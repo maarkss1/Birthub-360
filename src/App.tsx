@@ -14,6 +14,7 @@ import { EXECUTIVE_HUB_ALLOWED_EMAIL } from './config/access-policy';
 import { BrandProvider } from './contexts/BrandContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
 import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Skeleton } from './components/ui/Skeleton';
@@ -399,34 +400,36 @@ export default function App() {
     // em globals.css (que não cobre transitions/animate props do framer-motion).
     <MotionConfig reducedMotion="user">
       <ThemeProvider>
-        <BrandProvider>
-          <AuthProvider>
-            <ActiveRecordProvider>
-              <ClickSpark />
-              <Suspense fallback={<PageFallback />}>
-                <Routes>
-                  <Route path="/" element={<Navigate to="/app" replace />} />
-                  <Route path="/welcome" element={<WelcomeScreen />} />
-                  <Route path="/select-brand" element={<SelectionScreen />} />
-                  <Route path="/login" element={<LoginScreen />} />
-                  <Route path="/reset-password" element={<ResetPasswordScreen />} />
-                  <Route path="/book/:slug" element={<PublicBookingPage />} />
-                  <Route
-                    path="/app/*"
-                    element={
-                      <ProtectedRoute>
-                        <ErrorBoundary>
-                          <AppLayout />
-                        </ErrorBoundary>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="*" element={<Navigate to="/welcome" replace />} />
-                </Routes>
-              </Suspense>
-            </ActiveRecordProvider>
-          </AuthProvider>
-        </BrandProvider>
+        <ExperienceModeProvider>
+          <BrandProvider>
+            <AuthProvider>
+              <ActiveRecordProvider>
+                <ClickSpark />
+                <Suspense fallback={<PageFallback />}>
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/app" replace />} />
+                    <Route path="/welcome" element={<WelcomeScreen />} />
+                    <Route path="/select-brand" element={<SelectionScreen />} />
+                    <Route path="/login" element={<LoginScreen />} />
+                    <Route path="/reset-password" element={<ResetPasswordScreen />} />
+                    <Route path="/book/:slug" element={<PublicBookingPage />} />
+                    <Route
+                      path="/app/*"
+                      element={
+                        <ProtectedRoute>
+                          <ErrorBoundary>
+                            <AppLayout />
+                          </ErrorBoundary>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<Navigate to="/welcome" replace />} />
+                  </Routes>
+                </Suspense>
+              </ActiveRecordProvider>
+            </AuthProvider>
+          </BrandProvider>
+        </ExperienceModeProvider>
       </ThemeProvider>
     </MotionConfig>
   );

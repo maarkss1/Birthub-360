@@ -817,6 +817,24 @@
     background-size: 200% 100%;
     animation: shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  /* Atlas Visual Atmosphere 60° Geometry (Prompt 14) */
+  .atlas-pattern-diagonal-60 {
+    background-image: repeating-linear-gradient(
+      60deg,
+      transparent,
+      transparent 28px,
+      color-mix(in srgb, var(--brand) 4%, transparent) 28px,
+      color-mix(in srgb, var(--brand) 4%, transparent) 29px
+    );
+  }
+
+  .atlas-pattern-grid {
+    background-size: 32px 32px;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--line) 40%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--line) 40%, transparent) 1px, transparent 1px);
+  }
 }
 @custom-variant dark (&:where(.dark, .dark *));
 

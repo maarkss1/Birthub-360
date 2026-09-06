@@ -30,6 +30,8 @@ import { AiGatewayShowcase } from './AiGatewayShowcase';
 import { DeferredRevenueSignalOrb } from './DeferredRevenueSignalOrb';
 import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
 import { MetricSkeleton } from '../../../components/ui/Skeleton';
+import { useExperienceMode } from '../../../contexts/ExperienceModeContext';
+import { Sparkles } from 'lucide-react';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
   ligação: <Phone className="w-4 h-4" />,
@@ -111,6 +113,15 @@ export function SinglePageDashboard() {
     },
   ];
 
+  const { mode, setMode } = useExperienceMode();
+
+  const cycleMode = () => {
+    SoundFX.play('focus');
+    if (mode === 'STANDARD') setMode('IMMERSIVE');
+    else if (mode === 'IMMERSIVE') setMode('REDUCED_MOTION');
+    else setMode('STANDARD');
+  };
+
   const goTo = (path: string) => {
     SoundFX.play('navigate');
     navigate(path);
@@ -143,6 +154,15 @@ export function SinglePageDashboard() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={cycleMode}
+              title={`Modo Atual: ${mode}. Clique para alternar.`}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line bg-surface text-xs font-semibold text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-brand" />
+              <span>Modo: <strong className="text-ink">{mode}</strong></span>
+            </button>
             <motion.button
               type="button"
               onClick={() => goTo('/app/prospect')}
