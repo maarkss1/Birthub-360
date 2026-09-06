@@ -141,24 +141,24 @@ export function SinglePageDashboard() {
       </div>
 
       <div className="relative z-[1] w-full max-w-[92rem] space-y-4">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div data-testid="dashboard-greeting">
-            <p className="mb-1 text-[11px] font-black uppercase tracking-[0.2em] text-brand-active dark:text-brand-2">
+            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-brand-active dark:text-brand-2">
               {todayLabel}
             </p>
-            <h1 className="text-2xl font-black tracking-tight text-ink md:text-3xl">
+            <h1 className="text-xl font-black tracking-tight text-ink md:text-2xl">
               {greeting()}, {currentUser?.name?.split(' ')[0] || 'Usuário'}
             </h1>
-            <p className="mt-1 text-sm text-ink-2">
+            <p className="mt-0.5 text-xs text-ink-2">
               Resumo comercial de hoje · marca ativa: {isAtlas ? 'AtlasGR' : 'Total Trac'}.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={cycleMode}
               title={`Modo Atual: ${mode}. Clique para alternar.`}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-line bg-surface text-xs font-semibold text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-line bg-surface text-xs font-semibold text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-brand" />
               <span>Modo: <strong className="text-ink">{mode}</strong></span>
@@ -166,21 +166,21 @@ export function SinglePageDashboard() {
             <motion.button
               type="button"
               onClick={() => goTo('/app/prospect')}
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -1 }}
               whileTap={{ y: 0, scale: 0.985 }}
-              className="group flex cursor-pointer items-center gap-2 rounded-xl border border-brand/25 bg-brand-active px-4 py-2.5 text-sm font-bold text-white shadow-[0_14px_34px_-20px_color-mix(in_srgb,var(--brand)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.18)]"
+              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-brand/25 bg-brand-active px-3 py-1.5 text-xs font-bold text-white shadow-[0_10px_24px_-15px_color-mix(in_srgb,var(--brand)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.18)]"
             >
-              <Radar className="h-4 w-4 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110" />
+              <Radar className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110" />
               Nova varredura
             </motion.button>
             <motion.button
               type="button"
               onClick={() => goTo('/app/crm')}
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -1 }}
               whileTap={{ y: 0, scale: 0.985 }}
-              className="group flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-bold text-ink shadow-card transition-colors hover:border-brand/30 hover:bg-surface-2"
+              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-bold text-ink shadow-card transition-colors hover:border-brand/30 hover:bg-surface-2"
             >
-              <KanbanSquare className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+              <KanbanSquare className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110" />
               Abrir pipeline
             </motion.button>
           </div>

@@ -74,15 +74,15 @@ export function BugReportButton() {
                 interação real (foi exatamente o que quebrou tests/e2e/crm-kanban.spec.ts quando
                 este botão estava em bottom-6 left-6). A faixa vertical à direita (chatbot + voz)
                 já convive com o board sem esse problema. */}
-      <div className="fixed bottom-24 right-6 z-[900]">
+      <div className="fixed bottom-16 right-4 z-[900]">
         <button
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label="Reportar um problema"
-          className="group relative flex items-center justify-center w-12 h-12 rounded-2xl bg-surface text-ink-2 hover:text-ink hover:scale-110 active:scale-95 transition-all duration-300 border border-line shadow-card cursor-pointer"
+          className="group relative flex items-center justify-center w-9 h-9 rounded-xl bg-surface text-ink-2 hover:text-ink hover:scale-105 active:scale-95 transition-all duration-300 border border-line shadow-card cursor-pointer"
         >
-          <Bug className="w-5 h-5" />
-          <div className="absolute right-14 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-surface text-ink text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-line">
+          <Bug className="w-4 h-4" />
+          <div className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-surface text-ink text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-line">
             Reportar problema
           </div>
         </button>

@@ -260,7 +260,7 @@
   --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.28);
   --shadow-nav-value: 12px 0 34px -28px rgba(26, 21, 19, 0.45);
   --shadow-nav-active-value: 0 10px 26px -14px color-mix(in srgb, var(--brand) 52%, black);
-  --radius-nav-item-value: 1rem;
+  --radius-nav-item-value: 10px;
   --font-brand-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   /* "Mont" nunca foi carregada neste projeto (nenhum @font-face, nenhum arquivo local) — sempre
      caía silenciosamente pro fallback Montserrat. `CREATIVE_SYSTEM_01.md` (seção C) já formalizou
@@ -395,8 +395,8 @@
   --shadow-glow-brand: 0 0 15px -3px color-mix(in srgb, var(--brand) 20%, transparent);
   --shadow-glow-brand-strong: 0 0 15px -3px color-mix(in srgb, var(--brand) 40%, transparent);
 
-  --radius-card: 1.25rem;
-  --radius-card-lg: 1.75rem;
+  --radius-card: 12px;
+  --radius-card-lg: 16px;
   --radius-nav-item: var(--radius-nav-item-value);
 
   /* Escala de tipografia responsiva (H1-H6), única fonte de verdade — antes só H1-H3 existiam,
@@ -414,17 +414,18 @@
      níveis (--text-fluid-display/title/section) pro mesmo propósito; --text-fluid-* nunca foi
      referenciado fora deste arquivo, então foi descartado ao reconciliar os dois merges pra não
      manter dois tokens concorrentes pra tipografia responsiva (ver design-system/SKILL.md). */
-  --text-h1: clamp(2rem, 5vw, 3.5rem);
-  --text-h1--line-height: 1.1;
-  --text-h2: clamp(1.5rem, 4vw, 2.5rem);
+  /* Escala de tipografia responsiva calibrada (H1-H6) */
+  --text-h1: clamp(1.625rem, 3.2vw, 2.375rem);
+  --text-h1--line-height: 1.15;
+  --text-h2: clamp(1.35rem, 2.5vw, 1.85rem);
   --text-h2--line-height: 1.2;
-  --text-h3: clamp(1.25rem, 3vw, 2rem);
-  --text-h3--line-height: 1.3;
-  --text-h4: clamp(1.125rem, 1.5vw + 0.75rem, 1.5rem);
-  --text-h4--line-height: 1.35;
-  --text-h5: clamp(1rem, 1vw + 0.75rem, 1.25rem);
-  --text-h5--line-height: 1.4;
-  --text-h6: clamp(0.875rem, 0.5vw + 0.75rem, 1rem);
+  --text-h3: clamp(1.15rem, 2vw, 1.5rem);
+  --text-h3--line-height: 1.25;
+  --text-h4: clamp(1rem, 1.2vw + 0.5rem, 1.25rem);
+  --text-h4--line-height: 1.3;
+  --text-h5: clamp(0.9rem, 0.8vw + 0.5rem, 1.1rem);
+  --text-h5--line-height: 1.35;
+  --text-h6: clamp(0.8rem, 0.5vw + 0.5rem, 0.95rem);
   --text-h6--line-height: 1.4;
 
   --animate-toast-in: toast-in 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
