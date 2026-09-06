@@ -2,7 +2,7 @@
     email {$ACME_EMAIL:admin@atlasgr.com.br}
 }
 
-{$DOMAIN:localhost} {
+{$DOMAIN::80} {
     encode gzip zstd
 
     # Headers de Segurança
