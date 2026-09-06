@@ -21,7 +21,6 @@ import { LiveStatsWidget } from '../../../components/ui/LiveStatsWidget';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useAnalytics, useActivities, useAnalyticsDashboard } from '../../../hooks/useDatabase';
-import { staggerContainer, staggerItem } from '../../../lib/motion';
 import { SoundFX } from '../../../lib/soundEffects';
 import { RealtimeFeed } from './RealtimeFeed';
 import { GlowChart } from '../../analytics/components/GlowChart';
@@ -29,6 +28,8 @@ import { TeamRankingWidget } from './TeamRankingWidget';
 import { SellerCoachingCard } from './SellerCoachingCard';
 import { AiGatewayShowcase } from './AiGatewayShowcase';
 import { DeferredRevenueSignalOrb } from './DeferredRevenueSignalOrb';
+import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
+import { MetricSkeleton } from '../../../components/ui/Skeleton';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
   ligação: <Phone className="w-4 h-4" />,
@@ -201,44 +202,22 @@ export function SinglePageDashboard() {
         </div>
 
         {!statsError && (
-          <motion.div
-            variants={staggerContainer()}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-2 gap-3 lg:grid-cols-4"
-          >
-            {kpis.map((kpi, index) => (
-              <motion.div
-                key={kpi.label}
-                variants={staggerItem}
-                whileHover={{ y: -4, scale: 1.012 }}
-                transition={{ type: 'spring', stiffness: 360, damping: 26 }}
-                className="group relative overflow-hidden rounded-[1.35rem] border border-line bg-surface p-4 shadow-[0_22px_45px_-34px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]"
-              >
-                <div
-                  aria-hidden="true"
-                  className={`absolute -right-10 -top-10 h-24 w-24 rounded-full blur-[36px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-                    index % 2 === 0 ? 'bg-brand/18' : 'bg-brand-2/16'
-                  }`}
-                />
-                <div className="relative z-10 flex items-center gap-3">
-                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-brand/15 bg-soft text-brand shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105">
-                    {kpi.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl font-black leading-tight text-ink [font-variant-numeric:tabular-nums]">
-                      {statsLoading ? '—' : kpi.value}
-                    </p>
-                    <p className="truncate text-[10px] font-extrabold uppercase tracking-wide text-ink-2">
-                      {kpi.label}
-                    </p>
-                    <p className="mt-0.5 hidden text-[10px] text-ink-2/80 sm:block">{kpi.hint}</p>
-                  </div>
-                </div>
-                <div className="absolute inset-x-5 bottom-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-brand/55 to-transparent transition-transform duration-300 group-hover:scale-x-100" />
-              </motion.div>
-            ))}
-          </motion.div>
+          <BentoGrid columns={4} className="grid-cols-2 lg:grid-cols-4">
+            {statsLoading || !stats
+              ? Array.from({ length: 4 }).map((_, idx) => (
+                  <MetricSkeleton key={`metric-skel-${idx}`} />
+                ))
+              : kpis.map((kpi) => (
+                  <BentoMetric
+                    key={kpi.label}
+                    title={kpi.label}
+                    value={kpi.value}
+                    icon={kpi.icon}
+                    subtitle={kpi.hint}
+                    tilt={true}
+                  />
+                ))}
+          </BentoGrid>
         )}
 
         <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">

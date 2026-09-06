@@ -665,6 +665,60 @@
     box-shadow: var(--shadow-glow-brand-strong);
   }
 
+  /* Atlas Design System Foundation (Prompt 01) */
+  .atlas-glass {
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .atlas-surface {
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .atlas-card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .atlas-glow {
+    box-shadow: 0 0 16px -2px color-mix(in srgb, var(--brand) 30%, transparent);
+  }
+
+  .atlas-focus:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 20%, transparent);
+  }
+
+  .atlas-interactive {
+    cursor: pointer;
+    transition:
+      transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .atlas-interactive:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--brand) 30%, transparent);
+    box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--brand) 20%, transparent);
+  }
+  .atlas-interactive:active {
+    transform: scale(0.98);
+  }
+
   /* Custom Rounded Scrollbar */
   ::-webkit-scrollbar {
     width: 7px;
@@ -708,6 +762,60 @@
   }
   .hover-lift:hover {
     transform: translateY(-2px);
+  }
+
+  /* Atlas Interaction States (Prompt 01) */
+  .atlas-state-default {
+    opacity: 1;
+  }
+  .atlas-state-hover:hover {
+    background-color: color-mix(in srgb, var(--surface) 92%, var(--brand));
+  }
+  .atlas-state-active:active {
+    transform: scale(0.98);
+  }
+  .atlas-state-focus:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+  .atlas-state-selected {
+    border-color: var(--brand);
+    background-color: var(--soft);
+    color: var(--brand);
+  }
+  .atlas-state-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  .atlas-state-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .atlas-state-success {
+    border-color: var(--color-success);
+    color: var(--color-success);
+  }
+  .atlas-state-warning {
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+  .atlas-state-error {
+    border-color: var(--critical);
+    color: var(--critical);
+  }
+
+  /* Atlas Shimmer Wave for Skeletons (Prompt 06) */
+  .atlas-skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--surface-2) 100%, transparent) 0%,
+      color-mix(in srgb, var(--surface-2) 60%, var(--surface)) 50%,
+      color-mix(in srgb, var(--surface-2) 100%, transparent) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 }
 @custom-variant dark (&:where(.dark, .dark *));

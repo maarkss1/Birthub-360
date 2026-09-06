@@ -10,7 +10,8 @@ import { BugReportButton } from '../ui/BugReportButton';
 import { VoiceCommandWidget } from '../ui/VoiceCommandWidget';
 import { CommandPalette } from '../ui/CommandPalette';
 import { BottomSheet } from '../ui/BottomSheet';
-import { motion } from 'framer-motion';
+import { FloatingDock } from './FloatingDock';
+import { PageTransition } from './PageTransition';
 import { useBrandAccent } from '../../hooks/useBrandAccent';
 import { useNavigationBusBridge } from '../../hooks/useNavigationBusBridge';
 
@@ -80,16 +81,14 @@ export function MainLayout({ children }: MainLayoutProps) {
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
           <AppTopbar activeTab={activeTab} onOpenMobileNav={() => setMobileNavOpen(true)} />
           <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative bg-transparent">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-              className="flex-1 flex flex-col min-h-0 overflow-hidden"
-            >
+            <PageTransition id={activeTab}>
               {children}
-            </motion.div>
+            </PageTransition>
           </main>
+          <FloatingDock
+            activeTab={activeTab}
+            onOpenFullMenu={() => setMobileNavOpen(true)}
+          />
           <Toaster />
           <VoiceCommandWidget />
           <AtlasChatbotTrigger />

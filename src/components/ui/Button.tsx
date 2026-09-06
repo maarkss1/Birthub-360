@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
+import { Magnetic } from './Magnetic';
 
 const buttonVariants = cva(
   // disabled:text-gray-600 (não gray-400) — gray-400 sobre disabled:bg-gray-200 dá só 2.1:1,
@@ -56,14 +57,32 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  magnetic?: boolean;
+  loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, magnetic = false, loading = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
-    return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+    const buttonNode = (
+      <Comp
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          loading && 'atlas-state-loading opacity-75 cursor-wait'
+        )}
+        ref={ref}
+        disabled={loading || props.disabled}
+        {...props}
+      >
+        {children}
+      </Comp>
     );
+
+    if (magnetic && !props.disabled && !loading) {
+      return <Magnetic maxDisplacement={6}>{buttonNode}</Magnetic>;
+    }
+
+    return buttonNode;
   },
 );
 Button.displayName = 'Button';
