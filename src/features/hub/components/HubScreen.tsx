@@ -358,7 +358,9 @@ export function HubScreen() {
     [grantedCatalog, goTo, openExternal],
   );
 
-  const [centerKey, setCenterKey] = useState(() => items.find((i) => i.primary)?.key ?? items[0]?.key);
+  const [centerKey, setCenterKey] = useState(
+    () => items.find((i) => i.primary)?.key ?? items[0]?.key,
+  );
   const { containerRef, registerCard, select } = useOrbit(items, isDesktopOrbit, setCenterKey);
 
   return (
@@ -421,8 +423,8 @@ export function HubScreen() {
 
           {!isLoading && grantedCatalog.length === 0 && (
             <p className="text-xs text-ink-2">
-              Nenhum módulo executivo liberado para a sua conta ainda — os círculos abaixo mostram
-              a Central Comercial e as ferramentas de uso corriqueiro da equipe. Peça a um
+              Nenhum módulo executivo liberado para a sua conta ainda — os círculos abaixo mostram a
+              Central Comercial e as ferramentas de uso corriqueiro da equipe. Peça a um
               administrador para conceder acesso a um módulo no painel de Acesso a Módulos.
             </p>
           )}
@@ -496,9 +498,7 @@ function MobileDestinationList({ items }: { items: OrbitItem[] }) {
             </span>
             <span className="flex items-center gap-1 font-display text-xs font-bold text-ink">
               {item.label}
-              {item.external && (
-                <ExternalLink className="h-3 w-3 text-ink-2" aria-hidden="true" />
-              )}
+              {item.external && <ExternalLink className="h-3 w-3 text-ink-2" aria-hidden="true" />}
             </span>
           </button>
         ))}
