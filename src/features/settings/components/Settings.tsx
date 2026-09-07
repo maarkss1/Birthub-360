@@ -13,6 +13,7 @@ import { IconSliders } from '../../../components/icons';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrand, BRAND_CONFIGS, type Brand } from '../../../contexts/BrandContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import { SoundFX } from '../../../lib/soundEffects';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { FeatureFlagsPanel } from '../../feature-flags/components/FeatureFlagsPanel';
 import { Team } from '../../team/components/Team';
@@ -56,7 +57,10 @@ export function Settings() {
           <div className="flex gap-6 overflow-x-auto no-scrollbar">
             <button
               type="button"
-              onClick={() => setActiveTab('profile')}
+              onClick={() => {
+                SoundFX.play('navigate');
+                setActiveTab('profile');
+              }}
               className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'profile'
                   ? 'border-brand text-brand-active dark:text-brand-2'
@@ -68,7 +72,10 @@ export function Settings() {
             {isAdmin && (
               <button
                 type="button"
-                onClick={() => setActiveTab('users')}
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setActiveTab('users');
+                }}
                 className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                   activeTab === 'users'
                     ? 'border-brand text-brand-active dark:text-brand-2'
@@ -80,7 +87,10 @@ export function Settings() {
             )}
             <button
               type="button"
-              onClick={() => setActiveTab('integrations')}
+              onClick={() => {
+                SoundFX.play('navigate');
+                setActiveTab('integrations');
+              }}
               className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'integrations'
                   ? 'border-brand text-brand-active dark:text-brand-2'
@@ -92,7 +102,10 @@ export function Settings() {
             {isAdmin && (
               <button
                 type="button"
-                onClick={() => setActiveTab('featureFlags')}
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setActiveTab('featureFlags');
+                }}
                 className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                   activeTab === 'featureFlags'
                     ? 'border-brand text-brand-active dark:text-brand-2'
@@ -105,7 +118,10 @@ export function Settings() {
             {canViewAudit && (
               <button
                 type="button"
-                onClick={() => setActiveTab('audit')}
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setActiveTab('audit');
+                }}
                 className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                   activeTab === 'audit'
                     ? 'border-brand text-brand-active dark:text-brand-2'
@@ -176,7 +192,10 @@ export function Settings() {
                     <div role="group" aria-labelledby="settings-theme-label" className="flex gap-4">
                       <button
                         type="button"
-                        onClick={() => setThemeMode('dark')}
+                        onClick={() => {
+                          SoundFX.play('confirm');
+                          setThemeMode('dark');
+                        }}
                         aria-pressed={theme === 'dark'}
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-all ${
                           theme === 'dark'
@@ -188,7 +207,10 @@ export function Settings() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setThemeMode('light')}
+                        onClick={() => {
+                          SoundFX.play('confirm');
+                          setThemeMode('light');
+                        }}
                         aria-pressed={theme === 'light'}
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-all ${
                           theme === 'light'
@@ -220,7 +242,10 @@ export function Settings() {
                         <button
                           key={brand}
                           type="button"
-                          onClick={() => setActiveBrand(brand)}
+                          onClick={() => {
+                            SoundFX.play('confirm');
+                            setActiveBrand(brand);
+                          }}
                           className={`flex items-center justify-between p-4 rounded-xl border transition-all text-left ${
                             activeBrand === brand
                               ? 'border-brand bg-brand/5 shadow-sm'

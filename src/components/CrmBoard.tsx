@@ -14,6 +14,7 @@ import { Button } from './ui/Button';
 import { useBrand } from '../contexts/BrandContext';
 import { toast } from '../lib/toast';
 import { clientLogger } from '../lib/clientLogger';
+import { SoundFX } from '../lib/soundEffects';
 import { useCrmBoardController } from '../hooks/useCrmBoardController';
 import {
   DndContext,
@@ -230,6 +231,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       if (lead) {
         setActiveLead(lead);
         keyboardDragStatusRef.current = lead.status;
+        SoundFX.play('focus');
       }
     },
     [leads],
@@ -249,6 +251,12 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
 
       const currentLead = leads.find((l) => l.id === leadId);
       if (currentLead && currentLead.status !== targetStatus) {
+        if (targetStatus === 'Negócios Ganhos' || targetStatus === 'Convertido em Oportunidade') {
+          SoundFX.play('success');
+        } else {
+          SoundFX.play('confirm');
+        }
+
         setLeads((prev) =>
           prev.map((lead) => (lead.id === leadId ? { ...lead, status: targetStatus } : lead)),
         );
@@ -260,6 +268,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           // toast "a alteração foi desfeita" (achado do teste E2E de drag-and-drop).
           await api.put(`/api/leads/${leadId}`, { status: targetStatus });
         } catch (error) {
+          SoundFX.play('error');
           clientLogger.error({ err: error }, 'Error updating lead status');
           toast.error(
             `Não foi possível mover ${leadLabel(currentLead)} — a alteração foi desfeita.`,
@@ -425,6 +434,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
   const handleFunnelChange = useCallback(
     (next: 'Lead' | 'Negocio') => {
       if (funnelProp) return; // funil fixado por prop — toggle não se aplica
+      SoundFX.play('navigate');
       setSelectedLeadId(null); // evita abrir o drawer de um lead que já não está no funil visível
       setSelectedLeadIds(new Set());
       setSearchParams(next === 'Lead' ? {} : { funnel: next }, { replace: true });

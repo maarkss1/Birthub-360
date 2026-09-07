@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   Activity,
   AlertTriangle,
@@ -17,6 +18,9 @@ import {
 } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { clientLogger } from '../../../lib/clientLogger';
+import { SoundFX } from '../../../lib/soundEffects';
+import { Button } from '../../../components/ui/Button';
+import { staggerContainer, fadeInUp } from '../../../lib/motion';
 import type { CrmOverviewData } from '../crm360.types';
 
 interface CrmOverviewProps {
@@ -61,7 +65,11 @@ function KpiCard({
       'bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 border-violet-500/20',
   };
   return (
-    <article className="rounded-2xl border border-line bg-surface p-4 shadow-sm">
+    <motion.article
+      variants={fadeInUp}
+      whileHover={{ y: -2, transition: { duration: 0.15 } }}
+      className="rounded-2xl border border-line bg-surface p-4 shadow-sm hover:border-brand/30 hover:shadow-md transition-all duration-200"
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-2">{label}</p>
@@ -72,7 +80,7 @@ function KpiCard({
           <Icon className="h-5 w-5" />
         </span>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -147,16 +155,24 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
             Receita, conversão, atividades e prioridades em uma única visão.
           </p>
         </div>
-        <button
+        <Button
           onClick={() => void load()}
           disabled={loading}
-          className="inline-flex items-center gap-2 self-start rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink-2 hover:text-ink disabled:opacity-50"
+          variant="outline"
+          size="sm"
+          sound="confirm"
+          className="inline-flex items-center gap-2 self-start text-xs font-bold"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Atualizar
-        </button>
+        </Button>
       </div>
 
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <motion.section
+        variants={staggerContainer(0.06)}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5"
+      >
         <KpiCard
           label="Leads"
           value={String(data.kpis.leads)}
@@ -191,7 +207,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
           icon={CalendarClock}
           intent={data.kpis.overdueActivities > 0 ? 'warning' : 'success'}
         />
-      </section>
+      </motion.section>
 
       <section className="rounded-2xl border border-info/20 bg-gradient-to-r from-info/10 via-brand/5 to-transparent p-4">
         <div className="flex items-start gap-3">
@@ -204,12 +220,15 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
             </p>
             <p className="mt-1 text-sm leading-relaxed text-ink">{insight}</p>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
+            sound="navigate"
             onClick={() => onNavigate('activities')}
-            className="hidden items-center gap-1 rounded-lg px-3 py-2 text-xs font-bold text-info-active dark:text-info hover:bg-info/10 sm:flex"
+            className="hidden items-center gap-1 text-xs font-bold text-info-active dark:text-info hover:bg-info/10 sm:flex"
           >
             Abrir foco <ArrowRight className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
       </section>
 
@@ -345,8 +364,11 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
             CLAUDE.md seção 6 (preservar conteúdo real, nunca prometer o que não existe). */}
         <button
           type="button"
-          onClick={() => onNavigate('propostas')}
-          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40"
+          onClick={() => {
+            SoundFX.play('navigate');
+            onNavigate('propostas');
+          }}
+          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40 hover:shadow-sm transition-all"
         >
           <span>
             <strong className="block text-ink">Documentos comerciais</strong>
@@ -355,8 +377,12 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
           <FileClock className="h-5 w-5 text-brand" />
         </button>
         <button
-          onClick={() => onNavigate('activities')}
-          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40"
+          type="button"
+          onClick={() => {
+            SoundFX.play('navigate');
+            onNavigate('activities');
+          }}
+          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40 hover:shadow-sm transition-all"
         >
           <span>
             <strong className="block text-ink">Agenda inteligente</strong>

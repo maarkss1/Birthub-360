@@ -29,6 +29,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { toast } from '../../../lib/toast';
 import { downloadFile } from '../../../lib/api';
+import { SoundFX } from '../../../lib/soundEffects';
 import { BookingLinksModal } from './BookingLinksModal';
 import {
   calendarApi,
@@ -228,6 +229,7 @@ export function Calendar() {
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
+      SoundFX.play('focus');
       setDragged(activities.find((a) => a.id === event.active.id) ?? null);
     },
     [activities],
@@ -239,21 +241,22 @@ export function Calendar() {
       setDragged(null);
       if (!over) return;
 
-      const activity = activities.find((a) => a.id === active.id);
-      if (!activity) return;
+      const act = activities.find((a) => a.id === active.id);
+      if (!act) return;
 
       const targetKey = String(over.id);
-      const novaData = moveToDay(activity.date, targetKey);
+      const novaData = moveToDay(act.date, targetKey);
       const anterior = [...activities];
 
+      SoundFX.play('confirm');
       setActivities((lista) =>
         lista.map((item) =>
-          item.id === activity.id ? { ...item, date: novaData.toISOString() } : item,
+          item.id === act.id ? { ...item, date: novaData.toISOString() } : item,
         ),
       );
 
       try {
-        await calendarApi.update(activity.id, { date: novaData.toISOString() });
+        await calendarApi.update(act.id, { date: novaData.toISOString() });
         toast.success('Atividade remarcada.');
       } catch (err) {
         setActivities(anterior);
@@ -312,7 +315,8 @@ export function Calendar() {
                 autenticado gerencia os próprios links; nenhum gate de papel necessário aqui. */}
             <Button
               type="button"
-              variant="secondary"
+              variant="outline"
+              sound="focus"
               onClick={() => setIsBookingModalOpen(true)}
               className="text-xs"
               title="Gerenciar links públicos de agendamento estilo Calendly"
@@ -331,6 +335,7 @@ export function Calendar() {
             <Button
               type="button"
               variant="secondary"
+              sound="confirm"
               onClick={() => {
                 void downloadFile(
                   `${window.location.origin}/api/activities/feed.ics`,
@@ -349,17 +354,24 @@ export function Calendar() {
               <Button
                 type="button"
                 variant="outline"
+                sound="navigate"
                 onClick={() => setReference((r) => addMonths(r, -1))}
                 aria-label="Mês anterior"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <Button type="button" variant="outline" onClick={() => setReference(new Date())}>
+              <Button
+                type="button"
+                variant="outline"
+                sound="navigate"
+                onClick={() => setReference(new Date())}
+              >
                 Hoje
               </Button>
               <Button
                 type="button"
                 variant="outline"
+                sound="navigate"
                 onClick={() => setReference((r) => addMonths(r, 1))}
                 aria-label="Próximo mês"
               >

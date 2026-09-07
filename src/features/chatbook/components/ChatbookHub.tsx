@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Database, Globe, Link2, RefreshCw, Send, Sparkles } from 'lucide-react';
 import { useBrand } from '../../../contexts/BrandContext';
+import { SoundFX } from '../../../lib/soundEffects';
 import { useAssistantChat } from '../../../hooks/useAssistantChat';
 import { usePlaybookMatrixData } from '../../../hooks/usePlaybookMatrixData';
 
@@ -82,7 +83,10 @@ export function ChatbookHub() {
             <div className="flex items-center gap-1.5 bg-surface p-1 rounded-xl border border-line">
               <button
                 type="button"
-                onClick={() => setSearchMode('general')}
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setSearchMode('general');
+                }}
                 aria-pressed={searchMode === 'general'}
                 className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
                   searchMode === 'general'
@@ -94,7 +98,10 @@ export function ChatbookHub() {
               </button>
               <button
                 type="button"
-                onClick={() => setSearchMode('internal')}
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setSearchMode('internal');
+                }}
                 aria-pressed={searchMode === 'internal'}
                 className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
                   searchMode === 'internal'
@@ -141,7 +148,10 @@ export function ChatbookHub() {
           </div>
 
           <form
-            onSubmit={handleSendMessage}
+            onSubmit={(e) => {
+              SoundFX.play('focus');
+              handleSendMessage(e);
+            }}
             className="p-4 border-t border-line bg-surface flex items-center gap-2"
           >
             <input

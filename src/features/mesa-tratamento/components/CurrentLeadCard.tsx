@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../../c
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
 import { toast } from '../../../lib/toast';
+import { SoundFX } from '../../../lib/soundEffects';
 import { LOSS_REASONS } from '../constants/lossReasons';
 import {
   mesaTratamentoApi,
@@ -65,6 +66,11 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
         nextActionTitle: nextActionTitle.trim() || undefined,
         nextActionWhen: nextActionWhen || undefined,
       });
+      if (disqualifying) {
+        SoundFX.play('warning');
+      } else {
+        SoundFX.play('success');
+      }
       toast.success('Registrado no Bitrix24. Próximo Lead liberado.');
       setOutcome('');
       setNote('');

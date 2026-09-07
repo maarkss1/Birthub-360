@@ -99,7 +99,7 @@ export function Sidebar({
       title: 'Visão Geral',
       items: ['dashboard', ...(isJoaoReisOrAdmin ? (['sdr-diagnostic-joao'] as TabType[]) : [])],
     },
-    { title: 'Captar', items: ['prospect'] },
+    { title: 'Captar', items: ['prospect', 'market-intelligence'] },
     {
       title: 'Qualificar',
       items: [
