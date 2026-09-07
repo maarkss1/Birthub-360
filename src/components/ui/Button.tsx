@@ -62,13 +62,25 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, magnetic = false, loading = false, children, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      magnetic = false,
+      loading = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : 'button';
     const buttonNode = (
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          loading && 'atlas-state-loading opacity-75 cursor-wait'
+          loading && 'atlas-state-loading opacity-75 cursor-wait',
         )}
         ref={ref}
         disabled={loading || props.disabled}

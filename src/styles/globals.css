@@ -833,8 +833,16 @@
   .atlas-pattern-grid {
     background-size: 32px 32px;
     background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--line) 40%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--line) 40%, transparent) 1px, transparent 1px);
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--line) 40%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--line) 40%, transparent) 1px,
+        transparent 1px
+      );
   }
 }
 @custom-variant dark (&:where(.dark, .dark *));

@@ -13,7 +13,11 @@ export function PageTransition({ children, className, id }: PageTransitionProps)
   const shouldReduceMotion = useReducedMotion();
 
   if (shouldReduceMotion) {
-    return <div className={cn('flex-1 flex flex-col min-h-0 overflow-hidden', className)}>{children}</div>;
+    return (
+      <div className={cn('flex-1 flex flex-col min-h-0 overflow-hidden', className)}>
+        {children}
+      </div>
+    );
   }
 
   return (

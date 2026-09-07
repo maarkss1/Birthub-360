@@ -161,7 +161,9 @@ export function SinglePageDashboard() {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-line bg-surface text-xs font-semibold text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-brand" />
-              <span>Modo: <strong className="text-ink">{mode}</strong></span>
+              <span>
+                Modo: <strong className="text-ink">{mode}</strong>
+              </span>
             </button>
             <motion.button
               type="button"

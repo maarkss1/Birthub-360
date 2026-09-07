@@ -38,7 +38,7 @@ export function TiltCard({
       style={{ ...tiltStyle, ...style }}
       className={cn(
         'relative rounded-xl transition-[border-color,box-shadow] duration-200 [transform-style:preserve-3d]',
-        className
+        className,
       )}
       {...(props as React.ComponentProps<typeof motion.div>)}
     >

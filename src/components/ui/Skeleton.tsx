@@ -11,7 +11,7 @@ export function Skeleton({ className, shimmer = true, ...props }: SkeletonProps)
       className={cn(
         'rounded-md',
         shimmer ? 'atlas-skeleton-shimmer' : 'animate-pulse bg-surface-2',
-        className
+        className,
       )}
       {...props}
     />
@@ -23,7 +23,7 @@ export function MetricSkeleton({ className }: { className?: string }) {
     <div
       className={cn(
         'rounded-xl border border-line bg-surface p-5 shadow-card space-y-4',
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between">
@@ -46,7 +46,7 @@ export function CardSkeleton({ className }: { className?: string }) {
     <div
       className={cn(
         'rounded-xl border border-line bg-surface p-6 shadow-card space-y-4',
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between">
@@ -81,7 +81,10 @@ export function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
         {Array.from({ length: rows }).map((_, r) => (
           <div key={`tr-${r}`} className="flex items-center gap-4 px-4 py-3.5">
             {Array.from({ length: cols }).map((_, c) => (
-              <Skeleton key={`td-${r}-${c}`} className={cn('h-4 flex-1', c === 0 && 'w-1/3 flex-none')} />
+              <Skeleton
+                key={`td-${r}-${c}`}
+                className={cn('h-4 flex-1', c === 0 && 'w-1/3 flex-none')}
+              />
             ))}
           </div>
         ))}
@@ -117,7 +120,7 @@ export function ChartSkeleton({ className }: { className?: string }) {
     <div
       className={cn(
         'rounded-xl border border-line bg-surface p-6 shadow-card space-y-6',
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between">
@@ -129,11 +132,7 @@ export function ChartSkeleton({ className }: { className?: string }) {
       </div>
       <div className="h-56 w-full flex items-end gap-3 pt-6">
         {[40, 75, 55, 90, 65, 80, 45, 95, 70, 85, 60, 100].map((h, i) => (
-          <Skeleton
-            key={`bar-${i}`}
-            className="flex-1 rounded-t-md"
-            style={{ height: `${h}%` }}
-          />
+          <Skeleton key={`bar-${i}`} className="flex-1 rounded-t-md" style={{ height: `${h}%` }} />
         ))}
       </div>
     </div>

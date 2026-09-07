@@ -51,7 +51,7 @@ export function BentoMetric({
                     ? 'bg-surface-2 text-ink-2'
                     : delta.positive
                       ? 'bg-ok/15 text-ok-active'
-                      : 'bg-critical/15 text-critical-active'
+                      : 'bg-critical/15 text-critical-active',
                 )}
               >
                 {delta.positive ? '↑ ' : delta.neutral ? '' : '↓ '}
