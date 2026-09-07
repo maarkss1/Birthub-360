@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FileSignature, ExternalLink, Search, Sparkles, Layers, Gauge } from 'lucide-react';
 import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader';
+import { SoundFX } from '../../../lib/soundEffects';
 
 export function PropostaComercialHub() {
   const [activeTab, setActiveTab] = useState<
@@ -134,7 +135,10 @@ export function PropostaComercialHub() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           <button
-            onClick={() => setActiveTab('selecao')}
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('selecao');
+            }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'selecao'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
@@ -144,7 +148,10 @@ export function PropostaComercialHub() {
             Central de Seleção de Propostas
           </button>
           <button
-            onClick={() => setActiveTab('modelos')}
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('modelos');
+            }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'modelos'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
@@ -154,7 +161,10 @@ export function PropostaComercialHub() {
             Modelos de Propostas (7)
           </button>
           <button
-            onClick={() => setActiveTab('cockpit-atlas')}
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('cockpit-atlas');
+            }}
             className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
               activeTab === 'cockpit-atlas'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
@@ -164,7 +174,10 @@ export function PropostaComercialHub() {
             Cockpit Comercial Atlas GR
           </button>
           <button
-            onClick={() => setActiveTab('cockpit-totaltrac')}
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('cockpit-totaltrac');
+            }}
             className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
               activeTab === 'cockpit-totaltrac'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
@@ -212,7 +225,10 @@ export function PropostaComercialHub() {
                 {filteredProposals.map((p) => (
                   <button
                     key={p.file}
-                    onClick={() => setSelectedProposal(p.file)}
+                    onClick={() => {
+                      SoundFX.play('focus');
+                      setSelectedProposal(p.file);
+                    }}
                     className={`w-full text-left p-3 rounded-xl border transition-all space-y-1 ${
                       selectedProposal === p.file
                         ? 'bg-brand/10 border-brand/40 text-brand font-bold shadow-sm'

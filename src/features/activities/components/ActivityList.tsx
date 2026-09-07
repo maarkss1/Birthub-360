@@ -33,6 +33,7 @@ import { toast } from '../../../lib/toast';
 import { clientLogger } from '../../../lib/clientLogger';
 import type { PaletteIntent } from '../../../lib/paletteIntent';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { SoundFX } from '../../../lib/soundEffects';
 import type React from 'react';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
@@ -225,11 +226,17 @@ export function ActivityList() {
 
   const handleToggleStatus = async (a: Activity) => {
     const isDone = a.status === 'Concluída';
+    if (!isDone) {
+      SoundFX.play('success');
+    } else {
+      SoundFX.play('confirm');
+    }
     await updateActivity(a.id, { status: isDone ? 'Pendente' : 'Concluída' });
   };
 
   const handleSnooze = async (activityId: string, duration: '2h' | 'tomorrow' | 'next_week') => {
     try {
+      SoundFX.play('confirm');
       await api.post(`/api/activities/${activityId}/snooze`, { duration });
       toast.success(
         duration === '2h'
@@ -334,14 +341,20 @@ export function ActivityList() {
             <div className="inline-flex items-center gap-1 p-1 mt-3 bg-surface-2 rounded-xl border border-line">
               <button
                 type="button"
-                onClick={() => setFilterMineOnly(false)}
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setFilterMineOnly(false);
+                }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${!filterMineOnly ? 'bg-brand-active text-white' : 'text-ink-2 hover:text-ink'}`}
               >
                 Equipe Toda
               </button>
               <button
                 type="button"
-                onClick={() => setFilterMineOnly(true)}
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setFilterMineOnly(true);
+                }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${filterMineOnly ? 'bg-brand-active text-white' : 'text-ink-2 hover:text-ink'}`}
               >
                 Minhas Atividades {currentUser?.name ? `(${currentUser.name})` : ''}
@@ -365,7 +378,10 @@ export function ActivityList() {
             {/* Templates Rápidos de Follow-up */}
             <button
               type="button"
-              onClick={() => setIsTemplatesOpen(true)}
+              onClick={() => {
+                SoundFX.play('focus');
+                setIsTemplatesOpen(true);
+              }}
               className="flex items-center gap-1.5 bg-surface-2 hover:bg-surface-3 border border-line text-ink font-bold text-xs px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
               title="Criar atividade com templates rápidos pós-demo e negociação"
             >
@@ -380,6 +396,7 @@ export function ActivityList() {
             <button
               type="button"
               onClick={() => {
+                SoundFX.play('confirm');
                 const icsUrl = `${window.location.origin}/api/activities/feed.ics${currentUser?.name ? `?owner=${encodeURIComponent(currentUser.name)}` : ''}`;
                 downloadFile(icsUrl, 'agenda.ics').catch((err) => {
                   toast.error(err instanceof Error ? err.message : 'Falha ao baixar a agenda.');
@@ -395,7 +412,10 @@ export function ActivityList() {
             {/* Nova Atividade */}
             <button
               type="button"
-              onClick={() => setIsFormOpen(true)}
+              onClick={() => {
+                SoundFX.play('focus');
+                setIsFormOpen(true);
+              }}
               className="flex items-center gap-1.5 bg-brand-active text-white font-black text-xs px-4 py-2 rounded-xl shadow-md hover:brightness-110 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Nova Atividade

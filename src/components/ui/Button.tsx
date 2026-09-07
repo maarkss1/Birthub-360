@@ -4,6 +4,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 import { Magnetic } from './Magnetic';
+import { SoundFX, type UiSound } from '../../lib/soundEffects';
 
 const buttonVariants = cva(
   // disabled:text-gray-600 (não gray-400) — gray-400 sobre disabled:bg-gray-200 dá só 2.1:1,
@@ -59,6 +60,7 @@ export interface ButtonProps
   asChild?: boolean;
   magnetic?: boolean;
   loading?: boolean;
+  sound?: UiSound;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -70,12 +72,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       asChild = false,
       magnetic = false,
       loading = false,
+      sound,
       children,
+      onClick,
       ...props
     },
     ref,
   ) => {
     const Comp = asChild ? Slot : 'button';
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (sound && !loading && !props.disabled) {
+        SoundFX.play(sound);
+      }
+      onClick?.(e);
+    };
+
     const buttonNode = (
       <Comp
         className={cn(
@@ -84,6 +96,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         ref={ref}
         disabled={loading || props.disabled}
+        onClick={handleClick}
         {...props}
       >
         {children}

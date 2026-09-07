@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
+import { SoundFX } from '../../../lib/soundEffects';
 import { ConversationsTab } from './ConversationsTab';
 import { BitrixMappingSettingsTab } from './BitrixMappingSettingsTab';
 
@@ -21,6 +22,7 @@ export function CopilotoIaHub() {
   const visibleTabs = TABS.filter((t) => !t.managementOnly || canManage);
 
   const setTab = (next: TabId) => {
+    SoundFX.play('navigate');
     const params = new URLSearchParams(searchParams);
     params.set('tab', next);
     setSearchParams(params);

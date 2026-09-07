@@ -4,6 +4,7 @@ import { PhoneCall } from 'lucide-react';
 import { useBrand } from '../../../contexts/BrandContext';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
+import { SoundFX } from '../../../lib/soundEffects';
 import {
   QUALIFICATION_CRITERIA,
   OBJECTIONS_DATA,
@@ -153,6 +154,7 @@ export function RoleplayHub() {
   };
 
   const startCall = async () => {
+    SoundFX.play('focus');
     setCallActive(true);
     setIsFinished(false);
     setAnalysisResult(null);
@@ -308,6 +310,7 @@ export function RoleplayHub() {
   };
 
   const finishCall = () => {
+    SoundFX.play('success');
     setCallActive(false);
     setIsFinished(true);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();

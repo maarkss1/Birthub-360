@@ -68,7 +68,7 @@ export function Toggle({
           className="pointer-events-none block h-5 w-5 rounded-full bg-white shadow-md ring-0"
           animate={{
             x: checked ? 20 : 0,
-            scale: checked ? [1, 1.12, 1] : [1, 0.92, 1],
+            scale: 1,
           }}
           transition={
             shouldReduceMotion

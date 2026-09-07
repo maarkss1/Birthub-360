@@ -23,6 +23,7 @@ import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { toast } from '../../../lib/toast';
+import { SoundFX } from '../../../lib/soundEffects';
 import {
   automationsApi,
   describeAutomation,
@@ -457,6 +458,7 @@ export function Automations() {
 
   const toggle = useCallback(
     async (item: Automation) => {
+      SoundFX.play('confirm');
       const anterior = items;
       setItems((prev) => prev.map((a) => (a.id === item.id ? { ...a, enabled: !a.enabled } : a)));
       try {
@@ -550,6 +552,7 @@ export function Automations() {
               <Button
                 type="button"
                 variant="outline"
+                sound="confirm"
                 onClick={() => void runStagnationScanNow()}
                 disabled={scanningStagnation}
                 title='Reavalia agora as automações de "Lead estagnado" para todas as organizações, sem esperar o cron diário'
@@ -563,7 +566,7 @@ export function Automations() {
               </Button>
             )}
             {canManage && (
-              <Button type="button" onClick={() => setCreating(true)}>
+              <Button type="button" sound="focus" onClick={() => setCreating(true)}>
                 <Plus className="w-4 h-4 mr-2" /> Nova automação
               </Button>
             )}
