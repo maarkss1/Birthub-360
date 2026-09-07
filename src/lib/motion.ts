@@ -9,9 +9,20 @@ import {
 
 export const EASE_PREMIUM = [0.22, 1, 0.36, 1] as const;
 export const EASE_SPRING_SOFT = [0.34, 1.56, 0.64, 1] as const;
+export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+export const EASE_IN_OUT_SMOOTH = [0.4, 0, 0.2, 1] as const;
+
+export const MOTION_DURATION = {
+  instant: 0.1,
+  fast: 0.18,
+  base: 0.28,
+  deliberate: 0.42,
+  gentle: 0.6,
+} as const;
 
 export const SPRING_SNAPPY = { type: 'spring', stiffness: 420, damping: 32, mass: 0.7 } as const;
 export const SPRING_SOFT = { type: 'spring', stiffness: 260, damping: 24, mass: 0.9 } as const;
+export const SPRING_ELASTIC = { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 } as const;
 
 export const fadeIn: Variants = {
   hidden: { opacity: 0 },

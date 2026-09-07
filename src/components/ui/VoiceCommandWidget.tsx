@@ -127,22 +127,22 @@ export function VoiceCommandWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-24 z-[900]">
+    <div className="fixed bottom-4 right-16 z-[900]">
       <div className="relative group">
         <button
           type="button"
           onClick={toggleListening}
           aria-label="Comando de Voz por Microfone"
-          className={`flex items-center justify-center w-14 h-14 rounded-2xl text-white shadow-2xl transition-all duration-300 border border-line cursor-pointer ${
+          className={`flex items-center justify-center w-10 h-10 rounded-xl text-white shadow-xl transition-all duration-300 border border-line cursor-pointer ${
             isListening
               ? 'bg-red-600 animate-pulse ring-4 ring-red-500/40'
-              : 'bg-gradient-to-br from-brand via-orange-400 to-white hover:scale-110 active:scale-95 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_10px_30px_rgba(255,86,24,0.5)]'
+              : 'bg-gradient-to-br from-brand via-orange-400 to-white hover:scale-105 active:scale-95 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_6px_20px_rgba(255,86,24,0.4)]'
           }`}
         >
           {isListening ? (
-            <Volume2 className="w-7 h-7 animate-bounce text-white" />
+            <Volume2 className="w-5 h-5 animate-bounce text-white" />
           ) : (
-            <Mic className="w-7 h-7 group-hover:scale-110 transition-transform" />
+            <Mic className="w-5 h-5 group-hover:scale-110 transition-transform" />
           )}
         </button>
 

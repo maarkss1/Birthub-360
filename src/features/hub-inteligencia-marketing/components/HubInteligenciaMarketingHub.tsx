@@ -72,7 +72,7 @@ export function HubInteligenciaMarketingHub() {
 
   return (
     <div
-      className={`flex flex-col h-full space-y-4 bg-bg ${isFullscreen ? 'fixed inset-0 z-50 p-4 bg-bg overflow-hidden' : 'p-6'}`}
+      className={`flex flex-col h-full space-y-3 bg-bg ${isFullscreen ? 'fixed inset-0 z-50 p-3 bg-bg overflow-hidden' : 'p-4'}`}
     >
       {/* Unified Executive Header */}
       <ExecutiveHeader
@@ -84,54 +84,54 @@ export function HubInteligenciaMarketingHub() {
         onRefresh={() => setIframeKey((k) => k + 1)}
       />
 
-      {/* KPI Summary Bar */}
+      {/* KPI Summary Bar - Compacted */}
       {!isFullscreen && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-brand/10 text-brand rounded-xl">
-              <PieChart className="w-5 h-5" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-brand/10 text-brand rounded-lg">
+              <PieChart className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Censo Competitivo</div>
-              <div className="text-sm font-bold text-ink">Nacional 2026</div>
+              <div className="text-[10px] font-semibold text-ink-2">Censo Competitivo</div>
+              <div className="text-xs font-bold text-ink">Nacional 2026</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-success/10 text-success-active dark:text-success rounded-xl">
-              <Compass className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-success/10 text-success-active dark:text-success rounded-lg">
+              <Compass className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Mapa de Lacunas</div>
-              <div className="text-sm font-bold text-ink">Polos Logísticos</div>
+              <div className="text-[10px] font-semibold text-ink-2">Mapa de Lacunas</div>
+              <div className="text-xs font-bold text-ink">Polos Logísticos</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-xl">
-              <Database className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg">
+              <Database className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Data Lineage</div>
-              <div className="text-sm font-bold text-ink">MDF-e + RNTRC</div>
+              <div className="text-[10px] font-semibold text-ink-2">Data Lineage</div>
+              <div className="text-xs font-bold text-ink">MDF-e + RNTRC</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-info/10 text-info-active dark:text-info rounded-xl">
-              <FileText className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-info/10 text-info-active dark:text-info rounded-lg">
+              <FileText className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Metodologias</div>
-              <div className="text-sm font-bold text-ink">8 Documentos</div>
+              <div className="text-[10px] font-semibold text-ink-2">Metodologias</div>
+              <div className="text-xs font-bold text-ink">8 Documentos</div>
             </div>
           </div>
         </div>
       )}
 
       {/* Sub-tab Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           <button
             onClick={() => setActiveTab('censo')}
-            className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'censo'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
                 : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'
@@ -141,7 +141,7 @@ export function HubInteligenciaMarketingHub() {
           </button>
           <button
             onClick={() => setActiveTab('lacunas')}
-            className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'lacunas'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
                 : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'

@@ -73,40 +73,54 @@ export function RealtimeFeed() {
   }, [retryToken]);
 
   return (
-    <Card className="col-span-3">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium flex items-center">
+    <Card className="col-span-3 overflow-hidden border border-line bg-surface shadow-card">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-line pb-3 bg-surface/50">
+        <CardTitle className="text-sm font-bold flex items-center gap-2 text-ink">
           <Activity
-            className={`mr-2 h-4 w-4 ${connectionError ? 'text-ink-2' : 'text-green-500 animate-pulse'}`}
+            className={`h-4 w-4 ${connectionError ? 'text-ink-2' : 'text-success animate-pulse'}`}
           />
-          Feed em Tempo Real
+          Intelligence Stream
         </CardTitle>
+        <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full border border-line bg-surface-2 text-ink-2">
+          {connectionError ? 'Offline' : 'Ao vivo'}
+        </span>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         {connectionError ? (
-          <div className="flex items-center justify-between gap-3" role="status">
-            <div className="flex items-center gap-2 text-sm text-red-300">
+          <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-critical/20 bg-critical/10" role="status">
+            <div className="flex items-center gap-2 text-xs text-critical font-medium">
               <AlertTriangle className="w-4 h-4 shrink-0" />
               Feed em tempo real desconectado.
             </div>
             <button
               type="button"
               onClick={retry}
-              className="text-xs font-bold text-red-300 hover:underline cursor-pointer shrink-0"
+              className="text-xs font-bold text-critical hover:underline cursor-pointer shrink-0"
             >
               Tentar novamente
             </button>
           </div>
         ) : events.length === 0 ? (
-          <div className="text-sm text-muted-foreground text-center py-4">
+          <div className="text-xs text-ink-2 text-center py-6">
             Nenhuma atividade recente.
           </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-2.5">
             {events.map((ev) => (
-              <li key={ev.id} className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{ev.timestamp.toLocaleTimeString()}</span>
-                <Badge variant={ev.type === 'DEAL_WON' ? 'success' : 'outline'}>{ev.message}</Badge>
+              <li
+                key={ev.id}
+                className="flex items-center justify-between text-xs p-2.5 rounded-xl border border-line bg-surface-2/40 hover:bg-surface-2/80 transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
+                  <span className="font-semibold text-ink">{ev.message}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-ink-2 font-mono">{ev.timestamp.toLocaleTimeString()}</span>
+                  <Badge variant={ev.type === 'DEAL_WON' ? 'success' : 'outline'} className="text-[10px] px-2 py-0.5">
+                    {ev.type === 'DEAL_WON' ? 'Sucesso' : 'Evento'}
+                  </Badge>
+                </div>
               </li>
             ))}
           </ul>

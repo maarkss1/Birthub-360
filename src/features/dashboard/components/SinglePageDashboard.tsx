@@ -21,7 +21,6 @@ import { LiveStatsWidget } from '../../../components/ui/LiveStatsWidget';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useAnalytics, useActivities, useAnalyticsDashboard } from '../../../hooks/useDatabase';
-import { staggerContainer, staggerItem } from '../../../lib/motion';
 import { SoundFX } from '../../../lib/soundEffects';
 import { RealtimeFeed } from './RealtimeFeed';
 import { GlowChart } from '../../analytics/components/GlowChart';
@@ -29,6 +28,10 @@ import { TeamRankingWidget } from './TeamRankingWidget';
 import { SellerCoachingCard } from './SellerCoachingCard';
 import { AiGatewayShowcase } from './AiGatewayShowcase';
 import { DeferredRevenueSignalOrb } from './DeferredRevenueSignalOrb';
+import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
+import { MetricSkeleton } from '../../../components/ui/Skeleton';
+import { useExperienceMode } from '../../../contexts/ExperienceModeContext';
+import { Sparkles } from 'lucide-react';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
   ligação: <Phone className="w-4 h-4" />,
@@ -110,6 +113,15 @@ export function SinglePageDashboard() {
     },
   ];
 
+  const { mode, setMode } = useExperienceMode();
+
+  const cycleMode = () => {
+    SoundFX.play('focus');
+    if (mode === 'STANDARD') setMode('IMMERSIVE');
+    else if (mode === 'IMMERSIVE') setMode('REDUCED_MOTION');
+    else setMode('STANDARD');
+  };
+
   const goTo = (path: string) => {
     SoundFX.play('navigate');
     navigate(path);
@@ -129,37 +141,46 @@ export function SinglePageDashboard() {
       </div>
 
       <div className="relative z-[1] w-full max-w-[92rem] space-y-4">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div data-testid="dashboard-greeting">
-            <p className="mb-1 text-[11px] font-black uppercase tracking-[0.2em] text-brand-active dark:text-brand-2">
+            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-brand-active dark:text-brand-2">
               {todayLabel}
             </p>
-            <h1 className="text-2xl font-black tracking-tight text-ink md:text-3xl">
+            <h1 className="text-xl font-black tracking-tight text-ink md:text-2xl">
               {greeting()}, {currentUser?.name?.split(' ')[0] || 'Usuário'}
             </h1>
-            <p className="mt-1 text-sm text-ink-2">
+            <p className="mt-0.5 text-xs text-ink-2">
               Resumo comercial de hoje · marca ativa: {isAtlas ? 'AtlasGR' : 'Total Trac'}.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={cycleMode}
+              title={`Modo Atual: ${mode}. Clique para alternar.`}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-line bg-surface text-xs font-semibold text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-brand" />
+              <span>Modo: <strong className="text-ink">{mode}</strong></span>
+            </button>
             <motion.button
               type="button"
               onClick={() => goTo('/app/prospect')}
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -1 }}
               whileTap={{ y: 0, scale: 0.985 }}
-              className="group flex cursor-pointer items-center gap-2 rounded-xl border border-brand/25 bg-brand-active px-4 py-2.5 text-sm font-bold text-white shadow-[0_14px_34px_-20px_color-mix(in_srgb,var(--brand)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.18)]"
+              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-brand/25 bg-brand-active px-3 py-1.5 text-xs font-bold text-white shadow-[0_10px_24px_-15px_color-mix(in_srgb,var(--brand)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.18)]"
             >
-              <Radar className="h-4 w-4 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110" />
+              <Radar className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110" />
               Nova varredura
             </motion.button>
             <motion.button
               type="button"
               onClick={() => goTo('/app/crm')}
-              whileHover={{ y: -2 }}
+              whileHover={{ y: -1 }}
               whileTap={{ y: 0, scale: 0.985 }}
-              className="group flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-bold text-ink shadow-card transition-colors hover:border-brand/30 hover:bg-surface-2"
+              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-bold text-ink shadow-card transition-colors hover:border-brand/30 hover:bg-surface-2"
             >
-              <KanbanSquare className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+              <KanbanSquare className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110" />
               Abrir pipeline
             </motion.button>
           </div>
@@ -201,44 +222,22 @@ export function SinglePageDashboard() {
         </div>
 
         {!statsError && (
-          <motion.div
-            variants={staggerContainer()}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-2 gap-3 lg:grid-cols-4"
-          >
-            {kpis.map((kpi, index) => (
-              <motion.div
-                key={kpi.label}
-                variants={staggerItem}
-                whileHover={{ y: -4, scale: 1.012 }}
-                transition={{ type: 'spring', stiffness: 360, damping: 26 }}
-                className="group relative overflow-hidden rounded-[1.35rem] border border-line bg-surface p-4 shadow-[0_22px_45px_-34px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]"
-              >
-                <div
-                  aria-hidden="true"
-                  className={`absolute -right-10 -top-10 h-24 w-24 rounded-full blur-[36px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-                    index % 2 === 0 ? 'bg-brand/18' : 'bg-brand-2/16'
-                  }`}
-                />
-                <div className="relative z-10 flex items-center gap-3">
-                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-brand/15 bg-soft text-brand shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105">
-                    {kpi.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl font-black leading-tight text-ink [font-variant-numeric:tabular-nums]">
-                      {statsLoading ? '—' : kpi.value}
-                    </p>
-                    <p className="truncate text-[10px] font-extrabold uppercase tracking-wide text-ink-2">
-                      {kpi.label}
-                    </p>
-                    <p className="mt-0.5 hidden text-[10px] text-ink-2/80 sm:block">{kpi.hint}</p>
-                  </div>
-                </div>
-                <div className="absolute inset-x-5 bottom-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-brand/55 to-transparent transition-transform duration-300 group-hover:scale-x-100" />
-              </motion.div>
-            ))}
-          </motion.div>
+          <BentoGrid columns={4} className="grid-cols-2 lg:grid-cols-4">
+            {statsLoading || !stats
+              ? Array.from({ length: 4 }).map((_, idx) => (
+                  <MetricSkeleton key={`metric-skel-${idx}`} />
+                ))
+              : kpis.map((kpi) => (
+                  <BentoMetric
+                    key={kpi.label}
+                    title={kpi.label}
+                    value={kpi.value}
+                    icon={kpi.icon}
+                    subtitle={kpi.hint}
+                    tilt={true}
+                  />
+                ))}
+          </BentoGrid>
         )}
 
         <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">

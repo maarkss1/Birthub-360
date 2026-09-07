@@ -76,66 +76,66 @@ export function PropostaComercialHub() {
 
   return (
     <div
-      className={`flex flex-col h-full space-y-4 bg-bg ${isFullscreen ? 'fixed inset-0 z-50 p-4 bg-bg overflow-hidden' : 'p-6'}`}
+      className={`flex flex-col h-full space-y-3 bg-bg ${isFullscreen ? 'fixed inset-0 z-50 p-3 bg-bg overflow-hidden' : 'p-4'}`}
     >
       {/* Unified Executive Header */}
       <ExecutiveHeader
-        title="Proposta Comercial & Cockpit AtlasGR / Total Trac"
-        subtitle="Modelos de propostas revisados, gerador de propostas customizadas e acompanhamento comercial."
+        title="Proposta Comercial & Cockpits"
+        subtitle="Gerador de propostas oficiais de GR, modelos contratuais e cockpits comerciais."
         icon={FileSignature}
         isFullscreen={isFullscreen}
         onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
         onRefresh={() => setIframeKey((k) => k + 1)}
       />
 
-      {/* KPI Cards Bar */}
+      {/* KPI Cards Bar - Compacted */}
       {!isFullscreen && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-brand/10 text-brand rounded-xl">
-              <FileSignature className="w-5 h-5" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-brand/10 text-brand rounded-lg">
+              <FileSignature className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Central de Propostas</div>
-              <div className="text-sm font-bold text-ink">7 Modelos</div>
+              <div className="text-[10px] font-semibold text-ink-2">Central de Propostas</div>
+              <div className="text-xs font-bold text-ink">7 Modelos</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-success/10 text-success-active dark:text-success rounded-xl">
-              <Gauge className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-success/10 text-success-active dark:text-success rounded-lg">
+              <Gauge className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Cockpit Atlas GR</div>
-              <div className="text-sm font-bold text-ink">SDR & Forecast</div>
+              <div className="text-[10px] font-semibold text-ink-2">Cockpit Atlas GR</div>
+              <div className="text-xs font-bold text-ink">SDR & Forecast</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-info/10 text-info-active dark:text-info rounded-xl">
-              <Layers className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-info/10 text-info-active dark:text-info rounded-lg">
+              <Layers className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Cockpit Total Trac</div>
-              <div className="text-sm font-bold text-ink">Evolução & Extração</div>
+              <div className="text-[10px] font-semibold text-ink-2">Cockpit Total Trac</div>
+              <div className="text-xs font-bold text-ink">Evolução & Extração</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-xl">
-              <Sparkles className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg">
+              <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Seleção Rápida</div>
-              <div className="text-sm font-bold text-ink">Personalizador</div>
+              <div className="text-[10px] font-semibold text-ink-2">Seleção Rápida</div>
+              <div className="text-xs font-bold text-ink">Personalizador</div>
             </div>
           </div>
         </div>
       )}
 
       {/* Main Tabs Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           <button
             onClick={() => setActiveTab('selecao')}
-            className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'selecao'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
                 : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'
@@ -145,7 +145,7 @@ export function PropostaComercialHub() {
           </button>
           <button
             onClick={() => setActiveTab('modelos')}
-            className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'modelos'
                 ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
                 : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'

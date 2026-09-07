@@ -157,7 +157,7 @@ export function TreinamentoAtlasGRHub() {
 
   return (
     <div
-      className={`flex flex-col h-full space-y-4 bg-bg ${isFullscreen ? 'fixed inset-0 z-50 p-4 bg-bg overflow-hidden' : 'p-6'}`}
+      className={`flex flex-col h-full space-y-3 bg-bg ${isFullscreen ? 'fixed inset-0 z-50 p-3 bg-bg overflow-hidden' : 'p-4'}`}
     >
       {/* Unified Executive Header */}
       <ExecutiveHeader
@@ -169,58 +169,58 @@ export function TreinamentoAtlasGRHub() {
         onRefresh={() => setIframeKey((k) => k + 1)}
       />
 
-      {/* KPI Cards & Progress Bar */}
+      {/* KPI Cards & Progress Bar - Compacted */}
       {!isFullscreen && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-brand/10 text-brand rounded-xl">
-              <BookOpen className="w-5 h-5" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-brand/10 text-brand rounded-lg">
+              <BookOpen className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Trilha Comercial</div>
-              <div className="text-sm font-bold text-ink">15 Módulos</div>
+              <div className="text-[10px] font-semibold text-ink-2">Trilha Comercial</div>
+              <div className="text-xs font-bold text-ink">15 Módulos</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-success/10 text-success-active dark:text-success rounded-xl">
-              <CheckCircle className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-success/10 text-success-active dark:text-success rounded-lg">
+              <CheckCircle className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Progresso Concluído</div>
-              <div className="text-sm font-bold text-success-active dark:text-success">
+              <div className="text-[10px] font-semibold text-ink-2">Progresso Concluído</div>
+              <div className="text-xs font-bold text-success-active dark:text-success">
                 {completedModules.length} de 15 ({progressPercentage}%)
               </div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-xl">
-              <Award className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg">
+              <Award className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Certificação</div>
-              <div className="text-sm font-bold text-ink">Prova Final</div>
+              <div className="text-[10px] font-semibold text-ink-2">Certificação</div>
+              <div className="text-xs font-bold text-ink">Prova & Gabarito</div>
             </div>
           </div>
-          <div className="p-3.5 bg-surface border border-line rounded-2xl flex items-center gap-3">
-            <div className="p-2.5 bg-info/10 text-info-active dark:text-info rounded-xl">
-              <Layers className="w-5 h-5" />
+          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
+            <div className="p-1.5 bg-info/10 text-info-active dark:text-info rounded-lg">
+              <Layers className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-ink-2">Ranking & Equipe</div>
-              <div className="text-sm font-bold text-ink">Placar de Líderes</div>
+              <div className="text-[10px] font-semibold text-ink-2">Ranking & Equipe</div>
+              <div className="text-xs font-bold text-ink">Placar de Líderes</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Sub-tab Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      {/* Sub-tab Navigation */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {subTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as typeof activeSubTab)}
-              className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
                 activeSubTab === tab.id
                   ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
                   : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'
@@ -235,20 +235,20 @@ export function TreinamentoAtlasGRHub() {
           href={currentPath}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-semibold text-brand hover:underline flex items-center gap-1.5 self-end sm:self-auto"
+          className="text-xs font-semibold text-brand hover:underline flex items-center gap-1 self-end sm:self-auto"
         >
-          Abrir em Nova Aba <ExternalLink className="w-3.5 h-3.5" />
+          Abrir em Nova Aba <ExternalLink className="w-3 h-3" />
         </a>
       </div>
 
       {/* Main Content Area */}
       <div
-        className={`flex-1 bg-surface rounded-2xl border border-line overflow-hidden shadow-sm flex flex-col ${isFullscreen ? 'h-[calc(100vh-140px)]' : 'min-h-[650px]'}`}
+        className={`flex-1 bg-surface rounded-xl border border-line overflow-hidden shadow-sm flex flex-col ${isFullscreen ? 'h-[calc(100vh-110px)]' : 'min-h-[520px]'}`}
       >
         {activeSubTab === 'trilha' ? (
-          <div className="flex flex-col lg:flex-row h-full min-h-[650px]">
+          <div className="flex flex-col lg:flex-row h-full">
             {/* Sidebar list of 15 modules with search & progress checkboxes */}
-            <div className="w-full lg:w-80 bg-soft/30 border-r border-line p-4 overflow-y-auto max-h-[650px] space-y-3">
+            <div className="w-full lg:w-80 bg-soft/30 border-r border-line p-4 overflow-y-auto space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-ink-2 uppercase tracking-wider">
                   Módulos ({filteredModules.length})

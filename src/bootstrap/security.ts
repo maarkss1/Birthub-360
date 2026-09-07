@@ -77,8 +77,19 @@ export function applySecurityMiddleware(app: Express): void {
   // Google via better-auth. Script-src permanece estrito ('self' apenas) — é o
   // vetor que a CSP existe para mitigar; style-src mantém 'unsafe-inline' porque
   // React aplica estilos inline via atributo `style` de forma extensiva no app.
+  const isHttpsDeployment =
+    env.PUBLIC_BASE_URL?.startsWith('https://') ||
+    env.ALLOWED_ORIGINS?.split(',').some((o) => o.trim().startsWith('https://'));
+
   app.use(
     helmet({
+      // Só ativa HSTS se o deploy for explicitamente HTTPS (evita quebrar acesso por IP ou HTTP puro)
+      hsts: isHttpsDeployment
+        ? {
+            maxAge: 31536000,
+            includeSubDomains: true,
+          }
+        : false,
       contentSecurityPolicy:
         env.NODE_ENV === 'production'
           ? {
@@ -104,6 +115,8 @@ export function applySecurityMiddleware(app: Express): void {
                 formAction: ["'self'", 'https://accounts.google.com'],
                 objectSrc: ["'none'"],
                 baseUri: ["'self'"],
+                // Evita forçar upgrade-insecure-requests quando a aplicação roda via IP direto ou HTTP puro
+                'upgrade-insecure-requests': isHttpsDeployment ? [] : null,
               },
             }
           : false,

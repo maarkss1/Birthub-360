@@ -13,6 +13,7 @@ import {
 import { BrandProvider } from './contexts/BrandContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
 import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Skeleton } from './components/ui/Skeleton';
@@ -379,81 +380,83 @@ export default function App() {
     // em globals.css (que não cobre transitions/animate props do framer-motion).
     <MotionConfig reducedMotion="user">
       <ThemeProvider>
-        <BrandProvider>
-          <AuthProvider>
-            <ActiveRecordProvider>
-              <ClickSpark />
-              <Suspense fallback={<PageFallback />}>
-                <Routes>
-                  <Route path="/" element={<Navigate to="/app" replace />} />
-                  <Route path="/welcome" element={<WelcomeScreen />} />
-                  <Route path="/select-brand" element={<SelectionScreen />} />
-                  <Route path="/login" element={<LoginScreen />} />
-                  <Route path="/reset-password" element={<ResetPasswordScreen />} />
-                  <Route path="/book/:slug" element={<PublicBookingPage />} />
-                  {/* Hub Executivo — módulos concedidos individualmente via ModuleAccessAdmin
-                      (/app/module-access), NUNCA parte do CRM: pedido explícito do usuário ("não
-                      quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
-                      CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
-                      ainda exigem login (ProtectedRoute) e a concessão real do módulo
-                      (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
-                      autorização real vem de ModuleAccessGrant no banco). */}
-                  <Route
-                    path="/social-selling"
-                    element={
-                      <ProtectedRoute>
-                        <RequireModuleAccess moduleKey="social-selling">
-                          <SocialSellingHub />
-                        </RequireModuleAccess>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/treinamento-atlasgr"
-                    element={
-                      <ProtectedRoute>
-                        <RequireModuleAccess moduleKey="treinamento-atlasgr">
-                          <TreinamentoAtlasGRHub />
-                        </RequireModuleAccess>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/proposta-comercial"
-                    element={
-                      <ProtectedRoute>
-                        <RequireModuleAccess moduleKey="proposta-comercial">
-                          <PropostaComercialHub />
-                        </RequireModuleAccess>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/hub-inteligencia-marketing"
-                    element={
-                      <ProtectedRoute>
-                        <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
-                          <HubInteligenciaMarketingHub />
-                        </RequireModuleAccess>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/*"
-                    element={
-                      <ProtectedRoute>
-                        <ErrorBoundary>
-                          <AppLayout />
-                        </ErrorBoundary>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="*" element={<Navigate to="/welcome" replace />} />
-                </Routes>
-              </Suspense>
-            </ActiveRecordProvider>
-          </AuthProvider>
-        </BrandProvider>
+        <ExperienceModeProvider>
+          <BrandProvider>
+            <AuthProvider>
+              <ActiveRecordProvider>
+                <ClickSpark />
+                <Suspense fallback={<PageFallback />}>
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/app" replace />} />
+                    <Route path="/welcome" element={<WelcomeScreen />} />
+                    <Route path="/select-brand" element={<SelectionScreen />} />
+                    <Route path="/login" element={<LoginScreen />} />
+                    <Route path="/reset-password" element={<ResetPasswordScreen />} />
+                    <Route path="/book/:slug" element={<PublicBookingPage />} />
+                    {/* Hub Executivo — módulos concedidos individualmente via ModuleAccessAdmin
+                        (/app/module-access), NUNCA parte do CRM: pedido explícito do usuário ("não
+                        quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
+                        CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
+                        ainda exigem login (ProtectedRoute) e a concessão real do módulo
+                        (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
+                        autorização real vem de ModuleAccessGrant no banco). */}
+                    <Route
+                      path="/social-selling"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="social-selling">
+                            <SocialSellingHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/treinamento-atlasgr"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="treinamento-atlasgr">
+                            <TreinamentoAtlasGRHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/proposta-comercial"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="proposta-comercial">
+                            <PropostaComercialHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/hub-inteligencia-marketing"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
+                            <HubInteligenciaMarketingHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/*"
+                      element={
+                        <ProtectedRoute>
+                          <ErrorBoundary>
+                            <AppLayout />
+                          </ErrorBoundary>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<Navigate to="/welcome" replace />} />
+                  </Routes>
+                </Suspense>
+              </ActiveRecordProvider>
+            </AuthProvider>
+          </BrandProvider>
+        </ExperienceModeProvider>
       </ThemeProvider>
     </MotionConfig>
   );

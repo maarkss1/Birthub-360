@@ -21,6 +21,7 @@ import {
   OPEN_AI_CHAT_EVENT,
   type PaletteIntent,
 } from '../../lib/paletteIntent';
+import { SoundFX } from '../../lib/soundEffects';
 
 type ResultItem = {
   id: string;
@@ -309,18 +310,30 @@ export function CommandPalette() {
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [items.length, query]);
+  }, [query]);
 
   const handleInputKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIndex((prev) => Math.min(prev + 1, items.length - 1));
+      setActiveIndex((prev) => {
+        const next = Math.min(prev + 1, items.length - 1);
+        if (next !== prev) SoundFX.play('focus');
+        return next;
+      });
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIndex((prev) => Math.max(prev - 1, 0));
+      setActiveIndex((prev) => {
+        const next = Math.max(prev - 1, 0);
+        if (next !== prev) SoundFX.play('focus');
+        return next;
+      });
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      items[activeIndex]?.onSelect();
+      const selected = items[activeIndex];
+      if (selected) {
+        SoundFX.play('confirm');
+        selected.onSelect();
+      }
     }
   };
 
@@ -349,8 +362,9 @@ export function CommandPalette() {
     >
       <div
         ref={panelRef}
-        className="w-full h-full sm:h-auto sm:max-w-xl overflow-hidden sm:rounded-2xl border-0 sm:border border-line bg-surface shadow-2xl flex flex-col"
+        className="w-full h-full sm:h-auto sm:max-w-2xl overflow-hidden sm:rounded-2xl border-0 sm:border border-line bg-surface atlas-card shadow-2xl flex flex-col relative"
       >
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-brand to-transparent pointer-events-none" />
         <div className="flex items-center gap-3 border-b border-line px-4 py-3.5">
           <Search className="h-5 w-5 shrink-0 text-ink-2" />
           <input

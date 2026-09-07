@@ -30,6 +30,7 @@ export function Dialog({
   preventClose = false,
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -37,6 +38,7 @@ export function Dialog({
 
     if (isOpen) {
       if (!dialog.open) {
+        previouslyFocused.current = document.activeElement as HTMLElement | null;
         dialog.showModal();
         document.body.style.overflow = 'hidden';
       }
@@ -44,6 +46,7 @@ export function Dialog({
       if (dialog.open) {
         dialog.close();
         document.body.style.overflow = '';
+        previouslyFocused.current?.focus();
       }
     }
 
@@ -105,7 +108,7 @@ export function Dialog({
       onClick={handleBackdropClick}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
       className={cn(
-        'backdrop:bg-ink/50 backdrop:backdrop-blur-sm bg-surface rounded-card-lg shadow-card w-full p-0 outline-none overflow-hidden max-h-[90vh] open:flex open:flex-col',
+        'backdrop:bg-ink/60 backdrop:backdrop-blur-md bg-surface border border-line rounded-card-lg shadow-2xl w-full p-0 outline-none overflow-hidden max-h-[90vh] open:flex open:flex-col transition-all duration-200 ease-out',
         maxWidth,
       )}
     >
