@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   Building2,
   Mail,
+  Inbox,
+  Grid3x3,
   ExternalLink,
   Sun,
   Moon,
@@ -41,6 +43,8 @@ const EXTERNAL_LINK_ICONS: Record<string, LucideIcon> = {
   securitario: ShieldCheck,
   bitrix24: Building2,
   webmail: Mail,
+  gmail: Inbox,
+  workspace: Grid3x3,
 };
 
 interface DestinationCardProps {
