@@ -211,20 +211,43 @@ router.get('/commercial-cell', (_req: Request, res: Response) => {
 interface RevenueIntelligenceSourceContract {
   generateExecutiveSummary(
     organizationId: string,
-    filter: { month: string; owner?: string; product?: string; source?: string; icp?: string; company?: string },
+    filter: {
+      month: string;
+      owner?: string;
+      product?: string;
+      source?: string;
+      icp?: string;
+      company?: string;
+    },
   ): Promise<{ summary: string; generatedAt: string }>;
   generateMentorPlaybook(
     organizationId: string,
-    filter: { month: string; owner?: string; product?: string; source?: string; icp?: string; company?: string },
+    filter: {
+      month: string;
+      owner?: string;
+      product?: string;
+      source?: string;
+      icp?: string;
+      company?: string;
+    },
   ): Promise<{
-    recommendations: { priority: string; title: string; rationale: string; suggestedAction: string; relatedDealIds: string[] }[];
+    recommendations: {
+      priority: string;
+      title: string;
+      rationale: string;
+      suggestedAction: string;
+      relatedDealIds: string[];
+    }[];
     source: 'ai' | 'fallback';
     generatedAt: string;
   }>;
 }
 
 const revenueIntelligenceRunSchema = z.object({
-  month: z.string().trim().regex(/^\d{4}-\d{2}$/, 'Use o formato YYYY-MM'),
+  month: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}$/, 'Use o formato YYYY-MM'),
   owner: z.string().trim().optional(),
   product: z.string().trim().optional(),
   source: z.string().trim().optional(),
@@ -283,9 +306,7 @@ const churnRetentionRunSchema = z.object({
 // acontece em churn-prediction.service.ts (dono real), aqui é só o contrato de leitura. O
 // parâmetro de entrada reaproveita o próprio schema Zod acima (mesmo shape).
 interface ChurnPredictionSourceContract {
-  analyzeChurnRisk(
-    account: z.infer<typeof churnRetentionRunSchema>,
-  ): Promise<{
+  analyzeChurnRisk(account: z.infer<typeof churnRetentionRunSchema>): Promise<{
     churnRisk: string;
     healthScore: number;
     primaryRiskDrivers: string[];
@@ -303,9 +324,8 @@ router.post(
     try {
       const account = req.body as z.infer<typeof churnRetentionRunSchema>;
 
-      const churnService = container.resolve<ChurnPredictionSourceContract>(
-        'ChurnPredictionService',
-      );
+      const churnService =
+        container.resolve<ChurnPredictionSourceContract>('ChurnPredictionService');
       const prediction = await churnService.analyzeChurnRisk(account);
 
       const contextLines = [
