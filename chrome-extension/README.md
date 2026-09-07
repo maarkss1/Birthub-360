@@ -1,4 +1,4 @@
-# Copiloto Comercial IA — Extensão Chrome (Onda 2 + Onda 3)
+# Copiloto Comercial IA — Extensão Chrome (Ondas 2, 3 e 7)
 
 Extensão Manifest V3 real que fala com o backend do módulo Copiloto Comercial IA
 (`src/features/copiloto-ia/`, ver `AGENTS.md` lá) via `/api/copiloto-ia/*`.
@@ -23,6 +23,24 @@ Extensão Manifest V3 real que fala com o backend do módulo Copiloto Comercial 
   `src/features/copiloto-ia/jobs/transcribeConversation.worker.ts`.
 - Indicador visual persistente na própria página do Meet enquanto a captura está ativa (content
   script) — o usuário não precisa manter o side panel aberto pra saber que está gravando.
+- **Sugere automaticamente qual Lead vincular via Google Calendar** (Onda 7) — quando a organização
+  tem uma conta Google Workspace conectada (`GET /api/google/calendar/upcoming`) com um evento cujo
+  `hangoutLink` é o mesmo Meet aberto, a extensão tenta resolver um Lead pelo e-mail de algum
+  convidado do evento (`leads/lookup`) e oferece um botão "Usar este Lead sugerido" — só preenche o
+  campo, nunca vincula sozinha. **Limitação real**: `GoogleWorkspaceConnection` é ÚNICA por
+  organização (não por vendedor), então isto só encontra o evento quando a conta conectada está de
+  fato convidada nessa reunião específica — não é uma agenda por usuário. Falha (Google não
+  conectado/configurado, sessão expirada) é sempre silenciosa: é um atalho a mais sobre o fluxo
+  manual, nunca um requisito dele.
+- **Exibe o resumo executivo e as sugestões de campo de CRM direto no side panel, com
+  aprovar/rejeitar/enviar ao Bitrix24** (Onda 4/7, atendendo ao Agente 04 do pacote de spec) — assim
+  que a conversa fica `READY` (a extensão faz polling do status a cada 8s enquanto `PROCESSING`,
+  já que o worker de transcrição roda em background sem push nenhum pro cliente), aparece o card
+  "Resumo e sugestões da IA" com o resumo executivo + sentimento (`GET .../handoff`) e a lista de
+  `crmFieldSuggestions` pendentes/aprovadas com os mesmos botões da tela de Conversas na Central
+  (`ConversationDetailDrawer.tsx`). O botão "Enviar ao Bitrix24" sempre aparece (a extensão não sabe
+  o role de quem está logado) — o backend responde 403 explícito se a conta não for ADMIN/GESTOR
+  (`COPILOTO_IA_MANAGEMENT_ROLES`), tratado como qualquer outro erro de API.
 
 ## O que ainda NÃO faz (de propósito)
 
@@ -52,8 +70,14 @@ Extensão Manifest V3 real que fala com o backend do módulo Copiloto Comercial 
    `chrome.tabCapture`), o pill de status muda para "Capturando" e aparece o indicador vermelho no
    topo da página do Meet.
 8. Clique em "Parar sessão de captura" — o botão mostra "Enviando gravação..." até o upload
-   terminar. A partir daí, a transcrição e o resumo rodam em background; acompanhe via
+   terminar. A partir daí, a transcrição e o resumo rodam em background; a extensão faz polling do
+   status a cada 8s e mostra o card "Resumo e sugestões da IA" sozinha assim que a conversa fica
+   `READY` (ou clique em "Atualizar sugestões" pra forçar). Acompanhe também via
    `GET /api/copiloto-ia/conversations/:id` (`transcriptSegments`/`insights`) ou direto no banco.
+9. Opcional — sugestão automática via Calendar: conecte uma conta Google Workspace pela tela
+   Integrações da Central (`/api/google/auth-url`) com um evento que tenha ESTE Meet como
+   videochamada e um convidado com e-mail já vinculado a um Lead. Abrindo o Meet, o side panel
+   mostra o card "Sugestão via Google Calendar" antes mesmo de você digitar o Lead manualmente.
 
 **Verificação real ainda pendente**: esta implementação segue a documentação oficial do Chrome
 (`chrome.tabCapture` + `chrome.offscreen` + `MediaRecorder`), mas nunca foi exercitada numa chamada
