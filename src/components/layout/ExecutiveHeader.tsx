@@ -9,7 +9,7 @@ import {
   RefreshCw,
   ShieldCheck,
 } from 'lucide-react';
-import { EXECUTIVE_HUB_ALLOWED_EMAIL } from '../../config/access-policy';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
 
 interface ExecutiveHeaderProps {
   title: string;
@@ -30,28 +30,33 @@ export function ExecutiveHeader({
 }: ExecutiveHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { grantedModules } = useModuleAccess();
 
   const hubs = [
-    { id: 'social-selling', label: 'Social Selling', path: '/app/social-selling', icon: Share2 },
+    { id: 'social-selling', label: 'Social Selling', path: '/social-selling', icon: Share2 },
     {
       id: 'treinamento-atlasgr',
       label: 'Treinamento AtlasGR',
-      path: '/app/treinamento-atlasgr',
+      path: '/treinamento-atlasgr',
       icon: GraduationCap,
     },
     {
       id: 'proposta-comercial',
       label: 'Proposta Comercial',
-      path: '/app/proposta-comercial',
+      path: '/proposta-comercial',
       icon: FileSignature,
     },
     {
       id: 'hub-inteligencia-marketing',
       label: 'Hub Inteligência & Mkt',
-      path: '/app/hub-inteligencia-marketing',
+      path: '/hub-inteligencia-marketing',
       icon: PieChart,
     },
-  ];
+    // Só mostra no switcher os módulos que o usuário logado realmente tem concedidos (ver
+    // ModuleAccessGrant/ModuleAccessAdmin) — antes deste piloto os 4 hubs apareciam para
+    // qualquer usuário que passasse pelo gate único por e-mail; agora a concessão é individual,
+    // então o switcher não pode mais assumir "tudo ou nada".
+  ].filter((hub) => grantedModules.includes(hub.id));
 
   return (
     <div className="space-y-4 border-b border-line pb-4">
@@ -59,10 +64,7 @@ export function ExecutiveHeader({
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 bg-soft/40 p-2.5 rounded-2xl border border-line">
         <div className="flex items-center gap-2 px-2 text-xs font-semibold text-ink-2">
           <ShieldCheck className="w-4 h-4 text-emerald-500" />
-          <span className="hidden sm:inline">Acervo Executivo Privado</span>
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold border border-emerald-500/20">
-            {EXECUTIVE_HUB_ALLOWED_EMAIL}
-          </span>
+          <span className="hidden sm:inline">Acervo Executivo — acesso concedido individualmente</span>
         </div>
 
         {/* Executive Switcher Pills */}

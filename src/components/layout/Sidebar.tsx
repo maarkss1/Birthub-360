@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useBrand } from '../../contexts/BrandContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
-import { EXECUTIVE_HUB_ALLOWED_EMAIL } from '../../config/access-policy';
 import { SoundFX } from '../../lib/soundEffects';
 import { Logo } from '../Logo';
 import { TotalTrackLogo } from '../TotalTrackLogo';
@@ -54,35 +53,22 @@ export function Sidebar({ activeTab, mobileOpen = false, onCloseMobile }: Sideba
     'notifications',
     'bitrix',
     ...(canManageOperations ? (['integrations', 'automations'] as TabType[]) : []),
-    ...(isAdmin ? (['usage', 'team'] as TabType[]) : []),
+    ...(isAdmin ? (['usage', 'team', 'module-access'] as TabType[]) : []),
     'settings',
-  ];
-
-  const isMarcelo =
-    !!currentUser && currentUser.email?.toLowerCase().trim() === EXECUTIVE_HUB_ALLOWED_EMAIL;
-
-  const executiveRepoItems: TabType[] = [
-    'social-selling',
-    'treinamento-atlasgr',
-    'proposta-comercial',
-    'hub-inteligencia-marketing',
   ];
 
   // Navegação orientada pela jornada comercial, não pela árvore técnica do projeto.
   // TAB_META é a fonte única de rótulo/ícone e TabType impede destinos fantasma.
+  //
+  // Os módulos executivos (Social Selling, Treinamento AtlasGR, Proposta Comercial, Hub
+  // Inteligência & Mkt) NÃO aparecem mais aqui — pedido explícito do usuário: "não quero que
+  // apareça no CRM, só nos círculos" do Hub Executivo standalone (rotas top-level em App.tsx,
+  // fora de /app/*). Quem administra quem vê cada módulo é 'module-access' acima, não a Sidebar.
   const navGroupsByJourney: NavGroupDefinition[] = [
     {
       title: 'Visão Geral',
       items: ['dashboard', ...(isJoaoReisOrAdmin ? (['sdr-diagnostic-joao'] as TabType[]) : [])],
     },
-    ...(isMarcelo
-      ? [
-          {
-            title: 'Repositórios Executivos',
-            items: executiveRepoItems,
-          },
-        ]
-      : []),
     { title: 'Captar', items: ['prospect'] },
     {
       title: 'Qualificar',

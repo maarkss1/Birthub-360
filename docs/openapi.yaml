@@ -103,6 +103,11 @@ tags:
       eliminação/anonimização
   - name: Equipe
     description: Gestão de usuários da organização — restrito a ADMIN (exceto listagem de atribuíveis)
+  - name: Acesso a Módulos
+    description: >-
+      Concessão individual de acesso aos módulos do Hub Executivo (Social Selling, Treinamento
+      AtlasGR, Proposta Comercial, Hub Inteligência & Mkt) — restrito a ADMIN, exceto a consulta
+      do próprio usuário logado
   - name: Bitrix24
     description: Conexão, sincronização e extração de dados com o Bitrix24 (CRM externo)
   - name: 3CX
@@ -4230,6 +4235,79 @@ paths:
                 properties:
                   success: { type: boolean }
                   message: { type: string }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # ───────────────────────── Acesso a Módulos (Hub Executivo) ─────────────────────────
+  /module-access/me:
+    get:
+      tags: [Acesso a Módulos]
+      summary: >-
+        Módulos do Hub Executivo concedidos ao usuário logado (qualquer usuário autenticado, não
+        exige ADMIN)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      grantedModules: { type: array, items: { type: string } }
+
+  /module-access:
+    get:
+      tags: [Acesso a Módulos]
+      summary: >-
+        Matriz usuário × módulo da organização (usuários reais + catálogo de módulos), para o
+        painel de administração — somente ADMIN
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /module-access/{userId}/{moduleKey}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema: { type: string }
+      - name: moduleKey
+        in: path
+        required: true
+        schema: { type: string }
+    put:
+      tags: [Acesso a Módulos]
+      summary: Concede um módulo do Hub Executivo a um usuário da organização (somente ADMIN)
+      responses:
+        '200':
+          description: Concedido
+          content:
+            application/json:
+              schema: { type: object, properties: { success: { type: boolean } } }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Usuário não encontrado nesta organização
+    delete:
+      tags: [Acesso a Módulos]
+      summary: Revoga um módulo do Hub Executivo de um usuário da organização (somente ADMIN)
+      responses:
+        '200':
+          description: Revogado
+          content:
+            application/json:
+              schema: { type: object, properties: { success: { type: boolean } } }
         '403':
           $ref: '#/components/responses/Forbidden'
 

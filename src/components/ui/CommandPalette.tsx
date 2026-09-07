@@ -16,8 +16,6 @@ import type { TabType } from '../layout/tabMeta';
 import { TAB_META } from '../layout/tabMeta';
 import { api } from '../../lib/api';
 import type { Company, Contact, PaginatedResponse } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
-import { EXECUTIVE_HUB_ALLOWED_EMAIL } from '../../config/access-policy';
 import {
   OPEN_COMMAND_PALETTE_EVENT,
   OPEN_AI_CHAT_EVENT,
@@ -47,13 +45,10 @@ function normalize(value: string): string {
   return value.normalize('NFD').replace(DIACRITICS_PATTERN, '').toLowerCase();
 }
 
-const EXECUTIVE_TABS: TabType[] = [
-  'social-selling',
-  'treinamento-atlasgr',
-  'proposta-comercial',
-  'hub-inteligencia-marketing',
-];
-
+// Os módulos executivos (Social Selling, Treinamento AtlasGR, Proposta Comercial, Hub
+// Inteligência & Mkt) foram removidos deste catálogo: eles não vivem mais em `/app/*` (ver
+// tabMeta.ts), então `navigateAndClose` — que só sabe montar `/app/${tab}` — não pode navegar até
+// eles. O Hub Executivo standalone (rotas top-level em App.tsx) é o único ponto de entrada agora.
 const MODULE_ORDER: TabType[] = [
   'dashboard',
   'prospect',
@@ -78,21 +73,17 @@ const MODULE_ORDER: TabType[] = [
   'sdr-diagnostic-joao',
   'commercial_intelligence',
   'copiloto_ia',
-  'social-selling',
-  'treinamento-atlasgr',
-  'proposta-comercial',
-  'hub-inteligencia-marketing',
   'notifications',
   'automations',
   'usage',
   'editor',
   'team',
+  'module-access',
   'settings',
 ];
 
 export function CommandPalette() {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
@@ -275,13 +266,7 @@ export function CommandPalette() {
     ];
     result.push(...quickActions.filter((a) => !q || normalize(a.label).includes(q)));
 
-    const isMarcelo =
-      !!currentUser && currentUser.email.toLowerCase().trim() === EXECUTIVE_HUB_ALLOWED_EMAIL;
-    const visibleModuleOrder = isMarcelo
-      ? MODULE_ORDER
-      : MODULE_ORDER.filter((t) => !EXECUTIVE_TABS.includes(t));
-
-    const moduleItems: ResultItem[] = visibleModuleOrder
+    const moduleItems: ResultItem[] = MODULE_ORDER
       .filter((tab) => !q || normalize(TAB_META[tab].label).includes(q))
       .map((tab) => ({
         id: `mod-${tab}`,

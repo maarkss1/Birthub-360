@@ -780,6 +780,7 @@ model User {
   accounts           Account[]
   assistantMessages  AssistantMessage[]
   publicBookingLinks PublicBookingLink[]
+  moduleAccessGrants ModuleAccessGrant[]
 
   @@index([organizationId])
   @@map("user")
@@ -827,6 +828,7 @@ model Organization {
   forecastSnapshots             ForecastSnapshot[]
   leadFieldChanges              LeadFieldChange[]
   featureFlagOverrides          OrganizationFeatureFlag[]
+  moduleAccessGrants            ModuleAccessGrant[]
   bugReports                    BugReport[]
   // Onda 10 (Agente 01A) — schema de cadência/agendamento/proposta-assinatura proposto pelo
   // Agente 17 em .agents/handoffs/onda-7/17-para-01-schema-cadencia-optout-proposta.md (itens 2-5;
@@ -2723,6 +2725,28 @@ model OrganizationFeatureFlag {
 
   @@unique([organizationId, featureFlagId])
   @@index([organizationId])
+}
+
+// ─── Module Access Grants (Hub executivo) ──────────────────────────────────────────────────
+// Substitui o gate único por e-mail hardcoded (`EXECUTIVE_HUB_ALLOWED_EMAIL`, ver
+// src/config/access-policy.ts) por concessão real, por usuário e por módulo, feita por um
+// ADMIN na tela de administração (ver src/features/module-access/). `moduleKey` é validado
+// contra o catálogo estático em src/config/module-catalog.ts — não é texto livre.
+model ModuleAccessGrant {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleKey      String
+  /// Id do usuário ADMIN que concedeu o acesso — só informativo/auditoria (mesmo padrão de
+  /// `OrganizationFeatureFlag.updatedByUserId`), sem FK: sobrevive à remoção do admin que concedeu.
+  grantedByUserId String?
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, moduleKey])
+  @@index([organizationId])
+  @@index([userId])
 }
 
 // ─── Bug Reports (governança de 12 requisitos — item 8: Módulo de Reportar Problemas) ──────

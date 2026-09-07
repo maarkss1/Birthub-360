@@ -29,9 +29,7 @@ import {
   FileSignature,
   Headset,
   ClipboardCheck,
-  Share2,
-  GraduationCap,
-  PieChart,
+  ShieldCheck,
   Mic,
 } from 'lucide-react';
 
@@ -47,6 +45,14 @@ import {
  * (`ProspectingHub`), e não há uma tela "Commercial OS"/Prompt Studio real e navegável — só um
  * componente órfão (`PromptStudio.tsx`) sem rota. Ver
  * `.agents/handoffs/onda-8/09-para-02-navigationbus-rotas-ausentes.md`.
+ *
+ * `social-selling`, `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing`
+ * existiram aqui como TabType/rotas `/app/:tab` até este piloto de acesso — foram REMOVIDOS
+ * porque essas telas não vivem mais dentro do CRM (pedido explícito do usuário: "não quero que
+ * apareça no CRM, só nos círculos" do Hub Executivo standalone). Suas rotas reais agora são
+ * top-level em App.tsx (fora de `/app/*`, sem MainLayout/Sidebar), guardadas por
+ * `RequireModuleAccess` em vez de `RequireUserAllowed` — ver ModuleAccessGrant em
+ * prisma/schema.prisma e src/features/module-access/.
  */
 export type TabType =
   | 'dashboard'
@@ -81,10 +87,7 @@ export type TabType =
   | 'sdr-diagnostic-joao'
   | 'commercial_intelligence'
   | 'copiloto_ia'
-  | 'social-selling'
-  | 'treinamento-atlasgr'
-  | 'proposta-comercial'
-  | 'hub-inteligencia-marketing';
+  | 'module-access';
 
 /** Metadados (rótulo + ícone) de cada módulo navegável — fonte única usada pelo topbar e pelo Command Palette. */
 export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
@@ -119,9 +122,6 @@ export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
   usage: { label: 'Consumo de IA', icon: Wallet },
   editor: { label: 'Editor de Documentos', icon: FileText },
   team: { label: 'Equipe', icon: UserCog },
+  'module-access': { label: 'Acesso a Módulos', icon: ShieldCheck },
   settings: { label: 'Configurações', icon: SettingsIcon },
-  'social-selling': { label: 'Social Selling', icon: Share2 },
-  'treinamento-atlasgr': { label: 'Treinamento AtlasGR', icon: GraduationCap },
-  'proposta-comercial': { label: 'Proposta Comercial', icon: FileSignature },
-  'hub-inteligencia-marketing': { label: 'Hub Inteligência & Mkt', icon: PieChart },
 };
