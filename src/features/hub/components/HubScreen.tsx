@@ -219,7 +219,9 @@ function useOrbit(items: OrbitItem[], enabled: boolean, onCenterChange: (key: st
           requestAnimationFrame(frame);
         } else {
           posByKey.current.set(key, { angle: 0, radius: 0 });
-          transitions.forEach(({ key: k, to }) => posByKey.current.set(k, to));
+          transitions.forEach(({ key: k, to }) => {
+            posByKey.current.set(k, to);
+          });
           centerKey.current = key;
           busy.current = false;
           onOpen();
