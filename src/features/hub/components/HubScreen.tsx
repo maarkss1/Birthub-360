@@ -30,6 +30,7 @@ import { Logo } from '../../../components/Logo';
 import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { fadeInUp } from '../../../lib/motion';
+import { CommercialAgentCellPanel } from './CommercialAgentCellPanel';
 
 const MODULE_ICONS: Record<ModuleKey, LucideIcon> = {
   'social-selling': Share2,
@@ -457,6 +458,8 @@ export function HubScreen() {
           ) : (
             <MobileDestinationList items={items} />
           )}
+
+          <CommercialAgentCellPanel />
         </motion.div>
       </main>
     </div>
