@@ -351,7 +351,11 @@ export function Sidebar({
             className={`rounded-xl border border-line bg-surface-2/70 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
               isCollapsed ? 'md:px-1.5 md:py-2 md:flex md:justify-center' : ''
             }`}
-            title={isCollapsed ? `${currentUser.name} (${currentUser.roleTitle || currentUser.role})` : undefined}
+            title={
+              isCollapsed
+                ? `${currentUser.name} (${currentUser.roleTitle || currentUser.role})`
+                : undefined
+            }
           >
             <div className="flex min-w-0 items-center gap-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-white shadow-card ring-1 ring-white/10">

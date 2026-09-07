@@ -25,8 +25,14 @@ export function Magnetic({ children, maxDisplacement = 6, disabled = false }: Ma
     const middleX = clientX - (left + width / 2);
     const middleY = clientY - (top + height / 2);
 
-    const deltaX = Math.max(Math.min((middleX / width) * maxDisplacement * 2, maxDisplacement), -maxDisplacement);
-    const deltaY = Math.max(Math.min((middleY / height) * maxDisplacement * 2, maxDisplacement), -maxDisplacement);
+    const deltaX = Math.max(
+      Math.min((middleX / width) * maxDisplacement * 2, maxDisplacement),
+      -maxDisplacement,
+    );
+    const deltaY = Math.max(
+      Math.min((middleY / height) * maxDisplacement * 2, maxDisplacement),
+      -maxDisplacement,
+    );
 
     setPosition({ x: deltaX, y: deltaY });
   };

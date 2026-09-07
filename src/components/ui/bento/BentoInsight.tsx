@@ -44,7 +44,7 @@ export function BentoInsight({
             <span
               className={cn(
                 'px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border',
-                priorityColors
+                priorityColors,
               )}
             >
               Prioritário

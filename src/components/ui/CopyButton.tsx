@@ -70,7 +70,7 @@ export function CopyButton({
       className={cn(
         'inline-flex items-center justify-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-xs font-semibold text-ink-2 shadow-sm transition-all duration-200 hover:border-brand/30 hover:bg-surface-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer active:scale-95',
         copied && 'border-ok/30 bg-ok/10 text-ok-active',
-        className
+        className,
       )}
       {...props}
     >
