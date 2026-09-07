@@ -1,4 +1,4 @@
-import { ChevronRight, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { ChevronRight, LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBrand } from '../../contexts/BrandContext';
@@ -319,6 +319,29 @@ export function Sidebar({
               />
             </div>
           </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            SoundFX.play('navigate');
+            navigate('/hub');
+            onCloseMobile?.();
+          }}
+          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-2.5 rounded-[var(--radius-nav-item)] border border-line bg-surface-2/60 px-3 py-2 text-left transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/25 hover:bg-brand/8 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+            isCollapsed ? 'md:justify-center md:px-1.5' : ''
+          }`}
+          title="Ir para o Hub Executivo"
+          aria-label="Ir para o Hub Executivo"
+        >
+          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg border border-line bg-surface text-ink-2 transition-colors duration-200 group-hover:border-brand/30 group-hover:text-brand">
+            <LayoutGrid size={13} aria-hidden="true" />
+          </span>
+          <span
+            className={`text-xs font-bold text-ink-2 group-hover:text-ink ${isCollapsed ? 'md:hidden' : ''}`}
+          >
+            Hub Executivo
+          </span>
         </button>
       </div>
 

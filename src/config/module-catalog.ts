@@ -49,3 +49,56 @@ export function isModuleKey(value: string): value is ModuleKey {
 export function moduleLabel(key: string): string {
   return MODULE_CATALOG.find((m) => m.key === key)?.label ?? key;
 }
+
+// Atalhos para ferramentas externas reais da AtlasGR (portal legado, Bitrix24, webmail...).
+// Deliberadamente FORA do sistema de concessão por usuário acima (ModuleAccessGrant): são
+// ferramentas de uso corriqueiro de toda a equipe comercial, não acervo executivo restrito — cada
+// card só abre a URL em nova aba (login acontece no próprio site de destino; este catálogo nunca
+// guarda credencial). `iconKey` é só um identificador — o mapeamento pro componente de ícone
+// (lucide-react) fica no Hub (frontend), nunca aqui, porque este arquivo também é importado pelo
+// backend (ver módulo-access.service.ts) e não deve carregar dependência de UI.
+export interface ExternalLinkEntry {
+  key: string;
+  label: string;
+  description: string;
+  url: string;
+  iconKey: 'connect' | 'newConnect' | 'securitario' | 'bitrix24' | 'webmail';
+}
+
+export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
+  {
+    key: 'connect',
+    label: 'Connect Atlas',
+    description: 'Portal Atlas (login)',
+    url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Login.php',
+    iconKey: 'connect',
+  },
+  {
+    key: 'new-connect',
+    label: 'New Connect',
+    description: 'Novo portal Atlas',
+    url: 'https://newconnect.atlasgr.com.br/login',
+    iconKey: 'newConnect',
+  },
+  {
+    key: 'perfil-securitario',
+    label: 'Perfil Securitário',
+    description: 'Consulta de perfil securitário',
+    url: 'https://perfil-securitario.atlasgr.com.br/',
+    iconKey: 'securitario',
+  },
+  {
+    key: 'bitrix24',
+    label: 'Bitrix24',
+    description: 'CRM Bitrix24 da AtlasGR',
+    url: 'https://atlasgr.bitrix24.com.br/',
+    iconKey: 'bitrix24',
+  },
+  {
+    key: 'webmail',
+    label: 'Webmail',
+    description: 'E-mail corporativo',
+    url: 'https://webmail.atlasgr.com.br/?_task=mail&_mbox=INBOX',
+    iconKey: 'webmail',
+  },
+];
