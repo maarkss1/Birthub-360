@@ -4,13 +4,12 @@ import { MotionConfig } from 'framer-motion';
 import { MainLayout } from './components/layout/MainLayout';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { RequireRole } from './components/layout/RequireRole';
-import { RequireUserAllowed } from './components/layout/RequireUserAllowed';
+import { RequireModuleAccess } from './components/layout/RequireModuleAccess';
 import {
   COMMERCIAL_INTELLIGENCE_ROLES,
   MESA_TRATAMENTO_ROLES,
   COPILOTO_IA_ROLES,
 } from './lib/auth/authorization';
-import { EXECUTIVE_HUB_ALLOWED_EMAIL } from './config/access-policy';
 import { BrandProvider } from './contexts/BrandContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -169,6 +168,11 @@ const DocumentEditor = lazy(() =>
 const Team = lazy(() =>
   import('./features/team/components/Team').then((m) => ({ default: m.Team })),
 );
+const ModuleAccessAdmin = lazy(() =>
+  import('./features/module-access/components/ModuleAccessAdmin').then((m) => ({
+    default: m.ModuleAccessAdmin,
+  })),
+);
 const Settings = lazy(() =>
   import('./features/settings/components/Settings').then((m) => ({ default: m.Settings })),
 );
@@ -322,38 +326,6 @@ function AppLayout() {
             }
           />
           <Route path="sdr-diagnostic-joao" element={<JoaoReisDiagnosticHub />} />
-          <Route
-            path="social-selling"
-            element={
-              <RequireUserAllowed allowedEmails={[EXECUTIVE_HUB_ALLOWED_EMAIL]}>
-                <SocialSellingHub />
-              </RequireUserAllowed>
-            }
-          />
-          <Route
-            path="treinamento-atlasgr"
-            element={
-              <RequireUserAllowed allowedEmails={[EXECUTIVE_HUB_ALLOWED_EMAIL]}>
-                <TreinamentoAtlasGRHub />
-              </RequireUserAllowed>
-            }
-          />
-          <Route
-            path="proposta-comercial"
-            element={
-              <RequireUserAllowed allowedEmails={[EXECUTIVE_HUB_ALLOWED_EMAIL]}>
-                <PropostaComercialHub />
-              </RequireUserAllowed>
-            }
-          />
-          <Route
-            path="hub-inteligencia-marketing"
-            element={
-              <RequireUserAllowed allowedEmails={[EXECUTIVE_HUB_ALLOWED_EMAIL]}>
-                <HubInteligenciaMarketingHub />
-              </RequireUserAllowed>
-            }
-          />
           <Route path="calendar" element={<Calendar />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="automations" element={<Automations />} />
@@ -375,6 +347,14 @@ function AppLayout() {
             element={
               <RequireRole allowedRoles={['ADMIN']}>
                 <Team />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="module-access"
+            element={
+              <RequireRole allowedRoles={['ADMIN']}>
+                <ModuleAccessAdmin />
               </RequireRole>
             }
           />
@@ -413,6 +393,53 @@ export default function App() {
                     <Route path="/login" element={<LoginScreen />} />
                     <Route path="/reset-password" element={<ResetPasswordScreen />} />
                     <Route path="/book/:slug" element={<PublicBookingPage />} />
+                    {/* Hub Executivo — módulos concedidos individualmente via ModuleAccessAdmin
+                        (/app/module-access), NUNCA parte do CRM: pedido explícito do usuário ("não
+                        quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
+                        CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
+                        ainda exigem login (ProtectedRoute) e a concessão real do módulo
+                        (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
+                        autorização real vem de ModuleAccessGrant no banco). */}
+                    <Route
+                      path="/social-selling"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="social-selling">
+                            <SocialSellingHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/treinamento-atlasgr"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="treinamento-atlasgr">
+                            <TreinamentoAtlasGRHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/proposta-comercial"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="proposta-comercial">
+                            <PropostaComercialHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/hub-inteligencia-marketing"
+                      element={
+                        <ProtectedRoute>
+                          <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
+                            <HubInteligenciaMarketingHub />
+                          </RequireModuleAccess>
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/app/*"
                       element={

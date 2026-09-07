@@ -27,6 +27,7 @@ import { birthVoiceRoutes } from '../features/integrations/birth-voice/birthVoic
 import { googleRoutes } from '../features/integrations/google/google.routes.js';
 import { bitrixRoutes } from '../features/integrations/bitrix/bitrix.routes.js';
 import { teamRoutes } from '../features/team/routes/team.routes.js';
+import { moduleAccessRoutes } from '../features/module-access/routes/moduleAccess.routes.js';
 import { authExtraRoutes } from '../features/auth/routes/auth-extra.routes.js';
 import { agentRoutes } from '../features/intelligence/routes/agent.routes.js';
 import { knowledgeRoutes } from '../features/knowledge/knowledge.routes.js';
@@ -132,6 +133,7 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/google', authenticateToken, requireTenant, googleRoutes);
   app.use('/api/bitrix', authenticateToken, requireTenant, bitrixRoutes);
   app.use('/api/team', authenticateToken, requireTenant, teamRoutes);
+  app.use('/api/module-access', authenticateToken, requireTenant, moduleAccessRoutes);
   app.use('/api/auth-extra', authenticateToken, requireTenant, authExtraRoutes);
   app.use('/api/agent', requireTenant, agentRoutes);
   app.use('/api/cadence', authenticateToken, requireTenant, cadenceRoutes);

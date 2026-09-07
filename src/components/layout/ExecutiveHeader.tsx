@@ -9,7 +9,7 @@ import {
   RefreshCw,
   ShieldCheck,
 } from 'lucide-react';
-import { EXECUTIVE_HUB_ALLOWED_EMAIL } from '../../config/access-policy';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
 
 interface ExecutiveHeaderProps {
   title: string;
@@ -30,28 +30,33 @@ export function ExecutiveHeader({
 }: ExecutiveHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { grantedModules } = useModuleAccess();
 
   const hubs = [
-    { id: 'social-selling', label: 'Social Selling', path: '/app/social-selling', icon: Share2 },
+    { id: 'social-selling', label: 'Social Selling', path: '/social-selling', icon: Share2 },
     {
       id: 'treinamento-atlasgr',
       label: 'Treinamento AtlasGR',
-      path: '/app/treinamento-atlasgr',
+      path: '/treinamento-atlasgr',
       icon: GraduationCap,
     },
     {
       id: 'proposta-comercial',
       label: 'Proposta Comercial',
-      path: '/app/proposta-comercial',
+      path: '/proposta-comercial',
       icon: FileSignature,
     },
     {
       id: 'hub-inteligencia-marketing',
       label: 'Hub Inteligência & Mkt',
-      path: '/app/hub-inteligencia-marketing',
+      path: '/hub-inteligencia-marketing',
       icon: PieChart,
     },
-  ];
+    // Só mostra no switcher os módulos que o usuário logado realmente tem concedidos (ver
+    // ModuleAccessGrant/ModuleAccessAdmin) — antes deste piloto os 4 hubs apareciam para
+    // qualquer usuário que passasse pelo gate único por e-mail; agora a concessão é individual,
+    // então o switcher não pode mais assumir "tudo ou nada".
+  ].filter((hub) => grantedModules.includes(hub.id));
 
   return (
     <div className="space-y-2 border-b border-line pb-2.5">
@@ -59,9 +64,8 @@ export function ExecutiveHeader({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 bg-soft/30 px-3 py-1.5 rounded-xl border border-line">
         <div className="flex items-center gap-2 text-[11px] font-semibold text-ink-2">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-          <span className="hidden sm:inline">Acervo Executivo</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 font-bold border border-emerald-500/20">
-            {EXECUTIVE_HUB_ALLOWED_EMAIL}
+          <span className="hidden sm:inline">
+            Acervo Executivo — acesso concedido individualmente
           </span>
         </div>
 
