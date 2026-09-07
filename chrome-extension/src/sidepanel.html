@@ -36,6 +36,16 @@
       <small id="meetUrl"></small>
     </section>
 
+    <section class="card" id="calendarSuggestionCard" hidden>
+      <h2>Sugestão via Google Calendar</h2>
+      <p class="hint">
+        Este Meet corresponde a um evento da agenda conectada da organização. Encontramos um
+        possível Lead pelo e-mail do convidado — confira antes de vincular.
+      </p>
+      <p id="calendarSuggestionText" class="calendar-suggestion-text"></p>
+      <button id="useCalendarSuggestion" class="secondary">Usar este Lead sugerido</button>
+    </section>
+
     <section class="card">
       <h2>CRM (Bitrix24 via backend)</h2>
       <label for="leadId">Lead: nome, e-mail do contato, link do Bitrix24 ou id</label>
@@ -71,6 +81,17 @@
         Central assim que você parar — a transcrição roda em segundo plano depois disso.
       </p>
       <button id="toggleCapture" disabled>Iniciar sessão de captura</button>
+    </section>
+
+    <section class="card" id="aiCard" hidden>
+      <h2>Resumo e sugestões da IA</h2>
+      <p id="aiStatusText" class="hint"></p>
+      <div id="aiSummary" class="ai-summary" hidden>
+        <p id="aiSummaryText"></p>
+        <p id="aiSentiment" class="pill"></p>
+      </div>
+      <ul id="aiSuggestions" class="ai-suggestions"></ul>
+      <button id="refreshAi" class="secondary">Atualizar sugestões</button>
     </section>
 
     <details class="settings">

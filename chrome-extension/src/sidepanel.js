@@ -1,4 +1,4 @@
-import { copilotoApi, getApiBaseUrl, setApiBaseUrl, ApiError } from './api.js';
+import { copilotoApi, googleApi, getApiBaseUrl, setApiBaseUrl, ApiError } from './api.js';
 
 const statusEl = document.getElementById('status');
 const errorBannerEl = document.getElementById('errorBanner');
@@ -16,6 +16,16 @@ const toggleCaptureEl = document.getElementById('toggleCapture');
 const apiBaseUrlEl = document.getElementById('apiBaseUrl');
 const saveApiBaseUrlEl = document.getElementById('saveApiBaseUrl');
 const apiBaseUrlHintEl = document.getElementById('apiBaseUrlHint');
+const calendarSuggestionCardEl = document.getElementById('calendarSuggestionCard');
+const calendarSuggestionTextEl = document.getElementById('calendarSuggestionText');
+const useCalendarSuggestionEl = document.getElementById('useCalendarSuggestion');
+const aiCardEl = document.getElementById('aiCard');
+const aiStatusTextEl = document.getElementById('aiStatusText');
+const aiSummaryEl = document.getElementById('aiSummary');
+const aiSummaryTextEl = document.getElementById('aiSummaryText');
+const aiSentimentEl = document.getElementById('aiSentiment');
+const aiSuggestionsEl = document.getElementById('aiSuggestions');
+const refreshAiEl = document.getElementById('refreshAi');
 
 /** @type {number|null} */
 let activeTabId = null;
@@ -29,6 +39,18 @@ let conversation = null;
  * corresponde mais ao texto digitado. */
 let selectedLead = null;
 let leadSearchRequestId = 0;
+/** Sugestão de Lead vinda do Google Calendar (Onda 7) — só preenche o campo quando o usuário
+ * clica em "Usar este Lead sugerido", nunca vincula sozinha. Zerada a cada troca de aba/Meet. */
+let calendarSuggestedLead = null;
+let calendarSuggestionRequestId = 0;
+/** Último `meetingCode` para o qual já tentamos a sugestão do Calendar — evita repetir a chamada
+ * a cada poll de 1.5s de `refreshMeetContext` (só tenta de novo quando o Meet muda). */
+let calendarSuggestionMeetingCode = null;
+/** Última conversa (id) para a qual já carregamos o handoff — evita repetir `getHandoff` a cada
+ * poll enquanto o usuário não pede explicitamente ("Atualizar sugestões"). */
+let handoffLoadedForConversationId = null;
+/** Vista agregada (resumo/sugestões) da conversa atual — carregada só quando `status === 'READY'`. */
+let handoff = null;
 
 function clearLeadSearchResults() {
   leadSearchResultsEl.hidden = true;
@@ -88,6 +110,58 @@ leadIdEl.addEventListener('input', () => {
     }
   }, 350);
 });
+
+function clearCalendarSuggestion() {
+  calendarSuggestedLead = null;
+  calendarSuggestionCardEl.hidden = true;
+  calendarSuggestionTextEl.textContent = '';
+}
+
+/**
+ * Onda 7 ("calendário"): tenta achar, na agenda Google conectada da organização
+ * (`GET /api/google/calendar/upcoming`), o evento cujo `hangoutLink` é este mesmo Meet — e, se
+ * achar, tenta resolver um Lead pelo e-mail de algum convidado (`leads/lookup`). Só OFERECE a
+ * sugestão (o usuário ainda precisa clicar em "Usar este Lead sugerido" e depois em "Vincular");
+ * nunca vincula sozinha. A conexão Google é ÚNICA por organização (não por vendedor — ver
+ * `GoogleWorkspaceConnection` no schema), então isto só funciona quando a conta conectada está
+ * convidada nesta reunião. Qualquer falha (Google não configurado/conectado, sessão expirada,
+ * rede) é silenciosa — é um atalho a mais, nunca um requisito do fluxo manual já existente.
+ */
+async function tryCalendarSuggestion() {
+  clearCalendarSuggestion();
+  if (!meetContext?.meetingCode || conversation) return;
+  const requestId = ++calendarSuggestionRequestId;
+  const meetingCode = meetContext.meetingCode;
+
+  let events;
+  try {
+    events = await googleApi.getUpcomingCalendarEvents();
+  } catch {
+    return;
+  }
+  if (requestId !== calendarSuggestionRequestId || conversation) return;
+
+  const matchingEvent = (events || []).find(
+    (event) => typeof event.hangoutLink === 'string' && event.hangoutLink.includes(meetingCode),
+  );
+  if (!matchingEvent) return;
+
+  for (const email of matchingEvent.attendees || []) {
+    let lead;
+    try {
+      lead = await copilotoApi.lookupLead(email);
+    } catch {
+      continue;
+    }
+    if (requestId !== calendarSuggestionRequestId || conversation) return;
+    if (lead) {
+      calendarSuggestedLead = lead;
+      calendarSuggestionTextEl.textContent = `${lead.title || lead.companyName || lead.contactName || lead.id} — encontrado pelo convidado ${email} no evento "${matchingEvent.summary}".`;
+      calendarSuggestionCardEl.hidden = false;
+      return;
+    }
+  }
+}
 
 function showError(message) {
   errorBannerEl.textContent = message;
@@ -189,6 +263,17 @@ function render() {
     toggleCaptureEl.textContent = isCapturing ? 'Parar sessão de captura' : 'Iniciar sessão de captura';
     toggleCaptureEl.className = isCapturing ? 'danger' : '';
   }
+
+  // Sugestão do Calendar só faz sentido antes de vincular a reunião a um Lead.
+  if (hasConversation) clearCalendarSuggestion();
+
+  // IA/writeback card — só quando a transcrição+resumo já terminaram (AGENT_04: "exibir sugestões
+  // da IA"/"confirmar/editar/descartar writebacks" direto na extensão).
+  aiCardEl.hidden = !hasConversation || conversation.status !== 'READY';
+  if (hasConversation && conversation.status === 'READY' && conversation.id !== handoffLoadedForConversationId) {
+    handoffLoadedForConversationId = conversation.id;
+    loadHandoff();
+  }
 }
 
 async function refreshMeetContext() {
@@ -211,6 +296,13 @@ async function refreshMeetContext() {
   const stored = await chrome.storage.session.get(key);
   meetContext = stored[key] || null;
   render();
+
+  if (!meetContext?.meetingCode) {
+    calendarSuggestionMeetingCode = null;
+  } else if (meetContext.meetingCode !== calendarSuggestionMeetingCode && !conversation) {
+    calendarSuggestionMeetingCode = meetContext.meetingCode;
+    tryCalendarSuggestion();
+  }
 }
 
 /** Cria a conversa no backend e sincroniza o estado local — usado tanto vinculado a um Lead
@@ -261,6 +353,14 @@ skipLeadEl.addEventListener('click', () =>
     await startConversation({});
   }),
 );
+
+useCalendarSuggestionEl.addEventListener('click', () => {
+  if (!calendarSuggestedLead) return;
+  selectedLead = calendarSuggestedLead;
+  leadIdEl.value =
+    calendarSuggestedLead.title || calendarSuggestedLead.companyName || calendarSuggestedLead.id;
+  clearLeadSearchResults();
+});
 
 consentEl.addEventListener('change', () => {
   registerConsentEl.disabled = !consentEl.checked;
@@ -319,12 +419,159 @@ toggleCaptureEl.addEventListener('click', () =>
   }),
 );
 
+const SUGGESTION_STATUS_LABEL = {
+  PENDING: 'Pendente',
+  APPROVED: 'Aprovada',
+  REJECTED: 'Rejeitada',
+  WRITTEN_BACK: 'Enviada ao Bitrix24',
+  FAILED: 'Falhou',
+};
+
+function renderHandoff() {
+  if (!handoff) {
+    aiStatusTextEl.textContent = 'Carregando resumo e sugestões...';
+    aiSummaryEl.hidden = true;
+    aiSuggestionsEl.innerHTML = '';
+    return;
+  }
+
+  if (!handoff.isComplete) {
+    aiStatusTextEl.textContent = `Processamento ainda incompleto: ${handoff.missingParts.join(', ')}.`;
+  } else {
+    aiStatusTextEl.textContent = '';
+  }
+
+  if (handoff.summary) {
+    aiSummaryTextEl.textContent = handoff.summary.executiveSummary;
+    aiSentimentEl.textContent = handoff.summary.sentimentScore;
+    aiSummaryEl.hidden = false;
+  } else {
+    aiSummaryEl.hidden = true;
+  }
+
+  const suggestions = handoff.conversation?.crmFieldSuggestions || [];
+  aiSuggestionsEl.innerHTML = '';
+  for (const suggestion of suggestions) {
+    const li = document.createElement('li');
+    li.className = 'ai-suggestion';
+
+    const header = document.createElement('div');
+    header.className = 'ai-suggestion-header';
+    const fieldSpan = document.createElement('span');
+    fieldSpan.className = 'ai-suggestion-field';
+    fieldSpan.textContent = suggestion.fieldCode;
+    const statusSpan = document.createElement('span');
+    statusSpan.className = `status-badge ${suggestion.status}`;
+    statusSpan.textContent = SUGGESTION_STATUS_LABEL[suggestion.status] || suggestion.status;
+    header.append(fieldSpan, statusSpan);
+
+    const diff = document.createElement('p');
+    diff.className = 'ai-suggestion-diff';
+    const oldSpan = document.createElement('span');
+    oldSpan.className = 'old';
+    oldSpan.textContent = suggestion.previousValue || '(vazio)';
+    diff.append(oldSpan, ' → ', suggestion.suggestedValue);
+
+    li.append(header, diff);
+
+    if (suggestion.writebackError) {
+      const errorP = document.createElement('p');
+      errorP.className = 'ai-suggestion-error';
+      errorP.textContent = suggestion.writebackError;
+      li.append(errorP);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'ai-suggestion-actions';
+    if (suggestion.status === 'PENDING') {
+      actions.append(
+        createSuggestionActionButton('Aprovar', () => handleSuggestionAction('approve', suggestion.id)),
+        createSuggestionActionButton('Rejeitar', () => handleSuggestionAction('reject', suggestion.id)),
+      );
+    } else if (suggestion.status === 'APPROVED' || suggestion.status === 'FAILED') {
+      // A extensão não sabe o role do usuário logado — o botão sempre aparece, e o backend
+      // responde 403 explícito (ADMIN/GESTOR apenas) se não tiver permissão, tratado como
+      // qualquer outro ApiError (mesmo raciocínio de "nunca falha silenciosamente").
+      actions.append(
+        createSuggestionActionButton('Enviar ao Bitrix24', () =>
+          handleSuggestionAction('writeback', suggestion.id),
+        ),
+      );
+    }
+    if (actions.childElementCount > 0) li.append(actions);
+
+    aiSuggestionsEl.append(li);
+  }
+}
+
+function createSuggestionActionButton(label, onClick) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'secondary';
+  button.textContent = label;
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+async function handleSuggestionAction(action, suggestionId) {
+  await withErrorHandling(async () => {
+    if (action === 'approve') await copilotoApi.approveSuggestion(suggestionId);
+    if (action === 'reject') await copilotoApi.rejectSuggestion(suggestionId);
+    if (action === 'writeback') await copilotoApi.writebackSuggestion(suggestionId);
+    await loadHandoff();
+  });
+}
+
+async function loadHandoff() {
+  if (!conversation) return;
+  const conversationId = conversation.id;
+  try {
+    handoff = await copilotoApi.getHandoff(conversationId);
+  } catch (err) {
+    // Falha ao buscar o handoff não deve travar o resto do side panel (captura/consentimento já
+    // concluídos nesta altura) — mostra a mensagem só dentro do próprio card de IA.
+    aiStatusTextEl.textContent =
+      err instanceof ApiError ? err.message : 'Não foi possível carregar o resumo e as sugestões.';
+    return;
+  }
+  if (conversation?.id !== conversationId) return;
+  renderHandoff();
+}
+
+refreshAiEl.addEventListener('click', () => loadHandoff());
+
 saveApiBaseUrlEl.addEventListener('click', () =>
   withErrorHandling(async () => {
     const origin = await setApiBaseUrl(apiBaseUrlEl.value.trim());
     apiBaseUrlHintEl.textContent = `Salvo: ${origin}`;
   }),
 );
+
+/**
+ * A transcrição+resumo rodam em background no worker (`transcribeConversation.worker.ts`) depois
+ * de `stopCapture` — nada empurra esse resultado pro side panel automaticamente. Sem isto, o
+ * estado local (`conversation.status`, espelhado em `chrome.storage.session`) fica travado em
+ * `PROCESSING` para sempre, e o card de resumo/sugestões (`aiCard`, só visível em `READY`) nunca
+ * aparece sozinho. Intervalo mais espaçado que `refreshMeetContext` (que só lê estado local) por
+ * ser uma chamada real ao backend, e só roda enquanto há algo relevante para checar.
+ */
+async function pollConversationStatus() {
+  if (!conversation || conversation.status !== 'PROCESSING') return;
+  const conversationId = conversation.id;
+  let updated;
+  try {
+    updated = await copilotoApi.getConversation(conversationId);
+  } catch {
+    return;
+  }
+  if (!conversation || conversation.id !== conversationId || updated.status === conversation.status) {
+    return;
+  }
+  conversation.status = updated.status;
+  conversation.consentStatus = updated.consentStatus;
+  await saveConversationForTab();
+  render();
+}
 
 async function init() {
   apiBaseUrlEl.value = await getApiBaseUrl();
@@ -333,3 +580,4 @@ async function init() {
 
 init();
 setInterval(refreshMeetContext, 1500);
+setInterval(pollConversationStatus, 8000);

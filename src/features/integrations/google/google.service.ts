@@ -252,6 +252,15 @@ export interface UpcomingCalendarEvent {
   summary: string;
   start: string | null;
   end: string | null;
+  /** Link do Google Meet do evento (`hangoutLink`), quando o evento tem videochamada anexada —
+   * usado pela extensão Chrome (Onda 7, item "calendário") para casar o Meet aberto agora com um
+   * evento real da agenda, sem depender de heurística de horário/título. `null` quando o evento
+   * não tem Meet vinculado. */
+  hangoutLink: string | null;
+  /** E-mails dos convidados do evento, exceto a própria conta conectada (`self: true` na resposta
+   * do Google) — usado para sugerir automaticamente qual Lead vincular (`leads/lookup?q=<email>`),
+   * nunca para vincular sozinho: a extensão só oferece a sugestão, o clique continua do usuário. */
+  attendees: string[];
 }
 
 /** Próximos eventos reais do Google Calendar da conta conectada — prova de que a integração funciona de verdade. */
@@ -304,6 +313,8 @@ export async function getUpcomingCalendarEvents(
       summary?: string;
       start?: { dateTime?: string; date?: string };
       end?: { dateTime?: string; date?: string };
+      hangoutLink?: string;
+      attendees?: Array<{ email?: string; self?: boolean }>;
     }>;
   };
   return (data.items || []).map((item) => ({
@@ -311,6 +322,10 @@ export async function getUpcomingCalendarEvents(
     summary: item.summary || '(Sem título)',
     start: item.start?.dateTime || item.start?.date || null,
     end: item.end?.dateTime || item.end?.date || null,
+    hangoutLink: item.hangoutLink || null,
+    attendees: (item.attendees || [])
+      .filter((attendee) => !attendee.self && attendee.email)
+      .map((attendee) => attendee.email as string),
   }));
 }
 
