@@ -61,7 +61,7 @@ export function Toggle({
         className={cn(
           'relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
           checked ? 'bg-brand' : 'bg-surface-2 dark:bg-surface border-line',
-          disabled && 'cursor-not-allowed opacity-50'
+          disabled && 'cursor-not-allowed opacity-50',
         )}
       >
         <motion.span
@@ -73,7 +73,14 @@ export function Toggle({
           transition={
             shouldReduceMotion
               ? { duration: 0.1 }
-              : { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 }
+              : {
+                  // `scale` anima em 3 keyframes (squish de ida e volta) — spring/inertia do
+                  // Framer Motion só suporta exatamente 2 keyframes (lança em runtime com 3+,
+                  // reproduzido via testes reais, não teórico). `x` (2 keyframes) continua com a
+                  // mola; `scale` usa easing por tempo, que suporta múltiplos keyframes.
+                  x: { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 },
+                  scale: { duration: 0.25, ease: 'easeOut' },
+                }
           }
         />
       </button>

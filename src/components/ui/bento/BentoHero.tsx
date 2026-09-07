@@ -24,7 +24,7 @@ export function BentoHero({
       colSpan={colSpan}
       className={cn(
         'relative overflow-hidden p-6 md:p-8 flex flex-col justify-between gap-6',
-        className
+        className,
       )}
       {...props}
     >

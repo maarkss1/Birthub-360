@@ -87,7 +87,10 @@ export function RealtimeFeed() {
       </CardHeader>
       <CardContent className="pt-4">
         {connectionError ? (
-          <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-critical/20 bg-critical/10" role="status">
+          <div
+            className="flex items-center justify-between gap-3 p-3 rounded-xl border border-critical/20 bg-critical/10"
+            role="status"
+          >
             <div className="flex items-center gap-2 text-xs text-critical font-medium">
               <AlertTriangle className="w-4 h-4 shrink-0" />
               Feed em tempo real desconectado.
@@ -101,9 +104,7 @@ export function RealtimeFeed() {
             </button>
           </div>
         ) : events.length === 0 ? (
-          <div className="text-xs text-ink-2 text-center py-6">
-            Nenhuma atividade recente.
-          </div>
+          <div className="text-xs text-ink-2 text-center py-6">Nenhuma atividade recente.</div>
         ) : (
           <ul className="space-y-2.5">
             {events.map((ev) => (
@@ -116,8 +117,13 @@ export function RealtimeFeed() {
                   <span className="font-semibold text-ink">{ev.message}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-ink-2 font-mono">{ev.timestamp.toLocaleTimeString()}</span>
-                  <Badge variant={ev.type === 'DEAL_WON' ? 'success' : 'outline'} className="text-[10px] px-2 py-0.5">
+                  <span className="text-[11px] text-ink-2 font-mono">
+                    {ev.timestamp.toLocaleTimeString()}
+                  </span>
+                  <Badge
+                    variant={ev.type === 'DEAL_WON' ? 'success' : 'outline'}
+                    className="text-[10px] px-2 py-0.5"
+                  >
                     {ev.type === 'DEAL_WON' ? 'Sucesso' : 'Evento'}
                   </Badge>
                 </div>
