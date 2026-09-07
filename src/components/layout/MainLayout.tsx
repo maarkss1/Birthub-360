@@ -81,14 +81,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
           <AppTopbar activeTab={activeTab} onOpenMobileNav={() => setMobileNavOpen(true)} />
           <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative bg-transparent">
-            <PageTransition id={activeTab}>
-              {children}
-            </PageTransition>
+            <PageTransition id={activeTab}>{children}</PageTransition>
           </main>
-          <FloatingDock
-            activeTab={activeTab}
-            onOpenFullMenu={() => setMobileNavOpen(true)}
-          />
+          <FloatingDock activeTab={activeTab} onOpenFullMenu={() => setMobileNavOpen(true)} />
           <Toaster />
           <VoiceCommandWidget />
           <AtlasChatbotTrigger />

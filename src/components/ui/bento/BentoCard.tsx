@@ -52,7 +52,7 @@ export function BentoCard({
           colSpanClasses,
           rowSpanClasses,
           variantClasses,
-          className
+          className,
         )}
         {...(props as React.ComponentProps<typeof motion.div>)}
       >
@@ -68,7 +68,7 @@ export function BentoCard({
         colSpanClasses,
         rowSpanClasses,
         variantClasses,
-        className
+        className,
       )}
       style={style}
       {...props}
