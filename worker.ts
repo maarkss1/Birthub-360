@@ -51,6 +51,7 @@ import { createCadenceRunWorker, scheduleCadenceRunJob } from './src/features/ca
 import { createAgentMemoryCleanupWorker, scheduleAgentMemoryCleanupJob } from './src/features/intelligence/jobs/agentMemoryCleanup.worker.js';
 import { createBitrixExtractionPurgeWorker, scheduleBitrixExtractionPurgeJob } from './src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.js';
 import { createNewsMonitorWorker, scheduleGlobalNewsScan } from './src/lib/queue/newsMonitor.worker.js';
+import { createAccountIntelligenceInsightsWorker, scheduleAccountIntelligenceInsightsJob } from './src/features/market-intelligence/jobs/accountIntelligenceInsights.worker.js';
 import { createForecastSnapshotWorker, scheduleForecastSnapshotJob } from './src/features/commercial-intelligence/jobs/forecastSnapshotWeekly.worker.js';
 import { createCopilotoTranscriptionWorker } from './src/features/copiloto-ia/jobs/transcribeConversation.worker.js';
 import { MeetingSynthesisService } from './src/features/chatbook/services/meeting-synthesis.service.js';
@@ -92,6 +93,7 @@ async function startWorkerProcess() {
     const agentMemoryCleanupWorker = createAgentMemoryCleanupWorker();
     const bitrixExtractionPurgeWorker = createBitrixExtractionPurgeWorker();
     const newsMonitorWorker = createNewsMonitorWorker();
+    const accountIntelligenceInsightsWorker = createAccountIntelligenceInsightsWorker();
     const forecastSnapshotWorker = createForecastSnapshotWorker();
     const copilotoTranscriptionWorker = createCopilotoTranscriptionWorker({
         meetingSynthesisPort: new MeetingSynthesisService(),
@@ -111,6 +113,7 @@ async function startWorkerProcess() {
         scheduleAgentMemoryCleanupJob(),
         scheduleBitrixExtractionPurgeJob(),
         scheduleGlobalNewsScan(),
+        scheduleAccountIntelligenceInsightsJob(),
         scheduleForecastSnapshotJob(),
     ]);
 
@@ -157,6 +160,7 @@ async function startWorkerProcess() {
         { name: 'agent-memory-cleanup', worker: agentMemoryCleanupWorker },
         { name: 'bitrix-extraction-purge', worker: bitrixExtractionPurgeWorker },
         { name: 'news-monitor', worker: newsMonitorWorker },
+        { name: 'account-intelligence-insights', worker: accountIntelligenceInsightsWorker },
         { name: 'forecast-snapshot-weekly-queue', worker: forecastSnapshotWorker },
         { name: 'copiloto-ia-transcription-queue', worker: copilotoTranscriptionWorker },
     ];
