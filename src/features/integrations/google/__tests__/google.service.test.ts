@@ -208,7 +208,18 @@ describe('getUpcomingCalendarEvents', () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
         JSON.stringify({
-          items: [{ id: 'ev1', summary: 'Reunião', start: { dateTime: '2026-08-03T10:00:00Z' } }],
+          items: [
+            {
+              id: 'ev1',
+              summary: 'Reunião',
+              start: { dateTime: '2026-08-03T10:00:00Z' },
+              hangoutLink: 'https://meet.google.com/abc-defg-hij',
+              attendees: [
+                { email: 'comercial@atlasgr.com.br', self: true },
+                { email: 'cliente@empresa.com.br' },
+              ],
+            },
+          ],
         }),
         { status: 200 },
       ),
@@ -218,7 +229,14 @@ describe('getUpcomingCalendarEvents', () => {
     const events = await getUpcomingCalendarEvents(ORG);
 
     expect(events).toEqual([
-      { id: 'ev1', summary: 'Reunião', start: '2026-08-03T10:00:00Z', end: null },
+      {
+        id: 'ev1',
+        summary: 'Reunião',
+        start: '2026-08-03T10:00:00Z',
+        end: null,
+        hangoutLink: 'https://meet.google.com/abc-defg-hij',
+        attendees: ['cliente@empresa.com.br'],
+      },
     ]);
     expect(fetchMock.mock.calls[0][1]).toEqual(
       expect.objectContaining({ headers: { Authorization: 'Bearer at-valid' } }),

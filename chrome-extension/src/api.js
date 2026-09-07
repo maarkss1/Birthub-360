@@ -101,6 +101,27 @@ export const copilotoApi = {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
+  // Vista agregada (resumo, objeções, sinais de compra, Deal Health, sugestões de campo de CRM)
+  // — mesmo endpoint que a Central usa em ConversationDetailDrawer.tsx, ver AGENT_04 do pacote
+  // ("exibir sugestões da IA" e "confirmar/editar/descartar writebacks" direto na extensão).
+  getHandoff: (id) => request(`/api/copiloto-ia/conversations/${id}/handoff`),
+  approveSuggestion: (suggestionId) =>
+    request(`/api/copiloto-ia/crm-field-suggestions/${suggestionId}/approve`, { method: 'PATCH' }),
+  rejectSuggestion: (suggestionId) =>
+    request(`/api/copiloto-ia/crm-field-suggestions/${suggestionId}/reject`, { method: 'PATCH' }),
+  // Só ADMIN/GESTOR (`COPILOTO_IA_MANAGEMENT_ROLES`, defesa em profundidade no backend) — um
+  // CLOSER/SDR pode aprovar/rejeitar a sugestão, mas o backend responde 403 explícito aqui, nunca
+  // silencioso, e a extensão trata isso como qualquer outro ApiError (ver withErrorHandling).
+  writebackSuggestion: (suggestionId) =>
+    request(`/api/copiloto-ia/crm-field-suggestions/${suggestionId}/writeback`, { method: 'POST' }),
+};
+
+// Cliente da integração Google Workspace (Onda 7 — "calendário"). A conexão é UMA por
+// organização (não por vendedor, ver GoogleWorkspaceConnection no schema) — a extensão só usa
+// isso para SUGERIR automaticamente qual Lead vincular quando o Meet aberto agora corresponde a
+// um evento da agenda conectada, nunca para vincular sozinha (o clique continua do usuário).
+export const googleApi = {
+  getUpcomingCalendarEvents: () => request('/api/google/calendar/upcoming'),
 };
 
 export { ApiError };
