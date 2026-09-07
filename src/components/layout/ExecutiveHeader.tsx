@@ -123,11 +123,7 @@ export function ExecutiveHeader({
             }`}
             title={isFullscreen ? 'Sair do Modo Tela Cheia' : 'Modo Tela Cheia Imersivo'}
           >
-            {isFullscreen ? (
-              <Minimize2 className="w-3 h-3" />
-            ) : (
-              <Maximize2 className="w-3 h-3" />
-            )}
+            {isFullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
             {isFullscreen ? 'Sair Tela Cheia' : 'Tela Cheia'}
           </button>
         </div>

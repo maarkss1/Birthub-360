@@ -61,7 +61,7 @@ export function FloatingDock({ activeTab, onOpenFullMenu }: FloatingDockProps) {
                 'relative flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer',
                 isActive
                   ? 'text-white bg-brand shadow-sm'
-                  : 'text-ink-2 hover:text-ink hover:bg-surface-2'
+                  : 'text-ink-2 hover:text-ink hover:bg-surface-2',
               )}
             >
               <Icon size={20} className="shrink-0" />
