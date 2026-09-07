@@ -11,6 +11,13 @@ import { PrismaAutomationRepository } from '../../features/automations/infra/Pri
 import { PrismaAnalyticsRepository } from '../../features/analytics/infra/PrismaAnalyticsRepository';
 import { PrismaCommercialIntelligenceRepository } from '../../features/commercial-intelligence/infra/PrismaCommercialIntelligenceRepository';
 import { CommercialIntelligenceAiService } from '../../features/commercial-intelligence/infra/CommercialIntelligenceAiService';
+// Onda 43 (Agente 13, Célula Comercial): registrados aqui — não importados diretamente por
+// src/features/intelligence/** — porque `no-cross-feature-imports` (dependency-cruiser) proíbe uma
+// feature de importar internals de outra. Este é o composition root (src/shared/), o único lugar
+// isento dessa regra; os agentes novos resolvem esses serviços via `container.resolve<T>(name)`
+// com um tipo estrutural local (mesmo padrão já usado por commercialIntelligence.routes.ts para
+// `CommercialIntelligenceController`), nunca via import direto do outro domínio.
+import { ChurnPredictionService } from '../../features/analytics/services/churn-prediction.service';
 import { PrismaForecastSnapshotStore } from '../../features/commercial-intelligence/infra/PrismaForecastSnapshotStore';
 import { PrismaCrm360Repository } from '../../features/crm360/infra/PrismaCrm360Repository';
 import { PrismaQualificationMatrixRepository } from '../../features/playbook/qualification-matrix/infra/PrismaQualificationMatrixRepository';
@@ -125,6 +132,10 @@ export function setupDI() {
   const commercialIntelligenceAiService = new CommercialIntelligenceAiService(
     commercialIntelligenceUseCases,
   );
+  // Onda 43: motor real por trás do Agente Churn & Retenção da Célula Comercial
+  // (src/features/intelligence/agents/churnRetention.agent.ts) — resolvido via container, nunca
+  // importado diretamente por `intelligence/**` (ver comentário no import acima).
+  const churnPredictionService = new ChurnPredictionService();
   const crm360UseCases = new Crm360UseCases(crm360Repository);
   const qualificationMatrixUseCases = new QualificationMatrixUseCases(
     qualificationMatrixRepository,
@@ -147,6 +158,8 @@ export function setupDI() {
   container.register('AutomationUseCases', automationUseCases);
   container.register('AnalyticsUseCases', analyticsUseCases);
   container.register('CommercialIntelligenceUseCases', commercialIntelligenceUseCases);
+  container.register('CommercialIntelligenceAiService', commercialIntelligenceAiService);
+  container.register('ChurnPredictionService', churnPredictionService);
   container.register('Crm360UseCases', crm360UseCases);
   container.register('QualificationMatrixUseCases', qualificationMatrixUseCases);
   container.register('ObjectionMatrixUseCases', objectionMatrixUseCases);

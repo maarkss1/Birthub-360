@@ -192,6 +192,146 @@ router.get('/swarm/learn/history', async (req: Request, res: Response, next: Nex
   }
 });
 
+// --- CÉLULA COMERCIAL DE AGENTES (onda 43, Agente 13) ---
+import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry.js';
+import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
+import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
+import { container } from '../../../shared/di/container.js';
+
+// AI-005/golden-dataset acima já estabelece o precedente: catálogo estático (não dado de tenant)
+// só reaproveita a autenticação de '/api/agent'. `COMMERCIAL_AGENT_REGISTRY` é o mesmo caso —
+// metadado de produto, não dado de organização.
+router.get('/commercial-cell', (_req: Request, res: Response) => {
+  res.json({ success: true, data: COMMERCIAL_AGENT_REGISTRY });
+});
+
+// Estrutural, não importado de commercial-intelligence (no-cross-feature-imports) — espelha só os
+// 2 métodos que este agente consome de CommercialIntelligenceAiService, resolvido via DI container
+// (registrado em src/shared/di/setup.ts). Ver comentário no registro do container para o racional.
+interface RevenueIntelligenceSourceContract {
+  generateExecutiveSummary(
+    organizationId: string,
+    filter: { month: string; owner?: string; product?: string; source?: string; icp?: string; company?: string },
+  ): Promise<{ summary: string; generatedAt: string }>;
+  generateMentorPlaybook(
+    organizationId: string,
+    filter: { month: string; owner?: string; product?: string; source?: string; icp?: string; company?: string },
+  ): Promise<{
+    recommendations: { priority: string; title: string; rationale: string; suggestedAction: string; relatedDealIds: string[] }[];
+    source: 'ai' | 'fallback';
+    generatedAt: string;
+  }>;
+}
+
+const revenueIntelligenceRunSchema = z.object({
+  month: z.string().trim().regex(/^\d{4}-\d{2}$/, 'Use o formato YYYY-MM'),
+  owner: z.string().trim().optional(),
+  product: z.string().trim().optional(),
+  source: z.string().trim().optional(),
+  icp: z.string().trim().optional(),
+  company: z.string().trim().optional(),
+});
+
+router.post(
+  '/commercial-cell/revenue-intelligence/run',
+  writeRoles,
+  validateRequest(revenueIntelligenceRunSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const filter = req.body as z.infer<typeof revenueIntelligenceRunSchema>;
+
+      const aiService = container.resolve<RevenueIntelligenceSourceContract>(
+        'CommercialIntelligenceAiService',
+      );
+      const [summaryResult, playbook] = await Promise.all([
+        aiService.generateExecutiveSummary(organizationId, filter),
+        aiService.generateMentorPlaybook(organizationId, filter),
+      ]);
+
+      const contextLines = [
+        `- Resumo executivo do período ${filter.month}: ${summaryResult.summary}`,
+        playbook.recommendations.length > 0
+          ? `- Recomendações priorizadas (${playbook.source === 'ai' ? 'geradas por IA' : 'fallback determinístico'}):\n${playbook.recommendations
+              .map((r) => `  - [${r.priority}] ${r.title}: ${r.rationale} → ${r.suggestedAction}`)
+              .join('\n')}`
+          : '- Nenhuma recomendação priorizada disponível para o período.',
+      ];
+
+      const agent = new RevenueIntelligenceAgent();
+      const result = await agent.run(contextLines.join('\n'));
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+const churnRetentionRunSchema = z.object({
+  clientName: z.string().trim().min(1),
+  contractAgeMonths: z.number().nonnegative(),
+  monthlyRecurringRevenue: z.number().nonnegative(),
+  openSupportTickets: z.number().int().nonnegative(),
+  unresolvedComplaints: z.number().int().nonnegative(),
+  paymentDelaysLast90Days: z.number().int().nonnegative(),
+  platformUsageDropPercentage: z.number(),
+  recentSentimentNotes: z.string().trim().optional(),
+});
+
+// Espelha (sem importar de src/features/analytics/**, ver no-cross-feature-imports) só o shape
+// mínimo de entrada/saída de ChurnPredictionService.analyzeChurnRisk — a checagem de tipo real
+// acontece em churn-prediction.service.ts (dono real), aqui é só o contrato de leitura. O
+// parâmetro de entrada reaproveita o próprio schema Zod acima (mesmo shape).
+interface ChurnPredictionSourceContract {
+  analyzeChurnRisk(
+    account: z.infer<typeof churnRetentionRunSchema>,
+  ): Promise<{
+    churnRisk: string;
+    healthScore: number;
+    primaryRiskDrivers: string[];
+    immediateRetentionPlaybook: string[];
+    suggestedRetentionDiscountOrBenefit?: string;
+    executiveAlertSummary: string;
+  }>;
+}
+
+router.post(
+  '/commercial-cell/churn-retention/run',
+  writeRoles,
+  validateRequest(churnRetentionRunSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const account = req.body as z.infer<typeof churnRetentionRunSchema>;
+
+      const churnService = container.resolve<ChurnPredictionSourceContract>(
+        'ChurnPredictionService',
+      );
+      const prediction = await churnService.analyzeChurnRisk(account);
+
+      const contextLines = [
+        `- Conta: ${account.clientName}`,
+        `- Nível de risco (já calculado): ${prediction.churnRisk}`,
+        `- Health Score (já calculado): ${prediction.healthScore}`,
+        `- Fatores de risco: ${prediction.primaryRiskDrivers.join('; ') || 'nenhum listado'}`,
+        `- Playbook de retenção imediato: ${prediction.immediateRetentionPlaybook.join('; ') || 'nenhum listado'}`,
+        prediction.suggestedRetentionDiscountOrBenefit
+          ? `- Benefício/desconto sugerido: ${prediction.suggestedRetentionDiscountOrBenefit}`
+          : '- Nenhum benefício/desconto sugerido pelo motor.',
+        `- Resumo executivo (já calculado): ${prediction.executiveAlertSummary}`,
+        account.monthlyRecurringRevenue
+          ? `- MRR da conta: ${account.monthlyRecurringRevenue}`
+          : '- MRR da conta: não informado.',
+      ];
+
+      const agent = new ChurnRetentionAgent();
+      const result = await agent.run(contextLines.join('\n'));
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
 const learningRollbackSchema = z.object({
   targetVersion: z.number().int().min(1),
 });

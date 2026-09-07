@@ -3073,3 +3073,75 @@ entrada nova.
   futura de cor); e que o contorno de boot silencioso do dev server documentado nos Pilotos
   003/004/P3 não é garantido neste ambiente — uma sessão futura sem servidor real deve seguir o
   protocolo de QA alternativa da `visual-qa/SKILL.md` sem insistir indefinidamente no boot.
+
+## Pilot 031 — Hub Executivo (`HubScreen.tsx`): tela de destinos pós-login, fora do CRM
+
+- **Objetivo**: pedido explícito do usuário ("adicione esse cards e pode começar a construir a
+  tela real") — construir a tela real do Hub Executivo ("os círculos", como o usuário vinha se
+  referindo a ela em rodadas anteriores da sessão), que hospeda: o destino primário (Central
+  Comercial/CRM), os 4 módulos executivos com concessão real por usuário (`ModuleAccessGrant`,
+  substituindo o antigo gate único por e-mail — ver o piloto de módulo-access, sessão anterior) e
+  5 ferramentas externas reais da empresa (Connect Atlas, New Connect, Perfil Securitário,
+  Bitrix24, Webmail) fornecidas como URLs literais pelo usuário.
+- **Decisão arquitetural nova: catálogo `EXTERNAL_LINKS` separado do sistema de concessão por
+  usuário.** Ferramentas externas (Bitrix24, webmail, portais internos) não são "acervo executivo
+  restrito" — são ferramentas de uso corriqueiro de toda a equipe comercial. Colocá-las dentro de
+  `ModuleAccessGrant` (que exige concessão explícita por ADMIN) criaria fricção sem propósito de
+  segurança real. `EXTERNAL_LINKS` vive em `src/config/module-catalog.ts` ao lado de
+  `MODULE_CATALOG`, mas sem gate: todo usuário logado vê todos os 5 cards. Cada card só abre a URL
+  em nova aba (`window.open(url, '_blank', 'noopener,noreferrer')`) — nenhuma credencial é lida,
+  armazenada ou repassada; o login acontece no site de destino. `iconKey` no catálogo é só um
+  identificador de string — o mapeamento pro componente `lucide-react` fica no Hub (frontend),
+  nunca no arquivo de catálogo, porque esse arquivo também é importado pelo backend (validação de
+  `moduleKey`) e não deve carregar dependência de UI.
+- **Composição**: NÃO é hero centralizada + 3 cards iguais (regras #2/#4 da constituição). O
+  destino primário (Central Comercial) é uma faixa horizontal assimétrica full-width com ícone
+  circular à esquerda, texto ao centro, CTA à direita — visualmente dominante por ser maior e ter
+  glow de marca, não por estar centralizado. Abaixo, duas seções em grid responsivo
+  (`sm:grid-cols-2 lg:grid-cols-4` para módulos, `lg:grid-cols-3` para ferramentas) com contagem
+  real de itens (1 módulo concedido no teste, 5 ferramentas) — a grade nunca é forçada a 3 iguais.
+  Ícones em badge circular (`rounded-full`, não `rounded-lg`) foi a leitura literal do "círculos"
+  do usuário.
+- **Estado vazio real**: quando `grantedModules` está vazio, a seção de módulos mostra uma
+  mensagem explícita orientando o usuário a pedir acesso a um ADMIN, em vez de esconder a seção ou
+  mostrar um card fantasma — estado vazio como cidadão de primeira classe (`ui-ux`/seção 10).
+- **Bug real pego só pela verificação visual, não pelo `tsc`/lint**: a tela inteira renderizava
+  com o conteúdo dos cards em branco (`opacity: 0` travado) porque `motion.div`/`motion.button`
+  usavam `animate="visible"`, mas as variantes reais de `src/lib/motion.ts`
+  (`staggerContainer`/`staggerItem`) usam a chave `"show"`, não `"visible"` — Framer Motion não
+  reclama de uma chave de variante inexistente, só não anima (o elemento fica preso no estado
+  `hidden`, que define `opacity: 0`). `tsc --noEmit` e `biome lint` passaram limpos porque a
+  string é só uma prop de runtime, não checada por tipo. Só apareceu num screenshot real via
+  Playwright contra o servidor real — reforça a instrução da seção 12.6 da constituição
+  (`visual-qa/SKILL.md`) de sempre olhar a tela renderizada de verdade antes de reportar como
+  concluído, mesmo quando typecheck/lint/build estão 100% verdes.
+- **Verificação real feita nesta sessão** (ambiente Linux com Postgres 16 + Redis locais, já
+  levantados manualmente numa fase anterior desta mesma sessão): `tsc --noEmit` (0 erros),
+  `biome lint`/`biome format --write` (0 warnings novos nos 4 arquivos tocados), `npm run build`
+  (sucesso, confirma que `/hub` virou chunk lazy-loaded próprio,
+  `HubScreen-*.js` ~7.2kB gzip 2.4kB), e um spec Playwright temporário (criado e depois apagado,
+  não commitado) que: cria um usuário real via `signUp()` (mesmo helper de `tests/e2e/helpers.ts`),
+  concede um módulo real via `prisma.moduleAccessGrant.create` com o contexto de tenant correto
+  (`requestContext.enterWith({ tenantId })` — não `bypassRls`, porque `ModuleAccessGrant` foi
+  deliberadamente excluído do allowlist de bypass RLS numa migration de segurança anterior),
+  navega para `/hub`, confirma visualmente (screenshot real) o destino primário + módulo concedido
+  + as 5 ferramentas, depois navega para `/app`, confirma o novo botão "Hub Executivo" na Sidebar e
+  clica nele até confirmar a navegação de volta a `/hub`. A primeira rodada desse teste (antes do
+  fix do `animate="visible"`) foi o que expôs o bug acima.
+- **Entrada de navegação nova em `Sidebar.tsx`**: botão "Hub Executivo" (ícone `LayoutGrid`)
+  inserido logo abaixo do switch de marca "Operação Atual", fora do sistema `TabType`/`selectTab`
+  (que sempre assume `/app/:tab`) — chama `navigate('/hub')` direto, porque `/hub` é rota
+  top-level, não uma aba do CRM. Segue o mesmo padrão visual de borda/hover/`focus-visible` já
+  usado nos outros botões da Sidebar, incluindo o estado `isCollapsed` (ícone sozinho, sem label,
+  quando a barra lateral está recolhida).
+- **Rota `/` continua redirecionando para `/app`, não para `/hub`** — decisão deliberada de
+  reduzir o raio de impacto desta primeira versão do Hub: o CRM continua sendo o destino padrão
+  pós-login, `/hub` é alcançável a partir da Sidebar. Trocar o destino padrão do login é uma
+  decisão de produto maior, não implícita no pedido desta sessão ("construir a tela real"), e não
+  foi feita sem confirmação explícita do usuário.
+- **Nenhuma mudança de regra da constituição** — reforça o Piloto 007/008/009/010 (procurar dado já
+  computado antes de inventar feature nova: aqui, `useModuleAccess`/`MODULE_CATALOG` já existiam
+  prontos da sessão anterior, só faltava uma tela real que os consumisse) e acrescenta um novo
+  padrão de bug a vigiar em qualquer piloto futuro que use `src/lib/motion.ts`: **conferir a chave
+  exata da variante (`show`, não `visible`) antes de usar `animate=` com uma string literal**, e
+  nunca considerar motion "correto" só porque compilou.

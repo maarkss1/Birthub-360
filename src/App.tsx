@@ -47,6 +47,9 @@ const SinglePageDashboard = lazy(() =>
     default: m.SinglePageDashboard,
   })),
 );
+const HubScreen = lazy(() =>
+  import('./features/hub/components/HubScreen').then((m) => ({ default: m.HubScreen })),
+);
 const LoginScreen = lazy(() =>
   import('./features/auth/components/LoginScreen').then((m) => ({ default: m.LoginScreen })),
 );
@@ -387,14 +390,35 @@ export default function App() {
                 <ClickSpark />
                 <Suspense fallback={<PageFallback />}>
                   <Routes>
-                    <Route path="/" element={<Navigate to="/app" replace />} />
+                    {/* Porta de entrada do produto: pedido explícito do usuário ("primeira tela
+                        será o Hub"/"crie uma primeira tela de login com os elementos lindos do
+                        Hub") — em vez de redirecionar direto pro CRM, "/" mostra a tela de login
+                        (mesmo componente de "/login", que continua existindo à parte — ver
+                        tests/e2e/helpers.ts::signUp e outros specs que navegam direto pra lá),
+                        redesenhada com a linguagem visual do Hub Executivo (badges circulares,
+                        glow de canto, sem 3D). Um usuário já autenticado que caia aqui é
+                        redirecionado pro CRM automaticamente (guard dentro do próprio
+                        LoginScreen), então "/" nunca mostra o formulário a quem já está logado. */}
+                    <Route path="/" element={<LoginScreen />} />
                     <Route path="/welcome" element={<WelcomeScreen />} />
                     <Route path="/select-brand" element={<SelectionScreen />} />
                     <Route path="/login" element={<LoginScreen />} />
                     <Route path="/reset-password" element={<ResetPasswordScreen />} />
                     <Route path="/book/:slug" element={<PublicBookingPage />} />
-                    {/* Hub Executivo — módulos concedidos individualmente via ModuleAccessAdmin
-                        (/app/module-access), NUNCA parte do CRM: pedido explícito do usuário ("não
+                    {/* Hub Executivo ("os círculos") — tela de destinos pós-login: Central
+                        Comercial (CRM) + módulos executivos concedidos individualmente via
+                        ModuleAccessAdmin (/app/module-access) + atalhos para ferramentas externas
+                        (Bitrix24, webmail, portais). Fica fora de /app/* de propósito — sem
+                        MainLayout/Sidebar do CRM — mas ainda exige login (ProtectedRoute). */}
+                    <Route
+                      path="/hub"
+                      element={
+                        <ProtectedRoute>
+                          <HubScreen />
+                        </ProtectedRoute>
+                      }
+                    />
+                    {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
                         quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
                         CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
                         ainda exigem login (ProtectedRoute) e a concessão real do módulo

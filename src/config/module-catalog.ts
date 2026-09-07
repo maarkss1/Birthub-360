@@ -49,3 +49,77 @@ export function isModuleKey(value: string): value is ModuleKey {
 export function moduleLabel(key: string): string {
   return MODULE_CATALOG.find((m) => m.key === key)?.label ?? key;
 }
+
+// Atalhos para ferramentas externas reais da AtlasGR (portal legado, Bitrix24, webmail...).
+// Deliberadamente FORA do sistema de concessão por usuário acima (ModuleAccessGrant): são
+// ferramentas de uso corriqueiro de toda a equipe comercial, não acervo executivo restrito — cada
+// card só abre a URL em nova aba (login acontece no próprio site de destino; este catálogo nunca
+// guarda credencial). `iconKey` é só um identificador — o mapeamento pro componente de ícone
+// (lucide-react) fica no Hub (frontend), nunca aqui, porque este arquivo também é importado pelo
+// backend (ver módulo-access.service.ts) e não deve carregar dependência de UI.
+export interface ExternalLinkEntry {
+  key: string;
+  label: string;
+  description: string;
+  url: string;
+  iconKey:
+    | 'connect'
+    | 'newConnect'
+    | 'securitario'
+    | 'bitrix24'
+    | 'webmail'
+    | 'gmail'
+    | 'workspace';
+}
+
+export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
+  {
+    key: 'connect',
+    label: 'Connect Atlas',
+    description: 'Portal Atlas — página principal',
+    url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php',
+    iconKey: 'connect',
+  },
+  {
+    key: 'new-connect',
+    label: 'New Connect',
+    description: 'Novo portal Atlas — dashboard',
+    url: 'https://newconnect.atlasgr.com.br/dashboard',
+    iconKey: 'newConnect',
+  },
+  {
+    key: 'perfil-securitario',
+    label: 'Perfil Securitário',
+    description: 'Registros recentes de perfil securitário',
+    url: 'https://perfil-securitario.atlasgr.com.br/report/recentRecords',
+    iconKey: 'securitario',
+  },
+  {
+    key: 'bitrix24',
+    label: 'Bitrix24',
+    description: 'CRM Bitrix24 da AtlasGR',
+    url: 'https://atlasgr.bitrix24.com.br/',
+    iconKey: 'bitrix24',
+  },
+  {
+    key: 'webmail',
+    label: 'Webmail',
+    description: 'E-mail corporativo (@atlasgr.com.br)',
+    url: 'https://webmail.atlasgr.com.br/?_task=mail&_mbox=INBOX',
+    iconKey: 'webmail',
+  },
+  {
+    key: 'gmail',
+    label: 'Gmail',
+    description: 'Caixa de entrada do Gmail',
+    url: 'https://mail.google.com/mail/u/0/#inbox',
+    iconKey: 'gmail',
+  },
+  {
+    key: 'workspace',
+    label: 'Google Workspace',
+    description: 'Drive, Docs, Planilhas e Agenda',
+    url: 'https://drive.google.com/drive/',
+    iconKey: 'workspace',
+  },
+];
