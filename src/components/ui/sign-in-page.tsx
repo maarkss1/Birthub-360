@@ -81,7 +81,10 @@ export function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
             <div>
-              <label htmlFor="sign-in-email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="sign-in-email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address
               </label>
               <input
@@ -98,7 +101,10 @@ export function LoginPage() {
 
             {/* Password */}
             <div>
-              <label htmlFor="sign-in-password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="sign-in-password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -139,7 +145,10 @@ export function LoginPage() {
                 />
                 <span>Remember me</span>
               </label>
-              <button type="button" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <button
+                type="button"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
                 Forgot password?
               </button>
             </div>
