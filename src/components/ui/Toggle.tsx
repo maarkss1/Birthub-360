@@ -73,7 +73,13 @@ export function Toggle({
           transition={
             shouldReduceMotion
               ? { duration: 0.1 }
-              : { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 }
+              : // `scale` anima em 3 keyframes (pulso de entrada/saída) — spring/inertia só suportam
+                // 2 keyframes (motion.dev/troubleshooting/spring-two-frames), por isso fica em `tween`
+                // separado do `x`, que continua com a mola original.
+                {
+                  x: { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 },
+                  scale: { type: 'tween', duration: 0.2 },
+                }
           }
         />
       </button>
