@@ -1,4 +1,5 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import {
   Loader2,
   AlertCircle,
@@ -13,6 +14,7 @@ import {
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useAuth } from '../../../contexts/AuthContext';
 import { useBrand, BRAND_CONFIGS, type Brand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
@@ -21,14 +23,6 @@ import { isAuthorizedLoginEmail, getBrandFromEmail } from '../../../config/acces
 import { Logo } from '../../../components/Logo';
 import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
 import { fadeInUp, staggerContainer, staggerItem, useTilt, useMagnetic } from '../../../lib/motion';
-
-// Chunk de ~900kB (@react-three/fiber/three) — importado à parte para não pesar a página de
-// login, a primeira coisa que qualquer usuário (nem autenticado ainda) carrega. Mesmo cuidado do
-// OnboardingTour (ver comentário em App.tsx sobre esse mesmo chunk), aqui via Suspense em vez de
-// um import direto no topo do arquivo.
-const AtlasOrb = lazy(() =>
-  import('../../../components/ui/AtlasOrb').then((m) => ({ default: m.AtlasOrb })),
-);
 
 const BRAND_ORDER: Brand[] = ['atlasgr', 'totaltrac'];
 
@@ -44,6 +38,10 @@ const FEATURES = [
 ] as const;
 
 export function LoginScreen() {
+  // Esta tela agora é a porta de entrada do produto (rota "/", além de "/login" — ver App.tsx):
+  // um usuário já autenticado que cai aqui (aba antiga, link direto) vai direto pro destino real,
+  // em vez de ver o formulário de novo.
+  const { currentUser, isPending } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +69,7 @@ export function LoginScreen() {
   const submitMagnetic = useMagnetic(0.25);
 
   // Relógio e calendário ao vivo do painel do formulário: reforçam a sensação de central
-  // operando agora, na cor da marca ativa no momento (mesmo princípio do AtlasOrb ao lado).
+  // operando agora, na cor da marca ativa no momento.
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
@@ -80,21 +78,6 @@ export function LoginScreen() {
   const weekday = format(now, 'EEEE', { locale: ptBR });
   const dateLabel = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}, ${format(now, "dd 'de' MMMM", { locale: ptBR })}`;
   const timeLabel = format(now, 'HH:mm:ss');
-
-  // O import do AtlasOrb (three.js, ~236KB gzip mesmo lazy — ver DOCUMENTED_LARGE_CHUNKS em
-  // scripts/ci/check-bundle-budget.mjs) só dispara depois que o navegador fica ocioso, para não
-  // competir por banda/CPU com o formulário no carregamento crítico da tela de login.
-  const [showOrb, setShowOrb] = useState(false);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const ric = window.requestIdleCallback;
-    if (ric) {
-      const id = ric(() => setShowOrb(true), { timeout: 1500 });
-      return () => window.cancelIdleCallback?.(id);
-    }
-    const id = window.setTimeout(() => setShowOrb(true), 400);
-    return () => window.clearTimeout(id);
-  }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,6 +160,18 @@ export function LoginScreen() {
     setActiveBrand(getBrandFromEmail(value));
   };
 
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <Loader2 className="animate-spin text-brand w-8 h-8" aria-hidden="true" />
+      </div>
+    );
+  }
+
+  if (currentUser) {
+    return <Navigate to="/app" replace />;
+  }
+
   return (
     <main className="min-h-screen bg-bg text-ink flex font-sans transition-colors">
       {/* Painel de marca — visível a partir de lg, cor sólida da marca ativa (tokens --brand/
@@ -231,13 +226,16 @@ export function LoginScreen() {
             A central de prospecção e inteligência comercial da {brandInfo.name}.
           </motion.p>
 
+          {/* Ícone em badge circular — mesmo padrão dos "círculos" do Hub Executivo
+              (DestinationCard em src/features/hub/components/HubScreen.tsx), para que a primeira
+              tela do produto já fale a mesma língua visual do Hub que vem logo depois do login. */}
           <ul className="mt-10 space-y-4">
             {FEATURES.map(({ icon: Icon, text }) => (
               <motion.li key={text} variants={staggerItem} className="flex items-start gap-3">
-                <span className="mt-0.5 grid place-items-center w-8 h-8 rounded-lg bg-white/15 shrink-0">
+                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/25 bg-white/10">
                   <Icon className="w-4 h-4 text-white" />
                 </span>
-                <span className="text-sm text-white/90 leading-snug pt-1.5">{text}</span>
+                <span className="text-sm text-white/90 leading-snug pt-2">{text}</span>
               </motion.li>
             ))}
           </ul>
@@ -249,18 +247,18 @@ export function LoginScreen() {
           tipografia (títulos, rótulos e links usam var(--brand) via useBrandAccent), então a
           identidade visual continua explícita mesmo neste lado "neutro" da tela. */}
       <div className="flex-1 min-w-0 relative overflow-hidden flex items-center justify-center p-4 sm:p-8">
-        {/* Elemento 3D decorativo (esfera distorcida + partículas, cor da marca ativa) — puramente
-            ambiental, por isso pointer-events-none e escondido em telas pequenas. */}
-        {showOrb && (
-          <div
-            className="pointer-events-none absolute -top-8 -right-6 hidden sm:block opacity-80"
-            aria-hidden="true"
-          >
-            <Suspense fallback={null}>
-              <AtlasOrb size={150} />
-            </Suspense>
-          </div>
-        )}
+        {/* Glow de canto — mesmo tratamento do card "Central Comercial" do Hub Executivo (ver
+            HubScreen.tsx), substituindo a esfera 3D (AtlasOrb/@react-three/fiber) que ocupava este
+            canto antes. Troca deliberada, não corte por "achar desnecessário" (ver CLAUDE.md seção
+            9): esta tela virou a porta de entrada do produto (rota "/", maior tráfego de qualquer
+            tela), e o objetivo agora é ela puxar a mesma linguagem visual do Hub que vem em
+            seguida — círculos e glow suave, sem 3D — em vez de reintroduzir uma direção visual
+            diferente logo na primeira tela. Também remove ~236KB gzip do chunk three.js do
+            carregamento crítico desta rota (ver performance/SKILL.md).*/}
+        <div
+          className="pointer-events-none absolute -right-16 -top-20 hidden h-72 w-72 rounded-full bg-brand/10 blur-[90px] sm:block"
+          aria-hidden="true"
+        />
 
         <motion.div
           initial="hidden"
