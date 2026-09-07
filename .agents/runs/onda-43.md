@@ -55,4 +55,29 @@ Não executados nesta onda (código ainda dormente, não exercitado por rota rea
 `test:integration`, `test:e2e`, `build`. Registrado como pendência explícita no handoff, não como
 sucesso assumido.
 
-Branch: `agente/13-celula-comercial` (a partir de `main`). Sem merge, sem deploy.
+Branch: `agente/13-celula-comercial` (a partir de `main`).
+
+## Continuação (mesma onda, mesmo dia) — merge, prompts, wiring real e UI
+Aprovação direta do usuário para: (1) mesclar a instalação, (2) ligar os agentes bloqueados a dados
+reais, (3) decidir freeze de Coordenador/Gerente/Diretoria, (4) refinar prompts de BDR/SDR/Closer,
+(5) seção "Equipe IA Comercial" no Hub. Detalhe completo na seção "Resolução" de
+`.agents/handoffs/onda-43/13-para-00-instalacao-celula-comercial.md`. Resumo:
+
+- Merge feito em `main` (local) + push para `origin/main` (autorização explícita do usuário,
+  ciente de que o branch protection do repositório foi contornado — "Bypassed rule violations").
+- Prompts de BDR/SDR/Closer refinados (aditivo, nada removido do template tunado).
+- Descoberto o padrão real de composição cross-feature deste repositório: container de DI
+  compartilhado (`src/shared/di/container.ts`), não import direto nem HTTP self-call. Aplicado para
+  ligar `revenue-intelligence` e `churn-retention` a dado real (`CommercialIntelligenceAiService` e
+  `ChurnPredictionService`, ambos registrados em `src/shared/di/setup.ts`). `contract-signature`
+  continua dormente — falta um método de leitura em `PrismaSignatureRequestRepository`, fora do meu
+  escopo (Agente 17); handoff aberto.
+- Coordenador/Gerente/Diretoria: decisão conservadora — visíveis no catálogo do Hub, sem nenhum
+  botão de execução real (sem custo de IA novo, sem furar freeze de fato).
+- UI: painel "Equipe IA Comercial" adicionado ao Hub Executivo (`src/features/hub/`, não
+  `intelligence/`, pelo mesmo motivo de fronteira de arquitetura). Não verificado visualmente em
+  navegador (sem credencial de teste à mão nesta sessão) — pendência registrada, não sucesso
+  assumido.
+- Gate após tudo: `tsc --noEmit`, `biome lint`, `test:architecture` (0 violação nova),
+  `vitest intelligence/agents/__tests__/` (73 testes, 0 falha). `test:integration`/`test:e2e`/
+  `build` e verificação visual não executados.
