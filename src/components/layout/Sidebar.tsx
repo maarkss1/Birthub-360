@@ -113,7 +113,7 @@ export function Sidebar({
           },
         ]
       : []),
-    { title: 'Captar', items: ['prospect'] },
+    { title: 'Captar', items: ['prospect', 'market-intelligence'] },
     {
       title: 'Qualificar',
       items: [

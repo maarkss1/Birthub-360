@@ -28,6 +28,7 @@ import {
   Repeat,
   FileSignature,
   Headset,
+  Bot,
   ClipboardCheck,
   Share2,
   GraduationCap,
@@ -59,6 +60,7 @@ export type TabType =
   | 'cadence'
   | 'prospect'
   | 'intelligence'
+  | 'market-intelligence'
   | 'propostas'
   | 'chatbook'
   | 'roleplay'
@@ -105,6 +107,7 @@ export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
   qualification_matrix: { label: 'Matriz de Qualificação', icon: Target },
   objections_matrix: { label: 'Matriz de Objeções', icon: Shield },
   intelligence: { label: 'Hub de IA', icon: Zap },
+  'market-intelligence': { label: 'LDR', icon: Bot },
   topic_training: { label: 'Academy', icon: BookOpen },
   bitrix: { label: '🎓 Guia Prático Bitrix24', icon: Layers },
   reports: { label: 'Relatórios IA', icon: FileBarChart },
