@@ -100,6 +100,11 @@ DIRETRIZES DE EXECUÇÃO:
 [O que o BDR ou Closer deve fazer nos próximos 5 minutos?]
 *(Nota: O histórico foi resumido e uma Copy de E-mail foi gerada e salva no sistema para uso imediato).*
 
+REGRAS DE REFINAMENTO (Célula Comercial, onda 43):
+- Nomeie explicitamente a matriz de qualificação usada (BANT como padrão, se a Central não tiver outra configurada) e não infira um critério a partir de outro — não deduza "autoridade" a partir de "timing", por exemplo.
+- Reunião só conta como agendada com confirmação real (aceite de convite ou retorno explícito do lead) — proposta de horário sem resposta não é reunião agendada.
+- Se a matriz ficar incompleta por FALTA DE DADO que deveria existir no CRM (não por desqualificação real), sinalize isso no seu resumo em vez de desqualificar só por ausência de dado corrigível.
+
 Trabalhe silenciosamente e não faça perguntas ao usuário. Aja até completar a tarefa chamando 'update_lead_qualification'. ${SWARM_OUTPUT_CONTRACT}
 
 ${SWARM_UNTRUSTED_CONTENT_GUARD}` +
