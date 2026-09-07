@@ -62,29 +62,36 @@ export interface ExternalLinkEntry {
   label: string;
   description: string;
   url: string;
-  iconKey: 'connect' | 'newConnect' | 'securitario' | 'bitrix24' | 'webmail';
+  iconKey:
+    | 'connect'
+    | 'newConnect'
+    | 'securitario'
+    | 'bitrix24'
+    | 'webmail'
+    | 'gmail'
+    | 'workspace';
 }
 
 export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
   {
     key: 'connect',
     label: 'Connect Atlas',
-    description: 'Portal Atlas (login)',
-    url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Login.php',
+    description: 'Portal Atlas — página principal',
+    url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php',
     iconKey: 'connect',
   },
   {
     key: 'new-connect',
     label: 'New Connect',
-    description: 'Novo portal Atlas',
-    url: 'https://newconnect.atlasgr.com.br/login',
+    description: 'Novo portal Atlas — dashboard',
+    url: 'https://newconnect.atlasgr.com.br/dashboard',
     iconKey: 'newConnect',
   },
   {
     key: 'perfil-securitario',
     label: 'Perfil Securitário',
-    description: 'Consulta de perfil securitário',
-    url: 'https://perfil-securitario.atlasgr.com.br/',
+    description: 'Registros recentes de perfil securitário',
+    url: 'https://perfil-securitario.atlasgr.com.br/report/recentRecords',
     iconKey: 'securitario',
   },
   {
@@ -97,8 +104,22 @@ export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
   {
     key: 'webmail',
     label: 'Webmail',
-    description: 'E-mail corporativo',
+    description: 'E-mail corporativo (@atlasgr.com.br)',
     url: 'https://webmail.atlasgr.com.br/?_task=mail&_mbox=INBOX',
     iconKey: 'webmail',
+  },
+  {
+    key: 'gmail',
+    label: 'Gmail',
+    description: 'Caixa de entrada do Gmail',
+    url: 'https://mail.google.com/mail/u/0/#inbox',
+    iconKey: 'gmail',
+  },
+  {
+    key: 'workspace',
+    label: 'Google Workspace',
+    description: 'Drive, Docs, Planilhas e Agenda',
+    url: 'https://drive.google.com/drive/',
+    iconKey: 'workspace',
   },
 ];
