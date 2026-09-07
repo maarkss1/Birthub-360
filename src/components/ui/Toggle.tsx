@@ -73,12 +73,13 @@ export function Toggle({
           transition={
             shouldReduceMotion
               ? { duration: 0.1 }
-              : // `scale` anima em 3 keyframes (pulso de entrada/saída) — spring/inertia só suportam
-                // 2 keyframes (motion.dev/troubleshooting/spring-two-frames), por isso fica em `tween`
-                // separado do `x`, que continua com a mola original.
-                {
+              : {
+                  // `scale` anima em 3 keyframes (squish de ida e volta) — spring/inertia do
+                  // Framer Motion só suporta exatamente 2 keyframes (lança em runtime com 3+,
+                  // reproduzido via testes reais, não teórico). `x` (2 keyframes) continua com a
+                  // mola; `scale` usa easing por tempo, que suporta múltiplos keyframes.
                   x: { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 },
-                  scale: { type: 'tween', duration: 0.2 },
+                  scale: { duration: 0.25, ease: 'easeOut' },
                 }
           }
         />
