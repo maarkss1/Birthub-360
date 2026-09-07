@@ -267,15 +267,15 @@ export function CommandPalette() {
     ];
     result.push(...quickActions.filter((a) => !q || normalize(a.label).includes(q)));
 
-    const moduleItems: ResultItem[] = MODULE_ORDER
-      .filter((tab) => !q || normalize(TAB_META[tab].label).includes(q))
-      .map((tab) => ({
-        id: `mod-${tab}`,
-        group: 'Navegar',
-        label: TAB_META[tab].label,
-        icon: TAB_META[tab].icon,
-        onSelect: () => navigateAndClose(tab),
-      }));
+    const moduleItems: ResultItem[] = MODULE_ORDER.filter(
+      (tab) => !q || normalize(TAB_META[tab].label).includes(q),
+    ).map((tab) => ({
+      id: `mod-${tab}`,
+      group: 'Navegar',
+      label: TAB_META[tab].label,
+      icon: TAB_META[tab].icon,
+      onSelect: () => navigateAndClose(tab),
+    }));
     result.push(...(q ? moduleItems : moduleItems.slice(0, 8)));
 
     if (q.length >= 2) {

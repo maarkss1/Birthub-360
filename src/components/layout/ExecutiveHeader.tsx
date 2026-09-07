@@ -64,7 +64,9 @@ export function ExecutiveHeader({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 bg-soft/30 px-3 py-1.5 rounded-xl border border-line">
         <div className="flex items-center gap-2 text-[11px] font-semibold text-ink-2">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-          <span className="hidden sm:inline">Acervo Executivo — acesso concedido individualmente</span>
+          <span className="hidden sm:inline">
+            Acervo Executivo — acesso concedido individualmente
+          </span>
         </div>
 
         {/* Executive Switcher Pills */}

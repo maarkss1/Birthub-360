@@ -23,7 +23,9 @@ export interface ModuleAccessMatrixUser {
  * `moduleKey` que ele já tem concedido. A tela de admin (ModuleAccessAdmin.tsx) monta os toggles
  * a partir disto + MODULE_CATALOG (que define as colunas).
  */
-export async function getModuleAccessMatrix(organizationId: string): Promise<ModuleAccessMatrixUser[]> {
+export async function getModuleAccessMatrix(
+  organizationId: string,
+): Promise<ModuleAccessMatrixUser[]> {
   const [users, grants] = await Promise.all([
     prisma.user.findMany({
       where: { organizationId },
@@ -69,9 +71,7 @@ export async function grantModuleAccess(input: {
   grantedByUserId: string;
 }): Promise<void> {
   if (!isModuleKey(input.moduleKey)) {
-    throw new ModuleAccessServiceError(
-      `Módulo inválido. Use um de: ${MODULE_KEYS.join(', ')}.`,
-    );
+    throw new ModuleAccessServiceError(`Módulo inválido. Use um de: ${MODULE_KEYS.join(', ')}.`);
   }
 
   const target = await prisma.user.findFirst({

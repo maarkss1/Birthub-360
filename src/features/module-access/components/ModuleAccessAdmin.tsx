@@ -153,8 +153,7 @@ export function ModuleAccessAdmin() {
                         return (
                           <td key={mod.key} className="px-4 py-3 text-center">
                             <label htmlFor={inputId} className="sr-only">
-                              {granted ? 'Revogar' : 'Conceder'} acesso de {user.name} a{' '}
-                              {mod.label}
+                              {granted ? 'Revogar' : 'Conceder'} acesso de {user.name} a {mod.label}
                             </label>
                             <div className="flex items-center justify-center">
                               {pendingCell === cellId ? (
