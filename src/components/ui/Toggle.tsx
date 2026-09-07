@@ -73,7 +73,14 @@ export function Toggle({
           transition={
             shouldReduceMotion
               ? { duration: 0.1 }
-              : { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 }
+              : {
+                  // `scale` anima em 3 keyframes (squish de ida e volta) — spring/inertia do
+                  // Framer Motion só suporta exatamente 2 keyframes (lança em runtime com 3+,
+                  // reproduzido via testes reais, não teórico). `x` (2 keyframes) continua com a
+                  // mola; `scale` usa easing por tempo, que suporta múltiplos keyframes.
+                  x: { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 },
+                  scale: { duration: 0.25, ease: 'easeOut' },
+                }
           }
         />
       </button>
