@@ -8,10 +8,14 @@ import {
   Building2,
   ListChecks,
   Sparkles,
+  LayoutGrid,
   Clock,
   CalendarDays,
+  Sun,
+  Moon,
+  type LucideIcon,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -22,12 +26,13 @@ import { authClient } from '../../../lib/auth-client';
 import { isAuthorizedLoginEmail, getBrandFromEmail } from '../../../config/access-policy';
 import { Logo } from '../../../components/Logo';
 import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
-import { fadeInUp, staggerContainer, staggerItem, useTilt, useMagnetic } from '../../../lib/motion';
+import { SoundFX } from '../../../lib/soundEffects';
+import { fadeInUp, SPRING_SOFT, EASE_PREMIUM, useMagnetic } from '../../../lib/motion';
 
 const BRAND_ORDER: Brand[] = ['atlasgr', 'totaltrac'];
 
-// Prova de valor real ao lado do formulário (não é marketing genérico): reflete os grupos de
-// jornada reais da Sidebar (src/components/layout/Sidebar.tsx) — Captar, Fechar, IA & Capacitação.
+// Prova de valor real (não é marketing genérico): reflete os grupos de jornada reais da Sidebar
+// (src/components/layout/Sidebar.tsx) — Captar, Fechar, IA & Capacitação.
 const FEATURES = [
   {
     icon: Building2,
@@ -36,6 +41,90 @@ const FEATURES = [
   { icon: ListChecks, text: 'Pipeline comercial com automações, propostas e Bitrix24' },
   { icon: Sparkles, text: 'Dojo de Vendas: treino comercial com IA e capacitação contínua' },
 ] as const;
+
+// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam FEATURES acima; o 4º
+// (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar (src/components/layout/
+// Sidebar.tsx), literalmente o destino pra onde os três primeiros "círculos" se conectam.
+const CONNECT_ICONS: readonly LucideIcon[] = [Building2, ListChecks, Sparkles, LayoutGrid];
+
+interface ConnectingCirclesProps {
+  reduceMotion: boolean;
+}
+
+// Abertura da tela de entrada do produto: os mesmos "círculos" do Hub Executivo (badges
+// circulares, ver DestinationCard em src/features/hub/components/HubScreen.tsx) se conectando —
+// pedido explícito do usuário. Não é decoração gratuita (regra #6 da constituição): comunica
+// literalmente que este login é a porta de entrada para os destinos do Hub, terminando no mesmo
+// ícone (LayoutGrid) usado no atalho real do Hub na Sidebar. Toca uma vez na montagem (sem
+// repeat), e com prefers-reduced-motion a versão final já nasce montada, sem desenhar as linhas.
+function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
+  const nodeCount = CONNECT_ICONS.length;
+  const spacing = 96;
+  const radius = 22;
+  const width = spacing * (nodeCount - 1) + radius * 2 + 8;
+  const height = radius * 2 + 8;
+  const cy = height / 2;
+  const cx = (index: number) => radius + 4 + index * spacing;
+
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      width={width}
+      height={height}
+      className="mx-auto h-auto w-full max-w-sm"
+      aria-hidden="true"
+    >
+      {CONNECT_ICONS.slice(0, -1).map((_, index) => (
+        <motion.line
+          key={`line-${cx(index)}-${cx(index + 1)}`}
+          x1={cx(index)}
+          y1={cy}
+          x2={cx(index + 1)}
+          y2={cy}
+          style={{ stroke: 'var(--brand)' }}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeOpacity={0.35}
+          initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 0.35 }}
+          transition={{ duration: 0.5, ease: EASE_PREMIUM, delay: 0.25 + index * 0.28 }}
+        />
+      ))}
+      {CONNECT_ICONS.map((Icon, index) => {
+        const isHub = index === nodeCount - 1;
+        return (
+          <motion.g
+            key={`node-${cx(index)}`}
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.4 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...SPRING_SOFT, delay: index * 0.28 }}
+            style={{ transformOrigin: `${cx(index)}px ${cy}px` }}
+          >
+            <circle
+              cx={cx(index)}
+              cy={cy}
+              r={radius}
+              style={{
+                fill: isHub ? 'var(--brand)' : 'var(--surface)',
+                stroke: isHub ? 'var(--brand)' : 'var(--line)',
+              }}
+              strokeWidth={1.5}
+            />
+            <foreignObject x={cx(index) - 9} y={cy - 9} width={18} height={18}>
+              <div className="flex h-full w-full items-center justify-center">
+                <Icon
+                  className={
+                    isHub ? 'h-[18px] w-[18px] text-white' : 'h-[18px] w-[18px] text-brand'
+                  }
+                />
+              </div>
+            </foreignObject>
+          </motion.g>
+        );
+      })}
+    </svg>
+  );
+}
 
 export function LoginScreen() {
   // Esta tela agora é a porta de entrada do produto (rota "/", além de "/login" — ver App.tsx):
@@ -59,13 +148,12 @@ export function LoginScreen() {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
   const { activeBrand, setActiveBrand, brandInfo } = useBrand();
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const brandAccent = useBrandAccent();
+  const shouldReduceMotion = useReducedMotion();
 
-  // Inclinação 3D sutil do cartão de login seguindo o cursor, e puxão magnético do botão
-  // principal — mesmos hooks premium já usados em outras peças "hero" da plataforma
-  // (src/lib/motion.ts), ambos desligados automaticamente por prefers-reduced-motion.
-  const cardTilt = useTilt(6);
+  // Puxão magnético do botão principal — mesmo hook premium já usado em outras peças "hero" da
+  // plataforma (src/lib/motion.ts), desligado automaticamente por prefers-reduced-motion.
   const submitMagnetic = useMagnetic(0.25);
 
   // Relógio e calendário ao vivo do painel do formulário: reforçam a sensação de central
@@ -173,198 +261,214 @@ export function LoginScreen() {
   }
 
   return (
-    <main className="min-h-screen bg-bg text-ink flex font-sans transition-colors">
-      {/* Painel de marca — visível a partir de lg, cor sólida da marca ativa (tokens --brand/
-          --brand-2, reativos à troca via BrandContext) com prova de valor real do produto em vez de
-          um hero centralizado genérico (regra visual #2). Substitui o antigo padrão de duas logos
-          coexistindo com peso igual: o toggle no painel do formulário cumpre o mesmo papel (marca
-          escolhida explicitamente, peso igual entre as duas opções) antes do e-mail confirmar. */}
-      <div
-        aria-hidden="true"
-        className="hidden lg:flex lg:w-[44%] relative overflow-hidden items-center justify-center px-14 py-16 transition-colors duration-500"
-        style={{
-          background:
-            'linear-gradient(150deg, rgba(0,0,0,0.32), rgba(0,0,0,0.04)), linear-gradient(150deg, var(--brand), var(--brand-2))',
-        }}
-      >
-        <div className="pointer-events-none absolute -top-32 -left-24 w-[26rem] h-[26rem] rounded-full bg-white/15 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 -right-16 w-[30rem] h-[30rem] rounded-full bg-black/20 blur-3xl" />
-        <svg
-          className="pointer-events-none absolute inset-0 w-full h-full opacity-[0.08]"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern id="login-dot-grid" width="28" height="28" patternUnits="userSpaceOnUse">
-              <circle cx="2" cy="2" r="1.6" fill="white" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#login-dot-grid)" />
-        </svg>
-
-        <motion.div
-          key={activeBrand}
-          initial="hidden"
-          animate="show"
-          variants={staggerContainer(0.08)}
-          className="relative z-10 w-full max-w-sm"
-        >
-          <motion.div variants={staggerItem}>
-            {activeBrand === 'atlasgr' ? (
-              <Logo variant="white" className="h-10 w-auto" />
-            ) : (
-              <TotalTrackLogo tone="negative" className="h-10 w-auto" />
-            )}
-          </motion.div>
-
-          <motion.h2
-            variants={staggerItem}
-            className="mt-10 text-3xl font-black leading-tight text-white text-balance"
+    <div className="min-h-screen bg-bg">
+      {/* Cabeçalho — mesmo padrão do Hub Executivo (HubScreen.tsx): logo da marca ativa +
+          alternador de tema, para que a primeira tela do produto já seja visualmente contínua com
+          a tela que vem logo depois do login. */}
+      <header className="border-b border-line bg-surface/60 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+          {activeBrand === 'atlasgr' ? (
+            <Logo className="h-7 text-ink" />
+          ) : (
+            <TotalTrackLogo className="h-7 text-ink" />
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('focus');
+              toggleTheme();
+            }}
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-line hover:bg-surface-2 hover:text-ink active:translate-y-0"
+            aria-label="Alternar tema"
+            title={`Mudar para modo ${theme === 'dark' ? 'claro' : 'escuro'}`}
           >
-            {brandInfo.slogan}
-          </motion.h2>
-          <motion.p variants={staggerItem} className="mt-3 text-sm text-white/80">
-            A central de prospecção e inteligência comercial da {brandInfo.name}.
-          </motion.p>
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+        </div>
+      </header>
 
-          {/* Ícone em badge circular — mesmo padrão dos "círculos" do Hub Executivo
-              (DestinationCard em src/features/hub/components/HubScreen.tsx), para que a primeira
-              tela do produto já fale a mesma língua visual do Hub que vem logo depois do login. */}
-          <ul className="mt-10 space-y-4">
-            {FEATURES.map(({ icon: Icon, text }) => (
-              <motion.li key={text} variants={staggerItem} className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/25 bg-white/10">
-                  <Icon className="w-4 h-4 text-white" />
-                </span>
-                <span className="text-sm text-white/90 leading-snug pt-2">{text}</span>
-              </motion.li>
-            ))}
-          </ul>
-        </motion.div>
-      </div>
-
-      {/* Painel do formulário — fundo claro (bg-surface): ao contrário do painel de marca acima,
-          que comunica a marca ativa pela cor de fundo, aqui quem carrega a cor da marca é a
-          tipografia (títulos, rótulos e links usam var(--brand) via useBrandAccent), então a
-          identidade visual continua explícita mesmo neste lado "neutro" da tela. */}
-      <div className="flex-1 min-w-0 relative overflow-hidden flex items-center justify-center p-4 sm:p-8">
+      <main className="relative mx-auto max-w-6xl overflow-hidden px-6 py-10 md:py-16">
         {/* Glow de canto — mesmo tratamento do card "Central Comercial" do Hub Executivo (ver
             HubScreen.tsx), substituindo a esfera 3D (AtlasOrb/@react-three/fiber) que ocupava este
-            canto antes. Troca deliberada, não corte por "achar desnecessário" (ver CLAUDE.md seção
-            9): esta tela virou a porta de entrada do produto (rota "/", maior tráfego de qualquer
-            tela), e o objetivo agora é ela puxar a mesma linguagem visual do Hub que vem em
-            seguida — círculos e glow suave, sem 3D — em vez de reintroduzir uma direção visual
-            diferente logo na primeira tela. Também remove ~236KB gzip do chunk three.js do
-            carregamento crítico desta rota (ver performance/SKILL.md).*/}
+            espaço antes. Troca deliberada, não corte por "achar desnecessário" (ver CLAUDE.md
+            seção 9): esta tela virou a porta de entrada do produto (rota "/", maior tráfego de
+            qualquer tela), e o objetivo agora é ela puxar a mesma linguagem visual do Hub que vem
+            em seguida — círculos e glow suave, sem 3D. Também remove ~236KB gzip do chunk
+            three.js do carregamento crítico desta rota (ver performance/SKILL.md). */}
         <div
           className="pointer-events-none absolute -right-16 -top-20 hidden h-72 w-72 rounded-full bg-brand/10 blur-[90px] sm:block"
           aria-hidden="true"
         />
 
-        <motion.div
-          initial="hidden"
-          animate="show"
-          variants={fadeInUp}
-          className="w-full min-w-0 max-w-sm relative z-10"
-        >
-          {/* Relógio e calendário ao vivo — mesma cor da marca ativa */}
+        <div className="relative z-10 mx-auto flex max-w-md flex-col items-center text-center">
+          <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
+
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.4 }}
-            className={`mb-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-bold ${brandAccent.text}`}
+            initial={shouldReduceMotion ? false : 'hidden'}
+            animate="show"
+            variants={fadeInUp}
+            className="mt-4 w-full"
           >
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays size={15} strokeWidth={2.5} aria-hidden="true" />
-              {dateLabel}
-            </span>
-            <span className="h-1 w-1 rounded-full bg-current opacity-40" aria-hidden="true" />
-            <span className="inline-flex items-center gap-1.5 tabular-nums" aria-live="off">
-              <Clock size={15} strokeWidth={2.5} aria-hidden="true" />
-              {timeLabel}
-            </span>
-          </motion.div>
-
-          {/* Chave Atlas / Total Trac — escolha explícita da marca, peso visual igual entre as duas
-              (mesmo objetivo do antigo par de logos lado a lado), sincronizada com handleEmailChange. */}
-          <div className="flex justify-center mb-8">
-            <div className="relative flex p-1 rounded-full bg-surface-2 border border-line">
-              <div
-                aria-hidden="true"
-                className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-gradient-to-r from-brand to-brand-2 transition-transform duration-300 ease-out"
-                style={{
-                  transform:
-                    activeBrand === 'atlasgr' ? 'translateX(0%)' : 'translateX(calc(100% + 8px))',
-                }}
-              />
-              {BRAND_ORDER.map((brand) => (
-                <button
-                  key={brand}
-                  type="button"
-                  onClick={() => setActiveBrand(brand)}
-                  aria-pressed={activeBrand === brand}
-                  className={`relative z-10 flex w-28 items-center justify-center gap-1.5 py-2.5 text-sm font-bold rounded-full transition-colors cursor-pointer ${
-                    activeBrand === brand ? 'text-white' : `text-ink-2 hover:${brandAccent.text}`
-                  }`}
-                >
-                  {brand === 'atlasgr' ? (
-                    <span
-                      className={`grid h-4 w-4 shrink-0 place-items-center rounded-full ${activeBrand === brand ? 'bg-white' : ''}`}
-                    >
-                      <Logo variant="symbol" className="h-3.5 w-3.5" />
-                    </span>
-                  ) : (
-                    <TotalTrackLogo
-                      variant="symbol"
-                      tone={activeBrand === brand ? 'negative' : 'positive'}
-                      className="h-4 w-4 shrink-0"
-                    />
-                  )}
-                  {BRAND_CONFIGS[brand].name}
-                </button>
-              ))}
+            {/* Relógio e calendário ao vivo — mesma cor da marca ativa */}
+            <div
+              className={`mb-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-bold ${brandAccent.text}`}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <CalendarDays size={15} strokeWidth={2.5} aria-hidden="true" />
+                {dateLabel}
+              </span>
+              <span className="h-1 w-1 rounded-full bg-current opacity-40" aria-hidden="true" />
+              <span className="inline-flex items-center gap-1.5 tabular-nums" aria-live="off">
+                <Clock size={15} strokeWidth={2.5} aria-hidden="true" />
+                {timeLabel}
+              </span>
             </div>
-          </div>
 
-          {/* Cabeçalho compacto — no desktop o painel de marca já mostra a logo grande */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="mb-5 lg:hidden">
-              {activeBrand === 'atlasgr' ? (
-                <Logo variant={theme === 'dark' ? 'white' : 'default'} className="h-8 w-auto" />
-              ) : (
-                <TotalTrackLogo className="h-8 w-auto" />
-              )}
+            {/* Chave Atlas / Total Trac — escolha explícita da marca, peso visual igual entre as
+                duas, sincronizada com handleEmailChange. */}
+            <div className="flex justify-center mb-6">
+              <div className="relative flex p-1 rounded-full bg-surface-2 border border-line">
+                <div
+                  aria-hidden="true"
+                  className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-gradient-to-r from-brand to-brand-2 transition-transform duration-300 ease-out"
+                  style={{
+                    transform:
+                      activeBrand === 'atlasgr' ? 'translateX(0%)' : 'translateX(calc(100% + 8px))',
+                  }}
+                />
+                {BRAND_ORDER.map((brand) => (
+                  <button
+                    key={brand}
+                    type="button"
+                    onClick={() => setActiveBrand(brand)}
+                    aria-pressed={activeBrand === brand}
+                    className={`relative z-10 flex w-28 items-center justify-center gap-1.5 py-2.5 text-sm font-bold rounded-full transition-colors cursor-pointer ${
+                      activeBrand === brand ? 'text-white' : `text-ink-2 hover:${brandAccent.text}`
+                    }`}
+                  >
+                    {brand === 'atlasgr' ? (
+                      <span
+                        className={`grid h-4 w-4 shrink-0 place-items-center rounded-full ${activeBrand === brand ? 'bg-white' : ''}`}
+                      >
+                        <Logo variant="symbol" className="h-3.5 w-3.5" />
+                      </span>
+                    ) : (
+                      <TotalTrackLogo
+                        variant="symbol"
+                        tone={activeBrand === brand ? 'negative' : 'positive'}
+                        className="h-4 w-4 shrink-0"
+                      />
+                    )}
+                    {BRAND_CONFIGS[brand].name}
+                  </button>
+                ))}
+              </div>
             </div>
+
             <h1 className={`text-3xl font-black text-center ${brandAccent.text}`}>Bem-vindo</h1>
-          </div>
+            <p className="mt-2 text-sm text-ink-2">
+              {brandInfo.slogan} — a central de prospecção e inteligência comercial da{' '}
+              {brandInfo.name}.
+            </p>
 
-          <motion.div
-            ref={cardTilt.ref as React.RefObject<HTMLDivElement>}
-            onPointerMove={cardTilt.onPointerMove}
-            onPointerLeave={cardTilt.onPointerLeave}
-            style={cardTilt.style}
-            className={`w-full p-6 sm:p-7 rounded-[var(--radius-card-lg)] border border-line bg-surface shadow-card transition-shadow duration-300 ${brandAccent.glow}`}
-          >
-            {isForgotPassword ? (
-              <>
-                {forgotPasswordSent ? (
-                  <div className="space-y-5 text-center">
-                    <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
-                      <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
-                      <p>
-                        Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail
-                        com um link para redefinir a senha. O link expira em 1 hora.
-                      </p>
+            <div
+              className={`mt-8 w-full p-6 sm:p-7 rounded-card-lg border border-brand/25 bg-surface text-left shadow-card transition-shadow duration-300 ${brandAccent.glow}`}
+            >
+              {isForgotPassword ? (
+                <>
+                  {forgotPasswordSent ? (
+                    <div className="space-y-5 text-center">
+                      <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
+                        <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
+                        <p>
+                          Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail
+                          com um link para redefinir a senha. O link expira em 1 hora.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={backToSignIn}
+                        className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                      >
+                        Voltar para o login
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={backToSignIn}
-                      className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                    >
-                      Voltar para o login
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                  ) : (
+                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                      {error && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
+                        >
+                          <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                          <p>{error}</p>
+                        </motion.div>
+                      )}
+
+                      <p className="text-ink-2 text-sm">
+                        Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um
+                        link para redefinir a senha.
+                      </p>
+
+                      <div>
+                        <label
+                          htmlFor="login-forgot-email"
+                          className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
+                        >
+                          E-mail:
+                        </label>
+                        <input
+                          id="login-forgot-email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => handleEmailChange(e.target.value)}
+                          className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                          required
+                          /* campo revelado por ação do usuário ("Esqueci minha senha"), não focus
+                           automático de carregamento de página; foca o único campo do
+                           sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
+                           WAI-ARIA Authoring Practices. */
+                          // eslint-disable-next-line jsx-a11y/no-autofocus
+                          autoFocus
+                        />
+                      </div>
+
+                      <motion.button
+                        ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
+                        type="submit"
+                        disabled={isSubmitting || !email}
+                        onPointerMove={submitMagnetic.onPointerMove}
+                        onPointerLeave={submitMagnetic.onPointerLeave}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        style={submitMagnetic.style}
+                        className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {isSubmitting ? (
+                          <Loader2 className="animate-spin" size={18} />
+                        ) : (
+                          <>
+                            Enviar Link de Redefinição <ArrowRight size={16} />
+                          </>
+                        )}
+                      </motion.button>
+
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={backToSignIn}
+                          className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                        >
+                          Voltar para o login
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </>
+              ) : (
+                <>
+                  <form onSubmit={handleAuth} className="space-y-4">
                     {error && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
@@ -376,38 +480,79 @@ export function LoginScreen() {
                       </motion.div>
                     )}
 
-                    <p className="text-ink-2 text-sm">
-                      Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um link
-                      para redefinir a senha.
-                    </p>
+                    {isSignUp && (
+                      <div>
+                        <label
+                          htmlFor="login-name"
+                          className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
+                        >
+                          Seu Nome Completo
+                        </label>
+                        <input
+                          id="login-name"
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                          placeholder="Ex: Marcelo Nascimento"
+                          required={isSignUp}
+                        />
+                      </div>
+                    )}
 
                     <div>
                       <label
-                        htmlFor="login-forgot-email"
+                        htmlFor="login-email"
                         className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
                       >
                         E-mail:
                       </label>
                       <input
-                        id="login-forgot-email"
+                        id="login-email"
                         type="email"
                         value={email}
                         onChange={(e) => handleEmailChange(e.target.value)}
                         className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
                         required
-                        /* campo revelado por ação do usuário ("Esqueci minha senha"), não focus
-                           automático de carregamento de página; foca o único campo do
-                           sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
-                           WAI-ARIA Authoring Practices. */
-                        // eslint-disable-next-line jsx-a11y/no-autofocus
-                        autoFocus
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2 ml-1 mr-1">
+                        <label
+                          htmlFor="login-password"
+                          className={`block text-xs font-extrabold uppercase tracking-wider ${brandAccent.text}`}
+                        >
+                          Senha:
+                        </label>
+                        {!isSignUp && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsForgotPassword(true);
+                              setError('');
+                            }}
+                            className={`text-xs font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                          >
+                            Esqueci minha senha
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        id="login-password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                        placeholder="••••••••"
+                        required
                       />
                     </div>
 
                     <motion.button
                       ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
                       type="submit"
-                      disabled={isSubmitting || !email}
+                      disabled={isSubmitting || !email || !password}
                       onPointerMove={submitMagnetic.onPointerMove}
                       onPointerLeave={submitMagnetic.onPointerLeave}
                       whileHover={{ scale: 1.02 }}
@@ -419,131 +564,50 @@ export function LoginScreen() {
                         <Loader2 className="animate-spin" size={18} />
                       ) : (
                         <>
-                          Enviar Link de Redefinição <ArrowRight size={16} />
+                          {isSignUp ? 'Criar Nova Conta' : 'Entrar'} <ArrowRight size={16} />
                         </>
                       )}
                     </motion.button>
-
-                    <div className="text-center">
-                      <button
-                        type="button"
-                        onClick={backToSignIn}
-                        className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                      >
-                        Voltar para o login
-                      </button>
-                    </div>
                   </form>
-                )}
-              </>
-            ) : (
-              <>
-                <form onSubmit={handleAuth} className="space-y-4">
-                  {error && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
-                    >
-                      <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                      <p>{error}</p>
-                    </motion.div>
-                  )}
-
-                  {isSignUp && (
-                    <div>
-                      <label
-                        htmlFor="login-name"
-                        className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
-                      >
-                        Seu Nome Completo
-                      </label>
-                      <input
-                        id="login-name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                        placeholder="Ex: Marcelo Nascimento"
-                        required={isSignUp}
-                      />
-                    </div>
-                  )}
-
-                  <div>
-                    <label
-                      htmlFor="login-email"
-                      className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
-                    >
-                      E-mail:
-                    </label>
-                    <input
-                      id="login-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => handleEmailChange(e.target.value)}
-                      className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-2 ml-1 mr-1">
-                      <label
-                        htmlFor="login-password"
-                        className={`block text-xs font-extrabold uppercase tracking-wider ${brandAccent.text}`}
-                      >
-                        Senha:
-                      </label>
-                      {!isSignUp && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsForgotPassword(true);
-                            setError('');
-                          }}
-                          className={`text-xs font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                        >
-                          Esqueci minha senha
-                        </button>
-                      )}
-                    </div>
-                    <input
-                      id="login-password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                      placeholder="••••••••"
-                      required
-                    />
-                  </div>
-
-                  <motion.button
-                    ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
-                    type="submit"
-                    disabled={isSubmitting || !email || !password}
-                    onPointerMove={submitMagnetic.onPointerMove}
-                    onPointerLeave={submitMagnetic.onPointerLeave}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    style={submitMagnetic.style}
-                    className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="animate-spin" size={18} />
-                    ) : (
-                      <>
-                        {isSignUp ? 'Criar Nova Conta' : 'Entrar'} <ArrowRight size={16} />
-                      </>
-                    )}
-                  </motion.button>
-                </form>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </motion.div>
-        </motion.div>
-      </div>
-    </main>
+        </div>
+
+        {/* Prova de valor — mesma seção do Hub Executivo (rótulo + linha degradê, ver
+            HubScreen.tsx "Acervo Executivo"/"Ferramentas"), com os mesmos badges circulares. */}
+        <section
+          className="relative z-10 mx-auto mt-14 max-w-3xl"
+          aria-labelledby="login-features-heading"
+        >
+          <div className="mb-4 flex items-center gap-2">
+            <h2
+              id="login-features-heading"
+              className="font-display text-sm font-black uppercase tracking-[0.14em] text-ink-2"
+            >
+              O que você vai encontrar
+            </h2>
+            <span
+              className="h-px flex-1 bg-gradient-to-r from-line to-transparent"
+              aria-hidden="true"
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {FEATURES.map(({ icon: Icon, text }) => (
+              <div
+                key={text}
+                className="flex flex-col items-start gap-3 rounded-card border border-line bg-surface p-5"
+              >
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line bg-surface-2 text-brand">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span className="text-sm leading-relaxed text-ink-2">{text}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
   );
 }
