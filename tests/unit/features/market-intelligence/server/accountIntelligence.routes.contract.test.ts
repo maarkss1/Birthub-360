@@ -1,4 +1,5 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -60,6 +61,13 @@ function buildApp(options: {
     app.use(express.json());
     app.use(
         '/api/market-intelligence',
+        // Espelha o apiLimiter genérico que server.ts/rateLimiters.ts já aplica em toda rota
+        // /api em produção (`app.use('/api', apiLimiter)`, antes de mountFeatureRoutes) — sem
+        // isso, este app de teste isolado (supertest, nunca exposto a tráfego real) fica sem
+        // nenhum rate limiter no caminho de authenticateToken/requireTenant, o que o CodeQL
+        // (js/missing-rate-limiting) sinaliza como achado real. Limite generoso de propósito:
+        // não deve nunca disparar durante os testes deste arquivo.
+        rateLimit({ windowMs: 15 * 60 * 1000, max: 10_000, standardHeaders: true, legacyHeaders: false }),
         authenticateToken,
         requireTenant,
         createAccountIntelligenceRouter({
