@@ -73,7 +73,16 @@ export function Toggle({
           transition={
             shouldReduceMotion
               ? { duration: 0.1 }
-              : { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 }
+              : {
+                  // `scale` anima 3 keyframes (efeito "bounce" de squeeze-and-release) — spring/
+                  // inertia só suportam 2 keyframes no Framer Motion (motion-dom lança
+                  // "Only two keyframes currently supported with spring and inertia animations"),
+                  // então essa propriedade precisa de uma transição própria (tween com `times`
+                  // reproduz a mesma sensação de overshoot). `x` (deslizar) continua spring — tem
+                  // só 1 valor de destino, compatível.
+                  x: { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 },
+                  scale: { duration: 0.25, times: [0, 0.5, 1], ease: 'easeOut' },
+                }
           }
         />
       </button>
