@@ -44,7 +44,10 @@ describe('scripts/import-agent-catalog.ts — PROMPT 2 (Birth Hub 360)', () => {
     const afterGrants = await prisma.roleAgentGrant.count({ where: { agentDefinition: { code: { in: sourceAgentCodes } } } });
     expect(after).toBe(before);
     expect(afterGrants).toBe(beforeGrants);
-  });
+    // Timeout maior: importar os 379 agentes 2x é ~700 upserts sequenciais — dentro do timeout
+    // default (5s) quando este arquivo roda sozinho, mas passa disso quando a suíte de integração
+    // inteira acumula estado (mais linhas nas mesmas tabelas tornam cada upsert mais lento).
+  }, 30000);
 
   it('não existem dois AgentDefinition com o mesmo code (unicidade)', async () => {
     const rows = await prisma.agentDefinition.findMany({ where: { code: { in: sourceAgentCodes } }, select: { code: true } });

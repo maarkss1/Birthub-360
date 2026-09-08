@@ -13,6 +13,7 @@ import {
   JobRoleServiceError,
 } from '../services/jobRole.service.js';
 import { listAgentsForJobRole } from '../services/agentCatalog.service.js';
+import { listCapabilitiesForJobRole } from '../services/capability.service.js';
 
 const router = Router();
 
@@ -55,6 +56,26 @@ router.get(
       }
       const agents = await listAgentsForJobRole(jobRoleId);
       res.json({ success: true, data: { jobRole, agents } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// PROMPT 3 — Capability & Permission Engine: "que capabilities este cargo pode permitir?"
+// (RoleCapabilityGrant) — mesma leitura livre das rotas de catálogo acima.
+router.get(
+  '/:id/capabilities',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const jobRoleId = routeParam(req.params.id, 'id');
+      const jobRole = await getJobRoleById(jobRoleId);
+      if (!jobRole) {
+        res.status(404).json({ success: false, error: 'Cargo não encontrado.' });
+        return;
+      }
+      const capabilities = await listCapabilitiesForJobRole(jobRoleId);
+      res.json({ success: true, data: { jobRole, capabilities } });
     } catch (error) {
       next(error);
     }

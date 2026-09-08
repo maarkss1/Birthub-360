@@ -1,6 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { routeParam } from '../../../shared/http/routeParams.js';
 import { listAgentDefinitions, getAgentDefinitionById } from '../services/agentCatalog.service.js';
+import { listCapabilitiesForAgent } from '../services/capability.service.js';
 
 const router = Router();
 
@@ -31,5 +32,25 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
     next(error);
   }
 });
+
+// PROMPT 3 — Capability & Permission Engine: "que capabilities este agente foi desenhado para
+// fazer?" (AgentCapabilityGrant), mesma regra de leitura livre do resto deste router.
+router.get(
+  '/:id/capabilities',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const agentId = routeParam(req.params.id, 'id');
+      const agent = await getAgentDefinitionById(agentId);
+      if (!agent) {
+        res.status(404).json({ success: false, error: 'Agente não encontrado.' });
+        return;
+      }
+      const capabilities = await listCapabilitiesForAgent(agentId);
+      res.json({ success: true, data: { agent, capabilities } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 export const agentCatalogRoutes = router;

@@ -1,0 +1,457 @@
+{
+  "summary": {
+    "total": 30
+  },
+  "capabilities": [
+    {
+      "code": "lead.read",
+      "name": "Ler lead",
+      "description": "Consultar os dados de um lead específico.",
+      "domain": "CRM",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "crm.lead-usecases.find-by-id",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/crm/application/LeadUseCases.ts"
+      }
+    },
+    {
+      "code": "lead.search",
+      "name": "Buscar leads",
+      "description": "Listar/filtrar leads da organização.",
+      "domain": "CRM",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "crm.lead-usecases.find-many",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/crm/application/LeadUseCases.ts"
+      }
+    },
+    {
+      "code": "lead.enrich",
+      "name": "Enriquecer lead",
+      "description": "Disparar enriquecimento de dados de um lead a partir de fontes configuradas.",
+      "domain": "CRM",
+      "actionType": "EXECUTE",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "crm.lead-usecases.enrich",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/crm/application/LeadUseCases.ts"
+      }
+    },
+    {
+      "code": "lead.qualify",
+      "name": "Qualificar lead",
+      "description": "Executar/propor qualificação de um lead com evidência (BANT/matriz).",
+      "domain": "CRM",
+      "actionType": "EXECUTE",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "intelligence.sdr-qualification-agent.run",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/intelligence/agents/sdrQualification.agent.ts"
+      }
+    },
+    {
+      "code": "lead.update",
+      "name": "Atualizar lead",
+      "description": "Gravar alteração de campo de um lead.",
+      "domain": "CRM",
+      "actionType": "WRITE",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "crm.lead-usecases.update",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/crm/application/LeadUseCases.ts"
+      }
+    },
+    {
+      "code": "company.read",
+      "name": "Ler empresa",
+      "description": "Consultar os dados de uma empresa específica.",
+      "domain": "CRM",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "companies.usecases.find-by-id",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/companies/application/CompanyUseCases.ts"
+      }
+    },
+    {
+      "code": "company.search",
+      "name": "Buscar empresas",
+      "description": "Listar/filtrar empresas da organização.",
+      "domain": "CRM",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "companies.usecases.find-many",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/companies/application/CompanyUseCases.ts"
+      }
+    },
+    {
+      "code": "meeting.read",
+      "name": "Ler reunião",
+      "description": "Consultar dados/registro de uma reunião.",
+      "domain": "Reuniões",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "meeting.read.unverified",
+        "available": false,
+        "reason": "TOOL_UNAVAILABLE",
+        "verification": "UNVERIFIED",
+        "evidencePath": null
+      }
+    },
+    {
+      "code": "meeting.analyze",
+      "name": "Analisar reunião",
+      "description": "Sintetizar transcrição/gravação de reunião em pontos, riscos e próximos passos.",
+      "domain": "Reuniões",
+      "actionType": "EXECUTE",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "chatbook.meeting-synthesis.synthesize",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/chatbook/services/meeting-synthesis.service.ts"
+      }
+    },
+    {
+      "code": "meeting.schedule",
+      "name": "Agendar reunião",
+      "description": "Criar um novo evento de agenda/reunião (com Google Meet quando aplicável).",
+      "domain": "Reuniões",
+      "actionType": "WRITE",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "integrations.google.create-calendar-event",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/integrations/google/google.service.ts"
+      }
+    },
+    {
+      "code": "deal.read",
+      "name": "Ler negociação",
+      "description": "Consultar dados de uma oportunidade/negociação.",
+      "domain": "CRM",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "crm.lead-usecases.find-by-id",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/crm/application/LeadUseCases.ts"
+      }
+    },
+    {
+      "code": "deal.analyze",
+      "name": "Analisar negociação",
+      "description": "Analisar estratégia, objeções e probabilidade real de uma negociação.",
+      "domain": "CRM",
+      "actionType": "EXECUTE",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "intelligence.closer-agent.run",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/intelligence/agents/closer.agent.ts"
+      }
+    },
+    {
+      "code": "deal.update",
+      "name": "Atualizar negociação",
+      "description": "Gravar alteração de campo de uma negociação (ex.: valor, produto).",
+      "domain": "CRM",
+      "actionType": "WRITE",
+      "riskLevel": "HIGH",
+      "binding": {
+        "toolCode": "crm.lead-usecases.update",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/crm/application/LeadUseCases.ts"
+      }
+    },
+    {
+      "code": "deal.move_stage",
+      "name": "Mover estágio da negociação",
+      "description": "Mover uma negociação para outro estágio do pipeline (inclui ganho/perda).",
+      "domain": "CRM",
+      "actionType": "WRITE",
+      "riskLevel": "HIGH",
+      "binding": {
+        "toolCode": "crm.lead-usecases.update-status",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/crm/application/LeadUseCases.ts"
+      }
+    },
+    {
+      "code": "pipeline.read",
+      "name": "Ler pipeline",
+      "description": "Consultar números agregados de pipeline (nunca forecast — PIPELINE != FORECAST).",
+      "domain": "Pipeline/Forecast",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "commercial-intelligence.usecases.pipeline-creation",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/commercial-intelligence/application/CommercialIntelligenceUseCases.ts"
+      }
+    },
+    {
+      "code": "pipeline.analyze",
+      "name": "Analisar pipeline",
+      "description": "Analisar cobertura, ritmo de geração e composição do pipeline.",
+      "domain": "Pipeline/Forecast",
+      "actionType": "EXECUTE",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "commercial-intelligence.usecases.performance",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/commercial-intelligence/application/CommercialIntelligenceUseCases.ts"
+      }
+    },
+    {
+      "code": "forecast.read",
+      "name": "Ler forecast",
+      "description": "Consultar números de forecast já calculados pelo motor real (commit/best case/gap).",
+      "domain": "Pipeline/Forecast",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "commercial-intelligence.usecases.executive-overview",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/commercial-intelligence/application/CommercialIntelligenceUseCases.ts"
+      }
+    },
+    {
+      "code": "forecast.explain",
+      "name": "Explicar forecast",
+      "description": "Explicar a composição/racional do forecast já calculado.",
+      "domain": "Pipeline/Forecast",
+      "actionType": "EXECUTE",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "commercial-intelligence.usecases.forecast-explain",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/commercial-intelligence/application/CommercialIntelligenceUseCases.ts"
+      }
+    },
+    {
+      "code": "knowledge.search",
+      "name": "Buscar na base de conhecimento",
+      "description": "Busca híbrida (semântica + palavra-chave) na base de conhecimento da organização.",
+      "domain": "Conhecimento",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "knowledge.search-service.hybrid-search",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/knowledge/search.service.ts"
+      }
+    },
+    {
+      "code": "contract.read",
+      "name": "Ler contrato",
+      "description": "Consultar prontidão e status real de assinatura de um contrato.",
+      "domain": "Contratos",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "cadence.signature.is-valid-transition",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/cadence/domain/signature.ts"
+      }
+    },
+    {
+      "code": "contract.generate",
+      "name": "Gerar contrato",
+      "description": "Gerar um documento de contrato a partir de um template/dados do negócio.",
+      "domain": "Contratos",
+      "actionType": "EXECUTE",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "contract.generate.future",
+        "available": false,
+        "reason": "FUTURE_TOOL",
+        "verification": "UNVERIFIED",
+        "evidencePath": null
+      }
+    },
+    {
+      "code": "signature.request",
+      "name": "Solicitar assinatura",
+      "description": "Disparar um pedido de assinatura eletrônica externo para um documento.",
+      "domain": "Contratos",
+      "actionType": "EXECUTE",
+      "riskLevel": "CRITICAL",
+      "binding": {
+        "toolCode": "cadence.signature.govbr-stub",
+        "available": false,
+        "reason": "FUTURE_TOOL",
+        "verification": "UNVERIFIED",
+        "evidencePath": null
+      }
+    },
+    {
+      "code": "billing.read",
+      "name": "Ler faturamento",
+      "description": "Consultar dados de faturamento (vendido x faturado, MRR/ARR).",
+      "domain": "Financeiro",
+      "actionType": "READ",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "billing.read.source-required",
+        "available": false,
+        "reason": "SOURCE_REQUIRED",
+        "verification": "UNVERIFIED",
+        "evidencePath": null
+      }
+    },
+    {
+      "code": "billing.reconcile",
+      "name": "Reconciliar faturamento",
+      "description": "Reconciliar vendido x faturado contra a fonte real de cobrança.",
+      "domain": "Financeiro",
+      "actionType": "EXECUTE",
+      "riskLevel": "HIGH",
+      "binding": {
+        "toolCode": "billing.reconcile.source-required",
+        "available": false,
+        "reason": "SOURCE_REQUIRED",
+        "verification": "UNVERIFIED",
+        "evidencePath": null
+      }
+    },
+    {
+      "code": "bitrix.read",
+      "name": "Ler saúde do Bitrix",
+      "description": "Consultar saúde de sincronização, qualidade e duplicidade do Bitrix24.",
+      "domain": "Bitrix",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "commercial-intelligence.usecases.crm-quality",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/commercial-intelligence/application/CommercialIntelligenceUseCases.ts"
+      }
+    },
+    {
+      "code": "bitrix.write",
+      "name": "Gravar no Bitrix",
+      "description": "Gravar campos de volta no Bitrix24 (writeback).",
+      "domain": "Bitrix",
+      "actionType": "WRITE",
+      "riskLevel": "HIGH",
+      "binding": {
+        "toolCode": "integrations.bitrix.lead-writeback-adapter",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/integrations/bitrix/infra/BitrixLeadWritebackAdapter.ts"
+      }
+    },
+    {
+      "code": "bitrix.configure",
+      "name": "Configurar integração Bitrix",
+      "description": "Conectar/desconectar/configurar webhook e mapeamento de campos do Bitrix24.",
+      "domain": "Bitrix",
+      "actionType": "ADMIN",
+      "riskLevel": "CRITICAL",
+      "binding": {
+        "toolCode": "integrations.bitrix.routes.connect",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/integrations/bitrix/bitrix.routes.ts"
+      }
+    },
+    {
+      "code": "agent.discover",
+      "name": "Descobrir agente",
+      "description": "Ver que um agente existe no catálogo (sem detalhe/execução).",
+      "domain": "Governança de Agentes",
+      "actionType": "READ",
+      "riskLevel": "LOW",
+      "binding": {
+        "toolCode": "job-roles.agent-catalog.list",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/job-roles/services/agentCatalog.service.ts"
+      }
+    },
+    {
+      "code": "agent.execute",
+      "name": "Executar agente",
+      "description": "Executar um agente via AgentRuntime. Permanece FUTURE_TOOL/bloqueado até o PROMPT 4 implementar o runtime real.",
+      "domain": "Governança de Agentes",
+      "actionType": "EXECUTE",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "agent.execute.future",
+        "available": false,
+        "reason": "FUTURE_TOOL",
+        "verification": "UNVERIFIED",
+        "evidencePath": null
+      }
+    },
+    {
+      "code": "agent.request_cross_role",
+      "name": "Solicitar acesso entre cargos",
+      "description": "Solicitar autorização temporária para usar um agente/capability fora do próprio cargo. Permanece FUTURE_TOOL até o PROMPT 7 implementar o fluxo de aprovação.",
+      "domain": "Governança de Agentes",
+      "actionType": "EXECUTE",
+      "riskLevel": "MEDIUM",
+      "binding": {
+        "toolCode": "agent.request-cross-role.future",
+        "available": false,
+        "reason": "FUTURE_TOOL",
+        "verification": "UNVERIFIED",
+        "evidencePath": null
+      }
+    }
+  ]
+}
