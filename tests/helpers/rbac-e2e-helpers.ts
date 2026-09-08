@@ -48,12 +48,20 @@ export interface RealSessionUser {
  * Cria um usuário real via `auth.api.signUpEmail` e devolve o cookie de sessão REAL emitido pelo
  * better-auth. Ver o comentário completo em tests/integration/rbac-e2e.test.ts (mesma função,
  * extraída aqui sem mudança de comportamento).
+ *
+ * Desde que o cadastro passou a exigir confirmação de posse do e-mail
+ * (requireEmailVerification em src/lib/auth.ts — corrige um achado real do piloto de
+ * threat-modeling do Mantis: antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo
+ * dono real, virava sessão + ADMIN na hora), `signUpEmail` sozinho não devolve mais
+ * `Set-Cookie` nenhum (resposta vem com `token: null`). Sem mailbox real pra ler o link de
+ * verificação em teste, confirma o e-mail direto no banco (mesmo padrão de bypass já usado
+ * logo abaixo pra atribuir `role`) e faz um `signInEmail` de verdade pra obter a sessão real.
  */
 export async function signUpRealUser(prefix: string, role: 'ADMIN' | 'GESTOR' | 'CLOSER' | 'SDR' | 'VISUALIZADOR'): Promise<RealSessionUser> {
   const email = uniqueEmail(prefix);
 
   const { payload, headers } = await withRlsBypass(async () => {
-    const { response, headers } = await auth.api.signUpEmail({
+    const { response } = await auth.api.signUpEmail({
       body: { email, password: TEST_PASSWORD, name: `RBAC Test ${prefix}` },
       returnHeaders: true,
     }) as { response: { user: { id: string; organizationId: string; role: string } }; headers: Headers };
@@ -61,8 +69,14 @@ export async function signUpRealUser(prefix: string, role: 'ADMIN' | 'GESTOR' | 
     if (response.user.role !== role) {
       await prisma.user.update({ where: { id: response.user.id }, data: { role } });
     }
+    await prisma.user.update({ where: { id: response.user.id }, data: { emailVerified: true } });
 
-    return { payload: response.user, headers };
+    const { headers: signInHeaders } = await auth.api.signInEmail({
+      body: { email, password: TEST_PASSWORD },
+      returnHeaders: true,
+    }) as { headers: Headers };
+
+    return { payload: response.user, headers: signInHeaders };
   });
 
   const rawSetCookies: string[] = typeof headers.getSetCookie === 'function'

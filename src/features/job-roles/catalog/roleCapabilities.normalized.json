@@ -1,0 +1,572 @@
+{
+  "summary": {
+    "total": 113
+  },
+  "roleCapabilities": [
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "lead.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "lead.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "company.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "company.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "pipeline.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "LDR",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "lead.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "lead.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "lead.enrich",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "company.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "company.search",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "meeting.schedule",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BDR",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "lead.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "lead.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "lead.qualify",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "lead.update",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "meeting.schedule",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "meeting.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "contract.read",
+      "accessLevel": "REQUEST"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "SDR",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "deal.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "deal.analyze",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "deal.update",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "deal.move_stage",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "contract.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "contract.generate",
+      "accessLevel": "REQUEST"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "signature.request",
+      "accessLevel": "REQUEST"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "meeting.schedule",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CLOSER",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "lead.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "lead.search",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "deal.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "pipeline.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "bitrix.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "COORDENADOR_COMERCIAL",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "pipeline.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "pipeline.analyze",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "forecast.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "forecast.explain",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "deal.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "deal.analyze",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "billing.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "GERENTE_COMERCIAL",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "forecast.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "forecast.explain",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "pipeline.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "pipeline.analyze",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "billing.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "deal.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "DIRETOR_COMERCIAL",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "RECEITA_FATURAMENTO",
+      "capabilityCode": "billing.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "RECEITA_FATURAMENTO",
+      "capabilityCode": "billing.reconcile",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "RECEITA_FATURAMENTO",
+      "capabilityCode": "deal.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "RECEITA_FATURAMENTO",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "RECEITA_FATURAMENTO",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "RECEITA_FATURAMENTO",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "RECEITA_FATURAMENTO",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "deal.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "company.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "lead.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "billing.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CHURN_RETENCAO",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "contract.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "contract.generate",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "signature.request",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "deal.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "CONTRATOS_ASSINATURA",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "bitrix.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "bitrix.write",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "bitrix.configure",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "lead.search",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "company.search",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "BITRIX_GUARDIAN",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "pipeline.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "pipeline.analyze",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "forecast.read",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "forecast.explain",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "deal.read",
+      "accessLevel": "READ"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "knowledge.search",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "agent.discover",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "agent.execute",
+      "accessLevel": "EXECUTE"
+    },
+    {
+      "jobRoleCode": "REVENUE_INTELLIGENCE",
+      "capabilityCode": "agent.request_cross_role",
+      "accessLevel": "EXECUTE"
+    }
+  ]
+}

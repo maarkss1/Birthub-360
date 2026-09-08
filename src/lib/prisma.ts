@@ -38,7 +38,7 @@ const pool = new Pool({
   connectionString,
   max: 10, // Máximo de clients no pool — mantém margem abaixo do pool_size:15 do pooler Supabase
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  connectionTimeoutMillis: 30000, // Return an error after 30 seconds if connection could not be established
   allowExitOnIdle: true,
 });
 
@@ -422,14 +422,20 @@ export const prisma = basePrisma.$extends({
           // "new row violates row-level security policy", quando o problema real era outro, ver
           // TEST-002/e2e). Se a transação com contexto de tenant falha, o erro real deve subir —
           // nunca cair pra uma tentativa sem proteção de tenant/RLS.
-          return basePrisma.$transaction(async (tx) => {
-            await tx.$executeRawUnsafe(
-              `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
-              bypassRls ? 'on' : 'off',
-              tenantId || '',
-            );
-            return build(tx as unknown as PrismaClient);
-          });
+          return basePrisma.$transaction(
+            async (tx) => {
+              await tx.$executeRawUnsafe(
+                `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
+                bypassRls ? 'on' : 'off',
+                tenantId || '',
+              );
+              return build(tx as unknown as PrismaClient);
+            },
+            {
+              maxWait: 15000,
+              timeout: 30000,
+            },
+          );
         };
 
         // --- 3. Audit Log - Capture Before State ---
@@ -642,14 +648,20 @@ export async function withRlsContext<T>(
   const store = requestContext.getStore();
   const tenantId = store?.tenantId ?? '';
   const bypassRls = Boolean((store as Record<string, unknown>)?.bypassRls);
-  return basePrisma.$transaction(async (tx) => {
-    await tx.$executeRawUnsafe(
-      `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
-      bypassRls ? 'on' : 'off',
-      tenantId,
-    );
-    return fn(tx);
-  });
+  return basePrisma.$transaction(
+    async (tx) => {
+      await tx.$executeRawUnsafe(
+        `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
+        bypassRls ? 'on' : 'off',
+        tenantId,
+      );
+      return fn(tx);
+    },
+    {
+      maxWait: 15000,
+      timeout: 30000,
+    },
+  );
 }
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = basePrisma;

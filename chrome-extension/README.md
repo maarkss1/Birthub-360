@@ -6,6 +6,9 @@ Extensão Manifest V3 real que fala com o backend do módulo Copiloto Comercial 
 ## O que já faz
 
 - Detecta o Google Meet (URL + título + código da reunião).
+- Tema claro/escuro — botão 🌙/☀️ no header do side panel, persistido em `chrome.storage.sync`.
+  Escuro continua o padrão (era o único antes); a cor de marca (laranja) é fixa nos dois temas, só
+  a superfície muda.
 - Vincula a reunião a um Lead existente da Central Atlas GR — por nome (busca incremental com
   `GET /api/copiloto-ia/leads/search`, mostrando até 10 candidatos por título do Lead/nome do
   Contato/razão social ou nome fantasia da Company), por e-mail do contato, por link de
@@ -85,13 +88,21 @@ real do Google Meet — precisa de um passo manual num Chrome de verdade antes d
 
 ## Deploy em produção — passos pendentes (não automatizáveis por código)
 
-1. **CORS**: adicione a origem da extensão (`chrome-extension://<id>`) à variável de ambiente
-   `ALLOWED_ORIGINS` do backend (`src/bootstrap/security.ts` só libera qualquer origem fora de
-   produção). O `<id>` só é estável entre reinstalações se a extensão for publicada com uma chave
-   fixa (`key` no manifest) ou distribuída via política empresarial do Google Workspace.
-2. **URL do backend**: na aba "Configurações" do side panel, troque a URL padrão
-   (`http://localhost:3005`) pelo domínio real de produção — a extensão pede a permissão de host
-   correspondente (`optional_host_permissions`) na hora, nunca de antemão.
+1. **CORS — ainda pendente**: adicione a origem da extensão (`chrome-extension://<id>`, visível em
+   `chrome://extensions` abaixo do nome da extensão depois de carregada) à variável de ambiente
+   `ALLOWED_ORIGINS` do backend em produção (`src/bootstrap/security.ts` só libera qualquer origem
+   fora de produção). O `<id>` só é estável entre reinstalações se a extensão for publicada com uma
+   chave fixa (`key` no manifest) ou distribuída via política empresarial do Google Workspace — sem
+   isso, cada "Carregar sem compactação" gera um id novo e o `ALLOWED_ORIGINS` precisa ser
+   reatualizado. Sem esse passo no servidor, a extensão erra com CORS mesmo com a URL certa.
+2. **URL do backend — já configurada como padrão**: `DEFAULT_API_BASE_URL` (`src/api.js`) e
+   `host_permissions` (`manifest.json`) já apontam para a instância Oracle Cloud de produção
+   (`http://163.176.150.147`, ADR-004 — ainda sem domínio/TLS, ver
+   `docs/deploy/oracle-cloud.md` §7). Trocar para `https://<domínio>` assim que o cutover de
+   domínio acontecer. A aba "Configurações" do side panel continua existindo para apontar pra
+   outro ambiente (ex.: `localhost:3005` em desenvolvimento) sem precisar editar código — a
+   extensão pede a permissão de host correspondente (`optional_host_permissions`) na hora, nunca de
+   antemão.
 3. **Storage e Whisper configurados** — sem `STORAGE_*`/`OPENAI_API_KEY` reais em produção, o botão
    de captura ainda funciona (grava localmente), mas o upload/transcrição falham com erro explícito.
 4. **Distribuição**: para um time inteiro, prefira publicação privada na Chrome Web Store ou

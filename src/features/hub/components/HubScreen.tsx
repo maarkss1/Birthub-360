@@ -365,7 +365,15 @@ export function HubScreen() {
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
 
-  const grantedCatalog = MODULE_CATALOG.filter((m) => grantedModules.includes(m.key));
+  // Perfil SDR restrito (ver mesmo corte em Sidebar.tsx): pedido explícito do usuário — a conta de
+  // João Reis (role SDR) deve ver só "Central Comercial" e as ferramentas externas no Hub, sem os
+  // círculos sempre-visíveis de Acompanhamento SDR/Atlas Meeting Hub nem módulos executivos.
+  const isRestrictedSdrProfile = currentUser?.role === 'SDR';
+  const grantedCatalog = useMemo(
+    () =>
+      isRestrictedSdrProfile ? [] : MODULE_CATALOG.filter((m) => grantedModules.includes(m.key)),
+    [isRestrictedSdrProfile, grantedModules],
+  );
 
   const goTo = useCallback(
     (path: string) => {
@@ -394,21 +402,26 @@ export function HubScreen() {
       // Cadência/Agendamento), não módulos executivos restritos — vivem na órbita sempre visível,
       // igual à Central Comercial, sem gate de ModuleAccessGrant. Revenue Intelligence fica de
       // fora de propósito (decisão do usuário nesta sessão: "deixei o revenue intelligence em off
-      // por enquanto") — não adicionar aqui sem pedido explícito.
-      {
-        key: 'sdr',
-        label: 'Acompanhamento SDR',
-        description: 'Mesa de Tratamento · Dashboard SDR',
-        icon: Headset,
-        onOpen: () => goTo('/app/mesa-tratamento'),
-      },
-      {
-        key: 'meeting-hub',
-        label: 'Atlas Meeting Hub',
-        description: 'Cadência · Agendamento · Google Meet',
-        icon: Video,
-        onOpen: () => goTo('/app/cadence'),
-      },
+      // por enquanto") — não adicionar aqui sem pedido explícito. Ocultos para o perfil SDR
+      // restrito (ver isRestrictedSdrProfile acima) — só Central Comercial + links externos.
+      ...(isRestrictedSdrProfile
+        ? []
+        : [
+            {
+              key: 'sdr',
+              label: 'Acompanhamento SDR',
+              description: 'Mesa de Tratamento · Dashboard SDR',
+              icon: Headset,
+              onOpen: () => goTo('/app/mesa-tratamento'),
+            },
+            {
+              key: 'meeting-hub',
+              label: 'Atlas Meeting Hub',
+              description: 'Cadência · Agendamento · Google Meet',
+              icon: Video,
+              onOpen: () => goTo('/app/cadence'),
+            },
+          ]),
       ...grantedCatalog.map((mod) => ({
         key: mod.key,
         label: mod.label,
@@ -425,7 +438,7 @@ export function HubScreen() {
         onOpen: () => openExternal(link.url),
       })),
     ],
-    [grantedCatalog, goTo, openExternal],
+    [grantedCatalog, goTo, openExternal, isRestrictedSdrProfile],
   );
 
   const [centerKey, setCenterKey] = useState(

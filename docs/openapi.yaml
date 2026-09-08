@@ -113,7 +113,11 @@ tags:
       Fundação Multi-Cargo — catálogo de cargos profissionais (JobRole) e do catálogo de agentes
       (AgentDefinition/RoleAgentGrant) por cargo. Leitura livre para qualquer usuário autenticado;
       atribuição/remoção de cargo (`/job-roles/assignments/**`) restrita a ADMIN. Não substitui o
-      RBAC de segurança (`UserRole`, ver tag Equipe) — JobRole é só contexto funcional.
+      RBAC de segurança (`UserRole`, ver tag Equipe) — JobRole é só contexto funcional. Inclui o
+      Capability & Permission Engine (`/capabilities/**`, PROMPT 3) — camada de decisão de
+      autorização (`POST /capabilities/check`) que responde se um usuário pode usar um agente para
+      executar uma capability, sem executar nada: `UserRole ∩ JobRole ∩ RoleAgentGrant ∩
+      AgentCapabilityGrant ∩ RoleCapabilityGrant ∩ ToolBinding VERIFIED ∩ risco/aprovação`.
   - name: Bitrix24
     description: Conexão, sincronização e extração de dados com o Bitrix24 (CRM externo)
   - name: 3CX
@@ -4604,6 +4608,146 @@ paths:
         '404':
           description: Agente não encontrado
 
+  /agents/{id}/capabilities:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Capabilities que este agente foi desenhado para fazer (AgentCapabilityGrant ativo)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Agente não encontrado
+
+  /job-roles/{id}/capabilities:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Capabilities que este cargo pode permitir (RoleCapabilityGrant ativo), com nível de acesso
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Cargo não encontrado
+
+  # ─────────────────── Capability & Permission Engine (PROMPT 3) ───────────────────
+  /capabilities:
+    get:
+      tags: [Cargos e Agentes]
+      summary: Lista o catálogo de capabilities (resource.action) — leitura livre, qualquer usuário autenticado
+      parameters:
+        - name: activeOnly
+          in: query
+          description: 'Quando "false", inclui também capabilities desativadas. Default: true.'
+          schema: { type: string, enum: ['true', 'false'] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /capabilities/check:
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Decide se o usuário autenticado pode usar um agente para executar uma capability — nunca
+        executa nada, só responde a decisão estruturada (allowed/reason/riskLevel/requiresApproval/
+        toolAvailable/bindingVerification). Identidade e tenant vêm sempre da sessão autenticada,
+        nunca do corpo da requisição.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agentCode, capabilityCode]
+              properties:
+                agentCode: { type: string }
+                capabilityCode: { type: string }
+                resource: { type: object }
+      responses:
+        '200':
+          description: OK — decisão estruturada, `allowed=false` para negações (fail closed)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  # ─────────────────── Agent Runtime Genérico (PROMPT 4) ───────────────────
+  /agents/{agentCode}/run:
+    parameters:
+      - name: agentCode
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Executa um agente sobre uma capability — passa sempre pelo Capability & Permission Engine
+        (PROMPT 3) antes de qualquer execução real. Identidade/tenant sempre da sessão
+        autenticada, nunca do corpo da requisição. `status=SUCCEEDED` só quando o binding é
+        VERIFIED e a decisão de autorização permite (`allowed=true`); `DENIED` cobre todas as
+        negações (SOURCE_REQUIRED, FUTURE_TOOL, APPROVAL_REQUIRED, DISCOVER_ONLY etc.).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [requestedCapability]
+              properties:
+                requestedCapability: { type: string }
+                mission: { type: string }
+                resource: { type: object }
+                context: { type: object }
+                correlationId:
+                  type: string
+                  description: Chave de idempotência — reexecutar com o mesmo valor devolve o mesmo resultado já persistido.
+      responses:
+        '200':
+          description: Execução concluída (SUCCEEDED) ou negada (DENIED/FAILED) — ver `data.execution.status`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: Execução negada pelo Capability & Permission Engine
+
+  /capabilities/{code}:
+    parameters:
+      - name: code
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Detalhe de uma capability do catálogo (nomenclatura resource.action)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Capability não encontrada
+
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:
     get:
@@ -4742,6 +4886,89 @@ paths:
       summary: Campos customizados disponíveis na entidade do Bitrix24
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan:
+    get:
+      tags: [Bitrix24]
+      summary: >-
+        Plano Diário pessoal do usuário autenticado (tarefas/atividades/leads do Bitrix24 + Central,
+        consolidados). ADMIN/GESTOR podem consultar o plano de outro membro via `assignedById`.
+      parameters:
+        - name: assignedById
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/sync:
+    post:
+      tags: [Bitrix24]
+      summary: Força a releitura do Plano Diário direto do Bitrix24 (mesmo escopo de `/bitrix/daily-plan`).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignedById: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/complete:
+    post:
+      tags: [Bitrix24]
+      summary: Marca um item do Plano Diário como concluído.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemType, itemId]
+              properties:
+                itemType: { type: string }
+                itemId: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/daily-plan/note:
+    post:
+      tags: [Bitrix24]
+      summary: Adiciona uma observação a um item do Plano Diário.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemType, itemId, note]
+              properties:
+                itemType: { type: string }
+                itemId: { type: string }
+                note: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/daily-plan/activity:
+    post:
+      tags: [Bitrix24]
+      summary: Cria uma nova atividade avulsa no Plano Diário (registrada localmente na Central).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, channel]
+              properties:
+                title: { type: string }
+                channel: { type: string }
+                contactName: { type: string }
+                phone: { type: string }
+                dueTime: { type: string }
+                observations: { type: string }
+                leadId: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/leads/{leadId}/comment:
     parameters:
       - name: leadId

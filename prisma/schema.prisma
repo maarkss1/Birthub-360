@@ -872,6 +872,8 @@ model Organization {
   publicBookingLinks            PublicBookingLink[]
   // Fundação Multi-Cargo — ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo.
   userJobRoles                  UserJobRole[]
+  // Agent Runtime Genérico (PROMPT 4) — ver seção "Agent Runtime Genérico" no fim deste arquivo.
+  agentExecutions                AgentExecution[]
   savedSearches                 SavedSearch[]
   prospectingSearchExecutions   ProspectingSearchExecution[]
   automationVersions            AutomationVersion[]
@@ -3361,6 +3363,29 @@ enum AgentAccessLevel {
   REQUEST
 }
 
+/// Nível de risco de uma capability — PROMPT 3 (Capability & Permission Engine). Reutilizado por
+/// `CapabilityDefinition.riskLevel`; HIGH/CRITICAL sempre exigem aprovação (ver
+/// `capabilityAuthorization.service.ts`, nunca hardcoded em dois lugares).
+enum CapabilityRiskLevel {
+  /// Leitura/análise — nunca sozinho justifica aprovação.
+  LOW
+  /// Geração/execução sem efeito crítico (ex.: agendar reunião, gerar rascunho).
+  MEDIUM
+  /// Writes sensíveis, pricing, mudança de estágio de negociação, faturamento.
+  HIGH
+  /// Assinatura, configuração do Bitrix, ação administrativa crítica.
+  CRITICAL
+}
+
+/// Tipo de ação de uma capability — define o que `RoleCapabilityGrant.accessLevel = READ` pode
+/// autorizar (nunca WRITE/EXECUTE/ADMIN, ver `capabilityAuthorization.service.ts`).
+enum CapabilityActionType {
+  READ
+  WRITE
+  EXECUTE
+  ADMIN
+}
+
 /// Catálogo de cargos profissionais da Central — ver decisão de arquitetura no comentário da
 /// seção acima. `code` é o identificador estável (ex.: "SDR", "GERENTE_COMERCIAL"), nunca
 /// reaproveitado por outro cargo mesmo se este for desativado (`isActive = false`).
@@ -3380,9 +3405,10 @@ model JobRole {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  userJobRoles     UserJobRole[]
-  roleAgentGrants  RoleAgentGrant[]
-  primaryForAgents AgentDefinition[]
+  userJobRoles       UserJobRole[]
+  roleAgentGrants    RoleAgentGrant[]
+  primaryForAgents   AgentDefinition[]
+  capabilityGrants   RoleCapabilityGrant[]
 
   @@index([isActive])
 }
@@ -3441,8 +3467,10 @@ model AgentDefinition {
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
 
-  versions   AgentVersion[]
-  roleGrants RoleAgentGrant[]
+  versions         AgentVersion[]
+  roleGrants       RoleAgentGrant[]
+  capabilityGrants AgentCapabilityGrant[]
+  executions       AgentExecution[]
 
   @@index([isActive])
   @@index([primaryJobRoleId])
@@ -3472,6 +3500,8 @@ model AgentVersion {
   activatedAt       DateTime?
   deprecatedAt      DateTime?
 
+  executions AgentExecution[]
+
   @@unique([agentDefinitionId, version])
   @@index([agentDefinitionId, status])
 }
@@ -3493,5 +3523,195 @@ model RoleAgentGrant {
 
   @@unique([jobRoleId, agentDefinitionId])
   @@index([agentDefinitionId])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Capability & Permission Engine (PROMPT 3) — camada canônica que responde "qual usuário pode
+// usar qual agente para executar qual capability, com qual risco, e se precisa aprovação?".
+// Composição da autorização final (ver `capabilityAuthorization.service.ts`):
+//
+//   UserRole ∩ JobRole ∩ RoleAgentGrant ∩ AgentCapabilityGrant ∩ RoleCapabilityGrant ∩
+//   ToolBinding VERIFIED ∩ tenant/data scope ∩ policy/approval = PERMIT
+//
+// Exatamente 3 modelos novos, por decisão explícita do prompt da onda ("preferir exatamente
+// estes 3 modelos; se mais tabelas forem necessárias, parar e justificar") — nenhuma tabela
+// adicional foi necessária. `ToolBinding` (qual símbolo real de código implementa uma capability)
+// é registry em código (`src/features/job-roles/config/tool-bindings.ts`), não tabela, também por
+// decisão explícita do prompt ("criar registry em código/config, não nova tabela, salvo
+// necessidade real") — não há necessidade real: o binding é estático por deploy, não dado mutável
+// em runtime por organização.
+//
+// Mesma decisão de tenancy de `JobRole`/`AgentDefinition`/`AgentVersion`/`RoleAgentGrant` (ver
+// comentário acima daqueles modelos): catálogo de PRODUTO global, sem `organizationId`, sem RLS.
+// `CapabilityDefinition` é o dicionário de capacidades (o que existe), `AgentCapabilityGrant` é o
+// que um agente foi desenhado para fazer, `RoleCapabilityGrant` é o que um cargo pode autorizar —
+// nenhum dos três guarda dado de organização; a única coisa por-organização em toda a cadeia de
+// autorização continua sendo `UserJobRole` (já RLS desde o PROMPT 1) e o próprio `User.role`
+// (UserRole). Uma organização restringir uma capability especificamente para si é Cross-Role/
+// Temporary Grant — explicitamente fora do escopo desta onda (ver PROMPT 7).
+// ---------------------------------------------------------------------------------------------
+
+/// Dicionário de capacidades da plataforma — nomenclatura `resource.action` (ex.: `lead.read`,
+/// `deal.move_stage`, `agent.execute`). Uma capability é uma AÇÃO POSSÍVEL sobre um recurso, não
+/// um agente nem um cargo — `AgentCapabilityGrant`/`RoleCapabilityGrant` conectam isto a agentes e
+/// cargos. Catálogo de produto global (ver decisão de tenancy acima).
+model CapabilityDefinition {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String
+  description String?
+  /// Domínio funcional livre (mesmo espírito de `AgentDefinition.domain`) — ex.: "CRM",
+  /// "Pipeline/Forecast", "Contratos", "Bitrix".
+  domain                     String?
+  riskLevel                  CapabilityRiskLevel  @default(LOW)
+  actionType                 CapabilityActionType
+  /// Espelha `actionType == READ` como campo próprio consultável sem comparar enum — usado pela
+  /// regra "READ nunca autoriza WRITE/EXECUTE/ADMIN" em `capabilityAuthorization.service.ts` sem
+  /// duplicar a decisão em dois lugares (o service deriva de `actionType`, este campo é só cache
+  /// de leitura para quem consome o catálogo via API sem reimplementar a regra).
+  isReadOnly                 Boolean              @default(false)
+  /// HIGH/CRITICAL sempre nascem com isto implicitamente true na prática (reforçado em código,
+  /// não only aqui) — este campo é o valor padrão editorial do catálogo, nunca a fonte de verdade
+  /// de risco em si (isso é `riskLevel`).
+  requiresApprovalByDefault Boolean @default(false)
+  isSystem                  Boolean @default(true)
+  isActive                  Boolean @default(true)
+  /// Metadado livre não-normatizado (ex.: exemplos de uso, nota de proveniência) — nunca lido pela
+  /// lógica de autorização em si.
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  agentGrants AgentCapabilityGrant[]
+  roleGrants  RoleCapabilityGrant[]
+
+  @@index([isActive])
+  @@index([domain])
+}
+
+/// O que um AGENTE foi desenhado para fazer — nunca um `accessMode` redundante aqui (isso é papel
+/// exclusivo de `RoleCapabilityGrant.accessLevel`, avaliado depois na cadeia). Um agente sem
+/// nenhuma linha aqui não tem nenhuma capability conhecida (fail closed: `agent.execute` de
+/// qualquer capability para esse agente sempre nega com `CAPABILITY_NOT_GRANTED_TO_AGENT`).
+model AgentCapabilityGrant {
+  id                      String               @id @default(cuid())
+  agentDefinitionId       String
+  agentDefinition         AgentDefinition      @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
+  capabilityDefinitionId  String
+  capabilityDefinition    CapabilityDefinition @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Cascade)
+  isActive                Boolean              @default(true)
+  createdAt               DateTime             @default(now())
+
+  @@unique([agentDefinitionId, capabilityDefinitionId])
+  @@index([capabilityDefinitionId])
+}
+
+/// O que um CARGO pode permitir — reusa `AgentAccessLevel` (DISCOVER/READ/EXECUTE/REQUEST), o
+/// mesmo enum de `RoleAgentGrant.accessLevel`, em vez de um enum paralelo com os mesmos 4 valores
+/// (nomenclatura do prompt da onda para este campo é idêntica à de `RoleAgentGrant` de propósito).
+/// Semântica avaliada em `capabilityAuthorization.service.ts`:
+///  - DISCOVER: nunca executa (`allowed=false`, `reason=DISCOVER_ONLY`).
+///  - READ: só autoriza capability com `actionType=READ`.
+///  - EXECUTE: segue para UserRole policy / tool availability / risco / aprovação.
+///  - REQUEST: nunca executa diretamente (`allowed=false`, `requiresApproval=true`,
+///    `reason=CROSS_ROLE_REQUEST_REQUIRED` — base para Cross-Role Authorization no PROMPT 7).
+model RoleCapabilityGrant {
+  id                     String               @id @default(cuid())
+  jobRoleId              String
+  jobRole                JobRole              @relation(fields: [jobRoleId], references: [id], onDelete: Cascade)
+  capabilityDefinitionId String
+  capabilityDefinition   CapabilityDefinition @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Cascade)
+  accessLevel            AgentAccessLevel     @default(EXECUTE)
+  isActive               Boolean              @default(true)
+  requiresApproval       Boolean              @default(false)
+  createdAt              DateTime             @default(now())
+
+  @@unique([jobRoleId, capabilityDefinitionId])
+  @@index([capabilityDefinitionId])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Agent Runtime Genérico (PROMPT 4) — registro de execução de UM AgentDefinition sobre UMA
+// capability, sempre precedido por uma decisão real do Capability & Permission Engine (PROMPT 3).
+// Diferente de `JobRole`/`AgentDefinition`/`CapabilityDefinition` etc. (catálogo de PRODUTO,
+// global, sem organizationId), `AgentExecution` é DADO DE NEGÓCIO por tenant — carrega fatos,
+// evidências e o texto de missão de uma execução real de uma organização específica, então tem
+// `organizationId` + RLS, mesmo tratamento de `ModuleAccessGrant`/`MesaTratamentoTreatment`.
+//
+// Não existe um `ai_run`/`AgentExecution` reaproveitável no schema atual (auditado antes de criar
+// este modelo — `AILog` é só telemetria de custo/latência sem ator/agente/capability/decisão;
+// `AgentMemory` é estado de sessão de chat do Enxame antigo, sem o mesmo propósito de auditoria).
+// ---------------------------------------------------------------------------------------------
+
+/// Ciclo de vida de uma execução — nunca pula direto para SUCCEEDED/FAILED sem passar por
+/// AUTHORIZING (mesmo quando a autorização é instantânea): o campo `policyDecision` só faz
+/// sentido depois dessa etapa ter rodado de verdade.
+enum AgentExecutionStatus {
+  PENDING
+  AUTHORIZING
+  RUNNING
+  SUCCEEDED
+  DENIED
+  FAILED
+  CANCELLED
+}
+
+/// Registro de execução do AgentRuntime genérico — nunca um motor de negócio duplicado (o
+/// resultado real vem sempre de um executor real registrado em `toolExecutors.ts`, nunca
+/// recalculado aqui). `policyDecision` é o snapshot serializado do `CapabilityDecision` que
+/// autorizou (ou negou) esta execução — histórico imutável mesmo que o grant mude depois.
+model AgentExecution {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// Sem relação FK para `User` de propósito (mesmo padrão de `ModuleAccessGrant.grantedByUserId`)
+  /// — sobrevive à remoção do usuário, e o ator real desta execução é auditoria histórica, não
+  /// vínculo vivo.
+  actorId  String
+  /// `UserRole` do ator NO MOMENTO da execução — snapshot, nunca recalculado depois (o papel do
+  /// usuário pode mudar sem invalidar o histórico de por que uma execução passada foi permitida).
+  actorRole         String
+  /// Código do `JobRole` principal do ator no momento da execução — snapshot pelo mesmo motivo.
+  jobRoleCode String?
+  /// Nullable de propósito — uma tentativa de execução contra um `agentCode` que não existe no
+  /// catálogo (reason=UNKNOWN_AGENT) ainda é auditável (é um evento relevante de segurança), mas
+  /// não tem nenhum `AgentDefinition` real para referenciar.
+  agentDefinitionId String?
+  agentDefinition   AgentDefinition? @relation(fields: [agentDefinitionId], references: [id], onDelete: SetNull)
+  agentVersionId    String?
+  agentVersion      AgentVersion?    @relation(fields: [agentVersionId], references: [id], onDelete: SetNull)
+  /// Código solicitado pelo ator — sempre preenchido, mesmo quando `agentDefinitionId` é nulo
+  /// (UNKNOWN_AGENT): é o único jeito de saber, no histórico, qual código foi tentado.
+  agentCode         String
+  capabilityCode    String
+  mission           String?              @db.Text
+  status            AgentExecutionStatus @default(PENDING)
+  /// Snapshot serializado de `CapabilityDecision` (PROMPT 3) — sempre preenchido antes de
+  /// `status` sair de `AUTHORIZING`, mesmo quando a decisão nega a execução.
+  policyDecision  Json?
+  summary         String? @db.Text
+  facts           Json?
+  metrics         Json?
+  evidence        Json?
+  risks           Json?
+  recommendations Json?
+  nextActions     Json?
+  missingData     Json?
+  /// Lista de chamadas reais de executor feitas durante esta execução (toolCode, input, output,
+  /// duração) — nunca inclui prompt/segredo em texto puro (ver sanitização em `agentRuntime.service.ts`).
+  toolCalls Json?
+  /// 0 a 1 — só preenchido quando `status = SUCCEEDED`; nunca decorativo (mesma regra de
+  /// `AgentExecutionResult.confidence` em `commercialAgentTypes.ts`).
+  confidence Float?
+  /// Mensagem de erro SANITIZADA (nunca stack trace bruto) — só preenchida quando `status = FAILED`.
+  errorMessage  String?
+  correlationId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  completedAt   DateTime?
+
+  @@index([organizationId, createdAt])
+  @@index([agentDefinitionId])
+  @@index([organizationId, status])
 }
 

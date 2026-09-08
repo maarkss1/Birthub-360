@@ -147,6 +147,12 @@ export function LoginScreen() {
   const [name, setName] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
+  // Cadastro (?signup=1) agora exige confirmação de posse do e-mail antes de abrir sessão (ver
+  // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
+  // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
+  // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
+  // vez de tentar navegar para /app sem sessão nenhuma.
+  const [verificationPending, setVerificationPending] = useState(false);
   const { activeBrand, setActiveBrand, brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const brandAccent = useBrandAccent();
@@ -199,6 +205,15 @@ export function LoginScreen() {
       return;
     }
 
+    // Cadastro sem sessão de volta = e-mail ainda não confirmado (requireEmailVerification em
+    // src/lib/auth.ts) — não há pra onde navegar ainda, então mostra o aviso em vez de tentar ir
+    // pra /app sem sessão (o que só voltaria pro login de qualquer forma).
+    if (isSignUp && !result.data?.token) {
+      setVerificationPending(true);
+      setIsSubmitting(false);
+      return;
+    }
+
     window.location.href = '/app';
   };
 
@@ -237,6 +252,7 @@ export function LoginScreen() {
   const backToSignIn = () => {
     setIsForgotPassword(false);
     setForgotPasswordSent(false);
+    setVerificationPending(false);
     setError('');
   };
 
@@ -374,7 +390,24 @@ export function LoginScreen() {
             <div
               className={`mt-8 w-full p-6 sm:p-7 rounded-card-lg border border-brand/25 bg-surface text-left shadow-card transition-shadow duration-300 ${brandAccent.glow}`}
             >
-              {isForgotPassword ? (
+              {verificationPending ? (
+                <div className="space-y-5 text-center">
+                  <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
+                    <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
+                    <p>
+                      Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele
+                      para confirmar que este e-mail é seu e ativar sua conta.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={backToSignIn}
+                    className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                  >
+                    Voltar para o login
+                  </button>
+                </div>
+              ) : isForgotPassword ? (
                 <>
                   {forgotPasswordSent ? (
                     <div className="space-y-5 text-center">

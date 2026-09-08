@@ -71,6 +71,7 @@ const MODULE_ORDER: TabType[] = [
   'knowledge',
   'analytics',
   'winloss',
+  'daily-plan',
   'sdr-diagnostic-joao',
   'commercial_intelligence',
   'copiloto_ia',

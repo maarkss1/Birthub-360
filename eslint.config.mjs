@@ -7,9 +7,22 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
+import globals from 'globals';
 
 export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.recommended, {
   ignores: ['dist', 'node_modules', 'build', '*.config.js'],
+}, {
+  // Extensão Chrome (MV3): service worker (background.js), content script (content.js) e páginas
+  // HTML (sidepanel.js/offscreen.js) rodam fora do Node/DOM do resto do projeto — sem este bloco,
+  // `chrome`, `document`, `setInterval` etc. batiam como no-undef (globals do projeto principal são
+  // Node, não browser/webextensions).
+  files: ['chrome-extension/**/*.js'],
+  languageOptions: {
+    globals: {
+      ...globals.browser,
+      ...globals.webextensions,
+    },
+  },
 }, {
   files: ['**/*.{ts,tsx}'],
   plugins: {
