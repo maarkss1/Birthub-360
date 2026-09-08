@@ -1,4 +1,9 @@
-import type { AgentAccessLevel, AgentDefinitionStatus, AgentVersionStatus, Prisma } from '@prisma/client';
+import type {
+  AgentAccessLevel,
+  AgentDefinitionStatus,
+  AgentVersionStatus,
+  Prisma,
+} from '@prisma/client';
 import { prisma } from '../../../lib/prisma.js';
 import { AuditService } from '../../../lib/audit/audit.service.js';
 

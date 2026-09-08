@@ -35,14 +35,16 @@ export const JOB_ROLE_CATALOG: JobRoleCatalogEntry[] = [
     code: 'LDR',
     name: 'LDR — Lead Development Representative',
     department: 'Prospecção',
-    description: 'Contextualiza e prioriza contas antes da abordagem, usando sinais reais de mercado já coletados.',
+    description:
+      'Contextualiza e prioriza contas antes da abordagem, usando sinais reais de mercado já coletados.',
     level: 10,
   },
   {
     code: 'BDR',
     name: 'BDR — Business Development Representative',
     department: 'Prospecção',
-    description: 'Transforma contas priorizadas em abordagens outbound e cria o primeiro movimento comercial.',
+    description:
+      'Transforma contas priorizadas em abordagens outbound e cria o primeiro movimento comercial.',
     level: 20,
   },
   {
@@ -63,21 +65,24 @@ export const JOB_ROLE_CATALOG: JobRoleCatalogEntry[] = [
     code: 'COORDENADOR_COMERCIAL',
     name: 'Coordenador Comercial',
     department: 'Gestão Comercial',
-    description: 'Acompanha o ritmo diário do time a partir de alertas, aging e indicadores operacionais.',
+    description:
+      'Acompanha o ritmo diário do time a partir de alertas, aging e indicadores operacionais.',
     level: 50,
   },
   {
     code: 'GERENTE_COMERCIAL',
     name: 'Gerente Comercial',
     department: 'Gestão Comercial',
-    description: 'Revisa forecast, pipeline e performance do time, separando fato, tendência e risco.',
+    description:
+      'Revisa forecast, pipeline e performance do time, separando fato, tendência e risco.',
     level: 60,
   },
   {
     code: 'DIRETOR_COMERCIAL',
     name: 'Diretor Comercial',
     department: 'Executivo',
-    description: 'Responde se a máquina comercial sustenta a meta, traduzindo operação em decisão executiva.',
+    description:
+      'Responde se a máquina comercial sustenta a meta, traduzindo operação em decisão executiva.',
     level: 70,
   },
   {

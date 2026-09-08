@@ -43,33 +43,39 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
   }
 });
 
-router.get('/:id/agents', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const jobRoleId = routeParam(req.params.id, 'id');
-    const jobRole = await getJobRoleById(jobRoleId);
-    if (!jobRole) {
-      res.status(404).json({ success: false, error: 'Cargo não encontrado.' });
-      return;
+router.get(
+  '/:id/agents',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const jobRoleId = routeParam(req.params.id, 'id');
+      const jobRole = await getJobRoleById(jobRoleId);
+      if (!jobRole) {
+        res.status(404).json({ success: false, error: 'Cargo não encontrado.' });
+        return;
+      }
+      const agents = await listAgentsForJobRole(jobRoleId);
+      res.json({ success: true, data: { jobRole, agents } });
+    } catch (error) {
+      next(error);
     }
-    const agents = await listAgentsForJobRole(jobRoleId);
-    res.json({ success: true, data: { jobRole, agents } });
-  } catch (error) {
-    next(error);
-  }
-});
+  },
+);
 
 // A partir daqui: gestão de atribuição de cargo — mesmo nível de restrição de team.routes.ts
 // (só ADMIN cria/altera; leitura de catálogo acima é livre para o próprio usuário se orientar).
 router.use(requireRole(['ADMIN']));
 
-router.get('/assignments/matrix', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const users = await getJobRoleAssignmentMatrix((req as AuthRequest).user.organizationId);
-    res.json({ success: true, data: { users } });
-  } catch (error) {
-    next(error);
-  }
-});
+router.get(
+  '/assignments/matrix',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const users = await getJobRoleAssignmentMatrix((req as AuthRequest).user.organizationId);
+      res.json({ success: true, data: { users } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 const assignJobRoleSchema = z.object({
   userId: z.string().trim().min(1, 'userId é obrigatório.'),
