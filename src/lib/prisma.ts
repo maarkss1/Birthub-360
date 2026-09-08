@@ -471,7 +471,7 @@ export const prisma = basePrisma.$extends({
               data: { deletedAt: new Date(), deletedBy: userId, deleteReason: 'Soft delete' },
             });
           })) as Record<string, unknown>;
-          if (result && result.id) {
+          if (result?.id) {
             affectedIds.push(result.id as string);
           }
         } else if (isAuditable && operation === 'deleteMany') {

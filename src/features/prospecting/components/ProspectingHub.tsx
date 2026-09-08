@@ -515,7 +515,7 @@ export function ProspectingHub() {
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex gap-3 bg-surface/75 backdrop-blur-xl p-2 rounded-2xl border border-line shadow-card w-fit relative z-10">
-            <button
+            <button type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('cnpj');
@@ -524,7 +524,7 @@ export function ProspectingHub() {
             >
               <Landmark size={18} /> Busca Direta (CNPJ/Nome)
             </button>
-            <button
+            <button type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('discovery');
@@ -533,7 +533,7 @@ export function ProspectingHub() {
             >
               <Database size={18} /> Radar Discovery (Fontes abertas)
             </button>
-            <button
+            <button type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('ocr');
@@ -542,7 +542,7 @@ export function ProspectingHub() {
             >
               <Camera size={18} /> Cadastrar por Foto (OCR)
             </button>
-            <button
+            <button type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('tools');
@@ -553,7 +553,7 @@ export function ProspectingHub() {
             </button>
           </div>
 
-          <button
+          <button type="button"
             onClick={() => {
               SoundFX.play('focus');
               setIsSavedSearchesOpen(true);
@@ -633,7 +633,7 @@ export function ProspectingHub() {
             // antes disto era descartado, e um clique programático no botão de busca disparava
             // uma segunda chamada a /discover (Apollo/Places de novo) só para conseguir o mesmo
             // resultado que a API já tinha na resposta.
-            setCriteria(savedCrit as any);
+            setCriteria(savedCrit);
             setCandidates(savedCandidates);
             setDiscoveryPage(1);
             setApolloError(null);

@@ -30,7 +30,7 @@ export function PromptStudio() {
   useEffect(() => {
     loadPrompts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadPrompts]);
 
   const loadPrompts = async () => {
     try {
@@ -101,7 +101,7 @@ export function PromptStudio() {
         </div>
 
         <div className="flex items-center bg-gray-100 dark:bg-gray-700/50 p-1.5 rounded-2xl border border-gray-200 dark:border-gray-600">
-          <button
+          <button type="button"
             onClick={() => setViewMode('generator')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'generator'
@@ -111,7 +111,7 @@ export function PromptStudio() {
           >
             <Code2 size={16} /> Gerador de Prompts & Scripts
           </button>
-          <button
+          <button type="button"
             onClick={() => setViewMode('studio')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'studio'
@@ -134,7 +134,7 @@ export function PromptStudio() {
             </h2>
             <div className="space-y-2">
               {TOOLS.map((tool) => (
-                <button
+                <button type="button"
                   key={tool.id}
                   onClick={() => handleCategoryChange(tool.id)}
                   className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
@@ -178,7 +178,7 @@ export function PromptStudio() {
             </div>
 
             <div className="flex justify-end pt-4">
-              <button
+              <button type="button"
                 onClick={handleSave}
                 disabled={saving}
                 className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none disabled:opacity-50 transition-colors"

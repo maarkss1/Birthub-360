@@ -1,16 +1,16 @@
 import { Bookmark, Calendar, Loader2, Play, Plus, Sparkles, Trash2 } from 'lucide-react';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Dialog } from '../../../components/ui/Dialog';
 import { api } from '../../../lib/api.js';
 import { toast } from '../../../lib/toast.js';
-import type { ProspectCandidate } from '../domain/prospectTypes.js';
+import type { ProspectCandidate, ProspectCriteria } from '../domain/prospectTypes.js';
 
 export interface SavedSearchItem {
   id: string;
   name: string;
-  criteria: Record<string, any>;
+  criteria: ProspectCriteria;
   schedule: string | null;
   lastRunAt: string | null;
   nextRunAt: string | null;
@@ -21,7 +21,7 @@ export interface SavedSearchItem {
 interface SavedSearchesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentCriteria?: Record<string, any>;
+  currentCriteria?: ProspectCriteria;
   /**
    * Chamado depois de "Executar" com o critério da busca salva e os candidatos que
    * `/saved-searches/:id/run` já encontrou (Onda 43: antes o candidato era descartado e a tela
@@ -29,7 +29,7 @@ interface SavedSearchesModalProps {
    * conseguir o mesmo resultado que a API já tinha devolvido de graça, pagando de novo o custo de
    * Apollo/Places por nada).
    */
-  onApplyCriteria?: (criteria: Record<string, any>, candidates: ProspectCandidate[]) => void;
+  onApplyCriteria?: (criteria: ProspectCriteria, candidates: ProspectCandidate[]) => void;
 }
 
 export function SavedSearchesModal({
@@ -47,7 +47,7 @@ export function SavedSearchesModal({
   const [creating, setCreating] = useState(false);
   const { confirm, dialog } = useConfirmDialog();
 
-  const loadSearches = async () => {
+  const loadSearches = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.get<SavedSearchItem[]>('/api/prospecting/saved-searches');
@@ -57,13 +57,13 @@ export function SavedSearchesModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
       loadSearches();
     }
-  }, [isOpen]);
+  }, [isOpen, loadSearches]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,7 +150,7 @@ export function SavedSearchesModal({
         title={dialogTitle}
         maxWidth="max-w-2xl"
         footer={
-          <button
+          <button type="button"
             onClick={onClose}
             className="px-5 py-2 rounded-2xl bg-surface-2 text-xs font-bold text-ink hover:bg-surface-3 transition-colors"
           >
@@ -161,7 +161,7 @@ export function SavedSearchesModal({
         <div className="space-y-4">
           {/* Botão para salvar filtro atual */}
           {!showCreateForm ? (
-            <button
+            <button type="button"
               onClick={() => setShowCreateForm(true)}
               className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-active dark:text-brand-2 flex items-center justify-center gap-2 hover:bg-brand/5 transition-all"
             >
@@ -200,7 +200,12 @@ export function SavedSearchesModal({
                 <select
                   id="saved-search-schedule"
                   value={newSchedule}
-                  onChange={(e) => setNewSchedule(e.target.value as any)}
+                  onChange={(event) => {
+                    const schedule = event.target.value;
+                    if (schedule === 'none' || schedule === 'daily' || schedule === 'weekly') {
+                      setNewSchedule(schedule);
+                    }
+                  }}
                   className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs font-medium text-ink focus:outline-none focus:border-brand"
                 >
                   <option value="none">Manual (Sem agendamento)</option>
@@ -269,7 +274,7 @@ export function SavedSearchesModal({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
+                  <button type="button"
                     onClick={() => handleRun(s)}
                     disabled={runningId === s.id}
                     title="Executar busca agora"
@@ -282,7 +287,7 @@ export function SavedSearchesModal({
                     )}
                     Executar
                   </button>
-                  <button
+                  <button type="button"
                     onClick={() => handleDelete(s.id)}
                     title="Excluir busca salva"
                     className="p-2 text-ink-2 hover:text-red-500 rounded-xl hover:bg-red-50 transition-colors"

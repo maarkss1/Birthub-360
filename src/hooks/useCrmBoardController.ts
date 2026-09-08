@@ -21,7 +21,7 @@ export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
 
       if (Array.isArray(response)) {
         setLeads(response);
-      } else if (response && response.data) {
+      } else if (response?.data) {
         setLeads(response.data);
       }
     } catch (err) {

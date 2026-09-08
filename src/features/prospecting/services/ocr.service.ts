@@ -13,9 +13,6 @@ const ACCEPTED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const OCR_MIN_LONG_EDGE_PX = 1600;
 
 export class OcrValidationError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
 }
 
 /**

@@ -408,7 +408,7 @@ if __name__ == "__main__":
             >
               <Link size={14} /> App de Origem (Gatilho / Trigger)
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'trigger' ? null : 'trigger')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -462,7 +462,7 @@ if __name__ == "__main__":
             >
               <GitCommit size={14} /> App de Destino (Ação / Action)
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'action' ? null : 'action')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -514,7 +514,7 @@ if __name__ == "__main__":
             <p className="flex items-center gap-2 text-[10px] tracking-widest font-black uppercase mb-3 text-yellow-400">
               <Layers size={14} /> Ferramenta de Orquestração
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'tool' ? null : 'tool')}
               className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-yellow-400/50 transition-colors"
             >
@@ -562,7 +562,7 @@ if __name__ == "__main__":
             <p className="flex items-center gap-2 text-[10px] tracking-widest font-black uppercase mb-3 text-rose-400">
               <Bot size={14} /> Camada de Inteligência IA
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'ai' ? null : 'ai')}
               className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-rose-400/50 transition-colors"
             >
@@ -621,7 +621,7 @@ if __name__ == "__main__":
         </div>
 
         <div className="relative z-10 flex justify-center">
-          <button
+          <button type="button"
             onClick={handleGenerate}
             disabled={generating}
             className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-white px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
@@ -684,7 +684,7 @@ if __name__ == "__main__":
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <button
+                <button type="button"
                   onClick={handleCopy}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                     copied
@@ -702,7 +702,7 @@ if __name__ == "__main__":
                     </>
                   )}
                 </button>
-                <button
+                <button type="button"
                   onClick={handleDownload}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
                 >
@@ -713,7 +713,7 @@ if __name__ == "__main__":
 
             {/* Abas */}
             <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
-              <button
+              <button type="button"
                 onClick={() => setActiveTabOutput('blueprint')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'blueprint'
@@ -723,7 +723,7 @@ if __name__ == "__main__":
               >
                 Blueprint Passo a Passo
               </button>
-              <button
+              <button type="button"
                 onClick={() => setActiveTabOutput('json')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'json'
@@ -733,7 +733,7 @@ if __name__ == "__main__":
               >
                 Payload Workflow (n8n JSON)
               </button>
-              <button
+              <button type="button"
                 onClick={() => setActiveTabOutput('code')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'code'

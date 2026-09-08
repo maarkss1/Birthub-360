@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- região virtualizada rolável por teclado */
 /**
  * VirtualTable — tabela virtualizada usando @tanstack/react-virtual
  *
@@ -117,7 +118,6 @@ export function VirtualTable<T>({
         // Div não-interativa com scroll — tabIndex é intencional (torna a região focável/rolável
         // via teclado), não um erro de a11y. Mesmo padrão de CrmBoard.tsx.
         // biome-ignore lint/a11y/noNoninteractiveTabindex: scroll vertical via teclado, ver comentário acima
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scroll vertical via teclado, ver comentário acima
         tabIndex={0}
         aria-label="Tabela de dados"
       >

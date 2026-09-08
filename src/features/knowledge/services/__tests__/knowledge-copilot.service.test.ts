@@ -87,7 +87,7 @@ describe('KnowledgeCopilotService — citação real resolvida de SearchHit (AI-
     const result = await service.answerTechnicalQuestion({ question: 'q', hits: [buildHit()] });
 
     expect(result.sourceReferences).toHaveLength(1);
-    expect(result.sourceReferences[0]!.documentId).toBe('doc-1');
+    expect(result.sourceReferences[0]?.documentId).toBe('doc-1');
   });
 
   it('descarta índices não-inteiros e zero/negativos', async () => {
@@ -139,7 +139,7 @@ describe('KnowledgeCopilotService — citação real resolvida de SearchHit (AI-
     const result = await service.answerTechnicalQuestion({ question: 'q', hits: [] });
 
     expect(result.sourceReferences).toEqual([]);
-    const promptSentToLlm = invokeMock.mock.calls[0]![0][1].content as string;
+    const promptSentToLlm = invokeMock.mock.calls[0]?.[0][1].content as string;
     expect(promptSentToLlm).toContain('Nenhum documento da base de conhecimento foi encontrado');
   });
 
@@ -206,7 +206,7 @@ describe('KnowledgeCopilotService — defesa estrutural contra prompt injection 
 
     await service.answerTechnicalQuestion({ question: 'q', hits: [maliciousChunk] });
 
-    const promptSentToLlm = invokeMock.mock.calls[0]![0][1].content as string;
+    const promptSentToLlm = invokeMock.mock.calls[0]?.[0][1].content as string;
     // O delimitador estrutural envolve o chunk inteiro...
     expect(promptSentToLlm).toContain('<untrusted_external_content>');
     expect(promptSentToLlm).toContain('</untrusted_external_content>');
@@ -229,7 +229,7 @@ describe('KnowledgeCopilotService — defesa estrutural contra prompt injection 
 
     await service.answerTechnicalQuestion({ question: 'q', hits: [buildHit()] });
 
-    const systemPromptSentToLlm = invokeMock.mock.calls[0]![0][0].content as string;
+    const systemPromptSentToLlm = invokeMock.mock.calls[0]?.[0][0].content as string;
     expect(systemPromptSentToLlm).toContain('<untrusted_external_content>');
     expect(systemPromptSentToLlm.toUpperCase()).toContain('DADO');
   });
@@ -257,7 +257,7 @@ describe('KnowledgeCopilotService — defesa estrutural contra prompt injection 
     expect(result.sourceReferences).toEqual([
       expect.objectContaining({ documentId: 'doc-malicious', chunkId: 'chunk-malicious' }),
     ]);
-    const promptSentToLlm = invokeMock.mock.calls[0]![0][1].content as string;
+    const promptSentToLlm = invokeMock.mock.calls[0]?.[0][1].content as string;
     expect(promptSentToLlm).toContain('&lt;/untrusted_external_content&gt;');
   });
 });

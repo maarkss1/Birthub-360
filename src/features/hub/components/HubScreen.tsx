@@ -282,7 +282,7 @@ export function HubScreen() {
     layout();
     window.addEventListener('resize', layout);
     return () => window.removeEventListener('resize', layout);
-  }, [items, isDesktopOrbit]);
+  }, [isDesktopOrbit]);
 
   const handleCardClick = (e: React.MouseEvent, item: OrbitItem) => {
     burstRef.current?.trigger(e.clientX, e.clientY, item.colorRgb);

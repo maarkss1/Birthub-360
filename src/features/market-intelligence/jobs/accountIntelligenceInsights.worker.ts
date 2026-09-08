@@ -16,6 +16,7 @@ import { classifyBuyingRole } from '../domain/accountDecisionMakers.js';
 import {
   matchEconomicGroupByCnpjRoot,
   matchEconomicGroupCamada2e3,
+  type EconomicGroupCompanyInputExtended,
 } from '../domain/accountEconomicGroup.js';
 
 /**
@@ -52,7 +53,7 @@ interface AccountForInsights {
   organizationId: string;
   lookalikeScore: number | null;
   cnpj: string | null;
-  qsa?: any;
+  qsa?: unknown;
   website?: string | null;
 }
 
@@ -108,7 +109,7 @@ async function generateDecisionMakersForAccount(account: AccountForInsights): Pr
  */
 async function generateEconomicRelationshipsForOrganization(
   organizationId: string,
-  companies: any[],
+  companies: EconomicGroupCompanyInputExtended[],
   now: Date,
 ): Promise<void> {
   const matches = matchEconomicGroupByCnpjRoot(companies);

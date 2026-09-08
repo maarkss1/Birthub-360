@@ -311,7 +311,7 @@ export function CommandPalette() {
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [query]);
+  }, []);
 
   const handleInputKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {

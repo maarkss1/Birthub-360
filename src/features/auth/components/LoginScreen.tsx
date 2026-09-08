@@ -408,8 +408,7 @@ export function LoginScreen() {
                   </button>
                 </div>
               ) : isForgotPassword ? (
-                <>
-                  {forgotPasswordSent ? (
+                forgotPasswordSent ? (
                     <div className="space-y-5 text-center">
                       <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
                         <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
@@ -497,11 +496,9 @@ export function LoginScreen() {
                         </button>
                       </div>
                     </form>
-                  )}
-                </>
+                  )
               ) : (
-                <>
-                  <form onSubmit={handleAuth} className="space-y-4">
+                <form onSubmit={handleAuth} className="space-y-4">
                     {error && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
@@ -602,7 +599,6 @@ export function LoginScreen() {
                       )}
                     </motion.button>
                   </form>
-                </>
               )}
             </div>
           </motion.div>

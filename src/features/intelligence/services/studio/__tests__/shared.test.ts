@@ -174,7 +174,7 @@ describe('studio/shared', () => {
     });
 
     it('extrai JSON de dentro de uma cerca de código Markdown (```json ... ```)', async () => {
-      const fenced = '```json\n' + JSON.stringify({ subject: 'Oi', body: 'Corpo' }) + '\n```';
+      const fenced = `\`\`\`json\n${JSON.stringify({ subject: 'Oi', body: 'Corpo' })}\n\`\`\``;
       invokeMock.mockResolvedValueOnce(aiResult(fenced));
 
       const result = await invokeStructured(

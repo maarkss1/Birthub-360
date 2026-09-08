@@ -450,7 +450,7 @@ $status | ConvertTo-Json -Depth 3
             >
               <Brain size={14} /> Papel & Especialidade (Role)
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'role' ? null : 'role')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -491,7 +491,7 @@ $status | ConvertTo-Json -Depth 3
             <p className="flex items-center gap-2 text-[10px] tracking-widest font-black uppercase mb-3 text-sky-400">
               <Cpu size={14} /> Provedor de IA (Engine Provider)
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'provider' ? null : 'provider')}
               className="w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-sky-400/50 transition-colors"
             >
@@ -531,7 +531,7 @@ $status | ConvertTo-Json -Depth 3
             >
               <Brain size={14} /> Modelo Cognitivo Específico
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'model' ? null : 'model')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -572,7 +572,7 @@ $status | ConvertTo-Json -Depth 3
             <p className="flex items-center gap-2 text-[10px] tracking-widest font-black uppercase mb-3 text-amber-400">
               <Sliders size={14} /> Temperatura / Criatividade do Motor
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'temp' ? null : 'temp')}
               className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-amber-400/50 transition-colors"
             >
@@ -613,7 +613,7 @@ $status | ConvertTo-Json -Depth 3
             <p className="flex items-center gap-2 text-[10px] tracking-widest font-black uppercase mb-3 text-emerald-400">
               <Database size={14} /> Arquitetura de Memória & RAG
             </p>
-            <button
+            <button type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'memory' ? null : 'memory')}
               className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-emerald-400/50 transition-colors"
             >
@@ -682,7 +682,7 @@ $status | ConvertTo-Json -Depth 3
 
         {/* Botão de Geração */}
         <div className="relative z-10 flex justify-center">
-          <button
+          <button type="button"
             onClick={handleCreate}
             disabled={generating}
             className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradientVia} text-white px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
@@ -751,7 +751,7 @@ $status | ConvertTo-Json -Depth 3
               </div>
 
               <div className="flex items-center gap-3">
-                <button
+                <button type="button"
                   onClick={handleCopyCurrent}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                     copied
@@ -769,7 +769,7 @@ $status | ConvertTo-Json -Depth 3
                     </>
                   )}
                 </button>
-                <button
+                <button type="button"
                   onClick={handleDownloadCurrent}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
                 >
@@ -780,7 +780,7 @@ $status | ConvertTo-Json -Depth 3
 
             {/* Seletor de Abas de Output */}
             <div className="flex items-center gap-2 mb-4 relative z-10 overflow-x-auto pb-2">
-              <button
+              <button type="button"
                 onClick={() => setActiveTabOutput('prompt')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   activeTabOutput === 'prompt'
@@ -790,7 +790,7 @@ $status | ConvertTo-Json -Depth 3
               >
                 <Brain size={14} /> System Prompt (IA)
               </button>
-              <button
+              <button type="button"
                 onClick={() => setActiveTabOutput('json')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   activeTabOutput === 'json'
@@ -800,7 +800,7 @@ $status | ConvertTo-Json -Depth 3
               >
                 <Code2 size={14} /> Manifest (JSON)
               </button>
-              <button
+              <button type="button"
                 onClick={() => setActiveTabOutput('python')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   activeTabOutput === 'python'
@@ -810,7 +810,7 @@ $status | ConvertTo-Json -Depth 3
               >
                 <Terminal size={14} /> Python Deploy Script
               </button>
-              <button
+              <button type="button"
                 onClick={() => setActiveTabOutput('powershell')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   activeTabOutput === 'powershell'

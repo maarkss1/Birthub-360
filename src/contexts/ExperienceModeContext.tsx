@@ -23,7 +23,7 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
       return saved;
     }
     // Auto-detect prefers-reduced-motion
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       return 'REDUCED_MOTION';
     }
     return 'STANDARD';

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- região rolável focável por teclado */
 import { useCallback, useEffect, useState } from 'react';
 import { ArrowRight, AlertTriangle, Pencil, MonitorPlay, Download, RefreshCw } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
@@ -70,7 +71,6 @@ function CoverageProtectionTable({
       <div
         className="overflow-x-auto"
         // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável horizontal precisa ser focável por teclado, mesmo padrão de CrmBoard.tsx
         tabIndex={0}
         role="region"
         aria-label="Tabela Proteção 90 dias (rolável)"

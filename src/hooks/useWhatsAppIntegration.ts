@@ -24,7 +24,7 @@ export function useWhatsAppIntegration() {
     fetchStatus();
     const interval = setInterval(fetchStatus, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchStatus]);
 
   const handleConnect = async () => {
     setLoading(true);

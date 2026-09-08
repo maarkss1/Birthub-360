@@ -1,6 +1,6 @@
 import type { Express } from 'express';
-import path from 'path';
-import { readFileSync } from 'fs';
+import path from 'node:path';
+import { readFileSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import swaggerUi from 'swagger-ui-express';
 import { env } from '../config/env.js';

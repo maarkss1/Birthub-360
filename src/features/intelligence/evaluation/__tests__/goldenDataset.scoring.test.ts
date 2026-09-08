@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { loadGoldenDataset } from '../goldenDataset.service.js';
 import { evaluateGoldenDataset, scoreGoldenCase } from '../goldenDataset.scoring.js';
+import type { GoldenCase, LeadQualificationGoldenCase } from '../goldenDataset.types.js';
 
-function idealOutput(goldenCase: any): unknown {
+function idealOutput(goldenCase: GoldenCase): unknown {
   switch (goldenCase.category) {
     case 'lead_qualification':
       return {
@@ -42,7 +43,7 @@ function idealOutput(goldenCase: any): unknown {
         args: goldenCase.expected.expectedArgs,
       };
     default:
-      throw new Error(`Categoria desconhecida: ${goldenCase.category}`);
+      throw new Error('Categoria desconhecida no Golden Dataset');
   }
 }
 
@@ -82,8 +83,9 @@ describe('Golden Dataset automatic scoring gate', () => {
 
   it('mantém casos QUALIFIED coerentes com o threshold real do graph (>=70)', () => {
     const qualified = loadGoldenDataset().cases.filter(
-      (row: any) => row.category === 'lead_qualification' && row.expected.status === 'QUALIFIED',
-    ) as any[];
+      (row): row is LeadQualificationGoldenCase =>
+        row.category === 'lead_qualification' && row.expected.status === 'QUALIFIED',
+    );
     expect(qualified.every((row) => row.expected.minScore >= 70)).toBe(true);
   });
 });

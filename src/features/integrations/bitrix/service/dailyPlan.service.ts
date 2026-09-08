@@ -54,7 +54,6 @@ function deriveTacticalGuidance(
         scriptOrPrompt: `Prezado(a) ${contactName || ''}, conforme combinamos, segue o resumo dos pontos alinhados e nossa proposta customizada.`,
         suggestedHook: 'Anexar valores claros e link direto para agendamento de dúvidas.',
       };
-    case 'TASK':
     default:
       return {
         recommendedAction: `Executar a tarefa "${title}" e documentar o resultado nas observações para manter o histórico no Bitrix.`,

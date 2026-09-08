@@ -116,7 +116,7 @@ function buildReentries(
   for (const row of history) {
     if (!dealById.has(row.leadId)) continue;
     if (!byLead.has(row.leadId)) byLead.set(row.leadId, []);
-    byLead.get(row.leadId)!.push(row);
+    byLead.get(row.leadId)?.push(row);
   }
 
   const rows: ReentryRow[] = [];
@@ -209,7 +209,7 @@ function buildTransitions(
   for (const row of history) {
     if (!scopeIds.has(row.leadId)) continue;
     if (!byLead.has(row.leadId)) byLead.set(row.leadId, []);
-    byLead.get(row.leadId)!.push(row);
+    byLead.get(row.leadId)?.push(row);
   }
 
   const edgeMap = new Map<string, { edge: StageTransitionEdge; durations: number[] }>();

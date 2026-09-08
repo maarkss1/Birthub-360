@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, Crown, Briefcase, UserCheck, Phone, Mail } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 
 export interface DecisionMakerItem {
@@ -26,7 +27,7 @@ type HierarchyLevel = 'clevel' | 'directors' | 'managers' | 'operational';
 interface LevelConfig {
   id: HierarchyLevel;
   title: string;
-  icon: any;
+  icon: LucideIcon;
   colorBadge: string;
   borderAccent: string;
   bgAccent: string;

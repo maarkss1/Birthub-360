@@ -251,7 +251,6 @@ export function DailyPlanHub() {
             <FileText className="w-3 h-3" /> E-mail
           </span>
         );
-      case 'TASK':
       default:
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-brand/10 text-brand border border-brand/20">

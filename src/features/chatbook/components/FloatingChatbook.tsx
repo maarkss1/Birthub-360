@@ -104,7 +104,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, roleplayMessages]);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -152,7 +152,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 </div>
               </div>
 
-              <button
+              <button type="button"
                 onClick={onClose}
                 aria-label="Fechar assistente"
                 className="p-2 text-ink-2 hover:text-ink hover:bg-surface-2 rounded-xl transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand"
@@ -314,7 +314,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
               <div className="flex-1 flex flex-col min-h-0 bg-surface p-4 space-y-4 overflow-y-auto">
                 {/* Esta aba é a prática rápida por texto — a simulação completa por voz, com nota final
                     detalhada, fica no módulo dedicado "Roleplay" (Sidebar → Inteligência). */}
-                <button
+                <button type="button"
                   onClick={() => {
                     navigate('/app/roleplay');
                     onClose();
@@ -346,7 +346,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
-                    <button
+                    <button type="button"
                       onClick={() => setRoleplayPersona('skeptical_cfo')}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         roleplayPersona === 'skeptical_cfo'
@@ -356,7 +356,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     >
                       CFO Cético (Foco ROI)
                     </button>
-                    <button
+                    <button type="button"
                       onClick={() => setRoleplayPersona('strict_buyer')}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         roleplayPersona === 'strict_buyer'
@@ -366,7 +366,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     >
                       Comprador Rígido
                     </button>
-                    <button
+                    <button type="button"
                       onClick={() => setRoleplayPersona('tech_director')}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         roleplayPersona === 'tech_director'
@@ -490,7 +490,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       <Filter className="w-4 h-4 text-brand" /> Filtros Avançados de Playbook
                     </span>
                     <div className="flex items-center gap-1 bg-surface p-1 rounded-xl border border-line text-xs">
-                      <button
+                      <button type="button"
                         onClick={() => setPlaybookView('objections')}
                         className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                           playbookView === 'objections'
@@ -500,7 +500,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       >
                         Objeções
                       </button>
-                      <button
+                      <button type="button"
                         onClick={() => setPlaybookView('qualifications')}
                         className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                           playbookView === 'qualifications'
@@ -634,7 +634,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                                 {item.persona}
                               </span>
                             </div>
-                            <button
+                            <button type="button"
                               onClick={() => handleCopy(item.responseScript, item.id)}
                               className="text-[11px] text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
                             >
@@ -706,7 +706,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                                 {item.persona}
                               </span>
                             </div>
-                            <button
+                            <button type="button"
                               onClick={() => handleCopy(item.questionText, item.id)}
                               className="text-[11px] text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
                             >

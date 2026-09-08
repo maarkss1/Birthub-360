@@ -15,7 +15,7 @@ export async function apiFetch<T>(endpoint: string, options?: ApiRequestOptions)
   // Check if there is an auth token in localStorage (if used)
   const token = localStorage.getItem('token');
   if (token) {
-    (defaultHeaders as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+    (defaultHeaders as Record<string, string>).Authorization = `Bearer ${token}`;
   }
 
   const controller = new AbortController();

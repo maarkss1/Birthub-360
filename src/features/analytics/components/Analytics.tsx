@@ -108,7 +108,7 @@ function ChartCard({
           <h3 className="text-sm font-bold text-ink">{title}</h3>
           {subtitle && <p className="text-[11px] text-ink-2">{subtitle}</p>}
         </div>
-        <button
+        <button type="button"
           onClick={() => setShowTable((v) => !v)}
           aria-pressed={showTable}
           title="Ver como tabela"
@@ -181,7 +181,7 @@ export function Analytics() {
               aria-label="Período"
             >
               {PERIOD_OPTIONS.map((option) => (
-                <button
+                <button type="button"
                   key={option}
                   onClick={() => setMonths(option)}
                   aria-pressed={months === option}

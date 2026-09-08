@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   AlertCircle,
   BadgeCheck,
@@ -78,7 +78,7 @@ export function Team() {
   const [unlockingId, setUnlockingId] = useState<string | null>(null);
   const [resetError, setResetError] = useState('');
 
-  const loadMembers = async () => {
+  const loadMembers = useCallback(async () => {
     setIsLoading(true);
     setLoadError('');
     try {
@@ -90,11 +90,11 @@ export function Team() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadMembers();
-  }, []);
+  }, [loadMembers]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -44,7 +44,7 @@ export function useBitrixIntegration() {
 
   useEffect(() => {
     fetchBitrixConnections();
-  }, []);
+  }, [fetchBitrixConnections]);
 
   const handleBitrixConnect = async () => {
     if (!bitrixWebhookInput.trim()) {

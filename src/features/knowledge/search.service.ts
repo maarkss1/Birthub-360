@@ -235,7 +235,7 @@ export class SearchService {
                     FROM "DocumentChunk" c
                     JOIN "Document" d ON d."id" = c."documentId"
                     WHERE d."organizationId" = ${organizationId}
-                      AND (c."content" ILIKE ${'%' + query + '%'} OR d."title" ILIKE ${'%' + query + '%'})
+                      AND (c."content" ILIKE ${`%${query}%`} OR d."title" ILIKE ${`%${query}%`})
                     LIMIT ${CANDIDATES_PER_STRATEGY}
                 `,
         );

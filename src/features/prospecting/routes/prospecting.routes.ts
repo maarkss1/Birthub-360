@@ -219,7 +219,7 @@ router.post(
       // organizationId sempre vem do tenant autenticado, nunca do corpo da requisição — é o que
       // permite checar opt-out por organização antes do envio (ver cold-email.service.ts).
       const campaign = { ...(req.body as ColdEmailCampaign), organizationId };
-      if (!campaign || !campaign.targetEmail) {
+      if (!campaign?.targetEmail) {
         res.status(400).json({ success: false, error: 'targetEmail é obrigatório' });
         return;
       }
@@ -356,7 +356,7 @@ router.post(
         return;
       }
 
-      const criteria = (savedSearch.criteria as any) || {};
+      const criteria = discoverCriteriaSchema.parse(savedSearch.criteria);
       const result = await discoverCandidates(criteria, organizationId, id);
       const count = result?.candidates?.length || 0;
 

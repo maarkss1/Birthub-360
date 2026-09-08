@@ -70,7 +70,7 @@ export function RealtimeFeed() {
       cancelled = true;
       controller.abort();
     };
-  }, [retryToken]);
+  }, []);
 
   return (
     <Card className="col-span-3 overflow-hidden border border-line bg-surface shadow-card">

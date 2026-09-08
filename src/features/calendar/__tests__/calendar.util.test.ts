@@ -113,8 +113,8 @@ describe('groupByDay', () => {
       { id: 'c', date: new Date(2026, 6, 11, 8, 0).toISOString() },
     ]);
 
-    expect(grupos.get('2026-07-10')!.map((i) => i.id)).toEqual(['a', 'b']);
-    expect(grupos.get('2026-07-11')!.map((i) => i.id)).toEqual(['c']);
+    expect(grupos.get('2026-07-10')?.map((i) => i.id)).toEqual(['a', 'b']);
+    expect(grupos.get('2026-07-11')?.map((i) => i.id)).toEqual(['c']);
   });
 
   it('devolve mapa vazio para lista vazia', () => {

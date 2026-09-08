@@ -32,7 +32,7 @@ export function use3CXIntegration() {
 
   useEffect(() => {
     fetchThreeCXConnections();
-  }, []);
+  }, [fetchThreeCXConnections]);
 
   const handle3CXConnect = async () => {
     if (!threecxPbxUrlInput.trim() || !threecxExtensionInput.trim()) {
