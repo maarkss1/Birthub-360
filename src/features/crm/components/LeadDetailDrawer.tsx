@@ -29,7 +29,7 @@ import { toast } from '../../../lib/toast';
 import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { useBrand } from '../../../contexts/BrandContext';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import { useAuth } from '../../../contexts/AuthContext';
 // Painel de conversa real (histórico + envio) já usado pela Prospecção sobre a mesma integração
 // de WhatsApp (src/features/integrations/whatsapp, sessão Baileys por tenant) — reusado aqui em vez

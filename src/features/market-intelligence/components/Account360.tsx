@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../../lib/api.js';
 import { toast } from '../../../lib/toast.js';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
 import { VisualOrgChart } from './VisualOrgChart.js';
 import { CompanyBranchesView } from './CompanyBranchesView.js';
 

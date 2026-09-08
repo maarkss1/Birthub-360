@@ -7,7 +7,7 @@ import type {
   QualificationMatrixItem,
 } from '../features/playbook/playbook.api';
 import type { BrandInfo } from '../contexts/BrandContext';
-import { useActiveRecord } from '../contexts/ActiveRecordContext';
+import { useActiveRecord } from './useActiveRecord';
 import {
   buildAssistantLocalContext,
   getAssistantRouteContext,

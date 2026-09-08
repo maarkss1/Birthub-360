@@ -277,7 +277,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         }
       }
     },
-    [leads, fetchLeads, resolveStatusFromOverId, leadLabel],
+    [leads, setLeads, fetchLeads, resolveStatusFromOverId, leadLabel],
   );
 
   const handleDragCancel = useCallback(() => {
@@ -316,17 +316,6 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     [leads, leadLabel, resolveStatusFromOverId],
   );
 
-  const handleCardClick = useCallback(
-    (lead: Lead) => {
-      if (selectionMode) {
-        handleToggleSelect(lead.id);
-        return;
-      }
-      setSelectedLeadId(lead.id);
-    },
-    [selectionMode],
-  );
-
   const handleToggleSelect = useCallback((leadId: string) => {
     setSelectedLeadIds((prev) => {
       const next = new Set(prev);
@@ -335,6 +324,17 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       return next;
     });
   }, []);
+
+  const handleCardClick = useCallback(
+    (lead: Lead) => {
+      if (selectionMode) {
+        handleToggleSelect(lead.id);
+        return;
+      }
+      setSelectedLeadId(lead.id);
+    },
+    [selectionMode, handleToggleSelect],
+  );
 
   const handleSelectAll = useCallback(() => {
     if (selectedLeadIds.size === leads.length) {
