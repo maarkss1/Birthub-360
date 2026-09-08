@@ -4886,6 +4886,89 @@ paths:
       summary: Campos customizados disponíveis na entidade do Bitrix24
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan:
+    get:
+      tags: [Bitrix24]
+      summary: >-
+        Plano Diário pessoal do usuário autenticado (tarefas/atividades/leads do Bitrix24 + Central,
+        consolidados). ADMIN/GESTOR podem consultar o plano de outro membro via `assignedById`.
+      parameters:
+        - name: assignedById
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/sync:
+    post:
+      tags: [Bitrix24]
+      summary: Força a releitura do Plano Diário direto do Bitrix24 (mesmo escopo de `/bitrix/daily-plan`).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignedById: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/complete:
+    post:
+      tags: [Bitrix24]
+      summary: Marca um item do Plano Diário como concluído.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemType, itemId]
+              properties:
+                itemType: { type: string }
+                itemId: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/daily-plan/note:
+    post:
+      tags: [Bitrix24]
+      summary: Adiciona uma observação a um item do Plano Diário.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemType, itemId, note]
+              properties:
+                itemType: { type: string }
+                itemId: { type: string }
+                note: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/daily-plan/activity:
+    post:
+      tags: [Bitrix24]
+      summary: Cria uma nova atividade avulsa no Plano Diário (registrada localmente na Central).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, channel]
+              properties:
+                title: { type: string }
+                channel: { type: string }
+                contactName: { type: string }
+                phone: { type: string }
+                dueTime: { type: string }
+                observations: { type: string }
+                leadId: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/leads/{leadId}/comment:
     parameters:
       - name: leadId
