@@ -872,6 +872,8 @@ model Organization {
   publicBookingLinks            PublicBookingLink[]
   // Fundação Multi-Cargo — ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo.
   userJobRoles                  UserJobRole[]
+  // Agent Runtime Genérico (PROMPT 4) — ver seção "Agent Runtime Genérico" no fim deste arquivo.
+  agentExecutions                AgentExecution[]
   savedSearches                 SavedSearch[]
   prospectingSearchExecutions   ProspectingSearchExecution[]
   automationVersions            AutomationVersion[]
@@ -3468,6 +3470,7 @@ model AgentDefinition {
   versions         AgentVersion[]
   roleGrants       RoleAgentGrant[]
   capabilityGrants AgentCapabilityGrant[]
+  executions       AgentExecution[]
 
   @@index([isActive])
   @@index([primaryJobRoleId])
@@ -3496,6 +3499,8 @@ model AgentVersion {
   createdBy         String?
   activatedAt       DateTime?
   deprecatedAt      DateTime?
+
+  executions AgentExecution[]
 
   @@unique([agentDefinitionId, version])
   @@index([agentDefinitionId, status])
@@ -3623,5 +3628,90 @@ model RoleCapabilityGrant {
 
   @@unique([jobRoleId, capabilityDefinitionId])
   @@index([capabilityDefinitionId])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Agent Runtime Genérico (PROMPT 4) — registro de execução de UM AgentDefinition sobre UMA
+// capability, sempre precedido por uma decisão real do Capability & Permission Engine (PROMPT 3).
+// Diferente de `JobRole`/`AgentDefinition`/`CapabilityDefinition` etc. (catálogo de PRODUTO,
+// global, sem organizationId), `AgentExecution` é DADO DE NEGÓCIO por tenant — carrega fatos,
+// evidências e o texto de missão de uma execução real de uma organização específica, então tem
+// `organizationId` + RLS, mesmo tratamento de `ModuleAccessGrant`/`MesaTratamentoTreatment`.
+//
+// Não existe um `ai_run`/`AgentExecution` reaproveitável no schema atual (auditado antes de criar
+// este modelo — `AILog` é só telemetria de custo/latência sem ator/agente/capability/decisão;
+// `AgentMemory` é estado de sessão de chat do Enxame antigo, sem o mesmo propósito de auditoria).
+// ---------------------------------------------------------------------------------------------
+
+/// Ciclo de vida de uma execução — nunca pula direto para SUCCEEDED/FAILED sem passar por
+/// AUTHORIZING (mesmo quando a autorização é instantânea): o campo `policyDecision` só faz
+/// sentido depois dessa etapa ter rodado de verdade.
+enum AgentExecutionStatus {
+  PENDING
+  AUTHORIZING
+  RUNNING
+  SUCCEEDED
+  DENIED
+  FAILED
+  CANCELLED
+}
+
+/// Registro de execução do AgentRuntime genérico — nunca um motor de negócio duplicado (o
+/// resultado real vem sempre de um executor real registrado em `toolExecutors.ts`, nunca
+/// recalculado aqui). `policyDecision` é o snapshot serializado do `CapabilityDecision` que
+/// autorizou (ou negou) esta execução — histórico imutável mesmo que o grant mude depois.
+model AgentExecution {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// Sem relação FK para `User` de propósito (mesmo padrão de `ModuleAccessGrant.grantedByUserId`)
+  /// — sobrevive à remoção do usuário, e o ator real desta execução é auditoria histórica, não
+  /// vínculo vivo.
+  actorId  String
+  /// `UserRole` do ator NO MOMENTO da execução — snapshot, nunca recalculado depois (o papel do
+  /// usuário pode mudar sem invalidar o histórico de por que uma execução passada foi permitida).
+  actorRole         String
+  /// Código do `JobRole` principal do ator no momento da execução — snapshot pelo mesmo motivo.
+  jobRoleCode String?
+  /// Nullable de propósito — uma tentativa de execução contra um `agentCode` que não existe no
+  /// catálogo (reason=UNKNOWN_AGENT) ainda é auditável (é um evento relevante de segurança), mas
+  /// não tem nenhum `AgentDefinition` real para referenciar.
+  agentDefinitionId String?
+  agentDefinition   AgentDefinition? @relation(fields: [agentDefinitionId], references: [id], onDelete: SetNull)
+  agentVersionId    String?
+  agentVersion      AgentVersion?    @relation(fields: [agentVersionId], references: [id], onDelete: SetNull)
+  /// Código solicitado pelo ator — sempre preenchido, mesmo quando `agentDefinitionId` é nulo
+  /// (UNKNOWN_AGENT): é o único jeito de saber, no histórico, qual código foi tentado.
+  agentCode         String
+  capabilityCode    String
+  mission           String?              @db.Text
+  status            AgentExecutionStatus @default(PENDING)
+  /// Snapshot serializado de `CapabilityDecision` (PROMPT 3) — sempre preenchido antes de
+  /// `status` sair de `AUTHORIZING`, mesmo quando a decisão nega a execução.
+  policyDecision  Json?
+  summary         String? @db.Text
+  facts           Json?
+  metrics         Json?
+  evidence        Json?
+  risks           Json?
+  recommendations Json?
+  nextActions     Json?
+  missingData     Json?
+  /// Lista de chamadas reais de executor feitas durante esta execução (toolCode, input, output,
+  /// duração) — nunca inclui prompt/segredo em texto puro (ver sanitização em `agentRuntime.service.ts`).
+  toolCalls Json?
+  /// 0 a 1 — só preenchido quando `status = SUCCEEDED`; nunca decorativo (mesma regra de
+  /// `AgentExecutionResult.confidence` em `commercialAgentTypes.ts`).
+  confidence Float?
+  /// Mensagem de erro SANITIZADA (nunca stack trace bruto) — só preenchida quando `status = FAILED`.
+  errorMessage  String?
+  correlationId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  completedAt   DateTime?
+
+  @@index([organizationId, createdAt])
+  @@index([agentDefinitionId])
+  @@index([organizationId, status])
 }
 

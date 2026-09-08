@@ -4689,6 +4689,47 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
+  # ─────────────────── Agent Runtime Genérico (PROMPT 4) ───────────────────
+  /agents/{agentCode}/run:
+    parameters:
+      - name: agentCode
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Executa um agente sobre uma capability — passa sempre pelo Capability & Permission Engine
+        (PROMPT 3) antes de qualquer execução real. Identidade/tenant sempre da sessão
+        autenticada, nunca do corpo da requisição. `status=SUCCEEDED` só quando o binding é
+        VERIFIED e a decisão de autorização permite (`allowed=true`); `DENIED` cobre todas as
+        negações (SOURCE_REQUIRED, FUTURE_TOOL, APPROVAL_REQUIRED, DISCOVER_ONLY etc.).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [requestedCapability]
+              properties:
+                requestedCapability: { type: string }
+                mission: { type: string }
+                resource: { type: object }
+                context: { type: object }
+                correlationId:
+                  type: string
+                  description: Chave de idempotência — reexecutar com o mesmo valor devolve o mesmo resultado já persistido.
+      responses:
+        '200':
+          description: Execução concluída (SUCCEEDED) ou negada (DENIED/FAILED) — ver `data.execution.status`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: Execução negada pelo Capability & Permission Engine
+
   /capabilities/{code}:
     parameters:
       - name: code
