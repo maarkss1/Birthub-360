@@ -53,11 +53,11 @@ describe('SEC-006 — revogação de sessão ao trocar senha autenticado', () =>
     // sozinho mais (acha real do piloto de threat-modeling do Mantis: antes, qualquer
     // "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão na hora) — sem
     // mailbox real em teste, confirma o e-mail direto no banco antes do primeiro login.
-    const { response: signUpResponse } = await withRlsBypass(() =>
+    const signUpResponse = await withRlsBypass(() =>
       auth.api.signUpEmail({
         body: { email, password: TEST_PASSWORD, name: 'SEC-006 Test User' },
       })
-    ) as { response: { user: { id: string; organizationId: string } } };
+    ) as { user: { id: string; organizationId: string } };
 
     createdUserIds.push(signUpResponse.user.id);
     createdOrgIds.push(signUpResponse.user.organizationId);
