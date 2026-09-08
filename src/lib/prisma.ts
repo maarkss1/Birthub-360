@@ -296,11 +296,19 @@ export const prisma = basePrisma.$extends({
             }
             // Evita que o usuário mude o organizationId no update de um upsert
             if (a.update && typeof a.update === 'object' && 'organizationId' in a.update) {
+              // `delete` de propósito, não `= undefined`: guarda de segurança multi-tenant —
+              // preferimos remover a chave de verdade a confiar em como o Prisma trata um valor
+              // undefined neste campo específico.
+              // biome-ignore lint/performance/noDelete: ver comentário acima
               delete (a.update as Record<string, unknown>).organizationId;
             }
           }
           if (operation === 'update' || operation === 'updateMany') {
             if (a.data && typeof a.data === 'object' && 'organizationId' in a.data) {
+              // `delete` de propósito, não `= undefined`: guarda de segurança multi-tenant —
+              // preferimos remover a chave de verdade a confiar em como o Prisma trata um valor
+              // undefined neste campo específico.
+              // biome-ignore lint/performance/noDelete: ver comentário acima
               delete (a.data as Record<string, unknown>).organizationId;
             }
           }

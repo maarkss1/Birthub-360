@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus -- campo revelado por ação do usuário, ver comentário no local de uso */
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import {
@@ -461,7 +462,7 @@ export function LoginScreen() {
                            automático de carregamento de página; foca o único campo do
                            sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
                            WAI-ARIA Authoring Practices. */
-                          // eslint-disable-next-line jsx-a11y/no-autofocus
+                          // biome-ignore lint/a11y/noAutofocus: ver comentário acima
                           autoFocus
                         />
                       </div>

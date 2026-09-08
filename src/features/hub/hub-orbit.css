@@ -161,6 +161,9 @@
 @media (prefers-reduced-motion: reduce) {
   .hub-orb,
   .hub-card:hover .hub-orb {
+    /* !important necessário: precisa vencer o transform de :hover/:active declarado acima
+       (WCAG 2.3.3 — sem escala nenhuma quando o usuário pediu menos movimento). */
+    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
     transform: scale(var(--orb-scale, 1)) !important;
   }
   .hub-orb::before {
@@ -394,6 +397,9 @@
   }
   .hub-card {
     position: static;
+    /* !important necessário: .hub-card.primary (linha 37) é mais específico e continuaria
+       aplicando a margem negativa de centralização do desktop sem isto. */
+    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
     margin: 0 !important;
   }
   .hub-card.primary {

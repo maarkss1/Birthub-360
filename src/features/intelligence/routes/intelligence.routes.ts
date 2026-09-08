@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (aiToolkitFunctions, COD-004) */
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
@@ -600,7 +601,7 @@ ${JSON.stringify(metrics, null, 2)}`;
 // Record (contravariância de parâmetros — `unknown` não é atribuível a `string`), e não há um tipo
 // de união prático que descreva "uma função de N parâmetros de texto, N variando por chave". A
 // aridade real de cada uma é validada em runtime contra AI_TOOLKIT_ARITY logo abaixo.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: ver comentário acima
 const aiToolkitFunctions: Record<string, (...args: any[]) => Promise<unknown>> = {
   summarizeLead,
   generateEmailDraft,

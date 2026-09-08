@@ -431,7 +431,7 @@ describe('checkpoint incremental (Onda 41) — retomada real entre execuções, 
     ).toBeUndefined();
 
     expect(capturedProgress).toBeDefined();
-    const firstEntry = capturedProgress?.entities.find((e) => e.entity === 'lead')!;
+    const firstEntry = capturedProgress!.entities.find((e) => e.entity === 'lead')!;
     expect(firstEntry.status).toBe('done');
     expect(firstEntry.pagesExhausted).toBe(true);
     const firstCheckpoint = firstEntry.checkpointTo as string;

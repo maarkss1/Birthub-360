@@ -100,6 +100,9 @@ export function toCsv(rows: Record<string, unknown>[]): string {
   if (headers.length === 0) return '﻿';
   const lines = [headers.join(';')];
   for (const row of rows) lines.push(headers.map((h) => csvEscape(row[h])).join(';'));
+  // BOM UTF-8 (U+FEFF) de propósito no início do CSV — sem ele o Excel abre acentos/ç como
+  // mojibake; não é espaço irregular acidental.
+  // eslint-disable-next-line no-irregular-whitespace
   return `﻿${lines.join('\r\n')}`;
 }
 
