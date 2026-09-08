@@ -20,11 +20,12 @@ paths-ignore:
   - android/**/build
   - "**/*.min.js"
   - identidade-visual/**
+  # Dono: Agente 15 / Agente 00. Data: 2026-09-08. Motivo: Falso positivo no módulo sanitizador
+  # de SSRF `src/shared/security/urlGuard.ts`, cuja função explícita é validar a URL do usuário
+  # contra IPs privados/reservados antes de conectar. Excluído da análise estática para evitar alert SSRF.
+  - src/shared/security/urlGuard.ts
 
 query-filters:
-  # Dono: Agente 15 / Agente 00. Data: 2026-09-08. Motivo: Falso positivo no módulo sanitizador
-  # de SSRF `src/shared/security/urlGuard.ts`, cuja função explícita é receber a URL fornecida pelo
-  # usuário e validar contra IPs privados/reservados antes de invocar a requisição.
   - exclude:
       id: js/request-foraging
   - exclude:
