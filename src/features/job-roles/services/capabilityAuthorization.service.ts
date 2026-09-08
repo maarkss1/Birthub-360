@@ -1,8 +1,4 @@
-import type {
-  AgentAccessLevel,
-  CapabilityActionType,
-  CapabilityRiskLevel,
-} from '@prisma/client';
+import type { AgentAccessLevel, CapabilityActionType, CapabilityRiskLevel } from '@prisma/client';
 import { prisma } from '../../../lib/prisma.js';
 import { getVerifiedToolBinding } from '../catalog/verifiedToolBindings.js';
 import { canUserRolePerformCapabilityAction } from './capabilityUserRolePolicy.js';
