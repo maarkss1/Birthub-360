@@ -66,10 +66,29 @@ export async function signUp(page: Page, { email, password = E2E_PASSWORD, name 
   requestContext.enterWith({ bypassRls: true });
   await prisma.user.update({ where: { email }, data: { emailVerified: true } });
 
-  await page.goto('/login');
-  await page.getByLabel('E-mail:').fill(email);
-  await page.getByPlaceholder('••••••••').fill(password);
-  await page.getByRole('button', { name: /^Entrar$/ }).click();
+  // Login real via API (não pela UI de novo) — só o CADASTRO em si precisa passar pela tela (é o
+  // caminho que exercita o hook real de criação/RLS, ver comentário do helper acima); autenticar
+  // de novo depois de confirmado não precisa recarregar/hidratar a tela de login inteira só para
+  // preencher os mesmos 2 campos. `page.request` compartilha o cookie jar do browser context com
+  // `page`, então o cookie de sessão que a API devolve aqui já vale para a navegação seguinte.
+  // Isso existe porque o `application gate` do CI (job com orçamento de 30min pra unit+integration
+  // +e2e) estourou o timeout depois que este helper passou a fazer um segundo login — multiplicado
+  // por "dezenas de specs" (ver comentário acima), a UI completa de login por chamada era caro
+  // demais.
+  // `page.request` não copia automaticamente um header Origin igual ao da página — melhor não
+  // depender de estar (ou não) isento da checagem por ainda não ter cookie de sessão (ver
+  // validateOrigin em node_modules/better-auth/dist/api/middlewares/origin-check.mjs) e mandar
+  // explícito. `page.url()` aqui ainda é a tela de login/signup, então a origem é a confiável.
+  const signInRes = await page.request.post('/api/auth/sign-in/email', {
+    headers: { Origin: new URL(page.url()).origin },
+    data: { email, password },
+  });
+  if (!signInRes.ok()) {
+    throw new Error(
+      `Login pós-verificação falhou (status ${signInRes.status()}): ${await signInRes.text()}`,
+    );
+  }
+  await page.goto('/app');
   await page.waitForURL('**/app*', { timeout: 30_000 });
 }
 
