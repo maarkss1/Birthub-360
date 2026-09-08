@@ -60,12 +60,6 @@ export function Sidebar({
   const canAccessMesaTratamento =
     !!currentUser && hasRequiredRole(currentUser.role, MESA_TRATAMENTO_ROLES);
 
-  const isJoaoReisOrAdmin =
-    !!currentUser &&
-    (currentUser.email?.toLowerCase().includes('joao.reis') ||
-      currentUser.name?.toLowerCase().includes('joão reis') ||
-      canManageOperations);
-
   const selectTab = (tab: TabType) => {
     if (tab !== activeTab) SoundFX.play('navigate');
     navigate(`/app/${tab}`);
@@ -97,7 +91,7 @@ export function Sidebar({
   const navGroupsByJourney: NavGroupDefinition[] = [
     {
       title: 'Visão Geral',
-      items: ['dashboard', ...(isJoaoReisOrAdmin ? (['sdr-diagnostic-joao'] as TabType[]) : [])],
+      items: ['dashboard', 'daily-plan'],
     },
     { title: 'Captar', items: ['prospect', 'market-intelligence'] },
     {

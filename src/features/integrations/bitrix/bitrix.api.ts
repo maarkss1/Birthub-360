@@ -96,4 +96,49 @@ export const bitrixApi = {
       { leadIds, connectionId },
     );
   },
+
+  // ── Plano Diário Operacional ──
+  getDailyPlan: async (assignedById?: string) => {
+    const query = assignedById ? `?assignedById=${encodeURIComponent(assignedById)}` : '';
+    const res = await api.get<{ success: boolean; data: any }>(`/api/bitrix/daily-plan${query}`);
+    return res.data;
+  },
+
+  syncDailyPlan: async (assignedById?: string) => {
+    const res = await api.post<{ success: boolean; data: any; message: string }>(
+      '/api/bitrix/daily-plan/sync',
+      { assignedById },
+    );
+    return res.data;
+  },
+
+  completeDailyPlanItem: async (itemType: string, itemId: string) => {
+    return api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/complete', {
+      itemType,
+      itemId,
+    });
+  },
+
+  addDailyPlanNote: async (itemType: string, itemId: string, note: string) => {
+    return api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/note', {
+      itemType,
+      itemId,
+      note,
+    });
+  },
+
+  createDailyPlanActivity: async (payload: {
+    title: string;
+    channel: string;
+    contactName?: string;
+    phone?: string;
+    dueTime?: string;
+    observations?: string;
+    leadId?: string;
+  }) => {
+    return api.post<{ success: boolean; message: string }>(
+      '/api/bitrix/daily-plan/activity',
+      payload,
+    );
+  },
 };

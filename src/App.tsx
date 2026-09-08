@@ -141,9 +141,9 @@ const CopilotoIaHub = lazy(() =>
     default: m.CopilotoIaHub,
   })),
 );
-const JoaoReisDiagnosticHub = lazy(() =>
-  import('./features/commercial-intelligence/components/JoaoReisDiagnosticHub').then((m) => ({
-    default: m.JoaoReisDiagnosticHub,
+const DailyPlanHub = lazy(() =>
+  import('./features/commercial-intelligence/components/DailyPlanHub').then((m) => ({
+    default: m.DailyPlanHub,
   })),
 );
 const Calendar = lazy(() =>
@@ -328,7 +328,8 @@ function AppLayout() {
               </RequireRole>
             }
           />
-          <Route path="sdr-diagnostic-joao" element={<JoaoReisDiagnosticHub />} />
+          <Route path="daily-plan" element={<DailyPlanHub />} />
+          <Route path="sdr-diagnostic-joao" element={<DailyPlanHub />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="automations" element={<Automations />} />

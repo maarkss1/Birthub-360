@@ -57,6 +57,7 @@ const TAB_ROUTE_SET: Record<TabType, true> = {
   crm360: true,
   propostas: true,
   'mesa-tratamento': true,
+  'daily-plan': true,
   'sdr-diagnostic-joao': true,
   'module-access': true,
 };

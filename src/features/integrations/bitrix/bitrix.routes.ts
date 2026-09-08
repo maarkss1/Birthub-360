@@ -1,41 +1,45 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { type NextFunction, type Request, type Response, Router } from 'express';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
+  addDailyPlanItemNote,
+  cancelExtractionRun,
+  completeDailyPlanItem,
   connectBitrix,
-  listBitrixConnections,
+  createDailyPlanActivity,
+  createExtractionRun,
+  createSyncRule,
+  deleteExtractionRun,
+  deleteSyncRule,
   disconnectBitrix,
-  regenerateWebhookSecret,
-  setInboundEventsEnabled,
-  listBitrixLeads,
-  importSelectedBitrixLeads,
+  downloadExtractionFile,
+  exportLeadToBitrixNow,
+  fetchUserDailyPlan,
+  getBitrixUsers,
+  getConnectionWebhookUrl,
   getDealPipelines,
   getDealStages,
-  getBitrixUsers,
-  listBitrixDeals,
-  importSelectedBitrixDeals,
-  listSyncRules,
-  createSyncRule,
-  setSyncRuleActive,
-  deleteSyncRule,
-  getLeadStatuses,
-  testBitrixConnection,
   getEntityFields,
-  getConnectionWebhookUrl,
-  postCommentToBitrix,
-  exportLeadToBitrixNow,
-  resolveOwnBitrixUserId,
-  listRecentBitrixSyncLogs,
-  createExtractionRun,
-  listExtractionRuns,
   getExtractionRun,
-  cancelExtractionRun,
-  deleteExtractionRun,
-  downloadExtractionFile,
+  getLeadStatuses,
+  importSelectedBitrixDeals,
+  importSelectedBitrixLeads,
+  listBitrixConnections,
+  listBitrixDeals,
+  listBitrixLeads,
+  listExtractionRuns,
+  listRecentBitrixSyncLogs,
+  listSyncRules,
+  postCommentToBitrix,
+  regenerateWebhookSecret,
+  resolveOwnBitrixUserId,
+  setInboundEventsEnabled,
+  setSyncRuleActive,
+  testBitrixConnection,
 } from './bitrix.service.js';
 import type { ExtractionFileFormat } from './service/extractionFiles.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);
@@ -793,6 +797,124 @@ router.get(
       res.setHeader('Content-Type', contentType);
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(buffer);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// ── Plano Diário Operacional (Sincronizado com Bitrix24) ──────────────────────
+
+router.get(
+  '/daily-plan',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId, email, role } = (req as AuthRequest).user;
+      let overrideBitrixUserId: string | undefined;
+
+      // Se for ADMIN/GESTOR e passou assignedById na query, permite ver o plano de outro membro
+      if (hasRequiredRole(role, ['ADMIN', 'GESTOR']) && req.query.assignedById) {
+        overrideBitrixUserId = String(req.query.assignedById);
+      }
+
+      const plan = await fetchUserDailyPlan(
+        organizationId,
+        email,
+        userId,
+        undefined,
+        overrideBitrixUserId,
+      );
+      res.json({ success: true, data: plan });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/daily-plan/sync',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId, email, role } = (req as AuthRequest).user;
+      let overrideBitrixUserId: string | undefined;
+
+      if (hasRequiredRole(role, ['ADMIN', 'GESTOR']) && req.body.assignedById) {
+        overrideBitrixUserId = String(req.body.assignedById);
+      }
+
+      const plan = await fetchUserDailyPlan(
+        organizationId,
+        email,
+        userId,
+        undefined,
+        overrideBitrixUserId,
+      );
+      res.json({ success: true, data: plan, message: 'Plano diário sincronizado com o Bitrix24.' });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/daily-plan/complete',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const { itemType, itemId } = req.body;
+      if (!itemType || !itemId) {
+        res.status(400).json({ success: false, error: 'itemType e itemId são obrigatórios.' });
+        return;
+      }
+      const result = await completeDailyPlanItem(organizationId, userId, itemType, itemId);
+      res.json({ success: true, message: result.message });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/daily-plan/note',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const { itemType, itemId, note } = req.body;
+      if (!itemType || !itemId || !note) {
+        res.status(400).json({
+          success: false,
+          error: 'itemType, itemId e note são obrigatórios.',
+        });
+        return;
+      }
+      const result = await addDailyPlanItemNote(organizationId, userId, itemType, itemId, note);
+      res.json({ success: true, message: result.message });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/daily-plan/activity',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId, email } = (req as AuthRequest).user;
+      const { title, channel, contactName, phone, dueTime, observations, leadId } = req.body;
+      if (!title || !channel) {
+        res.status(400).json({ success: false, error: 'title e channel são obrigatórios.' });
+        return;
+      }
+      const result = await createDailyPlanActivity(organizationId, userId, email, {
+        title,
+        channel,
+        contactName,
+        phone,
+        dueTime,
+        observations,
+        leadId,
+      });
+      res.json({ success: true, message: result.message });
     } catch (error) {
       next(error);
     }

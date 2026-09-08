@@ -1,4 +1,6 @@
 import type React from 'react';
+import { DailyPlanHub } from './DailyPlanHub';
+export { DailyPlanHub };
 import { useState } from 'react';
 import {
   Calendar,

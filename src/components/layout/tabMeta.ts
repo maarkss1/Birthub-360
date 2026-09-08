@@ -29,7 +29,7 @@ import {
   FileSignature,
   Headset,
   Bot,
-  ClipboardCheck,
+  CalendarCheck,
   ShieldCheck,
   Mic,
 } from 'lucide-react';
@@ -86,6 +86,7 @@ export type TabType =
   | 'editor'
   | 'team'
   | 'settings'
+  | 'daily-plan'
   | 'sdr-diagnostic-joao'
   | 'commercial_intelligence'
   | 'copiloto_ia'
@@ -94,9 +95,10 @@ export type TabType =
 /** Metadados (rótulo + ícone) de cada módulo navegável — fonte única usada pelo topbar e pelo Command Palette. */
 export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
   dashboard: { label: 'Painel Central', icon: Home },
+  'daily-plan': { label: 'Plano Diário', icon: CalendarCheck },
   commercial_intelligence: { label: 'Comercial Inteligente', icon: LineChart },
   copiloto_ia: { label: 'Copiloto IA', icon: Mic },
-  'sdr-diagnostic-joao': { label: 'Diagnóstico & Plano SDR', icon: ClipboardCheck },
+  'sdr-diagnostic-joao': { label: 'Plano Diário', icon: CalendarCheck },
   prospect: { label: 'Prospecção', icon: Search },
   crm: { label: 'Pipeline CRM', icon: LayoutTemplate },
   crm360: { label: 'Cockpit CRM', icon: Gauge },
