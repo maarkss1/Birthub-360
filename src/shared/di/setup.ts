@@ -11,6 +11,7 @@ import { PrismaAutomationRepository } from '../../features/automations/infra/Pri
 import { PrismaAnalyticsRepository } from '../../features/analytics/infra/PrismaAnalyticsRepository';
 import { PrismaCommercialIntelligenceRepository } from '../../features/commercial-intelligence/infra/PrismaCommercialIntelligenceRepository';
 import { CommercialIntelligenceAiService } from '../../features/commercial-intelligence/infra/CommercialIntelligenceAiService';
+import { currentPeriod } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases.js';
 // Onda 43 (Agente 13, Célula Comercial): registrados aqui — não importados diretamente por
 // src/features/intelligence/** — porque `no-cross-feature-imports` (dependency-cruiser) proíbe uma
 // feature de importar internals de outra. Este é o composition root (src/shared/), o único lugar
@@ -35,6 +36,14 @@ import { MeetingSynthesisService } from '../../features/chatbook/services/meetin
 // e resolvido via `container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService')` com
 // o tipo estrutural local já usado por `agent.routes.ts`.
 import { createCalendarEvent } from '../../features/integrations/google/google.service.js';
+// Agent Runtime Genérico (PROMPT 4) — mesmo motivo do comentário da Onda 43 acima:
+// `src/features/job-roles/**` (dono do CapabilityAuthorizationService/AgentRuntime) não pode
+// importar `knowledge`/`intelligence/agents`/`integrations/bitrix` diretamente. Registrados aqui e
+// resolvidos via `container.resolve<T>(name)` em `toolExecutors.ts`, com tipos estruturais locais.
+import { searchService } from '../../features/knowledge/search.service.js';
+import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
+import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
+import { testBitrixConnection } from '../../features/integrations/bitrix/service/connections.js';
 
 // Use Cases
 import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
@@ -165,8 +174,21 @@ export function setupDI() {
   container.register('AnalyticsUseCases', analyticsUseCases);
   container.register('CommercialIntelligenceUseCases', commercialIntelligenceUseCases);
   container.register('CommercialIntelligenceAiService', commercialIntelligenceAiService);
+  container.register('CommercialIntelligencePeriod', { currentPeriod });
   container.register('ChurnPredictionService', churnPredictionService);
   container.register('GoogleCalendarService', { createCalendarEvent });
+  // Agent Runtime Genérico (PROMPT 4) — executores reais por trás de `toolExecutors.ts`
+  // (job-roles). `MeetingSynthesisService`/`SDRQualificationAgent`/`CloserAgent` não têm
+  // dependência própria (mesmo padrão de instanciação already usado em supervisor.agent.ts —
+  // `new SDRQualificationAgent()`/`new CloserAgent()` a cada chamada), então uma única instância
+  // registrada no boot é suficiente (nenhum estado por-requisição é guardado na própria classe —
+  // tenant/sessão vêm por parâmetro/async-context em cada `run`).
+  container.register('KnowledgeSearchService', searchService);
+  container.register('MeetingSynthesisService', new MeetingSynthesisService());
+  container.register('SDRQualificationAgent', new SDRQualificationAgent());
+  container.register('CloserAgent', new CloserAgent());
+  container.register('BitrixLeadWritebackAdapter', bitrixLeadWritebackAdapter);
+  container.register('BitrixConnectionOps', { testBitrixConnection });
   container.register('Crm360UseCases', crm360UseCases);
   container.register('QualificationMatrixUseCases', qualificationMatrixUseCases);
   container.register('ObjectionMatrixUseCases', objectionMatrixUseCases);
