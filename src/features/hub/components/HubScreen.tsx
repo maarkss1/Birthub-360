@@ -402,26 +402,22 @@ export function HubScreen() {
       // Cadência/Agendamento), não módulos executivos restritos — vivem na órbita sempre visível,
       // igual à Central Comercial, sem gate de ModuleAccessGrant. Revenue Intelligence fica de
       // fora de propósito (decisão do usuário nesta sessão: "deixei o revenue intelligence em off
-      // por enquanto") — não adicionar aqui sem pedido explícito. Ocultos para o perfil SDR
-      // restrito (ver isRestrictedSdrProfile acima) — só Central Comercial + links externos.
-      ...(isRestrictedSdrProfile
-        ? []
-        : [
-            {
-              key: 'sdr',
-              label: 'Acompanhamento SDR',
-              description: 'Mesa de Tratamento · Dashboard SDR',
-              icon: Headset,
-              onOpen: () => goTo('/app/mesa-tratamento'),
-            },
-            {
-              key: 'meeting-hub',
-              label: 'Atlas Meeting Hub',
-              description: 'Cadência · Agendamento · Google Meet',
-              icon: Video,
-              onOpen: () => goTo('/app/cadence'),
-            },
-          ]),
+      // por enquanto") — não adicionar aqui sem pedido explícito. Visíveis para todos os perfis,
+      // incluindo SDR (decisão explícita do usuário: perfil SDR pode ver os dois cards).
+      {
+        key: 'sdr',
+        label: 'Acompanhamento SDR',
+        description: 'Mesa de Tratamento · Dashboard SDR',
+        icon: Headset,
+        onOpen: () => goTo('/app/mesa-tratamento'),
+      },
+      {
+        key: 'meeting-hub',
+        label: 'Atlas Meeting Hub',
+        description: 'Cadência · Agendamento · Google Meet',
+        icon: Video,
+        onOpen: () => goTo('/app/cadence'),
+      },
       ...grantedCatalog.map((mod) => ({
         key: mod.key,
         label: mod.label,
@@ -438,7 +434,7 @@ export function HubScreen() {
         onOpen: () => openExternal(link.url),
       })),
     ],
-    [grantedCatalog, goTo, openExternal, isRestrictedSdrProfile],
+    [grantedCatalog, goTo, openExternal],
   );
 
   const [centerKey, setCenterKey] = useState(
