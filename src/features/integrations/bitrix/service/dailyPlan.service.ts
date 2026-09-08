@@ -1,63 +1,23 @@
 import { prisma } from '../../../../lib/prisma.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
+import type {
+  DailyPlanItem,
+  DailyPlanItemChannel,
+  DailyPlanItemOrigin,
+  DailyPlanPriorityLevel,
+  UserDailyPlanSummary,
+} from '../../../../shared/contracts/dailyPlan.contract.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import { getBitrixUsers } from './deals.js';
 import { resolveOwnBitrixUserId } from './userMapping.js';
 
-export type DailyPlanPriorityLevel = 'URGENT' | 'HIGH' | 'MEDIUM' | 'COMPLETED';
-
-export type DailyPlanItemOrigin =
-  | 'BITRIX_TASK'
-  | 'BITRIX_ACTIVITY'
-  | 'BITRIX_LEAD'
-  | 'LOCAL_ACTIVITY';
-
-export type DailyPlanItemChannel = 'CALL' | 'WHATSAPP' | 'MEETING' | 'EMAIL' | 'TASK';
-
-export interface DailyPlanItem {
-  id: string;
-  externalId?: string;
-  origin: DailyPlanItemOrigin;
-  channel: DailyPlanItemChannel;
-  title: string;
-  description?: string;
-  contactName?: string;
-  companyName?: string;
-  phone?: string;
-  email?: string;
-  dueTime?: string;
-  priority: DailyPlanPriorityLevel;
-  completed: boolean;
-  completedAt?: string;
-  leadId?: string;
-  bitrixLeadId?: string;
-  bitrixDealId?: string;
-  tacticalGuidance: {
-    recommendedAction: string;
-    scriptOrPrompt?: string;
-    suggestedHook?: string;
-  };
-  notes: string[];
-}
-
-export interface UserDailyPlanSummary {
-  date: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  bitrixUserId: string | null;
-  bitrixUserName?: string;
-  isBitrixConnected: boolean;
-  lastSyncedAt: string;
-  kpis: {
-    totalItems: number;
-    pendingItems: number;
-    completedItems: number;
-    urgentItems: number;
-    completionRate: number;
-  };
-  items: DailyPlanItem[];
-}
+export type {
+  DailyPlanItem,
+  DailyPlanItemChannel,
+  DailyPlanItemOrigin,
+  DailyPlanPriorityLevel,
+  UserDailyPlanSummary,
+} from '../../../../shared/contracts/dailyPlan.contract.js';
 
 function deriveTacticalGuidance(
   channel: DailyPlanItemChannel,
@@ -104,6 +64,36 @@ function deriveTacticalGuidance(
   }
 }
 
+interface BitrixTaskRaw {
+  ID: string | number;
+  TITLE?: string;
+  DESCRIPTION?: string;
+  DEADLINE?: string;
+  STATUS?: string;
+  PRIORITY?: string;
+}
+
+interface BitrixActivityRaw {
+  ID: string | number;
+  TYPE_ID?: string | number;
+  SUBJECT?: string;
+  START_TIME?: string;
+  END_TIME?: string;
+  DESCRIPTION?: string;
+  PRIORITY?: string;
+  COMMUNICATIONS?: Array<{ VALUE?: string }>;
+}
+
+interface BitrixLeadRaw {
+  ID: string | number;
+  TITLE?: string;
+  NAME?: string;
+  LAST_NAME?: string;
+  COMPANY_TITLE?: string;
+  STATUS_ID?: string;
+  PHONE?: Array<{ VALUE?: string }>;
+}
+
 /**
  * Busca e consolida o Plano Diário de um usuário com dados reais do Bitrix24 e da Central.
  */
@@ -135,9 +125,9 @@ export async function fetchUserDailyPlan(
 
   let bitrixUserId: string | null = null;
   let bitrixUserName: string | undefined;
-  let rawBitrixTasks: Record<string, unknown>[] = [];
-  let rawBitrixActivities: Record<string, unknown>[] = [];
-  let rawBitrixLeads: Record<string, unknown>[] = [];
+  let rawBitrixTasks: BitrixTaskRaw[] = [];
+  let rawBitrixActivities: BitrixActivityRaw[] = [];
+  let rawBitrixLeads: BitrixLeadRaw[] = [];
 
   if (connection) {
     try {
@@ -157,7 +147,7 @@ export async function fetchUserDailyPlan(
       if (bitrixUserId) {
         // Busca tarefas
         try {
-          const taskRes = await callBitrix<{ result: { tasks: Record<string, unknown>[] } }>(
+          const taskRes = await callBitrix<{ result: { tasks: BitrixTaskRaw[] } }>(
             webhookUrl,
             'tasks.task.list',
             {
@@ -174,7 +164,7 @@ export async function fetchUserDailyPlan(
 
         // Busca atividades CRM
         try {
-          const actRes = await callBitrix<{ result: Record<string, unknown>[] }>(
+          const actRes = await callBitrix<{ result: BitrixActivityRaw[] }>(
             webhookUrl,
             'crm.activity.list',
             {
@@ -199,7 +189,7 @@ export async function fetchUserDailyPlan(
 
         // Busca leads ativos atribuídos
         try {
-          const leadRes = await callBitrix<{ result: Record<string, unknown>[] }>(
+          const leadRes = await callBitrix<{ result: BitrixLeadRaw[] }>(
             webhookUrl,
             'crm.lead.list',
             {
