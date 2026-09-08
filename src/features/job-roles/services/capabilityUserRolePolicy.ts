@@ -27,8 +27,6 @@ export function canUserRolePerformCapabilityAction(
   return hasRequiredRole(userRole, [MINIMUM_ROLE_BY_ACTION[actionType]]);
 }
 
-export function minimumUserRoleForCapabilityAction(
-  actionType: CapabilityActionType,
-): UserRole {
+export function minimumUserRoleForCapabilityAction(actionType: CapabilityActionType): UserRole {
   return MINIMUM_ROLE_BY_ACTION[actionType];
 }
