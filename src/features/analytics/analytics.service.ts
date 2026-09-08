@@ -13,6 +13,10 @@ import {
   shiftBrazilMonth,
 } from '../../shared/time/brazilCalendar.js';
 
+/** Filtro base (`organizationId` + soft-delete) repassado do overview às sub-consultas privadas —
+ * mesmo formato usado em `lead.groupBy`/`activity.findMany`, nunca outro filtro. */
+type AnalyticsScope = { organizationId: string; deletedAt: null };
+
 /** Ordem real do funil comercial — usada para o gráfico e para a conversão etapa a etapa. */
 export const FUNNEL_STAGES = [
   'Lead_Recebido',
@@ -364,7 +368,7 @@ export class AnalyticsService {
     return result;
   }
 
-  private async performanceReport(organizationId: string, scope: any) {
+  private async performanceReport(organizationId: string, scope: AnalyticsScope) {
     const ownerStats = await prisma.lead.groupBy({
       by: ['owner'],
       where: scope,
@@ -400,7 +404,7 @@ export class AnalyticsService {
       .sort((a, b) => b.leadsQualified - a.leadsQualified);
   }
 
-  private async callHeatmap(organizationId: string, scope: any) {
+  private async callHeatmap(organizationId: string, scope: AnalyticsScope) {
     void organizationId;
     const activities = await prisma.activity.findMany({
       where: { ...scope, type: 'Ligacao' },
@@ -422,7 +426,7 @@ export class AnalyticsService {
     return result;
   }
 
-  private async tmqMetric(_organizationId: string, _scope: any): Promise<number | null> {
+  private async tmqMetric(_organizationId: string, _scope: AnalyticsScope): Promise<number | null> {
     return null;
   }
 }

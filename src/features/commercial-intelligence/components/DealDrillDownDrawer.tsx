@@ -5,7 +5,7 @@ import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { toast } from '../../../lib/toast';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import {
   commercialIntelligenceApi,
   formatCurrency,

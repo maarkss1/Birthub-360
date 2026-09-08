@@ -102,7 +102,7 @@ export function DailyPlanHub() {
       setSyncFeedback('Sincronizado com sucesso!');
       SoundFX.play('success');
       setTimeout(() => setSyncFeedback(null), 4000);
-    } catch (err) {
+    } catch {
       setSyncFeedback('Falha na sincronização com Bitrix24.');
     } finally {
       setIsSyncing(false);

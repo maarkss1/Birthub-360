@@ -49,7 +49,7 @@ export async function apiFetch<T>(endpoint: string, options?: ApiRequestOptions)
         ...requestOptions.headers,
       },
     });
-  } catch (err) {
+  } catch {
     if (controller.signal.aborted) {
       throw new Error('A API demorou demais para responder. Tente novamente.');
     }

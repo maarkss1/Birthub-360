@@ -14,6 +14,7 @@ import {
   History,
   Pencil,
   RefreshCw,
+  type LucideIcon,
 } from 'lucide-react';
 
 import { Card } from '../../../components/ui/Card';
@@ -58,7 +59,7 @@ function VisualNode({
   children,
   isLast,
 }: {
-  icon: any;
+  icon: LucideIcon;
   title: string;
   subtitle?: string;
   children?: React.ReactNode;

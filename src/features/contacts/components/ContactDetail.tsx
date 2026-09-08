@@ -15,7 +15,7 @@ import { Drawer } from '../../../components/ui/Drawer';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { contactsDB } from '../../../lib/db';
 import { getWhatsAppLink } from '../../../shared/utils/contact-links';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import { LEAD_STATUS_EMOJI } from '../../../lib/enumMap';
 import type { Contact } from '../../../types';
 
