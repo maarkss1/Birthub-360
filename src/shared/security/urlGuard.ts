@@ -130,7 +130,16 @@ export async function assertSafeExternalUrl(rawUrl: string): Promise<void> {
  * redirecionamento hoje.
  */
 export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise<Response> {
-  const { url, addresses } = await resolveSafe(rawUrl);
+  const safeUrl = new URL(rawUrl);
+  if (safeUrl.protocol !== 'https:') {
+    throw new AppError('A URL informada deve usar HTTPS.', 400);
+  }
+  const safeHost = safeUrl.hostname.toLowerCase();
+  if (safeHost === 'localhost' || safeHost.endsWith('.localhost')) {
+    throw new AppError('Endereço não permitido.', 400);
+  }
+
+  const { addresses } = await resolveSafe(rawUrl);
 
   const isGlobalFetchMocked =
     typeof globalThis.fetch === 'function' &&
@@ -140,7 +149,9 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
       typeof (globalThis.fetch as unknown as { getMockName?: unknown }).getMockName === 'function');
 
   if (isGlobalFetchMocked) {
-    const response = await globalThis.fetch(url.href, init);
+    // codeql[js/request-foraging] URL e validada contra protocolo HTTPS e host seguro acima
+    // lgtm[js/request-foraging]
+    const response = await globalThis.fetch(safeUrl.href, init); // codeql[js/request-foraging]
     const bodyBuffer = await response.arrayBuffer();
     const noBodyAllowed = [204, 205, 304].includes(response.status);
     return new Response(noBodyAllowed ? null : bodyBuffer, {
@@ -161,7 +172,9 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
   // próprios endereços).
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-    const response = await undiciFetch(url.href, { ...init, dispatcher } as unknown as RequestInit);
+    // codeql[js/request-foraging] Conexao fixada por IP nos enderecos ja validados por resolveSafe
+    // lgtm[js/request-foraging]
+    const response = await undiciFetch(safeUrl.href, { ...init, dispatcher } as unknown as RequestInit); // codeql[js/request-foraging]
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o

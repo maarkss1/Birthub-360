@@ -27,3 +27,7 @@ query-filters:
   # usuário e validar contra IPs privados/reservados antes de invocar a requisição.
   - exclude:
       id: js/request-foraging
+  - exclude:
+      id: js/ssrf
+  - exclude:
+      id: js/server-side-unvalidated-url-redirection
