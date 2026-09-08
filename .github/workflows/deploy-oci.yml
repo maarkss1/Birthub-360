@@ -1,0 +1,51 @@
+name: Deploy Oracle Cloud (produção)
+
+# Dispara só depois que "Central AtlasGR Release" (ci.yml) TERMINAR com sucesso no commit da main
+# — mesmo padrão de gate já usado em docker-publish.yml (workflow_run + checagem de conclusion).
+# GitHub Actions trata workflows de arquivos diferentes como pipelines independentes: ci.yml
+# passar não impede este arquivo de rodar sozinho se o gate não estiver aqui dentro também.
+# workflow_dispatch continua disponível para redeploy manual (ex.: reaplicar sem novo commit).
+on:
+  workflow_run:
+    workflows: ['Central AtlasGR Release']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+# Nenhuma permissão do GITHUB_TOKEN é necessária — este job só abre uma conexão SSH e manda o
+# próprio servidor atualizar (git pull + docker compose), não lê nem escreve o repositório a
+# partir do runner.
+permissions: {}
+
+jobs:
+  deploy:
+    name: Deploy via SSH no servidor OCI
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Configurar chave SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.OCI_SSH_HOST }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/oci_deploy_key
+          chmod 600 ~/.ssh/oci_deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: git pull + docker compose up --build no servidor
+        env:
+          SSH_HOST: ${{ secrets.OCI_SSH_HOST }}
+          SSH_USER: ${{ secrets.OCI_SSH_USER }}
+          DEPLOY_PATH: ${{ secrets.OCI_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          REMOTE_CMD="set -euo pipefail; cd \"$DEPLOY_PATH\"; echo '==> git fetch + reset --hard origin/main'; git fetch origin main; git reset --hard origin/main; echo '==> rodando scripts/deploy-oci.sh (build + up -d + migrate deploy)'; chmod +x scripts/deploy-oci.sh; ./scripts/deploy-oci.sh"
+          ssh -i ~/.ssh/oci_deploy_key -o StrictHostKeyChecking=yes "$SSH_USER@$SSH_HOST" "$REMOTE_CMD"
+
+      - name: Limpar chave SSH
+        if: always()
+        run: rm -f ~/.ssh/oci_deploy_key
