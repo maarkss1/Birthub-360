@@ -7,8 +7,14 @@ export class MailerNotConfiguredError extends Error {}
 export interface SendEmailInput {
   to: string;
   subject: string;
-  /** Corpo em texto simples — os rascunhos gerados pela IA já vêm como texto, sem HTML. */
+  /** Corpo em texto simples — os rascunhos gerados pela IA já vêm como texto, sem HTML, e é o
+   * fallback exibido por clientes de e-mail sem suporte a HTML. */
   text: string;
+  /** Corpo HTML opcional — usado hoje só pelo convite de reunião (ver `email/meetingInvite.ts`). */
+  html?: string;
+  /** Anexo de convite de calendário (ICS) — nodemailer monta o `Content-Type: text/calendar`
+   * correto a partir disto; o conteúdo do `.ics` em si vem de `email/meetingInvite.ts`. */
+  icalEvent?: { filename: string; method: 'REQUEST' | 'CANCEL' | 'REPLY'; content: string };
 }
 
 let cachedTransporter: Transporter | null = null;
@@ -41,6 +47,8 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     to: input.to,
     subject: input.subject,
     text: input.text,
+    ...(input.html ? { html: input.html } : {}),
+    ...(input.icalEvent ? { icalEvent: input.icalEvent } : {}),
   });
   return { messageId: info.messageId ?? null };
 }

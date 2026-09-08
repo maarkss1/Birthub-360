@@ -65,10 +65,45 @@ export interface RegisterLeadInput {
   nextActionWhen?: string;
 }
 
+export type DashboardPeriod = 'today' | '7d' | '30d' | 'all';
+
+export interface DailyActivityPoint {
+  date: string;
+  tratados: number;
+  reunioes: number;
+  oportunidades: number;
+  desqualificados: number;
+  minutosFoco: number;
+}
+
+export interface OutcomeSlice {
+  outcome: string;
+  count: number;
+}
+
+export interface DashboardKpis {
+  totalTratados: number;
+  taxaConversaoPercent: number;
+  taxaDesqualificacaoPercent: number;
+  totalFocusMinutes: number;
+  pomodoroCycles: number;
+}
+
+export interface MesaDashboardResponse {
+  period: DashboardPeriod;
+  dailyActivity: DailyActivityPoint[];
+  outcomeCounts: OutcomeSlice[];
+  kpis: DashboardKpis;
+}
+
 export const mesaTratamentoApi = {
   queue: () => api.get<MesaQueueResponse>('/api/mesa-tratamento/queue'),
   register: (leadId: string, input: RegisterLeadInput) =>
     api.post<{ registered: boolean }>(`/api/mesa-tratamento/lead/${leadId}/register`, input),
+  logPomodoroSession: (input: { durationMinutes: number; cycleNumber?: number }) =>
+    api.post<{ logged: boolean }>('/api/mesa-tratamento/pomodoro/session', input),
+  dashboard: (period: DashboardPeriod) =>
+    api.get<MesaDashboardResponse>(`/api/mesa-tratamento/dashboard?period=${period}`),
 };
 
 export const OUTCOME_LABELS: Record<LeadOutcome, string> = {

@@ -20,7 +20,10 @@ import {
  * puramente informativo, dentro do próprio Hub Executivo (rota e menu do Hub são compartilhados
  * com o Agente 02, mas esta seção não adiciona rota nova — só um bloco dentro da tela existente).
  */
-const STATUS_CONFIG: Record<CommercialAgentStatus, { label: string; variant: BadgeProps['variant'] }> = {
+const STATUS_CONFIG: Record<
+  CommercialAgentStatus,
+  { label: string; variant: BadgeProps['variant'] }
+> = {
   REAL_EM_PRODUCAO: { label: 'Em produção', variant: 'success' },
   NOVO_SOBRE_SERVICO_REAL: { label: 'Novo · dado real', variant: 'info' },
   NOVO_FONTE_PARCIAL: { label: 'Fonte parcial', variant: 'warning' },
@@ -62,7 +65,10 @@ export function CommercialAgentCellPanel() {
         >
           Equipe IA Comercial
         </h2>
-        <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent" aria-hidden="true" />
+        <span
+          className="h-px flex-1 bg-gradient-to-r from-line to-transparent"
+          aria-hidden="true"
+        />
       </div>
 
       {error && (

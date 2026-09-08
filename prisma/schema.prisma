@@ -648,6 +648,7 @@ model Lead {
   pipelineStage   CrmPipelineStage? @relation(fields: [pipelineStageId], references: [id], onDelete: SetNull)
 
   activities            Activity[]
+  mesaTratamentoTreatments MesaTratamentoTreatment[]
   timeline              TimelineEvent[]
   internalNotes         Note[]
   whatsAppMessages      WhatsAppMessage[]
@@ -781,6 +782,8 @@ model User {
   assistantMessages  AssistantMessage[]
   publicBookingLinks PublicBookingLink[]
   moduleAccessGrants ModuleAccessGrant[]
+  mesaTratamentoTreatments MesaTratamentoTreatment[]
+  pomodoroSessions   PomodoroSession[]
 
   @@index([organizationId])
   @@map("user")
@@ -829,6 +832,8 @@ model Organization {
   leadFieldChanges              LeadFieldChange[]
   featureFlagOverrides          OrganizationFeatureFlag[]
   moduleAccessGrants            ModuleAccessGrant[]
+  mesaTratamentoTreatments      MesaTratamentoTreatment[]
+  pomodoroSessions              PomodoroSession[]
   bugReports                    BugReport[]
   // Onda 10 (Agente 01A) — schema de cadência/agendamento/proposta-assinatura proposto pelo
   // Agente 17 em .agents/handoffs/onda-7/17-para-01-schema-cadencia-optout-proposta.md (itens 2-5;
@@ -2749,6 +2754,44 @@ model ModuleAccessGrant {
   @@index([userId])
 }
 
+// ─── Mesa de Tratamento SDR — dashboard de atividade e Pomodoro ────────────────────────────
+// Portado do protótipo standalone `acompanhamento-sdr` (Pomodoro + dashboard de métricas), a
+// pedido do usuário — a fila/priorização/escrita no Bitrix de mesaTratamento.routes.ts já eram
+// mais robustas que o protótipo e não mudam aqui. Estas duas tabelas só existem para alimentar o
+// dashboard com histórico real (o protótipo guardava isso em localStorage, que não serve pra um
+// time inteiro nem sobrevive a trocar de dispositivo).
+model MesaTratamentoTreatment {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leadId         String
+  lead           Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  /// Mesmo valor de `outcome` de mesaTratamento.routes.ts (LeadOutcome) — guardado como string,
+  /// não FK/enum, porque é só um rótulo pro dashboard agregar por dia/tipo, igual ao `EnrichmentLog.source`.
+  outcome        String
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, userId, createdAt])
+  @@index([leadId])
+}
+
+model PomodoroSession {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Duração do bloco de FOCO concluído (não conta descanso) — igual ao `logPomodoroSession` do
+  /// protótipo, que só registra ao terminar um bloco de foco, nunca um descanso.
+  durationMinutes Int
+  cycleNumber     Int?
+  createdAt       DateTime     @default(now())
+
+  @@index([organizationId, userId, createdAt])
+}
+
 // ─── Bug Reports (governança de 12 requisitos — item 8: Módulo de Reportar Problemas) ──────
 // Criado pelo botão flutuante `BugReportButton` (src/components/ui/BugReportButton.tsx) via
 // POST /api/bug-reports. `context` guarda um snapshot técnico capturado automaticamente no
@@ -2996,6 +3039,13 @@ model CadenceCalendarEvent {
   /// Preenchido só depois que `CalendarSchedulerPort.createEvent` confirma a criação real no
   /// Google Calendar — nulo enquanto o agendamento é só comercial/local.
   googleEventId String?
+  /// Link real do Google Meet (`hangoutLink`) do evento — nulo se a criação da videochamada falhou
+  /// ou se o evento em si falhou (ver PrismaCalendarSchedulerPort, best-effort). Usado para compor
+  /// o convite ICS/e-mail de confirmação enviado ao lead e ao vendedor.
+  meetUrl String?
+  /// `iCalUID` devolvido pelo Google — usado como UID estável do convite ICS enviado por e-mail,
+  /// para que clientes de calendário reconheçam o mesmo evento (nunca gerado localmente).
+  iCalUID String?
 
   confirmationEvidenceType ConfirmationEvidenceType
   /// Id do registro real que prova a confirmação (id de mensagem, id de clique no link de

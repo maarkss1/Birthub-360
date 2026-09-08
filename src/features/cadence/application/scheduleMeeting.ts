@@ -67,6 +67,7 @@ export async function scheduleVerifiedMeeting(
     return {
       scheduled: false,
       googleEventId: null,
+      meetUrl: null,
       rejectedReason: 'not-verifiable',
       noteId: null,
     };

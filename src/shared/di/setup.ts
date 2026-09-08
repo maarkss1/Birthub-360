@@ -29,6 +29,12 @@ import { PrismaCopilotoIaRepository } from '../../features/copiloto-ia/infra/Pri
 import { CopilotoVoiceIngestionAdapter } from '../../features/copiloto-ia/infra/CopilotoVoiceIngestionAdapter';
 import { BitrixLeadWritebackAdapter } from '../../features/integrations/bitrix/infra/BitrixLeadWritebackAdapter';
 import { MeetingSynthesisService } from '../../features/chatbook/services/meeting-synthesis.service';
+// Meeting Hub (Google Meet no agendamento público) — mesmo motivo do comentário da Onda 43 acima:
+// `src/features/calendar/routes/booking.routes.ts` não pode importar
+// `integrations/google/google.service.ts` diretamente (no-cross-feature-imports). Registrado aqui
+// e resolvido via `container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService')` com
+// o tipo estrutural local já usado por `agent.routes.ts`.
+import { createCalendarEvent } from '../../features/integrations/google/google.service.js';
 
 // Use Cases
 import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
@@ -160,6 +166,7 @@ export function setupDI() {
   container.register('CommercialIntelligenceUseCases', commercialIntelligenceUseCases);
   container.register('CommercialIntelligenceAiService', commercialIntelligenceAiService);
   container.register('ChurnPredictionService', churnPredictionService);
+  container.register('GoogleCalendarService', { createCalendarEvent });
   container.register('Crm360UseCases', crm360UseCases);
   container.register('QualificationMatrixUseCases', qualificationMatrixUseCases);
   container.register('ObjectionMatrixUseCases', objectionMatrixUseCases);
