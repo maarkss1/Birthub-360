@@ -101,7 +101,7 @@ export function Sidebar({
     : [
         {
           title: 'Visão Geral',
-          items: ['dashboard', 'daily-plan'],
+          items: ['dashboard', 'workspace', 'daily-plan'],
         },
         { title: 'Captar', items: ['prospect', 'market-intelligence'] },
         {

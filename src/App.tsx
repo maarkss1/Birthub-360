@@ -47,6 +47,11 @@ const SinglePageDashboard = lazy(() =>
     default: m.SinglePageDashboard,
   })),
 );
+const WorkspaceHome = lazy(() =>
+  import('./features/workspace/components/WorkspaceHome').then((m) => ({
+    default: m.WorkspaceHome,
+  })),
+);
 const HubScreen = lazy(() =>
   import('./features/hub/components/HubScreen').then((m) => ({ default: m.HubScreen })),
 );
@@ -270,6 +275,13 @@ function AppLayout() {
               coberto pelo teste de useNavigationBusBridge porque aquele hook já tinha o
               contorno certo só para o comando de voz). */}
           <Route path="dashboard" element={<SinglePageDashboard />} />
+          {/* PROMPT 6 — Workspace do cargo (JobRole) do usuário autenticado. Sem RequireRole:
+              qualquer UserRole autenticado pode abrir; o próprio workspace resolve seu estado
+              real (READY/NO_JOB_ROLE/NO_WORKSPACE_DEFINITION) a partir da sessão — nunca de
+              query/body (ver GET /api/workspace/me). Deep link direto nunca revela mais do que a
+              sessão do próprio usuário autoriza: cada módulo/quick action já vem marcado
+              `locked` quando o UserRole real não atinge o gate daquela rota. */}
+          <Route path="workspace" element={<WorkspaceHome />} />
           <Route path="prospect" element={<ProspectingHub />} />
           <Route path="crm" element={<CrmBoard />} />
           <Route path="crm360" element={<CrmOverview onNavigate={handleCrmOverviewNavigate} />} />
