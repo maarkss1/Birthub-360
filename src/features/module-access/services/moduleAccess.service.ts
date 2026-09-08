@@ -52,11 +52,20 @@ export async function getModuleAccessMatrix(
 }
 
 /** Conjunto de `moduleKey` concedido ao usuário logado — consumido por `useModuleAccess` no
- *  frontend para decidir o que mostrar no Hub e liberar as rotas dos módulos executivos. */
+ *  frontend para decidir o que mostrar no Hub e liberar as rotas dos módulos executivos.
+ *
+ *  ADMIN vê todos os módulos do catálogo automaticamente, sem precisar de `ModuleAccessGrant`
+ *  (achado real: o Hub aprovado pelo usuário sempre mostrou os módulos executivos visíveis; um
+ *  Administrador nunca deveria precisar que outro ADMIN conceda acesso a ele mesmo). Os demais
+ *  papéis continuam exigindo concessão explícita — o sistema de concessão por usuário não foi
+ *  removido, só ganhou este atalho para quem já administra a própria organização. */
 export async function listGrantedModulesForUser(
   organizationId: string,
   userId: string,
+  role: string,
 ): Promise<string[]> {
+  if (role === 'ADMIN') return [...MODULE_KEYS];
+
   const grants = await prisma.moduleAccessGrant.findMany({
     where: { organizationId, userId },
     select: { moduleKey: true },

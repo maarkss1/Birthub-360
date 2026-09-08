@@ -19,6 +19,10 @@ import {
   Moon,
   LogOut,
   Loader2,
+  Headset,
+  Video,
+  Volume2,
+  VolumeX,
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -293,6 +297,48 @@ function OrbitCard({ item, isCenter, registerRef, onSelect }: OrbitCardProps) {
   );
 }
 
+function greetingWord(hour: number): string {
+  if (hour < 5) return 'Boa madrugada';
+  if (hour < 12) return 'Bom dia';
+  if (hour < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+
+/** Relógio + saudação ao vivo — dado real (hora do sistema), não decorativo: comunica o momento
+ * do dia e é a base da saudação personalizada, mesmo par de informação já pedido no protótipo
+ * aprovado do Hub. Atualiza 1x/s, sem custo de render perceptível (só dois nós de texto). */
+function useLiveClock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return {
+    time: now.toLocaleTimeString('pt-BR', { hour12: false }),
+    dateLabel: now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'short' }),
+    greeting: greetingWord(now.getHours()),
+    monthLabel: now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+    year: now.getFullYear(),
+    month: now.getMonth(),
+    today: now.getDate(),
+  };
+}
+
+const WEEKDAYS_SHORT = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+
+/** Grade do mês corrente — célula vazia até o primeiro dia da semana, depois 1..N com o dia de
+ * hoje destacado. Puramente derivado da data real do sistema, sem nenhum dado de negócio (evento
+ * de agenda, compromisso) fabricado — ver CLAUDE.md seção "dados reais x demonstração". */
+function buildCalendarCells(year: number, month: number, today: number, isCurrentMonth: boolean) {
+  const firstDow = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: Array<{ day: number; isToday: boolean } | null> = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++)
+    cells.push({ day: d, isToday: isCurrentMonth && d === today });
+  return cells;
+}
+
 /**
  * Hub Executivo — tela de destinos pós-login ("os círculos", pedido explícito do usuário: os
  * módulos executivos e as ferramentas externas não vivem dentro do CRM, vivem aqui). Central
@@ -309,11 +355,15 @@ function OrbitCard({ item, isCenter, registerRef, onSelect }: OrbitCardProps) {
 export function HubScreen() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { activeBrand } = useBrand();
+  const { activeBrand, brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const { grantedModules, isLoading } = useModuleAccess();
   const isAtlas = activeBrand === 'atlasgr';
   const isDesktopOrbit = useIsDesktopOrbit();
+  const clock = useLiveClock();
+  const [soundOn, setSoundOn] = useState(() => SoundFX.isEnabled());
+  const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
+  const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
 
   const grantedCatalog = MODULE_CATALOG.filter((m) => grantedModules.includes(m.key));
 
@@ -339,6 +389,25 @@ export function HubScreen() {
         icon: LayoutTemplate,
         primary: true,
         onOpen: () => goTo('/app'),
+      },
+      // Acompanhamento SDR e Atlas Meeting Hub: produtos do próprio CRM (Mesa de Tratamento e
+      // Cadência/Agendamento), não módulos executivos restritos — vivem na órbita sempre visível,
+      // igual à Central Comercial, sem gate de ModuleAccessGrant. Revenue Intelligence fica de
+      // fora de propósito (decisão do usuário nesta sessão: "deixei o revenue intelligence em off
+      // por enquanto") — não adicionar aqui sem pedido explícito.
+      {
+        key: 'sdr',
+        label: 'Acompanhamento SDR',
+        description: 'Mesa de Tratamento · Dashboard SDR',
+        icon: Headset,
+        onOpen: () => goTo('/app/mesa-tratamento'),
+      },
+      {
+        key: 'meeting-hub',
+        label: 'Atlas Meeting Hub',
+        description: 'Cadência · Agendamento · Google Meet',
+        icon: Video,
+        onOpen: () => goTo('/app/cadence'),
       },
       ...grantedCatalog.map((mod) => ({
         key: mod.key,
@@ -374,6 +443,29 @@ export function HubScreen() {
             <TotalTrackLogo className="h-7 text-ink" />
           )}
           <div className="flex items-center gap-2">
+            <div
+              className="hidden items-center gap-1.5 rounded-full border border-line bg-surface-2/70 py-1 pl-2.5 pr-3 text-[11px] font-bold text-ink-2 sm:flex"
+              title={`Marca ativa: ${brandInfo.name} — ${brandInfo.operatingSystemName}`}
+            >
+              <span
+                className="h-2 w-2 shrink-0 rounded-full bg-brand motion-safe:animate-pulse"
+                aria-hidden="true"
+              />
+              {brandInfo.name} · {brandInfo.operatingSystemName}
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const next = SoundFX.toggleMute();
+                setSoundOn(next);
+                if (next) SoundFX.play('focus');
+              }}
+              className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-line hover:bg-surface-2 hover:text-ink active:translate-y-0"
+              aria-label={soundOn ? 'Desativar som de interação' : 'Ativar som de interação'}
+              title={soundOn ? 'Desativar som de interação' : 'Ativar som de interação'}
+            >
+              {soundOn ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
+            </button>
             <button
               type="button"
               onClick={() => {
@@ -411,11 +503,79 @@ export function HubScreen() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
-        <motion.div initial="hidden" animate="show" variants={fadeInUp} className="space-y-6">
+        <motion.div initial="hidden" animate="show" variants={fadeInUp} className="space-y-8">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-active dark:text-brand-2">
+                Portal {brandInfo.name}
+              </p>
+              <h1 className="mt-1.5 text-3xl font-black leading-tight tracking-tight text-ink sm:text-4xl">
+                {clock.greeting},{' '}
+                <span className="text-brand-active dark:text-brand-2">{firstName}</span>
+              </h1>
+              <p className="mt-1.5 text-sm font-bold text-brand-active dark:text-brand-2">
+                {brandInfo.slogan}
+              </p>
+            </div>
+
+            {/* Relógio + calendário do mês — dado real (hora/data do sistema), oculto em telas
+                estreitas (celular via Capacitor) onde o espaço não compensa, mesmo corte do
+                protótipo aprovado. */}
+            <div className="hidden items-stretch gap-3 md:flex">
+              <div className="flex min-w-[128px] flex-col items-center justify-center rounded-card-lg border border-line bg-surface/70 px-4 py-2.5 shadow-card backdrop-blur-md">
+                <span className="font-mono text-2xl font-bold tabular-nums text-brand-active dark:text-brand-2">
+                  {clock.time}
+                </span>
+                <span className="mt-0.5 text-[10px] font-bold capitalize text-ink-2">
+                  {clock.dateLabel}
+                </span>
+              </div>
+              <div className="w-[184px] rounded-card-lg border border-line bg-surface/70 px-3 py-2.5 shadow-card backdrop-blur-md">
+                <p className="mb-1.5 text-center text-[10px] font-black uppercase tracking-wide text-brand-active dark:text-brand-2">
+                  {clock.monthLabel}
+                </p>
+                <div className="grid grid-cols-7 gap-[3px]">
+                  {WEEKDAYS_SHORT.map((d, i) => (
+                    <span
+                      key={`wd-${i}`}
+                      className="text-center text-[9px] font-bold text-ink-2 opacity-80"
+                    >
+                      {d}
+                    </span>
+                  ))}
+                  {calendarCells.map((cell, i) =>
+                    cell ? (
+                      <span
+                        key={cell.day}
+                        className={
+                          cell.isToday
+                            ? 'grid place-items-center rounded-md bg-brand text-[10px] font-black text-white'
+                            : 'grid place-items-center rounded-md text-[10px] font-semibold text-ink-2'
+                        }
+                      >
+                        {cell.day}
+                      </span>
+                    ) : (
+                      <span key={`empty-${i}`} />
+                    ),
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-sm font-black uppercase tracking-[0.14em] text-ink-2">
-              Da prospecção ao contrato
-            </h1>
+            <h2 className="font-display text-sm font-black uppercase tracking-[0.14em] text-ink-2">
+              Da prospecção ao contrato — para o time comercial da{' '}
+              <span className="inline-flex items-center gap-1 align-middle normal-case tracking-normal">
+                {isAtlas ? (
+                  <Logo variant="symbol" className="h-3 w-auto" />
+                ) : (
+                  <TotalTrackLogo variant="symbol" className="h-3 w-auto" />
+                )}
+                {brandInfo.name}
+              </span>
+            </h2>
             <span
               className="h-px flex-1 bg-gradient-to-r from-line to-transparent"
               aria-hidden="true"

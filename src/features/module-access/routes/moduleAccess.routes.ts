@@ -22,6 +22,7 @@ router.get('/me', async (req: Request, res: Response, next: NextFunction): Promi
     const grantedModules = await listGrantedModulesForUser(
       authReq.user.organizationId,
       authReq.user.id,
+      authReq.user.role,
     );
     res.json({ success: true, data: { grantedModules } });
   } catch (error) {
