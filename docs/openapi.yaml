@@ -108,6 +108,12 @@ tags:
       Concessão individual de acesso aos módulos do Hub Executivo (Social Selling, Treinamento
       AtlasGR, Proposta Comercial, Hub Inteligência & Mkt) — restrito a ADMIN, exceto a consulta
       do próprio usuário logado
+  - name: Cargos e Agentes
+    description: >-
+      Fundação Multi-Cargo — catálogo de cargos profissionais (JobRole) e do catálogo de agentes
+      (AgentDefinition/RoleAgentGrant) por cargo. Leitura livre para qualquer usuário autenticado;
+      atribuição/remoção de cargo (`/job-roles/assignments/**`) restrita a ADMIN. Não substitui o
+      RBAC de segurança (`UserRole`, ver tag Equipe) — JobRole é só contexto funcional.
   - name: Bitrix24
     description: Conexão, sincronização e extração de dados com o Bitrix24 (CRM externo)
   - name: 3CX
@@ -4439,6 +4445,164 @@ paths:
               schema: { type: object, properties: { success: { type: boolean } } }
         '403':
           $ref: '#/components/responses/Forbidden'
+
+  # ─────────────────── Fundação Multi-Cargo (Cargos e Agentes) ───────────────────
+  /job-roles:
+    get:
+      tags: [Cargos e Agentes]
+      summary: Lista o catálogo de cargos profissionais (leitura livre, qualquer usuário autenticado)
+      parameters:
+        - name: activeOnly
+          in: query
+          description: 'Quando "false", inclui também cargos desativados. Default: true.'
+          schema: { type: string, enum: ['true', 'false'] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /job-roles/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Detalhe de um cargo profissional
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Cargo não encontrado
+
+  /job-roles/{id}/agents:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Agentes concedidos (RoleAgentGrant ativo) a este cargo, com o nível de acesso de cada um
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Cargo não encontrado
+
+  /job-roles/assignments/matrix:
+    get:
+      tags: [Cargos e Agentes]
+      summary: Matriz usuário × cargo da organização, para o painel de administração — somente ADMIN
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /job-roles/assignments:
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Atribui um cargo a um usuário da organização (somente ADMIN). Quando `isPrimary` (default
+        true), rebaixa qualquer outro cargo principal ativo do mesmo usuário.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, jobRoleId]
+              properties:
+                userId: { type: string }
+                jobRoleId: { type: string }
+                isPrimary: { type: boolean }
+      responses:
+        '201':
+          description: Atribuído
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Cargo ou usuário não encontrado nesta organização
+
+  /job-roles/assignments/{userId}/{jobRoleId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema: { type: string }
+      - name: jobRoleId
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      tags: [Cargos e Agentes]
+      summary: Desativa (soft-delete) o vínculo usuário↔cargo — somente ADMIN
+      responses:
+        '200':
+          description: Desativado
+          content:
+            application/json:
+              schema: { type: object, properties: { success: { type: boolean } } }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Vínculo de cargo não encontrado nesta organização
+
+  /agents:
+    get:
+      tags: [Cargos e Agentes]
+      summary: Lista o catálogo de agentes (leitura livre, qualquer usuário autenticado)
+      parameters:
+        - name: activeOnly
+          in: query
+          description: 'Quando "false", inclui também agentes desativados. Default: true.'
+          schema: { type: string, enum: ['true', 'false'] }
+        - name: jobRoleId
+          in: query
+          description: Filtra pelo cargo principal do agente
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /agents/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Detalhe de um agente do catálogo, com versões e cargos aos quais está concedido
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Agente não encontrado
 
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:
