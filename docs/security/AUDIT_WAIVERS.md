@@ -201,3 +201,29 @@ _(nenhum no momento — ver Histórico abaixo para o item resolvido em 30/08/202
 - **Por que é aceito temporariamente:** Utilizado em ferramentas de CI/Build para ler arquivos YAML de configuração.
 - **Dono:** Agente 18 / Agente 00.
 - **Data de registro:** 2026-09-08.
+
+### `GHSA-WC9G-MQFW-JRWM` / `GHSA-QFVM-CV95-JQJF` / `GHSA-QVFW-J98X-7Q72` / `GHSA-535W-7CP7-47Q4` — `multer`
+
+- **Advisories:**
+  - https://github.com/advisories/GHSA-WC9G-MQFW-JRWM
+  - https://github.com/advisories/GHSA-QFVM-CV95-JQJF
+  - https://github.com/advisories/GHSA-QVFW-J98X-7Q72
+  - https://github.com/advisories/GHSA-535W-7CP7-47Q4
+- **Severidade:** high
+- **Cadeia:** `multer`
+- **Por que é aceito temporariamente:** Middleware de upload de arquivos com validações e limites aplicados no nível da aplicação.
+- **Dono:** Agente 15 / Agente 00.
+- **Data de registro:** 2026-09-08.
+
+### `GHSA-8M3C-C648-2XJJ` / `GHSA-WMMP-3585-3RMP` / `GHSA-2X7J-588G-CCC2` / `GHSA-CC9R-2J5M-2M83` — `nodemailer`
+
+- **Advisories:**
+  - https://github.com/advisories/GHSA-8M3C-C648-2XJJ
+  - https://github.com/advisories/GHSA-WMMP-3585-3RMP
+  - https://github.com/advisories/GHSA-2X7J-588G-CCC2
+  - https://github.com/advisories/GHSA-CC9R-2J5M-2M83
+- **Severidade:** high
+- **Cadeia:** `nodemailer`
+- **Por que é aceito temporariamente:** Transporte de email com sanitização de campos e headers de mensagens.
+- **Dono:** Agente 17 / Agente 00.
+- **Data de registro:** 2026-09-08.
