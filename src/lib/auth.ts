@@ -8,6 +8,7 @@ import { parseAllowedOrigins } from '../config/network.js';
 import { isAuthorizedLoginEmail, getBrandFromEmail } from '../config/access-policy.js';
 import { sendEmail, MailerNotConfiguredError } from './email/mailer.js';
 import { logger } from './logger.js';
+import { env } from '../config/env.js';
 
 const ACCESS_DENIED_MESSAGE =
   'Acesso restrito a e-mails corporativos autorizados (@atlasgr.com.br ou @totaltrac.com.br).';
@@ -85,7 +86,18 @@ export const auth = betterAuth({
     // (skill Mantis, módulo mantis-threat-model) rodado sobre este módulo. Com isto, o sign-up
     // passa a devolver `{ token: null }` (sem sessão) até o link de verificação ser confirmado —
     // ver `emailVerification` abaixo.
-    requireEmailVerification: true,
+    //
+    // `!env.ALLOW_DEV_AUTH_BYPASS` (não `true` incondicional): ALLOW_DEV_AUTH_BYPASS
+    // (src/config/env.ts) já existe hoje só como trava de segurança — aborta o boot se vier
+    // true com NODE_ENV=production — mas nenhum middleware de fato a lia até agora (achado real
+    // rodando tests/load/k6-crm-authenticated.js contra este branch: o setup() do cenário de
+    // carga faz signup real via HTTP, sem acesso a Prisma para confirmar e-mail direto no banco
+    // como os testes de integração fazem, então ficaria travado em `token: null` para sempre).
+    // ALLOW_DEV_AUTH_BYPASS já vem `true` em todo CI/homolog (ci.yml, playwright-ci.yml,
+    // endpoint-latency-budget.yml, cd-homolog.yml) — não é uma flag nova, é a mesma que esses
+    // workflows já setam há tempo antecipando exatamente este tipo de atalho de dev/CI. Nunca
+    // pode ficar true em produção (trava já existente, abaixo em env.ts).
+    requireEmailVerification: !env.ALLOW_DEV_AUTH_BYPASS,
     // SEC-006 (Sprint 01/Onda 13): sem isto, um reset de senha por e-mail (ex.: após a conta
     // ser comprometida, exatamente o cenário em que reset é usado) deixava sessões antigas —
     // em outros dispositivos/navegadores — válidas até expirarem naturalmente (7 dias). Um
