@@ -597,7 +597,6 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         // Div não-interativa com scroll — tabIndex é intencional (torna a região focável/rolável
         // via teclado), não um erro de a11y. Mesmo padrão de VirtualTable.tsx.
         // biome-ignore lint/a11y/noNoninteractiveTabindex: scroll horizontal via teclado, ver comentário acima
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scroll horizontal via teclado, ver comentário acima
         tabIndex={0}
         aria-label="Colunas do pipeline — role o conteúdo horizontalmente"
       >

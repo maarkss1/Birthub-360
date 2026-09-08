@@ -30,7 +30,6 @@ describe('Dialog', () => {
         onClose: vi.fn(),
         title: 'Example',
         // biome-ignore lint/correctness/noChildrenProp: ver comentário acima
-        // eslint-disable-next-line react/no-children-prop -- ver comentário acima
         children: content,
       }),
     );

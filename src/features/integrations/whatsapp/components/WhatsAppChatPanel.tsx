@@ -83,7 +83,6 @@ export function WhatsAppChatPanel({
     // o modal inteiro. onClick aqui é conveniência de mouse/touch; o botão "Fechar conversa"
     // abaixo é um <button> real, já alcançável por Tab, então não falta caminho de teclado.
     // biome-ignore lint/a11y/noStaticElementInteractions: dismiss por overlay, ver comentário acima
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- dismiss por overlay, ver comentário acima
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}

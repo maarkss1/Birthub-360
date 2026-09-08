@@ -86,7 +86,6 @@ export function CallAnalysisReport({
               sincronizada à gravação, não uma trilha de legenda WebVTT, mas cobre o mesmo
               propósito de acessibilidade (conteúdo falado disponível como texto). */}
           {/* biome-ignore lint/a11y/useMediaCaption: transcrição textual completa cobre o mesmo propósito, ver comentário acima */}
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption -- transcrição textual completa cobre o mesmo propósito, ver comentário acima */}
           <audio controls className="w-full h-12" src={audioBlobUrl} />
 
           <div className="mt-6 space-y-4 max-h-64 overflow-y-auto pr-2">
