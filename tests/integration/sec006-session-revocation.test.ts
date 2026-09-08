@@ -49,17 +49,30 @@ describe('SEC-006 — revogação de sessão ao trocar senha autenticado', () =>
     // dispositivo, nem a antiga do próprio dispositivo que trocou a senha — sobrevive à troca.
     const email = uniqueEmail('sec006-session-revocation');
 
-    // Sessão 1: signup real (primeiro login do usuário).
-    const { headers: signUpHeaders, response: signUpResponse } = await withRlsBypass(() =>
+    // Cadastro real. requireEmailVerification (src/lib/auth.ts) faz o signup NÃO abrir sessão
+    // sozinho mais (acha real do piloto de threat-modeling do Mantis: antes, qualquer
+    // "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão na hora) — sem
+    // mailbox real em teste, confirma o e-mail direto no banco antes do primeiro login.
+    const { response: signUpResponse } = await withRlsBypass(() =>
       auth.api.signUpEmail({
         body: { email, password: TEST_PASSWORD, name: 'SEC-006 Test User' },
-        returnHeaders: true,
       })
-    ) as { headers: Headers; response: { user: { id: string; organizationId: string } } };
+    ) as { response: { user: { id: string; organizationId: string } } };
 
     createdUserIds.push(signUpResponse.user.id);
     createdOrgIds.push(signUpResponse.user.organizationId);
-    const session1Cookie = cookieFromHeaders(signUpHeaders);
+    await withRlsBypass(() =>
+      prisma.user.update({ where: { id: signUpResponse.user.id }, data: { emailVerified: true } }),
+    );
+
+    // Sessão 1: primeiro login real do usuário, já com o e-mail confirmado.
+    const { headers: signIn1Headers } = await withRlsBypass(() =>
+      auth.api.signInEmail({
+        body: { email, password: TEST_PASSWORD },
+        returnHeaders: true,
+      })
+    ) as unknown as { headers: Headers };
+    const session1Cookie = cookieFromHeaders(signIn1Headers);
 
     // Sessão 2: login real num "outro dispositivo" (mesma conta, cookie diferente).
     const { headers: signInHeaders } = await withRlsBypass(() =>

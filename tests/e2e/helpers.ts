@@ -18,8 +18,18 @@ interface SignUpOptions {
 }
 
 // Cria um usuário real via o formulário de cadastro do LoginScreen (mesmo caminho que um usuário
-// real percorre — sem atalho de API/seed) e espera a navegação pro app autenticado. O signup do
-// better-auth já loga o usuário automaticamente, então isto deixa `page` com uma sessão válida.
+// real percorre — sem atalho de API/seed) e espera a navegação pro app autenticado.
+//
+// Desde que o cadastro passou a exigir confirmação de posse do e-mail
+// (requireEmailVerification em src/lib/auth.ts — corrige um achado real do piloto de
+// threat-modeling do Mantis: antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono
+// real, virava sessão + ADMIN na hora), o better-auth NÃO loga mais automaticamente após o
+// sign-up: a resposta vem com `token: null` e um e-mail de verificação é "enviado" (sem SMTP
+// configurado em teste, o link só é logado no servidor — ver sendVerificationEmail em
+// src/lib/auth.ts). Não há mailbox real para ler esse link em CI, então este helper confirma o
+// e-mail direto no banco (mesmo padrão de bypass documentado em `setUserRole` abaixo, para um
+// passo que não tem como ser exercitado pela UI num ambiente de teste) e então faz o login de
+// verdade pela tela, exatamente como uma pessoa faria depois de clicar no link.
 export async function signUp(page: Page, { email, password = E2E_PASSWORD, name }: SignUpOptions) {
   // Organization.name é @unique (prisma/schema.prisma) e o hook de signup (src/lib/auth.ts) deriva
   // o nome da org a partir de `name` + marca — um default fixo tipo "E2E Test User" faz toda
@@ -49,6 +59,17 @@ export async function signUp(page: Page, { email, password = E2E_PASSWORD, name 
   // travamento real (não achamos nenhuma mudança recente no fluxo de signup/RLS que explique um
   // hang). 30s dá folga sem mascarar um hang de verdade (o timeout global do teste, abaixo, seria
   // estourado de qualquer forma nesse caso).
+  await expect(page.getByText(/Enviamos um link de confirmação/)).toBeVisible({ timeout: 30_000 });
+
+  // Confirma a posse do e-mail direto no banco — o passo que, numa conta real, aconteceria ao
+  // clicar no link recebido (ver comentário do helper acima).
+  requestContext.enterWith({ bypassRls: true });
+  await prisma.user.update({ where: { email }, data: { emailVerified: true } });
+
+  await page.goto('/login');
+  await page.getByLabel('E-mail:').fill(email);
+  await page.getByPlaceholder('••••••••').fill(password);
+  await page.getByRole('button', { name: /^Entrar$/ }).click();
   await page.waitForURL('**/app*', { timeout: 30_000 });
 }
 

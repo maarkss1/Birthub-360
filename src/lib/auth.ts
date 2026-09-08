@@ -77,6 +77,15 @@ export const auth = betterAuth({
   ],
   emailAndPassword: {
     enabled: true,
+    // Sem isto, `isAuthorizedLoginEmail` (checagem por DOMÍNIO, não por posse da caixa postal)
+    // era a ÚNICA barreira do cadastro: bastava digitar qualquer endereço
+    // "algo@atlasgr.com.br"/"@totaltrac.com.br" — mesmo pertencente a outra pessoa — para ganhar
+    // sessão válida na hora e, se fosse o primeiro cadastro daquela organização, virar ADMIN dela
+    // (ver databaseHooks.user.create.before abaixo). Achado real do piloto de threat-modeling
+    // (skill Mantis, módulo mantis-threat-model) rodado sobre este módulo. Com isto, o sign-up
+    // passa a devolver `{ token: null }` (sem sessão) até o link de verificação ser confirmado —
+    // ver `emailVerification` abaixo.
+    requireEmailVerification: true,
     // SEC-006 (Sprint 01/Onda 13): sem isto, um reset de senha por e-mail (ex.: após a conta
     // ser comprometida, exatamente o cenário em que reset é usado) deixava sessões antigas —
     // em outros dispositivos/navegadores — válidas até expirarem naturalmente (7 dias). Um
@@ -120,6 +129,51 @@ export const auth = betterAuth({
         throw new APIError('INTERNAL_SERVER_ERROR', {
           message: 'Falha ao enviar e-mail de redefinição.',
         });
+      }
+    },
+  },
+  emailVerification: {
+    // Reenvia automaticamente ao tentar logar sem ter verificado ainda — evita que a pessoa
+    // fique travada só porque perdeu/apagou o primeiro e-mail (sign-in.mjs do better-auth já
+    // bloqueia a sessão com EMAIL_NOT_VERIFIED nesse caso; isto só cobre o reenvio).
+    sendOnSignIn: true,
+    // Sem isto, clicar no link de verificação confirmava o e-mail mas não abria sessão — a
+    // pessoa precisaria digitar a senha de novo por nenhum motivo real.
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Confirme seu e-mail — Prospector Atlas',
+          text: [
+            `Olá${user.name ? `, ${user.name}` : ''},`,
+            '',
+            'Recebemos um cadastro no Prospector Atlas com este e-mail.',
+            '',
+            `Clique no link abaixo para confirmar que este e-mail é seu e ativar a conta:`,
+            url,
+            '',
+            'Se você não fez esse cadastro, ignore este e-mail — nenhuma conta será ativada.',
+          ].join('\n'),
+        });
+      } catch (error) {
+        // Diferente de sendResetPassword (abaixo): a conta JÁ foi criada em banco neste ponto do
+        // fluxo de sign-up (ver sign-up.mjs do better-auth), então relançar aqui faria o cliente
+        // ver "cadastro falhou" para uma conta que na verdade existe (só não verificada) — a
+        // pessoa ficaria sem saber que já tem conta pendente. Loga e segue: o botão "reenviar
+        // e-mail de verificação" (POST /api/auth/send-verification-email) continua disponível
+        // depois, e `sendOnSignIn` acima tenta de novo na primeira tentativa de login.
+        if (error instanceof MailerNotConfiguredError) {
+          logger.warn(
+            { email: user.email, url },
+            `Verificação de e-mail solicitada, mas SMTP não está configurado. O link é: ${url}`,
+          );
+          return;
+        }
+        logger.error(
+          { err: error, email: user.email },
+          'Falha ao enviar e-mail de verificação de cadastro.',
+        );
       }
     },
   },
