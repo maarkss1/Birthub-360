@@ -32,9 +32,7 @@ export function HubTaskWidget() {
   const pending = tasks.filter((t) => !t.done).length;
 
   function toggle(index: number) {
-    setTasks((prev) =>
-      prev.map((t, i) => (i === index ? { ...t, done: !t.done } : t)),
-    );
+    setTasks((prev) => prev.map((t, i) => (i === index ? { ...t, done: !t.done } : t)));
   }
 
   function add(e: React.FormEvent) {
@@ -65,9 +63,7 @@ export function HubTaskWidget() {
               aria-label={task.done ? 'Desmarcar tarefa' : 'Marcar como concluída'}
               onClick={() => toggle(i)}
               className={`grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full border transition-colors ${
-                task.done
-                  ? 'border-ok bg-ok text-white'
-                  : 'border-line-strong bg-transparent'
+                task.done ? 'border-ok bg-ok text-white' : 'border-line-strong bg-transparent'
               }`}
             >
               {task.done && <Check className="h-2.5 w-2.5" strokeWidth={3} />}
