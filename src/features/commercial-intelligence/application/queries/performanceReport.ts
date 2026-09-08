@@ -1,13 +1,20 @@
 /**
  * Eficiência (Fase 4) — Win Rate, ticket médio, ciclo de venda e funil de conversão (snapshot atual
- * + alcance histórico real via `LeadStageHistory`, seção 12).
+ * + alcance histórico real via `LeadStageHistory`, seção 12). Também SLA de primeiro contato e
+ * concentração de receita (top 10 clientes) — achados reais confirmados ao comparar com o
+ * protótipo standalone `Acompanhamento-Comercial-AtlasGR-e-Total-Trac` (ferramenta de relatórios
+ * 100% client-side sobre Bitrix): essas duas métricas não tinham nenhum equivalente neste módulo,
+ * mesmo já rodando sobre dados nativos (Postgres) em vez de reconsultar o Bitrix a cada relatório.
  */
 
 import type {
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
+  FirstContactSlaStats,
   FunnelStageConversion,
   PerformanceMetrics,
+  RevenueConcentrationClient,
+  RevenueConcentrationStats,
 } from '../../domain/CommercialIntelligence';
 import { STAGE_AGING_CRITICAL_DAYS, checkEligibility, isDealOpen } from '../pipelineEligibility';
 import { daysBetween, mean, median, roundMoney } from '../shared/mathUtils';
@@ -18,6 +25,75 @@ import {
   computeHistoricalStageReach,
   countAdvancedTransitions,
 } from '../scoring/stageHistoryAnalytics';
+
+/** Meta de horas até o primeiro contato — mesmo tipo de constante documentada de
+ * `STAGE_AGING_CRITICAL_DAYS`, não um valor fabricado por relatório. Sem meta cadastrada por
+ * organização hoje neste produto (diferente de `CommercialGoal`, que só cobre metas de receita) —
+ * 24h é o padrão de mercado para primeiro contato comercial B2B, usado só para classificar
+ * "dentro"/"fora" da meta, nunca para fabricar um valor de horas. */
+const FIRST_CONTACT_SLA_TARGET_HOURS = 24;
+
+function buildFirstContactSla(
+  createdInPeriod: ScoredDeal[],
+  firstActivityDates: Map<string, Date>,
+): FirstContactSlaStats {
+  const hoursSamples: number[] = [];
+  let leadsWithoutContact = 0;
+  for (const s of createdInPeriod) {
+    const firstActivityAt = firstActivityDates.get(s.deal.id);
+    if (!firstActivityAt) {
+      leadsWithoutContact += 1;
+      continue;
+    }
+    const hours = (firstActivityAt.getTime() - s.deal.createdAt.getTime()) / (60 * 60 * 1000);
+    // Atividade concluída registrada com data anterior à criação do lead é dado inconsistente do
+    // CRM (import/backfill), não um "contato antes de existir" — exclui da amostra em vez de
+    // fabricar uma SLA negativa.
+    if (hours >= 0) hoursSamples.push(hours);
+  }
+  const withinTarget = hoursSamples.filter((h) => h <= FIRST_CONTACT_SLA_TARGET_HOURS).length;
+  return {
+    meanHours: mean(hoursSamples),
+    medianHours: median(hoursSamples),
+    sampleSize: hoursSamples.length,
+    leadsWithoutContact,
+    withinTargetPct:
+      hoursSamples.length > 0 ? roundMoney((withinTarget / hoursSamples.length) * 100) : null,
+    targetHours: FIRST_CONTACT_SLA_TARGET_HOURS,
+  };
+}
+
+function buildRevenueConcentration(wonInPeriod: ScoredDeal[]): RevenueConcentrationStats {
+  const byCompany = new Map<
+    string,
+    { companyId: string | null; companyName: string | null; amount: number }
+  >();
+  for (const s of wonInPeriod) {
+    const key = s.deal.companyId ?? `sem-empresa:${s.deal.id}`;
+    const entry = byCompany.get(key) ?? {
+      companyId: s.deal.companyId,
+      companyName: s.deal.companyName,
+      amount: 0,
+    };
+    entry.amount += s.deal.amount;
+    byCompany.set(key, entry);
+  }
+  const totalWonAmount = roundMoney(wonInPeriod.reduce((sum, s) => sum + s.deal.amount, 0));
+  const sorted = [...byCompany.values()].sort((a, b) => b.amount - a.amount);
+  const top10 = sorted.slice(0, 10);
+  const topClients: RevenueConcentrationClient[] = top10.map((c) => ({
+    companyId: c.companyId,
+    companyName: c.companyName,
+    amount: roundMoney(c.amount),
+    pct: totalWonAmount > 0 ? roundMoney((c.amount / totalWonAmount) * 100) : 0,
+  }));
+  const top10Amount = top10.reduce((sum, c) => sum + c.amount, 0);
+  return {
+    topClients,
+    top10Pct: totalWonAmount > 0 ? roundMoney((top10Amount / totalWonAmount) * 100) : null,
+    totalWonAmount,
+  };
+}
 
 export async function buildPerformance(
   repository: CommercialIntelligenceRepository,
@@ -40,6 +116,13 @@ export async function buildPerformance(
       s.deal.closedAt < end,
   );
   const won = closedInPeriod.filter((s) => s.deal.stageIsWon);
+
+  const firstActivityDates = await repository.findFirstCompletedActivityDates(
+    organizationId,
+    createdInPeriod.map((s) => s.deal.id),
+  );
+  const firstContactSla = buildFirstContactSla(createdInPeriod, firstActivityDates);
+  const revenueConcentration = buildRevenueConcentration(won);
   const lost = closedInPeriod.filter((s) => s.deal.stageIsLost);
   const open = inScope.filter((s) => isDealOpen(s.deal));
   const eligible = open.filter((s) => checkEligibility(s.deal, now, s.daysInCurrentStage).eligible);
@@ -158,5 +241,7 @@ export async function buildPerformance(
     },
     funnel: cumulative,
     funnelHistoricalTrackingSince,
+    firstContactSla,
+    revenueConcentration,
   };
 }

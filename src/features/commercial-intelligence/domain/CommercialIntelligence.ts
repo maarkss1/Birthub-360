@@ -259,6 +259,41 @@ export interface PerformanceMetrics {
    * deve avisar disso, mesmo natureza de `AgingReport.trackingSince`.
    */
   funnelHistoricalTrackingSince: string | null;
+  firstContactSla: FirstContactSlaStats;
+  revenueConcentration: RevenueConcentrationStats;
+}
+
+// ─── SLA de primeiro contato ─────────────────────────────────────────────────
+
+export interface FirstContactSlaStats {
+  /** Horas entre `Lead.createdAt` e a primeira `Activity` concluída — `null` sem amostra. */
+  meanHours: number | null;
+  medianHours: number | null;
+  /** Quantos leads criados no período JÁ tiveram alguma atividade concluída (denominador de `withinTargetPct`). */
+  sampleSize: number;
+  /** Quantos leads criados no período ainda não têm nenhum contato registrado — nunca contam como "0h", ficam de fora da amostra. */
+  leadsWithoutContact: number;
+  /** % da amostra (leads já contatados) cujo primeiro contato aconteceu dentro de `targetHours`. */
+  withinTargetPct: number | null;
+  targetHours: number;
+}
+
+// ─── Concentração de receita ─────────────────────────────────────────────────
+
+export interface RevenueConcentrationClient {
+  companyId: string | null;
+  companyName: string | null;
+  amount: number;
+  /** % da receita total ganha no período que este cliente sozinho representa. */
+  pct: number;
+}
+
+export interface RevenueConcentrationStats {
+  /** Até 10 maiores clientes por receita ganha no período, ordenado desc. */
+  topClients: RevenueConcentrationClient[];
+  /** % da receita total ganha no período concentrada nos clientes de `topClients`. `null` sem receita no período. */
+  top10Pct: number | null;
+  totalWonAmount: number;
 }
 
 // ─── Aging (Fase 5) ──────────────────────────────────────────────────────────
@@ -859,6 +894,15 @@ export interface CommercialIntelligenceRepository {
    * por `changedAt` ascendente.
    */
   findFieldChanges(organizationId: string, field?: TrackedLeadField): Promise<LeadFieldChangeRow[]>;
+  /**
+   * Data da primeira `Activity` CONCLUÍDA de cada lead em `leadIds` — base do SLA de primeiro
+   * contato (tempo entre `Lead.createdAt` e o primeiro contato real registrado). Um lead ausente
+   * do Map nunca teve nenhuma atividade concluída — "sem contato ainda", não fabricado como 0h.
+   */
+  findFirstCompletedActivityDates(
+    organizationId: string,
+    leadIds: string[],
+  ): Promise<Map<string, Date>>;
   /** Grupos de negócios abertos (funil Negócio) que compartilham a mesma empresa — heurística de duplicidade suspeita (seção 27), não determinística de identidade. */
   countDuplicateCompanyGroupsAmongOpenDeals(organizationId: string): Promise<number>;
   /** `true` quando a organização tem ao menos uma conexão Bitrix24 ativa — usado por `bitrixSync` para distinguir "0 vinculado porque não tem Bitrix" de "0 vinculado apesar de ter Bitrix". */

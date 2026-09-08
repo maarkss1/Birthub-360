@@ -195,6 +195,23 @@ export class PrismaCommercialIntelligenceRepository implements CommercialIntelli
     return rows.map((row) => ({ ...row, field: row.field as TrackedLeadField }));
   }
 
+  async findFirstCompletedActivityDates(
+    organizationId: string,
+    leadIds: string[],
+  ): Promise<Map<string, Date>> {
+    if (leadIds.length === 0) return new Map();
+    const grouped = await prisma.activity.groupBy({
+      by: ['leadId'],
+      where: { organizationId, leadId: { in: leadIds }, status: 'Concluida' },
+      _min: { date: true },
+    });
+    const result = new Map<string, Date>();
+    for (const row of grouped) {
+      if (row._min.date) result.set(row.leadId, row._min.date);
+    }
+    return result;
+  }
+
   async countDuplicateCompanyGroupsAmongOpenDeals(organizationId: string): Promise<number> {
     const grouped = await prisma.lead.groupBy({
       by: ['companyId'],

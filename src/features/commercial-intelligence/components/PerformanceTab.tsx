@@ -188,12 +188,73 @@ export function PerformanceTab({ filter }: { filter: CommercialFilter }) {
               : undefined
           }
         />
+        <KpiTile
+          label="1º contato (mediana)"
+          value={
+            data.firstContactSla.medianHours != null
+              ? `${data.firstContactSla.medianHours}h`
+              : 'Não disponível'
+          }
+          hint={`Amostra: ${data.firstContactSla.sampleSize} · sem contato: ${data.firstContactSla.leadsWithoutContact}`}
+          metricKey="first_contact_sla"
+        />
+        <KpiTile
+          label={`Dentro da meta (${data.firstContactSla.targetHours}h)`}
+          value={formatPercent(data.firstContactSla.withinTargetPct)}
+          tone={
+            data.firstContactSla.withinTargetPct != null &&
+            data.firstContactSla.withinTargetPct >= 80
+              ? 'good'
+              : undefined
+          }
+          metricKey="first_contact_sla"
+        />
       </div>
 
       <FunnelConversionCard
         funnel={data.funnel}
         trackingSince={data.funnelHistoricalTrackingSince}
       />
+
+      {data.revenueConcentration.topClients.length > 0 && (
+        <Card padding="sm">
+          <h3 className="text-sm font-bold text-ink mb-1">
+            Concentração de receita — Top 10 clientes
+          </h3>
+          <p className="text-[11px] text-ink-2 mb-3">
+            {data.revenueConcentration.top10Pct != null
+              ? `Os 10 maiores clientes concentram ${formatPercent(data.revenueConcentration.top10Pct)} da receita ganha no período (${formatCurrency(data.revenueConcentration.totalWonAmount)}).`
+              : 'Sem receita ganha no período.'}
+          </p>
+          <div className="space-y-2">
+            {data.revenueConcentration.topClients.map((client, index) => (
+              <div
+                key={client.companyId ?? `sem-empresa-${index}`}
+                className="flex items-center gap-3"
+              >
+                <div
+                  className="w-32 shrink-0 text-xs font-semibold text-ink truncate"
+                  title={client.companyName ?? 'Sem empresa'}
+                >
+                  {client.companyName ?? 'Sem empresa'}
+                </div>
+                <div className="flex-1 h-6 rounded-md bg-surface-2 overflow-hidden">
+                  <div
+                    className="h-full rounded-md bg-brand/70"
+                    style={{ width: `${Math.max(4, client.pct)}%` }}
+                  />
+                </div>
+                <div className="w-14 shrink-0 text-right text-xs [font-variant-numeric:tabular-nums] text-ink">
+                  {formatPercent(client.pct)}
+                </div>
+                <div className="w-24 shrink-0 text-right text-[11px] text-ink-2 [font-variant-numeric:tabular-nums]">
+                  {formatCurrency(client.amount)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {trends && <TrendsCard data={trends} />}
 

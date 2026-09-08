@@ -155,6 +155,24 @@ export interface PerformanceMetrics {
   salesCycle: { meanDays: number | null; medianDays: number | null; sampleSize: number };
   funnel: FunnelStageConversion[];
   funnelHistoricalTrackingSince: string | null;
+  firstContactSla: {
+    meanHours: number | null;
+    medianHours: number | null;
+    sampleSize: number;
+    leadsWithoutContact: number;
+    withinTargetPct: number | null;
+    targetHours: number;
+  };
+  revenueConcentration: {
+    topClients: {
+      companyId: string | null;
+      companyName: string | null;
+      amount: number;
+      pct: number;
+    }[];
+    top10Pct: number | null;
+    totalWonAmount: number;
+  };
 }
 
 export interface AgingBucket {
