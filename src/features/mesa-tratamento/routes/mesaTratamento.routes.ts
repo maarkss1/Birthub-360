@@ -17,6 +17,14 @@ import {
 } from '../../integrations/bitrix/bitrix.service.js';
 import { rankLeadsForQueue } from '../mesaTratamento.priority.js';
 import { resolveLossReasonLabel } from '../constants/lossReasons.js';
+import {
+  buildDailyActivity,
+  buildOutcomeCounts,
+  computeDashboardKpis,
+  periodDayWindow,
+  periodStartDate,
+  type DashboardPeriod,
+} from '../mesaTratamento.dashboard.js';
 
 const router = Router();
 const mesaRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);
@@ -287,6 +295,14 @@ router.post(
 
       await prisma.lead.update({ where: { id }, data });
 
+      // Histórico próprio pro dashboard — antes desta rodada o único registro do desfecho ficava
+      // só no comentário de texto livre do Bitrix, ilegível pra agregação. Vem depois da escrita
+      // no Bitrix/Prisma acima de propósito: um erro aqui nunca deve reverter ou bloquear o
+      // registro real do atendimento, só a métrica do dashboard.
+      await prisma.mesaTratamentoTreatment.create({
+        data: { organizationId, userId, leadId: id, outcome: body.outcome },
+      });
+
       if (body.nextActionTitle && body.nextActionWhen) {
         const owner = await prisma.user.findUnique({
           where: { id: userId },
@@ -306,6 +322,92 @@ router.post(
       }
 
       res.json({ success: true, data: { registered: true } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/pomodoro/session',
+  mesaRoles,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const body = req.body as { durationMinutes?: number; cycleNumber?: number };
+      const durationMinutes = Number(body.durationMinutes);
+      if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) {
+        throw new AppError('Duração do bloco de foco inválida.', 400);
+      }
+
+      await prisma.pomodoroSession.create({
+        data: {
+          organizationId,
+          userId,
+          durationMinutes: Math.round(durationMinutes),
+          cycleNumber: Number.isFinite(Number(body.cycleNumber))
+            ? Math.round(Number(body.cycleNumber))
+            : undefined,
+        },
+      });
+
+      res.json({ success: true, data: { logged: true } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.get(
+  '/dashboard',
+  mesaRoles,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, role, id: userId } = (req as AuthRequest).user;
+      const period = (
+        ['today', '7d', '30d', 'all'].includes(String(req.query.period))
+          ? String(req.query.period)
+          : 'all'
+      ) as DashboardPeriod;
+
+      // Mesmo princípio de resolveScope acima: ADMIN/GESTOR veem o time todo, CLOSER/SDR só o
+      // próprio histórico — mas aqui filtrando por `userId` interno do Atlas (dono real do
+      // registro), não pelo nome/ID do Bitrix (resolveScope existe pra escopar Leads, que não têm
+      // FK de usuário — este histórico tem).
+      const own = !hasRequiredRole(role, ['ADMIN', 'GESTOR']);
+      const start = periodStartDate(period);
+      const dayWindow = periodDayWindow(period);
+      const windowStart = new Date(Date.now() - dayWindow * 86_400_000);
+      const effectiveStart = start && start > windowStart ? start : windowStart;
+
+      const [treatments, pomodoroSessions] = await Promise.all([
+        prisma.mesaTratamentoTreatment.findMany({
+          where: {
+            organizationId,
+            ...(own ? { userId } : {}),
+            createdAt: { gte: effectiveStart },
+          },
+          select: { outcome: true, createdAt: true },
+        }),
+        prisma.pomodoroSession.findMany({
+          where: {
+            organizationId,
+            ...(own ? { userId } : {}),
+            createdAt: { gte: effectiveStart },
+          },
+          select: { durationMinutes: true, createdAt: true },
+        }),
+      ]);
+
+      res.json({
+        success: true,
+        data: {
+          period,
+          dailyActivity: buildDailyActivity(treatments, pomodoroSessions, dayWindow),
+          outcomeCounts: buildOutcomeCounts(treatments),
+          kpis: computeDashboardKpis(treatments, pomodoroSessions),
+        },
+      });
     } catch (error) {
       next(error);
     }

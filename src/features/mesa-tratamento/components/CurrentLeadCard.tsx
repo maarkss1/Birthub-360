@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { Mic, Square } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
 import { toast } from '../../../lib/toast';
 import { SoundFX } from '../../../lib/soundEffects';
 import { LOSS_REASONS } from '../constants/lossReasons';
+import { useVoiceDictation } from '../hooks/useVoiceDictation';
 import {
   mesaTratamentoApi,
   OUTCOME_LABELS,
@@ -37,6 +39,7 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
   const [nextActionTitle, setNextActionTitle] = useState('');
   const [nextActionWhen, setNextActionWhen] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const dictation = useVoiceDictation(setNote);
 
   const disqualifying = isDisqualifyOutcome(outcome);
   const q = lead.qualification;
@@ -267,9 +270,33 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
           )}
 
           <div>
-            <label className={labelClass} htmlFor="mesa-note">
-              Observação *
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="block text-xs font-semibold text-ink-2" htmlFor="mesa-note">
+                Observação *
+              </label>
+              {dictation.isSupported && (
+                <button
+                  type="button"
+                  onClick={dictation.start}
+                  className={`flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-bold transition-colors duration-200 ${
+                    dictation.isDictating
+                      ? 'bg-critical/10 text-critical'
+                      : 'text-ink-2 hover:bg-surface-2 hover:text-ink'
+                  }`}
+                >
+                  {dictation.isDictating ? (
+                    <>
+                      <Square className="h-3 w-3 animate-pulse" aria-hidden="true" /> Gravando...
+                      pare para concluir
+                    </>
+                  ) : (
+                    <>
+                      <Mic className="h-3 w-3" aria-hidden="true" /> Ditar por voz
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
             <textarea
               id="mesa-note"
               className={textareaClass}

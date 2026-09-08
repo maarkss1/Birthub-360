@@ -275,6 +275,56 @@ paths:
         '404':
           description: Lead não encontrado
 
+  /mesa-tratamento/pomodoro/session:
+    post:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        Registra um bloco de foco Pomodoro concluído (alimenta o dashboard SDR). O timer em si
+        roda no cliente (localStorage) — só blocos de foco CONCLUÍDOS chegam aqui.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [durationMinutes]
+              properties:
+                durationMinutes: { type: number, description: Duração do bloco em minutos }
+                cycleNumber: { type: number, description: Número do ciclo dentro da sequência Pomodoro }
+      responses:
+        '200':
+          description: Bloco de foco registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: Duração do bloco de foco inválida
+
+  /mesa-tratamento/dashboard:
+    get:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        KPIs, evolução diária e distribuição de desfechos da Mesa de Tratamento. ADMIN/GESTOR veem
+        o time todo; CLOSER/SDR só o próprio histórico.
+      parameters:
+        - name: period
+          in: query
+          required: false
+          schema: { type: string, enum: [today, '7d', '30d', all] }
+      responses:
+        '200':
+          description: Dashboard agregado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+
   # ───────────────────────────── Auth (better-auth) ─────────────────────────────
   /auth/sign-up/email:
     post:
@@ -2167,6 +2217,85 @@ paths:
                 properties:
                   summary: { type: object }
                   toolUseValidation: { type: object }
+
+  /agent/commercial-cell:
+    get:
+      tags: [Agent]
+      summary: >-
+        Catálogo estático da Célula Comercial de Agentes de IA (onda 43) — metadado de produto
+        (status, risco, capacidades, handoffs), não dado de tenant.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /agent/commercial-cell/revenue-intelligence/run:
+    post:
+      tags: [Agent]
+      summary: >-
+        Executa o agente de Revenue Intelligence sobre o resumo executivo e o playbook de mentoria
+        já calculados pelo CommercialIntelligenceAiService para o período informado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [month]
+              properties:
+                month: { type: string, pattern: '^\d{4}-\d{2}$', description: 'Formato YYYY-MM' }
+                owner: { type: string }
+                product: { type: string }
+                source: { type: string }
+                icp: { type: string }
+                company: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /agent/commercial-cell/churn-retention/run:
+    post:
+      tags: [Agent]
+      summary: >-
+        Executa o agente de Churn Retention sobre a previsão de risco de churn (ChurnPredictionService)
+        para a conta informada.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientName
+                - contractAgeMonths
+                - monthlyRecurringRevenue
+                - openSupportTickets
+                - unresolvedComplaints
+                - paymentDelaysLast90Days
+                - platformUsageDropPercentage
+              properties:
+                clientName: { type: string }
+                contractAgeMonths: { type: number }
+                monthlyRecurringRevenue: { type: number }
+                openSupportTickets: { type: integer }
+                unresolvedComplaints: { type: integer }
+                paymentDelaysLast90Days: { type: integer }
+                platformUsageDropPercentage: { type: number }
+                recentSentimentNotes: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
 
   # ───────────────────────────── Prompts ─────────────────────────────
   /prompts:
