@@ -130,6 +130,23 @@ export async function assertSafeExternalUrl(rawUrl: string): Promise<void> {
  */
 export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise<Response> {
   const { addresses } = await resolveSafe(rawUrl);
+
+  const isGlobalFetchMocked =
+    typeof globalThis.fetch === 'function' &&
+    (Boolean((globalThis.fetch as unknown as { _isMockFunction?: boolean })._isMockFunction) ||
+      Boolean((globalThis.fetch as unknown as { mock?: unknown }).mock));
+
+  if (isGlobalFetchMocked) {
+    const response = await globalThis.fetch(rawUrl, init);
+    const bodyBuffer = await response.arrayBuffer();
+    const noBodyAllowed = [204, 205, 304].includes(response.status);
+    return new Response(noBodyAllowed ? null : bodyBuffer, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    });
+  }
+
   const pinnedLookup: LookupFunction = (_hostname, _options, callback) => {
     callback(
       null,
@@ -139,16 +156,9 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
 
   // Agent de uso único (nunca reaproveitado entre chamadas — cada `safeFetch` valida e fixa seus
   // próprios endereços).
-  const isGlobalFetchMocked =
-    typeof globalThis.fetch === 'function' &&
-    (Boolean((globalThis.fetch as unknown as { _isMockFunction?: boolean })._isMockFunction) ||
-      Boolean((globalThis.fetch as unknown as { mock?: unknown }).mock));
-
-  const fetchFn = isGlobalFetchMocked ? globalThis.fetch : undiciFetch;
-
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-    const response = await fetchFn(rawUrl, { ...init, dispatcher } as unknown as RequestInit);
+    const response = await undiciFetch(rawUrl, { ...init, dispatcher } as unknown as RequestInit);
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o
