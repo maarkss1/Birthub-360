@@ -138,6 +138,9 @@ class FakeRepository implements CommercialIntelligenceRepository {
   async findFieldChanges(_org: string, field?: 'expectedCloseAt' | 'owner') {
     return field ? this.fieldChanges.filter((c) => c.field === field) : this.fieldChanges;
   }
+  async findFirstCompletedActivityDates(): Promise<Map<string, Date>> {
+    return new Map();
+  }
   async countDuplicateCompanyGroupsAmongOpenDeals() {
     return 0;
   }

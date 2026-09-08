@@ -126,6 +126,15 @@ const PERFORMANCE: PerformanceMetrics = {
   salesCycle: { meanDays: 26, medianDays: 26, sampleSize: 2 },
   funnel: [],
   funnelHistoricalTrackingSince: '2026-01-01T00:00:00Z',
+  firstContactSla: {
+    meanHours: 4,
+    medianHours: 3,
+    sampleSize: 3,
+    leadsWithoutContact: 0,
+    withinTargetPct: 100,
+    targetHours: 24,
+  },
+  revenueConcentration: { topClients: [], top10Pct: null, totalWonAmount: 0 },
 };
 
 const CREATION: PipelineCreation = {

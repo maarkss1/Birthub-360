@@ -198,6 +198,29 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
     exclusionRules: 'Amostra vazia retorna "Não disponível".',
   },
   {
+    key: 'first_contact_sla',
+    name: 'SLA de Primeiro Contato',
+    description: 'Tempo entre a criação do lead e a primeira atividade concluída registrada nele.',
+    formula:
+      'primeira Activity.status=Concluída.date − Lead.createdAt, em horas. Média e mediana calculadas; % dentro da meta = amostra com horas ≤ 24h dividida pela amostra (leads já contatados).',
+    source: 'Lead + Activity',
+    period: 'Leads criados no período',
+    inclusionRules: 'Só entram leads que já tiveram ao menos uma atividade concluída.',
+    exclusionRules:
+      'Leads sem nenhum contato ainda ficam de fora da amostra (contados separadamente em "sem contato"), nunca contados como 0h.',
+  },
+  {
+    key: 'revenue_concentration',
+    name: 'Concentração de Receita (Top 10 clientes)',
+    description: 'Quanto da receita ganha no período está concentrada nos 10 maiores clientes.',
+    formula:
+      'SOMA(amount) dos 10 clientes com maior receita ganha ÷ SOMA(amount) total ganho no período.',
+    source: 'Lead (funil Negócio, isWon=true, closedAt no período)',
+    period: 'Negócios ganhos no período',
+    inclusionRules: 'Agrupado por Company (negócios sem empresa vinculada contam isoladamente).',
+    exclusionRules: 'Sem nenhum negócio ganho no período, retorna "Não disponível".',
+  },
+  {
     key: 'aging',
     name: 'Aging de Oportunidades',
     description: 'Idade dos negócios abertos desde a criação, em faixas.',
