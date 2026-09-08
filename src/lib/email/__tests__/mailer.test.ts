@@ -113,6 +113,39 @@ describe('sendEmail', () => {
     expect(sendMailMock).toHaveBeenCalledTimes(2);
   });
 
+  it('inclui html e icalEvent no envio quando informados (convite de reunião)', async () => {
+    mockedEnv = { SMTP_HOST: 'smtp.example.com', SMTP_PORT: 587, SMTP_SECURE: false };
+    const { sendEmail } = await import('../mailer.js');
+    const icalEvent = {
+      filename: 'convite.ics',
+      method: 'REQUEST' as const,
+      content: 'BEGIN:VCALENDAR...',
+    };
+
+    await sendEmail({
+      to: 'lead@empresa.com',
+      subject: 'Convite',
+      text: 'Corpo texto',
+      html: '<p>Corpo HTML</p>',
+      icalEvent,
+    });
+
+    expect(sendMailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ html: '<p>Corpo HTML</p>', icalEvent }),
+    );
+  });
+
+  it('não inclui html/icalEvent no envio quando não informados (compatibilidade com chamadores existentes)', async () => {
+    mockedEnv = { SMTP_HOST: 'smtp.example.com', SMTP_PORT: 587, SMTP_SECURE: false };
+    const { sendEmail } = await import('../mailer.js');
+
+    await sendEmail({ to: 'lead@empresa.com', subject: 'Proposta', text: 'Corpo' });
+
+    const call = sendMailMock.mock.calls[0][0];
+    expect(call).not.toHaveProperty('html');
+    expect(call).not.toHaveProperty('icalEvent');
+  });
+
   it('não envia SMTP_USER quando SMTP_USER não é definido', async () => {
     mockedEnv = {
       SMTP_HOST: 'smtp.example.com',

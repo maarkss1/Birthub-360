@@ -3039,6 +3039,13 @@ model CadenceCalendarEvent {
   /// Preenchido só depois que `CalendarSchedulerPort.createEvent` confirma a criação real no
   /// Google Calendar — nulo enquanto o agendamento é só comercial/local.
   googleEventId String?
+  /// Link real do Google Meet (`hangoutLink`) do evento — nulo se a criação da videochamada falhou
+  /// ou se o evento em si falhou (ver PrismaCalendarSchedulerPort, best-effort). Usado para compor
+  /// o convite ICS/e-mail de confirmação enviado ao lead e ao vendedor.
+  meetUrl String?
+  /// `iCalUID` devolvido pelo Google — usado como UID estável do convite ICS enviado por e-mail,
+  /// para que clientes de calendário reconheçam o mesmo evento (nunca gerado localmente).
+  iCalUID String?
 
   confirmationEvidenceType ConfirmationEvidenceType
   /// Id do registro real que prova a confirmação (id de mensagem, id de clique no link de

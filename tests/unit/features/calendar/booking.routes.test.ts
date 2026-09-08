@@ -32,6 +32,8 @@ const contactCreate = vi.fn();
 const leadCreate = vi.fn();
 const activityFindFirst = vi.fn();
 const activityCreate = vi.fn();
+const activityUpdate = vi.fn();
+const sendEmailMock = vi.fn().mockResolvedValue({ messageId: null });
 
 vi.mock('../../../../src/lib/prisma.js', () => ({
     prisma: {
@@ -44,13 +46,25 @@ vi.mock('../../../../src/lib/prisma.js', () => ({
         activity: {
             findFirst: (...a: unknown[]) => activityFindFirst(...a),
             create: (...a: unknown[]) => activityCreate(...a),
+            update: (...a: unknown[]) => activityUpdate(...a),
         },
     },
 }));
 
+vi.mock('../../../../src/config/env.js', () => ({
+    env: { SMTP_FROM: 'sdr@atlasgr.com.br' },
+}));
+
+vi.mock('../../../../src/lib/email/mailer.js', () => ({
+    sendEmail: (...args: unknown[]) => sendEmailMock(...args),
+    MailerNotConfiguredError: class MailerNotConfiguredError extends Error {},
+}));
+
 import { requestContext } from '../../../../src/lib/async-context';
+import { container } from '../../../../src/shared/di/container';
 import { publicBookingRouter } from '../../../../src/features/calendar/routes/booking.routes';
 import { errorHandler } from '../../../../src/shared/middlewares/errorHandler';
+import { MailerNotConfiguredError } from '../../../../src/lib/email/mailer';
 
 const app = express();
 app.use(express.json());
@@ -179,5 +193,85 @@ describe('POST /public-book/:slug — agendamento real', () => {
 
         expect(res.status).toBe(201);
         expect(leadCreate.mock.calls[0][0].data.contactId).toBeUndefined();
+    });
+
+    it('sem Google conectado (GoogleCalendarService ausente do container): agendamento continua funcionando, meetUrl null', async () => {
+        const res = await request(app).post('/public-book/joao-vendas').send(validBody);
+
+        expect(res.status).toBe(201);
+        expect(res.body.data.meetUrl).toBeNull();
+        expect(sendEmailMock).not.toHaveBeenCalled();
+        expect(activityUpdate).not.toHaveBeenCalled();
+    });
+});
+
+describe('POST /public-book/:slug — Meet + confirmação por e-mail (Meeting Hub)', () => {
+    const validBody = {
+        name: 'Cliente Teste',
+        email: 'cliente@empresa.com',
+        phone: '11999998888',
+        date: '2026-09-01',
+        time: '10:00',
+    };
+    const createCalendarEventMock = vi.fn();
+
+    beforeEach(() => {
+        createCalendarEventMock.mockReset();
+        container.register('GoogleCalendarService', { createCalendarEvent: createCalendarEventMock });
+    });
+
+    it('cria o evento com Meet, envia a confirmação por e-mail ao cliente e devolve o meetUrl', async () => {
+        createCalendarEventMock.mockResolvedValue({
+            googleEventId: 'evt-1',
+            meetUrl: 'https://meet.google.com/abc-defg-hij',
+            iCalUID: 'ical-1',
+        });
+        activityUpdate.mockResolvedValue({});
+
+        const res = await request(app).post('/public-book/joao-vendas').send(validBody);
+
+        expect(res.status).toBe(201);
+        expect(res.body.data.meetUrl).toBe('https://meet.google.com/abc-defg-hij');
+        expect(createCalendarEventMock).toHaveBeenCalledWith(
+            'org-1',
+            expect.objectContaining({
+                summary: 'Reunião com João',
+                attendees: ['cliente@empresa.com', 'joao@atlasgr.com'],
+            }),
+        );
+        expect(sendEmailMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+                to: 'cliente@empresa.com',
+                icalEvent: expect.objectContaining({ method: 'REQUEST' }),
+            }),
+        );
+        expect(activityUpdate).toHaveBeenCalledWith({
+            where: { id: 'activity-1' },
+            data: { observations: expect.stringContaining('Google Meet: https://meet.google.com/abc-defg-hij') },
+        });
+    });
+
+    it('Google Calendar falha: agendamento continua 201, e-mail não é enviado (sem Meet para oferecer)', async () => {
+        createCalendarEventMock.mockRejectedValue(new Error('Google indisponível'));
+
+        const res = await request(app).post('/public-book/joao-vendas').send(validBody);
+
+        expect(res.status).toBe(201);
+        expect(res.body.data.meetUrl).toBeNull();
+        expect(sendEmailMock).not.toHaveBeenCalled();
+    });
+
+    it('SMTP não configurado: evento é criado, mas o envio de e-mail é pulado sem erro', async () => {
+        createCalendarEventMock.mockResolvedValue({
+            googleEventId: 'evt-2',
+            meetUrl: 'https://meet.google.com/xyz-wvut-srq',
+            iCalUID: 'ical-2',
+        });
+        sendEmailMock.mockRejectedValueOnce(new MailerNotConfiguredError());
+
+        const res = await request(app).post('/public-book/joao-vendas').send(validBody);
+
+        expect(res.status).toBe(201);
+        expect(res.body.data.meetUrl).toBe('https://meet.google.com/xyz-wvut-srq');
     });
 });

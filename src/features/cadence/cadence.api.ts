@@ -118,6 +118,7 @@ export interface StartCadenceRunResponse {
 
 export interface ScheduleMeetingResponse {
   scheduled: boolean;
+  meetUrl?: string | null;
   noteId?: string;
 }
 
