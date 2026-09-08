@@ -1,8 +1,12 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { COMMERCIAL_AGENT_REGISTRY } from '../../src/features/intelligence/agents/commercialAgentRegistry.js';
 import normalizedAgents from '../../src/features/job-roles/catalog/agents.normalized.json';
 import agentCapabilities from '../../src/features/job-roles/catalog/agentCapabilities.normalized.json';
-import { getVerifiedToolBinding } from '../../src/features/job-roles/catalog/verifiedToolBindings.js';
+import {
+  getVerifiedToolBinding,
+  VERIFIED_TOOL_BINDINGS,
+} from '../../src/features/job-roles/catalog/verifiedToolBindings.js';
 import { canUserRolePerformCapabilityAction } from '../../src/features/job-roles/services/capabilityUserRolePolicy.js';
 
 describe('Capability Engine hardening — catálogo de agentes', () => {
@@ -56,6 +60,15 @@ describe('Capability Engine hardening — verified tool bindings', () => {
     expect(binding?.verification).toBe('VERIFIED');
     expect(binding?.binding).toBe('AccountIntelligenceService.getIntelligence');
     expect(binding?.evidencePath).toContain('accountIntelligence.service.ts');
+  });
+
+  it('todo binding VERIFIED aponta para arquivo e símbolo presentes no repositório', () => {
+    for (const [capabilityCode, evidence] of Object.entries(VERIFIED_TOOL_BINDINGS)) {
+      const source = readFileSync(evidence.evidencePath, 'utf8');
+      const symbol = evidence.binding.split('.').at(-1);
+      expect(symbol, `binding ${capabilityCode} deve possuir símbolo`).toBeTruthy();
+      expect(source, `${capabilityCode} -> ${evidence.binding} não encontrado`).toContain(symbol);
+    }
   });
 
   it('rebaixa binding conceitual não verificado para FUTURE_TOOL', () => {
