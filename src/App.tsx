@@ -396,9 +396,9 @@ export default function App() {
                         Hub") — em vez de redirecionar direto pro CRM, "/" mostra a tela de login
                         (mesmo componente de "/login", que continua existindo à parte — ver
                         tests/e2e/helpers.ts::signUp e outros specs que navegam direto pra lá),
-                        redesenhada com a linguagem visual do Hub Executivo (badges circulares,
-                        glow de canto, sem 3D). Um usuário já autenticado que caia aqui é
-                        redirecionado pro CRM automaticamente (guard dentro do próprio
+                        redesenhada com a linguagem visual do Hub Executivo (badges circulares e
+                        glow de canto). Um usuário já autenticado que caia aqui é redirecionado
+                        para o Hub automaticamente (guard dentro do próprio
                         LoginScreen), então "/" nunca mostra o formulário a quem já está logado. */}
                     <Route path="/" element={<LoginScreen />} />
                     <Route path="/welcome" element={<WelcomeScreen />} />

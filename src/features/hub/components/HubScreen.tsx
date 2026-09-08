@@ -21,7 +21,6 @@ import {
   Video,
   Volume2,
   VolumeX,
-  ChevronDown,
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -32,8 +31,9 @@ import { MODULE_CATALOG, EXTERNAL_LINKS, type ModuleKey } from '../../../config/
 import { Logo } from '../../../components/Logo';
 import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
 import { SoundFX } from '../../../lib/soundEffects';
-import { CommercialAgentCellPanel } from './CommercialAgentCellPanel';
+import { HubAmbientCanvas } from './HubAmbientCanvas';
 import { HubBurstCanvas, type BurstHandle } from './HubBurstCanvas';
+import { HubOrbitIcon } from './HubOrbitIcon';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
 
@@ -68,10 +68,10 @@ interface OrbitItem {
 
 function useIsDesktopOrbit(): boolean {
   const [isDesktop, setIsDesktop] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 860px)').matches,
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 901px)').matches,
   );
   useEffect(() => {
-    const query = window.matchMedia('(min-width: 860px)');
+    const query = window.matchMedia('(min-width: 901px)');
     const handleChange = () => setIsDesktop(query.matches);
     handleChange();
     query.addEventListener('change', handleChange);
@@ -204,12 +204,13 @@ export function HubScreen() {
     [grantedCatalog, goTo, openExternal],
   );
 
-  const orbitContainerRef = useRef<HTMLDivElement>(null);
+  const orbitContainerRef = useRef<HTMLFieldSetElement>(null);
+  const itemCount = items.length;
 
   // Posicionamento do layout radial concêntrico duplo
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
-    if (!orbit || !isDesktopOrbit) return;
+    if (!orbit || !isDesktopOrbit || itemCount === 0) return;
 
     function layout() {
       if (!orbit) return;
@@ -229,11 +230,11 @@ export function HubScreen() {
       }
 
       const primarySize = 238;
-      const innerSize = 180;
-      const outerSize = 160;
-      const gap = 20;
-      const margin = 20;
-      const minScale = 0.65;
+      const innerSize = 200;
+      const outerSize = 185;
+      const gap = 24;
+      const margin = 40;
+      const minScale = 0.7;
 
       const nInner = ringInner.length;
       const nOuter = ringOuter.length;
@@ -287,7 +288,7 @@ export function HubScreen() {
     layout();
     window.addEventListener('resize', layout);
     return () => window.removeEventListener('resize', layout);
-  }, [items, isDesktopOrbit]);
+  }, [itemCount, isDesktopOrbit]);
 
   const handleCardClick = (e: React.MouseEvent, item: OrbitItem) => {
     burstRef.current?.trigger(e.clientX, e.clientY, item.colorRgb);
@@ -296,28 +297,23 @@ export function HubScreen() {
   };
 
   return (
-    <div className="relative min-h-screen bg-bg overflow-hidden">
-      {/* Elementos visuais de fundo CSS para animação 3D sutil */}
-      <div className="hub-bg-orb h-96 w-96 bg-brand/10 blur-3xl -top-20 -left-20 animate-[hub-bg-float-1_15s_infinite_ease-in-out]" />
-      <div className="hub-bg-orb h-80 w-80 bg-brand-2/10 blur-3xl top-1/2 -right-20 animate-[hub-bg-float-2_18s_infinite_ease-in-out]" />
-      <div className="hub-bg-orb h-72 w-72 bg-brand-active/5 blur-3xl -bottom-10 left-1/3 animate-[hub-bg-float-3_20s_infinite_ease-in-out]" />
-
+    <main className="relative min-h-screen overflow-hidden bg-bg">
+      <HubAmbientCanvas isAtlas={isAtlas} />
       <HubBurstCanvas ref={burstRef} />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Topbar */}
-        <header className="flex items-center gap-2.5 px-6 pt-5 pb-2">
+        <header className="flex items-center gap-2.5 px-6 pt-5 sm:px-8">
           {isAtlas ? (
-            <Logo className="h-7 text-ink" />
+            <Logo variant="symbol" className="h-[22px] w-8 text-brand" />
           ) : (
-            <TotalTrackLogo className="h-7 text-ink" />
+            <TotalTrackLogo variant="symbol" className="h-[22px] w-8 text-brand" />
           )}
-          <div className="font-black text-xl tracking-tight text-ink">ATLAS</div>
+          <div className="font-black text-[19px] tracking-tight text-ink">ATLAS</div>
 
-          <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1 text-xs font-bold text-ink-2 backdrop-blur-md sm:flex">
+          <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1 text-[11px] font-bold text-ink-2 backdrop-blur-md sm:flex">
             <span className="hub-beacon h-2 w-2 rounded-full bg-brand" />
             {brandInfo.name} &middot; {brandInfo.operatingSystemName}
-            <ChevronDown className="h-3 w-3 opacity-60" />
           </div>
 
           <button
@@ -347,17 +343,6 @@ export function HubScreen() {
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          {currentUser && (
-            <div className="flex items-center gap-2 rounded-full border border-line bg-surface/70 py-1 pl-1 pr-3 backdrop-blur-md">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-white">
-                {currentUser.name?.charAt(0).toUpperCase() || 'U'}
-              </div>
-              <span className="hidden text-xs font-bold text-ink sm:inline">
-                {currentUser.name}
-              </span>
-            </div>
-          )}
-
           <button
             type="button"
             onClick={logout}
@@ -370,7 +355,7 @@ export function HubScreen() {
         </header>
 
         {/* Hero Section */}
-        <div className="flex flex-wrap items-end justify-between gap-6 px-8 pt-4 pb-2">
+        <div className="flex flex-wrap items-end justify-between gap-6 px-6 pb-1 pt-[26px] sm:px-8">
           <div>
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-active dark:text-brand-2">
               Portal Atlas
@@ -381,8 +366,8 @@ export function HubScreen() {
                 {firstName}
               </span>
             </h1>
-            <p className="mt-1 text-sm font-bold text-brand-active dark:text-brand-2">
-              {brandInfo.slogan}
+            <p className="mt-2 text-[15px] font-extrabold tracking-tight text-brand-active dark:text-brand-2">
+              Segurança &amp; Inteligência Logística
             </p>
           </div>
 
@@ -416,7 +401,7 @@ export function HubScreen() {
                       key={cell.day}
                       className={
                         cell.isToday
-                          ? 'grid place-items-center rounded-md bg-brand py-0.5 text-[10px] font-black text-white shadow-glow-brand-strong'
+                          ? 'grid place-items-center rounded-md bg-brand-active py-0.5 text-[10px] font-black text-white shadow-glow-brand-strong'
                           : 'grid place-items-center rounded-md py-0.5 text-[10px] font-semibold text-ink-2'
                       }
                     >
@@ -429,7 +414,7 @@ export function HubScreen() {
               </div>
             </div>
 
-            <HubTaskWidget />
+            <HubTaskWidget assigneeLabel={firstName} />
           </div>
         </div>
 
@@ -451,7 +436,8 @@ export function HubScreen() {
 
         {!isLoading && grantedCatalog.length === 0 && (
           <p className="mx-auto max-w-[1250px] px-8 text-xs text-ink-2">
-            Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central Comercial e ferramentas da equipe.
+            Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central
+            Comercial e ferramentas da equipe.
           </p>
         )}
         {isLoading && (
@@ -462,14 +448,12 @@ export function HubScreen() {
 
         {/* Órbita Radial Concêntrica (ou Lista Mobile) */}
         {isDesktopOrbit ? (
-          <div
+          <fieldset
             ref={orbitContainerRef}
-            className="relative mx-auto my-2 h-[820px] w-full max-w-[1250px] px-8"
-            role="group"
-            aria-label="Órbita do Hub Atlas"
+            className="relative mx-auto mb-2 mt-1 h-[1200px] w-full max-w-[1250px] px-8"
           >
+            <legend className="sr-only">Destinos do Hub Atlas</legend>
             {items.map((item) => {
-              const Icon = item.icon;
               return (
                 <button
                   key={item.key}
@@ -489,39 +473,25 @@ export function HubScreen() {
                       !item.primary ? ({ '--orb-scale': 1 } as React.CSSProperties) : undefined
                     }
                   >
-                    <div
-                      className={`hub-orb-icon ${
-                        item.primary ? 'hub-orb-icon-primary' : ''
-                      }`}
-                    >
-                      <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
+                    <div className={`hub-orb-icon ${item.primary ? 'hub-orb-icon-primary' : ''}`}>
+                      <HubOrbitIcon itemKey={item.key} primary={item.primary} />
                     </div>
-                    <div
-                      className={`hub-orb-title ${
-                        item.primary ? 'hub-orb-title-primary' : ''
-                      }`}
-                    >
+                    <div className={`hub-orb-title ${item.primary ? 'hub-orb-title-primary' : ''}`}>
                       {item.label}
                     </div>
                     {item.primary && (
-                      <div className="hub-orb-tag hub-orb-tag-primary">
-                        {item.description}
-                      </div>
+                      <div className="hub-orb-tag hub-orb-tag-primary">{item.description}</div>
                     )}
                   </div>
                 </button>
               );
             })}
-          </div>
+          </fieldset>
         ) : (
           <MobileDestinationList items={items} />
         )}
-
-        <div className="mx-auto w-full max-w-[1250px] px-8 pb-10">
-          <CommercialAgentCellPanel />
-        </div>
       </div>
-    </div>
+    </main>
   );
 }
 
