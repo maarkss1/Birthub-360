@@ -1,16 +1,16 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import type { LookupFunction } from 'node:net';
-import { Agent } from 'undici';
+import { Agent, fetch } from 'undici';
 import { AppError } from '../middlewares/errorHandler.js';
 
 // `RequestInit` global deste projeto vem do lib "DOM" do tsconfig (compartilhado com o frontend)
 // — esse tipo não conhece a opção `dispatcher` (extensão do Node/undici usada abaixo para fixar a
-// conexão real nos endereços já validados), embora o `fetch` global do Node aceite normalmente em
-// tempo de execução (é a mesma implementação undici por baixo). `dispatcher` entra via cast só
-// para contornar essa lacuna de tipo — continuamos usando o `fetch`/`Response` globais (não os do
-// pacote `undici`) para o `Response` devolvido permanecer o mesmo tipo que todo o resto do código
-// já espera.
+// conexão real nos endereços já validados). `dispatcher` entra via cast só para contornar essa
+// lacuna de tipo.
+// IMPORTANTE: usamos o `fetch` da biblioteca `undici` em vez do fetch global porque o fetch
+// global do Node.js (v24) tem incompatibilidade interna com instâncias de Agent importadas
+// do pacote `undici` do node_modules.
 
 // SSRF: guard genérico para QUALQUER URL fornecida por um usuário/tenant que o servidor vai
 // buscar (fetch/POST/HEAD) — webhook de integração (Bitrix24), PABX de telefonia (3CX), ou
