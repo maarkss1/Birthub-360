@@ -1,6 +1,11 @@
-import type { AgentAccessLevel, CapabilityRiskLevel } from '@prisma/client';
+import type {
+  AgentAccessLevel,
+  CapabilityActionType,
+  CapabilityRiskLevel,
+} from '@prisma/client';
 import { prisma } from '../../../lib/prisma.js';
-import { getToolBinding } from '../catalog/toolBindings.js';
+import { getVerifiedToolBinding } from '../catalog/verifiedToolBindings.js';
+import { canUserRolePerformCapabilityAction } from './capabilityUserRolePolicy.js';
 
 export type CapabilityDecisionReason =
   | 'PERMITTED'
@@ -10,11 +15,15 @@ export type CapabilityDecisionReason =
   | 'INACTIVE_AGENT'
   | 'AGENT_NOT_GRANTED_TO_ROLE'
   | 'CROSS_ROLE_REQUEST_REQUIRED'
+  | 'DISCOVER_ONLY'
+  | 'READ_ONLY_ACCESS'
   | 'UNKNOWN_CAPABILITY'
   | 'INACTIVE_CAPABILITY'
   | 'CAPABILITY_NOT_GRANTED_TO_AGENT'
   | 'CAPABILITY_NOT_GRANTED_TO_ROLE'
   | 'SOURCE_REQUIRED'
+  | 'FUTURE_TOOL'
+  | 'TOOL_UNAVAILABLE'
   | 'USER_ROLE_FORBIDDEN'
   | 'APPROVAL_REQUIRED';
 
@@ -40,6 +49,8 @@ export interface CapabilityDecision {
   accessLevel: AgentAccessLevel | null;
   toolCode: string | null;
   toolAvailable: boolean;
+  bindingVerification: 'VERIFIED' | 'UNVERIFIED' | null;
+  bindingEvidencePath: string | null;
   actor: {
     id: string;
     userRole: string;
@@ -63,6 +74,32 @@ export interface CapabilityDecision {
   };
 }
 
+const ACCESS_RANK: Record<Exclude<AgentAccessLevel, 'REQUEST'>, number> = {
+  DISCOVER: 0,
+  READ: 1,
+  EXECUTE: 2,
+};
+
+function validateAccessLevelForAction(
+  accessLevel: AgentAccessLevel,
+  actionType: CapabilityActionType,
+): CapabilityDecisionReason | null {
+  if (accessLevel === 'REQUEST') return 'CROSS_ROLE_REQUEST_REQUIRED';
+  if (accessLevel === 'DISCOVER') return 'DISCOVER_ONLY';
+  if (accessLevel === 'READ' && actionType !== 'READ') return 'READ_ONLY_ACCESS';
+  return null;
+}
+
+function effectiveAccessLevel(
+  roleAgentAccess: AgentAccessLevel,
+  roleCapabilityAccess: AgentAccessLevel,
+): AgentAccessLevel {
+  if (roleAgentAccess === 'REQUEST' || roleCapabilityAccess === 'REQUEST') return 'REQUEST';
+  return ACCESS_RANK[roleAgentAccess] <= ACCESS_RANK[roleCapabilityAccess]
+    ? roleAgentAccess
+    : roleCapabilityAccess;
+}
+
 /**
  * Capability Authorization Service (PROMPT 3 — Capability & Permission Engine).
  *
@@ -71,14 +108,16 @@ export interface CapabilityDecision {
  *   + UserRole válido e compatível
  *   + JobRole principal ativo
  *   + AgentDefinition ativo
- *   + RoleAgentGrant ativo
+ *   + RoleAgentGrant ativo e compatível com o tipo de ação
  *   + CapabilityDefinition ativa
  *   + AgentCapabilityGrant ativo
- *   + RoleCapabilityGrant ativo
- *   + Tool Binding disponível (não SOURCE_REQUIRED)
+ *   + RoleCapabilityGrant ativo e compatível com o tipo de ação
+ *   + Tool Binding comprovado por evidência real no repositório
  *   + Checagem de Risco / Aprovação
  *
  * NUNCA executa LLM, agentes ou tools nesta camada (PROMPT 4 cuidará do AgentRuntime).
+ * Resource ownership também não é resolvido aqui: `resource` é carregado na decisão para o
+ * runtime/policy de domínio combinar capability + ownership sem misturar responsabilidades.
  * FAIL CLOSED absoluto.
  */
 export async function authorizeCapability(
@@ -92,6 +131,8 @@ export async function authorizeCapability(
     accessLevel: null,
     toolCode: null,
     toolAvailable: false,
+    bindingVerification: null,
+    bindingEvidencePath: null,
     actor: {
       id: input.actor.id,
       userRole: input.actor.role,
@@ -112,8 +153,9 @@ export async function authorizeCapability(
     resource: input.resource,
   };
 
-  // 1. Validação de Actor e UserRole
-  if (!input.actor?.id || !input.actor?.role) {
+  // 1. Validação básica do actor. A compatibilidade do UserRole com o tipo de ação
+  // é avaliada assim que a CapabilityDefinition for conhecida.
+  if (!input.actor?.id || !input.actor?.role || !input.actor?.organizationId) {
     baseDecision.reason = 'USER_ROLE_FORBIDDEN';
     return baseDecision;
   }
@@ -165,7 +207,7 @@ export async function authorizeCapability(
     return baseDecision;
   }
 
-  // 4. RoleAgentGrant: este cargo tem grant para este agente?
+  // 4. RoleAgentGrant: este cargo pode sequer usar este agente?
   const roleAgentGrant = await prisma.roleAgentGrant.findUnique({
     where: {
       jobRoleId_agentDefinitionId: {
@@ -184,6 +226,12 @@ export async function authorizeCapability(
     baseDecision.reason = 'CROSS_ROLE_REQUEST_REQUIRED';
     baseDecision.requiresApproval = true;
     baseDecision.accessLevel = 'REQUEST';
+    return baseDecision;
+  }
+
+  if (roleAgentGrant.accessLevel === 'DISCOVER') {
+    baseDecision.reason = 'DISCOVER_ONLY';
+    baseDecision.accessLevel = 'DISCOVER';
     return baseDecision;
   }
 
@@ -208,16 +256,26 @@ export async function authorizeCapability(
     return baseDecision;
   }
 
-  // 6. UserRole como autoridade superior de segurança:
-  // VISUALIZADOR nunca pode executar ações que alterem estado (WRITE ou ADMIN)
-  if (input.actor.role === 'VISUALIZADOR') {
-    if (capability.actionType === 'WRITE' || capability.actionType === 'ADMIN') {
-      baseDecision.reason = 'USER_ROLE_FORBIDDEN';
-      return baseDecision;
-    }
+  // 6. Semântica completa do access level do agente para o tipo de ação solicitado.
+  const roleAgentAccessFailure = validateAccessLevelForAction(
+    roleAgentGrant.accessLevel,
+    capability.actionType,
+  );
+  if (roleAgentAccessFailure) {
+    baseDecision.reason = roleAgentAccessFailure;
+    baseDecision.accessLevel = roleAgentGrant.accessLevel;
+    baseDecision.requiresApproval = roleAgentAccessFailure === 'CROSS_ROLE_REQUEST_REQUIRED';
+    return baseDecision;
   }
 
-  // 7. AgentCapabilityGrant: o agente foi desenhado/autorizado para esta capability?
+  // 7. UserRole permanece a autoridade técnica superior. Esta policy reaproveita
+  // `hasRequiredRole`/`ROLE_HIERARCHY`; não introduz um terceiro RBAC.
+  if (!canUserRolePerformCapabilityAction(input.actor.role, capability.actionType)) {
+    baseDecision.reason = 'USER_ROLE_FORBIDDEN';
+    return baseDecision;
+  }
+
+  // 8. AgentCapabilityGrant: o agente foi desenhado/autorizado para esta capability?
   const agentCapabilityGrant = await prisma.agentCapabilityGrant.findUnique({
     where: {
       agentDefinitionId_capabilityDefinitionId: {
@@ -232,7 +290,7 @@ export async function authorizeCapability(
     return baseDecision;
   }
 
-  // 8. RoleCapabilityGrant: o cargo profissional tem grant para esta capability?
+  // 9. RoleCapabilityGrant: o cargo profissional pode permitir esta capability?
   const roleCapabilityGrant = await prisma.roleCapabilityGrant.findUnique({
     where: {
       jobRoleId_capabilityDefinitionId: {
@@ -247,26 +305,46 @@ export async function authorizeCapability(
     return baseDecision;
   }
 
-  baseDecision.accessLevel = roleCapabilityGrant.accessLevel;
+  const roleCapabilityAccessFailure = validateAccessLevelForAction(
+    roleCapabilityGrant.accessLevel,
+    capability.actionType,
+  );
+  baseDecision.accessLevel = effectiveAccessLevel(
+    roleAgentGrant.accessLevel,
+    roleCapabilityGrant.accessLevel,
+  );
 
-  if (roleCapabilityGrant.accessLevel === 'REQUEST') {
-    baseDecision.reason = 'CROSS_ROLE_REQUEST_REQUIRED';
-    baseDecision.requiresApproval = true;
+  if (roleCapabilityAccessFailure) {
+    baseDecision.reason = roleCapabilityAccessFailure;
+    baseDecision.requiresApproval = roleCapabilityAccessFailure === 'CROSS_ROLE_REQUEST_REQUIRED';
     return baseDecision;
   }
 
-  // 9. Tool Binding e Disponibilidade real (não dependente de nome de agente)
-  const toolBinding = getToolBinding(capability.code);
+  // 10. Tool Binding: somente bindings explicitamente comprovados no repositório
+  // saem como disponíveis. Nome conceitual não é evidência executável.
+  const toolBinding = getVerifiedToolBinding(capability.code);
   baseDecision.toolCode = toolBinding?.toolCode ?? null;
   baseDecision.toolAvailable = toolBinding?.available ?? false;
+  baseDecision.bindingVerification = toolBinding?.verification ?? null;
+  baseDecision.bindingEvidencePath = toolBinding?.evidencePath ?? null;
 
-  if (!toolBinding?.available || toolBinding.reason === 'SOURCE_REQUIRED') {
-    baseDecision.reason = 'SOURCE_REQUIRED';
-    baseDecision.allowed = false;
+  if (!toolBinding) {
+    baseDecision.reason = 'TOOL_UNAVAILABLE';
     return baseDecision;
   }
 
-  // 10. Risco e Requisito de Aprovação
+  if (!toolBinding.available) {
+    if (toolBinding.reason === 'SOURCE_REQUIRED') {
+      baseDecision.reason = 'SOURCE_REQUIRED';
+    } else if (toolBinding.reason === 'FUTURE_TOOL') {
+      baseDecision.reason = 'FUTURE_TOOL';
+    } else {
+      baseDecision.reason = 'TOOL_UNAVAILABLE';
+    }
+    return baseDecision;
+  }
+
+  // 11. Risco e Requisito de Aprovação
   const requiresApproval =
     capability.riskLevel === 'HIGH' ||
     capability.riskLevel === 'CRITICAL' ||
@@ -283,7 +361,7 @@ export async function authorizeCapability(
     return baseDecision;
   }
 
-  // 11. Todas as camadas de segurança autorizadas
+  // 12. Todas as camadas de segurança autorizaram.
   baseDecision.allowed = true;
   baseDecision.reason = 'PERMITTED';
   baseDecision.requiresApproval = false;
