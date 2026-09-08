@@ -45,6 +45,8 @@ import { bugReportRouter } from '../features/bug-reports/routes/bugReport.routes
 import { threecxRoutes } from '../features/integrations/threecx/threecx.routes.js';
 import { gamificationRoutes } from '../features/gamification/routes/gamification.routes.js';
 import { accountIntelligenceRoutes } from '../features/market-intelligence/server/accountIntelligence.routes.js';
+import { jobRoleRoutes } from '../features/job-roles/routes/jobRole.routes.js';
+import { agentCatalogRoutes } from '../features/job-roles/routes/agentCatalog.routes.js';
 
 /**
  * Monta todas as rotas de API protegidas (autenticação + tenant + papel, conforme o módulo) e o
@@ -134,6 +136,11 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/bitrix', authenticateToken, requireTenant, bitrixRoutes);
   app.use('/api/team', authenticateToken, requireTenant, teamRoutes);
   app.use('/api/module-access', authenticateToken, requireTenant, moduleAccessRoutes);
+  // Fundação Multi-Cargo (PROMPT 1) — catálogo de cargos/agentes é leitura livre por usuário
+  // autenticado; gestão de atribuição de cargo (`/assignments/**`) exige ADMIN dentro do próprio
+  // router (mesmo padrão de team.routes.ts/moduleAccess.routes.ts).
+  app.use('/api/job-roles', authenticateToken, requireTenant, jobRoleRoutes);
+  app.use('/api/agents', authenticateToken, requireTenant, agentCatalogRoutes);
   app.use('/api/auth-extra', authenticateToken, requireTenant, authExtraRoutes);
   app.use('/api/agent', requireTenant, agentRoutes);
   app.use('/api/cadence', authenticateToken, requireTenant, cadenceRoutes);

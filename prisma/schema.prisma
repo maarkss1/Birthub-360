@@ -784,6 +784,10 @@ model User {
   moduleAccessGrants ModuleAccessGrant[]
   mesaTratamentoTreatments MesaTratamentoTreatment[]
   pomodoroSessions   PomodoroSession[]
+  // Fundação Multi-Cargo (ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo) —
+  // vínculo com o(s) cargo(s) funcionais do usuário, independente de `role` (UserRole = nível de
+  // autoridade/segurança, nunca substituído por isto).
+  jobRoles           UserJobRole[]
 
   @@index([organizationId])
   @@map("user")
@@ -866,6 +870,8 @@ model Organization {
   updatedAt                     DateTime                       @updatedAt
   threeCXCallEvents             ThreeCXCallEvent[]
   publicBookingLinks            PublicBookingLink[]
+  // Fundação Multi-Cargo — ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo.
+  userJobRoles                  UserJobRole[]
   savedSearches                 SavedSearch[]
   prospectingSearchExecutions   ProspectingSearchExecution[]
   automationVersions            AutomationVersion[]
@@ -3265,5 +3271,213 @@ model ProspectingSearchExecution {
 
   @@index([organizationId, startedAt])
   @@index([savedSearchId])
+}
+
+// ─── Multi-Cargo e Governança de Agentes (Fundação) ────────────────────────────────────────
+//
+// Onda de fundação (ver PROMPT 1 — Fundação Multi-Cargo e Governança de Agentes). Objetivo:
+// separar duas perguntas que hoje colapsam em uma só (`User.role`):
+//   1. "Qual é o nível de autoridade/segurança deste usuário?"  → continua sendo `UserRole`
+//      (enum acima, ADMIN/GESTOR/CLOSER/SDR/VISUALIZADOR). NÃO tocado nesta onda.
+//   2. "Qual é a função profissional/cargo deste usuário dentro da Central?" → `JobRole` (novo).
+//
+// `JobRole` NUNCA concede nível de segurança sozinho — só `UserRole` decide o que uma rota
+// autoriza (`requireRole`/`hasRequiredRole` em src/lib/auth/authorization.ts, inalterados). Ver
+// teste de segurança em src/lib/auth/__tests__/jobRole.security.unit.test.ts.
+//
+// DECISÃO DE ARQUITETURA — JobRole é catálogo GLOBAL (sem organizationId), não por-organização
+// (a "opção A" descrita no prompt da onda). Motivo: os 12 cargos desta fundação são um catálogo
+// de produto (papéis profissionais que a Central reconhece), não um dado de tenant — mesmo
+// tratamento já usado em `FeatureFlag` (catálogo global) vs. `OrganizationFeatureFlag` (override
+// por tenant) acima neste arquivo. Nenhum dado sensível de organização é exposto por um catálogo
+// de cargos compartilhado, então não há risco de vazamento entre AtlasGR/Total Trac ao mantê-lo
+// global — e a solução fica mais simples do que replicar 12 linhas por organização. Extensão
+// futura (cargo customizado por organização) pode ser adicionada depois com uma tabela de
+// override espelhando o par FeatureFlag/OrganizationFeatureFlag, sem exigir migração retroativa
+// desta tabela. `UserJobRole` (o vínculo usuário↔cargo) É por-organização, com RLS, porque ali
+// sim há dado de tenant (quem trabalha em qual organização).
+//
+// `AgentDefinition`/`AgentVersion`/`RoleAgentGrant` seguem a mesma decisão: catálogo de produto
+// global (quais agentes existem, qual cargo os usa por padrão), não dado de organização. Uma
+// organização específica restringir um agente para um cargo é Cross-Role Authorization —
+// explicitamente fora do escopo desta onda (ver PROMPT 2).
+
+/// Status técnico de implementação de um `AgentDefinition` — estados controlados, por isso enum
+/// Prisma (diferente de `JobRole`/cargo, que é catálogo aberto/extensível de propósito). Mapeia
+/// o `CommercialAgentStatus` hoje usado em `commercialAgentTypes.ts`/`commercialAgentRegistry.ts`
+/// (ver função `seedAgentCatalogFromCommercialRegistry` em agentCatalog.service.ts para a tabela
+/// de conversão exata) sem apagar aquele tipo — os 12 agentes da Célula Comercial continuam
+/// funcionando exatamente como estão; este enum é o modelo NOVO de catálogo, não substitui nada
+/// em runtime ainda.
+enum AgentDefinitionStatus {
+  /// Só existe no catálogo — nenhuma implementação ainda (equivalente a MAPEADO_NAO_IMPLEMENTADO).
+  CATALOG_ONLY
+  /// Prompt/definição pronta, sem wrapper de serviço ainda.
+  PROMPT_READY
+  /// Implementado como wrapper fino sobre um serviço de domínio real (equivalente a
+  /// NOVO_SOBRE_SERVICO_REAL).
+  SERVICE_WRAPPER
+  /// Orquestração/workflow entre múltiplos agentes pronta.
+  WORKFLOW_READY
+  /// Em produção real, uso ativo (equivalente a REAL_EM_PRODUCAO).
+  PRODUCTION_READY
+  /// Depende de uma fonte de dado real que ainda não existe (equivalente a NOVO_FONTE_PARCIAL) —
+  /// nunca fabrica o dado ausente.
+  SOURCE_REQUIRED
+  /// Duplicata identificada de outro AgentDefinition (capability já coberta) — mantido só como
+  /// alias/rastro, nunca executável. Preparação para a deduplicação dos 392 agentes (PROMPT 2).
+  DUPLICATE_ALIAS
+  /// Bloqueado por decisão de governança/segurança — não executável até revisão.
+  BLOCKED
+  /// Descontinuado — mantido no catálogo por histórico/auditoria, não concedível a novos cargos.
+  DEPRECATED
+}
+
+/// Ciclo de vida de uma versão de agente — nunca sobrescreve a anterior silenciosamente.
+enum AgentVersionStatus {
+  DRAFT
+  ACTIVE
+  DEPRECATED
+}
+
+/// Nível de acesso de um cargo a um agente — do menor ao maior grau de uso real.
+enum AgentAccessLevel {
+  /// Aparece no catálogo do cargo, sem poder ver detalhe nem executar.
+  DISCOVER
+  /// Pode ver definição/resultado, sem poder disparar execução.
+  READ
+  /// Pode executar diretamente.
+  EXECUTE
+  /// Não tem acesso direto, mas pode solicitar autorização temporária (base para Cross-Role
+  /// Authorization no PROMPT 2 — nesta onda é só o valor do enum, sem fluxo de aprovação).
+  REQUEST
+}
+
+/// Catálogo de cargos profissionais da Central — ver decisão de arquitetura no comentário da
+/// seção acima. `code` é o identificador estável (ex.: "SDR", "GERENTE_COMERCIAL"), nunca
+/// reaproveitado por outro cargo mesmo se este for desativado (`isActive = false`).
+model JobRole {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  department  String?
+  /// Ordenação/hierarquia funcional opcional (não é nível de segurança — isso é só `UserRole`).
+  level       Int?
+  /// true para os 12 cargos canônicos desta fundação (seed) — reservado para diferenciar de
+  /// cargos customizados que uma organização venha a cadastrar no futuro (fora do escopo desta
+  /// onda: hoje todo JobRole criado é isSystem = true).
+  isSystem    Boolean  @default(true)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userJobRoles     UserJobRole[]
+  roleAgentGrants  RoleAgentGrant[]
+  primaryForAgents AgentDefinition[]
+
+  @@index([isActive])
+}
+
+/// Vínculo usuário↔cargo — por-organização (tem `organizationId`, RLS habilitado), diferente do
+/// catálogo `JobRole` (global). Um usuário sem nenhuma linha aqui continua funcionando
+/// normalmente pelo `UserRole` de sempre (fallback seguro — ver seção 18/backward compatibility
+/// do prompt da onda); nenhuma migração automática de `UserRole` para `JobRole` é feita.
+model UserJobRole {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobRoleId      String
+  jobRole        JobRole      @relation(fields: [jobRoleId], references: [id], onDelete: Restrict)
+  /// Cargo principal do usuário. A arquitetura já suporta múltiplos cargos por usuário
+  /// (múltiplas linhas), mas só um pode ser `isPrimary = true` por vez entre as linhas ativas —
+  /// reforçado por índice único parcial na migration (não representável em `@@unique` do Prisma
+  /// porque é condicional a `isActive = true`).
+  isPrimary  Boolean   @default(true)
+  isActive   Boolean   @default(true)
+  assignedAt DateTime  @default(now())
+  /// Id do usuário ADMIN que atribuiu o cargo — só informativo/auditoria (mesmo padrão de
+  /// `ModuleAccessGrant.grantedByUserId`), sem FK: sobrevive à remoção de quem atribuiu.
+  assignedBy String?
+
+  @@unique([userId, jobRoleId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+/// Catálogo de agentes — identidade e metadado de governança, nunca a implementação em si
+/// (código do agente continua em `src/features/intelligence/agents/**`, ex.:
+/// `commercialAgentRegistry.ts`). Global/produto, não por-organização — ver decisão de
+/// arquitetura na seção acima.
+model AgentDefinition {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String
+  description String?
+  /// Domínio funcional livre (ex.: "sales", "management", "control") — mesmo espírito do campo
+  /// `layer` já usado em `CommercialAgentDefinition` (commercialAgentRegistry.ts), sem reusar o
+  /// enum daquele arquivo para não acoplar o catálogo novo a um tipo de outra feature.
+  domain           String?
+  primaryJobRoleId String?
+  primaryJobRole   JobRole?              @relation(fields: [primaryJobRoleId], references: [id], onDelete: SetNull)
+  status           AgentDefinitionStatus @default(CATALOG_ONLY)
+  /// Texto livre ("LOW"/"MEDIUM"/"HIGH") — mesmo valor de `CommercialAgentRisk`, sem enum Prisma
+  /// próprio para não duplicar essa taxonomia em dois lugares divergentes.
+  risk             String?
+  requiresApproval Boolean               @default(false)
+  isSystem         Boolean               @default(true)
+  isActive         Boolean               @default(true)
+  /// Número da versão ATIVA atual (denormalizado — a fonte de verdade de cada versão em si é
+  /// `AgentVersion`; este campo evita um join extra só para saber "qual é a versão corrente").
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  versions   AgentVersion[]
+  roleGrants RoleAgentGrant[]
+
+  @@index([isActive])
+  @@index([primaryJobRoleId])
+}
+
+/// Versão executável de um `AgentDefinition` — nunca sobrescrita in-place. Nesta onda é só a
+/// fundação de versionamento (sem aprendizado automático criando versões sozinho); `configuration`
+/// fica livre (Json) porque o shape real de config por tipo de agente ainda não está definido.
+model AgentVersion {
+  id                String              @id @default(cuid())
+  agentDefinitionId String
+  agentDefinition   AgentDefinition     @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
+  version           Int
+  systemPrompt      String?             @db.Text
+  configuration     Json?
+  status            AgentVersionStatus  @default(DRAFT)
+  createdAt         DateTime            @default(now())
+  createdBy         String?
+  activatedAt       DateTime?
+  deprecatedAt      DateTime?
+
+  @@unique([agentDefinitionId, version])
+  @@index([agentDefinitionId, status])
+}
+
+/// Responde "quais agentes este cargo pode usar?" — um mesmo `AgentDefinition` pode ser
+/// concedido a vários cargos (ex.: um `company-research` único concedido a SDR/BDR/Closer), sem
+/// nunca duplicar o AgentDefinition em si (ver regra #12 do prompt da onda: nunca clonar um
+/// agente por cargo quando a capability é a mesma).
+model RoleAgentGrant {
+  id                String           @id @default(cuid())
+  jobRoleId         String
+  jobRole           JobRole          @relation(fields: [jobRoleId], references: [id], onDelete: Cascade)
+  agentDefinitionId String
+  agentDefinition   AgentDefinition  @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
+  accessLevel       AgentAccessLevel @default(EXECUTE)
+  isActive          Boolean          @default(true)
+  requiresApproval  Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+
+  @@unique([jobRoleId, agentDefinitionId])
+  @@index([agentDefinitionId])
 }
 
