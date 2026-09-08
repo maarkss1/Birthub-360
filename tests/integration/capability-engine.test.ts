@@ -348,7 +348,7 @@ describe('PROMPT 3 — Capability & Permission Engine', () => {
     it('nega com CAPABILITY_NOT_GRANTED_TO_AGENT se o agente não possui a capability (impede prompt injection / jailbreak)', async () => {
       const sdrRole = await getJobRoleByCode('SDR');
       const user = await prisma.user.create({
-        data: { name: 'Paula SDR', email: 'paula@engine.test', role: 'SDR', organizationId: ORG_ID },
+        data: { name: 'Paula Gestora', email: 'paula.gestora@engine.test', role: 'GESTOR', organizationId: ORG_ID },
       });
       await assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: sdrRole!.id, assignedBy: 'admin-1' });
 
@@ -368,7 +368,7 @@ describe('PROMPT 3 — Capability & Permission Engine', () => {
       });
 
       const decision = await authorizeCapability({
-        actor: { id: user.id, organizationId: ORG_ID, role: 'SDR' },
+        actor: { id: user.id, organizationId: ORG_ID, role: 'GESTOR' },
         agentId: agent.code,
         capabilityCode: bitrixCap.code,
       });
