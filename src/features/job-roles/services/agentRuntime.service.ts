@@ -10,9 +10,11 @@
 // `toolExecutors.ts`, que por sua vez só chama serviços reais já existentes. Um AgentDefinition
 // sem executor registrado (mesmo com capability autorizada) nunca executa — fail closed também
 // aqui, não só na camada de autorização.
-import { prisma } from '../../../lib/prisma.js';
+
 import type { AgentExecutionStatus } from '@prisma/client';
+import { prisma } from '../../../lib/prisma.js';
 import { authorizeCapability, type CapabilityDecision } from './capabilityAuthorization.service.js';
+import { getPrimaryActiveJobRoleForUser } from './jobRole.service.js';
 import { getToolExecutor, type ToolExecutionOutput } from './toolExecutors.js';
 
 export interface AgentExecutionRequest {
@@ -133,15 +135,10 @@ export async function runAgentExecution(
     }
   }
 
-  const primaryUserJobRole = await prisma.userJobRole.findFirst({
-    where: {
-      organizationId: request.organizationId,
-      userId: request.actorId,
-      isPrimary: true,
-      isActive: true,
-    },
-    select: { jobRole: { select: { code: true } } },
-  });
+  const primaryJobRole = await getPrimaryActiveJobRoleForUser(
+    request.organizationId,
+    request.actorId,
+  );
 
   // Autoriza ANTES de persistir qualquer coisa — `decision.agent` só vem preenchido quando o
   // AgentDefinition realmente existe (mesmo que inativo/sem grant), então a linha de auditoria
@@ -162,7 +159,7 @@ export async function runAgentExecution(
       organizationId: request.organizationId,
       actorId: request.actorId,
       actorRole: request.actorRole,
-      jobRoleCode: primaryUserJobRole?.jobRole.code,
+      jobRoleCode: primaryJobRole?.code,
       agentCode: request.agentCode,
       agentDefinitionId: decision.agent?.id,
       capabilityCode: request.requestedCapability,

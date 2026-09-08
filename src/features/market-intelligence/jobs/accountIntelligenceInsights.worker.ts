@@ -398,7 +398,9 @@ export function createAccountIntelligenceInsightsWorker(): Worker {
 }
 
 export async function scheduleAccountIntelligenceInsightsJob(): Promise<void> {
-  const queue = new Queue(ACCOUNT_INSIGHTS_QUEUE_NAME, { connection: connection as ConnectionOptions });
+  const queue = new Queue(ACCOUNT_INSIGHTS_QUEUE_NAME, {
+    connection: connection as ConnectionOptions,
+  });
   await queue.upsertJobScheduler(
     'account-intelligence-insights-tick',
     { every: SCAN_INTERVAL_MS },

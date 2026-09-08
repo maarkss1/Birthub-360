@@ -116,7 +116,9 @@ export function createAutoAnonymizeWorker() {
 
 export async function scheduleAutoAnonymizeJob() {
   if (!connection) return;
-  const queue = new Queue(AUTO_ANONYMIZE_QUEUE_NAME, { connection: connection as ConnectionOptions });
+  const queue = new Queue(AUTO_ANONYMIZE_QUEUE_NAME, {
+    connection: connection as ConnectionOptions,
+  });
   // BullMQ v6 removeu `repeat` de `Queue.add` (viraria um job avulso, nunca mais se repete) —
   // agendamento recorrente agora exige `upsertJobScheduler`, idempotente pelo id abaixo.
   await queue.upsertJobScheduler(
