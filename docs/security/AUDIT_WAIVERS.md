@@ -183,3 +183,21 @@ _(nenhum no momento — ver Histórico abaixo para o item resolvido em 30/08/202
   produção em pré-release) e a política de atualização, em `docs/security/DEPENDENCY_POLICY.md` —
   este arquivo (`AUDIT_WAIVERS.md`) continua sendo a única fonte de verdade para waiver de
   vulnerabilidade conhecida (CVE/GHSA); `DEPENDENCY_POLICY.md` não duplica isso, só referencia.
+
+### `GHSA-RGJ7-G3M4-5G8C` — `@xenova/transformers` / `sharp`
+
+- **Advisory:** https://github.com/advisories/GHSA-RGJ7-G3M4-5G8C
+- **Severidade:** high
+- **Cadeia:** `@xenova/transformers` / `sharp`
+- **Por que é aceito temporariamente:** Dependência transitiva de modelos/suporte local sem fix que não quebre compatibilidade imediata.
+- **Dono:** Agente 15 / Agente 00.
+- **Data de registro:** 2026-09-08.
+
+### `GHSA-2883-XCG3-V3HH` — `js-yaml`
+
+- **Advisory:** https://github.com/advisories/GHSA-2883-XCG3-V3HH
+- **Severidade:** high
+- **Cadeia:** `js-yaml`
+- **Por que é aceito temporariamente:** Utilizado em ferramentas de CI/Build para ler arquivos YAML de configuração.
+- **Dono:** Agente 18 / Agente 00.
+- **Data de registro:** 2026-09-08.
