@@ -4,6 +4,17 @@ import { brazilMonthKey } from '../../shared/time/brazilCalendar';
 
 export type ForecastTier = 'Commit' | 'BestCase' | 'Pipeline' | 'Upside';
 
+export interface DailyPlanTeamMember {
+  id: string;
+  name: string;
+  email: string | null;
+}
+
+interface DailyPlanBitrixConnection {
+  id: string;
+  label: string;
+}
+
 export interface CommercialGoalDTO {
   period: string;
   metric: 'NEW_MRR';
@@ -659,6 +670,19 @@ export const commercialIntelligenceApi = {
   },
   syncDailyPlan: (assignedById?: string) =>
     api.post<UserDailyPlanSummary>('/api/bitrix/daily-plan/sync', { assignedById }),
+  dailyPlanTeamMembers: async () => {
+    // O `assignedById` do plano diário é um ID do Bitrix, não o UUID interno retornado por
+    // `/api/team/assignable`. A mesma primeira conexão é usada pelo serviço que monta o plano.
+    const connections = await api.get<DailyPlanBitrixConnection[]>('/api/bitrix/connections');
+    const connection = connections[0];
+    if (!connection) {
+      return { members: [] as DailyPlanTeamMember[], connectionLabel: null };
+    }
+    const members = await api.get<DailyPlanTeamMember[]>(
+      `/api/bitrix/users?connectionId=${encodeURIComponent(connection.id)}`,
+    );
+    return { members, connectionLabel: connection.label };
+  },
   completeDailyPlanItem: (itemType: string, itemId: string) =>
     api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/complete', {
       itemType,
