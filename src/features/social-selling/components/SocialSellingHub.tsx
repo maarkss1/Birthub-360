@@ -268,7 +268,7 @@ export function SocialSellingHub() {
                     <h3 className="text-sm font-bold text-ink">{item.tema}</h3>
                     <p className="text-xs text-ink-2 font-medium">{item.desc}</p>
                     <div className="p-3 bg-surface rounded-xl border border-line/60 text-xs text-ink-2 leading-relaxed italic">
-                      "{item.copy}"
+                      &quot;{item.copy}&quot;
                     </div>
                   </div>
                 </div>

@@ -387,7 +387,7 @@ export function DailyPlanHub() {
             </p>
             {item.tacticalGuidance.scriptOrPrompt && (
               <p className="text-ink-2 italic font-serif bg-surface p-2 rounded-lg border border-line/60">
-                "{item.tacticalGuidance.scriptOrPrompt}"
+                &quot;{item.tacticalGuidance.scriptOrPrompt}&quot;
               </p>
             )}
             {item.tacticalGuidance.suggestedHook && (
@@ -754,7 +754,7 @@ export function DailyPlanHub() {
                 <div>
                   <span className="font-bold text-amber-600">Pergunta de Gancho (Abertura):</span>
                   <p className="text-ink font-serif italic mt-0.5">
-                    "{PITCHES_BY_SEGMENT[selectedSegment].gancho}"
+                    &quot;{PITCHES_BY_SEGMENT[selectedSegment].gancho}&quot;
                   </p>
                 </div>
                 <div>

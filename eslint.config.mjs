@@ -68,6 +68,7 @@ export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.r
     'src/features/gamification/components/SpaceGame.tsx',
     'src/features/gamification/components/GameWidget.tsx',
     'src/components/ui/AtlasOrb.tsx',
+    'src/features/dashboard/components/RevenueSignalOrb.tsx',
   ],
   rules: {
     'react/no-unknown-property': 'off',

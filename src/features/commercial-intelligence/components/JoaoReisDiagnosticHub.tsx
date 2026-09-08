@@ -1359,7 +1359,7 @@ Data: 01/09/2026 | BDR ID: 392
                 formatLabel={(label) => label.replace(' (genérico)', '')}
               />
               <p className="text-[11px] text-ink-2">
-                "Contatar cliente (genérico)" é o rótulo padrão da ferramenta de cadência — o canal
+                &quot;Contatar cliente (genérico)&quot; é o rótulo padrão da ferramenta de cadência — o canal
                 real só aparece discriminado numa parte pequena dos registros.
               </p>
             </div>
@@ -1420,7 +1420,7 @@ Data: 01/09/2026 | BDR ID: 392
                 formatLabel={(label) => label.replace(' (genérico)', '')}
               />
               <p className="text-[11px] text-ink-2">
-                "Contatar cliente (genérico)" é o rótulo padrão da ferramenta de cadência — o canal
+                &quot;Contatar cliente (genérico)&quot; é o rótulo padrão da ferramenta de cadência — o canal
                 real só aparece discriminado numa parte pequena dos registros.
               </p>
             </div>
@@ -1634,7 +1634,7 @@ Data: 01/09/2026 | BDR ID: 392
 
             <div className="space-y-4 rounded-card-lg border border-line bg-surface p-6 shadow-card">
               <h3 className="text-sm font-black text-ink">
-                Estoque de Leads em "Em Cadência" ({DIAGNOSTIC_DATA.emCadencia.resumo.total} Leads)
+                Estoque de Leads em &quot;Em Cadência&quot; ({DIAGNOSTIC_DATA.emCadencia.resumo.total} Leads)
               </h3>
 
               <div className="overflow-x-auto rounded-xl border border-line">
@@ -1708,7 +1708,7 @@ Data: 01/09/2026 | BDR ID: 392
                   </span>
                   <div className="space-y-1 text-xs text-ink-2">
                     <p className="font-bold text-critical">
-                      2. 88% das atividades registradas como "Contatar cliente" genérico
+                      2. 88% das atividades registradas como &quot;Contatar cliente&quot; genérico
                     </p>
                     <p>
                       Em agosto, 472 das 530 atividades não discriminaram se foi ligação, WhatsApp,
