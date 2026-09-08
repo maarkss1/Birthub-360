@@ -102,7 +102,7 @@ describe('bootstrap/security', () => {
 
         it('permite origens de extensões do Chrome (chrome-extension://) em produção', async () => {
             vi.doMock('../../../src/config/env.js', () => ({
-                env: { NODE_ENV: 'production', ALLOWED_ORIGINS: 'https://app.example.com', TRUST_PROXY: true },
+                env: { NODE_ENV: 'production', ALLOWED_ORIGINS: 'https://app.example.com,chrome-extension://abcdefghijklmnop', TRUST_PROXY: true },
             }));
             const { applySecurityMiddleware } = await import('../../../src/bootstrap/security.js');
             const app = express();

@@ -135,9 +135,9 @@ export async function fetchUserDailyPlan(
 
   let bitrixUserId: string | null = null;
   let bitrixUserName: string | undefined;
-  let rawBitrixTasks: Record<string, unknown>[] = [];
-  let rawBitrixActivities: Record<string, unknown>[] = [];
-  let rawBitrixLeads: Record<string, unknown>[] = [];
+  let rawBitrixTasks: Record<string, any>[] = [];
+  let rawBitrixActivities: Record<string, any>[] = [];
+  let rawBitrixLeads: Record<string, any>[] = [];
 
   if (connection) {
     try {
