@@ -16,6 +16,7 @@ const toggleCaptureEl = document.getElementById('toggleCapture');
 const apiBaseUrlEl = document.getElementById('apiBaseUrl');
 const saveApiBaseUrlEl = document.getElementById('saveApiBaseUrl');
 const apiBaseUrlHintEl = document.getElementById('apiBaseUrlHint');
+const themeToggleEl = document.getElementById('themeToggle');
 const calendarSuggestionCardEl = document.getElementById('calendarSuggestionCard');
 const calendarSuggestionTextEl = document.getElementById('calendarSuggestionText');
 const useCalendarSuggestionEl = document.getElementById('useCalendarSuggestion');
@@ -573,7 +574,28 @@ async function pollConversationStatus() {
   render();
 }
 
+const THEME_STORAGE_KEY = 'atlasTheme';
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const isLight = theme === 'light';
+  themeToggleEl.textContent = isLight ? '☀️' : '🌙';
+  themeToggleEl.setAttribute('aria-label', isLight ? 'Alternar para tema escuro' : 'Alternar para tema claro');
+}
+
+async function loadTheme() {
+  const stored = await chrome.storage.sync.get(THEME_STORAGE_KEY);
+  applyTheme(stored[THEME_STORAGE_KEY] === 'light' ? 'light' : 'dark');
+}
+
+themeToggleEl.addEventListener('click', async () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  applyTheme(next);
+  await chrome.storage.sync.set({ [THEME_STORAGE_KEY]: next });
+});
+
 async function init() {
+  await loadTheme();
   apiBaseUrlEl.value = await getApiBaseUrl();
   await refreshMeetContext();
 }
