@@ -34,10 +34,12 @@ import type {
   UserDailyPlanSummary,
 } from '../../../shared/contracts/dailyPlan.contract';
 import { commercialIntelligenceApi } from '../commercialIntelligence.api';
+import type { DailyPlanTeamMember } from '../commercialIntelligence.api';
 import { DEFAULT_DAILY_PLAN, type DailyTask, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
+import { DailyPlanTeamOverview } from './DailyPlanTeamOverview';
 
 export function DailyPlanHub() {
-  const { currentUser } = useAuth();
+  const { currentUser, canAccessCommercialIntelligence } = useAuth();
   const [activeTab, setActiveTab] = useState<'daily' | 'roteiro' | 'iacoach' | 'pauta1to1'>(
     'daily',
   );
@@ -47,6 +49,9 @@ export function DailyPlanHub() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+  const [planError, setPlanError] = useState<string | null>(null);
+  const [selectedMember, setSelectedMember] = useState<DailyPlanTeamMember | null>(null);
+  const [ownBitrixUserId, setOwnBitrixUserId] = useState<string | null>(null);
 
   // Estados de Interação nos Itens
   const [activeNoteItemId, setActiveNoteItemId] = useState<string | null>(null);
@@ -71,23 +76,41 @@ export function DailyPlanHub() {
   const [copiedPauta, setCopiedPauta] = useState(false);
 
   // Carregar Plano do Usuário
-  const loadDailyPlan = useCallback(async () => {
+  const loadDailyPlan = useCallback(async (assignedById?: string) => {
     try {
       setIsLoading(true);
-      const res = await commercialIntelligenceApi.getDailyPlan();
+      setPlanError(null);
+      setPlanData(null);
+      const res = await commercialIntelligenceApi.getDailyPlan(assignedById);
       if (res) {
         setPlanData(res);
+        if (!assignedById) setOwnBitrixUserId(res.bitrixUserId);
       }
     } catch (err) {
       console.error('Erro ao carregar plano diário:', err);
+      setPlanError(
+        err instanceof Error
+          ? err.message
+          : 'Não foi possível carregar o plano diário. Tente novamente.',
+      );
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadDailyPlan();
+    void loadDailyPlan();
   }, [loadDailyPlan]);
+
+  const handleMemberSelect = useCallback(
+    (member: DailyPlanTeamMember) => {
+      setSelectedMember(member);
+      setActiveTab('daily');
+      setActiveNoteItemId(null);
+      void loadDailyPlan(member.id);
+    },
+    [loadDailyPlan],
+  );
 
   // Sincronizar com Bitrix
   const handleSyncBitrix = async () => {
@@ -95,7 +118,7 @@ export function DailyPlanHub() {
       setIsSyncing(true);
       setSyncFeedback(null);
       SoundFX.play('focus');
-      const res = await commercialIntelligenceApi.syncDailyPlan();
+      const res = await commercialIntelligenceApi.syncDailyPlan(selectedMember?.id);
       if (res) {
         setPlanData(res);
       }
@@ -137,7 +160,7 @@ export function DailyPlanHub() {
       await commercialIntelligenceApi.completeDailyPlanItem(item.origin, item.id);
     } catch (err) {
       console.error('Erro ao concluir item:', err);
-      loadDailyPlan();
+      void loadDailyPlan(selectedMember?.id);
     }
   };
 
@@ -189,7 +212,7 @@ export function DailyPlanHub() {
       setNewContact('');
       setNewPhone('');
       setNewObs('');
-      loadDailyPlan();
+      void loadDailyPlan(selectedMember?.id);
     } catch (err) {
       console.error('Erro ao criar atividade:', err);
     } finally {
@@ -221,6 +244,8 @@ export function DailyPlanHub() {
   const highItems = planData?.items.filter((i) => !i.completed && i.priority === 'HIGH') || [];
   const mediumItems = planData?.items.filter((i) => !i.completed && i.priority === 'MEDIUM') || [];
   const completedItems = planData?.items.filter((i) => i.completed) || [];
+  const selectedMemberId = selectedMember?.id ?? ownBitrixUserId ?? '';
+  const isViewingAnotherMember = Boolean(selectedMember && selectedMember.id !== ownBitrixUserId);
 
   const completedCount = dailyTasks.filter((t) => t.completed).length;
   const progressPercent = Math.round((completedCount / dailyTasks.length) * 100);
@@ -251,7 +276,6 @@ export function DailyPlanHub() {
             <FileText className="w-3 h-3" /> E-mail
           </span>
         );
-      case 'TASK':
       default:
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-brand/10 text-brand border border-brand/20">
@@ -275,8 +299,14 @@ export function DailyPlanHub() {
             <button
               type="button"
               onClick={() => handleCompleteItem(item)}
-              disabled={item.completed}
-              title={item.completed ? 'Concluído' : 'Marcar como concluído'}
+              disabled={item.completed || isViewingAnotherMember}
+              title={
+                isViewingAnotherMember
+                  ? 'A visão de outro integrante é somente leitura'
+                  : item.completed
+                    ? 'Concluído'
+                    : 'Marcar como concluído'
+              }
               className={`mt-0.5 shrink-0 w-6 h-6 rounded-lg border flex items-center justify-center transition-colors cursor-pointer ${
                 item.completed
                   ? 'bg-emerald-500 border-emerald-500 text-white'
@@ -348,7 +378,11 @@ export function DailyPlanHub() {
             <button
               type="button"
               onClick={() => setActiveNoteItemId(isNoteOpen ? null : item.id)}
-              className="px-3 py-1.5 rounded-xl border border-line hover:border-brand/30 text-xs font-bold text-ink transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+              disabled={isViewingAnotherMember}
+              title={
+                isViewingAnotherMember ? 'A visão de outro integrante é somente leitura' : undefined
+              }
+              className="px-3 py-1.5 rounded-xl border border-line hover:border-brand/30 text-xs font-bold text-ink transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
               <FileText className="w-3.5 h-3.5 text-brand" />
               Observação
@@ -367,7 +401,9 @@ export function DailyPlanHub() {
               {item.tacticalGuidance.scriptOrPrompt && (
                 <button
                   type="button"
-                  onClick={() => copyToClipboard(item.tacticalGuidance.scriptOrPrompt!, item.id)}
+                  onClick={() =>
+                    copyToClipboard(item.tacticalGuidance.scriptOrPrompt ?? '', item.id)
+                  }
                   className="text-ink-2 hover:text-brand inline-flex items-center gap-1 cursor-pointer font-bold"
                 >
                   {copiedScriptId === item.id ? (
@@ -460,10 +496,12 @@ export function DailyPlanHub() {
               Plano Diário Operacional
             </div>
             <h1 className="text-2xl md:text-3xl font-black text-ink">
-              {currentUser?.name || 'Comercial'}
+              {selectedMember?.name || currentUser?.name || 'Comercial'}
             </h1>
             <p className="text-sm text-ink-2 mt-1 flex items-center gap-2 flex-wrap">
-              <span>{currentUser?.role || 'SDR / Closer'}</span>
+              <span>
+                {selectedMember ? 'Equipe comercial · Bitrix24' : currentUser?.role || 'Comercial'}
+              </span>
               <span>•</span>
               <span className="font-mono text-xs">
                 {new Date().toLocaleDateString('pt-BR', {
@@ -499,7 +537,11 @@ export function DailyPlanHub() {
             <button
               type="button"
               onClick={() => setShowNewActivityModal(true)}
-              className="px-4 py-2.5 rounded-2xl bg-brand text-white hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer"
+              disabled={isViewingAnotherMember}
+              title={
+                isViewingAnotherMember ? 'A visão de outro integrante é somente leitura' : undefined
+              }
+              className="px-4 py-2.5 rounded-2xl bg-brand-active text-white hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Plus className="w-4 h-4" />
               Nova Atividade
@@ -516,6 +558,24 @@ export function DailyPlanHub() {
           </div>
         )}
 
+        {canAccessCommercialIntelligence && (
+          <DailyPlanTeamOverview
+            selectedMemberId={selectedMemberId}
+            activePlan={planData}
+            onMemberSelect={handleMemberSelect}
+          />
+        )}
+
+        {isViewingAnotherMember && (
+          <div
+            className="rounded-2xl border border-brand/20 bg-brand/5 px-4 py-3 text-xs font-medium text-ink-2"
+            role="status"
+          >
+            Você está visualizando a fila de{' '}
+            <strong className="text-ink">{selectedMember?.name}</strong> em modo somente leitura.
+          </div>
+        )}
+
         {/* KPIs do Dia */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="p-4 rounded-2xl bg-surface border border-line shadow-card">
@@ -523,7 +583,7 @@ export function DailyPlanHub() {
               Total no Radar
             </span>
             <div className="text-2xl font-black text-ink mt-1">
-              {planData?.kpis.totalItems ?? 0}
+              {isLoading ? '…' : (planData?.kpis.totalItems ?? '—')}
             </div>
           </div>
           <div className="p-4 rounded-2xl bg-surface border border-line shadow-card">
@@ -531,7 +591,7 @@ export function DailyPlanHub() {
               Pendentes
             </span>
             <div className="text-2xl font-black text-amber-600 mt-1">
-              {planData?.kpis.pendingItems ?? 0}
+              {isLoading ? '…' : (planData?.kpis.pendingItems ?? '—')}
             </div>
           </div>
           <div className="p-4 rounded-2xl bg-surface border border-line shadow-card">
@@ -539,7 +599,7 @@ export function DailyPlanHub() {
               Urgentes / Atrasadas
             </span>
             <div className="text-2xl font-black text-red-500 mt-1">
-              {planData?.kpis.urgentItems ?? 0}
+              {isLoading ? '…' : (planData?.kpis.urgentItems ?? '—')}
             </div>
           </div>
           <div className="p-4 rounded-2xl bg-surface border border-line shadow-card">
@@ -547,7 +607,11 @@ export function DailyPlanHub() {
               Concluídas Hoje
             </span>
             <div className="text-2xl font-black text-emerald-600 mt-1">
-              {planData?.kpis.completedItems ?? 0} ({planData?.kpis.completionRate ?? 0}%)
+              {isLoading
+                ? '…'
+                : planData
+                  ? `${planData.kpis.completedItems} (${planData.kpis.completionRate}%)`
+                  : '—'}
             </div>
           </div>
         </div>
@@ -592,6 +656,31 @@ export function DailyPlanHub() {
               <div className="p-12 text-center text-ink-2 space-y-3">
                 <RefreshCw className="w-8 h-8 mx-auto animate-spin text-brand" />
                 <p className="text-sm font-bold">Carregando plano diário e dados do Bitrix24...</p>
+              </div>
+            ) : planError ? (
+              <div
+                className="flex items-start gap-3 rounded-2xl border border-critical/20 bg-critical/5 p-5 text-sm text-critical"
+                role="alert"
+              >
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+                <div>
+                  <p className="font-black">Não foi possível abrir este plano.</p>
+                  <p className="mt-1 text-xs">{planError}</p>
+                  <button
+                    type="button"
+                    onClick={() => void loadDailyPlan(selectedMember?.id)}
+                    className="mt-3 rounded-xl border border-critical/30 px-3 py-2 text-xs font-bold hover:bg-critical/10"
+                  >
+                    Tentar novamente
+                  </button>
+                </div>
+              </div>
+            ) : !planData ? (
+              <div className="rounded-2xl border border-dashed border-line p-8 text-center">
+                <p className="text-sm font-bold text-ink">Plano não disponível</p>
+                <p className="mt-1 text-xs text-ink-2">
+                  Selecione outro integrante ou atualize a equipe para tentar novamente.
+                </p>
               </div>
             ) : (
               <>
