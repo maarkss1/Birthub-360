@@ -18,8 +18,23 @@ interface SignUpOptions {
 }
 
 // Cria um usuário real via o formulário de cadastro do LoginScreen (mesmo caminho que um usuário
-// real percorre — sem atalho de API/seed) e espera a navegação pro app autenticado. O signup do
-// better-auth já loga o usuário automaticamente, então isto deixa `page` com uma sessão válida.
+// real percorre — sem atalho de API/seed) e espera a navegação pro app autenticado.
+//
+// Desde que o cadastro passou a exigir confirmação de posse do e-mail
+// (requireEmailVerification em src/lib/auth.ts — corrige um achado real do piloto de
+// threat-modeling do Mantis: antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono
+// real, virava sessão + ADMIN na hora), o sign-up passa a ter DOIS desfechos possíveis, e este
+// helper não pode assumir qual: com `ALLOW_DEV_AUTH_BYPASS=true` (é o caso deste job de CI — ver
+// ci.yml — e também de qualquer ambiente local que o exporte), `requireEmailVerification` fica
+// `false` e o comportamento é o de sempre (sessão aberta na hora, direto pra `/app`); sem o
+// bypass, o better-auth NÃO loga mais automaticamente — a resposta vem com `token: null` e um
+// e-mail de verificação é "enviado" (sem SMTP configurado em teste, o link só é logado no
+// servidor — ver sendVerificationEmail em src/lib/auth.ts). Assumir sempre o segundo caso foi um
+// bug real: neste job (bypass ligado) o app já navega pra `/app` na hora, o aviso de confirmação
+// nunca aparece, e esperar por ele até estourar 30s por chamada de `signUp()` — multiplicado por
+// dezenas de specs — foi o que fez o `application gate` do CI estourar o timeout do job inteiro
+// (30min) duas vezes seguidas. Por isso o helper detecta qual dos dois desfechos realmente
+// aconteceu em vez de presumir.
 export async function signUp(page: Page, { email, password = E2E_PASSWORD, name }: SignUpOptions) {
   // Organization.name é @unique (prisma/schema.prisma) e o hook de signup (src/lib/auth.ts) deriva
   // o nome da org a partir de `name` + marca — um default fixo tipo "E2E Test User" faz toda
@@ -43,12 +58,61 @@ export async function signUp(page: Page, { email, password = E2E_PASSWORD, name 
   await page.getByLabel('E-mail:').fill(email);
   await page.getByPlaceholder('••••••••').fill(password);
   await page.getByRole('button', { name: /Criar Nova Conta/ }).click();
+
   // 15s bastava numa suíte E2E curta, mas com dezenas de specs rodando em série (workers: 1) contra
   // o mesmo servidor/Postgres de teste, o signup (POST /api/auth/sign-up/email + refetch de sessão,
   // ver LoginScreen.tsx) ocasionalmente passa de 15s sob a carga do runner do CI — sem indício de
-  // travamento real (não achamos nenhuma mudança recente no fluxo de signup/RLS que explique um
-  // hang). 30s dá folga sem mascarar um hang de verdade (o timeout global do teste, abaixo, seria
-  // estourado de qualquer forma nesse caso).
+  // travamento real. 30s dá folga sem mascarar um hang de verdade.
+  //
+  // Corrida entre os dois desfechos possíveis (ver comentário da função) em vez de assumir um dos
+  // dois: `Promise.race` resolve assim que o PRIMEIRO virar verdadeiro — na prática isso acontece
+  // em segundos (não nos 30s cheios), porque o desfecho que realmente vai ocorrer neste ambiente
+  // sempre se resolve rápido; só o desfecho que NÃO vai acontecer fica pendurado até seu próprio
+  // timeout (daí o `.catch(() => null)`, pra nunca virar unhandled rejection).
+  const verificationPanel = page.getByText(/Enviamos um link de confirmação/);
+  const outcome = await Promise.race([
+    page
+      .waitForURL('**/app*', { timeout: 30_000 })
+      .then(() => 'authenticated' as const)
+      .catch(() => null),
+    verificationPanel
+      .waitFor({ state: 'visible', timeout: 30_000 })
+      .then(() => 'pending-verification' as const)
+      .catch(() => null),
+  ]);
+
+  if (outcome === 'authenticated') return;
+  if (outcome !== 'pending-verification') {
+    throw new Error(
+      'signUp(): nem a navegação para /app nem o aviso de confirmação de e-mail apareceram a tempo.',
+    );
+  }
+
+  // Confirma a posse do e-mail direto no banco — o passo que, numa conta real, aconteceria ao
+  // clicar no link recebido (ver comentário do helper acima).
+  requestContext.enterWith({ bypassRls: true });
+  await prisma.user.update({ where: { email }, data: { emailVerified: true } });
+
+  // Login real via API (não pela UI de novo) — só o CADASTRO em si precisa passar pela tela (é o
+  // caminho que exercita o hook real de criação/RLS); autenticar de novo depois de confirmado não
+  // precisa recarregar/hidratar a tela de login inteira só para preencher os mesmos 2 campos.
+  // `page.request` compartilha o cookie jar do browser context com `page`, então o cookie de
+  // sessão que a API devolve aqui já vale para a navegação seguinte.
+  //
+  // `page.request` não copia automaticamente um header Origin igual ao da página — melhor não
+  // depender de estar (ou não) isento da checagem por ainda não ter cookie de sessão (ver
+  // validateOrigin em node_modules/better-auth/dist/api/middlewares/origin-check.mjs) e mandar
+  // explícito. `page.url()` aqui ainda é a tela de login/signup, então a origem é a confiável.
+  const signInRes = await page.request.post('/api/auth/sign-in/email', {
+    headers: { Origin: new URL(page.url()).origin },
+    data: { email, password },
+  });
+  if (!signInRes.ok()) {
+    throw new Error(
+      `Login pós-verificação falhou (status ${signInRes.status()}): ${await signInRes.text()}`,
+    );
+  }
+  await page.goto('/app');
   await page.waitForURL('**/app*', { timeout: 30_000 });
 }
 
