@@ -1,71 +1,9 @@
 /* ============ TOKENS OFICIAIS ATLASGR (DESIGN.md) ============ */
-    :root {
-      --bg: #fbf9f7;
-      --surface: #ffffff;
-      --surface-2: #f5f1ee;
-      --surface-3: #ece6e1;
-      --ink: #1a1513;
-      --ink-2: #6f6560;
-      --line: rgba(0, 0, 0, 0.09);
-      --line-strong: rgba(0, 0, 0, 0.16);
-      --brand: #ff5618;
-      --brand-2: #ff6b10;
-      --brand-hover: #ff8008;
-      --brand-active: #a83810;
-      --soft: rgba(255, 86, 24, 0.08);
-      --soft-glow: rgba(255, 86, 24, 0.28);
-      --shadow-card: 0 1px 2px rgba(0,0,0,.04), 0 10px 28px -16px rgba(0,0,0,.22);
-      --shadow-nav: 0 10px 26px -14px rgba(168,56,16,.45);
-      --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-      --font-mono: "JetBrains Mono", monospace;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg: #0d0a09;
-        --surface: #171211;
-        --surface-2: #1f1917;
-        --surface-3: #2a2320;
-        --ink: #f7f3f1;
-        --ink-2: #a2968f;
-        --line: rgba(255, 255, 255, 0.1);
-        --line-strong: rgba(255, 255, 255, 0.18);
-        --soft: rgba(255, 86, 24, 0.16);
-        --soft-glow: rgba(255, 86, 24, 0.35);
-        --shadow-card: 0 1px 2px rgba(0,0,0,.6), 0 14px 34px -18px rgba(0,0,0,.9);
-      }
-    }
-    :root[data-theme="dark"] {
-      --bg: #0d0a09;
-      --surface: #171211;
-      --surface-2: #1f1917;
-      --surface-3: #2a2320;
-      --ink: #f7f3f1;
-      --ink-2: #a2968f;
-      --line: rgba(255, 255, 255, 0.1);
-      --line-strong: rgba(255, 255, 255, 0.18);
-      --soft: rgba(255, 86, 24, 0.16);
-      --soft-glow: rgba(255, 86, 24, 0.35);
-      --shadow-card: 0 1px 2px rgba(0,0,0,.6), 0 14px 34px -18px rgba(0,0,0,.9);
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font-sans);
-      font-size: 13.5px;
-      -webkit-font-smoothing: antialiased;
-    }
-    h1, h2, h3 { text-wrap: balance; margin: 0; }
-    button { font-family: inherit; cursor: pointer; }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; }
-
-    .theme-toggle { position: fixed; bottom: 14px; right: 14px; display: flex; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; box-shadow: var(--shadow-card); z-index: 50; }
-    .theme-toggle button { border: none; background: none; padding: 6px 11px; border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--ink-2); }
-    .theme-toggle button.active { background: var(--brand); color: #fff; }
-
+    
+    
+    
+                        
+        
     /* ============ HUB — PORTAL DE ENTRADA ATLASGR ============ */
     .hub-page { position: relative; min-height: 100vh; background: var(--bg); overflow: hidden; }
     #hubCanvas3d { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
@@ -100,13 +38,11 @@
       padding: 26px 32px 6px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;
     }
     .hub-greeting .eyebrow { font-size: 11px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; color: var(--brand-active); }
-    :root[data-theme="dark"] .hub-greeting .eyebrow { color: #ff9d70; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-greeting .eyebrow { color: #ff9d70; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-greeting .eyebrow { color: #ff9d70; } }
     .hub-greeting h1 { font-size: clamp(34px, 5.2vw, 54px); font-weight: 900; letter-spacing: -.02em; margin-top: 6px; line-height: 1.02; }
     .hub-greeting h1 .accent { background: linear-gradient(90deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .hub-greeting .tagline { font-size: 15px; font-weight: 800; color: var(--brand-active); margin-top: 8px; letter-spacing: -.01em; }
-    :root[data-theme="dark"] .hub-greeting .tagline { color: #ff9d70; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-greeting .tagline { color: #ff9d70; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-greeting .tagline { color: #ff9d70; } }
 
     /* relógio + calendário */
     .hub-widgets { display: flex; align-items: stretch; gap: 12px; }
@@ -116,19 +52,15 @@
     }
     .clock-widget { padding: 12px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 128px; }
     .clock-widget .time { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: .02em; font-variant-numeric: tabular-nums; color: var(--brand-active); }
-    :root[data-theme="dark"] .clock-widget .time { color: #ff9d70; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .clock-widget .time { color: #ff9d70; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .clock-widget .time { color: #ff9d70; } }
     .clock-widget .date { font-size: 10px; color: #8a6c00; font-weight: 800; text-transform: capitalize; margin-top: 2px; }
-    :root[data-theme="dark"] .clock-widget .date { color: #ffe066; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .clock-widget .date { color: #ffe066; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .clock-widget .date { color: #ffe066; } }
     .cal-widget { padding: 10px 12px; width: 178px; }
     .cal-widget .cal-head { font-size: 10px; font-weight: 800; text-transform: capitalize; color: var(--brand-active); text-align: center; margin-bottom: 6px; letter-spacing: .04em; }
-    :root[data-theme="dark"] .cal-widget .cal-head { color: #ff9d70; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cal-widget .cal-head { color: #ff9d70; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cal-widget .cal-head { color: #ff9d70; } }
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
     .cal-grid span { font-size: 8.5px; text-align: center; color: #8a6c00; font-weight: 800; opacity: .85; }
-    :root[data-theme="dark"] .cal-grid span { color: #ffe066; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cal-grid span { color: #ffe066; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cal-grid span { color: #ffe066; } }
     .cal-grid .cal-day { font-size: 10px; text-align: center; border-radius: 6px; padding: 2.5px 0; color: var(--ink-2); font-weight: 600; }
     .cal-grid .cal-day.today { background: var(--brand); color: #fff; font-weight: 800; box-shadow: 0 0 12px color-mix(in srgb, var(--brand) 60%, transparent); }
 
@@ -158,11 +90,7 @@
       border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
       border-radius: 6px; font-size: 9px; font-family: inherit; max-width: 74px;
     }
-    .task-add button {
-      border: none; background: var(--brand); color: #fff; border-radius: 6px; width: 22px; flex-shrink: 0;
-      display: grid; place-items: center;
-    }
-    .task-add button:hover { background: var(--brand-2); }
+    .task-add     .task-add button:hover { background: var(--brand-2); }
 
     @media (max-width: 760px) { .hub-widgets { display: none; } }
 
@@ -209,8 +137,7 @@
       display: flex; flex-direction: column; align-items: center;
       transition: transform .3s ease, color .3s ease;
     }
-    :root[data-theme="dark"] .hc-orb .hc-icon-wrap { color: #ff9d70; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hc-orb .hc-icon-wrap { color: #ff9d70; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hc-orb .hc-icon-wrap { color: #ff9d70; } }
     .hub-card:hover .hc-icon-wrap { transform: scale(1.08); color: var(--brand); }
 
     .hc-icon-wrap svg .profile-ring { transition: stroke .3s ease, stroke-width .3s ease; }
@@ -249,8 +176,7 @@
     }
     @keyframes hcTitleShimmer { from { background-position: 0 0; } to { background-position: 0 100%; } }
     @media (prefers-reduced-motion: reduce) { .hc-title { animation: none; background-position: 0 55%; } }
-    :root[data-theme="dark"] .hc-title { --title-light: #ffcfae; --title-dark: #ff5618; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hc-title { --title-light: #ffcfae; --title-dark: #ff5618; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hc-title { --title-light: #ffcfae; --title-dark: #ff5618; } }
 
     .hc-tag { font-size: 10px; font-weight: 700; color: var(--ink-2); margin-top: 2px; letter-spacing: .03em; text-align: center; }
     .hc-tag-inside { margin-top: -3px; }
@@ -260,13 +186,11 @@
     .hub-card:not(.primary) .hc-tag-inside { display: none; }
     .hub-card.primary .hc-tag-inside { color: rgba(255,255,255,.85); }
     .hub-card.primary .hc-title { --title-light: #ffffff; --title-dark: #ffddc2; font-size: 16px; padding: 0 24px; }
-    :root[data-theme="dark"] .hub-card.primary .hc-title { --title-light: #ffffff; --title-dark: #ffddc2; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-card.primary .hc-title { --title-light: #ffffff; --title-dark: #ffddc2; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-card.primary .hc-title { --title-light: #ffffff; --title-dark: #ffddc2; } }
 
     .label-logo-full { display: inline-flex; align-items: center; gap: 5px; margin-left: 5px; vertical-align: -2px; }
     .label-logo { display: inline-block; color: var(--brand-active); flex-shrink: 0; }
-    :root[data-theme="dark"] .label-logo { color: #ff9d70; }
-    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .label-logo { color: #ff9d70; } }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .label-logo { color: #ff9d70; } }
     .label-logo-word { font-weight: 900; font-size: 12px; letter-spacing: -.01em; color: var(--ink); }
 
     @media (max-width: 900px) {

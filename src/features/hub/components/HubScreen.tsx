@@ -1,34 +1,20 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Share2,
-  GraduationCap,
-  FileSignature,
-  PieChart,
-  LogIn,
-  Globe,
-  ShieldCheck,
-  Building2,
-  Mail,
-  Inbox,
-  Grid3x3,
   ExternalLink,
   Sun,
   Moon,
   LogOut,
   Loader2,
-  Headset,
-  Video,
   Volume2,
   VolumeX,
   ChevronDown,
-  type LucideIcon,
-} from 'lucide-react';
+  } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
-import { MODULE_CATALOG, EXTERNAL_LINKS, type ModuleKey } from '../../../config/module-catalog';
+import { MODULE_CATALOG, EXTERNAL_LINKS } from '../../../config/module-catalog';
 import { Logo } from '../../../components/Logo';
 import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
 import { SoundFX } from '../../../lib/soundEffects';
@@ -36,28 +22,17 @@ import { HubBurstCanvas, type BurstHandle } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
 
-const MODULE_ICONS: Record<ModuleKey, LucideIcon> = {
-  'social-selling': Share2,
-  'treinamento-atlasgr': GraduationCap,
-  'proposta-comercial': FileSignature,
-  'hub-inteligencia-marketing': PieChart,
-};
+import { HubIcons } from './HubIcons';
 
-const EXTERNAL_LINK_ICONS: Record<string, LucideIcon> = {
-  connect: LogIn,
-  newConnect: Globe,
-  securitario: ShieldCheck,
-  bitrix24: Building2,
-  webmail: Mail,
-  gmail: Inbox,
-  workspace: Grid3x3,
-};
+;
+
+;
 
 interface OrbitItem {
   key: string;
   label: string;
   description: string;
-  icon: LucideIcon;
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
   external?: boolean;
   primary?: boolean;
   ring: 'inner' | 'outer';
@@ -157,7 +132,7 @@ export function HubScreen() {
         key: 'central',
         label: 'Central Comercial',
         description: 'CRM · Prospecção · IA',
-        icon: Building2,
+        icon: HubIcons['central'],
         primary: true,
         ring: 'inner',
         colorRgb: '255,86,24',
@@ -167,7 +142,7 @@ export function HubScreen() {
         key: 'sdr',
         label: 'Acompanhamento SDR',
         description: 'Mesa de Tratamento · Dashboard SDR',
-        icon: Headset,
+        icon: HubIcons['sdr'],
         ring: 'inner',
         colorRgb: '255,109,60',
         onOpen: () => goTo('/app/mesa-tratamento'),
@@ -176,7 +151,7 @@ export function HubScreen() {
         key: 'meeting-hub',
         label: 'Atlas Meeting Hub',
         description: 'Cadência · Agendamento · Google Meet',
-        icon: Video,
+        icon: HubIcons['meeting-hub'],
         ring: 'inner',
         colorRgb: '255,109,60',
         onOpen: () => goTo('/app/cadence'),
@@ -185,7 +160,7 @@ export function HubScreen() {
         key: mod.key,
         label: mod.label,
         description: mod.description,
-        icon: MODULE_ICONS[mod.key] || Share2,
+        icon: HubIcons[mod.key] || HubIcons['central'],
         ring: 'inner' as const,
         colorRgb: '255,109,60',
         onOpen: () => goTo(`/${mod.key}`),
@@ -194,7 +169,7 @@ export function HubScreen() {
         key: link.key,
         label: link.label,
         description: link.description,
-        icon: EXTERNAL_LINK_ICONS[link.iconKey] || Globe,
+        icon: HubIcons[link.iconKey] || HubIcons['central'],
         external: true,
         ring: 'outer' as const,
         colorRgb: '255,109,60',
@@ -207,16 +182,19 @@ export function HubScreen() {
   const orbitContainerRef = useRef<HTMLDivElement>(null);
 
   // Cálculo matemático idêntico ao protótipo portalatlasprototype.html
+    const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
+
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
     if (!orbit || !isDesktopOrbit) return;
 
     function layout() {
       if (!orbit) return;
+      
+      const cards = Array.from(orbit.querySelectorAll('.hub-card')) as HTMLElement[];
       const primary = orbit.querySelector('.hub-card.primary') as HTMLElement;
-      const ringInner = Array.from(orbit.querySelectorAll('.hub-card.ring-inner')) as HTMLElement[];
-      const ringOuter = Array.from(orbit.querySelectorAll('.hub-card.ring-outer')) as HTMLElement[];
-
+      const outer = cards.filter(c => c !== primary);
+      
       const w = orbit.clientWidth;
       const h = orbit.clientHeight;
       if (!w || !h) return;
@@ -229,61 +207,56 @@ export function HubScreen() {
         primary.style.top = `${cy}px`;
       }
 
-      const primarySize = 238;
-      const innerSize = 200;
-      const outerSize = 185;
-      const gap = 24;
-      const margin = 40;
-      const minScale = 0.7;
+      const n = outer.length;
+      const orbSpan = 156;
+      const byCount = n > 0 ? (orbSpan / (2 * Math.sin(Math.PI / n))) + 24 : 0;
+      const radius = Math.max(300, byCount, Math.min(w, h) / 2 - 60);
 
-      const nInner = ringInner.length;
-      const nOuter = ringOuter.length;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      const angleInner = nInner > 0 ? (Math.PI * 2) / nInner : 0;
-      const sinHalfInner = Math.sin(angleInner / 2);
-      const angleOuter = nOuter > 0 ? (Math.PI * 2) / nOuter : 0;
-      const sinHalfOuter = Math.sin(angleOuter / 2);
-
-      const idealInnerRadius = Math.max(
-        nInner > 1 ? (innerSize + gap) / (2 * sinHalfInner) : 220,
-        primarySize / 2 + innerSize / 2 + gap,
+      const lines: React.ReactNode[] = [];
+      
+      outer.forEach((card, i) => {
+        const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        
+        card.style.left = `${x}px`;
+        card.style.top = `${y}px`;
+        
+        const pathId = `orbitPath${i}`;
+        const gradId = `orbitBeam${i}`;
+        
+        lines.push(
+          <g key={i}>
+            <linearGradient id={gradId} gradientUnits="userSpaceOnUse" x1={cx} y1={cy} x2={x} y2={y}>
+              <stop offset="0%" stopColor="var(--color-brand)" stopOpacity=".65"/>
+              <stop offset="100%" stopColor="var(--color-brand)" stopOpacity=".12"/>
+            </linearGradient>
+            <path id={pathId} d={`M ${cx} ${cy} L ${x} ${y}`} stroke={`url(#${gradId})`} />
+            {!reduceMotion && (
+              <circle className="pulse" r="3.4" fill="var(--color-brand)">
+                <animateMotion dur={`${2.4 + i * 0.35}s`} repeatCount="indefinite" begin={`${i * 0.4}s`}>
+                  <mpath href={`#${pathId}`}/>
+                </animateMotion>
+              </circle>
+            )}
+          </g>
+        );
+      });
+      
+      setOrbitLines(
+        <svg className="orbit-lines" viewBox={`0 0 ${w} ${h}`} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}>
+           <style>{'path { fill: none; stroke-width: 2.6; stroke-linecap: round; } circle.pulse { filter: drop-shadow(0 0 6px var(--color-brand)); }'}</style>
+           {lines}
+        </svg>
       );
-      const idealOuterRadius = Math.max(
-        nOuter > 1 ? (outerSize + gap) / (2 * sinHalfOuter) : 380,
-        idealInnerRadius + innerSize / 2 + outerSize / 2 + gap,
-      );
-      const idealHalf = idealOuterRadius + outerSize / 2 + margin;
-
-      const availableHalf = Math.min(w, h) / 2;
-      let shrink = availableHalf / idealHalf;
-      shrink = Math.max(minScale, Math.min(1, shrink));
-
-      const finalInnerSize = innerSize * shrink;
-      const finalOuterSize = outerSize * shrink;
-      const finalInnerRadius = idealInnerRadius * shrink;
-      const finalOuterRadius = idealOuterRadius * shrink;
-
-      function placeRing(ring: HTMLElement[], angleStep: number, radius: number, size: number) {
-        const scale = size / 168;
-        ring.forEach((card, i) => {
-          const angle = angleStep * i - Math.PI / 2;
-          const x = cx + radius * Math.cos(angle);
-          const y = cy + radius * Math.sin(angle);
-          card.style.left = `${x}px`;
-          card.style.top = `${y}px`;
-          const orb = card.querySelector('.hub-orb') as HTMLElement;
-          if (orb) orb.style.setProperty('--orb-scale', scale.toFixed(3));
-        });
-      }
-
-      placeRing(ringInner, angleInner, finalInnerRadius, finalInnerSize);
-      placeRing(ringOuter, angleOuter, finalOuterRadius, finalOuterSize);
     }
 
     layout();
     window.addEventListener('resize', layout);
     return () => window.removeEventListener('resize', layout);
-  }, [isDesktopOrbit]);
+  }, [isDesktopOrbit, items.length]);
 
   const handleCardClick = (e: React.MouseEvent, item: OrbitItem) => {
     burstRef.current?.trigger(e.clientX, e.clientY, item.colorRgb);
@@ -464,6 +437,7 @@ export function HubScreen() {
             role="group"
             aria-label="Órbita do Hub Atlas"
           >
+            {orbitLines}
             {items.map((item) => {
               const Icon = item.icon;
               return (
@@ -471,25 +445,21 @@ export function HubScreen() {
                   key={item.key}
                   type="button"
                   onClick={(e) => handleCardClick(e, item)}
-                  className={`hub-card ${item.primary ? 'primary' : ''} ${
-                    item.ring === 'inner' && !item.primary ? 'ring-inner' : ''
-                  } ${item.ring === 'outer' ? 'ring-outer' : ''}`}
+                  className={`hub-card ${item.primary ? 'primary' : ''}`}
                   title={item.description}
                 >
-                  {item.external && !item.primary && (
-                    <ExternalLink className="hub-ext-badge h-3.5 w-3.5" aria-hidden="true" />
-                  )}
-                  <div className="hub-orb">
-                    <div className="hub-orb-icon">
+                  <div className="hc-orb">
+                    <div className="hc-icon-wrap">
                       <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
                     </div>
-                    <div className="hub-orb-title">{item.label}</div>
-                    {item.primary && <div className="hub-orb-tag">{item.description}</div>}
+                    <div className="hc-title">{item.label}</div>
+                    {item.primary && <div className="hc-tag hc-tag-inside">{item.description}</div>}
                   </div>
                 </button>
               );
             })}
           </div>
+
         ) : (
           <MobileDestinationList items={items} />
         )}
