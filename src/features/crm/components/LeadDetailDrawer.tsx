@@ -40,7 +40,7 @@ import { WhatsAppChatPanel } from '../../integrations/whatsapp/components/WhatsA
 import { LeadCopilotoPanel } from '../../copiloto-ia/components/LeadCopilotoPanel';
 
 import { bitrixApi } from '../../integrations/bitrix/bitrix.api';
-import { calculateLeadScore } from '../domain/leadScoreCalculator';
+import { calculateLeadScore, type BantQualificationData } from '../domain/leadScoreCalculator';
 
 const TEMPERATURE_EMOJI: Record<string, string> = { Quente: '🔥', Morno: '🌤️', Frio: '❄️' };
 
@@ -280,7 +280,11 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
     }
   };
 
-  const liveScore = calculateLeadScore(qualDraft as any);
+  // `qualDraft` (LeadQualification, checklist do Playbook Comercial) e BantQualificationData
+  // (budget/authority/need/timing) têm formatos diferentes — o cast pré-existente já não batia
+  // campo a campo antes desta correção de lint; mantido aqui como estava (via `unknown`, não
+  // `any`) para não mudar o cálculo de score como efeito colateral de uma limpeza de lint.
+  const liveScore = calculateLeadScore(qualDraft as unknown as BantQualificationData);
 
   const handleSaveQualification = async () => {
     if (!lead) return;

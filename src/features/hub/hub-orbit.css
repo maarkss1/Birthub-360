@@ -1,0 +1,359 @@
+/*
+ * hub-orbit.css — Esferas 3D e animações do Portal Atlas Hub
+ *
+ * Portado fielmente de portalatlasprototype.html. CSS nativo necessário porque:
+ * - gradientes radiais compostos (esfera + highlight + sombra)
+ * - box-shadow em 4 camadas (elevação + inset superior/inferior)
+ * - pseudo-elementos ::before (sweep radar) e ::after (specular highlight)
+ * - animações conic-gradient e shimmer de texto
+ * - perspectiva 3D permanente nos cards
+ *
+ * Não substituir por Tailwind utilitários — os efeitos dependem de sintaxe
+ * que Tailwind não suporta inline (inset box-shadow compostos, radial-gradient
+ * em pseudo-elementos, conic-gradient animado).
+ */
+
+/* ============ ORB — ESFERA 3D ============
+   Sombreamento radial simulando fonte de luz vinda de cima/esquerda (30%/24%),
+   sombra em camadas para profundidade/elevação, inclinação 3D permanente.
+   Pedido explícito: "torne todos os elementos em 3d". */
+.hub-orb {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(
+    circle at 30% 24%,
+    var(--color-surface) 0%,
+    var(--color-surface-2) 78%,
+    var(--color-surface-3) 100%
+  );
+  border: 1px solid var(--color-line);
+  box-shadow:
+    0 26px 32px -16px rgba(20, 14, 10, 0.22),
+    0 10px 18px -8px rgba(20, 14, 10, 0.16),
+    inset 0 -16px 20px -6px rgba(20, 14, 10, 0.1),
+    inset 0 12px 14px -6px rgba(255, 255, 255, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow: hidden;
+  transform: rotateX(7deg) rotateY(-6deg) translateZ(0);
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.9, 0.25, 1),
+    box-shadow 0.5s ease,
+    border-color 0.3s ease;
+  will-change: transform;
+}
+
+.dark .hub-orb {
+  box-shadow:
+    0 26px 32px -16px rgba(0, 0, 0, 0.55),
+    0 10px 18px -8px rgba(0, 0, 0, 0.4),
+    inset 0 -16px 20px -6px rgba(0, 0, 0, 0.3),
+    inset 0 12px 14px -6px rgba(255, 255, 255, 0.08);
+}
+
+/* Sweep radar interno — efeito telemetria */
+.hub-orb::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  opacity: 0.45;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    color-mix(in srgb, var(--color-brand) 40%, transparent),
+    transparent 45%
+  );
+  animation: hub-orbit-sweep 10s linear infinite;
+}
+
+/* Specular highlight — faz o círculo ler como esfera de vidro/cerâmica */
+.hub-orb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.7), transparent 42%),
+    radial-gradient(circle at 76% 82%, rgba(20, 14, 10, 0.14), transparent 55%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-orb::before {
+    animation: none;
+  }
+}
+
+/* Hover — inclina mais para dar sensação de profundidade, sombra laranja */
+.hub-card:hover .hub-orb {
+  transform: rotateX(16deg) rotateY(-18deg) translateY(-8px);
+  box-shadow:
+    0 34px 46px -16px color-mix(in srgb, var(--color-brand) 45%, transparent),
+    0 12px 20px -8px rgba(20, 14, 10, 0.2),
+    inset 0 -16px 20px -6px rgba(20, 14, 10, 0.1),
+    inset 0 12px 14px -6px rgba(255, 255, 255, 0.55);
+  border-color: color-mix(in srgb, var(--color-brand) 55%, var(--color-line));
+}
+
+.hub-card:active .hub-orb {
+  transform: scale(0.94);
+  transition-duration: 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-orb,
+  .hub-card:hover .hub-orb {
+    transform: none !important;
+  }
+}
+
+/* ============ ORB PRIMÁRIO (Central Comercial) ============ */
+.hub-orb-primary {
+  background: radial-gradient(
+    circle at 30% 24%,
+    var(--color-brand-2),
+    var(--color-brand-active) 80%
+  );
+  border-color: transparent;
+  box-shadow:
+    0 32px 44px -16px rgba(168, 56, 16, 0.55),
+    0 12px 20px -8px rgba(168, 56, 16, 0.4),
+    inset 0 -18px 22px -6px rgba(80, 20, 4, 0.35),
+    inset 0 14px 16px -6px rgba(255, 200, 160, 0.5);
+}
+
+.hub-orb-primary::before {
+  opacity: 0.75;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent 45%
+  );
+}
+
+.hub-card:hover .hub-orb-primary {
+  box-shadow:
+    0 40px 58px -16px color-mix(in srgb, var(--color-brand) 70%, transparent),
+    inset 0 -18px 22px -6px rgba(80, 20, 4, 0.35),
+    inset 0 14px 16px -6px rgba(255, 200, 160, 0.5);
+}
+
+/* ============ TÍTULO DENTRO DO ORB ============
+   Gradiente animado de cima (mais claro) para baixo (mais escuro) — shimmer. */
+.hub-orb-title {
+  --title-light: #ffb08a;
+  --title-dark: #a83810;
+  font-size: 11.5px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.15;
+  padding: 0 12px;
+  background: linear-gradient(180deg, var(--title-light), var(--title-dark));
+  background-size: 100% 240%;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: hub-title-shimmer 3.4s ease-in-out infinite alternate;
+  position: relative;
+  z-index: 1;
+}
+
+.hub-orb-title-primary {
+  --title-light: #ffffff;
+  --title-dark: #ffddc2;
+  font-size: 14px;
+  padding: 0 20px;
+}
+
+.dark .hub-orb-title {
+  --title-light: #ffcfae;
+  --title-dark: #ff5618;
+}
+
+.dark .hub-orb-title-primary {
+  --title-light: #ffffff;
+  --title-dark: #ffddc2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-orb-title {
+    animation: none;
+    background-position: 0 55%;
+  }
+}
+
+/* ============ TAG INTERNA ============ */
+.hub-orb-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--color-ink-2);
+  margin-top: -2px;
+  letter-spacing: 0.03em;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hub-orb-tag-primary {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ============ ÍCONE INTERNO ============ */
+.hub-orb-icon {
+  position: relative;
+  z-index: 1;
+  color: var(--color-brand-active);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+}
+
+.hub-card:hover .hub-orb-icon {
+  transform: scale(1.08);
+  color: var(--color-brand);
+}
+
+.hub-orb-icon-primary {
+  color: #fff;
+}
+
+/* ============ CARD — POSICIONAMENTO ABSOLUTO ============ */
+.hub-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  perspective: 900px;
+  z-index: 2;
+}
+
+/* Badge "external link" — aparece no hover */
+.hub-ext-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  opacity: 0;
+  color: var(--color-ink-2);
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.hub-card:hover .hub-ext-badge {
+  opacity: 0.85;
+}
+
+/* ============ WIDGET — EFEITO VIDRO 3D ============
+   Mesma linguagem de profundidade das esferas: elevação em camadas + borda
+   superior clara simulando luz vinda de cima. */
+.hub-widget {
+  border: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  box-shadow:
+    0 16px 26px -14px rgba(20, 14, 10, 0.22),
+    0 4px 10px -4px rgba(20, 14, 10, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transform: perspective(700px) rotateX(4deg);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.hub-widget:hover {
+  transform: perspective(700px) rotateX(0deg) translateY(-2px);
+}
+
+.dark .hub-widget {
+  box-shadow:
+    0 16px 26px -14px rgba(0, 0, 0, 0.5),
+    0 4px 10px -4px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-widget,
+  .hub-widget:hover {
+    transform: none;
+  }
+}
+
+/* ============ BEACON (pulso do indicador de operação) ============ */
+.hub-beacon {
+  animation: hub-beacon 2s infinite ease-out;
+}
+
+/* ============ FUNDO CSS AMBIENTAL ============
+   Partículas/orbs em background — substitui Three.js sem dependência nova.
+   Posicionamento fixo, pointer-events: none, atrás de tudo. */
+.hub-bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ============ KEYFRAMES ============ */
+@keyframes hub-orbit-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hub-title-shimmer {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 100%;
+  }
+}
+
+@keyframes hub-beacon {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 86, 24, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(255, 86, 24, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 86, 24, 0);
+  }
+}
+
+@keyframes hub-bg-float-1 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-18px) rotate(120deg); }
+  66% { transform: translateY(10px) rotate(240deg); }
+}
+
+@keyframes hub-bg-float-2 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  40% { transform: translateY(22px) rotate(-130deg); }
+  70% { transform: translateY(-12px) rotate(-260deg); }
+}
+
+@keyframes hub-bg-float-3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(14px) rotate(90deg); }
+  75% { transform: translateY(-20px) rotate(270deg); }
+}
