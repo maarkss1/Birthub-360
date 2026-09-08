@@ -32,7 +32,6 @@ import { MODULE_CATALOG, EXTERNAL_LINKS, type ModuleKey } from '../../../config/
 import { Logo } from '../../../components/Logo';
 import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
 import { SoundFX } from '../../../lib/soundEffects';
-import { CommercialAgentCellPanel } from './CommercialAgentCellPanel';
 import { HubBurstCanvas, type BurstHandle } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
@@ -68,10 +67,10 @@ interface OrbitItem {
 
 function useIsDesktopOrbit(): boolean {
   const [isDesktop, setIsDesktop] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 860px)').matches,
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 901px)').matches,
   );
   useEffect(() => {
-    const query = window.matchMedia('(min-width: 860px)');
+    const query = window.matchMedia('(min-width: 901px)');
     const handleChange = () => setIsDesktop(query.matches);
     handleChange();
     query.addEventListener('change', handleChange);
@@ -206,7 +205,7 @@ export function HubScreen() {
 
   const orbitContainerRef = useRef<HTMLDivElement>(null);
 
-  // Posicionamento do layout radial concêntrico duplo
+  // Cálculo matemático idêntico ao protótipo portalatlasprototype.html
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
     if (!orbit || !isDesktopOrbit) return;
@@ -223,17 +222,18 @@ export function HubScreen() {
 
       const cx = w / 2;
       const cy = h / 2;
+
       if (primary) {
         primary.style.left = `${cx}px`;
         primary.style.top = `${cy}px`;
       }
 
       const primarySize = 238;
-      const innerSize = 180;
-      const outerSize = 160;
-      const gap = 20;
-      const margin = 20;
-      const minScale = 0.65;
+      const innerSize = 200;
+      const outerSize = 185;
+      const gap = 24;
+      const margin = 40;
+      const minScale = 0.7;
 
       const nInner = ringInner.length;
       const nOuter = ringOuter.length;
@@ -244,11 +244,11 @@ export function HubScreen() {
       const sinHalfOuter = Math.sin(angleOuter / 2);
 
       const idealInnerRadius = Math.max(
-        nInner > 1 ? (innerSize + gap) / (2 * sinHalfInner) : 180,
+        nInner > 1 ? (innerSize + gap) / (2 * sinHalfInner) : 220,
         primarySize / 2 + innerSize / 2 + gap,
       );
       const idealOuterRadius = Math.max(
-        nOuter > 1 ? (outerSize + gap) / (2 * sinHalfOuter) : 320,
+        nOuter > 1 ? (outerSize + gap) / (2 * sinHalfOuter) : 380,
         idealInnerRadius + innerSize / 2 + outerSize / 2 + gap,
       );
       const idealHalf = idealOuterRadius + outerSize / 2 + margin;
@@ -264,17 +264,12 @@ export function HubScreen() {
 
       function placeRing(ring: HTMLElement[], angleStep: number, radius: number, size: number) {
         const scale = size / 168;
-        const btnBox = size + 6;
         ring.forEach((card, i) => {
           const angle = angleStep * i - Math.PI / 2;
           const x = cx + radius * Math.cos(angle);
           const y = cy + radius * Math.sin(angle);
           card.style.left = `${x}px`;
           card.style.top = `${y}px`;
-          card.style.width = `${btnBox}px`;
-          card.style.height = `${btnBox}px`;
-          card.style.marginLeft = `${-btnBox / 2}px`;
-          card.style.marginTop = `${-btnBox / 2}px`;
           const orb = card.querySelector('.hub-orb') as HTMLElement;
           if (orb) orb.style.setProperty('--orb-scale', scale.toFixed(3));
         });
@@ -297,7 +292,7 @@ export function HubScreen() {
 
   return (
     <div className="relative min-h-screen bg-bg overflow-hidden">
-      {/* Elementos visuais de fundo CSS para animação 3D sutil */}
+      {/* Background Orbs */}
       <div className="hub-bg-orb h-96 w-96 bg-brand/10 blur-3xl -top-20 -left-20 animate-[hub-bg-float-1_15s_infinite_ease-in-out]" />
       <div className="hub-bg-orb h-80 w-80 bg-brand-2/10 blur-3xl top-1/2 -right-20 animate-[hub-bg-float-2_18s_infinite_ease-in-out]" />
       <div className="hub-bg-orb h-72 w-72 bg-brand-active/5 blur-3xl -bottom-10 left-1/3 animate-[hub-bg-float-3_20s_infinite_ease-in-out]" />
@@ -305,16 +300,15 @@ export function HubScreen() {
       <HubBurstCanvas ref={burstRef} />
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Topbar */}
-        <header className="flex items-center gap-2.5 px-6 pt-5 pb-2">
+        {/* Topbar sem duplicação da palavra ATLAS */}
+        <header className="flex items-center gap-3 px-8 pt-5 pb-3">
           {isAtlas ? (
             <Logo className="h-7 text-ink" />
           ) : (
             <TotalTrackLogo className="h-7 text-ink" />
           )}
-          <div className="font-black text-xl tracking-tight text-ink">ATLAS</div>
 
-          <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1 text-xs font-bold text-ink-2 backdrop-blur-md sm:flex">
+          <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3.5 py-1 text-xs font-bold text-ink-2 backdrop-blur-md sm:flex">
             <span className="hub-beacon h-2 w-2 rounded-full bg-brand" />
             {brandInfo.name} &middot; {brandInfo.operatingSystemName}
             <ChevronDown className="h-3 w-3 opacity-60" />
@@ -327,11 +321,11 @@ export function HubScreen() {
               setSoundOn(next);
               if (next) SoundFX.play('focus');
             }}
-            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
             aria-label={soundOn ? 'Desativar som de interação' : 'Ativar som de interação'}
             title={soundOn ? 'Desativar som de interação' : 'Ativar som de interação'}
           >
-            {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            {soundOn ? <Volume2 className="h-4.5 w-4.5" /> : <VolumeX className="h-4.5 w-4.5" />}
           </button>
 
           <button
@@ -340,16 +334,16 @@ export function HubScreen() {
               SoundFX.play('focus');
               toggleTheme();
             }}
-            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
             aria-label="Alternar tema"
             title={`Mudar para modo ${theme === 'dark' ? 'claro' : 'escuro'}`}
           >
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {theme === 'dark' ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
           </button>
 
           {currentUser && (
-            <div className="flex items-center gap-2 rounded-full border border-line bg-surface/70 py-1 pl-1 pr-3 backdrop-blur-md">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-white">
+            <div className="flex items-center gap-2.5 rounded-full border border-line bg-surface/70 py-1 pl-1 pr-3.5 backdrop-blur-md">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-white">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <span className="hidden text-xs font-bold text-ink sm:inline">
@@ -361,11 +355,11 @@ export function HubScreen() {
           <button
             type="button"
             onClick={logout}
-            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-critical backdrop-blur-md transition-colors hover:bg-critical/10"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-critical backdrop-blur-md transition-colors hover:bg-critical/10"
             aria-label="Encerrar sessão"
             title="Encerrar sessão e sair da conta"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-4.5 w-4.5" />
           </button>
         </header>
 
@@ -386,7 +380,7 @@ export function HubScreen() {
             </p>
           </div>
 
-          {/* Widgets do topo */}
+          {/* Widgets da Topbar */}
           <div className="hidden items-stretch gap-3 md:flex">
             <div className="hub-widget flex min-w-[128px] flex-col items-center justify-center px-4 py-3">
               <span className="font-mono text-2xl font-bold tabular-nums text-brand-active dark:text-brand-2">
@@ -433,8 +427,8 @@ export function HubScreen() {
           </div>
         </div>
 
-        {/* Rotulo da seção */}
-        <div className="mx-auto flex w-full max-w-[1250px] items-center gap-2.5 px-8 pt-4 pb-1">
+        {/* Rótulo da Seção (posicionado limpo acima da órbita) */}
+        <div className="mx-auto flex w-full max-w-[1250px] items-center gap-2.5 px-8 pt-6 pb-2">
           <span className="text-[11px] font-black uppercase tracking-[0.14em] text-ink-2">
             Da prospecção ao contrato — para o time comercial da{' '}
             <span className="inline-flex items-center gap-1 font-black text-ink">
@@ -460,11 +454,11 @@ export function HubScreen() {
           </div>
         )}
 
-        {/* Órbita Radial Concêntrica (ou Lista Mobile) */}
+        {/* Órbita Concêntrica Dupla */}
         {isDesktopOrbit ? (
           <div
             ref={orbitContainerRef}
-            className="relative mx-auto my-2 h-[820px] w-full max-w-[1250px] px-8"
+            className="hub-orbit"
             role="group"
             aria-label="Órbita do Hub Atlas"
           >
@@ -483,30 +477,13 @@ export function HubScreen() {
                   {item.external && !item.primary && (
                     <ExternalLink className="hub-ext-badge h-3.5 w-3.5" aria-hidden="true" />
                   )}
-                  <div
-                    className={`hub-orb ${item.primary ? 'hub-orb-primary' : ''}`}
-                    style={
-                      !item.primary ? ({ '--orb-scale': 1 } as React.CSSProperties) : undefined
-                    }
-                  >
-                    <div
-                      className={`hub-orb-icon ${
-                        item.primary ? 'hub-orb-icon-primary' : ''
-                      }`}
-                    >
+                  <div className="hub-orb">
+                    <div className="hub-orb-icon">
                       <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
                     </div>
-                    <div
-                      className={`hub-orb-title ${
-                        item.primary ? 'hub-orb-title-primary' : ''
-                      }`}
-                    >
-                      {item.label}
-                    </div>
+                    <div className="hub-orb-title">{item.label}</div>
                     {item.primary && (
-                      <div className="hub-orb-tag hub-orb-tag-primary">
-                        {item.description}
-                      </div>
+                      <div className="hub-orb-tag">{item.description}</div>
                     )}
                   </div>
                 </button>
@@ -516,10 +493,6 @@ export function HubScreen() {
         ) : (
           <MobileDestinationList items={items} />
         )}
-
-        <div className="mx-auto w-full max-w-[1250px] px-8 pb-10">
-          <CommercialAgentCellPanel />
-        </div>
       </div>
     </div>
   );

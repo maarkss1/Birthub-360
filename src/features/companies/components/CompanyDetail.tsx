@@ -28,7 +28,7 @@ import { TechToolLogo, type TechToolInfo } from '../../../components/ui/TechTool
 import { ToolTechPopover } from '../../../components/ui/ToolTechPopover';
 import { ContextualTip } from '../../../components/ui/ContextualTip';
 import { clientLogger } from '../../../lib/clientLogger';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import { toast } from '../../../lib/toast';
 
 interface CompanyDetailProps {
