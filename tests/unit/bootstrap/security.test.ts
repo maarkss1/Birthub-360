@@ -100,6 +100,22 @@ describe('bootstrap/security', () => {
             expect(res.headers['access-control-allow-origin']).toBe('https://qualquer-origem.example.com');
         });
 
+        it('permite origens de extensões do Chrome (chrome-extension://) em produção', async () => {
+            vi.doMock('../../../src/config/env.js', () => ({
+                env: { NODE_ENV: 'production', ALLOWED_ORIGINS: 'https://app.example.com', TRUST_PROXY: true },
+            }));
+            const { applySecurityMiddleware } = await import('../../../src/bootstrap/security.js');
+            const app = express();
+            applySecurityMiddleware(app);
+            app.get('/ping', (_req, res) => res.status(200).json({ ok: true }));
+
+            const res = await request(app).get('/ping').set('Origin', 'chrome-extension://abcdefghijklmnop');
+
+            expect(res.status).toBe(200);
+            expect(res.headers['access-control-allow-origin']).toBe('chrome-extension://abcdefghijklmnop');
+            expect(res.headers['access-control-allow-credentials']).toBe('true');
+        });
+
         // Regressão real: Better Auth resolve IP do cliente lendo x-forwarded-for por conta
         // própria (getIp, @better-auth/core/utils/ip.ts) — sem trustedProxies configurado, um
         // header com mais de um IP (formato de cadeia com mais de um proxy à frente da

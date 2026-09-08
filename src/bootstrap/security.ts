@@ -135,7 +135,8 @@ export function applySecurityMiddleware(app: Express): void {
         // de sessão) pra QUALQUER subdomínio railway.app, não só o desta aplicação — qualquer
         // outro app hospedado no Railway podia fazer requisições autenticadas contra esta API.
         // O domínio real de produção (ex: seu-app.up.railway.app) deve estar listado explicitamente
-        // em ALLOWED_ORIGINS, igual a qualquer outra origem.
+        // Permitir extensões Chrome (ex.: Copiloto IA da Atlas GR no Google Meet)
+        if (origin.startsWith('chrome-extension://')) return callback(null, true);
         if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
         callback(new Error(`CORS policy: origin ${origin} not allowed`));
       },
