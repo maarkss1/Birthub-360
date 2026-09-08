@@ -61,6 +61,17 @@ vi.mock('../whatsappMessage.service.js', () => ({
   persistWhatsAppMessage: vi.fn(),
 }));
 
+// Achado real (auditoria de release-readiness): whatsapp.service.ts passou a registrar falha de
+// persistência de mensagem inbound na dead-letter existente (ver `messages.upsert`). Sem este
+// mock, o import real de `deadLetter.js` carrega `lib/prisma.js` → `lib/queue/search.queue.ts`,
+// que lê `queuesEnabled` do `redis.js` mockado acima (que só expõe `cacheConnection`/
+// `isDedicatedWorkerProcess`) — vitest rejeita o import com "No queuesEnabled export is defined
+// on the mock". Mesmo padrão de mock de fronteira já usado para todos os outros imports diretos
+// deste arquivo.
+vi.mock('../../../../lib/queue/deadLetter.js', () => ({
+  recordDeadLetter: vi.fn(),
+}));
+
 vi.mock('../useRedisAuthState.js', () => ({
   useRedisAuthState: vi.fn().mockResolvedValue({
     state: { creds: {}, keys: { get: vi.fn(), set: vi.fn() } },

@@ -22,6 +22,14 @@
 -- por slug (sem tenant conhecido) já foi adicionado a `BYPASS_RLS_ALLOWED_MODELS` em
 -- `src/lib/prisma.ts` e ao código de `booking.routes.ts` na mesma mudança que introduziu esta
 -- migration — sem isso, habilitar RLS aqui quebraria a busca pública em produção.
+--
+-- Achado real durante a validação desta migration: `model User` tem `@@map("user")` em
+-- schema.prisma — a tabela real é `"user"` (minúscula), não `"User"`. A migration
+-- `20260720235926_sync_accumulated_schema_drift` já fez `DROP TABLE "User"` + `CREATE TABLE
+-- "user"` há muito tempo; toda FK real do resto do histórico já referencia `"user"` minúsculo. A
+-- primeira versão desta migration errou isso (`REFERENCES "User"`) e falhava com "relation User
+-- does not exist" ao rodar `prisma migrate deploy` do zero — reproduzido localmente contra um
+-- Postgres real com o papel `prospector_app` (NOSUPERUSER) antes desta correção.
 
 CREATE TABLE IF NOT EXISTS "PublicBookingLink" (
     "id" TEXT NOT NULL,
@@ -51,7 +59,7 @@ BEGIN
     ) THEN
         ALTER TABLE "PublicBookingLink"
             ADD CONSTRAINT "PublicBookingLink_userId_fkey"
-            FOREIGN KEY ("userId") REFERENCES "User"("id")
+            FOREIGN KEY ("userId") REFERENCES "user"("id")
             ON DELETE CASCADE ON UPDATE CASCADE;
     END IF;
 END $$;
