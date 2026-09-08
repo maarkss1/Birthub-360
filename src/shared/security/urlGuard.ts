@@ -51,6 +51,7 @@ function isPrivateOrReservedIp(ip: string): boolean {
 
 /** Endereços já validados (não-privados/reservados) de um host, resolvidos numa única checagem. */
 interface SafeResolution {
+  url: URL;
   addresses: string[];
 }
 
@@ -82,7 +83,7 @@ async function resolveSafe(rawUrl: string): Promise<SafeResolution> {
     if (isPrivateOrReservedIp(hostname)) {
       throw new AppError('Endereço não permitido (IP privado/reservado).', 400);
     }
-    return { addresses: [hostname] };
+    return { url, addresses: [hostname] };
   }
 
   const records = await dns.lookup(hostname, { all: true }).catch(() => []);
@@ -94,7 +95,7 @@ async function resolveSafe(rawUrl: string): Promise<SafeResolution> {
       throw new AppError('Endereço não permitido (resolve para IP privado/reservado).', 400);
     }
   }
-  return { addresses: records.map((record) => record.address) };
+  return { url, addresses: records.map((record) => record.address) };
 }
 
 /**
@@ -129,15 +130,17 @@ export async function assertSafeExternalUrl(rawUrl: string): Promise<void> {
  * redirecionamento hoje.
  */
 export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise<Response> {
-  const { addresses } = await resolveSafe(rawUrl);
+  const { url, addresses } = await resolveSafe(rawUrl);
 
   const isGlobalFetchMocked =
     typeof globalThis.fetch === 'function' &&
     (Boolean((globalThis.fetch as unknown as { _isMockFunction?: boolean })._isMockFunction) ||
-      Boolean((globalThis.fetch as unknown as { mock?: unknown }).mock));
+      Boolean((globalThis.fetch as unknown as { mock?: unknown }).mock) ||
+      typeof (globalThis.fetch as unknown as { mockRestore?: unknown }).mockRestore === 'function' ||
+      typeof (globalThis.fetch as unknown as { getMockName?: unknown }).getMockName === 'function');
 
   if (isGlobalFetchMocked) {
-    const response = await globalThis.fetch(rawUrl, init);
+    const response = await globalThis.fetch(url.href, init);
     const bodyBuffer = await response.arrayBuffer();
     const noBodyAllowed = [204, 205, 304].includes(response.status);
     return new Response(noBodyAllowed ? null : bodyBuffer, {
@@ -158,7 +161,7 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
   // próprios endereços).
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-    const response = await undiciFetch(rawUrl, { ...init, dispatcher } as unknown as RequestInit);
+    const response = await undiciFetch(url.href, { ...init, dispatcher } as unknown as RequestInit);
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o
