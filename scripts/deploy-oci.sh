@@ -164,11 +164,20 @@ current_value() {
 # valor customizado que o operador já tenha definido manualmente no .env.production.
 if [ -n "${DOMAIN:-}" ] && [ "$DOMAIN" != "localhost" ]; then
     PUBLIC_ORIGIN="https://${DOMAIN}"
-    for key in ALLOWED_ORIGINS BETTER_AUTH_URL PUBLIC_BASE_URL; do
+    for key in BETTER_AUTH_URL PUBLIC_BASE_URL; do
         case "$(current_value "$key")" in
             ""|*localhost*) set_env_value "$key" "$PUBLIC_ORIGIN" ;;
         esac
     done
+    CUR_ORIGINS="$(current_value "ALLOWED_ORIGINS")"
+    case "$CUR_ORIGINS" in
+        ""|*localhost*) set_env_value "ALLOWED_ORIGINS" "$PUBLIC_ORIGIN" ;;
+        *)
+            if [[ "$CUR_ORIGINS" != *"$PUBLIC_ORIGIN"* ]]; then
+                set_env_value "ALLOWED_ORIGINS" "${PUBLIC_ORIGIN},${CUR_ORIGINS}"
+            fi
+            ;;
+    esac
     case "$(current_value "COOKIE_DOMAIN")" in
         "") set_env_value "COOKIE_DOMAIN" "$DOMAIN" ;;
     esac
@@ -183,6 +192,22 @@ else
     echo "    DOMAIN=seu-dominio.com.br antes de rodar este script quando o domínio oficial estiver pronto"
     echo "    (ver 'Domínio' em docs/deploy/oracle-cloud.md)."
 fi
+
+# 2.1b Suporte opcional à Extensão Chrome em ALLOWED_ORIGINS (ex.: `CHROME_EXTENSION_ID=abcdef... ./scripts/deploy-oci.sh`)
+if [ -n "${CHROME_EXTENSION_ID:-}" ]; then
+    EXT_ORIGIN="chrome-extension://${CHROME_EXTENSION_ID}"
+    CUR_ORIGINS="$(current_value "ALLOWED_ORIGINS")"
+    case "$CUR_ORIGINS" in
+        ""|*localhost*) set_env_value "ALLOWED_ORIGINS" "$EXT_ORIGIN" ;;
+        *)
+            if [[ "$CUR_ORIGINS" != *"$EXT_ORIGIN"* ]]; then
+                set_env_value "ALLOWED_ORIGINS" "${CUR_ORIGINS},${EXT_ORIGIN}"
+            fi
+            ;;
+    esac
+    echo "🧩 Origem da extensão Chrome configurada em ALLOWED_ORIGINS: ${EXT_ORIGIN}"
+fi
+
 
 # 2.2 Filas/Redis — OFF por padrão no MVP (mesma decisão já registrada em render.yaml: nenhuma
 # jornada essencial depende disso hoje, ver docs/deploy/oracle-cloud.md). Só gera segredo e sobe o
