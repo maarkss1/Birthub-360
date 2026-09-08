@@ -336,22 +336,52 @@ export interface CreateCalendarEventInput {
   attendees?: string[];
 }
 
-/** Cria um evento no calendário primário e retorna o ID do evento criado no Google. */
+export interface CreateCalendarEventResult {
+  googleEventId: string;
+  /** Link real do Google Meet (`hangoutLink`) — `null` quando a videochamada não ficou pronta a
+   * tempo (evento em si foi criado normalmente; quem chamou decide se tenta de novo depois). */
+  meetUrl: string | null;
+  /** UID usado pelo Google para este evento — vira o UID do convite ICS enviado por e-mail, para
+   * o cliente de calendário do destinatário reconhecer o mesmo evento. */
+  iCalUID: string | null;
+}
+
+const MEET_READY_POLL_ATTEMPTS = 5;
+const MEET_READY_POLL_DELAY_MS = 1_000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Cria um evento no calendário primário com videochamada Google Meet anexada. `sendUpdates=none`
+ * de propósito (mesmo achado documentado no protótipo `ATLAS_MEETING_HUB`): o convite ao
+ * participante vai pelo e-mail HTML+ICS desta aplicação (`email/meetingInvite.ts`), nunca pelo
+ * e-mail nativo do Google — evitar duas origens de convite para a mesma reunião. */
 export async function createCalendarEvent(
   organizationId: string,
   input: CreateCalendarEventInput,
-): Promise<string> {
+): Promise<CreateCalendarEventResult> {
   let accessToken = await getValidAccessToken(organizationId);
 
+  const eventId = `atlascic${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
   const eventPayload = {
+    id: eventId,
     summary: input.summary,
     start: { dateTime: input.start.toISOString() },
     end: { dateTime: input.end.toISOString() },
     attendees: input.attendees ? input.attendees.map((email) => ({ email })) : undefined,
+    conferenceData: {
+      createRequest: {
+        requestId: eventId,
+        conferenceSolutionKey: { type: 'hangoutsMeet' },
+      },
+    },
   };
+  const createUrl =
+    'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&sendUpdates=none';
 
   let response = await fetchWithTimeout(
-    'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+    createUrl,
     {
       method: 'POST',
       headers: {
@@ -371,7 +401,7 @@ export async function createCalendarEvent(
     );
     accessToken = await getValidAccessToken(organizationId, true);
     response = await fetchWithTimeout(
-      'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+      createUrl,
       {
         method: 'POST',
         headers: {
@@ -394,6 +424,49 @@ export async function createCalendarEvent(
     throw new AppError(`Falha ao criar evento no Google Calendar (HTTP ${response.status}).`, 502);
   }
 
-  const data = (await response.json()) as { id: string };
-  return data.id;
+  let event = (await response.json()) as {
+    id: string;
+    hangoutLink?: string;
+    iCalUID?: string;
+    conferenceData?: {
+      createRequest?: { status?: { statusCode?: string } };
+      entryPoints?: Array<{ entryPointType?: string; uri?: string }>;
+    };
+  };
+
+  // A criação da sala do Meet é assíncrona no Google — o evento volta sem `hangoutLink` na
+  // resposta do POST. Espera curta e limitada (mesmo padrão validado no protótipo standalone
+  // ATLAS_MEETING_HUB): se não ficar pronto a tempo, devolve o evento sem Meet em vez de travar a
+  // requisição indefinidamente — quem chamou decide se isso é aceitável (best-effort).
+  for (
+    let attempt = 0;
+    attempt < MEET_READY_POLL_ATTEMPTS &&
+    !event.hangoutLink &&
+    event.conferenceData?.createRequest?.status?.statusCode !== 'failure';
+    attempt++
+  ) {
+    await sleep(MEET_READY_POLL_DELAY_MS);
+    const pollResponse = await fetchWithTimeout(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+      15_000,
+      ['www.googleapis.com'],
+    );
+    if (!pollResponse.ok) break;
+    event = await pollResponse.json();
+  }
+
+  const meetUrl =
+    event.hangoutLink ||
+    event.conferenceData?.entryPoints?.find((entry) => entry.entryPointType === 'video')?.uri ||
+    null;
+  if (meetUrl && !/^https:\/\/meet\.google\.com\//.test(meetUrl)) {
+    logger.error(
+      { organizationId, meetUrl },
+      'Google devolveu um link de Meet fora do domínio esperado.',
+    );
+    return { googleEventId: event.id, meetUrl: null, iCalUID: event.iCalUID ?? null };
+  }
+
+  return { googleEventId: event.id, meetUrl, iCalUID: event.iCalUID ?? null };
 }

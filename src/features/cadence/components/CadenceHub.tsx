@@ -179,11 +179,15 @@ function ScheduleMeetingDialog({
     }
     setSubmitting(true);
     try {
-      await cadenceApi.scheduleMeeting(leadId, {
+      const result = await cadenceApi.scheduleMeeting(leadId, {
         proposedStart: new Date(start).toISOString(),
         proposedEnd: new Date(end).toISOString(),
       });
-      toast.success('Reunião confirmada e registrada no calendário.');
+      toast.success(
+        result.meetUrl
+          ? 'Reunião confirmada com Google Meet — convite enviado ao lead por e-mail.'
+          : 'Reunião confirmada e registrada no calendário.',
+      );
       reset();
       onClose();
     } catch (err) {

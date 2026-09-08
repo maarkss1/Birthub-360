@@ -75,7 +75,7 @@ describe('scheduleVerifiedMeeting', () => {
             NOW,
         );
 
-        expect(result).toEqual({ scheduled: false, googleEventId: null, rejectedReason: 'not-verifiable', noteId: null });
+        expect(result).toEqual({ scheduled: false, googleEventId: null, meetUrl: null, rejectedReason: 'not-verifiable', noteId: null });
         expect(ports.notes.createConfirmationNote).not.toHaveBeenCalled();
         expect(ports.scheduler.createEvent).not.toHaveBeenCalled();
     });

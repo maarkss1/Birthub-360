@@ -98,14 +98,20 @@ export function buildCalendarEventDraft(
   };
 }
 
-/** Porta implementada por quem tem acesso real ao Google Calendar (`google.service.ts`, 06) — cria o evento e devolve o id real do Google. */
+/** Porta implementada por quem tem acesso real ao Google Calendar (`google.service.ts`, 06) — cria
+ * o evento (com Google Meet, quando possível) e devolve os identificadores reais do Google.
+ * `meetUrl`/`iCalUID` opcionais na assinatura para não quebrar um mock de teste que só devolvia
+ * `googleEventId` antes desta mudança. */
 export interface CalendarSchedulerPort {
-  createEvent(draft: CalendarEventDraft): Promise<{ googleEventId: string }>;
+  createEvent(
+    draft: CalendarEventDraft,
+  ): Promise<{ googleEventId: string; meetUrl?: string | null; iCalUID?: string | null }>;
 }
 
 export interface ScheduleMeetingResult {
   scheduled: boolean;
   googleEventId: string | null;
+  meetUrl: string | null;
   rejectedReason: 'not-verifiable' | null;
 }
 
@@ -121,10 +127,15 @@ export async function scheduleMeetingIfConfirmed(
   now: Date,
 ): Promise<ScheduleMeetingResult> {
   if (!isVerifiableConfirmation(confirmation, now)) {
-    return { scheduled: false, googleEventId: null, rejectedReason: 'not-verifiable' };
+    return {
+      scheduled: false,
+      googleEventId: null,
+      meetUrl: null,
+      rejectedReason: 'not-verifiable',
+    };
   }
 
   const draft = buildCalendarEventDraft(confirmation, context);
-  const { googleEventId } = await scheduler.createEvent(draft);
-  return { scheduled: true, googleEventId, rejectedReason: null };
+  const { googleEventId, meetUrl } = await scheduler.createEvent(draft);
+  return { scheduled: true, googleEventId, meetUrl: meetUrl ?? null, rejectedReason: null };
 }

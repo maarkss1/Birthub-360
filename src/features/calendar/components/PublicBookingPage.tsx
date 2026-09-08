@@ -49,6 +49,7 @@ export function PublicBookingPage() {
     title: string;
     date: string;
     time: string;
+    meetUrl: string | null;
   } | null>(null);
 
   useEffect(() => {
@@ -75,14 +76,17 @@ export function PublicBookingPage() {
     if (!slug) return;
     setSubmitting(true);
     try {
-      const res = await api.post<{ host: string; title: string; date: string; time: string }>(
-        `/api/calendar/book/${slug}`,
-        {
-          ...form,
-          date: selectedDate,
-          time: selectedSlot,
-        },
-      );
+      const res = await api.post<{
+        host: string;
+        title: string;
+        date: string;
+        time: string;
+        meetUrl: string | null;
+      }>(`/api/calendar/book/${slug}`, {
+        ...form,
+        date: selectedDate,
+        time: selectedSlot,
+      });
       setSuccessData(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha ao realizar agendamento.');
@@ -145,6 +149,17 @@ export function PublicBookingPage() {
               </span>
             </div>
           </div>
+
+          {successData.meetUrl && (
+            <a
+              href={successData.meetUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="block w-full rounded-xl bg-brand-active px-4 py-3 text-sm font-bold text-white transition-colors duration-200 hover:bg-brand-2"
+            >
+              Entrar na reunião (Google Meet)
+            </a>
+          )}
 
           <p className="text-xs text-slate-500">
             Um convite com o link da videoconferência foi enviado para o seu e-mail cadastrado.

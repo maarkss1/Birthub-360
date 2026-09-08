@@ -94,6 +94,7 @@ describe('scheduleMeetingIfConfirmed', () => {
     expect(result).toEqual({
       scheduled: true,
       googleEventId: 'gcal-evt-123',
+      meetUrl: null,
       rejectedReason: null,
     });
     expect(created).not.toBeNull();
@@ -118,6 +119,7 @@ describe('scheduleMeetingIfConfirmed', () => {
     expect(result).toEqual({
       scheduled: false,
       googleEventId: null,
+      meetUrl: null,
       rejectedReason: 'not-verifiable',
     });
     expect(calls).toBe(0);

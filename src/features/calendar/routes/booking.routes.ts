@@ -11,6 +11,22 @@ import { requireTenant } from '../../../shared/middlewares/authorization.js';
 import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 import { z } from 'zod';
 import { routeParam } from '../../../shared/http/routeParams.js';
+import { container } from '../../../shared/di/container.js';
+import { env } from '../../../config/env.js';
+import { sendEmail, MailerNotConfiguredError } from '../../../lib/email/mailer.js';
+import { buildMeetingInviteEmail } from '../../../lib/email/meetingInvite.js';
+
+// Estrutural, não importado de src/features/integrations/** (no-cross-feature-imports) — espelha
+// só o método que este router consome de `google.service.ts`, resolvido via DI container
+// (registrado em src/shared/di/setup.ts). Mesmo padrão já usado por agent.routes.ts.
+interface GoogleCalendarServiceContract {
+  createCalendarEvent(
+    organizationId: string,
+    input: { summary: string; start: Date; end: Date; attendees?: string[] },
+  ): Promise<{ googleEventId: string; meetUrl: string | null; iCalUID: string | null }>;
+}
+
+const DEFAULT_BOOKING_TIMEZONE = 'America/Sao_Paulo';
 
 // Schema para criação/atualização de link de agendamento
 const bookingLinkSchema = z.object({
@@ -430,6 +446,67 @@ publicBookingRouter.post(
         },
       );
 
+      // Cria o evento no Google Calendar (com Meet, quando possível) e envia a confirmação por
+      // e-mail ao cliente — best-effort de propósito: a organização pode não ter conectado o
+      // Google, ou o SMTP pode não estar configurado, e nenhum dos dois deveria impedir o
+      // agendamento em si (o registro no CRM já está feito). ACHADO REAL: até esta mudança, a
+      // mensagem de sucesso abaixo já prometia "você receberá os detalhes em seu e-mail" sem que
+      // nada fosse enviado de verdade.
+      const meetingStart = new Date(`${body.date}T${body.time}:00`);
+      const meetingEnd = new Date(meetingStart.getTime() + link.durationMin * 60_000);
+      let meetUrl: string | null = null;
+      try {
+        const googleCalendar =
+          container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService');
+        const event = await googleCalendar.createCalendarEvent(link.organizationId, {
+          summary: link.title,
+          start: meetingStart,
+          end: meetingEnd,
+          attendees: [body.email, hostUser.email].filter(
+            (e): e is string => !!e && e.trim() !== '',
+          ),
+        });
+        meetUrl = event.meetUrl;
+
+        const organizerEmail = env.SMTP_FROM || env.SMTP_USER;
+        if (organizerEmail) {
+          const invite = buildMeetingInviteEmail({
+            uid: event.iCalUID || event.googleEventId,
+            title: link.title,
+            notes: body.notes || '',
+            start: meetingStart,
+            end: meetingEnd,
+            timeZone: DEFAULT_BOOKING_TIMEZONE,
+            organizerEmail,
+            attendeeEmails: [body.email],
+            meetUrl: event.meetUrl,
+          });
+          await sendEmail({
+            to: body.email,
+            subject: invite.subject,
+            text: invite.text,
+            html: invite.html,
+            icalEvent: invite.icalEvent,
+          });
+        }
+
+        if (meetUrl) {
+          await requestContext.run({ tenantId: link.organizationId }, () =>
+            prisma.activity.update({
+              where: { id: activity.id },
+              data: { observations: `${activity.observations}\nGoogle Meet: ${meetUrl}` },
+            }),
+          );
+        }
+      } catch (err) {
+        if (!(err instanceof MailerNotConfiguredError)) {
+          logger.error(
+            { err, linkId: link.id, bookingId: activity.id },
+            'Falha ao criar evento no Google Calendar ou enviar confirmação de agendamento público.',
+          );
+        }
+      }
+
       res.status(201).json({
         success: true,
         data: {
@@ -439,6 +516,7 @@ publicBookingRouter.post(
           time: body.time,
           host: hostUser.name,
           title: link.title,
+          meetUrl,
           message: 'Reunião confirmada com sucesso! Você receberá os detalhes em seu e-mail.',
         },
       });
