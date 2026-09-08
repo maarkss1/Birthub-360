@@ -27,13 +27,13 @@ import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { SoundFX } from '../../../lib/soundEffects';
-import { bitrixApi } from '../../integrations/bitrix/bitrix.api';
 import type {
   DailyPlanItem,
   DailyPlanItemChannel,
   DailyPlanPriorityLevel,
   UserDailyPlanSummary,
-} from '../../integrations/bitrix/service/dailyPlan.service';
+} from '../../../shared/contracts/dailyPlan.contract';
+import { dailyPlanApi } from '../dailyPlan.api';
 
 interface DailyTask {
   id: string;
@@ -167,9 +167,9 @@ export function DailyPlanHub() {
   const loadDailyPlan = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await bitrixApi.getDailyPlan();
-      if (res?.data) {
-        setPlanData(res.data);
+      const plan = await dailyPlanApi.getDailyPlan();
+      if (plan) {
+        setPlanData(plan);
       }
     } catch (err) {
       console.error('Erro ao carregar plano diário:', err);
@@ -188,11 +188,11 @@ export function DailyPlanHub() {
       setIsSyncing(true);
       setSyncFeedback(null);
       SoundFX.play('focus');
-      const res = await bitrixApi.syncDailyPlan();
-      if (res?.data) {
-        setPlanData(res.data);
+      const { data, message } = await dailyPlanApi.syncDailyPlan();
+      if (data) {
+        setPlanData(data);
       }
-      setSyncFeedback(res?.message || 'Sincronizado com sucesso!');
+      setSyncFeedback(message || 'Sincronizado com sucesso!');
       SoundFX.play('success');
       setTimeout(() => setSyncFeedback(null), 4000);
     } catch (err) {
@@ -227,7 +227,7 @@ export function DailyPlanHub() {
         };
       });
 
-      await bitrixApi.completeDailyPlanItem(item.origin, item.id);
+      await dailyPlanApi.completeDailyPlanItem(item.origin, item.id);
     } catch (err) {
       console.error('Erro ao concluir item:', err);
       loadDailyPlan();
@@ -239,7 +239,7 @@ export function DailyPlanHub() {
     if (!noteText.trim()) return;
     try {
       setIsSubmittingNote(true);
-      await bitrixApi.addDailyPlanNote(item.origin, item.id, noteText);
+      await dailyPlanApi.addDailyPlanNote(item.origin, item.id, noteText);
       SoundFX.play('success');
 
       // Atualiza nota no item localmente
@@ -268,7 +268,7 @@ export function DailyPlanHub() {
     if (!newTitle.trim()) return;
     try {
       setIsCreatingActivity(true);
-      await bitrixApi.createDailyPlanActivity({
+      await dailyPlanApi.createDailyPlanActivity({
         title: newTitle,
         channel: newChannel,
         contactName: newContact || undefined,

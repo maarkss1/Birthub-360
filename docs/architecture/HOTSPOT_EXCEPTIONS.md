@@ -74,6 +74,22 @@ propósito por estar fora de "## Exceções ativas"):
 - **Registrado em:** 2026-08-29
 - **Reavaliar até:** 2026-11-30 (mesmo checkpoint do `KNOWN_VIOLATIONS.md`)
 
+### `src/features/commercial-intelligence/components/DailyPlanHub.tsx`
+
+- **Limite excepcional:** 1100 linhas
+- **Dono:** Agente 04 — CRM e BI
+- **Motivo:** mesma situação já documentada acima para `BitrixImportPanel.tsx` — o commit que
+  introduziu este arquivo (`15c1e74d`, "plano diário pessoal universal com sincronização Bitrix24")
+  já nasceu com 1033 linhas, mas também introduziu um erro real de `tsc` em
+  `dailyPlan.service.ts` e uma violação de `no-cross-feature-imports` (este componente importava
+  tipos/cliente HTTP direto de `integrations/bitrix/`) — as duas falhas anteriores no pipeline
+  mascaravam `check:hotspots` de rodar de fato contra este arquivo em CI. Corrigidas as duas causas
+  anteriores (contrato movido para `src/shared/contracts/dailyPlan.contract.ts`, cliente HTTP
+  próprio em `dailyPlan.api.ts`), o gate de tamanho finalmente rodou e bloqueou. Modularizar o hub
+  em sub-componentes fica para um item de dívida técnica dedicado, não para este fix pontual de CI.
+- **Registrado em:** 2026-09-08
+- **Reavaliar até:** 2026-11-30
+
 ## Débito conhecido, abaixo do limite de falha (sem exceção necessária)
 
 Arquivos na faixa de aviso (701–1000 linhas) no momento em que este gate foi criado — não
