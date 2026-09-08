@@ -53,8 +53,7 @@ export const VERIFIED_TOOL_BINDINGS: Readonly<Record<string, VerifiedBindingEvid
   },
   'revenue.analyze': {
     binding: 'CommercialIntelligenceAiService.generateExecutiveSummary',
-    evidencePath:
-      'src/features/commercial-intelligence/infra/CommercialIntelligenceAiService.ts',
+    evidencePath: 'src/features/commercial-intelligence/infra/CommercialIntelligenceAiService.ts',
   },
   'coverage.read': {
     binding: 'CommercialIntelligenceUseCases.executiveOverview',
@@ -120,9 +119,7 @@ export const VERIFIED_TOOL_BINDINGS: Readonly<Record<string, VerifiedBindingEvid
   },
 };
 
-export function getVerifiedToolBinding(
-  capabilityCode: string,
-): EffectiveToolBinding | undefined {
+export function getVerifiedToolBinding(capabilityCode: string): EffectiveToolBinding | undefined {
   const raw = getToolBinding(capabilityCode);
   if (!raw) return undefined;
 
