@@ -30,7 +30,7 @@ export function PromptStudio() {
   useEffect(() => {
     loadPrompts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadPrompts]);
+  }, []);
 
   const loadPrompts = async () => {
     try {
