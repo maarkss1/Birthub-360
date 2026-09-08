@@ -53,7 +53,18 @@ async function sendInviteBestEffort(
       icalEvent: invite.icalEvent,
     });
   } catch (error) {
-    if (error instanceof MailerNotConfiguredError) return;
+    if (error instanceof MailerNotConfiguredError) {
+      // Achado real (auditoria de release-readiness, integration-audit): este era o único
+      // call site de MailerNotConfiguredError (de 7 no projeto) que engolia o erro sem log
+      // algum — diferente de booking.routes.ts/auth.ts/CadenceDispatchers.ts etc., que já
+      // avisam. O evento no Google Calendar já foi criado (não é perda do dado de negócio),
+      // mas sem este log ninguém no time percebe que o convite por e-mail nunca saiu.
+      logger.warn(
+        { to, ...context },
+        '[CYC-004] Convite de reunião não enviado: SMTP não configurado.',
+      );
+      return;
+    }
     logger.error(
       { err: error, to, ...context },
       '[CYC-004] Falha ao enviar convite de reunião por e-mail.',

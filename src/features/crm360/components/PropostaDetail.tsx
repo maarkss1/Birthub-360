@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Copy, ExternalLink, Loader2, Pencil, Send } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Copy, ExternalLink, Loader2, Pencil, Send } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
@@ -118,7 +118,9 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
         signerEmail: signerEmail.trim(),
         signerName: signerName.trim() || undefined,
       });
-      toast.success('Solicitação de assinatura enviada.');
+      toast.success(
+        'Solicitação registrada no CRM. O envio real ao provedor gov.br ainda não está ativo — ver aviso abaixo.',
+      );
       onChanged();
     } catch (error) {
       clientLogger.error({ err: error }, 'Falha ao solicitar assinatura');
@@ -334,6 +336,19 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
               <p className="text-xs font-bold uppercase tracking-wide text-ink-2">
                 Solicitar assinatura eletrônica
               </p>
+              {/* Achado real (auditoria de release-readiness): GovBrSignatureProviderPort.ts é um
+                  stub de transporte — a solicitação fica registrada no CRM (guardrail de status,
+                  webhook de entrada), mas nenhuma chamada real ao gov.br acontece ainda (falta
+                  credencial de integrador). Aviso explícito em vez de deixar a tela parecer que o
+                  documento já foi enviado para assinatura de verdade. */}
+              <div className="flex items-start gap-2 rounded-card border border-warning/20 bg-warning/10 p-2.5 text-[11px] text-warning-active dark:text-warning">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                <span>
+                  Integração com o provedor gov.br ainda não está ativa. A solicitação fica
+                  registrada aqui no CRM, mas o documento não é enviado de fato para assinatura
+                  eletrônica até o provedor real ser conectado.
+                </span>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="signer-email" className="text-xs">
                   E-mail de quem assina

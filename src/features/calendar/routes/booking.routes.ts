@@ -219,14 +219,26 @@ async function loadBookingHost(userId: string, organizationId: string) {
   });
 }
 
+/**
+ * Achado real (auditoria de release-readiness, database-integrity): `PublicBookingLink` passou a
+ * ter RLS real (ver `BYPASS_RLS_ALLOWED_MODELS` em `src/lib/prisma.ts` e a migration
+ * `20260908090000_public_booking_link_create_and_rls`). Mesmo padrão de `loadBookingHost` acima —
+ * o lookup pelo slug opaco roda ANTES de qualquer tenant conhecido (é exatamente esse o ponto de
+ * uma rota pública), então precisa do mesmo bypass; o restante do fluxo de cada rota já escopa por
+ * `link.organizationId` normalmente.
+ */
+async function findPublicBookingLinkBySlug(slug: string) {
+  return requestContext.run({ bypassRls: true }, () =>
+    prisma.publicBookingLink.findUnique({ where: { slug } }),
+  );
+}
+
 // Consulta dados do link público e horários disponíveis
 publicBookingRouter.get(
   '/:slug',
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const link = await prisma.publicBookingLink.findUnique({
-        where: { slug: routeParam(req.params.slug, 'slug') },
-      });
+      const link = await findPublicBookingLinkBySlug(routeParam(req.params.slug, 'slug'));
 
       if (!link || !link.active) {
         res
@@ -291,9 +303,7 @@ publicBookingRouter.post(
   '/:slug',
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const link = await prisma.publicBookingLink.findUnique({
-        where: { slug: routeParam(req.params.slug, 'slug') },
-      });
+      const link = await findPublicBookingLinkBySlug(routeParam(req.params.slug, 'slug'));
 
       if (!link || !link.active) {
         res

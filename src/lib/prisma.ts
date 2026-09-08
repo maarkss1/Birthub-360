@@ -216,6 +216,18 @@ export const prisma = basePrisma.$extends({
         // dois workers descobrem organização por organização via bypass em `Organization` (já
         // permitido abaixo) e escopam `Company` por tenant real (`requestContext.run({ tenantId })`)
         // a cada organização — nunca leem `Company` sob bypass.
+        // PublicBookingLink entrou nesta allowlist pelo MESMO motivo/modelo de confiança já
+        // documentado acima para CrmCommercialDocument: as duas rotas públicas de agendamento
+        // (`GET`/`POST /api/public/book/:slug`, sem authenticateToken) recebem só um `slug` opaco
+        // (regex restrita, não sequencial) na URL — não há tenant conhecido até achar o link.
+        // Achado real (auditoria de release-readiness, database-integrity): a tabela nunca teve
+        // RLS habilitada via migration (ver `20260908090000_public_booking_link_create_and_rls`),
+        // e o `findUnique` por slug em `booking.routes.ts` roda sem bypass — habilitar RLS sem
+        // este bypass quebraria a busca pública em produção (a policy negaria a linha sem
+        // `app.current_tenant_id`/`app.bypass_rls` setados). O bypass aqui cobre só o `findUnique`
+        // por `slug`; o restante do fluxo (criação de Company/Contact/Lead/Activity a partir do
+        // agendamento) já roda escopado por tenant real (`requestContext.run({ tenantId:
+        // link.organizationId })`), igual ao lookup de CrmCommercialDocument/BitrixConnection.
         const BYPASS_RLS_ALLOWED_MODELS = [
           'User',
           'Organization',
@@ -230,6 +242,7 @@ export const prisma = basePrisma.$extends({
           'CrmCommercialDocument',
           'CrmDocumentSignatureRequest',
           'AILog',
+          'PublicBookingLink',
         ];
         const bypassRls =
           rawBypassRls &&
