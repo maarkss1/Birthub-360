@@ -39,4 +39,3 @@ export function ActiveRecordProvider({ children }: { children: ReactNode }) {
     </ActiveRecordContext.Provider>
   );
 }
-
