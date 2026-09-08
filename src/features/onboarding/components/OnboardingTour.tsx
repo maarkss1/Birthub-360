@@ -147,7 +147,8 @@ export function OnboardingTour() {
           <p className="text-base font-semibold leading-relaxed mb-6">{step.message}</p>
 
           <div className="flex w-full justify-between items-center mt-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={handleClose}
               className={`text-xs font-semibold transition-colors flex items-center gap-1 ${
                 theme === 'light'

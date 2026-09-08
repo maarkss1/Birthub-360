@@ -232,7 +232,8 @@ export function AIPendingActions() {
               </div>
 
               <footer className="border-t border-line p-3 bg-surface-2 flex gap-2">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => void handleApprove(action)}
                   disabled={busy}
                   className="flex-1 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
@@ -241,7 +242,8 @@ export function AIPendingActions() {
                   <Check className="w-4 h-4 mr-1.5" />
                   {busy ? 'Processando...' : presentation.approveLabel}
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => void handleDiscard(action.id)}
                   disabled={busy}
                   className="flex items-center justify-center bg-surface hover:bg-red-50 dark:hover:bg-red-950/30 disabled:opacity-60 text-red-600 dark:text-red-400 border border-line py-2 px-3 rounded-lg text-sm transition-colors cursor-pointer"

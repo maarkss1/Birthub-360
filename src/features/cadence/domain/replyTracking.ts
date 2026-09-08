@@ -51,8 +51,7 @@ export function isGenuineLeadReply(email: InboundEmailReply): boolean {
   if (!email.body?.trim()) return false;
   if (email.autoSubmittedHeader && email.autoSubmittedHeader.toLowerCase() !== 'no') return false;
   const subject = email.subject?.trim();
-  if (subject && AUTO_REPLY_SUBJECT_PATTERNS.some((pattern) => pattern.test(subject)))
-    return false;
+  if (subject && AUTO_REPLY_SUBJECT_PATTERNS.some((pattern) => pattern.test(subject))) return false;
   return true;
 }
 

@@ -82,7 +82,8 @@ export function YoutubeTool(_props: { configured: boolean }) {
           />
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleLookup}
           disabled={isSearching}
           className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"

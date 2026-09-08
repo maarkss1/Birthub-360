@@ -929,7 +929,8 @@ Data: 01/09/2026 | BDR ID: 392
                   <span>
                     Ritmo atual: <b>~3.5 toques/hora</b>
                   </span>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => setTodayActivitiesCount((prev) => prev + 1)}
                     className="px-3 py-1 rounded-xl bg-brand/10 text-brand font-bold text-[11px] hover:bg-brand/20 transition-all cursor-pointer"
                   >
@@ -948,7 +949,8 @@ Data: 01/09/2026 | BDR ID: 392
                   <b>16 leads novos de Agosto</b> estão sem contato inicial. Tempo médio de reação a
                   ser corrigido.
                 </p>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => setActiveTab('emcadencia')}
                   className="w-full py-1.5 rounded-xl bg-critical text-white font-bold text-xs shadow-sm hover:brightness-110 transition-all cursor-pointer"
                 >
@@ -972,7 +974,8 @@ Data: 01/09/2026 | BDR ID: 392
                 {/* Seleção de Tag de Canal */}
                 <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-line">
                   {(['[WhatsApp]', '[Ligação]', '[E-mail]', '[LinkedIn]'] as const).map((tag) => (
-                    <button type="button"
+                    <button
+                      type="button"
                       key={tag}
                       onClick={() => setChannelTag(tag)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
@@ -1004,7 +1007,8 @@ Data: 01/09/2026 | BDR ID: 392
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => {
                       setTodayActivitiesCount((p) => p + 1);
                       setSprintLeadIndex(
@@ -1016,7 +1020,8 @@ Data: 01/09/2026 | BDR ID: 392
                     <Send className="w-4 h-4" />
                     Salvar toque como {channelTag}
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() =>
                       setSprintLeadIndex(
                         (prev) => (prev + 1) % DIAGNOSTIC_DATA.emCadencia.topLeads.length,
@@ -1037,7 +1042,8 @@ Data: 01/09/2026 | BDR ID: 392
                   <CheckSquare className="w-4 h-4 text-brand" />
                   Roteiro do Dia — Passo a Passo por Bloco de Horário
                 </h3>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={resetDailyTasks}
                   className="p-1.5 rounded-lg border border-line bg-surface-2 text-ink-2 hover:text-ink transition-all cursor-pointer text-xs flex items-center gap-1 font-bold"
                 >
@@ -1124,7 +1130,8 @@ Data: 01/09/2026 | BDR ID: 392
                 <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-line">
                   {(Object.keys(PITCHES_BY_SEGMENT) as Array<keyof typeof PITCHES_BY_SEGMENT>).map(
                     (seg) => (
-                      <button type="button"
+                      <button
+                        type="button"
                         key={seg}
                         onClick={() => setSelectedSegment(seg)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
@@ -1181,7 +1188,8 @@ Data: 01/09/2026 | BDR ID: 392
                   className="w-full h-28 p-3 rounded-xl border border-line bg-surface-2 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-brand"
                 />
 
-                <button type="button"
+                <button
+                  type="button"
                   onClick={analyzeTranscript}
                   className="px-5 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                 >
@@ -1289,14 +1297,16 @@ Data: 01/09/2026 | BDR ID: 392
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={copyPautaToClipboard}
                     className="px-4 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                   >
                     {copiedPauta ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     {copiedPauta ? 'Copiado!' : 'Copiar Pauta (Markdown)'}
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => window.print()}
                     className="px-3 py-2.5 rounded-xl border border-line bg-surface-2 text-ink-2 font-bold text-xs hover:text-ink transition-all cursor-pointer flex items-center gap-1.5"
                   >

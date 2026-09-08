@@ -471,7 +471,8 @@ export function DiscoveryFilterPanel({
           </p>
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setShowAdvanced((v) => !v)}
           className="flex items-center justify-between w-full text-[10px] tracking-wider font-bold uppercase text-ink-2 hover:text-brand transition-colors pt-2"
         >
@@ -646,7 +647,8 @@ export function DiscoveryFilterPanel({
       </div>
 
       <div className="pt-6 mt-2 relative z-10 border-t border-line">
-        <button type="button"
+        <button
+          type="button"
           id="btn-discover"
           onClick={onDiscover}
           disabled={isSearching}

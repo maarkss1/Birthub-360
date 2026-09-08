@@ -100,10 +100,6 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
   }, []);
 
   return (
-    // canvas puramente decorativo (partículas de burst) — sem tabIndex, sem handler de foco/clique
-    // (pointerEvents: 'none'), nunca entra na ordem de tabulação; aria-hidden aqui é correto, não
-    // esconde nada operável.
-    // biome-ignore lint/a11y/noAriaHiddenOnFocusable: elemento nunca focável (sem tabIndex, pointerEvents none), ver comentário acima
     <canvas
       ref={canvasRef}
       style={{

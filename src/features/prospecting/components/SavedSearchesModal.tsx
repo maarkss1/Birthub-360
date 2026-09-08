@@ -150,7 +150,8 @@ export function SavedSearchesModal({
         title={dialogTitle}
         maxWidth="max-w-2xl"
         footer={
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="px-5 py-2 rounded-2xl bg-surface-2 text-xs font-bold text-ink hover:bg-surface-3 transition-colors"
           >
@@ -161,7 +162,8 @@ export function SavedSearchesModal({
         <div className="space-y-4">
           {/* Botão para salvar filtro atual */}
           {!showCreateForm ? (
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setShowCreateForm(true)}
               className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-active dark:text-brand-2 flex items-center justify-center gap-2 hover:bg-brand/5 transition-all"
             >
@@ -274,7 +276,8 @@ export function SavedSearchesModal({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => handleRun(s)}
                     disabled={runningId === s.id}
                     title="Executar busca agora"
@@ -287,7 +290,8 @@ export function SavedSearchesModal({
                     )}
                     Executar
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => handleDelete(s.id)}
                     title="Excluir busca salva"
                     className="p-2 text-ink-2 hover:text-red-500 rounded-xl hover:bg-red-50 transition-colors"

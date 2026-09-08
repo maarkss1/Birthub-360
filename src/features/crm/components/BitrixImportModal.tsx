@@ -157,7 +157,8 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
               </p>
             </div>
           </div>
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="p-2 rounded-xl text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors"
           >

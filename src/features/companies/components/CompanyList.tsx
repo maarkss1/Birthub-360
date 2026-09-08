@@ -313,7 +313,8 @@ export function CompanyList() {
         const companyLabel = company.tradeName || company.legalName;
         return (
           <div className="flex items-center justify-end gap-1 opacity-100 pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 transition-opacity">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => handleEnrich(company.id)}
               disabled={enrichingId === company.id}
               className="p-2 text-ink-2 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg transition-colors"
@@ -326,7 +327,8 @@ export function CompanyList() {
                 <Sparkles className="w-4 h-4" />
               )}
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setSelectedCompany(company);
                 setIsFormOpen(true);
@@ -337,7 +339,8 @@ export function CompanyList() {
             >
               <Edit className="w-4 h-4" />
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => handleDelete(company.id)}
               className="p-2 text-ink-2 hover:text-danger-active dark:hover:text-danger hover:bg-danger/10 rounded-lg transition-colors"
               title="Excluir"
@@ -425,7 +428,8 @@ export function CompanyList() {
                             onde text-ink-2 senta sobre bg-surface-2 (toggle, chips, badge inativo,
                             "+N" de ferramentas, "Limpar busca", cabeçalho da tabela). */}
             <div className="bg-surface-2 p-1 rounded-2xl border border-line flex items-center gap-1">
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setLayoutMode('grid')}
                 className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'grid' ? 'bg-brand-active text-white shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
                 title="Visão em Cards com Logos de Ferramentas"
@@ -434,7 +438,8 @@ export function CompanyList() {
                 <LayoutGrid className="w-4 h-4" />
                 <span className="hidden sm:inline">Cards</span>
               </button>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setLayoutMode('table')}
                 className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'table' ? 'bg-brand-active text-white shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
                 title="Visão em Tabela Compacta"
@@ -445,7 +450,8 @@ export function CompanyList() {
               </button>
             </div>
 
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setSelectedCompany(null);
                 setIsFormOpen(true);
@@ -471,7 +477,8 @@ export function CompanyList() {
             />
           </div>
           {inputValue && (
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setInputValue('');
                 setSearchTerm('');
@@ -660,7 +667,8 @@ export function CompanyList() {
 
                   {/* Action Footer */}
                   <div className="mt-5 pt-3 border-t border-line flex items-center justify-between">
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={() => {
                         setSelectedCompany(company);
                         setViewMode('detail');
@@ -672,7 +680,8 @@ export function CompanyList() {
                     </button>
 
                     <div className="flex items-center gap-1">
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => handleEnrich(company.id)}
                         disabled={enrichingId === company.id}
                         className="p-2 text-ink-2 hover:text-amber-400 hover:bg-amber-500/10 rounded-xl transition-colors"
@@ -685,7 +694,8 @@ export function CompanyList() {
                           <Sparkles className="w-4 h-4" />
                         )}
                       </button>
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => {
                           setSelectedCompany(company);
                           setIsFormOpen(true);
@@ -696,7 +706,8 @@ export function CompanyList() {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => handleDelete(company.id)}
                         className="p-2 text-ink-2 hover:text-danger-active dark:hover:text-danger hover:bg-danger/10 rounded-xl transition-colors"
                         title="Excluir"
@@ -757,7 +768,8 @@ export function CompanyList() {
                             segunda cor pra exatamente a mesma ação. text-amber-700/dark:text-amber-400
                             (não amber-400 sozinho) porque o botão tem texto visível permanente, não só
                             ícone em hover — amber-400 puro falha contraste em fundo claro (~1.7:1). */}
-            <button type="button"
+            <button
+              type="button"
               onClick={handleBulkEnrich}
               disabled={isBulkProcessing}
               className="flex items-center gap-2 px-4 py-2 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-400 rounded-full text-xs font-bold transition-all"

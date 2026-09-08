@@ -209,64 +209,82 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       .catch(() => setStages([]));
   }, [connectionId, categoryId]);
 
-  const loadDeals = useCallback(async (from: number) => {
-    setLoading(true);
-    setError('');
-    try {
-      const params = new URLSearchParams({ start: String(from), connectionId });
-      if (categoryId) params.set('categoryId', categoryId);
-      if (stageId) params.set('stageId', stageId);
-      if (assignedById) params.set('assignedById', assignedById);
-      if (month) params.set('month', month);
-      if (year) params.set('year', year);
-      if (debouncedSearch.trim()) params.set('search', debouncedSearch.trim());
-      if (customFieldCode && debouncedCustomFieldValue.trim()) {
-        params.set('customFieldCode', customFieldCode);
-        params.set('customFieldValue', debouncedCustomFieldValue.trim());
+  const loadDeals = useCallback(
+    async (from: number) => {
+      setLoading(true);
+      setError('');
+      try {
+        const params = new URLSearchParams({ start: String(from), connectionId });
+        if (categoryId) params.set('categoryId', categoryId);
+        if (stageId) params.set('stageId', stageId);
+        if (assignedById) params.set('assignedById', assignedById);
+        if (month) params.set('month', month);
+        if (year) params.set('year', year);
+        if (debouncedSearch.trim()) params.set('search', debouncedSearch.trim());
+        if (customFieldCode && debouncedCustomFieldValue.trim()) {
+          params.set('customFieldCode', customFieldCode);
+          params.set('customFieldValue', debouncedCustomFieldValue.trim());
+        }
+        const { data, meta } = await api.get<{
+          data: { deals: BitrixDealSummary[]; next: number | null; total: number };
+          meta: { restricted: boolean; warning?: string };
+        }>(`/api/bitrix/deals?${params}`);
+        setDeals(data.deals);
+        setNext(data.next);
+        setTotal(data.total);
+        setStart(from);
+        setRestrictedWarning(meta.warning || '');
+      } catch (e) {
+        setError(
+          e instanceof Error ? e.message : 'Não foi possível carregar os negócios do Bitrix24.',
+        );
+      } finally {
+        setLoading(false);
       }
-      const { data, meta } = await api.get<{
-        data: { deals: BitrixDealSummary[]; next: number | null; total: number };
-        meta: { restricted: boolean; warning?: string };
-      }>(`/api/bitrix/deals?${params}`);
-      setDeals(data.deals);
-      setNext(data.next);
-      setTotal(data.total);
-      setStart(from);
-      setRestrictedWarning(meta.warning || '');
-    } catch (e) {
-      setError(
-        e instanceof Error ? e.message : 'Não foi possível carregar os negócios do Bitrix24.',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [assignedById, categoryId, connectionId, customFieldCode, debouncedCustomFieldValue, debouncedSearch, month, stageId, year]);
+    },
+    [
+      assignedById,
+      categoryId,
+      connectionId,
+      customFieldCode,
+      debouncedCustomFieldValue,
+      debouncedSearch,
+      month,
+      stageId,
+      year,
+    ],
+  );
 
-  const loadLeads = useCallback(async (from: number) => {
-    setLoading(true);
-    setError('');
-    try {
-      const params = new URLSearchParams({ start: String(from), connectionId });
-      if (debouncedSearch.trim()) params.set('search', debouncedSearch.trim());
-      if (customFieldCode && debouncedCustomFieldValue.trim()) {
-        params.set('customFieldCode', customFieldCode);
-        params.set('customFieldValue', debouncedCustomFieldValue.trim());
+  const loadLeads = useCallback(
+    async (from: number) => {
+      setLoading(true);
+      setError('');
+      try {
+        const params = new URLSearchParams({ start: String(from), connectionId });
+        if (debouncedSearch.trim()) params.set('search', debouncedSearch.trim());
+        if (customFieldCode && debouncedCustomFieldValue.trim()) {
+          params.set('customFieldCode', customFieldCode);
+          params.set('customFieldValue', debouncedCustomFieldValue.trim());
+        }
+        const { data, meta } = await api.get<{
+          data: { leads: BitrixLeadSummary[]; next: number | null; total: number };
+          meta: { restricted: boolean; warning?: string };
+        }>(`/api/bitrix/leads?${params}`);
+        setLeads(data.leads);
+        setNext(data.next);
+        setTotal(data.total);
+        setStart(from);
+        setRestrictedWarning(meta.warning || '');
+      } catch (e) {
+        setError(
+          e instanceof Error ? e.message : 'Não foi possível carregar os leads do Bitrix24.',
+        );
+      } finally {
+        setLoading(false);
       }
-      const { data, meta } = await api.get<{
-        data: { leads: BitrixLeadSummary[]; next: number | null; total: number };
-        meta: { restricted: boolean; warning?: string };
-      }>(`/api/bitrix/leads?${params}`);
-      setLeads(data.leads);
-      setNext(data.next);
-      setTotal(data.total);
-      setStart(from);
-      setRestrictedWarning(meta.warning || '');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Não foi possível carregar os leads do Bitrix24.');
-    } finally {
-      setLoading(false);
-    }
-  }, [connectionId, customFieldCode, debouncedCustomFieldValue, debouncedSearch]);
+    },
+    [connectionId, customFieldCode, debouncedCustomFieldValue, debouncedSearch],
+  );
 
   const load = useCallback(
     (from: number) => (mode === 'deals' ? loadDeals(from) : loadLeads(from)),
@@ -465,7 +483,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => load(start)}
             disabled={loading}
             className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-ink-2 hover:text-ink bg-surface border border-line rounded-2xl shadow-sm hover:shadow transition-all disabled:opacity-50"
@@ -480,14 +499,16 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       {/* Alternador de Modo: Negócios x Leads + Indicadores de Valor */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex gap-1.5 p-1.5 bg-surface-2 rounded-2xl border border-line w-fit">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setMode('deals')}
             className={`flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl transition-all ${mode === 'deals' ? 'bg-gradient-to-r from-brand-active to-brand-2 text-white shadow-md shadow-brand-active/30' : 'text-ink-2 hover:text-ink'}`}
           >
             <Building2 className="w-4 h-4" />
             Negócios (Comercial)
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setMode('leads')}
             className={`flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl transition-all ${mode === 'leads' ? 'bg-gradient-to-r from-brand-active to-brand-2 text-white shadow-md shadow-brand-active/30' : 'text-ink-2 hover:text-ink'}`}
           >
@@ -507,14 +528,16 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
 
           {selected.size > 0 && (
             <div className="flex items-center gap-2">
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setShowBulkEditModal(true)}
                 className="flex items-center gap-1.5 px-3.5 py-2 bg-surface-2 hover:bg-line text-ink text-xs font-bold rounded-xl transition-all"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 Editar em Lote ({selected.size})
               </button>
-              <button type="button"
+              <button
+                type="button"
                 onClick={importSelected}
                 disabled={importing}
                 className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-white text-xs font-bold rounded-xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-50"
@@ -548,7 +571,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
               className="w-full h-10 text-sm rounded-2xl border border-line bg-surface-2 text-ink pl-10 pr-9 placeholder:text-ink-2 focus:bg-surface focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none"
             />
             {search && (
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setSearch('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-2 hover:text-ink p-1"
                 title="Limpar busca"
@@ -560,20 +584,23 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
 
           {/* Filtros Rápidos (Pills) */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setQuickFilter('all')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${quickFilter === 'all' ? 'bg-ink text-surface shadow-sm' : 'bg-surface-2 text-ink-2 hover:text-ink'}`}
             >
               Todos ({mode === 'deals' ? deals.length : leads.length})
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setQuickFilter('unimported')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${quickFilter === 'unimported' ? 'bg-brand-active text-white shadow-sm shadow-brand-active/20' : 'bg-surface-2 text-ink-2 hover:text-ink'}`}
             >
               Disponíveis para Importar
             </button>
             {mode === 'deals' && (
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setQuickFilter('has_value')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${quickFilter === 'has_value' ? 'bg-green-600 text-white shadow-sm shadow-green-600/20' : 'bg-surface-2 text-ink-2 hover:text-ink'}`}
               >
@@ -581,7 +608,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
               </button>
             )}
             {mode === 'leads' && (
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setQuickFilter('has_phone')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${quickFilter === 'has_phone' ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/20' : 'bg-surface-2 text-ink-2 hover:text-ink'}`}
               >
@@ -792,7 +820,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       {!loading && availableItems.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 bg-gradient-to-r from-surface-2 to-soft border border-line rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
-            <button type="button"
+            <button
+              type="button"
               onClick={toggleAllPage}
               className="flex items-center gap-2 text-xs font-bold text-ink hover:text-brand dark:hover:text-brand-2 transition-colors"
             >
@@ -804,7 +833,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
               <span>Selecionar Todos da Página ({availableItems.length} disponíveis)</span>
             </button>
 
-            <button type="button"
+            <button
+              type="button"
               onClick={selectAllAvailable}
               className="text-xs font-bold text-brand-active hover:brightness-110 dark:text-brand-2 flex items-center gap-1 underline underline-offset-2"
             >
@@ -818,7 +848,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
               <span className="text-xs font-bold text-brand-active dark:text-brand-2 bg-soft px-3 py-1 rounded-full">
                 {selected.size} selecionado(s)
               </span>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setSelected(new Set())}
                 className="text-xs font-bold text-ink-2 hover:text-red-500 transition-colors"
               >
@@ -907,7 +938,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                     {/* Ação Individual de 1 Clique */}
                     {!deal.alreadyImported && (
                       <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-line">
-                        <button type="button"
+                        <button
+                          type="button"
                           onClick={() => importSingle(deal.id)}
                           disabled={isSingleImporting || importing}
                           className="flex items-center gap-1.5 px-3.5 py-2 bg-soft hover:bg-brand/20 text-brand-active dark:text-brand-2 border border-brand/20 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
@@ -1018,7 +1050,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                     {/* Ação Individual de 1 Clique */}
                     {!lead.alreadyImported && (
                       <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-line">
-                        <button type="button"
+                        <button
+                          type="button"
                           onClick={() => importSingle(lead.id)}
                           disabled={isSingleImporting || importing}
                           className="flex items-center gap-1.5 px-3.5 py-2 bg-soft hover:bg-brand/20 text-brand-active dark:text-brand-2 border border-brand/20 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
@@ -1051,14 +1084,16 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       {/* Paginação Inferior */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
         <div className="flex items-center gap-2">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => load(Math.max(0, start - 50))}
             disabled={loading || start === 0}
             className="px-4 py-2 border border-line rounded-2xl text-xs font-bold text-ink hover:bg-surface-2 disabled:opacity-30 transition-colors"
           >
             ← Anterior
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => next != null && load(next)}
             disabled={loading || next == null}
             className="px-4 py-2 border border-line rounded-2xl text-xs font-bold text-ink hover:bg-surface-2 disabled:opacity-30 transition-colors"
@@ -1073,7 +1108,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
 
         <div className="flex items-center gap-2">
           {selected.size > 0 && (
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setShowBulkEditModal(true)}
               className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-2 hover:bg-line text-ink text-xs font-bold rounded-2xl transition-all"
             >
@@ -1081,7 +1117,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
               Editar ({selected.size})
             </button>
           )}
-          <button type="button"
+          <button
+            type="button"
             onClick={importSelected}
             disabled={importing || selected.size === 0}
             className="flex items-center gap-1.5 px-6 py-2.5 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-white text-xs font-bold rounded-2xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-40"
@@ -1116,7 +1153,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                   </p>
                 </div>
               </div>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setShowBulkEditModal(false)}
                 aria-label="Fechar"
                 className="text-ink-2 hover:text-ink p-1 rounded-lg"
