@@ -7,6 +7,7 @@ import {
   listGrantedModulesForUser,
   ModuleAccessServiceError,
 } from '../../src/features/module-access/services/moduleAccess.service';
+import { MODULE_KEYS } from '../../src/config/module-catalog';
 
 const ORG_ID = 'test-org-id';
 
@@ -28,11 +29,11 @@ describe('Module Access Grant Integration', () => {
       grantedByUserId: 'admin-1',
     });
 
-    expect(await listGrantedModulesForUser(ORG_ID, user.id)).toEqual(['social-selling']);
+    expect(await listGrantedModulesForUser(ORG_ID, user.id, user.role)).toEqual(['social-selling']);
 
     await revokeModuleAccess({ organizationId: ORG_ID, userId: user.id, moduleKey: 'social-selling' });
 
-    expect(await listGrantedModulesForUser(ORG_ID, user.id)).toEqual([]);
+    expect(await listGrantedModulesForUser(ORG_ID, user.id, user.role)).toEqual([]);
   });
 
   it('grant is idempotent (upsert) for the same user/module pair', async () => {
@@ -86,6 +87,24 @@ describe('Module Access Grant Integration', () => {
         grantedByUserId: 'admin-1',
       }),
     ).rejects.toThrow(ModuleAccessServiceError);
+  });
+
+  it('ADMIN vê todos os módulos do catálogo automaticamente, sem precisar de concessão', async () => {
+    const admin = await prisma.user.create({
+      data: {
+        name: 'Marcelo Admin',
+        email: 'marcelo.admin@module-access.test',
+        organizationId: ORG_ID,
+        role: 'ADMIN',
+      },
+    });
+
+    expect(await listGrantedModulesForUser(ORG_ID, admin.id, admin.role)).toEqual(
+      MODULE_KEYS,
+    );
+
+    const grants = await prisma.moduleAccessGrant.findMany({ where: { userId: admin.id } });
+    expect(grants).toHaveLength(0);
   });
 
   it('rejects granting to a user outside the organization', async () => {
