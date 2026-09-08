@@ -1,6 +1,28 @@
 import { describe, expect, it } from 'vitest';
-import { canUserRolePerformCapabilityAction } from '../../src/features/job-roles/services/capabilityUserRolePolicy.js';
+import { COMMERCIAL_AGENT_REGISTRY } from '../../src/features/intelligence/agents/commercialAgentRegistry.js';
+import normalizedAgents from '../../src/features/job-roles/catalog/agents.normalized.json';
+import agentCapabilities from '../../src/features/job-roles/catalog/agentCapabilities.normalized.json';
 import { getVerifiedToolBinding } from '../../src/features/job-roles/catalog/verifiedToolBindings.js';
+import { canUserRolePerformCapabilityAction } from '../../src/features/job-roles/services/capabilityUserRolePolicy.js';
+
+describe('Capability Engine hardening — catálogo de agentes', () => {
+  it('reconcilia 379 agentes importados + 12 agentes preexistentes = 391 governados', () => {
+    const importedCodes = new Set(
+      (normalizedAgents.agents as Array<{ code: string }>).map((agent) => agent.code),
+    );
+    const cellCodes = new Set(COMMERCIAL_AGENT_REGISTRY.map((agent) => agent.id));
+    const governedCodes = new Set([...importedCodes, ...cellCodes]);
+    const mappedCodes = new Set(Object.keys(agentCapabilities.agentCapabilities));
+
+    expect(importedCodes.size).toBe(379);
+    expect(cellCodes.size).toBe(12);
+    expect([...cellCodes].filter((code) => importedCodes.has(code))).toEqual([]);
+    expect(governedCodes.size).toBe(391);
+    expect(mappedCodes.size).toBe(391);
+    expect([...governedCodes].filter((code) => !mappedCodes.has(code))).toEqual([]);
+    expect([...mappedCodes].filter((code) => !governedCodes.has(code))).toEqual([]);
+  });
+});
 
 describe('Capability Engine hardening — UserRole policy', () => {
   it('mantém VISUALIZADOR estritamente em leitura', () => {
