@@ -39,6 +39,7 @@ Acesse **Networking → Virtual Cloud Networks → sua VCN → Security Lists/Ne
 | `0.0.0.0/0` | TCP | `80` | HTTP / ACME |
 | `0.0.0.0/0` | TCP | `443` | HTTPS |
 | IPs administrativos confiáveis | TCP | `22` | SSH |
+| IPs das máquinas de desenvolvimento (`/32` cada) | TCP | `5432` | Postgres direto (seção 4.2) — **nunca** `0.0.0.0/0` |
 
 Evite expor SSH para `0.0.0.0/0` quando puder restringir por IP de origem ou usar outro mecanismo de acesso seguro.
 
@@ -181,6 +182,65 @@ docker compose --env-file .env.production -f docker-compose.oci.yml --profile qu
 Render reativado por engano) consumindo as mesmas filas BullMQ ao mesmo tempo — isso duplica o
 processamento de cada job. Se o worker desta stack estiver ativo, o worker do Render
 (`prospector-atlas-worker`) deve continuar com `autoDeployTrigger: off`.
+
+### 4.2 Postgres da Oracle é o único banco — acesso direto das máquinas de desenvolvimento
+
+Decisão do dono do produto em 2026-09-08: **não existe mais Postgres local nem em Docker** nas
+máquinas de desenvolvimento. O container `postgres` desta stack é o único banco da aplicação, e
+toda `DATABASE_URL` (produção dentro da instância e desenvolvimento fora dela) aponta para ele.
+O que muda em relação ao desenho original (loopback only):
+
+| Onde | O que foi feito |
+| --- | --- |
+| `docker-compose.oci.yml` | `postgres` publica `5432:5432` (todas as interfaces) e sobe com `ssl=on` |
+| `docker/postgres/Dockerfile` | instala `openssl` e gera certificado autoassinado no build (chave nunca sai da instância) |
+| `scripts/deploy-oci.sh` | libera 5432 no firewall do host (iptables/firewalld/ufw) |
+| `docker-compose.yml` (local) | serviço `postgres` removido; legado opt-in em `docker-compose.postgres-local.yml` só para testes |
+| `.env.example` / `.env` | `DATABASE_URL` direto para o IP público, com `?sslmode=require&uselibpqcompat=true` |
+
+**Procedimento na instância** (uma vez, via SSH — recria o container `postgres`, ~30 s de
+indisponibilidade do banco; o volume `oci_pgdata` é preservado):
+
+```bash
+cd ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR
+git pull
+./scripts/deploy-oci.sh          # rebuild da imagem do Postgres (TLS) + recreate do container
+docker exec -i atlasgr_postgres psql -U prospector -d prospectordb -tAc "show ssl"   # esperado: on
+```
+
+**Security List da VCN** (Console OCI → Networking → VCN → Security List → Ingress Rules): uma
+regra TCP 5432 por máquina de desenvolvimento, com Source CIDR `= <IP público da máquina>/32`
+(descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a única barreira de
+rede antes da autenticação por senha. IP dinâmico mudou = atualizar a regra.
+
+**Na máquina de desenvolvimento**, pegue a senha do papel de aplicação diretamente da instância
+(não circula por chat/issue/PR) e coloque no `.env`:
+
+```bash
+ssh oracle-atlasgr 'grep ^APP_DB_PASSWORD= ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR/.env.production'
+```
+
+```env
+DATABASE_URL=postgresql://prospector_app:<APP_DB_PASSWORD>@163.176.150.147:5432/prospectordb?sslmode=require&uselibpqcompat=true
+```
+
+`sslmode=require&uselibpqcompat=true` é o único par que funciona para os dois clientes do projeto:
+o `pg` (Pool em `src/lib/prisma.ts`) só aceita o certificado autoassinado com `uselibpqcompat=true`
+(sem isso `sslmode=require` é tratado como `verify-full` e a conexão falha), e o Prisma CLI
+(`migrate deploy`, via `prisma.config.ts`) entende `sslmode=require` e ignora o parâmetro extra.
+
+Validação (sem Docker local): `npx prisma migrate status` deve listar as migrations como aplicadas
+e `npm run dev` + `curl -fsS http://localhost:3005/health/ready` deve responder 200.
+
+**Consequências operacionais que não são opcionais:**
+
+- Todo desenvolvedor trabalha **no dado real de produção**. Não existe mais banco de sandbox por
+  padrão — `prisma migrate reset`, `TRUNCATE`, seeds destrutivos ou testes de integração apontando
+  para esta URL destroem dado de cliente. Os testes continuam usando `prospectordb_test` num
+  Postgres local opt-in (`docker-compose.postgres-local.yml`) exatamente por isso.
+- `prisma migrate dev` (que pode recriar o banco) fica proibido contra esta URL; use
+  `prisma migrate deploy` para aplicar migrations já versionadas.
+- Backup diário (seção 8) deixa de ser recomendação e vira pré-requisito.
 
 ---
 
