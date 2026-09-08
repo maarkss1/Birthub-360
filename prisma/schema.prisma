@@ -3283,7 +3283,8 @@ model ProspectingSearchExecution {
 //
 // `JobRole` NUNCA concede nível de segurança sozinho — só `UserRole` decide o que uma rota
 // autoriza (`requireRole`/`hasRequiredRole` em src/lib/auth/authorization.ts, inalterados). Ver
-// teste de segurança em src/lib/auth/__tests__/jobRole.security.unit.test.ts.
+// teste de segurança em tests/integration/job-roles.test.ts (describe "segurança — JobRole nunca
+// substitui UserRole").
 //
 // DECISÃO DE ARQUITETURA — JobRole é catálogo GLOBAL (sem organizationId), não por-organização
 // (a "opção A" descrita no prompt da onda). Motivo: os 12 cargos desta fundação são um catálogo
@@ -3407,10 +3408,11 @@ model UserJobRole {
   @@index([userId])
 }
 
-/// Catálogo de agentes — identidade e metadado de governança, nunca a implementação em si
-/// (código do agente continua em `src/features/intelligence/agents/**`, ex.:
-/// `commercialAgentRegistry.ts`). Global/produto, não por-organização — ver decisão de
-/// arquitetura na seção acima.
+/// Catálogo de agentes — IDENTIDADE e estado administrativo, nunca a implementação em si (código
+/// do agente continua em `src/features/intelligence/agents/**`, ex.: `commercialAgentRegistry.ts`)
+/// nem dado mutável de versão (isso é só `AgentVersion` — `systemPrompt`/`configuration`/versão
+/// nunca são duplicados aqui). Global/produto, não por-organização — ver decisão de arquitetura na
+/// seção acima.
 model AgentDefinition {
   id          String  @id @default(cuid())
   code        String  @unique
@@ -3429,11 +3431,8 @@ model AgentDefinition {
   requiresApproval Boolean               @default(false)
   isSystem         Boolean               @default(true)
   isActive         Boolean               @default(true)
-  /// Número da versão ATIVA atual (denormalizado — a fonte de verdade de cada versão em si é
-  /// `AgentVersion`; este campo evita um join extra só para saber "qual é a versão corrente").
-  version   Int      @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
 
   versions   AgentVersion[]
   roleGrants RoleAgentGrant[]
@@ -3445,6 +3444,14 @@ model AgentDefinition {
 /// Versão executável de um `AgentDefinition` — nunca sobrescrita in-place. Nesta onda é só a
 /// fundação de versionamento (sem aprendizado automático criando versões sozinho); `configuration`
 /// fica livre (Json) porque o shape real de config por tipo de agente ainda não está definido.
+///
+/// "Qual é a versão ativa?" tem UMA fonte de verdade: a linha com `status = ACTIVE` — nunca um
+/// segundo contador em `AgentDefinition` (isso já existiu como campo denormalizado nesta onda e
+/// foi removido na auto-revisão por duplicar semanticamente o mesmo dado sem nenhum consumidor
+/// real ainda). Um índice único parcial na migration garante no banco que nunca existam duas
+/// versões `ACTIVE` para o mesmo `agentDefinitionId` (não representável em `@@unique` do Prisma
+/// por ser condicional a `status = 'ACTIVE'` — mesmo padrão do índice parcial de
+/// `UserJobRole.isPrimary`).
 model AgentVersion {
   id                String              @id @default(cuid())
   agentDefinitionId String

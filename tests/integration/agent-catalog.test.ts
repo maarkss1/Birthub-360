@@ -5,6 +5,7 @@ import { seedCanonicalJobRoles, getJobRoleByCode } from '../../src/features/job-
 import {
   upsertAgentDefinition,
   upsertAgentVersion,
+  getActiveAgentVersion,
   grantAgentToRole,
   revokeAgentFromRole,
   listAgentDefinitions,
@@ -71,6 +72,26 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
     const v2 = detail?.versions.find((v) => v.version === 2);
     expect(v1?.status).toBe('DEPRECATED');
     expect(v2?.status).toBe('ACTIVE');
+
+    // "Qual é a versão ativa?" tem UMA fonte de verdade (AgentVersion.status = ACTIVE) — nunca um
+    // segundo contador em AgentDefinition (removido na auto-revisão, ver prisma/schema.prisma).
+    const active = await getActiveAgentVersion(agent.id);
+    expect(active?.version).toBe(2);
+    expect(active?.systemPrompt).toBe('prompt v2');
+  });
+
+  it('rejeita uma segunda versão ACTIVE para o mesmo agente (índice único parcial no banco)', async () => {
+    const agent = await upsertAgentDefinition({ code: 'test-double-active-agent', name: 'Dupla ativa', status: 'PROMPT_READY' });
+    await upsertAgentVersion({ agentDefinitionId: agent.id, version: 1, status: 'ACTIVE' });
+
+    await expect(
+      prisma.agentVersion.create({
+        data: { agentDefinitionId: agent.id, version: 2, status: 'ACTIVE' },
+      }),
+    ).rejects.toThrow();
+
+    const active = await getActiveAgentVersion(agent.id);
+    expect(active?.version).toBe(1);
   });
 
   it('um mesmo agente pode ser concedido a vários cargos sem duplicar o AgentDefinition', async () => {

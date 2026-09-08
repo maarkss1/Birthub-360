@@ -27,7 +27,6 @@ export interface AgentDefinitionDto {
   requiresApproval: boolean;
   isSystem: boolean;
   isActive: boolean;
-  version: number;
   primaryJobRole: { id: string; code: string; name: string } | null;
 }
 
@@ -42,7 +41,6 @@ const AGENT_DEFINITION_SELECT = {
   requiresApproval: true,
   isSystem: true,
   isActive: true,
-  version: true,
   primaryJobRole: { select: { id: true, code: true, name: true } },
 } as const;
 
@@ -143,8 +141,9 @@ export async function listAgentsForJobRole(jobRoleId: string): Promise<RoleAgent
 
 /** Upsert idempotente por `code` — usado pelo seed (scripts/seed-multi-cargo.ts) para popular o
  *  catálogo a partir dos 12 agentes já reais de `commercialAgentRegistry.ts`, e por qualquer
- *  cadastro futuro de agente (inclusive a importação dos 392 do PROMPT 2). Nunca sobrescreve
- *  `version` aqui — isso é papel de `AgentVersion`/ativação de versão, não do catálogo. */
+ *  cadastro futuro de agente (inclusive a importação dos 392 do PROMPT 2). `AgentDefinition` é só
+ *  identidade/estado administrativo — nunca grava prompt/configuração/versão aqui, isso é papel
+ *  exclusivo de `AgentVersion` (ver `upsertAgentVersion`/`getActiveAgentVersion` abaixo). */
 export async function upsertAgentDefinition(input: {
   code: string;
   name: string;
@@ -212,6 +211,21 @@ export async function upsertAgentVersion(input: {
       status: input.status ?? 'ACTIVE',
     },
     select: { id: true, version: true },
+  });
+}
+
+/** Única forma de perguntar "qual é a versão ativa deste agente?" — nunca um contador
+ *  denormalizado em `AgentDefinition` (ver comentário do model `AgentVersion` em
+ *  prisma/schema.prisma). `null` quando o agente ainda não tem nenhuma versão ativada. */
+export async function getActiveAgentVersion(agentDefinitionId: string): Promise<{
+  id: string;
+  version: number;
+  systemPrompt: string | null;
+  configuration: Prisma.JsonValue | null;
+} | null> {
+  return prisma.agentVersion.findFirst({
+    where: { agentDefinitionId, status: 'ACTIVE' },
+    select: { id: true, version: true, systemPrompt: true, configuration: true },
   });
 }
 

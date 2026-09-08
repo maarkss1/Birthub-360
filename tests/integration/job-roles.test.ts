@@ -176,6 +176,90 @@ describe('Fundação Multi-Cargo — JobRole/UserJobRole', () => {
     });
   });
 
+  // Auditoria da fundação — item 17 (cross-tenant): um ADMIN da organização A nunca pode listar
+  // nem alterar o vínculo cargo↔usuário de um usuário da organização B, mesmo conhecendo o id.
+  describe('segurança — isolamento de tenant em UserJobRole', () => {
+    async function createOtherOrgUserWithRole(jobRoleCode: string) {
+      const jobRole = await getJobRoleByCode(jobRoleCode);
+      const user = await requestContext.run({ bypassRls: true }, async () => {
+        await prisma.organization.upsert({
+          where: { id: OTHER_ORG_ID },
+          update: {},
+          create: { id: OTHER_ORG_ID, name: 'Outra Org' },
+        });
+        return prisma.user.create({
+          data: {
+            name: 'Isolde Outro Tenant',
+            email: `isolde.${Date.now()}@job-roles.test`,
+            organizationId: OTHER_ORG_ID,
+          },
+        });
+      });
+      // "UserJobRole" tem RLS estrita (sem cláusula de bypass_rls — ver migration
+      // 20260908020000_multi_cargo_agent_governance_foundation, mesmo padrão fail-closed de
+      // ModuleAccessGrant), então esta linha só pode ser criada dentro do tenant real da
+      // organização B — nunca sob bypass. Simula a mesma gravação que assignJobRole faria se
+      // chamado por um ADMIN de dentro da própria organização B.
+      const userJobRole = await requestContext.run({ tenantId: OTHER_ORG_ID }, () =>
+        prisma.userJobRole.create({
+          data: {
+            organizationId: OTHER_ORG_ID,
+            userId: user.id,
+            jobRoleId: jobRole!.id,
+            isPrimary: true,
+            assignedBy: 'admin-org-b',
+          },
+        }),
+      );
+      return { user, userJobRole };
+    }
+
+    async function cleanupOtherOrg(userId: string) {
+      await requestContext.run({ tenantId: OTHER_ORG_ID }, () =>
+        prisma.userJobRole.deleteMany({ where: { userId } }),
+      );
+      await requestContext.run({ bypassRls: true }, async () => {
+        await prisma.user.delete({ where: { id: userId } });
+        await prisma.organization.delete({ where: { id: OTHER_ORG_ID } });
+      });
+    }
+
+    it('ADMIN da organização A não consegue listar o vínculo de cargo de um usuário da organização B', async () => {
+      const { user } = await createOtherOrgUserWithRole('CLOSER');
+
+      // Um ADMIN de ORG_ID tentando consultar o cargo de um usuário que na verdade é da outra
+      // organização — passar o organizationId errado (o dele, ORG_ID) nunca pode "achar" a linha
+      // real (que pertence a OTHER_ORG_ID).
+      const roles = await listUserJobRoles(ORG_ID, user.id);
+      expect(roles).toEqual([]);
+
+      await cleanupOtherOrg(user.id);
+    });
+
+    it('ADMIN da organização A não consegue desativar o vínculo de cargo de um usuário da organização B', async () => {
+      const { user, userJobRole } = await createOtherOrgUserWithRole('GERENTE_COMERCIAL');
+
+      await expect(
+        deactivateUserJobRole({
+          organizationId: ORG_ID,
+          userId: user.id,
+          jobRoleId: userJobRole.jobRoleId,
+          actorId: 'admin-org-a',
+        }),
+      ).rejects.toThrow(JobRoleServiceError);
+
+      // O vínculo real da organização B continua intacto — o ataque não teve efeito nenhum. Lido
+      // dentro do tenant real (B) pelo mesmo motivo do create acima: "UserJobRole" não tem
+      // cláusula de bypass_rls.
+      const untouched = await requestContext.run({ tenantId: OTHER_ORG_ID }, () =>
+        prisma.userJobRole.findUnique({ where: { id: userJobRole.id } }),
+      );
+      expect(untouched?.isActive).toBe(true);
+
+      await cleanupOtherOrg(user.id);
+    });
+  });
+
   // Seção 24 do prompt da onda: prova explícita de que JobRole nunca eleva o nível de segurança
   // real do usuário — UserRole (ADMIN/GESTOR/CLOSER/SDR/VISUALIZADOR) continua sendo a única fonte
   // de autoridade, `hasRequiredRole`/`requireRole` nunca leem JobRole.

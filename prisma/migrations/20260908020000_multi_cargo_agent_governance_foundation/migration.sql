@@ -63,7 +63,6 @@ CREATE TABLE "AgentDefinition" (
     "requiresApproval" BOOLEAN NOT NULL DEFAULT false,
     "isSystem" BOOLEAN NOT NULL DEFAULT true,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "version" INTEGER NOT NULL DEFAULT 1,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -133,6 +132,11 @@ CREATE UNIQUE INDEX "AgentVersion_agentDefinitionId_version_key" ON "AgentVersio
 
 -- CreateIndex
 CREATE INDEX "AgentVersion_agentDefinitionId_status_idx" ON "AgentVersion"("agentDefinitionId", "status");
+
+-- CreateIndex (índice único parcial — só uma versão ACTIVE por agente; mesma técnica do índice
+-- parcial de "UserJobRole_one_active_primary_per_user" acima. Garante no banco que "qual é a
+-- versão ativa" nunca fique ambíguo, sem precisar de um segundo contador em "AgentDefinition".)
+CREATE UNIQUE INDEX "AgentVersion_one_active_per_agent" ON "AgentVersion"("agentDefinitionId") WHERE "status" = 'ACTIVE';
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RoleAgentGrant_jobRoleId_agentDefinitionId_key" ON "RoleAgentGrant"("jobRoleId", "agentDefinitionId");
