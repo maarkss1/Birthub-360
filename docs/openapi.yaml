@@ -4748,6 +4748,43 @@ paths:
         '404':
           description: Capability não encontrada
 
+  /role-supervisor/run:
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        PROMPT 5 — Supervisor genérico do próprio cargo do usuário autenticado. Resolve o
+        JobRole primário ativo do ator, seleciona um agente concedido a esse cargo para cada
+        capability (a pedida, ou as `preferredCapabilities` do perfil do cargo em ordem) e
+        executa cada uma via `POST /agents/{agentCode}/run` — nunca decide autorização sozinho,
+        nunca acessa outro cargo, nunca cria capability. Respeita `maxSteps` (loop guard) e
+        interrompe o restante do plano quando um passo exige aprovação humana ou falha de
+        verdade (`stopConditions` do perfil) — SOURCE_REQUIRED/FUTURE_TOOL não interrompem,
+        só ficam registrados como bloqueados no passo correspondente.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestedCapability:
+                  type: string
+                  description: Capability específica a tentar; se omitida, usa as `preferredCapabilities` do perfil do cargo do ator.
+                mission: { type: string }
+                resource: { type: object }
+                context: { type: object }
+                correlationId: { type: string }
+      responses:
+        '200':
+          description: Execução do supervisor concluída (`COMPLETED`) ou interrompida (`HALTED`) — ver `data.supervisorRun`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Ator sem JobRole primário ativo, ou sem RoleSupervisorProfile para o cargo (`NO_JOB_ROLE`/`NO_SUPERVISOR_PROFILE`)
+
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:
     get:

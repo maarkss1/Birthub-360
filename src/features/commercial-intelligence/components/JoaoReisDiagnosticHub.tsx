@@ -1359,8 +1359,8 @@ Data: 01/09/2026 | BDR ID: 392
                 formatLabel={(label) => label.replace(' (genérico)', '')}
               />
               <p className="text-[11px] text-ink-2">
-                &quot;Contatar cliente (genérico)&quot; é o rótulo padrão da ferramenta de cadência — o canal
-                real só aparece discriminado numa parte pequena dos registros.
+                &quot;Contatar cliente (genérico)&quot; é o rótulo padrão da ferramenta de cadência
+                — o canal real só aparece discriminado numa parte pequena dos registros.
               </p>
             </div>
 
@@ -1420,8 +1420,8 @@ Data: 01/09/2026 | BDR ID: 392
                 formatLabel={(label) => label.replace(' (genérico)', '')}
               />
               <p className="text-[11px] text-ink-2">
-                &quot;Contatar cliente (genérico)&quot; é o rótulo padrão da ferramenta de cadência — o canal
-                real só aparece discriminado numa parte pequena dos registros.
+                &quot;Contatar cliente (genérico)&quot; é o rótulo padrão da ferramenta de cadência
+                — o canal real só aparece discriminado numa parte pequena dos registros.
               </p>
             </div>
 
@@ -1634,7 +1634,8 @@ Data: 01/09/2026 | BDR ID: 392
 
             <div className="space-y-4 rounded-card-lg border border-line bg-surface p-6 shadow-card">
               <h3 className="text-sm font-black text-ink">
-                Estoque de Leads em &quot;Em Cadência&quot; ({DIAGNOSTIC_DATA.emCadencia.resumo.total} Leads)
+                Estoque de Leads em &quot;Em Cadência&quot; (
+                {DIAGNOSTIC_DATA.emCadencia.resumo.total} Leads)
               </h3>
 
               <div className="overflow-x-auto rounded-xl border border-line">
