@@ -4499,6 +4499,24 @@ paths:
         '404':
           description: Cargo não encontrado
 
+  /job-roles/{id}/capabilities:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Capabilities concedidas (RoleCapabilityGrant ativo) a este cargo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Cargo não encontrado
+
   /job-roles/assignments/matrix:
     get:
       tags: [Cargos e Agentes]
@@ -4603,6 +4621,87 @@ paths:
               schema: { $ref: '#/components/schemas/DataEnvelope' }
         '404':
           description: Agente não encontrado
+
+  /agents/{id}/capabilities:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Capabilities concedidas (AgentCapabilityGrant ativo) a este agente
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Agente não encontrado
+
+  # ───────────────────────────── Capabilities ─────────────────────────────
+  /capabilities:
+    get:
+      tags: [Cargos e Agentes]
+      summary: Lista o catálogo de capabilities governadas
+      parameters:
+        - name: activeOnly
+          in: query
+          schema: { type: string, enum: ['true', 'false'] }
+        - name: domain
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /capabilities/{code}:
+    parameters:
+      - name: code
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Detalhes de uma capability específica pelo seu código
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '404':
+          description: Capability não encontrada
+
+  /capabilities/check:
+    post:
+      tags: [Cargos e Agentes]
+      summary: Checagem de autorização de capability estritamente para o usuário autenticado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agentId, capabilityCode]
+              properties:
+                agentId: { type: string }
+                capabilityCode: { type: string }
+                resource:
+                  type: object
+                  properties:
+                    type: { type: string }
+                    id: { type: string }
+      responses:
+        '200':
+          description: Decisão de autorização calculada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
 
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:

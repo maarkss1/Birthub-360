@@ -1,6 +1,6 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { routeParam } from '../../../shared/http/routeParams.js';
-import { listAgentDefinitions, getAgentDefinitionById } from '../services/agentCatalog.service.js';
+import { getAgentDefinitionById, listAgentDefinitions } from '../services/agentCatalog.service.js';
 
 const router = Router();
 
@@ -31,5 +31,24 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
     next(error);
   }
 });
+
+router.get(
+  '/:id/capabilities',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const agentId = routeParam(req.params.id, 'id');
+      const agent = await getAgentDefinitionById(agentId);
+      if (!agent) {
+        res.status(404).json({ success: false, error: 'Agente não encontrado.' });
+        return;
+      }
+      const { listCapabilitiesForAgent } = await import('../services/capabilityCatalog.service.js');
+      const capabilities = await listCapabilitiesForAgent(agent.id);
+      res.json({ success: true, data: { agent, capabilities } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 export const agentCatalogRoutes = router;

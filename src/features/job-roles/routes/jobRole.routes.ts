@@ -1,18 +1,18 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
+import { routeParam } from '../../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
+import { listAgentsForJobRole } from '../services/agentCatalog.service.js';
 import {
-  listJobRoles,
-  getJobRoleById,
-  getJobRoleAssignmentMatrix,
   assignJobRole,
   deactivateUserJobRole,
+  getJobRoleAssignmentMatrix,
+  getJobRoleById,
   JobRoleServiceError,
+  listJobRoles,
 } from '../services/jobRole.service.js';
-import { listAgentsForJobRole } from '../services/agentCatalog.service.js';
 
 const router = Router();
 
@@ -55,6 +55,27 @@ router.get(
       }
       const agents = await listAgentsForJobRole(jobRoleId);
       res.json({ success: true, data: { jobRole, agents } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.get(
+  '/:id/capabilities',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const jobRoleId = routeParam(req.params.id, 'id');
+      const jobRole = await getJobRoleById(jobRoleId);
+      if (!jobRole) {
+        res.status(404).json({ success: false, error: 'Cargo não encontrado.' });
+        return;
+      }
+      const { listCapabilitiesForJobRole } = await import(
+        '../services/capabilityCatalog.service.js'
+      );
+      const capabilities = await listCapabilitiesForJobRole(jobRoleId);
+      res.json({ success: true, data: { jobRole, capabilities } });
     } catch (error) {
       next(error);
     }

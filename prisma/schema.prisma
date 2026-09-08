@@ -3361,6 +3361,22 @@ enum AgentAccessLevel {
   REQUEST
 }
 
+/// Nível de risco governado de uma Capability (PROMPT 3 — Capability & Permission Engine).
+enum CapabilityRiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+/// Tipo de ação governada de uma Capability (PROMPT 3 — Capability & Permission Engine).
+enum CapabilityActionType {
+  READ
+  WRITE
+  EXECUTE
+  ADMIN
+}
+
 /// Catálogo de cargos profissionais da Central — ver decisão de arquitetura no comentário da
 /// seção acima. `code` é o identificador estável (ex.: "SDR", "GERENTE_COMERCIAL"), nunca
 /// reaproveitado por outro cargo mesmo se este for desativado (`isActive = false`).
@@ -3380,9 +3396,10 @@ model JobRole {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  userJobRoles     UserJobRole[]
-  roleAgentGrants  RoleAgentGrant[]
-  primaryForAgents AgentDefinition[]
+  userJobRoles        UserJobRole[]
+  roleAgentGrants     RoleAgentGrant[]
+  roleCapabilityGrants RoleCapabilityGrant[]
+  primaryForAgents    AgentDefinition[]
 
   @@index([isActive])
 }
@@ -3441,8 +3458,9 @@ model AgentDefinition {
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
 
-  versions   AgentVersion[]
-  roleGrants RoleAgentGrant[]
+  versions         AgentVersion[]
+  roleGrants       RoleAgentGrant[]
+  capabilityGrants AgentCapabilityGrant[]
 
   @@index([isActive])
   @@index([primaryJobRoleId])
@@ -3494,4 +3512,62 @@ model RoleAgentGrant {
   @@unique([jobRoleId, agentDefinitionId])
   @@index([agentDefinitionId])
 }
+
+/// Catálogo canônico de capabilities do produto (PROMPT 3 — Capability & Permission Engine).
+/// Global, sem organizationId (metadado de produto/segurança, análogo a JobRole e AgentDefinition).
+model CapabilityDefinition {
+  id                         String               @id @default(cuid())
+  code                       String               @unique
+  name                       String
+  description                String?
+  domain                     String
+  riskLevel                  CapabilityRiskLevel  @default(LOW)
+  actionType                 CapabilityActionType @default(READ)
+  isReadOnly                 Boolean              @default(false)
+  requiresApprovalByDefault Boolean              @default(false)
+  isSystem                   Boolean              @default(true)
+  isActive                   Boolean              @default(true)
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime             @updatedAt
+
+  agentGrants AgentCapabilityGrant[]
+  roleGrants  RoleCapabilityGrant[]
+
+  @@index([isActive])
+  @@index([domain])
+}
+
+/// Responde "o agente X possui permissão estrutural para usar a capability Y?"
+/// Sem accessMode redundante: a própria CapabilityDefinition já expressa a ação (ex: lead.read vs lead.update).
+model AgentCapabilityGrant {
+  id                     String               @id @default(cuid())
+  agentDefinitionId      String
+  agentDefinition        AgentDefinition      @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
+  capabilityDefinitionId String
+  capabilityDefinition   CapabilityDefinition @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Cascade)
+  requiresApproval       Boolean              @default(false)
+  isActive               Boolean              @default(true)
+  createdAt              DateTime             @default(now())
+
+  @@unique([agentDefinitionId, capabilityDefinitionId])
+  @@index([capabilityDefinitionId])
+}
+
+/// Responde "o cargo profissional X pode permitir o exercício da capability Y?"
+/// Usa AgentAccessLevel governado (DISCOVER, READ, EXECUTE, REQUEST).
+model RoleCapabilityGrant {
+  id                     String               @id @default(cuid())
+  jobRoleId              String
+  jobRole                JobRole              @relation(fields: [jobRoleId], references: [id], onDelete: Cascade)
+  capabilityDefinitionId String
+  capabilityDefinition   CapabilityDefinition @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Cascade)
+  accessLevel            AgentAccessLevel     @default(EXECUTE)
+  requiresApproval       Boolean              @default(false)
+  isActive               Boolean              @default(true)
+  createdAt              DateTime             @default(now())
+
+  @@unique([jobRoleId, capabilityDefinitionId])
+  @@index([capabilityDefinitionId])
+}
+
 
