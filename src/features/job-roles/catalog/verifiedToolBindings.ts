@@ -32,6 +32,10 @@ export const VERIFIED_TOOL_BINDINGS: Readonly<Record<string, VerifiedBindingEvid
     binding: 'AccountIntelligenceService.getIntelligence',
     evidencePath: 'src/features/market-intelligence/server/accountIntelligence.service.ts',
   },
+  'lead.qualify': {
+    binding: 'SDRQualificationAgent.run',
+    evidencePath: 'src/features/intelligence/agents/sdrQualification.agent.ts',
+  },
   'forecast.read': {
     binding: 'CommercialIntelligenceUseCases.executiveOverview',
     evidencePath:
@@ -105,6 +109,10 @@ export const VERIFIED_TOOL_BINDINGS: Readonly<Record<string, VerifiedBindingEvid
   'churn.analyze': {
     binding: 'ChurnPredictionService.analyzeChurnRisk',
     evidencePath: 'src/features/analytics/services/churn-prediction.service.ts',
+  },
+  'bitrix.write': {
+    binding: 'BitrixLeadWritebackAdapter.updateLeadFields',
+    evidencePath: 'src/features/integrations/bitrix/infra/BitrixLeadWritebackAdapter.ts',
   },
   'agent.discover': {
     binding: 'AgentCatalogService.listAgentDefinitions',
