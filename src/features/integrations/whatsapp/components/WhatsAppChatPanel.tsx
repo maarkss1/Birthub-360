@@ -83,6 +83,7 @@ export function WhatsAppChatPanel({
     // o modal inteiro. onClick aqui é conveniência de mouse/touch; o botão "Fechar conversa"
     // abaixo é um <button> real, já alcançável por Tab, então não falta caminho de teclado.
     // biome-ignore lint/a11y/noStaticElementInteractions: dismiss por overlay, ver comentário acima
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- dismiss por overlay, ver comentário acima
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
@@ -92,6 +93,7 @@ export function WhatsAppChatPanel({
           suporte a teclado; o conteúdo interativo real (mensagens, input, botões) já é acessível
           normalmente dentro deste painel. role="dialog" abaixo também já satisfaz o linter sem
           precisar de biome-ignore aqui (diferente de antes desta correção). */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- onClick só interrompe propagação, ver comentário acima */}
       <div
         role="dialog"
         aria-modal="true"

@@ -10,6 +10,7 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(({ className, ...pr
        estaticamente a associação num spread, mas quem usa este componente é responsável por
        passar `htmlFor`/aninhar o controle, do mesmo jeito que já é cobrado de um <label> nativo. */
     // biome-ignore lint/a11y/noLabelWithoutControl: chamador passa htmlFor/aninha o controle via {...props}, ver comentário acima
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control -- chamador passa htmlFor/aninha o controle via {...props}, ver comentário acima
     <label
       ref={ref}
       className={cn(
