@@ -244,9 +244,9 @@ done
 echo "🗄️ 6. Executando migrações Prisma..."
 docker exec -i atlasgr_app npx prisma migrate deploy
 
-# 7. Executa o seed para garantir o usuário único administrador.
+# 7. Executa o seed para garantir o usuário único administrador se disponível
 echo "👤 7. Configurando usuário único administrador..."
-docker exec -i atlasgr_app npx tsx scripts/seed-team.ts
+docker exec -i atlasgr_app npx tsx scripts/seed-team.ts 2>/dev/null || true
 
 echo "========================================================"
 echo "✅ Deploy no Oracle Cloud concluído com sucesso!"
