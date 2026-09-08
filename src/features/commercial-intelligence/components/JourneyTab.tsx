@@ -137,6 +137,7 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável horizontal precisa ser focável por teclado, mesmo padrão de CrmBoard.tsx
             tabIndex={0}
             role="region"
             aria-label="Tabela de negócios sem interação (rolável)"
@@ -234,6 +235,7 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável horizontal precisa ser focável por teclado, mesmo padrão de CrmBoard.tsx
             tabIndex={0}
             role="region"
             aria-label="Tabela de trocas de responsável (rolável)"
@@ -325,6 +327,7 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável horizontal precisa ser focável por teclado, mesmo padrão de CrmBoard.tsx
             tabIndex={0}
             role="region"
             aria-label="Tabela de reentradas (rolável)"
@@ -386,6 +389,7 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- região rolável horizontal precisa ser focável por teclado, mesmo padrão de CrmBoard.tsx
             tabIndex={0}
             role="region"
             aria-label="Tabela de transições entre etapas (rolável)"
