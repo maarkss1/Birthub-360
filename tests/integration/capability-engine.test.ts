@@ -520,43 +520,82 @@ describe('PROMPT 3 — Capability & Permission Engine', () => {
       expect(decision.reason).toBe('AGENT_NOT_GRANTED_TO_ROLE');
     });
 
-    it('marca APPROVAL_REQUIRED quando capability tem risco HIGH ou CRITICAL', async () => {
-      const dirRole = await getJobRoleByCode('DIRETOR_COMERCIAL');
+    it('marca APPROVAL_REQUIRED quando capability HIGH possui binding real verificável', async () => {
+      const bitrixRole = await getJobRoleByCode('BITRIX_GUARDIAN');
       const user = await prisma.user.create({
-        data: { name: 'Diretora Silvia', email: 'silvia.dir@engine.test', role: 'GESTOR', organizationId: ORG_ID },
+        data: { name: 'Gestora CRM', email: 'gestora.crm@engine.test', role: 'GESTOR', organizationId: ORG_ID },
       });
-      await assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: dirRole!.id, assignedBy: 'admin-1' });
+      await assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: bitrixRole!.id, assignedBy: 'admin-1' });
 
       const agent = await upsertAgentDefinition({
-        code: 'director-governance-bot',
-        name: 'Bot Governança',
-        primaryJobRoleId: dirRole!.id,
+        code: 'bitrix-writeback-test-agent',
+        name: 'Bitrix Writeback Test Agent',
+        primaryJobRoleId: bitrixRole!.id,
       });
-      await grantAgentToRole({ jobRoleId: dirRole!.id, agentDefinitionId: agent.id, accessLevel: 'EXECUTE' });
+      await grantAgentToRole({ jobRoleId: bitrixRole!.id, agentDefinitionId: agent.id, accessLevel: 'EXECUTE' });
 
-      // contract.request_signature possui risco CRITICAL e binding disponível
-      const commCap = await upsertCapabilityDefinition({
-        code: 'contract.request_signature',
-        name: 'Disparo de Assinatura de Contrato',
-        domain: 'DIRECTOR',
-        riskLevel: 'CRITICAL',
-        actionType: 'ADMIN',
+      const cap = await upsertCapabilityDefinition({
+        code: 'bitrix.write',
+        name: 'Escrita no Bitrix24',
+        domain: 'BITRIX',
+        riskLevel: 'HIGH',
+        actionType: 'WRITE',
         requiresApprovalByDefault: true,
       });
 
-      await grantCapabilityToAgent({ agentDefinitionId: agent.id, capabilityDefinitionId: commCap.id });
-      await grantCapabilityToRole({ jobRoleId: dirRole!.id, capabilityDefinitionId: commCap.id, accessLevel: 'EXECUTE' });
+      await grantCapabilityToAgent({ agentDefinitionId: agent.id, capabilityDefinitionId: cap.id });
+      await grantCapabilityToRole({ jobRoleId: bitrixRole!.id, capabilityDefinitionId: cap.id, accessLevel: 'EXECUTE' });
 
       const decision = await authorizeCapability({
         actor: { id: user.id, organizationId: ORG_ID, role: 'GESTOR' },
         agentId: agent.code,
-        capabilityCode: 'contract.request_signature',
+        capabilityCode: cap.code,
       });
 
       expect(decision.allowed).toBe(false);
       expect(decision.requiresApproval).toBe(true);
       expect(decision.reason).toBe('APPROVAL_REQUIRED');
-      expect(decision.riskLevel).toBe('CRITICAL');
+      expect(decision.riskLevel).toBe('HIGH');
+      expect(decision.toolAvailable).toBe(true);
+      expect(decision.bindingVerification).toBe('VERIFIED');
+    });
+
+    it('mantém assinatura externa como FUTURE_TOOL enquanto o transporte gov.br for stub', async () => {
+      const contractRole = await getJobRoleByCode('CONTRATOS_ASSINATURA');
+      const user = await prisma.user.create({
+        data: { name: 'Gestora Contratos', email: 'gestora.contratos@engine.test', role: 'GESTOR', organizationId: ORG_ID },
+      });
+      await assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: contractRole!.id, assignedBy: 'admin-1' });
+
+      const agent = await upsertAgentDefinition({
+        code: 'signature-stub-test-agent',
+        name: 'Signature Stub Test Agent',
+        primaryJobRoleId: contractRole!.id,
+      });
+      await grantAgentToRole({ jobRoleId: contractRole!.id, agentDefinitionId: agent.id, accessLevel: 'EXECUTE' });
+
+      const cap = await upsertCapabilityDefinition({
+        code: 'contract.request_signature',
+        name: 'Disparo de Assinatura de Contrato',
+        domain: 'CONTRACTS',
+        riskLevel: 'CRITICAL',
+        actionType: 'ADMIN',
+        requiresApprovalByDefault: true,
+      });
+
+      await grantCapabilityToAgent({ agentDefinitionId: agent.id, capabilityDefinitionId: cap.id });
+      await grantCapabilityToRole({ jobRoleId: contractRole!.id, capabilityDefinitionId: cap.id, accessLevel: 'EXECUTE' });
+
+      const decision = await authorizeCapability({
+        actor: { id: user.id, organizationId: ORG_ID, role: 'GESTOR' },
+        agentId: agent.code,
+        capabilityCode: cap.code,
+      });
+
+      expect(decision.allowed).toBe(false);
+      expect(decision.reason).toBe('FUTURE_TOOL');
+      expect(decision.toolAvailable).toBe(false);
+      expect(decision.bindingVerification).toBe('UNVERIFIED');
     });
 
     it('retorna CROSS_ROLE_REQUEST_REQUIRED quando cargo possui nível de acesso REQUEST', async () => {
