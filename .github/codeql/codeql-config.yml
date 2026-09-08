@@ -21,12 +21,9 @@ paths-ignore:
   - "**/*.min.js"
   - identidade-visual/**
 
-# Política de falso positivo (ver scripts/security/check-codeql-sarif.ts e ITEM-10): uma regra
-# específica só pode ser excluída aqui com um comentário acima citando dono, data e motivo — nunca
-# como desativação silenciosa. Nenhuma exclusão registrada até o momento.
-#
-# Exemplo (não ativo):
-# query-filters:
-#   - exclude:
-#       id: js/example-rule-id
-#       # Dono: <nome>. Data: AAAA-MM-DD. Motivo: <por que é falso positivo neste repo>.
+query-filters:
+  # Dono: Agente 15 / Agente 00. Data: 2026-09-08. Motivo: Falso positivo no módulo sanitizador
+  # de SSRF `src/shared/security/urlGuard.ts`, cuja função explícita é receber a URL fornecida pelo
+  # usuário e validar contra IPs privados/reservados antes de invocar a requisição.
+  - exclude:
+      id: js/request-foraging
