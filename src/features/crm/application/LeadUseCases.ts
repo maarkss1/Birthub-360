@@ -651,7 +651,16 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
                   stageName: String(dataToUpdate.status),
                 },
               })
-              .catch(() => {});
+              .catch((err) => {
+                // Achado real (auditoria de release-readiness, error-resilience): o lead
+                // principal já foi salvo com sucesso acima (side-effect apenas de histórico),
+                // mas perder esse registro sem log algum dificulta investigar buracos na
+                // trilha de mudança de estágio depois.
+                logger.error(
+                  { err, leadId: lead.id, organizationId },
+                  'batchUpdateLeads: falha ao registrar histórico de estágio (lead já foi salvo).',
+                );
+              });
           }
           updatedCount++;
         }
