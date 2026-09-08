@@ -32,7 +32,6 @@ import { MODULE_CATALOG, EXTERNAL_LINKS, type ModuleKey } from '../../../config/
 import { Logo } from '../../../components/Logo';
 import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
 import { SoundFX } from '../../../lib/soundEffects';
-import { CommercialAgentCellPanel } from './CommercialAgentCellPanel';
 import { HubBurstCanvas, type BurstHandle } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
@@ -494,10 +493,6 @@ export function HubScreen() {
         ) : (
           <MobileDestinationList items={items} />
         )}
-
-        <div className="mx-auto w-full max-w-[1250px] px-8 pb-10">
-          <CommercialAgentCellPanel />
-        </div>
       </div>
     </div>
   );
