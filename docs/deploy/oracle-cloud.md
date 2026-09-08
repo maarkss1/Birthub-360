@@ -206,24 +206,25 @@ Por padrão, `.env.production` herda os valores de desenvolvimento do `.env.exam
 `SECURE_COOKIES=false`, `TRUST_PROXY=false`) — isso não é apropriado para produção real com domínio
 e HTTPS via Caddy.
 
-Para configurar o domínio oficial automaticamente, exporte `DOMAIN` (o mesmo usado pelo Caddy) ao
-rodar o deploy:
+Para configurar o domínio oficial e/ou liberar CORS para a Extensão Chrome automaticamente, exporte `DOMAIN` e/ou `CHROME_EXTENSION_ID` ao rodar o deploy:
 
 ```bash
-DOMAIN=app.atlasgr.com.br ACME_EMAIL=ti@atlasgr.com.br ./scripts/deploy-oci.sh
+DOMAIN=app.atlasgr.com.br CHROME_EXTENSION_ID=abcdefghijklmnopqrstuvwxyz ACME_EMAIL=ti@atlasgr.com.br ./scripts/deploy-oci.sh
 ```
 
-O script então ajusta, em `.env.production` (só quando o valor atual ainda for o placeholder de
-desenvolvimento — nunca sobrescreve um valor já customizado manualmente):
+O script então ajusta em `.env.production` (preservando valores já customizados manualmente):
 
 | Variável | Valor definido |
 | --- | --- |
-| `ALLOWED_ORIGINS` | `https://<DOMAIN>` |
+| `ALLOWED_ORIGINS` | `https://<DOMAIN>,chrome-extension://<CHROME_EXTENSION_ID>` |
 | `BETTER_AUTH_URL` | `https://<DOMAIN>` |
 | `PUBLIC_BASE_URL` | `https://<DOMAIN>` |
 | `COOKIE_DOMAIN` | `<DOMAIN>` |
 | `SECURE_COOKIES` | `true` |
 | `TRUST_PROXY` | `true` (Caddy é o proxy na frente da aplicação) |
+
+> **Extensão Chrome em Produção**: Se a extensão do Chrome for usada contra o backend em produção, a sua origem (`chrome-extension://<id>`) deve estar explicitamente incluída na lista `ALLOWED_ORIGINS` separada por vírgulas. Sem este passo, as requisições autenticadas da extensão falham com erro de CORS no navegador.
+
 
 Antes do cutover de DNS, confirme também (fora do escopo do script, ação humana):
 
