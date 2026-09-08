@@ -33,14 +33,18 @@ export const actionExecutorService = {
           const responsibleId = currentUser?.bitrixUserId || 1;
 
           // Criação da task no Bitrix
-          const response = await callBitrix<any>(webhookUrl, 'tasks.task.add', {
+          const response = await callBitrix<{ result?: { task?: { id?: string | number } } }>(
+            webhookUrl,
+            'tasks.task.add',
+            {
             fields: {
               TITLE: recommendation.title,
               DESCRIPTION: `${recommendation.rationale}\n\nCriado via Central AtlasGR para a conta: ${company.legalName}`,
               RESPONSIBLE_ID: responsibleId,
               // Outras props relevantes
             },
-          });
+            },
+          );
 
           await prisma.accountRecommendation.update({
             where: { id: recommendationId },
@@ -87,11 +91,16 @@ export const actionExecutorService = {
 
           try {
             await prismaCadenceRunRepository.save(run);
-          } catch (err: any) {
-            if (err?.code === 'P2002') {
+          } catch (error: unknown) {
+            if (
+              error &&
+              typeof error === 'object' &&
+              'code' in error &&
+              error.code === 'P2002'
+            ) {
               throw new AppError('Este lead já tem uma cadência ativa em andamento.', 409);
             }
-            throw err;
+            throw error;
           }
 
           await prisma.accountRecommendation.update({
@@ -113,12 +122,12 @@ export const actionExecutorService = {
           });
           return { success: true, message: 'Ação executada.' };
         }
-      } catch (err: any) {
+      } catch (error: unknown) {
         await prisma.accountRecommendation.update({
           where: { id: recommendationId },
           data: { status: 'Failed' },
         });
-        throw err;
+        throw error;
       }
     });
   },

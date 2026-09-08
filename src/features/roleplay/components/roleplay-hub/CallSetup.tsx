@@ -60,7 +60,7 @@ export function CallSetup({
           </span>
           <div className="flex bg-surface-2 p-1.5 rounded-[1.25rem] w-full md:w-auto">
             {(['facil', 'medio', 'dificil'] as const).map((level) => (
-              <button
+              <button type="button"
                 key={level}
                 onClick={() => setDifficulty(level)}
                 className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs font-black capitalize transition-all ${

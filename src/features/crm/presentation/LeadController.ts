@@ -26,8 +26,8 @@ export class LeadController {
   getLeads = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { organizationId: orgId } = (req as AuthRequest).user;
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 50;
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 50;
       const requestedFunnel = req.query.funnel;
       const funnel: LeadFunnel | undefined =
         requestedFunnel === 'Lead' || requestedFunnel === 'Negocio' ? requestedFunnel : undefined;
@@ -193,7 +193,7 @@ export class LeadController {
   triggerStaleFollowups = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { organizationId: orgId } = (req as AuthRequest).user;
-      const days = parseInt(req.query.days as string) || 3;
+      const days = parseInt(req.query.days as string, 10) || 3;
 
       // Dispara a automação para leads que não mudam de status há X dias
       fireAutomations({

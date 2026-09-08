@@ -112,7 +112,6 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
         zIndex: 30,
         pointerEvents: 'none',
       }}
-      aria-hidden="true"
     />
   );
 });

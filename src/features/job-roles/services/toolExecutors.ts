@@ -532,19 +532,19 @@ const contractRead: ToolExecutor = async (ctx) => {
     summary:
       requests.length === 0
         ? `Nenhuma solicitação de assinatura encontrada para o documento ${documentId}.`
-        : `Documento ${documentId} — status de assinatura mais recente: "${requests[0]!.status}".`,
+        : `Documento ${documentId} — status de assinatura mais recente: "${requests[0]?.status}".`,
     facts:
       requests.length === 0
         ? []
         : [
             {
               label: 'status',
-              value: String(requests[0]!.status),
+              value: String(requests[0]?.status),
               source: 'CrmDocumentSignatureRequest',
             },
           ],
     metrics: { totalRequests: requests.length },
-    evidence: requests.length === 0 ? [] : [`CrmDocumentSignatureRequest.id=${requests[0]!.id}`],
+    evidence: requests.length === 0 ? [] : [`CrmDocumentSignatureRequest.id=${requests[0]?.id}`],
     missingData: requests.length === 0 ? ['signatureRequest'] : [],
     raw: requests,
   };

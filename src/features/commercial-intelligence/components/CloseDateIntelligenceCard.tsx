@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- região rolável focável por teclado */
 import { useEffect, useState } from 'react';
 import { AlertTriangle, CalendarClock } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';

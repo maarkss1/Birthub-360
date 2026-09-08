@@ -83,7 +83,7 @@ function buildIcs(input: MeetingInviteInput): string {
     `LOCATION:${icsEscape(input.meetUrl || 'Google Meet')}`,
     `ORGANIZER:mailto:${input.organizerEmail}`,
     ...input.attendeeEmails
-      .filter((email) => email && email.trim())
+      .filter((email) => email?.trim())
       .map((email) => `ATTENDEE;RSVP=TRUE;ROLE=REQ-PARTICIPANT:mailto:${email}`),
     'STATUS:CONFIRMED',
     'END:VEVENT',

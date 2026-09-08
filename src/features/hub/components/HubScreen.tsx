@@ -130,11 +130,12 @@ export function HubScreen() {
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
 
-  const isRestrictedSdrProfile = currentUser?.role === 'SDR';
+  // Quem decide quais módulos executivos cada pessoa vê é o painel 'module-access' (ADMIN), para
+  // qualquer papel — inclusive SDR. O corte por papel que existia aqui escondia do SDR até os
+  // módulos que o gestor tinha liberado explicitamente ("as ferramentas dele não aparecem").
   const grantedCatalog = useMemo(
-    () =>
-      isRestrictedSdrProfile ? [] : MODULE_CATALOG.filter((m) => grantedModules.includes(m.key)),
-    [isRestrictedSdrProfile, grantedModules],
+    () => MODULE_CATALOG.filter((m) => grantedModules.includes(m.key)),
+    [grantedModules],
   );
 
   const goTo = useCallback(
@@ -282,7 +283,7 @@ export function HubScreen() {
     layout();
     window.addEventListener('resize', layout);
     return () => window.removeEventListener('resize', layout);
-  }, [items, isDesktopOrbit]);
+  }, [isDesktopOrbit]);
 
   const handleCardClick = (e: React.MouseEvent, item: OrbitItem) => {
     burstRef.current?.trigger(e.clientX, e.clientY, item.colorRgb);

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- região virtualizada rolável por teclado */
 /**
  * VirtualTable — tabela virtualizada usando @tanstack/react-virtual
  *

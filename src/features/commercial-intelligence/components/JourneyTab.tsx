@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- regiões roláveis focáveis por teclado */
 import { useEffect, useState } from 'react';
 import { AlertTriangle, ArrowRightLeft, RotateCcw, Route, UserX } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';

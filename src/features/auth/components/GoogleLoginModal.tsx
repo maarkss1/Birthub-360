@@ -64,7 +64,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
           className="relative w-full max-w-md bg-surface rounded-3xl shadow-2xl overflow-hidden"
         >
           {/* Close button */}
-          <button
+          <button type="button"
             onClick={onClose}
             aria-label="Fechar"
             className="absolute top-4 right-4 p-2 text-ink-2 hover:text-ink hover:bg-surface-2 rounded-full transition-colors z-10"
@@ -104,7 +104,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
 
             <div className="w-full">
               {step === 'button' && (
-                <button
+                <button type="button"
                   onClick={handleGoogleLogin}
                   className="w-full flex items-center justify-center gap-3 bg-surface border border-line text-ink font-medium py-3 px-4 rounded-xl hover:bg-surface-2 active:bg-surface-2 transition-colors shadow-sm"
                 >

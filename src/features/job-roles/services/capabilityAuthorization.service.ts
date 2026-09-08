@@ -162,7 +162,7 @@ export async function authorizeCapability(
   const roleAgentGrant = await prisma.roleAgentGrant.findUnique({
     where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole.id, agentDefinitionId: agent.id } },
   });
-  if (!roleAgentGrant || !roleAgentGrant.isActive) {
+  if (!roleAgentGrant?.isActive) {
     return deny('AGENT_NOT_GRANTED_TO_ROLE', actor, { agent: agentRef, resource });
   }
 
@@ -236,7 +236,7 @@ export async function authorizeCapability(
       },
     },
   });
-  if (!agentCapabilityGrant || !agentCapabilityGrant.isActive) {
+  if (!agentCapabilityGrant?.isActive) {
     return deny('CAPABILITY_NOT_GRANTED_TO_AGENT', actor, {
       agent: agentRef,
       capability: capabilityRef,
@@ -254,7 +254,7 @@ export async function authorizeCapability(
       },
     },
   });
-  if (!roleCapabilityGrant || !roleCapabilityGrant.isActive) {
+  if (!roleCapabilityGrant?.isActive) {
     return deny('CAPABILITY_NOT_GRANTED_TO_ROLE', actor, {
       agent: agentRef,
       capability: capabilityRef,
@@ -297,7 +297,7 @@ export async function authorizeCapability(
   // 11. ToolBinding VERIFIED — nome conceitual não é evidência (ver tool-bindings.ts). Só binding
   // VERIFIED + available pode seguir para execução real.
   const binding = getToolBinding(capability.code);
-  if (!binding || binding.verification !== 'VERIFIED' || !binding.available) {
+  if (binding?.verification !== 'VERIFIED' || !binding.available) {
     const bindingReason: CapabilityDecisionReason =
       binding?.reason === 'SOURCE_REQUIRED'
         ? 'SOURCE_REQUIRED'

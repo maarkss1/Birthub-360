@@ -102,7 +102,7 @@ describe('getGoogleAuthUrl / verifyState', () => {
     getGoogleAuthUrl(ORG);
     const [[{ state }]] = generateAuthUrlMock.mock.calls.map((call) => call);
 
-    expect(verifyState(state + 'x', ORG)).toBe(false);
+    expect(verifyState(`${state}x`, ORG)).toBe(false);
   });
 });
 

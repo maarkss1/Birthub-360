@@ -240,7 +240,7 @@ publicBookingRouter.get(
     try {
       const link = await findPublicBookingLinkBySlug(routeParam(req.params.slug, 'slug'));
 
-      if (!link || !link.active) {
+      if (!link?.active) {
         res
           .status(404)
           .json({ success: false, error: 'Link de agendamento não encontrado ou inativo.' });
@@ -305,7 +305,7 @@ publicBookingRouter.post(
     try {
       const link = await findPublicBookingLinkBySlug(routeParam(req.params.slug, 'slug'));
 
-      if (!link || !link.active) {
+      if (!link?.active) {
         res
           .status(404)
           .json({ success: false, error: 'Link de agendamento não encontrado ou inativo.' });

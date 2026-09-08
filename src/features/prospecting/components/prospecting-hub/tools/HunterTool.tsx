@@ -153,7 +153,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
           />
         </div>
 
-        <button
+        <button type="button"
           onClick={handleSearch}
           disabled={isSearching}
           className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
@@ -180,7 +180,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
             value={verifyName}
             onChange={(e) => setVerifyName(e.target.value)}
           />
-          <button
+          <button type="button"
             onClick={handleVerifyEmail}
             disabled={isVerifying}
             className="w-full bg-surface-2 border border-line text-ink py-2.5 rounded-xl font-bold text-xs hover:border-brand/40 disabled:opacity-70 transition-all flex items-center justify-center gap-2"
@@ -287,7 +287,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
                     <CheckCircle2 size={14} /> No CRM
                   </span>
                 ) : (
-                  <button
+                  <button type="button"
                     onClick={() => promoteContact(contact, idx)}
                     disabled={promotingKey === key}
                     className="bg-brand-active text-white px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"

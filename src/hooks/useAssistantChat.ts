@@ -117,7 +117,7 @@ export function useAssistantChat(
     // conversa em andamento sempre que o registro mudasse de fundo (ex.: usuário navega para
     // outra empresa).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeBrand, brandInfo.name, selectedBrand]);
+  }, [brandInfo.name, selectedBrand, brandInfo, activeRecord?.label]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();

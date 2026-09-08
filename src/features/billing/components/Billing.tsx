@@ -81,7 +81,7 @@ export function Billing() {
 
   const daily = (data?.daily ?? []).map((p) => ({
     ...p,
-    label: p.day.slice(8) + '/' + p.day.slice(5, 7),
+    label: `${p.day.slice(8)}/${p.day.slice(5, 7)}`,
   }));
 
   return (

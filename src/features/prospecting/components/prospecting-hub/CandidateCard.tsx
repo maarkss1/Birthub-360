@@ -455,7 +455,7 @@ export function CandidateCard({
         ) : (
           <div className="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
             {onReject && (
-              <button
+              <button type="button"
                 onClick={onReject}
                 disabled={isPromoting || isRejecting}
                 title="Descarta este candidato e o exclui de buscas futuras"
@@ -469,7 +469,7 @@ export function CandidateCard({
                 {isRejecting ? 'Descartando...' : 'Não é esse perfil'}
               </button>
             )}
-            <button
+            <button type="button"
               onClick={onPromote}
               disabled={isPromoting || isRejecting}
               className="bg-brand-active text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 shadow-md hover:scale-[1.02] w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"

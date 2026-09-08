@@ -30,6 +30,33 @@ describe('resolveOwnBitrixUserId', () => {
     const users = [{ id: '1', name: 'Ana', email: null }];
     expect(resolveOwnBitrixUserId(users, 'ana@atlasgr.com.br')).toBeNull();
   });
+
+  it('sem e-mail correspondente, cai para o nome completo (sem acento/caixa) quando é único', async () => {
+    const { resolveOwnBitrixUserId } = await import('../userMapping.js');
+    const users = [
+      { id: '308', name: 'João Ricardo Denóis', email: null },
+      { id: '392', name: 'João Reis', email: 'joao.pessoal@gmail.com' },
+    ];
+    expect(resolveOwnBitrixUserId(users, 'joao.reis@atlasgr.com.br', 'Joao  Reis')).toBe('392');
+  });
+
+  it('nome ambíguo (dois homônimos) devolve null — nunca escolhe por aproximação', async () => {
+    const { resolveOwnBitrixUserId } = await import('../userMapping.js');
+    const users = [
+      { id: '1', name: 'João Reis', email: null },
+      { id: '2', name: 'Joao Reis', email: null },
+    ];
+    expect(resolveOwnBitrixUserId(users, 'joao.reis@atlasgr.com.br', 'João Reis')).toBeNull();
+  });
+
+  it('e-mail tem precedência sobre o nome', async () => {
+    const { resolveOwnBitrixUserId } = await import('../userMapping.js');
+    const users = [
+      { id: '1', name: 'João Reis', email: 'outro@atlasgr.com.br' },
+      { id: '2', name: 'Maria', email: 'joao.reis@atlasgr.com.br' },
+    ];
+    expect(resolveOwnBitrixUserId(users, 'joao.reis@atlasgr.com.br', 'João Reis')).toBe('2');
+  });
 });
 
 describe('resolveAtlasUserNameByEmail', () => {

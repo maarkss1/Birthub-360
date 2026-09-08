@@ -33,8 +33,8 @@
  * `server.ts` com todo `src/bootstrap/*.ts`, via `collectCompositionRootSource`.
  */
 
-import { readFileSync, readdirSync } from 'fs';
-import path from 'path';
+import { readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
 
 /**
  * Concatena `server.ts` com todo `src/bootstrap/*.ts` — o composition root da aplicação depois do

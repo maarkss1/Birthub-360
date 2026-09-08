@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
 class CrmEventBus extends EventEmitter {}
 
@@ -6,7 +6,7 @@ export const crmEventBus = new CrmEventBus();
 
 export interface CrmEvent {
   type: 'DEAL_WON' | 'DEAL_LOST' | 'NEW_OBJECTION' | 'NEW_LEAD' | 'MEETING_SCHEDULED';
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   timestamp: Date;
   organizationId: string;
 }

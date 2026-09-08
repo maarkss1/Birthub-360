@@ -197,7 +197,7 @@ export class AnalyticsService {
     for (const row of rows) counts.set(row.status as string, row._count._all);
 
     const orderedStages = [...FUNNEL_STAGES];
-    const cumulative = orderedStages.map((stage, index) => {
+    const cumulative = orderedStages.map((_stage, index) => {
       const downstream = orderedStages
         .slice(index)
         .reduce((sum, s) => sum + (counts.get(s) ?? 0), 0);
@@ -368,7 +368,7 @@ export class AnalyticsService {
     return result;
   }
 
-  private async performanceReport(organizationId: string, scope: AnalyticsScope) {
+  private async performanceReport(_organizationId: string, scope: AnalyticsScope) {
     const ownerStats = await prisma.lead.groupBy({
       by: ['owner'],
       where: scope,

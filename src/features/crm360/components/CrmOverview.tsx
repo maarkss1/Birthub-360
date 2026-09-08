@@ -131,7 +131,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
         <AlertTriangle className="mx-auto h-8 w-8 text-danger-active dark:text-danger" />
         <p className="mt-3 font-bold text-ink">Cockpit indisponível</p>
         <p className="mt-1 text-sm text-ink-2">{error}</p>
-        <button
+        <button type="button"
           onClick={() => void load()}
           className="mt-4 rounded-xl bg-ink px-4 py-2 text-sm font-bold text-bg"
         >
@@ -272,7 +272,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
               <h3 className="font-black text-ink">Foco agora</h3>
               <p className="text-xs text-ink-2">Próximas atividades por vencimento</p>
             </div>
-            <button
+            <button type="button"
               onClick={() => onNavigate('activities')}
               className="text-xs font-bold text-brand-active dark:text-brand-2"
             >
@@ -321,7 +321,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
             <h3 className="font-black text-ink">Negócios recentes</h3>
             <p className="text-xs text-ink-2">Últimas contas movimentadas</p>
           </div>
-          <button
+          <button type="button"
             onClick={() => onNavigate('crm?funnel=Negocio')}
             className="text-xs font-bold text-brand-active dark:text-brand-2"
           >

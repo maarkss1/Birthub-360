@@ -20,7 +20,7 @@ import {
   type DataQualityReport,
 } from './dataQualityReport.service.js';
 
-type TenantDb = NonNullable<AuthRequest['db']>;
+export type TenantDb = NonNullable<AuthRequest['db']>;
 type KnowledgeType = 'FACT' | 'INFERENCE' | 'RECOMMENDATION';
 
 export interface PaginationQuery {
@@ -370,7 +370,7 @@ export class AccountIntelligenceService implements AccountIntelligenceServiceCon
     return company;
   }
 
-  async getIntelligence(accountId: string): Promise<unknown> {
+  async getIntelligence(accountId: string) {
     const company = await this.requireCompany(accountId);
     const [
       latestSnapshot,
@@ -577,7 +577,7 @@ export class AccountIntelligenceService implements AccountIntelligenceServiceCon
     throw new AppError('Não foi possível atualizar a inteligência da conta.', 409);
   }
 
-  async listSignals(accountId: string, query: SignalQuery): Promise<PaginatedResult<unknown>> {
+  async listSignals(accountId: string, query: SignalQuery) {
     await this.requireCompany(accountId);
     const where: Prisma.AccountSignalWhereInput = {
       companyId: accountId,
@@ -907,13 +907,13 @@ export const accountIntelligenceService = {
   async chatWithAccount(companyId: string, message: string) {
     return withRlsContext(async (tx) => {
       const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      const intelligence: any = await service.getIntelligence(companyId);
-      const signals: any = await service.listSignals(companyId, { page: 1, limit: 10 });
+      const intelligence = await service.getIntelligence(companyId);
+      const signals = await service.listSignals(companyId, { page: 1, limit: 10 });
       const systemPrompt = `Você é o Analista de Inteligência Comercial (LDR) do AtlasGR.
 Contexto da Empresa:
-- Nome/Razão Social: ${intelligence?.company?.legalName || intelligence?.company?.tradeName || 'Desconhecido'}
-- ICP Fit: ${intelligence?.company?.segment || 'N/A'}
-- Sinais Recentes: ${signals?.items?.map((s: any) => s.title).join('; ') || 'Nenhum'}
+- Nome/Razão Social: ${intelligence.account.legalName || intelligence.account.tradeName || 'Desconhecido'}
+- ICP Fit: ${intelligence.account.segment || 'N/A'}
+- Sinais Recentes: ${signals.items.map((signal) => signal.title).join('; ') || 'Nenhum'}
 
 Seu objetivo é ajudar o vendedor a abordar essa conta de forma cirúrgica. Responda à pergunta do usuário de forma curta, direta e em português do Brasil.`;
 

@@ -559,8 +559,9 @@ export async function getSwarmSloSnapshot(
     );
 
     const executionLatencies = executedRows
-      .filter((row) => row.executedAt)
-      .map((row) => row.executedAt!.getTime() - row.createdAt.getTime());
+      .flatMap((row) =>
+        row.executedAt ? [row.executedAt.getTime() - row.createdAt.getTime()] : [],
+      );
     const avgExecutionLatencyMs =
       executionLatencies.length > 0
         ? executionLatencies.reduce((sum, ms) => sum + ms, 0) / executionLatencies.length

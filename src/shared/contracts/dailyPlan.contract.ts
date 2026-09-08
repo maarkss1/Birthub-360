@@ -28,6 +28,11 @@ export interface DailyPlanItem {
   companyName?: string;
   phone?: string;
   email?: string;
+  /** Data-limite (YYYY-MM-DD, fuso do time comercial). Ausente = sem prazo definido. Itens do
+   * Bitrix são TODOS os pendentes do usuário (não só os de hoje) — o frontend usa esta data para
+   * sinalizar atrasados e agendados para outro dia. */
+  dueDate?: string;
+  /** Hora-limite (HH:MM, fuso do time comercial). */
   dueTime?: string;
   priority: DailyPlanPriorityLevel;
   completed: boolean;

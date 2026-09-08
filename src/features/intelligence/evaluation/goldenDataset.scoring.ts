@@ -114,7 +114,7 @@ function deterministicScore(
   goldenCase: GoldenCase,
   actual: unknown,
 ): { score: number; reasons: string[] } {
-  const obj = (actual && typeof actual === 'object' ? actual : {}) as Record<string, any>;
+  const obj = (actual && typeof actual === 'object' ? actual : {}) as Record<string, unknown>;
   const reasons: string[] = [];
 
   switch (goldenCase.category) {
@@ -176,15 +176,17 @@ function deterministicScore(
 
     case 'next_best_action': {
       const actionOk = obj.actionType === goldenCase.expected.actionType;
-      const priorityOk = goldenCase.expected.priorityOneOf.includes(obj.priority);
+      const priorityOk = goldenCase.expected.priorityOneOf.some(
+        (priority) => priority === obj.priority,
+      );
       if (!actionOk) reasons.push('actionType divergente');
       if (!priorityOk) reasons.push('priority fora do conjunto aceito');
       return { score: Number(actionOk) * 0.7 + Number(priorityOk) * 0.3, reasons };
     }
 
     case 'summary': {
-      const sentimentOk = goldenCase.expected.sentimentOneOf.includes(
-        obj.sentimentScore ?? obj.sentiment,
+      const sentimentOk = goldenCase.expected.sentimentOneOf.some(
+        (sentiment) => sentiment === (obj.sentimentScore ?? obj.sentiment),
       );
       const actionCount = Array.isArray(obj.actionItems) ? obj.actionItems.length : 0;
       const actionsOk = actionCount >= goldenCase.expected.minActionItems;
@@ -194,10 +196,14 @@ function deterministicScore(
     }
 
     case 'rag': {
-      const actualIds: string[] = Array.isArray(obj.citedChunkIds)
-        ? obj.citedChunkIds
+      const actualIds = Array.isArray(obj.citedChunkIds)
+        ? obj.citedChunkIds.filter((id): id is string => typeof id === 'string')
         : Array.isArray(obj.sourceReferences)
-          ? obj.sourceReferences.map((ref: any) => ref?.chunkId).filter(Boolean)
+          ? obj.sourceReferences.flatMap((reference) => {
+              if (!reference || typeof reference !== 'object') return [];
+              const chunkId = (reference as Record<string, unknown>).chunkId;
+              return typeof chunkId === 'string' ? [chunkId] : [];
+            })
           : [];
       const expected = new Set(goldenCase.expected.expectedCitedChunkIds);
       const actualSet = new Set(actualIds);

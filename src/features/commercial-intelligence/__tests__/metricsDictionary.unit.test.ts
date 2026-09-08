@@ -44,8 +44,8 @@ describe('metricsDictionary — fonte única de verdade de fórmula/origem/limit
   it('a documentação do Coverage cita explicitamente as janelas móveis de 30/60/90 dias', () => {
     const coverage = METRICS_DICTIONARY.find((m) => m.key === 'coverage');
     expect(coverage).toBeDefined();
-    expect(coverage!.exclusionRules).toContain('coverage30');
-    expect(coverage!.exclusionRules).toContain('coverage60');
-    expect(coverage!.exclusionRules).toContain('coverage90');
+    expect(coverage?.exclusionRules).toContain('coverage30');
+    expect(coverage?.exclusionRules).toContain('coverage60');
+    expect(coverage?.exclusionRules).toContain('coverage90');
   });
 });

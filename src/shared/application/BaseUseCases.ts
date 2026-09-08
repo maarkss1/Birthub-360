@@ -51,14 +51,16 @@ export abstract class BaseUseCases<T, TRepository extends CrudRepository<T> = Cr
   }
 
   protected async findById(organizationId: string, id: string): Promise<T | null> {
-    return this.repository.findById!(organizationId, id);
+    return (await this.repository.findById?.(organizationId, id)) ?? null;
   }
 
   protected async create(
     organizationId: string,
     data: Partial<T> | Record<string, unknown>,
   ): Promise<T> {
-    return this.repository.create!(organizationId, data);
+    const created = await this.repository.create?.(organizationId, data);
+    if (created === undefined) throw new Error('Repository.create não implementado.');
+    return created;
   }
 
   protected async update(
@@ -66,10 +68,12 @@ export abstract class BaseUseCases<T, TRepository extends CrudRepository<T> = Cr
     id: string,
     data: Partial<T> | Record<string, unknown>,
   ): Promise<T> {
-    return this.repository.update!(organizationId, id, data);
+    const updated = await this.repository.update?.(organizationId, id, data);
+    if (updated === undefined) throw new Error('Repository.update não implementado.');
+    return updated;
   }
 
   protected async delete(organizationId: string, id: string): Promise<T | void> {
-    return this.repository.delete!(organizationId, id);
+    return this.repository.delete?.(organizationId, id);
   }
 }

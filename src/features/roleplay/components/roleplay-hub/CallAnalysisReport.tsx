@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/media-has-caption -- transcrição completa é exibida junto ao áudio */
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, Phone, RotateCcw, ShieldCheck } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';

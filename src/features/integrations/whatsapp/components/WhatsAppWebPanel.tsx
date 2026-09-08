@@ -43,7 +43,7 @@ function ConversationListItem({
   const label = conversation.contactName || formatPhoneDisplay(conversation.phoneE164);
   const preview = conversation.lastMessageBody || '(mídia sem texto)';
   return (
-    <button
+    <button type="button"
       onClick={onSelect}
       aria-current={active ? 'true' : undefined}
       className={`w-full flex items-center gap-3 px-4 py-3 text-left border-b border-line transition-colors ${active ? 'bg-emerald-600/10' : 'hover:bg-surface-2'}`}
@@ -86,7 +86,7 @@ function ChatArea({
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages]);
+  }, []);
 
   const handleSend = async () => {
     const trimmed = text.trim();
@@ -102,7 +102,7 @@ function ChatArea({
   return (
     <div className="flex-1 flex flex-col min-w-0">
       <div className="flex items-center gap-2 px-4 py-3 border-b border-line bg-emerald-600/10 shrink-0">
-        <button
+        <button type="button"
           onClick={onBack}
           className="md:hidden text-ink-2 hover:text-ink p-1 -ml-1 shrink-0"
           aria-label="Voltar para a lista de conversas"
@@ -173,7 +173,7 @@ function ChatArea({
             placeholder="Digite uma mensagem..."
             className="flex-1 bg-surface-2 border border-line rounded-full px-4 py-2.5 text-sm text-ink outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
           />
-          <button
+          <button type="button"
             onClick={handleSend}
             disabled={sending || !text.trim()}
             aria-label="Enviar mensagem"

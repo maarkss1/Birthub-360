@@ -42,7 +42,7 @@ export function useGoogleIntegration() {
 
   useEffect(() => {
     fetchGoogleStatus();
-  }, []);
+  }, [fetchGoogleStatus]);
 
   // Depois do callback OAuth (google.routes.ts redireciona pra cá com ?google=connected|error),
   // mostra o resultado e limpa a URL — sem isso, um F5 na página reenviaria os mesmos parâmetros.

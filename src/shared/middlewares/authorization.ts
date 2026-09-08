@@ -11,7 +11,7 @@ import { getTenantPrisma } from '../../lib/tenant-prisma.js';
 
 export const requireTenant = (req: Request, res: Response, next: NextFunction): void => {
   const authReq = req as AuthRequest;
-  if (!authReq.user || !authReq.user.organizationId) {
+  if (!authReq.user?.organizationId) {
     logger.warn({ userId: authReq.user?.id }, 'Access denied: Tenant ID missing');
     res
       .status(403)

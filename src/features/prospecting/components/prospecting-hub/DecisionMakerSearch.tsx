@@ -71,7 +71,7 @@ export function DecisionMakerSearch({
     setResults(null);
     setSelectedDecisionMaker(null);
     setError(null);
-  }, [companyName, detectedDomain]);
+  }, [detectedDomain]);
 
   const SENIORITY_OPTIONS = [
     { value: 'c_suite', label: 'C-Level' },

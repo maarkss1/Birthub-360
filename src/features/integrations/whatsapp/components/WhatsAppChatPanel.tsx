@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop fecha também por Escape */
 import { useEffect, useRef, useState } from 'react';
 import { X, Send, Loader2, MessageCircle, AlertTriangle } from 'lucide-react';
 import { api } from '../../../../lib/api';
@@ -36,7 +37,7 @@ export function WhatsAppChatPanel({
       document.removeEventListener('keydown', handleKeyDown);
       previouslyFocusedRef.current?.focus?.();
     };
-  }, []);
+  }, [onClose]);
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +55,7 @@ export function WhatsAppChatPanel({
     return () => {
       cancelled = true;
     };
-  }, [phone]);
+  }, []);
 
   const { messages, sending, error, sendMessage } = useWhatsAppMessages(
     phone,
@@ -63,7 +64,7 @@ export function WhatsAppChatPanel({
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages]);
+  }, []);
 
   const handleSend = async () => {
     const trimmed = text.trim();
@@ -92,7 +93,6 @@ export function WhatsAppChatPanel({
           suporte a teclado; o conteúdo interativo real (mensagens, input, botões) já é acessível
           normalmente dentro deste painel. role="dialog" abaixo também já satisfaz o linter sem
           precisar de biome-ignore aqui (diferente de antes desta correção). */}
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- onClick só interrompe propagação, ver comentário acima */}
       <div
         role="dialog"
         aria-modal="true"
@@ -187,7 +187,7 @@ export function WhatsAppChatPanel({
                   placeholder="Digite uma mensagem..."
                   className="flex-1 bg-surface-2 border border-line rounded-full px-4 py-2.5 text-sm text-ink outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
-                <button
+                <button type="button"
                   onClick={handleSend}
                   disabled={sending || !text.trim()}
                   aria-label="Enviar mensagem"

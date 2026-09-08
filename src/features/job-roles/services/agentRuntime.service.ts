@@ -179,7 +179,7 @@ export async function runAgentExecution(
   }
 
   const agentVersion = await prisma.agentVersion.findFirst({
-    where: { agentDefinitionId: decision.agent!.id, status: 'ACTIVE' },
+    where: { agentDefinitionId: decision.agent?.id, status: 'ACTIVE' },
     select: { id: true, version: true },
   });
 

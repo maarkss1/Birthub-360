@@ -415,7 +415,7 @@ router.delete(
 // Sem registro para uma toolKey, `ai.service.ts` cai no TOOL_CONFIG hardcoded como padrão.
 router.get(
   '/ai-settings',
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const settings = await listAiSettings();
       res.json({ success: true, data: settings });

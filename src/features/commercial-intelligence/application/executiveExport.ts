@@ -123,7 +123,7 @@ export function rowsToCsv(rows: ExportKpiRow[]): string {
   const lines = [header.join(';')];
   for (const row of rows)
     lines.push([row.block, row.indicator, row.value, row.unit].map(csvEscape).join(';'));
-  return '﻿' + lines.join('\r\n');
+  return `﻿${lines.join('\r\n')}`;
 }
 
 export interface ExecutiveExportJson {
@@ -175,7 +175,7 @@ export function buildExecutiveExportHtml(
   const byBlock = new Map<string, ExportKpiRow[]>();
   for (const row of rows) {
     if (!byBlock.has(row.block)) byBlock.set(row.block, []);
-    byBlock.get(row.block)!.push(row);
+    byBlock.get(row.block)?.push(row);
   }
   const blocksHtml = [...byBlock.entries()]
     .map(

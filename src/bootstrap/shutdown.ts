@@ -1,4 +1,4 @@
-import type { Server } from 'http';
+import type { Server } from 'node:http';
 import type { EmbeddedWorkersHandle } from './workers.js';
 
 export interface QuittableConnection {

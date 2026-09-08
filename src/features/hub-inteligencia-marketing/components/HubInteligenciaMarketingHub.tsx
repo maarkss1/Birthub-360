@@ -129,7 +129,7 @@ export function HubInteligenciaMarketingHub() {
       {/* Sub-tab Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-          <button
+          <button type="button"
             onClick={() => setActiveTab('censo')}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'censo'
@@ -139,7 +139,7 @@ export function HubInteligenciaMarketingHub() {
           >
             Censo Competitivo & Oportunidades GR
           </button>
-          <button
+          <button type="button"
             onClick={() => setActiveTab('lacunas')}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
               activeTab === 'lacunas'
@@ -149,7 +149,7 @@ export function HubInteligenciaMarketingHub() {
           >
             Mapa de Lacunas GR Hub
           </button>
-          <button
+          <button type="button"
             onClick={() => setActiveTab('portal')}
             className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
               activeTab === 'portal'
@@ -159,7 +159,7 @@ export function HubInteligenciaMarketingHub() {
           >
             Market Intelligence Dashboard
           </button>
-          <button
+          <button type="button"
             onClick={() => setActiveTab('metodologia')}
             className={`px-4 py-2 text-xs font-semibold rounded-xl border whitespace-nowrap transition-all ${
               activeTab === 'metodologia'
@@ -206,7 +206,7 @@ export function HubInteligenciaMarketingHub() {
 
               <div className="space-y-1.5 pt-1">
                 {filteredDocs.map((d) => (
-                  <button
+                  <button type="button"
                     key={d.file}
                     onClick={() => setActiveDoc(d.file)}
                     className={`w-full text-left p-3 rounded-xl border transition-all ${

@@ -3,7 +3,10 @@ import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
-import { AccountIntelligenceService } from '../server/accountIntelligence.service.js';
+import {
+  AccountIntelligenceService,
+  type TenantDb,
+} from '../server/accountIntelligence.service.js';
 import { withRlsContext } from '../../../lib/prisma.js';
 
 export const accountIntelligenceSchedulerQueueName = 'account-intelligence-scheduler';
@@ -73,7 +76,7 @@ export function createAccountIntelligenceSchedulerWorker() {
         for (const target of uniqueTargets) {
           try {
             await withRlsContext(async (tx) => {
-              const service = new AccountIntelligenceService(tx as any, target.orgId);
+              const service = new AccountIntelligenceService(tx as unknown as TenantDb, target.orgId);
               await service.refresh(target.id);
             });
             refreshed++;
@@ -85,7 +88,7 @@ export function createAccountIntelligenceSchedulerWorker() {
           }
         }
 
-        logger.info('Scheduler atualizou ' + refreshed + ' contas (LDR Fase 5).');
+        logger.info(`Scheduler atualizou ${refreshed} contas (LDR Fase 5).`);
         return { success: true, processed: refreshed };
       });
     },

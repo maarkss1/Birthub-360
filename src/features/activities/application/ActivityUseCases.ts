@@ -53,7 +53,7 @@ export class ActivityUseCases {
   }
 
   async deleteActivity(organizationId: string, id: string) {
-    return this.activityRepository.delete!(organizationId, id);
+    return this.activityRepository.delete?.(organizationId, id);
   }
 
   async snoozeActivity(
@@ -134,7 +134,7 @@ export class ActivityUseCases {
     const filtered = owner ? activities.filter((a) => a.owner === owner) : activities;
 
     const formatIcsDate = (d: Date) => {
-      return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      return `${d.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
     };
 
     const lines = [

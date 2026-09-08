@@ -100,7 +100,7 @@ export function toCsv(rows: Record<string, unknown>[]): string {
   if (headers.length === 0) return '﻿';
   const lines = [headers.join(';')];
   for (const row of rows) lines.push(headers.map((h) => csvEscape(row[h])).join(';'));
-  return '﻿' + lines.join('\r\n');
+  return `﻿${lines.join('\r\n')}`;
 }
 
 function serializeCell(value: unknown): string | number | boolean | null {
