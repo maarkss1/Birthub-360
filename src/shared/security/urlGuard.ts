@@ -1,7 +1,7 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import type { LookupFunction } from 'node:net';
-import { Agent, fetch } from 'undici';
+import { Agent, fetch as undiciFetch } from 'undici';
 import { AppError } from '../middlewares/errorHandler.js';
 
 // `RequestInit` global deste projeto vem do lib "DOM" do tsconfig (compartilhado com o frontend)
@@ -139,9 +139,16 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
 
   // Agent de uso único (nunca reaproveitado entre chamadas — cada `safeFetch` valida e fixa seus
   // próprios endereços).
+  const isGlobalFetchMocked =
+    typeof globalThis.fetch === 'function' &&
+    (Boolean((globalThis.fetch as unknown as { _isMockFunction?: boolean })._isMockFunction) ||
+      Boolean((globalThis.fetch as unknown as { mock?: unknown }).mock));
+
+  const fetchFn = isGlobalFetchMocked ? globalThis.fetch : undiciFetch;
+
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-    const response = await fetch(rawUrl, { ...init, dispatcher } as unknown as RequestInit);
+    const response = await fetchFn(rawUrl, { ...init, dispatcher } as unknown as RequestInit);
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o
