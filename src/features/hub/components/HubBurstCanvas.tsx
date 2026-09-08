@@ -5,7 +5,7 @@
  * Portado de portalatlasprototype.html (função `burstAt`). Expõe uma ref de
  * função `trigger(x, y, colorRgb)` que o HubScreen chama ao clicar num card.
  */
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
 
 export interface BurstHandle {
@@ -27,6 +27,37 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
   const particlesRef = useRef<Particle[]>([]);
   const rafRef = useRef<number | null>(null);
   const prefersReduced = useReducedMotion();
+
+  const drawFrame = useCallback(() => {
+    rafRef.current = null;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!ctx || !canvas) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesRef.current.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05 * (devicePixelRatio || 1);
+      p.life -= 0.02;
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = `rgb(${p.color})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    particlesRef.current = particlesRef.current.filter((p) => p.life > 0);
+    ctx.globalAlpha = 1;
+    if (particlesRef.current.length > 0 && document.visibilityState === 'visible') {
+      rafRef.current = requestAnimationFrame(drawFrame);
+    }
+  }, []);
+
+  const startDrawing = useCallback(() => {
+    if (rafRef.current === null && document.visibilityState === 'visible') {
+      rafRef.current = requestAnimationFrame(drawFrame);
+    }
+  }, [drawFrame]);
 
   // Expõe trigger para o pai sem causar re-render
   useImperativeHandle(
@@ -51,17 +82,15 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
             color: colorRgb,
           });
         }
+        startDrawing();
       },
     }),
-    [prefersReduced],
+    [prefersReduced, startDrawing],
   );
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
     function resize() {
       if (!canvas) return;
       const dpr = devicePixelRatio || 1;
@@ -73,31 +102,21 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
     resize();
     window.addEventListener('resize', resize);
 
-    function draw() {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesRef.current.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.05 * (devicePixelRatio || 1);
-        p.life -= 0.02;
-        ctx.globalAlpha = Math.max(p.life, 0);
-        ctx.fillStyle = `rgb(${p.color})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      particlesRef.current = particlesRef.current.filter((p) => p.life > 0);
-      ctx.globalAlpha = 1;
-      rafRef.current = requestAnimationFrame(draw);
-    }
-    rafRef.current = requestAnimationFrame(draw);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && particlesRef.current.length > 0) startDrawing();
+      if (document.visibilityState !== 'visible' && rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [startDrawing]);
 
   return (
     <canvas
@@ -108,7 +127,6 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
         zIndex: 30,
         pointerEvents: 'none',
       }}
-      aria-hidden="true"
     />
   );
 });

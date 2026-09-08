@@ -151,7 +151,7 @@ export function LoginScreen() {
   // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
   // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
   // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
-  // vez de tentar navegar para /app sem sessão nenhuma.
+  // vez de tentar navegar para /hub sem sessão nenhuma.
   const [verificationPending, setVerificationPending] = useState(false);
   const { activeBrand, setActiveBrand, brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
@@ -195,9 +195,9 @@ export function LoginScreen() {
           email,
           password,
           name: name || email.split('@')[0],
-          callbackURL: '/app',
+          callbackURL: '/hub',
         })
-      : await authClient.signIn.email({ email, password, callbackURL: '/app' });
+      : await authClient.signIn.email({ email, password, callbackURL: '/hub' });
 
     if (result.error) {
       setError(result.error.message || 'Não foi possível autenticar. Verifique suas credenciais.');
@@ -207,14 +207,14 @@ export function LoginScreen() {
 
     // Cadastro sem sessão de volta = e-mail ainda não confirmado (requireEmailVerification em
     // src/lib/auth.ts) — não há pra onde navegar ainda, então mostra o aviso em vez de tentar ir
-    // pra /app sem sessão (o que só voltaria pro login de qualquer forma).
+    // pro /hub sem sessão (o que só voltaria pro login de qualquer forma).
     if (isSignUp && !result.data?.token) {
       setVerificationPending(true);
       setIsSubmitting(false);
       return;
     }
 
-    window.location.href = '/app';
+    window.location.href = '/hub';
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -273,7 +273,7 @@ export function LoginScreen() {
   }
 
   if (currentUser) {
-    return <Navigate to="/app" replace />;
+    return <Navigate to="/hub" replace />;
   }
 
   return (
@@ -458,12 +458,6 @@ export function LoginScreen() {
                           onChange={(e) => handleEmailChange(e.target.value)}
                           className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
                           required
-                          /* campo revelado por ação do usuário ("Esqueci minha senha"), não focus
-                           automático de carregamento de página; foca o único campo do
-                           sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
-                           WAI-ARIA Authoring Practices. */
-                          // eslint-disable-next-line jsx-a11y/no-autofocus
-                          autoFocus
                         />
                       </div>
 
