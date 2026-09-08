@@ -1,4 +1,4 @@
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { requestContext } from '../../../lib/async-context.js';
@@ -107,7 +107,7 @@ export function createDeduplicationWorker() {
       }
     },
     {
-      connection: connection as any,
+      connection: connection as ConnectionOptions,
       concurrency: 1,
     },
   );
@@ -133,7 +133,7 @@ export function createDeduplicationWorker() {
 
 export async function scheduleDeduplicationJob() {
   const queue = new Queue(DEDUP_QUEUE_NAME, {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   // Roda domingo meia-noite (0 0 * * 0).

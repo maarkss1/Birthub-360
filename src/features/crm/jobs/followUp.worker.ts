@@ -1,4 +1,4 @@
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
@@ -94,7 +94,7 @@ export function createFollowUpWorker() {
       await runDailyFollowUpScan();
     },
     {
-      connection: connection as any,
+      connection: connection as ConnectionOptions,
       concurrency: 1,
     },
   );
@@ -120,7 +120,7 @@ export function createFollowUpWorker() {
 
 export async function scheduleFollowUpJobs() {
   const queue = new Queue(FOLLOWUP_QUEUE_NAME, {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   // Roda todo dia as 09:00.

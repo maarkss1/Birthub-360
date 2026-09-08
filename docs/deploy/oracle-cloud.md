@@ -101,6 +101,37 @@ chmod 600 .env.production
 
 Faça backup seguro dos segredos por um mecanismo apropriado à operação. Não use o repositório como cofre de credenciais.
 
+### 3.3 Deploy automatizado via GitHub Actions (`deploy-oci.yml`)
+
+**Achado real (auditoria de release-readiness + relato do usuário)**: merge no `main` do GitHub
+**não** atualiza a instância Oracle sozinho — diferente do Render (`autoDeployTrigger: commit`), o
+caminho Oracle dependia inteiramente de alguém rodar `git pull` + `./scripts/deploy-oci.sh`
+manualmente, via SSH, dentro da instância. `.github/workflows/deploy-oci.yml` fecha essa lacuna:
+dispara automaticamente depois que `ci.yml` ("Central AtlasGR Release") passar em `main` (mesmo
+padrão de gate já usado em `docker-publish.yml` — nunca deploya com CI vermelho), conecta via SSH e
+roda exatamente os mesmos passos manuais (`git fetch`/`reset --hard origin/main` +
+`scripts/deploy-oci.sh` + health checks).
+
+**Ativação pendente** até estes 4 secrets existirem em Settings → Secrets and variables → Actions
+do repositório (o workflow falha de propósito, com mensagem explícita, enquanto faltar algum):
+
+| Secret | Valor |
+| --- | --- |
+| `OCI_SSH_HOST` | IP público da instância (ex.: `163.176.150.147`) |
+| `OCI_SSH_USER` | usuário SSH da instância (ex.: `opc` para Oracle Linux, `ubuntu` para Ubuntu) |
+| `OCI_SSH_PRIVATE_KEY` | conteúdo completo da chave privada SSH (recomenda-se uma chave **dedicada** a este workflow, gerada só para deploy — não a chave pessoal de acesso interativo do operador) |
+| `OCI_DEPLOY_PATH` | caminho absoluto do clone do repositório na instância (ex.: `/home/opc/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR`) |
+
+Secret opcional `OCI_SSH_KNOWN_HOSTS` (saída de `ssh-keyscan -H <host>` capturada manualmente) fixa
+a chave do host em vez de confiar em trust-on-first-use a cada execução — mais resistente a MITM na
+primeira conexão.
+
+Nenhum desses valores deve ser colado em chat, issue, PR ou log — sempre diretamente no formulário
+de secrets do GitHub. `workflow_dispatch` continua disponível para redeploy manual sem novo commit.
+Redeploy manual via SSH direto (seção 3.2) continua funcionando normalmente e não é substituído por
+este workflow — útil para o bootstrap inicial da instância (que exige o clone inicial do repositório
+e a primeira geração de `.env.production`) e para qualquer intervenção fora do fluxo normal de CI.
+
 ---
 
 ## 4. Estrutura dos Serviços (`docker-compose.oci.yml`)

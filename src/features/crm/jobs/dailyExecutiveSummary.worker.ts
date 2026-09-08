@@ -1,4 +1,4 @@
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { requestContext } from '../../../lib/async-context.js';
@@ -116,7 +116,7 @@ export function createExecutiveSummaryWorker() {
       return { organizationsProcessed: results.length };
     },
     {
-      connection: connection as any,
+      connection: connection as ConnectionOptions,
       concurrency: 1,
     },
   );
@@ -142,7 +142,7 @@ export function createExecutiveSummaryWorker() {
 
 export async function scheduleExecutiveSummaryJob() {
   const queue = new Queue(EXEC_SUMMARY_QUEUE_NAME, {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   // Roda todo dia as 18:00.

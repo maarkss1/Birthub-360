@@ -1,4 +1,4 @@
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
@@ -92,7 +92,7 @@ export async function runAutoAnonymizeSweep(): Promise<{ anonymizedCount: number
 
 export function createAutoAnonymizeWorker() {
   const worker = new Worker(AUTO_ANONYMIZE_QUEUE_NAME, async (_job) => runAutoAnonymizeSweep(), {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   worker.on('failed', (job, err) => {
@@ -116,7 +116,7 @@ export function createAutoAnonymizeWorker() {
 
 export async function scheduleAutoAnonymizeJob() {
   if (!connection) return;
-  const queue = new Queue(AUTO_ANONYMIZE_QUEUE_NAME, { connection: connection as any });
+  const queue = new Queue(AUTO_ANONYMIZE_QUEUE_NAME, { connection: connection as ConnectionOptions });
   // BullMQ v6 removeu `repeat` de `Queue.add` (viraria um job avulso, nunca mais se repete) —
   // agendamento recorrente agora exige `upsertJobScheduler`, idempotente pelo id abaixo.
   await queue.upsertJobScheduler(

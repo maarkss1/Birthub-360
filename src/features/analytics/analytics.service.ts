@@ -259,7 +259,7 @@ export class AnalyticsService {
       try {
         const cached = await connection.get(cacheKey);
         if (cached) return JSON.parse(cached);
-      } catch (err) {
+      } catch {
         // Falha de cache não impede leitura do banco.
       }
     }
@@ -356,7 +356,7 @@ export class AnalyticsService {
     if (connection) {
       try {
         await connection.setex(cacheKey, 60, JSON.stringify(result));
-      } catch (err) {
+      } catch {
         // Falha de gravação de cache é não-fatal.
       }
     }

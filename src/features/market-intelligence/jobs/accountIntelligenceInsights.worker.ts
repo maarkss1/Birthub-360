@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { Worker, Queue, type Job } from 'bullmq';
+import { Worker, Queue, type Job, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
@@ -374,7 +374,7 @@ export function createAccountIntelligenceInsightsWorker(): Worker {
       const result = await scanAndGenerateAccountInsights();
       logger.info(result, 'Account intelligence insights scan finalizado.');
     },
-    { connection: connection as any, concurrency: 1 },
+    { connection: connection as ConnectionOptions, concurrency: 1 },
   );
 
   worker.on('failed', (job, err) => {
@@ -397,7 +397,7 @@ export function createAccountIntelligenceInsightsWorker(): Worker {
 }
 
 export async function scheduleAccountIntelligenceInsightsJob(): Promise<void> {
-  const queue = new Queue(ACCOUNT_INSIGHTS_QUEUE_NAME, { connection: connection as any });
+  const queue = new Queue(ACCOUNT_INSIGHTS_QUEUE_NAME, { connection: connection as ConnectionOptions });
   await queue.upsertJobScheduler(
     'account-intelligence-insights-tick',
     { every: SCAN_INTERVAL_MS },

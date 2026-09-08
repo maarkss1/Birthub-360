@@ -1,0 +1,118 @@
+name: Deploy Oracle Cloud (produção)
+
+# Achado real (usuário reportou tela do Hub não atualizada em produção após merge no main):
+# diferente do Render (`autoDeployTrigger: commit`, ver render.yaml), o caminho Oracle Cloud
+# (ADR-004, alvo definitivo de produção — ver docs/deploy/oracle-cloud.md) não tinha NENHUM
+# mecanismo automático: `scripts/deploy-oci.sh` só existia para execução manual, via SSH, dentro
+# da própria instância, e nem faz `git pull` sozinho. Merge no GitHub != deploy real.
+#
+# Mesmo padrão de gate já usado em docker-publish.yml: só dispara depois que o workflow canônico
+# de release (ci.yml, "Central AtlasGR Release") passar de verdade em main — nunca deploya com CI
+# vermelho. workflow_dispatch continua disponível para redeploy manual (ex.: reaplicar sem novo
+# commit, depois de mexer em .env.production na instância).
+#
+# ATIVAÇÃO: este workflow FALHA DE PROPÓSITO (passo "Validar secrets obrigatórios") enquanto os
+# secrets abaixo não existirem em Settings → Secrets and variables → Actions do repositório —
+# mesmo padrão de "pronto mas com ativação pendente" já usado em backup-production.yml. Isso é
+# esperado e seguro: não afeta a aplicação em produção, só sinaliza no Actions que a automação
+# ainda não foi configurada. Depois de cadastrar os secrets, o próximo push em main (ou um
+# workflow_dispatch manual) já deploya de verdade, sem precisar editar este arquivo.
+#
+# Secrets obrigatórios:
+#   OCI_SSH_HOST         IP ou hostname público da instância (ex.: 163.176.150.147)
+#   OCI_SSH_USER          usuário SSH (ex.: ubuntu, opc)
+#   OCI_SSH_PRIVATE_KEY   chave privada SSH (PEM) com acesso à instância — recomenda-se uma chave
+#                         DEDICADA a este workflow (não a chave pessoal do operador), com escopo
+#                         mínimo necessário na instância.
+#   OCI_DEPLOY_PATH       caminho absoluto do clone do repositório na instância (ex.:
+#                         /home/ubuntu/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR)
+# Secret opcional:
+#   OCI_SSH_KNOWN_HOSTS   saída de `ssh-keyscan -H <host>` capturada manualmente e colada aqui,
+#                         para fixar a chave do host em vez de confiar em TOFU (trust-on-first-use)
+#                         via `ssh-keyscan` rodado pelo próprio workflow a cada execução. Mais
+#                         seguro contra MITM na primeira conexão; omitir usa TOFU normalmente.
+
+on:
+  workflow_run:
+    workflows: ['Central AtlasGR Release']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions: {}
+
+concurrency:
+  group: deploy-oci-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy via SSH (docker compose up -d --build)
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validar secrets obrigatórios
+        env:
+          OCI_SSH_HOST: ${{ secrets.OCI_SSH_HOST }}
+          OCI_SSH_USER: ${{ secrets.OCI_SSH_USER }}
+          OCI_SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          OCI_DEPLOY_PATH: ${{ secrets.OCI_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in OCI_SSH_HOST OCI_SSH_USER OCI_SSH_PRIVATE_KEY OCI_DEPLOY_PATH; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Secret obrigatório ausente: $name — cadastre em Settings > Secrets and variables > Actions antes de esperar deploy automático. Ver comentário no topo de .github/workflows/deploy-oci.yml."
+              missing=1
+            fi
+          done
+          test "$missing" -eq 0
+
+      - name: Configurar chave SSH
+        env:
+          OCI_SSH_HOST: ${{ secrets.OCI_SSH_HOST }}
+          OCI_SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          OCI_SSH_KNOWN_HOSTS: ${{ secrets.OCI_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$OCI_SSH_PRIVATE_KEY" > ~/.ssh/oci_deploy_key
+          chmod 600 ~/.ssh/oci_deploy_key
+          if [ -n "$OCI_SSH_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$OCI_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "$OCI_SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          fi
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: git pull + docker compose up -d --build na instância
+        env:
+          OCI_SSH_HOST: ${{ secrets.OCI_SSH_HOST }}
+          OCI_SSH_USER: ${{ secrets.OCI_SSH_USER }}
+          OCI_SSH_PORT: ${{ secrets.OCI_SSH_PORT || '22' }}
+          OCI_DEPLOY_PATH: ${{ secrets.OCI_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/oci_deploy_key -o IdentitiesOnly=yes -p "$OCI_SSH_PORT" \
+            "$OCI_SSH_USER@$OCI_SSH_HOST" bash -s -- "$OCI_DEPLOY_PATH" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          DEPLOY_PATH="$1"
+          cd "$DEPLOY_PATH"
+          echo "== git fetch/reset para origin/main =="
+          git fetch origin main
+          git reset --hard origin/main
+          echo "== rodando scripts/deploy-oci.sh (rebuild + restart + migrations + seed) =="
+          chmod +x scripts/deploy-oci.sh
+          ./scripts/deploy-oci.sh
+          echo "== health checks pós-deploy =="
+          curl -fsS http://127.0.0.1:3000/health/live
+          curl -fsS http://127.0.0.1:3000/health/ready
+          REMOTE_SCRIPT
+
+      - name: Resumo
+        if: always()
+        run: |
+          echo "### Deploy Oracle Cloud" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: \`${{ github.event.workflow_run.head_sha || github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Disparado por: ${{ github.event_name }}" >> "$GITHUB_STEP_SUMMARY"
