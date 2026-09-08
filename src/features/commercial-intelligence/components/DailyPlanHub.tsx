@@ -27,107 +27,14 @@ import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { SoundFX } from '../../../lib/soundEffects';
-import { bitrixApi } from '../../integrations/bitrix/bitrix.api';
 import type {
   DailyPlanItem,
   DailyPlanItemChannel,
   DailyPlanPriorityLevel,
   UserDailyPlanSummary,
-} from '../../integrations/bitrix/service/dailyPlan.service';
-
-interface DailyTask {
-  id: string;
-  time: string;
-  title: string;
-  target: string;
-  channel: string;
-  script: string;
-  completed: boolean;
-}
-
-const DEFAULT_DAILY_PLAN: DailyTask[] = [
-  {
-    id: 't1',
-    time: '08:30 - 09:30',
-    title: 'Planejamento e Fila de Prioridades',
-    target: 'Revisar tarefas do Bitrix, leads prioritários e montar rota do dia',
-    channel: 'Estratégia',
-    script: 'Filtrar reuniões do dia, leads sem contato e SLA vencendo no Bitrix.',
-    completed: false,
-  },
-  {
-    id: 't2',
-    time: '09:30 - 11:30',
-    title: 'Bloco 1 de Prospecção & Follow-up',
-    target: '20 ligações ativas e 15 contatos via WhatsApp para decisores',
-    channel: 'Ligação / WhatsApp',
-    script: 'Foco na dor de redução de custos, rastreamento inteligente e telemetria.',
-    completed: false,
-  },
-  {
-    id: 't3',
-    time: '11:30 - 12:00',
-    title: 'Atualização e Registro no CRM',
-    target: 'Carimbar status, notas e agendamentos no Bitrix24',
-    channel: 'Bitrix24',
-    script: 'Preencher observação clara em 100% dos contatos realizados.',
-    completed: false,
-  },
-  {
-    id: 't4',
-    time: '13:30 - 15:30',
-    title: 'Bloco 2 de Prospecção & Qualificação',
-    target: '25 ligações ativas com decisores de logística/transporte',
-    channel: 'Ligação',
-    script: 'Qualificar tamanho de frota e dores nos primeiros 3 minutos de conversa.',
-    completed: false,
-  },
-  {
-    id: 't5',
-    time: '15:30 - 16:30',
-    title: 'Confirmação de Reuniões & Reengajamento',
-    target: 'Reengajar no-shows e confirmar agendas de amanhã',
-    channel: 'WhatsApp / E-mail',
-    script: 'Enviar lembrete amigável com link do Google Meet e pauta objetiva.',
-    completed: false,
-  },
-  {
-    id: 't6',
-    time: '16:30 - 17:30',
-    title: 'Fechamento do Dia & Alinhamento',
-    target: 'Conferir meta do dia (60 toques), registrar pendências e planejar D+1',
-    channel: 'Gestão',
-    script: 'Zerar tarefas vencidas e enviar resumo de agendamentos para o Closer.',
-    completed: false,
-  },
-];
-
-const PITCHES_BY_SEGMENT = {
-  transportadora: {
-    nome: 'Transportadoras & Cargas Fracionadas',
-    dor: 'Sinistralidade, combustível descontrolado e falta de visibilidade em tempo real.',
-    gancho:
-      'Você sabe exatamente onde cada motorista parou e se o consumo de diesel está no padrão da rota agora?',
-    script:
-      'Olá! Sou especialista em operações de frotas pesadas da AtlasGR. Reduzimos em média 12% do custo de diesel e eliminamos desvios de rota em transportadoras do seu porte já no primeiro mês.',
-  },
-  locadora: {
-    nome: 'Locadoras & Gestão de Ativos',
-    dor: 'Recuperação rápida pós-sinistro, apropriação indébita e telemetria de uso severo.',
-    gancho:
-      'Se um cliente romper o contrato e sumir com o veículo hoje, em quantos minutos você consegue imobilizar?',
-    script:
-      'Olá! A tecnologia da AtlasGR garante taxa de recuperação de 98% com dupla tecnologia e bloqueio seguro sem intervenção mecânica complexa.',
-  },
-  servicos: {
-    nome: 'Frotas de Serviços & Utilitários',
-    dor: 'Horas extras indevidas, uso particular do veículo fora de horário e atrasos.',
-    gancho:
-      'Você tem relatórios de quando a ignição foi ligada no final de semana ou após o expediente?',
-    script:
-      'Olá! Ajudamos empresas com frotas de manutenção e serviços a eliminar até 20% das horas extras indevidas com cercas eletrônicas automáticas.',
-  },
-};
+} from '../../../shared/contracts/dailyPlan.contract';
+import { commercialIntelligenceApi } from '../commercialIntelligence.api';
+import { DEFAULT_DAILY_PLAN, type DailyTask, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
 
 export function DailyPlanHub() {
   const { currentUser } = useAuth();
@@ -167,9 +74,9 @@ export function DailyPlanHub() {
   const loadDailyPlan = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await bitrixApi.getDailyPlan();
-      if (res?.data) {
-        setPlanData(res.data);
+      const res = await commercialIntelligenceApi.getDailyPlan();
+      if (res) {
+        setPlanData(res);
       }
     } catch (err) {
       console.error('Erro ao carregar plano diário:', err);
@@ -188,11 +95,11 @@ export function DailyPlanHub() {
       setIsSyncing(true);
       setSyncFeedback(null);
       SoundFX.play('focus');
-      const res = await bitrixApi.syncDailyPlan();
-      if (res?.data) {
-        setPlanData(res.data);
+      const res = await commercialIntelligenceApi.syncDailyPlan();
+      if (res) {
+        setPlanData(res);
       }
-      setSyncFeedback(res?.message || 'Sincronizado com sucesso!');
+      setSyncFeedback('Sincronizado com sucesso!');
       SoundFX.play('success');
       setTimeout(() => setSyncFeedback(null), 4000);
     } catch (err) {
@@ -227,7 +134,7 @@ export function DailyPlanHub() {
         };
       });
 
-      await bitrixApi.completeDailyPlanItem(item.origin, item.id);
+      await commercialIntelligenceApi.completeDailyPlanItem(item.origin, item.id);
     } catch (err) {
       console.error('Erro ao concluir item:', err);
       loadDailyPlan();
@@ -239,7 +146,7 @@ export function DailyPlanHub() {
     if (!noteText.trim()) return;
     try {
       setIsSubmittingNote(true);
-      await bitrixApi.addDailyPlanNote(item.origin, item.id, noteText);
+      await commercialIntelligenceApi.addDailyPlanNote(item.origin, item.id, noteText);
       SoundFX.play('success');
 
       // Atualiza nota no item localmente
@@ -268,7 +175,7 @@ export function DailyPlanHub() {
     if (!newTitle.trim()) return;
     try {
       setIsCreatingActivity(true);
-      await bitrixApi.createDailyPlanActivity({
+      await commercialIntelligenceApi.createDailyPlanActivity({
         title: newTitle,
         channel: newChannel,
         contactName: newContact || undefined,
