@@ -5067,6 +5067,86 @@ paths:
             application/octet-stream:
               schema: { type: string, format: binary }
         '403': { $ref: '#/components/responses/Forbidden' }
+  /bitrix/daily-plan:
+    get:
+      tags: [Bitrix24]
+      summary: Plano diário operacional do usuário logado (tarefas/atividades/leads do Bitrix24 + atividades locais), montado a partir do cache já sincronizado
+      parameters:
+        - name: assignedById
+          in: query
+          required: false
+          schema: { type: string }
+          description: Só ADMIN/GESTOR podem informar — vê o plano de outro membro do time
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/sync:
+    post:
+      tags: [Bitrix24]
+      summary: Sincroniza o plano diário com o Bitrix24 em tempo real e retorna o plano atualizado
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignedById: { type: string, description: 'Só ADMIN/GESTOR' }
+      responses:
+        '200': { description: Sincronizado, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/complete:
+    post:
+      tags: [Bitrix24]
+      summary: Marca um item do plano diário como concluído
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemType, itemId]
+              properties:
+                itemType: { type: string }
+                itemId: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/note:
+    post:
+      tags: [Bitrix24]
+      summary: Adiciona uma observação a um item do plano diário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemType, itemId, note]
+              properties:
+                itemType: { type: string }
+                itemId: { type: string }
+                note: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/activity:
+    post:
+      tags: [Bitrix24]
+      summary: Cria uma nova atividade avulsa no plano diário (fora do Bitrix24 e das atividades locais já existentes)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, channel]
+              properties:
+                title: { type: string }
+                channel: { type: string }
+                contactName: { type: string }
+                phone: { type: string }
+                dueTime: { type: string }
+                observations: { type: string }
+                leadId: { type: string }
+      responses:
+        '200': { description: Criada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
 
   # ───────────────────────────── 3CX ─────────────────────────────
   /integrations/3cx/connections:
