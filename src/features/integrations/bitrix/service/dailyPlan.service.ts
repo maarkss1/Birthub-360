@@ -1,3 +1,5 @@
+import { env } from '../../../../config/env.js';
+import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import type {
@@ -8,6 +10,7 @@ import type {
   UserDailyPlanSummary,
 } from '../../../../shared/contracts/dailyPlan.contract.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
+import { listBitrixConnections } from './connections.js';
 import { getBitrixUsers } from './deals.js';
 import { resolveOwnBitrixUserId } from './userMapping.js';
 
@@ -78,9 +81,100 @@ interface BitrixActivityRaw {
   SUBJECT?: string;
   START_TIME?: string;
   END_TIME?: string;
+  DEADLINE?: string;
   DESCRIPTION?: string;
   PRIORITY?: string;
+  /** 1 = lead, 2 = negócio, 3 = contato, 4 = empresa (crm.enum.ownertype). */
+  OWNER_TYPE_ID?: string | number;
+  OWNER_ID?: string | number;
   COMMUNICATIONS?: Array<{ VALUE?: string }>;
+}
+
+/** Fuso do time comercial (mesma env já usada pela política de cold call). O Bitrix devolve datas
+ * com offset do portal e o servidor de produção roda em UTC — sem fixar o fuso, "hoje" e a hora
+ * exibida escorregam (22h em São Paulo já é amanhã em UTC). */
+const PLAN_TIMEZONE = env.SDR_CALL_TIMEZONE;
+
+/** Tetos de paginação por lista — o Bitrix devolve 50 por página e ignora `limit`; o plano traz
+ * TODAS as pendências do usuário (pedido explícito), mas com um teto para um portal com backlog
+ * gigante não virar dezenas de chamadas por carregamento. */
+const BITRIX_PAGE_SIZE = 50;
+const MAX_BITRIX_ACTIVITIES = 300;
+const MAX_BITRIX_TASKS = 200;
+const MAX_BITRIX_LEADS = 10;
+
+function parseDate(value: Date | string | undefined | null): Date | null {
+  if (!value) return null;
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** YYYY-MM-DD no fuso do time comercial. */
+function toPlanDate(value: Date | string | undefined | null): string | undefined {
+  const d = parseDate(value);
+  return d ? d.toLocaleDateString('en-CA', { timeZone: PLAN_TIMEZONE }) : undefined;
+}
+
+/** HH:MM no fuso do time comercial. */
+function toPlanTime(value: Date | string | undefined | null): string | undefined {
+  const d = parseDate(value);
+  return d
+    ? d.toLocaleTimeString('pt-BR', {
+        timeZone: PLAN_TIMEZONE,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+    : undefined;
+}
+
+/** Percorre as páginas de um método *.list do Bitrix24 (`start`/`next`) até `maxItems`. */
+async function fetchAllBitrixPages<T>(
+  webhookUrl: string,
+  method: string,
+  params: Record<string, unknown>,
+  pick: (payload: unknown) => T[] | undefined,
+  maxItems: number,
+): Promise<T[]> {
+  const out: T[] = [];
+  let start = 0;
+  while (out.length < maxItems) {
+    const payload = await callBitrix<{ next?: number }>(webhookUrl, method, { ...params, start });
+    const chunk = pick(payload) ?? [];
+    out.push(...chunk);
+    if (chunk.length < BITRIX_PAGE_SIZE || typeof payload?.next !== 'number') break;
+    start = payload.next;
+  }
+  return out.slice(0, maxItems);
+}
+
+/** Conexão Bitrix da organização via `listBitrixConnections`, que autoconecta o webhook padrão da
+ * marca (env) quando ainda não há conexão salva — consultar a tabela direto devolvia
+ * "desconectado" para o mesmo tenant que a tela de Integrações mostrava como conectado. */
+async function resolvePlanConnection(organizationId: string): Promise<{ id: string } | null> {
+  const connections = await listBitrixConnections(organizationId);
+  return connections[0] ?? null;
+}
+
+/**
+ * Resolve o usuário do Bitrix que corresponde ao login da Central, nesta ordem:
+ * 1. `overrideBitrixUserId` (ADMIN/GESTOR olhando o plano de outro membro);
+ * 2. `User.bitrixUserId` (vínculo explícito gravado no cadastro do usuário);
+ * 3. e-mail e, por último, nome completo (ver `resolveOwnBitrixUserId`).
+ */
+async function resolvePlanBitrixUser(
+  organizationId: string,
+  connectionId: string,
+  user: { email: string; name?: string | null; bitrixUserId?: number | null },
+  overrideBitrixUserId?: string,
+): Promise<{ id: string | null; name?: string }> {
+  const users = await getBitrixUsers(organizationId, connectionId);
+  const id =
+    overrideBitrixUserId ??
+    (user.bitrixUserId != null ? String(user.bitrixUserId) : null) ??
+    resolveOwnBitrixUserId(users, user.email, user.name);
+  if (!id) return { id: null };
+  return { id, name: users.find((u) => u.id === id)?.name };
 }
 
 interface BitrixLeadRaw {
@@ -103,24 +197,17 @@ export async function fetchUserDailyPlan(
   userName?: string,
   overrideBitrixUserId?: string,
 ): Promise<UserDailyPlanSummary> {
-  const todayStr = new Date().toISOString().slice(0, 10);
   const now = new Date();
+  const todayStr = toPlanDate(now) ?? now.toISOString().slice(0, 10);
 
-  // Resolve nome do usuário se não informado
-  let resolvedUserName = userName;
-  if (!resolvedUserName) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { name: true },
-    });
-    resolvedUserName = user?.name || userEmail;
-  }
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, bitrixUserId: true },
+  });
+  const resolvedUserName = userName || user?.name || userEmail;
 
   // 1. Conexão Bitrix
-  const connection = await prisma.bitrixConnection.findFirst({
-    where: { organizationId },
-    orderBy: { createdAt: 'asc' },
-  });
+  const connection = await resolvePlanConnection(organizationId);
 
   let bitrixUserId: string | null = null;
   let bitrixUserName: string | undefined;
@@ -130,40 +217,48 @@ export async function fetchUserDailyPlan(
 
   if (connection) {
     try {
-      const users = await getBitrixUsers(organizationId, connection.id);
-      if (overrideBitrixUserId) {
-        bitrixUserId = overrideBitrixUserId;
-        const matched = users.find((u) => u.id === overrideBitrixUserId);
-        if (matched) bitrixUserName = matched.name;
-      } else {
-        bitrixUserId = resolveOwnBitrixUserId(users, userEmail);
-        const matched = users.find((u) => u.id === bitrixUserId);
-        if (matched) bitrixUserName = matched.name;
+      const resolved = await resolvePlanBitrixUser(
+        organizationId,
+        connection.id,
+        { email: userEmail, name: resolvedUserName, bitrixUserId: user?.bitrixUserId },
+        overrideBitrixUserId,
+      );
+      bitrixUserId = resolved.id;
+      bitrixUserName = resolved.name;
+
+      if (!bitrixUserId) {
+        logger.warn(
+          { organizationId, userId, userEmail },
+          '[daily-plan] Login da Central sem usuário correspondente no Bitrix24 — plano só com dados locais',
+        );
       }
 
       const webhookUrl = await getConnectionWebhookUrl(organizationId, connection.id);
 
       if (bitrixUserId) {
-        // Busca tarefas
+        // Todas as tarefas abertas do responsável (não só as de hoje). STATUS 5 = concluída.
         try {
-          const taskRes = await callBitrix<{ result: { tasks: BitrixTaskRaw[] } }>(
+          rawBitrixTasks = await fetchAllBitrixPages<BitrixTaskRaw>(
             webhookUrl,
             'tasks.task.list',
             {
               filter: { RESPONSIBLE_ID: bitrixUserId, '!STATUS': '5' },
               select: ['ID', 'TITLE', 'DESCRIPTION', 'DEADLINE', 'STATUS', 'PRIORITY'],
               order: { DEADLINE: 'ASC' },
-              limit: 25,
             },
+            (p) => (p as { result?: { tasks?: BitrixTaskRaw[] } }).result?.tasks,
+            MAX_BITRIX_TASKS,
           );
-          rawBitrixTasks = taskRes?.result?.tasks || [];
-        } catch {
-          // Fallback silencioso
+        } catch (err) {
+          logger.warn(
+            { err, organizationId, bitrixUserId },
+            '[daily-plan] Falha ao listar tarefas do Bitrix24',
+          );
         }
 
-        // Busca atividades CRM
+        // Todas as atividades CRM pendentes do responsável (ligações, reuniões, e-mails...).
         try {
-          const actRes = await callBitrix<{ result: BitrixActivityRaw[] }>(
+          rawBitrixActivities = await fetchAllBitrixPages<BitrixActivityRaw>(
             webhookUrl,
             'crm.activity.list',
             {
@@ -174,19 +269,27 @@ export async function fetchUserDailyPlan(
                 'SUBJECT',
                 'START_TIME',
                 'END_TIME',
+                'DEADLINE',
                 'DESCRIPTION',
                 'PRIORITY',
+                'OWNER_TYPE_ID',
+                'OWNER_ID',
                 'COMMUNICATIONS',
               ],
-              limit: 25,
+              order: { DEADLINE: 'ASC' },
             },
+            (p) => (p as { result?: BitrixActivityRaw[] }).result,
+            MAX_BITRIX_ACTIVITIES,
           );
-          rawBitrixActivities = actRes?.result || [];
-        } catch {
-          // Fallback silencioso
+        } catch (err) {
+          logger.warn(
+            { err, organizationId, bitrixUserId },
+            '[daily-plan] Falha ao listar atividades CRM do Bitrix24',
+          );
         }
 
-        // Busca leads ativos atribuídos
+        // Leads ativos atribuídos — só os mais recentes, como sugestão de follow-up (não são
+        // "atividades pendentes"; o Bitrix ignora `limit`, então o corte é feito aqui).
         try {
           const leadRes = await callBitrix<{ result: BitrixLeadRaw[] }>(
             webhookUrl,
@@ -195,16 +298,21 @@ export async function fetchUserDailyPlan(
               filter: { ASSIGNED_BY_ID: bitrixUserId, '!STATUS_SEMANTIC_ID': ['S', 'F'] },
               select: ['ID', 'TITLE', 'NAME', 'LAST_NAME', 'COMPANY_TITLE', 'STATUS_ID', 'PHONE'],
               order: { DATE_MODIFY: 'DESC' },
-              limit: 10,
             },
           );
-          rawBitrixLeads = leadRes?.result || [];
-        } catch {
-          // Fallback silencioso
+          rawBitrixLeads = (leadRes?.result || []).slice(0, MAX_BITRIX_LEADS);
+        } catch (err) {
+          logger.warn(
+            { err, organizationId, bitrixUserId },
+            '[daily-plan] Falha ao listar leads do Bitrix24',
+          );
         }
       }
-    } catch {
-      // Conexão Bitrix offline ou erro transitório
+    } catch (err) {
+      logger.warn(
+        { err, organizationId, userId },
+        '[daily-plan] Bitrix24 indisponível — plano montado só com dados locais',
+      );
     }
   }
 
@@ -214,11 +322,15 @@ export async function fetchUserDailyPlan(
   const endOfDay = new Date(todayStr);
   endOfDay.setHours(23, 59, 59, 999);
 
+  // Atividades de hoje (pendentes ou concluídas) + pendentes atrasadas de dias anteriores.
   const localActivities = await prisma.activity.findMany({
     where: {
       organizationId,
       owner: userId,
-      date: { gte: startOfDay, lte: endOfDay },
+      OR: [
+        { date: { gte: startOfDay, lte: endOfDay } },
+        { status: { not: 'Concluida' }, date: { lt: startOfDay } },
+      ],
     },
     include: {
       lead: {
@@ -243,9 +355,10 @@ export async function fetchUserDailyPlan(
     else if (act.type === 'WhatsApp') channel = 'WHATSAPP';
     else if (act.type === 'Email') channel = 'EMAIL';
 
+    const isOverdue = !isCompleted && act.date < startOfDay;
     const priority: DailyPlanPriorityLevel = isCompleted
       ? 'COMPLETED'
-      : act.type === 'Reuniao'
+      : isOverdue || act.type === 'Reuniao'
         ? 'URGENT'
         : 'HIGH';
 
@@ -263,6 +376,7 @@ export async function fetchUserDailyPlan(
       companyName,
       phone: act.lead?.contact?.phone || undefined,
       email: act.lead?.contact?.email || undefined,
+      dueDate: act.date.toISOString().slice(0, 10),
       dueTime: act.time || act.date.toISOString().slice(11, 16),
       priority,
       completed: isCompleted,
@@ -280,8 +394,18 @@ export async function fetchUserDailyPlan(
     else if (act.TYPE_ID === '4' || act.TYPE_ID === 4) channel = 'EMAIL';
     else if (act.SUBJECT?.toLowerCase().includes('whats')) channel = 'WHATSAPP';
 
-    const isUrgent = channel === 'MEETING' || act.PRIORITY === '2';
     const comm = Array.isArray(act.COMMUNICATIONS) ? act.COMMUNICATIONS[0] : null;
+    const dueRaw = act.DEADLINE || act.START_TIME;
+    const dueDate = toPlanDate(dueRaw);
+    const isOverdue = !!dueDate && dueDate < todayStr;
+    const isToday = dueDate === todayStr;
+    const isFlagged = channel === 'MEETING' || act.PRIORITY === '2';
+    // Atrasada ou reunião/alta prioridade de hoje → URGENT; demais de hoje ou sem prazo → HIGH;
+    // agendada para os próximos dias → MEDIUM.
+    const priority: DailyPlanPriorityLevel =
+      isOverdue || (isToday && isFlagged) ? 'URGENT' : isToday || !dueDate ? 'HIGH' : 'MEDIUM';
+    const ownerType = String(act.OWNER_TYPE_ID ?? '');
+    const ownerId = act.OWNER_ID != null ? String(act.OWNER_ID) : undefined;
 
     items.push({
       id: `bitrix_act_${act.ID}`,
@@ -291,9 +415,12 @@ export async function fetchUserDailyPlan(
       title: act.SUBJECT || 'Atividade Bitrix24',
       description: act.DESCRIPTION || undefined,
       phone: comm?.VALUE || undefined,
-      dueTime: act.START_TIME ? new Date(act.START_TIME).toISOString().slice(11, 16) : undefined,
-      priority: isUrgent ? 'URGENT' : 'HIGH',
+      dueDate,
+      dueTime: toPlanTime(dueRaw),
+      priority,
       completed: false,
+      bitrixLeadId: ownerType === '1' ? ownerId : undefined,
+      bitrixDealId: ownerType === '2' ? ownerId : undefined,
       tacticalGuidance: deriveTacticalGuidance(channel, act.SUBJECT || 'Atividade'),
       notes: [],
     });
@@ -301,10 +428,12 @@ export async function fetchUserDailyPlan(
 
   // 3.3 Tarefas Bitrix
   for (const t of rawBitrixTasks) {
-    const isOverdue = t.DEADLINE && new Date(t.DEADLINE) < now;
+    const deadline = parseDate(t.DEADLINE);
+    const dueDate = toPlanDate(deadline);
+    const isOverdue = !!deadline && deadline < now;
     const priority: DailyPlanPriorityLevel = isOverdue
       ? 'URGENT'
-      : t.PRIORITY === '2'
+      : dueDate === todayStr || t.PRIORITY === '2'
         ? 'HIGH'
         : 'MEDIUM';
 
@@ -315,7 +444,8 @@ export async function fetchUserDailyPlan(
       channel: 'TASK',
       title: t.TITLE || 'Tarefa Bitrix24',
       description: t.DESCRIPTION || undefined,
-      dueTime: t.DEADLINE ? new Date(t.DEADLINE).toISOString().slice(11, 16) : undefined,
+      dueDate,
+      dueTime: toPlanTime(deadline),
       priority,
       completed: t.STATUS === '5',
       tacticalGuidance: deriveTacticalGuidance('TASK', t.TITLE || 'Tarefa'),
@@ -358,6 +488,8 @@ export async function fetchUserDailyPlan(
     if (a.completed !== b.completed) return a.completed ? 1 : -1;
     const diff = priorityWeight[b.priority] - priorityWeight[a.priority];
     if (diff !== 0) return diff;
+    const dateDiff = (a.dueDate || '9999-99-99').localeCompare(b.dueDate || '9999-99-99');
+    if (dateDiff !== 0) return dateDiff;
     return (a.dueTime || '99:99').localeCompare(b.dueTime || '99:99');
   });
 
@@ -396,9 +528,7 @@ export async function completeDailyPlanItem(
   itemType: DailyPlanItemOrigin,
   itemId: string,
 ): Promise<{ success: boolean; message: string }> {
-  const connection = await prisma.bitrixConnection.findFirst({
-    where: { organizationId },
-  });
+  const connection = await resolvePlanConnection(organizationId);
 
   if (itemType === 'LOCAL_ACTIVITY') {
     const rawId = itemId.replace(/^local_/, '');
@@ -455,9 +585,7 @@ export async function addDailyPlanItemNote(
 ): Promise<{ success: boolean; message: string }> {
   if (!noteText.trim()) throw new AppError('A observação não pode ser vazia.', 400);
 
-  const connection = await prisma.bitrixConnection.findFirst({
-    where: { organizationId },
-  });
+  const connection = await resolvePlanConnection(organizationId);
 
   if (itemType === 'LOCAL_ACTIVITY') {
     const rawId = itemId.replace(/^local_/, '');
@@ -526,9 +654,7 @@ export async function createDailyPlanActivity(
 ): Promise<{ success: boolean; message: string }> {
   if (!input.title.trim()) throw new AppError('Título é obrigatório.', 400);
 
-  const connection = await prisma.bitrixConnection.findFirst({
-    where: { organizationId },
-  });
+  const connection = await resolvePlanConnection(organizationId);
 
   if (input.leadId) {
     const actType =
@@ -557,8 +683,15 @@ export async function createDailyPlanActivity(
   if (connection) {
     try {
       const webhookUrl = await getConnectionWebhookUrl(organizationId, connection.id);
-      const users = await getBitrixUsers(organizationId, connection.id);
-      const bitrixUserId = resolveOwnBitrixUserId(users, userEmail);
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true, bitrixUserId: true },
+      });
+      const { id: bitrixUserId } = await resolvePlanBitrixUser(organizationId, connection.id, {
+        email: userEmail,
+        name: user?.name,
+        bitrixUserId: user?.bitrixUserId,
+      });
 
       if (input.channel === 'TASK') {
         await callBitrix(webhookUrl, 'tasks.task.add', {
@@ -582,8 +715,12 @@ export async function createDailyPlanActivity(
           },
         });
       }
-    } catch {
-      // Silencioso se Bitrix falhar mas banco local salvou
+    } catch (err) {
+      // Banco local já salvou — não falha a criação, mas deixa rastro para diagnóstico.
+      logger.warn(
+        { err, organizationId, userId },
+        '[daily-plan] Atividade salva na Central, mas não sincronizada no Bitrix24',
+      );
     }
   }
 

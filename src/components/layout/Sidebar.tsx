@@ -59,8 +59,9 @@ export function Sidebar({
     !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
   const canAccessMesaTratamento =
     !!currentUser && hasRequiredRole(currentUser.role, MESA_TRATAMENTO_ROLES);
-  // Perfil SDR restrito: pedido explícito do usuário — dentro da Central Comercial (CRM), o papel
-  // SDR só deve ver a tela pessoal de Plano Diário, não os ~30 itens do menu completo. Aplica-se ao
+  // Perfil SDR focado: pedido explícito do usuário — dentro da Central Comercial (CRM), o papel
+  // SDR vê um menu enxuto centrado no Plano Diário e nas ferramentas de trabalho do dia
+  // (prospecção, qualificação, cadência, treino), não os ~30 itens do menu completo. Aplica-se ao
   // papel como um todo (não a uma conta específica), então vale para qualquer futuro SDR contratado.
   const isRestrictedSdrProfile = currentUser?.role === 'SDR';
 
@@ -93,11 +94,30 @@ export function Sidebar({
   // apareça no CRM, só nos círculos" do Hub Executivo standalone (rotas top-level em App.tsx,
   // fora de /app/*). Quem administra quem vê cada módulo é 'module-access' acima, não a Sidebar.
   //
-  // Perfil SDR restrito (role SDR, ver isRestrictedSdrProfile acima): menu reduzido a um único
-  // item, a tela pessoal de Plano Diário — pedido explícito do usuário. ADMIN/GESTOR/CLOSER
-  // continuam vendo o menu completo do CRM.
+  // Perfil SDR focado (role SDR, ver isRestrictedSdrProfile acima): Plano Diário em primeiro e só
+  // as ferramentas que o SDR usa no dia a dia — sem dashboards/analytics/administração de
+  // integrações. A primeira versão deixava um único item ("Plano Diário") e o SDR ficava sem
+  // acesso pelo menu às próprias ferramentas de trabalho. ADMIN/GESTOR/CLOSER continuam vendo o
+  // menu completo do CRM.
   const navGroupsByJourney: NavGroupDefinition[] = isRestrictedSdrProfile
-    ? [{ title: 'Visão Geral', items: ['daily-plan'] }]
+    ? [
+        { title: 'Visão Geral', items: ['daily-plan'] },
+        { title: 'Captar', items: ['prospect'] },
+        {
+          title: 'Qualificar',
+          items: [
+            'companies',
+            'contacts',
+            ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
+          ],
+        },
+        { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
+        {
+          title: 'IA & Capacitação',
+          items: ['roleplay', 'objections_matrix', 'chatbook', 'topic_training'],
+        },
+        { title: 'Administração', items: ['notifications', 'bitrix', 'settings'] },
+      ]
     : [
         {
           title: 'Visão Geral',

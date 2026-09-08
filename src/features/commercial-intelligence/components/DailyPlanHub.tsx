@@ -36,6 +36,12 @@ import type {
 import { commercialIntelligenceApi } from '../commercialIntelligence.api';
 import { DEFAULT_DAILY_PLAN, type DailyTask, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
 
+/** "YYYY-MM-DD" → "DD/MM" sem passar por `Date` (evita deslocar o dia pelo fuso do navegador). */
+function formatPlanDate(isoDate: string): string {
+  const [, month, day] = isoDate.split('-');
+  return month && day ? `${day}/${month}` : isoDate;
+}
+
 export function DailyPlanHub() {
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<'daily' | 'roteiro' | 'iacoach' | 'pauta1to1'>(
@@ -288,6 +294,18 @@ export function DailyPlanHub() {
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 {getChannelBadge(item.channel)}
+                {item.dueDate && planData && item.dueDate !== planData.date && (
+                  <span
+                    className={`inline-flex items-center gap-1 text-[11px] font-mono ${
+                      item.dueDate < planData.date && !item.completed
+                        ? 'text-red-500 font-bold'
+                        : 'text-ink-2'
+                    }`}
+                  >
+                    <CalendarCheck className="w-3 h-3" /> {formatPlanDate(item.dueDate)}
+                    {item.dueDate < planData.date && !item.completed && ' · atrasada'}
+                  </span>
+                )}
                 {item.dueTime && (
                   <span className="inline-flex items-center gap-1 text-[11px] font-mono text-ink-2">
                     <Clock className="w-3 h-3" /> {item.dueTime}
@@ -472,12 +490,37 @@ export function DailyPlanHub() {
                   year: 'numeric',
                 })}
               </span>
-              {planData?.isBitrixConnected && (
+              {planData?.isBitrixConnected && planData.bitrixUserId && (
                 <>
                   <span>•</span>
                   <span className="inline-flex items-center gap-1 text-emerald-600 font-bold text-xs">
                     <CheckCircle className="w-3.5 h-3.5" /> Bitrix Conectado
                     {planData.bitrixUserName && ` (${planData.bitrixUserName})`}
+                  </span>
+                </>
+              )}
+              {planData && !planData.isBitrixConnected && (
+                <>
+                  <span>•</span>
+                  <span
+                    role="status"
+                    className="inline-flex items-center gap-1 text-amber-600 font-bold text-xs"
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5" /> Bitrix24 não conectado nesta
+                    organização — peça ao gestor para conectar em Integrações
+                  </span>
+                </>
+              )}
+              {planData?.isBitrixConnected && !planData.bitrixUserId && (
+                <>
+                  <span>•</span>
+                  <span
+                    role="status"
+                    className="inline-flex items-center gap-1 text-amber-600 font-bold text-xs"
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5" /> Seu login ({planData.userEmail}) não
+                    foi localizado entre os usuários do Bitrix24 — peça ao gestor para conferir o
+                    e-mail ou o ID Bitrix do seu cadastro
                   </span>
                 </>
               )}
@@ -599,8 +642,8 @@ export function DailyPlanHub() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-black uppercase tracking-widest text-red-500 flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4" />
-                      Alta Prioridade · Reuniões de Hoje &amp; Prazos Críticos ({urgentItems.length}
-                      )
+                      Alta Prioridade · Atrasadas, Reuniões de Hoje &amp; Prazos Críticos (
+                      {urgentItems.length})
                     </h3>
                   </div>
                   {urgentItems.length === 0 ? (
@@ -634,12 +677,12 @@ export function DailyPlanHub() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-black uppercase tracking-widest text-blue-600 flex items-center gap-2">
                       <Target className="w-4 h-4" />
-                      Prospecção &amp; Rotinas Operacionais ({mediumItems.length})
+                      Próximos Dias, Prospecção &amp; Rotinas ({mediumItems.length})
                     </h3>
                   </div>
                   {mediumItems.length === 0 ? (
                     <div className="p-4 rounded-2xl bg-surface border border-line text-xs text-ink-2">
-                      Sem tarefas de rotina pendentes.
+                      Sem tarefas agendadas para os próximos dias nem rotinas pendentes.
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 gap-3">{mediumItems.map(renderCard)}</div>

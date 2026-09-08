@@ -130,11 +130,12 @@ export function HubScreen() {
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
 
-  const isRestrictedSdrProfile = currentUser?.role === 'SDR';
+  // Quem decide quais módulos executivos cada pessoa vê é o painel 'module-access' (ADMIN), para
+  // qualquer papel — inclusive SDR. O corte por papel que existia aqui escondia do SDR até os
+  // módulos que o gestor tinha liberado explicitamente ("as ferramentas dele não aparecem").
   const grantedCatalog = useMemo(
-    () =>
-      isRestrictedSdrProfile ? [] : MODULE_CATALOG.filter((m) => grantedModules.includes(m.key)),
-    [isRestrictedSdrProfile, grantedModules],
+    () => MODULE_CATALOG.filter((m) => grantedModules.includes(m.key)),
+    [grantedModules],
   );
 
   const goTo = useCallback(
@@ -445,7 +446,8 @@ export function HubScreen() {
 
         {!isLoading && grantedCatalog.length === 0 && (
           <p className="mx-auto max-w-[1250px] px-8 text-xs text-ink-2">
-            Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central Comercial e ferramentas da equipe.
+            Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central
+            Comercial e ferramentas da equipe.
           </p>
         )}
         {isLoading && (
@@ -482,9 +484,7 @@ export function HubScreen() {
                       <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
                     </div>
                     <div className="hub-orb-title">{item.label}</div>
-                    {item.primary && (
-                      <div className="hub-orb-tag">{item.description}</div>
-                    )}
+                    {item.primary && <div className="hub-orb-tag">{item.description}</div>}
                   </div>
                 </button>
               );

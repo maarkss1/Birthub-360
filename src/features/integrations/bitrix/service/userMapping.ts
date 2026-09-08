@@ -13,13 +13,38 @@ import type { BitrixUserOption } from './deals.js';
  * de import entre os dois módulos.
  */
 
-/** Devolve o ASSIGNED_BY_ID (Bitrix) do usuário logado neste portal, ou `null` se o e-mail dele não bater com nenhum usuário do Bitrix. */
+/** Normaliza um nome para comparação tolerante: sem acento, minúsculo, espaços colapsados
+ * ("João  Reis" ≡ "joao reis"). */
+function normalizeName(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/\p{M}+/gu, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Devolve o ASSIGNED_BY_ID (Bitrix) do usuário logado neste portal, ou `null` se não houver
+ * correspondência. Ordem de resolução:
+ * 1. e-mail (premissa principal — mesmo e-mail corporativo nos dois sistemas);
+ * 2. nome completo, só quando `userName` é informado E bate com exatamente UM usuário ativo do
+ *    Bitrix (sem acento/caixa). Cobre o caso real de o Bitrix ter o e-mail em branco ou um e-mail
+ *    pessoal diferente do login da Central — nunca escolhe por aproximação quando há ambiguidade.
+ */
 export function resolveOwnBitrixUserId(
   bitrixUsers: BitrixUserOption[],
   userEmail: string,
+  userName?: string | null,
 ): string | null {
   const normalized = userEmail.trim().toLowerCase();
-  return bitrixUsers.find((u) => u.email === normalized)?.id ?? null;
+  const byEmail = bitrixUsers.find((u) => u.email === normalized)?.id;
+  if (byEmail) return byEmail;
+
+  const target = userName ? normalizeName(userName) : '';
+  if (!target) return null;
+  const byName = bitrixUsers.filter((u) => normalizeName(u.name) === target);
+  return byName.length === 1 ? byName[0].id : null;
 }
 
 /**
