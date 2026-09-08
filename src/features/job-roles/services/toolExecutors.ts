@@ -11,8 +11,9 @@
 // dependency-cruiser). Resolvidos via `container.resolve<T>(name)` com contrato estrutural local,
 // mesmo padrão já usado por `src/features/intelligence/routes/agent.routes.ts` (ver comentário em
 // `src/shared/di/setup.ts` para o racional completo e onde cada um é registrado).
-import { container } from '../../../shared/di/container.js';
+
 import { prisma } from '../../../lib/prisma.js';
+import { container } from '../../../shared/di/container.js';
 
 export interface ToolExecutionContext {
   organizationId: string;
@@ -337,6 +338,72 @@ function resolveFilter(ctx: ToolExecutionContext): CommercialIntelligenceFilter 
   };
 }
 
+/** Extrai um subconjunto de campos REAIS do relatório (`CommercialIntelligenceUseCases`) para
+ *  `metrics` — nunca recalcula nada, só escolhe quais campos já existentes no relatório valem a
+ *  pena expor a um agente/supervisor sem forçá-lo a reconstruir o objeto inteiro a partir de
+ *  `raw` (que não é persistido em `AgentExecution`, ver `agentRuntime.service.ts`). Cada extrator
+ *  é resiliente a um formato inesperado (retorna `{}` em vez de lançar) — nunca inventa um número
+ *  quando o campo não existir no resultado real. */
+type CiMetricsExtractor = (result: unknown) => Record<string, number | string | null>;
+
+function num(v: unknown): number | null {
+  return typeof v === 'number' && Number.isFinite(v) ? v : null;
+}
+
+/** `executiveOverview` — venda esperada (`forecastAmount`) e gap (`gapForecast`) vêm daqui
+ *  (seção 6 do relatório executivo); `coverage90` é a "Proteção 90 dias" achatada em 3 campos. */
+const executiveOverviewMetrics: CiMetricsExtractor = (result) => {
+  const r = result as Record<string, unknown>;
+  const coverage90 = r.coverage90 as Record<string, unknown> | undefined;
+  return {
+    closedAmount: num(r.closedAmount),
+    forecastAmount: num(r.forecastAmount),
+    gapForecast: num(r.gapForecast),
+    gapCommit: num(r.gapCommit),
+    pctOfGoal: num(r.pctOfGoal),
+    pipelineEligible: num(r.pipelineEligible),
+    coverage90Multiple: num(coverage90?.coverage),
+    coverage90Recommended: num(coverage90?.coverageRecommended),
+    coverage90RemainingGoal: num(coverage90?.remainingGoal),
+  };
+};
+
+/** `pipelineCreation` — "ritmo pipeline novo" (Pipeline Creation Pace, seção 21): `pacePercent`
+ *  100 = exatamente no ritmo esperado até hoje; `paceGapAmount` positivo = atrás do ritmo. */
+const pipelineCreationMetrics: CiMetricsExtractor = (result) => {
+  const r = result as Record<string, unknown>;
+  return {
+    amount: num(r.amount),
+    count: num(r.count),
+    averageTicket: num(r.averageTicket),
+    pipelineNeeded: num(r.pipelineNeeded),
+    creationCoverage: num(r.creationCoverage),
+    pacePercent: num(r.pacePercent),
+    paceExpectedAmount: num(r.paceExpectedAmount),
+    paceGapAmount: num(r.paceGapAmount),
+  };
+};
+
+const performanceMetrics: CiMetricsExtractor = (result) => {
+  const r = result as Record<string, unknown>;
+  return {
+    winRate: num(r.winRate),
+    wonCount: num(r.wonCount),
+    lostCount: num(r.lostCount),
+  };
+};
+
+const crmQualityMetrics: CiMetricsExtractor = (result) => {
+  const r = result as Record<string, unknown>;
+  const bitrixSync = r.bitrixSync as Record<string, unknown> | undefined;
+  return {
+    overallScore: num(r.overallScore),
+    suspectedDuplicateGroups: num(r.suspectedDuplicateGroups),
+    evaluatedCount: num(r.evaluatedCount),
+    bitrixSyncHealthy: bitrixSync ? String(Boolean(bitrixSync.healthy)) : null,
+  };
+};
+
 function makeCiExecutor(
   label: string,
   call: (
@@ -344,14 +411,21 @@ function makeCiExecutor(
     organizationId: string,
     filter: CommercialIntelligenceFilter,
   ) => Promise<unknown>,
+  extractMetrics: CiMetricsExtractor,
 ): ToolExecutor {
   return async (ctx) => {
     const filter = resolveFilter(ctx);
     const result = await call(commercialIntelligence(), ctx.organizationId, filter);
+    let metrics: Record<string, number | string | null> = {};
+    try {
+      metrics = extractMetrics(result);
+    } catch {
+      // Formato inesperado do relatório real — nunca lança nem inventa métrica; segue com {}.
+    }
     return {
       summary: `${label} para o período ${filter.month}.`,
       facts: [],
-      metrics: {},
+      metrics,
       evidence: [`CommercialIntelligenceUseCases.${label} — período ${filter.month}`],
       missingData: [],
       raw: result,
@@ -359,14 +433,29 @@ function makeCiExecutor(
   };
 }
 
-const pipelineRead = makeCiExecutor('pipelineCreation', (ci, org, f) =>
-  ci.pipelineCreation(org, f),
+const pipelineRead = makeCiExecutor(
+  'pipelineCreation',
+  (ci, org, f) => ci.pipelineCreation(org, f),
+  pipelineCreationMetrics,
 );
-const pipelineAnalyze = makeCiExecutor('performance', (ci, org, f) => ci.performance(org, f));
-const forecastRead = makeCiExecutor('executiveOverview', (ci, org, f) =>
-  ci.executiveOverview(org, f),
+const pipelineAnalyze = makeCiExecutor(
+  'performance',
+  (ci, org, f) => ci.performance(org, f),
+  performanceMetrics,
 );
-const bitrixRead = makeCiExecutor('crmQuality', (ci, org, f) => ci.crmQuality(org, f));
+// PIPELINE != FORECAST (invariante do prompt da onda — ver PROMPT 5, perfil REVENUE_INTELLIGENCE):
+// `executiveOverview` é o único executor cujas métricas alimentam "venda esperada"/"gap", nunca
+// misturado com `pipelineCreation` (que é sobre pipeline NOVO criado, não sobre forecast).
+const forecastRead = makeCiExecutor(
+  'executiveOverview',
+  (ci, org, f) => ci.executiveOverview(org, f),
+  executiveOverviewMetrics,
+);
+const bitrixRead = makeCiExecutor(
+  'crmQuality',
+  (ci, org, f) => ci.crmQuality(org, f),
+  crmQualityMetrics,
+);
 
 const forecastExplain: ToolExecutor = async (ctx) => {
   const leadId = requireStr(ctx.resource, 'leadId');
@@ -375,16 +464,29 @@ const forecastExplain: ToolExecutor = async (ctx) => {
     return {
       summary: `Sem forecast explicável para o lead ${leadId} (fora do pipeline elegível ou sem dado suficiente).`,
       facts: [],
-      metrics: {},
+      metrics: {
+        amount: null,
+        stageProbability: null,
+        weightedProbability: null,
+        weightedValue: null,
+        tier: null,
+      },
       evidence: [],
       missingData: ['forecastExplain'],
       raw: null,
     };
   }
+  const r = result as Record<string, unknown>;
   return {
     summary: `Explicação de forecast gerada para o lead ${leadId}.`,
     facts: [],
-    metrics: {},
+    metrics: {
+      amount: num(r.amount),
+      stageProbability: num(r.stageProbability),
+      weightedProbability: num(r.weightedProbability),
+      weightedValue: num(r.weightedValue),
+      tier: typeof r.tier === 'string' ? r.tier : null,
+    },
     evidence: [`CommercialIntelligenceUseCases.forecastExplain leadId=${leadId}`],
     missingData: [],
     raw: result,
