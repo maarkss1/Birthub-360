@@ -857,9 +857,16 @@
   *,
   *::before,
   *::after {
+    /* !important necessário de propósito: precisa vencer qualquer animation-duration/
+       transition-duration declarado por um componente específico, não só ser mais uma regra
+       na cascata — é assim que a acessibilidade de "menos movimento" (WCAG 2.3.3) funciona. */
+    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
     animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
     animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
     transition-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
     scroll-behavior: auto !important;
   }
 }

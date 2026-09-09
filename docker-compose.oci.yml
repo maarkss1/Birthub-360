@@ -93,8 +93,27 @@ services:
       - ./scripts/db/docker-init.sh:/docker-entrypoint-initdb.d/01-create-app-role.sh:ro
       - ./scripts/db/02-enable-extensions.sql:/docker-entrypoint-initdb.d/02-enable-extensions.sql:ro
       - ./scripts/db/03-create-langfuse-db.sql:/docker-entrypoint-initdb.d/03-create-langfuse-db.sql:ro
+    # Publicado em todas as interfaces DE PROPÓSITO (decisão do dono do produto, 2026-09-08): este
+    # é o ÚNICO Postgres da aplicação — as máquinas de desenvolvimento apontam DATABASE_URL direto
+    # para <IP público da instância>:5432, sem Postgres local/Docker. Proteções que acompanham
+    # isso (nenhuma é opcional):
+    #   - TLS no fio: `ssl=on` abaixo com certificado autoassinado gerado no build da imagem
+    #     (docker/postgres/Dockerfile); cliente usa `?sslmode=require&uselibpqcompat=true`.
+    #   - Security List/NSG da VCN libera 5432 SÓ para os IPs de origem dos desenvolvedores
+    #     (nunca 0.0.0.0/0) — ver docs/deploy/oracle-cloud.md seções 2.1 e 4.2.
+    #   - Papel de aplicação NOSUPERUSER (prospector_app) com senha forte gerada pelo deploy.
     ports:
-      - "127.0.0.1:5432:5432"
+      - "5432:5432"
+    command:
+      - postgres
+      - -c
+      - listen_addresses=*
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/etc/postgresql/tls/server.crt
+      - -c
+      - ssl_key_file=/etc/postgresql/tls/server.key
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U prospector -d prospectordb"]
       interval: 10s

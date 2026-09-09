@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../lib/toast';
 import { clientLogger } from '../lib/clientLogger';
 
@@ -18,7 +18,7 @@ export function use3CXIntegration() {
   const [threecxLabelInput, setThreecxLabelInput] = useState('');
   const [threecxLoading, setThreecxLoading] = useState(false);
 
-  const fetchThreeCXConnections = async () => {
+  const fetchThreeCXConnections = useCallback(async () => {
     try {
       const res = await fetch('/api/integrations/3cx/connections');
       const data = await res.json();
@@ -28,7 +28,7 @@ export function use3CXIntegration() {
     } catch (error) {
       clientLogger.error({ err: error }, 'Failed to fetch 3CX connections');
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchThreeCXConnections();

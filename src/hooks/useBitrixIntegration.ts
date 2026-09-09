@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../lib/toast';
 import { clientLogger } from '../lib/clientLogger';
 
@@ -25,7 +25,7 @@ export function useBitrixIntegration() {
   const [bitrixLabelInput, setBitrixLabelInput] = useState('AtlasGR Bitrix24');
   const [bitrixLoading, setBitrixLoading] = useState(false);
 
-  const fetchBitrixConnections = async () => {
+  const fetchBitrixConnections = useCallback(async () => {
     try {
       const res = await fetch('/api/bitrix/connections');
       const data = await res.json();
@@ -40,7 +40,7 @@ export function useBitrixIntegration() {
     } catch (error) {
       clientLogger.error({ err: error }, 'Failed to fetch Bitrix24 connections');
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchBitrixConnections();

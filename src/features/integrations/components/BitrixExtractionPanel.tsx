@@ -195,7 +195,6 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
   useEffect(() => {
     if (!canManage) return;
     loadRuns();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canManage, loadRuns]);
 
   // Poll enquanto houver alguma extração ainda em andamento — para assim que a última terminar,

@@ -27,6 +27,9 @@ export function PromptStudio() {
     { id: 'competitor_battlecard', name: 'Contorno de Concorrente' },
   ];
 
+  // `loadPrompts` é declarado abaixo deste efeito (TDZ) — incluí-lo no array quebraria com
+  // "used before declaration"; roda só uma vez no mount, mesmo padrão já usado nesta tela.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useEffect(() => {
     loadPrompts();
     // eslint-disable-next-line react-hooks/exhaustive-deps

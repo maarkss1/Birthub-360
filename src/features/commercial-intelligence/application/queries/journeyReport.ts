@@ -73,6 +73,8 @@ function buildHandoffs(
     .reverse()
     .slice(0, RECENT_LIMIT)
     .map((c) => {
+      // Sempre encontra: `ownerChanges` (linha 49) já filtra por `dealById.has(c.leadId)`.
+      // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
       const s = dealById.get(c.leadId)!;
       return {
         leadId: c.leadId,
@@ -122,6 +124,8 @@ function buildReentries(
   const rows: ReentryRow[] = [];
   for (const [leadId, rowsOfLead] of byLead) {
     const sorted = [...rowsOfLead].sort((a, b) => a.enteredAt.getTime() - b.enteredAt.getTime());
+    // Sempre encontra: `byLead` (linha 119) só recebe leadId onde `dealById.has(row.leadId)` é true.
+    // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
     const s = dealById.get(leadId)!;
     for (let i = 1; i < sorted.length; i++) {
       const previous = sorted[i - 1];

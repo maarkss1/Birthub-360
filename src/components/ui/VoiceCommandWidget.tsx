@@ -16,6 +16,10 @@ export function VoiceCommandWidget() {
   const [recognition, setRecognition] = useState<SpeechRecognitionLike | null>(null);
   const { setActiveBrand } = useBrand();
 
+  // `stopListening` é declarado abaixo deste efeito (TDZ) — incluí-lo no array quebraria com
+  // "used before declaration"; o efeito só constrói o objeto `recognition` uma vez no mount e os
+  // handlers fecham sobre o binding real de `stopListening`, resolvido só quando disparados.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useEffect(() => {
     // Inicializa Web Speech API se suportado pelo navegador
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;

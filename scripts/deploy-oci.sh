@@ -80,15 +80,29 @@ echo "🔒 1. Verificando firewall local..."
 if command -v iptables &> /dev/null; then
     run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT 2>/dev/null || true
     run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT 2>/dev/null || true
+    # 5432: acesso direto ao Postgres pelas máquinas de desenvolvimento (ver comentário do serviço
+    # `postgres` em docker-compose.oci.yml). A restrição por IP de origem fica na Security List da
+    # VCN (docs/deploy/oracle-cloud.md 2.1), avaliada antes de qualquer regra do host.
+    run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 5432 -j ACCEPT 2>/dev/null || true
     if command -v netfilter-persistent &> /dev/null; then
         run_sudo netfilter-persistent save 2>/dev/null || true
     fi
+fi
+
+# Oracle Linux 8/9 (imagem padrão da OCI) usa firewalld; sem isto a regra iptables acima pode ser
+# sobrescrita no próximo reload do firewalld.
+if command -v firewall-cmd &> /dev/null; then
+    for port in 80 443 5432; do
+        run_sudo firewall-cmd --permanent --add-port="${port}/tcp" 2>/dev/null || true
+    done
+    run_sudo firewall-cmd --reload 2>/dev/null || true
 fi
 
 if command -v ufw &> /dev/null; then
     run_sudo ufw allow 80/tcp 2>/dev/null || true
     run_sudo ufw allow 443/tcp 2>/dev/null || true
     run_sudo ufw allow 22/tcp 2>/dev/null || true
+    run_sudo ufw allow 5432/tcp 2>/dev/null || true
 fi
 
 # 2. Detecta ou instala Docker e Docker Compose

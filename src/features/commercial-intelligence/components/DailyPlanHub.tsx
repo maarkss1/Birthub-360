@@ -268,6 +268,7 @@ export function DailyPlanHub() {
 
   const renderCard = (item: DailyPlanItem) => {
     const isNoteOpen = activeNoteItemId === item.id;
+    const scriptOrPrompt = item.tacticalGuidance?.scriptOrPrompt;
     return (
       <div
         key={item.id}
@@ -381,10 +382,10 @@ export function DailyPlanHub() {
               <span className="inline-flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-brand" /> Como Fazer (Diretriz Tática)
               </span>
-              {item.tacticalGuidance.scriptOrPrompt && (
+              {scriptOrPrompt && (
                 <button
                   type="button"
-                  onClick={() => copyToClipboard(item.tacticalGuidance.scriptOrPrompt!, item.id)}
+                  onClick={() => copyToClipboard(scriptOrPrompt, item.id)}
                   className="text-ink-2 hover:text-brand inline-flex items-center gap-1 cursor-pointer font-bold"
                 >
                   {copiedScriptId === item.id ? (

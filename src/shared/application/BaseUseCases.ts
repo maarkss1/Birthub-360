@@ -73,7 +73,7 @@ export abstract class BaseUseCases<T, TRepository extends CrudRepository<T> = Cr
     return updated;
   }
 
-  protected async delete(organizationId: string, id: string): Promise<T | void> {
+  protected async delete(organizationId: string, id: string): Promise<T | undefined> {
     return this.repository.delete?.(organizationId, id);
   }
 }

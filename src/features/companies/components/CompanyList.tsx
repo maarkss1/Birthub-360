@@ -53,7 +53,6 @@ export function CompanyList() {
       setIsFormOpen(true);
       navigate(location.pathname, { replace: true, state: null });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, location.state, location.pathname]);
 
   // Espera o usuário parar de digitar antes de disparar a busca no servidor — evita uma

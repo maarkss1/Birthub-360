@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../lib/toast';
 import { clientLogger } from '../lib/clientLogger';
 
@@ -21,7 +21,7 @@ export function useGoogleIntegration() {
   // escopo (ver Onda 3 — "Integrações honestas").
   const [hasCalendarWriteScope, setHasCalendarWriteScope] = useState(false);
 
-  const fetchGoogleStatus = async () => {
+  const fetchGoogleStatus = useCallback(async () => {
     try {
       const res = await fetch('/api/google/status');
       const data = await res.json();
@@ -38,7 +38,7 @@ export function useGoogleIntegration() {
     } catch (error) {
       clientLogger.error({ err: error }, 'Failed to fetch Google status');
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchGoogleStatus();

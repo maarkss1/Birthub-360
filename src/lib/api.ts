@@ -28,7 +28,7 @@ export async function apiFetch<T>(endpoint: string, options?: ApiRequestOptions)
   let response: Response;
   try {
     const requestOptions = { ...(options || {}) };
-    delete requestOptions.timeoutMs;
+    requestOptions.timeoutMs = undefined;
     const baseUrl =
       typeof window !== 'undefined' &&
       window.location?.origin &&
