@@ -59,6 +59,14 @@ const STOPWORDS = new Set([
   'entre',
   'seus',
   'suas',
+  // Termos que são puro "ruído de boilerplate" neste catálogo específico — aparecem em quase toda
+  // capability/agente/serviço (ex.: "motor real", "fonte real", "Agente de..."), então isolados não
+  // carregam nenhum sinal real sobre a necessidade do requester (achado real de falso positivo:
+  // "real"/"agente" sozinhos combinavam com dezenas de entradas não relacionadas do catálogo).
+  'real',
+  'reais',
+  'agente',
+  'agentes',
 ]);
 
 /** Extrai termos de busca reais do texto de `need` — nunca inventa palavras-chave que não vieram
@@ -73,14 +81,26 @@ function extractKeywords(need: string): string[] {
   return [...new Set(words)];
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Casa por palavra inteira (nunca substring solta, ex.: "real" dentro de "realizar") e exige pelo
+ *  menos 2 termos distintos batendo (ou o \u00fanico termo, se o need s\u00f3 rendeu 1 keyword) \u2014 uma \u00fanica
+ *  palavra gen\u00e9rica do vocabul\u00e1rio de neg\u00f3cio (ex.: "pipeline", "fluxo") sozinha n\u00e3o \u00e9 sinal
+ *  suficiente de que a capability/agente/servi\u00e7o j\u00e1 cobre a necessidade real do requester. */
 function matchesKeywords(haystack: (string | null | undefined)[], keywords: string[]): boolean {
+  if (keywords.length === 0) return false;
   const text = haystack
     .filter((h): h is string => Boolean(h))
     .join(' ')
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
-  return keywords.some((k) => text.includes(k));
+  const matchCount = keywords.filter((k) =>
+    new RegExp(`\\b${escapeRegExp(k)}\\b`).test(text),
+  ).length;
+  return matchCount >= Math.min(2, keywords.length);
 }
 
 export interface CapabilityMatch {

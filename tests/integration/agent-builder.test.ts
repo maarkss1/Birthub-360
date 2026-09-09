@@ -205,7 +205,7 @@ describe('Agent Builder / Fábrica de Agentes (PROMPT 10)', () => {
     it('need com número/valor solto (não vindo de fonte real) reprova hallucinatedNumbers e eleva o risco', async () => {
       const { user } = await makeUserWithJobRole('SDR');
       const need =
-        'Agente exclusivo para aumentar conversao em 47% e economizar R$ 5000 por mes automaticamente.';
+        'Quero um mecanismo que prometa crescimento de 47% e economize R$ 5000 todo mes, garantido por magica.';
       const proposal = await proposeAgentBuild({
         actor: { userId: user.id, organizationId: ORG_ID, userRole: 'SDR' },
         need,
@@ -222,7 +222,7 @@ describe('Agent Builder / Fábrica de Agentes (PROMPT 10)', () => {
       const { user } = await makeUserWithJobRole('SDR');
       const proposal = await proposeAgentBuild({
         actor: { userId: user.id, organizationId: ORG_ID, userRole: 'SDR' },
-        need: 'Necessidade real e inédita para testar o fluxo de revisão humana deste pipeline.',
+        need: 'Preciso de algo que decore piadas de matematica para motivar o time antes de reunioes internas.',
       });
       expect(proposal.status).toBe('DRAFT');
 
