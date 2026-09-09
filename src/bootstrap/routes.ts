@@ -28,6 +28,7 @@ import { agentRoutes } from '../features/intelligence/routes/agent.routes.js';
 import { intelligenceRoutes } from '../features/intelligence/routes/intelligence.routes.js';
 import { promptRoutes } from '../features/intelligence/routes/prompt.routes.js';
 import { accessRequestRoutes } from '../features/job-roles/routes/accessRequest.routes.js';
+import { agentBusRoutes } from '../features/job-roles/routes/agentBus.routes.js';
 import { agentCatalogRoutes } from '../features/job-roles/routes/agentCatalog.routes.js';
 import { capabilityRoutes } from '../features/job-roles/routes/capability.routes.js';
 import { jobRoleRoutes } from '../features/job-roles/routes/jobRole.routes.js';
@@ -36,6 +37,7 @@ import { workspaceRoutes } from '../features/job-roles/routes/workspace.routes.j
 import { knowledgeRoutes } from '../features/knowledge/knowledge.routes.js';
 import { lgpdRouter } from '../features/lgpd/lgpd.routes.js';
 import { accountIntelligenceRoutes } from '../features/market-intelligence/server/accountIntelligence.routes.js';
+import { marketIntelligenceCompanyRoutes } from '../features/market-intelligence/server/marketIntelligenceCompany.routes.js';
 import { mesaTratamentoRoutes } from '../features/mesa-tratamento/routes/mesaTratamento.routes.js';
 import { moduleAccessRoutes } from '../features/module-access/routes/moduleAccess.routes.js';
 import { noteRoutes } from '../features/notes/routes/note.routes.js';
@@ -57,6 +59,16 @@ import { requireRole } from '../shared/middlewares/requireRole.js';
  * BullBoard, e antes do fallback de frontend — mesma posição do server.ts original.
  */
 export function mountFeatureRoutes(app: Express): void {
+  // Precisa vir ANTES de '/api/companies': o path de 1 segmento
+  // '/api/companies/market-intelligence' colidiria com companyRoutes 'GET /:id' (que trataria
+  // "market-intelligence" como um id de empresa) se companyRoutes fosse verificado primeiro. Ver
+  // o comentário de topo de marketIntelligenceCompany.routes.ts.
+  app.use(
+    '/api/companies/market-intelligence',
+    authenticateToken,
+    requireTenant,
+    marketIntelligenceCompanyRoutes,
+  );
   app.use('/api/companies', authenticateToken, requireTenant, companyRoutes);
   app.use('/api/contacts', authenticateToken, requireTenant, contactRoutes);
   app.use('/api/leads', authenticateToken, requireTenant, leadRoutes);
@@ -151,6 +163,8 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/workspace', authenticateToken, requireTenant, workspaceRoutes);
   // PROMPT 7 — Cross-Role Authorization + Aprovações: mesmo padrão de mount independente.
   app.use('/api/access-requests', authenticateToken, requireTenant, accessRequestRoutes);
+  // PROMPT 8 — Agent Bus + Handoffs: mesmo padrão de mount independente.
+  app.use('/api/agent-bus', authenticateToken, requireTenant, agentBusRoutes);
   app.use('/api/auth-extra', authenticateToken, requireTenant, authExtraRoutes);
   app.use('/api/agent', requireTenant, agentRoutes);
   app.use('/api/cadence', authenticateToken, requireTenant, cadenceRoutes);

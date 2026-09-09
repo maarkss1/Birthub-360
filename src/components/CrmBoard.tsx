@@ -85,7 +85,10 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     handleCardEnrich,
     handleBatchEnrich,
   } = useCrmBoardController(funnel);
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  // Deep link do registro aberto: o lead/negócio selecionado vive no parâmetro `lead` da URL (não
+  // em useState local) para que a URL seja a fonte de verdade — compartilhável, sobrevive a
+  // reload, e o botão Voltar do navegador fecha o drawer antes de sair da tela (Onda A, Agente 00).
+  const selectedLeadId = searchParams.get('lead');
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const keyboardDragStatusRef = useRef<LeadStatus | null>(null);
 
@@ -332,10 +335,28 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         handleToggleSelect(lead.id);
         return;
       }
-      setSelectedLeadId(lead.id);
+      // push (padrão do setSearchParams): abrir o drawer entra no histórico do navegador, então
+      // Voltar fecha o drawer em vez de sair de /app/crm — ver handleCloseDrawer abaixo, que usa
+      // replace ao fechar explicitamente para não empilhar uma entrada de histórico simétrica.
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('lead', lead.id);
+        return next;
+      });
     },
-    [selectionMode, handleToggleSelect],
+    [selectionMode, handleToggleSelect, setSearchParams],
   );
+
+  const handleCloseDrawer = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('lead');
+        return next;
+      },
+      { replace: true },
+    );
+  }, [setSearchParams]);
 
   const handleSelectAll = useCallback(() => {
     if (selectedLeadIds.size === leads.length) {
@@ -436,8 +457,9 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     (next: 'Lead' | 'Negocio') => {
       if (funnelProp) return; // funil fixado por prop — toggle não se aplica
       SoundFX.play('navigate');
-      setSelectedLeadId(null); // evita abrir o drawer de um lead que já não está no funil visível
       setSelectedLeadIds(new Set());
+      // remove `lead` junto — evita manter aberto o drawer de um lead que já não está no funil
+      // visível (mesmo comportamento de antes, agora expresso na URL em vez de em state local).
       setSearchParams(next === 'Lead' ? {} : { funnel: next }, { replace: true });
     },
     [funnelProp, setSearchParams],
@@ -759,7 +781,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       {selectedLeadId && (
         <LeadDetailDrawer
           leadId={selectedLeadId}
-          onClose={() => setSelectedLeadId(null)}
+          onClose={handleCloseDrawer}
           onChanged={fetchLeads}
         />
       )}
