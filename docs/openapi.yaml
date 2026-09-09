@@ -4803,6 +4803,174 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/DataEnvelope' }
 
+  /access-requests:
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        PROMPT 7 — Abre um AccessRequest: capability temporária e escopada fora do que o JobRole
+        do ator já concede, nunca uma troca de cargo. Exige `agent.request_cross_role` concedido
+        ao cargo do ator (Capability Engine normal), `resource` escopado não-vazio e `reason`.
+        Categoria de aprovação (`data.accessRequest.category`) é derivada automaticamente da
+        capability pedida. Quando a categoria é `READ_CONSULTA` e a capability é `riskLevel: LOW`,
+        aprova automaticamente (SYSTEM) e já cria o grant temporário; caso contrário fica
+        `PENDING` até um aprovador elegível decidir.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [capabilityCode, resource, reason]
+              properties:
+                capabilityCode: { type: string }
+                resource: { type: object, description: 'Escopo do pedido, ex.: { "type": "LEAD", "id": "..." } — nunca vazio.' }
+                reason: { type: string }
+      responses:
+        '201':
+          description: AccessRequest criado (`PENDING` ou já `APPROVED` via auto-aprovação) — ver `data.accessRequest`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: Cargo do ator não pode solicitar acesso cruzado (`agent.request_cross_role` não concedido/negado)
+        '409':
+          description: Ator sem JobRole primário ativo (`NO_JOB_ROLE`)
+    get:
+      tags: [Cargos e Agentes]
+      summary: Lista os AccessRequest abertos pelo próprio ator autenticado (qualquer status), mais recentes primeiro
+      responses:
+        '200':
+          description: Lista de AccessRequest do ator — ver `data.accessRequests`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /access-requests/pending-approvals:
+    get:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Fila de aprovação: AccessRequest `PENDING` de OUTROS usuários cuja categoria o ator
+        autenticado atende (piso de UserRole + JobRole elegível da política, ver
+        `access-request-policy.ts`) — nunca inclui os próprios pedidos do ator.
+      responses:
+        '200':
+          description: Fila de aprovação do ator — ver `data.accessRequests`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /access-requests/{id}/approve:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Aprova um AccessRequest `PENDING` e cria o `TemporaryCapabilityGrant` (padrão 24h,
+        configurável até 7 dias via `expiresInHours`). Nunca permite autoaprovação (aprovador ==
+        requester) nem aprovador fora da política da categoria — ambos rejeitam a tentativa sem
+        mudar o status do pedido.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notes: { type: string }
+                expiresInHours: { type: integer, minimum: 1, maximum: 168 }
+      responses:
+        '200':
+          description: AccessRequest aprovado — ver `data.accessRequest`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          description: Autoaprovação (`SELF_APPROVAL_DENIED`) ou aprovador não elegível para a categoria (`APPROVER_NOT_ELIGIBLE`)
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Pedido já decidido (não está mais `PENDING`)
+
+  /access-requests/{id}/deny:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: Nega um AccessRequest `PENDING` — mesmas checagens de autoaprovação/elegibilidade de `/approve`, nunca cria grant
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { type: object, properties: { notes: { type: string } } }
+      responses:
+        '200':
+          description: AccessRequest negado — ver `data.accessRequest`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          description: Autoaprovação (`SELF_APPROVAL_DENIED`) ou aprovador não elegível para a categoria (`APPROVER_NOT_ELIGIBLE`)
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Pedido já decidido (não está mais `PENDING`)
+
+  /access-requests/{id}/cancel:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: O próprio requester (ou um ADMIN) retira um AccessRequest ainda `PENDING` — nunca decide o pedido, só o encerra como `CANCELLED`
+      responses:
+        '200':
+          description: AccessRequest cancelado — ver `data.accessRequest`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Pedido já decidido (não está mais `PENDING`)
+
+  /access-requests/grants/{grantId}/revoke:
+    parameters:
+      - name: grantId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Revoga um `TemporaryCapabilityGrant` ativo antes de expirar — permitido a ADMIN ou a
+        qualquer usuário que atenda a política de aprovação da categoria do pedido original.
+        `capabilityAuthorization.service.ts` para de considerar o grant na próxima chamada.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [reason], properties: { reason: { type: string } } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Grant já revogado ou já expirado
+
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:
     get:
