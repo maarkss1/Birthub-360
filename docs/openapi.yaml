@@ -5192,6 +5192,35 @@ paths:
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/daily-plan/closing/pending:
+    get:
+      tags: [Bitrix24]
+      summary: >-
+        Verifica se o usuário autenticado tem um fechamento de Plano Diário pendente (dia civil
+        anterior com atividades locais e sem `DailyPlanClosing` registrado) — usado pelo
+        DailyClosingGate para decidir se bloqueia o app.
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /bitrix/daily-plan/closing:
+    post:
+      tags: [Bitrix24]
+      summary: >-
+        Registra o fechamento do Plano Diário: parecer do usuário sobre o dia anterior e metas
+        para o novo dia.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [referenceDate, userComment]
+              properties:
+                referenceDate: { type: string, description: 'YYYY-MM-DD, fuso do time comercial' }
+                userComment: { type: string }
+                nextDayGoals: { type: array, items: { type: string } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/leads/{leadId}/comment:
     parameters:
       - name: leadId
