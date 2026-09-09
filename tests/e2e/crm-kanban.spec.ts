@@ -307,4 +307,42 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
     const columnBody = page.locator('h3', { hasText: 'Qualificação (SDR)' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
     await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible({ timeout: 10_000 });
   });
+
+  // Onda A (Agente 00, Commercial AI OS) — o lead selecionado passou a viver no parâmetro `lead`
+  // da URL (ver CrmBoard.tsx) em vez de state local, para que o registro aberto seja
+  // compartilhável por link e sobreviva a reload.
+  test('abrir o card grava o lead na URL; reload com ?lead= reabre o mesmo drawer', async ({ page }) => {
+    const { company, lead } = await createCompanyAndLead(page, {
+      tradeName: `Deep Link Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`[?&]lead=${lead.id}(&|$)`));
+
+    // A URL é a fonte de verdade do registro aberto — reload não deve perder o drawer.
+    await page.reload();
+    const drawerAfterReload = page.getByRole('dialog');
+    await expect(drawerAfterReload).toBeVisible();
+    await expect(drawerAfterReload).toContainText(company.tradeName);
+  });
+
+  test('botão Voltar do navegador fecha o drawer sem sair de /app/crm', async ({ page }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Voltar Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+
+    await page.goBack();
+    await expect(drawer).not.toBeVisible();
+    await expect(page).toHaveURL(/\/app\/crm$/);
+  });
 });
