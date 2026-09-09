@@ -180,7 +180,8 @@ export function Integrations() {
           aria-label="Módulos de integração"
           className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible lg:overflow-y-auto p-3 lg:p-4 lg:space-y-1 lg:flex-1"
         >
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('whatsapp');
@@ -189,7 +190,8 @@ export function Integrations() {
           >
             <span className="text-lg">💬</span> WhatsApp
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('google');
@@ -198,7 +200,8 @@ export function Integrations() {
           >
             <span className="text-lg">📧</span> Google Workspace
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('bitrix');
@@ -207,7 +210,8 @@ export function Integrations() {
           >
             <span className="text-lg">🔗</span> Bitrix24
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('3cx');
@@ -216,7 +220,8 @@ export function Integrations() {
           >
             <IconWrench className="w-4 h-4 text-sky-500" /> PABX 3CX
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('webhooks');
@@ -317,7 +322,8 @@ export function Integrations() {
                     )}
                   </div>
                   {status === 'connected' && (
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handleDisconnect}
                       disabled={loading || !canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -330,7 +336,8 @@ export function Integrations() {
 
                 {status === 'disconnected' && (
                   <div className="space-y-2">
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handleConnect}
                       disabled={loading || !canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -480,7 +487,8 @@ export function Integrations() {
                         ))}
                       </div>
                     )}
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handleGoogleDisconnect}
                       disabled={googleLoading || !canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -490,7 +498,8 @@ export function Integrations() {
                     </button>
                   </>
                 ) : (
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleGoogleConnect}
                     disabled={googleLoading || !canManage}
                     title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -634,7 +643,8 @@ export function Integrations() {
                     Gere em Bitrix24 → Aplicativos → Webhooks → Webhook de entrada, com permissão{' '}
                     <strong className="font-bold text-ink">crm</strong>.
                   </p>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleBitrixConnect}
                     disabled={bitrixLoading || !canManage}
                     title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -837,7 +847,8 @@ export function Integrations() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button type="button"
+                          <button
+                            type="button"
                             onClick={() => handle3CXTest(conn.id)}
                             disabled={!canManage}
                             title={
@@ -847,7 +858,8 @@ export function Integrations() {
                           >
                             Testar PABX
                           </button>
-                          <button type="button"
+                          <button
+                            type="button"
                             onClick={() => handle3CXDisconnect(conn.id)}
                             disabled={threecxLoading || !canManage}
                             title={
@@ -892,7 +904,8 @@ export function Integrations() {
                       className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
                     />
                   </div>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handle3CXConnect}
                     disabled={threecxLoading || !canManage}
                     title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}

@@ -26,6 +26,15 @@ vi.mock('@/lib/audit/audit.service', () => ({
   AuditService: { log: (...args: unknown[]) => auditLogMock(...args) },
 }));
 
+// `testWebhook` (client.ts) chama `safeFetch` (urlGuard.ts), que usa o `fetch` importado do
+// pacote `undici` — não o `fetch` global — então `vi.spyOn(globalThis, 'fetch')` não intercepta
+// essa chamada. Mocka só o export `fetch` do módulo, preservando o resto (`Agent` real).
+const fetchMock = vi.fn();
+vi.mock('undici', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('undici')>();
+  return { ...actual, fetch: (...args: Parameters<typeof actual.fetch>) => fetchMock(...args) };
+});
+
 function jsonResponse(body: unknown, init: { status?: number } = {}) {
   return new Response(JSON.stringify(body), { status: init.status ?? 200 });
 }
@@ -36,7 +45,6 @@ beforeEach(() => {
 
 describe('connectBitrix — SSRF real (guard não mockado)', () => {
   it('rejeita e nunca persiste um webhook apontando para IP privado/reservado', async () => {
-    const fetchMock = vi.spyOn(globalThis, 'fetch');
     const { connectBitrix } = await import('../connections.js');
 
     await expect(
@@ -45,11 +53,9 @@ describe('connectBitrix — SSRF real (guard não mockado)', () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
     expect(bitrixConnectionMock.create).not.toHaveBeenCalled();
-    fetchMock.mockRestore();
   });
 
   it('rejeita e nunca persiste um webhook apontando para loopback', async () => {
-    const fetchMock = vi.spyOn(globalThis, 'fetch');
     const { connectBitrix } = await import('../connections.js');
 
     await expect(
@@ -58,7 +64,6 @@ describe('connectBitrix — SSRF real (guard não mockado)', () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
     expect(bitrixConnectionMock.create).not.toHaveBeenCalled();
-    fetchMock.mockRestore();
   });
 
   // IP público literal (não hostname) de propósito: `assertSafeExternalUrl` não é mockado neste
@@ -66,9 +71,7 @@ describe('connectBitrix — SSRF real (guard não mockado)', () => {
   // ambiente de teste sandboxed (mesmo motivo documentado em client.test.ts/threecx tests). Um
   // IP público literal exercita o mesmo caminho de aceitação sem depender de rede.
   it('conecta e persiste normalmente uma URL pública válida', async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, 'fetch')
-      .mockResolvedValue(jsonResponse({ result: 'ok' }));
+    fetchMock.mockResolvedValue(jsonResponse({ result: 'ok' }));
     bitrixConnectionMock.create.mockResolvedValue({ id: 'conn-1' });
     const { connectBitrix } = await import('../connections.js');
 
@@ -80,7 +83,6 @@ describe('connectBitrix — SSRF real (guard não mockado)', () => {
         data: expect.objectContaining({ organizationId: 'org-a' }),
       }),
     );
-    fetchMock.mockRestore();
   });
 });
 
@@ -92,27 +94,22 @@ describe('testBitrixConnection — gap de auditoria: revalida SSRF mesmo para co
     bitrixConnectionMock.findFirst.mockResolvedValue({
       webhookUrl: 'https://10.0.0.5/rest/1/token/',
     });
-    const fetchMock = vi.spyOn(globalThis, 'fetch');
     const { testBitrixConnection } = await import('../connections.js');
 
     await expect(testBitrixConnection('org-a', 'conn-1')).rejects.toThrow(/não permitido/i);
     expect(fetchMock).not.toHaveBeenCalled();
-    fetchMock.mockRestore();
   });
 
   it('testa a conexão de verdade quando a URL persistida é pública', async () => {
     bitrixConnectionMock.findFirst.mockResolvedValue({
       webhookUrl: 'https://8.8.8.8/rest/1/token/',
     });
-    const fetchMock = vi
-      .spyOn(globalThis, 'fetch')
-      .mockResolvedValue(jsonResponse({ result: 'ok' }));
+    fetchMock.mockResolvedValue(jsonResponse({ result: 'ok' }));
     const { testBitrixConnection } = await import('../connections.js');
 
     const result = await testBitrixConnection('org-a', 'conn-1');
 
     expect(result.success).toBe(true);
     expect(fetchMock).toHaveBeenCalled();
-    fetchMock.mockRestore();
   });
 });

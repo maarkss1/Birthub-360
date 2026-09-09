@@ -32,6 +32,7 @@ import {
   CalendarCheck,
   ShieldCheck,
   Mic,
+  Briefcase,
 } from 'lucide-react';
 
 /**
@@ -57,6 +58,7 @@ import {
  */
 export type TabType =
   | 'dashboard'
+  | 'workspace'
   | 'companies'
   | 'contacts'
   | 'crm'
@@ -95,6 +97,7 @@ export type TabType =
 /** Metadados (rótulo + ícone) de cada módulo navegável — fonte única usada pelo topbar e pelo Command Palette. */
 export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
   dashboard: { label: 'Painel Central', icon: Home },
+  workspace: { label: 'Meu Workspace', icon: Briefcase },
   'daily-plan': { label: 'Plano Diário', icon: CalendarCheck },
   commercial_intelligence: { label: 'Comercial Inteligente', icon: LineChart },
   copiloto_ia: { label: 'Copiloto IA', icon: Mic },

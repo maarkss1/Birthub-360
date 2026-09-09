@@ -105,7 +105,8 @@ export function GitHubTool(_props: { configured: boolean }) {
           />
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleSearch}
           disabled={isSearching}
           className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
@@ -165,7 +166,8 @@ export function GitHubTool(_props: { configured: boolean }) {
                     <CheckCircle2 size={14} /> No CRM
                   </span>
                 ) : (
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => promoteOrg(org)}
                     disabled={promotingKey === org.login}
                     className="bg-brand-active text-white px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"

@@ -134,7 +134,8 @@ export function PropostaComercialHub() {
       {/* Main Tabs Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('selecao');
@@ -147,7 +148,8 @@ export function PropostaComercialHub() {
           >
             Central de Seleção de Propostas
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('modelos');
@@ -160,7 +162,8 @@ export function PropostaComercialHub() {
           >
             Modelos de Propostas (7)
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('cockpit-atlas');
@@ -173,7 +176,8 @@ export function PropostaComercialHub() {
           >
             Cockpit Comercial Atlas GR
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('cockpit-totaltrac');
@@ -223,7 +227,8 @@ export function PropostaComercialHub() {
 
               <div className="space-y-1.5 pt-1">
                 {filteredProposals.map((p) => (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={p.file}
                     onClick={() => {
                       SoundFX.play('focus');

@@ -31,6 +31,7 @@ import { agentCatalogRoutes } from '../features/job-roles/routes/agentCatalog.ro
 import { capabilityRoutes } from '../features/job-roles/routes/capability.routes.js';
 import { jobRoleRoutes } from '../features/job-roles/routes/jobRole.routes.js';
 import { roleSupervisorRoutes } from '../features/job-roles/routes/roleSupervisor.routes.js';
+import { workspaceRoutes } from '../features/job-roles/routes/workspace.routes.js';
 import { knowledgeRoutes } from '../features/knowledge/knowledge.routes.js';
 import { lgpdRouter } from '../features/lgpd/lgpd.routes.js';
 import { accountIntelligenceRoutes } from '../features/market-intelligence/server/accountIntelligence.routes.js';
@@ -144,6 +145,9 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/agents', authenticateToken, requireTenant, agentCatalogRoutes);
   app.use('/api/capabilities', authenticateToken, requireTenant, capabilityRoutes);
   app.use('/api/role-supervisor', authenticateToken, requireTenant, roleSupervisorRoutes);
+  // PROMPT 6 — Workspaces por Login/Cargo: mesmo padrão de mount independente de
+  // /api/module-access (rota "me" própria, não aninhada em /api/job-roles).
+  app.use('/api/workspace', authenticateToken, requireTenant, workspaceRoutes);
   app.use('/api/auth-extra', authenticateToken, requireTenant, authExtraRoutes);
   app.use('/api/agent', requireTenant, agentRoutes);
   app.use('/api/cadence', authenticateToken, requireTenant, cadenceRoutes);

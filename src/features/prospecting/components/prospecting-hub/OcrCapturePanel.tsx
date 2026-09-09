@@ -159,43 +159,46 @@ export function OcrCapturePanel() {
     });
   }, [stopCamera]);
 
-  const handleFile = useCallback(async (file: File) => {
-    reset();
-    setPreviewUrl(URL.createObjectURL(file));
-    setReading(true);
-    try {
-      const form = new FormData();
-      form.append('image', file);
-      form.append('brandName', brandInfo.name);
-      form.append('brandDescription', brandInfo.description);
-      const response = await api.postForm<{ candidate: ProspectCandidate; rawText?: string }>(
-        '/api/prospecting/ocr',
-        form,
-        { timeoutMs: 120_000 },
-      );
+  const handleFile = useCallback(
+    async (file: File) => {
+      reset();
+      setPreviewUrl(URL.createObjectURL(file));
+      setReading(true);
+      try {
+        const form = new FormData();
+        form.append('image', file);
+        form.append('brandName', brandInfo.name);
+        form.append('brandDescription', brandInfo.description);
+        const response = await api.postForm<{ candidate: ProspectCandidate; rawText?: string }>(
+          '/api/prospecting/ocr',
+          form,
+          { timeoutMs: 120_000 },
+        );
 
-      const cand = response.candidate;
-      setRawExtractedText(response.rawText || null);
-      setFormData({
-        tradeName: cand.tradeName || '',
-        legalName: cand.legalNameGuess || '',
-        cnpj: cand.cnpjGuess || '',
-        segment: cand.segment || '',
-        location: cand.location || '',
-        contactName: cand.suggestedContact?.name || '',
-        contactRole: cand.suggestedContact?.role || '',
-        phone: cand.phone || '',
-        email: cand.emails?.[0] || '',
-        website: cand.website || '',
-        rationale: cand.rationale || 'Extraído via OCR inteligente + IA.',
-        fitScoreEstimate: cand.fitScoreEstimate || 65,
-      });
-    } catch (e) {
-      setError(getErrorMessage(e, 'Não foi possível ler essa imagem.'));
-    } finally {
-      setReading(false);
-    }
-  }, [brandInfo.description, brandInfo.name, reset]);
+        const cand = response.candidate;
+        setRawExtractedText(response.rawText || null);
+        setFormData({
+          tradeName: cand.tradeName || '',
+          legalName: cand.legalNameGuess || '',
+          cnpj: cand.cnpjGuess || '',
+          segment: cand.segment || '',
+          location: cand.location || '',
+          contactName: cand.suggestedContact?.name || '',
+          contactRole: cand.suggestedContact?.role || '',
+          phone: cand.phone || '',
+          email: cand.emails?.[0] || '',
+          website: cand.website || '',
+          rationale: cand.rationale || 'Extraído via OCR inteligente + IA.',
+          fitScoreEstimate: cand.fitScoreEstimate || 65,
+        });
+      } catch (e) {
+        setError(getErrorMessage(e, 'Não foi possível ler essa imagem.'));
+      } finally {
+        setReading(false);
+      }
+    },
+    [brandInfo.description, brandInfo.name, reset],
+  );
 
   // Suporte a colar imagem da área de transferência (Ctrl+V)
   useEffect(() => {
@@ -717,7 +720,8 @@ export function OcrCapturePanel() {
 
             {/* Botão de Ação Principal */}
             <div className="pt-2">
-              <button type="button"
+              <button
+                type="button"
                 onClick={promote}
                 disabled={promoting || !formData.tradeName.trim()}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand to-orange-500 text-white py-3 rounded-2xl font-bold text-sm shadow-md hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer"
@@ -747,7 +751,8 @@ export function OcrCapturePanel() {
             </p>
           </div>
           <div className="pt-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={reset}
               className="inline-flex items-center gap-2 bg-brand-active text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:brightness-110 transition-all cursor-pointer"
             >

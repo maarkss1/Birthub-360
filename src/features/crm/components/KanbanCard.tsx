@@ -297,7 +297,8 @@ export const KanbanCard = React.memo(function KanbanCard({
         </div>
         <div className="flex items-center gap-3">
           {onConvert && (
-            <button type="button"
+            <button
+              type="button"
               onClick={handleConvert}
               disabled={converting}
               title="Converter em oportunidade — move este lead para o funil de Negócios"
@@ -317,7 +318,8 @@ export const KanbanCard = React.memo(function KanbanCard({
             </button>
           )}
           {onEnrich && lead.companyId && (
-            <button type="button"
+            <button
+              type="button"
               onClick={handleEnrich}
               disabled={enriching}
               title="Reenriquecer com dados da Receita Federal"

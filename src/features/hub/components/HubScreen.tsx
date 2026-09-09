@@ -9,7 +9,7 @@ import {
   Volume2,
   VolumeX,
   ChevronDown,
-  } from 'lucide-react';
+} from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
@@ -23,10 +23,6 @@ import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
 
 import { HubIcons } from './HubIcons';
-
-;
-
-;
 
 interface OrbitItem {
   key: string;
@@ -182,7 +178,7 @@ export function HubScreen() {
   const orbitContainerRef = useRef<HTMLDivElement>(null);
 
   // Cálculo matemático idêntico ao protótipo portalatlasprototype.html
-    const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
+  const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
 
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
@@ -190,11 +186,11 @@ export function HubScreen() {
 
     function layout() {
       if (!orbit) return;
-      
+
       const cards = Array.from(orbit.querySelectorAll('.hub-card')) as HTMLElement[];
       const primary = orbit.querySelector('.hub-card.primary') as HTMLElement;
-      const outer = cards.filter(c => c !== primary);
-      
+      const outer = cards.filter((c) => c !== primary);
+
       const w = orbit.clientWidth;
       const h = orbit.clientHeight;
       if (!w || !h) return;
@@ -209,47 +205,73 @@ export function HubScreen() {
 
       const n = outer.length;
       const orbSpan = 156;
-      const byCount = n > 0 ? (orbSpan / (2 * Math.sin(Math.PI / n))) + 24 : 0;
+      const byCount = n > 0 ? orbSpan / (2 * Math.sin(Math.PI / n)) + 24 : 0;
       const radius = Math.max(300, byCount, Math.min(w, h) / 2 - 60);
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       const lines: React.ReactNode[] = [];
-      
+
       outer.forEach((card, i) => {
         const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
         const x = cx + radius * Math.cos(angle);
         const y = cy + radius * Math.sin(angle);
-        
+
         card.style.left = `${x}px`;
         card.style.top = `${y}px`;
-        
+
         const pathId = `orbitPath${i}`;
         const gradId = `orbitBeam${i}`;
-        
+
         lines.push(
           <g key={i}>
-            <linearGradient id={gradId} gradientUnits="userSpaceOnUse" x1={cx} y1={cy} x2={x} y2={y}>
-              <stop offset="0%" stopColor="var(--color-brand)" stopOpacity=".65"/>
-              <stop offset="100%" stopColor="var(--color-brand)" stopOpacity=".12"/>
+            <linearGradient
+              id={gradId}
+              gradientUnits="userSpaceOnUse"
+              x1={cx}
+              y1={cy}
+              x2={x}
+              y2={y}
+            >
+              <stop offset="0%" stopColor="var(--color-brand)" stopOpacity=".65" />
+              <stop offset="100%" stopColor="var(--color-brand)" stopOpacity=".12" />
             </linearGradient>
             <path id={pathId} d={`M ${cx} ${cy} L ${x} ${y}`} stroke={`url(#${gradId})`} />
             {!reduceMotion && (
               <circle className="pulse" r="3.4" fill="var(--color-brand)">
-                <animateMotion dur={`${2.4 + i * 0.35}s`} repeatCount="indefinite" begin={`${i * 0.4}s`}>
-                  <mpath href={`#${pathId}`}/>
+                <animateMotion
+                  dur={`${2.4 + i * 0.35}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.4}s`}
+                >
+                  <mpath href={`#${pathId}`} />
                 </animateMotion>
               </circle>
             )}
-          </g>
+          </g>,
         );
       });
-      
+
       setOrbitLines(
-        <svg className="orbit-lines" viewBox={`0 0 ${w} ${h}`} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}>
-           <style>{'path { fill: none; stroke-width: 2.6; stroke-linecap: round; } circle.pulse { filter: drop-shadow(0 0 6px var(--color-brand)); }'}</style>
-           {lines}
-        </svg>
+        <svg
+          className="orbit-lines"
+          viewBox={`0 0 ${w} ${h}`}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            overflow: 'visible',
+          }}
+        >
+          <style>
+            {
+              'path { fill: none; stroke-width: 2.6; stroke-linecap: round; } circle.pulse { filter: drop-shadow(0 0 6px var(--color-brand)); }'
+            }
+          </style>
+          {lines}
+        </svg>,
       );
     }
 
@@ -459,7 +481,6 @@ export function HubScreen() {
               );
             })}
           </div>
-
         ) : (
           <MobileDestinationList items={items} />
         )}

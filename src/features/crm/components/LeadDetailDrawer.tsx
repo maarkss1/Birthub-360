@@ -380,7 +380,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleEnrich}
                     disabled={enriching}
                     title="Enriquecer dados via IA"
@@ -392,7 +393,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                       <Sparkles className="w-5 h-5" />
                     )}
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleDelete}
                     disabled={deleting}
                     title="Excluir Lead"
@@ -404,7 +406,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                       <Trash className="w-5 h-5" />
                     )}
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     ref={closeButtonRef}
                     onClick={onClose}
                     aria-label="Fechar detalhes do lead"
@@ -583,7 +586,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                       {TEMPERATURE_EMOJI[liveScore.temperature]} {liveScore.score}/100
                     </span>
                   </div>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => setQualOpen(!qualOpen)}
                     className="text-xs text-brand-active dark:text-brand-2 hover:underline font-semibold flex items-center gap-1"
                   >
@@ -660,7 +664,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                       </div>
                     ))}
 
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handleSaveQualification}
                       disabled={savingQual}
                       className="w-full py-2 bg-brand-active hover:brightness-110 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
@@ -837,7 +842,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   <option value="reactivation">Reativação</option>
                   <option value="nps">NPS</option>
                 </select>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleVoiceCall}
                   disabled={callingVoice}
                   className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition-colors disabled:opacity-50 shadow-sm"
@@ -849,7 +855,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   )}
                   Qualificar via Voz
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => setWhatsappOpen(true)}
                   disabled={!leadPhone}
                   title={
@@ -862,7 +869,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   <MessageCircle className="w-4 h-4" />
                   WhatsApp
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={onClose}
                   className="px-4 py-2 bg-surface-2 text-ink-2 rounded-xl text-sm font-bold hover:bg-surface transition-colors"
                 >

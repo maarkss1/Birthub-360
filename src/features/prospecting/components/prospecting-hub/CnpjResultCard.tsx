@@ -161,7 +161,8 @@ export function CnpjResultCard({
             <CheckCircle2 size={16} /> ✅ Adicionado ao CRM
           </span>
         ) : (
-          <button type="button"
+          <button
+            type="button"
             onClick={onPromote}
             disabled={isPromoting}
             className="bg-atlas-dark text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-black transition-colors flex items-center gap-2 disabled:opacity-60"

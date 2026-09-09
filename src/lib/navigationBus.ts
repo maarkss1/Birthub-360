@@ -26,6 +26,7 @@ function isKnownTab(tab: string): tab is TabType {
 
 const TAB_ROUTE_SET: Record<TabType, true> = {
   dashboard: true,
+  workspace: true,
   companies: true,
   contacts: true,
   crm: true,

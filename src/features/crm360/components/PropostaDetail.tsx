@@ -142,7 +142,8 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button type="button"
+        <button
+          type="button"
           onClick={onBack}
           className="p-2 rounded-xl hover:bg-surface-2 text-ink-2 hover:text-ink transition-colors"
           aria-label="Voltar para a lista"

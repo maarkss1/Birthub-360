@@ -25,7 +25,7 @@ function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
     } finally {
       setLoading(false);
     }
-  // biome-ignore lint/correctness/useExhaustiveDependencies: `deps` é parâmetro genérico do hook (não um array literal) — cada chamador informa suas próprias dependências.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: `deps` é parâmetro genérico do hook (não um array literal) — cada chamador informa suas próprias dependências.
   }, deps); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

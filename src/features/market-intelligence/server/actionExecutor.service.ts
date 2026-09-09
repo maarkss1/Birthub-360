@@ -37,12 +37,12 @@ export const actionExecutorService = {
             webhookUrl,
             'tasks.task.add',
             {
-            fields: {
-              TITLE: recommendation.title,
-              DESCRIPTION: `${recommendation.rationale}\n\nCriado via Central AtlasGR para a conta: ${company.legalName}`,
-              RESPONSIBLE_ID: responsibleId,
-              // Outras props relevantes
-            },
+              fields: {
+                TITLE: recommendation.title,
+                DESCRIPTION: `${recommendation.rationale}\n\nCriado via Central AtlasGR para a conta: ${company.legalName}`,
+                RESPONSIBLE_ID: responsibleId,
+                // Outras props relevantes
+              },
             },
           );
 
@@ -92,12 +92,7 @@ export const actionExecutorService = {
           try {
             await prismaCadenceRunRepository.save(run);
           } catch (error: unknown) {
-            if (
-              error &&
-              typeof error === 'object' &&
-              'code' in error &&
-              error.code === 'P2002'
-            ) {
+            if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
               throw new AppError('Este lead já tem uma cadência ativa em andamento.', 409);
             }
             throw error;

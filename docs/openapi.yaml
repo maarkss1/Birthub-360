@@ -4785,6 +4785,24 @@ paths:
         '409':
           description: Ator sem JobRole primário ativo, ou sem RoleSupervisorProfile para o cargo (`NO_JOB_ROLE`/`NO_SUPERVISOR_PROFILE`)
 
+  /workspace/me:
+    get:
+      tags: [Cargos e Agentes]
+      summary: >-
+        PROMPT 6 — Workspace do cargo do usuário autenticado. Resolve o JobRole primário ativo do
+        ator e monta a home do workspace (KPIs, agent groups, módulos/quick actions, navegação) a
+        partir do que já é público/concedido (`RoleSupervisorProfile.preferredCapabilities`,
+        `RoleAgentGrant`, `RoleCapabilityGrant`, `ToolBinding`) — nunca decide autorização real
+        sozinho, nunca recebe JobRole por query/body. `data.workspace.status` é `READY`,
+        `NO_JOB_ROLE` (ator sem cargo primário ativo) ou `NO_WORKSPACE_DEFINITION` (não deveria
+        ocorrer em uso normal — os 12 cargos do catálogo sempre têm definição).
+      responses:
+        '200':
+          description: Workspace do ator autenticado — ver `data.workspace`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:
     get:
