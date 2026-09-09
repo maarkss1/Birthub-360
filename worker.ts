@@ -242,8 +242,9 @@ async function startWorkerProcess() {
                 res.writeHead(200, { 'Content-Type': client.register.contentType });
                 res.end(await client.register.metrics());
             } catch (err) {
+                logger.error({ err }, 'worker.ts: failed to collect metrics');
                 res.writeHead(500);
-                res.end(String(err));
+                res.end('Falha ao coletar métricas.');
             }
             return;
         }
