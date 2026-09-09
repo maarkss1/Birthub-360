@@ -110,10 +110,12 @@ export type { ExtractionFileFormat } from './service/extractionFiles.js';
 
 // Plano Diário Operacional com integração Bitrix24
 export type {
+  DailyClosingMetrics,
   DailyPlanItem,
   DailyPlanPriorityLevel,
   DailyPlanItemOrigin,
   DailyPlanItemChannel,
+  PendingDailyClosing,
   UserDailyPlanSummary,
 } from './service/dailyPlan.service.js';
 export {
@@ -121,4 +123,6 @@ export {
   completeDailyPlanItem,
   addDailyPlanItemNote,
   createDailyPlanActivity,
+  getPendingDailyClosing,
+  createDailyPlanClosing,
 } from './service/dailyPlan.service.js';

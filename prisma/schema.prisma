@@ -784,6 +784,7 @@ model User {
   moduleAccessGrants ModuleAccessGrant[]
   mesaTratamentoTreatments MesaTratamentoTreatment[]
   pomodoroSessions   PomodoroSession[]
+  dailyPlanClosings  DailyPlanClosing[]
   // Fundação Multi-Cargo (ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo) —
   // vínculo com o(s) cargo(s) funcionais do usuário, independente de `role` (UserRole = nível de
   // autoridade/segurança, nunca substituído por isto).
@@ -812,6 +813,7 @@ model Organization {
   qualificationMatrixItems      QualificationMatrixItem[]
   objectionMatrixItems          ObjectionMatrixItem[]
   aiPendingActions              AIPendingAction[]
+  dailyPlanClosings             DailyPlanClosing[]
 
   prompts                       Prompt[]
   agentMemories                 AgentMemory[]
@@ -2798,6 +2800,31 @@ model PomodoroSession {
   createdAt       DateTime     @default(now())
 
   @@index([organizationId, userId, createdAt])
+}
+
+/// Fechamento obrigatório do Plano Diário (ver DailyPlanHub/DailyClosingGate) — registrado no dia
+/// seguinte, nunca no próprio dia: junta o parecer do usuário sobre `referenceDate` (métricas
+/// calculadas a partir de `Activity` locais daquele dia + comentário livre) com as metas que ele
+/// define para o novo dia que começa. Um único registro por usuário por dia (upsert), nunca
+/// múltiplos fechamentos do mesmo dia.
+model DailyPlanClosing {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Dia civil (YYYY-MM-DD, fuso do time comercial) que este fechamento avalia.
+  referenceDate  String
+  totalItems     Int
+  completedItems Int
+  pendingItems   Int
+  completionRate Int
+  userComment    String
+  nextDayGoals   String[]
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, referenceDate])
+  @@index([organizationId, userId])
 }
 
 // ─── Bug Reports (governança de 12 requisitos — item 8: Módulo de Reportar Problemas) ──────

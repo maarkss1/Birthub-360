@@ -77,9 +77,9 @@ export function DailyPlanHub() {
   const [copiedPauta, setCopiedPauta] = useState(false);
 
   // Carregar Plano do Usuário
-  const loadDailyPlan = useCallback(async () => {
+  const loadDailyPlan = useCallback(async (options?: { silent?: boolean }) => {
     try {
-      setIsLoading(true);
+      if (!options?.silent) setIsLoading(true);
       const res = await commercialIntelligenceApi.getDailyPlan();
       if (res) {
         setPlanData(res);
@@ -87,13 +87,31 @@ export function DailyPlanHub() {
     } catch (err) {
       console.error('Erro ao carregar plano diário:', err);
     } finally {
-      setIsLoading(false);
+      if (!options?.silent) setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
     loadDailyPlan();
   }, [loadDailyPlan]);
+
+  // Atualização automática do painel: reflete no radar as atividades que chegam (nova tarefa
+  // criada por outro fluxo, sincronização do Bitrix) e as que saem (concluídas em outro
+  // dispositivo/aba) sem exigir clique manual em "Sincronizar com Bitrix". `silent: true` evita
+  // que cada atualização em segundo plano substitua a lista pelo spinner de carregamento — só a
+  // carga inicial e o botão "Sincronizar" mostram esse estado. Só roda enquanto a aba "Meu Plano
+  // Diário" está ativa e a aba do navegador está em primeiro plano — custo de rede/bateria em
+  // segundo plano não se justifica (ver performance/SKILL.md).
+  useEffect(() => {
+    if (activeTab !== 'daily') return;
+    const POLL_INTERVAL_MS = 45_000;
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadDailyPlan({ silent: true });
+      }
+    }, POLL_INTERVAL_MS);
+    return () => window.clearInterval(intervalId);
+  }, [activeTab, loadDailyPlan]);
 
   // Sincronizar com Bitrix
   const handleSyncBitrix = async () => {
