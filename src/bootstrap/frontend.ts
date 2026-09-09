@@ -45,6 +45,28 @@ export async function mountFrontend(app: Express): Promise<void> {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+
+    // Ferramentas estáticas legadas (public/tools/** — propostas comerciais, portal comercial,
+    // treinamento AtlasGR) dependem de <script> inline e onclick="" espalhados por dezenas de
+    // arquivos HTML pré-existentes. A CSP estrita do Helmet (`script-src 'self'`, sem
+    // unsafe-inline — ver security.ts) bloqueia TODO esse JS em produção: nenhum botão desses
+    // HTMLs funciona (ex.: "Abrir Proposta" em Selecionar_Proposta_Atlas.html), sem nenhum erro
+    // visível ao usuário, só um "Refused to execute inline script" no console do navegador.
+    // Reescrever o JS inline de dezenas de arquivos legados para scripts externos é um retrabalho
+    // grande demais para este fix — em vez disso, relaxa script-src só para ESTE caminho estático
+    // (conteúdo próprio do produto, nunca dado de usuário refletido), sobrescrevendo aqui o header
+    // que o Helmet global já setou. O resto do app (rotas autenticadas do CRM, onde entrada de
+    // usuário é renderizada) mantém a CSP estrita — este relaxamento não amplia a superfície de
+    // XSS lá, só neste conjunto de arquivos estáticos que já é assim há tempos.
+    app.use('/tools', (_req, res, next) => {
+      res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'",
+      );
+      next();
+    });
+    app.use('/tools', express.static(path.join(distPath, 'tools')));
+
     app.use(express.static(distPath));
 
     // Treinamento AtlasGR (Next.js export) precisa de /_next na raiz (em produção fica em dist/tools/...)
