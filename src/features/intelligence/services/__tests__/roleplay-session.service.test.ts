@@ -6,9 +6,13 @@ vi.mock('@/features/intelligence/services/studio/generators/roleplay', () => ({
 }));
 
 const roleplaySessionCreateMock = vi.fn();
+const roleplaySessionFindManyMock = vi.fn();
 vi.mock('@/lib/prisma', () => ({
   prisma: {
-    roleplaySession: { create: (...args: unknown[]) => roleplaySessionCreateMock(...args) },
+    roleplaySession: {
+      create: (...args: unknown[]) => roleplaySessionCreateMock(...args),
+      findMany: (...args: unknown[]) => roleplaySessionFindManyMock(...args),
+    },
   },
 }));
 
@@ -17,7 +21,7 @@ vi.mock('@/lib/logger', () => ({
   logger: { warn: (...args: unknown[]) => loggerWarnMock(...args), error: vi.fn(), info: vi.fn() },
 }));
 
-import { finishRoleplaySession } from '../roleplay-session.service.js';
+import { finishRoleplaySession, listRoleplaySessions } from '../roleplay-session.service.js';
 
 const evaluation = {
   overallScore: 72,
@@ -103,5 +107,63 @@ describe('roleplay-session.service — finishRoleplaySession (parecer técnico d
 
     expect(result).toEqual({ sessionId: null, ...evaluation });
     expect(loggerWarnMock).toHaveBeenCalled();
+  });
+});
+
+describe('roleplay-session.service — listRoleplaySessions (histórico de ligações)', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('busca sessões escopadas por organização, usuário e marca, mais recentes primeiro, limitadas a 20', async () => {
+    const createdAt = new Date('2026-09-01T10:00:00Z');
+    roleplaySessionFindManyMock.mockResolvedValueOnce([
+      {
+        id: 'session_1',
+        personaId: 'gerente_risco',
+        personaLabel: 'Gerente de Risco (GR)',
+        difficulty: 'dificil',
+        durationSeconds: 180,
+        overallScore: 72,
+        clarityScore: 75,
+        objectionHandlingScore: 68,
+        closingScore: 60,
+        strengths: ['Ouviu a dor antes de apresentar produto'],
+        improvements: ['Não perguntou sobre o próximo passo'],
+        summary: 'Parecer técnico de exemplo.',
+        createdAt,
+      },
+    ]);
+
+    const result = await listRoleplaySessions('org_1', 'user_1', 'atlasgr');
+
+    expect(roleplaySessionFindManyMock).toHaveBeenCalledWith({
+      where: { organizationId: 'org_1', userId: 'user_1', brand: 'atlasgr' },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
+    expect(result).toEqual([
+      {
+        id: 'session_1',
+        personaId: 'gerente_risco',
+        personaLabel: 'Gerente de Risco (GR)',
+        difficulty: 'dificil',
+        durationSeconds: 180,
+        overallScore: 72,
+        clarityScore: 75,
+        objectionHandlingScore: 68,
+        closingScore: 60,
+        strengths: ['Ouviu a dor antes de apresentar produto'],
+        improvements: ['Não perguntou sobre o próximo passo'],
+        summary: 'Parecer técnico de exemplo.',
+        createdAt,
+      },
+    ]);
+  });
+
+  it('devolve lista vazia quando o usuário nunca fez uma ligação nesta marca', async () => {
+    roleplaySessionFindManyMock.mockResolvedValueOnce([]);
+
+    const result = await listRoleplaySessions('org_1', 'user_1', 'totaltrac');
+
+    expect(result).toEqual([]);
   });
 });

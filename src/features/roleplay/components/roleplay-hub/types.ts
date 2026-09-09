@@ -30,3 +30,21 @@ export interface CallAnalysisResult {
   // a sessão não fica disponível pra histórico, mas o parecer já foi entregue normalmente.
   sessionId?: string | null;
 }
+
+// Espelha RoleplaySessionHistoryItem (roleplay-session.service.ts no backend), exceto createdAt
+// que chega como string ISO 8601 (serializado via JSON), não Date.
+export interface RoleplayHistoryItem {
+  id: string;
+  personaId: string;
+  personaLabel: string;
+  difficulty: 'facil' | 'medio' | 'dificil';
+  durationSeconds: number;
+  overallScore: number;
+  clarityScore: number;
+  objectionHandlingScore: number;
+  closingScore: number;
+  strengths: string[];
+  improvements: string[];
+  summary: string;
+  createdAt: string;
+}

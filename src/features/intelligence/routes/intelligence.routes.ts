@@ -61,7 +61,10 @@ import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.
 import { routeParam } from '../../../shared/http/routeParams.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { aiSuiteRouter } from './ai-suite.routes.js';
-import { finishRoleplaySession } from '../services/roleplay-session.service.js';
+import {
+  finishRoleplaySession,
+  listRoleplaySessions,
+} from '../services/roleplay-session.service.js';
 
 const router = Router();
 
@@ -197,6 +200,27 @@ router.post(
       res.json({ success: true, data: result });
     } catch (error) {
       logger.error({ err: error }, 'Error generating roleplay session evaluation');
+      next(error);
+    }
+  },
+);
+
+// Histórico de ligações do Roleplay — as sessões já eram persistidas por /roleplay/finish, mas até
+// agora não havia rota para reler o que foi salvo (ver comentário de listRoleplaySessions).
+router.get(
+  '/roleplay/history',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const brand = String(req.query.brand || '');
+      if (brand !== 'atlasgr' && brand !== 'totaltrac') {
+        res.status(400).json({ success: false, error: 'brand deve ser "atlasgr" ou "totaltrac".' });
+        return;
+      }
+      const sessions = await listRoleplaySessions(organizationId, userId, brand);
+      res.json({ success: true, data: sessions });
+    } catch (error) {
+      logger.error({ err: error }, 'Error fetching roleplay session history');
       next(error);
     }
   },

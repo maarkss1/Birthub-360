@@ -41,6 +41,26 @@ export interface RoleplaySessionEvaluation {
   summary: string;
 }
 
+export interface RoleplaySessionHistoryItem {
+  id: string;
+  personaId: string;
+  personaLabel: string;
+  difficulty: 'facil' | 'medio' | 'dificil';
+  durationSeconds: number;
+  overallScore: number;
+  clarityScore: number;
+  objectionHandlingScore: number;
+  closingScore: number;
+  strengths: string[];
+  improvements: string[];
+  summary: string;
+  createdAt: Date;
+}
+
+/** Quantas sessões a tela de histórico carrega ao montar — mesmo raciocínio de HISTORY_LIMIT em
+ *  assistant-history.service.ts: teto fixo para não devolver a tabela inteira do usuário. */
+const HISTORY_LIMIT = 20;
+
 /**
  * Parecer técnico de fim de ligação do Roleplay (chamado por
  * POST /api/intelligence/roleplay/finish, consumido por RoleplayHub.finishCall no frontend): chama
@@ -107,4 +127,38 @@ export async function finishRoleplaySession(
   }
 
   return { sessionId, ...evaluation };
+}
+
+/**
+ * Histórico de ligações do Roleplay para a tela `/app/roleplay` — as sessões já eram persistidas
+ * por finishRoleplaySession, mas até agora não havia nenhuma rota para reler o que foi salvo (a
+ * tela mostrava o parecer técnico uma vez e ele sumia ao sair da tela ou trocar de marca). Escopado
+ * por usuário + marca, mesmo raciocínio de listAssistantHistory: é treino pessoal do vendedor, não
+ * um documento de equipe, e cada marca tem personas/playbook distintos.
+ */
+export async function listRoleplaySessions(
+  organizationId: string,
+  userId: string,
+  brand: 'atlasgr' | 'totaltrac',
+): Promise<RoleplaySessionHistoryItem[]> {
+  const rows = await prisma.roleplaySession.findMany({
+    where: { organizationId, userId, brand },
+    orderBy: { createdAt: 'desc' },
+    take: HISTORY_LIMIT,
+  });
+  return rows.map((row) => ({
+    id: row.id,
+    personaId: row.personaId,
+    personaLabel: row.personaLabel,
+    difficulty: row.difficulty as 'facil' | 'medio' | 'dificil',
+    durationSeconds: row.durationSeconds,
+    overallScore: row.overallScore,
+    clarityScore: row.clarityScore,
+    objectionHandlingScore: row.objectionHandlingScore,
+    closingScore: row.closingScore,
+    strengths: row.strengths as string[],
+    improvements: row.improvements as string[],
+    summary: row.summary,
+    createdAt: row.createdAt,
+  }));
 }
