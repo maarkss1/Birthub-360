@@ -28,6 +28,7 @@ import { agentRoutes } from '../features/intelligence/routes/agent.routes.js';
 import { intelligenceRoutes } from '../features/intelligence/routes/intelligence.routes.js';
 import { promptRoutes } from '../features/intelligence/routes/prompt.routes.js';
 import { accessRequestRoutes } from '../features/job-roles/routes/accessRequest.routes.js';
+import { agentBusRoutes } from '../features/job-roles/routes/agentBus.routes.js';
 import { agentCatalogRoutes } from '../features/job-roles/routes/agentCatalog.routes.js';
 import { capabilityRoutes } from '../features/job-roles/routes/capability.routes.js';
 import { jobRoleRoutes } from '../features/job-roles/routes/jobRole.routes.js';
@@ -162,6 +163,8 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/workspace', authenticateToken, requireTenant, workspaceRoutes);
   // PROMPT 7 — Cross-Role Authorization + Aprovações: mesmo padrão de mount independente.
   app.use('/api/access-requests', authenticateToken, requireTenant, accessRequestRoutes);
+  // PROMPT 8 — Agent Bus + Handoffs: mesmo padrão de mount independente.
+  app.use('/api/agent-bus', authenticateToken, requireTenant, agentBusRoutes);
   app.use('/api/auth-extra', authenticateToken, requireTenant, authExtraRoutes);
   app.use('/api/agent', requireTenant, agentRoutes);
   app.use('/api/cadence', authenticateToken, requireTenant, cadenceRoutes);
