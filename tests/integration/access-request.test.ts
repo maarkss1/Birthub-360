@@ -65,34 +65,38 @@ describe('Cross-Role Authorization + Aprovações (PROMPT 7)', () => {
     // deleteMany` abaixo, bloqueado pela FK Restrict numa linha de `AccessRequest` que achávamos
     // já apagada. `bypassRls: true` é o mesmo escape-hatch de setup/limpeza direta já usado em
     // dezenas de outros arquivos deste diretório (ex.: `agent-memory.test.ts`, `ai-budget.test.ts`)
-    // — nunca em código de produção.
+    // — nunca em código de produção. Escopo do wrap deliberadamente limitado só a estes 3 modelos
+    // (não o afterAll inteiro): cada chamada dentro de `requestContext.run` ainda abre sua própria
+    // transação curta (`executeWithRls` por operação, não por chamada de `run`) — envolver as ~13
+    // linhas deste afterAll já causou hook timeout (10s) em OUTROS arquivos de integração rodando
+    // em paralelo contra o mesmo catálogo compartilhado (contenção real medida em CI).
     await requestContext.run({ bypassRls: true }, async () => {
       await prisma.temporaryCapabilityGrant.deleteMany({ where: { organizationId: ORG_ID } });
       await prisma.approvalDecision.deleteMany({ where: { organizationId: ORG_ID } });
       await prisma.accessRequest.deleteMany({ where: { organizationId: ORG_ID } });
-      await prisma.auditLog.deleteMany({ where: { entity: 'AccessRequest' } });
-      await prisma.auditLog.deleteMany({ where: { entity: 'TemporaryCapabilityGrant' } });
-      await prisma.userJobRole.deleteMany({
-        where: { organizationId: { in: [ORG_ID, OTHER_ORG_ID] } },
-      });
-      await prisma.user.deleteMany({
-        where: { email: { contains: 'access-request.test' } },
-      });
-      await prisma.agentCapabilityGrant.deleteMany({
-        where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
-      });
-      await prisma.roleCapabilityGrant.deleteMany({
-        where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
-      });
-      await prisma.capabilityDefinition.deleteMany({ where: { code: { in: CAPABILITY_CODES } } });
-      await prisma.roleAgentGrant.deleteMany({
-        where: { agentDefinition: { code: { in: sourceAgentCodes } } },
-      });
-      await prisma.agentVersion.deleteMany({
-        where: { agentDefinition: { code: { in: sourceAgentCodes } } },
-      });
-      await prisma.agentDefinition.deleteMany({ where: { code: { in: sourceAgentCodes } } });
     });
+    await prisma.auditLog.deleteMany({ where: { entity: 'AccessRequest' } });
+    await prisma.auditLog.deleteMany({ where: { entity: 'TemporaryCapabilityGrant' } });
+    await prisma.userJobRole.deleteMany({
+      where: { organizationId: { in: [ORG_ID, OTHER_ORG_ID] } },
+    });
+    await prisma.user.deleteMany({
+      where: { email: { contains: 'access-request.test' } },
+    });
+    await prisma.agentCapabilityGrant.deleteMany({
+      where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
+    });
+    await prisma.roleCapabilityGrant.deleteMany({
+      where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
+    });
+    await prisma.capabilityDefinition.deleteMany({ where: { code: { in: CAPABILITY_CODES } } });
+    await prisma.roleAgentGrant.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
+    await prisma.agentVersion.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
+    await prisma.agentDefinition.deleteMany({ where: { code: { in: sourceAgentCodes } } });
   });
 
   describe('auto-aprovação — READ_CONSULTA de baixo risco', () => {
