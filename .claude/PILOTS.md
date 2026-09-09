@@ -3146,7 +3146,6 @@ entrada nova.
   exata da variante (`show`, não `visible`) antes de usar `animate=` com uma string literal**, e
   nunca considerar motion "correto" só porque compilou.
 
-<<<<<<< HEAD
 ## Pilot 032 — Hub Executivo vira destino padrão pós-login (confirmação explícita pendente do Piloto 031)
 
 - **Objetivo**: o Piloto 031 tinha deixado `/` e o pós-login apontando pra `/app` (CRM) de
@@ -3193,7 +3192,7 @@ entrada nova.
   critério explícito, nunca por preferência estética isolada): aqui o critério foi confirmação
   explícita e repetida do usuário para exatamente a decisão que o Piloto 031 tinha deixado em
   aberto, não uma escolha unilateral desta sessão.
-=======
+
 ## Piloto 031 — Meu Workspace (PROMPT 6, Workspaces por Login/Cargo)
 
 - **Objetivo**: primeira tela real que consome a Fundação Multi-Cargo (PROMPTs 1-5, até então
@@ -3283,4 +3282,3 @@ entrada nova.
   sem erro de console). Screenshot real (`page.screenshot`, descartado após revisão, não commitado)
   confirmou visualmente os 3 estados (sem cargo, CLOSER desktop, CLOSER mobile) antes de reportar
   concluído — nenhum bug visual encontrado desta vez, mas o hábito (seção 12.6) é o que importa.
->>>>>>> origin/main
