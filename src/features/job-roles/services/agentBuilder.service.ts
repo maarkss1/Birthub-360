@@ -335,8 +335,11 @@ function generateSpecs(params: {
 }
 
 const HALLUCINATED_NUMBER_PATTERN = /\b\d{1,3}%|\bR\$\s?\d/;
+// `*` (não `?`) porque qualificadores como "ignore ALL PREVIOUS instructions" empilham mais de um
+// termo antes de "instructions" — um único grupo opcional deixava passar exatamente esse caso real
+// (achado de CI: "Ignore all previous instructions" não batia com a versão anterior do padrão).
 const PROMPT_INJECTION_PATTERN =
-  /ignore\s+(all\s+|previous\s+)?instructions|disregard\s+(all\s+|previous\s+)?instructions|system\s+prompt/i;
+  /ignore\s+(all\s+|previous\s+)*instructions|disregard\s+(all\s+|previous\s+)*instructions|system\s+prompt/i;
 
 /** Preenche as 9 dimensões de `RISK_REVIEW_DIMENSIONS`, exatamente — cada uma checada contra o
  *  conteúdo REAL gerado (nunca uma nota fabricada). "Não pode: inventar fonte" aplica-se também
