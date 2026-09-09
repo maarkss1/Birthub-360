@@ -112,7 +112,10 @@ export function HubScreen() {
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
   const brandRgb = useMemo(() => hexToRgbString(brandInfo.primaryColor), [brandInfo.primaryColor]);
-  const brandAccentRgb = useMemo(() => hexToRgbString(brandInfo.accentColor), [brandInfo.accentColor]);
+  const brandAccentRgb = useMemo(
+    () => hexToRgbString(brandInfo.accentColor),
+    [brandInfo.accentColor],
+  );
 
   // Quem decide quais módulos executivos cada pessoa vê é o painel 'module-access' (ADMIN), para
   // qualquer papel — inclusive SDR. O corte por papel que existia aqui escondia do SDR até os
