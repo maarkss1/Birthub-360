@@ -779,7 +779,11 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       />
 
       {selectedLeadId && (
-        <LeadDetailDrawer leadId={selectedLeadId} onClose={handleCloseDrawer} onChanged={fetchLeads} />
+        <LeadDetailDrawer
+          leadId={selectedLeadId}
+          onClose={handleCloseDrawer}
+          onChanged={fetchLeads}
+        />
       )}
     </div>
   );
