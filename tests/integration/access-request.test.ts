@@ -56,21 +56,24 @@ describe('Cross-Role Authorization + Aprovações (PROMPT 7)', () => {
   });
 
   afterAll(async () => {
-    // `AccessRequest`/`TemporaryCapabilityGrant`/`ApprovalDecision` têm RLS real (tenant isolation
-    // é a própria feature testada aqui) — um `prisma.X.deleteMany` cru, fora de
-    // `requestContext.run`, roda com `basePrisma` sem `app.tenant_id` setado (ver
-    // `executeWithRls` em `src/lib/prisma.ts`); a policy de RLS então nunca torna nenhuma linha
-    // destas tabelas visível para o DELETE, que "sucede" silenciosamente sem apagar nada (0 linhas
-    // afetadas, sem erro) — só vira erro visível bem mais tarde, no `capabilityDefinition.
-    // deleteMany` abaixo, bloqueado pela FK Restrict numa linha de `AccessRequest` que achávamos
-    // já apagada. `bypassRls: true` é o mesmo escape-hatch de setup/limpeza direta já usado em
-    // dezenas de outros arquivos deste diretório (ex.: `agent-memory.test.ts`, `ai-budget.test.ts`)
-    // — nunca em código de produção. Escopo do wrap deliberadamente limitado só a estes 3 modelos
-    // (não o afterAll inteiro): cada chamada dentro de `requestContext.run` ainda abre sua própria
-    // transação curta (`executeWithRls` por operação, não por chamada de `run`) — envolver as ~13
-    // linhas deste afterAll já causou hook timeout (10s) em OUTROS arquivos de integração rodando
-    // em paralelo contra o mesmo catálogo compartilhado (contenção real medida em CI).
-    await requestContext.run({ bypassRls: true }, async () => {
+    // `AccessRequest`/`TemporaryCapabilityGrant`/`ApprovalDecision` têm RLS ESTRITO de propósito
+    // (ver migration 20260909020000_cross_role_authorization_approvals — mesmo padrão de
+    // `AgentExecution`): a policy USING só verifica `current_setting('app.current_tenant_id') =
+    // organizationId`, SEM nenhuma cláusula de `bypass_rls` (nenhum dos 3 modelos está no
+    // allowlist `BYPASS_RLS_ALLOWED_MODELS` de src/lib/prisma.ts) — não há caso legítimo de bypass
+    // nestas tabelas nem em produção nem em teste. `requestContext.run({ bypassRls: true }, ...)`
+    // (tentativa anterior) é literalmente um no-op para elas: `app.bypass_rls` é setado, mas a
+    // policy nunca lê essa variável, então o DELETE cru "sucede" sem apagar nada (0 linhas
+    // afetadas, sem erro) — só vira erro bem mais tarde, no `capabilityDefinition.deleteMany`
+    // abaixo, bloqueado pela FK Restrict numa linha de `AccessRequest` que achávamos já apagada.
+    // O que a policy exige é `app.current_tenant_id = ORG_ID` — exatamente `tenantId: ORG_ID`
+    // (não bypass), já que todas as linhas que este arquivo cria são desse tenant. Escopo do wrap
+    // deliberadamente limitado só a estes 3 modelos (não o afterAll inteiro): cada chamada dentro
+    // de `requestContext.run` ainda abre sua própria transação curta (`executeWithRls` por
+    // operação, não por chamada de `run`) — envolver as ~13 linhas deste afterAll já causou hook
+    // timeout (10s) em OUTROS arquivos de integração rodando em paralelo contra o mesmo catálogo
+    // compartilhado (contenção real medida em CI).
+    await requestContext.run({ tenantId: ORG_ID }, async () => {
       await prisma.temporaryCapabilityGrant.deleteMany({ where: { organizationId: ORG_ID } });
       await prisma.approvalDecision.deleteMany({ where: { organizationId: ORG_ID } });
       await prisma.accessRequest.deleteMany({ where: { organizationId: ORG_ID } });
