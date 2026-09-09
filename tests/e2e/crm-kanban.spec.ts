@@ -345,4 +345,45 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
     await expect(drawer).not.toBeVisible();
     await expect(page).toHaveURL(/\/app\/crm$/);
   });
+
+  // Onda B (Agente 00, Commercial AI OS) — Action Bar consolidada (P0-3) e Linha do Tempo (P0-4).
+  // As ações já existiam espalhadas (ícones no cabeçalho, botões no rodapé, botão Bitrix dentro de
+  // uma seção) — este teste cobre a barra única resultante, não uma ação nova.
+  test('barra de ações mostra as ações da oportunidade agrupadas', async ({ page }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Action Bar Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+
+    const actionBar = drawer.getByRole('group', { name: 'Ações da oportunidade' });
+    await expect(actionBar).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Enriquecer/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Qualificar via Voz/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /WhatsApp/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Enviar ao Bitrix24/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Excluir/ })).toBeVisible();
+  });
+
+  // Linha do Tempo usa `lead.timeline`, já retornado por GET /api/leads/:id há muito tempo (ver
+  // PrismaLeadRepository.ts) mas nunca renderizado — todo lead novo já nasce com 1 evento
+  // ("creation") gravado pela própria rota de criação.
+  test('linha do tempo mostra o evento de criação do lead', async ({ page }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Timeline Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+
+    const timelineSection = drawer.getByText('Linha do Tempo').locator('xpath=ancestor::section[1]');
+    await expect(timelineSection).toContainText('Lead criado');
+  });
 });
