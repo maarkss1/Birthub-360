@@ -588,21 +588,27 @@ describe('Agent Bus + Handoffs (PROMPT 8)', () => {
 
   describe('cancel', () => {
     it('quem publicou pode cancelar um handoff ainda QUEUED; cancelar de novo é um no-op', async () => {
-      const { user } = await makeUserWithJobRole('SDR');
+      const { user } = await makeUserWithJobRole('LDR', 'SDR');
+      const lead = await makeLead();
       const missionId = nextMissionId('cancel');
       const actor = { userId: user.id, organizationId: ORG_ID, userRole: 'SDR' };
 
+      // Mesma combinação ALLOWED do teste de ciclo de vida completo (LDR/ldr-intelligence/
+      // lead.read) — garante QUEUED de forma determinística (CHAIN_AGENT_CODES/SDR não tem
+      // RoleAgentGrant real, então cairia em DENIED antes mesmo de chegar a QUEUED).
       const published = await publishHandoff({
         actor,
         missionId,
         conversationId: 'conv-cancel',
-        fromAgent: CHAIN_AGENT_CODES[0]!,
-        toAgent: CHAIN_AGENT_CODES[1]!,
-        fromRole: 'SDR',
-        toRole: 'SDR',
+        fromAgent: 'account-manager',
+        fromRole: 'LDR',
+        toAgent: 'ldr-intelligence',
+        toRole: 'LDR',
         requestType: 'CAPABILITY_DELEGATION',
         requestedCapability: 'lead.read',
+        resourceScope: { leadId: lead.id },
       });
+      expect(published.status).toBe('QUEUED');
 
       const cancelled = await cancelHandoff({ actor, handoffId: published.id });
       expect(cancelled.status).toBe('CANCELLED');
