@@ -160,7 +160,11 @@ const roleplayFinishSchema = z.object({
   personaLabel: z.string().trim().min(1).max(200),
   personaKey: z.enum(['skeptical_cfo', 'strict_buyer', 'tech_director']),
   difficulty: z.enum(['facil', 'medio', 'dificil']),
-  durationSeconds: z.number().int().min(0).max(24 * 60 * 60),
+  durationSeconds: z
+    .number()
+    .int()
+    .min(0)
+    .max(24 * 60 * 60),
   transcript: z
     .array(
       z.object({
