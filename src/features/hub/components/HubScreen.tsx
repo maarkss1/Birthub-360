@@ -128,7 +128,7 @@ export function HubScreen() {
         key: 'central',
         label: 'Central Comercial',
         description: 'CRM · Prospecção · IA',
-        icon: HubIcons['central'],
+        icon: HubIcons.central,
         primary: true,
         ring: 'inner',
         colorRgb: '255,86,24',
@@ -138,7 +138,7 @@ export function HubScreen() {
         key: 'sdr',
         label: 'Acompanhamento SDR',
         description: 'Mesa de Tratamento · Dashboard SDR',
-        icon: HubIcons['sdr'],
+        icon: HubIcons.sdr,
         ring: 'inner',
         colorRgb: '255,109,60',
         onOpen: () => goTo('/app/mesa-tratamento'),
@@ -156,7 +156,7 @@ export function HubScreen() {
         key: mod.key,
         label: mod.label,
         description: mod.description,
-        icon: HubIcons[mod.key] || HubIcons['central'],
+        icon: HubIcons[mod.key] || HubIcons.central,
         ring: 'inner' as const,
         colorRgb: '255,109,60',
         onOpen: () => goTo(`/${mod.key}`),
@@ -165,7 +165,7 @@ export function HubScreen() {
         key: link.key,
         label: link.label,
         description: link.description,
-        icon: HubIcons[link.iconKey] || HubIcons['central'],
+        icon: HubIcons[link.iconKey] || HubIcons.central,
         external: true,
         ring: 'outer' as const,
         colorRgb: '255,109,60',
@@ -180,6 +180,12 @@ export function HubScreen() {
   // Cálculo matemático idêntico ao protótipo portalatlasprototype.html
   const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
 
+  // items.length é dependência real, não falso positivo do linter (ver biome-ignore abaixo): o
+  // efeito lê os cards via DOM (querySelectorAll), não via `items` diretamente, então o linter
+  // não enxerga que o layout precisa recalcular quando `grantedCatalog`/`items` muda (permissões
+  // carregam de forma assíncrona após o mount). Removê-la deixaria os cards nas posições erradas
+  // até um resize.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
     if (!orbit || !isDesktopOrbit) return;
@@ -453,6 +459,9 @@ export function HubScreen() {
 
         {/* Órbita Concêntrica Dupla */}
         {isDesktopOrbit ? (
+          // Grupo de botões de navegação (não campos de formulário) — <fieldset> não traria ganho
+          // real de acessibilidade aqui, só estilo.
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             ref={orbitContainerRef}
             className="hub-orbit"

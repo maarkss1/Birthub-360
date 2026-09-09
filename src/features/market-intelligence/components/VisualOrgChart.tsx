@@ -186,6 +186,9 @@ export function VisualOrgChart({ contacts, companyName, onSelectContact }: Visua
                   const phone = contact.whatsapp || contact.phone;
 
                   return (
+                    // Contém <a> reais (e-mail/WhatsApp) como controles interativos próprios —
+                    // <button> aninhando <a> seria HTML inválido (interativo dentro de interativo).
+                    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
                     <div
                       key={contact.id || `${contact.name}-${idx}`}
                       role="button"

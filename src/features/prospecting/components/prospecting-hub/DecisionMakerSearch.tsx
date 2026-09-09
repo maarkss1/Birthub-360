@@ -368,6 +368,9 @@ export function DecisionMakerSearch({
         >
           Personas {brandInfo.name} (Playbook de Pré-Vendas)
         </span>
+        {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+            real de acessibilidade aqui, só estilo. */}
+        {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
         <div role="group" aria-labelledby="persona-group-label" className="flex flex-wrap gap-1.5">
           {personaOptions.map((persona) => {
             const active = isPersonaActive(persona);
@@ -435,6 +438,9 @@ export function DecisionMakerSearch({
           >
             Níveis de Senioridade
           </span>
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div
             role="group"
             aria-labelledby="criteria-seniority-label"
@@ -459,6 +465,9 @@ export function DecisionMakerSearch({
           >
             Departamentos
           </span>
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div
             role="group"
             aria-labelledby="criteria-department-label"
