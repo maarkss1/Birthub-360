@@ -387,3 +387,81 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
     await expect(timelineSection).toContainText('Lead criado');
   });
 });
+
+// Onda B2a (Agente 00, Commercial AI OS) — filtros reais do pipeline (busca + dono), persistidos
+// na URL (?q=/?owner=). Achado real durante a implementação: Lead.owner guarda o User.id (contrato
+// DATA-003), mas o botão "Reatribuir Vendedor" gravava o NOME — divergência corrigida junto (ver
+// handleBatchReassignOwner em CrmBoard.tsx), porque sem ela o filtro por dono nunca bateria com
+// leads reatribuídos em lote.
+test.describe('Kanban do CRM — Filtros', () => {
+  test('busca por texto filtra os cards visíveis', async ({ page }) => {
+    await signUp(page, { email: uniqueTestEmail('kanban-filters-busca') });
+    const { company: companyA } = await createCompanyAndLead(page, {
+      tradeName: `Zeta Filtro ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    const { company: companyB } = await createCompanyAndLead(page, {
+      tradeName: `Omega Filtro ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    const cardA = page.getByRole('button', { name: new RegExp(companyA.tradeName) });
+    const cardB = page.getByRole('button', { name: new RegExp(companyB.tradeName) });
+    await expect(cardA).toBeVisible();
+    await expect(cardB).toBeVisible();
+
+    await page.getByLabel('Buscar por empresa ou contato').fill(companyA.tradeName);
+
+    await expect(cardA).toBeVisible();
+    await expect(cardB).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Limpar filtros' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Limpar filtros' }).click();
+    await expect(cardB).toBeVisible();
+  });
+
+  test('reatribuir em lote grava o dono como id; card e filtro mostram o nome resolvido, não o id cru', async ({
+    page,
+  }) => {
+    // Self-assign: usa o nome do próprio usuário logado como "dono" a reatribuir — garante um
+    // dono conhecido no <select> sem depender de outro membro de equipe existir no tenant de
+    // teste, e o nome precisa ser conhecido de antemão (selectOption por label exige string exata).
+    const ownerName = `Vendedor Filtro ${Date.now()}`;
+    await signUp(page, { email: uniqueTestEmail('kanban-filters-owner'), name: ownerName });
+
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Reatribuir Filtro ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: 'Seleção em Lote' }).click();
+    // Em modo de seleção o card ganha um checkbox irmão ("Selecionar <empresa>") cujo nome
+    // acessível também contém o nome da empresa — âncora no início evita casar com ele.
+    await page.getByRole('button', { name: new RegExp(`^${company.tradeName}`) }).click();
+
+    const batchResponse = page.waitForResponse(
+      (res) => res.url().includes('/api/leads/batch-update') && res.request().method() === 'POST',
+    );
+    await page.getByLabel('Dono:', { exact: true }).selectOption({ label: ownerName });
+    const res = await batchResponse;
+    expect(res.status()).toBe(200);
+    const payload = res.request().postDataJSON() as { updates: { owner: string } };
+    // O valor gravado é o id (cuid), não o nome — não bate no padrão de um nome com espaço.
+    expect(payload.updates.owner).not.toMatch(/\s/);
+
+    // O rodapé do card (data + dono) fica FORA da div com role="button" (é uma div irmã dela,
+    // dentro do wrapper externo "rounded-2xl") — por isso a checagem de conteúdo sobe até esse
+    // wrapper em vez de usar o locator de role="button" (que só cobre a área arrastável/clicável).
+    const cardContainer = page
+      .locator('h4', { hasText: company.tradeName })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(cardContainer).toContainText(ownerName);
+    await expect(cardContainer).not.toContainText(payload.updates.owner);
+
+    await page.getByLabel('Filtrar por dono:').selectOption({ label: ownerName });
+    await expect(cardContainer).toBeVisible();
+    await expect(page.getByText(/1 de \d+ leads/)).toBeVisible();
+  });
+});

@@ -53,6 +53,9 @@ interface KanbanCardProps {
   isSelected?: boolean;
   onToggleSelect?: (leadId: string) => void;
   selectionMode?: boolean;
+  /** id do usuário -> nome. Lead.owner guarda o User.id (contrato DATA-003), não o nome — sem
+   * resolver aqui, o card mostraria o id cru em vez de um nome legível. */
+  ownerNameById?: Record<string, string>;
 }
 
 export const KanbanCard = React.memo(function KanbanCard({
@@ -63,6 +66,7 @@ export const KanbanCard = React.memo(function KanbanCard({
   isSelected = false,
   onToggleSelect,
   selectionMode = false,
+  ownerNameById,
 }: KanbanCardProps) {
   const [enriching, setEnriching] = useState(false);
   const [converting, setConverting] = useState(false);
@@ -296,7 +300,9 @@ export const KanbanCard = React.memo(function KanbanCard({
         <div className="flex items-center gap-1.5 text-[11px] text-ink-2 min-w-0">
           <Calendar className="w-3.5 h-3.5 shrink-0" />
           {new Date(lead.updatedAt || lead.createdAt || '').toLocaleDateString('pt-BR')}
-          {lead.owner && <span className="truncate">· {lead.owner}</span>}
+          {lead.owner && (
+            <span className="truncate">· {ownerNameById?.[lead.owner] ?? lead.owner}</span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {onConvert && (
