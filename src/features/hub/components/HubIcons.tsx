@@ -65,12 +65,12 @@ export const HubIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> =
       <circle className="avatar-head" cx="28" cy="21" r="9.5" fill="#E4A97C" />
       <g className="badge" transform="translate(40,12)">
         <circle r="8" fill="#FFFFFF" stroke="#E2E2E2" strokeWidth="1.4" />
-        <circle cx="-3.4" cy="2.6" r="1.6" fill="var(--brand-active)" />
-        <circle cx="3.4" cy="2.6" r="1.6" fill="var(--brand-active)" />
-        <circle cx="0" cy="-3.2" r="1.6" fill="var(--brand-active)" />
+        <circle cx="-3.4" cy="2.6" r="1.6" fill="var(--color-brand-active)" />
+        <circle cx="3.4" cy="2.6" r="1.6" fill="var(--color-brand-active)" />
+        <circle cx="0" cy="-3.2" r="1.6" fill="var(--color-brand-active)" />
         <path
           d="M-2.4 1.4l2-3M2.4 1.4l-2-3"
-          stroke="var(--brand-active)"
+          stroke="var(--color-brand-active)"
           strokeWidth="1"
           opacity=".7"
         />
