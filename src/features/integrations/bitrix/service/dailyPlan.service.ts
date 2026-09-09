@@ -408,7 +408,15 @@ export async function fetchUserDailyPlan(
             'tasks.task.list',
             {
               filter: { RESPONSIBLE_ID: bitrixUserId, '!STATUS': '5' },
-              select: ['ID', 'TITLE', 'DESCRIPTION', 'DEADLINE', 'STATUS', 'PRIORITY', 'UF_CRM_TASK'],
+              select: [
+                'ID',
+                'TITLE',
+                'DESCRIPTION',
+                'DEADLINE',
+                'STATUS',
+                'PRIORITY',
+                'UF_CRM_TASK',
+              ],
               order: { DEADLINE: 'ASC' },
             },
             (p) => (p as { result?: { tasks?: BitrixTaskRaw[] } }).result?.tasks,
@@ -673,7 +681,12 @@ export async function fetchUserDailyPlan(
       dueTime: toPlanTime(deadline),
       priority,
       completed: t.STATUS === '5',
-      tacticalGuidance: deriveTacticalGuidance('TASK', t.TITLE || 'Tarefa', contactName, companyName),
+      tacticalGuidance: deriveTacticalGuidance(
+        'TASK',
+        t.TITLE || 'Tarefa',
+        contactName,
+        companyName,
+      ),
       notes: [],
     });
   }
