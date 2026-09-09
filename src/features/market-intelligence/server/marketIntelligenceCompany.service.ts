@@ -13,6 +13,11 @@ export type CompanyCatalogSort = 'name' | 'capital' | 'icp';
 export interface CompanyCatalogQuery {
   q?: string;
   cnpj?: string;
+  /** Raiz de 8 dígitos do CNPJ (os 8 primeiros números, comuns a matriz e todas as filiais) —
+   * usada por `CompanyBranchesView.tsx` para listar a estrutura de matriz/filiais de uma
+   * empresa. Campo separado de `cnpj` porque o catálogo não tem índice/coluna de raiz: o filtro
+   * vira `startsWith`, não igualdade exata. */
+  cnpjRoot?: string;
   uf?: string;
   municipio?: string;
   municipioIbge?: string;
@@ -56,10 +61,15 @@ export function normalizeCatalogCnpj(value: string): string {
 export function parseCompanyCatalogQuery(input: Record<string, unknown>): CompanyCatalogQuery {
   const q = first(input.q)?.trim() || undefined;
   const rawCnpj = first(input.cnpj)?.trim();
-  const cnpj = rawCnpj ? normalizeCatalogCnpj(rawCnpj) : undefined;
+  const normalizedCnpjInput = rawCnpj ? normalizeCatalogCnpj(rawCnpj) : undefined;
+  // 8 dígitos = raiz de CNPJ (busca de matriz/filiais por `startsWith`), não o CNPJ completo —
+  // ver `cnpjRoot` na interface acima. Qualquer outro tamanho segue a validação de CNPJ completo.
+  const isRoot = !!normalizedCnpjInput && /^\d{8}$/.test(normalizedCnpjInput);
+  const cnpj = normalizedCnpjInput && !isRoot ? normalizedCnpjInput : undefined;
+  const cnpjRoot = isRoot ? normalizedCnpjInput : undefined;
   if (cnpj && !CNPJ_CATALOG_PATTERN.test(cnpj)) {
     throw new CompanyCatalogValidationError(
-      'CNPJ deve conter 14 posições; as 12 primeiras aceitam letras/números e os 2 dígitos verificadores permanecem numéricos.',
+      'CNPJ deve conter 14 posições (ou 8, para buscar pela raiz de matriz/filiais); as 12 primeiras aceitam letras/números e os 2 dígitos verificadores permanecem numéricos.',
     );
   }
 
@@ -104,6 +114,7 @@ export function parseCompanyCatalogQuery(input: Record<string, unknown>): Compan
   return {
     q,
     cnpj,
+    cnpjRoot,
     uf,
     municipio,
     municipioIbge,
@@ -228,6 +239,7 @@ function buildWhere(
 ): Prisma.MarketIntelligenceCompanyWhereInput {
   const where: Prisma.MarketIntelligenceCompanyWhereInput = { datasetId };
   if (query.cnpj) where.cnpj = query.cnpj;
+  if (query.cnpjRoot) where.cnpj = { startsWith: query.cnpjRoot };
   if (query.uf) where.uf = query.uf;
   if (query.municipioIbge) where.municipioIbge = query.municipioIbge;
   if (query.municipio) where.municipioNome = { contains: query.municipio, mode: 'insensitive' };

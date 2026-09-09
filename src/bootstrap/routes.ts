@@ -35,6 +35,7 @@ import { workspaceRoutes } from '../features/job-roles/routes/workspace.routes.j
 import { knowledgeRoutes } from '../features/knowledge/knowledge.routes.js';
 import { lgpdRouter } from '../features/lgpd/lgpd.routes.js';
 import { accountIntelligenceRoutes } from '../features/market-intelligence/server/accountIntelligence.routes.js';
+import { marketIntelligenceCompanyRoutes } from '../features/market-intelligence/server/marketIntelligenceCompany.routes.js';
 import { mesaTratamentoRoutes } from '../features/mesa-tratamento/routes/mesaTratamento.routes.js';
 import { moduleAccessRoutes } from '../features/module-access/routes/moduleAccess.routes.js';
 import { noteRoutes } from '../features/notes/routes/note.routes.js';
@@ -56,6 +57,16 @@ import { requireRole } from '../shared/middlewares/requireRole.js';
  * BullBoard, e antes do fallback de frontend — mesma posição do server.ts original.
  */
 export function mountFeatureRoutes(app: Express): void {
+  // Precisa vir ANTES de '/api/companies': o path de 1 segmento
+  // '/api/companies/market-intelligence' colidiria com companyRoutes 'GET /:id' (que trataria
+  // "market-intelligence" como um id de empresa) se companyRoutes fosse verificado primeiro. Ver
+  // o comentário de topo de marketIntelligenceCompany.routes.ts.
+  app.use(
+    '/api/companies/market-intelligence',
+    authenticateToken,
+    requireTenant,
+    marketIntelligenceCompanyRoutes,
+  );
   app.use('/api/companies', authenticateToken, requireTenant, companyRoutes);
   app.use('/api/contacts', authenticateToken, requireTenant, contactRoutes);
   app.use('/api/leads', authenticateToken, requireTenant, leadRoutes);
