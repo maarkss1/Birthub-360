@@ -1168,6 +1168,9 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                 <span id="bulk-temperature-label" className="block text-xs font-bold text-ink mb-2">
                   Temperatura Inicial do Lead no AtlasGR
                 </span>
+                {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria
+                    ganho real de acessibilidade aqui, só estilo. */}
+                {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
                 <div
                   role="group"
                   aria-labelledby="bulk-temperature-label"

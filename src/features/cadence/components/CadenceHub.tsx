@@ -692,6 +692,9 @@ function CadenceRunsSection() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div className="flex items-center gap-1" role="group" aria-label="Filtrar por status">
             {STATUS_FILTERS.map((status) => (
               <button

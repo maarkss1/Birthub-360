@@ -656,11 +656,14 @@
   .orbit-lines {
     display: none;
   }
-  /* !important necessário: .hub-card.primary (linha 155) é mais específico e continuaria
-     aplicando a margem negativa de centralização do desktop sem isto. */
-  /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
+  /* !important necessário: .hub-card.primary (821 linhas acima) é mais específico (duas classes,
+     0,2,0) que este .hub-card do media query (0,1,0) e continuaria aplicando a margem negativa
+     de centralização do desktop no mobile sem isto — cascata por especificidade não resolve
+     aqui (achado real: minha primeira análise, que só comparou .hub-card com .hub-card, estava
+     incompleta). */
   .hub-card {
     position: static;
+    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
     margin: 0 !important;
   }
   .hub-card.primary {
@@ -668,9 +671,10 @@
   }
 }
 
-/* !important necessário: reforço universal do atributo nativo `hidden` — precisa vencer
-   qualquer `display` de classe do componente que estiver escondendo o elemento. */
-/* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
+/* [hidden] precisa vencer classes utilitárias display do Tailwind (mesma especificidade,
+   0,1,0) independente da ordem de carregamento — sem !important um elemento com
+   hidden + className="flex"/"grid" continuaria visível. */
 [hidden] {
+  /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
   display: none !important;
 }

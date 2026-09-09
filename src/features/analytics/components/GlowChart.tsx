@@ -96,6 +96,9 @@ export function GlowChart({ data, error }: GlowChartProps) {
             </p>
           </div>
 
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div
             role="group"
             aria-label="Séries exibidas no gráfico"
