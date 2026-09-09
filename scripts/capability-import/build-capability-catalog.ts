@@ -23,10 +23,15 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { CAPABILITY_CATALOG } from '../../src/config/capability-catalog.js';
-import { TOOL_BINDINGS, getToolBinding } from '../../src/features/job-roles/config/tool-bindings.js';
+import {
+  TOOL_BINDINGS,
+  getToolBinding,
+} from '../../src/features/job-roles/config/tool-bindings.js';
 import { JOB_ROLE_CODES, type JobRoleCode } from '../../src/config/job-role-catalog.js';
 import { COMMERCIAL_AGENT_REGISTRY } from '../../src/features/intelligence/agents/commercialAgentRegistry.js';
-import normalizedBirthHubCatalog from '../../src/features/job-roles/catalog/agents.normalized.json' with { type: 'json' };
+import normalizedBirthHubCatalog from '../../src/features/job-roles/catalog/agents.normalized.json' with {
+  type: 'json',
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,7 +43,19 @@ interface BirthHubNormalizedAgent {
   binding: { type: string; existingCode?: string };
 }
 
-const UNIVERSAL_AGENT_CAPABILITIES = ['agent.discover', 'agent.execute'];
+// As 3 capabilities estruturais (nunca de domínio) — `agent.discover`/`agent.execute` universais
+// desde o PROMPT 3, `agent.request_cross_role` adicionada aqui no PROMPT 7. Bug real do PROMPT 3
+// (commit 7757345): `buildRoleCapabilities` já concedia as 3 a todo `JobRole` (RoleCapabilityGrant),
+// mas esta lista de capability de AGENTE (AgentCapabilityGrant) só tinha as 2 primeiras — nenhum
+// agente jamais recebia `agent.request_cross_role`, então `selectAgentForCapability` nunca
+// encontrava candidato e `agent.request_cross_role` ficava estruturalmente inatingível mesmo com
+// o ToolBinding em VERIFIED (PROMPT 7). Só ficou visível agora porque só agora existe cobertura de
+// teste de ponta a ponta para esta capability.
+const UNIVERSAL_AGENT_CAPABILITIES = [
+  'agent.discover',
+  'agent.execute',
+  'agent.request_cross_role',
+];
 
 /** Capabilities de domínio real dos 12 agentes da Célula Comercial — derivadas das `capabilities`
  *  já documentadas em `commercialAgentRegistry.ts` (nunca inventadas aqui), mapeadas para o
@@ -49,13 +66,30 @@ const COMMERCIAL_CELL_DOMAIN_CAPABILITIES: Record<string, string[]> = {
   'sdr-qualification': ['lead.read', 'lead.qualify', 'lead.update', 'meeting.schedule'],
   'closer-sales': ['deal.read', 'deal.analyze', 'deal.update', 'deal.move_stage', 'contract.read'],
   'coordinator-commercial': ['lead.read', 'deal.read', 'pipeline.read', 'bitrix.read'],
-  'manager-commercial': ['forecast.read', 'forecast.explain', 'pipeline.read', 'pipeline.analyze', 'deal.read'],
-  'executive-director': ['forecast.read', 'forecast.explain', 'pipeline.read', 'pipeline.analyze', 'billing.read'],
+  'manager-commercial': [
+    'forecast.read',
+    'forecast.explain',
+    'pipeline.read',
+    'pipeline.analyze',
+    'deal.read',
+  ],
+  'executive-director': [
+    'forecast.read',
+    'forecast.explain',
+    'pipeline.read',
+    'pipeline.analyze',
+    'billing.read',
+  ],
   'billing-revenue': ['billing.read', 'billing.reconcile'],
   'churn-retention': ['deal.read', 'company.read', 'billing.read'],
   'contract-signature': ['contract.read', 'contract.generate', 'signature.request'],
   'bitrix-guardian': ['bitrix.read', 'bitrix.write', 'lead.search', 'company.search'],
-  'revenue-intelligence': ['pipeline.read', 'pipeline.analyze', 'forecast.read', 'forecast.explain'],
+  'revenue-intelligence': [
+    'pipeline.read',
+    'pipeline.analyze',
+    'forecast.read',
+    'forecast.explain',
+  ],
 };
 
 interface AgentCapabilityEntry {
@@ -113,7 +147,10 @@ interface RoleCapabilityEntry {
  *  são concedidos a EXECUTE em todos os 12 cargos: nenhum dos três é bloqueado por cargo nesta
  *  onda, o bloqueio real é estrutural (ToolBinding FUTURE_TOOL) até os PROMPTs 4/7 existirem.
  */
-const ROLE_DOMAIN_CAPABILITIES: Record<JobRoleCode, [string, RoleCapabilityEntry['accessLevel']][]> = {
+const ROLE_DOMAIN_CAPABILITIES: Record<
+  JobRoleCode,
+  [string, RoleCapabilityEntry['accessLevel']][]
+> = {
   LDR: [
     ['lead.read', 'EXECUTE'],
     ['lead.search', 'EXECUTE'],
@@ -268,14 +305,19 @@ function main() {
       TOOL_UNAVAILABLE: TOOL_BINDINGS.filter((b) => b.reason === 'TOOL_UNAVAILABLE').length,
     },
     totalAgentsWithCapabilityGrants: agentCapabilities.length,
-    agentsWithDomainCapability: agentCapabilities.filter((a) => a.source !== 'UNIVERSAL_ONLY').length,
+    agentsWithDomainCapability: agentCapabilities.filter((a) => a.source !== 'UNIVERSAL_ONLY')
+      .length,
     agentsUniversalOnly: agentCapabilities.filter((a) => a.source === 'UNIVERSAL_ONLY').length,
     totalRoleCapabilityGrants: roleCapabilities.length,
   };
 
   writeFileSync(
     path.join(OUTPUT_DIR, 'capabilities.normalized.json'),
-    JSON.stringify({ summary: { total: capabilitiesOutput.length }, capabilities: capabilitiesOutput }, null, 2) + '\n',
+    JSON.stringify(
+      { summary: { total: capabilitiesOutput.length }, capabilities: capabilitiesOutput },
+      null,
+      2,
+    ) + '\n',
   );
   writeFileSync(
     path.join(OUTPUT_DIR, 'agentCapabilities.normalized.json'),
@@ -283,7 +325,8 @@ function main() {
   );
   writeFileSync(
     path.join(OUTPUT_DIR, 'roleCapabilities.normalized.json'),
-    JSON.stringify({ summary: { total: roleCapabilities.length }, roleCapabilities }, null, 2) + '\n',
+    JSON.stringify({ summary: { total: roleCapabilities.length }, roleCapabilities }, null, 2) +
+      '\n',
   );
 
   console.log('Catálogo de capabilities gerado:', JSON.stringify(summary, null, 2));

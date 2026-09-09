@@ -59,6 +59,22 @@ describe('Cross-Role Authorization + Aprovações (PROMPT 7)', () => {
     await prisma.temporaryCapabilityGrant.deleteMany({ where: { organizationId: ORG_ID } });
     await prisma.approvalDecision.deleteMany({ where: { organizationId: ORG_ID } });
     await prisma.accessRequest.deleteMany({ where: { organizationId: ORG_ID } });
+    // `AccessRequest`/`TemporaryCapabilityGrant` usam `onDelete: Restrict` (de propósito — nunca
+    // cascatear a exclusão de um registro de auditoria/grant por causa de uma limpeza de
+    // catálogo) na FK para `CapabilityDefinition`, diferente de `AgentCapabilityGrant`/
+    // `RoleCapabilityGrant` abaixo (`onDelete: Cascade`). Os dois deletes acima já cobrem o caso
+    // comum (linhas criadas por este arquivo, sempre com `organizationId: ORG_ID`), mas varrem só
+    // ORG_ID — qualquer linha restante destes dois modelos (novos nesta onda, únicos consumidores
+    // hoje) que referencie um dos `CAPABILITY_CODES` bloquearia o `capabilityDefinition.deleteMany`
+    // abaixo. Mesmo escopo amplo (por capability code, não por organização) já usado para
+    // `agentCapabilityGrant`/`roleCapabilityGrant` logo abaixo, para o `deleteMany` final nunca
+    // falhar por uma linha órfã fora de `ORG_ID`.
+    await prisma.temporaryCapabilityGrant.deleteMany({
+      where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
+    });
+    await prisma.accessRequest.deleteMany({
+      where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
+    });
     await prisma.auditLog.deleteMany({ where: { entity: 'AccessRequest' } });
     await prisma.auditLog.deleteMany({ where: { entity: 'TemporaryCapabilityGrant' } });
     await prisma.userJobRole.deleteMany({
