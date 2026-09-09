@@ -22,6 +22,9 @@ export function RealtimeFeed() {
   const [retryToken, setRetryToken] = useState(0);
   const retry = useCallback(() => setRetryToken((t) => t + 1), []);
 
+  // `retryToken` não é lido dentro do efeito de propósito — é só um contador-gatilho (padrão
+  // React comum) para o botão "retry" forçar a reconexão SSE sem duplicar a função `connect`.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;

@@ -1,4 +1,5 @@
 import { StateGraph, Annotation } from '@langchain/langgraph';
+import type { ChatOpenAI } from '@langchain/openai';
 import { type BaseMessage, AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { z } from 'zod';
 import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
@@ -27,7 +28,7 @@ import { assertPiiExternalConsent } from '../services/guardrails.service.js';
 // precisa ser JSON confiável.
 import { buildModelWithFallback } from './fallback.util.js';
 
-let cachedSupervisorLlm: any = null;
+let cachedSupervisorLlm: ReturnType<typeof buildModelWithFallback> | null = null;
 function getSupervisorLlm() {
   if (cachedSupervisorLlm) return cachedSupervisorLlm;
 
@@ -301,10 +302,13 @@ ${SWARM_UNTRUSTED_CONTENT_GUARD}`;
     // fora do JSON (comum em modelos pequenos como o gpt-oss-20b usado aqui) quebrava
     // o regex de extração e o roteamento sempre caía no fallback heurístico, mesmo quando o
     // modelo tinha decidido corretamente.
-    const structuredModel = getSupervisorLlm().withStructuredOutput(supervisorDecisionSchema, {
-      name: 'route_decision',
-      includeRaw: true,
-    });
+    // withFallbacks() (buildModelWithFallback) devolve um RunnableWithFallbacks genérico, sem
+    // withStructuredOutput no tipo — mas em runtime é sempre um ChatOpenAI (com ou sem fallback
+    // amarrado), que expõe o método normalmente; o cast só repõe o que `any` já assumia aqui antes.
+    const structuredModel = (getSupervisorLlm() as ChatOpenAI).withStructuredOutput(
+      supervisorDecisionSchema,
+      { name: 'route_decision', includeRaw: true },
+    );
 
     const result = await structuredModel.invoke([
       new SystemMessage(systemPrompt),

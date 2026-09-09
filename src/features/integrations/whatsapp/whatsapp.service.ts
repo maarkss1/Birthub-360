@@ -7,9 +7,9 @@ import makeWASocket, {
 import type { Boom } from '@hapi/boom';
 import qrcode from 'qrcode';
 import pino from 'pino';
-import path from 'path';
-import fs from 'fs';
-import { EventEmitter } from 'events';
+import path from 'node:path';
+import fs from 'node:fs';
+import { EventEmitter } from 'node:events';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { extractMessageText, persistWhatsAppMessage } from './whatsappMessage.service.js';
@@ -474,7 +474,7 @@ export async function sendWhatsAppMessage(
   try {
     let finalMessage = text;
     if (buttons && buttons.length > 0) {
-      finalMessage += '\n\n' + buttons.map((b, i) => `[${i + 1}] ${b}`).join('\n');
+      finalMessage += `\n\n${buttons.map((b, i) => `[${i + 1}] ${b}`).join('\n')}`;
     }
     await withTimeout(
       sock.sendMessage(result.jid, { text: finalMessage }),

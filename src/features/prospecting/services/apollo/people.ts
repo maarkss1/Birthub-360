@@ -124,12 +124,15 @@ export async function enrichCandidatesWithDecisionMakers(
 ) {
   const withDomain = organizations
     .map((org, idx) => ({ org, idx }))
-    .filter(({ org }) => !!org.primary_domain)
+    .filter(
+      (x): x is { org: ApolloOrganization & { primary_domain: string }; idx: number } =>
+        !!x.org.primary_domain,
+    )
     .slice(0, MAX_DECISION_MAKER_LOOKUPS);
 
   await Promise.all(
     withDomain.map(async ({ org, idx }) => {
-      const domain = org.primary_domain!;
+      const domain = org.primary_domain;
       const { contacts } = await enrichOrganizationWithContacts(domain, 3);
       if (contacts.length === 0) {
         // Array vazio (em vez de undefined) sinaliza pro frontend "buscamos e não achamos

@@ -12,6 +12,7 @@ import {
 } from './lib/auth/authorization';
 import { BrandProvider } from './contexts/BrandContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { DailyClosingProvider } from './contexts/DailyClosingContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
 import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
@@ -45,6 +46,11 @@ const HubInteligenciaMarketingHub = lazy(() =>
 const SinglePageDashboard = lazy(() =>
   import('./features/dashboard/components/SinglePageDashboard').then((m) => ({
     default: m.SinglePageDashboard,
+  })),
+);
+const WorkspaceHome = lazy(() =>
+  import('./features/workspace/components/WorkspaceHome').then((m) => ({
+    default: m.WorkspaceHome,
   })),
 );
 const HubScreen = lazy(() =>
@@ -141,9 +147,9 @@ const CopilotoIaHub = lazy(() =>
     default: m.CopilotoIaHub,
   })),
 );
-const JoaoReisDiagnosticHub = lazy(() =>
-  import('./features/commercial-intelligence/components/JoaoReisDiagnosticHub').then((m) => ({
-    default: m.JoaoReisDiagnosticHub,
+const DailyPlanHub = lazy(() =>
+  import('./features/commercial-intelligence/components/DailyPlanHub').then((m) => ({
+    default: m.DailyPlanHub,
   })),
 );
 const Calendar = lazy(() =>
@@ -270,6 +276,13 @@ function AppLayout() {
               coberto pelo teste de useNavigationBusBridge porque aquele hook já tinha o
               contorno certo só para o comando de voz). */}
           <Route path="dashboard" element={<SinglePageDashboard />} />
+          {/* PROMPT 6 — Workspace do cargo (JobRole) do usuário autenticado. Sem RequireRole:
+              qualquer UserRole autenticado pode abrir; o próprio workspace resolve seu estado
+              real (READY/NO_JOB_ROLE/NO_WORKSPACE_DEFINITION) a partir da sessão — nunca de
+              query/body (ver GET /api/workspace/me). Deep link direto nunca revela mais do que a
+              sessão do próprio usuário autoriza: cada módulo/quick action já vem marcado
+              `locked` quando o UserRole real não atinge o gate daquela rota. */}
+          <Route path="workspace" element={<WorkspaceHome />} />
           <Route path="prospect" element={<ProspectingHub />} />
           <Route path="crm" element={<CrmBoard />} />
           <Route path="crm360" element={<CrmOverview onNavigate={handleCrmOverviewNavigate} />} />
@@ -328,7 +341,8 @@ function AppLayout() {
               </RequireRole>
             }
           />
-          <Route path="sdr-diagnostic-joao" element={<JoaoReisDiagnosticHub />} />
+          <Route path="daily-plan" element={<DailyPlanHub />} />
+          <Route path="sdr-diagnostic-joao" element={<DailyPlanHub />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="automations" element={<Automations />} />
@@ -386,98 +400,103 @@ export default function App() {
         <ExperienceModeProvider>
           <BrandProvider>
             <AuthProvider>
-              <ActiveRecordProvider>
-                <ClickSpark />
-                <Suspense fallback={<PageFallback />}>
-                  <Routes>
-                    {/* Porta de entrada do produto: pedido explícito do usuário ("primeira tela
+              <DailyClosingProvider>
+                <ActiveRecordProvider>
+                  <ClickSpark />
+                  <Suspense fallback={<PageFallback />}>
+                    <Routes>
+                      {/* Porta de entrada do produto: pedido explícito do usuário ("primeira tela
                         será o Hub"/"crie uma primeira tela de login com os elementos lindos do
                         Hub") — em vez de redirecionar direto pro CRM, "/" mostra a tela de login
                         (mesmo componente de "/login", que continua existindo à parte — ver
                         tests/e2e/helpers.ts::signUp e outros specs que navegam direto pra lá),
                         redesenhada com a linguagem visual do Hub Executivo (badges circulares,
                         glow de canto, sem 3D). Um usuário já autenticado que caia aqui é
-                        redirecionado pro CRM automaticamente (guard dentro do próprio
-                        LoginScreen), então "/" nunca mostra o formulário a quem já está logado. */}
-                    <Route path="/" element={<LoginScreen />} />
-                    <Route path="/welcome" element={<WelcomeScreen />} />
-                    <Route path="/select-brand" element={<SelectionScreen />} />
-                    <Route path="/login" element={<LoginScreen />} />
-                    <Route path="/reset-password" element={<ResetPasswordScreen />} />
-                    <Route path="/book/:slug" element={<PublicBookingPage />} />
-                    {/* Hub Executivo ("os círculos") — tela de destinos pós-login: Central
+                        redirecionado pro Hub automaticamente (guard dentro do próprio
+                        LoginScreen), então "/" nunca mostra o formulário a quem já está logado.
+                        Login/cadastro também levam direto ao Hub (ver Pilot 031/032 em
+                        .claude/PILOTS.md) — o CRM (/app) deixou de ser o destino padrão pós-login;
+                        continua existindo e acessível a partir dos círculos do Hub. */}
+                      <Route path="/" element={<LoginScreen />} />
+                      <Route path="/welcome" element={<WelcomeScreen />} />
+                      <Route path="/select-brand" element={<SelectionScreen />} />
+                      <Route path="/login" element={<LoginScreen />} />
+                      <Route path="/reset-password" element={<ResetPasswordScreen />} />
+                      <Route path="/book/:slug" element={<PublicBookingPage />} />
+                      {/* Hub Executivo ("os círculos") — tela de destinos pós-login: Central
                         Comercial (CRM) + módulos executivos concedidos individualmente via
                         ModuleAccessAdmin (/app/module-access) + atalhos para ferramentas externas
                         (Bitrix24, webmail, portais). Fica fora de /app/* de propósito — sem
                         MainLayout/Sidebar do CRM — mas ainda exige login (ProtectedRoute). */}
-                    <Route
-                      path="/hub"
-                      element={
-                        <ProtectedRoute>
-                          <HubScreen />
-                        </ProtectedRoute>
-                      }
-                    />
-                    {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
+                      <Route
+                        path="/hub"
+                        element={
+                          <ProtectedRoute>
+                            <HubScreen />
+                          </ProtectedRoute>
+                        }
+                      />
+                      {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
                         quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
                         CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
                         ainda exigem login (ProtectedRoute) e a concessão real do módulo
                         (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
                         autorização real vem de ModuleAccessGrant no banco). */}
-                    <Route
-                      path="/social-selling"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="social-selling">
-                            <SocialSellingHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/treinamento-atlasgr"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="treinamento-atlasgr">
-                            <TreinamentoAtlasGRHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/proposta-comercial"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="proposta-comercial">
-                            <PropostaComercialHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/hub-inteligencia-marketing"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
-                            <HubInteligenciaMarketingHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/app/*"
-                      element={
-                        <ProtectedRoute>
-                          <ErrorBoundary>
-                            <AppLayout />
-                          </ErrorBoundary>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="*" element={<Navigate to="/welcome" replace />} />
-                  </Routes>
-                </Suspense>
-              </ActiveRecordProvider>
+                      <Route
+                        path="/social-selling"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="social-selling">
+                              <SocialSellingHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/treinamento-atlasgr"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="treinamento-atlasgr">
+                              <TreinamentoAtlasGRHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/proposta-comercial"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="proposta-comercial">
+                              <PropostaComercialHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/hub-inteligencia-marketing"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
+                              <HubInteligenciaMarketingHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/app/*"
+                        element={
+                          <ProtectedRoute>
+                            <ErrorBoundary>
+                              <AppLayout />
+                            </ErrorBoundary>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="*" element={<Navigate to="/welcome" replace />} />
+                    </Routes>
+                  </Suspense>
+                </ActiveRecordProvider>
+              </DailyClosingProvider>
             </AuthProvider>
           </BrandProvider>
         </ExperienceModeProvider>

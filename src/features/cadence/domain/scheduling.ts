@@ -58,7 +58,7 @@ export function isVerifiableConfirmation(
   if (!VALID_EVIDENCE_TYPES.has(confirmation.evidenceType as ConfirmationEvidenceType))
     return false;
   if (FORBIDDEN_EVIDENCE_MARKERS.has(confirmation.evidenceRef.trim().toLowerCase())) return false;
-  if (!confirmation.evidenceRef || !confirmation.evidenceRef.trim()) return false;
+  if (!confirmation.evidenceRef?.trim()) return false;
   if (confirmation.proposedEnd.getTime() <= confirmation.proposedStart.getTime()) return false;
   if (confirmation.proposedStart.getTime() <= now.getTime()) return false;
   return true;
@@ -90,7 +90,7 @@ export function buildCalendarEventDraft(
     leadId: confirmation.leadId,
     start: confirmation.proposedStart,
     end: confirmation.proposedEnd,
-    attendeeEmails: [context.leadEmail, context.ownerEmail].filter((e) => e && e.trim()),
+    attendeeEmails: [context.leadEmail, context.ownerEmail].filter((e) => e?.trim()),
     ownerUserId: context.ownerUserId,
     title: `Reunião comercial — ${context.leadTitle}`,
     confirmationEvidenceType: confirmation.evidenceType as ConfirmationEvidenceType,

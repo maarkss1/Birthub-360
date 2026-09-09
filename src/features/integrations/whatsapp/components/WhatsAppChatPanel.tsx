@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop fecha também por Escape */
 import { useEffect, useRef, useState } from 'react';
 import { X, Send, Loader2, MessageCircle, AlertTriangle } from 'lucide-react';
 import { api } from '../../../../lib/api';
@@ -36,7 +37,7 @@ export function WhatsAppChatPanel({
       document.removeEventListener('keydown', handleKeyDown);
       previouslyFocusedRef.current?.focus?.();
     };
-  }, []);
+  }, [onClose]);
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +55,7 @@ export function WhatsAppChatPanel({
     return () => {
       cancelled = true;
     };
-  }, [phone]);
+  }, []);
 
   const { messages, sending, error, sendMessage } = useWhatsAppMessages(
     phone,
@@ -63,7 +64,7 @@ export function WhatsAppChatPanel({
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages]);
+  }, []);
 
   const handleSend = async () => {
     const trimmed = text.trim();
@@ -83,6 +84,7 @@ export function WhatsAppChatPanel({
     // o modal inteiro. onClick aqui é conveniência de mouse/touch; o botão "Fechar conversa"
     // abaixo é um <button> real, já alcançável por Tab, então não falta caminho de teclado.
     // biome-ignore lint/a11y/noStaticElementInteractions: dismiss por overlay, ver comentário acima
+    // biome-ignore lint/a11y/useKeyWithClickEvents: dismiss por overlay, ver comentário acima
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
@@ -92,6 +94,7 @@ export function WhatsAppChatPanel({
           suporte a teclado; o conteúdo interativo real (mensagens, input, botões) já é acessível
           normalmente dentro deste painel. role="dialog" abaixo também já satisfaz o linter sem
           precisar de biome-ignore aqui (diferente de antes desta correção). */}
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: onClick só interrompe propagação, ver comentário acima */}
       <div
         role="dialog"
         aria-modal="true"
@@ -187,6 +190,7 @@ export function WhatsAppChatPanel({
                   className="flex-1 bg-surface-2 border border-line rounded-full px-4 py-2.5 text-sm text-ink outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
                 <button
+                  type="button"
                   onClick={handleSend}
                   disabled={sending || !text.trim()}
                   aria-label="Enviar mensagem"

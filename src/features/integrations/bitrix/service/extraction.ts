@@ -232,7 +232,7 @@ async function findEntityCheckpoint(
     const progress = (candidate.progress as { entities?: ExtractionEntityProgress[] } | null)
       ?.entities;
     const entry = progress?.find((p) => p.entity === entity);
-    if (!entry || entry.status !== 'done' || !entry.pagesExhausted || !entry.checkpointTo) continue;
+    if (entry?.status !== 'done' || !entry.pagesExhausted || !entry.checkpointTo) continue;
 
     const cursor = new Date(entry.checkpointTo);
     if (!Number.isNaN(cursor.getTime())) return cursor;

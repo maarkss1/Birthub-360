@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- regiões roláveis focáveis por teclado */
 import { useEffect, useState } from 'react';
 import { AlertTriangle, ArrowRightLeft, RotateCcw, Route, UserX } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';
@@ -134,6 +135,9 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           />
         </div>
         {noInteraction.rows.length > 0 && (
+          // <section aria-label> produziria a mesma role region que role="region" já produz — sem
+          // ganho real de acessibilidade, mesmo padrão de CrmBoard.tsx.
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
@@ -231,6 +235,9 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           </ul>
         )}
         {handoffs.recent.length > 0 && (
+          // <section aria-label> produziria a mesma role region que role="region" já produz — sem
+          // ganho real de acessibilidade, mesmo padrão de CrmBoard.tsx.
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
@@ -322,6 +329,9 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           />
         </div>
         {reentries.rows.length > 0 && (
+          // <section aria-label> produziria a mesma role region que role="region" já produz — sem
+          // ganho real de acessibilidade, mesmo padrão de CrmBoard.tsx.
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx
@@ -383,6 +393,9 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           }
         />
         {transitions.edges.length > 0 && (
+          // <section aria-label> produziria a mesma role region que role="region" já produz — sem
+          // ganho real de acessibilidade, mesmo padrão de CrmBoard.tsx.
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             className="mt-4 overflow-x-auto"
             // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx

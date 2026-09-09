@@ -40,8 +40,8 @@ export function GoalCountdownOverlay({
 
   if (!isOpen) return null;
 
-  const currentYear = parseInt(period.split('-')[0]);
-  const currentMonth = parseInt(period.split('-')[1]) - 1;
+  const currentYear = parseInt(period.split('-')[0], 10);
+  const currentMonth = parseInt(period.split('-')[1], 10) - 1;
 
   // Fim do mês (último dia do mês as 23:59:59)
   const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
@@ -134,6 +134,7 @@ export function GoalCountdownOverlay({
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             aria-label="Fechar"

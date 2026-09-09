@@ -183,6 +183,7 @@ export function SalesMethodologyStudio() {
           {/* Selector Tabs (5 Frameworks) */}
           <div className="flex flex-wrap items-center bg-surface-2 p-1.5 rounded-2xl border border-line w-full md:w-auto gap-1">
             <button
+              type="button"
               onClick={() => {
                 setActiveTab('spin');
                 setResult(null);
@@ -196,6 +197,7 @@ export function SalesMethodologyStudio() {
               <Target className="w-3.5 h-3.5" /> SPIN
             </button>
             <button
+              type="button"
               onClick={() => {
                 setActiveTab('snap');
                 setResult(null);
@@ -209,6 +211,7 @@ export function SalesMethodologyStudio() {
               <Zap className="w-3.5 h-3.5" /> SNAP
             </button>
             <button
+              type="button"
               onClick={() => {
                 setActiveTab('aida');
                 setResult(null);
@@ -222,6 +225,7 @@ export function SalesMethodologyStudio() {
               <Flame className="w-3.5 h-3.5" /> AIDA
             </button>
             <button
+              type="button"
               onClick={() => {
                 setActiveTab('meddpicc');
                 setResult(null);
@@ -235,6 +239,7 @@ export function SalesMethodologyStudio() {
               <FileText className="w-3.5 h-3.5" /> MEDDPICC
             </button>
             <button
+              type="button"
               onClick={() => {
                 setActiveTab('challenger');
                 setResult(null);
@@ -741,6 +746,7 @@ function SpinBlock({
           {icon} {title}
         </h4>
         <button
+          type="button"
           onClick={() => onCopy(fullText)}
           className="text-xs text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
         >
@@ -795,6 +801,7 @@ function SnapCard({
           </span>
         </div>
         <button
+          type="button"
           onClick={onCopy}
           className="text-xs text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
         >

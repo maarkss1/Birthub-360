@@ -1,4 +1,5 @@
 import { prisma } from '../../../lib/prisma.js';
+import type { Prisma } from '@prisma/client';
 import { logger } from '../../../lib/logger.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { enrichOrganizationWithContacts, enrichOrganizationByDomain } from './apollo.service.js';
@@ -107,7 +108,7 @@ export async function runEnrichmentCascade(
   if (cnpj && (!company.legalName || !city || !state)) {
     try {
       const cnpjData = await fetchCnpjData(cnpj);
-      if (cnpjData && cnpjData.found && cnpjData.data) {
+      if (cnpjData?.found && cnpjData.data) {
         companyName = cnpjData.data.tradeName || cnpjData.data.legalName || companyName;
         city = city || cnpjData.data.city || undefined;
         state = state || cnpjData.data.state || undefined;
@@ -254,7 +255,12 @@ export async function runEnrichmentCascade(
           data: {
             googleRating: place.rating ?? company.googleRating,
             googleReviewsCount: place.userRatingCount ?? company.googleReviewsCount,
-            businessHours: (place.businessHours as any) ?? company.businessHours,
+            businessHours:
+              place.businessHours != null
+                ? (place.businessHours as Prisma.InputJsonValue)
+                : company.businessHours != null
+                  ? (company.businessHours as Prisma.InputJsonValue)
+                  : undefined,
             address: company.address || place.formattedAddress || undefined,
             phones:
               placePhone && !company.phones.includes(placePhone)

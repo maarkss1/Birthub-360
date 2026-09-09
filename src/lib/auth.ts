@@ -127,7 +127,7 @@ export const auth = betterAuth({
         if (error instanceof MailerNotConfiguredError) {
           logger.warn(
             { email: user.email, url },
-            'Reset de senha solicitado, mas SMTP não está configurado. O link é: ' + url,
+            `Reset de senha solicitado, mas SMTP não está configurado. O link é: ${url}`,
           );
           throw new APIError('INTERNAL_SERVER_ERROR', {
             message:
@@ -261,8 +261,7 @@ export const auth = betterAuth({
   },
   advanced: {
     useSecureCookies: Boolean(
-      process.env.SECURE_COOKIES === 'true' ||
-        (process.env.BETTER_AUTH_URL && process.env.BETTER_AUTH_URL.startsWith('https://')),
+      process.env.SECURE_COOKIES === 'true' || process.env.BETTER_AUTH_URL?.startsWith('https://'),
     ),
     crossSubDomainCookies: {
       enabled: Boolean(process.env.COOKIE_DOMAIN),
@@ -273,7 +272,7 @@ export const auth = betterAuth({
       sameSite: 'lax',
       secure: Boolean(
         process.env.SECURE_COOKIES === 'true' ||
-          (process.env.BETTER_AUTH_URL && process.env.BETTER_AUTH_URL.startsWith('https://')),
+          process.env.BETTER_AUTH_URL?.startsWith('https://'),
       ),
     },
   },

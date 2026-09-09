@@ -446,11 +446,11 @@
       "actionType": "EXECUTE",
       "riskLevel": "MEDIUM",
       "binding": {
-        "toolCode": "agent.request-cross-role.future",
-        "available": false,
-        "reason": "FUTURE_TOOL",
-        "verification": "UNVERIFIED",
-        "evidencePath": null
+        "toolCode": "access-request.create",
+        "available": true,
+        "reason": "AVAILABLE",
+        "verification": "VERIFIED",
+        "evidencePath": "src/features/job-roles/services/accessRequest.service.ts"
       }
     }
   ]

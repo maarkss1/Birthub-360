@@ -19,5 +19,5 @@ export interface Repository<T> {
     id: string,
     data: Partial<T> | Record<string, unknown>,
   ): Promise<T>;
-  delete?(organizationId: string, id: string): Promise<T | void>;
+  delete?(organizationId: string, id: string): Promise<T | undefined>;
 }

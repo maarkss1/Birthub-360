@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { X, Link2, Plus, Copy, Trash2, Loader2, Check, Globe } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
@@ -70,7 +70,7 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
       'Apresentação prática da central de inteligência, telemetria CAN e redução de custos operacionais.',
   });
 
-  const fetchLinks = async () => {
+  const fetchLinks = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get<BookingLink[]>('/api/calendar/booking-links');
@@ -80,13 +80,13 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
       fetchLinks();
     }
-  }, [isOpen]);
+  }, [isOpen, fetchLinks]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -53,6 +53,7 @@ export function CnpjSearchPanel({
         />
         <div className="flex flex-col gap-2">
           <button
+            type="button"
             onClick={onLookup}
             disabled={cnpjLoading || !cnpjInput}
             className="w-full bg-brand-active text-white py-3.5 rounded-[2rem] font-bold hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
@@ -63,6 +64,7 @@ export function CnpjSearchPanel({
 
           {cnpjInput && !/[0-9]{2}\.[0-9]{3}\.[0-9]{3}\/[0-9]{4}-[0-9]{2}/.test(cnpjInput) && (
             <button
+              type="button"
               onClick={() => onSearchWebInstead(cnpjInput)}
               className="w-full bg-surface-2 text-ink py-3.5 rounded-[2rem] font-bold hover:bg-atlas-dark hover:text-white disabled:opacity-50 transition-all flex items-center justify-center gap-2 mt-2"
             >

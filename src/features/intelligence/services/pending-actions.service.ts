@@ -7,8 +7,19 @@ import { executeAndRecord, type ExecutionResult } from './aiPendingAction.servic
 // o client estendido por $extends() usa `Exact<>` internamente, que não sobrevive a Pick.
 type Db = typeof prisma | ReturnType<typeof getTenantPrisma>;
 
+// PROMPT 7 (schema cresceu com AccessRequest/ApprovalDecision/TemporaryCapabilityGrant): chamar um
+// método sobre `db: Db` diretamente faz o TypeScript comparar as duas metades genéricas da união
+// (`DefaultArgs` vs `InternalArgs & {...}`) em cada um dos ~50 models do client gerado — acima de
+// um certo número de models isso estoura "Excessive stack depth" (TS2321). As duas metades da
+// união são runtime-compatíveis (mesmo shape, `getTenantPrisma` só troca o `organizationId`
+// implícito), então o cast para uma única metade concreta antes de chamar o delegate é seguro e
+// evita a comparação — a assinatura pública das funções abaixo continua aceitando `Db`.
+function asClient(db: Db): typeof prisma {
+  return db as typeof prisma;
+}
+
 export async function listPendingActions(db: Db, organizationId: string) {
-  return db.aIPendingAction.findMany({
+  return asClient(db).aIPendingAction.findMany({
     where: { approved: false, discardedAt: null, organizationId },
     orderBy: { createdAt: 'desc' },
   });
@@ -25,16 +36,17 @@ export async function approvePendingAction(
   id: string,
   actorId: string,
 ): Promise<{
-  action: Awaited<ReturnType<typeof db.aIPendingAction.update>>;
+  action: Awaited<ReturnType<typeof prisma.aIPendingAction.update>>;
   execution: ExecutionResult;
 } | null> {
-  const pendingAction = await db.aIPendingAction.findFirst({
+  const client = asClient(db);
+  const pendingAction = await client.aIPendingAction.findFirst({
     where: { id, organizationId, approved: false, discardedAt: null },
   });
   if (!pendingAction) {
     return null;
   }
-  const action = await db.aIPendingAction.update({
+  const action = await client.aIPendingAction.update({
     where: { id },
     data: { approved: true, approvedAt: new Date(), approvedBy: actorId },
   });
@@ -48,14 +60,15 @@ export async function discardPendingAction(
   id: string,
   actorId: string,
 ) {
-  const pendingAction = await db.aIPendingAction.findFirst({
+  const client = asClient(db);
+  const pendingAction = await client.aIPendingAction.findFirst({
     where: { id, organizationId, approved: false, discardedAt: null },
   });
   if (!pendingAction) {
     return false;
   }
   // Preserva a decisão para auditoria e aprendizado; descartar não deve apagar o rastro da IA.
-  await db.aIPendingAction.update({
+  await client.aIPendingAction.update({
     where: { id: pendingAction.id },
     data: { discardedAt: new Date(), discardedBy: actorId },
   });

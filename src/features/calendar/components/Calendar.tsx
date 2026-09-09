@@ -99,6 +99,10 @@ function DraggableActivity({
   });
 
   return (
+    // Elemento é alvo de useDraggable (dnd-kit) — listeners/attributes esperam um elemento
+    // genérico, não um <button> nativo (padrão já estabelecido no Piloto 020, ver
+    // .claude/PILOTS.md).
+    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
     <div
       ref={setNodeRef}
       {...(canDrag ? listeners : {})}

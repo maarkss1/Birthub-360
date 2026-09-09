@@ -18,12 +18,12 @@ import {
 } from 'lucide-react';
 import { api } from '../../../lib/api.js';
 import { toast } from '../../../lib/toast.js';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
 import { VisualOrgChart } from './VisualOrgChart.js';
 import { CompanyBranchesView } from './CompanyBranchesView.js';
 
 interface AccountIntelligenceSummary {
-  account: { id: string; legalName: string; tradeName: string | null };
+  account: { id: string; legalName: string; tradeName: string | null; cnpj: string | null };
   state: 'available' | 'not_refreshed';
   facts: { summary: string; generatedAt: string } | null;
   latestInference: {
@@ -69,6 +69,10 @@ interface TabState {
   loading: boolean;
   error: string | null;
   result: PaginatedResult<Record<string, unknown>> | null;
+}
+
+function optionalString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
 }
 
 const TABS: Array<{ id: TabId; label: string }> = [
@@ -316,6 +320,7 @@ export function Account360() {
         <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
           {TABS.map((tab) => (
             <button
+              type="button"
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               aria-current={activeTab === tab.id ? 'page' : undefined}
@@ -374,16 +379,19 @@ export function Account360() {
 
         {activeTab === 'decision-makers' && !currentTab?.loading && !currentTab?.error && (
           <VisualOrgChart
-            contacts={(currentTab?.result?.items || []).map((i: any) => ({
-              id: i.id || i.contactId,
-              name: i.name || i.contactName || 'Decisor',
-              role: i.title || i.role || i.contactRole,
-              seniority: i.seniority,
-              email: i.email,
-              phone: i.phone,
-              whatsapp: i.phone,
-              linkedin: i.linkedinUrl || i.linkedin,
-              source: i.source,
+            contacts={(currentTab?.result?.items || []).map((item) => ({
+              id: optionalString(item.id) || optionalString(item.contactId) || undefined,
+              name: optionalString(item.name) || optionalString(item.contactName) || 'Decisor',
+              role:
+                optionalString(item.title) ||
+                optionalString(item.role) ||
+                optionalString(item.contactRole),
+              seniority: optionalString(item.seniority),
+              email: optionalString(item.email),
+              phone: optionalString(item.phone),
+              whatsapp: optionalString(item.phone),
+              linkedin: optionalString(item.linkedinUrl) || optionalString(item.linkedin),
+              source: optionalString(item.source),
             }))}
             companyName={intelligence?.account.tradeName || intelligence?.account.legalName}
           />
@@ -391,7 +399,7 @@ export function Account360() {
 
         {activeTab === 'economic-group' && !currentTab?.loading && !currentTab?.error && (
           <CompanyBranchesView
-            cnpj={(intelligence?.account as any)?.cnpj || ''}
+            cnpj={intelligence?.account.cnpj || ''}
             companyName={intelligence?.account.tradeName || intelligence?.account.legalName || ''}
           />
         )}
@@ -416,7 +424,7 @@ export function Account360() {
           !currentTab?.error &&
           (currentTab?.result?.items.length ?? 0) > 0 && (
             <div className="space-y-3">
-              {currentTab!.result!.items.map((item, index) => (
+              {currentTab?.result?.items.map((item, index) => (
                 <AccountRecordCard
                   key={(item.id as string | undefined) ?? index}
                   tab={activeTab}
@@ -501,11 +509,11 @@ function AccountRecordCard({
               {status}
             </span>
           )}
-          {canExecute && (
+          {canExecute && recommendationId && (
             <Button
               size="sm"
               disabled={Boolean(executingId)}
-              onClick={() => onExecute!(recommendationId!)}
+              onClick={() => onExecute?.(recommendationId)}
             >
               {isExecuting ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : null}
               {isExecuting ? 'Executando...' : 'Executar'}

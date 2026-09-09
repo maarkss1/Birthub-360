@@ -188,6 +188,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
         </div>
 
         <button
+          type="button"
           onClick={() => setShowAdvanced((v) => !v)}
           className="flex items-center justify-between w-full text-[10px] tracking-wider font-bold uppercase text-ink-2 hover:text-brand transition-colors pt-1"
         >
@@ -240,6 +241,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
         )}
 
         <button
+          type="button"
           onClick={handleSearch}
           disabled={isSearching}
           className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"

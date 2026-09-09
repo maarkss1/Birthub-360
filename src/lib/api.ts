@@ -15,7 +15,7 @@ export async function apiFetch<T>(endpoint: string, options?: ApiRequestOptions)
   // Check if there is an auth token in localStorage (if used)
   const token = localStorage.getItem('token');
   if (token) {
-    (defaultHeaders as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+    (defaultHeaders as Record<string, string>).Authorization = `Bearer ${token}`;
   }
 
   const controller = new AbortController();
@@ -28,7 +28,7 @@ export async function apiFetch<T>(endpoint: string, options?: ApiRequestOptions)
   let response: Response;
   try {
     const requestOptions = { ...(options || {}) };
-    delete requestOptions.timeoutMs;
+    requestOptions.timeoutMs = undefined;
     const baseUrl =
       typeof window !== 'undefined' &&
       window.location?.origin &&
@@ -49,7 +49,7 @@ export async function apiFetch<T>(endpoint: string, options?: ApiRequestOptions)
         ...requestOptions.headers,
       },
     });
-  } catch (err) {
+  } catch {
     if (controller.signal.aborted) {
       throw new Error('A API demorou demais para responder. Tente novamente.');
     }

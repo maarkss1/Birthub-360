@@ -6,6 +6,8 @@
   "permissions": ["storage", "activeTab", "scripting", "sidePanel", "tabCapture", "offscreen"],
   "host_permissions": [
     "https://meet.google.com/*",
+    "http://163.176.150.147/*",
+    "https://app.atlasgr.com.br/*",
     "http://localhost:3005/*",
     "http://127.0.0.1:3005/*"
   ],

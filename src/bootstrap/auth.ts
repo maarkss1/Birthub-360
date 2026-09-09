@@ -18,6 +18,15 @@ export function mountAuthHandler(app: Express): void {
   // CORREÇÃO: app.all captura todos os métodos HTTP, incluindo CONNECT e TRACE.
   // app.use é mais correto aqui: deixa o Better Auth decidir quais métodos aceita.
   app.use('/api/auth', (req, res) => {
-    requestContext.run({ bypassRls: true }, () => authHandler(req, res));
+    requestContext.run({ bypassRls: true }, async () => {
+      try {
+        await authHandler(req, res);
+      } catch (err) {
+        console.error('MOUNT_AUTH_HANDLER_CAUGHT_ERROR:', err);
+        if (!res.headersSent) {
+          res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+        }
+      }
+    });
   });
 }

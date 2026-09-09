@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/media-has-caption -- trilha instrumental sem fala */
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';

@@ -1,6 +1,6 @@
-import { prisma } from '../../../lib/prisma.js';
-import { AuditService } from '../../../lib/audit/audit.service.js';
 import { isJobRoleCode } from '../../../config/job-role-catalog.js';
+import { AuditService } from '../../../lib/audit/audit.service.js';
+import { prisma } from '../../../lib/prisma.js';
 
 export class JobRoleServiceError extends Error {
   constructor(
@@ -51,6 +51,20 @@ export async function getJobRoleById(id: string): Promise<JobRoleDto | null> {
 
 export async function getJobRoleByCode(code: string): Promise<JobRoleDto | null> {
   return prisma.jobRole.findUnique({ where: { code }, select: JOB_ROLE_SELECT });
+}
+
+/** Cargo principal ativo do ator, dentro do tenant — mesma consulta que `AgentRuntime` (PROMPT 4)
+ *  e `RoleSupervisorRuntime` (PROMPT 5) precisam antes de qualquer decisão de autorização. Extraído
+ *  aqui para não duplicar a mesma query Prisma nos dois serviços. */
+export async function getPrimaryActiveJobRoleForUser(
+  organizationId: string,
+  userId: string,
+): Promise<{ id: string; code: string } | null> {
+  const userJobRole = await prisma.userJobRole.findFirst({
+    where: { organizationId, userId, isPrimary: true, isActive: true },
+    select: { jobRole: { select: { id: true, code: true } } },
+  });
+  return userJobRole?.jobRole ?? null;
 }
 
 /** Seed idempotente dos cargos canônicos — reexecutar nunca duplica (upsert por `code`). Usado

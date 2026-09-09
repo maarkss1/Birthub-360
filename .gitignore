@@ -81,3 +81,5 @@ _tmp_*
 # campanha de revisão são artefatos de análise efêmeros, não código do produto.
 /workspace/
 mantis-summary.md
+
+.codex/

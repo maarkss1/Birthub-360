@@ -201,7 +201,7 @@ export function Intelligence() {
     setPersonaFallback('Dono / CEO');
     setCompetitor('');
     setCustomCompetitor('');
-  }, [activeBrand]);
+  }, []);
 
   useEffect(() => {
     if (result && resultRef.current) {

@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
+  ArrowLeft,
   Share2,
   GraduationCap,
   FileSignature,
@@ -32,6 +33,16 @@ export function ExecutiveHeader({
   const location = useLocation();
   const { grantedModules } = useModuleAccess();
 
+  // Mesmo padrão do botão "Voltar" do AppTopbar (src/components/layout/AppTopbar.tsx): usa o
+  // histórico real de navegação desta sessão quando existe; cai para o Hub Executivo (`/hub`) —
+  // a origem real de quem chega a qualquer um dos 4 módulos executivos, ver o switcher abaixo —
+  // em deep link direto, sem histórico. Estes 4 módulos vivem fora de `/app/*` de propósito, então
+  // não usam AppTopbar; o botão de voltar deles precisa estar aqui, no header que os 4 compartilham.
+  const handleBack = () => {
+    if (location.key !== 'default') navigate(-1);
+    else navigate('/hub');
+  };
+
   const hubs = [
     { id: 'social-selling', label: 'Social Selling', path: '/social-selling', icon: Share2 },
     {
@@ -63,6 +74,15 @@ export function ExecutiveHeader({
       {/* Top Banner & Hub Switcher */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 bg-soft/30 px-3 py-1.5 rounded-xl border border-line">
         <div className="flex items-center gap-2 text-[11px] font-semibold text-ink-2">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-lg text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+            aria-label="Voltar ao Hub Executivo"
+            title="Voltar ao Hub Executivo"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+          </button>
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
           <span className="hidden sm:inline">
             Acervo Executivo — acesso concedido individualmente
