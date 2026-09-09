@@ -14,6 +14,7 @@ import {
 import { CallSetup } from './roleplay-hub/CallSetup';
 import { ActiveCallView } from './roleplay-hub/ActiveCallView';
 import { CallAnalysisReport } from './roleplay-hub/CallAnalysisReport';
+import { RoleplayHistoryPanel } from './roleplay-hub/RoleplayHistoryPanel';
 import type { CallAnalysisResult, CallMessage } from './roleplay-hub/types';
 
 export function RoleplayHub() {
@@ -434,14 +435,17 @@ export function RoleplayHub() {
         </motion.div>
 
         {!callActive && !isFinished && (
-          <CallSetup
-            currentPersonas={currentPersonas}
-            selectedPersona={selectedPersona}
-            setSelectedPersona={setSelectedPersona}
-            difficulty={difficulty}
-            setDifficulty={setDifficulty}
-            onStart={startCall}
-          />
+          <>
+            <CallSetup
+              currentPersonas={currentPersonas}
+              selectedPersona={selectedPersona}
+              setSelectedPersona={setSelectedPersona}
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
+              onStart={startCall}
+            />
+            <RoleplayHistoryPanel activeBrand={activeBrand} />
+          </>
         )}
 
         {callActive && (

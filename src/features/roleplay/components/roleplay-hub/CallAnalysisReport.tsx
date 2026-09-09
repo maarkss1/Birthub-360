@@ -4,34 +4,13 @@ import { AlertTriangle, CheckCircle2, Phone, RotateCcw, ShieldCheck } from 'luci
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useTheme } from '../../../../contexts/ThemeContext';
 import type { CallAnalysisResult } from './types';
+import { scoreTextClass, scoreTextClassOnSurface } from './scoreColor';
 
 interface TurnEvaluation {
   clarity: number;
   objectionHandling: number;
   total: number;
   feedback: string;
-}
-
-// Cor sólida (não gradiente) — a cor aqui É o sinal da nota (boa/média/ruim), não decoração. Sem
-// sufixo `-active`/`dark:`: este número vive dentro do cartão sempre-escuro abaixo (bg-gray-900,
-// independente do tema do resto do app), então usa direto a variante já calibrada para superfície
-// escura (mesmo raciocínio documentado em Badge.tsx: "no escuro a cor crua já passa").
-function scoreTextClass(score: number): string {
-  if (score >= 75) return 'text-success';
-  if (score >= 45) return 'text-warning';
-  return 'text-danger';
-}
-
-// Mesmos limiares de scoreTextClass, mas para os cards de sub-nota logo abaixo (bg-surface, que
-// REAGE ao tema — claro por padrão). Ali a cor crua (`text-success` etc.) é a mesma calibrada só
-// pra ficar legível sobre fundo sempre-escuro (ver comentário de scoreTextClass acima); sobre
-// `bg-surface` claro ela repete o problema real já documentado em DQA-19 (texto de baixo
-// contraste). Mesma variante `-active`/`dark:` já usada nos blocos "O que funcionou"/"Dicas" logo
-// abaixo neste arquivo.
-function scoreTextClassOnSurface(score: number): string {
-  if (score >= 75) return 'text-success-active dark:text-success';
-  if (score >= 45) return 'text-warning-active dark:text-warning';
-  return 'text-danger-active dark:text-danger';
 }
 
 export function CallAnalysisReport({

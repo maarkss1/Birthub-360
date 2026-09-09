@@ -1795,6 +1795,27 @@ paths:
         '400':
           description: corpo da requisição inválido (transcript vazio, enum fora do domínio, etc.)
 
+  /intelligence/roleplay/history:
+    get:
+      tags: [Intelligence]
+      summary: >-
+        Histórico de ligações simuladas do Roleplay do usuário, por marca — últimas 20 sessões
+        (transcrição completa e avaliações não incluídas, só o parecer técnico resumido).
+      parameters:
+        - name: brand
+          in: query
+          required: true
+          schema: { type: string, enum: [atlasgr, totaltrac] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: brand ausente ou inválido
+
   /intelligence:
     post:
       tags: [Intelligence]
