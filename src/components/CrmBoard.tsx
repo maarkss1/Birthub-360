@@ -748,7 +748,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           ganho real — não vale o risco de desalinhar abertura/fechamento num componente grande. */}
       {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
-        className="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
+        className="flex-1 min-h-[320px] overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
         role="region"
         // Div não-interativa com scroll — tabIndex é intencional (torna a região focável/rolável
         // via teclado), não um erro de a11y. Mesmo padrão de VirtualTable.tsx.
