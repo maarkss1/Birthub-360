@@ -25,6 +25,7 @@ describe('Dialog', () => {
     render(
       // React.createElement exige children como prop do objeto — o canônico do React aceita
       // isso via argumento extra, não como chave do objeto, daí o aviso do linter aqui.
+      // eslint-disable-next-line react/no-children-prop -- ver comentário acima
       React.createElement(Dialog, {
         isOpen: false,
         onClose: vi.fn(),

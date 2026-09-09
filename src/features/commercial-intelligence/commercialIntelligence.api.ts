@@ -1,4 +1,9 @@
 import { api } from '../../lib/api';
+import type {
+  DailyPlanClosingInput,
+  PendingDailyClosing,
+  UserDailyPlanSummary,
+} from '../../shared/contracts/dailyPlan.contract';
 import { brazilMonthKey } from '../../shared/time/brazilCalendar';
 
 export type ForecastTier = 'Commit' | 'BestCase' | 'Pipeline' | 'Upside';
@@ -155,6 +160,24 @@ export interface PerformanceMetrics {
   salesCycle: { meanDays: number | null; medianDays: number | null; sampleSize: number };
   funnel: FunnelStageConversion[];
   funnelHistoricalTrackingSince: string | null;
+  firstContactSla: {
+    meanHours: number | null;
+    medianHours: number | null;
+    sampleSize: number;
+    leadsWithoutContact: number;
+    withinTargetPct: number | null;
+    targetHours: number;
+  };
+  revenueConcentration: {
+    topClients: {
+      companyId: string | null;
+      companyName: string | null;
+      amount: number;
+      pct: number;
+    }[];
+    top10Pct: number | null;
+    totalWonAmount: number;
+  };
 }
 
 export interface AgingBucket {
@@ -631,6 +654,41 @@ export const commercialIntelligenceApi = {
       `/api/bitrix/leads/${leadId}/comment`,
       { comment },
     ),
+  // Plano Diário (DailyPlanHub) — chama a rota do Bitrix24 diretamente, sem importar
+  // src/features/integrations/bitrix (proibido por `no-cross-feature-imports`, ver
+  // .dependency-cruiser.cjs). Mesmos endpoints/formatos de `bitrix.api.ts`.
+  getDailyPlan: (assignedById?: string) => {
+    const query = assignedById ? `?assignedById=${encodeURIComponent(assignedById)}` : '';
+    return api.get<UserDailyPlanSummary>(`/api/bitrix/daily-plan${query}`);
+  },
+  syncDailyPlan: (assignedById?: string) =>
+    api.post<UserDailyPlanSummary>('/api/bitrix/daily-plan/sync', { assignedById }),
+  completeDailyPlanItem: (itemType: string, itemId: string) =>
+    api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/complete', {
+      itemType,
+      itemId,
+    }),
+  addDailyPlanNote: (itemType: string, itemId: string, note: string) =>
+    api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/note', {
+      itemType,
+      itemId,
+      note,
+    }),
+  createDailyPlanActivity: (payload: {
+    title: string;
+    channel: string;
+    contactName?: string;
+    phone?: string;
+    dueTime?: string;
+    observations?: string;
+    leadId?: string;
+  }) => api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/activity', payload),
+  // Fechamento obrigatório do Plano Diário (parecer do dia anterior + metas do novo dia) — ver
+  // DailyClosingGate.tsx/DailyClosingContext.tsx, checado uma vez por sessão antes de liberar o app.
+  getPendingDailyClosing: () =>
+    api.get<PendingDailyClosing>('/api/bitrix/daily-plan/closing/pending'),
+  submitDailyPlanClosing: (payload: DailyPlanClosingInput) =>
+    api.post<{ success: boolean }>('/api/bitrix/daily-plan/closing', payload),
   aiExecutiveSummary: (filter: CommercialFilter) =>
     api.post<ExecutiveSummaryResult>(`${BASE}/ai/executive-summary`, filter),
   aiBitrixNote: (leadId: string) =>

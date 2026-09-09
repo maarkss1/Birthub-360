@@ -7,12 +7,13 @@ import makeWASocket, {
 import type { Boom } from '@hapi/boom';
 import qrcode from 'qrcode';
 import pino from 'pino';
-import path from 'path';
-import fs from 'fs';
-import { EventEmitter } from 'events';
+import path from 'node:path';
+import fs from 'node:fs';
+import { EventEmitter } from 'node:events';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { extractMessageText, persistWhatsAppMessage } from './whatsappMessage.service.js';
+import { recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import { cacheConnection, isDedicatedWorkerProcess } from '../../../lib/queue/redis.js';
 import { enqueueWhatsAppCommand } from '../../../lib/queue/whatsappCommand.queue.js';
 import { withTimeout } from '../../../lib/http.js';
@@ -309,6 +310,22 @@ export async function initWhatsApp(organizationId: string) {
           });
         } catch (error) {
           logger.error({ err: error, organizationId }, 'Falha ao persistir mensagem de WhatsApp.');
+          // Achado real (auditoria de release-readiness, integration-audit): sem isto, uma falha
+          // de persistência aqui (ex.: blip de banco) descartava a mensagem recebida do lead sem
+          // nenhum rastro consultável depois — Baileys não redelivera o evento, e não há
+          // fila/retry para mensagens inbound (diferente do envio, que já passa por BullMQ com
+          // `attempts:3`). Reaproveita o mesmo mecanismo de dead-letter dos workers de fila (
+          // `bitrixSync.worker.ts` etc.) para tornar a perda investigável e reprocessável
+          // manualmente, mesmo não sendo um job de fila de verdade.
+          await recordDeadLetter({
+            queue: 'whatsapp-inbound',
+            jobId: message.key.id,
+            jobName: 'persistWhatsAppMessage',
+            organizationId,
+            attemptsMade: 1,
+            error,
+            data: { remoteJid: message.key.remoteJid, fromMe: message.key.fromMe },
+          });
         }
       }
     });
@@ -457,7 +474,7 @@ export async function sendWhatsAppMessage(
   try {
     let finalMessage = text;
     if (buttons && buttons.length > 0) {
-      finalMessage += '\n\n' + buttons.map((b, i) => `[${i + 1}] ${b}`).join('\n');
+      finalMessage += `\n\n${buttons.map((b, i) => `[${i + 1}] ${b}`).join('\n')}`;
     }
     await withTimeout(
       sock.sendMessage(result.jid, { text: finalMessage }),

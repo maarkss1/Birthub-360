@@ -110,8 +110,7 @@ class AgentMemoryClient {
     try {
       await (
         client as {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          add: (...args: any[]) => Promise<void>;
+          add: (...args: unknown[]) => Promise<void>;
         }
       ).add(messages, {
         user_id: options.userId,
@@ -133,8 +132,7 @@ class AgentMemoryClient {
     try {
       const results = await (
         client as {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          search: (...args: any[]) => Promise<MemorySearchResult[]>;
+          search: (...args: unknown[]) => Promise<MemorySearchResult[]>;
         }
       ).search(query, {
         user_id: options.userId,
@@ -171,8 +169,7 @@ class AgentMemoryClient {
     try {
       await (
         client as {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          delete_all: (...args: any[]) => Promise<void>;
+          delete_all: (...args: unknown[]) => Promise<void>;
         }
       ).delete_all({ user_id: userId });
     } catch (err) {

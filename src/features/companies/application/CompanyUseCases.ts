@@ -7,6 +7,7 @@ import { BaseUseCases } from '../../../shared/application/BaseUseCases';
 import { AppError } from '../../../shared/middlewares/errorHandler';
 
 export class CompanyUseCases extends BaseUseCases<Company, CompanyRepository> {
+  // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI
   constructor(companyRepository: CompanyRepository) {
     super(companyRepository);
   }
@@ -57,7 +58,7 @@ export class CompanyUseCases extends BaseUseCases<Company, CompanyRepository> {
     id: string,
     data?: { cnpj?: string; segmentKeywords?: string[] },
   ) {
-    const company = await this.repository.findById!(organizationId, id);
+    const company = await this.repository.findById?.(organizationId, id);
     if (!company) throw new AppError('Company not found', 404);
 
     const result = await enrichCompany(organizationId, id, {

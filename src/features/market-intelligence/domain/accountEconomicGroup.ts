@@ -73,7 +73,7 @@ export function matchEconomicGroupByCnpjRoot(
 export interface EconomicGroupCompanyInputExtended {
   id: string;
   cnpj: string | null;
-  qsa?: any;
+  qsa?: unknown;
   website?: string | null;
 }
 
@@ -100,7 +100,7 @@ export function matchEconomicGroupCamada2e3(
         .replace(/^https?:\/\//, '')
         .replace(/^www\./, '')
         .split('/')[0];
-      if (domain && domain.includes('.')) {
+      if (domain?.includes('.')) {
         const existing = byDomain.get(domain) || [];
         existing.push(company.id);
         byDomain.set(domain, existing);
@@ -109,8 +109,10 @@ export function matchEconomicGroupCamada2e3(
 
     if (company.qsa && Array.isArray(company.qsa)) {
       for (const socio of company.qsa) {
-        if (socio && socio.nome) {
-          const nome = socio.nome.trim().toUpperCase();
+        if (socio && typeof socio === 'object') {
+          const rawName = (socio as Record<string, unknown>).nome;
+          if (typeof rawName !== 'string') continue;
+          const nome = rawName.trim().toUpperCase();
           if (nome.length > 3) {
             const existing = bySocio.get(nome) || [];
             existing.push(company.id);

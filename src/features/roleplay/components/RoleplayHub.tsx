@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { PhoneCall } from 'lucide-react';
+import { AlertTriangle, PhoneCall, Sparkles } from 'lucide-react';
 import { useBrand } from '../../../contexts/BrandContext';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
 import { SoundFX } from '../../../lib/soundEffects';
+import { Skeleton } from '../../../components/ui/Skeleton';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import {
   QUALIFICATION_CRITERIA,
   OBJECTIONS_DATA,
@@ -12,6 +14,7 @@ import {
 import { CallSetup } from './roleplay-hub/CallSetup';
 import { ActiveCallView } from './roleplay-hub/ActiveCallView';
 import { CallAnalysisReport } from './roleplay-hub/CallAnalysisReport';
+import { RoleplayHistoryPanel } from './roleplay-hub/RoleplayHistoryPanel';
 import type { CallAnalysisResult, CallMessage } from './roleplay-hub/types';
 
 export function RoleplayHub() {
@@ -28,6 +31,8 @@ export function RoleplayHub() {
   const [callDuration, setCallDuration] = useState(0);
   const [botSpeaking, setBotSpeaking] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<CallAnalysisResult | null>(null);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluationError, setEvaluationError] = useState<string | null>(null);
   const [turnEvaluations, setTurnEvaluations] = useState<
     Array<{
       clarity: number;
@@ -84,6 +89,16 @@ export function RoleplayHub() {
   ];
 
   const currentPersonas = activeBrand === 'totaltrac' ? personasTotaltrack : personasAtlas;
+
+  // Mesma classificação de persona usada para o motor de IA do turno (generateRoleplay) — extraída
+  // pra função pura porque finishCall também precisa dela para o parecer técnico de sessão
+  // (generateRoleplayEvaluation), e as duas chamadas de IA precisam da mesma persona.
+  const personaKeyFor = (personaId: string): 'skeptical_cfo' | 'strict_buyer' | 'tech_director' =>
+    ['diretor_operacoes', 'diretor_logistica'].includes(personaId)
+      ? 'tech_director'
+      : ['gestor_frota', 'comprador_pme'].includes(personaId)
+        ? 'skeptical_cfo'
+        : 'strict_buyer';
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -145,8 +160,12 @@ export function RoleplayHub() {
         ptVoices.find((v) => v.name.toLowerCase().includes('microsoft')) ||
         ptVoices[0];
       if (bestVoice) utterance.voice = bestVoice;
-      utterance.rate = 1.1;
-      utterance.pitch = 1.05;
+      // Rate/pitch neutros (1.0/1.0) em vez do 1.1/1.05 anterior — fala levemente acelerada e
+      // aguda lê como apressada/robótica, não como alguém real ao telefone. As pausas naturais
+      // (vírgulas, reticências) já vêm do texto que a IA gera (ver o novo prompt de
+      // generateRoleplay), não de configuração de voz.
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
       utterance.onstart = () => setBotSpeaking(true);
       utterance.onend = () => setBotSpeaking(false);
       window.speechSynthesis.speak(utterance);
@@ -158,6 +177,8 @@ export function RoleplayHub() {
     setCallActive(true);
     setIsFinished(false);
     setAnalysisResult(null);
+    setIsEvaluating(false);
+    setEvaluationError(null);
     setTurnEvaluations([]);
     setCallDuration(0);
     setAudioBlobUrl(null);
@@ -225,11 +246,7 @@ export function RoleplayHub() {
     setInputMessage('');
     setIsThinking(true);
 
-    const persona = ['diretor_operacoes', 'diretor_logistica'].includes(selectedPersona)
-      ? 'tech_director'
-      : ['gestor_frota', 'comprador_pme'].includes(selectedPersona)
-        ? 'skeptical_cfo'
-        : 'strict_buyer';
+    const persona = personaKeyFor(selectedPersona);
     const playbookContext = JSON.stringify({
       difficulty,
       persona: currentPersonas.find((item) => item.id === selectedPersona),
@@ -309,41 +326,84 @@ export function RoleplayHub() {
     }
   };
 
-  const finishCall = () => {
+  // Encerra microfone/gravação/TTS — separado de requestEvaluation porque o retry do parecer
+  // técnico (botão "Tentar novamente" em caso de falha da IA) precisa disparar de novo só a
+  // chamada de IA, sem reabrir microfone nem duplicar a gravação já parada.
+  const stopActiveCallResources = () => {
     SoundFX.play('success');
     setCallActive(false);
-    setIsFinished(true);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     if (recognitionRef.current && isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
     }
-
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
     }
+  };
 
-    const average = (field: 'clarity' | 'objectionHandling' | 'total') =>
-      turnEvaluations.length
-        ? Math.round(
-            turnEvaluations.reduce((sum, item) => sum + item[field], 0) / turnEvaluations.length,
-          )
-        : 0;
+  // Parecer técnico da ligação completa: chamada de IA dedicada (POST /roleplay/finish →
+  // generateRoleplayEvaluation), não mais a média local dos turnos. roleplay/AGENTS.md exige que
+  // falhas de IA sejam explícitas — se a chamada falhar, mostramos o erro real e um botão de
+  // retentativa em vez de fabricar uma nota/feedback genérico.
+  const requestEvaluation = async () => {
+    setIsEvaluating(true);
+    setEvaluationError(null);
+    try {
+      const persona = currentPersonas.find((item) => item.id === selectedPersona);
+      const result = await api.post<{
+        sessionId: string | null;
+        overallScore: number;
+        clarityScore: number;
+        objectionHandlingScore: number;
+        closingScore: number;
+        strengths: string[];
+        improvements: string[];
+        summary: string;
+      }>(
+        '/api/intelligence/roleplay/finish',
+        {
+          brand: activeBrand,
+          brandName: brandInfo.name,
+          brandDescription: brandInfo.description,
+          personaId: selectedPersona,
+          personaLabel: persona?.label || selectedPersona,
+          personaKey: personaKeyFor(selectedPersona),
+          difficulty,
+          durationSeconds: callDuration,
+          transcript: messages.map((message) => ({
+            sender: message.sender,
+            text: message.text,
+          })),
+          turnEvaluations,
+        },
+        { timeoutMs: 90_000 },
+      );
 
-    setAnalysisResult({
-      score: average('total'),
-      feedback:
-        turnEvaluations.at(-1)?.feedback ||
-        'Fale ao menos uma resposta na ligação para receber uma avaliação pedagógica.',
-      strengths: [
-        `Clareza média estimada: ${average('clarity')}%`,
-        `Tratamento de objeções estimado: ${average('objectionHandling')}%`,
-        `${turnEvaluations.length} resposta(s) analisada(s) pelo motor Groq`,
-      ],
-      improvements: turnEvaluations.length
-        ? turnEvaluations.slice(-3).map((item) => item.feedback)
-        : ['Continue a ligação para gerar dicas baseadas nas suas respostas reais.'],
-    });
+      setAnalysisResult({
+        score: result.overallScore,
+        feedback: result.summary,
+        strengths: result.strengths,
+        improvements: result.improvements,
+        clarityScore: result.clarityScore,
+        objectionHandlingScore: result.objectionHandlingScore,
+        closingScore: result.closingScore,
+        sessionId: result.sessionId,
+      });
+    } catch (error) {
+      setEvaluationError(
+        error instanceof Error ? error.message : 'Falha inesperada ao gerar o parecer técnico.',
+      );
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
+  const finishCall = () => {
+    stopActiveCallResources();
+    setIsFinished(true);
+    setAnalysisResult(null);
+    void requestEvaluation();
   };
 
   return (
@@ -375,14 +435,17 @@ export function RoleplayHub() {
         </motion.div>
 
         {!callActive && !isFinished && (
-          <CallSetup
-            currentPersonas={currentPersonas}
-            selectedPersona={selectedPersona}
-            setSelectedPersona={setSelectedPersona}
-            difficulty={difficulty}
-            setDifficulty={setDifficulty}
-            onStart={startCall}
-          />
+          <>
+            <CallSetup
+              currentPersonas={currentPersonas}
+              selectedPersona={selectedPersona}
+              setSelectedPersona={setSelectedPersona}
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
+              onStart={startCall}
+            />
+            <RoleplayHistoryPanel activeBrand={activeBrand} />
+          </>
         )}
 
         {callActive && (
@@ -402,7 +465,44 @@ export function RoleplayHub() {
           />
         )}
 
-        {isFinished && analysisResult && (
+        {isFinished && isEvaluating && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-surface/90 backdrop-blur-2xl rounded-[3rem] p-10 border border-line shadow-[0_30px_60px_rgba(0,0,0,0.08)] space-y-6"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="flex items-center gap-3 text-ink">
+              <Sparkles className="w-6 h-6 text-brand animate-pulse" aria-hidden="true" />
+              <h2 className="text-xl font-black tracking-tight">Gerando parecer técnico…</h2>
+            </div>
+            <p className="text-sm text-ink-2">
+              A IA está lendo a ligação inteira para avaliar rapport, investigação de dores,
+              tratamento de objeções e fechamento — isso leva alguns segundos.
+            </p>
+            <div className="space-y-4">
+              <Skeleton className="h-24 w-full rounded-[2rem]" />
+              <Skeleton className="h-40 w-full rounded-[2rem]" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Skeleton className="h-32 w-full rounded-[2rem]" />
+                <Skeleton className="h-32 w-full rounded-[2rem]" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {isFinished && !isEvaluating && evaluationError && (
+          <EmptyState
+            icon={<AlertTriangle className="w-8 h-8 text-danger" aria-hidden="true" />}
+            title="Não foi possível gerar o parecer técnico"
+            description={`${evaluationError} A transcrição da ligação foi mantida — você pode tentar gerar o parecer novamente sem refazer a chamada.`}
+            actionLabel="Tentar novamente"
+            onAction={() => void requestEvaluation()}
+          />
+        )}
+
+        {isFinished && !isEvaluating && analysisResult && (
           <CallAnalysisReport
             analysisResult={analysisResult}
             onRestart={startCall}

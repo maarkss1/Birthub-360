@@ -38,7 +38,7 @@ const pool = new Pool({
   connectionString,
   max: 10, // Máximo de clients no pool — mantém margem abaixo do pool_size:15 do pooler Supabase
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+  connectionTimeoutMillis: 30000, // Return an error after 30 seconds if connection could not be established
   allowExitOnIdle: true,
 });
 
@@ -216,6 +216,18 @@ export const prisma = basePrisma.$extends({
         // dois workers descobrem organização por organização via bypass em `Organization` (já
         // permitido abaixo) e escopam `Company` por tenant real (`requestContext.run({ tenantId })`)
         // a cada organização — nunca leem `Company` sob bypass.
+        // PublicBookingLink entrou nesta allowlist pelo MESMO motivo/modelo de confiança já
+        // documentado acima para CrmCommercialDocument: as duas rotas públicas de agendamento
+        // (`GET`/`POST /api/public/book/:slug`, sem authenticateToken) recebem só um `slug` opaco
+        // (regex restrita, não sequencial) na URL — não há tenant conhecido até achar o link.
+        // Achado real (auditoria de release-readiness, database-integrity): a tabela nunca teve
+        // RLS habilitada via migration (ver `20260908090000_public_booking_link_create_and_rls`),
+        // e o `findUnique` por slug em `booking.routes.ts` roda sem bypass — habilitar RLS sem
+        // este bypass quebraria a busca pública em produção (a policy negaria a linha sem
+        // `app.current_tenant_id`/`app.bypass_rls` setados). O bypass aqui cobre só o `findUnique`
+        // por `slug`; o restante do fluxo (criação de Company/Contact/Lead/Activity a partir do
+        // agendamento) já roda escopado por tenant real (`requestContext.run({ tenantId:
+        // link.organizationId })`), igual ao lookup de CrmCommercialDocument/BitrixConnection.
         const BYPASS_RLS_ALLOWED_MODELS = [
           'User',
           'Organization',
@@ -230,6 +242,7 @@ export const prisma = basePrisma.$extends({
           'CrmCommercialDocument',
           'CrmDocumentSignatureRequest',
           'AILog',
+          'PublicBookingLink',
         ];
         const bypassRls =
           rawBypassRls &&
@@ -283,11 +296,19 @@ export const prisma = basePrisma.$extends({
             }
             // Evita que o usuário mude o organizationId no update de um upsert
             if (a.update && typeof a.update === 'object' && 'organizationId' in a.update) {
+              // `delete` de propósito, não `= undefined`: guarda de segurança multi-tenant —
+              // preferimos remover a chave de verdade a confiar em como o Prisma trata um valor
+              // undefined neste campo específico.
+              // biome-ignore lint/performance/noDelete: ver comentário acima
               delete (a.update as Record<string, unknown>).organizationId;
             }
           }
           if (operation === 'update' || operation === 'updateMany') {
             if (a.data && typeof a.data === 'object' && 'organizationId' in a.data) {
+              // `delete` de propósito, não `= undefined`: guarda de segurança multi-tenant —
+              // preferimos remover a chave de verdade a confiar em como o Prisma trata um valor
+              // undefined neste campo específico.
+              // biome-ignore lint/performance/noDelete: ver comentário acima
               delete (a.data as Record<string, unknown>).organizationId;
             }
           }
@@ -409,14 +430,20 @@ export const prisma = basePrisma.$extends({
           // "new row violates row-level security policy", quando o problema real era outro, ver
           // TEST-002/e2e). Se a transação com contexto de tenant falha, o erro real deve subir —
           // nunca cair pra uma tentativa sem proteção de tenant/RLS.
-          return basePrisma.$transaction(async (tx) => {
-            await tx.$executeRawUnsafe(
-              `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
-              bypassRls ? 'on' : 'off',
-              tenantId || '',
-            );
-            return build(tx as unknown as PrismaClient);
-          });
+          return basePrisma.$transaction(
+            async (tx) => {
+              await tx.$executeRawUnsafe(
+                `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
+                bypassRls ? 'on' : 'off',
+                tenantId || '',
+              );
+              return build(tx as unknown as PrismaClient);
+            },
+            {
+              maxWait: 15000,
+              timeout: 30000,
+            },
+          );
         };
 
         // --- 3. Audit Log - Capture Before State ---
@@ -452,7 +479,7 @@ export const prisma = basePrisma.$extends({
               data: { deletedAt: new Date(), deletedBy: userId, deleteReason: 'Soft delete' },
             });
           })) as Record<string, unknown>;
-          if (result && result.id) {
+          if (result?.id) {
             affectedIds.push(result.id as string);
           }
         } else if (isAuditable && operation === 'deleteMany') {
@@ -629,14 +656,20 @@ export async function withRlsContext<T>(
   const store = requestContext.getStore();
   const tenantId = store?.tenantId ?? '';
   const bypassRls = Boolean((store as Record<string, unknown>)?.bypassRls);
-  return basePrisma.$transaction(async (tx) => {
-    await tx.$executeRawUnsafe(
-      `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
-      bypassRls ? 'on' : 'off',
-      tenantId,
-    );
-    return fn(tx);
-  });
+  return basePrisma.$transaction(
+    async (tx) => {
+      await tx.$executeRawUnsafe(
+        `SELECT set_config('app.bypass_rls', $1, TRUE), set_config('app.current_tenant_id', $2, TRUE);`,
+        bypassRls ? 'on' : 'off',
+        tenantId,
+      );
+      return fn(tx);
+    },
+    {
+      maxWait: 15000,
+      timeout: 30000,
+    },
+  );
 }
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = basePrisma;

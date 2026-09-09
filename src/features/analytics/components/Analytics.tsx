@@ -109,6 +109,7 @@ function ChartCard({
           {subtitle && <p className="text-[11px] text-ink-2">{subtitle}</p>}
         </div>
         <button
+          type="button"
           onClick={() => setShowTable((v) => !v)}
           aria-pressed={showTable}
           title="Ver como tabela"
@@ -175,6 +176,9 @@ export function Analytics() {
               <Download className="w-4 h-4" />
               <span>Exportar PDF</span>
             </Button>
+            {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+                real de acessibilidade aqui, só estilo. */}
+            {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
             <div
               className="flex items-center rounded-xl border border-line overflow-hidden"
               role="group"
@@ -182,6 +186,7 @@ export function Analytics() {
             >
               {PERIOD_OPTIONS.map((option) => (
                 <button
+                  type="button"
                   key={option}
                   onClick={() => setMonths(option)}
                   aria-pressed={months === option}

@@ -75,3 +75,11 @@ storybook-static
 
 # Scripts temporários locais (já houve credencial de produção commitada por engano em _tmp_*.mjs)
 _tmp_*
+
+# Estado/saída de trabalho do skill kit de segurança Mantis (google/mantis, instalado em
+# .agents/skills/ e .claude/skills/mantis-*) — KB, findings, planos e caches de cada
+# campanha de revisão são artefatos de análise efêmeros, não código do produto.
+/workspace/
+mantis-summary.md
+
+.codex/

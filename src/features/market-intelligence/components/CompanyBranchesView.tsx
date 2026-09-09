@@ -24,7 +24,7 @@ interface CompanyBranchesViewProps {
 
 export function CompanyBranchesView({
   cnpj,
-  companyName,
+  companyName: _companyName,
   onSelectBranch,
 }: CompanyBranchesViewProps) {
   const [branches, setBranches] = useState<BranchCompanyItem[]>([]);

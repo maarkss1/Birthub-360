@@ -3,9 +3,20 @@ import { z } from 'zod';
 import { aiSuite } from '../services/CentralAISuiteService.js';
 import { searchService } from '../../knowledge/search.service.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 
 export const aiSuiteRouter = Router();
+
+// Achado real (auditoria de release-readiness, segurança/RBAC — já sinalizado em
+// `.claude/PILOTS.md`, mas seguia sem correção): nenhum dos ~16 endpoints deste router tinha
+// `requireRole`. `authenticateToken`/`requireTenant` já são aplicados antes deste router chegar a
+// ser montado (`intelligence.routes.ts` → `router.use('/suite', aiSuiteRouter)`, por sua vez
+// montado com auth em `rateLimiters.ts`), mas isso só garante "usuário autenticado do tenant" —
+// não impede um `VISUALIZADOR` (papel só-leitura) de disparar higienização de dados no Bitrix,
+// sanitização de LGPD e o restante do catálogo de ações de IA. Mesmo conjunto de papéis já usado
+// para "qualquer papel que age" em `intelligence.routes.ts` (`pendingActionRoles`).
+aiSuiteRouter.use(requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']));
 
 const knowledgeCopilotSchema = z.object({
   question: z

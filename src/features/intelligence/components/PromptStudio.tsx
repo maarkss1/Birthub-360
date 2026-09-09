@@ -27,6 +27,9 @@ export function PromptStudio() {
     { id: 'competitor_battlecard', name: 'Contorno de Concorrente' },
   ];
 
+  // `loadPrompts` é declarado abaixo deste efeito (TDZ) — incluí-lo no array quebraria com
+  // "used before declaration"; roda só uma vez no mount, mesmo padrão já usado nesta tela.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useEffect(() => {
     loadPrompts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,6 +105,7 @@ export function PromptStudio() {
 
         <div className="flex items-center bg-gray-100 dark:bg-gray-700/50 p-1.5 rounded-2xl border border-gray-200 dark:border-gray-600">
           <button
+            type="button"
             onClick={() => setViewMode('generator')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'generator'
@@ -112,6 +116,7 @@ export function PromptStudio() {
             <Code2 size={16} /> Gerador de Prompts & Scripts
           </button>
           <button
+            type="button"
             onClick={() => setViewMode('studio')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'studio'
@@ -135,6 +140,7 @@ export function PromptStudio() {
             <div className="space-y-2">
               {TOOLS.map((tool) => (
                 <button
+                  type="button"
                   key={tool.id}
                   onClick={() => handleCategoryChange(tool.id)}
                   className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
@@ -179,6 +185,7 @@ export function PromptStudio() {
 
             <div className="flex justify-end pt-4">
               <button
+                type="button"
                 onClick={handleSave}
                 disabled={saving}
                 className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none disabled:opacity-50 transition-colors"

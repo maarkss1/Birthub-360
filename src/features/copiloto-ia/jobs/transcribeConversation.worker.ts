@@ -23,7 +23,7 @@
 // (.dependency-cruiser.cjs) proíbe `copiloto-ia` importar internals de `chatbook`. Quem monta a
 // instância real (`new MeetingSynthesisService()`) é a composição root de cada processo
 // (`worker.ts`/`src/bootstrap/workers.ts`), passada para `createCopilotoTranscriptionWorker(...)`.
-import { Worker, Queue, type Job } from 'bullmq';
+import { Worker, Queue, type Job, type ConnectionOptions } from 'bullmq';
 import { connection, queuesEnabled } from '../../../lib/queue/redis.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { assertAiBudgetNotExceeded } from '../../../lib/ai/budget.js';
@@ -300,7 +300,7 @@ export function createCopilotoTranscriptionWorker(deps: {
     COPILOTO_TRANSCRIPTION_QUEUE_NAME,
     async (job: Job) =>
       runTranscribeConversationJob(job.data as TranscribeConversationJobData, deps),
-    { connection: connection as any, concurrency: 2 },
+    { connection: connection as ConnectionOptions, concurrency: 2 },
   );
 
   worker.on('failed', (job, err) => {
@@ -333,7 +333,7 @@ export function createCopilotoTranscriptionWorker(deps: {
 // conecta no Redis avidamente em ambiente sem fila (ex.: suíte de testes de integração).
 export const copilotoTranscriptionQueue = queuesEnabled
   ? new Queue(COPILOTO_TRANSCRIPTION_QUEUE_NAME, {
-      connection: connection as any,
+      connection: connection as ConnectionOptions,
       defaultJobOptions: {
         attempts: 3,
         backoff: { type: 'exponential', delay: 10_000 },

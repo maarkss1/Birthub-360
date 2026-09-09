@@ -6,21 +6,14 @@ import type {
 } from '../domain/AutomationVersion';
 
 /**
- * Implementação em memória de `AutomationVersionStore` — PROTÓTIPO, não persistência real.
+ * Implementação em memória de `AutomationVersionStore` — mantida hoje só para testes.
  *
- * Existe porque o versionamento de regras (Onda 42 — dossiê CPI DEC-14, opção A) precisa de um
- * model novo no Postgres (`AutomationVersion`) e `prisma/schema.prisma` tem dono exclusivo (Agente
- * 01 — ver `/AGENTS.md` → "Propriedade exclusiva de arquivos"). A proposta de schema está em
- * `.agents/handoffs/onda-42/07-para-00-automation-versioning.md`; enquanto esse handoff não é
- * resolvido, esta classe é a ÚNICA implementação em uso, e os dados somem a cada reinício do
- * processo — documentado, não é para produção real depender disto para reter histórico.
- *
- * Mesmo padrão já usado neste repo para o mesmo tipo de bloqueio: `ForecastSnapshotStore` nasceu
- * como `InMemoryForecastSnapshotStore.ts` (Onda 39) até o schema correspondente ser aprovado; hoje
- * já tem `PrismaForecastSnapshotStore.ts` como implementação real. O caminho aqui é o mesmo: assim
- * que `AutomationVersion` existir no schema, troca-se a instância exportada em
- * `automation-versioning.service.ts` por uma `PrismaAutomationVersionStore` — nenhum outro arquivo
- * desta feature precisa mudar, porque tudo depende só da interface `AutomationVersionStore`.
+ * Nasceu como PROTÓTIPO (Onda 42 — dossiê CPI DEC-14, opção A) enquanto `AutomationVersion` ainda
+ * não existia em `prisma/schema.prisma`. **Atualizado (auditoria de release-readiness): o model já
+ * foi criado e `automation-versioning.service.ts` já usa `PrismaAutomationVersionStore` em
+ * produção** — esta classe não é mais a implementação em uso real, só o fake usado pelos testes
+ * unitários da feature. Mesmo padrão já resolvido antes para `InMemoryForecastSnapshotStore.ts` →
+ * `PrismaForecastSnapshotStore.ts` (Onda 39).
  */
 export class InMemoryAutomationVersionStore implements AutomationVersionStore {
   private records: AutomationVersionRecord[] = [];

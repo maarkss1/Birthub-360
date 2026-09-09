@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (CloseableWorker) */
 import type { Worker } from 'bullmq';
 import { env } from '../config/env.js';
 import { logger } from '../lib/logger.js';
@@ -59,6 +60,12 @@ import {
 import { createCopilotoTranscriptionWorker } from '../features/copiloto-ia/jobs/transcribeConversation.worker.js';
 import { MeetingSynthesisService } from '../features/chatbook/services/meeting-synthesis.service.js';
 
+// `unknown` não serve aqui: os workers reais guardados neste handle têm DataType/ResultType todos
+// diferentes entre si (AgentJobData, EnrichmentJobData, WhatsAppSignalJobData, void, objetos de
+// contagem específicos etc.) — a posição contravariante do parâmetro `job` em `Processor` rejeita
+// `unknown` como supertipo comum. `any` é o único jeito de expressar "qualquer Worker, não importa
+// o tipo do job" numa única referência que só é usada para chamar `.close()` no shutdown.
+// biome-ignore lint/suspicious/noExplicitAny: ver comentário acima
 type CloseableWorker = Worker<any, any, string> | null;
 
 /**

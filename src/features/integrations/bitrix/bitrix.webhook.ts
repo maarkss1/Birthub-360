@@ -203,7 +203,7 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
     prisma.bitrixConnection.findUnique({ where: { id: connectionId } }),
   );
 
-  if (!connection || !connection.inboundEventsEnabled || !connection.webhookSecret) {
+  if (!connection?.inboundEventsEnabled || !connection.webhookSecret) {
     // 404 genérico — não confirma nem nega se o connectionId existe, para não dar pista a
     // quem estiver testando URLs às cegas.
     res.status(404).json({ success: false, error: 'Não encontrado.' });

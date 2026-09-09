@@ -119,7 +119,19 @@ export async function createTeamMember(input: {
       role: input.role,
       organizationId: input.organizationId,
       mustChangePassword: true,
-      emailVerified: false,
+      // true (não false) de propósito: `requireEmailVerification` (src/lib/auth.ts) agora
+      // bloqueia login de conta por e-mail/senha não verificada — mas esta conta não é
+      // auto-registro anônimo, é provisionada por um ADMIN já autenticado da organização, que
+      // relaya a `tempPassword` (retornada acima) pro colega por fora (nunca por e-mail
+      // automático — ver team.routes.ts). O ADMIN é quem está afirmando a identidade aqui, não
+      // a posse de uma caixa postal; `false` deixaria todo convite travado em EMAIL_NOT_VERIFIED
+      // no primeiro login, sem nenhum jeito de se autoverificar (nenhum e-mail de verificação é
+      // disparado neste fluxo). Efeito colateral aceito: o badge "verificado" em Team.tsx (antes
+      // sempre ausente em conta por senha, já que `emailVerified` nunca era setado por nenhum
+      // fluxo) passa a aparecer também aqui, não só em OAuth/signup+link — o selo passa a
+      // significar "identidade confirmada" (por posse do e-mail OU por vínculo de um ADMIN),
+      // não exclusivamente "clicou no link".
+      emailVerified: true,
       accounts: {
         create: {
           id: crypto.randomUUID(),

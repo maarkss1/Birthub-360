@@ -67,6 +67,11 @@ describe('Bloqueio de conta por tentativas de login malsucedidas', () => {
         )) as unknown as { user: { id: string; organizationId: string } };
         createdUserIds.push(signUp.user.id);
         createdOrgIds.push(signUp.user.organizationId);
+        // requireEmailVerification (src/lib/auth.ts) bloquearia o login "bem-sucedido" abaixo com
+        // EMAIL_NOT_VERIFIED em vez de zerar o contador — sem mailbox real em teste, confirma
+        // direto no banco (o único jeito de reproduzir aqui o passo que, numa conta real,
+        // aconteceria ao clicar no link recebido).
+        await withRlsBypass(() => prisma.user.update({ where: { id: signUp.user.id }, data: { emailVerified: true } }));
 
         // Menos tentativas que o limite — não deve bloquear.
         await trySignIn(email, 'senha-errada-1');

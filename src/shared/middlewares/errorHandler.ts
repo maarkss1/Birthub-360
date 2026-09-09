@@ -145,7 +145,14 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ): void => {
-  logger.error({ err, status: err.statusCode }, 'Global error handler');
+  // requestId incluído aqui de propósito (achado da auditoria de release-readiness,
+  // error-resilience): a resposta HTTP abaixo já carrega este mesmo id via `resolveRequestId`,
+  // mas a linha de log real (onde o erro e o stack de fato aparecem) não carregava — quebrando a
+  // correlação "usuário relatou erro X" → "achar o log correspondente".
+  logger.error(
+    { err, status: err.statusCode, requestId: resolveRequestId(req, res) },
+    'Global error handler',
+  );
 
   if (err instanceof ZodError) {
     sendError(req, res, 400, 'Erro de Validação', {

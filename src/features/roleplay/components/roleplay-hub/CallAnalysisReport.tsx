@@ -1,24 +1,16 @@
+/* eslint-disable jsx-a11y/media-has-caption -- transcrição completa é exibida junto ao áudio */
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, Phone, RotateCcw, ShieldCheck } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useTheme } from '../../../../contexts/ThemeContext';
 import type { CallAnalysisResult } from './types';
+import { scoreTextClass, scoreTextClassOnSurface } from './scoreColor';
 
 interface TurnEvaluation {
   clarity: number;
   objectionHandling: number;
   total: number;
   feedback: string;
-}
-
-// Cor sólida (não gradiente) — a cor aqui É o sinal da nota (boa/média/ruim), não decoração. Sem
-// sufixo `-active`/`dark:`: este número vive dentro do cartão sempre-escuro abaixo (bg-gray-900,
-// independente do tema do resto do app), então usa direto a variante já calibrada para superfície
-// escura (mesmo raciocínio documentado em Badge.tsx: "no escuro a cor crua já passa").
-function scoreTextClass(score: number): string {
-  if (score >= 75) return 'text-success';
-  if (score >= 45) return 'text-warning';
-  return 'text-danger';
 }
 
 export function CallAnalysisReport({
@@ -50,7 +42,7 @@ export function CallAnalysisReport({
 
         <div className="relative z-10 text-center md:text-left flex-1">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-widest mb-4">
-            <ShieldCheck className="w-4 h-4" /> Avaliador de Ligação · Groq IA
+            <ShieldCheck className="w-4 h-4" /> Parecer Técnico · IA
           </div>
           <h2 className="text-4xl lg:text-5xl font-black mb-3 tracking-tight">Nota da Ligação</h2>
           <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl">
@@ -74,6 +66,30 @@ export function CallAnalysisReport({
           </div>
         </div>
       </div>
+
+      {analysisResult.clarityScore != null &&
+        analysisResult.objectionHandlingScore != null &&
+        analysisResult.closingScore != null && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
+            {[
+              { label: 'Clareza', value: analysisResult.clarityScore },
+              { label: 'Tratamento de objeções', value: analysisResult.objectionHandlingScore },
+              { label: 'Fechamento / próximo passo', value: analysisResult.closingScore },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="bg-surface border border-line p-6 rounded-[2rem] text-center space-y-1"
+              >
+                <span className={`text-3xl font-black ${scoreTextClassOnSurface(item.value)}`}>
+                  {item.value}
+                </span>
+                <p className="text-xs font-bold uppercase tracking-wider text-ink-2">
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
 
       {audioBlobUrl && timestamps && timestamps.length > 0 && (
         <div className="bg-surface-2 border border-line p-8 rounded-[2rem] space-y-6 relative z-10">

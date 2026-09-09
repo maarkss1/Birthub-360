@@ -472,6 +472,7 @@ export function DiscoveryFilterPanel({
         </div>
 
         <button
+          type="button"
           onClick={() => setShowAdvanced((v) => !v)}
           className="flex items-center justify-between w-full text-[10px] tracking-wider font-bold uppercase text-ink-2 hover:text-brand transition-colors pt-2"
         >
@@ -529,6 +530,9 @@ export function DiscoveryFilterPanel({
               >
                 Tecnologias Utilizadas
               </span>
+              {/* Toolbar de chips toggle (não campos de formulário) — <fieldset> não traria
+                  ganho real de acessibilidade aqui, só estilo. */}
+              {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
               <div
                 role="group"
                 aria-labelledby="tech-included-label"
@@ -572,6 +576,9 @@ export function DiscoveryFilterPanel({
               >
                 Excluir Tecnologias
               </span>
+              {/* Toolbar de chips toggle (não campos de formulário) — <fieldset> não traria
+                  ganho real de acessibilidade aqui, só estilo. */}
+              {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
               <div
                 role="group"
                 aria-labelledby="tech-excluded-label"
@@ -647,6 +654,7 @@ export function DiscoveryFilterPanel({
 
       <div className="pt-6 mt-2 relative z-10 border-t border-line">
         <button
+          type="button"
           id="btn-discover"
           onClick={onDiscover}
           disabled={isSearching}

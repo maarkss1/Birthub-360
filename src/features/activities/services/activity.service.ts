@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client';
 import { prisma } from '../../../lib/prisma';
+import { logger } from '../../../lib/logger';
 import { activitySchema, type ActivityType, type ActivityStatus } from '../../../lib/zod';
 import type { z } from 'zod';
 import {
@@ -173,7 +174,10 @@ export class ActivityService {
       });
 
       // Gatilho de automação. Sem await: automação é efeito colateral e não pode atrasar nem
-      // derrubar a conclusão da atividade em si.
+      // derrubar a conclusão da atividade em si. Achado real (auditoria de release-readiness,
+      // error-resilience): o catch engolia qualquer falha real do motor de automação (ex.: regra
+      // mal configurada, erro de banco) sem log algum — logar aqui não atrasa a resposta (a
+      // Promise já roda em paralelo, sem await) nem muda o comportamento best-effort.
       if (data.status === 'Concluída') {
         void automationEngine
           .handle({
@@ -187,7 +191,12 @@ export class ActivityService {
               leadId: currentActivity.leadId,
             },
           })
-          .catch(() => {});
+          .catch((err) => {
+            logger.error(
+              { err, organizationId, activityId: id },
+              'Falha ao disparar automação de "Atividade concluída" (best-effort, atividade já foi salva).',
+            );
+          });
       }
     }
     return serializeActivity(activity);

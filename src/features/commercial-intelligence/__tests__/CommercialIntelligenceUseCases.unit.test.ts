@@ -142,6 +142,10 @@ class FakeRepository implements CommercialIntelligenceRepository {
   async findFieldChanges(): Promise<LeadFieldChangeRow[]> {
     return this.fieldChanges;
   }
+  firstCompletedActivityDates: Map<string, Date> = new Map();
+  async findFirstCompletedActivityDates(): Promise<Map<string, Date>> {
+    return this.firstCompletedActivityDates;
+  }
   async countDuplicateCompanyGroupsAmongOpenDeals(): Promise<number> {
     return this.duplicateGroups;
   }
@@ -409,6 +413,88 @@ describe('CommercialIntelligenceUseCases', () => {
     expect(performance.salesCycle.sampleSize).toBe(2);
     expect(performance.salesCycle.meanDays).toBeCloseTo((31 + 21) / 2, 1);
     expect(performance.salesCycle.medianDays).toBeCloseTo((31 + 21) / 2, 1);
+  });
+
+  it('SLA de primeiro contato: horas entre createdAt do lead e a primeira Activity concluída', async () => {
+    const contacted = deal({
+      id: 'lead-1',
+      amount: 1,
+      createdAt: new Date('2026-08-01T03:00:00Z'), // 01/08 00:00 BRT
+    });
+    const notContactedYet = deal({
+      id: 'lead-2',
+      amount: 1,
+      createdAt: new Date('2026-08-02T03:00:00Z'), // 02/08 00:00 BRT
+    });
+    const repo = new FakeRepository([contacted, notContactedYet]);
+    repo.firstCompletedActivityDates = new Map([
+      ['lead-1', new Date('2026-08-01T13:00:00Z')], // 10h depois (01/08 10:00 BRT) — dentro da meta de 24h
+    ]);
+    const useCases = new CommercialIntelligenceUseCases(repo);
+
+    const performance = await useCases.performance(ORG, { month: PERIOD }, NOW);
+
+    expect(performance.firstContactSla.sampleSize).toBe(1);
+    expect(performance.firstContactSla.leadsWithoutContact).toBe(1);
+    expect(performance.firstContactSla.meanHours).toBe(10);
+    expect(performance.firstContactSla.medianHours).toBe(10);
+    expect(performance.firstContactSla.withinTargetPct).toBe(100);
+    expect(performance.firstContactSla.targetHours).toBe(24);
+  });
+
+  it('SLA de primeiro contato: "Não disponível" (null) quando nenhum lead do período já foi contatado', async () => {
+    const repo = new FakeRepository([
+      deal({ id: 'lead-1', amount: 1, createdAt: new Date('2026-08-01T03:00:00Z') }),
+    ]);
+    const useCases = new CommercialIntelligenceUseCases(repo);
+
+    const performance = await useCases.performance(ORG, { month: PERIOD }, NOW);
+
+    expect(performance.firstContactSla.sampleSize).toBe(0);
+    expect(performance.firstContactSla.leadsWithoutContact).toBe(1);
+    expect(performance.firstContactSla.meanHours).toBeNull();
+    expect(performance.firstContactSla.withinTargetPct).toBeNull();
+  });
+
+  it('Concentração de receita: agrupa por empresa, ordena desc, top 10 e % sobre o total ganho no período', async () => {
+    const clienteGrande = deal({
+      id: 'g1',
+      amount: 80_000,
+      companyId: 'company-grande',
+      companyName: 'Cliente Grande',
+      stageIsWon: true,
+      closedAt: new Date('2026-08-05'),
+    });
+    const clientePequeno = deal({
+      id: 'p1',
+      amount: 20_000,
+      companyId: 'company-pequeno',
+      companyName: 'Cliente Pequeno',
+      stageIsWon: true,
+      closedAt: new Date('2026-08-06'),
+    });
+    const repo = new FakeRepository([clienteGrande, clientePequeno]);
+    const useCases = new CommercialIntelligenceUseCases(repo);
+
+    const performance = await useCases.performance(ORG, { month: PERIOD }, NOW);
+
+    expect(performance.revenueConcentration.totalWonAmount).toBe(100_000);
+    expect(performance.revenueConcentration.top10Pct).toBe(100);
+    expect(performance.revenueConcentration.topClients).toEqual([
+      { companyId: 'company-grande', companyName: 'Cliente Grande', amount: 80_000, pct: 80 },
+      { companyId: 'company-pequeno', companyName: 'Cliente Pequeno', amount: 20_000, pct: 20 },
+    ]);
+  });
+
+  it('Concentração de receita: "Não disponível" (null) sem nenhum negócio ganho no período', async () => {
+    const repo = new FakeRepository([deal({ id: 'aberto-1', amount: 15_000 })]);
+    const useCases = new CommercialIntelligenceUseCases(repo);
+
+    const performance = await useCases.performance(ORG, { month: PERIOD }, NOW);
+
+    expect(performance.revenueConcentration.totalWonAmount).toBe(0);
+    expect(performance.revenueConcentration.top10Pct).toBeNull();
+    expect(performance.revenueConcentration.topClients).toEqual([]);
   });
 
   it('Conversão por etapa: funil cumulativo ordenado por sortOrder, primeira etapa sem conversionFromPrevious', async () => {

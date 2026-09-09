@@ -13,8 +13,8 @@ import { isValidCnpj } from '../../../lib/cnpj.js';
 export async function discoverCnpjByName(companyName: string): Promise<string | null> {
   if (!companyName) return null;
   try {
-    const q = encodeURIComponent(companyName + ' cnpj');
-    const url = 'https://html.duckduckgo.com/html/?q=' + q;
+    const q = encodeURIComponent(`${companyName} cnpj`);
+    const url = `https://html.duckduckgo.com/html/?q=${q}`;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
     const res = await fetch(url, {

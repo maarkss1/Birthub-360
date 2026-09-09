@@ -109,7 +109,7 @@ export interface PersistWhatsAppMessageInput {
 export async function persistWhatsAppMessage(input: PersistWhatsAppMessageInput): Promise<void> {
   if (!isIndividualChat(input.remoteJid)) return;
 
-  const phoneE164 = toE164BR(input.remoteJid!.replace('@s.whatsapp.net', ''));
+  const phoneE164 = toE164BR(input.remoteJid?.replace('@s.whatsapp.net', ''));
   if (!phoneE164) return;
 
   const existing = await prisma.whatsAppMessage.findUnique({

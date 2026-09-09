@@ -94,7 +94,7 @@ export async function embedLocal(text: string, kind: EmbeddingKind = 'passage'):
       });
       if (res.ok) {
         const data = (await res.json()) as number[][];
-        if (data && data[0] && data[0].length === EMBEDDING_DIMENSIONS) {
+        if (data?.[0] && data[0].length === EMBEDDING_DIMENSIONS) {
           embeddingCache.set(cacheKey, data[0]);
           return data[0];
         }

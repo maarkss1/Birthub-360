@@ -77,7 +77,7 @@ export async function findOwnershipConflict(
     orderBy: { updatedAt: 'desc' },
   });
 
-  if (!existing || !existing.owner) return null;
+  if (!existing?.owner) return null;
   if (incomingOwnerId && existing.owner === incomingOwnerId) return null; // já é do mesmo dono — não é conflito
 
   return {

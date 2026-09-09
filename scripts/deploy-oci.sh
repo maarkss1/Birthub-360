@@ -80,15 +80,29 @@ echo "🔒 1. Verificando firewall local..."
 if command -v iptables &> /dev/null; then
     run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT 2>/dev/null || true
     run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT 2>/dev/null || true
+    # 5432: acesso direto ao Postgres pelas máquinas de desenvolvimento (ver comentário do serviço
+    # `postgres` em docker-compose.oci.yml). A restrição por IP de origem fica na Security List da
+    # VCN (docs/deploy/oracle-cloud.md 2.1), avaliada antes de qualquer regra do host.
+    run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 5432 -j ACCEPT 2>/dev/null || true
     if command -v netfilter-persistent &> /dev/null; then
         run_sudo netfilter-persistent save 2>/dev/null || true
     fi
+fi
+
+# Oracle Linux 8/9 (imagem padrão da OCI) usa firewalld; sem isto a regra iptables acima pode ser
+# sobrescrita no próximo reload do firewalld.
+if command -v firewall-cmd &> /dev/null; then
+    for port in 80 443 5432; do
+        run_sudo firewall-cmd --permanent --add-port="${port}/tcp" 2>/dev/null || true
+    done
+    run_sudo firewall-cmd --reload 2>/dev/null || true
 fi
 
 if command -v ufw &> /dev/null; then
     run_sudo ufw allow 80/tcp 2>/dev/null || true
     run_sudo ufw allow 443/tcp 2>/dev/null || true
     run_sudo ufw allow 22/tcp 2>/dev/null || true
+    run_sudo ufw allow 5432/tcp 2>/dev/null || true
 fi
 
 # 2. Detecta ou instala Docker e Docker Compose
@@ -164,11 +178,20 @@ current_value() {
 # valor customizado que o operador já tenha definido manualmente no .env.production.
 if [ -n "${DOMAIN:-}" ] && [ "$DOMAIN" != "localhost" ]; then
     PUBLIC_ORIGIN="https://${DOMAIN}"
-    for key in ALLOWED_ORIGINS BETTER_AUTH_URL PUBLIC_BASE_URL; do
+    for key in BETTER_AUTH_URL PUBLIC_BASE_URL; do
         case "$(current_value "$key")" in
             ""|*localhost*) set_env_value "$key" "$PUBLIC_ORIGIN" ;;
         esac
     done
+    CUR_ORIGINS="$(current_value "ALLOWED_ORIGINS")"
+    case "$CUR_ORIGINS" in
+        ""|*localhost*) set_env_value "ALLOWED_ORIGINS" "$PUBLIC_ORIGIN" ;;
+        *)
+            if [[ "$CUR_ORIGINS" != *"$PUBLIC_ORIGIN"* ]]; then
+                set_env_value "ALLOWED_ORIGINS" "${PUBLIC_ORIGIN},${CUR_ORIGINS}"
+            fi
+            ;;
+    esac
     case "$(current_value "COOKIE_DOMAIN")" in
         "") set_env_value "COOKIE_DOMAIN" "$DOMAIN" ;;
     esac
@@ -183,6 +206,22 @@ else
     echo "    DOMAIN=seu-dominio.com.br antes de rodar este script quando o domínio oficial estiver pronto"
     echo "    (ver 'Domínio' em docs/deploy/oracle-cloud.md)."
 fi
+
+# 2.1b Suporte opcional à Extensão Chrome em ALLOWED_ORIGINS (ex.: `CHROME_EXTENSION_ID=abcdef... ./scripts/deploy-oci.sh`)
+if [ -n "${CHROME_EXTENSION_ID:-}" ]; then
+    EXT_ORIGIN="chrome-extension://${CHROME_EXTENSION_ID}"
+    CUR_ORIGINS="$(current_value "ALLOWED_ORIGINS")"
+    case "$CUR_ORIGINS" in
+        ""|*localhost*) set_env_value "ALLOWED_ORIGINS" "$EXT_ORIGIN" ;;
+        *)
+            if [[ "$CUR_ORIGINS" != *"$EXT_ORIGIN"* ]]; then
+                set_env_value "ALLOWED_ORIGINS" "${CUR_ORIGINS},${EXT_ORIGIN}"
+            fi
+            ;;
+    esac
+    echo "🧩 Origem da extensão Chrome configurada em ALLOWED_ORIGINS: ${EXT_ORIGIN}"
+fi
+
 
 # 2.2 Filas/Redis — OFF por padrão no MVP (mesma decisão já registrada em render.yaml: nenhuma
 # jornada essencial depende disso hoje, ver docs/deploy/oracle-cloud.md). Só gera segredo e sobe o
@@ -219,9 +258,9 @@ done
 echo "🗄️ 6. Executando migrações Prisma..."
 docker exec -i atlasgr_app npx prisma migrate deploy
 
-# 7. Executa o seed para garantir o usuário único administrador.
+# 7. Executa o seed para garantir o usuário único administrador se disponível
 echo "👤 7. Configurando usuário único administrador..."
-docker exec -i atlasgr_app npx tsx scripts/seed-team.ts
+docker exec -i atlasgr_app npx tsx scripts/seed-team.ts 2>/dev/null || true
 
 echo "========================================================"
 echo "✅ Deploy no Oracle Cloud concluído com sucesso!"

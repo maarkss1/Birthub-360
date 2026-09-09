@@ -106,6 +106,15 @@ function basePerformance(overrides: Partial<PerformanceMetrics> = {}): Performan
     salesCycle: { meanDays: null, medianDays: null, sampleSize: 0 },
     funnel: [],
     funnelHistoricalTrackingSince: null,
+    firstContactSla: {
+      meanHours: null,
+      medianHours: null,
+      sampleSize: 0,
+      leadsWithoutContact: 0,
+      withinTargetPct: null,
+      targetHours: 24,
+    },
+    revenueConcentration: { topClients: [], top10Pct: null, totalWonAmount: 0 },
     ...overrides,
   };
 }

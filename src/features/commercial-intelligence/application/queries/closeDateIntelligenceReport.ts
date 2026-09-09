@@ -141,6 +141,8 @@ export async function buildCloseDateIntelligence(
   dealRows.sort((a, b) => b.slips - a.slips || b.amount - a.amount);
 
   const withSlips = dealRows.map((row) => ({
+    // Sempre encontra: `dealRows` só recebe `leadId` vindos de `s.deal.id` dentro do laço `for (const s of open)` acima.
+    // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
     deal: open.find((s) => s.deal.id === row.leadId)!,
     slips: row.slips,
     chronic: row.chronic,

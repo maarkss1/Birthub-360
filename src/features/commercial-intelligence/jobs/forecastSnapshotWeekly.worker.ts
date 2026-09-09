@@ -5,7 +5,7 @@
 // semana, para cada organização com pipeline ativo, calcula o ExecutiveOverview do mês corrente e
 // grava um snapshot append-only (nunca sobrescreve — permite comparar previsto-vs-realizado
 // depois, ver forecastAccuracy.ts).
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
@@ -91,7 +91,7 @@ export function createForecastSnapshotWorker() {
   const worker = new Worker(
     FORECAST_SNAPSHOT_QUEUE_NAME,
     async () => runForecastSnapshotWeeklyJob(),
-    { connection: connection as any, concurrency: 1 },
+    { connection: connection as ConnectionOptions, concurrency: 1 },
   );
 
   worker.on('failed', (job, err) => {
@@ -118,7 +118,7 @@ export function createForecastSnapshotWorker() {
 
 export async function scheduleForecastSnapshotJob() {
   const queue = new Queue(FORECAST_SNAPSHOT_QUEUE_NAME, {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   // Roda toda segunda-feira 06:00 (0 6 * * 1) — antes do expediente comercial começar, com dado

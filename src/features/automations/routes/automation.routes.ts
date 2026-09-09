@@ -49,7 +49,7 @@ router.post('/:id/dry-run', managementRoles, (req, res, next) =>
 // `daysSinceLastInteraction`, ver stagnation-scanner.service.ts) imediatamente em vez de esperar o
 // cron diário. Roda para TODAS as organizações (mesmo padrão de `runColdLeadsScan`/`/win-loss-
 // analysis`), então fica restrito a ADMIN — não é uma leitura escopada ao tenant de quem chama.
-router.post('/stagnation-scan', requireRole(['ADMIN']), async (req, res, next) => {
+router.post('/stagnation-scan', requireRole(['ADMIN']), async (_req, res, next) => {
   try {
     const result = await runStagnationScan();
     res.json({ success: true, data: result });

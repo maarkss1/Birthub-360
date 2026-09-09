@@ -286,8 +286,7 @@ async function upsertDefaultPipeline(
   });
 
   if (
-    existing &&
-    existing.active &&
+    existing?.active &&
     existing.isDefault &&
     existing.entity === entity &&
     existing.sortOrder === sortOrder &&

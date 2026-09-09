@@ -46,13 +46,20 @@ export class PrismaAutomationRepository implements AutomationRepository {
   }
 
   async create(organizationId: string, data: Partial<Automation>): Promise<Automation> {
+    // `data` é `Partial<Automation>` no tipo da interface (compartilhada com `update`), mas o
+    // único chamador real (AutomationUseCases.createAutomation) já validou name/trigger/action
+    // como obrigatórios via `automationSchema.parse` antes de chegar aqui — os `!` abaixo refletem
+    // essa garantia de contrato, não uma suposição sem verificação.
     const created = await prisma.automation.create({
       data: {
         organizationId,
+        // biome-ignore lint/style/noNonNullAssertion: validado por automationSchema.parse, ver comentário acima
         name: data.name!,
         enabled: data.enabled ?? true,
+        // biome-ignore lint/style/noNonNullAssertion: validado por automationSchema.parse, ver comentário acima
         trigger: toPrismaAutomationTrigger(data.trigger!) as never,
         conditions: (data.conditions ?? undefined) as Prisma.InputJsonValue | undefined,
+        // biome-ignore lint/style/noNonNullAssertion: validado por automationSchema.parse, ver comentário acima
         action: toPrismaAutomationAction(data.action!) as never,
         actionConfig: (data.actionConfig ?? {}) as Prisma.InputJsonValue,
       },

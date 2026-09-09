@@ -107,3 +107,28 @@ export {
   EXTRACTION_PERIODS,
 } from './service/extraction.js';
 export type { ExtractionFileFormat } from './service/extractionFiles.js';
+
+// Plano Diário Operacional com integração Bitrix24
+export type {
+  DailyPlanItem,
+  DailyPlanPriorityLevel,
+  DailyPlanItemOrigin,
+  DailyPlanItemChannel,
+  UserDailyPlanSummary,
+} from './service/dailyPlan.service.js';
+export {
+  fetchUserDailyPlan,
+  completeDailyPlanItem,
+  addDailyPlanItemNote,
+  createDailyPlanActivity,
+} from './service/dailyPlan.service.js';
+
+// Fechamento obrigatório do Plano Diário (parecer do dia anterior + metas do novo dia)
+export type {
+  DailyClosingMetrics,
+  PendingDailyClosing,
+} from './service/dailyPlanClosing.service.js';
+export {
+  getPendingDailyClosing,
+  createDailyPlanClosing,
+} from './service/dailyPlanClosing.service.js';

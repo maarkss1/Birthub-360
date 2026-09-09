@@ -1,8 +1,9 @@
 import type { Request, Response, NextFunction } from 'express';
+import type { AuthRequest } from '../shared/middlewares/authenticateToken.js';
 
 export const opaMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = (req as any).user || {};
+    const user = (req as AuthRequest).user || {};
     const { role, organizationId } = user;
 
     const input = {
@@ -28,7 +29,7 @@ export const opaMiddleware = async (req: Request, res: Response, next: NextFunct
     } else {
       return res.status(403).json({ error: 'Forbidden' });
     }
-  } catch (error) {
+  } catch {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

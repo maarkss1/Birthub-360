@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus -- campo revelado por ação do usuário, ver comentário no local de uso */
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import {
@@ -147,6 +148,12 @@ export function LoginScreen() {
   const [name, setName] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
+  // Cadastro (?signup=1) agora exige confirmação de posse do e-mail antes de abrir sessão (ver
+  // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
+  // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
+  // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
+  // vez de tentar navegar para /app sem sessão nenhuma.
+  const [verificationPending, setVerificationPending] = useState(false);
   const { activeBrand, setActiveBrand, brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const brandAccent = useBrandAccent();
@@ -189,9 +196,9 @@ export function LoginScreen() {
           email,
           password,
           name: name || email.split('@')[0],
-          callbackURL: '/app',
+          callbackURL: '/hub',
         })
-      : await authClient.signIn.email({ email, password, callbackURL: '/app' });
+      : await authClient.signIn.email({ email, password, callbackURL: '/hub' });
 
     if (result.error) {
       setError(result.error.message || 'Não foi possível autenticar. Verifique suas credenciais.');
@@ -199,7 +206,16 @@ export function LoginScreen() {
       return;
     }
 
-    window.location.href = '/app';
+    // Cadastro sem sessão de volta = e-mail ainda não confirmado (requireEmailVerification em
+    // src/lib/auth.ts) — não há pra onde navegar ainda, então mostra o aviso em vez de tentar ir
+    // pro Hub sem sessão (o que só voltaria pro login de qualquer forma).
+    if (isSignUp && !result.data?.token) {
+      setVerificationPending(true);
+      setIsSubmitting(false);
+      return;
+    }
+
+    window.location.href = '/hub';
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -237,6 +253,7 @@ export function LoginScreen() {
   const backToSignIn = () => {
     setIsForgotPassword(false);
     setForgotPasswordSent(false);
+    setVerificationPending(false);
     setError('');
   };
 
@@ -257,7 +274,7 @@ export function LoginScreen() {
   }
 
   if (currentUser) {
-    return <Navigate to="/app" replace />;
+    return <Navigate to="/hub" replace />;
   }
 
   return (
@@ -374,101 +391,43 @@ export function LoginScreen() {
             <div
               className={`mt-8 w-full p-6 sm:p-7 rounded-card-lg border border-brand/25 bg-surface text-left shadow-card transition-shadow duration-300 ${brandAccent.glow}`}
             >
-              {isForgotPassword ? (
-                <>
-                  {forgotPasswordSent ? (
-                    <div className="space-y-5 text-center">
-                      <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
-                        <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
-                        <p>
-                          Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail
-                          com um link para redefinir a senha. O link expira em 1 hora.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={backToSignIn}
-                        className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                      >
-                        Voltar para o login
-                      </button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleForgotPassword} className="space-y-4">
-                      {error && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
-                        >
-                          <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                          <p>{error}</p>
-                        </motion.div>
-                      )}
-
-                      <p className="text-ink-2 text-sm">
-                        Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um
-                        link para redefinir a senha.
+              {verificationPending ? (
+                <div className="space-y-5 text-center">
+                  <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
+                    <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
+                    <p>
+                      Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele
+                      para confirmar que este e-mail é seu e ativar sua conta.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={backToSignIn}
+                    className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                  >
+                    Voltar para o login
+                  </button>
+                </div>
+              ) : isForgotPassword ? (
+                forgotPasswordSent ? (
+                  <div className="space-y-5 text-center">
+                    <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
+                      <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
+                      <p>
+                        Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail
+                        com um link para redefinir a senha. O link expira em 1 hora.
                       </p>
-
-                      <div>
-                        <label
-                          htmlFor="login-forgot-email"
-                          className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
-                        >
-                          E-mail:
-                        </label>
-                        <input
-                          id="login-forgot-email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => handleEmailChange(e.target.value)}
-                          className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                          required
-                          /* campo revelado por ação do usuário ("Esqueci minha senha"), não focus
-                           automático de carregamento de página; foca o único campo do
-                           sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
-                           WAI-ARIA Authoring Practices. */
-                          // eslint-disable-next-line jsx-a11y/no-autofocus
-                          autoFocus
-                        />
-                      </div>
-
-                      <motion.button
-                        ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
-                        type="submit"
-                        disabled={isSubmitting || !email}
-                        onPointerMove={submitMagnetic.onPointerMove}
-                        onPointerLeave={submitMagnetic.onPointerLeave}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        style={submitMagnetic.style}
-                        className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                      >
-                        {isSubmitting ? (
-                          <Loader2 className="animate-spin" size={18} />
-                        ) : (
-                          <>
-                            Enviar Link de Redefinição <ArrowRight size={16} />
-                          </>
-                        )}
-                      </motion.button>
-
-                      <div className="text-center">
-                        <button
-                          type="button"
-                          onClick={backToSignIn}
-                          className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                        >
-                          Voltar para o login
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </>
-              ) : (
-                <>
-                  <form onSubmit={handleAuth} className="space-y-4">
+                    </div>
+                    <button
+                      type="button"
+                      onClick={backToSignIn}
+                      className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                    >
+                      Voltar para o login
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
                     {error && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
@@ -480,79 +439,38 @@ export function LoginScreen() {
                       </motion.div>
                     )}
 
-                    {isSignUp && (
-                      <div>
-                        <label
-                          htmlFor="login-name"
-                          className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
-                        >
-                          Seu Nome Completo
-                        </label>
-                        <input
-                          id="login-name"
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                          placeholder="Ex: Marcelo Nascimento"
-                          required={isSignUp}
-                        />
-                      </div>
-                    )}
+                    <p className="text-ink-2 text-sm">
+                      Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um link
+                      para redefinir a senha.
+                    </p>
 
                     <div>
                       <label
-                        htmlFor="login-email"
+                        htmlFor="login-forgot-email"
                         className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
                       >
                         E-mail:
                       </label>
                       <input
-                        id="login-email"
+                        id="login-forgot-email"
                         type="email"
                         value={email}
                         onChange={(e) => handleEmailChange(e.target.value)}
                         className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
                         required
-                      />
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between mb-2 ml-1 mr-1">
-                        <label
-                          htmlFor="login-password"
-                          className={`block text-xs font-extrabold uppercase tracking-wider ${brandAccent.text}`}
-                        >
-                          Senha:
-                        </label>
-                        {!isSignUp && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsForgotPassword(true);
-                              setError('');
-                            }}
-                            className={`text-xs font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                          >
-                            Esqueci minha senha
-                          </button>
-                        )}
-                      </div>
-                      <input
-                        id="login-password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                        placeholder="••••••••"
-                        required
+                        /* campo revelado por ação do usuário ("Esqueci minha senha"), não focus
+                           automático de carregamento de página; foca o único campo do
+                           sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
+                           WAI-ARIA Authoring Practices. */
+                        // biome-ignore lint/a11y/noAutofocus: ver comentário acima
+                        autoFocus
                       />
                     </div>
 
                     <motion.button
                       ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
                       type="submit"
-                      disabled={isSubmitting || !email || !password}
+                      disabled={isSubmitting || !email}
                       onPointerMove={submitMagnetic.onPointerMove}
                       onPointerLeave={submitMagnetic.onPointerLeave}
                       whileHover={{ scale: 1.02 }}
@@ -564,12 +482,124 @@ export function LoginScreen() {
                         <Loader2 className="animate-spin" size={18} />
                       ) : (
                         <>
-                          {isSignUp ? 'Criar Nova Conta' : 'Entrar'} <ArrowRight size={16} />
+                          Enviar Link de Redefinição <ArrowRight size={16} />
                         </>
                       )}
                     </motion.button>
+
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={backToSignIn}
+                        className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                      >
+                        Voltar para o login
+                      </button>
+                    </div>
                   </form>
-                </>
+                )
+              ) : (
+                <form onSubmit={handleAuth} className="space-y-4">
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
+                    >
+                      <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                      <p>{error}</p>
+                    </motion.div>
+                  )}
+
+                  {isSignUp && (
+                    <div>
+                      <label
+                        htmlFor="login-name"
+                        className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
+                      >
+                        Seu Nome Completo
+                      </label>
+                      <input
+                        id="login-name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                        placeholder="Ex: Marcelo Nascimento"
+                        required={isSignUp}
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label
+                      htmlFor="login-email"
+                      className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
+                    >
+                      E-mail:
+                    </label>
+                    <input
+                      id="login-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => handleEmailChange(e.target.value)}
+                      className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2 ml-1 mr-1">
+                      <label
+                        htmlFor="login-password"
+                        className={`block text-xs font-extrabold uppercase tracking-wider ${brandAccent.text}`}
+                      >
+                        Senha:
+                      </label>
+                      {!isSignUp && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsForgotPassword(true);
+                            setError('');
+                          }}
+                          className={`text-xs font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                        >
+                          Esqueci minha senha
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      id="login-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+
+                  <motion.button
+                    ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
+                    type="submit"
+                    disabled={isSubmitting || !email || !password}
+                    onPointerMove={submitMagnetic.onPointerMove}
+                    onPointerLeave={submitMagnetic.onPointerLeave}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={submitMagnetic.style}
+                    className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="animate-spin" size={18} />
+                    ) : (
+                      <>
+                        {isSignUp ? 'Criar Nova Conta' : 'Entrar'} <ArrowRight size={16} />
+                      </>
+                    )}
+                  </motion.button>
+                </form>
               )}
             </div>
           </motion.div>

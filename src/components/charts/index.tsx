@@ -77,7 +77,6 @@ function useEChart(option: EChartsOption, deps: unknown[] = []) {
       chartRef.current?.dispose();
       chartRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme]);
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import type {
   QualificationMatrixItem,
 } from '../features/playbook/playbook.api';
 import type { BrandInfo } from '../contexts/BrandContext';
-import { useActiveRecord } from '../contexts/ActiveRecordContext';
+import { useActiveRecord } from './useActiveRecord';
 import {
   buildAssistantLocalContext,
   getAssistantRouteContext,
@@ -61,7 +61,7 @@ function greeting(brandInfo: BrandInfo, activeRecordLabel?: string): ChatMessage
  * estático `brandMatrices.ts`).
  */
 export function useAssistantChat(
-  activeBrand: string,
+  _activeBrand: string,
   brandInfo: BrandInfo,
   selectedBrand: 'atlasgr' | 'totaltrac',
   objections: ObjectionMatrixItem[],
@@ -116,8 +116,7 @@ export function useAssistantChat(
     // Só a troca de marca recarrega o histórico — reagir a activeRecord aqui reiniciaria a
     // conversa em andamento sempre que o registro mudasse de fundo (ex.: usuário navega para
     // outra empresa).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeBrand, brandInfo.name, selectedBrand]);
+  }, [brandInfo.name, selectedBrand, brandInfo, activeRecord?.label]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
