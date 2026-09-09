@@ -48,6 +48,7 @@
         "lead.qualify",
         "lead.update",
         "meeting.schedule",
+        "contract.read",
         "agent.discover",
         "agent.execute",
         "agent.request_cross_role"
@@ -62,6 +63,8 @@
         "deal.update",
         "deal.move_stage",
         "contract.read",
+        "contract.generate",
+        "signature.request",
         "agent.discover",
         "agent.execute",
         "agent.request_cross_role"
@@ -565,6 +568,8 @@
         "deal.update",
         "deal.move_stage",
         "contract.read",
+        "contract.generate",
+        "signature.request",
         "agent.discover",
         "agent.execute",
         "agent.request_cross_role"

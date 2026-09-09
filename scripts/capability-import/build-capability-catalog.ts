@@ -59,12 +59,36 @@ const UNIVERSAL_AGENT_CAPABILITIES = [
 
 /** Capabilities de domínio real dos 12 agentes da Célula Comercial — derivadas das `capabilities`
  *  já documentadas em `commercialAgentRegistry.ts` (nunca inventadas aqui), mapeadas para o
- *  vocabulário canônico `resource.action` deste catálogo. */
+ *  vocabulário canônico `resource.action` deste catálogo.
+ *
+ *  As capabilities marcadas `'REQUEST'` em `ROLE_DOMAIN_CAPABILITIES` abaixo (`contract.read` do
+ *  SDR; `contract.generate`/`signature.request` do CLOSER) também entram aqui, no agente
+ *  canônico do próprio cargo dono da capability REQUEST — não porque o agente "já pode" executar
+ *  livremente (o `RoleCapabilityGrant.accessLevel = REQUEST` continua bloqueando em
+ *  `authorizeCapability`, etapa 10), mas porque `AgentCapabilityGrant` (etapa 8) é fail-closed e
+ *  NUNCA é substituído por um `TemporaryCapabilityGrant` (PROMPT 7, ver comentário em
+ *  `capabilityAuthorization.service.ts`) — sem o grant estrutural aqui, a aprovação de Cross-Role
+ *  nunca teria um agente real para de fato desbloquear, tornando o próprio mecanismo do PROMPT 7
+ *  inatingível para este cargo+capability. */
 const COMMERCIAL_CELL_DOMAIN_CAPABILITIES: Record<string, string[]> = {
   'ldr-intelligence': ['lead.read', 'lead.search', 'company.read', 'company.search'],
   'bdr-outbound': ['lead.read', 'lead.search', 'company.read'],
-  'sdr-qualification': ['lead.read', 'lead.qualify', 'lead.update', 'meeting.schedule'],
-  'closer-sales': ['deal.read', 'deal.analyze', 'deal.update', 'deal.move_stage', 'contract.read'],
+  'sdr-qualification': [
+    'lead.read',
+    'lead.qualify',
+    'lead.update',
+    'meeting.schedule',
+    'contract.read',
+  ],
+  'closer-sales': [
+    'deal.read',
+    'deal.analyze',
+    'deal.update',
+    'deal.move_stage',
+    'contract.read',
+    'contract.generate',
+    'signature.request',
+  ],
   'coordinator-commercial': ['lead.read', 'deal.read', 'pipeline.read', 'bitrix.read'],
   'manager-commercial': [
     'forecast.read',
