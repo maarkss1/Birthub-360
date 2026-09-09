@@ -7,7 +7,6 @@ import {
   Globe,
   Sparkles,
   Loader2,
-  Trash,
   Send,
   Clock,
   User,
@@ -16,8 +15,6 @@ import {
   ChevronDown,
   ChevronUp,
   Save,
-  PhoneCall,
-  MessageCircle,
 } from 'lucide-react';
 import type { Lead, Note, LeadStatus, LeadQualification } from '../../../types';
 // LEAD_STATUS é reexportado como tipo em ../../../types (export type {...}) — o array em
@@ -27,7 +24,9 @@ import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
 import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
+import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { LeadActionBar } from './LeadActionBar';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -43,6 +42,22 @@ import { bitrixApi } from '../../integrations/bitrix/bitrix.api';
 import { calculateLeadScore, type BantQualificationData } from '../domain/leadScoreCalculator';
 
 const TEMPERATURE_EMOJI: Record<string, string> = { Quente: '🔥', Morno: '🌤️', Frio: '❄️' };
+
+// TimelineEvent.type já vem do backend (PrismaLeadRepository.ts) restrito a estes 6 valores —
+// rótulo em português pra exibição; qualquer valor fora da lista cai no fallback (o próprio type).
+const TIMELINE_TYPE_LABELS: Record<string, string> = {
+  creation: 'Lead criado',
+  edition: 'Dados atualizados',
+  movement: 'Mudança de etapa',
+  activity: 'Atividade registrada',
+  comment: 'Comentário',
+  generic: 'Evento',
+};
+
+const TIMELINE_ITEM_TYPE: Record<string, TimelineItem['type']> = {
+  movement: 'status_change',
+  comment: 'note',
+};
 
 const LEAD_STATUSES: LeadStatus[] = [...LEAD_STATUS];
 
@@ -331,6 +346,17 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
   const company = lead?.company;
   const leadPhone = lead?.contact?.whatsapp || lead?.contact?.phone || company?.phones?.[0] || null;
 
+  // GET /api/leads/:id já inclui `timeline` (TimelineEvent[], PrismaLeadRepository.ts:99) desde
+  // sempre — a UI nunca chegou a renderizar esse dado, só as notas manuais abaixo. Nenhuma rota,
+  // migration ou campo novo foi necessário para esta seção.
+  const timelineItems: TimelineItem[] = (lead?.timeline ?? []).map((event) => ({
+    id: event.id,
+    title: TIMELINE_TYPE_LABELS[event.type] ?? event.type,
+    description: event.description,
+    timestamp: new Date(event.createdAt).toLocaleString('pt-BR'),
+    type: TIMELINE_ITEM_TYPE[event.type],
+  }));
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       {/* Backdrop de "clicar fora fecha" — não precisa de suporte a teclado próprio: Escape já
@@ -380,32 +406,6 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleEnrich}
-                    disabled={enriching}
-                    title="Enriquecer dados via IA"
-                    className="p-2 rounded-xl text-ink-2 hover:text-brand-active dark:hover:text-brand-2 hover:bg-brand/10 transition-colors disabled:opacity-50"
-                  >
-                    {enriching ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <Sparkles className="w-5 h-5" />
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    title="Excluir Lead"
-                    className="p-2 rounded-xl text-ink-2 hover:text-rose-500 hover:bg-rose-500/10 transition-colors disabled:opacity-50"
-                  >
-                    {deleting ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <Trash className="w-5 h-5" />
-                    )}
-                  </button>
                   <button
                     type="button"
                     ref={closeButtonRef}
@@ -475,6 +475,22 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                 </div>
               </div>
             </div>
+
+            <LeadActionBar
+              lead={lead}
+              enriching={enriching}
+              onEnrich={handleEnrich}
+              deleting={deleting}
+              onDelete={handleDelete}
+              agentType={agentType}
+              onAgentTypeChange={setAgentType}
+              callingVoice={callingVoice}
+              onVoiceCall={handleVoiceCall}
+              leadPhone={leadPhone}
+              onOpenWhatsapp={() => setWhatsappOpen(true)}
+              exportingBitrix={exportingBitrix}
+              onExportBitrix={handleExportToBitrix}
+            />
 
             <div className="flex-1 overflow-y-auto p-6 space-y-8">
               {company && (
@@ -721,6 +737,16 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
 
               <section className="space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-ink-2 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-brand" /> Linha do Tempo
+                </h3>
+                <Timeline
+                  items={timelineItems}
+                  emptyMessage="Nenhum evento registrado para este lead ainda."
+                />
+              </section>
+
+              <section className="space-y-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-ink-2 flex items-center gap-2">
                   <FileText className="w-4 h-4 text-brand" /> Notas & Histórico
                 </h3>
                 <form onSubmit={handleAddNote} className="space-y-2">
@@ -778,49 +804,33 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
 
               <LeadCopilotoPanel leadId={lead.id} />
 
-              {/* Seção de Ação Bitrix24 */}
+              {/* Seção de status Bitrix24 — a ação de enviar/reenviar vive na LeadActionBar
+                  (topo do drawer); esta seção só exibe o estado da sincronização. */}
               <section className="space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-ink-2 flex items-center gap-2">
                   <Globe className="w-4 h-4 text-sky-500" /> Integração Bitrix24
                 </h3>
                 <div className="bg-surface-2/40 p-4 rounded-2xl border border-line space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <span className="text-[10px] text-ink-2 font-bold uppercase block">
-                        Status no Portal
-                      </span>
-                      {lead.bitrixLeadId || lead.bitrixDealId ? (
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/15 border border-sky-500/30 text-sky-700 dark:text-sky-300">
-                            🌐 Sincronizado (#{lead.bitrixLeadId || lead.bitrixDealId})
-                          </span>
-                          {lead.bitrixSyncedAt && (
-                            <span className="text-[10px] text-ink-2">
-                              · {new Date(lead.bitrixSyncedAt).toLocaleDateString('pt-BR')}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium text-ink-2 bg-surface border border-line mt-0.5">
-                          Não sincronizado no Bitrix
+                  <div>
+                    <span className="text-[10px] text-ink-2 font-bold uppercase block">
+                      Status no Portal
+                    </span>
+                    {lead.bitrixLeadId || lead.bitrixDealId ? (
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/15 border border-sky-500/30 text-sky-700 dark:text-sky-300">
+                          🌐 Sincronizado (#{lead.bitrixLeadId || lead.bitrixDealId})
                         </span>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleExportToBitrix}
-                      disabled={exportingBitrix}
-                      className="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm"
-                    >
-                      {exportingBitrix ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Send className="w-3.5 h-3.5" />
-                      )}
-                      {lead.bitrixLeadId || lead.bitrixDealId
-                        ? 'Reenviar ao Bitrix'
-                        : 'Enviar para o Bitrix24'}
-                    </button>
+                        {lead.bitrixSyncedAt && (
+                          <span className="text-[10px] text-ink-2">
+                            · {new Date(lead.bitrixSyncedAt).toLocaleDateString('pt-BR')}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium text-ink-2 bg-surface border border-line mt-0.5">
+                        Não sincronizado no Bitrix
+                      </span>
+                    )}
                   </div>
                   {lead.bitrixSyncError && (
                     <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
@@ -829,54 +839,6 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   )}
                 </div>
               </section>
-            </div>
-
-            <div className="p-4 border-t border-line bg-surface-2/50 shrink-0 flex items-center justify-end">
-              <div className="flex items-center gap-2">
-                <select
-                  value={agentType}
-                  onChange={(e) => setAgentType(e.target.value)}
-                  className="px-2 py-2 bg-surface border border-line rounded-xl text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-brand"
-                >
-                  <option value="sdr">SDR Frio</option>
-                  <option value="reactivation">Reativação</option>
-                  <option value="nps">NPS</option>
-                </select>
-                <button
-                  type="button"
-                  onClick={handleVoiceCall}
-                  disabled={callingVoice}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition-colors disabled:opacity-50 shadow-sm"
-                >
-                  {callingVoice ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <PhoneCall className="w-4 h-4" />
-                  )}
-                  Qualificar via Voz
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setWhatsappOpen(true)}
-                  disabled={!leadPhone}
-                  title={
-                    leadPhone
-                      ? 'Enviar WhatsApp para este lead (sessão da organização)'
-                      : 'Este lead não possui telefone cadastrado'
-                  }
-                  className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-colors disabled:opacity-50 shadow-sm"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  WhatsApp
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 bg-surface-2 text-ink-2 rounded-xl text-sm font-bold hover:bg-surface transition-colors"
-                >
-                  Fechar
-                </button>
-              </div>
             </div>
           </>
         )}
