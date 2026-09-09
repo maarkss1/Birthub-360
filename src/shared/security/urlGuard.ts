@@ -1,13 +1,13 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import type { LookupFunction } from 'node:net';
-import { Agent, fetch } from 'undici';
+import { Agent, fetch, type RequestInit as UndiciRequestInit } from 'undici';
 import { AppError } from '../middlewares/errorHandler.js';
 
-// `RequestInit` global deste projeto vem do lib "DOM" do tsconfig (compartilhado com o frontend)
-// — esse tipo não conhece a opção `dispatcher` (extensão do Node/undici usada abaixo para fixar a
-// conexão real nos endereços já validados). `dispatcher` entra via cast só para contornar essa
-// lacuna de tipo.
+// Usamos o `RequestInit` do próprio `undici` (não o `RequestInit` global do lib "DOM" do
+// tsconfig, compartilhado com o frontend) porque só o tipo do undici já declara `dispatcher`
+// (extensão usada abaixo para fixar a conexão real nos endereços já validados) — evita o cast
+// que seria necessário para contornar essa lacuna no tipo global.
 // IMPORTANTE: usamos o `fetch` da biblioteca `undici` em vez do fetch global porque o fetch
 // global do Node.js (v24) tem incompatibilidade interna com instâncias de Agent importadas
 // do pacote `undici` do node_modules.
@@ -128,7 +128,7 @@ export async function assertSafeExternalUrl(rawUrl: string): Promise<void> {
  * validada. Nenhuma das URLs chamadas por este guard (webhook Bitrix24, PABX 3CX) espera
  * redirecionamento hoje.
  */
-export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise<Response> {
+export async function safeFetch(rawUrl: string, init: UndiciRequestInit = {}): Promise<Response> {
   const { addresses } = await resolveSafe(rawUrl);
   const pinnedLookup: LookupFunction = (_hostname, _options, callback) => {
     callback(
@@ -141,7 +141,7 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
   // próprios endereços).
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-    const response = await fetch(rawUrl, { ...init, dispatcher } as unknown as RequestInit);
+    const response = await fetch(rawUrl, { ...init, dispatcher });
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o
