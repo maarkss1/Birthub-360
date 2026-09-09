@@ -1,6 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
+import { redactResidualPii } from '../../../shared/security/piiRedaction.js';
 
 export interface AnonymizationInput {
   rawText: string;
@@ -29,31 +30,16 @@ export interface AnonymizationResult {
   requiresManualReview: boolean;
 }
 
-const RESIDUAL_PII_PATTERNS: Array<{ type: (typeof PERSONAL_DATA_TYPES)[number]; regex: RegExp }> =
-  [
-    { type: 'CPF', regex: /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g },
-    { type: 'Email', regex: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g },
-    {
-      type: 'Telefone',
-      regex: /\b(?:\+?55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\d{4}|\d{4})[-.\s]?\d{4}\b/g,
-    },
-  ];
-
 export class LgpdSanitizerService {
-  // Camada rápida via regex para casos comuns
+  // Camada rápida via regex para casos comuns — mesma implementação exportada em
+  // `redactResidualPii` acima (nunca duas cópias do mesmo regex).
   private preSanitize(text: string): string {
-    return text
-      .replace(RESIDUAL_PII_PATTERNS[0].regex, '[CPF REDIGIDO]')
-      .replace(RESIDUAL_PII_PATTERNS[1].regex, '[EMAIL REDIGIDO]')
-      .replace(RESIDUAL_PII_PATTERNS[2].regex, '[TELEFONE REDIGIDO]');
+    return redactResidualPii(text).redactedText;
   }
 
   /** Detecta CPF/e-mail/telefone que sobreviveram ao processamento da IA. */
   private findResidualPii(text: string): Array<(typeof PERSONAL_DATA_TYPES)[number]> {
-    return RESIDUAL_PII_PATTERNS.filter(({ regex }) => {
-      regex.lastIndex = 0;
-      return regex.test(text);
-    }).map(({ type }) => type);
+    return redactResidualPii(text).detectedTypes;
   }
 
   private isValidResult(

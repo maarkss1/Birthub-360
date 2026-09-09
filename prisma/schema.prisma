@@ -885,6 +885,11 @@ model Organization {
   temporaryCapabilityGrants     TemporaryCapabilityGrant[]
   // Agent Bus + Handoffs (PROMPT 8) — ver seção no fim deste arquivo.
   agentHandoffMessages          AgentHandoffMessage[]
+  // Memória + Aprendizado Contínuo Governado (PROMPT 9) — ver seção no fim deste arquivo.
+  learningCandidates            LearningCandidate[]
+  agentMemoryRecords            AgentMemoryRecord[]
+  roleMemoryRecords             RoleMemoryRecord[]
+  organizationMemoryRecords     OrganizationMemoryRecord[]
 
   /// DEC-09 (dossiê CPI, Onda 42): teto mensal de gasto com IA (USD) desta organização. Nullable =
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
@@ -4010,4 +4015,193 @@ model AgentHandoffMessage {
   @@index([organizationId, missionId])
   @@index([organizationId, status])
   @@index([parentHandoffId])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Memória + Aprendizado Contínuo Governado (PROMPT 9) — fluxo: execution -> outcome real ->
+// reflection -> candidate -> validação -> memória aprovada -> uso futuro. `memory.service.ts`
+// NUNCA altera prompt de produção, capability, versão de agente ou dispara deploy — o único
+// efeito colateral de aprovar um `LearningCandidate` é criar/superseder/revogar uma linha nas 3
+// tabelas de memória abaixo. Nenhuma capability/AgentVersion é lida para decisão aqui além de
+// checagens de existência (nunca escrita).
+//
+// `AgentMemoryRecord`/`RoleMemoryRecord`/`OrganizationMemoryRecord` são 3 modelos distintos
+// (nunca um `MemoryRecord` polimórfico com `scope`) — mesma decisão de `AccessRequest`/
+// `ApprovalDecision`/`TemporaryCapabilityGrant` no PROMPT 7: cada escopo tem sua própria chave
+// natural (agentCode/jobRoleCode/nenhuma) e seus próprios índices/uniques, sem coluna nullable
+// ambígua. IMPORTANTE: não confundir com o modelo `AgentMemory` já existente (AI-003, onda 31) —
+// aquele é estado de sessão do LangGraph (chat), sem relação nenhuma com o Capability/Governança
+// de Agentes desta fundação; os nomes aqui são deliberadamente diferentes para nunca colidir.
+//
+// Cada linha de memória é IMUTÁVEL uma vez criada (mesmo espírito de `ApprovalDecision`): uma
+// nova versão nunca sobrescreve a antiga, ela a supersede (`supersedesId`/`supersededById`,
+// strings simples sem FK viva — mesmo padrão de `sourceExecutionId`/`agentCode` em
+// `AgentExecution`/`AgentHandoffMessage`: sobrevive à eventual remoção da linha referenciada, e o
+// histórico é auditoria, não vínculo vivo). `rollback` marca a linha ATIVA como `ROLLED_BACK` sem
+// criar uma nova versão (reverter não é uma nova opinião, é desligar a atual).
+//
+// RLS estrito nas 4 tabelas (mesmo padrão de `AgentExecution`/`AccessRequest`/
+// `AgentHandoffMessage`): sem bypass_rls, nenhum dos 4 modelos está no allowlist
+// `BYPASS_RLS_ALLOWED_MODELS` de src/lib/prisma.ts.
+// ---------------------------------------------------------------------------------------------
+
+/// Escopo de destino de um `LearningCandidate` aprovado — decide em qual das 3 tabelas de memória
+/// a linha resultante é criada.
+enum MemoryScope {
+  AGENT
+  ROLE
+  ORGANIZATION
+}
+
+/// Categoria de negócio da memória — as 8 primeiras são EXATAMENTE a lista "memória aprovada
+/// sensível requer humano" do prompt da onda (pricing/discount/forecast rule/contract/finance/
+/// compliance/write automation/capability); `OPERATIONAL` é o balde não-sensível (única categoria
+/// elegível a aprovação automática, e mesmo assim nunca quando a sanitização de PII sinaliza
+/// revisão manual).
+enum MemoryCategory {
+  PRICING
+  DISCOUNT
+  FORECAST_RULE
+  CONTRACT
+  FINANCE
+  COMPLIANCE
+  WRITE_AUTOMATION
+  CAPABILITY
+  OPERATIONAL
+}
+
+/// Estados do prompt da onda — um único enum compartilhado por `LearningCandidate` (usa
+/// PROPOSED/UNDER_REVIEW/APPROVED/REJECTED) e pelas 3 tabelas de memória (nascem `APPROVED`,
+/// podem ir a `SUPERSEDED`/`ROLLED_BACK`) — nunca uma segunda taxonomia paralela.
+enum MemoryStatus {
+  PROPOSED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  SUPERSEDED
+  ROLLED_BACK
+}
+
+/// Proposta de memória gerada a partir de UMA `AgentExecution` real e terminal (nunca especulativa
+/// — "outcome real" é regra explícita do prompt da onda). `agentCode`/`jobRoleCode` são snapshot
+/// da execução de origem (nunca aceitos do corpo da requisição). `proposedContent` já é o texto
+/// PÓS-sanitização de PII (`sanitization` guarda o resultado de `LgpdSanitizerService` para
+/// auditoria) — nunca o texto bruto da execução.
+model LearningCandidate {
+  id                String         @id @default(cuid())
+  organizationId    String
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// `AgentExecution.id` de origem — sem FK viva (mesmo padrão de `AgentHandoffMessage.executionId`).
+  sourceExecutionId String
+  agentCode         String
+  jobRoleCode       String?
+  targetScope       MemoryScope
+  /// Chave de conflito/supersede dentro do escopo (ex.: "sdr.follow_up.melhor_horario") — duas
+  /// memórias aprovadas do mesmo escopo com o mesmo `topic` são, por definição, opiniões
+  /// concorrentes sobre a mesma coisa (ver `findActiveConflict` em `memory.service.ts`).
+  topic             String
+  category          MemoryCategory
+  proposedContent   Json
+  /// Racional do passo de reflexão — por que este fato/insight vale a pena lembrar (nunca vazio;
+  /// nunca decorativo, mesmo espírito de `AgentExecutionResult.confidence`).
+  reflection        Json
+  /// Evidência com provenance (mesmo contrato de `AgentHandoffMessage.evidence`) — nunca um texto
+  /// solto sem origem rastreável.
+  evidence          Json           @default("[]")
+  /// Snapshot do `AnonymizationResult` (LgpdSanitizerService) — `null` só quando o conteúdo não
+  /// tinha nenhum texto livre a sanitizar.
+  sanitization      Json?
+  status            MemoryStatus   @default(PROPOSED)
+  deciderId         String?
+  /// `UserRole` do decisor no momento da decisão — snapshot, nunca recalculado depois.
+  deciderRole       String?
+  decisionNotes     String?        @db.Text
+  decidedAt         DateTime?
+  /// Preenchido só quando `status = APPROVED` — id da linha real criada em `AgentMemoryRecord`/
+  /// `RoleMemoryRecord`/`OrganizationMemoryRecord` (conforme `targetScope`).
+  resultingMemoryId String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([organizationId, status])
+  @@index([organizationId, targetScope, topic])
+  @@index([sourceExecutionId])
+}
+
+/// Memória aprovada escopada a UM agente (`AgentDefinition.code`, string simples sem FK viva —
+/// mesmo padrão de `AgentExecution.agentCode`).
+model AgentMemoryRecord {
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agentCode         String
+  topic             String
+  category          MemoryCategory
+  content           Json
+  evidence          Json         @default("[]")
+  /// Sequência dentro da cadeia de supersede deste `topic` — 1 na primeira aprovação, incrementa a
+  /// cada supersede; nunca decrementado nem reescrito in-place.
+  version           Int          @default(1)
+  status            MemoryStatus @default(APPROVED)
+  /// `LearningCandidate.id` que originou esta linha — sem FK viva (mesmo padrão de `sourceExecutionId`).
+  sourceCandidateId String
+  supersedesId      String?
+  supersededById    String?
+  rolledBackBy      String?
+  rolledBackAt      DateTime?
+  rolledBackReason  String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([organizationId, agentCode, topic, version])
+  @@index([organizationId, agentCode, status, topic])
+}
+
+/// Memória aprovada escopada a UM cargo (`JobRole.code`, string simples sem FK viva).
+model RoleMemoryRecord {
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  jobRoleCode       String
+  topic             String
+  category          MemoryCategory
+  content           Json
+  evidence          Json         @default("[]")
+  version           Int          @default(1)
+  status            MemoryStatus @default(APPROVED)
+  sourceCandidateId String
+  supersedesId      String?
+  supersededById    String?
+  rolledBackBy      String?
+  rolledBackAt      DateTime?
+  rolledBackReason  String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([organizationId, jobRoleCode, topic, version])
+  @@index([organizationId, jobRoleCode, status, topic])
+}
+
+/// Memória aprovada compartilhada pela organização inteira (nenhum agente/cargo específico).
+model OrganizationMemoryRecord {
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  topic             String
+  category          MemoryCategory
+  content           Json
+  evidence          Json         @default("[]")
+  version           Int          @default(1)
+  status            MemoryStatus @default(APPROVED)
+  sourceCandidateId String
+  supersedesId      String?
+  supersededById    String?
+  rolledBackBy      String?
+  rolledBackAt      DateTime?
+  rolledBackReason  String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([organizationId, topic, version])
+  @@index([organizationId, status, topic])
 }

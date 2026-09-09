@@ -5268,6 +5268,215 @@ paths:
         '409':
           description: Handoff já aceito (não pode mais ser cancelado)
 
+  /memory/candidates:
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        PROMPT 9 — Cria um `LearningCandidate` a partir de UMA `AgentExecution` real e terminal
+        (nunca especulativa). `proposedContent.summary`/`reflection.rationale` passam por uma
+        camada determinística de PII (regex de CPF/e-mail/telefone) antes de qualquer
+        persistência. Categorias sensíveis (pricing/discount/forecast rule/contract/finance/
+        compliance/write automation/capability) NUNCA aprovam automaticamente; `OPERATIONAL` sem
+        PII residual aprova como SYSTEM na hora, criando já a memória ativa.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sourceExecutionId, targetScope, topic, category, proposedContent, reflection]
+              properties:
+                sourceExecutionId: { type: string, description: 'AgentExecution.id de origem.' }
+                targetScope: { type: string, enum: [AGENT, ROLE, ORGANIZATION] }
+                topic: { type: string, description: 'Chave de conflito/supersede dentro do escopo.' }
+                category:
+                  type: string
+                  enum: [PRICING, DISCOUNT, FORECAST_RULE, CONTRACT, FINANCE, COMPLIANCE, WRITE_AUTOMATION, CAPABILITY, OPERATIONAL]
+                proposedContent:
+                  type: object
+                  required: [summary]
+                  properties: { summary: { type: string } }
+                reflection:
+                  type: object
+                  required: [rationale]
+                  properties: { rationale: { type: string } }
+                evidence:
+                  type: array
+                  items:
+                    type: object
+                    required: [sourceAgent, summary, recordedAt]
+                    properties:
+                      sourceAgent: { type: string }
+                      sourceExecutionId: { type: string }
+                      capabilityCode: { type: string }
+                      summary: { type: string }
+                      recordedAt: { type: string }
+      responses:
+        '201':
+          description: LearningCandidate criado (`PROPOSED`, ou já `APPROVED` via auto-aprovação) — ver `data.candidate`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: AgentExecution de origem não encontrada
+        '409':
+          description: Execução ainda não terminal, ou escopo ROLE sem jobRoleCode na execução
+    get:
+      tags: [Cargos e Agentes]
+      summary: Lista os LearningCandidate do tenant, mais recentes primeiro (filtro opcional por `status` na query)
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema: { type: string, enum: [PROPOSED, UNDER_REVIEW, APPROVED, REJECTED, SUPERSEDED, ROLLED_BACK] }
+      responses:
+        '200':
+          description: Lista de LearningCandidate — ver `data.candidates`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /memory/candidates/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Detalha um LearningCandidate pelo id
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /memory/candidates/{id}/approve:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Aprova um LearningCandidate `PROPOSED`/`UNDER_REVIEW` — cria (ou reaproveita, se
+        reconfirmação idêntica) a linha real na tabela de memória do escopo certo. Quando já existe
+        memória ATIVA com conteúdo DIFERENTE para o mesmo tópico, exige `supersedesMemoryId`
+        apontando explicitamente para ela (nunca um supersede implícito) — sem isso, `409
+        MEMORY_CONFLICT`.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notes: { type: string }
+                supersedesMemoryId: { type: string }
+      responses:
+        '200':
+          description: LearningCandidate aprovado — ver `data.candidate`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Candidato já decidido, ou conflito de memória não resolvido (MEMORY_CONFLICT)
+
+  /memory/candidates/{id}/reject:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: Rejeita um LearningCandidate `PROPOSED`/`UNDER_REVIEW` — nunca cria memória nenhuma
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { type: object, properties: { notes: { type: string } } }
+      responses:
+        '200':
+          description: LearningCandidate rejeitado — ver `data.candidate`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Candidato já decidido
+
+  /memory/agent/{code}:
+    parameters:
+      - name: code
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Memória ATIVA (status APPROVED) de um agente — nunca inclui PROPOSED/UNDER_REVIEW/REJECTED/SUPERSEDED/ROLLED_BACK
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+
+  /memory/role/{code}:
+    parameters:
+      - name: code
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Memória ATIVA (status APPROVED) de um cargo
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+
+  /memory/organization:
+    get:
+      tags: [Cargos e Agentes]
+      summary: Memória ATIVA (status APPROVED) compartilhada pela organização inteira
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+
+  /memory/{scope}/{id}/rollback:
+    parameters:
+      - name: scope
+        in: path
+        required: true
+        schema: { type: string, enum: [agent, role, organization] }
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Revoga (`ROLLED_BACK`) uma memória hoje `APPROVED` — só ADMIN/GESTOR. Não cria uma nova
+        versão (reverter desliga a atual, não é uma nova opinião); a memória revogada some
+        imediatamente das consultas de "uso futuro" (`/memory/agent`, `/memory/role`,
+        `/memory/organization`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [reason], properties: { reason: { type: string } } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Memória já não está APPROVED
+
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:
     get:
