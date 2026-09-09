@@ -1,12 +1,23 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- regiões roláveis focáveis por teclado */
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Download, WifiOff, Sparkles, CheckSquare, Send, X, Loader2 } from 'lucide-react';
+import {
+  Download,
+  WifiOff,
+  Sparkles,
+  CheckSquare,
+  Send,
+  X,
+  Loader2,
+  Search,
+  Bookmark,
+} from 'lucide-react';
 import type { Lead, LeadStatus } from '../types';
 import { KanbanColumn } from '../features/crm/components/KanbanColumn';
 import { KanbanCard } from '../features/crm/components/KanbanCard';
 import { LeadDetailDrawer } from '../features/crm/components/LeadDetailDrawer';
 import { BitrixImportModal } from '../features/crm/components/BitrixImportModal';
+import { SavedViewsPanel, type SavedViewItem } from '../features/crm/components/SavedViewsPanel';
 import { bitrixApi } from '../features/integrations/bitrix/bitrix.api';
 import { api } from '../lib/api';
 import { ContextualTip } from './ui/ContextualTip';
@@ -96,8 +107,34 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
   const [selectedLeadIds, setSelectedLeadIds] = useState<Set<string>>(new Set());
   const [selectionMode, setSelectionMode] = useState(false);
   const [isBitrixModalOpen, setIsBitrixModalOpen] = useState(false);
+  const [isSavedViewsOpen, setIsSavedViewsOpen] = useState(false);
   const [isBatchUpdating, setIsBatchUpdating] = useState(false);
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+
+  // Onda B2a (Agente 00, Commercial AI OS) — filtros reais do pipeline (dono + busca), persistidos
+  // na URL como `owner`/`q`, mesmo mecanismo já usado para `funnel`/`lead`.
+  const ownerFilter = searchParams.get('owner') ?? '';
+  const searchQuery = searchParams.get('q') ?? '';
+
+  const ownerNameById = useMemo(
+    () => Object.fromEntries(users.map((u) => [u.id, u.name])),
+    [users],
+  );
+
+  const filteredLeads = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return leads.filter((lead) => {
+      if (ownerFilter && lead.owner !== ownerFilter) return false;
+      if (query) {
+        const haystack = [lead.company?.tradeName, lead.company?.legalName, lead.contact?.name]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+      return true;
+    });
+  }, [leads, ownerFilter, searchQuery]);
 
   useEffect(() => {
     // /api/users nunca existiu como rota (404 silencioso todo carregamento — achado do teste
@@ -358,13 +395,15 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     );
   }, [setSearchParams]);
 
+  // Opera sobre os leads FILTRADOS visíveis, não todos os `leads` carregados — "selecionar todos"
+  // com um filtro ativo deve selecionar o que está na tela, não leads escondidos pelo filtro.
   const handleSelectAll = useCallback(() => {
-    if (selectedLeadIds.size === leads.length) {
+    if (selectedLeadIds.size === filteredLeads.length) {
       setSelectedLeadIds(new Set());
     } else {
-      setSelectedLeadIds(new Set(leads.map((l) => l.id)));
+      setSelectedLeadIds(new Set(filteredLeads.map((l) => l.id)));
     }
-  }, [leads, selectedLeadIds.size]);
+  }, [filteredLeads, selectedLeadIds.size]);
 
   const handleClearSelection = useCallback(() => {
     setSelectedLeadIds(new Set());
@@ -405,9 +444,16 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     const ownerName = ownerUser?.name || ownerId;
     setIsBatchUpdating(true);
     try {
+      // Lead.owner é contrato User.id, não nome (DATA-003, mesma correção já aplicada em
+      // handleOwnerChange de LeadDetailDrawer.tsx) — este caminho de reatribuição em lote gravava
+      // o nome até aqui, divergindo do resto da aplicação (round-robin, import Bitrix, verificação
+      // de duplicidade em LeadUseCases.ts, que resolve `existing.owner` via
+      // `prisma.user.findUnique({ where: { id } })`) e do próprio KanbanCard.tsx, que já espera
+      // resolver o nome de exibição a partir do id (ver ownerNameById acima). `ownerName` aqui
+      // continua existindo só para a mensagem do toast, não para o payload.
       const result = await api.post<{ updatedCount: number; total: number; failedCount: number }>(
         '/api/leads/batch-update',
-        { leadIds: Array.from(selectedLeadIds), updates: { owner: ownerName } },
+        { leadIds: Array.from(selectedLeadIds), updates: { owner: ownerId } },
       );
       if (result.failedCount > 0) {
         toast.error(
@@ -465,6 +511,70 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     [funnelProp, setSearchParams],
   );
 
+  // Aplica funil+filtros de uma view salva de uma vez (Onda B2b) — mesma lógica de
+  // handleFunnelChange (não se aplica com funnel fixado por prop, fecha o drawer aberto), mas
+  // reconstrói a URL inteira em vez de alternar só o funil.
+  const handleApplySavedView = useCallback(
+    (view: SavedViewItem) => {
+      if (funnelProp) return;
+      SoundFX.play('navigate');
+      setSelectedLeadIds(new Set());
+      setSearchParams(
+        (() => {
+          const next = new URLSearchParams();
+          if (view.funnel === 'Negocio') next.set('funnel', 'Negocio');
+          if (view.filters.owner) next.set('owner', view.filters.owner);
+          if (view.filters.q) next.set('q', view.filters.q);
+          return next;
+        })(),
+        { replace: true },
+      );
+    },
+    [funnelProp, setSearchParams],
+  );
+
+  const handleOwnerFilterChange = useCallback(
+    (value: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (value) next.set('owner', value);
+          else next.delete('owner');
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
+  const handleSearchQueryChange = useCallback(
+    (value: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (value) next.set('q', value);
+          else next.delete('q');
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('owner');
+        next.delete('q');
+        return next;
+      },
+      { replace: true },
+    );
+  }, [setSearchParams]);
+
   const handleExportCsv = async () => {
     try {
       const response = await fetch('/api/leads/export/csv', {
@@ -493,11 +603,11 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     const grouped: Partial<Record<LeadStatus, Lead[]>> = Object.fromEntries(
       columns.map((status) => [status, [] as Lead[]]),
     );
-    leads.forEach((lead) => {
+    filteredLeads.forEach((lead) => {
       grouped[lead.status]?.push(lead);
     });
     return grouped;
-  }, [leads, columns]);
+  }, [filteredLeads, columns]);
 
   return (
     <div
@@ -545,6 +655,17 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          {/* Views Salvas (Onda B2b) */}
+          <Button
+            onClick={() => setIsSavedViewsOpen(true)}
+            variant="secondary"
+            className="text-xs"
+            title="Ver e salvar views do pipeline (funil + filtros)"
+          >
+            <Bookmark className="w-4 h-4 shrink-0" />
+            <span>Views Salvas</span>
+          </Button>
+
           {/* Botão de Modo de Seleção Múltipla */}
           <Button
             onClick={() => {
@@ -604,6 +725,56 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         </div>
       </div>
 
+      {/* Barra de filtros do pipeline (Onda B2a) — busca por texto + dono, persistidos na URL. */}
+      <div className="px-6 py-3 border-b border-line bg-surface/60 flex flex-wrap items-center gap-3 shrink-0">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <label htmlFor="crm-board-search" className="sr-only">
+            Buscar por empresa ou contato
+          </label>
+          <Search className="w-4 h-4 text-ink-2 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            id="crm-board-search"
+            type="search"
+            value={searchQuery}
+            onChange={(e) => handleSearchQueryChange(e.target.value)}
+            placeholder="Buscar por empresa ou contato..."
+            className="w-full pl-9 pr-3 py-2 bg-surface-2 border border-line rounded-xl text-xs text-ink placeholder:text-ink-2 focus:outline-none focus:border-brand"
+          />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <label htmlFor="crm-board-owner-filter" className="text-xs font-semibold text-ink-2">
+            Filtrar por dono:
+          </label>
+          <select
+            id="crm-board-owner-filter"
+            value={ownerFilter}
+            onChange={(e) => handleOwnerFilterChange(e.target.value)}
+            className="px-2.5 py-2 bg-surface-2 border border-line rounded-xl text-xs font-medium text-ink focus:outline-none focus:border-brand"
+          >
+            <option value="">Todos os donos</option>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {(ownerFilter || searchQuery) && (
+          <>
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="text-xs font-semibold text-brand-active dark:text-brand-2 hover:underline"
+            >
+              Limpar filtros
+            </button>
+            <span className="text-xs text-ink-2 sm:ml-auto">
+              {filteredLeads.length} de {leads.length} leads
+            </span>
+          </>
+        )}
+      </div>
+
       {/* Contextual Tip Banner */}
       {!embedded && (
         <div className="px-6 pt-4 shrink-0">
@@ -622,7 +793,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           ganho real — não vale o risco de desalinhar abertura/fechamento num componente grande. */}
       {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
-        className="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
+        className="flex-1 min-h-[320px] overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
         role="region"
         // Div não-interativa com scroll — tabIndex é intencional (torna a região focável/rolável
         // via teclado), não um erro de a11y. Mesmo padrão de VirtualTable.tsx.
@@ -670,6 +841,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
                   selectedLeadIds={selectedLeadIds}
                   onToggleSelect={handleToggleSelect}
                   selectionMode={selectionMode}
+                  ownerNameById={ownerNameById}
                 />
               ))}
             </div>
@@ -697,14 +869,17 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
               onClick={handleSelectAll}
               className="text-[11px] font-bold text-brand-active dark:text-brand-2 hover:underline ml-1"
             >
-              {selectedLeadIds.size === leads.length ? 'Desmarcar Todos' : 'Todos'}
+              {selectedLeadIds.size === filteredLeads.length ? 'Desmarcar Todos' : 'Todos'}
             </button>
           </div>
 
           {/* Mover Etapa em Massa */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-semibold text-ink-2">Etapa:</span>
+            <label htmlFor="crm-board-batch-stage" className="text-[11px] font-semibold text-ink-2">
+              Etapa:
+            </label>
             <select
+              id="crm-board-batch-stage"
               onChange={(e) => {
                 if (e.target.value) handleBatchMoveStage(e.target.value);
               }}
@@ -725,8 +900,11 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
 
           {/* Reatribuir Vendedor */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-semibold text-ink-2">Dono:</span>
+            <label htmlFor="crm-board-batch-owner" className="text-[11px] font-semibold text-ink-2">
+              Dono:
+            </label>
             <select
+              id="crm-board-batch-owner"
               onChange={(e) => {
                 if (e.target.value) handleBatchReassignOwner(e.target.value);
               }}
@@ -776,6 +954,15 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         isOpen={isBitrixModalOpen}
         onClose={() => setIsBitrixModalOpen(false)}
         onImportSuccess={fetchLeads}
+      />
+
+      <SavedViewsPanel
+        isOpen={isSavedViewsOpen}
+        onClose={() => setIsSavedViewsOpen(false)}
+        currentFunnel={funnel}
+        currentFilters={{ owner: ownerFilter || undefined, q: searchQuery || undefined }}
+        ownerNameById={ownerNameById}
+        onApply={handleApplySavedView}
       />
 
       {selectedLeadId && (
