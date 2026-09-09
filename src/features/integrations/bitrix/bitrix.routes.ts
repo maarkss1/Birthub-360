@@ -11,6 +11,7 @@ import {
   createDailyPlanActivity,
   createDailyPlanClosing,
   createExtractionRun,
+  createHubTask,
   createSyncRule,
   deleteExtractionRun,
   deleteSyncRule,
@@ -32,6 +33,8 @@ import {
   listBitrixDeals,
   listBitrixLeads,
   listExtractionRuns,
+  listHubTaskAssignees,
+  listHubTasks,
   listRecentBitrixSyncLogs,
   listSyncRules,
   postCommentToBitrix,
@@ -40,6 +43,7 @@ import {
   setInboundEventsEnabled,
   setSyncRuleActive,
   testBitrixConnection,
+  toggleHubTask,
 } from './bitrix.service.js';
 import type { ExtractionFileFormat } from './service/extractionFiles.js';
 
@@ -957,6 +961,61 @@ router.post(
         nextDayGoals: Array.isArray(nextDayGoals) ? nextDayGoals : [],
       });
       res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// ── Widget "Tarefas pendentes" do Hub Executivo (Sincronizado com Bitrix24) ────────────────────
+// Pedido explícito do usuário: as tarefas delegadas aqui são tarefas REAIS do Bitrix24
+// (tasks.task.*), não um estado local — ver o comentário de topo de hubTasks.service.ts.
+
+router.get('/hub-tasks', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { organizationId, id: userId, email } = (req as AuthRequest).user;
+    const user = { id: userId, email };
+    const [tasks, assignees] = await Promise.all([
+      listHubTasks(organizationId, user),
+      listHubTaskAssignees(organizationId),
+    ]);
+    res.json({ success: true, data: { tasks, assignees } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post(
+  '/hub-tasks',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId, email } = (req as AuthRequest).user;
+      const { text, assigneeId } = req.body;
+      if (!text || !assigneeId) {
+        res.status(400).json({ success: false, error: 'text e assigneeId são obrigatórios.' });
+        return;
+      }
+      const tasks = await createHubTask(
+        organizationId,
+        { id: userId, email },
+        { text: String(text), assigneeId: String(assigneeId) },
+      );
+      res.json({ success: true, data: { tasks } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/hub-tasks/:id/toggle',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId, email } = (req as AuthRequest).user;
+      const taskId = routeParam(req.params.id, 'id');
+      const { done } = req.body;
+      const tasks = await toggleHubTask(organizationId, { id: userId, email }, taskId, !!done);
+      res.json({ success: true, data: { tasks } });
     } catch (error) {
       next(error);
     }

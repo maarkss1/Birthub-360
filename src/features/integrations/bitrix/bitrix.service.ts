@@ -132,3 +132,12 @@ export {
   getPendingDailyClosing,
   createDailyPlanClosing,
 } from './service/dailyPlanClosing.service.js';
+
+// Widget "Tarefas pendentes" do Hub Executivo — delegação de tarefas sincronizada com Bitrix24
+export type { HubTask } from './service/hubTasks.service.js';
+export {
+  listHubTaskAssignees,
+  listHubTasks,
+  createHubTask,
+  toggleHubTask,
+} from './service/hubTasks.service.js';
