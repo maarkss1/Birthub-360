@@ -144,7 +144,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       if (!Number.isInteger(index) || index < 1 || index > hits.length || seen.has(index)) continue;
       seen.add(index);
 
-      const hit = hits[index - 1]!;
+      const hit = hits[index - 1];
       citations.push({
         documentId: hit.documentId,
         chunkId: hit.chunkId,

@@ -52,15 +52,20 @@ export async function runDailyFollowUpScan(): Promise<{ eligible: number; sentCo
     const customFields = (lead.customFields as Record<string, unknown>) || {};
     if (customFields.optOutWhatsApp) continue;
     if (!lead.contactId || !lead.organizationId) continue;
+    // TS não propaga o narrowing do guard acima para dentro do closure de requestContext.run
+    // (poderia rodar depois de `lead` mudar, na visão conservadora do checker) — variáveis
+    // locais preservam o narrowing, então extraímos aqui em vez de usar `!` lá dentro.
+    const contactId = lead.contactId;
+    const organizationId = lead.organizationId;
 
     try {
-      await requestContext.run({ tenantId: lead.organizationId }, async () => {
-        const contact = await prisma.contact.findUnique({ where: { id: lead.contactId! } });
+      await requestContext.run({ tenantId: organizationId }, async () => {
+        const contact = await prisma.contact.findUnique({ where: { id: contactId } });
         const phone = contact?.whatsapp || contact?.phone;
         if (!phone) return;
 
         await sendWhatsAppMessage(
-          lead.organizationId!,
+          organizationId,
           phone,
           `Olá! Tudo bem? Estou passando para dar continuidade ao nosso contato de alguns dias atrás. Faz sentido falarmos sobre a proposta essa semana?`,
           ['Sim, tenho interesse', 'Agora não'],

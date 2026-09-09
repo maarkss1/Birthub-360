@@ -66,18 +66,23 @@ export async function runAutoAnonymizeSweep(): Promise<{ anonymizedCount: number
     let anonymizedCount = 0;
     for (const lead of leadsToAnonymize) {
       if (!lead.contactId || !lead.organizationId) continue;
+      // TS não propaga o narrowing do guard acima para dentro do closure de requestContext.run
+      // (poderia rodar depois de `lead` mudar, na visão conservadora do checker) — variáveis
+      // locais preservam o narrowing, então extraímos aqui em vez de usar `!` lá dentro.
+      const contactId = lead.contactId;
+      const organizationId = lead.organizationId;
 
-      const alreadyAnonymized = await requestContext.run({ tenantId: lead.organizationId }, () =>
+      const alreadyAnonymized = await requestContext.run({ tenantId: organizationId }, () =>
         prisma.contact.findFirst({
-          where: { id: lead.contactId!, name: '[titular anonimizado — LGPD]' },
+          where: { id: contactId, name: '[titular anonimizado — LGPD]' },
           select: { id: true },
         }),
       );
       if (alreadyAnonymized) continue;
 
       await eraseDataSubject({
-        organizationId: lead.organizationId,
-        contactId: lead.contactId,
+        organizationId,
+        contactId,
       });
       anonymizedCount++;
     }

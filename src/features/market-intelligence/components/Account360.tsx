@@ -509,11 +509,11 @@ function AccountRecordCard({
               {status}
             </span>
           )}
-          {canExecute && (
+          {canExecute && recommendationId && (
             <Button
               size="sm"
               disabled={Boolean(executingId)}
-              onClick={() => onExecute?.(recommendationId!)}
+              onClick={() => onExecute?.(recommendationId)}
             >
               {isExecuting ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : null}
               {isExecuting ? 'Executando...' : 'Executar'}

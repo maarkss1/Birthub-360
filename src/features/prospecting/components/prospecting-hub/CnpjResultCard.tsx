@@ -42,7 +42,11 @@ export function CnpjResultCard({
   isPromoting: boolean;
   promoted: boolean;
 }) {
-  const d = result.data!;
+  // O chamador (CnpjSearchPanel) só renderiza este componente quando `cnpjResult.data` existe,
+  // mas isso não é visível para o TS através da fronteira de props — guard local narrowa `d`
+  // pro resto do componente sem precisar de `!`.
+  if (!result.data) return null;
+  const d = result.data;
   const isActive = d.situacaoCadastral?.toUpperCase() === 'ATIVA';
 
   return (
@@ -102,10 +106,17 @@ export function CnpjResultCard({
           </p>
           {result.marketRisk.available ? (
             <div className="space-y-1.5">
+              {/* tier/transporters são sempre preenchidos quando available === true — ver
+                  rntrcTerritorialRisk.service.ts: unavailable() zera esses campos, o retorno com
+                  available:true só acontece já com os totais calculados. TS não expressa essa
+                  correlação porque available/tier/transporters não são um union discriminado. */}
+              {/* biome-ignore lint/style/noNonNullAssertion: ver comentário acima */}
               <Badge variant={RNTRC_TIER_VARIANT[result.marketRisk.tier!]}>
+                {/* biome-ignore lint/style/noNonNullAssertion: ver comentário acima da Badge */}
                 {RNTRC_TIER_LABEL[result.marketRisk.tier!]}
               </Badge>
               <p className="text-sm text-ink-2">
+                {/* biome-ignore lint/style/noNonNullAssertion: ver comentário acima da Badge */}
                 {number.format(result.marketRisk.transporters!)} transportadoras registradas no
                 RNTRC em {result.marketRisk.uf} · percentil {result.marketRisk.percentile} entre as
                 UFs do Brasil
