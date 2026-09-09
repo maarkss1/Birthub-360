@@ -22,6 +22,7 @@ import { featureFlagsRouter } from '../features/feature-flags/routes/featureFlag
 import { gamificationRoutes } from '../features/gamification/routes/gamification.routes.js';
 import { birthVoiceRoutes } from '../features/integrations/birth-voice/birthVoice.routes.js';
 import { bitrixRoutes } from '../features/integrations/bitrix/bitrix.routes.js';
+import { hubTasksRoutes } from '../features/integrations/bitrix/hubTasks.routes.js';
 import { googleRoutes } from '../features/integrations/google/google.routes.js';
 import { threecxRoutes } from '../features/integrations/threecx/threecx.routes.js';
 import { whatsappRoutes } from '../features/integrations/whatsapp/whatsapp.routes.js';
@@ -152,6 +153,7 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/integrations/3cx', authenticateToken, requireTenant, threecxRoutes);
   app.use('/api/google', authenticateToken, requireTenant, googleRoutes);
   app.use('/api/bitrix', authenticateToken, requireTenant, bitrixRoutes);
+  app.use('/api/bitrix', authenticateToken, requireTenant, hubTasksRoutes);
   app.use('/api/team', authenticateToken, requireTenant, teamRoutes);
   app.use('/api/module-access', authenticateToken, requireTenant, moduleAccessRoutes);
   // Fundação Multi-Cargo (PROMPT 1) — catálogo de cargos/agentes é leitura livre por usuário
