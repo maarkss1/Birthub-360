@@ -83,6 +83,10 @@ export function CandidateCard({
   const finalScore = promotedResult?.fit?.score ?? candidate.fitScoreEstimate;
   const isEstimate = !promotedResult?.fit;
   const enrichment = promotedResult?.enrichment;
+  // Variável local em vez de `candidate.phone` repetido: o narrowing de `candidate.phone &&`
+  // não sobrevive dentro do closure do onClick do botão de WhatsApp abaixo (TS não propaga
+  // narrowing de acesso a propriedade para dentro de funções aninhadas).
+  const candidatePhone = candidate.phone;
   const [chatTarget, setChatTarget] = useState<{ phone: string; name: string } | null>(null);
   const [icebreakerText, setIcebreakerText] = useState<string | null>(
     candidate.icebreakerHook ?? null,
@@ -165,26 +169,23 @@ export function CandidateCard({
                 /ano
               </span>
             )}
-            {candidate.phone &&
-              (getTelephoneLink(candidate.phone) ? (
+            {candidatePhone &&
+              (getTelephoneLink(candidatePhone) ? (
                 <a
-                  href={getTelephoneLink(candidate.phone)}
+                  href={getTelephoneLink(candidatePhone)}
                   className="flex items-center gap-1.5 hover:text-ink hover:underline"
                 >
-                  <Phone size={14} className="text-ink-2" /> {candidate.phone}
+                  <Phone size={14} className="text-ink-2" /> {candidatePhone}
                 </a>
               ) : (
                 <span className="flex items-center gap-1.5">
-                  <Phone size={14} className="text-ink-2" /> {candidate.phone}
+                  <Phone size={14} className="text-ink-2" /> {candidatePhone}
                 </span>
               ))}
-            {getWhatsAppLink(candidate.phone) && (
+            {candidatePhone && getWhatsAppLink(candidatePhone) && (
               <button
                 type="button"
-                onClick={() =>
-                  candidate.phone &&
-                  setChatTarget({ phone: candidate.phone, name: candidate.tradeName })
-                }
+                onClick={() => setChatTarget({ phone: candidatePhone, name: candidate.tradeName })}
                 title="Número coletado — a existência de WhatsApp não foi verificada"
                 className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 hover:underline"
               >
@@ -310,6 +311,9 @@ export function CandidateCard({
                   });
                   const tel = getTelephoneLink(dm.phone);
                   const whatsapp = getWhatsAppLink(dm.phone);
+                  // Variável local: o narrowing de `whatsapp && dm.phone &&` não sobrevive dentro
+                  // do closure do onClick abaixo (mesmo motivo de candidatePhone acima).
+                  const dmPhone = dm.phone;
                   return (
                     <div
                       key={idx}
@@ -350,12 +354,10 @@ export function CandidateCard({
                           <Phone size={12} /> {dm.phone}
                         </a>
                       )}
-                      {whatsapp && (
+                      {whatsapp && dmPhone && (
                         <button
                           type="button"
-                          onClick={() =>
-                            dm.phone && setChatTarget({ phone: dm.phone, name: dm.name })
-                          }
+                          onClick={() => setChatTarget({ phone: dmPhone, name: dm.name })}
                           title="Número coletado — a existência de WhatsApp não foi verificada"
                           className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 hover:underline"
                         >

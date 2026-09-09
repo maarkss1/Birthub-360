@@ -417,7 +417,10 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
               {errors.lineItems.root.message}
             </p>
           )}
-          <div className="space-y-3" role="group" aria-labelledby="proposta-itens-heading">
+          <fieldset
+            className="space-y-3 border-0 p-0 m-0 min-w-0"
+            aria-labelledby="proposta-itens-heading"
+          >
             {fields.map((field, index) => (
               <div
                 key={field.id}
@@ -488,7 +491,7 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
                 </div>
               </div>
             ))}
-          </div>
+          </fieldset>
         </div>
 
         <div className="flex justify-end gap-6 text-sm">

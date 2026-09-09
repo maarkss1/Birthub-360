@@ -55,7 +55,9 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
   const [isSearchingPeople, setIsSearchingPeople] = useState(false);
   const [peopleError, setPeopleError] = useState<string | null>(null);
   const [peopleTotal, setPeopleTotal] = useState<number | null>(null);
-  const [peopleWithLinkedin, setPeopleWithLinkedin] = useState<DecisionMaker[]>([]);
+  const [peopleWithLinkedin, setPeopleWithLinkedin] = useState<
+    (DecisionMaker & { linkedinUrl: string })[]
+  >([]);
 
   // --- Gerador manual (fallback) ---
   const [manualName, setManualName] = useState('');
@@ -107,7 +109,11 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         { timeoutMs: 30_000 },
       );
       setPeopleTotal(result.decisionMakers.length);
-      setPeopleWithLinkedin(result.decisionMakers.filter((dm) => !!dm.linkedinUrl));
+      setPeopleWithLinkedin(
+        result.decisionMakers.filter(
+          (dm): dm is DecisionMaker & { linkedinUrl: string } => !!dm.linkedinUrl,
+        ),
+      );
       if (result.error) setPeopleError(result.error);
     } catch (err) {
       setPeopleError(getErrorMessage(err, 'Falha ao buscar decisores'));
@@ -407,10 +413,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                     {dm.title && <p className="text-xs text-ink-2">{dm.title}</p>}
                   </div>
                   <a
-                    // Sempre presente: peopleWithLinkedin só recebe decisores filtrados por
-                    // `!!dm.linkedinUrl` (ver setPeopleWithLinkedin acima).
-                    // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
-                    href={dm.linkedinUrl!}
+                    href={dm.linkedinUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1 text-xs text-blue-500 hover:underline"

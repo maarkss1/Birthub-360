@@ -134,7 +134,7 @@ function resolveKpiStatus(
   if (grant.accessLevel === 'REQUEST') return 'REQUEST';
 
   const binding = getToolBinding(capabilityCode);
-  if (!binding || binding.reason !== 'AVAILABLE' || !binding.available) {
+  if (binding?.reason !== 'AVAILABLE' || !binding.available) {
     return (binding?.reason ?? 'TOOL_UNAVAILABLE') as WorkspaceCapabilityStatus;
   }
 
@@ -155,7 +155,7 @@ export async function getWorkspaceForUser(
   if (!primaryJobRole) return emptyWorkspace('NO_JOB_ROLE');
 
   const jobRole = await getJobRoleById(primaryJobRole.id);
-  if (!jobRole || !jobRole.isActive) return emptyWorkspace('NO_JOB_ROLE');
+  if (!jobRole?.isActive) return emptyWorkspace('NO_JOB_ROLE');
 
   const definition = getWorkspaceDefinition(jobRole.code);
   const supervisorProfile = getSupervisorProfile(jobRole.code);

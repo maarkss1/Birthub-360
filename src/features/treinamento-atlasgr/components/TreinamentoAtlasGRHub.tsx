@@ -276,6 +276,9 @@ export function TreinamentoAtlasGRHub() {
                   const isDone = completedModules.includes(m.file);
                   const isSelected = selectedModule === m.file;
                   return (
+                    // Contém um <button> real (toggle de "concluído") como controle próprio —
+                    // <button> aninhando outro <button> seria HTML inválido.
+                    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
                     <div
                       key={m.file}
                       role="button"
