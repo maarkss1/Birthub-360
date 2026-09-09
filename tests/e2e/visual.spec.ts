@@ -9,7 +9,17 @@ import { signUp, uniqueTestEmail, waitForAppReady } from './helpers';
 // maxDiffPixels dá folga pro relógio ao vivo (ClockCalendarWidget, atualiza a cada segundo) e pra
 // jitter normal de anti-aliasing/fontes entre execuções — sem isso a screenshot nunca estabiliza
 // (o segundo do relógio muda enquanto o Playwright tira a foto de novo pra comparar consigo mesma).
-const SCREENSHOT_OPTIONS = { fullPage: true, maxDiffPixels: 600 };
+//
+// Achado real (CI do PR #407, pós barra de filtros da Onda B2a): com a baseline crm-board-*
+// atualizada corretamente, o diff residual ficou consistentemente em 600-660px (ratio 0.01) — a
+// baseline foi gerada num runner do GitHub Actions (job "Gerar baselines visuais Linux") e
+// comparada contra outro runner efêmero diferente rodando a suíte normal; a imagem de diff mostra
+// que a divergência inteira está no anti-aliasing do texto do rótulo "Filtrar por dono:" e do
+// select "Todos os donos" (a barra de filtros nova tem mais texto na tela que antes, logo mais
+// área sensível a esse jitter entre runners), não numa mudança de layout real. 900px dá folga
+// real acima do observado sem mascarar uma regressão de verdade (que produziria milhares de
+// pixels de diff, como já aconteceu quando a baseline estava genuinamente desatualizada).
+const SCREENSHOT_OPTIONS = { fullPage: true, maxDiffPixels: 900 };
 // O dashboard também tem a saudação por horário do dia e a data de hoje (greeting()/todayLabel em
 // SinglePageDashboard.tsx — "Bom dia"/"Boa tarde"/"Boa noite" e a data por extenso, cada
 // combinação com largura de texto diferente da baseline capturada num dia/hora diferentes) e o
