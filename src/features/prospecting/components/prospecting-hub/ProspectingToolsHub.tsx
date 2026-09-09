@@ -170,6 +170,9 @@ export function ProspectingToolsHub() {
     );
   }
 
+  // Sempre encontra: TOOL_TABS cobre exaustivamente os 7 valores de ToolId, e activeTool !== null
+  // já foi garantido pelo `return` acima.
+  // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
   const activeMeta = TOOL_TABS.find((t) => t.id === activeTool)!;
   const configured = status?.[activeMeta.statusKey]?.configured ?? false;
 

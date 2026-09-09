@@ -42,7 +42,8 @@ export function CnpjResultCard({
   isPromoting: boolean;
   promoted: boolean;
 }) {
-  const d = result.data!;
+  if (!result.data) return null;
+  const d = result.data;
   const isActive = d.situacaoCadastral?.toUpperCase() === 'ATIVA';
 
   return (
@@ -100,13 +101,15 @@ export function CnpjResultCard({
           <p className="text-[10px] tracking-wider font-bold uppercase text-ink-2 mb-2 flex items-center gap-1.5">
             <Truck size={12} /> Sinal territorial RNTRC (ANTT) — {result.marketRisk.uf ?? d.state}
           </p>
-          {result.marketRisk.available ? (
+          {result.marketRisk.available &&
+          result.marketRisk.tier &&
+          result.marketRisk.transporters != null ? (
             <div className="space-y-1.5">
-              <Badge variant={RNTRC_TIER_VARIANT[result.marketRisk.tier!]}>
-                {RNTRC_TIER_LABEL[result.marketRisk.tier!]}
+              <Badge variant={RNTRC_TIER_VARIANT[result.marketRisk.tier]}>
+                {RNTRC_TIER_LABEL[result.marketRisk.tier]}
               </Badge>
               <p className="text-sm text-ink-2">
-                {number.format(result.marketRisk.transporters!)} transportadoras registradas no
+                {number.format(result.marketRisk.transporters)} transportadoras registradas no
                 RNTRC em {result.marketRisk.uf} · percentil {result.marketRisk.percentile} entre as
                 UFs do Brasil
                 {result.marketRisk.metadata?.competencia

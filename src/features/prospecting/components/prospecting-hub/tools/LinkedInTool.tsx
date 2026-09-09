@@ -407,6 +407,9 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                     {dm.title && <p className="text-xs text-ink-2">{dm.title}</p>}
                   </div>
                   <a
+                    // Sempre presente: peopleWithLinkedin só recebe decisores filtrados por
+                    // `!!dm.linkedinUrl` (ver setPeopleWithLinkedin acima).
+                    // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
                     href={dm.linkedinUrl!}
                     target="_blank"
                     rel="noreferrer"

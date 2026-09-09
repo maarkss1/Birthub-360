@@ -543,6 +543,9 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     const jobs = leadsToEnrich.map((lead) => ({
       name: 'enrichment-job',
       data: {
+        // Sempre não-nulo: a query acima filtra `companyId: { not: null }` — Prisma não propaga
+        // isso para o tipo do `select`, só em runtime.
+        // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
         companyId: lead.companyId!,
         organizationId,
         cnpj: lead.company?.cnpj || undefined,
@@ -552,6 +555,8 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
 
     await enrichmentQueue.addBulk(jobs);
 
+    // Sempre não-nulo: mesma query filtrada por `companyId: { not: null }` acima.
+    // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
     const companyIds = Array.from(new Set(leadsToEnrich.map((l) => l.companyId!)));
     await prisma.company.updateMany({
       where: { id: { in: companyIds } },

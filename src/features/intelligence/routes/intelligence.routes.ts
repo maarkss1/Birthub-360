@@ -208,10 +208,10 @@ router.post('/qualify', async (req: Request, res: Response, next: NextFunction):
       const existing = await leadsQueue.getJob(jobId);
       const existingState = existing ? await existing.getState() : null;
 
-      if (existingState && ['waiting', 'active', 'delayed'].includes(existingState)) {
+      if (existing && existingState && ['waiting', 'active', 'delayed'].includes(existingState)) {
         // Já há uma qualificação em andamento para este lead — reaproveita em vez de
         // duplicar a chamada de IA e correr duas atualizações concorrentes do mesmo lead.
-        job = existing!;
+        job = existing;
       } else {
         // Job anterior com este id já terminou (completed/failed) ou nunca existiu: remove
         // antes de reusar o mesmo jobId — mesmo padrão de debounce-por-id já usado em

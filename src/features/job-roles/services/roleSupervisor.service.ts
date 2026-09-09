@@ -171,6 +171,8 @@ export async function selectAgentForCapability(params: {
   });
   if (candidates.length === 0) return null;
   const owned = candidates.find((c) => c.primaryJobRoleId === params.jobRoleId);
+  // candidates[0] sempre existe: já retornamos acima se candidates.length === 0.
+  // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
   return owned ?? candidates[0]!;
 }
 
@@ -263,10 +265,13 @@ export async function runRoleSupervisor(
       steps.push(stepResult);
       if (stepResult.requiresApproval) requiresApproval = true;
 
+      // `execution` só é null quando outcome === 'NO_ELIGIBLE_AGENT' (ver o map acima) — os dois
+      // campos nascem juntos no mesmo branch, mas o tipo não modela isso como union discriminada.
       const signal: SupervisorStopCondition | 'SUCCEEDED' | null =
         stepResult.outcome === 'NO_ELIGIBLE_AGENT'
           ? null // ausência de candidato não é uma decisão de política — nunca interrompe o run.
-          : classifyStepSignal(stepResult.execution!);
+          : // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
+            classifyStepSignal(stepResult.execution!);
 
       if (signal && signal !== 'SUCCEEDED' && profile.stopConditions.includes(signal)) {
         halted = true;

@@ -32,7 +32,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
     try {
       await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/app',
+        callbackURL: '/hub',
       });
       // The page will redirect to Google, so we just wait
     } catch (err) {

@@ -90,7 +90,11 @@ export function VirtualTable<T>({
       {/* Cabeçalho fixo (não virtualizado) — cabeçalho não é navegável por teclado (esta tabela
           não implementa grid ARIA completa com roving tabindex) — débito rastreado, não
           corrigido aqui para não expandir o escopo desta correção de CI. */}
+      {/* <tr>/<th> reais exigem um <table> ancestral e layout de tabela — incompatível com as
+          linhas virtualizadas abaixo, que usam position:absolute por linha para a janela de
+          scroll (ver comentário em "Container scrollável virtualizado"). */}
       {/* biome-ignore lint/a11y/useFocusableInteractive: ver comentário acima */}
+      {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
         className="sticky top-0 z-10 flex shrink-0 border-b border-line bg-surface/90 backdrop-blur-sm"
         role="row"
@@ -98,6 +102,7 @@ export function VirtualTable<T>({
       >
         {columns.map((col) => (
           // biome-ignore lint/a11y/useFocusableInteractive: mesmo débito do cabeçalho acima
+          // biome-ignore lint/a11y/useSemanticElements: mesmo motivo do cabeçalho acima (sem <table> ancestral)
           <div
             key={col.key}
             role="columnheader"
@@ -110,7 +115,9 @@ export function VirtualTable<T>({
         ))}
       </div>
 
-      {/* Container scrollável virtualizado */}
+      {/* Container scrollável virtualizado — <tbody> exigiria <table> ancestral, incompatível
+          com a virtualização por position:absolute usada nas linhas abaixo. */}
+      {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
         ref={parentRef}
         className="flex-1 overflow-y-auto"
@@ -128,6 +135,7 @@ export function VirtualTable<T>({
             const row = isLoading ? null : data[virtualRow.index];
 
             return (
+              // biome-ignore lint/a11y/useSemanticElements: <tr> exigiria <table> ancestral — esta linha usa position:absolute para a virtualização (ver style abaixo), incompatível com layout de tabela
               <div
                 key={row !== null ? getRowKey(row, virtualRow.index) : virtualRow.key}
                 role="row"
@@ -158,6 +166,7 @@ export function VirtualTable<T>({
                 tabIndex={onRowClick && row ? 0 : -1}
               >
                 {columns.map((col) => (
+                  // biome-ignore lint/a11y/useSemanticElements: <td> exigiria <table>/<tr> reais, incompatível com a linha virtualizada acima
                   <div
                     key={col.key}
                     role="cell"
