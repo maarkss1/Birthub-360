@@ -1,4 +1,4 @@
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
@@ -52,15 +52,16 @@ export async function runDailyFollowUpScan(): Promise<{ eligible: number; sentCo
     const customFields = (lead.customFields as Record<string, unknown>) || {};
     if (customFields.optOutWhatsApp) continue;
     if (!lead.contactId || !lead.organizationId) continue;
+    const { contactId, organizationId } = lead;
 
     try {
-      await requestContext.run({ tenantId: lead.organizationId }, async () => {
-        const contact = await prisma.contact.findUnique({ where: { id: lead.contactId! } });
+      await requestContext.run({ tenantId: organizationId }, async () => {
+        const contact = await prisma.contact.findUnique({ where: { id: contactId } });
         const phone = contact?.whatsapp || contact?.phone;
         if (!phone) return;
 
         await sendWhatsAppMessage(
-          lead.organizationId!,
+          organizationId,
           phone,
           `Olá! Tudo bem? Estou passando para dar continuidade ao nosso contato de alguns dias atrás. Faz sentido falarmos sobre a proposta essa semana?`,
           ['Sim, tenho interesse', 'Agora não'],
@@ -94,7 +95,7 @@ export function createFollowUpWorker() {
       await runDailyFollowUpScan();
     },
     {
-      connection: connection as any,
+      connection: connection as ConnectionOptions,
       concurrency: 1,
     },
   );
@@ -120,7 +121,7 @@ export function createFollowUpWorker() {
 
 export async function scheduleFollowUpJobs() {
   const queue = new Queue(FOLLOWUP_QUEUE_NAME, {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   // Roda todo dia as 09:00.

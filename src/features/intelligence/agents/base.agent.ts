@@ -1,4 +1,5 @@
 import { StateGraph, MessagesAnnotation, MemorySaver } from '@langchain/langgraph';
+import type { StructuredToolInterface } from '@langchain/core/tools';
 import { type BaseMessage, SystemMessage, HumanMessage, AIMessage } from '@langchain/core/messages';
 import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { assertAiBudgetNotExceeded } from '../../../lib/ai/budget.js';
@@ -146,8 +147,7 @@ export abstract class BaseAgent {
    */
   protected async runWithTools(
     inputData: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tools: any[],
+    tools: StructuredToolInterface[],
     sessionId?: string,
   ): Promise<AgentRunResult & Record<string, unknown>> {
     const sid = sessionId || `session-${this.agentType.toLowerCase()}-${Date.now()}`;

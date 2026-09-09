@@ -59,12 +59,11 @@ export function Sidebar({
     !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
   const canAccessMesaTratamento =
     !!currentUser && hasRequiredRole(currentUser.role, MESA_TRATAMENTO_ROLES);
-
-  const isJoaoReisOrAdmin =
-    !!currentUser &&
-    (currentUser.email?.toLowerCase().includes('joao.reis') ||
-      currentUser.name?.toLowerCase().includes('joão reis') ||
-      canManageOperations);
+  // Perfil SDR focado: pedido explícito do usuário — dentro da Central Comercial (CRM), o papel
+  // SDR vê um menu enxuto centrado no Plano Diário e nas ferramentas de trabalho do dia
+  // (prospecção, qualificação, cadência, treino), não os ~30 itens do menu completo. Aplica-se ao
+  // papel como um todo (não a uma conta específica), então vale para qualquer futuro SDR contratado.
+  const isRestrictedSdrProfile = currentUser?.role === 'SDR';
 
   const selectTab = (tab: TabType) => {
     if (tab !== activeTab) SoundFX.play('navigate');
@@ -94,39 +93,64 @@ export function Sidebar({
   // Inteligência & Mkt) NÃO aparecem mais aqui — pedido explícito do usuário: "não quero que
   // apareça no CRM, só nos círculos" do Hub Executivo standalone (rotas top-level em App.tsx,
   // fora de /app/*). Quem administra quem vê cada módulo é 'module-access' acima, não a Sidebar.
-  const navGroupsByJourney: NavGroupDefinition[] = [
-    {
-      title: 'Visão Geral',
-      items: ['dashboard', ...(isJoaoReisOrAdmin ? (['sdr-diagnostic-joao'] as TabType[]) : [])],
-    },
-    { title: 'Captar', items: ['prospect', 'market-intelligence'] },
-    {
-      title: 'Qualificar',
-      items: [
-        'companies',
-        'contacts',
-        ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
-        'qualification_matrix',
-      ],
-    },
-    { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
-    { title: 'Fechar', items: ['crm', 'crm360', 'propostas'] },
-    { title: 'Analisar', items: analyzeItems },
-    {
-      title: 'IA & Capacitação',
-      items: [
-        ...(canAccessCopilotoIa ? (['copiloto_ia'] as TabType[]) : []),
-        'intelligence',
-        'chatbook',
-        'roleplay',
-        'objections_matrix',
-        'topic_training',
-        'knowledge',
-        'editor',
-      ],
-    },
-    { title: 'Administração', items: administrationItems },
-  ];
+  //
+  // Perfil SDR focado (role SDR, ver isRestrictedSdrProfile acima): Plano Diário em primeiro e só
+  // as ferramentas que o SDR usa no dia a dia — sem dashboards/analytics/administração de
+  // integrações. A primeira versão deixava um único item ("Plano Diário") e o SDR ficava sem
+  // acesso pelo menu às próprias ferramentas de trabalho. ADMIN/GESTOR/CLOSER continuam vendo o
+  // menu completo do CRM.
+  const navGroupsByJourney: NavGroupDefinition[] = isRestrictedSdrProfile
+    ? [
+        { title: 'Visão Geral', items: ['daily-plan'] },
+        { title: 'Captar', items: ['prospect'] },
+        {
+          title: 'Qualificar',
+          items: [
+            'companies',
+            'contacts',
+            ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
+          ],
+        },
+        { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
+        {
+          title: 'IA & Capacitação',
+          items: ['roleplay', 'objections_matrix', 'chatbook', 'topic_training'],
+        },
+        { title: 'Administração', items: ['notifications', 'bitrix', 'settings'] },
+      ]
+    : [
+        {
+          title: 'Visão Geral',
+          items: ['dashboard', 'workspace', 'daily-plan'],
+        },
+        { title: 'Captar', items: ['prospect', 'market-intelligence'] },
+        {
+          title: 'Qualificar',
+          items: [
+            'companies',
+            'contacts',
+            ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
+            'qualification_matrix',
+          ],
+        },
+        { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
+        { title: 'Fechar', items: ['crm', 'crm360', 'propostas'] },
+        { title: 'Analisar', items: analyzeItems },
+        {
+          title: 'IA & Capacitação',
+          items: [
+            ...(canAccessCopilotoIa ? (['copiloto_ia'] as TabType[]) : []),
+            'intelligence',
+            'chatbook',
+            'roleplay',
+            'objections_matrix',
+            'topic_training',
+            'knowledge',
+            'editor',
+          ],
+        },
+        { title: 'Administração', items: administrationItems },
+      ];
 
   const GROUP_ORDER_BY_ROLE: Partial<Record<string, string[]>> = {
     CLOSER: [

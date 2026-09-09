@@ -1,4 +1,4 @@
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
@@ -145,7 +145,7 @@ export async function runWeeklySalesReportJob(): Promise<WeeklySalesReportResult
 
 export function createWeeklyPdfReportWorker() {
   const worker = new Worker(WEEKLY_PDF_QUEUE_NAME, async () => runWeeklySalesReportJob(), {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
     concurrency: 1,
   });
 
@@ -170,7 +170,7 @@ export function createWeeklyPdfReportWorker() {
 
 export async function scheduleWeeklyPdfReportJob() {
   const queue = new Queue(WEEKLY_PDF_QUEUE_NAME, {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   // Roda sexta-feira 20:00 (0 20 * * 5).

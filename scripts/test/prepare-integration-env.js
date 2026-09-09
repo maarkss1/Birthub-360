@@ -37,7 +37,12 @@ const TEST_DB_NAME = 'prospectordb_test';
 const APP_ROLE_PASSWORD = 'prospector_app_pass';
 
 const REQUIRED_CONTAINERS = ['atlas_postgres', 'atlas_redis', 'atlas_meilisearch'];
-// container_name (docker-compose.yml) -> nome do serviço compose correspondente. Usado para pedir
+// Desde 2026-09-08 o serviço `postgres` não existe mais em docker-compose.yml (a aplicação usa o
+// Postgres da Oracle diretamente — ver .env.example). Os testes continuam precisando de um banco
+// descartável local (prospectordb_test, com create/delete de verdade), então o container legado
+// vive em docker-compose.postgres-local.yml e precisa ser incluído explicitamente no `compose up`.
+const COMPOSE_FILES = ['-f', 'docker-compose.yml', '-f', 'docker-compose.postgres-local.yml'];
+// container_name (docker-compose*.yml) -> nome do serviço compose correspondente. Usado para pedir
 // ao `docker compose up` só o que falta (ver bug reproduzido abaixo).
 const SERVICE_BY_CONTAINER = {
   atlas_postgres: 'postgres',
@@ -99,7 +104,7 @@ if (!isCI) {
       `Containers ausentes: ${missingContainers.join(', ')} — subindo só ${missingServices.join(', ')} ` +
       '(os demais já em execução são reaproveitados, não recriados).'
     );
-    const result = spawnSync('docker', ['compose', 'up', '-d', ...missingServices], {
+    const result = spawnSync('docker', ['compose', ...COMPOSE_FILES, 'up', '-d', ...missingServices], {
       stdio: 'inherit',
     });
     if (result.status !== 0) {

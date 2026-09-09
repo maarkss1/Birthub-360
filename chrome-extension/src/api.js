@@ -4,7 +4,11 @@
 // usuário precisa estar logado na Central Atlas GR na mesma janela/perfil do Chrome. Sem isso não
 // existe nenhum outro segredo/token armazenado pela extensão.
 
-const DEFAULT_API_BASE_URL = 'http://localhost:3005';
+// Produção real (Oracle Cloud, ADR-004 — docs/ADR/ADR-004-Producao-Oracle-Cloud.md): IP direto,
+// HTTP na porta 80 (sem domínio/TLS configurado ainda, ver docs/deploy/oracle-cloud.md §7 e o
+// commit "fix(oci): default DOMAIN to :80..."). Trocar para https://<domínio> assim que o cutover
+// de domínio/TLS acontecer (aí some o mixed-content risk de rodar a extensão em http:// puro).
+const DEFAULT_API_BASE_URL = 'http://163.176.150.147';
 const STORAGE_KEY = 'atlasApiBaseUrl';
 
 export async function getApiBaseUrl() {

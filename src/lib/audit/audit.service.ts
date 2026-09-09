@@ -28,8 +28,8 @@ export interface AuditLogParams {
   afterState?: Record<string, unknown>;
 }
 
-export class AuditService {
-  static async log(params: AuditLogParams): Promise<void> {
+export const AuditService = {
+  async log(params: AuditLogParams): Promise<void> {
     try {
       const details = JSON.stringify({
         device: params.device,
@@ -51,5 +51,5 @@ export class AuditService {
     } catch (error) {
       logger.error({ err: error, auditParams: params }, 'Failed to save audit log');
     }
-  }
-}
+  },
+};

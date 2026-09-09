@@ -146,7 +146,7 @@ describe('RerankerService.rerank — reordenação correta dado um mock de pontu
     const result = await rerankerService.rerank('query', hits, 3);
 
     expect(result.map((h) => h.chunkId)).toEqual(['b', 'c', 'a']);
-    expect(result[0]!.rerankScore).toBe(95);
+    expect(result[0]?.rerankScore).toBe(95);
   });
 
   it('corta para topK depois de reordenar', async () => {
@@ -187,8 +187,8 @@ describe('RerankerService.rerank — reordenação correta dado um mock de pontu
     // 'b' tem a única pontuação válida (90) e sobe ao topo; 'a' e 'c' ficam sem pontuação
     // aproveitável e mantêm a ordem relativa original do RRF entre si.
     expect(result.map((h) => h.chunkId)).toEqual(['b', 'a', 'c']);
-    expect(result.find((h) => h.chunkId === 'b')!.rerankScore).toBe(90);
-    expect(result.find((h) => h.chunkId === 'a')!.rerankScore).toBeUndefined();
+    expect(result.find((h) => h.chunkId === 'b')?.rerankScore).toBe(90);
+    expect(result.find((h) => h.chunkId === 'a')?.rerankScore).toBeUndefined();
   });
 
   it('registra custo/latência via logAiUsage com o promptId catalogado', async () => {
@@ -221,7 +221,7 @@ describe('RerankerService.rerank — reordenação correta dado um mock de pontu
 
     await rerankerService.rerank('query pergunta', hits, 2);
 
-    const promptSentToLlm = invokeMock.mock.calls[0]![0][1].content as string;
+    const promptSentToLlm = invokeMock.mock.calls[0]?.[0][1].content as string;
     expect(promptSentToLlm).toContain('<untrusted_external_content>');
     expect(promptSentToLlm).toContain('</untrusted_external_content>');
     const openIndex = promptSentToLlm.indexOf('<untrusted_external_content>');

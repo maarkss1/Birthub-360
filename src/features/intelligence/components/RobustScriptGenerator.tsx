@@ -208,6 +208,7 @@ export function RobustScriptGenerator() {
               <Braces size={14} /> Stack Tecnológico / Linguagem
             </p>
             <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'language' ? null : 'language')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -258,6 +259,7 @@ export function RobustScriptGenerator() {
               <Globe size={14} /> Vetor de Propósito / Funcionalidade
             </p>
             <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'purpose' ? null : 'purpose')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -311,6 +313,7 @@ export function RobustScriptGenerator() {
               <Layers size={14} /> Abordagem & Framework
             </p>
             <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'framework' ? null : 'framework')}
               className={`w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -361,6 +364,7 @@ export function RobustScriptGenerator() {
               <ShieldCheck size={14} /> Nível de Resiliência & Complexidade
             </p>
             <button
+              type="button"
               onClick={() =>
                 setActiveDropdown(activeDropdown === 'complexity' ? null : 'complexity')
               }
@@ -422,6 +426,7 @@ export function RobustScriptGenerator() {
 
         <div className="relative z-10 flex justify-center">
           <button
+            type="button"
             onClick={handleGenerate}
             disabled={generating}
             className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-white px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
@@ -473,6 +478,7 @@ export function RobustScriptGenerator() {
               </div>
               <div className="flex items-center gap-3">
                 <button
+                  type="button"
                   onClick={handleCopy}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                     copied
@@ -491,6 +497,7 @@ export function RobustScriptGenerator() {
                   )}
                 </button>
                 <button
+                  type="button"
                   onClick={handleDownload}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
                 >

@@ -498,6 +498,7 @@ export function AISuiteHub() {
             { id: 'management', label: 'Gestão' },
           ].map((f) => (
             <button
+              type="button"
               key={f.id}
               onClick={() => setCategoryFilter(f.id)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${

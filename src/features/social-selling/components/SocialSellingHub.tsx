@@ -153,6 +153,7 @@ export function SocialSellingHub() {
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {subTabs.map((tab) => (
             <button
+              type="button"
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as typeof activeSubTab)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
@@ -246,6 +247,7 @@ export function SocialSellingHub() {
                         {item.semana}
                       </span>
                       <button
+                        type="button"
                         onClick={() => handleCopyCopy(item.copy, idx)}
                         className="px-2.5 py-1 text-xs font-medium bg-soft text-ink hover:bg-line rounded-lg border border-line flex items-center gap-1.5 transition-colors"
                         title="Copiar texto para publicação no LinkedIn"
@@ -268,7 +270,7 @@ export function SocialSellingHub() {
                     <h3 className="text-sm font-bold text-ink">{item.tema}</h3>
                     <p className="text-xs text-ink-2 font-medium">{item.desc}</p>
                     <div className="p-3 bg-surface rounded-xl border border-line/60 text-xs text-ink-2 leading-relaxed italic">
-                      "{item.copy}"
+                      &quot;{item.copy}&quot;
                     </div>
                   </div>
                 </div>

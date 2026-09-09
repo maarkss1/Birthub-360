@@ -58,6 +58,7 @@ export const automationSchema = z.object({
 export type AutomationInput = z.infer<typeof automationSchema>;
 
 export class AutomationUseCases extends BaseUseCases<Automation, AutomationRepository> {
+  // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI
   constructor(automationRepository: AutomationRepository) {
     super(automationRepository);
   }
@@ -83,7 +84,7 @@ export class AutomationUseCases extends BaseUseCases<Automation, AutomationRepos
     input: Partial<AutomationInput>,
     actor?: AutomationVersionActor,
   ) {
-    const existing = await this.repository.findById!(organizationId, id);
+    const existing = await this.repository.findById?.(organizationId, id);
     if (!existing) return null;
     await automationVersioningService.recordPriorState(
       organizationId,
@@ -104,7 +105,7 @@ export class AutomationUseCases extends BaseUseCases<Automation, AutomationRepos
     id: string,
     actor?: AutomationVersionActor,
   ): Promise<boolean> {
-    const existing = await this.repository.findById!(organizationId, id);
+    const existing = await this.repository.findById?.(organizationId, id);
     if (!existing) return false;
     await automationVersioningService.recordPriorState(
       organizationId,
@@ -123,7 +124,7 @@ export class AutomationUseCases extends BaseUseCases<Automation, AutomationRepos
     organizationId: string,
     id: string,
   ): Promise<AutomationVersionTimeline | null> {
-    const automation = await this.repository.findById!(organizationId, id);
+    const automation = await this.repository.findById?.(organizationId, id);
     if (!automation) return null;
     return automationVersioningService.buildTimeline(organizationId, automation);
   }
@@ -136,7 +137,7 @@ export class AutomationUseCases extends BaseUseCases<Automation, AutomationRepos
     id: string,
     options?: DryRunOptions,
   ): Promise<DryRunResult | null> {
-    const automation = await this.repository.findById!(organizationId, id);
+    const automation = await this.repository.findById?.(organizationId, id);
     if (!automation) return null;
     return dryRunAutomation(organizationId, automation, options);
   }

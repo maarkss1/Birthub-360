@@ -8,14 +8,14 @@ import { NullLogger } from './NullLogger.js';
 
 export type LoggerProvider = (scope: string) => Logger;
 
-export class LoggerFactory {
-  private static provider: LoggerProvider = () => new NullLogger();
+let provider: LoggerProvider = () => new NullLogger();
 
-  public static configure(provider: LoggerProvider): void {
-    LoggerFactory.provider = provider;
-  }
+export const LoggerFactory = {
+  configure(nextProvider: LoggerProvider): void {
+    provider = nextProvider;
+  },
 
-  public static create(scope: string): Logger {
-    return LoggerFactory.provider(scope);
-  }
-}
+  create(scope: string): Logger {
+    return provider(scope);
+  },
+};

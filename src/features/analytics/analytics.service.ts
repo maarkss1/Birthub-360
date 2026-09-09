@@ -13,6 +13,10 @@ import {
   shiftBrazilMonth,
 } from '../../shared/time/brazilCalendar.js';
 
+/** Filtro base (`organizationId` + soft-delete) repassado do overview às sub-consultas privadas —
+ * mesmo formato usado em `lead.groupBy`/`activity.findMany`, nunca outro filtro. */
+type AnalyticsScope = { organizationId: string; deletedAt: null };
+
 /** Ordem real do funil comercial — usada para o gráfico e para a conversão etapa a etapa. */
 export const FUNNEL_STAGES = [
   'Lead_Recebido',
@@ -193,7 +197,7 @@ export class AnalyticsService {
     for (const row of rows) counts.set(row.status as string, row._count._all);
 
     const orderedStages = [...FUNNEL_STAGES];
-    const cumulative = orderedStages.map((stage, index) => {
+    const cumulative = orderedStages.map((_stage, index) => {
       const downstream = orderedStages
         .slice(index)
         .reduce((sum, s) => sum + (counts.get(s) ?? 0), 0);
@@ -259,7 +263,7 @@ export class AnalyticsService {
       try {
         const cached = await connection.get(cacheKey);
         if (cached) return JSON.parse(cached);
-      } catch (err) {
+      } catch {
         // Falha de cache não impede leitura do banco.
       }
     }
@@ -356,7 +360,7 @@ export class AnalyticsService {
     if (connection) {
       try {
         await connection.setex(cacheKey, 60, JSON.stringify(result));
-      } catch (err) {
+      } catch {
         // Falha de gravação de cache é não-fatal.
       }
     }
@@ -364,7 +368,7 @@ export class AnalyticsService {
     return result;
   }
 
-  private async performanceReport(organizationId: string, scope: any) {
+  private async performanceReport(_organizationId: string, scope: AnalyticsScope) {
     const ownerStats = await prisma.lead.groupBy({
       by: ['owner'],
       where: scope,
@@ -400,7 +404,7 @@ export class AnalyticsService {
       .sort((a, b) => b.leadsQualified - a.leadsQualified);
   }
 
-  private async callHeatmap(organizationId: string, scope: any) {
+  private async callHeatmap(organizationId: string, scope: AnalyticsScope) {
     void organizationId;
     const activities = await prisma.activity.findMany({
       where: { ...scope, type: 'Ligacao' },
@@ -422,7 +426,7 @@ export class AnalyticsService {
     return result;
   }
 
-  private async tmqMetric(_organizationId: string, _scope: any): Promise<number | null> {
+  private async tmqMetric(_organizationId: string, _scope: AnalyticsScope): Promise<number | null> {
     return null;
   }
 }

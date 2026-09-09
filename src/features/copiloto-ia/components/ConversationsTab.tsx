@@ -144,6 +144,9 @@ export function ConversationsTab({ leadId }: ConversationsTabProps) {
               {conversations.map((conversation) => {
                 const Icon = SOURCE_ICON[conversation.source] ?? HelpCircle;
                 return (
+                  // Linha de <table> real — não pode virar <button> (elemento de bloco inválido
+                  // como filho de <tbody>, quebraria a semântica/estrutura da tabela).
+                  // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
                   <tr
                     key={conversation.id}
                     onClick={() => setSelectedId(conversation.id)}

@@ -83,7 +83,7 @@ function normalize(raw: string): string {
  *   automaticamente).
  */
 export function classifyLossReason(raw: string | null | undefined): LossReasonBucket {
-  if (!raw || !raw.trim()) return 'Não informado';
+  if (!raw?.trim()) return 'Não informado';
   const normalized = normalize(raw);
   for (const rule of KEYWORD_RULES) {
     if (rule.keywords.some((keyword) => normalized.includes(normalize(keyword)))) {

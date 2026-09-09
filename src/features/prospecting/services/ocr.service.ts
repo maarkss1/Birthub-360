@@ -12,11 +12,7 @@ const ACCEPTED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 // os traços dos caracteres, mesmo a imagem "parecendo nítida" a olho humano.
 const OCR_MIN_LONG_EDGE_PX = 1600;
 
-export class OcrValidationError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
-}
+export class OcrValidationError extends Error {}
 
 /**
  * Normaliza a foto antes do OCR: tons de cinza + auto-contraste + nitidez + upscale mínimo.

@@ -20,6 +20,6 @@ export class NoteUseCases {
   }
 
   async deleteNote(organizationId: string, noteId: string) {
-    return this.noteRepository.delete!(organizationId, noteId);
+    return this.noteRepository.delete?.(organizationId, noteId);
   }
 }

@@ -8,14 +8,14 @@ import { MemoryCache } from './MemoryCache.js';
 
 export type CacheProvider<TValue = unknown> = () => Cache<TValue>;
 
-export class CacheFactory {
-  private static provider: CacheProvider = () => new MemoryCache();
+let provider: CacheProvider = () => new MemoryCache();
 
-  public static configure(provider: CacheProvider): void {
-    CacheFactory.provider = provider;
-  }
+export const CacheFactory = {
+  configure(nextProvider: CacheProvider): void {
+    provider = nextProvider;
+  },
 
-  public static create<TValue = unknown>(): Cache<TValue> {
-    return CacheFactory.provider() as Cache<TValue>;
-  }
-}
+  create<TValue = unknown>(): Cache<TValue> {
+    return provider() as Cache<TValue>;
+  },
+};

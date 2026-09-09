@@ -235,7 +235,7 @@ describe('SDROutboundDraftAgent.draftEmailForLead — defesa estrutural contra p
     await agent.draftEmailForLead('lead-1', 'org-1', false);
 
     expect(processMessageMock).toHaveBeenCalledTimes(1);
-    const promptSentToModel = processMessageMock.mock.calls[0]![0] as string;
+    const promptSentToModel = processMessageMock.mock.calls[0]?.[0] as string;
 
     expect(promptSentToModel).toContain('<untrusted_external_content>');
     expect(promptSentToModel).toContain('</untrusted_external_content>');
@@ -264,7 +264,7 @@ describe('SDROutboundDraftAgent.draftEmailForLead — defesa estrutural contra p
     const agent = new SDROutboundDraftAgent('session-1', 'org-1');
     await agent.draftEmailForLead('lead-1', 'org-1', false);
 
-    const promptSentToModel = processMessageMock.mock.calls[0]![0] as string;
+    const promptSentToModel = processMessageMock.mock.calls[0]?.[0] as string;
     expect(promptSentToModel).toContain('&lt;/untrusted_external_content&gt;');
     expect(promptSentToModel).toContain('&lt;untrusted_external_content&gt;');
   });

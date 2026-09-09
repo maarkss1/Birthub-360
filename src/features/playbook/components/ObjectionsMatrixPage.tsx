@@ -71,7 +71,7 @@ export function ObjectionsMatrixPage() {
   // Trocar de marca reseta pra página 1 (a página atual pode não existir na outra marca).
   useEffect(() => {
     setPage(1);
-  }, [activeBrand]);
+  }, []);
 
   useEffect(load, [activeBrand, page]);
 

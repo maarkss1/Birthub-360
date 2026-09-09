@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Loader2, Plus, Trash2, Zap, Lock } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -69,11 +69,14 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
   const [newAssignedById, setNewAssignedById] = useState('');
   const [creating, setCreating] = useState(false);
 
-  const loadRules = () =>
-    api
-      .get<BitrixSyncRule[]>(`/api/bitrix/sync-rules?connectionId=${connectionId}`)
-      .then(setRules)
-      .catch(() => setRules([]));
+  const loadRules = useCallback(
+    () =>
+      api
+        .get<BitrixSyncRule[]>(`/api/bitrix/sync-rules?connectionId=${connectionId}`)
+        .then(setRules)
+        .catch(() => setRules([])),
+    [connectionId],
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -100,8 +103,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
         .catch(() => setUsers([])),
       loadRules(),
     ]).finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionId]);
+  }, [connectionId, loadRules]);
 
   // Etapas de Negócio dependem do pipeline escolhido; status de Lead já vieram prontos (sem pipeline).
   useEffect(() => {
@@ -250,6 +252,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
                     )}
                   </div>
                   <button
+                    type="button"
                     onClick={() => removeRule(rule.id)}
                     disabled={!canPickAnyVendor}
                     className="shrink-0 p-2 text-ink-2 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors dark:hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-ink-2"
@@ -269,12 +272,14 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex gap-1 p-1.5 bg-surface-2 rounded-xl">
               <button
+                type="button"
                 onClick={() => setNewSource('lead')}
                 className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'lead' ? 'bg-surface text-brand-active dark:text-brand-2 shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
                 Lead
               </button>
               <button
+                type="button"
                 onClick={() => setNewSource('deal')}
                 className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'deal' ? 'bg-surface text-brand-active dark:text-brand-2 shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
@@ -328,6 +333,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
               </span>
             )}
             <button
+              type="button"
               onClick={addRule}
               disabled={(newSource === 'deal' && !newCategoryId) || creating}
               className="flex items-center gap-2 h-9 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-40 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"

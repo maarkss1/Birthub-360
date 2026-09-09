@@ -1,0 +1,61 @@
+# LEGADO / OPT-IN — Postgres local em container.
+#
+# Desde 2026-09-08 (decisão do dono do produto) a aplicação NÃO usa mais Postgres local nem em
+# Docker: DATABASE_URL de toda máquina de desenvolvimento aponta DIRETAMENTE para o Postgres da
+# instância Oracle Cloud (ADR-004) — ver `.env.example` e docs/deploy/oracle-cloud.md seção 4.2.
+# Este serviço foi retirado do docker-compose.yml e preservado aqui só para os casos que ainda
+# dependem de um Postgres descartável na própria máquina:
+#   - testes de integração/E2E locais (scripts/test/prepare-integration-env.js — banco
+#     `prospectordb_test`, isolado, com create/delete de linhas de verdade);
+#   - overlays opcionais que guardam o próprio metadata nele (docker-compose.opensource.yml:
+#     langfuse; docker-compose.services.yml: flowise, n8n, temporal, superset, casdoor, infisical,
+#     chatwoot, plane) — todos usam `depends_on: postgres`, então precisam deste arquivo junto.
+#
+# Uso: docker compose -f docker-compose.yml -f docker-compose.postgres-local.yml up -d postgres
+# Nunca aponte DATABASE_URL da aplicação para ele de novo sem uma decisão registrada.
+services:
+  postgres:
+    build:
+      context: ./docker/postgres
+      dockerfile: Dockerfile
+    image: atlasgr/postgres-intelligence:16
+    container_name: atlas_postgres
+    environment:
+      # Superusuario de bootstrap — usado só pela inicialização do container (criar a extension
+      # vector e o papel restrito abaixo). Nada deve conectar como este usuário fora do bootstrap
+      # (ver N1 em docs/auditoria-divida-tecnica/08-PLANO-DE-SEGURANCA.md: RLS nunca se aplica a
+      # superusuário, então conectar como ele torna toda política RLS decorativa).
+      POSTGRES_USER: ${POSTGRES_USER:-prospector}
+      # Valores literais abaixo são só o fallback de desenvolvimento (`${VAR:-default}`) — em
+      # qualquer ambiente que não seja a máquina local, defina POSTGRES_PASSWORD/APP_DB_PASSWORD
+      # num .env não versionado para sobrescrever o default.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-prospector_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-prospectordb}
+      # Senha do papel NOSUPERUSER que os testes usam. Dev-only — troque em qualquer ambiente que
+      # não seja a sua máquina local.
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:-prospector_app_pass}
+    ports:
+      - "5434:5432"
+    # Padrão do Docker (64MB) é insuficiente para VACUUM/hash join paralelos em tabelas
+    # grandes (MarketIntelligenceCompany, dezenas de GB) — "No space left on device" ao
+    # redimensionar segmento de memória compartilhada não é falta de espaço em disco.
+    shm_size: '1gb'
+    volumes:
+      - atlas_pgdata:/var/lib/postgresql/data
+      # Só roda na primeira inicialização de um volume novo (comportamento padrão da imagem
+      # oficial do Postgres). Volume já existente: rode scripts/db/bootstrap-app-role.sh manualmente.
+      - ./scripts/db/create-app-role.sql:/docker-entrypoint-initdb.d/create-app-role.sql.tpl:ro
+      - ./scripts/db/docker-init.sh:/docker-entrypoint-initdb.d/01-create-app-role.sh:ro
+      - ./scripts/db/02-enable-extensions.sql:/docker-entrypoint-initdb.d/02-enable-extensions.sql:ro
+      - ./scripts/db/03-create-langfuse-db.sql:/docker-entrypoint-initdb.d/03-create-langfuse-db.sql:ro
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prospector} -d ${POSTGRES_DB:-prospectordb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  atlas_pgdata:

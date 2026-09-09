@@ -105,8 +105,7 @@ export function ContactList() {
       setIsFormOpen(true);
       navigate(location.pathname, { replace: true, state: null });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigate, location.state, location.pathname]);
 
   // Espera o usuário parar de digitar antes de disparar a busca no servidor — evita uma
   // requisição por tecla (mesmo padrão de debounce já usado em CommandPalette.tsx:82-108).

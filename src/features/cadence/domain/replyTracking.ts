@@ -48,13 +48,10 @@ const AUTO_REPLY_SUBJECT_PATTERNS = [
  * respondeu — mas os padrões acima são específicos o bastante para não capturar respostas reais.
  */
 export function isGenuineLeadReply(email: InboundEmailReply): boolean {
-  if (!email.body || !email.body.trim()) return false;
+  if (!email.body?.trim()) return false;
   if (email.autoSubmittedHeader && email.autoSubmittedHeader.toLowerCase() !== 'no') return false;
-  if (
-    email.subject &&
-    AUTO_REPLY_SUBJECT_PATTERNS.some((pattern) => pattern.test(email.subject!.trim()))
-  )
-    return false;
+  const subject = email.subject?.trim();
+  if (subject && AUTO_REPLY_SUBJECT_PATTERNS.some((pattern) => pattern.test(subject))) return false;
   return true;
 }
 
@@ -101,8 +98,8 @@ export function buildEmailTranscript(
   messages: Array<{ direction: 'inbound' | 'outbound'; body: string | null }>,
 ): string {
   return messages
-    .filter((m) => m.body && m.body.trim())
-    .map((m) => `${m.direction === 'inbound' ? 'Cliente' : 'Atlas'}: ${m.body!.trim()}`)
+    .filter((m) => m.body?.trim())
+    .map((m) => `${m.direction === 'inbound' ? 'Cliente' : 'Atlas'}: ${m.body?.trim()}`)
     .join('\n');
 }
 

@@ -179,7 +179,7 @@ export class AnalyticsUseCases {
     // etapas seguintes (mais os ganhos) para que o gráfico não pareça furado quando o lead
     // avança e some da etapa de origem.
     const orderedStages = [...FUNNEL_STAGES];
-    const cumulative = orderedStages.map((stage, index) => {
+    const cumulative = orderedStages.map((_stage, index) => {
       const downstream = orderedStages
         .slice(index)
         .reduce((sum, s) => sum + (counts.get(s) ?? 0), 0);
