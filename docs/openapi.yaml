@@ -55,6 +55,10 @@ tags:
     description: Contatos vinculados a empresas
   - name: Leads
     description: Oportunidades/leads do funil comercial
+  - name: Saved Views
+    description: >-
+      Views salvas (funil + filtros) do pipeline Kanban de leads/negócios — pessoais, escopadas
+      por usuário além de organização
   - name: Activities
     description: Agenda e atividades vinculadas a leads
   - name: Notes
@@ -3635,6 +3639,57 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /crm/saved-views:
+    get:
+      tags: [Saved Views]
+      summary: Lista as views salvas do usuário autenticado (pessoais, não compartilhadas)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+    post:
+      tags: [Saved Views]
+      summary: Salva a combinação atual de funil + filtros do Kanban como uma view nomeada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, funnel]
+              properties:
+                name: { type: string }
+                funnel: { type: string, enum: [Lead, Negocio] }
+                filters:
+                  type: object
+                  properties:
+                    owner: { type: string, description: 'User.id do dono filtrado' }
+                    q: { type: string, description: 'Texto de busca livre' }
+      responses:
+        '201':
+          description: Criado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          description: Nome ou funil ausente/inválido
+        '409':
+          description: Já existe uma view com esse nome para este usuário
+
+  /crm/saved-views/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    delete:
+      tags: [Saved Views]
+      summary: Exclui uma view salva do próprio usuário
+      responses:
+        '204':
+          description: Excluída
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /crm/records/{id}/stage:
     parameters:

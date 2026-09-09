@@ -1,12 +1,23 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- regiões roláveis focáveis por teclado */
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Download, WifiOff, Sparkles, CheckSquare, Send, X, Loader2, Search } from 'lucide-react';
+import {
+  Download,
+  WifiOff,
+  Sparkles,
+  CheckSquare,
+  Send,
+  X,
+  Loader2,
+  Search,
+  Bookmark,
+} from 'lucide-react';
 import type { Lead, LeadStatus } from '../types';
 import { KanbanColumn } from '../features/crm/components/KanbanColumn';
 import { KanbanCard } from '../features/crm/components/KanbanCard';
 import { LeadDetailDrawer } from '../features/crm/components/LeadDetailDrawer';
 import { BitrixImportModal } from '../features/crm/components/BitrixImportModal';
+import { SavedViewsPanel, type SavedViewItem } from '../features/crm/components/SavedViewsPanel';
 import { bitrixApi } from '../features/integrations/bitrix/bitrix.api';
 import { api } from '../lib/api';
 import { ContextualTip } from './ui/ContextualTip';
@@ -96,6 +107,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
   const [selectedLeadIds, setSelectedLeadIds] = useState<Set<string>>(new Set());
   const [selectionMode, setSelectionMode] = useState(false);
   const [isBitrixModalOpen, setIsBitrixModalOpen] = useState(false);
+  const [isSavedViewsOpen, setIsSavedViewsOpen] = useState(false);
   const [isBatchUpdating, setIsBatchUpdating] = useState(false);
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
 
@@ -499,6 +511,28 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     [funnelProp, setSearchParams],
   );
 
+  // Aplica funil+filtros de uma view salva de uma vez (Onda B2b) — mesma lógica de
+  // handleFunnelChange (não se aplica com funnel fixado por prop, fecha o drawer aberto), mas
+  // reconstrói a URL inteira em vez de alternar só o funil.
+  const handleApplySavedView = useCallback(
+    (view: SavedViewItem) => {
+      if (funnelProp) return;
+      SoundFX.play('navigate');
+      setSelectedLeadIds(new Set());
+      setSearchParams(
+        (() => {
+          const next = new URLSearchParams();
+          if (view.funnel === 'Negocio') next.set('funnel', 'Negocio');
+          if (view.filters.owner) next.set('owner', view.filters.owner);
+          if (view.filters.q) next.set('q', view.filters.q);
+          return next;
+        })(),
+        { replace: true },
+      );
+    },
+    [funnelProp, setSearchParams],
+  );
+
   const handleOwnerFilterChange = useCallback(
     (value: string) => {
       setSearchParams(
@@ -621,6 +655,17 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          {/* Views Salvas (Onda B2b) */}
+          <Button
+            onClick={() => setIsSavedViewsOpen(true)}
+            variant="secondary"
+            className="text-xs"
+            title="Ver e salvar views do pipeline (funil + filtros)"
+          >
+            <Bookmark className="w-4 h-4 shrink-0" />
+            <span>Views Salvas</span>
+          </Button>
+
           {/* Botão de Modo de Seleção Múltipla */}
           <Button
             onClick={() => {
@@ -909,6 +954,15 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         isOpen={isBitrixModalOpen}
         onClose={() => setIsBitrixModalOpen(false)}
         onImportSuccess={fetchLeads}
+      />
+
+      <SavedViewsPanel
+        isOpen={isSavedViewsOpen}
+        onClose={() => setIsSavedViewsOpen(false)}
+        currentFunnel={funnel}
+        currentFilters={{ owner: ownerFilter || undefined, q: searchQuery || undefined }}
+        ownerNameById={ownerNameById}
+        onApply={handleApplySavedView}
       />
 
       {selectedLeadId && (

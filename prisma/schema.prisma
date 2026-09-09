@@ -789,6 +789,9 @@ model User {
   // vínculo com o(s) cargo(s) funcionais do usuário, independente de `role` (UserRole = nível de
   // autoridade/segurança, nunca substituído por isto).
   jobRoles                 UserJobRole[]
+  // Onda B2b (Agente 00 — Commercial AI OS): views salvas do pipeline CRM são pessoais — só o
+  // próprio dono lê/edita/exclui (ver SavedView abaixo).
+  savedViews               SavedView[]
 
   @@index([organizationId])
   @@map("user")
@@ -836,6 +839,7 @@ model Organization {
   leadStageHistories            LeadStageHistory[]
   forecastSnapshots             ForecastSnapshot[]
   leadFieldChanges              LeadFieldChange[]
+  savedViews                    SavedView[]
   featureFlagOverrides          OrganizationFeatureFlag[]
   moduleAccessGrants            ModuleAccessGrant[]
   mesaTratamentoTreatments      MesaTratamentoTreatment[]
@@ -1021,6 +1025,37 @@ model LeadFieldChange {
   @@index([organizationId, field, changedAt])
   @@index([organizationId, leadId, field])
   @@index([leadId, changedAt])
+}
+
+// ─── Saved Views do Pipeline CRM (Onda B2b, Agente 00 — Commercial AI OS) ──────────────────────
+// Visão salva (funil + filtros) do Kanban de Leads/Negócios. Pessoal por padrão — userId é o
+// dono exclusivo, nenhum campo de compartilhamento com o time foi adicionado (decisão de escopo
+// confirmada com o usuário antes de implementar: ver .agents/runs/commercial-ai-os-onda-b2b.md —
+// evita ambiguidade de RBAC, sem por/dono de view de outro, sem necessidade comprovada ainda).
+// Distinto de SavedSearch (mais abaixo neste arquivo): aquele é sobre PROSPECÇÃO (descobrir leads
+// novos por critério geográfico/setorial, com schedule/execuções); este é sobre navegar o pipeline
+// que já existe. Reaproveitar SavedSearch para isto misturaria dois conceitos de produto
+// diferentes — ver database-integrity/SKILL.md.
+model SavedView {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// 'Lead' | 'Negocio' — mesmo domínio de Lead.funnel.
+  funnel    String
+  /// Filtros do Kanban serializados, ex.: { "owner": "<userId>", "q": "texto" }. Formato livre e
+  /// versionável de propósito — um filtro novo (etapa, tag) entra aqui sem migration nova.
+  filters   Json    @default("{}")
+  isDefault Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([organizationId, userId])
 }
 
 // ─── LDR / Account Intelligence ────────────────────────────────────────────
@@ -4131,18 +4166,18 @@ model LearningCandidate {
 /// Memória aprovada escopada a UM agente (`AgentDefinition.code`, string simples sem FK viva —
 /// mesmo padrão de `AgentExecution.agentCode`).
 model AgentMemoryRecord {
-  id                String       @id @default(cuid())
+  id                String         @id @default(cuid())
   organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   agentCode         String
   topic             String
   category          MemoryCategory
   content           Json
-  evidence          Json         @default("[]")
+  evidence          Json           @default("[]")
   /// Sequência dentro da cadeia de supersede deste `topic` — 1 na primeira aprovação, incrementa a
   /// cada supersede; nunca decrementado nem reescrito in-place.
-  version           Int          @default(1)
-  status            MemoryStatus @default(APPROVED)
+  version           Int            @default(1)
+  status            MemoryStatus   @default(APPROVED)
   /// `LearningCandidate.id` que originou esta linha — sem FK viva (mesmo padrão de `sourceExecutionId`).
   sourceCandidateId String
   supersedesId      String?
@@ -4150,8 +4185,8 @@ model AgentMemoryRecord {
   rolledBackBy      String?
   rolledBackAt      DateTime?
   rolledBackReason  String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@unique([organizationId, agentCode, topic, version])
   @@index([organizationId, agentCode, status, topic])
@@ -4159,24 +4194,24 @@ model AgentMemoryRecord {
 
 /// Memória aprovada escopada a UM cargo (`JobRole.code`, string simples sem FK viva).
 model RoleMemoryRecord {
-  id                String       @id @default(cuid())
+  id                String         @id @default(cuid())
   organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   jobRoleCode       String
   topic             String
   category          MemoryCategory
   content           Json
-  evidence          Json         @default("[]")
-  version           Int          @default(1)
-  status            MemoryStatus @default(APPROVED)
+  evidence          Json           @default("[]")
+  version           Int            @default(1)
+  status            MemoryStatus   @default(APPROVED)
   sourceCandidateId String
   supersedesId      String?
   supersededById    String?
   rolledBackBy      String?
   rolledBackAt      DateTime?
   rolledBackReason  String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@unique([organizationId, jobRoleCode, topic, version])
   @@index([organizationId, jobRoleCode, status, topic])
@@ -4184,23 +4219,23 @@ model RoleMemoryRecord {
 
 /// Memória aprovada compartilhada pela organização inteira (nenhum agente/cargo específico).
 model OrganizationMemoryRecord {
-  id                String       @id @default(cuid())
+  id                String         @id @default(cuid())
   organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   topic             String
   category          MemoryCategory
   content           Json
-  evidence          Json         @default("[]")
-  version           Int          @default(1)
-  status            MemoryStatus @default(APPROVED)
+  evidence          Json           @default("[]")
+  version           Int            @default(1)
+  status            MemoryStatus   @default(APPROVED)
   sourceCandidateId String
   supersedesId      String?
   supersededById    String?
   rolledBackBy      String?
   rolledBackAt      DateTime?
   rolledBackReason  String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@unique([organizationId, topic, version])
   @@index([organizationId, status, topic])
