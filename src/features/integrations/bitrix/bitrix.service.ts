@@ -122,6 +122,7 @@ export {
   addDailyPlanItemNote,
   createDailyPlanActivity,
 } from './service/dailyPlan.service.js';
+export { fetchDailyPlanItemNotes } from './service/dailyPlanNotes.service.js';
 
 // Fechamento obrigatório do Plano Diário (parecer do dia anterior + metas do novo dia)
 export type {
