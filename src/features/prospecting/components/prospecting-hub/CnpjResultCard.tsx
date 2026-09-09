@@ -109,9 +109,9 @@ export function CnpjResultCard({
                 {RNTRC_TIER_LABEL[result.marketRisk.tier]}
               </Badge>
               <p className="text-sm text-ink-2">
-                {number.format(result.marketRisk.transporters)} transportadoras registradas no
-                RNTRC em {result.marketRisk.uf} · percentil {result.marketRisk.percentile} entre as
-                UFs do Brasil
+                {number.format(result.marketRisk.transporters)} transportadoras registradas no RNTRC
+                em {result.marketRisk.uf} · percentil {result.marketRisk.percentile} entre as UFs do
+                Brasil
                 {result.marketRisk.metadata?.competencia
                   ? ` · competência ${result.marketRisk.metadata.competencia}`
                   : ''}
