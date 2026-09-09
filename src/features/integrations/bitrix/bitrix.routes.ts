@@ -380,8 +380,11 @@ router.get('/deals', async (req: Request, res: Response, next: NextFunction): Pr
       categoryId: req.query.categoryId ? String(req.query.categoryId) : undefined,
       stageId: req.query.stageId ? String(req.query.stageId) : undefined,
       assignedById: scope.assignedById,
-      month: Number.isInteger(month) && month! >= 1 && month! <= 12 ? month : undefined,
-      year: Number.isInteger(year) && year! > 2000 ? year : undefined,
+      month:
+        typeof month === 'number' && Number.isInteger(month) && month >= 1 && month <= 12
+          ? month
+          : undefined,
+      year: typeof year === 'number' && Number.isInteger(year) && year > 2000 ? year : undefined,
       search: req.query.search ? String(req.query.search) : undefined,
       customFieldCode: req.query.customFieldCode ? String(req.query.customFieldCode) : undefined,
       customFieldValue: req.query.customFieldValue ? String(req.query.customFieldValue) : undefined,

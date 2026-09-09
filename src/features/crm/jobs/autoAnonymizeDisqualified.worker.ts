@@ -66,10 +66,11 @@ export async function runAutoAnonymizeSweep(): Promise<{ anonymizedCount: number
     let anonymizedCount = 0;
     for (const lead of leadsToAnonymize) {
       if (!lead.contactId || !lead.organizationId) continue;
+      const { contactId, organizationId } = lead;
 
-      const alreadyAnonymized = await requestContext.run({ tenantId: lead.organizationId }, () =>
+      const alreadyAnonymized = await requestContext.run({ tenantId: organizationId }, () =>
         prisma.contact.findFirst({
-          where: { id: lead.contactId!, name: '[titular anonimizado — LGPD]' },
+          where: { id: contactId, name: '[titular anonimizado — LGPD]' },
           select: { id: true },
         }),
       );

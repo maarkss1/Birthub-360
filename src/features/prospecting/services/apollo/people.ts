@@ -129,6 +129,8 @@ export async function enrichCandidatesWithDecisionMakers(
 
   await Promise.all(
     withDomain.map(async ({ org, idx }) => {
+      // Sempre presente: withDomain já filtrou por !!org.primary_domain acima.
+      // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
       const domain = org.primary_domain!;
       const { contacts } = await enrichOrganizationWithContacts(domain, 3);
       if (contacts.length === 0) {

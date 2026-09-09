@@ -144,6 +144,8 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       if (!Number.isInteger(index) || index < 1 || index > hits.length || seen.has(index)) continue;
       seen.add(index);
 
+      // index-1 sempre é um índice válido de hits: o guard acima já garante 1 <= index <= hits.length.
+      // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
       const hit = hits[index - 1]!;
       citations.push({
         documentId: hit.documentId,

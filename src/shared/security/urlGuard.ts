@@ -1,7 +1,7 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import type { LookupFunction } from 'node:net';
-import { Agent, fetch } from 'undici';
+import { Agent, fetch, type RequestInit as UndiciRequestInit } from 'undici';
 import { AppError } from '../middlewares/errorHandler.js';
 
 // `RequestInit` global deste projeto vem do lib "DOM" do tsconfig (compartilhado com o frontend)
@@ -141,7 +141,7 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
   // próprios endereços).
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-    const response = await fetch(rawUrl, { ...init, dispatcher } as unknown as RequestInit);
+    const response = await fetch(rawUrl, { ...init, dispatcher } as unknown as UndiciRequestInit);
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o

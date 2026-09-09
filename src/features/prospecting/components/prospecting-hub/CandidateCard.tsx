@@ -182,7 +182,8 @@ export function CandidateCard({
               <button
                 type="button"
                 onClick={() =>
-                  setChatTarget({ phone: candidate.phone!, name: candidate.tradeName })
+                  candidate.phone &&
+                  setChatTarget({ phone: candidate.phone, name: candidate.tradeName })
                 }
                 title="Número coletado — a existência de WhatsApp não foi verificada"
                 className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 hover:underline"
@@ -352,7 +353,7 @@ export function CandidateCard({
                       {whatsapp && (
                         <button
                           type="button"
-                          onClick={() => setChatTarget({ phone: dm.phone!, name: dm.name })}
+                          onClick={() => dm.phone && setChatTarget({ phone: dm.phone, name: dm.name })}
                           title="Número coletado — a existência de WhatsApp não foi verificada"
                           className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 hover:underline"
                         >

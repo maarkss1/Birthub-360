@@ -189,7 +189,7 @@ export class IngestionService {
 
     const title = patch.title?.trim() || document.title;
     const contentChanged = patch.content != null && patch.content !== document.content;
-    const content = contentChanged ? patch.content! : document.content;
+    const content = patch.content != null && contentChanged ? patch.content : document.content;
 
     if (!content.trim()) throw new Error('O conteúdo do documento não pode ficar vazio.');
 
