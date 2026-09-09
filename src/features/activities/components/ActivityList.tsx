@@ -33,6 +33,7 @@ import { toast } from '../../../lib/toast';
 import { clientLogger } from '../../../lib/clientLogger';
 import type { PaletteIntent } from '../../../lib/paletteIntent';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { Button } from '../../../components/ui/Button';
 import { SoundFX } from '../../../lib/soundEffects';
 import type React from 'react';
 
@@ -837,18 +838,10 @@ export function ActivityList() {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="w-full bg-gradient-to-r from-brand to-brand-2 text-white font-extrabold py-3.5 rounded-2xl text-xs shadow-lg shadow-brand/30 hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                {isSaving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
+              <Button type="submit" loading={isSaving} className="w-full">
+                {!isSaving && <Save className="w-4 h-4 mr-2" />}
                 {isSaving ? 'Salvando...' : 'Salvar Atividade'}
-              </button>
+              </Button>
             </form>
           </motion.div>
         </div>

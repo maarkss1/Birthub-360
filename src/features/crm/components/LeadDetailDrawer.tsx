@@ -24,6 +24,7 @@ import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
 import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
+import { Button } from '../../../components/ui/Button';
 import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { LeadActionBar } from './LeadActionBar';
@@ -680,19 +681,15 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                       </div>
                     ))}
 
-                    <button
+                    <Button
                       type="button"
                       onClick={handleSaveQualification}
-                      disabled={savingQual}
-                      className="w-full py-2 bg-brand-active hover:brightness-110 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                      loading={savingQual}
+                      className="w-full"
                     >
-                      {savingQual ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Save className="w-3.5 h-3.5" />
-                      )}
+                      {!savingQual && <Save className="w-3.5 h-3.5 mr-2" />}
                       Salvar Matriz & Atualizar Score ({liveScore.score} pts)
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <div className="bg-surface-2/40 p-4 rounded-2xl border border-line space-y-3">

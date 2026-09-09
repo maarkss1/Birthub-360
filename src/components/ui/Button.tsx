@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Magnetic } from './Magnetic';
 import { SoundFX, type UiSound } from '../../lib/soundEffects';
@@ -99,6 +100,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={handleClick}
         {...props}
       >
+        {loading && <Loader2 className="mr-2 h-4 w-4 shrink-0 animate-spin" aria-hidden="true" />}
         {children}
       </Comp>
     );

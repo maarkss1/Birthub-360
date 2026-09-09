@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Bot, Save, Loader2, Code2, Sliders } from 'lucide-react';
 import { api } from '../../../lib/api';
+import { Button } from '../../../components/ui/Button';
 import { RobustScriptGenerator } from './RobustScriptGenerator';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
@@ -184,19 +185,10 @@ export function PromptStudio() {
             </div>
 
             <div className="flex justify-end pt-4">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                className="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none disabled:opacity-50 transition-colors"
-              >
-                {saving ? (
-                  <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
-                ) : (
-                  <Save className="-ml-1 mr-2 h-4 w-4" />
-                )}
+              <Button type="button" onClick={handleSave} loading={saving}>
+                {!saving && <Save className="-ml-1 mr-2 h-4 w-4" />}
                 Salvar Regras da IA
-              </button>
+              </Button>
             </div>
           </div>
         </div>

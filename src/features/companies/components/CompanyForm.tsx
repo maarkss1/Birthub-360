@@ -116,10 +116,7 @@ export function CompanyForm({ company, onClose, onSave }: CompanyFormProps) {
           <Button type="button" variant="ghost" onClick={onClose} className="text-ink-2">
             Cancelar
           </Button>
-          <Button type="submit" form="company-form" disabled={isSubmitting}>
-            {isSubmitting && (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-            )}
+          <Button type="submit" form="company-form" loading={isSubmitting}>
             {company ? 'Salvar Alterações' : 'Criar Empresa'}
           </Button>
         </>

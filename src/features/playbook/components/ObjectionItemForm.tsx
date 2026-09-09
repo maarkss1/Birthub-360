@@ -84,10 +84,7 @@ export function ObjectionItemForm({ item, defaultBrand, onClose, onSave }: Objec
           <Button type="button" variant="ghost" onClick={onClose} className="text-ink-2">
             Cancelar
           </Button>
-          <Button type="submit" form="objection-item-form" disabled={isSubmitting}>
-            {isSubmitting && (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-            )}
+          <Button type="submit" form="objection-item-form" loading={isSubmitting}>
             {item ? 'Salvar Alterações' : 'Criar Objeção'}
           </Button>
         </>

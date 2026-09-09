@@ -166,14 +166,8 @@ export const AIConfigCenter: React.FC = () => {
             </CardDescription>
           </div>
         </div>
-        <Button onClick={handleSave} disabled={saving || loading} className="shrink-0">
-          {saving ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : saved ? (
-            <Check size={16} />
-          ) : (
-            <Save size={16} />
-          )}
+        <Button onClick={handleSave} loading={saving} disabled={loading} className="shrink-0">
+          {!saving && (saved ? <Check size={16} /> : <Save size={16} />)}
           <span className="ml-2">
             {saved ? 'Salvo!' : saving ? 'Salvando…' : 'Salvar Configurações'}
           </span>

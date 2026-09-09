@@ -1,6 +1,7 @@
 import type React from 'react';
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { Button } from '../../../components/ui/Button';
 import { SoundFX } from '../../../lib/soundEffects';
 import type { DailyPlanItemChannel } from '../../../shared/contracts/dailyPlan.contract';
 import { commercialIntelligenceApi } from '../commercialIntelligence.api';
@@ -159,20 +160,12 @@ export function NewActivityModal({ open, onClose, onCreated }: NewActivityModalP
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-line text-ink-2 font-bold cursor-pointer"
-            >
+            <Button type="button" variant="ghost" onClick={onClose}>
               Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isCreating || !title.trim()}
-              className="px-4 py-2 rounded-xl bg-brand text-white font-black hover:bg-brand-active transition-colors disabled:opacity-50 cursor-pointer"
-            >
+            </Button>
+            <Button type="submit" loading={isCreating} disabled={!title.trim()}>
               {isCreating ? 'Criando...' : 'Salvar & Sincronizar'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
