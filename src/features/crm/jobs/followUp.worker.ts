@@ -52,11 +52,7 @@ export async function runDailyFollowUpScan(): Promise<{ eligible: number; sentCo
     const customFields = (lead.customFields as Record<string, unknown>) || {};
     if (customFields.optOutWhatsApp) continue;
     if (!lead.contactId || !lead.organizationId) continue;
-    // TS não propaga o narrowing do guard acima para dentro do closure de requestContext.run
-    // (poderia rodar depois de `lead` mudar, na visão conservadora do checker) — variáveis
-    // locais preservam o narrowing, então extraímos aqui em vez de usar `!` lá dentro.
-    const contactId = lead.contactId;
-    const organizationId = lead.organizationId;
+    const { contactId, organizationId } = lead;
 
     try {
       await requestContext.run({ tenantId: organizationId }, async () => {

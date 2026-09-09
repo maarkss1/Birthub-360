@@ -371,7 +371,7 @@ export function Team() {
                             senha temporária
                           </span>
                         )}
-                        {isLocked(member) && (
+                        {isLocked(member) && member.lockedUntil && (
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-danger/15 text-danger-active dark:text-danger font-bold">
                             bloqueado até{' '}
                             {new Date(member.lockedUntil).toLocaleTimeString('pt-BR', {

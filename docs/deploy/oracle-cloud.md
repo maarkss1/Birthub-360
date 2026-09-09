@@ -213,6 +213,12 @@ regra TCP 5432 por máquina de desenvolvimento, com Source CIDR `= <IP público 
 (descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a única barreira de
 rede antes da autenticação por senha. IP dinâmico mudou = atualizar a regra.
 
+Achado real (2026-09-08): a operadora da máquina de desenvolvimento usa NAT de carrier — o IP de
+saída variou entre `170.231.96.140` e `170.231.96.152` em chamadas consecutivas, e horas antes era
+`201.33.120.202`. Um `/32` fixo quebra sem aviso nesse cenário; rode `curl -4 ifconfig.me` várias
+vezes e, se a faixa oscilar, libere o bloco `/24` correspondente (ex.: `170.231.96.0/24`) em vez
+de um único host — ainda muito mais restrito que `0.0.0.0/0`.
+
 **Na máquina de desenvolvimento**, pegue a senha do papel de aplicação diretamente da instância
 (não circula por chat/issue/PR) e coloque no `.env`:
 

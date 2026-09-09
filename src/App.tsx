@@ -410,8 +410,11 @@ export default function App() {
                         tests/e2e/helpers.ts::signUp e outros specs que navegam direto pra lá),
                         redesenhada com a linguagem visual do Hub Executivo (badges circulares,
                         glow de canto, sem 3D). Um usuário já autenticado que caia aqui é
-                        redirecionado pro CRM automaticamente (guard dentro do próprio
-                        LoginScreen), então "/" nunca mostra o formulário a quem já está logado. */}
+                        redirecionado pro Hub automaticamente (guard dentro do próprio
+                        LoginScreen), então "/" nunca mostra o formulário a quem já está logado.
+                        Login/cadastro também levam direto ao Hub (ver Pilot 031/032 em
+                        .claude/PILOTS.md) — o CRM (/app) deixou de ser o destino padrão pós-login;
+                        continua existindo e acessível a partir dos círculos do Hub. */}
                     <Route path="/" element={<LoginScreen />} />
                     <Route path="/welcome" element={<WelcomeScreen />} />
                     <Route path="/select-brand" element={<SelectionScreen />} />

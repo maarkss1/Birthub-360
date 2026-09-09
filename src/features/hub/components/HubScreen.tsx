@@ -88,7 +88,7 @@ function buildCalendarCells(year: number, month: number, today: number, isCurren
 
 export function HubScreen() {
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, canAccessCommercialIntelligence } = useAuth();
   const { activeBrand, brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const { grantedModules, isLoading } = useModuleAccess();
@@ -152,6 +152,21 @@ export function HubScreen() {
         colorRgb: '255,109,60',
         onOpen: () => goTo('/app/cadence'),
       },
+      // Mesmo gate de papel do backend (RequireRole em App.tsx, COMMERCIAL_INTELLIGENCE_ROLES em
+      // authorization.ts) — quem não acessa a rota não vê o círculo, em vez de ver e levar um 403.
+      ...(canAccessCommercialIntelligence
+        ? [
+            {
+              key: 'revenue-intel',
+              label: 'Revenue Intelligence',
+              description: 'Comercial Inteligente · Métricas de receita',
+              icon: HubIcons['revenue-intel'],
+              ring: 'inner' as const,
+              colorRgb: '255,109,60',
+              onOpen: () => goTo('/app/commercial_intelligence'),
+            },
+          ]
+        : []),
       ...grantedCatalog.map((mod) => ({
         key: mod.key,
         label: mod.label,
@@ -172,7 +187,7 @@ export function HubScreen() {
         onOpen: () => openExternal(link.url),
       })),
     ],
-    [grantedCatalog, goTo, openExternal],
+    [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence],
   );
 
   const orbitContainerRef = useRef<HTMLDivElement>(null);
@@ -183,8 +198,8 @@ export function HubScreen() {
   // items.length é dependência real, não falso positivo do linter (ver biome-ignore abaixo): o
   // efeito lê os cards via DOM (querySelectorAll), não via `items` diretamente, então o linter
   // não enxerga que o layout precisa recalcular quando `grantedCatalog`/`items` muda (permissões
-  // carregam de forma assíncrona após o mount). Removê-la deixaria os cards nas posições erradas
-  // até um resize.
+  // carregam de forma assíncrona após o mount, ou quando canAccessCommercialIntelligence resolve).
+  // Removê-la deixaria os cards nas posições erradas até um resize.
   // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;

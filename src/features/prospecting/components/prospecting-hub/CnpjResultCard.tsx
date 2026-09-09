@@ -104,22 +104,17 @@ export function CnpjResultCard({
           <p className="text-[10px] tracking-wider font-bold uppercase text-ink-2 mb-2 flex items-center gap-1.5">
             <Truck size={12} /> Sinal territorial RNTRC (ANTT) — {result.marketRisk.uf ?? d.state}
           </p>
-          {result.marketRisk.available ? (
+          {result.marketRisk.available &&
+          result.marketRisk.tier &&
+          result.marketRisk.transporters != null ? (
             <div className="space-y-1.5">
-              {/* tier/transporters são sempre preenchidos quando available === true — ver
-                  rntrcTerritorialRisk.service.ts: unavailable() zera esses campos, o retorno com
-                  available:true só acontece já com os totais calculados. TS não expressa essa
-                  correlação porque available/tier/transporters não são um union discriminado. */}
-              {/* biome-ignore lint/style/noNonNullAssertion: ver comentário acima */}
-              <Badge variant={RNTRC_TIER_VARIANT[result.marketRisk.tier!]}>
-                {/* biome-ignore lint/style/noNonNullAssertion: ver comentário acima da Badge */}
-                {RNTRC_TIER_LABEL[result.marketRisk.tier!]}
+              <Badge variant={RNTRC_TIER_VARIANT[result.marketRisk.tier]}>
+                {RNTRC_TIER_LABEL[result.marketRisk.tier]}
               </Badge>
               <p className="text-sm text-ink-2">
-                {/* biome-ignore lint/style/noNonNullAssertion: ver comentário acima da Badge */}
-                {number.format(result.marketRisk.transporters!)} transportadoras registradas no
-                RNTRC em {result.marketRisk.uf} · percentil {result.marketRisk.percentile} entre as
-                UFs do Brasil
+                {number.format(result.marketRisk.transporters)} transportadoras registradas no RNTRC
+                em {result.marketRisk.uf} · percentil {result.marketRisk.percentile} entre as UFs do
+                Brasil
                 {result.marketRisk.metadata?.competencia
                   ? ` · competência ${result.marketRisk.metadata.competencia}`
                   : ''}

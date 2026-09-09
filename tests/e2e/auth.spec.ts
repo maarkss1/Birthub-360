@@ -6,9 +6,13 @@ import { signUp, uniqueTestEmail, E2E_PASSWORD } from './helpers';
 // testes (07-PLANO-DE-TESTES.md) de tratar a correção de SEC-001/002/003 como test-first: estes
 // specs batem contra o servidor Express real (auth.ts / better-auth), nunca contra um mock.
 test.describe('Autenticação', () => {
-  test('cadastro com e-mail corporativo autorizado cria a conta e entra no app', async ({ page }) => {
-    await signUp(page, { email: uniqueTestEmail('signup') });
-    await expect(page).toHaveURL(/\/app/);
+  test('cadastro com e-mail corporativo autorizado cria a conta e entra no Hub', async ({ page }) => {
+    // landOn: 'hub' pede pro helper NÃO normalizar pra /app — este teste é justamente sobre o
+    // destino real pós-login (ver Pilot 031/032 em .claude/PILOTS.md: /hub substituiu /app como
+    // destino padrão), então a asserção precisa ver o redirecionamento de verdade, não a
+    // conveniência que os outros specs usam.
+    await signUp(page, { email: uniqueTestEmail('signup'), landOn: 'hub' });
+    await expect(page).toHaveURL(/\/hub/);
   });
 
   test('e-mail fora dos domínios autorizados é rejeitado antes de chamar o servidor', async ({ page }) => {
@@ -30,7 +34,7 @@ test.describe('Autenticação', () => {
     await page.getByLabel('E-mail:').fill(email);
     await page.getByPlaceholder('••••••••').fill(E2E_PASSWORD);
     await page.getByRole('button', { name: /^Entrar$/ }).click();
-    await expect(page).toHaveURL(/\/app/, { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/hub/, { timeout: 15_000 });
   });
 
   test('login com senha incorreta é rejeitado pelo servidor e não navega pro app', async ({ page, context }) => {
