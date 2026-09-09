@@ -59,6 +59,7 @@ export function DailyPlanHub() {
   const [activeNoteItemId, setActiveNoteItemId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState<string>('');
   const [isSubmittingNote, setIsSubmittingNote] = useState<boolean>(false);
+  const [loadingNotesItemId, setLoadingNotesItemId] = useState<string | null>(null);
   const [copiedScriptId, setCopiedScriptId] = useState<string | null>(null);
 
   // Modal de Nova Atividade (formulário próprio em NewActivityModal.tsx)
@@ -164,7 +165,13 @@ export function DailyPlanHub() {
     if (!noteText.trim()) return;
     try {
       setIsSubmittingNote(true);
-      await commercialIntelligenceApi.addDailyPlanNote(item.origin, item.id, noteText);
+      await commercialIntelligenceApi.addDailyPlanNote(
+        item.origin,
+        item.id,
+        noteText,
+        item.bitrixEntityType,
+        item.bitrixEntityId,
+      );
       SoundFX.play('success');
 
       // Atualiza nota no item localmente
@@ -184,6 +191,40 @@ export function DailyPlanHub() {
       console.error('Erro ao salvar observação:', err);
     } finally {
       setIsSubmittingNote(false);
+    }
+  };
+
+  // Abre/fecha a gaveta de observação. Ao abrir um item Bitrix, busca o histórico real de
+  // comentários do Bitrix24 sob demanda (nunca em lote para os 500+ itens do plano) — itens
+  // locais já têm as observações completas desde o carregamento inicial, não precisam disso.
+  const handleToggleNoteDrawer = async (item: DailyPlanItem) => {
+    if (activeNoteItemId === item.id) {
+      setActiveNoteItemId(null);
+      return;
+    }
+    setActiveNoteItemId(item.id);
+    setNoteText('');
+    if (item.origin === 'LOCAL_ACTIVITY') return;
+
+    try {
+      setLoadingNotesItemId(item.id);
+      const bitrixNotes = await commercialIntelligenceApi.getDailyPlanItemNotes(
+        item.origin,
+        item.id,
+        item.bitrixEntityType,
+        item.bitrixEntityId,
+      );
+      setPlanData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          items: prev.items.map((i) => (i.id === item.id ? { ...i, notes: bitrixNotes || [] } : i)),
+        };
+      });
+    } catch (err) {
+      console.error('Erro ao buscar histórico de observações do Bitrix24:', err);
+    } finally {
+      setLoadingNotesItemId(null);
     }
   };
 
@@ -349,7 +390,7 @@ export function DailyPlanHub() {
 
             <button
               type="button"
-              onClick={() => setActiveNoteItemId(isNoteOpen ? null : item.id)}
+              onClick={() => handleToggleNoteDrawer(item)}
               className="px-3 py-1.5 rounded-xl border border-line hover:border-brand/30 text-xs font-bold text-ink transition-colors inline-flex items-center gap-1.5 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5 text-brand" />
@@ -433,18 +474,27 @@ export function DailyPlanHub() {
               </Button>
             </div>
 
-            {item.notes && item.notes.length > 0 && (
-              <div className="space-y-1 mt-2">
-                <span className="text-[10px] font-black uppercase text-ink-3">Histórico:</span>
-                {item.notes.map((n, idx) => (
-                  <p
-                    key={idx}
-                    className="text-xs text-ink-2 bg-bg px-2.5 py-1.5 rounded-lg border border-line/60"
-                  >
-                    {n}
-                  </p>
-                ))}
-              </div>
+            {loadingNotesItemId === item.id ? (
+              <p className="text-[11px] text-ink-2 mt-2 inline-flex items-center gap-1.5">
+                <RefreshCw className="w-3 h-3 animate-spin" /> Buscando histórico no Bitrix24...
+              </p>
+            ) : (
+              item.notes &&
+              item.notes.length > 0 && (
+                <div className="space-y-1 mt-2">
+                  <span className="text-[10px] font-black uppercase text-ink-3">
+                    Histórico {item.origin !== 'LOCAL_ACTIVITY' && '(Bitrix24)'}:
+                  </span>
+                  {item.notes.map((n, idx) => (
+                    <p
+                      key={idx}
+                      className="text-xs text-ink-2 bg-bg px-2.5 py-1.5 rounded-lg border border-line/60"
+                    >
+                      {n}
+                    </p>
+                  ))}
+                </div>
+              )
             )}
           </div>
         )}

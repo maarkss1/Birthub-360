@@ -5815,6 +5815,35 @@ paths:
                 itemType: { type: string }
                 itemId: { type: string }
                 note: { type: string }
+                entityType: { type: string, description: 'lead|deal|contact|company — ver DailyPlanItem.bitrixEntityType' }
+                entityId: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/daily-plan/notes:
+    get:
+      tags: [Bitrix24]
+      summary: >-
+        Busca o histórico real de comentários já existentes no Bitrix24 para um item do Plano
+        Diário (task.commentitem.getlist / crm.timeline.comment.list) — chamado sob demanda ao
+        abrir a gaveta de observação de um item, não em lote.
+      parameters:
+        - name: itemType
+          in: query
+          required: true
+          schema: { type: string }
+        - name: itemId
+          in: query
+          required: true
+          schema: { type: string }
+        - name: entityType
+          in: query
+          required: false
+          schema: { type: string }
+        - name: entityId
+          in: query
+          required: false
+          schema: { type: string }
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }

@@ -40,6 +40,11 @@ export interface DailyPlanItem {
   leadId?: string;
   bitrixLeadId?: string;
   bitrixDealId?: string;
+  /** Entidade CRM real por trás do item (lead/negócio/contato/empresa) — usada para postar e
+   * buscar comentários no lugar certo do Bitrix24 (`crm.timeline.comment.*`). Ausente quando não
+   * há vínculo CRM resolvido (ex.: tarefa Bitrix sem `UF_CRM_TASK`). */
+  bitrixEntityType?: 'lead' | 'deal' | 'contact' | 'company';
+  bitrixEntityId?: string;
   tacticalGuidance: {
     recommendedAction: string;
     scriptOrPrompt?: string;

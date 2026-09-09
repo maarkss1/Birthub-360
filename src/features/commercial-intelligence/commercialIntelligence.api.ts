@@ -668,12 +668,33 @@ export const commercialIntelligenceApi = {
       itemType,
       itemId,
     }),
-  addDailyPlanNote: (itemType: string, itemId: string, note: string) =>
+  addDailyPlanNote: (
+    itemType: string,
+    itemId: string,
+    note: string,
+    entityType?: string,
+    entityId?: string,
+  ) =>
     api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/note', {
       itemType,
       itemId,
       note,
+      entityType,
+      entityId,
     }),
+  // Comentários já existentes no Bitrix24 do item (histórico real, não só o que a Central
+  // adicionou) — buscado sob demanda quando a gaveta de observação é aberta, nunca em lote.
+  getDailyPlanItemNotes: (
+    itemType: string,
+    itemId: string,
+    entityType?: string,
+    entityId?: string,
+  ) => {
+    const params = new URLSearchParams({ itemType, itemId });
+    if (entityType) params.set('entityType', entityType);
+    if (entityId) params.set('entityId', entityId);
+    return api.get<string[]>(`/api/bitrix/daily-plan/notes?${params.toString()}`);
+  },
   createDailyPlanActivity: (payload: {
     title: string;
     channel: string;
