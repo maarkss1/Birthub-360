@@ -12,6 +12,7 @@ import {
 } from './lib/auth/authorization';
 import { BrandProvider } from './contexts/BrandContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { DailyClosingProvider } from './contexts/DailyClosingContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
 import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
@@ -399,11 +400,12 @@ export default function App() {
         <ExperienceModeProvider>
           <BrandProvider>
             <AuthProvider>
-              <ActiveRecordProvider>
-                <ClickSpark />
-                <Suspense fallback={<PageFallback />}>
-                  <Routes>
-                    {/* Porta de entrada do produto: pedido explícito do usuário ("primeira tela
+              <DailyClosingProvider>
+                <ActiveRecordProvider>
+                  <ClickSpark />
+                  <Suspense fallback={<PageFallback />}>
+                    <Routes>
+                      {/* Porta de entrada do produto: pedido explícito do usuário ("primeira tela
                         será o Hub"/"crie uma primeira tela de login com os elementos lindos do
                         Hub") — em vez de redirecionar direto pro CRM, "/" mostra a tela de login
                         (mesmo componente de "/login", que continua existindo à parte — ver
@@ -415,85 +417,86 @@ export default function App() {
                         Login/cadastro também levam direto ao Hub (ver Pilot 031/032 em
                         .claude/PILOTS.md) — o CRM (/app) deixou de ser o destino padrão pós-login;
                         continua existindo e acessível a partir dos círculos do Hub. */}
-                    <Route path="/" element={<LoginScreen />} />
-                    <Route path="/welcome" element={<WelcomeScreen />} />
-                    <Route path="/select-brand" element={<SelectionScreen />} />
-                    <Route path="/login" element={<LoginScreen />} />
-                    <Route path="/reset-password" element={<ResetPasswordScreen />} />
-                    <Route path="/book/:slug" element={<PublicBookingPage />} />
-                    {/* Hub Executivo ("os círculos") — tela de destinos pós-login: Central
+                      <Route path="/" element={<LoginScreen />} />
+                      <Route path="/welcome" element={<WelcomeScreen />} />
+                      <Route path="/select-brand" element={<SelectionScreen />} />
+                      <Route path="/login" element={<LoginScreen />} />
+                      <Route path="/reset-password" element={<ResetPasswordScreen />} />
+                      <Route path="/book/:slug" element={<PublicBookingPage />} />
+                      {/* Hub Executivo ("os círculos") — tela de destinos pós-login: Central
                         Comercial (CRM) + módulos executivos concedidos individualmente via
                         ModuleAccessAdmin (/app/module-access) + atalhos para ferramentas externas
                         (Bitrix24, webmail, portais). Fica fora de /app/* de propósito — sem
                         MainLayout/Sidebar do CRM — mas ainda exige login (ProtectedRoute). */}
-                    <Route
-                      path="/hub"
-                      element={
-                        <ProtectedRoute>
-                          <HubScreen />
-                        </ProtectedRoute>
-                      }
-                    />
-                    {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
+                      <Route
+                        path="/hub"
+                        element={
+                          <ProtectedRoute>
+                            <HubScreen />
+                          </ProtectedRoute>
+                        }
+                      />
+                      {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
                         quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
                         CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
                         ainda exigem login (ProtectedRoute) e a concessão real do módulo
                         (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
                         autorização real vem de ModuleAccessGrant no banco). */}
-                    <Route
-                      path="/social-selling"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="social-selling">
-                            <SocialSellingHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/treinamento-atlasgr"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="treinamento-atlasgr">
-                            <TreinamentoAtlasGRHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/proposta-comercial"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="proposta-comercial">
-                            <PropostaComercialHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/hub-inteligencia-marketing"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
-                            <HubInteligenciaMarketingHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/app/*"
-                      element={
-                        <ProtectedRoute>
-                          <ErrorBoundary>
-                            <AppLayout />
-                          </ErrorBoundary>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="*" element={<Navigate to="/welcome" replace />} />
-                  </Routes>
-                </Suspense>
-              </ActiveRecordProvider>
+                      <Route
+                        path="/social-selling"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="social-selling">
+                              <SocialSellingHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/treinamento-atlasgr"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="treinamento-atlasgr">
+                              <TreinamentoAtlasGRHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/proposta-comercial"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="proposta-comercial">
+                              <PropostaComercialHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/hub-inteligencia-marketing"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
+                              <HubInteligenciaMarketingHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/app/*"
+                        element={
+                          <ProtectedRoute>
+                            <ErrorBoundary>
+                              <AppLayout />
+                            </ErrorBoundary>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="*" element={<Navigate to="/welcome" replace />} />
+                    </Routes>
+                  </Suspense>
+                </ActiveRecordProvider>
+              </DailyClosingProvider>
             </AuthProvider>
           </BrandProvider>
         </ExperienceModeProvider>

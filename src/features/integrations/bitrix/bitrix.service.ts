@@ -122,3 +122,13 @@ export {
   addDailyPlanItemNote,
   createDailyPlanActivity,
 } from './service/dailyPlan.service.js';
+
+// Fechamento obrigatório do Plano Diário (parecer do dia anterior + metas do novo dia)
+export type {
+  DailyClosingMetrics,
+  PendingDailyClosing,
+} from './service/dailyPlanClosing.service.js';
+export {
+  getPendingDailyClosing,
+  createDailyPlanClosing,
+} from './service/dailyPlanClosing.service.js';

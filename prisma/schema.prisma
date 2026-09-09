@@ -784,6 +784,7 @@ model User {
   moduleAccessGrants       ModuleAccessGrant[]
   mesaTratamentoTreatments MesaTratamentoTreatment[]
   pomodoroSessions         PomodoroSession[]
+  dailyPlanClosings        DailyPlanClosing[]
   // Fundação Multi-Cargo (ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo) —
   // vínculo com o(s) cargo(s) funcionais do usuário, independente de `role` (UserRole = nível de
   // autoridade/segurança, nunca substituído por isto).
@@ -812,6 +813,7 @@ model Organization {
   qualificationMatrixItems QualificationMatrixItem[]
   objectionMatrixItems     ObjectionMatrixItem[]
   aiPendingActions         AIPendingAction[]
+  dailyPlanClosings        DailyPlanClosing[]
 
   prompts                       Prompt[]
   agentMemories                 AgentMemory[]
@@ -881,6 +883,8 @@ model Organization {
   accessRequests                AccessRequest[]
   approvalDecisions             ApprovalDecision[]
   temporaryCapabilityGrants     TemporaryCapabilityGrant[]
+  // Agent Bus + Handoffs (PROMPT 8) — ver seção no fim deste arquivo.
+  agentHandoffMessages          AgentHandoffMessage[]
 
   /// DEC-09 (dossiê CPI, Onda 42): teto mensal de gasto com IA (USD) desta organização. Nullable =
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
@@ -2802,6 +2806,31 @@ model PomodoroSession {
   @@index([organizationId, userId, createdAt])
 }
 
+/// Fechamento obrigatório do Plano Diário (ver DailyPlanHub/DailyClosingGate) — registrado no dia
+/// seguinte, nunca no próprio dia: junta o parecer do usuário sobre `referenceDate` (métricas
+/// calculadas a partir de `Activity` locais daquele dia + comentário livre) com as metas que ele
+/// define para o novo dia que começa. Um único registro por usuário por dia (upsert), nunca
+/// múltiplos fechamentos do mesmo dia.
+model DailyPlanClosing {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Dia civil (YYYY-MM-DD, fuso do time comercial) que este fechamento avalia.
+  referenceDate  String
+  totalItems     Int
+  completedItems Int
+  pendingItems   Int
+  completionRate Int
+  userComment    String
+  nextDayGoals   String[]
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, referenceDate])
+  @@index([organizationId, userId])
+}
+
 // ─── Bug Reports (governança de 12 requisitos — item 8: Módulo de Reportar Problemas) ──────
 // Criado pelo botão flutuante `BugReportButton` (src/components/ui/BugReportButton.tsx) via
 // POST /api/bug-reports. `context` guarda um snapshot técnico capturado automaticamente no
@@ -3863,4 +3892,122 @@ model TemporaryCapabilityGrant {
 
   @@index([organizationId, granteeId, capabilityDefinitionId])
   @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Agent Bus + Handoffs (PROMPT 8) — comunicação agente<->agente e cargo<->cargo com contrato
+// estruturado (`AgentHandoffMessage`). O Bus (`agentBus.service.ts`) NUNCA decide negócio: ele
+// transporta, valida estrutura, autoriza (reusando `authorizeCapability`/`TemporaryCapabilityGrant`
+// do PROMPT 7 sem duplicar nenhuma regra), audita, e entrega ao runtime já existente
+// (`runAgentExecution`, PROMPT 4) — nunca um segundo motor de execução paralelo.
+//
+// Dado de negócio por tenant (mesmo padrão de `AgentExecution`/`AccessRequest`): RLS estrito, sem
+// bypass_rls (nenhum dos dois modelos novos está no allowlist `BYPASS_RLS_ALLOWED_MODELS`).
+// ---------------------------------------------------------------------------------------------
+
+/// Estados do ciclo de vida de um handoff — exatamente os do prompt da onda, nunca uma taxonomia
+/// paralela à de `AgentExecutionStatus` (deliberadamente distinta dela: um handoff tem fases que a
+/// execução de agente não tem, como `QUEUED`/`EXPIRED`, e nunca reaproveita o enum de PROMPT 4).
+enum HandoffStatus {
+  CREATED
+  AUTHORIZING
+  QUEUED
+  ACCEPTED
+  RUNNING
+  COMPLETED
+  DENIED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+/// Prioridade declarada pelo agente/cargo de origem — usada só para ordenação de fila
+/// (`listPendingHandoffs`), nunca para pular nenhuma etapa de autorização.
+enum HandoffPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+/// Mensagem de handoff agente<->agente / cargo<->cargo — contrato estruturado do prompt da onda.
+/// `fromAgent`/`toAgent` (código de `AgentDefinition`) e `fromRole`/`toRole` (código de `JobRole`)
+/// são STRINGS livres sem FK viva, mesmo padrão de `AgentExecution.agentCode`/`actorId`: um handoff
+/// para um código inexistente/inativo ainda é auditável (é negado com `status=DENIED`, nunca
+/// silenciosamente descartado), e o histórico sobrevive à eventual desativação do agente/cargo.
+///
+/// `parentHandoffId`/`depth` formam a cadeia de handoffs de uma mesma missão — usados por
+/// `agent-bus-policy.ts` para aplicar `maxDepth` e o loop guard (nunca reencaminhar para um agente
+/// já presente na própria cadeia de ancestrais). `idempotencyKey` (único por organização quando
+/// informado) garante que republicar o mesmo handoff (retry de rede, duplo clique) nunca cria uma
+/// segunda linha. `executionId` referencia `AgentExecution.id` sem FK viva (mesmo padrão de
+/// `agentCode`) — o `runAgentExecution` real já é chamado com `correlationId = handoffId`, o que
+/// por si só impede uma segunda execução real mesmo que `accept` seja chamado mais de uma vez
+/// (retry seguro / no duplicate write ponta a ponta, não só neste modelo).
+model AgentHandoffMessage {
+  id                   String                @id @default(cuid())
+  organizationId       String
+  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  missionId            String
+  conversationId       String
+  fromAgent            String
+  fromRole             String
+  toAgent              String
+  toRole               String
+  requestType          String
+  requestedCapability  String
+  /// Escopo de recurso do pedido (ex.: {"type":"LEAD","id":"..."}) — mesmo formato/uso de
+  /// `AccessRequest.resource`, passado como `resource` para `authorizeCapability` e para o match
+  /// estrutural de `TemporaryCapabilityGrant`. `null` = handoff sem recorte de recurso.
+  resourceScope        Json?
+  /// Fatos já conhecidos pelo agente de origem — repassados ao destino para nunca precisar
+  /// redescobrir o que a origem já sabe. Cada item é um objeto livre (ver contrato em
+  /// `agentBus.service.ts`), nunca só uma string solta.
+  knownFacts           Json                  @default("[]")
+  /// Evidência com PROVENANCE obrigatória (regra do prompt da onda) — cada item traz de onde veio
+  /// (`sourceAgent`/`sourceExecutionId`/`capabilityCode`/`recordedAt`), nunca só um texto solto sem
+  /// origem rastreável. Ver `EvidenceItem` em `agentBus.service.ts`.
+  evidence             Json                  @default("[]")
+  risks                Json                  @default("[]")
+  /// Snapshot do `CapabilityDecision` (PROMPT 3) + identidade do actor humano que autorizou este
+  /// handoff — preenchido em `publish`/reavaliado em `accept`, nunca lido de volta como fonte de
+  /// autorização (a fonte real continua sendo `authorizeCapability`, chamado de novo a cada etapa).
+  authorizationContext Json?
+  priority             HandoffPriority       @default(NORMAL)
+  status               HandoffStatus         @default(CREATED)
+  /// Resultado devolvido pelo destino ao completar — preenchido só em `COMPLETED`.
+  response             Json?
+  /// 0 a 1 — só preenchido quando `status = COMPLETED`, nunca decorativo (mesma regra de
+  /// `AgentExecution.confidence`).
+  confidence           Float?
+  /// Mensagem de erro SANITIZADA (nunca stack trace bruto) — só preenchida quando `status = FAILED`.
+  errorMessage         String?
+  /// Chave de idempotência opcional fornecida pelo publisher — único por organização quando
+  /// informada. `publish` com a mesma chave devolve o handoff já existente em vez de criar outro.
+  idempotencyKey       String?
+  parentHandoffId      String?
+  parent               AgentHandoffMessage?  @relation("HandoffChain", fields: [parentHandoffId], references: [id], onDelete: SetNull)
+  children             AgentHandoffMessage[] @relation("HandoffChain")
+  /// Profundidade na cadeia de handoffs desta missão (0 = handoff raiz) — comparada contra
+  /// `MAX_HANDOFF_DEPTH` em `agent-bus-policy.ts` antes de criar a linha.
+  depth                Int                   @default(0)
+  /// Referência a `AgentExecution.id` (sem FK viva — ver comentário do modelo) preenchida quando
+  /// `accept` efetivamente entrega este handoff ao AgentRuntime.
+  executionId          String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  acceptedAt           DateTime?
+  /// Marcado em qualquer transição terminal (COMPLETED/DENIED/FAILED/CANCELLED/EXPIRED) — mesmo
+  /// espírito de `AgentExecution.completedAt` (nunca só para o caminho de sucesso).
+  completedAt          DateTime?
+  /// Prazo de validade da fila (`QUEUED`/`ACCEPTED` além deste horário nunca são aceitos/concluídos
+  /// — computado como `EXPIRED` na leitura, mesmo padrão de `AccessRequest.effectiveStatus`, nunca
+  /// um job de expiração separado).
+  expiresAt            DateTime?
+
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, conversationId])
+  @@index([organizationId, missionId])
+  @@index([organizationId, status])
+  @@index([parentHandoffId])
 }

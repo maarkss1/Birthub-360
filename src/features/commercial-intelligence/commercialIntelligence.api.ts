@@ -1,5 +1,9 @@
 import { api } from '../../lib/api';
-import type { UserDailyPlanSummary } from '../../shared/contracts/dailyPlan.contract';
+import type {
+  DailyPlanClosingInput,
+  PendingDailyClosing,
+  UserDailyPlanSummary,
+} from '../../shared/contracts/dailyPlan.contract';
 import { brazilMonthKey } from '../../shared/time/brazilCalendar';
 
 export type ForecastTier = 'Commit' | 'BestCase' | 'Pipeline' | 'Upside';
@@ -679,6 +683,12 @@ export const commercialIntelligenceApi = {
     observations?: string;
     leadId?: string;
   }) => api.post<{ success: boolean; message: string }>('/api/bitrix/daily-plan/activity', payload),
+  // Fechamento obrigatório do Plano Diário (parecer do dia anterior + metas do novo dia) — ver
+  // DailyClosingGate.tsx/DailyClosingContext.tsx, checado uma vez por sessão antes de liberar o app.
+  getPendingDailyClosing: () =>
+    api.get<PendingDailyClosing>('/api/bitrix/daily-plan/closing/pending'),
+  submitDailyPlanClosing: (payload: DailyPlanClosingInput) =>
+    api.post<{ success: boolean }>('/api/bitrix/daily-plan/closing', payload),
   aiExecutiveSummary: (filter: CommercialFilter) =>
     api.post<ExecutiveSummaryResult>(`${BASE}/ai/executive-summary`, filter),
   aiBitrixNote: (leadId: string) =>

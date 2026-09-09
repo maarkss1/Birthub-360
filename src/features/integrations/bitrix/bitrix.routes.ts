@@ -9,6 +9,7 @@ import {
   completeDailyPlanItem,
   connectBitrix,
   createDailyPlanActivity,
+  createDailyPlanClosing,
   createExtractionRun,
   createSyncRule,
   deleteExtractionRun,
@@ -24,6 +25,7 @@ import {
   getEntityFields,
   getExtractionRun,
   getLeadStatuses,
+  getPendingDailyClosing,
   importSelectedBitrixDeals,
   importSelectedBitrixLeads,
   listBitrixConnections,
@@ -918,6 +920,43 @@ router.post(
         leadId,
       });
       res.json({ success: true, message: result.message });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.get(
+  '/daily-plan/closing/pending',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const result = await getPendingDailyClosing(organizationId, userId);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/daily-plan/closing',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const { referenceDate, userComment, nextDayGoals } = req.body;
+      if (!referenceDate || !userComment) {
+        res
+          .status(400)
+          .json({ success: false, error: 'referenceDate e userComment são obrigatórios.' });
+        return;
+      }
+      await createDailyPlanClosing(organizationId, userId, {
+        referenceDate,
+        userComment,
+        nextDayGoals: Array.isArray(nextDayGoals) ? nextDayGoals : [],
+      });
+      res.json({ success: true });
     } catch (error) {
       next(error);
     }

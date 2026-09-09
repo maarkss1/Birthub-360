@@ -270,7 +270,7 @@ function parseDate(value: Date | string | undefined | null): Date | null {
 }
 
 /** YYYY-MM-DD no fuso do time comercial. */
-function toPlanDate(value: Date | string | undefined | null): string | undefined {
+export function toPlanDate(value: Date | string | undefined | null): string | undefined {
   const d = parseDate(value);
   return d ? d.toLocaleDateString('en-CA', { timeZone: PLAN_TIMEZONE }) : undefined;
 }
