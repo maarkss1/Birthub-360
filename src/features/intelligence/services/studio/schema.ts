@@ -153,6 +153,23 @@ export const studioGenerationSchema = z.discriminatedUnion('kind', [
     }),
   }),
   z.object({
+    kind: z.literal('roleplay_evaluation'),
+    brand: brandSchema,
+    inputs: z.object({
+      persona: z.enum(['skeptical_cfo', 'strict_buyer', 'tech_director']),
+      difficulty: z.enum(['facil', 'medio', 'dificil']),
+      transcript: z
+        .array(
+          z.object({
+            sender: z.enum(['sdr', 'buyer']),
+            text: z.string().trim().min(1).max(2_000),
+          }),
+        )
+        .min(1)
+        .max(60),
+    }),
+  }),
+  z.object({
     kind: z.literal('superagent'),
     brand: brandSchema,
     inputs: z.object({
@@ -313,4 +330,15 @@ export const roleplayResultSchema = z.object({
   feedback: z.string().trim().min(10).max(800),
   clarity: z.number().int().min(0).max(100),
   objectionHandling: z.number().int().min(0).max(100),
+});
+
+// Parecer técnico da sessão completa (não de um turno isolado) — ver generateRoleplayEvaluation.
+export const roleplayEvaluationResultSchema = z.object({
+  overallScore: z.number().int().min(0).max(100),
+  clarityScore: z.number().int().min(0).max(100),
+  objectionHandlingScore: z.number().int().min(0).max(100),
+  closingScore: z.number().int().min(0).max(100),
+  strengths: z.array(z.string().trim().min(3).max(300)).min(1).max(6),
+  improvements: z.array(z.string().trim().min(3).max(300)).min(1).max(6),
+  summary: z.string().trim().min(30).max(1_200),
 });

@@ -15,7 +15,7 @@ import { generateMethodology } from './studio/generators/methodology.js';
 import { generateScript } from './studio/generators/script.js';
 import { generateAutomation } from './studio/generators/automation.js';
 import { generateAssistant } from './studio/generators/assistant.js';
-import { generateRoleplay } from './studio/generators/roleplay.js';
+import { generateRoleplay, generateRoleplayEvaluation } from './studio/generators/roleplay.js';
 import { generateSuperagent } from './studio/generators/superagent.js';
 
 export {
@@ -49,6 +49,8 @@ export class StudioService {
         return generateAssistant(request);
       case 'roleplay':
         return generateRoleplay(request);
+      case 'roleplay_evaluation':
+        return generateRoleplayEvaluation(request);
       case 'superagent':
         return generateSuperagent(request);
     }
