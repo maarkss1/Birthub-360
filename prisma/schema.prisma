@@ -784,6 +784,7 @@ model User {
   moduleAccessGrants       ModuleAccessGrant[]
   mesaTratamentoTreatments MesaTratamentoTreatment[]
   pomodoroSessions         PomodoroSession[]
+  dailyPlanClosings        DailyPlanClosing[]
   // Fundação Multi-Cargo (ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo) —
   // vínculo com o(s) cargo(s) funcionais do usuário, independente de `role` (UserRole = nível de
   // autoridade/segurança, nunca substituído por isto).
@@ -812,6 +813,7 @@ model Organization {
   qualificationMatrixItems QualificationMatrixItem[]
   objectionMatrixItems     ObjectionMatrixItem[]
   aiPendingActions         AIPendingAction[]
+  dailyPlanClosings        DailyPlanClosing[]
 
   prompts                       Prompt[]
   agentMemories                 AgentMemory[]
@@ -2804,6 +2806,31 @@ model PomodoroSession {
   @@index([organizationId, userId, createdAt])
 }
 
+/// Fechamento obrigatório do Plano Diário (ver DailyPlanHub/DailyClosingGate) — registrado no dia
+/// seguinte, nunca no próprio dia: junta o parecer do usuário sobre `referenceDate` (métricas
+/// calculadas a partir de `Activity` locais daquele dia + comentário livre) com as metas que ele
+/// define para o novo dia que começa. Um único registro por usuário por dia (upsert), nunca
+/// múltiplos fechamentos do mesmo dia.
+model DailyPlanClosing {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Dia civil (YYYY-MM-DD, fuso do time comercial) que este fechamento avalia.
+  referenceDate  String
+  totalItems     Int
+  completedItems Int
+  pendingItems   Int
+  completionRate Int
+  userComment    String
+  nextDayGoals   String[]
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, referenceDate])
+  @@index([organizationId, userId])
+}
+
 // ─── Bug Reports (governança de 12 requisitos — item 8: Módulo de Reportar Problemas) ──────
 // Criado pelo botão flutuante `BugReportButton` (src/components/ui/BugReportButton.tsx) via
 // POST /api/bug-reports. `context` guarda um snapshot técnico capturado automaticamente no
@@ -3918,9 +3945,9 @@ enum HandoffPriority {
 /// por si só impede uma segunda execução real mesmo que `accept` seja chamado mais de uma vez
 /// (retry seguro / no duplicate write ponta a ponta, não só neste modelo).
 model AgentHandoffMessage {
-  id                   String          @id @default(cuid())
+  id                   String                @id @default(cuid())
   organizationId       String
-  organization         Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   missionId            String
   conversationId       String
   fromAgent            String
@@ -3936,18 +3963,18 @@ model AgentHandoffMessage {
   /// Fatos já conhecidos pelo agente de origem — repassados ao destino para nunca precisar
   /// redescobrir o que a origem já sabe. Cada item é um objeto livre (ver contrato em
   /// `agentBus.service.ts`), nunca só uma string solta.
-  knownFacts           Json            @default("[]")
+  knownFacts           Json                  @default("[]")
   /// Evidência com PROVENANCE obrigatória (regra do prompt da onda) — cada item traz de onde veio
   /// (`sourceAgent`/`sourceExecutionId`/`capabilityCode`/`recordedAt`), nunca só um texto solto sem
   /// origem rastreável. Ver `EvidenceItem` em `agentBus.service.ts`.
-  evidence             Json            @default("[]")
-  risks                Json            @default("[]")
+  evidence             Json                  @default("[]")
+  risks                Json                  @default("[]")
   /// Snapshot do `CapabilityDecision` (PROMPT 3) + identidade do actor humano que autorizou este
   /// handoff — preenchido em `publish`/reavaliado em `accept`, nunca lido de volta como fonte de
   /// autorização (a fonte real continua sendo `authorizeCapability`, chamado de novo a cada etapa).
   authorizationContext Json?
-  priority             HandoffPriority @default(NORMAL)
-  status               HandoffStatus   @default(CREATED)
+  priority             HandoffPriority       @default(NORMAL)
+  status               HandoffStatus         @default(CREATED)
   /// Resultado devolvido pelo destino ao completar — preenchido só em `COMPLETED`.
   response             Json?
   /// 0 a 1 — só preenchido quando `status = COMPLETED`, nunca decorativo (mesma regra de
@@ -3963,12 +3990,12 @@ model AgentHandoffMessage {
   children             AgentHandoffMessage[] @relation("HandoffChain")
   /// Profundidade na cadeia de handoffs desta missão (0 = handoff raiz) — comparada contra
   /// `MAX_HANDOFF_DEPTH` em `agent-bus-policy.ts` antes de criar a linha.
-  depth                Int             @default(0)
+  depth                Int                   @default(0)
   /// Referência a `AgentExecution.id` (sem FK viva — ver comentário do modelo) preenchida quando
   /// `accept` efetivamente entrega este handoff ao AgentRuntime.
   executionId          String?
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
   acceptedAt           DateTime?
   /// Marcado em qualquer transição terminal (COMPLETED/DENIED/FAILED/CANCELLED/EXPIRED) — mesmo
   /// espírito de `AgentExecution.completedAt` (nunca só para o caminho de sucesso).
