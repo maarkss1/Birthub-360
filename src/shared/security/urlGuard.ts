@@ -141,11 +141,7 @@ export async function safeFetch(rawUrl: string, init: UndiciRequestInit = {}): P
   // próprios endereços).
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-<<<<<<< HEAD
-    const response = await fetch(rawUrl, { ...init, dispatcher } as unknown as UndiciRequestInit);
-=======
     const response = await fetch(rawUrl, { ...init, dispatcher });
->>>>>>> origin/main
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o

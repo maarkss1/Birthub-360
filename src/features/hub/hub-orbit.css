@@ -643,22 +643,6 @@
   color: var(--ink);
 }
 
-<<<<<<< HEAD
-    @media (max-width: 900px) {
-      .hub-orbit { height: auto; position: static; padding: 10px 20px 30px; display: flex; flex-direction: column; align-items: center; gap: 28px; }
-      .orbit-lines { display: none; }
-      /* !important necessário: .hub-card.primary (linha 155) é mais específico e continuaria
-         aplicando a margem negativa de centralização do desktop sem isto. */
-      /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
-      .hub-card { position: static; margin: 0 !important; }
-      .hub-card.primary { order: -1; }
-    }
-
-    /* !important necessário: reforço universal do atributo nativo `hidden` — precisa vencer
-       qualquer `display` de classe do componente que estiver escondendo o elemento. */
-    /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
-    [hidden] { display: none !important; }
-=======
 @media (max-width: 900px) {
   .hub-orbit {
     height: auto;
@@ -672,6 +656,9 @@
   .orbit-lines {
     display: none;
   }
+  /* !important necessário: .hub-card.primary (linha 155) é mais específico e continuaria
+     aplicando a margem negativa de centralização do desktop sem isto. */
+  /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
   .hub-card {
     position: static;
     margin: 0 !important;
@@ -681,7 +668,9 @@
   }
 }
 
+/* !important necessário: reforço universal do atributo nativo `hidden` — precisa vencer
+   qualquer `display` de classe do componente que estiver escondendo o elemento. */
+/* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
 [hidden] {
   display: none !important;
 }
->>>>>>> origin/main
