@@ -658,13 +658,17 @@
   }
   .hub-card {
     position: static;
-    margin: 0 !important;
+    margin: 0;
   }
   .hub-card.primary {
     order: -1;
   }
 }
 
+/* [hidden] precisa vencer classes utilitárias display do Tailwind (mesma especificidade,
+   0,1,0) independente da ordem de carregamento — sem !important um elemento com
+   hidden + className="flex"/"grid" continuaria visível. */
 [hidden] {
+  /* biome-ignore lint/complexity/noImportantStyles: ver comentário acima */
   display: none !important;
 }
