@@ -189,6 +189,9 @@ export function Settings() {
                     >
                       Tema
                     </span>
+                    {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não
+                        traria ganho real de acessibilidade aqui, só estilo. */}
+                    {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
                     <div role="group" aria-labelledby="settings-theme-label" className="flex gap-4">
                       <button
                         type="button"
@@ -233,6 +236,9 @@ export function Settings() {
                     >
                       Marca Ativa
                     </span>
+                    {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não
+                        traria ganho real de acessibilidade aqui, só estilo. */}
+                    {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
                     <div
                       role="group"
                       aria-labelledby="settings-brand-label"

@@ -171,9 +171,7 @@ export async function selectAgentForCapability(params: {
   });
   if (candidates.length === 0) return null;
   const owned = candidates.find((c) => c.primaryJobRoleId === params.jobRoleId);
-  // candidates[0] sempre existe: já retornamos acima se candidates.length === 0.
-  // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
-  return owned ?? candidates[0]!;
+  return owned ?? candidates[0];
 }
 
 /** Classifica o resultado de um passo já executado no sinal de parada correspondente — nunca
@@ -265,8 +263,10 @@ export async function runRoleSupervisor(
       steps.push(stepResult);
       if (stepResult.requiresApproval) requiresApproval = true;
 
-      // `execution` só é null quando outcome === 'NO_ELIGIBLE_AGENT' (ver o map acima) — os dois
-      // campos nascem juntos no mesmo branch, mas o tipo não modela isso como union discriminada.
+      // `execution` só é null quando outcome === 'NO_ELIGIBLE_AGENT' (ver construção do
+      // stepResult acima, no map de runAgentExecution) — o ternário já isolou esse caso no ramo
+      // anterior, então aqui execution é sempre o resultado real. TS não expressa essa correlação
+      // porque outcome/execution não são um union discriminado no tipo de retorno.
       const signal: SupervisorStopCondition | 'SUCCEEDED' | null =
         stepResult.outcome === 'NO_ELIGIBLE_AGENT'
           ? null // ausência de candidato não é uma decisão de política — nunca interrompe o run.

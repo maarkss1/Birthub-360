@@ -530,6 +530,9 @@ export function DiscoveryFilterPanel({
               >
                 Tecnologias Utilizadas
               </span>
+              {/* Toolbar de chips toggle (não campos de formulário) — <fieldset> não traria
+                  ganho real de acessibilidade aqui, só estilo. */}
+              {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
               <div
                 role="group"
                 aria-labelledby="tech-included-label"
@@ -573,6 +576,9 @@ export function DiscoveryFilterPanel({
               >
                 Excluir Tecnologias
               </span>
+              {/* Toolbar de chips toggle (não campos de formulário) — <fieldset> não traria
+                  ganho real de acessibilidade aqui, só estilo. */}
+              {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
               <div
                 role="group"
                 aria-labelledby="tech-excluded-label"

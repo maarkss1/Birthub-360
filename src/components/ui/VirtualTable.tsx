@@ -89,10 +89,9 @@ export function VirtualTable<T>({
     <div className={`flex flex-col ${className}`} style={{ height }}>
       {/* Cabeçalho fixo (não virtualizado) — cabeçalho não é navegável por teclado (esta tabela
           não implementa grid ARIA completa com roving tabindex) — débito rastreado, não
-          corrigido aqui para não expandir o escopo desta correção de CI. */}
-      {/* <tr>/<th> reais exigem um <table> ancestral e layout de tabela — incompatível com as
-          linhas virtualizadas abaixo, que usam position:absolute por linha para a janela de
-          scroll (ver comentário em "Container scrollável virtualizado"). */}
+          corrigido aqui para não expandir o escopo desta correção de CI. Também não pode usar
+          <table>/<thead>/<tr>/<th> reais — o layout depende de divs posicionadas livremente
+          (linhas virtualizadas com position:absolute, ver Container scrollável abaixo). */}
       {/* biome-ignore lint/a11y/useFocusableInteractive: ver comentário acima */}
       {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
@@ -101,8 +100,9 @@ export function VirtualTable<T>({
         aria-rowindex={0}
       >
         {columns.map((col) => (
-          // biome-ignore lint/a11y/useFocusableInteractive: mesmo débito do cabeçalho acima
-          // biome-ignore lint/a11y/useSemanticElements: mesmo motivo do cabeçalho acima (sem <table> ancestral)
+          // Mesmo débito do cabeçalho acima (não focável por teclado e não pode usar <th> real).
+          // biome-ignore lint/a11y/useFocusableInteractive: ver comentário acima
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             key={col.key}
             role="columnheader"
@@ -115,9 +115,9 @@ export function VirtualTable<T>({
         ))}
       </div>
 
-      {/* Container scrollável virtualizado — <tbody> exigiria <table> ancestral, incompatível
-          com a virtualização por position:absolute usada nas linhas abaixo. */}
-      {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
+      {/* Container scrollável virtualizado — tabela virtualizada não pode usar <tbody> real,
+          mesmo débito documentado do cabeçalho acima. */}
+      {/* biome-ignore lint/a11y/useSemanticElements: tabela virtualizada, ver comentário acima */}
       <div
         ref={parentRef}
         className="flex-1 overflow-y-auto"
@@ -135,7 +135,9 @@ export function VirtualTable<T>({
             const row = isLoading ? null : data[virtualRow.index];
 
             return (
-              // biome-ignore lint/a11y/useSemanticElements: <tr> exigiria <table> ancestral — esta linha usa position:absolute para a virtualização (ver style abaixo), incompatível com layout de tabela
+              // Linha virtualizada com position:absolute — não pode virar <tr> real, mesmo débito
+              // documentado do cabeçalho/rowgroup acima.
+              // biome-ignore lint/a11y/useSemanticElements: tabela virtualizada, ver comentário acima
               <div
                 key={row !== null ? getRowKey(row, virtualRow.index) : virtualRow.key}
                 role="row"
@@ -166,7 +168,7 @@ export function VirtualTable<T>({
                 tabIndex={onRowClick && row ? 0 : -1}
               >
                 {columns.map((col) => (
-                  // biome-ignore lint/a11y/useSemanticElements: <td> exigiria <table>/<tr> reais, incompatível com a linha virtualizada acima
+                  // biome-ignore lint/a11y/useSemanticElements: tabela virtualizada, ver comentário do cabeçalho acima
                   <div
                     key={col.key}
                     role="cell"

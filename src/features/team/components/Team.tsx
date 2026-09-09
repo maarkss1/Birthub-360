@@ -37,7 +37,7 @@ interface TeamMember {
   updatedAt: string;
 }
 
-function isLocked(member: TeamMember): boolean {
+function isLocked(member: TeamMember): member is TeamMember & { lockedUntil: string } {
   return !!member.lockedUntil && new Date(member.lockedUntil).getTime() > Date.now();
 }
 

@@ -42,6 +42,9 @@ export function CnpjResultCard({
   isPromoting: boolean;
   promoted: boolean;
 }) {
+  // O chamador (CnpjSearchPanel) só renderiza este componente quando `cnpjResult.data` existe,
+  // mas isso não é visível para o TS através da fronteira de props — guard local narrowa `d`
+  // pro resto do componente sem precisar de `!`.
   if (!result.data) return null;
   const d = result.data;
   const isActive = d.situacaoCadastral?.toUpperCase() === 'ATIVA';

@@ -195,9 +195,11 @@ export function HubScreen() {
   // Cálculo matemático idêntico ao protótipo portalatlasprototype.html
   const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
 
-  // `items.length` não é lido diretamente no efeito (a posição vem de `.hub-card` já no DOM),
-  // mas precisa continuar aqui como gatilho: quando grantedCatalog carrega de forma assíncrona
-  // e muda a contagem de círculos, o layout precisa recalcular os ângulos/raio para o novo n.
+  // items.length é dependência real, não falso positivo do linter (ver biome-ignore abaixo): o
+  // efeito lê os cards via DOM (querySelectorAll), não via `items` diretamente, então o linter
+  // não enxerga que o layout precisa recalcular quando `grantedCatalog`/`items` muda (permissões
+  // carregam de forma assíncrona após o mount, ou quando canAccessCommercialIntelligence resolve).
+  // Removê-la deixaria os cards nas posições erradas até um resize.
   // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
@@ -472,6 +474,9 @@ export function HubScreen() {
 
         {/* Órbita Concêntrica Dupla */}
         {isDesktopOrbit ? (
+          // Grupo de botões de navegação (não campos de formulário) — <fieldset> não traria ganho
+          // real de acessibilidade aqui, só estilo.
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             ref={orbitContainerRef}
             className="hub-orbit"

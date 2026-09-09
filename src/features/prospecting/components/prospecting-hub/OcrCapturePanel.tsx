@@ -348,6 +348,9 @@ export function OcrCapturePanel() {
 
       {/* Área de Dropzone quando não há dados ou não está no split-view */}
       {!cameraActive && !hasExtractedData && (
+        // Contém um <button> real ("Usar Câmera") e um <input type="file"> como controles
+        // próprios — <button> aninhando outro <button>/<input> seria HTML inválido.
+        // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
         <div
           role="button"
           tabIndex={0}
