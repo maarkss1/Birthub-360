@@ -5869,6 +5869,55 @@ paths:
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
         '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/hub-tasks:
+    get:
+      tags: [Bitrix24]
+      summary: >-
+        Tarefas delegadas pelo usuário autenticado no widget "Tarefas pendentes" do Hub Executivo —
+        tarefas reais do Bitrix24 (`tasks.task.list`), não estado local. Devolve também a lista de
+        colegas ativos do Bitrix24 para o seletor "Designar para".
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+    post:
+      tags: [Bitrix24]
+      summary: Cria uma nova tarefa real no Bitrix24 (`tasks.task.add`) delegada a um colega.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text, assigneeId]
+              properties:
+                text: { type: string }
+                assigneeId: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /bitrix/hub-tasks/{id}/toggle:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Bitrix24]
+      summary: >-
+        Alterna a conclusão de uma tarefa do Hub no Bitrix24 (`tasks.task.complete`/`tasks.task.renew`
+        conforme `done`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [done]
+              properties:
+                done: { type: boolean }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/leads/{leadId}/comment:
     parameters:
       - name: leadId
