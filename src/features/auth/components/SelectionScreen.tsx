@@ -8,7 +8,7 @@ export function SelectionScreen() {
   const { theme } = useTheme();
   const handleSelect = (brand: 'atlasgr' | 'totaltrac') => {
     localStorage.setItem('selectedBrand', brand);
-    window.location.href = '/app';
+    window.location.href = '/hub';
   };
 
   return (

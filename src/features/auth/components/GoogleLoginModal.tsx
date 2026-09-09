@@ -32,7 +32,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
     try {
       await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/app',
+        callbackURL: '/hub',
       });
       // The page will redirect to Google, so we just wait
     } catch (err) {
@@ -65,6 +65,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
         >
           {/* Close button */}
           <button
+            type="button"
             onClick={onClose}
             aria-label="Fechar"
             className="absolute top-4 right-4 p-2 text-ink-2 hover:text-ink hover:bg-surface-2 rounded-full transition-colors z-10"
@@ -105,6 +106,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
             <div className="w-full">
               {step === 'button' && (
                 <button
+                  type="button"
                   onClick={handleGoogleLogin}
                   className="w-full flex items-center justify-center gap-3 bg-surface border border-line text-ink font-medium py-3 px-4 rounded-xl hover:bg-surface-2 active:bg-surface-2 transition-colors shadow-sm"
                 >

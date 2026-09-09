@@ -35,8 +35,8 @@ interface ConversationSignalResult {
 
 function buildTranscript(messages: Array<{ direction: string; body: string | null }>): string {
   return messages
-    .filter((m) => m.body && m.body.trim())
-    .map((m) => `${m.direction === 'inbound' ? 'Cliente' : 'Atlas'}: ${m.body!.trim()}`)
+    .filter((m) => m.body?.trim())
+    .map((m) => `${m.direction === 'inbound' ? 'Cliente' : 'Atlas'}: ${m.body?.trim()}`)
     .join('\n');
 }
 

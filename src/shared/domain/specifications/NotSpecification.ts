@@ -12,6 +12,7 @@ import type { Specification } from './Specification.js';
  * @typeParam TCandidate - Type evaluated by the specification.
  */
 export class NotSpecification<TCandidate> extends CompositeSpecification<TCandidate> {
+  // biome-ignore lint/complexity/noUselessConstructor: torna público o construtor protected da composição base
   public constructor(specification: Specification<TCandidate>) {
     super(specification);
   }

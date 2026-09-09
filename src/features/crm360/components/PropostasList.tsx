@@ -137,6 +137,7 @@ export function PropostasList() {
           </div>
           {canWrite && (
             <button
+              type="button"
               onClick={() => {
                 setEditingDocument(null);
                 setIsFormOpen(true);
@@ -245,6 +246,9 @@ export function PropostasList() {
                 </thead>
                 <tbody>
                   {filtered.map((doc) => (
+                    // Linha de <table> real — não pode virar <button> (elemento de bloco inválido
+                    // como filho de <tbody>, quebraria a semântica/estrutura da tabela).
+                    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
                     <tr
                       key={doc.id}
                       onClick={() => setSelectedDocumentId(doc.id)}

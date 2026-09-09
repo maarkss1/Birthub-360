@@ -38,7 +38,7 @@ import { buildModelWithFallbackAndTools } from './fallback.util.js';
 // módulo fosse importado antes de `dotenv/config` terminar de rodar. Motor local (Ollama via
 // LiteLLM) removido de propósito: processa uma completion por vez nesta máquina, travando o
 // enxame inteiro por vários segundos a cada etapa. Groq é rápido e não tem esse gargalo.
-let cachedModelWithTools: any = null;
+let cachedModelWithTools: ReturnType<typeof buildModelWithFallbackAndTools> | null = null;
 function getModelWithTools() {
   if (cachedModelWithTools) return cachedModelWithTools;
 

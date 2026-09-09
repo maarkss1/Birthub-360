@@ -157,7 +157,7 @@ async function searchViaDuckDuckGo(query: string): Promise<{ results: SearchResu
         }
       }
     }
-    if (url.startsWith('//')) url = 'https:' + url;
+    if (url.startsWith('//')) url = `https:${url}`;
 
     const title = cleanHtmlText(
       headingMatch ? headingMatch[1] : titleMatch ? titleMatch[2] : 'Sem título',

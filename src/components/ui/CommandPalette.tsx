@@ -52,6 +52,7 @@ function normalize(value: string): string {
 // eles. O Hub Executivo standalone (rotas top-level em App.tsx) é o único ponto de entrada agora.
 const MODULE_ORDER: TabType[] = [
   'dashboard',
+  'workspace',
   'prospect',
   'crm',
   'companies',
@@ -71,6 +72,7 @@ const MODULE_ORDER: TabType[] = [
   'knowledge',
   'analytics',
   'winloss',
+  'daily-plan',
   'sdr-diagnostic-joao',
   'commercial_intelligence',
   'copiloto_ia',
@@ -310,7 +312,7 @@ export function CommandPalette() {
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [query]);
+  }, []);
 
   const handleInputKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {

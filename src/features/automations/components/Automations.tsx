@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus -- modal aberto por ação do usuário, ver comentário no local de uso */
 import { useCallback, useEffect, useState } from 'react';
 import {
   Cpu,
@@ -14,6 +15,7 @@ import {
   History,
   Pencil,
   RefreshCw,
+  type LucideIcon,
 } from 'lucide-react';
 
 import { Card } from '../../../components/ui/Card';
@@ -58,7 +60,7 @@ function VisualNode({
   children,
   isLast,
 }: {
-  icon: any;
+  icon: LucideIcon;
   title: string;
   subtitle?: string;
   children?: React.ReactNode;
@@ -242,7 +244,7 @@ function AutomationForm({
               /* modal ("Construtor de Automação") aberto por ação do usuário; foca o primeiro
                  campo do formulário que acabou de abrir, padrão de diálogo do WAI-ARIA
                  Authoring Practices. */
-              // eslint-disable-next-line jsx-a11y/no-autofocus
+              // biome-ignore lint/a11y/noAutofocus: ver comentário acima
               autoFocus
             />
           </div>

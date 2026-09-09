@@ -23,11 +23,15 @@ export interface OutboundCallResult {
 }
 
 function requireConfig() {
+  const baseUrl = env.BIRTH_VOICES_URL?.replace(/\/$/, '');
+  const apiKey = env.BIRTH_VOICES_API_KEY;
+  const agentId = env.BIRTH_VOICES_AGENT_ID;
+  const publicBaseUrl = env.PUBLIC_BASE_URL?.replace(/\/$/, '');
   const missing = [
-    !env.BIRTH_VOICES_URL && 'BIRTH_VOICES_URL',
-    !env.BIRTH_VOICES_API_KEY && 'BIRTH_VOICES_API_KEY',
-    !env.BIRTH_VOICES_AGENT_ID && 'BIRTH_VOICES_AGENT_ID',
-    !env.PUBLIC_BASE_URL && 'PUBLIC_BASE_URL',
+    !baseUrl && 'BIRTH_VOICES_URL',
+    !apiKey && 'BIRTH_VOICES_API_KEY',
+    !agentId && 'BIRTH_VOICES_AGENT_ID',
+    !publicBaseUrl && 'PUBLIC_BASE_URL',
   ].filter(Boolean);
 
   if (missing.length > 0) {
@@ -36,11 +40,15 @@ function requireConfig() {
     );
   }
 
+  if (!baseUrl || !apiKey || !agentId || !publicBaseUrl) {
+    throw new BirthVoiceNotConfiguredError('SDR de voz não configurado.');
+  }
+
   return {
-    baseUrl: env.BIRTH_VOICES_URL!.replace(/\/$/, ''),
-    apiKey: env.BIRTH_VOICES_API_KEY!,
-    agentId: env.BIRTH_VOICES_AGENT_ID!,
-    callbackUrl: `${env.PUBLIC_BASE_URL!.replace(/\/$/, '')}${CALL_RESULT_WEBHOOK_PATH}`,
+    baseUrl,
+    apiKey,
+    agentId,
+    callbackUrl: `${publicBaseUrl}${CALL_RESULT_WEBHOOK_PATH}`,
   };
 }
 

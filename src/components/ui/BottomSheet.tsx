@@ -84,18 +84,3 @@ export function BottomSheet({
     </Drawer.Root>
   );
 }
-
-/**
- * Hook utilitário: retorna true quando a viewport é mobile (< 768px).
- * Permite ao chamador decidir entre <BottomSheet> e <Drawer> de forma idiomática.
- *
- * Exemplo:
- *   const isMobile = useIsMobile();
- *   return isMobile
- *     ? <BottomSheet open={open} onOpenChange={setOpen}>...</BottomSheet>
- *     : <Drawer isOpen={open} onClose={() => setOpen(false)} title="...">...</Drawer>;
- */
-export function useIsMobile(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(max-width: 767px)').matches;
-}

@@ -8,6 +8,7 @@ import { signUp, uniqueTestEmail, waitForAppReady } from './helpers';
 // aba em memória e /app/crm sempre caía no Dashboard; esse teste existia justamente pra documentar
 // essa limitação, que não existe mais.
 const TAB_ROUTES: Record<string, string> = {
+  'Meu Workspace': 'workspace',
   'Pipeline CRM': 'crm',
   'Empresas': 'companies',
   'Decisores': 'contacts',

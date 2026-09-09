@@ -55,7 +55,9 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
   const [isSearchingPeople, setIsSearchingPeople] = useState(false);
   const [peopleError, setPeopleError] = useState<string | null>(null);
   const [peopleTotal, setPeopleTotal] = useState<number | null>(null);
-  const [peopleWithLinkedin, setPeopleWithLinkedin] = useState<DecisionMaker[]>([]);
+  const [peopleWithLinkedin, setPeopleWithLinkedin] = useState<
+    (DecisionMaker & { linkedinUrl: string })[]
+  >([]);
 
   // --- Gerador manual (fallback) ---
   const [manualName, setManualName] = useState('');
@@ -107,7 +109,11 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         { timeoutMs: 30_000 },
       );
       setPeopleTotal(result.decisionMakers.length);
-      setPeopleWithLinkedin(result.decisionMakers.filter((dm) => !!dm.linkedinUrl));
+      setPeopleWithLinkedin(
+        result.decisionMakers.filter(
+          (dm): dm is DecisionMaker & { linkedinUrl: string } => !!dm.linkedinUrl,
+        ),
+      );
       if (result.error) setPeopleError(result.error);
     } catch (err) {
       setPeopleError(getErrorMessage(err, 'Falha ao buscar decisores'));
@@ -197,12 +203,14 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
 
       <div className="flex gap-2 bg-surface-2 p-1.5 rounded-xl border border-line w-fit">
         <button
+          type="button"
           onClick={() => setSubTab('empresas')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'empresas' ? 'bg-brand-active text-white shadow-sm' : 'text-ink-2 hover:text-ink'}`}
         >
           <Building2 size={14} /> Empresas
         </button>
         <button
+          type="button"
           onClick={() => setSubTab('decisores')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'decisores' ? 'bg-brand-active text-white shadow-sm' : 'text-ink-2 hover:text-ink'}`}
         >
@@ -267,6 +275,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
               </datalist>
             </div>
             <button
+              type="button"
               onClick={searchCompanies}
               disabled={isSearchingCompanies}
               className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
@@ -356,6 +365,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
               />
             </div>
             <button
+              type="button"
               onClick={searchPeople}
               disabled={isSearchingPeople}
               className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
@@ -403,7 +413,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                     {dm.title && <p className="text-xs text-ink-2">{dm.title}</p>}
                   </div>
                   <a
-                    href={dm.linkedinUrl!}
+                    href={dm.linkedinUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1 text-xs text-blue-500 hover:underline"
@@ -417,6 +427,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                       </span>
                     ) : (
                       <button
+                        type="button"
                         onClick={() => promotePerson(dm, idx)}
                         disabled={promotingKey === key}
                         className="bg-brand-active text-white px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
@@ -473,6 +484,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <button
+            type="button"
             onClick={generateManualLink}
             disabled={!manualName.trim()}
             className="bg-surface border border-line text-ink px-4 py-2 rounded-xl font-bold text-xs hover:border-brand/40 disabled:opacity-50 flex items-center gap-2"
@@ -496,6 +508,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                 </span>
               ) : (
                 <button
+                  type="button"
                   onClick={promoteManual}
                   disabled={promotingKey === 'li-manual'}
                   className="bg-brand-active text-white px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 flex items-center gap-2 disabled:opacity-60"

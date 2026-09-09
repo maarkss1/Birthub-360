@@ -6,6 +6,7 @@ import { BaseUseCases } from '../../../shared/application/BaseUseCases';
 import { AppError } from '../../../shared/middlewares/errorHandler';
 
 export class ContactUseCases extends BaseUseCases<Contact, ContactRepository> {
+  // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI
   constructor(contactRepository: ContactRepository) {
     super(contactRepository);
   }
@@ -36,13 +37,13 @@ export class ContactUseCases extends BaseUseCases<Contact, ContactRepository> {
   }
 
   async enrichContact(organizationId: string, id: string) {
-    const contact = await this.repository.findById!(organizationId, id);
+    const contact = await this.repository.findById?.(organizationId, id);
     if (!contact) throw new AppError('Contact not found', 404);
     if (!contact.companyId)
       throw new AppError('Contato sem empresa vinculada — não é possível enriquecer', 400);
 
     const result = await enrichCompany(organizationId, contact.companyId, {});
-    const updated = await this.repository.findById!(organizationId, id);
+    const updated = await this.repository.findById?.(organizationId, id);
 
     return { contact: updated, fit: result.fit, enrichment: result };
   }

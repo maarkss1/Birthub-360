@@ -218,6 +218,7 @@ export function TreinamentoAtlasGRHub() {
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {subTabs.map((tab) => (
             <button
+              type="button"
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as typeof activeSubTab)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
@@ -275,6 +276,9 @@ export function TreinamentoAtlasGRHub() {
                   const isDone = completedModules.includes(m.file);
                   const isSelected = selectedModule === m.file;
                   return (
+                    // Contém um <button> real (toggle de "concluído") como controle próprio —
+                    // <button> aninhando outro <button> seria HTML inválido.
+                    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
                     <div
                       key={m.file}
                       role="button"
@@ -292,6 +296,7 @@ export function TreinamentoAtlasGRHub() {
                         <div className="text-[11px] text-ink-2 truncate">{m.desc}</div>
                       </div>
                       <button
+                        type="button"
                         onClick={(e) => toggleModuleCompleted(m.file, e)}
                         className={`p-1 rounded-md transition-colors ${
                           isDone

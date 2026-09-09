@@ -17,7 +17,7 @@ export function countAdvancedTransitions(
   const byLead = new Map<string, StageHistoryRow[]>();
   for (const row of history) {
     if (!byLead.has(row.leadId)) byLead.set(row.leadId, []);
-    byLead.get(row.leadId)!.push(row);
+    byLead.get(row.leadId)?.push(row);
   }
   let advanced = 0;
   for (const rows of byLead.values()) {
@@ -54,7 +54,7 @@ export function computeHistoricalStageReach(
   const historyByLead = new Map<string, StageHistoryRow[]>();
   for (const row of history) {
     if (!historyByLead.has(row.leadId)) historyByLead.set(row.leadId, []);
-    historyByLead.get(row.leadId)!.push(row);
+    historyByLead.get(row.leadId)?.push(row);
   }
 
   const reachedByDeal = inScope.map((s) => {

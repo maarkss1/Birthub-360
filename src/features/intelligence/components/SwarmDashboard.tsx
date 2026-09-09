@@ -160,7 +160,7 @@ export function SwarmDashboard() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-  }, [messages]);
+  }, []);
 
   useEffect(() => {
     if (!isExecuting || !startedAt) return;
@@ -531,12 +531,14 @@ export function SwarmDashboard() {
       {/* Seletor de visão: missão ao vivo vs. SLO por agente */}
       <div className="px-8 pt-4 border-b border-line bg-surface-2/40 z-10 flex items-center gap-2">
         <button
+          type="button"
           onClick={() => setView('mission')}
           className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-widest rounded-t-lg border-b-2 transition-colors cursor-pointer ${view === 'mission' ? `${accent.text} border-current` : 'text-ink-2 border-transparent hover:text-ink'}`}
         >
           <Send size={12} /> Missão ao vivo
         </button>
         <button
+          type="button"
           onClick={() => setView('slo')}
           className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-widest rounded-t-lg border-b-2 transition-colors cursor-pointer ${view === 'slo' ? `${accent.text} border-current` : 'text-ink-2 border-transparent hover:text-ink'}`}
         >
@@ -572,6 +574,7 @@ export function SwarmDashboard() {
               <div className="flex flex-col gap-2 max-w-lg w-full">
                 {MISSION_SUGGESTIONS.map((suggestion) => (
                   <button
+                    type="button"
                     key={suggestion}
                     onClick={() => setMission(suggestion)}
                     className={`text-left text-xs text-ink bg-surface-2 border border-line rounded-xl px-4 py-3 ${accent.hoverBorder} hover:bg-surface transition-colors cursor-pointer`}
@@ -705,6 +708,7 @@ export function SwarmDashboard() {
             />
             {isExecuting ? (
               <button
+                type="button"
                 onClick={stopMission}
                 aria-label="Cancelar missão"
                 className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-danger-active hover:brightness-110 hover:scale-105 rounded-xl flex items-center justify-center text-white transition-all shadow-lg z-50 pointer-events-auto cursor-pointer"
@@ -714,6 +718,7 @@ export function SwarmDashboard() {
               </button>
             ) : (
               <button
+                type="button"
                 onClick={() => runSimulation()}
                 disabled={!mission.trim()}
                 aria-label="Executar missão"
@@ -772,6 +777,7 @@ function SwarmSloPanel({ snapshot, loading, error, onRetry }: SwarmSloPanelProps
         <AlertTriangle size={28} className="text-amber-500" />
         <p className="text-sm text-ink-2 font-medium">{error}</p>
         <button
+          type="button"
           onClick={onRetry}
           className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg border border-line text-ink hover:bg-surface-2 transition-colors cursor-pointer"
         >
@@ -797,6 +803,7 @@ function SwarmSloPanel({ snapshot, loading, error, onRetry }: SwarmSloPanelProps
           </p>
         </div>
         <button
+          type="button"
           onClick={onRetry}
           className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg border border-line text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
         >

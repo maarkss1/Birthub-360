@@ -1,53 +1,58 @@
 import type { Express } from 'express';
-import { authenticateToken, type AuthRequest } from '../shared/middlewares/authenticateToken.js';
-import { requireTenant } from '../shared/middlewares/authorization.js';
-import { requireRole } from '../shared/middlewares/requireRole.js';
-import { COMMERCIAL_INTELLIGENCE_ROLES, COPILOTO_IA_ROLES } from '../lib/auth/authorization.js';
-import { sseService } from '../features/notifications/sse.service.js';
-
-import { intelligenceRoutes } from '../features/intelligence/routes/intelligence.routes.js';
-import { promptRoutes } from '../features/intelligence/routes/prompt.routes.js';
-import { companyRoutes } from '../features/companies/routes/company.routes.js';
-import { contactRoutes } from '../features/contacts/routes/contact.routes.js';
-import { leadRoutes } from '../features/crm/routes/lead.routes.js';
-import { crm360Routes } from '../features/crm360/routes/crm360.routes.js';
-import { qualificationMatrixRoutes } from '../features/playbook/qualification-matrix/routes/qualification-matrix.routes.js';
-import { objectionMatrixRoutes } from '../features/playbook/objection-matrix/routes/objection-matrix.routes.js';
 import { activityRoutes } from '../features/activities/routes/activity.routes.js';
-import { mesaTratamentoRoutes } from '../features/mesa-tratamento/routes/mesaTratamento.routes.js';
-import { prospectingRoutes } from '../features/prospecting/routes/prospecting.routes.js';
-import { prospectingToolsRoutes } from '../features/prospecting/routes/prospecting-tools.routes.js';
-import { noteRoutes } from '../features/notes/routes/note.routes.js';
 import { analyticsRoutes } from '../features/analytics/routes/analytics.routes.js';
 import { eventsRoutes } from '../features/analytics/routes/events.routes.js';
-import { commercialIntelligenceRoutes } from '../features/commercial-intelligence/routes/commercialIntelligence.routes.js';
-import { copilotoIaRoutes } from '../features/copiloto-ia/routes/copilotoIa.routes.js';
-import { whatsappRoutes } from '../features/integrations/whatsapp/whatsapp.routes.js';
-import { birthVoiceRoutes } from '../features/integrations/birth-voice/birthVoice.routes.js';
-import { googleRoutes } from '../features/integrations/google/google.routes.js';
-import { bitrixRoutes } from '../features/integrations/bitrix/bitrix.routes.js';
-import { teamRoutes } from '../features/team/routes/team.routes.js';
-import { moduleAccessRoutes } from '../features/module-access/routes/moduleAccess.routes.js';
 import { authExtraRoutes } from '../features/auth/routes/auth-extra.routes.js';
-import { agentRoutes } from '../features/intelligence/routes/agent.routes.js';
-import { knowledgeRoutes } from '../features/knowledge/knowledge.routes.js';
-import { notificationRoutes } from '../features/notifications/notification.routes.js';
 import { automationRoutes } from '../features/automations/routes/automation.routes.js';
 import { usageRoutes } from '../features/billing/routes/usage.routes.js';
+import { bugReportRouter } from '../features/bug-reports/routes/bugReport.routes.js';
 import { cadenceRoutes } from '../features/cadence/cadence.routes.js';
 import {
-  publicBookingRouter,
   privateBookingRouter,
+  publicBookingRouter,
 } from '../features/calendar/routes/booking.routes.js';
-import { lgpdRouter } from '../features/lgpd/lgpd.routes.js';
+import { commercialIntelligenceRoutes } from '../features/commercial-intelligence/routes/commercialIntelligence.routes.js';
+import { companyRoutes } from '../features/companies/routes/company.routes.js';
+import { contactRoutes } from '../features/contacts/routes/contact.routes.js';
+import { copilotoIaRoutes } from '../features/copiloto-ia/routes/copilotoIa.routes.js';
+import { leadRoutes } from '../features/crm/routes/lead.routes.js';
+import { crm360Routes } from '../features/crm360/routes/crm360.routes.js';
 import { featureFlagsRouter } from '../features/feature-flags/routes/featureFlags.routes.js';
-import { bugReportRouter } from '../features/bug-reports/routes/bugReport.routes.js';
-import { threecxRoutes } from '../features/integrations/threecx/threecx.routes.js';
 import { gamificationRoutes } from '../features/gamification/routes/gamification.routes.js';
-import { accountIntelligenceRoutes } from '../features/market-intelligence/server/accountIntelligence.routes.js';
-import { jobRoleRoutes } from '../features/job-roles/routes/jobRole.routes.js';
+import { birthVoiceRoutes } from '../features/integrations/birth-voice/birthVoice.routes.js';
+import { bitrixRoutes } from '../features/integrations/bitrix/bitrix.routes.js';
+import { googleRoutes } from '../features/integrations/google/google.routes.js';
+import { threecxRoutes } from '../features/integrations/threecx/threecx.routes.js';
+import { whatsappRoutes } from '../features/integrations/whatsapp/whatsapp.routes.js';
+import { agentRoutes } from '../features/intelligence/routes/agent.routes.js';
+import { intelligenceRoutes } from '../features/intelligence/routes/intelligence.routes.js';
+import { promptRoutes } from '../features/intelligence/routes/prompt.routes.js';
+import { accessRequestRoutes } from '../features/job-roles/routes/accessRequest.routes.js';
+import { agentBusRoutes } from '../features/job-roles/routes/agentBus.routes.js';
 import { agentCatalogRoutes } from '../features/job-roles/routes/agentCatalog.routes.js';
 import { capabilityRoutes } from '../features/job-roles/routes/capability.routes.js';
+import { jobRoleRoutes } from '../features/job-roles/routes/jobRole.routes.js';
+import { memoryRoutes } from '../features/job-roles/routes/memory.routes.js';
+import { roleSupervisorRoutes } from '../features/job-roles/routes/roleSupervisor.routes.js';
+import { workspaceRoutes } from '../features/job-roles/routes/workspace.routes.js';
+import { knowledgeRoutes } from '../features/knowledge/knowledge.routes.js';
+import { lgpdRouter } from '../features/lgpd/lgpd.routes.js';
+import { accountIntelligenceRoutes } from '../features/market-intelligence/server/accountIntelligence.routes.js';
+import { marketIntelligenceCompanyRoutes } from '../features/market-intelligence/server/marketIntelligenceCompany.routes.js';
+import { mesaTratamentoRoutes } from '../features/mesa-tratamento/routes/mesaTratamento.routes.js';
+import { moduleAccessRoutes } from '../features/module-access/routes/moduleAccess.routes.js';
+import { noteRoutes } from '../features/notes/routes/note.routes.js';
+import { notificationRoutes } from '../features/notifications/notification.routes.js';
+import { sseService } from '../features/notifications/sse.service.js';
+import { objectionMatrixRoutes } from '../features/playbook/objection-matrix/routes/objection-matrix.routes.js';
+import { qualificationMatrixRoutes } from '../features/playbook/qualification-matrix/routes/qualification-matrix.routes.js';
+import { prospectingRoutes } from '../features/prospecting/routes/prospecting.routes.js';
+import { prospectingToolsRoutes } from '../features/prospecting/routes/prospecting-tools.routes.js';
+import { teamRoutes } from '../features/team/routes/team.routes.js';
+import { COMMERCIAL_INTELLIGENCE_ROLES, COPILOTO_IA_ROLES } from '../lib/auth/authorization.js';
+import { type AuthRequest, authenticateToken } from '../shared/middlewares/authenticateToken.js';
+import { requireTenant } from '../shared/middlewares/authorization.js';
+import { requireRole } from '../shared/middlewares/requireRole.js';
 
 /**
  * Monta todas as rotas de API protegidas (autenticação + tenant + papel, conforme o módulo) e o
@@ -55,6 +60,16 @@ import { capabilityRoutes } from '../features/job-roles/routes/capability.routes
  * BullBoard, e antes do fallback de frontend — mesma posição do server.ts original.
  */
 export function mountFeatureRoutes(app: Express): void {
+  // Precisa vir ANTES de '/api/companies': o path de 1 segmento
+  // '/api/companies/market-intelligence' colidiria com companyRoutes 'GET /:id' (que trataria
+  // "market-intelligence" como um id de empresa) se companyRoutes fosse verificado primeiro. Ver
+  // o comentário de topo de marketIntelligenceCompany.routes.ts.
+  app.use(
+    '/api/companies/market-intelligence',
+    authenticateToken,
+    requireTenant,
+    marketIntelligenceCompanyRoutes,
+  );
   app.use('/api/companies', authenticateToken, requireTenant, companyRoutes);
   app.use('/api/contacts', authenticateToken, requireTenant, contactRoutes);
   app.use('/api/leads', authenticateToken, requireTenant, leadRoutes);
@@ -143,6 +158,16 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/job-roles', authenticateToken, requireTenant, jobRoleRoutes);
   app.use('/api/agents', authenticateToken, requireTenant, agentCatalogRoutes);
   app.use('/api/capabilities', authenticateToken, requireTenant, capabilityRoutes);
+  app.use('/api/role-supervisor', authenticateToken, requireTenant, roleSupervisorRoutes);
+  // PROMPT 6 — Workspaces por Login/Cargo: mesmo padrão de mount independente de
+  // /api/module-access (rota "me" própria, não aninhada em /api/job-roles).
+  app.use('/api/workspace', authenticateToken, requireTenant, workspaceRoutes);
+  // PROMPT 7 — Cross-Role Authorization + Aprovações: mesmo padrão de mount independente.
+  app.use('/api/access-requests', authenticateToken, requireTenant, accessRequestRoutes);
+  // PROMPT 8 — Agent Bus + Handoffs: mesmo padrão de mount independente.
+  app.use('/api/agent-bus', authenticateToken, requireTenant, agentBusRoutes);
+  // PROMPT 9 — Memória + Aprendizado Contínuo Governado: mesmo padrão de mount independente.
+  app.use('/api/memory', authenticateToken, requireTenant, memoryRoutes);
   app.use('/api/auth-extra', authenticateToken, requireTenant, authExtraRoutes);
   app.use('/api/agent', requireTenant, agentRoutes);
   app.use('/api/cadence', authenticateToken, requireTenant, cadenceRoutes);

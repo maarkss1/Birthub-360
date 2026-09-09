@@ -16,21 +16,21 @@ export interface SearchResult {
  * encontrava nada. Agora delega para `searchService.hybridSearch`, o mesmo motor de busca (semântica
  * + palavra-chave, com RLS por tenant) que alimenta a Base de Conhecimento de verdade.
  */
-export class VectorSearchService {
+export const VectorSearchService = {
   /**
    * @deprecated Sem chamador no código (RAG-001). Revetorização real é
    * `ingestionService.reembedDocument` (src/features/knowledge/ingestion.service.ts).
    */
-  static async updateChunkEmbedding(): Promise<boolean> {
+  async updateChunkEmbedding(): Promise<boolean> {
     logger.warn('VectorSearchService.updateChunkEmbedding está desativado (RAG-001) — sem efeito.');
     return false;
-  }
+  },
 
   /**
    * Busca semântica (RAG-001): delega para `searchService.hybridSearch` (Document/DocumentChunk,
    * com RLS + filtro explícito de tenant) em vez da tabela "KnowledgeChunk" (sem ingestão real).
    */
-  static async searchChunks(
+  async searchChunks(
     query: string,
     organizationId: string,
     limit: number = 5,
@@ -53,5 +53,5 @@ export class VectorSearchService {
       logger.error({ err: error, query }, 'Erro ao realizar busca vetorial');
       return [];
     }
-  }
-}
+  },
+};

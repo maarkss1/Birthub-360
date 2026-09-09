@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AlertCircle, Check, Loader2, ShieldCheck } from 'lucide-react';
 import { moduleAccessApi, type ModuleAccessMatrixUser } from '../moduleAccess.api';
 import { invalidateModuleAccessCache } from '../../../hooks/useModuleAccess';
@@ -27,7 +27,7 @@ export function ModuleAccessAdmin() {
   const [loadError, setLoadError] = useState('');
   const [pendingCell, setPendingCell] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setIsLoading(true);
     setLoadError('');
     try {
@@ -39,11 +39,11 @@ export function ModuleAccessAdmin() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const toggle = async (user: ModuleAccessMatrixUser, moduleKey: string, granted: boolean) => {
     const cellId = `${user.id}:${moduleKey}`;

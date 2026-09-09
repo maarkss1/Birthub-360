@@ -1,4 +1,4 @@
-import { Worker, Queue, type Job } from 'bullmq';
+import { Worker, Queue, type Job, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
@@ -195,7 +195,7 @@ export function createCadenceRunWorker(): Worker {
     async (_job: Job) => {
       await scanAndAdvanceCadenceRuns();
     },
-    { connection: connection as any, concurrency: 1 },
+    { connection: connection as ConnectionOptions, concurrency: 1 },
   );
 
   worker.on('failed', (job, err) => {
@@ -218,7 +218,7 @@ export function createCadenceRunWorker(): Worker {
 }
 
 export async function scheduleCadenceRunJob(): Promise<void> {
-  const queue = new Queue(CADENCE_RUN_QUEUE_NAME, { connection: connection as any });
+  const queue = new Queue(CADENCE_RUN_QUEUE_NAME, { connection: connection as ConnectionOptions });
   await queue.upsertJobScheduler(
     'cadence-run-tick',
     { every: SCAN_INTERVAL_MS },

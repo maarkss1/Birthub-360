@@ -3,6 +3,8 @@ import {
   BufferJSON,
   type AuthenticationState,
   type AuthenticationCreds,
+  type SignalDataSet,
+  type SignalDataTypeMap,
 } from '@whiskeysockets/baileys';
 import type { Redis } from 'ioredis';
 import { encryptField, decryptField } from '../../../lib/crypto/secretFields.js';
@@ -25,7 +27,7 @@ export const useRedisAuthState = async (
 ): Promise<{ state: AuthenticationState; saveCreds: () => Promise<void> }> => {
   const prefix = `wa-auth:${organizationId}:`;
 
-  const writeData = async (key: string, data: any) => {
+  const writeData = async (key: string, data: unknown) => {
     const serialized = JSON.stringify(data, BufferJSON.replacer);
     await redisClient.set(`${prefix}${key}`, encryptField(serialized));
   };
@@ -54,8 +56,8 @@ export const useRedisAuthState = async (
     state: {
       creds,
       keys: {
-        get: async (type: string, ids: string[]) => {
-          const data: { [key: string]: any } = {};
+        get: async <T extends keyof SignalDataTypeMap>(type: T, ids: string[]) => {
+          const data: { [id: string]: SignalDataTypeMap[T] } = {};
           await Promise.all(
             ids.map(async (id) => {
               let value = await readData(`${type}-${id}`);
@@ -69,11 +71,12 @@ export const useRedisAuthState = async (
           );
           return data;
         },
-        set: async (data: any) => {
+        set: async (data: SignalDataSet) => {
           const tasks: Promise<void>[] = [];
-          for (const category in data) {
-            for (const id in data[category]) {
-              const value = data[category][id];
+          for (const category of Object.keys(data) as (keyof SignalDataTypeMap)[]) {
+            const entries = data[category] ?? {};
+            for (const id of Object.keys(entries)) {
+              const value = entries[id];
               const key = `${category}-${id}`;
               tasks.push(value ? writeData(key, value) : removeData(key));
             }

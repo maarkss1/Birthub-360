@@ -65,5 +65,5 @@ Identifique e responda a qualquer tipo de pergunta com simpatia. Se for necessá
 Entenda como lidam com seleção de motoristas e gestão de risco, ofereça o Teste Grátis (2 consultas) e encerre com o abraço caloroso da marca Atlas GR ("Tchau, tchau da Atlas GR!").
 `;
 
-  return ATLAS_GR_PLAYBOOK + '\n\n' + contextStr;
+  return `${ATLAS_GR_PLAYBOOK}\n\n${contextStr}`;
 }

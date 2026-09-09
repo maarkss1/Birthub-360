@@ -1,4 +1,5 @@
 import { ChatOpenAI } from '@langchain/openai';
+import type { BindToolsInput } from '@langchain/core/language_models/chat_models';
 
 function buildCandidates(modelName: string): ChatOpenAI[] {
   return [
@@ -26,8 +27,7 @@ function buildCandidates(modelName: string): ChatOpenAI[] {
  * antes do fallback ser montado — sem isso, um fallback assumindo o lugar do primário no meio de
  * uma execução perderia acesso às ferramentas do agente.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildModelWithFallback(modelName: string, tools?: any[]) {
+export function buildModelWithFallback(modelName: string, tools?: BindToolsInput[]) {
   const candidates = buildCandidates(modelName);
   const available = candidates.filter((llm) => llm.apiKey !== 'missing-key');
 
@@ -45,7 +45,6 @@ export function buildModelWithFallback(modelName: string, tools?: any[]) {
 
 // Mantido para não obrigar troca simultânea de todos os call sites — delega para
 // buildModelWithFallback, que agora cobre os dois casos (com e sem tools) num único lugar.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildModelWithFallbackAndTools(modelName: string, tools: any[]) {
+export function buildModelWithFallbackAndTools(modelName: string, tools: BindToolsInput[]) {
   return buildModelWithFallback(modelName, tools);
 }

@@ -1,6 +1,5 @@
 export class Container {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private dependencies = new Map<string, any>();
+  private dependencies = new Map<string, unknown>();
 
   register<T>(name: string, dependency: T): void {
     this.dependencies.set(name, dependency);

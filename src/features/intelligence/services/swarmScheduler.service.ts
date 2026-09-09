@@ -558,9 +558,9 @@ export async function getSwarmSloSnapshot(
       'Nenhuma execução foi tentada para este agente ainda nesta janela.',
     );
 
-    const executionLatencies = executedRows
-      .filter((row) => row.executedAt)
-      .map((row) => row.executedAt!.getTime() - row.createdAt.getTime());
+    const executionLatencies = executedRows.flatMap((row) =>
+      row.executedAt ? [row.executedAt.getTime() - row.createdAt.getTime()] : [],
+    );
     const avgExecutionLatencyMs =
       executionLatencies.length > 0
         ? executionLatencies.reduce((sum, ms) => sum + ms, 0) / executionLatencies.length

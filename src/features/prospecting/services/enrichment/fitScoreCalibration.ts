@@ -129,7 +129,7 @@ export function calibrateFitScoreFromClosedLeads(
     TIER_ORDER.map((tier) => [tier, []]),
   );
   for (const sample of ordered) {
-    byTier.get(tierForScore(sample.score))!.push(sample);
+    byTier.get(tierForScore(sample.score))?.push(sample);
   }
 
   const tiers: FitScoreTierCalibration[] = TIER_ORDER.map((tier) => {

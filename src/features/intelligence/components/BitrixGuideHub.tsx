@@ -142,6 +142,7 @@ export function BitrixGuideHub() {
       {/* Tabs Internas */}
       <div className="flex flex-wrap gap-2 border-b border-line pb-2">
         <button
+          type="button"
           onClick={() => setActiveTab('practices')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'practices'
@@ -152,6 +153,7 @@ export function BitrixGuideHub() {
           Boas Práticas de Operação
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('pipeline')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'pipeline'
@@ -162,6 +164,7 @@ export function BitrixGuideHub() {
           Regras de Estágios de Funil
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('field_mapping')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'field_mapping'
@@ -172,6 +175,7 @@ export function BitrixGuideHub() {
           Mapeamento de Campos
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('tutorials')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'tutorials'
