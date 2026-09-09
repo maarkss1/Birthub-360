@@ -76,6 +76,17 @@ function useLiveClock() {
 
 const WEEKDAYS_SHORT = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
+// HubBurstCanvas desenha em <canvas>, que não entende var(--brand) — precisa do RGB já resolvido
+// da marca ativa (BrandContext) para o burst de partículas não ficar laranja fixo com Total Trac.
+function hexToRgbString(hex: string): string {
+  const clean = hex.replace('#', '');
+  const value = Number.parseInt(clean, 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `${r},${g},${b}`;
+}
+
 function buildCalendarCells(year: number, month: number, today: number, isCurrentMonth: boolean) {
   const firstDow = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -100,6 +111,8 @@ export function HubScreen() {
 
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
+  const brandRgb = useMemo(() => hexToRgbString(brandInfo.primaryColor), [brandInfo.primaryColor]);
+  const brandAccentRgb = useMemo(() => hexToRgbString(brandInfo.accentColor), [brandInfo.accentColor]);
 
   // Quem decide quais módulos executivos cada pessoa vê é o painel 'module-access' (ADMIN), para
   // qualquer papel — inclusive SDR. O corte por papel que existia aqui escondia do SDR até os
@@ -131,7 +144,7 @@ export function HubScreen() {
         icon: HubIcons.central,
         primary: true,
         ring: 'inner',
-        colorRgb: '255,86,24',
+        colorRgb: brandRgb,
         onOpen: () => goTo('/app'),
       },
       {
@@ -140,7 +153,7 @@ export function HubScreen() {
         description: 'Mesa de Tratamento · Dashboard SDR',
         icon: HubIcons.sdr,
         ring: 'inner',
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => goTo('/app/mesa-tratamento'),
       },
       {
@@ -149,7 +162,7 @@ export function HubScreen() {
         description: 'Cadência · Agendamento · Google Meet',
         icon: HubIcons['meeting-hub'],
         ring: 'inner',
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => goTo('/app/cadence'),
       },
       // Mesmo gate de papel do backend (RequireRole em App.tsx, COMMERCIAL_INTELLIGENCE_ROLES em
@@ -162,7 +175,7 @@ export function HubScreen() {
               description: 'Comercial Inteligente · Métricas de receita',
               icon: HubIcons['revenue-intel'],
               ring: 'inner' as const,
-              colorRgb: '255,109,60',
+              colorRgb: brandAccentRgb,
               onOpen: () => goTo('/app/commercial_intelligence'),
             },
           ]
@@ -173,7 +186,7 @@ export function HubScreen() {
         description: mod.description,
         icon: HubIcons[mod.key] || HubIcons.central,
         ring: 'inner' as const,
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => goTo(`/${mod.key}`),
       })),
       ...EXTERNAL_LINKS.map((link) => ({
@@ -183,11 +196,11 @@ export function HubScreen() {
         icon: HubIcons[link.iconKey] || HubIcons.central,
         external: true,
         ring: 'outer' as const,
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => openExternal(link.url),
       })),
     ],
-    [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence],
+    [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence, brandRgb, brandAccentRgb],
   );
 
   const orbitContainerRef = useRef<HTMLDivElement>(null);

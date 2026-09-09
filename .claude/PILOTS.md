@@ -3282,3 +3282,54 @@ entrada nova.
   sem erro de console). Screenshot real (`page.screenshot`, descartado após revisão, não commitado)
   confirmou visualmente os 3 estados (sem cargo, CLOSER desktop, CLOSER mobile) antes de reportar
   concluído — nenhum bug visual encontrado desta vez, mas o hábito (seção 12.6) é o que importa.
+
+## Piloto 032 — HubScreen (identidade Total Trac)
+
+- **Pedido do usuário**: "criar uma tela Hub para a Total Trac, no mesmo modelo do Hub da AtlasGR".
+  Auditoria (seção 2/12.1) mostrou que isso já existe por arquitetura — `HubScreen.tsx` é única,
+  montada em `/hub`, e reage a `useBrand()` (troca `Logo`↔`TotalTrackLogo`, textos de
+  `brandInfo`, tokens `--brand`/`--brand-2` setados pelo `BrandContext`). Não havia "Hub separado
+  por marca" para duplicar nem justificativa para criar uma segunda tela física — o trabalho real
+  era fazer a Hub existente refletir de fato a identidade Total Trac quando ativa, que é o que a
+  seção 5 (exceção precisa de justificativa) e o Piloto 001/029 (telas pós-seleção de marca usam
+  tokens dinâmicos, não cor estática) já prescrevem.
+- **Achado principal, corrigido — vazamento de laranja AtlasGR em `hub-orbit.css`**: ~15 valores
+  hex/rgba fixos (`#ff9d70`, `rgba(255,86,24,...)`, gradiente do `.hc-title`) só existiam porque o
+  CSS puro do Hub nunca foi migrado para os tokens dinâmicos — com Total Trac ativa, logo/textos
+  trocavam mas o beacon do header, o glow do card primário, o shimmer do título dos círculos e o
+  ícone hover continuavam laranja. Convertidos para `var(--brand)`/`var(--brand-2)`/
+  `color-mix(in srgb, var(--brand) X%, white|black|transparent)` — mesmo padrão de
+  `--shadow-glow-brand` já usado no resto do projeto (`design-system/SKILL.md`). Fórmula validada
+  numericamente (script Node, não só visual): para AtlasGR o resultado bate quase pixel-a-pixel com
+  o hex original (`#a63810` vs `#a83810`); para Total Trac produz azul-marinho/pastel coerente com
+  `identidade-visual/totaltrac/tokens/totaltrac.css` (`#374898`/`#2D3B78`), sem cair em preto/branco
+  puro. Os `colorRgb` do burst de partículas em `HubScreen.tsx` (canvas 2D, não entende `var()`)
+  também eram laranja fixo — agora calculados via `hexToRgbString(brandInfo.primaryColor|
+  accentColor)`, únicos no repo (não havia utilitário equivalente).
+- **Achado secundário, corrigido — mesmo arquivo, não introduzido por esta sessão**: `var(--brand-
+  active)` em 8 pontos de `hub-orbit.css` e 4 de `HubIcons.tsx` nunca resolvia — Tailwind 4 registra
+  esse token como `--color-brand-active` dentro do `@theme` (`src/styles/globals.css`), não
+  `--brand-active` puro, que não é setado em lugar nenhum do projeto (`grep` confirmou). O efeito
+  era silencioso: eyebrow/tagline/relógio/calendário/ícone hover/label caíam para preto (`--ink`
+  herdado) em vez da cor de marca, **nas duas marcas**, não só Total Trac — só ficou visível ao
+  montar o QA visual alternativo abaixo. Corrigido para `var(--color-brand-active)` nos dois
+  arquivos (`replace_all`, escopo confirmado restrito ao Hub via `grep -r` no `src/`).
+- **Decisão explícita — cores douradas de `.clock-widget .date`/`.cal-grid span` mantidas como
+  estão**: `#8a6c00`/`#ffe066` não são derivadas de `--brand` nem de `--warn` (`#FFC500`) — são uma
+  escolha decorativa neutra própria do protótipo original para a data/abreviação de dias, não uma
+  cor de marca vazando. `design-system/SKILL.md` ("cor de marca ≠ semântica ≠ decoração") — não
+  "corrigidas" para não introduzir mudança visual fora do pedido.
+- **QA visual sem navegador com backend real (protocolo `visual-qa/SKILL.md`)**: `/hub` é rota
+  protegida e o app depende do Postgres remoto (Oracle Cloud) via `DATABASE_URL`, inacessível nesta
+  sessão — sem alternativa equivalente a `playwright test` real com login. Validação alternativa
+  executada e documentada, não apresentada como equivalente: `npx vite build` (build estático real,
+  sem backend) gerou o CSS processado (`@theme` do Tailwind já resolvido); harness Playwright
+  descartável (Chromium `/opt/pw-browsers/chromium`, `file://`, não promovido a teste oficial —
+  mesmo cuidado do Piloto 002) renderizou os elementos de cor do Hub (`op-dot`, `hc-title` small e
+  primary, eyebrow/tagline, clock) nas 4 combinações marca×tema. Confirmou visualmente Total Trac
+  azul/ciano correto nas 4 combinações e expôs o bug do `--brand-active` (textos pretos antes do
+  fix, coloridos depois) — screenshots e harness descartados após a revisão, não commitados.
+- **Verificação**: `npm ci` (ambiente sem `node_modules`), `npx biome lint` (0 erros/warnings nos
+  arquivos tocados), `npx tsc --noEmit` (0 erros) — rodados de novo após o fix do `--brand-active`
+  para confirmar que nada quebrou. Specs E2E oficiais (`crm.spec.ts` etc.) não puderam rodar por
+  falta de Postgres/login real nesta sessão — pendente de confirmação num ambiente com backend.

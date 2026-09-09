@@ -65,13 +65,13 @@
 }
 @keyframes beacon {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 86, 24, 0.7);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 70%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(255, 86, 24, 0);
+    box-shadow: 0 0 0 8px transparent;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 86, 24, 0);
+    box-shadow: 0 0 0 0 transparent;
   }
 }
 .sound-toggle {
@@ -102,11 +102,11 @@
   font-weight: 900;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--brand-active);
+  color: var(--color-brand-active);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .hub-greeting .eyebrow {
-    color: #ff9d70;
+    color: var(--brand-2);
   }
 }
 .hub-greeting h1 {
@@ -125,13 +125,13 @@
 .hub-greeting .tagline {
   font-size: 15px;
   font-weight: 800;
-  color: var(--brand-active);
+  color: var(--color-brand-active);
   margin-top: 8px;
   letter-spacing: -0.01em;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .hub-greeting .tagline {
-    color: #ff9d70;
+    color: var(--brand-2);
   }
 }
 
@@ -162,11 +162,11 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
-  color: var(--brand-active);
+  color: var(--color-brand-active);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .clock-widget .time {
-    color: #ff9d70;
+    color: var(--brand-2);
   }
 }
 .clock-widget .date {
@@ -189,14 +189,14 @@
   font-size: 10px;
   font-weight: 800;
   text-transform: capitalize;
-  color: var(--brand-active);
+  color: var(--color-brand-active);
   text-align: center;
   margin-bottom: 6px;
   letter-spacing: 0.04em;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .cal-widget .cal-head {
-    color: #ff9d70;
+    color: var(--brand-2);
   }
 }
 .cal-grid {
@@ -302,7 +302,7 @@
 .task-row .task-assignee {
   font-size: 8.5px;
   font-weight: 800;
-  color: var(--brand-active);
+  color: var(--color-brand-active);
   background: var(--soft);
   border-radius: 999px;
   padding: 1px 5px;
@@ -463,7 +463,7 @@
 .hc-orb .hc-icon-wrap {
   position: relative;
   z-index: 1;
-  color: var(--brand-active);
+  color: var(--color-brand-active);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -473,7 +473,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .hc-orb .hc-icon-wrap {
-    color: #ff9d70;
+    color: var(--brand-2);
   }
 }
 .hub-card:hover .hc-icon-wrap {
@@ -526,10 +526,10 @@
 .hub-card.primary .hc-orb {
   width: 238px;
   height: 238px;
-  background: radial-gradient(circle at 32% 28%, var(--brand-2), var(--brand-active) 80%);
+  background: radial-gradient(circle at 32% 28%, var(--brand-2), var(--color-brand-active) 80%);
   border-color: transparent;
   box-shadow:
-    0 20px 48px -14px rgba(255, 86, 24, 0.5),
+    0 20px 48px -14px color-mix(in srgb, var(--brand) 50%, transparent),
     var(--shadow-card);
 }
 .hub-card.primary .hc-orb .hc-icon-wrap {
@@ -550,8 +550,8 @@
 }
 
 .hc-title {
-  --title-light: #ffb08a;
-  --title-dark: #a83810;
+  --title-light: color-mix(in srgb, var(--brand) 40%, white);
+  --title-dark: color-mix(in srgb, var(--brand) 65%, black);
   font-size: 11.5px;
   font-weight: 900;
   text-align: center;
@@ -581,8 +581,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .hc-title {
-    --title-light: #ffcfae;
-    --title-dark: #ff5618;
+    --title-light: color-mix(in srgb, var(--brand) 22%, white);
+    --title-dark: var(--brand);
   }
 }
 
@@ -608,15 +608,9 @@
 }
 .hub-card.primary .hc-title {
   --title-light: #ffffff;
-  --title-dark: #ffddc2;
+  --title-dark: color-mix(in srgb, var(--brand) 18%, white);
   font-size: 16px;
   padding: 0 24px;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .hub-card.primary .hc-title {
-    --title-light: #ffffff;
-    --title-dark: #ffddc2;
-  }
 }
 
 .label-logo-full {
@@ -628,12 +622,12 @@
 }
 .label-logo {
   display: inline-block;
-  color: var(--brand-active);
+  color: var(--color-brand-active);
   flex-shrink: 0;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .label-logo {
-    color: #ff9d70;
+    color: var(--brand-2);
   }
 }
 .label-logo-word {
