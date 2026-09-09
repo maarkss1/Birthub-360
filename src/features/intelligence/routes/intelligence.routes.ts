@@ -61,7 +61,7 @@ import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.
 import { routeParam } from '../../../shared/http/routeParams.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { aiSuiteRouter } from './ai-suite.routes.js';
-import { finishRoleplaySession } from '../../roleplay/services/roleplay-session.service.js';
+import { finishRoleplaySession } from '../services/roleplay-session.service.js';
 
 const router = Router();
 
