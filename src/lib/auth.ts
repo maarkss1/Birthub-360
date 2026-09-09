@@ -261,8 +261,7 @@ export const auth = betterAuth({
   },
   advanced: {
     useSecureCookies: Boolean(
-      process.env.SECURE_COOKIES === 'true' ||
-        (process.env.BETTER_AUTH_URL?.startsWith('https://')),
+      process.env.SECURE_COOKIES === 'true' || process.env.BETTER_AUTH_URL?.startsWith('https://'),
     ),
     crossSubDomainCookies: {
       enabled: Boolean(process.env.COOKIE_DOMAIN),
@@ -273,7 +272,7 @@ export const auth = betterAuth({
       sameSite: 'lax',
       secure: Boolean(
         process.env.SECURE_COOKIES === 'true' ||
-          (process.env.BETTER_AUTH_URL?.startsWith('https://')),
+          process.env.BETTER_AUTH_URL?.startsWith('https://'),
       ),
     },
   },

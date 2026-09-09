@@ -3146,6 +3146,7 @@ entrada nova.
   exata da variante (`show`, não `visible`) antes de usar `animate=` com uma string literal**, e
   nunca considerar motion "correto" só porque compilou.
 
+<<<<<<< HEAD
 ## Pilot 032 — Hub Executivo vira destino padrão pós-login (confirmação explícita pendente do Piloto 031)
 
 - **Objetivo**: o Piloto 031 tinha deixado `/` e o pós-login apontando pra `/app` (CRM) de
@@ -3192,3 +3193,94 @@ entrada nova.
   critério explícito, nunca por preferência estética isolada): aqui o critério foi confirmação
   explícita e repetida do usuário para exatamente a decisão que o Piloto 031 tinha deixado em
   aberto, não uma escolha unilateral desta sessão.
+=======
+## Piloto 031 — Meu Workspace (PROMPT 6, Workspaces por Login/Cargo)
+
+- **Objetivo**: primeira tela real que consome a Fundação Multi-Cargo (PROMPTs 1-5, até então
+  100% backend — confirmado por auditoria: zero rota `/job-roles/**`, `/capabilities/**`,
+  `/agents/**` ou `/role-supervisor/**` era chamada por qualquer componente React antes desta
+  onda). Login → `UserRole` → `JobRole` → workspace do cargo → agentes/capabilities permitidos,
+  com "1 componente genérico + `RoleWorkspaceDefinition` configurável" (regra explícita do prompt
+  da onda: nunca 12 aplicações duplicadas).
+- **Decisão de arquitetura — o `RoleWorkspaceDefinition` (`role-workspace-definitions.ts`) só
+  declara o que é NOVO por cargo**: `homeWidgets` (ordem/conjunto fixo de seções), `modules`
+  (subconjunto de `TabType` já roteado) e `quickActions` (rótulo + `moduleKey`). KPIs vêm de
+  `ROLE_SUPERVISOR_PROFILES.preferredCapabilities` (PROMPT 5) + `RoleCapabilityGrant` +
+  `TOOL_BINDINGS` (PROMPT 3); agent groups vêm de `RoleAgentGrant` (PROMPT 1/2) — nada disso é
+  redeclarado, só lido em `workspace.service.ts` (`getWorkspaceForUser`). Isso é o motivo real de
+  "não duplicar 12 apps": o dado por cargo já existia todo, faltava só uma camada de leitura +
+  1 tela.
+- **`RECEITA_FATURAMENTO` não aponta quick action para `/app/usage`**: aquele módulo é custo de
+  uso de IA (consumo de token), não faturamento de venda (mesma distinção já documentada em
+  `tool-bindings.ts` para `billing.read`/`billing.reconcile`, ambos `SOURCE_REQUIRED` — sem tela
+  real de "vendido × faturado" ainda). Apontar pra lá seria um link enganoso; o bloqueio real já
+  aparece nos KPIs (badge "Fonte de dado ausente").
+- **`locked`/`lockedReason` por módulo — gate de `UserRole` reexposto, nunca um segundo sistema de
+  permissão**: `workspace.service.ts` tem um mapa `MODULE_MIN_ROLE` que espelha exatamente os
+  mesmos gates já aplicados em `App.tsx` (`RequireRole`)/`bootstrap/routes.ts`
+  (`commercial_intelligence`→`COMMERCIAL_INTELLIGENCE_ROLES`, `mesa-tratamento`→
+  `MESA_TRATAMENTO_ROLES`, `usage`/`team`/`module-access`→`ADMIN`). Cargo (`JobRole`) nunca eleva
+  segurança (`UserRole`) — testado explicitamente (`GERENTE_COMERCIAL` com `UserRole` SDR vê
+  `commercial_intelligence` como `locked: true`; o mesmo cargo com `UserRole` GESTOR vê
+  `locked: false`) — ver seção "UserRole vs JobRole" em `prisma/schema.prisma`.
+- **KPI é status de acesso, não valor numérico ao vivo**: decisão de escopo explícita. O workspace
+  responde "este cargo tem, em princípio, acesso a este dado?" (`AVAILABLE`/`APPROVAL_REQUIRED`/
+  `REQUEST`/`DISCOVER_ONLY`/`SOURCE_REQUIRED`/`FUTURE_TOOL`/`TOOL_UNAVAILABLE`/`NOT_GRANTED`),
+  reaproveitando a mesma lógica de `authorizeCapability` (etapas 6/10/11/12) sem precisar de um
+  `agentCode` específico — nunca chama motor de negócio nenhum (`CommercialIntelligenceUseCases`
+  etc.) pra popular número ao vivo, isso seria escopo do supervisor de cargo (PROMPT 5) quando
+  executado de verdade, não desta tela de estrutura/acesso.
+- **Dois componentes novos em `src/components/ui/`**: `BlockedState.tsx` (contraparte de
+  `EmptyState.tsx` para "isto está bloqueado por um motivo real", não "nada aconteceu ainda" —
+  `role="status"` para anunciar a leitores de tela). `KpiCard.tsx`/`EmptyState.tsx`/`Badge.tsx`
+  existentes foram reaproveitados sem alteração para o resto da tela (KPIs viram cards próprios
+  com `Badge` de status, não `KpiCard` — este espera um `value` numérico que a tela
+  deliberadamente não tem, ver ponto acima).
+- **Sem hero centralizada, sem 3 cards iguais forçados**: header assimétrico (departamento em
+  caps + nome do cargo + missão, alinhado à esquerda, mesmo padrão de `SinglePageDashboard.tsx`),
+  grid de KPIs com contagem real por cargo (3 a 4, nunca preenchido artificialmente), agent groups
+  agrupados por `accessLevel` (só as seções com pelo menos 1 agente aparecem). Único uso de
+  `BlockedState` centralizado é justificado pela seção 5 (estado único, nada mais para mostrar
+  quando não há cargo atribuído — mesmo raciocínio já usado por `EmptyState` em qualquer módulo).
+- **Novo item de navegação, aditivo, não substitui o Painel Central**: "Meu Workspace"
+  (`TabType 'workspace'`, ícone `Briefcase`) adicionado ao grupo "Visão Geral" da Sidebar, ao lado
+  de "Painel Central" — decisão deliberada de NÃO trocar o destino padrão pós-login
+  (`/app`/`SinglePageDashboard`) pelo workspace: a atribuição de `JobRole` é recente (PROMPT 1) e
+  a maioria dos usuários reais ainda não tem cargo atribuído hoje; forçar o workspace como home
+  quebraria a experiência de quem ainda não foi migrado. `/app/workspace` resolve seu próprio
+  estado (`READY`/`NO_JOB_ROLE`/`NO_WORKSPACE_DEFINITION`) a partir da sessão, nunca fica "quebrado"
+  para ninguém. Perfil restrito de SDR (`isRestrictedSdrProfile` em `Sidebar.tsx`, `UserRole`
+  SDR só vê "Plano Diário") foi deixado como estava — decisão pré-existente e deliberada de outra
+  sessão, fora do escopo desta onda.
+- **Bug real de ambiente encontrado e documentado, não do código do produto**: `@playwright/test`
+  1.62.1 instalado espera Chromium revisão `1234`, mas o binário pré-provisionado neste sandbox é
+  a revisão `1194` — tentar lançar sem `executablePath` explícito trava (tenta alcançar a rede de
+  download do Playwright, bloqueada pelo proxy do ambiente, sem erro nem timeout curto). O próprio
+  `playwright.config.ts` já antecipa exatamente isso (`PLAYWRIGHT_CHROMIUM_EXECUTABLE`, comentário
+  "ambientes que já vêm com um Chromium provisionado... costumam ter uma build diferente") — a
+  correção foi só usar a variável já prevista (`PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/
+  chromium`), nunca do código da tela.
+- **Bug real de RLS encontrado e corrigido no teste (não no produto)**: `assignJobRole`
+  (`jobRole.service.ts`) abre sua própria transação interativa (`prisma.$transaction`) — chamá-la
+  a partir de um teste com `requestContext.enterWith({ bypassRls: true })` falhava com "new row
+  violates row-level security policy for table UserJobRole", porque o `SET LOCAL
+  app.current_tenant_id` que a extensão de RLS de `src/lib/prisma.ts` injeta em operações de model
+  só bate com o `organizationId` real da linha quando o contexto carrega `tenantId`, não
+  `bypassRls` sozinho (mesmo padrão que `tests/helpers/integration-setup.ts` já usa no
+  `beforeEach` global — `tenantId`, nunca bypass, para escrita comum dentro do próprio tenant).
+  Não é um bug do Capability Engine nem do workspace — é só o jeito certo de simular "um ADMIN
+  atribuindo um cargo dentro da própria organização" num teste, sem precisar de bypass nenhum.
+- **Verificação real feita nesta sessão**: `tsc --noEmit` (0 erros), `biome lint`/`format` (0
+  erros/warnings novos), `lint:architecture` (sem violação nova), `check:hotspots` (sem estouro),
+  `verify:openapi-drift` (limpo, `GET /workspace/me` documentado), suíte de integração combinada
+  PROMPT 1-6 (6 arquivos, **107/107 passando**, incluindo os 12 cargos + usuário sem cargo +
+  VISUALIZADOR + deep-link/locked + `REQUEST` + `SOURCE_REQUIRED`/`FUTURE_TOOL` + tenant
+  isolation), suíte unitária completa (**2746/2746**, sem regressão), e **3 specs E2E reais contra
+  navegador real** (Chromium, servidor Express real, Postgres real): `workspace.spec.ts` (sem
+  cargo → estado bloqueado; com cargo CLOSER → nome/KPIs/navegação reais via deep-link; viewport
+  mobile 390×844 sem overflow horizontal), `accessibility.spec.ts` (novo caso "Meu Workspace sem
+  cargo" — zero violação `critical`/`serious` do axe-core) e `crm.spec.ts` (navegação pela Sidebar
+  sem erro de console). Screenshot real (`page.screenshot`, descartado após revisão, não commitado)
+  confirmou visualmente os 3 estados (sem cargo, CLOSER desktop, CLOSER mobile) antes de reportar
+  concluído — nenhum bug visual encontrado desta vez, mas o hábito (seção 12.6) é o que importa.
+>>>>>>> origin/main

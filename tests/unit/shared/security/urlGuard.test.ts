@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 /**
  * `assertSafeExternalUrl` (promovido de `src/lib/adapters/crm/Bitrix24Adapter.ts`, onde nasceu só
@@ -19,6 +19,17 @@ vi.mock('node:dns/promises', () => ({
     default: { lookup: (...args: unknown[]) => lookupMock(...args) },
     lookup: (...args: unknown[]) => lookupMock(...args),
 }));
+
+// `urlGuard.ts` chama o `fetch` importado do pacote `undici` (não o `fetch` global — ver o
+// comentário em `urlGuard.ts` sobre a incompatibilidade do fetch global do Node.js v24 com
+// `Agent` do `undici`), então mockar `fetch` global (`vi.stubGlobal`) não intercepta essa chamada.
+// Mocka só o export `fetch` do módulo, preservando o resto (`Agent` real segue sendo usado pelo
+// guard para fixar a conexão nos endereços já validados).
+const fetchMock = vi.fn();
+vi.mock('undici', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('undici')>();
+    return { ...actual, fetch: (...args: Parameters<typeof actual.fetch>) => fetchMock(...args) };
+});
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -133,13 +144,7 @@ describe('assertSafeExternalUrl — aceita URL pública normal', () => {
  * corpo) quando a URL é aprovada.
  */
 describe('safeFetch — mesmo guard de SSRF, conexão real fixada nos endereços já validados', () => {
-    afterEach(() => {
-        vi.unstubAllGlobals();
-    });
-
     it('rejeita IP privado sem nunca chamar fetch', async () => {
-        const fetchMock = vi.fn();
-        vi.stubGlobal('fetch', fetchMock);
         const { safeFetch } = await import('@/shared/security/urlGuard');
 
         await expect(safeFetch('https://10.0.0.1/')).rejects.toThrow(/não permitido/i);
@@ -148,8 +153,6 @@ describe('safeFetch — mesmo guard de SSRF, conexão real fixada nos endereços
 
     it('rejeita hostname com DNS rebinding (resolve para IP privado) sem nunca chamar fetch', async () => {
         lookupMock.mockResolvedValue([{ address: '10.0.0.5', family: 4 }]);
-        const fetchMock = vi.fn();
-        vi.stubGlobal('fetch', fetchMock);
         const { safeFetch } = await import('@/shared/security/urlGuard');
 
         await expect(safeFetch('https://webhook.exemplo.com/')).rejects.toThrow(/não permitido/i);
@@ -158,10 +161,7 @@ describe('safeFetch — mesmo guard de SSRF, conexão real fixada nos endereços
 
     it('busca a URL de verdade e devolve uma Response utilizável quando o guard aprova', async () => {
         lookupMock.mockResolvedValue([{ address: '203.0.113.10', family: 4 }]);
-        const fetchMock = vi
-            .fn()
-            .mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
-        vi.stubGlobal('fetch', fetchMock);
+        fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
         const { safeFetch } = await import('@/shared/security/urlGuard');
 
         const res = await safeFetch('https://webhook.exemplo.com/profile.json');

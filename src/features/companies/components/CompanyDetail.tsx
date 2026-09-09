@@ -110,7 +110,8 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-bg p-8 gap-4 min-h-screen">
         <p className="text-ink-2 text-lg">🔍 Empresa não encontrada.</p>
-        <button type="button"
+        <button
+          type="button"
           onClick={onBack}
           className="px-5 py-2.5 bg-surface-2 border border-line rounded-2xl hover:bg-surface transition-all text-ink font-bold flex items-center gap-2"
         >
@@ -130,7 +131,8 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
       <ToolTechPopover info={activeToolPopover} onClose={() => setActiveToolPopover(null)} />
 
       <div className="max-w-6xl mx-auto space-y-6">
-        <button type="button"
+        <button
+          type="button"
           onClick={onBack}
           className="flex items-center gap-2 text-ink-2 hover:text-ink transition-colors group cursor-pointer"
         >
@@ -167,7 +169,8 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
               </div>
 
               <div className="flex items-center gap-3">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => navigate(`/app/market-intelligence/accounts/${company.id}`)}
                   className="flex items-center gap-2 bg-surface-2 border border-line text-ink px-5 py-2.5 rounded-2xl font-black text-sm hover:bg-surface transition-all cursor-pointer"
                 >
@@ -177,7 +180,8 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
                 {/* Âmbar é a cor categórica de "ação de enriquecimento por IA" já estabelecida e
                     auditada em CompanyList.tsx (individual + em massa) — reaproveitada aqui em vez
                     do gradiente amber/orange/yellow-300 sem contraste verificado que existia antes. */}
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleEnrich}
                   disabled={enriching}
                   className="flex items-center gap-2 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-400 px-5 py-2.5 rounded-2xl font-black text-sm transition-all disabled:opacity-60 cursor-pointer"

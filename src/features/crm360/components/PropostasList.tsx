@@ -136,7 +136,8 @@ export function PropostasList() {
             </p>
           </div>
           {canWrite && (
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setEditingDocument(null);
                 setIsFormOpen(true);

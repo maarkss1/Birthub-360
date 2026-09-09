@@ -146,7 +146,8 @@ export function B2BGenerator() {
         </div>
 
         <div className="relative z-10 flex justify-center">
-          <button type="button"
+          <button
+            type="button"
             onClick={handleGenerate}
             disabled={generating || !icp || !solution}
             className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-white px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-lg cursor-pointer`}

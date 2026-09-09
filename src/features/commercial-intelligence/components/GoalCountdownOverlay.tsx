@@ -133,7 +133,8 @@ export function GoalCountdownOverlay({
               Acompanhamento de Meta • {period}
             </p>
           </div>
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             aria-label="Fechar"

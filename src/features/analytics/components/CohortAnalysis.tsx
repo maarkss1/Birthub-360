@@ -65,7 +65,8 @@ export function CohortAnalysis() {
     <Card className="mt-6">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Análise de Cohort (Conversão por mês de criação)</CardTitle>
-        <button type="button"
+        <button
+          type="button"
           onClick={downloadCsv}
           className="bg-brand text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-brand-active"
         >

@@ -515,7 +515,8 @@ export function ProspectingHub() {
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex gap-3 bg-surface/75 backdrop-blur-xl p-2 rounded-2xl border border-line shadow-card w-fit relative z-10">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('cnpj');
@@ -524,7 +525,8 @@ export function ProspectingHub() {
             >
               <Landmark size={18} /> Busca Direta (CNPJ/Nome)
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('discovery');
@@ -533,7 +535,8 @@ export function ProspectingHub() {
             >
               <Database size={18} /> Radar Discovery (Fontes abertas)
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('ocr');
@@ -542,7 +545,8 @@ export function ProspectingHub() {
             >
               <Camera size={18} /> Cadastrar por Foto (OCR)
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('tools');
@@ -553,7 +557,8 @@ export function ProspectingHub() {
             </button>
           </div>
 
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('focus');
               setIsSavedSearchesOpen(true);

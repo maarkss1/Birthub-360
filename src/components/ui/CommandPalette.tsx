@@ -52,6 +52,7 @@ function normalize(value: string): string {
 // eles. O Hub Executivo standalone (rotas top-level em App.tsx) é o único ponto de entrada agora.
 const MODULE_ORDER: TabType[] = [
   'dashboard',
+  'workspace',
   'prospect',
   'crm',
   'companies',

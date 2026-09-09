@@ -319,7 +319,8 @@ export function Account360() {
       <div className="border-b border-white/10">
         <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
           {TABS.map((tab) => (
-            <button type="button"
+            <button
+              type="button"
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               aria-current={activeTab === tab.id ? 'page' : undefined}

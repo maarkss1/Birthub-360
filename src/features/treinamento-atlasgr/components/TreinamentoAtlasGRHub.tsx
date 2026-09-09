@@ -217,7 +217,8 @@ export function TreinamentoAtlasGRHub() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           {subTabs.map((tab) => (
-            <button type="button"
+            <button
+              type="button"
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as typeof activeSubTab)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
@@ -291,7 +292,8 @@ export function TreinamentoAtlasGRHub() {
                         <div className="text-xs font-semibold">{m.name}</div>
                         <div className="text-[11px] text-ink-2 truncate">{m.desc}</div>
                       </div>
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={(e) => toggleModuleCompleted(m.file, e)}
                         className={`p-1 rounded-md transition-colors ${
                           isDone
