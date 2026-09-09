@@ -9,6 +9,7 @@ export class ObjectionMatrixUseCases extends BaseUseCases<
   ObjectionMatrixItem,
   ObjectionMatrixItemRepository
 > {
+  // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI
   constructor(repository: ObjectionMatrixItemRepository) {
     super(repository);
   }

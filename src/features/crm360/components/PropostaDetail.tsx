@@ -6,7 +6,7 @@ import { Label } from '../../../components/ui/Label';
 import { Select } from '../../../components/ui/Select';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { crm360Api } from '../crm360.api';
@@ -143,6 +143,7 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="p-2 rounded-xl hover:bg-surface-2 text-ink-2 hover:text-ink transition-colors"
           aria-label="Voltar para a lista"

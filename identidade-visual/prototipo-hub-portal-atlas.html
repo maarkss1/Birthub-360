@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Atlas — Segurança &amp; Inteligência Logística</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    /* ============ TOKENS OFICIAIS ATLASGR (DESIGN.md) ============ */
+    :root {
+      --bg: #fbf9f7;
+      --surface: #ffffff;
+      --surface-2: #f5f1ee;
+      --surface-3: #ece6e1;
+      --ink: #1a1513;
+      --ink-2: #6f6560;
+      --line: rgba(0, 0, 0, 0.09);
+      --line-strong: rgba(0, 0, 0, 0.16);
+      --brand: #ff5618;
+      --brand-2: #ff6b10;
+      --brand-hover: #ff8008;
+      --brand-active: #a83810;
+      --soft: rgba(255, 86, 24, 0.08);
+      --soft-glow: rgba(255, 86, 24, 0.28);
+      --ok: #0f9d64;
+      --ok-soft: rgba(15, 157, 100, 0.12);
+      --warn: #ffc500;
+      --warn-soft: rgba(255, 197, 0, 0.14);
+      --critical: #d6453f;
+      --critical-soft: rgba(214, 69, 63, 0.1);
+      --shadow-card: 0 1px 2px rgba(0,0,0,.04), 0 10px 28px -16px rgba(0,0,0,.22);
+      --shadow-nav: 0 10px 26px -14px rgba(168,56,16,.45);
+      --radius-card: 1.25rem;
+      --radius-nav: 0.85rem;
+      --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0d0a09;
+        --surface: #171211;
+        --surface-2: #1f1917;
+        --surface-3: #2a2320;
+        --ink: #f7f3f1;
+        --ink-2: #a2968f;
+        --line: rgba(255, 255, 255, 0.1);
+        --line-strong: rgba(255, 255, 255, 0.18);
+        --soft: rgba(255, 86, 24, 0.16);
+        --soft-glow: rgba(255, 86, 24, 0.35);
+        --ok-soft: rgba(15, 157, 100, 0.2);
+        --warn-soft: rgba(255, 197, 0, 0.18);
+        --critical-soft: rgba(214, 69, 63, 0.18);
+        --shadow-card: 0 1px 2px rgba(0,0,0,.6), 0 14px 34px -18px rgba(0,0,0,.9);
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #0d0a09;
+      --surface: #171211;
+      --surface-2: #1f1917;
+      --surface-3: #2a2320;
+      --ink: #f7f3f1;
+      --ink-2: #a2968f;
+      --line: rgba(255, 255, 255, 0.1);
+      --line-strong: rgba(255, 255, 255, 0.18);
+      --soft: rgba(255, 86, 24, 0.16);
+      --soft-glow: rgba(255, 86, 24, 0.35);
+      --ok-soft: rgba(15, 157, 100, 0.2);
+      --warn-soft: rgba(255, 197, 0, 0.18);
+      --critical-soft: rgba(214, 69, 63, 0.18);
+      --shadow-card: 0 1px 2px rgba(0,0,0,.6), 0 14px 34px -18px rgba(0,0,0,.9);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3 { text-wrap: balance; margin: 0; }
+    button { font-family: inherit; cursor: pointer; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; }
+
+    /* ============ SHELL DA CENTRAL COMERCIAL ============ */
+    .shell {
+      display: grid;
+      grid-template-columns: var(--sb-w, 264px) 1fr;
+      height: 100vh;
+      transition: grid-template-columns .22s ease;
+    }
+    .shell.collapsed { --sb-w: 72px; }
+
+    /* ============ SIDEBAR ============ */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .sb-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 14px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .sb-mark {
+      width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px;
+    }
+    .sb-brandname { font-weight: 800; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; }
+    .sb-brandname small { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+    .collapsed .sb-brandname { display: none; }
+
+    .sb-collapse-btn {
+      margin-left: auto; width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--line);
+      background: var(--surface-2); color: var(--ink-2); display: grid; place-items: center; flex-shrink: 0;
+    }
+    .sb-collapse-btn:hover { color: var(--ink); border-color: var(--line-strong); }
+    .collapsed .sb-collapse-btn { margin-left: 0; }
+    .collapsed .sb-brand { justify-content: center; gap: 6px; }
+    .collapsed #backHubBtn2 { display: none; }
+
+    .sb-nav { flex: 1; overflow-y: auto; padding: 10px 10px 12px; }
+    .sb-group { margin-bottom: 2px; }
+    .sb-group-head {
+      width: 100%; display: flex; align-items: center; gap: 8px;
+      padding: 9px 8px; background: none; border: none; color: var(--ink-2);
+      font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+      border-radius: 8px;
+    }
+    .sb-group-head:hover { background: var(--surface-2); color: var(--ink); }
+    .sb-group-head .chev { margin-left: auto; transition: transform .18s ease; opacity: .6; }
+    .sb-group.open .sb-group-head .chev { transform: rotate(90deg); }
+    .sb-group-count {
+      font-size: 9.5px; font-weight: 700; background: var(--surface-3); color: var(--ink-2);
+      border-radius: 999px; padding: 1px 6px; letter-spacing: 0;
+    }
+    .collapsed .sb-group-head span:not(.chev):not(.sb-group-count) { display: none; }
+    .collapsed .sb-group-head { justify-content: center; }
+    .collapsed .sb-group-head .chev, .collapsed .sb-group-count { display: none; }
+
+    .sb-items { display: grid; gap: 1px; overflow: hidden; max-height: 0; transition: max-height .22s ease; }
+    .sb-group.open .sb-items { max-height: 600px; }
+    .collapsed .sb-items { max-height: none !important; }
+
+    .sb-item {
+      display: flex; align-items: center; gap: 10px; padding: 7px 10px 7px 26px;
+      border-radius: 8px; border: none; background: none; color: var(--ink-2);
+      font-size: 12.5px; font-weight: 600; text-align: left; width: 100%; white-space: nowrap;
+      position: relative;
+    }
+    .collapsed .sb-item { padding: 8px; justify-content: center; }
+    .sb-item .ic { width: 16px; height: 16px; flex-shrink: 0; display: grid; place-items: center; }
+    .sb-item:hover { background: var(--surface-2); color: var(--ink); }
+    .sb-item.active { background: var(--brand); color: #fff; box-shadow: var(--shadow-nav); }
+    .sb-item.active::before {
+      content: ""; position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+      width: 4px; height: 4px; border-radius: 999px; background: #fff;
+    }
+    .collapsed .sb-item.active::before { display: none; }
+    .collapsed .sb-item span:not(.ic) { display: none; }
+    .sb-item .badge {
+      margin-left: auto; font-size: 9.5px; font-weight: 800; padding: 1px 6px; border-radius: 999px;
+      background: var(--critical-soft); color: var(--critical);
+    }
+    .sb-item.active .badge { background: rgba(255,255,255,.25); color: #fff; }
+    .collapsed .sb-item .badge { display: none; }
+
+    .sb-foot { border-top: 1px solid var(--line); padding: 10px; display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+    .sb-avatar {
+      width: 30px; height: 30px; border-radius: 999px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 12px;
+    }
+    .sb-user { min-width: 0; }
+    .sb-user .name { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sb-user .role { font-size: 10px; color: var(--ink-2); white-space: nowrap; }
+    .collapsed .sb-user { display: none; }
+    .collapsed .sb-foot { justify-content: center; }
+
+    /* ============ MAIN ============ */
+    .main { display: flex; flex-direction: column; min-width: 0; height: 100vh; }
+    .topbar {
+      height: 56px; flex-shrink: 0; display: flex; align-items: center; gap: 14px;
+      padding: 0 20px; border-bottom: 1px solid var(--line); background: var(--surface);
+    }
+    .crumb { font-size: 11px; color: var(--ink-2); font-weight: 600; white-space: nowrap; }
+    .crumb b { color: var(--ink); font-weight: 800; }
+    .search {
+      flex: 1; max-width: 420px; display: flex; align-items: center; gap: 8px;
+      background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px;
+      padding: 7px 10px; color: var(--ink-2); font-size: 12px;
+    }
+    .search kbd {
+      margin-left: auto; font-size: 9.5px; font-weight: 700; background: var(--surface-3);
+      border-radius: 5px; padding: 1px 5px; color: var(--ink-2);
+    }
+    .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    .icon-btn {
+      width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--line);
+      background: var(--surface); color: var(--ink-2); display: grid; place-items: center; position: relative;
+    }
+    .icon-btn:hover { color: var(--ink); border-color: var(--line-strong); }
+    .icon-btn .dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 999px; background: var(--brand); border: 1.5px solid var(--surface); }
+    .xp-chip {
+      display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 6px; border-radius: 999px;
+      background: var(--surface-2); border: 1px solid var(--line); font-size: 10.5px; font-weight: 700; color: var(--ink-2);
+    }
+    .xp-chip .lvl { width: 18px; height: 18px; border-radius: 999px; background: var(--warn); color: #4a3800; display:grid; place-items:center; font-size: 9px; font-weight: 900; }
+
+    .view { flex: 1; overflow-y: auto; padding: 18px 22px 28px; }
+    .view-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
+    .view-head h1 { font-size: 19px; font-weight: 800; letter-spacing: -.01em; }
+    .view-head p { margin: 2px 0 0; font-size: 12px; color: var(--ink-2); }
+    .btn {
+      border-radius: 9px; padding: 7px 13px; font-size: 12px; font-weight: 700; border: 1px solid transparent;
+    }
+    .btn.primary { background: var(--brand); color: #fff; box-shadow: var(--shadow-nav); }
+    .btn.ghost { background: var(--surface); border-color: var(--line); color: var(--ink); }
+
+    /* stat row */
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+    }
+    .stat .label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+    .stat .value { font-size: 22px; font-weight: 800; margin-top: 3px; font-variant-numeric: tabular-nums; }
+    .stat .delta { font-size: 10.5px; font-weight: 700; margin-top: 2px; }
+    .stat .delta.up { color: var(--ok); }
+    .stat .delta.down { color: var(--critical); }
+
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    .panel-head h3 { font-size: 12.5px; font-weight: 800; }
+    .panel-head .link { font-size: 11px; font-weight: 700; color: var(--brand-active); }
+
+    table.data { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table.data th {
+      text-align: left; font-size: 9.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+      color: var(--ink-2); padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2);
+    }
+    table.data td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    table.data tr:last-child td { border-bottom: none; }
+    table.data tr:hover td { background: var(--surface-2); }
+    .cell-name { font-weight: 700; }
+    .cell-sub { font-size: 10.5px; color: var(--ink-2); }
+    .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
+    .pill.ok { background: var(--ok-soft); color: var(--ok); }
+    .pill.warn { background: var(--warn-soft); color: #8a6c00; }
+    .pill.critical { background: var(--critical-soft); color: var(--critical); }
+    :root[data-theme="dark"] .pill.warn, @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.warn{color:#ffe066}}
+    .fit { font-variant-numeric: tabular-nums; font-weight: 800; }
+
+    .two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; align-items: start; }
+    .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .kcol { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 8px; min-height: 200px; }
+    .kcol-head { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 8px; font-size: 10.5px; font-weight: 800; color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em; }
+    .kcard { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; margin-bottom: 7px; box-shadow: var(--shadow-card); }
+    .kcard .co { font-size: 12px; font-weight: 700; }
+    .kcard .val { font-size: 11px; color: var(--ink-2); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+    .form-card { padding: 14px; display: grid; gap: 10px; }
+    .field label { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 4px; }
+    .field select, .field input {
+      width: 100%; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+      border-radius: 8px; padding: 7px 9px; font-size: 12px; font-family: inherit;
+    }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .badge-note { display:flex; gap:8px; align-items:flex-start; padding:10px 12px; border-radius:10px; background: var(--soft); border: 1px solid rgba(255,86,24,.22); font-size: 11.5px; color: var(--brand-active); }
+    :root[data-theme="dark"] .badge-note { color: #ffb08a; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .badge-note { color: #ffb08a; } }
+
+    .theme-toggle { position: fixed; bottom: 14px; right: 14px; display: flex; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; box-shadow: var(--shadow-card); z-index: 50; }
+    .theme-toggle button { border: none; background: none; padding: 6px 11px; border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--ink-2); }
+    .theme-toggle button.active { background: var(--brand); color: #fff; }
+
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 40; width: 264px; transform: translateX(-100%); transition: transform .22s ease; }
+      .shell.mobile-open .sidebar { transform: translateX(0); }
+      .shell.collapsed .sidebar { width: 264px; }
+      .two-col { grid-template-columns: 1fr; }
+      .kanban { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ============ HUB — PORTAL DE ENTRADA ATLASGR ============ */
+    .hub-page { position: relative; min-height: 100vh; background: var(--bg); overflow: hidden; }
+    #hubCanvas3d { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    #hubBurst { position: fixed; inset: 0; z-index: 30; pointer-events: none; }
+    .hub-content { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    .hub-topbar { display: flex; align-items: center; gap: 10px; padding: 20px 32px 0; }
+    .hub-topbar .sb-mark { width: 32px; height: 32px; font-size: 14px; }
+    .atlas-symbol { flex-shrink: 0; }
+    .hub-topbar .name { font-weight: 900; font-size: 19px; letter-spacing: -.01em; }
+    .hub-topbar .op-switch {
+      margin-left: auto; display: flex; align-items: center; gap: 7px; padding: 5px 12px 5px 6px;
+      border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 78%, transparent);
+      backdrop-filter: blur(10px); font-size: 11px; font-weight: 700; color: var(--ink-2);
+    }
+    .op-dot {
+      width: 8px; height: 8px; border-radius: 999px; background: var(--brand);
+      box-shadow: 0 0 10px var(--brand); animation: beacon 2s infinite ease-out;
+    }
+    @keyframes beacon {
+      0% { box-shadow: 0 0 0 0 rgba(255, 86, 24, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(255, 86, 24, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 86, 24, 0); }
+    }
+    .sound-toggle {
+      width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 78%, transparent); backdrop-filter: blur(10px);
+      color: var(--ink-2); display: grid; place-items: center;
+    }
+    .sound-toggle:hover { color: var(--ink); }
+
+    .hub-hero {
+      padding: 26px 32px 6px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    }
+    .hub-greeting .eyebrow { font-size: 11px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; color: var(--brand-active); }
+    :root[data-theme="dark"] .hub-greeting .eyebrow { color: #ff9d70; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-greeting .eyebrow { color: #ff9d70; } }
+    .hub-greeting h1 { font-size: clamp(34px, 5.2vw, 54px); font-weight: 900; letter-spacing: -.02em; margin-top: 6px; line-height: 1.02; }
+    .hub-greeting h1 .accent { background: linear-gradient(90deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hub-greeting p { font-size: 13.5px; font-weight: 600; color: var(--ink-2); margin-top: 8px; max-width: 58ch; line-height: 1.45; }
+    .hub-greeting .tagline { font-size: 15px; font-weight: 800; color: var(--brand-active); margin-top: 8px; letter-spacing: -.01em; }
+    :root[data-theme="dark"] .hub-greeting .tagline { color: #ff9d70; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-greeting .tagline { color: #ff9d70; } }
+    
+    .hub-segments { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .seg-pill {
+      font-size: 10.5px; font-weight: 800; letter-spacing: .02em; padding: 5px 12px; border-radius: 999px;
+      background: var(--soft); color: var(--brand-active); border: 1px solid rgba(255,86,24,.22);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    :root[data-theme="dark"] .seg-pill { color: #ffb08a; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .seg-pill { color: #ffb08a; } }
+
+    /* relógio + calendário */
+    .hub-widgets { display: flex; align-items: stretch; gap: 12px; }
+    .widget {
+      border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 72%, transparent);
+      backdrop-filter: blur(14px); border-radius: 18px;
+      /* mesma linguagem de profundidade das esferas da órbita: elevação em camadas + borda superior
+         clara simulando luz vinda de cima — "todos os elementos em 3d". */
+      box-shadow:
+        0 16px 26px -14px rgba(20, 14, 10, .22),
+        0 4px 10px -4px rgba(20, 14, 10, .14),
+        inset 0 1px 0 rgba(255, 255, 255, .5);
+      transform: perspective(700px) rotateX(4deg);
+      transition: transform .35s ease, box-shadow .35s ease;
+    }
+    .widget:hover { transform: perspective(700px) rotateX(0deg) translateY(-2px); }
+    :root[data-theme="dark"] .widget {
+      box-shadow: 0 16px 26px -14px rgba(0, 0, 0, .5), 0 4px 10px -4px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .widget {
+        box-shadow: 0 16px 26px -14px rgba(0, 0, 0, .5), 0 4px 10px -4px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .08);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) { .widget, .widget:hover { transform: none; } }
+    .clock-widget { padding: 12px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 128px; }
+    .clock-widget .time { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: .02em; font-variant-numeric: tabular-nums; color: var(--brand-active); }
+    :root[data-theme="dark"] .clock-widget .time { color: #ff9d70; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .clock-widget .time { color: #ff9d70; } }
+    .clock-widget .date { font-size: 10px; color: #8a6c00; font-weight: 800; text-transform: capitalize; margin-top: 2px; }
+    :root[data-theme="dark"] .clock-widget .date { color: #ffe066; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .clock-widget .date { color: #ffe066; } }
+    .cal-widget { padding: 10px 12px; width: 178px; }
+    .cal-widget .cal-head { font-size: 10px; font-weight: 800; text-transform: capitalize; color: var(--brand-active); text-align: center; margin-bottom: 6px; letter-spacing: .04em; }
+    :root[data-theme="dark"] .cal-widget .cal-head { color: #ff9d70; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cal-widget .cal-head { color: #ff9d70; } }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-grid span { font-size: 8.5px; text-align: center; color: #8a6c00; font-weight: 800; opacity: .85; }
+    :root[data-theme="dark"] .cal-grid span { color: #ffe066; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cal-grid span { color: #ffe066; } }
+    .cal-grid .cal-day { font-size: 10px; text-align: center; border-radius: 6px; padding: 2.5px 0; color: var(--ink-2); font-weight: 600; }
+    .cal-grid .cal-day.today { background: var(--brand); color: #fff; font-weight: 800; box-shadow: 0 0 12px color-mix(in srgb, var(--brand) 60%, transparent); }
+
+    /* Tarefas pendentes — gestores designam, usuários concluem */
+    .task-widget { padding: 10px 12px; width: 236px; display: flex; flex-direction: column; }
+    .task-head { display: flex; align-items: center; justify-content: space-between; font-size: 10.5px; font-weight: 800; color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+    .task-count { background: var(--brand); color: #fff; border-radius: 999px; padding: 1px 6px; font-size: 9.5px; font-weight: 800; }
+    .task-list { display: flex; flex-direction: column; gap: 4px; max-height: 82px; overflow-y: auto; margin-bottom: 6px; }
+    .task-row { display: flex; align-items: center; gap: 6px; font-size: 10.5px; }
+    .task-row .task-check {
+      width: 14px; height: 14px; border-radius: 999px; border: 1.5px solid var(--line-strong); flex-shrink: 0;
+      background: none; display: grid; place-items: center; color: #fff;
+    }
+    .task-row.done .task-check { background: var(--ok); border-color: var(--ok); }
+    .task-row .task-text { flex: 1; color: var(--ink); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .task-row.done .task-text { text-decoration: line-through; color: var(--ink-2); opacity: .6; }
+    .task-row .task-assignee {
+      font-size: 8.5px; font-weight: 800; color: var(--brand-active); background: var(--soft);
+      border-radius: 999px; padding: 1px 5px; flex-shrink: 0; white-space: nowrap;
+    }
+    .task-add { display: flex; gap: 4px; border-top: 1px solid var(--line); padding-top: 6px; }
+    .task-add input {
+      flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+      border-radius: 6px; padding: 4px 6px; font-size: 10px; font-family: inherit;
+    }
+    .task-add select {
+      border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+      border-radius: 6px; font-size: 9px; font-family: inherit; max-width: 74px;
+    }
+    .task-add button {
+      border: none; background: var(--brand); color: #fff; border-radius: 6px; width: 22px; flex-shrink: 0;
+      display: grid; place-items: center;
+    }
+    .task-add button:hover { background: var(--brand-2); }
+
+    @media (max-width: 760px) { .hub-widgets { display: none; } }
+
+    .hub-section-label {
+      padding: 6px 32px 4px; font-size: 11px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-2); max-width: 1180px; margin: 0 auto; width: 100%; display: flex; align-items: center; gap: 10px;
+    }
+    .hub-section-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+
+    /* ---- COMPOSIÇÃO RADIAL: DUAS voltas concêntricas ao redor do card central — volta interna
+       com os 6 módulos do CRM, volta externa com as 7 ferramentas externas. Pedido explícito do
+       usuário. Matemática das duas órbitas em layoutOrbit() (script no fim do arquivo). ---- */
+    .hub-orbit { position: relative; width: 100%; max-width: 1250px; margin: 6px auto 10px; padding: 0 32px; height: 1200px; }
+    .orbit-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .orbit-lines path { fill: none; stroke-width: 2.6; stroke-linecap: round; }
+    .orbit-lines circle.pulse { fill: var(--brand); filter: drop-shadow(0 0 6px var(--brand)); }
+
+    .hub-card {
+      position: absolute; top: 0; left: 0; border: none; background: none; padding: 0; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+      width: 172px; margin: -86px 0 0 -86px;
+      perspective: 900px; z-index: 2;
+    }
+    /* Ferramentas externas (Connect Atlas, Bitrix24, Webmail...): mesmo indicativo do HubScreen.tsx
+       real (ExternalLink, opacidade só no hover) — abrem em nova aba, não são "produto" do CRM. */
+    .hc-ext-badge {
+      position: absolute; top: 14px; right: 14px; z-index: 2; opacity: 0; color: var(--ink-2);
+      transition: opacity .2s ease;
+    }
+    .hub-card:hover .hc-ext-badge { opacity: .85; }
+    /* Esfera 3D real, não círculo achatado: sombreamento radial simulando fonte de luz vinda de
+       cima/esquerda (mesmo ângulo em todos os círculos, inclusive o central, pra luz ser
+       consistente), sombra em camadas para profundidade/elevação, e leve inclinação 3D permanente
+       (não só no hover) via perspective+rotateX/rotateY do .hub-card pai. Pedido explícito do
+       usuário: "torne todos os elementos em 3d". */
+    .hc-orb {
+      width: 168px; height: 168px; border-radius: 50%; position: relative;
+      background: radial-gradient(circle at 30% 24%, var(--surface) 0%, var(--surface-2) 78%, var(--surface-3) 100%);
+      border: 1px solid var(--line);
+      box-shadow:
+        0 26px 32px -16px rgba(20, 14, 10, .22),
+        0 10px 18px -8px rgba(20, 14, 10, .16),
+        inset 0 -16px 20px -6px rgba(20, 14, 10, .10),
+        inset 0 12px 14px -6px rgba(255, 255, 255, .55);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; overflow: hidden;
+      /* --orb-scale é calculado por layoutOrbit() para evitar sobreposição entre os 13 círculos
+         externos; fica em 1 (tamanho original) quando cabem sem encolher. */
+      transform: rotateX(7deg) rotateY(-6deg) translateZ(0) scale(var(--orb-scale, 1));
+      transition: transform .5s cubic-bezier(.2,.9,.25,1), box-shadow .5s ease, border-color .3s ease;
+    }
+    :root[data-theme="dark"] .hc-orb {
+      box-shadow:
+        0 26px 32px -16px rgba(0, 0, 0, .55),
+        0 10px 18px -8px rgba(0, 0, 0, .4),
+        inset 0 -16px 20px -6px rgba(0, 0, 0, .3),
+        inset 0 12px 14px -6px rgba(255, 255, 255, .08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .hc-orb {
+        box-shadow:
+          0 26px 32px -16px rgba(0, 0, 0, .55),
+          0 10px 18px -8px rgba(0, 0, 0, .4),
+          inset 0 -16px 20px -6px rgba(0, 0, 0, .3),
+          inset 0 12px 14px -6px rgba(255, 255, 255, .08);
+      }
+    }
+    .hub-card:hover .hc-orb {
+      transform: rotateX(16deg) rotateY(-18deg) translateY(-8px) scale(calc(var(--orb-scale, 1) * 1.06));
+      box-shadow:
+        0 34px 46px -16px color-mix(in srgb, var(--brand) 45%, transparent),
+        0 12px 20px -8px rgba(20, 14, 10, .2),
+        inset 0 -16px 20px -6px rgba(20, 14, 10, .1),
+        inset 0 12px 14px -6px rgba(255, 255, 255, .55);
+      border-color: color-mix(in srgb, var(--brand) 55%, var(--line));
+    }
+    .hub-card:active .hc-orb { transform: scale(calc(var(--orb-scale, 1) * .94)); transition-duration: .12s; }
+    @media (prefers-reduced-motion: reduce) {
+      .hc-orb, .hub-card:hover .hc-orb { transform: scale(var(--orb-scale, 1)) !important; }
+    }
+
+    /* Brilho especular (highlight) — o que faz o círculo ler como esfera de vidro/cerâmica em vez
+       de disco chapado. Mesma posição de luz (30%/24%) em toda esfera do portal. */
+    .hc-orb::after {
+      content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255, 255, 255, .7), transparent 42%),
+        radial-gradient(circle at 76% 82%, rgba(20, 14, 10, .14), transparent 55%);
+    }
+
+    /* Efeito de rotação de telemetria / radar no interior do orb */
+    .hc-orb::before {
+      content: ""; position: absolute; inset: -40%; opacity: .45;
+      background: conic-gradient(from 0deg, transparent, color-mix(in srgb, var(--brand) 40%, transparent), transparent 45%);
+      animation: orbit 10s linear infinite;
+    }
+    @media (prefers-reduced-motion: reduce) { .hc-orb::before { animation: none; } }
+    
+    .hc-orb .hc-icon-wrap {
+      position: relative; z-index: 1; color: var(--brand-active);
+      display: flex; flex-direction: column; align-items: center;
+      transition: transform .3s ease, color .3s ease;
+    }
+    :root[data-theme="dark"] .hc-orb .hc-icon-wrap { color: #ff9d70; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hc-orb .hc-icon-wrap { color: #ff9d70; } }
+    .hub-card:hover .hc-icon-wrap { transform: scale(1.08); color: var(--brand); }
+
+    /* Interação entre o círculo e o ícone: o anel de perfil, a cabeça e o crachá reagem ao hover do card */
+    .hc-icon-wrap svg .profile-ring { transition: stroke .3s ease, stroke-width .3s ease; }
+    .hub-card:hover .hc-icon-wrap svg .profile-ring { stroke: var(--brand); stroke-width: 3; }
+    .hc-icon-wrap svg .avatar-head { transition: transform .35s cubic-bezier(.22,.9,.3,1.2); transform-box: fill-box; transform-origin: bottom center; }
+    .hub-card:hover .hc-icon-wrap svg .avatar-head { transform: rotate(-6deg) translateY(-1px); }
+    .hc-icon-wrap svg .badge { transition: transform .4s cubic-bezier(.34,1.56,.64,1); transform-box: fill-box; transform-origin: center; }
+    .hub-card:hover .hc-icon-wrap svg .badge { transform: scale(1.3) rotate(10deg); }
+    @media (prefers-reduced-motion: reduce) {
+      .hc-icon-wrap svg .avatar-head, .hc-icon-wrap svg .badge { transition: none; }
+      .hub-card:hover .hc-icon-wrap svg .avatar-head, .hub-card:hover .hc-icon-wrap svg .badge { transform: none; }
+    }
+
+    /* Card Central (Central Comercial) */
+    .hub-card.primary { width: 238px; margin: -119px 0 0 -119px; z-index: 3; }
+    .hub-card.primary .hc-orb {
+      width: 238px; height: 238px; background: radial-gradient(circle at 30% 24%, var(--brand-2), var(--brand-active) 80%);
+      border-color: transparent;
+      box-shadow:
+        0 32px 44px -16px rgba(168, 56, 16, .55),
+        0 12px 20px -8px rgba(168, 56, 16, .4),
+        inset 0 -18px 22px -6px rgba(80, 20, 4, .35),
+        inset 0 14px 16px -6px rgba(255, 200, 160, .5);
+    }
+    .hub-card.primary .hc-orb .hc-icon-wrap { color: #fff; }
+    .hub-card.primary .hc-orb::before { opacity: .75; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,.4), transparent 45%); }
+    .hub-card.primary:hover .hc-orb {
+      box-shadow:
+        0 40px 58px -16px color-mix(in srgb, var(--brand) 70%, transparent),
+        inset 0 -18px 22px -6px rgba(80, 20, 4, .35),
+        inset 0 14px 16px -6px rgba(255, 200, 160, .5);
+    }
+
+    @keyframes orbit { to { transform: rotate(360deg); } }
+
+    /* Nome do item dentro do próprio círculo — gradiente animado do mais claro ao mais escuro */
+    .hc-title {
+      --title-light: #ffb08a; --title-dark: #a83810;
+      font-size: 12.5px; font-weight: 900; text-align: center; line-height: 1.15; padding: 0 16px;
+      background: linear-gradient(180deg, var(--title-light), var(--title-dark));
+      background-size: 100% 240%; background-position: 0 0;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: hcTitleShimmer 3.4s ease-in-out infinite alternate;
+    }
+    @keyframes hcTitleShimmer { from { background-position: 0 0; } to { background-position: 0 100%; } }
+    @media (prefers-reduced-motion: reduce) { .hc-title { animation: none; background-position: 0 55%; } }
+    :root[data-theme="dark"] .hc-title { --title-light: #ffcfae; --title-dark: #ff5618; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hc-title { --title-light: #ffcfae; --title-dark: #ff5618; } }
+
+    .hc-tag { font-size: 10px; font-weight: 700; color: var(--ink-2); margin-top: 2px; letter-spacing: .03em; text-align: center; }
+    .hc-tag-inside { margin-top: -3px; }
+    .hub-card.primary .hc-tag-inside { color: rgba(255,255,255,.85); }
+    .hub-card.primary .hc-title { --title-light: #ffffff; --title-dark: #ffddc2; font-size: 16px; padding: 0 24px; }
+    :root[data-theme="dark"] .hub-card.primary .hc-title { --title-light: #ffffff; --title-dark: #ffddc2; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hub-card.primary .hc-title { --title-light: #ffffff; --title-dark: #ffddc2; } }
+
+    .label-logo-full { display: inline-flex; align-items: center; gap: 5px; margin-left: 5px; vertical-align: -2px; }
+    .label-logo { display: inline-block; color: var(--brand-active); flex-shrink: 0; }
+    :root[data-theme="dark"] .label-logo { color: #ff9d70; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .label-logo { color: #ff9d70; } }
+    .label-logo-word { font-weight: 900; font-size: 12px; letter-spacing: -.01em; color: var(--ink); }
+
+    @media (max-width: 900px) {
+      .hub-orbit { height: auto; position: static; padding: 10px 20px 30px; display: flex; flex-direction: column; align-items: center; gap: 28px; }
+      .orbit-lines { display: none; }
+      .hub-card { position: static; margin: 0 !important; }
+      .hub-card.primary { order: -1; }
+    }
+
+    /* ============ PRODUTOS STANDALONE ============ */
+    .product-shell { min-height: 100vh; background: var(--bg); }
+    .product-top {
+      display: flex; align-items: center; gap: 12px; padding: 16px 28px;
+      border-bottom: 1px solid var(--line); background: var(--surface);
+    }
+    .back-hub {
+      display: flex; align-items: center; gap: 6px; border: 1px solid var(--line);
+      background: var(--surface-2); border-radius: 9px; padding: 6px 12px;
+      font-size: 12px; font-weight: 700; color: var(--ink);
+      transition: all .15s ease;
+    }
+    .back-hub:hover { border-color: var(--brand); color: var(--brand); }
+    .product-top .ptitle { font-weight: 800; font-size: 14px; }
+    .product-body {
+      max-width: 980px; margin: 0 auto; padding: 48px 24px;
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;
+    }
+    .product-body .pb-icon {
+      width: 68px; height: 68px; border-radius: 20px; background: var(--soft);
+      color: var(--brand-active); display: grid; place-items: center; margin-bottom: 4px;
+      box-shadow: 0 8px 20px -6px var(--soft-glow);
+    }
+    :root[data-theme="dark"] .product-body .pb-icon { color: #ff9d70; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .product-body .pb-icon { color: #ff9d70; } }
+    .product-body h2 { font-size: 22px; font-weight: 900; }
+    .product-body p { font-size: 13.5px; color: var(--ink-2); max-width: 58ch; line-height: 1.5; }
+
+    .product-features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px; width: 100%; margin-top: 24px; text-align: left;
+    }
+    .p-feat-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 16px; box-shadow: var(--shadow-card);
+    }
+    .p-feat-card b { display: block; font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+    .p-feat-card span { font-size: 11.5px; color: var(--ink-2); line-height: 1.4; display: block; }
+
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ HUB — PORTAL DE ENTRADA ATLASGR ============ -->
+  <div class="hub-page" id="hubPage">
+    <canvas id="hubCanvas3d"></canvas>
+    <canvas id="hubBurst"></canvas>
+
+    <div class="hub-content">
+      <div class="hub-topbar">
+        <!-- Logo Oficial Vetorial AtlasGR -->
+        <svg class="atlas-symbol" width="32" height="22" viewBox="0 0 252 175" xmlns="http://www.w3.org/2000/svg" aria-label="AtlasGR">
+          <g fill="#FF5618">
+            <polygon points="153.4 87.56 167.65 62.87 167.68 62.85 178.13 44.72 178.11 44.68 178.15 44.68 203.95 0 182.97 0 152.31 0 110.4 0 99.17 0 73.37 44.68 73.35 44.72 62.87 62.87 48.62 87.56 48.41 87.94 0 171.76 83.81 171.76 104.78 171.76 125.74 135.49 125.76 135.44 153.19 87.94 153.4 87.56"/>
+            <polygon points="203.07 87.94 175.75 87.94 153.9 125.79 153.9 125.83 137.02 155.01 146.7 171.76 209.57 171.76 251.48 171.76 203.07 87.94"/>
+          </g>
+        </svg>
+        <div class="name">ATLAS</div>
+        <div class="op-switch">
+          <span class="op-dot"></span> AtlasGR &middot; Gest&atilde;o de Risco
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <button class="sound-toggle" id="soundToggle" title="Ativar/desativar som de interação" aria-label="Som">
+          <svg id="soundIconOn" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          <svg id="soundIconOff" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" hidden><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+        </button>
+      </div>
+
+      <div class="hub-hero">
+        <div class="hub-greeting">
+          <div class="eyebrow">Portal Atlas</div>
+          <h1 id="greetingText">Boa tarde, <span class="accent">Marcelo</span></h1>
+          <div class="tagline">Segurança &amp; Inteligência Logística</div>
+        </div>
+        <div class="hub-widgets">
+          <div class="widget clock-widget">
+            <div class="time" id="clockTime">00:00:00</div>
+            <div class="date" id="clockDate">—</div>
+          </div>
+          <div class="widget cal-widget">
+            <div class="cal-head" id="calHead">—</div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+          <div class="widget task-widget">
+            <div class="task-head"><span>Tarefas pendentes</span><span class="task-count" id="taskCount">0</span></div>
+            <div class="task-list" id="taskList"></div>
+            <form class="task-add" id="taskAddForm">
+              <input type="text" id="taskInput" placeholder="Nova tarefa…" maxlength="60" required>
+              <select id="taskAssignee" aria-label="Designar para">
+                <option>Aline Souza</option>
+                <option>Bruno Alves</option>
+                <option>Marcelo Nascimento</option>
+              </select>
+              <button type="submit" title="Atribuir tarefa" aria-label="Atribuir tarefa">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="hub-section-label">Da prospecção ao contrato — para o time comercial da
+        <span class="label-logo-full">
+          <svg class="label-logo" width="17" height="12" viewBox="0 0 252 175" xmlns="http://www.w3.org/2000/svg" aria-label="AtlasGR">
+            <g fill="currentColor">
+              <polygon points="153.4 87.56 167.65 62.87 167.68 62.85 178.13 44.72 178.11 44.68 178.15 44.68 203.95 0 182.97 0 152.31 0 110.4 0 99.17 0 73.37 44.68 73.35 44.72 62.87 62.87 48.62 87.56 48.41 87.94 0 171.76 83.81 171.76 104.78 171.76 125.74 135.49 125.76 135.44 153.19 87.94 153.4 87.56"/>
+              <polygon points="203.07 87.94 175.75 87.94 153.9 125.79 153.9 125.83 137.02 155.01 146.7 171.76 209.57 171.76 251.48 171.76 203.07 87.94"/>
+            </g>
+          </svg>
+          <span class="label-logo-word">ATLAS</span>
+        </span>
+      </div>
+
+      <!-- ORBITAL RADIAL: OS 5 ITENS DO PORTAL COM ÍCONES E TRANSIÇÕES DO SETOR DE LOGÍSTICA / GR / MONITORAMENTO -->
+      <div class="hub-orbit" id="hubOrbit">
+        <svg class="orbit-lines" id="orbitLines"></svg>
+
+        <!-- 1. CENTRAL COMERCIAL (Card Central Primário) -->
+        <!-- Ícone: Central de Rastreamento com veículos monitorados em rota -->
+        <button class="hub-card primary" data-open="central" data-color="255,86,24" title="Abrir Central Comercial">
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="52" height="52" viewBox="0 0 60 60" fill="none">
+                <!-- Tela da central de rastreamento -->
+                <rect x="6" y="8" width="48" height="34" rx="4" stroke="currentColor" stroke-width="2.4" fill="none"/>
+                <!-- Rota monitorada -->
+                <path d="M11 34 L22 22 L32 29 L49 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+                <!-- Veículo 1 na rota -->
+                <g transform="translate(16,25)"><rect width="10" height="6" rx="1.2" fill="currentColor"/><rect x="8" y="1.4" width="5" height="4.6" rx="1" fill="currentColor"/><circle cx="2.4" cy="7.2" r="1.5" fill="#FFFFFF"/><circle cx="9.6" cy="7.2" r="1.5" fill="#FFFFFF"/></g>
+                <!-- Veículo 2 na rota -->
+                <g transform="translate(36,15) scale(.85)"><rect width="10" height="6" rx="1.2" fill="currentColor" opacity=".85"/><rect x="8" y="1.4" width="5" height="4.6" rx="1" fill="currentColor" opacity=".85"/><circle cx="2.4" cy="7.2" r="1.5" fill="#FFFFFF"/><circle cx="9.6" cy="7.2" r="1.5" fill="#FFFFFF"/></g>
+                <!-- Pulso de sinal de rastreamento -->
+                <circle cx="49" cy="13" r="2.6" fill="#FFFFFF"/>
+                <!-- Base / pedestal da central -->
+                <path d="M24 46h12M30 42v4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
+              </svg>
+            </div>
+            <div class="hc-title">Central Comercial</div>
+            <div class="hc-tag hc-tag-inside">CRM &middot; Prospec&ccedil;&atilde;o &middot; IA</div>
+          </div>
+        </button>
+
+        <!-- 2. SOCIAL SELLING -->
+        <!-- Ícone: Perfil de rede profissional (estilo LinkedIn) com uniforme AtlasGR, efeito de volume -->
+        <button class="hub-card ring-inner" data-open="social-selling" data-color="255,109,60" title="Abrir Social Selling">
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="46" height="46" viewBox="0 0 56 56" fill="none">
+                <defs>
+                  <linearGradient id="uniformGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FF9D70"/>
+                    <stop offset="100%" stop-color="#A83810"/>
+                  </linearGradient>
+                </defs>
+                <!-- Moldura de foto de perfil (estilo rede profissional) -->
+                <circle class="profile-ring" cx="28" cy="28" r="25" fill="var(--surface)" stroke="#0A66C2" stroke-width="2.2"/>
+                <!-- Ombros / uniforme AtlasGR com sombreado (volume) -->
+                <path d="M8 47c0-10.5 8.5-16 20-16s20 5.5 20 16" fill="url(#uniformGrad)"/>
+                <!-- Gola da camisa -->
+                <path d="M19 33h18l3 5.5H16z" fill="#FFFFFF" opacity=".92"/>
+                <!-- Cabeça -->
+                <circle class="avatar-head" cx="28" cy="21" r="9.5" fill="#E4A97C"/>
+                <!-- Badge de função: rede de conexões -->
+                <g class="badge" transform="translate(40,12)">
+                  <circle r="8" fill="#FFFFFF" stroke="#E2E2E2" stroke-width="1.4"/>
+                  <circle cx="-3.4" cy="2.6" r="1.6" fill="var(--brand-active)"/>
+                  <circle cx="3.4" cy="2.6" r="1.6" fill="var(--brand-active)"/>
+                  <circle cx="0" cy="-3.2" r="1.6" fill="var(--brand-active)"/>
+                  <path d="M-2.4 1.4l2-3M2.4 1.4l-2-3" stroke="var(--brand-active)" stroke-width="1" opacity=".7"/>
+                </g>
+              </svg>
+            </div>
+            <div class="hc-title">Social Selling</div>
+          </div>
+        </button>
+
+        <!-- 3. TREINAMENTO ATLASGR -->
+        <!-- Ícone: Escudo de Gerenciamento de Risco (GR / PGR) com Capacitação e Conformidade Viária -->
+        <button class="hub-card ring-inner" data-open="treinamento" data-color="255,109,60" title="Abrir Treinamento AtlasGR">
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="44" height="44" viewBox="0 0 50 50" fill="none">
+                <path d="M25 4L9 10v14c0 11.2 6.8 21.8 16 25.5 9.2-3.7 16-14.3 16-25.5V10L25 4z" stroke="#A83810" stroke-width="2.5" fill="#FF9D70" fill-opacity=".28"/>
+                <path d="M25 14l11 5-11 5-11-5 11-5z" fill="#FF6B10"/>
+                <path d="M18 22v6c0 3.8 3.2 7 7 7s7-3.2 7-7v-6" stroke="#0F9D64" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+                <path d="M36 19v8" stroke="#A83810" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="hc-title">Treinamento AtlasGR</div>
+          </div>
+        </button>
+
+        <!-- 4. PROPOSTA COMERCIAL -->
+        <!-- Ícone: Documento de Contrato de Carga + Caminhão Frotista e Validação Securitária -->
+        <button class="hub-card ring-inner" data-open="proposta" data-color="255,109,60" title="Abrir Proposta Comercial">
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
+                <path d="M12 4h18l8 8v30a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2Z" fill="#94A3B8" opacity=".22"/>
+                <path d="M30 4v8h8" stroke="#64748B" stroke-width="2" fill="none"/>
+                <path d="M16 20h16M16 25h11" stroke="#64748B" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>
+                <path d="M14 36v-4h7v4h8v-3.5h3l3 3.5v4h-2a2 2 0 11-4 0h-7a2 2 0 11-4 0h-4z" fill="#FF6B10"/>
+                <circle cx="19" cy="40" r="1.6" fill="var(--surface)"/>
+                <circle cx="30" cy="40" r="1.6" fill="var(--surface)"/>
+              </svg>
+            </div>
+            <div class="hc-title">Proposta Comercial</div>
+          </div>
+        </button>
+
+        <!-- 5. HUB INTELIGÊNCIA & MKT -->
+        <!-- Ícone: Telemetria de Frotas / Painel de Rota Rodoviária e Analytics de Risco -->
+        <button class="hub-card ring-inner" data-open="hub-mkt" data-color="255,109,60" title="Abrir Hub Inteligência &amp; Mkt">
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
+                <path d="M6 40h36" stroke="#94A3B8" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>
+                <path d="M8 34l9-12 8 7 11-13" stroke="#FF6B10" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <circle cx="36" cy="14" r="3.2" fill="#0F9D64"/>
+                <path d="M31 10a7 7 0 0110 0M28 7a12 12 0 0116 0" stroke="#0F9D64" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+                <circle cx="17" cy="22" r="2" fill="#3B82F6"/>
+              </svg>
+            </div>
+            <div class="hc-title">Hub Inteligência &amp; Mkt</div>
+          </div>
+        </button>
+
+        <!-- 6. ACOMPANHAMENTO SDR -->
+        <!-- Ícone: Relógio Pomodoro / ciclo de foco cronometrado -->
+        <button class="hub-card ring-inner" data-open="sdr" data-color="255,109,60" title="Abrir Acompanhamento SDR">
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
+                <!-- rota de prospecção como base, relógio de foco por cima -->
+                <path d="M4 40h20" stroke="#94A3B8" stroke-width="2.2" stroke-linecap="round" opacity=".5"/>
+                <circle cx="22" cy="21" r="14" stroke="#3B82F6" stroke-width="2.6"/>
+                <path d="M22 14v7l5 3.2" stroke="#1E3A8A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M17 4h10M22 4v3" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round"/>
+                <!-- caminhão avançando na rota -->
+                <g transform="translate(26,33)"><rect width="10" height="6" rx="1.2" fill="#FF6B10"/><rect x="8" y="1.4" width="5" height="4.6" rx="1" fill="#FF6B10"/><circle cx="2.4" cy="7.2" r="1.5" fill="var(--surface)"/><circle cx="9.6" cy="7.2" r="1.5" fill="var(--surface)"/></g>
+              </svg>
+            </div>
+            <div class="hc-title">Acompanhamento SDR</div>
+          </div>
+        </button>
+
+        <!-- 7. ATLAS MEETING HUB -->
+        <!-- Ícone: Agenda com videochamada (Google Meet) -->
+        <button class="hub-card ring-inner" data-open="meeting-hub" data-color="255,109,60" title="Abrir Atlas Meeting Hub">
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
+                <!-- agenda de visita/reunião com pino de destino em rota -->
+                <rect x="4" y="9" width="24" height="24" rx="3" stroke="#4285F4" stroke-width="2.6"/>
+                <path d="M4 16h24M12 5v7M22 5v7" stroke="#4285F4" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M34 18l9-5v19l-9-5z" fill="#34A853"/>
+                <path d="M15 21a3.6 3.6 0 013.6 3.6c0 2.8-3.6 6.4-3.6 6.4s-3.6-3.6-3.6-6.4A3.6 3.6 0 0115 21z" fill="#EA4335"/>
+              </svg>
+            </div>
+            <div class="hc-title">Atlas Meeting Hub</div>
+          </div>
+        </button>
+
+        <!-- Revenue Intelligence deliberadamente FORA da órbita — decisão do usuário ("deixei o
+             revenue intelligence em off por enquanto"), mesmo critério do HubScreen.tsx real
+             (ver comentário em src/features/hub/components/HubScreen.tsx). Não readicionar sem
+             pedido explícito. -->
+
+        <!-- 8. CONNECT ATLAS (ferramenta externa — sempre visível, sem gate) -->
+        <button class="hub-card ring-outer" data-external="https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php" data-color="255,109,60" title="Portal Atlas — página principal">
+          <svg class="hc-ext-badge" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="38" height="38" viewBox="0 0 44 44" fill="none">
+                <path d="M14 6h-4a4 4 0 00-4 4v24a4 4 0 004 4h4" stroke="#A83810" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M18 22h20M32 14l8 8-8 8" stroke="#FF6B10" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="hc-title">Connect Atlas</div>
+          </div>
+        </button>
+
+        <!-- 9. NEW CONNECT -->
+        <button class="hub-card ring-outer" data-external="https://newconnect.atlasgr.com.br/dashboard" data-color="255,109,60" title="Novo portal Atlas — dashboard">
+          <svg class="hc-ext-badge" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="38" height="38" viewBox="0 0 44 44" fill="none">
+                <circle cx="22" cy="22" r="16" stroke="#3B82F6" stroke-width="2.6"/>
+                <path d="M6 22h32" stroke="#3B82F6" stroke-width="2.2" opacity=".7"/>
+                <path d="M22 6c4.4 4.2 6.8 10 6.8 16S26.4 37.8 22 42c-4.4-4.2-6.8-10-6.8-16S17.6 10.2 22 6z" stroke="#3B82F6" stroke-width="2.2" opacity=".7"/>
+              </svg>
+            </div>
+            <div class="hc-title">New Connect</div>
+          </div>
+        </button>
+
+        <!-- 10. PERFIL SECURITÁRIO -->
+        <button class="hub-card ring-outer" data-external="https://perfil-securitario.atlasgr.com.br/report/recentRecords" data-color="255,109,60" title="Registros recentes de perfil securitário">
+          <svg class="hc-ext-badge" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="36" height="36" viewBox="0 0 44 44" fill="none">
+                <path d="M22 4l14 5v11c0 10-6 17-14 20-8-3-14-10-14-20V9l14-5z" stroke="#1E3A8A" stroke-width="2.6" fill="#3B82F6" fill-opacity=".14"/>
+                <path d="M15 22l5 5 9-11" stroke="#0F9D64" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="hc-title">Perfil Securitário</div>
+          </div>
+        </button>
+
+        <!-- 11. BITRIX24 -->
+        <button class="hub-card ring-outer" data-external="https://atlasgr.bitrix24.com.br/" data-color="255,109,60" title="CRM Bitrix24 da AtlasGR">
+          <svg class="hc-ext-badge" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="36" height="36" viewBox="0 0 44 44" fill="none">
+                <rect x="8" y="10" width="28" height="30" rx="2" stroke="#049DD9" stroke-width="2.4"/>
+                <path d="M8 10l14-6 14 6" stroke="#049DD9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M14 18h6M14 24h6M14 30h6M24 18h6M24 24h6M24 30h6" stroke="#02C39A" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>
+              </svg>
+            </div>
+            <div class="hc-title">Bitrix24</div>
+          </div>
+        </button>
+
+        <!-- 12. WEBMAIL -->
+        <button class="hub-card ring-outer" data-external="https://webmail.atlasgr.com.br/?_task=mail&amp;_mbox=INBOX" data-color="255,109,60" title="E-mail corporativo (@atlasgr.com.br)">
+          <svg class="hc-ext-badge" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="36" height="36" viewBox="0 0 44 44" fill="none">
+                <rect x="6" y="10" width="32" height="24" rx="3" stroke="#3B82F6" stroke-width="2.6"/>
+                <path d="M7 12l15 12 15-12" stroke="#1E3A8A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="hc-title">Webmail</div>
+          </div>
+        </button>
+
+        <!-- 13. GMAIL -->
+        <button class="hub-card ring-outer" data-external="https://mail.google.com/mail/u/0/#inbox" data-color="255,109,60" title="Caixa de entrada do Gmail">
+          <svg class="hc-ext-badge" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="36" height="36" viewBox="0 0 44 44" fill="none">
+                <path d="M6 24h9l3 5h8l3-5h9" stroke="#B0281A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M9 24L11 10a2 2 0 012-2h18a2 2 0 012 2l2 14" stroke="#EA4335" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <rect x="6" y="24" width="32" height="10" rx="2" stroke="#EA4335" stroke-width="2.4" fill="#EA4335" fill-opacity=".14"/>
+              </svg>
+            </div>
+            <div class="hc-title">Gmail</div>
+          </div>
+        </button>
+
+        <!-- 14. GOOGLE WORKSPACE -->
+        <button class="hub-card ring-outer" data-external="https://drive.google.com/drive/" data-color="255,109,60" title="Drive, Docs, Planilhas e Agenda">
+          <svg class="hc-ext-badge" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          <div class="hc-orb">
+            <div class="hc-icon-wrap">
+              <svg width="34" height="34" viewBox="0 0 44 44" fill="none">
+                <rect x="6" y="6" width="12" height="12" rx="2.5" fill="#4285F4"/>
+                <rect x="26" y="6" width="12" height="12" rx="2.5" fill="#EA4335"/>
+                <rect x="6" y="26" width="12" height="12" rx="2.5" fill="#FBBC05"/>
+                <rect x="26" y="26" width="12" height="12" rx="2.5" fill="#34A853"/>
+              </svg>
+            </div>
+            <div class="hc-title">Google Workspace</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PRODUTO STANDALONE (Social Selling, Treinamento, Proposta, Hub Mkt) ============ -->
+  <div class="product-shell" id="productShell" hidden>
+    <div class="product-top">
+      <button class="back-hub" id="backHubBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M15 18l-6-6 6-6"/></svg>
+        Portal Atlas
+      </button>
+      <div class="ptitle" id="productTitle">—</div>
+    </div>
+    <div class="product-body">
+      <div class="pb-icon" id="productIcon"></div>
+      <h2 id="productHeading">—</h2>
+      <p id="productDesc">—</p>
+
+      <div class="product-features-grid" id="productFeatures">
+        <!-- Injetado dinamicamente via JS com recursos do setor -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CENTRAL COMERCIAL (CRM DA ATLASGR) ============ -->
+  <div class="shell" id="shell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-brand">
+        <button class="sb-collapse-btn" id="backHubBtn2" title="Voltar ao Portal Atlas" aria-label="Voltar ao Portal Atlas" style="margin-left:0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="sb-mark">A</div>
+        <div class="sb-brandname"><small>Operação atual</small>AtlasGR</div>
+        <button class="sb-collapse-btn" id="collapseBtn" title="Recolher/expandir menu" aria-label="Recolher menu">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+      </div>
+
+      <nav class="sb-nav" id="sbNav" aria-label="Navegação principal"></nav>
+
+      <div class="sb-foot">
+        <div class="sb-avatar">MN</div>
+        <div class="sb-user">
+          <div class="name">Marcelo Nascimento</div>
+          <div class="role">Administrador Comercial</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="crumb">AtlasGR / <b id="crumbLabel">Prospecção</b></div>
+        <div class="search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          Buscar transportadora, frotista, decisor ou SM…
+          <kbd>⌘K</kbd>
+        </div>
+        <div class="topbar-actions">
+          <div class="xp-chip"><span class="lvl">1</span> 0 / 2.000 XP</div>
+          <button class="icon-btn" title="Notificações"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot"></span></button>
+          <button class="icon-btn" id="themeBtnTop" title="Alternar tema"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v1M12 20v1M4.2 4.2l.7.7M19.1 19.1l.7.7M3 12h1M20 12h1M4.2 19.8l.7-.7M19.1 4.9l.7-.7"/><circle cx="12" cy="12" r="4"/></svg></button>
+        </div>
+      </div>
+
+      <div class="view" id="view"></div>
+    </div>
+  </div>
+
+  <!-- Controle de Tema Fixo -->
+  <div class="theme-toggle">
+    <button data-theme-choice="light" id="btnLight">Claro</button>
+    <button data-theme-choice="dark" id="btnDark">Escuro</button>
+    <button data-theme-choice="system" class="active" id="btnSystem">Sistema</button>
+  </div>
+
+  <script>
+    // ============ ÍCONES REFINADOS COM IDENTIDADE DO SETOR ============
+    const ic = {
+      home: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+      search: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+      truck: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+      building: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22v-4h6v4M9 6h1M14 6h1M9 10h1M14 10h1M9 14h1M14 14h1"/></svg>',
+      users: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 8.2a3 3 0 1 1 4 2.83M18 14a5.5 5.5 0 0 1 4 5.3"/></svg>',
+      shield: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+      layout: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
+      gauge: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 12l5-4"/></svg>',
+      sign: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21h16M14 3l5 5-9 9H6v-5z"/></svg>',
+      activity: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+      calendar: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+      repeat: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg>',
+      target: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>',
+      bar: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M7 21V10M12 21V4M17 21v-7"/></svg>',
+      line: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-9"/></svg>',
+      file: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+      zap: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg>',
+      mic: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4"/></svg>',
+      book: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"/></svg>',
+      layers: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',
+      globe: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>',
+      database: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>',
+      bell: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+      cpu: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>',
+      wallet: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>',
+      usercog: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18.5" cy="15.5" r="2.3"/></svg>',
+      settings: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/></svg>',
+    };
+
+    const NAV = [
+      { title: 'Visão geral', open: false, items: [
+        { label: 'Painel Central', icon: ic.home, view: 'dashboard' },
+      ]},
+      { title: 'Captar', open: true, items: [
+        { label: 'Prospecção', icon: ic.search, view: 'prospect' },
+      ]},
+      { title: 'Qualificar', open: false, items: [
+        { label: 'Empresas', icon: ic.building, view: 'companies' },
+        { label: 'Decisores', icon: ic.users, view: 'contacts' },
+        { label: 'Matriz de Qualificação', icon: ic.target, view: 'generic' },
+      ]},
+      { title: 'Relacionar', open: false, items: [
+        { label: 'Agenda', icon: ic.activity, view: 'generic' },
+        { label: 'Calendário', icon: ic.calendar, view: 'generic' },
+        { label: 'Cadência', icon: ic.repeat, view: 'generic', badge: '3' },
+      ]},
+      { title: 'Fechar', open: false, items: [
+        { label: 'Pipeline CRM', icon: ic.layout, view: 'crm' },
+        { label: 'Cockpit CRM', icon: ic.gauge, view: 'cockpit' },
+        { label: 'Propostas', icon: ic.sign, view: 'propostas' },
+      ]},
+      { title: 'Analisar', open: false, items: [
+        { label: 'Comercial Inteligente', icon: ic.line, view: 'comercial-inteligente' },
+        { label: 'Analytics', icon: ic.bar, view: 'generic' },
+        { label: 'Win/Loss', icon: ic.target, view: 'generic' },
+        { label: 'Relatórios IA', icon: ic.file, view: 'generic' },
+      ]},
+      { title: 'IA & capacitação', open: false, items: [
+        { label: 'Copiloto IA', icon: ic.mic, view: 'generic' },
+        { label: 'Hub de IA', icon: ic.zap, view: 'generic' },
+        { label: 'Chatbook', icon: ic.file, view: 'generic' },
+        { label: 'Roleplay', icon: ic.mic, view: 'generic' },
+        { label: 'Academy', icon: ic.book, view: 'generic' },
+        { label: 'Base de Conhecimento', icon: ic.database, view: 'generic' },
+      ]},
+      { title: 'Administração', open: false, items: [
+        { label: 'Notificações', icon: ic.bell, view: 'generic', badge: '5' },
+        { label: 'Guia Prático Bitrix24', icon: ic.layers, view: 'generic' },
+        { label: 'Integrações', icon: ic.globe, view: 'generic' },
+        { label: 'Automações', icon: ic.cpu, view: 'generic' },
+        { label: 'Consumo de IA', icon: ic.wallet, view: 'generic' },
+        { label: 'Equipe', icon: ic.usercog, view: 'generic' },
+        { label: 'Configurações', icon: ic.settings, view: 'generic' },
+      ]},
+    ];
+
+    const sbNav = document.getElementById('sbNav');
+    NAV.forEach((group, gi) => {
+      const g = document.createElement('div');
+      g.className = 'sb-group' + (group.open ? ' open' : '');
+      g.innerHTML = `
+        <button class="sb-group-head" data-gi="${gi}">
+          <span>${group.title}</span>
+          <span class="sb-group-count">${group.items.length}</span>
+          <span class="chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M9 6l6 6-6 6"/></svg></span>
+        </button>
+        <div class="sb-items">
+          ${group.items.map(it => `
+            <button class="sb-item${it.view === 'prospect' ? ' active' : ''}" data-view="${it.view}" data-label="${it.label}">
+              <span class="ic">${it.icon}</span><span>${it.label}</span>
+              ${it.badge ? `<span class="badge">${it.badge}</span>` : ''}
+            </button>
+          `).join('')}
+        </div>`;
+      sbNav.appendChild(g);
+    });
+
+    sbNav.addEventListener('click', (e) => {
+      const head = e.target.closest('.sb-group-head');
+      if (head) {
+        const grp = head.closest('.sb-group');
+        const isOpen = grp.classList.contains('open');
+        document.querySelectorAll('.sb-group').forEach(x => x.classList.remove('open'));
+        if (!isOpen) grp.classList.add('open');
+        return;
+      }
+      const item = e.target.closest('.sb-item');
+      if (item) {
+        document.querySelectorAll('.sb-item').forEach(x => x.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById('crumbLabel').textContent = item.dataset.label;
+        renderView(item.dataset.view, item.dataset.label);
+      }
+    });
+
+    document.getElementById('collapseBtn').addEventListener('click', () => {
+      document.getElementById('shell').classList.toggle('collapsed');
+    });
+
+    // ============ VIEWS DA CENTRAL COMERCIAL COM DADOS DE LOGÍSTICA & TRANSPORTE ============
+    const VIEWS = {
+      dashboard: () => `
+        <div class="view-head">
+          <div><h1>Painel Central</h1><p>Visão consolidada do funil de transportadoras e embarcadores — hoje, 06 de setembro</p></div>
+          <button class="btn primary">+ Nova transportadora</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="label">Transportadoras ativas</div><div class="value">184</div><div class="delta up">↑ 12 esta semana</div></div>
+          <div class="stat"><div class="label">Em qualificação PGR</div><div class="value">37</div><div class="delta up">↑ 4</div></div>
+          <div class="stat"><div class="label">Propostas abertas</div><div class="value">9</div><div class="delta down">↓ 2</div></div>
+          <div class="stat"><div class="label">Ticket médio de frota</div><div class="value">R$ 6.4k</div><div class="delta up">↑ 8%</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head"><h3>Atividade recente de frotas</h3><span class="link">Ver tudo</span></div>
+            <table class="data">
+              <thead><tr><th>Transportadora</th><th>Ação</th><th>Responsável</th><th>Quando</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-name">Transportes Rio Verde</td><td>Proposta PGR enviada (80 veículos)</td><td>Aline Souza</td><td>há 12 min</td></tr>
+                <tr><td class="cell-name">Frota Norte Log</td><td>Apresentação Total Trac agendada</td><td>Bruno Alves</td><td>há 40 min</td></tr>
+                <tr><td class="cell-name">Cargas Bragança</td><td>Lead qualificado (Perfil Agronegócio)</td><td>SDR automático</td><td>há 1h</td></tr>
+                <tr><td class="cell-name">Expresso Serra Azul</td><td>Apólice RCF-DC validada</td><td>Aline Souza</td><td>há 2h</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel form-card">
+            <h3 style="font-size:12.5px;font-weight:800;">Metas comerciais de monitoramento</h3>
+            <div class="field"><label>Novos frotistas (meta 220)</label><div style="height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:84%;height:100%;background:var(--brand);"></div></div></div>
+            <div class="field"><label>Propostas de GR enviadas (meta 30)</label><div style="height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:60%;height:100%;background:var(--ok);"></div></div></div>
+            <div class="field"><label>Contratos fechados (meta 12)</label><div style="height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:33%;height:100%;background:var(--warn);"></div></div></div>
+          </div>
+        </div>`,
+
+      prospect: () => `
+        <div class="view-head">
+          <div><h1>Prospecção</h1><p>Motor de inteligência com IA — busca real de transportadoras, frotistas e embarcadores</p></div>
+          <button class="btn ghost">Listas salvas</button>
+        </div>
+        <div class="two-col">
+          <div class="panel form-card">
+            <h3 style="font-size:12.5px;font-weight:800;">Perfil de Cliente Ideal (ICP Logístico)</h3>
+            <div class="field"><label>Segmento de Transporte</label><select><option>Transportadora / Frotista Rodoviário</option><option>Embarcador Industrial / Bens de Consumo</option><option>Operador Logístico / Armazém</option></select></div>
+            <div class="field-row">
+              <div class="field"><label>Porte da Frota (Nº de Veículos)</label><select><option>Qualquer porte</option><option>Acima de 20 carretas</option><option>Acima de 50 carretas</option></select></div>
+              <div class="field"><label>Volume Mensal</label><input placeholder="Ex.: 50 viagens monitoradas/mês" value="50 cargas/mês"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Estado / Região</label><select><option>Todos os estados</option><option>São Paulo (SP)</option><option>Minas Gerais (MG)</option><option>Paraná (PR)</option></select></div>
+              <div class="field"><label>Cidade (opcional)</label><input placeholder="Ex.: Campinas, Uberlândia"></div>
+            </div>
+            <button class="btn primary" style="margin-top:4px;">Buscar transportadoras reais</button>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Resultados — Transportadoras Mapeadas</h3><span class="pill ok">12 encontradas</span></div>
+            <table class="data">
+              <thead><tr><th>Empresa</th><th>Localidade</th><th>Fit GR</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><div class="cell-name">Transportes Rio Verde</div><div class="cell-sub">Transportadora &middot; 80 carretas &middot; Medicamentos</div></td><td>Uberlândia/MG</td><td><span class="pill ok">92</span></td><td><button class="btn ghost">Adicionar</button></td></tr>
+                <tr><td><div class="cell-name">Frota Norte Log</div><div class="cell-sub">Frotista &middot; 34 cavalos mecânicos</div></td><td>Manaus/AM</td><td><span class="pill ok">87</span></td><td><button class="btn ghost">Adicionar</button></td></tr>
+                <tr><td><div class="cell-name">Cargas Bragança</div><div class="cell-sub">Transportadora &middot; 15 veículos &middot; Grãos</div></td><td>Bragança Paulista/SP</td><td><span class="pill warn">64</span></td><td><button class="btn ghost">Adicionar</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>`,
+
+      companies: () => `
+        <div class="view-head"><div><h1>Empresas &amp; Frotistas</h1><p>128 transportadoras cadastradas nesta operação</p></div><button class="btn primary">+ Nova empresa</button></div>
+        <div class="panel">
+          <table class="data">
+            <thead><tr><th>Transportadora</th><th>CNPJ</th><th>Segmento</th><th>Veículos</th><th>Status PGR</th></tr></thead>
+            <tbody>
+              <tr><td class="cell-name">Transportes Rio Verde</td><td>12.345.678/0001-90</td><td>Cargas Frigoríficas / Farma</td><td class="fit">80</td><td><span class="pill ok">Ativa (Porto Seguro)</span></td></tr>
+              <tr><td class="cell-name">Frota Norte Log</td><td>98.765.432/0001-11</td><td>Frotista Dedicado</td><td class="fit">34</td><td><span class="pill ok">Ativa (Tokio Marine)</span></td></tr>
+              <tr><td class="cell-name">Cargas Bragança</td><td>11.222.333/0001-44</td><td>Transporte Agrícola</td><td class="fit">15</td><td><span class="pill warn">Em qualificação</span></td></tr>
+            </tbody>
+          </table>
+        </div>`,
+
+      contacts: () => `
+        <div class="view-head"><div><h1>Decisores de Transporte &amp; GR</h1><p>96 contatos mapeados</p></div><button class="btn primary">+ Novo decisor</button></div>
+        <div class="panel">
+          <table class="data">
+            <thead><tr><th>Nome</th><th>Cargo</th><th>Transportadora</th><th>Canal preferido</th></tr></thead>
+            <tbody>
+              <tr><td class="cell-name">Ricardo Mendes</td><td>Diretor de Operações e Logística</td><td>Transportes Rio Verde</td><td><span class="pill ok">WhatsApp</span></td></tr>
+              <tr><td class="cell-name">Fernanda Lima</td><td>Gerente de Frotas e GR</td><td>Frota Norte Log</td><td><span class="pill ok">E-mail</span></td></tr>
+              <tr><td class="cell-name">Carlos Eduardo Paes</td><td>Coordenador de Monitoramento</td><td>Cargas Bragança</td><td><span class="pill ok">WhatsApp</span></td></tr>
+            </tbody>
+          </table>
+        </div>`,
+
+      crm: () => `
+        <div class="view-head"><div><h1>Pipeline CRM — Contratos de GR</h1><p>37 negócios em andamento &middot; R$ 612.400 em pipeline</p></div><button class="btn primary">+ Novo negócio</button></div>
+        <div class="kanban">
+          <div class="kcol"><div class="kcol-head">Qualificação (SDR) <span>9</span></div>
+            <div class="kcard"><div class="co">Cargas Bragança</div><div class="val">R$ 18.400 / mês</div></div>
+            <div class="kcard"><div class="co">Log Sul Express</div><div class="val">R$ 9.200 / mês</div></div>
+          </div>
+          <div class="kcol"><div class="kcol-head">Proposta GR <span>6</span></div>
+            <div class="kcard"><div class="co">Transportes Rio Verde</div><div class="val">R$ 64.000 / mês</div></div>
+          </div>
+          <div class="kcol"><div class="kcol-head">Negociação <span>4</span></div>
+            <div class="kcard"><div class="co">Frota Norte Log</div><div class="val">R$ 41.500 / mês</div></div>
+          </div>
+          <div class="kcol"><div class="kcol-head">Fechamento <span>2</span></div>
+            <div class="kcard"><div class="co">Expresso Serra Azul</div><div class="val">R$ 92.000 / mês</div></div>
+          </div>
+        </div>`,
+
+      cockpit: () => `
+        <div class="view-head">
+          <div><h1>Cockpit CRM</h1><p>Visão executiva da operação comercial — meta, forecast e saúde comercial</p></div>
+          <button class="btn ghost">Exportar relatório</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="label">Meta do mês (novos contratos GR)</div><div class="value">18</div><div class="delta up">↑ 6 fechados</div></div>
+          <div class="stat"><div class="label">MRR fechado</div><div class="value">R$ 197,5k</div><div class="delta up">↑ 14%</div></div>
+          <div class="stat"><div class="label">Forecast do mês</div><div class="value">R$ 340k</div><div class="delta up">↑ 8%</div></div>
+          <div class="stat"><div class="label">Gap para meta</div><div class="value">R$ 142,5k</div><div class="delta down">↓ em aberto</div></div>
+          <div class="stat"><div class="label">Pipeline coverage</div><div class="value">3,2x</div><div class="delta up">↑ saudável</div></div>
+          <div class="stat"><div class="label">Ticket médio (MRR/frota)</div><div class="value">R$ 5,9k</div><div class="delta up">↑ 4%</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head"><h3>Forecast por semana</h3><span class="link">Ver detalhado</span></div>
+            <table class="data">
+              <thead><tr><th>Semana</th><th>Commit</th><th>Best case</th><th>Fechado</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-name">Semana 1</td><td class="fit">R$ 62k</td><td class="fit">R$ 88k</td><td class="fit">R$ 58k</td></tr>
+                <tr><td class="cell-name">Semana 2</td><td class="fit">R$ 74k</td><td class="fit">R$ 95k</td><td class="fit">R$ 69k</td></tr>
+                <tr><td class="cell-name">Semana 3</td><td class="fit">R$ 81k</td><td class="fit">R$ 110k</td><td class="fit">R$ 70k</td></tr>
+                <tr><td class="cell-name">Semana 4 (em curso)</td><td class="fit">R$ 90k</td><td class="fit">R$ 125k</td><td class="fit">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel form-card">
+            <h3 style="font-size:12.5px;font-weight:800;">Saúde comercial</h3>
+            <div class="field"><label>Prospecção (leads/dia)</label><div style="height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:88%;height:100%;background:var(--ok);"></div></div></div>
+            <div class="field"><label>Qualificação PGR</label><div style="height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:62%;height:100%;background:var(--warn);"></div></div></div>
+            <div class="field"><label>Propostas em análise de risco</label><div style="height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:70%;height:100%;background:var(--brand);"></div></div></div>
+            <div class="field"><label>Fechamento / assinatura</label><div style="height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:41%;height:100%;background:var(--critical);"></div></div></div>
+            <div class="badge-note">3 negócios parados há mais de 5 dias sem follow-up — priorize Transportes Rio Verde e Frota Norte Log.</div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:14px;">
+          <div class="panel-head"><h3>Ações prioritárias</h3></div>
+          <table class="data">
+            <thead><tr><th>Transportadora</th><th>Situação</th><th>Ação recomendada</th><th>Responsável</th></tr></thead>
+            <tbody>
+              <tr><td class="cell-name">Transportes Rio Verde</td><td><span class="pill warn">Parado há 5 dias</span></td><td>Follow-up da proposta de GR (80 carretas)</td><td>Aline Souza</td></tr>
+              <tr><td class="cell-name">Frota Norte Log</td><td><span class="pill warn">Aguardando decisão</span></td><td>Reforçar apresentação Total Trac</td><td>Bruno Alves</td></tr>
+              <tr><td class="cell-name">Expresso Serra Azul</td><td><span class="pill ok">Pronto para assinar</span></td><td>Enviar contrato e cláusulas RCF-DC</td><td>Aline Souza</td></tr>
+            </tbody>
+          </table>
+        </div>`,
+
+      propostas: () => `
+        <div class="view-head">
+          <div><h1>Propostas</h1><p>Cockpit de propostas de Gerenciamento de Risco e Monitoramento — AtlasGR / Total Trac</p></div>
+          <button class="btn primary">+ Nova proposta</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="label">Propostas ativas</div><div class="value">9</div><div class="delta up">↑ 2</div></div>
+          <div class="stat"><div class="label">Em análise de risco</div><div class="value">4</div></div>
+          <div class="stat"><div class="label">Aguardando assinatura</div><div class="value">2</div></div>
+          <div class="stat"><div class="label">Valor total em propostas</div><div class="value">R$ 284k/mês</div><div class="delta up">↑ 11%</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head"><h3>Propostas em andamento</h3><span class="pill ok">9 ativas</span></div>
+            <table class="data">
+              <thead><tr><th>Transportadora</th><th>Veículos</th><th>Segmento</th><th>MRR</th><th>Seguradora</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-name">Transportes Rio Verde</td><td class="fit">80</td><td>Frigorificados / Farma</td><td class="fit">R$ 64.000</td><td>Porto Seguro</td><td><span class="pill warn">Em análise de risco</span></td></tr>
+                <tr><td class="cell-name">Frota Norte Log</td><td class="fit">34</td><td>Frotista dedicado</td><td class="fit">R$ 41.500</td><td>Tokio Marine</td><td><span class="pill warn">Em análise de risco</span></td></tr>
+                <tr><td class="cell-name">Cargas Bragança</td><td class="fit">15</td><td>Grãos</td><td class="fit">R$ 18.400</td><td>Sompo</td><td><span class="pill ok">Rascunho</span></td></tr>
+                <tr><td class="cell-name">Expresso Serra Azul</td><td class="fit">22</td><td>Alto valor</td><td class="fit">R$ 92.000</td><td>Chubb</td><td><span class="pill ok">Pronta p/ assinar</span></td></tr>
+                <tr><td class="cell-name">Log Sul Express</td><td class="fit">12</td><td>Grãos</td><td class="fit">R$ 9.200</td><td>Porto Seguro</td><td><span class="pill critical">Aguardando cliente</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel form-card">
+            <h3 style="font-size:12.5px;font-weight:800;">Modelos de proposta</h3>
+            <div class="badge-note">Cláusula RCF-DC (Responsabilidade Civil Facultativa) presente em 7 das 9 propostas ativas.</div>
+            <div class="field"><label>Seguradoras parceiras</label></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <span class="pill ok">Porto Seguro</span><span class="pill ok">Tokio Marine</span><span class="pill ok">Sompo</span><span class="pill ok">Chubb</span>
+            </div>
+            <button class="btn ghost" style="margin-top:8px;">Gerar proposta com IA</button>
+          </div>
+        </div>`,
+
+      'comercial-inteligente': () => `
+        <div class="view-head">
+          <div><h1>Comercial Inteligente</h1><p>Analytics de funil, sinistralidade e inteligência territorial de risco rodoviário</p></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="label">Conversão (lead → contrato)</div><div class="value">17%</div><div class="delta up">↑ 3pp</div></div>
+          <div class="stat"><div class="label">Ciclo médio de venda</div><div class="value">34 dias</div><div class="delta up">↓ 5 dias</div></div>
+          <div class="stat"><div class="label">Sinistralidade zero (base ativa)</div><div class="value">96%</div><div class="delta up">↑ 1pp</div></div>
+          <div class="stat"><div class="label">Win rate vs. concorrência</div><div class="value">58%</div><div class="delta up">↑ 6pp</div></div>
+        </div>
+        <div class="two-col">
+          <div class="panel form-card">
+            <h3 style="font-size:12.5px;font-weight:800;">Funil por etapa (últimos 30 dias)</h3>
+            <div class="field"><label>Leads recebidos — 420</label><div style="height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:100%;height:100%;background:var(--brand);"></div></div></div>
+            <div class="field"><label>Qualificados PGR — 168</label><div style="height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:40%;height:100%;background:var(--brand);"></div></div></div>
+            <div class="field"><label>Propostas enviadas — 62</label><div style="height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:15%;height:100%;background:var(--brand);"></div></div></div>
+            <div class="field"><label>Contratos fechados — 71 (17%)</label><div style="height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden;"><div style="width:7%;height:100%;background:var(--ok);"></div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Rotas críticas monitoradas</h3><span class="link">Territory Intelligence</span></div>
+            <table class="data">
+              <thead><tr><th>Corredor</th><th>Ocorrências (30d)</th><th>Risco</th></tr></thead>
+              <tbody>
+                <tr><td class="cell-name">BR-116 (SP–PR)</td><td class="fit">14</td><td><span class="pill critical">Alto</span></td></tr>
+                <tr><td class="cell-name">BR-381 (Fernão Dias)</td><td class="fit">9</td><td><span class="pill warn">Médio</span></td></tr>
+                <tr><td class="cell-name">BR-153 (Transbrasiliana)</td><td class="fit">6</td><td><span class="pill warn">Médio</span></td></tr>
+                <tr><td class="cell-name">BR-262 (MG–ES)</td><td class="fit">2</td><td><span class="pill ok">Baixo</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>`,
+
+      generic: (label) => `
+        <div class="view-head"><div><h1>${label}</h1><p>Módulo integrado à inteligência comercial e operacional da AtlasGR</p></div></div>
+        <div class="badge-note">Módulo ${label}: recursos corporativos de segurança, logística e gestão de risco configurados para a operação da AtlasGR.</div>`,
+    };
+
+    function renderView(key, label) {
+      const view = document.getElementById('view');
+      view.innerHTML = (VIEWS[key] || VIEWS.generic)(label);
+    }
+    renderView('prospect', 'Prospecção');
+
+    // ============ PRODUTOS STANDALONE — DADOS E RECURSOS DO SETOR ============
+    const PRODUCTS = {
+      'social-selling': {
+        title: 'Social Selling',
+        heading: 'Social Selling AtlasGR — Prospecção Ativa B2B',
+        desc: 'Repositório executivo independente: motor de prospecção comercial via LinkedIn e redes corporativas focado em decisores de transportadoras, diretores de logística e gerentes de risco.',
+        icon: '<svg width="34" height="34" viewBox="0 0 48 48" fill="none"><path d="M8 38C16 28 20 22 26 22S36 30 42 14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="26" cy="12" r="5" fill="currentColor"/><circle cx="8" cy="38" r="4" fill="currentColor"/><circle cx="42" cy="14" r="3.5" fill="currentColor"/></svg>',
+        features: [
+          { title: 'Mapeamento de Frotistas', text: 'Localização automatizada de gerentes de frota e diretores de logística em todo o Brasil.' },
+          { title: 'Cadências Segmentadas', text: 'Abordagens personalizadas por tipo de carga: grãos, frigorificados, farmacêuticos e alto valor.' },
+          { title: 'Enriquecimento de Decisores', text: 'Validação de e-mail corporativo, WhatsApp e histórico de frotas ativas.' }
+        ]
+      },
+      treinamento: {
+        title: 'Treinamento AtlasGR',
+        heading: 'Academy AtlasGR — Capacitação e Gestão de Risco',
+        desc: 'Trilhas oficiais e materiais de certificação para a equipe comercial e operacional: regras de PGR, checklist de atuadores veiculares, apólices de transporte e auditoria de sinistralidade.',
+        icon: '<svg width="34" height="34" viewBox="0 0 50 50" fill="none"><path d="M25 4L9 10v14c0 11.2 6.8 21.8 16 25.5 9.2-3.7 16-14.3 16-25.5V10L25 4z" stroke="currentColor" stroke-width="2.6" fill="currentColor" fill-opacity=".15"/><path d="M25 15l10 5-10 5-10-5 10-5z" fill="currentColor"/></svg>',
+        features: [
+          { title: 'Formação em PGR', text: 'Entendimento detalhado de travas de 5ª roda, sensores de baú, botões de pânico e regras securitárias.' },
+          { title: 'Tecnologias de Rastreamento', text: 'Treinamento sobre integração de hardware: Autotrac, Sascar, OnixSat, Omnilink e Total Trac.' },
+          { title: 'Script de Apresentação', text: 'Metodologia de vendas consultiva para grandes frotas e embarcadores industriais.' }
+        ]
+      },
+      proposta: {
+        title: 'Proposta Comercial',
+        heading: 'Cockpit de Propostas AtlasGR &middot; Total Trac',
+        desc: 'Montagem automatizada de propostas comerciais de Gerenciamento de Risco e Monitoramento: dimensionamento de frotas, cubagem, cálculo de risco por rota e emissão de minutas contratuais.',
+        icon: '<svg width="34" height="34" viewBox="0 0 48 48" fill="none"><path d="M12 4h18l8 8v30a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2Z" fill="currentColor" opacity=".18"/><path d="M30 4v8h8" stroke="currentColor" stroke-width="2.2" fill="none"/><path d="M14 36v-4h7v4h8v-3.5h3l3 3.5v4h-2a2 2 0 11-4 0h-7a2 2 0 11-4 0h-4z" fill="currentColor"/></svg>',
+        features: [
+          { title: 'Dimensionamento de Frotas', text: 'Cálculo de valores mensais (MRR) por quantidade de cavalos mecânicos e carretas.' },
+          { title: 'Cláusulas Securitárias', text: 'Inclusão de exigências específicas de seguradoras (Porto Seguro, Tokio Marine, Sompo, Chubb).' },
+          { title: 'Apresentações Institucionais', text: 'Geração de decks interativos das marcas AtlasGR e Total Trac para clientes.' }
+        ]
+      },
+      'hub-mkt': {
+        title: 'Hub de Inteligência & Marketing',
+        heading: 'Hub de Inteligência &amp; Marketing Estratégico',
+        desc: 'Indicadores analíticos, inteligência de território rodoviário e inteligência de mercado: dados de rotas críticas de roubo de carga no Brasil e métricas de mercado de logística.',
+        icon: '<svg width="34" height="34" viewBox="0 0 48 48" fill="none"><path d="M6 40h36" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M8 34l9-12 8 7 11-13" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="36" cy="14" r="3.5" fill="currentColor"/></svg>',
+        features: [
+          { title: 'Mapas de Risco Rodoviário', text: 'Densidade de ocorrências e inteligência preditiva nos principais corredores de carga do país.' },
+          { title: 'Relatórios de Sinistralidade Zero', text: 'Materiais de apoio comercial comprovando eficiência na recuperação de cargas.' },
+          { title: 'Territory Intelligence', text: 'Análise de concentração de transportadoras por região e rotas de escoamento agrícola e industrial.' }
+        ]
+      },
+      sdr: {
+        title: 'Acompanhamento SDR',
+        heading: 'Mesa de Tratamento SDR',
+        desc: 'Mesa de trabalho diária do SDR: fila de tratamento de leads direto do Bitrix24, ciclos de foco no método Pomodoro, calendário de follow-ups e análise de clientes — tudo num único lugar.',
+        icon: '<svg width="34" height="34" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="26" r="16" stroke="currentColor" stroke-width="2.6"/><path d="M24 18v9l6 4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 6h12M24 6v4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+        features: [
+          { title: 'Fila de Tratamento Bitrix', text: 'Leads organizados por prioridade e status direto do funil Bitrix24, sem precisar trocar de tela.' },
+          { title: 'Ciclos Pomodoro', text: 'Blocos de foco cronometrados para ligações e follow-ups, com pausas estruturadas entre eles.' },
+          { title: 'Calendário e Análise de Clientes', text: 'Agenda do dia e histórico de interação por cliente, na mesma mesa de trabalho.' }
+        ]
+      },
+      'meeting-hub': {
+        title: 'Atlas Meeting Hub',
+        heading: 'Atlas Meeting Hub — Agendamento Comercial',
+        desc: 'Agendamento ponta a ponta: Bitrix24 → Google Calendar/Meet → tarefa e atividade no CRM → convite por e-mail via Webmail Atlas, com reagendamento, cancelamento e auditoria completa.',
+        icon: '<svg width="34" height="34" viewBox="0 0 48 48" fill="none"><rect x="5" y="10" width="26" height="26" rx="3" stroke="currentColor" stroke-width="2.6"/><path d="M5 18h26M14 6v8M24 6v8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M36 24l8-4.5v17l-8-4.5z" fill="currentColor"/></svg>',
+        features: [
+          { title: 'Busca direta no CRM', text: 'Localiza Lead, Contato, Empresa ou Negócio no Bitrix24 sem sair da tela de agendamento.' },
+          { title: 'Google Meet automático', text: 'Cria a sala de vídeo e sincroniza com o Google Calendar do responsável pela reunião.' },
+          { title: 'Convite oficial por e-mail', text: 'Envia o convite (HTML + ICS) pelo Webmail Atlas, com reagendamento e cancelamento auditados.' }
+        ]
+      },
+    };
+
+    const hubPage = document.getElementById('hubPage');
+    const productShell = document.getElementById('productShell');
+    const shell = document.getElementById('shell');
+
+    function showOnly(el) {
+      [hubPage, productShell, shell].forEach(x => x.hidden = (x !== el));
+      if (el === hubPage) requestAnimationFrame(layoutOrbit);
+    }
+
+    // ============ COMPOSIÇÃO RADIAL: DUAS ÓRBITAS CONCÊNTRICAS ============
+    // Pedido explícito do usuário: um círculo central com DUAS voltas ao redor — volta interna
+    // com os 6 módulos do CRM (mais perto do centro), volta externa com as 7 ferramentas externas
+    // (categoria diferente, fica "por fora"). Cards maiores que a versão de órbita única anterior.
+    //
+    // Estratégia: calcula o raio IDEAL de cada volta (sem comprimir) a partir do tamanho desejado
+    // dos círculos — volta interna não pode invadir o centro nem se sobrepor entre si; volta externa
+    // não pode invadir a volta interna nem se sobrepor entre si. Se o container for pequeno demais
+    // para caber os dois raios ideais, tudo encolhe junto (mesma proporção) até caber — isso só
+    // acontece em janelas estreitas; no tamanho padrão do container (ver CSS de .hub-orbit) cabe sem
+    // encolher.
+    function layoutOrbit() {
+      const orbit = document.getElementById('hubOrbit');
+      const svg = document.getElementById('orbitLines');
+      if (!orbit || orbit.offsetParent === null) return;
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        svg.innerHTML = '';
+        // no layout empilhado mobile os cards voltam ao tamanho normal (position: static via CSS)
+        document.querySelectorAll('.hub-card:not(.primary)').forEach(card => {
+          card.style.width = '';
+          card.style.height = '';
+          card.style.marginLeft = '';
+          card.style.marginTop = '';
+          const orb = card.querySelector('.hc-orb');
+          if (orb) orb.style.removeProperty('--orb-scale');
+        });
+        return;
+      }
+
+      const primary = orbit.querySelector('.hub-card.primary');
+      const ringInner = Array.from(orbit.querySelectorAll('.hub-card.ring-inner'));
+      const ringOuter = Array.from(orbit.querySelectorAll('.hub-card.ring-outer'));
+      const w = orbit.clientWidth, h = orbit.clientHeight;
+      if (!w || !h) return;
+
+      const cx = w / 2, cy = h / 2;
+      primary.style.left = cx + 'px';
+      primary.style.top = cy + 'px';
+
+      const primarySize = 238; // diâmetro do card central — bate com o CSS (.hub-card.primary)
+      const innerSize = 200;   // diâmetro "cheio" dos círculos da volta interna (módulos do CRM)
+      const outerSize = 185;   // diâmetro "cheio" dos círculos da volta externa (ferramentas externas)
+      const gap = 24;          // respiro generoso entre círculos vizinhos e entre as duas voltas
+      const margin = 40;       // respiro entre a volta externa e a borda do container
+      const minScale = 0.7;    // nunca encolhe além disto — abaixo disso o nome fica ilegível
+
+      const nInner = ringInner.length, nOuter = ringOuter.length;
+      const angleInner = (Math.PI * 2) / nInner, sinHalfInner = Math.sin(angleInner / 2);
+      const angleOuter = (Math.PI * 2) / nOuter, sinHalfOuter = Math.sin(angleOuter / 2);
+
+      // Raio ideal da volta interna: cabe entre vizinhos E não invade o card central.
+      const idealInnerRadius = Math.max(
+        (innerSize + gap) / (2 * sinHalfInner),
+        primarySize / 2 + innerSize / 2 + gap
+      );
+      // Raio ideal da volta externa: cabe entre vizinhos E não invade a volta interna.
+      const idealOuterRadius = Math.max(
+        (outerSize + gap) / (2 * sinHalfOuter),
+        idealInnerRadius + innerSize / 2 + outerSize / 2 + gap
+      );
+      const idealHalf = idealOuterRadius + outerSize / 2 + margin;
+
+      // Se o container for menor que o ideal, encolhe tudo (raios e tamanhos) na mesma proporção.
+      const availableHalf = Math.min(w, h) / 2;
+      let shrink = availableHalf / idealHalf;
+      shrink = Math.max(minScale, Math.min(1, shrink));
+
+      const finalInnerSize = innerSize * shrink;
+      const finalOuterSize = outerSize * shrink;
+      const finalInnerRadius = idealInnerRadius * shrink;
+      const finalOuterRadius = idealOuterRadius * shrink;
+
+      svg.innerHTML = '';
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+
+      function placeRing(ring, angleStep, radius, size) {
+        const scale = size / 168; // 168 = diâmetro de referência original do .hc-orb no CSS
+        const btnBox = size + 6;
+        ring.forEach((card, i) => {
+          const angle = angleStep * i - Math.PI / 2;
+          const x = cx + radius * Math.cos(angle);
+          const y = cy + radius * Math.sin(angle);
+          card.style.left = x + 'px';
+          card.style.top = y + 'px';
+          card.style.width = btnBox + 'px';
+          card.style.height = btnBox + 'px';
+          card.style.marginLeft = (-btnBox / 2) + 'px';
+          card.style.marginTop = (-btnBox / 2) + 'px';
+          const orb = card.querySelector('.hc-orb');
+          if (orb) orb.style.setProperty('--orb-scale', scale.toFixed(3));
+        });
+      }
+      placeRing(ringInner, angleInner, finalInnerRadius, finalInnerSize);
+      placeRing(ringOuter, angleOuter, finalOuterRadius, finalOuterSize);
+    }
+    layoutOrbit();
+    window.addEventListener('resize', layoutOrbit);
+
+    document.querySelectorAll('.hub-card').forEach(card => {
+      card.addEventListener('mouseenter', () => playTone(540, .05, .04));
+      card.addEventListener('click', (e) => {
+        playTone(320, .12, .08);
+        burstAt(e.clientX, e.clientY, card.dataset.color || '255,86,24');
+        const key = card.dataset.open;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const externalUrl = card.dataset.external;
+        window.setTimeout(() => {
+          if (key === 'central') { showOnly(shell); return; }
+          if (externalUrl) { window.open(externalUrl, '_blank', 'noopener,noreferrer'); return; }
+          const p = PRODUCTS[key];
+          if (!p) return;
+          document.getElementById('productTitle').textContent = p.title;
+          document.getElementById('productHeading').textContent = p.heading;
+          document.getElementById('productDesc').textContent = p.desc;
+          document.getElementById('productIcon').innerHTML = p.icon;
+          
+          const feats = document.getElementById('productFeatures');
+          feats.innerHTML = p.features.map(f => `
+            <div class="p-feat-card">
+              <b>${f.title}</b>
+              <span>${f.text}</span>
+            </div>
+          `).join('');
+
+          showOnly(productShell);
+        }, reduceMotion ? 0 : 340);
+      });
+    });
+
+    document.getElementById('backHubBtn').addEventListener('click', () => showOnly(hubPage));
+    document.getElementById('backHubBtn2').addEventListener('click', () => showOnly(hubPage));
+
+    // ============ GERENCIAMENTO DE TEMA ============
+    const root = document.documentElement;
+    function setTheme(choice) {
+      if (choice === 'system') root.removeAttribute('data-theme');
+      else root.setAttribute('data-theme', choice);
+      document.querySelectorAll('.theme-toggle button').forEach(b => b.classList.toggle('active', b.dataset.themeChoice === choice));
+      try { localStorage.setItem('atlas-proto-theme', choice); } catch(e) {}
+    }
+    document.querySelectorAll('.theme-toggle button').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.themeChoice)));
+    document.getElementById('themeBtnTop').addEventListener('click', () => {
+      const current = root.getAttribute('data-theme') || 'system';
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+    try {
+      const saved = localStorage.getItem('atlas-proto-theme');
+      if (saved) setTheme(saved);
+    } catch(e) {}
+
+    // ============ RELÓGIO, DATA E SAUDAÇÃO ============
+    const USER_NAME = 'Marcelo';
+    const WEEKDAYS_SHORT = ['D','S','T','Q','Q','S','S'];
+
+    function greetingWord(hour) {
+      if (hour < 5) return 'Boa madrugada';
+      if (hour < 12) return 'Bom dia';
+      if (hour < 18) return 'Boa tarde';
+      return 'Boa noite';
+    }
+
+    function tickClock() {
+      const now = new Date();
+      document.getElementById('clockTime').textContent = now.toLocaleTimeString('pt-BR', { hour12: false });
+      document.getElementById('clockDate').textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'short' });
+      document.getElementById('greetingText').innerHTML = `${greetingWord(now.getHours())}, <span class="accent">${USER_NAME}</span>`;
+    }
+    tickClock();
+    setInterval(tickClock, 1000);
+
+    function buildCalendar() {
+      const now = new Date();
+      const head = document.getElementById('calHead');
+      head.textContent = now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      const grid = document.getElementById('calGrid');
+      const year = now.getFullYear(), month = now.getMonth(), today = now.getDate();
+      const firstDow = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      let html = WEEKDAYS_SHORT.map(d => `<span>${d}</span>`).join('');
+      for (let i = 0; i < firstDow; i++) html += '<div></div>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        html += `<div class="cal-day${d === today ? ' today' : ''}">${d}</div>`;
+      }
+      grid.innerHTML = html;
+    }
+    buildCalendar();
+
+    // ============ TAREFAS PENDENTES — gestor designa, usuário conclui ============
+    let TASKS = [
+      { text: 'Ligar para Cargas Bragança', assignee: 'Bruno Alves', due: 'Hoje', done: false },
+      { text: 'Enviar proposta GR — Frota Norte Log', assignee: 'Aline Souza', due: 'Amanhã', done: false },
+      { text: 'Revisar apólice Expresso Serra Azul', assignee: 'Aline Souza', due: 'Atrasada', done: true },
+    ];
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      const pending = TASKS.filter(t => !t.done).length;
+      document.getElementById('taskCount').textContent = pending;
+      list.innerHTML = TASKS.map((t, i) => `
+        <div class="task-row${t.done ? ' done' : ''}" data-i="${i}">
+          <button class="task-check" type="button" aria-label="Marcar como concluída">
+            ${t.done ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg>' : ''}
+          </button>
+          <span class="task-text">${t.text}</span>
+          <span class="task-assignee">${t.assignee.split(' ')[0]}</span>
+        </div>`).join('');
+    }
+    renderTasks();
+    document.getElementById('taskList').addEventListener('click', (e) => {
+      const row = e.target.closest('.task-row');
+      if (!row) return;
+      TASKS[Number(row.dataset.i)].done = !TASKS[Number(row.dataset.i)].done;
+      renderTasks();
+    });
+    document.getElementById('taskAddForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('taskInput');
+      const assignee = document.getElementById('taskAssignee').value;
+      if (!input.value.trim()) return;
+      TASKS.unshift({ text: input.value.trim(), assignee, due: 'Hoje', done: false });
+      input.value = '';
+      renderTasks();
+    });
+
+    // ============ SOM SINTETIZADO VIA WEB AUDIO ============
+    let audioCtx = null;
+    let soundOn = true;
+    function ensureAudio() {
+      if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      return audioCtx;
+    }
+    function playTone(freq, duration, volume) {
+      if (!soundOn) return;
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    }
+    const soundToggle = document.getElementById('soundToggle');
+    soundToggle.addEventListener('click', () => {
+      soundOn = !soundOn;
+      document.getElementById('soundIconOn').hidden = !soundOn;
+      document.getElementById('soundIconOff').hidden = soundOn;
+      if (soundOn) { ensureAudio(); playTone(660, .08, .05); }
+    });
+
+    // ============ EFEITO DE EXPLOSÃO DE PARTÍCULAS (BURST) ============
+    const burstCanvas = document.getElementById('hubBurst');
+    const burstCtx = burstCanvas.getContext('2d');
+    let burstParticles = [];
+    function resizeBurst() {
+      burstCanvas.width = window.innerWidth * devicePixelRatio;
+      burstCanvas.height = window.innerHeight * devicePixelRatio;
+      burstCanvas.style.width = window.innerWidth + 'px';
+      burstCanvas.style.height = window.innerHeight + 'px';
+    }
+    resizeBurst();
+    window.addEventListener('resize', resizeBurst);
+
+    function burstAt(x, y, colorRgb) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const count = reduceMotion ? 0 : 26;
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + Math.random() * 0.3;
+        const speed = 2.5 + Math.random() * 3.5;
+        burstParticles.push({
+          x: x * devicePixelRatio, y: y * devicePixelRatio,
+          vx: Math.cos(angle) * speed * devicePixelRatio, vy: Math.sin(angle) * speed * devicePixelRatio,
+          r: (2 + Math.random() * 3) * devicePixelRatio, life: 1, color: colorRgb,
+        });
+      }
+    }
+    function drawBurst() {
+      burstCtx.clearRect(0, 0, burstCanvas.width, burstCanvas.height);
+      burstParticles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.05 * devicePixelRatio; p.life -= 0.02;
+        burstCtx.globalAlpha = Math.max(p.life, 0);
+        burstCtx.fillStyle = `rgb(${p.color})`;
+        burstCtx.beginPath();
+        burstCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        burstCtx.fill();
+      });
+      burstParticles = burstParticles.filter(p => p.life > 0);
+      burstCtx.globalAlpha = 1;
+      requestAnimationFrame(drawBurst);
+    }
+    drawBurst();
+
+    // ============ FUNDO 3D AMBIENTAL (THREE.JS) ============
+    (function initHubScene() {
+      if (typeof THREE === 'undefined') return;
+      const canvas = document.getElementById('hubCanvas3d');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 14);
+
+      const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambient);
+      const point = new THREE.PointLight(0xff5618, 2.4, 40);
+      point.position.set(6, 4, 8);
+      scene.add(point);
+      const point2 = new THREE.PointLight(0xff9d70, 1.2, 40);
+      point2.position.set(-8, -3, 6);
+      scene.add(point2);
+
+      const orbs = [];
+      const geo = new THREE.IcosahedronGeometry(1, 1);
+      for (let i = 0; i < 9; i++) {
+        const mat = new THREE.MeshStandardMaterial({
+          color: i % 3 === 0 ? 0xff5618 : 0xffffff,
+          transparent: true, opacity: i % 3 === 0 ? 0.5 : 0.14,
+          roughness: 0.25, metalness: 0.35, wireframe: i % 4 === 0,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        const scale = 0.6 + Math.random() * 1.6;
+        mesh.scale.setScalar(scale);
+        mesh.position.set((Math.random() - 0.5) * 20, (Math.random() - 0.5) * 12, (Math.random() - 0.5) * 10 - 4);
+        scene.add(mesh);
+        orbs.push({ mesh, speed: 0.05 + Math.random() * 0.08, axis: new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(), drift: Math.random() * Math.PI * 2 });
+      }
+
+      function onResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      window.addEventListener('resize', onResize);
+
+      let raf = null;
+      function animate(t) {
+        const time = t * 0.0001;
+        orbs.forEach(o => {
+          o.mesh.rotateOnAxis(o.axis, o.speed * 0.01);
+          o.mesh.position.y += Math.sin(time * 0.6 + o.drift) * 0.003;
+        });
+        renderer.render(scene, camera);
+        raf = requestAnimationFrame(animate);
+      }
+      if (reduceMotion) {
+        renderer.render(scene, camera);
+      } else {
+        raf = requestAnimationFrame(animate);
+      }
+    })();
+  </script>
+</body>
+</html>

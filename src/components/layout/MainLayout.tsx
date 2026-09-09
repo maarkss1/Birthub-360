@@ -34,7 +34,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Fecha a navegação mobile sempre que o módulo ativo muda (ex.: usuário tocou num item do menu).
   useEffect(() => {
     setMobileNavOpen(false);
-  }, [activeTab]);
+  }, []);
 
   // Fecha com Escape, igual ao comportamento do Drawer/Dialog compartilhados.
   useEffect(() => {

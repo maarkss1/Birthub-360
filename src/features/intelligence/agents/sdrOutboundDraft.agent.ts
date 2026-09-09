@@ -51,7 +51,7 @@ Retorne SOMENTE JSON válido neste formato exato: {"subject":"assunto curto e ch
       include: { company: true, contact: true },
     });
 
-    if (!lead || !lead.contact || !lead.company) {
+    if (!lead?.contact || !lead.company) {
       return { status: 'skipped', reason: 'Lead sem empresa ou contato vinculados.' };
     }
     if (!lead.contact.email) {

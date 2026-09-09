@@ -507,12 +507,12 @@ model Contact {
   commercialDocuments CrmCommercialDocument[]
 
   companyId             String
-  company               Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company               Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
   leads                 Lead[]
   whatsAppMessages      WhatsAppMessage[]
   copilotoConversations CopilotoConversation[]
   organizationId        String?
-  organization          Organization?     @relation(fields: [organizationId], references: [id])
+  organization          Organization?          @relation(fields: [organizationId], references: [id])
   decisionMakerProfiles DecisionMaker[]
 
   createdAt    DateTime  @default(now())
@@ -647,27 +647,27 @@ model Lead {
   pipelineStageId String?
   pipelineStage   CrmPipelineStage? @relation(fields: [pipelineStageId], references: [id], onDelete: SetNull)
 
-  activities            Activity[]
-  mesaTratamentoTreatments MesaTratamentoTreatment[]
-  timeline              TimelineEvent[]
-  internalNotes         Note[]
-  whatsAppMessages      WhatsAppMessage[]
-  conversationSignals   ConversationSignal[]
-  dealItems             CrmDealItem[]
-  commercialDocuments   CrmCommercialDocument[]
-  stageHistory          LeadStageHistory[]
-  fieldChanges          LeadFieldChange[]
-  optOutRecords         OptOutRecord[]
-  prospects             Prospect[]
+  activities                  Activity[]
+  mesaTratamentoTreatments    MesaTratamentoTreatment[]
+  timeline                    TimelineEvent[]
+  internalNotes               Note[]
+  whatsAppMessages            WhatsAppMessage[]
+  conversationSignals         ConversationSignal[]
+  dealItems                   CrmDealItem[]
+  commercialDocuments         CrmCommercialDocument[]
+  stageHistory                LeadStageHistory[]
+  fieldChanges                LeadFieldChange[]
+  optOutRecords               OptOutRecord[]
+  prospects                   Prospect[]
   // Onda 10 (Agente 01A) — ver proposta do Agente 17, itens 2/3/4/5.
-  cadenceRuns           CadenceRun[]
-  emailMessages         EmailMessage[]
-  cadenceCalendarEvents CadenceCalendarEvent[]
-  dealClosureEvents     DealClosureEvent[]
+  cadenceRuns                 CadenceRun[]
+  emailMessages               EmailMessage[]
+  cadenceCalendarEvents       CadenceCalendarEvent[]
+  dealClosureEvents           DealClosureEvent[]
   copilotoConversations       CopilotoConversation[]
   copilotoDealHealthSnapshots CopilotoDealHealthSnapshot[]
-  organizationId        String?
-  organization          Organization?           @relation(fields: [organizationId], references: [id])
+  organizationId              String?
+  organization                Organization?                @relation(fields: [organizationId], references: [id])
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -753,65 +753,69 @@ model AuditLog {
 }
 
 model User {
-  id                 String       @id @default(cuid())
-  name               String
-  email              String       @unique
+  id                       String                    @id @default(cuid())
+  name                     String
+  email                    String                    @unique
   // Better Auth guarda a senha em Account.password (provider "credential"), não aqui — este
   // campo é resquício de um fluxo de auth anterior e não é mais escrito por ninguém no app real.
   // Precisa ser opcional para não quebrar `prisma.user.create()` do adapter do Better Auth.
-  passwordHash       String?
-  role               UserRole     @default(VISUALIZADOR)
-  bitrixUserId       Int?
+  passwordHash             String?
+  role                     UserRole                  @default(VISUALIZADOR)
+  bitrixUserId             Int?
   // Força a troca de senha no próximo login — usado quando um admin define uma senha
   // temporária/padrão pra outra pessoa (ver POST /api/auth-extra/change-password).
-  mustChangePassword Boolean      @default(false)
+  mustChangePassword       Boolean                   @default(false)
   // Bloqueio de conta por tentativas de login malsucedidas (ver hooks.before/after em
   // src/lib/auth.ts) — complementa o rate limit por IP (src/bootstrap/rateLimiters.ts,
   // AUTH_RATE_LIMIT_MAX) com um limite por CONTA: um atacante distribuído por vários IPs contra a
   // MESMA conta ainda é contido, o que o rate limit por IP sozinho não cobre.
-  failedLoginAttempts Int         @default(0)
-  lockedUntil         DateTime?
-  organizationId     String
-  organization       Organization @relation(fields: [organizationId], references: [id])
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
-  emailVerified      Boolean      @default(false)
-  image              String?
-  sessions           Session[]
-  accounts           Account[]
-  assistantMessages  AssistantMessage[]
-  publicBookingLinks PublicBookingLink[]
-  moduleAccessGrants ModuleAccessGrant[]
+  failedLoginAttempts      Int                       @default(0)
+  lockedUntil              DateTime?
+  organizationId           String
+  organization             Organization              @relation(fields: [organizationId], references: [id])
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  emailVerified            Boolean                   @default(false)
+  image                    String?
+  sessions                 Session[]
+  accounts                 Account[]
+  assistantMessages        AssistantMessage[]
+  roleplaySessions         RoleplaySession[]
+  publicBookingLinks       PublicBookingLink[]
+  moduleAccessGrants       ModuleAccessGrant[]
   mesaTratamentoTreatments MesaTratamentoTreatment[]
-  pomodoroSessions   PomodoroSession[]
+  pomodoroSessions         PomodoroSession[]
+  dailyPlanClosings        DailyPlanClosing[]
   // Fundação Multi-Cargo (ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo) —
   // vínculo com o(s) cargo(s) funcionais do usuário, independente de `role` (UserRole = nível de
   // autoridade/segurança, nunca substituído por isto).
-  jobRoles           UserJobRole[]
+  jobRoles                 UserJobRole[]
 
   @@index([organizationId])
   @@map("user")
 }
 
 model Organization {
-  id                            String                         @id @default(cuid())
-  name                          String                         @unique
-  users                         User[]
-  companies                     Company[]
-  contacts                      Contact[]
-  leads                         Lead[]
-  prospects                     Prospect[]
-  activities                    Activity[]
-  documents                     Document[]
-  notifications                 Notification[]
-  automations                   Automation[]
-  aiLogs                        AILog[]
-  aiGuardrailEvents             AIGuardrailEvent[]
-  reports                       Report[]
-  assistantMessages             AssistantMessage[]
-  qualificationMatrixItems      QualificationMatrixItem[]
-  objectionMatrixItems          ObjectionMatrixItem[]
-  aiPendingActions              AIPendingAction[]
+  id                       String                    @id @default(cuid())
+  name                     String                    @unique
+  users                    User[]
+  companies                Company[]
+  contacts                 Contact[]
+  leads                    Lead[]
+  prospects                Prospect[]
+  activities               Activity[]
+  documents                Document[]
+  notifications            Notification[]
+  automations              Automation[]
+  aiLogs                   AILog[]
+  aiGuardrailEvents        AIGuardrailEvent[]
+  reports                  Report[]
+  assistantMessages        AssistantMessage[]
+  roleplaySessions         RoleplaySession[]
+  qualificationMatrixItems QualificationMatrixItem[]
+  objectionMatrixItems     ObjectionMatrixItem[]
+  aiPendingActions         AIPendingAction[]
+  dailyPlanClosings        DailyPlanClosing[]
 
   prompts                       Prompt[]
   agentMemories                 AgentMemory[]
@@ -872,15 +876,28 @@ model Organization {
   publicBookingLinks            PublicBookingLink[]
   // Fundação Multi-Cargo — ver seção "Multi-Cargo e Governança de Agentes" no fim deste arquivo.
   userJobRoles                  UserJobRole[]
+  // Agent Runtime Genérico (PROMPT 4) — ver seção "Agent Runtime Genérico" no fim deste arquivo.
+  agentExecutions               AgentExecution[]
   savedSearches                 SavedSearch[]
   prospectingSearchExecutions   ProspectingSearchExecution[]
   automationVersions            AutomationVersion[]
+  // Cross-Role Authorization + Aprovações (PROMPT 7) — ver seção no fim deste arquivo.
+  accessRequests                AccessRequest[]
+  approvalDecisions             ApprovalDecision[]
+  temporaryCapabilityGrants     TemporaryCapabilityGrant[]
+  // Agent Bus + Handoffs (PROMPT 8) — ver seção no fim deste arquivo.
+  agentHandoffMessages          AgentHandoffMessage[]
+  // Memória + Aprendizado Contínuo Governado (PROMPT 9) — ver seção no fim deste arquivo.
+  learningCandidates            LearningCandidate[]
+  agentMemoryRecords            AgentMemoryRecord[]
+  roleMemoryRecords             RoleMemoryRecord[]
+  organizationMemoryRecords     OrganizationMemoryRecord[]
 
   /// DEC-09 (dossiê CPI, Onda 42): teto mensal de gasto com IA (USD) desta organização. Nullable =
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
   /// organização nova silenciosamente. Comparado contra a soma de AILog.cost do mês corrente desta
   /// organização por assertOrgAiBudgetNotExceeded (src/lib/ai/budget.ts).
-  monthlyAiBudgetUsd Float?
+  monthlyAiBudgetUsd          Float?
   /// DEC-09: teto mensal de gasto com providers de prospecção pagos (Apollo/Hunter, USD) desta
   /// organização. Nullable = SEM TETO, mesmo raciocínio do campo acima. Comparado contra o
   /// acumulado do mês corrente (Redis, ver providerBudget.ts) por assertProspectingBudgetNotExceeded.
@@ -1422,8 +1439,6 @@ model CrmCommercialDocument {
   @@index([leadId])
 }
 
-
-
 model Session {
   id        String   @id
   expiresAt DateTime
@@ -1650,6 +1665,45 @@ model AssistantMessage {
   @@index([organizationId, userId, brand, createdAt])
 }
 
+/// Sessão de ligação simulada de roleplay (ver src/features/roleplay/) — transcrição completa e o
+/// parecer técnico gerado por IA ao final da chamada. Antes vivia só em useState no
+/// RoleplayHub.tsx e era perdida ao recarregar a página (débito documentado no Piloto 008 de
+/// .claude/PILOTS.md). Escopada por usuário (é um treinamento pessoal, mesmo raciocínio de
+/// AssistantMessage acima) e por marca (AtlasGR/Total Trac têm personas e playbook distintos).
+model RoleplaySession {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brand           String // 'atlasgr' | 'totaltrac'
+  personaId       String
+  personaLabel    String
+  difficulty      String // 'facil' | 'medio' | 'dificil'
+  durationSeconds Int
+
+  // Transcrição completa (CallMessage[]) e avaliação por turno (clarity/objectionHandling/total/
+  // feedback, já calculada em tempo real durante a ligação) — Json porque é conteúdo de exibição,
+  // nunca filtrado/agregado via SQL.
+  transcript      Json
+  turnEvaluations Json
+
+  // Parecer técnico da sessão completa, gerado por uma chamada de IA dedicada ao final da ligação
+  // (não uma média local dos turnos) — ver generateRoleplayEvaluation em
+  // studio/generators/roleplay.ts.
+  overallScore           Int
+  clarityScore           Int
+  objectionHandlingScore Int
+  closingScore           Int
+  strengths              Json // string[]
+  improvements           Json // string[]
+  summary                String @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId, userId, createdAt])
+}
+
 /// Fase 4 do roadmap de melhorias: a Matriz de Qualificação vivia só em memória
 /// (src/features/chatbook/constants/brandMatrices.ts), somente leitura — sem CRUD, sem persistir
 /// edição alguma. Escopado por organização (cada org edita seu próprio playbook), não por usuário.
@@ -1790,7 +1844,7 @@ model AutomationVersion {
   editedByEmail  String?
   /// 'update' | 'delete' — 'delete' registra o último estado antes da automação ser removida, para
   /// o histórico não desaparecer junto com a regra.
-  changeReason String @default("update")
+  changeReason   String  @default("update")
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -1986,10 +2040,10 @@ model CopilotoConversation {
   // POST .../audio/upload-url e .../audio/complete. `audioObjectKey` é a chave do objeto no bucket
   // (nunca a URL assinada, que expira em 1h); o download pro worker de transcrição usa
   // `getDownloadUrl(audioObjectKey)` de novo, gerando uma URL assinada nova a cada tentativa.
-  audioObjectKey   String?
-  audioMimeType    String?
-  audioSizeBytes   Int?
-  audioDurationMs  Int?
+  audioObjectKey           String?
+  audioMimeType            String?
+  audioSizeBytes           Int?
+  audioDurationMs          Int?
   /// Preenchidos pelo worker de transcrição (`jobs/transcribeConversation.worker.ts`) — nulos
   /// enquanto a transcrição não foi tentada. `transcriptionError` preserva a última falha mesmo
   /// depois de um retry bem-sucedido zerar `status` para READY (auditoria: "funcionou, mas na
@@ -2033,9 +2087,9 @@ model CopilotoTranscriptSegment {
   /// User/Contact fica para uma onda futura, não é inferida aqui.
   speakerLabel String?
 
-  startMs Int
-  endMs   Int
-  text    String @db.Text
+  startMs    Int
+  endMs      Int
+  text       String @db.Text
   /// Confiança do provedor de transcrição (0-1), quando reportada.
   confidence Float?
 
@@ -2097,18 +2151,18 @@ model CopilotoCrmFieldSuggestion {
   previousValue  String? @db.Text
   suggestedValue String  @db.Text
   /// Confiança do modelo que gerou a sugestão (0-1).
-  confidence Float?
+  confidence     Float?
 
   status CopilotoSuggestionStatus @default(PENDING)
 
   /// Quem aprovou/rejeitou (userId) — sem FK dura para User, mesmo padrão de `CommercialGoal.createdBy`.
-  approvedBy  String?
-  approvedAt  DateTime?
-  writebackAt DateTime?
+  approvedBy     String?
+  approvedAt     DateTime?
+  writebackAt    DateTime?
   /// Preenchido só quando `status` vira FAILED numa tentativa de writeback (Onda 4) — mensagem
   /// legível (mapeamento ausente, Lead sem bitrixLeadId, erro do Bitrix) para o ADMIN/GESTOR
   /// entender o motivo sem precisar ler log de servidor.
-  writebackError String? @db.Text
+  writebackError String?   @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2133,9 +2187,9 @@ model CopilotoBitrixFieldMapping {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  entityType CopilotoCrmEntityType
+  entityType      CopilotoCrmEntityType
   /// Mesma chave usada em `CopilotoCrmFieldSuggestion.fieldCode` (ex.: "principal_dor").
-  semanticField String
+  semanticField   String
   /// Código real do campo no portal Bitrix DESTA organização (ex.: "UF_CRM_1234567890").
   bitrixFieldCode String
 
@@ -2173,13 +2227,13 @@ model CopilotoDealHealthSnapshot {
   /// Motivos legíveis por humano de por que a probabilidade IA diverge da probabilidade CRM —
   /// nunca uma mudança de probabilidade sem explicação (AGENT_10 do pacote: "obrigatório explicar
   /// cada mudança material de probabilidade").
-  forecastReasons String[]
+  forecastReasons       String[]
 
   /// Onda 6 ("Customer Success e Churn") — mesmo raciocínio de `score` acima, mas sobre risco de
   /// insatisfação/perda do cliente (reclamação, bloqueio recorrente), não sobre saúde da
   /// oportunidade de venda. `null` quando a conversa não teve sinal de CS extraído (ex.: MEET de
   /// descoberta inicial, sem contexto de relacionamento pós-venda).
-  churnRiskScore  Int?
+  churnRiskScore   Int?
   churnFactorsJson Json?
 
   createdAt DateTime @default(now())
@@ -2207,7 +2261,7 @@ model CopilotoCoachingEvaluation {
   /// proximoPasso, aderenciaPlaybook, qualidadeRegistro } — schema documentado em
   /// `infra/coachingEvaluation.service.ts`, não modelado campo-a-campo aqui para não exigir
   /// migration toda vez que a rubrica ganhar/perder uma dimensão.
-  rubricJson Json
+  rubricJson   Json
   /// 0-100, média das 9 dimensões × 10.
   overallScore Int
 
@@ -2227,7 +2281,7 @@ model CopilotoConsentRecord {
 
   /// Como o consentimento foi obtido (ex.: "meet_banner", "verbal_notice", "explicit_click") —
   /// texto livre documentado, mesmo padrão de `ConversationSignal.channel`.
-  method String
+  method      String
   /// Versão do texto/aviso de consentimento apresentado — auditoria: se o texto legal mudar, um
   /// registro antigo continua rastreável à versão que a pessoa realmente viu.
   textVersion String
@@ -2744,16 +2798,16 @@ model OrganizationFeatureFlag {
 // ADMIN na tela de administração (ver src/features/module-access/). `moduleKey` é validado
 // contra o catálogo estático em src/config/module-catalog.ts — não é texto livre.
 model ModuleAccessGrant {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  moduleKey      String
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleKey       String
   /// Id do usuário ADMIN que concedeu o acesso — só informativo/auditoria (mesmo padrão de
   /// `OrganizationFeatureFlag.updatedByUserId`), sem FK: sobrevive à remoção do admin que concedeu.
   grantedByUserId String?
-  createdAt      DateTime     @default(now())
+  createdAt       DateTime     @default(now())
 
   @@unique([userId, moduleKey])
   @@index([organizationId])
@@ -2796,6 +2850,31 @@ model PomodoroSession {
   createdAt       DateTime     @default(now())
 
   @@index([organizationId, userId, createdAt])
+}
+
+/// Fechamento obrigatório do Plano Diário (ver DailyPlanHub/DailyClosingGate) — registrado no dia
+/// seguinte, nunca no próprio dia: junta o parecer do usuário sobre `referenceDate` (métricas
+/// calculadas a partir de `Activity` locais daquele dia + comentário livre) com as metas que ele
+/// define para o novo dia que começa. Um único registro por usuário por dia (upsert), nunca
+/// múltiplos fechamentos do mesmo dia.
+model DailyPlanClosing {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Dia civil (YYYY-MM-DD, fuso do time comercial) que este fechamento avalia.
+  referenceDate  String
+  totalItems     Int
+  completedItems Int
+  pendingItems   Int
+  completionRate Int
+  userComment    String
+  nextDayGoals   String[]
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, referenceDate])
+  @@index([organizationId, userId])
 }
 
 // ─── Bug Reports (governança de 12 requisitos — item 8: Módulo de Reportar Problemas) ──────
@@ -3048,10 +3127,10 @@ model CadenceCalendarEvent {
   /// Link real do Google Meet (`hangoutLink`) do evento — nulo se a criação da videochamada falhou
   /// ou se o evento em si falhou (ver PrismaCalendarSchedulerPort, best-effort). Usado para compor
   /// o convite ICS/e-mail de confirmação enviado ao lead e ao vendedor.
-  meetUrl String?
+  meetUrl       String?
   /// `iCalUID` devolvido pelo Google — usado como UID estável do convite ICS enviado por e-mail,
   /// para que clientes de calendário reconheçam o mesmo evento (nunca gerado localmente).
-  iCalUID String?
+  iCalUID       String?
 
   confirmationEvidenceType ConfirmationEvidenceType
   /// Id do registro real que prova a confirmação (id de mensagem, id de clique no link de
@@ -3209,8 +3288,8 @@ model PublicBookingLink {
 model SavedSearch {
   id              String       @id @default(cuid())
   name            String
-  criteria        Json         // { segment, location, fleetSizeMin, keywords, radiusKm, lat, lng }
-  schedule        String?      // "daily" | "weekly" | null
+  criteria        Json // { segment, location, fleetSizeMin, keywords, radiusKm, lat, lng }
+  schedule        String? // "daily" | "weekly" | null
   lastRunAt       DateTime?
   nextRunAt       DateTime?
   leadsDiscovered Int          @default(0)
@@ -3240,9 +3319,9 @@ model ProspectingSearchExecution {
   /// no INÍCIO de cada execução real de busca, não pelo @default(cuid()) do Prisma — precisa
   /// existir ANTES do INSERT para propagar nos logs estruturados da execução inteira, inclusive
   /// quando ela falha antes de qualquer persistência.
-  id              String       @id
-  organizationId  String
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   savedSearchId String?
   savedSearch   SavedSearch? @relation(fields: [savedSearchId], references: [id], onDelete: SetNull)
@@ -3403,10 +3482,10 @@ model JobRole {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  userJobRoles       UserJobRole[]
-  roleAgentGrants    RoleAgentGrant[]
-  primaryForAgents   AgentDefinition[]
-  capabilityGrants   RoleCapabilityGrant[]
+  userJobRoles     UserJobRole[]
+  roleAgentGrants  RoleAgentGrant[]
+  primaryForAgents AgentDefinition[]
+  capabilityGrants RoleCapabilityGrant[]
 
   @@index([isActive])
 }
@@ -3427,12 +3506,12 @@ model UserJobRole {
   /// (múltiplas linhas), mas só um pode ser `isPrimary = true` por vez entre as linhas ativas —
   /// reforçado por índice único parcial na migration (não representável em `@@unique` do Prisma
   /// porque é condicional a `isActive = true`).
-  isPrimary  Boolean   @default(true)
-  isActive   Boolean   @default(true)
-  assignedAt DateTime  @default(now())
+  isPrimary      Boolean      @default(true)
+  isActive       Boolean      @default(true)
+  assignedAt     DateTime     @default(now())
   /// Id do usuário ADMIN que atribuiu o cargo — só informativo/auditoria (mesmo padrão de
   /// `ModuleAccessGrant.grantedByUserId`), sem FK: sobrevive à remoção de quem atribuiu.
-  assignedBy String?
+  assignedBy     String?
 
   @@unique([userId, jobRoleId])
   @@index([organizationId])
@@ -3445,10 +3524,10 @@ model UserJobRole {
 /// nunca são duplicados aqui). Global/produto, não por-organização — ver decisão de arquitetura na
 /// seção acima.
 model AgentDefinition {
-  id          String  @id @default(cuid())
-  code        String  @unique
-  name        String
-  description String?
+  id               String                @id @default(cuid())
+  code             String                @unique
+  name             String
+  description      String?
   /// Domínio funcional livre (ex.: "sales", "management", "control") — mesmo espírito do campo
   /// `layer` já usado em `CommercialAgentDefinition` (commercialAgentRegistry.ts), sem reusar o
   /// enum daquele arquivo para não acoplar o catálogo novo a um tipo de outra feature.
@@ -3468,6 +3547,7 @@ model AgentDefinition {
   versions         AgentVersion[]
   roleGrants       RoleAgentGrant[]
   capabilityGrants AgentCapabilityGrant[]
+  executions       AgentExecution[]
 
   @@index([isActive])
   @@index([primaryJobRoleId])
@@ -3485,17 +3565,19 @@ model AgentDefinition {
 /// por ser condicional a `status = 'ACTIVE'` — mesmo padrão do índice parcial de
 /// `UserJobRole.isPrimary`).
 model AgentVersion {
-  id                String              @id @default(cuid())
+  id                String             @id @default(cuid())
   agentDefinitionId String
-  agentDefinition   AgentDefinition     @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
+  agentDefinition   AgentDefinition    @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
   version           Int
-  systemPrompt      String?             @db.Text
+  systemPrompt      String?            @db.Text
   configuration     Json?
-  status            AgentVersionStatus  @default(DRAFT)
-  createdAt         DateTime            @default(now())
+  status            AgentVersionStatus @default(DRAFT)
+  createdAt         DateTime           @default(now())
   createdBy         String?
   activatedAt       DateTime?
   deprecatedAt      DateTime?
+
+  executions AgentExecution[]
 
   @@unique([agentDefinitionId, version])
   @@index([agentDefinitionId, status])
@@ -3551,34 +3633,37 @@ model RoleAgentGrant {
 /// um agente nem um cargo — `AgentCapabilityGrant`/`RoleCapabilityGrant` conectam isto a agentes e
 /// cargos. Catálogo de produto global (ver decisão de tenancy acima).
 model CapabilityDefinition {
-  id          String  @id @default(cuid())
-  code        String  @unique
-  name        String
-  description String?
+  id                        String               @id @default(cuid())
+  code                      String               @unique
+  name                      String
+  description               String?
   /// Domínio funcional livre (mesmo espírito de `AgentDefinition.domain`) — ex.: "CRM",
   /// "Pipeline/Forecast", "Contratos", "Bitrix".
-  domain                     String?
-  riskLevel                  CapabilityRiskLevel  @default(LOW)
-  actionType                 CapabilityActionType
+  domain                    String?
+  riskLevel                 CapabilityRiskLevel  @default(LOW)
+  actionType                CapabilityActionType
   /// Espelha `actionType == READ` como campo próprio consultável sem comparar enum — usado pela
   /// regra "READ nunca autoriza WRITE/EXECUTE/ADMIN" em `capabilityAuthorization.service.ts` sem
   /// duplicar a decisão em dois lugares (o service deriva de `actionType`, este campo é só cache
   /// de leitura para quem consome o catálogo via API sem reimplementar a regra).
-  isReadOnly                 Boolean              @default(false)
+  isReadOnly                Boolean              @default(false)
   /// HIGH/CRITICAL sempre nascem com isto implicitamente true na prática (reforçado em código,
   /// não only aqui) — este campo é o valor padrão editorial do catálogo, nunca a fonte de verdade
   /// de risco em si (isso é `riskLevel`).
-  requiresApprovalByDefault Boolean @default(false)
-  isSystem                  Boolean @default(true)
-  isActive                  Boolean @default(true)
+  requiresApprovalByDefault Boolean              @default(false)
+  isSystem                  Boolean              @default(true)
+  isActive                  Boolean              @default(true)
   /// Metadado livre não-normatizado (ex.: exemplos de uso, nota de proveniência) — nunca lido pela
   /// lógica de autorização em si.
-  metadata  Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  metadata                  Json?
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
 
-  agentGrants AgentCapabilityGrant[]
-  roleGrants  RoleCapabilityGrant[]
+  agentGrants               AgentCapabilityGrant[]
+  roleGrants                RoleCapabilityGrant[]
+  /// Cross-Role Authorization (PROMPT 7) — ver seção no fim deste arquivo.
+  accessRequests            AccessRequest[]
+  temporaryCapabilityGrants TemporaryCapabilityGrant[]
 
   @@index([isActive])
   @@index([domain])
@@ -3589,13 +3674,13 @@ model CapabilityDefinition {
 /// nenhuma linha aqui não tem nenhuma capability conhecida (fail closed: `agent.execute` de
 /// qualquer capability para esse agente sempre nega com `CAPABILITY_NOT_GRANTED_TO_AGENT`).
 model AgentCapabilityGrant {
-  id                      String               @id @default(cuid())
-  agentDefinitionId       String
-  agentDefinition         AgentDefinition      @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
-  capabilityDefinitionId  String
-  capabilityDefinition    CapabilityDefinition @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Cascade)
-  isActive                Boolean              @default(true)
-  createdAt               DateTime             @default(now())
+  id                     String               @id @default(cuid())
+  agentDefinitionId      String
+  agentDefinition        AgentDefinition      @relation(fields: [agentDefinitionId], references: [id], onDelete: Cascade)
+  capabilityDefinitionId String
+  capabilityDefinition   CapabilityDefinition @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Cascade)
+  isActive               Boolean              @default(true)
+  createdAt              DateTime             @default(now())
 
   @@unique([agentDefinitionId, capabilityDefinitionId])
   @@index([capabilityDefinitionId])
@@ -3625,3 +3710,539 @@ model RoleCapabilityGrant {
   @@index([capabilityDefinitionId])
 }
 
+// ---------------------------------------------------------------------------------------------
+// Agent Runtime Genérico (PROMPT 4) — registro de execução de UM AgentDefinition sobre UMA
+// capability, sempre precedido por uma decisão real do Capability & Permission Engine (PROMPT 3).
+// Diferente de `JobRole`/`AgentDefinition`/`CapabilityDefinition` etc. (catálogo de PRODUTO,
+// global, sem organizationId), `AgentExecution` é DADO DE NEGÓCIO por tenant — carrega fatos,
+// evidências e o texto de missão de uma execução real de uma organização específica, então tem
+// `organizationId` + RLS, mesmo tratamento de `ModuleAccessGrant`/`MesaTratamentoTreatment`.
+//
+// Não existe um `ai_run`/`AgentExecution` reaproveitável no schema atual (auditado antes de criar
+// este modelo — `AILog` é só telemetria de custo/latência sem ator/agente/capability/decisão;
+// `AgentMemory` é estado de sessão de chat do Enxame antigo, sem o mesmo propósito de auditoria).
+// ---------------------------------------------------------------------------------------------
+
+/// Ciclo de vida de uma execução — nunca pula direto para SUCCEEDED/FAILED sem passar por
+/// AUTHORIZING (mesmo quando a autorização é instantânea): o campo `policyDecision` só faz
+/// sentido depois dessa etapa ter rodado de verdade.
+enum AgentExecutionStatus {
+  PENDING
+  AUTHORIZING
+  RUNNING
+  SUCCEEDED
+  DENIED
+  FAILED
+  CANCELLED
+}
+
+/// Registro de execução do AgentRuntime genérico — nunca um motor de negócio duplicado (o
+/// resultado real vem sempre de um executor real registrado em `toolExecutors.ts`, nunca
+/// recalculado aqui). `policyDecision` é o snapshot serializado do `CapabilityDecision` que
+/// autorizou (ou negou) esta execução — histórico imutável mesmo que o grant mude depois.
+model AgentExecution {
+  id                String               @id @default(cuid())
+  organizationId    String
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// Sem relação FK para `User` de propósito (mesmo padrão de `ModuleAccessGrant.grantedByUserId`)
+  /// — sobrevive à remoção do usuário, e o ator real desta execução é auditoria histórica, não
+  /// vínculo vivo.
+  actorId           String
+  /// `UserRole` do ator NO MOMENTO da execução — snapshot, nunca recalculado depois (o papel do
+  /// usuário pode mudar sem invalidar o histórico de por que uma execução passada foi permitida).
+  actorRole         String
+  /// Código do `JobRole` principal do ator no momento da execução — snapshot pelo mesmo motivo.
+  jobRoleCode       String?
+  /// Nullable de propósito — uma tentativa de execução contra um `agentCode` que não existe no
+  /// catálogo (reason=UNKNOWN_AGENT) ainda é auditável (é um evento relevante de segurança), mas
+  /// não tem nenhum `AgentDefinition` real para referenciar.
+  agentDefinitionId String?
+  agentDefinition   AgentDefinition?     @relation(fields: [agentDefinitionId], references: [id], onDelete: SetNull)
+  agentVersionId    String?
+  agentVersion      AgentVersion?        @relation(fields: [agentVersionId], references: [id], onDelete: SetNull)
+  /// Código solicitado pelo ator — sempre preenchido, mesmo quando `agentDefinitionId` é nulo
+  /// (UNKNOWN_AGENT): é o único jeito de saber, no histórico, qual código foi tentado.
+  agentCode         String
+  capabilityCode    String
+  mission           String?              @db.Text
+  status            AgentExecutionStatus @default(PENDING)
+  /// Snapshot serializado de `CapabilityDecision` (PROMPT 3) — sempre preenchido antes de
+  /// `status` sair de `AUTHORIZING`, mesmo quando a decisão nega a execução.
+  policyDecision    Json?
+  summary           String?              @db.Text
+  facts             Json?
+  metrics           Json?
+  evidence          Json?
+  risks             Json?
+  recommendations   Json?
+  nextActions       Json?
+  missingData       Json?
+  /// Lista de chamadas reais de executor feitas durante esta execução (toolCode, input, output,
+  /// duração) — nunca inclui prompt/segredo em texto puro (ver sanitização em `agentRuntime.service.ts`).
+  toolCalls         Json?
+  /// 0 a 1 — só preenchido quando `status = SUCCEEDED`; nunca decorativo (mesma regra de
+  /// `AgentExecutionResult.confidence` em `commercialAgentTypes.ts`).
+  confidence        Float?
+  /// Mensagem de erro SANITIZADA (nunca stack trace bruto) — só preenchida quando `status = FAILED`.
+  errorMessage      String?
+  correlationId     String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  completedAt       DateTime?
+
+  @@index([organizationId, createdAt])
+  @@index([agentDefinitionId])
+  @@index([organizationId, status])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Cross-Role Authorization + Aprovações (PROMPT 7) — conceder CAPABILITY TEMPORÁRIA e ESCOPADA a
+// um usuário específico, nunca trocar o `JobRole`/`UserRole` do requester (invariantes do prompt
+// mestre: "JobRole não eleva privilégio", "aprovação não vira bypass de UserRole"). Plugado em
+// `capabilityAuthorization.service.ts`: um `TemporaryCapabilityGrant` ativo (não expirado, não
+// revogado, mesmo `resource`) só é considerado nos pontos onde o motor já sinalizava
+// `CROSS_ROLE_REQUEST_REQUIRED`/`APPROVAL_REQUIRED` — nunca substitui um grant estrutural ausente
+// (`AGENT_NOT_GRANTED_TO_ROLE`/`CAPABILITY_NOT_GRANTED_TO_*` continuam fail-closed sem exceção), e
+// nunca pula a checagem de `UserRole` (etapa 7) nem aceita `ToolBinding` diferente de VERIFIED
+// (etapa 11) — `FUTURE_TOOL`/`SOURCE_REQUIRED` continuam bloqueados mesmo com grant ativo.
+//
+// `ApprovalPolicy` (a matriz do prompt da onda: categoria -> papel mínimo de aprovador) é CÓDIGO
+// (`src/features/job-roles/config/access-request-policy.ts`), não tabela — mesma decisão de
+// `ToolBinding`/`RoleSupervisorProfile`/`RoleWorkspaceDefinition`: é uma política fixa de
+// governança do produto, sem necessidade real de customização por organização em runtime.
+// Exatamente 3 modelos novos (mesmo espírito de "3 modelos, nunca mais sem justificar" do PROMPT
+// 3): `AccessRequest` (o pedido), `ApprovalDecision` (o veredito, separado do pedido para permitir
+// histórico sem perder o registro da decisão original) e `TemporaryCapabilityGrant` (a autoridade
+// real resultante, só existe após aprovação).
+//
+// Dado de negócio por-organização (tenant scoped é regra explícita do prompt da onda) — mesmo
+// tratamento de `AgentExecution`: `organizationId` + RLS estrito, sem bypass.
+// ---------------------------------------------------------------------------------------------
+
+/// Categoria de negócio de um `AccessRequest` — decide a política de aprovação (matriz do PROMPT
+/// 7, ver `access-request-policy.ts`). Mapeada 1:1 a partir do `CapabilityDefinition.code`
+/// requisitado, nunca inferida livremente em runtime. `DEPLOY` não existe aqui de propósito —
+/// nenhuma capability deste catálogo é deploy, e a MATRIZ do prompt da onda marca "deploy: fora do
+/// fluxo" (nunca passível de `AccessRequest`).
+enum AccessRequestCategory {
+  READ_CONSULTA
+  HANDOFF_OPERACIONAL
+  DEAL_CHANGES
+  FORECAST_META
+  DESCONTO_PRECO
+  CONTRATO
+  FINANCEIRO
+  ASSINATURA
+  BITRIX_CONFIG
+}
+
+enum AccessRequestStatus {
+  PENDING
+  APPROVED
+  DENIED
+  EXPIRED
+  REVOKED
+  CANCELLED
+}
+
+enum ApprovalDecisionOutcome {
+  APPROVED
+  DENIED
+}
+
+/// Pedido de acesso temporário a UMA capability fora do que o `JobRole` do requester já concede —
+/// nunca uma troca de cargo. Tipicamente criado após uma negação real do Capability Engine
+/// (`CROSS_ROLE_REQUEST_REQUIRED`/`APPROVAL_REQUIRED`), mas pode ser aberto proativamente.
+model AccessRequest {
+  id                     String                @id @default(cuid())
+  organizationId         String
+  organization           Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// Sem relação FK para `User` de propósito (mesmo padrão de `AgentExecution.actorId`) —
+  /// sobrevive à remoção do usuário; o requester é auditoria histórica, não vínculo vivo.
+  requesterId            String
+  /// `UserRole` do requester NO MOMENTO do pedido — snapshot, nunca recalculado depois.
+  requesterRole          String
+  /// Código do `JobRole` principal do requester no momento do pedido — snapshot pelo mesmo motivo.
+  requesterJobRoleCode   String?
+  capabilityDefinitionId String
+  capabilityDefinition   CapabilityDefinition  @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Restrict)
+  category               AccessRequestCategory
+  /// Escopo de recurso real (ex.: {"type":"LEAD","id":"..."}) — nunca um pedido sem limite;
+  /// "resource scoped" é regra obrigatória do prompt da onda. Comparado por igualdade estrutural
+  /// exata contra o `resource` da chamada real em `authorizeCapability` (nunca um match parcial
+  /// que alargaria o escopo aprovado).
+  resource               Json
+  reason                 String                @db.Text
+  status                 AccessRequestStatus   @default(PENDING)
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+
+  decisions ApprovalDecision[]
+  grant     TemporaryCapabilityGrant?
+
+  @@index([organizationId, status])
+  @@index([requesterId])
+  @@index([capabilityDefinitionId])
+}
+
+/// Veredito de UM `AccessRequest` — separado do pedido em si (permite histórico sem perder o
+/// registro da decisão original; hoje sempre 0 ou 1 por `AccessRequest`, nunca mais de uma decisão
+/// terminal). `approverId = "SYSTEM"` para aprovação automática de categoria segura
+/// (`READ_CONSULTA` de baixo risco) — nunca um userId fictício.
+model ApprovalDecision {
+  id              String                  @id @default(cuid())
+  organizationId  String
+  organization    Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  accessRequestId String
+  accessRequest   AccessRequest           @relation(fields: [accessRequestId], references: [id], onDelete: Cascade)
+  approverId      String
+  /// `UserRole` do aprovador no momento da decisão — snapshot ("SYSTEM" para auto-aprovação).
+  approverRole    String
+  outcome         ApprovalDecisionOutcome
+  /// Motivo estável (mesmo espírito de `CapabilityDecisionReason`) — nunca renomeado livremente,
+  /// consumido por testes e auditoria: ex. "AUTO_APPROVED_READ_ONLY", "APPROVED_ELIGIBLE_APPROVER",
+  /// "SELF_APPROVAL_DENIED", "INVALID_APPROVER_ROLE", "INVALID_APPROVER_JOB_ROLE",
+  /// "DENIED_BY_APPROVER".
+  reasonCode      String
+  notes           String?                 @db.Text
+  decidedAt       DateTime                @default(now())
+
+  @@index([accessRequestId])
+  @@index([organizationId])
+}
+
+/// Autoridade real resultante de um `AccessRequest` aprovado — a única coisa que
+/// `capabilityAuthorization.service.ts` consulta em runtime (nunca o `AccessRequest`/
+/// `ApprovalDecision` diretamente). Escopada (resource + capability), temporária (`expiresAt`
+/// obrigatório) e revogável — nunca um grant permanente nem um segundo `RoleCapabilityGrant`
+/// paralelo. `granteeId` é denormalizado do `AccessRequest.requesterId` de propósito: mantém a
+/// consulta de autorização em runtime O(1) por índice, sem precisar joinar `AccessRequest`.
+model TemporaryCapabilityGrant {
+  id                     String               @id @default(cuid())
+  organizationId         String
+  organization           Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  accessRequestId        String               @unique
+  accessRequest          AccessRequest        @relation(fields: [accessRequestId], references: [id], onDelete: Cascade)
+  granteeId              String
+  capabilityDefinitionId String
+  capabilityDefinition   CapabilityDefinition @relation(fields: [capabilityDefinitionId], references: [id], onDelete: Restrict)
+  /// Cópia imutável do `resource` aprovado — nunca lido de `AccessRequest` em runtime.
+  resource               Json
+  expiresAt              DateTime
+  revokedAt              DateTime?
+  /// Sem FK para `User` (mesmo padrão de `requesterId`) — expiração automática (`expiresAt` no
+  /// passado) nunca preenche este campo, só uma revogação explícita registra `revokedBy`.
+  revokedBy              String?
+  revokedReason          String?
+  createdAt              DateTime             @default(now())
+
+  @@index([organizationId, granteeId, capabilityDefinitionId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Agent Bus + Handoffs (PROMPT 8) — comunicação agente<->agente e cargo<->cargo com contrato
+// estruturado (`AgentHandoffMessage`). O Bus (`agentBus.service.ts`) NUNCA decide negócio: ele
+// transporta, valida estrutura, autoriza (reusando `authorizeCapability`/`TemporaryCapabilityGrant`
+// do PROMPT 7 sem duplicar nenhuma regra), audita, e entrega ao runtime já existente
+// (`runAgentExecution`, PROMPT 4) — nunca um segundo motor de execução paralelo.
+//
+// Dado de negócio por tenant (mesmo padrão de `AgentExecution`/`AccessRequest`): RLS estrito, sem
+// bypass_rls (nenhum dos dois modelos novos está no allowlist `BYPASS_RLS_ALLOWED_MODELS`).
+// ---------------------------------------------------------------------------------------------
+
+/// Estados do ciclo de vida de um handoff — exatamente os do prompt da onda, nunca uma taxonomia
+/// paralela à de `AgentExecutionStatus` (deliberadamente distinta dela: um handoff tem fases que a
+/// execução de agente não tem, como `QUEUED`/`EXPIRED`, e nunca reaproveita o enum de PROMPT 4).
+enum HandoffStatus {
+  CREATED
+  AUTHORIZING
+  QUEUED
+  ACCEPTED
+  RUNNING
+  COMPLETED
+  DENIED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+/// Prioridade declarada pelo agente/cargo de origem — usada só para ordenação de fila
+/// (`listPendingHandoffs`), nunca para pular nenhuma etapa de autorização.
+enum HandoffPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+/// Mensagem de handoff agente<->agente / cargo<->cargo — contrato estruturado do prompt da onda.
+/// `fromAgent`/`toAgent` (código de `AgentDefinition`) e `fromRole`/`toRole` (código de `JobRole`)
+/// são STRINGS livres sem FK viva, mesmo padrão de `AgentExecution.agentCode`/`actorId`: um handoff
+/// para um código inexistente/inativo ainda é auditável (é negado com `status=DENIED`, nunca
+/// silenciosamente descartado), e o histórico sobrevive à eventual desativação do agente/cargo.
+///
+/// `parentHandoffId`/`depth` formam a cadeia de handoffs de uma mesma missão — usados por
+/// `agent-bus-policy.ts` para aplicar `maxDepth` e o loop guard (nunca reencaminhar para um agente
+/// já presente na própria cadeia de ancestrais). `idempotencyKey` (único por organização quando
+/// informado) garante que republicar o mesmo handoff (retry de rede, duplo clique) nunca cria uma
+/// segunda linha. `executionId` referencia `AgentExecution.id` sem FK viva (mesmo padrão de
+/// `agentCode`) — o `runAgentExecution` real já é chamado com `correlationId = handoffId`, o que
+/// por si só impede uma segunda execução real mesmo que `accept` seja chamado mais de uma vez
+/// (retry seguro / no duplicate write ponta a ponta, não só neste modelo).
+model AgentHandoffMessage {
+  id                   String                @id @default(cuid())
+  organizationId       String
+  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  missionId            String
+  conversationId       String
+  fromAgent            String
+  fromRole             String
+  toAgent              String
+  toRole               String
+  requestType          String
+  requestedCapability  String
+  /// Escopo de recurso do pedido (ex.: {"type":"LEAD","id":"..."}) — mesmo formato/uso de
+  /// `AccessRequest.resource`, passado como `resource` para `authorizeCapability` e para o match
+  /// estrutural de `TemporaryCapabilityGrant`. `null` = handoff sem recorte de recurso.
+  resourceScope        Json?
+  /// Fatos já conhecidos pelo agente de origem — repassados ao destino para nunca precisar
+  /// redescobrir o que a origem já sabe. Cada item é um objeto livre (ver contrato em
+  /// `agentBus.service.ts`), nunca só uma string solta.
+  knownFacts           Json                  @default("[]")
+  /// Evidência com PROVENANCE obrigatória (regra do prompt da onda) — cada item traz de onde veio
+  /// (`sourceAgent`/`sourceExecutionId`/`capabilityCode`/`recordedAt`), nunca só um texto solto sem
+  /// origem rastreável. Ver `EvidenceItem` em `agentBus.service.ts`.
+  evidence             Json                  @default("[]")
+  risks                Json                  @default("[]")
+  /// Snapshot do `CapabilityDecision` (PROMPT 3) + identidade do actor humano que autorizou este
+  /// handoff — preenchido em `publish`/reavaliado em `accept`, nunca lido de volta como fonte de
+  /// autorização (a fonte real continua sendo `authorizeCapability`, chamado de novo a cada etapa).
+  authorizationContext Json?
+  priority             HandoffPriority       @default(NORMAL)
+  status               HandoffStatus         @default(CREATED)
+  /// Resultado devolvido pelo destino ao completar — preenchido só em `COMPLETED`.
+  response             Json?
+  /// 0 a 1 — só preenchido quando `status = COMPLETED`, nunca decorativo (mesma regra de
+  /// `AgentExecution.confidence`).
+  confidence           Float?
+  /// Mensagem de erro SANITIZADA (nunca stack trace bruto) — só preenchida quando `status = FAILED`.
+  errorMessage         String?
+  /// Chave de idempotência opcional fornecida pelo publisher — único por organização quando
+  /// informada. `publish` com a mesma chave devolve o handoff já existente em vez de criar outro.
+  idempotencyKey       String?
+  parentHandoffId      String?
+  parent               AgentHandoffMessage?  @relation("HandoffChain", fields: [parentHandoffId], references: [id], onDelete: SetNull)
+  children             AgentHandoffMessage[] @relation("HandoffChain")
+  /// Profundidade na cadeia de handoffs desta missão (0 = handoff raiz) — comparada contra
+  /// `MAX_HANDOFF_DEPTH` em `agent-bus-policy.ts` antes de criar a linha.
+  depth                Int                   @default(0)
+  /// Referência a `AgentExecution.id` (sem FK viva — ver comentário do modelo) preenchida quando
+  /// `accept` efetivamente entrega este handoff ao AgentRuntime.
+  executionId          String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  acceptedAt           DateTime?
+  /// Marcado em qualquer transição terminal (COMPLETED/DENIED/FAILED/CANCELLED/EXPIRED) — mesmo
+  /// espírito de `AgentExecution.completedAt` (nunca só para o caminho de sucesso).
+  completedAt          DateTime?
+  /// Prazo de validade da fila (`QUEUED`/`ACCEPTED` além deste horário nunca são aceitos/concluídos
+  /// — computado como `EXPIRED` na leitura, mesmo padrão de `AccessRequest.effectiveStatus`, nunca
+  /// um job de expiração separado).
+  expiresAt            DateTime?
+
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, conversationId])
+  @@index([organizationId, missionId])
+  @@index([organizationId, status])
+  @@index([parentHandoffId])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Memória + Aprendizado Contínuo Governado (PROMPT 9) — fluxo: execution -> outcome real ->
+// reflection -> candidate -> validação -> memória aprovada -> uso futuro. `memory.service.ts`
+// NUNCA altera prompt de produção, capability, versão de agente ou dispara deploy — o único
+// efeito colateral de aprovar um `LearningCandidate` é criar/superseder/revogar uma linha nas 3
+// tabelas de memória abaixo. Nenhuma capability/AgentVersion é lida para decisão aqui além de
+// checagens de existência (nunca escrita).
+//
+// `AgentMemoryRecord`/`RoleMemoryRecord`/`OrganizationMemoryRecord` são 3 modelos distintos
+// (nunca um `MemoryRecord` polimórfico com `scope`) — mesma decisão de `AccessRequest`/
+// `ApprovalDecision`/`TemporaryCapabilityGrant` no PROMPT 7: cada escopo tem sua própria chave
+// natural (agentCode/jobRoleCode/nenhuma) e seus próprios índices/uniques, sem coluna nullable
+// ambígua. IMPORTANTE: não confundir com o modelo `AgentMemory` já existente (AI-003, onda 31) —
+// aquele é estado de sessão do LangGraph (chat), sem relação nenhuma com o Capability/Governança
+// de Agentes desta fundação; os nomes aqui são deliberadamente diferentes para nunca colidir.
+//
+// Cada linha de memória é IMUTÁVEL uma vez criada (mesmo espírito de `ApprovalDecision`): uma
+// nova versão nunca sobrescreve a antiga, ela a supersede (`supersedesId`/`supersededById`,
+// strings simples sem FK viva — mesmo padrão de `sourceExecutionId`/`agentCode` em
+// `AgentExecution`/`AgentHandoffMessage`: sobrevive à eventual remoção da linha referenciada, e o
+// histórico é auditoria, não vínculo vivo). `rollback` marca a linha ATIVA como `ROLLED_BACK` sem
+// criar uma nova versão (reverter não é uma nova opinião, é desligar a atual).
+//
+// RLS estrito nas 4 tabelas (mesmo padrão de `AgentExecution`/`AccessRequest`/
+// `AgentHandoffMessage`): sem bypass_rls, nenhum dos 4 modelos está no allowlist
+// `BYPASS_RLS_ALLOWED_MODELS` de src/lib/prisma.ts.
+// ---------------------------------------------------------------------------------------------
+
+/// Escopo de destino de um `LearningCandidate` aprovado — decide em qual das 3 tabelas de memória
+/// a linha resultante é criada.
+enum MemoryScope {
+  AGENT
+  ROLE
+  ORGANIZATION
+}
+
+/// Categoria de negócio da memória — as 8 primeiras são EXATAMENTE a lista "memória aprovada
+/// sensível requer humano" do prompt da onda (pricing/discount/forecast rule/contract/finance/
+/// compliance/write automation/capability); `OPERATIONAL` é o balde não-sensível (única categoria
+/// elegível a aprovação automática, e mesmo assim nunca quando a sanitização de PII sinaliza
+/// revisão manual).
+enum MemoryCategory {
+  PRICING
+  DISCOUNT
+  FORECAST_RULE
+  CONTRACT
+  FINANCE
+  COMPLIANCE
+  WRITE_AUTOMATION
+  CAPABILITY
+  OPERATIONAL
+}
+
+/// Estados do prompt da onda — um único enum compartilhado por `LearningCandidate` (usa
+/// PROPOSED/UNDER_REVIEW/APPROVED/REJECTED) e pelas 3 tabelas de memória (nascem `APPROVED`,
+/// podem ir a `SUPERSEDED`/`ROLLED_BACK`) — nunca uma segunda taxonomia paralela.
+enum MemoryStatus {
+  PROPOSED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  SUPERSEDED
+  ROLLED_BACK
+}
+
+/// Proposta de memória gerada a partir de UMA `AgentExecution` real e terminal (nunca especulativa
+/// — "outcome real" é regra explícita do prompt da onda). `agentCode`/`jobRoleCode` são snapshot
+/// da execução de origem (nunca aceitos do corpo da requisição). `proposedContent` já é o texto
+/// PÓS-sanitização de PII (`sanitization` guarda o resultado de `LgpdSanitizerService` para
+/// auditoria) — nunca o texto bruto da execução.
+model LearningCandidate {
+  id                String         @id @default(cuid())
+  organizationId    String
+  organization      Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// `AgentExecution.id` de origem — sem FK viva (mesmo padrão de `AgentHandoffMessage.executionId`).
+  sourceExecutionId String
+  agentCode         String
+  jobRoleCode       String?
+  targetScope       MemoryScope
+  /// Chave de conflito/supersede dentro do escopo (ex.: "sdr.follow_up.melhor_horario") — duas
+  /// memórias aprovadas do mesmo escopo com o mesmo `topic` são, por definição, opiniões
+  /// concorrentes sobre a mesma coisa (ver `findActiveConflict` em `memory.service.ts`).
+  topic             String
+  category          MemoryCategory
+  proposedContent   Json
+  /// Racional do passo de reflexão — por que este fato/insight vale a pena lembrar (nunca vazio;
+  /// nunca decorativo, mesmo espírito de `AgentExecutionResult.confidence`).
+  reflection        Json
+  /// Evidência com provenance (mesmo contrato de `AgentHandoffMessage.evidence`) — nunca um texto
+  /// solto sem origem rastreável.
+  evidence          Json           @default("[]")
+  /// Snapshot do `AnonymizationResult` (LgpdSanitizerService) — `null` só quando o conteúdo não
+  /// tinha nenhum texto livre a sanitizar.
+  sanitization      Json?
+  status            MemoryStatus   @default(PROPOSED)
+  deciderId         String?
+  /// `UserRole` do decisor no momento da decisão — snapshot, nunca recalculado depois.
+  deciderRole       String?
+  decisionNotes     String?        @db.Text
+  decidedAt         DateTime?
+  /// Preenchido só quando `status = APPROVED` — id da linha real criada em `AgentMemoryRecord`/
+  /// `RoleMemoryRecord`/`OrganizationMemoryRecord` (conforme `targetScope`).
+  resultingMemoryId String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([organizationId, status])
+  @@index([organizationId, targetScope, topic])
+  @@index([sourceExecutionId])
+}
+
+/// Memória aprovada escopada a UM agente (`AgentDefinition.code`, string simples sem FK viva —
+/// mesmo padrão de `AgentExecution.agentCode`).
+model AgentMemoryRecord {
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  agentCode         String
+  topic             String
+  category          MemoryCategory
+  content           Json
+  evidence          Json         @default("[]")
+  /// Sequência dentro da cadeia de supersede deste `topic` — 1 na primeira aprovação, incrementa a
+  /// cada supersede; nunca decrementado nem reescrito in-place.
+  version           Int          @default(1)
+  status            MemoryStatus @default(APPROVED)
+  /// `LearningCandidate.id` que originou esta linha — sem FK viva (mesmo padrão de `sourceExecutionId`).
+  sourceCandidateId String
+  supersedesId      String?
+  supersededById    String?
+  rolledBackBy      String?
+  rolledBackAt      DateTime?
+  rolledBackReason  String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([organizationId, agentCode, topic, version])
+  @@index([organizationId, agentCode, status, topic])
+}
+
+/// Memória aprovada escopada a UM cargo (`JobRole.code`, string simples sem FK viva).
+model RoleMemoryRecord {
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  jobRoleCode       String
+  topic             String
+  category          MemoryCategory
+  content           Json
+  evidence          Json         @default("[]")
+  version           Int          @default(1)
+  status            MemoryStatus @default(APPROVED)
+  sourceCandidateId String
+  supersedesId      String?
+  supersededById    String?
+  rolledBackBy      String?
+  rolledBackAt      DateTime?
+  rolledBackReason  String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([organizationId, jobRoleCode, topic, version])
+  @@index([organizationId, jobRoleCode, status, topic])
+}
+
+/// Memória aprovada compartilhada pela organização inteira (nenhum agente/cargo específico).
+model OrganizationMemoryRecord {
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  topic             String
+  category          MemoryCategory
+  content           Json
+  evidence          Json         @default("[]")
+  version           Int          @default(1)
+  status            MemoryStatus @default(APPROVED)
+  sourceCandidateId String
+  supersedesId      String?
+  supersededById    String?
+  rolledBackBy      String?
+  rolledBackAt      DateTime?
+  rolledBackReason  String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([organizationId, topic, version])
+  @@index([organizationId, status, topic])
+}

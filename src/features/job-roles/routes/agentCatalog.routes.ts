@@ -1,7 +1,11 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
+import { z } from 'zod';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import { routeParam } from '../../../shared/http/routeParams.js';
 import { listAgentDefinitions, getAgentDefinitionById } from '../services/agentCatalog.service.js';
 import { listCapabilitiesForAgent } from '../services/capability.service.js';
+import { runAgentExecution } from '../services/agentRuntime.service.js';
 
 const router = Router();
 
@@ -47,6 +51,45 @@ router.get(
       }
       const capabilities = await listCapabilitiesForAgent(agentId);
       res.json({ success: true, data: { agent, capabilities } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// PROMPT 4 — Agent Runtime Genérico: única rota de execução. Identidade/tenant SEMPRE da sessão
+// autenticada (`req.user`) — nunca aceitos no body (regra explícita do prompt da onda), mesmo
+// padrão de `POST /api/capabilities/check` (PROMPT 3).
+const runAgentSchema = z.object({
+  requestedCapability: z.string().trim().min(1, 'requestedCapability é obrigatório.'),
+  mission: z.string().trim().max(4000).optional(),
+  resource: z.record(z.string(), z.unknown()).optional(),
+  context: z.record(z.string(), z.unknown()).optional(),
+  correlationId: z.string().trim().max(200).optional(),
+});
+
+router.post(
+  '/:agentCode/run',
+  validateRequest(runAgentSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const authReq = req as AuthRequest;
+      const { requestedCapability, mission, resource, context, correlationId } =
+        req.body as z.infer<typeof runAgentSchema>;
+      const result = await runAgentExecution({
+        actorId: authReq.user.id,
+        organizationId: authReq.user.organizationId,
+        actorRole: authReq.user.role,
+        agentCode: routeParam(req.params.agentCode, 'agentCode'),
+        requestedCapability,
+        mission,
+        resource,
+        context,
+        correlationId,
+      });
+      res
+        .status(result.status === 'SUCCEEDED' ? 200 : result.status === 'DENIED' ? 403 : 200)
+        .json({ success: result.status === 'SUCCEEDED', data: { execution: result } });
     } catch (error) {
       next(error);
     }

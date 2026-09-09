@@ -482,7 +482,7 @@ export function ActivityList() {
               const statusStyle = STATUS_STYLES[a.status] ?? 'bg-surface-2 text-ink-2 border-line';
               const isDone = a.status === 'Concluída';
               const formattedDate = a.date
-                ? new Date(a.date + 'T12:00:00').toLocaleDateString('pt-BR', {
+                ? new Date(`${a.date}T12:00:00`).toLocaleDateString('pt-BR', {
                     weekday: 'short',
                     day: '2-digit',
                     month: 'short',

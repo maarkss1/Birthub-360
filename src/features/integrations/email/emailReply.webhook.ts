@@ -1,5 +1,5 @@
 import express, { Router, type Request, type Response } from 'express';
-import { createHmac, timingSafeEqual } from 'crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { env } from '../../../config/env.js';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';

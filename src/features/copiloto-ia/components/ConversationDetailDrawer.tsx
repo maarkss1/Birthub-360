@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -67,7 +67,7 @@ export function ConversationDetailDrawer({
   const [expandedInsightId, setExpandedInsightId] = useState<string | null>(null);
   const [suggestionActionId, setSuggestionActionId] = useState<string | null>(null);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     setError(null);
     copilotoIaApi
@@ -75,12 +75,11 @@ export function ConversationDetailDrawer({
       .then(setHandoff)
       .catch(() => setError('Não foi possível carregar o detalhe desta conversa.'))
       .finally(() => setLoading(false));
-  };
+  }, [conversationId]);
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversationId]);
+  }, [load]);
 
   const transcriptItems: TimelineItem[] = useMemo(() => {
     if (!handoff) return [];

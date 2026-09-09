@@ -52,7 +52,6 @@ export function calculateLeadScore(data: BantQualificationData = {}): LeadScoreR
     case 'indefinido':
       budgetScore = 5;
       break;
-    case 'sem_verba':
     default:
       budgetScore = 0;
       break;
@@ -112,7 +111,6 @@ export function calculateLeadScore(data: BantQualificationData = {}): LeadScoreR
     case 'medio_90d':
       timingScore = 10;
       break;
-    case 'longo_prazo':
     default:
       timingScore = 0;
       break;

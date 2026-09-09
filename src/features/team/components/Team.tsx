@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   AlertCircle,
   BadgeCheck,
@@ -37,7 +37,7 @@ interface TeamMember {
   updatedAt: string;
 }
 
-function isLocked(member: TeamMember): boolean {
+function isLocked(member: TeamMember): member is TeamMember & { lockedUntil: string } {
   return !!member.lockedUntil && new Date(member.lockedUntil).getTime() > Date.now();
 }
 
@@ -78,7 +78,7 @@ export function Team() {
   const [unlockingId, setUnlockingId] = useState<string | null>(null);
   const [resetError, setResetError] = useState('');
 
-  const loadMembers = async () => {
+  const loadMembers = useCallback(async () => {
     setIsLoading(true);
     setLoadError('');
     try {
@@ -90,11 +90,11 @@ export function Team() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadMembers();
-  }, []);
+  }, [loadMembers]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -371,10 +371,10 @@ export function Team() {
                             senha temporária
                           </span>
                         )}
-                        {isLocked(member) && (
+                        {isLocked(member) && member.lockedUntil && (
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-danger/15 text-danger-active dark:text-danger font-bold">
                             bloqueado até{' '}
-                            {new Date(member.lockedUntil!).toLocaleTimeString('pt-BR', {
+                            {new Date(member.lockedUntil).toLocaleTimeString('pt-BR', {
                               hour: '2-digit',
                               minute: '2-digit',
                             })}

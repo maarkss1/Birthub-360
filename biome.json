@@ -75,11 +75,14 @@
   },
   "overrides": [
     {
-      "includes": ["*.test.ts", "*.test.tsx", "*.spec.ts", "__tests__/**"],
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/__tests__/**"],
       "linter": {
         "rules": {
           "suspicious": {
             "noExplicitAny": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off"
           }
         }
       }

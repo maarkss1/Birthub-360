@@ -22,6 +22,15 @@ export default defineConfig({
     setupFiles: ['./tests/helpers/integration-setup.ts'],
     fileParallelism: false,
     singleThread: true,
+    // Default do Vitest (10s) ficou justo demais: arquivos são executados em sequência
+    // (fileParallelism/singleThread acima), então o tempo total da suíte cresce a cada arquivo
+    // novo, e um `beforeAll` que faz seed real (runMultiCargoSeed/runAgentCatalogImport/
+    // runCapabilityEngineSeed contra o catálogo compartilhado) pode cair perto do limite mesmo
+    // sem nenhuma regressão de código — só por rodar mais tarde numa suíte maior. PROMPT 9
+    // (tests/integration/memory.test.ts) foi o gatilho real medido em CI: 4 arquivos alheios
+    // (access-request/agent-bus/agent-runtime/role-supervisor) estouraram o hook padrão de 10s só
+    // por rodarem depois de mais um arquivo pesado ter sido adicionado à suíte sequencial.
+    hookTimeout: 30000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary', 'html'],

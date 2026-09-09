@@ -1,4 +1,4 @@
-import { Worker, Queue } from 'bullmq';
+import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
@@ -135,7 +135,7 @@ export function createWinLossAnalysisWorker() {
       return { analyses };
     },
     {
-      connection: connection as any,
+      connection: connection as ConnectionOptions,
       concurrency: 1,
     },
   );
@@ -161,7 +161,7 @@ export function createWinLossAnalysisWorker() {
 
 export async function scheduleWinLossAnalysisJob() {
   const queue = new Queue(WIN_LOSS_QUEUE_NAME, {
-    connection: connection as any,
+    connection: connection as ConnectionOptions,
   });
 
   // Roda toda sexta às 19:00.

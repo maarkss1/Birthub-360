@@ -1,7 +1,10 @@
 ## docker-compose.services.yml
 ## Serviços adicionais das Ondas OS-3 a OS-7
 ##
-## Uso: docker compose -f docker-compose.yml -f docker-compose.opensource.yml -f docker-compose.services.yml up -d
+## Uso: docker compose -f docker-compose.yml -f docker-compose.postgres-local.yml -f docker-compose.opensource.yml -f docker-compose.services.yml up -d
+## (docker-compose.postgres-local.yml é obrigatório aqui: estes serviços guardam metadata no
+## container `postgres`, que desde 2026-09-08 não faz mais parte do docker-compose.yml — a
+## aplicação usa o Postgres da Oracle diretamente, ver .env.example.)
 ##
 ## IMPORTANTE: este arquivo NÃO substitui o docker-compose.yml nem o docker-compose.opensource.yml.
 ## É um arquivo de extensão (overlay) que adiciona apenas os novos serviços open-source.

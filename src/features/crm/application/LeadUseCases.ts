@@ -42,6 +42,7 @@ interface LeadContactRelation {
 }
 
 export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
+  // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI
   constructor(leadRepository: LeadRepository) {
     super(leadRepository);
   }
@@ -225,7 +226,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
   }
 
   async enrichLead(organizationId: string, id: string) {
-    const lead = await this.repository.findById!(organizationId, id);
+    const lead = await this.repository.findById?.(organizationId, id);
     if (!lead) throw new AppError('Lead not found', 404);
     if (!lead.companyId)
       throw new AppError('Lead sem empresa vinculada — não é possível enriquecer', 400);
@@ -240,14 +241,14 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     // We simulate the previous behavior by extending the repository update to accept timeline inputs if supported,
     // or for now, we just update the core attributes. The timeline update is managed by the Infrastructure repository method if we added it,
     // but since we want to remove Prisma from Application, we update via repository.
-    await this.repository.update!(organizationId, id, {
+    await this.repository.update?.(organizationId, id, {
       score: result.fit.score,
       temperature: result.fit.temperature,
       // Assuming the repository handles timelines or we emit an event.
     });
 
     // Since we removed prisma import, we rely on the repository to fetch the updated lead.
-    const finalLead = await this.repository.findById!(organizationId, id);
+    const finalLead = await this.repository.findById?.(organizationId, id);
 
     return { lead: finalLead, fit: result.fit, enrichment: result };
   }
@@ -542,6 +543,9 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     const jobs = leadsToEnrich.map((lead) => ({
       name: 'enrichment-job',
       data: {
+        // O `where: { companyId: { not: null } }` acima já garante isso no banco — o Prisma só
+        // não expressa esse filtro no tipo do `select`, que continua nullable.
+        // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
         companyId: lead.companyId!,
         organizationId,
         cnpj: lead.company?.cnpj || undefined,
@@ -551,6 +555,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
 
     await enrichmentQueue.addBulk(jobs);
 
+    // biome-ignore lint/style/noNonNullAssertion: mesma garantia do `where` acima, ver comentário do map de jobs
     const companyIds = Array.from(new Set(leadsToEnrich.map((l) => l.companyId!)));
     await prisma.company.updateMany({
       where: { id: { in: companyIds } },
@@ -618,7 +623,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
             }
           }
           if (updates.removeTags) {
-            currentTags = currentTags.filter((t) => !updates.removeTags!.includes(t));
+            currentTags = currentTags.filter((t) => !updates.removeTags?.includes(t));
           }
           customFieldsObj.tags = currentTags;
           dataToUpdate.customFields = customFieldsObj;

@@ -12,6 +12,7 @@ export class QualificationMatrixUseCases extends BaseUseCases<
   QualificationMatrixItem,
   QualificationMatrixItemRepository
 > {
+  // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI
   constructor(repository: QualificationMatrixItemRepository) {
     super(repository);
   }

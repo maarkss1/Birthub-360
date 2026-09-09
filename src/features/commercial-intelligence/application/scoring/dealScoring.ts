@@ -85,7 +85,7 @@ export function buildStageDurationStats(history: StageHistoryRow[]): Map<string,
     if (!row.stageId || !row.exitedAt) continue;
     const days = daysBetween(row.enteredAt, row.exitedAt);
     if (!byStage.has(row.stageId)) byStage.set(row.stageId, []);
-    byStage.get(row.stageId)!.push(days);
+    byStage.get(row.stageId)?.push(days);
   }
   const result = new Map<string, number>();
   for (const [stageId, durations] of byStage) {

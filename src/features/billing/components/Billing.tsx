@@ -81,7 +81,7 @@ export function Billing() {
 
   const daily = (data?.daily ?? []).map((p) => ({
     ...p,
-    label: p.day.slice(8) + '/' + p.day.slice(5, 7),
+    label: `${p.day.slice(8)}/${p.day.slice(5, 7)}`,
   }));
 
   return (
@@ -101,6 +101,9 @@ export function Billing() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+                real de acessibilidade aqui, só estilo. */}
+            {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
             <div
               className="flex items-center rounded-xl border border-line overflow-hidden"
               role="group"

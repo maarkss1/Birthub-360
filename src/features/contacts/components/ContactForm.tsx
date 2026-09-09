@@ -13,7 +13,7 @@ import { contactSchema } from '../../../lib/zod';
 import { companiesDB, contactsDB } from '../../../lib/db';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
-import { useActiveRecord } from '../../../contexts/ActiveRecordContext';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
 
 interface ContactFormProps {
   contact?: Contact | null;

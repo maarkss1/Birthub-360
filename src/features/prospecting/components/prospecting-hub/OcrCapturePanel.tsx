@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Camera,
   Loader2,
@@ -88,34 +88,15 @@ export function OcrCapturePanel() {
     fitScoreEstimate: 60,
   });
 
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => {
       track.stop();
     });
     streamRef.current = null;
     setCameraActive(false);
-  };
+  }, []);
 
-  useEffect(() => () => stopCamera(), []);
-
-  // Suporte a colar imagem da área de transferência (Ctrl+V)
-  useEffect(() => {
-    const handlePaste = (e: ClipboardEvent) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.startsWith('image/')) {
-          const file = items[i].getAsFile();
-          if (file) {
-            handleFile(file);
-            break;
-          }
-        }
-      }
-    };
-    window.addEventListener('paste', handlePaste);
-    return () => window.removeEventListener('paste', handlePaste);
-  }, [brandInfo]);
+  useEffect(() => () => stopCamera(), [stopCamera]);
 
   const startCamera = async () => {
     setError(null);
@@ -138,7 +119,7 @@ export function OcrCapturePanel() {
 
   const capturePhoto = () => {
     const video = videoRef.current;
-    if (!video || !video.videoWidth) return;
+    if (!video?.videoWidth) return;
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -156,7 +137,7 @@ export function OcrCapturePanel() {
     );
   };
 
-  const reset = () => {
+  const reset = useCallback(() => {
     stopCamera();
     setPreviewUrl(null);
     setPromoted(null);
@@ -176,45 +157,64 @@ export function OcrCapturePanel() {
       rationale: '',
       fitScoreEstimate: 60,
     });
-  };
+  }, [stopCamera]);
 
-  const handleFile = async (file: File) => {
-    reset();
-    setPreviewUrl(URL.createObjectURL(file));
-    setReading(true);
-    try {
-      const form = new FormData();
-      form.append('image', file);
-      form.append('brandName', brandInfo.name);
-      form.append('brandDescription', brandInfo.description);
-      const response = await api.postForm<{ candidate: ProspectCandidate; rawText?: string }>(
-        '/api/prospecting/ocr',
-        form,
-        { timeoutMs: 120_000 },
-      );
+  const handleFile = useCallback(
+    async (file: File) => {
+      reset();
+      setPreviewUrl(URL.createObjectURL(file));
+      setReading(true);
+      try {
+        const form = new FormData();
+        form.append('image', file);
+        form.append('brandName', brandInfo.name);
+        form.append('brandDescription', brandInfo.description);
+        const response = await api.postForm<{ candidate: ProspectCandidate; rawText?: string }>(
+          '/api/prospecting/ocr',
+          form,
+          { timeoutMs: 120_000 },
+        );
 
-      const cand = response.candidate;
-      setRawExtractedText(response.rawText || null);
-      setFormData({
-        tradeName: cand.tradeName || '',
-        legalName: cand.legalNameGuess || '',
-        cnpj: cand.cnpjGuess || '',
-        segment: cand.segment || '',
-        location: cand.location || '',
-        contactName: cand.suggestedContact?.name || '',
-        contactRole: cand.suggestedContact?.role || '',
-        phone: cand.phone || '',
-        email: cand.emails?.[0] || '',
-        website: cand.website || '',
-        rationale: cand.rationale || 'Extraído via OCR inteligente + IA.',
-        fitScoreEstimate: cand.fitScoreEstimate || 65,
-      });
-    } catch (e) {
-      setError(getErrorMessage(e, 'Não foi possível ler essa imagem.'));
-    } finally {
-      setReading(false);
-    }
-  };
+        const cand = response.candidate;
+        setRawExtractedText(response.rawText || null);
+        setFormData({
+          tradeName: cand.tradeName || '',
+          legalName: cand.legalNameGuess || '',
+          cnpj: cand.cnpjGuess || '',
+          segment: cand.segment || '',
+          location: cand.location || '',
+          contactName: cand.suggestedContact?.name || '',
+          contactRole: cand.suggestedContact?.role || '',
+          phone: cand.phone || '',
+          email: cand.emails?.[0] || '',
+          website: cand.website || '',
+          rationale: cand.rationale || 'Extraído via OCR inteligente + IA.',
+          fitScoreEstimate: cand.fitScoreEstimate || 65,
+        });
+      } catch (e) {
+        setError(getErrorMessage(e, 'Não foi possível ler essa imagem.'));
+      } finally {
+        setReading(false);
+      }
+    },
+    [brandInfo.description, brandInfo.name, reset],
+  );
+
+  // Suporte a colar imagem da área de transferência (Ctrl+V)
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      const items = event.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (!item.type.startsWith('image/')) continue;
+        const file = item.getAsFile();
+        if (file) void handleFile(file);
+        break;
+      }
+    };
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [handleFile]);
 
   const handleCnpjEnrich = async () => {
     const cleanCnpj = formData.cnpj.replace(/\D/g, '');
@@ -348,6 +348,9 @@ export function OcrCapturePanel() {
 
       {/* Área de Dropzone quando não há dados ou não está no split-view */}
       {!cameraActive && !hasExtractedData && (
+        // Contém um <button> real ("Usar Câmera") e um <input type="file"> como controles
+        // próprios — <button> aninhando outro <button>/<input> seria HTML inválido.
+        // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
         <div
           role="button"
           tabIndex={0}
@@ -721,6 +724,7 @@ export function OcrCapturePanel() {
             {/* Botão de Ação Principal */}
             <div className="pt-2">
               <button
+                type="button"
                 onClick={promote}
                 disabled={promoting || !formData.tradeName.trim()}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand to-orange-500 text-white py-3 rounded-2xl font-bold text-sm shadow-md hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer"
@@ -751,6 +755,7 @@ export function OcrCapturePanel() {
           </div>
           <div className="pt-2">
             <button
+              type="button"
               onClick={reset}
               className="inline-flex items-center gap-2 bg-brand-active text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:brightness-110 transition-all cursor-pointer"
             >

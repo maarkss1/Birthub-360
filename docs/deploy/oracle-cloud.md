@@ -39,6 +39,7 @@ Acesse **Networking → Virtual Cloud Networks → sua VCN → Security Lists/Ne
 | `0.0.0.0/0` | TCP | `80` | HTTP / ACME |
 | `0.0.0.0/0` | TCP | `443` | HTTPS |
 | IPs administrativos confiáveis | TCP | `22` | SSH |
+| IPs das máquinas de desenvolvimento (`/32` cada) | TCP | `5432` | Postgres direto (seção 4.2) — **nunca** `0.0.0.0/0` |
 
 Evite expor SSH para `0.0.0.0/0` quando puder restringir por IP de origem ou usar outro mecanismo de acesso seguro.
 
@@ -101,6 +102,37 @@ chmod 600 .env.production
 
 Faça backup seguro dos segredos por um mecanismo apropriado à operação. Não use o repositório como cofre de credenciais.
 
+### 3.3 Deploy automatizado via GitHub Actions (`deploy-oci.yml`)
+
+**Achado real (auditoria de release-readiness + relato do usuário)**: merge no `main` do GitHub
+**não** atualiza a instância Oracle sozinho — diferente do Render (`autoDeployTrigger: commit`), o
+caminho Oracle dependia inteiramente de alguém rodar `git pull` + `./scripts/deploy-oci.sh`
+manualmente, via SSH, dentro da instância. `.github/workflows/deploy-oci.yml` fecha essa lacuna:
+dispara automaticamente depois que `ci.yml` ("Central AtlasGR Release") passar em `main` (mesmo
+padrão de gate já usado em `docker-publish.yml` — nunca deploya com CI vermelho), conecta via SSH e
+roda exatamente os mesmos passos manuais (`git fetch`/`reset --hard origin/main` +
+`scripts/deploy-oci.sh` + health checks).
+
+**Ativação pendente** até estes 4 secrets existirem em Settings → Secrets and variables → Actions
+do repositório (o workflow falha de propósito, com mensagem explícita, enquanto faltar algum):
+
+| Secret | Valor |
+| --- | --- |
+| `OCI_SSH_HOST` | IP público da instância (ex.: `163.176.150.147`) |
+| `OCI_SSH_USER` | usuário SSH da instância (ex.: `opc` para Oracle Linux, `ubuntu` para Ubuntu) |
+| `OCI_SSH_PRIVATE_KEY` | conteúdo completo da chave privada SSH (recomenda-se uma chave **dedicada** a este workflow, gerada só para deploy — não a chave pessoal de acesso interativo do operador) |
+| `OCI_DEPLOY_PATH` | caminho absoluto do clone do repositório na instância (ex.: `/home/opc/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR`) |
+
+Secret opcional `OCI_SSH_KNOWN_HOSTS` (saída de `ssh-keyscan -H <host>` capturada manualmente) fixa
+a chave do host em vez de confiar em trust-on-first-use a cada execução — mais resistente a MITM na
+primeira conexão.
+
+Nenhum desses valores deve ser colado em chat, issue, PR ou log — sempre diretamente no formulário
+de secrets do GitHub. `workflow_dispatch` continua disponível para redeploy manual sem novo commit.
+Redeploy manual via SSH direto (seção 3.2) continua funcionando normalmente e não é substituído por
+este workflow — útil para o bootstrap inicial da instância (que exige o clone inicial do repositório
+e a primeira geração de `.env.production`) e para qualquer intervenção fora do fluxo normal de CI.
+
 ---
 
 ## 4. Estrutura dos Serviços (`docker-compose.oci.yml`)
@@ -150,6 +182,71 @@ docker compose --env-file .env.production -f docker-compose.oci.yml --profile qu
 Render reativado por engano) consumindo as mesmas filas BullMQ ao mesmo tempo — isso duplica o
 processamento de cada job. Se o worker desta stack estiver ativo, o worker do Render
 (`prospector-atlas-worker`) deve continuar com `autoDeployTrigger: off`.
+
+### 4.2 Postgres da Oracle é o único banco — acesso direto das máquinas de desenvolvimento
+
+Decisão do dono do produto em 2026-09-08: **não existe mais Postgres local nem em Docker** nas
+máquinas de desenvolvimento. O container `postgres` desta stack é o único banco da aplicação, e
+toda `DATABASE_URL` (produção dentro da instância e desenvolvimento fora dela) aponta para ele.
+O que muda em relação ao desenho original (loopback only):
+
+| Onde | O que foi feito |
+| --- | --- |
+| `docker-compose.oci.yml` | `postgres` publica `5432:5432` (todas as interfaces) e sobe com `ssl=on` |
+| `docker/postgres/Dockerfile` | instala `openssl` e gera certificado autoassinado no build (chave nunca sai da instância) |
+| `scripts/deploy-oci.sh` | libera 5432 no firewall do host (iptables/firewalld/ufw) |
+| `docker-compose.yml` (local) | serviço `postgres` removido; legado opt-in em `docker-compose.postgres-local.yml` só para testes |
+| `.env.example` / `.env` | `DATABASE_URL` direto para o IP público, com `?sslmode=require&uselibpqcompat=true` |
+
+**Procedimento na instância** (uma vez, via SSH — recria o container `postgres`, ~30 s de
+indisponibilidade do banco; o volume `oci_pgdata` é preservado):
+
+```bash
+cd ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR
+git pull
+./scripts/deploy-oci.sh          # rebuild da imagem do Postgres (TLS) + recreate do container
+docker exec -i atlasgr_postgres psql -U prospector -d prospectordb -tAc "show ssl"   # esperado: on
+```
+
+**Security List da VCN** (Console OCI → Networking → VCN → Security List → Ingress Rules): uma
+regra TCP 5432 por máquina de desenvolvimento, com Source CIDR `= <IP público da máquina>/32`
+(descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a única barreira de
+rede antes da autenticação por senha. IP dinâmico mudou = atualizar a regra.
+
+Achado real (2026-09-08): a operadora da máquina de desenvolvimento usa NAT de carrier — o IP de
+saída variou entre `170.231.96.140` e `170.231.96.152` em chamadas consecutivas, e horas antes era
+`201.33.120.202`. Um `/32` fixo quebra sem aviso nesse cenário; rode `curl -4 ifconfig.me` várias
+vezes e, se a faixa oscilar, libere o bloco `/24` correspondente (ex.: `170.231.96.0/24`) em vez
+de um único host — ainda muito mais restrito que `0.0.0.0/0`.
+
+**Na máquina de desenvolvimento**, pegue a senha do papel de aplicação diretamente da instância
+(não circula por chat/issue/PR) e coloque no `.env`:
+
+```bash
+ssh oracle-atlasgr 'grep ^APP_DB_PASSWORD= ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR/.env.production'
+```
+
+```env
+DATABASE_URL=postgresql://prospector_app:<APP_DB_PASSWORD>@163.176.150.147:5432/prospectordb?sslmode=require&uselibpqcompat=true
+```
+
+`sslmode=require&uselibpqcompat=true` é o único par que funciona para os dois clientes do projeto:
+o `pg` (Pool em `src/lib/prisma.ts`) só aceita o certificado autoassinado com `uselibpqcompat=true`
+(sem isso `sslmode=require` é tratado como `verify-full` e a conexão falha), e o Prisma CLI
+(`migrate deploy`, via `prisma.config.ts`) entende `sslmode=require` e ignora o parâmetro extra.
+
+Validação (sem Docker local): `npx prisma migrate status` deve listar as migrations como aplicadas
+e `npm run dev` + `curl -fsS http://localhost:3005/health/ready` deve responder 200.
+
+**Consequências operacionais que não são opcionais:**
+
+- Todo desenvolvedor trabalha **no dado real de produção**. Não existe mais banco de sandbox por
+  padrão — `prisma migrate reset`, `TRUNCATE`, seeds destrutivos ou testes de integração apontando
+  para esta URL destroem dado de cliente. Os testes continuam usando `prospectordb_test` num
+  Postgres local opt-in (`docker-compose.postgres-local.yml`) exatamente por isso.
+- `prisma migrate dev` (que pode recriar o banco) fica proibido contra esta URL; use
+  `prisma migrate deploy` para aplicar migrations já versionadas.
+- Backup diário (seção 8) deixa de ser recomendação e vira pré-requisito.
 
 ---
 
@@ -206,24 +303,25 @@ Por padrão, `.env.production` herda os valores de desenvolvimento do `.env.exam
 `SECURE_COOKIES=false`, `TRUST_PROXY=false`) — isso não é apropriado para produção real com domínio
 e HTTPS via Caddy.
 
-Para configurar o domínio oficial automaticamente, exporte `DOMAIN` (o mesmo usado pelo Caddy) ao
-rodar o deploy:
+Para configurar o domínio oficial e/ou liberar CORS para a Extensão Chrome automaticamente, exporte `DOMAIN` e/ou `CHROME_EXTENSION_ID` ao rodar o deploy:
 
 ```bash
-DOMAIN=app.atlasgr.com.br ACME_EMAIL=ti@atlasgr.com.br ./scripts/deploy-oci.sh
+DOMAIN=app.atlasgr.com.br CHROME_EXTENSION_ID=abcdefghijklmnopqrstuvwxyz ACME_EMAIL=ti@atlasgr.com.br ./scripts/deploy-oci.sh
 ```
 
-O script então ajusta, em `.env.production` (só quando o valor atual ainda for o placeholder de
-desenvolvimento — nunca sobrescreve um valor já customizado manualmente):
+O script então ajusta em `.env.production` (preservando valores já customizados manualmente):
 
 | Variável | Valor definido |
 | --- | --- |
-| `ALLOWED_ORIGINS` | `https://<DOMAIN>` |
+| `ALLOWED_ORIGINS` | `https://<DOMAIN>,chrome-extension://<CHROME_EXTENSION_ID>` |
 | `BETTER_AUTH_URL` | `https://<DOMAIN>` |
 | `PUBLIC_BASE_URL` | `https://<DOMAIN>` |
 | `COOKIE_DOMAIN` | `<DOMAIN>` |
 | `SECURE_COOKIES` | `true` |
 | `TRUST_PROXY` | `true` (Caddy é o proxy na frente da aplicação) |
+
+> **Extensão Chrome em Produção**: Se a extensão do Chrome for usada contra o backend em produção, a sua origem (`chrome-extension://<id>`) deve estar explicitamente incluída na lista `ALLOWED_ORIGINS` separada por vírgulas. Sem este passo, as requisições autenticadas da extensão falham com erro de CORS no navegador.
+
 
 Antes do cutover de DNS, confirme também (fora do escopo do script, ação humana):
 

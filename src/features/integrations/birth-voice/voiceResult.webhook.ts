@@ -1,5 +1,5 @@
 import express, { Router, type Request, type Response } from 'express';
-import { createHash, timingSafeEqual } from 'crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { env } from '../../../config/env.js';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';

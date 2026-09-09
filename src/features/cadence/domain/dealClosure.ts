@@ -48,8 +48,8 @@ export interface DealClosureEventInput {
 export function isDeterministicCloseEvent(event: DealClosureEventInput): boolean {
   if (FORBIDDEN_TYPE_MARKERS.has(event.type)) return false;
   if (!VALID_TYPES.has(event.type as DealClosureEventType)) return false;
-  if (!event.evidenceRef || !event.evidenceRef.trim()) return false;
-  if (!event.triggeredBy || !event.triggeredBy.trim()) return false;
+  if (!event.evidenceRef?.trim()) return false;
+  if (!event.triggeredBy?.trim()) return false;
   // O Closer (agente de IA) nunca é um triggeredBy válido — fechamento sempre vem de um humano
   // (userId) ou de um webhook de provedor real, nunca do próprio enxame se autodeclarando.
   if (/^(ai|agent|swarm|closer|bot)[:_-]/i.test(event.triggeredBy.trim())) return false;
@@ -70,10 +70,9 @@ export interface DealClosureResult {
 }
 
 function rejectionReason(event: DealClosureEventInput): DealClosureResult['rejectedReason'] {
-  if (!event.evidenceRef || !event.evidenceRef.trim()) return 'missing-evidence';
+  if (!event.evidenceRef?.trim()) return 'missing-evidence';
   if (
-    !event.triggeredBy ||
-    !event.triggeredBy.trim() ||
+    !event.triggeredBy?.trim() ||
     /^(ai|agent|swarm|closer|bot)[:_-]/i.test(event.triggeredBy.trim())
   ) {
     return 'untrusted-trigger';

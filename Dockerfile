@@ -56,6 +56,7 @@ COPY --from=builder /app/prisma ./prisma
 # property is required in your Prisma config file when using prisma migrate deploy" (reproduzido
 # no deploy do Railway; a imagem buildava com SUCCESS mas nunca ficava saudável em runtime).
 COPY --from=builder /app/prisma.config.ts ./
+COPY --from=builder /app/scripts ./scripts
 
 # Create a non-root user
 RUN groupadd -g 1001 nodejs && useradd -u 1001 -g nodejs nodejs

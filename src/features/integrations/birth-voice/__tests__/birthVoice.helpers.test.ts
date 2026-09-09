@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createHmac } from 'crypto';
+import { createHmac } from 'node:crypto';
 import {
   isValidSignature,
   callMarker,

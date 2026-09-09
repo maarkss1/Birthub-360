@@ -16,6 +16,7 @@ const toggleCaptureEl = document.getElementById('toggleCapture');
 const apiBaseUrlEl = document.getElementById('apiBaseUrl');
 const saveApiBaseUrlEl = document.getElementById('saveApiBaseUrl');
 const apiBaseUrlHintEl = document.getElementById('apiBaseUrlHint');
+const themeToggleEl = document.getElementById('themeToggle');
 const calendarSuggestionCardEl = document.getElementById('calendarSuggestionCard');
 const calendarSuggestionTextEl = document.getElementById('calendarSuggestionText');
 const useCalendarSuggestionEl = document.getElementById('useCalendarSuggestion');
@@ -51,6 +52,24 @@ let calendarSuggestionMeetingCode = null;
 let handoffLoadedForConversationId = null;
 /** Vista agregada (resumo/sugestões) da conversa atual — carregada só quando `status === 'READY'`. */
 let handoff = null;
+let refreshIntervalId = null;
+let pollIntervalId = null;
+/** Mesmo problema documentado em content.js: se a extensão for recarregada em
+ * `chrome://extensions` enquanto o side panel já estava aberto, esta instância antiga do JS fica
+ * com o contexto invalidado — `chrome.storage`/`chrome.tabs` somem (ex.: "Cannot read properties
+ * of undefined (reading 'sync')") em vez de só rejeitar a Promise. `chrome.runtime.id` vira
+ * `undefined` no mesmo momento, servindo de sentinela barata pra evitar chamar essas APIs de novo
+ * — para os dois polls abaixo e avisa o usuário, em vez de martelar erro não tratado a cada
+ * 1.5s/8s até ele fechar e abrir o painel de novo. */
+let contextInvalidated = false;
+
+function handleContextInvalidated() {
+  if (contextInvalidated) return;
+  contextInvalidated = true;
+  if (refreshIntervalId) clearInterval(refreshIntervalId);
+  if (pollIntervalId) clearInterval(pollIntervalId);
+  showError('A extensão foi recarregada — feche e abra o side panel de novo para continuar.');
+}
 
 function clearLeadSearchResults() {
   leadSearchResultsEl.hidden = true;
@@ -277,6 +296,8 @@ function render() {
 }
 
 async function refreshMeetContext() {
+  if (contextInvalidated) return;
+  if (!chrome.runtime?.id) return handleContextInvalidated();
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   const tab = tabs[0];
   const tabId = tab?.id ?? null;
@@ -556,6 +577,8 @@ saveApiBaseUrlEl.addEventListener('click', () =>
  * ser uma chamada real ao backend, e só roda enquanto há algo relevante para checar.
  */
 async function pollConversationStatus() {
+  if (contextInvalidated) return;
+  if (!chrome.runtime?.id) return handleContextInvalidated();
   if (!conversation || conversation.status !== 'PROCESSING') return;
   const conversationId = conversation.id;
   let updated;
@@ -573,11 +596,35 @@ async function pollConversationStatus() {
   render();
 }
 
+const THEME_STORAGE_KEY = 'atlasTheme';
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const isLight = theme === 'light';
+  themeToggleEl.textContent = isLight ? '☀️' : '🌙';
+  themeToggleEl.setAttribute('aria-label', isLight ? 'Alternar para tema escuro' : 'Alternar para tema claro');
+}
+
+async function loadTheme() {
+  if (!chrome.runtime?.id) return handleContextInvalidated();
+  const stored = await chrome.storage.sync.get(THEME_STORAGE_KEY);
+  applyTheme(stored[THEME_STORAGE_KEY] === 'light' ? 'light' : 'dark');
+}
+
+themeToggleEl.addEventListener('click', async () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  applyTheme(next);
+  if (!chrome.runtime?.id) return handleContextInvalidated();
+  await chrome.storage.sync.set({ [THEME_STORAGE_KEY]: next });
+});
+
 async function init() {
+  if (!chrome.runtime?.id) return handleContextInvalidated();
+  await loadTheme();
   apiBaseUrlEl.value = await getApiBaseUrl();
   await refreshMeetContext();
 }
 
 init();
-setInterval(refreshMeetContext, 1500);
-setInterval(pollConversationStatus, 8000);
+refreshIntervalId = setInterval(refreshMeetContext, 1500);
+pollIntervalId = setInterval(pollConversationStatus, 8000);

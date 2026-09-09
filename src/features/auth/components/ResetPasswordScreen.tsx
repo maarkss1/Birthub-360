@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus -- página de propósito único, ver comentário no local de uso */
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Loader2, AlertCircle, ArrowRight, Sun, Moon, CheckCircle2 } from 'lucide-react';
@@ -153,7 +154,7 @@ export function ResetPasswordScreen() {
                      senha (nunca navegação livre); focar o único campo relevante da página é o
                      padrão esperado deste fluxo (mesmo comportamento usado por GitHub/Google em
                      telas equivalentes). */
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                  // biome-ignore lint/a11y/noAutofocus: ver comentário acima
                   autoFocus
                 />
               </div>

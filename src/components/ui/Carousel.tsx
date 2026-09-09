@@ -76,6 +76,9 @@ export function Carousel({
   const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi]);
 
   return (
+    // <section aria-label> produziria a mesma role region na árvore de acessibilidade que
+    // role="region" já produz — sem ganho real de acessibilidade, só estilo.
+    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
     <div
       className={`relative w-full ${className}`}
       role="region"

@@ -83,7 +83,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
     if (isOpen && selectedConnectionId) {
       fetchRecords();
     }
-  }, [isOpen, selectedConnectionId, entityType, fetchRecords]);
+  }, [isOpen, selectedConnectionId, fetchRecords]);
 
   const toggleSelect = (id: string) => {
     const next = new Set(selectedIds);
@@ -158,6 +158,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 rounded-xl text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors"
           >
@@ -199,6 +200,9 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
               >
                 Objeto do Bitrix
               </span>
+              {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria
+                  ganho real de acessibilidade aqui, só estilo. */}
+              {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
               <div
                 role="group"
                 aria-labelledby="bitrix-import-entity-label"
@@ -306,24 +310,20 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
                   ? leads.map((l) => {
                       const isSelected = selectedIds.has(l.id);
                       return (
-                        <div
+                        <label
                           key={l.id}
-                          role="checkbox"
-                          aria-checked={isSelected}
-                          tabIndex={0}
-                          onClick={() => toggleSelect(l.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              toggleSelect(l.id);
-                            }
-                          }}
                           className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                             isSelected
                               ? 'bg-sky-500/10 border-sky-500/40 ring-1 ring-sky-500/40'
                               : 'bg-surface-2/40 border-line hover:border-brand/40'
                           }`}
                         >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelect(l.id)}
+                            className="sr-only"
+                          />
                           <div className="flex items-center gap-3 min-w-0">
                             <div className="text-brand shrink-0">
                               {isSelected ? (
@@ -363,30 +363,26 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
                           <span className="text-[10px] text-ink-2 shrink-0">
                             {l.dateCreate ? new Date(l.dateCreate).toLocaleDateString('pt-BR') : ''}
                           </span>
-                        </div>
+                        </label>
                       );
                     })
                   : deals.map((d) => {
                       const isSelected = selectedIds.has(d.id);
                       return (
-                        <div
+                        <label
                           key={d.id}
-                          role="checkbox"
-                          aria-checked={isSelected}
-                          tabIndex={0}
-                          onClick={() => toggleSelect(d.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              toggleSelect(d.id);
-                            }
-                          }}
                           className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                             isSelected
                               ? 'bg-sky-500/10 border-sky-500/40 ring-1 ring-sky-500/40'
                               : 'bg-surface-2/40 border-line hover:border-brand/40'
                           }`}
                         >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelect(d.id)}
+                            className="sr-only"
+                          />
                           <div className="flex items-center gap-3 min-w-0">
                             <div className="text-brand shrink-0">
                               {isSelected ? (
@@ -426,7 +422,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
                           <span className="text-[10px] text-ink-2 shrink-0">
                             {d.dateCreate ? new Date(d.dateCreate).toLocaleDateString('pt-BR') : ''}
                           </span>
-                        </div>
+                        </label>
                       );
                     })}
               </div>

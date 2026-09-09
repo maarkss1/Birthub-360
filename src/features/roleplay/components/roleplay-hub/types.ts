@@ -20,4 +20,13 @@ export interface CallAnalysisResult {
   feedback: string;
   strengths: string[];
   improvements: string[];
+  // Notas por critério do parecer técnico de sessão completa (generateRoleplayEvaluation) —
+  // opcionais porque o estado de erro (evaluationError em RoleplayHub) nunca chega a produzir
+  // um CallAnalysisResult com estes campos preenchidos.
+  clarityScore?: number;
+  objectionHandlingScore?: number;
+  closingScore?: number;
+  // null quando a avaliação foi gerada mas a persistência falhou (ver finishRoleplaySession) —
+  // a sessão não fica disponível pra histórico, mas o parecer já foi entregue normalmente.
+  sessionId?: string | null;
 }
