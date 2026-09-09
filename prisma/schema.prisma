@@ -780,6 +780,7 @@ model User {
   sessions                 Session[]
   accounts                 Account[]
   assistantMessages        AssistantMessage[]
+  roleplaySessions         RoleplaySession[]
   publicBookingLinks       PublicBookingLink[]
   moduleAccessGrants       ModuleAccessGrant[]
   mesaTratamentoTreatments MesaTratamentoTreatment[]
@@ -810,6 +811,7 @@ model Organization {
   aiGuardrailEvents        AIGuardrailEvent[]
   reports                  Report[]
   assistantMessages        AssistantMessage[]
+  roleplaySessions         RoleplaySession[]
   qualificationMatrixItems QualificationMatrixItem[]
   objectionMatrixItems     ObjectionMatrixItem[]
   aiPendingActions         AIPendingAction[]
@@ -1661,6 +1663,45 @@ model AssistantMessage {
   createdAt      DateTime     @default(now())
 
   @@index([organizationId, userId, brand, createdAt])
+}
+
+/// Sessão de ligação simulada de roleplay (ver src/features/roleplay/) — transcrição completa e o
+/// parecer técnico gerado por IA ao final da chamada. Antes vivia só em useState no
+/// RoleplayHub.tsx e era perdida ao recarregar a página (débito documentado no Piloto 008 de
+/// .claude/PILOTS.md). Escopada por usuário (é um treinamento pessoal, mesmo raciocínio de
+/// AssistantMessage acima) e por marca (AtlasGR/Total Trac têm personas e playbook distintos).
+model RoleplaySession {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brand           String // 'atlasgr' | 'totaltrac'
+  personaId       String
+  personaLabel    String
+  difficulty      String // 'facil' | 'medio' | 'dificil'
+  durationSeconds Int
+
+  // Transcrição completa (CallMessage[]) e avaliação por turno (clarity/objectionHandling/total/
+  // feedback, já calculada em tempo real durante a ligação) — Json porque é conteúdo de exibição,
+  // nunca filtrado/agregado via SQL.
+  transcript      Json
+  turnEvaluations Json
+
+  // Parecer técnico da sessão completa, gerado por uma chamada de IA dedicada ao final da ligação
+  // (não uma média local dos turnos) — ver generateRoleplayEvaluation em
+  // studio/generators/roleplay.ts.
+  overallScore           Int
+  clarityScore           Int
+  objectionHandlingScore Int
+  closingScore           Int
+  strengths              Json // string[]
+  improvements           Json // string[]
+  summary                String @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId, userId, createdAt])
 }
 
 /// Fase 4 do roadmap de melhorias: a Matriz de Qualificação vivia só em memória

@@ -61,6 +61,7 @@ import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.
 import { routeParam } from '../../../shared/http/routeParams.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { aiSuiteRouter } from './ai-suite.routes.js';
+import { finishRoleplaySession } from '../services/roleplay-session.service.js';
 
 const router = Router();
 
@@ -142,6 +143,61 @@ router.post(
         res.write(`event: error\ndata: ${JSON.stringify((error as Error).message)}\n\n`);
         res.end();
       }
+    }
+  },
+);
+
+// Parecer técnico de fim de ligação do Roleplay (ver RoleplayHub.finishCall) — recebe a
+// transcrição completa + avaliações por turno já calculadas em tempo real, dispara uma chamada de
+// IA dedicada de avaliação de sessão (generateRoleplayEvaluation) e persiste em RoleplaySession
+// (antes só existia em memória no componente, perdido ao recarregar — Piloto 008 em
+// .claude/PILOTS.md).
+const roleplayFinishSchema = z.object({
+  brand: z.enum(['atlasgr', 'totaltrac']),
+  brandName: z.string().trim().min(1).max(80),
+  brandDescription: z.string().trim().min(1).max(500),
+  personaId: z.string().trim().min(1).max(80),
+  personaLabel: z.string().trim().min(1).max(200),
+  personaKey: z.enum(['skeptical_cfo', 'strict_buyer', 'tech_director']),
+  difficulty: z.enum(['facil', 'medio', 'dificil']),
+  durationSeconds: z
+    .number()
+    .int()
+    .min(0)
+    .max(24 * 60 * 60),
+  transcript: z
+    .array(
+      z.object({
+        sender: z.enum(['bot', 'user']),
+        text: z.string().trim().min(1).max(2_000),
+      }),
+    )
+    .min(1)
+    .max(200),
+  turnEvaluations: z
+    .array(
+      z.object({
+        clarity: z.number().int().min(0).max(100),
+        objectionHandling: z.number().int().min(0).max(100),
+        total: z.number().int().min(0).max(100),
+        feedback: z.string().trim().min(1).max(800),
+      }),
+    )
+    .max(100),
+});
+
+router.post(
+  '/roleplay/finish',
+  validateRequest(roleplayFinishSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const body = req.body as z.infer<typeof roleplayFinishSchema>;
+      const result = await finishRoleplaySession({ organizationId, userId, ...body });
+      res.json({ success: true, data: result });
+    } catch (error) {
+      logger.error({ err: error }, 'Error generating roleplay session evaluation');
+      next(error);
     }
   },
 );

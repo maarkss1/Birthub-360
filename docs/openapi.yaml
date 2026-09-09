@@ -1729,6 +1729,72 @@ paths:
                 properties:
                   result: { type: object }
 
+  /intelligence/roleplay/finish:
+    post:
+      tags: [Intelligence]
+      summary: >-
+        Parecer técnico de fim de ligação do Roleplay: avalia a transcrição completa da chamada
+        simulada (rapport, investigação de dores, tratamento de objeções, fechamento) via IA e
+        persiste a sessão (RoleplaySession) escopada por usuário/marca.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                [
+                  brand,
+                  brandName,
+                  brandDescription,
+                  personaId,
+                  personaLabel,
+                  personaKey,
+                  difficulty,
+                  durationSeconds,
+                  transcript,
+                  turnEvaluations,
+                ]
+              properties:
+                brand: { type: string, enum: [atlasgr, totaltrac] }
+                brandName: { type: string, maxLength: 80 }
+                brandDescription: { type: string, maxLength: 500 }
+                personaId: { type: string, maxLength: 80 }
+                personaLabel: { type: string, maxLength: 200 }
+                personaKey: { type: string, enum: [skeptical_cfo, strict_buyer, tech_director] }
+                difficulty: { type: string, enum: [facil, medio, dificil] }
+                durationSeconds: { type: integer, minimum: 0 }
+                transcript:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [sender, text]
+                    properties:
+                      sender: { type: string, enum: [bot, user] }
+                      text: { type: string, maxLength: 2000 }
+                turnEvaluations:
+                  type: array
+                  items:
+                    type: object
+                    required: [clarity, objectionHandling, total, feedback]
+                    properties:
+                      clarity: { type: integer, minimum: 0, maximum: 100 }
+                      objectionHandling: { type: integer, minimum: 0, maximum: 100 }
+                      total: { type: integer, minimum: 0, maximum: 100 }
+                      feedback: { type: string, maxLength: 800 }
+      responses:
+        '200':
+          description: >-
+            Parecer técnico gerado. `data.sessionId` é `null` quando a avaliação foi gerada mas a
+            persistência falhou (best-effort — a falha de banco não derruba um parecer já computado).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: corpo da requisição inválido (transcript vazio, enum fora do domínio, etc.)
+
   /intelligence:
     post:
       tags: [Intelligence]
