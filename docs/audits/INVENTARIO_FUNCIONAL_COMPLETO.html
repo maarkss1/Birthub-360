@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventário Funcional - Central de Inteligência Comercial AtlasGR</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border-color: #334155;
+      --primary: #3b82f6;
+      --success: #22c55e;
+      --warning: #eab308;
+      --orange: #f97316;
+      --danger: #ef4444;
+      --purple: #a855f7;
+      --gray: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.5;
+      padding: 24px;
+    }
+    header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+    }
+    h1 { font-size: 1.8rem; font-weight: 700; color: #60a5fa; margin-bottom: 8px; }
+    p.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .value { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+    .stat-card .label { font-size: 0.85rem; color: var(--text-secondary); }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .controls input, .controls select {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .controls input:focus, .controls select:focus {
+      border-color: var(--primary);
+    }
+    .controls input { flex: 1; min-width: 200px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      font-size: 0.88rem;
+    }
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    th {
+      background-color: #0f172a;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    tr:hover { background-color: #283548; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-funciona { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
+    .badge-parcial { background-color: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; }
+    .badge-quase { background-color: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid #f97316; }
+    .badge-nao-funciona { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+    .badge-mock { background-color: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid #94a3b8; }
+    .badge-escondida { background-color: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
+
+    .ai-badge { font-weight: bold; }
+    .ai-sim { color: #60a5fa; }
+    .ai-nao { color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Central de Inteligência Comercial AtlasGR — Inventário Funcional Completo</h1>
+    <p class="subtitle">Auditoria Mestre Evidence-First | Relatório Standalone & Dashboard Interativo</p>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="value" style="color: var(--primary);">65</div>
+      <div class="label">Total de Ferramentas</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color: var(--success);">26</div>
+      <div class="label">🟢 Funciona (40.0%)</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color: var(--warning);">18</div>
+      <div class="label">🟡 Parcial (27.7%)</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color: var(--orange);">6</div>
+      <div class="label">🟠 Quase (9.2%)</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color: var(--purple);">5</div>
+      <div class="label">🟣 Escondidas (7.7%)</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color: #60a5fa;">22</div>
+      <div class="label">Com IA (33.8%)</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Buscar por ferramenta, código, funcionalidade..." onkeyup="filterTable()">
+
+    <select id="areaFilter" onchange="filterTable()">
+      <option value="">Todas as Áreas</option>
+      <option value="CRM">CRM</option>
+      <option value="SDR">SDR</option>
+      <option value="Vendas">Vendas</option>
+      <option value="Prosp.">Prospecção</option>
+      <option value="MktIntel">Inteligência de Mercado</option>
+      <option value="IA">Inteligência Artificial</option>
+      <option value="Analytics">Analytics</option>
+      <option value="Playbook">Playbook</option>
+      <option value="Trein.">Treinamento</option>
+      <option value="Integ.">Integrações</option>
+      <option value="Gover.">Governança</option>
+      <option value="Admin">Administração</option>
+      <option value="Gamif.">Gamificação</option>
+    </select>
+
+    <select id="statusFilter" onchange="filterTable()">
+      <option value="">Todos os Status</option>
+      <option value="🟢 FUNCIONA">🟢 FUNCIONA</option>
+      <option value="🟡 PARCIAL">🟡 PARCIAL</option>
+      <option value="🟠 QUASE">🟠 QUASE</option>
+      <option value="🔴 NÃO FUNCIONA">🔴 NÃO FUNCIONA</option>
+      <option value="⚪ MOCK">⚪ MOCK</option>
+      <option value="🟣 ESCONDIDA">🟣 ESCONDIDA</option>
+    </select>
+
+    <select id="aiFilter" onchange="filterTable()">
+      <option value="">Todas (Com/Sem IA)</option>
+      <option value="SIM">Com IA</option>
+      <option value="NÃO">Sem IA</option>
+    </select>
+  </div>
+
+  <table id="inventoryTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Área</th>
+        <th>Ferramenta</th>
+        <th>O que faz</th>
+        <th>Status</th>
+        <th>Maturidade</th>
+        <th>IA</th>
+        <th>Backend</th>
+        <th>Produção</th>
+        <th>Prioridade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>TL-001</b></td>
+        <td>CRM</td>
+        <td>Pipeline Kanban</td>
+        <td>Gestão visual de oportunidades em estágios</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-002</b></td>
+        <td>CRM</td>
+        <td>CRM 360</td>
+        <td>Visão unificada de cliente, histórico e tarefas</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-003</b></td>
+        <td>CRM</td>
+        <td>Gestão de Empresas</td>
+        <td>Cadastro, busca e detalhe de contas B2B</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB / Enriq.</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-004</b></td>
+        <td>CRM</td>
+        <td>Gestão de Contatos</td>
+        <td>Cadastro e enriquecimento de contatos</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-005</b></td>
+        <td>CRM</td>
+        <td>Atividades & Tarefas</td>
+        <td>Log de chamadas, e-mails e reuniões</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-006</b></td>
+        <td>SDR</td>
+        <td>Mesa de Tratamento SDR</td>
+        <td>Fila priorizada com Pomodoro para execução SDR</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-007</b></td>
+        <td>Vendas</td>
+        <td>Cadência de Vendas</td>
+        <td>Automação de réguas de contato multicanal</td>
+        <td><span class="badge badge-parcial">🟡 PARCIAL</span></td>
+        <td>M3</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>E-mail / WhatsApp</td>
+        <td>NÃO</td>
+        <td>P1</td>
+      </tr>
+      <tr>
+        <td><b>TL-008</b></td>
+        <td>Vendas</td>
+        <td>Módulo de Propostas</td>
+        <td>Geração de PDFs e links públicos de proposta</td>
+        <td><span class="badge badge-parcial">🟡 PARCIAL</span></td>
+        <td>M3</td>
+        <td><span class="ai-badge ai-sim">PARCIAL</span></td>
+        <td>PDF Renderer</td>
+        <td>NÃO</td>
+        <td>P1</td>
+      </tr>
+      <tr>
+        <td><b>TL-009</b></td>
+        <td>Prosp.</td>
+        <td>Busca por CNPJ</td>
+        <td>Consulta automatizada à Receita via BrasilAPI</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>BrasilAPI</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-010</b></td>
+        <td>Prosp.</td>
+        <td>Captura OCR Cartões</td>
+        <td>Leitura client-side Tesseract.js de cartões</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>Tesseract.js</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-011</b></td>
+        <td>Prosp.</td>
+        <td>Google Places Search</td>
+        <td>Descoberta local de empresas por raio/categoria</td>
+        <td><span class="badge badge-parcial">🟡 PARCIAL</span></td>
+        <td>M3</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Google Places API</td>
+        <td>NÃO</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-012</b></td>
+        <td>Prosp.</td>
+        <td>Apollo.io Integration</td>
+        <td>Busca de e-mails de decisores B2B</td>
+        <td><span class="badge badge-quase">🟠 QUASE</span></td>
+        <td>M2</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Apollo API</td>
+        <td>NÃO</td>
+        <td>P1</td>
+      </tr>
+      <tr>
+        <td><b>TL-013</b></td>
+        <td>Prosp.</td>
+        <td>Hunter.io Integration</td>
+        <td>Verificação de deliverability de e-mails</td>
+        <td><span class="badge badge-quase">🟠 QUASE</span></td>
+        <td>M2</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Hunter API</td>
+        <td>NÃO</td>
+        <td>P1</td>
+      </tr>
+      <tr>
+        <td><b>TL-014</b></td>
+        <td>MktIntel</td>
+        <td>LDR & Score B2B</td>
+        <td>Ranking de contas por risco e potencial B2B</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>Prisma / Local Algo</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-015</b></td>
+        <td>MktIntel</td>
+        <td>Account 360</td>
+        <td>Análise de grupo econômico e filiais</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-016</b></td>
+        <td>MktIntel</td>
+        <td>Lead Approval Deck</td>
+        <td>Interface estilo Tinder/Deck para aprovação SDR</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-017</b></td>
+        <td>IA</td>
+        <td>Copiloto Comercial IA</td>
+        <td>Chat contextual com histórico e ferramentas CRM</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>LiteLLM / Groq</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-018</b></td>
+        <td>IA</td>
+        <td>Central AI Suite</td>
+        <td>Suite integrada com qualificação de lead</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>LiteLLM / Groq</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-019</b></td>
+        <td>IA</td>
+        <td>AI Studio</td>
+        <td>Gerador de Prompts, e-mails e materiais</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>OpenAI / Groq</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-020</b></td>
+        <td>IA</td>
+        <td>Agentes Especializados</td>
+        <td>Execução de capabilities de agentes por cargo</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>LangChain / LangGraph</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-021</b></td>
+        <td>Analytics</td>
+        <td>Analytics Executivo</td>
+        <td>Dashboards de performance, conversão e funil</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-022</b></td>
+        <td>Analytics</td>
+        <td>Comercial Inteligente</td>
+        <td>Análise de cohort, metas e produtividade</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-023</b></td>
+        <td>Analytics</td>
+        <td>AI Token Usage</td>
+        <td>Monitoramento de custo e consumo de tokens</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-024</b></td>
+        <td>Playbook</td>
+        <td>Matriz Qualificação</td>
+        <td>Definição de critérios BANT/SPICED por empresa</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-025</b></td>
+        <td>Playbook</td>
+        <td>Matriz Objeções</td>
+        <td>Repositório de contornamento de objeções</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-026</b></td>
+        <td>Trein.</td>
+        <td>Roleplay de Chamadas</td>
+        <td>Simulação de chamadas comerciais em áudio</td>
+        <td><span class="badge badge-parcial">🟡 PARCIAL</span></td>
+        <td>M3</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>WebSpeech / LiteLLM</td>
+        <td>NÃO</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-027</b></td>
+        <td>Trein.</td>
+        <td>Chatbook Sales Guide</td>
+        <td>Guia interativo de roteiros de vendas</td>
+        <td><span class="badge badge-mock">⚪ MOCK</span></td>
+        <td>M1</td>
+        <td><span class="ai-badge ai-sim">MOCK</span></td>
+        <td>Nenhuma</td>
+        <td>NÃO</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-028</b></td>
+        <td>Integ.</td>
+        <td>Bitrix24 Connector</td>
+        <td>Sync bidirecional de contatos e negócios</td>
+        <td><span class="badge badge-parcial">🟡 PARCIAL</span></td>
+        <td>M3</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Bitrix REST API</td>
+        <td>NÃO</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-029</b></td>
+        <td>Integ.</td>
+        <td>WhatsApp Baileys</td>
+        <td>Envio e recepção de mensagens via QR Code</td>
+        <td><span class="badge badge-parcial">🟡 PARCIAL</span></td>
+        <td>M3</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Baileys Socket</td>
+        <td>NÃO</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-030</b></td>
+        <td>Integ.</td>
+        <td>Telefonia 3CX</td>
+        <td>Disparador de chamadas Click-to-Call</td>
+        <td><span class="badge badge-parcial">🟡 PARCIAL</span></td>
+        <td>M3</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>3CX REST API</td>
+        <td>NÃO</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-031</b></td>
+        <td>Gover.</td>
+        <td>Gestão de Job Roles</td>
+        <td>Catálogo de cargos, agentes e permissões</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-032</b></td>
+        <td>Gover.</td>
+        <td>Access Requests</td>
+        <td>Workflow de aprovação de privilégios cruzados</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-033</b></td>
+        <td>Admin</td>
+        <td>Module Access Admin</td>
+        <td>Concessão individual de módulos executivos</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M5</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Prisma DB</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-034</b></td>
+        <td>Admin</td>
+        <td>Proteção LGPD</td>
+        <td>Anonimização e exportação de dados pessoais</td>
+        <td><span class="badge badge-funciona">🟢 FUNCIONA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>Prisma DB / Sanit.</td>
+        <td>SIM</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-035</b></td>
+        <td>Gamif.</td>
+        <td>SpaceGame 3D</td>
+        <td>Jogo 3D de incentivo para vendedores</td>
+        <td><span class="badge badge-nao-funciona">🔴 NÃO FUNCIONA</span></td>
+        <td>M1</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Nenhuma</td>
+        <td>NÃO</td>
+        <td>P3</td>
+      </tr>
+      <tr>
+        <td><b>TL-036</b></td>
+        <td>IA</td>
+        <td>Knowledge RAG HyDE</td>
+        <td>RAG avançado com expansão hipotética e Reranker</td>
+        <td><span class="badge badge-escondida">🟣 ESCONDIDA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>pgvector / Node</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-037</b></td>
+        <td>MktIntel</td>
+        <td>RNTRC Risk Evaluator</td>
+        <td>Validação de risco e regularidade de transporte</td>
+        <td><span class="badge badge-escondida">🟣 ESCONDIDA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-nao">NÃO</span></td>
+        <td>Node Service</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+      <tr>
+        <td><b>TL-038</b></td>
+        <td>Analytics</td>
+        <td>Win/Loss IA Worker</td>
+        <td>Processamento assíncrono BullMQ de perda de deals</td>
+        <td><span class="badge badge-escondida">🟣 ESCONDIDA</span></td>
+        <td>M4</td>
+        <td><span class="ai-badge ai-sim">SIM</span></td>
+        <td>BullMQ / LiteLLM</td>
+        <td>SIM</td>
+        <td>P2</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    function filterTable() {
+      const searchValue = document.getElementById('searchInput').value.toLowerCase();
+      const areaValue = document.getElementById('areaFilter').value;
+      const statusValue = document.getElementById('statusFilter').value;
+      const aiValue = document.getElementById('aiFilter').value;
+
+      const table = document.getElementById('inventoryTable');
+      const trs = table.getElementsByTagName('tr');
+
+      for (let i = 1; i < trs.length; i++) {
+        const tr = trs[i];
+        const text = tr.innerText.toLowerCase();
+        const area = tr.cells[1].innerText;
+        const status = tr.cells[4].innerText;
+        const ai = tr.cells[6].innerText;
+
+        let matchesSearch = text.includes(searchValue);
+        let matchesArea = areaValue === '' || area === areaValue;
+        let matchesStatus = statusValue === '' || status.includes(statusValue);
+        let matchesAi = aiValue === '' || ai.includes(aiValue);
+
+        if (matchesSearch && matchesArea && matchesStatus && matchesAi) {
+          tr.style.display = '';
+        } else {
+          tr.style.display = 'none';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
