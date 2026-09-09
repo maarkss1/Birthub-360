@@ -159,8 +159,12 @@ export function RoleplayHub() {
         ptVoices.find((v) => v.name.toLowerCase().includes('microsoft')) ||
         ptVoices[0];
       if (bestVoice) utterance.voice = bestVoice;
-      utterance.rate = 1.1;
-      utterance.pitch = 1.05;
+      // Rate/pitch neutros (1.0/1.0) em vez do 1.1/1.05 anterior — fala levemente acelerada e
+      // aguda lê como apressada/robótica, não como alguém real ao telefone. As pausas naturais
+      // (vírgulas, reticências) já vêm do texto que a IA gera (ver o novo prompt de
+      // generateRoleplay), não de configuração de voz.
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
       utterance.onstart = () => setBotSpeaking(true);
       utterance.onend = () => setBotSpeaking(false);
       window.speechSynthesis.speak(utterance);

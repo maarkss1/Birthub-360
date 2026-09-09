@@ -50,7 +50,7 @@ describe('studio/generators/roleplay', () => {
     const [prompt, context, schema, , temperature] = invokeStructuredMock.mock.calls[0];
     expect(context).toBe('studio:roleplay');
     expect(schema).toBe(roleplayResultSchema);
-    expect(temperature).toBe(0.55);
+    expect(temperature).toBe(0.6);
     expect(prompt).toContain('CFO cético');
     expect(prompt).toContain('Nosso ROI se paga em 3 meses.');
   });
