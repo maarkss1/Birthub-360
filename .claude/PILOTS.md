@@ -3145,3 +3145,50 @@ entrada nova.
   padrão de bug a vigiar em qualquer piloto futuro que use `src/lib/motion.ts`: **conferir a chave
   exata da variante (`show`, não `visible`) antes de usar `animate=` com uma string literal**, e
   nunca considerar motion "correto" só porque compilou.
+
+## Pilot 032 — Hub Executivo vira destino padrão pós-login (confirmação explícita pendente do Piloto 031)
+
+- **Objetivo**: o Piloto 031 tinha deixado `/` e o pós-login apontando pra `/app` (CRM) de
+  propósito, registrando por escrito que trocar o destino padrão era "decisão de produto maior...
+  não feita sem confirmação explícita do usuário". Nesta sessão o usuário trouxe dois HTMLs de
+  referência (`portalatlasprototype.html`, depois `hubpaginainicial.html`, o segundo sendo o escopo
+  real pedido) e, após eu mostrar que `HubScreen.tsx`/`hub-orbit.css` já implementavam ~14/15 do
+  protótipo (matemática de órbita, tokens e catálogo de módulos idênticos), confirmou
+  explicitamente três vezes em sequência ("sim", "esse escopo e tela", "pode mandar a ver" / "eu
+  autorizo a troca" / "ajuste o que for necessário") quando perguntado se quer o Hub como destino
+  pós-login em vez do CRM. Essa é a confirmação que o Piloto 031 deixou pendente.
+- **Item real faltando identificado por diff contra o protótipo**: "Revenue Intelligence". O ícone
+  já existia pronto em `HubIcons.tsx` (`'revenue-intel'`) mas nunca tinha sido plugado no array
+  `items` de `HubScreen.tsx`. Adicionado, apontando pra `/app/commercial_intelligence` e visível só
+  quando `useAuth().canAccessCommercialIntelligence` é `true` — mesmo gate de papel
+  (`COMMERCIAL_INTELLIGENCE_ROLES` = ADMIN/GESTOR) que a própria rota já exige no backend
+  (`RequireRole` em `App.tsx`), evitando um círculo clicável que levaria a um 403.
+- **Mudança de destino pós-login**: `LoginScreen.tsx` — `callbackURL` do `signUp`/`signIn` e o
+  `window.location.href` final passam de `/app` para `/hub`; o guard de usuário já autenticado
+  (`<Navigate to="/app" replace />`) também passa a apontar pro Hub. `/app` (CRM) continua existindo
+  e acessível a partir do círculo central "Central Comercial" — nada foi removido, só o destino
+  *padrão* mudou. Comentário de `App.tsx` que documentava a decisão antiga do Piloto 031 foi
+  atualizado para refletir a nova.
+- **Blast radius real no e2e, medido antes de mudar**: `tests/e2e/helpers.ts::signUp()` é consumido
+  por ~15 arquivos de spec (incluindo os 5 citados na regra #10 da constituição:
+  `crm.spec.ts`/`auth.spec.ts`/`contact-company-forms.spec.ts`/`command-palette.spec.ts`/
+  `leads-crud.spec.ts`), e a maioria assume — sem `goto` explícito — que logo após `signUp()` a
+  Sidebar do CRM já está visível (clique direto em botão tipo "Empresas"/"Pipeline CRM"). Em vez de
+  editar os ~15 arquivos, o helper ganhou um parâmetro `landOn?: 'app' | 'hub'` (default `'app'`):
+  detecta a autenticação esperando `**/hub*` (reflete o redirecionamento real) e, por padrão, dá um
+  `goto('/app')` interno antes de devolver o controle — preserva o contrato de todo spec existente
+  sem tocar neles. Só `auth.spec.ts` (que testa o próprio destino do redirecionamento, não só "o
+  login funcionou") pede `landOn: 'hub'` explicitamente, pra sua asserção continuar testando o
+  comportamento real em vez da conveniência normalizada do helper.
+- **Verificação real feita nesta sessão**: `tsc --noEmit` (0 erros) e `eslint` (0 erros/warnings) em
+  todos os arquivos tocados (`HubScreen.tsx`, `LoginScreen.tsx`, `App.tsx`, `helpers.ts`,
+  `auth.spec.ts`). **Não** rodei a suíte Playwright nem subi o dev server: `DATABASE_URL` deste
+  ambiente aponta direto pro Postgres de produção na Oracle (ver `project_db_direto_oracle` em
+  memória) — evitei criar sessões/signups de teste contra dado real de produção. Fica pendente
+  rodar `auth.spec.ts` (e idealmente a suíte completa) num ambiente com banco de teste isolado antes
+  do próximo deploy, seguindo o protocolo de bloqueio real da `visual-qa/SKILL.md` (registrar o que
+  não rodou, nunca fingir verde).
+- **Nenhuma mudança de regra da constituição** — reforça a seção 5 (exceção justificada só com
+  critério explícito, nunca por preferência estética isolada): aqui o critério foi confirmação
+  explícita e repetida do usuário para exatamente a decisão que o Piloto 031 tinha deixado em
+  aberto, não uma escolha unilateral desta sessão.

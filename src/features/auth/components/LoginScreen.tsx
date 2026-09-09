@@ -196,9 +196,9 @@ export function LoginScreen() {
           email,
           password,
           name: name || email.split('@')[0],
-          callbackURL: '/app',
+          callbackURL: '/hub',
         })
-      : await authClient.signIn.email({ email, password, callbackURL: '/app' });
+      : await authClient.signIn.email({ email, password, callbackURL: '/hub' });
 
     if (result.error) {
       setError(result.error.message || 'Não foi possível autenticar. Verifique suas credenciais.');
@@ -208,14 +208,14 @@ export function LoginScreen() {
 
     // Cadastro sem sessão de volta = e-mail ainda não confirmado (requireEmailVerification em
     // src/lib/auth.ts) — não há pra onde navegar ainda, então mostra o aviso em vez de tentar ir
-    // pra /app sem sessão (o que só voltaria pro login de qualquer forma).
+    // pro Hub sem sessão (o que só voltaria pro login de qualquer forma).
     if (isSignUp && !result.data?.token) {
       setVerificationPending(true);
       setIsSubmitting(false);
       return;
     }
 
-    window.location.href = '/app';
+    window.location.href = '/hub';
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -274,7 +274,7 @@ export function LoginScreen() {
   }
 
   if (currentUser) {
-    return <Navigate to="/app" replace />;
+    return <Navigate to="/hub" replace />;
   }
 
   return (

@@ -493,6 +493,10 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
               : `Gerencie propostas, pilotos e receita do ${brandInfo.name} em um funil separado.`}
           </p>
           {!funnelProp && (
+            // <fieldset> implica agrupamento de campos de formulário — isto é um toolbar de botões
+            // de alternância (Lead/Proposta), não um form; role="group" num div é o padrão
+            // WAI-ARIA correto aqui, não uma lacuna de acessibilidade.
+            // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
             <div
               className="inline-flex items-center gap-1 p-1 mt-3 bg-surface-2 rounded-lg border border-line"
               role="group"
@@ -590,6 +594,9 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       )}
 
       {/* Região com scroll horizontal do Kanban */}
+      {/* <section aria-label> produziria a mesma role="region" na AX tree — div+role mantido para
+          não arriscar desalinhar a tag de fechamento neste bloco extenso. */}
+      {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
         className="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
         // role="region" torna o aria-label válido (div genérica não aceita nome acessível) e

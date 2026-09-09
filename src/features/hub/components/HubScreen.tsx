@@ -92,7 +92,7 @@ function buildCalendarCells(year: number, month: number, today: number, isCurren
 
 export function HubScreen() {
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, canAccessCommercialIntelligence } = useAuth();
   const { activeBrand, brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const { grantedModules, isLoading } = useModuleAccess();
@@ -132,7 +132,7 @@ export function HubScreen() {
         key: 'central',
         label: 'Central Comercial',
         description: 'CRM · Prospecção · IA',
-        icon: HubIcons['central'],
+        icon: HubIcons.central,
         primary: true,
         ring: 'inner',
         colorRgb: '255,86,24',
@@ -142,7 +142,7 @@ export function HubScreen() {
         key: 'sdr',
         label: 'Acompanhamento SDR',
         description: 'Mesa de Tratamento · Dashboard SDR',
-        icon: HubIcons['sdr'],
+        icon: HubIcons.sdr,
         ring: 'inner',
         colorRgb: '255,109,60',
         onOpen: () => goTo('/app/mesa-tratamento'),
@@ -156,11 +156,26 @@ export function HubScreen() {
         colorRgb: '255,109,60',
         onOpen: () => goTo('/app/cadence'),
       },
+      // Mesmo gate de papel do backend (RequireRole em App.tsx, COMMERCIAL_INTELLIGENCE_ROLES em
+      // authorization.ts) — quem não acessa a rota não vê o círculo, em vez de ver e levar um 403.
+      ...(canAccessCommercialIntelligence
+        ? [
+            {
+              key: 'revenue-intel',
+              label: 'Revenue Intelligence',
+              description: 'Comercial Inteligente · Métricas de receita',
+              icon: HubIcons['revenue-intel'],
+              ring: 'inner' as const,
+              colorRgb: '255,109,60',
+              onOpen: () => goTo('/app/commercial_intelligence'),
+            },
+          ]
+        : []),
       ...grantedCatalog.map((mod) => ({
         key: mod.key,
         label: mod.label,
         description: mod.description,
-        icon: HubIcons[mod.key] || HubIcons['central'],
+        icon: HubIcons[mod.key] || HubIcons.central,
         ring: 'inner' as const,
         colorRgb: '255,109,60',
         onOpen: () => goTo(`/${mod.key}`),
@@ -169,14 +184,14 @@ export function HubScreen() {
         key: link.key,
         label: link.label,
         description: link.description,
-        icon: HubIcons[link.iconKey] || HubIcons['central'],
+        icon: HubIcons[link.iconKey] || HubIcons.central,
         external: true,
         ring: 'outer' as const,
         colorRgb: '255,109,60',
         onOpen: () => openExternal(link.url),
       })),
     ],
-    [grantedCatalog, goTo, openExternal],
+    [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence],
   );
 
   const orbitContainerRef = useRef<HTMLDivElement>(null);
@@ -184,6 +199,10 @@ export function HubScreen() {
   // Cálculo matemático idêntico ao protótipo portalatlasprototype.html
     const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
 
+  // `items.length` não é lido diretamente no efeito (a posição vem de `.hub-card` já no DOM),
+  // mas precisa continuar aqui como gatilho: quando grantedCatalog carrega de forma assíncrona
+  // e muda a contagem de círculos, o layout precisa recalcular os ângulos/raio para o novo n.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
     if (!orbit || !isDesktopOrbit) return;
