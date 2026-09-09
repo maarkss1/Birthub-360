@@ -753,9 +753,9 @@ export function Base() {
               <Button
                 type="button"
                 onClick={() => void handlePasteSubmit()}
-                disabled={uploading || loadingEditContent}
+                loading={uploading}
+                disabled={loadingEditContent}
               >
-                {uploading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 {uploading
                   ? editingDoc
                     ? 'Salvando…'

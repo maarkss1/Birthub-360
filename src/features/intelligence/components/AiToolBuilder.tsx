@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Sparkles, Plus, Save, Check, Bot } from 'lucide-react';
+import { Button } from '../../../components/ui/Button';
 
 export function AiToolBuilder() {
   const [toolName, setToolName] = useState('');
@@ -124,15 +125,14 @@ export function AiToolBuilder() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-brand to-amber-500 text-white font-extrabold py-3.5 rounded-2xl text-xs shadow-lg shadow-brand/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
-          >
-            {saved ? <Check className="w-4 h-4 animate-bounce" /> : <Save className="w-4 h-4" />}
-            <span>
-              {saved ? 'Ferramenta de IA Criada com Sucesso!' : 'Salvar & Publicar Ferramenta'}
-            </span>
-          </button>
+          <Button type="submit" className="w-full">
+            {saved ? (
+              <Check className="w-4 h-4 mr-2 animate-bounce" />
+            ) : (
+              <Save className="w-4 h-4 mr-2" />
+            )}
+            {saved ? 'Ferramenta de IA Criada com Sucesso!' : 'Salvar & Publicar Ferramenta'}
+          </Button>
         </form>
 
         {/* Lista de Ferramentas Criadas */}

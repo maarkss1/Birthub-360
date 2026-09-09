@@ -24,6 +24,7 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { Button } from '../../../components/ui/Button';
 import { useAuth } from '../../../contexts/AuthContext';
 import { SoundFX } from '../../../lib/soundEffects';
 import type {
@@ -420,15 +421,16 @@ export function DailyPlanHub() {
                   }
                 }}
               />
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={() => handleSaveNote(item)}
-                disabled={isSubmittingNote || !noteText.trim()}
-                className="px-4 py-2 bg-brand text-white text-xs font-black rounded-xl hover:bg-brand-active transition-colors disabled:opacity-50 cursor-pointer inline-flex items-center gap-1.5"
+                loading={isSubmittingNote}
+                disabled={!noteText.trim()}
               >
-                <Send className="w-3 h-3" />
+                {!isSubmittingNote && <Send className="w-3 h-3 mr-1.5" />}
                 {isSubmittingNote ? 'Salvando...' : 'Salvar no Bitrix'}
-              </button>
+              </Button>
             </div>
 
             {item.notes && item.notes.length > 0 && (

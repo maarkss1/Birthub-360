@@ -408,8 +408,7 @@ function AutomationForm({
           <Button type="button" variant="outline" onClick={onCancel} disabled={saving}>
             Cancelar
           </Button>
-          <Button type="button" onClick={() => void submit()} disabled={saving}>
-            {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          <Button type="button" onClick={() => void submit()} loading={saving}>
             {editing ? 'Salvar alterações' : 'Criar'}
           </Button>
         </div>

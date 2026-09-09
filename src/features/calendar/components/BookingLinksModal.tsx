@@ -3,6 +3,7 @@ import { X, Link2, Plus, Copy, Trash2, Loader2, Check, Globe } from 'lucide-reac
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { Button } from '../../../components/ui/Button';
 
 interface BookingLink {
   id: string;
@@ -275,18 +276,10 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
             </div>
 
             <div className="flex justify-end pt-1">
-              <button
-                type="submit"
-                disabled={creating}
-                className="px-4 py-2 bg-brand-active text-white rounded-xl text-xs font-bold transition-colors hover:brightness-110 disabled:opacity-50 flex items-center gap-1.5 shadow-sm"
-              >
-                {creating ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Plus className="w-3.5 h-3.5" />
-                )}
+              <Button type="submit" size="sm" loading={creating}>
+                {!creating && <Plus className="w-3.5 h-3.5 mr-1.5" />}
                 Salvar Link
-              </button>
+              </Button>
             </div>
           </form>
 
