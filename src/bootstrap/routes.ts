@@ -28,6 +28,7 @@ import { agentRoutes } from '../features/intelligence/routes/agent.routes.js';
 import { intelligenceRoutes } from '../features/intelligence/routes/intelligence.routes.js';
 import { promptRoutes } from '../features/intelligence/routes/prompt.routes.js';
 import { accessRequestRoutes } from '../features/job-roles/routes/accessRequest.routes.js';
+import { agentBuilderRoutes } from '../features/job-roles/routes/agentBuilder.routes.js';
 import { agentBusRoutes } from '../features/job-roles/routes/agentBus.routes.js';
 import { agentCatalogRoutes } from '../features/job-roles/routes/agentCatalog.routes.js';
 import { capabilityRoutes } from '../features/job-roles/routes/capability.routes.js';
@@ -168,6 +169,8 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/agent-bus', authenticateToken, requireTenant, agentBusRoutes);
   // PROMPT 9 — Memória + Aprendizado Contínuo Governado: mesmo padrão de mount independente.
   app.use('/api/memory', authenticateToken, requireTenant, memoryRoutes);
+  // PROMPT 10 — Agent Builder / Fábrica de Agentes: mesmo padrão de mount independente.
+  app.use('/api/agent-builder', authenticateToken, requireTenant, agentBuilderRoutes);
   app.use('/api/auth-extra', authenticateToken, requireTenant, authExtraRoutes);
   app.use('/api/agent', requireTenant, agentRoutes);
   app.use('/api/cadence', authenticateToken, requireTenant, cadenceRoutes);

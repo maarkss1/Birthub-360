@@ -5477,6 +5477,127 @@ paths:
         '409':
           description: Memória já não está APPROVED
 
+  /agent-builder/proposals:
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        PROMPT 10 — Detecta uma lacuna real e propõe um agente/capability novo, nunca publica
+        sozinho. ANTES de gerar qualquer spec, busca de verdade em `CapabilityDefinition`,
+        `AgentDefinition` (+ catálogo-fonte completo de ~380 agentes, incluindo aliases) e
+        `TOOL_BINDINGS` (serviços já documentados). Se algo relevante já existe, a proposta fica
+        `GAP_NOT_CONFIRMED` (com recomendação de Cross-Role Access Request/Agent Bus handoff) e
+        NENHUM spec é gerado. Só numa lacuna real (`status: DRAFT`) o pipeline gera AgentSpec/
+        CapabilitySpec/ToolBindingSpec (sempre `UNVERIFIED`/`FUTURE_TOOL` — nunca `VERIFIED` sem
+        prova real)/PromptSpec/TestsSpec + uma revisão de risco determinística (9 dimensões, nunca
+        uma nota inventada).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [need]
+              properties:
+                need: { type: string, description: 'Necessidade em texto livre — nunca reformulada antes de buscar.' }
+                targetJobRoleCode: { type: string }
+                domain: { type: string }
+      responses:
+        '201':
+          description: Proposta criada (`DRAFT` com spec completo, ou `GAP_NOT_CONFIRMED` sem spec) — ver `data.proposal`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: targetJobRoleCode desconhecido no catálogo de cargos
+    get:
+      tags: [Cargos e Agentes]
+      summary: Lista as propostas do Agent Builder do tenant, mais recentes primeiro (filtro opcional por `status` na query)
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema: { type: string, enum: [DRAFT, GAP_NOT_CONFIRMED, UNDER_REVIEW, APPROVED_FOR_DEVELOPMENT, REJECTED] }
+      responses:
+        '200':
+          description: Lista de propostas — ver `data.proposals`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+
+  /agent-builder/proposals/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Cargos e Agentes]
+      summary: Detalha uma proposta do Agent Builder pelo id (spec completo + gapAnalysis + riskReview)
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /agent-builder/proposals/{id}/approve:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: >-
+        Marca uma proposta `DRAFT` como `APPROVED_FOR_DEVELOPMENT` — só ADMIN/GESTOR. Nunca
+        publica, nunca ativa nada de verdade: só sinaliza "vale a pena desenvolver isto" para um
+        humano implementar fora deste sistema (nunca auto-merge, nunca deploy, nunca cria
+        credencial).
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { type: object, properties: { notes: { type: string } } }
+      responses:
+        '200':
+          description: Proposta aprovada para desenvolvimento — ver `data.proposal`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Proposta sem spec real (GAP_NOT_CONFIRMED) ou já decidida
+
+  /agent-builder/proposals/{id}/reject:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Cargos e Agentes]
+      summary: Marca uma proposta `DRAFT` como `REJECTED` — só ADMIN/GESTOR
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { type: object, properties: { notes: { type: string } } }
+      responses:
+        '200':
+          description: Proposta rejeitada — ver `data.proposal`
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Proposta sem spec real (GAP_NOT_CONFIRMED) ou já decidida
+
   # ───────────────────────────── Bitrix24 ─────────────────────────────
   /bitrix/connections:
     get:

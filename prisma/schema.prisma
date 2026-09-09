@@ -890,6 +890,8 @@ model Organization {
   agentMemoryRecords            AgentMemoryRecord[]
   roleMemoryRecords             RoleMemoryRecord[]
   organizationMemoryRecords     OrganizationMemoryRecord[]
+  // Agent Builder / Fábrica de Agentes (PROMPT 10) — ver seção no fim deste arquivo.
+  agentBuildProposals           AgentBuildProposal[]
 
   /// DEC-09 (dossiê CPI, Onda 42): teto mensal de gasto com IA (USD) desta organização. Nullable =
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
@@ -4204,4 +4206,73 @@ model OrganizationMemoryRecord {
 
   @@unique([organizationId, topic, version])
   @@index([organizationId, status, topic])
+}
+
+// ---------------------------------------------------------------------------------------------
+// Agent Builder / Fábrica de Agentes (PROMPT 10) — detecta uma lacuna REAL de capability/agente
+// e gera uma PROPOSTA (spec/prompt/contrato/plano de testes/revisão de risco), nunca publica
+// sozinho. Pipeline do prompt da onda: Need -> Existing Capability Search -> Existing Agent
+// Search -> Service Search -> Gap Analysis -> AgentSpec -> CapabilitySpec -> ToolBindingSpec ->
+// PromptSpec -> Tests -> Risk Review -> [revisão humana].
+//
+// `agentBuilder.service.ts` NUNCA escreve em `AgentDefinition`/`AgentVersion`/
+// `CapabilityDefinition`/`ToolBinding` reais (essas tabelas/registries continuam gerenciadas
+// pelos fluxos já existentes dos PROMPTs 1-3) — o único efeito colateral de aprovar uma proposta
+// aqui é marcar `status = APPROVED_FOR_DEVELOPMENT`, nunca criar/ativar nada de verdade. Um
+// `toolBindingSpec` gerado aqui nasce SEMPRE `verification: 'UNVERIFIED'`/`reason: 'FUTURE_TOOL'`
+// (mesmos valores literais de `tool-bindings.ts`) — nunca `VERIFIED` sem símbolo real + adapter +
+// teste de integração + `evidencePath`, que só existem depois que um humano de verdade
+// implementa a proposta fora deste sistema. Nunca cria credencial, nunca mergeia, nunca faz
+// deploy — "revisão humana" aqui decide só "vale a pena desenvolver isto?", nunca "publicar".
+//
+// RLS estrito (sem `bypass_rls`), mesmo padrão de `AgentExecution`/`AccessRequest`/
+// `AgentHandoffMessage`/`LearningCandidate`.
+// ---------------------------------------------------------------------------------------------
+
+/// `DRAFT`: proposta com spec completo, aguardando revisão humana. `GAP_NOT_CONFIRMED`: a busca
+/// encontrou capability/agente/composição existente que já cobre a necessidade — nenhum spec é
+/// gerado, a proposta só registra a recomendação (nunca reinventa o que já existe).
+/// `UNDER_REVIEW`/`APPROVED_FOR_DEVELOPMENT`/`REJECTED`: decisão humana (nunca automática).
+enum AgentBuildProposalStatus {
+  DRAFT
+  GAP_NOT_CONFIRMED
+  UNDER_REVIEW
+  APPROVED_FOR_DEVELOPMENT
+  REJECTED
+}
+
+model AgentBuildProposal {
+  id                String                   @id @default(cuid())
+  organizationId    String
+  organization      Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// Sem FK para `User` de propósito (mesmo padrão de `AccessRequest.requesterId`) — sobrevive à
+  /// remoção do usuário, histórico de auditoria.
+  requestedBy       String
+  requestedByRole   String
+  /// Necessidade descrita em texto livre pelo requester — nunca reformulada/reinterpretada antes
+  /// de armazenar (o `gapAnalysis` abaixo é que interpreta, de forma rastreável).
+  need              String                   @db.Text
+  targetJobRoleCode String?
+  /// Resultado real da busca (ANTES DE CRIAR, regra do prompt da onda): capabilities/agentes/
+  /// serviços já existentes considerados, e se composição (Cross-Role Access Request do PROMPT 7
+  /// ou Agent Bus handoff do PROMPT 8) já resolveria sem precisar de nada novo.
+  gapAnalysis       Json
+  /// Preenchidos só quando `gapAnalysis` conclui que a lacuna é real (`status` sai de `DRAFT` em
+  /// diante) — `null` em `GAP_NOT_CONFIRMED`.
+  agentSpec         Json?
+  capabilitySpec    Json?
+  toolBindingSpec   Json?
+  promptSpec        Json?
+  testsSpec         Json?
+  riskReview        Json?
+  status            AgentBuildProposalStatus @default(DRAFT)
+  reviewedBy        String?
+  reviewedByRole    String?
+  reviewNotes       String?                  @db.Text
+  reviewedAt        DateTime?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
 }
