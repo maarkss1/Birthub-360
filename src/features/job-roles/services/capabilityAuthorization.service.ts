@@ -3,6 +3,57 @@ import { prisma } from '../../../lib/prisma.js';
 import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 import { getToolBinding } from '../config/tool-bindings.js';
 
+/** Canonicaliza um `resource` (ordena chaves recursivamente) para comparar por igualdade
+ *  estrutural exata contra o `resource` aprovado de um `TemporaryCapabilityGrant` (PROMPT 7) —
+ *  nunca um match parcial que alargaria o escopo além do que foi aprovado. `{}`/`null`/`undefined`
+ *  canonicalizam para a mesma chave (nenhum resource informado). */
+function canonicalizeJson(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalizeJson);
+  if (value && typeof value === 'object') {
+    const obj = value as Record<string, unknown>;
+    return Object.keys(obj)
+      .sort()
+      .reduce<Record<string, unknown>>((acc, key) => {
+        acc[key] = canonicalizeJson(obj[key]);
+        return acc;
+      }, {});
+  }
+  return value;
+}
+function resourceKey(resource: Record<string, unknown> | null | undefined): string {
+  return JSON.stringify(canonicalizeJson(resource ?? {}));
+}
+
+/**
+ * Cross-Role Authorization (PROMPT 7) — um `TemporaryCapabilityGrant` ativo (não expirado, não
+ * revogado) para este `organizationId`/`granteeId`/`capabilityDefinitionId`, com o MESMO
+ * `resource` (comparação estrutural exata via `resourceKey`), é a ÚNICA coisa que
+ * `authorizeCapability` aceita como substituto de um gate de "REQUEST"/"aprovação necessária" —
+ * nunca de um grant estrutural ausente. Chamado nos 3 pontos exatos onde o motor já sinalizava
+ * `CROSS_ROLE_REQUEST_REQUIRED`/`APPROVAL_REQUIRED` antes desta onda (ver comentários inline nas
+ * etapas 6, 10 e 12 abaixo) — em nenhum outro ponto.
+ */
+async function findActiveTemporaryGrant(
+  organizationId: string,
+  granteeId: string,
+  capabilityDefinitionId: string,
+  resource: Record<string, unknown> | null | undefined,
+): Promise<{ id: string } | null> {
+  const candidates = await prisma.temporaryCapabilityGrant.findMany({
+    where: {
+      organizationId,
+      granteeId,
+      capabilityDefinitionId,
+      revokedAt: null,
+      expiresAt: { gt: new Date() },
+    },
+    select: { id: true, resource: true },
+  });
+  const key = resourceKey(resource);
+  const match = candidates.find((c) => resourceKey(c.resource as Record<string, unknown>) === key);
+  return match ? { id: match.id } : null;
+}
+
 /**
  * Motor de autorização canônico do Capability & Permission Engine (PROMPT 3). Responde:
  * "Este usuário pode usar este agente para executar esta capability, com qual risco, e precisa
@@ -80,6 +131,10 @@ export interface CapabilityDecision {
   agent: CapabilityDecisionRef | null;
   capability: CapabilityDecisionRef | null;
   resource: Record<string, unknown> | null;
+  /** Preenchido quando um `TemporaryCapabilityGrant` (PROMPT 7) foi o que permitiu passar por um
+   *  gate que de outra forma teria negado (`CROSS_ROLE_REQUEST_REQUIRED`/`APPROVAL_REQUIRED`) —
+   *  `null` quando a decisão não dependeu de nenhum grant temporário, mesmo quando `allowed`. */
+  temporaryGrantId: string | null;
 }
 
 /** Patamar mínimo de `UserRole` por tipo de ação (seção "USERROLE POLICY" do prompt da onda) —
@@ -111,6 +166,7 @@ function deny(
     agent: null,
     capability: null,
     resource: null,
+    temporaryGrantId: null,
     ...overrides,
   };
 }
@@ -187,6 +243,28 @@ export async function authorizeCapability(
     });
   }
 
+  // Cross-Role Authorization (PROMPT 7) — memoiza a única consulta de `TemporaryCapabilityGrant`
+  // desta chamada (reusada pelas etapas 6, 10 e 12 abaixo; nenhuma delas dispara uma segunda
+  // consulta se a primeira já resolveu). Só considerado nos gates "REQUEST"/"aprovação
+  // necessária" — nunca substitui `AGENT_NOT_GRANTED_TO_ROLE`/`CAPABILITY_NOT_GRANTED_TO_*`
+  // (grant estrutural ausente continua fail-closed sem exceção nesta função).
+  const capabilityId = capability.id;
+  let temporaryGrantId: string | null = null;
+  let temporaryGrantChecked = false;
+  async function resolveTemporaryGrant(): Promise<string | null> {
+    if (!temporaryGrantChecked) {
+      temporaryGrantChecked = true;
+      const grant = await findActiveTemporaryGrant(
+        actor.organizationId,
+        actor.userId,
+        capabilityId,
+        resource,
+      );
+      temporaryGrantId = grant?.id ?? null;
+    }
+    return temporaryGrantId;
+  }
+
   // 6. Access level do AGENTE (RoleAgentGrant.accessLevel — nível concedido ao cargo para usar
   // este agente, distinto do nível concedido para esta capability especificamente, etapa 10).
   if (roleAgentGrant.accessLevel === 'DISCOVER') {
@@ -197,7 +275,7 @@ export async function authorizeCapability(
       resource,
     });
   }
-  if (roleAgentGrant.accessLevel === 'REQUEST') {
+  if (roleAgentGrant.accessLevel === 'REQUEST' && !(await resolveTemporaryGrant())) {
     return deny('CROSS_ROLE_REQUEST_REQUIRED', actor, {
       requiresApproval: true,
       agent: agentRef,
@@ -274,7 +352,7 @@ export async function authorizeCapability(
       resource,
     });
   }
-  if (roleCapabilityGrant.accessLevel === 'REQUEST') {
+  if (roleCapabilityGrant.accessLevel === 'REQUEST' && !(await resolveTemporaryGrant())) {
     return deny('CROSS_ROLE_REQUEST_REQUIRED', actor, {
       requiresApproval: true,
       agent: agentRef,
@@ -324,7 +402,7 @@ export async function authorizeCapability(
     capability.requiresApprovalByDefault ||
     capability.riskLevel === 'HIGH' ||
     capability.riskLevel === 'CRITICAL';
-  if (requiresApproval) {
+  if (requiresApproval && !(await resolveTemporaryGrant())) {
     return deny('APPROVAL_REQUIRED', actor, {
       requiresApproval: true,
       agent: agentRef,
@@ -339,7 +417,9 @@ export async function authorizeCapability(
     });
   }
 
-  // 13. Decisão final — PERMIT.
+  // 13. Decisão final — PERMIT (via grant temporário quando alguma etapa 6/10/12 acima só passou
+  // por causa de `resolveTemporaryGrant()` — `temporaryGrantId` reflete isso; `null` quando a
+  // permissão veio inteiramente dos grants permanentes de sempre).
   return {
     allowed: true,
     reason: 'PERMITTED',
@@ -350,6 +430,7 @@ export async function authorizeCapability(
     toolAvailable: true,
     bindingVerification: binding.verification,
     bindingEvidencePath: binding.evidencePath,
+    temporaryGrantId,
     actor,
     agent: agentRef,
     capability: capabilityRef,

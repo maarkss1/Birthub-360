@@ -144,8 +144,10 @@ function chunk<T>(items: T[], size: number): T[][] {
  *  representante canônico do cargo — antes de cair para ordem alfabética de `code` (desempate
  *  determinístico, nunca aleatório). Nunca decide autorização aqui — é só descoberta de
  *  candidato; a decisão real vem de `authorizeCapability` dentro de `runAgentExecution` logo
- *  depois. */
-async function selectAgentForCapability(params: {
+ *  depois. Exportado (não mais módulo-privado) porque `accessRequest.service.ts` (PROMPT 7)
+ *  precisa do mesmo lookup para resolver qual agente usar ao autorizar `agent.request_cross_role`
+ *  — mesma regra, sem duplicar. */
+export async function selectAgentForCapability(params: {
   jobRoleId: string;
   capabilityCode: string;
   allowedAgentCategories: string[];
