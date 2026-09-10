@@ -251,7 +251,7 @@ export function CandidateCard({
 
           {icebreakerText || (candidate.webInsights && candidate.webInsights.length > 0) ? (
             <div className="my-3 p-3 bg-brand/10 border border-brand/20 rounded-xl">
-              <p className="text-[10px] tracking-wider font-bold uppercase text-brand-active dark:text-brand-2 mb-1 flex items-center gap-1">
+              <p className="text-[10px] tracking-wider font-bold uppercase text-brand-ink dark:text-brand mb-1 flex items-center gap-1">
                 <Sparkles size={12} /> ❄️ Quebra-Gelo / Notícia Recente (Busca Web)
               </p>
               {icebreakerText && (
@@ -282,7 +282,7 @@ export function CandidateCard({
                 type="button"
                 onClick={handleFetchIcebreaker}
                 disabled={isLoadingIcebreaker}
-                className="text-[11px] font-semibold text-brand-active dark:text-brand-2 hover:underline flex items-center gap-1 bg-brand/5 border border-brand/20 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                className="text-[11px] font-semibold text-brand-ink dark:text-brand hover:underline flex items-center gap-1 bg-brand/5 border border-brand/20 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
               >
                 {isLoadingIcebreaker ? (
                   <Loader2 className="animate-spin" size={12} />
@@ -479,7 +479,7 @@ export function CandidateCard({
               type="button"
               onClick={onPromote}
               disabled={isPromoting || isRejecting}
-              className="bg-brand-active text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 shadow-md hover:scale-[1.02] w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
+              className="bg-brand-active text-on-brand px-5 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 shadow-md hover:scale-[1.02] w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
             >
               {isPromoting ? (
                 <Loader2 className="animate-spin" size={15} />

@@ -124,7 +124,7 @@ export function SavedViewsPanel({
 
   const dialogTitle = (
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-2xl bg-brand/10 text-brand-active dark:text-brand-2 flex items-center justify-center font-bold shrink-0">
+      <div className="w-10 h-10 rounded-2xl bg-brand/10 text-brand-ink dark:text-brand flex items-center justify-center font-bold shrink-0">
         <Bookmark size={20} />
       </div>
       <div>
@@ -158,7 +158,7 @@ export function SavedViewsPanel({
             <button
               type="button"
               onClick={() => setShowCreateForm(true)}
-              className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-active dark:text-brand-2 flex items-center justify-center gap-2 hover:bg-brand/5 transition-all"
+              className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-ink dark:text-brand flex items-center justify-center gap-2 hover:bg-brand/5 transition-all"
             >
               <Plus size={18} /> Salvar Filtro Atual como Nova View
             </button>
@@ -206,7 +206,7 @@ export function SavedViewsPanel({
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-1.5 rounded-xl bg-brand-active text-white text-xs font-bold hover:brightness-110 flex items-center gap-1.5"
+                  className="px-4 py-1.5 rounded-xl bg-brand-active text-on-brand text-xs font-bold hover:brightness-110 flex items-center gap-1.5"
                 >
                   {creating ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}{' '}
                   Salvar View
@@ -241,7 +241,7 @@ export function SavedViewsPanel({
                       onClose();
                     }}
                     title="Aplicar esta view"
-                    className="px-3 py-1.5 rounded-xl bg-brand/10 hover:bg-brand/20 text-brand-active dark:text-brand-2 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                    className="px-3 py-1.5 rounded-xl bg-brand/10 hover:bg-brand/20 text-brand-ink dark:text-brand text-xs font-bold flex items-center gap-1.5 transition-colors"
                   >
                     <Play size={14} />
                     Aplicar

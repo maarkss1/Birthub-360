@@ -486,7 +486,7 @@ export function SwarmDashboard() {
       <div className="px-8 py-6 border-b border-line bg-surface/80 backdrop-blur-xl flex items-center justify-between z-10 gap-4 flex-wrap">
         <div className="flex items-center gap-4">
           <div
-            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${accent.gradient} flex items-center justify-center text-white shadow-md`}
+            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${accent.gradient} flex items-center justify-center text-on-brand shadow-md`}
           >
             <Zap size={24} fill="currentColor" />
           </div>
@@ -703,7 +703,7 @@ export function SwarmDashboard() {
                 if (e.key === 'Enter' && !isExecuting && mission.trim()) runSimulation();
               }}
               placeholder="O que você deseja que o Swarm faça? (Clique aqui para digitar)"
-              className={`w-full bg-surface-2 border border-line rounded-2xl pl-6 pr-20 py-5 text-ink text-[16px] font-medium focus:outline-none focus:ring-1 focus:bg-surface transition-all placeholder:text-ink-2 shadow-inner relative z-50 pointer-events-auto ${accent.isAtlas ? 'focus:border-brand focus:ring-brand/50' : 'focus:border-brand-2 focus:ring-brand-2/50'}`}
+              className={`w-full bg-surface-2 border border-line rounded-2xl pl-6 pr-20 py-5 text-ink text-[16px] font-medium focus:outline-none focus:ring-1 focus:bg-surface transition-all placeholder:text-ink-2 shadow-inner relative z-50 pointer-events-auto focus:border-brand focus:ring-brand/50`}
               disabled={isExecuting}
             />
             {isExecuting ? (
@@ -722,7 +722,7 @@ export function SwarmDashboard() {
                 onClick={() => runSimulation()}
                 disabled={!mission.trim()}
                 aria-label="Executar missão"
-                className={`absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-r ${accent.gradient} hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center text-white transition-all shadow-lg z-50 pointer-events-auto cursor-pointer`}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-r ${accent.gradient} hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center text-on-brand transition-all shadow-lg z-50 pointer-events-auto cursor-pointer`}
               >
                 <Send size={20} className="ml-1" />
               </button>

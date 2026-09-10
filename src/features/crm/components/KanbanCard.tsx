@@ -182,7 +182,7 @@ export const KanbanCard = React.memo(function KanbanCard({
           {hasCompanyName ? (
             <h4
               title={companyName}
-              className="font-bold text-ink group-hover:text-brand-active dark:group-hover:text-brand-2 transition-colors text-sm line-clamp-2 leading-snug"
+              className="font-bold text-ink group-hover:text-brand-ink dark:group-hover:text-brand-2 transition-colors text-sm line-clamp-2 leading-snug"
             >
               {companyName}
             </h4>
@@ -311,12 +311,11 @@ export const KanbanCard = React.memo(function KanbanCard({
               onClick={handleConvert}
               disabled={converting}
               title="Converter em oportunidade — move este lead para o funil de Negócios"
-              // text-brand-active dark:text-brand-2 (não dark:text-brand simples):
-              // --brand cru da Total Trac (#374898) só dá 2.25:1 sobre a superfície
-              // escura, abaixo até do mínimo não-textual — teria ficado quase
-              // ilegível no card. brand-2 (#008FCE, acento) dá 5.15:1. Confirmado via
-              // canvas + fórmula de contraste real, nas duas marcas — ver relato.
-              className="flex items-center gap-1 text-[11px] font-bold text-brand-active dark:text-brand-2 hover:opacity-75 disabled:opacity-50 transition-colors"
+              // text-brand-ink dark:text-brand: cor de marca como TEXTO — claro no escuro
+              // (Antique Gold cru já mede ~8.74:1 contra a superfície escura), escurecida no
+              // claro (--color-brand-ink, ver globals.css) porque a cor crua ali cai abaixo
+              // de 4.5:1. Mesmo par usado em todo o app — ver design-system/SKILL.md.
+              className="flex items-center gap-1 text-[11px] font-bold text-brand-ink dark:text-brand hover:opacity-75 disabled:opacity-50 transition-colors"
             >
               {converting ? (
                 <Loader2 className="w-3 h-3 animate-spin" />

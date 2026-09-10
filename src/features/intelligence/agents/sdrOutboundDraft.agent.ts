@@ -113,7 +113,7 @@ Retorne SOMENTE JSON válido neste formato exato: {"subject":"assunto curto e ch
     const searchQuery = `Estratégia de prospecção e dores para segmento ${lead.company.segment || 'geral'}`;
     const similarKnowledge = await vectorService.searchSimilar(searchQuery, tenantId, 3, 0.5);
     // Cada `item.content` vem de um `DocumentChunk` de um documento carregado na base de
-    // conhecimento (playbook) — conteúdo de terceiro, não controlado pela AtlasGR. Envolvido
+    // conhecimento (playbook) — conteúdo de terceiro, não controlado pela Birth Hub 360. Envolvido
     // individualmente com o mesmo delimitador estrutural usado no Copiloto de Conhecimento
     // (`knowledge-copilot.service.ts`), para que um chunk malicioso não consiga se passar por
     // instrução nem "fechar" o bloco de dados de um chunk vizinho.
@@ -132,7 +132,7 @@ Dados do prospect:
 - Score de fit: ${lead.score ?? 'ainda não calculado'}
 - Resumo de qualificação: ${JSON.stringify(lead.qualification)}
 
-Contexto da base de conhecimento da AtlasGR:
+Contexto da base de conhecimento da Birth Hub 360:
 ${ragContext}
 
 Escreva um primeiro e-mail curto, específico e consultivo. Valide uma hipótese de dor e use uma única chamada para resposta; não peça reunião no primeiro contato.

@@ -276,7 +276,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
             <button
               type="button"
               onClick={() => onNavigate('activities')}
-              className="text-xs font-bold text-brand-active dark:text-brand-2"
+              className="text-xs font-bold text-brand-ink dark:text-brand"
             >
               Ver tudo
             </button>
@@ -326,7 +326,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
           <button
             type="button"
             onClick={() => onNavigate('crm?funnel=Negocio')}
-            className="text-xs font-bold text-brand-active dark:text-brand-2"
+            className="text-xs font-bold text-brand-ink dark:text-brand"
           >
             Abrir pipeline
           </button>
@@ -340,7 +340,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
               <p className="mt-1 truncate text-xs text-ink-2">{deal.status}</p>
               <div className="mt-3 flex items-end justify-between gap-2">
                 <span className="font-black text-ink">{money.format(deal.amount ?? 0)}</span>
-                <span className="text-xs font-bold text-brand-active dark:text-brand-2">
+                <span className="text-xs font-bold text-brand-ink dark:text-brand">
                   {deal.probability ?? 0}%
                 </span>
               </div>

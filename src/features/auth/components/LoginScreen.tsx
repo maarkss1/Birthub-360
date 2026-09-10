@@ -20,17 +20,18 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useBrand, BRAND_CONFIGS, type Brand } from '../../../contexts/BrandContext';
+import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
-import { isAuthorizedLoginEmail, getBrandFromEmail } from '../../../config/access-policy';
-import { Logo } from '../../../components/Logo';
-import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
+import {
+  AUTHORIZED_LOGIN_DOMAINS,
+  isAuthorizedLoginEmail,
+} from '../../../config/access-policy';
+import { BirthHubSignature } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { fadeInUp, SPRING_SOFT, EASE_PREMIUM, useMagnetic } from '../../../lib/motion';
 
-const BRAND_ORDER: Brand[] = ['atlasgr', 'totaltrac'];
 
 // Prova de valor real (não é marketing genérico): reflete os grupos de jornada reais da Sidebar
 // (src/components/layout/Sidebar.tsx) — Captar, Fechar, IA & Capacitação.
@@ -127,6 +128,10 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
   );
 }
 
+/** Domínios aceitos no login, para a mensagem de acesso negado ficar sempre igual à
+ *  allowlist real de `access-policy.ts` em vez de repetir nomes de empresa à mão. */
+const ALLOWED_DOMAINS_LABEL = AUTHORIZED_LOGIN_DOMAINS.map((d) => `@${d}`).join(' ou ');
+
 export function LoginScreen() {
   // Esta tela agora é a porta de entrada do produto (rota "/", além de "/login" — ver App.tsx):
   // um usuário já autenticado que cai aqui (aba antiga, link direto) vai direto pro destino real,
@@ -150,11 +155,11 @@ export function LoginScreen() {
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
   // Cadastro (?signup=1) agora exige confirmação de posse do e-mail antes de abrir sessão (ver
   // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
-  // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
+  // antes, qualquer e-mail de domínio autorizado digitado, mesmo não sendo dono real, virava sessão +
   // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
   // vez de tentar navegar para /app sem sessão nenhuma.
   const [verificationPending, setVerificationPending] = useState(false);
-  const { activeBrand, setActiveBrand, brandInfo } = useBrand();
+  const { brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const brandAccent = useBrandAccent();
   const shouldReduceMotion = useReducedMotion();
@@ -164,7 +169,7 @@ export function LoginScreen() {
   const submitMagnetic = useMagnetic(0.25);
 
   // Relógio e calendário ao vivo do painel do formulário: reforçam a sensação de central
-  // operando agora, na cor da marca ativa no momento.
+  // operando agora.
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
@@ -181,13 +186,12 @@ export function LoginScreen() {
 
     if (!isAuthorizedLoginEmail(email)) {
       setError(
-        'Acesso restrito. Utilize um e-mail corporativo autorizado da AtlasGR (@atlasgr.com.br) ou Total Trac (@totaltrac.com.br).',
+        `Acesso restrito. Utilize um e-mail corporativo autorizado (${ALLOWED_DOMAINS_LABEL}).`,
       );
       setIsSubmitting(false);
       return;
     }
 
-    setActiveBrand(getBrandFromEmail(email));
 
     // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
     // o cliente nunca decide, por conta própria, se um login é válido.
@@ -225,7 +229,7 @@ export function LoginScreen() {
 
     if (!isAuthorizedLoginEmail(email)) {
       setError(
-        'Acesso restrito. Utilize um e-mail corporativo autorizado da AtlasGR (@atlasgr.com.br) ou Total Trac (@totaltrac.com.br).',
+        `Acesso restrito. Utilize um e-mail corporativo autorizado (${ALLOWED_DOMAINS_LABEL}).`,
       );
       setIsSubmitting(false);
       return;
@@ -257,12 +261,8 @@ export function LoginScreen() {
     setError('');
   };
 
-  // Reflete a marca em tempo real conforme o domínio digitado — o toggle abaixo permite escolher a
-  // marca antes de digitar o e-mail, mas o e-mail continua sendo a fonte de verdade no submit
-  // (handleAuth chama getBrandFromEmail de novo), então os dois mecanismos nunca divergem.
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    setActiveBrand(getBrandFromEmail(value));
   };
 
   if (isPending) {
@@ -279,16 +279,12 @@ export function LoginScreen() {
 
   return (
     <div className="min-h-screen bg-bg">
-      {/* Cabeçalho — mesmo padrão do Hub Executivo (HubScreen.tsx): logo da marca ativa +
+      {/* Cabeçalho — mesmo padrão do Hub Executivo (HubScreen.tsx): assinatura da plataforma +
           alternador de tema, para que a primeira tela do produto já seja visualmente contínua com
           a tela que vem logo depois do login. */}
       <header className="border-b border-line bg-surface/60 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          {activeBrand === 'atlasgr' ? (
-            <Logo className="h-7 text-ink" />
-          ) : (
-            <TotalTrackLogo className="h-7 text-ink" />
-          )}
+          <BirthHubSignature className="h-7 text-ink" />
           <button
             type="button"
             onClick={() => {
@@ -306,7 +302,7 @@ export function LoginScreen() {
 
       <main className="relative mx-auto max-w-6xl overflow-hidden px-6 py-10 md:py-16">
         {/* Glow de canto — mesmo tratamento do card "Central Comercial" do Hub Executivo (ver
-            HubScreen.tsx), substituindo a esfera 3D (AtlasOrb/@react-three/fiber) que ocupava este
+            HubScreen.tsx), substituindo a esfera 3D (BrandOrb/@react-three/fiber) que ocupava este
             espaço antes. Troca deliberada, não corte por "achar desnecessário" (ver CLAUDE.md
             seção 9): esta tela virou a porta de entrada do produto (rota "/", maior tráfego de
             qualquer tela), e o objetivo agora é ela puxar a mesma linguagem visual do Hub que vem
@@ -326,7 +322,7 @@ export function LoginScreen() {
             variants={fadeInUp}
             className="mt-4 w-full"
           >
-            {/* Relógio e calendário ao vivo — mesma cor da marca ativa */}
+            {/* Relógio e calendário ao vivo — na cor de assinatura da marca */}
             <div
               className={`mb-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-bold ${brandAccent.text}`}
             >
@@ -341,52 +337,8 @@ export function LoginScreen() {
               </span>
             </div>
 
-            {/* Chave Atlas / Total Trac — escolha explícita da marca, peso visual igual entre as
-                duas, sincronizada com handleEmailChange. */}
-            <div className="flex justify-center mb-6">
-              <div className="relative flex p-1 rounded-full bg-surface-2 border border-line">
-                <div
-                  aria-hidden="true"
-                  className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-gradient-to-r from-brand to-brand-2 transition-transform duration-300 ease-out"
-                  style={{
-                    transform:
-                      activeBrand === 'atlasgr' ? 'translateX(0%)' : 'translateX(calc(100% + 8px))',
-                  }}
-                />
-                {BRAND_ORDER.map((brand) => (
-                  <button
-                    key={brand}
-                    type="button"
-                    onClick={() => setActiveBrand(brand)}
-                    aria-pressed={activeBrand === brand}
-                    className={`relative z-10 flex w-28 items-center justify-center gap-1.5 py-2.5 text-sm font-bold rounded-full transition-colors cursor-pointer ${
-                      activeBrand === brand ? 'text-white' : `text-ink-2 hover:${brandAccent.text}`
-                    }`}
-                  >
-                    {brand === 'atlasgr' ? (
-                      <span
-                        className={`grid h-4 w-4 shrink-0 place-items-center rounded-full ${activeBrand === brand ? 'bg-white' : ''}`}
-                      >
-                        <Logo variant="symbol" className="h-3.5 w-3.5" />
-                      </span>
-                    ) : (
-                      <TotalTrackLogo
-                        variant="symbol"
-                        tone={activeBrand === brand ? 'negative' : 'positive'}
-                        className="h-4 w-4 shrink-0"
-                      />
-                    )}
-                    {BRAND_CONFIGS[brand].name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <h1 className={`text-3xl font-black text-center ${brandAccent.text}`}>Bem-vindo</h1>
-            <p className="mt-2 text-sm text-ink-2">
-              {brandInfo.slogan} — a central de prospecção e inteligência comercial da{' '}
-              {brandInfo.name}.
-            </p>
+            <p className="mt-2 text-sm text-ink-2">{brandInfo.tagline}</p>
 
             <div
               className={`mt-8 w-full p-6 sm:p-7 rounded-card-lg border border-brand/25 bg-surface text-left shadow-card transition-shadow duration-300 ${brandAccent.glow}`}
@@ -476,7 +428,7 @@ export function LoginScreen() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       style={submitMagnetic.style}
-                      className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <Loader2 className="animate-spin" size={18} />
@@ -589,7 +541,7 @@ export function LoginScreen() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     style={submitMagnetic.style}
-                    className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <Loader2 className="animate-spin" size={18} />

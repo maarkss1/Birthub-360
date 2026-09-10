@@ -86,7 +86,7 @@ Procure materiais como `extrator_bitrix.html`, `extrator_bitrix (2).html` ou equ
 
 Antes de implementar, descubra sobre o Bitrix existente: como conexões são cadastradas e credenciais persistidas/mascaradas; como o tenant é obtido; quais serviços/rotas/entidades Bitrix já existem; como paginação e erros já são tratados; se já existe queue/job, histórico de sincronização e `verify:integrations`.
 
-Valide suporte multi-organização (AtlasGR, TotalTrac, e portais adicionais que possam existir). Não presuma que separação visual significa separação de dados.
+Valide suporte multi-organização (AtlasGR, Total Trac, e portais adicionais que possam existir — tenants, não marcas: a plataforma tem identidade visual única, Birth Hub 360º). Não presuma que separação visual significa separação de dados.
 
 ---
 
@@ -189,7 +189,7 @@ Nunca enviar segredo, expor chave no frontend, misturar tenants, ou afirmar aná
 
 Reutilizar layout, componentes e design system existentes.
 
-Identidade AtlasGR: Laranja `#FF5618`, Grafite `#333333`, Branco `#FFFFFF`. Respeitar modo escuro, usar logos oficiais disponíveis, respeitar TotalTrac quando tenant ativo, usar PT-BR, ser responsivo e acessível.
+Identidade Birth Hub 360º: Antique Gold `#D4AF37`, Obsidian `#0B132B`, Snow White `#F8FAFC` (ver identidade-visual/birthhub360/). Cores de origem por tenant (AtlasGR laranja `#FF5618`/Total Trac azul `#374898`) só valem como metadado da extração Bitrix, nunca como UI do produto. Respeitar modo escuro, usar BirthHubLogo (não os logos antigos), usar PT-BR, ser responsivo e acessível.
 
 Estados obrigatórios: carregamento, vazio, progresso, sucesso, cancelando, cancelado, erro, conexão inválida, token revogado, sem permissão.
 

@@ -69,7 +69,7 @@ export function KpiTile({
         className="w-full cursor-pointer rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
       >
         {figures}
-        <span className="mt-2 block text-[10px] font-bold uppercase tracking-wide text-brand-active opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:text-brand-2">
+        <span className="mt-2 block text-[10px] font-bold uppercase tracking-wide text-brand-ink opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:text-brand">
           Abrir detalhe
         </span>
       </button>

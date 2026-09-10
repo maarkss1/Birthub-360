@@ -3,7 +3,7 @@ name: performance
 description: Use ao adicionar dependência, animação contínua, uso de 3D/Three.js, listas grandes, imagens, ou qualquer coisa que rode em toda tela do CRM. Cobre code splitting/lazy loading já em uso e o custo real de renderização 3D contínua neste app, que também roda como aplicativo Android via Capacitor.
 ---
 
-# Performance — Central de Inteligência Comercial ATLASGR
+# Performance — Birth Hub 360º
 
 ## O que já está certo — não regrida
 

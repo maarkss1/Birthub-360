@@ -7,7 +7,7 @@ name: Deploy Oracle Cloud (produção)
 # da própria instância, e nem faz `git pull` sozinho. Merge no GitHub != deploy real.
 #
 # Mesmo padrão de gate já usado em docker-publish.yml: só dispara depois que o workflow canônico
-# de release (ci.yml, "Central AtlasGR Release") passar de verdade em main — nunca deploya com CI
+# de release (ci.yml, "Central Birth Hub 360 Release") passar de verdade em main — nunca deploya com CI
 # vermelho. workflow_dispatch continua disponível para redeploy manual (ex.: reaplicar sem novo
 # commit, depois de mexer em .env.production na instância).
 #
@@ -34,7 +34,7 @@ name: Deploy Oracle Cloud (produção)
 
 on:
   workflow_run:
-    workflows: ['Central AtlasGR Release']
+    workflows: ['Central Birth Hub 360 Release']
     types: [completed]
     branches: [main]
   workflow_dispatch: {}

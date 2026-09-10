@@ -1,6 +1,5 @@
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Bot, Mic, MicOff, Send, PhoneOff } from 'lucide-react';
-import type { Brand } from '../../../../contexts/BrandContext';
 import type { CallMessage, Persona } from './types';
 
 // Fundo sempre escuro (independente do tema claro/escuro do resto do app): exceção justificada
@@ -8,7 +7,6 @@ import type { CallMessage, Persona } from './types';
 // chamada/videochamada (foco total, sem distração visual do restante da interface). `bg-slate-950`
 // (escala real do Tailwind) substitui o hex cru `#0b0f19` anterior, mesmo efeito visual.
 export function ActiveCallView({
-  activeBrand,
   currentPersonas,
   selectedPersona,
   messages,
@@ -21,7 +19,6 @@ export function ActiveCallView({
   botSpeaking,
   onEndCall,
 }: {
-  activeBrand: Brand;
   currentPersonas: Persona[];
   selectedPersona: string;
   messages: CallMessage[];
@@ -34,13 +31,13 @@ export function ActiveCallView({
   botSpeaking: boolean;
   onEndCall: () => void;
 }) {
-  // AtlasGR usa --brand (laranja) direto; Total Trac usa --brand-2 (ciano de acento) em vez de
-  // --brand (navy) porque o navy fica pouco visível como glow sobre fundo quase preto — mesma
-  // técnica já usada em GlowChart.tsx/useBrandAccent.ts para o mesmo problema.
-  const isAtlas = activeBrand !== 'totaltrac';
-  const accentText = isAtlas ? 'text-brand' : 'text-brand-2';
-  const accentBg = isAtlas ? 'bg-brand' : 'bg-brand-2';
-  const accentFrom = isAtlas ? 'from-brand' : 'from-brand-2';
+  // O acento era escolhido por marca ativa (laranja ou ciano, cada uma com a sua
+  // curadoria de glow sobre fundo quase preto). Com marca única os três apontam
+  // para a mesma cor de assinatura — mantidos como constantes nomeadas porque
+  // são referenciados em vários pontos do JSX abaixo.
+  const accentText = 'text-brand';
+  const accentBg = 'bg-brand';
+  const accentFrom = 'from-brand';
   const reduceMotion = useReducedMotion();
 
   return (
@@ -124,7 +121,7 @@ export function ActiveCallView({
               onClick={onSendMessage}
               aria-label="Enviar mensagem"
               title="Enviar mensagem"
-              className="w-20 h-20 rounded-full flex items-center justify-center text-white shadow-xl bg-brand-active hover:bg-brand-2"
+              className="w-20 h-20 rounded-full flex items-center justify-center text-on-brand shadow-xl bg-brand-active hover:bg-brand-2"
             >
               <Send className="w-8 h-8 ml-1" />
             </motion.button>

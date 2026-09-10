@@ -32,7 +32,7 @@ export class PlaybookAiService {
     const model = getAiModel('local-llama3-fast', 0.2, 'playbook-ai');
     const startTime = Date.now();
 
-    const systemPrompt = `Você é o Head de Capacitação Comercial e autor do Playbook de Vendas da AtlasGR / TotalTrac.
+    const systemPrompt = `Você é o Head de Capacitação Comercial e autor do Playbook de Vendas da Birth Hub 360 / Birth Hub 360.
 Escreva um capítulo completo e prático do Playbook de Vendas sobre o tema solicitado.
 Estruture utilizando a metodologia SPIN Selling adaptada para o mercado de logística, telemetria e gestão de risco.
 

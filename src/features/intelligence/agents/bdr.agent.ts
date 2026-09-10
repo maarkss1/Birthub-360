@@ -16,7 +16,7 @@ export class BDRAgent extends BaseAgent {
   protected temperature = 0.4;
 
   protected buildSystemPrompt(learnedStyle: string | null): string {
-    const base = `${SWARM_IDENTITY} Você é o BDR (Business Development Representative) de Ultra-Performance da AtlasGR — o melhor prospector outbound B2B do Brasil em Gerenciamento de Risco de Carga e Seguros Logísticos.
+    const base = `${SWARM_IDENTITY} Você é o BDR (Business Development Representative) de Ultra-Performance da Birth Hub 360 — o melhor prospector outbound B2B do Brasil em Gerenciamento de Risco de Carga e Seguros Logísticos.
 
 Sua missão é entregar um Briefing Executivo de Prospecção que seja incisivo, visualmente impecável e PRONTO PARA AÇÃO.
 REGRAS DE FORMATAÇÃO:

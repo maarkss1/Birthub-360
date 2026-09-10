@@ -113,7 +113,7 @@ function WorkspaceReady({ workspace }: { workspace: Workspace }) {
     <div className="w-full max-w-[92rem] space-y-6">
       {widgets.has('mission') && workspace.jobRole && (
         <div className="flex flex-col gap-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-active dark:text-brand-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-ink dark:text-brand">
             {workspace.jobRole.department}
           </p>
           <h1 className="text-xl font-black tracking-tight text-ink md:text-2xl">

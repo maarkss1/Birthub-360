@@ -68,7 +68,7 @@ export const OBJECTIONS_DATA: ObjectionItem[] = [
     title: 'Já tenho fornecedor de rastreamento / GR',
     description: 'O cliente alega satisfação com a solução contratada atualmente.',
     bestResponseAtlas:
-      'Excelente! A AtlasGR não visa substituir sua GR atual, mas atuar como uma camada de Inteligência Artificial Autônoma que audita em tempo real o cumprimento das regras e reduz falhas humanas.',
+      'Excelente! A Birth Hub 360 não visa substituir sua GR atual, mas atuar como uma camada de Inteligência Artificial Autônoma que audita em tempo real o cumprimento das regras e reduz falhas humanas.',
     bestResponseTotaltrac:
       'Entendo perfeitamente! Grande parte dos nossos clientes também usava rastreadores comuns. O diferencial do Total Telemetria CAN é que lemos direto os dados reais da central do veículo, e nossas Iscas RF continuam funcionando mesmo quando ladrões usam jammer.',
     technique: 'Acknowledge & Elevate (Validar e Elevar o Nível)',
@@ -78,7 +78,7 @@ export const OBJECTIONS_DATA: ObjectionItem[] = [
     title: 'Acho o valor muito alto / Fora do Orçamento',
     description: 'Resistência ao preço inicial do investimento.',
     bestResponseAtlas:
-      'Entendo a preocupação com custos. No entanto, o custo de um único sinistro sem cobertura por descumprimento de regra de GR supera em anos o investimento na plataforma AtlasGR.',
+      'Entendo a preocupação com custos. No entanto, o custo de um único sinistro sem cobertura por descumprimento de regra de GR supera em anos o investimento na plataforma Birth Hub 360.',
     bestResponseTotaltrac:
       'Compreendo. Porém, com o Total Jornada e o Total Telemetria CAN, a economia direta em combustível e a eliminação de horas extras indevidas cobrem integralmente a mensalidade no primeiro trimestre.',
     technique: 'ROI vs Cost Framing (Enquadramento por Retorno)',
@@ -98,7 +98,7 @@ export const OBJECTIONS_DATA: ObjectionItem[] = [
     title: 'Minha seguradora não exige esses adicionais',
     description: 'Visão de conformidade mínima apenas para cumprir apólice.',
     bestResponseAtlas:
-      'Cumprir a apólice é a obrigação mínima. A AtlasGR garante que, no momento crítico do sinistro, você tenha 100% de conformidade comprovável para receber a indenização sem contestação.',
+      'Cumprir a apólice é a obrigação mínima. A Birth Hub 360 garante que, no momento crítico do sinistro, você tenha 100% de conformidade comprovável para receber a indenização sem contestação.',
     bestResponseTotaltrac:
       'A exigência da seguradora é o básico. Nossos equipamentos invisíveis (Total Imobilizador e Isca RF) garantem a recuperação real do veículo e da carga, evitando o prejuízo da franquia e o aumento da apólice no ano seguinte.',
     technique: 'Total Asset Protection (Proteção Ativa do Patrimônio)',

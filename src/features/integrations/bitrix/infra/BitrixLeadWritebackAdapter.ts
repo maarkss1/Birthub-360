@@ -8,7 +8,7 @@ import type { BitrixLeadWritebackPort } from '../../../../shared/contracts/bitri
  * Implementação real de `BitrixLeadWritebackPort` — mesmo padrão de resolução de conexão que
  * `pushLeadToBitrix`/`exportLeadToBitrixNow` (`service/outboundSync.ts`): sem `connectionId`
  * explícito, usa a conexão mais antiga da organização (`findFirst` por `createdAt asc`). Uma
- * organização com múltiplos portais Bitrix (ex.: AtlasGR + TotalTrac) que precise escolher qual
+ * organização com múltiplos portais Bitrix (ex.: Birth Hub 360 + Birth Hub 360) que precise escolher qual
  * conexão recebe o writeback do Copiloto IA ainda não é suportado — fica para quando isso virar um
  * problema real, não antecipado aqui.
  */

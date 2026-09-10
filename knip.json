@@ -6,7 +6,7 @@
  * - Exports nunca consumidos fora do próprio arquivo
  * - Dependências em package.json não usadas no código
  *
- * Gap resolvido (mapeado em PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md):
+ * Gap resolvido (mapeado em PRODUCT_EXPERIENCE.md):
  * - src/components/layout/nav.ts — segundo sistema de navegação morto
  * - Topbar.tsx — duplicata de AppTopbar sem uso
  * - Settings.tsx — existe mas não está no roteamento

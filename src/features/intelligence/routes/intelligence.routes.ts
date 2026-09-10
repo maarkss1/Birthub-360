@@ -548,8 +548,8 @@ const reportSchema = z.object({
 
 function reportBrandContext(brandId: 'atlasgr' | 'totaltrac'): string {
   return brandId === 'totaltrac'
-    ? 'TotalTrac (tecnologia para telemetria, videotelemetria, jornada e proteção de frotas)'
-    : 'AtlasGR (inteligência comercial e gestão de risco logístico)';
+    ? 'Birth Hub 360 (tecnologia para telemetria, videotelemetria, jornada e proteção de frotas)'
+    : 'Birth Hub 360 (inteligência comercial e gestão de risco logístico)';
 }
 
 function reportPrompt(brandContext: string): string {

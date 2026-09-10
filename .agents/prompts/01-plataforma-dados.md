@@ -82,12 +82,12 @@ Garantir:
 
 Coordene com 06 para integração com o armazenamento seguro.
 
-### 5. Tenancy AtlasGR / TotalTrac
+### 5. Tenancy Birth Hub 360 / Birth Hub 360
 Separação visual é insuficiente.
 
 Faça testes de acesso cruzado:
-- usuário AtlasGR tentando ler/escrever TotalTrac;
-- usuário TotalTrac tentando ler/escrever AtlasGR;
+- usuário Birth Hub 360 tentando ler/escrever Birth Hub 360;
+- usuário Birth Hub 360 tentando ler/escrever Birth Hub 360;
 - IDs manipulados;
 - queries sem filtro;
 - background jobs sem tenant explícito.

@@ -47,7 +47,7 @@ export function ExecutiveHeader({
     { id: 'social-selling', label: 'Social Selling', path: '/social-selling', icon: Share2 },
     {
       id: 'treinamento-atlasgr',
-      label: 'Treinamento AtlasGR',
+      label: 'Treinamento Comercial',
       path: '/treinamento-atlasgr',
       icon: GraduationCap,
     },
@@ -101,7 +101,7 @@ export function ExecutiveHeader({
                 onClick={() => navigate(hub.path)}
                 className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border flex items-center gap-1.5 whitespace-nowrap transition-all ${
                   isActive
-                    ? 'bg-brand-active text-white border-brand shadow-sm'
+                    ? 'bg-brand-active text-on-brand border-brand shadow-sm'
                     : 'bg-surface text-ink-2 hover:bg-soft hover:text-ink border-line'
                 }`}
               >

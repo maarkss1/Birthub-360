@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, PhoneCall, Sparkles } from 'lucide-react';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
 import { SoundFX } from '../../../lib/soundEffects';
@@ -18,7 +18,7 @@ import { RoleplayHistoryPanel } from './roleplay-hub/RoleplayHistoryPanel';
 import type { CallAnalysisResult, CallMessage } from './roleplay-hub/types';
 
 export function RoleplayHub() {
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook, info: playbookMeta } = useActivePlaybook();
 
   const [selectedPersona, setSelectedPersona] = useState('gestor_frota');
   const [difficulty, setDifficulty] = useState<'facil' | 'medio' | 'dificil'>('medio');
@@ -88,7 +88,7 @@ export function RoleplayHub() {
     },
   ];
 
-  const currentPersonas = activeBrand === 'totaltrac' ? personasTotaltrack : personasAtlas;
+  const currentPersonas = playbook === 'totaltrac' ? personasTotaltrack : personasAtlas;
 
   // Mesma classificação de persona usada para o motor de IA do turno (generateRoleplay) — extraída
   // pra função pura porque finishCall também precisa dela para o parecer técnico de sessão
@@ -213,9 +213,9 @@ export function RoleplayHub() {
     }
 
     const initialGreeting =
-      activeBrand === 'totaltrac'
-        ? 'Alô? Aqui é da frota. Recebi seu contato sobre soluções de rastreamento e telemetria. O que exatamente a TotalTrac oferece que é diferente do mercado?'
-        : 'Alô? Recebi seu contato sobre a plataforma AtlasGR. Nossa operação já trabalha com Gerenciamento de Risco. Por que deveríamos conversar?';
+      playbook === 'totaltrac'
+        ? 'Alô? Aqui é da frota. Recebi seu contato sobre soluções de rastreamento e telemetria. O que exatamente vocês oferecem que é diferente do mercado?'
+        : 'Alô? Recebi seu contato sobre a sua plataforma. Nossa operação já trabalha com Gerenciamento de Risco. Por que deveríamos conversar?';
 
     setMessages([
       {
@@ -252,13 +252,13 @@ export function RoleplayHub() {
       persona: currentPersonas.find((item) => item.id === selectedPersona),
       qualificationCriteria: QUALIFICATION_CRITERIA.map((item) => ({
         category: item.category,
-        criteria: activeBrand === 'totaltrac' ? item.totaltrac : item.atlas,
-        question: activeBrand === 'totaltrac' ? item.spinQuestionTotaltrac : item.spinQuestionAtlas,
+        criteria: playbook === 'totaltrac' ? item.totaltrac : item.atlas,
+        question: playbook === 'totaltrac' ? item.spinQuestionTotaltrac : item.spinQuestionAtlas,
       })),
       objections: OBJECTIONS_DATA.map((item) => ({
         title: item.title,
         technique: item.technique,
-        guidance: activeBrand === 'totaltrac' ? item.bestResponseTotaltrac : item.bestResponseAtlas,
+        guidance: playbook === 'totaltrac' ? item.bestResponseTotaltrac : item.bestResponseAtlas,
       })),
     });
 
@@ -275,7 +275,7 @@ export function RoleplayHub() {
         '/api/intelligence/studio',
         {
           kind: 'roleplay',
-          brand: { name: brandInfo.name, description: brandInfo.description },
+          brand: { name: playbookMeta.label, description: playbookMeta.description },
           inputs: {
             persona,
             message: text,
@@ -363,9 +363,9 @@ export function RoleplayHub() {
       }>(
         '/api/intelligence/roleplay/finish',
         {
-          brand: activeBrand,
-          brandName: brandInfo.name,
-          brandDescription: brandInfo.description,
+          brand: playbook,
+          brandName: playbookMeta.label,
+          brandDescription: playbookMeta.description,
           personaId: selectedPersona,
           personaLabel: persona?.label || selectedPersona,
           personaKey: personaKeyFor(selectedPersona),
@@ -420,15 +420,15 @@ export function RoleplayHub() {
           <div className="absolute inset-0 bg-gradient-to-b from-surface/50 to-transparent pointer-events-none" />
           <div className="relative z-10 flex flex-col items-center gap-5">
             <span
-              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${brandInfo.badgeBg} border-current/20`}
+              className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-brand/30 bg-brand/10 text-brand-ink dark:text-brand shadow-sm"
             >
-              {brandInfo.badgeText}
+              {playbookMeta.label}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-ink tracking-tight flex items-center gap-3">
               <PhoneCall className="text-brand" size={40} /> Roleplay
             </h1>
             <p className="text-ink-2 text-base md:text-lg font-medium max-w-xl">
-              Simule uma ligação real de vendas por voz para {brandInfo.name} e receba uma nota +
+              Simule uma ligação real de vendas por voz no playbook {playbookMeta.label} e receba uma nota +
               dicas de melhoria ao final.
             </p>
           </div>
@@ -444,13 +444,12 @@ export function RoleplayHub() {
               setDifficulty={setDifficulty}
               onStart={startCall}
             />
-            <RoleplayHistoryPanel activeBrand={activeBrand} />
+            <RoleplayHistoryPanel playbook={playbook} />
           </>
         )}
 
         {callActive && (
           <ActiveCallView
-            activeBrand={activeBrand}
             currentPersonas={currentPersonas}
             selectedPersona={selectedPersona}
             messages={messages}

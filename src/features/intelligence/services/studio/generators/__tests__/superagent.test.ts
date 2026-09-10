@@ -21,7 +21,7 @@ import { superagentAiResultSchema } from '../../schema.js';
 function buildRequest(name: string) {
   return {
     kind: 'superagent' as const,
-    brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+    brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
     inputs: {
       name,
       provider: 'openai',
@@ -49,7 +49,7 @@ describe('studio/generators/superagent', () => {
     expect(context).toBe('studio:superagent');
     expect(schema).toBe(superagentAiResultSchema);
     expect(temperature).toBe(0.35);
-    expect(prompt).toContain('AtlasGR');
+    expect(prompt).toContain('Birth Hub 360');
   });
 
   it('monta o scaffold (jsonConfig/pythonScript/powershellScript) usando o nome do agente sanitizado como identificador', async () => {

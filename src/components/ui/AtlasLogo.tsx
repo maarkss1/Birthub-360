@@ -1,4 +1,4 @@
-export function AtlasLogo({
+export function BirthHubLogo({
   className = 'w-8 h-8',
   color,
 }: {

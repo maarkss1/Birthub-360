@@ -42,7 +42,7 @@ function deriveTacticalGuidance(
     case 'CALL':
       return {
         recommendedAction: `Realizar ligação de qualificação/avanço com ${target}. Confirmar cenário de frota e dor principal.`,
-        scriptOrPrompt: `Olá ${contactName || 'tudo bem'}! Aqui é da AtlasGR. Estou retornando nosso contato sobre a visibilidade e controle de frota da sua operação. Como estão as operações hoje?`,
+        scriptOrPrompt: `Olá ${contactName || 'tudo bem'}! Aqui é da Birth Hub 360. Estou retornando nosso contato sobre a visibilidade e controle de frota da sua operação. Como estão as operações hoje?`,
         suggestedHook: 'Enfatizar redução de custos, rastreamento inteligente e suporte ágil 24/7.',
       };
     case 'WHATSAPP':
@@ -683,7 +683,7 @@ export async function completeDailyPlanItem(
       fields: {
         ENTITY_ID: rawId,
         ENTITY_TYPE: 'lead',
-        COMMENT: 'Contato diário realizado via Central AtlasGR.',
+        COMMENT: 'Contato diário realizado via Central Birth Hub 360.',
       },
     });
     return { success: true, message: 'Contato com lead registrado no Bitrix24.' };

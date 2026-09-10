@@ -61,7 +61,7 @@ export function PomodoroWidget() {
           <button
             type="button"
             onClick={startFocus}
-            className="flex items-center gap-1.5 rounded-xl bg-brand-active px-3 py-1.5 text-xs font-bold text-white transition-colors duration-200 hover:bg-brand-2"
+            className="flex items-center gap-1.5 rounded-xl bg-brand-active px-3 py-1.5 text-xs font-bold text-on-brand transition-colors duration-200 hover:bg-brand-2"
           >
             <Play className="h-3.5 w-3.5" aria-hidden="true" /> Iniciar foco
           </button>

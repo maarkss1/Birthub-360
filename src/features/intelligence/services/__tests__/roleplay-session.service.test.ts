@@ -37,7 +37,7 @@ const input = {
   organizationId: 'org_1',
   userId: 'user_1',
   brand: 'atlasgr' as const,
-  brandName: 'AtlasGR',
+  brandName: 'Birth Hub 360',
   brandDescription: 'Revenue OS de logística',
   personaId: 'gerente_risco',
   personaLabel: 'Gerente de Risco (GR)',
@@ -62,7 +62,7 @@ describe('roleplay-session.service — finishRoleplaySession (parecer técnico d
 
     expect(generateRoleplayEvaluationMock).toHaveBeenCalledWith({
       kind: 'roleplay_evaluation',
-      brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+      brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
       inputs: {
         persona: 'strict_buyer',
         difficulty: 'dificil',

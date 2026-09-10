@@ -55,7 +55,7 @@ export function DealDrillDownDrawer({ filter, query, onClose }: DealDrillDownDra
   const [sending, setSending] = useState(false);
 
   const defaultTemplate = (row: DealDrillDownRow) =>
-    `⚠️ Risco identificado pelo Comercial Inteligente (AtlasGR Prospector): ${row.riskFactors.join(', ')}.`;
+    `⚠️ Risco identificado pelo Comercial Inteligente (Birth Hub 360 Prospector): ${row.riskFactors.join(', ')}.`;
 
   const openComposer = (row: DealDrillDownRow) => {
     setComposerFor(row.id);

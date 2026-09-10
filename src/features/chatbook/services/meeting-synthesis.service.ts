@@ -48,7 +48,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
   "unresolvedObjections": ["Preocupação com o prazo de carência da instalação"],
   "actionItems": [
     {
-      "assignee": "Vendedor (AtlasGR)",
+      "assignee": "Vendedor (Birth Hub 360)",
       "description": "Elaborar proposta com taxa reduzida e enviar para aprovação",
       "deadlineDays": 2
     }

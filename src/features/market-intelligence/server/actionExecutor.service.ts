@@ -39,7 +39,7 @@ export const actionExecutorService = {
             {
               fields: {
                 TITLE: recommendation.title,
-                DESCRIPTION: `${recommendation.rationale}\n\nCriado via Central AtlasGR para a conta: ${company.legalName}`,
+                DESCRIPTION: `${recommendation.rationale}\n\nCriado via Central Birth Hub 360 para a conta: ${company.legalName}`,
                 RESPONSIBLE_ID: responsibleId,
                 // Outras props relevantes
               },

@@ -79,7 +79,7 @@ export function CallSetup({
         <button
           type="button"
           onClick={onStart}
-          className="w-full lg:w-auto px-10 py-4 rounded-[1.75rem] font-black text-white text-sm uppercase tracking-wider shadow-xl shadow-brand-sm flex items-center justify-center gap-3 transition-transform hover:scale-105 bg-brand-active hover:bg-brand-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+          className="w-full lg:w-auto px-10 py-4 rounded-[1.75rem] font-black text-on-brand text-sm uppercase tracking-wider shadow-xl shadow-brand-sm flex items-center justify-center gap-3 transition-transform hover:scale-105 bg-brand-active hover:bg-brand-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
         >
           <Phone className="w-5 h-5" /> Ligar Agora
         </button>

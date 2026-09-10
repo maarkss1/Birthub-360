@@ -1,5 +1,5 @@
 // Opções de ICP (Perfil de Cliente Ideal) para os dropdowns do Prospector.
-// Extraídas do "Playbook de Pré-Vendas Atlas" e do "Playbook Comercial - AtlasGR"
+// Extraídas do "Playbook de Pré-Vendas Atlas" e do "Playbook Comercial - Birth Hub 360"
 // fornecidos pelo time comercial.
 
 export const SEGMENTO_OPTIONS = [

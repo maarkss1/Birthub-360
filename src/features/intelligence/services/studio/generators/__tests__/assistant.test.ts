@@ -19,9 +19,9 @@ function buildRequest(
 ) {
   return {
     kind: 'assistant' as const,
-    brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+    brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
     inputs: {
-      question: 'Qual o diferencial da AtlasGR?',
+      question: 'Qual o diferencial da Birth Hub 360?',
       mode: overrides.mode ?? 'internal',
       localContext: overrides.localContext,
       history: overrides.history,

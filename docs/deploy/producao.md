@@ -1,4 +1,4 @@
-# Guia de Produção — AtlasGR / Prospector-Atlas
+# Guia de Produção — Birth Hub 360 / Prospector-Atlas
 
 > **Status real (2026-09-02): modo local-first ENCERRADO, arquitetura reativada — migração
 > Supabase → Neon EM ANDAMENTO, produção ainda no Supabase.** O critério de saída documentado em

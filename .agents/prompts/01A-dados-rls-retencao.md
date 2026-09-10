@@ -20,7 +20,7 @@ correção se sustenta e avançar para o item 2 (varredura de SQL cru) e item 3 
 continuam abertos de verdade.
 
 ## Leia primeiro
-1. `/AGENTS.md` — "Tenancy AtlasGR / TotalTrac", "LGPD e dados pessoais", "Propriedade exclusiva de arquivos";
+1. `/AGENTS.md` — "Tenancy Birth Hub 360 / Birth Hub 360", "LGPD e dados pessoais", "Propriedade exclusiva de arquivos";
 2. `/prisma/AGENTS.md`;
 3. `.agents/handoffs/onda-2/00-para-01-ailog-rls-violation.md` — **inteiro, incluindo a seção `## Reabertura`**;
 4. `.agents/runs/onda-5.md` → "Achado da integração — correção de registro (AILog RLS)";

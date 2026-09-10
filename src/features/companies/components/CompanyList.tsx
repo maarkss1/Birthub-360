@@ -332,7 +332,7 @@ export function CompanyList() {
                 setSelectedCompany(company);
                 setIsFormOpen(true);
               }}
-              className="p-2 text-ink-2 hover:text-brand-active dark:hover:text-brand-2 hover:bg-brand/10 rounded-lg transition-colors"
+              className="p-2 text-ink-2 hover:text-brand-ink dark:hover:text-brand-2 hover:bg-brand/10 rounded-lg transition-colors"
               title="Editar"
               aria-label={`Editar ${companyLabel}`}
             >
@@ -396,18 +396,18 @@ export function CompanyList() {
           <div>
             <h1 className="text-3xl font-extrabold text-ink flex items-center gap-3 tracking-tight">
               🏢 Empresas & Carteira
-              {/* text-brand puro falha contraste real (axe-core): ~2.9:1 no AtlasGR
-                                claro (laranja vívido sobre fundo claro) e ~1.9:1 no Total Trac
-                                escuro (azul-marinho sobre fundo escuro) — as duas marcas falham,
+              {/* text-brand puro falha contraste real (axe-core): ~2.9:1 no Birth Hub 360
+                                claro (laranja vívido sobre fundo claro) e ~1.9:1 no Birth Hub 360
+                                escuro (azul-marinho sobre fundo escuro) — as duas marcas de então falhavam,
                                 cada uma no tema oposto, porque a cor primária de uma é clara
-                                (AtlasGR) e da outra é escura (Total Trac). brand-active escurece
-                                (resolve claro nas duas marcas) e brand-2 é o tom vívido de cada
+                                (Birth Hub 360) e da outra é escura (Birth Hub 360). brand-active escurece
+                                (resolve claro em qualquer marca) e brand-2 é o tom vívido de cada
                                 marca (resolve escuro nas duas). Fundo é bg-surface-2 (neutro), não
-                                bg-soft: no Total Trac escuro --soft já é um tingimento ciano, e
+                                bg-soft: no Birth Hub 360 escuro --soft já é um tingimento ciano, e
                                 texto ciano (brand-2) sobre fundo ciano ainda fica em 4.32:1 — perto
                                 mas abaixo do mínimo. Combinação final verificada via axe-core nas 4
                                 combinações antes de fixar. */}
-              <span className="text-xs bg-surface-2 text-brand-active dark:text-brand-2 border border-brand/30 px-3 py-1 rounded-full font-bold">
+              <span className="text-xs bg-surface-2 text-brand-ink dark:text-brand border border-brand/30 px-3 py-1 rounded-full font-bold">
                 {companies.length} Mapeadas
               </span>
             </h1>
@@ -430,7 +430,7 @@ export function CompanyList() {
               <button
                 type="button"
                 onClick={() => setLayoutMode('grid')}
-                className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'grid' ? 'bg-brand-active text-white shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
+                className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'grid' ? 'bg-brand-active text-on-brand shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
                 title="Visão em Cards com Logos de Ferramentas"
                 aria-label="Visão em Cards com Logos de Ferramentas"
               >
@@ -440,7 +440,7 @@ export function CompanyList() {
               <button
                 type="button"
                 onClick={() => setLayoutMode('table')}
-                className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'table' ? 'bg-brand-active text-white shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
+                className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'table' ? 'bg-brand-active text-on-brand shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
                 title="Visão em Tabela Compacta"
                 aria-label="Visão em Tabela Compacta"
               >
@@ -455,7 +455,7 @@ export function CompanyList() {
                 setSelectedCompany(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-white px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               Nova Empresa
@@ -672,7 +672,7 @@ export function CompanyList() {
                         setSelectedCompany(company);
                         setViewMode('detail');
                       }}
-                      className="text-xs font-bold text-brand-active dark:text-brand-2 hover:opacity-80 flex items-center gap-1 transition-colors"
+                      className="text-xs font-bold text-brand-ink dark:text-brand hover:opacity-80 flex items-center gap-1 transition-colors"
                     >
                       Ver Perfil Completo
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -699,7 +699,7 @@ export function CompanyList() {
                           setSelectedCompany(company);
                           setIsFormOpen(true);
                         }}
-                        className="p-2 text-ink-2 hover:text-brand-active dark:hover:text-brand-2 hover:bg-brand/10 rounded-xl transition-colors"
+                        className="p-2 text-ink-2 hover:text-brand-ink dark:hover:text-brand-2 hover:bg-brand/10 rounded-xl transition-colors"
                         title="Editar"
                         aria-label={`Editar ${companyLabel}`}
                       >
@@ -756,7 +756,7 @@ export function CompanyList() {
       {selectedIds.size > 0 && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/40 text-ink px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 z-50 animate-in slide-in-from-bottom-5 duration-300 backdrop-blur-xl">
           <div className="flex items-center gap-2">
-            <span className="bg-brand-active text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold">
+            <span className="bg-brand-active text-on-brand w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold">
               {selectedIds.size}
             </span>
             <span className="text-sm font-bold">empresas selecionadas</span>

@@ -75,7 +75,7 @@ describe('connectBitrix — SSRF real (guard não mockado)', () => {
     bitrixConnectionMock.create.mockResolvedValue({ id: 'conn-1' });
     const { connectBitrix } = await import('../connections.js');
 
-    const result = await connectBitrix('org-a', 'https://8.8.8.8/rest/1/token/', 'AtlasGR');
+    const result = await connectBitrix('org-a', 'https://8.8.8.8/rest/1/token/', 'Birth Hub 360');
 
     expect(result.id).toBe('conn-1');
     expect(bitrixConnectionMock.create).toHaveBeenCalledWith(

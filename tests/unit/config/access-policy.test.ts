@@ -4,7 +4,7 @@ import {
   AUTHORIZED_LOGIN_DOMAINS,
   isAuthorizedLoginEmail,
   normalizeLoginEmail,
-  getBrandFromEmail,
+  getTenantFromEmail,
 } from '../../../src/config/access-policy';
 
 describe('access policy', () => {
@@ -35,9 +35,9 @@ describe('access policy', () => {
     );
   });
 
-  it('correctly identifies brand from corporate email domain', () => {
-    expect(getBrandFromEmail('marcelo@atlasgr.com.br')).toBe('atlasgr');
-    expect(getBrandFromEmail('suporte@totaltrac.com.br')).toBe('totaltrac');
-    expect(getBrandFromEmail('caue@totaltrack.com.br')).toBe('totaltrac');
+  it('identifies the tenant from the corporate email domain', () => {
+    expect(getTenantFromEmail('marcelo@atlasgr.com.br')).toBe('atlasgr');
+    expect(getTenantFromEmail('suporte@totaltrac.com.br')).toBe('totaltrac');
+    expect(getTenantFromEmail('caue@totaltrack.com.br')).toBe('totaltrac');
   });
 });

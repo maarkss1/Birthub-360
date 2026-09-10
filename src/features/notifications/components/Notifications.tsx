@@ -166,7 +166,7 @@ export function Notifications() {
                   aria-pressed={onlyUnread === opt.value}
                   className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
                     onlyUnread === opt.value
-                      ? `${accent.bg} text-white`
+                      ? `${accent.bg} text-on-brand`
                       : 'text-ink-2 hover:text-ink hover:bg-surface-2'
                   }`}
                 >

@@ -1,6 +1,6 @@
 # Governança de Confiabilidade (SRE)
 
-Este documento centraliza as definições de SLOs (Service Level Objectives), SLIs (Service Level Indicators) e diretrizes de alertas para a plataforma AtlasGR, assegurando monitoramento ativo e respostas rápidas a incidentes.
+Este documento centraliza as definições de SLOs (Service Level Objectives), SLIs (Service Level Indicators) e diretrizes de alertas para a plataforma Birth Hub 360, assegurando monitoramento ativo e respostas rápidas a incidentes.
 
 ## 1. SLIs e SLOs
 

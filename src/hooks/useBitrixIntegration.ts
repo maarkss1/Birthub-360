@@ -22,7 +22,7 @@ export function useBitrixIntegration() {
   // Nunca pré-preencher com uma URL real: a URL de webhook do Bitrix É a credencial (token no
   // path) e um valor default real neste arquivo ficaria versionado no git.
   const [bitrixWebhookInput, setBitrixWebhookInput] = useState('');
-  const [bitrixLabelInput, setBitrixLabelInput] = useState('AtlasGR Bitrix24');
+  const [bitrixLabelInput, setBitrixLabelInput] = useState('Birth Hub 360 Bitrix24');
   const [bitrixLoading, setBitrixLoading] = useState(false);
 
   const fetchBitrixConnections = useCallback(async () => {

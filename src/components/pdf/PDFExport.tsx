@@ -140,15 +140,15 @@ export function ScriptDocument({ data }: { data: ScriptDocumentData }) {
   return (
     <Document
       title={data.title}
-      author="AtlasGR — Central de Inteligência Comercial"
-      creator="AtlasGR"
+      author="Birth Hub 360º — Central de Comando Inteligente"
+      creator="Birth Hub 360"
     >
       <Page size="A4" style={BASE_STYLES.page}>
         {/* Header */}
         <View style={BASE_STYLES.header}>
           <Text style={BASE_STYLES.title}>{data.title}</Text>
           <Text style={BASE_STYLES.subtitle}>
-            AtlasGR · Central de Inteligência Comercial
+            Birth Hub 360º · Central de Comando Inteligente
             {data.companyName ? ` · ${data.companyName}` : ''}
             {data.contactName ? ` · ${data.contactName}` : ''}
           </Text>
@@ -240,7 +240,7 @@ export function ScriptDocument({ data }: { data: ScriptDocumentData }) {
 
         {/* Footer */}
         <View style={BASE_STYLES.footer} fixed>
-          <Text style={BASE_STYLES.footerText}>AtlasGR — Confidencial</Text>
+          <Text style={BASE_STYLES.footerText}>Birth Hub 360 — Confidencial</Text>
           <Text
             style={BASE_STYLES.footerText}
             render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
@@ -271,7 +271,7 @@ export function PDFDownloadButton({
     <PDFDownloadLink
       document={doc}
       fileName={fileName}
-      className={`inline-flex items-center gap-2 rounded-xl bg-brand-active px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${className}`}
+      className={`inline-flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-on-brand hover:bg-brand-active transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${className}`}
     >
       {({ loading }) =>
         loading ? (

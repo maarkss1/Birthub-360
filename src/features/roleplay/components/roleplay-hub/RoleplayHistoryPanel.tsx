@@ -6,7 +6,7 @@ import { AlertTriangle, CheckCircle2, History } from 'lucide-react';
 import { api } from '../../../../lib/api';
 import { Dialog } from '../../../../components/ui/Dialog';
 import { ListSkeleton } from '../../../../components/ui/Skeleton';
-import type { Brand } from '../../../../contexts/BrandContext';
+import type { PlaybookKey } from '../../../../config/playbooks';
 import { scoreTextClassOnSurface } from './scoreColor';
 import type { RoleplayHistoryItem } from './types';
 
@@ -28,7 +28,7 @@ function formatDuration(secs: number): string {
  * foi salvo (dado capturado, nunca usado). Só aparece na tela de setup (antes de uma nova ligação),
  * nunca durante uma chamada ativa — não é o fluxo principal, é consulta de treinos passados.
  */
-export function RoleplayHistoryPanel({ activeBrand }: { activeBrand: Brand }) {
+export function RoleplayHistoryPanel({ playbook }: { playbook: PlaybookKey }) {
   const [sessions, setSessions] = useState<RoleplayHistoryItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<RoleplayHistoryItem | null>(null);
@@ -38,7 +38,7 @@ export function RoleplayHistoryPanel({ activeBrand }: { activeBrand: Brand }) {
     setSessions(null);
     setError(null);
     api
-      .get<RoleplayHistoryItem[]>(`/api/intelligence/roleplay/history?brand=${activeBrand}`)
+      .get<RoleplayHistoryItem[]>(`/api/intelligence/roleplay/history?brand=${playbook}`)
       .then((data) => {
         if (!cancelled) setSessions(data);
       })
@@ -50,7 +50,7 @@ export function RoleplayHistoryPanel({ activeBrand }: { activeBrand: Brand }) {
     return () => {
       cancelled = true;
     };
-  }, [activeBrand]);
+  }, [playbook]);
 
   if (error) {
     return (

@@ -2915,7 +2915,7 @@ model DailyPlanClosing {
 // ─── Bug Reports (governança de 12 requisitos — item 8: Módulo de Reportar Problemas) ──────
 // Criado pelo botão flutuante `BugReportButton` (src/components/ui/BugReportButton.tsx) via
 // POST /api/bug-reports. `context` guarda um snapshot técnico capturado automaticamente no
-// momento do report (URL, papel do usuário, marca ativa, user agent, viewport, e as últimas
+// momento do report (URL, papel do usuário, playbook ativo, user agent, viewport, e as últimas
 // entradas de log do clientLogger) — nunca texto livre do usuário além de title/description,
 // para reduzir o risco de PII/segredo acabar em campo de texto. Ver sanitização de `context`
 // em bugReport.service.ts antes de persistir.

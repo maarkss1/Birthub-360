@@ -234,7 +234,7 @@ export function CallAnalysisReport({
         <button
           type="button"
           onClick={onRestart}
-          className="px-10 py-5 bg-brand-active hover:bg-brand-2 text-white rounded-[1.75rem] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-transform hover:scale-105 shadow-xl shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+          className="px-10 py-5 bg-brand-active hover:bg-brand-2 text-on-brand rounded-[1.75rem] font-black text-sm uppercase tracking-wider flex items-center gap-3 transition-transform hover:scale-105 shadow-xl shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
         >
           <RotateCcw className="w-5 h-5" /> <Phone className="w-5 h-5" /> Nova Ligação
         </button>

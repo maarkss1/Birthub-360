@@ -22,7 +22,8 @@ import {
   Clipboard,
 } from 'lucide-react';
 import { api } from '../../../../lib/api';
-import { useBrand } from '../../../../contexts/BrandContext';
+import { BRAND } from '../../../../config/brand';
+import { useActivePlaybook } from '../../../../hooks/useActivePlaybook';
 import type { ProspectCandidate } from '../../services/prospecting.service';
 
 interface PromoteResult {
@@ -45,7 +46,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function OcrCapturePanel() {
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -167,8 +168,8 @@ export function OcrCapturePanel() {
       try {
         const form = new FormData();
         form.append('image', file);
-        form.append('brandName', brandInfo.name);
-        form.append('brandDescription', brandInfo.description);
+        form.append('brandName', playbookMeta.label);
+        form.append('brandDescription', playbookMeta.description);
         const response = await api.postForm<{ candidate: ProspectCandidate; rawText?: string }>(
           '/api/prospecting/ocr',
           form,
@@ -197,7 +198,7 @@ export function OcrCapturePanel() {
         setReading(false);
       }
     },
-    [brandInfo.description, brandInfo.name, reset],
+    [playbookMeta.description, playbookMeta.label, reset],
   );
 
   // Suporte a colar imagem da área de transferência (Ctrl+V)
@@ -269,7 +270,7 @@ export function OcrCapturePanel() {
         segment: formData.segment || 'Não informado',
         size: 'Não informado',
         location: formData.location || 'Não informado',
-        source: `${brandInfo.name} Prospect (OCR Inteligente)`,
+        source: `${BRAND.shortName} Prospect (OCR Inteligente)`,
         autoEnrich: false,
         phone: formData.phone || null,
         website: formData.website || null,
@@ -331,7 +332,7 @@ export function OcrCapturePanel() {
             <button
               type="button"
               onClick={capturePhoto}
-              className="flex items-center gap-2 bg-brand-active text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg hover:brightness-110 transition-all cursor-pointer"
+              className="flex items-center gap-2 bg-brand-active text-on-brand px-6 py-2.5 rounded-full font-bold text-sm shadow-lg hover:brightness-110 transition-all cursor-pointer"
             >
               <Aperture className="w-4 h-4" /> Capturar Foto
             </button>
@@ -382,7 +383,7 @@ export function OcrCapturePanel() {
             }}
           />
           <div className="space-y-4 max-w-md mx-auto">
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-brand via-orange-500 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg">
+            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-brand via-orange-500 to-indigo-600 flex items-center justify-center text-on-brand mx-auto shadow-lg">
               <Camera className="w-8 h-8" />
             </div>
             <div>
@@ -394,7 +395,7 @@ export function OcrCapturePanel() {
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 pt-2">
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-brand-active text-white px-4 py-2 rounded-xl shadow-sm hover:brightness-110 transition-all">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-brand-active text-on-brand px-4 py-2 rounded-xl shadow-sm hover:brightness-110 transition-all">
                 <UploadCloud className="w-4 h-4" /> Selecionar Arquivo
               </span>
               <button
@@ -455,7 +456,7 @@ export function OcrCapturePanel() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   type="button"
-                  className="text-[11px] font-bold text-brand-active dark:text-brand-2 hover:underline"
+                  className="text-[11px] font-bold text-brand-ink dark:text-brand hover:underline"
                 >
                   Trocar Foto
                 </button>
@@ -496,7 +497,7 @@ export function OcrCapturePanel() {
           <div className="lg:col-span-7 bg-surface border border-line rounded-3xl p-6 shadow-sm space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-line">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-brand/10 text-brand-active dark:text-brand-2">
+                <div className="p-1.5 rounded-lg bg-brand/10 text-brand-ink dark:text-brand">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
@@ -506,7 +507,7 @@ export function OcrCapturePanel() {
                   </p>
                 </div>
               </div>
-              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-brand/10 text-brand-active dark:text-brand-2 border border-brand/20">
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
                 Score: {formData.fitScoreEstimate}%
               </span>
             </div>
@@ -526,7 +527,7 @@ export function OcrCapturePanel() {
                   value={formData.tradeName}
                   onChange={(e) => setFormData({ ...formData, tradeName: e.target.value })}
                   className="w-full bg-surface-2 border border-line rounded-xl px-3.5 py-2 text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-                  placeholder="Ex: Total Trac Tecnologia"
+                  placeholder="Ex: Transportadora Nordeste Ltda"
                 />
               </div>
 
@@ -551,7 +552,7 @@ export function OcrCapturePanel() {
                     type="button"
                     onClick={handleCnpjEnrich}
                     disabled={enrichingCnpj || !formData.cnpj}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-surface-2 border border-line text-brand-active dark:text-brand-2 hover:bg-brand/10 hover:border-brand/40 transition-colors disabled:opacity-40 cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-surface-2 border border-line text-brand-ink dark:text-brand hover:bg-brand/10 hover:border-brand/40 transition-colors disabled:opacity-40 cursor-pointer"
                     title="Consultar dados oficiais na Receita Federal via BrasilAPI"
                   >
                     {enrichingCnpj ? (
@@ -727,7 +728,7 @@ export function OcrCapturePanel() {
                 type="button"
                 onClick={promote}
                 disabled={promoting || !formData.tradeName.trim()}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand to-orange-500 text-white py-3 rounded-2xl font-bold text-sm shadow-md hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand to-orange-500 text-on-brand py-3 rounded-2xl font-bold text-sm shadow-md hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {promoting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -757,7 +758,7 @@ export function OcrCapturePanel() {
             <button
               type="button"
               onClick={reset}
-              className="inline-flex items-center gap-2 bg-brand-active text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:brightness-110 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 bg-brand-active text-on-brand px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:brightness-110 transition-all cursor-pointer"
             >
               <Camera className="w-3.5 h-3.5" /> Ler Novo Cartão / Foto
             </button>

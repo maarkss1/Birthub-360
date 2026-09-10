@@ -20,6 +20,10 @@
  * Ambos os fixtures existem só para este teste — não reutilize para outra suíte sem revisar se o
  * conteúdo textual esperado ainda bate.
  */
+// As duas asserções abaixo conferem o texto de arquivos BINÁRIOS em
+// tests/fixtures/knowledge/ (sample.pdf, sample.docx), gravados antes da troca de
+// marca. Elas citam a marca antiga porque o conteúdo dos arquivos cita — regerar as
+// fixtures é uma tarefa à parte, e trocar só a expectativa deixaria o teste vermelho.
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';

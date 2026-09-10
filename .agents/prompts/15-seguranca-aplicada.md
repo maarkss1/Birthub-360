@@ -42,7 +42,7 @@ dependem de ação humana em portal de terceiro:
 
 1. **Rotacionar a chave da Bland AI** — esteve versionada em `scripts/call_bland_juliana.py` (script
    já removido) com remote público. Dispara ligações pagas.
-2. **Rotacionar os 2 webhooks Bitrix24** (AtlasGR `/rest/450/…` e TotalTrac `/rest/2486/…`) — na
+2. **Rotacionar os 2 webhooks Bitrix24** (Birth Hub 360 `/rest/450/…` e Birth Hub 360 `/rest/2486/…`) — na
    arquitetura do Bitrix, **a URL é a credencial**.
 3. **Decidir sobre `git filter-repo`/BFG** para `backups/prospector-*.dump`, ainda recuperável nos
    commits `2e30b2f`, `543c5b0` e `8b1bc38`.

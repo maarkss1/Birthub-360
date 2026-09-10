@@ -2,7 +2,7 @@
  * HubBurstCanvas — canvas 2D fixo sobre toda a tela que exibe o efeito de
  * explosão de partículas ao clicar em qualquer card do Hub.
  *
- * Portado de portalatlasprototype.html (função `burstAt`). Expõe uma ref de
+ * Portado do protótipo original do portal (função `burstAt`). Expõe uma ref de
  * função `trigger(x, y, colorRgb)` que o HubScreen chama ao clicar num card.
  */
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';

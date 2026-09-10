@@ -306,7 +306,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                 type="button"
                 onClick={() => toggleEntity(opt.value)}
                 aria-pressed={active}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${active ? 'bg-brand-active border-brand-active text-white' : 'bg-surface border-line text-ink-2 hover:border-brand/50'}`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${active ? 'bg-brand-active border-brand-active text-on-brand' : 'bg-surface border-line text-ink-2 hover:border-brand/50'}`}
               >
                 {opt.label}
               </button>
@@ -389,7 +389,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
             type="button"
             onClick={startExtraction}
             disabled={submitting}
-            className="h-9 flex items-center gap-2 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+            className="h-9 flex items-center gap-2 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-50 text-on-brand text-sm font-bold rounded-xl transition-colors shadow-sm"
           >
             {submitting ? (
               <Loader2 className="w-4 h-4 animate-spin" />

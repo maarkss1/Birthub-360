@@ -462,7 +462,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       {/* Header com Indicador de Saúde do Portal Bitrix */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-brand/10 via-brand-2/5 to-transparent p-5 rounded-3xl border border-brand/20 shadow-sm">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand to-brand-2 flex items-center justify-center text-white shadow-lg shadow-brand/30">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand to-brand-2 flex items-center justify-center text-on-brand shadow-lg shadow-brand/30">
             <Layers className="w-6 h-6" />
           </div>
           <div>
@@ -502,7 +502,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
           <button
             type="button"
             onClick={() => setMode('deals')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl transition-all ${mode === 'deals' ? 'bg-gradient-to-r from-brand-active to-brand-2 text-white shadow-md shadow-brand-active/30' : 'text-ink-2 hover:text-ink'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl transition-all ${mode === 'deals' ? 'bg-gradient-to-r from-brand-active to-brand-2 text-on-brand shadow-md shadow-brand-active/30' : 'text-ink-2 hover:text-ink'}`}
           >
             <Building2 className="w-4 h-4" />
             Negócios (Comercial)
@@ -510,7 +510,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
           <button
             type="button"
             onClick={() => setMode('leads')}
-            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl transition-all ${mode === 'leads' ? 'bg-gradient-to-r from-brand-active to-brand-2 text-white shadow-md shadow-brand-active/30' : 'text-ink-2 hover:text-ink'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl transition-all ${mode === 'leads' ? 'bg-gradient-to-r from-brand-active to-brand-2 text-on-brand shadow-md shadow-brand-active/30' : 'text-ink-2 hover:text-ink'}`}
           >
             <Users className="w-4 h-4" />
             Leads (Todos)
@@ -540,7 +540,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                 type="button"
                 onClick={importSelected}
                 disabled={importing}
-                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-white text-xs font-bold rounded-xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-50"
+                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-on-brand text-xs font-bold rounded-xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-50"
               >
                 {importing ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -594,7 +594,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
             <button
               type="button"
               onClick={() => setQuickFilter('unimported')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${quickFilter === 'unimported' ? 'bg-brand-active text-white shadow-sm shadow-brand-active/20' : 'bg-surface-2 text-ink-2 hover:text-ink'}`}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${quickFilter === 'unimported' ? 'bg-brand-active text-on-brand shadow-sm shadow-brand-active/20' : 'bg-surface-2 text-ink-2 hover:text-ink'}`}
             >
               Disponíveis para Importar
             </button>
@@ -632,7 +632,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                 <span className={filterLabelClass}>
                   <Filter className="w-3 h-3" /> Pipeline
                 </span>
-                <span className="flex items-center gap-1.5 h-9 px-3 rounded-xl bg-soft border border-brand/20 text-brand-active dark:text-brand-2 text-sm font-bold whitespace-nowrap">
+                <span className="flex items-center gap-1.5 h-9 px-3 rounded-xl bg-soft border border-brand/20 text-brand-ink dark:text-brand text-sm font-bold whitespace-nowrap">
                   {pipelines[0].name}
                 </span>
               </div>
@@ -836,7 +836,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
             <button
               type="button"
               onClick={selectAllAvailable}
-              className="text-xs font-bold text-brand-active hover:brightness-110 dark:text-brand-2 flex items-center gap-1 underline underline-offset-2"
+              className="text-xs font-bold text-brand-ink hover:brightness-110 dark:text-brand flex items-center gap-1 underline underline-offset-2"
             >
               <Sparkles className="w-3.5 h-3.5" />
               Marcar Todos
@@ -845,7 +845,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
 
           {selected.size > 0 && (
             <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-brand-active dark:text-brand-2 bg-soft px-3 py-1 rounded-full">
+              <span className="text-xs font-bold text-brand-ink dark:text-brand bg-soft px-3 py-1 rounded-full">
                 {selected.size} selecionado(s)
               </span>
               <button
@@ -897,11 +897,11 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
 
                       <div className="space-y-1.5 min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <div className="w-8 h-8 rounded-xl bg-soft text-brand-active dark:text-brand-2 flex items-center justify-center shrink-0 font-bold text-xs">
+                          <div className="w-8 h-8 rounded-xl bg-soft text-brand-ink dark:text-brand flex items-center justify-center shrink-0 font-bold text-xs">
                             <Building2 className="w-4 h-4" />
                           </div>
                           <h4 className="font-bold text-ink text-sm truncate">{deal.title}</h4>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-soft text-brand-active dark:text-brand-2 border border-brand/20 text-[10px] font-bold">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-soft text-brand-ink dark:text-brand border border-brand/20 text-[10px] font-bold">
                             <Tag className="w-3 h-3" />
                             {deal.stageLabel}
                           </span>
@@ -942,7 +942,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                           type="button"
                           onClick={() => importSingle(deal.id)}
                           disabled={isSingleImporting || importing}
-                          className="flex items-center gap-1.5 px-3.5 py-2 bg-soft hover:bg-brand/20 text-brand-active dark:text-brand-2 border border-brand/20 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+                          className="flex items-center gap-1.5 px-3.5 py-2 bg-soft hover:bg-brand/20 text-brand-ink dark:text-brand border border-brand/20 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
                         >
                           {isSingleImporting ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -987,11 +987,11 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
 
                       <div className="space-y-1.5 min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <div className="w-8 h-8 rounded-xl bg-soft text-brand-active dark:text-brand-2 flex items-center justify-center shrink-0 font-bold text-xs">
+                          <div className="w-8 h-8 rounded-xl bg-soft text-brand-ink dark:text-brand flex items-center justify-center shrink-0 font-bold text-xs">
                             <Users className="w-4 h-4" />
                           </div>
                           <h4 className="font-bold text-ink text-sm truncate">{lead.title}</h4>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-soft text-brand-active dark:text-brand-2 border border-brand/20 text-[10px] font-bold">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-soft text-brand-ink dark:text-brand border border-brand/20 text-[10px] font-bold">
                             <Tag className="w-3 h-3" />
                             {lead.statusLabel}
                           </span>
@@ -1054,7 +1054,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                           type="button"
                           onClick={() => importSingle(lead.id)}
                           disabled={isSingleImporting || importing}
-                          className="flex items-center gap-1.5 px-3.5 py-2 bg-soft hover:bg-brand/20 text-brand-active dark:text-brand-2 border border-brand/20 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+                          className="flex items-center gap-1.5 px-3.5 py-2 bg-soft hover:bg-brand/20 text-brand-ink dark:text-brand border border-brand/20 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
                         >
                           {isSingleImporting ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1121,7 +1121,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
             type="button"
             onClick={importSelected}
             disabled={importing || selected.size === 0}
-            className="flex items-center gap-1.5 px-6 py-2.5 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-white text-xs font-bold rounded-2xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-40"
+            className="flex items-center gap-1.5 px-6 py-2.5 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-on-brand text-xs font-bold rounded-2xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-40"
           >
             {importing ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -1141,7 +1141,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
           <div className="bg-surface rounded-3xl p-6 max-w-md w-full border border-line shadow-2xl space-y-5 animate-in fade-in zoom-in duration-150">
             <div className="flex items-center justify-between border-b border-line pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-soft text-brand-active dark:text-brand-2 flex items-center justify-center font-bold">
+                <div className="w-9 h-9 rounded-2xl bg-soft text-brand-ink dark:text-brand flex items-center justify-center font-bold">
                   <Edit3 className="w-4 h-4" />
                 </div>
                 <div>
@@ -1166,7 +1166,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
             <div className="space-y-4">
               <div>
                 <span id="bulk-temperature-label" className="block text-xs font-bold text-ink mb-2">
-                  Temperatura Inicial do Lead no AtlasGR
+                  Temperatura Inicial do Lead no Birth Hub 360
                 </span>
                 {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria
                     ganho real de acessibilidade aqui, só estilo. */}
@@ -1183,7 +1183,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                       onClick={() => setBulkTemperature(temp)}
                       className={`flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold rounded-2xl border transition-all ${
                         bulkTemperature === temp
-                          ? 'bg-gradient-to-r from-brand-active to-brand-2 text-white border-brand-active shadow-md shadow-brand-active/20'
+                          ? 'bg-gradient-to-r from-brand-active to-brand-2 text-on-brand border-brand-active shadow-md shadow-brand-active/20'
                           : 'bg-surface-2 border-line text-ink hover:bg-line'
                       }`}
                     >
@@ -1239,7 +1239,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
                 type="button"
                 onClick={applyBulkEditAndImport}
                 disabled={importing}
-                className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-white text-xs font-bold rounded-2xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-50"
+                className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-brand-active to-brand-2 hover:brightness-110 text-on-brand text-xs font-bold rounded-2xl shadow-md shadow-brand-active/20 transition-all disabled:opacity-50"
               >
                 {importing ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />

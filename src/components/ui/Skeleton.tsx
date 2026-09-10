@@ -10,7 +10,7 @@ export function Skeleton({ className, shimmer = true, ...props }: SkeletonProps)
     <div
       className={cn(
         'rounded-md',
-        shimmer ? 'atlas-skeleton-shimmer' : 'animate-pulse bg-surface-2',
+        shimmer ? 'bh-skeleton-shimmer' : 'animate-pulse bg-surface-2',
         className,
       )}
       {...props}

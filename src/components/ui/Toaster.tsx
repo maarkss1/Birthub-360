@@ -10,7 +10,7 @@ import { toast, type ToastMessage } from '../../lib/toast';
 const KIND_STYLES: Record<ToastMessage['kind'], { bg: string; icon: typeof CheckCircle2 }> = {
   success: { bg: 'bg-green-700', icon: CheckCircle2 },
   error: { bg: 'bg-red-600', icon: AlertTriangle },
-  info: { bg: 'bg-atlas-dark', icon: Info },
+  info: { bg: 'bg-obsidian', icon: Info },
 };
 
 const AUTO_DISMISS_MS = 4500;

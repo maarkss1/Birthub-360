@@ -192,7 +192,7 @@ export function Analytics() {
                   aria-pressed={months === option}
                   className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
                     months === option
-                      ? 'bg-brand-active text-white'
+                      ? 'bg-brand-active text-on-brand'
                       : 'text-ink-2 hover:text-ink hover:bg-surface-2'
                   }`}
                 >

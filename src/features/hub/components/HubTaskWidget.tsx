@@ -111,7 +111,7 @@ export function HubTaskWidget() {
           Tarefas pendentes
         </span>
         {!loading && !error && (
-          <span className="rounded-full bg-brand px-1.5 py-px text-[9.5px] font-black text-white">
+          <span className="rounded-full bg-brand px-1.5 py-px text-[9.5px] font-black text-on-brand">
             {pending}
           </span>
         )}
@@ -157,7 +157,7 @@ export function HubTaskWidget() {
                 >
                   {task.text}
                 </span>
-                <span className="shrink-0 whitespace-nowrap rounded-full bg-brand/10 px-1.5 py-px text-[8.5px] font-black text-brand-active">
+                <span className="shrink-0 whitespace-nowrap rounded-full bg-brand/10 px-1.5 py-px text-[8.5px] font-black text-brand-ink">
                   {task.assigneeName.split(' ')[0]}
                 </span>
               </div>
@@ -200,7 +200,7 @@ export function HubTaskWidget() {
               type="submit"
               aria-label="Atribuir tarefa"
               disabled={submitting || !newText.trim() || !assigneeId}
-              className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-brand text-white hover:bg-brand-2 disabled:opacity-50"
+              className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-brand text-on-brand hover:bg-brand-2 disabled:opacity-50"
             >
               {submitting ? (
                 <Loader2 className="h-3 w-3 animate-spin" strokeWidth={2.5} />

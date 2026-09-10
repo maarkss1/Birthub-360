@@ -1,1 +1,1 @@
-export * from './AtlasIcons';
+export * from './BrandIcons';

@@ -12,7 +12,7 @@ import { trainingResultSchema } from '../../schema.js';
 
 const request = {
   kind: 'training' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: { topic: 'Como tratar objeção de preço' },
 };
 

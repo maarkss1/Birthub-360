@@ -315,7 +315,7 @@ export function Team() {
           <button
             type="submit"
             disabled={isCreating || !name || !email}
-            className="bg-brand-active text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-2 transition-colors flex items-center gap-2 disabled:opacity-50"
+            className="bg-brand-active text-on-brand px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-2 transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             {isCreating ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
             {isCreating ? 'Criando...' : 'Criar usuário'}
@@ -358,7 +358,7 @@ export function Team() {
                     ) : (
                       <div
                         aria-hidden="true"
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-white shadow-card"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-on-brand shadow-card"
                       >
                         {(member.name || 'U').charAt(0).toUpperCase()}
                       </div>
@@ -442,7 +442,7 @@ export function Team() {
                           ? 'Redefinir a sua própria senha'
                           : `Redefinir a senha de ${member.name}`
                       }
-                      className="text-ink-2 hover:bg-brand/10 hover:text-brand-active dark:hover:text-brand-2 p-2 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="text-ink-2 hover:bg-brand/10 hover:text-brand-ink dark:hover:text-brand-2 p-2 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       {resettingId === member.id ? (
                         <Loader2 size={14} className="animate-spin" />

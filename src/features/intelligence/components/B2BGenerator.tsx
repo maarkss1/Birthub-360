@@ -12,7 +12,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 
 interface B2BMatrixResult {
@@ -23,7 +23,7 @@ interface B2BMatrixResult {
 
 export function B2BGenerator() {
   const accent = useBrandAccent();
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const [icp, setIcp] = useState('');
   const [solution, setSolution] = useState('');
   const [generating, setGenerating] = useState(false);
@@ -40,7 +40,7 @@ export function B2BGenerator() {
         '/api/intelligence/studio',
         {
           kind: 'b2b_matrix',
-          brand: { name: brandInfo.name, description: brandInfo.description },
+          brand: { name: playbookMeta.label, description: playbookMeta.description },
           inputs: { icp, solution },
         },
         { timeoutMs: 90_000 },
@@ -92,7 +92,7 @@ export function B2BGenerator() {
             <BrainCircuit size={32} className={accent.text} />
           </motion.div>
           <h3 className="text-3xl font-black text-ink mb-3 tracking-tight">
-            {accent.brandName}{' '}
+            {playbookMeta.label}{' '}
             <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
               Simulador Cognitivo B2B
             </span>
@@ -150,7 +150,7 @@ export function B2BGenerator() {
             type="button"
             onClick={handleGenerate}
             disabled={generating || !icp || !solution}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-white px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-lg cursor-pointer`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-lg cursor-pointer`}
           >
             {generating && (
               <motion.div

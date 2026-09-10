@@ -68,7 +68,7 @@ export function CohortAnalysis() {
         <button
           type="button"
           onClick={downloadCsv}
-          className="bg-brand text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-brand-active"
+          className="bg-brand text-on-brand px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-brand-active"
         >
           Baixar CSV
         </button>

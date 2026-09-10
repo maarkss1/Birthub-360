@@ -27,6 +27,7 @@ import {
 } from '@floating-ui/react';
 import { Bot, Loader2, Sparkles, X } from 'lucide-react';
 import { api } from '../../lib/api';
+import { OPEN_AI_CHAT_EVENT } from '../../lib/paletteIntent';
 
 type EntityType = 'company' | 'contact' | 'deal';
 
@@ -129,7 +130,7 @@ export function AIContextPopover({
 
             {/* Header */}
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
-              <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-active dark:text-brand-2">
+              <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-ink dark:text-brand">
                 <Sparkles className="h-3.5 w-3.5" />
                 IA — {ENTITY_LABELS[entityType]}
               </span>
@@ -169,7 +170,7 @@ export function AIContextPopover({
 
                   {insight.nextAction && (
                     <div className="rounded-xl bg-brand/10 px-3 py-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-active dark:text-brand-2 mb-0.5">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-ink dark:text-brand mb-0.5">
                         Próxima Ação Recomendada
                       </p>
                       <p className="text-xs text-ink">{insight.nextAction}</p>
@@ -192,10 +193,10 @@ export function AIContextPopover({
             <div className="border-t border-line px-4 py-3">
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand/10 px-3 py-2 text-xs font-semibold text-brand-active dark:text-brand-2 transition-colors hover:bg-brand/20"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand/10 px-3 py-2 text-xs font-semibold text-brand-ink dark:text-brand transition-colors hover:bg-brand/20"
                 onClick={() => {
                   setIsOpen(false);
-                  window.dispatchEvent(new Event('atlas:open-ai-chat'));
+                  window.dispatchEvent(new Event(OPEN_AI_CHAT_EVENT));
                 }}
               >
                 <Bot className="h-3.5 w-3.5" />

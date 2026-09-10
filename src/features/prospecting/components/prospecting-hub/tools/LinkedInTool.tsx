@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { LinkedinIcon as Linkedin } from '../../../../../components/ui/icons/LinkedinIcon';
 import { api } from '../../../../../lib/api';
-import { useBrand } from '../../../../../contexts/BrandContext';
+import { BRAND } from '../../../../../config/brand';
+import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
@@ -32,9 +33,9 @@ import { getErrorMessage, type PromoteResult } from './shared';
 type SubTab = 'empresas' | 'decisores';
 
 export function LinkedInTool({ configured }: { configured: boolean }) {
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook } = useActivePlaybook();
   const activeSegments =
-    activeBrand === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+    playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
   const [subTab, setSubTab] = useState<SubTab>('empresas');
 
   // --- Empresas (Apollo Organization Search filtrado por linkedinUrl) ---
@@ -143,7 +144,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         segment: candidate.segment,
         size: candidate.size,
         location: candidate.location,
-        source: `${brandInfo.name} — Ferramenta LinkedIn (Empresas via Apollo)`,
+        source: `${BRAND.shortName} — Ferramenta LinkedIn (Empresas via Apollo)`,
         autoEnrich: false,
         linkedin: candidate.linkedinUrl,
         phone: candidate.phone,
@@ -164,7 +165,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
     try {
       const result = await api.post<PromoteResult>('/api/prospecting/promote', {
         tradeName: domainInput,
-        source: `${brandInfo.name} — Ferramenta LinkedIn (Decisores via Apollo)`,
+        source: `${BRAND.shortName} — Ferramenta LinkedIn (Decisores via Apollo)`,
         autoEnrich: false,
         website: domainInput,
         decisionMakers: [dm],
@@ -185,7 +186,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
     try {
       const result = await api.post<PromoteResult>('/api/prospecting/promote', {
         tradeName: manualCompany.trim() || manualName,
-        source: `${brandInfo.name} — Ferramenta LinkedIn (link manual)`,
+        source: `${BRAND.shortName} — Ferramenta LinkedIn (link manual)`,
         autoEnrich: false,
         contact: { name: manualName, role: manualTitle || undefined },
       });
@@ -205,14 +206,14 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         <button
           type="button"
           onClick={() => setSubTab('empresas')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'empresas' ? 'bg-brand-active text-white shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'empresas' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
         >
           <Building2 size={14} /> Empresas
         </button>
         <button
           type="button"
           onClick={() => setSubTab('decisores')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'decisores' ? 'bg-brand-active text-white shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'decisores' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
         >
           <Users size={14} /> Decisores
         </button>
@@ -278,7 +279,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
               type="button"
               onClick={searchCompanies}
               disabled={isSearchingCompanies}
-              className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+              className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
             >
               {isSearchingCompanies ? (
                 <>
@@ -368,7 +369,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
               type="button"
               onClick={searchPeople}
               disabled={isSearchingPeople}
-              className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+              className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
             >
               {isSearchingPeople ? (
                 <>
@@ -405,7 +406,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                   key={key}
                   className="bg-surface p-5 rounded-2xl border border-line shadow-sm flex flex-wrap items-center gap-x-4 gap-y-2"
                 >
-                  <div className="w-9 h-9 rounded-full bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2 shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand shrink-0">
                     <User size={16} />
                   </div>
                   <div className="min-w-0">
@@ -430,7 +431,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                         type="button"
                         onClick={() => promotePerson(dm, idx)}
                         disabled={promotingKey === key}
-                        className="bg-brand-active text-white px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
+                        className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
                       >
                         {promotingKey === key ? (
                           <Loader2 className="animate-spin" size={13} />
@@ -511,7 +512,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                   type="button"
                   onClick={promoteManual}
                   disabled={promotingKey === 'li-manual'}
-                  className="bg-brand-active text-white px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 flex items-center gap-2 disabled:opacity-60"
+                  className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 flex items-center gap-2 disabled:opacity-60"
                 >
                   {promotingKey === 'li-manual' ? (
                     <Loader2 className="animate-spin" size={13} />

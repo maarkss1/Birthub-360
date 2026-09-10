@@ -91,7 +91,7 @@ export function DailyClosingGate({ pending, onClosed }: DailyClosingGateProps) {
       <div className="w-full max-w-xl relative z-10">
         <div className="glass-panel p-6 sm:p-8 rounded-[2.5rem] border border-line bg-surface/95 shadow-2xl space-y-6">
           <div className="flex flex-col items-center mb-2 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2 mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand mb-4">
               <ClipboardList size={24} />
             </div>
             <h1 className="text-xl font-black text-ink">
@@ -171,7 +171,7 @@ export function DailyClosingGate({ pending, onClosed }: DailyClosingGateProps) {
                   <button
                     type="button"
                     onClick={addGoal}
-                    className="text-[10px] font-bold text-brand hover:text-brand-active inline-flex items-center gap-1 cursor-pointer"
+                    className="text-[10px] font-bold text-brand hover:text-brand-ink inline-flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="w-3 h-3" /> Adicionar
                   </button>
@@ -210,7 +210,7 @@ export function DailyClosingGate({ pending, onClosed }: DailyClosingGateProps) {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
+              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <Loader2 className="animate-spin" size={18} />

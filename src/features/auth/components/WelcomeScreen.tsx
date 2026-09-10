@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, MessageCircle, Phone, Volume2, VolumeX } from 'lucide-react';
 import { clientLogger } from '../../../lib/clientLogger';
-import { Logo } from '../../../components/Logo';
-import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
-import { useTheme } from '../../../contexts/ThemeContext';
+import { BRAND } from '../../../config/brand';
+import { BirthHubLogo, BirthHubWordmark } from '../../../components/brand/BirthHubLogo';
 import { staggerContainer, staggerItem } from '../../../lib/motion';
 
 // Marcas de redes sociais não existem no lucide-react (biblioteca de ícones genéricos do
-// projeto) — seguindo a mesma convenção de Logo.tsx/TotalTrackLogo.tsx, ícones de marca de
-// terceiros vivem como SVG inline em vez de puxar uma segunda lib de ícones para 4 glifos.
+// projeto) — ícones de marca de terceiros vivem como SVG inline em vez de puxar uma segunda lib
+// de ícones para 4 glifos. Ficam aqui, prontos, porque `BRAND.social` volta a ser preenchido
+// assim que os perfis da plataforma existirem (hoje a lista está vazia de propósito).
 function FacebookGlyph({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
@@ -73,20 +73,30 @@ function YoutubeGlyph({ className }: { className?: string }) {
   );
 }
 
-const SOCIAL_LINKS = [
-  { href: 'https://www.facebook.com/atlasgroficial', label: 'Facebook', Icon: FacebookGlyph },
-  { href: 'https://www.instagram.com/atlasgroficial/', label: 'Instagram', Icon: InstagramGlyph },
-  {
-    href: 'https://www.linkedin.com/company/atlasgroficial',
-    label: 'LinkedIn',
-    Icon: LinkedinGlyph,
-  },
-  { href: 'https://www.youtube.com/@atlasgroficial', label: 'YouTube', Icon: YoutubeGlyph },
-] as const;
+const SOCIAL_GLYPHS = {
+  Facebook: FacebookGlyph,
+  Instagram: InstagramGlyph,
+  LinkedIn: LinkedinGlyph,
+  YouTube: YoutubeGlyph,
+} as const;
 
+/**
+ * Tela de entrada (pré-login).
+ *
+ * Antes era o primeiro passo de um fluxo de duas etapas — boas-vindas com os
+ * dois logos e depois `/select-brand` para escolher entre as duas marcas.
+ * Com marca única não há o que escolher: a tela virou o portal institucional da
+ * Birth Hub 360 e "Continuar" leva direto ao login.
+ *
+ * Composição centralizada: exceção justificada da regra #2 da Constituição
+ * (`.claude/CLAUDE.md` §4/§5), pelos mesmos critérios do Piloto 001 — é um gate
+ * institucional pré-marca, de estado único, com uma decisão só ("entrar"). Não
+ * há informação real que sustente uma composição assimétrica, e o emblema
+ * (que É a tese da marca: núcleo, anel e órbita) é o elemento dominante por
+ * direito, não por decoração.
+ */
 export function WelcomeScreen() {
   const navigate = useNavigate();
-  const { theme } = useTheme();
   const [isMuted, setIsMuted] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -108,7 +118,8 @@ export function WelcomeScreen() {
       {/* Trilha ambiente decorativa (piano/cordas instrumental, sem fala) — não transmite
           informação que precise de legenda (WCAG 1.2.2 é sobre conteúdo falado/significativo);
           sem `controls` nativo de propósito (o botão de mudo próprio da tela já dá controle ao
-          usuário, ver toggleMute acima). */}
+          usuário, ver toggleMute acima). Recurso externo herdado, mantido com o mesmo
+          comportamento (mudo por padrão, nunca toca sozinho) — ver CLAUDE.md §9. */}
       {/* biome-ignore lint/a11y/useMediaCaption: trilha instrumental sem fala, ver comentário acima */}
       <audio
         ref={audioRef}
@@ -116,21 +127,22 @@ export function WelcomeScreen() {
         src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=ambient-piano-and-strings-10711.mp3"
       />
 
-      {/* Ambiente de fundo — um glow por marca, sutil e com rotação lenta (mesmo padrão já usado
-          em LoginScreen), não duas faixas largas de gradiente competindo pela atenção. Tamanho
-          reduzido em telas estreitas: em ~390px de largura um blob de 420px tingia a tela toda e
-          derrubava o contraste do texto por baixo dele (achado real do axe-core em mobile). */}
+      {/* Ambiente de fundo — os dois extremos da órbita do emblema (ouro e íris) como halo, que é
+          exatamente o uso que o brand book reserva ao gradiente 360º ("halos, bordas, indicadores
+          e hero sections"). Antes eram um glow por marca, um laranja e um azul. Tamanho reduzido
+          em telas estreitas: em ~390px de largura um blob de 420px tingia a tela toda e derrubava
+          o contraste do texto por baixo dele (achado real do axe-core em mobile). */}
       <motion.div
         aria-hidden="true"
         animate={{ rotate: [0, 90, 0] }}
         transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
-        className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-atlas-orange/6 blur-[90px] sm:-left-32 sm:-top-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
+        className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-brand/8 blur-[90px] sm:-left-32 sm:-top-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
       />
       <motion.div
         aria-hidden="true"
         animate={{ rotate: [0, -90, 0] }}
         transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-totaltrack-blue/6 blur-[90px] sm:-bottom-32 sm:-right-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
+        className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-iris/10 blur-[90px] sm:-bottom-32 sm:-right-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
       />
 
       <button
@@ -149,47 +161,45 @@ export function WelcomeScreen() {
         animate="show"
         className="relative z-10 flex w-full max-w-3xl flex-col items-center px-6 text-center"
       >
-        <motion.p
-          variants={staggerItem}
-          className="mb-8 text-xs font-bold uppercase tracking-[0.3em] text-ink-2"
-        >
-          AtlasGR <span className="text-ink-2/40">•</span> Total Trac
-        </motion.p>
-
-        <motion.div variants={staggerItem} className="mb-10 flex items-center gap-6">
-          <div className="flex h-16 w-40 items-center justify-center">
-            <Logo variant={theme === 'dark' ? 'white' : 'default'} className="h-full w-full" />
-          </div>
-          <div className="h-10 w-px bg-line" />
-          <div className="flex h-16 w-40 items-center justify-center">
-            <TotalTrackLogo className="h-full w-full" />
-          </div>
+        <motion.div variants={staggerItem} className="mb-8">
+          <BirthHubLogo variant="symbol" className="h-40 w-40 sm:h-44 sm:w-44" title={BRAND.name} />
         </motion.div>
 
-        <motion.h1
-          variants={staggerItem}
-          className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-ink md:text-5xl"
-        >
-          A sua nova inteligência comercial.
+        <motion.h1 variants={staggerItem} className="mb-5">
+          <BirthHubWordmark className="text-3xl sm:text-4xl md:text-5xl" />
         </motion.h1>
+
         <motion.p
           variants={staggerItem}
-          className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ink-2 md:text-lg"
+          className="mx-auto max-w-xl text-base leading-relaxed text-ink-2 md:text-lg"
         >
-          Onde dados se transformam em receita e os leads B2B mais qualificados encontram o seu
-          negócio de forma automatizada.
+          {BRAND.tagline}
         </motion.p>
+
+        <motion.ul
+          variants={staggerItem}
+          className="mt-8 flex flex-wrap items-center justify-center gap-3"
+        >
+          {BRAND.pillars.map((pillar) => (
+            <li
+              key={pillar}
+              className="rounded-full border border-brand/60 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-ink dark:text-brand"
+            >
+              {pillar}
+            </li>
+          ))}
+        </motion.ul>
 
         <motion.div variants={staggerItem} className="mt-10">
           <button
             type="button"
             onClick={() => {
               if (audioRef.current) audioRef.current.play().catch(() => {});
-              navigate('/select-brand');
+              navigate('/login');
             }}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-ink px-8 py-4 text-sm font-bold text-bg transition-transform hover:scale-[1.03] active:scale-95"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-brand px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand transition-[transform,background-color] hover:scale-[1.03] hover:bg-brand-active active:scale-95"
           >
-            Continuar
+            Explorar Hub
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
         </motion.div>
@@ -198,44 +208,53 @@ export function WelcomeScreen() {
           variants={staggerItem}
           className="mt-14 text-xs font-medium tracking-wide text-ink-2"
         >
-          Desenvolvido pelo Coordenador Comercial Marcelo do Nascimento
+          {BRAND.credit}
         </motion.p>
       </motion.div>
 
       <div className="absolute bottom-6 z-10 flex w-full flex-col items-center gap-4 px-8 text-sm text-ink-2 sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <a
-            href="https://api.whatsapp.com/send?phone=5516981818458"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 transition-colors hover:text-ink"
-          >
-            <MessageCircle size={16} aria-hidden="true" />
-            <span>Suporte: (16) 98181-8458</span>
-          </a>
-          <a
-            href="tel:1621323790"
-            className="flex items-center gap-2 transition-colors hover:text-ink"
-          >
-            <Phone size={16} aria-hidden="true" />
-            <span>Comercial: (16) 2132-3790</span>
-          </a>
+          {BRAND.support.whatsapp.href && (
+            <a
+              href={BRAND.support.whatsapp.href}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 transition-colors hover:text-ink"
+            >
+              <MessageCircle size={16} aria-hidden="true" />
+              <span>{BRAND.support.whatsapp.label}</span>
+            </a>
+          )}
+          {BRAND.support.phone.href && (
+            <a
+              href={BRAND.support.phone.href}
+              className="flex items-center gap-2 transition-colors hover:text-ink"
+            >
+              <Phone size={16} aria-hidden="true" />
+              <span>{BRAND.support.phone.label}</span>
+            </a>
+          )}
         </div>
-        <ul className="flex gap-4">
-          {SOCIAL_LINKS.map(({ href, label, Icon }) => (
-            <li key={href}>
-              <a
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={label}
-                className="block transition-colors hover:text-ink"
-              >
-                <Icon className="h-[18px] w-[18px]" />
-              </a>
-            </li>
-          ))}
-        </ul>
+        {BRAND.social.length > 0 && (
+          <ul className="flex gap-4">
+            {BRAND.social.map(({ href, label }) => {
+              const Icon = SOCIAL_GLYPHS[label];
+              return (
+                <li key={href}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={label}
+                    className="block transition-colors hover:text-ink"
+                  >
+                    <Icon className="h-[18px] w-[18px]" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     </main>
   );

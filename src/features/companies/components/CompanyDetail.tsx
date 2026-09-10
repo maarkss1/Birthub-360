@@ -256,7 +256,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
         <div className="bg-surface p-6 md:p-8 rounded-3xl border border-line shadow-xl space-y-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-2xl bg-brand/10 border border-brand/20 text-brand-active dark:text-brand-2">
+              <div className="p-2.5 rounded-2xl bg-brand/10 border border-brand/20 text-brand-ink dark:text-brand">
                 <Wrench className="w-6 h-6" />
               </div>
               <div>
@@ -473,7 +473,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
               <div className="bg-warning/10 p-6 rounded-3xl border border-warning/20 space-y-2">
                 <h3 className="text-xs font-bold text-warning-active dark:text-warning uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4" />
-                  Observações da IA Atlas
+                  Observações da IA do Hub
                 </h3>
                 <p className="text-xs text-ink-2 leading-relaxed whitespace-pre-wrap">
                   {company.observations}

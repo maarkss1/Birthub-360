@@ -26,9 +26,9 @@ const SocialSellingHub = lazy(() =>
     default: m.SocialSellingHub,
   })),
 );
-const TreinamentoAtlasGRHub = lazy(() =>
-  import('./features/treinamento-atlasgr/components/TreinamentoAtlasGRHub').then((m) => ({
-    default: m.TreinamentoAtlasGRHub,
+const TreinamentoHub = lazy(() =>
+  import('./features/treinamento/components/TreinamentoHub').then((m) => ({
+    default: m.TreinamentoHub,
   })),
 );
 const PropostaComercialHub = lazy(() =>
@@ -193,11 +193,6 @@ const OnboardingTour = lazy(() =>
 const WelcomeScreen = lazy(() =>
   import('./features/auth/components/WelcomeScreen').then((m) => ({ default: m.WelcomeScreen })),
 );
-const SelectionScreen = lazy(() =>
-  import('./features/auth/components/SelectionScreen').then((m) => ({
-    default: m.SelectionScreen,
-  })),
-);
 const Ldr = lazy(() => import('./pages/Ldr').then((m) => ({ default: m.Ldr })));
 const Account360 = lazy(() =>
   import('./features/market-intelligence/components/Account360').then((m) => ({
@@ -243,7 +238,7 @@ function PageFallback() {
 }
 
 function AppLayout() {
-  // OnboardingTour importa AtlasOrb (@react-three/fiber/three), um chunk de ~900kB — React.lazy
+  // OnboardingTour importa BrandOrb (@react-three/fiber/three), um chunk de ~900kB — React.lazy
   // só adia QUANDO o import roda, não SE ele roda. Sem esta checagem aqui, <OnboardingTour />
   // sendo renderizado incondicionalmente disparava esse import em toda montagem do MainLayout
   // (ou seja, em toda navegação autenticada), mesmo para quem já viu o tour — a checagem de
@@ -419,7 +414,10 @@ export default function App() {
                         continua existindo e acessível a partir dos círculos do Hub. */}
                       <Route path="/" element={<LoginScreen />} />
                       <Route path="/welcome" element={<WelcomeScreen />} />
-                      <Route path="/select-brand" element={<SelectionScreen />} />
+                      {/* `/select-brand` era a escolha entre as duas marcas anteriores. Com marca
+                        única a tela deixou de existir; a rota permanece como redirecionamento
+                        para não quebrar link salvo, atalho de app instalado ou bookmark. */}
+                      <Route path="/select-brand" element={<Navigate to="/welcome" replace />} />
                       <Route path="/login" element={<LoginScreen />} />
                       <Route path="/reset-password" element={<ResetPasswordScreen />} />
                       <Route path="/book/:slug" element={<PublicBookingPage />} />
@@ -457,7 +455,7 @@ export default function App() {
                         element={
                           <ProtectedRoute>
                             <RequireModuleAccess moduleKey="treinamento-atlasgr">
-                              <TreinamentoAtlasGRHub />
+                              <TreinamentoHub />
                             </RequireModuleAccess>
                           </ProtectedRoute>
                         }

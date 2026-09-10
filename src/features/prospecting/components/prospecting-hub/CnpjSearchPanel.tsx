@@ -29,7 +29,7 @@ export function CnpjSearchPanel({
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
       <div className="xl:col-span-4 bg-surface p-6 sm:p-8 rounded-2xl border border-line shadow-sm">
         <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2">
+          <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand">
             <Landmark size={18} />
           </div>
           <h2 className="font-black text-xl text-ink">🏛️ Busca Direta</h2>
@@ -56,7 +56,7 @@ export function CnpjSearchPanel({
             type="button"
             onClick={onLookup}
             disabled={cnpjLoading || !cnpjInput}
-            className="w-full bg-brand-active text-white py-3.5 rounded-[2rem] font-bold hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+            className="w-full bg-brand-active text-on-brand py-3.5 rounded-[2rem] font-bold hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
           >
             {cnpjLoading ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />}
             {cnpjLoading ? '⏳ Consultando...' : '🔎 Consultar CNPJ'}
@@ -66,7 +66,7 @@ export function CnpjSearchPanel({
             <button
               type="button"
               onClick={() => onSearchWebInstead(cnpjInput)}
-              className="w-full bg-surface-2 text-ink py-3.5 rounded-[2rem] font-bold hover:bg-atlas-dark hover:text-white disabled:opacity-50 transition-all flex items-center justify-center gap-2 mt-2"
+              className="w-full bg-surface-2 text-ink py-3.5 rounded-[2rem] font-bold hover:bg-obsidian hover:text-white disabled:opacity-50 transition-all flex items-center justify-center gap-2 mt-2"
             >
               ✨ Buscar &quot;{cnpjInput}&quot; na web (Radar)
             </button>

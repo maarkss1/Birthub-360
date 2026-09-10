@@ -16,12 +16,12 @@ describe('Onda 2 — Microinteractions and System Components', () => {
       },
     });
 
-    render(<CopyButton value="AtlasGR Enterprise" label="Copiar Token" />);
+    render(<CopyButton value="Birth Hub 360 Enterprise" label="Copiar Token" />);
     const button = screen.getByRole('button', { name: /copiar token/i });
     expect(button).toBeInTheDocument();
 
     fireEvent.click(button);
-    expect(writeTextMock).toHaveBeenCalledWith('AtlasGR Enterprise');
+    expect(writeTextMock).toHaveBeenCalledWith('Birth Hub 360 Enterprise');
   });
 
   it('renders Toggle and toggles state on click and keyboard', () => {

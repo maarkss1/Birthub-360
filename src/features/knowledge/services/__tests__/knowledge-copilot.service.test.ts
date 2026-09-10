@@ -182,7 +182,7 @@ describe('KnowledgeCopilotService — citação real resolvida de SearchHit (AI-
 
 /**
  * Prompt injection via chunk de documento de terceiro (AI-0XX): um chunk de `DocumentChunk` vem de
- * upload de documento (manual/PDF de terceiro), conteúdo que a AtlasGR não controla. Prova que um
+ * upload de documento (manual/PDF de terceiro), conteúdo que a Birth Hub 360 não controla. Prova que um
  * chunk malicioso contendo uma instrução de injeção (1) continua delimitado estruturalmente como
  * dado externo na mensagem enviada ao modelo, e (2) não muda o comportamento esperado do serviço —
  * a citação continua resolvida apenas por índice verificado contra os hits reais, nunca por texto

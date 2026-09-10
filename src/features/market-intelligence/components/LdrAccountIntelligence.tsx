@@ -187,10 +187,10 @@ export function LdrAccountIntelligence() {
 
   return (
     <div className="space-y-5 p-4 md:p-6 lg:p-8">
-      <header className="overflow-hidden rounded-[28px] bg-atlas-dark px-5 py-6 text-white md:px-8 md:py-8">
+      <header className="overflow-hidden rounded-[28px] bg-obsidian px-5 py-6 text-white md:px-8 md:py-8">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <div className="flex items-center gap-2 text-atlas-yellow">
+            <div className="flex items-center gap-2 text-brand">
               <Bot className="h-5 w-5" />
               <span className="text-[10px] font-black uppercase tracking-[0.2em]">
                 LDR Atlas · Account Intelligence
@@ -202,7 +202,7 @@ export function LdrAccountIntelligence() {
                 ao <h1> — o navegador só herda uma cor quando nenhuma regra mais específica mira o
                 próprio elemento; um seletor de tag em @layer base já mira o <h1> diretamente).
                 Sem `text-white` explícito aqui, este h1 renderizava quase preto (--ink, #1a1513)
-                sobre o fundo escuro do header (bg-atlas-dark, #333333) — contraste 1.43:1, muito
+                sobre o fundo escuro do header (bg-obsidian, #333333) — contraste 1.43:1, muito
                 abaixo do mínimo de 3:1 pra texto grande (mesma classe de bug do precedente DQA-19:
                 texto de baixo contraste sobre cor sólida). Título sobre superfície escura precisa
                 de cor explícita, não pode depender de herança. */}
@@ -224,7 +224,7 @@ export function LdrAccountIntelligence() {
             </div>
             <Link
               to="/app/market-intelligence/deck"
-              className="inline-flex items-center gap-2 rounded-xl bg-brand-active px-4 py-2 text-xs font-black text-white hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand-active px-4 py-2 text-xs font-black text-on-brand hover:brightness-110"
             >
               <Zap className="h-4 w-4" /> Abrir fila de aprovação
             </Link>
@@ -246,7 +246,7 @@ export function LdrAccountIntelligence() {
             <button
               type="submit"
               disabled={loading}
-              className="my-1.5 inline-flex items-center gap-2 rounded-lg bg-brand-active px-4 py-2 text-xs font-black text-white disabled:opacity-50"
+              className="my-1.5 inline-flex items-center gap-2 rounded-lg bg-brand-active px-4 py-2 text-xs font-black text-on-brand disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

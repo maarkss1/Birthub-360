@@ -65,7 +65,7 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
 
   const [form, setForm] = useState({
     title: 'Demonstração de Telemetria e Rastreamento',
-    slug: 'demo-atlas',
+    slug: 'demo-comercial',
     durationMin: 30,
     description:
       'Apresentação prática da central de inteligência, telemetria CAN e redução de custos operacionais.',
@@ -160,7 +160,7 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
         {/* Header */}
         <div className="p-6 border-b border-line flex items-center justify-between bg-surface-2/60">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-brand/10 text-brand-active dark:text-brand-2 border border-brand/20">
+            <div className="p-2.5 rounded-2xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
               <Link2 className="w-6 h-6" />
             </div>
             <div>
@@ -309,7 +309,7 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
                         <span className="font-extrabold text-xs text-ink truncate">
                           {link.title}
                         </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand/10 text-brand-active dark:text-brand-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand/10 text-brand-ink dark:text-brand">
                           ⏱️ {link.durationMin} min
                         </span>
                         {!link.active && (

@@ -7,7 +7,7 @@ tabela D do Truth Map — nenhuma tela, número ou funcionalidade nova foi inven
 
 ## 1. Objetivo estratégico
 
-Posicionar o AtlasGR Revenue OS como a camada de inteligência que conecta sinal, contexto,
+Posicionar o Birth Hub 360 Revenue OS como a camada de inteligência que conecta sinal, contexto,
 prioridade e execução comercial — não "mais um CRM", não "IA que faz tudo sozinha". Público-alvo
 deste corte: Diretores Comerciais, Heads de Vendas, Revenue Managers e CROs (público primário,
 Seção 12 do briefing) vendo a peça no LinkedIn ou em contexto de apresentação comercial. Percepção
@@ -23,7 +23,7 @@ Produto → Ação → Marca**.
 ## 3. Insight
 
 Toda operação comercial B2B já gera sinal suficiente — o gargalo real é decidir a tempo o que
-importa. O AtlasGR não cria dado novo, ele torna o dado existente acionável.
+importa. O Birth Hub 360 não cria dado novo, ele torna o dado existente acionável.
 
 ## 4. Mensagem principal
 
@@ -64,12 +64,12 @@ importa. O AtlasGR não cria dado novo, ele torna o dado existente acionável.
 | # | Tempo | Visual | Produto/Tela (origem real) | Movimento | Copy na tela | Locução (opcional) | Som |
 |---|---|---|---|---|---|---|---|
 | 1 | 0:00–0:04 | Fragmentos de informação isolados: recortes pequenos de tela flutuando sem conexão aparente — cada recorte é um crop real do Painel Central, não uma tela cheia | `/app` — `SinglePageDashboard.tsx` (KPIs ao vivo, agenda do dia) | Elementos entram espalhados, sem ordem, câmera parada | "Toda operação comercial deixa sinais." | "Toda operação comercial deixa sinais." | Sons discretos, pequenos eventos de notificação, fragmentados, sem ritmo definido |
-| 2 | 0:04–0:09 | Os recortes começam a se aproximar e se organizar em uma composição única — revela o Cockpit CRM360 completo | `/app/crm360` — `CrmOverview.tsx` (KPIs consolidados por intenção: brand/success/warning/violet) | `staggerContainer`: cards entrando em sequência, convergindo para grid organizado | "Contexto transforma informação em direção." | "O AtlasGR conecta esse contexto." | Elemento musical começa a se organizar, batida entra suave |
+| 2 | 0:04–0:09 | Os recortes começam a se aproximar e se organizar em uma composição única — revela o Cockpit CRM360 completo | `/app/crm360` — `CrmOverview.tsx` (KPIs consolidados por intenção: brand/success/warning/violet) | `staggerContainer`: cards entrando em sequência, convergindo para grid organizado | "Contexto transforma informação em direção." | "O Birth Hub 360 conecta esse contexto." | Elemento musical começa a se organizar, batida entra suave |
 | 3a | 0:09–0:13 | Zoom editorial em busca de empresa/lead — cursor real interagindo | `/app/prospect` — `ProspectingHub.tsx` (busca por CNPJ / descoberta por critério) | `fadeInUp` com blur de entrada — resultado ganhando foco | "Encontre onde existe movimento." | — | Redução de ruído começa |
 | 3b | 0:13–0:16 | Fila de leads priorizada, cursor seleciona o próximo item da fila | `/app/mesa-tratamento` — `MesaTratamento.tsx` (`QueueList`/`CurrentLeadCard`) | Item em destaque ganha foco visual (escala sutil, sem exagero) | "Veja o que exige atenção." | — | Um elemento sonoro único ganha foco, resto do som recua |
 | 3c | 0:16–0:20 | Pipeline Kanban, card de lead sendo arrastado de um estágio para o seguinte | `/app/crm` — `CrmBoard.tsx` (drag-and-drop real via `@dnd-kit`) | Drag-and-drop real capturado em tela, movimento físico e preciso (`SPRING_SNAPPY`) | "Contexto vira execução." | "Contexto certo, execução real." | Clique/feedback preciso ao soltar o card |
 | 4 | 0:20–0:26 | Corte para tela cheia do Kanban com o card já no novo estágio, painel lateral de detalhe do lead abre (`LeadDetailDrawer`) | `/app/crm` — `CrmBoard.tsx` + `LeadDetailDrawer.tsx` | `Drawer` desliza lateralmente (`framer-motion`), confirmação de ação | "O próximo movimento, executado." | — | Confirmação curta, resolução rítmica |
-| 5 | 0:26–0:30 | Fundo escuro/grafite, logotipo AtlasGR centralizado, assinatura abaixo | Tela de encerramento (assets de `identidade-visual/atlasgr/`, não é captura de produto) | Fade suave, sem movimento gratuito | "AtlasGR Revenue OS — Inteligência & Aceleração Comercial B2B — Explore o Revenue OS" | "Inteligência que encontra o próximo movimento." | Maior espaço, resolução musical, assinatura sonora AtlasGR (1-2s, a produzir) |
+| 5 | 0:26–0:30 | Fundo escuro/grafite, logotipo Birth Hub 360 centralizado, assinatura abaixo | Tela de encerramento (assets de `identidade-visual/atlasgr/`, não é captura de produto) | Fade suave, sem movimento gratuito | "Birth Hub 360 Revenue OS — Inteligência & Aceleração Comercial B2B — Explore o Revenue OS" | "Inteligência que encontra o próximo movimento." | Maior espaço, resolução musical, assinatura sonora Birth Hub 360 (1-2s, a produzir) |
 
 ## 9. Produto utilizado (rotas reais)
 
@@ -137,7 +137,7 @@ checklist do Truth Map):
 5. Pipeline Kanban (`/app/crm`) — um card sendo arrastado entre dois estágios reais do funil,
    `LeadDetailDrawer` abrindo em seguida.
 
-**Assets:** logotipo AtlasGR (`identidade-visual/atlasgr/`), fonte Montserrat (arquivo web já no
+**Assets:** logotipo Birth Hub 360 (`identidade-visual/atlasgr/`), fonte Montserrat (arquivo web já no
 repo), tokens de cor de `globals.css`.
 
 **Gravação:** tela em alta resolução (mínimo 1920×1080 nativo para permitir crop em 9:16/1:1 sem
@@ -161,7 +161,7 @@ encerramento com logotipo (cena 5).
 - [x] Nenhum cliente/depoimento/case inventado.
 - [x] Nenhuma funcionalidade inventada — Gamificação, AtlasOrb, SpaceGame não aparecem (não são
       prova real de valor, ver Truth Map Seção B).
-- [x] Identidade AtlasGR respeitada — paleta de runtime, Montserrat, tema escuro real.
+- [x] Identidade Birth Hub 360 respeitada — paleta de runtime, Montserrat, tema escuro real.
 - [x] Conceito Do Sinal à Ação presente estrutural e literalmente (beats 1→5).
 - [ ] **Pendente de produção real:** todas as 5 capturas de tela listadas na Seção 17 ainda
       precisam ser gravadas em ambiente de demonstração — este documento é roteiro/storyboard, não

@@ -21,7 +21,7 @@ export class LdrIntelligenceAgent extends BaseAgent {
   protected temperature = 0.3;
 
   protected buildSystemPrompt(learnedStyle: string | null): string {
-    const base = `${SWARM_IDENTITY} Você é o LDR (Lead Development / Inteligência de Leads) de Elite da AtlasGR — responsável por transformar dados brutos de mercado em contas priorizadas e acionáveis antes do primeiro contato.
+    const base = `${SWARM_IDENTITY} Você é o LDR (Lead Development / Inteligência de Leads) de Elite da Birth Hub 360 — responsável por transformar dados brutos de mercado em contas priorizadas e acionáveis antes do primeiro contato.
 
 REGRAS INVIOLÁVEIS:
 1. Use SOMENTE os dados fornecidos abaixo (snapshot, score, sinais, contagens). Nunca invente segmento, porte, sinal de mercado ou decisor que não esteja no contexto.

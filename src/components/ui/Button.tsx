@@ -16,7 +16,7 @@ const buttonVariants = cva(
       variant: {
         // Redesign simplificado: Fundo sólido, sem borda agressiva.
         // bg-brand-active (não bg-brand) — texto branco direto sobre --brand só atinge ~3.2:1
-        // (AtlasGR) / ~3.9:1 (TotalTrac), abaixo do mínimo WCAG AA de 4.5:1 (achado real do
+        // (Birth Hub 360) / ~3.9:1 (Birth Hub 360), abaixo do mínimo WCAG AA de 4.5:1 (achado real do
         // axe-core em accessibility.spec.ts, mesmo padrão do DQA-19 documentado em globals.css).
         // `hover:bg-brand-accent` (usado antes aqui) não gerava nenhuma utility real: `--brand-accent`
         // em globals.css não tem o prefixo `--color-` que o Tailwind 4 exige pra virar classe — hover
@@ -24,9 +24,9 @@ const buttonVariants = cva(
         // dinamicamente na troca de marca (BrandContext.tsx) e já geram `bg-brand-2` de verdade.
         // O glow em hover usa o token `shadow-brand-sm` (color-mix com var(--brand)) em vez de
         // rgba(255,86,24,...) cru pelo mesmo motivo — reage à troca de marca em vez de ficar preso
-        // ao laranja da AtlasGR.
+        // ao laranja da Birth Hub 360.
         default:
-          'bg-brand-active text-white hover:bg-brand-2 hover:scale-[1.02] hover:shadow-brand-sm',
+          'bg-brand-active text-on-brand hover:bg-brand-2 hover:scale-[1.02] hover:shadow-brand-sm',
         destructive: 'bg-red-500 text-white shadow-sm hover:bg-red-600 hover:scale-[1.02]',
         // border-gray-300/hover:bg-gray-100/200 (Tailwind cru, não token) nunca reagiam ao tema —
         // no dark mode (padrão do produto, CREATIVE_SYSTEM_01.md seção C) produziam borda
@@ -36,10 +36,10 @@ const buttonVariants = cva(
         outline: 'border border-line bg-transparent text-ink hover:bg-surface-2',
         secondary: 'bg-surface-2 text-ink hover:bg-line hover:scale-[1.02]',
         ghost: 'hover:bg-surface-2 hover:text-ink',
-        // text-brand-active dark:text-brand-2 (não text-brand cru) — mesmo achado do axe-core que
+        // text-brand-ink dark:text-brand (não text-brand cru) — mesmo achado do axe-core que
         // motivou bg-brand-active acima: texto de marca direto sobre bg-bg/bg-surface só atinge
         // ~3.0:1, abaixo do mínimo AA de 4.5:1.
-        link: 'text-brand-active dark:text-brand-2 underline-offset-4 hover:underline',
+        link: 'text-brand-ink dark:text-brand underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-9 px-4 py-2',
@@ -93,7 +93,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          loading && 'atlas-state-loading opacity-75 cursor-wait',
+          loading && 'bh-state-loading opacity-75 cursor-wait',
         )}
         ref={ref}
         disabled={loading || props.disabled}

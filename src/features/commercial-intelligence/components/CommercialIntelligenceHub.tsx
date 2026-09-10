@@ -150,11 +150,11 @@ export function CommercialIntelligenceHub() {
 
         <div className="relative z-10 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div className="flex items-start gap-3">
-            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-brand/20 bg-brand/10 text-brand-active shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] dark:text-brand-2">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-brand/20 bg-brand/10 text-brand-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] dark:text-brand">
               <LineChart className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-brand-active dark:text-brand-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-brand-ink dark:text-brand">
                 Revenue Command Center
               </p>
               <h1 className="mt-1 text-xl font-black tracking-tight text-ink md:text-2xl">
@@ -239,7 +239,7 @@ export function CommercialIntelligenceHub() {
               aria-current={active ? 'page' : undefined}
               className={`shrink-0 rounded-xl px-3.5 py-2.5 text-xs font-bold transition-[transform,background-color,color,box-shadow,border-color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                 active
-                  ? 'border border-brand/20 bg-brand-active text-white shadow-[0_12px_28px_-18px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.16)]'
+                  ? 'border border-brand/20 bg-brand-active text-on-brand shadow-[0_12px_28px_-18px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.16)]'
                   : 'border border-transparent text-ink-2 hover:-translate-y-0.5 hover:border-line hover:bg-surface-2 hover:text-ink'
               }`}
             >

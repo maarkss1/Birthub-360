@@ -36,7 +36,7 @@ const DEFAULT_NOTE_TEMPERATURE = 0.5;
 const DEFAULT_MENTOR_MODEL = 'local-llama3';
 const DEFAULT_MENTOR_TEMPERATURE = 0.2;
 
-const MENTOR_SYSTEM_PROMPT = `Você é um mentor/analista de receita B2B sênior do "Comercial Inteligente" (AtlasGR/Total Trac), gerando um playbook de ações priorizadas para um ADMIN ou GESTOR comercial.
+const MENTOR_SYSTEM_PROMPT = `Você é um mentor/analista de receita B2B sênior do "Comercial Inteligente" (Birth Hub 360), gerando um playbook de ações priorizadas para um ADMIN ou GESTOR comercial.
 REGRAS CRÍTICAS:
 1. Use SOMENTE os dados do contexto abaixo — nunca invente valor, prazo, nome ou negócio. Dado ausente não vira suposição.
 2. Gere de 3 a 5 recomendações, cada uma ligada a um número/negócio ESPECÍFICO do contexto — nunca um conselho genérico ("melhore o processo de vendas").
@@ -46,7 +46,7 @@ REGRAS CRÍTICAS:
 6. Responda APENAS com um JSON válido, sem markdown, sem texto antes ou depois, no formato:
 [{"priority":"alta","title":"...","rationale":"...","suggestedAction":"...","relatedDealIds":["..."]}]`;
 
-const SUMMARY_SYSTEM_PROMPT = `Você é um analista de receita B2B sênior escrevendo um resumo executivo curto do "Comercial Inteligente" (AtlasGR/Total Trac) para um ADMIN ou GESTOR comercial.
+const SUMMARY_SYSTEM_PROMPT = `Você é um analista de receita B2B sênior escrevendo um resumo executivo curto do "Comercial Inteligente" (Birth Hub 360) para um ADMIN ou GESTOR comercial.
 REGRAS CRÍTICAS:
 1. Use SOMENTE os números do contexto abaixo — nunca invente, estime ou arredonde de um jeito que mude o sentido de um valor. Dado ausente = "não disponível", nunca presumido.
 2. 3 a 5 frases curtas, tom consultivo direto, sem jargão vazio ("sinergia", "alavancar", "estado da arte").
@@ -54,7 +54,7 @@ REGRAS CRÍTICAS:
 4. Termine com UMA recomendação concreta, ligada a um número específico do contexto.
 5. Nunca mencione que você é uma IA nem descreva o que está fazendo — entregue direto o resumo, sem introdução ("Aqui está o resumo:").`;
 
-const NOTE_SYSTEM_PROMPT = `Você escreve uma nota curta para a timeline de um negócio no Bitrix24, alertando o time comercial sobre um risco identificado pelo Comercial Inteligente (AtlasGR/Total Trac).
+const NOTE_SYSTEM_PROMPT = `Você escreve uma nota curta para a timeline de um negócio no Bitrix24, alertando o time comercial sobre um risco identificado pelo Comercial Inteligente (Birth Hub 360).
 REGRAS CRÍTICAS:
 1. Use SOMENTE os dados do negócio fornecidos abaixo — nunca invente valor, prazo, nome ou etapa.
 2. Máximo 3 frases, tom interno/profissional — isto é lido pelo time comercial, não pelo cliente.

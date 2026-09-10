@@ -1,220 +1,116 @@
 @import "tailwindcss";
 /* IBM Plex Mono — números tabulares (KPIs, valores em R$, métricas de indicador). Carregado via
-   Google Fonts CSS2 (não self-hosted como o Montserrat acima) porque cobre só dígitos/pontuação/
-   moeda em contextos pontuais, não texto corrido — não vale reproduzir na mão o unicode-range
+   Google Fonts CSS2 (não self-hosted como Inter/Bodoni Moda abaixo) porque cobre só dígitos/
+   pontuação/moeda em contextos pontuais, não texto corrido — não vale reproduzir na mão o
+   unicode-range
    subsetting que o endpoint já resolve. */
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
 
-/* cyrillic-ext */
+/* Birth Hub 360 — famílias tipográficas do brand book (p. 06 "Typography"),
+   self-hosted a partir dos .woff2 originais em `public/fonts/`:
+
+   - Bodoni Moda → display. "Headlines, títulos, chamadas institucionais."
+   - Inter       → UI. "Menus, textos, tabelas, dashboards, relatórios."
+
+   Antes deste arquivo carregava Montserrat de fonts.gstatic.com em 4 pesos ×
+   5 subsets (20 blocos @font-face). Os dois arquivos abaixo são fontes
+   VARIÁVEIS — um arquivo por subset cobre toda a faixa de peso — e são
+   servidos pela própria origem: menos requisições, sem CDN de terceiros, sem
+   dependência de rede para a marca renderizar (importa no app Android via
+   Capacitor, onde a primeira abertura pode ser offline).
+
+   Só latin e latin-ext: a aplicação é pt-BR e os subsets cirílico/grego/
+   vietnamita que o Montserrat trazia nunca foram exercitados. Adicione um
+   subset novo só quando existir texto real que precise dele.
+
+   O "B" do emblema é Playfair Display italic no brand book — já vetorizado
+   dentro dos SVGs de `public/brand/`, então essa terceira família NÃO é
+   carregada em runtime (38 kB para um único glifo não se justificaria). */
+
+/* latin */
 @font-face {
-  font-family: "Montserrat";
+  font-family: "Inter";
   font-style: normal;
-  font-weight: 300;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WRhyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 300;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459W1hyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 300;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WZhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: "Montserrat";
+  font-family: "Inter";
   font-style: normal;
-  font-weight: 300;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wdhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: "Montserrat";
+  font-family: "Bodoni Moda";
   font-style: normal;
-  font-weight: 300;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2)
-    format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WRhyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459W1hyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WZhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/fonts/bodoni-moda-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: "Montserrat";
+  font-family: "Bodoni Moda";
   font-style: normal;
-  font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wdhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2)
-    format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 600;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WRhyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 600;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459W1hyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 600;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WZhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 600;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wdhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 600;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2)
-    format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic-ext */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 700;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WRhyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-/* cyrillic */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 700;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459W1hyzbi.woff2)
-    format("woff2");
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* vietnamese */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 700;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WZhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
-}
-/* latin-ext */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 700;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wdhyzbi.woff2)
-    format("woff2");
-  unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 700;
-  src: url(https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2)
-    format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/fonts/bodoni-moda-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 :root {
-  /* Warm neutral (ver comentário "Warm neutral design system" no @theme abaixo): o modo escuro já
-     usava esta paleta quente (#0d0a09/#171211/#1f1917/#f7f3f1/#a2968f) — o claro tinha ficado pra
-     trás com cinza frio neutro. Alinhado aqui pros dois temas usarem a mesma família de cor,
-     contraste recalculado e verificado (WCAG AA): --ink 17.2:1 e --ink-2 4.77:1 contra --surface,
-     4.5:1+ contra --surface-2 — igual ou melhor que os valores anteriores (11.99:1 / 5.22:1). */
-  --bg: #fbf9f7;
+  /* Neutros ancorados na paleta Birth Hub 360 (brand book, p. 07/08). A regra
+     "ANCHOR — base sempre Obsidian ou Snow White" define os dois extremos: o
+     tema claro parte do Snow White com a superfície Parchment (#E9E4D9) do
+     próprio brand book como segundo plano; o escuro parte do Midnight/Obsidian.
+     Substitui a família "warm neutral" (#fbf9f7/#1a1513 …) da marca anterior.
+
+     Contraste recalculado e verificado pela fórmula de luminância relativa do
+     WCAG (calculado, não estimado), tema claro:
+       --ink   (#0B132B) 18.38:1 contra --surface, 16.4:1 contra --surface-2
+       --ink-2 (#5A6274)  6.12:1 contra --surface,  5.09:1 contra --surface-2
+     Ambos com folga sobre o mínimo AA (4.5:1) e melhores que os valores
+     anteriores (17.2:1 / 4.77:1). */
+  --bg: #f6f3ec;
   --surface: #ffffff;
-  --surface-2: #f5f1ee;
-  --ink: #1a1513;
-  --ink-2: #6f6560;
-  --line: rgba(0, 0, 0, 0.09);
-  --brand: #ff5618;
-  --brand-2: #ff6b10;
+  --surface-2: #edeae2;
+  --ink: #0b132b;
+  --ink-2: #5a6274;
+  --line: rgba(11, 19, 43, 0.1);
+  /* Antique Gold — "valor, foco e assinatura" (brand book, p. 07). É a cor de
+     ação primária: a própria aplicação de exemplo do brand book (p. 11) usa
+     `background:#D4AF37; color:#0B132B` no CTA. Diferente da marca anterior
+     (laranja escuro), ouro é uma cor CLARA: texto branco em cima mede 2.10:1 e
+     é proibido — use `text-on-brand` (ver --on-brand abaixo), que mede 8.74:1. */
+  --brand: #d4af37;
+  /* Gold Soft — segundo ponto da rampa metálica do logotipo
+     (linear-gradient(180deg,#F7E9B8,#D4AF37,#8C6D1F,#EBD689)). Escolhido de
+     propósito dentro da família do ouro, e não o Deep Iris: `from-brand
+     to-brand-2` é usado como FUNDO de botão/estado ativo com um único texto em
+     cima — um gradiente que atravessasse ouro→roxo não teria cor de texto que
+     passasse nas duas pontas. O gradiente 360º completo (ouro→íris→azul) existe
+     como --orbit e é reservado a halo/borda/hero, como manda o brand book. */
+  --brand-2: #ebd689;
+  /* Cor de texto/ícone sobre qualquer superfície de marca sólida (bg-brand,
+     bg-brand-2, from-brand…). Obsidian sobre ouro mede 8.74:1 — o par correto
+     segundo o próprio brand book. NÃO usar text-white sobre marca. */
+  --on-brand: #0b132b;
+  /* Deep Iris — "inteligência em movimento". Não é fundo de botão: vive em
+     halos, indicadores, órbitas e realces de dado (brand book, p. 08, regra
+     "01 USE"). */
+  --iris: #5b21b6;
+  /* Terceira cor da órbita. No brand book é `oklch(52% 0.19 255)`; aqui em sRGB
+     porque assets de marca (SVG, e-mail, impresso) precisam de hex. */
+  --orbit-blue: #0065d2;
   --warn: #ffc500;
   --ok: #0f9d64;
-  --soft: rgba(255, 86, 24, 0.08);
+  --soft: rgba(212, 175, 55, 0.12);
   /* Vermelho de estado crítico/risco (Comercial Inteligente: Centro de Decisão, Alertas, drill-down
      de negócios) — precisa ser redefinido por tema porque nenhum hex único passa 4.5:1 (WCAG AA)
      contra --surface nos dois temas ao mesmo tempo. Achado real via QA em navegador (contraste
@@ -261,28 +157,29 @@
   --shadow-nav-value: 12px 0 34px -28px rgba(26, 21, 19, 0.45);
   --shadow-nav-active-value: 0 10px 26px -14px color-mix(in srgb, var(--brand) 52%, black);
   --radius-nav-item-value: 10px;
-  --font-brand-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  /* "Mont" nunca foi carregada neste projeto (nenhum @font-face, nenhum arquivo local) — sempre
-     caía silenciosamente pro fallback Montserrat. `CREATIVE_SYSTEM_01.md` (seção C) já formalizou
-     que Montserrat é "o que o produto efetivamente renderiza... não 'Mont'/'Space Grotesk' do
-     manual histórico" — removida a referência morta em vez de mantê-la como falso indício de uma
-     segunda família tipográfica. Nenhuma mudança visual: o fallback já era sempre Montserrat. */
-  --font-brand-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-}
-
-:root[data-brand="totaltrac"] {
-  --soft: rgba(0, 143, 206, 0.1);
-  --font-brand-sans: "Fivo Sans", Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-brand-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Bodoni Moda é a família de display do brand book (p. 06) — um Didone de alto
+     contraste, papel bem diferente do Montserrat que ocupava este token antes
+     (uma grotesca, praticamente idêntica ao --font-brand-sans, de modo que
+     `font-display` e `font-sans` renderizavam igual). Agora as duas famílias são
+     de fato distintas: serif editorial para título, sans para interface. Como
+     Bodoni Moda é serifada e de contraste alto, ela é para DISPLAY — não use
+     `font-display` em corpo de texto, tabela ou rótulo pequeno. */
+  --font-brand-display: "Bodoni Moda", Georgia, "Times New Roman", serif;
 }
 
 .dark {
-  --bg: #0d0a09;
-  --surface: #171211;
-  --surface-2: #1f1917;
-  --ink: #f7f3f1;
-  --ink-2: #a2968f;
-  --line: rgba(255, 255, 255, 0.1);
-  --soft: rgba(255, 86, 24, 0.15);
+  /* Âncora Obsidian (brand book, p. 08). Midnight (#08090F) é o fundo de página
+     do próprio brand book; Obsidian (#0B132B) é a superfície institucional.
+     Contraste verificado: --ink 17.77:1 e --ink-2 7.13:1 contra --surface,
+     6.48:1 contra --surface-2. */
+  --bg: #08090f;
+  --surface: #0b132b;
+  --surface-2: #131c3a;
+  --ink: #f8fafc;
+  --ink-2: #97a1bc;
+  --line: rgba(248, 250, 252, 0.12);
+  --soft: rgba(212, 175, 55, 0.16);
   --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.6), 0 14px 34px -18px rgba(0, 0, 0, 0.9);
   --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.7), 0 20px 46px -20px rgba(0, 0, 0, 0.95);
   --shadow-nav-value: 12px 0 38px -24px rgba(0, 0, 0, 0.85);
@@ -305,44 +202,36 @@
   --danger-active: var(--color-danger);
 }
 
-:root[data-brand="totaltrac"].dark {
-  --soft: rgba(0, 143, 206, 0.16);
-}
-
 @theme {
   --font-sans: var(--font-brand-sans);
   --font-display: var(--font-brand-display);
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
 
-  --color-atlas-orange: #ff5618;
-  --color-atlas-orange-medium: #ff6b10;
-  --color-atlas-light-orange: #ff8008;
-  --color-atlas-yellow: #ffc500;
-  --color-atlas-dark: #333333;
-  --color-ring: #ff5618;
-
-  --color-totaltrack-blue: #008fce;
-  --color-totaltrac-navy: #374898;
-  --color-totaltrac-deep: #2d3b78;
-  --color-totaltrac-light: #93dbf2;
-
-  /* Texto branco direto sobre bg-atlas-orange/bg-totaltrack-blue crus (useBrandAccent.ts `.bg`/
-     `.solidBg`, usado fora da troca de marca reativa — ex.: dia de hoje no Calendar, filtro de
-     período do Billing) cai pra ~3.2:1/3.6:1 — mesmo achado do axe-core que gerou
-     --color-brand-active, só que pro par estático dessas duas cores. Sem variação por tema
-     porque a cor de fundo (laranja/azul sólido) não muda entre claro/escuro. */
-  --color-atlas-orange-active: color-mix(in srgb, var(--color-atlas-orange) 65%, black);
-  --color-totaltrack-blue-active: color-mix(in srgb, var(--color-totaltrack-blue) 65%, black);
-
-  --brand-primary: #ff5618;
-  --brand-accent: #ff6b10;
+  /* Paleta oficial Birth Hub 360 (brand book, p. 07). Substitui os pares de
+     tokens por marca que existiam aqui (--color-atlas-* / --color-totaltrac*),
+     de quando a plataforma trocava de identidade em runtime entre duas marcas.
+     Agora há uma marca só, então cor de marca e cor de produto são a mesma
+     coisa: use --color-brand/--color-brand-2 para ação e os quatro tokens
+     abaixo quando precisar nomear a cor da paleta em si. */
+  --color-obsidian: #0b132b;
+  --color-midnight: #08090f;
+  --color-snow: #f8fafc;
+  --color-parchment: #e9e4d9;
+  /* "Inteligência em movimento" — halos, indicadores, órbita. Não é fundo de
+     botão: ver o comentário de --iris em :root. */
+  --color-iris: var(--iris);
+  --color-orbit-blue: var(--orbit-blue);
+  /* Íris sobre superfície clara mede 3.9:1 como texto; a versão escurecida
+     passa 4.5:1. Mesmo idioma dos demais pares `-active` deste arquivo. */
+  --color-iris-active: color-mix(in srgb, var(--iris) 78%, black);
+  --color-ring: var(--brand);
 
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
   --color-info: #3b82f6;
 
-  /* Warm neutral design system (Atlas Commercial OS) */
+  /* Neutros do produto — ver :root/.dark acima (âncora Obsidian / Snow White) */
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
@@ -356,24 +245,38 @@
   --color-critical: var(--critical);
   /* Reativo a tema — ver --critical-active em :root/.dark acima. */
   --color-critical-active: var(--critical-active);
-  /* Versão escurecida de --brand pra texto branco em cima (ex.: item ativo da Sidebar) atingir
-     4.5:1 de contraste (WCAG AA) — achado real do axe-core (tests/e2e/accessibility.spec.ts):
-     branco sobre --brand puro dá só ~3.2:1 (AtlasGR) / ~3.9:1 (TotalTrac), abaixo do mínimo.
-     color-mix com preto escala os 3 canais igualmente, então funciona pras duas marcas sem hardcodear cor. */
-  --color-brand-active: color-mix(in srgb, var(--brand) 65%, black);
-  /* Mesmo problema de --color-brand-active, mas pro extremo `to-brand-2` de gradientes
-     `from-brand to-brand-2`/`via-brand-2` usados como fundo de botão/estado ativo com texto
-     branco em cima (ex.: variante default de Button.tsx, dia selecionado de ClockCalendarWidget).
-     --brand-2 sozinho (ex.: #FF6B10 na AtlasGR, #008FCE na TotalTrac) fica abaixo de 4.5:1 com
-     texto branco — achado nesta rodada (Onda 8, débito de contraste da Constituição §10/DQA-19),
-     não coberto pelo --color-brand-active original porque esse só escurece --brand. */
-  --color-brand-2-active: color-mix(in srgb, var(--brand-2) 65%, black);
+  /* Cor de texto/ícone sobre superfície de marca sólida. Com a marca anterior
+     (laranja escuro) o par era texto BRANCO, e --color-brand-active existia
+     para escurecer o fundo até o branco passar 4.5:1. Com o Antique Gold a
+     direção se inverte: ouro é claro, branco em cima mede 2.10:1 e nunca passa
+     — o par correto (e o que o próprio brand book usa no CTA, p. 11) é
+     Obsidian sobre ouro, 8.74:1. Regra: `bg-brand` sempre com `text-on-brand`,
+     nunca com `text-white`. */
+  --color-on-brand: var(--on-brand);
+  /* Estado hover/pressed da superfície de marca — ouro um degrau mais escuro,
+     ainda com Obsidian legível em cima (6.37:1 calculado). Não confundir com o
+     --color-brand-active anterior, que servia ao propósito oposto (escurecer o
+     suficiente para o texto BRANCO passar). */
+  --color-brand-active: color-mix(in srgb, var(--brand) 85%, black);
+  /* Versão escurecida de --brand para --brand- como TEXTO sobre superfície
+     clara: ouro cru sobre --surface branca mede 2.10:1. Idioma já usado no
+     resto do arquivo — `text-brand-ink dark:text-brand`, porque contra a
+     superfície escura o ouro cru já mede 8.74:1. */
+  --color-brand-ink: color-mix(in srgb, var(--brand) 62%, black);
+  /* Extremo `to-brand-2` dos gradientes `from-brand to-brand-2` usados como
+     fundo de botão/estado ativo: Gold Soft é ainda mais claro que --brand, então
+     também pede `text-on-brand` (10.9:1). O par -active serve ao mesmo caso do
+     --color-brand-ink acima, para --brand-2 usado como texto. */
+  --color-brand-2-active: color-mix(in srgb, var(--brand-2) 58%, black);
   --color-warn: var(--warn);
-  /* Alias: "gold" (#FFC500, "Amarelo Alerta" do manual de marca) já existe como --warn — várias
-     classes gold-* (JoaoReisDiagnosticHub.tsx) foram escritas assumindo esse nome e renderizavam
-     sem cor nenhuma (mesmo padrão do bug "neon-purple" do Piloto 002: classe nunca definida,
-     sem erro no console). Alias em vez de token duplicado, mesmo valor exato. */
-  --color-gold: var(--warn);
+  /* "gold" era um alias de --warn (#FFC500, "Amarelo Alerta" da marca anterior),
+     criado porque classes gold-* já existiam no código e renderizavam sem cor.
+     Com a Birth Hub 360 o ouro deixou de ser um amarelo de alerta e virou a cor
+     primária da marca: o alias agora aponta para --brand (Antique Gold), e
+     alerta continua em --warn. As classes gold-* que existiam sinalizavam
+     destaque/valor, não risco — que é exatamente o papel do ouro no brand book
+     ("reservar para valor, foco e assinatura"). */
+  --color-gold: var(--brand);
   --color-ok: var(--ok);
   /* Reativos a tema — ver --ok-active/--warn-active/--info-active em :root/.dark acima. */
   --color-warn-active: var(--warn-active);
@@ -387,10 +290,10 @@
   --shadow-card-hover: var(--shadow-card-hover-value);
   --shadow-nav: var(--shadow-nav-value);
   --shadow-nav-active: var(--shadow-nav-active-value);
-  /* Sombra/glow reativos à marca ativa (color-mix com var(--brand), mesmo idioma já usado no
-     keyframe pulse-glow abaixo) — substitui rgba(255,86,24,...) hardcoded que existia em
-     Button "default", Card "accent" e .border-glow-orange: antes ficavam laranja (cor da AtlasGR)
-     mesmo com a Total Trac ativa, porque não liam nenhum token de marca. */
+  /* Sombra/glow derivados da marca (color-mix com var(--brand), mesmo idioma do
+     keyframe pulse-glow abaixo) — existem para que nenhum componente volte a
+     hardcodear um rgba() da cor de marca, como já aconteceu em Button
+     "default", Card "accent" e .border-glow-orange. */
   --shadow-brand-sm: 0 4px 12px color-mix(in srgb, var(--brand) 20%, transparent);
   --shadow-glow-brand: 0 0 15px -3px color-mix(in srgb, var(--brand) 20%, transparent);
   --shadow-glow-brand-strong: 0 0 15px -3px color-mix(in srgb, var(--brand) 40%, transparent);
@@ -401,7 +304,7 @@
 
   /* Escala de tipografia responsiva (H1-H6), única fonte de verdade — antes só H1-H3 existiam,
      hardcoded direto no seletor de elemento em @layer base (débito documentado, à época, em
-     DESIGN_QA_CENTRAL_ATLASGR.md, "Typography 68" — arquivo removido do controle de versão em
+     no antigo arquivo de DESIGN QA, "Typography 68" — removido do controle de versão em
      22/08/2026, ver docs/REMOVED-DOCS.md). H1-H3 mantêm exatamente os mesmos valores
      clamp() de antes (nenhuma mudança visual); H4-H6 são novos, seguindo a mesma progressão —
      antes ficavam sem tamanho definido (herdavam o default do navegador, fora da escala da marca).
@@ -531,9 +434,10 @@
      `color: var(--brand)` + `uppercase` + peso 700 fixo a TODO h1-h6 da aplicação inteira — não só
      à tela de login (única superfície onde o pedido original fazia sentido), mas a cada título de
      cada tela autenticada (dashboard, CRM, pipeline, configurações etc.). Duas regressões reais:
-     (1) `--brand` (#FF5618) sobre `--bg` (#F8F9FA) tem ~3:1 de contraste, abaixo do mínimo AA de
-     4.5:1 para texto normal — mesma classe de bug já documentada como DQA-19 (texto sobre cor
-     sólida de marca); (2) uppercase+cor de marca em todo título quebra a hierarquia visual de um
+     (1) `--brand` sobre `--bg` claro fica abaixo do mínimo AA de 4.5:1 para texto normal — na
+     marca da época (#FF5618) media ~3:1, e com o Antique Gold da Birth Hub 360 seria ainda pior
+     (2.10:1), o que torna a regra mais necessária, não menos — mesma classe de bug já documentada
+     como DQA-19 (texto sobre cor sólida de marca); (2) uppercase+cor de marca em todo título quebra a hierarquia visual de um
      dashboard denso de uso repetido (CLAUDE.md, seção 4, regra #8: "UX nunca é sacrificado por
      estética"). `color: var(--ink)` continua reagindo a tema claro/escuro (é um token, não um
      valor fixo); só não força mais a cor de marca sobre título nenhum. */
@@ -543,9 +447,32 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-display);
-    letter-spacing: -0.03em;
     color: var(--ink);
+  }
+
+  /* Divisão de famílias conforme a escala do brand book (p. 06): Display 44-72 e
+     Título 28-36 são território da Bodoni Moda; Subtítulo 16-20 e Corpo 10-14
+     são da Inter. H1-H3 caem na primeira faixa, H4-H6 na segunda — e é por isso
+     que os títulos pequenos NÃO usam a serifada: Bodoni é um Didone de contraste
+     alto, cujas hastes finas somem abaixo de ~20px, e este é um CRM denso, onde
+     h4/h5/h6 rotulam bloco de tabela e card ("a prioridade é legibilidade", diz
+     o próprio brand book sobre interface).
+
+     letter-spacing: -0.03em era calibrado para uma grotesca (Montserrat). Num
+     Didone esse aperto encosta as serifas; -0.01em preserva a densidade sem
+     colar os caracteres. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.02em;
   }
 
   h1 {
@@ -657,17 +584,16 @@
     text-shadow: 0 0 14px currentColor;
   }
 
-  /* Antes `.border-glow-orange`, hardcoded pra laranja AtlasGR (rgba(255,86,24,...)) mesmo sem
-     nenhum consumidor em `src/` — renomeado (não fazia sentido nomear "orange" um efeito que agora
-     reage à marca) e migrado pro token `--shadow-glow-brand-strong` (ver @theme) em vez de repetir
-     o color-mix inline, evitando um efeito morto que continuaria quebrado pra Total Trac no dia em
-     que alguém o usasse. */
+  /* Antes `.border-glow-orange`, com a cor de marca hardcoded em rgba() e sem nenhum consumidor
+     em `src/` — renomeado (não fazia sentido nomear "orange" um efeito derivado da marca) e
+     migrado pro token `--shadow-glow-brand-strong` (ver @theme) em vez de repetir o color-mix
+     inline. É por isso que a troca de marca desta rodada não precisou tocar neste bloco. */
   .border-glow-brand {
     box-shadow: var(--shadow-glow-brand-strong);
   }
 
-  /* Atlas Design System Foundation (Prompt 01) */
-  .atlas-glass {
+  /* Primitivas do design system (prefixo bh- = Birth Hub) */
+  .bh-glass {
     background: color-mix(in srgb, var(--surface) 82%, transparent);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -675,14 +601,14 @@
     border-radius: 12px;
   }
 
-  .atlas-surface {
+  .bh-surface {
     background-color: var(--surface);
     color: var(--ink);
     border: 1px solid var(--line);
     border-radius: 12px;
   }
 
-  .atlas-card {
+  .bh-card {
     background-color: var(--surface);
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -693,17 +619,17 @@
       border-color 0.2s ease;
   }
 
-  .atlas-glow {
+  .bh-glow {
     box-shadow: 0 0 16px -2px color-mix(in srgb, var(--brand) 30%, transparent);
   }
 
-  .atlas-focus:focus-visible {
+  .bh-focus:focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: 2px;
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 20%, transparent);
   }
 
-  .atlas-interactive {
+  .bh-interactive {
     cursor: pointer;
     transition:
       transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
@@ -711,12 +637,12 @@
       border-color 0.2s ease,
       background-color 0.2s ease;
   }
-  .atlas-interactive:hover {
+  .bh-interactive:hover {
     transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--brand) 30%, transparent);
     box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--brand) 20%, transparent);
   }
-  .atlas-interactive:active {
+  .bh-interactive:active {
     transform: scale(0.98);
   }
 
@@ -765,50 +691,50 @@
     transform: translateY(-2px);
   }
 
-  /* Atlas Interaction States (Prompt 01) */
-  .atlas-state-default {
+  /* Estados de interação canônicos */
+  .bh-state-default {
     opacity: 1;
   }
-  .atlas-state-hover:hover {
+  .bh-state-hover:hover {
     background-color: color-mix(in srgb, var(--surface) 92%, var(--brand));
   }
-  .atlas-state-active:active {
+  .bh-state-active:active {
     transform: scale(0.98);
   }
-  .atlas-state-focus:focus-visible {
+  .bh-state-focus:focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: 2px;
   }
-  .atlas-state-selected {
+  .bh-state-selected {
     border-color: var(--brand);
     background-color: var(--soft);
     color: var(--brand);
   }
-  .atlas-state-disabled {
+  .bh-state-disabled {
     opacity: 0.45;
     pointer-events: none;
     cursor: not-allowed;
   }
-  .atlas-state-loading {
+  .bh-state-loading {
     position: relative;
     pointer-events: none;
     opacity: 0.7;
   }
-  .atlas-state-success {
+  .bh-state-success {
     border-color: var(--color-success);
     color: var(--color-success);
   }
-  .atlas-state-warning {
+  .bh-state-warning {
     border-color: var(--warn);
     color: var(--warn);
   }
-  .atlas-state-error {
+  .bh-state-error {
     border-color: var(--critical);
     color: var(--critical);
   }
 
-  /* Atlas Shimmer Wave for Skeletons (Prompt 06) */
-  .atlas-skeleton-shimmer {
+  /* Shimmer dos skeletons */
+  .bh-skeleton-shimmer {
     background: linear-gradient(
       90deg,
       color-mix(in srgb, var(--surface-2) 100%, transparent) 0%,
@@ -819,8 +745,8 @@
     animation: shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  /* Atlas Visual Atmosphere 60° Geometry (Prompt 14) */
-  .atlas-pattern-diagonal-60 {
+  /* Padrões geométricos de atmosfera (60°) */
+  .bh-pattern-diagonal-60 {
     background-image: repeating-linear-gradient(
       60deg,
       transparent,
@@ -830,7 +756,7 @@
     );
   }
 
-  .atlas-pattern-grid {
+  .bh-pattern-grid {
     background-size: 32px 32px;
     background-image:
       linear-gradient(

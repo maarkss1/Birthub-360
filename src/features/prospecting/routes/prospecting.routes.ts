@@ -83,7 +83,7 @@ router.post(
         res.status(400).json({ success: false, error: 'Envie uma imagem no campo "image".' });
         return;
       }
-      const brandName = typeof req.body?.brandName === 'string' ? req.body.brandName : 'AtlasGR';
+      const brandName = typeof req.body?.brandName === 'string' ? req.body.brandName : 'Birth Hub 360';
       const brandDescription =
         typeof req.body?.brandDescription === 'string'
           ? req.body.brandDescription

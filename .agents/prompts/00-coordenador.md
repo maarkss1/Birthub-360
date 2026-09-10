@@ -89,7 +89,7 @@ Execute simultaneamente:
 ### Objetivos mínimos
 - responsividade;
 - WCAG 2.2 AA nos fluxos principais;
-- identidade AtlasGR/TotalTrac consistente;
+- identidade Birth Hub 360 consistente;
 - isolamento de tenant validado;
 - performance;
 - suíte completa;

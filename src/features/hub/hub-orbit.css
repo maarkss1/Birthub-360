@@ -1,6 +1,4 @@
-/* ============ TOKENS OFICIAIS ATLASGR (DESIGN.md) ============ */
-
-/* ============ HUB — PORTAL DE ENTRADA ATLASGR ============ */
+/* ============ HUB — PORTAL DE ENTRADA ============ */
 .hub-page {
   position: relative;
   min-height: 100vh;
@@ -32,9 +30,6 @@
   align-items: center;
   gap: 10px;
   padding: 20px 32px 0;
-}
-.atlas-symbol {
-  flex-shrink: 0;
 }
 .hub-topbar .name {
   font-weight: 900;

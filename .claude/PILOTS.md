@@ -1,4 +1,8 @@
-# Registro de pilotos — Central de Inteligência Comercial ATLASGR
+# Registro de pilotos — Birth Hub 360º
+
+> As entradas anteriores ao Piloto 033 citam AtlasGR e Total Trac porque foi sob aquelas marcas que
+> as decisões relatadas aconteceram. São registro histórico: renomeá-las não renomearia nada, só
+> tornaria o relato falso. O Piloto 033 documenta a troca para a marca única.
 
 Registro curto de cada tela/fluxo usado como piloto real da camada `.claude/`. Objetivo: não perder
 aprendizado empírico depois que a tarefa termina. Ver `CLAUDE.md` seção 12 para quando adicionar uma
@@ -1038,7 +1042,7 @@ entrada nova.
 - **Objetivo**: primeiro dos módulos "ainda sem piloto" do roadmap do Pilot 007 — `/app/contacts`
   (nav "Decisores").
 - **O achado principal**: `ContactDetail.tsx` era um stub morto (`return <div />`), nunca importado
-  por nenhuma rota — já documentado como intencional em `PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md`
+  por nenhuma rota — já documentado como intencional em `PRODUCT_EXPERIENCE.md`
   ("Contatos usa formulário modal, não tela de detalhe"). Mas `GET /api/contacts/:id` **já existia
   e já devolvia** `{...contact, company: CompanyCompleta, leads: Lead[]}`
   (`PrismaContactRepository`/`ContactController`), inclusive `contactsDB.get(id)` já existia em
@@ -3333,3 +3337,62 @@ entrada nova.
   arquivos tocados), `npx tsc --noEmit` (0 erros) — rodados de novo após o fix do `--brand-active`
   para confirmar que nada quebrou. Specs E2E oficiais (`crm.spec.ts` etc.) não puderam rodar por
   falta de Postgres/login real nesta sessão — pendente de confirmação num ambiente com backend.
+
+## Piloto 033 — Rebranding para Birth Hub 360º (marca única)
+
+- **Objetivo**: aposentar as duas marcas da plataforma (Birth Hub 360) e implantar a
+  identidade **Birth Hub 360º** a partir do brand book "Birth Hub 360 Brand Book Cinematic" V2.0,
+  mantendo tema claro e escuro e sem perder funcionalidade.
+
+- **Reconstrução do emblema, não importação**: o brand book chegou como HTML auto-descompactante.
+  O emblema era CSS puro (`repeating-conic-gradient` + `conic-gradient` + máscara radial), sem
+  arquivo vetorial. Foi reconstruído como SVG-mestre a partir das medidas do original, e o "B" e o
+  logotipo foram **vetorizados dos próprios .woff2 do brand book** (Playfair Display italic 800 e
+  Bodoni Moda 800, via fontTools) — o logo não depende de fonte instalada em ninguém.
+  - **Achado que só apareceu na comparação lado a lado**: a máscara `radial-gradient(circle,
+    transparent 63%, #000 64%, #000 80%, ...)` da coroa de traços mede em **farthest-corner**
+    (raio × √2), não no raio. Lendo como percentual do raio, a coroa cai *em cima* do anel; lida
+    corretamente, ela vive fora dele, com folga visível. A primeira versão estava errada e passou
+    despercebida até renderizar o HTML original ao lado do SVG na mesma tela.
+  - Dois outros desvios só apareceram nessa comparação: gradientes de arco em `objectBoundingBox`
+    (rotacionavam a órbita) e costura de 1px entre arcos de `stroke-linecap: butt`.
+
+- **A inversão de contraste é a parte perigosa**: a marca anterior era laranja escuro e pedia texto
+  BRANCO; Antique Gold (`#D4AF37`) é uma cor **clara** — branco em cima mede 2.10:1. O par correto
+  é Obsidian, 8.74:1, que é o que o próprio brand book usa no CTA. Isso obrigou a separar em três
+  tokens o que `--color-brand-active` acumulava: superfície (`--brand` + `text-on-brand`), hover
+  (`--color-brand-active`) e marca-como-texto (`--color-brand-ink`). A varredura trocou 148
+  `text-white` sobre superfície de marca e 140 `text-brand-active` usados como texto.
+
+- **Separar identidade de dado comercial foi o que destravou o resto**: o seletor de marca parecia
+  visual, mas controlava playbook, personas, matriz de objeções e histórico do copiloto. Apagá-lo
+  junto com a marca teria removido funcionalidade (Constituição §6). Virou **playbook comercial**
+  (`src/config/playbooks.ts` + `useActivePlaybook`), com as chaves de banco (`atlasgr`/`totaltrac`)
+  preservadas e o seletor movido para a barra de filtros das matrizes — onde ele sempre pertenceu.
+  Mesmo raciocínio para `getBrandFromEmail` → `getTenantFromEmail`: nunca decidiu marca, decidia
+  organização.
+
+- **Tipografia**: Bodoni Moda + Inter **self-hosted** a partir dos .woff2 do próprio brand book
+  (variáveis, latin + latin-ext) — 20 blocos `@font-face` de Montserrat via gstatic viraram 4
+  locais. H4-H6 ficaram na Inter de propósito: Bodoni é Didone e some abaixo de ~20px, e num CRM
+  denso esses níveis rotulam bloco de tabela e card.
+
+- **O logotipo vetorial não serve para topbar**: a 28px de altura o corpo do logotipo fica com ~6px
+  e vira borrão. `BirthHubSignature` (ícone + nome como TEXTO) resolve, e de quebra o nome volta a
+  ser selecionável e legível por leitor de tela. Regra: `icon` de 32 a 96px, `symbol` acima disso,
+  `horizontal` só onde a marca tem espaço real.
+
+- **O gradiente metálico do logotipo é escuro-only**: recortado no texto, o topo das letras é
+  `#F7E9B8` — ~1.1:1 contra superfície clara. No tema claro o logotipo é Obsidian sólido, que é o
+  que a regra "ANCHOR" do brand book já mandava.
+
+- **O que NÃO foi renomeado, e por quê** (checar antes de "terminar o serviço"): allowlist de
+  domínios de login (regra de segurança); chaves `atlasgr`/`totaltrac` em banco e API; `appId`,
+  esquema de deep link e domínios (invalidam instalações e DNS); `EXTERNAL_LINKS` (sistemas de
+  terceiros da operação); `public/tools/` (aplicações legadas em iframe); o script de voz
+  `atlasProductPlaybook.ts` — renomear ali faria a IA se apresentar ao prospect como a plataforma
+  em vez da empresa que está vendendo, ou seja, mentir.
+
+- **Verificação**: typecheck e build limpos; `biome lint src` sem erro novo; Welcome e Login
+  medidos com fórmula de luminância WCAG nos dois temas (nenhuma reprovação); emblema comparado
+  pixel a pixel com o render original do brand book.

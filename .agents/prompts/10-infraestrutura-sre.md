@@ -47,7 +47,7 @@ Você é o único agente autorizado a alterar:
 
 ### 3. Capacidade e scaling
 - definir/revisar limites de CPU/memória e política de autoscaling coerentes com o uso real esperado;
-- evitar configuração que permita um único tenant (AtlasGR ou TotalTrac) degradar o outro por consumo desproporcional de recursos compartilhados.
+- evitar configuração que permita um único tenant (Birth Hub 360) degradar o outro por consumo desproporcional de recursos compartilhados.
 
 ### 4. Migração e rollback no cluster
 - consumir o contrato de migração definido pelo Agente 01 e implementado no pipeline pelo Agente 08;

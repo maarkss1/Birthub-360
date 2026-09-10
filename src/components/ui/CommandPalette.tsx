@@ -46,7 +46,7 @@ function normalize(value: string): string {
   return value.normalize('NFD').replace(DIACRITICS_PATTERN, '').toLowerCase();
 }
 
-// Os módulos executivos (Social Selling, Treinamento AtlasGR, Proposta Comercial, Hub
+// Os módulos executivos (Social Selling, Treinamento Comercial, Proposta Comercial, Hub
 // Inteligência & Mkt) foram removidos deste catálogo: eles não vivem mais em `/app/*` (ver
 // tabMeta.ts), então `navigateAndClose` — que só sabe montar `/app/${tab}` — não pode navegar até
 // eles. O Hub Executivo standalone (rotas top-level em App.tsx) é o único ponto de entrada agora.
@@ -364,7 +364,7 @@ export function CommandPalette() {
     >
       <div
         ref={panelRef}
-        className="w-full h-full sm:h-auto sm:max-w-2xl overflow-hidden sm:rounded-2xl border-0 sm:border border-line bg-surface atlas-card shadow-2xl flex flex-col relative"
+        className="w-full h-full sm:h-auto sm:max-w-2xl overflow-hidden sm:rounded-2xl border-0 sm:border border-line bg-surface bh-card shadow-2xl flex flex-col relative"
       >
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-brand to-transparent pointer-events-none" />
         <div className="flex items-center gap-3 border-b border-line px-4 py-3.5">

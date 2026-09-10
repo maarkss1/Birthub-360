@@ -150,7 +150,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
           onClick={toggleSound}
           className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
             soundEnabled
-              ? 'border-brand/20 bg-brand/10 text-brand-active dark:text-brand-2'
+              ? 'border-brand/20 bg-brand/10 text-brand-ink dark:text-brand'
               : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
           }`}
           aria-pressed={soundEnabled}
@@ -183,7 +183,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         </button>
 
         <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-white shadow-card ring-1 ring-white/10"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-on-brand shadow-card ring-1 ring-white/10"
           title={`${currentUser?.name || 'Usuário'} (${currentUser?.roleTitle || currentUser?.role || ''})`}
         >
           {userInitial}

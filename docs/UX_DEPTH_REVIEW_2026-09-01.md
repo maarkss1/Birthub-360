@@ -1,4 +1,4 @@
-# Revisão UX Depth — Central de Inteligência Comercial
+# Revisão UX Depth — Central de Comando Inteligente
 
 Data: 01/09/2026
 
@@ -12,7 +12,7 @@ A direção continua sendo **Do Sinal à Ação**. Profundidade não significa r
 
 ### O que já existia e deve ser preservado
 
-- React 19, Tailwind CSS 4 e tokens multi-brand AtlasGR/Total Trac.
+- React 19, Tailwind CSS 4 e tokens de design (à época, multi-marca).
 - Framer Motion com `prefers-reduced-motion`.
 - Recharts e ECharts para visualização.
 - Three.js + React Three Fiber + Drei já instalados.
@@ -154,7 +154,7 @@ A branch não deve ser tratada como pronta para merge sem execução real de:
 - testes de acessibilidade
 - `npm run build`
 - `npm run check:bundle-budget`
-- QA visual em AtlasGR/Total Trac e light/dark
+- QA visual em Birth Hub 360 e light/dark
 - smoke mobile/Capacitor ou viewport equivalente
 
 O merge deve ocorrer somente depois de evidência real desses gates.

@@ -68,7 +68,7 @@ Se o projeto tiver verificação de assets/imagens (lint de tamanho, referência
 
 ## Entrega
 Forneça:
-- inventário de ativos de marca por tenant (AtlasGR/TotalTrac);
+- inventário de ativos de marca por tenant (Birth Hub 360);
 - duplicidades/desatualizações corrigidas;
 - achados de conteúdo sensível (se houver), sem reproduzir o conteúdo sensível no relatório;
 - handoffs para 03/Coordenador.

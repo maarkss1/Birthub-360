@@ -68,7 +68,7 @@ async function resolveScopedAssignedById(
   return { assignedById: ownId ?? undefined, restricted: true, matched: ownId !== null };
 }
 
-// ── Conexões (uma organização pode ter mais de um portal Bitrix — ex.: AtlasGR e TotalTrac) ────
+// ── Conexões (uma organização pode ter mais de um portal Bitrix — ex.: Birth Hub 360) ────
 
 router.get(
   '/connections',

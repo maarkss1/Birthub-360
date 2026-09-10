@@ -48,31 +48,31 @@ export function SocialSellingHub() {
       semana: 'Semana 1',
       tema: 'Operação reativa vs. governável',
       desc: 'Conceito chave sobre maturidade em Gerenciamento de Risco (GR).',
-      copy: 'Você sabia que 74% dos sinistros no transporte de carga ocorrem em operações que operam no modelo reativo? Na Atlas GR, transformamos o risco em governança preditiva. Conheça a diferença entre agir depois do sinistro e antecipar a ameaça.',
+      copy: 'Você sabia que 74% dos sinistros no transporte de carga ocorrem em operações que operam no modelo reativo? Aqui, transformamos o risco em governança preditiva. Conheça a diferença entre agir depois do sinistro e antecipar a ameaça.',
     },
     {
       semana: 'Semana 2',
       tema: 'Tecnologia útil vs. cosmética',
       desc: 'Como identificar soluções reais e ferramentas eficientes no mercado de GR.',
-      copy: 'Nem todo dashboard é tecnologia útil. Muitas soluções entregam gráficos bonitos mas falham no momento crítico da tomada de decisão. A tecnologia de GR da Atlas foca em resposta imediata, integração de telemetria e validação cadastral rigorosa.',
+      copy: 'Nem todo dashboard é tecnologia útil. Muitas soluções entregam gráficos bonitos mas falham no momento crítico da tomada de decisão. Nossa tecnologia de GR foca em resposta imediata, integração de telemetria e validação cadastral rigorosa.',
     },
     {
       semana: 'Semana 3',
       tema: 'Segurança como performance',
       desc: 'Redução de perdas operacionais gerando margem líquida e ROI comprovado.',
-      copy: 'Segurança logística não é custo, é alavanca de margem operacional. Cada sinistro evitado é lucro preservado diretamente na DRE da transportadora. Veja como o Atlas Profile e nossas torres reduzem em até 40% a sinistralidade acumulada.',
+      copy: 'Segurança logística não é custo, é alavanca de margem operacional. Cada sinistro evitado é lucro preservado diretamente na DRE da transportadora. Veja como o perfil securitário e nossas torres reduzem em até 40% a sinistralidade acumulada.',
     },
     {
       semana: 'Semana 4',
       tema: 'Risco antes do sinistro',
       desc: 'Prevenção proativa, score preditivo e auditoria cadastral de motoristas.',
-      copy: 'O gerenciamento de risco moderno começa muito antes do caminhão ligar o motor. A análise contínua de perfil de motoristas e ajudantes (Atlas Profile) garante que a carga viaje apenas com profissionais qualificados e checados.',
+      copy: 'O gerenciamento de risco moderno começa muito antes do caminhão ligar o motor. A análise contínua de perfil de motoristas e ajudantes garante que a carga viaje apenas com profissionais qualificados e checados.',
     },
     {
       semana: 'Semana 5',
       tema: 'Improviso vs. processo escalável',
       desc: 'Estruturação de processos comerciais e operacionais em Gerenciamento de Risco.',
-      copy: 'Operações logísticas que dependem de processos manuais ou improvisos não escalam. Com a infraestrutura comercial e tecnológica da Atlas GR, sua transportadora ganha consistência, dados auditáveis e SLA garantido.',
+      copy: 'Operações logísticas que dependem de processos manuais ou improvisos não escalam. Com uma infraestrutura comercial e tecnológica integrada, sua transportadora ganha consistência, dados auditáveis e SLA garantido.',
     },
   ];
 
@@ -98,7 +98,7 @@ export function SocialSellingHub() {
     >
       {/* Unified Executive Header */}
       <ExecutiveHeader
-        title="Social Selling Atlas GR"
+        title="Social Selling"
         subtitle="Plano de ação, rastreador de pipeline, kit de campanhas LinkedIn e acervo de conteúdos."
         icon={Share2}
         isFullscreen={isFullscreen}
@@ -188,7 +188,7 @@ export function SocialSellingHub() {
             key={`motor-${iframeKey}`}
             src="/tools/social-selling/Motor de Social Selling Atlas GR.html"
             className="w-full h-full min-h-[520px] border-none"
-            title="Motor de Social Selling Atlas GR"
+            title="Motor de Social Selling"
           />
         )}
 
@@ -197,7 +197,7 @@ export function SocialSellingHub() {
             key={`pipeline-${iframeKey}`}
             src="/tools/social-selling/Atlas GR Pipeline.html"
             className="w-full h-full min-h-[650px] border-none"
-            title="Atlas GR Pipeline Tracker"
+            title="Pipeline Tracker"
           />
         )}
 
@@ -206,7 +206,7 @@ export function SocialSellingHub() {
             key={`linkedin-${iframeKey}`}
             src="/tools/social-selling/AtlasGR Kit Campanha LinkedIn Completo.html"
             className="w-full h-full min-h-[650px] border-none"
-            title="AtlasGR Kit Campanha LinkedIn Completo"
+            title="Birth Hub 360 Kit Campanha LinkedIn Completo"
           />
         )}
 
@@ -295,7 +295,7 @@ export function SocialSellingHub() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-ink">
-                      Manual de Identidade Visual Atlas
+                      Manual de Identidade Visual
                     </h3>
                     <p className="text-xs text-ink-2">Guia completo de aplicação da marca (PDF)</p>
                   </div>
@@ -304,7 +304,7 @@ export function SocialSellingHub() {
                   href="/tools/social-selling/Manual de Identidade Visual – Atlas_compressed (1).pdf"
                   target="_blank"
                   download
-                  className="w-full py-2.5 px-4 bg-brand-active text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 hover:bg-brand-hover transition-colors shadow-sm"
+                  className="w-full py-2.5 px-4 bg-brand-active text-on-brand rounded-xl text-xs font-semibold flex items-center justify-center gap-2 hover:bg-brand-hover transition-colors shadow-sm"
                   rel="noopener"
                 >
                   <Download className="w-4 h-4" /> Download Manual (PDF)
@@ -318,7 +318,7 @@ export function SocialSellingHub() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-ink">
-                      Apresentação Social Selling Atlas
+                      Apresentação de Social Selling
                     </h3>
                     <p className="text-xs text-ink-2">
                       Deck comercial oficial de Social Selling (PPTX)
@@ -329,7 +329,7 @@ export function SocialSellingHub() {
                   href="/tools/social-selling/Social Selling Atlas.pptx"
                   target="_blank"
                   download
-                  className="w-full py-2.5 px-4 bg-brand-active text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 hover:bg-brand-hover transition-colors shadow-sm"
+                  className="w-full py-2.5 px-4 bg-brand-active text-on-brand rounded-xl text-xs font-semibold flex items-center justify-center gap-2 hover:bg-brand-hover transition-colors shadow-sm"
                   rel="noopener"
                 >
                   <Download className="w-4 h-4" /> Download Apresentação (PPTX)

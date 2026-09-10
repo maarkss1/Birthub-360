@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 
 const TRIGGERS = [
@@ -116,7 +116,7 @@ const AI_LAYERS = [
 
 export function AutomationGuide() {
   const accent = useBrandAccent();
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const [triggerApp, setTriggerApp] = useState(TRIGGERS[0].id);
   const [actionApp, setActionApp] = useState(ACTIONS[0].id);
   const [tool, setTool] = useState(TOOLS[0].id);
@@ -291,7 +291,7 @@ if __name__ == "__main__":
         '/api/intelligence/studio',
         {
           kind: 'automation',
-          brand: { name: brandInfo.name, description: brandInfo.description },
+          brand: { name: playbookMeta.label, description: playbookMeta.description },
           inputs: {
             triggerId: selectedTriggerObj.id,
             trigger: selectedTriggerObj.title,
@@ -389,7 +389,7 @@ if __name__ == "__main__":
             </span>
           </div>
           <h3 className="text-4xl font-black text-ink mb-4 tracking-tight">
-            {accent.brandName}{' '}
+            {playbookMeta.label}{' '}
             <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
               Guia e Construtor de Automações
             </span>
@@ -629,7 +629,7 @@ if __name__ == "__main__":
             type="button"
             onClick={handleGenerate}
             disabled={generating}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-white px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
           >
             {generating && (
               <motion.div
@@ -725,7 +725,7 @@ if __name__ == "__main__":
                 onClick={() => setActiveTabOutput('blueprint')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'blueprint'
-                    ? `${accent.solidBg} text-white shadow-lg`
+                    ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-surface-2 text-ink-2 hover:bg-line'
                 }`}
               >
@@ -736,7 +736,7 @@ if __name__ == "__main__":
                 onClick={() => setActiveTabOutput('json')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'json'
-                    ? `${accent.solidBg} text-white shadow-lg`
+                    ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-surface-2 text-ink-2 hover:bg-line'
                 }`}
               >

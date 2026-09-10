@@ -6,7 +6,7 @@
 # PR em resultado `level: error` (achado de alta confiança); as queries extras de
 # `security-extended` que saem como `warning`/`note` ficam visíveis na aba Security sem travar o
 # gate, então não há custo de falso-positivo bloqueante em usar o suite mais amplo.
-name: "Central AtlasGR — CodeQL"
+name: "Central Birth Hub 360 — CodeQL"
 
 queries:
   - uses: security-extended

@@ -1,8 +1,8 @@
-# Final Delivery Report: AtlasGR & Total Trac Multi-Brand Design System Repagination
+# Final Delivery Report: Design System Repagination (histórico — escrito sob o sistema de duas marcas, aposentado em 09/2026)
 
 ## 1. Initial Audit
 - **Visual Inconsistencies**: Scattered utility class strings, inconsistent application of glows/drop-shadows, and a lack of a unified component token structure.
-- **Tech Debt**: A heavy reliance on manually defined gradients tied explicitly to AtlasGR's `rgba(255, 86, 24)` inside components like `Button.tsx`.
+- **Tech Debt**: A heavy reliance on manually defined gradients tied explicitly to Birth Hub 360's `rgba(255, 86, 24)` inside components like `Button.tsx`.
 
 ## 2. Stitch MCP Usage
 - Connected successfully to Google Stitch MCP.
@@ -13,9 +13,9 @@
 - Global token layers (`--color-bg`, `--color-surface`, `--color-surface-elevated`) were defined and injected dynamically per-brand.
 
 ## 4. Multi-brand Structure
-### AtlasGR
+### Birth Hub 360
 - Bound back natively to `--brand: #FF5618` and `--brand-2: #FF6B10` for energetic primary actions.
-### Total Trac
+### Birth Hub 360
 - Refined mapping to `--brand: #374898` and `--brand-2: #008FCE` matching existing guidelines.
 ### Isolation
 - Removed hardcoded values inside UI structural components (like Button, Card, and Badges) converting them to use generic semantic names like `bg-brand` and `bg-ok`.

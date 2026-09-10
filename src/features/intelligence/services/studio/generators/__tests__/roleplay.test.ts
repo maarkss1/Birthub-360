@@ -12,7 +12,7 @@ import { roleplayResultSchema, roleplayEvaluationResultSchema } from '../../sche
 
 const request = {
   kind: 'roleplay' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: {
     persona: 'skeptical_cfo' as const,
     message: 'Nosso ROI se paga em 3 meses.',
@@ -23,7 +23,7 @@ const request = {
 
 const evaluationRequest = {
   kind: 'roleplay_evaluation' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: {
     persona: 'skeptical_cfo' as const,
     difficulty: 'dificil' as const,

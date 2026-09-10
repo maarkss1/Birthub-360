@@ -1,5 +1,5 @@
 # AUDITORIA FUNCIONAL E INVENTÁRIO TÉCNICO COMPLETO
-## CENTRAL DE INTELIGÊNCIA COMERCIAL ATLASGR
+## CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 **Data de Execução:** 2026-09-09
 **Repositório:** CENTRAL-DE-INTELIGENCIA-COMERCIAL-ATLASGR
 **Escopo da Auditoria:** Auditoria Evidence-First de Código, Rotas, Servidores, Modelos e Serviços de IA
@@ -80,7 +80,7 @@ Oportunidades Legítimas de IA (P0/P1):      12  (18.5%)
 ## 3. MAPA VISUAL DO PRODUTO (PRODUCT TREE)
 
 ```
-CENTRAL DE INTELIGÊNCIA COMERCIAL ATLASGR
+CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 │
 ├── 🏢 Módulos Principais de CRM & Vendas
 │   ├── Pipeline & Kanban (/app/crm) [🟢 FUNCIONA]
@@ -331,4 +331,4 @@ CENTRAL DE INTELIGÊNCIA COMERCIAL ATLASGR
 - **Ação 5.2:** Executar testes de carga k6 e varredura de vulnerabilidades ZAP.
 
 ---
-*Relatório gerado automaticamente via Auditoria Mestre da Central de Inteligência Comercial AtlasGR.*
+*Relatório gerado automaticamente via Auditoria Mestre da Birth Hub 360º.*

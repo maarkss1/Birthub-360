@@ -1,4 +1,4 @@
-# PRODUCT ADOPTION & COMMERCIAL INTELLIGENCE — CENTRAL ATLASGR
+# PRODUCT ADOPTION & COMMERCIAL INTELLIGENCE — CENTRAL BIRTH HUB 360
 
 > **Registro histórico.** Movido da raiz do repositório para `docs/reports/` em 25/08/2026
 > (ITEM-14, consolidação de documentação) — não é atualizado retroativamente e não deve ser
@@ -29,7 +29,7 @@ Não é possível calcular um Product Adoption Score real hoje — não há even
 **Média ponderada da "Camada de Inteligência Comercial" (pilares 6–9, os que este prompt pede): ~2,3/10.**
 **Média da "Plataforma Operacional Core" (pilares 1–3): ~7,3/10.**
 
-Leitura: a AtlasGR construiu um CRM/prospecção sólido e uma integração Bitrix ambiciosa, mas a camada de inteligência que o prompt original pede (adoção, health score, forecast, next best action) **ainda não existe como produto** — existe como especificação. Isso não é um problema de "funcionalidade ruim", é a ordem natural de um produto em 3 semanas de desenvolvimento intenso que priorizou o operacional antes do analítico.
+Leitura: a Birth Hub 360 construiu um CRM/prospecção sólido e uma integração Bitrix ambiciosa, mas a camada de inteligência que o prompt original pede (adoção, health score, forecast, next best action) **ainda não existe como produto** — existe como especificação. Isso não é um problema de "funcionalidade ruim", é a ordem natural de um produto em 3 semanas de desenvolvimento intenso que priorizou o operacional antes do analítico.
 
 ---
 

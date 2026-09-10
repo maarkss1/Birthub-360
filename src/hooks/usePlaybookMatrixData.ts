@@ -7,7 +7,7 @@ import {
 import { clientLogger } from '../lib/clientLogger';
 
 /**
- * Busca as duas matrizes (qualificação + objeções) da marca ativa uma única vez — usado pelo
+ * Busca as duas matrizes (qualificação + objeções) do playbook ativo uma única vez — usado pelo
  * Chatbook flutuante (FloatingChatbook.tsx, que antes importava BRAND_OBJECTIONS/
  * BRAND_QUALIFICATIONS de um arquivo estático em 3 hooks distintos) e pelo Chatbook principal
  * (ChatbookHub.tsx). Sem isso, cada um dos 3 hooks buscaria a mesma coisa separadamente.

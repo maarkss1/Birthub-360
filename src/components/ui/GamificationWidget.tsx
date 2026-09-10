@@ -59,10 +59,10 @@ export function GamificationWidget({
         {/* Level Badge */}
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-atlas-yellow via-brand to-red-600 flex items-center justify-center font-extrabold text-white text-xl shadow-lg shadow-brand/30 border border-atlas-yellow/30">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand via-brand to-red-600 flex items-center justify-center font-extrabold text-on-brand text-xl shadow-lg shadow-brand/30 border border-brand/30">
               Lvl {level}
             </div>
-            <div className="absolute -bottom-1 -right-1 bg-atlas-yellow text-slate-950 p-1 rounded-full text-xs font-black flex items-center shadow">
+            <div className="absolute -bottom-1 -right-1 bg-brand text-slate-950 p-1 rounded-full text-xs font-black flex items-center shadow">
               <Trophy className="w-3 h-3" />
             </div>
           </div>
@@ -71,8 +71,8 @@ export function GamificationWidget({
             <div className="flex items-center gap-2">
               <h4 className="font-bold text-ink text-base">Missões Diárias</h4>
               {streakDays > 0 && (
-                <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full bg-atlas-yellow/20 text-atlas-yellow border border-atlas-yellow/30 font-semibold">
-                  <Flame className="w-3.5 h-3.5 text-atlas-yellow animate-pulse" /> {streakDays}{' '}
+                <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full bg-brand/20 text-brand border border-brand/30 font-semibold">
+                  <Flame className="w-3.5 h-3.5 text-brand animate-pulse" /> {streakDays}{' '}
                   Dias Seguidos
                 </span>
               )}
@@ -91,7 +91,7 @@ export function GamificationWidget({
           className="flex items-center gap-2 text-xs font-semibold px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-line text-ink-2 border border-line transition-all active:scale-95 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand"
           aria-label="Ver Missões Diárias"
         >
-          <Zap className="w-4 h-4 text-atlas-yellow" />
+          <Zap className="w-4 h-4 text-brand" />
           <span>Missões Diárias</span>
           <ChevronRight
             className={`w-4 h-4 transition-transform duration-300 ${showMissions ? 'rotate-90' : ''}`}
@@ -122,7 +122,7 @@ export function GamificationWidget({
           >
             <div className="flex items-center justify-between text-xs font-bold text-ink-2 mb-2">
               <span>Missões de Prospecção (Clique para Concluir)</span>
-              <span className="text-atlas-yellow">Recompensas +XP</span>
+              <span className="text-brand">Recompensas +XP</span>
             </div>
             {missions.map((mission) => (
               // <button> real (não <div role="button"> + onKeyDown manual) — semântica HTML
@@ -157,7 +157,7 @@ export function GamificationWidget({
                     {mission.title}
                   </span>
                 </span>
-                <span className="font-extrabold text-atlas-yellow flex items-center gap-1">
+                <span className="font-extrabold text-brand flex items-center gap-1">
                   <Award className="w-3.5 h-3.5" /> +{mission.xp} XP
                 </span>
               </button>

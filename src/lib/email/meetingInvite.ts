@@ -69,7 +69,7 @@ function buildIcs(input: MeetingInviteInput): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//AtlasGR//Central de Inteligencia Comercial//PT-BR',
+    'PRODID:-//Birth Hub 360//Central de Inteligencia Comercial//PT-BR',
     'CALSCALE:GREGORIAN',
     'METHOD:REQUEST',
     'BEGIN:VEVENT',
@@ -99,7 +99,7 @@ export interface MeetingInviteEmail {
   icalEvent: { filename: string; method: 'REQUEST'; content: string };
 }
 
-/** Monta o convite completo (assunto, texto, HTML com logo/paleta AtlasGR, e o anexo .ics) para um
+/** Monta o convite completo (assunto, texto, HTML com logo/paleta Birth Hub 360, e o anexo .ics) para um
  * destinatário do agendamento — chame uma vez por destinatário (organizador nunca é destinatário). */
 export function buildMeetingInviteEmail(input: MeetingInviteInput): MeetingInviteEmail {
   const formattedTime = new Intl.DateTimeFormat('pt-BR', {
@@ -126,7 +126,7 @@ export function buildMeetingInviteEmail(input: MeetingInviteInput): MeetingInvit
       input.meetUrl
         ? `<p style="margin:0"><a href="${htmlEscape(input.meetUrl)}" style="display:inline-block;background:#FF5618;color:#ffffff;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:6px">Acessar Google Meet</a></p>`
         : `<p style="margin:0;color:#666666">${htmlEscape(meetLine)}</p>`
-    }<hr style="margin:28px 0 16px;border:none;border-top:1px solid #eeeeee"><p style="margin:0;font-size:12px;color:#999999">AtlasGR · Central de Inteligência Comercial</p></div></div></body></html>`,
+    }<hr style="margin:28px 0 16px;border:none;border-top:1px solid #eeeeee"><p style="margin:0;font-size:12px;color:#999999">Birth Hub 360º · Central de Comando Inteligente</p></div></div></body></html>`,
     icalEvent: {
       filename: 'convite.ics',
       method: 'REQUEST',

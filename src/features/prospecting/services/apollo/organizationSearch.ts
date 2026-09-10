@@ -89,7 +89,7 @@ function mapSegmentToKeyword(segmento: string): string | null {
 /**
  * A Atlas atende Transportadoras e Operadores Logísticos (3PL/4PL) como ICP primário — empresas
  * cuja atividade É o transporte/logística (ver "ICP, Segmentos, Personas" no Playbook Comercial
- * AtlasGR). A busca por palavra-chave da Apollo é ampla e pode incluir falsos positivos (ex: "Vale"
+ * Birth Hub 360). A busca por palavra-chave da Apollo é ampla e pode incluir falsos positivos (ex: "Vale"
  * mineradora, "Localiza" locadora, empresas de TI) que só citam logística tangencialmente.
  * Usado só como sinal de ORDENAÇÃO (ver `rankByIcpAffinity`) — nunca para excluir um resultado. Uma
  * versão anterior descartava direto qualquer organização cujo `industry` não batesse aqui, o que

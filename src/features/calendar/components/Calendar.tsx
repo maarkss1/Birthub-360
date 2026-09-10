@@ -162,7 +162,7 @@ function DayCell({
       <div className="flex items-center justify-between">
         <span
           className={`text-[11px] font-semibold w-5 h-5 flex items-center justify-center rounded-full ${
-            isToday ? `${accent.bg} text-white` : 'text-ink-2'
+            isToday ? `${accent.bg} text-on-brand` : 'text-ink-2'
           }`}
         >
           {date.getDate()}

@@ -36,7 +36,7 @@ import { ChannelDonut } from '../../../components/ui/ChannelDonut';
 import { CompareBar, DeltaPill } from '../../../components/ui/CompareBar';
 import { DealsGrid, type DealCardData } from '../../../components/ui/DealsGrid';
 
-// Dataset extraído do Diagnóstico SDR — João Reis (BDR ID 392, AtlasGR)
+// Dataset extraído do Diagnóstico SDR — João Reis (BDR ID 392, Birth Hub 360)
 const DIAGNOSTIC_DATA = {
   funilJul: [
     { status: 'JUNK', nome: 'Desqualificado', eventos: 20, leadsUnicos: 20 },
@@ -592,7 +592,7 @@ const DEFAULT_DAILY_PLAN: DailyTask[] = [
     title: 'Bloco 6: Encerramento & Batimento de Meta',
     description:
       'Conferir o volume total de atividades lançadas no dia (Meta: 60-100/dia), atualizar compromissos de amanhã e registrar o diário de prospecção.',
-    tool: 'Painel Central AtlasGR + CRM Bitrix24',
+    tool: 'Painel Central Birth Hub 360 + CRM Bitrix24',
     targetCount: 'Meta mínima de 60 atividades batida',
     completed: false,
   },
@@ -603,25 +603,25 @@ const PITCHES_BY_SEGMENT = {
   transportadora: {
     segmento: 'Transportadora de Cargas',
     dor: 'Exigências da seguradora/PGR para cadastro rápido de motoristas e redução de sinistro.',
-    pitch: `Olá [Nome], aqui é o João Reis da AtlasGR. Vi que a [Nome da Empresa] atua no transporte rodoviário e sei o quanto a exigência de gerenciamento de risco e cadastro rápido de motoristas impacta a liberação de frota. Nós ajudamos transportadoras a reduzirem o tempo de validação de motoristas e cumprirem 100% da apólice com nossa plataforma. Como vocês gerenciam esse processo hoje?`,
+    pitch: `Olá [Nome], aqui é o João Reis da Birth Hub 360. Vi que a [Nome da Empresa] atua no transporte rodoviário e sei o quanto a exigência de gerenciamento de risco e cadastro rápido de motoristas impacta a liberação de frota. Nós ajudamos transportadoras a reduzirem o tempo de validação de motoristas e cumprirem 100% da apólice com nossa plataforma. Como vocês gerenciam esse processo hoje?`,
     perguntaChave: 'Quantos veículos ou viagens vocês operam por mês em média?',
   },
   agro: {
     segmento: 'Usina / Agroindústria',
     dor: 'Logística de escoamento de safra e rastreamento em rotas rurais sem sinal.',
-    pitch: `Olá [Nome], sou o João Reis da AtlasGR. Estou em contato com grandes grupos sucroalcooleiros e do agronegócio para otimizar o monitoramento do escoamento de safra e controle de terceiros. Vocês hoje têm visibilidade em tempo real do transbordo e da segurança dos veículos que entram na usina?`,
+    pitch: `Olá [Nome], sou o João Reis da Birth Hub 360. Estou em contato com grandes grupos sucroalcooleiros e do agronegócio para otimizar o monitoramento do escoamento de safra e controle de terceiros. Vocês hoje têm visibilidade em tempo real do transbordo e da segurança dos veículos que entram na usina?`,
     perguntaChave: 'Vocês trabalham mais com frota própria ou frota dedicada de terceiros?',
   },
   embarcador: {
     segmento: 'Embarcador / Indústria / Varejo',
     dor: 'Falta de visibilidade da carga em trânsito e nível de serviço da transportadora.',
-    pitch: `Olá [Nome], João Reis da AtlasGR. Ajudamos embarcadores industriais a terem torre de controle centralizada sobre todas as transportadoras contratadas, reduzindo no-show e atrasos de entrega. Como vocês garantem o nível de serviço do frete hoje?`,
+    pitch: `Olá [Nome], João Reis da Birth Hub 360. Ajudamos embarcadores industriais a terem torre de controle centralizada sobre todas as transportadoras contratadas, reduzindo no-show e atrasos de entrega. Como vocês garantem o nível de serviço do frete hoje?`,
     perguntaChave: 'Quantas transportadoras parceiras hoje atendem as rotas de vocês?',
   },
   terceirizacao: {
     segmento: 'Terceirização & Facilities (Portaria/Segurança)',
     dor: 'Controle de ponto/presença e validação de perfil de atendentes.',
-    pitch: `Olá [Nome], aqui é o João Reis da AtlasGR. Trabalhamos com empresas de facilities para gestão e validação de equipes terceirizadas em postos de trabalho. Como vocês fazem o acompanhamento de presença e compliance dos profissionais hoje?`,
+    pitch: `Olá [Nome], aqui é o João Reis da Birth Hub 360. Trabalhamos com empresas de facilities para gestão e validação de equipes terceirizadas em postos de trabalho. Como vocês fazem o acompanhamento de presença e compliance dos profissionais hoje?`,
     perguntaChave: 'Quantos postos de trabalho ativos a empresa gerencia atualmente?',
   },
 };
@@ -634,7 +634,7 @@ const OBJECTIONS_DATABASE = [
     diagnostico:
       'O lead acha que o produto substitui o que ele tem, quando na verdade pode integrar ou complementar.',
     respostaRecomendada:
-      'Perfeito, [Nome]! Nós não substituímos sua gerenciadora nem exigimos troca de rastreadores. A AtlasGR integra com a sua infraestrutura atual para homologar cadastros mais rápido e automatizar a conformidade com a seguradora. Quantas horas hoje sua equipe leva pra liberar um motorista agregado?',
+      'Perfeito, [Nome]! Nós não substituímos sua gerenciadora nem exigimos troca de rastreadores. A Birth Hub 360 integra com a sua infraestrutura atual para homologar cadastros mais rápido e automatizar a conformidade com a seguradora. Quantas horas hoje sua equipe leva pra liberar um motorista agregado?',
   },
   {
     id: 'obj-2',
@@ -786,7 +786,7 @@ export function JoaoReisDiagnosticHub() {
 
   // Pauta Markdown de 1:1
   const generatePautaMarkdown = () => {
-    return `# Pauta de Acompanhamento 1:1 — João Reis (AtlasGR)
+    return `# Pauta de Acompanhamento 1:1 — João Reis (Birth Hub 360)
 Data: 01/09/2026 | BDR ID: 392
 
 ## 1. Resumo Executivo de Desempenho
@@ -849,13 +849,13 @@ Data: 01/09/2026 | BDR ID: 392
               <Sparkles className="w-4 h-4 text-brand" />
               Diagnóstico SDR &amp; Plano Diário Operacional · BDR ID 392
             </div>
-            <h1 className="text-2xl md:text-3xl font-black text-ink">João Reis da AtlasGR</h1>
+            <h1 className="text-2xl md:text-3xl font-black text-ink">João Reis da Birth Hub 360</h1>
             <p className="text-sm text-ink-2 mt-1">
               Hub completo de performance, automações de prospecção, IA Coach e pauta de 1:1.
             </p>
           </div>
           {isJoaoReis && (
-            <div className="px-4 py-2 rounded-2xl bg-brand-active text-white text-xs font-black shadow-md flex items-center gap-2">
+            <div className="px-4 py-2 rounded-2xl bg-brand-active text-on-brand text-xs font-black shadow-md flex items-center gap-2">
               <ShieldCheck className="w-4 h-4" />
               Sessão Exclusiva — João Reis
             </div>
@@ -883,7 +883,7 @@ Data: 01/09/2026 | BDR ID: 392
                 />
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                    active ? 'bg-brand text-white' : 'bg-brand/10 text-brand'
+                    active ? 'bg-brand text-on-brand' : 'bg-brand/10 text-brand'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -980,7 +980,7 @@ Data: 01/09/2026 | BDR ID: 392
                       onClick={() => setChannelTag(tag)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                         channelTag === tag
-                          ? 'bg-brand-active text-white shadow-sm'
+                          ? 'bg-brand-active text-on-brand shadow-sm'
                           : 'text-ink-2 hover:text-ink'
                       }`}
                     >
@@ -1015,7 +1015,7 @@ Data: 01/09/2026 | BDR ID: 392
                         (prev) => (prev + 1) % DIAGNOSTIC_DATA.emCadencia.topLeads.length,
                       );
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     Salvar toque como {channelTag}
@@ -1136,7 +1136,7 @@ Data: 01/09/2026 | BDR ID: 392
                         onClick={() => setSelectedSegment(seg)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
                           selectedSegment === seg
-                            ? 'bg-brand-active text-white shadow-sm'
+                            ? 'bg-brand-active text-on-brand shadow-sm'
                             : 'text-ink-2 hover:text-ink'
                         }`}
                       >
@@ -1191,7 +1191,7 @@ Data: 01/09/2026 | BDR ID: 392
                 <button
                   type="button"
                   onClick={analyzeTranscript}
-                  className="px-5 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   Analisar Qualidade da Call com IA
@@ -1300,7 +1300,7 @@ Data: 01/09/2026 | BDR ID: 392
                   <button
                     type="button"
                     onClick={copyPautaToClipboard}
-                    className="px-4 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                   >
                     {copiedPauta ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     {copiedPauta ? 'Copiado!' : 'Copiar Pauta (Markdown)'}

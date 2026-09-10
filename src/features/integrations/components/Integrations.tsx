@@ -186,7 +186,7 @@ export function Integrations() {
               SoundFX.play('navigate');
               setActiveTab('whatsapp');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'whatsapp' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'whatsapp' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">💬</span> WhatsApp
           </button>
@@ -196,7 +196,7 @@ export function Integrations() {
               SoundFX.play('navigate');
               setActiveTab('google');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'google' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'google' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">📧</span> Google Workspace
           </button>
@@ -206,7 +206,7 @@ export function Integrations() {
               SoundFX.play('navigate');
               setActiveTab('bitrix');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'bitrix' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'bitrix' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">🔗</span> Bitrix24
           </button>
@@ -216,7 +216,7 @@ export function Integrations() {
               SoundFX.play('navigate');
               setActiveTab('3cx');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === '3cx' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === '3cx' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <IconWrench className="w-4 h-4 text-sky-500" /> PABX 3CX
           </button>
@@ -226,7 +226,7 @@ export function Integrations() {
               SoundFX.play('navigate');
               setActiveTab('webhooks');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'webhooks' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'webhooks' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <Activity className="w-4 h-4 text-brand" /> Webhooks & Monitor
           </button>
@@ -628,7 +628,7 @@ export function Integrations() {
                       type="text"
                       value={bitrixLabelInput}
                       onChange={(e) => setBitrixLabelInput(e.target.value)}
-                      placeholder="Nome pra identificar (ex.: AtlasGR, Total Trac)"
+                      placeholder="Nome pra identificar (ex.: Birth Hub 360, Birth Hub 360)"
                       className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-line shadow-sm bg-surface text-ink placeholder:text-ink-2 outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all"
                     />
                     <input
@@ -648,7 +648,7 @@ export function Integrations() {
                     onClick={handleBitrixConnect}
                     disabled={bitrixLoading || !canManage}
                     title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
-                    className="w-full py-2.5 bg-brand-active hover:bg-brand-2 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors"
+                    className="w-full py-2.5 bg-brand-active hover:bg-brand-2 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed text-on-brand font-bold rounded-lg transition-colors"
                   >
                     {bitrixLoading ? 'Validando webhook...' : 'Conectar'}
                   </button>
@@ -726,7 +726,7 @@ export function Integrations() {
                                   ? undefined
                                   : 'Requer permissão de Gestor ou Administrador'
                               }
-                              className="px-3 py-2 text-xs font-bold bg-soft text-brand-active dark:text-brand-2 hover:bg-brand/20 rounded-lg transition-colors border border-brand/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                              className="px-3 py-2 text-xs font-bold bg-soft text-brand-ink dark:text-brand hover:bg-brand/20 rounded-lg transition-colors border border-brand/20 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               {conn.hasWebhookSecret ? 'Gerar novo segredo' : 'Gerar segredo'}
                             </button>

@@ -72,7 +72,7 @@ export const DOCUMENTED_LARGE_CHUNKS = [
     reason: 'OnboardingTour (three.js via AtlasOrb) — lazy + gate condicional, fora do load inicial.',
   },
   {
-    // LoginScreen tambem usa o AtlasOrb (esfera 3D decorativa na cor da marca ativa). Agora que
+    // LoginScreen tambem usa o BrandOrb (esfera 3D decorativa na cor da marca). Agora que
     // dois pontos de entrada (OnboardingTour e LoginScreen) importam o mesmo componente via
     // React.lazy(), o Rollup deduplica o three.js compartilhado num chunk proprio
     // ("AtlasOrb-*.js", ~236KB gzip) em vez de duplica-lo em cada um — bom para cache, mas cai

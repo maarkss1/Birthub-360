@@ -117,7 +117,7 @@ export function Billing() {
                   aria-pressed={days === p}
                   className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
                     days === p
-                      ? `${accent.bg} text-white`
+                      ? `${accent.bg} text-on-brand`
                       : 'text-ink-2 hover:text-ink hover:bg-surface-2'
                   }`}
                 >

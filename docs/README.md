@@ -1,4 +1,4 @@
-# Documentação do PROSPECTOR-ATLASGR
+# Documentação do PROSPECTOR-BIRTH HUB 360
 
 Este é o índice único de documentação canônica deste repositório. Se um documento em qualquer
 outro lugar do repositório contradizer o que está listado aqui, este arquivo vence — corrija o

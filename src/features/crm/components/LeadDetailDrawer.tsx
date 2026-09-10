@@ -28,7 +28,7 @@ import { Button } from '../../../components/ui/Button';
 import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { LeadActionBar } from './LeadActionBar';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import { useAuth } from '../../../contexts/AuthContext';
 // Painel de conversa real (histórico + envio) já usado pela Prospecção sobre a mesma integração
@@ -122,7 +122,7 @@ interface LeadDetailDrawerProps {
 }
 
 export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawerProps) {
-  const { activeBrand, brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const { setActiveRecord, clearActiveRecord } = useActiveRecord();
   const { currentUser } = useAuth();
   const { confirm, dialog: confirmDialog } = useConfirmDialog();
@@ -385,7 +385,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
             <div className="p-6 border-b border-line bg-surface-2/50 shrink-0">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-brand/10 text-brand-active dark:text-brand-2 flex items-center justify-center shrink-0 border border-brand/20">
+                  <div className="w-12 h-12 rounded-2xl bg-brand/10 text-brand-ink dark:text-brand flex items-center justify-center shrink-0 border border-brand/20">
                     <Building2 size={24} />
                   </div>
                   <div>
@@ -533,7 +533,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                           }
                           target="_blank"
                           rel="noreferrer"
-                          className="text-xs font-semibold text-brand-active dark:text-brand-2 hover:underline flex items-center gap-1"
+                          className="text-xs font-semibold text-brand-ink dark:text-brand hover:underline flex items-center gap-1"
                         >
                           <Globe className="w-3 h-3" /> {company.website}
                         </a>
@@ -606,7 +606,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   <button
                     type="button"
                     onClick={() => setQualOpen(!qualOpen)}
-                    className="text-xs text-brand-active dark:text-brand-2 hover:underline font-semibold flex items-center gap-1"
+                    className="text-xs text-brand-ink dark:text-brand hover:underline font-semibold flex items-center gap-1"
                   >
                     {qualOpen ? (
                       <ChevronUp className="w-3.5 h-3.5" />
@@ -624,7 +624,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-ink flex items-center gap-1.5">
                           🎯 Lead Score:{' '}
-                          <b className="text-sm font-black text-brand-active dark:text-brand-2">
+                          <b className="text-sm font-black text-brand-ink dark:text-brand">
                             {liveScore.score}
                           </b>
                           /100
@@ -696,7 +696,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-black text-ink">Score Atual:</span>
-                        <span className="px-2 py-0.5 rounded-lg bg-surface border border-line font-black text-xs text-brand-active dark:text-brand-2">
+                        <span className="px-2 py-0.5 rounded-lg bg-surface border border-line font-black text-xs text-brand-ink dark:text-brand">
                           {lead.score ?? liveScore.score}/100
                         </span>
                       </div>
@@ -758,7 +758,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                     <button
                       type="submit"
                       disabled={savingNote || !noteText.trim()}
-                      className="px-4 py-2 bg-brand-active hover:brightness-110 text-white rounded-xl text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                      className="px-4 py-2 bg-brand-active hover:brightness-110 text-on-brand rounded-xl text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5"
                     >
                       {savingNote ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -785,10 +785,10 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                 </div>
               </section>
 
-              {brandInfo && (
+              {playbookMeta && (
                 <section className="space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-ink-2 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-brand" /> Copiloto de Vendas ({activeBrand})
+                    <Sparkles className="w-4 h-4 text-brand" /> Copiloto de Vendas ({playbookMeta.label})
                   </h3>
                   <AIEmailGenerator
                     companyName={lead.company?.legalName || lead.company?.tradeName || undefined}

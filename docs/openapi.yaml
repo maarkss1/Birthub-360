@@ -1,9 +1,9 @@
 openapi: 3.0.3
 info:
-  title: Prospector AtlasGR API
+  title: Birth Hub 360º API
   version: "1.0.0"
   description: |
-    Documentação da API do Prospector AtlasGR (CRM comercial + prospecção + IA).
+    Documentação da API do Birth Hub 360º (CRM comercial + prospecção + IA).
 
     **Autenticação**: a maioria das rotas exige uma sessão válida do Better Auth,
     enviada via cookie de sessão (`better-auth.session_token`) definido por
@@ -37,7 +37,7 @@ info:
       Expõe jobs de todas as organizações (as filas são globais, não por tenant) — risco residual
       documentado em `docs/security/SECURITY_GUIDE.md`.
   contact:
-    name: AtlasGR
+    name: Birth Hub 360
     email: comercial@atlasgr.com.br
 
 servers:
@@ -110,7 +110,7 @@ tags:
   - name: Acesso a Módulos
     description: >-
       Concessão individual de acesso aos módulos do Hub Executivo (Social Selling, Treinamento
-      AtlasGR, Proposta Comercial, Hub Inteligência & Mkt) — restrito a ADMIN, exceto a consulta
+      Comercial, Proposta Comercial, Hub Inteligência & Mkt) — restrito a ADMIN, exceto a consulta
       do próprio usuário logado
   - name: Cargos e Agentes
     description: >-
@@ -7313,7 +7313,7 @@ components:
         qualification:
           type: object
           nullable: true
-          description: Checklist de qualificação do SDR (Playbook Comercial AtlasGR, seção 4.2) — objeto livre
+          description: Checklist de qualificação do SDR (Playbook Comercial Birth Hub 360, seção 4.2) — objeto livre
     LeadInputPartial:
       allOf:
         - $ref: '#/components/schemas/LeadInput'

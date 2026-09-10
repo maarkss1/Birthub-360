@@ -1,8 +1,16 @@
-# PROSPECTOR-ATLAS
+# BIRTH HUB 360º
 
 > Operação autônoma: consulte [AUTONOMIA_COMERCIAL_24X7.md](./AUTONOMIA_COMERCIAL_24X7.md) para ativação, políticas, gatilhos e observabilidade de SDR/BDR/Closer.
 
-Prospector-Atlas é uma plataforma de inteligência logística focada em prospecção e gestão de leads no setor B2B, atuando como um CRM inteligente impulsionado por IA.
+**Birth Hub 360º** — sua central de comando inteligente: integrando dados, potencializando decisões
+e acelerando a execução.
+
+Plataforma de inteligência comercial B2B: prospecção, pipeline, roleplay de vendas, automações e
+analytics num CRM impulsionado por IA. ICP: qualquer empresa com área comercial que queira
+automatizar ponta a ponta.
+
+Identidade visual e regras de marca: [`identidade-visual/birthhub360/`](./identidade-visual/birthhub360/README.md)
+e [`docs/BrandConstitution.md`](./docs/BrandConstitution.md).
 
 ## Estrutura da Aplicação
 O repositório foi reestruturado para ser modular, escalável e de fácil manutenção, preparando a base para o desenvolvimento das próximas fases.

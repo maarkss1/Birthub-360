@@ -497,7 +497,7 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
           </span>
           <span className="text-ink-2">
             Total estimado:{' '}
-            <strong className="text-brand-active dark:text-brand-2">{money.format(total)}</strong>
+            <strong className="text-brand-ink dark:text-brand">{money.format(total)}</strong>
           </span>
         </div>
 

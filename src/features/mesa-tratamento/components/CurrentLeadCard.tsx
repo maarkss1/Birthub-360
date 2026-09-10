@@ -123,7 +123,7 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
             {lead.phone ? (
               <a
                 href={`tel:${lead.phone}`}
-                className="text-brand-active dark:text-brand-2 hover:underline"
+                className="text-brand-ink dark:text-brand hover:underline"
               >
                 {lead.phone}
               </a>
@@ -136,7 +136,7 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
             {lead.email ? (
               <a
                 href={`mailto:${lead.email}`}
-                className="text-brand-active dark:text-brand-2 hover:underline"
+                className="text-brand-ink dark:text-brand hover:underline"
               >
                 {lead.email}
               </a>

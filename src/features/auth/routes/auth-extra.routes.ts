@@ -2,6 +2,7 @@ import { Router, type Request, type Response, type NextFunction } from 'express'
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { sendEmail, MailerNotConfiguredError } from '../../../lib/email/mailer.js';
 import { logger } from '../../../lib/logger.js';
+import { BRAND } from '../../../config/brand.js';
 
 const router = Router();
 
@@ -18,18 +19,18 @@ router.post(
       try {
         await sendEmail({
           to: user.email,
-          subject: 'Bem-vindo(a) ao Prospector Atlas',
+          subject: `Bem-vindo(a) ao ${BRAND.name}`,
           text: [
             `Olá,`,
             '',
-            'Sua senha foi trocada com sucesso e sua conta no Prospector Atlas — Central de Inteligência Comercial AtlasGR/Total Trac — já está pronta para uso.',
+            `Sua senha foi trocada com sucesso e sua conta no ${BRAND.name} — ${BRAND.slogan} — já está pronta para uso.`,
             '',
             'Com ela você tem acesso a prospecção, pipeline de vendas, roleplay de vendas com IA e automações comerciais, de acordo com o papel atribuído à sua conta.',
             '',
             'Se você não reconhece esta conta ou não trocou sua senha agora, avise um administrador imediatamente.',
             '',
             'Bom trabalho!',
-            'Equipe AtlasGR / Total Trac',
+            `Equipe ${BRAND.shortName}`,
           ].join('\n'),
         });
       } catch (error) {

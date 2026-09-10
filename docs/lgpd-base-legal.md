@@ -1,6 +1,6 @@
 # Mapeamento de Bases Legais (LGPD - Lei 13.709/2018)
 
-Este documento mapeia o tratamento de dados pessoais no **AtlasGR / Central de Inteligência Comercial**, especificando a finalidade, a base legal aplicável e o ciclo de vida dos dados.
+Este documento mapeia o tratamento de dados pessoais no **Birth Hub 360 / Central de Comando Inteligente**, especificando a finalidade, a base legal aplicável e o ciclo de vida dos dados.
 
 ---
 

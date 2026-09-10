@@ -1,4 +1,4 @@
-# Central AtlasGR — modo local-first
+# Central Birth Hub 360 — modo local-first
 
 > **Atualização de destino de produção (2026-09-05):** a arquitetura de produção definitiva
 > descrita no parágrafo abaixo (Render + Neon + Cloudflare R2) foi **substituída por decisão

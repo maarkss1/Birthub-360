@@ -1,9 +1,9 @@
 ---
 name: frontend-design
-description: Use ao criar ou revisar qualquer tela, componente ou fluxo visual novo neste projeto (CRM Central de Inteligência Comercial ATLASGR/Prospector). Evita interfaces genéricas de IA e garante que o resultado pareça desenhado para este produto específico, não um template.
+description: Use ao criar ou revisar qualquer tela, componente ou fluxo visual novo neste projeto (CRM Birth Hub 360º/Prospector). Evita interfaces genéricas de IA e garante que o resultado pareça desenhado para este produto específico, não um template.
 ---
 
-# Frontend Design — Central de Inteligência Comercial ATLASGR
+# Frontend Design — Birth Hub 360º
 
 Inspirado no princípio do plugin oficial `frontend-design` da Anthropic (evitar estética genérica
 de IA, fazer escolhas de design ousadas e específicas ao contexto), adaptado aos tokens, marcas e
@@ -72,11 +72,11 @@ testada) e normalmente custa muito menos que construir algo novo do zero.
 
 - [ ] A composição tem um motivo identificável, não é a disposição "padrão" de um gerador (hero
       centralizada + 3 cards + CTA).
-- [ ] Nenhum gradiente azul/roxo genérico foi introduzido (paleta é laranja AtlasGR / azul
-      Total Trac, via tokens).
-- [ ] Cores vêm de tokens (`bg-brand`, `text-ink-2`...), não de hex/rgb cru, exceto onde já é
-      padrão do projeto (ex.: `atlas-orange`/`totaltrack-blue` estáticos nas telas de
-      pré-seleção de marca).
+- [ ] Nenhum gradiente genérico de "IA" foi introduzido. O único gradiente multicolorido da marca
+      é a órbita 360º (ouro → íris → azul), reservada a halo/borda/hero — nunca fundo com texto.
+- [ ] Cores vêm de tokens (`bg-brand`, `text-ink-2`...), não de hex/rgb cru — hex só onde não
+      existe CSS (three.js, canvas, PDF, e-mail) e vindo de `BRAND.colors`.
+- [ ] Superfície de marca sólida usa `text-on-brand`, nunca `text-white` (ouro é cor clara).
 - [ ] Tipografia usa a escala existente (`font-sans`/`font-display`, H1-H3 de `@layer base`), sem
       redefinir tamanho/peso ad-hoc.
 - [ ] Todo `.glass-panel`/blur/sombra tem propósito de hierarquia, não é decoração padrão.

@@ -17,6 +17,10 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // nenhuma tela que depende de dados (dashboard, CRM, prospecção, Hub de IA etc.) funcionava.
 // Restaurado aqui, com o domínio de produção real confirmado nesta onda (ver comentário abaixo).
 //
+// NOTA DE MARCA: appId, esquema de deep link (`atlasgr://`) e domínios continuam com o nome
+// anterior de propósito. Trocá-los invalida instalações já publicadas, links salvos e a
+// configuração de DNS/Render — é uma migração coordenada, não parte de um rebranding de UI.
+//
 // `app.atlasgr.com.br` (domínio final, usado em render.yaml/docs/deploy/producao.md como
 // ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL) ainda não resolve DNS — verificado nesta onda
 // (`curl https://app.atlasgr.com.br` não conecta). O fallback documentado em
@@ -36,7 +40,7 @@ const IS_LOCAL_TEST_URL = PRODUCTION_URL.startsWith('http://');
 
 const config: CapacitorConfig = {
   appId: 'br.com.atlasgr.prospector',
-  appName: 'AtlasGR Prospector',
+  appName: 'Birth Hub 360',
   webDir: 'dist',
   server: {
     url: PRODUCTION_URL,
@@ -51,7 +55,9 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchShowDuration: 2000,
       launchAutoHide: true,
-      backgroundColor: "#ffffff",
+      // Obsidian: a marca é escura por padrão (identidade-visual/birthhub360). Splash
+      // branco criava um flash claro antes do app pintar a própria superfície.
+      backgroundColor: "#0B132B",
       androidSplashResourceName: "splash",
       androidScaleType: "CENTER_CROP",
       showSpinner: false,
@@ -59,9 +65,11 @@ const config: CapacitorConfig = {
       splashImmersive: true,
     },
     StatusBar: {
-      style: "DARK",
+      // "LIGHT" = conteúdo claro sobre barra escura (nomenclatura do Capacitor),
+      // combinando com o Obsidian do splash e do tema escuro.
+      style: "LIGHT",
       overlaysWebView: false,
-      backgroundColor: "#ffffff",
+      backgroundColor: "#0B132B",
     },
   },
 };

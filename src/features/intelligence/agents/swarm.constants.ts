@@ -8,11 +8,11 @@
  * "Você é um agente da Atlas..." e sua própria frase de "não invente dados / responda em
  * português / sem markdown". Isso divergia com o tempo (alguns agentes tinham a regra de
  * anti-alucinação, outros não; a marca usada no texto do prompt — "Atlas" — nunca bateu com o
- * nome completo do produto, "AtlasGR", usado no restante do app) e cada especialista podia acabar
+ * nome completo do produto, "Birth Hub 360", usado no restante do app) e cada especialista podia acabar
  * respondendo num formato ligeiramente diferente dos demais. Centralizar aqui garante que uma
  * mudança de marca ou de regra de formatação seja escrita uma vez só e valha para o enxame inteiro.
  */
-export const SWARM_BRAND = 'AtlasGR';
+export const SWARM_BRAND = 'Birth Hub 360';
 
 export const SWARM_IDENTITY =
   `Você é um BDR/SDR Especialista de Elite da ${SWARM_BRAND}, referência nacional em Inteligência Comercial, ` +

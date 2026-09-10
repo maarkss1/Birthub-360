@@ -5,7 +5,7 @@ import { APIError, createAuthMiddleware, isAPIError } from 'better-auth/api';
 import { prisma } from './prisma.js';
 import { requestContext } from './async-context.js';
 import { parseAllowedOrigins } from '../config/network.js';
-import { isAuthorizedLoginEmail, getBrandFromEmail } from '../config/access-policy.js';
+import { isAuthorizedLoginEmail, getTenantFromEmail } from '../config/access-policy.js';
 import { sendEmail, MailerNotConfiguredError } from './email/mailer.js';
 import { logger } from './logger.js';
 import { env } from '../config/env.js';
@@ -111,11 +111,11 @@ export const auth = betterAuth({
       try {
         await sendEmail({
           to: user.email,
-          subject: 'Redefinição de senha — Prospector Atlas',
+          subject: 'Redefinição de senha — Birth Hub 360',
           text: [
             `Olá${user.name ? `, ${user.name}` : ''},`,
             '',
-            'Recebemos uma solicitação para redefinir a senha da sua conta no Prospector Atlas.',
+            'Recebemos uma solicitação para redefinir a senha da sua conta no Birth Hub 360.',
             '',
             `Clique no link abaixo para escolher uma nova senha (válido por 1 hora):`,
             url,
@@ -156,11 +156,11 @@ export const auth = betterAuth({
       try {
         await sendEmail({
           to: user.email,
-          subject: 'Confirme seu e-mail — Prospector Atlas',
+          subject: 'Confirme seu e-mail — Birth Hub 360',
           text: [
             `Olá${user.name ? `, ${user.name}` : ''},`,
             '',
-            'Recebemos um cadastro no Prospector Atlas com este e-mail.',
+            'Recebemos um cadastro no Birth Hub 360 com este e-mail.',
             '',
             `Clique no link abaixo para confirmar que este e-mail é seu e ativar a conta:`,
             url,
@@ -314,7 +314,7 @@ export const auth = betterAuth({
 
           // Create an organization if one isn't provided (during registration / Google OAuth)
           if (!user.organizationId) {
-            const brand = getBrandFromEmail(user.email);
+            const brand = getTenantFromEmail(user.email);
             const brandTitle = brand === 'totaltrac' ? 'Total Trac Operações' : 'AtlasGR Operações';
             // O middleware de /api/auth (server.ts) já roda toda esta rota sob
             // requestContext.run({ bypassRls: true }, ...) — sem tenant conhecido ainda,

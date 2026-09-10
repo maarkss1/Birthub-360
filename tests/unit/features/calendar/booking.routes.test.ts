@@ -82,7 +82,7 @@ const LINK = {
     active: true,
 };
 const HOST_USER = { name: 'João Vendedor', email: 'joao@atlasgr.com', image: null, role: 'CLOSER' };
-const HOST_ORG = { name: 'AtlasGR' };
+const HOST_ORG = { name: 'Birth Hub 360' };
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -120,7 +120,7 @@ describe('GET /public-book/:slug', () => {
         const res = await request(app).get('/public-book/joao-vendas');
 
         expect(res.status).toBe(200);
-        expect(res.body.data.host).toEqual({ name: 'João Vendedor', role: 'CLOSER', organization: 'AtlasGR' });
+        expect(res.body.data.host).toEqual({ name: 'João Vendedor', role: 'CLOSER', organization: 'Birth Hub 360' });
         // A query do link em si nunca usa `include` — os dois lookups acima são chamadas próprias.
         expect(publicBookingLinkFindUnique).toHaveBeenCalledWith({ where: { slug: 'joao-vendas' } });
     });

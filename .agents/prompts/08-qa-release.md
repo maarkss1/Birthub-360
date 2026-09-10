@@ -73,7 +73,7 @@ CI não pode marcar verde ignorando exit code. Se algum script não existir em `
 Cobrir fluxos críticos:
 - login/logout/session;
 - RBAC admin;
-- tenant AtlasGR/TotalTrac;
+- tenant Birth Hub 360;
 - dashboard sem fake data;
 - CRM;
 - prospecção;

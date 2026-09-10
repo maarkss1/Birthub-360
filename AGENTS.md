@@ -207,7 +207,7 @@ Antes de adicionar novas funcionalidades, eliminar ou validar como resolvidos:
 7. Comando de voz que afirma navegar sem realizar navegação.
 8. Ferramentas do Hub de IA inacessíveis.
 9. Erros de frontend em Integrações, incluindo estado/importações ausentes.
-10. Separação visual AtlasGR/TotalTrac sem isolamento de dados comprovado.
+10. Separação visual Birth Hub 360 sem isolamento de dados comprovado.
 11. Sincronizações Bitrix que podem falhar silenciosamente.
 12. Extrações Bitrix incompletas tratadas como recurso final.
 13. Tratamento de dados pessoais sem base legal, retenção definida ou meio de exclusão (ver seção LGPD).
@@ -219,7 +219,7 @@ Decisão de governança da Sprint 00/Onda 12 (GOV-003), vigente até a Sprint 13
 
 - **Bloqueado**: qualquer feature nova fora do que já está listado como necessário para cumprir uma
   promessa já feita ao usuário/produto (ver `docs/`, `AUTONOMIA_COMERCIAL_24X7.md`,
-  `PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md` e handoffs abertos com sprint destino "onda-13" no
+  `PRODUCT_EXPERIENCE.md` e handoffs abertos com sprint destino "onda-13" no
   inventário de `.agents/handoffs/**`, consolidado em `.agents/runs/onda-12.md`).
 - **Permitido**:
   - remediação de bug, débito técnico, achado de segurança/RBAC/tenancy/LGPD (ver "Bloqueadores
@@ -295,7 +295,7 @@ Antes de finalizar qualquer onda, rodar varredura de segredo versionado (ferrame
 - Dashboards devem apresentar loading, empty, error e stale state de forma explícita.
 - Nenhuma métrica comercial pode ser fabricada para "preencher" a interface.
 
-## Tenancy AtlasGR / TotalTrac
+## Tenancy Birth Hub 360 / Birth Hub 360
 Separação visual não é prova de isolamento.
 
 Toda leitura e escrita de dados sensíveis a empresa/tenant deve comprovar:

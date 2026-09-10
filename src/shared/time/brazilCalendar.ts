@@ -1,4 +1,4 @@
-/** Calendário canônico da operação AtlasGR/TotalTrac (America/Sao_Paulo). */
+/** Calendário canônico da operação Birth Hub 360 (America/Sao_Paulo). */
 export const BRAZIL_TIME_ZONE = 'America/Sao_Paulo';
 export const BRAZIL_UTC_OFFSET_MS = 3 * 60 * 60 * 1000;
 

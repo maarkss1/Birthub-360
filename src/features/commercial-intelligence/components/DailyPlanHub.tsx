@@ -344,7 +344,7 @@ export function DailyPlanHub() {
                       ? 'Bitrix CRM'
                       : item.origin === 'BITRIX_LEAD'
                         ? 'Bitrix Lead'
-                        : 'Central AtlasGR'}
+                        : 'Central Birth Hub 360'}
                 </span>
               </div>
 
@@ -577,7 +577,7 @@ export function DailyPlanHub() {
             <button
               type="button"
               onClick={() => setShowNewActivityModal(true)}
-              className="px-4 py-2.5 rounded-2xl bg-brand text-white hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-2xl bg-brand text-on-brand hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Nova Atividade
@@ -814,7 +814,7 @@ export function DailyPlanHub() {
                       onClick={() => setSelectedSegment(seg)}
                       className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         selectedSegment === seg
-                          ? 'bg-brand text-white shadow-sm'
+                          ? 'bg-brand text-on-brand shadow-sm'
                           : 'bg-bg border border-line text-ink hover:border-brand/30'
                       }`}
                     >
@@ -865,7 +865,7 @@ Urgentes: ${planData?.kpis.urgentItems || 0}`;
                   setCopiedPauta(true);
                   setTimeout(() => setCopiedPauta(false), 2000);
                 }}
-                className="px-4 py-2 rounded-xl bg-brand text-white text-xs font-black hover:bg-brand-active transition-colors cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-brand text-on-brand text-xs font-black hover:bg-brand-active transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 {copiedPauta ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedPauta ? 'Pauta Copiada!' : 'Copiar Pauta'}

@@ -32,7 +32,7 @@ export async function mountFrontend(app: Express): Promise<void> {
   if (env.NODE_ENV !== 'production') {
     // Serve estáticos do /tools antes do Vite, para evitar que o Vite intercepte .html e retorne o SPA fallback
     app.use('/tools', express.static(path.join(process.cwd(), 'public', 'tools')));
-    // Treinamento AtlasGR (Next.js export) precisa de /_next na raiz
+    // Treinamento Comercial (Next.js export) precisa de /_next na raiz
     app.use(
       '/_next',
       express.static(path.join(process.cwd(), 'public', 'tools', 'treinamento-atlasgr', '_next')),
@@ -47,7 +47,7 @@ export async function mountFrontend(app: Express): Promise<void> {
     const distPath = path.join(process.cwd(), 'dist');
 
     // Ferramentas estáticas legadas (public/tools/** — propostas comerciais, portal comercial,
-    // treinamento AtlasGR) dependem de <script> inline e onclick="" espalhados por dezenas de
+    // treinamento Birth Hub 360) dependem de <script> inline e onclick="" espalhados por dezenas de
     // arquivos HTML pré-existentes. A CSP estrita do Helmet (`script-src 'self'`, sem
     // unsafe-inline — ver security.ts) bloqueia TODO esse JS em produção: nenhum botão desses
     // HTMLs funciona (ex.: "Abrir Proposta" em Selecionar_Proposta_Atlas.html), sem nenhum erro
@@ -69,7 +69,7 @@ export async function mountFrontend(app: Express): Promise<void> {
 
     app.use(express.static(distPath));
 
-    // Treinamento AtlasGR (Next.js export) precisa de /_next na raiz (em produção fica em dist/tools/...)
+    // Treinamento Comercial (Next.js export) precisa de /_next na raiz (em produção fica em dist/tools/...)
     app.use('/_next', express.static(path.join(distPath, 'tools', 'treinamento-atlasgr', '_next')));
 
     // Express 5 (path-to-regexp v8) não aceita mais o wildcard nu `'*'` — o processo morria no

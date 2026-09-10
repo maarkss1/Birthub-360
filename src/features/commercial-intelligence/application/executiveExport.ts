@@ -217,7 +217,7 @@ footer{margin-top:32px;color:#999;font-size:11px}
 <h2>Alertas</h2>
 ${alertsHtml}
 ${blocksHtml}
-<footer>Gerado automaticamente pelo Comercial Inteligente — AtlasGR. Nenhuma credencial/webhook incluído neste arquivo.</footer>
+<footer>Gerado automaticamente pelo Comercial Inteligente — Birth Hub 360. Nenhuma credencial/webhook incluído neste arquivo.</footer>
 </body></html>`;
 }
 

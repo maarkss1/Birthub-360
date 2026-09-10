@@ -1,4 +1,4 @@
-# Relatório de Auditoria Enterprise — Prospector Atlas GR
+# Relatório de Auditoria Enterprise — Birth Hub 360º
 
 Esta auditoria apresenta a visão técnica aprofundada do repositório, classificada por pilares, para guiar a evolução do sistema rumo a uma plataforma B2B SaaS Enterprise.
 

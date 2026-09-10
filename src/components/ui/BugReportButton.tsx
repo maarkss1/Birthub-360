@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Bug } from 'lucide-react';
 import { Dialog } from './Dialog';
 import { Button } from './Button';
-import { useBrand } from '../../contexts/BrandContext';
+import { useActivePlaybook } from '../../hooks/useActivePlaybook';
 import { useFeatureFlag } from '../../hooks/useFeatureFlags';
 import { bugReportApi, type BugReportSeverity } from '../../features/bug-reports/bugReport.api';
 import { toast } from '../../lib/toast';
@@ -19,7 +19,7 @@ const SEVERITY_OPTIONS: Array<{ value: BugReportSeverity; label: string }> = [
  * Problemas). Captura contexto técnico automaticamente (URL, user agent, viewport, últimos logs
  * — ver bugReport.api.ts#buildContext) para reduzir o quanto o usuário precisa descrever à mão.
  *
- * Sem indicador pulsante/contínuo de propósito, ao contrário de AtlasChatbotTrigger: aquele ping
+ * Sem indicador pulsante/contínuo de propósito, ao contrário de CopilotTrigger: aquele ping
  * comunica "o copiloto está disponível agora" (um estado real que muda); este botão não tem
  * estado equivalente para comunicar, então uma animação contínua aqui seria só decorativa (ver
  * CLAUDE.md, seção 8 — motion sem propósito).
@@ -30,7 +30,7 @@ export function BugReportButton() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [severity, setSeverity] = useState<BugReportSeverity>('MEDIUM');
-  const { activeBrand } = useBrand();
+  const { playbook } = useActivePlaybook();
 
   const isVisible = useFeatureFlag('bug_report_module', true);
 
@@ -54,7 +54,7 @@ export function BugReportButton() {
 
     setIsSubmitting(true);
     try {
-      await bugReportApi.create({ title, description, severity, brand: activeBrand });
+      await bugReportApi.create({ title, description, severity, brand: playbook });
       toast.success('Relato enviado. Obrigado por avisar!');
       setIsOpen(false);
       resetForm();
@@ -67,7 +67,7 @@ export function BugReportButton() {
 
   return (
     <>
-      {/* Empilhado ACIMA do AtlasChatbotTrigger (bottom-6 right-6), não no canto oposto:
+      {/* Empilhado ACIMA do CopilotTrigger (bottom-6 right-6), não no canto oposto:
                 este app tem telas de conteúdo full-bleed (o Kanban do CRM ocupa a largura/altura
                 inteiras da área de conteúdo, drag-and-drop incluído) — um botão flutuante novo
                 num canto ainda não ocupado por nenhum widget arrisca sobrepor uma área de
@@ -88,7 +88,7 @@ export function BugReportButton() {
         </button>
       </div>
 
-      {/* Montado só quando aberto — mesmo padrão de FloatingChatbook em AtlasChatbotTrigger.tsx.
+      {/* Montado só quando aberto — mesmo padrão de FloatingChatbook em CopilotTrigger.tsx.
                 Diferente daquele caso, este botão é global (MainLayout, toda tela do app): o
                 <dialog> do Dialog compartilhado ficaria sempre no DOM mesmo fechado se renderizado
                 incondicionalmente, o que apareceu na varredura axe-core de Configurações (só ela

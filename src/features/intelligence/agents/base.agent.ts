@@ -20,7 +20,7 @@ export interface AgentRunResult {
 }
 
 /**
- * Classe base abstrata para os agentes de IA do PROSPECTOR-ATLASGR.
+ * Classe base abstrata para os agentes de IA do Birth Hub 360.
  * Centraliza: grafo LangGraph de turno único, memória de longo prazo (AgentMemory),
  * carregamento do perfil de estilo aprendido e tratamento de erros.
  *

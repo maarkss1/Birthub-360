@@ -79,7 +79,7 @@ export const PITCHES_BY_SEGMENT = {
     gancho:
       'Você sabe exatamente onde cada motorista parou e se o consumo de diesel está no padrão da rota agora?',
     script:
-      'Olá! Sou especialista em operações de frotas pesadas da AtlasGR. Reduzimos em média 12% do custo de diesel e eliminamos desvios de rota em transportadoras do seu porte já no primeiro mês.',
+      'Olá! Sou especialista em operações de frotas pesadas da Birth Hub 360. Reduzimos em média 12% do custo de diesel e eliminamos desvios de rota em transportadoras do seu porte já no primeiro mês.',
   },
   locadora: {
     nome: 'Locadoras & Gestão de Ativos',
@@ -87,7 +87,7 @@ export const PITCHES_BY_SEGMENT = {
     gancho:
       'Se um cliente romper o contrato e sumir com o veículo hoje, em quantos minutos você consegue imobilizar?',
     script:
-      'Olá! A tecnologia da AtlasGR garante taxa de recuperação de 98% com dupla tecnologia e bloqueio seguro sem intervenção mecânica complexa.',
+      'Olá! A tecnologia da Birth Hub 360 garante taxa de recuperação de 98% com dupla tecnologia e bloqueio seguro sem intervenção mecânica complexa.',
   },
   servicos: {
     nome: 'Frotas de Serviços & Utilitários',

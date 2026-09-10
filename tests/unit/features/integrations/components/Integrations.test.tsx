@@ -104,7 +104,7 @@ expect(screen.getByText('Integrações')).toBeInTheDocument();
                 success: true,
                 data: [{
                     id: 'bitrix-1',
-                    label: 'AtlasGR',
+                    label: 'Birth Hub 360',
                     portalDomain: 'atlas.bitrix24.com.br',
                     webhookReceiverUrl: 'https://app.example.com/api/bitrix/webhook/bitrix-1',
                     hasWebhookSecret: true,

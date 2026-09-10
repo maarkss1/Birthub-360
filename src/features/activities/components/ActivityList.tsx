@@ -346,7 +346,7 @@ export function ActivityList() {
                   SoundFX.play('navigate');
                   setFilterMineOnly(false);
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${!filterMineOnly ? 'bg-brand-active text-white' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${!filterMineOnly ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:text-ink'}`}
               >
                 Equipe Toda
               </button>
@@ -356,7 +356,7 @@ export function ActivityList() {
                   SoundFX.play('navigate');
                   setFilterMineOnly(true);
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${filterMineOnly ? 'bg-brand-active text-white' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${filterMineOnly ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:text-ink'}`}
               >
                 Minhas Atividades {currentUser?.name ? `(${currentUser.name})` : ''}
               </button>
@@ -417,7 +417,7 @@ export function ActivityList() {
                 SoundFX.play('focus');
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-1.5 bg-brand-active text-white font-black text-xs px-4 py-2 rounded-xl shadow-md hover:brightness-110 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 bg-brand-active text-on-brand font-black text-xs px-4 py-2 rounded-xl shadow-md hover:brightness-110 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Nova Atividade
             </button>
@@ -466,7 +466,7 @@ export function ActivityList() {
             <button
               type="button"
               onClick={() => setIsFormOpen(true)}
-              className="mt-2 flex items-center gap-2 bg-brand-active text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer"
+              className="mt-2 flex items-center gap-2 bg-brand-active text-on-brand font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Criar Primeira Atividade
             </button>

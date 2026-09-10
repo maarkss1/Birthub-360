@@ -155,7 +155,7 @@ export function PublicBookingPage() {
               href={successData.meetUrl}
               target="_blank"
               rel="noreferrer"
-              className="block w-full rounded-xl bg-brand-active px-4 py-3 text-sm font-bold text-white transition-colors duration-200 hover:bg-brand-2"
+              className="block w-full rounded-xl bg-brand-active px-4 py-3 text-sm font-bold text-on-brand transition-colors duration-200 hover:bg-brand-2"
             >
               Entrar na reunião (Google Meet)
             </a>

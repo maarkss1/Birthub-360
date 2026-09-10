@@ -93,7 +93,7 @@ function toQueueDetail(lead: QueueLead) {
     bitrixStageLabel: lead.bitrixStageLabel,
     nextAction: lead.nextAction,
     // Já buscado do banco (leadSelect) mas descartado antes desta correção (achado do Piloto
-    // 026) — checklist de qualificação do SDR (Playbook Comercial AtlasGR §4.2), útil pra decidir
+    // 026) — checklist de qualificação do SDR (Playbook Comercial Birth Hub 360 §4.2), útil pra decidir
     // o que fazer agora sem reabrir o cadastro completo do lead em outra tela.
     qualification: lead.qualification,
   };

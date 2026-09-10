@@ -103,7 +103,7 @@ describe('getGithubOrganizationProfile', () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse(200, {
         login: 'atlasgr',
-        name: 'AtlasGR',
+        name: 'Birth Hub 360',
         description: 'Revenue OS de logística',
         blog: 'https://atlasgr.com.br',
         location: 'São Paulo, BR',
@@ -118,7 +118,7 @@ describe('getGithubOrganizationProfile', () => {
 
     expect(result.profile).toEqual({
       login: 'atlasgr',
-      name: 'AtlasGR',
+      name: 'Birth Hub 360',
       description: 'Revenue OS de logística',
       blog: 'https://atlasgr.com.br',
       location: 'São Paulo, BR',

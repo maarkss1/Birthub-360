@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { ATLAS_TOKENS, ATLAS_CLASSES } from '@/lib/designSystem';
+import { DS_TOKENS, DS_CLASSES } from '@/lib/designSystem';
 import {
   BentoGrid,
   BentoCard,
@@ -24,12 +24,12 @@ import {
 describe('Onda 1 — Design System Foundation & Core Components', () => {
   describe('Prompt 01: Design System Tokens', () => {
     it('should define canonical radii and elevation tokens according to the brand manual', () => {
-      expect(ATLAS_TOKENS.radii.default).toBe('12px');
-      expect(ATLAS_TOKENS.elevation.commandPalette).toBe(60);
-      expect(ATLAS_CLASSES.glass).toBe('atlas-glass');
-      expect(ATLAS_CLASSES.card).toBe('atlas-card');
-      expect(ATLAS_CLASSES.states.active).toBe('atlas-state-active');
-      expect(ATLAS_CLASSES.skeleton).toBe('atlas-skeleton-shimmer');
+      expect(DS_TOKENS.radii.default).toBe('12px');
+      expect(DS_TOKENS.elevation.commandPalette).toBe(60);
+      expect(DS_CLASSES.glass).toBe('bh-glass');
+      expect(DS_CLASSES.card).toBe('bh-card');
+      expect(DS_CLASSES.states.active).toBe('bh-state-active');
+      expect(DS_CLASSES.skeleton).toBe('bh-skeleton-shimmer');
     });
   });
 
@@ -130,7 +130,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
           <ChartSkeleton />
         </div>
       );
-      expect(container.querySelectorAll('.atlas-skeleton-shimmer').length).toBeGreaterThan(5);
+      expect(container.querySelectorAll('.bh-skeleton-shimmer').length).toBeGreaterThan(5);
     });
   });
 });

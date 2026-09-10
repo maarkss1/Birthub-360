@@ -78,7 +78,7 @@ export function DiscoveryFilterPanel({
     <div className="xl:col-span-4 bg-surface p-6 sm:p-8 rounded-2xl border border-line shadow-sm relative overflow-hidden flex flex-col h-full max-h-[800px]">
       <div className="absolute top-0 right-0 w-40 h-40 bg-brand opacity-5 transform rotate-45 translate-x-20 -translate-y-20" />
       <div className="flex items-center gap-2 mb-6 relative z-10">
-        <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2">
+        <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand">
           <Database size={18} />
         </div>
         <h2 className="font-black text-xl text-ink">🗺️ Motor de Busca Turbo</h2>
@@ -557,7 +557,7 @@ export function DiscoveryFilterPanel({
                           tecnologias: next.length ? next.join(',') : undefined,
                         });
                       }}
-                      className={`px-2 py-1 rounded-md text-[11px] font-medium border transition-colors ${selected ? 'bg-brand-active border-brand-active text-white' : 'bg-surface border-line text-ink-2 hover:border-brand/40'}`}
+                      className={`px-2 py-1 rounded-md text-[11px] font-medium border transition-colors ${selected ? 'bg-brand-active border-brand-active text-on-brand' : 'bg-surface border-line text-ink-2 hover:border-brand/40'}`}
                     >
                       {opt.label}
                     </button>
@@ -658,7 +658,7 @@ export function DiscoveryFilterPanel({
           id="btn-discover"
           onClick={onDiscover}
           disabled={isSearching}
-          className="w-full bg-brand-active text-white py-4 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-4 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>

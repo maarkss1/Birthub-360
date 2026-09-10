@@ -1,4 +1,4 @@
-# CREATIVE SYSTEM 01 — AtlasGR Revenue OS
+# CREATIVE SYSTEM 01 — Birth Hub 360º
 
 Primeira entrega obrigatória do `PROMPT MASTER 2.0` (Seção 53), construída sobre o
 `PRODUCT_VISUAL_TRUTH_MAP.md` (removido do controle de versão em 22/08/2026 — ver
@@ -11,17 +11,17 @@ daqui, não é reinventada peça a peça.
 
 ## A. Brand Narrative
 
-**Marca:** AtlasGR Revenue OS
+**Marca:** Birth Hub 360º
 **Assinatura:** Inteligência & Aceleração Comercial B2B
 **Big Idea:** Do Sinal à Ação
 **Verdade estratégica:** toda operação comercial B2B gera sinais (leads, atividades, mudanças de
 pipeline, comportamento) — o problema não é falta de dado, é não enxergar o que importa a tempo de
-agir. O AtlasGR conecta Sinal → Contexto → Prioridade → Ação → Aprendizado → Decisão.
+agir. O Birth Hub 360 conecta Sinal → Contexto → Prioridade → Ação → Aprendizado → Decisão.
 
 **Personalidade:** inteligente, madura, precisa, segura, silenciosamente poderosa, executiva.
 **Território emocional:** controle (primário), clareza (secundário). Nunca ansiedade, caos visual
 ou hype.
-**O que o AtlasGR não é:** não é "mais um CRM", não é "IA que faz tudo sozinha", não é dashboard
+**O que o Birth Hub 360 não é:** não é "mais um CRM", não é "IA que faz tudo sozinha", não é dashboard
 por dashboard. É a camada operacional que conecta sinal, contexto, prioridade e execução —
 a decisão continua sendo humana.
 
@@ -118,7 +118,7 @@ exatamente sua receita"). Preferir "ajuda a priorizar", "organiza sinais", "orie
 
 ## H. CTA System
 
-Padrão: *Conheça o AtlasGR Revenue OS* · *Veja o próximo movimento* · *Explore o Revenue OS* ·
+Padrão: *Conheça o Birth Hub 360º* · *Veja o próximo movimento* · *Explore o Hub* ·
 *Transforme sinais em ação*. Nunca urgência artificial ("compre agora", "não perca").
 
 ## I. Film Architecture
@@ -162,7 +162,7 @@ respiração entre eles que um filme, já que é apresentado com narração ao v
 - [x] Nenhum dado inventado — paleta/tipografia validadas contra `globals.css`, não contra o
       manual histórico desatualizado.
 - [x] Nenhum cliente/depoimento/número inventado — nenhum foi citado neste documento.
-- [x] Identidade AtlasGR respeitada (paleta de runtime, Montserrat).
+- [x] Identidade Birth Hub 360 respeitada (paleta de runtime, Montserrat).
 - [x] Conceito Do Sinal à Ação presente em toda camada (B, I, J).
 
 ## Próximo passo sugerido

@@ -12,7 +12,7 @@ import { emailResultSchema } from '../../schema.js';
 
 const request = {
   kind: 'email' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: {
     companyName: 'Transportes Silva',
     contactName: 'Maria',
@@ -38,7 +38,7 @@ describe('studio/generators/email', () => {
     expect(context).toBe('studio:email');
     expect(schema).toBe(emailResultSchema);
     expect(temperature).toBe(0.55);
-    expect(prompt).toContain('AtlasGR');
+    expect(prompt).toContain('Birth Hub 360');
     expect(prompt).toContain('Transportes Silva');
   });
 

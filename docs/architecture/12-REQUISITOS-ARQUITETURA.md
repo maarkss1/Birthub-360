@@ -2,8 +2,8 @@
 
 **Escopo deste documento**: não é o PRD de uma funcionalidade de negócio nova. É a auditoria e o
 framework de governança dos 12 requisitos de arquitetura/documentação/segurança exigidos para
-qualquer sistema em produção, aplicados ao Prospector (Central de Inteligência Comercial
-ATLASGR/Total Trac) como um todo — 10 dos 12 itens já existiam e são consolidados/documentados
+qualquer sistema em produção, aplicados ao Birth Hub 360º como um todo — 10 dos 12 itens já
+existiam e são consolidados/documentados
 aqui; 2 eram gaps reais e foram implementados nesta mudança (**Feature Flags** e **Módulo de
 Reportar Problemas**).
 
@@ -15,9 +15,9 @@ Toda decisão de design deste documento e dos dois módulos novos segue `.claude
 
 ## 1. Documento do Sistema (PRD)
 
-**Produto**: Prospector — Central de Inteligência Comercial, CRM B2B com IA (prospecção,
-pipeline, roleplay de vendas, automações, analytics) para duas marcas irmãs (AtlasGR/Revenue OS e
-Total Trac/Fleet OS — ver `docs/BrandConstitution.md`).
+**Produto**: Birth Hub 360º — central de comando inteligente. CRM B2B com IA (prospecção,
+pipeline, roleplay de vendas, automações, analytics), marca única (ver
+`docs/BrandConstitution.md`).
 
 **Regra de negócio central que atravessa todo o sistema**: isolamento total de dados entre
 organizações (tenants) — nenhuma linha de dado de uma organização é visível, editável ou
@@ -253,7 +253,7 @@ serviço de error tracking (Sentry etc., que este projeto conscientemente não u
   (canto inferior esquerdo, para não colidir com `AtlasChatbotTrigger`/`VoiceCommandWidget` no
   canto direito), visível para todo usuário autenticado — controlado pelo próprio sistema de
   feature flags acima (`bug_report_module`, default ligado).
-- Captura automática de contexto no momento do envio: URL, rota, marca ativa, user agent,
+- Captura automática de contexto no momento do envio: URL, rota, playbook ativo, user agent,
   viewport, e as últimas 30 entradas `warn`/`error` do `clientLogger` (ring buffer adicionado a
   `src/lib/clientLogger.ts` só para esse fim — `debug`/`info` não entram, são ruído).
 - **Sanitização antes de persistir** (`src/features/bug-reports/domain/bugReport.sanitize.ts`): redige

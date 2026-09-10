@@ -23,7 +23,7 @@ import { api } from '../lib/api';
 import { ContextualTip } from './ui/ContextualTip';
 import { EmptyState } from './ui/EmptyState';
 import { Button } from './ui/Button';
-import { useBrand } from '../contexts/BrandContext';
+import { BRAND } from '../config/brand';
 import { toast } from '../lib/toast';
 import { clientLogger } from '../lib/clientLogger';
 import { SoundFX } from '../lib/soundEffects';
@@ -81,7 +81,7 @@ interface CrmBoardProps {
 }
 
 export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps) {
-  const { brandInfo } = useBrand();
+  // (identidade da plataforma vem de BRAND)
   const [searchParams, setSearchParams] = useSearchParams();
   const funnel: 'Lead' | 'Negocio' =
     funnelProp ?? (searchParams.get('funnel') === 'Negocio' ? 'Negocio' : 'Lead');
@@ -588,7 +588,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       link.href = url;
       link.setAttribute(
         'download',
-        `leads_${brandInfo.name.toLowerCase()}_${new Date().toISOString().slice(0, 10)}.csv`,
+        `leads_${BRAND.id}_${new Date().toISOString().slice(0, 10)}.csv`,
       );
       document.body.appendChild(link);
       link.click();
@@ -622,7 +622,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           <p className="text-ink-2 text-xs mt-1">
             {funnel === 'Lead'
               ? 'Qualifique, nutra e converta os leads prontos para o pipeline de negócios.'
-              : `Gerencie propostas, pilotos e receita do ${brandInfo.name} em um funil separado.`}
+              : 'Gerencie propostas, pilotos e receita em um funil separado.'}
           </p>
           {!funnelProp && (
             // Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
@@ -638,7 +638,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
                 type="button"
                 onClick={() => handleFunnelChange('Lead')}
                 aria-pressed={funnel === 'Lead'}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Lead' ? 'bg-brand-active text-white' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Lead' ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
               >
                 Leads
               </button>
@@ -646,7 +646,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
                 type="button"
                 onClick={() => handleFunnelChange('Negocio')}
                 aria-pressed={funnel === 'Negocio'}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Negocio' ? 'bg-brand-active text-white' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Negocio' ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
               >
                 Negócios
               </button>
@@ -764,7 +764,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
             <button
               type="button"
               onClick={handleClearFilters}
-              className="text-xs font-semibold text-brand-active dark:text-brand-2 hover:underline"
+              className="text-xs font-semibold text-brand-ink dark:text-brand hover:underline"
             >
               Limpar filtros
             </button>
@@ -860,14 +860,14 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       {selectedLeadIds.size > 0 && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-surface/95 backdrop-blur-xl border border-line shadow-2xl rounded-3xl p-3 px-5 flex flex-wrap items-center gap-3 animate-in slide-in-from-bottom-5 duration-300">
           <div className="flex items-center gap-2 pr-3 border-r border-line">
-            <span className="w-6 h-6 rounded-full bg-brand-active text-white text-xs font-black flex items-center justify-center">
+            <span className="w-6 h-6 rounded-full bg-brand-active text-on-brand text-xs font-black flex items-center justify-center">
               {selectedLeadIds.size}
             </span>
             <span className="text-xs font-bold text-ink">selecionado(s)</span>
             <button
               type="button"
               onClick={handleSelectAll}
-              className="text-[11px] font-bold text-brand-active dark:text-brand-2 hover:underline ml-1"
+              className="text-[11px] font-bold text-brand-ink dark:text-brand hover:underline ml-1"
             >
               {selectedLeadIds.size === filteredLeads.length ? 'Desmarcar Todos' : 'Todos'}
             </button>

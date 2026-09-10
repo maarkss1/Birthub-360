@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 
 const PROVIDERS = [
@@ -117,7 +117,7 @@ const TOOLS_LIST = [
 
 export function SuperagentCreator() {
   const accent = useBrandAccent();
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const [name, setName] = useState('');
   const [provider, setProvider] = useState(PROVIDERS[0].id);
   const [model, setModel] = useState(PROVIDERS[0].models[0]);
@@ -164,7 +164,7 @@ export function SuperagentCreator() {
   const handleCreateOffline = () => {
     setGenerating(true);
     setError('');
-    const agentName = name || `${accent.brandName} SDR Alpha`;
+    const agentName = name || `${playbookMeta.label} SDR Alpha`;
 
     {
       const systemPrompt = `[SYSTEM PROMPT - ${agentName.toUpperCase()}]
@@ -297,7 +297,7 @@ $status | ConvertTo-Json -Depth 3
     setGenerating(true);
     setError('');
     setResult(null);
-    const agentName = name.trim() || `${brandInfo.name} SDR Alpha`;
+    const agentName = name.trim() || `${playbookMeta.label} SDR Alpha`;
     try {
       const response = await api.post<{
         result: {
@@ -311,7 +311,7 @@ $status | ConvertTo-Json -Depth 3
         '/api/intelligence/studio',
         {
           kind: 'superagent',
-          brand: { name: brandInfo.name, description: brandInfo.description },
+          brand: { name: playbookMeta.label, description: playbookMeta.description },
           inputs: {
             name: agentName,
             provider: currentProviderObj.name,
@@ -415,7 +415,7 @@ $status | ConvertTo-Json -Depth 3
             </span>
           </div>
           <h3 className="text-4xl font-black text-ink mb-4 tracking-tight">
-            {accent.brandName}{' '}
+            {playbookMeta.label}{' '}
             <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
               Fábrica de Superagentes
             </span>
@@ -673,7 +673,7 @@ $status | ConvertTo-Json -Depth 3
                   onClick={() => toggleTool(t.id)}
                   className={`px-4 py-3 rounded-xl border text-xs font-bold text-left transition-all flex items-center justify-between ${
                     isSelected
-                      ? `${accent.selectedBg} text-white`
+                      ? `${accent.selectedBg} text-on-brand`
                       : 'bg-surface-2 border-line text-ink-2 hover:border-line hover:text-ink'
                   }`}
                 >
@@ -691,7 +691,7 @@ $status | ConvertTo-Json -Depth 3
             type="button"
             onClick={handleCreate}
             disabled={generating}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradientVia} text-white px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradientVia} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
           >
             {generating && (
               <motion.div
@@ -793,7 +793,7 @@ $status | ConvertTo-Json -Depth 3
                 onClick={() => setActiveTabOutput('prompt')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   activeTabOutput === 'prompt'
-                    ? `${accent.solidBg} text-white shadow-lg`
+                    ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
                 }`}
               >

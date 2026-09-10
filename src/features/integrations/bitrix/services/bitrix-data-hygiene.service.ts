@@ -31,7 +31,7 @@ export class BitrixDataHygieneService {
     const startTime = Date.now();
 
     const systemPrompt = `Você é um engenheiro de qualidade e higienização de dados de CRM B2B.
-Sua missão é padronizar e limpar dados brutos importados do Bitrix24 para o ecossistema AtlasGR / TotalTrac.
+Sua missão é padronizar e limpar dados brutos importados do Bitrix24 para o ecossistema Birth Hub 360 / Birth Hub 360.
 Regras de padronização:
 1. "commercialName": Nome informal e limpo da empresa para uso em e-mails/WhatsApp (remova LTDA, S/A, ME, EPP, TRANSPORTES, etc. e use Capital Case correto).
 2. "standardizedJobTitle": Padronize cargos confusos (ex: "ger. logist" -> "Gerente de Logística").

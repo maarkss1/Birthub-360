@@ -55,7 +55,7 @@ export const AccentBar: Story = {
     <Card {...args} className="w-80">
       <CardHeader>
         <CardTitle>Destaque da marca</CardTitle>
-        <CardDescription>accentBar usa o gradiente laranja→branco da AtlasGR.</CardDescription>
+        <CardDescription>accentBar usa o gradiente laranja→branco da Birth Hub 360.</CardDescription>
       </CardHeader>
     </Card>
   ),

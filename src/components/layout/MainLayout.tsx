@@ -5,14 +5,13 @@ import { AppTopbar } from './AppTopbar';
 import { OfflineBanner } from './OfflineBanner';
 import type { TabType } from './tabMeta';
 import { Toaster } from '../ui/Toaster';
-import { AtlasChatbotTrigger } from '../ui/AtlasChatbotTrigger';
+import { CopilotTrigger } from '../ui/CopilotTrigger';
 import { BugReportButton } from '../ui/BugReportButton';
 import { VoiceCommandWidget } from '../ui/VoiceCommandWidget';
 import { CommandPalette } from '../ui/CommandPalette';
 import { BottomSheet } from '../ui/BottomSheet';
 import { FloatingDock } from './FloatingDock';
 import { PageTransition } from './PageTransition';
-import { useBrandAccent } from '../../hooks/useBrandAccent';
 import { useNavigationBusBridge } from '../../hooks/useNavigationBusBridge';
 
 interface MainLayoutProps {
@@ -20,7 +19,6 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const { isAtlas } = useBrandAccent();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const location = useLocation();
   // Liga o navigationBus (usado hoje pelo comando de voz) à navegação real — ver
@@ -48,16 +46,16 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="h-screen w-full flex flex-col bg-bg text-ink font-sans overflow-hidden relative transition-colors duration-500">
-      {/* BACKGROUND: superfície neutra e quente, com um brilho sutil da marca ativa */}
+      {/* BACKGROUND: superfície neutra, com um halo sutil da marca (ouro + íris) */}
       <div className="absolute inset-0 flex z-0 overflow-hidden pointer-events-none bg-bg">
-        {/* bg-brand/bg-brand-2 (não bg-atlas-orange/bg-totaltrack-blue estáticos) — reagem a
+        {/* bg-brand/bg-brand-2 (não bg-brand/bg-iris estáticos) — reagem a
                     document.documentElement.style.setProperty em BrandContext.tsx sem precisar
                     tocar este componente se a paleta de alguma marca mudar. */}
         <div
-          className={`absolute -top-32 -right-32 w-[560px] h-[560px] rounded-full blur-[120px] opacity-40 ${isAtlas ? 'bg-brand/20' : 'bg-brand-2/20'}`}
+          className={`absolute -top-32 -right-32 w-[560px] h-[560px] rounded-full blur-[120px] opacity-40 bg-brand/20`}
         />
         <div
-          className={`absolute bottom-0 left-0 w-[420px] h-[420px] rounded-full blur-[110px] opacity-30 ${isAtlas ? 'bg-atlas-yellow/10' : 'bg-sky-300/10'}`}
+          className={`absolute bottom-0 left-0 w-[420px] h-[420px] rounded-full blur-[110px] opacity-30 bg-iris/10`}
         />
       </div>
 
@@ -86,7 +84,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           <FloatingDock activeTab={activeTab} onOpenFullMenu={() => setMobileNavOpen(true)} />
           <Toaster />
           <VoiceCommandWidget />
-          <AtlasChatbotTrigger />
+          <CopilotTrigger />
           <BugReportButton />
           <CommandPalette />
           <BottomSheet open={false} onOpenChange={() => {}} snapPoints={['50%', '90%']}>

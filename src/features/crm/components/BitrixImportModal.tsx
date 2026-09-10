@@ -213,7 +213,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
                   onClick={() => setEntityType('lead')}
                   className={`py-2 px-3 rounded-xl text-xs font-bold transition-colors border ${
                     entityType === 'lead'
-                      ? 'bg-brand-active text-white border-brand'
+                      ? 'bg-brand-active text-on-brand border-brand'
                       : 'bg-surface-2 text-ink-2 border-line hover:bg-surface'
                   }`}
                 >
@@ -224,7 +224,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
                   onClick={() => setEntityType('deal')}
                   className={`py-2 px-3 rounded-xl text-xs font-bold transition-colors border ${
                     entityType === 'deal'
-                      ? 'bg-brand-active text-white border-brand'
+                      ? 'bg-brand-active text-on-brand border-brand'
                       : 'bg-surface-2 text-ink-2 border-line hover:bg-surface'
                   }`}
                 >
@@ -288,7 +288,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
                 <button
                   type="button"
                   onClick={toggleSelectAll}
-                  className="flex items-center gap-2 font-bold text-brand-active dark:text-brand-2 hover:underline"
+                  className="flex items-center gap-2 font-bold text-brand-ink dark:text-brand hover:underline"
                 >
                   {selectedIds.size === (entityType === 'lead' ? leads : deals).length ? (
                     <CheckSquare className="w-4 h-4" />
@@ -458,7 +458,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
               type="button"
               onClick={handleImportSelected}
               disabled={importing || selectedIds.size === 0}
-              className="px-5 py-2.5 bg-brand-active hover:brightness-110 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto"
+              className="px-5 py-2.5 bg-brand-active hover:brightness-110 text-on-brand rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto"
             >
               {importing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

@@ -3,7 +3,7 @@ name: end-to-end-flow-validator
 description: Use para validar uma jornada completa do produto (lead→enriquecimento→conversão→Bitrix; empresa→enriquecimento→CRM; IA→dados→resposta→persistência), não um componente isolado. Um módulo não é funcional só porque suas partes passam em isolamento — valida happy path, erro, reload, duplicidade, autorização, integridade e observabilidade ao longo de toda a cadeia.
 ---
 
-# End-to-End Flow Validator — Central de Inteligência Comercial ATLASGR
+# End-to-End Flow Validator — Birth Hub 360º
 
 ## Quando usar
 
@@ -94,7 +94,7 @@ Persistência (AILog, AgentMemory, AIPendingAction conforme o fluxo)
 Interface (ChatbookHub / FloatingChatbook / RoleplayHub / AIDockWidget)
 ```
 
-**Achado documentado a confirmar**: `PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md` aponta 4 superfícies de
+**Achado documentado a confirmar**: `PRODUCT_EXPERIENCE.md` aponta 4 superfícies de
 chat de IA sobrepostas sem um entry point único, e que `useAssistantChat` recebe só
 `activeBrand`/`brandInfo`, não o registro/rota aberta — ou seja, a etapa "Contexto" da jornada pode
 estar estruturalmente rasa (IA não sabe em que lead/empresa o usuário está) mesmo que "Modelo" e

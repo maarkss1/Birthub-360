@@ -15,7 +15,7 @@ import { generateScript } from '../script.js';
 
 const request = {
   kind: 'script' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: {
     language: 'Python',
     purpose: 'Enriquecer CNPJ',

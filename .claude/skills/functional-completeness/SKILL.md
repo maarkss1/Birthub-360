@@ -3,7 +3,7 @@ name: functional-completeness
 description: Use ao investigar se uma funcionalidade específica (botão, formulário, tela) que parece pronta visualmente realmente funciona ponta a ponta — existe, aceita interação, chama o backend, persiste, sobrevive a reload, trata erro e respeita permissão. Detecta formulário cenográfico, estado só local, e feature escondida atrás de UI funcionando.
 ---
 
-# Functional Completeness — Central de Inteligência Comercial ATLASGR
+# Functional Completeness — Birth Hub 360º
 
 ## Quando usar
 
@@ -52,7 +52,7 @@ Leia primeiro:
   com resposta padronizada `{success, data, meta}` e também com resposta "crua" não-padronizada
   como fallback. Isso pode mascarar um endpoint que nunca foi migrado pro formato padrão — ver
   `api-contracts`.
-- `PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md` — já documenta features suspeitas de incompletude (ex.:
+- `PRODUCT_EXPERIENCE.md` — já documenta features suspeitas de incompletude (ex.:
   `Settings.tsx` como possível stub órfão sem rota, múltiplas superfícies de chat de IA sem entry
   point único). Confirme o estado atual antes de tratar como novidade — código muda mais rápido que
   documentação.

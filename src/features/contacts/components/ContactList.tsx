@@ -204,7 +204,7 @@ export function ContactList() {
                 setSelectedContact(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 bg-gradient-to-r from-brand to-brand-2 text-white font-black text-xs px-5 py-2.5 rounded-2xl shadow-lg shadow-brand/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand font-black text-xs px-5 py-2.5 rounded-2xl shadow-lg shadow-brand/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Novo Contato
             </button>
@@ -275,7 +275,7 @@ export function ContactList() {
                     >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2 font-black text-sm shrink-0 border border-brand/20 shadow-sm">
+                          <div className="w-10 h-10 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand font-black text-sm shrink-0 border border-brand/20 shadow-sm">
                             {contact.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
@@ -360,7 +360,7 @@ export function ContactList() {
                             type="button"
                             onClick={() => handleEnrich(contact.id)}
                             disabled={!!enrichingId}
-                            className="p-2 rounded-xl bg-brand/10 text-brand-active dark:text-brand-2 border border-brand/20 hover:bg-brand/20 transition-all cursor-pointer disabled:opacity-40"
+                            className="p-2 rounded-xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20 hover:bg-brand/20 transition-all cursor-pointer disabled:opacity-40"
                             title="Validar e enriquecer contato"
                             aria-label={`Validar e enriquecer ${contact.name}`}
                           >

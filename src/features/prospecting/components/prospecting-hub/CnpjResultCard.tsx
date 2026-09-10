@@ -171,7 +171,7 @@ export function CnpjResultCard({
             type="button"
             onClick={onPromote}
             disabled={isPromoting}
-            className="bg-atlas-dark text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-black transition-colors flex items-center gap-2 disabled:opacity-60"
+            className="bg-obsidian text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-black transition-colors flex items-center gap-2 disabled:opacity-60"
           >
             {isPromoting ? <Loader2 className="animate-spin" size={16} /> : <UserPlus size={16} />}
             {isPromoting ? '⏳ Adicionando...' : '➕ Adicionar ao CRM como Lead'}

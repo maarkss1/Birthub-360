@@ -12,7 +12,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { api } from '../../../lib/api';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { fadeInUp } from '../../../lib/motion';
@@ -56,7 +55,6 @@ function formatUsd(value: number): string {
  * nem estado do circuit breaker por provedor — ver Piloto 007 em .claude/PILOTS.md.
  */
 export function AiGatewayShowcase() {
-  const { isAtlas } = useBrandAccent();
   const { theme } = useTheme();
   const [data, setData] = useState<UsageSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,7 +80,7 @@ export function AiGatewayShowcase() {
   // var(--brand)/var(--brand-2) em vez de hex fixo — mesma técnica de GlowChart.tsx, reage à troca
   // de marca. Divergência intencional vs. a paleta hex fixa que Billing.tsx usa para este mesmo
   // dado: aqui o card fica dentro de uma tela que troca de marca em runtime, Billing não precisa.
-  const accentColor = isAtlas ? 'var(--brand)' : 'var(--brand-2)';
+  const accentColor = 'var(--brand)';
   const axisColor = theme === 'light' ? '#cbd5e1' : '#475569';
   const tooltipStyle = {
     backgroundColor: theme === 'light' ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.85)',

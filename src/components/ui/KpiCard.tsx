@@ -69,7 +69,7 @@ export function KpiCard({
             aria-hidden="true"
             className={cn(
               'flex h-5 w-5 items-center justify-center rounded-full bg-surface-2 text-ink-2 transition-colors duration-200',
-              active && 'bg-brand text-white',
+              active && 'bg-brand text-on-brand',
             )}
           >
             <svg

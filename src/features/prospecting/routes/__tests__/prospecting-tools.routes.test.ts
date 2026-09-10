@@ -152,7 +152,7 @@ describe('POST /api/prospecting/tools/github/profile', () => {
     getGithubOrganizationProfileMock.mockResolvedValue({
       profile: {
         login: 'atlasgr',
-        name: 'AtlasGR',
+        name: 'Birth Hub 360',
         description: null,
         blog: null,
         location: null,

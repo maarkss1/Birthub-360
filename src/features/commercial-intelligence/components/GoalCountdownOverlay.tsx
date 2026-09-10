@@ -245,10 +245,10 @@ export function GoalCountdownOverlay({
                 </div>
                 <div className="flex flex-col">
                   {/* text-brand (não text-brand-2) sobre bg-zinc-950 (fundo fixo, sem reagir a
-                                        tema/dark:) só passa 4.5:1 na marca AtlasGR (6.25:1) — na Total Trac,
+                                        tema/dark:) só passa 4.5:1 na marca Birth Hub 360 (6.25:1) — na Birth Hub 360,
                                         --brand é um azul-marinho escuro demais pra esse fundo quase preto (2.41:1,
                                         falha grave). text-brand-2 (o tom mais claro de cada marca) resolve as
-                                        duas: Atlas 7.9:1, Total Trac 5.51:1 sólido / 4.65:1 em /90. */}
+                                        duas: Atlas 7.9:1, Birth Hub 360 5.51:1 sólido / 4.65:1 em /90. */}
                   <span className="text-4xl md:text-5xl font-black text-brand-2 tabular-nums">
                     {String(secondsRemaining).padStart(2, '0')}
                   </span>

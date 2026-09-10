@@ -274,21 +274,21 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
               <button
                 type="button"
                 onClick={() => setNewSource('lead')}
-                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'lead' ? 'bg-surface text-brand-active dark:text-brand-2 shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'lead' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
                 Lead
               </button>
               <button
                 type="button"
                 onClick={() => setNewSource('deal')}
-                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'deal' ? 'bg-surface text-brand-active dark:text-brand-2 shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'deal' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
                 Negócio
               </button>
             </div>
             {newSource === 'deal' &&
               (pipelines.length > 0 ? (
-                <span className="flex items-center gap-1.5 px-4 h-9 rounded-xl bg-soft border border-brand/20 text-brand-active dark:text-brand-2 text-sm font-bold whitespace-nowrap">
+                <span className="flex items-center gap-1.5 px-4 h-9 rounded-xl bg-soft border border-brand/20 text-brand-ink dark:text-brand text-sm font-bold whitespace-nowrap">
                   {pipelines[0].name}
                 </span>
               ) : (
@@ -336,7 +336,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
               type="button"
               onClick={addRule}
               disabled={(newSource === 'deal' && !newCategoryId) || creating}
-              className="flex items-center gap-2 h-9 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-40 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+              className="flex items-center gap-2 h-9 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-40 text-on-brand text-sm font-bold rounded-xl transition-colors shadow-sm"
             >
               {creating ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

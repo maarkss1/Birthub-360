@@ -1,7 +1,7 @@
 # Workflow canônico de release da aplicação.
 # A proteção da main exige o contexto GitHub Actions `build`; por isso esse nome é
 # reservado exclusivamente ao agregador final deste workflow.
-name: Central AtlasGR Release
+name: Central Birth Hub 360 Release
 
 on:
   push:
@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   secret-scan:
-    name: Central AtlasGR / secret scan
+    name: Central Birth Hub 360 / secret scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -32,7 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-test:
-    name: Central AtlasGR / application gate
+    name: Central Birth Hub 360 / application gate
     runs-on: ubuntu-latest
     needs: secret-scan
     timeout-minutes: 30

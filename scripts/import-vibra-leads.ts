@@ -283,7 +283,7 @@ async function main() {
               customFields: {
                 ...existingCustomFields,
                 evento: 'Vibra',
-                marca: 'AtlasGR',
+                marca: 'Birth Hub 360',
                 transpCode: row.transp || null,
                 vendedorResponsavel: row.vendedor || null,
                 pdlt: row.pdlt || null,
@@ -297,7 +297,7 @@ async function main() {
             data: {
               customFields: {
                 evento: 'Vibra',
-                marca: 'AtlasGR',
+                marca: 'Birth Hub 360',
                 vendedorResponsavel: row.vendedor || null,
               },
             },

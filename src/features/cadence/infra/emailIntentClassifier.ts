@@ -21,7 +21,7 @@ const ALLOWED_INTENTS = new Set([
 ]);
 const ALLOWED_URGENCY = new Set(['alta', 'media', 'baixa']);
 
-const EXTRACTION_SYSTEM_PROMPT = `Você é um analista de conversas comerciais B2B (logística/gerenciamento de risco de carga, mercado brasileiro). Leia a troca de e-mails entre um vendedor da Atlas ("Atlas") e um lead ("Cliente") e extraia sinais REAIS — nunca invente algo que não está no texto. Responda SOMENTE com um JSON válido, sem markdown, no formato exato:
+const EXTRACTION_SYSTEM_PROMPT = `Você é um analista de conversas comerciais B2B (logística/gerenciamento de risco de carga, mercado brasileiro). Leia a troca de e-mails entre um vendedor ("Vendedor") e um lead ("Cliente") e extraia sinais REAIS — nunca invente algo que não está no texto. Responda SOMENTE com um JSON válido, sem markdown, no formato exato:
 {"intent": "alta_intencao_compra"|"duvida_tecnica"|"objecao_preco"|"objecao_outro"|"sem_interesse"|"neutro", "urgency": "alta"|"media"|"baixa", "objections": string[], "budgetMentioned": boolean, "nextStep": string|null, "summary": string, "confidence": number}
 "objections" só objeções REALMENTE ditas pelo cliente (frase curta, em português). "nextStep" é o próximo passo combinado (reunião, envio de proposta, retorno em data) ou null se nada foi combinado. "summary" tem 1-2 frases citando algo real da conversa — nunca genérico. "confidence" é de 0 a 1: sua confiança nesta leitura.`;
 

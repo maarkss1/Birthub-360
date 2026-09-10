@@ -3,7 +3,7 @@ name: motion-design
 description: Use ao adicionar ou revisar qualquer animação, transição de estado, reveal, parallax ou microinteração. Framer Motion é a biblioteca padrão deste projeto (src/lib/motion.ts) — define quando animar, quando não, e como respeitar prefers-reduced-motion.
 ---
 
-# Motion Design — Central de Inteligência Comercial ATLASGR
+# Motion Design — Birth Hub 360º
 
 ## Biblioteca padrão: Framer Motion
 

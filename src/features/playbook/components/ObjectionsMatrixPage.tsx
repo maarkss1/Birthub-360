@@ -13,7 +13,8 @@ import {
   Trash2,
   WifiOff,
 } from 'lucide-react';
-import { useBrand } from '../../../contexts/BrandContext';
+import { PLAYBOOKS } from '../../../config/playbooks';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { EmptyState } from '../../../components/ui/EmptyState';
@@ -28,7 +29,7 @@ import { toast } from '../../../lib/toast';
 const PAGE_SIZE = 20;
 
 export function ObjectionsMatrixPage() {
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook, setPlaybook, info: playbookMeta } = useActivePlaybook();
   const { currentUser } = useAuth();
   // Mesmo achado do Piloto 017 na Matriz de Qualificação: DELETE exige ADMIN/GESTOR no backend, o
   // botão "Excluir" aparecia pra qualquer papel.
@@ -56,7 +57,7 @@ export function ObjectionsMatrixPage() {
     setLoading(true);
     setError(null);
     playbookApi
-      .listObjectionsPage({ brand: activeBrand, page, limit: PAGE_SIZE })
+      .listObjectionsPage({ brand: playbook, page, limit: PAGE_SIZE })
       .then((res) => {
         setItems(res.data);
         setMeta(res.meta);
@@ -73,7 +74,7 @@ export function ObjectionsMatrixPage() {
     setPage(1);
   }, []);
 
-  useEffect(load, [activeBrand, page]);
+  useEffect(load, [playbook, page]);
 
   const segments = useMemo(
     () => Array.from(new Set(items.map((item) => item.segment))).sort(),
@@ -132,8 +133,8 @@ export function ObjectionsMatrixPage() {
             <p className="text-ink-2 text-sm font-medium">
               {meta?.total ?? items.length} objeç
               {(meta?.total ?? items.length) !== 1 ? 'ões' : 'ão'} mapeada
-              {(meta?.total ?? items.length) !== 1 ? 's' : ''} para {brandInfo.name} com script de
-              contorno recomendado e diferencial-chave.
+              {(meta?.total ?? items.length) !== 1 ? 's' : ''} no playbook {playbookMeta.label},
+              com script de contorno recomendado e diferencial-chave.
             </p>
           </div>
           <button
@@ -142,7 +143,7 @@ export function ObjectionsMatrixPage() {
               setEditingItem(null);
               setIsFormOpen(true);
             }}
-            className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-white px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer shrink-0"
+            className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer shrink-0"
           >
             <Plus className="w-5 h-5" /> Nova Objeção
           </button>
@@ -165,6 +166,18 @@ export function ObjectionsMatrixPage() {
               className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-2 text-ink text-xs font-semibold border border-line focus:outline-none focus:ring-1 focus:ring-brand"
             />
           </div>
+          <select
+            aria-label="Playbook"
+            value={playbook}
+            onChange={(e) => setPlaybook(e.target.value as typeof playbook)}
+            className="px-3 py-2 rounded-xl bg-surface-2 text-ink text-xs font-bold border border-brand/40 focus:outline-none focus:ring-1 focus:ring-brand"
+          >
+            {PLAYBOOKS.map((pb) => (
+              <option key={pb.key} value={pb.key}>
+                {pb.label}
+              </option>
+            ))}
+          </select>
           <select
             aria-label="Filtrar por segmento"
             value={selectedSegment}
@@ -325,7 +338,7 @@ export function ObjectionsMatrixPage() {
       {isFormOpen && (
         <ObjectionItemForm
           item={editingItem}
-          defaultBrand={activeBrand}
+          defaultBrand={playbook}
           onClose={() => setIsFormOpen(false)}
           onSave={() => {
             setIsFormOpen(false);

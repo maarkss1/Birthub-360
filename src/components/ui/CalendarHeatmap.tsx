@@ -22,9 +22,9 @@ const WEEKDAY_LABELS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 const LEVEL_CLASS = [
   'bg-surface-2 text-ink-2',
   'bg-brand/[0.18] text-ink',
-  'bg-brand/40 text-white',
-  'bg-brand/65 text-white',
-  'bg-gradient-to-br from-brand to-brand-2 text-white shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_25%,transparent)]',
+  'bg-brand/40 text-on-brand',
+  'bg-brand/65 text-on-brand',
+  'bg-gradient-to-br from-brand to-brand-2 text-on-brand shadow-[0_0_0_2px_color-mix(in_srgb,var(--brand)_25%,transparent)]',
 ];
 
 function levelOf(count: number, max: number) {

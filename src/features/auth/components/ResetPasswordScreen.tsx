@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { authClient } from '../../../lib/auth-client';
-import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
+import { BirthHubSignature } from '../../../components/brand/BirthHubLogo';
 
 // Chegamos aqui a partir do link enviado por e-mail (ver sendResetPassword em src/lib/auth.ts):
 // better-auth redireciona pra cá com ?token=... quando o token é válido, ou ?error=INVALID_TOKEN
@@ -22,7 +22,7 @@ export function ResetPasswordScreen() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-  const { activeBrand, brandInfo } = useBrand();
+  const { brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,13 +61,13 @@ export function ResetPasswordScreen() {
         aria-hidden="true"
         animate={{ scale: [1, 1.08, 1], rotate: [0, 90, 0] }}
         transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-        className="absolute left-[-18%] top-1/2 h-[560px] w-[440px] -translate-y-1/2 rounded-full bg-atlas-orange/12 blur-[130px] pointer-events-none"
+        className="absolute left-[-18%] top-1/2 h-[560px] w-[440px] -translate-y-1/2 rounded-full bg-brand/12 blur-[130px] pointer-events-none"
       />
       <motion.div
         aria-hidden="true"
         animate={{ scale: [1, 1.1, 1], rotate: [0, -90, 0] }}
         transition={{ duration: 27, repeat: Infinity, ease: 'linear' }}
-        className="absolute right-[-18%] top-1/2 h-[560px] w-[440px] -translate-y-1/2 rounded-full bg-totaltrack-blue/12 blur-[130px] pointer-events-none"
+        className="absolute right-[-18%] top-1/2 h-[560px] w-[440px] -translate-y-1/2 rounded-full bg-iris/12 blur-[130px] pointer-events-none"
       />
 
       <button
@@ -83,11 +83,7 @@ export function ResetPasswordScreen() {
       <div className="w-full max-w-md relative z-10">
         <div className="glass-panel p-8 sm:p-10 rounded-[2.5rem] border border-line bg-surface/95 shadow-2xl relative">
           <div className="flex flex-col items-center mb-6">
-            {activeBrand === 'atlasgr' ? (
-              <img src="/atlas-logo.svg" alt="AtlasGR" className="h-10 w-auto object-contain" />
-            ) : (
-              <TotalTrackLogo className="h-10 w-auto" />
-            )}
+            <BirthHubSignature className="h-10 text-ink" />
             <p className="text-ink-2 text-xs mt-3 font-medium text-center">{brandInfo.slogan}</p>
           </div>
 
@@ -116,7 +112,7 @@ export function ResetPasswordScreen() {
               <button
                 type="button"
                 onClick={() => navigate('/login')}
-                className="w-full bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 Ir para o login <ArrowRight size={16} />
               </button>
@@ -181,7 +177,7 @@ export function ResetPasswordScreen() {
               <button
                 type="submit"
                 disabled={isSubmitting || !newPassword || !confirmPassword}
-                className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <Loader2 className="animate-spin" size={18} />

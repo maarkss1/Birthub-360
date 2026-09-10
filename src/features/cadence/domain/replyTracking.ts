@@ -99,7 +99,7 @@ export function buildEmailTranscript(
 ): string {
   return messages
     .filter((m) => m.body?.trim())
-    .map((m) => `${m.direction === 'inbound' ? 'Cliente' : 'Atlas'}: ${m.body?.trim()}`)
+    .map((m) => `${m.direction === 'inbound' ? 'Cliente' : 'Vendedor'}: ${m.body?.trim()}`)
     .join('\n');
 }
 

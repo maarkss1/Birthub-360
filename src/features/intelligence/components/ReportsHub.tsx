@@ -11,7 +11,7 @@ import { Button } from '../../../components/ui/Button';
 import { analyticsDB } from '../../../lib/db';
 import { api } from '../../../lib/api';
 import { readSseStream, sseRequestInit } from '../../../lib/sse';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { GlowChart } from '../../analytics/components/GlowChart';
 import { analyticsApi, type MonthlyPoint } from '../../analytics/analytics.api';
 
@@ -59,7 +59,7 @@ function renderReportMarkdown(markdown: string) {
 }
 
 export function ReportsHub() {
-  const { activeBrand } = useBrand();
+  const { playbook } = useActivePlaybook();
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [monthly, setMonthly] = useState<MonthlyPoint[]>([]);
   const [monthlyError, setMonthlyError] = useState<string | null>(null);
@@ -126,7 +126,7 @@ export function ReportsHub() {
     try {
       const response = await fetch(
         '/api/intelligence/report/stream',
-        sseRequestInit({ metrics, brandId: activeBrand }),
+        sseRequestInit({ metrics, brandId: playbook }),
       );
 
       let sawDelta = false;
