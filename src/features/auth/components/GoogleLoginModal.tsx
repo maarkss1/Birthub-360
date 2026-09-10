@@ -3,11 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, X } from 'lucide-react';
 import { authClient } from '../../../lib/auth-client';
 import { clientLogger } from '../../../lib/clientLogger';
-import { AUTHORIZED_LOGIN_DOMAINS } from '../../../config/access-policy';
-
-/** Domínios aceitos no login social — derivado da allowlist real em vez de repetido à mão. */
-const ALLOWED_DOMAINS_LABEL = AUTHORIZED_LOGIN_DOMAINS.map((d) => `@${d}`).join(' ou ');
-
 interface GoogleLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -105,8 +100,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
 
             <h2 className="text-2xl font-semibold text-ink mb-2">Fazer login</h2>
             <p className="text-ink-2 mb-8 text-xs">
-              Use sua Conta do Google corporativa ({ALLOWED_DOMAINS_LABEL}) para acessar a
-              plataforma
+              Use sua Conta do Google para acessar a plataforma
             </p>
 
             <div className="w-full">

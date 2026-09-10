@@ -96,9 +96,7 @@ export async function createTeamMember(input: {
 
   if (!name) throw new TeamServiceError('Nome é obrigatório.');
   if (!isAuthorizedLoginEmail(email)) {
-    throw new TeamServiceError(
-      'Use um e-mail corporativo autorizado (@atlasgr.com.br ou @totaltrac.com.br).',
-    );
+    throw new TeamServiceError('Informe um e-mail válido.');
   }
   if (!isKnownRole(input.role)) {
     throw new TeamServiceError(`Papel inválido. Use um de: ${ASSIGNABLE_ROLES.join(', ')}.`);

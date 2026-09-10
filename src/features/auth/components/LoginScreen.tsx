@@ -24,7 +24,7 @@ import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
-import { AUTHORIZED_LOGIN_DOMAINS, isAuthorizedLoginEmail } from '../../../config/access-policy';
+import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BirthHubSignature } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { fadeInUp, SPRING_SOFT, EASE_PREMIUM, useMagnetic } from '../../../lib/motion';
@@ -126,8 +126,6 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
 
 /** Domínios aceitos no login, para a mensagem de acesso negado ficar sempre igual à
  *  allowlist real de `access-policy.ts` em vez de repetir nomes de empresa à mão. */
-const ALLOWED_DOMAINS_LABEL = AUTHORIZED_LOGIN_DOMAINS.map((d) => `@${d}`).join(' ou ');
-
 export function LoginScreen() {
   // Esta tela agora é a porta de entrada do produto (rota "/", além de "/login" — ver App.tsx):
   // um usuário já autenticado que cai aqui (aba antiga, link direto) vai direto pro destino real,
@@ -181,9 +179,7 @@ export function LoginScreen() {
     setError('');
 
     if (!isAuthorizedLoginEmail(email)) {
-      setError(
-        `Acesso restrito. Utilize um e-mail corporativo autorizado (${ALLOWED_DOMAINS_LABEL}).`,
-      );
+      setError('Informe um e-mail válido.');
       setIsSubmitting(false);
       return;
     }
@@ -223,9 +219,7 @@ export function LoginScreen() {
     setError('');
 
     if (!isAuthorizedLoginEmail(email)) {
-      setError(
-        `Acesso restrito. Utilize um e-mail corporativo autorizado (${ALLOWED_DOMAINS_LABEL}).`,
-      );
+      setError('Informe um e-mail válido.');
       setIsSubmitting(false);
       return;
     }

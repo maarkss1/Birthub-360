@@ -5,13 +5,12 @@ import { APIError, createAuthMiddleware, isAPIError } from 'better-auth/api';
 import { prisma } from './prisma.js';
 import { requestContext } from './async-context.js';
 import { parseAllowedOrigins } from '../config/network.js';
-import { isAuthorizedLoginEmail, getTenantFromEmail } from '../config/access-policy.js';
+import { isAuthorizedLoginEmail } from '../config/access-policy.js';
 import { sendEmail, MailerNotConfiguredError } from './email/mailer.js';
 import { logger } from './logger.js';
 import { env } from '../config/env.js';
 
-const ACCESS_DENIED_MESSAGE =
-  'Acesso restrito a e-mails corporativos autorizados (@atlasgr.com.br ou @totaltrac.com.br).';
+const ACCESS_DENIED_MESSAGE = 'E-mail inválido.';
 
 // Bloqueio de conta por tentativas de login malsucedidas — complementa o rate limit por IP
 // (AUTH_RATE_LIMIT_MAX/15min, src/bootstrap/rateLimiters.ts) com um limite por CONTA: um
@@ -314,8 +313,10 @@ export const auth = betterAuth({
 
           // Create an organization if one isn't provided (during registration / Google OAuth)
           if (!user.organizationId) {
-            const brand = getTenantFromEmail(user.email);
-            const brandTitle = brand === 'totaltrac' ? 'Total Trac Operações' : 'AtlasGR Operações';
+            // Nome da organização não carrega mais marca nenhuma — desde que o cadastro deixou
+            // de ser restrito a e-mails @atlasgr.com.br/@totaltrac.com.br (ver access-policy.ts),
+            // rotular toda organização nova como "... AtlasGR Operações" ficaria simplesmente
+            // errado para qualquer outra empresa que se cadastre.
             // O middleware de /api/auth (server.ts) já roda toda esta rota sob
             // requestContext.run({ bypassRls: true }, ...) — sem tenant conhecido ainda,
             // o INSERT nesta Organization (e, logo em seguida, o de User) só passa pela
@@ -337,7 +338,7 @@ export const auth = betterAuth({
             const bypassRls = requestContext.getStore()?.bypassRls;
             requestContext.enterWith({ tenantId: orgId, bypassRls });
             const org = await prisma.organization.create({
-              data: { id: orgId, name: `${user.name || 'Novo Usuário'} - ${brandTitle}` },
+              data: { id: orgId, name: `${user.name || 'Novo Usuário'} - Operações` },
             });
             // Quem cria uma organização NOVA vira ADMIN dela — sem isso, `role` cai no
             // default do schema (VISUALIZADOR, somente-leitura, ver additionalFields
