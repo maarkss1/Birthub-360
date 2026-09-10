@@ -13,7 +13,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /etc/postgresql/tls \
     && openssl req -x509 -newkey rsa:2048 -nodes -days 3650 \
-         -subj "/CN=atlasgr-postgres" \
+         -subj "/CN=birthhub-postgres" \
          -keyout /etc/postgresql/tls/server.key \
          -out /etc/postgresql/tls/server.crt \
     && chown postgres:postgres /etc/postgresql/tls/server.key /etc/postgresql/tls/server.crt \

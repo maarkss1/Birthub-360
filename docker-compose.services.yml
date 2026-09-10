@@ -18,7 +18,7 @@ services:
   # ───────────────────────────────────────────────────────
   flowise:
     image: flowiseai/flowise:latest
-    container_name: atlas_flowise
+    container_name: birthhub_flowise
     environment:
       PORT: 3008
       DATABASE_TYPE: postgres
@@ -35,7 +35,7 @@ services:
     ports:
       - "3008:3008"
     volumes:
-      - atlas_flowise_data:/root/.flowise
+      - birthhub_flowise_data:/root/.flowise
     depends_on:
       postgres:
         condition: service_healthy
@@ -54,18 +54,18 @@ services:
   # ───────────────────────────────────────────────────────
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
-    container_name: atlas_openwebui
+    container_name: birthhub_openwebui
     environment:
       OLLAMA_BASE_URL: http://ollama:11434
       OPENAI_API_BASE_URL: http://litellm:4000/v1
-      OPENAI_API_KEY: ${LITELLM_MASTER_KEY:-sk-atlas-master}
+      OPENAI_API_KEY: ${LITELLM_MASTER_KEY:-sk-birthhub-master}
       WEBUI_AUTH: "true"
       WEBUI_SECRET_KEY: ${OPENWEBUI_SECRET:-change-this-openwebui-secret}
       DEFAULT_MODELS: llama3
     ports:
       - "3009:8080"
     volumes:
-      - atlas_openwebui_data:/app/backend/data
+      - birthhub_openwebui_data:/app/backend/data
     depends_on:
       ollama:
         condition: service_started
@@ -81,7 +81,7 @@ services:
   # ───────────────────────────────────────────────────────
   n8n:
     image: n8nio/n8n:latest
-    container_name: atlas_n8n
+    container_name: birthhub_n8n
     environment:
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgres
@@ -99,7 +99,7 @@ services:
     ports:
       - "5678:5678"
     volumes:
-      - atlas_n8n_data:/home/node/.n8n
+      - birthhub_n8n_data:/home/node/.n8n
     depends_on:
       postgres:
         condition: service_healthy
@@ -118,7 +118,7 @@ services:
   # ───────────────────────────────────────────────────────
   temporal:
     image: temporalio/auto-setup:latest
-    container_name: atlas_temporal
+    container_name: birthhub_temporal
     environment:
       DB: postgresql
       DB_PORT: 5432
@@ -137,7 +137,7 @@ services:
 
   temporal-ui:
     image: temporalio/ui:latest
-    container_name: atlas_temporal_ui
+    container_name: birthhub_temporal_ui
     environment:
       TEMPORAL_ADDRESS: temporal:7233
       TEMPORAL_CORS_ORIGINS: http://localhost:3000
@@ -156,7 +156,7 @@ services:
   # ───────────────────────────────────────────────────────
   superset:
     image: apache/superset:latest
-    container_name: atlas_superset
+    container_name: birthhub_superset
     environment:
       SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-change-this-superset-key-256bits}
       DATABASE_DB: superset
@@ -170,7 +170,7 @@ services:
     ports:
       - "8089:8088"
     volumes:
-      - atlas_superset_data:/app/superset_home
+      - birthhub_superset_data:/app/superset_home
     depends_on:
       postgres:
         condition: service_healthy
@@ -191,7 +191,7 @@ services:
   # residente.
   superset-init:
     image: apache/superset:latest
-    container_name: atlas_superset_init
+    container_name: birthhub_superset_init
     entrypoint:
       - /bin/sh
       - -c
@@ -200,7 +200,7 @@ services:
         superset fab create-admin
         --username "${SUPERSET_ADMIN_USERNAME:-admin}"
         --firstname Admin --lastname AtlasGR
-        --email "${SUPERSET_ADMIN_EMAIL:-admin@atlasgr.local}"
+        --email "${SUPERSET_ADMIN_EMAIL:-admin@birthhub.local}"
         --password "${SUPERSET_ADMIN_PASSWORD:-change-this-superset-admin-password}" || true &&
         superset init
     environment:
@@ -214,7 +214,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-prospector_redis_pass}
     volumes:
-      - atlas_superset_data:/app/superset_home
+      - birthhub_superset_data:/app/superset_home
     depends_on:
       postgres:
         condition: service_healthy
@@ -231,7 +231,7 @@ services:
   # ───────────────────────────────────────────────────────
   casdoor:
     image: casbin/casdoor:latest
-    container_name: atlas_casdoor
+    container_name: birthhub_casdoor
     environment:
       driverName: postgres
       dataSourceName: "user=${POSTGRES_USER:-prospector} password=${APP_DB_PASSWORD:-prospector_app_pass} host=postgres port=5432 sslmode=disable dbname=casdoor"
@@ -252,7 +252,7 @@ services:
   # ───────────────────────────────────────────────────────
   infisical:
     image: infisical/infisical:latest-postgres
-    container_name: atlas_infisical
+    container_name: birthhub_infisical
     environment:
       ENCRYPTION_KEY: ${INFISICAL_ENCRYPTION_KEY:-00000000000000000000000000000000}
       AUTH_SECRET: ${INFISICAL_AUTH_SECRET:-change-this-infisical-auth-secret}
@@ -277,7 +277,7 @@ services:
   # ───────────────────────────────────────────────────────
   opa:
     image: openpolicyagent/opa:latest
-    container_name: atlas_opa
+    container_name: birthhub_opa
     command:
       - run
       - --server
@@ -303,12 +303,12 @@ services:
   # ───────────────────────────────────────────────────────
   qdrant:
     image: qdrant/qdrant:latest
-    container_name: atlas_qdrant
+    container_name: birthhub_qdrant
     ports:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - atlas_qdrant_data:/qdrant/storage
+      - birthhub_qdrant_data:/qdrant/storage
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -324,7 +324,7 @@ services:
   # ───────────────────────────────────────────────────────
   livekit:
     image: livekit/livekit-server:latest
-    container_name: atlas_livekit
+    container_name: birthhub_livekit
     command: --dev --bind 0.0.0.0
     environment:
       LIVEKIT_KEYS: "${LIVEKIT_API_KEY:-devkey}:${LIVEKIT_API_SECRET:-change-this-livekit-secret-min32}"
@@ -342,7 +342,7 @@ services:
   # ───────────────────────────────────────────────────────
   chatwoot:
     image: chatwoot/chatwoot:latest
-    container_name: atlas_chatwoot
+    container_name: birthhub_chatwoot
     command: bundle exec rails s -p 3000 -b 0.0.0.0
     environment:
       SECRET_KEY_BASE: ${CHATWOOT_SECRET_KEY:-change-this-chatwoot-secret-key-very-long}
@@ -358,7 +358,7 @@ services:
     ports:
       - "3005:3000"
     volumes:
-      - atlas_chatwoot_data:/app/storage
+      - birthhub_chatwoot_data:/app/storage
     depends_on:
       postgres:
         condition: service_healthy
@@ -374,11 +374,11 @@ services:
   # ───────────────────────────────────────────────────────
   uptime-kuma:
     image: louislam/uptime-kuma:latest
-    container_name: atlas_uptime_kuma
+    container_name: birthhub_uptime_kuma
     ports:
       - "3003:3001"
     volumes:
-      - atlas_uptime_kuma_data:/app/data
+      - birthhub_uptime_kuma_data:/app/data
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -394,12 +394,12 @@ services:
   # ───────────────────────────────────────────────────────
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:latest
-    container_name: atlas_pocketbase_test
+    container_name: birthhub_pocketbase_test
     profiles: [tools, test]
     ports:
       - "8090:8090"
     volumes:
-      - atlas_pocketbase_data:/pb_data
+      - birthhub_pocketbase_data:/pb_data
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -419,7 +419,7 @@ services:
   # ───────────────────────────────────────────────────────
   plane-api:
     image: makeplane/plane-backend:latest
-    container_name: atlas_plane_api
+    container_name: birthhub_plane_api
     environment:
       DJANGO_SETTINGS_MODULE: plane.settings.production
       DATABASE_URL: postgresql://${POSTGRES_USER:-prospector}:${APP_DB_PASSWORD:-prospector_app_pass}@postgres:5432/plane
@@ -439,7 +439,7 @@ services:
 
   plane-frontend:
     image: makeplane/plane-frontend:latest
-    container_name: atlas_plane_frontend
+    container_name: birthhub_plane_frontend
     environment:
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8091
     ports:
@@ -451,13 +451,13 @@ services:
     restart: unless-stopped
 
 volumes:
-  atlas_flowise_data:
-  atlas_openwebui_data:
-  atlas_n8n_data:
-  atlas_superset_data:
-  atlas_casdoor_data:
-  atlas_infisical_data:
-  atlas_qdrant_data:
-  atlas_chatwoot_data:
-  atlas_uptime_kuma_data:
-  atlas_pocketbase_data:
+  birthhub_flowise_data:
+  birthhub_openwebui_data:
+  birthhub_n8n_data:
+  birthhub_superset_data:
+  birthhub_casdoor_data:
+  birthhub_infisical_data:
+  birthhub_qdrant_data:
+  birthhub_chatwoot_data:
+  birthhub_uptime_kuma_data:
+  birthhub_pocketbase_data:
