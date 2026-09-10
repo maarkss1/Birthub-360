@@ -105,8 +105,8 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
 
             <h2 className="text-2xl font-semibold text-ink mb-2">Fazer login</h2>
             <p className="text-ink-2 mb-8 text-xs">
-              Use sua Conta do Google corporativa ({ALLOWED_DOMAINS_LABEL}) para
-              acessar a plataforma
+              Use sua Conta do Google corporativa ({ALLOWED_DOMAINS_LABEL}) para acessar a
+              plataforma
             </p>
 
             <div className="w-full">

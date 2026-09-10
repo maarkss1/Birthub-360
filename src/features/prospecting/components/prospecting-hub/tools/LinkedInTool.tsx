@@ -34,8 +34,7 @@ type SubTab = 'empresas' | 'decisores';
 
 export function LinkedInTool({ configured }: { configured: boolean }) {
   const { playbook } = useActivePlaybook();
-  const activeSegments =
-    playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
   const [subTab, setSubTab] = useState<SubTab>('empresas');
 
   // --- Empresas (Apollo Organization Search filtrado por linkedinUrl) ---

@@ -136,8 +136,7 @@ export function TopicTrainingAcademy() {
         >
           <div className="p-5 rounded-2xl bg-brand/10 border border-brand/20">
             <h3 className="font-black text-brand-ink dark:text-brand text-base flex items-center gap-2">
-              <Award className="w-5 h-5 text-brand-ink dark:text-brand" />{' '}
-              {trainingModule.title}
+              <Award className="w-5 h-5 text-brand-ink dark:text-brand" /> {trainingModule.title}
             </h3>
             <p className="text-xs text-brand-ink dark:text-brand mt-1">
               {trainingModule.description}

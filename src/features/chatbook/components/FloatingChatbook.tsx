@@ -51,7 +51,6 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
   // Compartilhado entre as 3 abas (assistente, roleplay e filtro de matrizes) — por isso não
   // pertence a nenhum dos hooks de dados extraídos, cada um recebe como argumento.
 
-
   // Fase 4: Matriz de Qualificação/Objeções saíram do arquivo estático brandMatrices.ts pro
   // banco — busca uma vez aqui, os 3 hooks abaixo recebem os arrays já prontos em vez de
   // importar o arquivo estático cada um por conta própria.
@@ -615,9 +614,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         <AlertTriangle className="w-4 h-4 text-red-400" /> Objeções Mapeadas (
                         {filteredObjections.length})
                       </h4>
-                      <span className="text-[10px] text-ink-2">
-                        Playbook: {playbookMeta.label}
-                      </span>
+                      <span className="text-[10px] text-ink-2">Playbook: {playbookMeta.label}</span>
                     </div>
 
                     {filteredObjections.length === 0 ? (
@@ -688,9 +685,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         <Target className="w-4 h-4 text-brand" /> Matriz de Qualificação (
                         {filteredQualifications.length})
                       </h4>
-                      <span className="text-[10px] text-ink-2">
-                        Playbook: {playbookMeta.label}
-                      </span>
+                      <span className="text-[10px] text-ink-2">Playbook: {playbookMeta.label}</span>
                     </div>
 
                     {filteredQualifications.length === 0 ? (

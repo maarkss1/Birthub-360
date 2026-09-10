@@ -133,9 +133,7 @@ export function SinglePageDashboard() {
         aria-hidden="true"
       >
         <div
-          className={`absolute left-[18%] top-[-11rem] h-80 w-80 rounded-full blur-[110px] ${
-            'bg-brand/10'
-          }`}
+          className={`absolute left-[18%] top-[-11rem] h-80 w-80 rounded-full blur-[110px] ${'bg-brand/10'}`}
         />
       </div>
 

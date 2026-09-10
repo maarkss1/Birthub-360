@@ -24,14 +24,10 @@ import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
-import {
-  AUTHORIZED_LOGIN_DOMAINS,
-  isAuthorizedLoginEmail,
-} from '../../../config/access-policy';
+import { AUTHORIZED_LOGIN_DOMAINS, isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BirthHubSignature } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { fadeInUp, SPRING_SOFT, EASE_PREMIUM, useMagnetic } from '../../../lib/motion';
-
 
 // Prova de valor real (não é marketing genérico): reflete os grupos de jornada reais da Sidebar
 // (src/components/layout/Sidebar.tsx) — Captar, Fechar, IA & Capacitação.
@@ -191,7 +187,6 @@ export function LoginScreen() {
       setIsSubmitting(false);
       return;
     }
-
 
     // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
     // o cliente nunca decide, por conta própria, se um login é válido.

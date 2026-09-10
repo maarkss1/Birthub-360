@@ -136,16 +136,8 @@ export function RevenueSignalOrb({
           camera={{ position: [0, 0, 5.2], fov: 42 }}
         >
           <ambientLight intensity={0.72} />
-          <pointLight
-            position={[3, 3, 4]}
-            intensity={3.2}
-            color={BRAND.colors.brandAccent}
-          />
-          <pointLight
-            position={[-3, -2, 2]}
-            intensity={1.8}
-            color={BRAND.colors.iris}
-          />
+          <pointLight position={[3, 3, 4]} intensity={3.2} color={BRAND.colors.brandAccent} />
+          <pointLight position={[-3, -2, 2]} intensity={1.8} color={BRAND.colors.iris} />
           <SignalScene
             conversionRate={conversionRate}
             pendingActivities={pendingActivities}

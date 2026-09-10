@@ -97,8 +97,7 @@ export function ProspectingHub() {
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
 
-  const activeSegments =
-    playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
   const activePersonaOptions =
     playbook === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
 

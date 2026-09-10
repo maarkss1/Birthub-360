@@ -16,8 +16,7 @@ import { getErrorMessage, type PromoteResult } from './shared';
 
 export function ApolloTool({ configured }: { configured: boolean }) {
   const { playbook } = useActivePlaybook();
-  const activeSegments =
-    playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
 
   const [criteria, setCriteria] = useState<ProspectCriteria>({
     segmento: activeSegments[0],

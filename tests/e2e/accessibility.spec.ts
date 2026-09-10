@@ -344,10 +344,7 @@ test.describe('Acessibilidade automática (axe-core)', () => {
     await assertNoBlockingViolations(page, testInfo);
   });
 
-  test('Seleção de marca (pré-login) não tem violações críticas/sérias', async ({
-    page,
-  }, testInfo) => {
-    await page.goto('/select-brand');
-    await assertNoBlockingViolations(page, testInfo);
-  });
+  // 'Seleção de marca' foi removida (marca única, ver .claude/PILOTS.md, Piloto 033);
+  // /select-brand agora só redireciona para /welcome, já coberto pelo teste acima —
+  // manter um segundo teste aqui só duplicaria a mesma verificação.
 });

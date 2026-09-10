@@ -294,9 +294,7 @@ export function SocialSellingHub() {
                     <FileText className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-ink">
-                      Manual de Identidade Visual
-                    </h3>
+                    <h3 className="text-sm font-bold text-ink">Manual de Identidade Visual</h3>
                     <p className="text-xs text-ink-2">Guia completo de aplicação da marca (PDF)</p>
                   </div>
                 </div>
@@ -317,9 +315,7 @@ export function SocialSellingHub() {
                     <FileText className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-ink">
-                      Apresentação de Social Selling
-                    </h3>
+                    <h3 className="text-sm font-bold text-ink">Apresentação de Social Selling</h3>
                     <p className="text-xs text-ink-2">
                       Deck comercial oficial de Social Selling (PPTX)
                     </p>

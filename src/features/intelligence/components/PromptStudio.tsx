@@ -179,8 +179,8 @@ export function PromptStudio() {
                 Como funciona a injeção dinâmica?
               </h4>
               <p className="mt-1 text-xs text-purple-700 dark:text-purple-400 leading-relaxed">
-                As regras salvas aqui são injetadas no pipeline de LLM da Birth Hub 360, sobrepondo os
-                comportamentos padrão do agente comercial SDR.
+                As regras salvas aqui são injetadas no pipeline de LLM da Birth Hub 360, sobrepondo
+                os comportamentos padrão do agente comercial SDR.
               </p>
             </div>
 

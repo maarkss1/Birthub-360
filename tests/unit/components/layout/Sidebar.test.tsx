@@ -18,12 +18,8 @@ afterEach(cleanup);
 const useAuthMock = vi.fn();
 vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => useAuthMock() }));
 
-const useBrandMock = vi.fn();
-vi.mock('@/contexts/BrandContext', () => ({ useBrand: () => useBrandMock() }));
-
-vi.mock('@/components/Logo', () => ({ Logo: () => <span data-testid="logo-atlasgr" /> }));
-vi.mock('@/components/TotalTrackLogo', () => ({ TotalTrackLogo: () => <span data-testid="logo-totaltrac" /> }));
-
+// A Sidebar não usa mais BrandContext/Logo/TotalTrackLogo (marca única, ver
+// src/components/brand/BirthHubLogo.tsx) — mocks removidos junto com a troca.
 import { Sidebar } from '@/components/layout/Sidebar';
 
 function renderSidebar(role: string) {
@@ -33,8 +29,6 @@ function renderSidebar(role: string) {
         canAccessCommercialIntelligence: role === 'ADMIN' || role === 'GESTOR',
         logout: vi.fn(),
     });
-    useBrandMock.mockReturnValue({ activeBrand: 'atlasgr', setActiveBrand: vi.fn() });
-
     return render(
         <MemoryRouter>
             <Sidebar activeTab="dashboard" />

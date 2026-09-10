@@ -18,7 +18,6 @@ import { Integrations } from '../../integrations/components/Integrations';
 import { AuditLogs } from '../../lgpd/components/AuditLogs';
 import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
 
-
 export function Settings() {
   const { theme, setThemeMode } = useTheme();
   const { currentUser, isAdmin } = useAuth();
@@ -220,7 +219,6 @@ export function Settings() {
                       </button>
                     </div>
                   </div>
-
                 </CardContent>
               </Card>
             </div>

@@ -788,7 +788,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
               {playbookMeta && (
                 <section className="space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-ink-2 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-brand" /> Copiloto de Vendas ({playbookMeta.label})
+                    <Sparkles className="w-4 h-4 text-brand" /> Copiloto de Vendas (
+                    {playbookMeta.label})
                   </h3>
                   <AIEmailGenerator
                     companyName={lead.company?.legalName || lead.company?.tradeName || undefined}

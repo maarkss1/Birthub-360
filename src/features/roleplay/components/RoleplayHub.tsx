@@ -419,17 +419,15 @@ export function RoleplayHub() {
         >
           <div className="absolute inset-0 bg-gradient-to-b from-surface/50 to-transparent pointer-events-none" />
           <div className="relative z-10 flex flex-col items-center gap-5">
-            <span
-              className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-brand/30 bg-brand/10 text-brand-ink dark:text-brand shadow-sm"
-            >
+            <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-brand/30 bg-brand/10 text-brand-ink dark:text-brand shadow-sm">
               {playbookMeta.label}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-ink tracking-tight flex items-center gap-3">
               <PhoneCall className="text-brand" size={40} /> Roleplay
             </h1>
             <p className="text-ink-2 text-base md:text-lg font-medium max-w-xl">
-              Simule uma ligação real de vendas por voz no playbook {playbookMeta.label} e receba uma nota +
-              dicas de melhoria ao final.
+              Simule uma ligação real de vendas por voz no playbook {playbookMeta.label} e receba
+              uma nota + dicas de melhoria ao final.
             </p>
           </div>
         </motion.div>

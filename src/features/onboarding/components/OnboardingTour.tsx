@@ -122,9 +122,7 @@ export function OnboardingTour() {
         <div className="relative mb-6">
           <BrandOrb size={180} />
           {/* Pulsing indicator behind the orb */}
-          <div
-            className={`absolute inset-0 rounded-full animate-ping opacity-20 bg-brand`}
-          />
+          <div className={`absolute inset-0 rounded-full animate-ping opacity-20 bg-brand`} />
         </div>
 
         <motion.div

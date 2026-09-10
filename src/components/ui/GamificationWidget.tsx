@@ -72,8 +72,8 @@ export function GamificationWidget({
               <h4 className="font-bold text-ink text-base">Missões Diárias</h4>
               {streakDays > 0 && (
                 <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full bg-brand/20 text-brand border border-brand/30 font-semibold">
-                  <Flame className="w-3.5 h-3.5 text-brand animate-pulse" /> {streakDays}{' '}
-                  Dias Seguidos
+                  <Flame className="w-3.5 h-3.5 text-brand animate-pulse" /> {streakDays} Dias
+                  Seguidos
                 </span>
               )}
             </div>

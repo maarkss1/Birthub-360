@@ -23,8 +23,7 @@ interface GooglePlacesCriteria {
 
 export function GooglePlacesTool({ configured }: { configured: boolean }) {
   const { playbook } = useActivePlaybook();
-  const activeSegments =
-    playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
 
   const [criteria, setCriteria] = useState<GooglePlacesCriteria>({
     segmento: activeSegments[0],

@@ -231,7 +231,9 @@ export function AIEmailGenerator({
                 setCopied(false);
               }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                channel === c ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:text-ink'
+                channel === c
+                  ? 'bg-brand-active text-on-brand shadow-sm'
+                  : 'text-ink-2 hover:text-ink'
               }`}
             >
               <Icon className="w-3.5 h-3.5" /> {CHANNEL_META[c].label}

@@ -70,9 +70,7 @@ export function GlowChart({ data, error }: GlowChartProps) {
     >
       <motion.div
         aria-hidden="true"
-        className={`pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full blur-[90px] ${
-          'bg-brand/20'
-        }`}
+        className={`pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full blur-[90px] ${'bg-brand/20'}`}
         animate={{ scale: [1, 1.08, 1], opacity: [0.34, 0.5, 0.34] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
       />

@@ -133,8 +133,8 @@ export function ObjectionsMatrixPage() {
             <p className="text-ink-2 text-sm font-medium">
               {meta?.total ?? items.length} objeç
               {(meta?.total ?? items.length) !== 1 ? 'ões' : 'ão'} mapeada
-              {(meta?.total ?? items.length) !== 1 ? 's' : ''} no playbook {playbookMeta.label},
-              com script de contorno recomendado e diferencial-chave.
+              {(meta?.total ?? items.length) !== 1 ? 's' : ''} no playbook {playbookMeta.label}, com
+              script de contorno recomendado e diferencial-chave.
             </p>
           </div>
           <button
