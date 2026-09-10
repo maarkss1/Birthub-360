@@ -37,6 +37,8 @@ import {
   listPendingActions,
   approvePendingAction,
   discardPendingAction,
+  listActionsAwaitingOutcome,
+  recordActionOutcome,
 } from '../services/pending-actions.service.js';
 import { listAiSettings, saveAiSettings } from '../services/ai-settings.service.js';
 import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
@@ -487,6 +489,65 @@ router.delete(
       res.status(204).send();
     } catch (error) {
       logger.error({ err: error }, 'Error discarding pending AI action');
+      next(error);
+    }
+  },
+);
+
+// Item 103 da constituição de produto (Closed-Loop Intelligence) — fecha o ciclo depois de
+// `executeAndRecord`: fila de ações já executadas sem resultado de negócio registrado ainda.
+router.get(
+  '/pending/awaiting-outcome',
+  pendingActionRoles,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const authRequest = req as AuthRequest;
+      const db = authRequest.db || prisma;
+      const actions = await listActionsAwaitingOutcome(db, authRequest.user.organizationId);
+      res.json({ success: true, data: { actions } });
+    } catch (error) {
+      logger.error({ err: error }, 'Error fetching actions awaiting outcome');
+      next(error);
+    }
+  },
+);
+
+const outcomeSchema = z.object({
+  status: z.enum(['POSITIVE', 'NEGATIVE', 'NEUTRAL']),
+  notes: z.string().trim().max(2000).optional(),
+});
+
+router.post(
+  '/pending/:id/outcome',
+  pendingActionRoles,
+  validateRequest(outcomeSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const authRequest = req as AuthRequest;
+      const db = authRequest.db || prisma;
+      const { status, notes } = req.body as z.infer<typeof outcomeSchema>;
+      const result = await recordActionOutcome(
+        db,
+        authRequest.user.organizationId,
+        routeParam(req.params.id, 'id'),
+        authRequest.user.id,
+        { status, notes },
+      );
+      if (!result) {
+        res
+          .status(404)
+          .json({ success: false, error: 'Ação executada não encontrada para este id.' });
+        return;
+      }
+      if (result.alreadyRecorded) {
+        res
+          .status(409)
+          .json({ success: false, error: 'Esta ação já tem um resultado registrado.' });
+        return;
+      }
+      res.json({ success: true, data: { action: result.action } });
+    } catch (error) {
+      logger.error({ err: error }, 'Error recording AI pending action outcome');
       next(error);
     }
   },

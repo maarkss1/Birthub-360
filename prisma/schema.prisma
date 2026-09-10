@@ -2722,6 +2722,17 @@ model AIPendingAction {
   executionError String?
   attempts       Int           @default(0)
   lastAttemptAt  DateTime?
+  /// Item 103 da constituição de produto (Closed-Loop Intelligence): até aqui o ciclo parava em
+  /// "foi executado tecnicamente" — nada registrava o resultado de negócio depois disso
+  /// (signal→recommendation→decision→action→execution existiam; outcome→measurement→learning,
+  /// não). Captura MANUAL nesta primeira fatia (um humano registra o que aconteceu), nunca
+  /// inferida — detecção automática (ex.: reply de e-mail) é escopo do Agente 17
+  /// (`.agents/prompts/17-cadencia-ciclo-receita.md`), não duplicada aqui.
+  outcomeStatus  AIPendingActionOutcome @default(UNMEASURED)
+  outcome        Json?
+  outcomeNotes   String?
+  outcomeMeasuredAt DateTime?
+  outcomeMeasuredBy String?
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt      DateTime      @default(now())
@@ -2730,6 +2741,16 @@ model AIPendingAction {
   @@unique([organizationId, idempotencyKey])
   @@index([organizationId, approved])
   @@index([organizationId, discardedAt, approved, createdAt], map: "AIPendingAction_autonomy_queue_idx")
+}
+
+/// Resultado de negócio observado depois de uma `AIPendingAction` executada — ver comentário do
+/// campo `outcomeStatus`. `UNMEASURED` é o estado inicial de toda ação, nunca reescrito
+/// automaticamente para outra coisa.
+enum AIPendingActionOutcome {
+  UNMEASURED
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
 }
 
 /// Modelo/provedor de IA escolhido para cada ferramenta (toolKey = chave em ContentTool, ex.

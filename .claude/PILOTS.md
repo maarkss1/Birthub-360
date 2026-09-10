@@ -3396,3 +3396,71 @@ entrada nova.
 - **Verificação**: typecheck e build limpos; `biome lint src` sem erro novo; Welcome e Login
   medidos com fórmula de luminância WCAG nos dois temas (nenhuma reprovação); emblema comparado
   pixel a pixel com o render original do brand book.
+
+## Piloto 034 — Fechar lacunas de memória/decisão + unificar home (itens 101-105)
+
+- **Objetivo**: pedido do usuário para planejar/implementar os itens 101-105 de uma spec de
+  produto colada (Organizational Memory, Decision Intelligence, Closed-Loop Intelligence, System
+  of Attention, Adaptive Command Center). Investigação prévia (4 agentes de exploração) achou
+  infraestrutura parcial real para quase todos — implementar do zero teria duplicado sistemas já
+  existentes. Escopo desta fatia, por decisão do usuário: fechar lacunas dos sistemas já
+  existentes mais próximos de 101/103, e unificar as duas homes concorrentes (105). 102 e 104
+  ficaram fora — cada um exige decidir primeiro qual de várias implementações concorrentes vira a
+  oficial, decisão de arquitetura maior que não cabia nesta fatia.
+
+- **A lacuna real não era "falta o sistema", era "o sistema existe e ninguém nunca aciona nem vê"**:
+  `LearningCandidate` → `AgentMemoryRecord`/`RoleMemoryRecord`/`OrganizationMemoryRecord`
+  (PROMPT 9, `memory.service.ts`) já tinha conflito/versionamento/RBAC completos, mas nada no
+  código chamava `createLearningCandidateFromExecution` e não existia nenhuma UI — órfão nas duas
+  pontas. Mesmo padrão em `AIPendingAction`: recommend→decide→execute reais, mas nenhum campo
+  registrava o resultado depois (closed loop parava em "executado", nunca chegava a
+  "outcome"/"aprendizado").
+
+- **Achado mais sério: um sistema já violava o próprio princípio da spec do usuário**. O
+  `learning.agent.ts` (perfil de estilo aprendido, injetado de verdade no prompt do SDR/BDR/CRM
+  via `getLearningProfile` — o único ponto do produto onde uma reflexão de IA já mudava
+  comportamento real) promovia cada reflexão nova a `activeVersion` automaticamente, sem nenhuma
+  aprovação humana — item 103 da spec pede exatamente o oposto ("NÃO APRENDER CEGAMENTE"). Corrigido
+  para nascer `approvalStatus: 'PENDING'` e só virar ativa via `approveLearningProfileVersion`.
+
+- **Um teste existente travou uma tentativa errada de "consertar" demais**: a primeira versão do
+  gate deixava um GESTOR+ passar `?actorId=`/`actorId` no body pra decidir o perfil de outra
+  pessoa — pareceu necessário pra função ser útil (SDR não tem nível pra decidir sozinho). Quebrou
+  `agent.routes.learning-profile.test.ts` ("tenant/ator vêm sempre de req.user, nunca de
+  querystring/body", testado até para ADMIN) — decisão arquitetural deliberada de uma onda
+  anterior (GOV-13/onda-39: "nunca cross-user"), não uma lacuna esquecida. Correção real: manter
+  self-service (identidade sempre de `req.user`) e baixar o piso mínimo de decisor de GESTOR para
+  SDR — aprovar só afeta o próprio agente do próprio usuário, então não precisa de um piso alto.
+  Lição: quando um teste existente contradiz a mudança, o teste geralmente está protegendo uma
+  decisão real — investigar o motivo antes de reescrevê-lo.
+
+- **Unificar as duas "homes" foi aditivo, não substituição**: `/app/dashboard`
+  (`SinglePageDashboard`, igual pra todo UserRole) e `/app/workspace` (`WorkspaceHome`, adaptativo
+  por JobRole) eram duas implementações paralelas do mesmo conceito. Trocar o conteúdo da home
+  pelo adaptativo teria sido regressão real (`WorkspaceReadySection` só tem KPIs/agentGroups/nav —
+  muito mais raso que o dashboard operacional de sempre). Resolvido com `AdaptiveDashboard.tsx`:
+  sempre renderiza `SinglePageDashboard` (nenhum widget removido — Constituição §6) e, só quando o
+  backend resolve `status: 'READY'`, acrescenta a seção por cargo embaixo — nunca um spinner/erro
+  cobrindo o dashboard real. `/app/workspace` continua existindo inalterado (link "Meu Workspace"),
+  porque `tests/e2e/workspace.spec.ts` trava especificamente os estados de bloqueio dessa tela
+  dedicada (`NO_JOB_ROLE` mostra "Nenhum cargo atribuído", nunca uma tela vazia) — misturar os dois
+  comportamentos ali teria quebrado esse contrato testado.
+
+- **`no-cross-feature-imports` pegou 2 violações reais, ambas com fix correto (não
+  ignore-known)**: `MemoryGovernancePanel.tsx` foi criado sob `features/job-roles/` mas só é
+  usado por `Settings.tsx` (`features/settings/`) e só chama `/api/memory/**` por HTTP — sem
+  nenhum import real de job-roles, então o fix certo era mover o arquivo para
+  `features/settings/components/`, não relaxar a regra. Já `WorkspaceReady` (usado por
+  `workspace/` E pela nova `dashboard/`) era genuinamente compartilhado entre duas features — o
+  fix certo foi extrair para `src/components/workspace/WorkspaceReadySection.tsx` (fora de
+  `src/features/`, onde a regra não se aplica), não criar uma dependência direta feature-a-feature.
+
+- **Verificação**: `npx tsc --noEmit` (0 erros), `npm run lint`/`format` (só os 2 warnings
+  pré-existentes e não relacionados), `npm run test:architecture` (0 violações novas, mesmas 113
+  conhecidas), `npm run test:unit` (2780/2780, incluindo a suíte de aprovação/versionamento nova),
+  `npm run build` (build de produção limpo, `AdaptiveDashboard` vira chunk lazy próprio).
+  `test:e2e`/`test:integration` **não puderam rodar** — sem Postgres/Redis reais neste sandbox
+  (mesma limitação ENV-001 documentada em `.agents/prompts/14-ambiente-execucao-harness.md`),
+  registrado como bloqueio real, não como sucesso assumido — pendente de confirmação num ambiente
+  com backend antes de considerar `tests/e2e/workspace.spec.ts`/`visual.spec.ts` confirmados verdes
+  contra o código novo.

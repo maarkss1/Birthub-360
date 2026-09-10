@@ -6,6 +6,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // métrica/dataset e sem permitir reverter. Estes testes cobrem exatamente os três pontos exigidos:
 // (1) uma reflexão nova nunca apaga a anterior — fica no histórico versionado; (2) rollback
 // funciona; (3) a reflexão nunca lança e nunca persiste nada quando o LLM falha.
+//
+// Item 103 da constituição de produto (Closed-Loop Intelligence — "NÃO APRENDER CEGAMENTE"):
+// desde essa correção, uma reflexão nova nasce `approvalStatus: 'PENDING'` e NUNCA vira
+// `activeVersion` sozinha — só `approveLearningProfileVersion` (GESTOR+) faz isso. Os testes 1 e 3
+// abaixo cobrem esse gate explicitamente.
 
 const mockEnv: Record<string, unknown> = { AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS: '*' };
 vi.mock('../../../../config/env.js', () => ({ env: mockEnv }));
@@ -95,8 +100,16 @@ vi.mock('../../../../lib/prisma.js', () => ({
   },
 }));
 
-const { LearningAgent, getLearningProfile, getLearningProfileHistory, rollbackLearningProfile } =
-  await import('../learning.agent');
+const {
+  LearningAgent,
+  getLearningProfile,
+  getLearningProfileHistory,
+  rollbackLearningProfile,
+  approveLearningProfileVersion,
+  rejectLearningProfileVersion,
+} = await import('../learning.agent');
+
+const GESTOR_DECIDER = { userId: 'gestor-1', userRole: 'GESTOR' };
 
 function auditRow(action: string, timestamp: string) {
   return {
@@ -121,7 +134,7 @@ afterEach(() => {
 });
 
 describe('LearningAgent — versionamento, rollback e métrica mínima (GOV-13)', () => {
-  it('uma reflexão nova nunca apaga a anterior: fica registrada no histórico como uma nova versão', async () => {
+  it('uma reflexão nova nunca apaga a anterior nem vira ativa sozinha — fica PENDING até aprovação humana', async () => {
     const agent = new LearningAgent();
 
     auditLogFindManyMock.mockResolvedValueOnce([
@@ -134,13 +147,29 @@ describe('LearningAgent — versionamento, rollback e métrica mínima (GOV-13)'
     expect(first).toBe('Estilo A: direto e objetivo.');
 
     let history = await getLearningProfileHistory('org-1', 'actor-1');
-    expect(history.activeVersion).toBe(1);
+    // Nada foi aprovado ainda — activeVersion continua 0, o SDR/BDR/CRM real não herda nada disto.
+    expect(history.activeVersion).toBe(0);
     expect(history.versions).toHaveLength(1);
     expect(history.versions[0]).toMatchObject({
       version: 1,
       guidelines: 'Estilo A: direto e objetivo.',
+      approvalStatus: 'PENDING',
     });
     expect(history.versions[0].metrics.newAuditLogsSinceLastReflection).toBe(2);
+    expect(await getLearningProfile('org-1', 'actor-1')).toBeNull();
+
+    // Fluxo é self-service (piso SDR+, não GESTOR+ — ver comentário em
+    // `MIN_LEARNING_PROFILE_DECIDER_ROLE`), mas VISUALIZADOR (abaixo do piso) continua barrado.
+    const deniedApproval = await approveLearningProfileVersion('org-1', 'actor-1', 1, {
+      userId: 'actor-1',
+      userRole: 'VISUALIZADOR',
+    });
+    expect(deniedApproval.success).toBe(false);
+    expect(await getLearningProfile('org-1', 'actor-1')).toBeNull();
+
+    const approval = await approveLearningProfileVersion('org-1', 'actor-1', 1, GESTOR_DECIDER);
+    expect(approval).toEqual({ success: true, activeVersion: 1 });
+    expect(await getLearningProfile('org-1', 'actor-1')).toBe('Estilo A: direto e objetivo.');
 
     // Segunda reflexão, com AuditLogs mais recentes do que o watermark da primeira.
     auditLogFindManyMock.mockResolvedValueOnce([
@@ -153,23 +182,63 @@ describe('LearningAgent — versionamento, rollback e métrica mínima (GOV-13)'
     expect(second).toBe('Estilo B: consultivo e paciente.');
 
     history = await getLearningProfileHistory('org-1', 'actor-1');
-    expect(history.activeVersion).toBe(2);
+    // Versão 2 existe mas ainda não foi aprovada — o perfil ativo continua sendo a versão 1.
+    expect(history.activeVersion).toBe(1);
     expect(history.versions).toHaveLength(2);
-    // A versão 1 (a anterior) continua intacta no histórico — nunca foi apagada/sobrescrita.
-    expect(history.versions[0]).toMatchObject({
-      version: 1,
-      guidelines: 'Estilo A: direto e objetivo.',
-    });
     expect(history.versions[1]).toMatchObject({
       version: 2,
       guidelines: 'Estilo B: consultivo e paciente.',
+      approvalStatus: 'PENDING',
     });
     expect(history.versions[1].metrics.guidelinesChanged).toBe(true);
     expect(history.versions[1].metrics.previousGuidelinesLength).toBe(
       'Estilo A: direto e objetivo.'.length,
     );
+    expect(await getLearningProfile('org-1', 'actor-1')).toBe('Estilo A: direto e objetivo.');
 
+    await approveLearningProfileVersion('org-1', 'actor-1', 2, GESTOR_DECIDER);
+    history = await getLearningProfileHistory('org-1', 'actor-1');
+    expect(history.activeVersion).toBe(2);
+    // A versão 1 (a anterior) continua intacta no histórico — nunca foi apagada/sobrescrita.
+    expect(history.versions[0]).toMatchObject({ version: 1, approvalStatus: 'APPROVED' });
     expect(await getLearningProfile('org-1', 'actor-1')).toBe('Estilo B: consultivo e paciente.');
+  });
+
+  it('rejeitar uma versão pendente nunca a promove, e uma versão já aprovada não pode ser rejeitada', async () => {
+    const agent = new LearningAgent();
+    auditLogFindManyMock.mockResolvedValueOnce([auditRow('a', '2026-01-01T10:00:00.000Z')]);
+    invokeMock.mockResolvedValueOnce({ content: 'Estilo A.' });
+    await agent.reflectAndLearn('actor-1', 'org-1');
+
+    const rejection = await rejectLearningProfileVersion('org-1', 'actor-1', 1, GESTOR_DECIDER);
+    expect(rejection).toEqual({ success: true });
+
+    let history = await getLearningProfileHistory('org-1', 'actor-1');
+    expect(history.activeVersion).toBe(0);
+    expect(history.versions[0].approvalStatus).toBe('REJECTED');
+
+    const approvalAfterReject = await approveLearningProfileVersion(
+      'org-1',
+      'actor-1',
+      1,
+      GESTOR_DECIDER,
+    );
+    expect(approvalAfterReject.success).toBe(false);
+
+    auditLogFindManyMock.mockResolvedValueOnce([auditRow('b', '2026-01-02T10:00:00.000Z')]);
+    invokeMock.mockResolvedValueOnce({ content: 'Estilo B.' });
+    await agent.reflectAndLearn('actor-1', 'org-1');
+    await approveLearningProfileVersion('org-1', 'actor-1', 2, GESTOR_DECIDER);
+
+    const rejectionOfApproved = await rejectLearningProfileVersion(
+      'org-1',
+      'actor-1',
+      2,
+      GESTOR_DECIDER,
+    );
+    expect(rejectionOfApproved.success).toBe(false);
+    history = await getLearningProfileHistory('org-1', 'actor-1');
+    expect(history.versions[1].approvalStatus).toBe('APPROVED');
   });
 
   it('sem nenhum AuditLog novo desde a última reflexão, reaproveita a versão ativa em vez de gerar (e persistir) uma nova', async () => {
@@ -203,10 +272,12 @@ describe('LearningAgent — versionamento, rollback e métrica mínima (GOV-13)'
     auditLogFindManyMock.mockResolvedValueOnce([auditRow('a', '2026-01-01T10:00:00.000Z')]);
     invokeMock.mockResolvedValueOnce({ content: 'Estilo A.' });
     await agent.reflectAndLearn('actor-1', 'org-1');
+    await approveLearningProfileVersion('org-1', 'actor-1', 1, GESTOR_DECIDER);
 
     auditLogFindManyMock.mockResolvedValueOnce([auditRow('b', '2026-01-02T10:00:00.000Z')]);
     invokeMock.mockResolvedValueOnce({ content: 'Estilo B.' });
     await agent.reflectAndLearn('actor-1', 'org-1');
+    await approveLearningProfileVersion('org-1', 'actor-1', 2, GESTOR_DECIDER);
 
     expect(await getLearningProfile('org-1', 'actor-1')).toBe('Estilo B.');
 
@@ -225,6 +296,7 @@ describe('LearningAgent — versionamento, rollback e métrica mínima (GOV-13)'
     auditLogFindManyMock.mockResolvedValueOnce([auditRow('a', '2026-01-01T10:00:00.000Z')]);
     invokeMock.mockResolvedValueOnce({ content: 'Estilo A.' });
     await agent.reflectAndLearn('actor-1', 'org-1');
+    await approveLearningProfileVersion('org-1', 'actor-1', 1, GESTOR_DECIDER);
 
     const rollback = await rollbackLearningProfile('org-1', 'actor-1', 99);
 
@@ -233,6 +305,17 @@ describe('LearningAgent — versionamento, rollback e métrica mínima (GOV-13)'
     const history = await getLearningProfileHistory('org-1', 'actor-1');
     expect(history.activeVersion).toBe(1);
     expect(history.versions).toHaveLength(1);
+  });
+
+  it('rollback para uma versão ainda pendente (nunca aprovada) falha', async () => {
+    const agent = new LearningAgent();
+    auditLogFindManyMock.mockResolvedValueOnce([auditRow('a', '2026-01-01T10:00:00.000Z')]);
+    invokeMock.mockResolvedValueOnce({ content: 'Estilo A.' });
+    await agent.reflectAndLearn('actor-1', 'org-1');
+
+    const rollback = await rollbackLearningProfile('org-1', 'actor-1', 1);
+    expect(rollback.success).toBe(false);
+    expect(rollback.reason).toContain('nunca foi aprovada');
   });
 
   it('quando o LLM falha, reflectAndLearn nunca lança e não persiste nada', async () => {
@@ -248,7 +331,7 @@ describe('LearningAgent — versionamento, rollback e métrica mínima (GOV-13)'
     expect(await getLearningProfile('org-1', 'actor-1')).toBeNull();
   });
 
-  it('saída vazia do LLM não vira uma versão nova — mantém a versão ativa anterior', async () => {
+  it('saída vazia do LLM não vira uma versão nova — mantém o texto da última tentativa', async () => {
     const agent = new LearningAgent();
     auditLogFindManyMock.mockResolvedValueOnce([auditRow('a', '2026-01-01T10:00:00.000Z')]);
     invokeMock.mockResolvedValueOnce({ content: 'Estilo A.' });

@@ -4,6 +4,7 @@ import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { saveAgentMemory, loadAgentMemory } from './agentMemory.store.js';
 import { assertPiiExternalConsent } from '../services/guardrails.service.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 
 // AgentMemory não tem colunas dedicadas para "perfil de aprendizado", mas sessionId+agentType já
 // bastam pra guardar um registro por (tenant, ator) sem precisar de migração nova.
@@ -18,8 +19,17 @@ function learningProfileSessionId(tenantId: string, actorId: string): string {
 // rollback. Não há coluna dedicada em `AgentMemory` para histórico (mudar `prisma/schema.prisma`
 // está fora do escopo do Agente 13 — ver handoff), então o histórico vive como um array
 // append-only dentro do próprio JSON de `messages` da linha já existente: cada reflexão adiciona
-// uma entrada nova a `versions`, nunca remove nem sobrescreve uma anterior; `activeVersion` é o
-// único campo que muda em um rollback.
+// uma entrada nova a `versions`, nunca remove nem sobrescreve uma anterior.
+//
+// Item 103 da constituição de produto (Closed-Loop Intelligence — "NÃO APRENDER CEGAMENTE"):
+// mudanças de comportamento operacional exigem recomendação + aprovação humana explícita antes de
+// valer. Até esta correção, uma reflexão nova virava `activeVersion` (e portanto passava a moldar
+// o comportamento real do SDR/BDR/CRM via `getLearningProfile`) automaticamente, sem nenhum humano
+// decidir — o único ponto do produto onde isso acontecia. Agora toda versão nova nasce
+// `approvalStatus: 'PENDING'` e nunca move `activeVersion` sozinha: só
+// `approveLearningProfileVersion` (GESTOR+, mesmo piso de `memory-policy.ts` para categorias
+// sensíveis) faz isso. `activeVersion` continua sendo o único campo que muda em aprovação/rollback
+// — nunca uma versão é removida ou reescrita.
 
 export interface LearningProfileVersionMetrics {
   /** Quantos AuditLogs (até 50, mesma janela de sempre) entraram nesta reflexão. */
@@ -34,11 +44,21 @@ export interface LearningProfileVersionMetrics {
   guidelinesChanged: boolean;
 }
 
+export type LearningProfileApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface LearningProfileVersionEntry {
   version: number;
   guidelines: string;
   createdAt: string;
   metrics: LearningProfileVersionMetrics;
+  /** Nasce sempre `PENDING` — só vira `APPROVED` por decisão humana explícita (ver
+   *  `approveLearningProfileVersion`). Nunca inferido/derivado automaticamente. */
+  approvalStatus: LearningProfileApprovalStatus;
+  approvedBy?: string;
+  approvedByRole?: string;
+  approvedAt?: string;
+  rejectedBy?: string;
+  rejectedAt?: string;
 }
 
 export interface LearningProfileState {
@@ -141,6 +161,12 @@ export async function rollbackLearningProfile(
           : `Versão ${targetVersion} não encontrada no histórico deste perfil.`,
     };
   }
+  if (target.approvalStatus !== 'APPROVED') {
+    return {
+      success: false,
+      reason: `Versão ${targetVersion} nunca foi aprovada (status atual: ${target.approvalStatus}) — só é possível reverter para uma versão já aprovada por um humano.`,
+    };
+  }
   if (state.activeVersion === targetVersion) {
     // Já é a versão ativa — nada para persistir, mas ainda é um "sucesso" do ponto de vista de
     // quem chamou (o estado pedido já é o estado atual).
@@ -162,13 +188,143 @@ export async function rollbackLearningProfile(
   return { success: true, activeVersion: targetVersion, guidelines: target.guidelines };
 }
 
+export interface LearningProfileDecider {
+  userId: string;
+  userRole: string;
+}
+
+export interface DecideLearningProfileVersionResult {
+  success: boolean;
+  reason?: string;
+  activeVersion?: number;
+}
+
+/** Piso mínimo para aprovar/rejeitar uma versão do PRÓPRIO perfil de estilo aprendido — este
+ *  fluxo é sempre self-service (mesma decisão arquitetural de `rollbackLearningProfile`/GOV-13,
+ *  onda 39: "o histórico é por (tenant, ator), nunca cross-user" — ver
+ *  `tests/unit/.../agent.routes.learning-profile.test.ts`, que trava identidade vindo só de
+ *  `req.user`, nunca de querystring/body). GESTOR+ faria sentido para um fluxo de revisão por
+ *  terceiros, mas isso exigiria um mecanismo novo de "atuar em nome de outro usuário" que este
+ *  repositório não usa em nenhum outro lugar — mesmo piso mínimo de SDR+ já usado pelas rotas de
+ *  `/api/agent/swarm/**` (`writeRoles`) é suficiente aqui: o único efeito de aprovar é mudar o
+ *  comportamento do PRÓPRIO agente do próprio usuário, nunca de outra pessoa. */
+const MIN_LEARNING_PROFILE_DECIDER_ROLE = 'SDR';
+
+/**
+ * Aprova uma versão `PENDING` do perfil de estilo aprendido — só então ela passa a valer
+ * (`activeVersion`) e a moldar o comportamento real do SDR/BDR/CRM via `getLearningProfile`.
+ * Nunca aprova implicitamente uma versão mais antiga que já foi superada por outra pendente mais
+ * recente: aprovar uma versão qualquer sempre a torna a ativa, independentemente de quantas
+ * versões pendentes existam depois dela (mesmo espírito do rollback: o humano decide
+ * explicitamente qual versão vale, a ordem cronológica não decide sozinha).
+ */
+export async function approveLearningProfileVersion(
+  tenantId: string,
+  actorId: string,
+  targetVersion: number,
+  decider: LearningProfileDecider,
+): Promise<DecideLearningProfileVersionResult> {
+  if (!hasRequiredRole(decider.userRole, [MIN_LEARNING_PROFILE_DECIDER_ROLE])) {
+    return {
+      success: false,
+      reason: `Só ${MIN_LEARNING_PROFILE_DECIDER_ROLE} ou superior pode aprovar uma mudança de comportamento aprendida.`,
+    };
+  }
+  const state = await loadState(tenantId, actorId);
+  const target = state.versions.find((entry) => entry.version === targetVersion);
+  if (!target) {
+    return { success: false, reason: `Versão ${targetVersion} não encontrada.` };
+  }
+  if (target.approvalStatus === 'REJECTED') {
+    return {
+      success: false,
+      reason: `Versão ${targetVersion} já foi rejeitada — não pode ser aprovada depois.`,
+    };
+  }
+
+  const nextVersions = state.versions.map((entry) =>
+    entry.version === targetVersion
+      ? ({
+          ...entry,
+          approvalStatus: 'APPROVED',
+          approvedBy: decider.userId,
+          approvedByRole: decider.userRole,
+          approvedAt: new Date().toISOString(),
+        } satisfies LearningProfileVersionEntry)
+      : entry,
+  );
+  const nextState: LearningProfileState = {
+    ...state,
+    activeVersion: targetVersion,
+    versions: nextVersions,
+  };
+  await saveAgentMemory({
+    sessionId: learningProfileSessionId(tenantId, actorId),
+    agentType: 'LEARNING_PROFILE',
+    organizationId: tenantId,
+    messages: nextState,
+    status: 'Completed',
+  });
+  logger.info(
+    { tenantId, actorId, targetVersion, approvedBy: decider.userId },
+    'LearningAgent: versão do perfil aprovada por decisão humana.',
+  );
+  return { success: true, activeVersion: targetVersion };
+}
+
+/** Rejeita uma versão `PENDING` — nunca vira `activeVersion`, mas nunca é apagada do histórico
+ *  (mesma regra "append-only, nunca some" do resto do programa). */
+export async function rejectLearningProfileVersion(
+  tenantId: string,
+  actorId: string,
+  targetVersion: number,
+  decider: LearningProfileDecider,
+): Promise<DecideLearningProfileVersionResult> {
+  if (!hasRequiredRole(decider.userRole, [MIN_LEARNING_PROFILE_DECIDER_ROLE])) {
+    return {
+      success: false,
+      reason: `Só ${MIN_LEARNING_PROFILE_DECIDER_ROLE} ou superior pode rejeitar uma mudança de comportamento aprendida.`,
+    };
+  }
+  const state = await loadState(tenantId, actorId);
+  const target = state.versions.find((entry) => entry.version === targetVersion);
+  if (!target) {
+    return { success: false, reason: `Versão ${targetVersion} não encontrada.` };
+  }
+  if (target.approvalStatus === 'APPROVED') {
+    return {
+      success: false,
+      reason: `Versão ${targetVersion} já foi aprovada — use rollback para deixar de usá-la, não rejeição.`,
+    };
+  }
+  const nextVersions = state.versions.map((entry) =>
+    entry.version === targetVersion
+      ? ({
+          ...entry,
+          approvalStatus: 'REJECTED',
+          rejectedBy: decider.userId,
+          rejectedAt: new Date().toISOString(),
+        } satisfies LearningProfileVersionEntry)
+      : entry,
+  );
+  await saveAgentMemory({
+    sessionId: learningProfileSessionId(tenantId, actorId),
+    agentType: 'LEARNING_PROFILE',
+    organizationId: tenantId,
+    messages: { ...state, versions: nextVersions } satisfies LearningProfileState,
+    status: 'Completed',
+  });
+  return { success: true };
+}
+
 /**
  * LearningAgent (Self-Reflection)
  * Este agente roda em background para observar as ações manuais do usuário (via AuditLog)
  * e sintetizar um "Manual de Estilo" dinâmico.
  * Esse manual (Few-Shot) é persistido em AgentMemory (versionado — ver `LearningProfileState`
  * acima) e injetado nos agentes SDR/BDR/CRM (via getLearningProfile) para que eles ajam de acordo
- * com o estilo do usuário humano.
+ * com o estilo do usuário humano — mas só depois de `approveLearningProfileVersion`: uma reflexão
+ * nova nunca vira comportamento real sozinha (item 103 da constituição de produto).
  */
 export class LearningAgent {
   async reflectAndLearn(actorId: string, tenantId: string): Promise<string | null> {
@@ -203,6 +359,12 @@ export class LearningAgent {
 
       const state = await loadState(tenantId, actorId);
       const previousEntry = findActiveEntry(state);
+      // A entrada mais recente TENTADA (qualquer status — PENDING/APPROVED/REJECTED), não só a
+      // ativa: o gate de aprovação (item 103) faz `activeVersion` poder ficar sem mudar por muito
+      // tempo enquanto uma versão fica pendente, mas isso não deve reabrir a porta pra gerar uma
+      // versão nova idêntica a cada chamada só porque nada foi aprovado ainda.
+      const lastAttemptEntry =
+        state.versions.length > 0 ? state.versions[state.versions.length - 1] : null;
       const lastSeenAt = state.lastAuditLogAt ? new Date(state.lastAuditLogAt).getTime() : null;
       // recentActions vem ordenado desc (mais recente primeiro) — sem watermark anterior
       // (primeira reflexão deste ator/tenant), todos os 50 contam como "novos".
@@ -211,17 +373,17 @@ export class LearningAgent {
           ? recentActions.length
           : recentActions.filter((action) => action.timestamp.getTime() > lastSeenAt).length;
 
-      // GOV-13 — métrica mínima de aceitação: sem nenhum AuditLog novo desde a última
-      // reflexão bem-sucedida, não existe evidência nova para justificar gastar uma chamada a
-      // um provedor de IA externo (custo + exposição de PII) só para reformular o mesmo
-      // material já visto e criar uma versão idêntica no histórico. Reaproveita a versão
-      // ativa em vez disso. Isto NUNCA se aplica na primeira reflexão (sem `previousEntry`).
-      if (previousEntry && newAuditLogsSinceLastReflection === 0) {
+      // GOV-13 — métrica mínima de aceitação: sem nenhum AuditLog novo desde a última tentativa de
+      // reflexão, não existe evidência nova para justificar gastar uma chamada a um provedor de IA
+      // externo (custo + exposição de PII) só para reformular o mesmo material já visto e criar
+      // uma versão pendente idêntica no histórico. Reaproveita o texto da última tentativa em vez
+      // disso. Isto NUNCA se aplica na primeira reflexão (sem `lastAttemptEntry`).
+      if (lastAttemptEntry && newAuditLogsSinceLastReflection === 0) {
         logger.info(
           { actorId, tenantId, activeVersion: state.activeVersion },
-          'LearningAgent: nenhum AuditLog novo desde a última reflexão — reaproveitando a versão ativa, sem gerar uma nova.',
+          'LearningAgent: nenhum AuditLog novo desde a última tentativa de reflexão — reaproveitando o texto já gerado, sem propor uma versão nova.',
         );
-        return previousEntry.guidelines;
+        return lastAttemptEntry.guidelines;
       }
 
       const actionsText = recentActions
@@ -250,13 +412,14 @@ Gere um parágrafo denso e direto contendo as DIRETRIZES DE ESTILO APRENDIDAS. E
       ).trim();
 
       // GOV-13 — nunca aceita cegamente qualquer saída do LLM: uma saída vazia não vira uma
-      // versão nova (não há o que persistir), a versão ativa anterior continua valendo.
+      // versão nova (não há o que persistir) — reaproveita o texto da última tentativa real
+      // (`lastAttemptEntry`, não só a ativa: pode não haver nenhuma aprovada ainda).
       if (!learnedStyle) {
         logger.warn(
           { actorId, tenantId },
-          'LearningAgent: LLM devolveu saída vazia — não persistindo uma versão vazia; mantendo a versão ativa anterior.',
+          'LearningAgent: LLM devolveu saída vazia — não persistindo uma versão vazia; mantendo o texto da última tentativa.',
         );
-        return previousEntry?.guidelines ?? null;
+        return lastAttemptEntry?.guidelines ?? null;
       }
 
       // recentActions[0] é o mais recente (orderBy desc) — vira o novo watermark.
@@ -291,10 +454,10 @@ Gere um parágrafo denso e direto contendo as DIRETRIZES DE ESTILO APRENDIDAS. E
     }
   }
 
-  /** Sempre acrescenta uma entrada nova a `versions` (nunca sobrescreve/apaga uma anterior) e
-   * aponta `activeVersion` para ela. `saveAgentMemory` já é o upsert atômico compartilhado
-   * (AI-003) — reaproveitado aqui, não recriado; a única mudança de comportamento é O QUE é
-   * gravado em `messages` (o estado versionado inteiro, não só o texto mais recente). */
+  /** Sempre acrescenta uma entrada nova a `versions` (nunca sobrescreve/apaga uma anterior),
+   * sempre `approvalStatus: 'PENDING'`. Nunca move `activeVersion` — só uma aprovação humana
+   * explícita faz isso (ver `approveLearningProfileVersion`). `saveAgentMemory` já é o upsert
+   * atômico compartilhado (AI-003) — reaproveitado aqui, não recriado. */
   private async persistProfile(
     tenantId: string,
     actorId: string,
@@ -310,9 +473,10 @@ Gere um parágrafo denso e direto contendo as DIRETRIZES DE ESTILO APRENDIDAS. E
       guidelines,
       createdAt: new Date().toISOString(),
       metrics,
+      approvalStatus: 'PENDING',
     };
     const nextState: LearningProfileState = {
-      activeVersion: nextVersion,
+      activeVersion: state.activeVersion,
       lastAuditLogAt: mostRecentAuditLogAt.toISOString(),
       versions: [...state.versions, entry],
     };

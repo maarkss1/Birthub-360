@@ -43,9 +43,9 @@ const HubInteligenciaMarketingHub = lazy(() =>
     }),
   ),
 );
-const SinglePageDashboard = lazy(() =>
-  import('./features/dashboard/components/SinglePageDashboard').then((m) => ({
-    default: m.SinglePageDashboard,
+const AdaptiveDashboard = lazy(() =>
+  import('./features/dashboard/components/AdaptiveDashboard').then((m) => ({
+    default: m.AdaptiveDashboard,
   })),
 );
 const WorkspaceHome = lazy(() =>
@@ -261,7 +261,7 @@ function AppLayout() {
           Router casar estes paths aninhados contra o restante da URL automaticamente. */}
       <Suspense fallback={<PageFallback />}>
         <Routes>
-          <Route index element={<SinglePageDashboard />} />
+          <Route index element={<AdaptiveDashboard />} />
           {/* Alias explícito para /app/dashboard: TabType inclui 'dashboard' e Sidebar/
               CommandPalette navegam para `/app/${tab}` para TODO TabType (useNavigationBusBridge é
               a única exceção, com mapeamento especial só ali — ver comentário nesse hook). Sem esta
@@ -270,7 +270,7 @@ function AppLayout() {
               "Painel Central" na Sidebar ou no Command Palette (achado real desta auditoria, não
               coberto pelo teste de useNavigationBusBridge porque aquele hook já tinha o
               contorno certo só para o comando de voz). */}
-          <Route path="dashboard" element={<SinglePageDashboard />} />
+          <Route path="dashboard" element={<AdaptiveDashboard />} />
           {/* PROMPT 6 — Workspace do cargo (JobRole) do usuário autenticado. Sem RequireRole:
               qualquer UserRole autenticado pode abrir; o próprio workspace resolve seu estado
               real (READY/NO_JOB_ROLE/NO_WORKSPACE_DEFINITION) a partir da sessão — nunca de
