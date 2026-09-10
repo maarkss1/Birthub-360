@@ -20,6 +20,10 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { Skeleton } from './components/ui/Skeleton';
 import { ClickSpark } from './components/ui/ClickSpark';
 
+const DesignLabPage = lazy(() =>
+  import('./features/design-lab/DesignLabPage').then((m) => ({ default: m.DesignLabPage })),
+);
+
 // Lazy loaded feature modules
 const SocialSellingHub = lazy(() =>
   import('./features/social-selling/components/SocialSellingHub').then((m) => ({
@@ -412,6 +416,8 @@ export default function App() {
                         Login/cadastro também levam direto ao Hub (ver Pilot 031/032 em
                         .claude/PILOTS.md) — o CRM (/app) deixou de ser o destino padrão pós-login;
                         continua existindo e acessível a partir dos círculos do Hub. */}
+                      <Route path="/design-lab/command-language" element={<DesignLabPage section="command-language" />} />
+                      <Route path="/design-lab/components-v2" element={<DesignLabPage section="components-v2" />} />
                       <Route path="/" element={<LoginScreen />} />
                       <Route path="/welcome" element={<WelcomeScreen />} />
                       {/* `/select-brand` era a escolha entre as duas marcas anteriores. Com marca
