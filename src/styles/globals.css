@@ -262,16 +262,25 @@
      --color-brand-active anterior, que servia ao propósito oposto (escurecer o
      suficiente para o texto BRANCO passar). */
   --color-brand-active: color-mix(in srgb, var(--brand) 85%, black);
-  /* Versão escurecida de --brand para --brand- como TEXTO sobre superfície
-     clara: ouro cru sobre --surface branca mede 2.10:1. Idioma já usado no
-     resto do arquivo — `text-brand-ink dark:text-brand`, porque contra a
-     superfície escura o ouro cru já mede 8.74:1. */
-  --color-brand-ink: color-mix(in srgb, var(--brand) 62%, black);
-  /* Extremo `to-brand-2` dos gradientes `from-brand to-brand-2` usados como
-     fundo de botão/estado ativo: Gold Soft é ainda mais claro que --brand, então
-     também pede `text-on-brand` (10.9:1). O par -active serve ao mesmo caso do
-     --color-brand-ink acima, para --brand-2 usado como texto. */
-  --color-brand-2-active: color-mix(in srgb, var(--brand-2) 58%, black);
+  /* Versão escurecida de --brand para uso como TEXTO sobre superfície clara:
+     ouro cru sobre --surface branca mede 2.10:1. Idioma já usado no resto do
+     arquivo — `text-brand-ink dark:text-brand`, porque contra a superfície
+     escura o ouro cru já mede 8.74:1.
+     53% (não 62%, valor anterior — axe-core mediu 4.22:1/4.38:1 contra
+     --surface-2 em produção, abaixo do mínimo AA; achado real em
+     tests/e2e/accessibility.spec.ts, Piloto 033) — recalculado com margem:
+     6.42:1 contra --surface, 5.34:1 contra --surface-2. */
+  --color-brand-ink: color-mix(in srgb, var(--brand) 53%, black);
+  /* Versão escurecida de --brand-2 (Gold Soft) para uso como TEXTO sobre
+     superfície clara — mesmo caso do --color-brand-ink acima, para o extremo
+     `to-brand-2` de gradientes usado como texto (`dark:text-brand-2`, herdado
+     da sweep de nomenclatura). Gold Soft cru sobre --surface mede 1.28:1: pior
+     ainda que --brand cru, porque é mais claro. 44% dá margem real: 6.48:1
+     contra --surface, 5.39:1 contra --surface-2. Como SUPERFÍCIE sólida
+     (`bg-brand-2`), o par correto continua sendo `text-on-brand` (Obsidian
+     sobre Gold Soft cru mede 12.70:1) — este token nunca deve ser confundido
+     com aquele caso. */
+  --color-brand-2-active: color-mix(in srgb, var(--brand-2) 44%, black);
   --color-warn: var(--warn);
   /* "gold" era um alias de --warn (#FFC500, "Amarelo Alerta" da marca anterior),
      criado porque classes gold-* já existiam no código e renderizavam sem cor.
