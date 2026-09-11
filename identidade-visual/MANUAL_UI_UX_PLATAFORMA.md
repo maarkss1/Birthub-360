@@ -1,3 +1,8 @@
+> **Documento histórico** — descreve o sistema de duas marcas (AtlasGR & TotalTrac), substituído
+> pela marca única Birth Hub 360º em 09/2026. Paleta, logos e combinações de cor aqui (incluindo
+> `#FF5618` e texto branco sobre cor de marca) **não são mais válidos**. Fonte de verdade atual:
+> `identidade-visual/birthhub360/` e `src/styles/globals.css`.
+
 # NEXUS OS — Manual Definitivo de Identidade Visual & UI/UX Futurista
 ## Central de Inteligência Comercial (AtlasGR & TotalTrac)
 
