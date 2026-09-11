@@ -115,6 +115,22 @@
   --warn: #ffc500;
   --ok: #0f9d64;
   --soft: rgba(212, 175, 55, 0.12);
+  /* --- Acentos de interação (proposta "Neon Tokyo × Cosmic Gold", catálogo visual) ---
+     --accent-violet/--accent-cyan são NOVOS tokens dedicados a acentos de botão/interação — não
+     são um alias de --iris/--orbit-blue. No claro valem literalmente o mesmo hex (reaproveita o
+     par já auditado, sem inventar cor nova); no escuro (.dark abaixo) divergem para uma versão mais
+     vívida, pensada pra glow. --iris/--orbit-blue continuam INTOCADOS em todo o resto do produto
+     (RevenueSignalOrb, LiveStatsWidget, BrandOrb, HubScreen, WelcomeScreen, ResetPasswordScreen,
+     MainLayout) — mudar o valor deles quebraria esses halos sem revisão visual. --pulse é o 5º
+     acento, novo em ambos os temas: indicadores "ao vivo"/urgência, nunca substituto do ouro. */
+  --accent-violet: var(--iris);
+  --accent-cyan: var(--orbit-blue);
+  --pulse: #c2255c;
+  /* Glow discreto no claro — "neon só no escuro" (regra do brief). Mesma fórmula de
+     --shadow-glow-brand acima (20%, blur 15px), só trocando a cor de base. */
+  --shadow-glow-accent-violet-value: 0 0 15px -3px color-mix(in srgb, var(--accent-violet) 20%, transparent);
+  --shadow-glow-accent-cyan-value: 0 0 15px -3px color-mix(in srgb, var(--accent-cyan) 20%, transparent);
+  --shadow-glow-pulse-value: 0 0 15px -3px color-mix(in srgb, var(--pulse) 20%, transparent);
   /* Vermelho de estado crítico/risco (Comercial Inteligente: Centro de Decisão, Alertas, drill-down
      de negócios) — precisa ser redefinido por tema porque nenhum hex único passa 4.5:1 (WCAG AA)
      contra --surface nos dois temas ao mesmo tempo. Achado real via QA em navegador (contraste
@@ -204,6 +220,17 @@
   --success-active: var(--color-success);
   --warning-active: var(--color-warning);
   --danger-active: var(--color-danger);
+  /* Só aqui --accent-violet/--accent-cyan divergem de --iris/--orbit-blue — versão vívida para
+     glow sobre superfície escura (contraste como texto verificado: 4.65:1 e 10.17:1 contra
+     --surface escura, cálculo de luminância relativa WCAG). --pulse também clareia para neon.
+     --iris/--orbit-blue em si permanecem os mesmos do :root — nenhum outro componente muda. */
+  --accent-violet: #a855f7;
+  --accent-cyan: #22d3ee;
+  --pulse: #ff2d78;
+  /* Glow vívido, difuso (12-20px), duas camadas — só aqui, só hover/focus (nunca em repouso). */
+  --shadow-glow-accent-violet-value: 0 0 20px -2px color-mix(in srgb, var(--accent-violet) 55%, transparent), 0 0 8px -1px color-mix(in srgb, var(--accent-violet) 40%, transparent);
+  --shadow-glow-accent-cyan-value: 0 0 20px -2px color-mix(in srgb, var(--accent-cyan) 55%, transparent), 0 0 8px -1px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+  --shadow-glow-pulse-value: 0 0 20px -2px color-mix(in srgb, var(--pulse) 55%, transparent), 0 0 8px -1px color-mix(in srgb, var(--pulse) 40%, transparent);
 }
 
 @theme {
@@ -310,6 +337,21 @@
   --shadow-brand-sm: 0 4px 12px color-mix(in srgb, var(--brand) 20%, transparent);
   --shadow-glow-brand: 0 0 15px -3px color-mix(in srgb, var(--brand) 20%, transparent);
   --shadow-glow-brand-strong: 0 0 15px -3px color-mix(in srgb, var(--brand) 40%, transparent);
+
+  /* Acentos de interação novos (ver --accent-violet/--accent-cyan/--pulse em :root/.dark) —
+     Button.tsx variantes iris/cyan/pulse. Glow difuso (12-20px), nunca em repouso: as classes
+     shadow-glow-* só entram via hover:/focus-visible: no componente, nunca como sombra base. */
+  --color-accent-violet: var(--accent-violet);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-pulse: var(--pulse);
+  --shadow-glow-accent-violet: var(--shadow-glow-accent-violet-value);
+  --shadow-glow-accent-cyan: var(--shadow-glow-accent-cyan-value);
+  --shadow-glow-pulse: var(--shadow-glow-pulse-value);
+  /* destructive do Button real usava bg-red-500/600 cru: red-500 com texto branco mede ~3.76:1,
+     abaixo do mínimo AA 4.5:1 (mesma classe de achado do DQA-19 documentado acima para --brand).
+     --danger via color-mix corrige sem inventar hex novo. */
+  --color-btn-danger: color-mix(in srgb, var(--color-danger) 82%, black);
+  --color-btn-danger-hover: color-mix(in srgb, var(--color-danger) 68%, black);
 
   --radius-card: 12px;
   --radius-card-lg: 16px;

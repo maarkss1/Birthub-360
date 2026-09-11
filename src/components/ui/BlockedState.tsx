@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Ban, Clock, ShieldQuestion } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-export type BlockedStateTone = 'neutral' | 'warning' | 'info';
+export type BlockedStateTone = 'neutral' | 'warning' | 'info' | 'iris';
 
 const TONE_STYLES: Record<BlockedStateTone, { icon: string; ring: string }> = {
   neutral: { icon: 'bg-surface-2 text-ink-2 border-line', ring: 'shadow-none' },
@@ -14,6 +14,13 @@ const TONE_STYLES: Record<BlockedStateTone, { icon: string; ring: string }> = {
   info: {
     icon: 'bg-info/10 text-info-active dark:text-info border-info/20',
     ring: 'shadow-lg shadow-info/5',
+  },
+  // Proposta "Neon Tokyo × Cosmic Gold" — bloqueio por motivo de IA/inteligência ainda
+  // processando (ex.: "aguardando enriquecimento", "modelo ainda não treinado pra este caso").
+  // text-iris-active no claro (íris crua mede 3.9:1, ver comentário em globals.css).
+  iris: {
+    icon: 'bg-accent-violet/10 text-iris-active dark:text-accent-violet border-accent-violet/20',
+    ring: 'shadow-glow-accent-violet',
   },
 };
 

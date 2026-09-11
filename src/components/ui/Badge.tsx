@@ -21,6 +21,16 @@ const badgeVariants = cva(
         gradient:
           'bg-gradient-to-r from-brand to-white text-slate-950 font-black shadow-[0_0_12px_-2px_color-mix(in_srgb,var(--brand)_60%,transparent)] focus:ring-brand/40',
         outline: 'border border-line text-ink-2 focus:ring-white/30',
+        // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
+        // text-iris-active (não text-accent-violet cru) no claro — --accent-violet é o mesmo valor
+        // de --iris nesse tema, e íris crua sobre superfície clara mede 3.9:1 (comentário de
+        // --color-iris-active em globals.css), abaixo do mínimo AA. dark:text-accent-violet já
+        // mede 4.65:1 contra --surface escura (calculado), sem precisar de versão escurecida.
+        iris: 'bg-accent-violet/15 text-iris-active dark:text-accent-violet focus:ring-accent-violet/40',
+        // --accent-cyan (= --orbit-blue no claro) já mede 5.54:1 cru — não precisa de -active.
+        cyan: 'bg-accent-cyan/15 text-accent-cyan focus:ring-accent-cyan/40',
+        // --pulse mede ≥5.1:1 cru nos dois temas (calculado) — mesmo raciocínio.
+        pulse: 'bg-pulse/15 text-pulse focus:ring-pulse/40',
       },
     },
     defaultVariants: {

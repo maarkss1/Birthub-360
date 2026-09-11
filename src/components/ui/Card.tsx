@@ -18,6 +18,14 @@ const cardVariants = cva(
           'bg-surface/96 border border-line shadow-[0_28px_65px_-42px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-brand/20 hover:shadow-[0_34px_72px_-40px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.08)]',
         interactive:
           'group bg-surface border border-line shadow-card cursor-pointer transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-brand/25 hover:bg-surface-2/75 hover:shadow-card-hover active:translate-y-0 active:scale-[0.995]',
+        // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
+        // Mesmo idioma do "accent" acima (borda + shadow-glow em repouso, pra marcar destaque
+        // persistente — não é o glow transitório de hover do Button). shadow-glow-accent-*/pulse
+        // já são discretos no claro (20%) e vívidos no escuro (duas camadas) — o mesmo token
+        // resolve os dois temas sem precisar de dark: aqui.
+        iris: 'bg-surface border border-accent-violet/30 shadow-glow-accent-violet transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+        cyan: 'bg-surface border border-accent-cyan/30 shadow-glow-accent-cyan transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+        pulse: 'bg-surface border border-pulse/30 shadow-glow-pulse transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
       },
       padding: {
         default: 'p-6',

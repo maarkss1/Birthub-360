@@ -54,11 +54,17 @@ export const DEFAULT_PLAYBOOK: PlaybookKey = 'atlasgr';
 
 const BY_KEY = new Map(PLAYBOOKS.map((s) => [s.key, s]));
 
+// PLAYBOOKS[0] em vez de BY_KEY.get(DEFAULT_PLAYBOOK)! — mesmo fallback, sem non-null assertion:
+// PLAYBOOKS é um array literal não-vazio, então o find() só cai no ?? em teoria (DEFAULT_PLAYBOOK
+// sempre está na lista), mas o tipo fica provado sem precisar "confiar" numa asserção.
+const DEFAULT_PLAYBOOK_INFO: PlaybookInfo =
+  PLAYBOOKS.find((p) => p.key === DEFAULT_PLAYBOOK) ?? PLAYBOOKS[0];
+
 export function isPlaybookKey(value: unknown): value is PlaybookKey {
   return typeof value === 'string' && BY_KEY.has(value as PlaybookKey);
 }
 
 /** Nunca lança: chave desconhecida (dado antigo, query manipulada) cai no padrão. */
 export function playbookInfo(key: string | null | undefined): PlaybookInfo {
-  return BY_KEY.get(key as PlaybookKey) ?? BY_KEY.get(DEFAULT_PLAYBOOK)!;
+  return BY_KEY.get(key as PlaybookKey) ?? DEFAULT_PLAYBOOK_INFO;
 }

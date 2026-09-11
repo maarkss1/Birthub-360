@@ -21,6 +21,16 @@ const KPI_TONES = {
     value: 'text-warn-active dark:text-gold',
   },
   critical: { bar: 'bg-critical', chip: 'bg-critical/10 text-critical', value: 'text-critical' },
+  // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
+  // iris: text-iris-active no claro (íris crua mede 3.9:1, abaixo do AA — mesmo achado do
+  // comentário de --color-iris-active em globals.css); dark:text-accent-violet no escuro.
+  iris: {
+    bar: 'bg-accent-violet',
+    chip: 'bg-accent-violet/15 text-iris-active dark:text-accent-violet',
+    value: 'text-iris-active dark:text-accent-violet',
+  },
+  cyan: { bar: 'bg-accent-cyan', chip: 'bg-accent-cyan/15 text-accent-cyan', value: 'text-accent-cyan' },
+  pulse: { bar: 'bg-pulse', chip: 'bg-pulse/15 text-pulse', value: 'text-pulse' },
 } as const;
 
 export type KpiTone = keyof typeof KPI_TONES;

@@ -272,7 +272,7 @@ export async function createAccessRequest(
 ): Promise<AccessRequestDto> {
   const { actor } = input;
   const capability = await getCapabilityDefinitionByCode(input.capabilityCode);
-  if (!capability || !capability.isActive) {
+  if (!capability?.isActive) {
     throw new AccessRequestServiceError(
       'Capability desconhecida ou inativa.',
       'UNKNOWN_CAPABILITY',
