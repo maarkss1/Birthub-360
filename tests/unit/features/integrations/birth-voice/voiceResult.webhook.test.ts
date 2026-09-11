@@ -13,6 +13,12 @@ const leadUpdate = vi.fn().mockResolvedValue({});
 const noteFindFirst = vi.fn();
 const noteCreate = vi.fn().mockResolvedValue({});
 const timelineCreate = vi.fn().mockResolvedValue({});
+// VoiceCallLog: projeção estruturada do mesmo resultado (ver comentário em voiceResult.webhook.ts)
+// — precisa existir no mock pro handler não quebrar com "Cannot read properties of undefined",
+// mas nenhum teste deste arquivo faz asserção sobre ela (cobertura própria em
+// mesaTratamento.priority.test.ts não se aplica aqui; a cobertura real de VoiceCallLog fica pro
+// teste dedicado do model/rota, não deste webhook legado da Bland).
+const voiceCallLogCreate = vi.fn().mockResolvedValue({});
 const sendWhatsAppMessage = vi.fn().mockResolvedValue(undefined);
 const notifyVoiceQualified = vi.fn();
 const contextRuns: Array<Record<string, unknown>> = [];
@@ -29,6 +35,9 @@ vi.mock('../../../../../src/lib/prisma.js', () => ({
     },
     timelineEvent: {
       create: (...args: unknown[]) => timelineCreate(...args),
+    },
+    voiceCallLog: {
+      create: (...args: unknown[]) => voiceCallLogCreate(...args),
     },
   },
 }));
