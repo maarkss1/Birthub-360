@@ -65,7 +65,13 @@ describe('buildRequirementsFromSearchIntent', () => {
   it('inclui cidade só quando isCitySpecific é true', () => {
     const requirements = buildRequirementsFromSearchIntent(
       baseIntent({
-        location: { label: 'Niterói, RJ', city: 'Niterói', state: 'RJ', excluded: [], isCitySpecific: true },
+        location: {
+          label: 'Niterói, RJ',
+          city: 'Niterói',
+          state: 'RJ',
+          excluded: [],
+          isCitySpecific: true,
+        },
       }),
     );
     expect(requirements.map((r) => r.criterion)).toContain('city');
@@ -89,15 +95,24 @@ describe('buildRequirementsFromSearchIntent', () => {
 
   it('classifica cargo do decisor como ENRICHMENT, só quando needsDecisionMakerContacts', () => {
     const requirements = buildRequirementsFromSearchIntent(
-      baseIntent({ decisionMakerTitles: ['Diretor de Logística'], needsDecisionMakerContacts: true }),
+      baseIntent({
+        decisionMakerTitles: ['Diretor de Logística'],
+        needsDecisionMakerContacts: true,
+      }),
     );
-    expect(requirements.find((r) => r.criterion === 'decisionMakerTitles')?.type).toBe('ENRICHMENT');
+    expect(requirements.find((r) => r.criterion === 'decisionMakerTitles')?.type).toBe(
+      'ENRICHMENT',
+    );
   });
 });
 
 describe('evaluateCandidateRequirements — segmento (a própria fabricação que o motor evita)', () => {
   it('NUNCA marca segmento como confirmado quando o candidato só ecoou o segmento pedido (Google Places/Nominatim)', () => {
-    const candidate = baseCandidate({ segment: 'Transportadora', segmentObserved: false, source: 'googlePlaces' });
+    const candidate = baseCandidate({
+      segment: 'Transportadora',
+      segmentObserved: false,
+      source: 'googlePlaces',
+    });
     const evaluation = evalFor(evaluateCandidateRequirements(baseIntent(), candidate), 'segment');
     expect(evaluation?.status).toBe('unknown');
     expect(evaluation?.observed).toBeNull();
@@ -118,7 +133,11 @@ describe('evaluateCandidateRequirements — segmento (a própria fabricação qu
   });
 
   it('marca segmento como divergente quando a Apollo confirma uma industry real que NÃO bate com o pedido', () => {
-    const candidate = baseCandidate({ segment: 'Software', segmentObserved: true, source: 'apollo' });
+    const candidate = baseCandidate({
+      segment: 'Software',
+      segmentObserved: true,
+      source: 'apollo',
+    });
     const evaluation = evalFor(
       evaluateCandidateRequirements(baseIntent({ segment: 'Transportadora' }), candidate),
       'segment',
@@ -131,7 +150,10 @@ describe('evaluateCandidateRequirements — localização', () => {
   it('confirma estado quando bate com a localização observada do candidato', () => {
     const candidate = baseCandidate({ location: 'Niterói, RJ', source: 'googlePlaces' });
     const evaluation = evalFor(
-      evaluateCandidateRequirements(baseIntent({ location: { label: 'RJ', state: 'RJ', excluded: [], isCitySpecific: false } }), candidate),
+      evaluateCandidateRequirements(
+        baseIntent({ location: { label: 'RJ', state: 'RJ', excluded: [], isCitySpecific: false } }),
+        candidate,
+      ),
       'state',
     );
     expect(evaluation?.status).toBe('matched');
@@ -140,7 +162,10 @@ describe('evaluateCandidateRequirements — localização', () => {
   it('marca como divergente quando o estado observado não bate com o pedido', () => {
     const candidate = baseCandidate({ location: 'Curitiba, PR', source: 'googlePlaces' });
     const evaluation = evalFor(
-      evaluateCandidateRequirements(baseIntent({ location: { label: 'RJ', state: 'RJ', excluded: [], isCitySpecific: false } }), candidate),
+      evaluateCandidateRequirements(
+        baseIntent({ location: { label: 'RJ', state: 'RJ', excluded: [], isCitySpecific: false } }),
+        candidate,
+      ),
       'state',
     );
     expect(evaluation?.status).toBe('unmatched');
@@ -152,7 +177,14 @@ describe('evaluateCandidateRequirements — faixas numéricas (faturamento/ano d
     const candidate = baseCandidate();
     const evaluation = evalFor(
       evaluateCandidateRequirements(
-        baseIntent({ firmographics: { annualRevenueMin: 1_000_000, technologiesInclude: [], technologiesExclude: [], publicCompanyOnly: false } }),
+        baseIntent({
+          firmographics: {
+            annualRevenueMin: 1_000_000,
+            technologiesInclude: [],
+            technologiesExclude: [],
+            publicCompanyOnly: false,
+          },
+        }),
         candidate,
       ),
       'annualRevenue',
@@ -205,7 +237,10 @@ describe('evaluateCandidateRequirements — cargo do decisor (ENRICHMENT)', () =
     const candidate = baseCandidate();
     const evaluation = evalFor(
       evaluateCandidateRequirements(
-        baseIntent({ decisionMakerTitles: ['Diretor de Logística'], needsDecisionMakerContacts: true }),
+        baseIntent({
+          decisionMakerTitles: ['Diretor de Logística'],
+          needsDecisionMakerContacts: true,
+        }),
         candidate,
       ),
       'decisionMakerTitles',
@@ -217,12 +252,21 @@ describe('evaluateCandidateRequirements — cargo do decisor (ENRICHMENT)', () =
     const candidate = baseCandidate({
       source: 'apollo',
       decisionMakers: [
-        { name: 'Fulano', title: 'Diretor de Logística', email: null, phone: null, linkedinUrl: null },
+        {
+          name: 'Fulano',
+          title: 'Diretor de Logística',
+          email: null,
+          phone: null,
+          linkedinUrl: null,
+        },
       ],
     });
     const evaluation = evalFor(
       evaluateCandidateRequirements(
-        baseIntent({ decisionMakerTitles: ['Diretor de Logística'], needsDecisionMakerContacts: true }),
+        baseIntent({
+          decisionMakerTitles: ['Diretor de Logística'],
+          needsDecisionMakerContacts: true,
+        }),
         candidate,
       ),
       'decisionMakerTitles',

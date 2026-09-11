@@ -60,7 +60,7 @@ const AGENT_INFO: Record<
   sdr: {
     label: 'SDR Autônomo',
     description:
-      'Qualifica um lead JÁ CADASTRADO no CRM (fit logístico, porte de frota/faturamento, situação cadastral) e atualiza o status de qualificação.',
+      'Qualifica um lead JÁ CADASTRADO no CRM (fit com o ICP, porte/faturamento, situação cadastral) e atualiza o status de qualificação.',
     chooseWhen:
       'A missão pede para qualificar/analisar um lead específico que já existe no CRM. Exige um Lead ID real — nunca escolha sem um.',
   },

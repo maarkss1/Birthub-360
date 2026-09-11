@@ -17,6 +17,7 @@ import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
+  appendLearnedStyle,
 } from './swarm.constants.js';
 import { rehydratePii, assertPiiExternalConsent } from '../services/guardrails.service.js';
 
@@ -63,8 +64,9 @@ async function loadLearnedStyle(): Promise<string | null> {
 async function callModel(state: typeof MessagesAnnotation.State) {
   const learnedStyle = await loadLearnedStyle();
   const systemPrompt = new SystemMessage(
-    `${SWARM_IDENTITY} Você é a IA de Pré-Vendas (SDR Autônomo) de Elite, arquitetada para qualificação cirúrgica de leads B2B no setor logístico.
-Sua missão não é apenas ler dados, mas EXECUTAR UMA ANÁLISE DE RISCO LOGÍSTICO COMPLETA baseada no ICP e decidir o destino do lead no funil.
+    appendLearnedStyle(
+      `${SWARM_IDENTITY} Você é a IA de Pré-Vendas (SDR Autônomo) de Elite, arquitetada para qualificação cirúrgica de leads B2B.
+Sua missão não é apenas ler dados, mas EXECUTAR UMA ANÁLISE DE FIT COMPLETA baseada no ICP e decidir o destino do lead no funil.
 
 DIRETRIZES DE EXECUÇÃO:
 1. USE FERRAMENTAS: Obtenha os dados do Lead com 'get_lead_context' e 'summarize_lead_history'. Nunca presuma porte ou situação cadastral sem que as ferramentas confirmem.
@@ -107,10 +109,9 @@ REGRAS DE REFINAMENTO (Célula Comercial, onda 43):
 
 Trabalhe silenciosamente e não faça perguntas ao usuário. Aja até completar a tarefa chamando 'update_lead_qualification'. ${SWARM_OUTPUT_CONTRACT}
 
-${SWARM_UNTRUSTED_CONTENT_GUARD}` +
-      (learnedStyle
-        ? `\n\nEstilo aprendido do usuário (aplique como preferência de tom):\n${learnedStyle}`
-        : ''),
+${SWARM_UNTRUSTED_CONTENT_GUARD}`,
+      learnedStyle,
+    ),
   );
 
   const startTime = Date.now();

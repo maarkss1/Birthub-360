@@ -53,18 +53,22 @@ export function PomodoroWidget() {
         confirmationLabel: 'Bloco de foco iniciado',
         handler: startFocus,
       },
-      isRunning && !isBreak && !paused && {
-        keywords: ['pausar'],
-        phrase: 'pausar',
-        confirmationLabel: 'Cronômetro pausado',
-        handler: pause,
-      },
-      isRunning && !isBreak && paused && {
-        keywords: ['retomar', 'continuar'],
-        phrase: 'retomar',
-        confirmationLabel: 'Cronômetro retomado',
-        handler: resume,
-      },
+      isRunning &&
+        !isBreak &&
+        !paused && {
+          keywords: ['pausar'],
+          phrase: 'pausar',
+          confirmationLabel: 'Cronômetro pausado',
+          handler: pause,
+        },
+      isRunning &&
+        !isBreak &&
+        paused && {
+          keywords: ['retomar', 'continuar'],
+          phrase: 'retomar',
+          confirmationLabel: 'Cronômetro retomado',
+          handler: resume,
+        },
       isRunning && {
         keywords: ['reiniciar cronômetro', 'reiniciar timer', 'reiniciar pomodoro'],
         phrase: 'reiniciar cronômetro',

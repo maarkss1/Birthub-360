@@ -1,6 +1,16 @@
 import dns from 'node:dns/promises';
 import disposableDomains from 'disposable-email-domains';
 import { logger } from '../../../lib/logger';
+import { withTimeout } from '../../../lib/http.js';
+
+// `dns.resolveMx`/`resolveTxt` (API de Promise do Node) não aceitam AbortSignal nem têm timeout
+// próprio exposto — em DNS lento/sem resposta, a chamada podia ficar pendurada por bem mais tempo
+// que qualquer chamada HTTP deste domínio (todas via fetchWithTimeout/fetchWithProviderRetry).
+// `withTimeout` (lib/http.ts) existe exatamente para isso: SDKs/APIs que não expõem cancelamento.
+// Esta checagem roda no caminho síncrono de criação de contato (enrichmentCascade.service.ts,
+// enrichment.service.ts) — um DNS lento atrasaria a criação do lead inteiro sem isto.
+const MX_LOOKUP_TIMEOUT_MS = 5_000;
+const TXT_LOOKUP_TIMEOUT_MS = 3_000;
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DISPOSABLE_DOMAIN_SET = new Set(disposableDomains);
@@ -33,7 +43,7 @@ export async function checkEmailDeliverability(email: string): Promise<EmailDeli
   }
 
   try {
-    const records = await dns.resolveMx(domain);
+    const records = await withTimeout(dns.resolveMx(domain), MX_LOOKUP_TIMEOUT_MS);
     if (!records.length) {
       return { email: trimmed, status: 'invalid', reason: 'no_mail_server' };
     }
@@ -45,13 +55,13 @@ export async function checkEmailDeliverability(email: string): Promise<EmailDeli
     let hasSpf: boolean | undefined;
     let hasDmarc: boolean | undefined;
     try {
-      const txt = await dns.resolveTxt(domain);
+      const txt = await withTimeout(dns.resolveTxt(domain), TXT_LOOKUP_TIMEOUT_MS);
       hasSpf = txt.some((row) => row.join('').includes('v=spf1'));
     } catch {
       /* ignore */
     }
     try {
-      const dmarc = await dns.resolveTxt(`_dmarc.${domain}`);
+      const dmarc = await withTimeout(dns.resolveTxt(`_dmarc.${domain}`), TXT_LOOKUP_TIMEOUT_MS);
       hasDmarc = dmarc.some((row) => row.join('').includes('v=DMARC1'));
     } catch {
       /* ignore */
