@@ -1,3 +1,5 @@
+import { BRAND } from '../../config/brand';
+
 /**
  * Convite de reunião (ICS + e-mail HTML) — só o caminho de CRIAÇÃO existe hoje porque nenhum dos
  * dois pontos reais que chamam isto (`schedule-meeting` da Cadência e o agendamento público em
@@ -122,9 +124,9 @@ export function buildMeetingInviteEmail(input: MeetingInviteInput): MeetingInvit
     ]
       .filter(Boolean)
       .join('\n'),
-    html: `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#f4f1ea;font-family:Montserrat,Arial,sans-serif;color:#333333"><div style="max-width:560px;margin:0 auto;padding:32px 24px"><div style="border-top:4px solid #FF5618;background:#ffffff;border-radius:8px;padding:28px"><p style="margin:0 0 16px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#FF5618">Convite de reunião</p><h1 style="margin:0 0 16px;font-size:22px;line-height:1.3">${htmlEscape(input.title)}</h1><p style="margin:0 0 4px;font-weight:700">${htmlEscape(formattedTime)}</p><p style="margin:0 0 20px;color:#666666">${htmlEscape(input.timeZone)}</p>${input.notes ? `<p style="margin:0 0 20px;white-space:pre-line">${htmlEscape(input.notes)}</p>` : ''}${
+    html: `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#f4f1ea;font-family:Inter,Arial,sans-serif;color:#333333"><div style="max-width:560px;margin:0 auto;padding:32px 24px"><div style="border-top:4px solid ${BRAND.colors.brand};background:#ffffff;border-radius:8px;padding:28px"><p style="margin:0 0 16px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:${BRAND.colors.brand}">Convite de reunião</p><h1 style="margin:0 0 16px;font-size:22px;line-height:1.3">${htmlEscape(input.title)}</h1><p style="margin:0 0 4px;font-weight:700">${htmlEscape(formattedTime)}</p><p style="margin:0 0 20px;color:#666666">${htmlEscape(input.timeZone)}</p>${input.notes ? `<p style="margin:0 0 20px;white-space:pre-line">${htmlEscape(input.notes)}</p>` : ''}${
       input.meetUrl
-        ? `<p style="margin:0"><a href="${htmlEscape(input.meetUrl)}" style="display:inline-block;background:#FF5618;color:#ffffff;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:6px">Acessar Google Meet</a></p>`
+        ? `<p style="margin:0"><a href="${htmlEscape(input.meetUrl)}" style="display:inline-block;background:${BRAND.colors.brand};color:${BRAND.colors.obsidian};font-weight:700;text-decoration:none;padding:12px 20px;border-radius:6px">Acessar Google Meet</a></p>`
         : `<p style="margin:0;color:#666666">${htmlEscape(meetLine)}</p>`
     }<hr style="margin:28px 0 16px;border:none;border-top:1px solid #eeeeee"><p style="margin:0;font-size:12px;color:#999999">Birth Hub 360º · Central de Comando Inteligente</p></div></div></body></html>`,
     icalEvent: {
