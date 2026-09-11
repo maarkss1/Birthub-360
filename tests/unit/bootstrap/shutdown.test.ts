@@ -22,6 +22,9 @@ function buildDeps(calls: string[], overrides: Partial<ShutdownDeps> = {}): Shut
         autoAnonymizeWorker: null,
         coldLeadsScannerWorker: null,
         stagnationScannerWorker: null,
+        accountIntelligenceSchedulerWorker: null,
+        forecastSnapshotWorker: null,
+        copilotoTranscriptionWorker: null,
         searchWorker: null,
         coldCallWorker: fakeWorker('coldCall', calls),
         swarmSchedulerWorker: null,
@@ -131,5 +134,51 @@ describe('bootstrap/shutdown', () => {
 
         expect(deps.connection.disconnect).toHaveBeenCalled();
         expect(calls2).toContain('exit(0)');
+    });
+
+    it('fecha TODOS os campos de EmbeddedWorkersHandle — falha se um worker novo for adicionado ao handle e esquecido em workerList()', async () => {
+        const calls3: string[] = [];
+
+        // Constrói um handle com um worker mockado em CADA campo (nenhum null), para que qualquer
+        // campo esquecido em workerList() apareça como "nunca fechado" abaixo — sem precisar
+        // manter uma lista hardcoded de nomes aqui, que ficaria tão desatualizada quanto o bug
+        // original (ACH-16-03: 3 dos 19 campos de EmbeddedWorkersHandle não eram fechados).
+        const workers: EmbeddedWorkersHandle = {
+            leadsWorker: fakeWorker('leadsWorker', calls3),
+            agentWorker: fakeWorker('agentWorker', calls3),
+            enrichmentWorker: fakeWorker('enrichmentWorker', calls3),
+            whatsappSignalWorker: fakeWorker('whatsappSignalWorker', calls3),
+            bitrixSyncWorker: fakeWorker('bitrixSyncWorker', calls3),
+            followUpWorker: fakeWorker('followUpWorker', calls3),
+            execSummaryWorker: fakeWorker('execSummaryWorker', calls3),
+            deduplicationWorker: fakeWorker('deduplicationWorker', calls3),
+            winLossWorker: fakeWorker('winLossWorker', calls3),
+            pdfWorker: fakeWorker('pdfWorker', calls3),
+            autoAnonymizeWorker: fakeWorker('autoAnonymizeWorker', calls3),
+            coldLeadsScannerWorker: fakeWorker('coldLeadsScannerWorker', calls3),
+            stagnationScannerWorker: fakeWorker('stagnationScannerWorker', calls3),
+            accountIntelligenceSchedulerWorker: fakeWorker('accountIntelligenceSchedulerWorker', calls3),
+            forecastSnapshotWorker: fakeWorker('forecastSnapshotWorker', calls3),
+            copilotoTranscriptionWorker: fakeWorker('copilotoTranscriptionWorker', calls3),
+            searchWorker: fakeWorker('searchWorker', calls3),
+            coldCallWorker: fakeWorker('coldCallWorker', calls3),
+            swarmSchedulerWorker: fakeWorker('swarmSchedulerWorker', calls3),
+        };
+
+        const deps = buildDeps(calls3, { workers });
+        const shutdown = createGracefulShutdown(deps);
+
+        await shutdown('SIGTERM');
+
+        const uncloseFields: string[] = [];
+        for (const key of Object.keys(workers) as Array<keyof EmbeddedWorkersHandle>) {
+            const worker = workers[key];
+            const closeMock = worker?.close as unknown as ReturnType<typeof vi.fn> | undefined;
+            if (!closeMock || closeMock.mock.calls.length === 0) {
+                uncloseFields.push(key);
+            }
+        }
+
+        expect(uncloseFields).toEqual([]);
     });
 });
