@@ -29,9 +29,9 @@ export async function withTenant<T>(tenantId: string, fn: () => Promise<T>): Pro
 
 const TEST_PASSWORD = 'RbacTestPassword123!';
 
-// Domínio @atlasgr.com.br: único jeito de passar por isAuthorizedLoginEmail
-// (src/config/access-policy.ts), checado tanto pelo databaseHooks.user.create.before do
-// better-auth (src/lib/auth.ts) quanto por databaseHooks.session.create.before.
+// isAuthorizedLoginEmail (src/config/access-policy.ts) hoje só valida formato — qualquer
+// domínio passaria. Mantido em @atlasgr.com.br aqui só por convenção histórica dos testes
+// RBAC, sem significado especial.
 export function uniqueEmail(prefix: string): string {
   const unique = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
   return `rbac-${prefix}-${unique}@atlasgr.com.br`;

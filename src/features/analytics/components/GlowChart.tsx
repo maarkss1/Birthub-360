@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { motion } from 'framer-motion';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { formatMonthLabel, type MonthlyPoint } from '../analytics.api';
 
@@ -35,7 +34,6 @@ const SERIES: Array<{
 ];
 
 export function GlowChart({ data, error }: GlowChartProps) {
-  const { isAtlas } = useBrandAccent();
   const { theme } = useTheme();
   const [visible, setVisible] = useState<Record<SeriesKey, boolean>>({
     created: true,
@@ -72,9 +70,7 @@ export function GlowChart({ data, error }: GlowChartProps) {
     >
       <motion.div
         aria-hidden="true"
-        className={`pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full blur-[90px] ${
-          isAtlas ? 'bg-brand/20' : 'bg-brand-2/20'
-        }`}
+        className={`pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full blur-[90px] ${'bg-brand/20'}`}
         animate={{ scale: [1, 1.08, 1], opacity: [0.34, 0.5, 0.34] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -86,7 +82,7 @@ export function GlowChart({ data, error }: GlowChartProps) {
       <div className="relative z-10 flex h-full flex-col">
         <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div>
-            <div className="mb-1 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-brand-active dark:text-brand-2">
+            <div className="mb-1 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-brand-ink dark:text-brand">
               <CircleDot className="h-3.5 w-3.5" aria-hidden="true" /> Pulso comercial
             </div>
             <h3 className="text-lg font-black text-ink">Entrada, ganho e perda por mês</h3>
@@ -96,6 +92,9 @@ export function GlowChart({ data, error }: GlowChartProps) {
             </p>
           </div>
 
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div
             role="group"
             aria-label="Séries exibidas no gráfico"

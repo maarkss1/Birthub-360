@@ -45,8 +45,22 @@ echarts.use([
   CanvasRenderer,
 ]);
 
-// Paleta da marca AtlasGR
-const ATLAS_COLORS = ['#F97316', '#FB923C', '#FDBA74', '#FED7AA', '#6B7280', '#9CA3AF'];
+// Paleta categórica da marca Birth Hub 360. Antes era uma rampa de laranjas
+// (a cor da marca anterior), em que quatro das seis cores eram o mesmo matiz em
+// tons diferentes — séries adjacentes ficavam quase indistinguíveis num gráfico
+// de pizza ou de barras empilhadas. Esta ordena por MATIZ primeiro (ouro, íris,
+// azul de órbita) e só depois abre em claridade, então as três primeiras séries
+// — as mais frequentes — já são separáveis inclusive em escala de cinza.
+// Fecha em cinza neutro, para a categoria "Outros"/resíduo não competir com as
+// cores de marca.
+const BRAND_CHART_COLORS = [
+  '#D4AF37', // Antique Gold
+  '#5B21B6', // Deep Iris
+  '#0065D2', // Orbit Blue
+  '#8C6D1F', // Gold Deep
+  '#9B7BE0', // Iris claro
+  '#6B7280', // Neutro
+];
 const DARK_BG = 'transparent';
 const LIGHT_BG = 'transparent';
 
@@ -104,7 +118,7 @@ export function FunnelChart({ data, title, height = 300, className = '' }: Funne
   const { theme } = useTheme();
   const option: EChartsOption = {
     backgroundColor: theme === 'dark' ? DARK_BG : LIGHT_BG,
-    color: ATLAS_COLORS,
+    color: BRAND_CHART_COLORS,
     title: title
       ? {
           text: title,
@@ -167,7 +181,7 @@ export function SankeyChart({
   const { theme } = useTheme();
   const option: EChartsOption = {
     backgroundColor: theme === 'dark' ? DARK_BG : LIGHT_BG,
-    color: ATLAS_COLORS,
+    color: BRAND_CHART_COLORS,
     title: title
       ? {
           text: title,
@@ -324,7 +338,7 @@ export function BarChart({
   };
   const option: EChartsOption = {
     backgroundColor: theme === 'dark' ? DARK_BG : LIGHT_BG,
-    color: ATLAS_COLORS,
+    color: BRAND_CHART_COLORS,
     title: title
       ? {
           text: title,
@@ -399,7 +413,7 @@ export function LineChart({
   };
   const option: EChartsOption = {
     backgroundColor: theme === 'dark' ? DARK_BG : LIGHT_BG,
-    color: ATLAS_COLORS,
+    color: BRAND_CHART_COLORS,
     title: title
       ? {
           text: title,
@@ -433,8 +447,8 @@ export function LineChart({
         ? {
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: `${ATLAS_COLORS[i % ATLAS_COLORS.length]}40` },
-                { offset: 1, color: `${ATLAS_COLORS[i % ATLAS_COLORS.length]}00` },
+                { offset: 0, color: `${BRAND_CHART_COLORS[i % BRAND_CHART_COLORS.length]}40` },
+                { offset: 1, color: `${BRAND_CHART_COLORS[i % BRAND_CHART_COLORS.length]}00` },
               ]),
             },
           }

@@ -14,7 +14,8 @@ import {
   ATLAS_PERSONA_OPTIONS,
   TOTALTRAC_PERSONA_OPTIONS,
 } from '../../../shared/constants/icp-options';
-import { useBrand } from '../../../contexts/BrandContext';
+import { BRAND } from '../../../config/brand';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { SoundFX } from '../../../lib/soundEffects';
 import { GamificationWidget } from '../../../components/ui/GamificationWidget';
@@ -91,15 +92,14 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function ProspectingHub() {
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook, info: playbookMeta } = useActivePlaybook();
   const accent = useBrandAccent();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
 
-  const activeSegments =
-    activeBrand === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
   const activePersonaOptions =
-    activeBrand === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
+    playbook === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
 
   // --- CNPJ real lookup ---
   const [cnpjInput, setCnpjInput] = useState('');
@@ -162,7 +162,7 @@ export function ProspectingHub() {
             segment: candidate.segment,
             size: candidate.size,
             location: candidate.location,
-            source: `${brandInfo.name} Prospect List`,
+            source: `${BRAND.shortName} Prospect List`,
             autoEnrich: false,
             linkedin: candidate.linkedinUrl,
             phone: candidate.phone,
@@ -200,7 +200,7 @@ export function ProspectingHub() {
               segment: candidate.segment,
               size: candidate.size,
               location: candidate.location,
-              source: `${brandInfo.name} Prospect List (Bulk Enrich)`,
+              source: `${BRAND.shortName} Prospect List (Bulk Enrich)`,
               autoEnrich: true,
               linkedin: candidate.linkedinUrl,
               phone: candidate.phone,
@@ -276,7 +276,7 @@ export function ProspectingHub() {
             segment: candidate.segment,
             size: candidate.size,
             location: candidate.location,
-            source: `${brandInfo.name} Prospect List`,
+            source: `${BRAND.shortName} Prospect List`,
             autoEnrich: false, // salva em lista sem enriquecer; o enriquecimento será feito ao entrar no lead
             linkedin: candidate.linkedinUrl,
             phone: candidate.phone,
@@ -351,7 +351,7 @@ export function ProspectingHub() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${brandInfo.name}_Prospects_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    a.download = `${BRAND.shortName}_Prospects_${new Date().toISOString().slice(0, 10)}.xlsx`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -477,7 +477,7 @@ export function ProspectingHub() {
         segment: candidate.segment,
         size: candidate.size,
         location: candidate.location,
-        source: `${brandInfo.name} Prospect (OpenStreetMap / Apollo opcional)`,
+        source: `${BRAND.shortName} Prospect (OpenStreetMap / Apollo opcional)`,
         autoEnrich: false, // Salvar como lead cru para economizar créditos
         linkedin: candidate.linkedinUrl,
         phone: candidate.phone,
@@ -500,7 +500,7 @@ export function ProspectingHub() {
           className="mb-4 space-y-4"
         >
           <h1 className="text-4xl font-black tracking-tight text-ink">
-            {brandInfo.name}{' '}
+            {playbookMeta.label}{' '}
             <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
               Prospect
             </span>{' '}
@@ -515,7 +515,8 @@ export function ProspectingHub() {
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex gap-3 bg-surface/75 backdrop-blur-xl p-2 rounded-2xl border border-line shadow-card w-fit relative z-10">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('cnpj');
@@ -524,16 +525,18 @@ export function ProspectingHub() {
             >
               <Landmark size={18} /> Busca Direta (CNPJ/Nome)
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('discovery');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'discovery' ? 'bg-brand-active text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'discovery' ? 'bg-brand-active text-on-brand shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Database size={18} /> Radar Discovery (Fontes abertas)
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('ocr');
@@ -542,7 +545,8 @@ export function ProspectingHub() {
             >
               <Camera size={18} /> Cadastrar por Foto (OCR)
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('tools');
@@ -553,7 +557,8 @@ export function ProspectingHub() {
             </button>
           </div>
 
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('focus');
               setIsSavedSearchesOpen(true);

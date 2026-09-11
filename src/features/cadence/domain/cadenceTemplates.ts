@@ -1,7 +1,7 @@
 export interface CadenceJourneyTemplate {
   id: string;
   name: string;
-  targetBrand: 'AtlasGR' | 'TotalTrac' | 'Ambas';
+  targetBrand: 'Birth Hub 360' | 'Birth Hub 360' | 'Ambas';
   category: 'Outbound' | 'Inbound' | 'Reativação' | 'Fechamento' | 'Nutrição';
   description: string;
   persona: string;
@@ -18,8 +18,8 @@ export interface CadenceJourneyTemplate {
 export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
   {
     id: 'outbound-frota-pesada-can',
-    name: 'Outbound B2B Frota Pesada (Telemetria CAN & Diesel - AtlasGR)',
-    targetBrand: 'AtlasGR',
+    name: 'Outbound B2B Frota Pesada (Telemetria CAN & Diesel - Birth Hub 360)',
+    targetBrand: 'Birth Hub 360',
     category: 'Outbound',
     persona: 'Diretores de Operações, Gerentes de Logística e Gestores de Frota Pesada',
     description:
@@ -31,7 +31,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         delayHoursFromPrevious: 0,
         stepTitle: 'Diagnóstico Consultivo WhatsApp',
         templateRef:
-          'Olá {{contact_name}}! Notei que você gerencia a operação na {{company_name}}. Desenvolvemos uma auditoria de telemetria CAN na AtlasGR que reduz em média 9.4% o consumo de diesel e sinistros em frotas pesadas. Gostaria de ver o benchmark do seu segmento?',
+          'Olá {{contact_name}}! Notei que você gerencia a operação na {{company_name}}. Desenvolvemos uma auditoria de telemetria CAN na Birth Hub 360 que reduz em média 9.4% o consumo de diesel e sinistros em frotas pesadas. Gostaria de ver o benchmark do seu segmento?',
       },
       {
         order: 2,
@@ -39,7 +39,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         delayHoursFromPrevious: 4,
         stepTitle: 'Estudo de Caso & ROI Diesel',
         templateRef:
-          'Assunto: Benchmark de Redução de Combustível — {{company_name}} & AtlasGR\n\nOlá {{contact_name}},\n\nComplementando minha mensagem no WhatsApp, estou compartilhando nosso estudo de caso com telemetria direta na rede CAN do caminhão. Conseguimos identificar ponto morto excessivo, banguela eletrônica e frenagens bruscas em tempo real.\n\nPodemos fazer uma call rápida de 15 minutos para avaliar a aderência na sua frota?',
+          'Assunto: Benchmark de Redução de Combustível — {{company_name}} & Birth Hub 360\n\nOlá {{contact_name}},\n\nComplementando minha mensagem no WhatsApp, estou compartilhando nosso estudo de caso com telemetria direta na rede CAN do caminhão. Conseguimos identificar ponto morto excessivo, banguela eletrônica e frenagens bruscas em tempo real.\n\nPodemos fazer uma call rápida de 15 minutos para avaliar a aderência na sua frota?',
       },
       {
         order: 3,
@@ -47,7 +47,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         delayHoursFromPrevious: 24,
         stepTitle: 'Ligação de Qualificação SDR',
         templateRef:
-          'Ligação do SDR da AtlasGR apresentando diagnósticos de risco e convidando o decisor para uma demonstração com o especialista de engenharia de telemetria.',
+          'Ligação do SDR da Birth Hub 360 apresentando diagnósticos de risco e convidando o decisor para uma demonstração com o especialista de engenharia de telemetria.',
       },
       {
         order: 4,
@@ -55,7 +55,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         delayHoursFromPrevious: 48,
         stepTitle: 'Demonstração em Vídeo & Prova de Conceito',
         templateRef:
-          '{{contact_name}}, gravei um vídeo de 1 minuto mostrando como o painel de inteligência da AtlasGR avisa o gestor no momento exato de uma infração de telemetria. Consegue dar uma olhada rápida hoje?',
+          '{{contact_name}}, gravei um vídeo de 1 minuto mostrando como o painel de inteligência da Birth Hub 360 avisa o gestor no momento exato de uma infração de telemetria. Consegue dar uma olhada rápida hoje?',
       },
       {
         order: 5,
@@ -63,14 +63,14 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         delayHoursFromPrevious: 72,
         stepTitle: 'Link de Agendamento Direto',
         templateRef:
-          'Assunto: Próximos passos para teste piloto na {{company_name}}\n\nOlá {{contact_name}},\n\nSei que a rotina operacional é corrida. Caso faça sentido avaliar a implantação de um teste piloto em 3 a 5 veículos da sua frota sem custo de adesão, escolha o melhor horário diretamente na minha agenda:\n\n👉 {{booking_link}}\n\nUm abraço,\nEquipe AtlasGR',
+          'Assunto: Próximos passos para teste piloto na {{company_name}}\n\nOlá {{contact_name}},\n\nSei que a rotina operacional é corrida. Caso faça sentido avaliar a implantação de um teste piloto em 3 a 5 veículos da sua frota sem custo de adesão, escolha o melhor horário diretamente na minha agenda:\n\n👉 {{booking_link}}\n\nUm abraço,\nEquipe Birth Hub 360',
       },
     ],
   },
   {
     id: 'inbound-speed-lead-totaltrac',
-    name: 'Inbound Speed Lead (Contato Rápido Antifurto & Rastreamento - TotalTrac)',
-    targetBrand: 'TotalTrac',
+    name: 'Inbound Speed Lead (Contato Rápido Antifurto & Rastreamento - Birth Hub 360)',
+    targetBrand: 'Birth Hub 360',
     category: 'Inbound',
     persona: 'Proprietários de Frotas Leves, Vãs, Utilitários e Compradores de Segurança Veicular',
     description:
@@ -82,7 +82,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         delayHoursFromPrevious: 0,
         stepTitle: 'Boas-vindas Instantâneas WhatsApp',
         templateRef:
-          'Olá {{contact_name}}! Recebemos sua solicitação de cotação de rastreamento veicular e antifurto na TotalTrac. Para qual tipo de veículo e cidade você precisa de cobertura imediata?',
+          'Olá {{contact_name}}! Recebemos sua solicitação de cotação de rastreamento veicular e antifurto na Birth Hub 360. Para qual tipo de veículo e cidade você precisa de cobertura imediata?',
       },
       {
         order: 2,
@@ -98,7 +98,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         delayHoursFromPrevious: 24,
         stepTitle: 'Tabela de Planos & Cobertura Nacional',
         templateRef:
-          'Assunto: Cotação de Rastreamento Veicular TotalTrac para {{company_name}}\n\nOlá {{contact_name}},\n\nConforme conversamos, segue anexo nossa proposta comercial com cobertura nacional 4G/GPS, bloqueio remoto e assistência 24h com equipe de pronta resposta armada.\n\nFicou com alguma dúvida sobre a instalação?',
+          'Assunto: Cotação de Rastreamento Veicular Birth Hub 360 para {{company_name}}\n\nOlá {{contact_name}},\n\nConforme conversamos, segue anexo nossa proposta comercial com cobertura nacional 4G/GPS, bloqueio remoto e assistência 24h com equipe de pronta resposta armada.\n\nFicou com alguma dúvida sobre a instalação?',
       },
       {
         order: 4,

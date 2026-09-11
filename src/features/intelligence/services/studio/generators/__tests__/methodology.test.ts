@@ -13,14 +13,14 @@ import { methodologyResultSchema } from '../../schema.js';
 function buildRequest(framework: 'spin' | 'meddpicc' | 'aida' | 'snap' | 'challenger') {
   return {
     kind: 'methodology' as const,
-    brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+    brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
     inputs: {
       framework,
       targetPersona: 'CFO',
       companySegment: 'Transporte',
       icpSize: '50-200 funcionários',
       techStack: 'SAP',
-      solutionName: 'AtlasGR',
+      solutionName: 'Birth Hub 360',
       mainPainPoint: 'Falta de visibilidade de risco de carga',
       mainBenefit: 'Redução de sinistros',
     },

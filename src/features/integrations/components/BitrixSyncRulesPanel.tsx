@@ -69,11 +69,14 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
   const [newAssignedById, setNewAssignedById] = useState('');
   const [creating, setCreating] = useState(false);
 
-  const loadRules = useCallback(() =>
-    api
-      .get<BitrixSyncRule[]>(`/api/bitrix/sync-rules?connectionId=${connectionId}`)
-      .then(setRules)
-      .catch(() => setRules([])), [connectionId]);
+  const loadRules = useCallback(
+    () =>
+      api
+        .get<BitrixSyncRule[]>(`/api/bitrix/sync-rules?connectionId=${connectionId}`)
+        .then(setRules)
+        .catch(() => setRules([])),
+    [connectionId],
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -248,7 +251,8 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
                       </p>
                     )}
                   </div>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => removeRule(rule.id)}
                     disabled={!canPickAnyVendor}
                     className="shrink-0 p-2 text-ink-2 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors dark:hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-ink-2"
@@ -267,22 +271,24 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
 
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex gap-1 p-1.5 bg-surface-2 rounded-xl">
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setNewSource('lead')}
-                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'lead' ? 'bg-surface text-brand-active dark:text-brand-2 shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'lead' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
                 Lead
               </button>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setNewSource('deal')}
-                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'deal' ? 'bg-surface text-brand-active dark:text-brand-2 shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'deal' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
                 Negócio
               </button>
             </div>
             {newSource === 'deal' &&
               (pipelines.length > 0 ? (
-                <span className="flex items-center gap-1.5 px-4 h-9 rounded-xl bg-soft border border-brand/20 text-brand-active dark:text-brand-2 text-sm font-bold whitespace-nowrap">
+                <span className="flex items-center gap-1.5 px-4 h-9 rounded-xl bg-soft border border-brand/20 text-brand-ink dark:text-brand text-sm font-bold whitespace-nowrap">
                   {pipelines[0].name}
                 </span>
               ) : (
@@ -326,10 +332,11 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
                 <Lock className="w-3.5 h-3.5" /> Só o seu
               </span>
             )}
-            <button type="button"
+            <button
+              type="button"
               onClick={addRule}
               disabled={(newSource === 'deal' && !newCategoryId) || creating}
-              className="flex items-center gap-2 h-9 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-40 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+              className="flex items-center gap-2 h-9 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-40 text-on-brand text-sm font-bold rounded-xl transition-colors shadow-sm"
             >
               {creating ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

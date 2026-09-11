@@ -289,10 +289,7 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
           <Button type="button" variant="ghost" onClick={onClose} className="text-ink-2">
             Cancelar
           </Button>
-          <Button type="submit" form="proposta-form" disabled={isSubmitting}>
-            {isSubmitting && (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-            )}
+          <Button type="submit" form="proposta-form" loading={isSubmitting}>
             {isEdit ? 'Salvar (nova versão)' : 'Criar Documento'}
           </Button>
         </>
@@ -417,7 +414,10 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
               {errors.lineItems.root.message}
             </p>
           )}
-          <div className="space-y-3" role="group" aria-labelledby="proposta-itens-heading">
+          <fieldset
+            className="space-y-3 border-0 p-0 m-0 min-w-0"
+            aria-labelledby="proposta-itens-heading"
+          >
             {fields.map((field, index) => (
               <div
                 key={field.id}
@@ -488,7 +488,7 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
                 </div>
               </div>
             ))}
-          </div>
+          </fieldset>
         </div>
 
         <div className="flex justify-end gap-6 text-sm">
@@ -497,7 +497,7 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
           </span>
           <span className="text-ink-2">
             Total estimado:{' '}
-            <strong className="text-brand-active dark:text-brand-2">{money.format(total)}</strong>
+            <strong className="text-brand-ink dark:text-brand">{money.format(total)}</strong>
           </span>
         </div>
 

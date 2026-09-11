@@ -24,6 +24,7 @@ import {
 
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Dialog } from '../../../components/ui/Dialog';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
@@ -99,6 +100,10 @@ function DraggableActivity({
   });
 
   return (
+    // Elemento é alvo de useDraggable (dnd-kit) — listeners/attributes esperam um elemento
+    // genérico, não um <button> nativo (padrão já estabelecido no Piloto 020, ver
+    // .claude/PILOTS.md).
+    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
     <div
       ref={setNodeRef}
       {...(canDrag ? listeners : {})}
@@ -158,7 +163,7 @@ function DayCell({
       <div className="flex items-center justify-between">
         <span
           className={`text-[11px] font-semibold w-5 h-5 flex items-center justify-center rounded-full ${
-            isToday ? `${accent.bg} text-white` : 'text-ink-2'
+            isToday ? `${accent.bg} text-on-brand` : 'text-ink-2'
           }`}
         >
           {date.getDate()}
@@ -451,24 +456,45 @@ export function Calendar() {
       </div>
 
       {/* Detalhe do dia/atividade */}
-      {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 backdrop-blur-sm p-6">
-          <Card className="w-full max-w-md" accentBar>
-            <div className="flex items-start justify-between mb-4 gap-4">
-              <div>
-                <h2 className="text-lg font-bold text-ink">{selected.type}</h2>
-                <p className="text-sm text-ink-2">{activitySubject(selected)}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelected(null)}
-                className="p-1 rounded-lg text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors"
-                aria-label="Fechar"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      <Dialog
+        isOpen={!!selected}
+        onClose={() => setSelected(null)}
+        title={
+          selected ? (
+            <div>
+              <span className="block text-lg font-bold text-ink">{selected.type}</span>
+              <span className="block text-sm font-normal text-ink-2">
+                {activitySubject(selected)}
+              </span>
             </div>
-
+          ) : (
+            ''
+          )
+        }
+        maxWidth="max-w-md"
+        footer={
+          selected && canWrite ? (
+            <>
+              {selected.status !== 'Cancelada' && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => void changeStatus(selected, 'Cancelada')}
+                >
+                  <X className="w-4 h-4 mr-2" /> Cancelar
+                </Button>
+              )}
+              {selected.status !== 'Concluída' && (
+                <Button type="button" onClick={() => void changeStatus(selected, 'Concluída')}>
+                  <Check className="w-4 h-4 mr-2" /> Concluir
+                </Button>
+              )}
+            </>
+          ) : undefined
+        }
+      >
+        {selected && (
+          <>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-ink-2">Data</dt>
@@ -495,28 +521,9 @@ export function Calendar() {
                 {selected.observations}
               </p>
             )}
-
-            {canWrite && (
-              <div className="flex items-center justify-end gap-2 mt-5 pt-4 border-t border-line">
-                {selected.status !== 'Cancelada' && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => void changeStatus(selected, 'Cancelada')}
-                  >
-                    <X className="w-4 h-4 mr-2" /> Cancelar
-                  </Button>
-                )}
-                {selected.status !== 'Concluída' && (
-                  <Button type="button" onClick={() => void changeStatus(selected, 'Concluída')}>
-                    <Check className="w-4 h-4 mr-2" /> Concluir
-                  </Button>
-                )}
-              </div>
-            )}
-          </Card>
-        </div>
-      )}
+          </>
+        )}
+      </Dialog>
 
       {/* Modal de Gestão de Links de Agendamento */}
       <BookingLinksModal isOpen={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} />

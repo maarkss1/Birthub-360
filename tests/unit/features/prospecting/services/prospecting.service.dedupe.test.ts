@@ -5,7 +5,7 @@
  * - `promoteToCrm`/`findExistingCompany` não pode criar uma segunda Company para uma empresa já
  *   cadastrada (por nome), nem um segundo Lead aberto para a mesma Company.
  * - A busca de dedupe por CNPJ é escopada por `organizationId` — nunca deve considerar uma
- *   empresa de outra organização como "já existente" (isolamento de tenant AtlasGR/TotalTrac).
+ *   empresa de outra organização como "já existente" (isolamento de tenant Birth Hub 360).
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 

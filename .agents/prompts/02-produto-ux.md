@@ -89,7 +89,7 @@ Cada ferramenta deve ter:
 - configurações devem explicar tenant/marca quando aplicável;
 - preferências não podem alterar autorização real.
 
-### 6. AtlasGR / TotalTrac
+### 6. Birth Hub 360 / Birth Hub 360
 Você pode corrigir estado visual/seleção de tenant/marca, mas o isolamento de dados pertence ao 01.
 
 A UI deve tornar claro qual contexto está ativo e nunca sugerir separação que o backend não garante.

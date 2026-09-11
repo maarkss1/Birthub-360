@@ -18,7 +18,7 @@ import {
   Compass,
 } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 
 type FrameworkType = 'spin' | 'snap' | 'aida' | 'meddpicc' | 'challenger';
@@ -85,22 +85,22 @@ type MethodologyResult =
     };
 
 export function SalesMethodologyStudio() {
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook, info: playbookMeta } = useActivePlaybook();
   const [activeTab, setActiveTab] = useState<FrameworkType>('spin');
   const [form, setForm] = useState<MethodologyFormState>({
     targetPersona:
-      activeBrand === 'totaltrac'
+      playbook === 'totaltrac'
         ? 'Diretor de Operações / Gestor de Frota'
         : 'Diretor de Logística / Head de GR',
     companySegment:
-      activeBrand === 'totaltrac'
+      playbook === 'totaltrac'
         ? 'Transportadoras / Frotas corporativas'
         : 'Logística / Transporte de cargas',
     icpSize: 'Mid-Market (50 a 500 colaboradores)',
     techStack: 'A confirmar durante a descoberta',
-    solutionName: brandInfo.name,
+    solutionName: playbookMeta.label,
     mainPainPoint:
-      activeBrand === 'totaltrac'
+      playbook === 'totaltrac'
         ? 'Baixa visibilidade sobre consumo, jornada e eventos da frota'
         : 'Dificuldade de comprovar e auditar o cumprimento das regras de gerenciamento de risco',
     mainBenefit:
@@ -129,8 +129,8 @@ export function SalesMethodologyStudio() {
         {
           kind: 'methodology',
           brand: {
-            name: brandInfo.name,
-            description: brandInfo.description,
+            name: playbookMeta.label,
+            description: playbookMeta.description,
           },
           inputs: {
             framework: activeTab,
@@ -157,7 +157,7 @@ export function SalesMethodologyStudio() {
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand via-amber-500 to-red-600 flex items-center justify-center text-white shadow-xl shadow-brand/20">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand via-amber-500 to-red-600 flex items-center justify-center text-on-brand shadow-xl shadow-brand/20">
               <BookOpen className="w-7 h-7" />
             </div>
             <div>
@@ -182,66 +182,71 @@ export function SalesMethodologyStudio() {
 
           {/* Selector Tabs (5 Frameworks) */}
           <div className="flex flex-wrap items-center bg-surface-2 p-1.5 rounded-2xl border border-line w-full md:w-auto gap-1">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setActiveTab('spin');
                 setResult(null);
               }}
               className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                 activeTab === 'spin'
-                  ? 'bg-brand-active text-white shadow-lg shadow-brand/20'
+                  ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
               <Target className="w-3.5 h-3.5" /> SPIN
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setActiveTab('snap');
                 setResult(null);
               }}
               className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                 activeTab === 'snap'
-                  ? 'bg-brand-active text-white shadow-lg shadow-brand/20'
+                  ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
               <Zap className="w-3.5 h-3.5" /> SNAP
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setActiveTab('aida');
                 setResult(null);
               }}
               className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                 activeTab === 'aida'
-                  ? 'bg-brand-active text-white shadow-lg shadow-brand/20'
+                  ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
               <Flame className="w-3.5 h-3.5" /> AIDA
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setActiveTab('meddpicc');
                 setResult(null);
               }}
               className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                 activeTab === 'meddpicc'
-                  ? 'bg-brand-active text-white shadow-lg shadow-brand/20'
+                  ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
               <FileText className="w-3.5 h-3.5" /> MEDDPICC
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setActiveTab('challenger');
                 setResult(null);
               }}
               className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                 activeTab === 'challenger'
-                  ? 'bg-brand-active text-white shadow-lg shadow-brand/20'
+                  ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
@@ -260,7 +265,7 @@ export function SalesMethodologyStudio() {
               <Sparkles className="w-5 h-5 text-brand" />
               <h3 className="font-bold text-ink text-base">Parâmetros ICP & Persona Target</h3>
             </div>
-            <span className="text-[10px] bg-brand/10 text-brand-active dark:text-brand-2 font-bold px-2 py-0.5 rounded border border-brand/20">
+            <span className="text-[10px] bg-brand/10 text-brand-ink dark:text-brand font-bold px-2 py-0.5 rounded border border-brand/20">
               Rascunho para revisão
             </span>
           </div>
@@ -385,7 +390,7 @@ export function SalesMethodologyStudio() {
         <div className="lg:col-span-7 space-y-6">
           {!result && !generating && (
             <div className="glass-panel p-12 rounded-3xl border border-line text-center bg-surface flex flex-col items-center justify-center min-h-[440px]">
-              <div className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2 mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand mb-4">
                 <Lightbulb className="w-8 h-8 animate-bounce" />
               </div>
               <h3 className="text-xl font-bold text-ink mb-2">
@@ -740,7 +745,8 @@ function SpinBlock({
         <h4 className="font-bold text-ink text-sm flex items-center gap-2">
           {icon} {title}
         </h4>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => onCopy(fullText)}
           className="text-xs text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
         >
@@ -794,7 +800,8 @@ function SnapCard({
             {subtitle}
           </span>
         </div>
-        <button type="button"
+        <button
+          type="button"
           onClick={onCopy}
           className="text-xs text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
         >
@@ -808,7 +815,7 @@ function SnapCard({
       </div>
       <p className="text-xs text-ink-2 leading-relaxed font-medium">{content}</p>
       {extra && (
-        <p className="text-xs text-brand-active dark:text-brand-2 font-bold pt-1 border-t border-line">
+        <p className="text-xs text-brand-ink dark:text-brand font-bold pt-1 border-t border-line">
           💡 {extra}
         </p>
       )}

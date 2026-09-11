@@ -76,7 +76,10 @@ export function createAccountIntelligenceSchedulerWorker() {
         for (const target of uniqueTargets) {
           try {
             await withRlsContext(async (tx) => {
-              const service = new AccountIntelligenceService(tx as unknown as TenantDb, target.orgId);
+              const service = new AccountIntelligenceService(
+                tx as unknown as TenantDb,
+                target.orgId,
+              );
               await service.refresh(target.id);
             });
             refreshed++;

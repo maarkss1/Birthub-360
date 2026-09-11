@@ -47,7 +47,7 @@ export function TabNavCards({
               aria-hidden="true"
               className={cn(
                 'flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] transition-[background-color,color,transform] duration-200',
-                active ? 'scale-105 bg-brand text-white' : 'bg-brand/[0.08] text-brand',
+                active ? 'scale-105 bg-brand text-on-brand' : 'bg-brand/[0.08] text-brand',
               )}
             >
               <item.icon className="h-[22px] w-[22px]" />

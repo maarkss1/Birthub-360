@@ -1,4 +1,4 @@
-# Constituição de Design Engineering — Central de Inteligência Comercial ATLASGR
+# Constituição de Design Engineering — Birth Hub 360º
 
 Este arquivo é a camada permanente de direção visual e de engenharia de frontend deste
 repositório. Qualquer sessão do Claude Code que crie, edite ou revise UI neste projeto deve ler
@@ -15,41 +15,60 @@ aprendizado incorporado aqui e um registro curto em `.claude/PILOTS.md`. Ver Pil
 
 ## 1. O que é este projeto
 
-- **Produto:** "Prospector" — Central de Inteligência Comercial, um CRM B2B com IA (prospecção,
-  pipeline, roleplay de vendas, automações, analytics) para duas marcas irmãs:
-  - **AtlasGR** (Revenue OS) — logística/risco de carga. Cor primária `#FF5618` (laranja).
-  - **Total Trac** (Fleet OS) — telemetria de frota. Cor primária `#374898`/`#008FCE` (azul).
-  A marca ativa troca em runtime (`src/contexts/BrandContext.tsx`, `data-brand` no `<html>`) e
-  reescreve os tokens de cor via `document.documentElement.style.setProperty`.
+- **Produto:** **Birth Hub 360º** — "sua central de comando inteligente: integrando dados,
+  potencializando decisões e acelerando a execução". Um CRM B2B com IA (prospecção, pipeline,
+  roleplay de vendas, automações, analytics).
+  - **Marca única.** Cor primária: Antique Gold `#D4AF37`; apoio: Deep Iris `#5B21B6` e Orbit Blue
+    `#0065D2`; âncoras: Obsidian `#0B132B` e Snow White `#F8FAFC`. Fonte da verdade:
+    `identidade-visual/birthhub360/` e `src/config/brand.ts`.
+  - **Ouro é uma cor CLARA.** Texto branco sobre `--brand` mede 2.10:1 e é proibido — o par
+    correto é `text-on-brand` (Obsidian), 8.74:1. É a inversão mais importante em relação à
+    identidade anterior (laranja escuro, que pedia texto branco).
+  - Até 09/2026 a plataforma trocava de marca em runtime entre **AtlasGR** e **Total Trac**
+    (`BrandContext`, `data-brand` no `<html>`, `--brand` reescrito por JS). Isso não existe mais:
+    a cor vive só em CSS. O eixo que aquele seletor de fato controlava no CONTEÚDO (playbook,
+    personas, matriz de objeções, portal Bitrix) sobreviveu como **playbook comercial**
+    (`src/config/playbooks.ts` + `src/hooks/useActivePlaybook.ts`) — dado comercial, não
+    identidade. As chaves `atlasgr`/`totaltrac` continuam gravadas em banco e não devem ser
+    renomeadas sem migração.
+  - **ICP:** qualquer empresa com área comercial que queira automatizar ponta a ponta.
+    **Persona:** papéis da área comercial (SDR, closer, gestão). Nenhum texto novo deve amarrar o
+    produto a um vertical específico.
 - **Stack:** React 19 + TypeScript + Vite 6 + React Router 7 + Express/Prisma no backend.
   Tailwind CSS 4 **CSS-first** (sem `tailwind.config.*`, tudo via `@theme` em
   `src/styles/globals.css`). Framer Motion para animação. `@dnd-kit` para drag-and-drop (Kanban do
-  CRM). `recharts` para gráficos. `lucide-react` para ícones.
+  CRM). `recharts` para gráficos. `lucide-react` para ícones. Tipografia self-hosted em
+  `public/fonts/`: **Bodoni Moda** (display, H1-H3) e **Inter** (interface, H4-H6 e corpo) —
+  nenhuma requisição a CDN de fonte.
   `@react-three/fiber` + `drei` + `three` já são dependências reais, usadas hoje só num widget de
   gamificação decorativo (`src/features/gamification/components/SpaceGame.tsx`) e no
-  `AtlasOrb.tsx`.
+  `BrandOrb.tsx`.
 - **Também é um app Android** via Capacitor (`android/`, `capacitor.config.ts`) — todo layout
   precisa funcionar em viewport de celular de verdade, não só "responsivo em teoria".
-- **Público:** ferramenta de trabalho interna para times comerciais (SDR, closers, gestão). Não é
-  um site de marketing/landing scrollytelling — a exceção são as telas pré-login
-  (`WelcomeScreen.tsx`, `SelectionScreen.tsx`), que são telas de seleção de marca, não uma página
-  de vendas.
+- **Público:** ferramenta de trabalho para times comerciais (SDR, closers, gestão). Não é um site
+  de marketing/landing scrollytelling — a exceção é a tela pré-login (`WelcomeScreen.tsx`), que é
+  o portal institucional de entrada, não uma página de vendas. (`SelectionScreen.tsx`, a escolha
+  de marca, deixou de existir; `/select-brand` sobrevive só como redirecionamento.)
 
 ## 2. Fontes de verdade que já existem — leia antes de inventar novas
 
 Não recrie o que já existe. Nesta ordem:
 
 1. **`src/styles/globals.css`** — único lugar onde tokens de design (`@theme`) são definidos.
-   Sistema de cor "warm neutral": `--bg`, `--surface`, `--surface-2`, `--ink`, `--ink-2`, `--line`,
-   `--brand`, `--brand-2`, `--warn`, `--ok`, `--soft`. Dark mode via classe `.dark`
-   (`@custom-variant dark`). Dois tokens de radius (`--radius-card`, `--radius-card-lg`) e um de
-   sombra (`--shadow-card`).
-2. **`docs/BrandConstitution.md`** — paleta oficial, tipografia (Montserrat/Space Grotesk),
-   diretrizes de marca em texto.
-3. **`identidade-visual/atlasgr/` e `identidade-visual/totaltrac/`** — logos, ícones, tokens
-   (`.css`/`.ts`/`.json`) e `preview.html` de cada marca. Abra o `preview.html` antes de supor uma
-   cor de marca.
-4. **`DESIGN_QA_CENTRAL_ATLASGR.md` foi removido do controle de versão em 22/08/2026** (pedido
+   Neutros ancorados em Obsidian/Snow White: `--bg`, `--surface`, `--surface-2`, `--ink`,
+   `--ink-2`, `--line`, `--brand`, `--brand-2`, `--on-brand`, `--iris`, `--orbit-blue`, `--warn`,
+   `--ok`, `--soft`. Dark mode via classe `.dark` (`@custom-variant dark`). Dois tokens de radius
+   (`--radius-card`, `--radius-card-lg`) e um de sombra (`--shadow-card`).
+   Três pares de contraste que não podem ser confundidos: `bg-brand` sempre com `text-on-brand`;
+   `--color-brand-active` é o **hover** da superfície de marca; `--color-brand-ink` é a cor de
+   marca **como texto** sobre superfície clara.
+2. **`identidade-visual/birthhub360/`** — logos vetoriais mestre, tokens (`.css`/`.ts`/`.json`),
+   `README.md` com as regras do brand book e `preview.html`. Abra o `preview.html` antes de supor
+   uma cor, um tamanho mínimo de logo ou um par tipográfico.
+3. **`src/config/brand.ts`** — a mesma identidade em código: nome, tagline, pilares, valores, hex
+   (para contextos sem CSS) e caminhos dos logos. Nenhum componente deve escrever "Birth Hub 360"
+   solto.
+4. **O antigo arquivo de DESIGN QA foi removido do controle de versão em 22/08/2026** (pedido
    explícito do usuário — ver `docs/REMOVED-DOCS.md`). Não existe hoje um substituto versionado com
    scores por categoria; os sinais vivos mais próximos de débito visual/a11y conhecido são
    `eslint.config.mjs` (as regras `jsx-a11y` já voltaram a `error` — ver o comentário da Onda 43 no
@@ -60,6 +79,10 @@ Não recrie o que já existe. Nesta ordem:
    de inventar uma curva de easing nova.
 6. **`src/components/ui/`** — primitivos existentes (`Button`, `Card`, `Badge`, `Dialog`, `Drawer`,
    `EmptyState`, `Skeleton`, `Pagination`, `Timeline`, `Toaster`). Componha a partir daqui.
+   A marca em si vive em `src/components/brand/BirthHubLogo.tsx` (`symbol`/`icon`/`horizontal`,
+   mais `BirthHubSignature` para topbar e `BirthHubWordmark` para o nome como texto). O arquivo é
+   **gerado** a partir dos SVGs de `identidade-visual/birthhub360/logos/` — não edite geometria
+   nele.
 7. **`.claude/PILOTS.md`** — registro curto de aprendizados por piloto de tela real. Consulte antes
    de reabrir uma investigação ou decisão já tomada num piloto anterior.
 
@@ -88,11 +111,12 @@ lugares — se uma explicação detalhada já existe numa skill, referencie-a em
 2. **Hero centralizada não é o padrão.** Antes de centralizar título+subtítulo+CTA, considere
    composição assimétrica, grid com conteúdo real, ou ancoragem lateral. (Nota: `WelcomeScreen.tsx`
    usa composição centralizada de propósito — é uma exceção justificada pelos critérios da seção 5,
-   não o padrão a copiar em telas novas. Ver `.claude/PILOTS.md`, Piloto 001, para o raciocínio
-   completo.)
-3. **Sem gradiente azul/roxo genérico.** Este produto tem paleta própria (laranja AtlasGR / azul
-   Total Trac, ambos definidos em tokens). Gradiente roxo/azul de "IA genérica" é proibido em
-   qualquer tela nova.
+   não o padrão a copiar em telas novas. Ver `.claude/PILOTS.md`, Pilotos 001 e o piloto de
+   rebranding, para o raciocínio completo.)
+3. **Sem gradiente genérico de "IA".** Este produto tem paleta própria, definida em tokens. O
+   único gradiente multicolorido autorizado é a **órbita 360º** (ouro → íris → azul), e o brand
+   book a reserva a "halos, bordas, indicadores e hero sections" — nunca como fundo de superfície
+   com texto em cima, e no máximo um gradiente dominante por composição.
 4. **Sem três cards iguais só para preencher espaço.** Se o conteúdo não sustenta 3 itens
    simetricamente iguais, não force a grade. Densidade de informação real > simetria decorativa.
 5. **Sombra, blur ou glassmorphism só com propósito.** `.glass-panel`/`.glass-card` já existem em
@@ -166,18 +190,15 @@ comentário de PR) a estas perguntas, na ordem:
    hardcoded? H1-H3 já têm tamanho/peso definidos em `@layer base` — reuse, não redefina.
 4. **Escala e densidade** — este é um dashboard/CRM de uso repetido, não uma landing page. Prefira
    densidade de informação alta e espaçamento eficiente a espaço em branco decorativo excessivo.
-5. **Contraste** — cores de texto sobre `--brand`/`--brand-2` já têm um problema documentado
-   (DQA-19, resolvido com `--color-brand-active`) — não reintroduza texto de baixo contraste sobre
-   cor sólida de marca.
+5. **Contraste** — texto sobre `--brand`/`--brand-2` já tem um problema documentado (DQA-19).
+   Com o Antique Gold a regra é dura: **branco sobre marca nunca passa** (2.10:1). Use
+   `text-on-brand`. Não reintroduza `text-white` sobre cor sólida de marca.
 6. **Ritmo visual e grid** — mantenha consistência com o grid já usado nas telas vizinhas do mesmo
    módulo antes de inventar um novo.
-7. **Cor** — use os tokens (`bg-brand`, `text-ink-2`, `border-line` etc.), não hex cru. Se a tela
-   precisa reagir à troca de marca AtlasGR↔Total Trac, use os tokens dinâmicos (`--brand`), não as
-   classes estáticas `atlas-orange`/`totaltrack-blue` (que existem de propósito só onde as duas
-   marcas devem aparecer lado a lado, como em `WelcomeScreen`/`SelectionScreen`). **Tema e marca são
-   eixos independentes**: um token de tema (`bg-bg`, `text-ink`) resolve reatividade a claro/escuro,
-   não automaticamente a marca. Superfícies pré-seleção de marca reagem a tema mas precisam manter
-   as duas marcas com peso visual igual — ver `design-system/SKILL.md`.
+7. **Cor** — use os tokens (`bg-brand`, `text-ink-2`, `border-line` etc.), não hex cru. Hex só é
+   aceitável onde não existe CSS: three.js, canvas, PDF, e-mail — e mesmo aí vindo de
+   `BRAND.colors`, nunca digitado à mão. **Ouro é claro**: qualquer superfície de marca sólida
+   pede `text-on-brand`; cor de marca como texto sobre fundo claro pede `text-brand-ink`.
 8. **Estados** — todo componente interativo precisa de hover, focus-visible, active, disabled,
    loading e erro definidos antes de ser considerado pronto. Ver `ui-ux/SKILL.md`.
 9. **Microinterações e movimento** — ver seção 8 e `motion-design/SKILL.md`.
@@ -267,3 +288,10 @@ Esta constituição não é uma licença para redesenhar o app inteiro, trocar a
 componentes, ou "modernizar" telas que não foram pedidas. Ela existe para que, quando uma mudança
 visual for pedida, o resultado pareça parte deste produto — não um componente genérico colado por
 cima dele.
+
+Também não autoriza mexer no que sobrou das marcas anteriores por conta própria. Continuam de pé,
+de propósito, e cada um por um motivo diferente: a allowlist de domínios de login
+(`src/config/access-policy.ts`) é regra de segurança; as chaves `atlasgr`/`totaltrac` são valores
+gravados em banco; os atalhos de `EXTERNAL_LINKS` apontam para sistemas de terceiros da operação;
+e `public/tools/` são aplicações legadas embutidas por iframe. Trocar qualquer um deles exige
+migração de dados ou coordenação com infraestrutura — peça antes.

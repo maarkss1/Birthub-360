@@ -8,6 +8,7 @@ import { signUp, uniqueTestEmail, waitForAppReady } from './helpers';
 // aba em memória e /app/crm sempre caía no Dashboard; esse teste existia justamente pra documentar
 // essa limitação, que não existe mais.
 const TAB_ROUTES: Record<string, string> = {
+  'Meu Workspace': 'workspace',
   'Pipeline CRM': 'crm',
   'Empresas': 'companies',
   'Decisores': 'contacts',
@@ -22,7 +23,7 @@ test.describe('Navegação principal', () => {
 
   test('carrega o Painel Central (dashboard) como aba padrão após login', async ({ page }) => {
     await expect(page).toHaveURL(/\/app$/);
-    await expect(page).toHaveTitle(/AtlasGR|Commercial Intelligence OS/);
+    await expect(page).toHaveTitle(/Birth Hub 360|Commercial Intelligence OS/);
   });
 
   for (const [tab, route] of Object.entries(TAB_ROUTES)) {

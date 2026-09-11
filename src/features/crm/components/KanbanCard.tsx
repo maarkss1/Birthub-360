@@ -53,6 +53,9 @@ interface KanbanCardProps {
   isSelected?: boolean;
   onToggleSelect?: (leadId: string) => void;
   selectionMode?: boolean;
+  /** id do usuário -> nome. Lead.owner guarda o User.id (contrato DATA-003), não o nome — sem
+   * resolver aqui, o card mostraria o id cru em vez de um nome legível. */
+  ownerNameById?: Record<string, string>;
 }
 
 export const KanbanCard = React.memo(function KanbanCard({
@@ -63,6 +66,7 @@ export const KanbanCard = React.memo(function KanbanCard({
   isSelected = false,
   onToggleSelect,
   selectionMode = false,
+  ownerNameById,
 }: KanbanCardProps) {
   const [enriching, setEnriching] = useState(false);
   const [converting, setConverting] = useState(false);
@@ -158,6 +162,9 @@ export const KanbanCard = React.memo(function KanbanCard({
         </button>
       )}
 
+      {/* biome-ignore lint/a11y/useSemanticElements: elemento é alvo de useDraggable (dnd-kit) —
+          listeners/attributes esperam um elemento genérico, não um <button> nativo (mesmo padrão
+          de Calendar.tsx/DraggableActivity, Piloto 020). */}
       <div
         {...attributes}
         {...listeners}
@@ -175,7 +182,7 @@ export const KanbanCard = React.memo(function KanbanCard({
           {hasCompanyName ? (
             <h4
               title={companyName}
-              className="font-bold text-ink group-hover:text-brand-active dark:group-hover:text-brand-2 transition-colors text-sm line-clamp-2 leading-snug"
+              className="font-bold text-ink group-hover:text-brand-ink dark:group-hover:text-brand-2 transition-colors text-sm line-clamp-2 leading-snug"
             >
               {companyName}
             </h4>
@@ -293,20 +300,22 @@ export const KanbanCard = React.memo(function KanbanCard({
         <div className="flex items-center gap-1.5 text-[11px] text-ink-2 min-w-0">
           <Calendar className="w-3.5 h-3.5 shrink-0" />
           {new Date(lead.updatedAt || lead.createdAt || '').toLocaleDateString('pt-BR')}
-          {lead.owner && <span className="truncate">· {lead.owner}</span>}
+          {lead.owner && (
+            <span className="truncate">· {ownerNameById?.[lead.owner] ?? lead.owner}</span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {onConvert && (
-            <button type="button"
+            <button
+              type="button"
               onClick={handleConvert}
               disabled={converting}
               title="Converter em oportunidade — move este lead para o funil de Negócios"
-              // text-brand-active dark:text-brand-2 (não dark:text-brand simples):
-              // --brand cru da Total Trac (#374898) só dá 2.25:1 sobre a superfície
-              // escura, abaixo até do mínimo não-textual — teria ficado quase
-              // ilegível no card. brand-2 (#008FCE, acento) dá 5.15:1. Confirmado via
-              // canvas + fórmula de contraste real, nas duas marcas — ver relato.
-              className="flex items-center gap-1 text-[11px] font-bold text-brand-active dark:text-brand-2 hover:opacity-75 disabled:opacity-50 transition-colors"
+              // text-brand-ink dark:text-brand: cor de marca como TEXTO — claro no escuro
+              // (Antique Gold cru já mede ~8.74:1 contra a superfície escura), escurecida no
+              // claro (--color-brand-ink, ver globals.css) porque a cor crua ali cai abaixo
+              // de 4.5:1. Mesmo par usado em todo o app — ver design-system/SKILL.md.
+              className="flex items-center gap-1 text-[11px] font-bold text-brand-ink dark:text-brand hover:opacity-75 disabled:opacity-50 transition-colors"
             >
               {converting ? (
                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -317,7 +326,8 @@ export const KanbanCard = React.memo(function KanbanCard({
             </button>
           )}
           {onEnrich && lead.companyId && (
-            <button type="button"
+            <button
+              type="button"
               onClick={handleEnrich}
               disabled={enriching}
               title="Reenriquecer com dados da Receita Federal"

@@ -17,10 +17,12 @@ import {
   ShieldCheck,
   ThumbsDown,
   IdCard,
+  AlertTriangle,
+  HelpCircle,
 } from 'lucide-react';
 import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
 import type { FitScoreResult } from '../../services/enrichment.service';
-import type { ProspectCandidate } from '../../services/prospecting.service';
+import type { ProspectCandidate, RequirementEvaluation } from '../../services/prospecting.service';
 import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
 import {
   getTelephoneLink,
@@ -48,6 +50,44 @@ interface PromoteResult {
       linkedin_url?: string | null;
     }>;
   };
+}
+
+/** Pill compacta de uma avaliação do Requirement Engine (`domain/requirementEngine.ts`) — mostra,
+ * por critério pedido na busca, se o que foi observado de verdade confirma, diverge, ou não
+ * confirma nem diverge (`title` carrega a explicação completa em português). */
+function RequirementPill({ evaluation }: { evaluation: RequirementEvaluation }) {
+  const style =
+    evaluation.status === 'matched'
+      ? 'bg-success/15 text-success-active dark:text-success'
+      : evaluation.status === 'unmatched'
+        ? 'bg-warning/15 text-warning-active dark:text-warning'
+        : 'bg-surface-2 text-ink-2 border border-line';
+  const Icon =
+    evaluation.status === 'matched'
+      ? CheckCircle2
+      : evaluation.status === 'unmatched'
+        ? AlertTriangle
+        : HelpCircle;
+
+  return (
+    <span
+      title={evaluation.reason}
+      className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${style}`}
+    >
+      <Icon size={10} /> {evaluation.label}
+    </span>
+  );
+}
+
+/** SOFT_FILTER/ENRICHMENT "não confirmado" é o caso comum (esses providers raramente confirmam
+ * esse tipo de dado) — mostrar sempre viraria ruído em toda busca com filtro avançado. HARD_FILTER
+ * é sempre mostrado, incluindo "não confirmado": é o critério que definiu a busca, esconder que
+ * ele não foi confirmado seria a própria fabricação que o Requirement Engine existe para evitar. */
+function visibleRequirementEvaluations(
+  evaluations: RequirementEvaluation[] | undefined,
+): RequirementEvaluation[] {
+  if (!evaluations) return [];
+  return evaluations.filter((e) => e.type === 'HARD_FILTER' || e.status !== 'unknown');
 }
 
 function formatUsd(value: number): string {
@@ -83,6 +123,10 @@ export function CandidateCard({
   const finalScore = promotedResult?.fit?.score ?? candidate.fitScoreEstimate;
   const isEstimate = !promotedResult?.fit;
   const enrichment = promotedResult?.enrichment;
+  // Variável local em vez de `candidate.phone` repetido: o narrowing de `candidate.phone &&`
+  // não sobrevive dentro do closure do onClick do botão de WhatsApp abaixo (TS não propaga
+  // narrowing de acesso a propriedade para dentro de funções aninhadas).
+  const candidatePhone = candidate.phone;
   const [chatTarget, setChatTarget] = useState<{ phone: string; name: string } | null>(null);
   const [icebreakerText, setIcebreakerText] = useState<string | null>(
     candidate.icebreakerHook ?? null,
@@ -165,25 +209,23 @@ export function CandidateCard({
                 /ano
               </span>
             )}
-            {candidate.phone &&
-              (getTelephoneLink(candidate.phone) ? (
+            {candidatePhone &&
+              (getTelephoneLink(candidatePhone) ? (
                 <a
-                  href={getTelephoneLink(candidate.phone)}
+                  href={getTelephoneLink(candidatePhone)}
                   className="flex items-center gap-1.5 hover:text-ink hover:underline"
                 >
-                  <Phone size={14} className="text-ink-2" /> {candidate.phone}
+                  <Phone size={14} className="text-ink-2" /> {candidatePhone}
                 </a>
               ) : (
                 <span className="flex items-center gap-1.5">
-                  <Phone size={14} className="text-ink-2" /> {candidate.phone}
+                  <Phone size={14} className="text-ink-2" /> {candidatePhone}
                 </span>
               ))}
-            {getWhatsAppLink(candidate.phone) && (
+            {candidatePhone && getWhatsAppLink(candidatePhone) && (
               <button
                 type="button"
-                onClick={() =>
-                  setChatTarget({ phone: candidate.phone!, name: candidate.tradeName })
-                }
+                onClick={() => setChatTarget({ phone: candidatePhone, name: candidate.tradeName })}
                 title="Número coletado — a existência de WhatsApp não foi verificada"
                 className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 hover:underline"
               >
@@ -243,13 +285,21 @@ export function CandidateCard({
             </div>
           )}
 
+          {visibleRequirementEvaluations(candidate.requirementEvaluations).length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {visibleRequirementEvaluations(candidate.requirementEvaluations).map((evaluation) => (
+                <RequirementPill key={evaluation.criterion} evaluation={evaluation} />
+              ))}
+            </div>
+          )}
+
           {!enrichment && candidate.rationale && (
             <p className="text-xs text-ink-2 italic mb-2">&quot;{candidate.rationale}&quot;</p>
           )}
 
           {icebreakerText || (candidate.webInsights && candidate.webInsights.length > 0) ? (
             <div className="my-3 p-3 bg-brand/10 border border-brand/20 rounded-xl">
-              <p className="text-[10px] tracking-wider font-bold uppercase text-brand-active dark:text-brand-2 mb-1 flex items-center gap-1">
+              <p className="text-[10px] tracking-wider font-bold uppercase text-brand-ink dark:text-brand mb-1 flex items-center gap-1">
                 <Sparkles size={12} /> ❄️ Quebra-Gelo / Notícia Recente (Busca Web)
               </p>
               {icebreakerText && (
@@ -280,7 +330,7 @@ export function CandidateCard({
                 type="button"
                 onClick={handleFetchIcebreaker}
                 disabled={isLoadingIcebreaker}
-                className="text-[11px] font-semibold text-brand-active dark:text-brand-2 hover:underline flex items-center gap-1 bg-brand/5 border border-brand/20 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                className="text-[11px] font-semibold text-brand-ink dark:text-brand hover:underline flex items-center gap-1 bg-brand/5 border border-brand/20 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
               >
                 {isLoadingIcebreaker ? (
                   <Loader2 className="animate-spin" size={12} />
@@ -309,6 +359,9 @@ export function CandidateCard({
                   });
                   const tel = getTelephoneLink(dm.phone);
                   const whatsapp = getWhatsAppLink(dm.phone);
+                  // Variável local: o narrowing de `whatsapp && dm.phone &&` não sobrevive dentro
+                  // do closure do onClick abaixo (mesmo motivo de candidatePhone acima).
+                  const dmPhone = dm.phone;
                   return (
                     <div
                       key={idx}
@@ -349,10 +402,10 @@ export function CandidateCard({
                           <Phone size={12} /> {dm.phone}
                         </a>
                       )}
-                      {whatsapp && (
+                      {whatsapp && dmPhone && (
                         <button
                           type="button"
-                          onClick={() => setChatTarget({ phone: dm.phone!, name: dm.name })}
+                          onClick={() => setChatTarget({ phone: dmPhone, name: dm.name })}
                           title="Número coletado — a existência de WhatsApp não foi verificada"
                           className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 hover:underline"
                         >
@@ -455,7 +508,8 @@ export function CandidateCard({
         ) : (
           <div className="flex flex-col sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
             {onReject && (
-              <button type="button"
+              <button
+                type="button"
                 onClick={onReject}
                 disabled={isPromoting || isRejecting}
                 title="Descarta este candidato e o exclui de buscas futuras"
@@ -469,10 +523,11 @@ export function CandidateCard({
                 {isRejecting ? 'Descartando...' : 'Não é esse perfil'}
               </button>
             )}
-            <button type="button"
+            <button
+              type="button"
               onClick={onPromote}
               disabled={isPromoting || isRejecting}
-              className="bg-brand-active text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 shadow-md hover:scale-[1.02] w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
+              className="bg-brand-active text-on-brand px-5 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 shadow-md hover:scale-[1.02] w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
             >
               {isPromoting ? (
                 <Loader2 className="animate-spin" size={15} />

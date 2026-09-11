@@ -31,7 +31,7 @@ describe('searchPlaybookTool', () => {
         id: 'chunk-1',
         content: 'Transportadoras em expansão operacional são PIC1.',
         documentId: 'doc-1',
-        documentTitle: 'Playbook Comercial AtlasGR',
+        documentTitle: 'Playbook Comercial Birth Hub 360',
         chunkIndex: 4,
         similarity: 0.86,
         matchedBy: ['semantic'],
@@ -40,7 +40,7 @@ describe('searchPlaybookTool', () => {
 
     const result = await searchPlaybookTool.invoke({ query: 'como qualificar PIC1?' });
 
-    expect(result).toContain('Fonte: "Playbook Comercial AtlasGR"');
+    expect(result).toContain('Fonte: "Playbook Comercial Birth Hub 360"');
     expect(result).toContain('trecho 5');
     expect(result).toContain('86.0%');
     expect(result).toContain('Transportadoras em expansão operacional são PIC1.');

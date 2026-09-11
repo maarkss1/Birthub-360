@@ -4,7 +4,7 @@ import { Float } from '@react-three/drei';
 import { useReducedMotion } from 'framer-motion';
 import type * as THREE from 'three';
 import { Activity, Handshake, Target } from 'lucide-react';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { BRAND } from '../../../config/brand';
 
 interface RevenueSignalOrbProps {
   conversionRate: number;
@@ -16,12 +16,13 @@ function SignalScene({
   conversionRate,
   pendingActivities,
   closedThisMonth,
-  isAtlas,
   animate,
-}: RevenueSignalOrbProps & { isAtlas: boolean; animate: boolean }) {
+}: RevenueSignalOrbProps & { animate: boolean }) {
   const group = useRef<THREE.Group>(null);
-  const brand = isAtlas ? '#ff5618' : '#008fce';
-  const secondary = isAtlas ? '#ffc500' : '#374898';
+  // Núcleo em Antique Gold, satélites em Deep Iris — os dois primeiros pontos da
+  // órbita do emblema. Hex e não token porque three.js não lê custom property.
+  const brand = BRAND.colors.brand;
+  const secondary = BRAND.colors.iris;
   const conversion = Math.max(0, Math.min(conversionRate, 100));
   const pendingIntensity = Math.min(Math.max(pendingActivities, 0), 120) / 120;
   const closedIntensity = Math.min(Math.max(closedThisMonth, 0), 30) / 30;
@@ -70,7 +71,6 @@ export function RevenueSignalOrb({
   pendingActivities,
   closedThisMonth,
 }: RevenueSignalOrbProps) {
-  const { isAtlas } = useBrandAccent();
   const reduceMotion = Boolean(useReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const [isIntersecting, setIsIntersecting] = useState(true);
@@ -110,16 +110,12 @@ export function RevenueSignalOrb({
     >
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 opacity-60 ${
-          isAtlas
-            ? 'bg-[radial-gradient(circle_at_50%_42%,rgba(255,86,24,0.18),transparent_48%)]'
-            : 'bg-[radial-gradient(circle_at_50%_42%,rgba(0,143,206,0.18),transparent_48%)]'
-        }`}
+        className="pointer-events-none absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_50%_42%,rgba(212,175,55,0.18),transparent_48%)]"
       />
 
       <div className="absolute inset-x-5 top-5 z-10 flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-brand-active dark:text-brand-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-brand-ink dark:text-brand">
             Signal Core 3D
           </p>
           <h3 className="mt-1 text-base font-black text-ink">Pressão comercial agora</h3>
@@ -140,21 +136,12 @@ export function RevenueSignalOrb({
           camera={{ position: [0, 0, 5.2], fov: 42 }}
         >
           <ambientLight intensity={0.72} />
-          <pointLight
-            position={[3, 3, 4]}
-            intensity={3.2}
-            color={isAtlas ? '#ffb18f' : '#7dd3fc'}
-          />
-          <pointLight
-            position={[-3, -2, 2]}
-            intensity={1.8}
-            color={isAtlas ? '#ffc500' : '#374898'}
-          />
+          <pointLight position={[3, 3, 4]} intensity={3.2} color={BRAND.colors.brandAccent} />
+          <pointLight position={[-3, -2, 2]} intensity={1.8} color={BRAND.colors.iris} />
           <SignalScene
             conversionRate={conversionRate}
             pendingActivities={pendingActivities}
             closedThisMonth={closedThisMonth}
-            isAtlas={isAtlas}
             animate={shouldAnimate}
           />
         </Canvas>

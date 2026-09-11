@@ -49,7 +49,7 @@ function assertNoKnownCloud(key, value) {
   }
 }
 
-console.log('ATLASGR local-first doctor');
+console.log('BIRTH HUB 360 local-first doctor');
 console.log('--------------------------');
 
 for (const key of inspectedKeys) {

@@ -16,7 +16,7 @@ export const ContextualTip: React.FC<ContextualTipProps> = ({
   id: _id,
   title,
   description,
-  badgeText = '💡 Dica da IA Atlas',
+  badgeText = '💡 Dica da IA do Hub',
   actionLabel,
   onAction,
   className = '',

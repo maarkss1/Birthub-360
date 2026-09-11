@@ -24,7 +24,7 @@ export function ActionPlanSteps({ steps }: { steps: PlanStep[] }) {
         >
           <span
             aria-hidden="true"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 font-mono text-xs font-black text-white shadow-[0_3px_8px_-3px_color-mix(in_srgb,var(--brand)_60%,transparent)]"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 font-mono text-xs font-black text-on-brand shadow-[0_3px_8px_-3px_color-mix(in_srgb,var(--brand)_60%,transparent)]"
           >
             {index + 1}
           </span>

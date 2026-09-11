@@ -1,4 +1,4 @@
-# Relatório de Finalização — Central de Inteligência Comercial ATLASGR
+# Relatório de Finalização — Birth Hub 360º
 
 - **Data:** 2026-09-04
 - **Branch de finalização:** `claude/atlasgr-platform-finalization-te0ovt` (a partir de `main` em
@@ -132,7 +132,7 @@ Todos contra servidor Express real (`npx dotenv-cli -e .env.test -- npx tsx serv
 "O que falta" abaixo): CRM (criar/editar empresa/contato/lead, mover etapa, atividades),
 Prospecção→promover, Cadência (criar/iniciar/pausar/retomar/cancelar), Bitrix24 bidirecional,
 Google/WhatsApp/3CX, Copiloto IA (lista/detalhe/lead/aprovação), RAG/Base de Conhecimento,
-Relatórios/Forecast/Jornada, Treinamento AtlasGR, Configurações/Equipe/RBAC, Notificações, mobile
+Relatórios/Forecast/Jornada, Treinamento Comercial, Configurações/Equipe/RBAC, Notificações, mobile
 Capacitor. Estes fluxos foram auditados por leitura de código (rotas, RBAC, RLS — ver seções 3, 6, 8)
 mas não exercitados via smoke HTTP real nesta sessão.
 

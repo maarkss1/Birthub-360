@@ -14,6 +14,7 @@ import {
 import { playbookApi, type QualificationMatrixItem } from '../playbook.api';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
+import { PLAYBOOKS } from '../../../config/playbooks';
 
 const FRAMEWORKS = ['SPIN', 'BANT', 'MEDDPICC', 'SNAP', 'CHALLENGER'] as const;
 const CATEGORIES = ['Situação', 'Problema', 'Implicação/Custo', 'Necessidade/ROI'] as const;
@@ -95,10 +96,7 @@ export function QualificationItemForm({
           <Button type="button" variant="ghost" onClick={onClose} className="text-ink-2">
             Cancelar
           </Button>
-          <Button type="submit" form="qualification-item-form" disabled={isSubmitting}>
-            {isSubmitting && (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-            )}
+          <Button type="submit" form="qualification-item-form" loading={isSubmitting}>
             {item ? 'Salvar Alterações' : 'Criar Pergunta'}
           </Button>
         </>
@@ -107,10 +105,17 @@ export function QualificationItemForm({
       <form id="qualification-item-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="qi-brand">Marca *</Label>
+            <Label htmlFor="qi-brand">Playbook *</Label>
+            {/* `brand` é o nome do campo no banco e na API; o rótulo mudou para
+                "Playbook" porque a chave passou a identificar o conjunto de
+                conteúdo comercial, não a marca da plataforma — ver
+                src/config/playbooks.ts. */}
             <Select id="qi-brand" {...register('brand')}>
-              <option value="atlasgr">AtlasGR</option>
-              <option value="totaltrac">Total Trac</option>
+              {PLAYBOOKS.map((pb) => (
+                <option key={pb.key} value={pb.key}>
+                  {pb.label}
+                </option>
+              ))}
             </Select>
           </div>
           <div className="space-y-2">

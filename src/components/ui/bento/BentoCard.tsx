@@ -36,7 +36,7 @@ export function BentoCard({
 
   const variantClasses = {
     surface: 'bg-surface border border-line shadow-card',
-    glass: 'atlas-glass',
+    glass: 'bh-glass',
     accent: 'bg-surface border border-brand/30 shadow-glow-brand',
   }[variant];
 

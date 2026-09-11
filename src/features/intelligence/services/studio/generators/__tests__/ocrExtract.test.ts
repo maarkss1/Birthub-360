@@ -12,7 +12,7 @@ import { ocrExtractResultSchema } from '../../schema.js';
 
 const request = {
   kind: 'ocr_extract' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: {
     rawText: 'TRANSPORTES SILVA LTDA\nJoão - Diretor\n(11) 99999-0000',
   },

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 90" width="380" height="90" role="img" aria-label="Birthub 360 - Logo Horizontal Fundo Escuro">
+  <defs>
+    <linearGradient id="lhd-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4C82F7"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="lhd-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9B6BF3"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="lhd-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8C765"/>
+      <stop offset="100%" stop-color="#B8942E"/>
+    </linearGradient>
+  </defs>
+  <!-- Símbolo Embutido -->
+  <g transform="translate(10, 5) scale(0.8)">
+    <g fill="none" stroke-width="9" stroke-linecap="round">
+      <path stroke="url(#lhd-blue)" d="M 50 14 A 36 36 0 0 1 84.6 68" transform="rotate(0 50 50)"/>
+      <path stroke="url(#lhd-violet)" d="M 50 14 A 36 36 0 0 1 84.6 68" transform="rotate(120 50 50)"/>
+      <path stroke="url(#lhd-gold)" d="M 50 14 A 36 36 0 0 1 84.6 68" transform="rotate(240 50 50)"/>
+    </g>
+    <polygon points="50,38 62,50 50,62 38,50" fill="#D4AF37"/>
+    <circle cx="50" cy="50" r="3.5" fill="#FFFFFF"/>
+  </g>
+  <!-- Tipografia Oficial: Birthub 360 -->
+  <text x="100" y="55" font-family="'Bricolage Grotesque', Arial, sans-serif" font-weight="800" font-size="34" fill="#F3F4FA" letter-spacing="-0.5">Birthub</text>
+  <text x="238" y="55" font-family="'Bricolage Grotesque', Arial, sans-serif" font-weight="800" font-size="34" fill="#D4AF37" letter-spacing="-0.5">360</text>
+</svg>

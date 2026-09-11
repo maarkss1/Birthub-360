@@ -57,7 +57,7 @@ export class KnowledgeCopilotService {
     const model = getAiModel('local-llama3-fast', 0.2, 'knowledge-copilot');
     const startTime = Date.now();
 
-    const systemPrompt = `Você é o Engenheiro Especialista e Copiloto Técnico de Soluções da AtlasGR / TotalTrac.
+    const systemPrompt = `Você é o Engenheiro Especialista e Copiloto Técnico de Soluções da Birth Hub 360 / Birth Hub 360.
 Sua missão é responder dúvidas técnicas e comerciais de consultores sobre hardwares, rastreadores, sensores de telemetria, atuadores (bloqueio, travas, sirenes) e regras de PGR (Plano de Gerenciamento de Risco).
 Regras:
 1. Baseie-se EXCLUSIVAMENTE nos trechos numerados fornecidos abaixo (RAG) — nunca em conhecimento externo ou memorizado.
@@ -80,7 +80,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
 }`;
 
     // AI-0XX: cada trecho vem de um `DocumentChunk` originado de upload de documento (manual de
-    // terceiro, PDF de fornecedor, etc.) — conteúdo que a AtlasGR não controla. Cada trecho é
+    // terceiro, PDF de fornecedor, etc.) — conteúdo que a Birth Hub 360 não controla. Cada trecho é
     // envolvido individualmente (não o bloco inteiro) para que um trecho malicioso não consiga,
     // com um delimitador de fechamento forjado, "vazar" e disfarçar o restante dos trechos reais
     // como se estivessem fora da zona de dados.
@@ -144,7 +144,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       if (!Number.isInteger(index) || index < 1 || index > hits.length || seen.has(index)) continue;
       seen.add(index);
 
-      const hit = hits[index - 1]!;
+      const hit = hits[index - 1];
       citations.push({
         documentId: hit.documentId,
         chunkId: hit.chunkId,

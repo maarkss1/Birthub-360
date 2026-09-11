@@ -1,15 +1,28 @@
-# Packs de identidade visual
+# Identidade visual
 
-Este diretório centraliza os assets oficiais e as regras de aplicação das marcas usadas neste repositório.
+Assets oficiais e regras de aplicação da marca da plataforma.
 
-## Marcas disponíveis
+## Marca
 
-- `atlasgr/`: logo SVG/PNG, símbolo, ícones, paleta, tipografia, tokens, padrões e preview.
-- `totaltrac/`: assinaturas PNG transparentes, símbolo, ícones, paleta, tipografia, tokens, padrões e preview.
+- **`birthhub360/`** — Birth Hub 360º. Logos vetoriais mestre (símbolo, ícone reduzido,
+  assinatura horizontal), tokens (`.css`/`.ts`/`.json`), `preview.html` e as regras do brand book
+  em `README.md`.
 
-Abra `atlasgr/preview.html` ou `totaltrac/preview.html` no navegador para uma conferência visual rápida. Cada subdiretório possui um README com regras, tamanhos mínimos, licenciamento de fontes e referências de páginas do manual.
+Abra `birthhub360/preview.html` no navegador para conferir logo, paleta e tipografia antes de
+supor qualquer valor.
 
-## Observação de licenciamento
+Os packs `atlasgr/` e `totaltrac/` foram removidos em 09/2026, quando a plataforma passou a ter
+marca única — continuam recuperáveis pelo histórico do git.
 
-Fontes comerciais ou distribuídas por terceiros não foram extraídas dos PDFs. Os packs indicam as fontes oficiais e os links de aquisição, evitando redistribuição sem licença.
+## Outros arquivos aqui
 
+- `MANUAL_UI_UX_PLATAFORMA.md` / `.html` — manual de UI/UX da plataforma.
+- `prototipo-hub-portal-atlas.html` — protótipo histórico da órbita do Hub, origem do
+  `hub-orbit.css` e do `HubBurstCanvas`. Mantido como referência do cálculo original.
+- `mockup_dashboard.jpg` — mockup de referência.
+
+## Fontes
+
+Bodoni Moda (display) e Inter (interface) são **self-hosted** em `public/fonts/`, em formato
+variável (latin e latin-ext) — são as próprias fontes do brand book, servidas pela aplicação, sem
+requisição a CDN de terceiros. Ambas são open source (SIL Open Font License).

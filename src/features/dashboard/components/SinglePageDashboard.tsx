@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { ClockCalendarWidget } from '../../../components/ui/ClockCalendarWidget';
 import { LiveStatsWidget } from '../../../components/ui/LiveStatsWidget';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useAnalytics, useActivities, useAnalyticsDashboard } from '../../../hooks/useDatabase';
 import { SoundFX } from '../../../lib/soundEffects';
@@ -52,9 +52,8 @@ function greeting() {
 
 export function SinglePageDashboard() {
   const navigate = useNavigate();
-  const { activeBrand } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const { currentUser, isAdmin } = useAuth();
-  const isAtlas = activeBrand === 'atlasgr';
 
   const {
     data: stats,
@@ -134,23 +133,21 @@ export function SinglePageDashboard() {
         aria-hidden="true"
       >
         <div
-          className={`absolute left-[18%] top-[-11rem] h-80 w-80 rounded-full blur-[110px] ${
-            isAtlas ? 'bg-brand/10' : 'bg-brand-2/10'
-          }`}
+          className={`absolute left-[18%] top-[-11rem] h-80 w-80 rounded-full blur-[110px] ${'bg-brand/10'}`}
         />
       </div>
 
       <div className="relative z-[1] w-full max-w-[92rem] space-y-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div data-testid="dashboard-greeting">
-            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-brand-active dark:text-brand-2">
+            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-brand-ink dark:text-brand">
               {todayLabel}
             </p>
             <h1 className="text-xl font-black tracking-tight text-ink md:text-2xl">
               {greeting()}, {currentUser?.name?.split(' ')[0] || 'Usuário'}
             </h1>
             <p className="mt-0.5 text-xs text-ink-2">
-              Resumo comercial de hoje · marca ativa: {isAtlas ? 'AtlasGR' : 'Total Trac'}.
+              Resumo comercial de hoje · playbook ativo: {playbookMeta.label}.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -170,7 +167,7 @@ export function SinglePageDashboard() {
               onClick={() => goTo('/app/prospect')}
               whileHover={{ y: -1 }}
               whileTap={{ y: 0, scale: 0.985 }}
-              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-brand/25 bg-brand-active px-3 py-1.5 text-xs font-bold text-white shadow-[0_10px_24px_-15px_color-mix(in_srgb,var(--brand)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.18)]"
+              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-brand/25 bg-brand-active px-3 py-1.5 text-xs font-bold text-on-brand shadow-[0_10px_24px_-15px_color-mix(in_srgb,var(--brand)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.18)]"
             >
               <Radar className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110" />
               Nova varredura
@@ -248,7 +245,7 @@ export function SinglePageDashboard() {
           <div className="rounded-[1.5rem] border border-line bg-surface p-5 shadow-[0_24px_55px_-40px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.055)]">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-active dark:text-brand-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-ink dark:text-brand">
                   Próximos movimentos
                 </p>
                 <h3 className="mt-1 text-sm font-black text-ink">Agenda de hoje</h3>
@@ -256,7 +253,7 @@ export function SinglePageDashboard() {
               <button
                 type="button"
                 onClick={() => goTo('/app/activities')}
-                className="text-xs font-bold text-brand-active hover:underline dark:text-brand-2"
+                className="text-xs font-bold text-brand-ink hover:underline dark:text-brand"
               >
                 Ver agenda completa
               </button>

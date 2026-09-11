@@ -199,7 +199,7 @@ async function findEntityCheckpoint(
   if (period === 'custom') return null;
   if (!EXTRACTION_ENTITY_SPECS[entity].dateField) return null; // ex.: user — sem campo de data, sem cursor possível
 
-  let candidates: Array<{ id: string; filters: unknown; progress: unknown }> = [];
+  let candidates: Array<{ id: string; filters: unknown; progress: unknown }>;
   try {
     // `await` antes de qualquer encadeamento — se o mock/driver devolver `undefined` em vez de
     // uma Promise (comum em teste unitário sem stub explícito para esta chamada), encadear

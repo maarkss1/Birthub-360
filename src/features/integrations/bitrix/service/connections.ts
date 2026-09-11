@@ -6,6 +6,7 @@ import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
 import { assertSafeExternalUrl } from '../../../../shared/security/urlGuard.js';
 import { normalizeWebhookUrl, testWebhook, hostnameOf, getConnectionWebhookUrl } from './client.js';
+import { playbookInfo } from '../../../../config/playbooks.js';
 
 export interface BitrixConnectionSummary {
   id: string;
@@ -38,7 +39,7 @@ export const TOTALTRAC_BITRIX_WEBHOOK_URL =
   process.env.TOTALTRAC_BITRIX24_WEBHOOK_URL || process.env.TOTALTRAC_BITRIX_WEBHOOK_URL || null;
 
 /** Lista todos os portais Bitrix conectados desta organização — se não houver nenhum e a env do
- * webhook da marca estiver configurada, autoconecta o portal correspondente (TotalTrac x AtlasGR). */
+ * webhook da marca estiver configurada, autoconecta o portal correspondente (Birth Hub 360 x Birth Hub 360). */
 export async function listBitrixConnections(
   organizationId: string,
 ): Promise<BitrixConnectionSummary[]> {
@@ -65,14 +66,17 @@ export async function listBitrixConnections(
       const isTotalTrac = orgName.includes('totaltrac') || orgName.includes('total track');
       const isAtlas = orgName.includes('atlas');
 
-      // Só as duas marcas conhecidas herdam webhook padrão — tenant desconhecido nunca
+      // Só os dois tenants conhecidos herdam webhook padrão — organização desconhecida nunca
       // recebe credencial de outra empresa por default (vazamento cross-tenant).
       const defaultWebhook = isTotalTrac
         ? TOTALTRAC_BITRIX_WEBHOOK_URL
         : isAtlas
           ? ATLAS_BITRIX_WEBHOOK_URL
           : null;
-      const defaultLabel = isTotalTrac ? 'TotalTrac Bitrix24' : 'AtlasGR Bitrix24';
+      // Rótulo da conexão auto-provisionada: descreve o TENANT (a org detectada pelo nome),
+      // não a marca da plataforma — reaproveita o rótulo já usado no playbook comercial
+      // (src/config/playbooks.ts) em vez de inventar um segundo nome para o mesmo eixo.
+      const defaultLabel = `${playbookInfo(isTotalTrac ? 'totaltrac' : 'atlasgr').label} Bitrix24`;
 
       if (defaultWebhook) {
         await connectBitrix(organizationId, defaultWebhook, defaultLabel);

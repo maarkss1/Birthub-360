@@ -189,7 +189,10 @@ export class IngestionService {
 
     const title = patch.title?.trim() || document.title;
     const contentChanged = patch.content != null && patch.content !== document.content;
-    const content = contentChanged ? patch.content! : document.content;
+    // Equivalente ao ternário por contentChanged: quando patch.content é null/undefined cai no
+    // document.content; quando é igual ao document.content, o valor final é o mesmo de qualquer
+    // forma. `contentChanged` só importa para decidir se vale gastar embeddings de novo (abaixo).
+    const content = patch.content ?? document.content;
 
     if (!content.trim()) throw new Error('O conteúdo do documento não pode ficar vazio.');
 

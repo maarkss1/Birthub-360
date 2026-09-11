@@ -1,4 +1,8 @@
-# Registro de pilotos — Central de Inteligência Comercial ATLASGR
+# Registro de pilotos — Birth Hub 360º
+
+> As entradas anteriores ao Piloto 033 citam AtlasGR e Total Trac porque foi sob aquelas marcas que
+> as decisões relatadas aconteceram. São registro histórico: renomeá-las não renomearia nada, só
+> tornaria o relato falso. O Piloto 033 documenta a troca para a marca única.
 
 Registro curto de cada tela/fluxo usado como piloto real da camada `.claude/`. Objetivo: não perder
 aprendizado empírico depois que a tarefa termina. Ver `CLAUDE.md` seção 12 para quando adicionar uma
@@ -1038,7 +1042,7 @@ entrada nova.
 - **Objetivo**: primeiro dos módulos "ainda sem piloto" do roadmap do Pilot 007 — `/app/contacts`
   (nav "Decisores").
 - **O achado principal**: `ContactDetail.tsx` era um stub morto (`return <div />`), nunca importado
-  por nenhuma rota — já documentado como intencional em `PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md`
+  por nenhuma rota — já documentado como intencional em `PRODUCT_EXPERIENCE.md`
   ("Contatos usa formulário modal, não tela de detalhe"). Mas `GET /api/contacts/:id` **já existia
   e já devolvia** `{...contact, company: CompanyCompleta, leads: Lead[]}`
   (`PrismaContactRepository`/`ContactController`), inclusive `contactsDB.get(id)` já existia em
@@ -3145,3 +3149,318 @@ entrada nova.
   padrão de bug a vigiar em qualquer piloto futuro que use `src/lib/motion.ts`: **conferir a chave
   exata da variante (`show`, não `visible`) antes de usar `animate=` com uma string literal**, e
   nunca considerar motion "correto" só porque compilou.
+
+## Pilot 032 — Hub Executivo vira destino padrão pós-login (confirmação explícita pendente do Piloto 031)
+
+- **Objetivo**: o Piloto 031 tinha deixado `/` e o pós-login apontando pra `/app` (CRM) de
+  propósito, registrando por escrito que trocar o destino padrão era "decisão de produto maior...
+  não feita sem confirmação explícita do usuário". Nesta sessão o usuário trouxe dois HTMLs de
+  referência (`portalatlasprototype.html`, depois `hubpaginainicial.html`, o segundo sendo o escopo
+  real pedido) e, após eu mostrar que `HubScreen.tsx`/`hub-orbit.css` já implementavam ~14/15 do
+  protótipo (matemática de órbita, tokens e catálogo de módulos idênticos), confirmou
+  explicitamente três vezes em sequência ("sim", "esse escopo e tela", "pode mandar a ver" / "eu
+  autorizo a troca" / "ajuste o que for necessário") quando perguntado se quer o Hub como destino
+  pós-login em vez do CRM. Essa é a confirmação que o Piloto 031 deixou pendente.
+- **Item real faltando identificado por diff contra o protótipo**: "Revenue Intelligence". O ícone
+  já existia pronto em `HubIcons.tsx` (`'revenue-intel'`) mas nunca tinha sido plugado no array
+  `items` de `HubScreen.tsx`. Adicionado, apontando pra `/app/commercial_intelligence` e visível só
+  quando `useAuth().canAccessCommercialIntelligence` é `true` — mesmo gate de papel
+  (`COMMERCIAL_INTELLIGENCE_ROLES` = ADMIN/GESTOR) que a própria rota já exige no backend
+  (`RequireRole` em `App.tsx`), evitando um círculo clicável que levaria a um 403.
+- **Mudança de destino pós-login**: `LoginScreen.tsx` — `callbackURL` do `signUp`/`signIn` e o
+  `window.location.href` final passam de `/app` para `/hub`; o guard de usuário já autenticado
+  (`<Navigate to="/app" replace />`) também passa a apontar pro Hub. `/app` (CRM) continua existindo
+  e acessível a partir do círculo central "Central Comercial" — nada foi removido, só o destino
+  *padrão* mudou. Comentário de `App.tsx` que documentava a decisão antiga do Piloto 031 foi
+  atualizado para refletir a nova.
+- **Blast radius real no e2e, medido antes de mudar**: `tests/e2e/helpers.ts::signUp()` é consumido
+  por ~15 arquivos de spec (incluindo os 5 citados na regra #10 da constituição:
+  `crm.spec.ts`/`auth.spec.ts`/`contact-company-forms.spec.ts`/`command-palette.spec.ts`/
+  `leads-crud.spec.ts`), e a maioria assume — sem `goto` explícito — que logo após `signUp()` a
+  Sidebar do CRM já está visível (clique direto em botão tipo "Empresas"/"Pipeline CRM"). Em vez de
+  editar os ~15 arquivos, o helper ganhou um parâmetro `landOn?: 'app' | 'hub'` (default `'app'`):
+  detecta a autenticação esperando `**/hub*` (reflete o redirecionamento real) e, por padrão, dá um
+  `goto('/app')` interno antes de devolver o controle — preserva o contrato de todo spec existente
+  sem tocar neles. Só `auth.spec.ts` (que testa o próprio destino do redirecionamento, não só "o
+  login funcionou") pede `landOn: 'hub'` explicitamente, pra sua asserção continuar testando o
+  comportamento real em vez da conveniência normalizada do helper.
+- **Verificação real feita nesta sessão**: `tsc --noEmit` (0 erros) e `eslint` (0 erros/warnings) em
+  todos os arquivos tocados (`HubScreen.tsx`, `LoginScreen.tsx`, `App.tsx`, `helpers.ts`,
+  `auth.spec.ts`). **Não** rodei a suíte Playwright nem subi o dev server: `DATABASE_URL` deste
+  ambiente aponta direto pro Postgres de produção na Oracle (ver `project_db_direto_oracle` em
+  memória) — evitei criar sessões/signups de teste contra dado real de produção. Fica pendente
+  rodar `auth.spec.ts` (e idealmente a suíte completa) num ambiente com banco de teste isolado antes
+  do próximo deploy, seguindo o protocolo de bloqueio real da `visual-qa/SKILL.md` (registrar o que
+  não rodou, nunca fingir verde).
+- **Nenhuma mudança de regra da constituição** — reforça a seção 5 (exceção justificada só com
+  critério explícito, nunca por preferência estética isolada): aqui o critério foi confirmação
+  explícita e repetida do usuário para exatamente a decisão que o Piloto 031 tinha deixado em
+  aberto, não uma escolha unilateral desta sessão.
+
+## Piloto 031 — Meu Workspace (PROMPT 6, Workspaces por Login/Cargo)
+
+- **Objetivo**: primeira tela real que consome a Fundação Multi-Cargo (PROMPTs 1-5, até então
+  100% backend — confirmado por auditoria: zero rota `/job-roles/**`, `/capabilities/**`,
+  `/agents/**` ou `/role-supervisor/**` era chamada por qualquer componente React antes desta
+  onda). Login → `UserRole` → `JobRole` → workspace do cargo → agentes/capabilities permitidos,
+  com "1 componente genérico + `RoleWorkspaceDefinition` configurável" (regra explícita do prompt
+  da onda: nunca 12 aplicações duplicadas).
+- **Decisão de arquitetura — o `RoleWorkspaceDefinition` (`role-workspace-definitions.ts`) só
+  declara o que é NOVO por cargo**: `homeWidgets` (ordem/conjunto fixo de seções), `modules`
+  (subconjunto de `TabType` já roteado) e `quickActions` (rótulo + `moduleKey`). KPIs vêm de
+  `ROLE_SUPERVISOR_PROFILES.preferredCapabilities` (PROMPT 5) + `RoleCapabilityGrant` +
+  `TOOL_BINDINGS` (PROMPT 3); agent groups vêm de `RoleAgentGrant` (PROMPT 1/2) — nada disso é
+  redeclarado, só lido em `workspace.service.ts` (`getWorkspaceForUser`). Isso é o motivo real de
+  "não duplicar 12 apps": o dado por cargo já existia todo, faltava só uma camada de leitura +
+  1 tela.
+- **`RECEITA_FATURAMENTO` não aponta quick action para `/app/usage`**: aquele módulo é custo de
+  uso de IA (consumo de token), não faturamento de venda (mesma distinção já documentada em
+  `tool-bindings.ts` para `billing.read`/`billing.reconcile`, ambos `SOURCE_REQUIRED` — sem tela
+  real de "vendido × faturado" ainda). Apontar pra lá seria um link enganoso; o bloqueio real já
+  aparece nos KPIs (badge "Fonte de dado ausente").
+- **`locked`/`lockedReason` por módulo — gate de `UserRole` reexposto, nunca um segundo sistema de
+  permissão**: `workspace.service.ts` tem um mapa `MODULE_MIN_ROLE` que espelha exatamente os
+  mesmos gates já aplicados em `App.tsx` (`RequireRole`)/`bootstrap/routes.ts`
+  (`commercial_intelligence`→`COMMERCIAL_INTELLIGENCE_ROLES`, `mesa-tratamento`→
+  `MESA_TRATAMENTO_ROLES`, `usage`/`team`/`module-access`→`ADMIN`). Cargo (`JobRole`) nunca eleva
+  segurança (`UserRole`) — testado explicitamente (`GERENTE_COMERCIAL` com `UserRole` SDR vê
+  `commercial_intelligence` como `locked: true`; o mesmo cargo com `UserRole` GESTOR vê
+  `locked: false`) — ver seção "UserRole vs JobRole" em `prisma/schema.prisma`.
+- **KPI é status de acesso, não valor numérico ao vivo**: decisão de escopo explícita. O workspace
+  responde "este cargo tem, em princípio, acesso a este dado?" (`AVAILABLE`/`APPROVAL_REQUIRED`/
+  `REQUEST`/`DISCOVER_ONLY`/`SOURCE_REQUIRED`/`FUTURE_TOOL`/`TOOL_UNAVAILABLE`/`NOT_GRANTED`),
+  reaproveitando a mesma lógica de `authorizeCapability` (etapas 6/10/11/12) sem precisar de um
+  `agentCode` específico — nunca chama motor de negócio nenhum (`CommercialIntelligenceUseCases`
+  etc.) pra popular número ao vivo, isso seria escopo do supervisor de cargo (PROMPT 5) quando
+  executado de verdade, não desta tela de estrutura/acesso.
+- **Dois componentes novos em `src/components/ui/`**: `BlockedState.tsx` (contraparte de
+  `EmptyState.tsx` para "isto está bloqueado por um motivo real", não "nada aconteceu ainda" —
+  `role="status"` para anunciar a leitores de tela). `KpiCard.tsx`/`EmptyState.tsx`/`Badge.tsx`
+  existentes foram reaproveitados sem alteração para o resto da tela (KPIs viram cards próprios
+  com `Badge` de status, não `KpiCard` — este espera um `value` numérico que a tela
+  deliberadamente não tem, ver ponto acima).
+- **Sem hero centralizada, sem 3 cards iguais forçados**: header assimétrico (departamento em
+  caps + nome do cargo + missão, alinhado à esquerda, mesmo padrão de `SinglePageDashboard.tsx`),
+  grid de KPIs com contagem real por cargo (3 a 4, nunca preenchido artificialmente), agent groups
+  agrupados por `accessLevel` (só as seções com pelo menos 1 agente aparecem). Único uso de
+  `BlockedState` centralizado é justificado pela seção 5 (estado único, nada mais para mostrar
+  quando não há cargo atribuído — mesmo raciocínio já usado por `EmptyState` em qualquer módulo).
+- **Novo item de navegação, aditivo, não substitui o Painel Central**: "Meu Workspace"
+  (`TabType 'workspace'`, ícone `Briefcase`) adicionado ao grupo "Visão Geral" da Sidebar, ao lado
+  de "Painel Central" — decisão deliberada de NÃO trocar o destino padrão pós-login
+  (`/app`/`SinglePageDashboard`) pelo workspace: a atribuição de `JobRole` é recente (PROMPT 1) e
+  a maioria dos usuários reais ainda não tem cargo atribuído hoje; forçar o workspace como home
+  quebraria a experiência de quem ainda não foi migrado. `/app/workspace` resolve seu próprio
+  estado (`READY`/`NO_JOB_ROLE`/`NO_WORKSPACE_DEFINITION`) a partir da sessão, nunca fica "quebrado"
+  para ninguém. Perfil restrito de SDR (`isRestrictedSdrProfile` em `Sidebar.tsx`, `UserRole`
+  SDR só vê "Plano Diário") foi deixado como estava — decisão pré-existente e deliberada de outra
+  sessão, fora do escopo desta onda.
+- **Bug real de ambiente encontrado e documentado, não do código do produto**: `@playwright/test`
+  1.62.1 instalado espera Chromium revisão `1234`, mas o binário pré-provisionado neste sandbox é
+  a revisão `1194` — tentar lançar sem `executablePath` explícito trava (tenta alcançar a rede de
+  download do Playwright, bloqueada pelo proxy do ambiente, sem erro nem timeout curto). O próprio
+  `playwright.config.ts` já antecipa exatamente isso (`PLAYWRIGHT_CHROMIUM_EXECUTABLE`, comentário
+  "ambientes que já vêm com um Chromium provisionado... costumam ter uma build diferente") — a
+  correção foi só usar a variável já prevista (`PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/
+  chromium`), nunca do código da tela.
+- **Bug real de RLS encontrado e corrigido no teste (não no produto)**: `assignJobRole`
+  (`jobRole.service.ts`) abre sua própria transação interativa (`prisma.$transaction`) — chamá-la
+  a partir de um teste com `requestContext.enterWith({ bypassRls: true })` falhava com "new row
+  violates row-level security policy for table UserJobRole", porque o `SET LOCAL
+  app.current_tenant_id` que a extensão de RLS de `src/lib/prisma.ts` injeta em operações de model
+  só bate com o `organizationId` real da linha quando o contexto carrega `tenantId`, não
+  `bypassRls` sozinho (mesmo padrão que `tests/helpers/integration-setup.ts` já usa no
+  `beforeEach` global — `tenantId`, nunca bypass, para escrita comum dentro do próprio tenant).
+  Não é um bug do Capability Engine nem do workspace — é só o jeito certo de simular "um ADMIN
+  atribuindo um cargo dentro da própria organização" num teste, sem precisar de bypass nenhum.
+- **Verificação real feita nesta sessão**: `tsc --noEmit` (0 erros), `biome lint`/`format` (0
+  erros/warnings novos), `lint:architecture` (sem violação nova), `check:hotspots` (sem estouro),
+  `verify:openapi-drift` (limpo, `GET /workspace/me` documentado), suíte de integração combinada
+  PROMPT 1-6 (6 arquivos, **107/107 passando**, incluindo os 12 cargos + usuário sem cargo +
+  VISUALIZADOR + deep-link/locked + `REQUEST` + `SOURCE_REQUIRED`/`FUTURE_TOOL` + tenant
+  isolation), suíte unitária completa (**2746/2746**, sem regressão), e **3 specs E2E reais contra
+  navegador real** (Chromium, servidor Express real, Postgres real): `workspace.spec.ts` (sem
+  cargo → estado bloqueado; com cargo CLOSER → nome/KPIs/navegação reais via deep-link; viewport
+  mobile 390×844 sem overflow horizontal), `accessibility.spec.ts` (novo caso "Meu Workspace sem
+  cargo" — zero violação `critical`/`serious` do axe-core) e `crm.spec.ts` (navegação pela Sidebar
+  sem erro de console). Screenshot real (`page.screenshot`, descartado após revisão, não commitado)
+  confirmou visualmente os 3 estados (sem cargo, CLOSER desktop, CLOSER mobile) antes de reportar
+  concluído — nenhum bug visual encontrado desta vez, mas o hábito (seção 12.6) é o que importa.
+
+## Piloto 032 — HubScreen (identidade Total Trac)
+
+- **Pedido do usuário**: "criar uma tela Hub para a Total Trac, no mesmo modelo do Hub da AtlasGR".
+  Auditoria (seção 2/12.1) mostrou que isso já existe por arquitetura — `HubScreen.tsx` é única,
+  montada em `/hub`, e reage a `useBrand()` (troca `Logo`↔`TotalTrackLogo`, textos de
+  `brandInfo`, tokens `--brand`/`--brand-2` setados pelo `BrandContext`). Não havia "Hub separado
+  por marca" para duplicar nem justificativa para criar uma segunda tela física — o trabalho real
+  era fazer a Hub existente refletir de fato a identidade Total Trac quando ativa, que é o que a
+  seção 5 (exceção precisa de justificativa) e o Piloto 001/029 (telas pós-seleção de marca usam
+  tokens dinâmicos, não cor estática) já prescrevem.
+- **Achado principal, corrigido — vazamento de laranja AtlasGR em `hub-orbit.css`**: ~15 valores
+  hex/rgba fixos (`#ff9d70`, `rgba(255,86,24,...)`, gradiente do `.hc-title`) só existiam porque o
+  CSS puro do Hub nunca foi migrado para os tokens dinâmicos — com Total Trac ativa, logo/textos
+  trocavam mas o beacon do header, o glow do card primário, o shimmer do título dos círculos e o
+  ícone hover continuavam laranja. Convertidos para `var(--brand)`/`var(--brand-2)`/
+  `color-mix(in srgb, var(--brand) X%, white|black|transparent)` — mesmo padrão de
+  `--shadow-glow-brand` já usado no resto do projeto (`design-system/SKILL.md`). Fórmula validada
+  numericamente (script Node, não só visual): para AtlasGR o resultado bate quase pixel-a-pixel com
+  o hex original (`#a63810` vs `#a83810`); para Total Trac produz azul-marinho/pastel coerente com
+  `identidade-visual/totaltrac/tokens/totaltrac.css` (`#374898`/`#2D3B78`), sem cair em preto/branco
+  puro. Os `colorRgb` do burst de partículas em `HubScreen.tsx` (canvas 2D, não entende `var()`)
+  também eram laranja fixo — agora calculados via `hexToRgbString(brandInfo.primaryColor|
+  accentColor)`, únicos no repo (não havia utilitário equivalente).
+- **Achado secundário, corrigido — mesmo arquivo, não introduzido por esta sessão**: `var(--brand-
+  active)` em 8 pontos de `hub-orbit.css` e 4 de `HubIcons.tsx` nunca resolvia — Tailwind 4 registra
+  esse token como `--color-brand-active` dentro do `@theme` (`src/styles/globals.css`), não
+  `--brand-active` puro, que não é setado em lugar nenhum do projeto (`grep` confirmou). O efeito
+  era silencioso: eyebrow/tagline/relógio/calendário/ícone hover/label caíam para preto (`--ink`
+  herdado) em vez da cor de marca, **nas duas marcas**, não só Total Trac — só ficou visível ao
+  montar o QA visual alternativo abaixo. Corrigido para `var(--color-brand-active)` nos dois
+  arquivos (`replace_all`, escopo confirmado restrito ao Hub via `grep -r` no `src/`).
+- **Decisão explícita — cores douradas de `.clock-widget .date`/`.cal-grid span` mantidas como
+  estão**: `#8a6c00`/`#ffe066` não são derivadas de `--brand` nem de `--warn` (`#FFC500`) — são uma
+  escolha decorativa neutra própria do protótipo original para a data/abreviação de dias, não uma
+  cor de marca vazando. `design-system/SKILL.md` ("cor de marca ≠ semântica ≠ decoração") — não
+  "corrigidas" para não introduzir mudança visual fora do pedido.
+- **QA visual sem navegador com backend real (protocolo `visual-qa/SKILL.md`)**: `/hub` é rota
+  protegida e o app depende do Postgres remoto (Oracle Cloud) via `DATABASE_URL`, inacessível nesta
+  sessão — sem alternativa equivalente a `playwright test` real com login. Validação alternativa
+  executada e documentada, não apresentada como equivalente: `npx vite build` (build estático real,
+  sem backend) gerou o CSS processado (`@theme` do Tailwind já resolvido); harness Playwright
+  descartável (Chromium `/opt/pw-browsers/chromium`, `file://`, não promovido a teste oficial —
+  mesmo cuidado do Piloto 002) renderizou os elementos de cor do Hub (`op-dot`, `hc-title` small e
+  primary, eyebrow/tagline, clock) nas 4 combinações marca×tema. Confirmou visualmente Total Trac
+  azul/ciano correto nas 4 combinações e expôs o bug do `--brand-active` (textos pretos antes do
+  fix, coloridos depois) — screenshots e harness descartados após a revisão, não commitados.
+- **Verificação**: `npm ci` (ambiente sem `node_modules`), `npx biome lint` (0 erros/warnings nos
+  arquivos tocados), `npx tsc --noEmit` (0 erros) — rodados de novo após o fix do `--brand-active`
+  para confirmar que nada quebrou. Specs E2E oficiais (`crm.spec.ts` etc.) não puderam rodar por
+  falta de Postgres/login real nesta sessão — pendente de confirmação num ambiente com backend.
+
+## Piloto 033 — Rebranding para Birth Hub 360º (marca única)
+
+- **Objetivo**: aposentar as duas marcas da plataforma (Birth Hub 360) e implantar a
+  identidade **Birth Hub 360º** a partir do brand book "Birth Hub 360 Brand Book Cinematic" V2.0,
+  mantendo tema claro e escuro e sem perder funcionalidade.
+
+- **Reconstrução do emblema, não importação**: o brand book chegou como HTML auto-descompactante.
+  O emblema era CSS puro (`repeating-conic-gradient` + `conic-gradient` + máscara radial), sem
+  arquivo vetorial. Foi reconstruído como SVG-mestre a partir das medidas do original, e o "B" e o
+  logotipo foram **vetorizados dos próprios .woff2 do brand book** (Playfair Display italic 800 e
+  Bodoni Moda 800, via fontTools) — o logo não depende de fonte instalada em ninguém.
+  - **Achado que só apareceu na comparação lado a lado**: a máscara `radial-gradient(circle,
+    transparent 63%, #000 64%, #000 80%, ...)` da coroa de traços mede em **farthest-corner**
+    (raio × √2), não no raio. Lendo como percentual do raio, a coroa cai *em cima* do anel; lida
+    corretamente, ela vive fora dele, com folga visível. A primeira versão estava errada e passou
+    despercebida até renderizar o HTML original ao lado do SVG na mesma tela.
+  - Dois outros desvios só apareceram nessa comparação: gradientes de arco em `objectBoundingBox`
+    (rotacionavam a órbita) e costura de 1px entre arcos de `stroke-linecap: butt`.
+
+- **A inversão de contraste é a parte perigosa**: a marca anterior era laranja escuro e pedia texto
+  BRANCO; Antique Gold (`#D4AF37`) é uma cor **clara** — branco em cima mede 2.10:1. O par correto
+  é Obsidian, 8.74:1, que é o que o próprio brand book usa no CTA. Isso obrigou a separar em três
+  tokens o que `--color-brand-active` acumulava: superfície (`--brand` + `text-on-brand`), hover
+  (`--color-brand-active`) e marca-como-texto (`--color-brand-ink`). A varredura trocou 148
+  `text-white` sobre superfície de marca e 140 `text-brand-active` usados como texto.
+
+- **Separar identidade de dado comercial foi o que destravou o resto**: o seletor de marca parecia
+  visual, mas controlava playbook, personas, matriz de objeções e histórico do copiloto. Apagá-lo
+  junto com a marca teria removido funcionalidade (Constituição §6). Virou **playbook comercial**
+  (`src/config/playbooks.ts` + `useActivePlaybook`), com as chaves de banco (`atlasgr`/`totaltrac`)
+  preservadas e o seletor movido para a barra de filtros das matrizes — onde ele sempre pertenceu.
+  Mesmo raciocínio para `getBrandFromEmail` → `getTenantFromEmail`: nunca decidiu marca, decidia
+  organização.
+
+- **Tipografia**: Bodoni Moda + Inter **self-hosted** a partir dos .woff2 do próprio brand book
+  (variáveis, latin + latin-ext) — 20 blocos `@font-face` de Montserrat via gstatic viraram 4
+  locais. H4-H6 ficaram na Inter de propósito: Bodoni é Didone e some abaixo de ~20px, e num CRM
+  denso esses níveis rotulam bloco de tabela e card.
+
+- **O logotipo vetorial não serve para topbar**: a 28px de altura o corpo do logotipo fica com ~6px
+  e vira borrão. `BirthHubSignature` (ícone + nome como TEXTO) resolve, e de quebra o nome volta a
+  ser selecionável e legível por leitor de tela. Regra: `icon` de 32 a 96px, `symbol` acima disso,
+  `horizontal` só onde a marca tem espaço real.
+
+- **O gradiente metálico do logotipo é escuro-only**: recortado no texto, o topo das letras é
+  `#F7E9B8` — ~1.1:1 contra superfície clara. No tema claro o logotipo é Obsidian sólido, que é o
+  que a regra "ANCHOR" do brand book já mandava.
+
+- **O que NÃO foi renomeado, e por quê** (checar antes de "terminar o serviço"): allowlist de
+  domínios de login (regra de segurança); chaves `atlasgr`/`totaltrac` em banco e API; `appId`,
+  esquema de deep link e domínios (invalidam instalações e DNS); `EXTERNAL_LINKS` (sistemas de
+  terceiros da operação); `public/tools/` (aplicações legadas em iframe); o script de voz
+  `atlasProductPlaybook.ts` — renomear ali faria a IA se apresentar ao prospect como a plataforma
+  em vez da empresa que está vendendo, ou seja, mentir.
+
+- **Verificação**: typecheck e build limpos; `biome lint src` sem erro novo; Welcome e Login
+  medidos com fórmula de luminância WCAG nos dois temas (nenhuma reprovação); emblema comparado
+  pixel a pixel com o render original do brand book.
+
+## Piloto 034 — Fechar lacunas de memória/decisão + unificar home (itens 101-105)
+
+- **Objetivo**: pedido do usuário para planejar/implementar os itens 101-105 de uma spec de
+  produto colada (Organizational Memory, Decision Intelligence, Closed-Loop Intelligence, System
+  of Attention, Adaptive Command Center). Investigação prévia (4 agentes de exploração) achou
+  infraestrutura parcial real para quase todos — implementar do zero teria duplicado sistemas já
+  existentes. Escopo desta fatia, por decisão do usuário: fechar lacunas dos sistemas já
+  existentes mais próximos de 101/103, e unificar as duas homes concorrentes (105). 102 e 104
+  ficaram fora — cada um exige decidir primeiro qual de várias implementações concorrentes vira a
+  oficial, decisão de arquitetura maior que não cabia nesta fatia.
+
+- **A lacuna real não era "falta o sistema", era "o sistema existe e ninguém nunca aciona nem vê"**:
+  `LearningCandidate` → `AgentMemoryRecord`/`RoleMemoryRecord`/`OrganizationMemoryRecord`
+  (PROMPT 9, `memory.service.ts`) já tinha conflito/versionamento/RBAC completos, mas nada no
+  código chamava `createLearningCandidateFromExecution` e não existia nenhuma UI — órfão nas duas
+  pontas. Mesmo padrão em `AIPendingAction`: recommend→decide→execute reais, mas nenhum campo
+  registrava o resultado depois (closed loop parava em "executado", nunca chegava a
+  "outcome"/"aprendizado").
+
+- **Achado mais sério: um sistema já violava o próprio princípio da spec do usuário**. O
+  `learning.agent.ts` (perfil de estilo aprendido, injetado de verdade no prompt do SDR/BDR/CRM
+  via `getLearningProfile` — o único ponto do produto onde uma reflexão de IA já mudava
+  comportamento real) promovia cada reflexão nova a `activeVersion` automaticamente, sem nenhuma
+  aprovação humana — item 103 da spec pede exatamente o oposto ("NÃO APRENDER CEGAMENTE"). Corrigido
+  para nascer `approvalStatus: 'PENDING'` e só virar ativa via `approveLearningProfileVersion`.
+
+- **Um teste existente travou uma tentativa errada de "consertar" demais**: a primeira versão do
+  gate deixava um GESTOR+ passar `?actorId=`/`actorId` no body pra decidir o perfil de outra
+  pessoa — pareceu necessário pra função ser útil (SDR não tem nível pra decidir sozinho). Quebrou
+  `agent.routes.learning-profile.test.ts` ("tenant/ator vêm sempre de req.user, nunca de
+  querystring/body", testado até para ADMIN) — decisão arquitetural deliberada de uma onda
+  anterior (GOV-13/onda-39: "nunca cross-user"), não uma lacuna esquecida. Correção real: manter
+  self-service (identidade sempre de `req.user`) e baixar o piso mínimo de decisor de GESTOR para
+  SDR — aprovar só afeta o próprio agente do próprio usuário, então não precisa de um piso alto.
+  Lição: quando um teste existente contradiz a mudança, o teste geralmente está protegendo uma
+  decisão real — investigar o motivo antes de reescrevê-lo.
+
+- **Unificar as duas "homes" foi aditivo, não substituição**: `/app/dashboard`
+  (`SinglePageDashboard`, igual pra todo UserRole) e `/app/workspace` (`WorkspaceHome`, adaptativo
+  por JobRole) eram duas implementações paralelas do mesmo conceito. Trocar o conteúdo da home
+  pelo adaptativo teria sido regressão real (`WorkspaceReadySection` só tem KPIs/agentGroups/nav —
+  muito mais raso que o dashboard operacional de sempre). Resolvido com `AdaptiveDashboard.tsx`:
+  sempre renderiza `SinglePageDashboard` (nenhum widget removido — Constituição §6) e, só quando o
+  backend resolve `status: 'READY'`, acrescenta a seção por cargo embaixo — nunca um spinner/erro
+  cobrindo o dashboard real. `/app/workspace` continua existindo inalterado (link "Meu Workspace"),
+  porque `tests/e2e/workspace.spec.ts` trava especificamente os estados de bloqueio dessa tela
+  dedicada (`NO_JOB_ROLE` mostra "Nenhum cargo atribuído", nunca uma tela vazia) — misturar os dois
+  comportamentos ali teria quebrado esse contrato testado.
+
+- **`no-cross-feature-imports` pegou 2 violações reais, ambas com fix correto (não
+  ignore-known)**: `MemoryGovernancePanel.tsx` foi criado sob `features/job-roles/` mas só é
+  usado por `Settings.tsx` (`features/settings/`) e só chama `/api/memory/**` por HTTP — sem
+  nenhum import real de job-roles, então o fix certo era mover o arquivo para
+  `features/settings/components/`, não relaxar a regra. Já `WorkspaceReady` (usado por
+  `workspace/` E pela nova `dashboard/`) era genuinamente compartilhado entre duas features — o
+  fix certo foi extrair para `src/components/workspace/WorkspaceReadySection.tsx` (fora de
+  `src/features/`, onde a regra não se aplica), não criar uma dependência direta feature-a-feature.
+
+- **Verificação**: `npx tsc --noEmit` (0 erros), `npm run lint`/`format` (só os 2 warnings
+  pré-existentes e não relacionados), `npm run test:architecture` (0 violações novas, mesmas 113
+  conhecidas), `npm run test:unit` (2780/2780, incluindo a suíte de aprovação/versionamento nova),
+  `npm run build` (build de produção limpo, `AdaptiveDashboard` vira chunk lazy próprio).
+  `test:e2e`/`test:integration` **não puderam rodar** — sem Postgres/Redis reais neste sandbox
+  (mesma limitação ENV-001 documentada em `.agents/prompts/14-ambiente-execucao-harness.md`),
+  registrado como bloqueio real, não como sucesso assumido — pendente de confirmação num ambiente
+  com backend antes de considerar `tests/e2e/workspace.spec.ts`/`visual.spec.ts` confirmados verdes
+  contra o código novo.

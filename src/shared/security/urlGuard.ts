@@ -4,10 +4,10 @@ import type { LookupFunction } from 'node:net';
 import { Agent, fetch as undiciFetch } from 'undici';
 import { AppError } from '../middlewares/errorHandler.js';
 
-// `RequestInit` global deste projeto vem do lib "DOM" do tsconfig (compartilhado com o frontend)
-// — esse tipo não conhece a opção `dispatcher` (extensão do Node/undici usada abaixo para fixar a
-// conexão real nos endereços já validados). `dispatcher` entra via cast só para contornar essa
-// lacuna de tipo.
+// Usamos o `RequestInit` do próprio `undici` (não o `RequestInit` global do lib "DOM" do
+// tsconfig, compartilhado com o frontend) porque só o tipo do undici já declara `dispatcher`
+// (extensão usada abaixo para fixar a conexão real nos endereços já validados) — evita o cast
+// que seria necessário para contornar essa lacuna no tipo global.
 // IMPORTANTE: usamos o `fetch` da biblioteca `undici` em vez do fetch global porque o fetch
 // global do Node.js (v24) tem incompatibilidade interna com instâncias de Agent importadas
 // do pacote `undici` do node_modules.

@@ -5,7 +5,7 @@ import {
   buildEmailTranscript,
   type IntentClassifierPort,
   type InboundEmailReply,
-} from '../domain/replyTracking';
+} from '../../../shared/domain/replyTracking';
 
 const BASE: InboundEmailReply = {
   organizationId: 'org-1',
@@ -13,7 +13,7 @@ const BASE: InboundEmailReply = {
   providerMessageId: 'msg-1',
   inReplyTo: 'outbound-msg-1',
   fromEmail: 'lead@empresa.com',
-  subject: 'Re: Proposta AtlasGR',
+  subject: 'Re: Proposta Birth Hub 360',
   body: 'Legal, podemos marcar uma call na quinta?',
   receivedAt: new Date('2026-08-03T14:00:00Z'),
 };
@@ -37,9 +37,9 @@ describe('isGenuineLeadReply', () => {
 
   it.each([
     'Out of Office: Fora do escritório',
-    'Automatic reply: Re: Proposta AtlasGR',
+    'Automatic reply: Re: Proposta Birth Hub 360',
     'Resposta automática',
-    'Undeliverable: Re: Proposta AtlasGR',
+    'Undeliverable: Re: Proposta Birth Hub 360',
     'Mail Delivery Subsystem',
   ])('rejeita assunto de auto-resposta/bounce: %s', (subject) => {
     expect(isGenuineLeadReply({ ...BASE, subject })).toBe(false);
@@ -51,13 +51,13 @@ describe('isGenuineLeadReply', () => {
 });
 
 describe('buildEmailTranscript', () => {
-  it('rotula inbound como Cliente e outbound como Atlas, ignorando mensagens vazias', () => {
+  it('rotula inbound como Cliente e outbound como Vendedor, ignorando mensagens vazias', () => {
     const transcript = buildEmailTranscript([
       { direction: 'outbound', body: 'Olá, tudo bem?' },
       { direction: 'inbound', body: '  ' },
       { direction: 'inbound', body: 'Tudo sim, pode mandar a proposta.' },
     ]);
-    expect(transcript).toBe('Atlas: Olá, tudo bem?\nCliente: Tudo sim, pode mandar a proposta.');
+    expect(transcript).toBe('Vendedor: Olá, tudo bem?\nCliente: Tudo sim, pode mandar a proposta.');
   });
 });
 

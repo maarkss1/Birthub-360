@@ -692,6 +692,9 @@ function CadenceRunsSection() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div className="flex items-center gap-1" role="group" aria-label="Filtrar por status">
             {STATUS_FILTERS.map((status) => (
               <button
@@ -701,7 +704,7 @@ function CadenceRunsSection() {
                 aria-pressed={statusFilter.has(status)}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                   statusFilter.has(status)
-                    ? 'bg-brand-active text-white border-brand-active'
+                    ? 'bg-brand-active text-on-brand border-brand-active'
                     : 'bg-surface-2 text-ink-2 border-line hover:text-ink'
                 }`}
               >
@@ -1443,7 +1446,7 @@ function JourneyTemplatesDialog({
     <Dialog
       isOpen={isOpen}
       onClose={onClose}
-      title="Modelos de Jornada do Cliente (AtlasGR & TotalTrac)"
+      title="Modelos de Jornada do Cliente (Birth Hub 360 & Birth Hub 360)"
       maxWidth="max-w-3xl"
     >
       <div className="space-y-4">
@@ -1469,7 +1472,7 @@ function JourneyTemplatesDialog({
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-extrabold text-sm text-ink">{tpl.name}</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand/10 text-brand-active dark:text-brand-2">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand/10 text-brand-ink dark:text-brand">
                           {tpl.category}
                         </span>
                       </div>

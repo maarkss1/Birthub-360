@@ -17,7 +17,7 @@ export function PropostaComercialHub() {
   const proposalsList = [
     {
       file: 'Modelo_Proposta_Completa_FINAL_REVISADO.html',
-      name: 'Proposta Comercial Completa Atlas GR',
+      name: 'Proposta Comercial Completa',
       desc: 'Solução integral de GR, Profile e Conectividade',
       tag: 'Completa',
     },
@@ -29,19 +29,19 @@ export function PropostaComercialHub() {
     },
     {
       file: 'Modelo_Proposta_Profile_Cadastro_Consulta_FINAL_REVISADO.html',
-      name: 'Atlas Profile — Cadastro & Consulta',
+      name: 'Perfil Securitário — Cadastro & Consulta',
       desc: 'Análise cadastral e histórico de profissionais',
       tag: 'Profile',
     },
     {
       file: 'Modelo_Proposta_Profile_GR_Avulso_FINAL_REVISADO.html',
-      name: 'Atlas Profile — GR Avulso',
+      name: 'Perfil Securitário — GR Avulso',
       desc: 'Consultas sob demanda por viagem ou operação',
       tag: 'Profile Avulso',
     },
     {
       file: 'Modelo_Proposta_Profile_RH_FINAL_REVISADO.html',
-      name: 'Atlas Profile — Recursos Humanos',
+      name: 'Perfil Securitário — Recursos Humanos',
       desc: 'Validação de equipe própria e contratados',
       tag: 'RH',
     },
@@ -106,7 +106,7 @@ export function PropostaComercialHub() {
               <Gauge className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[10px] font-semibold text-ink-2">Cockpit Atlas GR</div>
+              <div className="text-[10px] font-semibold text-ink-2">Cockpit Logística & Risco</div>
               <div className="text-xs font-bold text-ink">SDR & Forecast</div>
             </div>
           </div>
@@ -115,7 +115,7 @@ export function PropostaComercialHub() {
               <Layers className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[10px] font-semibold text-ink-2">Cockpit Total Trac</div>
+              <div className="text-[10px] font-semibold text-ink-2">Cockpit Birth Hub 360</div>
               <div className="text-xs font-bold text-ink">Evolução & Extração</div>
             </div>
           </div>
@@ -134,7 +134,8 @@ export function PropostaComercialHub() {
       {/* Main Tabs Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('selecao');
@@ -147,7 +148,8 @@ export function PropostaComercialHub() {
           >
             Central de Seleção de Propostas
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('modelos');
@@ -160,7 +162,8 @@ export function PropostaComercialHub() {
           >
             Modelos de Propostas (7)
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('cockpit-atlas');
@@ -171,9 +174,10 @@ export function PropostaComercialHub() {
                 : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'
             }`}
           >
-            Cockpit Comercial Atlas GR
+            Cockpit Comercial — Logística & Risco
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('cockpit-totaltrac');
@@ -184,7 +188,7 @@ export function PropostaComercialHub() {
                 : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'
             }`}
           >
-            Cockpit Comercial Total Trac
+            Cockpit Comercial Birth Hub 360
           </button>
         </div>
 
@@ -223,7 +227,8 @@ export function PropostaComercialHub() {
 
               <div className="space-y-1.5 pt-1">
                 {filteredProposals.map((p) => (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={p.file}
                     onClick={() => {
                       SoundFX.play('focus');

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AtlasOrb } from '../../../components/ui/AtlasOrb';
+import { BrandOrb } from '../../../components/ui/BrandOrb';
 import { Button } from '../../../components/ui/Button';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { SoundFX } from '../../../lib/soundEffects';
 import { ChevronRight, X } from 'lucide-react';
@@ -23,7 +22,7 @@ const steps: TourStep[] = [
   {
     id: 2,
     message:
-      'Aqui na página inicial, você deve escolher em qual operação deseja trabalhar: AtlasGR ou Total Trac. Cada uma tem ferramentas e identidades próprias.',
+      'Aqui na página inicial, você deve escolher em qual operação deseja trabalhar: Birth Hub 360. Cada uma tem ferramentas e identidades próprias.',
     position: 'left-center',
   },
   {
@@ -43,7 +42,6 @@ const steps: TourStep[] = [
 export function OnboardingTour() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const { isAtlas } = useBrandAccent();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -122,11 +120,9 @@ export function OnboardingTour() {
         className={`absolute flex flex-col items-center pointer-events-auto ${getPositionClasses(step.position)}`}
       >
         <div className="relative mb-6">
-          <AtlasOrb size={180} />
+          <BrandOrb size={180} />
           {/* Pulsing indicator behind the orb */}
-          <div
-            className={`absolute inset-0 rounded-full animate-ping opacity-20 ${isAtlas ? 'bg-brand' : 'bg-brand-2'}`}
-          />
+          <div className={`absolute inset-0 rounded-full animate-ping opacity-20 bg-brand`} />
         </div>
 
         <motion.div
@@ -141,13 +137,14 @@ export function OnboardingTour() {
         >
           {/* Subtle glow inside tooltip */}
           <div
-            className={`absolute top-0 inset-x-0 h-1 ${isAtlas ? 'bg-gradient-to-r from-brand/0 via-brand to-brand/0' : 'bg-gradient-to-r from-brand-2/0 via-brand-2 to-brand-2/0'}`}
+            className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-brand/0 via-brand to-brand/0`}
           />
 
           <p className="text-base font-semibold leading-relaxed mb-6">{step.message}</p>
 
           <div className="flex w-full justify-between items-center mt-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={handleClose}
               className={`text-xs font-semibold transition-colors flex items-center gap-1 ${
                 theme === 'light'
@@ -159,7 +156,7 @@ export function OnboardingTour() {
             </button>
             <Button
               onClick={handleNext}
-              className={`${isAtlas ? 'bg-brand-active hover:bg-orange-600' : 'bg-brand-2-active hover:bg-sky-600'} text-white shadow-lg`}
+              className={`bg-brand text-on-brand hover:bg-brand-active shadow-lg`}
             >
               {currentStep === steps.length - 1 ? 'Começar' : 'Avançar'}{' '}
               <ChevronRight size={16} className="ml-1" />

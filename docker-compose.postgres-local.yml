@@ -18,8 +18,8 @@ services:
     build:
       context: ./docker/postgres
       dockerfile: Dockerfile
-    image: atlasgr/postgres-intelligence:16
-    container_name: atlas_postgres
+    image: birthhub360/postgres-intelligence:16
+    container_name: birthhub_postgres
     environment:
       # Superusuario de bootstrap — usado só pela inicialização do container (criar a extension
       # vector e o papel restrito abaixo). Nada deve conectar como este usuário fora do bootstrap
@@ -41,7 +41,7 @@ services:
     # redimensionar segmento de memória compartilhada não é falta de espaço em disco.
     shm_size: '1gb'
     volumes:
-      - atlas_pgdata:/var/lib/postgresql/data
+      - birthhub_pgdata:/var/lib/postgresql/data
       # Só roda na primeira inicialização de um volume novo (comportamento padrão da imagem
       # oficial do Postgres). Volume já existente: rode scripts/db/bootstrap-app-role.sh manualmente.
       - ./scripts/db/create-app-role.sql:/docker-entrypoint-initdb.d/create-app-role.sql.tpl:ro
@@ -58,4 +58,4 @@ services:
       retries: 5
 
 volumes:
-  atlas_pgdata:
+  birthhub_pgdata:

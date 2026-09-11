@@ -9,7 +9,7 @@
 > seção "O que esta sessão não pôde validar" no fim deste guia antes de considerar isso concluído.
 > Ver [`docs/deploy/README.md`](README.md) para o inventário completo de caminhos.
 
-Este guia orienta o provisionamento, configuração e deploy da **Central de Inteligência Comercial AtlasGR** em uma instância de computação no **Oracle Cloud Infrastructure (OCI)**, compatível com instâncias Always Free quando disponíveis e com instâncias dedicadas.
+Este guia orienta o provisionamento, configuração e deploy da **Birth Hub 360º** em uma instância de computação no **Oracle Cloud Infrastructure (OCI)**, compatível com instâncias Always Free quando disponíveis e com instâncias dedicadas.
 
 ---
 
@@ -108,7 +108,7 @@ Faça backup seguro dos segredos por um mecanismo apropriado à operação. Não
 **não** atualiza a instância Oracle sozinho — diferente do Render (`autoDeployTrigger: commit`), o
 caminho Oracle dependia inteiramente de alguém rodar `git pull` + `./scripts/deploy-oci.sh`
 manualmente, via SSH, dentro da instância. `.github/workflows/deploy-oci.yml` fecha essa lacuna:
-dispara automaticamente depois que `ci.yml` ("Central AtlasGR Release") passar em `main` (mesmo
+dispara automaticamente depois que `ci.yml` ("Central Birth Hub 360 Release") passar em `main` (mesmo
 padrão de gate já usado em `docker-publish.yml` — nunca deploya com CI vermelho), conecta via SSH e
 roda exatamente os mesmos passos manuais (`git fetch`/`reset --hard origin/main` +
 `scripts/deploy-oci.sh` + health checks).
@@ -139,7 +139,7 @@ e a primeira geração de `.env.production`) e para qualquer intervenção fora 
 
 **Stack mínimo do MVP** (sobe sempre, com `docker compose ... up -d`, sem flags extras):
 
-1. **`app`**: monólito AtlasGR, frontend e API.
+1. **`app`**: monólito Birth Hub 360, frontend e API.
 2. **`postgres`**: PostgreSQL com as extensões exigidas pela aplicação.
 3. **`caddy`**: reverse proxy e terminação TLS.
 
@@ -212,6 +212,12 @@ docker exec -i atlasgr_postgres psql -U prospector -d prospectordb -tAc "show ss
 regra TCP 5432 por máquina de desenvolvimento, com Source CIDR `= <IP público da máquina>/32`
 (descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a única barreira de
 rede antes da autenticação por senha. IP dinâmico mudou = atualizar a regra.
+
+Achado real (2026-09-08): a operadora da máquina de desenvolvimento usa NAT de carrier — o IP de
+saída variou entre `170.231.96.140` e `170.231.96.152` em chamadas consecutivas, e horas antes era
+`201.33.120.202`. Um `/32` fixo quebra sem aviso nesse cenário; rode `curl -4 ifconfig.me` várias
+vezes e, se a faixa oscilar, libere o bloco `/24` correspondente (ex.: `170.231.96.0/24`) em vez
+de um único host — ainda muito mais restrito que `0.0.0.0/0`.
 
 **Na máquina de desenvolvimento**, pegue a senha do papel de aplicação diretamente da instância
 (não circula por chat/issue/PR) e coloque no `.env`:

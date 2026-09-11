@@ -1,7 +1,7 @@
 /**
  * mem0 — Memória persistente para agentes IA
  *
- * Resolve o gap mapeado em PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md:
+ * Resolve o gap mapeado em PRODUCT_EXPERIENCE.md:
  * "AIDockWidget e useAssistantChat não lembram contexto entre sessões".
  *
  * mem0 persiste memória por userId + agentId, com backend configurável:
@@ -48,7 +48,7 @@ const MEM0_CONFIG = {
       model: process.env.MEM0_EMBEDDING_MODEL ?? 'text-embedding-3-small',
     },
   },
-  // Separação de memórias por tenant (AtlasGR / TotalTrac)
+  // Separação de memórias por tenant (Birth Hub 360 / Birth Hub 360)
   // O userId DEVE sempre incluir o tenantId para garantir isolamento:
   // ex: "org_atlas_123:usr_abc" — nunca apenas "usr_abc"
   version: 'v1.1',

@@ -33,6 +33,7 @@ import { toast } from '../../../lib/toast';
 import { clientLogger } from '../../../lib/clientLogger';
 import type { PaletteIntent } from '../../../lib/paletteIntent';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { Button } from '../../../components/ui/Button';
 import { SoundFX } from '../../../lib/soundEffects';
 import type React from 'react';
 
@@ -345,7 +346,7 @@ export function ActivityList() {
                   SoundFX.play('navigate');
                   setFilterMineOnly(false);
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${!filterMineOnly ? 'bg-brand-active text-white' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${!filterMineOnly ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:text-ink'}`}
               >
                 Equipe Toda
               </button>
@@ -355,7 +356,7 @@ export function ActivityList() {
                   SoundFX.play('navigate');
                   setFilterMineOnly(true);
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${filterMineOnly ? 'bg-brand-active text-white' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${filterMineOnly ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:text-ink'}`}
               >
                 Minhas Atividades {currentUser?.name ? `(${currentUser.name})` : ''}
               </button>
@@ -416,7 +417,7 @@ export function ActivityList() {
                 SoundFX.play('focus');
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-1.5 bg-brand-active text-white font-black text-xs px-4 py-2 rounded-xl shadow-md hover:brightness-110 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 bg-brand-active text-on-brand font-black text-xs px-4 py-2 rounded-xl shadow-md hover:brightness-110 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Nova Atividade
             </button>
@@ -465,7 +466,7 @@ export function ActivityList() {
             <button
               type="button"
               onClick={() => setIsFormOpen(true)}
-              className="mt-2 flex items-center gap-2 bg-brand-active text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer"
+              className="mt-2 flex items-center gap-2 bg-brand-active text-on-brand font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Criar Primeira Atividade
             </button>
@@ -837,18 +838,10 @@ export function ActivityList() {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="w-full bg-gradient-to-r from-brand to-brand-2 text-white font-extrabold py-3.5 rounded-2xl text-xs shadow-lg shadow-brand/30 hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                {isSaving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
+              <Button type="submit" loading={isSaving} className="w-full">
+                {!isSaving && <Save className="w-4 h-4 mr-2" />}
                 {isSaving ? 'Salvando...' : 'Salvar Atividade'}
-              </button>
+              </Button>
             </form>
           </motion.div>
         </div>

@@ -12,6 +12,12 @@ import type {
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import { listBitrixConnections } from './connections.js';
 import { getBitrixUsers } from './deals.js';
+import {
+  crmEntityFromTaskLink,
+  crmEntityTypeFromOwnerTypeId,
+  resolveCrmEnrichment,
+} from './dailyPlanEnrichment.service.js';
+import type { CrmEnrichedInfo, CrmEntityType } from './dailyPlanEnrichment.service.js';
 import { resolveOwnBitrixUserId } from './userMapping.js';
 
 export type {
@@ -36,7 +42,7 @@ function deriveTacticalGuidance(
     case 'CALL':
       return {
         recommendedAction: `Realizar ligação de qualificação/avanço com ${target}. Confirmar cenário de frota e dor principal.`,
-        scriptOrPrompt: `Olá ${contactName || 'tudo bem'}! Aqui é da AtlasGR. Estou retornando nosso contato sobre a visibilidade e controle de frota da sua operação. Como estão as operações hoje?`,
+        scriptOrPrompt: `Olá ${contactName || 'tudo bem'}! Aqui é da Birth Hub 360. Estou retornando nosso contato sobre a visibilidade e controle de frota da sua operação. Como estão as operações hoje?`,
         suggestedHook: 'Enfatizar redução de custos, rastreamento inteligente e suporte ágil 24/7.',
       };
     case 'WHATSAPP':
@@ -59,10 +65,34 @@ function deriveTacticalGuidance(
       };
     default:
       return {
-        recommendedAction: `Executar a tarefa "${title}" e documentar o resultado nas observações para manter o histórico no Bitrix.`,
+        recommendedAction:
+          contactName || companyName
+            ? `Executar a tarefa "${title}" para ${target} e documentar o resultado nas observações para manter o histórico no Bitrix.`
+            : `Executar a tarefa "${title}" e documentar o resultado nas observações para manter o histórico no Bitrix.`,
         scriptOrPrompt: 'Registrar evidência clara e atualizar status do lead.',
         suggestedHook: 'Concluir dentro do prazo para manter SLA operacional verde.',
       };
+  }
+}
+
+/**
+ * `TYPE_ID` de `crm.activity.list` (`crm.enum.activitytype`, método legado mas ainda documentado
+ * e funcional — os valores do enum padrão do Bitrix24 não são customizáveis por portal, só é
+ * possível registrar tipos adicionais acima de 6 via `crm.activity.type.add`):
+ * 1 = Reunião, 2 = Ligação, 3 = Tarefa, 4 = E-mail, 5 = Ação, 6 = Ação do usuário. Sem heurística
+ * de texto no assunto (não existe tipo "WhatsApp" nativo no Bitrix24) — tipo 5/6/desconhecido cai
+ * no default Ligação, o mesmo que o Bitrix mostra como ícone genérico para esses casos raros.
+ */
+function channelFromActivityTypeId(typeId?: string | number): DailyPlanItemChannel {
+  switch (String(typeId ?? '')) {
+    case '1':
+      return 'MEETING';
+    case '3':
+      return 'TASK';
+    case '4':
+      return 'EMAIL';
+    default:
+      return 'CALL';
   }
 }
 
@@ -73,6 +103,8 @@ interface BitrixTaskRaw {
   DEADLINE?: string;
   STATUS?: string;
   PRIORITY?: string;
+  /** Vínculo com CRM (lead/negócio/contato/empresa) — ex.: ["D_123"], ["CO_45", "C_9"]. */
+  UF_CRM_TASK?: string[];
 }
 
 interface BitrixActivityRaw {
@@ -103,20 +135,20 @@ const MAX_BITRIX_ACTIVITIES = 300;
 const MAX_BITRIX_TASKS = 200;
 const MAX_BITRIX_LEADS = 10;
 
-function parseDate(value: Date | string | undefined | null): Date | null {
+export function parseDate(value: Date | string | undefined | null): Date | null {
   if (!value) return null;
   const d = value instanceof Date ? value : new Date(value);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
 /** YYYY-MM-DD no fuso do time comercial. */
-function toPlanDate(value: Date | string | undefined | null): string | undefined {
+export function toPlanDate(value: Date | string | undefined | null): string | undefined {
   const d = parseDate(value);
   return d ? d.toLocaleDateString('en-CA', { timeZone: PLAN_TIMEZONE }) : undefined;
 }
 
 /** HH:MM no fuso do time comercial. */
-function toPlanTime(value: Date | string | undefined | null): string | undefined {
+export function toPlanTime(value: Date | string | undefined | null): string | undefined {
   const d = parseDate(value);
   return d
     ? d.toLocaleTimeString('pt-BR', {
@@ -151,7 +183,9 @@ async function fetchAllBitrixPages<T>(
 /** Conexão Bitrix da organização via `listBitrixConnections`, que autoconecta o webhook padrão da
  * marca (env) quando ainda não há conexão salva — consultar a tabela direto devolvia
  * "desconectado" para o mesmo tenant que a tela de Integrações mostrava como conectado. */
-async function resolvePlanConnection(organizationId: string): Promise<{ id: string } | null> {
+export async function resolvePlanConnection(
+  organizationId: string,
+): Promise<{ id: string } | null> {
   const connections = await listBitrixConnections(organizationId);
   return connections[0] ?? null;
 }
@@ -185,6 +219,7 @@ interface BitrixLeadRaw {
   COMPANY_TITLE?: string;
   STATUS_ID?: string;
   PHONE?: Array<{ VALUE?: string }>;
+  EMAIL?: Array<{ VALUE?: string }>;
 }
 
 /**
@@ -214,6 +249,10 @@ export async function fetchUserDailyPlan(
   let rawBitrixTasks: BitrixTaskRaw[] = [];
   let rawBitrixActivities: BitrixActivityRaw[] = [];
   let rawBitrixLeads: BitrixLeadRaw[] = [];
+  /** Nome do decisor/empresa/telefone/e-mail resolvidos para as atividades e tarefas do Bitrix24
+   * (chave `${tipo}:${id}`, ver `resolveCrmEnrichment`) — sem isto, "Contatar cliente" chega à UI
+   * sem nenhum dado real de quem é o cliente. */
+  let crmEnrichment = new Map<string, CrmEnrichedInfo>();
 
   if (connection) {
     try {
@@ -243,7 +282,15 @@ export async function fetchUserDailyPlan(
             'tasks.task.list',
             {
               filter: { RESPONSIBLE_ID: bitrixUserId, '!STATUS': '5' },
-              select: ['ID', 'TITLE', 'DESCRIPTION', 'DEADLINE', 'STATUS', 'PRIORITY'],
+              select: [
+                'ID',
+                'TITLE',
+                'DESCRIPTION',
+                'DEADLINE',
+                'STATUS',
+                'PRIORITY',
+                'UF_CRM_TASK',
+              ],
               order: { DEADLINE: 'ASC' },
             },
             (p) => (p as { result?: { tasks?: BitrixTaskRaw[] } }).result?.tasks,
@@ -296,7 +343,16 @@ export async function fetchUserDailyPlan(
             'crm.lead.list',
             {
               filter: { ASSIGNED_BY_ID: bitrixUserId, '!STATUS_SEMANTIC_ID': ['S', 'F'] },
-              select: ['ID', 'TITLE', 'NAME', 'LAST_NAME', 'COMPANY_TITLE', 'STATUS_ID', 'PHONE'],
+              select: [
+                'ID',
+                'TITLE',
+                'NAME',
+                'LAST_NAME',
+                'COMPANY_TITLE',
+                'STATUS_ID',
+                'PHONE',
+                'EMAIL',
+              ],
               order: { DATE_MODIFY: 'DESC' },
             },
           );
@@ -305,6 +361,31 @@ export async function fetchUserDailyPlan(
           logger.warn(
             { err, organizationId, bitrixUserId },
             '[daily-plan] Falha ao listar leads do Bitrix24',
+          );
+        }
+
+        // Nome do decisor/empresa/telefone/e-mail reais por trás de cada atividade e tarefa —
+        // `crm.activity.list`/`tasks.task.list` só devolvem o vínculo (OWNER_ID/UF_CRM_TASK), não
+        // os dados do contato/empresa em si.
+        try {
+          const activityRefs = rawBitrixActivities
+            .map((act) => {
+              const type = crmEntityTypeFromOwnerTypeId(act.OWNER_TYPE_ID);
+              const id = act.OWNER_ID != null ? String(act.OWNER_ID) : undefined;
+              return type && id ? { type, id } : null;
+            })
+            .filter((ref): ref is { type: CrmEntityType; id: string } => ref != null);
+
+          const taskRefs = rawBitrixTasks
+            .flatMap((t) => (Array.isArray(t.UF_CRM_TASK) ? t.UF_CRM_TASK : []))
+            .map(crmEntityFromTaskLink)
+            .filter((ref): ref is { type: CrmEntityType; id: string } => ref != null);
+
+          crmEnrichment = await resolveCrmEnrichment(webhookUrl, [...activityRefs, ...taskRefs]);
+        } catch (err) {
+          logger.warn(
+            { err, organizationId, bitrixUserId },
+            '[daily-plan] Falha ao enriquecer atividades/tarefas com contato/empresa do Bitrix24 — seguem sem esses dados',
           );
         }
       }
@@ -389,23 +470,27 @@ export async function fetchUserDailyPlan(
 
   // 3.2 Atividades Bitrix
   for (const act of rawBitrixActivities) {
-    let channel: DailyPlanItemChannel = 'CALL';
-    if (act.TYPE_ID === '1' || act.TYPE_ID === 1) channel = 'MEETING';
-    else if (act.TYPE_ID === '4' || act.TYPE_ID === 4) channel = 'EMAIL';
-    else if (act.SUBJECT?.toLowerCase().includes('whats')) channel = 'WHATSAPP';
+    const channel = channelFromActivityTypeId(act.TYPE_ID);
 
     const comm = Array.isArray(act.COMMUNICATIONS) ? act.COMMUNICATIONS[0] : null;
     const dueRaw = act.DEADLINE || act.START_TIME;
     const dueDate = toPlanDate(dueRaw);
     const isOverdue = !!dueDate && dueDate < todayStr;
-    const isToday = dueDate === todayStr;
-    const isFlagged = channel === 'MEETING' || act.PRIORITY === '2';
-    // Atrasada ou reunião/alta prioridade de hoje → URGENT; demais de hoje ou sem prazo → HIGH;
-    // agendada para os próximos dias → MEDIUM.
-    const priority: DailyPlanPriorityLevel =
-      isOverdue || (isToday && isFlagged) ? 'URGENT' : isToday || !dueDate ? 'HIGH' : 'MEDIUM';
+    // Prioridade real do Bitrix24 (crm.enum.activitypriority: 1=baixa, 2=média, 3=alta) — atrasada
+    // sempre vira URGENT (o Bitrix não sinaliza isso na listagem, mas é informação real e
+    // objetiva); alta prioridade do Bitrix vira HIGH; o resto (média/baixa/sem valor) fica MEDIUM.
+    const priority: DailyPlanPriorityLevel = isOverdue
+      ? 'URGENT'
+      : String(act.PRIORITY) === '3'
+        ? 'HIGH'
+        : 'MEDIUM';
     const ownerType = String(act.OWNER_TYPE_ID ?? '');
     const ownerId = act.OWNER_ID != null ? String(act.OWNER_ID) : undefined;
+    const ownerEntityType = crmEntityTypeFromOwnerTypeId(act.OWNER_TYPE_ID);
+    const enrichment =
+      ownerEntityType && ownerId ? crmEnrichment.get(`${ownerEntityType}:${ownerId}`) : undefined;
+    const contactName = enrichment?.contactName;
+    const companyName = enrichment?.companyName;
 
     items.push({
       id: `bitrix_act_${act.ID}`,
@@ -414,14 +499,24 @@ export async function fetchUserDailyPlan(
       channel,
       title: act.SUBJECT || 'Atividade Bitrix24',
       description: act.DESCRIPTION || undefined,
-      phone: comm?.VALUE || undefined,
+      contactName,
+      companyName,
+      phone: comm?.VALUE || enrichment?.phone || undefined,
+      email: enrichment?.email,
       dueDate,
       dueTime: toPlanTime(dueRaw),
       priority,
       completed: false,
       bitrixLeadId: ownerType === '1' ? ownerId : undefined,
       bitrixDealId: ownerType === '2' ? ownerId : undefined,
-      tacticalGuidance: deriveTacticalGuidance(channel, act.SUBJECT || 'Atividade'),
+      bitrixEntityType: ownerEntityType ?? undefined,
+      bitrixEntityId: ownerId,
+      tacticalGuidance: deriveTacticalGuidance(
+        channel,
+        act.SUBJECT || 'Atividade',
+        contactName,
+        companyName,
+      ),
       notes: [],
     });
   }
@@ -431,11 +526,20 @@ export async function fetchUserDailyPlan(
     const deadline = parseDate(t.DEADLINE);
     const dueDate = toPlanDate(deadline);
     const isOverdue = !!deadline && deadline < now;
+    // Prioridade real do Bitrix24 (tasks.task PRIORITY: 0=baixa, 1=média/padrão, 2=alta) — mesmo
+    // critério da atividade CRM acima: atrasada vira URGENT, alta prioridade vira HIGH, resto MEDIUM.
     const priority: DailyPlanPriorityLevel = isOverdue
       ? 'URGENT'
-      : dueDate === todayStr || t.PRIORITY === '2'
+      : String(t.PRIORITY) === '2'
         ? 'HIGH'
         : 'MEDIUM';
+
+    const crmLink = (Array.isArray(t.UF_CRM_TASK) ? t.UF_CRM_TASK : [])
+      .map(crmEntityFromTaskLink)
+      .find((ref): ref is { type: CrmEntityType; id: string } => ref != null);
+    const enrichment = crmLink ? crmEnrichment.get(`${crmLink.type}:${crmLink.id}`) : undefined;
+    const contactName = enrichment?.contactName;
+    const companyName = enrichment?.companyName;
 
     items.push({
       id: `bitrix_task_${t.ID}`,
@@ -444,11 +548,24 @@ export async function fetchUserDailyPlan(
       channel: 'TASK',
       title: t.TITLE || 'Tarefa Bitrix24',
       description: t.DESCRIPTION || undefined,
+      contactName,
+      companyName,
+      phone: enrichment?.phone,
+      email: enrichment?.email,
+      bitrixLeadId: crmLink?.type === 'lead' ? crmLink.id : undefined,
+      bitrixDealId: crmLink?.type === 'deal' ? crmLink.id : undefined,
+      bitrixEntityType: crmLink?.type,
+      bitrixEntityId: crmLink?.id,
       dueDate,
       dueTime: toPlanTime(deadline),
       priority,
       completed: t.STATUS === '5',
-      tacticalGuidance: deriveTacticalGuidance('TASK', t.TITLE || 'Tarefa'),
+      tacticalGuidance: deriveTacticalGuidance(
+        'TASK',
+        t.TITLE || 'Tarefa',
+        contactName,
+        companyName,
+      ),
       notes: [],
     });
   }
@@ -463,6 +580,8 @@ export async function fetchUserDailyPlan(
       id: `bitrix_lead_${l.ID}`,
       externalId: String(l.ID),
       bitrixLeadId: String(l.ID),
+      bitrixEntityType: 'lead',
+      bitrixEntityId: String(l.ID),
       origin: 'BITRIX_LEAD',
       channel: 'WHATSAPP',
       title: `Follow-up de Lead: ${leadName}`,
@@ -564,7 +683,7 @@ export async function completeDailyPlanItem(
       fields: {
         ENTITY_ID: rawId,
         ENTITY_TYPE: 'lead',
-        COMMENT: 'Contato diário realizado via Central AtlasGR.',
+        COMMENT: 'Contato diário realizado via Central Birth Hub 360.',
       },
     });
     return { success: true, message: 'Contato com lead registrado no Bitrix24.' };
@@ -582,6 +701,11 @@ export async function addDailyPlanItemNote(
   itemType: DailyPlanItemOrigin,
   itemId: string,
   noteText: string,
+  /** `item.bitrixEntityType`/`bitrixEntityId` (ver `DailyPlanItem`) — entidade CRM real por trás
+   * da atividade (lead/negócio/contato/empresa). Sem isso, uma atividade vinculada a negócio ou
+   * empresa postaria o comentário em `ENTITY_TYPE: 'lead'` com o ID errado. */
+  entityType?: string,
+  entityId?: string,
 ): Promise<{ success: boolean; message: string }> {
   if (!noteText.trim()) throw new AppError('A observação não pode ser vazia.', 400);
 
@@ -624,8 +748,8 @@ export async function addDailyPlanItemNote(
   if (itemType === 'BITRIX_ACTIVITY' || itemType === 'BITRIX_LEAD') {
     await callBitrix(webhookUrl, 'crm.timeline.comment.add', {
       fields: {
-        ENTITY_ID: rawId,
-        ENTITY_TYPE: 'lead',
+        ENTITY_ID: entityId || rawId,
+        ENTITY_TYPE: entityType || 'lead',
         COMMENT: noteText,
       },
     });

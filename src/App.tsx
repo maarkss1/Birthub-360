@@ -1,23 +1,28 @@
-import { lazy, Suspense, useCallback, useState } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
+import { lazy, Suspense, useCallback, useState } from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { MainLayout } from './components/layout/MainLayout';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
-import { RequireRole } from './components/layout/RequireRole';
 import { RequireModuleAccess } from './components/layout/RequireModuleAccess';
+import { RequireRole } from './components/layout/RequireRole';
+import { ClickSpark } from './components/ui/ClickSpark';
+import { Skeleton } from './components/ui/Skeleton';
+import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { BrandProvider } from './contexts/BrandContext';
+import { DailyClosingProvider } from './contexts/DailyClosingContext';
+import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import {
   COMMERCIAL_INTELLIGENCE_ROLES,
-  MESA_TRATAMENTO_ROLES,
   COPILOTO_IA_ROLES,
+  MESA_TRATAMENTO_ROLES,
 } from './lib/auth/authorization';
-import { BrandProvider } from './contexts/BrandContext';
-import { AuthProvider } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
-import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { Skeleton } from './components/ui/Skeleton';
-import { ClickSpark } from './components/ui/ClickSpark';
+
+const DesignLabPage = lazy(() =>
+  import('./features/design-lab/DesignLabPage').then((m) => ({ default: m.DesignLabPage })),
+);
 
 // Lazy loaded feature modules
 const SocialSellingHub = lazy(() =>
@@ -25,9 +30,9 @@ const SocialSellingHub = lazy(() =>
     default: m.SocialSellingHub,
   })),
 );
-const TreinamentoAtlasGRHub = lazy(() =>
-  import('./features/treinamento-atlasgr/components/TreinamentoAtlasGRHub').then((m) => ({
-    default: m.TreinamentoAtlasGRHub,
+const TreinamentoHub = lazy(() =>
+  import('./features/treinamento/components/TreinamentoHub').then((m) => ({
+    default: m.TreinamentoHub,
   })),
 );
 const PropostaComercialHub = lazy(() =>
@@ -42,9 +47,14 @@ const HubInteligenciaMarketingHub = lazy(() =>
     }),
   ),
 );
-const SinglePageDashboard = lazy(() =>
-  import('./features/dashboard/components/SinglePageDashboard').then((m) => ({
-    default: m.SinglePageDashboard,
+const AdaptiveDashboard = lazy(() =>
+  import('./features/dashboard/components/AdaptiveDashboard').then((m) => ({
+    default: m.AdaptiveDashboard,
+  })),
+);
+const WorkspaceHome = lazy(() =>
+  import('./features/workspace/components/WorkspaceHome').then((m) => ({
+    default: m.WorkspaceHome,
   })),
 );
 const HubScreen = lazy(() =>
@@ -187,11 +197,6 @@ const OnboardingTour = lazy(() =>
 const WelcomeScreen = lazy(() =>
   import('./features/auth/components/WelcomeScreen').then((m) => ({ default: m.WelcomeScreen })),
 );
-const SelectionScreen = lazy(() =>
-  import('./features/auth/components/SelectionScreen').then((m) => ({
-    default: m.SelectionScreen,
-  })),
-);
 const Ldr = lazy(() => import('./pages/Ldr').then((m) => ({ default: m.Ldr })));
 const Account360 = lazy(() =>
   import('./features/market-intelligence/components/Account360').then((m) => ({
@@ -237,7 +242,7 @@ function PageFallback() {
 }
 
 function AppLayout() {
-  // OnboardingTour importa AtlasOrb (@react-three/fiber/three), um chunk de ~900kB — React.lazy
+  // OnboardingTour importa BrandOrb (@react-three/fiber/three), um chunk de ~900kB — React.lazy
   // só adia QUANDO o import roda, não SE ele roda. Sem esta checagem aqui, <OnboardingTour />
   // sendo renderizado incondicionalmente disparava esse import em toda montagem do MainLayout
   // (ou seja, em toda navegação autenticada), mesmo para quem já viu o tour — a checagem de
@@ -260,7 +265,7 @@ function AppLayout() {
           Router casar estes paths aninhados contra o restante da URL automaticamente. */}
       <Suspense fallback={<PageFallback />}>
         <Routes>
-          <Route index element={<SinglePageDashboard />} />
+          <Route index element={<AdaptiveDashboard />} />
           {/* Alias explícito para /app/dashboard: TabType inclui 'dashboard' e Sidebar/
               CommandPalette navegam para `/app/${tab}` para TODO TabType (useNavigationBusBridge é
               a única exceção, com mapeamento especial só ali — ver comentário nesse hook). Sem esta
@@ -269,7 +274,14 @@ function AppLayout() {
               "Painel Central" na Sidebar ou no Command Palette (achado real desta auditoria, não
               coberto pelo teste de useNavigationBusBridge porque aquele hook já tinha o
               contorno certo só para o comando de voz). */}
-          <Route path="dashboard" element={<SinglePageDashboard />} />
+          <Route path="dashboard" element={<AdaptiveDashboard />} />
+          {/* PROMPT 6 — Workspace do cargo (JobRole) do usuário autenticado. Sem RequireRole:
+              qualquer UserRole autenticado pode abrir; o próprio workspace resolve seu estado
+              real (READY/NO_JOB_ROLE/NO_WORKSPACE_DEFINITION) a partir da sessão — nunca de
+              query/body (ver GET /api/workspace/me). Deep link direto nunca revela mais do que a
+              sessão do próprio usuário autoriza: cada módulo/quick action já vem marcado
+              `locked` quando o UserRole real não atinge o gate daquela rota. */}
+          <Route path="workspace" element={<WorkspaceHome />} />
           <Route path="prospect" element={<ProspectingHub />} />
           <Route path="crm" element={<CrmBoard />} />
           <Route path="crm360" element={<CrmOverview onNavigate={handleCrmOverviewNavigate} />} />
@@ -387,98 +399,111 @@ export default function App() {
         <ExperienceModeProvider>
           <BrandProvider>
             <AuthProvider>
-              <ActiveRecordProvider>
-                <ClickSpark />
-                <Suspense fallback={<PageFallback />}>
-                  <Routes>
-                    {/* Porta de entrada do produto: pedido explícito do usuário ("primeira tela
-                        será o Hub"/"crie uma primeira tela de login com os elementos lindos do
-                        Hub") — em vez de redirecionar direto pro CRM, "/" mostra a tela de login
-                        (mesmo componente de "/login", que continua existindo à parte — ver
-                        tests/e2e/helpers.ts::signUp e outros specs que navegam direto pra lá),
-                        redesenhada com a linguagem visual do Hub Executivo (badges circulares,
-                        glow de canto, sem 3D). Um usuário já autenticado que caia aqui é
-                        redirecionado pro CRM automaticamente (guard dentro do próprio
-                        LoginScreen), então "/" nunca mostra o formulário a quem já está logado. */}
-                    <Route path="/" element={<LoginScreen />} />
-                    <Route path="/welcome" element={<WelcomeScreen />} />
-                    <Route path="/select-brand" element={<SelectionScreen />} />
-                    <Route path="/login" element={<LoginScreen />} />
-                    <Route path="/reset-password" element={<ResetPasswordScreen />} />
-                    <Route path="/book/:slug" element={<PublicBookingPage />} />
-                    {/* Hub Executivo ("os círculos") — tela de destinos pós-login: Central
+              <DailyClosingProvider>
+                <ActiveRecordProvider>
+                  <ClickSpark />
+                  <Suspense fallback={<PageFallback />}>
+                    <Routes>
+                      {/* Porta de entrada do produto — revertido em 2026-09-11 (pedido explícito
+                        do usuário, ver Piloto 001 addendum em .claude/PILOTS.md): "/" volta a
+                        mostrar o portal institucional (WelcomeScreen, mesmo componente de
+                        "/welcome") em vez do formulário de login direto. Entre 2026 e esta data
+                        "/" tinha sido o próprio LoginScreen (pedido anterior, "primeira tela será
+                        o Hub"/"crie uma primeira tela de login com os elementos lindos do Hub") —
+                        essa versão continua existindo e acessível em "/login", só deixou de ser o
+                        que carrega na raiz. O login/cadastro seguem levando direto ao Hub (Pilot
+                        031/032); o CRM (/app) continua fora do destino padrão pós-login. */}
+                      <Route
+                        path="/design-lab/command-language"
+                        element={<DesignLabPage section="command-language" />}
+                      />
+                      <Route
+                        path="/design-lab/components-v2"
+                        element={<DesignLabPage section="components-v2" />}
+                      />
+                      <Route path="/" element={<WelcomeScreen />} />
+                      <Route path="/welcome" element={<WelcomeScreen />} />
+                      {/* `/select-brand` era a escolha entre as duas marcas anteriores. Com marca
+                        única a tela deixou de existir; a rota permanece como redirecionamento
+                        para não quebrar link salvo, atalho de app instalado ou bookmark. */}
+                      <Route path="/select-brand" element={<Navigate to="/welcome" replace />} />
+                      <Route path="/login" element={<LoginScreen />} />
+                      <Route path="/reset-password" element={<ResetPasswordScreen />} />
+                      <Route path="/book/:slug" element={<PublicBookingPage />} />
+                      {/* Hub Executivo ("os círculos") — tela de destinos pós-login: Central
                         Comercial (CRM) + módulos executivos concedidos individualmente via
                         ModuleAccessAdmin (/app/module-access) + atalhos para ferramentas externas
                         (Bitrix24, webmail, portais). Fica fora de /app/* de propósito — sem
                         MainLayout/Sidebar do CRM — mas ainda exige login (ProtectedRoute). */}
-                    <Route
-                      path="/hub"
-                      element={
-                        <ProtectedRoute>
-                          <HubScreen />
-                        </ProtectedRoute>
-                      }
-                    />
-                    {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
+                      <Route
+                        path="/hub"
+                        element={
+                          <ProtectedRoute>
+                            <HubScreen />
+                          </ProtectedRoute>
+                        }
+                      />
+                      {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
                         quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
                         CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
                         ainda exigem login (ProtectedRoute) e a concessão real do módulo
                         (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
                         autorização real vem de ModuleAccessGrant no banco). */}
-                    <Route
-                      path="/social-selling"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="social-selling">
-                            <SocialSellingHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/treinamento-atlasgr"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="treinamento-atlasgr">
-                            <TreinamentoAtlasGRHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/proposta-comercial"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="proposta-comercial">
-                            <PropostaComercialHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/hub-inteligencia-marketing"
-                      element={
-                        <ProtectedRoute>
-                          <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
-                            <HubInteligenciaMarketingHub />
-                          </RequireModuleAccess>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/app/*"
-                      element={
-                        <ProtectedRoute>
-                          <ErrorBoundary>
-                            <AppLayout />
-                          </ErrorBoundary>
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="*" element={<Navigate to="/welcome" replace />} />
-                  </Routes>
-                </Suspense>
-              </ActiveRecordProvider>
+                      <Route
+                        path="/social-selling"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="social-selling">
+                              <SocialSellingHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/treinamento-atlasgr"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="treinamento-atlasgr">
+                              <TreinamentoHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/proposta-comercial"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="proposta-comercial">
+                              <PropostaComercialHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/hub-inteligencia-marketing"
+                        element={
+                          <ProtectedRoute>
+                            <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
+                              <HubInteligenciaMarketingHub />
+                            </RequireModuleAccess>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/app/*"
+                        element={
+                          <ProtectedRoute>
+                            <ErrorBoundary>
+                              <AppLayout />
+                            </ErrorBoundary>
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="*" element={<Navigate to="/welcome" replace />} />
+                    </Routes>
+                  </Suspense>
+                </ActiveRecordProvider>
+              </DailyClosingProvider>
             </AuthProvider>
           </BrandProvider>
         </ExperienceModeProvider>

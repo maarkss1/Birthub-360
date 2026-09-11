@@ -12,7 +12,8 @@ import {
   Trash2,
   WifiOff,
 } from 'lucide-react';
-import { useBrand } from '../../../contexts/BrandContext';
+import { PLAYBOOKS } from '../../../config/playbooks';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { EmptyState } from '../../../components/ui/EmptyState';
@@ -27,7 +28,7 @@ import { toast } from '../../../lib/toast';
 const PAGE_SIZE = 20;
 
 export function QualificationMatrixPage() {
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook, setPlaybook, info: playbookMeta } = useActivePlaybook();
   const { currentUser } = useAuth();
   // DELETE /api/playbook/qualification-matrix/:id exige ADMIN/GESTOR no backend, mas o botão
   // "Excluir" aparecia pra qualquer papel (SDR/CLOSER também podem criar/editar) e só falhava com
@@ -58,7 +59,7 @@ export function QualificationMatrixPage() {
     setLoading(true);
     setError(null);
     playbookApi
-      .listQualificationsPage({ brand: activeBrand, page, limit: PAGE_SIZE })
+      .listQualificationsPage({ brand: playbook, page, limit: PAGE_SIZE })
       .then((res) => {
         setItems(res.data);
         setMeta(res.meta);
@@ -75,7 +76,7 @@ export function QualificationMatrixPage() {
     setPage(1);
   }, []);
 
-  useEffect(load, [activeBrand, page]);
+  useEffect(load, [playbook, page]);
 
   const segments = useMemo(
     () => Array.from(new Set(items.map((item) => item.segment))).sort(),
@@ -138,8 +139,8 @@ export function QualificationMatrixPage() {
             </h1>
             <p className="text-ink-2 text-sm font-medium">
               {meta?.total ?? items.length} pergunta{(meta?.total ?? items.length) !== 1 ? 's' : ''}{' '}
-              de diagnóstico (SPIN/BANT/MEDDPICC) para {brandInfo.name}, com o sinal ideal de
-              resposta esperado.
+              de diagnóstico (SPIN/BANT/MEDDPICC) no playbook {playbookMeta.label}, com o sinal
+              ideal de resposta esperado.
             </p>
           </div>
           <button
@@ -148,7 +149,7 @@ export function QualificationMatrixPage() {
               setEditingItem(null);
               setIsFormOpen(true);
             }}
-            className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-white px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer shrink-0"
+            className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer shrink-0"
           >
             <Plus className="w-5 h-5" /> Nova Pergunta
           </button>
@@ -171,6 +172,18 @@ export function QualificationMatrixPage() {
               className="w-full pl-9 pr-3 py-2 rounded-xl bg-surface-2 text-ink text-xs font-semibold border border-line focus:outline-none focus:ring-1 focus:ring-brand"
             />
           </div>
+          <select
+            aria-label="Playbook"
+            value={playbook}
+            onChange={(e) => setPlaybook(e.target.value as typeof playbook)}
+            className="px-3 py-2 rounded-xl bg-surface-2 text-ink text-xs font-bold border border-brand/40 focus:outline-none focus:ring-1 focus:ring-brand"
+          >
+            {PLAYBOOKS.map((pb) => (
+              <option key={pb.key} value={pb.key}>
+                {pb.label}
+              </option>
+            ))}
+          </select>
           <select
             aria-label="Filtrar por segmento"
             value={selectedSegment}
@@ -243,7 +256,7 @@ export function QualificationMatrixPage() {
                 >
                   <div className="flex items-center justify-between pb-3 border-b border-line flex-wrap gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/15 text-brand-active dark:text-brand-2 font-bold">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/15 text-brand-ink dark:text-brand font-bold">
                         {item.framework} · {item.questionCategory}
                       </span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-info/15 text-info-active dark:text-info font-bold">
@@ -334,7 +347,7 @@ export function QualificationMatrixPage() {
       {isFormOpen && (
         <QualificationItemForm
           item={editingItem}
-          defaultBrand={activeBrand}
+          defaultBrand={playbook}
           onClose={() => setIsFormOpen(false)}
           onSave={() => {
             setIsFormOpen(false);

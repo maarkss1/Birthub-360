@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { api } from '../lib/api';
 import type { ObjectionMatrixItem } from '../features/playbook/playbook.api';
-import type { BrandInfo } from '../contexts/BrandContext';
+import type { PlaybookInfo, PlaybookKey } from '../config/playbooks';
 
 export interface RoleplayMessage {
   sender: 'sdr' | 'buyer';
@@ -12,13 +12,13 @@ export type RoleplayPersona = 'skeptical_cfo' | 'strict_buyer' | 'tech_director'
 
 /**
  * Estado/ações do simulador de roleplay (aba "Roleplay Simulator") do FloatingChatbook —
- * extraído em FRONT-006. `selectedBrand` vem do componente (compartilhado com o assistente e o
- * filtro de matrizes). `objections` vem de `usePlaybookMatrixData` (Fase 4: antes vinha do
+ * extraído em FRONT-006. A chave de playbook vem do componente (compartilhada com o assistente
+ * e o filtro de matrizes). `objections` vem de `usePlaybookMatrixData` (Fase 4: antes vinha do
  * arquivo estático `brandMatrices.ts`).
  */
 export function useRoleplaySimulator(
-  brandInfo: BrandInfo,
-  selectedBrand: 'atlasgr' | 'totaltrac',
+  playbookMeta: PlaybookInfo,
+  selectedBrand: PlaybookKey,
   objections: ObjectionMatrixItem[],
 ) {
   const [roleplayPersona, setRoleplayPersona] = useState<RoleplayPersona>('skeptical_cfo');
@@ -60,7 +60,7 @@ export function useRoleplaySimulator(
           };
     const objectionText = randomObj.objectionText.replace(/[.!?]+$/, '');
 
-    let initialGreeting = '';
+    let initialGreeting: string;
     if (roleplayPersona === 'skeptical_cfo') {
       initialGreeting = `Olá! Sou o CFO. Em nossa operação de ${randomObj.segment}, ${objectionText}. O que a sua solução traz de retorno financeiro para justificar a contratação?`;
     } else if (roleplayPersona === 'strict_buyer') {
@@ -112,8 +112,8 @@ export function useRoleplaySimulator(
         {
           kind: 'roleplay',
           brand: {
-            name: brandInfo.name,
-            description: brandInfo.description,
+            name: playbookMeta.label,
+            description: playbookMeta.description,
           },
           inputs: {
             persona: roleplayPersona,

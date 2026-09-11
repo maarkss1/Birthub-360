@@ -909,7 +909,7 @@ export const accountIntelligenceService = {
       const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
       const intelligence = await service.getIntelligence(companyId);
       const signals = await service.listSignals(companyId, { page: 1, limit: 10 });
-      const systemPrompt = `Você é o Analista de Inteligência Comercial (LDR) do AtlasGR.
+      const systemPrompt = `Você é o Analista de Inteligência Comercial (LDR) do Birth Hub 360.
 Contexto da Empresa:
 - Nome/Razão Social: ${intelligence.account.legalName || intelligence.account.tradeName || 'Desconhecido'}
 - ICP Fit: ${intelligence.account.segment || 'N/A'}

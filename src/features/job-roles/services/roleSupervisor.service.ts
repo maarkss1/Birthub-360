@@ -144,8 +144,10 @@ function chunk<T>(items: T[], size: number): T[][] {
  *  representante canônico do cargo — antes de cair para ordem alfabética de `code` (desempate
  *  determinístico, nunca aleatório). Nunca decide autorização aqui — é só descoberta de
  *  candidato; a decisão real vem de `authorizeCapability` dentro de `runAgentExecution` logo
- *  depois. */
-async function selectAgentForCapability(params: {
+ *  depois. Exportado (não mais módulo-privado) porque `accessRequest.service.ts` (PROMPT 7)
+ *  precisa do mesmo lookup para resolver qual agente usar ao autorizar `agent.request_cross_role`
+ *  — mesma regra, sem duplicar. */
+export async function selectAgentForCapability(params: {
   jobRoleId: string;
   capabilityCode: string;
   allowedAgentCategories: string[];
@@ -169,7 +171,7 @@ async function selectAgentForCapability(params: {
   });
   if (candidates.length === 0) return null;
   const owned = candidates.find((c) => c.primaryJobRoleId === params.jobRoleId);
-  return owned ?? candidates[0]!;
+  return owned ?? candidates[0];
 }
 
 /** Classifica o resultado de um passo já executado no sinal de parada correspondente — nunca
@@ -261,10 +263,15 @@ export async function runRoleSupervisor(
       steps.push(stepResult);
       if (stepResult.requiresApproval) requiresApproval = true;
 
+      // `execution` só é null quando outcome === 'NO_ELIGIBLE_AGENT' (ver construção do
+      // stepResult acima, no map de runAgentExecution) — o ternário já isolou esse caso no ramo
+      // anterior, então aqui execution é sempre o resultado real. TS não expressa essa correlação
+      // porque outcome/execution não são um union discriminado no tipo de retorno.
       const signal: SupervisorStopCondition | 'SUCCEEDED' | null =
         stepResult.outcome === 'NO_ELIGIBLE_AGENT'
           ? null // ausência de candidato não é uma decisão de política — nunca interrompe o run.
-          : classifyStepSignal(stepResult.execution!);
+          : // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
+            classifyStepSignal(stepResult.execution!);
 
       if (signal && signal !== 'SUCCEEDED' && profile.stopConditions.includes(signal)) {
         halted = true;

@@ -3,7 +3,7 @@ name: release-readiness
 description: Use quando a pergunta for "está pronto para produção?", "podemos lançar?", ou equivalente — visão de fechamento que agrega bloqueadores reais de funcionalidade, segurança, integrações, dados, testes, build, environment, observabilidade e deploy. Nunca declara "pronto" só porque lint/typecheck/build passam.
 ---
 
-# Release Readiness — Central de Inteligência Comercial ATLASGR
+# Release Readiness — Birth Hub 360º
 
 ## Quando usar
 
@@ -40,9 +40,9 @@ Esta skill é **auditoria por padrão**, não implementação. Comece sempre em 
 versão em 22/08/2026 (pedido explícito do usuário — ver `docs/REMOVED-DOCS.md`); não existe hoje
 substituto versionado para nenhum dos dois, então não assuma que débito visual ou a integração
 Bitrix24 já foram auditados — trate como não auditado e reaudite quando o escopo exigir, em vez de
-tentar ler um arquivo que não existe. `PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md` (gaps de UX/produto
+tentar ler um arquivo que não existe. `PRODUCT_EXPERIENCE.md` (gaps de UX/produto
 já identificados),
-`REMEDIACAO_FINAL_PROSPECTOR_ATLASGR.md` (o que já foi corrigido — não reporte como bloqueador algo
+`REMEDIACAO_FINAL.md` (o que já foi corrigido — não reporte como bloqueador algo
 já remediado ali; verifique o estado atual antes de citar). Só edite código se o usuário pedir
 explicitamente uma correção pontual depois do relatório — a entrega padrão desta skill é o
 relatório de bloqueadores, não um PR.

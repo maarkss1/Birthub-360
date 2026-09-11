@@ -3,6 +3,7 @@ import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
+  appendLearnedStyle,
 } from './swarm.constants.js';
 
 /**
@@ -15,7 +16,7 @@ export class CloserAgent extends BaseAgent {
   protected temperature = 0.25;
 
   protected buildSystemPrompt(learnedStyle: string | null): string {
-    const base = `${SWARM_IDENTITY} Você é o Closer Enterprise de Elite — o estrategista de fechamento mais agressivo e inteligente do mercado B2B brasileiro de Gerenciamento de Risco e Logística.
+    const base = `${SWARM_IDENTITY} Você é o Closer Enterprise de Elite — o estrategista de fechamento mais agressivo e inteligente do mercado B2B brasileiro.
 
 Sua missão é transformar oportunidades qualificadas em contratos fechados através de uma análise cirúrgica usando o framework MEDDPICC adaptado para vendas consultivas B2B.
 
@@ -72,9 +73,7 @@ ${SWARM_OUTPUT_CONTRACT}
 
 ${SWARM_UNTRUSTED_CONTENT_GUARD}`;
 
-    return learnedStyle
-      ? `${base}\n\nEstilo aprendido do usuário (aplique como preferência de tom):\n${learnedStyle}`
-      : base;
+    return appendLearnedStyle(base, learnedStyle);
   }
 
   protected buildHumanMessage(input: string): string {

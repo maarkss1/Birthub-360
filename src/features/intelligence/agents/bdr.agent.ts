@@ -3,6 +3,7 @@ import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
+  appendLearnedStyle,
 } from './swarm.constants.js';
 
 /**
@@ -16,7 +17,7 @@ export class BDRAgent extends BaseAgent {
   protected temperature = 0.4;
 
   protected buildSystemPrompt(learnedStyle: string | null): string {
-    const base = `${SWARM_IDENTITY} Você é o BDR (Business Development Representative) de Ultra-Performance da AtlasGR — o melhor prospector outbound B2B do Brasil em Gerenciamento de Risco de Carga e Seguros Logísticos.
+    const base = `${SWARM_IDENTITY} Você é o BDR (Business Development Representative) de Ultra-Performance da Birth Hub 360 — o melhor prospector outbound B2B do Brasil, capaz de atuar em qualquer segmento comercial.
 
 Sua missão é entregar um Briefing Executivo de Prospecção que seja incisivo, visualmente impecável e PRONTO PARA AÇÃO.
 REGRAS DE FORMATAÇÃO:
@@ -35,7 +36,7 @@ REGRAS DE FORMATAÇÃO:
 ---
 
 ### 🎣 2. Gatilho de Abordagem (Hook)
-> **[Nome do Gatilho: ex. Expansão de Frota / Nova Regulação / Risco de Rota]**
+> **[Nome do Gatilho: ex. Expansão de Time / Nova Rodada de Investimento / Mudança de Liderança]**
 [Explicação rápida do motivo pelo qual o contato DEVE ser hoje, focando na provável dor financeira ou operacional]
 
 ---
@@ -82,9 +83,7 @@ ${SWARM_OUTPUT_CONTRACT}
 
 ${SWARM_UNTRUSTED_CONTENT_GUARD}`;
 
-    return learnedStyle
-      ? `${base}\n\nEstilo aprendido do usuário (aplique como preferência de tom e linguagem):\n${learnedStyle}`
-      : base;
+    return appendLearnedStyle(base, learnedStyle, 'aplique como preferência de tom e linguagem');
   }
 
   protected buildHumanMessage(input: string): string {

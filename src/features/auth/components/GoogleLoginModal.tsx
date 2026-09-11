@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, X } from 'lucide-react';
 import { authClient } from '../../../lib/auth-client';
 import { clientLogger } from '../../../lib/clientLogger';
-
 interface GoogleLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Carteira comercial escolhida antes do login social, persistida para a sessão. Chave de
+   *  dado comercial (não de marca da plataforma) — ver src/config/brand.ts. */
   selectedBrand: 'atlasgr' | 'totaltrac' | null;
 }
 
@@ -32,7 +33,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
     try {
       await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/app',
+        callbackURL: '/hub',
       });
       // The page will redirect to Google, so we just wait
     } catch (err) {
@@ -64,7 +65,8 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
           className="relative w-full max-w-md bg-surface rounded-3xl shadow-2xl overflow-hidden"
         >
           {/* Close button */}
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             aria-label="Fechar"
             className="absolute top-4 right-4 p-2 text-ink-2 hover:text-ink hover:bg-surface-2 rounded-full transition-colors z-10"
@@ -98,13 +100,13 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
 
             <h2 className="text-2xl font-semibold text-ink mb-2">Fazer login</h2>
             <p className="text-ink-2 mb-8 text-xs">
-              Use sua Conta do Google corporativa (@atlasgr.com.br ou @totaltrac.com.br) para
-              acessar a plataforma
+              Use sua Conta do Google para acessar a plataforma
             </p>
 
             <div className="w-full">
               {step === 'button' && (
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleGoogleLogin}
                   className="w-full flex items-center justify-center gap-3 bg-surface border border-line text-ink font-medium py-3 px-4 rounded-xl hover:bg-surface-2 active:bg-surface-2 transition-colors shadow-sm"
                 >

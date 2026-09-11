@@ -22,7 +22,9 @@ import {
   ArrowUpRight,
   Link2,
 } from 'lucide-react';
-import { useBrand } from '../../../contexts/BrandContext';
+import { BRAND } from '../../../config/brand';
+import { PLAYBOOKS } from '../../../config/playbooks';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { Button } from '../../../components/ui/Button';
 import { useAssistantChat } from '../../../hooks/useAssistantChat';
 import { useRoleplaySimulator } from '../../../hooks/useRoleplaySimulator';
@@ -35,7 +37,7 @@ interface FloatingChatbookProps {
 }
 
 /**
- * Drawer global do copiloto, montado em toda tela autenticada via `AtlasChatbotTrigger` e
+ * Drawer global do copiloto, montado em toda tela autenticada via `CopilotTrigger` e
  * acionável de qualquer lugar (botão flutuante ou ⌘K → "Chamar copiloto de IA"). A aba
  * "Assistente IA" usa `useAssistantChat`, a mesma fonte única de estado/histórico consumida pela
  * página cheia `/app/chatbook` (`ChatbookHub`) — as duas são o mesmo copiloto, não implementações
@@ -43,22 +45,16 @@ interface FloatingChatbookProps {
  */
 export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
   const navigate = useNavigate();
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook, setPlaybook, info: playbookMeta } = useActivePlaybook();
   const [activeTab, setActiveTab] = useState<'assistant' | 'roleplay' | 'playbook'>('assistant');
 
   // Compartilhado entre as 3 abas (assistente, roleplay e filtro de matrizes) — por isso não
   // pertence a nenhum dos hooks de dados extraídos, cada um recebe como argumento.
-  const [selectedBrand, setSelectedBrand] = useState<'atlasgr' | 'totaltrac'>(
-    activeBrand === 'totaltrac' ? 'totaltrac' : 'atlasgr',
-  );
-  useEffect(() => {
-    setSelectedBrand(activeBrand === 'totaltrac' ? 'totaltrac' : 'atlasgr');
-  }, [activeBrand]);
 
   // Fase 4: Matriz de Qualificação/Objeções saíram do arquivo estático brandMatrices.ts pro
   // banco — busca uma vez aqui, os 3 hooks abaixo recebem os arrays já prontos em vez de
   // importar o arquivo estático cada um por conta própria.
-  const { objections, qualifications } = usePlaybookMatrixData(selectedBrand);
+  const { objections, qualifications } = usePlaybookMatrixData(playbook);
 
   const {
     messages,
@@ -69,7 +65,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
     setSearchMode,
     handleSendMessage,
     activeRecord,
-  } = useAssistantChat(activeBrand, brandInfo, selectedBrand, objections, qualifications);
+  } = useAssistantChat(playbook, playbookMeta, playbook, objections, qualifications);
 
   const {
     roleplayPersona,
@@ -85,7 +81,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
     isRoleplayThinking,
     startRoleplay,
     handleRoleplaySubmit,
-  } = useRoleplaySimulator(brandInfo, selectedBrand, objections);
+  } = useRoleplaySimulator(playbookMeta, playbook, objections);
 
   const {
     selectedSegment,
@@ -98,7 +94,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
     handleCopy,
     filteredObjections,
     filteredQualifications,
-  } = usePlaybookMatrixFilters(selectedBrand, objections, qualifications);
+  } = usePlaybookMatrixFilters(playbook, objections, qualifications);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -130,13 +126,13 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
             {/* Header Superior */}
             <div className="p-5 border-b border-line bg-surface backdrop-blur-md flex items-center justify-between sticky top-0 z-10">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand to-brand-2 flex items-center justify-center text-white shadow-lg shadow-brand/20">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand to-brand-2 flex items-center justify-center text-on-brand shadow-lg shadow-brand/20">
                   <Bot className="w-6 h-6" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <h2 className="font-extrabold text-base text-ink tracking-tight">
-                      {brandInfo.name} Copilot
+                      {BRAND.shortName} Copilot
                     </h2>
                     {/* bg-emerald-500/20 text-emerald-300 cru (contra bg-surface, tema claro) dava
                         contraste ainda pior que o achado do axe-core em ChatbookHub.tsx (mesmo badge,
@@ -152,7 +148,8 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 </div>
               </div>
 
-              <button type="button"
+              <button
+                type="button"
                 onClick={onClose}
                 aria-label="Fechar assistente"
                 className="p-2 text-ink-2 hover:text-ink hover:bg-surface-2 rounded-xl transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand"
@@ -169,7 +166,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 aria-pressed={activeTab === 'assistant'}
                 className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'assistant'
-                    ? 'bg-brand-active text-white shadow-md font-extrabold'
+                    ? 'bg-brand-active text-on-brand shadow-md font-extrabold'
                     : 'text-ink-2 hover:text-ink'
                 }`}
               >
@@ -181,7 +178,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 aria-pressed={activeTab === 'roleplay'}
                 className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'roleplay'
-                    ? 'bg-brand-active text-white shadow-md font-extrabold'
+                    ? 'bg-brand-active text-on-brand shadow-md font-extrabold'
                     : 'text-ink-2 hover:text-ink'
                 }`}
               >
@@ -193,7 +190,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 aria-pressed={activeTab === 'playbook'}
                 className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'playbook'
-                    ? 'bg-brand-active text-white shadow-md font-extrabold'
+                    ? 'bg-brand-active text-on-brand shadow-md font-extrabold'
                     : 'text-ink-2 hover:text-ink'
                 }`}
               >
@@ -211,7 +208,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     {/* Mesmo achado do Piloto 010 em ChatbookHub.tsx: o registro aberto já é
                         injetado em toda pergunta, mas só aparecia uma vez na saudação inicial. */}
                     {activeRecord && (
-                      <span className="flex items-center gap-1 text-[10px] font-bold text-brand-active dark:text-brand-2 bg-brand/10 border border-brand/20 rounded-full px-2 py-0.5">
+                      <span className="flex items-center gap-1 text-[10px] font-bold text-brand-ink dark:text-brand bg-brand/10 border border-brand/20 rounded-full px-2 py-0.5">
                         <Link2 className="w-3 h-3" /> {activeRecord.label}
                       </span>
                     )}
@@ -223,7 +220,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       aria-pressed={searchMode === 'general'}
                       className={`px-3 py-1 rounded-lg font-bold transition-all flex items-center gap-1 cursor-pointer ${
                         searchMode === 'general'
-                          ? 'bg-brand-active text-white shadow-sm'
+                          ? 'bg-brand-active text-on-brand shadow-sm'
                           : 'text-ink-2 hover:text-ink'
                       }`}
                     >
@@ -235,11 +232,11 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       aria-pressed={searchMode === 'internal'}
                       className={`px-3 py-1 rounded-lg font-bold transition-all flex items-center gap-1 cursor-pointer ${
                         searchMode === 'internal'
-                          ? 'bg-brand-active text-white shadow-sm'
+                          ? 'bg-brand-active text-on-brand shadow-sm'
                           : 'text-ink-2 hover:text-ink'
                       }`}
                     >
-                      <Database className="w-3.5 h-3.5" /> Base {brandInfo.name}
+                      <Database className="w-3.5 h-3.5" /> Base {playbookMeta.label}
                     </button>
                   </div>
                 </div>
@@ -254,13 +251,13 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       <div
                         className={`max-w-[88%] p-4 rounded-2xl text-xs space-y-2 leading-relaxed shadow-md ${
                           msg.sender === 'user'
-                            ? 'bg-brand-active text-white rounded-br-none font-medium'
+                            ? 'bg-brand-active text-on-brand rounded-br-none font-medium'
                             : 'bg-surface-2 text-ink-2 border border-line rounded-bl-none'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2 text-[10px] opacity-75 pb-1 border-b border-line">
                           <span className="font-bold uppercase tracking-wider">
-                            {msg.sender === 'user' ? 'Você' : `${brandInfo.name} Copilot`}
+                            {msg.sender === 'user' ? 'Você' : `${BRAND.shortName} Copilot`}
                           </span>
                           <span>{msg.timestamp}</span>
                         </div>
@@ -271,7 +268,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                   ))}
 
                   {isSearching && (
-                    <div className="flex items-center gap-2 text-xs text-brand-active dark:text-brand-2 bg-surface-2 p-3 rounded-2xl border border-line w-fit animate-pulse">
+                    <div className="flex items-center gap-2 text-xs text-brand-ink dark:text-brand bg-surface-2 p-3 rounded-2xl border border-line w-fit animate-pulse">
                       <RefreshCw className="w-4 h-4 animate-spin" />
                       <span>Consultando o motor Groq...</span>
                     </div>
@@ -290,7 +287,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     placeholder={
                       searchMode === 'general'
                         ? 'Pergunte sobre a rota ou registro aberto...'
-                        : `Consulte a matriz comercial da ${brandInfo.name}...`
+                        : `Consulte a matriz comercial de ${playbookMeta.label}...`
                     }
                     value={inputQuery}
                     onChange={(e) => setInputQuery(e.target.value)}
@@ -301,7 +298,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     disabled={isSearching}
                     size="sm"
                     aria-label="Enviar mensagem"
-                    className="px-4 py-2.5 bg-brand-active text-white font-bold cursor-pointer"
+                    className="px-4 py-2.5 bg-brand-active text-on-brand font-bold cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
                   </Button>
@@ -314,7 +311,8 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
               <div className="flex-1 flex flex-col min-h-0 bg-surface p-4 space-y-4 overflow-y-auto">
                 {/* Esta aba é a prática rápida por texto — a simulação completa por voz, com nota final
                     detalhada, fica no módulo dedicado "Roleplay" (Sidebar → Inteligência). */}
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => {
                     navigate('/app/roleplay');
                     onClose();
@@ -346,7 +344,8 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={() => setRoleplayPersona('skeptical_cfo')}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         roleplayPersona === 'skeptical_cfo'
@@ -356,7 +355,8 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     >
                       CFO Cético (Foco ROI)
                     </button>
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={() => setRoleplayPersona('strict_buyer')}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         roleplayPersona === 'strict_buyer'
@@ -366,7 +366,8 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     >
                       Comprador Rígido
                     </button>
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={() => setRoleplayPersona('tech_director')}
                       className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                         roleplayPersona === 'tech_director'
@@ -471,7 +472,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       type="submit"
                       size="sm"
                       disabled={isRoleplayThinking}
-                      className="px-4 py-2.5 bg-brand text-white font-bold cursor-pointer"
+                      className="px-4 py-2.5 bg-brand text-on-brand font-bold cursor-pointer"
                     >
                       <Send className="w-4 h-4" />
                     </Button>
@@ -490,21 +491,23 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       <Filter className="w-4 h-4 text-brand" /> Filtros Avançados de Playbook
                     </span>
                     <div className="flex items-center gap-1 bg-surface p-1 rounded-xl border border-line text-xs">
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => setPlaybookView('objections')}
                         className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                           playbookView === 'objections'
-                            ? 'bg-brand-active text-white'
+                            ? 'bg-brand-active text-on-brand'
                             : 'text-ink-2 hover:text-ink'
                         }`}
                       >
                         Objeções
                       </button>
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => setPlaybookView('qualifications')}
                         className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                           playbookView === 'qualifications'
-                            ? 'bg-brand-active text-white'
+                            ? 'bg-brand-active text-on-brand'
                             : 'text-ink-2 hover:text-ink'
                         }`}
                       >
@@ -520,18 +523,19 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         htmlFor="chatbook-brand"
                         className="font-bold text-ink-2 block mb-1 text-[10px] uppercase"
                       >
-                        Empresa / Marca
+                        Playbook
                       </label>
                       <select
                         id="chatbook-brand"
-                        value={selectedBrand}
-                        onChange={(e) =>
-                          setSelectedBrand(e.target.value as 'atlasgr' | 'totaltrac')
-                        }
+                        value={playbook}
+                        onChange={(e) => setPlaybook(e.target.value as typeof playbook)}
                         className="w-full px-2.5 py-1.5 rounded-xl bg-surface text-ink font-bold border border-line focus:outline-none focus:ring-1 focus:ring-brand"
                       >
-                        <option value="atlasgr">AtlasGR (SaaS B2B)</option>
-                        <option value="totaltrac">Total Trac (Frotas/Risco)</option>
+                        {PLAYBOOKS.map((pb) => (
+                          <option key={pb.key} value={pb.key}>
+                            {pb.label}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -550,7 +554,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         className="w-full px-2.5 py-1.5 rounded-xl bg-surface text-ink border border-line focus:outline-none focus:ring-1 focus:ring-brand"
                       >
                         <option value="todos">Todos os Segmentos</option>
-                        {selectedBrand === 'atlasgr' ? (
+                        {playbook === 'atlasgr' ? (
                           <>
                             <option value="SaaS">SaaS & Tecnologia</option>
                             <option value="Indústria">Indústria & Manufatura</option>
@@ -583,7 +587,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         className="w-full px-2.5 py-1.5 rounded-xl bg-surface text-ink border border-line focus:outline-none focus:ring-1 focus:ring-brand"
                       >
                         <option value="todos">Todas as Personas</option>
-                        {selectedBrand === 'atlasgr' ? (
+                        {playbook === 'atlasgr' ? (
                           <>
                             <option value="VP de Vendas">VP / Diretor Comercial</option>
                             <option value="CFO">CFO / Financeiro</option>
@@ -610,9 +614,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         <AlertTriangle className="w-4 h-4 text-red-400" /> Objeções Mapeadas (
                         {filteredObjections.length})
                       </h4>
-                      <span className="text-[10px] text-ink-2">
-                        Marca: {selectedBrand.toUpperCase()}
-                      </span>
+                      <span className="text-[10px] text-ink-2">Playbook: {playbookMeta.label}</span>
                     </div>
 
                     {filteredObjections.length === 0 ? (
@@ -634,7 +636,8 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                                 {item.persona}
                               </span>
                             </div>
-                            <button type="button"
+                            <button
+                              type="button"
                               onClick={() => handleCopy(item.responseScript, item.id)}
                               className="text-[11px] text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
                             >
@@ -682,9 +685,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         <Target className="w-4 h-4 text-brand" /> Matriz de Qualificação (
                         {filteredQualifications.length})
                       </h4>
-                      <span className="text-[10px] text-ink-2">
-                        Marca: {selectedBrand.toUpperCase()}
-                      </span>
+                      <span className="text-[10px] text-ink-2">Playbook: {playbookMeta.label}</span>
                     </div>
 
                     {filteredQualifications.length === 0 ? (
@@ -699,14 +700,15 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         >
                           <div className="flex items-center justify-between pb-2 border-b border-line">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] px-2 py-0.5 rounded bg-brand/20 text-brand-active dark:text-brand-2 font-bold border border-brand/30">
+                              <span className="text-[10px] px-2 py-0.5 rounded bg-brand/20 text-brand-ink dark:text-brand font-bold border border-brand/30">
                                 {item.framework} · {item.questionCategory}
                               </span>
                               <span className="text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">
                                 {item.persona}
                               </span>
                             </div>
-                            <button type="button"
+                            <button
+                              type="button"
                               onClick={() => handleCopy(item.questionText, item.id)}
                               className="text-[11px] text-ink-2 hover:text-ink flex items-center gap-1 cursor-pointer"
                             >

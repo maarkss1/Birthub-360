@@ -7,17 +7,30 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { generateRoleplay } from '../roleplay.js';
-import { roleplayResultSchema } from '../../schema.js';
+import { generateRoleplay, generateRoleplayEvaluation } from '../roleplay.js';
+import { roleplayResultSchema, roleplayEvaluationResultSchema } from '../../schema.js';
 
 const request = {
   kind: 'roleplay' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: {
     persona: 'skeptical_cfo' as const,
     message: 'Nosso ROI se paga em 3 meses.',
     transcript: [{ sender: 'sdr' as const, text: 'Oi, tudo bem?' }],
     playbookContext: 'Foco em ROI',
+  },
+};
+
+const evaluationRequest = {
+  kind: 'roleplay_evaluation' as const,
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
+  inputs: {
+    persona: 'skeptical_cfo' as const,
+    difficulty: 'dificil' as const,
+    transcript: [
+      { sender: 'buyer' as const, text: 'Por que deveríamos conversar?' },
+      { sender: 'sdr' as const, text: 'Nosso ROI se paga em 3 meses.' },
+    ],
   },
 };
 
@@ -37,7 +50,7 @@ describe('studio/generators/roleplay', () => {
     const [prompt, context, schema, , temperature] = invokeStructuredMock.mock.calls[0];
     expect(context).toBe('studio:roleplay');
     expect(schema).toBe(roleplayResultSchema);
-    expect(temperature).toBe(0.55);
+    expect(temperature).toBe(0.6);
     expect(prompt).toContain('CFO cético');
     expect(prompt).toContain('Nosso ROI se paga em 3 meses.');
   });
@@ -98,5 +111,59 @@ describe('studio/generators/roleplay', () => {
     const result = await generateRoleplay(request);
 
     expect(result.clarity).toBe(100);
+  });
+});
+
+describe('studio/generators/roleplay — generateRoleplayEvaluation (parecer técnico de sessão)', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('chama invokeStructured com o schema/contexto/temperatura corretos e inclui persona, dificuldade e transcrição completa no prompt', async () => {
+    invokeStructuredMock.mockResolvedValueOnce({
+      overallScore: 72,
+      clarityScore: 75,
+      objectionHandlingScore: 68,
+      closingScore: 60,
+      strengths: ['Ouviu a dor antes de apresentar produto'],
+      improvements: ['Não perguntou sobre o próximo passo'],
+      summary: 'Parecer técnico de exemplo.',
+    });
+
+    await generateRoleplayEvaluation(evaluationRequest);
+
+    const [prompt, context, schema, , temperature] = invokeStructuredMock.mock.calls[0];
+    expect(context).toBe('studio:roleplay_evaluation');
+    expect(schema).toBe(roleplayEvaluationResultSchema);
+    expect(temperature).toBe(0.3);
+    expect(prompt).toContain('CFO cético');
+    expect(prompt).toContain('difícil');
+    expect(prompt).toContain('Por que deveríamos conversar?');
+    expect(prompt).toContain('Nosso ROI se paga em 3 meses.');
+    // Avalia a ligação inteira, não só a última resposta (diferença chave vs. generateRoleplay).
+    expect(prompt).toMatch(/ligação inteira/);
+  });
+
+  it('devolve o parecer técnico validado (score geral + sub-notas + strengths/improvements/summary) sem recalcular nada localmente', async () => {
+    const evaluation = {
+      overallScore: 82,
+      clarityScore: 90,
+      objectionHandlingScore: 78,
+      closingScore: 70,
+      strengths: ['Boa investigação SPIN'],
+      improvements: ['Faltou fechamento firme'],
+      summary: 'Diagnóstico e plano de ação.',
+    };
+    invokeStructuredMock.mockResolvedValueOnce(evaluation);
+
+    const result = await generateRoleplayEvaluation(evaluationRequest);
+
+    expect(result).toEqual(evaluation);
+  });
+
+  it('propaga o erro do provedor de IA sem fabricar um parecer técnico (roleplay/AGENTS.md: falhas de IA são explícitas)', async () => {
+    invokeStructuredMock.mockRejectedValueOnce(new Error('Groq indisponível'));
+
+    await expect(generateRoleplayEvaluation(evaluationRequest)).rejects.toThrow(
+      'Groq indisponível',
+    );
   });
 });

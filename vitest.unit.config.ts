@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
+// Permite override local via `VITEST_MAX_WORKERS=8 npm run test:unit` para quem não tem outros
+// worktrees do enxame disputando CPU no momento, sem precisar editar este arquivo toda vez. Vazio,
+// não-numérico ou <= 0 caem no default (2) — o piso pensado para coexistir com outros worktrees
+// continua sendo o comportamento padrão do CI e de quem não passar a variável.
+const parsedMaxWorkers = Number.parseInt(process.env.VITEST_MAX_WORKERS ?? '', 10);
+const maxWorkers = Number.isFinite(parsedMaxWorkers) && parsedMaxWorkers > 0 ? parsedMaxWorkers : 2;
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -13,13 +20,18 @@ export default defineConfig({
     // Forkar um processo para cada arquivo tornou a suíte de ~160 arquivos aparentemente
     // travada em hosts com poucos CPUs: o custo de bootstrap do Node/jsdom dominava os testes.
     // Threads continuam isoladas pelo Vitest, reduzem esse custo e o limite explícito impede que
-    // o gate dispute todos os recursos com outros worktrees da mesma onda.
+    // o gate dispute todos os recursos com outros worktrees da mesma onda. Configurável via
+    // VITEST_MAX_WORKERS (ver definição de `maxWorkers` acima) — default 2 preservado.
     pool: 'threads',
-    maxWorkers: 2,
+    maxWorkers,
     include: ['tests/unit/**/*.test.ts', 'src/**/__tests__/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'json-summary', 'html'],
+      // 'lcov' adicionado (Onda 3, agente 08): sonar-project.properties aponta
+      // sonar.javascript.lcov.reportPaths para dentro de reportsDirectory abaixo — sem o
+      // reporter 'lcov' nenhum arquivo era escrito ali e a integração de coverage do Sonar nunca
+      // recebia dado real deste pipeline (ver comentário em .github/workflows/sonarqube.yml).
+      reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
       // Diretório próprio (em vez do './coverage' default) porque test:integration também roda
       // `--coverage` e, sem isso, o segundo run sobrescreve o relatório do primeiro no CI — os dois
       // acabavam publicados como um único artefato "coverage/" contendo só a cobertura de
@@ -107,15 +119,26 @@ export default defineConfig({
           lines: 71,
         },
         // Domínio crítico 3: núcleo de CRM (lead/pipeline — o objeto central do produto, ver
-        // CLAUDE.md seção 1). Baseline local hoje é baixo (Statements 8.94% · Branches 6.44% ·
-        // Functions 4.79% · Lines 8.99%) — o threshold aqui existe sobretudo para travar a
-        // regressão a partir de agora enquanto cobertura real é adicionada em itens futuros, não
-        // porque 9% seja um número aceitável.
+        // CLAUDE.md seção 1). Recalibrado em 2026-09-11 depois de testes reais novos para
+        // LeadUseCases (createLead: posse CLOSER/SDR, bloqueio de lead duplicado por
+        // empresa+funil, Round-Robin tolerante a falha; updateLead/updateLeadStatus: gate de
+        // fechamento CYC-007, eventos DEAL_WON/DEAL_LOST, re-sync fire-and-forget com o Bitrix),
+        // LeadController (roteamento updateLeadStatus vs. updateLead, validação de funnel/query,
+        // validação de batchUpdate), LeadDeduplicationService, dealClosureGate,
+        // assignment.service e savedView.service — todos ficaram entre 80-100% de statements.
+        // Baseline local hoje: Statements 33.83% · Branches 32.19% · Functions 18.75% ·
+        // Lines 34.64% (medido isolando `src/features/crm/**`, excluindo `crm360/**`, a partir de
+        // coverage-final.json — o texto do reporter default trunca essa pasta na tabela). Os
+        // valores abaixo ficam ~1-2pp abaixo do baseline (piso, não meta, mesmo critério das
+        // calibrações acima) — o que ainda falta é sobretudo camada de I/O pesado (jobs/*.worker.ts
+        // com BullMQ, infra/PrismaLeadRepository.ts) e componentes React (KanbanCard,
+        // LeadDetailDrawer, BitrixImportModal, SavedViewsPanel), que ficaram de fora deste item por
+        // exigirem mocks de infraestrutura ou DOM desproporcionais ao ganho de cobertura pura.
         'src/features/crm/**': {
-          statements: 8,
-          branches: 6,
-          functions: 4,
-          lines: 8,
+          statements: 32,
+          branches: 30,
+          functions: 17,
+          lines: 33,
         },
       },
     },

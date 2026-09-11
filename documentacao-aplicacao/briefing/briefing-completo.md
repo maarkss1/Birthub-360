@@ -77,7 +77,7 @@ A aplicação oferece uma navegação extremamente rápida, de fácil aprendizad
 Não existe um arquivo `roadmap.md` nesta pasta hoje — uma versão anterior deste briefing apontava
 para ele, mas o arquivo nunca foi produzido. Corrigido nesta revisão para não prometer um documento
 inexistente. Para prioridades de produto reais e já registradas, ver
-`AUTONOMIA_COMERCIAL_24X7.md`/`PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md` na raiz do repositório (fora
+`AUTONOMIA_COMERCIAL_24X7.md`/`PRODUCT_EXPERIENCE.md` na raiz do repositório (fora
 desta pasta) e `atualizacoes-futuras.md` (item 10 acima), que já cobre sugestões pontuais por
 módulo.
 

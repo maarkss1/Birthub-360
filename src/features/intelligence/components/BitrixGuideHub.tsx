@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Layers, CheckCircle2, Clock, Workflow, ShieldCheck, Table2 } from 'lucide-react';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { LEAD_STATUS } from '../../../lib/zod';
 import { BITRIX_FIELD_MAP } from '../../integrations/bitrix/bitrixFieldMap';
@@ -30,19 +30,19 @@ const FIELD_TYPE_LABEL: Record<string, string> = {
 };
 
 export function BitrixGuideHub() {
-  const { activeBrand } = useBrand();
+  const { playbook, info: playbookMeta } = useActivePlaybook();
   const accent = useBrandAccent();
   const [activeTab, setActiveTab] = useState<
     'practices' | 'pipeline' | 'field_mapping' | 'tutorials'
   >('practices');
-  const isAtlas = activeBrand === 'atlasgr';
+  const isAtlas = playbook === 'atlasgr';
 
   const practices = isAtlas
     ? [
         {
           title: 'Preenchimento Obrigatório do CNPJ e Inscrição Estadual',
           detail:
-            'Evite duplicidade na base do Bitrix24 exigindo que todo Lead criado contenha o CNPJ validado no Prospector Atlas.',
+            'Evite duplicidade na base do Bitrix24 exigindo que todo Lead criado contenha o CNPJ validado no Birth Hub 360.',
         },
         {
           title: 'Vincular Persona do Decisor na Negociação',
@@ -76,7 +76,7 @@ export function BitrixGuideHub() {
   const tutorials = isAtlas
     ? [
         {
-          title: 'Como Integrar Lead do Prospector Atlas no Bitrix24 em 1 Clique',
+          title: 'Como Integrar Lead do Birth Hub 360 no Bitrix24 em 1 Clique',
           duration: '3 min',
           level: 'Iniciante',
         },
@@ -93,7 +93,7 @@ export function BitrixGuideHub() {
       ]
     : [
         {
-          title: 'Como Integrar Lead do TotalTrac Radar no Bitrix24 em 1 Clique',
+          title: 'Como Integrar Lead do Radar de Frotas no Bitrix24 em 1 Clique',
           duration: '3 min',
           level: 'Iniciante',
         },
@@ -103,7 +103,7 @@ export function BitrixGuideHub() {
           level: 'Intermediário',
         },
         {
-          title: 'Sincronização de Frotas e Chips M2M da TotalTrac no CRM',
+          title: 'Sincronização de Frotas e Chips M2M da Birth Hub 360 no CRM',
           duration: '7 min',
           level: 'Avançado',
         },
@@ -120,7 +120,7 @@ export function BitrixGuideHub() {
           </div>
           <div>
             <h2 className="text-xl font-black tracking-tight">
-              {accent.brandName} + Bitrix24 Mastery & Boas Práticas CRM
+              {playbookMeta.label} + Bitrix24 Mastery & Boas Práticas CRM
             </h2>
             <p className="text-xs text-ink-2 font-medium">
               Guia oficial de uso, automação, mapeamento de campos e regras do Bitrix24
@@ -133,7 +133,7 @@ export function BitrixGuideHub() {
             (accent.text também vira ícone em ~30 outros lugares, onde SVG fill não tem o mesmo
             requisito de contraste de texto). */}
         <span
-          className={`px-3 py-1 ${accent.bgSofter} ${accent.isAtlas ? 'text-atlas-orange-active' : 'text-totaltrack-blue-active'} text-xs font-black rounded-full border ${accent.borderSoft}`}
+          className={`px-3 py-1 ${accent.bgSofter} ${accent.text} text-xs font-black rounded-full border ${accent.borderSoft}`}
         >
           Bitrix24 Certified Standard
         </span>
@@ -141,41 +141,45 @@ export function BitrixGuideHub() {
 
       {/* Tabs Internas */}
       <div className="flex flex-wrap gap-2 border-b border-line pb-2">
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setActiveTab('practices')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'practices'
-              ? `${accent.solidBg} text-white shadow-md`
+              ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'
           }`}
         >
           Boas Práticas de Operação
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setActiveTab('pipeline')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'pipeline'
-              ? `${accent.solidBg} text-white shadow-md`
+              ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'
           }`}
         >
           Regras de Estágios de Funil
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setActiveTab('field_mapping')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'field_mapping'
-              ? `${accent.solidBg} text-white shadow-md`
+              ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'
           }`}
         >
           Mapeamento de Campos
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setActiveTab('tutorials')}
           className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'tutorials'
-              ? `${accent.solidBg} text-white shadow-md`
+              ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'
           }`}
         >

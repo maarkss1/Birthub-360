@@ -235,6 +235,26 @@ ${transcript || 'Nenhuma transcrição gravada.'}`;
         },
       });
 
+      // Projeção estruturada do mesmo resultado, pra tela de atividade de voz (VoiceCallActivity
+      // .tsx) conseguir listar/filtrar chamadas recentes sem precisar reabrir cada lead e ler a
+      // Note em texto livre acima — nunca a fonte de verdade do resultado, só uma projeção dela.
+      // `callId !== 'sem-id'` já garantido pelo guard de idempotência mais acima (a marca no Note
+      // usa o mesmo `callId`), então esta criação não corre risco de duplicar numa reentrega.
+      if (callId !== 'sem-id') {
+        await prisma.voiceCallLog.create({
+          data: {
+            organizationId,
+            leadId: lead.id,
+            providerCallId: callId,
+            outcome: classifiedOutcome,
+            durationSeconds: Math.round(callLength * 60),
+            summary,
+            transcript,
+            recordingUrl,
+          },
+        });
+      }
+
       const currentFields = (lead.customFields as Record<string, unknown>) || {};
       await prisma.lead.update({
         where: { id: lead.id },

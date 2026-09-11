@@ -12,7 +12,6 @@ import {
   Users,
   CheckCircle,
   AlertTriangle,
-  X,
   Sparkles,
   CheckSquare,
   Square,
@@ -35,8 +34,9 @@ import { FunnelBars, type FunnelBarItem } from '../../../components/ui/FunnelBar
 import { ChannelDonut } from '../../../components/ui/ChannelDonut';
 import { CompareBar, DeltaPill } from '../../../components/ui/CompareBar';
 import { DealsGrid, type DealCardData } from '../../../components/ui/DealsGrid';
+import { Dialog } from '../../../components/ui/Dialog';
 
-// Dataset extraído do Diagnóstico SDR — João Reis (BDR ID 392, AtlasGR)
+// Dataset extraído do Diagnóstico SDR — João Reis (BDR ID 392, Birth Hub 360)
 const DIAGNOSTIC_DATA = {
   funilJul: [
     { status: 'JUNK', nome: 'Desqualificado', eventos: 20, leadsUnicos: 20 },
@@ -592,7 +592,7 @@ const DEFAULT_DAILY_PLAN: DailyTask[] = [
     title: 'Bloco 6: Encerramento & Batimento de Meta',
     description:
       'Conferir o volume total de atividades lançadas no dia (Meta: 60-100/dia), atualizar compromissos de amanhã e registrar o diário de prospecção.',
-    tool: 'Painel Central AtlasGR + CRM Bitrix24',
+    tool: 'Painel Central Birth Hub 360 + CRM Bitrix24',
     targetCount: 'Meta mínima de 60 atividades batida',
     completed: false,
   },
@@ -603,25 +603,25 @@ const PITCHES_BY_SEGMENT = {
   transportadora: {
     segmento: 'Transportadora de Cargas',
     dor: 'Exigências da seguradora/PGR para cadastro rápido de motoristas e redução de sinistro.',
-    pitch: `Olá [Nome], aqui é o João Reis da AtlasGR. Vi que a [Nome da Empresa] atua no transporte rodoviário e sei o quanto a exigência de gerenciamento de risco e cadastro rápido de motoristas impacta a liberação de frota. Nós ajudamos transportadoras a reduzirem o tempo de validação de motoristas e cumprirem 100% da apólice com nossa plataforma. Como vocês gerenciam esse processo hoje?`,
+    pitch: `Olá [Nome], aqui é o João Reis da Birth Hub 360. Vi que a [Nome da Empresa] atua no transporte rodoviário e sei o quanto a exigência de gerenciamento de risco e cadastro rápido de motoristas impacta a liberação de frota. Nós ajudamos transportadoras a reduzirem o tempo de validação de motoristas e cumprirem 100% da apólice com nossa plataforma. Como vocês gerenciam esse processo hoje?`,
     perguntaChave: 'Quantos veículos ou viagens vocês operam por mês em média?',
   },
   agro: {
     segmento: 'Usina / Agroindústria',
     dor: 'Logística de escoamento de safra e rastreamento em rotas rurais sem sinal.',
-    pitch: `Olá [Nome], sou o João Reis da AtlasGR. Estou em contato com grandes grupos sucroalcooleiros e do agronegócio para otimizar o monitoramento do escoamento de safra e controle de terceiros. Vocês hoje têm visibilidade em tempo real do transbordo e da segurança dos veículos que entram na usina?`,
+    pitch: `Olá [Nome], sou o João Reis da Birth Hub 360. Estou em contato com grandes grupos sucroalcooleiros e do agronegócio para otimizar o monitoramento do escoamento de safra e controle de terceiros. Vocês hoje têm visibilidade em tempo real do transbordo e da segurança dos veículos que entram na usina?`,
     perguntaChave: 'Vocês trabalham mais com frota própria ou frota dedicada de terceiros?',
   },
   embarcador: {
     segmento: 'Embarcador / Indústria / Varejo',
     dor: 'Falta de visibilidade da carga em trânsito e nível de serviço da transportadora.',
-    pitch: `Olá [Nome], João Reis da AtlasGR. Ajudamos embarcadores industriais a terem torre de controle centralizada sobre todas as transportadoras contratadas, reduzindo no-show e atrasos de entrega. Como vocês garantem o nível de serviço do frete hoje?`,
+    pitch: `Olá [Nome], João Reis da Birth Hub 360. Ajudamos embarcadores industriais a terem torre de controle centralizada sobre todas as transportadoras contratadas, reduzindo no-show e atrasos de entrega. Como vocês garantem o nível de serviço do frete hoje?`,
     perguntaChave: 'Quantas transportadoras parceiras hoje atendem as rotas de vocês?',
   },
   terceirizacao: {
     segmento: 'Terceirização & Facilities (Portaria/Segurança)',
     dor: 'Controle de ponto/presença e validação de perfil de atendentes.',
-    pitch: `Olá [Nome], aqui é o João Reis da AtlasGR. Trabalhamos com empresas de facilities para gestão e validação de equipes terceirizadas em postos de trabalho. Como vocês fazem o acompanhamento de presença e compliance dos profissionais hoje?`,
+    pitch: `Olá [Nome], aqui é o João Reis da Birth Hub 360. Trabalhamos com empresas de facilities para gestão e validação de equipes terceirizadas em postos de trabalho. Como vocês fazem o acompanhamento de presença e compliance dos profissionais hoje?`,
     perguntaChave: 'Quantos postos de trabalho ativos a empresa gerencia atualmente?',
   },
 };
@@ -634,7 +634,7 @@ const OBJECTIONS_DATABASE = [
     diagnostico:
       'O lead acha que o produto substitui o que ele tem, quando na verdade pode integrar ou complementar.',
     respostaRecomendada:
-      'Perfeito, [Nome]! Nós não substituímos sua gerenciadora nem exigimos troca de rastreadores. A AtlasGR integra com a sua infraestrutura atual para homologar cadastros mais rápido e automatizar a conformidade com a seguradora. Quantas horas hoje sua equipe leva pra liberar um motorista agregado?',
+      'Perfeito, [Nome]! Nós não substituímos sua gerenciadora nem exigimos troca de rastreadores. A Birth Hub 360 integra com a sua infraestrutura atual para homologar cadastros mais rápido e automatizar a conformidade com a seguradora. Quantas horas hoje sua equipe leva pra liberar um motorista agregado?',
   },
   {
     id: 'obj-2',
@@ -786,7 +786,7 @@ export function JoaoReisDiagnosticHub() {
 
   // Pauta Markdown de 1:1
   const generatePautaMarkdown = () => {
-    return `# Pauta de Acompanhamento 1:1 — João Reis (AtlasGR)
+    return `# Pauta de Acompanhamento 1:1 — João Reis (Birth Hub 360)
 Data: 01/09/2026 | BDR ID: 392
 
 ## 1. Resumo Executivo de Desempenho
@@ -849,13 +849,13 @@ Data: 01/09/2026 | BDR ID: 392
               <Sparkles className="w-4 h-4 text-brand" />
               Diagnóstico SDR &amp; Plano Diário Operacional · BDR ID 392
             </div>
-            <h1 className="text-2xl md:text-3xl font-black text-ink">João Reis da AtlasGR</h1>
+            <h1 className="text-2xl md:text-3xl font-black text-ink">João Reis da Birth Hub 360</h1>
             <p className="text-sm text-ink-2 mt-1">
               Hub completo de performance, automações de prospecção, IA Coach e pauta de 1:1.
             </p>
           </div>
           {isJoaoReis && (
-            <div className="px-4 py-2 rounded-2xl bg-brand-active text-white text-xs font-black shadow-md flex items-center gap-2">
+            <div className="px-4 py-2 rounded-2xl bg-brand-active text-on-brand text-xs font-black shadow-md flex items-center gap-2">
               <ShieldCheck className="w-4 h-4" />
               Sessão Exclusiva — João Reis
             </div>
@@ -883,7 +883,7 @@ Data: 01/09/2026 | BDR ID: 392
                 />
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                    active ? 'bg-brand text-white' : 'bg-brand/10 text-brand'
+                    active ? 'bg-brand text-on-brand' : 'bg-brand/10 text-brand'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -929,7 +929,8 @@ Data: 01/09/2026 | BDR ID: 392
                   <span>
                     Ritmo atual: <b>~3.5 toques/hora</b>
                   </span>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => setTodayActivitiesCount((prev) => prev + 1)}
                     className="px-3 py-1 rounded-xl bg-brand/10 text-brand font-bold text-[11px] hover:bg-brand/20 transition-all cursor-pointer"
                   >
@@ -948,7 +949,8 @@ Data: 01/09/2026 | BDR ID: 392
                   <b>16 leads novos de Agosto</b> estão sem contato inicial. Tempo médio de reação a
                   ser corrigido.
                 </p>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => setActiveTab('emcadencia')}
                   className="w-full py-1.5 rounded-xl bg-critical text-white font-bold text-xs shadow-sm hover:brightness-110 transition-all cursor-pointer"
                 >
@@ -972,12 +974,13 @@ Data: 01/09/2026 | BDR ID: 392
                 {/* Seleção de Tag de Canal */}
                 <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-line">
                   {(['[WhatsApp]', '[Ligação]', '[E-mail]', '[LinkedIn]'] as const).map((tag) => (
-                    <button type="button"
+                    <button
+                      type="button"
                       key={tag}
                       onClick={() => setChannelTag(tag)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                         channelTag === tag
-                          ? 'bg-brand-active text-white shadow-sm'
+                          ? 'bg-brand-active text-on-brand shadow-sm'
                           : 'text-ink-2 hover:text-ink'
                       }`}
                     >
@@ -1004,19 +1007,21 @@ Data: 01/09/2026 | BDR ID: 392
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => {
                       setTodayActivitiesCount((p) => p + 1);
                       setSprintLeadIndex(
                         (prev) => (prev + 1) % DIAGNOSTIC_DATA.emCadencia.topLeads.length,
                       );
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     Salvar toque como {channelTag}
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() =>
                       setSprintLeadIndex(
                         (prev) => (prev + 1) % DIAGNOSTIC_DATA.emCadencia.topLeads.length,
@@ -1037,7 +1042,8 @@ Data: 01/09/2026 | BDR ID: 392
                   <CheckSquare className="w-4 h-4 text-brand" />
                   Roteiro do Dia — Passo a Passo por Bloco de Horário
                 </h3>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={resetDailyTasks}
                   className="p-1.5 rounded-lg border border-line bg-surface-2 text-ink-2 hover:text-ink transition-all cursor-pointer text-xs flex items-center gap-1 font-bold"
                 >
@@ -1124,12 +1130,13 @@ Data: 01/09/2026 | BDR ID: 392
                 <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-xl border border-line">
                   {(Object.keys(PITCHES_BY_SEGMENT) as Array<keyof typeof PITCHES_BY_SEGMENT>).map(
                     (seg) => (
-                      <button type="button"
+                      <button
+                        type="button"
                         key={seg}
                         onClick={() => setSelectedSegment(seg)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
                           selectedSegment === seg
-                            ? 'bg-brand-active text-white shadow-sm'
+                            ? 'bg-brand-active text-on-brand shadow-sm'
                             : 'text-ink-2 hover:text-ink'
                         }`}
                       >
@@ -1181,9 +1188,10 @@ Data: 01/09/2026 | BDR ID: 392
                   className="w-full h-28 p-3 rounded-xl border border-line bg-surface-2 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-brand"
                 />
 
-                <button type="button"
+                <button
+                  type="button"
                   onClick={analyzeTranscript}
-                  className="px-5 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   Analisar Qualidade da Call com IA
@@ -1289,14 +1297,16 @@ Data: 01/09/2026 | BDR ID: 392
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={copyPautaToClipboard}
-                    className="px-4 py-2.5 rounded-xl bg-brand-active text-white font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
                   >
                     {copiedPauta ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     {copiedPauta ? 'Copiado!' : 'Copiar Pauta (Markdown)'}
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => window.print()}
                     className="px-3 py-2.5 rounded-xl border border-line bg-surface-2 text-ink-2 font-bold text-xs hover:text-ink transition-all cursor-pointer flex items-center gap-1.5"
                   >
@@ -1723,23 +1733,16 @@ Data: 01/09/2026 | BDR ID: 392
         )}
 
         {/* Modal de Detalhes / Drill-Down */}
-        {modalContent && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-surface border border-line rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
-              <button
-                type="button"
-                onClick={() => setModalContent(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-surface-2 text-ink-2 transition-all cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <h3 className="text-lg font-black text-ink">{modalContent.title}</h3>
-              <div className="text-xs text-ink-2 space-y-2 max-h-[60vh] overflow-y-auto pr-2">
-                {modalContent.body}
-              </div>
-            </div>
+        <Dialog
+          isOpen={!!modalContent}
+          onClose={() => setModalContent(null)}
+          title={modalContent?.title ?? ''}
+          maxWidth="max-w-2xl"
+        >
+          <div className="text-xs text-ink-2 space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+            {modalContent?.body}
           </div>
-        )}
+        </Dialog>
       </div>
     </div>
   );

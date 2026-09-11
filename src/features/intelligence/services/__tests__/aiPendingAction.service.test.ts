@@ -131,7 +131,7 @@ describe('executeAction', () => {
       'org-1',
       'lead-1',
       expect.objectContaining({
-        author: 'Enxame de IA AtlasGR',
+        author: 'Enxame de IA da Birth Hub 360',
         content: expect.stringContaining('Acionar o decisor hoje.'),
       }),
     );

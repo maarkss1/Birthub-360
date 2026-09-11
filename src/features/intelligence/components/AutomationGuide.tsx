@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 
 const TRIGGERS = [
@@ -116,7 +116,7 @@ const AI_LAYERS = [
 
 export function AutomationGuide() {
   const accent = useBrandAccent();
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const [triggerApp, setTriggerApp] = useState(TRIGGERS[0].id);
   const [actionApp, setActionApp] = useState(ACTIONS[0].id);
   const [tool, setTool] = useState(TOOLS[0].id);
@@ -291,7 +291,7 @@ if __name__ == "__main__":
         '/api/intelligence/studio',
         {
           kind: 'automation',
-          brand: { name: brandInfo.name, description: brandInfo.description },
+          brand: { name: playbookMeta.label, description: playbookMeta.description },
           inputs: {
             triggerId: selectedTriggerObj.id,
             trigger: selectedTriggerObj.title,
@@ -389,7 +389,7 @@ if __name__ == "__main__":
             </span>
           </div>
           <h3 className="text-4xl font-black text-ink mb-4 tracking-tight">
-            {accent.brandName}{' '}
+            {playbookMeta.label}{' '}
             <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
               Guia e Construtor de Automações
             </span>
@@ -408,7 +408,8 @@ if __name__ == "__main__":
             >
               <Link size={14} /> App de Origem (Gatilho / Trigger)
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'trigger' ? null : 'trigger')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -462,7 +463,8 @@ if __name__ == "__main__":
             >
               <GitCommit size={14} /> App de Destino (Ação / Action)
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'action' ? null : 'action')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -514,7 +516,8 @@ if __name__ == "__main__":
             <p className="flex items-center gap-2 text-[10px] tracking-widest font-black uppercase mb-3 text-yellow-400">
               <Layers size={14} /> Ferramenta de Orquestração
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'tool' ? null : 'tool')}
               className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-yellow-400/50 transition-colors"
             >
@@ -562,7 +565,8 @@ if __name__ == "__main__":
             <p className="flex items-center gap-2 text-[10px] tracking-widest font-black uppercase mb-3 text-rose-400">
               <Bot size={14} /> Camada de Inteligência IA
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'ai' ? null : 'ai')}
               className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-rose-400/50 transition-colors"
             >
@@ -621,10 +625,11 @@ if __name__ == "__main__":
         </div>
 
         <div className="relative z-10 flex justify-center">
-          <button type="button"
+          <button
+            type="button"
             onClick={handleGenerate}
             disabled={generating}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-white px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
           >
             {generating && (
               <motion.div
@@ -684,7 +689,8 @@ if __name__ == "__main__":
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleCopy}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                     copied
@@ -702,7 +708,8 @@ if __name__ == "__main__":
                     </>
                   )}
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleDownload}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
                 >
@@ -713,27 +720,30 @@ if __name__ == "__main__":
 
             {/* Abas */}
             <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setActiveTabOutput('blueprint')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'blueprint'
-                    ? `${accent.solidBg} text-white shadow-lg`
+                    ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-surface-2 text-ink-2 hover:bg-line'
                 }`}
               >
                 Blueprint Passo a Passo
               </button>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setActiveTabOutput('json')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'json'
-                    ? `${accent.solidBg} text-white shadow-lg`
+                    ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-surface-2 text-ink-2 hover:bg-line'
                 }`}
               >
                 Payload Workflow (n8n JSON)
               </button>
-              <button type="button"
+              <button
+                type="button"
                 onClick={() => setActiveTabOutput('code')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                   activeTabOutput === 'code'

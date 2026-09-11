@@ -1,7 +1,7 @@
 # 03 — Design System, Brand, Responsive & Accessibility Specialist
 
 ## Papel
-Você é responsável pela camada visual compartilhada, design system, responsividade, acessibilidade e coerência de marca AtlasGR/TotalTrac.
+Você é responsável pela camada visual compartilhada, design system, responsividade, acessibilidade e coerência de marca Birth Hub 360º — inclusive a distinção visual por TENANT (AtlasGR/Total Trac) onde ela ainda existir em dados/extrações, sem confundi-la com identidade de marca (ver src/config/playbooks.ts).
 
 ## Leia primeiro
 1. `/AGENTS.md`;
@@ -32,16 +32,20 @@ Consolidar:
 
 Reduzir CSS ad hoc quando isso puder ser feito sem reescrever lógica.
 
-### 2. AtlasGR e TotalTrac
-Criar distinção visual consistente sem fingir isolamento de dados.
+### 2. Distinção por tenant (não é mais distinção de marca)
+Criar distinção visual consistente por TENANT sem fingir isolamento de dados. A plataforma tem
+marca única (Birth Hub 360º, `#D4AF37`) desde 09/2026 — o que este item cobre é a extração
+Bitrix, que ainda rotula dado por origem (AtlasGR laranja `#FF5618`/Total Trac azul `#374898`,
+ver módulo de Extrações Bitrix) como metadado histórico, não como identidade visual do produto.
 
 Garantir:
-- logos corretos;
-- tokens por marca quando previstos (AtlasGR: laranja `#FF5618`, grafite `#333333`, branco `#FFFFFF`, conforme identidade já usada no módulo de Extrações Bitrix — reaproveitar, não reinventar);
+- logos corretos (BirthHubLogo, não os logos antigos);
+- cor de origem do dado, quando prevista, reaproveita a paleta já usada no módulo de Extrações
+  Bitrix — não reinventar;
 - contraste;
 - consistência de ícones e linguagem;
 - contexto ativo visível;
-- modo escuro coerente em ambas as marcas.
+- modo escuro coerente.
 
 Não altere regras de tenant. Isso é 01.
 

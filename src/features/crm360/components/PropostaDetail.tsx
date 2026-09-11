@@ -142,7 +142,8 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button type="button"
+        <button
+          type="button"
           onClick={onBack}
           className="p-2 rounded-xl hover:bg-surface-2 text-ink-2 hover:text-ink transition-colors"
           aria-label="Voltar para a lista"
@@ -218,7 +219,7 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
               )}
               <span className="text-base text-ink-2">
                 Total:{' '}
-                <span className="text-brand-active dark:text-brand-2 font-black">
+                <span className="text-brand-ink dark:text-brand font-black">
                   {money.format(document.total)}
                 </span>
               </span>

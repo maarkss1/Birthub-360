@@ -4,7 +4,7 @@ import { prisma } from '../src/lib/prisma.js';
 import { requestContext } from '../src/lib/async-context.js';
 import type { UserRole } from '@prisma/client';
 
-const ORG_NAME = 'AtlasGR';
+const ORG_NAME = 'Birth Hub 360';
 const DEFAULT_ADMIN_EMAIL = 'marcelo.nascimento@atlasgr.com.br';
 const DEFAULT_ADMIN_NAME = 'Marcelo Nascimento';
 const DEFAULT_ADMIN_ROLE: UserRole = 'ADMIN';

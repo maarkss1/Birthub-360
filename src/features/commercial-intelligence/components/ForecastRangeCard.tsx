@@ -22,8 +22,8 @@ const SCENARIO_STYLE: Record<
 > = {
   conservative: { barClass: 'bg-ink-2/50', textClass: 'text-ink-2' },
   // text-brand cru sobre bg-surface mede 3.18:1 (abaixo do mínimo AA 4.5:1 pra texto normal) —
-  // mesmo problema já corrigido na Sidebar/Configurações (PR #247). text-brand-active resolve.
-  likely: { barClass: 'bg-brand', textClass: 'text-brand-active dark:text-brand-2' },
+  // mesmo problema já corrigido na Sidebar/Configurações (PR #247). text-brand-ink resolve.
+  likely: { barClass: 'bg-brand', textClass: 'text-brand-ink dark:text-brand' },
   optimistic: { barClass: 'bg-success-active', textClass: 'text-success-active dark:text-success' },
 };
 

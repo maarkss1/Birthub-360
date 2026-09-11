@@ -3,7 +3,7 @@ name: accessibility
 description: Use em todo componente interativo, formulário, modal, navegação ou mudança de layout. Cobre o débito de acessibilidade já mapeado neste projeto (jsx-a11y, axe-core) e os requisitos WCAG AA mínimos não-negociáveis.
 ---
 
-# Acessibilidade — Central de Inteligência Comercial ATLASGR
+# Acessibilidade — Birth Hub 360º
 
 ## Estado atual (não repita os problemas já resolvidos, nem ignore os que faltam)
 
@@ -32,7 +32,7 @@ Este projeto já tem tooling de acessibilidade real, não é greenfield:
 ## Bug real já encontrado e corrigido — não reintroduza
 
 Texto branco sobre `--brand`/`--brand-2` puro (ex.: item ativo da Sidebar) dava só ~3.2:1
-(AtlasGR) / ~3.9:1 (Total Trac) de contraste — abaixo do mínimo AA de 4.5:1. Corrigido com o token
+(Birth Hub 360) / ~3.9:1 (Birth Hub 360) de contraste — abaixo do mínimo AA de 4.5:1. Corrigido com o token
 `--color-brand-active` (`color-mix(in srgb, var(--brand) 75%, black)`). **Use
 `bg-brand-active`/`--color-brand-active` sempre que precisar de texto branco sobre um fundo de cor
 de marca sólida** — não volte a usar `--brand` puro nesse cenário.

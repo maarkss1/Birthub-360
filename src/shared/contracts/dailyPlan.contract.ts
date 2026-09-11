@@ -40,6 +40,11 @@ export interface DailyPlanItem {
   leadId?: string;
   bitrixLeadId?: string;
   bitrixDealId?: string;
+  /** Entidade CRM real por trás do item (lead/negócio/contato/empresa) — usada para postar e
+   * buscar comentários no lugar certo do Bitrix24 (`crm.timeline.comment.*`). Ausente quando não
+   * há vínculo CRM resolvido (ex.: tarefa Bitrix sem `UF_CRM_TASK`). */
+  bitrixEntityType?: 'lead' | 'deal' | 'contact' | 'company';
+  bitrixEntityId?: string;
   tacticalGuidance: {
     recommendedAction: string;
     scriptOrPrompt?: string;
@@ -65,4 +70,30 @@ export interface UserDailyPlanSummary {
     completionRate: number;
   };
   items: DailyPlanItem[];
+}
+
+/**
+ * Fechamento do Plano Diário (`DailyPlanClosing`) — parecer de fim de dia + planejamento do novo
+ * dia, exigido antes de liberar o resto do app (ver `DailyClosingGate.tsx`/`ProtectedRoute.tsx`).
+ * Métricas calculadas só a partir de `Activity` locais de `referenceDate`: o Bitrix24 não expõe um
+ * snapshot histórico do que estava pendente num dia específico do passado, só o estado ao vivo.
+ */
+export interface DailyClosingMetrics {
+  totalItems: number;
+  completedItems: number;
+  pendingItems: number;
+  completionRate: number;
+}
+
+export interface PendingDailyClosing {
+  pending: boolean;
+  /** Dia (YYYY-MM-DD) com atividades e sem fechamento registrado. Ausente quando `pending` é falso. */
+  referenceDate?: string;
+  metrics?: DailyClosingMetrics;
+}
+
+export interface DailyPlanClosingInput {
+  referenceDate: string;
+  userComment: string;
+  nextDayGoals: string[];
 }

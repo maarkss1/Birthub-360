@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="38 38 180 180" width="180" height="180"
+     role="img" aria-label="Birth Hub 360">
+  <title>Birth Hub 360 — ícone</title>
+  <defs>
+    <linearGradient id="bh-o0" gradientUnits="userSpaceOnUse" x1="127.14" y1="46.00" x2="199.44" y2="87.75"><stop offset="0" stop-color="#D4AF37"/><stop offset="1" stop-color="#986876"/></linearGradient>
+    <linearGradient id="bh-o1" gradientUnits="userSpaceOnUse" x1="198.58" y1="86.26" x2="198.58" y2="169.74"><stop offset="0" stop-color="#986876"/><stop offset="1" stop-color="#5B21B6"/></linearGradient>
+    <linearGradient id="bh-o2" gradientUnits="userSpaceOnUse" x1="199.44" y1="168.25" x2="127.14" y2="210.00"><stop offset="0" stop-color="#5B21B6"/><stop offset="1" stop-color="#2E43C4"/></linearGradient>
+    <linearGradient id="bh-o3" gradientUnits="userSpaceOnUse" x1="128.86" y1="210.00" x2="56.56" y2="168.25"><stop offset="0" stop-color="#2E43C4"/><stop offset="1" stop-color="#0065D2"/></linearGradient>
+    <linearGradient id="bh-o4" gradientUnits="userSpaceOnUse" x1="57.42" y1="169.74" x2="57.42" y2="86.26"><stop offset="0" stop-color="#0065D2"/><stop offset="1" stop-color="#6A8A84"/></linearGradient>
+    <linearGradient id="bh-o5" gradientUnits="userSpaceOnUse" x1="56.56" y1="87.75" x2="128.86" y2="46.00"><stop offset="0" stop-color="#6A8A84"/><stop offset="1" stop-color="#D4AF37"/></linearGradient>
+    <linearGradient id="bh-bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D4AF37"/><stop offset="0.45" stop-color="#D4AF37" stop-opacity="0.15"/><stop offset="0.55" stop-color="#D4AF37" stop-opacity="0.15"/><stop offset="1" stop-color="#D4AF37"/></linearGradient>
+    <radialGradient id="bh-sheen" cx="0.3" cy="0.25" r="0.55"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.34"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bh-core-shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.55"/><stop offset="0.42" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.06"/></linearGradient>
+  </defs>
+  <g fill="none" stroke-width="20">
+      <path stroke="url(#bh-o0)" d="M127.16 48.00 A80.0 80.0 0 0 1 197.70 88.73"/>
+      <path stroke="url(#bh-o1)" d="M196.86 87.28 A80.0 80.0 0 0 1 196.86 168.72"/>
+      <path stroke="url(#bh-o2)" d="M197.70 167.27 A80.0 80.0 0 0 1 127.16 208.00"/>
+      <path stroke="url(#bh-o3)" d="M128.84 208.00 A80.0 80.0 0 0 1 58.30 167.27"/>
+      <path stroke="url(#bh-o4)" d="M59.14 168.72 A80.0 80.0 0 0 1 59.14 87.28"/>
+      <path stroke="url(#bh-o5)" d="M58.30 88.73 A80.0 80.0 0 0 1 128.84 48.00"/>
+  </g>
+  <circle cx="128.0" cy="128.0" r="90" fill="url(#bh-sheen)"/>
+  <circle cx="128.0" cy="128.0" r="70" fill="#0B132B"/>
+  <circle cx="128.0" cy="128.0" r="70" fill="url(#bh-core-shade)"/>
+  <circle cx="128.0" cy="128.0" r="59" fill="none" stroke="#D4AF37" stroke-width="6"/>
+  <rect x="66.0" y="126.3" width="124" height="3.4" fill="url(#bh-bar)"/>
+  <path fill="#F8FAFC" transform="matrix(0.0858 0 0 -0.0858 100.68 158.39)" d="M450.4 707Q574.2 707 627.9 670.8Q681.6 634.6 681.6 573.4Q681.6 520.8 646.8 476.7Q612 432.6 547 404.5Q482 376.4 391 370.8Q511 369.4 573.8 326.1Q636.6 282.8 636.6 218.2Q636.6 165.8 612.2 125.1Q587.8 84.4 543.2 56.4Q498.6 28.4 436 14.2Q373.4 0 297 0Q267.8 0 227.6 1.5Q187.4 3 121 3Q94.8 3 63.8 2.5Q32.8 2 3.7 1.5Q-25.4 1 -45 0L-41 20Q-7 22 12 28Q31 34 42 52Q53 70 62 106L194 602Q201.8 632.8 202.4 651.3Q203 669.8 188.5 678.5Q174 687.2 135 688L140 708Q159.6 707 188.2 706.5Q216.8 706 247.7 705.5Q278.6 705 303 705Q353.2 705 385.7 706Q418.2 707 450.4 707ZM266 359 270 376H339.2Q393.8 376 430.6 407.9Q467.4 439.8 486.2 490.8Q505 541.8 505 596.8Q505 636.6 491.5 662.3Q478 688 438.6 688Q413 688 401 674.1Q389 660.2 378 617L243 106Q238.2 86.4 235.7 67.1Q233.2 47.8 242.2 35.4Q251.2 23 278.8 23Q331.6 23 368.9 53.4Q406.2 83.8 426.6 132.9Q447 182 447 237.2Q447 270.4 437.2 297.9Q427.4 325.4 404.3 342.2Q381.2 359 341.6 359Z"/>
+</svg>

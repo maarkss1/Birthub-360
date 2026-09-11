@@ -31,12 +31,12 @@ describe('decision-maker LinkedIn links', () => {
   it('não aceita páginas de empresa ou URLs externas como perfil pessoal', () => {
     const companyPage = getDecisionMakerLinkedInLink({
       name: 'Ana Lima',
-      companyName: 'AtlasGR',
+      companyName: 'Birth Hub 360',
       linkedinUrl: 'https://www.linkedin.com/company/atlasgr',
     });
     const unsafeUrl = getDecisionMakerLinkedInLink({
       name: 'Ana Lima',
-      companyName: 'AtlasGR',
+      companyName: 'Birth Hub 360',
       linkedinUrl: 'javascript:alert(1)',
     });
 

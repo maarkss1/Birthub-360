@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { BookOpen, Sparkles, Award, Loader2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 
 export function TopicTrainingAcademy() {
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
@@ -28,7 +28,7 @@ export function TopicTrainingAcademy() {
         '/api/intelligence/studio',
         {
           kind: 'training',
-          brand: { name: brandInfo.name, description: brandInfo.description },
+          brand: { name: playbookMeta.label, description: playbookMeta.description },
           inputs: { topic },
         },
         { timeoutMs: 90_000 },
@@ -49,7 +49,7 @@ export function TopicTrainingAcademy() {
     <div className="bg-surface/95 backdrop-blur-3xl p-8 rounded-[3rem] border border-line/90 shadow-2xl space-y-6 text-ink">
       <div className="flex items-center justify-between border-b border-line pb-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-brand/10 text-brand-active dark:text-brand-2 border border-brand/20">
+          <div className="p-3 rounded-2xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
             <BookOpen className="w-6 h-6" />
           </div>
           <div>
@@ -61,7 +61,7 @@ export function TopicTrainingAcademy() {
             </p>
           </div>
         </div>
-        <span className="px-3 py-1 bg-brand/10 text-brand-active dark:text-brand-2 text-xs font-black rounded-full border border-brand/20">
+        <span className="px-3 py-1 bg-brand/10 text-brand-ink dark:text-brand text-xs font-black rounded-full border border-brand/20">
           IA Academy Live
         </span>
       </div>
@@ -91,7 +91,7 @@ export function TopicTrainingAcademy() {
           <button
             type="submit"
             disabled={isGenerating || !topic}
-            className="bg-brand-active hover:bg-brand-2 text-white font-extrabold px-6 py-3 rounded-2xl text-xs shadow-lg shadow-brand-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="bg-brand-active hover:bg-brand-2 text-on-brand font-extrabold px-6 py-3 rounded-2xl text-xs shadow-lg shadow-brand-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -135,11 +135,10 @@ export function TopicTrainingAcademy() {
           className="space-y-4 pt-2"
         >
           <div className="p-5 rounded-2xl bg-brand/10 border border-brand/20">
-            <h3 className="font-black text-brand-active dark:text-brand-2 text-base flex items-center gap-2">
-              <Award className="w-5 h-5 text-brand-active dark:text-brand-2" />{' '}
-              {trainingModule.title}
+            <h3 className="font-black text-brand-ink dark:text-brand text-base flex items-center gap-2">
+              <Award className="w-5 h-5 text-brand-ink dark:text-brand" /> {trainingModule.title}
             </h3>
-            <p className="text-xs text-brand-active dark:text-brand-2 mt-1">
+            <p className="text-xs text-brand-ink dark:text-brand mt-1">
               {trainingModule.description}
             </p>
           </div>
@@ -151,7 +150,7 @@ export function TopicTrainingAcademy() {
                 className="p-5 rounded-3xl bg-surface border border-line shadow-sm space-y-2 flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-[10px] font-black text-brand-active dark:text-brand-2 bg-brand/10 px-2.5 py-1 rounded-full border border-brand/10">
+                  <span className="text-[10px] font-black text-brand-ink dark:text-brand bg-brand/10 px-2.5 py-1 rounded-full border border-brand/10">
                     ETAPA {s.step}
                   </span>
                   <h4 className="font-extrabold text-xs text-ink mt-2">{s.title}</h4>

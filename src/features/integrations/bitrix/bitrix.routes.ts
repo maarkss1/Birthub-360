@@ -4,11 +4,8 @@ import { routeParam } from '../../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
-  addDailyPlanItemNote,
   cancelExtractionRun,
-  completeDailyPlanItem,
   connectBitrix,
-  createDailyPlanActivity,
   createExtractionRun,
   createSyncRule,
   deleteExtractionRun,
@@ -16,7 +13,6 @@ import {
   disconnectBitrix,
   downloadExtractionFile,
   exportLeadToBitrixNow,
-  fetchUserDailyPlan,
   getBitrixUsers,
   getConnectionWebhookUrl,
   getDealPipelines,
@@ -39,6 +35,7 @@ import {
   setSyncRuleActive,
   testBitrixConnection,
 } from './bitrix.service.js';
+import { dailyPlanRoutes } from './dailyPlanRoutes.js';
 import type { ExtractionFileFormat } from './service/extractionFiles.js';
 
 const router = Router();
@@ -71,7 +68,7 @@ async function resolveScopedAssignedById(
   return { assignedById: ownId ?? undefined, restricted: true, matched: ownId !== null };
 }
 
-// ── Conexões (uma organização pode ter mais de um portal Bitrix — ex.: AtlasGR e TotalTrac) ────
+// ── Conexões (uma organização pode ter mais de um portal Bitrix — ex.: Birth Hub 360) ────
 
 router.get(
   '/connections',
@@ -380,8 +377,11 @@ router.get('/deals', async (req: Request, res: Response, next: NextFunction): Pr
       categoryId: req.query.categoryId ? String(req.query.categoryId) : undefined,
       stageId: req.query.stageId ? String(req.query.stageId) : undefined,
       assignedById: scope.assignedById,
-      month: Number.isInteger(month) && month! >= 1 && month! <= 12 ? month : undefined,
-      year: Number.isInteger(year) && year! > 2000 ? year : undefined,
+      month:
+        typeof month === 'number' && Number.isInteger(month) && month >= 1 && month <= 12
+          ? month
+          : undefined,
+      year: typeof year === 'number' && Number.isInteger(year) && year > 2000 ? year : undefined,
       search: req.query.search ? String(req.query.search) : undefined,
       customFieldCode: req.query.customFieldCode ? String(req.query.customFieldCode) : undefined,
       customFieldValue: req.query.customFieldValue ? String(req.query.customFieldValue) : undefined,
@@ -804,121 +804,8 @@ router.get(
 );
 
 // ── Plano Diário Operacional (Sincronizado com Bitrix24) ──────────────────────
-
-router.get(
-  '/daily-plan',
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { organizationId, id: userId, email, role } = (req as AuthRequest).user;
-      let overrideBitrixUserId: string | undefined;
-
-      // Se for ADMIN/GESTOR e passou assignedById na query, permite ver o plano de outro membro
-      if (hasRequiredRole(role, ['ADMIN', 'GESTOR']) && req.query.assignedById) {
-        overrideBitrixUserId = String(req.query.assignedById);
-      }
-
-      const plan = await fetchUserDailyPlan(
-        organizationId,
-        email,
-        userId,
-        undefined,
-        overrideBitrixUserId,
-      );
-      res.json({ success: true, data: plan });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-router.post(
-  '/daily-plan/sync',
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { organizationId, id: userId, email, role } = (req as AuthRequest).user;
-      let overrideBitrixUserId: string | undefined;
-
-      if (hasRequiredRole(role, ['ADMIN', 'GESTOR']) && req.body.assignedById) {
-        overrideBitrixUserId = String(req.body.assignedById);
-      }
-
-      const plan = await fetchUserDailyPlan(
-        organizationId,
-        email,
-        userId,
-        undefined,
-        overrideBitrixUserId,
-      );
-      res.json({ success: true, data: plan, message: 'Plano diário sincronizado com o Bitrix24.' });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-router.post(
-  '/daily-plan/complete',
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { organizationId, id: userId } = (req as AuthRequest).user;
-      const { itemType, itemId } = req.body;
-      if (!itemType || !itemId) {
-        res.status(400).json({ success: false, error: 'itemType e itemId são obrigatórios.' });
-        return;
-      }
-      const result = await completeDailyPlanItem(organizationId, userId, itemType, itemId);
-      res.json({ success: true, message: result.message });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-router.post(
-  '/daily-plan/note',
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { organizationId, id: userId } = (req as AuthRequest).user;
-      const { itemType, itemId, note } = req.body;
-      if (!itemType || !itemId || !note) {
-        res.status(400).json({
-          success: false,
-          error: 'itemType, itemId e note são obrigatórios.',
-        });
-        return;
-      }
-      const result = await addDailyPlanItemNote(organizationId, userId, itemType, itemId, note);
-      res.json({ success: true, message: result.message });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-router.post(
-  '/daily-plan/activity',
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { organizationId, id: userId, email } = (req as AuthRequest).user;
-      const { title, channel, contactName, phone, dueTime, observations, leadId } = req.body;
-      if (!title || !channel) {
-        res.status(400).json({ success: false, error: 'title e channel são obrigatórios.' });
-        return;
-      }
-      const result = await createDailyPlanActivity(organizationId, userId, email, {
-        title,
-        channel,
-        contactName,
-        phone,
-        dueTime,
-        observations,
-        leadId,
-      });
-      res.json({ success: true, message: result.message });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+// Rotas extraídas para dailyPlanRoutes.ts (ver check-hotspots.ts / HOTSPOT_EXCEPTIONS.md — este
+// arquivo tinha passado de 1000 linhas). Mesmo prefixo `/api/bitrix`, sem middleware próprio.
+router.use(dailyPlanRoutes);
 
 export const bitrixRoutes = router;

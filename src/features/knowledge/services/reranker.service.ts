@@ -41,7 +41,7 @@ export class RerankerService {
    * com `wrapUntrustedContent` — mesmo padrão de defesa contra prompt injection já usado em
    * `KnowledgeCopilotService.answerTechnicalQuestion` (ver `../services/knowledge-copilot.service.ts`),
    * porque o conteúdo de um `DocumentChunk` é, aqui também, dado de um documento de terceiro que a
-   * AtlasGR não controla.
+   * Birth Hub 360 não controla.
    *
    * Desligado (`KNOWLEDGE_RERANK_ENABLED=false`, o padrão) ou com menos de 2 candidatos (nada para
    * reordenar): devolve `candidates.slice(0, topK)` sem chamar IA nenhuma.
@@ -84,7 +84,7 @@ export class RerankerService {
   }
 
   private static buildSystemPrompt(): string {
-    return `Você é um sistema de reranqueamento de relevância para a Base de Conhecimento técnica da AtlasGR/TotalTrac (hardwares, rastreadores, sensores de telemetria, atuadores, regras de PGR).
+    return `Você é um sistema de reranqueamento de relevância para a Base de Conhecimento técnica da Birth Hub 360 (hardwares, rastreadores, sensores de telemetria, atuadores, regras de PGR).
 
 Sua ÚNICA tarefa é pontuar, de 0 a 100, o quanto cada trecho numerado abaixo responde de fato à pergunta do usuário. 0 = irrelevante, 100 = responde diretamente à pergunta.
 

@@ -1,11 +1,15 @@
 /**
- * AtlasGR Design System Foundation (Prompt 01)
+ * Fundação do design system.
  *
  * Centraliza tokens tipográficos, espaçamento, elevações, classes canônicas
- * e abstrações de interação em conformidade com o Manual de Identidade Visual.
+ * e abstrações de interação, em conformidade com `identidade-visual/birthhub360/`.
+ *
+ * As constantes se chamavam DS_TOKENS/DS_CLASSES e as classes que elas
+ * nomeiam tinham o prefixo `atlas-`; ambos passaram a `DS_*`/`bh-*` junto com a
+ * troca de marca — os valores não mudaram.
  */
 
-export const ATLAS_TOKENS = {
+export const DS_TOKENS = {
   radii: {
     xs: '4px',
     sm: '8px',
@@ -38,28 +42,28 @@ export const ATLAS_TOKENS = {
 } as const;
 
 /**
- * Classes utilitárias CSS oficiais da camada Atlas Design System
+ * Classes utilitárias CSS oficiais da camada de design system
  */
-export const ATLAS_CLASSES = {
-  glass: 'atlas-glass',
-  surface: 'atlas-surface',
-  card: 'atlas-card',
-  glow: 'atlas-glow',
-  focus: 'atlas-focus',
-  interactive: 'atlas-interactive',
+export const DS_CLASSES = {
+  glass: 'bh-glass',
+  surface: 'bh-surface',
+  card: 'bh-card',
+  glow: 'bh-glow',
+  focus: 'bh-focus',
+  interactive: 'bh-interactive',
   states: {
-    default: 'atlas-state-default',
-    hover: 'atlas-state-hover',
-    active: 'atlas-state-active',
-    focus: 'atlas-state-focus',
-    selected: 'atlas-state-selected',
-    disabled: 'atlas-state-disabled',
-    loading: 'atlas-state-loading',
-    success: 'atlas-state-success',
-    warning: 'atlas-state-warning',
-    error: 'atlas-state-error',
+    default: 'bh-state-default',
+    hover: 'bh-state-hover',
+    active: 'bh-state-active',
+    focus: 'bh-state-focus',
+    selected: 'bh-state-selected',
+    disabled: 'bh-state-disabled',
+    loading: 'bh-state-loading',
+    success: 'bh-state-success',
+    warning: 'bh-state-warning',
+    error: 'bh-state-error',
   },
-  skeleton: 'atlas-skeleton-shimmer',
+  skeleton: 'bh-skeleton-shimmer',
 } as const;
 
-export type AtlasInteractionState = keyof typeof ATLAS_CLASSES.states;
+export type InteractionState = keyof typeof DS_CLASSES.states;

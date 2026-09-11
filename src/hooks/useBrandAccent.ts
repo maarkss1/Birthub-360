@@ -1,59 +1,52 @@
-import { useBrand } from '../contexts/BrandContext';
-
 /**
- * Classes Tailwind condicionadas à marca ativa (AtlasGR = laranja, TotalTrac = azul).
- * Usado pelas ferramentas dentro de IntelligenceHub que antes tinham cores roxo/rosa
- * fixas (herdadas de um nome de produto antigo, "Nexus") sem nenhuma relação com a
- * identidade visual de nenhuma das duas empresas.
+ * Classes Tailwind de acento da marca.
+ *
+ * Existia para resolver um problema que não existe mais: as ferramentas do
+ * IntelligenceHub tinham cores roxo/rosa fixas, herdadas de um nome de produto
+ * antigo ("Nexus"), e este hook as trocava entre laranja e azul conforme a marca
+ * ativa. Com marca única, o acento é sempre o da Birth Hub 360 — o hook
+ * permanece como o lugar canônico dessas combinações (em vez de ~30 telas
+ * repetindo `bg-brand/15 border-brand/30`) e para que qualquer ajuste de
+ * contraste seja feito num arquivo só.
+ *
+ * Contraste (fórmula de luminância relativa do WCAG, calculado):
+ * Antique Gold (#D4AF37) cru mede 8.74:1 contra a superfície escura, mas só
+ * 2.10:1 contra a clara — por isso `text` usa `text-brand-ink` no claro e a cor
+ * crua no escuro, mesmo idioma do resto do design system. Superfície de marca
+ * sólida (`bg`/`solidBg`) sempre pede `text-on-brand` (Obsidian), nunca branco.
  */
 export function useBrandAccent() {
-  const { activeBrand } = useBrand();
-  const isAtlas = activeBrand === 'atlasgr';
-
   return {
-    isAtlas,
-    brandName: isAtlas ? 'Atlas' : 'Total Trac',
-    // Texto direto (não decorativo) sobre bg-bg/bg-surface: a cor crua da marca cai a 3.02:1
-    // (laranja) / 3.42:1 (azul) no claro, abaixo de 4.5:1 (achado do axe-core na LoginScreen,
-    // PR #309). Mesmo padrão já usado neste hook pra bg/solidBg e no restante do app pra
-    // text-danger-active dark:text-danger: -active (mais escura) no claro, cor crua no escuro
-    // (a crua já é clara o bastante contra o --bg escuro quase preto, ~6:1 nos dois casos).
-    text: isAtlas
-      ? 'text-atlas-orange-active dark:text-atlas-orange'
-      : 'text-totaltrack-blue-active dark:text-totaltrack-blue',
-    textSoft: isAtlas ? 'text-orange-300' : 'text-totaltrac-light',
-    // bg/solidBg usam a versão -active (mais escura): todo consumidor que as usa emparelha
-    // com texto branco em cima (Calendar "hoje", filtro de período do Billing, abas do
-    // BitrixGuideHub/AutomationGuide/SuperagentCreator) — bg-atlas-orange/bg-totaltrack-blue
-    // crus com texto branco caem abaixo de 4.5:1 (achado do axe-core, ver comentário em
-    // globals.css). As demais variantes (bgSoft, border etc.) não têm texto branco em cima e
-    // continuam com a cor crua.
-    bg: isAtlas ? 'bg-atlas-orange-active' : 'bg-totaltrack-blue-active',
-    bgSoft: isAtlas ? 'bg-atlas-orange/15' : 'bg-totaltrack-blue/15',
-    bgSofter: isAtlas ? 'bg-atlas-orange/10' : 'bg-totaltrack-blue/10',
-    border: isAtlas ? 'border-atlas-orange' : 'border-totaltrack-blue',
-    borderSoft: isAtlas ? 'border-atlas-orange/30' : 'border-totaltrack-blue/30',
-    hoverBorder: isAtlas ? 'hover:border-atlas-orange/50' : 'hover:border-totaltrack-blue/50',
-    hoverBg: isAtlas ? 'hover:bg-atlas-orange/30' : 'hover:bg-totaltrack-blue/30',
-    selectedBg: isAtlas
-      ? 'bg-atlas-orange/30 border-atlas-orange'
-      : 'bg-totaltrack-blue/30 border-totaltrack-blue',
-    solidBg: isAtlas ? 'bg-atlas-orange-active' : 'bg-totaltrack-blue-active',
-    gradient: isAtlas
-      ? 'from-atlas-orange to-orange-400'
-      : 'from-totaltrac-navy to-totaltrack-blue',
-    gradientVia: isAtlas
-      ? 'from-atlas-orange via-orange-500 to-amber-500'
-      : 'from-totaltrac-deep via-totaltrac-navy to-totaltrack-blue',
-    // Valores curados por marca (não um var(--brand) direto): a TotalTrac usa aqui a cor de
-    // acento (--brand-2, #008FCE) em vez da cor primária (--brand, #374898 navy) porque o
-    // navy fica escuro/pouco visível como glow — decisão intencional, não um esquecimento de
-    // tokenização (ver token genérico --shadow-glow-brand em globals.css/design-system/SKILL.md
-    // pra qualquer glow novo que não precise dessa curadoria por marca).
-    glow: isAtlas
-      ? 'shadow-[0_0_40px_rgba(255,86,24,0.4)] hover:shadow-[0_0_60px_rgba(255,86,24,0.6)]'
-      : 'shadow-[0_0_40px_rgba(0,143,206,0.4)] hover:shadow-[0_0_60px_rgba(0,143,206,0.6)]',
-    blobA: isAtlas ? 'bg-atlas-orange/15' : 'bg-totaltrack-blue/15',
-    blobB: isAtlas ? 'bg-amber-500/15' : 'bg-totaltrac-light/15',
+    /** Texto de acento, não decorativo — reativo a tema. */
+    text: 'text-brand-ink dark:text-brand',
+    /** Texto de acento em superfície já escura (dentro de card escuro, hero). */
+    textSoft: 'text-brand',
+    /**
+     * Superfície de marca sólida. Emparelhe SEMPRE com `text-on-brand`:
+     * ouro é uma cor clara e texto branco em cima mede 2.10:1.
+     */
+    bg: 'bg-brand',
+    /** Cor de texto/ícone obrigatória sobre `bg`/`solidBg`/`selectedBg`. */
+    onBg: 'text-on-brand',
+    bgSoft: 'bg-brand/15',
+    bgSofter: 'bg-brand/10',
+    border: 'border-brand',
+    borderSoft: 'border-brand/30',
+    hoverBorder: 'hover:border-brand/50',
+    hoverBg: 'hover:bg-brand/30',
+    selectedBg: 'bg-brand/30 border-brand',
+    solidBg: 'bg-brand',
+    /** Rampa metálica do logotipo — ouro → ouro claro, dentro da mesma família. */
+    gradient: 'from-brand to-brand-2',
+    gradientVia: 'from-brand via-brand-2 to-brand',
+    /**
+     * Halo/órbita: aqui — e só aqui — entram o Deep Iris e o Orbit Blue. O brand
+     * book reserva o gradiente 360º para "halos, bordas, indicadores e hero
+     * sections", nunca como fundo de superfície com texto em cima.
+     */
+    orbit: 'from-brand via-iris to-orbit-blue',
+    glow: 'shadow-glow-brand hover:shadow-glow-brand-strong',
+    blobA: 'bg-brand/15',
+    blobB: 'bg-iris/15',
   };
 }

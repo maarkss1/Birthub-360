@@ -141,7 +141,7 @@ export type TranslationResult = z.infer<typeof TranslationSchema>;
 
 export const summarizeLead = async (leadData: string, piiValues: PiiValue[] = []) =>
   callModel(
-    'Você é um assistente da AtlasGR especializado em resumir perfis de leads no mercado B2B.',
+    'Você é um assistente da Birth Hub 360 especializado em resumir perfis de leads no mercado B2B.',
     `Resuma as seguintes informações do lead de forma estratégica, focando em oportunidades de negócios e logística corporativa:\n${leadData}`,
     'local-llama3',
     piiValues,
@@ -152,14 +152,14 @@ export const generateEmailDraft = async (
   piiValues: PiiValue[] = [],
 ) =>
   callModel(
-    'Você é um SDR experiente da AtlasGR, especializado em escrever e-mails frios e follow-ups persuasivos B2B.',
+    'Você é um SDR experiente da Birth Hub 360, especializado em escrever e-mails frios e follow-ups persuasivos B2B.',
     `Escreva um e-mail profissional com foco em alta taxa de resposta.\nContexto: ${context}\nObjetivo: ${goal}`,
     'local-llama3',
     piiValues,
   );
 export const predictConversionScore = async (leadData: string, piiValues: PiiValue[] = []) =>
   callModel(
-    'Você é um Analista de RevOps avançado da AtlasGR.',
+    'Você é um Analista de RevOps avançado da Birth Hub 360.',
     `Avalie os dados qualitativos deste lead B2B e forneça uma estimativa de probabilidade de conversão (0 a 100%). Justifique criticamente apontando sinais vitais de compra.\nDados: ${leadData}`,
     'local-llama3',
     piiValues,
@@ -170,7 +170,7 @@ export const generateMeetingAgenda = async (
   piiValues: PiiValue[] = [],
 ) =>
   callModel(
-    'Você é um Consultor de Vendas Enterprise da AtlasGR.',
+    'Você é um Consultor de Vendas Enterprise da Birth Hub 360.',
     `Gere uma pauta (agenda) estruturada, orientada a fechamento e discovery, para uma reunião B2B com os seguintes detalhes:\nTópico: ${topic}\nDuração: ${duration}`,
     'local-llama3',
     piiValues,

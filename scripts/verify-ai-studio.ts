@@ -3,7 +3,7 @@ import 'dotenv/config';
 import { studioService, type StudioGenerationRequest } from '../src/features/intelligence/services/studio.service.js';
 
 const brand = {
-    name: 'AtlasGR',
+    name: 'Birth Hub 360',
     description: 'Gestão de risco de carga, scoring inteligente e prospecção B2B.',
 };
 

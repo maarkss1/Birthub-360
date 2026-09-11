@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
-import * as React from 'react';
+
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const cardVariants = cva(
@@ -18,6 +19,15 @@ const cardVariants = cva(
           'bg-surface/96 border border-line shadow-[0_28px_65px_-42px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-brand/20 hover:shadow-[0_34px_72px_-40px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.08)]',
         interactive:
           'group bg-surface border border-line shadow-card cursor-pointer transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-brand/25 hover:bg-surface-2/75 hover:shadow-card-hover active:translate-y-0 active:scale-[0.995]',
+        // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
+        // Mesmo idioma do "accent" acima (borda + shadow-glow em repouso, pra marcar destaque
+        // persistente — não é o glow transitório de hover do Button). shadow-glow-accent-*/pulse
+        // já são discretos no claro (20%) e vívidos no escuro (duas camadas) — o mesmo token
+        // resolve os dois temas sem precisar de dark: aqui.
+        iris: 'bg-surface border border-accent-violet/30 shadow-glow-accent-violet transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+        cyan: 'bg-surface border border-accent-cyan/30 shadow-glow-accent-cyan transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+        pulse:
+          'bg-surface border border-pulse/30 shadow-glow-pulse transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
       },
       padding: {
         default: 'p-6',
@@ -36,7 +46,7 @@ const cardVariants = cva(
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {
-  /** Faixa de destaque no topo do card — reage à marca ativa pelos tokens runtime. */
+  /** Faixa de destaque no topo do card — usa os tokens de marca (`--brand`/`--brand-2`). */
   accentBar?: boolean;
 }
 
@@ -100,4 +110,4 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardFooter.displayName = 'CardFooter';
 
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, cardVariants };
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cardVariants };

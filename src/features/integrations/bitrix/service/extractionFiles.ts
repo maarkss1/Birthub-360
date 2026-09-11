@@ -120,7 +120,7 @@ function safeSheetName(label: string): string {
 
 export async function buildXlsxWorkbook(datasets: ExtractionEntityDataset[]): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'AtlasGR Prospector — Extrações Bitrix24';
+  workbook.creator = 'Birth Hub 360 Prospector — Extrações Bitrix24';
   workbook.created = new Date();
 
   for (const dataset of datasets) {

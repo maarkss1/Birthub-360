@@ -2,7 +2,7 @@
 export const OPEN_COMMAND_PALETTE_EVENT = 'atlas:open-command-palette';
 
 /** Nome do evento global disparado para abrir o copiloto de IA flutuante a partir de qualquer tela. */
-export const OPEN_AI_CHAT_EVENT = 'atlas:open-ai-chat';
+export const OPEN_AI_CHAT_EVENT = 'birthhub:open-ai-chat';
 
 /**
  * Intenção que o Command Palette carrega pro módulo de destino (ex.: "abra o formulário de criar"

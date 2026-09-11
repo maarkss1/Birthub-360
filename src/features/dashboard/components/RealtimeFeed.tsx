@@ -46,7 +46,7 @@ export function RealtimeFeed() {
         await readSseStream(response, (sseEvent: SseEvent) => {
           if (sseEvent.event === 'crm_event') {
             const payload = JSON.parse(sseEvent.data);
-            let message = 'Evento recebido';
+            let message: string;
             if (payload.type === 'DEAL_WON') message = 'Negócio ganho!';
             else if (payload.type === 'DEAL_LOST') message = 'Negócio perdido/desqualificado.';
             else message = payload.type;

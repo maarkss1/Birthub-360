@@ -45,7 +45,7 @@ export function BentoHero({
 
       {action && <div className="z-10 pt-2">{action}</div>}
 
-      {/* Grafismo sutil angular de 60 graus AtlasGR em marca d'água */}
+      {/* Grafismo sutil angular de 60 graus Birth Hub 360 em marca d'água */}
       <div
         className="pointer-events-none absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.04] dark:opacity-[0.07] bg-gradient-to-tr from-brand to-brand-2 rounded-3xl [transform:rotate(60deg)]"
         aria-hidden="true"

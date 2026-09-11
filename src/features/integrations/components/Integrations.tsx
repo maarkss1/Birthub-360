@@ -20,6 +20,7 @@ import { useWhatsAppIntegration } from '../../../hooks/useWhatsAppIntegration';
 import { useGoogleIntegration } from '../../../hooks/useGoogleIntegration';
 import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
 import { use3CXIntegration } from '../../../hooks/use3CXIntegration';
+import { VoiceHubConnectionPanel } from '../birth-voice/components/VoiceHubConnectionPanel';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { IntegrationStatusBadge } from './IntegrationStatusBadge';
@@ -151,7 +152,7 @@ export function Integrations() {
     handle3CXTest,
   } = use3CXIntegration();
 
-  type Tab = 'whatsapp' | 'google' | 'bitrix' | '3cx' | 'webhooks';
+  type Tab = 'whatsapp' | 'google' | 'bitrix' | '3cx' | 'voice-hub' | 'webhooks';
   const [activeTab, setActiveTab] = useState<Tab>('whatsapp');
 
   return (
@@ -180,48 +181,63 @@ export function Integrations() {
           aria-label="Módulos de integração"
           className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible lg:overflow-y-auto p-3 lg:p-4 lg:space-y-1 lg:flex-1"
         >
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('whatsapp');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'whatsapp' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'whatsapp' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">💬</span> WhatsApp
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('google');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'google' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'google' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">📧</span> Google Workspace
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('bitrix');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'bitrix' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'bitrix' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">🔗</span> Bitrix24
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('3cx');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === '3cx' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === '3cx' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <IconWrench className="w-4 h-4 text-sky-500" /> PABX 3CX
           </button>
-          <button type="button"
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('voice-hub');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'voice-hub' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">🎙️</span> SDR de Voz IA
+          </button>
+          <button
+            type="button"
             onClick={() => {
               SoundFX.play('navigate');
               setActiveTab('webhooks');
             }}
-            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'webhooks' ? 'bg-brand/10 text-brand-active dark:text-brand-2' : 'text-ink-2 hover:bg-surface-2'}`}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'webhooks' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <Activity className="w-4 h-4 text-brand" /> Webhooks & Monitor
           </button>
@@ -317,7 +333,8 @@ export function Integrations() {
                     )}
                   </div>
                   {status === 'connected' && (
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handleDisconnect}
                       disabled={loading || !canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -330,7 +347,8 @@ export function Integrations() {
 
                 {status === 'disconnected' && (
                   <div className="space-y-2">
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handleConnect}
                       disabled={loading || !canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -480,7 +498,8 @@ export function Integrations() {
                         ))}
                       </div>
                     )}
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handleGoogleDisconnect}
                       disabled={googleLoading || !canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -490,7 +509,8 @@ export function Integrations() {
                     </button>
                   </>
                 ) : (
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleGoogleConnect}
                     disabled={googleLoading || !canManage}
                     title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -619,7 +639,7 @@ export function Integrations() {
                       type="text"
                       value={bitrixLabelInput}
                       onChange={(e) => setBitrixLabelInput(e.target.value)}
-                      placeholder="Nome pra identificar (ex.: AtlasGR, Total Trac)"
+                      placeholder="Nome pra identificar (ex.: Birth Hub 360, Birth Hub 360)"
                       className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-line shadow-sm bg-surface text-ink placeholder:text-ink-2 outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all"
                     />
                     <input
@@ -634,11 +654,12 @@ export function Integrations() {
                     Gere em Bitrix24 → Aplicativos → Webhooks → Webhook de entrada, com permissão{' '}
                     <strong className="font-bold text-ink">crm</strong>.
                   </p>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleBitrixConnect}
                     disabled={bitrixLoading || !canManage}
                     title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
-                    className="w-full py-2.5 bg-brand-active hover:bg-brand-2 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors"
+                    className="w-full py-2.5 bg-brand-active hover:bg-brand-2 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed text-on-brand font-bold rounded-lg transition-colors"
                   >
                     {bitrixLoading ? 'Validando webhook...' : 'Conectar'}
                   </button>
@@ -716,7 +737,7 @@ export function Integrations() {
                                   ? undefined
                                   : 'Requer permissão de Gestor ou Administrador'
                               }
-                              className="px-3 py-2 text-xs font-bold bg-soft text-brand-active dark:text-brand-2 hover:bg-brand/20 rounded-lg transition-colors border border-brand/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                              className="px-3 py-2 text-xs font-bold bg-soft text-brand-ink dark:text-brand hover:bg-brand/20 rounded-lg transition-colors border border-brand/20 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               {conn.hasWebhookSecret ? 'Gerar novo segredo' : 'Gerar segredo'}
                             </button>
@@ -837,7 +858,8 @@ export function Integrations() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button type="button"
+                          <button
+                            type="button"
                             onClick={() => handle3CXTest(conn.id)}
                             disabled={!canManage}
                             title={
@@ -847,7 +869,8 @@ export function Integrations() {
                           >
                             Testar PABX
                           </button>
-                          <button type="button"
+                          <button
+                            type="button"
                             onClick={() => handle3CXDisconnect(conn.id)}
                             disabled={threecxLoading || !canManage}
                             title={
@@ -892,7 +915,8 @@ export function Integrations() {
                       className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
                     />
                   </div>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handle3CXConnect}
                     disabled={threecxLoading || !canManage}
                     title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
@@ -904,6 +928,11 @@ export function Integrations() {
               </div>
             </Card>
           )}
+
+          {/* SDR de Voz IA — Birth Voices Hub — extraído para VoiceHubConnectionPanel.tsx
+              (hotspot: este arquivo já estava perto do limite de 1000 linhas do gate de
+              arquitetura) */}
+          {activeTab === 'voice-hub' && <VoiceHubConnectionPanel />}
 
           {activeTab === 'webhooks' && <WebhookMonitor />}
         </div>

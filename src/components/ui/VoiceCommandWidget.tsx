@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Mic, Sparkles, Volume2, Command, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useBrand } from '../../contexts/BrandContext';
+import { useActivePlaybook } from '../../hooks/useActivePlaybook';
+import { playbookInfo } from '../../config/playbooks';
 import { navigationBus } from '../../lib/navigationBus';
+import { voiceCommandBus } from '../../lib/voiceCommandBus';
 import { clientLogger } from '../../lib/clientLogger';
 import { toast } from '../../lib/toast';
 
@@ -14,7 +16,7 @@ export function VoiceCommandWidget() {
   const [transcript, setTranscript] = useState('');
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [recognition, setRecognition] = useState<SpeechRecognitionLike | null>(null);
-  const { setActiveBrand } = useBrand();
+  const { setPlaybook } = useActivePlaybook();
 
   // `stopListening` é declarado abaixo deste efeito (TDZ) — incluí-lo no array quebraria com
   // "used before declaration"; o efeito só constrói o objeto `recognition` uma vez no mount e os
@@ -52,17 +54,26 @@ export function VoiceCommandWidget() {
           stopListening();
         };
 
-        if (textLower.includes('crm') || textLower.includes('pipeline')) {
+        // Comandos registrados pela tela atualmente ativa (ex.: Mesa de Tratamento — "iniciar
+        // foco", "sincronizar") sempre têm prioridade sobre o vocabulário global de navegação
+        // abaixo: são mais específicos e, quando existem, é porque a tela precisa deles agora.
+        const localHint = voiceCommandBus.tryHandle(textLower);
+        if (localHint) {
+          setLastAction(localHint);
+          stopListening();
+        } else if (textLower.includes('crm') || textLower.includes('pipeline')) {
           navigateOrReportFailure('crm', 'Navegou para o CRM Board');
         } else if (textLower.includes('prospector') || textLower.includes('buscar lead')) {
           navigateOrReportFailure('prospect', 'Navegou para o Prospector');
-        } else if (textLower.includes('atlas') || textLower.includes('atlas gr')) {
-          setActiveBrand('atlasgr');
-          setLastAction('Alternou para operação AtlasGR');
+        } else if (textLower.includes('logística') || textLower.includes('logistica')) {
+          // Estes dois comandos alternavam a marca ativa; hoje alternam o PLAYBOOK
+          // comercial, que era o efeito real que eles tinham sobre o conteúdo.
+          setPlaybook('atlasgr');
+          setLastAction(`Playbook ativo: ${playbookInfo('atlasgr').label}`);
           stopListening();
-        } else if (textLower.includes('total track') || textLower.includes('totaltrac')) {
-          setActiveBrand('totaltrac');
-          setLastAction('Alternou para operação Total Trac');
+        } else if (textLower.includes('frota') || textLower.includes('telemetria')) {
+          setPlaybook('totaltrac');
+          setLastAction(`Playbook ativo: ${playbookInfo('totaltrac').label}`);
           stopListening();
         } else if (textLower.includes('inteligência') || textLower.includes('metodologia')) {
           navigateOrReportFailure('intelligence', 'Abriu o Hub de IA');
@@ -95,7 +106,7 @@ export function VoiceCommandWidget() {
       setRecognition(rec);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setActiveBrand]);
+  }, [setPlaybook]);
 
   const toggleListening = () => {
     if (!recognition) {
@@ -185,7 +196,11 @@ export function VoiceCommandWidget() {
             {isListening && (
               <div className="space-y-1 text-center py-2">
                 <p className="text-ink-2 italic animate-pulse">
-                  &quot;Diga: CRM, Prospector, Total Trac, Atlas...&quot;
+                  &quot;Diga: CRM, Prospector, Contatos, Empresas, Logística, Frota
+                  {voiceCommandBus.getPhrases().length > 0
+                    ? `, ${voiceCommandBus.getPhrases().join(', ')}`
+                    : ''}
+                  ...&quot;
                 </p>
                 {transcript && (
                   <p className="text-ink font-bold bg-surface-2 p-2 rounded-xl border border-line">

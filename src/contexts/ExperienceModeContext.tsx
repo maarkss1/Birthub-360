@@ -11,14 +11,17 @@ interface ExperienceModeContextType {
   isStandard: boolean;
 }
 
-const STORAGE_KEY = 'atlas_experience_mode';
+const STORAGE_KEY = '@birthhub:experience-mode';
+/** Chave anterior à troca de marca — lida uma vez para não resetar a preferência de quem já usava. */
+const LEGACY_STORAGE_KEY = 'atlas_experience_mode';
 
 const ExperienceModeContext = createContext<ExperienceModeContextType | undefined>(undefined);
 
 export function ExperienceModeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<ExperienceMode>(() => {
     if (typeof window === 'undefined') return 'STANDARD';
-    const saved = localStorage.getItem(STORAGE_KEY) as ExperienceMode | null;
+    const saved = (localStorage.getItem(STORAGE_KEY) ??
+      localStorage.getItem(LEGACY_STORAGE_KEY)) as ExperienceMode | null;
     if (saved === 'STANDARD' || saved === 'IMMERSIVE' || saved === 'REDUCED_MOTION') {
       return saved;
     }

@@ -10,7 +10,7 @@ async function ingestPlaybook() {
     // Simulando a leitura de um arquivo Markdown ou PDF com os playbooks.
     // Em um cenário real, você apontaria para o arquivo real em "./playbook.md".
     const playbookContent = `
-# Playbook Comercial - AtlasGR
+# Playbook Comercial - Birth Hub 360
 
 ## 1. ICP (Ideal Customer Profile)
 A Atlas atende principalmente transportadoras, embarcadores e operadores logísticos no Brasil.
@@ -34,7 +34,7 @@ Clientes em fase de expansão operacional (abrindo novas filiais) ou sob pressã
         // 1. Criar um documento pai
         const document = await prisma.document.create({
             data: {
-                title: "Playbook Comercial AtlasGR - Base de Conhecimento",
+                title: "Playbook Comercial Birth Hub 360 - Base de Conhecimento",
                 content: playbookContent,
                 metadata: { version: "1.0", author: "Comercial" }
             }

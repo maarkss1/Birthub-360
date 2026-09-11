@@ -319,7 +319,8 @@ export function Account360() {
       <div className="border-b border-white/10">
         <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
           {TABS.map((tab) => (
-            <button type="button"
+            <button
+              type="button"
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               aria-current={activeTab === tab.id ? 'page' : undefined}
@@ -508,11 +509,11 @@ function AccountRecordCard({
               {status}
             </span>
           )}
-          {canExecute && (
+          {canExecute && recommendationId && (
             <Button
               size="sm"
               disabled={Boolean(executingId)}
-              onClick={() => onExecute?.(recommendationId!)}
+              onClick={() => onExecute?.(recommendationId)}
             >
               {isExecuting ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : null}
               {isExecuting ? 'Executando...' : 'Executar'}

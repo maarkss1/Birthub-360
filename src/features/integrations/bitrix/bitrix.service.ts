@@ -46,10 +46,10 @@ export {
 export type {
   BitrixDealPipeline,
   BitrixDealStage,
-  BitrixUserOption,
   BitrixDealSummary,
   BitrixDealFilters,
 } from './service/deals.js';
+export type { BitrixUserOption } from './service/userMapping.js';
 export {
   getDealPipelines,
   getDealStages,
@@ -122,3 +122,14 @@ export {
   addDailyPlanItemNote,
   createDailyPlanActivity,
 } from './service/dailyPlan.service.js';
+export { fetchDailyPlanItemNotes } from './service/dailyPlanNotes.service.js';
+
+// Fechamento obrigatório do Plano Diário (parecer do dia anterior + metas do novo dia)
+export type {
+  DailyClosingMetrics,
+  PendingDailyClosing,
+} from './service/dailyPlanClosing.service.js';
+export {
+  getPendingDailyClosing,
+  createDailyPlanClosing,
+} from './service/dailyPlanClosing.service.js';

@@ -19,7 +19,7 @@ existiam apenas como "caminho alternativo documentado, não implantado ativament
 `docs/deploy/README.md`, tabela dos quatro caminhos de infraestrutura).
 
 Em 2026-09-05, o dono do produto comunicou uma decisão definitiva, substituindo a anterior: a
-Central de Inteligência Comercial AtlasGR será colocada em produção em uma instância Oracle Cloud
+Birth Hub 360º será colocada em produção em uma instância Oracle Cloud
 Ampere A1 (`sa-saopaulo-1`), self-hosted via Docker Compose, com Caddy como reverse proxy/TLS e
 PostgreSQL executando na própria instância — não mais em Render/Neon/Supabase como plataforma de
 produção.

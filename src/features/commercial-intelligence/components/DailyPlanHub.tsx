@@ -23,8 +23,8 @@ import {
   User,
   X,
 } from 'lucide-react';
-import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { Button } from '../../../components/ui/Button';
 import { useAuth } from '../../../contexts/AuthContext';
 import { SoundFX } from '../../../lib/soundEffects';
 import type {
@@ -35,6 +35,7 @@ import type {
 } from '../../../shared/contracts/dailyPlan.contract';
 import { commercialIntelligenceApi } from '../commercialIntelligence.api';
 import { DEFAULT_DAILY_PLAN, type DailyTask, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
+import { NewActivityModal } from './NewActivityModal';
 
 /** "YYYY-MM-DD" → "DD/MM" sem passar por `Date` (evita deslocar o dia pelo fuso do navegador). */
 function formatPlanDate(isoDate: string): string {
@@ -58,17 +59,11 @@ export function DailyPlanHub() {
   const [activeNoteItemId, setActiveNoteItemId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState<string>('');
   const [isSubmittingNote, setIsSubmittingNote] = useState<boolean>(false);
+  const [loadingNotesItemId, setLoadingNotesItemId] = useState<string | null>(null);
   const [copiedScriptId, setCopiedScriptId] = useState<string | null>(null);
 
-  // Modal de Nova Atividade
+  // Modal de Nova Atividade (formulário próprio em NewActivityModal.tsx)
   const [showNewActivityModal, setShowNewActivityModal] = useState<boolean>(false);
-  const [newTitle, setNewTitle] = useState<string>('');
-  const [newChannel, setNewChannel] = useState<DailyPlanItemChannel>('CALL');
-  const [newContact, setNewContact] = useState<string>('');
-  const [newPhone, setNewPhone] = useState<string>('');
-  const [newDueTime, setNewDueTime] = useState<string>('14:00');
-  const [newObs, setNewObs] = useState<string>('');
-  const [isCreatingActivity, setIsCreatingActivity] = useState<boolean>(false);
 
   // Roteiro Diário Tradicional (Checklist)
   const [dailyTasks, setDailyTasks] = useState<DailyTask[]>(DEFAULT_DAILY_PLAN);
@@ -77,9 +72,9 @@ export function DailyPlanHub() {
   const [copiedPauta, setCopiedPauta] = useState(false);
 
   // Carregar Plano do Usuário
-  const loadDailyPlan = useCallback(async () => {
+  const loadDailyPlan = useCallback(async (options?: { silent?: boolean }) => {
     try {
-      setIsLoading(true);
+      if (!options?.silent) setIsLoading(true);
       const res = await commercialIntelligenceApi.getDailyPlan();
       if (res) {
         setPlanData(res);
@@ -87,13 +82,31 @@ export function DailyPlanHub() {
     } catch (err) {
       console.error('Erro ao carregar plano diário:', err);
     } finally {
-      setIsLoading(false);
+      if (!options?.silent) setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
     loadDailyPlan();
   }, [loadDailyPlan]);
+
+  // Atualização automática do painel: reflete no radar as atividades que chegam (nova tarefa
+  // criada por outro fluxo, sincronização do Bitrix) e as que saem (concluídas em outro
+  // dispositivo/aba) sem exigir clique manual em "Sincronizar com Bitrix". `silent: true` evita
+  // que cada atualização em segundo plano substitua a lista pelo spinner de carregamento — só a
+  // carga inicial e o botão "Sincronizar" mostram esse estado. Só roda enquanto a aba "Meu Plano
+  // Diário" está ativa e a aba do navegador está em primeiro plano — custo de rede/bateria em
+  // segundo plano não se justifica (ver performance/SKILL.md).
+  useEffect(() => {
+    if (activeTab !== 'daily') return;
+    const POLL_INTERVAL_MS = 45_000;
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadDailyPlan({ silent: true });
+      }
+    }, POLL_INTERVAL_MS);
+    return () => window.clearInterval(intervalId);
+  }, [activeTab, loadDailyPlan]);
 
   // Sincronizar com Bitrix
   const handleSyncBitrix = async () => {
@@ -152,7 +165,13 @@ export function DailyPlanHub() {
     if (!noteText.trim()) return;
     try {
       setIsSubmittingNote(true);
-      await commercialIntelligenceApi.addDailyPlanNote(item.origin, item.id, noteText);
+      await commercialIntelligenceApi.addDailyPlanNote(
+        item.origin,
+        item.id,
+        noteText,
+        item.bitrixEntityType,
+        item.bitrixEntityId,
+      );
       SoundFX.play('success');
 
       // Atualiza nota no item localmente
@@ -175,31 +194,37 @@ export function DailyPlanHub() {
     }
   };
 
-  // Criar Nova Atividade
-  const handleCreateActivity = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTitle.trim()) return;
+  // Abre/fecha a gaveta de observação. Ao abrir um item Bitrix, busca o histórico real de
+  // comentários do Bitrix24 sob demanda (nunca em lote para os 500+ itens do plano) — itens
+  // locais já têm as observações completas desde o carregamento inicial, não precisam disso.
+  const handleToggleNoteDrawer = async (item: DailyPlanItem) => {
+    if (activeNoteItemId === item.id) {
+      setActiveNoteItemId(null);
+      return;
+    }
+    setActiveNoteItemId(item.id);
+    setNoteText('');
+    if (item.origin === 'LOCAL_ACTIVITY') return;
+
     try {
-      setIsCreatingActivity(true);
-      await commercialIntelligenceApi.createDailyPlanActivity({
-        title: newTitle,
-        channel: newChannel,
-        contactName: newContact || undefined,
-        phone: newPhone || undefined,
-        dueTime: newDueTime || undefined,
-        observations: newObs || undefined,
+      setLoadingNotesItemId(item.id);
+      const bitrixNotes = await commercialIntelligenceApi.getDailyPlanItemNotes(
+        item.origin,
+        item.id,
+        item.bitrixEntityType,
+        item.bitrixEntityId,
+      );
+      setPlanData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          items: prev.items.map((i) => (i.id === item.id ? { ...i, notes: bitrixNotes || [] } : i)),
+        };
       });
-      SoundFX.play('success');
-      setShowNewActivityModal(false);
-      setNewTitle('');
-      setNewContact('');
-      setNewPhone('');
-      setNewObs('');
-      loadDailyPlan();
     } catch (err) {
-      console.error('Erro ao criar atividade:', err);
+      console.error('Erro ao buscar histórico de observações do Bitrix24:', err);
     } finally {
-      setIsCreatingActivity(false);
+      setLoadingNotesItemId(null);
     }
   };
 
@@ -319,7 +344,7 @@ export function DailyPlanHub() {
                       ? 'Bitrix CRM'
                       : item.origin === 'BITRIX_LEAD'
                         ? 'Bitrix Lead'
-                        : 'Central AtlasGR'}
+                        : 'Central Birth Hub 360'}
                 </span>
               </div>
 
@@ -365,7 +390,7 @@ export function DailyPlanHub() {
 
             <button
               type="button"
-              onClick={() => setActiveNoteItemId(isNoteOpen ? null : item.id)}
+              onClick={() => handleToggleNoteDrawer(item)}
               className="px-3 py-1.5 rounded-xl border border-line hover:border-brand/30 text-xs font-bold text-ink transition-colors inline-flex items-center gap-1.5 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5 text-brand" />
@@ -437,29 +462,39 @@ export function DailyPlanHub() {
                   }
                 }}
               />
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={() => handleSaveNote(item)}
-                disabled={isSubmittingNote || !noteText.trim()}
-                className="px-4 py-2 bg-brand text-white text-xs font-black rounded-xl hover:bg-brand-active transition-colors disabled:opacity-50 cursor-pointer inline-flex items-center gap-1.5"
+                loading={isSubmittingNote}
+                disabled={!noteText.trim()}
               >
-                <Send className="w-3 h-3" />
+                {!isSubmittingNote && <Send className="w-3 h-3 mr-1.5" />}
                 {isSubmittingNote ? 'Salvando...' : 'Salvar no Bitrix'}
-              </button>
+              </Button>
             </div>
 
-            {item.notes && item.notes.length > 0 && (
-              <div className="space-y-1 mt-2">
-                <span className="text-[10px] font-black uppercase text-ink-3">Histórico:</span>
-                {item.notes.map((n, idx) => (
-                  <p
-                    key={idx}
-                    className="text-xs text-ink-2 bg-bg px-2.5 py-1.5 rounded-lg border border-line/60"
-                  >
-                    {n}
-                  </p>
-                ))}
-              </div>
+            {loadingNotesItemId === item.id ? (
+              <p className="text-[11px] text-ink-2 mt-2 inline-flex items-center gap-1.5">
+                <RefreshCw className="w-3 h-3 animate-spin" /> Buscando histórico no Bitrix24...
+              </p>
+            ) : (
+              item.notes &&
+              item.notes.length > 0 && (
+                <div className="space-y-1 mt-2">
+                  <span className="text-[10px] font-black uppercase text-ink-3">
+                    Histórico {item.origin !== 'LOCAL_ACTIVITY' && '(Bitrix24)'}:
+                  </span>
+                  {item.notes.map((n, idx) => (
+                    <p
+                      key={idx}
+                      className="text-xs text-ink-2 bg-bg px-2.5 py-1.5 rounded-lg border border-line/60"
+                    >
+                      {n}
+                    </p>
+                  ))}
+                </div>
+              )
             )}
           </div>
         )}
@@ -542,7 +577,7 @@ export function DailyPlanHub() {
             <button
               type="button"
               onClick={() => setShowNewActivityModal(true)}
-              className="px-4 py-2.5 rounded-2xl bg-brand text-white hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-2xl bg-brand text-on-brand hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Nova Atividade
@@ -779,7 +814,7 @@ export function DailyPlanHub() {
                       onClick={() => setSelectedSegment(seg)}
                       className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         selectedSegment === seg
-                          ? 'bg-brand text-white shadow-sm'
+                          ? 'bg-brand text-on-brand shadow-sm'
                           : 'bg-bg border border-line text-ink hover:border-brand/30'
                       }`}
                     >
@@ -830,7 +865,7 @@ Urgentes: ${planData?.kpis.urgentItems || 0}`;
                   setCopiedPauta(true);
                   setTimeout(() => setCopiedPauta(false), 2000);
                 }}
-                className="px-4 py-2 rounded-xl bg-brand text-white text-xs font-black hover:bg-brand-active transition-colors cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-brand text-on-brand text-xs font-black hover:bg-brand-active transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 {copiedPauta ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedPauta ? 'Pauta Copiada!' : 'Copiar Pauta'}
@@ -849,135 +884,12 @@ Urgentes: ${planData?.kpis.urgentItems || 0}`;
           </div>
         )}
 
-        {/* Modal de Criação de Atividade */}
-        {showNewActivityModal && (
-          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-surface border border-line rounded-3xl p-6 max-w-lg w-full shadow-modal space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-base font-black text-ink">Nova Atividade no Plano Diário</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowNewActivityModal(false)}
-                  className="text-ink-2 hover:text-ink cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <form onSubmit={handleCreateActivity} className="space-y-3 text-xs">
-                <div>
-                  <label htmlFor="activity-title" className="block font-bold text-ink mb-1">
-                    Título da Atividade *
-                  </label>
-                  <input
-                    id="activity-title"
-                    type="text"
-                    required
-                    value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder="Ex: Ligação de qualificação - TransLog"
-                    className="w-full px-3 py-2 rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-brand"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="activity-channel" className="block font-bold text-ink mb-1">
-                      Canal
-                    </label>
-                    <select
-                      id="activity-channel"
-                      value={newChannel}
-                      onChange={(e) => setNewChannel(e.target.value as DailyPlanItemChannel)}
-                      className="w-full px-3 py-2 rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-brand"
-                    >
-                      <option value="CALL">Ligação</option>
-                      <option value="WHATSAPP">WhatsApp</option>
-                      <option value="MEETING">Reunião</option>
-                      <option value="EMAIL">E-mail</option>
-                      <option value="TASK">Tarefa Bitrix</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="activity-duetime" className="block font-bold text-ink mb-1">
-                      Horário Previsto
-                    </label>
-                    <input
-                      id="activity-duetime"
-                      type="time"
-                      value={newDueTime}
-                      onChange={(e) => setNewDueTime(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-brand"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="activity-contact" className="block font-bold text-ink mb-1">
-                      Contato / Decisor
-                    </label>
-                    <input
-                      id="activity-contact"
-                      type="text"
-                      value={newContact}
-                      onChange={(e) => setNewContact(e.target.value)}
-                      placeholder="Nome do cliente"
-                      className="w-full px-3 py-2 rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-brand"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="activity-phone" className="block font-bold text-ink mb-1">
-                      Telefone
-                    </label>
-                    <input
-                      id="activity-phone"
-                      type="tel"
-                      value={newPhone}
-                      onChange={(e) => setNewPhone(e.target.value)}
-                      placeholder="(11) 99999-9999"
-                      className="w-full px-3 py-2 rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-brand"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="activity-obs" className="block font-bold text-ink mb-1">
-                    Observações Iniciais
-                  </label>
-                  <textarea
-                    id="activity-obs"
-                    rows={2}
-                    value={newObs}
-                    onChange={(e) => setNewObs(e.target.value)}
-                    placeholder="Instruções ou contexto do lead..."
-                    className="w-full px-3 py-2 rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-brand"
-                  />
-                </div>
-
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowNewActivityModal(false)}
-                    className="px-4 py-2 rounded-xl border border-line text-ink-2 font-bold cursor-pointer"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isCreatingActivity || !newTitle.trim()}
-                    className="px-4 py-2 rounded-xl bg-brand text-white font-black hover:bg-brand-active transition-colors disabled:opacity-50 cursor-pointer"
-                  >
-                    {isCreatingActivity ? 'Criando...' : 'Salvar & Sincronizar'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        <NewActivityModal
+          open={showNewActivityModal}
+          onClose={() => setShowNewActivityModal(false)}
+          onCreated={loadDailyPlan}
+        />
       </div>
     </div>
   );
 }
-
-export default DailyPlanHub;

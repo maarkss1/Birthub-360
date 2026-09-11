@@ -3,7 +3,7 @@ name: visual-qa
 description: Use depois de qualquer mudança visual, antes de reportar a tarefa como concluída. Define os comandos de verificação (lint, typecheck, axe-core, regressão visual) já configurados neste projeto e o que checar manualmente quando não há navegador disponível.
 ---
 
-# Visual QA — Central de Inteligência Comercial ATLASGR
+# Visual QA — Birth Hub 360º
 
 Este projeto já tem infraestrutura de QA visual e de acessibilidade real — use-a antes de declarar
 qualquer mudança de UI como concluída. Não é opcional nem redundante: à época,
@@ -51,7 +51,7 @@ A "Ordem de verificação recomendada" acima é o teto, não um mínimo fixo pra
 decidir o que rodar, avalie o risco real: um ajuste pontual de texto/espaçamento numa tela isolada
 não precisa das mesmas combinações que uma mudança em autenticação, layout compartilhado
 (`MainLayout`, `Sidebar`), ou primitivo de design system (`src/components/ui/`) — essas últimas
-afetam múltiplas telas e justificam QA amplo: desktop, mobile, light, dark, AtlasGR, Total Trac,
+afetam múltiplas telas e justificam QA amplo: desktop, mobile, light, dark, Birth Hub 360, Birth Hub 360,
 navegação por teclado, foco visível, overflow horizontal, contraste, `prefers-reduced-motion`,
 console do navegador (sem erros novos) e screenshot. Não pule QA proporcional por preguiça, mas
 também não rode todas as combinações cegamente em toda alteração pequena — isso não é rigor, é
@@ -111,12 +111,16 @@ foi o caso do teste de touch/mobile deste piloto (`tests/e2e/crm-kanban-mobile.s
 entrou na suíte oficial depois de reescrito nesses termos e validado por múltiplas execuções
 consecutivas sem falha.
 
-## Verificação nas duas marcas
+## Verificação nos dois temas
 
-Sempre que a mudança tocar cor, contraste ou qualquer coisa condicionada a `data-brand`, verifique
-em **AtlasGR e Total Trac**, light e dark — 4 combinações. Um bug real deste projeto (vazamento de
-laranja da AtlasGR em componentes usados pela Total Trac) só existia porque a verificação tinha
-sido feita apenas na marca default.
+Sempre que a mudança tocar cor ou contraste, verifique em **light e dark** — 2 combinações. Eram 4
+até 09/2026, quando existiam duas marcas trocáveis em runtime; a marca é única agora e `data-brand`
+não existe mais.
+
+Um par merece atenção específica: **texto sobre superfície de marca**. Ouro (`--brand`, `#D4AF37`)
+é uma cor clara — `text-white` em cima mede 2.10:1 e reprova. Confira que a classe é
+`text-on-brand`. Foi exatamente o inverso da regra anterior (laranja escuro pedia branco), então
+componentes portados de antes são os candidatos mais prováveis a falhar.
 
 ## O que reportar ao final
 

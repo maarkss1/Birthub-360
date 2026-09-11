@@ -48,7 +48,7 @@ tabela.
 | `contacts` | 2 | Agente 04 — CRM e BI | `prospecting` (2) |
 | `activities` | 1 | Agente 04 — CRM e BI | `automations` (1) |
 | `document-editor` | 1 | **Sem `AGENTS.md` de governança na pasta** — dono não declarado formalmente | `knowledge` (1) |
-| `mesa-tratamento` | 1 | **`AGENTS.md` presente mas é doc de produto/MVP, sem seção `## Dono`** — funcionalmente é mesa de trabalho SDR sobre leads do Bitrix, adjacente a Agente 04/06 | `integrations` (1) |
+| `mesa-tratamento` | 2 | **`AGENTS.md` presente mas é doc de produto/MVP, sem seção `## Dono`** — funcionalmente é mesa de trabalho SDR sobre leads do Bitrix, adjacente a Agente 04/06 | `integrations` (2) |
 | `roleplay` | 1 | Agente 07 — IA e Automações | `chatbook` (1) |
 
 **Leitura do padrão dominante:** `intelligence` sozinho responde por quase 1/3 da baseline (31/95).
@@ -130,6 +130,66 @@ resolver de verdade (ex.: extrair um contrato em `src/shared/` para o caso do `g
 manter como está.
 
 **Total atualizado:** 112 violações.
+
+## 2026-09-11 — redução real da baseline (Requirement Engine / Mesa de Tratamento)
+
+Ao regenerar a baseline nesta sessão, `npm run lint:architecture:baseline` partiu de **114**
+violações (não 112 — a baseline já havia crescido em 2 desde a última atualização documentada
+acima, por commits anteriores desta mesma branch que não passaram por este documento; não
+investigado aqui, fora do escopo desta sessão) e chegou a **100** (97 `no-cross-feature-imports` +
+3 `no-circular`). As 14 entradas removidas se dividem em dois grupos:
+
+**Correções reais feitas nesta sessão (6 entradas):**
+- `src/features/cadence/domain/{dealClosure,proposal,replyTracking,signature}.ts` eram módulos
+  puros (zero imports) escritos em `cadence` mas consumidos só por outras features
+  (`crm/application/dealClosureGate.ts`, `crm/infra/PrismaDealClosureGate.ts`,
+  `crm360/infra/PrismaCrm360Repository.ts`, `integrations/email/emailReply.webhook.ts`,
+  `integrations/signature/signatureStatus.webhook.ts`), nunca por `cadence` fora dos próprios
+  testes. Movidos para `src/shared/domain/{dealClosure,proposal,replyTracking,signature}.ts` —
+  conteúdo idêntico, só a localização mudou (ver comentário de cabeçalho em cada arquivo). Isso
+  resolveu as 5 violações `no-cross-feature-imports` que tinham esses módulos como alvo (`to`).
+  `src/features/cadence/domain/` deixou de existir; `application/documentSignature.ts` e os
+  `infra/*` de `cadence` continuam de propriedade do Agente 17.
+- `src/features/integrations/bitrix/service/{deals.ts,userMapping.ts}` tinham um ciclo real
+  (`deals.ts` importava `BitrixUserOption` de `userMapping.ts` e vice-versa). Corrigido movendo a
+  declaração da interface `BitrixUserOption` para `userMapping.ts` (quem só consome o tipo, nunca
+  produz) — `deals.ts` agora importa o tipo normalmente, sem ciclo. Resolveu a violação
+  `no-circular` desse par.
+
+**Entradas obsoletas removidas pela regeneração, não relacionadas a esta sessão (8 entradas)** —
+mesmo caso já registrado em 2026-08-29 acima (caso (a): violação real corrigida em outro momento,
+baseline só não tinha sido regenerada):
+- `src/shared/domain/specifications/{Specification,CompositeSpecification,AndSpecification,OrSpecification,NotSpecification}.ts`
+  (6 ciclos `no-circular`, linha da tabela acima) — a pasta inteira não existe mais no repositório
+  (removida na limpeza de código morto via knip, commit `990621b9`).
+- `src/features/companies/routes/company.routes.ts` → `market-intelligence/server/marketIntelligenceCompany.routes.ts`
+  (`no-cross-feature-imports`) — o import não existe mais no arquivo atual.
+- `src/features/prospecting/services/whatsapp.service.ts` → `integrations/whatsapp/whatsapp.service.ts`
+  (`no-cross-feature-imports`) — o arquivo de origem não existe mais.
+
+Nenhuma entrada nova foi adicionada (0 `+` no diff da baseline por conteúdo real — o diff textual
+do JSON mostra mais linhas alteradas por reordenação do array após as remoções). Verificado com
+`tsc --noEmit`, `npm run lint:architecture`, `npm run check:hotspots` e a suíte `vitest` de
+`cadence`/`crm`/`crm360`/`integrations/bitrix`/`integrations/email`/`integrations/signature`/
+`intelligence`/`job-roles` (79 arquivos de teste, 637 testes, todos verdes) antes de regenerar e
+commitar.
+
+**Total atualizado:** 100 violações (97 `no-cross-feature-imports` + 3 `no-circular`).
+
+## 2026-09-11 — 1 exceção nova registrada (painel de gestão da Mesa de Tratamento)
+
+`mesa-tratamento/components/ManagementPanel.tsx` → `integrations/bitrix/bitrix.api.ts`: o painel de
+gestão (ADMIN/GESTOR) da Mesa de Tratamento — reatribuir responsável, comentar, marcar como decidido
+— precisa listar os usuários do Bitrix24 para o dropdown de reatribuição. Em vez de duplicar uma
+chamada `GET /api/bitrix/users` própria, reusa `bitrixApi.listUsers` (novo método adicionado ao
+client já existente em `bitrix.api.ts`, mesmo endpoint que a tela de importação do Bitrix já
+consome). Caso 2 (decisão de arquitetura deliberada): o mesmo raciocínio já usado para o backend
+(`mesaTratamento.routes.ts` → `bitrix.service.ts`, já na baseline) — reusar o client de Bitrix já
+existente em vez de duplicar a chamada HTTP. Dono: **sem seção `## Dono` formal em
+`mesa-tratamento/AGENTS.md`**, adjacente a Agente 04/06 (`from`); Agente 06 — Integrações e Bitrix
+(`to`, dono de `integrations`).
+
+**Total atualizado:** 101 violações (98 `no-cross-feature-imports` + 3 `no-circular`).
 
 ## Como adicionar uma exceção nova (crescer a baseline deliberadamente)
 

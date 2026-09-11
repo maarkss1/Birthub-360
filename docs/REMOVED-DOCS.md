@@ -141,9 +141,11 @@ parágrafos). Achado durante a auditoria de dívida técnica desta sessão (Onda
   registro histórico de limpeza — **não corrigido de propósito**, mesmo critério já usado nesta
   página para `.agents/runs/**`: é um log de execução passada, não documentação viva.
 
-Os 2 documentos de `docs/security/` que descrevem a MESMA arquitetura JWT/refresh obsoleta mas
-**não** foram removidos (`SECURITY_GUIDE.md`, `THREAT_MODEL.md` — são guias vivos, não relatórios
-de sessão passada) já estavam
-sinalizados como gap de frescor documental — não de processo — em
-`docs/architecture/12-REQUISITOS-ARQUITETURA.md` antes desta remoção; permanecem como item
-separado de atualização, fora do escopo desta limpeza.
+Os 2 documentos de `docs/security/` que este parágrafo antes descrevia como tendo a MESMA
+arquitetura JWT/refresh obsoleta (`SECURITY_GUIDE.md`, `THREAT_MODEL.md` — são guias vivos, não
+relatórios de sessão passada) **não estão mais nesse estado**: confirmado em auditoria de dívida
+técnica de 2026-09-11 que os dois já descrevem corretamente a arquitetura real — sessão via Better
+Auth (`src/lib/auth.ts`) com cookie `HttpOnly` (`better-auth.session_token`), sem par de
+Access/Refresh Token JWT. `SECURITY_GUIDE.md` (linhas 7-9) e `THREAT_MODEL.md` (linhas 10-13)
+nomeiam essa arquitetura explicitamente. O gap documental que este parágrafo registrava já foi
+fechado — não reabra esta investigação sem antes reler os dois arquivos contra `src/lib/auth.ts`.

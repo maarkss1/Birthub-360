@@ -130,7 +130,7 @@ export function SavedSearchesModal({
 
   const dialogTitle = (
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-2xl bg-brand/10 text-brand-active dark:text-brand-2 flex items-center justify-center font-bold shrink-0">
+      <div className="w-10 h-10 rounded-2xl bg-brand/10 text-brand-ink dark:text-brand flex items-center justify-center font-bold shrink-0">
         <Bookmark size={20} />
       </div>
       <div>
@@ -150,7 +150,8 @@ export function SavedSearchesModal({
         title={dialogTitle}
         maxWidth="max-w-2xl"
         footer={
-          <button type="button"
+          <button
+            type="button"
             onClick={onClose}
             className="px-5 py-2 rounded-2xl bg-surface-2 text-xs font-bold text-ink hover:bg-surface-3 transition-colors"
           >
@@ -161,9 +162,10 @@ export function SavedSearchesModal({
         <div className="space-y-4">
           {/* Botão para salvar filtro atual */}
           {!showCreateForm ? (
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setShowCreateForm(true)}
-              className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-active dark:text-brand-2 flex items-center justify-center gap-2 hover:bg-brand/5 transition-all"
+              className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-ink dark:text-brand flex items-center justify-center gap-2 hover:bg-brand/5 transition-all"
             >
               <Plus size={18} /> Salvar Filtro Atual como Nova Lista
             </button>
@@ -224,7 +226,7 @@ export function SavedSearchesModal({
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-1.5 rounded-xl bg-brand-active text-white text-xs font-bold hover:brightness-110 flex items-center gap-1.5"
+                  className="px-4 py-1.5 rounded-xl bg-brand-active text-on-brand text-xs font-bold hover:brightness-110 flex items-center gap-1.5"
                 >
                   {creating ? (
                     <Loader2 size={14} className="animate-spin" />
@@ -255,7 +257,7 @@ export function SavedSearchesModal({
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-ink">{s.name}</span>
                     {s.schedule && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 text-brand-active dark:text-brand-2 font-bold flex items-center gap-1">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 text-brand-ink dark:text-brand font-bold flex items-center gap-1">
                         <Calendar size={10} />
                         {s.schedule === 'daily' ? 'Diário' : 'Semanal'}
                       </span>
@@ -274,11 +276,12 @@ export function SavedSearchesModal({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => handleRun(s)}
                     disabled={runningId === s.id}
                     title="Executar busca agora"
-                    className="px-3 py-1.5 rounded-xl bg-brand/10 hover:bg-brand/20 text-brand-active dark:text-brand-2 text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                    className="px-3 py-1.5 rounded-xl bg-brand/10 hover:bg-brand/20 text-brand-ink dark:text-brand text-xs font-bold flex items-center gap-1.5 transition-colors disabled:opacity-50"
                   >
                     {runningId === s.id ? (
                       <Loader2 size={14} className="animate-spin" />
@@ -287,7 +290,8 @@ export function SavedSearchesModal({
                     )}
                     Executar
                   </button>
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => handleDelete(s.id)}
                     title="Excluir busca salva"
                     className="p-2 text-ink-2 hover:text-red-500 rounded-xl hover:bg-red-50 transition-colors"

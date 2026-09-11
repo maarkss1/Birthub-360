@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sun, Moon, Check, User, Users, Puzzle, Flag, Shield } from 'lucide-react';
+import { Sun, Moon, User, Users, Puzzle, Flag, Shield, BrainCircuit } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -7,11 +7,8 @@ import {
   CardDescription,
   CardContent,
 } from '../../../components/ui/Card';
-import { Logo } from '../../../components/Logo';
-import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
 import { IconSliders } from '../../../components/icons';
 import { useTheme } from '../../../contexts/ThemeContext';
-import { useBrand, BRAND_CONFIGS, type Brand } from '../../../contexts/BrandContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { SoundFX } from '../../../lib/soundEffects';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
@@ -20,12 +17,11 @@ import { Team } from '../../team/components/Team';
 import { Integrations } from '../../integrations/components/Integrations';
 import { AuditLogs } from '../../lgpd/components/AuditLogs';
 import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
-
-const BRAND_OPTIONS: Brand[] = ['atlasgr', 'totaltrac'];
+import { MemoryGovernancePanel } from './MemoryGovernancePanel';
+import { LearningProfilePanel } from './LearningProfilePanel';
 
 export function Settings() {
   const { theme, setThemeMode } = useTheme();
-  const { activeBrand, setActiveBrand } = useBrand();
   const { currentUser, isAdmin } = useAuth();
   // GESTOR também pode ler auditoria no backend (`lgpd.routes.ts`, `requireRole(['ADMIN',
   // 'GESTOR'])`, já coberto por teste), mas a aba só checava `isAdmin` — GESTOR nunca tinha como
@@ -34,7 +30,7 @@ export function Settings() {
   const canViewAudit = hasRequiredRole(currentUser?.role ?? '', ['ADMIN', 'GESTOR']);
 
   const [activeTab, setActiveTab] = useState<
-    'profile' | 'users' | 'integrations' | 'featureFlags' | 'audit'
+    'profile' | 'users' | 'integrations' | 'featureFlags' | 'audit' | 'memory'
   >('profile');
 
   return (
@@ -63,7 +59,7 @@ export function Settings() {
               }}
               className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'profile'
-                  ? 'border-brand text-brand-active dark:text-brand-2'
+                  ? 'border-brand text-brand-ink dark:text-brand'
                   : 'border-transparent text-ink-2 hover:text-ink hover:border-line'
               }`}
             >
@@ -78,7 +74,7 @@ export function Settings() {
                 }}
                 className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                   activeTab === 'users'
-                    ? 'border-brand text-brand-active dark:text-brand-2'
+                    ? 'border-brand text-brand-ink dark:text-brand'
                     : 'border-transparent text-ink-2 hover:text-ink hover:border-line'
                 }`}
               >
@@ -93,7 +89,7 @@ export function Settings() {
               }}
               className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'integrations'
-                  ? 'border-brand text-brand-active dark:text-brand-2'
+                  ? 'border-brand text-brand-ink dark:text-brand'
                   : 'border-transparent text-ink-2 hover:text-ink hover:border-line'
               }`}
             >
@@ -108,7 +104,7 @@ export function Settings() {
                 }}
                 className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                   activeTab === 'featureFlags'
-                    ? 'border-brand text-brand-active dark:text-brand-2'
+                    ? 'border-brand text-brand-ink dark:text-brand'
                     : 'border-transparent text-ink-2 hover:text-ink hover:border-line'
                 }`}
               >
@@ -124,11 +120,27 @@ export function Settings() {
                 }}
                 className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
                   activeTab === 'audit'
-                    ? 'border-brand text-brand-active dark:text-brand-2'
+                    ? 'border-brand text-brand-ink dark:text-brand'
                     : 'border-transparent text-ink-2 hover:text-ink hover:border-line'
                 }`}
               >
                 <Shield size={16} /> Auditoria & LGPD
+              </button>
+            )}
+            {canViewAudit && (
+              <button
+                type="button"
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setActiveTab('memory');
+                }}
+                className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
+                  activeTab === 'memory'
+                    ? 'border-brand text-brand-ink dark:text-brand'
+                    : 'border-transparent text-ink-2 hover:text-ink hover:border-line'
+                }`}
+              >
+                <BrainCircuit size={16} /> Memória & Aprendizado
               </button>
             )}
           </div>
@@ -165,7 +177,7 @@ export function Settings() {
                       <p className="text-xs text-ink-2">
                         {currentUser?.email || 'email@exemplo.com'}
                       </p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand-active dark:text-brand-2">
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand-ink dark:text-brand">
                         {currentUser?.role || 'USUÁRIO'}
                       </span>
                     </div>
@@ -189,6 +201,9 @@ export function Settings() {
                     >
                       Tema
                     </span>
+                    {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não
+                        traria ganho real de acessibilidade aqui, só estilo. */}
+                    {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
                     <div role="group" aria-labelledby="settings-theme-label" className="flex gap-4">
                       <button
                         type="button"
@@ -222,62 +237,10 @@ export function Settings() {
                       </button>
                     </div>
                   </div>
-
-                  <div>
-                    {/* Não é <label htmlFor>: rotula um grupo de botões de escolha de marca, não
-                        um único controle — role="group" + aria-labelledby é a associação correta
-                        aqui. */}
-                    <span
-                      id="settings-brand-label"
-                      className="text-xs font-bold text-ink-2 uppercase tracking-wider block mb-3"
-                    >
-                      Marca Ativa
-                    </span>
-                    <div
-                      role="group"
-                      aria-labelledby="settings-brand-label"
-                      className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                    >
-                      {BRAND_OPTIONS.map((brand) => (
-                        <button
-                          key={brand}
-                          type="button"
-                          onClick={() => {
-                            SoundFX.play('confirm');
-                            setActiveBrand(brand);
-                          }}
-                          className={`flex items-center justify-between p-4 rounded-xl border transition-all text-left ${
-                            activeBrand === brand
-                              ? 'border-brand bg-brand/5 shadow-sm'
-                              : 'border-line bg-surface-2/40 hover:bg-surface-2 text-ink-2 hover:text-ink'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            {brand === 'atlasgr' ? (
-                              <Logo className="h-6 w-auto" />
-                            ) : (
-                              <TotalTrackLogo className="h-6 w-auto" />
-                            )}
-                            <div>
-                              <p className="font-bold text-sm text-ink">
-                                {BRAND_CONFIGS[brand].name}
-                              </p>
-                              <p className="text-xs text-ink-2">
-                                {BRAND_CONFIGS[brand].operatingSystemName}
-                              </p>
-                            </div>
-                          </div>
-                          {activeBrand === brand && (
-                            <div className="w-5 h-5 rounded-full bg-brand-active text-white flex items-center justify-center">
-                              <Check size={12} />
-                            </div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
+
+              <LearningProfilePanel />
             </div>
           </div>
         )}
@@ -307,6 +270,14 @@ export function Settings() {
             <div className="max-w-5xl mx-auto space-y-6">
               <DataSubjectRights />
               <AuditLogs />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'memory' && canViewAudit && (
+          <div className="p-6 sm:p-8">
+            <div className="max-w-5xl mx-auto">
+              <MemoryGovernancePanel />
             </div>
           </div>
         )}

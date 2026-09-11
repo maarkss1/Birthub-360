@@ -126,7 +126,7 @@ export function PropostasList() {
           <div>
             <h1 className="text-3xl font-extrabold text-ink flex items-center gap-3 tracking-tight">
               📄 Propostas & Documentos
-              <span className="text-xs bg-surface-2 text-brand-active dark:text-brand-2 border border-brand/30 px-3 py-1 rounded-full font-bold">
+              <span className="text-xs bg-surface-2 text-brand-ink dark:text-brand border border-brand/30 px-3 py-1 rounded-full font-bold">
                 {documents.length}
               </span>
             </h1>
@@ -136,12 +136,13 @@ export function PropostasList() {
             </p>
           </div>
           {canWrite && (
-            <button type="button"
+            <button
+              type="button"
               onClick={() => {
                 setEditingDocument(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-white px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               Novo Documento
@@ -245,6 +246,9 @@ export function PropostasList() {
                 </thead>
                 <tbody>
                   {filtered.map((doc) => (
+                    // Linha de <table> real — não pode virar <button> (elemento de bloco inválido
+                    // como filho de <tbody>, quebraria a semântica/estrutura da tabela).
+                    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
                     <tr
                       key={doc.id}
                       onClick={() => setSelectedDocumentId(doc.id)}

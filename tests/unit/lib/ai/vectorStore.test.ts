@@ -34,7 +34,7 @@ beforeEach(() => {
             {
                 chunkId: 'chunk-1',
                 documentId: 'doc-1',
-                documentTitle: 'Playbook Comercial AtlasGR',
+                documentTitle: 'Playbook Comercial Birth Hub 360',
                 content: 'trecho',
                 chunkIndex: 2,
                 similarity: 0.9,
@@ -64,7 +64,7 @@ describe('vectorStore.similaritySearch', () => {
                 id: 'chunk-1',
                 content: 'trecho',
                 documentId: 'doc-1',
-                documentTitle: 'Playbook Comercial AtlasGR',
+                documentTitle: 'Playbook Comercial Birth Hub 360',
                 chunkIndex: 2,
                 similarity: 0.9,
                 matchedBy: ['semantic'],

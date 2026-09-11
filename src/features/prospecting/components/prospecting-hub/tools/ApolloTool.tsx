@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Building2, ChevronDown, ChevronUp, Cpu, Loader2, SlidersHorizontal } from 'lucide-react';
 import { api } from '../../../../../lib/api';
-import { useBrand } from '../../../../../contexts/BrandContext';
+import { BRAND } from '../../../../../config/brand';
+import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
 import {
   ESTADO_OPTIONS,
   PORTE_OPTIONS,
@@ -14,9 +15,8 @@ import { NotConfiguredBanner } from './NotConfiguredBanner';
 import { getErrorMessage, type PromoteResult } from './shared';
 
 export function ApolloTool({ configured }: { configured: boolean }) {
-  const { activeBrand, brandInfo } = useBrand();
-  const activeSegments =
-    activeBrand === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const { playbook } = useActivePlaybook();
+  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
 
   const [criteria, setCriteria] = useState<ProspectCriteria>({
     segmento: activeSegments[0],
@@ -61,7 +61,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
         segment: candidate.segment,
         size: candidate.size,
         location: candidate.location,
-        source: `${brandInfo.name} — Ferramenta Apollo.io`,
+        source: `${BRAND.shortName} — Ferramenta Apollo.io`,
         autoEnrich: false,
         linkedin: candidate.linkedinUrl,
         phone: candidate.phone,
@@ -80,7 +80,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
       <div className="xl:col-span-4 bg-surface p-6 rounded-2xl border border-line shadow-sm space-y-4 max-h-[800px] overflow-y-auto">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2">
+          <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand">
             <Building2 size={18} />
           </div>
           <h2 className="font-black text-lg text-ink">Apollo.io</h2>
@@ -187,7 +187,8 @@ export function ApolloTool({ configured }: { configured: boolean }) {
           />
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setShowAdvanced((v) => !v)}
           className="flex items-center justify-between w-full text-[10px] tracking-wider font-bold uppercase text-ink-2 hover:text-brand transition-colors pt-1"
         >
@@ -239,10 +240,11 @@ export function ApolloTool({ configured }: { configured: boolean }) {
           </div>
         )}
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleSearch}
           disabled={isSearching}
-          className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>

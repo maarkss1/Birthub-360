@@ -1,23 +1,23 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Database, Globe, Link2, RefreshCw, Send, Sparkles } from 'lucide-react';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { BRAND } from '../../../config/brand';
 import { SoundFX } from '../../../lib/soundEffects';
 import { useAssistantChat } from '../../../hooks/useAssistantChat';
 import { usePlaybookMatrixData } from '../../../hooks/usePlaybookMatrixData';
 
 /**
  * Página cheia (`/app/chatbook`) do mesmo copiloto do drawer flutuante global
- * (`FloatingChatbook`/`AtlasChatbotTrigger`) — as duas telas consomem `useAssistantChat`, a única
+ * (`FloatingChatbook`/`CopilotTrigger`) — as duas telas consomem `useAssistantChat`, a única
  * fonte de estado/histórico/chamada do copiloto conversacional. Não são implementações
  * concorrentes: o drawer é o acesso rápido a partir de qualquer tela (⌘K → "Chamar copiloto de
  * IA"), esta página é a sessão dedicada para uma conversa mais longa. Ver TRUST_BLOCKERS_ROADMAP.md
  * P1-5.
  */
 export function ChatbookHub() {
-  const { activeBrand, brandInfo } = useBrand();
-  const selectedBrand = activeBrand === 'totaltrac' ? 'totaltrac' : 'atlasgr';
-  const { objections, qualifications } = usePlaybookMatrixData(selectedBrand);
+  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { objections, qualifications } = usePlaybookMatrixData(playbook);
   const {
     messages,
     inputQuery,
@@ -27,7 +27,7 @@ export function ChatbookHub() {
     setSearchMode,
     handleSendMessage,
     activeRecord,
-  } = useAssistantChat(activeBrand, brandInfo, selectedBrand, objections, qualifications);
+  } = useAssistantChat(playbook, playbookMeta, playbook, objections, qualifications);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,13 +45,13 @@ export function ChatbookHub() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-surface/70 backdrop-blur-2xl rounded-[2.5rem] p-8 border border-line shadow-[0_20px_40px_rgba(0,0,0,0.03)] flex items-center gap-4 relative overflow-hidden"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-brand-2 flex items-center justify-center text-white shadow-lg shadow-brand/20 shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-brand-2 flex items-center justify-center text-on-brand shadow-lg shadow-brand/20 shrink-0">
             <Bot className="w-7 h-7" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-black text-ink tracking-tight">
-                {brandInfo.name} Copilot
+                {BRAND.shortName} Copilot
               </h1>
               {/* bg-emerald-500/20 text-emerald-500 cru (contra bg-surface, tema claro) dava
                                 ~1.8:1 — achado real do axe-core, tests/e2e/accessibility.spec.ts. Mesmo
@@ -75,7 +75,7 @@ export function ChatbookHub() {
                   pergunta via localContext — antes só aparecia uma vez na saudação inicial, que
                   rola pra fora da tela (achado do Piloto 010). */}
               {activeRecord && (
-                <span className="flex items-center gap-1.5 text-[11px] font-bold text-brand-active dark:text-brand-2 bg-brand/10 border border-brand/20 rounded-full px-2.5 py-1">
+                <span className="flex items-center gap-1.5 text-[11px] font-bold text-brand-ink dark:text-brand bg-brand/10 border border-brand/20 rounded-full px-2.5 py-1">
                   <Link2 className="w-3 h-3" /> Contexto: {activeRecord.label}
                 </span>
               )}
@@ -90,7 +90,7 @@ export function ChatbookHub() {
                 aria-pressed={searchMode === 'general'}
                 className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
                   searchMode === 'general'
-                    ? 'bg-brand-active text-white shadow-sm'
+                    ? 'bg-brand-active text-on-brand shadow-sm'
                     : 'text-ink-2 hover:text-ink'
                 }`}
               >
@@ -105,11 +105,11 @@ export function ChatbookHub() {
                 aria-pressed={searchMode === 'internal'}
                 className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
                   searchMode === 'internal'
-                    ? 'bg-brand-active text-white shadow-sm'
+                    ? 'bg-brand-active text-on-brand shadow-sm'
                     : 'text-ink-2 hover:text-ink'
                 }`}
               >
-                <Database className="w-3.5 h-3.5" /> Base {brandInfo.name}
+                <Database className="w-3.5 h-3.5" /> Base {playbookMeta.label}
               </button>
             </div>
           </div>
@@ -123,13 +123,13 @@ export function ChatbookHub() {
                 <div
                   className={`max-w-[85%] p-4 rounded-2xl text-sm space-y-2 leading-relaxed shadow-md ${
                     msg.sender === 'user'
-                      ? 'bg-brand-active text-white rounded-br-none font-medium'
+                      ? 'bg-brand-active text-on-brand rounded-br-none font-medium'
                       : 'bg-surface-2 text-ink border border-line rounded-bl-none'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3 text-[10px] opacity-75 pb-1 border-b border-current/10">
                     <span className="font-bold uppercase tracking-wider">
-                      {msg.sender === 'user' ? 'Você' : `${brandInfo.name} Copilot`}
+                      {msg.sender === 'user' ? 'Você' : `${BRAND.shortName} Copilot`}
                     </span>
                     <span>{msg.timestamp}</span>
                   </div>
@@ -139,7 +139,7 @@ export function ChatbookHub() {
             ))}
 
             {isSearching && (
-              <div className="flex items-center gap-2 text-sm text-brand-active dark:text-brand-2 bg-surface-2 p-3 rounded-2xl border border-line w-fit animate-pulse">
+              <div className="flex items-center gap-2 text-sm text-brand-ink dark:text-brand bg-surface-2 p-3 rounded-2xl border border-line w-fit animate-pulse">
                 <RefreshCw className="w-4 h-4 animate-spin" />
                 <span>Consultando o motor Groq...</span>
               </div>
@@ -159,7 +159,7 @@ export function ChatbookHub() {
               placeholder={
                 searchMode === 'general'
                   ? 'Pergunte sobre a rota ou registro aberto...'
-                  : `Consulte a matriz comercial da ${brandInfo.name}...`
+                  : `Consulte a matriz comercial de ${playbookMeta.label}...`
               }
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
@@ -169,7 +169,7 @@ export function ChatbookHub() {
               type="submit"
               disabled={isSearching || !inputQuery.trim()}
               aria-label="Enviar mensagem"
-              className="p-3 rounded-xl bg-brand-active text-white font-bold disabled:opacity-50 hover:bg-brand-2 transition-colors shrink-0"
+              className="p-3 rounded-xl bg-brand-active text-on-brand font-bold disabled:opacity-50 hover:bg-brand-2 transition-colors shrink-0"
             >
               <Send className="w-5 h-5" />
             </button>

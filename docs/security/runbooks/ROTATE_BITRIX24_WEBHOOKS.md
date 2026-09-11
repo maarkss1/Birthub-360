@@ -1,11 +1,11 @@
-# Runbook — Rotação dos webhooks de saída Bitrix24 (AtlasGR + TotalTrac)
+# Runbook — Rotação dos webhooks de saída Bitrix24 (Birth Hub 360 + Birth Hub 360)
 
 ## Status: ✅ Concluído (confirmado pelo dono do repositório, Sprint 01/Onda 13, 2026-08-18 — SEC-003)
 
 Fase Final 0 (2026-08-16) reprovou por rotação não confirmada; uma confirmação informal registrada
 em `final-fase-3.md` (2026-08-17) nunca foi formalmente reverificada/fechada no gate (ver
 `.agents/completion/01-bloqueadores.md`). Nesta sprint, o dono do repositório confirmou
-diretamente que os dois webhooks (AtlasGR e TotalTrac) já foram rotacionados — bloqueador fechado.
+diretamente que os dois webhooks (Birth Hub 360) já foram rotacionados — bloqueador fechado.
 Este runbook permanece como referência para uma futura rotação.
 
 ## Por que isso é bloqueador, e por que é diferente de rotacionar uma API key comum
@@ -34,7 +34,7 @@ limpeza remotamente.
 
 | Marca | Env var | URL exposta (padrão) |
 |---|---|---|
-| AtlasGR | `BITRIX24_WEBHOOK_URL` (ou legado `BITRIX_WEBHOOK_URL`) | `.../rest/450/…` |
+| Birth Hub 360 | `BITRIX24_WEBHOOK_URL` (ou legado `BITRIX_WEBHOOK_URL`) | `.../rest/450/…` |
 | Total Trac | `TOTALTRAC_BITRIX24_WEBHOOK_URL` (ou legado `TOTALTRAC_BITRIX_WEBHOOK_URL`) | `.../rest/2486/…` |
 
 Essas URLs dão acesso à base de CRM do Bitrix com dado pessoal real de prospecção (nome, telefone,
@@ -64,14 +64,14 @@ Para cada linha retornada, mais as duas env vars (`BITRIX24_WEBHOOK_URL`,
 
 ## Passo 2 — Gerar a nova URL no portal Bitrix24
 
-Para **cada** portal (AtlasGR e Total Trac são portais Bitrix distintos):
+Para **cada** portal (Birth Hub 360 são portais Bitrix distintos):
 
 1. Login no portal Bitrix24 (`https://<portal>.bitrix24.com.br`) com um usuário com permissão de
    administrador de aplicativos.
 2. Vá em **Aplicativos → Webhooks** (ou **Developer resources → Other → Inbound webhook**, o nome
    varia por idioma/versão do portal).
-3. Localize o webhook de entrada ativo (ex.: aquele terminando em `/rest/450/…` para AtlasGR,
-   `/rest/2486/…` para Total Trac).
+3. Localize o webhook de entrada ativo (ex.: aquele terminando em `/rest/450/…` para Birth Hub 360,
+   `/rest/2486/…` para Birth Hub 360).
 4. **Desative/exclua** esse webhook específico — isso invalida a URL antiga imediatamente,
    independente do que for feito nos passos seguintes.
 5. Crie um **novo** webhook de entrada, com o mesmo escopo de permissões do anterior (confirme os
@@ -86,7 +86,7 @@ Repita para o segundo portal.
 
 ### Env vars (Render)
 1. Render → serviço do backend → **Environment**.
-2. Atualize `BITRIX24_WEBHOOK_URL` com a nova URL do portal AtlasGR.
+2. Atualize `BITRIX24_WEBHOOK_URL` com a nova URL do portal Birth Hub 360.
 3. Atualize `TOTALTRAC_BITRIX24_WEBHOOK_URL` com a nova URL do portal Total Trac.
 4. Se os nomes legados (`BITRIX_WEBHOOK_URL`, `TOTALTRAC_BITRIX_WEBHOOK_URL`) também estiverem
    setados no Render, atualize-os também ou remova-os — `connections.ts` lê o nome novo primeiro,

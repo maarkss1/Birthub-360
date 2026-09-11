@@ -12,7 +12,7 @@ import { b2bResultSchema } from '../../schema.js';
 
 const request = {
   kind: 'b2b_matrix' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: { icp: 'Transportadoras de médio porte', solution: 'Gestão de risco de carga' },
 };
 

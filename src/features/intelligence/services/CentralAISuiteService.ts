@@ -1,5 +1,5 @@
 /**
- * Central de Inteligência Comercial — AtlasGR & TotalTrac
+ * Central de Inteligência Comercial — Birth Hub 360 & Birth Hub 360
  *
  * Suíte Centralizada de IA que unifica e orquestra os 20 recursos de IA da plataforma:
  * 1.  🧊 Icebreaker & Hook Personalizado (Prospecção)

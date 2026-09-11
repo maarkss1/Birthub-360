@@ -101,6 +101,9 @@ export function Billing() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+                real de acessibilidade aqui, só estilo. */}
+            {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
             <div
               className="flex items-center rounded-xl border border-line overflow-hidden"
               role="group"
@@ -114,7 +117,7 @@ export function Billing() {
                   aria-pressed={days === p}
                   className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
                     days === p
-                      ? `${accent.bg} text-white`
+                      ? `${accent.bg} text-on-brand`
                       : 'text-ink-2 hover:text-ink hover:bg-surface-2'
                   }`}
                 >

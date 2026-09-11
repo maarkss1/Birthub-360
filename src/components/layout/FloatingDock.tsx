@@ -45,7 +45,7 @@ export function FloatingDock({ activeTab, onOpenFullMenu }: FloatingDockProps) {
       aria-label="Navegação rápida inferior"
       className="fixed bottom-3 inset-x-3 z-30 md:hidden flex justify-center pointer-events-none"
     >
-      <div className="pointer-events-auto flex items-center gap-1 p-1.5 rounded-2xl atlas-glass bg-surface/90 border border-line shadow-2xl backdrop-blur-xl">
+      <div className="pointer-events-auto flex items-center gap-1 p-1.5 rounded-2xl bh-glass bg-surface/90 border border-line shadow-2xl backdrop-blur-xl">
         {DOCK_ITEMS.map((item) => {
           const isActive = !item.isAction && item.tab === activeTab;
           const Icon = item.icon;
@@ -60,7 +60,7 @@ export function FloatingDock({ activeTab, onOpenFullMenu }: FloatingDockProps) {
               className={cn(
                 'relative flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer',
                 isActive
-                  ? 'text-white bg-brand shadow-sm'
+                  ? 'text-on-brand bg-brand shadow-sm'
                   : 'text-ink-2 hover:text-ink hover:bg-surface-2',
               )}
             >

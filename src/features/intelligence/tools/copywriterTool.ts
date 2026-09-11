@@ -25,7 +25,7 @@ export const copywriterTool = tool(
       // Em uma evolução, poderia usar a própria LLM para escrever em sub-agentes,
       // mas o SDR já tem contexto, ele só precisa chamar e formatar.
       const subject = `Ideia para otimizar ${args.icpPainPoint}`;
-      const body = `Olá, tudo bem?\n\nSabemos que, como ${args.targetRole}, um dos maiores desafios atuais é lidar com ${args.icpPainPoint}. Na AtlasGR, temos ajudado empresas similares a mitigar exatamente isso com tecnologia de ponta.\n\nFaz sentido agendarmos 10 minutos na próxima semana para trocarmos uma ideia sobre como isso impacta sua operação?`;
+      const body = `Olá, tudo bem?\n\nSabemos que, como ${args.targetRole}, um dos maiores desafios atuais é lidar com ${args.icpPainPoint}. Na Birth Hub 360, temos ajudado empresas similares a mitigar exatamente isso com tecnologia de ponta.\n\nFaz sentido agendarmos 10 minutos na próxima semana para trocarmos uma ideia sobre como isso impacta sua operação?`;
 
       const finalCopy = `Assunto: ${subject}\n\n${body}`;
 

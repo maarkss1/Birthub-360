@@ -199,7 +199,7 @@ export function LiveStatsWidget() {
             <div className="text-center">
               <p className="text-xs text-ink-2 font-medium">Valor no Pipeline</p>
               {/* var(--brand-2) fixo, não token de marca dinâmico: este número sempre aparecia
-                  azul Total Trac mesmo com AtlasGR ativa (`text-totaltrack-blue` é uma classe
+                  azul fixo mesmo com a outra marca ativa (`text-iris` é uma classe
                   estática de marca, proibida fora de tela pré-seleção — CLAUDE.md regra visual
                   3). Achado e corrigido no Piloto 007, ver .claude/PILOTS.md. */}
               <p className="text-lg font-black text-brand-2">

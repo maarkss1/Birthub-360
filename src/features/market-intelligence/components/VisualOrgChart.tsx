@@ -46,7 +46,7 @@ const HIERARCHY_LEVELS: LevelConfig[] = [
     id: 'directors',
     title: 'Diretoria & VPs',
     icon: Briefcase,
-    colorBadge: 'bg-brand/10 text-brand-active dark:text-brand-2 border-brand/20',
+    colorBadge: 'bg-brand/10 text-brand-ink dark:text-brand border-brand/20',
     borderAccent: 'border-brand/30',
     bgAccent: 'bg-brand/5',
   },
@@ -186,6 +186,9 @@ export function VisualOrgChart({ contacts, companyName, onSelectContact }: Visua
                   const phone = contact.whatsapp || contact.phone;
 
                   return (
+                    // Contém <a> reais (e-mail/WhatsApp) como controles interativos próprios —
+                    // <button> aninhando <a> seria HTML inválido (interativo dentro de interativo).
+                    // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
                     <div
                       key={contact.id || `${contact.name}-${idx}`}
                       role="button"

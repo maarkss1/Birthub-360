@@ -1,6 +1,7 @@
 import type { Express } from 'express';
 import client from 'prom-client';
 import { env } from '../config/env.js';
+import { logger } from '../lib/logger.js';
 import { httpMetricsMiddleware } from '../shared/middlewares/httpMetrics.js';
 import { observabilityMiddleware } from '../shared/middlewares/observability.js';
 import { requirePlatformOperator } from '../shared/middlewares/requirePlatformOperator.js';
@@ -36,7 +37,8 @@ export function mountMetricsEndpoint(app: Express): void {
       res.set('Content-Type', client.register.contentType);
       res.end(await client.register.metrics());
     } catch (ex) {
-      res.status(500).end(ex);
+      logger.error({ err: ex }, 'mountMetricsEndpoint: failed to collect metrics');
+      res.status(500).end('Falha ao coletar métricas.');
     }
   });
 }

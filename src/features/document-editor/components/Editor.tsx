@@ -179,12 +179,13 @@ export function Editor() {
                     <RotateCcw className="w-4 h-4 mr-2" /> Descartar
                   </Button>
                 )}
-                <Button type="button" onClick={() => void save()} disabled={!dirty || saving}>
-                  {saving ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Save className="w-4 h-4 mr-2" />
-                  )}
+                <Button
+                  type="button"
+                  onClick={() => void save()}
+                  loading={saving}
+                  disabled={!dirty}
+                >
+                  {!saving && <Save className="w-4 h-4 mr-2" />}
                   {saving ? 'Salvando…' : 'Salvar'}
                 </Button>
               </>

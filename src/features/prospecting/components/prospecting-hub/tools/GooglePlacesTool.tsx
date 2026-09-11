@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Cpu, Loader2, MapPin } from 'lucide-react';
 import { api } from '../../../../../lib/api';
-import { useBrand } from '../../../../../contexts/BrandContext';
+import { BRAND } from '../../../../../config/brand';
+import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
@@ -21,9 +22,8 @@ interface GooglePlacesCriteria {
 }
 
 export function GooglePlacesTool({ configured }: { configured: boolean }) {
-  const { activeBrand, brandInfo } = useBrand();
-  const activeSegments =
-    activeBrand === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const { playbook } = useActivePlaybook();
+  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
 
   const [criteria, setCriteria] = useState<GooglePlacesCriteria>({
     segmento: activeSegments[0],
@@ -75,7 +75,7 @@ export function GooglePlacesTool({ configured }: { configured: boolean }) {
         segment: candidate.segment,
         size: candidate.size,
         location: candidate.location,
-        source: `${brandInfo.name} — Ferramenta Google Places`,
+        source: `${BRAND.shortName} — Ferramenta Google Places`,
         autoEnrich: false,
         website: candidate.website,
       });
@@ -91,7 +91,7 @@ export function GooglePlacesTool({ configured }: { configured: boolean }) {
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
       <div className="xl:col-span-4 bg-surface p-6 rounded-2xl border border-line shadow-sm space-y-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2">
+          <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand">
             <MapPin size={18} />
           </div>
           <h2 className="font-black text-lg text-ink">Google Places</h2>
@@ -200,10 +200,11 @@ export function GooglePlacesTool({ configured }: { configured: boolean }) {
           />
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleSearch}
           disabled={isSearching}
-          className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>

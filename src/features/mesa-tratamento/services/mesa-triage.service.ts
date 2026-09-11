@@ -104,7 +104,7 @@ export class MesaTriageService {
     const model = getAiModel('local-llama3-fast', 0.1, 'mesa-triage');
     const startTime = Date.now();
 
-    const systemPrompt = `Você é o Coordenador Sênior da Central de Monitoramento e Mesa de Tratamento de Ocorrências e Sinistros da AtlasGR / TotalTrac.
+    const systemPrompt = `Você é o Coordenador Sênior da Central de Monitoramento e Mesa de Tratamento de Ocorrências e Sinistros da Birth Hub 360 / Birth Hub 360.
 Analise os dados de telemetria e o tipo de alerta para classificar a severidade (P0 a P3) e instruir o operador com o Procedimento Operacional Padrão (POP) exato.
 Regras Críticas:
 - Violação de trava de baú em zona de alto risco ou detecção de Jammer/Anti-Jammer é P0 ou P1.

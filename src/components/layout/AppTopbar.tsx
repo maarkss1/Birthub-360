@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, Bell, Sun, Moon, Menu, LogOut, Volume2, VolumeX } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Search, Bell, Sun, Moon, Menu, LogOut, Volume2, VolumeX, ArrowLeft } from 'lucide-react';
 import { type TabType, TAB_META } from './tabMeta';
 import { useLiveClock } from '../../hooks/useLiveClock';
 import { useAuth } from '../../contexts/AuthContext';
@@ -20,6 +20,19 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
   const { currentUser, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Home real do CRM — não faz sentido oferecer "Voltar" aqui. Qualquer outro módulo mostra o
+  // botão: cobre as ~46 rotas de /app/* com uma única fonte (nenhuma tela precisa reimplementar
+  // seu próprio botão de voltar, ver duplicação ad-hoc em CompanyDetail/ProspectingToolsHub/etc.).
+  const isHome = location.pathname === '/app' || location.pathname === '/app/dashboard';
+  const handleBack = () => {
+    SoundFX.play('navigate');
+    // `location.key === 'default'` = primeira entrada desta sessão do router (deep link direto,
+    // sem histórico interno para voltar) — nesse caso `navigate(-1)` sairia do app para o que
+    // veio antes no histórico do navegador. Cai pro dashboard, que é sempre um "voltar" seguro.
+    if (location.key !== 'default') navigate(-1);
+    else navigate('/app');
+  };
   const meta = TAB_META[activeTab] ?? TAB_META.dashboard;
   const Icon = meta.icon;
   const [soundEnabled, setSoundEnabled] = useState(() => SoundFX.isEnabled());
@@ -75,6 +88,18 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         <Menu className="h-4 w-4" />
       </button>
 
+      {!isHome && (
+        <button
+          type="button"
+          onClick={handleBack}
+          className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-ink-2 transition-[transform,background-color,color] duration-200 hover:-translate-y-0.5 hover:bg-surface-2 active:translate-y-0"
+          aria-label="Voltar"
+          title="Voltar"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+      )}
+
       <div className="flex min-w-0 items-center gap-2">
         <div className="grid h-7 w-7 place-items-center rounded-lg border border-brand/20 bg-brand/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
           <Icon className="h-4 w-4 shrink-0 text-brand" />
@@ -125,7 +150,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
           onClick={toggleSound}
           className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
             soundEnabled
-              ? 'border-brand/20 bg-brand/10 text-brand-active dark:text-brand-2'
+              ? 'border-brand/20 bg-brand/10 text-brand-ink dark:text-brand'
               : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
           }`}
           aria-pressed={soundEnabled}
@@ -158,7 +183,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         </button>
 
         <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-white shadow-card ring-1 ring-white/10"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-on-brand shadow-card ring-1 ring-white/10"
           title={`${currentUser?.name || 'Usuário'} (${currentUser?.roleTitle || currentUser?.role || ''})`}
         >
           {userInitial}

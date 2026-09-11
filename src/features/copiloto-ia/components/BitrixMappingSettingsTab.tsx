@@ -119,7 +119,7 @@ export function BitrixMappingSettingsTab() {
               className="rounded-xl border border-line bg-surface-2/75 px-3 py-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             />
           </div>
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" loading={saving}>
             <Plus className="w-4 h-4 mr-1.5" /> Salvar
           </Button>
         </form>

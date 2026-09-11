@@ -1,13 +1,18 @@
-import { ChevronRight, LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useBrand } from '../../contexts/BrandContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
 import { SoundFX } from '../../lib/soundEffects';
-import { Logo } from '../Logo';
-import { TotalTrackLogo } from '../TotalTrackLogo';
+import { BRAND } from '../../config/brand';
+import { BirthHubLogo, BirthHubSignature } from '../brand/BirthHubLogo';
 import { TAB_META, type TabType } from './tabMeta';
+
+/** Preferência de menu recolhido. A chave anterior era prefixada com o nome da
+ *  marca antiga; a leitura do valor legado existe só para não zerar a
+ *  preferência de quem já usava o produto — pode sair numa limpeza futura. */
+const SIDEBAR_COLLAPSED_KEY = '@birthhub:sidebar-collapsed';
+const LEGACY_SIDEBAR_COLLAPSED_KEY = '@atlasgr:sidebar-collapsed';
 
 interface SidebarProps {
   activeTab: TabType;
@@ -31,7 +36,10 @@ export function Sidebar({
 }: SidebarProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.localStorage.getItem('@atlasgr:sidebar-collapsed') === 'true';
+    return (
+      (window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) ??
+        window.localStorage.getItem(LEGACY_SIDEBAR_COLLAPSED_KEY)) === 'true'
+    );
   });
 
   const isCollapsed = externalCollapsed !== undefined ? externalCollapsed : internalCollapsed;
@@ -44,16 +52,14 @@ export function Sidebar({
       setInternalCollapsed((prev) => {
         const next = !prev;
         if (typeof window !== 'undefined') {
-          window.localStorage.setItem('@atlasgr:sidebar-collapsed', String(next));
+          window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
         }
         return next;
       });
     }
   };
-  const { activeBrand, setActiveBrand } = useBrand();
   const { currentUser, isAdmin, canAccessCommercialIntelligence, canAccessCopilotoIa, logout } =
     useAuth();
-  const isAtlas = activeBrand === 'atlasgr';
   const navigate = useNavigate();
   const canManageOperations =
     !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
@@ -89,7 +95,7 @@ export function Sidebar({
   // Navegação orientada pela jornada comercial, não pela árvore técnica do projeto.
   // TAB_META é a fonte única de rótulo/ícone e TabType impede destinos fantasma.
   //
-  // Os módulos executivos (Social Selling, Treinamento AtlasGR, Proposta Comercial, Hub
+  // Os módulos executivos (Social Selling, Treinamento Comercial, Proposta Comercial, Hub
   // Inteligência & Mkt) NÃO aparecem mais aqui — pedido explícito do usuário: "não quero que
   // apareça no CRM, só nos círculos" do Hub Executivo standalone (rotas top-level em App.tsx,
   // fora de /app/*). Quem administra quem vê cada módulo é 'module-access' acima, não a Sidebar.
@@ -121,7 +127,7 @@ export function Sidebar({
     : [
         {
           title: 'Visão Geral',
-          items: ['dashboard', 'daily-plan'],
+          items: ['dashboard', 'workspace', 'daily-plan'],
         },
         { title: 'Captar', items: ['prospect', 'market-intelligence'] },
         {
@@ -218,7 +224,7 @@ export function Sidebar({
         aria-current={isActive ? 'page' : undefined}
         className={`group relative w-full overflow-hidden rounded-xl border px-2 py-1.5 text-left text-xs font-semibold transition-[transform,background-color,border-color,color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
           isActive
-            ? 'border-brand/20 bg-brand-active text-white shadow-[0_10px_20px_-15px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.16)]'
+            ? 'border-brand/20 bg-brand-active text-on-brand shadow-[0_10px_20px_-15px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.16)]'
             : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
         } ${isCollapsed ? 'md:px-0 md:justify-center' : ''}`}
       >
@@ -261,19 +267,11 @@ export function Sidebar({
         <div className="relative z-10 mb-2 flex items-center justify-between gap-2">
           {isCollapsed ? (
             <div className="mx-auto">
-              {isAtlas ? (
-                <Logo variant="symbol" className="h-7" />
-              ) : (
-                <TotalTrackLogo variant="symbol" className="h-7" />
-              )}
+              <BirthHubLogo variant="icon" className="h-7 w-7" title={BRAND.name} />
             </div>
           ) : (
             <>
-              {isAtlas ? (
-                <Logo className="h-7 text-ink" />
-              ) : (
-                <TotalTrackLogo className="h-7 text-ink" />
-              )}
+              <BirthHubSignature className="h-7 text-ink" />
               <button
                 type="button"
                 onClick={toggleCollapse}
@@ -300,50 +298,6 @@ export function Sidebar({
             </button>
           </div>
         )}
-
-        <button
-          type="button"
-          className="group relative w-full cursor-pointer text-left"
-          onClick={() => {
-            SoundFX.play('confirm');
-            setActiveBrand(isAtlas ? 'totaltrac' : 'atlasgr');
-          }}
-          aria-label={`Alternar para a operação ${isAtlas ? 'Total Trac' : 'AtlasGR'}`}
-          title={`Alternar para ${isAtlas ? 'Total Trac' : 'AtlasGR'}`}
-        >
-          <div
-            className={`flex items-center justify-between rounded-[var(--radius-nav-item)] border border-line bg-surface-2/80 p-2 shadow-[0_10px_24px_-20px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.05)] transition-[transform,border-color,background-color,box-shadow] duration-200 group-hover:-translate-y-0.5 group-hover:border-brand/25 group-hover:bg-brand/8 group-hover:shadow-card ${
-              isCollapsed ? 'md:justify-center md:p-1.5' : ''
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              {isAtlas ? (
-                <Logo variant="symbol" className="h-6 w-6 shrink-0" />
-              ) : (
-                <TotalTrackLogo variant="symbol" className="h-6 w-6 shrink-0" />
-              )}
-              <div className={`flex flex-col ${isCollapsed ? 'md:hidden' : ''}`}>
-                <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-brand-active dark:text-brand-2">
-                  Operação Atual
-                </span>
-                <span className="text-xs font-black text-ink">
-                  {isAtlas ? 'AtlasGR' : 'Total Trac'}
-                </span>
-              </div>
-            </div>
-            <div
-              className={`grid h-6 w-6 place-items-center rounded-lg border border-line bg-surface text-ink-2 shadow-sm ${
-                isCollapsed ? 'md:hidden' : ''
-              }`}
-            >
-              <ChevronRight
-                size={12}
-                className="transition-transform duration-200 group-hover:rotate-90"
-                aria-hidden="true"
-              />
-            </div>
-          </div>
-        </button>
 
         <button
           type="button"
@@ -405,7 +359,7 @@ export function Sidebar({
             }
           >
             <div className="flex min-w-0 items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-white shadow-card ring-1 ring-white/10">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-on-brand shadow-card ring-1 ring-white/10">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className={`min-w-0 flex-1 ${isCollapsed ? 'md:hidden' : ''}`}>

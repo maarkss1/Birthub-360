@@ -307,4 +307,161 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
     const columnBody = page.locator('h3', { hasText: 'Qualificação (SDR)' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
     await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible({ timeout: 10_000 });
   });
+
+  // Onda A (Agente 00, Commercial AI OS) — o lead selecionado passou a viver no parâmetro `lead`
+  // da URL (ver CrmBoard.tsx) em vez de state local, para que o registro aberto seja
+  // compartilhável por link e sobreviva a reload.
+  test('abrir o card grava o lead na URL; reload com ?lead= reabre o mesmo drawer', async ({ page }) => {
+    const { company, lead } = await createCompanyAndLead(page, {
+      tradeName: `Deep Link Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`[?&]lead=${lead.id}(&|$)`));
+
+    // A URL é a fonte de verdade do registro aberto — reload não deve perder o drawer.
+    await page.reload();
+    const drawerAfterReload = page.getByRole('dialog');
+    await expect(drawerAfterReload).toBeVisible();
+    await expect(drawerAfterReload).toContainText(company.tradeName);
+  });
+
+  test('botão Voltar do navegador fecha o drawer sem sair de /app/crm', async ({ page }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Voltar Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+
+    await page.goBack();
+    await expect(drawer).not.toBeVisible();
+    await expect(page).toHaveURL(/\/app\/crm$/);
+  });
+
+  // Onda B (Agente 00, Commercial AI OS) — Action Bar consolidada (P0-3) e Linha do Tempo (P0-4).
+  // As ações já existiam espalhadas (ícones no cabeçalho, botões no rodapé, botão Bitrix dentro de
+  // uma seção) — este teste cobre a barra única resultante, não uma ação nova.
+  test('barra de ações mostra as ações da oportunidade agrupadas', async ({ page }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Action Bar Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+
+    const actionBar = drawer.getByRole('group', { name: 'Ações da oportunidade' });
+    await expect(actionBar).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Enriquecer/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Qualificar via Voz/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /WhatsApp/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Enviar ao Bitrix24/ })).toBeVisible();
+    await expect(actionBar.getByRole('button', { name: /Excluir/ })).toBeVisible();
+  });
+
+  // Linha do Tempo usa `lead.timeline`, já retornado por GET /api/leads/:id há muito tempo (ver
+  // PrismaLeadRepository.ts) mas nunca renderizado — todo lead novo já nasce com 1 evento
+  // ("creation") gravado pela própria rota de criação.
+  test('linha do tempo mostra o evento de criação do lead', async ({ page }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Timeline Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
+    const drawer = page.getByRole('dialog');
+    await expect(drawer).toBeVisible();
+
+    const timelineSection = drawer.getByText('Linha do Tempo').locator('xpath=ancestor::section[1]');
+    await expect(timelineSection).toContainText('Lead criado');
+  });
+});
+
+// Onda B2a (Agente 00, Commercial AI OS) — filtros reais do pipeline (busca + dono), persistidos
+// na URL (?q=/?owner=). Achado real durante a implementação: Lead.owner guarda o User.id (contrato
+// DATA-003), mas o botão "Reatribuir Vendedor" gravava o NOME — divergência corrigida junto (ver
+// handleBatchReassignOwner em CrmBoard.tsx), porque sem ela o filtro por dono nunca bateria com
+// leads reatribuídos em lote.
+test.describe('Kanban do CRM — Filtros', () => {
+  test('busca por texto filtra os cards visíveis', async ({ page }) => {
+    await signUp(page, { email: uniqueTestEmail('kanban-filters-busca') });
+    const { company: companyA } = await createCompanyAndLead(page, {
+      tradeName: `Zeta Filtro ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    const { company: companyB } = await createCompanyAndLead(page, {
+      tradeName: `Omega Filtro ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    const cardA = page.getByRole('button', { name: new RegExp(companyA.tradeName) });
+    const cardB = page.getByRole('button', { name: new RegExp(companyB.tradeName) });
+    await expect(cardA).toBeVisible();
+    await expect(cardB).toBeVisible();
+
+    await page.getByLabel('Buscar por empresa ou contato').fill(companyA.tradeName);
+
+    await expect(cardA).toBeVisible();
+    await expect(cardB).not.toBeVisible();
+    await expect(page.getByRole('button', { name: 'Limpar filtros' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Limpar filtros' }).click();
+    await expect(cardB).toBeVisible();
+  });
+
+  test('reatribuir em lote grava o dono como id; card e filtro mostram o nome resolvido, não o id cru', async ({
+    page,
+  }) => {
+    // Self-assign: usa o nome do próprio usuário logado como "dono" a reatribuir — garante um
+    // dono conhecido no <select> sem depender de outro membro de equipe existir no tenant de
+    // teste, e o nome precisa ser conhecido de antemão (selectOption por label exige string exata).
+    const ownerName = `Vendedor Filtro ${Date.now()}`;
+    await signUp(page, { email: uniqueTestEmail('kanban-filters-owner'), name: ownerName });
+
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Reatribuir Filtro ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
+    await page.goto('/app/crm');
+
+    await page.getByRole('button', { name: 'Seleção em Lote' }).click();
+    // Em modo de seleção o card ganha um checkbox irmão ("Selecionar <empresa>") cujo nome
+    // acessível também contém o nome da empresa — âncora no início evita casar com ele.
+    await page.getByRole('button', { name: new RegExp(`^${company.tradeName}`) }).click();
+
+    const batchResponse = page.waitForResponse(
+      (res) => res.url().includes('/api/leads/batch-update') && res.request().method() === 'POST',
+    );
+    await page.getByLabel('Dono:', { exact: true }).selectOption({ label: ownerName });
+    const res = await batchResponse;
+    expect(res.status()).toBe(200);
+    const payload = res.request().postDataJSON() as { updates: { owner: string } };
+    // O valor gravado é o id (cuid), não o nome — não bate no padrão de um nome com espaço.
+    expect(payload.updates.owner).not.toMatch(/\s/);
+
+    // O rodapé do card (data + dono) fica FORA da div com role="button" (é uma div irmã dela,
+    // dentro do wrapper externo "rounded-2xl") — por isso a checagem de conteúdo sobe até esse
+    // wrapper em vez de usar o locator de role="button" (que só cobre a área arrastável/clicável).
+    const cardContainer = page
+      .locator('h4', { hasText: company.tradeName })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(cardContainer).toContainText(ownerName);
+    await expect(cardContainer).not.toContainText(payload.updates.owner);
+
+    await page.getByLabel('Filtrar por dono:').selectOption({ label: ownerName });
+    await expect(cardContainer).toBeVisible();
+    await expect(page.getByText(/1 de \d+ leads/)).toBeVisible();
+  });
 });

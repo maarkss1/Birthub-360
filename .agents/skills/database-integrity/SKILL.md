@@ -3,7 +3,7 @@ name: database-integrity
 description: Use ao revisar prisma/schema.prisma, migrations, RLS multi-tenant, índices, uniques ou qualquer mudança de banco. Garante integridade real do PostgreSQL/Prisma — foreign keys, registros órfãos, migration segura, coluna que o código assume mas a migration nunca criou. Não muda schema só para satisfazer o frontend sem antes determinar qual contrato é correto.
 ---
 
-# Database Integrity — Central de Inteligência Comercial ATLASGR
+# Database Integrity — Birth Hub 360º
 
 ## Quando usar
 
@@ -43,7 +43,7 @@ Leia primeiro:
   RLS deliberadamente (`requestContext.run({bypassRls: true}, ...)`) só para resolver a sessão antes
   do tenant ser conhecido — não é bug, é o único bypass legítimo; qualquer outro bypass de RLS no
   código é suspeito por padrão.
-- **Débito de schema já identificado** (`PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md` §5) — confirme
+- **Débito de schema já identificado** (`PRODUCT_EXPERIENCE.md` §5) — confirme
   contra o schema atual antes de reportar como novidade: três models de RAG sobrepostos
   (`KnowledgeDocument` isolado vs. `Document`/`DocumentChunk` ativos vs. `KnowledgeChunk` paralelo);
   `Prospect` duplica campos de `Company`/`Lead` como pipeline paralelo não relacionado;

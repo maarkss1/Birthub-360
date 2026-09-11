@@ -25,7 +25,7 @@ export class ProposalAiService {
     const model = getAiModel('local-llama3-fast', 0.3, 'proposal-ai');
     const startTime = Date.now();
 
-    const systemPrompt = `Você é um Consultor Sênior de Soluções Comerciais e ROI da AtlasGR / TotalTrac.
+    const systemPrompt = `Você é um Consultor Sênior de Soluções Comerciais e ROI da Birth Hub 360 / Birth Hub 360.
 Sua missão é redigir o corpo executivo de uma Proposta Comercial B2B personalizada para um cliente de transporte/logística.
 Destaque:
 1. Resumo Executivo elegante e focado em valor estratégico.

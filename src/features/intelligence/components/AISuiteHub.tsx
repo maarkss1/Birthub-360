@@ -328,7 +328,7 @@ const CAPABILITIES: AICapability[] = [
       'Converte transcrições brutas de chamadas em atas executivas com pontos acordados e tarefas atribuídas.',
     modelDefault: 'llama3.1:8b',
     samplePayload: {
-      meetingTitle: 'Apresentação Comercial AtlasGR vs Concorrente',
+      meetingTitle: 'Apresentação Comercial Birth Hub 360 vs Concorrente',
       participants: ['Leonardo (Consultor Atlas)', 'Mauro (Gerente Geral Cliente)'],
       rawTranscript:
         'Leonardo: Demonstramos a trava de quinta roda e o bloqueador anti-jammer. Mauro: Gostei muito da redundância via satélite. Vamos avançar com o teste em 10 veículos na próxima terça.',
@@ -482,8 +482,8 @@ export function AISuiteHub() {
             Central de Inteligência Artificial — Suíte Completa
           </h1>
           <p className="text-sm text-ink-2 mt-0.5">
-            Execute, teste e orquestre os 20 motores de IA integrados à operação da AtlasGR e
-            TotalTrac.
+            Execute, teste e orquestre os 20 motores de IA integrados à operação da Birth Hub 360 e
+            Birth Hub 360.
           </p>
         </div>
 
@@ -497,7 +497,8 @@ export function AISuiteHub() {
             { id: 'operations', label: 'Operações' },
             { id: 'management', label: 'Gestão' },
           ].map((f) => (
-            <button type="button"
+            <button
+              type="button"
               key={f.id}
               onClick={() => setCategoryFilter(f.id)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
@@ -624,7 +625,7 @@ export function AISuiteHub() {
                     }
                     className="text-xs text-primary hover:underline font-medium"
                   >
-                    Restaurar Exemplo da AtlasGR
+                    Restaurar Exemplo da Birth Hub 360
                   </button>
                 </div>
                 <textarea

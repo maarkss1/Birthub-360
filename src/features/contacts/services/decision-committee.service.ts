@@ -47,7 +47,7 @@ export class DecisionCommitteeService {
     const startTime = Date.now();
 
     const systemPrompt = `Você é um especialista sênior em Vendas B2B Complexas e Engenharia de Contas (Account-Based Marketing).
-Analise a lista de contatos de uma empresa alvo e mapeie o Comitê de Decisão de Compra para soluções de Rastreamento, Telemetria e Gestão de Riscos Logísticos (AtlasGR / TotalTrac).
+Analise a lista de contatos de uma empresa alvo e mapeie o Comitê de Decisão de Compra para soluções de Rastreamento, Telemetria e Gestão de Riscos Logísticos (Birth Hub 360 / Birth Hub 360).
 Para cada contato, classifique o papel de compra (buyingRole) em:
 - "Decisor Econômico" (ex: Diretor Geral, CFO, Dono)
 - "Decisor Operacional" (ex: Diretor de Logística, Gerente de Frotas, Gerente de Operações)

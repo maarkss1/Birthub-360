@@ -14,6 +14,8 @@ interface KanbanColumnProps {
   selectedLeadIds?: Set<string>;
   onToggleSelect?: (leadId: string) => void;
   selectionMode?: boolean;
+  /** id do usuário -> nome, para KanbanCard exibir o dono (Lead.owner guarda o id, não o nome). */
+  ownerNameById?: Record<string, string>;
 }
 
 export const KanbanColumn = React.memo(function KanbanColumn({
@@ -25,6 +27,7 @@ export const KanbanColumn = React.memo(function KanbanColumn({
   selectedLeadIds,
   onToggleSelect,
   selectionMode,
+  ownerNameById,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
@@ -51,7 +54,7 @@ export const KanbanColumn = React.memo(function KanbanColumn({
             {leads.length}
           </span>
         </div>
-        <div className="text-xs text-brand-active dark:text-brand-2 font-medium">
+        <div className="text-xs text-brand-ink dark:text-brand font-medium">
           Forecast:{' '}
           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
             leads.reduce((acc, lead) => {
@@ -93,6 +96,7 @@ export const KanbanColumn = React.memo(function KanbanColumn({
               isSelected={selectedLeadIds?.has(lead.id)}
               onToggleSelect={onToggleSelect}
               selectionMode={selectionMode}
+              ownerNameById={ownerNameById}
             />
           ))}
         </SortableContext>

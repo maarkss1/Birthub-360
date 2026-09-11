@@ -1,7 +1,14 @@
-name: Code Quality (Lint & Unit Tests)
+name: Code Quality (Lint)
 
-# Diagnóstico sob demanda. O workflow canônico ci.yml já executa typecheck, lint e unit tests
-# automaticamente em push/PR, portanto disparar esta mesma suíte em paralelo só duplica minutos.
+# Diagnóstico sob demanda, só de lint. O workflow canônico ci.yml já executa typecheck, lint,
+# testes de arquitetura e testes unitários (com coverage) automaticamente em todo push/PR — este
+# workflow rodava a mesma suíte inteira de novo sob demanda, duplicando minutos de CI sem ganho de
+# sinal (auditoria de redundância CI, onda 3: ci.yml / qualidade-ci.yml / sonarqube.yml rodando o
+# mesmo unit+coverage três vezes). ci.yml é a fonte de verdade para todos esses gates; este
+# workflow ficou reduzido a um atalho para depurar só a etapa de lint isoladamente, sem esperar o
+# restante do pipeline. Para typecheck/testes de arquitetura/unitários sob demanda, dispare o
+# próprio ci.yml via workflow_dispatch (já suportado) ou rode localmente:
+#   npx tsc --noEmit && npm run test:architecture && npm run test:unit
 on:
   workflow_dispatch:
 
@@ -25,17 +32,5 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Generate Prisma Client
-      run: npx prisma generate
-
-    - name: Type Check
-      run: npx tsc --noEmit
-
     - name: Run Linter
       run: npm run lint:ci
-
-    - name: Architecture tests (fronteiras de dependência e hotspots)
-      run: npm run test:architecture
-
-    - name: Run Unit Tests
-      run: npm run test:unit

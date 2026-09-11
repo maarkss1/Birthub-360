@@ -6,7 +6,7 @@ import { AuditService } from '../../../../lib/audit/audit.service.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import { resolveEnumMaps, applyInboundCustomFields } from './customFields.js';
 import { BITRIX_FIELD_MAP } from '../bitrixFieldMap.js';
-import { resolveAtlasUserIdByEmail } from './userMapping.js';
+import { resolveAtlasUserIdByEmail, type BitrixUserOption } from './userMapping.js';
 import { findOwnershipConflict, notifyOwnershipConflict } from './ownershipGuard.js';
 
 const DEAL_UF_CRM_CODES = BITRIX_FIELD_MAP.map((m) => m.dealCode).filter((c): c is string =>
@@ -30,18 +30,12 @@ export interface BitrixDealStage {
   name: string;
 }
 
-export interface BitrixUserOption {
-  id: string;
-  name: string;
-  email: string | null;
-}
-
 /**
  * Lista os pipelines (categorias) de Negócio configurados no portal — só o pipeline "Comercial".
- * Portais como o da TotalTrac têm dezenas de pipelines operacionais (Financeiro, RH, Suporte
+ * Portais como o da Birth Hub 360 têm dezenas de pipelines operacionais (Financeiro, RH, Suporte
  * Técnico, Implantação...) que não são funil de vendas; misturar tudo na tela de importação do
  * Atlas (uma ferramenta de prospecção/CRM comercial) só traz ruído. Se o portal não tiver nenhum
- * pipeline chamado "Comercial" (caso do AtlasGR, cujas vendas vivem em Lead, não em Negócio), a
+ * pipeline chamado "Comercial" (caso do Birth Hub 360, cujas vendas vivem em Lead, não em Negócio), a
  * lista vem vazia e a aba Negócios não tem o que mostrar — a pessoa usa a aba Leads nesse caso.
  */
 export async function getDealPipelines(
@@ -167,7 +161,7 @@ export async function listBitrixDeals(
   // Sem categoryId explícito ("Todos os pipelines" no filtro), resolve o pipeline Comercial e
   // filtra por ele mesmo assim — sem isso, "Todos" vazaria negócios de pipelines operacionais
   // (Financeiro, RH, Suporte...) que getDealPipelines já esconde da lista de opções. Se o portal
-  // não tem pipeline Comercial (ex.: AtlasGR, cujas vendas vivem em Lead), não existe "todos os
+  // não tem pipeline Comercial (ex.: Birth Hub 360, cujas vendas vivem em Lead), não existe "todos os
   // negócios relevantes" pra cair como fallback — devolve vazio em vez de vazar o portal inteiro.
   let categoryId = filters.categoryId;
   if (!categoryId) {
@@ -177,12 +171,17 @@ export async function listBitrixDeals(
   }
 
   const filter: Record<string, unknown> = {};
+  const safeCustomFieldCode =
+    typeof filters.customFieldCode === 'string' &&
+    /^UF_CRM_[A-Z0-9_]+$/i.test(filters.customFieldCode)
+      ? filters.customFieldCode.toUpperCase()
+      : null;
   if (categoryId) filter.CATEGORY_ID = categoryId;
   if (filters.stageId) filter.STAGE_ID = filters.stageId;
   if (filters.assignedById) filter.ASSIGNED_BY_ID = filters.assignedById;
   if (filters.search?.trim()) filter['%TITLE'] = filters.search.trim();
-  if (filters.customFieldCode && filters.customFieldValue?.trim())
-    filter[filters.customFieldCode] = filters.customFieldValue.trim();
+  if (safeCustomFieldCode && filters.customFieldValue?.trim())
+    filter[safeCustomFieldCode] = filters.customFieldValue.trim();
   if (filters.month && filters.year) {
     const start_ = new Date(Date.UTC(filters.year, filters.month - 1, 1));
     const end_ = new Date(Date.UTC(filters.year, filters.month, 1));

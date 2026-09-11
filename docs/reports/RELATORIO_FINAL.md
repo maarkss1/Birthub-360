@@ -17,7 +17,7 @@ Abaixo, a lista de integração consolidada:
 
 1. **`packages/contracts/src/crm.ts` -> `src/shared/types/crm.ts`**
    * *Motivo:* Prover as interfaces e tipagens corretas de domínio BDR (Pipeline, Leads, Deals) para o frontend e backend.
-   * *Alterações:* Remoção das dependências internas de validação complexa (`@nexusone`), e limpeza para suportar tipagem pura no formato Vite do Prospector Atlas.
+   * *Alterações:* Remoção das dependências internas de validação complexa (`@nexusone`), e limpeza para suportar tipagem pura no formato Vite do Birth Hub 360.
    * *Dependências:* Nenhuma dependência externa.
 
 2. **`packages/database/src/crm-repository.ts` -> `server/services/crm-service.ts`**

@@ -1,18 +1,29 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- regiões roláveis focáveis por teclado */
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Download, WifiOff, Sparkles, CheckSquare, Send, X, Loader2 } from 'lucide-react';
+import {
+  Download,
+  WifiOff,
+  Sparkles,
+  CheckSquare,
+  Send,
+  X,
+  Loader2,
+  Search,
+  Bookmark,
+} from 'lucide-react';
 import type { Lead, LeadStatus } from '../types';
 import { KanbanColumn } from '../features/crm/components/KanbanColumn';
 import { KanbanCard } from '../features/crm/components/KanbanCard';
 import { LeadDetailDrawer } from '../features/crm/components/LeadDetailDrawer';
 import { BitrixImportModal } from '../features/crm/components/BitrixImportModal';
+import { SavedViewsPanel, type SavedViewItem } from '../features/crm/components/SavedViewsPanel';
 import { bitrixApi } from '../features/integrations/bitrix/bitrix.api';
 import { api } from '../lib/api';
 import { ContextualTip } from './ui/ContextualTip';
 import { EmptyState } from './ui/EmptyState';
 import { Button } from './ui/Button';
-import { useBrand } from '../contexts/BrandContext';
+import { BRAND } from '../config/brand';
 import { toast } from '../lib/toast';
 import { clientLogger } from '../lib/clientLogger';
 import { SoundFX } from '../lib/soundEffects';
@@ -70,7 +81,7 @@ interface CrmBoardProps {
 }
 
 export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps) {
-  const { brandInfo } = useBrand();
+  // (identidade da plataforma vem de BRAND)
   const [searchParams, setSearchParams] = useSearchParams();
   const funnel: 'Lead' | 'Negocio' =
     funnelProp ?? (searchParams.get('funnel') === 'Negocio' ? 'Negocio' : 'Lead');
@@ -85,7 +96,10 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     handleCardEnrich,
     handleBatchEnrich,
   } = useCrmBoardController(funnel);
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  // Deep link do registro aberto: o lead/negócio selecionado vive no parâmetro `lead` da URL (não
+  // em useState local) para que a URL seja a fonte de verdade — compartilhável, sobrevive a
+  // reload, e o botão Voltar do navegador fecha o drawer antes de sair da tela (Onda A, Agente 00).
+  const selectedLeadId = searchParams.get('lead');
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const keyboardDragStatusRef = useRef<LeadStatus | null>(null);
 
@@ -93,8 +107,34 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
   const [selectedLeadIds, setSelectedLeadIds] = useState<Set<string>>(new Set());
   const [selectionMode, setSelectionMode] = useState(false);
   const [isBitrixModalOpen, setIsBitrixModalOpen] = useState(false);
+  const [isSavedViewsOpen, setIsSavedViewsOpen] = useState(false);
   const [isBatchUpdating, setIsBatchUpdating] = useState(false);
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+
+  // Onda B2a (Agente 00, Commercial AI OS) — filtros reais do pipeline (dono + busca), persistidos
+  // na URL como `owner`/`q`, mesmo mecanismo já usado para `funnel`/`lead`.
+  const ownerFilter = searchParams.get('owner') ?? '';
+  const searchQuery = searchParams.get('q') ?? '';
+
+  const ownerNameById = useMemo(
+    () => Object.fromEntries(users.map((u) => [u.id, u.name])),
+    [users],
+  );
+
+  const filteredLeads = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return leads.filter((lead) => {
+      if (ownerFilter && lead.owner !== ownerFilter) return false;
+      if (query) {
+        const haystack = [lead.company?.tradeName, lead.company?.legalName, lead.contact?.name]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+      return true;
+    });
+  }, [leads, ownerFilter, searchQuery]);
 
   useEffect(() => {
     // /api/users nunca existiu como rota (404 silencioso todo carregamento — achado do teste
@@ -332,18 +372,38 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         handleToggleSelect(lead.id);
         return;
       }
-      setSelectedLeadId(lead.id);
+      // push (padrão do setSearchParams): abrir o drawer entra no histórico do navegador, então
+      // Voltar fecha o drawer em vez de sair de /app/crm — ver handleCloseDrawer abaixo, que usa
+      // replace ao fechar explicitamente para não empilhar uma entrada de histórico simétrica.
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('lead', lead.id);
+        return next;
+      });
     },
-    [selectionMode, handleToggleSelect],
+    [selectionMode, handleToggleSelect, setSearchParams],
   );
 
+  const handleCloseDrawer = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('lead');
+        return next;
+      },
+      { replace: true },
+    );
+  }, [setSearchParams]);
+
+  // Opera sobre os leads FILTRADOS visíveis, não todos os `leads` carregados — "selecionar todos"
+  // com um filtro ativo deve selecionar o que está na tela, não leads escondidos pelo filtro.
   const handleSelectAll = useCallback(() => {
-    if (selectedLeadIds.size === leads.length) {
+    if (selectedLeadIds.size === filteredLeads.length) {
       setSelectedLeadIds(new Set());
     } else {
-      setSelectedLeadIds(new Set(leads.map((l) => l.id)));
+      setSelectedLeadIds(new Set(filteredLeads.map((l) => l.id)));
     }
-  }, [leads, selectedLeadIds.size]);
+  }, [filteredLeads, selectedLeadIds.size]);
 
   const handleClearSelection = useCallback(() => {
     setSelectedLeadIds(new Set());
@@ -384,9 +444,16 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     const ownerName = ownerUser?.name || ownerId;
     setIsBatchUpdating(true);
     try {
+      // Lead.owner é contrato User.id, não nome (DATA-003, mesma correção já aplicada em
+      // handleOwnerChange de LeadDetailDrawer.tsx) — este caminho de reatribuição em lote gravava
+      // o nome até aqui, divergindo do resto da aplicação (round-robin, import Bitrix, verificação
+      // de duplicidade em LeadUseCases.ts, que resolve `existing.owner` via
+      // `prisma.user.findUnique({ where: { id } })`) e do próprio KanbanCard.tsx, que já espera
+      // resolver o nome de exibição a partir do id (ver ownerNameById acima). `ownerName` aqui
+      // continua existindo só para a mensagem do toast, não para o payload.
       const result = await api.post<{ updatedCount: number; total: number; failedCount: number }>(
         '/api/leads/batch-update',
-        { leadIds: Array.from(selectedLeadIds), updates: { owner: ownerName } },
+        { leadIds: Array.from(selectedLeadIds), updates: { owner: ownerId } },
       );
       if (result.failedCount > 0) {
         toast.error(
@@ -436,12 +503,77 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     (next: 'Lead' | 'Negocio') => {
       if (funnelProp) return; // funil fixado por prop — toggle não se aplica
       SoundFX.play('navigate');
-      setSelectedLeadId(null); // evita abrir o drawer de um lead que já não está no funil visível
       setSelectedLeadIds(new Set());
+      // remove `lead` junto — evita manter aberto o drawer de um lead que já não está no funil
+      // visível (mesmo comportamento de antes, agora expresso na URL em vez de em state local).
       setSearchParams(next === 'Lead' ? {} : { funnel: next }, { replace: true });
     },
     [funnelProp, setSearchParams],
   );
+
+  // Aplica funil+filtros de uma view salva de uma vez (Onda B2b) — mesma lógica de
+  // handleFunnelChange (não se aplica com funnel fixado por prop, fecha o drawer aberto), mas
+  // reconstrói a URL inteira em vez de alternar só o funil.
+  const handleApplySavedView = useCallback(
+    (view: SavedViewItem) => {
+      if (funnelProp) return;
+      SoundFX.play('navigate');
+      setSelectedLeadIds(new Set());
+      setSearchParams(
+        (() => {
+          const next = new URLSearchParams();
+          if (view.funnel === 'Negocio') next.set('funnel', 'Negocio');
+          if (view.filters.owner) next.set('owner', view.filters.owner);
+          if (view.filters.q) next.set('q', view.filters.q);
+          return next;
+        })(),
+        { replace: true },
+      );
+    },
+    [funnelProp, setSearchParams],
+  );
+
+  const handleOwnerFilterChange = useCallback(
+    (value: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (value) next.set('owner', value);
+          else next.delete('owner');
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
+  const handleSearchQueryChange = useCallback(
+    (value: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (value) next.set('q', value);
+          else next.delete('q');
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('owner');
+        next.delete('q');
+        return next;
+      },
+      { replace: true },
+    );
+  }, [setSearchParams]);
 
   const handleExportCsv = async () => {
     try {
@@ -456,7 +588,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       link.href = url;
       link.setAttribute(
         'download',
-        `leads_${brandInfo.name.toLowerCase()}_${new Date().toISOString().slice(0, 10)}.csv`,
+        `leads_${BRAND.id}_${new Date().toISOString().slice(0, 10)}.csv`,
       );
       document.body.appendChild(link);
       link.click();
@@ -471,11 +603,11 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
     const grouped: Partial<Record<LeadStatus, Lead[]>> = Object.fromEntries(
       columns.map((status) => [status, [] as Lead[]]),
     );
-    leads.forEach((lead) => {
+    filteredLeads.forEach((lead) => {
       grouped[lead.status]?.push(lead);
     });
     return grouped;
-  }, [leads, columns]);
+  }, [filteredLeads, columns]);
 
   return (
     <div
@@ -490,9 +622,13 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           <p className="text-ink-2 text-xs mt-1">
             {funnel === 'Lead'
               ? 'Qualifique, nutra e converta os leads prontos para o pipeline de negócios.'
-              : `Gerencie propostas, pilotos e receita do ${brandInfo.name} em um funil separado.`}
+              : 'Gerencie propostas, pilotos e receita em um funil separado.'}
           </p>
           {!funnelProp && (
+            // Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+            // real de acessibilidade aqui, só estilo (mesma justificativa da política de
+            // useSemanticElements deste repositório).
+            // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
             <div
               className="inline-flex items-center gap-1 p-1 mt-3 bg-surface-2 rounded-lg border border-line"
               role="group"
@@ -502,7 +638,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
                 type="button"
                 onClick={() => handleFunnelChange('Lead')}
                 aria-pressed={funnel === 'Lead'}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Lead' ? 'bg-brand-active text-white' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Lead' ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
               >
                 Leads
               </button>
@@ -510,7 +646,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
                 type="button"
                 onClick={() => handleFunnelChange('Negocio')}
                 aria-pressed={funnel === 'Negocio'}
-                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Negocio' ? 'bg-brand-active text-white' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
+                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${funnel === 'Negocio' ? 'bg-brand-active text-on-brand' : 'text-ink-2 hover:bg-surface hover:text-ink'}`}
               >
                 Negócios
               </button>
@@ -519,6 +655,17 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          {/* Views Salvas (Onda B2b) */}
+          <Button
+            onClick={() => setIsSavedViewsOpen(true)}
+            variant="secondary"
+            className="text-xs"
+            title="Ver e salvar views do pipeline (funil + filtros)"
+          >
+            <Bookmark className="w-4 h-4 shrink-0" />
+            <span>Views Salvas</span>
+          </Button>
+
           {/* Botão de Modo de Seleção Múltipla */}
           <Button
             onClick={() => {
@@ -578,6 +725,56 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         </div>
       </div>
 
+      {/* Barra de filtros do pipeline (Onda B2a) — busca por texto + dono, persistidos na URL. */}
+      <div className="px-6 py-3 border-b border-line bg-surface/60 flex flex-wrap items-center gap-3 shrink-0">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <label htmlFor="crm-board-search" className="sr-only">
+            Buscar por empresa ou contato
+          </label>
+          <Search className="w-4 h-4 text-ink-2 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            id="crm-board-search"
+            type="search"
+            value={searchQuery}
+            onChange={(e) => handleSearchQueryChange(e.target.value)}
+            placeholder="Buscar por empresa ou contato..."
+            className="w-full pl-9 pr-3 py-2 bg-surface-2 border border-line rounded-xl text-xs text-ink placeholder:text-ink-2 focus:outline-none focus:border-brand"
+          />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <label htmlFor="crm-board-owner-filter" className="text-xs font-semibold text-ink-2">
+            Filtrar por dono:
+          </label>
+          <select
+            id="crm-board-owner-filter"
+            value={ownerFilter}
+            onChange={(e) => handleOwnerFilterChange(e.target.value)}
+            className="px-2.5 py-2 bg-surface-2 border border-line rounded-xl text-xs font-medium text-ink focus:outline-none focus:border-brand"
+          >
+            <option value="">Todos os donos</option>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {(ownerFilter || searchQuery) && (
+          <>
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="text-xs font-semibold text-brand-ink dark:text-brand hover:underline"
+            >
+              Limpar filtros
+            </button>
+            <span className="text-xs text-ink-2 sm:ml-auto">
+              {filteredLeads.length} de {leads.length} leads
+            </span>
+          </>
+        )}
+      </div>
+
       {/* Contextual Tip Banner */}
       {!embedded && (
         <div className="px-6 pt-4 shrink-0">
@@ -590,10 +787,13 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       )}
 
       {/* Região com scroll horizontal do Kanban */}
+      {/* role="region" torna o aria-label válido (div genérica não aceita nome acessível) e
+          sinaliza a screen readers que é uma landmark navegável — não só satisfaz o linter.
+          <section aria-label> produziria a mesma role region na árvore de acessibilidade, sem
+          ganho real — não vale o risco de desalinhar abertura/fechamento num componente grande. */}
+      {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
-        className="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
-        // role="region" torna o aria-label válido (div genérica não aceita nome acessível) e
-        // sinaliza a screen readers que é uma landmark navegável — não só satisfaz o linter.
+        className="flex-1 min-h-[320px] overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
         role="region"
         // Div não-interativa com scroll — tabIndex é intencional (torna a região focável/rolável
         // via teclado), não um erro de a11y. Mesmo padrão de VirtualTable.tsx.
@@ -641,6 +841,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
                   selectedLeadIds={selectedLeadIds}
                   onToggleSelect={handleToggleSelect}
                   selectionMode={selectionMode}
+                  ownerNameById={ownerNameById}
                 />
               ))}
             </div>
@@ -659,23 +860,26 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       {selectedLeadIds.size > 0 && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-surface/95 backdrop-blur-xl border border-line shadow-2xl rounded-3xl p-3 px-5 flex flex-wrap items-center gap-3 animate-in slide-in-from-bottom-5 duration-300">
           <div className="flex items-center gap-2 pr-3 border-r border-line">
-            <span className="w-6 h-6 rounded-full bg-brand-active text-white text-xs font-black flex items-center justify-center">
+            <span className="w-6 h-6 rounded-full bg-brand-active text-on-brand text-xs font-black flex items-center justify-center">
               {selectedLeadIds.size}
             </span>
             <span className="text-xs font-bold text-ink">selecionado(s)</span>
             <button
               type="button"
               onClick={handleSelectAll}
-              className="text-[11px] font-bold text-brand-active dark:text-brand-2 hover:underline ml-1"
+              className="text-[11px] font-bold text-brand-ink dark:text-brand hover:underline ml-1"
             >
-              {selectedLeadIds.size === leads.length ? 'Desmarcar Todos' : 'Todos'}
+              {selectedLeadIds.size === filteredLeads.length ? 'Desmarcar Todos' : 'Todos'}
             </button>
           </div>
 
           {/* Mover Etapa em Massa */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-semibold text-ink-2">Etapa:</span>
+            <label htmlFor="crm-board-batch-stage" className="text-[11px] font-semibold text-ink-2">
+              Etapa:
+            </label>
             <select
+              id="crm-board-batch-stage"
               onChange={(e) => {
                 if (e.target.value) handleBatchMoveStage(e.target.value);
               }}
@@ -696,8 +900,11 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
 
           {/* Reatribuir Vendedor */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-semibold text-ink-2">Dono:</span>
+            <label htmlFor="crm-board-batch-owner" className="text-[11px] font-semibold text-ink-2">
+              Dono:
+            </label>
             <select
+              id="crm-board-batch-owner"
               onChange={(e) => {
                 if (e.target.value) handleBatchReassignOwner(e.target.value);
               }}
@@ -749,10 +956,19 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
         onImportSuccess={fetchLeads}
       />
 
+      <SavedViewsPanel
+        isOpen={isSavedViewsOpen}
+        onClose={() => setIsSavedViewsOpen(false)}
+        currentFunnel={funnel}
+        currentFilters={{ owner: ownerFilter || undefined, q: searchQuery || undefined }}
+        ownerNameById={ownerNameById}
+        onApply={handleApplySavedView}
+      />
+
       {selectedLeadId && (
         <LeadDetailDrawer
           leadId={selectedLeadId}
-          onClose={() => setSelectedLeadId(null)}
+          onClose={handleCloseDrawer}
           onChanged={fetchLeads}
         />
       )}

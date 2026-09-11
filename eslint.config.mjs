@@ -10,7 +10,10 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import globals from 'globals';
 
 export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.recommended, {
-  ignores: ['dist', 'node_modules', 'build', '*.config.js'],
+  // public/tools/** são aplicações legadas embutidas por iframe (ver CLAUDE.md §13) — bundles
+  // JS de terceiros minificados (Next.js, vendor chunks), não código deste projeto. Sem este
+  // ignore, ~18 mil erros de lint desses bundles escondem os erros reais de src/ no mesmo report.
+  ignores: ['dist', 'node_modules', 'build', '*.config.js', 'public/tools/**'],
 }, {
   // Extensão Chrome (MV3): service worker (background.js), content script (content.js) e páginas
   // HTML (sidepanel.js/offscreen.js) rodam fora do Node/DOM do resto do projeto — sem este bloco,
@@ -68,6 +71,7 @@ export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.r
     'src/features/gamification/components/SpaceGame.tsx',
     'src/features/gamification/components/GameWidget.tsx',
     'src/components/ui/AtlasOrb.tsx',
+    'src/components/ui/BrandOrb.tsx',
     'src/features/dashboard/components/RevenueSignalOrb.tsx',
   ],
   rules: {

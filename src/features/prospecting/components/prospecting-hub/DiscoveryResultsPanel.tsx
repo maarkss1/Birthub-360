@@ -83,14 +83,16 @@ export function DiscoveryResultsPanel({
         <h2 className="font-black text-2xl text-ink">✨ Resultados</h2>
         {candidates.length > 0 && (
           <div className="flex items-center gap-3">
-            <button type="button"
+            <button
+              type="button"
               onClick={onSaveAll}
               disabled={isSavingBatch}
-              className="bg-brand-active text-white px-4 py-2 rounded-[2rem] text-xs font-bold hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50"
+              className="bg-brand-active text-on-brand px-4 py-2 rounded-[2rem] text-xs font-bold hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50"
             >
               <UserPlus size={14} /> {isSavingBatch ? 'Salvando Lista...' : 'Salvar Lista de Leads'}
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={onExport}
               className="bg-green-600 text-white px-4 py-2 rounded-[2rem] text-xs font-bold hover:bg-green-700 transition-colors shadow-sm flex items-center gap-2"
             >
@@ -137,7 +139,7 @@ export function DiscoveryResultsPanel({
             {loadingSteps.map((step, idx) => (
               <div
                 key={idx}
-                className={`flex items-center gap-3 text-sm font-medium ${idx === loadingStepIdx ? 'text-brand-active dark:text-brand-2' : idx < loadingStepIdx ? 'text-ink-2' : 'text-ink opacity-50'}`}
+                className={`flex items-center gap-3 text-sm font-medium ${idx === loadingStepIdx ? 'text-brand-ink dark:text-brand' : idx < loadingStepIdx ? 'text-ink-2' : 'text-ink opacity-50'}`}
               >
                 {idx < loadingStepIdx ? (
                   <CheckCircle2 size={16} />
@@ -168,17 +170,19 @@ export function DiscoveryResultsPanel({
 
             <div className="h-4 w-px bg-line mx-2" />
 
-            <button type="button"
+            <button
+              type="button"
               onClick={onBulkSave}
               disabled={selectedCandidates.size === 0 || isSavingBatch}
               className="text-[10px] font-bold bg-surface-2 hover:bg-line text-ink px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
             >
               Salvar em Massa
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={onBulkEnrich}
               disabled={selectedCandidates.size === 0 || isSavingBatch}
-              className="text-[10px] font-bold bg-brand-active hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+              className="text-[10px] font-bold bg-brand-active hover:bg-orange-600 text-on-brand px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
             >
               Enriquecer em Massa
             </button>
@@ -214,7 +218,8 @@ export function DiscoveryResultsPanel({
             </motion.div>
           ))}
 
-          <button type="button"
+          <button
+            type="button"
             onClick={onDiscoverMore}
             disabled={isSearching}
             className="w-full py-3 rounded-xl border border-dashed border-line text-xs font-bold text-ink-2 hover:text-brand hover:border-brand/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50"

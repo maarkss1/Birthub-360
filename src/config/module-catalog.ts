@@ -25,8 +25,8 @@ export const MODULE_CATALOG: ModuleCatalogEntry[] = [
   },
   {
     key: 'treinamento-atlasgr',
-    label: 'Treinamento AtlasGR',
-    description: 'Trilha de treinamento institucional AtlasGR.',
+    label: 'Treinamento Comercial',
+    description: 'Trilha de treinamento institucional da operação comercial.',
   },
   {
     key: 'proposta-comercial',
@@ -50,7 +50,9 @@ export function moduleLabel(key: string): string {
   return MODULE_CATALOG.find((m) => m.key === key)?.label ?? key;
 }
 
-// Atalhos para ferramentas externas reais da AtlasGR (portal legado, Bitrix24, webmail...).
+// Atalhos para sistemas EXTERNOS da operação do cliente (portal legado, Bitrix24, webmail...).
+// Não são telas desta plataforma: cada card abre a URL de um sistema de terceiro em nova aba, e
+// por isso os rótulos descrevem o sistema de destino, não a marca do produto.
 // Deliberadamente FORA do sistema de concessão por usuário acima (ModuleAccessGrant): são
 // ferramentas de uso corriqueiro de toda a equipe comercial, não acervo executivo restrito — cada
 // card só abre a URL em nova aba (login acontece no próprio site de destino; este catálogo nunca
@@ -75,15 +77,15 @@ export interface ExternalLinkEntry {
 export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
   {
     key: 'connect',
-    label: 'Connect Atlas',
-    description: 'Portal Atlas — página principal',
+    label: 'Connect',
+    description: 'Portal — página principal',
     url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php',
     iconKey: 'connect',
   },
   {
     key: 'new-connect',
     label: 'New Connect',
-    description: 'Novo portal Atlas — dashboard',
+    description: 'Novo portal — dashboard',
     url: 'https://newconnect.atlasgr.com.br/dashboard',
     iconKey: 'newConnect',
   },
@@ -97,14 +99,14 @@ export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
   {
     key: 'bitrix24',
     label: 'Bitrix24',
-    description: 'CRM Bitrix24 da AtlasGR',
+    description: 'CRM Bitrix24 da operação',
     url: 'https://atlasgr.bitrix24.com.br/',
     iconKey: 'bitrix24',
   },
   {
     key: 'webmail',
     label: 'Webmail',
-    description: 'E-mail corporativo (@atlasgr.com.br)',
+    description: 'E-mail corporativo da operação',
     url: 'https://webmail.atlasgr.com.br/?_task=mail&_mbox=INBOX',
     iconKey: 'webmail',
   },

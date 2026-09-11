@@ -306,7 +306,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                 type="button"
                 onClick={() => toggleEntity(opt.value)}
                 aria-pressed={active}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${active ? 'bg-brand-active border-brand-active text-white' : 'bg-surface border-line text-ink-2 hover:border-brand/50'}`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${active ? 'bg-brand-active border-brand-active text-on-brand' : 'bg-surface border-line text-ink-2 hover:border-brand/50'}`}
               >
                 {opt.label}
               </button>
@@ -385,10 +385,11 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
               className="h-9 text-sm rounded-xl border border-line bg-surface text-ink px-3 placeholder:text-ink-2 focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none"
             />
           </div>
-          <button type="button"
+          <button
+            type="button"
             onClick={startExtraction}
             disabled={submitting}
-            className="h-9 flex items-center gap-2 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+            className="h-9 flex items-center gap-2 px-4 bg-brand-active hover:bg-brand-2 disabled:opacity-50 text-on-brand text-sm font-bold rounded-xl transition-colors shadow-sm"
           >
             {submitting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -442,7 +443,8 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                   </div>
                   <div className="flex items-center gap-1.5">
                     {(run.status === 'queued' || run.status === 'running') && (
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => cancelRun(run.id)}
                         className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 rounded-lg transition-colors"
                       >
@@ -450,7 +452,8 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                       </button>
                     )}
                     {run.status !== 'queued' && run.status !== 'running' && (
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => removeRun(run.id)}
                         title="Remover do histórico (apaga os arquivos gerados)"
                         className="p-1.5 text-ink-2 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
@@ -476,7 +479,8 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-bold text-ink">{run.totalCount} registro(s)</span>
                     {csvFiles.map((f) => (
-                      <button type="button"
+                      <button
+                        type="button"
                         key={f.filename}
                         onClick={() => triggerDownload(downloadUrl(run.id, 'csv', f.entity))}
                         className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-ink bg-surface-2 hover:bg-line rounded-lg transition-colors"
@@ -486,7 +490,8 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                       </button>
                     ))}
                     {hasXlsx && (
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => triggerDownload(downloadUrl(run.id, 'xlsx'))}
                         className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-500/10 hover:bg-green-100 rounded-lg transition-colors"
                       >
@@ -494,7 +499,8 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                       </button>
                     )}
                     {hasJson && (
-                      <button type="button"
+                      <button
+                        type="button"
                         onClick={() => triggerDownload(downloadUrl(run.id, 'json'))}
                         className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 rounded-lg transition-colors"
                       >

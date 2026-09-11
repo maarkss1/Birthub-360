@@ -1,0 +1,62 @@
+/**
+ * Birth Hub 360º — tokens de marca (fonte de verdade cromática)
+ *
+ * Extraídos do brand book "Birth Hub 360 Brand Book Cinematic" (V2.0, edição
+ * reformulada), páginas 07 (Color Palette) e 08 (Sistema Cromático 360º).
+ *
+ * Estes tokens descrevem a MARCA. Os tokens de PRODUTO (--bg, --surface, --ink,
+ * --brand …) vivem em `src/styles/globals.css` e consomem os valores daqui — não
+ * duplique um hex de marca direto num componente.
+ */
+:root {
+  /* --- Paleta oficial (brand book, p. 07) ------------------------------- */
+  /* Obsidian Black — profundidade. Base institucional escura. */
+  --bh-obsidian: #0b132b;
+  /* Midnight — fundo de página do brand book, um degrau abaixo do Obsidian.
+     Usado como --bg do tema escuro do produto. */
+  --bh-midnight: #08090f;
+  /* Deep Iris — inteligência em movimento. Cor de apoio da órbita. */
+  --bh-iris: #5b21b6;
+  /* Antique Gold — valor, foco e assinatura. Cor primária de marca. */
+  --bh-gold: #d4af37;
+  /* Snow White — respiro. Texto sobre superfícies escuras. */
+  --bh-snow: #f8fafc;
+
+  /* --- Extensões do sistema (brand book, p. 08 "Sistema Cromático 360º") -- */
+  /* Terceira cor da órbita: no brand book é `oklch(52% 0.19 255)`. Convertida
+     para sRGB aqui porque os assets de marca (SVG, e-mail, material impresso)
+     precisam de um hex — o produto pode voltar a usar oklch onde quiser. */
+  --bh-blue: #0065d2;
+  /* Rampa metálica do logotipo: linear-gradient(180deg, …) do wordmark. */
+  --bh-gold-light: #f7e9b8;
+  --bh-gold-deep: #8c6d1f;
+  --bh-gold-soft: #ebd689;
+  /* Superfície clara institucional (páginas claras do brand book). */
+  --bh-parchment: #e9e4d9;
+
+  /* --- Gradiente 360º ---------------------------------------------------- */
+  /* "O gradiente é movimento, não decoração." Um gradiente dominante por
+     composição; base sempre Obsidian ou Snow White. */
+  --bh-orbit: conic-gradient(
+    from 0deg,
+    var(--bh-gold),
+    var(--bh-iris),
+    var(--bh-blue),
+    var(--bh-gold)
+  );
+  --bh-gold-metal: linear-gradient(
+    180deg,
+    var(--bh-gold-light) 0%,
+    var(--bh-gold) 42%,
+    var(--bh-gold-deep) 68%,
+    var(--bh-gold-soft) 100%
+  );
+
+  /* --- Tipografia (brand book, p. 06) ------------------------------------ */
+  /* Bodoni Moda: headlines, títulos, chamadas institucionais.
+     Inter: UI, menus, textos, tabelas, dashboards, relatórios.
+     Playfair Display italic: exclusivamente o "B" do emblema — já vetorizado
+     nos SVGs de logo, não precisa ser carregada em runtime. */
+  --bh-font-display: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  --bh-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}

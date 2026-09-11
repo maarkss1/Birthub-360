@@ -34,7 +34,8 @@ import type { Lead } from '../types';
 import { PIC_OPTIONS } from '../shared/constants/icp-options';
 import { AIPendingActions } from '../features/intelligence/components/AIPendingActions';
 import { useBrandAccent } from '../hooks/useBrandAccent';
-import { useBrand } from '../contexts/BrandContext';
+import { useActivePlaybook } from '../hooks/useActivePlaybook';
+import { BRAND } from '../config/brand';
 import { clientLogger } from '../lib/clientLogger';
 
 type ToolType =
@@ -160,9 +161,9 @@ const TOTALTRAC_PERSONAS = [
 
 export function Intelligence() {
   const accent = useBrandAccent();
-  const { activeBrand } = useBrand();
-  const suggestedCompetitors = activeBrand === 'atlasgr' ? ATLAS_COMPETITORS : [];
-  const personas = activeBrand === 'atlasgr' ? ATLAS_PERSONAS : TOTALTRAC_PERSONAS;
+  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const suggestedCompetitors = playbook === 'atlasgr' ? ATLAS_COMPETITORS : [];
+  const personas = playbook === 'atlasgr' ? ATLAS_PERSONAS : TOTALTRAC_PERSONAS;
   const [activeTool, setActiveTool] = useState<ToolType>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -256,7 +257,7 @@ export function Intelligence() {
           tone,
           objective,
           personaFallback: !selectedLead ? personaFallback : undefined,
-          brandId: activeBrand,
+          brandId: playbook,
         },
         { timeoutMs: 90_000 },
       );
@@ -309,13 +310,13 @@ export function Intelligence() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand-active dark:text-brand-2 mb-3"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand-ink dark:text-brand mb-3"
             >
               <Sparkles className="w-4 h-4" />
               <span className="text-xs font-bold uppercase tracking-wider">Premium AI Suite</span>
             </motion.div>
             <h2 className="font-black text-4xl text-ink tracking-tight mb-2">
-              {accent.brandName}{' '}
+              {playbookMeta.label}{' '}
               <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
                 Outreach Intelligence
               </span>
@@ -336,7 +337,7 @@ export function Intelligence() {
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-brand to-orange-600 text-white flex items-center justify-center shadow-inner relative">
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-brand to-orange-600 text-on-brand flex items-center justify-center shadow-inner relative">
                     <Building2 size={20} />
                     <div className="absolute inset-0 rounded-xl border border-white/20"></div>
                   </div>
@@ -384,7 +385,7 @@ export function Intelligence() {
                   <button
                     type="button"
                     onClick={() => setPickerOpen(true)}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-2 text-ink-2 hover:bg-brand-active hover:text-white transition-colors shrink-0"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-2 text-ink-2 hover:bg-brand-active hover:text-on-brand transition-colors shrink-0"
                     title="Trocar Lead"
                   >
                     <RefreshCw size={14} />
@@ -637,7 +638,7 @@ export function Intelligence() {
                 className="absolute z-50 inset-x-0 mt-4 p-5 border border-brand/30 rounded-2xl bg-surface/90 backdrop-blur-2xl shadow-2xl shadow-brand/10"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] tracking-widest font-black uppercase text-brand-active dark:text-brand-2 flex items-center gap-1.5">
+                  <span className="text-[10px] tracking-widest font-black uppercase text-brand-ink dark:text-brand flex items-center gap-1.5">
                     <Swords size={14} />{' '}
                     {suggestedCompetitors.length
                       ? 'Selecione o Concorrente'
@@ -664,7 +665,7 @@ export function Intelligence() {
                         setCompetitor(c);
                         handleGenerate('competitor_battlecard', c);
                       }}
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold border border-line bg-surface text-ink-2 hover:border-brand hover:bg-brand-active hover:text-white transition-all shadow-sm"
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold border border-line bg-surface text-ink-2 hover:border-brand hover:bg-brand-active hover:text-on-brand transition-all shadow-sm"
                     >
                       {c}
                     </button>
@@ -728,7 +729,7 @@ export function Intelligence() {
                       className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-colors
                                             ${
                                               activeTool === tool.id
-                                                ? 'bg-gradient-to-br from-brand to-orange-500 text-white shadow-md'
+                                                ? 'bg-gradient-to-br from-brand to-orange-500 text-on-brand shadow-md'
                                                 : 'bg-surface-2 border border-line text-ink-2 group-hover:bg-orange-50 group-hover:text-brand group-hover:border-orange-100'
                                             }`}
                     >
@@ -772,14 +773,14 @@ export function Intelligence() {
               </div>
               <div className="flex items-center gap-3">
                 {isGenerating && (
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-brand-active dark:text-brand-2 animate-pulse">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-brand-ink dark:text-brand animate-pulse">
                     Sintetizando...
                   </span>
                 )}
                 <div className="px-3 py-1 bg-surface rounded-full border border-line flex items-center gap-2">
                   <Bot size={12} className="text-ink-2" />
                   <span className="text-[10px] font-bold tracking-widest text-ink uppercase">
-                    {accent.brandName} Engine v2.0
+                    {BRAND.shortName} Engine v2.0
                   </span>
                 </div>
               </div>
@@ -830,7 +831,7 @@ export function Intelligence() {
                   <h3 className="font-black text-2xl text-ink mb-2 tracking-tight">
                     Gerando Inteligência
                   </h3>
-                  <p className="font-bold text-xs uppercase tracking-[0.2em] text-brand-active dark:text-brand-2">
+                  <p className="font-bold text-xs uppercase tracking-[0.2em] text-brand-ink dark:text-brand">
                     Processando algoritmos cognitivos...
                   </p>
 
@@ -855,7 +856,7 @@ export function Intelligence() {
                 >
                   <div className="flex justify-between items-end mb-6">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-brand-active dark:text-brand-2 mb-1 flex items-center gap-1.5">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-brand-ink dark:text-brand mb-1 flex items-center gap-1.5">
                         <CheckCircle2 size={12} /> Síntese Concluída
                       </p>
                       <h3 className="text-xl font-bold text-ink">

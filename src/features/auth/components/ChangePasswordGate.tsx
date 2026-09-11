@@ -61,7 +61,7 @@ export function ChangePasswordGate() {
       () => {},
     );
 
-    window.location.href = '/app';
+    window.location.href = '/hub';
   };
 
   return (
@@ -69,7 +69,7 @@ export function ChangePasswordGate() {
       <div className="w-full max-w-md relative z-10">
         <div className="glass-panel p-8 sm:p-10 rounded-[2.5rem] border border-line bg-surface/95 shadow-2xl">
           <div className="flex flex-col items-center mb-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-active dark:text-brand-2 mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand mb-4">
               <KeyRound size={24} />
             </div>
             <h1 className="text-xl font-black text-ink">Troque sua senha para continuar</h1>
@@ -148,7 +148,7 @@ export function ChangePasswordGate() {
             <button
               type="submit"
               disabled={isSubmitting || !currentPassword || !newPassword || !confirmPassword}
-              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 <Loader2 className="animate-spin" size={18} />

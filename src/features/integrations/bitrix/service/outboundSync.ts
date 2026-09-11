@@ -126,7 +126,7 @@ async function syncLeadToBitrix(
           ? [{ VALUE: lead.contact?.email || lead.company?.emails?.[0], VALUE_TYPE: 'WORK' }]
           : undefined,
       SOURCE_ID: 'WEB',
-      SOURCE_DESCRIPTION: 'AtlasGR Prospector',
+      SOURCE_DESCRIPTION: 'Birth Hub 360 Prospector',
       COMMENTS: commentsParts || undefined,
       ...(overrides.statusId ? { STATUS_ID: overrides.statusId } : {}),
       ...(overrides.assignedById ? { ASSIGNED_BY_ID: overrides.assignedById } : {}),
@@ -237,7 +237,7 @@ async function syncLeadToBitrix(
         fields: {
           ENTITY_ID: newId,
           ENTITY_TYPE: 'lead',
-          COMMENT: `Lead criado pelo AtlasGR Prospector.\nEtapa: ${statusLabel}${lead.score != null ? `\nFit Score: ${lead.score}` : ''}`,
+          COMMENT: `Lead criado pelo Birth Hub 360 Prospector.\nEtapa: ${statusLabel}${lead.score != null ? `\nFit Score: ${lead.score}` : ''}`,
         },
       },
       { correlationId },

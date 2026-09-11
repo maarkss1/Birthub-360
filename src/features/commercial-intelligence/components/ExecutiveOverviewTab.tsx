@@ -68,6 +68,9 @@ function CoverageProtectionTable({
         Pipeline elegível por mês de calendário frente à meta daquele mês — não confundir com
         Pipeline Total.
       </p>
+      {/* <section aria-label> produziria a mesma role region que role="region" já produz —
+          sem ganho real de acessibilidade, mesmo padrão de CrmBoard.tsx. */}
+      {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
         className="overflow-x-auto"
         // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable), mesmo padrão de CrmBoard.tsx

@@ -18,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: atlasgr_app
+    container_name: birthhub_app
     restart: unless-stopped
     depends_on:
       postgres:
@@ -53,7 +53,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: atlasgr_worker
+    container_name: birthhub_worker
     restart: unless-stopped
     command: ["sh", "-c", "npx prisma migrate deploy && exec npm run start:worker"]
     depends_on:
@@ -79,8 +79,8 @@ services:
     build:
       context: ./docker/postgres
       dockerfile: Dockerfile
-    image: atlasgr/postgres-intelligence:16
-    container_name: atlasgr_postgres
+    image: birthhub360/postgres-intelligence:16
+    container_name: birthhub_postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: prospector
@@ -126,7 +126,7 @@ services:
   redis:
     profiles: ["queues"]
     image: redis:7-alpine
-    container_name: atlasgr_redis
+    container_name: birthhub_redis
     restart: unless-stopped
     # Sem `:?` de propósito — ver comentário no serviço `worker` acima sobre interpolação e
     # profiles. scripts/deploy-oci.sh recusa subir este profile sem REDIS_PASSWORD definido.
@@ -145,7 +145,7 @@ services:
 
   caddy:
     image: caddy:2-alpine
-    container_name: atlasgr_caddy
+    container_name: birthhub_caddy
     restart: unless-stopped
     depends_on:
       - app

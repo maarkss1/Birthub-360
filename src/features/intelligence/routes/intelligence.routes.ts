@@ -37,6 +37,8 @@ import {
   listPendingActions,
   approvePendingAction,
   discardPendingAction,
+  listActionsAwaitingOutcome,
+  recordActionOutcome,
 } from '../services/pending-actions.service.js';
 import { listAiSettings, saveAiSettings } from '../services/ai-settings.service.js';
 import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
@@ -61,6 +63,10 @@ import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.
 import { routeParam } from '../../../shared/http/routeParams.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { aiSuiteRouter } from './ai-suite.routes.js';
+import {
+  finishRoleplaySession,
+  listRoleplaySessions,
+} from '../services/roleplay-session.service.js';
 
 const router = Router();
 
@@ -146,6 +152,82 @@ router.post(
   },
 );
 
+// Parecer técnico de fim de ligação do Roleplay (ver RoleplayHub.finishCall) — recebe a
+// transcrição completa + avaliações por turno já calculadas em tempo real, dispara uma chamada de
+// IA dedicada de avaliação de sessão (generateRoleplayEvaluation) e persiste em RoleplaySession
+// (antes só existia em memória no componente, perdido ao recarregar — Piloto 008 em
+// .claude/PILOTS.md).
+const roleplayFinishSchema = z.object({
+  brand: z.enum(['atlasgr', 'totaltrac']),
+  brandName: z.string().trim().min(1).max(80),
+  brandDescription: z.string().trim().min(1).max(500),
+  personaId: z.string().trim().min(1).max(80),
+  personaLabel: z.string().trim().min(1).max(200),
+  personaKey: z.enum(['skeptical_cfo', 'strict_buyer', 'tech_director']),
+  difficulty: z.enum(['facil', 'medio', 'dificil']),
+  durationSeconds: z
+    .number()
+    .int()
+    .min(0)
+    .max(24 * 60 * 60),
+  transcript: z
+    .array(
+      z.object({
+        sender: z.enum(['bot', 'user']),
+        text: z.string().trim().min(1).max(2_000),
+      }),
+    )
+    .min(1)
+    .max(200),
+  turnEvaluations: z
+    .array(
+      z.object({
+        clarity: z.number().int().min(0).max(100),
+        objectionHandling: z.number().int().min(0).max(100),
+        total: z.number().int().min(0).max(100),
+        feedback: z.string().trim().min(1).max(800),
+      }),
+    )
+    .max(100),
+});
+
+router.post(
+  '/roleplay/finish',
+  validateRequest(roleplayFinishSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const body = req.body as z.infer<typeof roleplayFinishSchema>;
+      const result = await finishRoleplaySession({ organizationId, userId, ...body });
+      res.json({ success: true, data: result });
+    } catch (error) {
+      logger.error({ err: error }, 'Error generating roleplay session evaluation');
+      next(error);
+    }
+  },
+);
+
+// Histórico de ligações do Roleplay — as sessões já eram persistidas por /roleplay/finish, mas até
+// agora não havia rota para reler o que foi salvo (ver comentário de listRoleplaySessions).
+router.get(
+  '/roleplay/history',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const brand = String(req.query.brand || '');
+      if (brand !== 'atlasgr' && brand !== 'totaltrac') {
+        res.status(400).json({ success: false, error: 'brand deve ser "atlasgr" ou "totaltrac".' });
+        return;
+      }
+      const sessions = await listRoleplaySessions(organizationId, userId, brand);
+      res.json({ success: true, data: sessions });
+    } catch (error) {
+      logger.error({ err: error }, 'Error fetching roleplay session history');
+      next(error);
+    }
+  },
+);
+
 const contentGenerationSchema = z.object({
   tool: z.string().min(1).max(80),
   leadId: z.string().min(1).max(100).optional(),
@@ -208,10 +290,10 @@ router.post('/qualify', async (req: Request, res: Response, next: NextFunction):
       const existing = await leadsQueue.getJob(jobId);
       const existingState = existing ? await existing.getState() : null;
 
-      if (existingState && ['waiting', 'active', 'delayed'].includes(existingState)) {
+      if (existing && existingState && ['waiting', 'active', 'delayed'].includes(existingState)) {
         // Já há uma qualificação em andamento para este lead — reaproveita em vez de
         // duplicar a chamada de IA e correr duas atualizações concorrentes do mesmo lead.
-        job = existing!;
+        job = existing;
       } else {
         // Job anterior com este id já terminou (completed/failed) ou nunca existiu: remove
         // antes de reusar o mesmo jobId — mesmo padrão de debounce-por-id já usado em
@@ -412,6 +494,65 @@ router.delete(
   },
 );
 
+// Item 103 da constituição de produto (Closed-Loop Intelligence) — fecha o ciclo depois de
+// `executeAndRecord`: fila de ações já executadas sem resultado de negócio registrado ainda.
+router.get(
+  '/pending/awaiting-outcome',
+  pendingActionRoles,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const authRequest = req as AuthRequest;
+      const db = authRequest.db || prisma;
+      const actions = await listActionsAwaitingOutcome(db, authRequest.user.organizationId);
+      res.json({ success: true, data: { actions } });
+    } catch (error) {
+      logger.error({ err: error }, 'Error fetching actions awaiting outcome');
+      next(error);
+    }
+  },
+);
+
+const outcomeSchema = z.object({
+  status: z.enum(['POSITIVE', 'NEGATIVE', 'NEUTRAL']),
+  notes: z.string().trim().max(2000).optional(),
+});
+
+router.post(
+  '/pending/:id/outcome',
+  pendingActionRoles,
+  validateRequest(outcomeSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const authRequest = req as AuthRequest;
+      const db = authRequest.db || prisma;
+      const { status, notes } = req.body as z.infer<typeof outcomeSchema>;
+      const result = await recordActionOutcome(
+        db,
+        authRequest.user.organizationId,
+        routeParam(req.params.id, 'id'),
+        authRequest.user.id,
+        { status, notes },
+      );
+      if (!result) {
+        res
+          .status(404)
+          .json({ success: false, error: 'Ação executada não encontrada para este id.' });
+        return;
+      }
+      if (result.alreadyRecorded) {
+        res
+          .status(409)
+          .json({ success: false, error: 'Esta ação já tem um resultado registrado.' });
+        return;
+      }
+      res.json({ success: true, data: { action: result.action } });
+    } catch (error) {
+      logger.error({ err: error }, 'Error recording AI pending action outcome');
+      next(error);
+    }
+  },
+);
+
 // Configuração de provider/modelo/temperatura por ferramenta de IA (usada pela tela AIConfigCenter).
 // Sem registro para uma toolKey, `ai.service.ts` cai no TOOL_CONFIG hardcoded como padrão.
 router.get(
@@ -468,8 +609,8 @@ const reportSchema = z.object({
 
 function reportBrandContext(brandId: 'atlasgr' | 'totaltrac'): string {
   return brandId === 'totaltrac'
-    ? 'TotalTrac (tecnologia para telemetria, videotelemetria, jornada e proteção de frotas)'
-    : 'AtlasGR (inteligência comercial e gestão de risco logístico)';
+    ? 'Birth Hub 360 (tecnologia para telemetria, videotelemetria, jornada e proteção de frotas)'
+    : 'Birth Hub 360 (inteligência comercial e gestão de risco logístico)';
 }
 
 function reportPrompt(brandContext: string): string {
@@ -490,10 +631,33 @@ router.get(
     try {
       const organizationId = (req as AuthRequest).user.organizationId;
       const latest = await prisma.report.findFirst({
-        where: { organizationId },
+        // Filtro explícito por ON_DEMAND: sem isto, o resumo diário automático (`ReportSource
+        // DAILY_AUTO`, gerado por `dailyExecutiveSummary.worker.ts`) apareceria aqui sem o
+        // usuário ter pedido, substituindo silenciosamente o último relatório que ele gerou.
+        where: { organizationId, source: 'ON_DEMAND' },
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, data: latest });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// Histórico do resumo executivo diário automático (`dailyExecutiveSummary.worker.ts`, cron
+// 0 18 * * *) — antes gerava via IA todo dia mas só logava; nunca aparecia em nenhuma tela.
+router.get(
+  '/report/daily-summaries',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const organizationId = (req as AuthRequest).user.organizationId;
+      const summaries = await prisma.report.findMany({
+        where: { organizationId, source: 'DAILY_AUTO' },
+        orderBy: { createdAt: 'desc' },
+        take: 14,
+        select: { id: true, content: true, metrics: true, createdAt: true },
+      });
+      res.json({ success: true, data: summaries });
     } catch (error) {
       next(error);
     }

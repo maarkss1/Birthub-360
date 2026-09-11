@@ -14,7 +14,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { Button } from './Button';
-import { useBrand } from '../../contexts/BrandContext';
+import { useActivePlaybook } from '../../hooks/useActivePlaybook';
 import { api } from '../../lib/api';
 
 type Channel = 'email' | 'call' | 'message';
@@ -90,7 +90,7 @@ export function AIEmailGenerator({
   companySize = '50-200 Colaboradores (Mid-Market)',
   phone,
 }: AIEmailGeneratorProps) {
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const [channel, setChannel] = useState<Channel>('email');
   const [tone, setTone] = useState<Tone>('consultative');
 
@@ -112,7 +112,7 @@ export function AIEmailGenerator({
     setError('');
 
     const inputs = { companyName, contactName, sector, role, technologies, companySize, tone };
-    const brand = { name: brandInfo.name, description: brandInfo.description };
+    const brand = { name: playbookMeta.label, description: playbookMeta.description };
 
     try {
       if (channel === 'email') {
@@ -173,7 +173,7 @@ export function AIEmailGenerator({
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-line">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-brand flex items-center justify-center text-white shadow-md">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-brand flex items-center justify-center text-on-brand shadow-md">
             <Bot className="w-5 h-5" />
           </div>
           <div>
@@ -206,7 +206,7 @@ export function AIEmailGenerator({
               onClick={() => setTone(value)}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 tone === value
-                  ? 'bg-brand-active text-white font-bold shadow-sm'
+                  ? 'bg-brand-active text-on-brand font-bold shadow-sm'
                   : 'text-ink-2 hover:text-ink'
               }`}
             >
@@ -231,7 +231,9 @@ export function AIEmailGenerator({
                 setCopied(false);
               }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                channel === c ? 'bg-brand-active text-white shadow-sm' : 'text-ink-2 hover:text-ink'
+                channel === c
+                  ? 'bg-brand-active text-on-brand shadow-sm'
+                  : 'text-ink-2 hover:text-ink'
               }`}
             >
               <Icon className="w-3.5 h-3.5" /> {CHANNEL_META[c].label}
@@ -325,7 +327,7 @@ export function AIEmailGenerator({
               {channel === 'email' && emailResult && (
                 <a
                   href={`mailto:?subject=${encodeURIComponent(emailResult.subject)}&body=${encodeURIComponent(emailResult.body)}`}
-                  className="inline-flex items-center justify-center text-xs font-bold px-3.5 py-1.5 rounded-md bg-brand-active text-white hover:brightness-95 transition-[filter] shadow-md"
+                  className="inline-flex items-center justify-center text-xs font-bold px-3.5 py-1.5 rounded-md bg-brand-active text-on-brand hover:brightness-95 transition-[filter] shadow-md"
                 >
                   <Send className="w-3.5 h-3.5 mr-1.5" /> Enviar
                 </a>
@@ -333,7 +335,7 @@ export function AIEmailGenerator({
               {channel === 'call' && phone && (
                 <a
                   href={`tel:${phone}`}
-                  className="inline-flex items-center justify-center text-xs font-bold px-3.5 py-1.5 rounded-md bg-brand-active text-white hover:brightness-95 transition-[filter] shadow-md"
+                  className="inline-flex items-center justify-center text-xs font-bold px-3.5 py-1.5 rounded-md bg-brand-active text-on-brand hover:brightness-95 transition-[filter] shadow-md"
                 >
                   <Phone className="w-3.5 h-3.5 mr-1.5" /> Ligar para {phone}
                 </a>
@@ -343,7 +345,7 @@ export function AIEmailGenerator({
                   href={`https://wa.me/${toWhatsAppDigits(phone)}?text=${encodeURIComponent(messageResult.body)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center text-xs font-bold px-3.5 py-1.5 rounded-md bg-brand-active text-white hover:brightness-95 transition-[filter] shadow-md"
+                  className="inline-flex items-center justify-center text-xs font-bold px-3.5 py-1.5 rounded-md bg-brand-active text-on-brand hover:brightness-95 transition-[filter] shadow-md"
                 >
                   <Send className="w-3.5 h-3.5 mr-1.5" /> Enviar WhatsApp
                 </a>

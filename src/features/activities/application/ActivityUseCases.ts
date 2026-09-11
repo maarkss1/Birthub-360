@@ -140,10 +140,10 @@ export class ActivityUseCases {
     const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//AtlasGR//Central de Inteligencia Comercial//PT',
+      'PRODID:-//Birth Hub 360//Central de Inteligencia Comercial//PT',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
-      `X-WR-CALNAME:Agenda AtlasGR - ${owner || 'Equipe'}`,
+      `X-WR-CALNAME:Agenda Birth Hub 360 - ${owner || 'Equipe'}`,
     ];
 
     for (const act of filtered) {

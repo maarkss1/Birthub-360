@@ -3,7 +3,7 @@ name: api-contracts
 description: Use ao investigar divergência de contrato de dados entre UI, hook, cliente de API, rota Express, validação Zod, service e Prisma/PostgreSQL — nome de campo diferente, enum divergente, nullable incompatível, cast "as any" mascarando erro. Corrige a origem do contrato, nunca só o sintoma no consumidor.
 ---
 
-# API Contracts — Central de Inteligência Comercial ATLASGR
+# API Contracts — Birth Hub 360º
 
 ## Quando usar
 

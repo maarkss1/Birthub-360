@@ -3,7 +3,7 @@ name: ui-ux
 description: Use ao decidir composição, hierarquia, fluxo, estados de componente ou responsividade em qualquer tela deste CRM. Cobre os padrões de layout, densidade de informação e comportamento mobile (Capacitor/Android) já estabelecidos no projeto.
 ---
 
-# UI/UX — Central de Inteligência Comercial ATLASGR
+# UI/UX — Birth Hub 360º
 
 Este é um produto de uso diário e repetido (CRM comercial), não uma landing page — as decisões de
 UX priorizam velocidade de tarefa e previsibilidade sobre impacto visual pontual.

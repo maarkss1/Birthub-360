@@ -20,7 +20,7 @@ export type {
 // Arrays das etapas de cada funil (não tipos) — usados pelos dois Kanbans para montar as colunas.
 
 /**
- * Checklist de qualificação do SDR — Playbook Comercial AtlasGR, seção 4.2. Preenchido
+ * Checklist de qualificação do SDR — Playbook Comercial Birth Hub 360, seção 4.2. Preenchido
  * manualmente pelo time comercial durante a qualificação, nunca inferido automaticamente.
  */
 export interface LeadQualification {
@@ -175,7 +175,7 @@ export interface Lead {
   organizationId?: string | null;
   /** PIC (Perfil de Cliente Ideal) do Playbook de Pré-Vendas Atlas — setado manualmente, nunca inferido automaticamente. */
   pic?: 'PIC1_Expansao' | 'PIC2_Risco' | 'PIC3_Transicao' | null;
-  /** Checklist de qualificação do SDR (Playbook Comercial AtlasGR, seção 4.2). */
+  /** Checklist de qualificação do SDR (Playbook Comercial Birth Hub 360, seção 4.2). */
   qualification?: LeadQualification | null;
 
   // Campos comerciais espelhados do Bitrix24 (ver bitrixFieldMap.ts)

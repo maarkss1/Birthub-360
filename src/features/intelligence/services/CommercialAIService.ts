@@ -96,7 +96,7 @@ export class CommercialAIService {
    */
   async generateLeadScore(lead: IEnrichedLead): Promise<number> {
     const result = await askJson(
-      'Você avalia o fit de leads B2B de logística/transporte de cargas para a Atlas (SaaS de gestão de risco/torre de controle operacional). Considere porte, situação cadastral, segmento (CNAE) e maturidade tecnológica. Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"score": number de 0 a 1000}.',
+      'Você avalia o fit de leads B2B para a Birth Hub 360 (plataforma de inteligência comercial e automação de vendas). Considere porte, situação cadastral, segmento (CNAE) e maturidade tecnológica. Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"score": number de 0 a 1000}.',
       `Dados do lead:\n${describeLead(lead)}`,
       'commercial-ai:lead-score',
       leadScoreSchema,
@@ -111,7 +111,7 @@ export class CommercialAIService {
    */
   async generateSWOT(lead: IEnrichedLead): Promise<Record<string, string[]>> {
     return askJson(
-      'Você monta uma análise SWOT curta e factual (baseada apenas nos dados fornecidos, sem inventar números ou fatos) de um lead B2B de logística, para a equipe comercial da Atlas usar antes de uma abordagem. Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"strengths": string[], "weaknesses": string[], "opportunities": string[], "threats": string[]}, cada lista com 2 a 4 itens curtos (máx. 8 palavras cada).',
+      'Você monta uma análise SWOT curta e factual (baseada apenas nos dados fornecidos, sem inventar números ou fatos) de um lead B2B, para a equipe comercial da Birth Hub 360 usar antes de uma abordagem. Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"strengths": string[], "weaknesses": string[], "opportunities": string[], "threats": string[]}, cada lista com 2 a 4 itens curtos (máx. 8 palavras cada).',
       `Dados do lead:\n${describeLead(lead)}`,
       'commercial-ai:swot',
       swotSchema,
@@ -138,7 +138,7 @@ export class CommercialAIService {
       },
     };
     return askJson(
-      'Você preenche matrizes de qualificação de vendas B2B (BANT e GPCT) para um lead de logística, com base ESTRITAMENTE nos dados fornecidos. Quando um campo não puder ser inferido com segurança pelos dados, use exatamente "Não identificado" em vez de inventar. Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"bant": {"budget": string, "authority": string, "need": string, "timeframe": string}, "gpct": {"goals": string, "plans": string, "challenges": string, "timeline": string}}.',
+      'Você preenche matrizes de qualificação de vendas B2B (BANT e GPCT) para um lead comercial, com base ESTRITAMENTE nos dados fornecidos. Quando um campo não puder ser inferido com segurança pelos dados, use exatamente "Não identificado" em vez de inventar. Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"bant": {"budget": string, "authority": string, "need": string, "timeframe": string}, "gpct": {"goals": string, "plans": string, "challenges": string, "timeline": string}}.',
       `Dados do lead:\n${describeLead(lead)}`,
       'commercial-ai:qualification',
       qualificationsSchema,
@@ -151,7 +151,7 @@ export class CommercialAIService {
    */
   async generateObjectionsMatrix(lead: IEnrichedLead): Promise<Record<string, unknown>[]> {
     const result = await askJson(
-      'Você monta uma matriz de objeções de vendas B2B para logística/gestão de risco operacional, com a objeção mais provável para ESTE lead, a psicologia por trás dela e 3 respostas (consultiva, desafiadora/challenger, SPIN). Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"objections": [{"objection": string, "psychology": string, "responseConsultative": string, "responseChallenger": string, "responseSpin": string}]}, com 3 a 5 itens.',
+      'Você monta uma matriz de objeções de vendas B2B, com a objeção mais provável para ESTE lead, a psicologia por trás dela e 3 respostas (consultiva, desafiadora/challenger, SPIN). Responda SOMENTE com JSON válido, sem markdown, no formato exato: {"objections": [{"objection": string, "psychology": string, "responseConsultative": string, "responseChallenger": string, "responseSpin": string}]}, com 3 a 5 itens.',
       `Dados do lead:\n${describeLead(lead)}`,
       'commercial-ai:objections',
       objectionsMatrixSchema,

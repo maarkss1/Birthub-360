@@ -74,18 +74,113 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   Verificar com `npm audit --audit-level=high` **e** `trivy fs --severity HIGH,CRITICAL` a cada
   reavaliação — as duas ferramentas precisam ficar limpas (ou com este waiver renovado nas duas)
   antes de considerar o achado resolvido.
-- **Data de registro:** 2026-08-17. **Reavaliar em:** próxima atualização de `prisma`/`@prisma/config`
-  ou em 30 dias, o que vier primeiro (`expired_at: 2026-09-16` em `.trivyignore.yaml` para as duas
-  entradas — reavaliar as duas juntas, mesmo prazo).
+- **Data de registro:** 2026-08-17. **Reavaliado em:** 2026-09-11 (ver entrada de Histórico abaixo).
+  **Reavaliar em:** próxima atualização de `prisma`/`@prisma/config` ou em 30 dias, o que vier
+  primeiro (`expired_at: 2026-10-11` em `.trivyignore.yaml` para as duas entradas — reavaliar as
+  duas juntas, mesmo prazo).
 - **Escopo do waiver:** só estes dois advisory IDs (mesmo achado, dois catálogos), só via esta
   cadeia de dependência. Qualquer outro achado `HIGH`/`CRITICAL` novo continua bloqueando o gate
   normalmente.
 
 ## Débito conhecido, fora do escopo deste waiver (severidade abaixo do gate)
 
-_(nenhum no momento — ver Histórico abaixo para o item resolvido em 30/08/2026)_
+### `GHSA-8988-4f7v-96qf` / `CVE-2026-54285` — `@opentelemetry/core` (Unbounded memory allocation em W3C Baggage propagation)
+
+- **Advisory:** https://github.com/advisories/GHSA-8988-4f7v-96qf — `W3CBaggagePropagator.extract()` em
+  `@opentelemetry/core <2.8.0` não aplica limite de tamanho ao fazer parsing do header HTTP `baggage`
+  inbound (a especificação recomenda máx. 8192 bytes / 180 entradas; a versão vulnerável só aplicava
+  isso no envio, não no recebimento). Corrigido em `@opentelemetry/core@2.8.0`.
+- **Severidade reportada pelo `npm audit`:** moderate (CVSS 5.3) — propaga moderate (não high/critical)
+  para `@opentelemetry/exporter-otlp-http`, `@opentelemetry/resources`, `@opentelemetry/sdk-metrics-base`
+  e `@opentelemetry/sdk-trace-base`; 5 achados moderate no total, todos a mesma cadeia raiz.
+  `fixAvailable: false` para `@opentelemetry/core`/`@opentelemetry/exporter-otlp-http` confirmado em
+  `npm audit --json` (rodado em 2026-09-11); `npm audit fix --dry-run` confirma que nenhum desses
+  pacotes muda de versão automaticamente (só resolveria os achados `high` do Prisma via downgrade
+  major, já coberto pelo waiver `GHSA-ggr8-5vv4-36mx` acima).
+- **Cadeia:** duas cadeias paralelas, nenhuma envolvendo o OpenTelemetry realmente usado em produção:
+  - `@opentelemetry/exporter-otlp-http@^0.26.0` (devDependency direta em `package.json`, pacote OTel
+    **legado/depreciado**, substituído há anos por `@opentelemetry/exporter-trace-otlp-http` e
+    `@opentelemetry/exporter-metrics-otlp-http`) → cópia própria de `@opentelemetry/core <2.8.0` em
+    `node_modules/@opentelemetry/exporter-otlp-http/node_modules/@opentelemetry/core`.
+  - `@opentelemetry/sdk-metrics-base` (transitiva, pacote também depreciado, substituído por
+    `@opentelemetry/sdk-metrics`) → outra cópia própria de `@opentelemetry/core <2.8.0` em
+    `node_modules/@opentelemetry/sdk-metrics-base/node_modules/@opentelemetry/core`.
+- **Por que não é tratado como waiver formal (não entra em "## Waivers ativos", não é espelhado em
+  `.trivyignore.yaml`/`allow-ghsas`):**
+  1. **Abaixo do gate nas três ferramentas deste repositório.** `scripts/security/check-audit-waivers.ts`
+     roda `npm audit --audit-level=high` (só falha para `high`/`critical`); `dependency-review.yml` usa
+     `fail-on-severity: high`; `security-trivy.yml`/`cd-homolog.yml` usam `severity: HIGH,CRITICAL`.
+     Nenhuma delas sequer avalia um achado `moderate` — não há gate para desbloquear, então uma entrada
+     em "## Waivers ativos" (reservada a achados que bloqueiam CI e exigem aprovação do Agente 00 antes
+     de religar `continue-on-error`) ou um espelho em `.trivyignore.yaml`/`allow-ghsas` seria inerte e
+     diluiria o propósito dessas listas.
+  2. **Raio de exposição real também é baixo, independente do gate.** `src/lib/tracing.ts` (única
+     inicialização de OpenTelemetry no runtime real, `initTracing()`) importa só
+     `@opentelemetry/sdk-node`, `@opentelemetry/auto-instrumentations-node`,
+     `@opentelemetry/exporter-trace-otlp-http`, `@opentelemetry/exporter-metrics-otlp-http` e
+     `@opentelemetry/sdk-metrics` — pacotes diferentes e mais novos (`^0.220`/`^0.222`), que carregam sua
+     própria cópia de `@opentelemetry/core`, não listada entre os `nodes` afetados no relatório do
+     `npm audit`. Busca em `src/` confirma que `@opentelemetry/exporter-otlp-http` (a devDependency
+     vulnerável) não é importada em nenhum arquivo — é devDependency não utilizada. O parsing vulnerável
+     de `baggage` nunca executa no processo Express real desta aplicação. Mesmo num cenário hipotético
+     de uso, o próprio advisory nota que o Node.js limita por padrão o tamanho de header HTTP a 16KB
+     (`--max-http-header-size` não é elevado neste projeto), o que já reduz bastante o impacto prático.
+- **Dono:** Agente 15 — recomendação para o Agente 00/dono de `package.json`: `@opentelemetry/exporter-otlp-http`
+  aparenta ser devDependency morta (substituída pelos pacotes `exporter-trace-otlp-http`/
+  `exporter-metrics-otlp-http`, já em uso real); removê-la eliminaria uma das duas cadeias sem precisar
+  de waiver nenhum. Fora do escopo desta entrada — quem faz essa alteração precisa mexer em
+  `package.json`, propriedade de outro dono.
+- **Data de registro:** 2026-09-11. **Reavaliar em:** quando `@opentelemetry/exporter-otlp-http` for
+  removida/substituída, ou em 60 dias (`2026-11-11`) — prazo mais longo que os waivers `high` acima
+  porque este achado não bloqueia nenhum gate.
+- **Escopo:** só este advisory (`GHSA-8988-4f7v-96qf`/`CVE-2026-54285`), moderate, sem pressão de CI.
+  Se o `npm audit` algum dia reportar essa cadeia como `high`/`critical` (ex.: nova vulnerabilidade
+  agregando severidade, como já ocorreu com `mysql2` acima), este item precisa ser promovido para
+  "## Waivers ativos" e espelhado nos outros dois arquivos antes que o gate volte a bloquear.
 
 ## Histórico
+
+- 2026-09-11 — Auditoria de rotina (Agente 15) encontrou 5 achados `moderate` novos em `npm audit
+  --json`, todos a mesma cadeia raiz `@opentelemetry/core` (`GHSA-8988-4f7v-96qf`/`CVE-2026-54285`,
+  "Unbounded memory allocation in W3C Baggage propagation"), não registrados em nenhum dos 3 arquivos
+  de waiver. Confirmado o advisory real (severidade moderate/CVSS 5.3, patch em `core@2.8.0`,
+  `fixAvailable: false`) e o raio de exposição: a cadeia vulnerável vem só de
+  `@opentelemetry/exporter-otlp-http` (devDependency direta não usada em `src/`) e
+  `@opentelemetry/sdk-metrics-base` (transitivo depreciado) — nenhum dos dois é o OpenTelemetry
+  realmente inicializado em `src/lib/tracing.ts` (que usa `sdk-node`/`auto-instrumentations-node`/
+  `exporter-trace-otlp-http`/`exporter-metrics-otlp-http`/`sdk-metrics`, com cópia própria e não
+  vulnerável de `core`). Registrada entrada completa em "## Débito conhecido, fora do escopo deste
+  waiver (severidade abaixo do gate)" acima, com advisory, cadeia, justificativa de exposição, dono e
+  data de reavaliação — no mesmo nível de detalhe dos waivers de "## Waivers ativos".
+  **Decisão deliberada de não seguir a instrução literal de replicar a entrada em
+  `.trivyignore.yaml`/`allow-ghsas`:** as três ferramentas que este arquivo espelha
+  (`scripts/security/check-audit-waivers.ts` via `npm audit --audit-level=high`,
+  `dependency-review.yml` `fail-on-severity: high`, `security-trivy.yml`/`cd-homolog.yml`
+  `severity: HIGH,CRITICAL`) só bloqueiam `high`/`critical` — um achado `moderate` não passa pelo gate
+  de nenhuma delas, então uma entrada em `.trivyignore.yaml`/`allow-ghsas` seria inerte (não desbloqueia
+  nada) e, pior, diluiria o propósito dessas duas listas, hoje reservadas a bypasses de gate real já
+  aprovados pelo Agente 00 (ver "## Regra" no topo deste arquivo). Por isso o achado foi documentado
+  na seção "Débito conhecido" (mesmo padrão já usado para o caso `uuid`/`exceljs` resolvido em
+  30/08/2026 abaixo), não em "## Waivers ativos". Fica registrado aqui para o Coordenador validar essa
+  leitura — se a decisão for mesmo assim manter os três arquivos sempre sincronizados
+  independentemente de severidade, basta promover esta entrada para "## Waivers ativos" e espelhá-la.
+  Nenhuma alteração em `package.json`/`server.ts`/schema (fora do escopo deste agente); recomendação de
+  remover a devDependency morta `@opentelemetry/exporter-otlp-http` deixada registrada na entrada acima
+  para o dono do `package.json` avaliar.
+
+- 2026-09-11 — Reavaliação de rotina do waiver `GHSA-ggr8-5vv4-36mx`/`CVE-2026-40345`
+  (`deepmerge-ts`), encontrado a 5 dias de expirar (`expired_at: 2026-09-16`) durante uma auditoria
+  de dívida técnica. Verificado antes de renovar (não apenas adiada a data):
+  `npm audit --json` confirma que o achado é exatamente o mesmo de quando o waiver foi registrado
+  (mesma cadeia `prisma@7.10.0` → `@prisma/config@7.10.0` → `deepmerge-ts@7.1.5`, `fixAvailable`
+  continua apontando só para o downgrade major `@prisma/config@6.12.0`); `npm view prisma versions`
+  confirma que `7.10.0` continua sendo a versão estável mais recente da série 7.x (não houve bump
+  que atualizasse `deepmerge-ts` internamente); `npm view deepmerge-ts version` mostra `8.0.2`
+  disponível upstream, mas o Prisma ainda não a adotou em nenhuma versão `7.x` publicada. Nenhuma
+  das duas condições de fechamento deste waiver (Prisma `7.x` com fix, ou planejamento real da
+  próxima major) se concretizou — renovado por mais 30 dias (`expired_at: 2026-10-11` em
+  `.trivyignore.yaml`, mesma data nas duas entradas). Nenhuma mudança de escopo ou justificativa;
+  só a data.
 
 - 2026-09-02 — `trivy-fs-pr-gate` (e o scan de imagem em `production.yaml`) bloqueava com
   `GHSA-rgwj-5xj2-c3m3` (`mysql2`, MEDIUM, decompression-bomb DoS via zlib inflate — mesma cadeia

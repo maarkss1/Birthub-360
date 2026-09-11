@@ -31,7 +31,7 @@ export function ClockCalendarWidget() {
   const currentMonthName = time.toLocaleDateString('pt-BR', { month: 'long' });
 
   // Agenda real do mês corrente — antes disto era um array fixo de compromissos inventados
-  // ("Demo AtlasGR — Diretoria SaaS" etc.), mostrado a qualquer usuário em qualquer organização
+  // ("Demo Birth Hub 360 — Diretoria SaaS" etc.), mostrado a qualquer usuário em qualquer organização
   // como se fosse a agenda comercial de verdade (verdade cenográfica, ver AGENTS.md). `to` é
   // exclusivo em /api/activities (mesmo motivo documentado em SinglePageDashboard), por isso o
   // primeiro dia do mês seguinte.
@@ -74,7 +74,7 @@ export function ClockCalendarWidget() {
 
       {/* Header */}
       <div className="flex items-center gap-3 pb-3 border-b border-line mb-3">
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-active to-brand-2-active flex items-center justify-center text-white shadow-card">
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-active to-brand-2-active flex items-center justify-center text-on-brand shadow-card">
           <Clock className="w-5 h-5" />
         </div>
         <p className="text-xs text-ink-2 capitalize font-semibold">
@@ -130,7 +130,7 @@ export function ClockCalendarWidget() {
                 aria-pressed={isSelected}
                 className={`py-2 rounded-xl transition-all relative flex flex-col items-center justify-center cursor-pointer ${
                   isToday
-                    ? 'bg-gradient-to-br from-brand-active to-brand-2-active text-white font-black shadow-lg'
+                    ? 'bg-gradient-to-br from-brand-active to-brand-2-active text-on-brand font-black shadow-lg'
                     : isSelected
                       ? 'bg-surface border-2 border-brand/40 text-ink font-bold'
                       : 'bg-surface-2 hover:bg-line text-ink-2'
@@ -181,7 +181,7 @@ export function ClockCalendarWidget() {
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-extrabold text-ink-2">{evt.time}</span>
-                    <span className="text-[9px] px-2 py-0.5 rounded font-bold border bg-soft text-brand-active dark:text-brand-2 border-brand/20">
+                    <span className="text-[9px] px-2 py-0.5 rounded font-bold border bg-soft text-brand-ink dark:text-brand border-brand/20">
                       {evt.badge}
                     </span>
                   </div>

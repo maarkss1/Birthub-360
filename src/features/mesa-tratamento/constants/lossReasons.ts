@@ -1,5 +1,5 @@
 /**
- * Opções reais do campo "Motivo de desqualificação" (UF_CRM_1770065854148) do Bitrix24 da AtlasGR
+ * Opções reais do campo "Motivo de desqualificação" (UF_CRM_1770065854148) do Bitrix24 da Birth Hub 360
  * — extraídas de bitrix_fields.json (raiz do repo), não inventadas. Mesmo padrão de
  * LeadDetailDrawer.tsx (enums hardcoded no frontend em vez de buscados ao vivo a cada abertura).
  * Se o Bitrix mudar essas opções, atualizar aqui.
@@ -25,7 +25,7 @@ export const LOSS_REASONS: LossReasonOption[] = [
   { id: '22084', label: 'Consulta Avulsa - Profile' },
   { id: '22118', label: 'Limitação Técnica' },
   { id: '22142', label: 'CNPJ Baixado' },
-  { id: '22154', label: 'Oportunidade Total Trac' },
+  { id: '22154', label: 'Oportunidade Birth Hub 360' },
   { id: '22236', label: 'Oferta de serviços' },
   { id: '22240', label: 'Não responde mais' },
   { id: '22280', label: 'Blacklist' },

@@ -189,7 +189,8 @@ export function WhatsAppChatPanel({
                   placeholder="Digite uma mensagem..."
                   className="flex-1 bg-surface-2 border border-line rounded-full px-4 py-2.5 text-sm text-ink outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleSend}
                   disabled={sending || !text.trim()}
                   aria-label="Enviar mensagem"

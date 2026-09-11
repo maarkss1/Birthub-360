@@ -3,7 +3,7 @@ name: error-resilience
 description: Use quando a API falha e o usuário não recebe feedback, quando uma operação bulk é reportada como "erro" mesmo tendo parcialmente funcionado, ou ao caçar catch(error){ console.error } sem retorno ao usuário, loading infinito, retry infinito ou optimistic update sem rollback. Classifica falhas em recoverable/retryable/fatal/partial em vez de tratar tudo como "deu erro".
 ---
 
-# Error Resilience — Central de Inteligência Comercial ATLASGR
+# Error Resilience — Birth Hub 360º
 
 ## Quando usar
 

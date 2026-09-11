@@ -1,12 +1,12 @@
 name: Publish private container image
 
-# Gate: publicar a imagem só depois que o workflow canônico de release (ci.yml, "Central AtlasGR
+# Gate: publicar a imagem só depois que o workflow canônico de release (ci.yml, "Central Birth Hub 360
 # Release") tiver passado no mesmo commit de main — antes disso, push:main disparava a publicação
 # incondicionalmente, sem nenhum teste/scan rodar primeiro (achado HIGH da auditoria de
 # release-readiness). workflow_dispatch continua disponível para publicação manual.
 on:
   workflow_run:
-    workflows: ['Central AtlasGR Release']
+    workflows: ['Central Birth Hub 360 Release']
     types: [completed]
     branches: [main]
   workflow_dispatch:

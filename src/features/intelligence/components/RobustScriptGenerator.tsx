@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { useBrand } from '../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 
 const LANGUAGES = [
@@ -80,7 +80,7 @@ const COMPLEXITIES = [
 
 export function RobustScriptGenerator() {
   const accent = useBrandAccent();
-  const { brandInfo } = useBrand();
+  const { info: playbookMeta } = useActivePlaybook();
   const [language, setLanguage] = useState(LANGUAGES[0].id);
   const [purpose, setPurpose] = useState(PURPOSES[0].id);
   const [framework, setFramework] = useState(FRAMEWORKS[0].id);
@@ -110,7 +110,7 @@ export function RobustScriptGenerator() {
         '/api/intelligence/studio',
         {
           kind: 'script',
-          brand: { name: brandInfo.name, description: brandInfo.description },
+          brand: { name: playbookMeta.label, description: playbookMeta.description },
           inputs: {
             language: selectedLangObj.label,
             purpose: `${selectedPurposeObj.title}: ${selectedPurposeObj.desc}`,
@@ -188,7 +188,7 @@ export function RobustScriptGenerator() {
             </span>
           </div>
           <h3 className="text-4xl font-black text-ink mb-4 tracking-tight">
-            {accent.brandName}{' '}
+            {playbookMeta.label}{' '}
             <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
               Gerador de Prompts e Scripts Robustos
             </span>
@@ -207,7 +207,8 @@ export function RobustScriptGenerator() {
             >
               <Braces size={14} /> Stack Tecnológico / Linguagem
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'language' ? null : 'language')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -257,7 +258,8 @@ export function RobustScriptGenerator() {
             >
               <Globe size={14} /> Vetor de Propósito / Funcionalidade
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'purpose' ? null : 'purpose')}
               className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -310,7 +312,8 @@ export function RobustScriptGenerator() {
             >
               <Layers size={14} /> Abordagem & Framework
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'framework' ? null : 'framework')}
               className={`w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
@@ -360,7 +363,8 @@ export function RobustScriptGenerator() {
             >
               <ShieldCheck size={14} /> Nível de Resiliência & Complexidade
             </p>
-            <button type="button"
+            <button
+              type="button"
               onClick={() =>
                 setActiveDropdown(activeDropdown === 'complexity' ? null : 'complexity')
               }
@@ -421,10 +425,11 @@ export function RobustScriptGenerator() {
         </div>
 
         <div className="relative z-10 flex justify-center">
-          <button type="button"
+          <button
+            type="button"
             onClick={handleGenerate}
             disabled={generating}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-white px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
           >
             {generating && (
               <motion.div
@@ -472,7 +477,8 @@ export function RobustScriptGenerator() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleCopy}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                     copied
@@ -490,7 +496,8 @@ export function RobustScriptGenerator() {
                     </>
                   )}
                 </button>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleDownload}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
                 >

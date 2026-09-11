@@ -79,7 +79,7 @@ export interface ProviderCapabilityProfile {
    * nova). */
   requiresPaidKey: boolean;
   /** Cobertura geográfica real de uso hoje — os 4 providers deste domínio só são usados para
-   * empresas no Brasil (ver `REGION_TO_APOLLO_LOCATIONS`/ICP do playbook comercial AtlasGR);
+   * empresas no Brasil (ver `REGION_TO_APOLLO_LOCATIONS`/ICP do playbook comercial Birth Hub 360);
    * nenhum filtra por região fora do Brasil hoje. Não é um limite técnico do provider (todos os
    * 4 suportam outras geografias), é o único uso real deste produto. */
   coverage: 'brazil';

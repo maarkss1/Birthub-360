@@ -28,24 +28,24 @@ export type ContentTool =
   | 'cadence_sequence';
 
 /**
- * Material de referência extraído literalmente do Playbook de Pré-Vendas Atlas e do Playbook
- * Comercial - AtlasGR (pasta Desktop/DOCUMENTOS IMPORTANTES ATLASGR). Embutido nos prompts para
- * que os scripts gerados sigam a estrutura e o tom já validados pelo time comercial da Atlas, em
+ * Material de referência extraído literalmente dos playbooks comerciais internos (Pré-Vendas e
+ * Playbook Comercial). Embutido nos prompts para que os scripts gerados sigam a estrutura e o tom
+ * já validados pelo time comercial, em
  * vez da IA inventar uma abordagem genérica do zero a cada chamada.
  */
-const ATLAS_CALL_STRUCTURE_REFERENCE = `
-ESTRUTURA REAL DE COLD CALL DA ATLAS (adapte ao lead, não copie literalmente):
-1) ABERTURA: confirmar que é a pessoa certa antes de qualquer pitch — "Aqui é [SDR] da Atlas. Rapidinho: falo com quem responde por operação e tratativa de ocorrências/risco no transporte aí?". Se não for, pedir o responsável com educação, sem soar como spam.
+const CALL_STRUCTURE_REFERENCE = `
+ESTRUTURA REAL DE COLD CALL VALIDADA EM CAMPO (adapte ao lead, não copie literalmente):
+1) ABERTURA: confirmar que é a pessoa certa antes de qualquer pitch — "Aqui é [SDR] da [SUA EMPRESA]. Rapidinho: falo com quem responde por operação e tratativa de ocorrências/risco no transporte aí?". Se não for, pedir o responsável com educação, sem soar como spam.
 2) CONTEXTO (1-2 frases): citar o cenário provável do lead (expansão operacional / pressão de risco recente / troca de liderança) — "Tenho falado com transportadoras em [cenário] e normalmente o que aparece é [dor típica]".
-3) MINI-PITCH (sem monólogo): "A Atlas entra como torre/GR operacional pra fazer gestão por exceção — não só alerta, orquestra a tratativa com SLA e gera evidência. Antes: isso é um problema real aí ou já está redondo?"
+3) MINI-PITCH (sem monólogo): "Nós entramos como torre/GR operacional pra fazer gestão por exceção — não só alerta, orquestra a tratativa com SLA e gera evidência. Antes: isso é um problema real aí ou já está redondo?"
 4) PERGUNTAS DE DOR (escolha 2-3, do amplo pro específico): "Hoje, quando sai do trilho, vocês descobrem cedo ou tarde demais?" / "O que mais acontece: atraso crítico, desvio de rota, sinistro?" / "Por que olhar isso agora — o que mudou nos últimos meses?"
 5) CONEXÃO DE IMPACTO (sem dramatizar): traduzir a dor em consequência concreta (SLA estourando, retrabalho, atrito com seguradora).
 6) CTA consultivo, só se qualificou: "Pelo que você descreveu, parece que tem fit. Prefere amanhã 10h ou 16h?"
 Regra de ouro: sempre oferecer 2 horários + alternativa por WhatsApp/LinkedIn.
 `.trim();
 
-const ATLAS_OBJECTIONS_REFERENCE = `
-MATRIZ REAL DE OBJEÇÕES DA ATLAS (use as 3 mais prováveis para ESTE lead — adapte a linguagem, não invente objeções novas fora desta lista a menos que nenhuma se aplique):
+const OBJECTIONS_REFERENCE = `
+MATRIZ REAL DE OBJEÇÕES (use as 3 mais prováveis para ESTE lead — adapte a linguagem, não invente objeções novas fora desta lista a menos que nenhuma se aplique):
 - "Já temos fornecedor/gerenciadora/rastreador" → Implicação: ferramenta sem tratativa é alarme tocando em casa vazia. Pergunta: "Quando acontece um desvio, quem trata, em quanto tempo, com qual SLA? Ou hoje vira WhatsApp e esperança?"
 - "Estamos satisfeitos" → Implicação: satisfeito até o dia que vira incidente. Pergunta: "O que teria que acontecer pra revisitarem isso: sinistro, pressão de seguradora, SLA estourando?"
 - "Não é prioridade agora" → Implicação: o risco não espera o roadmap. Pergunta: "O que vocês estão priorizando no lugar? Qual o custo de manter como está nos próximos 90 dias?"
@@ -60,10 +60,10 @@ MATRIZ REAL DE OBJEÇÕES DA ATLAS (use as 3 mais prováveis para ESTE lead — 
 - "Não temos volume pra isso" → Implicação: volume baixo com alto risco ainda machuca. Pergunta: "Quantas viagens/mês e qual o perfil de risco/valor da carga?"
 - "A seguradora que manda, não eu" → Implicação: então você precisa de algo que ajude a cumprir e provar. Pergunta: "Quais exigências mais doem hoje: cadastro, jornada, evidência, tratativa?"
 - "Já temos torre de controle" → Implicação: se a torre só observa, é vigilância sem ação. Pergunta: "A torre de vocês executa tratativa com SLA e fecha o loop, ou só reporta?"
-- "A Atlas é mais uma" → Implicação: mais uma é a que fala, diferente é a que trata e prova. Pergunta: "Se em 30 dias eu provar redução de exceções e tempo de tratativa, isso muda o jogo?"
+- "Vocês são mais um" → Implicação: mais um é o que fala, diferente é a que trata e prova. Pergunta: "Se em 30 dias eu provar redução de exceções e tempo de tratativa, isso muda o jogo?"
 `.trim();
 
-const ATLAS_COMPETITORS_REFERENCE = `
+const COMPETITORS_REFERENCE = `
 MATERIAL INTERNO DE POSICIONAMENTO COMPETITIVO (trate os possíveis gaps como hipóteses a validar, não como fatos públicos):
 - RasterGR: forte em atendimento tradicional, fraco em tecnologia integrada — menos foco em orquestração de dados. Gancho: "Muitos clientes relatam dificuldade de consolidar dados em um único lugar. Como vocês conseguem visibilidade integrada hoje?"
 - Buonny: marca tradicional com +30 anos e grande base, mas pode ser percebida como tradicional em tecnologia, atendimento em fila, foco forte em GR isolado sem visão operacional consolidada. Gancho: "Muitos clientes dizem que conseguem cadastro e monitoramento, mas falta visão consolidada de performance e compliance numa só solução."
@@ -71,10 +71,10 @@ MATERIAL INTERNO DE POSICIONAMENTO COMPETITIVO (trate os possíveis gaps como hi
 - OpentechGR: forte em gestão de temperatura e torre de controle, mas passou por reestruturação recente e menor penetração de mercado. Gancho: "A torre deles dá insights em tempo real — mas isso já se traduziu em redução efetiva de custo e SLA?"
 - Apisul: combina seguro + GR + inteligência logística, mas pode confundir foco por ser abrangente demais, integração com dados mais limitada. Gancho: "Apisul une seguro e GR num pacote — isso é tratamento de risco ou só mitigação de custo? Como vocês medem retorno hoje?"
 - Servis: +25 anos de experiência tradicional em rastreamento e prevenção de perdas, mas marca menor, menos tecnologia própria, sem BI/reporting moderno. Gancho: "Servis tem tradição, mas a capacidade de integrar dados operacionais pra decisão ainda é manual?"
-Posicionamento da Atlas contra todos eles: orquestração real de dados (não GR isolado), implantação rápida via Atlas Profile como porta de entrada, modelo consultivo orientado a ROI mensurável — não "mais um monitoramento".
+Posicionamento contra todos eles: orquestração real de dados (não GR isolado), implantação rápida por um diagnóstico de perfil como porta de entrada, modelo consultivo orientado a ROI mensurável — não "mais um monitoramento".
 `.trim();
 
-const SYSTEM_PREAMBLE = `Você é um SDR (Sales Development Representative) de elite e Estrategista B2B Enterprise da Atlas (SaaS de inteligência logística).
+const SYSTEM_PREAMBLE = `Você é um SDR (Sales Development Representative) de elite e Estrategista B2B Enterprise de um SaaS de inteligência logística.
 Sua missão é gerar abordagens hyper-personalizadas, persuasivas e que soem como se um humano as tivesse escrito rapidamente do celular.
 DIRETRIZES CRÍTICAS:
 1. HUMANIDADE EXTREMA: NUNCA use "Prezado", "Caro", "Espero que este e-mail o encontre bem", "Gostaria de apresentar". Seja casual, direto e cortês, como colegas de trabalho.
@@ -83,8 +83,8 @@ DIRETRIZES CRÍTICAS:
 4. ANÁLISE CIRÚRGICA: Use os dados do lead fornecidos. Foque no problema provável do cargo dele.
 5. SAÍDA DIRETA: Responda apenas com o script/texto final. SEM introduções como "Aqui está o e-mail" ou notas no final. Apenas entregue o output puro.`;
 
-const TOTALTRAC_SYSTEM_PREAMBLE = `Você é um SDR de elite e Estrategista de Vendas B2B Enterprise da TotalTrac.
-A TotalTrac atua com telemetria CAN, videotelemetria com IA, controle de jornada, iscas RF e imobilizadores.
+const FLEET_SYSTEM_PREAMBLE = `Você é um SDR de elite e Estrategista de Vendas B2B Enterprise de uma solução de telemetria de frota.
+A solução cobre telemetria CAN, videotelemetria com IA, controle de jornada, iscas RF e imobilizadores.
 DIRETRIZES CRÍTICAS:
 1. HUMANIDADE EXTREMA: NUNCA use "Prezado", "Caro", "Espero que este e-mail o encontre bem". Escreva de forma fluida, rápida e consultiva.
 2. CONCISÃO ABSOLUTA: Se for um e-mail ou WhatsApp, NUNCA passe de 3 ou 4 frases curtas.
@@ -123,25 +123,25 @@ const TOOL_CONFIG: Record<
 
 /** Instruções específicas de cada ferramenta — o "molde" de cada tipo de conteúdo gerado. */
 const TOOL_PROMPTS: Record<ContentTool, string> = {
-  script_call: `Crie um script de Cold Call para o time comercial ligar para este lead agora, seguindo a estrutura real de ligação da Atlas abaixo — adapte cada bloco ao contexto do lead, não copie literalmente:
-${ATLAS_CALL_STRUCTURE_REFERENCE}
+  script_call: `Crie um script de Cold Call para o time comercial ligar para este lead agora, seguindo a estrutura real de ligação abaixo — adapte cada bloco ao contexto do lead, não copie literalmente:
+${CALL_STRUCTURE_REFERENCE}
 Formate a resposta nos 6 blocos numerados acima, cada um pronto para ser falado ao telefone (frases curtas, linguagem natural, sem jargão corporativo).`,
 
-  script_whatsapp: `Crie DUAS variações de mensagem de prospecção para WhatsApp (Social Selling), seguindo a régua real da Atlas: curto + contexto + 1 pergunta objetiva, nunca texto longo. Rotule "VARIAÇÃO A (validar fit — primeiro contato)" seguindo o padrão "Oi, [Nome]! Aqui é [SDR] da Atlas. Vi [contexto curto]. Rápido: hoje quando dá exceção (atraso/desvio/ocorrência), vocês tratam com SLA ou ainda cai no WhatsApp?" e "VARIAÇÃO B (mais neutra, sem soar vendas)" perguntando direto quem responde por tratativa de ocorrências/GR na empresa. Nenhuma das duas deve pedir reunião de cara — isso só depois de confirmar fit.`,
+  script_whatsapp: `Crie DUAS variações de mensagem de prospecção para WhatsApp (Social Selling), seguindo a régua real: curto + contexto + 1 pergunta objetiva, nunca texto longo. Rotule "VARIAÇÃO A (validar fit — primeiro contato)" seguindo o padrão "Oi, [Nome]! Aqui é [SDR] da [SUA EMPRESA]. Vi [contexto curto]. Rápido: hoje quando dá exceção (atraso/desvio/ocorrência), vocês tratam com SLA ou ainda cai no WhatsApp?" e "VARIAÇÃO B (mais neutra, sem soar vendas)" perguntando direto quem responde por tratativa de ocorrências/GR na empresa. Nenhuma das duas deve pedir reunião de cara — isso só depois de confirmar fit.`,
 
-  script_email: `Crie um Cold E-mail seguindo a estrutura real da Atlas: DUAS opções de assunto curtas (3-6 palavras, específicas, sem "proposta"/"parceria"/"URGENTE") e UM corpo com 4 partes: 1) conectar com o contexto do lead (cenário: expansão/pressão de risco/troca de liderança), 2) apontar consequência sem dramatizar (SLA estourando, retrabalho, atrito com seguradora quando a tratativa é manual), 3) posicionar a Atlas como gestão por exceção — não "mais um monitoramento", 4) CTA simples de uma pergunta binária sobre como tratam exceção hoje. Máximo 120 palavras no corpo.`,
+  script_email: `Crie um Cold E-mail seguindo a estrutura real validada: DUAS opções de assunto curtas (3-6 palavras, específicas, sem "proposta"/"parceria"/"URGENTE") e UM corpo com 4 partes: 1) conectar com o contexto do lead (cenário: expansão/pressão de risco/troca de liderança), 2) apontar consequência sem dramatizar (SLA estourando, retrabalho, atrito com seguradora quando a tratativa é manual), 3) posicionar a solução como gestão por exceção — não "mais um monitoramento", 4) CTA simples de uma pergunta binária sobre como tratam exceção hoje. Máximo 120 palavras no corpo.`,
 
   prompt: `Crie 4 perguntas de qualificação profundas (estilo BANT/SPIN) para a próxima ligação/reunião com este lead, cada uma seguida de UMA linha explicando o que a resposta revela para o vendedor (ex: orçamento, autoridade, urgência, ou o tamanho real da dor).`,
 
-  objections: `Monte uma matriz com as 3 objeções MAIS PROVÁVEIS para este lead específico, escolhidas a partir da matriz real de objeções da Atlas abaixo — adapte a linguagem ao contexto do lead, mas mantenha a implicação e a pergunta de contorno fiéis ao material:
-${ATLAS_OBJECTIONS_REFERENCE}
+  objections: `Monte uma matriz com as 3 objeções MAIS PROVÁVEIS para este lead específico, escolhidas a partir da matriz real de objeções abaixo — adapte a linguagem ao contexto do lead, mas mantenha a implicação e a pergunta de contorno fiéis ao material:
+${OBJECTIONS_REFERENCE}
 Formate cada uma como "OBJEÇÃO → IMPLICAÇÃO → PERGUNTA DE CONTORNO".`,
 
   followup: `Crie um e-mail de follow-up pós-reunião de demonstração para este lead. Reforce em 2-3 bullets apenas os benefícios e combinados explicitamente presentes no contexto. Se o contexto não trouxer detalhes da reunião, use placeholders claros para revisão do vendedor em vez de inventar. Proponha um próximo passo com data a confirmar.`,
 
   profile: `Crie uma hipótese de abordagem para o decisor usando princípios de comunicação do DiSC, sem diagnosticar nem atribuir um perfil comportamental com base apenas em cargo ou segmento. Indique: (1) sinais que o vendedor deve observar, (2) duas adaptações de tom possíveis condicionadas a esses sinais, (3) perguntas para confirmar preferência de comunicação e (4) um erro comum a evitar.`,
 
-  risk: `Liste os 3 maiores riscos que podem fazer a Atlas perder esta negociação no final do funil, considerando os dados reais do lead abaixo (situação cadastral, porte, região, temperatura). Para cada risco, dê uma ação preventiva concreta a tomar ainda nesta semana.`,
+  risk: `Liste os 3 maiores riscos que podem fazer esta negociação ser perdida no final do funil, considerando os dados reais do lead abaixo (situação cadastral, porte, região, temperatura). Para cada risco, dê uma ação preventiva concreta a tomar ainda nesta semana.`,
 
   linkedin_invite: `Crie um convite de conexão no LinkedIn (máximo 300 caracteres, sem saudação genérica tipo "Olá, gostaria de me conectar") e, em seguida, uma mensagem de follow-up para enviar 2 dias depois de aceito o convite, iniciando a conversa comercial sem parecer um script de vendas.`,
 
@@ -149,8 +149,8 @@ Formate cada uma como "OBJEÇÃO → IMPLICAÇÃO → PERGUNTA DE CONTORNO".`,
 
   roi_pitch: `Monte um roteiro para quantificar o impacto financeiro do risco logístico deste lead. Use números somente quando estiverem explicitamente no contexto. Quando faltarem dados, apresente uma fórmula com variáveis nomeadas (por exemplo: ocorrências/mês × custo médio por ocorrência) e as perguntas necessárias para preenchê-la; não forneça benchmarks de memória. Deixe claro o que é dado, cálculo ou lacuna e termine pedindo os números reais do lead.`,
 
-  competitor_battlecard: `O lead mencionou ou usa um concorrente da Atlas (nome informado abaixo, em "Concorrente mencionado"). Use o material interno apenas para formular hipóteses de descoberta: (1) reconheça sem desmerecer o fornecedor atual, (2) transforme qualquer possível gap em pergunta neutra, sem afirmá-lo como fato, (3) conecte a resposta esperada ao posicionamento da Atlas e (4) feche com uma pergunta que permita ao lead confirmar ou refutar a hipótese. Material interno:
-${ATLAS_COMPETITORS_REFERENCE}
+  competitor_battlecard: `O lead mencionou ou usa um concorrente (nome informado abaixo, em "Concorrente mencionado"). Use o material interno apenas para formular hipóteses de descoberta: (1) reconheça sem desmerecer o fornecedor atual, (2) transforme qualquer possível gap em pergunta neutra, sem afirmá-lo como fato, (3) conecte a resposta esperada ao nosso posicionamento e (4) feche com uma pergunta que permita ao lead confirmar ou refutar a hipótese. Material interno:
+${COMPETITORS_REFERENCE}
 Se o concorrente informado não estiver na lista, não atribua forças ou fraquezas específicas: investigue orquestração de dados, tratativa, SLA e mensuração de retorno com perguntas abertas.`,
 
   cadence_sequence: `Crie uma sequência completa de cadência de prospecção outbound de 5 dias (Steps) para este lead, alternando entre E-mail, LinkedIn e Call.
@@ -161,22 +161,22 @@ Estrutura exigida:
 Use o contexto do lead fornecido para personalizar fortemente a dor e a abordagem.`,
 };
 
-const TOTALTRAC_TOOL_OVERRIDES: Partial<Record<ContentTool, string>> = {
+const FLEET_TOOL_OVERRIDES: Partial<Record<ContentTool, string>> = {
   script_call: `Crie um script de cold call em 6 blocos: (1) confirmação da pessoa responsável por frota/operação,
-(2) contexto curto, (3) duas perguntas de diagnóstico, (4) hipótese de impacto, (5) posicionamento da TotalTrac
+(2) contexto curto, (3) duas perguntas de diagnóstico, (4) hipótese de impacto, (5) posicionamento da solução
 sem prometer resultado não comprovado e (6) próximo passo simples. Use frases naturais e prontas para falar.`,
   script_whatsapp: `Crie duas mensagens curtas de primeiro contato por WhatsApp. Cada uma deve citar um contexto
 real do lead, levantar uma hipótese sobre visibilidade/segurança da frota e terminar com uma única pergunta.
 Não peça reunião antes de validar o fit.`,
   script_email: `Crie duas opções de assunto e um cold e-mail de até 120 palavras. Conecte o contexto do lead a
-uma hipótese relevante para telemetria, videotelemetria, jornada ou proteção do ativo; apresente a TotalTrac sem
+uma hipótese relevante para telemetria, videotelemetria, jornada ou proteção do ativo; apresente a solução sem
 inventar ganhos; termine com uma pergunta objetiva sobre o processo atual.`,
   objections: `Monte as 3 objeções mais prováveis para uma conversa sobre tecnologia de frota. Para cada uma,
 responda no formato "OBJEÇÃO → COMO RECONHECER → PERGUNTA DE DIAGNÓSTICO". Não desmereça fornecedores atuais
 e não alegue diferenciais que não foram fornecidos.`,
-  followup: `Crie um e-mail de follow-up pós-reunião para a TotalTrac. Resuma somente o contexto disponível,
+  followup: `Crie um e-mail de follow-up pós-reunião para o playbook de frota. Resuma somente o contexto disponível,
 liste até 3 pontos a validar sobre frota/segurança/jornada e proponha um próximo passo com responsável e prazo.`,
-  risk: `Liste os 3 riscos comerciais mais prováveis desta negociação para a TotalTrac. Para cada risco,
+  risk: `Liste os 3 riscos comerciais mais prováveis desta negociação de frota. Para cada risco,
 explique o sinal observado nos dados recebidos e uma ação preventiva concreta. Não trate ausência de dado como fato.`,
   competitor_battlecard: `Crie um contorno consultivo para o concorrente informado: reconheça que a solução
 atual pode atender parte da operação, faça perguntas sobre lacunas de telemetria, jornada, evidência em vídeo e
@@ -188,12 +188,14 @@ export interface GenerateContentOptions {
   tone?: string;
   objective?: string;
   personaFallback?: string;
+  /** Chave do playbook comercial ativo (valor gravado em banco — ver
+   *  src/config/playbooks.ts). Seleciona o preâmbulo e os overrides de prompt. */
   brandId?: 'atlasgr' | 'totaltrac';
   organizationId?: string;
 }
 
 /**
- * Discurso por PIC — da "Matriz de Decisão e Convencimento" do Playbook de Pré-Vendas Atlas. O PIC
+ * Discurso por PIC — da "Matriz de Decisão e Convencimento" do Playbook de Pré-Vendas. O PIC
  * é setado manualmente pelo SDR/AM (nunca inferido), então só entra no contexto quando o lead já
  * tem um PIC confirmado.
  */
@@ -284,14 +286,14 @@ export class AIService {
     }
     const toolId = tool as ContentTool;
 
-    const isTotalTrac = extra?.brandId === 'totaltrac';
-    const basePreamble = isTotalTrac ? TOTALTRAC_SYSTEM_PREAMBLE : SYSTEM_PREAMBLE;
+    const isFleetPlaybook = extra?.brandId === 'totaltrac';
+    const basePreamble = isFleetPlaybook ? FLEET_SYSTEM_PREAMBLE : SYSTEM_PREAMBLE;
     const userSections: string[] = [];
     if (extra?.tone) userSections.push(`Tom solicitado pelo usuário: ${extra.tone}`);
     if (extra?.objective) userSections.push(`Objetivo informado pelo usuário: ${extra.objective}`);
 
-    const toolPrompt = isTotalTrac
-      ? TOTALTRAC_TOOL_OVERRIDES[toolId] || TOOL_PROMPTS[toolId]
+    const toolPrompt = isFleetPlaybook
+      ? FLEET_TOOL_OVERRIDES[toolId] || TOOL_PROMPTS[toolId]
       : TOOL_PROMPTS[toolId];
     let systemPrompt = `${basePreamble}\n\n${toolPrompt}`;
 
@@ -350,7 +352,12 @@ export class AIService {
       );
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
-      throw new Error(`Não foi possível gerar o conteúdo agora (ferramenta: ${toolId}). ${detail}`);
+      throw new Error(
+        `Não foi possível gerar o conteúdo agora (ferramenta: ${toolId}). ${detail}`,
+        {
+          cause: error,
+        },
+      );
     }
     const latencyMs = Date.now() - startTime;
 

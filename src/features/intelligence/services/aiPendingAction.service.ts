@@ -71,7 +71,7 @@ export async function executeAction(action: ExecutableAction): Promise<Execution
       await container
         .resolve<NoteUseCases>('NoteUseCases')
         .createNote(action.organizationId, payload.leadId, {
-          author: 'Enxame de IA AtlasGR',
+          author: 'Enxame de IA da Birth Hub 360',
           content: [
             'Recomendação autônoma aprovada',
             payload.triggerDetail ? `Gatilho: ${payload.triggerDetail}` : null,

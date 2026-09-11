@@ -170,6 +170,10 @@ export function ProspectingToolsHub() {
     );
   }
 
+  // TOOL_TABS lista exaustivamente todo ToolId (7 entradas, uma por variante do union) e
+  // activeTool !== null é garantido pelo return antecipado acima — o .find() sempre encontra.
+  // TS não expressa essa exaustividade porque TOOL_TABS é um array, não um Record<ToolId, ...>.
+  // biome-ignore lint/style/noNonNullAssertion: ver comentário acima
   const activeMeta = TOOL_TABS.find((t) => t.id === activeTool)!;
   const configured = status?.[activeMeta.statusKey]?.configured ?? false;
 

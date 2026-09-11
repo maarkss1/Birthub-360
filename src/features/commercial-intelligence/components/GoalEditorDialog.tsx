@@ -68,7 +68,7 @@ export function GoalEditorDialog({
           <Button variant="outline" onClick={onClose} disabled={saving}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={saving}>
+          <Button onClick={handleSave} loading={saving}>
             {saving ? 'Salvando…' : 'Salvar meta'}
           </Button>
         </>

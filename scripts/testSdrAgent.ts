@@ -9,10 +9,10 @@ async function runEndToEndTest() {
     console.log("🚀 Iniciando Teste de Fogo (End-to-End) do Agente SDR...");
 
     // 1. Setup do Tenant de Teste
-    let tenant = await prisma.organization.findFirst({ where: { name: 'AtlasGR E2E Test' }});
+    let tenant = await prisma.organization.findFirst({ where: { name: 'Birth Hub 360 E2E Test' }});
     if (!tenant) {
         tenant = await prisma.organization.create({
-            data: { name: 'AtlasGR E2E Test' }
+            data: { name: 'Birth Hub 360 E2E Test' }
         });
     }
 

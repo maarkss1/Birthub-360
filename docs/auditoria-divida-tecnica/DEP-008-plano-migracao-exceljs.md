@@ -1,5 +1,17 @@
 # DEP-008 — Plano de migração `xlsx` → `exceljs`
 
+> **Status: executado.** Achado numa auditoria de dívida técnica em 2026-09-11: a migração
+> descrita abaixo já foi feita — commit `ecc29ab3` (2026-08-06, mesmo dia em que este plano foi
+> escrito). [`ProspectingHub.tsx`](../../src/features/prospecting/components/ProspectingHub.tsx)
+> usa `const ExcelJS = (await import('exceljs')).default` + `workbook.xlsx.writeBuffer()` (não
+> mais `xlsx`/SheetJS). `xlsx` não está em `package.json` nem instalado em `node_modules` — as
+> duas CVEs (`GHSA-4r6h-8v6p-xvw6`, `GHSA-5pgg-2g8v-p4x9`) não aparecem em `npm audit` desde então.
+> A única etapa do plano abaixo que ficou pendente foi a **remoção formal da entrada `xlsx` do
+> `package.json`** (passo 6) — já não é necessária, porque a dependência nunca chegou a ficar
+> registrada ali (o código sempre a importava dinamicamente sem declará-la, então trocar a
+> implementação removeu o uso sem deixar entrada órfã para apagar). Mantido abaixo como registro
+> histórico da decisão, não como trabalho pendente.
+
 ## Por quê
 
 `xlsx` (SheetJS, `^0.18.5`) tem duas CVEs de severidade alta sem correção publicada pelo mantenedor

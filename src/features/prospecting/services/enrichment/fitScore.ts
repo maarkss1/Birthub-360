@@ -20,8 +20,8 @@ const LOGISTICS_RELEVANT_TECH_KEYWORDS = [
 
 // Categorias de carga com maior índice de roubo no Brasil, segundo a Associação Nacional do
 // Transporte de Cargas e Logística (NTC) — citadas na Apresentação de Gerenciamento de Risco da
-// Atlas como as "cargas mais roubadas no Brasil". Empresas que transportam esse tipo de carga são
-// prioridade comercial real (maior exposição a sinistro = maior valor percebido do GR da Atlas).
+// o playbook comercial como as "cargas mais roubadas no Brasil". Empresas que transportam esse tipo de carga são
+// prioridade comercial real (maior exposição a sinistro = maior valor percebido do GR).
 const HIGH_THEFT_RISK_CARGO_KEYWORDS = [
   'aliment',
   'bebida',
@@ -64,10 +64,10 @@ export interface FitScoreInput {
   segmentKeywords?: string[];
   /** Segmento/indústria (ex: Apollo `industry`, ou o segmento do ICP) — usado junto com o CNAE para o bônus de carga de risco. */
   segment?: string | null;
-  /** Cidade/UF real (pós-enriquecimento) — usado para o bônus de região de risco do playbook Atlas. */
+  /** Cidade/UF real (pós-enriquecimento) — usado para o bônus de região de risco do playbook comercial. */
   city?: string | null;
   state?: string | null;
-  /** Faixa de frota selecionada no ICP (texto do dropdown) — usado para o bônus de frota do playbook Atlas. */
+  /** Faixa de frota selecionada no ICP (texto do dropdown) — usado para o bônus de frota do playbook comercial. */
   fleetSizeHint?: string | null;
   /** UIDs de tecnologia detectados via Apollo Organization Enrich — usado para o bônus de ERP/TMS logístico. */
   technologies?: string[] | null;
@@ -164,12 +164,12 @@ export function computeFitScore(input: FitScoreInput): FitScoreResult {
     }
   }
 
-  // Critérios de priorização do playbook comercial Atlas: frota acima de 50 veículos
+  // Critérios de priorização do playbook comercial: frota acima de 50 veículos
   // e atuação em regiões de maior índice de roubo de carga (RJ e Grande SP).
   if (input.fleetSizeHint && /acima de 50|150-500|acima de 500/i.test(input.fleetSizeHint)) {
     score += 15;
     breakdown.push({
-      label: 'Frota (playbook Atlas)',
+      label: 'Frota (playbook comercial)',
       points: 15,
       detail: 'Frota acima de 50 veículos — critério de priorização',
     });
@@ -179,14 +179,14 @@ export function computeFitScore(input: FitScoreInput): FitScoreResult {
   if (input.state && /^(RJ|SP)$/.test(input.state.toUpperCase())) {
     score += 10;
     breakdown.push({
-      label: 'Região de risco (playbook Atlas)',
+      label: 'Região de risco (playbook comercial)',
       points: 10,
       detail: `Atuação em ${riskRegion.trim()} — região com maior índice de roubo de carga`,
     });
   }
 
   // Categoria de carga de maior risco de roubo (fonte: NTC, citada na Apresentação de
-  // Gerenciamento de Risco da Atlas) — empresas nesses segmentos têm maior exposição a sinistro,
+  // Gerenciamento de Risco) — empresas nesses segmentos têm maior exposição a sinistro,
   // logo maior valor percebido na venda de GR.
   const cargoText = `${input.cnaeDescription || ''} ${input.segment || ''}`.toLowerCase();
   const matchedCargoRisk = HIGH_THEFT_RISK_CARGO_KEYWORDS.find((k) => cargoText.includes(k));

@@ -7,8 +7,9 @@ export interface CreateBugReportPayload {
   title: string;
   description: string;
   severity: BugReportSeverity;
-  /** Marca ativa (atlasgr/totaltrac) no momento do relato — vem de useBrand(), não hardcoded
-   *  aqui, para não acoplar este módulo genérico a um valor de marca específico. */
+  /** Playbook comercial ativo no momento do relato — vem de useActivePlaybook(), não hardcoded
+   *  aqui, para não acoplar este módulo genérico a um valor específico. O campo se chama `brand`
+   *  porque é o nome já gravado no contexto do report; ver src/config/playbooks.ts. */
   brand?: string;
 }
 

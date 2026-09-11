@@ -1,0 +1,28 @@
+{
+  "name": "Birth Hub 360º",
+  "tagline": "Sua central de comando inteligente: integrando dados, potencializando decisões e acelerando a execução.",
+  "source": "Birth Hub 360 Brand Book Cinematic V2.0",
+  "colors": {
+    "obsidian": "#0B132B",
+    "midnight": "#08090F",
+    "iris": "#5B21B6",
+    "gold": "#D4AF37",
+    "snow": "#F8FAFC",
+    "blue": "#0065D2",
+    "goldLight": "#F7E9B8",
+    "goldDeep": "#8C6D1F",
+    "goldSoft": "#EBD689",
+    "parchment": "#E9E4D9"
+  },
+  "typography": {
+    "display": "Bodoni Moda",
+    "sans": "Inter",
+    "emblem": "Playfair Display (italic 800, vetorizada nos SVGs)"
+  },
+  "values": [
+    "Innovation",
+    "Data Intelligence",
+    "Efficiency",
+    "Scalability"
+  ]
+}

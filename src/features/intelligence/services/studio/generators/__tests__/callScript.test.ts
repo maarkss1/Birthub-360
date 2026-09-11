@@ -12,7 +12,7 @@ import { callScriptResultSchema } from '../../schema.js';
 
 const request = {
   kind: 'call_script' as const,
-  brand: { name: 'Total Trac', description: 'Fleet OS de telemetria' },
+  brand: { name: 'Birth Hub 360', description: 'Fleet OS de telemetria' },
   inputs: {
     companyName: 'Frota Rápida',
     contactName: 'João',
@@ -47,7 +47,7 @@ describe('studio/generators/callScript', () => {
     expect(context).toBe('studio:call-script');
     expect(schema).toBe(callScriptResultSchema);
     expect(temperature).toBe(0.55);
-    expect(prompt).toContain('Total Trac');
+    expect(prompt).toContain('Birth Hub 360');
     expect(prompt).toContain(JSON.stringify(request.inputs, null, 2));
   });
 });

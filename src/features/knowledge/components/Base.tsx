@@ -501,7 +501,7 @@ export function Base() {
                         reordenada por IA além do RRF. */}
                     {hit.rerankScore != null && (
                       <span
-                        className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-brand/15 text-brand-active dark:text-brand-2 flex items-center gap-1"
+                        className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-brand/15 text-brand-ink dark:text-brand flex items-center gap-1"
                         title="Reordenado por IA (reranking) — pontuação de relevância de 0 a 100"
                       >
                         <ArrowUpDown className="w-3 h-3" /> IA {Math.round(hit.rerankScore)}
@@ -632,7 +632,7 @@ export function Base() {
                       disabled={busyDocId === doc.id}
                       title="Gerar FAQ Automático com IA"
                       aria-label={`Gerar FAQ automático para ${doc.title}`}
-                      className="p-2 rounded-lg text-ink-2 hover:text-brand-active dark:hover:text-brand-2 hover:bg-brand/10 transition-colors disabled:opacity-40"
+                      className="p-2 rounded-lg text-ink-2 hover:text-brand-ink dark:hover:text-brand-2 hover:bg-brand/10 transition-colors disabled:opacity-40"
                     >
                       {busyDocId === doc.id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -753,9 +753,9 @@ export function Base() {
               <Button
                 type="button"
                 onClick={() => void handlePasteSubmit()}
-                disabled={uploading || loadingEditContent}
+                loading={uploading}
+                disabled={loadingEditContent}
               >
-                {uploading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 {uploading
                   ? editingDoc
                     ? 'Salvando…'

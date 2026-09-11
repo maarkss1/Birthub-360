@@ -9,24 +9,20 @@ import {
   Volume2,
   VolumeX,
   ChevronDown,
-  } from 'lucide-react';
+} from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
 import { MODULE_CATALOG, EXTERNAL_LINKS } from '../../../config/module-catalog';
-import { Logo } from '../../../components/Logo';
-import { TotalTrackLogo } from '../../../components/TotalTrackLogo';
+import { BRAND } from '../../../config/brand';
+import { BirthHubLogo, BirthHubSignature } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { HubBurstCanvas, type BurstHandle } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
 
 import { HubIcons } from './HubIcons';
-
-;
-
-;
 
 interface OrbitItem {
   key: string;
@@ -80,6 +76,17 @@ function useLiveClock() {
 
 const WEEKDAYS_SHORT = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
+// HubBurstCanvas desenha em <canvas>, que não entende var(--brand) — precisa do RGB já resolvido
+// da marca (BRAND) para o burst de partículas não ficar com uma cor fixa fora da paleta.
+function hexToRgbString(hex: string): string {
+  const clean = hex.replace('#', '');
+  const value = Number.parseInt(clean, 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `${r},${g},${b}`;
+}
+
 function buildCalendarCells(year: number, month: number, today: number, isCurrentMonth: boolean) {
   const firstDow = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -92,11 +99,10 @@ function buildCalendarCells(year: number, month: number, today: number, isCurren
 
 export function HubScreen() {
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
-  const { activeBrand, brandInfo } = useBrand();
+  const { currentUser, logout, canAccessCommercialIntelligence } = useAuth();
+  const { brandInfo } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const { grantedModules, isLoading } = useModuleAccess();
-  const isAtlas = activeBrand === 'atlasgr';
   const isDesktopOrbit = useIsDesktopOrbit();
   const clock = useLiveClock();
   const [soundOn, setSoundOn] = useState(() => SoundFX.isEnabled());
@@ -104,6 +110,11 @@ export function HubScreen() {
 
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
+  // A órbita colore cada anel por RGB cru (o canvas/CSS custom property não lê token),
+  // então os dois valores vêm da paleta da marca: Antique Gold no anel externo e Deep Iris
+  // no interno — os mesmos dois primeiros pontos da órbita do emblema.
+  const brandRgb = useMemo(() => hexToRgbString(BRAND.colors.brand), []);
+  const brandAccentRgb = useMemo(() => hexToRgbString(BRAND.colors.iris), []);
 
   // Quem decide quais módulos executivos cada pessoa vê é o painel 'module-access' (ADMIN), para
   // qualquer papel — inclusive SDR. O corte por papel que existia aqui escondia do SDR até os
@@ -132,69 +143,90 @@ export function HubScreen() {
         key: 'central',
         label: 'Central Comercial',
         description: 'CRM · Prospecção · IA',
-        icon: HubIcons['central'],
+        icon: HubIcons.central,
         primary: true,
         ring: 'inner',
-        colorRgb: '255,86,24',
+        colorRgb: brandRgb,
         onOpen: () => goTo('/app'),
       },
       {
         key: 'sdr',
         label: 'Acompanhamento SDR',
         description: 'Mesa de Tratamento · Dashboard SDR',
-        icon: HubIcons['sdr'],
+        icon: HubIcons.sdr,
         ring: 'inner',
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => goTo('/app/mesa-tratamento'),
       },
       {
         key: 'meeting-hub',
-        label: 'Atlas Meeting Hub',
+        label: 'Meeting Hub',
         description: 'Cadência · Agendamento · Google Meet',
         icon: HubIcons['meeting-hub'],
         ring: 'inner',
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => goTo('/app/cadence'),
       },
+      // Mesmo gate de papel do backend (RequireRole em App.tsx, COMMERCIAL_INTELLIGENCE_ROLES em
+      // authorization.ts) — quem não acessa a rota não vê o círculo, em vez de ver e levar um 403.
+      ...(canAccessCommercialIntelligence
+        ? [
+            {
+              key: 'revenue-intel',
+              label: 'Revenue Intelligence',
+              description: 'Comercial Inteligente · Métricas de receita',
+              icon: HubIcons['revenue-intel'],
+              ring: 'inner' as const,
+              colorRgb: brandAccentRgb,
+              onOpen: () => goTo('/app/commercial_intelligence'),
+            },
+          ]
+        : []),
       ...grantedCatalog.map((mod) => ({
         key: mod.key,
         label: mod.label,
         description: mod.description,
-        icon: HubIcons[mod.key] || HubIcons['central'],
+        icon: HubIcons[mod.key] || HubIcons.central,
         ring: 'inner' as const,
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => goTo(`/${mod.key}`),
       })),
       ...EXTERNAL_LINKS.map((link) => ({
         key: link.key,
         label: link.label,
         description: link.description,
-        icon: HubIcons[link.iconKey] || HubIcons['central'],
+        icon: HubIcons[link.iconKey] || HubIcons.central,
         external: true,
         ring: 'outer' as const,
-        colorRgb: '255,109,60',
+        colorRgb: brandAccentRgb,
         onOpen: () => openExternal(link.url),
       })),
     ],
-    [grantedCatalog, goTo, openExternal],
+    [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence, brandRgb, brandAccentRgb],
   );
 
   const orbitContainerRef = useRef<HTMLDivElement>(null);
 
-  // Cálculo matemático idêntico ao protótipo portalatlasprototype.html
-    const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
+  // Cálculo matemático idêntico ao protótipo original da órbita
+  const [orbitLines, setOrbitLines] = useState<React.ReactNode>(null);
 
+  // items.length é dependência real, não falso positivo do linter (ver biome-ignore abaixo): o
+  // efeito lê os cards via DOM (querySelectorAll), não via `items` diretamente, então o linter
+  // não enxerga que o layout precisa recalcular quando `grantedCatalog`/`items` muda (permissões
+  // carregam de forma assíncrona após o mount, ou quando canAccessCommercialIntelligence resolve).
+  // Removê-la deixaria os cards nas posições erradas até um resize.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ver comentário acima
   useLayoutEffect(() => {
     const orbit = orbitContainerRef.current;
     if (!orbit || !isDesktopOrbit) return;
 
     function layout() {
       if (!orbit) return;
-      
+
       const cards = Array.from(orbit.querySelectorAll('.hub-card')) as HTMLElement[];
       const primary = orbit.querySelector('.hub-card.primary') as HTMLElement;
-      const outer = cards.filter(c => c !== primary);
-      
+      const outer = cards.filter((c) => c !== primary);
+
       const w = orbit.clientWidth;
       const h = orbit.clientHeight;
       if (!w || !h) return;
@@ -209,47 +241,73 @@ export function HubScreen() {
 
       const n = outer.length;
       const orbSpan = 156;
-      const byCount = n > 0 ? (orbSpan / (2 * Math.sin(Math.PI / n))) + 24 : 0;
+      const byCount = n > 0 ? orbSpan / (2 * Math.sin(Math.PI / n)) + 24 : 0;
       const radius = Math.max(300, byCount, Math.min(w, h) / 2 - 60);
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       const lines: React.ReactNode[] = [];
-      
+
       outer.forEach((card, i) => {
         const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
         const x = cx + radius * Math.cos(angle);
         const y = cy + radius * Math.sin(angle);
-        
+
         card.style.left = `${x}px`;
         card.style.top = `${y}px`;
-        
+
         const pathId = `orbitPath${i}`;
         const gradId = `orbitBeam${i}`;
-        
+
         lines.push(
           <g key={i}>
-            <linearGradient id={gradId} gradientUnits="userSpaceOnUse" x1={cx} y1={cy} x2={x} y2={y}>
-              <stop offset="0%" stopColor="var(--color-brand)" stopOpacity=".65"/>
-              <stop offset="100%" stopColor="var(--color-brand)" stopOpacity=".12"/>
+            <linearGradient
+              id={gradId}
+              gradientUnits="userSpaceOnUse"
+              x1={cx}
+              y1={cy}
+              x2={x}
+              y2={y}
+            >
+              <stop offset="0%" stopColor="var(--color-brand)" stopOpacity=".65" />
+              <stop offset="100%" stopColor="var(--color-brand)" stopOpacity=".12" />
             </linearGradient>
             <path id={pathId} d={`M ${cx} ${cy} L ${x} ${y}`} stroke={`url(#${gradId})`} />
             {!reduceMotion && (
               <circle className="pulse" r="3.4" fill="var(--color-brand)">
-                <animateMotion dur={`${2.4 + i * 0.35}s`} repeatCount="indefinite" begin={`${i * 0.4}s`}>
-                  <mpath href={`#${pathId}`}/>
+                <animateMotion
+                  dur={`${2.4 + i * 0.35}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.4}s`}
+                >
+                  <mpath href={`#${pathId}`} />
                 </animateMotion>
               </circle>
             )}
-          </g>
+          </g>,
         );
       });
-      
+
       setOrbitLines(
-        <svg className="orbit-lines" viewBox={`0 0 ${w} ${h}`} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}>
-           <style>{'path { fill: none; stroke-width: 2.6; stroke-linecap: round; } circle.pulse { filter: drop-shadow(0 0 6px var(--color-brand)); }'}</style>
-           {lines}
-        </svg>
+        <svg
+          className="orbit-lines"
+          viewBox={`0 0 ${w} ${h}`}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            overflow: 'visible',
+          }}
+        >
+          <style>
+            {
+              'path { fill: none; stroke-width: 2.6; stroke-linecap: round; } circle.pulse { filter: drop-shadow(0 0 6px var(--color-brand)); }'
+            }
+          </style>
+          {lines}
+        </svg>,
       );
     }
 
@@ -274,17 +332,12 @@ export function HubScreen() {
       <HubBurstCanvas ref={burstRef} />
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Topbar sem duplicação da palavra ATLAS */}
         <header className="flex items-center gap-3 px-8 pt-5 pb-3">
-          {isAtlas ? (
-            <Logo className="h-7 text-ink" />
-          ) : (
-            <TotalTrackLogo className="h-7 text-ink" />
-          )}
+          <BirthHubSignature className="h-7 text-ink" />
 
           <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3.5 py-1 text-xs font-bold text-ink-2 backdrop-blur-md sm:flex">
             <span className="hub-beacon h-2 w-2 rounded-full bg-brand" />
-            {brandInfo.name} &middot; {brandInfo.operatingSystemName}
+            {brandInfo.name} &middot; {brandInfo.slogan}
             <ChevronDown className="h-3 w-3 opacity-60" />
           </div>
 
@@ -317,7 +370,7 @@ export function HubScreen() {
 
           {currentUser && (
             <div className="flex items-center gap-2.5 rounded-full border border-line bg-surface/70 py-1 pl-1 pr-3.5 backdrop-blur-md">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-white">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-on-brand">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <span className="hidden text-xs font-bold text-ink sm:inline">
@@ -340,8 +393,8 @@ export function HubScreen() {
         {/* Hero Section */}
         <div className="flex flex-wrap items-end justify-between gap-6 px-8 pt-4 pb-2">
           <div>
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-active dark:text-brand-2">
-              Portal Atlas
+            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-ink dark:text-brand">
+              Portal {brandInfo.shortName}
             </div>
             <h1 className="mt-1 text-3xl font-black leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
               {clock.greeting},{' '}
@@ -349,7 +402,7 @@ export function HubScreen() {
                 {firstName}
               </span>
             </h1>
-            <p className="mt-1 text-sm font-bold text-brand-active dark:text-brand-2">
+            <p className="mt-1 text-sm font-bold text-brand-ink dark:text-brand">
               {brandInfo.slogan}
             </p>
           </div>
@@ -357,7 +410,7 @@ export function HubScreen() {
           {/* Widgets da Topbar */}
           <div className="hidden items-stretch gap-3 md:flex">
             <div className="hub-widget flex min-w-[128px] flex-col items-center justify-center px-4 py-3">
-              <span className="font-mono text-2xl font-bold tabular-nums text-brand-active dark:text-brand-2">
+              <span className="font-mono text-2xl font-bold tabular-nums text-brand-ink dark:text-brand">
                 {clock.time}
               </span>
               <span className="mt-0.5 text-[10px] font-extrabold capitalize text-ink-2">
@@ -366,7 +419,7 @@ export function HubScreen() {
             </div>
 
             <div className="hub-widget w-[178px] px-3 py-2.5">
-              <p className="mb-1.5 text-center text-[10px] font-black uppercase tracking-wider text-brand-active dark:text-brand-2">
+              <p className="mb-1.5 text-center text-[10px] font-black uppercase tracking-wider text-brand-ink dark:text-brand">
                 {clock.monthLabel}
               </p>
               <div className="grid grid-cols-7 gap-0.5">
@@ -384,7 +437,7 @@ export function HubScreen() {
                       key={cell.day}
                       className={
                         cell.isToday
-                          ? 'grid place-items-center rounded-md bg-brand py-0.5 text-[10px] font-black text-white shadow-glow-brand-strong'
+                          ? 'grid place-items-center rounded-md bg-brand py-0.5 text-[10px] font-black text-on-brand shadow-glow-brand-strong'
                           : 'grid place-items-center rounded-md py-0.5 text-[10px] font-semibold text-ink-2'
                       }
                     >
@@ -404,14 +457,10 @@ export function HubScreen() {
         {/* Rótulo da Seção (posicionado limpo acima da órbita) */}
         <div className="mx-auto flex w-full max-w-[1250px] items-center gap-2.5 px-8 pt-6 pb-2">
           <span className="text-[11px] font-black uppercase tracking-[0.14em] text-ink-2">
-            Da prospecção ao contrato — para o time comercial da{' '}
+            Da prospecção ao contrato — para o time comercial{' '}
             <span className="inline-flex items-center gap-1 font-black text-ink">
-              {isAtlas ? (
-                <Logo variant="symbol" className="h-3 w-auto text-brand" />
-              ) : (
-                <TotalTrackLogo variant="symbol" className="h-3 w-auto text-brand" />
-              )}
-              ATLAS
+              <BirthHubLogo variant="icon" className="h-3.5 w-3.5" />
+              {BRAND.shortName}
             </span>
           </span>
           <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent" />
@@ -431,11 +480,14 @@ export function HubScreen() {
 
         {/* Órbita Concêntrica Dupla */}
         {isDesktopOrbit ? (
+          // Grupo de botões de navegação (não campos de formulário) — <fieldset> não traria ganho
+          // real de acessibilidade aqui, só estilo.
+          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
           <div
             ref={orbitContainerRef}
             className="hub-orbit"
             role="group"
-            aria-label="Órbita do Hub Atlas"
+            aria-label="Órbita do Hub"
           >
             {orbitLines}
             {items.map((item) => {
@@ -459,7 +511,6 @@ export function HubScreen() {
               );
             })}
           </div>
-
         ) : (
           <MobileDestinationList items={items} />
         )}
@@ -496,7 +547,7 @@ function MobileDestinationList({ items }: { items: OrbitItem[] }) {
             onClick={item.onOpen}
             className="group flex flex-col items-start gap-2 rounded-card border border-line bg-surface p-4 text-left shadow-card transition-transform duration-200 active:scale-[0.98]"
           >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-surface-2 text-brand-active dark:text-brand-2">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-surface-2 text-brand-ink dark:text-brand">
               <item.icon className="h-4 w-4" aria-hidden="true" />
             </span>
             <span className="flex items-center gap-1 font-display text-xs font-bold text-ink">

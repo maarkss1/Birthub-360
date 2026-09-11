@@ -108,6 +108,18 @@ test.describe('Acessibilidade automática (axe-core)', () => {
     await assertNoBlockingViolations(page, testInfo);
   });
 
+  test('Meu Workspace (sem cargo atribuído) não tem violações críticas/sérias', async ({
+    page,
+  }, testInfo) => {
+    // PROMPT 6 — deep-link direto: usuário recém-cadastrado nunca tem JobRole ainda, então esta
+    // rota exercita o estado bloqueado (NO_JOB_ROLE, BlockedState) — a superfície mais provável de
+    // um problema de contraste/landmark novo, já que é conteúdo 100% novo desta onda.
+    await signUp(page, { email: uniqueTestEmail('a11y-workspace') });
+    await page.goto('/app/workspace');
+    await waitForAppReady(page);
+    await assertNoBlockingViolations(page, testInfo);
+  });
+
   test('Configurações não tem violações críticas/sérias', async ({ page }, testInfo) => {
     await signUp(page, { email: uniqueTestEmail('a11y-settings') });
     // Deep-link direto (rota real desde a migração de tab-state pra react-router) — não depende do
@@ -332,10 +344,7 @@ test.describe('Acessibilidade automática (axe-core)', () => {
     await assertNoBlockingViolations(page, testInfo);
   });
 
-  test('Seleção de marca (pré-login) não tem violações críticas/sérias', async ({
-    page,
-  }, testInfo) => {
-    await page.goto('/select-brand');
-    await assertNoBlockingViolations(page, testInfo);
-  });
+  // 'Seleção de marca' foi removida (marca única, ver .claude/PILOTS.md, Piloto 033);
+  // /select-brand agora só redireciona para /welcome, já coberto pelo teste acima —
+  // manter um segundo teste aqui só duplicaria a mesma verificação.
 });

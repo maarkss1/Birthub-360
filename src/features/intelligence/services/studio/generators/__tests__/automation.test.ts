@@ -15,7 +15,7 @@ import { generateAutomation } from '../automation.js';
 
 const request = {
   kind: 'automation' as const,
-  brand: { name: 'AtlasGR', description: 'Revenue OS de logística' },
+  brand: { name: 'Birth Hub 360', description: 'Revenue OS de logística' },
   inputs: {
     triggerId: 'new_lead',
     trigger: 'Novo lead criado',

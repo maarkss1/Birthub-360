@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/MaarksN/CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.git'
+    repoURL: 'https://github.com/maarkss1/Birthub-360.git'
     targetRevision: develop
     path: charts/prospector-atlas
     helm:

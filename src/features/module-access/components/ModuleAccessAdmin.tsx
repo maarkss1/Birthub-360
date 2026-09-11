@@ -14,7 +14,7 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 /**
- * Painel de administração dos módulos executivos (Social Selling, Treinamento AtlasGR, Proposta
+ * Painel de administração dos módulos executivos (Social Selling, Treinamento Comercial, Proposta
  * Comercial, Hub Inteligência & Mkt) — substitui o gate único por e-mail
  * (EXECUTIVE_HUB_ALLOWED_EMAIL) por concessão real, por usuário, por módulo. Cada célula da
  * matriz é uma concessão independente em ModuleAccessGrant (ver prisma/schema.prisma); a mudança
@@ -164,7 +164,7 @@ export function ModuleAccessAdmin() {
                                   type="checkbox"
                                   checked={granted}
                                   onChange={(e) => toggle(user, mod.key, e.target.checked)}
-                                  className="h-4 w-4 rounded border-line text-brand-active focus-visible:ring-2 focus-visible:ring-brand cursor-pointer"
+                                  className="h-4 w-4 rounded border-line text-brand-ink focus-visible:ring-2 focus-visible:ring-brand cursor-pointer"
                                 />
                               )}
                             </div>

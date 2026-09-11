@@ -6,7 +6,8 @@ import type {
   ObjectionMatrixItem,
   QualificationMatrixItem,
 } from '../features/playbook/playbook.api';
-import type { BrandInfo } from '../contexts/BrandContext';
+import { BRAND } from '../config/brand';
+import type { PlaybookInfo, PlaybookKey } from '../config/playbooks';
 import { useActiveRecord } from './useActiveRecord';
 import {
   buildAssistantLocalContext,
@@ -39,14 +40,14 @@ function timestamp(): string {
   return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function greeting(brandInfo: BrandInfo, activeRecordLabel?: string): ChatMessage {
+function greeting(playbookMeta: PlaybookInfo, activeRecordLabel?: string): ChatMessage {
   const recordLine = activeRecordLabel
     ? ` Vi que você está com **${activeRecordLabel}** aberto — pode perguntar direto sobre esse registro.`
     : '';
   return {
-    id: `${brandInfo.name}-${Date.now()}`,
+    id: `${BRAND.id}-${Date.now()}`,
     sender: 'bot',
-    text: `Olá! Sou o copiloto comercial da ${brandInfo.name}. Uso o motor Groq e a matriz interna da marca. Também posso responder com conhecimento geral, mas não tenho navegação web nem consulta de CNPJ em tempo real.${recordLine}`,
+    text: `Olá! Sou o copiloto comercial ${BRAND.shortName}. Uso o motor Groq e a matriz interna do playbook ${playbookMeta.label}. Também posso responder com conhecimento geral, mas não tenho navegação web nem consulta de CNPJ em tempo real.${recordLine}`,
     timestamp: timestamp(),
     source: 'general',
     isGreeting: true,
@@ -55,22 +56,22 @@ function greeting(brandInfo: BrandInfo, activeRecordLabel?: string): ChatMessage
 
 /**
  * Estado/ações do assistente conversacional (aba "Assistente IA") do FloatingChatbook —
- * extraído em FRONT-006. `selectedBrand`/`activeBrand` vêm do componente porque também são usados
- * pelo simulador de roleplay e pelo filtro de matrizes (não são exclusivos deste hook).
+ * extraído em FRONT-006. A chave de playbook vem do componente porque também é usada pelo
+ * simulador de roleplay e pelo filtro de matrizes (não é exclusiva deste hook).
  * `objections`/`qualifications` vêm de `usePlaybookMatrixData` (Fase 4: antes vinham do arquivo
  * estático `brandMatrices.ts`).
  */
 export function useAssistantChat(
-  _activeBrand: string,
-  brandInfo: BrandInfo,
-  selectedBrand: 'atlasgr' | 'totaltrac',
+  _activePlaybook: string,
+  playbookMeta: PlaybookInfo,
+  selectedBrand: PlaybookKey,
   objections: ObjectionMatrixItem[],
   qualifications: QualificationMatrixItem[],
 ) {
   const { activeRecord } = useActiveRecord();
   const location = useLocation();
   const [messages, setMessages] = useState<ChatMessage[]>([
-    greeting(brandInfo, activeRecord?.label),
+    greeting(playbookMeta, activeRecord?.label),
   ]);
   const [inputQuery, setInputQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -89,7 +90,7 @@ export function useAssistantChat(
       .then((history) => {
         if (cancelled) return;
         if (!history.length) {
-          setMessages([greeting(brandInfo, activeRecord?.label)]);
+          setMessages([greeting(playbookMeta, activeRecord?.label)]);
           return;
         }
         setMessages(
@@ -107,7 +108,7 @@ export function useAssistantChat(
       .catch((error) => {
         if (cancelled) return;
         clientLogger.error({ err: error }, 'Falha ao carregar histórico do Chatbook');
-        setMessages([greeting(brandInfo, activeRecord?.label)]);
+        setMessages([greeting(playbookMeta, activeRecord?.label)]);
       });
 
     return () => {
@@ -116,7 +117,7 @@ export function useAssistantChat(
     // Só a troca de marca recarrega o histórico — reagir a activeRecord aqui reiniciaria a
     // conversa em andamento sempre que o registro mudasse de fundo (ex.: usuário navega para
     // outra empresa).
-  }, [brandInfo.name, selectedBrand, brandInfo, activeRecord?.label]);
+  }, [selectedBrand, playbookMeta, activeRecord?.label]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,8 +207,8 @@ export function useAssistantChat(
           {
             kind: 'assistant',
             brand: {
-              name: brandInfo.name,
-              description: brandInfo.description,
+              name: playbookMeta.label,
+              description: playbookMeta.description,
             },
             brandKey: selectedBrand,
             inputs: {

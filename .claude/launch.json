@@ -4,21 +4,27 @@
     {
       "name": "prospector-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 3005,
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3024,
       "env": {
         "NODE_ENV": "development",
         "REDIS_URL": "redis://:prospector_redis_pass@localhost:6379",
-        "PORT": "3005",
-        "BETTER_AUTH_URL": "http://localhost:3005",
-        "ALLOWED_ORIGINS": "http://localhost:3005,http://localhost:3000,http://localhost:5173,http://192.168.0.179:3005",
+        "PORT": "3024",
+        "BETTER_AUTH_URL": "http://localhost:3024",
+        "ALLOWED_ORIGINS": "http://localhost:3024,http://localhost:3000,http://localhost:5173,http://192.168.0.179:3024",
         "OTEL_SDK_DISABLED": "true"
       }
     },
     {
       "name": "prospector-dev-uxcheck",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3009,
       "env": {
         "PORT": "3009",
@@ -29,8 +35,25 @@
     {
       "name": "portal-comercial-static",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["http-server", "-p", "8088", "-c-1"],
+      "runtimeArgs": [
+        "http-server",
+        "-p",
+        "8088",
+        "-c-1"
+      ],
       "port": 8088
+    },
+    {
+      "name": "frontend-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "preview",
+        "--port",
+        "4173",
+        "--strictPort"
+      ],
+      "port": 4173
     }
   ]
 }

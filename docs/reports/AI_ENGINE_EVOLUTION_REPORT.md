@@ -1,7 +1,7 @@
-# Relatório de Evolução da IA (AI Engine) - AtlasGR
+# Relatório de Evolução da IA (AI Engine) - Birth Hub 360
 
 ## 1. Resumo Executivo
-Este relatório detalha a refatoração e evolução dos módulos de Inteligência Artificial da plataforma AtlasGR. O objetivo principal foi consolidar a arquitetura dos agentes, remover lógicas simuladas (mocks) em interfaces frontend, e garantir uma integração real, confiável e segura utilizando o conceito de Clean Architecture.
+Este relatório detalha a refatoração e evolução dos módulos de Inteligência Artificial da plataforma Birth Hub 360. O objetivo principal foi consolidar a arquitetura dos agentes, remover lógicas simuladas (mocks) em interfaces frontend, e garantir uma integração real, confiável e segura utilizando o conceito de Clean Architecture.
 
 ## 2. Estado Anterior
 - **Mocks no Frontend**: Ferramentas como o `RobustScriptGenerator` e o `SuperagentCreator` possuíam botões para "gerar offline" que contornavam o motor de IA e simulavam resultados com `setTimeout`.

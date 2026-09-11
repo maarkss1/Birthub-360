@@ -8,7 +8,7 @@ import {
   ATLAS_PERSONA_OPTIONS,
   TOTALTRAC_PERSONA_OPTIONS,
 } from '../../../../shared/constants/icp-options';
-import { useBrand } from '../../../../contexts/BrandContext';
+import { useActivePlaybook } from '../../../../hooks/useActivePlaybook';
 import { findCompanyDomain, normalizeCompanyDomain } from '../../utils/domain';
 import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
 import {
@@ -44,10 +44,10 @@ export function DecisionMakerSearch({
   appearance = 'dark',
   alreadyFoundCount,
 }: DecisionMakerSearchProps) {
-  const { activeBrand, brandInfo } = useBrand();
+  const { playbook, info: playbookMeta } = useActivePlaybook();
   const light = appearance === 'light';
   const personaOptions =
-    activeBrand === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
+    playbook === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
   const [open, setOpen] = useState(false);
   const [criteria, setCriteria] = useState<DecisionMakerCriteria>({
     apenasEmailVerificado: true,
@@ -366,8 +366,11 @@ export function DecisionMakerSearch({
           id="persona-group-label"
           className="block text-[10px] tracking-wider font-bold uppercase mb-1.5 text-ink-2"
         >
-          Personas {brandInfo.name} (Playbook de Pré-Vendas)
+          Personas · {playbookMeta.label}
         </span>
+        {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+            real de acessibilidade aqui, só estilo. */}
+        {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
         <div role="group" aria-labelledby="persona-group-label" className="flex flex-wrap gap-1.5">
           {personaOptions.map((persona) => {
             const active = isPersonaActive(persona);
@@ -435,6 +438,9 @@ export function DecisionMakerSearch({
           >
             Níveis de Senioridade
           </span>
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div
             role="group"
             aria-labelledby="criteria-seniority-label"
@@ -459,6 +465,9 @@ export function DecisionMakerSearch({
           >
             Departamentos
           </span>
+          {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+              real de acessibilidade aqui, só estilo. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
           <div
             role="group"
             aria-labelledby="criteria-department-label"

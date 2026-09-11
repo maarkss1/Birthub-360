@@ -3,7 +3,7 @@ name: integration-audit
 description: Use ao investigar se uma integração externa ou interna (Bitrix24, AI gateway, Google Workspace, WhatsApp/Baileys, 3CX, Birth Voice, Apollo/Hunter, e-mail) é confiável — credencial, retry, timeout, rate limit, idempotência, webhook, paginação. Bitrix24 já tem auditoria completa em BITRIX24-LEAD-FLOW-AUDIT.md — leia antes de reauditar do zero.
 ---
 
-# Integration Audit — Central de Inteligência Comercial ATLASGR
+# Integration Audit — Birth Hub 360º
 
 ## Quando usar
 
@@ -30,7 +30,7 @@ resolveu P1-3/P2-3 antes de repeti-los como abertos), e (2) aprofundar apenas o 
 usuário pedir além do que já está documentado.
 
 Para as demais integrações, não existe auditoria prévia formal — construa a matriz do zero, mas
-consulte `PRODUCT_EXPERIENCE_CENTRAL_ATLASGR.md`/`REMEDIACAO_FINAL_PROSPECTOR_ATLASGR.md` para
+consulte `PRODUCT_EXPERIENCE.md`/`REMEDIACAO_FINAL.md` para
 contexto de produto já registrado.
 
 ## Investigação — integrações reais presentes no código

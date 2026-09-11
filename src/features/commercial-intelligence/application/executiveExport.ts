@@ -6,6 +6,7 @@ import type {
   ExportFormat,
   ExportKpiRow,
 } from '../domain/CommercialIntelligence';
+import { BRAND } from '../../../config/brand';
 
 /**
  * Serialização em CSV/JSON/HTML dos dados JÁ CALCULADOS por `executiveOverview`/`performance`/
@@ -203,7 +204,7 @@ export function buildExecutiveExportHtml(
 <style>
 body{font-family:Arial,Helvetica,sans-serif;margin:32px;color:#1a1a1a;background:#fff}
 h1{font-size:22px;margin-bottom:4px}
-h2{font-size:15px;margin-top:28px;border-bottom:2px solid #ff5618;padding-bottom:4px;color:#1a1a1a}
+h2{font-size:15px;margin-top:28px;border-bottom:2px solid ${BRAND.colors.brand};padding-bottom:4px;color:#1a1a1a}
 p.meta{color:#666;font-size:13px;margin-top:0}
 table{width:100%;border-collapse:collapse;margin-top:8px}
 td{padding:6px 8px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}
@@ -217,7 +218,7 @@ footer{margin-top:32px;color:#999;font-size:11px}
 <h2>Alertas</h2>
 ${alertsHtml}
 ${blocksHtml}
-<footer>Gerado automaticamente pelo Comercial Inteligente — AtlasGR. Nenhuma credencial/webhook incluído neste arquivo.</footer>
+<footer>Gerado automaticamente pelo Comercial Inteligente — Birth Hub 360. Nenhuma credencial/webhook incluído neste arquivo.</footer>
 </body></html>`;
 }
 

@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { CheckCircle2, ExternalLink, Loader2, Search, ShieldCheck } from 'lucide-react';
 import { GithubIcon as Github } from '../../../../../components/ui/icons/GithubIcon';
 import { api } from '../../../../../lib/api';
-import { useBrand } from '../../../../../contexts/BrandContext';
+import { BRAND } from '../../../../../config/brand';
 import type { GithubOrgSummary } from '../../../services/github.service';
 import { getErrorMessage, type PromoteResult } from './shared';
 
 export function GitHubTool(_props: { configured: boolean }) {
-  const { brandInfo } = useBrand();
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +60,7 @@ export function GitHubTool(_props: { configured: boolean }) {
       const result = await api.post<PromoteResult>('/api/prospecting/promote', {
         tradeName: profile.name || profile.login,
         location: profile.location || undefined,
-        source: `${brandInfo.name} — Ferramenta GitHub`,
+        source: `${BRAND.shortName} — Ferramenta GitHub`,
         autoEnrich: false,
         website: profile.blog || org.htmlUrl,
       });
@@ -105,10 +104,11 @@ export function GitHubTool(_props: { configured: boolean }) {
           />
         </div>
 
-        <button type="button"
+        <button
+          type="button"
           onClick={handleSearch}
           disabled={isSearching}
-          className="w-full bg-brand-active text-white py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>
@@ -165,10 +165,11 @@ export function GitHubTool(_props: { configured: boolean }) {
                     <CheckCircle2 size={14} /> No CRM
                   </span>
                 ) : (
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => promoteOrg(org)}
                     disabled={promotingKey === org.login}
-                    className="bg-brand-active text-white px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
+                    className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
                   >
                     {promotingKey === org.login ? (
                       <Loader2 className="animate-spin" size={13} />
