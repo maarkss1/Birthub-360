@@ -3464,3 +3464,45 @@ entrada nova.
   registrado como bloqueio real, não como sucesso assumido — pendente de confirmação num ambiente
   com backend antes de considerar `tests/e2e/workspace.spec.ts`/`visual.spec.ts` confirmados verdes
   contra o código novo.
+
+## Fix — `/app/sdr-diagnostic-joao` reaproveitada silenciosamente pelo Plano Diário (ACH-02-01)
+
+- **O que quebrou**: o commit `15c1e74d` ("plano diário pessoal universal com sincronização
+  Bitrix24") trocou o import de `JoaoReisDiagnosticHub` por `DailyPlanHub` em `App.tsx` e
+  reaproveitou a rota `sdr-diagnostic-joao` (que já existia, real, para o diagnóstico comercial —
+  ver Pilot "JoaoReisDiagnosticHub" acima) para renderizar `DailyPlanHub`. Isso deixou
+  `JoaoReisDiagnosticHub.tsx` órfão (nenhuma `<Route>` apontava mais pra ele) e criou dois
+  resultados idênticos "Plano Diário" no Command Palette (`tabMeta.ts` tinha o mesmo label nas
+  chaves `daily-plan` e `sdr-diagnostic-joao`), sem nenhuma decisão registrada — a tela real de
+  diagnóstico (5 abas, dado Bitrix real, QA'da e documentada nos dois Pilots acima) virou código
+  morto silenciosamente.
+- **Decisão (Opção A — restaurar, não Opção B — remover)**: `JoaoReisDiagnosticHub.tsx` representa
+  múltiplas sessões de QA real documentadas (extração de estilo do relatório HTML de origem,
+  correção de alias de cor, refatoração para os primitivos `ui/` novos, QA visual ponta-a-ponta em
+  claro/escuro com usuário real) — descartá-la exigiria justificar a perda dessa funcionalidade já
+  QA'da (Constituição §6, itens 1/4: conteúdo e funcionalidade exigem preferir refinamento à
+  remoção). Não havia nenhum sinal de que o Plano Diário universal deveria *substituir* o
+  diagnóstico específico do SDR — são conteúdos diferentes (plano de execução do dia vs. relatório
+  histórico de performance) — então restaurar é a opção mais conservadora e correta aqui.
+- **O que mudou**: `App.tsx` volta a importar `JoaoReisDiagnosticHub` (lazy) e a rota
+  `sdr-diagnostic-joao` volta a renderizar `<JoaoReisDiagnosticHub />`; `daily-plan` continua
+  apontando para `DailyPlanHub` (rota própria, já existia e não precisou mudar de nome).
+  `tabMeta.ts`: `sdr-diagnostic-joao` ganhou label próprio "Diagnóstico SDR" com ícone
+  `Stethoscope` (era `CalendarCheck`/"Plano Diário", duplicado com `daily-plan`) — como
+  `CommandPalette.tsx` deriva o label direto de `TAB_META`, o item duplicado no Command Palette
+  some sem precisar tocar em `CommandPalette.tsx`. `navigationBus.ts` já tinha
+  `'sdr-diagnostic-joao': true` (não precisou mudar). `Sidebar.tsx` não lista essa rota
+  diretamente (alcançável só via Command Palette/URL direta/`navigationBus`, mesmo padrão de antes
+  do regressão).
+- **Verificação**: `npx tsc --noEmit` — 0 erros novos (o único erro do run é pré-existente em
+  `src/shared/security/urlGuard.ts`, incompatibilidade de tipo `RequestInit`/`undici`, não
+  relacionado a este fix e fora dos arquivos tocados). `npx eslint` nos dois arquivos alterados
+  (`App.tsx`, `tabMeta.ts`) — limpo. Não existe teste e2e/unit dedicado a essas duas rotas
+  específicas hoje (`tests/e2e/**` não referencia `sdr-diagnostic-joao`/`daily-plan`/
+  `JoaoReisDiagnosticHub`); rodados os testes unitários dos componentes de UI consumidos por
+  `JoaoReisDiagnosticHub` (`ChannelDonut`, `CompareBar`, `DealsGrid`, `FunnelBars`, `KpiCard`) —
+  24/24 passando, nenhuma quebra. `test:e2e`/`test:integration` não rodados nesta sessão: os
+  containers Docker (Postgres/Redis/Meilisearch) são compartilhados entre várias worktrees
+  simultâneas e `pretest:e2e`/`pretest:integration` rodam `prisma migrate deploy` contra esse
+  Postgres compartilhado — risco real de conflito com outras sessões em paralelo, então não
+  forçado; documentado aqui como limitação de ambiente, não como sucesso assumido.
