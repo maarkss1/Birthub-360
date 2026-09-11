@@ -18,6 +18,7 @@ export interface ErasureResult {
   whatsAppMessagesMasked: number;
   conversationSignalsRedacted: number;
   timelineEventsRedacted: number;
+  voiceCallLogsRedacted: number;
   alreadyAnonymized: boolean;
 }
 
@@ -47,6 +48,13 @@ export const ANONYMIZED_CONTACT_NAME = '[titular anonimizado — LGPD]';
  *   o titular (`summary`, `nextStep`, `objections`, `rawModelOutput` em ConversationSignal;
  *   `description` em TimelineEvent) são redigidos; a linha em si não é apagada — mesmo raciocínio
  *   do Contact/Lead: preserva o histórico comercial "isto aconteceu", remove só o "quem".
+ * - `VoiceCallLog` — mesmo padrão de ConversationSignal/TimelineEvent: sem `contactId` próprio
+ *   (é `leadId` solto de propósito, sem FK — ver comentário da migration
+ *   20260911150000_voice_hub_connection_and_call_log), alcançado via `Lead.contactId`.
+ *   `transcript`/`summary` (texto livre da ligação, pode conter PII do titular) e `recordingUrl`
+ *   (aponta para o áudio da ligação, PII por si só) são redigidos; `outcome`/`durationSeconds`/
+ *   `createdAt` são preservados — mesmo raciocínio: fica "houve uma ligação com este resultado",
+ *   não "o que foi dito nela".
  * - `AgentMemory` — **não alcançável por este mecanismo**: o schema (`prisma/schema.prisma`) não
  *   tem `contactId`/`leadId`, só `sessionId`/`agentType`/`organizationId`; `messages` é um blob JSON
  *   de conversa que PODE conter PII do titular em texto livre, mas não há chave estruturada para
@@ -109,6 +117,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
 
       let conversationSignalsRedacted = 0;
       let timelineEventsRedacted = 0;
+      let voiceCallLogsRedacted = 0;
 
       if (leadIds.length > 0) {
         const { count: signalsCount } = await prisma.conversationSignal.updateMany({
@@ -127,6 +136,16 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
           data: { description: '[evento anonimizado — LGPD]' },
         });
         timelineEventsRedacted = timelineCount;
+
+        const { count: voiceCallLogsCount } = await prisma.voiceCallLog.updateMany({
+          where: { leadId: { in: leadIds }, organizationId: target.organizationId },
+          data: {
+            transcript: null,
+            summary: null,
+            recordingUrl: null,
+          },
+        });
+        voiceCallLogsRedacted = voiceCallLogsCount;
       }
 
       logger.info(
@@ -136,6 +155,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
           whatsAppMessagesMasked,
           conversationSignalsRedacted,
           timelineEventsRedacted,
+          voiceCallLogsRedacted,
           alreadyAnonymized,
         },
         '[lgpd] Titular anonimizado a pedido de exercício de direito (LGPD art. 18).',
@@ -146,6 +166,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
         whatsAppMessagesMasked,
         conversationSignalsRedacted,
         timelineEventsRedacted,
+        voiceCallLogsRedacted,
         alreadyAnonymized,
       };
     },
