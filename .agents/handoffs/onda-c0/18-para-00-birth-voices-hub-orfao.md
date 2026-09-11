@@ -1,7 +1,7 @@
 - De: 18
 - Para: 00
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema
@@ -27,3 +27,24 @@ Se mantidos: confirmar que existe um plano concreto para a implementação falta
 ## Contexto adicional
 Catalogado como achado BT-048 em `docs/architecture/BRAIN_TRUTH_MAP.md`. Não incluído no commit de
 design system desta sessão justamente por esta razão.
+
+## Resolução
+
+Confirmado no HEAD atual de `main` (item ACH-18-04 do relatório de auditoria, Agente 18/Fase 3): a
+pasta `BIRTH-VOICES-HUB/` nunca chegou a ser commitada em nenhum branch.
+
+- A pasta não existe mais neste worktree (criado a partir de `origin/main`): `ls BIRTH-VOICES-HUB`
+  falha com "no such file or directory".
+- `git log --all --oneline -- BIRTH-VOICES-HUB` não retorna nenhum commit em todo o histórico —
+  confirma que era conteúdo local/untracked da sessão de catalogação original, não um artefato do
+  repositório. Ao trocar de worktree/branch, o conteúdo untracked simplesmente não acompanhou.
+- Não havia, portanto, decisão de produto pendente (opção (a) vs. (b) da "Alteração necessária")
+  a tomar — o "problema" era o próprio arquivo untracked, que não existe mais para decidir sobre.
+
+Achado residual, fora do escopo deste handoff: `docs/architecture/BRAIN_TRUTH_MAP.md` linha 117
+ainda lista BT-048 com status `ORPHAN` referenciando essa pasta. Como o achado nunca foi
+persistido no repositório, essa linha do BRAIN_TRUTH_MAP está desatualizada, mas atualizá-la é
+edição de um documento de terceiros fora do escopo objetivo deste item — sinalizado aqui para quem
+tocar esse arquivo em seguida.
+
+Status: resolvido.
