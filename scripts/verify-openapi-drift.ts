@@ -20,15 +20,28 @@
  * então a checagem mais funda vive aqui em vez de alterar aquele módulo): resolve, para cada
  * `app.use('/api/prefixo', ...middlewares, algumRouterImportado)` do composition root, o arquivo de
  * router de feature correspondente (via import estático de `src/bootstrap/*.ts`), lê os
- * `router.get/post/put/patch/delete('/subpath', ...)` literais desse arquivo (um nível — não segue
- * `router.use()` aninhado dentro dele) e cruza path+método exatos contra `docs/openapi.yaml`. Foi
- * assim que se confirmou o achado real desta auditoria: `GET /api/analytics/cohort` e
- * `GET /api/analytics/export/pdf` existem no código e nunca tiveram entrada em `docs/openapi.yaml`
- * — o Passe 1 não pegava porque `/api/analytics` já tinha *outros* paths documentados
- * (`/analytics/overview`, `/analytics/dashboard`), o que bastava para o prefixo inteiro ser
- * considerado "coberto". Só falha o build por algo que este passe resolveu com confiança (import
- * estático de nome simples, sem let/reassign, sem geração dinâmica de path) — quando não consegue
- * resolver um router com segurança, pula esse mount em vez de arriscar falso positivo.
+ * `router.get/post/put/patch/delete('/subpath', ...)` literais desse arquivo e cruza path+método
+ * exatos contra `docs/openapi.yaml`. Foi assim que se confirmou o achado real desta auditoria:
+ * `GET /api/analytics/cohort` e `GET /api/analytics/export/pdf` existem no código e nunca tiveram
+ * entrada em `docs/openapi.yaml` — o Passe 1 não pegava porque `/api/analytics` já tinha *outros*
+ * paths documentados (`/analytics/overview`, `/analytics/dashboard`), o que bastava para o prefixo
+ * inteiro ser considerado "coberto".
+ *
+ * Recursivo desde a auditoria de 2026-09-11 (Onda 8, achado de retomada): o passe original só
+ * olhava um nível de router — se um arquivo de feature montasse `router.use('/subprefixo',
+ * outroRouterImportado)`, os endpoints definidos DENTRO desse sub-router nunca eram lidos, e
+ * ficavam invisíveis ao gate mesmo com drift real (achado confirmado: `intelligence.routes.ts`
+ * monta `router.use('/suite', aiSuiteRouter)`, e os 16 endpoints POST/GET de `ai-suite.routes.ts`
+ * — `/suite/inventory`, `/suite/bitrix-hygiene`, `/suite/lgpd/sanitize` etc. — nunca tiveram
+ * entrada correspondente em `docs/openapi.yaml`, apesar de `/api/intelligence` já ter outros paths
+ * documentados). Agora `resolveAndWalkRouter` segue `router.use('/subprefixo', identificador)`
+ * aninhado dentro de qualquer arquivo de router já resolvido, compondo o prefixo completo
+ * (`prefixoDoMount + subprefixoDoUse + subpathDoMétodo`) em cada nível antes de comparar contra o
+ * documento — não só no nível montado direto pelo composition root. Um `Set` de
+ * `arquivo::variávelLocal` visitados evita loop infinito em caso de import circular. Só falha o
+ * build por algo que este passe resolveu com confiança em CADA nível (import estático de nome
+ * simples, sem let/reassign, sem geração dinâmica de path) — quando não consegue resolver um
+ * router com segurança em qualquer nível, pula esse mount em vez de arriscar falso positivo.
  */
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
@@ -79,22 +92,42 @@ interface TopLevelMount {
     routerVarName: string;
 }
 
-/** Extrai `app.use('/api/prefixo', ...middlewares, identificadorSimples)` — ignora handlers inline. */
-function extractTopLevelRouterMounts(source: string): TopLevelMount[] {
-    const mounts: TopLevelMount[] = [];
-    const useRegex = /app\.use\(\s*['"](\/api\/[^'"]*)['"]\s*,([^;]*?)\)\s*;/g;
+interface UseMount {
+    /** Path literal do primeiro argumento do `.use(...)`, ex.: '/api/analytics' ou '/suite'. */
+    path: string;
+    routerVarName: string;
+}
+
+/**
+ * Extrai `<callerVarName>.use('/prefixo', ...middlewares, identificadorSimples)` — ignora handlers
+ * inline. Genérico o bastante para ler tanto `app.use(...)` no composition root quanto
+ * `router.use(...)` (ou qualquer outro nome de variável local de router) dentro de um arquivo de
+ * feature, o que é o que torna a resolução de sub-router aninhado (Passe 2 recursivo) possível sem
+ * duplicar esta regra de extração.
+ */
+function extractUseMounts(source: string, callerVarName: string): UseMount[] {
+    const mounts: UseMount[] = [];
+    const safeName = escapeForRegex(callerVarName);
+    const useRegex = new RegExp(`${safeName}\\.use\\(\\s*['"](\\/[^'"]*)['"]\\s*,([^;]*?)\\)\\s*;`, 'g');
     let match: RegExpExecArray | null;
     while ((match = useRegex.exec(source)) !== null) {
-        const prefix = match[1];
+        const usePath = match[1];
         const args = match[2].trim();
         // último token da lista de argumentos precisa ser um identificador simples (nome de router
         // importado) — se terminar em '}', ')' etc. é um handler inline ou expressão, não um router
         // resolvível estaticamente, então pulamos esse mount (best-effort, sem falso positivo).
         const lastArg = args.split(',').map((a) => a.trim()).filter(Boolean).pop();
         if (!lastArg || !/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(lastArg)) continue;
-        mounts.push({ prefix, routerVarName: lastArg });
+        mounts.push({ path: usePath, routerVarName: lastArg });
     }
     return mounts;
+}
+
+/** Extrai `app.use('/api/prefixo', ...middlewares, identificadorSimples)` no composition root. */
+function extractTopLevelRouterMounts(source: string): TopLevelMount[] {
+    return extractUseMounts(source, 'app')
+        .filter((mount) => mount.path.startsWith('/api/'))
+        .map((mount) => ({ prefix: mount.path, routerVarName: mount.routerVarName }));
 }
 
 function escapeForRegex(identifier: string): string {
@@ -119,7 +152,7 @@ function resolveRouterLocalVarName(source: string, exportedName: string): string
     return null;
 }
 
-/** Extrai `<localVarName>.<method>('/subpath', ...)` literais de um arquivo de router de feature (um nível). */
+/** Extrai `<localVarName>.<method>('/subpath', ...)` literais de um arquivo de router de feature. */
 function extractRouterMethodPaths(source: string, localVarName: string): Array<{ method: string; subpath: string }> {
     const found: Array<{ method: string; subpath: string }> = [];
     const safeName = escapeForRegex(localVarName);
@@ -137,9 +170,91 @@ function joinPrefixAndSubpath(prefix: string, subpath: string): string {
 }
 
 /**
- * Passe 2, ver comentário de topo do arquivo. Resolve um nível de router de feature por mount de
- * topo e cruza path+método exatos contra `docs/openapi.yaml`. Retorna também `resolvedFileCount`
- * só para log informativo (quantos arquivos de router puderam ser lidos e verificados de fato).
+ * Resolve um arquivo de router de feature já identificado (caminho absoluto + nome da variável
+ * local do `Router()` dentro dele) sob um prefixo de rota já composto, cruza cada
+ * `<localVarName>.<method>('/subpath', ...)` literal contra `docs/openapi.yaml`, e então RECURSA
+ * em qualquer `<localVarName>.use('/subprefixo', outroRouterImportado)` encontrado no mesmo
+ * arquivo — resolvendo o import de `outroRouterImportado` relativo a ESTE arquivo (não ao
+ * composition root) e compondo `prefix + subprefixo` como o novo prefixo do nível seguinte. Isso é
+ * o que fecha o buraco do Passe 2 original: um endpoint só existia dentro de um sub-router
+ * aninhado (`router.use()` dentro de um arquivo de feature, não dentro de `server.ts`/
+ * `src/bootstrap/*.ts`) e nunca era lido.
+ *
+ * `visited` (chave `caminhoAbsoluto::nomeDaVariávelLocal`) evita recursão infinita em caso de
+ * import circular entre dois routers — best-effort, sem falso positivo: se não resolver um nível
+ * com confiança (import não estático, export não reconhecido, arquivo fora de `src/`), esse ramo é
+ * simplesmente abandonado em vez de arriscar reportar drift errado.
+ */
+function resolveAndWalkRouter(
+    repoRoot: string,
+    absoluteFilePath: string,
+    localVarName: string,
+    prefix: string,
+    openapiPaths: Record<string, unknown>,
+    findings: SubRouteDriftFinding[],
+    visited: Set<string>,
+): boolean {
+    const visitKey = `${absoluteFilePath}::${localVarName}`;
+    if (visited.has(visitKey)) return false; // já resolvido por este caminho — evita ciclo/duplicata
+    visited.add(visitKey);
+
+    if (!existsSync(absoluteFilePath)) return false; // não resolveu o arquivo — pula, sem falso positivo
+
+    let source: string;
+    try {
+        source = readFileSync(absoluteFilePath, 'utf-8');
+    } catch {
+        return false;
+    }
+
+    const methodPaths = extractRouterMethodPaths(source, localVarName);
+    for (const { method, subpath } of methodPaths) {
+        const sourcePath = joinPrefixAndSubpath(prefix, subpath);
+        const docStylePath = toDocStylePath(sourcePath);
+        const pathItem = openapiPaths[docStylePath] as Record<string, unknown> | undefined;
+        if (!pathItem) {
+            findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-path' });
+        } else if (!(method in pathItem)) {
+            findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-method' });
+        }
+    }
+
+    // Passe 2 recursivo: segue `<localVarName>.use('/subprefixo', outroRouterImportado)` aninhado
+    // dentro deste mesmo arquivo, resolvendo o import relativo a ESTE arquivo (não ao
+    // bootstrapDir/composition root) antes de recursar com o prefixo composto.
+    const importMap = buildImportMap(source);
+    const nestedMounts = extractUseMounts(source, localVarName);
+    for (const nested of nestedMounts) {
+        const importPath = importMap.get(nested.routerVarName);
+        if (!importPath) continue; // sub-router não importado por nome simples resolvível — pula
+
+        const relativeToTs = importPath.endsWith('.js') ? importPath.slice(0, -3) + '.ts' : `${importPath}.ts`;
+        const nestedAbsolutePath = path.normalize(path.join(path.dirname(absoluteFilePath), relativeToTs));
+        if (!nestedAbsolutePath.startsWith(path.join(repoRoot, 'src') + path.sep)) continue; // fora do repo, não segue
+
+        if (!existsSync(nestedAbsolutePath)) continue;
+        let nestedSource: string;
+        try {
+            nestedSource = readFileSync(nestedAbsolutePath, 'utf-8');
+        } catch {
+            continue;
+        }
+
+        const nestedLocalVarName = resolveRouterLocalVarName(nestedSource, nested.routerVarName);
+        if (!nestedLocalVarName) continue; // export não reconhecido com confiança — pula, sem falso positivo
+
+        const nestedPrefix = joinPrefixAndSubpath(prefix, nested.path);
+        resolveAndWalkRouter(repoRoot, nestedAbsolutePath, nestedLocalVarName, nestedPrefix, openapiPaths, findings, visited);
+    }
+
+    return true;
+}
+
+/**
+ * Passe 2, ver comentário de topo do arquivo. Resolve, recursivamente, cada árvore de router de
+ * feature a partir de um mount de topo, e cruza path+método exatos contra `docs/openapi.yaml` em
+ * cada nível. Retorna também `resolvedFileCount` só para log informativo (quantos arquivos de
+ * router — de qualquer nível de aninhamento — puderam ser lidos e verificados de fato).
  */
 function computeSubRouteDrift(
     repoRoot: string,
@@ -150,6 +265,7 @@ function computeSubRouteDrift(
     const importMap = buildImportMap(compositionRootSource);
     const mounts = extractTopLevelRouterMounts(compositionRootSource);
     const findings: SubRouteDriftFinding[] = [];
+    const visited = new Set<string>();
     let resolvedFileCount = 0;
 
     for (const mount of mounts) {
@@ -170,19 +286,17 @@ function computeSubRouteDrift(
 
         const localVarName = resolveRouterLocalVarName(routerFileSource, mount.routerVarName);
         if (!localVarName) continue; // export não reconhecido com confiança — pula, sem falso positivo
-        resolvedFileCount += 1;
 
-        const methodPaths = extractRouterMethodPaths(routerFileSource, localVarName);
-        for (const { method, subpath } of methodPaths) {
-            const sourcePath = joinPrefixAndSubpath(mount.prefix, subpath);
-            const docStylePath = toDocStylePath(sourcePath);
-            const pathItem = openapiPaths[docStylePath] as Record<string, unknown> | undefined;
-            if (!pathItem) {
-                findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-path' });
-            } else if (!(method in pathItem)) {
-                findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-method' });
-            }
-        }
+        const resolved = resolveAndWalkRouter(
+            repoRoot,
+            absoluteFilePath,
+            localVarName,
+            mount.prefix,
+            openapiPaths,
+            findings,
+            visited,
+        );
+        if (resolved) resolvedFileCount += 1;
     }
 
     return { findings, resolvedFileCount };
