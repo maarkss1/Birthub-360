@@ -27,7 +27,11 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts', 'src/**/__tests__/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'json-summary', 'html'],
+      // 'lcov' adicionado (Onda 3, agente 08): sonar-project.properties aponta
+      // sonar.javascript.lcov.reportPaths para dentro de reportsDirectory abaixo — sem o
+      // reporter 'lcov' nenhum arquivo era escrito ali e a integração de coverage do Sonar nunca
+      // recebia dado real deste pipeline (ver comentário em .github/workflows/sonarqube.yml).
+      reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
       // Diretório próprio (em vez do './coverage' default) porque test:integration também roda
       // `--coverage` e, sem isso, o segundo run sobrescreve o relatório do primeiro no CI — os dois
       // acabavam publicados como um único artefato "coverage/" contendo só a cobertura de
