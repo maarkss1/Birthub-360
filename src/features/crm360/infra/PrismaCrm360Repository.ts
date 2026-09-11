@@ -40,7 +40,7 @@ import {
   draftNextProposalVersion,
   type ProposalSnapshot,
   type ProposalVersion,
-} from '../../cadence/domain/proposal.js';
+} from '../../../shared/domain/proposal.js';
 import { requestDocumentSignature as requestDocumentSignatureUseCase } from '../../cadence/application/documentSignature.js';
 import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
 import { govBrSignatureProviderPort } from '../../cadence/infra/GovBrSignatureProviderPort.js';

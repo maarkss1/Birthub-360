@@ -8,7 +8,7 @@ import {
   type ProposalLineItem,
   type ProposalVersion,
   type ProposalSnapshot,
-} from '../domain/proposal';
+} from '../../../shared/domain/proposal';
 
 const ITEM: ProposalLineItem = {
   name: 'Monitoramento de risco',

@@ -8,7 +8,7 @@ import {
   isGenuineLeadReply,
   handleEmailReply,
   type InboundEmailReply,
-} from '../../cadence/domain/replyTracking.js';
+} from '../../../shared/domain/replyTracking.js';
 import { emailIntentClassifier } from '../../cadence/infra/emailIntentClassifier.js';
 import { prismaConversationSignalPort } from '../../cadence/infra/PrismaConversationSignalPort.js';
 import { contactEmailIndex } from '../../../lib/crypto/piiIndex.js';

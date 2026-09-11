@@ -131,7 +131,7 @@ export interface CrmCommercialDocument {
   updatedAt: string;
 }
 
-/** CYC-005 (onda 25) — uma fotografia imutável do documento, ver `src/features/cadence/domain/proposal.ts`. */
+/** CYC-005 (onda 25) — uma fotografia imutável do documento, ver `src/shared/domain/proposal.ts`. */
 export interface CrmCommercialDocumentVersionDTO {
   id: string;
   documentId: string;
