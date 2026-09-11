@@ -46,7 +46,7 @@ describe('LeadUseCases.createLead — posse do lead (CLOSER/SDR sempre captura p
 
       await useCases.createLead(
         'org-1',
-        { owner: 'outro-usuario-id' },
+        { status: 'Lead Recebido', owner: 'outro-usuario-id' },
         { userId: 'actor-1', role },
       );
 
@@ -64,7 +64,7 @@ describe('LeadUseCases.createLead — posse do lead (CLOSER/SDR sempre captura p
 
       await useCases.createLead(
         'org-1',
-        { owner: 'outro-usuario-id' },
+        { status: 'Lead Recebido', owner: 'outro-usuario-id' },
         { userId: 'actor-1', role },
       );
 
@@ -83,7 +83,7 @@ describe('LeadUseCases.createLead — bloqueio de lead duplicado por empresa+fun
     const { useCases, repository } = makeUseCases();
 
     await expect(
-      useCases.createLead('org-1', { companyId: 'company-1' }),
+      useCases.createLead('org-1', { status: 'Lead Recebido', companyId: 'company-1' }),
     ).rejects.toMatchObject({
       statusCode: 409,
       message: expect.stringContaining('Fulano de Tal'),
@@ -96,7 +96,9 @@ describe('LeadUseCases.createLead — bloqueio de lead duplicado por empresa+fun
     prismaMock.lead.findFirst.mockResolvedValue({ id: 'lead-existente', owner: null });
     const { useCases } = makeUseCases();
 
-    await expect(useCases.createLead('org-1', { companyId: 'company-1' })).rejects.toMatchObject({
+    await expect(
+      useCases.createLead('org-1', { status: 'Lead Recebido', companyId: 'company-1' }),
+    ).rejects.toMatchObject({
       statusCode: 409,
       message: expect.stringContaining('outro usuário'),
     });
@@ -106,7 +108,7 @@ describe('LeadUseCases.createLead — bloqueio de lead duplicado por empresa+fun
   it('não bloqueia quando não há companyId (nada para checar duplicidade)', async () => {
     const { useCases, repository } = makeUseCases();
 
-    await useCases.createLead('org-1', {});
+    await useCases.createLead('org-1', { status: 'Lead Recebido' });
 
     expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
     expect(repository.create).toHaveBeenCalled();
@@ -115,7 +117,11 @@ describe('LeadUseCases.createLead — bloqueio de lead duplicado por empresa+fun
   it('checa duplicidade escopada ao funil informado (Lead x Negócio não competem entre si)', async () => {
     const { useCases } = makeUseCases();
 
-    await useCases.createLead('org-1', { companyId: 'company-1', funnel: 'Negocio' });
+    await useCases.createLead('org-1', {
+      status: 'Lead Recebido',
+      companyId: 'company-1',
+      funnel: 'Negocio',
+    });
 
     expect(prismaMock.lead.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -130,7 +136,7 @@ describe('LeadUseCases.createLead — atribuição automática via Round-Robin',
     assignLeadRoundRobin.mockResolvedValue('closer-round-robin');
     const { useCases } = makeUseCases({ id: 'lead-new' });
 
-    const result = await useCases.createLead('org-1', {});
+    const result = await useCases.createLead('org-1', { status: 'Lead Recebido' });
 
     expect(assignLeadRoundRobin).toHaveBeenCalledWith('org-1', 'lead-new');
     expect(result.owner).toBe('closer-round-robin');
@@ -139,7 +145,7 @@ describe('LeadUseCases.createLead — atribuição automática via Round-Robin',
   it('não tenta Round-Robin quando o lead já foi criado com dono', async () => {
     const { useCases } = makeUseCases({ id: 'lead-new' });
 
-    await useCases.createLead('org-1', { owner: 'user-1' });
+    await useCases.createLead('org-1', { status: 'Lead Recebido', owner: 'user-1' });
 
     expect(assignLeadRoundRobin).not.toHaveBeenCalled();
   });
@@ -148,7 +154,7 @@ describe('LeadUseCases.createLead — atribuição automática via Round-Robin',
     assignLeadRoundRobin.mockRejectedValue(new Error('Redis indisponível'));
     const { useCases } = makeUseCases({ id: 'lead-new' });
 
-    const result = await useCases.createLead('org-1', {});
+    const result = await useCases.createLead('org-1', { status: 'Lead Recebido' });
 
     expect(result).toMatchObject({ id: 'lead-new' });
     expect(logger.error).toHaveBeenCalled();

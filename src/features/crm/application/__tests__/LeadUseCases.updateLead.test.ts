@@ -98,7 +98,7 @@ describe('LeadUseCases.updateLead', () => {
     expect(broadcastEvent).not.toHaveBeenCalled();
   });
 
-  it.each(['Negócios Perdidos', 'Lead Desqualificado'])(
+  it.each(['Negócios Perdidos', 'Lead Desqualificado'] as const)(
     'emite DEAL_LOST para status "%s" (perdido/desqualificado, case-insensitive por substring)',
     async (status) => {
       const { useCases } = makeUseCases();
