@@ -128,8 +128,10 @@ Corrigido e enviado diretamente a `main` (commit `0c6a6dfd`), aprovado explicita
 - `/metrics` sem auth quando EXPOSE_METRICS=true (mitigação: manter flag off ou proteger por rede).
 - piiSanitizer é código morto (✅ removido, Onda 43); consentimento LGPD antes de enviar PII a
   provedores de IA — ✅ `conversation-intelligence.service.ts` (WhatsApp) corrigido na Onda 43
-  (`assertPiiExternalConsent`, mesmo gate fail-closed do resto do enxame); `birth-voice` ainda não
-  reverificado.
+  (`assertPiiExternalConsent`, mesmo gate fail-closed do resto do enxame); ✅ `birth-voice` também
+  já aplica o gate (`birthVoice.service.ts` chama `assertPiiExternalConsent` antes de enviar
+  nome/telefone/empresa ao provedor externo), com teste cobrindo a recusa sem base legal LGPD
+  registrada em `birthVoice.service.test.ts`.
 - 4 vulnerabilidades moderate: `uuid` via `exceljs` — ✅ resolvido na Onda 43 (`exceljs` 3.10.0 →
   4.4.0, ver `docs/security/AUDIT_WAIVERS.md`); `dockerode`/`testcontainers` (dev-only) — ainda não
   reverificado.
