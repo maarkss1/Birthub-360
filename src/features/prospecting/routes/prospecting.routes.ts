@@ -240,7 +240,34 @@ router.post(
 // ───────────────────── Enriquecimento em Cascata (Apollo ➔ Hunter ➔ Google Places) ─────────────────────
 import { runEnrichmentCascade } from '../services/enrichmentCascade.service.js';
 import { enrichmentCascadeQueue } from '../../../lib/queue/enrichmentCascade.worker.js';
+import { pingRedis, connection as bullmqRedisConnection } from '../../../lib/queue/redis.js';
 import { prisma } from '../../../lib/prisma.js';
+import { logger } from '../../../lib/logger.js';
+
+// queuesEnabled (redis.ts) só confere se REDIS_URL está presente, não se o Redis está de fato
+// acessível em runtime. Se a env aponta pra um Redis inatingível, enrichmentCascadeQueue.add()
+// pode ficar pendurado indefinidamente (enableOfflineQueue mantém o comando em fila esperando uma
+// conexão que nunca chega), travando a requisição até o proxy estourar o timeout. Por isso,
+// confirmamos que a conexão responde (pingRedis) dentro de uma janela curta antes de tentar
+// enfileirar; se o ping não voltar a tempo, caímos para o caminho síncrono já existente.
+const ENRICH_CASCADE_QUEUE_PING_TIMEOUT_MS = 3_000;
+
+async function isEnrichCascadeQueueReachable(): Promise<boolean> {
+  let timeoutHandle: NodeJS.Timeout;
+  const timeout = new Promise<false>((resolve) => {
+    timeoutHandle = setTimeout(() => resolve(false), ENRICH_CASCADE_QUEUE_PING_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([
+      pingRedis(bullmqRedisConnection).then(() => true),
+      timeout,
+    ]);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeoutHandle!);
+  }
+}
 
 router.post(
   '/companies/:id/enrich-cascade',
@@ -251,15 +278,21 @@ router.post(
       const { async: isAsync, ...options } = req.body || {};
 
       if (isAsync && enrichmentCascadeQueue) {
-        const job = await enrichmentCascadeQueue.add('enrich-cascade-job', {
-          companyId,
-          organizationId,
-          options,
-        });
-        res
-          .status(202)
-          .json({ success: true, message: 'Enriquecimento em cascata enfileirado', jobId: job.id });
-        return;
+        if (await isEnrichCascadeQueueReachable()) {
+          const job = await enrichmentCascadeQueue.add('enrich-cascade-job', {
+            companyId,
+            organizationId,
+            options,
+          });
+          res
+            .status(202)
+            .json({ success: true, message: 'Enriquecimento em cascata enfileirado', jobId: job.id });
+          return;
+        }
+        logger.warn(
+          { companyId, organizationId },
+          'enrich-cascade: Redis configurado mas inacessível dentro do timeout; caindo para execução síncrona',
+        );
       }
 
       const result = await runEnrichmentCascade(organizationId, companyId, options);
