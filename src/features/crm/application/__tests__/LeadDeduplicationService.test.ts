@@ -64,7 +64,10 @@ describe('LeadDeduplicationService.deduplicateByEmail', () => {
   it('soma o mergedCount de vários grupos de contato duplicados', async () => {
     groupBy.mockResolvedValue([{ contactId: 'contact-1' }, { contactId: 'contact-2' }]);
     findMany
-      .mockResolvedValueOnce([{ id: 'a1', amount: 10 }, { id: 'a2', amount: 5 }])
+      .mockResolvedValueOnce([
+        { id: 'a1', amount: 10 },
+        { id: 'a2', amount: 5 },
+      ])
       .mockResolvedValueOnce([
         { id: 'b1', amount: 30 },
         { id: 'b2', amount: 20 },

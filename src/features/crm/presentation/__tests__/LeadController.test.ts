@@ -101,7 +101,14 @@ describe('LeadController', () => {
 
       await controller.getLeads(buildRequest({ query: { funnel: 'DROP TABLE' } }), res, next);
 
-      expect(useCases.findLeads).toHaveBeenCalledWith('org-1', undefined, 1, 50, undefined, undefined);
+      expect(useCases.findLeads).toHaveBeenCalledWith(
+        'org-1',
+        undefined,
+        1,
+        50,
+        undefined,
+        undefined,
+      );
     });
 
     it('descarta funnel tamperado como array de query string em vez de propagar', async () => {
@@ -114,7 +121,14 @@ describe('LeadController', () => {
         next,
       );
 
-      expect(useCases.findLeads).toHaveBeenCalledWith('org-1', undefined, 1, 50, undefined, undefined);
+      expect(useCases.findLeads).toHaveBeenCalledWith(
+        'org-1',
+        undefined,
+        1,
+        50,
+        undefined,
+        undefined,
+      );
     });
 
     it('ignora q/status tamperados como array/objeto, tratando como ausentes', async () => {
@@ -127,20 +141,30 @@ describe('LeadController', () => {
         next,
       );
 
-      expect(useCases.findLeads).toHaveBeenCalledWith('org-1', undefined, 1, 50, undefined, undefined);
+      expect(useCases.findLeads).toHaveBeenCalledWith(
+        'org-1',
+        undefined,
+        1,
+        50,
+        undefined,
+        undefined,
+      );
     });
 
     it('usa página/limite default quando query não traz valores numéricos válidos', async () => {
       useCases.findLeads.mockResolvedValue({ data: [], meta: {} });
       const res = buildResponse();
 
-      await controller.getLeads(
-        buildRequest({ query: { page: 'abc', limit: 'xyz' } }),
-        res,
-        next,
-      );
+      await controller.getLeads(buildRequest({ query: { page: 'abc', limit: 'xyz' } }), res, next);
 
-      expect(useCases.findLeads).toHaveBeenCalledWith('org-1', undefined, 1, 50, undefined, undefined);
+      expect(useCases.findLeads).toHaveBeenCalledWith(
+        'org-1',
+        undefined,
+        1,
+        50,
+        undefined,
+        undefined,
+      );
     });
 
     it('encaminha erro do use case para next()', async () => {

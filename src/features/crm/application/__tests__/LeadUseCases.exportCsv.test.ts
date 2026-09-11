@@ -98,9 +98,7 @@ describe('LeadUseCases.exportLeadsCsv', () => {
   });
 
   it('separa nome do contato em primeiro/último nome corretamente', async () => {
-    const useCases = makeUseCases([
-      makeLead({ contact: { name: 'Maria Clara Souza Lima' } }),
-    ]);
+    const useCases = makeUseCases([makeLead({ contact: { name: 'Maria Clara Souza Lima' } })]);
     const csv = await useCases.exportLeadsCsv('org-1');
     const row = csv.split('\n')[1].split(';');
 

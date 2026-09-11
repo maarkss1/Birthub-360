@@ -42,15 +42,15 @@ describe('createSavedView', () => {
   });
 
   it('rejeita nome só com espaços', () => {
-    expect(() =>
-      createSavedView('org-1', 'user-1', { name: '   ', funnel: 'Lead' }),
-    ).toThrowError(expect.objectContaining({ statusCode: 400 }));
+    expect(() => createSavedView('org-1', 'user-1', { name: '   ', funnel: 'Lead' })).toThrowError(
+      expect.objectContaining({ statusCode: 400 }),
+    );
   });
 
   it('rejeita funil ausente', () => {
-    expect(() =>
-      createSavedView('org-1', 'user-1', { name: 'Minha view' }),
-    ).toThrowError(expect.objectContaining({ statusCode: 400 }));
+    expect(() => createSavedView('org-1', 'user-1', { name: 'Minha view' })).toThrowError(
+      expect.objectContaining({ statusCode: 400 }),
+    );
   });
 
   it('rejeita funil fora de "Lead"/"Negocio"', () => {
