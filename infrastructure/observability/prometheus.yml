@@ -1,3 +1,16 @@
+# Config do Prometheus da stack de OBSERVABILIDADE LOCAL (docker-compose.opensource.yml, subida
+# via `npm run infra:up`) — o alvo `host.docker.internal:3000` só existe a partir de um container
+# rodando na máquina de desenvolvimento, apontando para o `npm run dev` local. Este arquivo NÃO
+# scrapea nenhuma instância de produção (nem Render, nem Oracle Cloud).
+#
+# ACH-10-01: a produção real (Oracle Cloud, `docker-compose.oci.yml`, ADR-004) NÃO tem Prometheus
+# próprio hoje — decisão de escopo MVP documentada em `docs/deploy/oracle-cloud.md` §11 (a barreira
+# real não é falta de tempo: `/metrics` exige o header `x-platform-operator-token` da aplicação,
+# que o `scrape_config` nativo do Prometheus não sabe enviar sem mudança de código fora do escopo
+# desta correção — ver o mesmo §11 para o detalhamento). Ver
+# `infrastructure/observability/RUNBOOK.md` seção 8 para o gap registrado e seção 0-OCI para como
+# investigar um incidente na Oracle sem essa métrica.
+
 global:
   scrape_interval: 15s
 

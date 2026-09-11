@@ -435,7 +435,74 @@ valor:
 
 ---
 
-## 11. O que esta sessão não pôde validar
+## 11. Observabilidade (Prometheus/Grafana/Loki) — fora do MVP, decisão registrada (ACH-10-01)
+
+**Contexto**: ADR-004 (2026-09-05) moveu a produção definitiva para esta stack, já recebendo
+tráfego real (ver `docs/deploy/README.md` §1). `infrastructure/observability/` já tem um stack
+completo (Prometheus, Grafana, Loki, Tempo, OTel Collector) pronto e em uso no **ambiente local**
+(`docker-compose.opensource.yml`, subido por `npm run infra:up`) — mas `docker-compose.oci.yml`
+não sobe nenhum desses serviços, e nenhum Prometheus externo está apontado para esta instância.
+
+**Isto é uma decisão de escopo, não uma lacuna esquecida** — e a razão não é só "faltou tempo": há
+uma barreira técnica real.
+
+### 11.1 Por que não é um simples "copiar os serviços do stack local"
+
+O endpoint `GET /metrics` da aplicação (`src/bootstrap/observability.ts`,
+`mountMetricsEndpoint`) é protegido por `requirePlatformOperator`
+(`src/shared/middlewares/requirePlatformOperator.ts`) — a mesma trava de segurança usada pelo
+BullBoard (`/admin/queues`). Ele exige um token válido em **um destes três lugares**: o header
+customizado `x-platform-operator-token`, a query string `?operator_token=`, ou um cookie. O
+`scrape_config` nativo do Prometheus (`static_configs` + `authorization`/`basic_auth`) só sabe
+enviar `Authorization: Bearer <token>` ou Basic Auth — **nenhum dos dois bate com o header
+customizado que a aplicação espera**. Sem alterar `requirePlatformOperator` para também aceitar
+`Authorization: Bearer` (mudança de código de segurança, fora do escopo desta correção de
+infraestrutura — domínio do Agente 01/dono de `src/shared/middlewares/`), um Prometheus real não
+consegue autenticar contra `/metrics` nesta instância sem inventar um proxy/sidecar adicional só
+para reescrever o header, o que adicionaria complexidade e superfície de ataque não avaliadas nesta
+rodada.
+
+Publicar `/metrics` sem essa trava (ex.: só verificando IP de origem) também não foi escolhido:
+`/metrics` expõe cardinalidade e nomes de métrica de negócio (uso de IA por org, filas por tenant)
+que a mesma trava de "operador de plataforma" já existe precisamente para não deixar público — SEC-
+001/SEC-002 (ver o comentário de `requirePlatformOperator.ts`).
+
+### 11.2 Decisão
+
+**Observabilidade centralizada (Prometheus/Grafana/Loki) para a instância Oracle real fica fora do
+MVP.** Enquanto isso, um incidente real nesta instância só é descoberto por relato de usuário ou
+checagem manual de `/health/live`/`/health/ready`/logs do Docker (ver
+`infrastructure/observability/RUNBOOK.md` seção 0-OCI). Isso é uma regressão real de
+confiabilidade frente ao Render (que, apesar de também não ter Prometheus apontado, tem dashboard
+e alertas nativos da plataforma — ver `RUNBOOK.md` seção 0.3) e frente ao que o stack local já
+oferece — registrado aqui para não ser esquecido, não para ser minimizado.
+
+**Prazo para reativar**: antes de qualquer decisão de desligar o Render (o critério de cutover já
+documentado em `docs/deploy/README.md` §1 — "não desligar antes do Go-Live Oracle estar
+validado"), esta lacuna deve estar resolvida ou explicitamente aceita pelo dono do produto como
+risco assumido. Ela também deve ser reavaliada se/quando o volume de organizações ativas crescer o
+suficiente para que "esperar relato de usuário" deixe de ser uma janela de detecção aceitável.
+
+### 11.3 Pré-requisitos já corretos, independente de quando a lacuna acima for fechada
+
+- `EXPOSE_METRICS=true` no `.env.production` da instância — sem isso, `/metrics` nem existe
+  (`mountMetricsEndpoint` retorna cedo). Hoje não é gerado automaticamente por
+  `scripts/deploy-oci.sh` (só os segredos essenciais, ver seção 3.2) — precisa ser adicionado
+  manualmente ao arquivo antes de qualquer scraper (local, temporário, ou futuro) funcionar.
+- `PLATFORM_OPERATOR_TOKEN` configurado no mesmo arquivo — sem ele, `/metrics` (e `/admin/queues`)
+  negam por padrão (fail-closed, não é um "modo aberto" acidental).
+- Reportar o status desses dois (CONFIGURADO/NÃO NECESSÁRIO), nunca o valor, seguindo o mesmo
+  padrão da seção 10 deste guia.
+
+### 11.4 Alternativa leve, se um monitoramento mínimo for necessário antes da solução definitiva
+
+`docker-compose.services.yml` já traz **Uptime Kuma** (ver `docs/deploy/README.md` §6.1) como
+ferramenta opcional local — ele não faz parte de nenhum caminho de deploy hoje, mas é a opção mais
+barata para um operador apontar manualmente para `https://<domínio>/health/live` de fora da
+instância (uptime binário, sem métricas de negócio) enquanto a solução de Prometheus não é
+resolvida. Isso não substitui a seção 12.2 — é só um paliativo de detecção, não de diagnóstico.
+
+## 12. O que esta sessão não pôde validar
 
 Esta sessão preparou e validou o que é possível **sem acesso a credenciais de infraestrutura
 reais** (nenhuma chave SSH, token OCI ou credencial de banco de produção está disponível neste
