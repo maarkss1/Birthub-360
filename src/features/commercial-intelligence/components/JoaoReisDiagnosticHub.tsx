@@ -12,7 +12,6 @@ import {
   Users,
   CheckCircle,
   AlertTriangle,
-  X,
   Sparkles,
   CheckSquare,
   Square,
@@ -35,6 +34,7 @@ import { FunnelBars, type FunnelBarItem } from '../../../components/ui/FunnelBar
 import { ChannelDonut } from '../../../components/ui/ChannelDonut';
 import { CompareBar, DeltaPill } from '../../../components/ui/CompareBar';
 import { DealsGrid, type DealCardData } from '../../../components/ui/DealsGrid';
+import { Dialog } from '../../../components/ui/Dialog';
 
 // Dataset extraído do Diagnóstico SDR — João Reis (BDR ID 392, Birth Hub 360)
 const DIAGNOSTIC_DATA = {
@@ -1733,23 +1733,16 @@ Data: 01/09/2026 | BDR ID: 392
         )}
 
         {/* Modal de Detalhes / Drill-Down */}
-        {modalContent && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-surface border border-line rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
-              <button
-                type="button"
-                onClick={() => setModalContent(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-surface-2 text-ink-2 transition-all cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <h3 className="text-lg font-black text-ink">{modalContent.title}</h3>
-              <div className="text-xs text-ink-2 space-y-2 max-h-[60vh] overflow-y-auto pr-2">
-                {modalContent.body}
-              </div>
-            </div>
+        <Dialog
+          isOpen={!!modalContent}
+          onClose={() => setModalContent(null)}
+          title={modalContent?.title ?? ''}
+          maxWidth="max-w-2xl"
+        >
+          <div className="text-xs text-ink-2 space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+            {modalContent?.body}
           </div>
-        )}
+        </Dialog>
       </div>
     </div>
   );
