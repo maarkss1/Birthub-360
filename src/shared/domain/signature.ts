@@ -9,6 +9,11 @@
  * qualquer webhook externo) — `isValidSignatureTransition` garante que um evento atrasado
  * ("Sent" chegando depois de "Signed" já aplicado) nunca reverte um estado terminal, e que uma
  * transição nunca pula para um estado que o fluxo real de assinatura não permite.
+ *
+ * Movido de `src/features/cadence/domain/signature.ts` para `src/shared/domain/` (dependency-
+ * cruiser ITEM-13): módulo puro (zero imports), consumido por `cadence` (application/infra) e por
+ * `integrations/signature` (webhook de status). Conteúdo idêntico ao original — só a localização
+ * mudou.
  */
 
 export type SignatureStatus =

@@ -127,7 +127,7 @@ export type CrmDocumentInput = z.infer<typeof crmDocumentSchema>;
  * CYC-005 (onda 25) — edição de conteúdo de um documento comercial já criado. Sem `status` (tem
  * rota própria, `PUT /documents/:id/status`) nem `number`/`publicToken` (imutáveis após criação).
  * Cada chamada gera uma nova `CrmCommercialDocumentVersion` — nunca sobrescreve a anterior, ver
- * `src/features/cadence/domain/proposal.ts`.
+ * `src/shared/domain/proposal.ts`.
  */
 export const crmDocumentUpdateSchema = z.object({
   title: z.string().trim().min(1).max(180),

@@ -5,7 +5,7 @@ import {
   buildEmailTranscript,
   type IntentClassifierPort,
   type InboundEmailReply,
-} from '../domain/replyTracking';
+} from '../../../shared/domain/replyTracking';
 
 const BASE: InboundEmailReply = {
   organizationId: 'org-1',

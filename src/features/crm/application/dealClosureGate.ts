@@ -4,7 +4,7 @@ import {
   evaluateDealClosure,
   isDeterministicCloseEvent,
   type DealClosureEvent,
-} from '../../cadence/domain/dealClosure.js';
+} from '../../../shared/domain/dealClosure.js';
 
 /**
  * CYC-007 (onda 24) — conecta `dealClosure.ts` (domínio puro do Agente 17, entregue na Sprint 06

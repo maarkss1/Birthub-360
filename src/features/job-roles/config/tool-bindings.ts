@@ -273,7 +273,7 @@ export const TOOL_BINDINGS: ToolBinding[] = [
     available: true,
     reason: 'AVAILABLE',
     verification: 'VERIFIED',
-    evidencePath: 'src/features/cadence/domain/signature.ts',
+    evidencePath: 'src/shared/domain/signature.ts',
     exportName: 'isValidSignatureTransition',
     methodName: null,
   },

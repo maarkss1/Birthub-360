@@ -9,6 +9,13 @@
  * `.agents/handoffs/onda-7/17-para-13-evento-fechamento.md`. Os três tipos abaixo são o mínimo
  * necessário para a entrega 5 do meu prompt — não uma lista fechada por princípio; ajustável se o
  * 13 responder pedindo um quarto tipo.
+ *
+ * Movido de `src/features/cadence/domain/dealClosure.ts` para `src/shared/domain/` (dependency-
+ * cruiser ITEM-13): módulo puro (zero imports), escrito pelo dono de `cadence` mas consumido só por
+ * `crm` (`dealClosureGate.ts`/`PrismaDealClosureGate.ts`) — nunca por `cadence` fora dos testes.
+ * Mesmo raciocínio do comentário original: "Lead" não é arquivo de `cadence`, então o contrato que
+ * decide se um Lead pode ser movido para "Negócios Ganhos" pertence a um local neutro, não a uma
+ * das duas features que o consomem. Conteúdo idêntico ao original — só a localização mudou.
  */
 
 export type DealClosureEventType =

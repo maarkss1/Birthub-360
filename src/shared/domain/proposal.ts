@@ -7,6 +7,11 @@
  * aprovado pelo Agente 01, hoje sem versionamento) e modela só o que falta: uma versão é uma
  * fotografia imutável do documento em um instante, e `nextVersionNumber` é a única forma
  * permitida de avançar o histórico (nunca sobrescrever uma versão existente).
+ *
+ * Movido de `src/features/cadence/domain/proposal.ts` para `src/shared/domain/` (dependency-
+ * cruiser ITEM-13): módulo puro (zero imports), escrito pelo dono de `cadence` mas consumido só
+ * por `crm360` (`PrismaCrm360Repository.ts`) — nunca por `cadence` fora dos testes. Conteúdo
+ * idêntico ao original — só a localização mudou.
  */
 
 export interface ProposalLineItem {

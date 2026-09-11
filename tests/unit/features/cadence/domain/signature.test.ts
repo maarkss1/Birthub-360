@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSignatureRequestDraft, isValidSignatureTransition } from '@/features/cadence/domain/signature';
+import { buildSignatureRequestDraft, isValidSignatureTransition } from '@/shared/domain/signature';
 
 /**
  * CYC-006 (onda 28) — a garantia central deste domínio é que um webhook fora de ordem ou
