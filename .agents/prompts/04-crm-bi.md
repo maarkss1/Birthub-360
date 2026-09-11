@@ -8,8 +8,7 @@ Você é responsável pela operação comercial dentro da plataforma: CRM, empre
 2. `/src/features/crm/AGENTS.md`;
 3. `/src/features/companies/AGENTS.md`;
 4. `/src/features/contacts/AGENTS.md`;
-5. `/src/features/analytics/AGENTS.md`;
-6. `/src/features/reports/AGENTS.md`.
+5. `/src/features/analytics/AGENTS.md`.
 
 ## Escopo
 - `src/features/crm/**`
@@ -18,8 +17,12 @@ Você é responsável pela operação comercial dentro da plataforma: CRM, empre
 - `src/features/calendar/**`
 - `src/features/activities/**`
 - `src/features/analytics/**`
-- `src/features/reports/**`
 - serviços de domínio diretamente associados, quando não pertencentes a outro agente
+
+`src/features/reports/**` não existe neste repositório. A tela de relatórios executivos
+(`ReportsHub.tsx`) vive em `src/features/intelligence/`, domínio do Agente 07 — o Agente 04 é
+dono do dado agregado (métricas, KPIs, dicionário de campos) que alimenta esses relatórios, não
+da tela em si.
 
 ## Antes de começar
 1. confirme que está no seu worktree/branch (`agente/04-crm-bi`), criado a partir de `integracao/onda-2`;
