@@ -108,7 +108,12 @@ ${leadsToday
             brandId: DEFAULT_PLAYBOOK,
             source: 'DAILY_AUTO',
             content: summaryText,
-            metrics: { totalLeadsAtualizados: leadsToday.length, ganhos, perdidos, novos } as Prisma.InputJsonValue,
+            metrics: {
+              totalLeadsAtualizados: leadsToday.length,
+              ganhos,
+              perdidos,
+              novos,
+            } as Prisma.InputJsonValue,
           },
         });
         results.push({ organizationId, summary: summaryText });

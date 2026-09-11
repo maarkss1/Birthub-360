@@ -59,7 +59,5 @@ export function appendLearnedStyle(
   learnedStyle: string | null,
   note: string = 'aplique como preferência de tom',
 ): string {
-  return learnedStyle
-    ? `${base}\n\nEstilo aprendido do usuário (${note}):\n${learnedStyle}`
-    : base;
+  return learnedStyle ? `${base}\n\nEstilo aprendido do usuário (${note}):\n${learnedStyle}` : base;
 }
