@@ -3,6 +3,7 @@ import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
+  appendLearnedStyle,
 } from './swarm.constants.js';
 
 /**
@@ -55,9 +56,7 @@ ${SWARM_OUTPUT_CONTRACT}
 
 ${SWARM_UNTRUSTED_CONTENT_GUARD}`;
 
-    return learnedStyle
-      ? `${base}\n\nEstilo aprendido do usuário (aplique como preferência de tom):\n${learnedStyle}`
-      : base;
+    return appendLearnedStyle(base, learnedStyle);
   }
 
   protected buildHumanMessage(input: string): string {
