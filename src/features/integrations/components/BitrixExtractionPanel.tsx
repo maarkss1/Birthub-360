@@ -524,7 +524,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                 )}
 
                 {run.status === 'cancelled' && (
-                  <p className="text-xs text-amber-600 dark:text-amber-400">
+                  <p className="text-xs text-warning-active dark:text-warning">
                     Cancelada — nenhum arquivo foi gerado.{' '}
                     {run.totalCount > 0
                       ? `${run.totalCount} registro(s) já haviam sido lidos antes do cancelamento.`
