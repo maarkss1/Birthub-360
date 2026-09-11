@@ -15,6 +15,36 @@
  * volta para `services/` quebra o ciclo pela raiz, em vez de só reposicioná-lo.
  */
 
+import type { DiscoveryProviderId } from './providerCapabilities.js';
+
+/** Tipos do Requirement Engine (`domain/requirementEngine.ts`) — vivem aqui, não lá, pelo mesmo
+ * motivo do resto deste arquivo: `ProspectCandidate.requirementEvaluations` precisa do tipo
+ * `RequirementEvaluation`, e `requirementEngine.ts` precisa de `ProspectCandidate`/`SearchIntent`
+ * — colocar os tipos no módulo que os dois importam (em vez de um importar do outro) evita um
+ * ciclo real entre dois arquivos de `domain/`. */
+export type RequirementType = 'HARD_FILTER' | 'SOFT_FILTER' | 'ENRICHMENT';
+export type RequirementStatus = 'matched' | 'unmatched' | 'unknown';
+
+export interface RequirementEvaluation {
+  criterion: string;
+  /** Rótulo pronto para exibição (ex: "Segmento", "Estado", "Cargo do decisor") — evita a UI
+   * duplicar o mapeamento `criterion` → texto em português. */
+  label: string;
+  type: RequirementType;
+  expected: string;
+  /** null quando nenhum provider confirmou este dado para o candidato específico — nunca
+   * preenchido com o valor pedido só para não ficar vazio (isso seria exatamente a fabricação que
+   * este tipo existe para impedir). */
+  observed: string | null;
+  status: RequirementStatus;
+  /** De onde veio o valor observado (`apollo`, `googlePlaces`, `nominatim`, ou `none` quando
+   * `observed` é null). */
+  source: DiscoveryProviderId | 'none';
+  /** Frase pronta em português explicando o status — para a UI não precisar montar texto a partir
+   * de `type`+`status`. */
+  reason: string;
+}
+
 export interface ProspectCriteria {
   /** Detalhes adicionais do ICP além dos campos estruturados abaixo (texto livre, nuance qualitativa). */
   icp?: string;
@@ -79,6 +109,23 @@ export interface ProspectCandidate {
   fitScoreEstimate: number;
   suggestedContact: { name: string; role: string } | null;
   rationale: string;
+  /** Provider que efetivamente encontrou este candidato — usado pelo Requirement Engine
+   * (`domain/requirementEngine.ts`) para saber se um campo é dado observado de verdade ou só o
+   * critério pedido ecoado (ver `segmentObserved`). Não confundir com `rationale`, que é texto
+   * livre pensado pra exibição, não pra leitura por código. */
+  source?: DiscoveryProviderId;
+  /** true quando `segment` veio de uma classificação de indústria real do provider (Apollo
+   * `organization.industry`) — false/undefined quando `segment` é só o segmento PEDIDO na busca
+   * ecoado de volta (sempre o caso para Google Places/Nominatim, que não classificam indústria; e
+   * também o caso da Apollo quando ela não devolveu `industry` para aquela organização). Sem esta
+   * distinção, o Requirement Engine trataria todo `segment` como confirmado — exatamente a
+   * "fabricação sutil" (filtro solicitado virando atributo observado) que ele existe para evitar. */
+  segmentObserved?: boolean;
+  /** Avaliação, por critério pedido na busca, do que foi de fato observado neste candidato
+   * (`domain/requirementEngine.ts::evaluateCandidateRequirements`) — preenchido em
+   * `discoverCandidates` depois do enriquecimento de qualidade. Não decide inclusão/exclusão do
+   * candidato, só documenta a honestidade de cada critério para a UI mostrar. */
+  requirementEvaluations?: RequirementEvaluation[];
   // Dados extras retornados pela Apollo — deixam o candidato mais rico em informação antes mesmo de promover.
   linkedinUrl?: string | null;
   phone?: string | null;

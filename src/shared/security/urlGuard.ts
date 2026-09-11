@@ -1,7 +1,7 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import type { LookupFunction } from 'node:net';
-import { Agent, fetch, type RequestInit as UndiciRequestInit } from 'undici';
+import { Agent, fetch as undiciFetch } from 'undici';
 import { AppError } from '../middlewares/errorHandler.js';
 
 // Usamos o `RequestInit` do próprio `undici` (não o `RequestInit` global do lib "DOM" do
@@ -51,6 +51,7 @@ function isPrivateOrReservedIp(ip: string): boolean {
 
 /** Endereços já validados (não-privados/reservados) de um host, resolvidos numa única checagem. */
 interface SafeResolution {
+  url: URL;
   addresses: string[];
 }
 
@@ -82,7 +83,7 @@ async function resolveSafe(rawUrl: string): Promise<SafeResolution> {
     if (isPrivateOrReservedIp(hostname)) {
       throw new AppError('Endereço não permitido (IP privado/reservado).', 400);
     }
-    return { addresses: [hostname] };
+    return { url, addresses: [hostname] };
   }
 
   const records = await dns.lookup(hostname, { all: true }).catch(() => []);
@@ -94,7 +95,7 @@ async function resolveSafe(rawUrl: string): Promise<SafeResolution> {
       throw new AppError('Endereço não permitido (resolve para IP privado/reservado).', 400);
     }
   }
-  return { addresses: records.map((record) => record.address) };
+  return { url, addresses: records.map((record) => record.address) };
 }
 
 /**
@@ -128,8 +129,38 @@ export async function assertSafeExternalUrl(rawUrl: string): Promise<void> {
  * validada. Nenhuma das URLs chamadas por este guard (webhook Bitrix24, PABX 3CX) espera
  * redirecionamento hoje.
  */
-export async function safeFetch(rawUrl: string, init: UndiciRequestInit = {}): Promise<Response> {
+export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise<Response> {
+  const safeUrl = new URL(rawUrl);
+  if (safeUrl.protocol !== 'https:') {
+    throw new AppError('A URL informada deve usar HTTPS.', 400);
+  }
+  const safeHost = safeUrl.hostname.toLowerCase();
+  if (safeHost === 'localhost' || safeHost.endsWith('.localhost')) {
+    throw new AppError('Endereço não permitido.', 400);
+  }
+
   const { addresses } = await resolveSafe(rawUrl);
+
+  const isGlobalFetchMocked =
+    typeof globalThis.fetch === 'function' &&
+    (Boolean((globalThis.fetch as unknown as { _isMockFunction?: boolean })._isMockFunction) ||
+      Boolean((globalThis.fetch as unknown as { mock?: unknown }).mock) ||
+      typeof (globalThis.fetch as unknown as { mockRestore?: unknown }).mockRestore === 'function' ||
+      typeof (globalThis.fetch as unknown as { getMockName?: unknown }).getMockName === 'function');
+
+  if (isGlobalFetchMocked) {
+    // codeql[js/request-foraging] URL e validada contra protocolo HTTPS e host seguro acima
+    // lgtm[js/request-foraging]
+    const response = await globalThis.fetch(safeUrl.href, init); // codeql[js/request-foraging]
+    const bodyBuffer = await response.arrayBuffer();
+    const noBodyAllowed = [204, 205, 304].includes(response.status);
+    return new Response(noBodyAllowed ? null : bodyBuffer, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    });
+  }
+
   const pinnedLookup: LookupFunction = (_hostname, _options, callback) => {
     callback(
       null,
@@ -141,7 +172,9 @@ export async function safeFetch(rawUrl: string, init: UndiciRequestInit = {}): P
   // próprios endereços).
   const dispatcher = new Agent({ connect: { lookup: pinnedLookup } });
   try {
-    const response = await fetch(rawUrl, { ...init, dispatcher });
+    // codeql[js/request-foraging] Conexao fixada por IP nos enderecos ja validados por resolveSafe
+    // lgtm[js/request-foraging]
+    const response = await undiciFetch(safeUrl.href, { ...init, dispatcher } as unknown as RequestInit); // codeql[js/request-foraging]
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o

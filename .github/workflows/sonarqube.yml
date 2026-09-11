@@ -8,12 +8,14 @@ name: SonarQube Analysis
 # resolver o contexto de PR a partir de `github.event.workflow_run.pull_requests` em vez de
 # `pull_request` nativo — uma mudança de comportamento maior (Sonar passaria a rodar só depois do
 # ci.yml concluir, e a decoração de PR dependeria desse mapeamento) que não foi feita nesta rodada
-# por não ser possível validar contra o GitHub Actions real nesta sessão. Além disso, há um gap
-# pré-existente e separado: `sonar.javascript.lcov.reportPaths=coverage/lcov.info` (ver
-# sonar-project.properties) não bate com `vitest.unit.config.ts` (reportsDirectory
-# `./coverage/unit`, reporters sem `lcov`) — a integração de coverage do Sonar já não recebe dado
-# real hoje, independente deste workflow duplicar ou não o teste. Ambos os pontos ficam registrados
-# aqui para follow-up do agente 08 numa onda futura, em vez de uma tentativa não verificável agora.
+# por não ser possível validar contra o GitHub Actions real nesta sessão.
+#
+# O gap de coverage documentado aqui anteriormente (`sonar.javascript.lcov.reportPaths` não batia
+# com o `reportsDirectory`/`reporter` de `vitest.unit.config.ts`) foi corrigido nesta onda:
+# `vitest.unit.config.ts` agora inclui `lcov` em `coverage.reporter`, e
+# `sonar-project.properties` aponta para `coverage/unit/lcov.info` (o `reportsDirectory` real
+# deste config, não o `./coverage` do `vitest.config.ts` da raiz usado só pelo Storybook).
+# Validado localmente rodando um subconjunto de testes com `--coverage` e confirmando o arquivo.
 # O que É feito nesta rodada: este job já roda só a fatia mínima que o Sonar precisa (unit +
 # coverage), não a suíte completa de ci.yml (sem integration/e2e/build) — não há aqui outra
 # duplicação óbvia a remover sem a mudança de trigger acima.

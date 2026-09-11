@@ -68,4 +68,44 @@ describe('Lead Score Calculator (BANT / SPIN)', () => {
     expect(result.breakdown.authorityScore).toBe(25);
     expect(result.breakdown.needScore).toBe(25);
   });
+
+  it('covers the middle branches of budget ("indefinido") and timing ("curto_60d")', () => {
+    const result = calculateLeadScore({
+      budget: 'indefinido', // 5
+      timing: 'curto_60d', // 18
+    });
+
+    expect(result.breakdown.budgetScore).toBe(5);
+    expect(result.breakdown.timingScore).toBe(18);
+  });
+
+  it('theftRiskPain sozinho (sem fuelCostPain) também aplica o bônus de +5 no need', () => {
+    const withoutBonus = calculateLeadScore({ need: 'moderada_otimizacao' });
+    const withBonus = calculateLeadScore({ need: 'moderada_otimizacao', theftRiskPain: true });
+
+    expect(withoutBonus.breakdown.needScore).toBe(15);
+    expect(withBonus.breakdown.needScore).toBe(20);
+  });
+
+  it('o bônus de dor específica nunca faz o needScore passar de 25 (teto do BANT)', () => {
+    const result = calculateLeadScore({
+      need: 'critica_urgente', // já 25
+      fuelCostPain: true,
+      theftRiskPain: true,
+    });
+
+    expect(result.breakdown.needScore).toBe(25);
+  });
+
+  it('valores desconhecidos de budget/authority/need/timing caem no default (0), não quebram', () => {
+    const result = calculateLeadScore({
+      budget: 'valor-nunca-visto',
+      authority: 'valor-nunca-visto',
+      need: 'valor-nunca-visto',
+      timing: 'valor-nunca-visto',
+    });
+
+    expect(result.score).toBe(0);
+    expect(result.temperature).toBe('Frio');
+  });
 });

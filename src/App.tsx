@@ -404,19 +404,19 @@ export default function App() {
                   <ClickSpark />
                   <Suspense fallback={<PageFallback />}>
                     <Routes>
-                      {/* Porta de entrada do produto — revisado (11/09/2026) por pedido explícito
-                        do usuário: a tentativa anterior (LoginScreen com linguagem visual do Hub,
-                        formulário já visível) misturava o gate institucional com o formulário na
-                        mesma tela, e não era "a tela do Hub" que o usuário pedia (referência
-                        visual fornecida: hero + emblema + CTA único "Explorar Hub", SEM campos de
-                        login à vista). "/" volta a mostrar `WelcomeScreen` (mesmo componente de
-                        "/welcome") — o formulário de fato continua só em "/login" (ver
-                        tests/e2e/helpers.ts::signUp e outros specs que navegam direto pra lá). Um
-                        usuário já autenticado que caia aqui é redirecionado pro Hub
-                        automaticamente (guard dentro do próprio WelcomeScreen, espelhando o mesmo
-                        guard de LoginScreen). Login/cadastro continuam levando direto ao Hub (ver
-                        Pilot 031/032 em .claude/PILOTS.md) — o CRM (/app) não é o destino padrão
-                        pós-login; continua existindo e acessível a partir dos círculos do Hub. */}
+                      {/* Porta de entrada do produto — revertido em 2026-09-11 (pedido explícito
+                        do usuário, ver Piloto 001 addendum em .claude/PILOTS.md): "/" volta a
+                        mostrar o portal institucional (WelcomeScreen, mesmo componente de
+                        "/welcome") em vez do formulário de login direto. Entre 2026 e esta data
+                        "/" tinha sido o próprio LoginScreen (pedido anterior, "primeira tela será
+                        o Hub"/"crie uma primeira tela de login com os elementos lindos do Hub") —
+                        essa versão continua existindo e acessível em "/login" (ver
+                        tests/e2e/helpers.ts::signUp e outros specs que navegam direto pra lá), só
+                        deixou de ser o que carrega na raiz. Um usuário já autenticado que caia
+                        aqui é redirecionado pro Hub automaticamente (guard dentro do próprio
+                        WelcomeScreen, espelhando o mesmo guard de LoginScreen). O login/cadastro
+                        seguem levando direto ao Hub (Pilot 031/032); o CRM (/app) continua fora do
+                        destino padrão pós-login. */}
                       <Route
                         path="/design-lab/command-language"
                         element={<DesignLabPage section="command-language" />}

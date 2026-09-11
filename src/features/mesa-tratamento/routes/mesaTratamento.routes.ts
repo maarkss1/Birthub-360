@@ -12,10 +12,11 @@ import {
   getLeadStatuses,
   getBitrixUsers,
   resolveOwnBitrixUserId,
+  resolveAtlasUserIdByEmail,
   postCommentToBitrix,
   exportLeadToBitrixNow,
 } from '../../integrations/bitrix/bitrix.service.js';
-import { rankLeadsForQueue } from '../mesaTratamento.priority.js';
+import { rankLeadsForQueue, computeQueuePriorityScore } from '../mesaTratamento.priority.js';
 import { resolveLossReasonLabel } from '../constants/lossReasons.js';
 import {
   buildDailyActivity,
@@ -67,23 +68,30 @@ function daysSince(date: Date | null): number | null {
   return Math.floor((Date.now() - date.getTime()) / 86_400_000);
 }
 
-function toQueueSummary(lead: QueueLead) {
+/** `Lead.owner` grava sempre `User.id` (ver comentário de resolveScope abaixo), nunca um nome —
+ *  `ownerNames` resolve esse id pro nome de exibição. CORREÇÃO: antes desta mudança o campo
+ *  `owner` da resposta devolvia o `User.id` cru (ex.: um cuid), que a UI (`QueueList.tsx`)
+ *  mostrava direto como "Responsável: <cuid>" — nunca foi percebido porque a fila de CLOSER/SDR
+ *  estava sempre vazia por causa do MESMO bug de `owner` vs nome corrigido em `resolveScope`
+ *  (só ADMIN/GESTOR, vendo a fila do time todo, chegavam a ver esse campo — e aparentemente nunca
+ *  reportaram). `null` quando o id não resolve pra nenhum usuário Atlas (nunca fabrica um nome). */
+function toQueueSummary(lead: QueueLead, ownerNames: Map<string, string>) {
   return {
     id: lead.id,
     title: leadTitle(lead),
     status: lead.status,
     temperature: lead.temperature,
     daysSinceTouch: daysSince(lead.lastInteraction),
-    // ADMIN/GESTOR veem a fila do time todo sem filtro de dono (resolveScope acima) — sem isso,
-    // não havia como saber de quem é cada lead da fila compartilhada (achado do Piloto 026). Para
-    // CLOSER/SDR o valor é sempre o próprio nome (fila já vem filtrada por owner), inofensivo.
-    owner: lead.owner ?? null,
+    owner: lead.owner ? (ownerNames.get(lead.owner) ?? null) : null,
+    // AGENTS.md: "Pontuação do lead com detalhamento por fator" — explica a posição na fila, não
+    // decide ela (ver mesaTratamento.priority.ts::computeQueuePriorityScore).
+    priorityScore: computeQueuePriorityScore(lead),
   };
 }
 
-function toQueueDetail(lead: QueueLead) {
+function toQueueDetail(lead: QueueLead, ownerNames: Map<string, string>) {
   return {
-    ...toQueueSummary(lead),
+    ...toQueueSummary(lead, ownerNames),
     segment: lead.company?.segment ?? null,
     contactName: lead.contact?.name ?? null,
     contactRole: lead.contact?.role ?? null,
@@ -100,29 +108,36 @@ function toQueueDetail(lead: QueueLead) {
 }
 
 /** "Cada usuário só vê o próprio dado do Bitrix", mesmo princípio de resolveScopedAssignedById em
- *  bitrix.routes.ts (não exportada de lá — reimplementada aqui com as mesmas peças exportadas). */
+ *  bitrix.routes.ts (não exportada de lá — reimplementada aqui com as mesmas peças exportadas).
+ *
+ *  CORREÇÃO: esta função filtrava `Lead.owner` (que sempre grava `User.id` — ver o comentário de
+ *  `resolveAtlasUserIdByEmail` em `integrations/bitrix/service/userMapping.ts` e o uso real em
+ *  `LeadUseCases.ts`) contra `user.name` (um NOME de exibição), então `where.owner = scope.ownerName`
+ *  nunca batia com nenhum Lead real — todo CLOSER/SDR via a fila sempre vazia. O mesmo bug existia
+ *  na checagem de posse de `/lead/:id/register` abaixo. Corrigido usando `userId` (já disponível no
+ *  token, sem precisar buscar o nome) nos dois lugares — `assignedById`/`resolveOwnBitrixUserId`
+ *  continuam corretos (é assim que a importação do Bitrix já resolve o vínculo). */
 async function resolveScope(
   req: Request,
   organizationId: string,
   connectionId: string,
 ): Promise<{
-  ownerName: string | undefined;
+  ownerId: string | undefined;
   assignedById: string | undefined;
   restricted: boolean;
   matched: boolean;
 }> {
   const { role, id: userId, email } = (req as AuthRequest).user;
   if (hasRequiredRole(role, ['ADMIN', 'GESTOR'])) {
-    return { ownerName: undefined, assignedById: undefined, restricted: false, matched: true };
+    return { ownerId: undefined, assignedById: undefined, restricted: false, matched: true };
   }
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
   const bitrixUsers = await getBitrixUsers(organizationId, connectionId);
   const assignedById = resolveOwnBitrixUserId(bitrixUsers, email) ?? undefined;
   return {
-    ownerName: user?.name,
+    ownerId: userId,
     assignedById,
     restricted: true,
-    matched: !!user?.name && !!assignedById,
+    matched: !!assignedById,
   };
 }
 
@@ -171,19 +186,31 @@ router.get(
         bitrixLeadId: { not: null },
         status: { in: [...OPEN_LEAD_STATUSES] },
       };
-      if (scope.ownerName) where.owner = scope.ownerName;
+      if (scope.ownerId) where.owner = scope.ownerId;
 
       const [leads, leadStatuses] = await Promise.all([
         prisma.lead.findMany({ where, select: leadSelect }),
         getLeadStatuses(organizationId, connection.id),
       ]);
 
+      // `Lead.owner` não é uma relação Prisma (coluna `String?` solta — ver comentário de
+      // toQueueSummary) — resolve os nomes em lote, não um `findUnique` por lead.
+      const ownerIds = [...new Set(leads.map((l) => l.owner).filter((v): v is string => !!v))];
+      const owners =
+        ownerIds.length > 0
+          ? await prisma.user.findMany({
+              where: { id: { in: ownerIds } },
+              select: { id: true, name: true },
+            })
+          : [];
+      const ownerNames = new Map(owners.map((u) => [u.id, u.name]));
+
       const ranked = rankLeadsForQueue(leads);
       res.json({
         success: true,
         data: {
-          queue: ranked.map(toQueueSummary),
-          current: ranked[0] ? toQueueDetail(ranked[0]) : null,
+          queue: ranked.map((l) => toQueueSummary(l, ownerNames)),
+          current: ranked[0] ? toQueueDetail(ranked[0], ownerNames) : null,
           connectionId: connection.id,
           leadStatuses,
         },
@@ -236,14 +263,13 @@ router.post(
 
       // CLOSER/SDR só registra em leads que são dele — mesmo princípio de requireLeadOwnership.ts
       // (lead.routes.ts), reimplementado aqui pois aquele middleware é específico da rota /api/leads.
+      // `Lead.owner` sempre grava `User.id` (ver comentário de resolveScope acima) — comparar
+      // contra `userId` direto, não contra um nome buscado à parte (bug corrigido nesta mudança:
+      // a comparação anterior contra `user.name` nunca era verdadeira, então todo CLOSER/SDR
+      // recebia 403 mesmo em leads legitimamente seus).
       const { role, id: userId } = (req as AuthRequest).user;
-      if (!hasRequiredRole(role, ['ADMIN', 'GESTOR'])) {
-        const user = await prisma.user.findUnique({
-          where: { id: userId },
-          select: { name: true },
-        });
-        if (!user?.name || lead.owner !== user.name)
-          throw new AppError('Este Lead não é seu.', 403);
+      if (!hasRequiredRole(role, ['ADMIN', 'GESTOR']) && lead.owner !== userId) {
+        throw new AppError('Este Lead não é seu.', 403);
       }
 
       const connection = await prisma.bitrixConnection.findFirst({
@@ -408,6 +434,143 @@ router.get(
           kpis: computeDashboardKpis(treatments, pomodoroSessions),
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// --- Painel de gestão (ADMIN/GESTOR) ---------------------------------------------------------
+// AGENTS.md: "Painel de gestão com ações (reatribuir responsável, comentar, marcar como
+// decidido)". Reusa inteiramente a integração Bitrix já existente (`bitrix.service.ts`) — nenhuma
+// chamada nova ao Bitrix é inventada aqui, só combinações novas de funções já existentes.
+const managementRoles = requireRole(['ADMIN', 'GESTOR']);
+
+router.post(
+  '/lead/:id/reassign',
+  managementRoles,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const id = routeParam(req.params.id, 'id');
+      const body = req.body as { bitrixUserId?: string };
+      if (!body.bitrixUserId?.trim()) throw new AppError('Selecione o novo responsável.', 400);
+
+      const lead = await prisma.lead.findFirst({
+        where: { id, organizationId },
+        select: { id: true, bitrixLeadId: true },
+      });
+      if (!lead) throw new AppError('Lead não encontrado.', 404);
+      if (!lead.bitrixLeadId)
+        throw new AppError('Este Lead ainda não está vinculado ao Bitrix24.', 400);
+
+      const connection = await prisma.bitrixConnection.findFirst({
+        where: { organizationId },
+        orderBy: { createdAt: 'asc' },
+      });
+      if (!connection)
+        throw new AppError('Bitrix24 não está conectado para esta organização.', 400);
+
+      const bitrixUsers = await getBitrixUsers(organizationId, connection.id);
+      const chosen = bitrixUsers.find((u) => u.id === body.bitrixUserId);
+      if (!chosen) throw new AppError('Usuário do Bitrix24 não encontrado.', 400);
+
+      // Bitrix primeiro (fonte da verdade do funil de SDR, mesmo princípio do /register acima) —
+      // só grava local depois de confirmar que a escrita lá deu certo.
+      await exportLeadToBitrixNow(organizationId, id, connection.id, {
+        assignedById: body.bitrixUserId,
+      });
+
+      // `Lead.owner` precisa do User.id do Atlas (não do id/nome do Bitrix) — mesma convenção da
+      // importação (ver comentário de resolveScope acima). Fica `null` quando o novo responsável
+      // do Bitrix não tem usuário correspondente no Atlas (ex.: só existe no Bitrix) — a fila
+      // simplesmente não filtra por ele até esse vínculo existir, nunca fabrica um dono.
+      const newOwnerId = chosen.email
+        ? await resolveAtlasUserIdByEmail(organizationId, chosen.email)
+        : null;
+      await prisma.lead.update({ where: { id }, data: { owner: newOwnerId } });
+
+      await postCommentToBitrix(
+        organizationId,
+        id,
+        `Mesa de Tratamento SDR (gestão) • ${new Date().toLocaleString('pt-BR')}\nResponsável reatribuído para ${chosen.name}.`,
+      );
+
+      res.json({
+        success: true,
+        data: { reassigned: true, ownerId: newOwnerId, ownerName: chosen.name },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/lead/:id/comment',
+  managementRoles,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const id = routeParam(req.params.id, 'id');
+      const body = req.body as { comment?: string };
+      if (!body.comment?.trim()) throw new AppError('Escreva um comentário.', 400);
+
+      const lead = await prisma.lead.findFirst({
+        where: { id, organizationId },
+        select: { id: true, bitrixLeadId: true },
+      });
+      if (!lead) throw new AppError('Lead não encontrado.', 404);
+      if (!lead.bitrixLeadId)
+        throw new AppError('Este Lead ainda não está vinculado ao Bitrix24.', 400);
+
+      await postCommentToBitrix(
+        organizationId,
+        id,
+        `Mesa de Tratamento SDR (gestão) • ${new Date().toLocaleString('pt-BR')}\n${body.comment.trim()}`,
+      );
+
+      res.json({ success: true, data: { commented: true } });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/lead/:id/decide',
+  managementRoles,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { organizationId, id: userId } = (req as AuthRequest).user;
+      const id = routeParam(req.params.id, 'id');
+      const body = req.body as { note?: string };
+
+      const lead = await prisma.lead.findFirst({
+        where: { id, organizationId },
+        select: { id: true, bitrixLeadId: true },
+      });
+      if (!lead) throw new AppError('Lead não encontrado.', 404);
+
+      // Comentário no Bitrix é best-effort (só quando o lead já está vinculado) — "marcar como
+      // decidido" ainda registra o histórico local mesmo sem vínculo Bitrix, diferente de
+      // /register e /comment (que exigem o vínculo porque a ação PRINCIPAL deles é a escrita lá).
+      if (lead.bitrixLeadId) {
+        const note = body.note?.trim();
+        await postCommentToBitrix(
+          organizationId,
+          id,
+          `Mesa de Tratamento SDR (gestão) • ${new Date().toLocaleString('pt-BR')}\nRevisado e decidido pela gestão.${note ? `\n${note}` : ''}`,
+        );
+      }
+
+      // Mesmo histórico usado por /register — entra na mesma agregação do dashboard
+      // (mesaTratamento.dashboard.ts) sem precisar de um outcome novo lá.
+      await prisma.mesaTratamentoTreatment.create({
+        data: { organizationId, userId, leadId: id, outcome: 'decidido_pela_gestao' },
+      });
+
+      res.json({ success: true, data: { decided: true } });
     } catch (error) {
       next(error);
     }

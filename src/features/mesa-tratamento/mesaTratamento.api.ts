@@ -10,6 +10,17 @@ export type LeadOutcome =
   | 'dados_invalidos'
   | 'revisao';
 
+export interface QueuePriorityScoreBreakdownItem {
+  label: string;
+  points: number;
+  detail: string;
+}
+
+export interface QueuePriorityScore {
+  score: number;
+  breakdown: QueuePriorityScoreBreakdownItem[];
+}
+
 export interface QueueLeadSummary {
   id: string;
   title: string;
@@ -17,6 +28,7 @@ export interface QueueLeadSummary {
   temperature: string | null;
   daysSinceTouch: number | null;
   owner: string | null;
+  priorityScore: QueuePriorityScore;
 }
 
 /** Subconjunto de `LeadQualification` (`src/types/index.ts`) mais relevante pra decidir o que
@@ -120,3 +132,28 @@ export const OUTCOME_LABELS: Record<LeadOutcome, string> = {
 export function isDisqualifyOutcome(outcome: LeadOutcome | ''): boolean {
   return outcome === 'sem_fit' || outcome === 'dados_invalidos';
 }
+
+/** Desfechos gerados só pelo painel de gestão (`/lead/:id/decide`), nunca pelo formulário de
+ *  registro do SDR — mantidos separados de `OUTCOME_LABELS`/`LeadOutcome` de propósito, pra não
+ *  aparecerem como opção selecionável no dropdown "Resultado" de `CurrentLeadCard.tsx` (que itera
+ *  `OUTCOME_LABELS`). Usado só para rotular o gráfico/lista de desfechos do dashboard. */
+export const MANAGEMENT_OUTCOME_LABELS: Record<string, string> = {
+  decidido_pela_gestao: 'Revisado e decidido pela gestão',
+};
+
+export interface ReassignLeadResponse {
+  reassigned: boolean;
+  ownerId: string | null;
+  ownerName: string;
+}
+
+export const mesaTratamentoManagementApi = {
+  reassign: (leadId: string, bitrixUserId: string) =>
+    api.post<ReassignLeadResponse>(`/api/mesa-tratamento/lead/${leadId}/reassign`, {
+      bitrixUserId,
+    }),
+  comment: (leadId: string, comment: string) =>
+    api.post<{ commented: boolean }>(`/api/mesa-tratamento/lead/${leadId}/comment`, { comment }),
+  decide: (leadId: string, note?: string) =>
+    api.post<{ decided: boolean }>(`/api/mesa-tratamento/lead/${leadId}/decide`, { note }),
+};
