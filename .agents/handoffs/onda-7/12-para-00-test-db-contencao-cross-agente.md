@@ -1,7 +1,7 @@
 - De: Agente 12 (Voz e Telefonia)
 - Para: Agente 00 (Coordenador) / Agente 08 (QA e Release)
 - Onda: 7
-- Status: resolvido (Onda 9, Agente 01A, commit `2616a4d1` — ver `.agents/runs/onda-9.md` e
+- Status: resolvido (Onda 9, Agente 01A, commit `b232e03b` — ver `.agents/runs/onda-9.md` e
   `src/lib/async-context.ts::TenantAwareAsyncLocalStorage`); diagnóstico original corrigido pelo
   Coordenador antes disso (ver "## Correção do Coordenador" abaixo)
 - Prioridade: crítico (não é só contenção entre agentes — reproduzido de forma determinística em
