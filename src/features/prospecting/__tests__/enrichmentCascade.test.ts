@@ -151,7 +151,11 @@ describe('runEnrichmentCascade', () => {
       const logCall = vi.mocked(prisma.enrichmentLog.create).mock.calls[0][0] as {
         data: Record<string, unknown>;
       };
-      expect(logCall.data).toMatchObject({ status: 'success', dataOrigin: 'confirmado' });
+      expect(logCall.data).toMatchObject({
+        status: 'success',
+        dataOrigin: 'confirmado',
+        appliedToCompany: true,
+      });
 
       const companyUpdateCalls = vi.mocked(prisma.company.update).mock.calls;
       const finalUpdate = companyUpdateCalls[companyUpdateCalls.length - 1][0] as {
@@ -260,7 +264,11 @@ describe('runEnrichmentCascade', () => {
       const logCall = vi.mocked(prisma.enrichmentLog.create).mock.calls[0][0] as {
         data: Record<string, unknown>;
       };
-      expect(logCall.data).toMatchObject({ status: 'failed', dataOrigin: null });
+      expect(logCall.data).toMatchObject({
+        status: 'failed',
+        dataOrigin: null,
+        appliedToCompany: false,
+      });
       const rawData = logCall.data.rawData as { errors: Record<string, string> };
       expect(rawData.errors.apollo).toBeDefined();
       expect(rawData.errors.googlePlaces).toBeDefined();
@@ -287,7 +295,11 @@ describe('runEnrichmentCascade', () => {
       const logCall = vi.mocked(prisma.enrichmentLog.create).mock.calls[0][0] as {
         data: Record<string, unknown>;
       };
-      expect(logCall.data).toMatchObject({ status: 'not_found', dataOrigin: null });
+      expect(logCall.data).toMatchObject({
+        status: 'not_found',
+        dataOrigin: null,
+        appliedToCompany: false,
+      });
 
       const companyUpdateCalls = vi.mocked(prisma.company.update).mock.calls;
       const finalUpdate = companyUpdateCalls[companyUpdateCalls.length - 1][0] as {
