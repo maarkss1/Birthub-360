@@ -1,0 +1,168 @@
+# Brain Truth Map — BIRTHUB-BRAIN-REORG / Onda C0
+
+- **Agente responsável:** 18 — Contratos, API e Documentação Viva.
+- **Data:** 2026-09-10.
+- **Programa:** `BIRTHUB-BRAIN-REORG`, Onda C0 ("Verdade e arquitetura").
+- **Método:** síntese de evidência já levantada por auditorias anteriores + verificação pontual
+  nesta rodada (`grep`/`glob` em `src/App.tsx`, `src/bootstrap/routes.ts`,
+  `src/components/layout/tabMeta.ts`, `src/components/layout/Sidebar.tsx`). Onde um documento
+  anterior já cobre o dado com evidência de código, ele é **citado**, não reescrito — mesma
+  convenção usada por `.agents/completion/02-mapa-plataforma.md`.
+- **Fontes primárias já existentes** (não duplicadas aqui em detalhe):
+  - `.agents/completion/02-mapa-plataforma.md` (2026-08-14) — estrutura, motores, filas, agentes.
+  - `docs/audits/INVENTARIO_FUNCIONAL_COMPLETO.md` (2026-09-09) — status ponta-a-ponta de 65
+    ferramentas, granularidade mais fina que este documento.
+  - `docs/audits/product-truth-wave-1.md` (2026-08-19) — status real/parcial/stub/demo/bloqueado
+    por rota de UI e por grupo de rota de API; **fonte mais atual** para status de rota (o próprio
+    `docs/architecture/FEATURE-CLASSIFICATION.md` se declara parcialmente desatualizado em favor
+    deste).
+  - `docs/architecture/FEATURE-CLASSIFICATION.md` (2026-08-02, parcialmente desatualizado) —
+    classificação Core transacional / UI-only-Mock / Suporte-Infra / Misto por pasta de
+    `src/features/`.
+- **Não é refactor.** Esta é uma saída de contrato e evidência, conforme a missão C0 do Agente 18.
+  Nenhum arquivo de `src/` foi alterado para produzir este documento.
+
+## 1. Como ler a classificação-alvo
+
+Cada capacidade abaixo recebe uma classificação-alvo dentre:
+
+`CORE` · `WORKSPACE_COMMERCIAL` · `WORKSPACE_EXECUTIVE` · `ENABLEMENT` · `CONNECTOR` · `PLATFORM` ·
+`LEGACY` · `ORPHAN` · `DUPLICATED` · `HIDDEN`
+
+Isso é o **destino arquitetural proposto** dentro do modelo-alvo (`AGENTS.md` do programa,
+"Core horizontal" + "Workspaces"), não uma reorganização já feita. Nenhuma pasta foi movida.
+
+## 2. Cadeia de rastreamento por capacidade
+
+Formato por linha: `ID temporário | nome | área | rota UI | endpoint | owner (dev-agente) | models
+principais | filas | IA? | provider | sync/async | risco | status (legenda de
+product-truth-wave-1) | destino arquitetural`.
+
+### 2.1 Núcleo comercial (hoje "CRM"; alvo: `WORKSPACE_COMMERCIAL`)
+
+| ID | Nome | Rota UI | Endpoint | Owner | Models | Filas | IA | Status | Destino |
+|---|---|---|---|---|---|---|---|---|---|---|
+| BT-001 | Pipeline Kanban | `/app/crm` | `/api/leads`, `/api/crm` | 04 | `Lead` | `leads`, `followUp`, `deduplication` | não | real | WORKSPACE_COMMERCIAL |
+| BT-002 | CRM 360 / Cockpit | `/app/crm360` | `/api/crm` | 04 | `Lead`, `Deal` | — | não | real | WORKSPACE_COMMERCIAL |
+| BT-003 | Empresas | `/app/companies` | `/api/companies`, `/api/companies/market-intelligence` | 04 | `Company` | `enrichment` | não | real | WORKSPACE_COMMERCIAL |
+| BT-004 | Contatos | `/app/contacts` | `/api/contacts` | 04 | `Contact` | — | não | real | WORKSPACE_COMMERCIAL |
+| BT-005 | Atividades/Agenda | `/app/activities` | `/api/activities` | 04 | `Activity` | — | não | real | WORKSPACE_COMMERCIAL |
+| BT-006 | Notas | embutido no lead | `/api/leads/:leadId/notes` | 04 | `Note` | — | não | real | WORKSPACE_COMMERCIAL |
+| BT-007 | Calendário | `/app/calendar` | `/api/google`, `/api/calendar/book*` | 04/06 | `Activity` (view) | — | não | real (view sobre `activities`) | WORKSPACE_COMMERCIAL |
+| BT-008 | Mesa de Tratamento SDR | `/app/mesa-tratamento` | `/api/mesa-tratamento` | 04 | `Lead` | — | não | real | WORKSPACE_COMMERCIAL |
+| BT-009 | Cadência multicanal | `/app/cadence` | `/api/cadence`, webhooks `/api/webhooks/email`, `/api/webhooks/signature` | 17 | `Cadence*` | — | não | parcial (persistência real; transporte e-mail/assinatura ainda stub) | WORKSPACE_COMMERCIAL |
+| BT-010 | Propostas | `/app/propostas` | `/api/public/proposals` | 04/17 | `Proposal` | — | parcial | real/bloqueado (view pública por token) | WORKSPACE_COMMERCIAL |
+
+### 2.2 Prospecção (hoje módulo próprio; alvo: `WORKSPACE_COMMERCIAL` consumindo `CONNECTOR`s)
+
+| ID | Nome | Rota UI | Endpoint | Owner | Provider | Status | Destino |
+|---|---|---|---|---|---|---|---|
+| BT-011 | Hub de Prospecção | `/app/prospect` | `/api/prospecting`, `/api/prospecting/tools` | 05 | Apollo, Hunter, Places, CNPJ, Nominatim, OCR, DuckDuckGo | parcial (depende de credencial por tenant) | WORKSPACE_COMMERCIAL (orquestração) + CONNECTOR (cada provider) |
+| BT-012 | Fit/Lookalike scoring | interno ao Hub | — | 05 | local | real | WORKSPACE_COMMERCIAL |
+| BT-013 | Market Intelligence / LDR | `/app/market-intelligence(+accounts/:id, +deck)` | `/api/market-intelligence` | 05 | datasets públicos/ETL | parcial (depende de atualização de pipeline) | WORKSPACE_COMMERCIAL |
+
+### 2.3 Inteligência — candidatos a domínio `CORE` hoje presos ao workspace comercial
+
+| ID | Nome | Rota UI | Endpoint | Owner | IA | Status | Destino |
+|---|---|---|---|---|---|---|---|
+| BT-014 | Hub de IA (10 abas) | `/app/intelligence` | `/api/intelligence`, `/api/agent`, `/api/prompts` | 07 | sim (Groq→OpenAI→Gemini→LiteLLM) | parcial (degrada por credencial) | **CORE** candidato (`Intelligence` + `Agents` + `Automation` horizontais) — hoje é uma tela única, não um domínio horizontal |
+| BT-015 | Enxame Autônomo (Supervisor/SDR/BDR/Closer/CRM/Ops/Learning) | aba dentro de BT-014 | `/api/agent`, `/api/agent-bus`, `/api/role-supervisor` | 07/13 | sim (LangGraph) | parcial | **CORE** candidato (`Agents`) — já é o domínio mais próximo do "Agents" horizontal do modelo-alvo, mas sem rota/UI própria fora do Hub de IA |
+| BT-016 | Base de Conhecimento (RAG) | `/app/knowledge` | `/api/knowledge` | 07 | sim (pgvector + e5 local) | parcial | **CORE** candidato (`Knowledge`) — reutilizado por `document-editor` (BT-023) e pelo chat; já é horizontal na prática, só não nomeado como tal |
+| BT-017 | Comercial Inteligente (BI executivo) | `/app/commercial_intelligence` | `/api/commercial-intelligence` | 04 | não | real (bloqueado por papel) | WORKSPACE_EXECUTIVE |
+| BT-018 | Analytics / Win-Loss | `/app/analytics`, `/app/winloss` | `/api/analytics` | 04 | não (Win-Loss worker tem IA — ver BT-019) | real | WORKSPACE_EXECUTIVE (visão) sobre dado de `CORE.Analytics` |
+| BT-019 | Win/Loss Analysis Worker | fila `winLoss` | — | 04/07 | sim | **HIDDEN** — implementado, sem exposição na UI (achado já registrado em `INVENTARIO_FUNCIONAL_COMPLETO.md` §8) | CORE (`Analytics`) quando exposto |
+| BT-020 | Copiloto Comercial IA | `/app/copiloto_ia` | `/api/copiloto-ia` | 07 | sim | real | WORKSPACE_COMMERCIAL (superfície) sobre CORE `Intelligence` |
+| BT-021 | AI Studio (12 geradores) | dentro de BT-014 | `/api/prompts` | 07 | sim | real | CORE candidato (`Intelligence`) |
+| BT-022 | Roleplay | `/app/roleplay` | interno | 07 | sim (parcial) | parcial/demo (per `product-truth-wave-1.md`) | ENABLEMENT |
+| BT-023 | Editor de Documentos | `/app/editor` | `/api/knowledge/:id` | 07 | não | real | ENABLEMENT (UI acoplada a `knowledge`, sem rota/serviço próprio) |
+| BT-024 | Playbook (Qualificação/Objeções) | `/app/qualification_matrix`, `/app/objections_matrix` | `/api/playbook/qualification-matrix`, `/api/playbook/objection-matrix` | 04 | não | demo (per `product-truth-wave-1.md`) — dado real de banco, mas rotulado como material de apoio | ENABLEMENT |
+| BT-025 | Chatbook | `/app/chatbook` | `/api/intelligence` (studio) | 07 | aparente/mock (`INVENTARIO...md` TL-027) | demo/mock | ENABLEMENT — candidato a virar consumidor real de `knowledge` (handoff sugerido, ver §5) |
+| BT-026 | Topic Training / Academy | `/app/topic_training` | — | 03/07 | não | demo | ENABLEMENT |
+| BT-027 | Bitrix Guide ("Guia Prático") | `/app/bitrix` | conteúdo estático | 11 | não | demo | ENABLEMENT — **risco de "provider virando domínio de produto"**: existe uma aba de navegação de primeiro nível dedicada ao guia de um único CONNECTOR (Bitrix), o que a missão C0 do Agente 00 lista como regra a evitar. Ver handoff §5. |
+| BT-028 | Reports (dinâmicos) | `/app/reports` | — | 04 | não | parcial | WORKSPACE_EXECUTIVE |
+
+### 2.4 Conectores (`CONNECTOR`)
+
+| ID | Nome | Rota UI | Endpoint | Owner | Status | Destino |
+|---|---|---|---|---|---|---|
+| BT-029 | Bitrix24 (in/out) | `/app/integrations`, `/app/bitrix` | `/api/bitrix`, `/api/integrations/bitrix`, webhook cru pré-`express.json` | 06/06A | parcial | CONNECTOR |
+| BT-030 | WhatsApp (Baileys) | `/app/integrations` | `/api/whatsapp` | 06 | parcial (sessão em memória, não multi-tenant — débito já registrado) | CONNECTOR |
+| BT-031 | Birthub Voices / Bland (voz) | `/app/integrations` | `/api/integrations/birth-voice`, webhook `/api/webhooks/voice-result` | **sem owner formal** (achado pré-existente "Agente 12 fantasma", `02-mapa-plataforma.md` §5.2) | parcial | CONNECTOR — **ORPHAN de governança**: capacidade real, sem dono de desenvolvimento único (dividida entre 06 e 07 na prática) |
+| BT-032 | 3CX (telefonia) | `/app/integrations` | `/api/integrations/3cx` | 06/mesmo achado do BT-031 | parcial | CONNECTOR |
+| BT-033 | Google Workspace | `/app/calendar`, `/app/integrations` | `/api/google` | 06 | parcial (OAuth2 real, per correção citada em `FEATURE-CLASSIFICATION.md` linha 6-12 — o achado antigo BACK-005 de mock **já foi corrigido**) | CONNECTOR |
+
+### 2.5 Plataforma / Governança (candidatos ao `CORE` horizontal "Governance"/"Capabilities")
+
+| ID | Nome | Rota UI | Endpoint | Owner | Status | Destino |
+|---|---|---|---|---|---|---|
+| BT-034 | Cargos e Capacidades | `/app/job-roles` | `/api/job-roles`, `/api/capabilities` | 01 | real | **CORE** (`Capabilities` — nome já coincide com o domínio-alvo) |
+| BT-035 | Controle de Acesso por Módulo | `/app/module-access` | `/api/module-access` | 01 | real | CORE (`Governance`) |
+| BT-036 | Solicitações de Acesso | `/app/access-requests` | `/api/access-requests` | 01 | real | CORE (`Governance`) |
+| BT-037 | LGPD | sem UI própria | `/api/lgpd` | 01 | real | CORE (`Governance`) |
+| BT-038 | Notificações + SSE | `/app/notifications` | `/api/notifications`, `/api/notifications/stream` | 01/02 | real | CORE (`Signals`) |
+| BT-039 | Automações | `/app/automations` | `/api/automations` | 07 | real, porém **estreito**: 3 gatilhos × 3 ações (enum Prisma) — o resto da inteligência (WhatsApp, voz, enriquecimento, enxame) roda por caminhos próprios, fora deste motor | CORE (`Automation`) candidato, mas hoje não é a via real de composição |
+| BT-040 | Consumo de IA (billing/usage) | `/app/usage` | `/api/usage` | 01/07 | real (custo estimado; não é cobrança) | CORE (`Governance`/`Observability`) |
+| BT-041 | Equipe | `/app/team` | `/api/team` | 01 | real (bloqueado não-ADMIN) | CORE (`Identity/Tenant`) |
+| BT-042 | Configurações | `/app/settings` | — | 02 | real | CORE (`Identity/Tenant`) |
+| BT-043 | Autenticação | `/welcome`, `/login`, `/reset-password`, `/select-brand` | `/api/auth`, `/api/auth-extra` | 01 | real | CORE (`Identity/Tenant`) — `/select-brand` sobrevive só como redirecionamento (ver `LEGACY_BRAND_CONTENT_MAP.md`) |
+| BT-044 | Meu Workspace | `/app/workspace` | `/api/workspace` | 02 | **novo, encontrado nesta varredura** (`src/features/workspace/`) — não catalogado em nenhuma auditoria anterior | **PLATFORM** — é a semente literal do conceito "Workspace" que este programa propõe generalizar. Ver `WORKSPACE_MODEL.md` §3 |
+| BT-045 | Design Lab (`components-v2`, `command-language`) | `/design-lab/*` | — | 03 (Design/A11y) | **novo, encontrado nesta varredura** (`src/features/design-lab/`) — ferramenta interna, não é rota de produto para tenant | PLATFORM (ferramenta de desenvolvimento, não é capability de cliente) |
+| BT-046 | Feature Flags | sem rota de UI dedicada encontrada | `/api/feature-flags` | 01 | real | CORE (`Governance`) |
+
+### 2.6 `LEGACY` / `ORPHAN` / `DUPLICATED` já identificados
+
+| ID | Nome | Evidência | Classificação | Ação sugerida |
+|---|---|---|---|---|
+| BT-047 | `src/components/ui/AtlasLogo.tsx` | Confirmado sem nenhum import em `src/` (sessão anterior de catálogo visual, grep exaustivo); exporta uma função `BirthHubLogo` divergente e desatualizada da oficial em `src/components/brand/BirthHubLogo.tsx` | ORPHAN | Handoff para 11 (já sinalizado informalmente; formalizar em `.agents/handoffs/`, ver §5) |
+| BT-048 | `BIRTH-VOICES-HUB/__tests__/**` (16 arquivos) | Pasta untracked encontrada nesta sessão: só contém `__tests__/`, nenhum código-fonte correspondente | ORPHAN | Handoff para 12/06 — decidir se a implementação vem em seguida ou se os testes devem ser removidos |
+| BT-049 | `src/features/reports/components/Reports.tsx`, `Roleplay.tsx`, `Settings.tsx`, `Team.tsx` (placeholders antigos de 25 linhas) | Sem rota apontando para eles — as rotas reais (`ReportsHub.tsx`, `RoleplayHub.tsx` etc.) já existem em paralelo (`FEATURE-CLASSIFICATION.md` nota de rodapé) | DUPLICATED (código morto ao lado do substituto real) | Handoff para 08 (limpeza de código morto, não bloqueador) |
+| BT-050 | 4 interfaces de IA (Copiloto IA, Central AI Suite, AI Studio, "Assistente de IA") | Achado #10 de `INVENTARIO_FUNCIONAL_COMPLETO.md` §1 | DUPLICATED | Já é o gatilho para a missão C1 (Agente 07 — Intelligence Layer); não resolver na C0 |
+| BT-051 | `src/features/design-lab/neon-tokyo-buttons/` | Protótipo isolado, README próprio já declara "superado em 10/09/2026" — mudanças incorporadas em `Button.tsx`/`globals.css` real | DUPLICATED intencional (vitrine de referência, não código morto silencioso) | Nenhuma ação — já autodocumentado |
+
+## 3. Contagem por classificação-alvo (nível de capacidade, não de arquivo)
+
+| Classificação | Quantidade (das 51 linhas acima) |
+|---|---:|
+| WORKSPACE_COMMERCIAL | 15 |
+| CORE (candidato) | 14 |
+| CONNECTOR | 5 |
+| ENABLEMENT | 6 |
+| WORKSPACE_EXECUTIVE | 4 |
+| PLATFORM | 3 |
+| ORPHAN | 3 |
+| DUPLICATED | 3 |
+| HIDDEN | 1 |
+
+Nenhuma capacidade real foi encontrada nesta rodada exigindo classificação `LEGACY` pura (feature
+inteira obsoleta ainda montada em rota) — o candidato mais próximo, `gamification`/`SpaceGame`
+(🔴 quebrada, `INVENTARIO_FUNCIONAL_COMPLETO.md` TL-035), continua montado e é tratado como decisão
+de produto pendente, não como achado novo desta onda.
+
+## 4. Leitura para o programa
+
+1. **O "core horizontal" proposto por `AGENTS.md`/manifest do programa já existe parcialmente na
+   prática**, só não está nomeado nem isolado: `Intelligence` (BT-014/016/021), `Agents` (BT-015),
+   `Capabilities` (BT-034), `Automation` (BT-039) e `Governance` (BT-035/036/037/046) têm código
+   real hoje, espalhado dentro de `intelligence`/`job-roles`/`automations`. A Onda C1 (Core do
+   cérebro) não parte do zero — parte de extração/nomeação, não de construção nova.
+2. **O conceito de "Workspace" já tem uma semente real não catalogada** (BT-044,
+   `src/features/workspace/`) — qualquer novo `WorkspaceDefinition` desenhado pelo Agente 02 em
+   `WORKSPACE_MODEL.md` precisa decidir explicitamente se estende essa pasta ou a substitui, nunca
+   ignorá-la.
+3. **Bitrix (BT-027/029) é o caso mais concreto do risco "provider virando domínio de produto"**
+   citado nas regras comuns do programa — tem aba de navegação de primeiro nível própria
+   (`bitrix: '🎓 Guia Prático Bitrix24'` em `tabMeta.ts`), o que nenhum outro conector recebe.
+4. **Voz/Telefonia (BT-031/032) segue sem dono de desenvolvimento formal** — achado já registrado
+   em `02-mapa-plataforma.md`, confirmado ainda válido nesta rodada.
+
+## 5. Handoffs abertos por este documento
+
+- `.agents/handoffs/onda-c0/18-para-11-atlaslogo-orfao.md` (normal) — formalizar remoção de
+  `src/components/ui/AtlasLogo.tsx` (BT-047).
+- `.agents/handoffs/onda-c0/18-para-00-agente-12-sem-prompt.md` (alto) — BT-031/032 seguem sem dono
+  de desenvolvimento formal; o Coordenador precisa decidir se cria `.agents/prompts/12-voz-telefonia.md`
+  antes da Onda C2 (que já lista "12 Voz/Telefonia" como participante).
+- `.agents/handoffs/onda-c0/18-para-00-birth-voices-hub-orfao.md` (normal) — BT-048, pasta de testes
+  sem implementação correspondente.
+
+Ver contratos de API associados em `docs/architecture/BRAIN_API_CONTRACT_MAP.md`.
