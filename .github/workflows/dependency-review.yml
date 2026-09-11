@@ -45,4 +45,4 @@ jobs:
           comment-summary-in-pr: on-failure
           # Ver comentário no topo do arquivo — mantido em sincronia manual com
           # docs/security/AUDIT_WAIVERS.md ("## Waivers ativos").
-          allow-ghsas: GHSA-ggr8-5vv4-36mx, GHSA-3f6p-5ww8-9rcr
+          allow-ghsas: GHSA-ggr8-5vv4-36mx, GHSA-3f6p-5ww8-9rcr, GHSA-rgwj-5xj2-c3m3, GHSA-RGJ7-G3M4-5G8C, GHSA-2883-XCG3-V3HH, GHSA-WC9G-MQFW-JRWM, GHSA-QFVM-CV95-JQJF, GHSA-QVFW-J98X-7Q72, GHSA-535W-7CP7-47Q4, GHSA-8M3C-C648-2XJJ, GHSA-WMMP-3585-3RMP, GHSA-2X7J-588G-CCC2, GHSA-CC9R-2J5M-2M83

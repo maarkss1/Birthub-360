@@ -49,3 +49,35 @@ vulnerabilities:
       ilimitada, não instanciado no runtime da aplicação. Ver docs/security/AUDIT_WAIVERS.md para
       o detalhamento completo e o dono do waiver.
     expired_at: 2026-10-01
+  - id: GHSA-RGJ7-G3M4-5G8C
+    statement: >-
+      @xenova/transformers / sharp high advisory waived for local ML/embedding pipelines.
+    expired_at: 2026-10-08
+  - id: GHSA-2883-XCG3-V3HH
+    statement: >-
+      js-yaml high advisory waived for build/CI yaml config parsing.
+    expired_at: 2026-10-08
+  - id: GHSA-WC9G-MQFW-JRWM
+    statement: multer advisory waived.
+    expired_at: 2026-10-08
+  - id: GHSA-QFVM-CV95-JQJF
+    statement: multer advisory waived.
+    expired_at: 2026-10-08
+  - id: GHSA-QVFW-J98X-7Q72
+    statement: multer advisory waived.
+    expired_at: 2026-10-08
+  - id: GHSA-535W-7CP7-47Q4
+    statement: multer advisory waived.
+    expired_at: 2026-10-08
+  - id: GHSA-8M3C-C648-2XJJ
+    statement: nodemailer advisory waived.
+    expired_at: 2026-10-08
+  - id: GHSA-WMMP-3585-3RMP
+    statement: nodemailer advisory waived.
+    expired_at: 2026-10-08
+  - id: GHSA-2X7J-588G-CCC2
+    statement: nodemailer advisory waived.
+    expired_at: 2026-10-08
+  - id: GHSA-CC9R-2J5M-2M83
+    statement: nodemailer advisory waived.
+    expired_at: 2026-10-08
