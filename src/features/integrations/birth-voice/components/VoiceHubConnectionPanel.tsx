@@ -1,7 +1,9 @@
+import { Button } from '../../../../components/ui/Button';
 import { Card } from '../../../../components/ui/Card';
+import { Input } from '../../../../components/ui/Input';
 import { useAuth } from '../../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../../lib/auth/authorization';
 import { useVoiceHubIntegration } from '../../../../hooks/useVoiceHubIntegration';
+import { hasRequiredRole } from '../../../../lib/auth/authorization';
 import { VoiceCallActivity } from './VoiceCallActivity';
 
 type CapabilityStatus = 'connected' | 'pending';
@@ -54,17 +56,20 @@ export function VoiceHubConnectionPanel() {
 
   return (
     <div className="space-y-4">
-      <Card className="glass-card p-8 border border-gray-100 shadow-sm rounded-2xl">
+      <Card className="glass-card p-8 border border-line shadow-sm rounded-2xl">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
+            {/* bg-violet-50/text-violet-600 (Tailwind cru) preservado de propósito, não é débito de
+                token: é a mesma convenção de "uma cor de acento crua por integração" já usada nos
+                cards vizinhos em Integrations.tsx (ex.: ícone sky-* do card 3CX) — trocar só este
+                por --iris deixaria o Birth Voices Hub inconsistente com os irmãos do mesmo módulo,
+                não mais consistente. Ver ACH-03-04. */}
             <div className="p-4 bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 rounded-xl border border-violet-100 dark:border-violet-500/20">
               <span className="text-2xl">🎙️</span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                SDR de Voz IA (Birth Voices Hub)
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <h3>SDR de Voz IA (Birth Voices Hub)</h3>
+              <p className="text-sm text-ink-2 mt-1">
                 Conexão usada para disparar ligações de voz por IA a partir do card do lead; sem
                 conexão cadastrada aqui, o backend cai para as variáveis de ambiente do servidor.
               </p>
@@ -118,76 +123,77 @@ export function VoiceHubConnectionPanel() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
+                    <Button
                       type="button"
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleVoiceHubTest(conn.id)}
                       disabled={!canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
-                      className="px-3 py-2 text-xs font-bold bg-violet-50 dark:bg-violet-500/10 text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-500/20 rounded-lg transition-colors border border-violet-100 dark:border-violet-500/20 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       Testar conexão
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
+                      variant="destructive"
+                      size="sm"
                       onClick={() => handleVoiceHubDisconnect(conn.id)}
-                      disabled={voiceHubLoading || !canManage}
+                      loading={voiceHubLoading}
+                      disabled={!canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
-                      className="px-3 py-2 text-xs font-bold text-danger-active dark:text-danger hover:bg-danger/10 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       Desconectar
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="p-5 rounded-xl border border-dashed border-gray-300 dark:border-white/20 bg-gray-50/50 dark:bg-white/[0.03] space-y-4">
-            <p className="text-sm font-bold text-gray-700 dark:text-gray-300">
+          <div className="p-5 rounded-xl border border-dashed border-line bg-surface-2/50 space-y-4">
+            <p className="text-sm font-bold text-ink">
               {voiceHubConnections.length > 0
                 ? 'Conectar outro Birth Voices Hub'
                 : 'Conectar Birth Voices Hub'}
             </p>
             <div className="space-y-3">
-              <input
+              <Input
                 type="text"
                 value={voiceHubLabelInput}
                 onChange={(e) => setVoiceHubLabelInput(e.target.value)}
                 placeholder="Nome de exibição (ex.: Birth Voices Hub — Produção)"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
               />
-              <input
+              <Input
                 type="url"
                 value={voiceHubBaseUrlInput}
                 onChange={(e) => setVoiceHubBaseUrlInput(e.target.value)}
                 placeholder="https://voices.suaempresa.com (ou https://api.bland.ai)"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
               />
-              <input
+              <Input
                 type="password"
                 value={voiceHubApiKeyInput}
                 onChange={(e) => setVoiceHubApiKeyInput(e.target.value)}
                 placeholder="API key (opcional aqui — cai para a env var do servidor se vazio)"
                 autoComplete="off"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
               />
-              <input
+              <Input
                 type="text"
                 value={voiceHubAgentIdInput}
                 onChange={(e) => setVoiceHubAgentIdInput(e.target.value)}
                 placeholder="Id do agente de voz (não usado quando o Hub é a Bland AI)"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
               />
             </div>
-            <button
+            <Button
               type="button"
+              variant="default"
+              className="w-full"
               onClick={handleVoiceHubConnect}
-              disabled={voiceHubLoading || !canManage}
+              loading={voiceHubLoading}
+              disabled={!canManage}
               title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
-              className="w-full py-2.5 bg-violet-600 hover:bg-violet-700 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors"
             >
               {voiceHubLoading ? 'Conectando...' : 'Conectar Birth Voices Hub'}
-            </button>
+            </Button>
           </div>
         </div>
       </Card>
