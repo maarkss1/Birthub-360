@@ -40,10 +40,22 @@
    registrada: o dump ainda existe, com PII real, recuperável por quem tiver acesso ao histórico.
    Remoção definitiva exige `git filter-repo`/BFG — reescreve hashes, decisão humana (ver
    AGENTS.md → Segurança e higiene).
-   **Decidido na Fase Final 0 (2026-08-16), reafirmado na Sprint 01/Onda 13 (2026-08-18):** dono
-   do repositório escolheu o Caminho A (manter histórico, mitigar daqui pra frente) — sem
-   force-push. Risco residual aceito e registrado, ver runbook
-   `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`.
+   **Decidido na Fase Final 0 (2026-08-16), reafirmado na Sprint 01/Onda 13 (2026-08-18) — decisão
+   revista em 2026-09-05:** o dono do repositório reabriu a decisão e escolheu o **Caminho B**
+   (`git filter-repo` + `git push --force` real em `refs/heads/main`), executado em 2026-09-05, com
+   escopo ampliado para incluir também a chave Gemini exposta em `test-gemini.ts`/
+   `test-gemini-quota.ts`. `main` está limpo — nenhum blob de `.dump`/`test-gemini*` alcançável a
+   partir dele (verificado contra o remote real). Ver runbook
+   `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`, seção "Decisão revista — Caminho B
+   executado (2026-09-05)", para o procedimento completo, quem executou o quê e a nota de escopo
+   sobre as 81 branches remotas não force-pushadas.
+   **Pendência residual da execução (ACH-15-01, P0, ainda ABERTA — não é reabertura da decisão):**
+   a tag `v0.0.1` (commit `8fd8fa22`) não entrou no force-push e continua alcançando os commits com
+   o dump de PII e a chave Gemini antiga — `git fetch --tags && git checkout v0.0.1` recupera tudo,
+   o que invalida o objetivo do Caminho B enquanto a tag existir assim. Falta decisão do dono do
+   repositório: apagar a tag do remote ou recriá-la apontando para o commit equivalente já
+   reescrito em `main`. Até lá, o bloqueador #14 do `AGENTS.md` segue ABERTO na prática, mesmo com
+   `main` limpo.
 
 ## P0 — Plataforma quebrada no main (remediados)
 
