@@ -177,12 +177,17 @@ export async function listBitrixDeals(
   }
 
   const filter: Record<string, unknown> = {};
+  const safeCustomFieldCode =
+    typeof filters.customFieldCode === 'string' &&
+    /^UF_CRM_[A-Z0-9_]+$/i.test(filters.customFieldCode)
+      ? filters.customFieldCode.toUpperCase()
+      : null;
   if (categoryId) filter.CATEGORY_ID = categoryId;
   if (filters.stageId) filter.STAGE_ID = filters.stageId;
   if (filters.assignedById) filter.ASSIGNED_BY_ID = filters.assignedById;
   if (filters.search?.trim()) filter['%TITLE'] = filters.search.trim();
-  if (filters.customFieldCode && filters.customFieldValue?.trim())
-    filter[filters.customFieldCode] = filters.customFieldValue.trim();
+  if (safeCustomFieldCode && filters.customFieldValue?.trim())
+    filter[safeCustomFieldCode] = filters.customFieldValue.trim();
   if (filters.month && filters.year) {
     const start_ = new Date(Date.UTC(filters.year, filters.month - 1, 1));
     const end_ = new Date(Date.UTC(filters.year, filters.month, 1));
