@@ -1,9 +1,10 @@
 import { useCallback, useState, useEffect } from 'react';
-import { X, Link2, Plus, Copy, Trash2, Loader2, Check, Globe } from 'lucide-react';
+import { Link2, Plus, Copy, Trash2, Loader2, Check, Globe } from 'lucide-react';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Button } from '../../../components/ui/Button';
+import { Dialog } from '../../../components/ui/Dialog';
 
 interface BookingLink {
   id: string;
@@ -152,35 +153,38 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
     setTimeout(() => setCopiedSlug(null), 2500);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-surface border border-line rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-        {/* Header */}
-        <div className="p-6 border-b border-line flex items-center justify-between bg-surface-2/60">
+    <>
+      <Dialog
+        isOpen={isOpen}
+        onClose={onClose}
+        maxWidth="max-w-2xl"
+        title={
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-2xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
               <Link2 className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-extrabold text-lg text-ink">Links Públicos de Agendamento</h3>
-              <p className="text-xs text-ink-2">
+              <span className="block font-extrabold text-lg text-ink">
+                Links Públicos de Agendamento
+              </span>
+              <span className="block text-xs font-normal text-ink-2">
                 Páginas de agendamento estilo Calendly integradas diretamente à sua agenda e CRM
-              </p>
+              </span>
             </div>
           </div>
+        }
+        footer={
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fechar"
-            className="p-2 rounded-xl text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors"
+            className="px-5 py-2 bg-surface border border-line rounded-xl text-xs font-bold text-ink hover:bg-surface-2 transition-colors"
           >
-            <X className="w-5 h-5" />
+            Fechar
           </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+        }
+      >
+        <div className="space-y-6 custom-scrollbar">
           {/* Formulário de Novo Link */}
           <form
             onSubmit={handleCreate}
@@ -370,19 +374,8 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
             )}
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-line bg-surface-2/60 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2 bg-surface border border-line rounded-xl text-xs font-bold text-ink hover:bg-surface-2 transition-colors"
-          >
-            Fechar
-          </button>
-        </div>
-      </div>
+      </Dialog>
       {dialog}
-    </div>
+    </>
   );
 }
