@@ -863,6 +863,15 @@
   },
   {
     "type": "dependency",
+    "from": "src/features/mesa-tratamento/components/ManagementPanel.tsx",
+    "rule": {
+      "name": "no-cross-feature-imports",
+      "severity": "error"
+    },
+    "to": "src/features/integrations/bitrix/bitrix.api.ts"
+  },
+  {
+    "type": "dependency",
     "from": "src/features/prospecting/components/prospecting-hub/CandidateCard.tsx",
     "rule": {
       "name": "no-cross-feature-imports",

@@ -48,7 +48,7 @@ tabela.
 | `contacts` | 2 | Agente 04 — CRM e BI | `prospecting` (2) |
 | `activities` | 1 | Agente 04 — CRM e BI | `automations` (1) |
 | `document-editor` | 1 | **Sem `AGENTS.md` de governança na pasta** — dono não declarado formalmente | `knowledge` (1) |
-| `mesa-tratamento` | 1 | **`AGENTS.md` presente mas é doc de produto/MVP, sem seção `## Dono`** — funcionalmente é mesa de trabalho SDR sobre leads do Bitrix, adjacente a Agente 04/06 | `integrations` (1) |
+| `mesa-tratamento` | 2 | **`AGENTS.md` presente mas é doc de produto/MVP, sem seção `## Dono`** — funcionalmente é mesa de trabalho SDR sobre leads do Bitrix, adjacente a Agente 04/06 | `integrations` (2) |
 | `roleplay` | 1 | Agente 07 — IA e Automações | `chatbook` (1) |
 
 **Leitura do padrão dominante:** `intelligence` sozinho responde por quase 1/3 da baseline (31/95).
@@ -130,6 +130,23 @@ resolver de verdade (ex.: extrair um contrato em `src/shared/` para o caso do `g
 manter como está.
 
 **Total atualizado:** 112 violações.
+
+## 2026-09-11 — 1 exceção nova registrada
+
+`mesa-tratamento/components/ManagementPanel.tsx` → `integrations/bitrix/bitrix.api.ts`: o painel de
+gestão (ADMIN/GESTOR) da Mesa de Tratamento — reatribuir responsável, comentar, marcar como decidido
+— precisa listar os usuários do Bitrix24 para o dropdown de reatribuição. Em vez de duplicar uma
+chamada `GET /api/bitrix/users` própria, reusa `bitrixApi.listUsers` (novo método adicionado ao
+client já existente em `bitrix.api.ts`, mesmo endpoint que a tela de importação do Bitrix já
+consome). Caso 2 (decisão de arquitetura deliberada): o mesmo raciocínio já usado para o backend
+(`mesaTratamento.routes.ts` → `bitrix.service.ts`, já na baseline) — reusar o client de Bitrix já
+existente em vez de duplicar a chamada HTTP. Dono: **sem seção `## Dono` formal em
+`mesa-tratamento/AGENTS.md`**, adjacente a Agente 04/06 (`from`); Agente 06 — Integrações e Bitrix
+(`to`, dono de `integrations`).
+
+**Total atualizado:** 114 violações no baseline (`no-cross-feature-imports` + `no-circular`
+combinados — confirmado por `npm run lint:architecture` após este registro: "114 known violations
+ignored").
 
 ## Como adicionar uma exceção nova (crescer a baseline deliberadamente)
 
