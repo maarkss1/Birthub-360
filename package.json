@@ -24,8 +24,8 @@
   "scripts": {
     "postinstall": "prisma generate",
     "ship": "tsc --noEmit && npm run build && git add . && git commit -m \"update: melhorias e ajustes\" && git push origin main",
-    "dev": "tsx watch server.ts",
-    "dev:worker": "tsx watch worker.ts",
+    "dev": "tsx watch --exclude \".claude/worktrees/**\" server.ts",
+    "dev:worker": "tsx watch --exclude \".claude/worktrees/**\" worker.ts",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "build:worker": "esbuild worker.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/worker.cjs",
     "start": "node dist/server.cjs",

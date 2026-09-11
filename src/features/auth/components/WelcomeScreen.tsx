@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/media-has-caption -- trilha instrumental sem fala */
 import { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, MessageCircle, Phone, Volume2, VolumeX } from 'lucide-react';
 import { clientLogger } from '../../../lib/clientLogger';
 import { BRAND } from '../../../config/brand';
 import { BirthHubLogo, BirthHubWordmark } from '../../../components/brand/BirthHubLogo';
 import { staggerContainer, staggerItem } from '../../../lib/motion';
+import { useAuth } from '../../../contexts/AuthContext';
 
 // Marcas de redes sociais não existem no lucide-react (biblioteca de ícones genéricos do
 // projeto) — ícones de marca de terceiros vivem como SVG inline em vez de puxar uma segunda lib
@@ -94,9 +95,19 @@ const SOCIAL_GLYPHS = {
  * há informação real que sustente uma composição assimétrica, e o emblema
  * (que É a tese da marca: núcleo, anel e órbita) é o elemento dominante por
  * direito, não por decoração.
+ *
+ * Tratamento visual "cósmico" (obsidian + halo dourado/íris/azul, sempre escuro
+ * independente do tema do resto do app): pedido explícito do usuário
+ * (referência visual fornecida), segunda exceção justificada — mesmo critério
+ * do parágrafo acima (gate de estado único, decisão única), aplicado ao MODO em
+ * vez de à composição. `dark` fixo na raiz (não o toggle global) força os
+ * tokens de superfície escuros aqui sem afetar o resto do app; o halo usa só
+ * `--brand`/`--iris`/`--orbit-blue` (a órbita 360º do brand book), nunca cor
+ * solta fora de token.
  */
 export function WelcomeScreen() {
   const navigate = useNavigate();
+  const { currentUser, isPending } = useAuth();
   const [isMuted, setIsMuted] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -113,8 +124,22 @@ export function WelcomeScreen() {
 
   const toggleMute = () => setIsMuted((prev) => !prev);
 
+  // Quem já está autenticado e cai em "/" (ex.: bookmark, PWA instalado) pula direto pro Hub —
+  // mesmo guard que já existe em LoginScreen.tsx, replicado aqui porque "/" passou a renderizar
+  // este gate em vez do formulário diretamente.
+  if (isPending) {
+    return (
+      <div className="dark flex min-h-screen items-center justify-center bg-bg">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+      </div>
+    );
+  }
+  if (currentUser) {
+    return <Navigate to="/hub" replace />;
+  }
+
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-bg font-sans text-ink transition-colors">
+    <main className="dark relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-bg font-sans text-ink">
       {/* Trilha ambiente decorativa (piano/cordas instrumental, sem fala) — não transmite
           informação que precise de legenda (WCAG 1.2.2 é sobre conteúdo falado/significativo);
           sem `controls` nativo de propósito (o botão de mudo próprio da tela já dá controle ao
@@ -127,22 +152,30 @@ export function WelcomeScreen() {
         src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=ambient-piano-and-strings-10711.mp3"
       />
 
-      {/* Ambiente de fundo — os dois extremos da órbita do emblema (ouro e íris) como halo, que é
-          exatamente o uso que o brand book reserva ao gradiente 360º ("halos, bordas, indicadores
-          e hero sections"). Antes eram um glow por marca, um laranja e um azul. Tamanho reduzido
-          em telas estreitas: em ~390px de largura um blob de 420px tingia a tela toda e derrubava
-          o contraste do texto por baixo dele (achado real do axe-core em mobile). */}
+      {/* Névoa de fundo — órbita 360º (ouro → íris → azul) como halo difuso, uso reservado a
+          "halos, bordas, indicadores e hero sections" pelo brand book. Tamanho reduzido em telas
+          estreitas: em ~390px de largura um blob grande tingia a tela toda e derrubava o
+          contraste do texto por baixo dele (achado real do axe-core em mobile, herdado da versão
+          clara desta tela). */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--iris) 20%, transparent) 0%, color-mix(in srgb, var(--orbit-blue) 14%, transparent) 32%, transparent 68%), radial-gradient(circle at 85% 68%, color-mix(in srgb, var(--brand) 12%, transparent) 0%, transparent 50%)',
+        }}
+      />
       <motion.div
         aria-hidden="true"
         animate={{ rotate: [0, 90, 0] }}
         transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
-        className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-brand/8 blur-[90px] sm:-left-32 sm:-top-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
+        className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-brand/10 blur-[90px] sm:-left-32 sm:-top-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
       />
       <motion.div
         aria-hidden="true"
         animate={{ rotate: [0, -90, 0] }}
         transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-iris/10 blur-[90px] sm:-bottom-32 sm:-right-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
+        className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-iris/14 blur-[90px] sm:-bottom-32 sm:-right-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
       />
 
       <button
@@ -161,8 +194,38 @@ export function WelcomeScreen() {
         animate="show"
         className="relative z-10 flex w-full max-w-3xl flex-col items-center px-6 text-center"
       >
-        <motion.div variants={staggerItem} className="mb-8">
-          <BirthHubLogo variant="symbol" className="h-40 w-40 sm:h-44 sm:w-44" title={BRAND.name} />
+        <motion.div variants={staggerItem} className="relative mb-8 flex items-center justify-center">
+          {/* Anéis orbitais — mesma composição da órbita 360º do brand book (núcleo, anel,
+              órbita), só que aqui como halo giratório em vez de estático: o emblema real
+              (`BirthHubLogo`, gerado do SVG mestre — geometria nunca editada à mão) ganha peso
+              visual sem virar decoração vazia, já que É a tese da marca. */}
+          <motion.div
+            aria-hidden="true"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+            className="absolute -inset-6 rounded-full border sm:-inset-7"
+            style={{ borderColor: 'color-mix(in srgb, var(--orbit-blue) 40%, transparent)' }}
+          />
+          <motion.div
+            aria-hidden="true"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+            className="absolute -inset-3 rounded-full border border-dashed sm:-inset-3.5"
+            style={{ borderColor: 'color-mix(in srgb, var(--iris) 45%, transparent)' }}
+          />
+          <div
+            className="absolute -inset-10 rounded-full blur-3xl sm:-inset-12"
+            style={{
+              background:
+                'conic-gradient(from 45deg, var(--orbit-blue), var(--iris), var(--brand), var(--orbit-blue))',
+              opacity: 0.25,
+            }}
+          />
+          <BirthHubLogo
+            variant="symbol"
+            className="relative h-36 w-36 drop-shadow-[0_0_30px_color-mix(in_srgb,var(--brand)_55%,transparent)] sm:h-40 sm:w-40"
+            title={BRAND.name}
+          />
         </motion.div>
 
         <motion.h1 variants={staggerItem} className="mb-5">
@@ -183,7 +246,7 @@ export function WelcomeScreen() {
           {BRAND.pillars.map((pillar) => (
             <li
               key={pillar}
-              className="rounded-full border border-brand/60 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-ink dark:text-brand"
+              className="rounded-full border border-brand/30 bg-ink/5 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand backdrop-blur-md"
             >
               {pillar}
             </li>
@@ -197,7 +260,7 @@ export function WelcomeScreen() {
               if (audioRef.current) audioRef.current.play().catch(() => {});
               navigate('/login');
             }}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-brand px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand transition-[transform,background-color] hover:scale-[1.03] hover:bg-brand-active active:scale-95"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-brand-2 via-brand to-brand-2 px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand shadow-[0_0_30px_-6px_color-mix(in_srgb,var(--brand)_55%,transparent)] transition-[transform,box-shadow] hover:scale-[1.03] hover:shadow-[0_0_40px_-4px_color-mix(in_srgb,var(--brand)_70%,transparent)] active:scale-95"
           >
             Explorar Hub
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
