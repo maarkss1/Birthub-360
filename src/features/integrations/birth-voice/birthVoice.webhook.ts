@@ -1,4 +1,5 @@
 import express, { Router, type Request, type Response } from 'express';
+import { randomUUID } from 'node:crypto';
 import { env } from '../../../config/env.js';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
@@ -108,6 +109,30 @@ async function recordCallResult(
     });
 
     await prisma.lead.update({ where: { id: leadId }, data: { lastInteraction: new Date() } });
+
+    // Projeção estruturada do mesmo resultado, pra tela de atividade de voz (VoiceCallActivity
+    // .tsx) conseguir listar/filtrar chamadas recentes sem precisar reabrir cada lead — mesmo
+    // ponto de gravação usado pelo webhook legado da Bland (voiceResult.webhook.ts). O guard de
+    // `existing` acima já garante que este trecho não roda duas vezes pra um mesmo call_id.
+    await prisma.voiceCallLog.create({
+      data: {
+        organizationId,
+        leadId,
+        // `randomUUID()` (não um literal fixo tipo 'sem-id') quando o Hub não manda callSid — um
+        // literal fixo colidiria com o índice único (organizationId, providerCallId) na segunda
+        // chamada sem callSid da mesma organização, derrubando o webhook com erro de banco.
+        providerCallId: data.callSid || randomUUID(),
+        outcome,
+        durationSeconds:
+          typeof data.durationSeconds === 'number' ? Math.round(data.durationSeconds) : 0,
+        summary: data.outcome || data.status || null,
+        transcript:
+          data.transcript && data.transcript.length > 0
+            ? data.transcript.map((turn) => `${turn.role}: ${turn.content}`).join('\n')
+            : null,
+        recordingUrl: null,
+      },
+    });
 
     // Fallback automático para WhatsApp quando a ligação não resultou em conversa real — mesma
     // regra já aplicada no webhook legado da Bland (voiceResult.webhook.ts). Fica DEPOIS de toda

@@ -18,6 +18,10 @@ const timelineCreate = vi.fn().mockResolvedValue({});
 const leadUpdate = vi.fn().mockResolvedValue({});
 const recordOptOutMock = vi.fn().mockResolvedValue(true);
 const sendWhatsAppMessageMock = vi.fn().mockResolvedValue(undefined);
+// VoiceCallLog: projeção estruturada do mesmo resultado, gravada logo após o TimelineEvent (ver
+// comentário em birthVoice.webhook.ts) — precisa existir no mock pro handler não quebrar; nenhum
+// teste deste arquivo faz asserção sobre ela ainda.
+const voiceCallLogCreate = vi.fn().mockResolvedValue({});
 const contextRuns: Array<Record<string, unknown>> = [];
 
 vi.mock('../../../../../src/lib/prisma.js', () => ({
@@ -32,6 +36,9 @@ vi.mock('../../../../../src/lib/prisma.js', () => ({
     },
     timelineEvent: {
       create: (...args: unknown[]) => timelineCreate(...args),
+    },
+    voiceCallLog: {
+      create: (...args: unknown[]) => voiceCallLogCreate(...args),
     },
   },
 }));
