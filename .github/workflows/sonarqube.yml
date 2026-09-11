@@ -1,5 +1,22 @@
 name: SonarQube Analysis
 
+# Redundância conhecida (auditoria de CI, onda 3): este job roda `test:unit --coverage` de novo,
+# mesmo ci.yml já gerando e publicando esse mesmo relatório como artifact `coverage-reports` (ver
+# ci.yml, step "Upload coverage reports", `if: always()`). Reaproveitar aquele artifact aqui
+# exigiria trocar o gatilho deste workflow para `workflow_run` (esperar ci.yml terminar, baixar o
+# artifact via `actions/download-artifact` com `run-id: ${{ github.event.workflow_run.id }}`) e
+# resolver o contexto de PR a partir de `github.event.workflow_run.pull_requests` em vez de
+# `pull_request` nativo — uma mudança de comportamento maior (Sonar passaria a rodar só depois do
+# ci.yml concluir, e a decoração de PR dependeria desse mapeamento) que não foi feita nesta rodada
+# por não ser possível validar contra o GitHub Actions real nesta sessão. Além disso, há um gap
+# pré-existente e separado: `sonar.javascript.lcov.reportPaths=coverage/lcov.info` (ver
+# sonar-project.properties) não bate com `vitest.unit.config.ts` (reportsDirectory
+# `./coverage/unit`, reporters sem `lcov`) — a integração de coverage do Sonar já não recebe dado
+# real hoje, independente deste workflow duplicar ou não o teste. Ambos os pontos ficam registrados
+# aqui para follow-up do agente 08 numa onda futura, em vez de uma tentativa não verificável agora.
+# O que É feito nesta rodada: este job já roda só a fatia mínima que o Sonar precisa (unit +
+# coverage), não a suíte completa de ci.yml (sem integration/e2e/build) — não há aqui outra
+# duplicação óbvia a remover sem a mudança de trigger acima.
 on:
   push:
     branches:
