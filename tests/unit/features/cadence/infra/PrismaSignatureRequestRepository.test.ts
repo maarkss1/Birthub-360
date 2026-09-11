@@ -14,6 +14,9 @@ vi.mock('../../../../../src/lib/prisma.js', () => ({
     },
 }));
 
+const REQUESTED_AT = new Date('2026-01-10T12:00:00.000Z');
+const RESPONDED_AT = new Date('2026-01-12T09:30:00.000Z');
+
 vi.mock('@prisma/client', () => ({
     SignatureRequestStatus: {
         Created: 'Created', Sent: 'Sent', Viewed: 'Viewed', Signed: 'Signed',
@@ -91,5 +94,76 @@ describe('prismaSignatureRequestRepository', () => {
 
         const call = signatureRequestUpdate.mock.calls[0][0];
         expect(call.data).not.toHaveProperty('evidenceRef');
+    });
+
+    // ACH-17-02 (onda-43, handoff 13→17): leitura por documento — sem ela o Agente de Contratos &
+    // Assinatura não tinha forma de verificar o status real de uma solicitação.
+    describe('findByDocumentId', () => {
+        it('documento sem solicitação de assinatura: devolve null (sem bypass de RLS)', async () => {
+            const result = await prismaSignatureRequestRepository.findByDocumentId('org-1', 'doc-1');
+
+            expect(result).toBeNull();
+            expect(signatureRequestFindFirst).toHaveBeenCalledWith({
+                where: { documentId: 'doc-1', organizationId: 'org-1' },
+                orderBy: { requestedAt: 'desc' },
+                select: {
+                    id: true,
+                    status: true,
+                    provider: true,
+                    signerEmail: true,
+                    requestedAt: true,
+                    respondedAt: true,
+                },
+            });
+            // Diferente de findByProviderRequestId, este método roda com RLS normal — nunca bypassRls.
+            expect(contextRuns).toEqual([]);
+        });
+
+        it('documento com solicitação em andamento: devolve status mapeado e respondedAt null', async () => {
+            signatureRequestFindFirst.mockResolvedValueOnce({
+                id: 'request-1',
+                status: 'Sent',
+                provider: 'govbr',
+                signerEmail: 'signer@exemplo.com',
+                requestedAt: REQUESTED_AT,
+                respondedAt: null,
+            });
+
+            const result = await prismaSignatureRequestRepository.findByDocumentId('org-1', 'doc-1');
+
+            expect(result).toEqual({
+                id: 'request-1',
+                status: 'sent',
+                provider: 'govbr',
+                signerEmail: 'signer@exemplo.com',
+                requestedAt: REQUESTED_AT,
+                respondedAt: null,
+            });
+        });
+
+        it.each(['Signed', 'Declined', 'Expired', 'Cancelled'] as const)(
+            'documento com solicitação em estado terminal (%s): devolve status mapeado com respondedAt',
+            async (dbStatus) => {
+                signatureRequestFindFirst.mockResolvedValueOnce({
+                    id: 'request-1',
+                    status: dbStatus,
+                    provider: 'govbr',
+                    signerEmail: 'signer@exemplo.com',
+                    requestedAt: REQUESTED_AT,
+                    respondedAt: RESPONDED_AT,
+                });
+
+                const result = await prismaSignatureRequestRepository.findByDocumentId('org-1', 'doc-1');
+
+                expect(result).toEqual({
+                    id: 'request-1',
+                    status: dbStatus.toLowerCase(),
+                    provider: 'govbr',
+                    signerEmail: 'signer@exemplo.com',
+                    requestedAt: REQUESTED_AT,
+                    respondedAt: RESPONDED_AT,
+                });
+            },
+        );
     });
 });

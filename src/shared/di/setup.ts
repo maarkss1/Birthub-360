@@ -19,6 +19,12 @@ import { currentPeriod } from '../../features/commercial-intelligence/applicatio
 // com um tipo estrutural local (mesmo padrão já usado por commercialIntelligence.routes.ts para
 // `CommercialIntelligenceController`), nunca via import direto do outro domínio.
 import { ChurnPredictionService } from '../../features/analytics/services/churn-prediction.service';
+// ACH-17-02 (onda-43, handoff 13→17): motor real por trás do Agente Contratos & Assinatura da
+// Célula Comercial (src/features/intelligence/agents/contractSignature.agent.ts) — mesmo motivo do
+// comentário acima: `intelligence/**` não pode importar `cadence/**` diretamente
+// (no-cross-feature-imports), então a rota resolve este repositório via container com um tipo
+// estrutural local (mesmo padrão de `ChurnPredictionService`/`CommercialIntelligenceAiService`).
+import { prismaSignatureRequestRepository } from '../../features/cadence/infra/PrismaSignatureRequestRepository.js';
 import { PrismaForecastSnapshotStore } from '../../features/commercial-intelligence/infra/PrismaForecastSnapshotStore';
 import { PrismaCrm360Repository } from '../../features/crm360/infra/PrismaCrm360Repository';
 import { PrismaQualificationMatrixRepository } from '../../features/playbook/qualification-matrix/infra/PrismaQualificationMatrixRepository';
@@ -176,6 +182,7 @@ export function setupDI() {
   container.register('CommercialIntelligenceAiService', commercialIntelligenceAiService);
   container.register('CommercialIntelligencePeriod', { currentPeriod });
   container.register('ChurnPredictionService', churnPredictionService);
+  container.register('SignatureRequestRepositoryPort', prismaSignatureRequestRepository);
   container.register('GoogleCalendarService', { createCalendarEvent });
   // Agent Runtime Genérico (PROMPT 4) — executores reais por trás de `toolExecutors.ts`
   // (job-roles). `MeetingSynthesisService`/`SDRQualificationAgent`/`CloserAgent` não têm

@@ -8,6 +8,7 @@ function buildRepository(overrides: Partial<SignatureRequestRepositoryPort> = {}
         markSent: vi.fn(async () => {}),
         findByProviderRequestId: vi.fn(async () => null),
         updateStatus: vi.fn(async () => {}),
+        findByDocumentId: vi.fn(async () => null),
         ...overrides,
     };
 }
