@@ -115,15 +115,26 @@ export default defineConfig({
           lines: 71,
         },
         // Domínio crítico 3: núcleo de CRM (lead/pipeline — o objeto central do produto, ver
-        // CLAUDE.md seção 1). Baseline local hoje é baixo (Statements 8.94% · Branches 6.44% ·
-        // Functions 4.79% · Lines 8.99%) — o threshold aqui existe sobretudo para travar a
-        // regressão a partir de agora enquanto cobertura real é adicionada em itens futuros, não
-        // porque 9% seja um número aceitável.
+        // CLAUDE.md seção 1). Recalibrado em 2026-09-11 depois de testes reais novos para
+        // LeadUseCases (createLead: posse CLOSER/SDR, bloqueio de lead duplicado por
+        // empresa+funil, Round-Robin tolerante a falha; updateLead/updateLeadStatus: gate de
+        // fechamento CYC-007, eventos DEAL_WON/DEAL_LOST, re-sync fire-and-forget com o Bitrix),
+        // LeadController (roteamento updateLeadStatus vs. updateLead, validação de funnel/query,
+        // validação de batchUpdate), LeadDeduplicationService, dealClosureGate,
+        // assignment.service e savedView.service — todos ficaram entre 80-100% de statements.
+        // Baseline local hoje: Statements 33.83% · Branches 32.19% · Functions 18.75% ·
+        // Lines 34.64% (medido isolando `src/features/crm/**`, excluindo `crm360/**`, a partir de
+        // coverage-final.json — o texto do reporter default trunca essa pasta na tabela). Os
+        // valores abaixo ficam ~1-2pp abaixo do baseline (piso, não meta, mesmo critério das
+        // calibrações acima) — o que ainda falta é sobretudo camada de I/O pesado (jobs/*.worker.ts
+        // com BullMQ, infra/PrismaLeadRepository.ts) e componentes React (KanbanCard,
+        // LeadDetailDrawer, BitrixImportModal, SavedViewsPanel), que ficaram de fora deste item por
+        // exigirem mocks de infraestrutura ou DOM desproporcionais ao ganho de cobertura pura.
         'src/features/crm/**': {
-          statements: 8,
-          branches: 6,
-          functions: 4,
-          lines: 8,
+          statements: 32,
+          branches: 30,
+          functions: 17,
+          lines: 33,
         },
       },
     },
