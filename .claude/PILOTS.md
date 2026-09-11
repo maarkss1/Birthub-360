@@ -3506,3 +3506,39 @@ entrada nova.
   simultâneas e `pretest:e2e`/`pretest:integration` rodam `prisma migrate deploy` contra esse
   Postgres compartilhado — risco real de conflito com outras sessões em paralelo, então não
   forçado; documentado aqui como limitação de ambiente, não como sucesso assumido.
+
+## ACH-03-05 — `GlowChart.tsx`: halo decorativo em loop contínuo sem gate de viewport
+
+Item de higiene de performance (auditoria externa, sev P3). O halo `aria-hidden` do card
+"Pulso comercial" (`src/features/analytics/components/GlowChart.tsx`) animava
+`repeat: Infinity` (7s, scale+opacity) incondicionalmente, mesmo com o card fora da viewport —
+violação direta da regra de performance da Constituição (seção 11: "nenhuma animação ou render
+contínuo fora da viewport/aba ativa"). O prompt do item pedia avaliar `useInView` ou documentar
+por que o custo (um único blur, sem 3D) seria aceitável; optei por implementar o gate, porque a
+constituição já trata isso como regra dura, não como preferência estética — não havia motivo pra
+abrir uma exceção.
+
+Fix: `useInView` (Framer Motion, já dependência do projeto — primeiro uso desse hook no repo)
+observando a própria `<section>` do card (`amount: 0.2, once: false`, ou seja, volta a pausar se
+o usuário rolar o card pra fora de novo). Fora da viewport, o halo cai pra um estado estático
+(`scale: 1, opacity: 0.34`, transição de 0.3s) em vez de continuar consumindo frames. `prefers-
+reduced-motion` já era coberto globalmente por `MotionConfig reducedMotion="user"` em `App.tsx` —
+não precisou de tratamento adicional aqui. `data-testid="dashboard-analytics-chart"` preservado
+(já mascarado em `tests/e2e/visual.spec.ts`, então a regressão visual não é afetada).
+
+**Efeito colateral real pego pela própria suíte, não hipotético**: jsdom não implementa
+`IntersectionObserver`, então `useInView` derrubava (`ReferenceError`) qualquer teste que
+renderizasse `GlowChart` de passagem — 10 testes de `ReportsHub.test.tsx` (que só monta o
+dashboard, não testa o halo) quebraram na primeira rodada de `test:unit`. Fix: stub mínimo de
+`IntersectionObserver` em `tests/mocks/setup.ts` (nunca dispara callback — equivalente a "nunca
+visível", inofensivo em jsdom, que não tem layout real de qualquer forma), no mesmo padrão já
+usado ali para o gap de `HTMLDialogElement.showModal`. Primeiro uso de `useInView` no repo, então
+primeira vez que esse gap apareceu — fica registrado para não ser redescoberto.
+
+Verificação: `npx tsc --noEmit` sem erros novos (o único erro do projeto, `urlGuard.ts` TS2345, é
+pré-existente em `origin/main`, fora do escopo deste item); `npx biome lint
+src/features/analytics/components/GlowChart.tsx` limpo; `npx vitest run -c
+vitest.unit.config.ts` **2945/2945 testes passando** (364/364 arquivos), incluindo os 10 de
+`ReportsHub.test.tsx` que só voltaram a passar depois do stub acima. `test:integration`/`test:e2e`
+não puderam rodar (Docker Desktop inacessível nesta rodada) — não é regressão nova, é limitação de
+ambiente já conhecida.
