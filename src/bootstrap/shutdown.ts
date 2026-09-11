@@ -60,6 +60,7 @@ export function createGracefulShutdown(deps: ShutdownDeps): (signal: string) => 
     workers.agentWorker,
     workers.searchWorker,
     workers.enrichmentWorker,
+    workers.enrichmentCascadeWorker,
     workers.whatsappSignalWorker,
     workers.bitrixSyncWorker,
     workers.followUpWorker,
