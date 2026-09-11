@@ -55,6 +55,20 @@ sudo ufw allow 22/tcp
 
 Adapte as regras à política de rede da instância. O script `scripts/deploy-oci.sh` também tenta configurar as portas necessárias quando as ferramentas correspondentes estão disponíveis.
 
+**ACH-10-02 (defesa em profundidade para a porta 5432):** a Security List/NSG da VCN (2.1) é a
+camada primária, mas não é a única — `scripts/deploy-oci.sh` também restringe o firewall do host
+(`iptables`/`firewalld`/`ufw`) por IP de origem, nunca liberando `0.0.0.0/0`. Defina
+`POSTGRES_ALLOWED_CIDRS` (lista separada por vírgula de IPs/CIDRs) antes de rodar o script:
+
+```bash
+POSTGRES_ALLOWED_CIDRS="203.0.113.10/32,198.51.100.0/24" DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
+```
+
+Sem essa variável, a porta 5432 **não** é liberada no firewall do host — o acesso direto de
+máquinas de desenvolvimento fica bloqueado nessa camada até a variável ser definida (a aplicação e
+o Caddy continuam funcionando normalmente, pois não dependem dessa porta). Ver seção 4.2 para o
+procedimento completo e o item de auditoria periódica.
+
 ---
 
 ## 3. Deploy da Aplicação com Docker Compose
@@ -194,7 +208,7 @@ O que muda em relação ao desenho original (loopback only):
 | --- | --- |
 | `docker-compose.oci.yml` | `postgres` publica `5432:5432` (todas as interfaces) e sobe com `ssl=on` |
 | `docker/postgres/Dockerfile` | instala `openssl` e gera certificado autoassinado no build (chave nunca sai da instância) |
-| `scripts/deploy-oci.sh` | libera 5432 no firewall do host (iptables/firewalld/ufw) |
+| `scripts/deploy-oci.sh` | libera 5432 no firewall do host (iptables/firewalld/ufw) **só** para os CIDRs de `POSTGRES_ALLOWED_CIDRS` — nunca `0.0.0.0/0` (ver 2.2 e "Auditoria periódica" abaixo) |
 | `docker-compose.yml` (local) | serviço `postgres` removido; legado opt-in em `docker-compose.postgres-local.yml` só para testes |
 | `.env.example` / `.env` | `DATABASE_URL` direto para o IP público, com `?sslmode=require&uselibpqcompat=true` |
 
@@ -210,14 +224,35 @@ docker exec -i atlasgr_postgres psql -U prospector -d prospectordb -tAc "show ss
 
 **Security List da VCN** (Console OCI → Networking → VCN → Security List → Ingress Rules): uma
 regra TCP 5432 por máquina de desenvolvimento, com Source CIDR `= <IP público da máquina>/32`
-(descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a única barreira de
-rede antes da autenticação por senha. IP dinâmico mudou = atualizar a regra.
+(descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a camada primária, mas
+não a única — desde a correção do ACH-10-02, `scripts/deploy-oci.sh` também restringe o firewall
+do host (iptables/firewalld/ufw) aos mesmos CIDRs via `POSTGRES_ALLOWED_CIDRS` (seção 2.2),
+recriando defesa em profundidade caso a Security List seja alterada por engano. IP dinâmico mudou =
+atualizar a regra **nos dois lugares** (Security List e `POSTGRES_ALLOWED_CIDRS`).
 
 Achado real (2026-09-08): a operadora da máquina de desenvolvimento usa NAT de carrier — o IP de
 saída variou entre `170.231.96.140` e `170.231.96.152` em chamadas consecutivas, e horas antes era
 `201.33.120.202`. Um `/32` fixo quebra sem aviso nesse cenário; rode `curl -4 ifconfig.me` várias
 vezes e, se a faixa oscilar, libere o bloco `/24` correspondente (ex.: `170.231.96.0/24`) em vez
 de um único host — ainda muito mais restrito que `0.0.0.0/0`.
+
+#### Auditoria periódica (defesa em profundidade — ACH-10-02, item do checklist de Go-Live)
+
+A Security List da VCN e o firewall do host (`POSTGRES_ALLOWED_CIDRS`) são mantidos manualmente e
+podem divergir com o tempo (IP de desenvolvedor mudou, colaborador saiu, instância recriada sem a
+variável). Revise periodicamente, e sempre antes de declarar `GO-LIVE READY` (seção 11):
+
+1. Console OCI → Security List da VCN → Ingress Rules: nenhuma regra TCP 5432 com Source CIDR
+   `0.0.0.0/0`; cada `/32` ou `/24` listado corresponde a uma máquina de desenvolvimento ainda em
+   uso.
+2. Na instância: `sudo iptables -L INPUT -n | grep 5432` (ou `sudo ufw status | grep 5432` /
+   `sudo firewall-cmd --list-rich-rules | grep 5432`) — confirme que as origens batem com a
+   Security List e que não existe uma regra aberta a `0.0.0.0/0`.
+3. `.env.production` da instância: `POSTGRES_ALLOWED_CIDRS` reflete a lista atual de IPs
+   autorizados (sem essa variável no ambiente do deploy, o host não libera 5432 — revalide se
+   alguém rodou o script manualmente sem exportá-la).
+4. Remova regras de CIDRs que não correspondem mais a nenhuma máquina de desenvolvimento ativa, nos
+   dois lugares.
 
 **Na máquina de desenvolvimento**, pegue a senha do papel de aplicação diretamente da instância
 (não circula por chat/issue/PR) e coloque no `.env`:
