@@ -88,4 +88,33 @@ export const prismaSignatureRequestRepository: SignatureRequestRepositoryPort = 
       }),
     );
   },
+
+  async findByDocumentId(organizationId, documentId) {
+    // RLS normal — sem bypass. Diferente de `findByProviderRequestId` (chamado pelo webhook, sem
+    // tenant conhecido a priori), este método é sempre chamado dentro de uma request autenticada
+    // (`organizationId` já resolvido pelo middleware de tenant), mesmo padrão de
+    // `PrismaCadenceRunRepository.findById`/`PrismaCadenceSequenceRepository.findById`: o filtro
+    // por `organizationId` no `where` é defesa em profundidade, não o único portão.
+    const request = await prisma.crmDocumentSignatureRequest.findFirst({
+      where: { documentId, organizationId },
+      orderBy: { requestedAt: 'desc' },
+      select: {
+        id: true,
+        status: true,
+        provider: true,
+        signerEmail: true,
+        requestedAt: true,
+        respondedAt: true,
+      },
+    });
+    if (!request) return null;
+    return {
+      id: request.id,
+      status: STATUS_FROM_DB[request.status],
+      provider: request.provider,
+      signerEmail: request.signerEmail,
+      requestedAt: request.requestedAt,
+      respondedAt: request.respondedAt,
+    };
+  },
 };

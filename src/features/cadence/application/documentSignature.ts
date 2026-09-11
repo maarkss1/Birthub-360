@@ -25,6 +25,24 @@ export interface SignatureRequestRepositoryPort {
     evidenceRef: string | null;
     rawWebhookPayload: unknown;
   }): Promise<void>;
+  /**
+   * ACH-17-02 (onda-43, handoff 13→17): leitura por documento, escopada normalmente pelo tenant
+   * (RLS normal, sem bypass — chamador já autenticado, diferente de `findByProviderRequestId`, que
+   * roda antes de qualquer tenant ser conhecido). Um documento pode ter mais de uma solicitação ao
+   * longo do tempo (reenvio); devolve a mais recente por `requestedAt`. `null` quando o documento
+   * nunca teve uma solicitação de assinatura — nunca um erro.
+   */
+  findByDocumentId(
+    organizationId: string,
+    documentId: string,
+  ): Promise<{
+    id: string;
+    status: SignatureStatus;
+    provider: string;
+    signerEmail: string;
+    requestedAt: Date;
+    respondedAt: Date | null;
+  } | null>;
 }
 
 export interface RequestDocumentSignatureInput {
