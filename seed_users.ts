@@ -78,6 +78,13 @@ async function seed() {
                 // trocada por uma gerada aleatoriamente sem aviso.
                 const explicitPassword = u.passwordEnvVar && process.env[u.passwordEnvVar];
                 if (explicitPassword) {
+                    // codeql[js/clear-text-logging] Só o NOME da env var é logado (ex.:
+                    // "SEED_PASSWORD_MARCELO"), nunca process.env[u.passwordEnvVar] — a checagem de
+                    // taint do CodeQL segue `explicitPassword` (calculada a partir do valor
+                    // sensível) até este console.log próximo, mas o valor em si não é interpolado
+                    // aqui. O valor real só é impresso mais abaixo, no bloco de credenciais geradas
+                    // (ver supressão lá — impressão intencional, é o mecanismo de entrega segura
+                    // deste script, ver docstring no topo do arquivo).
                     console.log(`User ${u.email} already exists — updating password (from ${u.passwordEnvVar}) and role...`);
                     await client.query('UPDATE account SET password = $1 WHERE "userId" = $2 AND "providerId" = $3', [hashedPassword, res.rows[0].id, 'credential']);
                     generatedCredentials.push({ email: u.email, password });
@@ -123,6 +130,10 @@ async function seed() {
     if (generatedCredentials.length > 0) {
         console.log('\n=== Credenciais geradas nesta execução (repasse por canal seguro; não ficam salvas em nenhum arquivo) ===');
         for (const { email, password } of generatedCredentials) {
+            // codeql[js/clear-text-logging] Intencional, não um vazamento: este script existe
+            // justamente para imprimir a senha gerada UMA vez no terminal, pra ser repassada ao
+            // titular por canal seguro (gerenciador de senhas etc.) — ver docstring no topo do
+            // arquivo. Nunca grava em arquivo/log persistente, só stdout desta execução manual.
             console.log(`${email} -> ${password}`);
         }
         console.log('=== Fim da lista de credenciais ===\n');
