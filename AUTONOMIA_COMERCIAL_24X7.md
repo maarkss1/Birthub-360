@@ -121,3 +121,22 @@ protege forecast, comissão e sincronização do Kanban/Bitrix.
 - incorporar reply tracking de e-mail ao classificador de intenção;
 - usar eventos de aceite/pagamento para fechar o negócio de forma determinística;
 - painel de SLO por agente: cobertura, conversão, custo, latência, erro e override humano.
+
+## Limitações conhecidas
+
+- **Canal de voz na cadência multicanal (`CadenceDispatchers.ts`) nunca despacha de verdade.**
+  `productionCadenceDispatcher` já trata e-mail e WhatsApp com envio real (`sendEmail`,
+  `sendWhatsAppMessage`); para `touch.channel === 'voice'` ele sempre devolve `failed` com o erro
+  "Canal de voz ainda não tem dispatcher real de cadência (CYC-004 pendente)" — comportamento
+  correto (nunca finge sucesso), mas qualquer `CadenceSequence` com um toque de voz esgota as
+  tentativas e é sempre marcada como falha. Não é um bug de código: é a ausência deliberada de um
+  dispatcher real, registrada como pendência de auditoria em ACH-17-03
+  (`.agents/handoffs/audit-ach/17-para-06-12-voz-cadencia-dispatcher-pendente.md`). Implementar o
+  dispatcher real exige duas decisões que o Agente 17 (dono de `src/features/cadence/**`) não pode
+  tomar sozinho: (1) qual caminho de voz já real usar por trás de uma porta — a ligação autônoma de
+  IA (`birthVoice.service.ts::callLead`, Agente 12) ou o click-to-call assistido por humano
+  (`threecx.service.ts::make3CXCall`, Agente 06), que têm semântica muito diferente para um
+  disparo automático e desacompanhado; e (2) como conectar essa porta sem editar
+  `src/features/integrations/**` diretamente, propriedade exclusiva de outro agente por
+  `AGENTS.md`. Até essa decisão ser tomada, o comportamento honesto atual (falhar, nunca fingir
+  envio) é o correto a manter.
