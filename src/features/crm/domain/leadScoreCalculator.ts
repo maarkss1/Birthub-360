@@ -36,10 +36,10 @@ export interface LeadScoreResult {
  * Calcula determinística e auditavelmente o Lead Score (0 a 100) baseado no framework BANT/SPIN
  */
 export function calculateLeadScore(data: BantQualificationData = {}): LeadScoreResult {
-  let budgetScore = 0;
-  let authorityScore = 0;
-  let needScore = 0;
-  let timingScore = 0;
+  let budgetScore: number;
+  let authorityScore: number;
+  let needScore: number;
+  let timingScore: number;
 
   // 1. Budget (0 a 25)
   switch (data.budget) {

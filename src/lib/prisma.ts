@@ -465,7 +465,7 @@ export const prisma = basePrisma.$extends({
         }
 
         // --- 4. Execute Query (Intercepting Delete) ---
-        let result: Record<string, unknown> | null = null;
+        let result: Record<string, unknown> | null;
         let affectedIds: string[] = [];
         const a = args as Record<string, unknown>;
 

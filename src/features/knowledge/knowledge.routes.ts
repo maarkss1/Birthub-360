@@ -134,6 +134,7 @@ export async function extractText(fileName: string, base64: string): Promise<str
       );
       throw new Error(
         'Não foi possível ler este .docx. O arquivo pode estar corrompido ou não ser um Word válido.',
+        { cause: err },
       );
     }
     return value;
@@ -181,19 +182,22 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
     // pdf.js (usado internamente pelo pdf-parse) nomeia essas exceções — ver
     // https://github.com/mozilla/pdf.js/blob/master/src/shared/util.js.
     if (name === 'PasswordException') {
-      throw new Error('Este PDF está protegido por senha. Remova a proteção e envie novamente.');
+      throw new Error('Este PDF está protegido por senha. Remova a proteção e envie novamente.', {
+        cause: err,
+      });
     }
     if (
       name === 'InvalidPDFException' ||
       name === 'MissingPDFException' ||
       name === 'UnexpectedResponseException'
     ) {
-      throw new Error('Este PDF está corrompido ou não é um arquivo PDF válido.');
+      throw new Error('Este PDF está corrompido ou não é um arquivo PDF válido.', { cause: err });
     }
 
     logger.error({ err }, 'Falha ao extrair texto de PDF na ingestão da Base de Conhecimento');
     throw new Error(
       'Não foi possível ler este PDF. Verifique se o arquivo não está corrompido ou protegido por senha.',
+      { cause: err },
     );
   }
 

@@ -47,7 +47,7 @@ export const getUploadUrl = async (key: string, contentType: string) => {
     return { signedUrl, key };
   } catch (err) {
     logger.error({ err, key }, 'Error generating upload URL');
-    throw new Error('Failed to generate upload URL');
+    throw new Error('Failed to generate upload URL', { cause: err });
   }
 };
 
@@ -61,6 +61,6 @@ export const getDownloadUrl = async (key: string) => {
     return { signedUrl, key };
   } catch (err) {
     logger.error({ err, key }, 'Error generating download URL');
-    throw new Error('Failed to generate download URL');
+    throw new Error('Failed to generate download URL', { cause: err });
   }
 };

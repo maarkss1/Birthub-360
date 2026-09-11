@@ -104,6 +104,7 @@ export function cleanAndParseJson<T>(content: string): T {
   } catch (err) {
     throw new Error(
       `Falha ao decodificar JSON gerado pela IA: ${(err as Error).message}. Conteúdo original: ${content.slice(0, 200)}...`,
+      { cause: err },
     );
   }
 }

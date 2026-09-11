@@ -74,9 +74,10 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   Verificar com `npm audit --audit-level=high` **e** `trivy fs --severity HIGH,CRITICAL` a cada
   reavaliação — as duas ferramentas precisam ficar limpas (ou com este waiver renovado nas duas)
   antes de considerar o achado resolvido.
-- **Data de registro:** 2026-08-17. **Reavaliar em:** próxima atualização de `prisma`/`@prisma/config`
-  ou em 30 dias, o que vier primeiro (`expired_at: 2026-09-16` em `.trivyignore.yaml` para as duas
-  entradas — reavaliar as duas juntas, mesmo prazo).
+- **Data de registro:** 2026-08-17. **Reavaliado em:** 2026-09-11 (ver entrada de Histórico abaixo).
+  **Reavaliar em:** próxima atualização de `prisma`/`@prisma/config` ou em 30 dias, o que vier
+  primeiro (`expired_at: 2026-10-11` em `.trivyignore.yaml` para as duas entradas — reavaliar as
+  duas juntas, mesmo prazo).
 - **Escopo do waiver:** só estes dois advisory IDs (mesmo achado, dois catálogos), só via esta
   cadeia de dependência. Qualquer outro achado `HIGH`/`CRITICAL` novo continua bloqueando o gate
   normalmente.
@@ -86,6 +87,20 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
 _(nenhum no momento — ver Histórico abaixo para o item resolvido em 30/08/2026)_
 
 ## Histórico
+
+- 2026-09-11 — Reavaliação de rotina do waiver `GHSA-ggr8-5vv4-36mx`/`CVE-2026-40345`
+  (`deepmerge-ts`), encontrado a 5 dias de expirar (`expired_at: 2026-09-16`) durante uma auditoria
+  de dívida técnica. Verificado antes de renovar (não apenas adiada a data):
+  `npm audit --json` confirma que o achado é exatamente o mesmo de quando o waiver foi registrado
+  (mesma cadeia `prisma@7.10.0` → `@prisma/config@7.10.0` → `deepmerge-ts@7.1.5`, `fixAvailable`
+  continua apontando só para o downgrade major `@prisma/config@6.12.0`); `npm view prisma versions`
+  confirma que `7.10.0` continua sendo a versão estável mais recente da série 7.x (não houve bump
+  que atualizasse `deepmerge-ts` internamente); `npm view deepmerge-ts version` mostra `8.0.2`
+  disponível upstream, mas o Prisma ainda não a adotou em nenhuma versão `7.x` publicada. Nenhuma
+  das duas condições de fechamento deste waiver (Prisma `7.x` com fix, ou planejamento real da
+  próxima major) se concretizou — renovado por mais 30 dias (`expired_at: 2026-10-11` em
+  `.trivyignore.yaml`, mesma data nas duas entradas). Nenhuma mudança de escopo ou justificativa;
+  só a data.
 
 - 2026-09-02 — `trivy-fs-pr-gate` (e o scan de imagem em `production.yaml`) bloqueava com
   `GHSA-rgwj-5xj2-c3m3` (`mysql2`, MEDIUM, decompression-bomb DoS via zlib inflate — mesma cadeia

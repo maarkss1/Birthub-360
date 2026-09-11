@@ -349,7 +349,7 @@ export class CommercialIntelligenceAiService {
         { err: error, toolKey },
         'CommercialIntelligenceAiService: falha ao invocar modelo de IA',
       );
-      throw new Error(errorPrefix);
+      throw new Error(errorPrefix, { cause: error });
     }
     const latencyMs = Date.now() - startTime;
     await logAiUsage({

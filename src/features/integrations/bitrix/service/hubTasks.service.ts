@@ -92,7 +92,7 @@ export async function listHubTasks(
   ]);
   const nameById = new Map(assignees.map((a) => [a.id, a.name]));
 
-  let rawTasks: BitrixTaskRaw[] = [];
+  let rawTasks: BitrixTaskRaw[];
   try {
     const payload = await callBitrix<{ result?: { tasks?: BitrixTaskRaw[] } }>(
       webhookUrl,

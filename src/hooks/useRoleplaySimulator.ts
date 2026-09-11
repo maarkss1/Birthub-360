@@ -60,7 +60,7 @@ export function useRoleplaySimulator(
           };
     const objectionText = randomObj.objectionText.replace(/[.!?]+$/, '');
 
-    let initialGreeting = '';
+    let initialGreeting: string;
     if (roleplayPersona === 'skeptical_cfo') {
       initialGreeting = `Olá! Sou o CFO. Em nossa operação de ${randomObj.segment}, ${objectionText}. O que a sua solução traz de retorno financeiro para justificar a contratação?`;
     } else if (roleplayPersona === 'strict_buyer') {

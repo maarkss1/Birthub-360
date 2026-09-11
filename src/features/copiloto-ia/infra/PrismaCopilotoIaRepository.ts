@@ -66,7 +66,7 @@ export class PrismaCopilotoIaRepository implements CopilotoIaRepository {
       title: string | null;
       company: { tradeName: string | null; legalName: string | null } | null;
       contact: { name: string | null } | null;
-    } | null = null;
+    } | null;
 
     if (parsed.type === 'bitrix') {
       lead = await prisma.lead.findFirst({
