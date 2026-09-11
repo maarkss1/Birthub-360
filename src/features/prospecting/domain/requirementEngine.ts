@@ -190,8 +190,13 @@ export function buildRequirementsFromSearchIntent(intent: SearchIntent): Require
       expected: intent.location.city,
     });
   }
-  const { annualRevenueMin, annualRevenueMax, foundedYearMin, foundedYearMax, technologiesInclude } =
-    intent.firmographics;
+  const {
+    annualRevenueMin,
+    annualRevenueMax,
+    foundedYearMin,
+    foundedYearMax,
+    technologiesInclude,
+  } = intent.firmographics;
   if (annualRevenueMin != null || annualRevenueMax != null) {
     requirements.push({
       criterion: 'annualRevenue',

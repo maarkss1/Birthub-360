@@ -198,7 +198,10 @@ router.get(
       const ownerIds = [...new Set(leads.map((l) => l.owner).filter((v): v is string => !!v))];
       const owners =
         ownerIds.length > 0
-          ? await prisma.user.findMany({ where: { id: { in: ownerIds } }, select: { id: true, name: true } })
+          ? await prisma.user.findMany({
+              where: { id: { in: ownerIds } },
+              select: { id: true, name: true },
+            })
           : [];
       const ownerNames = new Map(owners.map((u) => [u.id, u.name]));
 
@@ -451,8 +454,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       const id = routeParam(req.params.id, 'id');
       const body = req.body as { bitrixUserId?: string };
-      if (!body.bitrixUserId?.trim())
-        throw new AppError('Selecione o novo responsável.', 400);
+      if (!body.bitrixUserId?.trim()) throw new AppError('Selecione o novo responsável.', 400);
 
       const lead = await prisma.lead.findFirst({
         where: { id, organizationId },

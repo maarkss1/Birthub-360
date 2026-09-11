@@ -20,7 +20,8 @@ export interface ApproachSuggestion {
 }
 
 function contactLabel(lead: QueueLeadDetail): string {
-  if (lead.contactName) return lead.contactRole ? `${lead.contactName} (${lead.contactRole})` : lead.contactName;
+  if (lead.contactName)
+    return lead.contactRole ? `${lead.contactName} (${lead.contactRole})` : lead.contactName;
   return 'o decisor';
 }
 
@@ -116,7 +117,9 @@ function stageSuggestion(lead: QueueLeadDetail): ApproachSuggestion {
     default:
       return {
         headline: 'Sem roteiro específico para esta etapa',
-        talkingPoints: ['Etapa não reconhecida pelo assistente — siga o processo comercial padrão.'],
+        talkingPoints: [
+          'Etapa não reconhecida pelo assistente — siga o processo comercial padrão.',
+        ],
       };
   }
 }
@@ -131,8 +134,6 @@ export function suggestApproach(lead: QueueLeadDetail): ApproachSuggestion {
 
   return {
     headline: base.headline,
-    talkingPoints: [opener, ...base.talkingPoints, coldNote].filter(
-      (v): v is string => !!v,
-    ),
+    talkingPoints: [opener, ...base.talkingPoints, coldNote].filter((v): v is string => !!v),
   };
 }
