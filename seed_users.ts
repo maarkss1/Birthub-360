@@ -82,10 +82,12 @@ async function seed() {
                     // process.env[u.passwordEnvVar] — a checagem de taint do CodeQL segue
                     // `explicitPassword` (calculada a partir do valor sensível) até este
                     // console.log próximo, mas o valor em si não é interpolado aqui. O valor real
-                    // só é impresso mais abaixo, no bloco de credenciais geradas (ver supressão lá
-                    // — impressão intencional, é o mecanismo de entrega segura deste script, ver
-                    // docstring no topo do arquivo).
-                    console.log(`User ${u.email} already exists — updating password (from ${u.passwordEnvVar}) and role...`); // codeql[js/clear-text-logging]
+                    // só é impresso mais abaixo, no bloco de credenciais geradas — impressão
+                    // intencional, é o mecanismo de entrega segura deste script (ver docstring no
+                    // topo do arquivo). Achado do CodeQL tratado via paths-ignore em
+                    // .github/codeql/codeql-config.yml (comentário de supressão por linha
+                    // confirmado sem efeito neste repositório).
+                    console.log(`User ${u.email} already exists — updating password (from ${u.passwordEnvVar}) and role...`);
                     await client.query('UPDATE account SET password = $1 WHERE "userId" = $2 AND "providerId" = $3', [hashedPassword, res.rows[0].id, 'credential']);
                     generatedCredentials.push({ email: u.email, password });
                 } else {
@@ -133,8 +135,9 @@ async function seed() {
             // Intencional, não um vazamento: este script existe justamente para imprimir a senha
             // gerada UMA vez no terminal, pra ser repassada ao titular por canal seguro
             // (gerenciador de senhas etc.) — ver docstring no topo do arquivo. Nunca grava em
-            // arquivo/log persistente, só stdout desta execução manual.
-            console.log(`${email} -> ${password}`); // codeql[js/clear-text-logging]
+            // arquivo/log persistente, só stdout desta execução manual. Achado do CodeQL tratado
+            // via paths-ignore em .github/codeql/codeql-config.yml.
+            console.log(`${email} -> ${password}`);
         }
         console.log('=== Fim da lista de credenciais ===\n');
     }
