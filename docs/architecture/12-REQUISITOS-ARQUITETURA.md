@@ -175,6 +175,12 @@ para outra tabela global do schema (`AiEngineSetting`): a policy não isola por 
 o que isolar), só exige que a conexão seja da própria app com tenant já resolvido — bloqueando
 acesso direto via `anon`/`authenticated` do PostgREST do Supabase.
 
+Para qualquer tabela nova que carregue dado de organização: siga
+`docs/architecture/RLS-CHECKLIST.md` (SQL exato de cada um dos 4 casos de tenancy, extraído das
+migrations reais, e o resultado da auditoria de cobertura de 2026-09-11) em vez de reconstruir o
+padrão de memória — RLS foi retrofit incremental em pelo menos 7 migrations dedicadas neste projeto
+justamente por falta de um checklist como esse no momento em que a tabela nasceu.
+
 ---
 
 ## 5. Travas no Banco de Dados
