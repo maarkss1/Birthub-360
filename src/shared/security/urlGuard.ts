@@ -1,6 +1,6 @@
 import dns from 'node:dns/promises';
-import net from 'node:net';
 import type { LookupFunction } from 'node:net';
+import net from 'node:net';
 import { Agent, fetch as undiciFetch } from 'undici';
 import { AppError } from '../middlewares/errorHandler.js';
 
@@ -175,6 +175,12 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
   try {
     // codeql[js/request-foraging] Conexao fixada por IP nos enderecos ja validados por resolveSafe
     // lgtm[js/request-foraging]
+    //
+    // `as unknown as RequestInit` (o `RequestInit` global do lib.dom, não o da undici) tipava o
+    // cast errado: `body` do lib.dom aceita `ReadableStream<any>` (o da DOM), que não é
+    // estruturalmente igual ao `ReadableStream` que a própria undici declara no seu `RequestInit`
+    // — TS2345 batendo bem aqui, não um falso positivo. `Parameters<typeof undiciFetch>[1]` pega
+    // o tipo exato que a função espera, sem ambiguidade entre os dois `RequestInit` globais.
     const response = await undiciFetch(safeUrl.href, {
       ...init,
       dispatcher,
