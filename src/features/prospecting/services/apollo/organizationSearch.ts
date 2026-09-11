@@ -324,11 +324,6 @@ export async function fetchApolloCandidates(
       legalNameGuess: null,
       cnpjGuess: null,
       segment: org.industry || criteria.segmento,
-      source: 'apollo',
-      // Requirement Engine (`domain/requirementEngine.ts`): só marca `segment` como observado
-      // quando a Apollo realmente devolveu `industry` para esta organização — o fallback acima
-      // (`|| criteria.segmento`) é o mesmo segmento PEDIDO ecoado, não um dado confirmado.
-      segmentObserved: !!org.industry,
       size: org.estimated_num_employees
         ? `~${org.estimated_num_employees} funcionários`
         : 'Não informado',

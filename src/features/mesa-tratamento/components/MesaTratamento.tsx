@@ -3,21 +3,18 @@ import { PhoneCall, Target } from 'lucide-react';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { toast } from '../../../lib/toast';
-import { voiceCommandBus } from '../../../lib/voiceCommandBus';
 import { mesaTratamentoApi, type MesaQueueResponse } from '../mesaTratamento.api';
 import { QueueList } from './QueueList';
 import { CurrentLeadCard } from './CurrentLeadCard';
-import { ManagementPanel } from './ManagementPanel';
 import { PomodoroWidget } from './PomodoroWidget';
 import { SdrDashboard } from './SdrDashboard';
 
 type MesaTab = 'fila' | 'dashboard';
 
-/** Página da Mesa de Tratamento SDR. ADMIN/GESTOR e CLOSER/SDR veem a mesma fila (ADMIN/GESTOR sem
- *  filtro de dono = fila do time todo); ADMIN/GESTOR adicionalmente veem o painel de gestão
- *  (`ManagementPanel`) abaixo do lead atual — reatribuir responsável, comentar, marcar decidido. */
+/** Página da Mesa de Tratamento SDR. ADMIN/GESTOR e CLOSER/SDR veem a mesma fila nesta primeira
+ *  entrega (ADMIN/GESTOR sem filtro de dono = fila do time todo) — ações de gestão dedicadas
+ *  (reatribuir, comentar, marcar decidido) ficam pra próxima rodada, ver AGENTS.md desta pasta. */
 export function MesaTratamento() {
   const { currentUser } = useAuth();
   const [tab, setTab] = useState<MesaTab>('fila');
@@ -41,21 +38,6 @@ export function MesaTratamento() {
 
   useEffect(() => {
     loadQueue();
-  }, [loadQueue]);
-
-  // Comando de voz "sincronizar" — reusa o mesmo assistente global de voz do resto do app (ver
-  // PomodoroWidget.tsx para o comentário completo sobre por que via voiceCommandBus em vez de um
-  // microfone próprio desta tela).
-  useEffect(() => {
-    voiceCommandBus.registerCommands('mesa-tratamento:fila', [
-      {
-        keywords: ['sincronizar', 'atualizar fila'],
-        phrase: 'sincronizar',
-        confirmationLabel: 'Fila sincronizada',
-        handler: loadQueue,
-      },
-    ]);
-    return () => voiceCommandBus.unregister('mesa-tratamento:fila');
   }, [loadQueue]);
 
   function renderFila() {
@@ -102,24 +84,13 @@ export function MesaTratamento() {
       );
     }
 
-    const isManager = hasRequiredRole(currentUser?.role ?? '', ['ADMIN', 'GESTOR']);
-
     return (
       <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_0.7fr] gap-4 items-start">
-        <div className="space-y-4">
-          <CurrentLeadCard
-            lead={data.current}
-            leadStatuses={data.leadStatuses}
-            onRegistered={loadQueue}
-          />
-          {isManager && (
-            <ManagementPanel
-              leadId={data.current.id}
-              connectionId={data.connectionId}
-              onActionComplete={loadQueue}
-            />
-          )}
-        </div>
+        <CurrentLeadCard
+          lead={data.current}
+          leadStatuses={data.leadStatuses}
+          onRegistered={loadQueue}
+        />
         <QueueList queue={data.queue} />
       </div>
     );

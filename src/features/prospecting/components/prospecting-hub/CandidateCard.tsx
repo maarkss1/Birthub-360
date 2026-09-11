@@ -17,12 +17,10 @@ import {
   ShieldCheck,
   ThumbsDown,
   IdCard,
-  AlertTriangle,
-  HelpCircle,
 } from 'lucide-react';
 import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
 import type { FitScoreResult } from '../../services/enrichment.service';
-import type { ProspectCandidate, RequirementEvaluation } from '../../services/prospecting.service';
+import type { ProspectCandidate } from '../../services/prospecting.service';
 import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
 import {
   getTelephoneLink,
@@ -50,44 +48,6 @@ interface PromoteResult {
       linkedin_url?: string | null;
     }>;
   };
-}
-
-/** Pill compacta de uma avaliação do Requirement Engine (`domain/requirementEngine.ts`) — mostra,
- * por critério pedido na busca, se o que foi observado de verdade confirma, diverge, ou não
- * confirma nem diverge (`title` carrega a explicação completa em português). */
-function RequirementPill({ evaluation }: { evaluation: RequirementEvaluation }) {
-  const style =
-    evaluation.status === 'matched'
-      ? 'bg-success/15 text-success-active dark:text-success'
-      : evaluation.status === 'unmatched'
-        ? 'bg-warning/15 text-warning-active dark:text-warning'
-        : 'bg-surface-2 text-ink-2 border border-line';
-  const Icon =
-    evaluation.status === 'matched'
-      ? CheckCircle2
-      : evaluation.status === 'unmatched'
-        ? AlertTriangle
-        : HelpCircle;
-
-  return (
-    <span
-      title={evaluation.reason}
-      className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${style}`}
-    >
-      <Icon size={10} /> {evaluation.label}
-    </span>
-  );
-}
-
-/** SOFT_FILTER/ENRICHMENT "não confirmado" é o caso comum (esses providers raramente confirmam
- * esse tipo de dado) — mostrar sempre viraria ruído em toda busca com filtro avançado. HARD_FILTER
- * é sempre mostrado, incluindo "não confirmado": é o critério que definiu a busca, esconder que
- * ele não foi confirmado seria a própria fabricação que o Requirement Engine existe para evitar. */
-function visibleRequirementEvaluations(
-  evaluations: RequirementEvaluation[] | undefined,
-): RequirementEvaluation[] {
-  if (!evaluations) return [];
-  return evaluations.filter((e) => e.type === 'HARD_FILTER' || e.status !== 'unknown');
 }
 
 function formatUsd(value: number): string {
@@ -281,14 +241,6 @@ export function CandidateCard({
                 >
                   <Wrench size={9} /> {tech}
                 </span>
-              ))}
-            </div>
-          )}
-
-          {visibleRequirementEvaluations(candidate.requirementEvaluations).length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {visibleRequirementEvaluations(candidate.requirementEvaluations).map((evaluation) => (
-                <RequirementPill key={evaluation.criterion} evaluation={evaluation} />
               ))}
             </div>
           )}

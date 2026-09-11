@@ -38,22 +38,9 @@ export interface BitrixDealItem {
   contactName?: string;
 }
 
-export interface BitrixUserOption {
-  id: string;
-  name: string;
-  email: string | null;
-}
-
 export const bitrixApi = {
   listConnections: async (): Promise<BitrixConnectionItem[]> => {
     const res = await api.get<{ data: BitrixConnectionItem[] }>('/api/bitrix/connections');
-    return res.data;
-  },
-
-  listUsers: async (connectionId: string): Promise<BitrixUserOption[]> => {
-    const res = await api.get<{ data: BitrixUserOption[] }>(
-      `/api/bitrix/users?connectionId=${connectionId}`,
-    );
     return res.data;
   },
 

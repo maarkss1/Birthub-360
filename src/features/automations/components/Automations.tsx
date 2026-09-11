@@ -244,6 +244,7 @@ function AutomationForm({
             /* modal ("Construtor de Automação") aberto por ação do usuário; foca o primeiro
                  campo do formulário que acabou de abrir, padrão de diálogo do WAI-ARIA
                  Authoring Practices. */
+            // biome-ignore lint/a11y/noAutofocus: ver comentário acima
             autoFocus
           />
         </div>

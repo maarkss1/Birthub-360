@@ -29,9 +29,6 @@ export type {
   RejectCandidateInput,
   PromoteInput,
   DecisionMakerCriteria,
-  RequirementEvaluation,
-  RequirementType,
-  RequirementStatus,
 } from './prospecting/types.js';
 
 export {

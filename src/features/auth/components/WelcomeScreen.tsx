@@ -127,14 +127,11 @@ export function WelcomeScreen() {
         src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=ambient-piano-and-strings-10711.mp3"
       />
 
-      {/* Ambiente de fundo — os três pontos da órbita do emblema (ouro, íris/violeta e ciano) como
-          halo, que é exatamente o uso que o brand book reserva ao gradiente 360º ("halos, bordas,
-          indicadores e hero sections"). Antes eram só dois blobs (ouro + íris); o terceiro (ciano)
-          fecha a órbita completa e, no escuro, os tons de --accent-violet/--accent-cyan (propostos
-          em globals.css, "Neon Tokyo × Cosmic Gold") ficam vívidos — no claro seguem discretos
-          (mesmo valor de --iris/--orbit-blue já auditado). Tamanho reduzido em telas estreitas: em
-          ~390px de largura um blob de 420px tingia a tela toda e derrubava o contraste do texto
-          por baixo dele (achado real do axe-core em mobile). */}
+      {/* Ambiente de fundo — os dois extremos da órbita do emblema (ouro e íris) como halo, que é
+          exatamente o uso que o brand book reserva ao gradiente 360º ("halos, bordas, indicadores
+          e hero sections"). Antes eram um glow por marca, um laranja e um azul. Tamanho reduzido
+          em telas estreitas: em ~390px de largura um blob de 420px tingia a tela toda e derrubava
+          o contraste do texto por baixo dele (achado real do axe-core em mobile). */}
       <motion.div
         aria-hidden="true"
         animate={{ rotate: [0, 90, 0] }}
@@ -145,13 +142,7 @@ export function WelcomeScreen() {
         aria-hidden="true"
         animate={{ rotate: [0, -90, 0] }}
         transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-accent-violet/10 blur-[90px] sm:-bottom-32 sm:-right-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
-      />
-      <motion.div
-        aria-hidden="true"
-        animate={{ rotate: [0, 90, 0] }}
-        transition={{ duration: 34, repeat: Infinity, ease: 'linear' }}
-        className="pointer-events-none absolute left-1/2 top-1/3 h-56 w-56 -translate-x-1/2 rounded-full bg-accent-cyan/8 blur-[100px] sm:h-[360px] sm:w-[360px] sm:blur-[120px]"
+        className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-iris/10 blur-[90px] sm:-bottom-32 sm:-right-32 sm:h-[420px] sm:w-[420px] sm:blur-[110px]"
       />
 
       <button
@@ -170,10 +161,7 @@ export function WelcomeScreen() {
         animate="show"
         className="relative z-10 flex w-full max-w-3xl flex-col items-center px-6 text-center"
       >
-        {/* border-glow-brand — halo estático (não anima; os 3 blobs de fundo já cobrem o
-            movimento) atrás do emblema, mesmo idioma de destaque persistente já usado em
-            Card variant="accent"/Toggle ligado, não o glow transitório de hover do Button. */}
-        <motion.div variants={staggerItem} className="mb-8 rounded-full border-glow-brand">
+        <motion.div variants={staggerItem} className="mb-8">
           <BirthHubLogo variant="symbol" className="h-40 w-40 sm:h-44 sm:w-44" title={BRAND.name} />
         </motion.div>
 
@@ -195,7 +183,7 @@ export function WelcomeScreen() {
           {BRAND.pillars.map((pillar) => (
             <li
               key={pillar}
-              className="rounded-full border border-brand/60 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-ink transition-shadow duration-300 hover:shadow-glow-brand dark:text-brand"
+              className="rounded-full border border-brand/60 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-ink dark:text-brand"
             >
               {pillar}
             </li>
@@ -209,7 +197,7 @@ export function WelcomeScreen() {
               if (audioRef.current) audioRef.current.play().catch(() => {});
               navigate('/login');
             }}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-brand px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand transition-[transform,background-color,box-shadow] hover:scale-[1.03] hover:bg-brand-active hover:shadow-glow-brand active:scale-95"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-brand px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand transition-[transform,background-color] hover:scale-[1.03] hover:bg-brand-active active:scale-95"
           >
             Explorar Hub
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

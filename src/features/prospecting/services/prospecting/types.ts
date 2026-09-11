@@ -11,9 +11,6 @@ export type {
   DecisionMaker,
   ProspectCandidate,
   DiscoverResult,
-  RequirementEvaluation,
-  RequirementType,
-  RequirementStatus,
 } from '../../domain/prospectTypes.js';
 export { buildLocationLabel } from '../../domain/prospectTypes.js';
 export type { DecisionMakerCriteria } from '../apollo.service.js';

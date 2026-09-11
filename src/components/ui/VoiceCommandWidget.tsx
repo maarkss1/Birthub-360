@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useActivePlaybook } from '../../hooks/useActivePlaybook';
 import { playbookInfo } from '../../config/playbooks';
 import { navigationBus } from '../../lib/navigationBus';
-import { voiceCommandBus } from '../../lib/voiceCommandBus';
 import { clientLogger } from '../../lib/clientLogger';
 import { toast } from '../../lib/toast';
 
@@ -54,14 +53,7 @@ export function VoiceCommandWidget() {
           stopListening();
         };
 
-        // Comandos registrados pela tela atualmente ativa (ex.: Mesa de Tratamento — "iniciar
-        // foco", "sincronizar") sempre têm prioridade sobre o vocabulário global de navegação
-        // abaixo: são mais específicos e, quando existem, é porque a tela precisa deles agora.
-        const localHint = voiceCommandBus.tryHandle(textLower);
-        if (localHint) {
-          setLastAction(localHint);
-          stopListening();
-        } else if (textLower.includes('crm') || textLower.includes('pipeline')) {
+        if (textLower.includes('crm') || textLower.includes('pipeline')) {
           navigateOrReportFailure('crm', 'Navegou para o CRM Board');
         } else if (textLower.includes('prospector') || textLower.includes('buscar lead')) {
           navigateOrReportFailure('prospect', 'Navegou para o Prospector');
@@ -196,11 +188,7 @@ export function VoiceCommandWidget() {
             {isListening && (
               <div className="space-y-1 text-center py-2">
                 <p className="text-ink-2 italic animate-pulse">
-                  &quot;Diga: CRM, Prospector, Contatos, Empresas, Logística, Frota
-                  {voiceCommandBus.getPhrases().length > 0
-                    ? `, ${voiceCommandBus.getPhrases().join(', ')}`
-                    : ''}
-                  ...&quot;
+                  &quot;Diga: CRM, Prospector, Contatos, Empresas, Logística, Frota...&quot;
                 </p>
                 {transcript && (
                   <p className="text-ink font-bold bg-surface-2 p-2 rounded-xl border border-line">

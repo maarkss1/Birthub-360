@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Mic, Square, Lightbulb, ChevronDown, ChevronUp, Gauge } from 'lucide-react';
+import { useState } from 'react';
+import { Mic, Square } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
@@ -7,7 +7,6 @@ import { toast } from '../../../lib/toast';
 import { SoundFX } from '../../../lib/soundEffects';
 import { LOSS_REASONS } from '../constants/lossReasons';
 import { useVoiceDictation } from '../hooks/useVoiceDictation';
-import { suggestApproach } from '../mesaTratamento.approachSuggestion';
 import {
   mesaTratamentoApi,
   OUTCOME_LABELS,
@@ -30,9 +29,8 @@ const labelClass = 'block text-xs font-semibold text-ink-2 mb-1.5';
 
 /** Card do Lead liberado agora + formulário de registro. Só o resultado + observação são
  *  obrigatórios — etapa Bitrix e motivo de desqualificação são condicionais (ver validação no
- *  backend, mesaTratamento.routes.ts). Sugestão de abordagem (`suggestApproach`) e o score de
- *  prioridade com detalhamento por fator (`lead.priorityScore`) vêm prontos no payload do backend
- *  — ver AGENTS.md desta pasta pro que ainda falta (criação de negócio no funil Comercial). */
+ *  backend, mesaTratamento.routes.ts). Ver AGENTS.md desta pasta pro que falta (roteiro
+ *  sugerido, pontuação, criação de negócio). */
 export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLeadCardProps) {
   const [outcome, setOutcome] = useState<LeadOutcome | ''>('');
   const [note, setNote] = useState('');
@@ -41,10 +39,7 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
   const [nextActionTitle, setNextActionTitle] = useState('');
   const [nextActionWhen, setNextActionWhen] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [showScoreBreakdown, setShowScoreBreakdown] = useState(false);
   const dictation = useVoiceDictation(setNote);
-
-  const approach = useMemo(() => suggestApproach(lead), [lead]);
 
   const disqualifying = isDisqualifyOutcome(outcome);
   const q = lead.qualification;
@@ -107,54 +102,10 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
           <div className="flex gap-1.5 flex-wrap justify-end">
             {lead.temperature && <Badge variant="warning">{lead.temperature}</Badge>}
             {lead.score !== null && <Badge variant="info">Fit Score {lead.score}</Badge>}
-            <button
-              type="button"
-              onClick={() => setShowScoreBreakdown((v) => !v)}
-              className="flex items-center gap-1 rounded-full border border-line bg-surface-2 px-2.5 py-1 text-xs font-bold text-ink-2 transition-colors duration-200 hover:text-ink"
-              aria-expanded={showScoreBreakdown}
-            >
-              <Gauge className="h-3 w-3" aria-hidden="true" />
-              Prioridade {lead.priorityScore.score}
-              {showScoreBreakdown ? (
-                <ChevronUp className="h-3 w-3" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="h-3 w-3" aria-hidden="true" />
-              )}
-            </button>
           </div>
         </div>
-
-        {showScoreBreakdown && (
-          <div className="mt-3 space-y-1.5 rounded-xl border border-line bg-surface-2/60 p-3">
-            {lead.priorityScore.breakdown.map((item) => (
-              <div key={item.label} className="flex items-start justify-between gap-3 text-xs">
-                <div>
-                  <span className="font-semibold text-ink">{item.label}</span>
-                  <p className="text-ink-2">{item.detail}</p>
-                </div>
-                <span className="shrink-0 font-mono font-bold text-ink">+{item.points}</span>
-              </div>
-            ))}
-          </div>
-        )}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-xl border border-brand/20 bg-brand/5 p-3.5">
-          <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-brand-ink dark:text-brand">
-            <Lightbulb className="h-3.5 w-3.5" aria-hidden="true" /> {approach.headline}
-          </p>
-          <ul className="space-y-1 text-xs text-ink">
-            {approach.talkingPoints.map((point, idx) => (
-              <li key={idx} className="flex gap-1.5">
-                <span className="text-brand-ink dark:text-brand" aria-hidden="true">
-                  •
-                </span>
-                <span>{point}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
             <span className="text-ink-2 block text-xs">Contato</span>

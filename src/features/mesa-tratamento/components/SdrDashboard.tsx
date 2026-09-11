@@ -23,7 +23,6 @@ import { toast } from '../../../lib/toast';
 import {
   mesaTratamentoApi,
   OUTCOME_LABELS,
-  MANAGEMENT_OUTCOME_LABELS,
   type DashboardPeriod,
   type MesaDashboardResponse,
   type LeadOutcome,
@@ -59,7 +58,7 @@ const OUTCOME_COLORS = [
 ];
 
 function outcomeLabel(outcome: string): string {
-  return OUTCOME_LABELS[outcome as LeadOutcome] ?? MANAGEMENT_OUTCOME_LABELS[outcome] ?? outcome;
+  return OUTCOME_LABELS[outcome as LeadOutcome] ?? outcome;
 }
 
 /**

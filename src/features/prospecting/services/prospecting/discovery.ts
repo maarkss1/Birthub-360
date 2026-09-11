@@ -11,7 +11,6 @@ import {
   planShortfallFallback,
   type ProviderPlanStep,
 } from '../../domain/queryPlanner.js';
-import { evaluateCandidateRequirements } from '../../domain/requirementEngine.js';
 import { SearchExecutionTracker, type SearchExecutionStatus } from '../searchExecution.service.js';
 import { enrichCandidatesWithQualityData } from './qualityEnrichment.js';
 import { buildLocationLabel } from '../../domain/prospectTypes.js';
@@ -57,10 +56,6 @@ export async function discoverViaGooglePlaces(
       legalNameGuess: null,
       cnpjGuess: null,
       segment: criteria.segmento,
-      // Google Places não classifica indústria/segmento — `segment` acima é só o critério pedido
-      // ecoado, nunca um dado observado (ver Requirement Engine, `domain/requirementEngine.ts`).
-      segmentObserved: false,
-      source: 'googlePlaces',
       size: 'Não informado',
       location: [p.city, p.state].filter(Boolean).join(', ') || buildLocationLabel(criteria),
       fitScoreEstimate: p.rating ? Math.round(Math.min(100, p.rating * 20)) : 60,
@@ -90,9 +85,6 @@ async function discoverViaNominatim(
       legalNameGuess: null,
       cnpjGuess: null,
       segment: criteria.segmento,
-      // Mesma honestidade do mapper de Google Places acima: Nominatim não classifica indústria.
-      segmentObserved: false,
-      source: 'nominatim',
       size: 'Não informado',
       location: [p.city, p.state].filter(Boolean).join(', ') || buildLocationLabel(criteria),
       fitScoreEstimate: 60,
@@ -316,15 +308,6 @@ export async function discoverCandidates(
       ]);
     } catch {
       // Non-blocking best-effort
-    }
-
-    // Requirement Engine (`domain/requirementEngine.ts`): anota, por candidato, o que cada
-    // critério pedido nesta busca encontrou de fato observado (vs. só pedido) — depois do
-    // enriquecimento de qualidade acima, quando o candidato já tem o máximo de dado real que a
-    // busca vai trazer (CNPJ, decisores, tecnologias). Puramente aditivo: nunca remove nem
-    // reordena `finalCandidates` — só documenta para a UI mostrar com honestidade.
-    for (const candidate of finalCandidates) {
-      candidate.requirementEvaluations = evaluateCandidateRequirements(intent, candidate);
     }
 
     const hadProviderError = tracker.providerCalls.some((c) => c.status === 'error');
