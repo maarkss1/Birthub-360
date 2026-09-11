@@ -1,7 +1,7 @@
 - De: 11
 - Para: 10
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
@@ -30,3 +30,22 @@ sincronização do ArgoCD por `repoURL` inválido.
 ## Contexto adicional
 Risco de causa-raiz de falha silenciosa de deploy — não é resíduo cosmético. Detalhado em
 `docs/architecture/LEGACY_BRAND_CONTENT_MAP.md` §2.1.
+
+## Resolução
+Confirmado via `git remote get-url origin` + `gh repo view`: o repositório real hoje é
+`maarkss1/Birthub-360` (não `MaarksN/CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR`). Também
+confirmado, via `.github/workflows/docker-publish.yml` (pipeline de publicação automática real,
+dispara após todo `push` aprovado em `main` — diferente de `cd-homolog.yml`, que é
+`workflow_dispatch`-only e nunca foi executado), que a imagem publicada de verdade usa o owner
+`maarkss1` com o nome de imagem antigo `central-de-inteligencia-comecial-atlasgr` (mantido de
+propósito nesta correção — renomear a imagem em si é decisão de Agente 08, dono de
+`.github/workflows/**`, não desta correção pontual).
+
+Corrigido:
+- `argocd/application-production.yaml` e `argocd/application-homolog.yaml`: `repoURL` →
+  `https://github.com/maarkss1/Birthub-360.git`.
+- `charts/prospector-atlas/values.yaml`: `image.repository` →
+  `ghcr.io/maarkss1/central-de-inteligencia-comecial-atlasgr` (só o owner, `maarksn` → `maarkss1`
+  — nome da imagem mantido igual ao que `docker-publish.yml` de fato publica).
+
+Nenhuma mudança em `.github/workflows/**` (fora do escopo desta correção).
