@@ -832,6 +832,8 @@ model Organization {
   bitrixSyncLogs                BitrixSyncLog[]
   bitrixExtractionRuns          BitrixExtractionRun[]
   threeCXConnections            ThreeCXConnection[]
+  voiceHubConnections           VoiceHubConnection[]
+  voiceCallLogs                 VoiceCallLog[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
   crmProducts                   CrmProduct[]
@@ -2622,6 +2624,86 @@ model ThreeCXConnection {
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
+}
+
+/// Conexão com o Birth Voices Hub (SDR de voz por IA) por organização — antes desta tabela, a
+/// configuração vivia inteiramente em variáveis de ambiente globais do processo
+/// (BIRTH_VOICES_URL/API_KEY/AGENT_ID/WEBHOOK_SECRET, ver `.env.example`), um único valor pra todo
+/// o deployment, sem jeito de cada organização ter seu próprio Hub/agente. Mesmo padrão de
+/// BitrixConnection/ThreeCXConnection: uma organização pode ter mais de uma conexão registrada, mas
+/// `birthVoice.service.ts` usa só a primeira habilitada — não é (ainda) um roteamento por tipo de
+/// agente. Variáveis de ambiente continuam funcionando como fallback (compatibilidade com
+/// deployments existentes) quando nenhuma conexão está cadastrada aqui.
+model VoiceHubConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Nome de exibição — livre, mesmo espírito de BitrixConnection.label.
+  label String @default("Birth Voices Hub")
+
+  /// URL base do Hub (ex.: https://voices.suaempresa.com, ou https://api.bland.ai quando o
+  /// provedor é a Bland AI diretamente — ver isBland em birthVoice.service.ts).
+  baseUrl String
+
+  /// Credenciais cifradas em repouso (AES-256-GCM) de forma transparente pela extensão Prisma em
+  /// src/lib/prisma.ts — ver ENCRYPTED_FIELDS, mesmo tratamento de
+  /// BitrixConnection.webhookUrl/ThreeCXConnection.apiKey. Nullable: enquanto a organização não
+  /// preenche via tela, o fallback de env var ainda pode estar em uso.
+  apiKey String? @db.Text
+
+  /// Id do agente de voz configurado no Hub — obrigatório para o Hub próprio (não usado quando
+  /// baseUrl aponta pra Bland AI, que identifica o agente por outro caminho).
+  agentId String?
+
+  /// Segredo do webhook de resultado de chamada (`CALL_RESULT_WEBHOOK_PATH`) — comparado contra o
+  /// cabeçalho assinado de cada callback antes de aceitar o payload (mesmo princípio de
+  /// BitrixConnection.webhookSecret). Cifrado em repouso, mesmo tratamento dos campos acima.
+  webhookSecret String? @db.Text
+
+  /// Liga/desliga esta conexão sem apagá-la — `birthVoice.service.ts` só considera conexões com
+  /// enabled=true ao escolher qual usar.
+  enabled Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+/// Log estruturado de cada chamada de voz IA (Birth Voices Hub / Bland AI) — antes desta tabela, o
+/// resultado só existia como texto livre dentro de `Note` (`voiceResult.webhook.ts`), sem jeito de
+/// listar/filtrar chamadas recentes fora do card de um lead específico (ver
+/// `VoiceCallActivity.tsx`). Escrito no MESMO ponto que já grava a Note/TimelineEvent — nunca a
+/// única fonte de verdade do resultado da chamada, só a projeção estruturada dela para a tela de
+/// atividade. `leadId` de propósito sem `@relation` (mesmo padrão de `CallSuppression.leadId`):
+/// apagar um Lead não deve apagar o histórico de chamadas (valor de auditoria).
+model VoiceCallLog {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  leadId String
+
+  /// Id da chamada no provedor (`call_id` da Bland) — usado para idempotência (mesmo marcador já
+  /// usado na Note, replicado aqui pra permitir dedupe direto na tabela).
+  providerCallId String
+
+  /// Estado classificado por `birthVoice.helpers.ts::classifyCallOutcome` — nunca um "sucesso" cru
+  /// não confirmado (ver o comentário dessa função sobre por que isto importa).
+  outcome String
+
+  durationSeconds Int     @default(0)
+  summary         String? @db.Text
+  transcript      String? @db.Text
+  recordingUrl    String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, providerCallId])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, leadId])
 }
 
 /// Registro unificado de opt-out multicanal (e-mail/WhatsApp/voz), proposto pelo Agente 17 em

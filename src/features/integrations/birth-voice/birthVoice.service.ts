@@ -22,21 +22,35 @@ export interface OutboundCallResult {
   status: string;
 }
 
-function requireConfig() {
-  const baseUrl = env.BIRTH_VOICES_URL?.replace(/\/$/, '');
-  const apiKey = env.BIRTH_VOICES_API_KEY;
-  const agentId = env.BIRTH_VOICES_AGENT_ID;
+/**
+ * Resolve a configuração de voz para esta organização — prioriza uma `VoiceHubConnection`
+ * cadastrada pela tela de Integrações (`voiceHubConnection.service.ts`) e cai para as variáveis
+ * de ambiente globais (`BIRTH_VOICES_URL`/`API_KEY`/`AGENT_ID`) quando não há nenhuma conexão
+ * habilitada — mesmo espírito de compatibilidade retroativa de qualquer migração de config global
+ * para por-tenant neste produto (ex.: `BitrixConnection`). `orderBy: createdAt asc` quando há mais
+ * de uma conexão cadastrada: a primeira criada vence, sem roteamento por tipo de agente ainda (ver
+ * comentário do model em `prisma/schema.prisma`).
+ */
+async function requireConfig(organizationId: string) {
+  const connection = await prisma.voiceHubConnection.findFirst({
+    where: { organizationId, enabled: true },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  const baseUrl = (connection?.baseUrl ?? env.BIRTH_VOICES_URL)?.replace(/\/$/, '');
+  const apiKey = connection?.apiKey ?? env.BIRTH_VOICES_API_KEY;
+  const agentId = connection?.agentId ?? env.BIRTH_VOICES_AGENT_ID;
   const publicBaseUrl = env.PUBLIC_BASE_URL?.replace(/\/$/, '');
   const missing = [
-    !baseUrl && 'BIRTH_VOICES_URL',
-    !apiKey && 'BIRTH_VOICES_API_KEY',
-    !agentId && 'BIRTH_VOICES_AGENT_ID',
+    !baseUrl && 'BIRTH_VOICES_URL (ou uma conexão cadastrada em Integrações)',
+    !apiKey && 'BIRTH_VOICES_API_KEY (ou uma conexão cadastrada em Integrações)',
+    !agentId && 'BIRTH_VOICES_AGENT_ID (ou uma conexão cadastrada em Integrações)',
     !publicBaseUrl && 'PUBLIC_BASE_URL',
   ].filter(Boolean);
 
   if (missing.length > 0) {
     throw new BirthVoiceNotConfiguredError(
-      `SDR de voz não configurado. Variáveis ausentes: ${missing.join(', ')}.`,
+      `SDR de voz não configurado. Faltando: ${missing.join(', ')}.`,
     );
   }
 
@@ -88,7 +102,7 @@ export async function callLead(
   leadId: string,
   agentType: VoiceAgentType = 'sdr',
 ): Promise<OutboundCallResult> {
-  const config = requireConfig();
+  const config = await requireConfig(organizationId);
 
   // Mesmo gate fail-closed já em vigor para os agentes de texto (guardrails.service.ts,
   // AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS) — até esta correção, a ligação de voz enviava

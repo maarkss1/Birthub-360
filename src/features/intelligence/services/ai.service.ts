@@ -352,9 +352,12 @@ export class AIService {
       );
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
-      throw new Error(`Não foi possível gerar o conteúdo agora (ferramenta: ${toolId}). ${detail}`, {
-        cause: error,
-      });
+      throw new Error(
+        `Não foi possível gerar o conteúdo agora (ferramenta: ${toolId}). ${detail}`,
+        {
+          cause: error,
+        },
+      );
     }
     const latencyMs = Date.now() - startTime;
 
