@@ -27,6 +27,182 @@ const knowledgeCopilotSchema = z.object({
   userRole: z.string().trim().max(100).optional(),
 });
 
+// ACH-07-02: os 19 endpoints abaixo liam `req.body` direto, sem `z.object().parse` — payload
+// arbitrário do cliente compunha o prompt de IA sem teto de tamanho nem shape garantido. Um
+// schema por endpoint, no molde de `knowledgeCopilotSchema` acima. Os 4 endpoints também citados
+// no achado ACH-07-01 (decision-committee, bitrix-hygiene, mesa/triage, lgpd/sanitize) levam
+// `.max(2000)` nos campos de texto livre para reduzir a superfície daquele achado (envio de PII a
+// IA externa) — os demais campos de texto livre têm limites maiores quando o conteúdo legítimo
+// (transcrição de reunião, notas de call) é normalmente mais longo que isso.
+
+const contactInputSchema = z.object({
+  name: z.string().trim().min(1).max(200),
+  role: z.string().trim().max(200).optional(),
+  email: z.string().trim().max(200).optional(),
+  phone: z.string().trim().max(50).optional(),
+  department: z.string().trim().max(200).optional(),
+});
+
+// #6 Mapeamento de Comitê de Decisores — um dos 4 do ACH-07-01.
+const decisionCommitteeSchema = z.object({
+  contacts: z.array(contactInputSchema).max(100).default([]),
+  companyContext: z.string().trim().max(2000).optional(),
+});
+
+// #7 Higienização Bitrix — um dos 4 do ACH-07-01.
+const bitrixHygieneSchema = z.object({
+  companyName: z.string().trim().min(1).max(300),
+  contactName: z.string().trim().max(200).optional(),
+  jobTitle: z.string().trim().max(200).optional(),
+  rawNotes: z.string().trim().max(2000).optional(),
+  segmentHint: z.string().trim().max(200).optional(),
+});
+
+// #8 Cadência Dinâmica
+const cadenceStepSchema = z.object({
+  companyName: z.string().trim().min(1).max(300),
+  contactName: z.string().trim().min(1).max(200),
+  channel: z.enum(['email', 'whatsapp', 'call', 'linkedin']),
+  stepNumber: z.number().int().min(0).max(1000),
+  previousInteraction: z.string().trim().max(2000).optional(),
+  leadReaction: z
+    .enum(['sem_resposta', 'abriu_email', 'clicou_link', 'pediu_tempo', 'objecao_preco'])
+    .optional(),
+  valueProposition: z.string().trim().max(2000).optional(),
+});
+
+const roleplayPersonaSchema = z.object({
+  name: z.string().trim().min(1).max(200),
+  role: z.string().trim().min(1).max(200),
+  companyProfile: z.string().trim().max(2000),
+  difficulty: z.enum(['Fácil', 'Médio', 'Difícil', 'Extremo']),
+  mainObjection: z.string().trim().max(2000),
+  personality: z.string().trim().max(2000),
+});
+
+const roleplayHistoryEntrySchema = z.object({
+  sender: z.enum(['user', 'persona']),
+  text: z.string().trim().max(4000),
+});
+
+// #9 Roleplay Turno
+const roleplayTurnSchema = z.object({
+  persona: roleplayPersonaSchema,
+  history: z.array(roleplayHistoryEntrySchema).max(500).default([]),
+  userMessage: z.string().trim().min(1).max(2000),
+});
+
+// #9 Roleplay Avaliação
+const roleplayEvaluateSchema = z.object({
+  persona: roleplayPersonaSchema,
+  history: z.array(roleplayHistoryEntrySchema).max(500).default([]),
+});
+
+// #10 Geração de Proposta Comercial
+const proposalGenerateSchema = z.object({
+  clientName: z.string().trim().min(1).max(300),
+  fleetSize: z.number().int().min(0).max(1_000_000).optional(),
+  diagnosedPains: z.array(z.string().trim().max(500)).max(50),
+  proposedModules: z.array(z.string().trim().max(200)).max(50),
+  monthlyInvestmentEstimated: z.number().min(0).optional(),
+  competitorOrCurrentSolution: z.string().trim().max(300).optional(),
+});
+
+// #11 Next Best Action
+const nextBestActionSchema = z.object({
+  leadOrClientName: z.string().trim().min(1).max(300),
+  stage: z.string().trim().min(1).max(200),
+  rawNote: z.string().trim().min(1).max(4000),
+  salesRepName: z.string().trim().max(200).optional(),
+});
+
+// #13 Churn Prediction
+const churnPredictSchema = z.object({
+  clientName: z.string().trim().min(1).max(300),
+  contractAgeMonths: z.number().int().min(0).max(1200),
+  monthlyRecurringRevenue: z.number().min(0),
+  openSupportTickets: z.number().int().min(0),
+  unresolvedComplaints: z.number().int().min(0),
+  paymentDelaysLast90Days: z.number().int().min(0),
+  platformUsageDropPercentage: z.number().min(-100).max(100),
+  recentSentimentNotes: z.string().trim().max(2000).optional(),
+});
+
+const incomingLeadInfoSchema = z.object({
+  leadId: z.string().trim().min(1).max(100),
+  companyName: z.string().trim().min(1).max(300),
+  estimatedFleet: z.number().int().min(0).max(1_000_000),
+  segment: z.string().trim().min(1).max(200),
+  urgency: z.enum(['Alta', 'Média', 'Baixa']),
+  region: z.string().trim().min(1).max(200),
+});
+
+const repProfileSchema = z.object({
+  repId: z.string().trim().min(1).max(100),
+  name: z.string().trim().min(1).max(200),
+  specialties: z.array(z.string().trim().max(100)).max(50),
+  winRatePercent: z.number().min(0).max(100),
+  currentLeadCount: z.number().int().min(0),
+});
+
+// #14 Smart Lead Router
+const leadRouterMatchSchema = z.object({
+  lead: incomingLeadInfoSchema,
+  reps: z.array(repProfileSchema).max(500).default([]),
+});
+
+// #16 Meeting Synthesis — transcrição de reunião real, limite maior que os campos de texto curto.
+const meetingSynthesizeSchema = z.object({
+  meetingTitle: z.string().trim().min(1).max(300),
+  participants: z.array(z.string().trim().max(200)).max(100),
+  rawTranscript: z.string().trim().min(1).max(20_000),
+  dealName: z.string().trim().max(300).optional(),
+});
+
+// #17 Mesa de Tratamento Triage — um dos 4 do ACH-07-01.
+const mesaTriageSchema = z.object({
+  alertId: z.string().trim().min(1).max(100),
+  vehiclePlate: z.string().trim().max(20).optional(),
+  clientName: z.string().trim().min(1).max(300),
+  alertType: z.string().trim().min(1).max(200),
+  telemetryDataSummary: z.string().trim().min(1).max(2000),
+  driverName: z.string().trim().max(200).optional(),
+  cargoValueEstimated: z.number().min(0).optional(),
+  riskZoneClassification: z.string().trim().max(200).optional(),
+});
+
+// #18 Seller Coaching
+const coachingReportSchema = z.object({
+  sellerName: z.string().trim().min(1).max(200),
+  role: z
+    .enum(['SDR / Hunter', 'Closer / Executivo de Contas', 'Account Manager / Farmer'])
+    .optional(),
+  period: z.string().trim().min(1).max(100),
+  callsMade: z.number().int().min(0),
+  connectionsRatePercent: z.number().min(0).max(100).optional(),
+  meetingsScheduled: z.number().int().min(0),
+  proposalsSent: z.number().int().min(0).optional(),
+  dealsClosed: z.number().int().min(0),
+  conversionRatePercent: z.number().min(0).max(100),
+  avgTicket: z.number().min(0),
+  topLossReason: z.string().trim().max(500).optional(),
+});
+
+// #19 Playbook Generator
+const playbookGenerateSchema = z.object({
+  topic: z.string().trim().min(1).max(500),
+  targetAudience: z.enum(['SDR', 'Closer', 'Onboarding', 'CS']),
+  industrySegment: z.string().trim().min(1).max(300),
+  winningPatternsObserved: z.array(z.string().trim().max(500)).max(50).optional(),
+});
+
+// #20 LGPD Sanitizer — um dos 4 do ACH-07-01.
+const lgpdSanitizeSchema = z.object({
+  rawText: z.string().trim().min(1).max(2000),
+  preserveCompanyNames: z.boolean().optional(),
+  maskLevel: z.enum(['estrito', 'moderado']),
+});
+
 // Endpoint de Inventário dos 20 recursos de IA
 aiSuiteRouter.get('/inventory', (_req: Request, res: Response) => {
   res.json({ success: true, data: aiSuite.getCapabilitiesInventory() });
@@ -35,6 +211,7 @@ aiSuiteRouter.get('/inventory', (_req: Request, res: Response) => {
 // #6 Mapeamento de Comitê de Decisores
 aiSuiteRouter.post(
   '/decision-committee',
+  validateRequest(decisionCommitteeSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { contacts, companyContext } = req.body;
@@ -47,37 +224,50 @@ aiSuiteRouter.post(
 );
 
 // #7 Higienização Bitrix
-aiSuiteRouter.post('/bitrix-hygiene', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.bitrixHygiene.sanitizeLeadData(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/bitrix-hygiene',
+  validateRequest(bitrixHygieneSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.bitrixHygiene.sanitizeLeadData(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 // #8 Cadência Dinâmica
-aiSuiteRouter.post('/cadence-step', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.cadenceAI.generateNextStep(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/cadence-step',
+  validateRequest(cadenceStepSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.cadenceAI.generateNextStep(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 // #9 Roleplay Turno e Avaliação
-aiSuiteRouter.post('/roleplay/turn', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.roleplayAI.simulateCustomerResponse(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/roleplay/turn',
+  validateRequest(roleplayTurnSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.roleplayAI.simulateCustomerResponse(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 aiSuiteRouter.post(
   '/roleplay/evaluate',
+  validateRequest(roleplayEvaluateSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { persona, history } = req.body;
@@ -92,6 +282,7 @@ aiSuiteRouter.post(
 // #10 Geração de Proposta Comercial
 aiSuiteRouter.post(
   '/proposal/generate',
+  validateRequest(proposalGenerateSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await aiSuite.proposalAI.generateProposalSections(req.body);
@@ -103,24 +294,32 @@ aiSuiteRouter.post(
 );
 
 // #11 Next Best Action
-aiSuiteRouter.post('/next-best-action', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.nextBestAction.determineNextAction(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/next-best-action',
+  validateRequest(nextBestActionSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.nextBestAction.determineNextAction(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 // #13 Churn Prediction
-aiSuiteRouter.post('/churn/predict', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.churnPrediction.analyzeChurnRisk(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/churn/predict',
+  validateRequest(churnPredictSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.churnPrediction.analyzeChurnRisk(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 // #14 Smart Lead Router
 // Achado da auditoria (PR #328): SmartLeadRouterService.matchLeadToRep já valida (schema Zod +
@@ -133,6 +332,7 @@ aiSuiteRouter.post('/churn/predict', async (req: Request, res: Response, next: N
 // que o escopo desta correção — documentado aqui para não ficar perdido.
 aiSuiteRouter.post(
   '/lead-router/match',
+  validateRequest(leadRouterMatchSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lead, reps } = req.body;
@@ -173,6 +373,7 @@ aiSuiteRouter.post(
 // #16 Meeting Synthesis
 aiSuiteRouter.post(
   '/meeting/synthesize',
+  validateRequest(meetingSynthesizeSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await aiSuite.meetingSynthesis.synthesizeMeeting(req.body);
@@ -184,28 +385,37 @@ aiSuiteRouter.post(
 );
 
 // #17 Mesa de Tratamento Triage
-aiSuiteRouter.post('/mesa/triage', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.mesaTriage.triageIncident(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/mesa/triage',
+  validateRequest(mesaTriageSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.mesaTriage.triageIncident(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 // #18 Seller Coaching
-aiSuiteRouter.post('/coaching/report', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.sellerCoaching.generateCoachingReport(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/coaching/report',
+  validateRequest(coachingReportSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.sellerCoaching.generateCoachingReport(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 // #19 Playbook Generator
 aiSuiteRouter.post(
   '/playbook/generate-chapter',
+  validateRequest(playbookGenerateSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await aiSuite.playbookAI.generatePlaybookChapter(req.body);
@@ -217,11 +427,15 @@ aiSuiteRouter.post(
 );
 
 // #20 LGPD Sanitizer
-aiSuiteRouter.post('/lgpd/sanitize', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await aiSuite.lgpdSanitizer.sanitizeText(req.body);
-    res.json({ success: true, data: result });
-  } catch (err) {
-    next(err);
-  }
-});
+aiSuiteRouter.post(
+  '/lgpd/sanitize',
+  validateRequest(lgpdSanitizeSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await aiSuite.lgpdSanitizer.sanitizeText(req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
