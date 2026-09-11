@@ -53,12 +53,13 @@ public class MainActivity extends BridgeActivity {
     // .agents/handoffs/onda-8/09-para-02-navigationbus-rotas-ausentes.md para o bug que acontece
     // quando as duas listas divergem (deep link "abre e não faz nada").
     private static final Set<String> VALID_TABS = new HashSet<>(Arrays.asList(
-        "dashboard", "companies", "contacts", "crm", "crm360", "mesa-tratamento", "activities",
-        "cadence", "prospect", "intelligence", "market-intelligence", "propostas", "chatbook",
-        "roleplay", "qualification_matrix", "objections_matrix", "topic_training", "bitrix",
-        "reports", "integrations", "knowledge", "analytics", "winloss", "calendar",
+        "dashboard", "workspace", "companies", "contacts", "crm", "crm360", "mesa-tratamento",
+        "activities", "cadence", "prospect", "intelligence", "market-intelligence", "propostas",
+        "chatbook", "roleplay", "qualification_matrix", "objections_matrix", "topic_training",
+        "bitrix", "reports", "integrations", "knowledge", "analytics", "winloss", "calendar",
         "notifications", "automations", "usage", "editor", "team", "settings",
-        "commercial_intelligence"
+        "commercial_intelligence", "copiloto_ia", "daily-plan", "sdr-diagnostic-joao",
+        "module-access"
     ));
 
     @Override
