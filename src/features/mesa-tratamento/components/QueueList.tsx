@@ -40,7 +40,12 @@ export function QueueList({ queue }: QueueListProps) {
                 )}
                 {lead.title}
               </span>
-              <span className="text-xs text-ink-2 shrink-0">#{index + 1}</span>
+              <span
+                className="text-xs text-ink-2 shrink-0"
+                title={`Prioridade ${lead.priorityScore.score}/100 — ${lead.priorityScore.breakdown.map((b) => `${b.label}: +${b.points}`).join(', ')}`}
+              >
+                #{index + 1} · {lead.priorityScore.score}
+              </span>
             </div>
             <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
               <Badge variant="outline">{lead.status.replace(/_/g, ' ')}</Badge>
