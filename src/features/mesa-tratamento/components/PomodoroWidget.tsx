@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
 import { Pause, Play, RotateCcw, Timer } from 'lucide-react';
 import { usePomodoro } from '../hooks/usePomodoro';
+import { voiceCommandBus } from '../../../lib/voiceCommandBus';
+
+const VOICE_OWNER_ID = 'mesa-tratamento:pomodoro';
 
 function formatClock(totalSeconds: number): string {
   const mm = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
@@ -33,6 +37,45 @@ export function PomodoroWidget() {
 
   const isRunning = phase !== 'idle';
   const isBreak = phase === 'break' || phase === 'long_break';
+
+  // Comando de voz mãos-livres — portado do protótipo standalone `acompanhamento-sdr` (js/
+  // voice-service.js, comandos "iniciar foco"/"sincronizar"), mas via o assistente de voz global
+  // já existente (`VoiceCommandWidget`, ver `voiceCommandBus.ts`) em vez de um segundo microfone
+  // sempre ativo — só o ditado pontual (useVoiceDictation) fica embutido no formulário. Cada
+  // comando só entra na lista quando a ação correspondente é realmente possível no estado atual
+  // (ex.: "pausar" não aparece se já está pausado), pelo mesmo motivo que os botões acima também
+  // somem/aparecem condicionalmente.
+  useEffect(() => {
+    const commands = [
+      !isRunning && {
+        keywords: ['iniciar foco', 'começar foco', 'iniciar pomodoro'],
+        phrase: 'iniciar foco',
+        confirmationLabel: 'Bloco de foco iniciado',
+        handler: startFocus,
+      },
+      isRunning && !isBreak && !paused && {
+        keywords: ['pausar'],
+        phrase: 'pausar',
+        confirmationLabel: 'Cronômetro pausado',
+        handler: pause,
+      },
+      isRunning && !isBreak && paused && {
+        keywords: ['retomar', 'continuar'],
+        phrase: 'retomar',
+        confirmationLabel: 'Cronômetro retomado',
+        handler: resume,
+      },
+      isRunning && {
+        keywords: ['reiniciar cronômetro', 'reiniciar timer', 'reiniciar pomodoro'],
+        phrase: 'reiniciar cronômetro',
+        confirmationLabel: 'Cronômetro reiniciado',
+        handler: reset,
+      },
+    ].filter((c): c is Exclude<typeof c, false> => !!c);
+
+    voiceCommandBus.registerCommands(VOICE_OWNER_ID, commands);
+    return () => voiceCommandBus.unregister(VOICE_OWNER_ID);
+  }, [isRunning, isBreak, paused, startFocus, pause, resume, reset]);
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-card border border-line bg-surface px-4 py-2.5 shadow-card">
