@@ -1,108 +1,40 @@
-import { prisma } from '../../../lib/prisma.js';
+import type {
+  AggregatedSellerPerformance,
+  SellerPerformancePeriod,
+  SellerPerformanceRepository,
+} from '../domain/SellerPerformance.js';
+import { prismaSellerPerformanceRepository } from '../infra/PrismaSellerPerformanceRepository.js';
 
-export interface SellerPerformancePeriod {
-  from: Date;
-  to: Date;
-}
+export type { SellerPerformancePeriod, AggregatedSellerPerformance };
 
-export interface AggregatedSellerPerformance {
-  callsMade: number;
-  meetingsScheduled: number;
-  dealsClosed: number;
-  avgTicket: number;
-  conversionRatePercent: number;
-  topLossReason?: string;
-}
-
-// Mesmo recorte de "qualificado" de PrismaAnalyticsRepository.groupQualifiedLeadsByOwner: saiu das
-// duas primeiras etapas do funil e não foi desqualificado. Deliberadamente NÃO escopado ao período
-// (lifetime, como o resto do app já faz) — não existe um carimbo de "data de qualificação" no
-// schema para recortar isso por semana sem inventar um.
-const QUALIFIED_EXCLUDED_STATUSES = ['Lead_Recebido', 'Cadencia_Iniciada', 'Lead_Desqualificado'];
-
+/**
+ * Piloto de migração para repository (ver `docs/architecture/PRISMA-REPOSITORY-MIGRATION-GUIDE.md`):
+ * as seis queries que viviam aqui saíram para `SellerPerformanceRepository`/
+ * `PrismaSellerPerformanceRepository`. O repositório é injetado por construtor (default =
+ * implementação Prisma real) para permitir testar a combinação das métricas (conversão, maior
+ * motivo de perda) com um repositório em memória, sem precisar de banco.
+ */
 export class SellerPerformanceAggregatorService {
+  constructor(
+    private readonly repository: SellerPerformanceRepository = prismaSellerPerformanceRepository,
+  ) {}
+
   async compute(
     organizationId: string,
     owner: string,
     period: SellerPerformancePeriod,
   ): Promise<AggregatedSellerPerformance> {
-    const { from, to } = period;
+    const raw = await this.repository.getRawMetrics(organizationId, owner, period);
 
-    const [
-      callsMade,
-      meetingsScheduled,
-      dealsAggregate,
-      dealsClosed,
-      qualifiedCount,
-      lossReasonRows,
-    ] = await Promise.all([
-      prisma.activity.count({
-        where: {
-          organizationId,
-          owner,
-          type: 'Ligacao',
-          date: { gte: from, lt: to },
-          deletedAt: null,
-        },
-      }),
-      prisma.activity.count({
-        where: {
-          organizationId,
-          owner,
-          type: 'Reuniao',
-          date: { gte: from, lt: to },
-          deletedAt: null,
-        },
-      }),
-      prisma.lead.aggregate({
-        where: {
-          organizationId,
-          owner,
-          status: 'Negocios_Ganhos',
-          closedAt: { gte: from, lt: to },
-          deletedAt: null,
-        },
-        _avg: { amount: true },
-      }),
-      prisma.lead.count({
-        where: {
-          organizationId,
-          owner,
-          status: 'Negocios_Ganhos',
-          closedAt: { gte: from, lt: to },
-          deletedAt: null,
-        },
-      }),
-      prisma.lead.count({
-        where: {
-          organizationId,
-          owner,
-          deletedAt: null,
-          status: { notIn: QUALIFIED_EXCLUDED_STATUSES as unknown as never[] },
-        },
-      }),
-      prisma.lead.groupBy({
-        by: ['lossReason'],
-        where: {
-          organizationId,
-          owner,
-          deletedAt: null,
-          status: 'Negocios_Perdidos',
-          closedAt: { gte: from, lt: to },
-        },
-        _count: { _all: true },
-      }),
-    ]);
-
-    const topLossRow = [...lossReasonRows].sort((a, b) => b._count._all - a._count._all)[0];
+    const topLossRow = [...raw.lossReasonCounts].sort((a, b) => b.count - a.count)[0];
 
     return {
-      callsMade,
-      meetingsScheduled,
-      dealsClosed,
-      avgTicket: dealsAggregate._avg?.amount ?? 0,
+      callsMade: raw.callsMade,
+      meetingsScheduled: raw.meetingsScheduled,
+      dealsClosed: raw.dealsClosed,
+      avgTicket: raw.avgDealAmount ?? 0,
       conversionRatePercent:
-        qualifiedCount > 0 ? Math.round((dealsClosed / qualifiedCount) * 1000) / 10 : 0,
+        raw.qualifiedCount > 0 ? Math.round((raw.dealsClosed / raw.qualifiedCount) * 1000) / 10 : 0,
       topLossReason: topLossRow?.lossReason ?? undefined,
     };
   }

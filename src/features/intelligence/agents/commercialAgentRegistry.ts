@@ -14,10 +14,12 @@ import type {
  * `status`/`risk`/`bindings` abaixo foram corrigidos nesta onda depois de ler o código real:
  *
  * - `contract-signature`: o pacote marcava `status: BLOCKED, risk: HIGH` ("nenhuma integração de
- *   assinatura confiável encontrada"). Falso — `src/features/cadence/domain/signature.ts`,
- *   `application/documentSignature.ts`, `infra/GovBrSignatureProviderPort.ts` e
- *   `infra/PrismaSignatureRequestRepository.ts` já implementam o fluxo real (provedor gov.br,
- *   hoje um stub de transporte documentado, mas a máquina de estados e o webhook são reais).
+ *   assinatura confiável encontrada"). Falso — `src/shared/domain/signature.ts` (movido de
+ *   `src/features/cadence/domain/signature.ts` no ITEM-13 de arquitetura — módulo puro sem dono
+ *   de feature, sempre consumido de fora de `cadence`), `application/documentSignature.ts`,
+ *   `infra/GovBrSignatureProviderPort.ts` e `infra/PrismaSignatureRequestRepository.ts` (esses três
+ *   continuam em `src/features/cadence/**`) já implementam o fluxo real (provedor gov.br, hoje um
+ *   stub de transporte documentado, mas a máquina de estados e o webhook são reais).
  * - `billing-revenue`: o pacote e a auditoria concordam que não existe fonte real de faturamento.
  *   Confirmado: `src/features/billing/**` é consumo de IA (custo de token), não faturamento de
  *   venda — o próprio arquivo documenta "deliberadamente NÃO é um módulo de faturamento".
@@ -300,7 +302,7 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
     ],
     handoffs: ['billing-revenue', 'closer-sales', 'executive-director', 'bitrix-guardian'],
     bindings: [
-      'Espelha (sem importar — no-cross-feature-imports) os status reais de src/features/cadence/domain/signature.ts (SignatureStatus). Nunca chama requestDocumentSignature/applySignatureStatusUpdate.',
+      'Espelha (sem importar) os status reais de src/shared/domain/signature.ts (SignatureStatus, movido de src/features/cadence/domain/ no ITEM-13). Nunca chama requestDocumentSignature/applySignatureStatusUpdate.',
     ],
     agentModule: './contractSignature.agent.js',
   },

@@ -154,15 +154,6 @@
   },
   {
     "type": "dependency",
-    "from": "src/features/companies/routes/company.routes.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/market-intelligence/server/marketIntelligenceCompany.routes.ts"
-  },
-  {
-    "type": "dependency",
     "from": "src/features/contacts/application/ContactUseCases.ts",
     "rule": {
       "name": "no-cross-feature-imports",
@@ -178,15 +169,6 @@
       "severity": "error"
     },
     "to": "src/features/prospecting/services/enrichment.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/crm/application/dealClosureGate.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/cadence/domain/dealClosure.ts"
   },
   {
     "type": "dependency",
@@ -222,6 +204,15 @@
       "name": "no-cross-feature-imports",
       "severity": "error"
     },
+    "to": "src/features/copiloto-ia/components/LeadCopilotoPanel.tsx"
+  },
+  {
+    "type": "dependency",
+    "from": "src/features/crm/components/LeadDetailDrawer.tsx",
+    "rule": {
+      "name": "no-cross-feature-imports",
+      "severity": "error"
+    },
     "to": "src/features/integrations/bitrix/bitrix.api.ts"
   },
   {
@@ -232,24 +223,6 @@
       "severity": "error"
     },
     "to": "src/features/integrations/whatsapp/components/WhatsAppChatPanel.tsx"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/crm/components/LeadDetailDrawer.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/copiloto-ia/components/LeadCopilotoPanel.tsx"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/crm/infra/PrismaDealClosureGate.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/cadence/domain/dealClosure.ts"
   },
   {
     "type": "dependency",
@@ -286,15 +259,6 @@
       "severity": "error"
     },
     "to": "src/features/cadence/application/documentSignature.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/crm360/infra/PrismaCrm360Repository.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/cadence/domain/proposal.ts"
   },
   {
     "type": "dependency",
@@ -405,41 +369,6 @@
     "to": "src/features/cadence/infra/PrismaOptOutRepository.ts"
   },
   {
-    "type": "cycle",
-    "from": "src/features/integrations/bitrix/service/deals.ts",
-    "rule": {
-      "name": "no-circular",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/bitrix/service/userMapping.ts",
-    "cycle": [
-      {
-        "name": "src/features/integrations/bitrix/service/userMapping.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      },
-      {
-        "name": "src/features/integrations/bitrix/service/deals.ts",
-        "dependencyTypes": [
-          "local",
-          "type-only",
-          "import"
-        ]
-      }
-    ]
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/integrations/email/emailReply.webhook.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/cadence/domain/replyTracking.ts"
-  },
-  {
     "type": "dependency",
     "from": "src/features/integrations/email/emailReply.webhook.ts",
     "rule": {
@@ -465,15 +394,6 @@
       "severity": "error"
     },
     "to": "src/features/cadence/application/documentSignature.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/integrations/signature/signatureStatus.webhook.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/cadence/domain/signature.ts"
   },
   {
     "type": "dependency",
@@ -926,15 +846,6 @@
   },
   {
     "type": "dependency",
-    "from": "src/features/prospecting/services/whatsapp.service.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/whatsapp/whatsapp.service.ts"
-  },
-  {
-    "type": "dependency",
     "from": "src/features/roleplay/components/RoleplayHub.tsx",
     "rule": {
       "name": "no-cross-feature-imports",
@@ -968,6 +879,15 @@
       "severity": "error"
     },
     "to": "src/features/lgpd/components/AuditLogs.tsx"
+  },
+  {
+    "type": "dependency",
+    "from": "src/features/settings/components/Settings.tsx",
+    "rule": {
+      "name": "no-cross-feature-imports",
+      "severity": "error"
+    },
+    "to": "src/features/lgpd/components/DataSubjectRights.tsx"
   },
   {
     "type": "dependency",
@@ -1034,188 +954,5 @@
         ]
       }
     ]
-  },
-  {
-    "type": "cycle",
-    "from": "src/shared/domain/specifications/AndSpecification.ts",
-    "rule": {
-      "name": "no-circular",
-      "severity": "error"
-    },
-    "to": "src/shared/domain/specifications/CompositeSpecification.ts",
-    "cycle": [
-      {
-        "name": "src/shared/domain/specifications/CompositeSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/Specification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/AndSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      }
-    ]
-  },
-  {
-    "type": "cycle",
-    "from": "src/shared/domain/specifications/AndSpecification.ts",
-    "rule": {
-      "name": "no-circular",
-      "severity": "error"
-    },
-    "to": "src/shared/domain/specifications/Specification.ts",
-    "cycle": [
-      {
-        "name": "src/shared/domain/specifications/Specification.ts",
-        "dependencyTypes": [
-          "local",
-          "type-only",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/AndSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      }
-    ]
-  },
-  {
-    "type": "cycle",
-    "from": "src/shared/domain/specifications/NotSpecification.ts",
-    "rule": {
-      "name": "no-circular",
-      "severity": "error"
-    },
-    "to": "src/shared/domain/specifications/CompositeSpecification.ts",
-    "cycle": [
-      {
-        "name": "src/shared/domain/specifications/CompositeSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/Specification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/NotSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      }
-    ]
-  },
-  {
-    "type": "cycle",
-    "from": "src/shared/domain/specifications/NotSpecification.ts",
-    "rule": {
-      "name": "no-circular",
-      "severity": "error"
-    },
-    "to": "src/shared/domain/specifications/Specification.ts",
-    "cycle": [
-      {
-        "name": "src/shared/domain/specifications/Specification.ts",
-        "dependencyTypes": [
-          "local",
-          "type-only",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/NotSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      }
-    ]
-  },
-  {
-    "type": "cycle",
-    "from": "src/shared/domain/specifications/OrSpecification.ts",
-    "rule": {
-      "name": "no-circular",
-      "severity": "error"
-    },
-    "to": "src/shared/domain/specifications/CompositeSpecification.ts",
-    "cycle": [
-      {
-        "name": "src/shared/domain/specifications/CompositeSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/Specification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/OrSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      }
-    ]
-  },
-  {
-    "type": "cycle",
-    "from": "src/shared/domain/specifications/OrSpecification.ts",
-    "rule": {
-      "name": "no-circular",
-      "severity": "error"
-    },
-    "to": "src/shared/domain/specifications/Specification.ts",
-    "cycle": [
-      {
-        "name": "src/shared/domain/specifications/Specification.ts",
-        "dependencyTypes": [
-          "local",
-          "type-only",
-          "import"
-        ]
-      },
-      {
-        "name": "src/shared/domain/specifications/OrSpecification.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
-      }
-    ]
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/settings/components/Settings.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/lgpd/components/DataSubjectRights.tsx"
   }
 ]

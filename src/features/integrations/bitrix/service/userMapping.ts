@@ -1,5 +1,18 @@
 import { prisma } from '../../../../lib/prisma.js';
-import type { BitrixUserOption } from './deals.js';
+
+/**
+ * Formato de usuário do Bitrix já normalizado (id/nome/e-mail) — definido aqui, não em `deals.ts`,
+ * porque este módulo é quem consome o tipo (`resolveOwnBitrixUserId`) e `deals.ts` já importa
+ * `resolveAtlasUserIdByEmail` daqui; declarar o tipo do lado que só consome, nunca produz, evitava
+ * uma dependência circular real entre os dois módulos (`no-circular`,
+ * `.dependency-cruiser-known-violations.json`) sem mudar nenhum comportamento — `deals.ts` importa
+ * o tipo daqui normalmente.
+ */
+export interface BitrixUserOption {
+  id: string;
+  name: string;
+  email: string | null;
+}
 
 /**
  * Ponte Usuário-Atlas ↔ Usuário-Bitrix — deliberadamente SEM coluna nova no schema (Integrações

@@ -3,7 +3,7 @@ import {
   isValidSignatureTransition,
   type SignatureRequestDraft,
   type SignatureStatus,
-} from '../domain/signature.js';
+} from '../../../shared/domain/signature.js';
 
 /** Envia a solicitação ao provedor real (ou stub) e devolve o id que ele atribuiu — usado depois para casar o webhook de status com a solicitação certa. */
 export interface SignatureProviderPort {
