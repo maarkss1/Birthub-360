@@ -631,10 +631,33 @@ router.get(
     try {
       const organizationId = (req as AuthRequest).user.organizationId;
       const latest = await prisma.report.findFirst({
-        where: { organizationId },
+        // Filtro explícito por ON_DEMAND: sem isto, o resumo diário automático (`ReportSource
+        // DAILY_AUTO`, gerado por `dailyExecutiveSummary.worker.ts`) apareceria aqui sem o
+        // usuário ter pedido, substituindo silenciosamente o último relatório que ele gerou.
+        where: { organizationId, source: 'ON_DEMAND' },
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, data: latest });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// Histórico do resumo executivo diário automático (`dailyExecutiveSummary.worker.ts`, cron
+// 0 18 * * *) — antes gerava via IA todo dia mas só logava; nunca aparecia em nenhuma tela.
+router.get(
+  '/report/daily-summaries',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const organizationId = (req as AuthRequest).user.organizationId;
+      const summaries = await prisma.report.findMany({
+        where: { organizationId, source: 'DAILY_AUTO' },
+        orderBy: { createdAt: 'desc' },
+        take: 14,
+        select: { id: true, content: true, metrics: true, createdAt: true },
+      });
+      res.json({ success: true, data: summaries });
     } catch (error) {
       next(error);
     }

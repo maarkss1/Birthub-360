@@ -164,4 +164,34 @@ describe('ReportsHub', () => {
 
         expect(await screen.findByText('IA indisponível')).toBeInTheDocument();
     });
+
+    it('exibe o histórico do resumo executivo diário automático quando a API devolve itens', async () => {
+        getMock.mockImplementation((url: string) => {
+            if (url.includes('/report/daily-summaries')) {
+                return Promise.resolve([
+                    { id: 'd1', content: 'Resumo de ontem: 3 leads ganhos.', createdAt: '2026-09-10T18:00:00.000Z' },
+                ]);
+            }
+            if (url.includes('/report/latest')) return Promise.resolve(null);
+            return Promise.resolve({ monthly: [] });
+        });
+
+        render(<ReportsHub />);
+
+        expect(await screen.findByText('Resumo Executivo Diário (automático)')).toBeInTheDocument();
+        expect(screen.getByText(/Resumo de ontem: 3 leads ganhos\./)).toBeInTheDocument();
+    });
+
+    it('não mostra a seção de resumo diário quando a organização nunca teve o job rodando', async () => {
+        getMock.mockImplementation((url: string) => {
+            if (url.includes('/report/daily-summaries')) return Promise.resolve([]);
+            if (url.includes('/report/latest')) return Promise.resolve(null);
+            return Promise.resolve({ monthly: [] });
+        });
+
+        render(<ReportsHub />);
+
+        await waitFor(() => expect(overviewMock).toHaveBeenCalledTimes(1));
+        expect(screen.queryByText('Resumo Executivo Diário (automático)')).not.toBeInTheDocument();
+    });
 });

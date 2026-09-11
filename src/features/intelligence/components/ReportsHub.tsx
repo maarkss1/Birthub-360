@@ -1,19 +1,26 @@
+import { CalendarClock, FileBarChart, Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { FileBarChart, Loader2, Sparkles, RefreshCw } from 'lucide-react';
+import { Button } from '../../../components/ui/Button';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { analyticsDB } from '../../../lib/db';
-import { api } from '../../../lib/api';
-import { readSseStream, sseRequestInit } from '../../../lib/sse';
+import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { GlowChart } from '../../analytics/components/GlowChart';
+import { api } from '../../../lib/api';
+import { analyticsDB } from '../../../lib/db';
+import { readSseStream, sseRequestInit } from '../../../lib/sse';
 import { analyticsApi, type MonthlyPoint } from '../../analytics/analytics.api';
+import { GlowChart } from '../../analytics/components/GlowChart';
+
+interface DailySummary {
+  id: string;
+  content: string;
+  createdAt: string;
+}
 
 type Metrics = Awaited<ReturnType<typeof analyticsDB.overview>>;
 
@@ -68,6 +75,7 @@ export function ReportsHub() {
   const [reportSavedAt, setReportSavedAt] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dailySummaries, setDailySummaries] = useState<DailySummary[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,6 +118,16 @@ export function ReportsHub() {
       })
       .catch(() => {
         /* melhor esforço — a tela continua útil sem o histórico */
+      });
+    // Resumo executivo diário automático (job agendado às 18h) — antes era gerado por IA todo
+    // dia mas só ia pro log; agora fica salvo e aparece aqui como histórico somente-leitura.
+    api
+      .get<DailySummary[]>('/api/intelligence/report/daily-summaries')
+      .then((data) => {
+        if (!cancelled) setDailySummaries(data ?? []);
+      })
+      .catch(() => {
+        /* melhor esforço — seção de histórico diário some silenciosamente, resto da tela funciona */
       });
     return () => {
       cancelled = true;
@@ -313,7 +331,33 @@ export function ReportsHub() {
             </div>
           )}
         </div>
+
+        {/* Resumo executivo diário (job agendado às 18h, sem interação do usuário) — só aparece
+            quando existe pelo menos um resumo salvo, para não mostrar uma seção vazia a quem
+            nunca teve o job rodando na sua organização. */}
+        {dailySummaries.length > 0 && (
+          <div>
+            <h4 className="text-[11px] font-black uppercase tracking-wider text-ink-2 mb-3 flex items-center gap-1.5">
+              <CalendarClock size={13} className="text-brand" />
+              Resumo Executivo Diário (automático)
+            </h4>
+            <Timeline items={dailySummaries.map(toDailySummaryTimelineItem)} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
+}
+
+function toDailySummaryTimelineItem(summary: DailySummary): TimelineItem {
+  const excerpt = summary.content.replace(/\s+/g, ' ').trim();
+  return {
+    id: summary.id,
+    title: `Resumo de ${new Date(summary.createdAt).toLocaleDateString('pt-BR')}`,
+    description: excerpt.length > 220 ? `${excerpt.slice(0, 220)}…` : excerpt,
+    timestamp: new Date(summary.createdAt).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+  };
 }

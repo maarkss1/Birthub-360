@@ -7234,7 +7234,17 @@ paths:
   /intelligence/report/latest:
     get:
       tags: [Intelligence]
-      summary: Último relatório executivo gerado via IA para o tenant
+      summary: Último relatório executivo gerado sob demanda (ReportsHub) para o tenant — nunca inclui o resumo automático diário (ver ReportSource)
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+
+  /intelligence/report/daily-summaries:
+    get:
+      tags: [Intelligence]
+      summary: >-
+        Histórico (até 14) do resumo executivo diário gerado automaticamente pelo job agendado
+        (dailyExecutiveSummary.worker.ts, ReportSource=DAILY_AUTO) — somente leitura, exibido no
+        ReportsHub separado do relatório sob demanda.
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
 

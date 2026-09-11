@@ -1,11 +1,13 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { requestContext } from '../../../lib/async-context.js';
-import { connection } from '../../../lib/queue/redis.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
-import { getAiModel } from '../../../lib/ai/gateway.js';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import type { Prisma } from '@prisma/client';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
+import { DEFAULT_PLAYBOOK } from '../../../config/playbooks.js';
+import { getAiModel } from '../../../lib/ai/gateway.js';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { connection } from '../../../lib/queue/redis.js';
 
 export const EXEC_SUMMARY_QUEUE_NAME = 'daily-executive-summary-queue';
 
@@ -95,8 +97,25 @@ ${leadsToday
             : JSON.stringify(response.content);
         logger.info({ organizationId, summaryText }, 'Resumo Executivo Gerado com Sucesso');
 
-        // Aqui poderíamos salvar em uma tabela `ExecutiveReport` ou enviar por e-mail (usando Nodemailer).
-        // Para efeitos de integração (Passo 56), o texto gerado já é suficiente.
+        // Persiste como `Report` (mesma forma do relatório sob demanda de ReportsHub — markdown +
+        // snapshot de métricas), marcado com `source: DAILY_AUTO` para não se misturar com o
+        // histórico ON_DEMAND consultado por GET /report/latest. `brandId` é um dado comercial
+        // sem sentido aqui (o playbook ativo é uma preferência de navegador, não algo que o job
+        // em background conhece) — grava o valor padrão só para satisfazer a coluna obrigatória.
+        await prisma.report.create({
+          data: {
+            organizationId,
+            brandId: DEFAULT_PLAYBOOK,
+            source: 'DAILY_AUTO',
+            content: summaryText,
+            metrics: {
+              totalLeadsAtualizados: leadsToday.length,
+              ganhos,
+              perdidos,
+              novos,
+            } as Prisma.InputJsonValue,
+          },
+        });
         results.push({ organizationId, summary: summaryText });
       } catch (err) {
         logger.error({ err, organizationId }, 'Falha ao gerar resumo executivo com IA');
