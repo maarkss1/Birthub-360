@@ -1,7 +1,7 @@
 - De: 03 — Design e Acessibilidade
 - Para: 04 — CRM e BI
 - Onda: roadmap-v2-onda-3
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema
@@ -43,3 +43,15 @@ config), não quebra o gate. Fora do escopo do Agente 03 nesta onda porque o arq
 `src/features/crm360/` (fora de `src/components/ui/`/`src/styles/`), e o próprio `Label.tsx` (owned
 by 03) não precisa de mudança — ele é intencionalmente genérico (usado 40x no repo, exige `htmlFor`
 por instância, não pelo componente).
+
+## Resolução
+
+Aplicada a alternativa mais leve descrita em "Alteração necessária": `<Label>Itens *</Label>` foi
+removido e substituído por `<span id="proposta-itens-heading">Itens *</span>` (mantendo o mesmo
+texto e estilo visual) associado ao bloco de itens via `<fieldset aria-labelledby=
+"proposta-itens-heading">` envolvendo o `fields.map(...)` do `useFieldArray` — `src/features/crm360/
+components/PropostaForm.tsx`, linhas ~391-421. Um comentário no próprio JSX documenta a decisão
+(grupo de campos, não controle único, `htmlFor` não se aplica). `role="group"` não foi necessário
+porque `<fieldset>` já carrega semântica de agrupamento nativa; `aria-labelledby` supre a função do
+`<legend>` sem herdar o estilo padrão de `<legend>` do navegador. Não há mais nenhum uso de
+`<Label>` sem `htmlFor` correspondente no arquivo.

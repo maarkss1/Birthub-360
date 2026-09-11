@@ -1,7 +1,7 @@
 - De: 18
 - Para: 04
 - Onda: roadmap-v2-transversais-2
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
@@ -57,3 +57,24 @@ nem abre num leitor de PDF).
 Achado durante a auditoria de contratos/OpenAPI da onda `roadmap-v2-transversais-2` (Agente 18).
 Ver `docs/openapi.yaml` → `/analytics/cohort` e `/analytics/export/pdf` para o contrato atual
 documentado (com a ressalva de dado fictício escrita no próprio YAML).
+
+## Resolução
+
+`AnalyticsController.getCohort` (`src/features/analytics/presentation/AnalyticsController.ts`,
+~linha 58) não devolve mais a lista fixa de 3 meses de exemplo — agora chama
+`this.analyticsUseCases.cohortAnalysis(organizationId)`, uma agregação real por `organizationId`
+(mesmo padrão de `getOverview`/`getDashboard`, que já liam do Prisma). Um comentário no próprio
+controller documenta a correção e por que ela era necessária.
+
+O endpoint `exportPdf` (que devolvia `Buffer.from('PDF_FAKE_CONTENT_FOR_NOW')` como se fosse PDF
+válido) foi substituído por `exportCohortCsv`, que gera um CSV real (`buildCohortCsv`) a partir dos
+mesmos dados reais de cohort — não um PDF. Essa foi a alternativa "mais barata" explicitamente
+prevista neste handoff ("remover o endpoint de export até existir geração real"), adaptada para CSV
+em vez de remoção pura porque o projeto já tem um padrão equivalente de export em CSV
+(`commercial-intelligence/application/executiveExport.ts` +
+`commercialIntelligence.api.ts` → `downloadExecutiveExport`), reaproveitado aqui em vez de
+adicionar uma biblioteca de geração de PDF nova (que exigiria aprovação de dependência fora do
+escopo desta correção). `docs/openapi.yaml` já reflete isso: a rota foi renomeada de
+`/analytics/export/pdf` para `/analytics/export/csv` (linha ~3127), com `summary` documentando o
+motivo da mudança e referência a `.agents/runs/roadmap-v2-onda-2.md` (Agente 04) — não é mais o
+contrato fictício descrito neste handoff.
