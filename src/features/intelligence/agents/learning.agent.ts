@@ -395,7 +395,7 @@ export class LearningAgent {
 
       const model = getAiModel('local-llama3-fast', 0.1, 'learning-agent');
       const systemPrompt = new SystemMessage(
-        `Você é o Agente de Reflexão (Learning Agent) da Atlas.
+        `Você é o Agente de Reflexão (Learning Agent) da Birth Hub 360.
 Sua missão é analisar o log de ações manuais de um usuário humano no CRM e deduzir o "Estilo de Qualificação e Vendas" dele.
 Descubra padrões: Como ele classifica um lead? O que faz ele descartar um lead? Que tom ele usa?
 Gere um parágrafo denso e direto contendo as DIRETRIZES DE ESTILO APRENDIDAS. Estas diretrizes serão injetadas no Agente SDR autônomo para clonar o comportamento do usuário.`,

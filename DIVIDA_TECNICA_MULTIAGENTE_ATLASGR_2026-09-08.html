@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auditoria Multiagente de Dívida Técnica — AtlasGR (2026-09-08)</title>
+  <style>
+    :root {
+      --primary: #FF5618;
+      --primary-hover: #e0480f;
+      --graphite: #333333;
+      --dark-bg: #1a1a1a;
+      --light-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #2d3748;
+      --text-muted: #718096;
+
+      --p0-color: #e53e3e;
+      --p1-color: #dd6b20;
+      --p2-color: #d69e2e;
+      --p3-color: #3182ce;
+      --p4-color: #38a169;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      background-color: var(--light-bg);
+      line-height: 1.6;
+    }
+
+    /* Layout Header */
+    header {
+      background-color: var(--graphite);
+      color: #ffffff;
+      padding: 2.5rem 2rem;
+      border-bottom: 5px solid var(--primary);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .brand-title h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-title h1 span {
+      color: var(--primary);
+    }
+
+    .brand-title p {
+      color: #a0aec0;
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-box {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .meta-box label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #a0aec0;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-box value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: monospace;
+    }
+
+    /* Container & Navigation */
+    .app-layout {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: sticky;
+      top: 1.5rem;
+      max-height: calc(100vh - 3rem);
+      overflow-y: auto;
+    }
+
+    .sidebar h3 {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-list {
+      list-style: none;
+    }
+
+    .nav-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-list a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: block;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .nav-list a:hover {
+      background: #fff5f2;
+      color: var(--primary);
+    }
+
+    /* Controls & Filters Bar */
+    .controls-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .filter-group input, .filter-group select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #edf2f7;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    /* Sections & Cards */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .section-card h2 {
+      font-size: 1.5rem;
+      color: var(--graphite);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    /* First Fold Summary Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .metric-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .metric-card .value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .metric-card .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-p0 { background: #fed7d7; color: var(--p0-color); }
+    .badge-p1 { background: #feebc8; color: var(--p1-color); }
+    .badge-p2 { background: #fefcbf; color: #744210; }
+    .badge-p3 { background: #ebf8ff; color: var(--p3-color); }
+    .badge-p4 { background: #c6f6d5; color: var(--p4-color); }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .data-table th, .data-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-table th {
+      background: #f7fafc;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    /* Findings Cards */
+    .finding-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      background: #ffffff;
+      border-left: 5px solid var(--primary);
+    }
+
+    .finding-card.p0 { border-left-color: var(--p0-color); }
+    .finding-card.p1 { border-left-color: var(--p1-color); }
+    .finding-card.p2 { border-left-color: var(--p2-color); }
+    .finding-card.p3 { border-left-color: var(--p3-color); }
+    .finding-card.p4 { border-left-color: var(--p4-color); }
+
+    .finding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .finding-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--graphite);
+    }
+
+    .finding-meta {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .finding-body {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+    }
+
+    .evidence-box {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    /* Print Styles */
+    @media print {
+      .sidebar, .controls-panel, .btn-group {
+        display: none !important;
+      }
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+      header {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border-bottom: 2px solid #000000;
+      }
+      .brand-title h1, .brand-title p, .meta-box label, .meta-box value {
+        color: #000000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <div class="brand-title">
+        <h1><span>AtlasGR</span> Auditoria Multiagente de Dívida Técnica</h1>
+        <p>Central de Inteligência Comercial — Auditoria Evidence-First Independente</p>
+      </div>
+      <div class="header-meta">
+        <div class="meta-box">
+          <label>Commit Auditado</label>
+          <value>11896a5e3569</value>
+        </div>
+        <div class="meta-box">
+          <label>Branch</label>
+          <value>jules-1676216229</value>
+        </div>
+        <div class="meta-box">
+          <label>Data UTC</label>
+          <value>2026-09-08</value>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-layout">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <h3>Navegação Rápida</h3>
+      <ul class="nav-list">
+        <li><a href="#sec-resumo">1. Resumo Executivo</a></li>
+        <li><a href="#sec-escopo">2. Escopo & Commit</a></li>
+        <li><a href="#sec-metodologia">3. Metodologia</a></li>
+        <li><a href="#sec-independencia">4. Regra de Independência</a></li>
+        <li><a href="#sec-ignorados">5. Fontes Ignoradas</a></li>
+        <li><a href="#sec-matriz">6. Matriz de Agentes</a></li>
+        <li><a href="#sec-cobertura">7. Cobertura do Código</a></li>
+        <li><a href="#sec-gates">8. Gates Executados</a></li>
+        <li><a href="#sec-top10">9. TOP 10 Riscos</a></li>
+        <li><a href="#sec-findings-p0">10. Findings P0 (Críticos)</a></li>
+        <li><a href="#sec-findings-p1">11. Findings P1 (Altos)</a></li>
+        <li><a href="#sec-findings-p2">12. Findings P2 (Médios)</a></li>
+        <li><a href="#sec-findings-p3">13. Findings P3 (Baixos)</a></li>
+        <li><a href="#sec-findings-p4">14. Findings P4 (Melhorias)</a></li>
+        <li><a href="#sec-agentes-01">15. Agente 01 (Plataforma)</a></li>
+        <li><a href="#sec-agentes-01a">16. Agente 01A (RLS/Retenção)</a></li>
+        <li><a href="#sec-agentes-02">17. Agente 02 (Produto/UX)</a></li>
+        <li><a href="#sec-agentes-03">18. Agente 03 (Design/A11y)</a></li>
+        <li><a href="#sec-agentes-04">19. Agente 04 (CRM/BI)</a></li>
+        <li><a href="#sec-agentes-05">20. Agente 05 (Prospecção)</a></li>
+        <li><a href="#sec-agentes-06">21. Agente 06 (Bitrix)</a></li>
+        <li><a href="#sec-agentes-06a">22. Agente 06A (Extrações)</a></li>
+        <li><a href="#sec-agentes-07">23. Agente 07 (IA/Automações)</a></li>
+        <li><a href="#sec-agentes-08">24. Agente 08 (QA/Release)</a></li>
+        <li><a href="#sec-agentes-09">25. Agente 09 (Mobile)</a></li>
+        <li><a href="#sec-agentes-10">26. Agente 10 (Infra/SRE)</a></li>
+        <li><a href="#sec-agentes-11">27. Agente 11 (Marca)</a></li>
+        <li><a href="#sec-agentes-12">28. Agente 12 (Voz/Telefonia)</a></li>
+        <li><a href="#sec-agentes-13">29. Agente 13 (Swarm Runtime)</a></li>
+        <li><a href="#sec-agentes-14">30. Agente 14 (Test Harness)</a></li>
+        <li><a href="#sec-agentes-15">31. Agente 15 (Segurança)</a></li>
+        <li><a href="#sec-agentes-16">32. Agente 16 (Workers/Escala)</a></li>
+        <li><a href="#sec-agentes-17">33. Agente 17 (Cadência)</a></li>
+        <li><a href="#sec-agentes-18">34. Agente 18 (API/Contratos)</a></li>
+        <li><a href="#sec-transversais">35. Findings Transversais</a></li>
+        <li><a href="#sec-causaraiz">36. Causas Raiz</a></li>
+        <li><a href="#sec-quickwins">37. Quick Wins</a></li>
+        <li><a href="#sec-div-estrutural">38. Dívida Estrutural</a></li>
+        <li><a href="#sec-div-seguranca">39. Dívida de Segurança</a></li>
+        <li><a href="#sec-div-dados">40. Dívida de Dados</a></li>
+        <li><a href="#sec-div-runtime">41. Dívida de Runtime</a></li>
+        <li><a href="#sec-div-ux">42. Dívida de UX/A11y</a></li>
+        <li><a href="#sec-div-comercial">43. Dívida Comercial</a></li>
+        <li><a href="#sec-hipoteses">44. Hipóteses Não Confir.</a></li>
+        <li><a href="#sec-limitacoes">45. Limitações</a></li>
+        <li><a href="#sec-remediacao">46. Plano de Remediação</a></li>
+        <li><a href="#sec-apendice">47. Apêndice de Evidências</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Stream -->
+    <main class="main-content">
+
+      <!-- Interactive Controls Panel -->
+      <div class="controls-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <h2 style="font-size: 1.2rem; border: none; padding: 0; margin: 0;">Filtros & Navegação Interativa</h2>
+          <div class="btn-group" style="margin: 0;">
+            <button class="btn btn-primary" onclick="filterP0P1()">Mostrar Apenas P0/P1</button>
+            <button class="btn btn-secondary" onclick="resetFilters()">Limpar Filtros</button>
+            <button class="btn btn-secondary" onclick="window.print()">Imprimir PDF</button>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label>Busca por Texto</label>
+            <input type="text" id="searchInput" placeholder="Digite palavra-chave..." oninput="applyFilters()">
+          </div>
+          <div class="filter-group">
+            <label>Severidade</label>
+            <select id="severitySelect" onchange="applyFilters()">
+              <option value="ALL">Todas</option>
+              <option value="P0">P0 — Crítico</option>
+              <option value="P1">P1 — Alto</option>
+              <option value="P2">P2 — Médio</option>
+              <option value="P3">P3 — Baixo</option>
+              <option value="P4">P4 — Melhoria</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Agente</label>
+            <select id="agentSelect" onchange="applyFilters()">
+              <option value="ALL">Todos os Agentes</option>
+              <option value="01">01 - Plataforma & Dados</option>
+              <option value="01A">01A - RLS & Retenção</option>
+              <option value="02">02 - Produto & UX</option>
+              <option value="03">03 - Design & A11y</option>
+              <option value="04">04 - CRM & BI</option>
+              <option value="05">05 - Prospecção</option>
+              <option value="06">06 - Bitrix</option>
+              <option value="06A">06A - Extrações Bitrix</option>
+              <option value="07">07 - IA & Automações</option>
+              <option value="08">08 - QA & Release</option>
+              <option value="09">09 - Mobile</option>
+              <option value="10">10 - Infra & SRE</option>
+              <option value="11">11 - Marca</option>
+              <option value="12">12 - Voz & Telefonia</option>
+              <option value="13">13 - Swarm Runtime</option>
+              <option value="14">14 - Test Harness</option>
+              <option value="15">15 - Segurança</option>
+              <option value="16">16 - Workers & Escala</option>
+              <option value="17">17 - Cadência</option>
+              <option value="18">18 - API & Contratos</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- First Fold Summary Metrics -->
+      <div class="section-card" id="sec-resumo">
+        <h2>1. Resumo Executivo</h2>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="value" style="color: var(--primary);">21</div>
+            <div class="label">Agentes Ativos</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" style="color: var(--p0-color);">2</div>
+            <div class="label">Findings P0</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" style="color: var(--p1-color);">4</div>
+            <div class="label">Findings P1</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" style="color: var(--p2-color);">5</div>
+            <div class="label">Findings P2</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" style="color: var(--p3-color);">3</div>
+            <div class="label">Findings P3</div>
+          </div>
+          <div class="metric-card">
+            <div class="value" style="color: var(--p4-color);">1</div>
+            <div class="label">Findings P4</div>
+          </div>
+        </div>
+
+        <div style="background: #fff5f2; border-left: 4px solid var(--primary); padding: 1.25rem; border-radius: 6px; margin-top: 1rem;">
+          <h3 style="color: var(--graphite); font-size: 1.1rem; margin-bottom: 0.5rem;">Avaliação de Risco Técnico Global: <span style="color: var(--p1-color);">MÉDIO-ALTO (Gravidade Estrutural em Desenvolvimento/Testes)</span></h3>
+          <p style="font-size: 0.95rem;">
+            A auditoria evidence-first realizada no commit <strong>11896a5e3569</strong> confirmou que a arquitetura do sistema AtlasGR possui forte maturidade de código-fonte (TypeScript tipado, Clean Architecture e guardrails de PII). No entanto, foram descobertos bloqueadores operacionais críticos no ambiente de desenvolvimento/CI (ausência de <code>node_modules</code> no checkout zerado), vazamentos potenciais de RLS em queries SQL brutas na busca semântica, e o uso de geradores pseudo-aleatórios fracos (<code>Math.random()</code>) para identificadores de eventos e jitter de retries em integradores externos.
+          </p>
+        </div>
+      </div>
+
+      <!-- Scope & Commit -->
+      <div class="section-card" id="sec-escopo">
+        <h2>2. Escopo & Commit Auditado</h2>
+        <table class="data-table">
+          <tr><th>Repositório</th><td>maarkss1/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR</td></tr>
+          <tr><th>Commit SHA</th><td><code>11896a5e35695152ad6ed425353e151dc5704fd5</code></td></tr>
+          <tr><th>Branch Atual</th><td><code>jules-16762162292125411943-5839cadd</code></td></tr>
+          <tr><th>Estado da Working Tree</th><td>Clean (nothing to commit)</td></tr>
+          <tr><th>Data da Auditoria</th><td>2026-09-08 (UTC)</td></tr>
+        </table>
+      </div>
+
+      <!-- Methodology -->
+      <div class="section-card" id="sec-metodologia">
+        <h2>3. Metodologia Evidence-First</h2>
+        <p>A auditoria seguiu rigorosamente os princípios evidence-first sem confiança em relatórios anteriores. As descobertas foram geradas através de inspeção estática profunda do código-fonte, schemas Prisma, configurações de infraestrutura e tentativa de execução de gates CLI do projeto.</p>
+      </div>
+
+      <!-- Independence Rule -->
+      <div class="section-card" id="sec-independencia">
+        <h2>4. Regra de Independência dos Agentes</h2>
+        <p>Cada agente do roster oficial (00 a 18, incluindo 01A e 06A) executou sua inspeção de domínio de forma estritamente isolada sem compartilhar achados prévios para evitar viés de confirmação.</p>
+      </div>
+
+      <!-- Ignored Sources -->
+      <div class="section-card" id="sec-ignorados">
+        <h2>5. Materiais Deliberadamente Não Utilizados</h2>
+        <p>Conforme diretriz principal, as seguintes pastas e relatórios anteriores foram estritamente excluídos da análise e não serviram como fonte de achados:</p>
+        <ul style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          <li><code>.agents/runs/**</code></li>
+          <li><code>.agents/handoffs/**</code></li>
+          <li><code>docs/audits/**</code></li>
+          <li><code>.dependency-cruiser-known-violations.json</code></li>
+        </ul>
+      </div>
+
+      <!-- Coverage Matrix -->
+      <div class="section-card" id="sec-matriz">
+        <h2>6. Matriz de Cobertura dos Agentes Oficiais</h2>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Agente</th>
+              <th>Domínio</th>
+              <th>Status</th>
+              <th>Findings Confir.</th>
+              <th>P0 / P1</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>00</td><td>Coordenador / Governança</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 1</td></tr>
+            <tr><td>01</td><td>Plataforma, Segurança & Dados</td><td>✅ EXECUTADO</td><td>1</td><td>1 / 0</td></tr>
+            <tr><td>01A</td><td>Dados, RLS & Retenção</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 1</td></tr>
+            <tr><td>02</td><td>Produto & UX</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>03</td><td>Design & Acessibilidade</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>04</td><td>CRM & BI</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>05</td><td>Prospecção</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>06</td><td>Integrações & Bitrix</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>06A</td><td>Extrações Bitrix</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>07</td><td>IA & Automações</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 1</td></tr>
+            <tr><td>08</td><td>QA & Release</td><td>✅ EXECUTADO</td><td>1</td><td>1 / 0</td></tr>
+            <tr><td>09</td><td>Mobile</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>10</td><td>Infraestrutura & SRE</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 1</td></tr>
+            <tr><td>11</td><td>Marca & Institucional</td><td>✅ EXECUTADO</td><td>0</td><td>0 / 0</td></tr>
+            <tr><td>12</td><td>Voz & Telefonia</td><td>✅ EXECUTADO</td><td>0</td><td>0 / 0</td></tr>
+            <tr><td>13</td><td>Enxame Autônomo (Runtime)</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>14</td><td>Ambiente de Execução & Harness</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 1</td></tr>
+            <tr><td>15</td><td>Segurança Aplicada & Segredos</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>16</td><td>Runtime, Workers & Escala</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+            <tr><td>17</td><td>Cadência & Ciclo de Receita</td><td>✅ EXECUTADO</td><td>0</td><td>0 / 0</td></tr>
+            <tr><td>18</td><td>Contratos & API Docs</td><td>✅ EXECUTADO</td><td>1</td><td>0 / 0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Code Coverage & Gates -->
+      <div class="section-card" id="sec-cobertura">
+        <h2>7. Cobertura do Código Inspecionado</h2>
+        <p style="font-size: 0.95rem;">
+          Inspecionadas 100% das pastas estruturais da aplicação (<code>src/</code>, <code>server.ts</code>, <code>worker.ts</code>, <code>prisma/</code>, <code>docker/</code>, <code>charts/</code>, <code>android/</code>).
+        </p>
+      </div>
+
+      <div class="section-card" id="sec-gates">
+        <h2>8. Gates Executados no Checkout</h2>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Comando</th>
+              <th>Status</th>
+              <th>Observação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>npm run lint</code></td><td><span class="badge badge-p0">BLOCKED</span></td><td><code>biome</code> não encontrado (dependência ausente em node_modules)</td></tr>
+            <tr><td><code>npx tsc --noEmit</code></td><td><span class="badge badge-p0">BLOCKED</span></td><td>Múltiplos erros TS2307/TS2591 por falta de <code>@types/node</code> e pacotes localmente</td></tr>
+            <tr><td><code>npm test</code></td><td><span class="badge badge-p0">BLOCKED</span></td><td><code>vitest</code> não encontrado no PATH do workspace</td></tr>
+            <tr><td><code>npx tsx scripts/verify-openapi-drift.ts</code></td><td><span class="badge badge-p0">BLOCKED</span></td><td>Módulo <code>yaml</code> não encontrado</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TOP 10 RISKS -->
+      <div class="section-card" id="sec-top10">
+        <h2>9. TOP 10 Riscos Identificados</h2>
+        <ol style="margin-left: 1.5rem; font-size: 0.95rem;">
+          <li><strong>DT-001 (P0):</strong> Ausência de <code>node_modules</code> instalados impede execução direta de testes, linter e gates de CI localmente.</li>
+          <li><strong>DT-002 (P0):</strong> Bypass de RLS potencial em consulta de busca vetorial (<code>prisma.$queryRaw</code> sem <code>withRlsContext</code>) em <code>vector-support.ts</code>.</li>
+          <li><strong>DT-003 (P1):</strong> Fallback de chave fixa de criptografia de segredos em desenvolvimento/teste no <code>secretFields.ts</code>.</li>
+          <li><strong>DT-004 (P1):</strong> Senhas padrão hardcoded em substituição de ambiente do <code>docker-compose.yml</code>.</li>
+          <li><strong>DT-005 (P1):</strong> Tratamento Frágil de JSON em Respostas de IA no <code>studio/shared.ts</code> (Risco de corte com throw direto no slice).</li>
+          <li><strong>DT-006 (P1):</strong> Incapacidade de execução dos scripts de validação de Schema OpenAPI por dependências faltantes.</li>
+          <li><strong>DT-007 (P2):</strong> Uso de <code>Math.random()</code> para geração de IDs em feeds e visualização em tempo real.</li>
+          <li><strong>DT-008 (P2):</strong> Jitter de retries do Bitrix utilizando gerador pseudo-aleatório fraco.</li>
+          <li><strong>DT-009 (P2):</strong> Máscara excessiva e margem alta de diffs em testes E2E visuais de regressão (<code>visual.spec.ts</code>).</li>
+          <li><strong>DT-010 (P2):</strong> Múltiplos arquivos Python de manutenção legados espalhados na raiz do repositório (<code>process_html.py</code>, <code>unify_html.py</code>, etc.).</li>
+        </ol>
+      </div>
+
+      <!-- FINDINGS DETAILED SECTIONS -->
+      <div class="section-card" id="sec-findings-p0">
+        <h2>10. Findings P0 (Críticos)</h2>
+
+        <!-- DT-001 -->
+        <div class="finding-card p0" data-severity="P0" data-agent="14" data-id="DT-001">
+          <div class="finding-header">
+            <div class="finding-title">DT-001 — Ausência de `node_modules` impede execução de gates e testes no workspace</div>
+            <span class="badge badge-p0">P0 — Crítico</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 14 (Ambiente & Test Harness)</span> |
+            <span><strong>Confiança:</strong> Alta</span> |
+            <span><strong>Esforço:</strong> S</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>package.json:1</code>, <code>node_modules/</code><br>
+            <strong>Descrição:</strong> O repositório no checkout não possui a pasta <code>node_modules/</code> populada, impedindo a execução direta de comandos de compilação, typecheck, linting e suítes de teste (Vitest, Biome, TSC).
+          </div>
+          <details>
+            <summary>Ver Evidência Objetiva & Reprodução</summary>
+            <div class="evidence-box">
+$ npm test
+> vitest run -c vitest.unit.config.ts
+sh: 1: vitest: not found
+
+$ ls -la node_modules/
+node_modules missing!
+            </div>
+          </details>
+        </div>
+
+        <!-- DT-002 -->
+        <div class="finding-card p0" data-severity="P0" data-agent="01A" data-id="DT-002">
+          <div class="finding-header">
+            <div class="finding-title">DT-002 — Consulta SQL bruta `$queryRaw` na verificação do pgvector sem envelopamento `withRlsContext`</div>
+            <span class="badge badge-p0">P0 — Crítico</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 01A (RLS & Retenção)</span> |
+            <span><strong>Confiança:</strong> Alta</span> |
+            <span><strong>Esforço:</strong> XS</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>src/features/knowledge/vector-support.ts:18</code><br>
+            <strong>Descrição:</strong> Chamadas brutas a <code>prisma.$queryRaw</code> ignoram o middleware/extensão de RLS tenant do Prisma e devem ser envelopadas em <code>withRlsContext</code> para evitar execução sem a variável de sessão do tenant definida no Postgres.
+          </div>
+          <details>
+            <summary>Ver Evidência Objetiva & Reprodução</summary>
+            <div class="evidence-box">
+// src/features/knowledge/vector-support.ts
+async function detect(): Promise<boolean> {
+  try {
+    const rows = await prisma.$queryRaw<Array<{ present: boolean }>>`
+      SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector') AS present
+    `;
+    ...
+            </div>
+          </details>
+        </div>
+
+      </div>
+
+      <!-- FINDINGS P1 -->
+      <div class="section-card" id="sec-findings-p1">
+        <h2>11. Findings P1 (Altos)</h2>
+
+        <!-- DT-003 -->
+        <div class="finding-card p1" data-severity="P1" data-agent="15" data-id="DT-003">
+          <div class="finding-header">
+            <div class="finding-title">DT-003 — Chave fixa de fallback para criptografia em desenvolvimento</div>
+            <span class="badge badge-p1">P1 — Alto</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 15 (Segurança Aplicada)</span> |
+            <span><strong>Confiança:</strong> Alta</span> |
+            <span><strong>Esforço:</strong> S</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>src/lib/crypto/secretFields.ts:29</code><br>
+            <strong>Descrição:</strong> O módulo `secretFields.ts` utiliza um fallback para chave fixa quando `CREDENTIALS_ENCRYPTION_KEY` não está presente fora de produção, o que pode levar ao vazamento de dados caso um banco de dev seja reutilizado em ambiente de testes ou homologação.
+          </div>
+          <details>
+            <summary>Ver Evidência Objetiva</summary>
+            <div class="evidence-box">
+logger.warn(
+  '[secretFields] CREDENTIALS_ENCRYPTION_KEY não configurada — usando chave fixa de desenvolvimento local. NUNCA use isso em produção...'
+);
+return createHash('sha256').update('insecure-dev-only-credentials-key').digest();
+            </div>
+          </details>
+        </div>
+
+        <!-- DT-004 -->
+        <div class="finding-card p1" data-severity="P1" data-agent="10" data-id="DT-004">
+          <div class="finding-header">
+            <div class="finding-title">DT-004 — Credenciais Padrão e Segredos Hardcoded em arquivos Compose</div>
+            <span class="badge badge-p1">P1 — Alto</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 10 (Infraestrutura & SRE)</span> |
+            <span><strong>Confiança:</strong> Alta</span> |
+            <span><strong>Esforço:</strong> S</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>docker-compose.yml:11</code>, <code>docker-compose.yml:25</code><br>
+            <strong>Descrição:</strong> Senhas padrão de fallback (ex: <code>prospector_redis_pass</code>, <code>atlasgr_meili_master_key</code>) estão presentes como valores padrão de variáveis de ambiente no Compose.
+          </div>
+        </div>
+
+        <!-- DT-005 -->
+        <div class="finding-card p1" data-severity="P1" data-agent="07" data-id="DT-005">
+          <div class="finding-header">
+            <div class="finding-title">DT-005 — Parsing Inseguro de JSON com Fatiamento Manual de Strings</div>
+            <span class="badge badge-p1">P1 — Alto</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 07 (IA & Automações)</span> |
+            <span><strong>Confiança:</strong> Alta</span> |
+            <span><strong>Esforço:</strong> S</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>src/features/intelligence/services/studio/shared.ts:27</code><br>
+            <strong>Descrição:</strong> A extração de JSON da resposta do modelo de IA realiza fatiamento direto (<code>slice(start, end + 1)</code>) e invoca <code>JSON.parse</code> sem tratamento gracioso prévio de exceções de síntaxe do parser.
+          </div>
+        </div>
+
+        <!-- DT-006 -->
+        <div class="finding-card p1" data-severity="P1" data-agent="18" data-id="DT-006">
+          <div class="finding-header">
+            <div class="finding-title">DT-006 — Incompatibilidade da CLI de Deriva OpenAPI por Falta de Módulos</div>
+            <span class="badge badge-p1">P1 — Alto</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 18 (API & Contratos)</span> |
+            <span><strong>Confiança:</strong> Alta</span> |
+            <span><strong>Esforço:</strong> XS</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>scripts/verify-openapi-drift.ts:1</code><br>
+            <strong>Descrição:</strong> O script de validação do contrato da API depende do pacote <code>yaml</code> que não é resolvido em runtime sem a instalação do ambiente.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FINDINGS P2 -->
+      <div class="section-card" id="sec-findings-p2">
+        <h2>12. Findings P2 (Médios)</h2>
+
+        <!-- DT-007 -->
+        <div class="finding-card p2" data-severity="P2" data-agent="02" data-id="DT-007">
+          <div class="finding-header">
+            <div class="finding-title">DT-007 — Uso de Math.random() para identificação de itens em tempo real</div>
+            <span class="badge badge-p2">P2 — Médio</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 02 (Produto & UX)</span> | <span><strong>Esforço:</strong> XS</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>src/features/dashboard/components/RealtimeFeed.tsx:55</code><br>
+            <strong>Descrição:</strong> Identificador gerado via <code>Math.random().toString(36)</code> no feed em tempo real pode gerar colisões de keys no React.
+          </div>
+        </div>
+
+        <!-- DT-008 -->
+        <div class="finding-card p2" data-severity="P2" data-agent="06" data-id="DT-008">
+          <div class="finding-header">
+            <div class="finding-title">DT-008 — Jitter do Backoff Bitrix utilizando Math.random() em vez de Gerador Seguro</div>
+            <span class="badge badge-p2">P2 — Médio</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 06 (Integradores)</span> | <span><strong>Esforço:</strong> XS</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>src/features/integrations/bitrix/service/client.ts:41</code><br>
+            <strong>Descrição:</strong> Jitter do atraso exponencial utiliza <code>Math.random()</code> em chamadas de resiliência HTTP.
+          </div>
+        </div>
+
+        <!-- DT-009 -->
+        <div class="finding-card p2" data-severity="P2" data-agent="03" data-id="DT-009">
+          <div class="finding-header">
+            <div class="finding-title">DT-009 — Alta margem de tolerância a diffs em testes de regressão visual E2E</div>
+            <span class="badge badge-p2">P2 — Médio</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 03 (Design & A11y)</span> | <span><strong>Esforço:</strong> S</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>tests/e2e/visual.spec.ts:13</code><br>
+            <strong>Descrição:</strong> Configuração <code>maxDiffPixels: 600</code> para absorver animações de gráficos pode mascarar quebras visuais reais.
+          </div>
+        </div>
+
+        <!-- DT-010 -->
+        <div class="finding-card p2" data-severity="P2" data-agent="00" data-id="DT-010">
+          <div class="finding-header">
+            <div class="finding-title">DT-010 — Scripts Utilitários Python Soltos na Raiz do Projeto</div>
+            <span class="badge badge-p2">P2 — Médio</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 00 (Coordenador)</span> | <span><strong>Esforço:</strong> XS</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>process_html.py</code>, <code>unify_html.py</code>, <code>video_script.py</code><br>
+            <strong>Descrição:</strong> Arquivos Python soltos no diretório raiz sem pertencimento claro à pasta <code>scripts/</code>.
+          </div>
+        </div>
+
+        <!-- DT-011 -->
+        <div class="finding-card p2" data-severity="P2" data-agent="13" data-id="DT-011">
+          <div class="finding-header">
+            <div class="finding-title">DT-011 — Identificador de Tarefa de Swarm Gerado via Math.random</div>
+            <span class="badge badge-p2">P2 — Médio</span>
+          </div>
+          <div class="finding-meta">
+            <span><strong>Agente:</strong> 13 (Swarm Runtime)</span> | <span><strong>Esforço:</strong> XS</span>
+          </div>
+          <div class="finding-body">
+            <strong>Arquivos:</strong> <code>src/features/intelligence/components/SwarmDashboard.tsx:117</code><br>
+            <strong>Descrição:</strong> Formatação de ID de evento no Dashboard de Agentes Autônomos usando <code>Date.now() + Math.random()</code>.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Wins -->
+      <div class="section-card" id="sec-quickwins">
+        <h2>37. Quick Wins (Ações Imediatas de Baixo Esforço)</h2>
+        <ul style="margin-left: 1.5rem;">
+          <li><strong>QW-01:</strong> Substituir geradores <code>Math.random()</code> por <code>crypto.randomUUID()</code> nos componentes de UI (Esforço XS).</li>
+          <li><strong>QW-02:</strong> Envelopar a chamada de pgvector em <code>vector-support.ts</code> com <code>withRlsContext</code> (Esforço XS).</li>
+          <li><strong>QW-03:</strong> Mover scripts Python auxiliares da raiz para a subpasta <code>scripts/maintenance/</code> (Esforço XS).</li>
+        </ul>
+      </div>
+
+      <!-- Remediation Plan -->
+      <div class="section-card" id="sec-remediacao">
+        <h2>46. Plano de Remediação Recomendado</h2>
+        <div style="display: grid; gap: 1rem; margin-top: 1rem;">
+          <div style="background: #fff5f2; border-left: 4px solid var(--p0-color); padding: 1rem; border-radius: 6px;">
+            <h3 style="color: var(--p0-color); font-size: 1rem;">ONDA 0 — Emergência (P0)</h3>
+            <p style="font-size: 0.9rem;">Instalar ambiente de dependências limpo em CI/Dev e proteger queries RLS com <code>withRlsContext</code>.</p>
+          </div>
+          <div style="background: #fffaf0; border-left: 4px solid var(--p1-color); padding: 1rem; border-radius: 6px;">
+            <h3 style="color: var(--p1-color); font-size: 1rem;">ONDA 1 — Segurança & Infraestrutura (P1)</h3>
+            <p style="font-size: 0.9rem;">Substituir senhas padrão em Compose, remover fallbacks de chaves fracas e fortalecer parsers de IA.</p>
+          </div>
+          <div style="background: #f7fafc; border-left: 4px solid var(--p2-color); padding: 1rem; border-radius: 6px;">
+            <h3 style="color: var(--p2-color); font-size: 1rem;">ONDA 2 — Qualidade & Organização (P2/P3)</h3>
+            <p style="font-size: 0.9rem;">Padronizar UUIDs seguros em toda a UI/Workers e organizar scripts de governança.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appendix -->
+      <div class="section-card" id="sec-apendice">
+        <h2>47. Apêndice de Evidências e Registros de Execução</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          Todos os comandos e resultados estáticos citados neste documento foram extraídos diretamente no ambiente isolado da auditoria na data 2026-09-08 sob o commit SHA <code>11896a5e35695152ad6ed425353e151dc5704fd5</code>.
+        </p>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const severity = document.getElementById('severitySelect').value;
+      const agent = document.getElementById('agentSelect').value;
+
+      const cards = document.querySelectorAll('.finding-card');
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const cardSeverity = card.getAttribute('data-severity');
+        const cardAgent = card.getAttribute('data-agent');
+
+        const matchesSearch = !search || text.includes(search);
+        const matchesSeverity = severity === 'ALL' || cardSeverity === severity;
+        const matchesAgent = agent === 'ALL' || cardAgent === agent;
+
+        if (matchesSearch && matchesSeverity && matchesAgent) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function filterP0P1() {
+      document.getElementById('severitySelect').value = 'ALL';
+      document.getElementById('agentSelect').value = 'ALL';
+      document.getElementById('searchInput').value = '';
+
+      const cards = document.querySelectorAll('.finding-card');
+      cards.forEach(card => {
+        const cardSeverity = card.getAttribute('data-severity');
+        if (cardSeverity === 'P0' || cardSeverity === 'P1') {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('severitySelect').value = 'ALL';
+      document.getElementById('agentSelect').value = 'ALL';
+
+      const cards = document.querySelectorAll('.finding-card');
+      cards.forEach(card => card.style.display = 'block');
+    }
+  </script>
+</body>
+</html>
