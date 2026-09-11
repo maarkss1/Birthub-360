@@ -203,8 +203,11 @@ export async function enrichCompany(
  *   embedding pgvector — isso já não passava por nenhum provider pago, mas evita trabalho à toa).
  * - `domainGuess`/`apolloContacts` não têm dado "fresco" pra oferecer sem uma nova chamada, então
  *   voltam vazios/nulos em vez de inventados.
+ *
+ * Exportada (ACH-05-04) para ser testável diretamente como função pura, sem precisar mockar
+ * Prisma — recebe `company`/`options` já prontos e não faz nenhuma chamada externa.
  */
-function buildCachedEnrichmentResult(
+export function buildCachedEnrichmentResult(
   company: NonNullable<Awaited<ReturnType<typeof prisma.company.findUnique>>>,
   options: EnrichCompanyOptions,
 ) {
