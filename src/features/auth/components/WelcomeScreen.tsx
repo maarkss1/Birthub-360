@@ -305,7 +305,11 @@ export function WelcomeScreen() {
             aria-label={isMuted ? 'Ativar som ambiente' : 'Silenciar som ambiente'}
             aria-pressed={!isMuted}
           >
-            {isMuted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}
+            {isMuted ? (
+              <VolumeX size={18} aria-hidden="true" />
+            ) : (
+              <Volume2 size={18} aria-hidden="true" />
+            )}
           </button>
           <button
             type="button"
