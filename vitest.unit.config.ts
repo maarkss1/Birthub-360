@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
+// Permite override local via `VITEST_MAX_WORKERS=8 npm run test:unit` para quem não tem outros
+// worktrees do enxame disputando CPU no momento, sem precisar editar este arquivo toda vez. Vazio,
+// não-numérico ou <= 0 caem no default (2) — o piso pensado para coexistir com outros worktrees
+// continua sendo o comportamento padrão do CI e de quem não passar a variável.
+const parsedMaxWorkers = Number.parseInt(process.env.VITEST_MAX_WORKERS ?? '', 10);
+const maxWorkers = Number.isFinite(parsedMaxWorkers) && parsedMaxWorkers > 0 ? parsedMaxWorkers : 2;
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -13,9 +20,10 @@ export default defineConfig({
     // Forkar um processo para cada arquivo tornou a suíte de ~160 arquivos aparentemente
     // travada em hosts com poucos CPUs: o custo de bootstrap do Node/jsdom dominava os testes.
     // Threads continuam isoladas pelo Vitest, reduzem esse custo e o limite explícito impede que
-    // o gate dispute todos os recursos com outros worktrees da mesma onda.
+    // o gate dispute todos os recursos com outros worktrees da mesma onda. Configurável via
+    // VITEST_MAX_WORKERS (ver definição de `maxWorkers` acima) — default 2 preservado.
     pool: 'threads',
-    maxWorkers: 2,
+    maxWorkers,
     include: ['tests/unit/**/*.test.ts', 'src/**/__tests__/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     coverage: {
       provider: 'v8',
