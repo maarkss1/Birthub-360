@@ -70,11 +70,11 @@ export default defineConfig(() => {
     },
     server: {
       host: true, // Permite acesso via rede (0.0.0.0)
-      port: 3005, // O backend já usa a 3005 via env.PORT e serve o Vite via middleware.
-      strictPort: true, // Garante que se usarem Vite standalone, ele tente usar a 3005.
+      port: 3024, // O backend já usa a 3024 via env.PORT e serve o Vite via middleware.
+      strictPort: true, // Garante que se usarem Vite standalone, ele tente usar a 3024.
       proxy: {
         '/api': {
-          target: 'http://localhost:3005',
+          target: 'http://localhost:3024',
           changeOrigin: true,
         },
       },
