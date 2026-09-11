@@ -289,6 +289,98 @@ paths:
         '404':
           description: Lead não encontrado
 
+  /mesa-tratamento/lead/{id}/reassign:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        Painel de gestão (ADMIN/GESTOR): reatribui o responsável de um lead no Bitrix24
+        (`ASSIGNED_BY_ID`) e resolve `Lead.owner` local para o `User.id` correspondente, quando
+        existir vínculo entre o usuário Bitrix e um usuário Atlas.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bitrixUserId]
+              properties:
+                bitrixUserId: { type: string, description: Id do usuário no Bitrix24 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: bitrixUserId ausente, lead sem vínculo Bitrix, ou usuário Bitrix não encontrado
+        '403':
+          description: Papel insuficiente (só ADMIN/GESTOR)
+        '404':
+          description: Lead não encontrado
+
+  /mesa-tratamento/lead/{id}/comment:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        Painel de gestão (ADMIN/GESTOR): adiciona um comentário na timeline do Bitrix24 sem
+        registrar um resultado completo de atendimento.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comment]
+              properties:
+                comment: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: Comentário vazio, ou lead sem vínculo Bitrix
+        '403':
+          description: Papel insuficiente (só ADMIN/GESTOR)
+        '404':
+          description: Lead não encontrado
+
+  /mesa-tratamento/lead/{id}/decide:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        Painel de gestão (ADMIN/GESTOR): marca um lead como revisado/decidido pela gestão —
+        registra histórico local (`MesaTratamentoTreatment`, outcome `decidido_pela_gestao`) e,
+        quando o lead já está vinculado ao Bitrix24, também comenta na timeline lá.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note: { type: string, description: Nota opcional sobre a decisão }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '403':
+          description: Papel insuficiente (só ADMIN/GESTOR)
+        '404':
+          description: Lead não encontrado
+
   /mesa-tratamento/pomodoro/session:
     post:
       tags: [Mesa de Tratamento]
