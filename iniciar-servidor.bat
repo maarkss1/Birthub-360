@@ -46,8 +46,8 @@ if errorlevel 1 (
 echo.
 echo ============================================
 echo   Servidor iniciando em:
-echo     - Neste PC:  http://localhost:3005
-echo     - Na rede:   http://192.168.60.217:3005
+echo     - Neste PC:  http://localhost:3024
+echo     - Na rede:   http://192.168.60.217:3024
 echo   Outras maquinas da rede acessam pelo segundo link.
 echo.
 echo   Para PARAR o servidor: feche esta janela ou aperte Ctrl+C
