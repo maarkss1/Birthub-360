@@ -3827,6 +3827,81 @@ paths:
         '422':
           description: Telefone fora de um formato brasileiro discável
 
+  /integrations/birth-voice/connections:
+    get:
+      tags: [Birth Voice]
+      summary: Lista as conexões com o Birth Voices Hub configuradas para o tenant
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /integrations/birth-voice/connect:
+    post:
+      tags: [Birth Voice]
+      summary: Cria uma nova conexão com o Birth Voices Hub (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/birth-voice/connections/{connectionId}/test:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Birth Voice]
+      summary: >-
+        Testa a conectividade com o Hub (somente `/health`, sem autenticação — nunca confirma
+        API key/agentId cadastrados). Somente ADMIN/GESTOR.
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { description: Conexão não encontrada }
+  /integrations/birth-voice/disconnect/{connectionId}:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Birth Voice]
+      summary: Desconecta a conexão com o Birth Voices Hub (somente ADMIN/GESTOR)
+      responses:
+        '200': { description: Desconectada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/birth-voice/calls:
+    get:
+      tags: [Birth Voice]
+      summary: >-
+        Lista recente de chamadas de voz IA (VoiceCallLog) — projeção estruturada do resultado
+        gravado pelos webhooks de callback, paginada por cursor.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+        - name: cursor
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+  /integrations/birth-voice/calls/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Birth Voice]
+      summary: Detalhe de uma chamada de voz IA (transcrição completa incluída)
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '404': { description: Chamada não encontrada }
+
   # ═══════════════════════════════════════════════════════════════════════════════════
   # Endpoints adicionados em 2026-08-15 (Onda 8, Agente 18) para fechar a deriva medida
   # entre este documento e as rotas reais (`server.ts` + routers). Ver tabela de deriva

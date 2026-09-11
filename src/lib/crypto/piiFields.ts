@@ -37,6 +37,9 @@ export const ENCRYPTED_MODEL_FIELDS: Record<string, readonly string[]> = {
   // Credencial de PABX 3CX (Call Control API) — mesmo tratamento das duas linhas acima. Ver
   // .agents/handoffs/onda-5/01-para-06-persistencia-3cx-implementada.md.
   ThreeCXConnection: ['apiKey', 'apiSecret'],
+  // Credencial do Birth Voices Hub (SDR de voz por IA) por organização — mesmo tratamento de
+  // ThreeCXConnection acima.
+  VoiceHubConnection: ['apiKey'],
   // Tokens OAuth de login social (Google/Microsoft via Better Auth, gravados por
   // prismaAdapter em src/lib/auth.ts) — mesma classe de credencial de terceiro das linhas
   // acima. Ver .agents/handoffs/roadmap-v2-onda-1/01-para-00-account-oauth-tokens-sem-cifra.md.

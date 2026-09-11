@@ -20,7 +20,12 @@ vi.mock('@/config/env', () => ({
 }));
 
 vi.mock('@/lib/prisma', () => ({
-  prisma: { lead: { findFirst: vi.fn() } },
+  prisma: {
+    lead: { findFirst: vi.fn() },
+    // Sem conexão cadastrada por padrão — requireConfig() cai pro fallback de env var acima,
+    // preservando o comportamento que todo teste pré-existente deste arquivo já assume.
+    voiceHubConnection: { findFirst: vi.fn().mockResolvedValue(null) },
+  },
 }));
 
 vi.mock('@/lib/logger', () => ({
@@ -41,6 +46,9 @@ import {
 import { PiiConsentRequiredError } from '@/features/intelligence/services/guardrails.service';
 
 const leadMock = prisma.lead as unknown as { findFirst: ReturnType<typeof vi.fn> };
+const voiceHubConnectionMock = prisma.voiceHubConnection as unknown as {
+  findFirst: ReturnType<typeof vi.fn>;
+};
 const mockIsSuppressed = vi.mocked(isSuppressed);
 
 const ORG = 'org-1';
@@ -55,6 +63,7 @@ function leadComTelefone(phone: string | null = '(11) 99999-8888', email: string
 
 beforeEach(() => {
   vi.clearAllMocks();
+  voiceHubConnectionMock.findFirst.mockResolvedValue(null);
   mockIsSuppressed.mockResolvedValue(false);
   vi.stubGlobal(
     'fetch',
@@ -144,5 +153,30 @@ describe('callLead', () => {
     } finally {
       delete process.env.BLAND_API_KEY;
     }
+  });
+
+  // requireConfig() prioriza a conexão cadastrada em Integrações (VoiceHubConnection) sobre as
+  // env vars globais — mesmo espírito de qualquer outra migração de config global para por-tenant
+  // já feita neste produto (BitrixConnection). Sem esta prioridade, cadastrar uma conexão pela
+  // tela não teria efeito nenhum enquanto a env var global continuasse setada.
+  it('usa a conexão cadastrada em Integrações (VoiceHubConnection) em vez das env vars globais, quando existe uma habilitada', async () => {
+    leadMock.findFirst.mockResolvedValue(leadComTelefone());
+    voiceHubConnectionMock.findFirst.mockResolvedValue({
+      baseUrl: 'https://voices.outra-org.com',
+      apiKey: 'chave-da-conexao',
+      agentId: 'agente-da-conexao',
+    });
+
+    await callLead(ORG, 'lead-9');
+
+    expect(voiceHubConnectionMock.findFirst).toHaveBeenCalledWith({
+      where: { organizationId: ORG, enabled: true },
+      orderBy: { createdAt: 'asc' },
+    });
+    const [calledUrl, options] = (fetch as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(calledUrl).toBe('https://voices.outra-org.com/api/voice/outbound');
+    expect((options as { headers: Record<string, string> }).headers.Authorization).toBe(
+      'Bearer chave-da-conexao',
+    );
   });
 });
