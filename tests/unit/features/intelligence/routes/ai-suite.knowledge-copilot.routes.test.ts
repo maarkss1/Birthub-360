@@ -8,7 +8,17 @@ import request from 'supertest';
  * inventava livremente os `sourceReferences` a partir dele. Este teste trava a regressão: a rota
  * agora chama `searchService.hybridSearch` de verdade, com a organização do usuário autenticado
  * (nunca de querystring/body), e nunca mais aceita snippets do cliente.
+ *
+ * ACH-07-01: desde que o gate de consentimento LGPD (`assertPiiExternalConsent`) passou a ser
+ * aplicado como middleware de todo `aiSuiteRouter` (não só nos 12 endpoints originalmente
+ * identificados na auditoria), as organizações usadas aqui ('org-real'/'org-1') precisam constar
+ * em `AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS` — senão toda requisição cai em 403 antes de chegar no
+ * handler, e este arquivo passaria a testar o gate em vez do contrato AI-010 que é o seu objetivo.
  */
+const mockEnv = vi.hoisted(() => ({
+    AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS: 'org-real,org-1',
+}));
+vi.mock('../../../../../src/config/env.js', () => ({ env: mockEnv }));
 
 const hybridSearchMock = vi.fn();
 
