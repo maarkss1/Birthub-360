@@ -130,7 +130,9 @@ export function computeQueuePriorityScore(
     {
       label: 'Temperatura',
       points: temperaturePoints,
-      detail: lead.temperature ? `Lead classificado como ${lead.temperature}` : 'Sem temperatura definida',
+      detail: lead.temperature
+        ? `Lead classificado como ${lead.temperature}`
+        : 'Sem temperatura definida',
     },
   ];
 
