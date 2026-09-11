@@ -52,6 +52,10 @@ import { createAgentMemoryCleanupWorker, scheduleAgentMemoryCleanupJob } from '.
 import { createBitrixExtractionPurgeWorker, scheduleBitrixExtractionPurgeJob } from './src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.js';
 import { createNewsMonitorWorker, scheduleGlobalNewsScan } from './src/lib/queue/newsMonitor.worker.js';
 import { createAccountIntelligenceInsightsWorker, scheduleAccountIntelligenceInsightsJob } from './src/features/market-intelligence/jobs/accountIntelligenceInsights.worker.js';
+import {
+    createAccountIntelligenceSchedulerWorker,
+    accountIntelligenceSchedulerQueue,
+} from './src/features/market-intelligence/jobs/accountIntelligenceScheduler.worker.js';
 import { createForecastSnapshotWorker, scheduleForecastSnapshotJob } from './src/features/commercial-intelligence/jobs/forecastSnapshotWeekly.worker.js';
 import { createCopilotoTranscriptionWorker } from './src/features/copiloto-ia/jobs/transcribeConversation.worker.js';
 import { MeetingSynthesisService } from './src/features/chatbook/services/meeting-synthesis.service.js';
@@ -94,6 +98,7 @@ async function startWorkerProcess() {
     const bitrixExtractionPurgeWorker = createBitrixExtractionPurgeWorker();
     const newsMonitorWorker = createNewsMonitorWorker();
     const accountIntelligenceInsightsWorker = createAccountIntelligenceInsightsWorker();
+    const accountIntelligenceSchedulerWorker = createAccountIntelligenceSchedulerWorker();
     const forecastSnapshotWorker = createForecastSnapshotWorker();
     const copilotoTranscriptionWorker = createCopilotoTranscriptionWorker({
         meetingSynthesisPort: new MeetingSynthesisService(),
@@ -115,6 +120,11 @@ async function startWorkerProcess() {
         scheduleGlobalNewsScan(),
         scheduleAccountIntelligenceInsightsJob(),
         scheduleForecastSnapshotJob(),
+        accountIntelligenceSchedulerQueue.upsertJobScheduler(
+            'daily-ldr-scheduler',
+            { pattern: '0 2 * * *' },
+            { name: 'accountIntelligenceScheduler', data: {} },
+        ),
     ]);
 
     const searchWorker = env.ENABLE_SEARCH ? createSearchWorker() : null;
@@ -161,6 +171,7 @@ async function startWorkerProcess() {
         { name: 'bitrix-extraction-purge', worker: bitrixExtractionPurgeWorker },
         { name: 'news-monitor', worker: newsMonitorWorker },
         { name: 'account-intelligence-insights', worker: accountIntelligenceInsightsWorker },
+        { name: 'account-intelligence-scheduler', worker: accountIntelligenceSchedulerWorker },
         { name: 'forecast-snapshot-weekly-queue', worker: forecastSnapshotWorker },
         { name: 'copiloto-ia-transcription-queue', worker: copilotoTranscriptionWorker },
     ];
