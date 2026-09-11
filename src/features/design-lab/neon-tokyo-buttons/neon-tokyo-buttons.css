@@ -24,42 +24,96 @@ html.dark .ntb-scope {
   --ntb-iris: #a855f7;
   --ntb-cyan: #22d3ee;
   --ntb-pulse: #ff2d78;
-  --ntb-glow-iris: 0 0 20px -2px color-mix(in srgb, var(--ntb-iris) 60%, transparent), 0 0 8px -1px color-mix(in srgb, var(--ntb-iris) 45%, transparent);
-  --ntb-glow-cyan: 0 0 20px -2px color-mix(in srgb, var(--ntb-cyan) 60%, transparent), 0 0 8px -1px color-mix(in srgb, var(--ntb-cyan) 45%, transparent);
-  --ntb-glow-pulse: 0 0 20px -2px color-mix(in srgb, var(--ntb-pulse) 60%, transparent), 0 0 8px -1px color-mix(in srgb, var(--ntb-pulse) 45%, transparent);
+  --ntb-glow-iris:
+    0 0 20px -2px color-mix(in srgb, var(--ntb-iris) 60%, transparent),
+    0 0 8px -1px color-mix(in srgb, var(--ntb-iris) 45%, transparent);
+  --ntb-glow-cyan:
+    0 0 20px -2px color-mix(in srgb, var(--ntb-cyan) 60%, transparent),
+    0 0 8px -1px color-mix(in srgb, var(--ntb-cyan) 45%, transparent);
+  --ntb-glow-pulse:
+    0 0 20px -2px color-mix(in srgb, var(--ntb-pulse) 60%, transparent),
+    0 0 8px -1px color-mix(in srgb, var(--ntb-pulse) 45%, transparent);
 }
 
 /* Base — todo botão ganha a mesma física de interação (lift sutil + press), independente da
    variante. Hoje só default/destructive/secondary têm isso em Button.tsx; outline/ghost/link
    ficavam sem nenhum feedback de hover — esta é a lacuna real que este componente fecha. */
 .ntb-btn {
-  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
 }
-.ntb-btn:hover { transform: scale(1.02); }
-.ntb-btn:active { transform: scale(0.97); }
+.ntb-btn:hover {
+  transform: scale(1.02);
+}
+.ntb-btn:active {
+  transform: scale(0.97);
+}
 
 /* destructive — usa --color-danger (token real do Tailwind theme; --danger sem o prefixo
    --color- não existe como custom property, só via @theme) via color-mix, não vermelho cru
    (bg-red-500 do Button.tsx real falha AA com texto branco: ~3.76:1, abaixo do mínimo 4.5:1). */
-.ntb-destructive { background: color-mix(in srgb, var(--color-danger) 82%, black); }
-.ntb-destructive:hover { background: color-mix(in srgb, var(--color-danger) 68%, black); }
+.ntb-destructive {
+  background: color-mix(in srgb, var(--color-danger) 82%, black);
+}
+.ntb-destructive:hover {
+  background: color-mix(in srgb, var(--color-danger) 68%, black);
+}
 
 /* Glow — regra do DESIGN.md: difuso, nunca em repouso, só interação, só no escuro. */
-.ntb-glow-brand:hover, .ntb-glow-brand:focus-visible { box-shadow: var(--shadow-glow-brand, 0 0 15px -3px color-mix(in srgb, var(--brand) 20%, transparent)); }
-.ntb-glow-iris { border: 1px solid color-mix(in srgb, var(--ntb-iris) 45%, transparent); }
-.ntb-glow-cyan { border: 1px solid color-mix(in srgb, var(--ntb-cyan) 45%, transparent); }
-.ntb-glow-pulse { border: 1px solid color-mix(in srgb, var(--ntb-pulse) 45%, transparent); }
-.ntb-glow-iris:hover, .ntb-glow-iris:focus-visible { box-shadow: var(--ntb-glow-iris); border-color: color-mix(in srgb, var(--ntb-iris) 70%, transparent); text-shadow: 0 0 10px currentColor; }
-.ntb-glow-cyan:hover, .ntb-glow-cyan:focus-visible { box-shadow: var(--ntb-glow-cyan); border-color: color-mix(in srgb, var(--ntb-cyan) 70%, transparent); text-shadow: 0 0 10px currentColor; }
-.ntb-glow-pulse:hover, .ntb-glow-pulse:focus-visible { box-shadow: var(--ntb-glow-pulse); border-color: color-mix(in srgb, var(--ntb-pulse) 70%, transparent); text-shadow: 0 0 10px currentColor; }
+.ntb-glow-brand:hover,
+.ntb-glow-brand:focus-visible {
+  box-shadow: var(
+    --shadow-glow-brand,
+    0 0 15px -3px color-mix(in srgb, var(--brand) 20%, transparent)
+  );
+}
+.ntb-glow-iris {
+  border: 1px solid color-mix(in srgb, var(--ntb-iris) 45%, transparent);
+}
+.ntb-glow-cyan {
+  border: 1px solid color-mix(in srgb, var(--ntb-cyan) 45%, transparent);
+}
+.ntb-glow-pulse {
+  border: 1px solid color-mix(in srgb, var(--ntb-pulse) 45%, transparent);
+}
+.ntb-glow-iris:hover,
+.ntb-glow-iris:focus-visible {
+  box-shadow: var(--ntb-glow-iris);
+  border-color: color-mix(in srgb, var(--ntb-iris) 70%, transparent);
+  text-shadow: 0 0 10px currentColor;
+}
+.ntb-glow-cyan:hover,
+.ntb-glow-cyan:focus-visible {
+  box-shadow: var(--ntb-glow-cyan);
+  border-color: color-mix(in srgb, var(--ntb-cyan) 70%, transparent);
+  text-shadow: 0 0 10px currentColor;
+}
+.ntb-glow-pulse:hover,
+.ntb-glow-pulse:focus-visible {
+  box-shadow: var(--ntb-glow-pulse);
+  border-color: color-mix(in srgb, var(--ntb-pulse) 70%, transparent);
+  text-shadow: 0 0 10px currentColor;
+}
 /* No claro, texto/borda continuam legíveis (AA) mas sem glow — "neon só no escuro". */
-html:not(.dark) .ntb-glow-iris:hover, html:not(.dark) .ntb-glow-iris:focus-visible,
-html:not(.dark) .ntb-glow-cyan:hover, html:not(.dark) .ntb-glow-cyan:focus-visible,
-html:not(.dark) .ntb-glow-pulse:hover, html:not(.dark) .ntb-glow-pulse:focus-visible {
+html:not(.dark) .ntb-glow-iris:hover,
+html:not(.dark) .ntb-glow-iris:focus-visible,
+html:not(.dark) .ntb-glow-cyan:hover,
+html:not(.dark) .ntb-glow-cyan:focus-visible,
+html:not(.dark) .ntb-glow-pulse:hover,
+html:not(.dark) .ntb-glow-pulse:focus-visible {
   box-shadow: none;
   text-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ntb-btn, .ntb-btn:hover, .ntb-btn:active { transition: none; transform: none; }
+  .ntb-btn,
+  .ntb-btn:hover,
+  .ntb-btn:active {
+    transition: none;
+    transform: none;
+  }
 }

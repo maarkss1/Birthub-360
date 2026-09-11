@@ -1,11 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
-import * as React from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
+import * as React from 'react';
+import { SoundFX, type UiSound } from '../../lib/soundEffects';
 import { cn } from '../../lib/utils';
 import { Magnetic } from './Magnetic';
-import { SoundFX, type UiSound } from '../../lib/soundEffects';
 
 const buttonVariants = cva(
   // disabled:text-gray-600 (não gray-400) — gray-400 sobre disabled:bg-gray-200 dá só 2.1:1,
@@ -32,7 +33,8 @@ const buttonVariants = cva(
         // bg-btn-danger (color-mix com --danger, globals.css) — bg-red-500 cru com texto branco
         // media ~3.76:1, abaixo do mínimo AA 4.5:1 (mesma classe de achado do DQA-19 que motivou
         // bg-brand-active acima). btn-danger-hover escurece mais, mesma lógica de bg-brand-2.
-        destructive: 'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:scale-[1.02]',
+        destructive:
+          'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:scale-[1.02]',
         // border-gray-300/hover:bg-gray-100/200 (Tailwind cru, não token) nunca reagiam ao tema —
         // no dark mode (padrão do produto, CREATIVE_SYSTEM_01.md seção C) produziam borda
         // praticamente invisível e um hover claro incoerente sobre superfície escura. Trocados
@@ -54,7 +56,8 @@ const buttonVariants = cva(
         // só em .dark; --iris/--orbit-blue em si continuam intocados em todo o resto do produto).
         iris: 'border border-accent-violet/45 bg-transparent text-accent-violet hover:scale-[1.02] hover:border-accent-violet/70 hover:shadow-glow-accent-violet dark:hover:[text-shadow:0_0_10px_currentColor]',
         cyan: 'border border-accent-cyan/45 bg-transparent text-accent-cyan hover:scale-[1.02] hover:border-accent-cyan/70 hover:shadow-glow-accent-cyan dark:hover:[text-shadow:0_0_10px_currentColor]',
-        pulse: 'border border-pulse/45 bg-transparent text-pulse hover:scale-[1.02] hover:border-pulse/70 hover:shadow-glow-pulse dark:hover:[text-shadow:0_0_10px_currentColor]',
+        pulse:
+          'border border-pulse/45 bg-transparent text-pulse hover:scale-[1.02] hover:border-pulse/70 hover:shadow-glow-pulse dark:hover:[text-shadow:0_0_10px_currentColor]',
       },
       size: {
         default: 'h-9 px-4 py-2',

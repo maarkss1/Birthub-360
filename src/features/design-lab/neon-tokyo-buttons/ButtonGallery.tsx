@@ -11,15 +11,50 @@ const VARIANTS: {
   hint: string;
   children: React.ReactNode;
 }[] = [
-  { variant: 'default', label: 'default', hint: 'ação primária (CTA), 1 por tela', children: 'Salvar' },
-  { variant: 'destructive', label: 'destructive', hint: 'exclusão irreversível', children: 'Excluir' },
+  {
+    variant: 'default',
+    label: 'default',
+    hint: 'ação primária (CTA), 1 por tela',
+    children: 'Salvar',
+  },
+  {
+    variant: 'destructive',
+    label: 'destructive',
+    hint: 'exclusão irreversível',
+    children: 'Excluir',
+  },
   { variant: 'outline', label: 'outline', hint: 'ação secundária neutra', children: 'Cancelar' },
-  { variant: 'secondary', label: 'secondary', hint: 'menor ênfase que outline', children: 'Ver detalhes' },
-  { variant: 'ghost', label: 'ghost', hint: 'terciária, invisível até o hover', children: 'Mais opções' },
+  {
+    variant: 'secondary',
+    label: 'secondary',
+    hint: 'menor ênfase que outline',
+    children: 'Ver detalhes',
+  },
+  {
+    variant: 'ghost',
+    label: 'ghost',
+    hint: 'terciária, invisível até o hover',
+    children: 'Mais opções',
+  },
   { variant: 'link', label: 'link', hint: 'navegação inline', children: 'Saiba mais' },
-  { variant: 'iris', label: 'iris (proposta)', hint: 'ações de IA/inteligência', children: <>✨ Perguntar à IA</> },
-  { variant: 'cyan', label: 'cyan (proposta)', hint: 'dados/analytics ao vivo', children: <>📡 Ver ao vivo</> },
-  { variant: 'pulse', label: 'pulse (proposta)', hint: 'urgente, uso raro', children: <>● Responder agora</> },
+  {
+    variant: 'iris',
+    label: 'iris (proposta)',
+    hint: 'ações de IA/inteligência',
+    children: <>✨ Perguntar à IA</>,
+  },
+  {
+    variant: 'cyan',
+    label: 'cyan (proposta)',
+    hint: 'dados/analytics ao vivo',
+    children: <>📡 Ver ao vivo</>,
+  },
+  {
+    variant: 'pulse',
+    label: 'pulse (proposta)',
+    hint: 'urgente, uso raro',
+    children: <>● Responder agora</>,
+  },
 ];
 
 export function ButtonGallery() {
@@ -31,7 +66,8 @@ export function ButtonGallery() {
       <p style={{ color: 'var(--ink-2)', fontSize: 13, marginBottom: 24, maxWidth: '70ch' }}>
         Protótipo isolado (não é <code>Button.tsx</code>). Passe o mouse em cada botão — todas as 9
         variantes têm animação de hover/press agora; iris/cyan/pulse também acendem um glow no modo
-        escuro. Troque o tema do app (Sol/Lua na topbar) para comparar claro vs. escuro em tempo real.
+        escuro. Troque o tema do app (Sol/Lua na topbar) para comparar claro vs. escuro em tempo
+        real.
       </p>
       <div
         style={{
@@ -71,7 +107,9 @@ export function ButtonGallery() {
         <NeonTokyoButton disabled>Indisponível</NeonTokyoButton>
         <NeonTokyoButton size="sm">Pequeno</NeonTokyoButton>
         <NeonTokyoButton size="lg">Grande</NeonTokyoButton>
-        <NeonTokyoButton size="icon" aria-label="Favoritar">★</NeonTokyoButton>
+        <NeonTokyoButton size="icon" aria-label="Favoritar">
+          ★
+        </NeonTokyoButton>
       </div>
     </div>
   );
