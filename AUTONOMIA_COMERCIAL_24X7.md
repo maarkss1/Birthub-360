@@ -121,3 +121,23 @@ protege forecast, comissão e sincronização do Kanban/Bitrix.
 - incorporar reply tracking de e-mail ao classificador de intenção;
 - usar eventos de aceite/pagamento para fechar o negócio de forma determinística;
 - painel de SLO por agente: cobertura, conversão, custo, latência, erro e override humano.
+
+## Limitações conhecidas
+
+- **Agendamento automático por confirmação do lead ainda só tem um caminho real (manual).**
+  `src/features/cadence/domain/scheduling.ts` aceita três tipos de evidência verificável para
+  criar uma reunião real (`lead-calendar-reply`, `lead-scheduling-link-click`,
+  `manual-verified`), mas hoje só `manual-verified` tem um caller de produção
+  (`application/scheduleMeeting.ts::scheduleVerifiedMeeting`, acionado depois de contato ao vivo
+  do vendedor). Não é um bug de código: `isVerifiableConfirmation` já recusa qualquer confirmação
+  que não referencie um registro real e comparável — nunca "acho que o lead topou" do modelo — e
+  os dois transportes automáticos que faltam esbarram em barreiras de propriedade/schema, não em
+  lógica ausente. Detalhe completo e decisões pendentes (uma para o Agente 01/01A, outra para o
+  Agente 04) em ACH-17-04
+  (`.agents/handoffs/audit-ach/17-para-01-04-agendamento-transporte-pendente.md`). Em resumo:
+  réplica de e-mail/WhatsApp confirmando um horário (`lead-calendar-reply`) precisa de um registro
+  determinístico do horário que foi oferecido ao lead para comparar — essa âncora não existe hoje
+  no schema; e o clique num link de auto-agendamento (`lead-scheduling-link-click`) já tem uma
+  página pública 100% funcional (`src/features/calendar/routes/booking.routes.ts`), mas ela
+  pertence ao Agente 04 e roda hoje totalmente desconectada do domínio de cadência do Agente 17
+  (cria `Lead`/`Activity` própria, nunca uma `AvailabilityConfirmation`/`CadenceCalendarEvent`).
