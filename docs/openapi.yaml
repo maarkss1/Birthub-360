@@ -1964,6 +1964,64 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /intelligence/pending/awaiting-outcome:
+    get:
+      tags: [Intelligence]
+      summary: >-
+        Lista ações de IA já executadas (aprovadas) que ainda não têm resultado de negócio
+        registrado — fila do Closed-Loop Intelligence (item 103 da constituição de produto).
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      actions:
+                        type: array
+                        items: { $ref: '#/components/schemas/AIPendingAction' }
+
+  /intelligence/pending/{id}/outcome:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [Intelligence]
+      summary: >-
+        Registra o resultado de negócio (positivo/negativo/neutro) de uma ação de IA já executada,
+        fechando o ciclo do Closed-Loop Intelligence.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [POSITIVE, NEGATIVE, NEUTRAL] }
+                notes: { type: string, maxLength: 2000 }
+      responses:
+        '200':
+          description: Resultado registrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      action: { $ref: '#/components/schemas/AIPendingAction' }
+        '404':
+          description: Ação executada não encontrada para este id
+        '409':
+          description: Esta ação já tem um resultado registrado
+
   /intelligence/ai-settings:
     get:
       tags: [Intelligence]
@@ -2323,6 +2381,89 @@ paths:
           description: 'Corpo inválido (`targetVersion` ausente ou menor que 1)'
         '404':
           description: Versão pedida não existe no histórico deste perfil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  error: { type: string }
+
+  /agent/swarm/learn/approve:
+    post:
+      tags: [Agent]
+      summary: >-
+        Aprova uma versão pendente do perfil de estilo aprendido pelo LearningAgent do (tenant,
+        usuário) autenticado — gate de aprovação humana (item 103 da constituição de produto).
+        Self-service: identidade sempre de `req.user`, nunca de body/querystring.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetVersion]
+              properties:
+                targetVersion: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Versão aprovada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      success: { type: boolean }
+                      activeVersion: { type: integer }
+        '400':
+          description: >-
+            Versão não encontrada, já rejeitada anteriormente, ou papel do usuário insuficiente
+            para aprovar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  error: { type: string }
+
+  /agent/swarm/learn/reject:
+    post:
+      tags: [Agent]
+      summary: >-
+        Rejeita uma versão pendente do perfil de estilo aprendido pelo LearningAgent do (tenant,
+        usuário) autenticado — nunca vira `activeVersion`, mas permanece no histórico (append-only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetVersion]
+              properties:
+                targetVersion: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Versão rejeitada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      success: { type: boolean }
+                      activeVersion: { type: integer }
+        '400':
+          description: >-
+            Versão não encontrada, já aprovada anteriormente, ou papel do usuário insuficiente
+            para rejeitar
           content:
             application/json:
               schema:

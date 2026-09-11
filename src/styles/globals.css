@@ -128,8 +128,10 @@
   --pulse: #c2255c;
   /* Glow discreto no claro — "neon só no escuro" (regra do brief). Mesma fórmula de
      --shadow-glow-brand acima (20%, blur 15px), só trocando a cor de base. */
-  --shadow-glow-accent-violet-value: 0 0 15px -3px color-mix(in srgb, var(--accent-violet) 20%, transparent);
-  --shadow-glow-accent-cyan-value: 0 0 15px -3px color-mix(in srgb, var(--accent-cyan) 20%, transparent);
+  --shadow-glow-accent-violet-value: 0 0 15px -3px
+    color-mix(in srgb, var(--accent-violet) 20%, transparent);
+  --shadow-glow-accent-cyan-value: 0 0 15px -3px
+    color-mix(in srgb, var(--accent-cyan) 20%, transparent);
   --shadow-glow-pulse-value: 0 0 15px -3px color-mix(in srgb, var(--pulse) 20%, transparent);
   /* Vermelho de estado crítico/risco (Comercial Inteligente: Centro de Decisão, Alertas, drill-down
      de negócios) — precisa ser redefinido por tema porque nenhum hex único passa 4.5:1 (WCAG AA)
@@ -228,9 +230,15 @@
   --accent-cyan: #22d3ee;
   --pulse: #ff2d78;
   /* Glow vívido, difuso (12-20px), duas camadas — só aqui, só hover/focus (nunca em repouso). */
-  --shadow-glow-accent-violet-value: 0 0 20px -2px color-mix(in srgb, var(--accent-violet) 55%, transparent), 0 0 8px -1px color-mix(in srgb, var(--accent-violet) 40%, transparent);
-  --shadow-glow-accent-cyan-value: 0 0 20px -2px color-mix(in srgb, var(--accent-cyan) 55%, transparent), 0 0 8px -1px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
-  --shadow-glow-pulse-value: 0 0 20px -2px color-mix(in srgb, var(--pulse) 55%, transparent), 0 0 8px -1px color-mix(in srgb, var(--pulse) 40%, transparent);
+  --shadow-glow-accent-violet-value:
+    0 0 20px -2px color-mix(in srgb, var(--accent-violet) 55%, transparent),
+    0 0 8px -1px color-mix(in srgb, var(--accent-violet) 40%, transparent);
+  --shadow-glow-accent-cyan-value:
+    0 0 20px -2px color-mix(in srgb, var(--accent-cyan) 55%, transparent),
+    0 0 8px -1px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+  --shadow-glow-pulse-value:
+    0 0 20px -2px color-mix(in srgb, var(--pulse) 55%, transparent),
+    0 0 8px -1px color-mix(in srgb, var(--pulse) 40%, transparent);
 }
 
 @theme {
