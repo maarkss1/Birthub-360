@@ -106,8 +106,12 @@ async function seed() {
                 [userId, u.name, u.email, u.role, targetOrgId, true]);
 
             // Create account
+            // Bug real encontrado em sessão de debug (11/09/2026): better-auth exige accountId ===
+            // userId para o provider "credential" (confirmado comparando com uma conta que já
+            // logava de verdade) — accountId = e-mail parecia razoável mas faz sign-in/email falhar
+            // sempre com "Invalid email or password", mesmo com hash de senha correto.
             await client.query('INSERT INTO account (id, "accountId", "providerId", "userId", password, "updatedAt") VALUES ($1, $2, $3, $4, $5, NOW())',
-                [accountId, u.email, 'credential', userId, hashedPassword]);
+                [accountId, userId, 'credential', userId, hashedPassword]);
 
             generatedCredentials.push({ email: u.email, password });
             console.log(`Created user: ${u.email}`);
