@@ -289,6 +289,98 @@ paths:
         '404':
           description: Lead não encontrado
 
+  /mesa-tratamento/lead/{id}/reassign:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        Painel de gestão (ADMIN/GESTOR): reatribui o responsável de um lead no Bitrix24
+        (`ASSIGNED_BY_ID`) e resolve `Lead.owner` local para o `User.id` correspondente, quando
+        existir vínculo entre o usuário Bitrix e um usuário Atlas.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bitrixUserId]
+              properties:
+                bitrixUserId: { type: string, description: Id do usuário no Bitrix24 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: bitrixUserId ausente, lead sem vínculo Bitrix, ou usuário Bitrix não encontrado
+        '403':
+          description: Papel insuficiente (só ADMIN/GESTOR)
+        '404':
+          description: Lead não encontrado
+
+  /mesa-tratamento/lead/{id}/comment:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        Painel de gestão (ADMIN/GESTOR): adiciona um comentário na timeline do Bitrix24 sem
+        registrar um resultado completo de atendimento.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comment]
+              properties:
+                comment: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: Comentário vazio, ou lead sem vínculo Bitrix
+        '403':
+          description: Papel insuficiente (só ADMIN/GESTOR)
+        '404':
+          description: Lead não encontrado
+
+  /mesa-tratamento/lead/{id}/decide:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [Mesa de Tratamento]
+      summary: >-
+        Painel de gestão (ADMIN/GESTOR): marca um lead como revisado/decidido pela gestão —
+        registra histórico local (`MesaTratamentoTreatment`, outcome `decidido_pela_gestao`) e,
+        quando o lead já está vinculado ao Bitrix24, também comenta na timeline lá.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note: { type: string, description: Nota opcional sobre a decisão }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '403':
+          description: Papel insuficiente (só ADMIN/GESTOR)
+        '404':
+          description: Lead não encontrado
+
   /mesa-tratamento/pomodoro/session:
     post:
       tags: [Mesa de Tratamento]
@@ -2158,6 +2250,304 @@ paths:
                 $ref: '#/components/schemas/DataEnvelope'
         '400':
           description: Função desconhecida ou aridade de argumentos incorreta
+
+  # ─────────────────── Intelligence Suite (catálogo de 16 ações de IA) ───────────────────
+  # Montado em intelligence.routes.ts (`router.use('/suite', aiSuiteRouter)`), restrito a
+  # ADMIN/GESTOR/CLOSER/SDR (ver src/features/intelligence/routes/ai-suite.routes.ts). A maioria
+  # repassa req.body direto ao serviço correspondente sem schema Zod próprio — requestBody abaixo
+  # documenta o formato esperado por cada serviço, não uma validação aplicada na borda.
+  /intelligence/suite/inventory:
+    get:
+      tags: [Intelligence]
+      summary: Inventário das 20 capacidades de IA do AI Suite
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/decision-committee:
+    post:
+      tags: [Intelligence]
+      summary: '#6 Mapeia o comitê de decisores de uma conta a partir de contatos e contexto da empresa'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contacts: { type: array, items: { type: object } }
+                companyContext: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/bitrix-hygiene:
+    post:
+      tags: [Intelligence]
+      summary: '#7 Sanitiza/higieniza dados de um lead antes de sincronizar com o Bitrix24'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/cadence-step:
+    post:
+      tags: [Intelligence]
+      summary: '#8 Gera o próximo passo de uma cadência multicanal (cadência dinâmica)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/roleplay/turn:
+    post:
+      tags: [Intelligence]
+      summary: '#9 Simula a resposta do cliente num turno de roleplay de vendas'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/roleplay/evaluate:
+    post:
+      tags: [Intelligence]
+      summary: '#9 Avalia uma sessão de roleplay completa (persona + histórico)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                persona: { type: object }
+                history: { type: array, items: { type: object } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/proposal/generate:
+    post:
+      tags: [Intelligence]
+      summary: '#10 Gera as seções de uma proposta comercial'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/next-best-action:
+    post:
+      tags: [Intelligence]
+      summary: '#11 Determina a próxima melhor ação comercial para um contexto de negócio'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/churn/predict:
+    post:
+      tags: [Intelligence]
+      summary: '#13 Analisa risco de churn de uma conta/cliente'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/lead-router/match:
+    post:
+      tags: [Intelligence]
+      summary: >-
+        #14 Sugere o vendedor mais adequado para um lead a partir de uma lista de candidatos
+        enviada pelo chamador (roteamento inteligente de leads)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lead: { type: object }
+                reps: { type: array, items: { type: object } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/knowledge/copilot:
+    post:
+      tags: [Intelligence]
+      summary: >-
+        #15 Responde uma dúvida técnica com retrieval real contra a base de conhecimento do
+        tenant autenticado (o cliente envia só a pergunta, não os trechos)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question: { type: string, minLength: 3, maxLength: 2000 }
+                userRole: { type: string, maxLength: 100 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+        '400':
+          description: 'question ausente ou fora do tamanho permitido (3–2000 caracteres)'
+
+  /intelligence/suite/meeting/synthesize:
+    post:
+      tags: [Intelligence]
+      summary: '#16 Sintetiza uma reunião (resumo, decisões, próximos passos)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/mesa/triage:
+    post:
+      tags: [Intelligence]
+      summary: '#17 Triagem de incidente para a Mesa de Tratamento'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/coaching/report:
+    post:
+      tags: [Intelligence]
+      summary: '#18 Gera relatório de coaching de vendedor'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/playbook/generate-chapter:
+    post:
+      tags: [Intelligence]
+      summary: '#19 Gera um capítulo do playbook comercial'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
+  /intelligence/suite/lgpd/sanitize:
+    post:
+      tags: [Intelligence]
+      summary: '#20 Sanitiza um texto livre removendo/mascarando dados pessoais (LGPD)'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
 
   # ───────────────────────────── Agent (copiloto/voz/swarm) ─────────────────────────────
   /agent/chat:
@@ -7217,7 +7607,17 @@ paths:
   /intelligence/report/latest:
     get:
       tags: [Intelligence]
-      summary: Último relatório executivo gerado via IA para o tenant
+      summary: Último relatório executivo gerado sob demanda (ReportsHub) para o tenant — nunca inclui o resumo automático diário (ver ReportSource)
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+
+  /intelligence/report/daily-summaries:
+    get:
+      tags: [Intelligence]
+      summary: >-
+        Histórico (até 14) do resumo executivo diário gerado automaticamente pelo job agendado
+        (dailyExecutiveSummary.worker.ts, ReportSource=DAILY_AUTO) — somente leitura, exibido no
+        ReportsHub separado do relatório sob demanda.
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
 
