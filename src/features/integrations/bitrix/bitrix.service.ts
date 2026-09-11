@@ -46,10 +46,10 @@ export {
 export type {
   BitrixDealPipeline,
   BitrixDealStage,
-  BitrixUserOption,
   BitrixDealSummary,
   BitrixDealFilters,
 } from './service/deals.js';
+export type { BitrixUserOption } from './service/userMapping.js';
 export {
   getDealPipelines,
   getDealStages,

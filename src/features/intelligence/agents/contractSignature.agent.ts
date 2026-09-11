@@ -10,14 +10,20 @@ import {
  * id `contract-signature`).
  *
  * O pacote original classificava este agente como `BLOCKED`/risco `HIGH` ("nenhuma integração de
- * assinatura confiável encontrada") — falso: `src/features/cadence/domain/signature.ts` e
- * `application/documentSignature.ts` (donos: Agente 17/18, não este agente) já implementam a
- * máquina de estados real de assinatura (provedor gov.br, hoje um stub de transporte documentado
- * em `GovBrSignatureProviderPort.ts`). Este agente nunca importa esse módulo (import cross-feature
- * de `src/features/intelligence/agents/**` para `src/features/cadence/**` é rejeitado pelo gate de
- * arquitetura real — `npm run test:architecture` → dependency-cruiser, `no-cross-feature-imports`,
- * confirmado nesta onda) — os status válidos abaixo são copiados como literal, não importados; se
- * `signature.ts` mudar esse enum, este comentário e a lista abaixo precisam ser atualizados junto.
+ * assinatura confiável encontrada") — falso: `src/shared/domain/signature.ts` (movido de
+ * `src/features/cadence/domain/signature.ts` no ITEM-13 de arquitetura — módulo puro, sem dono de
+ * feature) e `application/documentSignature.ts` (dono: Agente 17/18, continua em
+ * `src/features/cadence/**`, não este agente) já implementam a máquina de estados real de
+ * assinatura (provedor gov.br, hoje um stub de transporte documentado em
+ * `GovBrSignatureProviderPort.ts`). Este agente nunca importa `documentSignature.ts` (import
+ * cross-feature de `src/features/intelligence/agents/**` para `src/features/cadence/**` é
+ * rejeitado pelo gate de arquitetura real — `npm run test:architecture` → dependency-cruiser,
+ * `no-cross-feature-imports`) — os status válidos abaixo são copiados como literal, não
+ * importados de `signature.ts` (que hoje já poderia ser importado sem violar o gate, por viver em
+ * `shared/`, mas a lista é mantida literal aqui de propósito: o valor real que este comentário
+ * protege é "este agente nunca chama `requestDocumentSignature`/`applySignatureStatusUpdate`", não
+ * a origem do enum). Se `signature.ts` mudar esse enum, este comentário e a lista abaixo precisam
+ * ser atualizados junto.
  * Este agente nunca chama `requestDocumentSignature`/`applySignatureStatusUpdate` — nunca envia
  * nem assina em nome de ninguém. `src/features/cadence/**` continua propriedade exclusiva do
  * Agente 17.
@@ -28,7 +34,7 @@ export class ContractSignatureAgent extends BaseAgent {
   protected temperature = 0.1;
 
   protected buildSystemPrompt(learnedStyle: string | null): string {
-    // Espelha `SignatureStatus` de `src/features/cadence/domain/signature.ts` — mantido como
+    // Espelha `SignatureStatus` de `src/shared/domain/signature.ts` — mantido como
     // literal (não importado) por causa do limite de arquitetura descrito acima.
     const validStatuses = [
       'created',

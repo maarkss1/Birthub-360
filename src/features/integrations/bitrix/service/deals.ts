@@ -6,7 +6,7 @@ import { AuditService } from '../../../../lib/audit/audit.service.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import { resolveEnumMaps, applyInboundCustomFields } from './customFields.js';
 import { BITRIX_FIELD_MAP } from '../bitrixFieldMap.js';
-import { resolveAtlasUserIdByEmail } from './userMapping.js';
+import { resolveAtlasUserIdByEmail, type BitrixUserOption } from './userMapping.js';
 import { findOwnershipConflict, notifyOwnershipConflict } from './ownershipGuard.js';
 
 const DEAL_UF_CRM_CODES = BITRIX_FIELD_MAP.map((m) => m.dealCode).filter((c): c is string =>
@@ -28,12 +28,6 @@ export interface BitrixDealPipeline {
 export interface BitrixDealStage {
   id: string;
   name: string;
-}
-
-export interface BitrixUserOption {
-  id: string;
-  name: string;
-  email: string | null;
 }
 
 /**

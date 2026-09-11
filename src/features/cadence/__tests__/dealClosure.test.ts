@@ -3,7 +3,7 @@ import {
   isDeterministicCloseEvent,
   evaluateDealClosure,
   type DealClosureEventInput,
-} from '../domain/dealClosure';
+} from '../../../shared/domain/dealClosure';
 
 const NOW = new Date('2026-08-03T12:00:00Z');
 

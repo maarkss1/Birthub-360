@@ -15,6 +15,11 @@
  * `EmailMessage` (schema proposto ao 01) e do transporte de e-mail (domínio do 05) — por isso
  * este módulo é a porta (`ConversationSignalPort`, `IntentClassifierPort`) e a lógica pura em
  * volta dela, testável sem nenhuma das duas dependências existirem ainda.
+ *
+ * Movido de `src/features/cadence/domain/replyTracking.ts` para `src/shared/domain/` (dependency-
+ * cruiser ITEM-13): módulo puro (zero imports), consumido por `cadence` (infra) e por
+ * `integrations/email` (webhook de resposta). Conteúdo idêntico ao original — só a localização
+ * mudou.
  */
 
 export interface InboundEmailReply {

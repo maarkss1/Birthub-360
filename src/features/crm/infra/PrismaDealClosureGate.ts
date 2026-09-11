@@ -1,5 +1,5 @@
 import { prisma } from '../../../lib/prisma.js';
-import type { DealClosureEventType } from '../../cadence/domain/dealClosure.js';
+import type { DealClosureEventType } from '../../../shared/domain/dealClosure.js';
 import type { DealClosureEvidencePort } from '../application/dealClosureGate.js';
 
 /**

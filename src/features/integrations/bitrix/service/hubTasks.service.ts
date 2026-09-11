@@ -2,10 +2,10 @@ import { logger } from '../../../../lib/logger.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import { listBitrixConnections } from './connections.js';
-import { type BitrixUserOption, getBitrixUsers } from './deals.js';
-import { resolveOwnBitrixUserId } from './userMapping.js';
+import { getBitrixUsers } from './deals.js';
+import { resolveOwnBitrixUserId, type BitrixUserOption } from './userMapping.js';
 
-export type { BitrixUserOption } from './deals.js';
+export type { BitrixUserOption } from './userMapping.js';
 
 /**
  * Widget "Tarefas pendentes" do Hub Executivo (`HubTaskWidget.tsx`) — pedido explícito do usuário:

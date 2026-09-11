@@ -2,7 +2,7 @@ import { type Prisma, SignatureRequestStatus } from '@prisma/client';
 import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
 import type { SignatureRequestRepositoryPort } from '../application/documentSignature.js';
-import type { SignatureStatus } from '../domain/signature.js';
+import type { SignatureStatus } from '../../../shared/domain/signature.js';
 
 /** CYC-006 (onda 28) — implementação real de `SignatureRequestRepositoryPort`. Mesmo padrão de
  * `PrismaCalendarSchedulerPort`: enum Postgres (PascalCase) mapeado aqui, nunca propagado cru para
