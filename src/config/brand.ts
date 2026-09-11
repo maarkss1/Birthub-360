@@ -28,6 +28,8 @@ export const BRAND = {
   /** Assinatura completa do brand book (p. 01 e p. 10). */
   tagline:
     'Sua central de comando inteligente: integrando dados, potencializando decisões e acelerando a execução.',
+  /** Subtítulo institucional sob o wordmark na tela de entrada (`WelcomeScreen`). */
+  ecosystemLabel: 'Ecossistema de Alta Performance',
   description:
     'Ecossistema inteligente e unificado que atua como central de comando 360º para negócios — conectando dados, IA, automações e processos, e transformando o que está disperso em direção clara.',
   /** Os três movimentos da marca: dados → decisões → execução (brand book, p. 02). */
