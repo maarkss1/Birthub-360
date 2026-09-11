@@ -29,7 +29,11 @@ const KPI_TONES = {
     chip: 'bg-accent-violet/15 text-iris-active dark:text-accent-violet',
     value: 'text-iris-active dark:text-accent-violet',
   },
-  cyan: { bar: 'bg-accent-cyan', chip: 'bg-accent-cyan/15 text-accent-cyan', value: 'text-accent-cyan' },
+  cyan: {
+    bar: 'bg-accent-cyan',
+    chip: 'bg-accent-cyan/15 text-accent-cyan',
+    value: 'text-accent-cyan',
+  },
   pulse: { bar: 'bg-pulse', chip: 'bg-pulse/15 text-pulse', value: 'text-pulse' },
 } as const;
 

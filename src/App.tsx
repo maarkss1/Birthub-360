@@ -1,24 +1,24 @@
-import { lazy, Suspense, useCallback, useState } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
+import { lazy, Suspense, useCallback, useState } from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { MainLayout } from './components/layout/MainLayout';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
-import { RequireRole } from './components/layout/RequireRole';
 import { RequireModuleAccess } from './components/layout/RequireModuleAccess';
+import { RequireRole } from './components/layout/RequireRole';
+import { ClickSpark } from './components/ui/ClickSpark';
+import { Skeleton } from './components/ui/Skeleton';
+import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { BrandProvider } from './contexts/BrandContext';
+import { DailyClosingProvider } from './contexts/DailyClosingContext';
+import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import {
   COMMERCIAL_INTELLIGENCE_ROLES,
-  MESA_TRATAMENTO_ROLES,
   COPILOTO_IA_ROLES,
+  MESA_TRATAMENTO_ROLES,
 } from './lib/auth/authorization';
-import { BrandProvider } from './contexts/BrandContext';
-import { AuthProvider } from './contexts/AuthContext';
-import { DailyClosingProvider } from './contexts/DailyClosingContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
-import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { Skeleton } from './components/ui/Skeleton';
-import { ClickSpark } from './components/ui/ClickSpark';
 
 const DesignLabPage = lazy(() =>
   import('./features/design-lab/DesignLabPage').then((m) => ({ default: m.DesignLabPage })),
@@ -416,8 +416,14 @@ export default function App() {
                         Login/cadastro também levam direto ao Hub (ver Pilot 031/032 em
                         .claude/PILOTS.md) — o CRM (/app) deixou de ser o destino padrão pós-login;
                         continua existindo e acessível a partir dos círculos do Hub. */}
-                      <Route path="/design-lab/command-language" element={<DesignLabPage section="command-language" />} />
-                      <Route path="/design-lab/components-v2" element={<DesignLabPage section="components-v2" />} />
+                      <Route
+                        path="/design-lab/command-language"
+                        element={<DesignLabPage section="command-language" />}
+                      />
+                      <Route
+                        path="/design-lab/components-v2"
+                        element={<DesignLabPage section="components-v2" />}
+                      />
                       <Route path="/" element={<LoginScreen />} />
                       <Route path="/welcome" element={<WelcomeScreen />} />
                       {/* `/select-brand` era a escolha entre as duas marcas anteriores. Com marca

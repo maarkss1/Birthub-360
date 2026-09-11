@@ -8,10 +8,11 @@
  *      nunca preenchimento neon sólido, só borda + glow no hover/focus, e só no modo escuro.
  * Ver README.md nesta pasta para status e como testar dentro do app.
  */
-import * as React from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
+import * as React from 'react';
 import { cn } from '../../../lib/utils';
 import './neon-tokyo-buttons.css';
 
@@ -20,7 +21,8 @@ const neonTokyoButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'ntb-glow-brand bg-brand-active text-on-brand hover:bg-brand-2 hover:shadow-brand-sm',
+        default:
+          'ntb-glow-brand bg-brand-active text-on-brand hover:bg-brand-2 hover:shadow-brand-sm',
         destructive: 'ntb-destructive text-white shadow-sm',
         outline: 'border border-line bg-transparent text-ink hover:bg-surface-2',
         secondary: 'bg-surface-2 text-ink hover:bg-line',
@@ -45,7 +47,9 @@ const neonTokyoButtonVariants = cva(
   },
 );
 
-const ACCENT_COLOR: Partial<Record<NonNullable<VariantProps<typeof neonTokyoButtonVariants>['variant']>, string>> = {
+const ACCENT_COLOR: Partial<
+  Record<NonNullable<VariantProps<typeof neonTokyoButtonVariants>['variant']>, string>
+> = {
   iris: 'var(--ntb-iris)',
   cyan: 'var(--ntb-cyan)',
   pulse: 'var(--ntb-pulse)',
@@ -64,7 +68,10 @@ export interface NeonTokyoButtonProps
  * caem nos valores claros por padrão (proposta ainda não integrada a globals.css).
  */
 export const NeonTokyoButton = React.forwardRef<HTMLButtonElement, NeonTokyoButtonProps>(
-  ({ className, variant, size, asChild = false, loading = false, children, style, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, loading = false, children, style, ...props },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : 'button';
     const accent = variant ? ACCENT_COLOR[variant] : undefined;
 
