@@ -893,5 +893,3 @@ Urgentes: ${planData?.kpis.urgentItems || 0}`;
     </div>
   );
 }
-
-export default DailyPlanHub;

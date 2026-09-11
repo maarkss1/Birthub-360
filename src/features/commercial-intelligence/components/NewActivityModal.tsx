@@ -164,5 +164,3 @@ export function NewActivityModal({ open, onClose, onCreated }: NewActivityModalP
     </Dialog>
   );
 }
-
-export default NewActivityModal;
