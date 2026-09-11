@@ -7546,15 +7546,6 @@ paths:
       responses:
         '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
 
-  /intelligence/report/daily-summaries:
-    get:
-      tags: [Intelligence]
-      summary: >-
-        Histórico do resumo executivo diário automático (job dailyExecutiveSummary.worker.ts,
-        cron 0 18 * * *) — até 14 resumos mais recentes, mais novo primeiro
-      responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
-
   /intelligence/win-loss-analysis:
     post:
       tags: [Intelligence]
