@@ -8,7 +8,10 @@ import { SellerPerformanceAggregatorService } from '../sellerPerformanceAggregat
 
 const ORG = 'org-1';
 const OWNER = 'owner-1';
-const PERIOD: SellerPerformancePeriod = { from: new Date('2026-09-01'), to: new Date('2026-09-30') };
+const PERIOD: SellerPerformancePeriod = {
+  from: new Date('2026-09-01'),
+  to: new Date('2026-09-30'),
+};
 
 /**
  * Repositório em memória — mesmo padrão de `InMemoryOptOutRepository` (cadence). Existir só
