@@ -5,6 +5,19 @@ import { signUp, uniqueTestEmail, E2E_PASSWORD } from './helpers';
 // "login só sucede com senha correta validada pelo servidor" — e o pedido explícito do plano de
 // testes (07-PLANO-DE-TESTES.md) de tratar a correção de SEC-001/002/003 como test-first: estes
 // specs batem contra o servidor Express real (auth.ts / better-auth), nunca contra um mock.
+//
+// Removido daqui: "e-mail fora dos domínios autorizados é rejeitado antes de chamar o servidor"
+// (usava alguem@gmail.com). A allowlist de domínio corporativo (@atlasgr.com.br/@totaltrac.com.br)
+// foi removida de propósito no rebranding para Birth Hub 360º — ver o docstring de
+// `isAuthorizedLoginEmail` em src/config/access-policy.ts e o teste unitário correspondente
+// (tests/unit/config/access-policy.test.ts), que hoje afirma explicitamente que
+// `usuario@gmail.com` deve AUTORIZAR. Manter este e2e testando o comportamento antigo o deixava
+// falhando permanentemente contra a política atual — achado real de CI (2026-09-11), não
+// flakiness. Um substituto testando "formato de e-mail inválido rejeitado no cliente" não é
+// exercitável via UI real: qualquer e-mail que passe a validação nativa do `<input type="email">`
+// do navegador (que intercepta o submit antes do nosso handler rodar) também passa no regex de
+// formato do próprio `isAuthorizedLoginEmail` — a checagem client-side já é coberta a fundo pelo
+// teste unitário de access-policy.ts.
 test.describe('Autenticação', () => {
   test('cadastro com e-mail corporativo autorizado cria a conta e entra no Hub', async ({ page }) => {
     // landOn: 'hub' pede pro helper NÃO normalizar pra /app — este teste é justamente sobre o
@@ -13,15 +26,6 @@ test.describe('Autenticação', () => {
     // conveniência que os outros specs usam.
     await signUp(page, { email: uniqueTestEmail('signup'), landOn: 'hub' });
     await expect(page).toHaveURL(/\/hub/);
-  });
-
-  test('e-mail fora dos domínios autorizados é rejeitado antes de chamar o servidor', async ({ page }) => {
-    await page.goto('/login');
-    await page.getByLabel('E-mail:').fill('alguem@gmail.com');
-    await page.getByPlaceholder('••••••••').fill(E2E_PASSWORD);
-    await page.getByRole('button', { name: /^Entrar$/ }).click();
-    await expect(page.getByText(/Acesso restrito/)).toBeVisible();
-    await expect(page).toHaveURL(/\/login/);
   });
 
   test('login com senha correta autentica de verdade contra o servidor', async ({ page, context }) => {
