@@ -172,5 +172,3 @@ export function NewActivityModal({ open, onClose, onCreated }: NewActivityModalP
     </div>
   );
 }
-
-export default NewActivityModal;

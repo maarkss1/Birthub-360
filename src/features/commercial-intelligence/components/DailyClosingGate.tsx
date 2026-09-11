@@ -226,5 +226,3 @@ export function DailyClosingGate({ pending, onClosed }: DailyClosingGateProps) {
     </div>
   );
 }
-
-export default DailyClosingGate;
