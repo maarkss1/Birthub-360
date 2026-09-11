@@ -1,7 +1,7 @@
 - De: 18
 - Para: 04
 - Onda: roadmap-v2-transversais-2
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
@@ -57,3 +57,31 @@ nem abre num leitor de PDF).
 Achado durante a auditoria de contratos/OpenAPI da onda `roadmap-v2-transversais-2` (Agente 18).
 Ver `docs/openapi.yaml` → `/analytics/cohort` e `/analytics/export/pdf` para o contrato atual
 documentado (com a ressalva de dado fictício escrita no próprio YAML).
+
+## Resolução (ACH-04-02, item de auditoria posterior)
+Ao chegar neste handoff via `report-atualizado.html` (item `ACH-04-02`), a correção de negócio já
+estava feita em `origin/main`: `AnalyticsController.getCohort` chama
+`AnalyticsUseCases.cohortAnalysis` (agregação real de `Lead.createdAt`/`closedAt`/`status` por
+`organizationId`, meses sem lead omitidos — não fabricados), e a rota de export foi renomeada de
+`/analytics/export/pdf` (buffer fixo `PDF_FAKE_CONTENT_FOR_NOW`, nunca um PDF válido) para
+`/analytics/export/csv` (`AnalyticsController.exportCohortCsv` + `buildCohortCsv`, CSV real do
+mesmo dado do cohort — a alternativa "mais barata" que este handoff já cogitava, já que não há
+lib de geração de PDF no projeto). O único gap real era o teste de integração pedido na seção
+"Teste esperado" — nunca tinha sido entregue.
+
+Adicionado `tests/integration/analytics-cohort-export-tenancy.test.ts` (padrão de sessão real +
+RLS real de `rbac-e2e-crm-write-routes.test.ts`), cobrindo os 4 cenários pedidos: organização sem
+Lead → `cohorts: []`; organização com Leads reais → números do bucket do mês batem com uma
+contagem direta e independente no banco; duas organizações distintas → org B nunca vê lead de
+org A (array vazio + contagem cross-tenant = 0); `GET /api/analytics/export/csv` → `Content-Type
+text/csv` real e conteúdo do CSV bate byte a byte com o mesmo cohort devolvido por
+`GET /api/analytics/cohort` para a mesma organização.
+
+Verificação: `npx tsc --noEmit` (0 erros novos — 1 erro pré-existente em
+`src/shared/security/urlGuard.ts`, já presente em `origin/main`, não relacionado) e
+`npx eslint tests/integration/analytics-cohort-export-tenancy.test.ts` (limpo). Não foi possível
+rodar o teste de fato (`npm run test:integration`): o Docker Desktop não estava acessível neste
+ambiente (`failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine`) —
+sem Postgres/Redis/Meilisearch de teste disponíveis, nem `pretest:integration` consegue preparar
+`.env.test`. Ver relatório da tarefa ACH-04-02 para o detalhe completo dessa limitação de
+ambiente.
