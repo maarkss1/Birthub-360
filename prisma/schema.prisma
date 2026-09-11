@@ -2670,21 +2670,14 @@ model VoiceHubConnection {
   /// baseUrl aponta pra Bland AI, que identifica o agente por outro caminho).
   agentId String?
 
-  // ACH-01-01 (09/2026): um campo `webhookSecret String? @db.Text` chegou a existir aqui, com
-  // comentário afirmando que era "cifrado em repouso, mesmo tratamento dos campos acima" — mas
-  // nunca existiu de verdade: a migration `20260911150000_voice_hub_connection_and_call_log` NUNCA
-  // criou essa coluna no CREATE TABLE (o comentário da própria migration já dizia por quê: "o
-  // segredo do webhook de resultado de chamada continua vindo só de env var... fora do escopo
-  // desta migration"), `ENCRYPTED_MODEL_FIELDS.VoiceHubConnection` em src/lib/crypto/piiFields.ts
-  // nunca listou `webhookSecret` (só `apiKey`), e nenhum service/route/webhook handler deste
-  // feature (`voiceHubConnection.service.ts`, `birthVoice.webhook.ts`, `voiceResult.webhook.ts`)
-  // jamais leu ou escreveu esse campo — a verificação de assinatura do webhook usa hoje só as env
-  // vars globais BIRTH_VOICES_WEBHOOK_SECRET/ATLASGR_WEBHOOK_SECRET. Ou seja: schema declarando um
-  // segredo "cifrado em repouso" que nunca existiu no banco e nunca foi cifrado por ninguém —
-  // drift puro entre schema e migration, não um campo em uso. Removido por isso (não por decisão
-  // de produto): reintroduza junto com uma migration real (`ALTER TABLE ... ADD COLUMN
-  // "webhookSecret" TEXT`) e a entrada em ENCRYPTED_MODEL_FIELDS quando o webhook por-organização
-  // for de fato implementado.
+  // ACH-01-01 (09/2026) encontrou este campo sem migration real por trás (drift puro) e cogitou
+  // removê-lo. ACH-06-01 (mesma auditoria, item de segurança) mostrou que ele é necessário de
+  // verdade: sem segredo por-organização, o webhook do Birth Voices Hub validava só contra um
+  // segredo global compartilhado + organizationId auto-declarado no payload — qualquer org podia
+  // forjar o webhook de outra. Resolução final: campo mantido, migration real adicionada
+  // (20260911180000_voice_hub_connection_webhook_secret), e cifrado em repouso do mesmo jeito que
+  // apiKey (ver ENCRYPTED_MODEL_FIELDS em src/lib/crypto/piiFields.ts).
+  webhookSecret String? @db.Text
 
   /// Liga/desliga esta conexão sem apagá-la — `birthVoice.service.ts` só considera conexões com
   /// enabled=true ao escolher qual usar.
