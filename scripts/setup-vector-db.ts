@@ -83,14 +83,14 @@ async function main() {
 
     let containerUp = false;
     try {
-        const running = run('docker ps --filter name=atlas_postgres --format "{{.Names}}"').trim();
-        containerUp = running.includes('atlas_postgres');
+        const running = run('docker ps --filter name=birthhub_postgres --format "{{.Names}}"').trim();
+        containerUp = running.includes('birthhub_postgres');
         if (containerUp) {
-            ok('atlas_postgres já está em execução');
+            ok('birthhub_postgres já está em execução');
         } else if (checkOnly) {
-            fail('atlas_postgres não está em execução (use sem --check para subir)');
+            fail('birthhub_postgres não está em execução (use sem --check para subir)');
         } else {
-            info('subindo atlas_postgres…');
+            info('subindo birthhub_postgres…');
             run('docker compose up -d postgres');
             ok('container iniciado');
             containerUp = true;

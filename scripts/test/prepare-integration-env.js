@@ -30,13 +30,13 @@ const isCI = process.env.CI === 'true' || process.env.CI === '1';
 const envTestPath = path.resolve(process.cwd(), '.env.test');
 const envTestExamplePath = path.resolve(process.cwd(), '.env.test.example');
 
-const POSTGRES_CONTAINER = 'atlas_postgres';
+const POSTGRES_CONTAINER = 'birthhub_postgres';
 const BOOTSTRAP_SUPERUSER = 'prospector';
 const BOOTSTRAP_DB = 'prospectordb';
 const TEST_DB_NAME = 'prospectordb_test';
 const APP_ROLE_PASSWORD = 'prospector_app_pass';
 
-const REQUIRED_CONTAINERS = ['atlas_postgres', 'atlas_redis', 'atlas_meilisearch'];
+const REQUIRED_CONTAINERS = ['birthhub_postgres', 'birthhub_redis', 'birthhub_meilisearch'];
 // Desde 2026-09-08 o serviço `postgres` não existe mais em docker-compose.yml (a aplicação usa o
 // Postgres da Oracle diretamente — ver .env.example). Os testes continuam precisando de um banco
 // descartável local (prospectordb_test, com create/delete de verdade), então o container legado
@@ -45,13 +45,13 @@ const COMPOSE_FILES = ['-f', 'docker-compose.yml', '-f', 'docker-compose.postgre
 // container_name (docker-compose*.yml) -> nome do serviço compose correspondente. Usado para pedir
 // ao `docker compose up` só o que falta (ver bug reproduzido abaixo).
 const SERVICE_BY_CONTAINER = {
-  atlas_postgres: 'postgres',
-  atlas_redis: 'redis',
-  atlas_meilisearch: 'meilisearch',
+  birthhub_postgres: 'postgres',
+  birthhub_redis: 'redis',
+  birthhub_meilisearch: 'meilisearch',
 };
 
 if (!isCI) {
-  // `docker-compose.yml` fixa `container_name` (atlas_postgres/atlas_redis/atlas_meilisearch) —
+  // `docker-compose.yml` fixa `container_name` (birthhub_postgres/birthhub_redis/birthhub_meilisearch) —
   // de propósito, para o app e os scripts de bootstrap sempre acharem o mesmo nome independente
   // de onde rodam. Isso quebra quando múltiplos `git worktree` (ver "Regra de concorrência" em
   // /AGENTS.md, até 8 agentes simultâneos) rodam `docker compose up` a partir de diretórios
@@ -112,7 +112,7 @@ if (!isCI) {
         `Falha ao subir docker-compose (${missingServices.join(', ')}). Se o erro for "container name ` +
         'already in use", outro worktree já subiu esse container sob um projeto compose diferente — ' +
         'defina COMPOSE_PROJECT_NAME igual ao worktree que os criou primeiro, ou pare-os ' +
-        '(`docker stop atlas_postgres atlas_redis atlas_meilisearch`) antes de tentar de novo. Veja a ' +
+        '(`docker stop birthhub_postgres birthhub_redis birthhub_meilisearch`) antes de tentar de novo. Veja a ' +
         'saída acima para o erro exato.'
       );
       process.exit(result.status || 1);
