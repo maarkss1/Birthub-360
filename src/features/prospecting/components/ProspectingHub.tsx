@@ -521,7 +521,12 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('cnpj');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[2rem] font-bold text-sm transition-all duration-300 ${tab === 'cnpj' ? 'bg-ink text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              // bg-obsidian (não bg-ink) — --ink é texto que INVERTE por tema (quase branco no
+              // escuro), então usá-lo como fundo sólido com texto branco em cima dava 1.04:1 no
+              // escuro (achado real do axe-core, tests/e2e/accessibility.spec.ts —
+              // "Prospecção"). --color-obsidian é a âncora fixa da marca (mesmo hex de --ink no
+              // claro, mas sem inverter no escuro) — 18.39:1 com texto branco nos dois temas.
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-[2rem] font-bold text-sm transition-all duration-300 ${tab === 'cnpj' ? 'bg-obsidian text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Landmark size={18} /> Busca Direta (CNPJ/Nome)
             </button>
