@@ -15,11 +15,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private static let serverURL = "https://prospector-atlas.onrender.com"
 
     private static let validTabs: Set<String> = [
-        "dashboard", "companies", "contacts", "crm", "activities", "prospect", "enrich",
-        "intelligence", "market-intelligence", "prompts", "chatbook", "roleplay",
-        "qualification_matrix", "objections_matrix", "topic_training", "bitrix", "reports",
-        "integrations", "knowledge", "analytics", "winloss", "calendar", "notifications",
-        "automations", "usage", "editor", "team", "settings", "commercial_intelligence", "crm360"
+        "dashboard", "workspace", "companies", "contacts", "crm", "crm360", "mesa-tratamento", "activities",
+        "cadence", "prospect", "intelligence", "market-intelligence", "propostas", "chatbook",
+        "roleplay", "qualification_matrix", "objections_matrix", "topic_training", "bitrix",
+        "reports", "integrations", "knowledge", "analytics", "winloss", "calendar",
+        "notifications", "automations", "usage", "editor", "team", "settings",
+        "commercial_intelligence", "copiloto_ia", "daily-plan", "sdr-diagnostic-joao", "module-access"
     ]
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
