@@ -113,6 +113,7 @@ describe('prismaSignatureRequestRepository', () => {
       id: 'request-1',
       organizationId: 'org-1',
       status: 'Signed',
+      document: { leadId: null },
     });
 
     const result = await prismaSignatureRequestRepository.findByProviderRequestId(
@@ -120,7 +121,12 @@ describe('prismaSignatureRequestRepository', () => {
       'provider-request-1',
     );
 
-    expect(result).toEqual({ id: 'request-1', organizationId: 'org-1', status: 'signed' });
+    expect(result).toEqual({
+      id: 'request-1',
+      organizationId: 'org-1',
+      status: 'signed',
+      leadId: null,
+    });
   });
 
   it('updateStatus: grava status/respondedAt/evidenceRef/rawWebhookPayload, escopado pelo tenant resolvido', async () => {
