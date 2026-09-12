@@ -1,3 +1,11 @@
+/**
+ * AVISO DE GOVERNANÇA (ACH-13-01):
+ * Módulo legado de execução direta de ferramentas do OpsAgent.
+ * Em produção, o OpsAgent utiliza `src/features/intelligence/agents/opsPendingActions.tool.ts`
+ * para propor ações via `AIPendingAction` em vez de executar diretamente no banco.
+ * Mantido apenas para compatibilidade histórica; não é mais fonte de verdade para verificações de segurança.
+ */
+
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { prisma } from '../../../lib/prisma.js';
