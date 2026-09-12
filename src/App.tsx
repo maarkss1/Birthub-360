@@ -156,6 +156,11 @@ const DailyPlanHub = lazy(() =>
     default: m.DailyPlanHub,
   })),
 );
+const JoaoReisDiagnosticHub = lazy(() =>
+  import('./features/commercial-intelligence/components/JoaoReisDiagnosticHub').then((m) => ({
+    default: m.JoaoReisDiagnosticHub,
+  })),
+);
 const Calendar = lazy(() =>
   import('./features/calendar/components/Calendar').then((m) => ({ default: m.Calendar })),
 );
@@ -341,7 +346,7 @@ function AppLayout() {
             }
           />
           <Route path="daily-plan" element={<DailyPlanHub />} />
-          <Route path="sdr-diagnostic-joao" element={<DailyPlanHub />} />
+          <Route path="sdr-diagnostic-joao" element={<JoaoReisDiagnosticHub />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="automations" element={<Automations />} />
@@ -464,10 +469,10 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/treinamento-atlasgr"
+                        path="/treinamento-birthub360"
                         element={
                           <ProtectedRoute>
-                            <RequireModuleAccess moduleKey="treinamento-atlasgr">
+                            <RequireModuleAccess moduleKey="treinamento-birthub360">
                               <TreinamentoHub />
                             </RequireModuleAccess>
                           </ProtectedRoute>
