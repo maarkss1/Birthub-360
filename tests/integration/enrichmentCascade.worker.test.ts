@@ -131,7 +131,12 @@ describe('createEnrichmentCascadeWorker — worker real da fila enrichment-casca
     expect(updatedCompany.enrichmentSource).toBe('Cascade:Apollo->Hunter->GooglePlaces');
     expect(updatedCompany.enrichedAt).not.toBeNull();
 
-    const logs = await withRlsBypass(() =>
+    // EnrichmentLog não está na allowlist de bypass (migration
+    // 20260825120000_scope_rls_bypass_to_bootstrap_allowlist restringiu bypass_rls a um
+    // allowlist explícito de tabelas de bootstrap — EnrichmentLog nunca precisou disso em
+    // produção, sempre escrito/lido dentro do contexto do tenant real). Consultar com
+    // `withRlsBypass` aqui devolveria sempre vazio, não porque o log não existe.
+    const logs = await asOrg(org, () =>
       prisma.enrichmentLog.findMany({ where: { companyId: company.id } }),
     );
     expect(logs).toHaveLength(1);

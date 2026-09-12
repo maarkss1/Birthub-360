@@ -84,7 +84,12 @@ describe('GET /api/analytics/cohort e /api/analytics/export/csv — banco real, 
     expect(res.body.data.cohorts).toEqual([]);
   });
 
-  it('organização com Leads reais: números batem com consulta direta ao banco', async () => {
+  // As 3 verificações abaixo (números reais, isolamento de tenant, export CSV) precisam
+  // compartilhar os MESMOS 3 leads de orgA — por isso vivem num único `it()`, não em três
+  // separados. O harness global de integração (tests/helpers/integration-setup.ts) roda
+  // `cleanDatabase()` num `afterEach` que apaga TODOS os leads de TODAS as organizações depois de
+  // cada `it()` — leads criados num teste nunca sobrevivem para o próximo.
+  it('organização com Leads reais: números batem com o banco, isolamento entre tenants e export CSV', async () => {
     // 3 leads criados "este mês" para orgA: 1 ganho em <30d, 1 ganho em <60d (mas não <30d), 1
     // ainda aberto (não fechado). Números esperados são construídos por design e depois
     // reconferidos com uma contagem independente direta no banco (não recalculados pelo mesmo
@@ -105,6 +110,7 @@ describe('GET /api/analytics/cohort e /api/analytics/export/csv — banco real, 
       closedAt: null, // ainda aberto
     });
 
+    // ---- 1. números reais, batendo com contagem independente direta no banco ----
     const res = await request(app).get('/api/analytics/cohort').set('Cookie', orgA.cookie);
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
@@ -115,8 +121,6 @@ describe('GET /api/analytics/cohort e /api/analytics/export/csv — banco real, 
     expect(bucket).toBeDefined();
     expect(bucket).toEqual({ month: currentMonth, total: 3, won30d: 1, won60d: 2 });
 
-    // Consulta independente direta ao banco (não passa por AnalyticsUseCases): confirma que o
-    // total do bucket bate com a contagem real de leads de orgA criados neste mês.
     const directCount = await withTenant(orgA.organizationId, () =>
       prisma.lead.count({
         where: {
@@ -129,33 +133,18 @@ describe('GET /api/analytics/cohort e /api/analytics/export/csv — banco real, 
       }),
     );
     expect(directCount).toBe(bucket?.total);
-  });
 
-  it('duas organizações distintas: B nunca vê dado de A', async () => {
-    // orgA já tem os 3 leads criados no teste anterior; orgB continua sem nenhum lead.
+    // ---- 2. isolamento entre tenants: orgB nunca vê os leads de orgA ----
     const resB = await request(app).get('/api/analytics/cohort').set('Cookie', orgB.cookie);
     expect(resB.status).toBe(200);
     expect(resB.body.data.cohorts).toEqual([]);
 
-    const resA = await request(app).get('/api/analytics/cohort').set('Cookie', orgA.cookie);
-    const bucketA = resA.body.data.cohorts.find(
-      (row: { month: string }) => row.month === currentMonth,
-    );
-    expect(bucketA.total).toBeGreaterThan(0);
-
-    // Garantia adicional além do array vazio: nenhum lead de orgA aparece contado em orgB mesmo
-    // consultando o banco diretamente sob o contexto de tenant de orgB.
     const crossTenantCount = await withTenant(orgB.organizationId, () =>
       prisma.lead.count({ where: { organizationId: orgA.organizationId } }),
     );
     expect(crossTenantCount).toBe(0);
-  });
 
-  it('GET /api/analytics/export/csv: Content-Type text/csv real, conteúdo bate com o cohort da mesma organização', async () => {
-    const cohortRes = await request(app).get('/api/analytics/cohort').set('Cookie', orgA.cookie);
-    const cohorts: Array<{ month: string; total: number; won30d: number; won60d: number }> =
-      cohortRes.body.data.cohorts;
-
+    // ---- 3. export CSV bate linha a linha com o mesmo cohort ----
     const exportRes = await request(app)
       .get('/api/analytics/export/csv')
       .set('Cookie', orgA.cookie);
@@ -168,8 +157,6 @@ describe('GET /api/analytics/cohort e /api/analytics/export/csv — banco real, 
     expect(lines[0]).toBe('Mes,Total de Leads,Ganhos em 30 dias,Ganhos em 60 dias');
     expect(lines.length - 1).toBe(cohorts.length);
 
-    const bucket = cohorts.find((row) => row.month === currentMonth);
-    expect(bucket).toBeDefined();
     const currentLine = lines.find((line) => line.startsWith(`${currentMonth},`));
     expect(currentLine).toBe(`${bucket?.month},${bucket?.total},${bucket?.won30d},${bucket?.won60d}`);
   });
