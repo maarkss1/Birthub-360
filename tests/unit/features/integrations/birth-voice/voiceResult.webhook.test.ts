@@ -366,4 +366,72 @@ describe('POST /api/webhooks/voice-result', () => {
       expect(sendWhatsAppMessage).not.toHaveBeenCalled();
     });
   });
+
+  // ACH-06-03: recording_url é eco de payload externo da Bland, persistido em VoiceCallLog e
+  // renderizado como link clicável (nota em texto livre aqui + <a href> em
+  // VoiceCallActivity.tsx). Sem validar o esquema, um valor não-HTTP (ex.: `javascript:`)
+  // sobreviveria como string não-vazia e teria comportamento não-HTTP ao ser clicado.
+  describe('recording_url — só persiste esquema http(s)', () => {
+    it('esquema http(s) válido é persistido e aparece no link da nota', async () => {
+      const res = await request(buildApp())
+        .post('/api/webhooks/voice-result')
+        .set(VALID_HEADERS)
+        .send(blandPayload({ recording_url: 'https://cdn.bland.ai/rec/abc.mp3' }));
+
+      expect(res.status).toBe(200);
+      expect(voiceCallLogCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ recordingUrl: 'https://cdn.bland.ai/rec/abc.mp3' }),
+        }),
+      );
+      expect(noteCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            content: expect.stringContaining(
+              '[Ouvir Gravação](https://cdn.bland.ai/rec/abc.mp3)',
+            ),
+          }),
+        }),
+      );
+    });
+
+    it('esquema javascript: é tratado como null (fail-safe), nunca derruba o webhook', async () => {
+      const res = await request(buildApp())
+        .post('/api/webhooks/voice-result')
+        .set(VALID_HEADERS)
+        .send(blandPayload({ recording_url: 'javascript:alert(document.cookie)' }));
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(voiceCallLogCreate).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ recordingUrl: null }) }),
+      );
+      expect(noteCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            content: expect.stringContaining('Sem gravação de áudio.'),
+          }),
+        }),
+      );
+      expect(noteCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            content: expect.not.stringContaining('javascript:'),
+          }),
+        }),
+      );
+    });
+
+    it('esquema data: também é tratado como null', async () => {
+      const res = await request(buildApp())
+        .post('/api/webhooks/voice-result')
+        .set(VALID_HEADERS)
+        .send(blandPayload({ recording_url: 'data:text/html,<script>alert(1)</script>' }));
+
+      expect(res.status).toBe(200);
+      expect(voiceCallLogCreate).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ recordingUrl: null }) }),
+      );
+    });
+  });
 });
