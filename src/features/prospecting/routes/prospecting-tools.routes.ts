@@ -19,6 +19,7 @@ import {
   getProspectingProviderMode,
 } from '../../../config/prospecting-integrations.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 
 const router = Router();
@@ -94,6 +95,7 @@ router.get('/status', (_req: Request, res: Response) => {
 // diferente do /discover multi-provider.
 router.post(
   '/google-places',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(discoverCriteriaSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -115,6 +117,7 @@ router.post(
 // chamada isolada (já é 100% Apollo, não precisa de nenhuma adaptação pra "isolar" a fonte).
 router.post(
   '/apollo',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(discoverCriteriaSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -132,6 +135,7 @@ router.post(
 // publicados num domínio, sem passar pelo People Search da Apollo.
 router.post(
   '/hunter',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(hunterDomainSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -156,6 +160,7 @@ router.post(
 // (nome + domínio), via Hunter.io Email Finder.
 router.post(
   '/hunter/verify-email',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(hunterVerifyEmailSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

@@ -58,6 +58,7 @@ router.post(
 // Descoberta de candidatos via IA a partir de um ICP (Perfil de Cliente Ideal).
 router.post(
   '/discover',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(discoverCriteriaSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -76,6 +77,7 @@ router.post(
 // depois que o usuário confere os dados extraídos (OCR erra; não promovemos sozinho).
 router.post(
   '/ocr',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   ocrUpload.single('image'),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -109,6 +111,7 @@ router.post(
 // Consulta em tempo real (sem persistir) de um CNPJ na Receita Federal via BrasilAPI.
 router.post(
   '/enrich-cnpj',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { cnpj } = req.body as { cnpj?: string };
@@ -153,6 +156,7 @@ router.post(
 // futuras deste tenant (ver `fetchKnownExclusions` em prospecting.service.ts).
 router.post(
   '/reject',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(rejectCandidateSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -168,6 +172,7 @@ router.post(
 // Busca de decisores para uma empresa específica
 router.post(
   '/decision-makers',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { domain, criteria } = req.body as {
@@ -192,6 +197,7 @@ router.post(
 // alert() sem chamar IA nenhuma.
 router.post(
   '/icebreaker',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { companyName } = req.body as { companyName?: string };
@@ -244,6 +250,7 @@ import { prisma } from '../../../lib/prisma.js';
 
 router.post(
   '/companies/:id/enrich-cascade',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { organizationId } = (req as AuthRequest).user;
