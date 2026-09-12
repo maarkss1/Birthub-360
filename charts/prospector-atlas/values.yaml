@@ -4,8 +4,14 @@ replicaCount: 2
 # repository aponta para o registro real onde .github/workflows/cd-homolog.yml publica a imagem
 # (ghcr.io/${{ github.repository }}, resolvido em minúsculas pelo GHCR) — antes apontava só para
 # "prospector-atlas", um nome de imagem sem registro/owner que não corresponde a nada publicado.
+# Atualizado em 2026-09-11 (achado da Onda C0 do BIRTHUB-BRAIN-REORG,
+# docs/architecture/LEGACY_BRAND_CONTENT_MAP.md §2.1): o valor anterior
+# ("ghcr.io/maarksn/central-de-inteligencia-comecial-atlasgr") já não corresponde a
+# `github.repository` — o dono da conta é "maarkss1" (não "maarksn") e o repositório foi
+# renomeado para "Birthub-360". Confirmado via API do GitHub que o nome antigo apenas
+# redireciona para o repositório atual (mesmo `id`); não é garantia permanente.
 image:
-  repository: ghcr.io/maarkss1/central-de-inteligencia-comecial-atlasgr
+  repository: ghcr.io/maarkss1/birthub-360
   pullPolicy: IfNotPresent
   tag: "latest"
 

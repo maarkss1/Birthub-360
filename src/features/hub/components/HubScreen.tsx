@@ -76,7 +76,7 @@ function useLiveClock() {
 const WEEKDAYS_SHORT = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 // HubBurstCanvas desenha em <canvas>, que não entende var(--brand) — precisa do RGB já resolvido
-// da marca ativa (BrandContext) para o burst de partículas não ficar laranja fixo com BIRTHUB360.
+// da marca ativa (BrandContext) para o burst de partículas não ficar laranja fixo com Total Trac.
 function hexToRgbString(hex: string): string {
   const clean = hex.replace('#', '');
   const value = Number.parseInt(clean, 16);
@@ -109,8 +109,6 @@ export function HubScreen() {
 
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
-  // brandInfo.colors.brand/brandAccent (hex) — marca única agora, nada a recalcular por email/
-  // tenant; useMemo mantido só para não recomputar hexToRgbString a cada render.
   const brandRgb = useMemo(() => hexToRgbString(brandInfo.colors.brand), [brandInfo.colors.brand]);
   const brandAccentRgb = useMemo(
     () => hexToRgbString(brandInfo.colors.brandAccent),
@@ -335,11 +333,11 @@ export function HubScreen() {
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Topbar Birth Hub 360° */}
         <header className="flex items-center gap-3 px-8 pt-5 pb-3">
-          <BirthHubLogo variant="full" className="h-8 text-ink" />
+          <BirthHubLogo variant="horizontal" className="h-8 text-ink" />
 
           <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3.5 py-1 text-xs font-bold text-ink-2 backdrop-blur-md sm:flex">
             <span className="hub-beacon h-2 w-2 rounded-full bg-brand" />
-            {brandInfo.name} &middot; {brandInfo.slogan}
+            {brandInfo.name} &middot; {brandInfo.ecosystemLabel}
             <ChevronDown className="h-3 w-3 opacity-60" />
           </div>
 

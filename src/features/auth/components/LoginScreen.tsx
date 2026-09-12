@@ -20,6 +20,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useAuth } from '../../../contexts/AuthContext';
+
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
@@ -144,10 +145,11 @@ export function LoginScreen() {
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
   // Cadastro (?signup=1) agora exige confirmação de posse do e-mail antes de abrir sessão (ver
   // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
-  // antes, qualquer "algo@birthub360.com.br" digitado, mesmo não sendo dono real, virava sessão +
+  // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
   // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
   // vez de tentar navegar para /app sem sessão nenhuma.
   const [verificationPending, setVerificationPending] = useState(false);
+
   const { theme, toggleTheme } = useTheme();
   const brandAccent = useBrandAccent();
   const shouldReduceMotion = useReducedMotion();
@@ -179,6 +181,8 @@ export function LoginScreen() {
       setIsSubmitting(false);
       return;
     }
+
+
 
     // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
     // o cliente nunca decide, por conta própria, se um login é válido.
@@ -248,6 +252,8 @@ export function LoginScreen() {
     setError('');
   };
 
+
+  // O e-mail não decide mais a marca ativa visualmente, apenas guarda no state.
   const handleEmailChange = (value: string) => {
     setEmail(value);
   };
@@ -271,7 +277,7 @@ export function LoginScreen() {
           a tela que vem logo depois do login. */}
       <header className="border-b border-line bg-surface/60 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <BirthHubLogo variant="full" size="sm" />
+          <BirthHubLogo variant="horizontal" />
           <button
             type="button"
             onClick={() => {

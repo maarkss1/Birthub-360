@@ -132,7 +132,7 @@ do repositório (o workflow falha de propósito, com mensagem explícita, enquan
 
 | Secret | Valor |
 | --- | --- |
-| `OCI_SSH_HOST` | IP público da instância (ex.: `163.176.150.147`) |
+| `OCI_SSH_HOST` | IP público da instância (ex.: `168.138.147.145`) |
 | `OCI_SSH_USER` | usuário SSH da instância (ex.: `opc` para Oracle Linux, `ubuntu` para Ubuntu) |
 | `OCI_SSH_PRIVATE_KEY` | conteúdo completo da chave privada SSH (recomenda-se uma chave **dedicada** a este workflow, gerada só para deploy — não a chave pessoal de acesso interativo do operador) |
 | `OCI_DEPLOY_PATH` | caminho absoluto do clone do repositório na instância (ex.: `/home/opc/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR`) |
@@ -262,7 +262,7 @@ ssh oracle-atlasgr 'grep ^APP_DB_PASSWORD= ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-A
 ```
 
 ```env
-DATABASE_URL=postgresql://prospector_app:<APP_DB_PASSWORD>@163.176.150.147:5432/prospectordb?sslmode=require&uselibpqcompat=true
+DATABASE_URL=postgresql://prospector_app:<APP_DB_PASSWORD>@168.138.147.145:5432/prospectordb?sslmode=require&uselibpqcompat=true
 ```
 
 `sslmode=require&uselibpqcompat=true` é o único par que funciona para os dois clientes do projeto:

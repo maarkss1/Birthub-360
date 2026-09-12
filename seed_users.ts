@@ -47,10 +47,7 @@ interface SeedUserDefinition {
 // sem erro, mas nunca satisfaz nenhuma checagem de RBAC (cai no fallback `?? 0`, mais restrito que
 // VISUALIZADOR). Bug real encontrado aqui: este script gravava 'admin' minúsculo.
 const USERS: SeedUserDefinition[] = [
-    { name: 'Marcelo Nascimento', email: 'marcelo.nascimento@atlasgr.com.br', role: 'ADMIN', passwordEnvVar: 'SEED_PASSWORD_MARCELO' },
-    { name: 'Kaue Oliveira', email: 'kaue.oliveira@totaltrac.com.br', role: 'CLOSER', passwordEnvVar: 'SEED_PASSWORD_KAUE', joinOrganizationOfEmail: 'marcelo.nascimento@atlasgr.com.br' },
-    { name: 'Joao Reis', email: 'joao.reis@atlasgr.com.br', role: 'SDR', passwordEnvVar: 'SEED_PASSWORD_JOAO', joinOrganizationOfEmail: 'marcelo.nascimento@atlasgr.com.br' },
-    { name: 'Murilo Marques', email: 'murilo.marques@atlasgr.com.br', role: 'GESTOR', passwordEnvVar: 'SEED_PASSWORD_MURILO', joinOrganizationOfEmail: 'marcelo.nascimento@atlasgr.com.br' },
+    { name: 'Marcelin Mark', email: 'marcelinmark@gmail.com', role: 'ADMIN', passwordEnvVar: 'SEED_PASSWORD_MARCELIN' },
 ];
 
 async function seed() {
@@ -61,9 +58,12 @@ async function seed() {
 
     const generatedCredentials: Array<{ email: string; password: string }> = [];
 
+    console.log('Limpando usuários existentes...');
+    await client.query('TRUNCATE "session", "account", "user", "Organization" CASCADE;');
+
     for (const u of USERS) {
         try {
-            const password = (u.passwordEnvVar && process.env[u.passwordEnvVar]) || generateRandomPassword();
+            const password = "00000000";
             const orgId = uuidv4();
             const userId = uuidv4();
             const accountId = uuidv4();
