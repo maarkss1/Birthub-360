@@ -3539,3 +3539,53 @@ vitest.unit.config.ts` **2945/2945 testes passando** (364/364 arquivos), incluin
 `ReportsHub.test.tsx` que só voltaram a passar depois do stub acima. `test:integration`/`test:e2e`
 não puderam rodar (Docker Desktop inacessível nesta rodada) — não é regressão nova, é limitação de
 ambiente já conhecida.
+
+## Fix — Varredura completa do padrão `-active` usado como fundo sólido (continuação do achado WhatsApp/cnpj)
+
+Uma sessão anterior corrigiu 2 casos confirmados de um bug de contraste: tokens `--X-active`
+(pensados para TEXTO sobre superfície, `text-X-active dark:text-X`) usados como FUNDO sólido de
+botão com `text-white` em cima. No escuro, `--ok-active`/`--info-active`/`--warning-active`/
+`--danger-active` caem para a cor base crua (`var(--color-X)`, nunca calibrada pra esse uso), e
+`--color-warning`/`--color-danger` em si nem reagem a tema — o mesmo bug pode aparecer mesmo sem
+o sufixo `-active`. `grep` pelo padrão (`bg-X-active`/`bg-danger` + `text-white`) achou mais 6
+pontos a verificar; cada um foi confirmado por cálculo de luminância relativa WCAG (mesma fórmula
+já usada nos comentários de `globals.css` — validada batendo com o 3.48:1 documentado ali pro
+caso do WhatsApp antes de aplicar aos 6 novos).
+
+Confirmados e corrigidos (4):
+- `ProspectingHub.tsx` (abas "OCR"/"Ferramentas", linhas 544/554): `bg-info-active` → `bg-info-solid`
+  (token novo, mesmo idioma de `--color-ok-solid`). Escuro: 3.69:1 → 7.30:1.
+- `ExecutiveHeader.tsx:145` (botão "Tela Cheia" ativo, presente na maioria das telas): base E
+  hover quebrados — `--warning-active` no escuro E `--color-warning` cru (usado no
+  `hover:bg-warning`) nunca passam. `bg-warning-active…hover:bg-warning` → `bg-warning-solid
+  …hover:brightness-110` (token novo `--color-warning-solid`, mesmo padrão `hover:brightness-110`
+  já usado no botão "Conectar WhatsApp"). Escuro (base e hover): 2.25:1 → 6.19:1 fixo nos dois
+  temas.
+- `DataSubjectRights.tsx:200` (botão "Excluir/anonimizar dados"): `Button` com `className="bg-
+  danger-active text-white hover:brightness-110"` reinventando à mão o que a variante
+  `destructive` do próprio `Button.tsx` já faz corretamente (`bg-btn-danger`, token dedicado,
+  5.29:1 fixo nos dois temas). Trocado por `variant="destructive"`, sem className custom — menos
+  código, reusa o primitivo em vez de duplicar.
+- `DiscoveryFilterPanel.tsx:608` (chip selecionado, texto 11px): `bg-danger-active border-danger-
+  active text-white` → `bg-btn-danger border-btn-danger text-white` (mesmo token do Button
+  destructive, já existia, não precisou de token novo). Escuro: 3.76:1 → 5.29:1.
+
+Avaliados e **não alterados** (2) — ambos são chip só-ícone (`Bot`/`Square`, sem texto visível
+dentro do elemento colorido), onde o limiar WCAG aplicável é o de contraste não-textual (3:1, SC
+1.4.11), não o de texto (4.5:1):
+- `SwarmDashboard.tsx:714` (botão cancelar missão, ícone `Square`): `bg-danger-active` no escuro
+  mede 3.76:1 contra o ícone branco — passa o limiar de 3:1 de gráfico/ícone.
+- `CrmOverview.tsx:215` (chip "Radar de IA", ícone `Bot`): `bg-info-active` no escuro mede 3.69:1
+  — mesma lógica, passa 3:1. Fica registrado porque é o mais próximo do limite dos dois — se a
+  barra subir para "tratar todo ícone como texto" por decisão de produto, é o primeiro candidato.
+
+Verificação: `npx eslint` (jsx-a11y) e `npx tsc -b --noEmit` limpos nos 4 arquivos alterados;
+`npx vite build` completo sem erro novo. **Bloqueio de ambiente confirmado antes de tentar**: sem
+`.env.test`, Postgres, Redis nem Docker Desktop disponíveis nesta sessão — `tests/e2e/
+accessibility.spec.ts` (que exige o servidor Express real via `start:e2e`) não pôde rodar; mesmo
+se rodasse, o estado "Tela Cheia ativa"/"chip selecionado" testados aqui só aparece após
+interação, fora do que um scan de axe-core no carregamento inicial da página pegaria. Validação
+alternativa: cálculo manual de contraste (luminância relativa, fórmula WCAG) para os 6 pontos,
+com a mesma fórmula conferida contra o 3.48:1 já documentado em `globals.css` para o caso
+WhatsApp — não é substituto do axe-core rodando de verdade, registrado aqui como o que foi
+possível fazer nesta rodada.

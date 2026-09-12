@@ -347,6 +347,18 @@
   --color-success-active: var(--success-active);
   --color-warning-active: var(--warning-active);
   --color-danger-active: var(--danger-active);
+  /* Fixa (não reage a tema) — mesmo idioma de --color-ok-solid acima, pro mesmo bug: abas
+     "Cadastrar por Foto (OCR)"/"Ferramentas" de ProspectingHub.tsx usavam `bg-info-active
+     text-white` como fundo sólido — no escuro --info-active vira --color-info cru (#3b82f6),
+     medindo só 3.69:1 com texto branco (abaixo de 4.5:1 AA). Mesma fórmula que --info-active já
+     usa no claro (65% preto), só que fixa nos dois temas: 7.30:1. */
+  --color-info-solid: color-mix(in srgb, var(--color-info) 65%, black);
+  /* Fixa (não reage a tema) — mesmo idioma acima, pro botão "Tela Cheia" ativo de
+     ExecutiveHeader.tsx (`bg-warning-active text-white`/`hover:bg-warning`): no escuro
+     --warning-active vira --color-warning cru (#f59e0b), e --color-warning em si nunca reage a
+     tema — os dois casos medem só 2.25:1 com texto branco, bem abaixo de 4.5:1 AA. Mesma fórmula
+     que --warning-active já usa no claro (55% preto), só que fixa nos dois temas: 6.19:1. */
+  --color-warning-solid: color-mix(in srgb, var(--color-warning) 55%, black);
   --color-soft: var(--soft);
   --shadow-card: var(--shadow-card-value);
   --shadow-card-hover: var(--shadow-card-hover-value);
