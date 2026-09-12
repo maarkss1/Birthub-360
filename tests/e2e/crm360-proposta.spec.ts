@@ -58,9 +58,14 @@ test.describe('Fluxo de Proposta comercial (PropostaForm.tsx) — e2e de navegad
     await itemRows.nth(1).getByPlaceholder('Preço unit.').fill('50');
 
     // 2*100 + 3*50 = 350, sem desconto/imposto — mesma fórmula usada pelo backend
-    // (PrismaCrm360Repository.calculateItem, citada no comentário de computeItemTotal).
+    // (PrismaCrm360Repository.calculateItem, citada no comentário de computeItemTotal). Sem
+    // desconto/imposto aplicado, "Subtotal" e "Total estimado" mostram o mesmo valor — escopado
+    // à linha "Total estimado" especificamente (não um getByText solto) para não colidir com o
+    // "R$ 350,00" da linha de Subtotal logo acima.
     await expect(page.getByText('Total estimado:')).toBeVisible();
-    await expect(page.getByText(/R\$\s*350,00/)).toBeVisible();
+    await expect(
+      page.locator('span').filter({ hasText: 'Total estimado: R$' }).getByRole('strong'),
+    ).toHaveText(/R\$\s*350,00/);
 
     await page.getByRole('button', { name: 'Criar Documento' }).click();
     await expect(page.getByText('Documento criado.')).toBeVisible();
