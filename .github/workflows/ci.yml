@@ -14,8 +14,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: central-atlasgr-release-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: central-birthub360-release-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   secret-scan:
