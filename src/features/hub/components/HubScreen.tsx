@@ -15,7 +15,7 @@ import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
 import { MODULE_CATALOG, EXTERNAL_LINKS } from '../../../config/module-catalog';
-import { BirthHubLogo } from '../../../components/BirthHubLogo';
+import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { HubBurstCanvas, type BurstHandle } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
@@ -76,7 +76,7 @@ function useLiveClock() {
 const WEEKDAYS_SHORT = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 // HubBurstCanvas desenha em <canvas>, que não entende var(--brand) — precisa do RGB já resolvido
-// da marca ativa (BrandContext) para o burst de partículas não ficar laranja fixo com Total Trac.
+// da marca ativa (BrandContext) para o burst de partículas não ficar laranja fixo com BIRTHUB360.
 function hexToRgbString(hex: string): string {
   const clean = hex.replace('#', '');
   const value = Number.parseInt(clean, 16);
@@ -109,10 +109,12 @@ export function HubScreen() {
 
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
-  const brandRgb = useMemo(() => hexToRgbString(brandInfo.primaryColor), [brandInfo.primaryColor]);
+  // brandInfo.colors.brand/brandAccent (hex) — marca única agora, nada a recalcular por email/
+  // tenant; useMemo mantido só para não recomputar hexToRgbString a cada render.
+  const brandRgb = useMemo(() => hexToRgbString(brandInfo.colors.brand), [brandInfo.colors.brand]);
   const brandAccentRgb = useMemo(
-    () => hexToRgbString(brandInfo.accentColor),
-    [brandInfo.accentColor],
+    () => hexToRgbString(brandInfo.colors.brandAccent),
+    [brandInfo.colors.brandAccent],
   );
 
   // Quem decide quais módulos executivos cada pessoa vê é o painel 'module-access' (ADMIN), para
@@ -337,7 +339,7 @@ export function HubScreen() {
 
           <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3.5 py-1 text-xs font-bold text-ink-2 backdrop-blur-md sm:flex">
             <span className="hub-beacon h-2 w-2 rounded-full bg-brand" />
-            {brandInfo.name} &middot; {brandInfo.operatingSystemName}
+            {brandInfo.name} &middot; {brandInfo.slogan}
             <ChevronDown className="h-3 w-3 opacity-60" />
           </div>
 

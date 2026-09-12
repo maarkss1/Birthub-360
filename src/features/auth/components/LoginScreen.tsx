@@ -20,12 +20,11 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
-import { isAuthorizedLoginEmail, getBrandFromEmail } from '../../../config/access-policy';
-import { BirthHubLogo } from '../../../components/BirthHubLogo';
+import { isAuthorizedLoginEmail } from '../../../config/access-policy';
+import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { fadeInUp, SPRING_SOFT, EASE_PREMIUM, useMagnetic } from '../../../lib/motion';
 
@@ -145,11 +144,10 @@ export function LoginScreen() {
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
   // Cadastro (?signup=1) agora exige confirmação de posse do e-mail antes de abrir sessão (ver
   // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
-  // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
+  // antes, qualquer "algo@birthub360.com.br" digitado, mesmo não sendo dono real, virava sessão +
   // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
   // vez de tentar navegar para /app sem sessão nenhuma.
   const [verificationPending, setVerificationPending] = useState(false);
-  const { setActiveBrand } = useBrand();
   const { theme, toggleTheme } = useTheme();
   const brandAccent = useBrandAccent();
   const shouldReduceMotion = useReducedMotion();
@@ -181,8 +179,6 @@ export function LoginScreen() {
       setIsSubmitting(false);
       return;
     }
-
-    setActiveBrand(getBrandFromEmail(email));
 
     // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
     // o cliente nunca decide, por conta própria, se um login é válido.
@@ -252,12 +248,8 @@ export function LoginScreen() {
     setError('');
   };
 
-  // Reflete a marca em tempo real conforme o domínio digitado — o toggle abaixo permite escolher a
-  // marca antes de digitar o e-mail, mas o e-mail continua sendo a fonte de verdade no submit
-  // (handleAuth chama getBrandFromEmail de novo), então os dois mecanismos nunca divergem.
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    setActiveBrand(getBrandFromEmail(value));
   };
 
   if (isPending) {
