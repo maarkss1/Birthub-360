@@ -20,7 +20,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useBrand } from '../../../contexts/BrandContext';
+
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
@@ -277,7 +277,7 @@ export function LoginScreen() {
           a tela que vem logo depois do login. */}
       <header className="border-b border-line bg-surface/60 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <BirthHubLogo variant="horizontal" size="sm" />
+          <BirthHubLogo variant="horizontal" />
           <button
             type="button"
             onClick={() => {
