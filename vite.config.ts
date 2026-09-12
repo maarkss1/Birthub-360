@@ -86,8 +86,21 @@ export default defineConfig(() => {
       // test-results/, que o Playwright regrava a cada teste enquanto o servidor de e2e roda essa
       // mesma config em middleware mode) — cada gravação do relatório disparava um full reload da
       // página no meio do teste, derrubando login/formulário em andamento (TEST-002).
+      // `.claude/worktrees/**` entrou na lista depois de um achado real (11/09/2026): com várias
+      // sessões Claude Code rodando em paralelo, cada uma no seu próprio worktree dentro deste
+      // mesmo diretório, o Vite (e o `tsx watch` do `npm run dev`, que soma outro watcher por
+      // cima) tentava vigiar TODAS as cópias completas do repo simultaneamente — cada edição de
+      // QUALQUER worktree disparava reload em cascata aqui, saturando o watcher a ponto de o
+      // servidor nunca terminar de subir (ou, uma vez de pé, nunca responder a requisições —
+      // event loop preso processando reload atrás de reload). Sem isso, `npm run dev` é
+      // inutilizável sempre que outro worktree deste projeto está ativo.
       watch: process.env.DISABLE_HMR === 'true' ? null : {
-        ignored: ['**/playwright-report/**', '**/test-results/**', '**/coverage/**'],
+        ignored: [
+          '**/playwright-report/**',
+          '**/test-results/**',
+          '**/coverage/**',
+          '**/.claude/worktrees/**',
+        ],
       },
     },
     build: {

@@ -24,6 +24,16 @@ paths-ignore:
   # de SSRF `src/shared/security/urlGuard.ts`, cuja função explícita é validar a URL do usuário
   # contra IPs privados/reservados antes de conectar. Excluído da análise estática para evitar alert SSRF.
   - src/shared/security/urlGuard.ts
+  # Dono: sessão de 2026-09-11. Motivo: `seed_users.ts` é um script de provisionamento manual
+  # (nunca importado pela aplicação, nunca executado em produção/CI — roda só localmente, sob
+  # comando explícito de um operador). O CodeQL (js/clear-text-logging) sinaliza dois
+  # console.log ali: um é falso positivo (só o NOME da env var é logado, nunca o segredo), o
+  # outro é intencional — o script existe justamente para imprimir a senha gerada uma única vez
+  # no terminal, como mecanismo de entrega segura ao operador (nunca grava em arquivo). Comentário
+  # de supressão por linha (`codeql[...]`) tentado antes e confirmado sem efeito: os únicos
+  # mecanismos que este repositório de fato usa são `paths-ignore` (aqui) e `query-filters`
+  # abaixo — ver o mesmo raciocínio já aplicado a urlGuard.ts acima.
+  - seed_users.ts
 
 query-filters:
   - exclude:
