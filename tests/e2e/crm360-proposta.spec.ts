@@ -29,7 +29,11 @@ test.describe('Fluxo de Proposta comercial (PropostaForm.tsx) — e2e de navegad
     await page.getByRole('button', { name: 'Propostas' }).click();
     await waitForAppReady(page);
 
-    await page.getByRole('button', { name: 'Novo Documento' }).click();
+    // .first() de propósito: quando a lista está vazia, PropostasList.tsx renderiza DOIS botões
+    // "Novo Documento" simultâneos (o do cabeçalho + o do EmptyState) — achado real de UX/a11y
+    // pré-existente, fora do escopo deste item (ACH-04-03), não corrigido aqui. O do cabeçalho
+    // (primeiro no DOM) é o alvo estável independente do estado da lista.
+    await page.getByRole('button', { name: 'Novo Documento' }).first().click();
     await expect(page.getByRole('heading', { name: 'Novo Documento Comercial' })).toBeVisible();
 
     const title = `Proposta Teste ${suffix}`;
@@ -102,7 +106,7 @@ test.describe('Fluxo de Proposta comercial (PropostaForm.tsx) — e2e de navegad
       await route.continue();
     });
 
-    await page.getByRole('button', { name: 'Novo Documento' }).click();
+    await page.getByRole('button', { name: 'Novo Documento' }).first().click();
     await expect(page.getByRole('heading', { name: 'Novo Documento Comercial' })).toBeVisible();
 
     const title = `Proposta Sem Item ${Date.now()}`;
@@ -126,7 +130,7 @@ test.describe('Fluxo de Proposta comercial (PropostaForm.tsx) — e2e de navegad
 
     await page.getByRole('button', { name: 'Propostas' }).click();
     await waitForAppReady(page);
-    await page.getByRole('button', { name: 'Novo Documento' }).click();
+    await page.getByRole('button', { name: 'Novo Documento' }).first().click();
     await expect(page.getByRole('heading', { name: 'Novo Documento Comercial' })).toBeVisible();
 
     const heading = page.locator('#proposta-itens-heading');
