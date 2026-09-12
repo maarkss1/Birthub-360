@@ -1,5 +1,6 @@
 import { Copy } from 'lucide-react';
 import { Card } from '../../../../components/ui/Card';
+import { Label } from '../../../../components/ui/Label';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../../lib/auth/authorization';
 import { useVoiceHubIntegration } from '../../../../hooks/useVoiceHubIntegration';
@@ -183,35 +184,51 @@ export function VoiceHubConnectionPanel() {
                 : 'Conectar Birth Voices Hub'}
             </p>
             <div className="space-y-3">
-              <input
-                type="text"
-                value={voiceHubLabelInput}
-                onChange={(e) => setVoiceHubLabelInput(e.target.value)}
-                placeholder="Nome de exibição (ex.: Birth Voices Hub — Produção)"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
-              />
-              <input
-                type="url"
-                value={voiceHubBaseUrlInput}
-                onChange={(e) => setVoiceHubBaseUrlInput(e.target.value)}
-                placeholder="https://voices.suaempresa.com (ou https://api.bland.ai)"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
-              />
-              <input
-                type="password"
-                value={voiceHubApiKeyInput}
-                onChange={(e) => setVoiceHubApiKeyInput(e.target.value)}
-                placeholder="API key (opcional aqui — cai para a env var do servidor se vazio)"
-                autoComplete="off"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
-              />
-              <input
-                type="text"
-                value={voiceHubAgentIdInput}
-                onChange={(e) => setVoiceHubAgentIdInput(e.target.value)}
-                placeholder="Id do agente de voz (não usado quando o Hub é a Bland AI)"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
-              />
+              <div>
+                <Label htmlFor="voice-hub-label">Nome de exibição</Label>
+                <input
+                  id="voice-hub-label"
+                  type="text"
+                  value={voiceHubLabelInput}
+                  onChange={(e) => setVoiceHubLabelInput(e.target.value)}
+                  placeholder="Nome de exibição (ex.: Birth Voices Hub — Produção)"
+                  className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                />
+              </div>
+              <div>
+                <Label htmlFor="voice-hub-base-url">URL base</Label>
+                <input
+                  id="voice-hub-base-url"
+                  type="url"
+                  value={voiceHubBaseUrlInput}
+                  onChange={(e) => setVoiceHubBaseUrlInput(e.target.value)}
+                  placeholder="https://voices.suaempresa.com (ou https://api.bland.ai)"
+                  className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                />
+              </div>
+              <div>
+                <Label htmlFor="voice-hub-api-key">API key</Label>
+                <input
+                  id="voice-hub-api-key"
+                  type="password"
+                  value={voiceHubApiKeyInput}
+                  onChange={(e) => setVoiceHubApiKeyInput(e.target.value)}
+                  placeholder="API key (opcional aqui — cai para a env var do servidor se vazio)"
+                  autoComplete="off"
+                  className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                />
+              </div>
+              <div>
+                <Label htmlFor="voice-hub-agent-id">Id do agente</Label>
+                <input
+                  id="voice-hub-agent-id"
+                  type="text"
+                  value={voiceHubAgentIdInput}
+                  onChange={(e) => setVoiceHubAgentIdInput(e.target.value)}
+                  placeholder="Id do agente de voz (não usado quando o Hub é a Bland AI)"
+                  className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                />
+              </div>
             </div>
             <button
               type="button"
