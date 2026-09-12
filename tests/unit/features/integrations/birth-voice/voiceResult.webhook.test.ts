@@ -13,11 +13,9 @@ const leadUpdate = vi.fn().mockResolvedValue({});
 const noteFindFirst = vi.fn();
 const noteCreate = vi.fn().mockResolvedValue({});
 const timelineCreate = vi.fn().mockResolvedValue({});
-// VoiceCallLog: projeção estruturada do mesmo resultado (ver comentário em voiceResult.webhook.ts)
-// — precisa existir no mock pro handler não quebrar com "Cannot read properties of undefined",
-// mas nenhum teste deste arquivo faz asserção sobre ela (cobertura própria em
-// mesaTratamento.priority.test.ts não se aplica aqui; a cobertura real de VoiceCallLog fica pro
-// teste dedicado do model/rota, não deste webhook legado da Bland).
+// VoiceCallLog: projeção estruturada do mesmo resultado (ver comentário em voiceResult.webhook.ts).
+// A maioria dos testes deste arquivo não faz asserção sobre ela; o teste ACH-12-02 abaixo cobre
+// especificamente o fallback de providerCallId (randomUUID) quando falta call_id no payload.
 const voiceCallLogCreate = vi.fn().mockResolvedValue({});
 const sendWhatsAppMessage = vi.fn().mockResolvedValue(undefined);
 const notifyVoiceQualified = vi.fn();
@@ -152,6 +150,25 @@ describe('POST /api/webhooks/voice-result', () => {
     expect(res.status).toBe(200);
     expect(res.body.lead_found).toBe(false);
     expect(leadFindFirst).not.toHaveBeenCalled();
+  });
+
+  it('cria o VoiceCallLog mesmo sem call_id, com providerCallId gerado (randomUUID), igual ao webhook novo', async () => {
+    const res = await request(buildApp())
+      .post('/api/webhooks/voice-result')
+      .set(VALID_HEADERS)
+      .send(blandPayload({ call_id: undefined }));
+
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ success: true, lead_found: true, duplicate: false });
+    expect(voiceCallLogCreate).toHaveBeenCalledTimes(1);
+    const [{ data }] = voiceCallLogCreate.mock.calls[0];
+    expect(data.leadId).toBe('lead-1');
+    expect(data.organizationId).toBe('org-1');
+    // Nunca o literal fixo 'sem-id' — colidiria com o índice único (organizationId,
+    // providerCallId) numa segunda chamada sem call_id da mesma organização.
+    expect(data.providerCallId).not.toBe('sem-id');
+    expect(typeof data.providerCallId).toBe('string');
+    expect(data.providerCallId.length).toBeGreaterThan(0);
   });
 
   it('registra nota, timeline e voiceQualified dentro do contexto do tenant', async () => {
