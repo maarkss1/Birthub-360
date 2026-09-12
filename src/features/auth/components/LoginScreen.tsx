@@ -252,68 +252,6 @@ export function LoginScreen() {
     setError('');
   };
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) return;
-
-    if (!isAuthorizedLoginEmail(email)) {
-      setError(
-        'Este e-mail não pertence a um domínio corporativo autorizado a criar contas no momento.',
-      );
-      return;
-    }
-
-    // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
-    // o cliente nunca decide, por conta própria, se um login é válido.
-    setError('');
-    setIsSubmitting(true);
-
-    try {
-      if (isSignUp) {
-        if (!name.trim()) {
-          setError('Por favor, informe seu nome completo.');
-          return;
-        }
-
-        const res = await authClient.signUp.email({
-          email,
-          password,
-          name: name.trim(),
-        });
-
-        // Achado da auditoria de onboarding: o servidor devolve erro puro quando o e-mail
-        // já está em uso, mas o better-auth não lança throw na resposta OK - ele retorna
-        // um data ou error object.
-        if (res.error) {
-          setError(res.error.message || 'Erro ao criar conta. Verifique os dados.');
-          return;
-        }
-
-        // SignUp bem-sucedido — o servidor criou a conta e a organization,
-        // mas a sessão de verdade requer verificação de e-mail (token fica pendente).
-        setVerificationPending(true);
-      } else {
-        const { error: signInError } = await authClient.signIn.email({
-          email,
-          password,
-          // better-auth: não passa 'rememberMe: true' por padrão para não expor a sessão
-          // permanentemente num computador compartilhado; o fallback padrão do provedor se aplica.
-        });
-
-        if (signInError) {
-          setError('E-mail ou senha incorretos.');
-          SoundFX.play('error');
-        } else {
-          SoundFX.play('success');
-        }
-      }
-    } catch (err: unknown) {
-      console.error('Erro detalhado no login/signup:', err);
-      setError('Ocorreu um erro de conexão. Tente novamente mais tarde.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // O e-mail não decide mais a marca ativa visualmente, apenas guarda no state.
   const handleEmailChange = (value: string) => {
@@ -339,7 +277,7 @@ export function LoginScreen() {
           a tela que vem logo depois do login. */}
       <header className="border-b border-line bg-surface/60 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <BirthHubLogo variant="full" size="sm" />
+          <BirthHubLogo variant="horizontal" size="sm" />
           <button
             type="button"
             onClick={() => {

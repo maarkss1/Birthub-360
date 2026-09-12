@@ -333,7 +333,7 @@ export function HubScreen() {
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Topbar Birth Hub 360° */}
         <header className="flex items-center gap-3 px-8 pt-5 pb-3">
-          <BirthHubLogo variant="full" className="h-8 text-ink" />
+          <BirthHubLogo variant="horizontal" className="h-8 text-ink" />
 
           <div className="ml-auto hidden items-center gap-2 rounded-full border border-line bg-surface/70 px-3.5 py-1 text-xs font-bold text-ink-2 backdrop-blur-md sm:flex">
             <span className="hub-beacon h-2 w-2 rounded-full bg-brand" />
