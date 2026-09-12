@@ -2670,10 +2670,6 @@ model VoiceHubConnection {
   /// baseUrl aponta pra Bland AI, que identifica o agente por outro caminho).
   agentId String?
 
-  /// Segredo do webhook de resultado de chamada (`CALL_RESULT_WEBHOOK_PATH`) — comparado contra o
-  /// cabeçalho assinado de cada callback antes de aceitar o payload (mesmo princípio de
-  /// BitrixConnection.webhookSecret). Cifrado em repouso, mesmo tratamento dos campos acima.
-  webhookSecret String? @db.Text
 
   /// Liga/desliga esta conexão sem apagá-la — `birthVoice.service.ts` só considera conexões com
   /// enabled=true ao escolher qual usar.
