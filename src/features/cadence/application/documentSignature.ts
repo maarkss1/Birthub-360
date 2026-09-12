@@ -13,6 +13,14 @@ export interface SignatureProviderPort {
 export interface SignatureRequestRepositoryPort {
   create(input: SignatureRequestDraft): Promise<{ id: string }>;
   markSent(id: string, providerRequestId: string): Promise<void>;
+  findById(
+    id: string,
+    organizationId: string,
+  ): Promise<{ id: string; organizationId: string; documentId: string; status: SignatureStatus; providerRequestId?: string | null } | null>;
+  findByDocumentId(
+    documentId: string,
+    organizationId: string,
+  ): Promise<Array<{ id: string; organizationId: string; documentId: string; status: SignatureStatus; providerRequestId?: string | null }>>;
   findByProviderRequestId(
     provider: string,
     providerRequestId: string,
