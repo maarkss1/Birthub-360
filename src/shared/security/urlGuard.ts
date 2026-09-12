@@ -145,7 +145,8 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
     typeof globalThis.fetch === 'function' &&
     (Boolean((globalThis.fetch as unknown as { _isMockFunction?: boolean })._isMockFunction) ||
       Boolean((globalThis.fetch as unknown as { mock?: unknown }).mock) ||
-      typeof (globalThis.fetch as unknown as { mockRestore?: unknown }).mockRestore === 'function' ||
+      typeof (globalThis.fetch as unknown as { mockRestore?: unknown }).mockRestore ===
+        'function' ||
       typeof (globalThis.fetch as unknown as { getMockName?: unknown }).getMockName === 'function');
 
   if (isGlobalFetchMocked) {
@@ -174,7 +175,10 @@ export async function safeFetch(rawUrl: string, init: RequestInit = {}): Promise
   try {
     // codeql[js/request-foraging] Conexao fixada por IP nos enderecos ja validados por resolveSafe
     // lgtm[js/request-foraging]
-    const response = await undiciFetch(safeUrl.href, { ...init, dispatcher } as unknown as RequestInit); // codeql[js/request-foraging]
+    const response = await undiciFetch(safeUrl.href, {
+      ...init,
+      dispatcher,
+    } as unknown as Parameters<typeof undiciFetch>[1]); // codeql[js/request-foraging]
     // Materializa o corpo INTEIRO aqui dentro, antes de fechar o dispatcher — devolver a
     // `Response` original ao chamador e só então fechar a conexão quebraria `res.json()`/
     // `res.text()` do chamador (o corpo ainda pode estar em streaming da conexão real quando o
