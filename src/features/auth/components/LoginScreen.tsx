@@ -24,8 +24,8 @@ import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
-import { isAuthorizedLoginEmail, getBrandFromEmail } from '../../../config/access-policy';
-import { BirthHubLogo } from '../../../components/BirthHubLogo';
+import { isAuthorizedLoginEmail } from '../../../config/access-policy';
+import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
 import { fadeInUp, SPRING_SOFT, EASE_PREMIUM, useMagnetic } from '../../../lib/motion';
 
@@ -149,7 +149,7 @@ export function LoginScreen() {
   // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
   // vez de tentar navegar para /app sem sessão nenhuma.
   const [verificationPending, setVerificationPending] = useState(false);
-  const { setActiveBrand } = useBrand();
+
   const { theme, toggleTheme } = useTheme();
   const brandAccent = useBrandAccent();
   const shouldReduceMotion = useReducedMotion();
@@ -182,7 +182,7 @@ export function LoginScreen() {
       return;
     }
 
-    setActiveBrand(getBrandFromEmail(email));
+
 
     // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
     // o cliente nunca decide, por conta própria, se um login é válido.
@@ -252,12 +252,72 @@ export function LoginScreen() {
     setError('');
   };
 
-  // Reflete a marca em tempo real conforme o domínio digitado — o toggle abaixo permite escolher a
-  // marca antes de digitar o e-mail, mas o e-mail continua sendo a fonte de verdade no submit
-  // (handleAuth chama getBrandFromEmail de novo), então os dois mecanismos nunca divergem.
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+
+    if (!isAuthorizedLoginEmail(email)) {
+      setError(
+        'Este e-mail não pertence a um domínio corporativo autorizado a criar contas no momento.',
+      );
+      return;
+    }
+
+    // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
+    // o cliente nunca decide, por conta própria, se um login é válido.
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      if (isSignUp) {
+        if (!name.trim()) {
+          setError('Por favor, informe seu nome completo.');
+          return;
+        }
+
+        const res = await authClient.signUp.email({
+          email,
+          password,
+          name: name.trim(),
+        });
+
+        // Achado da auditoria de onboarding: o servidor devolve erro puro quando o e-mail
+        // já está em uso, mas o better-auth não lança throw na resposta OK - ele retorna
+        // um data ou error object.
+        if (res.error) {
+          setError(res.error.message || 'Erro ao criar conta. Verifique os dados.');
+          return;
+        }
+
+        // SignUp bem-sucedido — o servidor criou a conta e a organization,
+        // mas a sessão de verdade requer verificação de e-mail (token fica pendente).
+        setVerificationPending(true);
+      } else {
+        const { error: signInError } = await authClient.signIn.email({
+          email,
+          password,
+          // better-auth: não passa 'rememberMe: true' por padrão para não expor a sessão
+          // permanentemente num computador compartilhado; o fallback padrão do provedor se aplica.
+        });
+
+        if (signInError) {
+          setError('E-mail ou senha incorretos.');
+          SoundFX.play('error');
+        } else {
+          SoundFX.play('success');
+        }
+      }
+    } catch (err: unknown) {
+      console.error('Erro detalhado no login/signup:', err);
+      setError('Ocorreu um erro de conexão. Tente novamente mais tarde.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // O e-mail não decide mais a marca ativa visualmente, apenas guarda no state.
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    setActiveBrand(getBrandFromEmail(value));
   };
 
   if (isPending) {
