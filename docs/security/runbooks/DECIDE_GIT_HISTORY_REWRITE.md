@@ -205,11 +205,14 @@ humano executa o force-push final").
 
 **Verificação pós-reescrita, contra o remote real:**
 ```
-git ls-remote https://github.com/maarkss1/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR refs/heads/main
+git ls-remote https://github.com/maarkss1/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-BIRTHUB360 refs/heads/main
 # b5d47d1f94f500652873fdac21f5f13086723efc — hash novo, confirmado
 ```
 `git rev-list --objects main` (sem `--all`) no worktree sincronizado com o `main` pós-reescrita não
 retorna mais nenhum blob de `.dump`/`test-gemini*`.
+
+**Verificação residual (ACH-15-01, 12/09/2026):**
+A tag `v0.0.1`, publicada antes do Caminho B, continuava apontando para o histórico antigo e mantendo os arquivos sensíveis recuperáveis (`test-gemini*` e o dump PII) através do remote. A tag foi apagada do remote (`git push origin --delete tag v0.0.1`) e localmente (`git tag -d v0.0.1`) nesta data, completando o objetivo do Caminho B de remover o alcance a esses blobs.
 
 ### Observação técnica registrada (achado do dono do repositório, pós-reescrita)
 

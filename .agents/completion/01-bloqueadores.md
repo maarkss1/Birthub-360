@@ -40,10 +40,7 @@
    registrada: o dump ainda existe, com PII real, recuperável por quem tiver acesso ao histórico.
    Remoção definitiva exige `git filter-repo`/BFG — reescreve hashes, decisão humana (ver
    AGENTS.md → Segurança e higiene).
-   **Decidido na Fase Final 0 (2026-08-16), reafirmado na Sprint 01/Onda 13 (2026-08-18):** dono
-   do repositório escolheu o Caminho A (manter histórico, mitigar daqui pra frente) — sem
-   force-push. Risco residual aceito e registrado, ver runbook
-   `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`.
+   **Decisão revista (2026-09-05) e executada (Caminho B):** o dono do repositório escolheu o Caminho B (reescrever histórico e force-push em main) para remover definitivamente este dump e as chaves do Gemini. A reescrita foi executada, conforme detalhado em `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`. **Pendência residual resolvida (ACH-15-01):** a tag `v0.0.1` que expunha o histórico antigo foi deletada do remote em 12/09/2026.
 
 ## P0 — Plataforma quebrada no main (remediados)
 
