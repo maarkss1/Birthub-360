@@ -9,6 +9,7 @@ interface VoiceHubConnection {
   agentId: string | null;
   enabled: boolean;
   hasApiKey: boolean;
+  hasWebhookSecret: boolean;
 }
 
 /** Estado/ações das conexões com o Birth Voices Hub na tela de Integrações — mesmo padrão de
@@ -20,6 +21,13 @@ export function useVoiceHubIntegration() {
   const [voiceHubAgentIdInput, setVoiceHubAgentIdInput] = useState('');
   const [voiceHubLabelInput, setVoiceHubLabelInput] = useState('');
   const [voiceHubLoading, setVoiceHubLoading] = useState(false);
+  // Segredo do webhook em texto puro só existe uma vez, na resposta de `connectVoiceHub`
+  // (ACH-06-01) — mesmo padrão de `revealedWebhookSecret` em `useBitrixIntegration.ts`. Fica só em
+  // memória do componente, nunca persistido no cliente nem devolvido de novo pela API depois.
+  const [revealedWebhookSecret, setRevealedWebhookSecret] = useState<string | null>(null);
+  const [revealedWebhookSecretConnectionId, setRevealedWebhookSecretConnectionId] = useState<
+    string | null
+  >(null);
 
   const fetchVoiceHubConnections = useCallback(async () => {
     try {
@@ -63,6 +71,12 @@ export function useVoiceHubIntegration() {
       setVoiceHubApiKeyInput('');
       setVoiceHubAgentIdInput('');
       setVoiceHubLabelInput('');
+      // `connectVoiceHub` devolve o segredo do webhook em texto puro só nesta resposta (ver
+      // voiceHubConnection.service.ts) — é a única chance de mostrar/copiar o valor real.
+      if (typeof data.data?.webhookSecret === 'string') {
+        setRevealedWebhookSecret(data.data.webhookSecret);
+        setRevealedWebhookSecretConnectionId(data.data.id ?? null);
+      }
       fetchVoiceHubConnections();
     } catch (error) {
       toast.error((error as Error).message);
@@ -129,5 +143,7 @@ export function useVoiceHubIntegration() {
     handleVoiceHubConnect,
     handleVoiceHubDisconnect,
     handleVoiceHubTest,
+    revealedWebhookSecret,
+    revealedWebhookSecretConnectionId,
   };
 }

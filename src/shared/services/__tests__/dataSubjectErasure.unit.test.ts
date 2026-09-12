@@ -6,6 +6,7 @@ const updateManyMock = vi.fn();
 const leadFindManyMock = vi.fn();
 const conversationSignalUpdateManyMock = vi.fn();
 const timelineEventUpdateManyMock = vi.fn();
+const voiceCallLogUpdateManyMock = vi.fn();
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -25,6 +26,9 @@ vi.mock('@/lib/prisma', () => ({
     timelineEvent: {
       updateMany: (...args: unknown[]) => timelineEventUpdateManyMock(...args),
     },
+    voiceCallLog: {
+      updateMany: (...args: unknown[]) => voiceCallLogUpdateManyMock(...args),
+    },
   },
 }));
 
@@ -42,6 +46,7 @@ beforeEach(() => {
   leadFindManyMock.mockResolvedValue([{ id: 'lead-1' }, { id: 'lead-2' }]);
   conversationSignalUpdateManyMock.mockResolvedValue({ count: 2 });
   timelineEventUpdateManyMock.mockResolvedValue({ count: 4 });
+  voiceCallLogUpdateManyMock.mockResolvedValue({ count: 5 });
 });
 
 describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LGPD (art. 18)', () => {
@@ -96,16 +101,21 @@ describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LG
       where: { leadId: { in: ['lead-1', 'lead-2'] } },
       data: { description: '[evento anonimizado — LGPD]' },
     });
+    expect(voiceCallLogUpdateManyMock).toHaveBeenCalledWith({
+      where: { leadId: { in: ['lead-1', 'lead-2'] }, organizationId: ORG_ID },
+      data: { transcript: null, summary: null, recordingUrl: null },
+    });
     expect(result).toEqual({
       contactId: CONTACT_ID,
       whatsAppMessagesMasked: 3,
       conversationSignalsRedacted: 2,
       timelineEventsRedacted: 4,
+      voiceCallLogsRedacted: 5,
       alreadyAnonymized: false,
     });
   });
 
-  it('sem Leads ligados ao titular, não chama updateMany de ConversationSignal/TimelineEvent (evita where vazio)', async () => {
+  it('sem Leads ligados ao titular, não chama updateMany de ConversationSignal/TimelineEvent/VoiceCallLog (evita where vazio)', async () => {
     findFirstMock.mockResolvedValue({
       id: CONTACT_ID,
       name: 'Fulano de Tal',
@@ -117,8 +127,10 @@ describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LG
 
     expect(conversationSignalUpdateManyMock).not.toHaveBeenCalled();
     expect(timelineEventUpdateManyMock).not.toHaveBeenCalled();
+    expect(voiceCallLogUpdateManyMock).not.toHaveBeenCalled();
     expect(result.conversationSignalsRedacted).toBe(0);
     expect(result.timelineEventsRedacted).toBe(0);
+    expect(result.voiceCallLogsRedacted).toBe(0);
   });
 
   it('é idempotente: contato já anonimizado não é regravado, mas WhatsApp continua sendo verificado', async () => {

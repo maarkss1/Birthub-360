@@ -51,6 +51,7 @@ function connectionRow(overrides: Partial<Record<string, unknown>> = {}) {
     apiKey: 'chave-secreta',
     agentId: 'agente-1',
     enabled: true,
+    webhookSecret: 'segredo-do-webhook',
     createdAt: new Date('2026-01-01T00:00:00Z'),
     updatedAt: new Date('2026-01-01T00:00:00Z'),
     ...overrides,
@@ -63,7 +64,7 @@ beforeEach(() => {
 });
 
 describe('listVoiceHubConnections', () => {
-  it('nunca devolve a API key em texto puro — só um flag hasApiKey', async () => {
+  it('nunca devolve a API key nem o segredo do webhook em texto puro — só hasApiKey/hasWebhookSecret', async () => {
     prismaMock.voiceHubConnection.findMany.mockResolvedValue([connectionRow()]);
 
     const result = await listVoiceHubConnections(ORG);
@@ -76,9 +77,14 @@ describe('listVoiceHubConnections', () => {
         agentId: 'agente-1',
         enabled: true,
         hasApiKey: true,
+        hasWebhookSecret: true,
         createdAt: connectionRow().createdAt,
       },
     ]);
+    // Nenhum valor de segredo real (nem 'chave-secreta' nem 'segredo-do-webhook') escapa na
+    // resposta — só os dois booleanos de presença acima.
+    expect(JSON.stringify(result)).not.toContain('chave-secreta');
+    expect(JSON.stringify(result)).not.toContain('segredo-do-webhook');
     expect(prismaMock.voiceHubConnection.findMany).toHaveBeenCalledWith({
       where: { organizationId: ORG },
       orderBy: { createdAt: 'desc' },
@@ -91,6 +97,16 @@ describe('listVoiceHubConnections', () => {
     const [result] = await listVoiceHubConnections(ORG);
 
     expect(result.hasApiKey).toBe(false);
+  });
+
+  it('hasWebhookSecret é false quando nenhum segredo de webhook foi cadastrado', async () => {
+    prismaMock.voiceHubConnection.findMany.mockResolvedValue([
+      connectionRow({ webhookSecret: null }),
+    ]);
+
+    const [result] = await listVoiceHubConnections(ORG);
+
+    expect(result.hasWebhookSecret).toBe(false);
   });
 });
 
@@ -122,6 +138,63 @@ describe('connectVoiceHub', () => {
         label: 'Birth Voices Hub',
         baseUrl: 'https://hub.example.com',
       }),
+    });
+  });
+
+  // ACH-06-01: antes desta correção, VoiceHubConnectionInput nem tinha webhookSecret — o webhook
+  // (birthVoice.webhook.ts) validava toda organização contra um único segredo global do processo.
+  describe('ACH-06-01 — segredo do webhook por conexão', () => {
+    it('gera um segredo aleatório quando nenhum é informado, e o grava na conexão', async () => {
+      prismaMock.voiceHubConnection.create.mockImplementation(
+        async ({ data }: { data: Record<string, unknown> }) => connectionRow(data),
+      );
+
+      await connectVoiceHub(ORG, { baseUrl: 'https://hub.example.com' });
+
+      const [[{ data }]] = prismaMock.voiceHubConnection.create.mock.calls;
+      expect(typeof data.webhookSecret).toBe('string');
+      expect((data.webhookSecret as string).length).toBeGreaterThanOrEqual(32);
+    });
+
+    it('duas conexões sem segredo informado recebem segredos diferentes (não é um valor fixo)', async () => {
+      prismaMock.voiceHubConnection.create.mockImplementation(
+        async ({ data }: { data: Record<string, unknown> }) => connectionRow(data),
+      );
+
+      await connectVoiceHub(ORG, { baseUrl: 'https://hub.example.com' });
+      await connectVoiceHub(ORG, { baseUrl: 'https://hub2.example.com' });
+
+      const [firstCall, secondCall] = prismaMock.voiceHubConnection.create.mock.calls;
+      expect(firstCall[0].data.webhookSecret).not.toBe(secondCall[0].data.webhookSecret);
+    });
+
+    it('usa o webhookSecret informado quando fornecido, em vez de gerar um novo', async () => {
+      prismaMock.voiceHubConnection.create.mockImplementation(
+        async ({ data }: { data: Record<string, unknown> }) => connectionRow(data),
+      );
+
+      await connectVoiceHub(ORG, {
+        baseUrl: 'https://hub.example.com',
+        webhookSecret: 'segredo-escolhido-pelo-usuario',
+      });
+
+      expect(prismaMock.voiceHubConnection.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ webhookSecret: 'segredo-escolhido-pelo-usuario' }),
+      });
+    });
+
+    it('devolve o segredo em texto puro UMA vez, no retorno de connectVoiceHub', async () => {
+      prismaMock.voiceHubConnection.create.mockImplementation(
+        async ({ data }: { data: Record<string, unknown> }) => connectionRow(data),
+      );
+
+      const result = await connectVoiceHub(ORG, {
+        baseUrl: 'https://hub.example.com',
+        webhookSecret: 'segredo-revelado-uma-vez',
+      });
+
+      expect(result.webhookSecret).toBe('segredo-revelado-uma-vez');
+      expect(result.hasWebhookSecret).toBe(true);
     });
   });
 });

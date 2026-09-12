@@ -783,8 +783,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
         </p>
       )}
       {!error && restrictedWarning && (
-        <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 p-3.5 rounded-2xl border border-amber-200 font-medium">
-          <ShieldCheck className="w-4 h-4 shrink-0 text-amber-600" /> {restrictedWarning}
+        <p className="text-xs text-warning-active dark:text-warning flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 p-3.5 rounded-2xl border border-amber-200 font-medium">
+          <ShieldCheck className="w-4 h-4 shrink-0 text-warning-active dark:text-warning" /> {restrictedWarning}
         </p>
       )}
 
@@ -796,13 +796,13 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
             {importResult.skipped > 0 ? `, ${importResult.skipped} já existiam` : ''}.
           </p>
           {importResult.skippedConflicts > 0 && (
-            <p className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5 pl-6">
+            <p className="text-warning-active dark:text-warning flex items-center gap-1.5 pl-6">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> {importResult.skippedConflicts}{' '}
               bloqueado(s) — pertenciam a outro responsável.
             </p>
           )}
           {importResult.skippedNotOwned > 0 && (
-            <p className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5 pl-6">
+            <p className="text-warning-active dark:text-warning flex items-center gap-1.5 pl-6">
               <Lock className="w-3.5 h-3.5 shrink-0" /> {importResult.skippedNotOwned} ignorado(s) —
               não atribuídos a você no Bitrix24.
             </p>

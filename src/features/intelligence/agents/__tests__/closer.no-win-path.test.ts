@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { updateLeadQualificationTool } from '../../tools/crmTools';
-import { createFollowUpTaskTool, notifyTeamTool } from '../../tools/opsTools';
+import { createFollowUpTaskTool, notifyTeamTool } from '../opsPendingActions.tool';
 
 /**
  * Prova, por teste (não por leitura), que NENHUM caminho do enxame — em especial o Closer — move

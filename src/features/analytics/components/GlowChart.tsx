@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CircleDot, Eye, EyeOff } from 'lucide-react';
 import {
   AreaChart,
@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { formatMonthLabel, type MonthlyPoint } from '../analytics.api';
 
@@ -41,6 +41,12 @@ export function GlowChart({ data, error }: GlowChartProps) {
     lost: true,
   });
 
+  // Halo decorativo (aria-hidden) só deve animar em loop enquanto o card está de fato visível —
+  // regra de performance da constituição (seção 11): nenhuma animação contínua fora da
+  // viewport/aba ativa. `once: false` para pausar de novo se o usuário rolar o card para fora.
+  const sectionRef = useRef<HTMLElement>(null);
+  const isCardInView = useInView(sectionRef, { amount: 0.2, once: false });
+
   const chartData = useMemo(
     () => data.map((point) => ({ ...point, name: formatMonthLabel(point.month) })),
     [data],
@@ -65,14 +71,21 @@ export function GlowChart({ data, error }: GlowChartProps) {
 
   return (
     <section
+      ref={sectionRef}
       data-testid="dashboard-analytics-chart"
       className="group relative min-h-[18rem] w-full overflow-hidden rounded-[1.6rem] border border-line bg-surface/92 p-4 shadow-[0_28px_70px_-42px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-5"
     >
       <motion.div
         aria-hidden="true"
-        className={`pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full blur-[90px] ${'bg-brand/20'}`}
-        animate={{ scale: [1, 1.08, 1], opacity: [0.34, 0.5, 0.34] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-brand/20 blur-[90px]"
+        animate={
+          isCardInView
+            ? { scale: [1, 1.08, 1], opacity: [0.34, 0.5, 0.34] }
+            : { scale: 1, opacity: 0.34 }
+        }
+        transition={
+          isCardInView ? { duration: 7, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.3 }
+        }
       />
       <div
         aria-hidden="true"

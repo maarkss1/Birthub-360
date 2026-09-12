@@ -60,6 +60,7 @@ export function createGracefulShutdown(deps: ShutdownDeps): (signal: string) => 
     workers.agentWorker,
     workers.searchWorker,
     workers.enrichmentWorker,
+    workers.enrichmentCascadeWorker,
     workers.whatsappSignalWorker,
     workers.bitrixSyncWorker,
     workers.followUpWorker,
@@ -72,6 +73,9 @@ export function createGracefulShutdown(deps: ShutdownDeps): (signal: string) => 
     workers.swarmSchedulerWorker,
     workers.coldLeadsScannerWorker,
     workers.stagnationScannerWorker,
+    workers.accountIntelligenceSchedulerWorker,
+    workers.forecastSnapshotWorker,
+    workers.copilotoTranscriptionWorker,
   ];
 
   return async function shutdown(signal: string): Promise<void> {

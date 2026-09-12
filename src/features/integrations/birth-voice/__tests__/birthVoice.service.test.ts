@@ -7,7 +7,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('@/config/env', () => ({
   env: {
-    BIRTH_VOICES_URL: 'http://hub.local',
+    // https (não http): desde a correção do ACH-06-02, o ramo Hub (não-Bland) passa por
+    // `assertSafeExternalUrl`/`safeFetch` (mockados abaixo) — mantido https aqui só para o valor
+    // ser um endpoint plausível; a validação real de protocolo/DNS é responsabilidade do guard,
+    // que estes testes mockam, não deste arquivo.
+    BIRTH_VOICES_URL: 'https://hub.local',
     BIRTH_VOICES_API_KEY: 'chave',
     BIRTH_VOICES_AGENT_ID: 'agente-1',
     PUBLIC_BASE_URL: 'http://prospector.local',
@@ -36,6 +40,24 @@ vi.mock('@/features/integrations/birth-voice/callSuppression.service', () => ({
   isSuppressed: vi.fn(),
 }));
 
+// ACH-06-02: callLead (ramo Hub/não-Bland) agora usa safeFetch/assertSafeExternalUrl de
+// urlGuard.ts em vez de fetch cru — mesmo padrão de mock já usado em
+// voiceHubConnection.service.test.ts. safeFetchMock delega pro fetch global mockado abaixo depois
+// de "revalidar", para que os testes de payload/roteamento pré-existentes continuem passando
+// olhando pro mesmo `fetch` global.
+const { assertSafeExternalUrlMock, safeFetchMock } = vi.hoisted(() => {
+  const assertSafeExternalUrlMock = vi.fn().mockResolvedValue(undefined);
+  const safeFetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+    await assertSafeExternalUrlMock(url);
+    return (globalThis.fetch as typeof fetch)(url, init);
+  });
+  return { assertSafeExternalUrlMock, safeFetchMock };
+});
+vi.mock('@/shared/security/urlGuard', () => ({
+  assertSafeExternalUrl: assertSafeExternalUrlMock,
+  safeFetch: safeFetchMock,
+}));
+
 import { prisma } from '@/lib/prisma';
 import { isSuppressed } from '@/features/integrations/birth-voice/callSuppression.service';
 import {
@@ -44,6 +66,7 @@ import {
   NoPhoneNumberError,
 } from '@/features/integrations/birth-voice/birthVoice.service';
 import { PiiConsentRequiredError } from '@/features/intelligence/services/guardrails.service';
+import { AppError } from '@/shared/middlewares/errorHandler';
 
 const leadMock = prisma.lead as unknown as { findFirst: ReturnType<typeof vi.fn> };
 const voiceHubConnectionMock = prisma.voiceHubConnection as unknown as {
@@ -65,6 +88,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   voiceHubConnectionMock.findFirst.mockResolvedValue(null);
   mockIsSuppressed.mockResolvedValue(false);
+  assertSafeExternalUrlMock.mockResolvedValue(undefined);
   vi.stubGlobal(
     'fetch',
     vi.fn().mockResolvedValue({
@@ -85,6 +109,38 @@ describe('callLead', () => {
       email: null,
     });
     expect(fetch).toHaveBeenCalledOnce();
+  });
+
+  // ACH-06-02 (achado de auditoria): callLead usava fetch cru contra o Hub configurado — só
+  // validado uma vez no cadastro da conexão (VoiceHubConnection/env), deixando aberta a janela
+  // clássica de DNS rebinding entre aquela validação e cada ligação real. Este teste prova que a
+  // chamada real passa por safeFetch (que revalida e fixa a conexão nos endereços validados),
+  // revalidando a CADA chamada — não só no cadastro.
+  it('revalida a URL do Hub a cada chamada real via assertSafeExternalUrl/safeFetch, não só no cadastro', async () => {
+    leadMock.findFirst.mockResolvedValue(leadComTelefone());
+
+    await callLead(ORG, 'lead-9');
+
+    expect(assertSafeExternalUrlMock).toHaveBeenCalledWith('https://hub.local/api/voice/outbound');
+    expect(safeFetchMock).toHaveBeenCalledWith(
+      'https://hub.local/api/voice/outbound',
+      expect.objectContaining({ method: 'POST' }),
+    );
+    expect(fetch).toHaveBeenCalledOnce();
+  });
+
+  // Uma URL que falha na revalidação (ex.: DNS rebinding — o host respondia IP público no cadastro
+  // e agora resolve para um IP privado/reservado) nunca deve chegar a fazer a chamada real.
+  it('não dispara a chamada real quando a revalidação da URL do Hub falha', async () => {
+    leadMock.findFirst.mockResolvedValue(leadComTelefone());
+    assertSafeExternalUrlMock.mockRejectedValue(
+      new AppError('Endereço não permitido (resolve para IP privado/reservado).', 400),
+    );
+
+    await expect(callLead(ORG, 'lead-9')).rejects.toBeInstanceOf(AppError);
+
+    expect(safeFetchMock).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   // leadId/email do lead entram como contexto para o opt-out unificado entre canais (05/06) —
@@ -145,7 +201,7 @@ describe('callLead', () => {
 
       expect(fetch).toHaveBeenCalledOnce();
       const [calledUrl, options] = (fetch as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(calledUrl).toBe('http://hub.local/api/voice/outbound');
+      expect(calledUrl).toBe('https://hub.local/api/voice/outbound');
       expect(calledUrl).not.toContain('bland.ai');
       expect((options as { headers: Record<string, string> }).headers.Authorization).toBe(
         'Bearer chave',

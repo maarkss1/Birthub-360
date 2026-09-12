@@ -1,15 +1,23 @@
 import { env } from '../../config/env.js';
+import { AppError } from '../middlewares/errorHandler.js';
 
 /**
- * Erro específico (em vez de um `Error` genérico) para que quem chama consiga distinguir "faltou
- * base legal" de qualquer outra falha de execução — e para que o teste que prova a trava não
- * dependa de comparar a mensagem de texto.
+ * Erro específico (em vez de um `Error`/`AppError` genérico) para que quem chama consiga
+ * distinguir "faltou base legal" de qualquer outra falha de execução — e para que o teste que
+ * prova a trava não dependa de comparar a mensagem de texto.
+ *
+ * Herda de `AppError` (statusCode 403) para que um chamador que não trate este erro
+ * explicitamente (ex.: só repassa pra `next(error)`) ainda caia no formato canônico
+ * `{ success: false, error }` via `errorHandler.ts`, em vez de virar 500 — ver ACH-07-01. Quem já
+ * faz `instanceof PiiConsentRequiredError` explícito (birthVoice.routes.ts,
+ * intelligence.routes.ts) continua funcionando sem mudança: a subclasse ainda passa nesse check.
  */
-export class PiiConsentRequiredError extends Error {
+export class PiiConsentRequiredError extends AppError {
   constructor(organizationId: string | null) {
     super(
       `Consentimento/base legal LGPD não registrado para a organização ${organizationId ?? '(desconhecida)'} ` +
         'enviar dado pessoal de titular a um provedor de IA externo.',
+      403,
     );
     this.name = 'PiiConsentRequiredError';
   }

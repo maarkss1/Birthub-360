@@ -55,6 +55,20 @@ sudo ufw allow 22/tcp
 
 Adapte as regras à política de rede da instância. O script `scripts/deploy-oci.sh` também tenta configurar as portas necessárias quando as ferramentas correspondentes estão disponíveis.
 
+**ACH-10-02 (defesa em profundidade para a porta 5432):** a Security List/NSG da VCN (2.1) é a
+camada primária, mas não é a única — `scripts/deploy-oci.sh` também restringe o firewall do host
+(`iptables`/`firewalld`/`ufw`) por IP de origem, nunca liberando `0.0.0.0/0`. Defina
+`POSTGRES_ALLOWED_CIDRS` (lista separada por vírgula de IPs/CIDRs) antes de rodar o script:
+
+```bash
+POSTGRES_ALLOWED_CIDRS="203.0.113.10/32,198.51.100.0/24" DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
+```
+
+Sem essa variável, a porta 5432 **não** é liberada no firewall do host — o acesso direto de
+máquinas de desenvolvimento fica bloqueado nessa camada até a variável ser definida (a aplicação e
+o Caddy continuam funcionando normalmente, pois não dependem dessa porta). Ver seção 4.2 para o
+procedimento completo e o item de auditoria periódica.
+
 ---
 
 ## 3. Deploy da Aplicação com Docker Compose
@@ -118,7 +132,7 @@ do repositório (o workflow falha de propósito, com mensagem explícita, enquan
 
 | Secret | Valor |
 | --- | --- |
-| `OCI_SSH_HOST` | IP público da instância (ex.: `163.176.150.147`) |
+| `OCI_SSH_HOST` | IP público da instância (ex.: `168.138.147.145`) |
 | `OCI_SSH_USER` | usuário SSH da instância (ex.: `opc` para Oracle Linux, `ubuntu` para Ubuntu) |
 | `OCI_SSH_PRIVATE_KEY` | conteúdo completo da chave privada SSH (recomenda-se uma chave **dedicada** a este workflow, gerada só para deploy — não a chave pessoal de acesso interativo do operador) |
 | `OCI_DEPLOY_PATH` | caminho absoluto do clone do repositório na instância (ex.: `/home/opc/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR`) |
@@ -194,7 +208,7 @@ O que muda em relação ao desenho original (loopback only):
 | --- | --- |
 | `docker-compose.oci.yml` | `postgres` publica `5432:5432` (todas as interfaces) e sobe com `ssl=on` |
 | `docker/postgres/Dockerfile` | instala `openssl` e gera certificado autoassinado no build (chave nunca sai da instância) |
-| `scripts/deploy-oci.sh` | libera 5432 no firewall do host (iptables/firewalld/ufw) |
+| `scripts/deploy-oci.sh` | libera 5432 no firewall do host (iptables/firewalld/ufw) **só** para os CIDRs de `POSTGRES_ALLOWED_CIDRS` — nunca `0.0.0.0/0` (ver 2.2 e "Auditoria periódica" abaixo) |
 | `docker-compose.yml` (local) | serviço `postgres` removido; legado opt-in em `docker-compose.postgres-local.yml` só para testes |
 | `.env.example` / `.env` | `DATABASE_URL` direto para o IP público, com `?sslmode=require&uselibpqcompat=true` |
 
@@ -210,14 +224,35 @@ docker exec -i atlasgr_postgres psql -U prospector -d prospectordb -tAc "show ss
 
 **Security List da VCN** (Console OCI → Networking → VCN → Security List → Ingress Rules): uma
 regra TCP 5432 por máquina de desenvolvimento, com Source CIDR `= <IP público da máquina>/32`
-(descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a única barreira de
-rede antes da autenticação por senha. IP dinâmico mudou = atualizar a regra.
+(descubra com `curl -4 ifconfig.me`). Nunca `0.0.0.0/0`: a Security List é a camada primária, mas
+não a única — desde a correção do ACH-10-02, `scripts/deploy-oci.sh` também restringe o firewall
+do host (iptables/firewalld/ufw) aos mesmos CIDRs via `POSTGRES_ALLOWED_CIDRS` (seção 2.2),
+recriando defesa em profundidade caso a Security List seja alterada por engano. IP dinâmico mudou =
+atualizar a regra **nos dois lugares** (Security List e `POSTGRES_ALLOWED_CIDRS`).
 
 Achado real (2026-09-08): a operadora da máquina de desenvolvimento usa NAT de carrier — o IP de
 saída variou entre `170.231.96.140` e `170.231.96.152` em chamadas consecutivas, e horas antes era
 `201.33.120.202`. Um `/32` fixo quebra sem aviso nesse cenário; rode `curl -4 ifconfig.me` várias
 vezes e, se a faixa oscilar, libere o bloco `/24` correspondente (ex.: `170.231.96.0/24`) em vez
 de um único host — ainda muito mais restrito que `0.0.0.0/0`.
+
+#### Auditoria periódica (defesa em profundidade — ACH-10-02, item do checklist de Go-Live)
+
+A Security List da VCN e o firewall do host (`POSTGRES_ALLOWED_CIDRS`) são mantidos manualmente e
+podem divergir com o tempo (IP de desenvolvedor mudou, colaborador saiu, instância recriada sem a
+variável). Revise periodicamente, e sempre antes de declarar `GO-LIVE READY` (seção 11):
+
+1. Console OCI → Security List da VCN → Ingress Rules: nenhuma regra TCP 5432 com Source CIDR
+   `0.0.0.0/0`; cada `/32` ou `/24` listado corresponde a uma máquina de desenvolvimento ainda em
+   uso.
+2. Na instância: `sudo iptables -L INPUT -n | grep 5432` (ou `sudo ufw status | grep 5432` /
+   `sudo firewall-cmd --list-rich-rules | grep 5432`) — confirme que as origens batem com a
+   Security List e que não existe uma regra aberta a `0.0.0.0/0`.
+3. `.env.production` da instância: `POSTGRES_ALLOWED_CIDRS` reflete a lista atual de IPs
+   autorizados (sem essa variável no ambiente do deploy, o host não libera 5432 — revalide se
+   alguém rodou o script manualmente sem exportá-la).
+4. Remova regras de CIDRs que não correspondem mais a nenhuma máquina de desenvolvimento ativa, nos
+   dois lugares.
 
 **Na máquina de desenvolvimento**, pegue a senha do papel de aplicação diretamente da instância
 (não circula por chat/issue/PR) e coloque no `.env`:
@@ -227,7 +262,7 @@ ssh oracle-atlasgr 'grep ^APP_DB_PASSWORD= ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-A
 ```
 
 ```env
-DATABASE_URL=postgresql://prospector_app:<APP_DB_PASSWORD>@163.176.150.147:5432/prospectordb?sslmode=require&uselibpqcompat=true
+DATABASE_URL=postgresql://prospector_app:<APP_DB_PASSWORD>@168.138.147.145:5432/prospectordb?sslmode=require&uselibpqcompat=true
 ```
 
 `sslmode=require&uselibpqcompat=true` é o único par que funciona para os dois clientes do projeto:
@@ -435,7 +470,74 @@ valor:
 
 ---
 
-## 11. O que esta sessão não pôde validar
+## 11. Observabilidade (Prometheus/Grafana/Loki) — fora do MVP, decisão registrada (ACH-10-01)
+
+**Contexto**: ADR-004 (2026-09-05) moveu a produção definitiva para esta stack, já recebendo
+tráfego real (ver `docs/deploy/README.md` §1). `infrastructure/observability/` já tem um stack
+completo (Prometheus, Grafana, Loki, Tempo, OTel Collector) pronto e em uso no **ambiente local**
+(`docker-compose.opensource.yml`, subido por `npm run infra:up`) — mas `docker-compose.oci.yml`
+não sobe nenhum desses serviços, e nenhum Prometheus externo está apontado para esta instância.
+
+**Isto é uma decisão de escopo, não uma lacuna esquecida** — e a razão não é só "faltou tempo": há
+uma barreira técnica real.
+
+### 11.1 Por que não é um simples "copiar os serviços do stack local"
+
+O endpoint `GET /metrics` da aplicação (`src/bootstrap/observability.ts`,
+`mountMetricsEndpoint`) é protegido por `requirePlatformOperator`
+(`src/shared/middlewares/requirePlatformOperator.ts`) — a mesma trava de segurança usada pelo
+BullBoard (`/admin/queues`). Ele exige um token válido em **um destes três lugares**: o header
+customizado `x-platform-operator-token`, a query string `?operator_token=`, ou um cookie. O
+`scrape_config` nativo do Prometheus (`static_configs` + `authorization`/`basic_auth`) só sabe
+enviar `Authorization: Bearer <token>` ou Basic Auth — **nenhum dos dois bate com o header
+customizado que a aplicação espera**. Sem alterar `requirePlatformOperator` para também aceitar
+`Authorization: Bearer` (mudança de código de segurança, fora do escopo desta correção de
+infraestrutura — domínio do Agente 01/dono de `src/shared/middlewares/`), um Prometheus real não
+consegue autenticar contra `/metrics` nesta instância sem inventar um proxy/sidecar adicional só
+para reescrever o header, o que adicionaria complexidade e superfície de ataque não avaliadas nesta
+rodada.
+
+Publicar `/metrics` sem essa trava (ex.: só verificando IP de origem) também não foi escolhido:
+`/metrics` expõe cardinalidade e nomes de métrica de negócio (uso de IA por org, filas por tenant)
+que a mesma trava de "operador de plataforma" já existe precisamente para não deixar público — SEC-
+001/SEC-002 (ver o comentário de `requirePlatformOperator.ts`).
+
+### 11.2 Decisão
+
+**Observabilidade centralizada (Prometheus/Grafana/Loki) para a instância Oracle real fica fora do
+MVP.** Enquanto isso, um incidente real nesta instância só é descoberto por relato de usuário ou
+checagem manual de `/health/live`/`/health/ready`/logs do Docker (ver
+`infrastructure/observability/RUNBOOK.md` seção 0-OCI). Isso é uma regressão real de
+confiabilidade frente ao Render (que, apesar de também não ter Prometheus apontado, tem dashboard
+e alertas nativos da plataforma — ver `RUNBOOK.md` seção 0.3) e frente ao que o stack local já
+oferece — registrado aqui para não ser esquecido, não para ser minimizado.
+
+**Prazo para reativar**: antes de qualquer decisão de desligar o Render (o critério de cutover já
+documentado em `docs/deploy/README.md` §1 — "não desligar antes do Go-Live Oracle estar
+validado"), esta lacuna deve estar resolvida ou explicitamente aceita pelo dono do produto como
+risco assumido. Ela também deve ser reavaliada se/quando o volume de organizações ativas crescer o
+suficiente para que "esperar relato de usuário" deixe de ser uma janela de detecção aceitável.
+
+### 11.3 Pré-requisitos já corretos, independente de quando a lacuna acima for fechada
+
+- `EXPOSE_METRICS=true` no `.env.production` da instância — sem isso, `/metrics` nem existe
+  (`mountMetricsEndpoint` retorna cedo). Hoje não é gerado automaticamente por
+  `scripts/deploy-oci.sh` (só os segredos essenciais, ver seção 3.2) — precisa ser adicionado
+  manualmente ao arquivo antes de qualquer scraper (local, temporário, ou futuro) funcionar.
+- `PLATFORM_OPERATOR_TOKEN` configurado no mesmo arquivo — sem ele, `/metrics` (e `/admin/queues`)
+  negam por padrão (fail-closed, não é um "modo aberto" acidental).
+- Reportar o status desses dois (CONFIGURADO/NÃO NECESSÁRIO), nunca o valor, seguindo o mesmo
+  padrão da seção 10 deste guia.
+
+### 11.4 Alternativa leve, se um monitoramento mínimo for necessário antes da solução definitiva
+
+`docker-compose.services.yml` já traz **Uptime Kuma** (ver `docs/deploy/README.md` §6.1) como
+ferramenta opcional local — ele não faz parte de nenhum caminho de deploy hoje, mas é a opção mais
+barata para um operador apontar manualmente para `https://<domínio>/health/live` de fora da
+instância (uptime binário, sem métricas de negócio) enquanto a solução de Prometheus não é
+resolvida. Isso não substitui a seção 12.2 — é só um paliativo de detecção, não de diagnóstico.
+
+## 12. O que esta sessão não pôde validar
 
 Esta sessão preparou e validou o que é possível **sem acesso a credenciais de infraestrutura
 reais** (nenhuma chave SSH, token OCI ou credencial de banco de produção está disponível neste

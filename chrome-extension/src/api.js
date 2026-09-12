@@ -8,7 +8,7 @@
 // HTTP na porta 80 (sem domínio/TLS configurado ainda, ver docs/deploy/oracle-cloud.md §7 e o
 // commit "fix(oci): default DOMAIN to :80..."). Trocar para https://<domínio> assim que o cutover
 // de domínio/TLS acontecer (aí some o mixed-content risk de rodar a extensão em http:// puro).
-const DEFAULT_API_BASE_URL = 'http://163.176.150.147';
+const DEFAULT_API_BASE_URL = 'http://168.138.147.145';
 const STORAGE_KEY = 'atlasApiBaseUrl';
 
 export async function getApiBaseUrl() {

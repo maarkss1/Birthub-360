@@ -10,13 +10,10 @@ import { prisma } from '../../../../lib/prisma.js';
  * (domínio puro, entregue na Onda 10) sair do papel: até aqui a única implementação de
  * `CadenceDispatcher` do repo era `ScriptedDispatcher`, só em teste.
  *
- * Limitação conhecida e deliberada, documentada em `docs/CADENCE-CYCLE-AUDIT.md`: não existe
- * ainda nenhuma UI/rota para criar uma `CadenceSequence` ou iniciar um `CadenceRun` — só o
- * schema e `startCadenceRun` (chamado hoje só em teste). `CadenceTouch.templateRef` também não
- * tem nenhum sistema de template por trás — é tratado aqui como o texto final da mensagem
- * (corpo, ou "assunto\n\ncorpo" para e-mail). Autoria de conteúdo/gatilho de início de cadência é
- * uma decisão de produto que este runtime não toma sozinho; sem ela, este dispatcher fica correto
- * mas ocioso (nenhum `CadenceRun` ativo existe para o worker varrer).
+ * Limitação conhecida e ainda real: `CadenceTouch.templateRef` não tem nenhum sistema de
+ * template por trás — é tratado aqui como o texto final da mensagem (corpo, ou
+ * "assunto\n\ncorpo" para e-mail). Autoria de conteúdo de cadência é uma decisão de produto que
+ * este runtime não toma sozinho.
  */
 
 async function resolveLeadPhone(organizationId: string, leadId: string): Promise<string | null> {

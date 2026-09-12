@@ -1,4 +1,4 @@
-# Runbook — Prospector-Atlas (Agente 10, Onda 4 — atualizado na Onda 8, go-live)
+# Runbook — Prospector-Atlas (Agente 10, Onda 4 — atualizado na Onda 8, go-live; corrigido para Oracle Cloud em ACH-10-01)
 
 Runbook de resposta a incidentes e de go-live para os cenários já mapeados como bloqueadores em
 `/AGENTS.md` e para migração/rollback (missão do Agente 10 — ver
@@ -6,32 +6,34 @@ Runbook de resposta a incidentes e de go-live para os cenários já mapeados com
 
 **Antes de tudo: qual é o deploy ativo?** Verifique o ambiente real antes de agir.
 
-> **Correção (ITEM-12, 2026-08-25): a tabela abaixo ficou desatualizada.** Ela foi escrita antes
-> do commit `53c55ac` ("chore(infra): move a Central para modo local-first (#180)"), que congelou
-> o Render (`render.yaml` → `autoDeployTrigger: off`, marcado `LEGACY/FROZEN` no próprio arquivo).
-> **Hoje não há nenhum deploy cloud ativo** — o projeto está em modo local-first
-> (`docs/development/LOCAL_FIRST.md`). Ver [`docs/deploy/README.md`](../../docs/deploy/README.md)
-> para o caminho canônico atual. O conteúdo abaixo (go-live, rollback, procedimentos Render/k8s)
-> permanece correto como **procedimento** para quando cada caminho for reativado — só a coluna
-> "Status" está desatualizada.
+> **Correção (ACH-10-01, ver relatório de auditoria): a tabela abaixo estava desatualizada em
+> relação a `docs/deploy/README.md` e ao ADR-004.** A correção anterior (ITEM-12, 2026-08-25)
+> dizia "hoje não há nenhum deploy cloud ativo" (modo local-first) — isso já não é verdade desde
+> `docs/ADR/ADR-004-Producao-Oracle-Cloud.md` (2026-09-05): o dono do produto decidiu que o
+> destino definitivo de produção passa a ser **Oracle Cloud Infrastructure, self-hosted**
+> (`docker-compose.oci.yml`), com uma instância real já provisionada e recebendo tráfego. Render
+> continua ativo em paralelo como **fallback durante a transição** (não descontinuado, não recebe
+> mais investimento de infraestrutura novo) até o cutover Oracle estar validado (backup/restore/
+> smoke = PASS) — ver [`docs/deploy/README.md`](../../docs/deploy/README.md) para o inventário
+> completo e sempre atualizado dos quatro caminhos. Esta página é a fonte de verdade sobre "qual é
+> o ambiente real" — se este runbook e `docs/deploy/README.md` voltarem a divergir no futuro,
+> `docs/deploy/README.md` prevalece e este arquivo deve ser corrigido para bater com ele.
 
-| Caminho | Status (histórico, ver correção acima) | Onde |
+| Caminho | Status (ver `docs/deploy/README.md` §1 para o estado sempre atualizado) | Onde |
 | --- | --- | --- |
-| Render (monólito Express: API + estático do Vite) + Supabase (Postgres/Storage) + Cloudflare (DNS/CDN) | Foi ativo em produção; **congelado** desde a migração local-first | `render.yaml`, `docs/deploy/producao.md` |
+| **Oracle Cloud Infrastructure, self-hosted** (`app`+`postgres`+`caddy`; Redis/worker opt-in via profile `queues`) | **Alvo definitivo de produção (ADR-004)** — instância real provisionada, recebendo tráfego; deploy automático via `deploy-oci.yml` pendente de ativação dos secrets SSH (ver `docs/deploy/oracle-cloud.md` §3.3), deploy manual via SSH funciona hoje | `docker-compose.oci.yml`, `docs/deploy/oracle-cloud.md` |
+| Render (monólito Express: API + estático do Vite) + Supabase (Postgres/Storage) + Cloudflare (DNS/CDN) | **Ativo, fallback durante a transição** — continua recebendo tráfego real hoje; não desligar antes do cutover Oracle validado | `render.yaml`, `docs/deploy/producao.md` |
 | Kubernetes/Helm/ArgoCD (`k8s/`, `charts/`, `argocd/`) | Aspiracional/legado, nenhum cluster real registrado | `charts/README.md`, `argocd/README.md`, `k8s/README.md` |
 
-> **Correção de registro (Onda 8):** a missão desta rodada citava "Render+Vercel" como caminho
-> real. Verificado nesta rodada — via `docs/deploy/producao.md` (decisão arquitetural explícita:
-> "Não há split Vercel/Render porque isso exigiria reescrever autenticação... para cookies
-> cross-domain") e via consulta direta ao workspace Render real (MCP Render, ver seção "Go-live"
-> abaixo) — **não existe Vercel neste projeto**. É um único serviço Render (`prospector-atlas`,
-> `srv-d9qtn8bm8hqs7395qtpg`) servindo API e frontend estático do mesmo processo Express. Não há
-> nenhum vestígio de Vercel em `render.yaml`, `package.json` ou no workspace consultado. Este
-> runbook usa "Render" para o caminho real a partir daqui.
+> **Correção de registro (Onda 8, ainda válida):** a missão citava "Render+Vercel" como caminho
+> real — verificado que **não existe Vercel neste projeto**, é um único serviço Render
+> (`prospector-atlas`, `srv-d9qtn8bm8hqs7395qtpg`) servindo API e frontend estático do mesmo
+> processo Express. A seção "Go-live (Render)" abaixo usa "Render" para esse caminho.
 
-Os passos abaixo cobrem os dois caminhos (Render real e k8s aspiracional); identifique qual se
-aplica antes de executar comandos `kubectl`/`helm`/`argocd` — eles não têm efeito nenhum se o
-incidente é no serviço Render real.
+Os passos abaixo cobrem os três caminhos com tráfego real ou potencial (Oracle Cloud, Render, k8s
+aspiracional); identifique qual se aplica antes de agir — comandos `docker compose -f docker-
+compose.oci.yml ...` não têm efeito nenhum se o incidente é no Render, e vice-versa, e comandos
+`kubectl`/`helm`/`argocd` não têm efeito nenhum enquanto não existir cluster real.
 
 ## 0. Go-live — passo a passo executável (Render)
 
@@ -123,6 +125,47 @@ aqui como pendência explícita para o usuário/gestão definir antes do primeir
 
 **Mecanismo (como), já confirmado tecnicamente** — ver seção 6, "Rollback via Render".
 
+## 0-OCI. Go-live e operação — Oracle Cloud (`docker-compose.oci.yml`, alvo definitivo de produção)
+
+Procedimento completo (provisionamento, firewall/VCN, segredos, cutover de domínio, backup/
+restore, migração de dado) já documentado em `docs/deploy/oracle-cloud.md` — não duplicado aqui.
+Esta seção cobre só o que um plantão de incidente precisa saber que é **diferente** do caminho
+Render:
+
+1. **Não há dashboard cloud** — tudo é `docker compose` via SSH na instância (IP público, ver
+   secret `OCI_SSH_HOST` ou o registro do operador). Comandos básicos, executados no diretório do
+   clone (`OCI_DEPLOY_PATH`, ver `docs/deploy/oracle-cloud.md` §3.3):
+   ```bash
+   docker compose --env-file .env.production -f docker-compose.oci.yml ps
+   docker compose --env-file .env.production -f docker-compose.oci.yml logs -f app
+   ```
+2. **Migração roda dentro do próprio container `app`, não como passo separado**: a imagem
+   (`Dockerfile`) tem `CMD ["sh", "-c", "npx prisma migrate deploy && exec npm run start"]` — se a
+   migração falhar, o container `app` sai (`Exited`), não fica "rodando com erro". `docker compose
+   ps` mostra o status `Exited`/`Restarting` (por causa de `restart: unless-stopped`, ele fica
+   tentando de novo em loop se a causa não for corrigida) — ver seção 2 abaixo.
+3. **Healthcheck do Compose só verifica `/health/live`** (processo vivo), não `/health/ready`
+   (banco) — `docker compose ps` mostrando `healthy` não garante que o Postgres está acessível.
+   Confirme sempre os dois: `curl -fsS http://127.0.0.1:3000/health/live` e `.../health/ready`
+   (de dentro da instância; de fora, via `https://<domínio>/health/ready` atrás do Caddy).
+4. **Deploy automático (`deploy-oci.yml`) só dispara depois de `ci.yml` verde em `main`** — mesmo
+   gate de qualidade do Render, mas **pendente de ativação** até os 4 secrets SSH existirem no
+   GitHub (ver `docs/deploy/oracle-cloud.md` §3.3). Enquanto isso, todo deploy é manual (`git pull`
+   + `./scripts/deploy-oci.sh` via SSH) — um incidente causado por "deploy não aconteceu" pode ser
+   simplesmente ninguém ter rodado o passo manual, não uma falha de infraestrutura.
+5. **Sem observabilidade centralizada (Prometheus/Grafana/Loki) para esta instância hoje** —
+   decisão de escopo registrada em `docker-compose.oci.yml` (cabeçalho) e
+   `docs/deploy/oracle-cloud.md` §11, não uma lacuna esquecida. Um incidente real na Oracle,
+   diferente do Render (que tem `InstanceDown`/`AIBudgetOverrun`/etc. via Prometheus local
+   apontando para a instância — quando alguém configurar isso), hoje só é descoberto por relato de
+   usuário ou por quem verificar `/health/*` manualmente. Ver seção 8 (lacunas conhecidas).
+6. **Rollback**: ver seção 6, "Rollback via Oracle Cloud (Docker Compose)".
+7. **Fila/worker**: mesmo desenho do Render (`ENABLE_QUEUES`), mas aqui `worker`+`redis` já existem
+   como serviços reais no `docker-compose.oci.yml` (profile `queues`, opt-in) — não é um serviço
+   "declarado mas nunca criado" como o `prospector-atlas-worker` do Render (ver seção 3 e 7). Se
+   `ENABLE_QUEUES=true` estiver ativo, confirme que o Render **não** está processando as mesmas
+   filas ao mesmo tempo (duplicaria jobs) — ver aviso no cabeçalho de `docker-compose.oci.yml`.
+
 ## Correlação de logs
 
 Toda request HTTP carrega `x-request-id` e `x-correlation-id` (gerados ou propagados por
@@ -132,45 +175,71 @@ incidente abaixo, comece pedindo ao usuário afetado (ou pegando do header de re
 `x-request-id`/`x-correlation-id` e filtre os logs agregados por ele — muito mais rápido que
 procurar por timestamp aproximado. Se o stack Loki local estiver rodando (`npm run infra:up`),
 use o mesmo campo como filtro LogQL: `{job="central-comercial"} | json | correlationId="<id>"`.
+Na instância Oracle (produção real), não há Loki centralizando logs hoje (ver §11 de
+`docs/deploy/oracle-cloud.md`) — filtre com `grep`/`jq` sobre a saída de `docker compose -f
+docker-compose.oci.yml logs app`, que já é JSON estruturado (Pino) e carrega os mesmos campos.
 
 ## 1. Aplicação indisponível (5xx generalizado / instância não responde)
 
-**Sintoma**: `InstanceDown` (Prometheus) ou relato de erro 5xx generalizado.
+**Sintoma**: `InstanceDown` (Prometheus, só aplicável onde o Prometheus já está de fato scrapeando
+a instância — hoje isso é só o stack local, não a instância Oracle nem o Render, ver seção 8) ou
+relato de erro 5xx generalizado.
 
 1. Checar health real, não só "site no ar": `GET /health/live` (processo vivo) e
    `GET /health/ready` (confirma `SELECT 1` no Postgres — se `/health/ready` falha com
    `Database unavailable`, o problema é o banco, não a aplicação).
-2. **Render**: dashboard → serviço `prospector-atlas` (`srv-d9qtn8bm8hqs7395qtpg`, confirmado
+2. **Oracle Cloud** (alvo definitivo, ver seção 0-OCI): via SSH,
+   `docker compose --env-file .env.production -f docker-compose.oci.yml ps` — confirme os status
+   dos containers `birthhub_app`, `birthhub_postgres`, `birthhub_caddy`. Se `birthhub_app` está
+   `Restarting`/`Exited`, é quase sempre falha de migração (seção 2) ou env var ausente/inválida
+   em `.env.production`. `docker compose ... logs --tail 200 app` mostra a causa. Se `caddy` está
+   com problema mas `app` está saudável, o sintoma é TLS/roteamento, não a aplicação — checar
+   `docker compose ... logs caddy` (renovação ACME falhando é a causa mais comum).
+3. **Render**: dashboard → serviço `prospector-atlas` (`srv-d9qtn8bm8hqs7395qtpg`, confirmado
    nesta rodada) → aba Logs/Events. Verificar se o deploy mais recente falhou no `startCommand`
    (`npx prisma migrate deploy && npm run start` — ver seção 2 abaixo se for isso; corrigido nesta
    rodada: a referência anterior apontava para "seção 3", que é "Fila travada", não "Falha de
    migração") ou se é o banco Supabase que está fora.
-3. **k8s/Helm** (se ativado): `kubectl get pods -n <namespace>`, `kubectl describe pod <pod>`,
+4. **k8s/Helm** (se ativado): `kubectl get pods -n <namespace>`, `kubectl describe pod <pod>`,
    `kubectl logs <pod> --previous` (se reiniciou). Ver `argocd app get prospector-atlas-<env>`
    para status de sync/health do ArgoCD.
-4. Se o Postgres (Supabase) está fora: incidente é do provedor, não corrigível por
-   redeploy/restart — verificar status page do Supabase.
+5. Se o Postgres está fora — Supabase (Render) é incidente do provedor, não corrigível por
+   redeploy/restart (verificar status page do Supabase); `birthhub_postgres` (Oracle) é o
+   container local da própria instância, então `docker compose ... logs postgres` + `docker
+   compose ... ps` (checar `healthy`/`unhealthy`) já diagnosticam a causa diretamente, sem
+   depender de terceiro.
 
 ## 2. Falha de migração (deploy travado)
 
 **Sintoma**: deploy não conclui; `MigrationJobFailed` (só aplicável ao caminho k8s aspiracional,
 requer kube-state-metrics — ver `alert.rules.yml`); no Render (caminho real, ver seção 0.2),
-`startCommand` falha antes de `npm run start` rodar.
+`startCommand` falha antes de `npm run start` rodar; na Oracle, o container `app` sai (`Exited`)
+antes de `npm run start` rodar (ver seção 0-OCI item 2).
 
-1. **Render**: aba Logs do deploy que falhou — a saída de `npx prisma migrate deploy` aparece
+1. **Oracle Cloud**: `docker compose --env-file .env.production -f docker-compose.oci.yml logs
+   app` — a saída de `npx prisma migrate deploy` aparece antes de qualquer log da aplicação, igual
+   ao Render. Diferença importante: como a migração roda dentro do `CMD` da própria imagem (não um
+   passo de deploy separado como o `startCommand` do Render), **não há "instância anterior"
+   continuando a servir tráfego** — se o container `app` cai e `restart: unless-stopped` fica
+   tentando de novo em loop contra a mesma migração quebrada, a aplicação fica fora do ar até
+   alguém corrigir a causa raiz e rodar `docker compose ... up -d --no-deps app` de novo. Isso é
+   uma diferença real de garantia entre os dois caminhos, não só de comando — documentar para quem
+   for decidir se vale a pena reproduzir o padrão `preDeployCommand`/instância separada do Render
+   aqui também.
+2. **Render**: aba Logs do deploy que falhou — a saída de `npx prisma migrate deploy` aparece
    ali antes de qualquer log da aplicação. A instância anterior continua servindo tráfego
    (`healthCheckPath` nunca passa para a nova instância) — não há downtime, mas o deploy fica
    bloqueado até corrigir.
-2. **k8s/Helm**: `kubectl get jobs -l app.kubernetes.io/component=migration`,
+3. **k8s/Helm**: `kubectl get jobs -l app.kubernetes.io/component=migration`,
    `kubectl logs job/<nome>-migrate-<revisão>`. O hook `pre-install,pre-upgrade`
    (`charts/prospector-atlas/templates/migration-job.yaml`) aborta o `helm upgrade`/sync do
    ArgoCD — o Deployment/Rollout novo nunca chega a ser aplicado, então não há tráfego servido
    contra schema quebrado.
-3. Causa raiz comum: migration com SQL inválido para os dados existentes, ou lock de tabela
+4. Causa raiz comum: migration com SQL inválido para os dados existentes, ou lock de tabela
    grande demais para o `activeDeadlineSeconds`/timeout do pooler. Ver
    `.claude/skills/database-integrity/SKILL.md` para diagnóstico de migration insegura — domínio
    do Agente 01, abrir handoff se a causa raiz for uma migration específica.
-4. **Nunca** rode `prisma db push` em produção como "solução rápida" — mascarra o histórico de
+5. **Nunca** rode `prisma db push` em produção como "solução rápida" — mascarra o histórico de
    migrations e diverge do schema real (ver `/AGENTS.md` bloqueador #5).
 
 ## 3. Fila travada (BullMQ)
@@ -194,6 +263,15 @@ relato de leads não enriquecidos/mensagens não enviadas.
    ver `.agents/handoffs/onda-6/16-para-00-remover-workers-de-server-ts.md`, `status:
    em-andamento`, corte proposital ainda não aplicado). Não assuma que o worker dedicado está
    rodando só porque `render.yaml` o declara.
+3b. **Quem processa a fila na Oracle**: diferente do Render, o serviço `worker`
+   (`docker-compose.oci.yml`, profile `queues`) **existe de verdade** como container próprio
+   (`birthhub_worker`) quando o profile está ativo — `docker compose --env-file .env.production -f
+   docker-compose.oci.yml --profile queues ps` mostra se ele está de pé. Se `ENABLE_QUEUES=true`
+   mas o profile `queues` não foi usado no `up`, o worker dedicado simplesmente não existe (mesmo
+   sintoma do Render — quem processa é o `app`, se `server.ts` ainda não teve os workers
+   removidos). Confirme sempre qual dos dois (Render ou Oracle) tem `ENABLE_QUEUES=true` ativo —
+   **nunca os dois ao mesmo tempo** (ver aviso no cabeçalho de `docker-compose.oci.yml`: consumers
+   duplicados reprocessam jobs).
 4. Se Redis está acessível mas jobs não avançam: checar logs do processo que está de fato
    processando (server.ts hoje, ou o worker dedicado quando for ativado) por exceção repetida no
    mesmo job (job "poison pill" sendo re-tentado infinitamente). No caminho k8s aspiracional,
@@ -235,20 +313,52 @@ blueprint. **Lacuna que precisa de confirmação humana com acesso ao dashboard 
 em Environment se `AI_MONTHLY_BUDGET_USD` está definida; se não estiver, este alerta fica
 `unknown` permanentemente em produção. Sem orçamento configurado, o custo de IA continua sendo
 registrado (`ai_usage_cost_usd_total` e a tabela `AILog`), só não há um limiar automático para
-alertar sobre estouro.
+alertar sobre estouro. Na Oracle, o mesmo vale para `.env.production` na instância — `scripts/
+deploy-oci.sh` não gera `AI_MONTHLY_BUDGET_USD` automaticamente (só os segredos essenciais listados
+em `docs/deploy/oracle-cloud.md` §3.2); confirme com `grep ^AI_MONTHLY_BUDGET_USD= .env.production`
+na instância (reporta só se está presente, nunca o valor em chat/log, ver §10 do mesmo guia).
 
 1. Verificar `verify:ai` (`npm run verify:ai`, script `scripts/verify-ai-studio.ts`) — cobre
    conectividade dos provedores de IA configurados.
 2. Checar quais chaves de provedor estão presentes no ambiente real (`GROQ_API_KEY`,
-   `GEMINI_API_KEY` no Render — ver `render.yaml`) vs. as que o código tenta em ordem de
-   fallback (`src/lib/ai/gateway.ts`) — "inacessível" às vezes é só "chave ausente", não uma
-   falha de infraestrutura.
+   `GEMINI_API_KEY` no Render, ou nas variáveis correspondentes de `.env.production` na instância
+   Oracle) vs. as que o código tenta em ordem de fallback (`src/lib/ai/gateway.ts`) —
+   "inacessível" às vezes é só "chave ausente", não uma falha de infraestrutura.
 3. Se `AI_MONTHLY_BUDGET_USD` estiver configurada e `AIBudgetOverrun` disparar: orçamento de IA é
    lógica do Agente 07 (não há enforcement que bloqueie chamadas automaticamente — a métrica só
    alerta, não corta). Se uma ferramenta do Hub de IA está bloqueada, a correção de lógica é do
    Agente 07; este runbook cobre só o "o que checar primeiro" antes de escalar.
 
 ## 6. Rollback
+
+### Rollback via Oracle Cloud (Docker Compose, alvo definitivo de produção)
+
+Sem mecanismo de rollback automatizado ou versionado hoje (nenhum equivalente ao histórico de
+deploys do Render) — é uma sequência manual via SSH na instância:
+
+- **Reverter o código**: `git fetch origin && git checkout <commit-anterior-conhecido-bom>` (ou
+  `git reset --hard <sha>` se já estiver em `main` e não houver trabalho local a preservar — a
+  instância é um deploy, não um ambiente de desenvolvimento) seguido de
+  `docker compose --env-file .env.production -f docker-compose.oci.yml up -d --build app`
+  (rebuild só do serviço `app`; `postgres`/`caddy` não precisam de rebuild para um rollback de
+  código de aplicação).
+- **Migração roda de novo no boot do container revertido** (mesmo `CMD` do Dockerfile,
+  seção 0-OCI item 2) — se a versão revertida espera um schema mais antigo e a migration mais
+  recente já rodou e é destrutiva, o rollback de código não desfaz o schema. Mesma ressalva de
+  sempre: avaliar com o Agente 01 se é necessária uma migration de compensação antes de reverter.
+- **`.env.production` não é versionado por deploy** (mesma ressalva do Render abaixo) — reverter o
+  código não reverte env vars alteradas manualmente na instância.
+- **Sem downtime automático conhecido durante o rollback**: diferente do Render (health check
+  antes de rotear tráfego para a instância nova), aqui `docker compose up -d --build app` substitui
+  o container em execução diretamente — há uma janela real de indisponibilidade entre o container
+  antigo parar e o novo (rebuildado, migrado) ficar pronto, maior que a do Render por não ter uma
+  instância "nova" paralela à "antiga". Ainda não medido/documentado como SLA — considerar isso ao
+  decidir a hora de um rollback não-emergencial.
+- **`deploy-oci.yml` (GitHub Actions), quando os secrets estiverem ativados, também não serve para
+  rollback a um commit específico** — dispara `git fetch`/`reset --hard origin/main` (sempre o HEAD
+  de `main`), mesma limitação do `trigger_deploy` do Render descrita abaixo. Reverter para um
+  commit anterior específico continua sendo a sequência manual acima, ou revertendo o commit em
+  `main` via PR e deixando o pipeline normal reimplantar o novo HEAD.
 
 ### Rollback via Render (caminho real de produção)
 
@@ -335,7 +445,12 @@ Isso é mais rápido que `helm rollback`/`argocd app rollback` quando a versão 
 janela de preview (antes da promoção automática) — a versão "blue" (estável) nunca parou de
 servir tráfego de produção durante esse período.
 
-## 7. Worker dedicado (`worker.ts`) — observabilidade preparada, ainda não aplicável
+## 7. Worker dedicado (`worker.ts`) — observabilidade preparada, ainda não aplicável (Render)
+
+**Esta seção é específica do Render** — no caminho Oracle Cloud o worker dedicado já existe como
+serviço real opt-in (`docker-compose.oci.yml`, profile `queues`, ver seção 0-OCI item 7 e seção 3
+item "3b"), não é uma pendência de criação. O que segue documenta só o estado (ainda pendente) do
+Render.
 
 Resposta ao handoff `.agents/handoffs/onda-6/16-para-10-observabilidade-worker.md` (Agente 16,
 Onda 6, `status: aberto`).
@@ -383,18 +498,19 @@ que a Onda 4 evitou para as outras métricas (regra "pronta" mas enganosa). Deix
 de `server.ts`) deve avisar o Agente 10 (ou adicionar a regra diretamente, seguindo o padrão dos
 grupos `ativos-hoje` deste arquivo) para promover isso a uma regra real.
 
-## 8. Lacunas conhecidas (Onda 8 — não inventadas, documentadas para decisão)
+## 8. Lacunas conhecidas (Onda 8 — não inventadas, documentadas para decisão; atualizado em ACH-10-01 com o gap real da Oracle Cloud)
 
 | Lacuna | Detalhe | Quem decide/resolve |
 | --- | --- | --- |
+| **Produção Oracle Cloud sem observabilidade centralizada** | Alvo definitivo de produção (ADR-004) já recebendo tráfego real, mas `docker-compose.oci.yml` não sobe Prometheus/Grafana/Loki e nenhum Prometheus externo está scrapeando a instância — decisão de escopo MVP registrada em `docs/deploy/oracle-cloud.md` §11 (não uma lacuna esquecida: a barreira técnica real é que `/metrics` exige o header `x-platform-operator-token` da própria aplicação — `requirePlatformOperator` — que o `scrape_config` nativo do Prometheus não consegue enviar sem mudança de código fora do escopo desta correção). Até isso ser resolvido, um incidente real na Oracle só é descoberto por relato de usuário ou checagem manual de `/health/*` — ver seção 0-OCI item 5. | Agente 10 (mecanismo de auth compatível com scrape) + Agente 01/08 (se a solução exigir mudar `requirePlatformOperator` ou adicionar um exportador dedicado) |
 | Sem dashboard Grafana versionado | `infrastructure/observability/` tem datasources (`grafana-datasources.yml`) mas nenhum `dashboards/*.json` — Grafana sobe "em branco", só com os datasources provisionados. Não criado nesta rodada por falta de tempo dentro do escopo de go-live (priorizado runbook/alertas executáveis) — fica como próximo passo, não crítico para o go-live em si (Prometheus `/alerts` e consultas ad-hoc já cobrem o mínimo). | Agente 10, próxima rodada |
-| `AI_MONTHLY_BUDGET_USD` possivelmente não configurada em produção | Não está em `render.yaml`; não é possível confirmar via API/MCP se foi setada manualmente no dashboard. Sem ela, `AIBudgetOverrun` fica `unknown` para sempre. | Confirmação humana (dashboard Render) + decisão de negócio do valor do orçamento |
+| `AI_MONTHLY_BUDGET_USD` possivelmente não configurada em produção | Não está em `render.yaml`; não é possível confirmar via API/MCP se foi setada manualmente no dashboard. Na Oracle, `scripts/deploy-oci.sh` também não a gera automaticamente — mesmo gap, ver seção 5. Sem ela, `AIBudgetOverrun` fica `unknown` permanentemente em ambos os caminhos. | Confirmação humana (dashboard Render / SSH na instância Oracle) + decisão de negócio do valor do orçamento |
 | Métrica HTTP por status code (`HighErrorRate5xx`) | Auto-instrumentação OTel emite métricas de runtime/GC mas não a métrica HTTP com a versão instalada de `instrumentation-http`. Ver `alert.rules.yml` para o diagnóstico completo. | Agente 01 (dono de `src/lib/tracing.ts`) |
-| `MigrationJobFailed` (grupo k8s) não tem contraparte real no Render | Não é uma lacuna a fechar — é a confirmação de que o caminho k8s é aspiracional. A garantia equivalente no Render já existe via `startCommand`+`healthCheckPath` (seção 0.2). Nenhuma ação necessária a menos que o projeto migre para k8s de verdade. | N/A |
-| Quem aciona rollback e por qual canal | Ver seção 0.4 — decisão organizacional, não técnica. | Usuário/gestão |
-| Worker dedicado sem observabilidade aplicável | Ver seção 7 — não há processo separado rodando ainda. | Agente 08 (ativação) + Agente 10 (regra de alerta quando ativar) |
+| `MigrationJobFailed` (grupo k8s) não tem contraparte real no Render | Não é uma lacuna a fechar — é a confirmação de que o caminho k8s é aspiracional. A garantia equivalente no Render já existe via `startCommand`+`healthCheckPath` (seção 0.2); na Oracle, via o `CMD` da imagem (seção 0-OCI item 2). Nenhuma ação necessária a menos que o projeto migre para k8s de verdade. | N/A |
+| Quem aciona rollback e por qual canal | Ver seção 0.4 — decisão organizacional, não técnica. Vale para os dois caminhos com tráfego real (Render e Oracle). | Usuário/gestão |
+| Worker dedicado sem observabilidade aplicável (Render) | Ver seção 7 — não há processo separado rodando ainda no Render. Não se aplica à Oracle, onde o worker (profile `queues`) já existe como serviço real. | Agente 08 (ativação) + Agente 10 (regra de alerta quando ativar) |
 | `http_request_count` nativo do Render vazio para `prospector-atlas` | Confirmado via `get_metrics` do MCP Render nesta rodada — pode ser limitação do plano `free`, falta de tráfego capturado no intervalo consultado, ou outra causa não identificada. Não impede os `/health/*` nem os logs de servirem como fonte de verdade, mas reduz a confiança em métricas nativas do Render para SLO de erro 5xx (reforça a importância de resolver a lacuna de `HighErrorRate5xx` acima). | Confirmação humana (dashboard Render, plano pago) se for crítico |
-| Sem Alertmanager configurado | Já documentado no cabeçalho de `alert.rules.yml` desde a Onda 4 — alertas ficam visíveis em `/alerts` do Prometheus mas não notificam ninguém (Slack/e-mail/PagerDuty) até um receptor ser configurado. Continua verdade nesta rodada. | Decisão de produto/operação (qual canal usar) |
+| Sem Alertmanager configurado | Já documentado no cabeçalho de `alert.rules.yml` desde a Onda 4 — alertas ficam visíveis em `/alerts` do Prometheus mas não notificam ninguém (Slack/e-mail/PagerDuty) até um receptor ser configurado. Continua verdade nesta rodada, e continuaria mesmo se a lacuna de observabilidade da Oracle acima fosse fechada. | Decisão de produto/operação (qual canal usar) |
 
 ## 9. Verificação pós-incidente
 

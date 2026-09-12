@@ -1,7 +1,7 @@
 - De: Agente 15 — Segurança Aplicada e Rotação de Segredos
 - Para: Agente 01 — Plataforma, Segurança e Dados
 - Onda: roadmap-v2-transversais
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
@@ -70,3 +70,25 @@ Encontrado durante auditoria de `scripts/security/**` + `src/lib/security/` dest
 (roadmap-v2-transversais). Não é o achado conhecido de `backups/prospector-*.dump` (esse
 permanece como decisão humana separada, sem novidade nesta auditoria — confirmei via `git
 ls-files` que nenhum `.dump` está rastreado no worktree atual).
+
+## Resolução
+
+A correção sugerida foi aplicada (commit `fbcad9a1`, "fix(00): resolve os 5 handoffs residuais do
+Roadmap v2 (#291)"). `docs/security/runbooks/INCIDENT_RESPONSE.md`, Fase 2 (Containment), hoje lê:
+
+> "Immediately rotate `BETTER_AUTH_SECRET` (invalidates all active sessions — see
+> `docs/security/SECRETS_MANAGER_MIGRATION.md` for sequencing). This project authenticates via a
+> Better Auth session cookie, not JWT Access/Refresh tokens — see `docs/security/THREAT_MODEL.md`."
+
+seguido da orientação sobre credencial de integração vazada e `CREDENTIALS_ENCRYPTION_KEY`, como
+proposto. `JWT_SECRET`/`JWT_REFRESH_SECRET` não aparecem mais neste arquivo.
+
+A revisão dos placeholders `JWT_SECRET`/`JWT_REFRESH_SECRET` nos workflows de CI
+(`ci.yml`, `cd-homolog.yml`, `market-intelligence-ci.yml`, `onda-2.5-validation.yml`,
+`endpoint-latency-budget.yml`), mencionada como "aproveitar para revisar" mas explicitamente fora
+do escopo deste handoff (decisão do dono de Pipelines de CI/Agente 08), não foi verificada nesta
+atualização — não bloqueia o fechamento deste item, que tratava apenas do texto do runbook.
+
+Validação: revisão manual confirmando que a Fase 2 cita `BETTER_AUTH_SECRET` e nenhuma outra
+referência a `JWT_SECRET`/`JWT_REFRESH_SECRET` permanece em
+`docs/security/runbooks/INCIDENT_RESPONSE.md`.

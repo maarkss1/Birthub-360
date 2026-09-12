@@ -18,8 +18,7 @@ para um cliente real sem ninguém ter aprovado.
 3. `AUTONOMIA_COMERCIAL_24X7.md` — **inteiro**: os 5 papéis, os gatilhos monitorados, os modos `supervised`/`full`, as 7 travas do envio autônomo, o "Critério honesto de Closer autônomo" e as 6 próximas integrações;
 4. `.agents/completion/02-mapa-plataforma.md` → §4 e §5.1;
 5. `src/features/intelligence/agents/` inteiro — `base.agent.ts`, `supervisor.agent.ts` (roteamento, `MAX_STEPS`, `enforceLeadGuard`, `fallbackDecision`), `sdr.agent.ts`, `sdr-agent.ts`, `bdr.agent.ts`, `closer.agent.ts`, `crm.agent.ts`, `ops.agent.ts`, `learning.agent.ts`, `swarm.constants.ts`;
-6. `src/features/intelligence/services/guardrails.service.ts`, `aiPendingAction.service.ts`, `pending-actions.service.ts`, `autonomyRoleRunner.service.ts`, `swarmScheduler.service.ts`;
-7. `src/lib/security/piiSanitizer.ts` — **existe e nenhum import o alcança**.
+6. `src/features/intelligence/services/guardrails.service.ts`, `aiPendingAction.service.ts`, `pending-actions.service.ts`, `autonomyRoleRunner.service.ts`, `swarmScheduler.service.ts`.
 
 ## Escopo
 Propriedade exclusiva:
@@ -28,7 +27,6 @@ Propriedade exclusiva:
 - `src/features/intelligence/services/winLossAnalysis.worker.ts`
 - `src/features/intelligence/components/{SwarmDashboard,AIPendingActions}.tsx`
 - `src/lib/queue/swarmScheduler.worker.ts` e `src/lib/queue/agent.worker.ts`
-- `src/lib/security/piiSanitizer.ts`
 
 **Fora do escopo:** `src/lib/ai/gateway.ts`, RAG (`src/features/knowledge/**`,
 `vectorStore.ts`) e o motor de automação são do **07**. `src/features/intelligence/tools/**` é

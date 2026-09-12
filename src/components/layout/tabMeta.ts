@@ -33,6 +33,7 @@ import {
   ShieldCheck,
   Mic,
   Briefcase,
+  Stethoscope,
 } from 'lucide-react';
 
 /**
@@ -101,7 +102,7 @@ export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
   'daily-plan': { label: 'Plano Diário', icon: CalendarCheck },
   commercial_intelligence: { label: 'Comercial Inteligente', icon: LineChart },
   copiloto_ia: { label: 'Copiloto IA', icon: Mic },
-  'sdr-diagnostic-joao': { label: 'Plano Diário', icon: CalendarCheck },
+  'sdr-diagnostic-joao': { label: 'Diagnóstico SDR', icon: Stethoscope },
   prospect: { label: 'Prospecção', icon: Search },
   crm: { label: 'Pipeline CRM', icon: LayoutTemplate },
   crm360: { label: 'Cockpit CRM', icon: Gauge },

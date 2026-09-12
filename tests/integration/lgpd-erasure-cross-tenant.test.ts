@@ -48,6 +48,7 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       await withTenant(org, async () => {
         await prisma.whatsAppMessage.deleteMany({ where: { organizationId: org } });
         await prisma.conversationSignal.deleteMany({ where: { organizationId: org } });
+        await prisma.voiceCallLog.deleteMany({ where: { organizationId: org } });
       });
     }
     // TimelineEvent não tem organizationId próprio (filtra via Lead pai — ver schema.prisma) — o
@@ -173,6 +174,35 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       }),
     );
 
+    await withTenant(ORG_A, async () =>
+      prisma.voiceCallLog.create({
+        data: {
+          organizationId: ORG_A,
+          leadId: leadA.id,
+          providerCallId: `call-a-${suffix}`,
+          outcome: 'connected_positive',
+          durationSeconds: 120,
+          summary: 'Resumo da ligação com o titular A',
+          transcript: 'Transcrição completa da ligação com o titular A',
+          recordingUrl: 'https://cdn.example.com/recordings/call-a.mp3',
+        },
+      }),
+    );
+    await withTenant(ORG_B, async () =>
+      prisma.voiceCallLog.create({
+        data: {
+          organizationId: ORG_B,
+          leadId: leadB.id,
+          providerCallId: `call-b-${suffix}`,
+          outcome: 'connected_positive',
+          durationSeconds: 90,
+          summary: 'Resumo da ligação com o titular B',
+          transcript: 'Transcrição completa da ligação com o titular B',
+          recordingUrl: 'https://cdn.example.com/recordings/call-b.mp3',
+        },
+      }),
+    );
+
     // --- Ação sob teste: apaga o titular de ORG_A (RLS real — eraseDataSubject roda sob o
     // tenant da própria organização passada, não sob bypass). ---
     const result = await eraseDataSubject({ organizationId: ORG_A, contactId: contactA.id });
@@ -182,6 +212,7 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       whatsAppMessagesMasked: 1,
       conversationSignalsRedacted: 1,
       timelineEventsRedacted: 1,
+      voiceCallLogsRedacted: 1,
       alreadyAnonymized: false,
     });
 
@@ -214,12 +245,14 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       whatsAppMessage: await prisma.whatsAppMessage.findFirst({ where: { contactId: contactA.id } }),
       conversationSignal: await prisma.conversationSignal.findFirst({ where: { leadId: leadA.id } }),
       timelineEvent: await prisma.timelineEvent.findFirst({ where: { leadId: leadA.id } }),
+      voiceCallLog: await prisma.voiceCallLog.findFirst({ where: { leadId: leadA.id } }),
       leadList: await prisma.lead.findMany({ where: { organizationId: ORG_A } }),
     }));
     expect(crossTenantReadFromB.contact).toBeNull();
     expect(crossTenantReadFromB.whatsAppMessage).toBeNull();
     expect(crossTenantReadFromB.conversationSignal).toBeNull();
     expect(crossTenantReadFromB.timelineEvent).toBeNull();
+    expect(crossTenantReadFromB.voiceCallLog).toBeNull();
     expect(crossTenantReadFromB.leadList).toEqual([]);
 
     // --- 4/5. ConversationSignal de ORG_A redigido, ORG_B intacto. Nenhuma dessas tabelas está no
@@ -260,6 +293,27 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       prisma.whatsAppMessage.findFirstOrThrow({ where: { contactId: contactB.id } }),
     );
     expect(waBAfter.body).toBe('Mensagem de PII do titular B');
+
+    // --- 10/11. VoiceCallLog de ORG_A redigido (transcript/summary/recordingUrl removidos,
+    // outcome/durationSeconds/createdAt preservados — ACH-01-02), ORG_B intacto. ---
+    const voiceCallLogAAfter = await withTenant(ORG_A, async () =>
+      prisma.voiceCallLog.findFirstOrThrow({ where: { leadId: leadA.id } }),
+    );
+    expect(voiceCallLogAAfter.transcript).toBeNull();
+    expect(voiceCallLogAAfter.summary).toBeNull();
+    expect(voiceCallLogAAfter.recordingUrl).toBeNull();
+    expect(voiceCallLogAAfter.outcome).toBe('connected_positive');
+    expect(voiceCallLogAAfter.durationSeconds).toBe(120);
+    expect(voiceCallLogAAfter.createdAt).toBeInstanceOf(Date);
+
+    const voiceCallLogBAfter = await withTenant(ORG_B, async () =>
+      prisma.voiceCallLog.findFirstOrThrow({ where: { leadId: leadB.id } }),
+    );
+    expect(voiceCallLogBAfter.transcript).toBe('Transcrição completa da ligação com o titular B');
+    expect(voiceCallLogBAfter.summary).toBe('Resumo da ligação com o titular B');
+    expect(voiceCallLogBAfter.recordingUrl).toBe('https://cdn.example.com/recordings/call-b.mp3');
+    expect(voiceCallLogBAfter.outcome).toBe('connected_positive');
+    expect(voiceCallLogBAfter.durationSeconds).toBe(90);
 
     // --- Idempotência (garantia documentada no docstring de eraseDataSubject): rodar de novo
     // sobre um titular já anonimizado não falha, não duplica efeito, e sinaliza alreadyAnonymized.

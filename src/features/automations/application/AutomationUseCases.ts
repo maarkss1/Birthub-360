@@ -14,9 +14,15 @@ import {
 
 // 'Lead estagnado' faltava aqui (achado do Piloto 018) apesar de já existir no enum Prisma
 // (Lead_Estagnado), no formulário da UI (`automations.api.ts` já oferecia a opção), no motor
-// (`automation.engine.ts`) e ser disparado de verdade por dois jobs de fundo
-// (`stagnation-scanner.service.ts`/`stalledLead.worker.ts`) — toda submissão com esse gatilho pela
-// tela sempre falhava aqui, no `automationSchema.parse`, antes mesmo de chegar no controller.
+// (`automation.engine.ts`) e ser disparado de verdade por `stagnation-scanner.service.ts` — toda
+// submissão com esse gatilho pela tela sempre falhava aqui, no `automationSchema.parse`, antes
+// mesmo de chegar no controller.
+// (ACH-16-04, 2026-09-11: `stalledLead.worker.ts`, citado aqui antes como o segundo job que
+// disparava este gatilho, nunca foi de fato instanciado por nenhum entrypoint — `worker.ts` e
+// `src/bootstrap/workers.ts` só ligam `stagnation-scanner.service.ts`. Removido como código morto;
+// já havia sido documentado e recomendado para remoção em
+// `docs/release/FINALIZATION_REPORT_2026-09-04.md` (achado R7) sem ter sido executado naquele
+// momento.)
 export const AUTOMATION_TRIGGERS = [
   'Lead criado',
   'Lead mudou de status',

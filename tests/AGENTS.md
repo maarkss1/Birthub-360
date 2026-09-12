@@ -37,7 +37,7 @@ ENV-001 (`.agents/completion/02-mapa-plataforma.md` → §7.1): `test:unit` 706/
 ```bash
 sudo dockerd > /tmp/dockerd.log 2>&1 &
 ```
-Em ambiente de agente, os containers `atlas_postgres`/`atlas_redis`/`atlas_meilisearch` costumam já
+Em ambiente de agente, os containers `birthhub_postgres`/`birthhub_redis`/`birthhub_meilisearch` costumam já
 vir compartilhados entre worktrees da mesma onda — confira com `docker ps` antes de tentar subir de
 novo.
 
@@ -60,7 +60,7 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium-1194/chrome-linux/chrom
 ```
 
 ### 5. Containers compartilhados entre múltiplos worktrees (`git worktree`)
-`docker-compose.yml` fixa `container_name: atlas_postgres/atlas_redis/atlas_meilisearch` de
+`docker-compose.yml` fixa `container_name: birthhub_postgres/birthhub_redis/birthhub_meilisearch` de
 propósito, para todo script de bootstrap sempre achar o mesmo nome. Isso conflita com múltiplos
 worktrees rodando `docker compose up` a partir de diretórios diferentes (cada diretório é um
 "projeto" compose distinto, mas `container_name` é global ao daemon) — o segundo worktree recebe
@@ -68,7 +68,7 @@ worktrees rodando `docker compose up` a partir de diretórios diferentes (cada d
 já detecta os três containers já rodando (de qualquer projeto compose) e pula o `docker compose up`
 nesse caso — não é preciso setar `COMPOSE_PROJECT_NAME` manualmente. Se mesmo assim aparecer esse
 conflito (ex.: só 1 ou 2 dos três containers de pé), pare os containers parciais
-(`docker stop atlas_postgres atlas_redis atlas_meilisearch`) e rode de novo, ou alinhe
+(`docker stop birthhub_postgres birthhub_redis birthhub_meilisearch`) e rode de novo, ou alinhe
 `COMPOSE_PROJECT_NAME` com o worktree que os criou primeiro.
 
 ### 6. Testes marcados como skip e o motivo de cada um

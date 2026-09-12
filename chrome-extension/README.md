@@ -97,7 +97,7 @@ real do Google Meet — precisa de um passo manual num Chrome de verdade antes d
    reatualizado. Sem esse passo no servidor, a extensão erra com CORS mesmo com a URL certa.
 2. **URL do backend — já configurada como padrão**: `DEFAULT_API_BASE_URL` (`src/api.js`) e
    `host_permissions` (`manifest.json`) já apontam para a instância Oracle Cloud de produção
-   (`http://163.176.150.147`, ADR-004 — ainda sem domínio/TLS, ver
+   (`http://168.138.147.145`, ADR-004 — ainda sem domínio/TLS, ver
    `docs/deploy/oracle-cloud.md` §7). Trocar para `https://<domínio>` assim que o cutover de
    domínio acontecer. A aba "Configurações" do side panel continua existindo para apontar pra
    outro ambiente (ex.: `localhost:3005` em desenvolvimento) sem precisar editar código — a

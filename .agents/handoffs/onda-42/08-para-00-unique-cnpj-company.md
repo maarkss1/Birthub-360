@@ -2,10 +2,33 @@
 - Para: 00 (roteamento) / Agente 01 (dono real de `prisma/schema.prisma` e migrações, por
   `AGENTS.md` linhas 251-252)
 - Onda: 42
-- Status: aberto
-- Prioridade: média-alta (bloqueia a garantia real de identidade única de empresa; não bloqueia o
-  que esta onda entregou — a resolução determinística já funciona sem o `@@unique`, só não é
-  garantida em nível de banco)
+- Status: resolvido — `@@unique([organizationId, cnpj])` está aplicado em `Company`
+  (`prisma/schema.prisma` linha ~299) e em `Prospect` (linha ~2903), pelas duas migrations
+  `prisma/migrations/20260830120000_company_organization_cnpj_unique/migration.sql` e
+  `prisma/migrations/20260902040000_prospect_organization_cnpj_unique/migration.sql`, ambas já
+  aplicadas. As duas seguem exatamente o roteiro pedido neste handoff: normalizam o CNPJ existente
+  para dígitos puros (tratando `''` como `NULL`), abortam com `RAISE EXCEPTION` se sobrar grupo
+  duplicado real depois da normalização (decisão de merge fica para humano, não para a migration),
+  e só então criam o índice único composto por `organizationId`. A migration de `Prospect` também
+  corrigiu, de quebra, um unique global indevido (`Prospect_cnpj_key`, sem escopo de tenant —
+  bloqueava uma organização de cadastrar um CNPJ já usado por outra), substituindo-o pelo unique
+  por tenant.
+- Item separado, ainda pendente (não implementado neste handoff — fora do escopo do item de
+  auditoria ACH-08-03, que pediu só a atualização deste status): tratamento explícito do erro
+  Prisma `P2002` na criação de `Company`. Confirmado no código atual que nenhum dos dois pontos de
+  escrita trata a colisão:
+  - `PrismaCompanyRepository.ts::create` (`src/features/companies/infra/PrismaCompanyRepository.ts`,
+    linha ~92-101) chama `prisma.company.create` sem `try/catch` — uma colisão de
+    `(organizationId, cnpj)` sobe hoje como erro 500 cru em vez de uma mensagem "empresa com este
+    CNPJ já existe".
+  - O fluxo de aprovação 1-clique do catálogo de Market Intelligence também não trata `P2002` no
+    `prisma.company.create` (linha ~341). O arquivo mudou de nome desde que este handoff foi
+    escrito — era `marketIntelligence.service.ts`, hoje é
+    `src/features/market-intelligence/server/marketIntelligenceCompany.service.ts`, função
+    `approveToPipeline` — mas o comportamento (sem tratamento de `P2002`) é o mesmo.
+- Prioridade (item pendente acima): média-alta (bloqueia a garantia real de identidade única de
+  empresa; não bloqueia o que esta onda entregou — a resolução determinística já funciona sem o
+  `@@unique`, só não é garantida em nível de banco)
 
 ## Contexto (dossiê CPI, DEC-16, opção A)
 

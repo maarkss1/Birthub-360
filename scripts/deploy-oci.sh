@@ -77,13 +77,43 @@ run_sudo() {
 
 # 1. Configura regras de firewall no Linux se houver permissão
 echo "🔒 1. Verificando firewall local..."
+
+# 5432: acesso direto ao Postgres pelas máquinas de desenvolvimento (ver comentário do serviço
+# `postgres` em docker-compose.oci.yml). ACH-10-02: a Security List/NSG da VCN (docs/deploy/oracle-
+# cloud.md 2.1/4.2) é a camada primária, mas defesa em profundidade exige que o firewall do host
+# TAMBÉM restrinja por IP de origem — nunca liberar 5432 para 0.0.0.0/0 aqui. A faixa permitida vem
+# de POSTGRES_ALLOWED_CIDRS (lista separada por vírgula de IPs/CIDRs, ex.:
+# `POSTGRES_ALLOWED_CIDRS="203.0.113.10/32,198.51.100.0/24" ./scripts/deploy-oci.sh`). Sem essa
+# variável, a porta 5432 NÃO é liberada no firewall do host — a aplicação e o Caddy continuam
+# funcionando normalmente (só a conexão direta de máquinas de desenvolvimento fica bloqueada até a
+# variável ser definida).
+POSTGRES_CIDR_LIST=()
+if [ -n "${POSTGRES_ALLOWED_CIDRS:-}" ]; then
+    IFS=',' read -ra _RAW_PG_CIDRS <<< "$POSTGRES_ALLOWED_CIDRS"
+    for _raw_cidr in "${_RAW_PG_CIDRS[@]}"; do
+        _cidr="$(printf '%s' "$_raw_cidr" | tr -d '[:space:]')"
+        [ -z "$_cidr" ] && continue
+        POSTGRES_CIDR_LIST+=("$_cidr")
+    done
+fi
+
+if [ "${#POSTGRES_CIDR_LIST[@]}" -eq 0 ]; then
+    echo "ℹ️  POSTGRES_ALLOWED_CIDRS não definida (ou vazia) — a porta 5432 NÃO será liberada no"
+    echo "    firewall do host. Isso é intencional (defesa em profundidade — ACH-10-02): a Security"
+    echo "    List da VCN sozinha não é considerada suficiente. Defina POSTGRES_ALLOWED_CIDRS com o(s)"
+    echo "    IP(s)/CIDR(s) de origem permitido(s) para liberar o acesso direto. Ver 'Auditoria"
+    echo "    periódica' em docs/deploy/oracle-cloud.md (seção 4.2)."
+else
+    echo "🔐 Porta 5432 será liberada no firewall do host apenas para: ${POSTGRES_CIDR_LIST[*]}"
+fi
+
 if command -v iptables &> /dev/null; then
     run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT 2>/dev/null || true
     run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT 2>/dev/null || true
-    # 5432: acesso direto ao Postgres pelas máquinas de desenvolvimento (ver comentário do serviço
-    # `postgres` em docker-compose.oci.yml). A restrição por IP de origem fica na Security List da
-    # VCN (docs/deploy/oracle-cloud.md 2.1), avaliada antes de qualquer regra do host.
-    run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 5432 -j ACCEPT 2>/dev/null || true
+    for _cidr in "${POSTGRES_CIDR_LIST[@]-}"; do
+        [ -z "$_cidr" ] && continue
+        run_sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 5432 -s "$_cidr" -j ACCEPT 2>/dev/null || true
+    done
     if command -v netfilter-persistent &> /dev/null; then
         run_sudo netfilter-persistent save 2>/dev/null || true
     fi
@@ -92,8 +122,14 @@ fi
 # Oracle Linux 8/9 (imagem padrão da OCI) usa firewalld; sem isto a regra iptables acima pode ser
 # sobrescrita no próximo reload do firewalld.
 if command -v firewall-cmd &> /dev/null; then
-    for port in 80 443 5432; do
+    for port in 80 443; do
         run_sudo firewall-cmd --permanent --add-port="${port}/tcp" 2>/dev/null || true
+    done
+    for _cidr in "${POSTGRES_CIDR_LIST[@]-}"; do
+        [ -z "$_cidr" ] && continue
+        _family="ipv4"
+        case "$_cidr" in *:*) _family="ipv6" ;; esac
+        run_sudo firewall-cmd --permanent --add-rich-rule="rule family=\"${_family}\" source address=\"${_cidr}\" port protocol=\"tcp\" port=\"5432\" accept" 2>/dev/null || true
     done
     run_sudo firewall-cmd --reload 2>/dev/null || true
 fi
@@ -102,7 +138,10 @@ if command -v ufw &> /dev/null; then
     run_sudo ufw allow 80/tcp 2>/dev/null || true
     run_sudo ufw allow 443/tcp 2>/dev/null || true
     run_sudo ufw allow 22/tcp 2>/dev/null || true
-    run_sudo ufw allow 5432/tcp 2>/dev/null || true
+    for _cidr in "${POSTGRES_CIDR_LIST[@]-}"; do
+        [ -z "$_cidr" ] && continue
+        run_sudo ufw allow from "$_cidr" to any port 5432 proto tcp 2>/dev/null || true
+    done
 fi
 
 # 2. Detecta ou instala Docker e Docker Compose

@@ -29,7 +29,7 @@ describe('piiFields — cifra em repouso de credenciais de integração', () => 
     ]);
     expect(ENCRYPTED_MODEL_FIELDS.BitrixConnection).toEqual(['webhookUrl', 'webhookSecret']);
     expect(ENCRYPTED_MODEL_FIELDS.ThreeCXConnection).toEqual(['apiKey', 'apiSecret']);
-    expect(ENCRYPTED_MODEL_FIELDS.VoiceHubConnection).toEqual(['apiKey']);
+    expect(ENCRYPTED_MODEL_FIELDS.VoiceHubConnection).toEqual(['apiKey', 'webhookSecret']);
     expect(ENCRYPTED_MODEL_FIELDS.Account).toEqual(['accessToken', 'refreshToken', 'idToken']);
   });
 

@@ -39,7 +39,7 @@ A plataforma é um SPA React 19 + Vite servido por um backend Express único (`s
 | Notificações | `src/features/notifications/components/Notifications.tsx` | ✅ Completo |
 | Automações | `src/features/automations/components/Automations.tsx` | ✅ Completo (regra-real, distinta do "Guia de Automação" dentro do Hub de IA) |
 | Equipe | `src/features/team/components/Team.tsx` | ✅ Completo, admin-only |
-| Configurações | `src/features/settings/components/Settings.tsx` | ❌ Stub ("Em breve"), **nem está roteado** no Sidebar/App.tsx |
+| Configurações | `src/features/settings/components/Settings.tsx` | ⚠️ Roteado desde §8e (Sidebar/App.tsx/tabMeta.ts) — continua sendo placeholder "Em breve" no conteúdo, mas já é alcançável |
 | Login/Onboarding | `LoginScreen.tsx`, `OnboardingTour.tsx` | ✅ Completo |
 | IA Global / AI Dock | `AIDockWidget.tsx` + `AtlasChatbotTrigger.tsx` | ⚠️ Flutuante, mas não sabe qual registro está aberto |
 
@@ -50,8 +50,8 @@ A plataforma é um SPA React 19 + Vite servido por um backend Express único (`s
 1. **4 superfícies de IA conversacional sobrepostas** sem porta de entrada única: `ChatbookHub` (página cheia), `FloatingChatbook` (painel flutuante, tabs assistant/roleplay/playbook), `RoleplayHub` (página dedicada), `AIDockWidget` (widget flutuante com 5 sub-ferramentas incluindo roleplay e objeções de novo). Um SDR não tem como saber qual usar para qual tarefa.
 2. **Bitrix duplicado**: uma tela "Bitrix24" no menu é só um guia estático de boas práticas; a integração real (conectar, importar, regras de sync) vive dentro de "Integrações". Nome ambíguo, dois lugares, um deles enganoso.
 3. **"Editor de Documentos" não é um editor geral** — é o editor da própria Base de Conhecimento (re-vetoriza ao salvar). O nome no menu promete algo que não existe.
-4. **Command palette é decorativo.** `AppTopbar.tsx` mostra uma busca com badge "⌘K" mas é um `<span>` estático sem `onClick`, sem input, sem listener de teclado. Não existe pacote `cmdk` no projeto. É a Etapa 10 do mandato — atualmente 0% implementada.
-5. **Settings.tsx é órfão** — existe, é um placeholder "Em desenvolvimento", e nem está no roteamento (`App.tsx`/`Sidebar.tsx` não o referenciam). Ninguém consegue nem abrir a versão "em breve".
+4. ~~**Command palette é decorativo.**~~ **Corrigido em §8c** — era um `<span>` estático sem `onClick`/input/listener de teclado; agora `src/components/ui/CommandPalette.tsx` implementa uma paleta real (`⌘K`/`Ctrl+K`, busca fuzzy sobre os módulos, busca real de empresas/contatos, ações rápidas).
+5. ~~**Settings.tsx é órfão**~~ **Corrigido em §8e** — `'settings'` foi adicionado a `TabType`/`TAB_META`, à Sidebar (admin-only) e ao roteamento em `App.tsx`. O conteúdo continua sendo um placeholder "Em breve" (isso é intencional, não o mesmo bug), mas a tela agora é alcançável.
 6. **Navegação morta**: `src/components/layout/nav.ts` e `Topbar.tsx` são um segundo sistema de navegação completo, não usado em lugar nenhum da árvore ativa — inclusive contêm o único toggle mobile/hamburguer do projeto, que por estar no componente morto, nunca roda.
 7. **IntelligenceHub — corrigido nesta sessão** (era o pior caso: funcionalidade paga e construída, zero caminho de navegação).
 
@@ -79,11 +79,11 @@ Praticamente inexistentes hoje: nenhum hook de media query no projeto, sidebar f
 | # | Problema | Persona afetada | Prioridade | Esforço |
 |---|---|---|---|---|
 | 1 | 8/9 sub-telas do Hub de IA inacessíveis | SDR, Closer, Gestor | **P0** | Baixo — **✅ corrigido nesta sessão** |
-| 2 | Command palette falso (Etapa 10 do mandato, 0% real) | Todos | P1 | Médio |
+| 2 | ~~Command palette falso (Etapa 10 do mandato, 0% real)~~ | Todos | — | **✅ corrigido em §8c** |
 | 3 | 4 superfícies de IA conversacional sem porta única | SDR, Closer | P1 | Médio–Alto (decisão de produto) |
 | 4 | IA não é contextual ao registro aberto | SDR, Closer | P1 | Médio |
 | 5 | Bitrix guia-vs-integração confuso | SDR, RevOps | P2 | Baixo |
-| 6 | Settings stub não roteado | Admin | P2 | Baixo |
+| 6 | ~~Settings stub não roteado~~ | Admin | — | **✅ corrigido em §8e** (roteado; conteúdo continua placeholder por design) |
 | 7 | Navegação morta (`nav.ts`/`Topbar.tsx`) ocupando espaço mental de manutenção | Eng/RevOps | P3 | Baixo |
 | 8 | Mobile praticamente ausente | SDR em campo | P2 | Alto |
 | 9 | Modelos Prisma órfãos/duplicados (RAG, Prospect) | RevOps/Eng | P2 | Alto (requer migração de dados) |

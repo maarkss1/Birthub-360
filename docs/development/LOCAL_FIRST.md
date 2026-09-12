@@ -39,7 +39,7 @@ Navegador
    v
 Node/Express + Vite (localhost:3005)
    |
-   +--> PostgreSQL da instância Oracle Cloud (163.176.150.147:5432, TLS) — sem Postgres local
+   +--> PostgreSQL da instância Oracle Cloud (168.138.147.145:5432, TLS) — sem Postgres local
    +--> Redis local (localhost:6379)
    +--> Meilisearch local (localhost:7700)
    +--> MinIO local / S3 (localhost:9000)

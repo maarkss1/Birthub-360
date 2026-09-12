@@ -1,4 +1,5 @@
 import type { VoiceHubConnection } from '@prisma/client';
+import { randomBytes } from 'node:crypto';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
@@ -19,6 +20,10 @@ export interface VoiceHubConnectionInput {
   apiKey?: string;
   agentId?: string;
   enabled?: boolean;
+  /** Segredo do webhook de resultado de chamada — opcional na entrada (gerado aleatoriamente em
+   *  `connectVoiceHub` quando ausente). Ver comentário do campo no schema (`VoiceHubConnection
+   *  .webhookSecret`) e `birthVoice.webhook.ts::handleWebhook` para onde ele é consumido. */
+  webhookSecret?: string;
 }
 
 export interface VoiceHubConnectionSummary {
@@ -28,6 +33,7 @@ export interface VoiceHubConnectionSummary {
   agentId: string | null;
   enabled: boolean;
   hasApiKey: boolean;
+  hasWebhookSecret: boolean;
   createdAt: Date;
 }
 
@@ -38,9 +44,11 @@ function toSummary(conn: VoiceHubConnection): VoiceHubConnectionSummary {
     baseUrl: conn.baseUrl,
     agentId: conn.agentId,
     enabled: conn.enabled,
-    // A API key nunca volta em texto puro na resposta (mesmo princípio do segredo de webhook do
-    // Bitrix, ver Integrations.tsx `revealedWebhookSecret`) — só se uma já foi cadastrada.
+    // A API key e o segredo do webhook nunca voltam em texto puro por aqui (mesmo princípio do
+    // segredo de webhook do Bitrix, ver Integrations.tsx `revealedWebhookSecret`) — só flags de
+    // presença. O segredo do webhook só é exposto uma vez, no retorno de `connectVoiceHub`.
     hasApiKey: !!conn.apiKey,
+    hasWebhookSecret: !!conn.webhookSecret,
     createdAt: conn.createdAt,
   };
 }
@@ -55,12 +63,23 @@ export async function listVoiceHubConnections(
   return connections.map(toSummary);
 }
 
+/**
+ * Conecta um novo Birth Voices Hub e devolve o segredo do webhook em texto puro UMA vez (mesmo
+ * padrão de `regenerateWebhookSecret` do Bitrix, `bitrix/service/connections.ts`) — chamadas
+ * seguintes (`listVoiceHubConnections`) só confirmam presença via `hasWebhookSecret`, nunca o
+ * valor. Isolamento de tenant do webhook (`birthVoice.webhook.ts::handleWebhook`) depende deste
+ * segredo ser por conexão em vez de um único segredo global compartilhado entre organizações.
+ */
 export async function connectVoiceHub(
   organizationId: string,
   input: VoiceHubConnectionInput,
-): Promise<VoiceHubConnectionSummary> {
+): Promise<VoiceHubConnectionSummary & { webhookSecret: string }> {
   if (!input.baseUrl?.trim()) throw new AppError('Informe a URL do Birth Voices Hub.', 400);
   await assertSafeExternalUrl(input.baseUrl);
+
+  // Gera um segredo aleatório quando nenhum é informado — nunca cria conexão sem segredo próprio,
+  // senão o webhook desta organização continuaria dependendo só do segredo global.
+  const webhookSecret = input.webhookSecret?.trim() || randomBytes(32).toString('hex');
 
   const created = await prisma.voiceHubConnection.create({
     data: {
@@ -70,9 +89,10 @@ export async function connectVoiceHub(
       apiKey: input.apiKey?.trim() || undefined,
       agentId: input.agentId?.trim() || undefined,
       enabled: input.enabled ?? true,
+      webhookSecret,
     },
   });
-  return toSummary(created);
+  return { ...toSummary(created), webhookSecret };
 }
 
 export async function disconnectVoiceHub(

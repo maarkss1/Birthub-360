@@ -74,4 +74,20 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- CAMERA — uso funcional real, não especulativo (regra deste AGENTS.md: "não solicitar
+         permissão sem uso funcional correspondente"). OcrCapturePanel.tsx
+         (src/features/prospecting/components/prospecting-hub/OcrCapturePanel.tsx, propriedade do
+         Agente 05) chama navigator.mediaDevices.getUserMedia({video: {...}}) para pré-visualização
+         de câmera ao vivo no OCR de prospecção. Sem esta permissão declarada, getUserMedia sempre
+         cai no catch dentro do WebView do app empacotado (ACH-09-03) — o app nunca crasha nem
+         perde funcionalidade porque o mesmo componente já tem fallback via
+         <input type="file" capture="environment">, mas a pré-visualização ao vivo nunca aparece
+         dentro do app. MainActivity estende BridgeActivity (Capacitor) sem overrides de
+         WebChromeClient/onPermissionRequest, então a concessão de permissão em runtime para
+         getUserMedia é delegada ao tratamento padrão do Bridge do Capacitor — não foi possível
+         confirmar em dispositivo/emulador real nesta sessão (sem JDK/Android SDK disponíveis no
+         ambiente). Ver handoff
+         .agents/handoffs/audit-ach/09-para-05-ocr-camera-permission-declarada.md. -->
+    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>

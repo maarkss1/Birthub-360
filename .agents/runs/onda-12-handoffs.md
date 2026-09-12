@@ -51,13 +51,13 @@ um com uma seção `## Resolução` nova no próprio arquivo (ver GOV-006 no rel
 | onda-7/06-para-04-voice-trigger.md | 06 | 04 | normal | resolvido | não (resolvido) | seção Resolução | fechado |
 | onda-7/06-para-12-3cx-webhook-persistencia.md | 06 | 12 | normal | aberto | sim | `process3CXWebhook` confirmado só loga payload, não persiste | onda-13 |
 | onda-7/07-para-00-wire-stagnation-scanner-boot.md | 07 | 00 | normal | **resolvido (corrigido nesta onda)** | não (já implementado) | `scheduleStagnationScannerJob()` confirmado em `server.ts` | fechado |
-| onda-7/07-para-01-flaky-org-creation-mid-integration-test.md | 07 | 01 | alto | resolvido | não (resolvido) | corrigido na Onda 9, commit `2616a4d1` | fechado |
+| onda-7/07-para-01-flaky-org-creation-mid-integration-test.md | 07 | 01 | alto | resolvido | não (resolvido) | corrigido na Onda 9, commit `b232e03b` | fechado |
 | onda-7/12-para-00-test-db-contencao-cross-agente.md | 12 | 00/08 | crítico | resolvido | não (resolvido) | corrigido na Onda 9, mesmo commit acima | fechado |
 | onda-7/12-para-01-3cx-call-event-persistence.md | 12 | 01/01A | normal | aberto | sim | mesmo achado do 06-para-12 (schema de evento 3CX nunca implementado) | onda-13 |
 | onda-7/12-para-06-fallback-whatsapp-informativo.md | 12 | 06 | normal | **resolvido (corrigido nesta onda)** | não (informativo) | handoff de aviso, nenhuma ação pendente | fechado |
 | onda-7/12-para-07-gatilho-ligar-via-sdr-voz.md | 12 | 07 | alto | aberto | sim | decisão de produto pendente sobre travas de horário no gatilho de automação | onda-13 |
 | onda-7/12-para-17-optout-unificado-voz.md | 12 | 17 | normal | aberto | incerto | módulo `cadence/optOut` existe hoje; não verificado se unifica voz+WhatsApp+e-mail de fato | onda-13 |
-| onda-7/13-para-01-anomalia-visibilidade-entre-requestcontext-run.md | 13 | 01 | normal | resolvido | não (resolvido) | corrigido na Onda 9, commit `2616a4d1` | fechado |
+| onda-7/13-para-01-anomalia-visibilidade-entre-requestcontext-run.md | 13 | 01 | normal | resolvido | não (resolvido) | corrigido na Onda 9, commit `b232e03b` | fechado |
 | onda-7/13-para-01-consentimento-lgpd-por-titular.md | 13 | 01 | normal | aberto | sim | confirmado: nenhum campo de "consent"/base legal por titular no schema | onda-13 |
 | onda-7/13-para-07-rota-slo-swarm.md | 13 | 07 | normal | aberto | sim | confirmado: rota `GET /api/agent/swarm/slo` ausente | onda-13 |
 | onda-7/17-para-01-schema-cadencia-optout-proposta.md | 17 | 01/01A | alto | resolvido | não (resolvido) | schema aplicado na Onda 10 | fechado |

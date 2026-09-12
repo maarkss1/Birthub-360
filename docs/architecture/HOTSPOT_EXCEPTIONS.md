@@ -85,6 +85,7 @@ requerem exceção porque não quebram o gate, só ficam registrados aqui para n
 - `src/features/market-intelligence/server/accountIntelligence.service.ts` (857 linhas)
 - `src/features/intelligence/components/SwarmDashboard.tsx` (770 linhas)
 - `src/features/crm/components/LeadDetailDrawer.tsx` (726 linhas)
+- `src/components/CrmBoard.tsx` (977 linhas, 2026-09-11)
 
 Se qualquer um desses cruzar 1000 linhas num PR futuro sem uma exceção registrada acima, o gate
 bloqueia normalmente — esta lista é só contexto, não é uma isenção.

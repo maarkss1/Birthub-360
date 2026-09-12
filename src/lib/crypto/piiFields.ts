@@ -38,8 +38,11 @@ export const ENCRYPTED_MODEL_FIELDS: Record<string, readonly string[]> = {
   // .agents/handoffs/onda-5/01-para-06-persistencia-3cx-implementada.md.
   ThreeCXConnection: ['apiKey', 'apiSecret'],
   // Credencial do Birth Voices Hub (SDR de voz por IA) por organização — mesmo tratamento de
-  // ThreeCXConnection acima.
-  VoiceHubConnection: ['apiKey'],
+  // ThreeCXConnection acima. `webhookSecret` (ACH-06-01, isolamento de tenant do webhook —
+  // birthVoice.webhook.ts) entrou aqui junto de `apiKey`: mesma classe de segredo, mesmo
+  // tratamento — o comentário do campo no schema já dizia "cifrado em repouso" antes de o
+  // campo existir de fato nesta lista.
+  VoiceHubConnection: ['apiKey', 'webhookSecret'],
   // Tokens OAuth de login social (Google/Microsoft via Better Auth, gravados por
   // prismaAdapter em src/lib/auth.ts) — mesma classe de credencial de terceiro das linhas
   // acima. Ver .agents/handoffs/roadmap-v2-onda-1/01-para-00-account-oauth-tokens-sem-cifra.md.

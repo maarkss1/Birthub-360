@@ -103,7 +103,7 @@ async function loadToolSchemas(): Promise<
   const [crmTools, opsTools, marketResearchTool, playbookTool, summarizeLeadTool, copywriterTool] =
     await Promise.all([
       import('../tools/crmTools.js'),
-      import('../tools/opsTools.js'),
+      import('../agents/opsPendingActions.tool.js'),
       import('../tools/marketResearchTool.js'),
       import('../tools/playbookTool.js'),
       import('../tools/summarizeLeadTool.js'),

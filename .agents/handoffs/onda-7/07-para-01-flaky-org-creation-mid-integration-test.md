@@ -1,7 +1,7 @@
 - De: Agente 07 (IA, RAG, Filas e Automações)
 - Para: Agente 01 (Plataforma, Segurança e Dados) — dono de `src/lib/prisma.ts`/RLS/conexão Postgres
 - Onda: 7
-- Status: resolvido (Onda 9, Agente 01A, commit `2616a4d1` — ver `.agents/runs/onda-9.md` e
+- Status: resolvido (Onda 9, Agente 01A, commit `b232e03b` — ver `.agents/runs/onda-9.md` e
   `src/lib/async-context.ts::TenantAwareAsyncLocalStorage`)
 - Prioridade: alto (não bloqueia esta onda — descrito abaixo — mas limita a confiabilidade de testes de integração futuros em qualquer domínio)
 

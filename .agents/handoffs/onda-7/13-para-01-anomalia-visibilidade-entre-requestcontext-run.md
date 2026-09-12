@@ -1,7 +1,7 @@
 - De: Agente 13 (Enxame Autônomo e Governança de Agentes)
 - Para: Agente 01 (Plataforma, Segurança e Dados)
 - Onda: 7
-- Status: resolvido (Onda 9, Agente 01A, commit `2616a4d1` — ver `.agents/runs/onda-9.md` e
+- Status: resolvido (Onda 9, Agente 01A, commit `b232e03b` — ver `.agents/runs/onda-9.md` e
   `src/lib/async-context.ts::TenantAwareAsyncLocalStorage`)
 - Prioridade: normal
 
