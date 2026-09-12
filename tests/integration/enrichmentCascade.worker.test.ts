@@ -131,7 +131,17 @@ describe('createEnrichmentCascadeWorker — worker real da fila enrichment-casca
     expect(updatedCompany.enrichmentSource).toBe('Cascade:Apollo->Hunter->GooglePlaces');
     expect(updatedCompany.enrichedAt).not.toBeNull();
 
-    const logs = await withRlsBypass(() =>
+    // Leitura escopada por tenant (`asOrg`), não `withRlsBypass`: a policy de RLS de
+    // `EnrichmentLog` (migration 20260825120000_scope_rls_bypass_to_bootstrap_allowlist) removeu
+    // de propósito a cláusula `OR app.bypass_rls = 'on'` que a migration original (20260807) tinha
+    // — mesmo tratamento dado a `Company` (ver o comentário sobre isso em src/lib/prisma.ts):
+    // dado comercial/de auditoria vinculado a um tenant real, não uma tabela de bootstrap, então
+    // não faz parte do allowlist de bypass. Ler com `withRlsBypass` aqui não reproduz nenhum erro
+    // do worker: a policy hoje exige `app.current_tenant_id` de verdade (não vazio) e nenhuma
+    // sessão de bypass o fornece, então a leitura sempre voltava vazia mesmo com o INSERT
+    // (que roda sob `requestContext.run({ tenantId: organizationId })`, dentro do WITH CHECK
+    // válido) tendo commitado normalmente.
+    const logs = await asOrg(org, () =>
       prisma.enrichmentLog.findMany({ where: { companyId: company.id } }),
     );
     expect(logs).toHaveLength(1);
