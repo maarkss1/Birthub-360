@@ -181,6 +181,10 @@ export async function upsertAgentDefinition(input: {
   });
 }
 
+/** Ativar uma versão (`status: 'ACTIVE'`, o default) precisa demover a versão ACTIVE anterior do
+ *  mesmo agente na mesma transação — o índice único parcial `AgentVersion_one_active_per_agent`
+ *  (migration 20260908020000) só barra duas linhas ACTIVE simultâneas, ele não demove a antiga
+ *  sozinho. Sem a transação, ativar uma v2 com uma v1 ainda ACTIVE cai direto no P2002 cru. */
 export async function upsertAgentVersion(input: {
   agentDefinitionId: string;
   version: number;
@@ -189,29 +193,58 @@ export async function upsertAgentVersion(input: {
   status?: AgentVersionStatus;
   createdBy?: string;
 }): Promise<{ id: string; version: number }> {
-  return prisma.agentVersion.upsert({
-    where: {
-      agentDefinitionId_version: {
-        agentDefinitionId: input.agentDefinitionId,
-        version: input.version,
-      },
-    },
-    create: {
-      agentDefinitionId: input.agentDefinitionId,
-      version: input.version,
-      systemPrompt: input.systemPrompt,
-      configuration: input.configuration,
-      status: input.status ?? 'ACTIVE',
-      createdBy: input.createdBy,
-      activatedAt: (input.status ?? 'ACTIVE') === 'ACTIVE' ? new Date() : null,
-    },
-    update: {
-      systemPrompt: input.systemPrompt,
-      configuration: input.configuration,
-      status: input.status ?? 'ACTIVE',
-    },
-    select: { id: true, version: true },
-  });
+  const status = input.status ?? 'ACTIVE';
+
+  try {
+    return await prisma.$transaction(async (tx) => {
+      if (status === 'ACTIVE') {
+        await tx.agentVersion.updateMany({
+          where: {
+            agentDefinitionId: input.agentDefinitionId,
+            status: 'ACTIVE',
+            version: { not: input.version },
+          },
+          data: { status: 'DEPRECATED', deprecatedAt: new Date() },
+        });
+      }
+
+      return tx.agentVersion.upsert({
+        where: {
+          agentDefinitionId_version: {
+            agentDefinitionId: input.agentDefinitionId,
+            version: input.version,
+          },
+        },
+        create: {
+          agentDefinitionId: input.agentDefinitionId,
+          version: input.version,
+          systemPrompt: input.systemPrompt,
+          configuration: input.configuration,
+          status,
+          createdBy: input.createdBy,
+          activatedAt: status === 'ACTIVE' ? new Date() : null,
+        },
+        update: {
+          systemPrompt: input.systemPrompt,
+          configuration: input.configuration,
+          status,
+          activatedAt: status === 'ACTIVE' ? new Date() : null,
+        },
+        select: { id: true, version: true },
+      });
+    });
+  } catch (err) {
+    // Corrida genuína remanescente (duas ativações concorrentes da mesma versão entre o
+    // updateMany e o upsert acima) — mesmo padrão de cadence.routes.ts para
+    // CadenceRun_leadId_active_unique: 409 de negócio, nunca o P2002 cru subindo pro handler.
+    if ((err as { code?: string })?.code === 'P2002') {
+      throw new AgentCatalogServiceError(
+        'Outra versão deste agente já foi ativada concorrentemente. Tente novamente.',
+        409,
+      );
+    }
+    throw err;
+  }
 }
 
 /** Única forma de perguntar "qual é a versão ativa deste agente?" — nunca um contador
