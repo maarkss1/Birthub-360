@@ -1,9 +1,11 @@
+import { randomUUID } from 'node:crypto';
 import {
   buildSignatureRequestDraft,
   isValidSignatureTransition,
   type SignatureRequestDraft,
   type SignatureStatus,
 } from '../../../shared/domain/signature.js';
+import { evaluateDealClosure, type DealClosureEvent } from '../../../shared/domain/dealClosure.js';
 
 /** Envia a solicitação ao provedor real (ou stub) e devolve o id que ele atribuiu — usado depois para casar o webhook de status com a solicitação certa. */
 export interface SignatureProviderPort {
@@ -16,7 +18,13 @@ export interface SignatureRequestRepositoryPort {
   findByProviderRequestId(
     provider: string,
     providerRequestId: string,
-  ): Promise<{ id: string; organizationId: string; status: SignatureStatus } | null>;
+  ): Promise<{
+    id: string;
+    organizationId: string;
+    status: SignatureStatus;
+    /** Lead associado ao documento assinado (via `CrmCommercialDocument.leadId`), ou `null` quando o documento não está ligado a nenhum lead — nesse caso não há negócio para fechar. */
+    leadId: string | null;
+  } | null>;
   /** `organizationId` vem do registro já resolvido por `findByProviderRequestId` — nunca de um valor solto no payload do webhook (RLS escopado pelo tenant real). */
   updateStatus(input: {
     id: string;
@@ -43,6 +51,13 @@ export interface SignatureRequestRepositoryPort {
     requestedAt: Date;
     respondedAt: Date | null;
   } | null>;
+  /**
+   * ACH-17-01: persiste um `DealClosureEvent` já aceito por `evaluateDealClosure` e move
+   * `Lead.status` para "Negócios Ganhos" — o mesmo efeito de `ensureManualDealClosureAllowed`
+   * (confirmação manual no Kanban), só que disparado por este webhook. Só é chamado depois que o
+   * evento já passou pelo portão do domínio (`isDeterministicCloseEvent`), nunca antes.
+   */
+  recordSignatureDealClosure(event: DealClosureEvent): Promise<void>;
 }
 
 export interface RequestDocumentSignatureInput {
@@ -103,5 +118,30 @@ export async function applySignatureStatusUpdate(
     evidenceRef: input.evidenceRef,
     rawWebhookPayload: input.rawWebhookPayload,
   });
+
+  // ACH-17-01: até aqui, `signature_completed` nunca fechava negócio nenhum — só
+  // `manual_crm_confirmation` (arrastar card no Kanban) chamava `evaluateDealClosure`. Documento
+  // sem lead associado (`leadId` nulo) é tratado como "nada a fechar", nunca como erro: um
+  // documento comercial pode existir sem lead vinculado, e isso não deveria derrubar o
+  // processamento do webhook.
+  if (input.nextStatus === 'signed' && existing.leadId) {
+    const result = evaluateDealClosure(
+      {
+        organizationId: existing.organizationId,
+        leadId: existing.leadId,
+        type: 'signature_completed',
+        // Id da própria CrmDocumentSignatureRequest — nunca um resumo/texto gerado.
+        evidenceRef: existing.id,
+        triggeredBy: `webhook:${input.provider}`,
+      },
+      () => randomUUID(),
+      new Date(),
+    );
+
+    if (result.accepted && result.event) {
+      await ports.repository.recordSignatureDealClosure(result.event);
+    }
+  }
+
   return { applied: true };
 }

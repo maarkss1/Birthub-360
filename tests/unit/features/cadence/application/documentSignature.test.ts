@@ -9,6 +9,7 @@ function buildRepository(overrides: Partial<SignatureRequestRepositoryPort> = {}
         findByProviderRequestId: vi.fn(async () => null),
         updateStatus: vi.fn(async () => {}),
         findByDocumentId: vi.fn(async () => null),
+        recordSignatureDealClosure: vi.fn(async () => {}),
         ...overrides,
     };
 }
@@ -76,7 +77,7 @@ describe('applySignatureStatusUpdate', () => {
 
     it('transição válida: aplica e grava o evidenceRef/payload real', async () => {
         const repository = buildRepository({
-            findByProviderRequestId: vi.fn(async () => ({ id: 'request-1', organizationId: 'org-1', status: 'sent' })),
+            findByProviderRequestId: vi.fn(async () => ({ id: 'request-1', organizationId: 'org-1', status: 'sent', leadId: null })),
         });
         const rawPayload = { provider: 'govbr', providerRequestId: 'provider-request-1', status: 'signed', evidenceRef: 'cert-123' };
 
@@ -92,6 +93,61 @@ describe('applySignatureStatusUpdate', () => {
             status: 'signed',
             evidenceRef: 'cert-123',
             rawWebhookPayload: rawPayload,
+        });
+    });
+
+    // ACH-17-01: signature_completed nunca fechava negócio nenhum — cobre o fechamento
+    // determinístico disparado pelo webhook de assinatura (evaluateDealClosure/DealClosureEvent).
+    describe('ACH-17-01 — fechamento de negócio a partir de signature_completed', () => {
+        it('status signed com lead associado: grava o DealClosureEvent e move o Lead para Negócios Ganhos', async () => {
+            const repository = buildRepository({
+                findByProviderRequestId: vi.fn(async () => ({ id: 'request-1', organizationId: 'org-1', status: 'sent', leadId: 'lead-1' })),
+            });
+
+            const result = await applySignatureStatusUpdate(
+                { repository },
+                { provider: 'govbr', providerRequestId: 'provider-request-1', nextStatus: 'signed', evidenceRef: 'cert-123', rawWebhookPayload: {} },
+            );
+
+            expect(result).toEqual({ applied: true });
+            expect(repository.recordSignatureDealClosure).toHaveBeenCalledTimes(1);
+            expect(repository.recordSignatureDealClosure).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    organizationId: 'org-1',
+                    leadId: 'lead-1',
+                    type: 'signature_completed',
+                    evidenceRef: 'request-1',
+                    triggeredBy: 'webhook:govbr',
+                }),
+            );
+        });
+
+        it('status signed sem lead associado (documentId sem lead vinculado): não lança erro e não fecha negócio', async () => {
+            const repository = buildRepository({
+                findByProviderRequestId: vi.fn(async () => ({ id: 'request-1', organizationId: 'org-1', status: 'sent', leadId: null })),
+            });
+
+            const result = await applySignatureStatusUpdate(
+                { repository },
+                { provider: 'govbr', providerRequestId: 'provider-request-1', nextStatus: 'signed', evidenceRef: 'cert-123', rawWebhookPayload: {} },
+            );
+
+            expect(result).toEqual({ applied: true });
+            expect(repository.recordSignatureDealClosure).not.toHaveBeenCalled();
+        });
+
+        it('status diferente de signed (ex.: viewed) nunca fecha negócio, mesmo com lead associado', async () => {
+            const repository = buildRepository({
+                findByProviderRequestId: vi.fn(async () => ({ id: 'request-1', organizationId: 'org-1', status: 'sent', leadId: 'lead-1' })),
+            });
+
+            const result = await applySignatureStatusUpdate(
+                { repository },
+                { provider: 'govbr', providerRequestId: 'provider-request-1', nextStatus: 'viewed', evidenceRef: null, rawWebhookPayload: {} },
+            );
+
+            expect(result).toEqual({ applied: true });
+            expect(repository.recordSignatureDealClosure).not.toHaveBeenCalled();
         });
     });
 });
