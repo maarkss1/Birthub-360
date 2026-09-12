@@ -210,7 +210,7 @@ export function PropostasList() {
               <EmptyState
                 title="Nenhum documento comercial ainda"
                 description="Crie um orçamento, proposta, fatura ou contrato para começar."
-                actionLabel={canWrite ? 'Novo Documento' : undefined}
+                actionLabel={canWrite ? 'Criar meu primeiro documento' : undefined}
                 onAction={
                   canWrite
                     ? () => {
