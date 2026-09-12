@@ -57,7 +57,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Instância do Prospector-Atlas não responde ao scrape do Prometheus"
+          summary: 'Instância do Prospector-Atlas não responde ao scrape do Prometheus'
           description: >-
             `up == 0` para o job central-comercial por mais de 2 minutos. Verificar
             /health/live e /health/ready diretamente, depois logs do processo. Ver runbook
@@ -69,7 +69,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Event loop do Node.js com lag alto (>500ms) por 5min+"
+          summary: 'Event loop do Node.js com lag alto (>500ms) por 5min+'
           description: >-
             Indica trabalho síncrono bloqueando o processo (query pesada sem streaming,
             processamento de arquivo grande, loop CPU-bound) — sintoma comum antes de timeouts
@@ -83,7 +83,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Heap V8 acima de 90% do heap total alocado por 10min+"
+          summary: 'Heap V8 acima de 90% do heap total alocado por 10min+'
           description: >-
             Candidato a memory leak ou carga real acima do dimensionado. Cruzar com
             `resources.limits.memory` do Deployment/Rollout (charts/prospector-atlas/values.yaml)
@@ -107,13 +107,13 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Job de migração Prisma (hook Helm pre-upgrade) falhou"
+          summary: 'Job de migração Prisma (hook Helm pre-upgrade) falhou'
           description: >-
             O release foi abortado pelo hook — nenhuma versão nova do app está rodando com
             schema desatualizado (garantia mantida), mas o deploy está bloqueado até a causa
             raiz ser corrigida. Ver runbook → "Falha de migração".
           contract_metric_source: kube-state-metrics
-          contract_owner: "Agente 10 (cluster real ainda não provisionado; caminho k8s aspiracional)"
+          contract_owner: 'Agente 10 (cluster real ainda não provisionado; caminho k8s aspiracional)'
 
   - name: prospector-atlas.filas.ativos-hoje
     rules:
@@ -134,13 +134,13 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Fila BullMQ com mais de 500 jobs aguardando por 10min+"
+          summary: 'Fila BullMQ com mais de 500 jobs aguardando por 10min+'
           description: >-
             Fila travada ou worker sem capacidade. Ver runbook → "Fila travada". No Render, o
             worker dedicado (`prospector-atlas-worker`, `render.yaml`) ainda não foi ativado de
             verdade (ver RUNBOOK.md → "Go-live"/handoff onda-6/16-para-08) — hoje `server.ts` é
             quem processaria a fila, se `ENABLE_QUEUES=true` fosse ligado nele.
-          contract_metric_source: "src/lib/queue/metrics.ts (real desde Onda 5-7)"
+          contract_metric_source: 'src/lib/queue/metrics.ts (real desde Onda 5-7)'
 
       - alert: QueueStalled
         expr: rate(bullmq_queue_completed_jobs[15m]) == 0 and bullmq_queue_waiting_jobs > 0
@@ -148,8 +148,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Fila com jobs aguardando mas zero jobs completados em 15min — fila travada"
-          contract_metric_source: "src/lib/queue/metrics.ts (real desde Onda 5-7)"
+          summary: 'Fila com jobs aguardando mas zero jobs completados em 15min — fila travada'
+          contract_metric_source: 'src/lib/queue/metrics.ts (real desde Onda 5-7)'
 
   - name: prospector-atlas.bitrix.ativos-hoje
     rules:
@@ -166,11 +166,11 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "5+ falhas de sincronização Bitrix em 15min"
+          summary: '5+ falhas de sincronização Bitrix em 15min'
           description: >-
             Bloqueador conhecido em /AGENTS.md ("Sincronizações Bitrix que podem falhar
             silenciosamente"). Ver runbook → "Sync Bitrix falhando".
-          contract_metric_source: "src/features/integrations/bitrix/service/metrics.ts (real desde Onda 5)"
+          contract_metric_source: 'src/features/integrations/bitrix/service/metrics.ts (real desde Onda 5)'
 
   - name: prospector-atlas.http-5xx.ativos-hoje
     rules:
@@ -185,8 +185,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Taxa de erro 5xx acima de 5% nos últimos 5min"
-          contract_metric_source: "src/shared/middlewares/httpMetrics.ts (real desde 2026-08-21)"
+          summary: 'Taxa de erro 5xx acima de 5% nos últimos 5min'
+          contract_metric_source: 'src/shared/middlewares/httpMetrics.ts (real desde 2026-08-21)'
 
   - name: prospector-atlas.orcamento-ia.ativos-hoje
     rules:
@@ -206,13 +206,13 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Uso de IA acima do orçamento definido pelo Agente 07"
+          summary: 'Uso de IA acima do orçamento definido pelo Agente 07'
           description: >-
             Bloqueador conhecido: "Ferramentas do Hub de IA inacessíveis" pode ser sintoma de
             corte por orçamento. Ver runbook → "Hub de IA inacessível / orçamento de IA". Regra
             só dispara ("unknown" caso contrário) quando AI_MONTHLY_BUDGET_USD estiver configurada
             no ambiente — confirmar se está setada em produção antes de confiar neste alerta.
-          contract_metric_source: "src/lib/ai/metrics.ts (real desde Onda 5-7, condicionado a AI_MONTHLY_BUDGET_USD)"
+          contract_metric_source: 'src/lib/ai/metrics.ts (real desde Onda 5-7, condicionado a AI_MONTHLY_BUDGET_USD)'
 
   - name: prospector-atlas.database.ativos-hoje
     rules:
@@ -231,13 +231,13 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Pool de conexões Postgres (pg.Pool, max 20) com requisições esperando um client livre por 2min+"
+          summary: 'Pool de conexões Postgres (pg.Pool, max 20) com requisições esperando um client livre por 2min+'
           description: >-
             Toda a capacidade do pool está em uso e novas queries estão na fila — sintoma comum
             antes de timeout em cascata. Cruzar com `pg_pool_total_connections`/
             `pg_pool_idle_connections` (mesmo scrape) para confirmar saturação real vs. pico
             passageiro. Ver runbook → "Latência/timeouts".
-          contract_metric_source: "src/lib/prisma.ts (real desde Onda 39)"
+          contract_metric_source: 'src/lib/prisma.ts (real desde Onda 39)'
 
       - alert: RedisConnectionDown
         expr: redis_connection_up == 0
@@ -250,4 +250,4 @@ groups:
             Bloqueador conhecido: fila BullMQ travada, rate limit distribuído ou cache podem estar
             silenciosamente inoperantes. Ver runbook → "Fila travada" / verificar `REDIS_URL` e
             conectividade de rede até a instância Redis.
-          contract_metric_source: "src/lib/queue/metrics.ts + src/lib/queue/redis.ts (real desde Onda 39)"
+          contract_metric_source: 'src/lib/queue/metrics.ts + src/lib/queue/redis.ts (real desde Onda 39)'

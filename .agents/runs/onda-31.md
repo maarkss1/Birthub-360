@@ -53,7 +53,7 @@ linha nova sem tenant resolvido.
   comportamento observável (`loadMemory()` já só lia a mais recente).
 - Onde uma escrita de sucesso agora falha (ex.: Postgres indisponível no exato momento de
   persistir), `SDRQualificationAgent`/`OpsAgent` reportam `{success:false, error:'...falha ao
-  persistir o resultado.'}` em vez de `{success:true}` — nunca mais reportar sucesso com a memória
+persistir o resultado.'}` em vez de `{success:true}` — nunca mais reportar sucesso com a memória
   perdida.
 
 ## Fora de escopo (documentado, não corrigido)
@@ -85,6 +85,7 @@ linha nova sem tenant resolvido.
 ## Correção durante a implementação
 
 Duas idas e voltas antes do gate fechar:
+
 1. Primeira versão da migration usava `DEFAULT CURRENT_TIMESTAMP` para `updatedAt` e não removia o
    índice antigo `AgentMemory_sessionId_idx` (redundante — o índice único novo já cobre buscas só
    por `sessionId` como prefixo). `prisma migrate diff` contra o banco recém-migrado apontou as

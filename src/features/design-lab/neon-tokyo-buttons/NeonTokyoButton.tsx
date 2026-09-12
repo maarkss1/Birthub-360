@@ -56,7 +56,8 @@ const ACCENT_COLOR: Partial<
 };
 
 export interface NeonTokyoButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof neonTokyoButtonVariants> {
   asChild?: boolean;
   loading?: boolean;

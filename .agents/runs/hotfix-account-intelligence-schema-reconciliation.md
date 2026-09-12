@@ -1,6 +1,7 @@
 # Hotfix — reconciliação do schema duplicado de Account Intelligence (bloqueava CI de todo PR)
 
 ## Identificação
+
 - Origem: CI vermelho (`quality`, `SonarQube`, `e2e-tests`, `build-and-test`) no PR #193
   (CYC-003), sem nenhuma relação com o diff daquele PR. Investigação confirmou que `main` estava
   quebrado desde o merge `5990d17` ("Merge remote-tracking branch
@@ -82,6 +83,7 @@ coluna/tabela inexistente, mesmo antes desta rodada). Por isso:
   com "column does not exist".
 
 ## Correções durante a implementação
+
 - `Company` tinha os 7 campos de back-relation do Account Intelligence declarados duas vezes
   dentro do próprio model (não só nos models filhos) — removida a segunda cópia (nomes/relations
   da versão antiga, `"SourceRelationship"`/`"TargetRelationship"`).
@@ -98,6 +100,7 @@ coluna/tabela inexistente, mesmo antes desta rodada). Por isso:
   banco local que pode ter ficado com histórico misto.
 
 ## Gate final
+
 - `npx prisma generate` — limpo (era o ponto de falha original: 20 erros de validação)
 - `npx tsc --noEmit` — limpo, 0 erros (chegou a ter 15 erros intermediários: schema duplicado,
   enum/campo de cadência faltando, imports quebrados de 3 arquivos de frontend/rota)
@@ -105,13 +108,14 @@ coluna/tabela inexistente, mesmo antes desta rodada). Por isso:
   `LeadApprovalDeck.tsx` já tinham alguns pré-existentes)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **175/175 arquivos, 1389/1389 testes**
 - integration (Postgres+Redis reais, banco recriado do zero): `npx dotenv-cli -e .env.test --
-  npx vitest run -c vitest.integration.config.ts` — **38/38 arquivos, 175/175 testes**, incluindo
+npx vitest run -c vitest.integration.config.ts` — **38/38 arquivos, 175/175 testes**, incluindo
   `run002e-worker-startup-fails-visibly.test.ts` (prova real, via processo `worker.ts` spawnado,
   que o boot falha visivelmente e rápido sem Redis — esse teste ficava pendurado 20s e estourava
   timeout antes desta correção, porque o `withTimeout` de boot tinha sido removido)
 - `npm run build` e `npm run build:worker` — ambos limpos
 
 ## Skips e flakes
+
 0 — nenhum teste pulado ou instável observado nesta rodada (depois de recriar o banco de teste do
 zero; antes disso, falhas de "coluna não existe" pareciam flakes mas eram estado obsoleto real).
 

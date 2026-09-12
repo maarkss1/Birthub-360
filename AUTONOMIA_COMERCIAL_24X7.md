@@ -4,13 +4,13 @@
 
 A plataforma passa a operar com cinco papéis coordenados:
 
-| Papel | Responsabilidade autônoma | Limite operacional |
-|---|---|---|
-| SDR | Qualificação, pesquisa no playbook/RAG e primeiro e-mail personalizado | Contato externo respeita opt-in, score e janela comercial |
-| BDR | Fit outbound, hipótese de dor e estratégia de primeira abordagem | Não inventa dados e não marca reunião sem resposta real |
-| Closer | Objeções, prova de valor, proteção de margem e próximo compromisso | Não marca negócio como ganho sem evidência do comprador |
-| CRM | Risco de estagnação, higiene do funil e próxima ação | Recomendações ficam vinculadas ao lead |
-| Ops | Atividades e notificações internas | Ferramentas mutáveis não são usadas pelo scanner analítico |
+| Papel  | Responsabilidade autônoma                                              | Limite operacional                                         |
+| ------ | ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| SDR    | Qualificação, pesquisa no playbook/RAG e primeiro e-mail personalizado | Contato externo respeita opt-in, score e janela comercial  |
+| BDR    | Fit outbound, hipótese de dor e estratégia de primeira abordagem       | Não inventa dados e não marca reunião sem resposta real    |
+| Closer | Objeções, prova de valor, proteção de margem e próximo compromisso     | Não marca negócio como ganho sem evidência do comprador    |
+| CRM    | Risco de estagnação, higiene do funil e próxima ação                   | Recomendações ficam vinculadas ao lead                     |
+| Ops    | Atividades e notificações internas                                     | Ferramentas mutáveis não são usadas pelo scanner analítico |
 
 O scheduler continua acordado 24 horas por dia. Comunicação externa automática só é liberada na
 janela comercial; análise, priorização e preparação continuam fora dela.

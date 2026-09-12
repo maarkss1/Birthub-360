@@ -1,6 +1,7 @@
 # Onda 22 — Item 1/15: rota/UI para criar CadenceSequence e iniciar CadenceRun
 
 ## Identificação
+
 - Origem: pendência levantada no `docs/CADENCE-CYCLE-AUDIT.md` (Sprint 06) e confirmada na
   auditoria da onda-19/onda-20 — o runtime de cadência (`cadenceRun.worker.ts`, construído na
   onda 19) nunca teria efeito prático em produção, porque não existia **nenhuma forma** de criar
@@ -15,6 +16,7 @@
 ## O que foi construído
 
 ### Backend (`src/features/cadence/cadence.routes.ts`)
+
 - `GET /api/cadence/sequences` — lista sequências ativas (`active: true`, `deletedAt: null`) da
   organização do usuário autenticado.
 - `POST /api/cadence/sequences` (papéis ADMIN/GESTOR/CLOSER/SDR) — cria uma `CadenceSequence`.
@@ -32,6 +34,7 @@
      (Prisma `P2002`) em 409 — "lead já tem cadência ativa" é regra de negócio, não erro de banco.
 
 ### Frontend (`src/features/cadence/cadence.api.ts`, `src/features/cadence/components/CadenceHub.tsx`)
+
 - Cliente HTTP: `cadenceApi.sequences()`, `cadenceApi.createSequence()`, `cadenceApi.startRun()`.
 - `NewSequenceDialog` — formulário para nome + lista dinâmica de toques (canal, atraso em horas,
   conteúdo da mensagem), com validação client-side antes do submit.
@@ -44,6 +47,7 @@
   separado desta lista).
 
 ## Correções durante a implementação
+
 - **tsc**: variável `userId` desestruturada sem uso na rota `/runs` (só é usada em `/sequences`,
   onde vira `createdBy`) — removida da desestruturação.
 - **Contrato de resposta**: `apiFetch` (`src/lib/api.ts`) desembrulha `{success, data}` para só
@@ -57,6 +61,7 @@
   específico.
 
 ## Gate final
+
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 80 warnings (mesmo nível pré-existente do branch base)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **169/169 arquivos, 1313/1313 testes**
@@ -70,6 +75,7 @@
   fluxo completo de cadência é o escopo do item CYC-009, ainda pendente)
 
 ## Skips e flakes
+
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Decisão

@@ -11,7 +11,6 @@
 ## Variáveis de ambiente com valores default de dev — definir em .env para sobrescrever.
 
 services:
-
   # ───────────────────────────────────────────────────────
   # OS-3: Flowise — Builder visual de agentes IA
   # http://localhost:3008
@@ -33,7 +32,7 @@ services:
       LOG_LEVEL: info
       TOOL_FUNCTION_BUILTIN_DEP: crypto,fs
     ports:
-      - "3008:3008"
+      - '3008:3008'
     volumes:
       - birthhub_flowise_data:/root/.flowise
     depends_on:
@@ -43,7 +42,15 @@ services:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3008/api/v1/ping"]
+      test:
+        [
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://127.0.0.1:3008/api/v1/ping',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -59,11 +66,11 @@ services:
       OLLAMA_BASE_URL: http://ollama:11434
       OPENAI_API_BASE_URL: http://litellm:4000/v1
       OPENAI_API_KEY: ${LITELLM_MASTER_KEY:-sk-birthhub-master}
-      WEBUI_AUTH: "true"
+      WEBUI_AUTH: 'true'
       WEBUI_SECRET_KEY: ${OPENWEBUI_SECRET:-change-this-openwebui-secret}
       DEFAULT_MODELS: llama3
     ports:
-      - "3009:8080"
+      - '3009:8080'
     volumes:
       - birthhub_openwebui_data:/app/backend/data
     depends_on:
@@ -91,13 +98,13 @@ services:
       DB_POSTGRESDB_PASSWORD: ${APP_DB_PASSWORD:-prospector_app_pass}
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-change-this-n8n-key-32chars-min}
       WEBHOOK_URL: ${N8N_WEBHOOK_URL:-http://localhost:5678}
-      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_ACTIVE: 'true'
       N8N_BASIC_AUTH_USER: ${N8N_USER:-admin}
       N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD:-change-this-n8n-password}
       GENERIC_TIMEZONE: America/Sao_Paulo
       TZ: America/Sao_Paulo
     ports:
-      - "5678:5678"
+      - '5678:5678'
     volumes:
       - birthhub_n8n_data:/home/node/.n8n
     depends_on:
@@ -107,7 +114,8 @@ services:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5678/healthz"]
+      test:
+        ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:5678/healthz']
       interval: 15s
       timeout: 5s
       retries: 10
@@ -127,7 +135,7 @@ services:
       POSTGRES_SEEDS: postgres
       DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
     ports:
-      - "7233:7233"
+      - '7233:7233'
     depends_on:
       postgres:
         condition: service_healthy
@@ -142,7 +150,7 @@ services:
       TEMPORAL_ADDRESS: temporal:7233
       TEMPORAL_CORS_ORIGINS: http://localhost:3000
     ports:
-      - "8088:8080"
+      - '8088:8080'
     depends_on:
       - temporal
     security_opt:
@@ -168,7 +176,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-prospector_redis_pass}
     ports:
-      - "8089:8088"
+      - '8089:8088'
     volumes:
       - birthhub_superset_data:/app/superset_home
     depends_on:
@@ -180,7 +188,7 @@ services:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8088/health"]
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:8088/health']
       interval: 15s
       timeout: 5s
       retries: 10
@@ -222,7 +230,7 @@ services:
         condition: service_healthy
     security_opt:
       - no-new-privileges:true
-    restart: "no"
+    restart: 'no'
     profiles: [tools]
 
   # ───────────────────────────────────────────────────────
@@ -234,11 +242,11 @@ services:
     container_name: birthhub_casdoor
     environment:
       driverName: postgres
-      dataSourceName: "user=${POSTGRES_USER:-prospector} password=${APP_DB_PASSWORD:-prospector_app_pass} host=postgres port=5432 sslmode=disable dbname=casdoor"
+      dataSourceName: 'user=${POSTGRES_USER:-prospector} password=${APP_DB_PASSWORD:-prospector_app_pass} host=postgres port=5432 sslmode=disable dbname=casdoor'
       runmode: dev
       sessionConfig: '{"gclifetime":3600}'
     ports:
-      - "8000:8000"
+      - '8000:8000'
     depends_on:
       postgres:
         condition: service_healthy
@@ -259,9 +267,9 @@ services:
       DB_CONNECTION_URI: postgresql://${POSTGRES_USER:-prospector}:${APP_DB_PASSWORD:-prospector_app_pass}@postgres:5432/infisical
       REDIS_URL: redis://:${REDIS_PASSWORD:-prospector_redis_pass}@redis:6379
       SITE_URL: http://localhost:8200
-      TELEMETRY_ENABLED: "false"
+      TELEMETRY_ENABLED: 'false'
     ports:
-      - "8200:8080"
+      - '8200:8080'
     depends_on:
       postgres:
         condition: service_healthy
@@ -287,12 +295,12 @@ services:
     volumes:
       - ./infrastructure/opa/policies:/policies:ro
     ports:
-      - "8181:8181"
+      - '8181:8181'
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8181/health"]
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:8181/health']
       interval: 10s
       timeout: 3s
       retries: 5
@@ -305,15 +313,16 @@ services:
     image: qdrant/qdrant:latest
     container_name: birthhub_qdrant
     ports:
-      - "6333:6333"
-      - "6334:6334"
+      - '6333:6333'
+      - '6334:6334'
     volumes:
       - birthhub_qdrant_data:/qdrant/storage
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:6333/healthz"]
+      test:
+        ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:6333/healthz']
       interval: 10s
       timeout: 3s
       retries: 5
@@ -327,11 +336,11 @@ services:
     container_name: birthhub_livekit
     command: --dev --bind 0.0.0.0
     environment:
-      LIVEKIT_KEYS: "${LIVEKIT_API_KEY:-devkey}:${LIVEKIT_API_SECRET:-change-this-livekit-secret-min32}"
+      LIVEKIT_KEYS: '${LIVEKIT_API_KEY:-devkey}:${LIVEKIT_API_SECRET:-change-this-livekit-secret-min32}'
     ports:
-      - "7880:7880"
-      - "7881:7881"
-      - "7882:7882/udp"
+      - '7880:7880'
+      - '7881:7881'
+      - '7882:7882/udp'
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -356,7 +365,7 @@ services:
       RAILS_ENV: production
       NODE_ENV: production
     ports:
-      - "3005:3000"
+      - '3005:3000'
     volumes:
       - birthhub_chatwoot_data:/app/storage
     depends_on:
@@ -376,14 +385,14 @@ services:
     image: louislam/uptime-kuma:latest
     container_name: birthhub_uptime_kuma
     ports:
-      - "3003:3001"
+      - '3003:3001'
     volumes:
       - birthhub_uptime_kuma_data:/app/data
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "extra/healthcheck"]
+      test: ['CMD', 'extra/healthcheck']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -397,14 +406,15 @@ services:
     container_name: birthhub_pocketbase_test
     profiles: [tools, test]
     ports:
-      - "8090:8090"
+      - '8090:8090'
     volumes:
       - birthhub_pocketbase_data:/pb_data
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8090/api/health"]
+      test:
+        ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:8090/api/health']
       interval: 15s
       timeout: 5s
       retries: 10
@@ -427,7 +437,7 @@ services:
       SECRET_KEY: ${PLANE_SECRET_KEY:-change-this-plane-secret-key}
       WEB_URL: http://localhost:3004
     ports:
-      - "8091:8000"
+      - '8091:8000'
     depends_on:
       postgres:
         condition: service_healthy
@@ -443,7 +453,7 @@ services:
     environment:
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8091
     ports:
-      - "3004:3000"
+      - '3004:3000'
     depends_on:
       - plane-api
     security_opt:

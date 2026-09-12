@@ -11,7 +11,12 @@ import { activityRoutes } from '../../src/features/activities/routes/activity.ro
 import { errorHandler } from '../../src/shared/middlewares/errorHandler';
 import { setupDI } from '../../src/shared/di/setup';
 import { CompanyFactory, LeadFactory } from '../helpers/factories';
-import { withRlsBypass, withTenant, signUpRealUser, type RealSessionUser } from '../helpers/rbac-e2e-helpers';
+import {
+  withRlsBypass,
+  withTenant,
+  signUpRealUser,
+  type RealSessionUser,
+} from '../helpers/rbac-e2e-helpers';
 
 // Fecha a lacuna registrada em `.agents/handoffs/onda-1/01-para-04-role-gates-crm.md` ("Teste
 // esperado"): TEST-006 (rbac-e2e.test.ts) e rbac-e2e-crm-operations.test.ts já cobrem
@@ -32,14 +37,22 @@ function buildApp(): Express {
 }
 
 async function createCompany(organizationId: string): Promise<{ id: string }> {
-  return withTenant(organizationId, () =>
-    prisma.company.create({ data: CompanyFactory.build({ organizationId }) }) as unknown as Promise<{ id: string }>
+  return withTenant(
+    organizationId,
+    () =>
+      prisma.company.create({
+        data: CompanyFactory.build({ organizationId }),
+      }) as unknown as Promise<{ id: string }>,
   );
 }
 
 async function createLead(organizationId: string): Promise<{ id: string }> {
-  return withTenant(organizationId, () =>
-    prisma.lead.create({ data: LeadFactory.build({ organizationId }) }) as unknown as Promise<{ id: string }>
+  return withTenant(
+    organizationId,
+    () =>
+      prisma.lead.create({ data: LeadFactory.build({ organizationId }) }) as unknown as Promise<{
+        id: string;
+      }>,
   );
 }
 
@@ -80,7 +93,9 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
 
   describe('POST /api/companies', () => {
     it('VISUALIZADOR: 403 do requireRole real, empresa não é criada', async () => {
-      const before = await withTenant(viewerA.organizationId, () => prisma.company.count({ where: { organizationId: viewerA.organizationId } }));
+      const before = await withTenant(viewerA.organizationId, () =>
+        prisma.company.count({ where: { organizationId: viewerA.organizationId } }),
+      );
 
       const res = await request(app)
         .post('/api/companies')
@@ -88,7 +103,9 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
         .send({ legalName: 'Empresa X', tradeName: 'X' });
 
       expect(res.status).toBe(403);
-      const after = await withTenant(viewerA.organizationId, () => prisma.company.count({ where: { organizationId: viewerA.organizationId } }));
+      const after = await withTenant(viewerA.organizationId, () =>
+        prisma.company.count({ where: { organizationId: viewerA.organizationId } }),
+      );
       expect(after).toBe(before);
     });
 
@@ -101,7 +118,9 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
       expect(res.status).toBe(201);
       expect(res.body.success).toBe(true);
 
-      const created = await withTenant(vendedorA.organizationId, () => prisma.company.findUnique({ where: { id: res.body.data.id } }));
+      const created = await withTenant(vendedorA.organizationId, () =>
+        prisma.company.findUnique({ where: { id: res.body.data.id } }),
+      );
       expect(created?.organizationId).toBe(vendedorA.organizationId);
     });
   });
@@ -115,7 +134,9 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
         .set('Cookie', vendedorA.cookie);
 
       expect(res.status).toBe(403);
-      const stillThere = await withTenant(vendedorA.organizationId, () => prisma.company.findUnique({ where: { id: company.id } }));
+      const stillThere = await withTenant(vendedorA.organizationId, () =>
+        prisma.company.findUnique({ where: { id: company.id } }),
+      );
       expect(stillThere).not.toBeNull();
     });
 
@@ -159,7 +180,13 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
     it('SDR: 403 (exclusão é GESTOR/ADMIN)', async () => {
       const company = await createCompany(vendedorA.organizationId);
       const contact = await withTenant(vendedorA.organizationId, () =>
-        prisma.contact.create({ data: { name: 'Ciclano', organizationId: vendedorA.organizationId, companyId: company.id } })
+        prisma.contact.create({
+          data: {
+            name: 'Ciclano',
+            organizationId: vendedorA.organizationId,
+            companyId: company.id,
+          },
+        }),
       );
 
       const res = await request(app)
@@ -177,7 +204,13 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
       const res = await request(app)
         .post('/api/activities')
         .set('Cookie', viewerA.cookie)
-        .send({ type: 'Ligação', owner: 'Fulano', date: new Date().toISOString(), leadId: lead.id, status: 'Pendente' });
+        .send({
+          type: 'Ligação',
+          owner: 'Fulano',
+          date: new Date().toISOString(),
+          leadId: lead.id,
+          status: 'Pendente',
+        });
 
       expect(res.status).toBe(403);
     });
@@ -188,7 +221,13 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
       const res = await request(app)
         .post('/api/activities')
         .set('Cookie', vendedorA.cookie)
-        .send({ type: 'Ligação', owner: 'Fulano', date: new Date().toISOString(), leadId: lead.id, status: 'Pendente' });
+        .send({
+          type: 'Ligação',
+          owner: 'Fulano',
+          date: new Date().toISOString(),
+          leadId: lead.id,
+          status: 'Pendente',
+        });
 
       expect(res.status).toBe(201);
       expect(res.body.success).toBe(true);
@@ -200,7 +239,13 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
       const res = await request(app)
         .post('/api/activities')
         .set('Cookie', vendedorA.cookie)
-        .send({ type: 'Ligação', owner: 'Enxame de IA Atlas', date: new Date().toISOString(), leadId: lead.id, status: 'Pendente' });
+        .send({
+          type: 'Ligação',
+          owner: 'Enxame de IA Atlas',
+          date: new Date().toISOString(),
+          leadId: lead.id,
+          status: 'Pendente',
+        });
 
       expect(res.status).toBe(422);
     });
@@ -211,8 +256,15 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
       const lead = await createLead(vendedorA.organizationId);
       const activity = await withTenant(vendedorA.organizationId, () =>
         prisma.activity.create({
-          data: { type: 'Ligacao', owner: 'Fulano', date: new Date(), status: 'Pendente', leadId: lead.id, organizationId: vendedorA.organizationId },
-        })
+          data: {
+            type: 'Ligacao',
+            owner: 'Fulano',
+            date: new Date(),
+            status: 'Pendente',
+            leadId: lead.id,
+            organizationId: vendedorA.organizationId,
+          },
+        }),
       );
 
       const res = await request(app)
@@ -225,7 +277,9 @@ describe('RBAC ponta-a-ponta — rotas de escrita de company/contact/activity', 
 
   describe('sem sessão', () => {
     it('POST /api/companies: 401, sem chegar no requireRole', async () => {
-      const res = await request(app).post('/api/companies').send({ legalName: 'X', tradeName: 'X' });
+      const res = await request(app)
+        .post('/api/companies')
+        .send({ legalName: 'X', tradeName: 'X' });
       expect(res.status).toBe(401);
     });
   });

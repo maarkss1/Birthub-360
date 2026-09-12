@@ -1,17 +1,18 @@
 # BIRTHUB 360 — CATÁLOGO DE ATIVOS VISUAIS
+
 ## Especificações Técnicas, Formatos, Proporções e Condições de Uso
 
 ---
 
 ### 1. Resumo dos Ativos Gerados
 
-| Arquivo | Formato | Dimensões / ViewBox | Aplicação Principal |
-| :--- | :--- | :--- | :--- |
-| `symbol.svg` | Vetorial SVG | `0 0 100 100` | Símbolo isolado para marcas d'água, ícones de app e favicons |
-| `logo-horizontal-dark.svg` | Vetorial SVG | `0 0 380 90` | Assinatura horizontal principal para headers e superfícies escuras |
-| `logo-horizontal-light.svg`| Vetorial SVG | `0 0 380 90` | Assinatura horizontal para documentos impressos e superfícies claras |
-| `favicon.svg` | Vetorial SVG | `0 0 64 64` | Favicon para abas de navegadores e bookmarks |
-| `avatar.svg` | Vetorial SVG | `0 0 128 128` | Avatar oficial da aplicação para perfis de redes e integrações |
+| Arquivo                     | Formato      | Dimensões / ViewBox | Aplicação Principal                                                  |
+| :-------------------------- | :----------- | :------------------ | :------------------------------------------------------------------- |
+| `symbol.svg`                | Vetorial SVG | `0 0 100 100`       | Símbolo isolado para marcas d'água, ícones de app e favicons         |
+| `logo-horizontal-dark.svg`  | Vetorial SVG | `0 0 380 90`        | Assinatura horizontal principal para headers e superfícies escuras   |
+| `logo-horizontal-light.svg` | Vetorial SVG | `0 0 380 90`        | Assinatura horizontal para documentos impressos e superfícies claras |
+| `favicon.svg`               | Vetorial SVG | `0 0 64 64`         | Favicon para abas de navegadores e bookmarks                         |
+| `avatar.svg`                | Vetorial SVG | `0 0 128 128`       | Avatar oficial da aplicação para perfis de redes e integrações       |
 
 ---
 

@@ -118,6 +118,7 @@ documento existente (`/AGENTS.md`, `docs/deploy/**`, `.agents/**`), quem tem aut
 acionar um rollback em produção nem um canal de escalonamento (on-call, Slack, telefone). Isso não
 é algo que este agente pode decidir por conta própria — é uma decisão organizacional. Registrado
 aqui como pendência explícita para o usuário/gestão definir antes do primeiro incidente real:
+
 - quem tem acesso ao dashboard Render do workspace de produção (rollback de código é uma ação
   manual do dashboard, ver seção 6 — não há automação scriptável para isso hoje);
 - canal de decisão para autorizar rollback quando o incidente também envolve dado (migration
@@ -256,12 +257,12 @@ relato de leads não enriquecidos/mensagens não enviadas.
    (comportamento padrão hoje no Render, ver `render.yaml`), a fila está **desligada por
    design**, não travada. Confirme isso antes de tratar como incidente.
 3. **Quem processa a fila hoje (Render real)**: o serviço `prospector-atlas-worker` (`type:
-   worker` em `render.yaml`, preparado pelo Agente 16/08 na Onda 6) **ainda não foi criado de
+worker` em `render.yaml`, preparado pelo Agente 16/08 na Onda 6) **ainda não foi criado de
    verdade no Render** — confirmado nesta rodada consultando o workspace real via API: só existe
    o serviço web `prospector-atlas`. Se `ENABLE_QUEUES=true` for ligado sem o worker dedicado
    ativo, é o próprio `server.ts` quem processa os jobs (workers ainda não foram removidos de lá —
    ver `.agents/handoffs/onda-6/16-para-00-remover-workers-de-server-ts.md`, `status:
-   em-andamento`, corte proposital ainda não aplicado). Não assuma que o worker dedicado está
+em-andamento`, corte proposital ainda não aplicado). Não assuma que o worker dedicado está
    rodando só porque `render.yaml` o declara.
 3b. **Quem processa a fila na Oracle**: diferente do Render, o serviço `worker`
    (`docker-compose.oci.yml`, profile `queues`) **existe de verdade** como container próprio
@@ -391,7 +392,7 @@ MCP Render — não é suposição:
   daquele deploy antigo. Se o incidente foi causado por uma env var nova mal configurada (não pelo
   código), rollback de deploy não resolve — corrija a env var diretamente.
 - **Migração não é desfeita pelo rollback**: `startCommand: npx prisma migrate deploy && npm run
-  start` roda a cada deploy, incluindo um rollback (que é, mecanicamente, um novo deploy do commit
+start` roda a cada deploy, incluindo um rollback (que é, mecanicamente, um novo deploy do commit
   antigo). Se a migration mais recente já rodou e é destrutiva (coluna removida, tipo alterado),
   reverter só o código não desfaz o schema — o código antigo pode nem funcionar contra o schema
   novo. Avaliar com o Agente 01 se é necessária uma migration de compensação antes do rollback.
@@ -421,6 +422,7 @@ avaliar com o Agente 01 se é necessária uma migration de compensação antes o
 de código. Nunca assumir que "reverter o deploy" também reverte o banco.
 
 ### Rollback via ArgoCD (caminho documentado como ativo em `argocd/README.md`, quando houver
+
 cluster real)
 
 ```bash
@@ -484,7 +486,7 @@ quando ele for ativado, não um estado atual:
    workers exponha `/metrics` com `EXPOSE_METRICS=true`.
 3. **Contagem de workers ativos / shutdown por timeout**: `worker.ts` já loga
    `activeWorkers`/`totalRegistered` na inicialização e `worker.ts: shutdown excedeu o timeout —
-   forçando saída` como `error` quando `SIGTERM` não drena a tempo (25s). Sem um coletor de logs
+forçando saída` como `error` quando `SIGTERM` não drena a tempo (25s). Sem um coletor de logs
    estruturado versionado neste repositório com alerta por padrão de mensagem (Loki/Grafana Loki
    local existe via `infrastructure/observability/loki.yml`, mas sem regra de alerta baseada em
    `LogQL` neste arquivo — Prometheus só lê métricas, não logs), este item fica como

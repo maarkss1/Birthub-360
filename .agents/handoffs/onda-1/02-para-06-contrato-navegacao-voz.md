@@ -30,6 +30,7 @@ realizar navegação"), confirmado por evidência de código, não só suspeita.
 
 Como estou operando os dois slots nesta sessão, já atualizei `VoiceCommandWidget.tsx` (seu domínio
 de captura/comando de voz) para consumir o contrato corretamente:
+
 - só anuncia sucesso quando `requestNavigation` retorna `true`;
 - mostra "Não consegui navegar até aqui agora — tente de novo em instantes." quando retorna `false`;
 - mostra "Não entendi o comando..." quando a frase reconhecida (resultado final, não interino) não
@@ -39,7 +40,9 @@ Fique à vontade para revisar o vocabulário reconhecido (`textLower.includes(..
 isso é seu domínio; só garanti que o contrato de navegação por trás não minta mais.
 
 ## Teste esperado
+
 Já entregue:
+
 - `src/lib/__tests__/navigationBus.unit.test.ts` (4 testes — ack real, destino desconhecido, sem
   navegador registrado, cleanup);
 - `tests/unit/hooks/useNavigationBusBridge.test.tsx` (3 testes — wiring real com react-router,
@@ -48,6 +51,7 @@ Já entregue:
   não reconhecido).
 
 ## Contexto adicional
+
 `setActiveBrand('atlasgr'|'totaltrac')` (troca de marca por voz) não passa por este contrato — é
 uma ação de contexto local síncrona e genuína (`BrandContext`), não uma navegação de rota, então
 não tinha o mesmo problema.

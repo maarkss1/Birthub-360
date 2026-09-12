@@ -21,7 +21,10 @@ async function injectContentScriptIntoOpenMeetTabs() {
   for (const tab of tabs) {
     if (!tab.id) continue;
     try {
-      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['src/content.js'] });
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['src/content.js'],
+      });
     } catch (err) {
       // Aba pode estar numa página interna do Chrome sem permissão de injeção, ou ter fechado
       // entre o query e a injeção — não é um erro que o usuário precise ver.

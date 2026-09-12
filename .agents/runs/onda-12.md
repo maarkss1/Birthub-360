@@ -99,10 +99,11 @@ possível, portanto, ler programaticamente a configuração formal de proteção
 `MaarksN`, 2026-08-17):
 
 > "main agora tem proteção de branch exigindo PR + check `build` obrigatório (`GH006: Protected
-> branch update failed`)"
+branch update failed`)"
 
 Isto confirma, por um evento real (um workflow de dados tentou `git push origin HEAD:main` e foi
 recusado pelo próprio GitHub), que:
+
 - **PR obrigatório**: confirmado (push direto foi rejeitado com `GH006`).
 - **Check obrigatório apontando para gate real**: confirmado que ao menos o check `build` é
   obrigatório — três workflows (`market-intelligence-cnpj.yml`, `market-intelligence-rntrc.yml`,
@@ -127,10 +128,10 @@ ou **10** (Infraestrutura), com evidência anexada ao próximo relatório de ond
 PRs abertos no momento desta onda (`list_pull_requests`, `state=open`): **2**, ambos legítimos e
 sem sobreposição de escopo:
 
-| PR | Título | Situação |
-|---|---|---|
-| #144 | fix(ci): reaplica e revalida o gate único de release (Fase Final 1) | Draft, `mergeable_state: blocked`. Base registrado como `d344e37` está desatualizado — `main` já absorveu a maior parte deste PR (merge commit `d25883a`, segundo pai `d8b6c30`, ancestral direto do head atual do PR). Restam **2 commits reais não mesclados** (`39d5245`, `b77eded` — sweep mobile da Fase Final 4, docs-only). Recomendação: atualizar a branch contra `main` atual e mesclar; não é duplicado, é uma cauda real de trabalho. |
-| #145 | fix(market-intelligence): publica dados via PR em vez de push direto na main protegida | Draft, `mergeable_state: blocked`, 1 commit, não mesclado. Corrige 4 workflows de CI para pararem de dar `git push` direto contra `main` protegida (ver evidência em GOV-004). Legítimo e necessário — sem ele, os workflows de dados de mercado continuam falhando. |
+| PR   | Título                                                                                 | Situação                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #144 | fix(ci): reaplica e revalida o gate único de release (Fase Final 1)                    | Draft, `mergeable_state: blocked`. Base registrado como `d344e37` está desatualizado — `main` já absorveu a maior parte deste PR (merge commit `d25883a`, segundo pai `d8b6c30`, ancestral direto do head atual do PR). Restam **2 commits reais não mesclados** (`39d5245`, `b77eded` — sweep mobile da Fase Final 4, docs-only). Recomendação: atualizar a branch contra `main` atual e mesclar; não é duplicado, é uma cauda real de trabalho. |
+| #145 | fix(market-intelligence): publica dados via PR em vez de push direto na main protegida | Draft, `mergeable_state: blocked`, 1 commit, não mesclado. Corrige 4 workflows de CI para pararem de dar `git push` direto contra `main` protegida (ver evidência em GOV-004). Legítimo e necessário — sem ele, os workflows de dados de mercado continuam falhando.                                                                                                                                                                              |
 
 Nenhum PR fechado como duplicado nesta onda porque nenhum foi encontrado. Verificação adicional em
 PRs fechados recentes (#89 a #143) não revelou nenhum par de PRs abertos disputando o mesmo escopo —
@@ -148,6 +149,7 @@ sprint destino publicada em `.agents/runs/onda-12-handoffs.md` (anexo desta onda
 varredura + verificação cruzada com o código atual).
 
 Resumo:
+
 - **83 handoffs totais.**
 - **9 handoffs corrigidos nesta onda** — tinham `Status: aberto`/`em-andamento` desatualizado
   porque a correção já estava no código, mas ninguém tinha voltado para fechar o campo. Cada um
@@ -198,17 +200,17 @@ npm run verify:ai
 npm run setup:db:check
 ```
 
-| Comando | Resultado |
-|---|---|
-| `npx tsc --noEmit` | **PASS** — 0 erros |
-| `npm run lint` | **PASS** |
-| `npm run test:unit` | **PASS** — 161 arquivos / 1266 testes |
-| `npm run test:integration` | **PASS** — 24 arquivos / 114 testes (Postgres real, migrations aplicadas do zero) |
-| `npm run test:e2e` | **PASS_WITH_NON_BLOCKING_WARNINGS** — 44 passed + 1 flaky (passou no retry) + 5 skipped, 0 falha real, 3.0min (ver abaixo) |
-| `npm run build` | **PASS** — Vite + esbuild (server.cjs), 16.73s, sem erros (avisos de chunk >500kB pré-existentes, não regressão) |
-| `npm run verify:integrations` | **CHECKPOINT EXTERNO** — ver detalhe abaixo |
-| `npm run verify:ai` | **CHECKPOINT EXTERNO** — ver detalhe abaixo |
-| `npm run setup:db:check` | **CHECKPOINT EXTERNO** — ver detalhe abaixo |
+| Comando                       | Resultado                                                                                                                  |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `npx tsc --noEmit`            | **PASS** — 0 erros                                                                                                         |
+| `npm run lint`                | **PASS**                                                                                                                   |
+| `npm run test:unit`           | **PASS** — 161 arquivos / 1266 testes                                                                                      |
+| `npm run test:integration`    | **PASS** — 24 arquivos / 114 testes (Postgres real, migrations aplicadas do zero)                                          |
+| `npm run test:e2e`            | **PASS_WITH_NON_BLOCKING_WARNINGS** — 44 passed + 1 flaky (passou no retry) + 5 skipped, 0 falha real, 3.0min (ver abaixo) |
+| `npm run build`               | **PASS** — Vite + esbuild (server.cjs), 16.73s, sem erros (avisos de chunk >500kB pré-existentes, não regressão)           |
+| `npm run verify:integrations` | **CHECKPOINT EXTERNO** — ver detalhe abaixo                                                                                |
+| `npm run verify:ai`           | **CHECKPOINT EXTERNO** — ver detalhe abaixo                                                                                |
+| `npm run setup:db:check`      | **CHECKPOINT EXTERNO** — ver detalhe abaixo                                                                                |
 
 ### `test:e2e` — 1ª tentativa (ambiente) x 2ª tentativa (real)
 
@@ -245,16 +247,32 @@ skipped de visual) — não é uma regressão introduzida por esta onda.
 
 ```json
 {
-  "googlePlaces": { "ok": false, "detail": "nenhum resultado; confira ativação, faturamento e restrições da chave" },
-  "apollo": { "ok": true, "skipped": true, "detail": "APOLLO_API_KEY ausente — provedor pago desativado por padrão" },
-  "hunter": { "ok": true, "skipped": true, "detail": "HUNTER_API_KEY ausente — provedor pago desativado por padrão" },
+  "googlePlaces": {
+    "ok": false,
+    "detail": "nenhum resultado; confira ativação, faturamento e restrições da chave"
+  },
+  "apollo": {
+    "ok": true,
+    "skipped": true,
+    "detail": "APOLLO_API_KEY ausente — provedor pago desativado por padrão"
+  },
+  "hunter": {
+    "ok": true,
+    "skipped": true,
+    "detail": "HUNTER_API_KEY ausente — provedor pago desativado por padrão"
+  },
   "brasilApiCnpj": { "ok": true, "detail": "consulta gratuita disponível" },
   "bitrix24": { "ok": true, "skipped": true, "detail": "BITRIX24_WEBHOOK_URL não configurada" },
   "groq": { "ok": true, "skipped": true, "detail": "GROQ_API_KEY ausente" },
   "litellm": { "ok": true, "skipped": true, "detail": "LITELLM_URL ausente" },
-  "langfuse": { "ok": true, "skipped": true, "detail": "LANGFUSE_PUBLIC_KEY/SECRET_KEY/BASEURL ausentes" }
+  "langfuse": {
+    "ok": true,
+    "skipped": true,
+    "detail": "LANGFUSE_PUBLIC_KEY/SECRET_KEY/BASEURL ausentes"
+  }
 }
 ```
+
 `brasilApiCnpj` (sem credencial, rede real) passou — confirma que o script em si funciona e que este
 sandbox tem saída de rede para pelo menos um provedor público. `googlePlaces` chama a API real
 mesmo sem chave configurada (`scripts/verify-integrations.ts:15-26`) e retorna 0 resultados — sem
@@ -264,18 +282,22 @@ produção/homologação para confirmar `googlePlaces`, `apollo`, `hunter`, `bit
 `litellm`, `langfuse` — nenhuma dessas 7 pode ser validada de dentro deste sandbox.
 
 ### `verify:ai` — detalhe real
+
 ```
 Nenhum motor de IA configurado. Defina GROQ_API_KEY (gratuito, console.groq.com) ou OPENAI_API_KEY no .env.
 ```
+
 **Checkpoint externo** — sem `GROQ_API_KEY`/`OPENAI_API_KEY` neste sandbox, não é possível validar o
 motor de IA. Precisa reexecução com credencial real.
 
 ### `setup:db:check` — detalhe real
+
 ```
 Preparando o Postgres com pgvector...
   ✗ Docker indisponível: Command failed: docker ps --filter name=atlas_postgres --format "{{.Names}}"
 O engine do Docker Desktop não está respondendo. Reinicie o Docker Desktop e rode este script de novo.
 ```
+
 `scripts/setup-vector-db.ts` verifica exclusivamente via `docker ps` — não tem caminho alternativo
 para Postgres nativo, diferente de `scripts/test/prepare-integration-env.js` (que também prefere
 Docker, mas cujo requisito foi contornado manualmente nesta onda para os outros gates). Esta sessão
@@ -290,14 +312,14 @@ nativo/Postgres-direto a este script evitaria essa lacuna em ambientes sem Docke
 
 ## Aceite
 
-| Critério | Status |
-|---|---|
-| Roster normativo sem agente inexistente | **Atendido** — GOV-001, 01A/06A/13-18 formalizados, 19/20 removidos e reatribuídos |
-| Ownership sem ambiguidade | **Atendido** — reatribuição explícita de verificação contínua (14+08) e experiência real (02+03+08+14), com a ressalva de gap registrada, não escondida |
-| Baseline executado | **Atendido** — tsc/lint/unit/integration/build/e2e com evidência real e 100% PASS ou PASS_WITH_NON_BLOCKING_WARNINGS; os 3 comandos que dependem de credencial externa/Docker (`verify:integrations`, `verify:ai`, `setup:db:check`) foram executados de verdade e documentados como checkpoint externo com erro real anexado, nunca como "PASS N/A" |
-| Nenhum blocker histórico sem destino | **Atendido** — GOV-006, 83/83 handoffs inventariados, 1 único bloqueador real (`onda-8/09-para-08-10-dominio-producao-e-verificacao-deep-link.md`) com destino explícito (onda-13, dono 09/08/10) |
-| `main` protegida | **Parcialmente verificado** — GOV-004, PR obrigatório e ao menos 1 check obrigatório confirmados por evidência real de produção (GH006); force-push e admin-bypass não confirmáveis com as ferramentas desta sessão, checkpoint externo registrado com dono sugerido (15/10) |
-| `.agents/runs/onda-12.md` publicado | **Atendido** — este arquivo, mais o anexo `onda-12-handoffs.md` |
+| Critério                                | Status                                                                                                                                                                                                                                                                                                                                               |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Roster normativo sem agente inexistente | **Atendido** — GOV-001, 01A/06A/13-18 formalizados, 19/20 removidos e reatribuídos                                                                                                                                                                                                                                                                   |
+| Ownership sem ambiguidade               | **Atendido** — reatribuição explícita de verificação contínua (14+08) e experiência real (02+03+08+14), com a ressalva de gap registrada, não escondida                                                                                                                                                                                              |
+| Baseline executado                      | **Atendido** — tsc/lint/unit/integration/build/e2e com evidência real e 100% PASS ou PASS_WITH_NON_BLOCKING_WARNINGS; os 3 comandos que dependem de credencial externa/Docker (`verify:integrations`, `verify:ai`, `setup:db:check`) foram executados de verdade e documentados como checkpoint externo com erro real anexado, nunca como "PASS N/A" |
+| Nenhum blocker histórico sem destino    | **Atendido** — GOV-006, 83/83 handoffs inventariados, 1 único bloqueador real (`onda-8/09-para-08-10-dominio-producao-e-verificacao-deep-link.md`) com destino explícito (onda-13, dono 09/08/10)                                                                                                                                                    |
+| `main` protegida                        | **Parcialmente verificado** — GOV-004, PR obrigatório e ao menos 1 check obrigatório confirmados por evidência real de produção (GH006); force-push e admin-bypass não confirmáveis com as ferramentas desta sessão, checkpoint externo registrado com dono sugerido (15/10)                                                                         |
+| `.agents/runs/onda-12.md` publicado     | **Atendido** — este arquivo, mais o anexo `onda-12-handoffs.md`                                                                                                                                                                                                                                                                                      |
 
 ### Decisão: **APROVADA**
 
@@ -310,6 +332,7 @@ impossível de provisionar localmente. Nenhum teste foi marcado como aprovado se
 
 Pendências que sobrevivem a esta onda, todas com dono e destino (não bloqueiam a aprovação da
 governança em si, mas ficam registradas para a Sprint 13 ou antes):
+
 1. Confirmar em GitHub → Settings → Branches se "Allow force pushes" e "Do not allow bypassing the
    above settings" estão configurados, e se a lista de checks obrigatórios cobre todo o gate
    (`ci.yml`), não só `build`. Dono: 15/10.
@@ -325,4 +348,3 @@ governança em si, mas ficam registradas para a Sprint 13 ou antes):
 - Reabrir formalmente a Fase Final 0 (rodando o gate completo pós-rotação de credenciais, conforme
   `final-fase-3.md`) e avançar a Fase Final 5 (Go-Live), hoje bloqueada só pelo item de deep link.
 - Nenhuma feature nova fora do freeze de escopo (GOV-003) até a Sprint 13.
-

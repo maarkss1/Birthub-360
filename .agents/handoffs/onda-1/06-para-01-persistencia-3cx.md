@@ -14,6 +14,7 @@ provisório: "Em-memória / fallback store para configurações 3CX quando não 
 customizada".
 
 Consequência real:
+
 - toda conexão 3CX de toda organização é perdida a cada restart/redeploy do processo, sem aviso
   nenhum ao usuário — a tela volta a mostrar "Não conectado" e o vendedor precisa reconectar do
   zero;
@@ -25,6 +26,7 @@ Isto não é uma migração que eu (06) posso criar — `prisma/schema.prisma` e
 são propriedade exclusiva do Agente 01.
 
 ## Arquivo(s) envolvido(s)
+
 - `prisma/schema.prisma` — falta um modelo (ex.: `ThreeCXConnection`), no mesmo padrão de
   `BitrixConnection`/`GoogleWorkspaceConnection` (organizationId, RLS, timestamps).
 - `src/features/integrations/threecx/threecx.service.ts` — `memory3CXStore` e as funções
@@ -32,6 +34,7 @@ são propriedade exclusiva do Agente 01.
   precisam trocar de `Map` para `prisma.threeCXConnection.*` depois que o modelo existir.
 
 ## Alteração necessária
+
 1. Criar `ThreeCXConnection` em `prisma/schema.prisma`: `id`, `organizationId` (+ relação e
    índice, como `BitrixConnection`), `label`, `pbxUrl`, `extension`, `apiKey`/`apiSecret`
    (avaliar se estes dois precisam do mesmo tratamento de criptografia em repouso já aplicado a
@@ -43,11 +46,13 @@ são propriedade exclusiva do Agente 01.
    meu escopo, `src/features/integrations/**`), a menos que você prefira fazer os dois juntos.
 
 ## Teste esperado
+
 Depois da migração: `list3CXConnections`/`connect3CX`/`disconnect3CX` sobrevivendo a um restart do
 processo (ou, em teste, a uma nova instância de Prisma Client) — o mesmo tipo de cobertura que já
 existe para Bitrix/Google.
 
 ## Contexto adicional
+
 Achado relacionado, já corrigido por mim nesta rodada (não depende deste handoff): `make3CXCall`
 não fazia NENHUMA chamada de rede real ao PABX — fabricava sucesso incondicionalmente, inclusive
 gravando no CRM uma Activity afirmando "Chamada iniciada via 3CX PABX" mesmo com o PABX
@@ -77,10 +82,10 @@ Implementado por completo (Agente 01, remediação Onda 5) — os dois itens do 
    em repouso (AES-256-GCM) de forma transparente, mesmo tratamento de
    `BitrixConnection.webhookUrl`/`webhookSecret`.
 2. **Migração** `prisma/migrations/20260814120000_three_cx_connection/migration.sql` — `CREATE TABLE`
-   + índice + FK + RLS, aplicada e validada localmente contra Postgres real (`prisma migrate deploy`
-   limpo em cima das 45 migrações já existentes, `prisma migrate status` confirma "up to date",
-   `prisma migrate diff` não mostra mais nenhuma divergência de `ThreeCXConnection` entre schema e
-   banco).
+   - índice + FK + RLS, aplicada e validada localmente contra Postgres real (`prisma migrate deploy`
+     limpo em cima das 45 migrações já existentes, `prisma migrate status` confirma "up to date",
+     `prisma migrate diff` não mostra mais nenhuma divergência de `ThreeCXConnection` entre schema e
+     banco).
 3. **`threecx.service.ts`**: `memory3CXStore` (o `Map` em memória) removido. `get3CXConnectionsForOrg`
    /`save3CXConnectionForOrg`/`delete3CXConnectionForOrg` agora são `async` e chamam
    `prisma.threeCXConnection.findMany`/`create`/`deleteMany` (delete sempre escopado por

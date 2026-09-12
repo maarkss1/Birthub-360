@@ -32,13 +32,15 @@ sintoma: a ferramenta de IA vai começar a devolver erro sempre que não tiver u
 passar, em vez de silenciosamente inventar um.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/intelligence/tools/opsTools.ts:31` (`createFollowUpTaskTool`)
 - Padrão semelhante, mesmo domínio, não necessariamente o mesmo model: `owner: payload.owner ||
-  'Enxame de IA AtlasGR'` em `src/features/intelligence/services/aiPendingAction.service.ts:78` —
+'Enxame de IA AtlasGR'` em `src/features/intelligence/services/aiPendingAction.service.ts:78` —
   não investiguei esse a fundo (model fora do meu escopo), mas vale conferir se tem o mesmo
   problema.
 
 ## Alteração necessária
+
 Na ferramenta, resolver um responsável real em vez de usar um texto fixo quando `owner` não é
 informado — por exemplo, usar o `Lead.owner` do próprio lead (o vendedor já responsável por ele),
 já que a tarefa é sobre esse lead. Se nem isso existir (lead sem responsável), a ferramenta deveria
@@ -47,6 +49,7 @@ nome fabricado — mesmo princípio de "ausência de responsável é um estado d
 mascarado" já aplicado ao `Lead.owner` no meu domínio.
 
 ## Teste esperado
+
 - Teste unitário/integração da tool confirmando que, sem `owner` explícito, ela resolve o
   responsável real do lead (ou falha de forma visível) em vez de gravar
   `'Enxame de IA Atlas'`.
@@ -54,6 +57,7 @@ mascarado" já aplicado ao `Lead.owner` no meu domínio.
   coberto por teste no meu lado, `tests/unit/features/activities/services/activity.service.test.ts`).
 
 ## Contexto adicional
+
 Achado durante a auditoria de forecast/BI da Onda 7 (mission do Agente 04, item "Sem owner
 fictício"). `Activity.owner` é campo de texto livre por desenho (o formulário humano deixa digitar
 qualquer responsável) — o problema não é o tipo do campo, é um chamador automatizado usando um
@@ -66,7 +70,7 @@ sobrevivendo ao guard `assertRealOwner`:
 
 1. **`opsTools.ts` (`createFollowUpTaskTool`)** — quando `owner` não vem explícito na chamada da
    ferramenta, ela agora busca o próprio `Lead` (`prisma.lead.findFirst({ where: { id: leadId,
-   organizationId }, select: { owner: true } })`) e usa `Lead.owner` como responsável, já que a
+organizationId }, select: { owner: true } })`) e usa `Lead.owner` como responsável, já que a
    tarefa é sobre esse lead e o vendedor dono dele é o candidato natural. Três casos tratados
    explicitamente, sem nunca cair no placeholder:
    - lead não encontrado no tenant atual → mensagem de erro clara ("Lead ... não encontrado no
@@ -76,8 +80,8 @@ sobrevivendo ao guard `assertRealOwner`:
      executar este follow-up"), tarefa não é criada;
    - lead com `owner` definido → usa esse valor, mesmo texto que já apareceria em
      `ActivityList.tsx`/`Calendar.tsx`/relatório por responsável.
-   `owner` explícito (quando informado) continua tendo prioridade e nunca dispara a consulta ao
-   Lead.
+     `owner` explícito (quando informado) continua tendo prioridade e nunca dispara a consulta ao
+     Lead.
 
 2. **`aiPendingAction.service.ts:78` (`executeAction`, ramo `create_follow_up`)** — confirmado: é
    o mesmo problema, mesmo destino (`activityService.create`, mesmo model `Activity`), só um
@@ -100,6 +104,7 @@ sobrevivendo ao guard `assertRealOwner`:
    responsável humano por uma tarefa, então não é o mesmo padrão fabricado.
 
 Arquivos alterados:
+
 - `src/features/intelligence/tools/opsTools.ts`
 - `src/features/intelligence/services/aiPendingAction.service.ts`
 - `src/features/intelligence/tools/__tests__/opsTools.test.ts` (testes novos: owner explícito,
@@ -110,6 +115,7 @@ Arquivos alterados:
 
 Gate (ambiente sem Docker/Postgres — `test:integration`/`test:e2e` não executáveis localmente,
 delegados ao CI do PR, ver `.agents/runs/onda-10.md` → "Limitação de ambiente conhecida"):
+
 - `npx tsc --noEmit -p .` — limpo.
 - `npm run lint` — 0 erros (73 warnings pré-existentes, nenhum nos arquivos tocados).
 - `npm run test:unit` — verde (arquivos afetados + suíte completa).

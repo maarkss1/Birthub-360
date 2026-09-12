@@ -4,6 +4,7 @@
 > `identidade-visual/birthhub360/` e `src/styles/globals.css`.
 
 # NEXUS OS — Manual Definitivo de Identidade Visual & UI/UX Futurista
+
 ## Central de Inteligência Comercial (AtlasGR & TotalTrac)
 
 Este manual é a especificação técnica e visual definitiva para a plataforma multi-tenant, fundindo o DNA de **Segurança & Gestão de Risco da AtlasGR** com a **Telemetria de Precisão da TotalTrac** sob uma camada cibernética de alta performance.
@@ -13,12 +14,14 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
 ### 1. Pilares Estratégicos & DNA das Marcas
 
 #### AtlasGR
+
 - **Missão:** Gerenciar os riscos nos processos logísticos com ampla gama de serviços e alta segurança.
 - **Propósito:** Conectar pessoas e tecnologia gerando valores com segurança e inovação.
 - **Valores:** Perseverança, Transparência, Simplicidade, Atitude de Dono e Inovação.
 - **Conceitos Visuais:** Formas geométricas com ângulos de 60º, robustez, calor industrial e dinamismo.
 
 #### TotalTrac
+
 - **Missão:** Atender às necessidades na gestão de frotas com recursos tecnológicos avançados.
 - **Slogan:** Conectar para cuidar.
 - **Valores:** Inovação, Praticidade, Segurança, Custo-benefício e Excelência de atendimento.
@@ -43,18 +46,18 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
 
 ### 3. Paletas Cromáticas Exatas
 
-| Marca | Papel | HEX | RGB | CMYK | Pantone |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **AtlasGR** | Primária (Laranja Atlas) | `#FF5618` | 255, 86, 24 | 0, 84, 100, 0 | 172 C |
-| **AtlasGR** | Secundária (Laranja Apoio) | `#FF6B10` | 255, 107, 16 | 0, 75, 100, 0 | 2018 C |
-| **AtlasGR** | Secundária (Laranja Médio) | `#FF8008` | 255, 128, 8 | 0, 6, 100, 0 | 151 C |
-| **AtlasGR** | Secundária (Amarelo) | `#FFC500` | 255, 197, 0 | 0, 26, 100, 0 | 109 C |
-| **AtlasGR** | Neutra (Grafite Dark) | `#333333` | 51, 51, 51 | 73, 67, 65, 80 | 447 C |
-| **TotalTrac** | Primária (Azul Médio) | `#008FCE` | 0, 143, 206 | 80, 30, 0, 0 | Medium Blue C |
-| **TotalTrac** | Secundária (Azul Primário) | `#374898` | 55, 72, 152 | 90, 75, 0, 0 | 2747 C |
-| **TotalTrac** | Secundária (Azul Navy) | `#2D3B78` | 45, 59, 120 | 95, 85, 20, 5 | 2372 C |
-| **TotalTrac** | Secundária (Azul Claro) | `#93DBF2` | 147, 219, 242 | 45, 0, 5, 0 | 2975 C |
-| **TotalTrac** | Neutra (Azul Noturno) | `#1E2F37` | 30, 47, 55 | 85, 65, 55, 60 | 433 C |
+| Marca         | Papel                      | HEX       | RGB           | CMYK           | Pantone       |
+| :------------ | :------------------------- | :-------- | :------------ | :------------- | :------------ |
+| **AtlasGR**   | Primária (Laranja Atlas)   | `#FF5618` | 255, 86, 24   | 0, 84, 100, 0  | 172 C         |
+| **AtlasGR**   | Secundária (Laranja Apoio) | `#FF6B10` | 255, 107, 16  | 0, 75, 100, 0  | 2018 C        |
+| **AtlasGR**   | Secundária (Laranja Médio) | `#FF8008` | 255, 128, 8   | 0, 6, 100, 0   | 151 C         |
+| **AtlasGR**   | Secundária (Amarelo)       | `#FFC500` | 255, 197, 0   | 0, 26, 100, 0  | 109 C         |
+| **AtlasGR**   | Neutra (Grafite Dark)      | `#333333` | 51, 51, 51    | 73, 67, 65, 80 | 447 C         |
+| **TotalTrac** | Primária (Azul Médio)      | `#008FCE` | 0, 143, 206   | 80, 30, 0, 0   | Medium Blue C |
+| **TotalTrac** | Secundária (Azul Primário) | `#374898` | 55, 72, 152   | 90, 75, 0, 0   | 2747 C        |
+| **TotalTrac** | Secundária (Azul Navy)     | `#2D3B78` | 45, 59, 120   | 95, 85, 20, 5  | 2372 C        |
+| **TotalTrac** | Secundária (Azul Claro)    | `#93DBF2` | 147, 219, 242 | 45, 0, 5, 0    | 2975 C        |
+| **TotalTrac** | Neutra (Azul Noturno)      | `#1E2F37` | 30, 47, 55    | 85, 65, 55, 60 | 433 C         |
 
 ---
 
@@ -63,12 +66,12 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
 - **Contexto AtlasGR:** Família **Mont** (Heavy/Bold para títulos) e **Montserrat** (Regular/Medium para corpo e labels).
 - **Contexto TotalTrac:** Família **Fivo Sans** (Heavy/Medium) e **Inter** como fallback web.
 - **Escala Modular:**
-  - *Display (Hero):* 48px – 64px / Bold 900 / Tracking -0.04em
-  - *H1 (Títulos de Página):* 32px / Bold 800 / Tracking -0.03em
-  - *H2 (Títulos de Seção/Cards):* 24px / SemiBold 700
-  - *H3 (Subtítulos & Modais):* 18px / Medium 600
-  - *Corpo (Body Regular):* 16px / Line-height 1.6 / Regular 400
-  - *Caption & Overline:* 12px / Monospaced / Uppercase / Tracking 0.1em
+  - _Display (Hero):_ 48px – 64px / Bold 900 / Tracking -0.04em
+  - _H1 (Títulos de Página):_ 32px / Bold 800 / Tracking -0.03em
+  - _H2 (Títulos de Seção/Cards):_ 24px / SemiBold 700
+  - _H3 (Subtítulos & Modais):_ 18px / Medium 600
+  - _Corpo (Body Regular):_ 16px / Line-height 1.6 / Regular 400
+  - _Caption & Overline:_ 12px / Monospaced / Uppercase / Tracking 0.1em
 
 ---
 
@@ -105,7 +108,7 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
   - Formato chanfrado cibernético ou cantos de **8px**.
   - Microinteração de escala (`scale: 1.04`), glow intenso ao passar o mouse e feedback auditivo imediato.
 - **Cards & Superfícies:**
-  - Vidro temperado (*Glassmorphism*): `background: rgba(18, 12, 10, 0.75)`, `backdrop-filter: blur(20px)`.
+  - Vidro temperado (_Glassmorphism_): `background: rgba(18, 12, 10, 0.75)`, `backdrop-filter: blur(20px)`.
   - Raio de curvatura padrão de **12px** (`rounded-xl`).
   - Bordas com iluminação neon sutil na cor da marca ativa.
 - **Inputs & Formulários:**

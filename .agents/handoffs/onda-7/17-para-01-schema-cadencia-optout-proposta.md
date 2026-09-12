@@ -5,7 +5,9 @@
   Agente 01A — ver "## Resolução (Agente 01A, Onda 10)" abaixo; `migrate deploy`/`dev` contra
   banco real ainda não executado neste worktree, ver limitação de ambiente na mesma seção)
 - Prioridade: alto
+
 ## Problema
+
 As 5 entregas da Onda 7 do Agente 17 (opt-out unificado, cadência multicanal, reply tracking,
 agendamento, proposta/assinatura/fechamento) precisam de tabelas novas. `prisma/schema.prisma` é
 propriedade exclusiva sua — não editei o arquivo. Implementei toda a lógica de domínio em
@@ -15,6 +17,7 @@ aplicado para poder entregar código testado agora. Este handoff é a proposta p
 aplicar (ou ajustar) como migration real.
 
 ## Arquivo(s) envolvido(s)
+
 `prisma/schema.prisma` (novo `enum`s e `model`s abaixo) + migration correspondente em
 `prisma/migrations/<timestamp>_cadence_optout_proposal/migration.sql`.
 
@@ -76,11 +79,13 @@ WITH CHECK (true);
 não pode ser desligado até `OptOutRecord` cobrir 100% do que ele cobre. Proposta de migração de
 dados, a rodar na mesma migration ou logo depois, sem `DROP TABLE "CallSuppression"` neste
 momento:
+
 ```sql
 INSERT INTO "OptOutRecord" ("id", "organizationId", "scope", "leadId", "phoneE164", "originChannel", "reason", "createdAt")
 SELECT gen_random_uuid()::text, "organizationId", 'Voice', "leadId", "phoneE164", 'voice', "reason", "createdAt"
 FROM "CallSuppression";
 ```
+
 `CallSuppression` continua existindo e sendo escrito pelo 12 até ele confirmar a migração de
 leitura para `OptOutRecord` (ver handoff a ele). Eu não decido esse corte — é dele.
 
@@ -159,13 +164,16 @@ ALTER TABLE "CadenceTouchAttempt" ADD CONSTRAINT "CadenceTouchAttempt_cadenceRun
 
 `ConversationSignal` já existe e é reaproveitado (não crio modelo paralelo, conforme meu prompt).
 Falta apenas o canal ter ficado implícito como "sempre WhatsApp":
+
 ```sql
 ALTER TABLE "ConversationSignal" ADD COLUMN "channel" TEXT NOT NULL DEFAULT 'whatsapp';
 ```
+
 E falta persistência da mensagem de e-mail em si — hoje só existe `WhatsAppMessage` para o canal
 de chat. Proposta simétrica (mesmo formato), mas **este modelo é compartilhado com o 05
 (dono de e-mail/SMTP)** — abri também `17-para-05-06-12-contrato-optout.md` pedindo a ele revisão
 do formato antes de você aplicar:
+
 ```sql
 CREATE TABLE "EmailMessage" (
     "id" TEXT NOT NULL,
@@ -285,6 +293,7 @@ Todas as tabelas acima levam a mesma RLS `tenant_isolation_policy` do bloco 1 �
 repetição em 2-5, mas obrigatória em todas (LGPD e tenancy, `/AGENTS.md`).
 
 ## Teste esperado
+
 - `prisma migrate dev` aplica sem erro contra o schema atual.
 - Testes de RLS por tabela (mesmo padrão de `tests/integration/rls/**`, se existir, ou o padrão
   usado para `BitrixExtractionRun`): tenant A não lê/escreve linha de tenant B.
@@ -293,6 +302,7 @@ repetição em 2-5, mas obrigatória em todas (LGPD e tenancy, `/AGENTS.md`).
   garantir sozinho sem constraint de banco.
 
 ## Contexto adicional
+
 Enquanto este handoff está aberto, meu progresso em `src/features/cadence/**` não fica bloqueado:
 toda a lógica de domínio (máquina de estados de cadência, matching de opt-out, guardas de
 confirmação verificável, versionamento de proposta, guarda de fechamento determinístico) está
@@ -309,6 +319,7 @@ Não Clicksign/DocuSign/Autentique.
 
 Notas para quem for implementar o adaptador real (não pesquisado a fundo nesta sessão — validar
 antes de codar):
+
 - É o serviço oficial do governo federal brasileiro, integrado à conta gov.br do signatário
   (autenticação prata/ouro dá validade jurídica equivalente à ICP-Brasil, MP 2.200-2/2001).
   Diferença de UX real para o signatário final: ele precisa ter (ou criar) uma conta gov.br para
@@ -329,6 +340,7 @@ produção antes desta onda — não mexido aqui). Migration nova:
 `prisma/migrations/20260816120000_cadence_scheduling_signature/migration.sql`.
 
 ### O que foi aplicado
+
 - **Item 2** — enums `CadenceChannel`, `CadenceRunStatus`, `CadenceStopReason`,
   `CadenceTouchResult` + models `CadenceSequence`, `CadenceRun`, `CadenceTouchAttempt`.
 - **Item 3** — `ConversationSignal.channel` (`String @default("whatsapp")`) + model
@@ -344,23 +356,26 @@ produção antes desta onda — não mexido aqui). Migration nova:
   nova (exigência da DSL do Prisma — os dois lados de toda relação precisam estar declarados).
 
 ### Duas correções em relação ao SQL literal deste handoff (não é reescrita do pedido original —
+
 registradas aqui e também no comentário da seção nova em `schema.prisma`, por cima dos models):
+
 1. **FK `organizationId → Organization` adicionada em todas as tabelas novas.** O SQL proposto
    acima lista a coluna `organizationId` em `CadenceSequence`, `CadenceRun`,
    `CadenceTouchAttempt`, `EmailMessage`, `CadenceCalendarEvent`,
    `CrmCommercialDocumentVersion` e `CrmDocumentSignatureRequest`, mas não tem o `ALTER TABLE ...
-   ADD CONSTRAINT ..._organizationId_fkey` correspondente (só `OptOutRecord` e
+ADD CONSTRAINT ..._organizationId_fkey` correspondente (só `OptOutRecord` e
    `BitrixExtractionRun`, aplicados em migrations anteriores, já tinham essa FK). Tratado como
    lacuna de transcrição, não decisão de omitir — o próprio parágrafo de abertura desta proposta
    promete "`organizationId` com FK `ON DELETE CASCADE` para `Organization`" em todas as tabelas.
 2. **`CadenceRun_leadId_active_unique` como índice único parcial de verdade** (`WHERE "status" =
-   'Active'`), exatamente como este handoff propôs, só que isso não é representável na DSL do
+'Active'`), exatamente como este handoff propôs, só que isso não é representável na DSL do
    Prisma (sem suporte a índice parcial) — existe só na migration SQL manual, com um
    `@@index([leadId])` normal em `schema.prisma` para a consulta comum. `prisma migrate diff`
    contra o schema vai sempre reportar esse índice específico como fora do schema — conhecido e
    aceito, não é deriva real.
 
 ### Convenção de enum (mantida do precedente de `OptOutRecord`)
+
 Valores PascalCase no Postgres (`Email`/`WhatsApp`/`Voice`, `Active`/`Paused`/`Stopped` etc.),
 diferentes dos literais lowercase/kebab/snake usados no domínio TypeScript já implementado em
 `src/features/cadence/domain/*.ts` (`'email'`, `'active'`, `'opt-out'`, `'signature_completed'`
@@ -370,6 +385,7 @@ para o domínio. Quem escrever os adaptadores `Prisma*Repository` para `CadenceR
 etc. deve seguir o mesmo padrão de tabela de mapeamento.
 
 ### Verificação executada (e o que NÃO foi executado)
+
 - `npx prisma validate` — limpo.
 - `npx prisma format` — aplicado (realinha espaçamento/ordem de atributos `@@unique`/`@@index` em
   alguns models pré-existentes não relacionados a este handoff, como efeito colateral esperado e
@@ -390,6 +406,7 @@ etc. deve seguir o mesmo padrão de tabela de mapeamento.
   para o CI do PR ou para um ambiente com banco liberado.
 
 ### Para quem retomar este handoff (Agente 17 ou quem escrever os adaptadores Prisma)
+
 - Os adaptadores Prisma reais (`PrismaCadenceRunRepository`, `PrismaEmailMessageRepository`
   ou equivalente) ainda não existem — só `PrismaOptOutRepository.ts` (item 1, já em produção).
   `prisma/schema.prisma` é propriedade exclusiva do 01/01A; os adaptadores em

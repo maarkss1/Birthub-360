@@ -23,6 +23,7 @@ em todo `src/` e não existe nenhum arquivo de worker de expurgo, nem em
 referenciado em `worker.ts`.
 
 Isso já estava documentado como pendência conhecida — o próprio código-fonte confirma:
+
 - `src/features/integrations/bitrix/service/extraction.ts:26-27`: "...retenção via
   `BITRIX_EXTRACTION_RETENTION_DAYS` (worker de expurgo continua DESLIGADO por padrão, fora do
   escopo desta rodada)."
@@ -45,6 +46,7 @@ que exigem confirmação humana (ver abaixo) e em arquivos fora da minha proprie
 (`src/features/integrations/bitrix/**` apenas).
 
 ## Arquivo(s) envolvido(s)
+
 - `src/config/env.ts` — declaração de `BITRIX_EXTRACTION_RETENTION_DAYS` (default 45) e
   `BITRIX_EXTRACTION_PURGE_ENABLED` (default `false`). Não editado por mim (fora do meu escopo
   nesta rodada).
@@ -59,8 +61,10 @@ que exigem confirmação humana (ver abaixo) e em arquivos fora da minha proprie
   (compartilhado, ver `AGENTS.md`).
 
 ## Alteração necessária
+
 Construir `bitrixExtractionPurge.worker.ts` (ou nome equivalente) em `src/lib/queue/`, registrado
 em `worker.ts`, que:
+
 1. Só executa quando `BITRIX_EXTRACTION_PURGE_ENABLED === true` (env já existe, só falta o
    consumidor).
 2. Seleciona `BitrixExtractionRun` com `createdAt` mais antigo que
@@ -76,6 +80,7 @@ em `worker.ts`, que:
    as organizações, não uma sessão de usuário.
 
 ## Decisão humana pendente antes de LIGAR em produção (mesmo depois do worker existir)
+
 - Confirmar se DELETE físico da linha é o comportamento desejado, ou se deveria ser soft-delete
   (a auditoria/LGPD às vezes prefere anonimizar em vez de apagar, dependendo da base legal
   registrada) — este módulo já tem um precedente de "anonimizar" em vez de apagar
@@ -88,6 +93,7 @@ em `worker.ts`, que:
   produção antes de qualquer ativação real, dado que é uma operação sem reversibilidade.
 
 ## Teste esperado
+
 - Idempotência (rodar duas vezes seguidas no mesmo lote não duplica efeito nem lança erro).
 - Respeito ao flag desligado por padrão (não expurga nada quando `BITRIX_EXTRACTION_PURGE_ENABLED`
   não está explicitamente `true`).
@@ -95,11 +101,14 @@ em `worker.ts`, que:
 - Isolamento entre organizações (RLS/filtro explícito, mesmo padrão de `tenant-isolation-*.test.ts`).
 
 ## Contexto adicional
+
 Investigação feita nesta rodada (Onda de auditoria Bitrix, gap LGPD):
+
 ```
 grep -rln "BITRIX_EXTRACTION_PURGE_ENABLED\|purgeExpiredExtractionRuns\|purgeExtraction" src --include="*.ts"
 # → só src/config/env.ts (a declaração da env var em si, nenhum consumidor)
 ```
+
 Nenhuma alteração de código foi feita para este item — meu escopo nesta rodada
 (`src/features/integrations/bitrix/**`) não inclui `worker.ts` nem justificaria eu construir um
 worker novo sem a confirmação humana acima, então documentei e registrei este handoff em vez de

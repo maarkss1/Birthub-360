@@ -51,8 +51,9 @@ funcional).
 
 Cifrar PII de `Contact` em repouso continua sendo um gap real do checklist CPI. Para reativar, é
 necessário resolver antes um dos dois caminhos (decisão de produto/arquitetura, não técnica pura):
+
 1. Índice determinístico separado (ex.: HMAC-SHA256 de um valor normalizado) para permitir
    igualdade exata sem expor o texto puro, mantendo o campo principal com IV aleatório.
 2. Decifrar em relações incluídas também (estender a extensão do Prisma para percorrer `include`/
    `select` aninhados) — resolve o caso de leitura, mas não o de `where` por igualdade.
-Nenhum dos dois foi implementado nesta rodada.
+   Nenhum dos dois foi implementado nesta rodada.

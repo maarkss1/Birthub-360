@@ -7,7 +7,8 @@ describe('security audit waiver gate', () => {
     const registryFailure = JSON.stringify({
       error: {
         code: 'E403',
-        summary: '403 Forbidden - POST https://registry.example.test/-/npm/v1/security/audits/quick',
+        summary:
+          '403 Forbidden - POST https://registry.example.test/-/npm/v1/security/audits/quick',
       },
     });
 

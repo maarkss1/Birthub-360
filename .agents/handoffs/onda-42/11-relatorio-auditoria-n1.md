@@ -54,48 +54,48 @@ Tabela completa de toda rota `GET` que devolve uma coleção (paginada ou não),
 auditoria. "N+1 real" = `findMany`/`groupBy` seguido de outra query Prisma por item da lista, dentro
 do caminho de execução da própria rota HTTP.
 
-| Domínio | Rota | Service/Repository | N+1 real? |
-|---|---|---|---|
-| Leads | `GET /api/crm/leads` | `PrismaLeadRepository.findAllWithFilters` | Não — `include: { company, contact }` |
-| Leads | `GET /api/crm/leads/export/csv` | `PrismaLeadRepository.findAllForExport` | Não — `include` |
-| Empresas | `GET /api/companies` | `PrismaCompanyRepository.findAllWithFilters` | Não — `include: { contacts, leads }` |
-| Contatos | `GET /api/contacts` | `PrismaContactRepository.findAllWithFilters` | Não — `include: { company }` |
-| Atividades | `GET /api/activities` | `PrismaActivityRepository.findAllPaginated` | Não — `include: { lead: { company, contact } }` |
-| Atividades | `GET /api/activities/templates` | estático (sem DB) | N/A |
-| Pipeline/Negócios | `GET /api/crm360/overview` | `PrismaCrm360Repository.getOverviewData` | Não — `$transaction` batch de counts/finds |
-| Pipeline/Negócios | `GET /api/crm360/pipelines` | `PrismaCrm360Repository.getPipelines` | Não — `include: { stages: { _count } }` |
-| Pipeline/Negócios | `GET /api/crm360/board` | `PrismaCrm360Repository.getBoardLeads` | Não — `include: { company, contact, pipelineStage, dealItems }` |
-| Pipeline/Negócios | `GET /api/crm360/products` | `PrismaCrm360Repository.listProducts` | Não |
-| Pipeline/Negócios | `GET /api/crm360/deals/:leadId/items` | `PrismaCrm360Repository.getDealItems` | Não — `include: { product }` |
-| Documentos | `GET /api/crm360/documents` | `PrismaCrm360Repository.listDocuments` | Não — `include: { lead, company, contact }` |
-| Documentos | `GET /api/crm360/documents/:id/versions` | `PrismaCrm360Repository.listDocumentVersions` | Não |
-| Mesa de Tratamento | `GET /api/mesa-tratamento/queue` | rota inline, `select` aninhado | Não — `select` com `company`/`contact` embutidos numa query |
-| Deals (Comercial Inteligente) | `GET /api/commercial-intelligence/deals` | `PrismaCommercialIntelligenceRepository.findDeals` | Não — `include: { company, pipelineStage, dealItems }` |
-| Comercial Inteligente | `GET /api/commercial-intelligence/overview` | `buildExecutiveOverview` | **SIM — corrigido nesta rodada** (ver seção 2.1) |
-| Comercial Inteligente | `/pipeline-creation`, `/performance`, `/aging`, `/losses`, `/crm-quality`, `/alerts` | `build*Report` (queries*) | Não — processam em memória o resultado já carregado de `findDeals`/`findStageHistory` |
-| Comercial Inteligente | `/leading-indicators` | `buildLeadingIndicators` | **Achado, não corrigido** — ver seção "Pendências" |
-| Comercial Inteligente | `/filter-options` | `getFilterOptions` | Não — 5 queries em `Promise.all` (paralelo, não sequencial; nenhuma delas é "1 por item") |
-| Comercial Inteligente | `/goals` | `getGoal` | Não |
-| Comercial Inteligente | `/deals/:leadId/forecast` | `buildForecastExplain` | Não (item único, fora da definição de "listagem") |
-| Market Intelligence | `GET /api/market-intelligence/companies` | `marketIntelligenceService.listCompanies` | Não — `$queryRaw` único com `LIMIT`/`OFFSET`, paginação real em SQL |
-| Market Intelligence | `GET /api/market-intelligence/territories` | `territories` | Não — `GROUP BY` em SQL |
-| Market Intelligence | `GET /api/market-intelligence/rankings` | `rankings` | Não — `GROUP BY`/`ORDER BY`/`LIMIT` em SQL |
-| Market Intelligence | `GET /api/market-intelligence/sources` | `sources` | Não |
-| Time | `GET /api/team`, `/team/assignable` | `listTeamMembers`/`listAssignableOwners` | Não |
-| Notas | `GET /api/notes` (por lead) | `NoteUseCases.findNotesByLead` → repository | Não |
-| Prospecção | `GET /api/prospecting-tools/saved-searches` | rota inline | Não |
-| Playbook | `GET /api/playbook/objection-matrix`, `/qualification-matrix` | `PrismaObjectionMatrixRepository`/`PrismaQualificationMatrixRepository` | Não |
-| Automações | `GET /api/automations` | `PrismaAutomationRepository.findAllWithFilters` | Não (sem relações — tabela plana) |
-| IA / Chatbook | `GET /api/intelligence/chatbook/history` | `listAssistantHistory` | Não |
-| Integrações — WhatsApp | `GET /api/integrations/whatsapp/conversations` | `listConversations` | **SIM — corrigido nesta rodada** (ver seção 2.2) |
-| Integrações — WhatsApp | `GET /api/integrations/whatsapp/messages`, `/signals` | rota inline | Não |
-| Cadência | `GET /api/cadence/opt-outs` | `PrismaOptOutRepository.list` | Não |
-| Cadência | `GET /api/cadence/runs` | `PrismaCadenceRunRepository.listByOrganization` | Não — `include: { touchAttempts }` |
-| Cadência | `GET /api/cadence/sequences`, `/templates` | rota inline / estático | Não |
-| Conhecimento | `GET /api/knowledge` | `ingestionService.list` | Não |
-| Billing/Uso de IA | `GET /api/usage` | `usageService.summary` | Não — 4 queries em `Promise.all` (agregações independentes, não "1 por item") |
-| Analytics | `/overview`, `/dashboard`, `/cohort` | `analytics.service.ts` / `AnalyticsUseCases.ts` | Não — todo `for (...)` desses arquivos itera sobre arrays já carregados em memória, sem `await prisma` dentro do loop |
-| Integrações — Bitrix | rotas de sync (`bitrix.routes.ts`, `service/{leads,deals,syncRules}.ts`) | — | **Já documentado** (ver `PERFORMANCE_BUDGETS.md` seção 4) — sync sequencial contra API externa, não N+1 de rota HTTP própria; fora do escopo desta rodada (ver "Pendências") |
+| Domínio                       | Rota                                                                                 | Service/Repository                                                      | N+1 real?                                                                                                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Leads                         | `GET /api/crm/leads`                                                                 | `PrismaLeadRepository.findAllWithFilters`                               | Não — `include: { company, contact }`                                                                                                                                        |
+| Leads                         | `GET /api/crm/leads/export/csv`                                                      | `PrismaLeadRepository.findAllForExport`                                 | Não — `include`                                                                                                                                                              |
+| Empresas                      | `GET /api/companies`                                                                 | `PrismaCompanyRepository.findAllWithFilters`                            | Não — `include: { contacts, leads }`                                                                                                                                         |
+| Contatos                      | `GET /api/contacts`                                                                  | `PrismaContactRepository.findAllWithFilters`                            | Não — `include: { company }`                                                                                                                                                 |
+| Atividades                    | `GET /api/activities`                                                                | `PrismaActivityRepository.findAllPaginated`                             | Não — `include: { lead: { company, contact } }`                                                                                                                              |
+| Atividades                    | `GET /api/activities/templates`                                                      | estático (sem DB)                                                       | N/A                                                                                                                                                                          |
+| Pipeline/Negócios             | `GET /api/crm360/overview`                                                           | `PrismaCrm360Repository.getOverviewData`                                | Não — `$transaction` batch de counts/finds                                                                                                                                   |
+| Pipeline/Negócios             | `GET /api/crm360/pipelines`                                                          | `PrismaCrm360Repository.getPipelines`                                   | Não — `include: { stages: { _count } }`                                                                                                                                      |
+| Pipeline/Negócios             | `GET /api/crm360/board`                                                              | `PrismaCrm360Repository.getBoardLeads`                                  | Não — `include: { company, contact, pipelineStage, dealItems }`                                                                                                              |
+| Pipeline/Negócios             | `GET /api/crm360/products`                                                           | `PrismaCrm360Repository.listProducts`                                   | Não                                                                                                                                                                          |
+| Pipeline/Negócios             | `GET /api/crm360/deals/:leadId/items`                                                | `PrismaCrm360Repository.getDealItems`                                   | Não — `include: { product }`                                                                                                                                                 |
+| Documentos                    | `GET /api/crm360/documents`                                                          | `PrismaCrm360Repository.listDocuments`                                  | Não — `include: { lead, company, contact }`                                                                                                                                  |
+| Documentos                    | `GET /api/crm360/documents/:id/versions`                                             | `PrismaCrm360Repository.listDocumentVersions`                           | Não                                                                                                                                                                          |
+| Mesa de Tratamento            | `GET /api/mesa-tratamento/queue`                                                     | rota inline, `select` aninhado                                          | Não — `select` com `company`/`contact` embutidos numa query                                                                                                                  |
+| Deals (Comercial Inteligente) | `GET /api/commercial-intelligence/deals`                                             | `PrismaCommercialIntelligenceRepository.findDeals`                      | Não — `include: { company, pipelineStage, dealItems }`                                                                                                                       |
+| Comercial Inteligente         | `GET /api/commercial-intelligence/overview`                                          | `buildExecutiveOverview`                                                | **SIM — corrigido nesta rodada** (ver seção 2.1)                                                                                                                             |
+| Comercial Inteligente         | `/pipeline-creation`, `/performance`, `/aging`, `/losses`, `/crm-quality`, `/alerts` | `build*Report` (queries*)                                               | Não — processam em memória o resultado já carregado de `findDeals`/`findStageHistory`                                                                                        |
+| Comercial Inteligente         | `/leading-indicators`                                                                | `buildLeadingIndicators`                                                | **Achado, não corrigido** — ver seção "Pendências"                                                                                                                           |
+| Comercial Inteligente         | `/filter-options`                                                                    | `getFilterOptions`                                                      | Não — 5 queries em `Promise.all` (paralelo, não sequencial; nenhuma delas é "1 por item")                                                                                    |
+| Comercial Inteligente         | `/goals`                                                                             | `getGoal`                                                               | Não                                                                                                                                                                          |
+| Comercial Inteligente         | `/deals/:leadId/forecast`                                                            | `buildForecastExplain`                                                  | Não (item único, fora da definição de "listagem")                                                                                                                            |
+| Market Intelligence           | `GET /api/market-intelligence/companies`                                             | `marketIntelligenceService.listCompanies`                               | Não — `$queryRaw` único com `LIMIT`/`OFFSET`, paginação real em SQL                                                                                                          |
+| Market Intelligence           | `GET /api/market-intelligence/territories`                                           | `territories`                                                           | Não — `GROUP BY` em SQL                                                                                                                                                      |
+| Market Intelligence           | `GET /api/market-intelligence/rankings`                                              | `rankings`                                                              | Não — `GROUP BY`/`ORDER BY`/`LIMIT` em SQL                                                                                                                                   |
+| Market Intelligence           | `GET /api/market-intelligence/sources`                                               | `sources`                                                               | Não                                                                                                                                                                          |
+| Time                          | `GET /api/team`, `/team/assignable`                                                  | `listTeamMembers`/`listAssignableOwners`                                | Não                                                                                                                                                                          |
+| Notas                         | `GET /api/notes` (por lead)                                                          | `NoteUseCases.findNotesByLead` → repository                             | Não                                                                                                                                                                          |
+| Prospecção                    | `GET /api/prospecting-tools/saved-searches`                                          | rota inline                                                             | Não                                                                                                                                                                          |
+| Playbook                      | `GET /api/playbook/objection-matrix`, `/qualification-matrix`                        | `PrismaObjectionMatrixRepository`/`PrismaQualificationMatrixRepository` | Não                                                                                                                                                                          |
+| Automações                    | `GET /api/automations`                                                               | `PrismaAutomationRepository.findAllWithFilters`                         | Não (sem relações — tabela plana)                                                                                                                                            |
+| IA / Chatbook                 | `GET /api/intelligence/chatbook/history`                                             | `listAssistantHistory`                                                  | Não                                                                                                                                                                          |
+| Integrações — WhatsApp        | `GET /api/integrations/whatsapp/conversations`                                       | `listConversations`                                                     | **SIM — corrigido nesta rodada** (ver seção 2.2)                                                                                                                             |
+| Integrações — WhatsApp        | `GET /api/integrations/whatsapp/messages`, `/signals`                                | rota inline                                                             | Não                                                                                                                                                                          |
+| Cadência                      | `GET /api/cadence/opt-outs`                                                          | `PrismaOptOutRepository.list`                                           | Não                                                                                                                                                                          |
+| Cadência                      | `GET /api/cadence/runs`                                                              | `PrismaCadenceRunRepository.listByOrganization`                         | Não — `include: { touchAttempts }`                                                                                                                                           |
+| Cadência                      | `GET /api/cadence/sequences`, `/templates`                                           | rota inline / estático                                                  | Não                                                                                                                                                                          |
+| Conhecimento                  | `GET /api/knowledge`                                                                 | `ingestionService.list`                                                 | Não                                                                                                                                                                          |
+| Billing/Uso de IA             | `GET /api/usage`                                                                     | `usageService.summary`                                                  | Não — 4 queries em `Promise.all` (agregações independentes, não "1 por item")                                                                                                |
+| Analytics                     | `/overview`, `/dashboard`, `/cohort`                                                 | `analytics.service.ts` / `AnalyticsUseCases.ts`                         | Não — todo `for (...)` desses arquivos itera sobre arrays já carregados em memória, sem `await prisma` dentro do loop                                                        |
+| Integrações — Bitrix          | rotas de sync (`bitrix.routes.ts`, `service/{leads,deals,syncRules}.ts`)             | —                                                                       | **Já documentado** (ver `PERFORMANCE_BUDGETS.md` seção 4) — sync sequencial contra API externa, não N+1 de rota HTTP própria; fora do escopo desta rodada (ver "Pendências") |
 
 Todas as demais rotas `GET` do app (roleplay, dashboard, gamification, feature-flags, integrações
 Google/3CX/Birth Voice, notificações, LGPD, settings) foram varridas pela regex de
@@ -165,13 +165,14 @@ da query principal (não muda o isolamento de tenant, só o número de queries).
 **Teste (prova de eliminação do N+1):**
 `src/features/integrations/whatsapp/__tests__/whatsappMessage.service.test.ts`, describe
 `listConversations — sem N+1`:
+
 - Mocka `prisma.whatsAppMessage.findMany`/`groupBy`/`findFirst` e afirma
   `findMany` chamado **exatamente 1 vez**, `groupBy` e `findFirst` **nunca chamados** — trava
   regressão futura de volta a "1 query, mas N+1 escondido em outro método".
 - Segundo teste confirma que o corte pelo `limit` continua correto (mais recentes primeiro) mesmo
   vindo de uma única query já ordenada.
 - Rodado: `npx vitest run -c vitest.unit.config.ts
-  src/features/integrations/whatsapp/__tests__/whatsappMessage.service.test.ts` → 11 testes, 0
+src/features/integrations/whatsapp/__tests__/whatsappMessage.service.test.ts` → 11 testes, 0
   falhas (inclui os 2 novos + os 9 já existentes do arquivo, intactos).
 
 ### 2.2 `GET /api/commercial-intelligence/overview` — loop sequencial de metas corrigido
@@ -245,6 +246,7 @@ for (let i = 0; i <= 3; i++) {
 
 **Teste (prova de eliminação do N+1):**
 `src/features/commercial-intelligence/__tests__/CommercialIntelligenceUseCases.unit.test.ts`:
+
 - `FakeRepository` (test double já existente, usado por toda a suíte de Comercial Inteligente) ganhou
   `getGoalCallCount`/`getGoalsCallCount` para medir **quantas vezes cada método é chamado**, não só o
   resultado.
@@ -257,7 +259,7 @@ for (let i = 0; i <= 3; i++) {
   `critico`/`sem_dados` e o caso de meta batida) continuam passando sem alteração — prova que o
   comportamento observável não mudou, só o número de queries.
 - Rodado: `npx vitest run -c vitest.unit.config.ts
-  src/features/commercial-intelligence/__tests__/CommercialIntelligenceUseCases.unit.test.ts` → todos
+src/features/commercial-intelligence/__tests__/CommercialIntelligenceUseCases.unit.test.ts` → todos
   os testes do arquivo passando (nenhuma falha).
 
 ---
@@ -290,12 +292,13 @@ dedicado com seu próprio plano de teste antes/depois.
 ### 3.2 Sync sequencial do Bitrix — já documentado, não é N+1 de rota HTTP própria
 
 `src/features/integrations/bitrix/service/{leads,deals,syncRules}.ts` continuam com o padrão de loop
-+ chamada sequencial já encontrado pela varredura heurística anterior (`PERFORMANCE_BUDGETS.md` seção
-4). Confirmado nesta rodada que o padrão é sincronização **contra a API externa do Bitrix24**
-(rate-limited, precisa ser sequencial por natureza), não N+1 de uma rota de listagem do próprio
-produto — já auditado separadamente em `BITRIX24-LEAD-FLOW-AUDIT.md`. Mantido fora do escopo desta
-auditoria (que é especificamente sobre rotas `GET` de listagem do CRM), conforme o próprio
-`PERFORMANCE_BUDGETS.md` já registrava.
+
+- chamada sequencial já encontrado pela varredura heurística anterior (`PERFORMANCE_BUDGETS.md` seção
+  4). Confirmado nesta rodada que o padrão é sincronização **contra a API externa do Bitrix24**
+  (rate-limited, precisa ser sequencial por natureza), não N+1 de uma rota de listagem do próprio
+  produto — já auditado separadamente em `BITRIX24-LEAD-FLOW-AUDIT.md`. Mantido fora do escopo desta
+  auditoria (que é especificamente sobre rotas `GET` de listagem do CRM), conforme o próprio
+  `PERFORMANCE_BUDGETS.md` já registrava.
 
 ### 3.3 Observação relacionada (não é N+1, mas é custo evitável na mesma vizinhança)
 

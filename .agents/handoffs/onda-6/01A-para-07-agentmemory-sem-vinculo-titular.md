@@ -13,17 +13,17 @@
 completo de todo ponto que grava `AgentMemory` (`grep -rn "agentMemory\." src/features/intelligence
 src/shared`), oito pontos no total:
 
-| Arquivo | Quem invoca / sessionId usado | leadId embutido? |
-|---|---|---|
-| `agents/base.agent.ts` (`updateMemory`, usado por BDR/Closer/CRM/Ops fora do enxame) | Default quando chamador não passa sessionId: `session-${agentType}-${Date.now()}` | **Não** |
-| `agents/sdr.agent.ts` (`SDRQualificationAgent.run`) | Default quando chamador não passa sessionId: `` session-${leadId}-${Date.now()} `` | Sim (posição fixa, sem timestamp variável no meio) |
-| `agents/ops.agent.ts` (`OpsAgent.run`) | Default: `session-ops-${Date.now()}` | **Não** (leadId chega só no conteúdo da mensagem, nunca no sessionId) |
-| `agents/learning.agent.ts` (`getLearningProfile`/perfil de estilo) | `learningProfileSessionId(tenantId, actorId)` — chave por usuário, não por lead | **Não é lead-scoped por design** (perfil de estilo do vendedor, não do lead) |
-| `agents/sdr-agent.ts` (`SDROutboundDraftAgent extends AgentService`) via `lib/queue/agent.worker.ts:63` | `` new SDROutboundDraftAgent(`session_${leadId}`, tenantId) `` | **Sim, sempre** (determinístico, não sobrescrevível pelo cliente — é um worker BullMQ) |
-| `services/agent.service.ts` (`AgentService.saveMemory`, base do acima) | `this.sessionId` — o que a subclasse/chamador passar no construtor | Depende do chamador |
-| `services/autonomyRoleRunner.service.ts` via `services/swarmScheduler.service.ts:341-344` (scheduler 24/7) | `` autonomy-${role}-${leadId}-${now.getTime()} `` | **Sim, sempre** (gerado pelo próprio scheduler, não vem de fora) |
-| `agents/supervisor.agent.ts` (`sdrNode`/`bdrNode`/`closerNode`/`crmNode`/`opsNode`, enxame `/api/agent/swarm/*`) | **Antes desta correção:** `swarm-<role>-${state.step}` (SEM leadId, embora `state.leadId` já estivesse disponível) | **Não estava — corrigido nesta rodada, ver §3** |
-| `routes/intelligence.routes.ts:113-137` (`POST /agents/sdr/qualify`, sem uso confirmado no frontend hoje) | `sessionId` vem opcionalmente do `req.body` do cliente; só cai no default de `sdr.agent.ts` (leadId embutido) se o cliente não mandar nada | **Não garantido** — um cliente que passe seu próprio `sessionId` quebra a correlação |
+| Arquivo                                                                                                          | Quem invoca / sessionId usado                                                                                                              | leadId embutido?                                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `agents/base.agent.ts` (`updateMemory`, usado por BDR/Closer/CRM/Ops fora do enxame)                             | Default quando chamador não passa sessionId: `session-${agentType}-${Date.now()}`                                                          | **Não**                                                                                |
+| `agents/sdr.agent.ts` (`SDRQualificationAgent.run`)                                                              | Default quando chamador não passa sessionId: `session-${leadId}-${Date.now()}`                                                             | Sim (posição fixa, sem timestamp variável no meio)                                     |
+| `agents/ops.agent.ts` (`OpsAgent.run`)                                                                           | Default: `session-ops-${Date.now()}`                                                                                                       | **Não** (leadId chega só no conteúdo da mensagem, nunca no sessionId)                  |
+| `agents/learning.agent.ts` (`getLearningProfile`/perfil de estilo)                                               | `learningProfileSessionId(tenantId, actorId)` — chave por usuário, não por lead                                                            | **Não é lead-scoped por design** (perfil de estilo do vendedor, não do lead)           |
+| `agents/sdr-agent.ts` (`SDROutboundDraftAgent extends AgentService`) via `lib/queue/agent.worker.ts:63`          | ``new SDROutboundDraftAgent(`session_${leadId}`, tenantId)``                                                                               | **Sim, sempre** (determinístico, não sobrescrevível pelo cliente — é um worker BullMQ) |
+| `services/agent.service.ts` (`AgentService.saveMemory`, base do acima)                                           | `this.sessionId` — o que a subclasse/chamador passar no construtor                                                                         | Depende do chamador                                                                    |
+| `services/autonomyRoleRunner.service.ts` via `services/swarmScheduler.service.ts:341-344` (scheduler 24/7)       | `autonomy-${role}-${leadId}-${now.getTime()}`                                                                                              | **Sim, sempre** (gerado pelo próprio scheduler, não vem de fora)                       |
+| `agents/supervisor.agent.ts` (`sdrNode`/`bdrNode`/`closerNode`/`crmNode`/`opsNode`, enxame `/api/agent/swarm/*`) | **Antes desta correção:** `swarm-<role>-${state.step}` (SEM leadId, embora `state.leadId` já estivesse disponível)                         | **Não estava — corrigido nesta rodada, ver §3**                                        |
+| `routes/intelligence.routes.ts:113-137` (`POST /agents/sdr/qualify`, sem uso confirmado no frontend hoje)        | `sessionId` vem opcionalmente do `req.body` do cliente; só cai no default de `sdr.agent.ts` (leadId embutido) se o cliente não mandar nada | **Não garantido** — um cliente que passe seu próprio `sessionId` quebra a correlação   |
 
 Conclusão: **não existe uma convenção única, obrigatória e estrutural.** Em vários pontos
 (worker de outbound, scheduler autônomo) o leadId está embutido de forma confiável porque o
@@ -31,11 +31,11 @@ sessionId é gerado inteiramente pelo servidor. Em outros (rota HTTP direta do S
 correção — todo o enxame supervisor/BDR/Closer/CRM/Ops) o leadId ficava ausente do sessionId ou
 dependia do cliente não sobrescrever o default. Isso é exatamente o "risco alto de falso
 positivo/negativo" que o handoff original apontou para não implementar via regex/scan de string
-como mecanismo *primário* de exclusão — permanece verdade mesmo após a correção de código abaixo.
+como mecanismo _primário_ de exclusão — permanece verdade mesmo após a correção de código abaixo.
 
 ### Bug real encontrado durante a investigação (colateral, corrigido)
 
-Em `supervisor.agent.ts`, o sessionId de cada especialista do enxame era `` swarm-<role>-${state.step} ``,
+Em `supervisor.agent.ts`, o sessionId de cada especialista do enxame era `swarm-<role>-${state.step}`,
 onde `state.step` é um contador que **reinicia a cada missão** (0/1 na primeira chamada de cada
 missão, incrementando até `MAX_STEPS = 5`). Duas missões diferentes (leads diferentes, execuções
 concorrentes ou sequenciais) cujo primeiro acionamento do mesmo especialista caísse no mesmo
@@ -50,12 +50,18 @@ reportado porque não há assert sobre o conteúdo de `AgentMemory` nos testes e
 `sdrNode` agora usam um helper `swarmSessionId(role, state)`:
 
 ```ts
-function swarmSessionId(role: 'sdr' | 'bdr' | 'closer' | 'crm' | 'ops', state: SwarmStateType): string {
-    return state.leadId ? `swarm-${role}-lead_${state.leadId}-${state.step}` : `swarm-${role}-${state.step}`;
+function swarmSessionId(
+  role: 'sdr' | 'bdr' | 'closer' | 'crm' | 'ops',
+  state: SwarmStateType,
+): string {
+  return state.leadId
+    ? `swarm-${role}-lead_${state.leadId}-${state.step}`
+    : `swarm-${role}-${state.step}`;
 }
 ```
 
 Efeito duplo:
+
 1. **Corrige a colisão entre missões** — o sessionId agora é único por lead+step, não só por step.
 2. **Melhora a correlação sessionId↔leadId** para todo o tráfego do enxame (que hoje é o principal
    ponto de entrada de IA no produto), sem tocar `prisma/schema.prisma`.
@@ -65,6 +71,7 @@ essa convenção, e regex sobre `sessionId`/conteúdo de `messages` nunca deve v
 "oficial" de uma exclusão de titular. A solução real é a migration abaixo.
 
 Verificação rodada após a mudança:
+
 - `npx tsc --noEmit` → sem erros.
 - `npm run lint` → 0 erros, 101 warnings (todos pré-existentes, nenhum novo introduzido pela mudança).
 - `npx vitest run -c vitest.unit.config.ts` (suíte completa) → **707/707 testes passando** (109
@@ -169,13 +176,17 @@ efetivamente existir na mesma organização — nunca assumir que uma substring 
 Pseudocódigo:
 
 ```ts
-const rows = await prisma.agentMemory.findMany({ where: { leadId: null, organizationId: { not: null } } });
+const rows = await prisma.agentMemory.findMany({
+  where: { leadId: null, organizationId: { not: null } },
+});
 for (const row of rows) {
-    const leadId = extractLeadId(row.sessionId); // tenta os 4 regex acima, nesse ordem
-    if (!leadId) continue;
-    const lead = await prisma.lead.findFirst({ where: { id: leadId, organizationId: row.organizationId! } });
-    if (!lead) continue; // não valida = não escreve; falso positivo é pior que não preencher
-    await prisma.agentMemory.update({ where: { id: row.id }, data: { leadId } });
+  const leadId = extractLeadId(row.sessionId); // tenta os 4 regex acima, nesse ordem
+  if (!leadId) continue;
+  const lead = await prisma.lead.findFirst({
+    where: { id: leadId, organizationId: row.organizationId! },
+  });
+  if (!lead) continue; // não valida = não escreve; falso positivo é pior que não preencher
+  await prisma.agentMemory.update({ where: { id: row.id }, data: { leadId } });
 }
 ```
 
@@ -192,8 +203,8 @@ possível. Isso deve ficar registrado como limitação conhecida, não escondido
    (a partir de `target.contactId`), adicionar a redação de `AgentMemory`:
    ```ts
    const { count: agentMemoriesRedacted } = await prisma.agentMemory.updateMany({
-       where: { leadId: { in: leadIds }, organizationId: target.organizationId },
-       data: { messages: [] }, // ou um marcador de redação equivalente ao usado em TimelineEvent
+     where: { leadId: { in: leadIds }, organizationId: target.organizationId },
+     data: { messages: [] }, // ou um marcador de redação equivalente ao usado em TimelineEvent
    });
    ```
    mais o campo correspondente em `ErasureResult`/no log estruturado, e atualizar o comentário do
@@ -208,6 +219,7 @@ aplicar a migration, devolver para o Agente 07 (ou qualquer agente do domínio d
 implementar o item 3, já que a lógica de erasure em si é do domínio do 01A/dados, não de IA.
 
 ## Arquivo(s) envolvido(s) nesta rodada
+
 - `src/features/intelligence/agents/supervisor.agent.ts` — correção de código aplicada (commit
   `fix(07): embutir leadId no sessionId dos especialistas do enxame`).
 - `prisma/schema.prisma` → `model AgentMemory` (linha ~802) e `model Lead` — migration proposta
@@ -216,11 +228,13 @@ implementar o item 3, já que a lógica de erasure em si é do domínio do 01A/d
   implementado nesta rodada (depende da migration).
 
 ## Teste esperado (repetido do handoff original, ainda pendente da migration)
+
 Depois que a migration for aplicada e o item 3 do §4 implementado: teste de integração provando que
 `eraseDataSubject` (ou uma função irmã) consegue redigir/remover `AgentMemory` de um titular
 específico sem afetar sessões de outros titulares na mesma organização.
 
 ## Contexto adicional
+
 Não bloqueia nada além de si mesmo — o mecanismo de exclusão hoje continua cobrindo Contact,
 WhatsAppMessage, ConversationSignal e TimelineEvent como antes. A correção de código desta rodada
 reduz o risco (corrige uma colisão real de dados entre leads diferentes e melhora a correlação para

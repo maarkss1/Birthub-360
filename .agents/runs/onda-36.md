@@ -60,7 +60,7 @@ sem definir formato.
   novos em `goldenDataset.service.test.ts` — inclusive a prova de que os 3 casos `tool_use` reais
   validam contra o schema real da ferramenta —, 2 casos novos na rota)
 - integration (Postgres+Redis reais): `npx dotenv-cli -e .env.test -- npx vitest run -c
-  vitest.integration.config.ts` — **46/46 arquivos, 226/226 testes** (nenhuma migration nesta onda)
+vitest.integration.config.ts` — **46/46 arquivos, 226/226 testes** (nenhuma migration nesta onda)
 - `npm run build` e `npm run build:worker` — ambos limpos; conteúdo do dataset confirmado inline em
   `dist/server.cjs` (grep pelo id de um caso real no bundle)
 

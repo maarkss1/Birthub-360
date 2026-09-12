@@ -5,6 +5,7 @@
 - Prioridade: normal (backlog — não bloqueia release, exige contrato de payload validado antes de codar)
 
 ## Resolução
+
 Model `ThreeCXCallEvent` adicionado no schema com a estrutura de chaves exigida: `id`, `organizationId`, `connectionId`, `extension`, `callId`, `eventType`, `rawPayload`, e chaves únicas `[organizationId, callId, eventType]`. O schema já está preparado.
 
 ## Problema

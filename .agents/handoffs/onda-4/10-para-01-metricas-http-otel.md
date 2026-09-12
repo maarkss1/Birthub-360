@@ -3,7 +3,9 @@
 - Onda: 4
 - Status: resolvido
 - Prioridade: normal
+
 ## Problema
+
 Minha missão pede alerta para "erro 5xx acima de limiar" (`.agents/prompts/10-infraestrutura-sre.md`).
 Escrevi a regra em `infrastructure/observability/alert.rules.yml` (grupo
 `prospector-atlas.http-5xx.pendente-instrumentacao`, alerta `HighErrorRate5xx`), mas ela depende
@@ -17,44 +19,55 @@ atributo — mas o `NodeSDK` ali só registra um `traceExporter` (`OTLPTraceExpo
 (`infrastructure/observability/otel-collector.yml`, que eu não precisei alterar — já está
 correto: recebe OTLP em `:4317`/`:4318` e exporta para Prometheus em `:9464`) fica sem nada para
 processar porque a aplicação nunca envia métricas via OTLP, só traces.
+
 ## Arquivo(s) envolvido(s)
+
 - `src/lib/tracing.ts` — falta um `PeriodicExportingMetricReader` + `OTLPMetricExporter`
   (`@opentelemetry/exporter-metrics-otlp-http`, já teria dependência semelhante à
   `@opentelemetry/exporter-trace-otlp-http` já usada) passado para o `NodeSDK`.
 - Meu lado (já correto, só esperando a origem dos dados):
   `infrastructure/observability/otel-collector.yml`, `infrastructure/observability/
-  alert.rules.yml`.
+alert.rules.yml`.
+
 ## Alteração necessária
+
 No `NodeSDK` de `src/lib/tracing.ts`, adicionar:
+
 ```ts
 const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-http');
 const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
 // ...
 sdkInstance = new NodeSDK({
-    traceExporter: new OTLPTraceExporter(),
-    metricReader: new PeriodicExportingMetricReader({ exporter: new OTLPMetricExporter() }),
-    instrumentations: [getNodeAutoInstrumentations()],
+  traceExporter: new OTLPTraceExporter(),
+  metricReader: new PeriodicExportingMetricReader({ exporter: new OTLPMetricExporter() }),
+  instrumentations: [getNodeAutoInstrumentations()],
 });
 ```
+
 Isso dá métricas HTTP (duração, contagem por status code) "de graça" via auto-instrumentação,
 sem precisar de `Counter`/`Histogram` custom por rota. Confirmar o nome exato da métrica gerada
 pela versão instalada do auto-instrumentations-node (`http.server.duration` costuma virar
 `http_server_duration_milliseconds_*` depois do exporter Prometheus — ajustei a expressão em
 `alert.rules.yml` para esse nome, mas validar contra a saída real de `/metrics` do
 otel-collector, porta `:9464`, depois de ligar o exporter).
+
 ## Teste esperado
+
 `curl http://localhost:9464/metrics` (otel-collector, stack `npm run infra:up`) mostra séries
 `http_server_duration_milliseconds_*` com label `http_status_code`. A regra `HighErrorRate5xx`
 deixa de ficar `unknown` no Prometheus.
+
 ## Contexto adicional
+
 Onda 4 — Agente 10. `EXPOSE_METRICS`/`/metrics` (prom-client, métricas de processo) já funciona e
 não depende desta mudança — este handoff é só sobre a lacuna de métricas HTTP via OTel.
 
 ## Resolução (parcial — deixado `em-andamento`, não `resolvido`)
 
 Feito (Agente 01, remediação Onda 5):
+
 - `src/lib/tracing.ts`: `metricReader: new PeriodicExportingMetricReader({ exporter: new
-  OTLPMetricExporter() })` adicionado ao `NodeSDK`, exatamente como pedido. Dependência
+OTLPMetricExporter() })` adicionado ao `NodeSDK`, exatamente como pedido. Dependência
   `@opentelemetry/exporter-metrics-otlp-http` adicionada como direta em `package.json`/
   `package-lock.json` (autorização explícita do Coordenador — já era transitiva via
   `@opentelemetry/sdk-node`, agora também é direta).
@@ -67,6 +80,7 @@ otel-collector` — `npm run infra:up` completo não foi necessário para isolar
 `otel/opentelemetry-collector-contrib:0.136.0` puxada e rodando, `:4317`/`:4318`/`:9464`
 mapeadas; app real rodada via `node dist/server.cjs` com `OTEL_EXPORTER_OTLP_ENDPOINT=
 http://localhost:4318`):
+
 - **Confirmado**: com o `metricReader`, a aplicação agora EXPORTA métricas de verdade — antes
   desta mudança, zero métrica saía (não só HTTP: nenhuma). `curl http://localhost:9464/metrics`
   mostra séries reais de runtime/GC do Node (`nodejs_eventloop_delay_*`,
@@ -78,11 +92,11 @@ http://localhost:4318`):
 - **NÃO confirmado**: a métrica HTTP específica que `HighErrorRate5xx` espera
   (`http.server.duration` / `http_server_duration_milliseconds_*` com `http_status_code`) NÃO
   apareceu em `:9464/metrics` depois de gerar tráfego real contra o servidor (`GET /`, `GET
-  /api/health`, uma rota inexistente para gerar 404). Tentei também com
+/api/health`, uma rota inexistente para gerar 404). Tentei também com
   `OTEL_SEMCONV_STABILITY_OPT_IN=http` (env var conhecida para habilitar métricas HTTP estáveis
   em algumas versões do SDK JS) — mesmo resultado, sem série HTTP. Com a versão instalada hoje
   (`@opentelemetry/auto-instrumentations-node@^0.78.0` → `@opentelemetry/instrumentation-http@
-  ^0.220.0`), a auto-instrumentação parece gerar métricas de runtime/GC mas não a métrica de
+^0.220.0`), a auto-instrumentação parece gerar métricas de runtime/GC mas não a métrica de
   duração HTTP por rota/status — possivelmente essa versão específica do pacote de
   instrumentation-http ainda não implementa a métrica (ou exige uma opção de configuração que não
   identifiquei na janela de tempo desta rodada, ex.: `HttpInstrumentationConfig` passado

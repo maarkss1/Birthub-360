@@ -8,28 +8,28 @@ divergência real de contrato ativa em produção, corrigida nesta mesma rodada.
 
 ## Camadas
 
-| Camada | Arquivo |
-|---|---|
-| Prisma | `prisma/schema.prisma`, `model Note` |
-| Domain | `src/features/notes/domain/Note.ts` |
-| Repository | `src/features/notes/infra/PrismaNoteRepository.ts` |
-| Use Cases | `src/features/notes/application/NoteUseCases.ts` |
-| Controller/Rotas | `src/features/notes/presentation/NoteController.ts`, `src/features/notes/routes/note.routes.ts` |
-| DTO/API | `noteSchema` (`src/lib/zod.ts`), `docs/openapi.yaml` (`NoteInput`/`Note`/`NoteResponse`/`NoteListResponse`) |
-| UI (consumidor real) | `src/features/crm/components/LeadDetailDrawer.tsx` |
-| UI (helper não usado) | `src/lib/db.ts` (`leadsDB.addNote`) — ver "Achado" abaixo |
-| Tipo de UI | `src/types/index.ts` (`interface Note`) |
+| Camada                | Arquivo                                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Prisma                | `prisma/schema.prisma`, `model Note`                                                                        |
+| Domain                | `src/features/notes/domain/Note.ts`                                                                         |
+| Repository            | `src/features/notes/infra/PrismaNoteRepository.ts`                                                          |
+| Use Cases             | `src/features/notes/application/NoteUseCases.ts`                                                            |
+| Controller/Rotas      | `src/features/notes/presentation/NoteController.ts`, `src/features/notes/routes/note.routes.ts`             |
+| DTO/API               | `noteSchema` (`src/lib/zod.ts`), `docs/openapi.yaml` (`NoteInput`/`Note`/`NoteResponse`/`NoteListResponse`) |
+| UI (consumidor real)  | `src/features/crm/components/LeadDetailDrawer.tsx`                                                          |
+| UI (helper não usado) | `src/lib/db.ts` (`leadsDB.addNote`) — ver "Achado" abaixo                                                   |
+| Tipo de UI            | `src/types/index.ts` (`interface Note`)                                                                     |
 
 ## Rotas
 
 Montadas em `server.ts:427` como `app.use('/api/leads/:leadId/notes', authenticateToken,
 requireTenant, noteRoutes)`.
 
-| Método | Path | Papéis | Handler |
-|---|---|---|---|
-| GET | `/api/leads/:leadId/notes` | qualquer autenticado | `NoteController.getNotesByLead` → `NoteUseCases.findNotesByLead` |
-| POST | `/api/leads/:leadId/notes` | ADMIN, GESTOR, CLOSER, SDR | `validateRequest(noteSchema)` → `NoteController.createNote` → `NoteUseCases.createNote` |
-| DELETE | `/api/leads/:leadId/notes/:noteId` | ADMIN, GESTOR | `NoteController.deleteNote` → `NoteUseCases.deleteNote` |
+| Método | Path                               | Papéis                     | Handler                                                                                 |
+| ------ | ---------------------------------- | -------------------------- | --------------------------------------------------------------------------------------- |
+| GET    | `/api/leads/:leadId/notes`         | qualquer autenticado       | `NoteController.getNotesByLead` → `NoteUseCases.findNotesByLead`                        |
+| POST   | `/api/leads/:leadId/notes`         | ADMIN, GESTOR, CLOSER, SDR | `validateRequest(noteSchema)` → `NoteController.createNote` → `NoteUseCases.createNote` |
+| DELETE | `/api/leads/:leadId/notes/:noteId` | ADMIN, GESTOR              | `NoteController.deleteNote` → `NoteUseCases.deleteNote`                                 |
 
 Resposta sempre no envelope `{ success: boolean, data? }`, exceto DELETE (`204`, sem corpo) — igual
 ao padrão das demais 8 features Clean Architecture já registradas em
@@ -37,14 +37,14 @@ ao padrão das demais 8 features Clean Architecture já registradas em
 
 ## Campo a campo
 
-| Campo | Prisma | Domain/Repository | `noteSchema` (POST) | UI (`types/index.ts`) | Observação |
-|---|---|---|---|---|---|
-| `id` | `String @id @default(cuid())` | idem | gerado pelo servidor (não aceito no body) | `string` | — |
-| `content` | `String` | idem | obrigatório, `min(1)` | `string` | — |
-| `author` | `String` | idem | **obrigatório**, `min(1)` | `string` | Ver achado abaixo — era enviado só por um caminho |
-| `leadId` | FK obrigatória (`onDelete: Cascade`) | idem | vem do path (`:leadId`), não do body | `string` | Repositório sempre confirma `leadId` pertence à `organizationId` do usuário autenticado antes de ler/escrever (`verifyLead`) |
-| `createdAt`/`updatedAt` | `DateTime` (auto) | idem | gerado pelo servidor | `string` (serializado) | — |
-| `organizationId` | não é coluna própria de `Note` — isolamento é via `Lead.organizationId` | `verifyLead(organizationId, leadId)` | vem de `req.user.organizationId` (`AuthRequest`), nunca do body | não exposto na UI | Multi-tenant garantido pelo relacionamento com `Lead`, não por uma FK direta em `Note` |
+| Campo                   | Prisma                                                                  | Domain/Repository                    | `noteSchema` (POST)                                             | UI (`types/index.ts`)  | Observação                                                                                                                   |
+| ----------------------- | ----------------------------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `id`                    | `String @id @default(cuid())`                                           | idem                                 | gerado pelo servidor (não aceito no body)                       | `string`               | —                                                                                                                            |
+| `content`               | `String`                                                                | idem                                 | obrigatório, `min(1)`                                           | `string`               | —                                                                                                                            |
+| `author`                | `String`                                                                | idem                                 | **obrigatório**, `min(1)`                                       | `string`               | Ver achado abaixo — era enviado só por um caminho                                                                            |
+| `leadId`                | FK obrigatória (`onDelete: Cascade`)                                    | idem                                 | vem do path (`:leadId`), não do body                            | `string`               | Repositório sempre confirma `leadId` pertence à `organizationId` do usuário autenticado antes de ler/escrever (`verifyLead`) |
+| `createdAt`/`updatedAt` | `DateTime` (auto)                                                       | idem                                 | gerado pelo servidor                                            | `string` (serializado) | —                                                                                                                            |
+| `organizationId`        | não é coluna própria de `Note` — isolamento é via `Lead.organizationId` | `verifyLead(organizationId, leadId)` | vem de `req.user.organizationId` (`AuthRequest`), nunca do body | não exposto na UI      | Multi-tenant garantido pelo relacionamento com `Lead`, não por uma FK direta em `Note`                                       |
 
 ## Achado real desta sprint — `author` nunca chegava ao backend pelo caminho de UI usado
 

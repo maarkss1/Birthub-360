@@ -16,6 +16,7 @@ somente-leitura (`src/contexts/AuthContext.tsx`: `VISUALIZADOR: ['crm.read']`, s
 Por ser um bloqueador da lista do AGENTS.md (não um item de backlog), apliquei a correção
 diretamente nos arquivos abaixo — fora do meu escopo de propriedade (`src/features/**` não é meu),
 mas necessário para o gate da Onda 1. Os arquivos passam a exigir:
+
 - **`requireRole(['ADMIN', 'GESTOR', 'VENDEDOR'])`** (equivalente a `crm.write`) em criar/editar;
 - **`requireRole(['ADMIN', 'GESTOR'])`** (equivalente a `crm.delete`/administrativo) em excluir e em
   operações de bulk import/export.
@@ -23,6 +24,7 @@ mas necessário para o gate da Onda 1. Os arquivos passam a exigir:
 Nenhuma lógica de negócio foi alterada — só a linha de middleware antes do handler.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/crm/routes/lead.routes.ts` — `POST /`, `PUT /:id`, `POST /:id/enrich` → VENDEDOR+;
   `GET /export/csv`, `POST /export/bitrix24`, `POST /import/bitrix24` → GESTOR+ (bulk/LGPD-sensível).
 - `src/features/contacts/routes/contact.routes.ts` — `POST /`, `PUT /:id`, `POST /:id/enrich` → VENDEDOR+.
@@ -35,7 +37,9 @@ Nenhuma lógica de negócio foi alterada — só a linha de middleware antes do 
 - `src/features/prospecting/routes/prospecting.routes.ts` — só `POST /promote` (cria Company+Contact+Lead) → VENDEDOR+.
 
 ## Alteração necessária
+
 Revisar se os limiares de papel que escolhi fazem sentido pro seu domínio — em particular:
+
 - `automations` como GESTOR+ em vez de VENDEDOR+ foi minha leitura de "afeta toda a organização",
   mas pode fazer mais sentido VENDEDOR+ se vendedores devem poder criar suas próprias automações;
 - `crm360` tem bastante superfície (deals, documentos comerciais, itens) — vale conferir se algum
@@ -45,6 +49,7 @@ Não é bloqueador de você fazer nada agora — é só para você saber que a m
 mexer nesses arquivos na Onda 2, e ajustar o limiar se achar que errei a régua em algum caso.
 
 ## Teste esperado
+
 Testes de matriz de acesso (role permitido/negado) para os endpoints acima, se ainda não existirem
 quando você tocar nesses arquivos — hoje só há cobertura direta para `intelligence.routes.ts`
 `PUT /ai-settings` (`tests/unit/features/intelligence/routes/intelligence.routes.test.ts`) e para
@@ -52,6 +57,7 @@ quando você tocar nesses arquivos — hoje só há cobertura direta para `intel
 neste ambiente).
 
 ## Contexto adicional
+
 Ver relatório completo do Agente 01 na resposta ao usuário desta sessão (Onda 1) para a lista
 completa dos 17 arquivos alterados nesta auditoria de autorização, incluindo os que pertencem ao
 Agente 06 e ao Agente 07 (handoffs separados: `01-para-06-role-gates-integracoes.md`,
@@ -66,9 +72,10 @@ revisada uma vez na Onda 5 (`.agents/runs/onda-5.md`: "deixado para quando o Age
 nesses arquivos de novo") — chegou a vez agora.
 
 Conferi os limiares linha a linha nos quatro arquivos do meu escopo:
+
 - `lead.routes.ts`: `POST /`, `PUT /:id`, `POST /:id/enrich` → VENDEDOR+ (restrito ao próprio lead
   via `requireLeadOwnership`, adicionado depois da Onda 1); `DELETE /:id`, `export/import
-  bulk/Bitrix` → GESTOR+.
+bulk/Bitrix` → GESTOR+.
 - `contact.routes.ts`, `company.routes.ts`: mesmo padrão (`POST`/`PUT`/`enrich` → VENDEDOR+;
   `DELETE` → GESTOR+).
 - `activity.routes.ts`: `POST`/`PUT` → VENDEDOR+; `DELETE` → GESTOR+.

@@ -18,6 +18,7 @@ relatórios antigos.
 ## A. Mapa da arquitetura atual
 
 **Backend (Express modular, `src/bootstrap/routes.ts`):**
+
 - `POST /api/market-intelligence/accounts/:id/refresh`, `GET .../intelligence`,
   `GET .../signals`, `GET .../decision-makers`, `GET .../relationships`,
   `GET .../recommendations`, `GET .../evidence`,
@@ -38,6 +39,7 @@ relatórios antigos.
   não montada em produção (`marketIntelligenceCompany.routes.ts`).
 
 **Frontend:**
+
 - `Account360.tsx` (`src/features/market-intelligence/components/`), rota
   `/market-intelligence/accounts/:id` — abas Visão Geral/Sinais/Decisores/Grupo
   Econômico/CRM/Recomendações/Evidências, estados loading/error/empty via `EmptyState` real.
@@ -45,7 +47,8 @@ relatórios antigos.
 **Dados (Prisma):** `AccountIntelligenceSnapshot`, `AccountSignal`, `DecisionMaker`,
 `EconomicRelationship`, `IntelligenceEvidence`, `AccountScore`, `AccountRecommendation` — todos
 com `organizationId`, migration real aplicada (`20260818100000_ldr_account_intelligence_foundation`
-+ ajustes posteriores até `20260827210000_onda42_decisoes_schema`).
+
+- ajustes posteriores até `20260827210000_onda42_decisoes_schema`).
 
 **Runtime/Workers:** `worker.ts` **não registra nenhum job do LDR**. `createNewsMonitorWorker`
 (único gerador real de `AccountSignal` encontrado no repo) existe em
@@ -56,28 +59,28 @@ mesmo — nunca inicializado no processo `worker.ts`. Nenhum outro gerador de `D
 
 ## B. Tabela FUNCIONA / PARCIAL / MOCK / QUEBRADO / NÃO IMPLEMENTADO
 
-| # | Capability | Status | Evidência |
-|---|---|---|---|
-| 1 | Busca de empresa real | **FUNCIONA** | Catálogo `MarketIntelligenceCompany` + `Company` do CRM, busca por CNPJ/nome real |
-| 2 | Perfil cadastral da empresa | **FUNCIONA** | CNPJ, razão social, CNAE, porte, matriz/filial — campos reais, sem fabricação |
-| 3 | Enriquecimento | **PARCIAL** | `Company.enrichmentSource/enrichmentStatus/enrichedAt` rastreados e usados como critério de "identidade rastreável" em `refresh()`; pipeline de enriquecimento em si vive em `prospecting/`, não integrado ao fluxo de refresh do LDR |
-| 4 | ICP/Fit | **FUNCIONA** | `company.icpScore/icpTier/icpReasons` reais, computados no módulo de prospecção, consumidos como `fit` do Account Score |
-| 5 | Account Score | **PARCIAL** | `fit` real; `timing`/`intent`/`relationship` explicitamente `null` com `missingComponents` e mensagem honesta — nunca fabricado, mas 3 de 4 dimensões não calculadas |
-| 6 | Evidências/fontes | **FUNCIONA** | `IntelligenceEvidence` com `source`, `reference`, `valueHash`, `dedupeKey` reais |
-| 7 | Sinais | **PARCIAL** | Gerador real existe (`newsMonitor.worker.ts`, busca via GDELT/SearXNG, nunca fabrica notícia) mas **não está registrado em `worker.ts`** — nunca roda em produção hoje |
-| 8 | Timeline de sinais | **PARCIAL** | Endpoint `listSignals` paginado real, mas população vazia enquanto o gerador (#7) não roda |
-| 9 | Decisores | **NÃO IMPLEMENTADO** | Schema + `listDecisionMakers` (leitura) existem; nenhum código cria `DecisionMaker` a partir de `Contact` |
-| 10 | Grupo econômico | **NÃO IMPLEMENTADO** | Schema + `listRelationships` existem; nenhum código cria `EconomicRelationship` (a lógica de raiz de CNPJ descrita no antigo relatório de Fase 6 não existe no código atual — foi removida na reconciliação do hotfix) |
-| 11 | Resumo IA | **NÃO IMPLEMENTADO** | `buildSummary()` é template determinístico (nome + segmento + cidade/UF) — nenhuma chamada a modelo de IA |
-| 12 | Next Best Action | **PARCIAL** | Execução (`execute` → Bitrix) é real e testada; **geração** de `AccountRecommendation` não existe em nenhum lugar do código (zero `.create`/`.upsert` encontrados) — hoje só existe recomendação se for inserida fora do fluxo do app |
-| 13 | Integração Bitrix | **FUNCIONA** | `callBitrix` real, wrapper resiliente, usa `bitrixConnections` da organização |
-| 14 | Criação de tarefa no Bitrix | **FUNCIONA** | `CREATE_BITRIX_TASK` real, `RESPONSIBLE_ID` dinâmico (nunca hardcoded — guardado por `check-ldr-integrity.mjs`), `externalRef` persistido |
-| 15 | Início de cadência | **PARCIAL (stub)** | `START_SDR_CADENCE` apenas marca a recomendação como `Executed` — não invoca o motor real de cadência (`src/features/cadence/`) |
-| 16 | Persistência de snapshots | **FUNCIONA** | `accountIntelligenceSnapshot` versionado, dedupe por `inputHash`, transação com retry em conflito de unicidade |
-| 17 | Reprocessamento assíncrono | **NÃO IMPLEMENTADO** | `refresh()` só roda de forma síncrona via HTTP POST; nenhuma fila/worker dedicado ao LDR |
-| 18 | Feedback/aprendizado | **NÃO IMPLEMENTADO** | Nenhum loop de feedback (accepted/rejected/converted) encontrado para `AccountRecommendation` |
-| 19 | Segurança/PII | **FUNCIONA** | RLS via `withRlsContext`/`req.db`, `requireRole` por rota, `organizationId` obrigatório em toda query |
-| 20 | Testes ponta a ponta | **PARCIAL** | Ver seção "Gate executado nesta auditoria" abaixo |
+| #   | Capability                  | Status               | Evidência                                                                                                                                                                                                                             |
+| --- | --------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Busca de empresa real       | **FUNCIONA**         | Catálogo `MarketIntelligenceCompany` + `Company` do CRM, busca por CNPJ/nome real                                                                                                                                                     |
+| 2   | Perfil cadastral da empresa | **FUNCIONA**         | CNPJ, razão social, CNAE, porte, matriz/filial — campos reais, sem fabricação                                                                                                                                                         |
+| 3   | Enriquecimento              | **PARCIAL**          | `Company.enrichmentSource/enrichmentStatus/enrichedAt` rastreados e usados como critério de "identidade rastreável" em `refresh()`; pipeline de enriquecimento em si vive em `prospecting/`, não integrado ao fluxo de refresh do LDR |
+| 4   | ICP/Fit                     | **FUNCIONA**         | `company.icpScore/icpTier/icpReasons` reais, computados no módulo de prospecção, consumidos como `fit` do Account Score                                                                                                               |
+| 5   | Account Score               | **PARCIAL**          | `fit` real; `timing`/`intent`/`relationship` explicitamente `null` com `missingComponents` e mensagem honesta — nunca fabricado, mas 3 de 4 dimensões não calculadas                                                                  |
+| 6   | Evidências/fontes           | **FUNCIONA**         | `IntelligenceEvidence` com `source`, `reference`, `valueHash`, `dedupeKey` reais                                                                                                                                                      |
+| 7   | Sinais                      | **PARCIAL**          | Gerador real existe (`newsMonitor.worker.ts`, busca via GDELT/SearXNG, nunca fabrica notícia) mas **não está registrado em `worker.ts`** — nunca roda em produção hoje                                                                |
+| 8   | Timeline de sinais          | **PARCIAL**          | Endpoint `listSignals` paginado real, mas população vazia enquanto o gerador (#7) não roda                                                                                                                                            |
+| 9   | Decisores                   | **NÃO IMPLEMENTADO** | Schema + `listDecisionMakers` (leitura) existem; nenhum código cria `DecisionMaker` a partir de `Contact`                                                                                                                             |
+| 10  | Grupo econômico             | **NÃO IMPLEMENTADO** | Schema + `listRelationships` existem; nenhum código cria `EconomicRelationship` (a lógica de raiz de CNPJ descrita no antigo relatório de Fase 6 não existe no código atual — foi removida na reconciliação do hotfix)                |
+| 11  | Resumo IA                   | **NÃO IMPLEMENTADO** | `buildSummary()` é template determinístico (nome + segmento + cidade/UF) — nenhuma chamada a modelo de IA                                                                                                                             |
+| 12  | Next Best Action            | **PARCIAL**          | Execução (`execute` → Bitrix) é real e testada; **geração** de `AccountRecommendation` não existe em nenhum lugar do código (zero `.create`/`.upsert` encontrados) — hoje só existe recomendação se for inserida fora do fluxo do app |
+| 13  | Integração Bitrix           | **FUNCIONA**         | `callBitrix` real, wrapper resiliente, usa `bitrixConnections` da organização                                                                                                                                                         |
+| 14  | Criação de tarefa no Bitrix | **FUNCIONA**         | `CREATE_BITRIX_TASK` real, `RESPONSIBLE_ID` dinâmico (nunca hardcoded — guardado por `check-ldr-integrity.mjs`), `externalRef` persistido                                                                                             |
+| 15  | Início de cadência          | **PARCIAL (stub)**   | `START_SDR_CADENCE` apenas marca a recomendação como `Executed` — não invoca o motor real de cadência (`src/features/cadence/`)                                                                                                       |
+| 16  | Persistência de snapshots   | **FUNCIONA**         | `accountIntelligenceSnapshot` versionado, dedupe por `inputHash`, transação com retry em conflito de unicidade                                                                                                                        |
+| 17  | Reprocessamento assíncrono  | **NÃO IMPLEMENTADO** | `refresh()` só roda de forma síncrona via HTTP POST; nenhuma fila/worker dedicado ao LDR                                                                                                                                              |
+| 18  | Feedback/aprendizado        | **NÃO IMPLEMENTADO** | Nenhum loop de feedback (accepted/rejected/converted) encontrado para `AccountRecommendation`                                                                                                                                         |
+| 19  | Segurança/PII               | **FUNCIONA**         | RLS via `withRlsContext`/`req.db`, `requireRole` por rota, `organizationId` obrigatório em toda query                                                                                                                                 |
+| 20  | Testes ponta a ponta        | **PARCIAL**          | Ver seção "Gate executado nesta auditoria" abaixo                                                                                                                                                                                     |
 
 ## C. Arquivos/serviços reaproveitáveis (não recriar)
 
@@ -137,6 +140,7 @@ mesmo — nunca inicializado no processo `worker.ts`. Nenhum outro gerador de `D
 O pacote de 11 arquivos assume um estado inicial ("Fase 1: fundação ainda não existe") que já não
 é real — fundação, APIs e UI (Fases 1-2 do pacote) já existem e são sólidas. A ordem real que falta
 é:
+
 1. Gerador de recomendação + registro do worker de sinal existente (item D.1, D.2) — sem isso não
    há corte vertical demonstrável ponta a ponta com dado real.
 2. Decisores (D.3) e Grupo Econômico camada 1 (D.4).
@@ -195,19 +199,21 @@ ausente. Ações tomadas, nesta ordem:
 
 ### Resultado por gate
 
-| Gate | Resultado |
-|---|---|
-| `npx tsc --noEmit` | **PASS** — 0 erros |
-| `npm run lint` | **PASS** — 0 erros, 156 warnings pré-existentes (nenhum novo). 1 erro real corrigido nesta auditoria: aspas não escapadas em `MarketIntelligenceApp.tsx:293` |
-| `npm run test:architecture` | **PASS** — 0 violações novas de dependência, 0 arquivo acima do limite de linhas sem exceção |
-| `npm run build` | **PASS** — build de frontend + servidor limpo |
-| `npm run test:unit` | **PARCIAL** — 2335/2338 testes, 289/292 arquivos (após corrigir `CREDENTIALS_ENCRYPTION_KEY`/`PII_SEARCH_HMAC_SECRET` no `.env` local — eram o placeholder literal `replace-with-openssl-rand-base64-32`, que decodifica para 26 bytes em vez dos 32 exigidos; gerei chaves reais de dev com `crypto.randomBytes(32)`, o que também corrigiu 2 testes de integração, ver abaixo). 3 falhas reais pré-existentes, **não relacionadas ao LDR**: 2 em `AnalyticsUseCases.dashboard.test.ts` (sensibilidade a timezone local, UTC-3), 1 em `providerBudget.test.ts` (DEC-09, reset de teto mensal em memória). +1 arquivo (`tests/unit/check-bundle-budget.test.ts`) falha com `SyntaxError: Invalid or unexpected token` ao importar `scripts/ci/check-bundle-budget.mjs` — script tem shebang (`#!/usr/bin/env node`) + CRLF; suspeita de incompatibilidade do transform do Vitest/esbuild com shebang+CRLF neste ambiente Windows, não investigado a fundo (fora do escopo do LDR) |
-| `npm run test:integration` | **PASS** (após a correção acima) — 241/245 testes, 53/53 arquivos, 4 skipped. Falha original (2 testes em `threecx-persistence.test.ts`, cifragem de credencial) era a mesma causa-raiz da chave inválida — confirmada corrigida com re-execução isolada (5/5) |
-| `npm run test:e2e` | **PASS** (85/92, 7 falhas — nenhuma delas defeito novo) — Playwright Chromium não estava instalado localmente (`npx playwright install chromium`, ausente do meu setup inicial, presente no `ci.yml`); após instalar: 5 falhas são divergência de screenshot de regressão visual (baseline gerada em outro SO/fonte — esperado na primeira execução local, não em CI); 2 são `axe-core` "color-contrast" em elementos capturados **em pleno meio de animação de entrada** (`opacity: 0`/toast `animate-toast-in`) — a do Toaster já está documentada no próprio código (`src/components/ui/Toaster.tsx:5-9`) como falso positivo intermitente conhecido (cor em repouso mede 4.83:1, acima do mínimo); a do Chatbook (elemento `opacity: 0` durante fade-in) é do mesmo padrão. Nenhuma das 7 é um defeito real novo nem toca o fluxo do LDR |
+| Gate                        | Resultado                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npx tsc --noEmit`          | **PASS** — 0 erros                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `npm run lint`              | **PASS** — 0 erros, 156 warnings pré-existentes (nenhum novo). 1 erro real corrigido nesta auditoria: aspas não escapadas em `MarketIntelligenceApp.tsx:293`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `npm run test:architecture` | **PASS** — 0 violações novas de dependência, 0 arquivo acima do limite de linhas sem exceção                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `npm run build`             | **PASS** — build de frontend + servidor limpo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `npm run test:unit`         | **PARCIAL** — 2335/2338 testes, 289/292 arquivos (após corrigir `CREDENTIALS_ENCRYPTION_KEY`/`PII_SEARCH_HMAC_SECRET` no `.env` local — eram o placeholder literal `replace-with-openssl-rand-base64-32`, que decodifica para 26 bytes em vez dos 32 exigidos; gerei chaves reais de dev com `crypto.randomBytes(32)`, o que também corrigiu 2 testes de integração, ver abaixo). 3 falhas reais pré-existentes, **não relacionadas ao LDR**: 2 em `AnalyticsUseCases.dashboard.test.ts` (sensibilidade a timezone local, UTC-3), 1 em `providerBudget.test.ts` (DEC-09, reset de teto mensal em memória). +1 arquivo (`tests/unit/check-bundle-budget.test.ts`) falha com `SyntaxError: Invalid or unexpected token` ao importar `scripts/ci/check-bundle-budget.mjs` — script tem shebang (`#!/usr/bin/env node`) + CRLF; suspeita de incompatibilidade do transform do Vitest/esbuild com shebang+CRLF neste ambiente Windows, não investigado a fundo (fora do escopo do LDR) |
+| `npm run test:integration`  | **PASS** (após a correção acima) — 241/245 testes, 53/53 arquivos, 4 skipped. Falha original (2 testes em `threecx-persistence.test.ts`, cifragem de credencial) era a mesma causa-raiz da chave inválida — confirmada corrigida com re-execução isolada (5/5)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `npm run test:e2e`          | **PASS** (85/92, 7 falhas — nenhuma delas defeito novo) — Playwright Chromium não estava instalado localmente (`npx playwright install chromium`, ausente do meu setup inicial, presente no `ci.yml`); após instalar: 5 falhas são divergência de screenshot de regressão visual (baseline gerada em outro SO/fonte — esperado na primeira execução local, não em CI); 2 são `axe-core` "color-contrast" em elementos capturados **em pleno meio de animação de entrada** (`opacity: 0`/toast `animate-toast-in`) — a do Toaster já está documentada no próprio código (`src/components/ui/Toaster.tsx:5-9`) como falso positivo intermitente conhecido (cor em repouso mede 4.83:1, acima do mínimo); a do Chatbook (elemento `opacity: 0` durante fade-in) é do mesmo padrão. Nenhuma das 7 é um defeito real novo nem toca o fluxo do LDR                                                                                                                                      |
 
 ### Achados fora do escopo do LDR (registrados, não corrigidos nesta auditoria — fora do
+
 ownership desta fase, remediação permitida sob o freeze de escopo se um agente de domínio quiser
 puxar):
+
 - `.env.example` sem `BITRIX_EXTRACTION_STORAGE_DIR` (onboarding local).
 - `.env.example`/`.env` com placeholder literal em `CREDENTIALS_ENCRYPTION_KEY`/
   `PII_SEARCH_HMAC_SECRET` (`replace-with-openssl-rand-base64-32`) que decodifica para um tamanho
@@ -246,6 +252,7 @@ foram implementados. Como gerar uma recomendação real exige alguma noção de 
 timing/intent do Account Score) também avançou como consequência direta, não como escopo à parte.
 
 ### O que foi criado/alterado
+
 - **[accountInsights.ts](src/features/market-intelligence/domain/accountInsights.ts)** — funções
   puras `computeAccountScore`/`decideNextBestAction`. `fit` vem de `Company.lookalikeScore` (já
   existia, nunca fora ligado ao LDR); `timing`/`intent`/`relationship` são heurística v1
@@ -263,6 +270,7 @@ timing/intent do Account Score) também avançou como consequência direta, não
 - **worker.ts** — os dois workers acima registrados na lista real de processors.
 
 ### Achado de segurança durante a implementação (corrigido na mesma sessão)
+
 A descoberta cross-tenant dos dois workers precisa listar contas de todos os tenants antes de saber
 qual organização escopar — mesmo problema que `Lead`/`CadenceRun` já resolveram via
 `BYPASS_RLS_ALLOWED_MODELS` (`src/lib/prisma.ts`). Tentei a mesma solução para `Company`: adicionar
@@ -276,6 +284,7 @@ e listar contas de cada organização com `requestContext.run({ tenantId })` rea
 cada vez — `Company` nunca é lida sob bypass em nenhum caminho novo deste trabalho.
 
 ### Testes adicionados
+
 - `tests/unit/market-intelligence/accountInsights.test.ts` — 16 testes das funções puras de
   score/decisão.
 - `tests/integration/accountIntelligenceInsights.worker.test.ts` — 3 testes contra Postgres real:
@@ -283,12 +292,14 @@ cada vez — `Company` nunca é lida sob bypass em nenhum caminho novo deste tra
   isolamento de tenant (conta de uma organização nunca aparece pontuada em outra).
 
 ### Gate final desta rodada
+
 `tsc --noEmit`, `lint` (0 erros nos arquivos tocados), `test:architecture` (0 violações novas),
 `build` + `build:worker`, `test:unit` completo (2416/2416, único arquivo falho é o
 `check-bundle-budget.test.ts` pré-existente e não relacionado), `test:integration` completo
 (244/248, 4 skips pré-existentes, **0 falhas** — incluindo `rls-bypass-allowlist.test.ts` verde).
 
 ### O que ainda falta (não incluído nesta rodada, fora do que foi pedido)
+
 - `START_SDR_CADENCE` (D.6) ainda não invoca o motor real de cadência — a recomendação é gerada e
   fica `Pending` até um humano executá-la via `actionExecutor.service.ts`.
 - Scheduler HOT/WARM/COLD por prioridade de conta (Fase 5 completa do pacote original) — o worker
@@ -306,6 +317,7 @@ sucesso — ver histórico do commit `88cb2fb2`→merge→`d42daabe`. Nenhum dos
 do LDR.
 
 ### O que foi criado
+
 - **[accountDecisionMakers.ts](src/features/market-intelligence/domain/accountDecisionMakers.ts)**
   — `classifyBuyingRole`, heurística determinística (sem IA, para não multiplicar custo/latência
   num worker em lote) a partir de `Contact.role`/`seniority`/`department` reais. Reusa a MESMA
@@ -322,6 +334,7 @@ do LDR.
   conta, para não processar cada dupla duas vezes).
 
 ### Achado real durante a implementação
+
 `EconomicRelationship` tem a mesma classe de constraint que `DecisionMaker`
 (`EconomicRelationship_verified_timestamp`: `status = 'Verified'` exige `verifiedAt` não nulo).
 Diferente de `DecisionMaker` (que nasce `Unverified` — inferência de cargo precisa de revisão
@@ -329,6 +342,7 @@ humana antes de contar no Account Score), aqui é legítimo já nascer `Verified
 preenchido: raiz de CNPJ é fato matematicamente derivável do próprio dado, não uma inferência.
 
 ### Testes adicionados
+
 - `tests/unit/market-intelligence/accountDecisionMakers.test.ts` — 8 testes da heurística de
   classificação.
 - `tests/unit/market-intelligence/accountEconomicGroup.test.ts` — 9 testes de normalização de CNPJ
@@ -339,11 +353,13 @@ preenchido: raiz de CNPJ é fato matematicamente derivável do próprio dado, n�
   cruza organizações diferentes.
 
 ### Gate final desta rodada
+
 `tsc --noEmit` limpo, `lint` 0 erros nos arquivos tocados, `test:architecture` 0 violações novas
 (os 2 hotspots que bloqueiam o gate — `CadenceHub.tsx`/`BitrixImportPanel.tsx` — são pré-existentes,
 de outra frente, não tocados aqui), `build` limpo, `test:integration` do arquivo do LDR + do teste
 de regressão de RLS: 10/10.
 
 ### O que ainda falta
+
 Inalterado da lista acima, exceto que D.3/D.4 saíram dela: `START_SDR_CADENCE` real (D.6),
 scheduler por prioridade (Fase 5), Camadas 2/3 do grupo econômico.

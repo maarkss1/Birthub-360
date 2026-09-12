@@ -11,78 +11,78 @@ const createMock = vi.fn();
 const updateMock = vi.fn();
 
 vi.mock('@/lib/db', () => ({
-    companiesDB: {
-        create: (...args: unknown[]) => createMock(...args),
-        update: (...args: unknown[]) => updateMock(...args),
-    },
+  companiesDB: {
+    create: (...args: unknown[]) => createMock(...args),
+    update: (...args: unknown[]) => updateMock(...args),
+  },
 }));
 
 import { CompanyForm } from '@/features/companies/components/CompanyForm';
 
 beforeEach(() => {
-    vi.clearAllMocks();
-    createMock.mockResolvedValue({ id: 'c1' });
+  vi.clearAllMocks();
+  createMock.mockResolvedValue({ id: 'c1' });
 });
 
 afterEach(() => cleanup());
 
 describe('CompanyForm', () => {
-    it('shows required-field errors instead of submitting when Razão Social/Nome Fantasia are empty', async () => {
-        const user = userEvent.setup();
-        render(<CompanyForm onClose={vi.fn()} onSave={vi.fn()} />);
+  it('shows required-field errors instead of submitting when Razão Social/Nome Fantasia are empty', async () => {
+    const user = userEvent.setup();
+    render(<CompanyForm onClose={vi.fn()} onSave={vi.fn()} />);
 
-        await user.click(screen.getByRole('button', { name: /criar empresa/i }));
+    await user.click(screen.getByRole('button', { name: /criar empresa/i }));
 
-        expect(await screen.findByText('Razão Social é obrigatória')).toBeInTheDocument();
-        expect(screen.getByText('Nome Fantasia é obrigatório')).toBeInTheDocument();
-        expect(createMock).not.toHaveBeenCalled();
+    expect(await screen.findByText('Razão Social é obrigatória')).toBeInTheDocument();
+    expect(screen.getByText('Nome Fantasia é obrigatório')).toBeInTheDocument();
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it('shows a CNPJ inválido error and blocks submit when the checksum is wrong', async () => {
+    const user = userEvent.setup();
+    render(<CompanyForm onClose={vi.fn()} onSave={vi.fn()} />);
+
+    const rs = screen.getByLabelText(/razão social/i);
+    const nf = screen.getByLabelText(/nome fantasia/i);
+    const cnpj = screen.getByPlaceholderText('00.000.000/0000-00');
+
+    await user.clear(rs);
+    await user.type(rs, 'Acme Transportes Ltda');
+    await user.clear(nf);
+    await user.type(nf, 'Acme');
+    await user.clear(cnpj);
+    await user.type(cnpj, '11.111.111/1111-11');
+    await user.click(screen.getByRole('button', { name: /criar empresa/i }));
+
+    expect(await screen.findByText(/cnpj inválido/i)).toBeInTheDocument();
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it('submits via companiesDB.create with a valid CNPJ', async () => {
+    const user = userEvent.setup();
+    const onSave = vi.fn();
+    render(<CompanyForm onClose={vi.fn()} onSave={onSave} />);
+
+    const rs = screen.getByLabelText(/razão social/i);
+    const nf = screen.getByLabelText(/nome fantasia/i);
+    const cnpj = screen.getByPlaceholderText('00.000.000/0000-00');
+
+    await user.clear(rs);
+    await user.type(rs, 'Acme Transportes Ltda');
+    await user.clear(nf);
+    await user.type(nf, 'Acme');
+    await user.clear(cnpj);
+    await user.type(cnpj, '11.222.333/0001-81');
+    await user.click(screen.getByRole('button', { name: /criar empresa/i }));
+
+    await waitFor(() => expect(createMock).toHaveBeenCalledTimes(1));
+    // companySchema normaliza cnpj pra dígitos puros antes de chegar em companiesDB.create
+    // (Onda 43) — o valor pontuado digitado no campo não é mais o que é persistido.
+    expect(createMock.mock.calls[0][0]).toMatchObject({
+      legalName: 'Acme Transportes Ltda',
+      tradeName: 'Acme',
+      cnpj: '11222333000181',
     });
-
-    it('shows a CNPJ inválido error and blocks submit when the checksum is wrong', async () => {
-        const user = userEvent.setup();
-        render(<CompanyForm onClose={vi.fn()} onSave={vi.fn()} />);
-
-        const rs = screen.getByLabelText(/razão social/i);
-        const nf = screen.getByLabelText(/nome fantasia/i);
-        const cnpj = screen.getByPlaceholderText('00.000.000/0000-00');
-
-        await user.clear(rs);
-        await user.type(rs, 'Acme Transportes Ltda');
-        await user.clear(nf);
-        await user.type(nf, 'Acme');
-        await user.clear(cnpj);
-        await user.type(cnpj, '11.111.111/1111-11');
-        await user.click(screen.getByRole('button', { name: /criar empresa/i }));
-
-        expect(await screen.findByText(/cnpj inválido/i)).toBeInTheDocument();
-        expect(createMock).not.toHaveBeenCalled();
-    });
-
-    it('submits via companiesDB.create with a valid CNPJ', async () => {
-        const user = userEvent.setup();
-        const onSave = vi.fn();
-        render(<CompanyForm onClose={vi.fn()} onSave={onSave} />);
-
-        const rs = screen.getByLabelText(/razão social/i);
-        const nf = screen.getByLabelText(/nome fantasia/i);
-        const cnpj = screen.getByPlaceholderText('00.000.000/0000-00');
-
-        await user.clear(rs);
-        await user.type(rs, 'Acme Transportes Ltda');
-        await user.clear(nf);
-        await user.type(nf, 'Acme');
-        await user.clear(cnpj);
-        await user.type(cnpj, '11.222.333/0001-81');
-        await user.click(screen.getByRole('button', { name: /criar empresa/i }));
-
-        await waitFor(() => expect(createMock).toHaveBeenCalledTimes(1));
-        // companySchema normaliza cnpj pra dígitos puros antes de chegar em companiesDB.create
-        // (Onda 43) — o valor pontuado digitado no campo não é mais o que é persistido.
-        expect(createMock.mock.calls[0][0]).toMatchObject({
-            legalName: 'Acme Transportes Ltda',
-            tradeName: 'Acme',
-            cnpj: '11222333000181',
-        });
-        expect(onSave).toHaveBeenCalledTimes(1);
-    });
+    expect(onSave).toHaveBeenCalledTimes(1);
+  });
 });

@@ -94,12 +94,12 @@ Achado novo corrigido nesta rodada:
   - `service.yaml`/`service-preview.yaml`: sem impacto de roteamento de tráfego de fato (o pod do
     worker não expõe porta nomeada `http`/numérica `3000`, então o controller de Endpoints não o
     inclui para essa porta), mas o selector continuava semanticamente incorreto.
-  Corrigido adicionando `app.kubernetes.io/component: web` ao `selector.matchLabels`/
-  `spec.selector` e ao `template.metadata.labels` desses cinco arquivos (Deployment e Rollout
-  precisam do label em ambos os lugares — Kubernetes exige que o pod template contenha todo
-  label do selector). Seguro aplicar agora: `spec.selector` de Deployment é imutável após criado,
-  mas nenhum cluster real está sincronizando este chart hoje (ver aviso no topo deste arquivo),
-  então não há release existente para quebrar.
+    Corrigido adicionando `app.kubernetes.io/component: web` ao `selector.matchLabels`/
+    `spec.selector` e ao `template.metadata.labels` desses cinco arquivos (Deployment e Rollout
+    precisam do label em ambos os lugares — Kubernetes exige que o pod template contenha todo
+    label do selector). Seguro aplicar agora: `spec.selector` de Deployment é imutável após criado,
+    mas nenhum cluster real está sincronizando este chart hoje (ver aviso no topo deste arquivo),
+    então não há release existente para quebrar.
 - **Documentação desatualizada**: o comentário de `templates/migration-job.yaml` e o parágrafo
   correspondente acima descreviam o gap da CLI do `prisma` na imagem como um caveat aberto. O
   handoff já está `Status: resolvido` e o `Dockerfile` atual já reinstala a CLI no estágio final

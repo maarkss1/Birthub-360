@@ -11,8 +11,8 @@ vi.mock('@/lib/prisma', () => ({
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
-    }
-  }
+    },
+  },
 }));
 
 describe('ContactService', () => {
@@ -24,12 +24,16 @@ describe('ContactService', () => {
     id: '1',
     name: 'John Doe',
     companyId: 'comp-1',
-    status: 'Ativo'
+    status: 'Ativo',
   };
 
   it('should create a contact', async () => {
     const input = { name: 'John Doe', companyId: 'comp-1' };
-    vi.mocked(prisma.contact.create).mockResolvedValue({ id: '1', ...input, status: 'Ativo' } as never);
+    vi.mocked(prisma.contact.create).mockResolvedValue({
+      id: '1',
+      ...input,
+      status: 'Ativo',
+    } as never);
     const result = await contactService.create('test-org-id', input as any);
     expect(prisma.contact.create).toHaveBeenCalled();
     expect(result.id).toBe('1');
@@ -47,6 +51,8 @@ describe('ContactService', () => {
     vi.mocked(prisma.contact.delete).mockResolvedValue(mockContact as never);
     vi.mocked(prisma.contact.findFirst).mockResolvedValue(mockContact as never);
     await contactService.delete('test-org-id', '1');
-    expect(prisma.contact.delete).toHaveBeenCalledWith({ where: { id: '1', organizationId: 'test-org-id' } });
+    expect(prisma.contact.delete).toHaveBeenCalledWith({
+      where: { id: '1', organizationId: 'test-org-id' },
+    });
   });
 });

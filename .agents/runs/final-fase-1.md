@@ -27,12 +27,12 @@ trata cada arquivo como pipeline independente por padrão.
 
 ### Caminhos que efetivamente PUBLICAM artefato (os que importam para o gate de release)
 
-| Workflow | Dispara em | Testes/gates antes de publicar | Publica |
-|---|---|---|---|
-| `production.yaml` (job `publish`) | `push main` | Job interno `build-and-test` **próprio e mais fraco** que `ci.yml`: lint, typecheck, unit, migrations, integration — **sem E2E**; `npm audit --audit-level=high` com `continue-on-error: true` (`production.yaml:84`) | Imagem Docker no GHCR (`:latest` + `:sha`) |
-| `cd-homolog.yml` | `push develop` | **NENHUM** — checkout → build imagem → push → edita `charts/prospector-atlas/values.yaml` → commit direto | Imagem Docker no GHCR + config Helm |
-| `deploy-pages.yml` | manual (`workflow_dispatch`) | **NENHUM** | GitHub Pages |
-| `android-build.yml` / `ios-build.yml` | `push main` | **NENHUM** (não roda lint/typecheck/test antes do build) | Artifact de app (APK debug / xcarchive) |
+| Workflow                              | Dispara em                   | Testes/gates antes de publicar                                                                                                                                                                                        | Publica                                    |
+| ------------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `production.yaml` (job `publish`)     | `push main`                  | Job interno `build-and-test` **próprio e mais fraco** que `ci.yml`: lint, typecheck, unit, migrations, integration — **sem E2E**; `npm audit --audit-level=high` com `continue-on-error: true` (`production.yaml:84`) | Imagem Docker no GHCR (`:latest` + `:sha`) |
+| `cd-homolog.yml`                      | `push develop`               | **NENHUM** — checkout → build imagem → push → edita `charts/prospector-atlas/values.yaml` → commit direto                                                                                                             | Imagem Docker no GHCR + config Helm        |
+| `deploy-pages.yml`                    | manual (`workflow_dispatch`) | **NENHUM**                                                                                                                                                                                                            | GitHub Pages                               |
+| `android-build.yml` / `ios-build.yml` | `push main`                  | **NENHUM** (não roda lint/typecheck/test antes do build)                                                                                                                                                              | Artifact de app (APK debug / xcarchive)    |
 
 ### Caminhos que só VALIDAM (não publicam)
 
@@ -48,9 +48,9 @@ fora do caminho de `main`), `market-intelligence-*.yml` (escopo restrito a featu
 
 O caminho que efetivamente decide o que roda em produção (`production.yaml`, publica em `push main`)
 **não depende de `ci.yml` passar**. O próprio arquivo já documenta isso
-(`production.yaml:20-23`, comentário `DEVOPS-001`): *"este job é o gate real de quem decide publicar
+(`production.yaml:20-23`, comentário `DEVOPS-001`): _"este job é o gate real de quem decide publicar
 em produção; workflows são independentes entre si, então o `ci.yml` passar não impede este arquivo de
-publicar uma imagem com teste quebrado se este job não rodar os testes."* O problema é conhecido pelo
+publicar uma imagem com teste quebrado se este job não rodar os testes."_ O problema é conhecido pelo
 autor do arquivo, mas **nunca foi corrigido nem virou handoff formal** — nenhum arquivo em
 `.agents/handoffs/**` cita "gate único" ou "múltiplos caminhos de publicação".
 
@@ -98,8 +98,8 @@ nesta fase.
    workflows (`ci.yml:107`, `production.yaml:84`) com a mesma justificativa ("better-auth pendente
    upstream"). Formalizar isso como waiver documentado (arquivo dedicado, ex.
    `docs/security/AUDIT_WAIVERS.md`, com CVE, motivo, prazo de reavaliação) em vez de
-   `continue-on-error` silencioso — cumprindo `/AGENTS.md`/prompt do 00: *"HIGH/CRITICAL de segurança
-   não pode ser ignorado por continue-on-error sem waiver explícito, documentado e aprovado."*
+   `continue-on-error` silencioso — cumprindo `/AGENTS.md`/prompt do 00: _"HIGH/CRITICAL de segurança
+   não pode ser ignorado por continue-on-error sem waiver explícito, documentado e aprovado."_
 5. Consolidar `qualidade-ci.yml` e `playwright-ci.yml` — hoje duplicam trabalho que `ci.yml` já faz
    (lint/typecheck/unit e E2E respectivamente) em jobs separados com Node 20 vs Node 22 divergente
    (`qualidade-ci.yml` usa Node 20, os demais Node 22) — decidir se isso é redundância proposital
@@ -238,6 +238,7 @@ fiel ao handler real: best-effort, sempre `200 { success: true }`, nunca bloquei
 usuário) — correção mínima, sem mudança de comportamento de código.
 
 ### Gate completo — reexecutado de verdade nesta rodada (Postgres 16 + pgvector e Redis nativos,
+
 Docker indisponível neste sandbox, mesmo procedimento das Fases Final 0/2)
 
 ```text

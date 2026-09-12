@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(() => {
@@ -25,11 +25,24 @@ export default defineConfig(() => {
           icons: [
             { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
             { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-            { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+            {
+              src: '/icons/icon-512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable',
+            },
           ],
           shortcuts: [
-            { name: 'CRM', url: '/app/crm', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
-            { name: 'Prospecção', url: '/app/prospect', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+            {
+              name: 'CRM',
+              url: '/app/crm',
+              icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }],
+            },
+            {
+              name: 'Prospecção',
+              url: '/app/prospect',
+              icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }],
+            },
           ],
         },
         workbox: {
@@ -94,14 +107,17 @@ export default defineConfig(() => {
       // servidor nunca terminar de subir (ou, uma vez de pé, nunca responder a requisições —
       // event loop preso processando reload atrás de reload). Sem isso, `npm run dev` é
       // inutilizável sempre que outro worktree deste projeto está ativo.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {
-        ignored: [
-          '**/playwright-report/**',
-          '**/test-results/**',
-          '**/coverage/**',
-          '**/.claude/worktrees/**',
-        ],
-      },
+      watch:
+        process.env.DISABLE_HMR === 'true'
+          ? null
+          : {
+              ignored: [
+                '**/playwright-report/**',
+                '**/test-results/**',
+                '**/coverage/**',
+                '**/.claude/worktrees/**',
+              ],
+            },
     },
     build: {
       rollupOptions: {
@@ -136,7 +152,11 @@ export default defineConfig(() => {
               return 'vendor-tiptap';
             }
             // React PDF (pdf-lib + fontkit)
-            if (normalizedId.includes('/@react-pdf/') || normalizedId.includes('/pdf-lib/') || normalizedId.includes('/fontkit/')) {
+            if (
+              normalizedId.includes('/@react-pdf/') ||
+              normalizedId.includes('/pdf-lib/') ||
+              normalizedId.includes('/fontkit/')
+            ) {
               return 'vendor-pdf';
             }
             // Embla Carousel

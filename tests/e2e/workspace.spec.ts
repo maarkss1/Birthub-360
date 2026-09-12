@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { requestContext } from '../../src/lib/async-context';
 import { prisma } from '../../src/lib/prisma';
-import { assignJobRole, getJobRoleByCode } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  assignJobRole,
+  getJobRoleByCode,
+} from '../../src/features/job-roles/services/jobRole.service';
 import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { signUp, uniqueTestEmail, waitForAppReady } from './helpers';
@@ -91,7 +94,9 @@ test.describe('Meu Workspace (PROMPT 6)', () => {
     await page.goto('/app/workspace');
     await waitForAppReady(page);
 
-    await expect(page.getByRole('heading', { name: 'SDR — Sales Development Representative' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'SDR — Sales Development Representative' }),
+    ).toBeVisible();
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     );

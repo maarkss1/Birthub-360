@@ -42,8 +42,16 @@ describe('rankLeadsForQueue', () => {
   it('dentro da mesma etapa, prioriza quem está há mais dias sem toque', () => {
     const now = Date.now();
     const ranked = rankLeadsForQueue([
-      lead({ id: 'recent', status: 'Lead_Recebido', lastInteraction: new Date(now - 1 * 86_400_000) }),
-      lead({ id: 'stale', status: 'Lead_Recebido', lastInteraction: new Date(now - 10 * 86_400_000) }),
+      lead({
+        id: 'recent',
+        status: 'Lead_Recebido',
+        lastInteraction: new Date(now - 1 * 86_400_000),
+      }),
+      lead({
+        id: 'stale',
+        status: 'Lead_Recebido',
+        lastInteraction: new Date(now - 10 * 86_400_000),
+      }),
     ]);
     expect(ranked.map((l) => l.id)).toEqual(['stale', 'recent']);
   });
@@ -60,8 +68,18 @@ describe('rankLeadsForQueue', () => {
     const sameDate = new Date();
     const ranked = rankLeadsForQueue([
       lead({ id: 'frio', status: 'Lead_Recebido', lastInteraction: sameDate, temperature: 'Frio' }),
-      lead({ id: 'quente', status: 'Lead_Recebido', lastInteraction: sameDate, temperature: 'Quente' }),
-      lead({ id: 'morno', status: 'Lead_Recebido', lastInteraction: sameDate, temperature: 'Morno' }),
+      lead({
+        id: 'quente',
+        status: 'Lead_Recebido',
+        lastInteraction: sameDate,
+        temperature: 'Quente',
+      }),
+      lead({
+        id: 'morno',
+        status: 'Lead_Recebido',
+        lastInteraction: sameDate,
+        temperature: 'Morno',
+      }),
     ]);
     expect(ranked.map((l) => l.id)).toEqual(['quente', 'morno', 'frio']);
   });
@@ -158,7 +176,12 @@ describe('computeQueuePriorityScore', () => {
       }),
     );
     const min = computeQueuePriorityScore(
-      lead({ id: 'min', status: 'unknown_status', lastInteraction: new Date(now), temperature: null }),
+      lead({
+        id: 'min',
+        status: 'unknown_status',
+        lastInteraction: new Date(now),
+        temperature: null,
+      }),
     );
     expect(max.score).toBeLessThanOrEqual(100);
     expect(min.score).toBeGreaterThanOrEqual(0);

@@ -47,7 +47,11 @@ describe('searchGithubOrganizations', () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse(200, {
         items: [
-          { login: 'atlasgr', html_url: 'https://github.com/atlasgr', avatar_url: 'https://x/a.png' },
+          {
+            login: 'atlasgr',
+            html_url: 'https://github.com/atlasgr',
+            avatar_url: 'https://x/a.png',
+          },
         ],
       }),
     );
@@ -65,7 +69,9 @@ describe('searchGithubOrganizations', () => {
   });
 
   it('resposta não-ok (ex: 403 rate limit real do GitHub) preenche `.error` em vez de mascarar como lista vazia', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(403, { message: 'API rate limit exceeded' }));
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse(403, { message: 'API rate limit exceeded' }));
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await searchGithubOrganizations('empresa');

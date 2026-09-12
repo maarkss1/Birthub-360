@@ -5,6 +5,7 @@
 - Prioridade: normal
 
 ## Problema
+
 `tests/e2e/visual.spec.ts` está em `describe.skip` porque as únicas baselines commitadas em
 `tests/e2e/visual.spec.ts-snapshots/` são `*-chromium-win32.png` (geradas no Windows). Playwright
 inclui a plataforma no nome do arquivo de baseline, então o CI (`ubuntu-latest`) sempre procuraria
@@ -21,13 +22,16 @@ positivo/negativo que uma suíte de regressão visual pixel-a-pixel não pode to
 gerei/commitei PNG nenhum a partir deste ambiente.
 
 ## Arquivo(s) envolvido(s)
+
 - `tests/e2e/visual.spec.ts` (comentário do skip atualizado nesta onda para explicar a causa correta)
 - `tests/e2e/visual.spec.ts-snapshots/*-chromium-win32.png` (baseline existente, Windows)
 - `.github/workflows/ci.yml` (fora do meu escopo — pertence ao 08)
 
 ## Alteração necessária
+
 Adicionar um job (ou step dedicado, rodando uma vez) no `ci.yml`, no mesmo runner/imagem
 `ubuntu-latest` que já roda `test:e2e`, que:
+
 1. sobe a stack de serviços igual ao job de e2e normal (postgres/redis/meilisearch);
 2. roda `npx playwright test tests/e2e/visual.spec.ts --update-snapshots` (com o `describe.skip`
    temporariamente removido, ou passando o teste explicitamente já que `--update-snapshots` ainda
@@ -39,11 +43,13 @@ Este passo é essencialmente manual/único (não precisa virar job permanente) �
 dentro do CI uma vez para estabelecer a baseline Linux real.
 
 ## Teste esperado
+
 Depois de commitados os PNGs `*-chromium-linux.png` e removido o `describe.skip`:
 `npm run test:e2e` (ou só `npx playwright test tests/e2e/visual.spec.ts`) roda os 5 testes de
 `visual.spec.ts` no CI e fecha verde sem depender de retry.
 
 ## Contexto adicional
+
 Baseline Windows preservada (não removi `*-chromium-win32.png`) — sem instrução do usuário para
 descartar histórico de referência, e não custa nada mantê-la junto da baseline Linux nova.
 

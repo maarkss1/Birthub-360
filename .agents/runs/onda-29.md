@@ -25,7 +25,7 @@ gap que este item fecha).
   reaproveitado das rotas vizinhas (bloqueia `VISUALIZADOR`).
 - **`cadence.api.ts`** — `pauseRun`/`resumeRun`/`stopRun`, mesmo padrão de `startRun`.
 - **`CadenceHub.tsx`** — novo componente `CadenceRunActions`: Pausar+Parar quando `status ===
-  'active'`, Retomar+Parar quando `'paused'`, nada em estado terminal. Parar exige confirmação via
+'active'`, Retomar+Parar quando `'paused'`, nada em estado terminal. Parar exige confirmação via
   `window.confirm` (mesmo padrão de exclusão de lead em `LeadDetailDrawer.tsx`) porque é
   irreversível — `stopCadenceManually` não tem retomada, diferente de pausar. Nova coluna "Ações" na
   tabela. Nota "Em breve nesta tela" corrigida para refletir o estado real (CYC-003/004/005/006 têm
@@ -57,6 +57,7 @@ gap que este item fecha).
 
 Nenhuma no código de produção. Quatro rodadas de ajuste no próprio E2E novo, sem alterar
 comportamento real da tela:
+
 1. Path do executável do Chromium do sandbox não batia com o esperado pelo `@playwright/test`
    instalado — resolvido com a variável `PLAYWRIGHT_CHROMIUM_EXECUTABLE` já documentada em
    `playwright.config.ts`.

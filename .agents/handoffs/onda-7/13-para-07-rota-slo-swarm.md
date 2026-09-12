@@ -32,19 +32,23 @@ aplicado no restante do router, ver como `server.ts` monta `/api/agent`):
 import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
 
 const sloQuerySchema = z.object({
-    days: z.coerce.number().int().min(1).max(90).optional(),
+  days: z.coerce.number().int().min(1).max(90).optional(),
 });
 
-router.get('/swarm/slo', validateRequest(sloQuerySchema, 'query'), async (req: Request, res: Response, next: NextFunction) => {
+router.get(
+  '/swarm/slo',
+  validateRequest(sloQuerySchema, 'query'),
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { organizationId } = (req as AuthRequest).user;
-        const { days } = req.query as unknown as z.infer<typeof sloQuerySchema>;
-        const snapshot = await getSwarmSloSnapshot(organizationId, days ?? 30);
-        res.json(snapshot);
+      const { organizationId } = (req as AuthRequest).user;
+      const { days } = req.query as unknown as z.infer<typeof sloQuerySchema>;
+      const snapshot = await getSwarmSloSnapshot(organizationId, days ?? 30);
+      res.json(snapshot);
     } catch (err) {
-        next(err);
+      next(err);
     }
-});
+  },
+);
 ```
 
 Ajuste a assinatura de `validateRequest` conforme o padrão real do seu router para querystring (o
@@ -64,9 +68,10 @@ mesmo padrão já usado no restante do arquivo e em `lgpd.routes.ts`.
 ## Contexto adicional
 
 Não é necessário handoff para o Agente 02 (rota de página/menu): a aba "SLO por agente" foi
-implementada como uma segunda visão *dentro* do `SwarmDashboard.tsx` já existente (aba "Enxame
+implementada como uma segunda visão _dentro_ do `SwarmDashboard.tsx` já existente (aba "Enxame
 Autônomo" do Hub de IA) — não criei rota nem entrada de menu nova, evitando escopo fora do pedido
 original da constituição de design (`CLAUDE.md` §13).
 
 ## Resolução
+
 A rota já foi implementada por um agente anterior em \src/features/intelligence/routes/agent.routes.ts\.

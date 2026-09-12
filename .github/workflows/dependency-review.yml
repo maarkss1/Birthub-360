@@ -19,7 +19,7 @@ name: Security - Dependency Review
 
 on:
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 permissions:
   contents: read

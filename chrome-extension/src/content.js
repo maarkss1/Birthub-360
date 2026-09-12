@@ -32,7 +32,9 @@ let contextInvalidated = false;
 function publishContext() {
   if (contextInvalidated) return;
   try {
-    chrome.runtime.sendMessage({ type: 'ATLAS_MEET_CONTEXT', payload: getMeetContext() }).catch(() => {});
+    chrome.runtime
+      .sendMessage({ type: 'ATLAS_MEET_CONTEXT', payload: getMeetContext() })
+      .catch(() => {});
   } catch {
     contextInvalidated = true;
     observer.disconnect();

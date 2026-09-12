@@ -12,7 +12,12 @@ describe('voiceCommandBus', () => {
   it('dispara o handler do comando cuja keyword aparece no texto', () => {
     const handler = vi.fn();
     voiceCommandBus.registerCommands('owner-a', [
-      { keywords: ['iniciar foco'], phrase: 'iniciar foco', confirmationLabel: 'Iniciou o foco', handler },
+      {
+        keywords: ['iniciar foco'],
+        phrase: 'iniciar foco',
+        confirmationLabel: 'Iniciou o foco',
+        handler,
+      },
     ]);
 
     const result = voiceCommandBus.tryHandle('quero iniciar foco agora');
@@ -33,7 +38,12 @@ describe('voiceCommandBus', () => {
     const handlerA = vi.fn();
     const handlerB = vi.fn();
     voiceCommandBus.registerCommands('owner-a', [
-      { keywords: ['sincronizar'], phrase: 'sincronizar', confirmationLabel: 'Sincronizou', handler: handlerA },
+      {
+        keywords: ['sincronizar'],
+        phrase: 'sincronizar',
+        confirmationLabel: 'Sincronizou',
+        handler: handlerA,
+      },
     ]);
     voiceCommandBus.registerCommands('owner-b', [
       { keywords: ['pausar'], phrase: 'pausar', confirmationLabel: 'Pausou', handler: handlerB },
@@ -73,8 +83,12 @@ describe('voiceCommandBus', () => {
   });
 
   it('getPhrases agrega as frases de exemplo de todos os donos ativos', () => {
-    voiceCommandBus.registerCommands('owner-a', [{ keywords: ['x'], phrase: 'Dica A', confirmationLabel: 'Dica A', handler: vi.fn() }]);
-    voiceCommandBus.registerCommands('owner-b', [{ keywords: ['y'], phrase: 'Dica B', confirmationLabel: 'Dica B', handler: vi.fn() }]);
+    voiceCommandBus.registerCommands('owner-a', [
+      { keywords: ['x'], phrase: 'Dica A', confirmationLabel: 'Dica A', handler: vi.fn() },
+    ]);
+    voiceCommandBus.registerCommands('owner-b', [
+      { keywords: ['y'], phrase: 'Dica B', confirmationLabel: 'Dica B', handler: vi.fn() },
+    ]);
 
     expect(voiceCommandBus.getPhrases()).toEqual(expect.arrayContaining(['Dica A', 'Dica B']));
   });

@@ -1,6 +1,7 @@
 # Onda 21 — Investigação e correção: followUp.worker.ts processava sempre 0 leads
 
 ## Identificação
+
 - Origem: risco levantado (não confirmado) no relatório da onda-20 — "`followUp.worker.ts` pode
   estar processando sempre 0 leads em produção (mesmo padrão de RLS sem contexto encontrado e
   corrigido no worker de cadência, onda 19)". Usuário pediu explicitamente "investigue".
@@ -43,6 +44,7 @@ opt-out (`customFields.optOutWhatsApp`), ignora leads fora do status elegível, 
 organizações diferentes na mesma varredura sem vazar dado entre elas.
 
 ## Gate final
+
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 80 warnings (mesmo nível pré-existente do branch base)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **169/169 arquivos, 1313/1313 testes**
@@ -52,6 +54,7 @@ organizações diferentes na mesma varredura sem vazar dado entre elas.
 - e2e: não executado (nenhuma mudança de UI)
 
 ## Skips e flakes
+
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Decisão

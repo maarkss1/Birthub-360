@@ -10,10 +10,7 @@
 export type DailyPlanPriorityLevel = 'URGENT' | 'HIGH' | 'MEDIUM' | 'COMPLETED';
 
 export type DailyPlanItemOrigin =
-  | 'BITRIX_TASK'
-  | 'BITRIX_ACTIVITY'
-  | 'BITRIX_LEAD'
-  | 'LOCAL_ACTIVITY';
+  'BITRIX_TASK' | 'BITRIX_ACTIVITY' | 'BITRIX_LEAD' | 'LOCAL_ACTIVITY';
 
 export type DailyPlanItemChannel = 'CALL' | 'WHATSAPP' | 'MEETING' | 'EMAIL' | 'TASK';
 

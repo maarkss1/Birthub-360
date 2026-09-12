@@ -22,6 +22,7 @@ avisou" nem de fechar o loop com a Activity criada por `make3CXCall` (que hoje s
 disparo da chamada, nunca o resultado real reportado pelo próprio PABX).
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/integrations/threecx/threecx.service.ts` — `process3CXWebhook`.
 - `src/features/integrations/threecx/threecx.routes.ts` — rota que recebe o webhook (confirme
   autenticação/validação de payload já existente antes de mexer na persistência).
@@ -29,6 +30,7 @@ disparo da chamada, nunca o resultado real reportado pelo próprio PABX).
   Agente 01, seguindo o mesmo padrão já usado para `ThreeCXConnection`/`BitrixExtractionRun`.
 
 ## Alteração necessária
+
 1. Definir o organizationId de origem do evento — hoje o payload do 3CX não chega com tenant
    conhecido nenhum; provavelmente precisa vir por `connectionId` na URL do webhook (mesmo padrão
    já usado pelo webhook de entrada do Bitrix, `bitrix.webhook.ts`: segredo por conexão na URL,
@@ -42,16 +44,19 @@ disparo da chamada, nunca o resultado real reportado pelo próprio PABX).
 4. Nunca persistir segredo/credencial do payload do webhook.
 
 ## Teste esperado
+
 - Evento de webhook 3CX persiste corretamente escopado à organização certa.
 - Evento sem tenant identificável é rejeitado/ignorado com log claro, não silenciosamente aceito.
 - Isolamento entre organizações (cross-tenant negado).
 - Evento correlacionado a um Lead quando o número bate com uma chamada disparada por `make3CXCall`.
 
 ## Contexto adicional
+
 Não fiz nenhuma alteração em `threecx/**` nesta rodada — arquivo fora da minha propriedade nesta
 onda (ver matriz em `.agents/runs/onda-7.md`). Revisão completa do handoff original em
 `.agents/handoffs/onda-5/01-para-06-persistencia-3cx-implementada.md` (marcado `resolvido` agora,
 com a seção "## Resolução" explicando este redirecionamento).
 
 ## Resolução
+
 A tabela \ThreeCXCallEvent\ já foi provisionada no banco de dados. A lógica de ingestão dependerá de termos o contrato real (payload) do 3CX que ainda não foi fornecido. Handoff resolvido no quesito preparo técnico.

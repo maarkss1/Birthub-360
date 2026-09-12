@@ -36,8 +36,8 @@ em algum lugar) nunca aconteceu ou foi revertida sem remover o arquivo.
 - `src/lib/security/auditLog.middleware.ts` (meu escopo — já revisado, lógica interna correta,
   nada a corrigir na própria função).
 - Onde a decisão precisa ser aplicada: rotas específicas dentro de `src/features/*/`.
-  routes.ts` de cada módulo (dono varia por módulo — CRM/04, Prospecção/05, Integrações/06 etc.) e,
-  se a montagem for centralizada, `server.ts` (exige aprovação do Agente 00).
+  routes.ts`de cada módulo (dono varia por módulo — CRM/04, Prospecção/05, Integrações/06 etc.) e,
+se a montagem for centralizada,`server.ts` (exige aprovação do Agente 00).
 
 ## Alteração necessária
 

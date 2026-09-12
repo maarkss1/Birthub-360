@@ -5,13 +5,16 @@
 - Prioridade: normal
 
 ## Problema
+
 O novo processo `worker.ts` precisa de monitoramento/alertas próprios, separados do processo HTTP,
 depois que o deploy do worker service acontecer (ver handoff `16-para-08-deploy-worker-service.md`).
 
 ## Arquivo(s) envolvido(s)
+
 `worker.ts` (novo), `infrastructure/observability/**` (seu escopo)
 
 ## Alteração necessária (sugestão, a validar com você)
+
 1. **Readiness como sinal de alerta**: `GET /health/ready` (porta `WORKER_HEALTH_PORT`, default
    `3006`) retorna 503 com `{ status: "degraded", errors: [...] }` quando `queuesEnabled` é falso
    ou quando `sdr-cold-call`/`swarm-scheduler` falharam ao inicializar. Um 503 sustentado nesse
@@ -33,10 +36,12 @@ depois que o deploy do worker service acontecer (ver handoff `16-para-08-deploy-
    drena a tempo (25s). Isso indica job preso — vale um alerta de log pattern.
 
 ## Teste esperado
+
 N/A — handoff de coordenação, você decide o mecanismo de alerta real (Prometheus/Alertmanager,
 Grafana, etc., conforme já usado no projeto).
 
 ## Contexto adicional
+
 Inventário completo, comportamento testado localmente e resultado de `SIGTERM` no relatório de
 entrega desta onda (Agente 16).
 

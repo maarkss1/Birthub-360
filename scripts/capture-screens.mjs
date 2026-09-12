@@ -2,7 +2,8 @@ import { chromium } from 'playwright';
 import path from 'path';
 import fs from 'fs';
 
-const artifactDir = 'C:\\Users\\Marks\\.gemini\\antigravity\\brain\\b1687234-4a6b-459c-bc6d-083993983f33';
+const artifactDir =
+  'C:\\Users\\Marks\\.gemini\\antigravity\\brain\\b1687234-4a6b-459c-bc6d-083993983f33';
 const desktopDir = 'C:\\Users\\Marks\\Desktop\\BirthHub360_Capturas';
 const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
@@ -26,7 +27,7 @@ async function capture() {
   const browser = await chromium.launch({
     headless: true,
     executablePath: chromePath,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   // ==========================================
@@ -34,7 +35,7 @@ async function capture() {
   // ==========================================
   const unauthContext = await browser.newContext({
     viewport: { width: 1440, height: 900 },
-    deviceScaleFactor: 2
+    deviceScaleFactor: 2,
   });
 
   await unauthContext.addInitScript(() => {
@@ -51,7 +52,7 @@ async function capture() {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(null)
+      body: JSON.stringify(null),
     });
   });
 
@@ -86,7 +87,7 @@ async function capture() {
   // ==========================================
   const authContext = await browser.newContext({
     viewport: { width: 1440, height: 900 },
-    deviceScaleFactor: 2
+    deviceScaleFactor: 2,
   });
 
   await authContext.addInitScript(() => {
@@ -113,14 +114,14 @@ async function capture() {
           email: 'admin@birthhub.com.br',
           role: 'ADMIN',
           image: null,
-          mustChangePassword: false
+          mustChangePassword: false,
         },
         session: {
           id: 'sess-birthhub',
           userId: 'user-birthhub',
-          expiresAt: new Date(Date.now() + 86400000).toISOString()
-        }
-      })
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+        },
+      }),
     });
   });
 
@@ -130,8 +131,13 @@ async function capture() {
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: ['social-selling', 'treinamento-atlasgr', 'proposta-comercial', 'hub-inteligencia-marketing']
-      })
+        data: [
+          'social-selling',
+          'treinamento-atlasgr',
+          'proposta-comercial',
+          'hub-inteligencia-marketing',
+        ],
+      }),
     });
   });
 
@@ -147,9 +153,9 @@ async function capture() {
           pendingActivities: 34,
           closedThisMonth: 19,
           pipelineValue: 4850000,
-          averageScore: 84
-        }
-      })
+          averageScore: 84,
+        },
+      }),
     });
   });
 
@@ -159,8 +165,8 @@ async function capture() {
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: []
-      })
+        data: [],
+      }),
     });
   });
 
@@ -178,7 +184,9 @@ async function capture() {
 
   await authContext.close();
   await browser.close();
-  console.log('Todas as telas foram capturadas e salvas na Área de Trabalho e Artifacts com sucesso!');
+  console.log(
+    'Todas as telas foram capturadas e salvas na Área de Trabalho e Artifacts com sucesso!',
+  );
 }
 
 capture().catch((err) => {

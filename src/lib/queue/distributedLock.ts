@@ -3,10 +3,7 @@ import { cacheConnection, redisConfigured } from './redis.js';
 import { logger } from '../logger.js';
 
 export type DistributedLockReason =
-  | 'acquired'
-  | 'contended'
-  | 'redis-unavailable'
-  | 'redis-disabled';
+  'acquired' | 'contended' | 'redis-unavailable' | 'redis-disabled';
 
 export interface DistributedLock {
   readonly runId: string;

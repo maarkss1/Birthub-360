@@ -8,6 +8,7 @@
 
 Como parte da Onda 0/preparação desta rodada, o Coordenador corrigiu diretamente em `main`
 (commit `51ba141`, antes de criar `integracao/onda-2`):
+
 - Bloqueador conhecido e documentado em `/AGENTS.md` → "Segurança e higiene": dump de banco com
   dado pessoal real (`backups/prospector-20260806-152827.dump`) estava versionado no git.
   Removido do rastreamento (`git rm --cached` + `.gitignore`), arquivo mantido em disco, histórico
@@ -23,11 +24,11 @@ Como parte da Onda 0/preparação desta rodada, o Coordenador corrigiu diretamen
 Três especialistas em paralelo (máximo permitido pela regra de concorrência), cada um em worktree
 e branch próprios a partir de `integracao/onda-2`:
 
-| Agente | Branch | Worktree |
-|---|---|---|
-| 04 — CRM, BI e Analytics | `agente/04-crm-bi` | `.claude/worktrees/agente-04-crm-bi` |
+| Agente                           | Branch                       | Worktree                                       |
+| -------------------------------- | ---------------------------- | ---------------------------------------------- |
+| 04 — CRM, BI e Analytics         | `agente/04-crm-bi`           | `.claude/worktrees/agente-04-crm-bi`           |
 | 05 — Prospecção e Enriquecimento | `agente/05-prospeccao-onda2` | `.claude/worktrees/agente-05-prospeccao-onda2` |
-| 07 — IA, RAG, Filas e Automações | `agente/07-ia-automacoes` | `.claude/worktrees/agente-07-ia-automacoes` |
+| 07 — IA, RAG, Filas e Automações | `agente/07-ia-automacoes`    | `.claude/worktrees/agente-07-ia-automacoes`    |
 
 Todas as três branches foram revisadas (diff restrito ao escopo declarado de cada agente, sem
 arquivos fora do domínio) e mescladas em `integracao/onda-2` sem conflito, nesta ordem: 04 → 05 → 07.
@@ -35,6 +36,7 @@ arquivos fora do domínio) e mescladas em `integracao/onda-2` sem conflito, nest
 ## Achados e correções por agente
 
 ### Agente 04 — CRM, BI e Analytics
+
 - Boa parte da missão (integridade ponta a ponta, forecast rastreável determinístico, dicionário de
   métricas, ausência de dado fabricado, LGPD em relatórios agregados) já estava implementada em
   commits anteriores à Onda 2 — auditado, não refeito.
@@ -50,6 +52,7 @@ arquivos fora do domínio) e mescladas em `integracao/onda-2` sem conflito, nest
 - Handoff aberto: `onda-2/04-para-05-whatsapp-duplicado.md` (resolvido pelo próprio 05 em paralelo).
 
 ### Agente 05 — Prospecção e Enriquecimento
+
 - **Corrigido (prioridade 1, bloqueava typecheck do repo inteiro)**: removido
   `src/features/prospecting/services/whatsapp.service.ts` — arquivo órfão/quebrado, importava
   pacotes npm inexistentes (`whatsapp-web.js`, `qrcode-terminal`), sem nenhum import real no
@@ -65,6 +68,7 @@ arquivos fora do domínio) e mescladas em `integracao/onda-2` sem conflito, nest
 - Dedupe/proveniência/scoring existentes auditados e cobertos por teste novo, sem reescrita.
 
 ### Agente 07 — IA, RAG, Filas e Automações
+
 - Inventariado o Hub de IA (10 abas) — nenhuma é placeholder; todas conectam a backend real.
 - **Corrigido (dado fabricado na UI, bloqueador #6 do `AGENTS.md`)**: aba "RAG" do Hub mostrava
   texto/status hardcoded ("Última sincronização há 2 horas", badge "Ativo" fixo). Passou a buscar
@@ -89,6 +93,7 @@ arquivos fora do domínio) e mescladas em `integracao/onda-2` sem conflito, nest
   agregados `lastRunAt`/`runCount` hoje) — não bloqueador desta onda, proposta de schema anexada.
 
 ### Achado do Coordenador durante o gate de integração (não atribuível a nenhum dos três agentes)
+
 Ao rodar `npm run verify:ai` com credencial real de provider (primeira vez que esse caminho foi
 exercitado de fato — o baseline da Onda 0 não tinha credencial válida), toda tentativa de persistir
 o log de uso de IA falhou com `new row violates row-level security policy for table "AILog"`. A
@@ -98,6 +103,7 @@ só ficou visível agora. Registrado handoff `onda-2/00-para-01-ailog-rls-violat
 Agente 01, dono exclusivo de `prisma/schema.prisma` e RLS.
 
 ## Arquivos alterados (resumo agregado)
+
 21 arquivos de código/teste + 6 arquivos de handoff, distribuídos exatamente pelos escopos
 declarados de cada agente (`src/features/crm/**` por 04; `src/features/prospecting/**` e
 `src/lib/enrichment/**` por 05; `src/features/intelligence/**`, `src/features/automations/**` e
@@ -106,22 +112,23 @@ declarados de cada agente (`src/features/crm/**` por 04; `src/features/prospecti
 
 ## Testes (rodados na branch de integração, após merge das três branches)
 
-| Gate | Resultado |
-|---|---|
-| `npx tsc --noEmit` | ✅ PASSOU — 0 erros (o erro pré-existente do arquivo órfão de WhatsApp desapareceu com a remoção pelo Agente 05) |
-| `npm run lint` | ✅ PASSOU — 0 erros, 152 warnings (mesmo débito `jsx-a11y/*` pré-existente do baseline, nenhum warning novo introduzido) |
-| `npm run test:unit` | ✅ PASSOU — 88 arquivos, 577 testes, 0 falhas. **Nota de ambiente**: as duas primeiras tentativas tiveram falhas de infraestrutura do worker pool do Vitest (módulo não encontrado / worker morto por OOM / erro de spawn) — confirmado via `tasklist` que há ~20 processos `node.exe` residuais no host (um usando 1,5 GB), provavelmente sobra de sessões/dev servers anteriores. Rodando com `--maxWorkers=2`, a suíte passa de forma limpa e determinística. Não é regressão de código. |
-| `npm run test:integration` | ✅ PASSOU — 11 arquivos, 40 testes, 0 falhas (Docker/Postgres/Redis disponíveis nesta execução, diferente do bloqueio registrado no baseline da Onda 0) |
-| `npm run test:e2e` | não executado nesta rodada de integração — Agente 04 reportou bloqueio de porta por processos dos agentes irmãos rodando em paralelo; recomendo o usuário rodar isoladamente antes do gate final da Onda 3 |
-| `npm run build` | ✅ PASSOU |
-| `npm run verify:integrations` | ✅ PASSOU — todas as integrações obrigatórias respondendo (diferente do baseline da Onda 0, que tinha 3 falhas de credencial/rede; parecem ter sido corrigidas fora desta onda). 2 integrações opcionais não configuradas por design (`gemini`, `langfuse`) |
-| `npm run verify:ai` | ✅ PASSOU (exit 0) — geração de conteúdo real funcionando; ver achado de RLS acima, registrado como handoff, não bloqueia o script |
+| Gate                          | Resultado                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npx tsc --noEmit`            | ✅ PASSOU — 0 erros (o erro pré-existente do arquivo órfão de WhatsApp desapareceu com a remoção pelo Agente 05)                                                                                                                                                                                                                                                                                                                                                                            |
+| `npm run lint`                | ✅ PASSOU — 0 erros, 152 warnings (mesmo débito `jsx-a11y/*` pré-existente do baseline, nenhum warning novo introduzido)                                                                                                                                                                                                                                                                                                                                                                    |
+| `npm run test:unit`           | ✅ PASSOU — 88 arquivos, 577 testes, 0 falhas. **Nota de ambiente**: as duas primeiras tentativas tiveram falhas de infraestrutura do worker pool do Vitest (módulo não encontrado / worker morto por OOM / erro de spawn) — confirmado via `tasklist` que há ~20 processos `node.exe` residuais no host (um usando 1,5 GB), provavelmente sobra de sessões/dev servers anteriores. Rodando com `--maxWorkers=2`, a suíte passa de forma limpa e determinística. Não é regressão de código. |
+| `npm run test:integration`    | ✅ PASSOU — 11 arquivos, 40 testes, 0 falhas (Docker/Postgres/Redis disponíveis nesta execução, diferente do bloqueio registrado no baseline da Onda 0)                                                                                                                                                                                                                                                                                                                                     |
+| `npm run test:e2e`            | não executado nesta rodada de integração — Agente 04 reportou bloqueio de porta por processos dos agentes irmãos rodando em paralelo; recomendo o usuário rodar isoladamente antes do gate final da Onda 3                                                                                                                                                                                                                                                                                  |
+| `npm run build`               | ✅ PASSOU                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `npm run verify:integrations` | ✅ PASSOU — todas as integrações obrigatórias respondendo (diferente do baseline da Onda 0, que tinha 3 falhas de credencial/rede; parecem ter sido corrigidas fora desta onda). 2 integrações opcionais não configuradas por design (`gemini`, `langfuse`)                                                                                                                                                                                                                                 |
+| `npm run verify:ai`           | ✅ PASSOU (exit 0) — geração de conteúdo real funcionando; ver achado de RLS acima, registrado como handoff, não bloqueia o script                                                                                                                                                                                                                                                                                                                                                          |
 
 Nenhuma varredura automatizada de segredo (`gitleaks`/`trufflehog`) disponível neste ambiente; feita
 varredura manual por padrão de chave/token sobre o diff acumulado (`git diff main..integracao/onda-2`)
 — nenhum achado.
 
 ## Handoffs (abertos e resolvidos nesta onda)
+
 - Resolvidos: `onda-7/06-para-04-voice-trigger.md`, `onda-G/05-para-04-whatsapp.md`,
   `onda-D/08-para-00-qa-package-json.md`, `onda-G/07-para-00-server-cron.md`.
 - Criados e já resolvidos dentro da própria onda: `onda-2/04-para-05-whatsapp-duplicado.md` →
@@ -131,6 +138,7 @@ varredura manual por padrão de chave/token sobre o diff acumulado (`git diff ma
 - Nenhum handoff `Prioridade: bloqueador` ficou `Status: aberto`.
 
 ## Riscos restantes
+
 - RLS de `AILog` rejeitando inserts legítimos (handoff aberto para 01) — custo/uso de IA não está
   sendo registrado em produção até isso ser corrigido.
 - `test:e2e` não executado nesta integração por conflito de porta entre os 3 worktrees rodando em
@@ -139,6 +147,7 @@ varredura manual por padrão de chave/token sobre o diff acumulado (`git diff ma
   concorrência alta — não é bug de código, mas vale limpar processos travados periodicamente.
 
 ## Decisão da Onda 2
+
 **APROVADA.** Todos os gates obrigatórios passaram na branch de integração (com a ressalva de
 `test:e2e`, não executado por conflito de porta local, e a nota de ambiente sobre o worker pool do
 Vitest). Nenhum handoff bloqueador ficou aberto. Nenhum dado fictício, bypass de RBAC/tenant,

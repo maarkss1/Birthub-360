@@ -72,15 +72,15 @@ function main() {
   if (totalBytes > MAX_TOTAL_BYTES) {
     violations.push(
       `public/ total = ${formatBytes(totalBytes)}, acima do budget de ${formatBytes(MAX_TOTAL_BYTES)}. ` +
-      'Se o crescimento e legitimo (novo dataset municipal necessario ao frontend), suba ' +
-      'PUBLIC_BUDGET_MAX_TOTAL_BYTES nesta checagem com justificativa no PR. Se nao, o arquivo ' +
-      'provavelmente pertence a data/ (consumo so pelo backend) ou a object storage, nao a public/.',
+        'Se o crescimento e legitimo (novo dataset municipal necessario ao frontend), suba ' +
+        'PUBLIC_BUDGET_MAX_TOTAL_BYTES nesta checagem com justificativa no PR. Se nao, o arquivo ' +
+        'provavelmente pertence a data/ (consumo so pelo backend) ou a object storage, nao a public/.',
     );
   }
   for (const entry of oversizedFiles) {
     violations.push(
       `${path.relative(ROOT, entry.file)} = ${formatBytes(entry.size)}, acima do limite por arquivo ` +
-      `de ${formatBytes(MAX_FILE_BYTES)}.`,
+        `de ${formatBytes(MAX_FILE_BYTES)}.`,
     );
   }
 
@@ -94,7 +94,11 @@ function main() {
     largestFiles: sized
       .sort((a, b) => b.size - a.size)
       .slice(0, 10)
-      .map((entry) => ({ path: path.relative(ROOT, entry.file), size: entry.size, formatted: formatBytes(entry.size) })),
+      .map((entry) => ({
+        path: path.relative(ROOT, entry.file),
+        size: entry.size,
+        formatted: formatBytes(entry.size),
+      })),
   };
   console.log(JSON.stringify(summary, null, 2));
 

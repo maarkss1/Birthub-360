@@ -173,19 +173,19 @@ Por esse motivo a Onda 2.5 não sincronizou o `main` novo para dentro da branch 
 
 Nenhum PASS será declarado sem execução real.
 
-| Gate | Estado |
-|---|---|
-| `npx tsc --noEmit` | PENDENTE - workflow #109 |
-| `npm run lint` | PENDENTE - workflow #109 |
-| `npm run test:unit` | PENDENTE - workflow #109 |
-| `npm run test:integration` | PENDENTE - workflow #109 |
-| `npm run test:e2e` | PENDENTE - workflow #109 |
-| `npm run verify:integrations` | PENDENTE - workflow #109 |
-| `npm run verify:ai` | PENDENTE - workflow #109 / depende de provider |
-| `npm run build` | PENDENTE - workflow #109 |
-| SonarQube | BLOQUEADO no workflow legado antes do primeiro step |
-| varredura de segredos do diff | PENDENTE |
-| rotação da credencial exposta em `main` | BLOQUEADOR EXTERNO |
+| Gate                                    | Estado                                              |
+| --------------------------------------- | --------------------------------------------------- |
+| `npx tsc --noEmit`                      | PENDENTE - workflow #109                            |
+| `npm run lint`                          | PENDENTE - workflow #109                            |
+| `npm run test:unit`                     | PENDENTE - workflow #109                            |
+| `npm run test:integration`              | PENDENTE - workflow #109                            |
+| `npm run test:e2e`                      | PENDENTE - workflow #109                            |
+| `npm run verify:integrations`           | PENDENTE - workflow #109                            |
+| `npm run verify:ai`                     | PENDENTE - workflow #109 / depende de provider      |
+| `npm run build`                         | PENDENTE - workflow #109                            |
+| SonarQube                               | BLOQUEADO no workflow legado antes do primeiro step |
+| varredura de segredos do diff           | PENDENTE                                            |
+| rotação da credencial exposta em `main` | BLOQUEADOR EXTERNO                                  |
 
 ## Decisão atual
 

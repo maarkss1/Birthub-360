@@ -57,34 +57,45 @@ export interface RealSessionUser {
  * verificação em teste, confirma o e-mail direto no banco (mesmo padrão de bypass já usado
  * logo abaixo pra atribuir `role`) e faz um `signInEmail` de verdade pra obter a sessão real.
  */
-export async function signUpRealUser(prefix: string, role: 'ADMIN' | 'GESTOR' | 'CLOSER' | 'SDR' | 'VISUALIZADOR'): Promise<RealSessionUser> {
+export async function signUpRealUser(
+  prefix: string,
+  role: 'ADMIN' | 'GESTOR' | 'CLOSER' | 'SDR' | 'VISUALIZADOR',
+): Promise<RealSessionUser> {
   const email = uniqueEmail(prefix);
 
   const { payload, headers } = await withRlsBypass(async () => {
-    const { response } = await auth.api.signUpEmail({
+    const { response } = (await auth.api.signUpEmail({
       body: { email, password: TEST_PASSWORD, name: `RBAC Test ${prefix}` },
       returnHeaders: true,
-    }) as { response: { user: { id: string; organizationId: string; role: string } }; headers: Headers };
+    })) as {
+      response: { user: { id: string; organizationId: string; role: string } };
+      headers: Headers;
+    };
 
     if (response.user.role !== role) {
       await prisma.user.update({ where: { id: response.user.id }, data: { role } });
     }
     await prisma.user.update({ where: { id: response.user.id }, data: { emailVerified: true } });
 
-    const { headers: signInHeaders } = await auth.api.signInEmail({
+    const { headers: signInHeaders } = (await auth.api.signInEmail({
       body: { email, password: TEST_PASSWORD },
       returnHeaders: true,
-    }) as { headers: Headers };
+    })) as { headers: Headers };
 
     return { payload: response.user, headers: signInHeaders };
   });
 
-  const rawSetCookies: string[] = typeof headers.getSetCookie === 'function'
-    ? headers.getSetCookie()
-    : (headers.get('set-cookie') ? [headers.get('set-cookie') as string] : []);
+  const rawSetCookies: string[] =
+    typeof headers.getSetCookie === 'function'
+      ? headers.getSetCookie()
+      : headers.get('set-cookie')
+        ? [headers.get('set-cookie') as string]
+        : [];
 
   if (rawSetCookies.length === 0) {
-    throw new Error(`signUpEmail não retornou Set-Cookie para ${email} — sem sessão real pra reaproveitar.`);
+    throw new Error(
+      `signUpEmail não retornou Set-Cookie para ${email} — sem sessão real pra reaproveitar.`,
+    );
   }
 
   const cookie = rawSetCookies.map((raw) => raw.split(';')[0]).join('; ');

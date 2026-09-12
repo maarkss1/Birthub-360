@@ -23,41 +23,41 @@ vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => useAuthMock() }));
 import { Sidebar } from '@/components/layout/Sidebar';
 
 function renderSidebar(role: string) {
-    useAuthMock.mockReturnValue({
-        currentUser: { name: 'Usuária Teste', role, roleTitle: role },
-        isAdmin: role === 'ADMIN',
-        canAccessCommercialIntelligence: role === 'ADMIN' || role === 'GESTOR',
-        logout: vi.fn(),
-    });
-    return render(
-        <MemoryRouter>
-            <Sidebar activeTab="dashboard" />
-        </MemoryRouter>,
-    );
+  useAuthMock.mockReturnValue({
+    currentUser: { name: 'Usuária Teste', role, roleTitle: role },
+    isAdmin: role === 'ADMIN',
+    canAccessCommercialIntelligence: role === 'ADMIN' || role === 'GESTOR',
+    logout: vi.fn(),
+  });
+  return render(
+    <MemoryRouter>
+      <Sidebar activeTab="dashboard" />
+    </MemoryRouter>,
+  );
 }
 
 describe('Sidebar — visibilidade de Automações/Integrações por papel', () => {
-    it('GESTOR vê Automações e Integrações (permissão real de gerenciar, per backend), mas não Equipe/Consumo de IA', () => {
-        renderSidebar('GESTOR');
-        expect(screen.getByRole('button', { name: /Automações/ })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Integrações/ })).toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /^Equipe$/ })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /Consumo de IA/ })).not.toBeInTheDocument();
-    });
+  it('GESTOR vê Automações e Integrações (permissão real de gerenciar, per backend), mas não Equipe/Consumo de IA', () => {
+    renderSidebar('GESTOR');
+    expect(screen.getByRole('button', { name: /Automações/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Integrações/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Equipe$/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Consumo de IA/ })).not.toBeInTheDocument();
+  });
 
-    it('ADMIN vê os quatro itens administrativos', () => {
-        renderSidebar('ADMIN');
-        expect(screen.getByRole('button', { name: /Automações/ })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Integrações/ })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Equipe/ })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Consumo de IA/ })).toBeInTheDocument();
-    });
+  it('ADMIN vê os quatro itens administrativos', () => {
+    renderSidebar('ADMIN');
+    expect(screen.getByRole('button', { name: /Automações/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Integrações/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Equipe/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Consumo de IA/ })).toBeInTheDocument();
+  });
 
-    it('CLOSER não vê nenhum dos quatro itens administrativos', () => {
-        renderSidebar('CLOSER');
-        expect(screen.queryByRole('button', { name: /Automações/ })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /Integrações/ })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /Equipe/ })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /Consumo de IA/ })).not.toBeInTheDocument();
-    });
+  it('CLOSER não vê nenhum dos quatro itens administrativos', () => {
+    renderSidebar('CLOSER');
+    expect(screen.queryByRole('button', { name: /Automações/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Integrações/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Equipe/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Consumo de IA/ })).not.toBeInTheDocument();
+  });
 });

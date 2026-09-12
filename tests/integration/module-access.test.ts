@@ -31,7 +31,11 @@ describe('Module Access Grant Integration', () => {
 
     expect(await listGrantedModulesForUser(ORG_ID, user.id, user.role)).toEqual(['social-selling']);
 
-    await revokeModuleAccess({ organizationId: ORG_ID, userId: user.id, moduleKey: 'social-selling' });
+    await revokeModuleAccess({
+      organizationId: ORG_ID,
+      userId: user.id,
+      moduleKey: 'social-selling',
+    });
 
     expect(await listGrantedModulesForUser(ORG_ID, user.id, user.role)).toEqual([]);
   });
@@ -60,7 +64,11 @@ describe('Module Access Grant Integration', () => {
 
   it('builds the matrix with granted modules per user', async () => {
     const user = await prisma.user.create({
-      data: { name: 'Carla Gestora', email: 'carla.gestora@module-access.test', organizationId: ORG_ID },
+      data: {
+        name: 'Carla Gestora',
+        email: 'carla.gestora@module-access.test',
+        organizationId: ORG_ID,
+      },
     });
     await grantModuleAccess({
       organizationId: ORG_ID,
@@ -76,7 +84,11 @@ describe('Module Access Grant Integration', () => {
 
   it('rejects an unknown moduleKey', async () => {
     const user = await prisma.user.create({
-      data: { name: 'Duda Visualizadora', email: 'duda.viz@module-access.test', organizationId: ORG_ID },
+      data: {
+        name: 'Duda Visualizadora',
+        email: 'duda.viz@module-access.test',
+        organizationId: ORG_ID,
+      },
     });
 
     await expect(
@@ -99,9 +111,7 @@ describe('Module Access Grant Integration', () => {
       },
     });
 
-    expect(await listGrantedModulesForUser(ORG_ID, admin.id, admin.role)).toEqual(
-      MODULE_KEYS,
-    );
+    expect(await listGrantedModulesForUser(ORG_ID, admin.id, admin.role)).toEqual(MODULE_KEYS);
 
     const grants = await prisma.moduleAccessGrant.findMany({ where: { userId: admin.id } });
     expect(grants).toHaveLength(0);

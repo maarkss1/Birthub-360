@@ -6,11 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": [
-      "src/**", 
-      "server/**", 
-      "scripts/**"
-    ]
+    "includes": ["src/**", "server/**", "scripts/**"]
   },
   "formatter": {
     "enabled": true,
@@ -75,7 +71,13 @@
   },
   "overrides": [
     {
-      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/__tests__/**"],
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/__tests__/**"
+      ],
       "linter": {
         "rules": {
           "suspicious": {

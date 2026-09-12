@@ -429,9 +429,7 @@ export interface HealthScoreResult {
 }
 
 export type ForecastAccuracyUnavailableReason =
-  | 'periodo_nao_fechou'
-  | 'sem_snapshot'
-  | 'sem_realizado';
+  'periodo_nao_fechou' | 'sem_snapshot' | 'sem_realizado';
 export interface ForecastAccuracyResult {
   available: boolean;
   period: string;

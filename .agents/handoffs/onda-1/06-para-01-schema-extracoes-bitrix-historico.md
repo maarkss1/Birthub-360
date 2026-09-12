@@ -21,6 +21,7 @@ feature não precisar levantar os requisitos do zero.
 ## Modelo sugerido — `BitrixExtractionRun` (nome sujeito ao seu critério)
 
 Campos:
+
 - `id` (cuid), `organizationId` (+ relação/índice, mesmo padrão de `BitrixConnection`).
 - `connectionId` — qual portal Bitrix foi extraído (relação com `BitrixConnection`).
 - `requestedBy` — userId de quem disparou a extração.
@@ -49,15 +50,18 @@ decisão de produto/negócio (prazo N), não algo que eu deva fixar sozinho — 
 Coordenador/usuário decidir o valor antes da migração ser gerada.
 
 ## Teste esperado
+
 Ver seção 18 do `06A-extracoes-bitrix.md` (lista extensa) — a parte relevante pro schema:
 isolamento entre organizações no histórico, cross-tenant negado, exclusão de extração remove
 arquivo associado.
 
 ## Contexto adicional
+
 Este handoff é preparatório — não bloqueia a Onda 1 atual (o módulo em si está fora de escopo
 desta rodada). Fica pronto pra quando o Coordenador priorizar esta feature.
 
 ## Resolução (Sprint 00/Onda 12 — GOV-006, 2026-08-18)
+
 O modelo `BitrixExtractionRun` sugerido aqui foi implementado na Onda 6 pelo Agente 01A — ver
 `.agents/handoffs/onda-6/01A-para-06-bitrix-extraction-run-schema.md` para o schema final aplicado
 (inclui RLS, retenção configurável via env e a análise de campos que este handoff pedia).
