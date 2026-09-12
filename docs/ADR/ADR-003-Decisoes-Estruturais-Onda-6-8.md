@@ -1,6 +1,7 @@
 # ADR 003: Decisões Estruturais das Ondas 6–8
 
 ## Status
+
 Aceito
 
 - Data de registro: 2026-08-15
@@ -93,6 +94,7 @@ como decisão em aberto.
 ## Consequências
 
 ### Positivas
+
 - **A.** Caminho para escalar filas/cron horizontalmente sem duplicar cron e sessões Baileys a cada
   réplica HTTP — hoje o maior fator limitante de escala documentado (`02-mapa-plataforma.md` §1).
 - **B.** Ondas maiores executam mais rápido sem custo de qualidade comprovado, desde que as 6
@@ -101,6 +103,7 @@ como decisão em aberto.
   continuar recebendo contato por outro — fecha uma lacuna real de conformidade comercial.
 
 ### Negativas
+
 - **A.** Até o corte ser aplicado, a plataforma carrega dois caminhos de execução de worker
   (documentado, não código morto: `worker.ts` só passa a valer depois do provisionamento real).
 - **B.** Um teto mais alto aumenta o custo de um bisect de gate vermelho na integração se as

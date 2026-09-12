@@ -72,7 +72,7 @@ Foi identificada uma injeção de dependência rudimentar e direta nos serviços
 * **Testabilidade: 4.0/10** (A injeção direta e acoplamento a serviços externos exige testes de integração pesados ao invés de unitários fáceis)
 * **Escalabilidade: 6.5/10** (Padrão de IA e estrutura modular em partes críticas permitem crescer, mas os gargalos arquiteturais atrapalharão)
 * **Manutenibilidade: 4.5/10** (A coexistência de dois padrões, God Services e ausência de tipagem em alguns mocks tornam a manutenção complexa)
-`
+`;
 
 fs.writeFileSync('docs/auditoria-divida-tecnica/10-DIAGNOSTICO-ARQUITETURA.md', content);
 console.log('Report saved!');

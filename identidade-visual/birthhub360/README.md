@@ -12,15 +12,15 @@ emblema (ver "Logo" abaixo).
 
 ## Paleta
 
-| Cor | Hex | Papel |
-|---|---|---|
-| Obsidian Black | `#0B132B` | Profundidade. Base institucional escura. |
-| Deep Iris | `#5B21B6` | Inteligência em movimento. Apoio da órbita. |
-| Antique Gold | `#D4AF37` | **Cor primária.** Valor, foco e assinatura. |
-| Snow White | `#F8FAFC` | Respiro. Texto sobre superfície escura. |
-| Orbit Blue | `#0065D2` | Terceira cor da órbita. |
-| Parchment | `#E9E4D9` | Superfície clara institucional. |
-| Midnight | `#08090F` | Fundo de página (um degrau abaixo do Obsidian). |
+| Cor            | Hex       | Papel                                           |
+| -------------- | --------- | ----------------------------------------------- |
+| Obsidian Black | `#0B132B` | Profundidade. Base institucional escura.        |
+| Deep Iris      | `#5B21B6` | Inteligência em movimento. Apoio da órbita.     |
+| Antique Gold   | `#D4AF37` | **Cor primária.** Valor, foco e assinatura.     |
+| Snow White     | `#F8FAFC` | Respiro. Texto sobre superfície escura.         |
+| Orbit Blue     | `#0065D2` | Terceira cor da órbita.                         |
+| Parchment      | `#E9E4D9` | Superfície clara institucional.                 |
+| Midnight       | `#08090F` | Fundo de página (um degrau abaixo do Obsidian). |
 
 `Orbit Blue` aparece no brand book como `oklch(52% 0.19 255)`. O hex acima é a
 conversão exata para sRGB — existe porque assets de marca (SVG, e-mail, impresso)
@@ -37,11 +37,11 @@ precisam de hex; no produto, use o token, não o valor cru.
 
 ## Tipografia
 
-| Família | Uso |
-|---|---|
-| **Bodoni Moda** | Headlines, títulos, chamadas institucionais. |
-| **Inter** | UI, menus, textos, tabelas, dashboards, relatórios. |
-| Playfair Display *italic* | Exclusivamente o "B" do emblema — já vetorizado nos SVGs, **não** é carregada em runtime. |
+| Família                   | Uso                                                                                       |
+| ------------------------- | ----------------------------------------------------------------------------------------- |
+| **Bodoni Moda**           | Headlines, títulos, chamadas institucionais.                                              |
+| **Inter**                 | UI, menus, textos, tabelas, dashboards, relatórios.                                       |
+| Playfair Display _italic_ | Exclusivamente o "B" do emblema — já vetorizado nos SVGs, **não** é carregada em runtime. |
 
 Escala do brand book: Display 44–72 · Título 28–36 · Subtítulo 16–20 · Corpo 10–14 ·
 Label 8–10.
@@ -52,11 +52,11 @@ book, self-hosted: nenhuma requisição a CDN de terceiros.
 
 ## Logo
 
-| Arquivo | Uso |
-|---|---|
-| `logos/birthhub360-simbolo.svg` | Emblema completo. ≥ 96 px. |
-| `logos/birthhub360-icone.svg` | Redução estrutural para ícone/favicon/avatar. 32–96 px. |
-| `logos/birthhub360-logo-horizontal.svg` | Emblema + logotipo. Assinatura institucional. |
+| Arquivo                                 | Uso                                                     |
+| --------------------------------------- | ------------------------------------------------------- |
+| `logos/birthhub360-simbolo.svg`         | Emblema completo. ≥ 96 px.                              |
+| `logos/birthhub360-icone.svg`           | Redução estrutural para ícone/favicon/avatar. 32–96 px. |
+| `logos/birthhub360-logo-horizontal.svg` | Emblema + logotipo. Assinatura institucional.           |
 
 Os três são **arquivos-mestre vetoriais** (brand book, p. 05): sem dependência de
 fonte instalada — o "B" e o logotipo são contornos, não `<text>`.

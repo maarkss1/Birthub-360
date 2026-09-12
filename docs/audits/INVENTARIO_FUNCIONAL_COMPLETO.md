@@ -1,5 +1,7 @@
 # AUDITORIA FUNCIONAL E INVENTÁRIO TÉCNICO COMPLETO
+
 ## CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
+
 **Data de Execução:** 2026-09-09
 **Repositório:** CENTRAL-DE-INTELIGENCIA-COMERCIAL-ATLASGR
 **Escopo da Auditoria:** Auditoria Evidence-First de Código, Rotas, Servidores, Modelos e Serviços de IA
@@ -147,73 +149,74 @@ CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 
 ### AI PROVIDER MAP
 
-| Provider | Modelo | Onde Usado | Configurado | Funcionando | Fallback | Observação |
-| --- | --- | --- | --- | --- | --- | --- |
-| **LiteLLM Gateway** | Proxy p/ Ollama / Groq / OpenAI | `src/lib/ai/gateway.ts` | SIM | 🟢 SIM | Groq → OpenAI → Local | Gateway central do sistema. |
-| **Groq** | `llama-3.3-70b-versatile` | Copiloto, Qualificação, RAG | SIM (`GROQ_API_KEY`) | 🟢 SIM | Fallback local | Alta velocidade e baixo custo. |
-| **OpenAI** | `gpt-4o-mini` / `gpt-4o` | AI Studio, Summaries | SIM (`OPENAI_API_KEY`) | 🟢 SIM | Groq / Ollama | Usado quando configurado. |
-| **Local Offline Transformer** | `xenova/multilingual-e5-base` | Embeddings Vetoriais pgvector | SIM (Offline via Node) | 🟢 SIM | N/A | Embeddings 768d 100% locais sem custo de API. |
-| **Ollama** | `local-llama3` | Gateway Local | Opcional | 🟡 PARCIAL | Requer servidor Ollama rodando | Fallback para operação air-gapped. |
+| Provider                      | Modelo                          | Onde Usado                    | Configurado            | Funcionando | Fallback                       | Observação                                    |
+| ----------------------------- | ------------------------------- | ----------------------------- | ---------------------- | ----------- | ------------------------------ | --------------------------------------------- |
+| **LiteLLM Gateway**           | Proxy p/ Ollama / Groq / OpenAI | `src/lib/ai/gateway.ts`       | SIM                    | 🟢 SIM      | Groq → OpenAI → Local          | Gateway central do sistema.                   |
+| **Groq**                      | `llama-3.3-70b-versatile`       | Copiloto, Qualificação, RAG   | SIM (`GROQ_API_KEY`)   | 🟢 SIM      | Fallback local                 | Alta velocidade e baixo custo.                |
+| **OpenAI**                    | `gpt-4o-mini` / `gpt-4o`        | AI Studio, Summaries          | SIM (`OPENAI_API_KEY`) | 🟢 SIM      | Groq / Ollama                  | Usado quando configurado.                     |
+| **Local Offline Transformer** | `xenova/multilingual-e5-base`   | Embeddings Vetoriais pgvector | SIM (Offline via Node) | 🟢 SIM      | N/A                            | Embeddings 768d 100% locais sem custo de API. |
+| **Ollama**                    | `local-llama3`                  | Gateway Local                 | Opcional               | 🟡 PARCIAL  | Requer servidor Ollama rodando | Fallback para operação air-gapped.            |
 
 ### INTEGRATION MAP
 
-| Integração | Finalidade | Onde Usada | Status | Autenticação | Dados Reais | Problema / Bloqueador |
-| --- | --- | --- | --- | --- | --- | --- |
-| **BrasilAPI** | Consulta CNPJ / Dados da Receita | Prospecção / Enriquecimento | 🟢 FUNCIONA | Pública (Sem key) | SIM | Nulo. 100% operacional. |
-| **Bitrix24** | Sincronização de Leads e Deals | `/api/bitrix` | 🟡 PARCIAL | Webhook / OAuth | SIM | Requer webhook real configurado no Bitrix. |
-| **WhatsApp (Baileys)**| Envio/Recebimento de Mensagens | `/api/whatsapp` | 🟡 PARCIAL | QR Code | SIM | Requer pareamento por QR Code ativo. |
-| **Google Workspace** | Gmail / Google Calendar | `/api/google` | 🟡 PARCIAL | OAuth2 | SIM | Requer `GOOGLE_CLIENT_ID` configurado. |
-| **3CX / BirthVoice** | Telefonia VoIP & Click-to-Call | `/api/integrations/3cx` | 🟡 PARCIAL | API Key / SIP | SIM | Requer PABX 3CX configurado. |
-| **Apollo.io** | Busca de Decisores Globais | Prospecção | 🟠 QUASE | API Key | N/A | Requer `APOLLO_API_KEY` válida. |
-| **Hunter.io** | Verificação e Encontra de E-mails| Prospecção | 🟠 QUASE | API Key | N/A | Requer `HUNTER_API_KEY` válida. |
+| Integração             | Finalidade                        | Onde Usada                  | Status      | Autenticação      | Dados Reais | Problema / Bloqueador                      |
+| ---------------------- | --------------------------------- | --------------------------- | ----------- | ----------------- | ----------- | ------------------------------------------ |
+| **BrasilAPI**          | Consulta CNPJ / Dados da Receita  | Prospecção / Enriquecimento | 🟢 FUNCIONA | Pública (Sem key) | SIM         | Nulo. 100% operacional.                    |
+| **Bitrix24**           | Sincronização de Leads e Deals    | `/api/bitrix`               | 🟡 PARCIAL  | Webhook / OAuth   | SIM         | Requer webhook real configurado no Bitrix. |
+| **WhatsApp (Baileys)** | Envio/Recebimento de Mensagens    | `/api/whatsapp`             | 🟡 PARCIAL  | QR Code           | SIM         | Requer pareamento por QR Code ativo.       |
+| **Google Workspace**   | Gmail / Google Calendar           | `/api/google`               | 🟡 PARCIAL  | OAuth2            | SIM         | Requer `GOOGLE_CLIENT_ID` configurado.     |
+| **3CX / BirthVoice**   | Telefonia VoIP & Click-to-Call    | `/api/integrations/3cx`     | 🟡 PARCIAL  | API Key / SIP     | SIM         | Requer PABX 3CX configurado.               |
+| **Apollo.io**          | Busca de Decisores Globais        | Prospecção                  | 🟠 QUASE    | API Key           | N/A         | Requer `APOLLO_API_KEY` válida.            |
+| **Hunter.io**          | Verificação e Encontra de E-mails | Prospecção                  | 🟠 QUASE    | API Key           | N/A         | Requer `HUNTER_API_KEY` válida.            |
 
 ---
 
 ## 5. INVENTÁRIO GERAL DAS FERRAMENTAS (MASTER INVENTORY MATRIX)
 
-| ID | Área | Ferramenta | O que faz | Existe | Status | Mat. | IA | Dados Reais | Backend | Integração | Testada | Produção | Precisa Melhorar | Prio. |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **TL-001** | CRM | Pipeline Kanban | Gestão visual de oportunidades em estágios | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Adicionar automação visual drag-and-drop | P2 |
-| **TL-002** | CRM | CRM 360 | Visão unificada de cliente, histórico e tarefas | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-003** | CRM | Gestão de Empresas | Cadastro, busca e detalhe de contas B2B | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB / Enriq. | SIM | SIM | Nenhuma | P3 |
-| **TL-004** | CRM | Gestão de Contatos | Cadastro e enriquecimento de contatos | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-005** | CRM | Atividades & Tarefas | Log de chamadas, e-mails e reuniões | SIM | 🟢 FUNCIONA | M4 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Sincronização com Google Calendar | P2 |
-| **TL-006** | SDR | Mesa de Tratamento SDR| Fila priorizada com Pomodoro para execução SDR | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Integrar discador de voz direto | P2 |
-| **TL-007** | Vendas| Cadência de Vendas | Automação de réguas de contato multicanal | SIM | 🟡 PARCIAL | M3 | NÃO | SIM | SIM | E-mail / WhatsApp | SIM | NÃO | Finalizar transporte de e-mail SMTP real | P1 |
-| **TL-008** | Vendas| Módulo de Propostas | Geração de PDFs e links públicos de proposta | SIM | 🟡 PARCIAL | M3 | PARCIAL | SIM | SIM | PDF Renderer | SIM | NÃO | Conectar gerador de propostas por IA | P1 |
-| **TL-009** | Prosp.| Busca por CNPJ | Consulta automatizada à Receita via BrasilAPI | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | BrasilAPI | SIM | SIM | Nenhuma | P3 |
-| **TL-010** | Prosp.| Captura OCR Cartões | Leitura client-side Tesseract.js de cartões | SIM | 🟢 FUNCIONA | M4 | SIM | SIM | SIM | Tesseract.js | SIM | SIM | Nenhuma | P3 |
-| **TL-011** | Prosp.| Google Places Search | Descoberta local de empresas por raio/categoria| SIM | 🟡 PARCIAL | M3 | NÃO | SIM | SIM | Google Places | SIM | NÃO | Adicionar chave de API no fallback | P2 |
-| **TL-012** | Prosp.| Apollo.io Integration | Busca de e-mails de decisores B2B | SIM | 🟠 QUASE | M2 | NÃO | SIM | SIM | Apollo API | SIM | NÃO | Chave API precisa ser configurada | P1 |
-| **TL-013** | Prosp.| Hunter.io Integration | Verificação de deliverability de e-mails | SIM | 🟠 QUASE | M2 | NÃO | SIM | SIM | Hunter API | SIM | NÃO | Chave API precisa ser configurada | P1 |
-| **TL-014** | MktIntel| LDR & Score B2B | Ranking de contas por risco e potencial B2B | SIM | 🟢 FUNCIONA | M5 | SIM | SIM | SIM | Prisma / Local Algo| SIM | SIM | Nenhuma | P3 |
-| **TL-015** | MktIntel| Account 360 | Análise de grupo econômico e filiais | SIM | 🟢 FUNCIONA | M4 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-016** | MktIntel| Lead Approval Deck | Interface estilo Tinder/Deck para aprovação SDR| SIM | 🟢 FUNCIONA | M4 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-017** | IA | Copiloto Comercial IA | Chat contextual com histórico e ferramentas CRM | SIM | 🟢 FUNCIONA | M5 | SIM | SIM | SIM | LiteLLM / Groq | SIM | SIM | Nenhuma | P3 |
-| **TL-018** | IA | Central AI Suite | Suite integrada com qualificação de lead | SIM | 🟢 FUNCIONA | M5 | SIM | SIM | SIM | LiteLLM / Groq | SIM | SIM | Consolidar com Copiloto | P2 |
-| **TL-019** | IA | AI Studio | Gerador de Prompts, e-mails e materiais | SIM | 🟢 FUNCIONA | M4 | SIM | SIM | SIM | OpenAI / Groq | SIM | SIM | Nenhuma | P3 |
-| **TL-020** | IA | Agentes Especializados | Execução de capabilities de agentes por cargo | SIM | 🟢 FUNCIONA | M5 | SIM | SIM | SIM | LangChain/LangGraph| SIM | SIM | Nenhuma | P3 |
-| **TL-021** | Analytics| Analytics Executivo | Dashboards de performance, conversão e funil | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-022** | Analytics| Comercial Inteligente| Análise de cohort, metas e produtividade | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-023** | Analytics| AI Token Usage | Monitoramento de custo e consumo de tokens | SIM | 🟢 FUNCIONA | M4 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-024** | Playbook| Matriz Qualificação | Definição de critérios BANT/SPICED por empresa| SIM | 🟢 FUNCIONA | M4 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Adicionar sugestão por IA | P2 |
-| **TL-025** | Playbook| Matriz Objeções | Repositório de contornamento de objeções | SIM | 🟢 FUNCIONA | M4 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Conectar ao Roleplay de áudio | P2 |
-| **TL-026** | Trein. | Roleplay de Chamadas | Simulação de chamadas comerciais em áudio | SIM | 🟡 PARCIAL | M3 | SIM | SIM | SIM | WebSpeech / LiteLLM| SIM | NÃO | Adicionar síntese TTS natural | P2 |
-| **TL-027** | Trein. | Chatbook Sales Guide | Guia interativo de roteiros de vendas | SIM | ⚪ MOCK | M1 | MOCK | MOCK | NÃO | Nenhuma | NÃO | NÃO | Conectar ao RAG da empresa | P2 |
-| **TL-028** | Integ. | Bitrix24 Connector | Sync bidirecional de contatos e negócios | SIM | 🟡 PARCIAL | M3 | NÃO | SIM | SIM | Bitrix REST API | SIM | NÃO | Sanitizar payload de webhook | P2 |
-| **TL-029** | Integ. | WhatsApp Baileys | Envio e recepção de mensagens via QR Code | SIM | 🟡 PARCIAL | M3 | NÃO | SIM | SIM | Baileys Socket | SIM | NÃO | Tratar desconexão periódica | P2 |
-| **TL-030** | Integ. | Telefonia 3CX | Disparador de chamadas Click-to-Call | SIM | 🟡 PARCIAL | M3 | NÃO | SIM | SIM | 3CX REST API | SIM | NÃO | Validar escuta de webhook de encerramento | P2 |
-| **TL-031** | Gover. | Gestão de Job Roles | Catálogo de cargos, agentes e permissões | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-032** | Gover. | Access Requests | Workflow de aprovação de privilégios cruzados | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-033** | Admin | Module Access Admin | Concessão individual de módulos executivos | SIM | 🟢 FUNCIONA | M5 | NÃO | SIM | SIM | Prisma DB | SIM | SIM | Nenhuma | P3 |
-| **TL-034** | Admin | Proteção LGPD | Anonimização e exportação de dados pessoais | SIM | 🟢 FUNCIONA | M4 | SIM | SIM | SIM | Prisma DB / Sanit.| SIM | SIM | Nenhuma | P3 |
-| **TL-035** | Gamif. | SpaceGame 3D | Jogo 3D de incentivo para vendedores | SIM | 🔴 QUEBRADA| M1 | NÃO | NÃO | NÃO | Nenhuma | NÃO | NÃO | Corrigir suporte WebGL/Canvas | P3 |
+| ID         | Área      | Ferramenta             | O que faz                                       | Existe | Status      | Mat. | IA      | Dados Reais | Backend | Integração          | Testada | Produção | Precisa Melhorar                          | Prio. |
+| ---------- | --------- | ---------------------- | ----------------------------------------------- | ------ | ----------- | ---- | ------- | ----------- | ------- | ------------------- | ------- | -------- | ----------------------------------------- | ----- |
+| **TL-001** | CRM       | Pipeline Kanban        | Gestão visual de oportunidades em estágios      | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Adicionar automação visual drag-and-drop  | P2    |
+| **TL-002** | CRM       | CRM 360                | Visão unificada de cliente, histórico e tarefas | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-003** | CRM       | Gestão de Empresas     | Cadastro, busca e detalhe de contas B2B         | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB / Enriq.  | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-004** | CRM       | Gestão de Contatos     | Cadastro e enriquecimento de contatos           | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-005** | CRM       | Atividades & Tarefas   | Log de chamadas, e-mails e reuniões             | SIM    | 🟢 FUNCIONA | M4   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Sincronização com Google Calendar         | P2    |
+| **TL-006** | SDR       | Mesa de Tratamento SDR | Fila priorizada com Pomodoro para execução SDR  | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Integrar discador de voz direto           | P2    |
+| **TL-007** | Vendas    | Cadência de Vendas     | Automação de réguas de contato multicanal       | SIM    | 🟡 PARCIAL  | M3   | NÃO     | SIM         | SIM     | E-mail / WhatsApp   | SIM     | NÃO      | Finalizar transporte de e-mail SMTP real  | P1    |
+| **TL-008** | Vendas    | Módulo de Propostas    | Geração de PDFs e links públicos de proposta    | SIM    | 🟡 PARCIAL  | M3   | PARCIAL | SIM         | SIM     | PDF Renderer        | SIM     | NÃO      | Conectar gerador de propostas por IA      | P1    |
+| **TL-009** | Prosp.    | Busca por CNPJ         | Consulta automatizada à Receita via BrasilAPI   | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | BrasilAPI           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-010** | Prosp.    | Captura OCR Cartões    | Leitura client-side Tesseract.js de cartões     | SIM    | 🟢 FUNCIONA | M4   | SIM     | SIM         | SIM     | Tesseract.js        | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-011** | Prosp.    | Google Places Search   | Descoberta local de empresas por raio/categoria | SIM    | 🟡 PARCIAL  | M3   | NÃO     | SIM         | SIM     | Google Places       | SIM     | NÃO      | Adicionar chave de API no fallback        | P2    |
+| **TL-012** | Prosp.    | Apollo.io Integration  | Busca de e-mails de decisores B2B               | SIM    | 🟠 QUASE    | M2   | NÃO     | SIM         | SIM     | Apollo API          | SIM     | NÃO      | Chave API precisa ser configurada         | P1    |
+| **TL-013** | Prosp.    | Hunter.io Integration  | Verificação de deliverability de e-mails        | SIM    | 🟠 QUASE    | M2   | NÃO     | SIM         | SIM     | Hunter API          | SIM     | NÃO      | Chave API precisa ser configurada         | P1    |
+| **TL-014** | MktIntel  | LDR & Score B2B        | Ranking de contas por risco e potencial B2B     | SIM    | 🟢 FUNCIONA | M5   | SIM     | SIM         | SIM     | Prisma / Local Algo | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-015** | MktIntel  | Account 360            | Análise de grupo econômico e filiais            | SIM    | 🟢 FUNCIONA | M4   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-016** | MktIntel  | Lead Approval Deck     | Interface estilo Tinder/Deck para aprovação SDR | SIM    | 🟢 FUNCIONA | M4   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-017** | IA        | Copiloto Comercial IA  | Chat contextual com histórico e ferramentas CRM | SIM    | 🟢 FUNCIONA | M5   | SIM     | SIM         | SIM     | LiteLLM / Groq      | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-018** | IA        | Central AI Suite       | Suite integrada com qualificação de lead        | SIM    | 🟢 FUNCIONA | M5   | SIM     | SIM         | SIM     | LiteLLM / Groq      | SIM     | SIM      | Consolidar com Copiloto                   | P2    |
+| **TL-019** | IA        | AI Studio              | Gerador de Prompts, e-mails e materiais         | SIM    | 🟢 FUNCIONA | M4   | SIM     | SIM         | SIM     | OpenAI / Groq       | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-020** | IA        | Agentes Especializados | Execução de capabilities de agentes por cargo   | SIM    | 🟢 FUNCIONA | M5   | SIM     | SIM         | SIM     | LangChain/LangGraph | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-021** | Analytics | Analytics Executivo    | Dashboards de performance, conversão e funil    | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-022** | Analytics | Comercial Inteligente  | Análise de cohort, metas e produtividade        | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-023** | Analytics | AI Token Usage         | Monitoramento de custo e consumo de tokens      | SIM    | 🟢 FUNCIONA | M4   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-024** | Playbook  | Matriz Qualificação    | Definição de critérios BANT/SPICED por empresa  | SIM    | 🟢 FUNCIONA | M4   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Adicionar sugestão por IA                 | P2    |
+| **TL-025** | Playbook  | Matriz Objeções        | Repositório de contornamento de objeções        | SIM    | 🟢 FUNCIONA | M4   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Conectar ao Roleplay de áudio             | P2    |
+| **TL-026** | Trein.    | Roleplay de Chamadas   | Simulação de chamadas comerciais em áudio       | SIM    | 🟡 PARCIAL  | M3   | SIM     | SIM         | SIM     | WebSpeech / LiteLLM | SIM     | NÃO      | Adicionar síntese TTS natural             | P2    |
+| **TL-027** | Trein.    | Chatbook Sales Guide   | Guia interativo de roteiros de vendas           | SIM    | ⚪ MOCK     | M1   | MOCK    | MOCK        | NÃO     | Nenhuma             | NÃO     | NÃO      | Conectar ao RAG da empresa                | P2    |
+| **TL-028** | Integ.    | Bitrix24 Connector     | Sync bidirecional de contatos e negócios        | SIM    | 🟡 PARCIAL  | M3   | NÃO     | SIM         | SIM     | Bitrix REST API     | SIM     | NÃO      | Sanitizar payload de webhook              | P2    |
+| **TL-029** | Integ.    | WhatsApp Baileys       | Envio e recepção de mensagens via QR Code       | SIM    | 🟡 PARCIAL  | M3   | NÃO     | SIM         | SIM     | Baileys Socket      | SIM     | NÃO      | Tratar desconexão periódica               | P2    |
+| **TL-030** | Integ.    | Telefonia 3CX          | Disparador de chamadas Click-to-Call            | SIM    | 🟡 PARCIAL  | M3   | NÃO     | SIM         | SIM     | 3CX REST API        | SIM     | NÃO      | Validar escuta de webhook de encerramento | P2    |
+| **TL-031** | Gover.    | Gestão de Job Roles    | Catálogo de cargos, agentes e permissões        | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-032** | Gover.    | Access Requests        | Workflow de aprovação de privilégios cruzados   | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-033** | Admin     | Module Access Admin    | Concessão individual de módulos executivos      | SIM    | 🟢 FUNCIONA | M5   | NÃO     | SIM         | SIM     | Prisma DB           | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-034** | Admin     | Proteção LGPD          | Anonimização e exportação de dados pessoais     | SIM    | 🟢 FUNCIONA | M4   | SIM     | SIM         | SIM     | Prisma DB / Sanit.  | SIM     | SIM      | Nenhuma                                   | P3    |
+| **TL-035** | Gamif.    | SpaceGame 3D           | Jogo 3D de incentivo para vendedores            | SIM    | 🔴 QUEBRADA | M1   | NÃO     | NÃO         | NÃO     | Nenhuma             | NÃO     | NÃO      | Corrigir suporte WebGL/Canvas             | P3    |
 
 ---
 
 ## 6. FICHAS INDIVIDUAIS SELECIONADAS (TOOL CARDS)
 
 ### TOOL-017 — Copiloto Comercial IA
+
 - **Objetivo:** Assistente conversacional inteligente que auxilia SDRs e Executivos de Vendas com análise de leads, sugestão de próximos passos e execução de ações no CRM.
 - **Localização:**
   - Frontend: `src/features/copiloto-ia/components/CopilotoIaHub.tsx`
@@ -226,6 +229,7 @@ CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 - **Prioridade:** P3 | **Esforço Estimado:** Baixo.
 
 ### TOOL-006 — Mesa de Tratamento SDR
+
 - **Objetivo:** Fila unificada e priorizada de trabalho diário para SDRs com timer Pomodoro, histórico rápido e ações de 1-clique.
 - **Localização:**
   - Frontend: `src/features/mesa-tratamento/components/MesaTratamento.tsx`
@@ -238,6 +242,7 @@ CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 - **Prioridade:** P2 | **Esforço Estimado:** Médio.
 
 ### TOOL-027 — Chatbook Sales Guide
+
 - **Objetivo:** Guia interativo de roteiros de vendas e quebra de objeções em tempo real.
 - **Localização:**
   - Frontend: `src/features/chatbook/components/ChatbookHub.tsx`
@@ -252,35 +257,36 @@ CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 
 ## 7. MATRIZ DE OPORTUNIDADES E USO DE IA (AI OPPORTUNITIES MATRIX)
 
-| Ferramenta Atual | Hoje usa IA? | IA Agregaria Valor? | Caso de Uso Sugerido | Impacto | Complexidade |
-| --- | --- | --- | --- | --- | --- |
-| **Mesa de Tratamento SDR** | NÃO | SIM | Resumo instantâneo do lead antes da chamada | ALTO | BAIXA |
-| **Cadência de Vendas** | NÃO | SIM | Adaptação automática do tom do e-mail por segmento | ALTO | MÉDIA |
-| **Matriz de Objeções** | NÃO | SIM | Sugestão automática de réplica com base em transcrição | MÉDIO | MÉDIA |
-| **Gestão de Propostas** | PARCIAL | SIM | Geração automática do escopo técnico com base na reunião | ALTO | MÉDIA |
-| **Analytics Executivo** | NÃO | SIM | Diagnóstico narrativo automático das quedas de conversão | ALTO | BAIXA |
-| **WhatsApp Connector** | NÃO | SIM | Sugestão de resposta rápida baseada no contexto do chat | ALTO | MÉDIA |
+| Ferramenta Atual           | Hoje usa IA? | IA Agregaria Valor? | Caso de Uso Sugerido                                     | Impacto | Complexidade |
+| -------------------------- | ------------ | ------------------- | -------------------------------------------------------- | ------- | ------------ |
+| **Mesa de Tratamento SDR** | NÃO          | SIM                 | Resumo instantâneo do lead antes da chamada              | ALTO    | BAIXA        |
+| **Cadência de Vendas**     | NÃO          | SIM                 | Adaptação automática do tom do e-mail por segmento       | ALTO    | MÉDIA        |
+| **Matriz de Objeções**     | NÃO          | SIM                 | Sugestão automática de réplica com base em transcrição   | MÉDIO   | MÉDIA        |
+| **Gestão de Propostas**    | PARCIAL      | SIM                 | Geração automática do escopo técnico com base na reunião | ALTO    | MÉDIA        |
+| **Analytics Executivo**    | NÃO          | SIM                 | Diagnóstico narrativo automático das quedas de conversão | ALTO    | BAIXA        |
+| **WhatsApp Connector**     | NÃO          | SIM                 | Sugestão de resposta rápida baseada no contexto do chat  | ALTO    | MÉDIA        |
 
 ---
 
 ## 8. CAPACIDADES ESCONDIDAS NO CÓDIGO (PURPLE - HIDDEN CAPACITIES)
 
 1. **RAG Avançado com Reranker e HyDE (`knowledge-copilot.service.ts`):**
-   - *Descrição:* Código totalmente funcional para expansão de query por hipótese (HyDE) e re-rankeamento de resultados de busca vetorial. Não exposto diretamente como botão simples na UI.
+   - _Descrição:_ Código totalmente funcional para expansão de query por hipótese (HyDE) e re-rankeamento de resultados de busca vetorial. Não exposto diretamente como botão simples na UI.
 2. **Motor de Enriquecimento e Qualificação B2B (`qualityEnrichment.ts`):**
-   - *Descrição:* Algoritmo de cálculo de FitScore com calibração por segmento (`fitScoreCalibration.ts`). Executado no backend, mas o detalhe do cálculo não é exibido graficamente na UI.
+   - _Descrição:_ Algoritmo de cálculo de FitScore com calibração por segmento (`fitScoreCalibration.ts`). Executado no backend, mas o detalhe do cálculo não é exibido graficamente na UI.
 3. **Worker de Análise Automática de Win/Loss (`winLossAnalysis.worker.ts`):**
-   - *Descrição:* Worker assíncrono BullMQ que analisa dados de oportunidades ganhas/perdidas via LLM para extrair razões estruturadas.
+   - _Descrição:_ Worker assíncrono BullMQ que analisa dados de oportunidades ganhas/perdidas via LLM para extrair razões estruturadas.
 4. **Análise de Risco Territorial RNTRC (`rntrcTerritorialRisk.service.ts`):**
-   - *Descrição:* Serviço especializado para validação de registros de transporte e risco por estado/município.
+   - _Descrição:_ Serviço especializado para validação de registros de transporte e risco por estado/município.
 5. **Guardrail de Sanitização LGPD por IA (`lgpd-sanitizer.service.ts`):**
-   - *Descrição:* Filtro de remoção automática de PII (CPFs, senhas, cartões) antes do envio de prompts a modelos externos.
+   - _Descrição:_ Filtro de remoção automática de PII (CPFs, senhas, cartões) antes do envio de prompts a modelos externos.
 
 ---
 
 ## 9. TOP LISTS OBRIGATÓRIAS
 
 ### 🏆 TOP 10 FERRAMENTAS MAIS MADURAS (M5 / PRODUÇÃO)
+
 1. **Pipeline Kanban CRM** (`/app/crm`)
 2. **Mesa de Tratamento SDR** (`/app/mesa-tratamento`)
 3. **Copiloto Comercial IA** (`/app/copiloto_ia`)
@@ -293,6 +299,7 @@ CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 10. **Consulta CNPJ via BrasilAPI** (`/app/prospect/tools`)
 
 ### 🚀 TOP 10 MAIS PRÓXIMAS DE FICAR TOTALMENTE PRONTAS
+
 1. **Módulo de Propostas com PDF** (Apenas conectar gerador de IA)
 2. **Cadência de Vendas** (Mudar de transportador stub para SMTP real)
 3. **Conector WhatsApp Baileys** (Adicionar reconexão automática de socket)
@@ -309,26 +316,32 @@ CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
 ## 10. ROADMAP RECOMENDADO DE 5 ONDAS (EXECUTION ROADMAP)
 
 ### ONDA 1 — Quick Wins (Desbloqueio Imediato)
+
 - **Ação 1.1:** Mudar transportador de e-mail da Cadência de Vendas para SMTP real via Nodemailer.
 - **Ação 1.2:** Adicionar reconexão automática ao Socket do WhatsApp Baileys.
 - **Ação 1.3:** Conectar RAG do `knowledge-copilot.service.ts` ao botão de busca de Playbook.
 
 ### ONDA 2 — Capacidades Estratégicas
+
 - **Ação 2.1:** Conectar gerador de propostas comerciais por IA no Módulo de Propostas.
 - **Ação 2.2:** Expor detalhes do FitScore e Qualificação B2B no Card do Lead.
 - **Ação 2.3:** Integrar discador Click-to-Call direto na Mesa de Tratamento SDR.
 
 ### ONDA 3 — Consolidação de IA e Automação
+
 - **Ação 3.1:** Unificar Copiloto IA, Central AI Suite e AI Studio sob uma única interface modular.
 - **Ação 3.2:** Ativar Worker BullMQ de Análise de Win/Loss por IA em segundo plano.
 
 ### ONDA 4 — Consolidação e Remoção de Mocks
+
 - **Ação 4.1:** Substituir dados estáticos do Chatbook por RAG em tempo real da empresa.
 - **Ação 4.2:** Remover/substituir o widget SpaceGame 3D por dashboard gamificado em Canvas 2D limpo.
 
 ### ONDA 5 — Produção, Segurança e Escala
+
 - **Ação 5.1:** Habilitar auditoria de logs RLS por tenant em produção.
 - **Ação 5.2:** Executar testes de carga k6 e varredura de vulnerabilidades ZAP.
 
 ---
-*Relatório gerado automaticamente via Auditoria Mestre da Birth Hub 360º.*
+
+_Relatório gerado automaticamente via Auditoria Mestre da Birth Hub 360º._

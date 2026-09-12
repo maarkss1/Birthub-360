@@ -9,26 +9,26 @@ import { prisma } from '../src/lib/prisma.js';
 // Uso: npx tsx scripts/lgpd-erase-data-subject.ts <organizationId> <contactId>
 
 async function main() {
-    const [organizationId, contactId] = process.argv.slice(2);
-    if (!organizationId || !contactId) {
-        console.error('Uso: npx tsx scripts/lgpd-erase-data-subject.ts <organizationId> <contactId>');
-        console.error(
-            'Anonimiza irreversivelmente os dados pessoais de um Contact (nome, telefone, WhatsApp, ' +
-            'e-mail, LinkedIn, data de nascimento, observações, customFields) e mascara o corpo das ' +
-            'mensagens de WhatsApp ligadas a ele. Não apaga o histórico comercial (Lead/negócio) associado.',
-        );
-        process.exit(1);
-    }
+  const [organizationId, contactId] = process.argv.slice(2);
+  if (!organizationId || !contactId) {
+    console.error('Uso: npx tsx scripts/lgpd-erase-data-subject.ts <organizationId> <contactId>');
+    console.error(
+      'Anonimiza irreversivelmente os dados pessoais de um Contact (nome, telefone, WhatsApp, ' +
+        'e-mail, LinkedIn, data de nascimento, observações, customFields) e mascara o corpo das ' +
+        'mensagens de WhatsApp ligadas a ele. Não apaga o histórico comercial (Lead/negócio) associado.',
+    );
+    process.exit(1);
+  }
 
-    const result = await eraseDataSubject({ organizationId, contactId });
-    console.log(JSON.stringify(result, null, 2));
+  const result = await eraseDataSubject({ organizationId, contactId });
+  console.log(JSON.stringify(result, null, 2));
 }
 
 main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

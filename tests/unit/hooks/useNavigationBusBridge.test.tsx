@@ -11,62 +11,62 @@ import { useNavigationBusBridge } from '@/hooks/useNavigationBusBridge';
 import { navigationBus } from '@/lib/navigationBus';
 
 function LocationProbe() {
-    const location = useLocation();
-    return <span data-testid="pathname">{location.pathname}</span>;
+  const location = useLocation();
+  return <span data-testid="pathname">{location.pathname}</span>;
 }
 
 function Harness() {
-    useNavigationBusBridge();
-    return <LocationProbe />;
+  useNavigationBusBridge();
+  return <LocationProbe />;
 }
 
 afterEach(() => {
-    cleanup();
-    navigationBus.registerNavigator(null);
+  cleanup();
+  navigationBus.registerNavigator(null);
 });
 
 describe('useNavigationBusBridge', () => {
-    it('registra um navegador real que move a rota quando navigationBus.requestNavigation é chamado', () => {
-        render(
-            <MemoryRouter initialEntries={['/app']}>
-                <Harness />
-            </MemoryRouter>,
-        );
+  it('registra um navegador real que move a rota quando navigationBus.requestNavigation é chamado', () => {
+    render(
+      <MemoryRouter initialEntries={['/app']}>
+        <Harness />
+      </MemoryRouter>,
+    );
 
-        expect(screen.getByTestId('pathname')).toHaveTextContent('/app');
+    expect(screen.getByTestId('pathname')).toHaveTextContent('/app');
 
-        act(() => {
-            const navigated = navigationBus.requestNavigation('crm');
-            expect(navigated).toBe(true);
-        });
-
-        expect(screen.getByTestId('pathname')).toHaveTextContent('/app/crm');
+    act(() => {
+      const navigated = navigationBus.requestNavigation('crm');
+      expect(navigated).toBe(true);
     });
 
-    it('"dashboard" navega para /app (rota index), não /app/dashboard', () => {
-        render(
-            <MemoryRouter initialEntries={['/app/crm']}>
-                <Harness />
-            </MemoryRouter>,
-        );
+    expect(screen.getByTestId('pathname')).toHaveTextContent('/app/crm');
+  });
 
-        act(() => {
-            navigationBus.requestNavigation('dashboard');
-        });
+  it('"dashboard" navega para /app (rota index), não /app/dashboard', () => {
+    render(
+      <MemoryRouter initialEntries={['/app/crm']}>
+        <Harness />
+      </MemoryRouter>,
+    );
 
-        expect(screen.getByTestId('pathname')).toHaveTextContent('/app');
+    act(() => {
+      navigationBus.requestNavigation('dashboard');
     });
 
-    it('desregistra o navegador ao desmontar — nenhuma navegação depois disso', () => {
-        const { unmount } = render(
-            <MemoryRouter initialEntries={['/app']}>
-                <Harness />
-            </MemoryRouter>,
-        );
+    expect(screen.getByTestId('pathname')).toHaveTextContent('/app');
+  });
 
-        unmount();
+  it('desregistra o navegador ao desmontar — nenhuma navegação depois disso', () => {
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/app']}>
+        <Harness />
+      </MemoryRouter>,
+    );
 
-        const navigated = navigationBus.requestNavigation('crm');
-        expect(navigated).toBe(false);
-    });
+    unmount();
+
+    const navigated = navigationBus.requestNavigation('crm');
+    expect(navigated).toBe(false);
+  });
 });

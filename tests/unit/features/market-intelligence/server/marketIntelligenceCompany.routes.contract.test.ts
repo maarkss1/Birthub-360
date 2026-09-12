@@ -3,14 +3,19 @@ import rateLimit from 'express-rate-limit';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { authGetSessionMock, getTenantPrismaMock, getAccountIntelligenceMock, listMock, approveMock } =
-  vi.hoisted(() => ({
-    authGetSessionMock: vi.fn(),
-    getTenantPrismaMock: vi.fn((organizationId: string) => ({ organizationId })),
-    getAccountIntelligenceMock: vi.fn(),
-    listMock: vi.fn(),
-    approveMock: vi.fn(),
-  }));
+const {
+  authGetSessionMock,
+  getTenantPrismaMock,
+  getAccountIntelligenceMock,
+  listMock,
+  approveMock,
+} = vi.hoisted(() => ({
+  authGetSessionMock: vi.fn(),
+  getTenantPrismaMock: vi.fn((organizationId: string) => ({ organizationId })),
+  getAccountIntelligenceMock: vi.fn(),
+  listMock: vi.fn(),
+  approveMock: vi.fn(),
+}));
 
 vi.mock('@/lib/auth.js', () => ({
   auth: { api: { getSession: (...args: unknown[]) => authGetSessionMock(...args) } },
@@ -22,23 +27,34 @@ vi.mock('@/lib/tenant-prisma.js', () => ({
   getTenantPrisma: (organizationId: string) => getTenantPrismaMock(organizationId),
 }));
 
-vi.mock('@/features/market-intelligence/server/accountIntelligence.service.js', async (importOriginal) => {
-  const actual = await importOriginal<
-    typeof import('@/features/market-intelligence/server/accountIntelligence.service.js')
-  >();
-  return { ...actual, getAccountIntelligence: (...args: [string]) => getAccountIntelligenceMock(...args) };
-});
+vi.mock(
+  '@/features/market-intelligence/server/accountIntelligence.service.js',
+  async (importOriginal) => {
+    const actual =
+      await importOriginal<
+        typeof import('@/features/market-intelligence/server/accountIntelligence.service.js')
+      >();
+    return {
+      ...actual,
+      getAccountIntelligence: (...args: [string]) => getAccountIntelligenceMock(...args),
+    };
+  },
+);
 
-vi.mock('@/features/market-intelligence/server/marketIntelligenceCompany.service.js', async (importOriginal) => {
-  const actual = await importOriginal<
-    typeof import('@/features/market-intelligence/server/marketIntelligenceCompany.service.js')
-  >();
-  return {
-    ...actual,
-    listMarketIntelligenceCompanies: (...args: unknown[]) => listMock(...args),
-    approveToPipeline: (...args: unknown[]) => approveMock(...args),
-  };
-});
+vi.mock(
+  '@/features/market-intelligence/server/marketIntelligenceCompany.service.js',
+  async (importOriginal) => {
+    const actual =
+      await importOriginal<
+        typeof import('@/features/market-intelligence/server/marketIntelligenceCompany.service.js')
+      >();
+    return {
+      ...actual,
+      listMarketIntelligenceCompanies: (...args: unknown[]) => listMock(...args),
+      approveToPipeline: (...args: unknown[]) => approveMock(...args),
+    };
+  },
+);
 
 import { authenticateToken } from '@/shared/middlewares/authenticateToken.js';
 import { requireTenant } from '@/shared/middlewares/authorization.js';
@@ -66,7 +82,12 @@ function buildApp(authenticatedAs: ReturnType<typeof session> | null = session('
     // Mesmo motivo do contract test irmão (accountIntelligence.routes.contract.test.ts): espelha
     // o apiLimiter genérico que server.ts já aplica em toda rota /api em produção, senão o CodeQL
     // (js/missing-rate-limiting) sinaliza este app de teste isolado como achado real.
-    rateLimit({ windowMs: 15 * 60 * 1000, max: 10_000, standardHeaders: true, legacyHeaders: false }),
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 10_000,
+      standardHeaders: true,
+      legacyHeaders: false,
+    }),
     authenticateToken,
     requireTenant,
     marketIntelligenceCompanyRoutes,
@@ -78,7 +99,11 @@ function buildApp(authenticatedAs: ReturnType<typeof session> | null = session('
 const account = {
   version: 'ldr-account-intelligence.v1',
   generatedAt: '2026-09-09T00:00:00.000Z',
-  identity: { marketIntelligenceCompanyId: 'mic-1', cnpj: '48762359000122', legalName: 'Empresa Teste' },
+  identity: {
+    marketIntelligenceCompanyId: 'mic-1',
+    cnpj: '48762359000122',
+    legalName: 'Empresa Teste',
+  },
 };
 
 beforeEach(() => {
@@ -125,9 +150,8 @@ describe('GET /api/companies/market-intelligence/:cnpj/intelligence', () => {
     // Instância real de CompanyCatalogValidationError (reaproveitada do módulo mockado só
     // parcialmente via importOriginal) — precisa ser a classe de verdade para o
     // `instanceof CompanyCatalogValidationError` em toAppError() reconhecer o erro.
-    const { CompanyCatalogValidationError } = await import(
-      '@/features/market-intelligence/server/marketIntelligenceCompany.service.js'
-    );
+    const { CompanyCatalogValidationError } =
+      await import('@/features/market-intelligence/server/marketIntelligenceCompany.service.js');
     getAccountIntelligenceMock.mockRejectedValue(
       new CompanyCatalogValidationError('CNPJ inválido para o catálogo empresarial.'),
     );
@@ -143,7 +167,11 @@ describe('GET /api/companies/market-intelligence/:cnpj/intelligence', () => {
 
 describe('GET /api/companies/market-intelligence (lista/matriz-filiais)', () => {
   it('resolve raiz de 8 dígitos como cnpjRoot, não como cnpj completo', async () => {
-    listMock.mockResolvedValue({ data: [], meta: { page: 1, pageSize: 50, total: 0, totalPages: 0 }, dataset: null });
+    listMock.mockResolvedValue({
+      data: [],
+      meta: { page: 1, pageSize: 50, total: 0, totalPages: 0 },
+      dataset: null,
+    });
 
     const response = await request(buildApp()).get(
       '/api/companies/market-intelligence?cnpj=48762359&pageSize=50',
@@ -178,7 +206,11 @@ describe('POST /api/companies/market-intelligence/:cnpj/approve-to-pipeline', ()
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toMatchObject({ success: true, companyId: 'company-1', leadId: 'lead-1' });
+    expect(response.body).toMatchObject({
+      success: true,
+      companyId: 'company-1',
+      leadId: 'lead-1',
+    });
     expect(approveMock).toHaveBeenCalledWith('org-a', '48762359000122', 'user-org-a');
   });
 });

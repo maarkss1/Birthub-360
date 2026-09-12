@@ -154,7 +154,7 @@ Execute the research stage as follows:
      Collect all files flagged in Wave 1. Spawn a wave of concurrent deep
      auditor sub-agents (e.g. up to 4-8 in parallel) to focus exclusively on
      those identified hotspots. For particularly complex files, spawn multiple
-     subagents targeting the *same* file using either different prompt
+     subagents targeting the _same_ file using either different prompt
      constraints or a diverse set of less expensive LLMs to explore parallel
      attack vectors. Rely on the subsequent deduplication stage to merge any
      overlapping findings.

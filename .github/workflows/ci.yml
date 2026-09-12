@@ -5,9 +5,9 @@ name: Central Birth Hub 360 Release
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [main, master, develop]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   workflow_dispatch:
 
 permissions:
@@ -215,7 +215,7 @@ jobs:
 
   # Geração manual de baselines Linux. Não participa do required check `build`.
   visual-baselines:
-    name: "Gerar baselines visuais Linux (manual)"
+    name: 'Gerar baselines visuais Linux (manual)'
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 

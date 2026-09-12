@@ -10,7 +10,7 @@
 Causa raiz confirmada com execução real contra Postgres (não só leitura de código): **não** é a
 forma array de `$transaction` em `executeWithRls` (essa hipótese foi testada e descartada). É uma
 interação entre `AsyncLocalStorage.run(store, callback)` e o fato de `PrismaClient` devolver uma
-`PrismaPromise` *lazy* — quando `callback` só constrói e devolve a promise sem `await` interno
+`PrismaPromise` _lazy_ — quando `callback` só constrói e devolve a promise sem `await` interno
 (padrão usado por `asOrg`/`withRlsBypass` em todo o código), a store de `run()` já não está mais
 ativa no momento em que o `.then()` real dispara, então a query vê o contexto ambiente errado (ex.:
 sobrescrito por `enterWith` de um hook global). Corrigido de forma centralizada com

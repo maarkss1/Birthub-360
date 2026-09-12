@@ -50,6 +50,7 @@ Atualize `BLAND_API_KEY` nos três lugares onde o backend roda ou é testado loc
 nenhum — uma chave antiga esquecida num ambiente é a mesma classe de risco que não ter rotacionado.
 
 ### Render (produção/homologação)
+
 1. Painel Render → serviço do backend (`server.ts`) → aba **Environment**.
 2. Localize `BLAND_API_KEY`. Se não existir ainda como variável nomeada (hoje pode estar ausente
    de `.env.example`, ver gap acima), crie-a.
@@ -57,6 +58,7 @@ nenhum — uma chave antiga esquecida num ambiente é a mesma classe de risco qu
    — confirme no painel que o deploy novo ficou `Live` antes de considerar o passo concluído.
 
 ### Vercel (se o frontend/edge functions também referenciarem a chave)
+
 1. Verifique primeiro se `BLAND_API_KEY` é usada em algum caminho servido pela Vercel — hoje o
    consumo conhecido é só no backend Express/Render (`birthVoice.service.ts`, rodando dentro de
    `server.ts`). Se a checagem confirmar que não há uso no lado Vercel, registre isso e pule esta
@@ -65,6 +67,7 @@ nenhum — uma chave antiga esquecida num ambiente é a mesma classe de risco qu
    `BLAND_API_KEY` nos ambientes `Production` e `Preview` conforme aplicável → redeploy.
 
 ### `.env` local (qualquer agente com ambiente local configurado)
+
 1. Cada desenvolvedor/agente com `.env` local próprio atualiza a linha `BLAND_API_KEY=` com o novo
    valor, retirado do cofre — nunca copiado de outro `.env` ou de mensagem.
 2. `.env` nunca é commitado (já coberto por `.gitignore` — confirme com

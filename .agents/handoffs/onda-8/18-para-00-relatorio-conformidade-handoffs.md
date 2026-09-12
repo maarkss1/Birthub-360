@@ -5,6 +5,7 @@
 - Prioridade: alto
 
 ## Problema
+
 Validação de formato de **todos** os 60 handoffs em `.agents/handoffs/**` (onda-1 até onda-8,
 onda-2.5, onda-D, onda-E, onda-G) contra o protocolo de `/AGENTS.md` → "Protocolo de handoff"
 (campos `De`/`Para`/`Onda`/`Status`/`Prioridade` + seções `## Problema`/`## Arquivo(s)
@@ -21,6 +22,7 @@ obsoleto endereçado a 11"). A missão descrevia este arquivo como fora do proto
 mais verdade; não precisei alterá-lo.
 
 ## Arquivo(s) envolvido(s)
+
 Os 5 não conformes (não editei nenhum — não sou o destinatário de nenhum, e `/AGENTS.md` proíbe
 editar handoff alheio exceto o campo `Status` pelo próprio destinatário):
 
@@ -49,6 +51,7 @@ editar handoff alheio exceto o campo `Status` pelo próprio destinatário):
    valor — mas por protocolo, quem edita esse campo é o destinatário (00/08) ao resolver, não eu.
 
 ## Alteração necessária
+
 Nenhuma ação minha além deste relatório — corrigir os 5 arquivos acima é dos próprios autores (ao
 reabrir o handoff) ou dos destinatários (ao resolver e normalizar, mesmo padrão que o Agente 11 já
 aplicou em `07-para-11-lgpd-service-fix.md` na Onda 4). Recomendo ao Coordenador, no mínimo,
@@ -56,6 +59,7 @@ confirmar pessoalmente se `onda-7/12-para-00-test-db-contencao-cross-agente.md` 
 como bloqueador em alguma decisão de fechamento de onda anterior.
 
 ## Teste esperado
+
 Nenhum teste automatizado aplicável a este handoff em si — é uma auditoria de conformidade de
 documento. Uma verificação automatizada de formato de handoff (validando os 3 valores permitidos de
 `Prioridade`/`Status` e a presença das 5 seções) poderia ser um script futuro nesta mesma família
@@ -65,11 +69,13 @@ um verificador permanente para ele; o verificador permanente desta onda é o de 
 OpenAPI, ver `.agents/handoffs/onda-8/18-para-08-ci-openapi-drift.md`).
 
 ## Contexto adicional
+
 Tabela completa (60 handoffs, 55 conformes) disponível na auditoria que gerou este relatório —
 consultar histórico desta sessão do Agente 18 se precisar do detalhe completo linha a linha; aqui
 resumi só os 5 não conformes para manter o handoff acionável.
 
 ## Resolução (Fase Final 0, Agente 00)
+
 Item mais importante do relatório — `onda-7/12-para-00-test-db-contencao-cross-agente.md` com
 `Prioridade: crítico` fora do vocabulário padrão (`bloqueador | alto | normal`) — confirmado
 **já resolvido de fato** na Onda 9 pelo Agente 01A (`TenantAwareAsyncLocalStorage`,

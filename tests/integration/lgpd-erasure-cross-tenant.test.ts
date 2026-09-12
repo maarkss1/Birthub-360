@@ -1,7 +1,10 @@
 import { describe, it, expect, afterAll } from 'vitest';
 import { prisma } from '../../src/lib/prisma';
 import { requestContext } from '../../src/lib/async-context';
-import { eraseDataSubject, ANONYMIZED_CONTACT_NAME } from '../../src/shared/services/dataSubjectErasure.service';
+import {
+  eraseDataSubject,
+  ANONYMIZED_CONTACT_NAME,
+} from '../../src/shared/services/dataSubjectErasure.service';
 
 // Handoff: .agents/handoffs/onda-6/01A-para-14-lgpd-erasure-cross-tenant-test.md
 //
@@ -54,7 +57,9 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
     // afterEach global de tests/helpers/integration-setup.ts já limpa Lead/Contact/Company/
     // TimelineEvent sem where (roda depois de cada teste), então isto é defensivo/idempotente caso
     // este arquivo rode sozinho fora dessa suíte.
-    await withBypass(() => prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }));
+    await withBypass(() =>
+      prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }),
+    );
   });
 
   it('apaga titular de ORG_A sem tocar o titular equivalente em ORG_B, e RLS real bloqueia leitura cross-tenant', async () => {
@@ -100,10 +105,14 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
     );
 
     const leadA = await withTenant(ORG_A, async () =>
-      prisma.lead.create({ data: { contactId: contactA.id, companyId: companyA.id, title: 'Negócio A' } }),
+      prisma.lead.create({
+        data: { contactId: contactA.id, companyId: companyA.id, title: 'Negócio A' },
+      }),
     );
     const leadB = await withTenant(ORG_B, async () =>
-      prisma.lead.create({ data: { contactId: contactB.id, companyId: companyB.id, title: 'Negócio B' } }),
+      prisma.lead.create({
+        data: { contactId: contactB.id, companyId: companyB.id, title: 'Negócio B' },
+      }),
     );
 
     await withTenant(ORG_A, async () =>
@@ -164,12 +173,20 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
 
     await withTenant(ORG_A, async () =>
       prisma.timelineEvent.create({
-        data: { type: 'comment', description: 'Ligação com o titular A sobre o contrato', leadId: leadA.id },
+        data: {
+          type: 'comment',
+          description: 'Ligação com o titular A sobre o contrato',
+          leadId: leadA.id,
+        },
       }),
     );
     await withTenant(ORG_B, async () =>
       prisma.timelineEvent.create({
-        data: { type: 'comment', description: 'Ligação com o titular B sobre o contrato', leadId: leadB.id },
+        data: {
+          type: 'comment',
+          description: 'Ligação com o titular B sobre o contrato',
+          leadId: leadB.id,
+        },
       }),
     );
 
@@ -211,8 +228,12 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
     // ORG_A — nem o Contact, nem o WhatsAppMessage, nem o ConversationSignal, nem o TimelineEvent.
     const crossTenantReadFromB = await withTenant(ORG_B, async () => ({
       contact: await prisma.contact.findUnique({ where: { id: contactA.id } }),
-      whatsAppMessage: await prisma.whatsAppMessage.findFirst({ where: { contactId: contactA.id } }),
-      conversationSignal: await prisma.conversationSignal.findFirst({ where: { leadId: leadA.id } }),
+      whatsAppMessage: await prisma.whatsAppMessage.findFirst({
+        where: { contactId: contactA.id },
+      }),
+      conversationSignal: await prisma.conversationSignal.findFirst({
+        where: { leadId: leadA.id },
+      }),
       timelineEvent: await prisma.timelineEvent.findFirst({ where: { leadId: leadA.id } }),
       leadList: await prisma.lead.findMany({ where: { organizationId: ORG_A } }),
     }));

@@ -5,6 +5,7 @@
 - Prioridade: alto
 
 ## Resolução
+
 Script `scripts/backfill-lead-owner.ts` adicionado com a lógica exata requisitada, cobrindo validação de ids, verificação dry-run por default e log auditável (AuditLog). Pode ser rodado com `npx tsx scripts/backfill-lead-owner.ts --apply` em produção/homologação quando necessário.
 
 ## Problema
@@ -35,6 +36,7 @@ Rodar esse backfill é decisão sobre dado real de produção/homologação — 
 deva executar sozinho.
 
 ## Arquivo(s) envolvido(s)
+
 - `prisma/schema.prisma` → `model Lead` (campo `owner String?`, sem FK para `User` — é texto livre
   hoje, então o backfill não pode confiar em constraint de banco para achar os candidatos, só em
   correspondência de valor).
@@ -73,6 +75,7 @@ existentes):
    mudou o campo em massa.
 
 ## Teste esperado
+
 - Teste do script de backfill (mock de Prisma, mesmo padrão dos testes de
   `bitrix/service/__tests__/**`) cobrindo: nome com 1 correspondência única (migra), nome sem
   correspondência (não mexe, loga), nome com múltiplas correspondências na mesma organização (não
@@ -85,6 +88,7 @@ existentes):
   relatório, não desaparecer silenciosamente).
 
 ## Contexto adicional
+
 - Handoff original que apontou o problema: `.agents/handoffs/onda-7/04-para-06-owner-bitrix-nome-nao-id.md`
   (Status atualizado para `resolvido` nesta onda — a correção na origem foi feita; este handoff
   cobre só o backfill do dado histórico, que ficou pendente por ser decisão sobre dado real).

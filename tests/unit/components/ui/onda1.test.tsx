@@ -3,13 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { DS_TOKENS, DS_CLASSES } from '@/lib/designSystem';
-import {
-  BentoGrid,
-  BentoCard,
-  BentoMetric,
-  BentoHero,
-  BentoInsight,
-} from '@/components/ui/bento';
+import { BentoGrid, BentoCard, BentoMetric, BentoHero, BentoInsight } from '@/components/ui/bento';
 import { FloatingDock } from '@/components/layout/FloatingDock';
 import { PageTransition } from '@/components/layout/PageTransition';
 import {
@@ -39,7 +33,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
         <BentoGrid columns={4} data-testid="bento-grid">
           <BentoCard>Card 1</BentoCard>
           <BentoCard colSpan={2}>Card 2</BentoCard>
-        </BentoGrid>
+        </BentoGrid>,
       );
       expect(container.firstChild).toHaveClass('grid');
       expect(container.firstChild).toHaveClass('lg:grid-cols-4');
@@ -54,7 +48,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
           value="24.8%"
           delta={{ value: '+3.2%', positive: true }}
           subtitle="eficiência comercial"
-        />
+        />,
       );
       expect(screen.getByText('Taxa de Conversão')).toBeInTheDocument();
       expect(screen.getByText('24.8%')).toBeInTheDocument();
@@ -68,7 +62,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
           badge="Destaque"
           title="Centro de Inteligência"
           description="Visão executiva unificada do pipeline comercial"
-        />
+        />,
       );
       expect(screen.getByText('Destaque')).toBeInTheDocument();
       expect(screen.getByText('Centro de Inteligência')).toBeInTheDocument();
@@ -83,7 +77,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
           recommendation="Empresa com faturamento acima de R$ 50M sem contato há 15 dias"
           actionText="Qualificar agora"
           priority="high"
-        />
+        />,
       );
       expect(screen.getByText('Radar de Oportunidades')).toBeInTheDocument();
       expect(screen.getByText('Lead de Alto Potencial')).toBeInTheDocument();
@@ -98,7 +92,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
       render(
         <MemoryRouter>
           <FloatingDock activeTab="dashboard" onOpenFullMenu={() => {}} />
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.getByRole('navigation', { name: /navegação rápida/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /painel/i })).toBeInTheDocument();
@@ -112,7 +106,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
       render(
         <PageTransition id="test-page">
           <div>Conteúdo de Teste</div>
-        </PageTransition>
+        </PageTransition>,
       );
       expect(screen.getByText('Conteúdo de Teste')).toBeInTheDocument();
     });
@@ -128,7 +122,7 @@ describe('Onda 1 — Design System Foundation & Core Components', () => {
           <TableSkeleton rows={2} cols={2} />
           <ListSkeleton items={2} />
           <ChartSkeleton />
-        </div>
+        </div>,
       );
       expect(container.querySelectorAll('.bh-skeleton-shimmer').length).toBeGreaterThan(5);
     });

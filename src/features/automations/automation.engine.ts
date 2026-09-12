@@ -160,8 +160,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 export type RunActionWithRetryResult =
-  | { success: true; attempts: number }
-  | { success: false; attempts: number; error: unknown };
+  { success: true; attempts: number } | { success: false; attempts: number; error: unknown };
 
 /**
  * Estado compartilhado entre as tentativas de UMA MESMA execução de ação (não sobrevive além de
@@ -488,9 +487,8 @@ export class AutomationEngine {
           'A ação "Ligar via SDR de Voz" só se aplica a eventos de lead.',
         );
       }
-      const { callLead, SuppressedNumberError } = await import(
-        '../integrations/birth-voice/birthVoice.service.js'
-      );
+      const { callLead, SuppressedNumberError } =
+        await import('../integrations/birth-voice/birthVoice.service.js');
       const { isWithinCallWindow } = await import('../integrations/birth-voice/coldCall.policy.js');
       const { callWindowFromEnv } = await import('../integrations/birth-voice/coldCall.service.js');
 

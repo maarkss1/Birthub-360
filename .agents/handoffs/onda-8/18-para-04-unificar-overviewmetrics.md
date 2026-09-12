@@ -5,9 +5,11 @@
 - Prioridade: normal
 
 ## Problema
+
 `OverviewMetrics` (resumo agregado de KPIs do CRM: totais de empresas/contatos/leads/atividades,
 funil, `pipelineValue`) está declarado de forma independente em dois arquivos do seu domínio, com
 campos idênticos hoje mas sem nenhuma relação de import entre si:
+
 - `src/features/analytics/domain/Analytics.ts:26-46` (camada de domínio, versão "wired", usada por
   `AnalyticsUseCases`);
 - `src/features/analytics/analytics.service.ts:31-50` (serviço legado, ainda consumido de verdade
@@ -18,6 +20,7 @@ declarações de divergir silenciosamente no futuro (um campo renomeado ou remov
 outra), e o typecheck não acusaria — cada arquivo tem seu próprio tipo local.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/analytics/domain/Analytics.ts` (linhas 26-46)
 - `src/features/analytics/analytics.service.ts` (linhas 31-50)
 - `src/shared/contracts/analytics.contract.ts` (**novo**, criado nesta onda pelo Agente 18 — fonte
@@ -25,9 +28,10 @@ outra), e o typecheck não acusaria — cada arquivo tem seu próprio tipo local
 - Consumidor indireto: `src/features/crm/jobs/weeklyPdfReport.worker.ts` (usa `analytics.service.ts`)
 
 ## Alteração necessária
+
 1. Em `src/features/analytics/domain/Analytics.ts`, substituir a declaração local de
    `OverviewMetrics` por `export type { OverviewMetrics } from '../../../shared/contracts/
-   analytics.contract.js';` (ajuste o caminho relativo real) — ou `import type` + re-export,
+analytics.contract.js';` (ajuste o caminho relativo real) — ou `import type` + re-export,
    conforme o padrão que vocês preferirem para manter `AnalyticsDashboard.overview: OverviewMetrics`
    funcionando sem mudança de assinatura pública.
 2. Em `src/features/analytics/analytics.service.ts`, mesma substituição.
@@ -38,12 +42,14 @@ outra), e o typecheck não acusaria — cada arquivo tem seu próprio tipo local
    flagar qualquer campo que hoje divergisse e eu não tenha visto).
 
 ## Teste esperado
+
 - `npx tsc --noEmit` sem erros novos.
 - `npm run test:unit` — specs existentes de `tests/unit/features/analytics/**` continuam passando
   sem alteração de asserção (o contrato não muda, só a origem do tipo).
 - Nenhuma mudança de comportamento em runtime — é refatoração de tipo, não de lógica.
 
 ## Contexto adicional
+
 Este handoff é o item 2 da missão do Agente 18 (`.agents/prompts/18-contratos-api-docs.md`) —
 "OverviewMetrics: uma fonte, não duas" — já registrado como débito conhecido em
 `PLATFORM_COMPLETION_REPORT.md` e `.agents/completion/02-mapa-plataforma.md` §7.4.
@@ -66,21 +72,21 @@ misturar os dois escopos neste handoff.
 Implementado exatamente como proposto, com uma correção de padrão TypeScript em relação ao passo 1:
 
 1. `src/features/analytics/domain/Analytics.ts`: adicionado `import type { OverviewMetrics } from
-   '../../../shared/contracts/analytics.contract.js';` no topo do arquivo, e a declaração local do
+'../../../shared/contracts/analytics.contract.js';` no topo do arquivo, e a declaração local do
    `interface OverviewMetrics { ... }` foi substituída por `export type { OverviewMetrics };`.
    Nota: a sugestão original do handoff (`export type { OverviewMetrics } from '...'` sozinho, sem
    `import type` antes) não compila quando o mesmo nome é usado localmente no arquivo — `export ...
-   from` é um re-export puro, não cria um binding local utilizável por `AnalyticsDashboard.overview:
-   OverviewMetrics` mais abaixo no mesmo arquivo (erro `TS2304: Cannot find name 'OverviewMetrics'`
+from` é um re-export puro, não cria um binding local utilizável por `AnalyticsDashboard.overview:
+OverviewMetrics` mais abaixo no mesmo arquivo (erro `TS2304: Cannot find name 'OverviewMetrics'`
    descoberto pelo próprio `tsc`). Corrigido usando o padrão `import type` + `export type { X };`
    (dois passos), que resolve tanto o uso local quanto o re-export externo.
 2. `src/features/analytics/analytics.service.ts`: mesma correção — `import type { OverviewMetrics }
-   from '../../shared/contracts/analytics.contract.js';` (caminho relativo de dois níveis, arquivo
+from '../../shared/contracts/analytics.contract.js';` (caminho relativo de dois níveis, arquivo
    está em `src/features/analytics/`, não em `domain/`) + `export type { OverviewMetrics };` no
    lugar da declaração local. Comentário no código reforça que este serviço legado continua em uso
    real por `weeklyPdfReport.worker.ts` — não foi tocado além da troca de tipo.
 3. Confirmado: `AnalyticsUseCases.ts` (`import { ..., type OverviewMetrics, ... } from
-   '../domain/Analytics'`) segue compilando sem nenhuma alteração — ele não precisou saber que a
+'../domain/Analytics'`) segue compilando sem nenhuma alteração — ele não precisou saber que a
    origem do tipo mudou.
 4. `npx tsc --noEmit -p .` rodou limpo (0 erros) após a mudança, confirmando compatibilidade
    estrutural total com `src/shared/contracts/analytics.contract.ts` nos dois arquivos.

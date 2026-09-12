@@ -182,8 +182,6 @@ export function LoginScreen() {
       return;
     }
 
-
-
     // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
     // o cliente nunca decide, por conta própria, se um login é válido.
     const result = isSignUp
@@ -251,7 +249,6 @@ export function LoginScreen() {
     setVerificationPending(false);
     setError('');
   };
-
 
   // O e-mail não decide mais a marca ativa visualmente, apenas guarda no state.
   const handleEmailChange = (value: string) => {
@@ -323,7 +320,9 @@ export function LoginScreen() {
               </span>
             </div>
 
-            <h1 className="text-3xl font-black text-center text-gold-gradient font-display">Bem-vindo</h1>
+            <h1 className="text-3xl font-black text-center text-gold-gradient font-display">
+              Bem-vindo
+            </h1>
             <p className="mt-1.5 text-sm text-ink-2 font-heading">
               Central de Comando Inteligente — Ecossistema de Alta Performance.
             </p>

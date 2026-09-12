@@ -24,12 +24,12 @@ que a carga depois exercita.
 Fase de carga: `ramping-vus` até 5 VUs simultâneas por ~45s (75s totais incl. rampas), cada
 iteração faz as 4 chamadas abaixo + `sleep(1)`:
 
-| Rota | Método | O que exercita |
-|---|---|---|
-| `/api/leads?page=&limit=25&funnel=` | GET | Listagem paginada do pipeline (a tela mais usada do dia a dia comercial) |
-| `/api/companies?page=&limit=25&q=K6` | GET | Busca/listagem de empresas |
-| `/api/activities` | POST | Escrita mais frequente do uso diário (toda interação vira atividade) |
-| `/api/market-intelligence/data-quality-report` | GET | Relatório agregado desta mesma onda — 14 queries `Promise.all` |
+| Rota                                           | Método | O que exercita                                                           |
+| ---------------------------------------------- | ------ | ------------------------------------------------------------------------ |
+| `/api/leads?page=&limit=25&funnel=`            | GET    | Listagem paginada do pipeline (a tela mais usada do dia a dia comercial) |
+| `/api/companies?page=&limit=25&q=K6`           | GET    | Busca/listagem de empresas                                               |
+| `/api/activities`                              | POST   | Escrita mais frequente do uso diário (toda interação vira atividade)     |
+| `/api/market-intelligence/data-quality-report` | GET    | Relatório agregado desta mesma onda — 14 queries `Promise.all`           |
 
 Todas as 4 passam pela cadeia real `authenticateToken → auth.api.getSession() → requireTenant →
 (requireRole quando aplicável) → RLS do Postgres (`app.current_tenant_id`) → controller →
@@ -82,43 +82,43 @@ não têm p99 exportado, mas p50/p95 são válidos).
 
 ### `GET /api/leads` (pipeline, paginado + filtro de funil)
 
-| Execução | p50 | p95 | p99 | avg | max |
-|---|---|---|---|---|---|
-| A | 71.1ms | 197.0ms | — | — | — |
-| B | 77.5ms | 240.3ms | — | 98.0ms | 757.3ms |
-| C | 73.7ms | 400.6ms ⚠ | 1010ms ⚠ | 121.3ms | 1.49s |
-| D | 72.6ms | 478.6ms | 853.2ms | — | — |
-| E | 57.3ms | 327.0ms | 639.4ms | 89.4ms | 762.2ms |
+| Execução | p50    | p95       | p99      | avg     | max     |
+| -------- | ------ | --------- | -------- | ------- | ------- |
+| A        | 71.1ms | 197.0ms   | —        | —       | —       |
+| B        | 77.5ms | 240.3ms   | —        | 98.0ms  | 757.3ms |
+| C        | 73.7ms | 400.6ms ⚠ | 1010ms ⚠ | 121.3ms | 1.49s   |
+| D        | 72.6ms | 478.6ms   | 853.2ms  | —       | —       |
+| E        | 57.3ms | 327.0ms   | 639.4ms  | 89.4ms  | 762.2ms |
 
 ### `GET /api/companies` (busca `?q=K6`)
 
-| Execução | p50 | p95 | p99 | avg | max |
-|---|---|---|---|---|---|
-| A | 73.9ms | 175.4ms | — | — | — |
-| B | 76.9ms | 217.0ms | — | 94.6ms | 668.0ms |
-| C | 74.4ms | 210.3ms | 400.6ms | 97.1ms | 835.5ms |
-| D | 71.0ms | 174.5ms | 352.0ms | — | — |
-| E | 59.2ms | 172.3ms | 438.7ms | 76.2ms | 551.5ms |
+| Execução | p50    | p95     | p99     | avg    | max     |
+| -------- | ------ | ------- | ------- | ------ | ------- |
+| A        | 73.9ms | 175.4ms | —       | —      | —       |
+| B        | 76.9ms | 217.0ms | —       | 94.6ms | 668.0ms |
+| C        | 74.4ms | 210.3ms | 400.6ms | 97.1ms | 835.5ms |
+| D        | 71.0ms | 174.5ms | 352.0ms | —      | —       |
+| E        | 59.2ms | 172.3ms | 438.7ms | 76.2ms | 551.5ms |
 
 ### `POST /api/activities` (escrita)
 
-| Execução | p50 | p95 | p99 | avg | max |
-|---|---|---|---|---|---|
-| A | 64.4ms | 176.3ms | — | — | — |
-| B | 64.9ms | 193.8ms | — | 86.8ms | 678.9ms |
-| C | 68.4ms | 236.6ms | 339.7ms | 98.0ms | 1.64s |
-| D | 65.2ms | 189.2ms | 341.6ms | — | — |
-| E | 54.9ms | 154.0ms | 525.9ms | 73.2ms | 698.2ms |
+| Execução | p50    | p95     | p99     | avg    | max     |
+| -------- | ------ | ------- | ------- | ------ | ------- |
+| A        | 64.4ms | 176.3ms | —       | —      | —       |
+| B        | 64.9ms | 193.8ms | —       | 86.8ms | 678.9ms |
+| C        | 68.4ms | 236.6ms | 339.7ms | 98.0ms | 1.64s   |
+| D        | 65.2ms | 189.2ms | 341.6ms | —      | —       |
+| E        | 54.9ms | 154.0ms | 525.9ms | 73.2ms | 698.2ms |
 
 ### `GET /api/market-intelligence/data-quality-report` (14 queries agregadas)
 
-| Execução | p50 | p95 | p99 | avg | max |
-|---|---|---|---|---|---|
-| A | 139.8ms | 297.8ms | — | — | — |
-| B | 151.2ms | 356.1ms | — | 166.9ms | 460.4ms |
-| C | 127.7ms | 331.6ms | 763.5ms | 168.0ms | 1.63s |
-| D | 124.9ms | 399.1ms | 807.1ms | — | — |
-| E | 108.7ms | 257.3ms | 718.7ms | 136.4ms | 994.1ms |
+| Execução | p50     | p95     | p99     | avg     | max     |
+| -------- | ------- | ------- | ------- | ------- | ------- |
+| A        | 139.8ms | 297.8ms | —       | —       | —       |
+| B        | 151.2ms | 356.1ms | —       | 166.9ms | 460.4ms |
+| C        | 127.7ms | 331.6ms | 763.5ms | 168.0ms | 1.63s   |
+| D        | 124.9ms | 399.1ms | 807.1ms | —       | —       |
+| E        | 108.7ms | 257.3ms | 718.7ms | 136.4ms | 994.1ms |
 
 ⚠ = threshold do momento cruzado nessa execução (a execução C rodou com o threshold intermediário
 `p(95)<400`/`p(99)<650` de `leads_list`, ainda calibrado só com as execuções A/B — foi esse

@@ -80,7 +80,11 @@ describe('Fundação Multi-Cargo — JobRole/UserJobRole', () => {
 
     it('um usuário sem nenhum JobRole continua existindo e utilizável (fallback seguro)', async () => {
       const user = await prisma.user.create({
-        data: { name: 'Beto Sem Cargo', email: 'beto.semcargo@job-roles.test', organizationId: ORG_ID },
+        data: {
+          name: 'Beto Sem Cargo',
+          email: 'beto.semcargo@job-roles.test',
+          organizationId: ORG_ID,
+        },
       });
       const roles = await listUserJobRoles(ORG_ID, user.id);
       expect(roles).toEqual([]);
@@ -96,8 +100,18 @@ describe('Fundação Multi-Cargo — JobRole/UserJobRole', () => {
       const sdr = await getJobRoleByCode('SDR');
       const closer = await getJobRoleByCode('CLOSER');
 
-      await assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: sdr!.id, assignedBy: 'admin-1' });
-      await assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: closer!.id, assignedBy: 'admin-1' });
+      await assignJobRole({
+        organizationId: ORG_ID,
+        userId: user.id,
+        jobRoleId: sdr!.id,
+        assignedBy: 'admin-1',
+      });
+      await assignJobRole({
+        organizationId: ORG_ID,
+        userId: user.id,
+        jobRoleId: closer!.id,
+        assignedBy: 'admin-1',
+      });
 
       const roles = await listUserJobRoles(ORG_ID, user.id);
       const primaries = roles.filter((r) => r.isPrimary);
@@ -111,10 +125,19 @@ describe('Fundação Multi-Cargo — JobRole/UserJobRole', () => {
 
     it('desativar um vínculo faz soft-delete (nunca apaga a linha de auditoria)', async () => {
       const user = await prisma.user.create({
-        data: { name: 'Duda Removida', email: 'duda.removida@job-roles.test', organizationId: ORG_ID },
+        data: {
+          name: 'Duda Removida',
+          email: 'duda.removida@job-roles.test',
+          organizationId: ORG_ID,
+        },
       });
       const sdr = await getJobRoleByCode('SDR');
-      await assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: sdr!.id, assignedBy: 'admin-1' });
+      await assignJobRole({
+        organizationId: ORG_ID,
+        userId: user.id,
+        jobRoleId: sdr!.id,
+        assignedBy: 'admin-1',
+      });
 
       await deactivateUserJobRole({
         organizationId: ORG_ID,
@@ -123,7 +146,9 @@ describe('Fundação Multi-Cargo — JobRole/UserJobRole', () => {
         actorId: 'admin-1',
       });
 
-      const row = await prisma.userJobRole.findFirst({ where: { userId: user.id, jobRoleId: sdr!.id } });
+      const row = await prisma.userJobRole.findFirst({
+        where: { userId: user.id, jobRoleId: sdr!.id },
+      });
       expect(row).not.toBeNull();
       expect(row?.isActive).toBe(false);
 
@@ -133,13 +158,22 @@ describe('Fundação Multi-Cargo — JobRole/UserJobRole', () => {
 
     it('rejeita atribuir um cargo inativo', async () => {
       const user = await prisma.user.create({
-        data: { name: 'Egon Inativo', email: 'egon.inativo@job-roles.test', organizationId: ORG_ID },
+        data: {
+          name: 'Egon Inativo',
+          email: 'egon.inativo@job-roles.test',
+          organizationId: ORG_ID,
+        },
       });
       const bdr = await getJobRoleByCode('BDR');
       await prisma.jobRole.update({ where: { id: bdr!.id }, data: { isActive: false } });
 
       await expect(
-        assignJobRole({ organizationId: ORG_ID, userId: user.id, jobRoleId: bdr!.id, assignedBy: 'admin-1' }),
+        assignJobRole({
+          organizationId: ORG_ID,
+          userId: user.id,
+          jobRoleId: bdr!.id,
+          assignedBy: 'admin-1',
+        }),
       ).rejects.toThrow(JobRoleServiceError);
 
       await prisma.jobRole.update({ where: { id: bdr!.id }, data: { isActive: true } });
@@ -166,7 +200,12 @@ describe('Fundação Multi-Cargo — JobRole/UserJobRole', () => {
       const sdr = await getJobRoleByCode('SDR');
 
       await expect(
-        assignJobRole({ organizationId: ORG_ID, userId: outsider.id, jobRoleId: sdr!.id, assignedBy: 'admin-1' }),
+        assignJobRole({
+          organizationId: ORG_ID,
+          userId: outsider.id,
+          jobRoleId: sdr!.id,
+          assignedBy: 'admin-1',
+        }),
       ).rejects.toThrow(JobRoleServiceError);
 
       await requestContext.run({ bypassRls: true }, async () => {

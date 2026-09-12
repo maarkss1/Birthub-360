@@ -31,15 +31,15 @@ somente leitura contra produção; testes destrutivos rodados só em ambiente is
 
 ## 1. Arquitetura operacional real (confirmada via API, não por manifest)
 
-| Camada | O que existe de verdade | Evidência |
-|---|---|---|
-| Compute | Render, serviço `prospector-atlas` (`srv-d9qtn8bm8hqs7395qtpg`), `web_service`, branch `main`, `autoDeploy: commit`, plano `free` (instância), região `oregon` | `list_services`/`get_service` (MCP Render) |
-| Worker dedicado | Declarado em `render.yaml` (`type: worker`, `prospector-atlas-worker`) mas **não existe no Render de verdade** — só 4 serviços no workspace, nenhum é este worker | `list_services` retorna 4 serviços; nenhum com este nome/tipo (confirma achado já registrado na Fase Final 2 e no RUNBOOK) |
-| Banco | Supabase, projeto `atlasgr-prospector-production` (`hzttamzvokacmcnrfkrm`), Postgres 17.6, `ACTIVE_HEALTHY`, região `sa-east-1` | `list_projects`/`get_project` (MCP Supabase) |
-| Plano do banco | **`free`** (organização `MaarksN's Org`, `kslzukzodzexkqfsuszn`) | `get_organization` (MCP Supabase) — achado central da seção 2 |
-| Vercel | `vercel.json` existe no repositório e há um App do Vercel instalado no GitHub gerando preview de cada PR (confirmado nesta sessão pelos comentários automáticos do bot em PRs) — mas **não é o caminho de produção**. `docs/deploy/producao.md` documenta a decisão explícita de não usar Vercel (cookies cross-domain quebrariam o Better Auth). `vercel.json` é manifesto órfão/histórico: gera preview visual, não serve produção. Registrado para não confundir um futuro incidente ("por que o Vercel mostra uma versão diferente?" — resposta: é só preview de PR, nunca é onde o tráfego real está). | `docs/deploy/producao.md`, comentários do Vercel bot no PR #144 |
-| Migrations | Prisma `migrate deploy` roda a cada boot via `startCommand`; `_prisma_migrations` real da produção consultado via SQL direto (não confiando no `list_migrations` do MCP Supabase, que é o ledger do Supabase CLI — não usado neste projeto, que só usa Prisma) — última migration aplicada `20260817134959_onda11_db_cleanup`, `finished_at` batendo com o commit mais recente do repositório. **Produção está em dia com o schema do código.** | `SELECT ... FROM _prisma_migrations` via MCP Supabase, comparado a `prisma/migrations/` do repo |
-| Segurança do banco | `get_advisors` (security): só 2 achados de severidade baixa — `_prisma_migrations` com RLS habilitado sem policy (tabela de sistema, não tenant, não é risco real) e extensão `vector` instalada no schema `public` (higiene, não vulnerabilidade). Nenhum HIGH/CRITICAL. | `get_advisors` (MCP Supabase) |
+| Camada             | O que existe de verdade                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Evidência                                                                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Compute            | Render, serviço `prospector-atlas` (`srv-d9qtn8bm8hqs7395qtpg`), `web_service`, branch `main`, `autoDeploy: commit`, plano `free` (instância), região `oregon`                                                                                                                                                                                                                                                                                                                                                                                                                                              | `list_services`/`get_service` (MCP Render)                                                                                 |
+| Worker dedicado    | Declarado em `render.yaml` (`type: worker`, `prospector-atlas-worker`) mas **não existe no Render de verdade** — só 4 serviços no workspace, nenhum é este worker                                                                                                                                                                                                                                                                                                                                                                                                                                           | `list_services` retorna 4 serviços; nenhum com este nome/tipo (confirma achado já registrado na Fase Final 2 e no RUNBOOK) |
+| Banco              | Supabase, projeto `atlasgr-prospector-production` (`hzttamzvokacmcnrfkrm`), Postgres 17.6, `ACTIVE_HEALTHY`, região `sa-east-1`                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `list_projects`/`get_project` (MCP Supabase)                                                                               |
+| Plano do banco     | **`free`** (organização `MaarksN's Org`, `kslzukzodzexkqfsuszn`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `get_organization` (MCP Supabase) — achado central da seção 2                                                              |
+| Vercel             | `vercel.json` existe no repositório e há um App do Vercel instalado no GitHub gerando preview de cada PR (confirmado nesta sessão pelos comentários automáticos do bot em PRs) — mas **não é o caminho de produção**. `docs/deploy/producao.md` documenta a decisão explícita de não usar Vercel (cookies cross-domain quebrariam o Better Auth). `vercel.json` é manifesto órfão/histórico: gera preview visual, não serve produção. Registrado para não confundir um futuro incidente ("por que o Vercel mostra uma versão diferente?" — resposta: é só preview de PR, nunca é onde o tráfego real está). | `docs/deploy/producao.md`, comentários do Vercel bot no PR #144                                                            |
+| Migrations         | Prisma `migrate deploy` roda a cada boot via `startCommand`; `_prisma_migrations` real da produção consultado via SQL direto (não confiando no `list_migrations` do MCP Supabase, que é o ledger do Supabase CLI — não usado neste projeto, que só usa Prisma) — última migration aplicada `20260817134959_onda11_db_cleanup`, `finished_at` batendo com o commit mais recente do repositório. **Produção está em dia com o schema do código.**                                                                                                                                                             | `SELECT ... FROM _prisma_migrations` via MCP Supabase, comparado a `prisma/migrations/` do repo                            |
+| Segurança do banco | `get_advisors` (security): só 2 achados de severidade baixa — `_prisma_migrations` com RLS habilitado sem policy (tabela de sistema, não tenant, não é risco real) e extensão `vector` instalada no schema `public` (higiene, não vulnerabilidade). Nenhum HIGH/CRITICAL.                                                                                                                                                                                                                                                                                                                                   | `get_advisors` (MCP Supabase)                                                                                              |
 
 ## 2. Backup e Restore — P0 encontrado
 
@@ -248,11 +248,13 @@ VEREDITO: BLOCKED (pelo P0 de backup de produção)
 ## 8. P0/P1 — estado final desta fase
 
 **P0:**
+
 1. **Banco de produção (Supabase, plano free) não tem nenhum backup automático, e o repositório não
    tem nenhuma automação apontando `scripts/backup.sh` para produção.** RPO efetivo: sem limite
    conhecido. Este é o bloqueador real da Fase Final 3.
 
 **P1:**
+
 - Sem Alertmanager configurado — alertas do Prometheus não notificam ninguém (débito já
   documentado, não piorado nesta rodada).
 - Métrica HTTP 5xx (`HighErrorRate5xx`) ainda não instrumentada (débito do Agente 01, já
@@ -280,6 +282,7 @@ recupera de uma perda de banco porque não há de onde recuperar.
 **Bloqueador exato para reabrir esta fase — decisão do dono do repositório, não técnica:**
 
 Duas rotas possíveis (custo/arquitetura, não decido isso sozinho):
+
 1. **Upgrade do plano Supabase** (`free` → `Pro` ou superior) — ativa backup diário gerenciado e,
    dependendo do tier, PITR — a rota mais simples, sem escrever nenhuma automação nova.
 2. **Backup automatizado próprio**: um workflow agendado (GitHub Actions `schedule:`, ou um cron
@@ -307,7 +310,7 @@ Supabase). Entregue nesta sessão:
    e diferente do papel `prospector_app` da aplicação, que nunca tem `BYPASSRLS`),
    `CONNECTION LIMIT 3`. `GRANT SELECT` em todas as tabelas existentes +
    `ALTER DEFAULT PRIVILEGES` para tabelas futuras. Comentário no próprio papel (`COMMENT ON
-   ROLE`) documenta o propósito e a instrução de rotação. Confirmado via `pg_roles`
+ROLE`) documenta o propósito e a instrução de rotação. Confirmado via `pg_roles`
    (`rolcanlogin=true`, `rolbypassrls=true`, `rolconnlimit=3`).
 2. **Workflow** `.github/workflows/backup-production.yml`: `pg_dump` diário (05:00 UTC) contra
    produção → `gzip` → criptografia GPG simétrica (AES256) antes de sair do runner → upload para
@@ -318,8 +321,9 @@ Supabase). Entregue nesta sessão:
 
 **Não executado nesta sessão, depende de ação do dono do repositório** (fora do alcance de
 qualquer ferramenta disponível aqui):
+
 - Habilitar R2 no dashboard da Cloudflare (a API retorna `403 — Please enable R2 through the
-  Cloudflare Dashboard`, confirmado tentando `r2_buckets_list`/`r2_bucket_create` nesta sessão —
+Cloudflare Dashboard`, confirmado tentando `r2_buckets_list`/`r2_bucket_create` nesta sessão —
   não é algo que a API permite ativar).
 - Depois de habilitado, eu crio o bucket via API (`r2_bucket_create`, já disponível nesta sessão)
   — nome planejado: `prospector-atlas-backups`.

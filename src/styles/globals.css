@@ -1,10 +1,10 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 /* IBM Plex Mono — números tabulares (KPIs, valores em R$, métricas de indicador). Carregado via
    Google Fonts CSS2 (não self-hosted como Inter/Bodoni Moda abaixo) porque cobre só dígitos/
    pontuação/moeda em contextos pontuais, não texto corrido — não vale reproduzir na mão o
    unicode-range
    subsetting que o endpoint já resolve. */
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap');
 
 /* Birth Hub 360 — famílias tipográficas do brand book (p. 06 "Typography"),
    self-hosted a partir dos .woff2 originais em `public/fonts/`:
@@ -29,43 +29,49 @@
 
 /* latin */
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/inter-latin.woff2") format("woff2");
+  src: url('/fonts/inter-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/inter-latin-ext.woff2") format("woff2");
+  src: url('/fonts/inter-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
 }
 /* latin */
 @font-face {
-  font-family: "Bodoni Moda";
+  font-family: 'Bodoni Moda';
   font-style: normal;
   font-weight: 400 900;
   font-display: swap;
-  src: url("/fonts/bodoni-moda-latin.woff2") format("woff2");
+  src: url('/fonts/bodoni-moda-latin.woff2') format('woff2');
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
-  font-family: "Bodoni Moda";
+  font-family: 'Bodoni Moda';
   font-style: normal;
   font-weight: 400 900;
   font-display: swap;
-  src: url("/fonts/bodoni-moda-latin-ext.woff2") format("woff2");
+  src: url('/fonts/bodoni-moda-latin-ext.woff2') format('woff2');
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
 }
 
 :root {
@@ -179,7 +185,7 @@
   --shadow-nav-value: 12px 0 34px -28px rgba(26, 21, 19, 0.45);
   --shadow-nav-active-value: 0 10px 26px -14px color-mix(in srgb, var(--brand) 52%, black);
   --radius-nav-item-value: 10px;
-  --font-brand-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-brand-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   /* Bodoni Moda é a família de display do brand book (p. 06) — um Didone de alto
      contraste, papel bem diferente do Montserrat que ocupava este token antes
      (uma grotesca, praticamente idêntica ao --font-brand-sans, de modo que
@@ -187,7 +193,7 @@
      de fato distintas: serif editorial para título, sans para interface. Como
      Bodoni Moda é serifada e de contraste alto, ela é para DISPLAY — não use
      `font-display` em corpo de texto, tabela ou rótulo pequeno. */
-  --font-brand-display: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  --font-brand-display: 'Bodoni Moda', Georgia, 'Times New Roman', serif;
 }
 
 .dark {
@@ -244,7 +250,7 @@
 @theme {
   --font-sans: var(--font-brand-sans);
   --font-display: var(--font-brand-display);
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
 
   /* Paleta oficial Birth Hub 360 (brand book, p. 07). Substitui os pares de
      tokens por marca que existiam aqui (--color-atlas-* / --color-totaltrac*),
@@ -571,13 +577,13 @@
 
   button,
   a,
-  [role="button"] {
+  [role='button'] {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   button:active,
   a:active,
-  [role="button"]:active {
+  [role='button']:active {
     transform: scale(0.97);
   }
 

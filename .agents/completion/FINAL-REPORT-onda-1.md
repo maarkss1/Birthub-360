@@ -34,6 +34,7 @@ backend/frontend/integrações-IA/testes-infra/segurança, 45 achados classifica
 Ver `.agents/completion/00-inventario.md`.
 
 **Onda 1 — Fundação** (3 especialistas + remediação direta):
+
 - **Plataforma/Segurança (01)**: RLS aplicado a 2 pontos de SQL cru (vectorStore RAG, vínculo
   WhatsApp→Contato); enriquecimento em lote deixa de mentir sucesso sem Redis; scanner de leads
   frios corrigido para rodar dentro do contexto de tenant; fallback de tenant via header removido
@@ -48,6 +49,7 @@ Ver `.agents/completion/00-inventario.md`.
 
 **Correções diretas do orquestrador** (fora do escopo dos 3 especialistas, achadas durante
 saneamento/integração):
+
 - Ambiente quebrado no `main`: `npm install` falhava (ESLint 10 × jsx-a11y incompatível), JSX
   inválido quebrando o typecheck inteiro, BullMQ 6 sem migração (8 agendadores recorrentes nunca
   agendariam nada), `@bull-board` dessincronizado, `eslint-plugin-react-hooks` v7 introduzindo 60
@@ -66,6 +68,7 @@ saneamento/integração):
 ## Segurança — achados e evidência
 
 **6 bloqueadores P0 de segredo/PII versionado, todos remediados:**
+
 1. Chave real da Bland AI (dispara ligações pagas) — script removido.
 2. Telefone pessoal real de titulares (LGPD) em 7 scripts one-off — removidos.
 3. Tokens reais de webhook Bitrix24 (AtlasGR + TotalTrac) — a URL É a credencial — removidos de
@@ -76,6 +79,7 @@ saneamento/integração):
    commit `0c6a6dfd`, enviado ao GitHub.
 
 **⚠️ AÇÃO EXTERNA OBRIGATÓRIA — impossível resolver via código:**
+
 - Rotacionar a chave Bland AI e os 2 webhooks Bitrix24 (considerar comprometidos).
 - Decidir sobre reescrita de histórico git para remover `backups/prospector-*.dump` (dado pessoal
   real, ainda recuperável no histórico) — decisão humana, ver `/AGENTS.md`.
@@ -89,16 +93,16 @@ saneamento/integração):
 
 ## QA — resultado dos gates (branch `fable/finalizacao-plataforma`, worktree isolado)
 
-| Gate | Baseline (main, início da sessão) | Resultado final |
-|---|---|---|
-| `npm install` | ❌ ERESOLVE | ✅ |
-| `npx tsc --noEmit` | ❌ 15 erros | ✅ 0 erros |
-| `npm run lint` | ❌ 61 erros | ✅ 0 erros, 101 warnings (sem regressão) |
-| `test:unit` | ❌ 2 falhas | ✅ 672/672 |
-| `test:integration` | ⛔ nunca rodava (Docker inacessível) | ✅ 43/43 |
-| `test:e2e` | ⛔ nunca rodava | ✅ 42/43 (1 flake confirmado 3/3 em isolamento) |
-| `npm audit --audit-level=high` | ❌ 3 high | ✅ 0 high (4 moderate residuais, dev-only) |
-| `npm run build` | ✅ | ✅ |
+| Gate                           | Baseline (main, início da sessão)    | Resultado final                                 |
+| ------------------------------ | ------------------------------------ | ----------------------------------------------- |
+| `npm install`                  | ❌ ERESOLVE                          | ✅                                              |
+| `npx tsc --noEmit`             | ❌ 15 erros                          | ✅ 0 erros                                      |
+| `npm run lint`                 | ❌ 61 erros                          | ✅ 0 erros, 101 warnings (sem regressão)        |
+| `test:unit`                    | ❌ 2 falhas                          | ✅ 672/672                                      |
+| `test:integration`             | ⛔ nunca rodava (Docker inacessível) | ✅ 43/43                                        |
+| `test:e2e`                     | ⛔ nunca rodava                      | ✅ 42/43 (1 flake confirmado 3/3 em isolamento) |
+| `npm audit --audit-level=high` | ❌ 3 high                            | ✅ 0 high (4 moderate residuais, dev-only)      |
+| `npm run build`                | ✅                                   | ✅                                              |
 
 ## Infraestrutura
 
@@ -140,6 +144,7 @@ saneamento/integração):
 ## Commits desta sessão (36, ordem cronológica)
 
 Ver `git log --oneline c906e17b~1..HEAD` no worktree `wt-orchestrator`. Resumo por categoria:
+
 - 9 commits de saneamento de baseline (deps, JSX, BullMQ v6, tools de IA, PageHeader, webhook de
   voz, testes, audit, expurgo de segredos).
 - 16 commits cherry-picked da Onda 1 (5 CI/deploy, 6 RLS/LGPD, 5 produto/UX).

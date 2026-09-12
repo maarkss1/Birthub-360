@@ -33,20 +33,20 @@ mesmo espírito do `check-public-budget.mjs` do ITEM-05:
 
 ### Baseline real (medido em 2026-08-25, build limpo de `origin/main`)
 
-| Métrica | Valor |
-|---|---|
-| Arquivos em `dist/assets/` | 74 |
-| Total bruto | ~4.53 MB |
-| Total gzip | ~1.21 MB |
-| Maior chunk "de rota" genérico (recharts/`CartesianChart`) | ~100 KB gzip |
-| Chunk mais pesado do bundle | `exceljs.min-*.js`, ~268 KB gzip (lazy, só no fluxo de exportação de planilha) |
+| Métrica                                                    | Valor                                                                          |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Arquivos em `dist/assets/`                                 | 74                                                                             |
+| Total bruto                                                | ~4.53 MB                                                                       |
+| Total gzip                                                 | ~1.21 MB                                                                       |
+| Maior chunk "de rota" genérico (recharts/`CartesianChart`) | ~100 KB gzip                                                                   |
+| Chunk mais pesado do bundle                                | `exceljs.min-*.js`, ~268 KB gzip (lazy, só no fluxo de exportação de planilha) |
 
 ### Budgets atuais
 
-| Limite | Valor | Override |
-|---|---|---|
-| Total (gzip) | 1.7 MB | `BUNDLE_BUDGET_MAX_TOTAL_GZIP_BYTES` |
-| Por arquivo, genérico (gzip) | 160 KB | `BUNDLE_BUDGET_MAX_FILE_GZIP_BYTES` |
+| Limite                       | Valor  | Override                             |
+| ---------------------------- | ------ | ------------------------------------ |
+| Total (gzip)                 | 1.7 MB | `BUNDLE_BUDGET_MAX_TOTAL_GZIP_BYTES` |
+| Por arquivo, genérico (gzip) | 160 KB | `BUNDLE_BUDGET_MAX_FILE_GZIP_BYTES`  |
 
 ### Exceções documentadas (chunks legitimamente pesados)
 
@@ -54,11 +54,11 @@ Alguns chunks já excedem o teto genérico por motivo real e já isolado via `Re
 carregamento condicional (nunca entram no caminho crítico do primeiro load). Cada um tem teto
 próprio em `DOCUMENTED_LARGE_CHUNKS` (`scripts/ci/check-bundle-budget.mjs`):
 
-| Chunk | Teto (gzip) | Motivo |
-|---|---|---|
-| `exceljs.min-*.js` | 290 KB | Geração de planilha (`.xlsx`) real — só no fluxo de exportação (Billing/relatórios), nunca no load inicial. |
-| `OnboardingTour-*.js` | 260 KB | Importa `AtlasOrb` (`@react-three/fiber`/`three`) para o widget 3D do tour de boas-vindas. `App.tsx` já isola isso com `React.lazy()` **e** um gate condicional (`showOnboardingTour`) — o import só roda quando o tour aparece de verdade. |
-| `CartesianChart-*.js` | 110 KB | `recharts`, compartilhado entre várias telas de analytics/relatórios, sempre via import dinâmico por feature. |
+| Chunk                 | Teto (gzip) | Motivo                                                                                                                                                                                                                                      |
+| --------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `exceljs.min-*.js`    | 290 KB      | Geração de planilha (`.xlsx`) real — só no fluxo de exportação (Billing/relatórios), nunca no load inicial.                                                                                                                                 |
+| `OnboardingTour-*.js` | 260 KB      | Importa `AtlasOrb` (`@react-three/fiber`/`three`) para o widget 3D do tour de boas-vindas. `App.tsx` já isola isso com `React.lazy()` **e** um gate condicional (`showOnboardingTour`) — o import só roda quando o tour aparece de verdade. |
+| `CartesianChart-*.js` | 110 KB      | `recharts`, compartilhado entre várias telas de analytics/relatórios, sempre via import dinâmico por feature.                                                                                                                               |
 
 Adicionar uma exceção nova exige justificativa escrita no próprio array (padrão já usado pelo
 ITEM-05 em `public/`) — não é uma válvula de escape silenciosa.
@@ -86,13 +86,13 @@ item os transforma em algo que falha um comando/CI, em vez de ficar só em prosa
 
 ### O que é medido hoje
 
-| Endpoint | O que toca | Threshold (p95) | Origem do número |
-|---|---|---|---|
-| `GET /health/live` | Só o event loop do Node (sem I/O) | < 100ms | Endpoint síncrono e trivial — não deveria nunca chegar perto do teto transacional. |
-| `GET /health/ready` | Postgres (`SELECT 1`) + Redis (`PING`, quando filas habilitadas) — ver `server.ts` | < 500ms | `docs/SRE.md` 1.2 (latência transacional, P95 < 500ms), aplicado de forma conservadora ao endpoint mais próximo de dependência externa real que pode ser exercitado sem autenticação. |
-| `GET /api/leads` (pipeline, paginado/filtrado) | `authenticateToken` → `getSession()` → `requireTenant` → RLS Postgres → listagem paginada | p50<200ms / p95<500ms / p99<800ms | `docs/SRE.md` 1.2 (P95<500ms transacional) + teto de "Aviso" do mesmo documento (P95>800ms) usado como teto de p99. Onda 42, ver relatório abaixo. |
-| `GET /api/companies` (busca) | Mesma cadeia de middleware + busca por `q` | p50<200ms / p95<500ms / p99<800ms | Idem. |
-| `POST /api/activities` (escrita) | Mesma cadeia + `validateRequest` + INSERT | p50<200ms / p95<500ms / p99<800ms | Idem. |
+| Endpoint                                       | O que toca                                                                                | Threshold (p95)                   | Origem do número                                                                                                                                                                      |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /health/live`                             | Só o event loop do Node (sem I/O)                                                         | < 100ms                           | Endpoint síncrono e trivial — não deveria nunca chegar perto do teto transacional.                                                                                                    |
+| `GET /health/ready`                            | Postgres (`SELECT 1`) + Redis (`PING`, quando filas habilitadas) — ver `server.ts`        | < 500ms                           | `docs/SRE.md` 1.2 (latência transacional, P95 < 500ms), aplicado de forma conservadora ao endpoint mais próximo de dependência externa real que pode ser exercitado sem autenticação. |
+| `GET /api/leads` (pipeline, paginado/filtrado) | `authenticateToken` → `getSession()` → `requireTenant` → RLS Postgres → listagem paginada | p50<200ms / p95<500ms / p99<800ms | `docs/SRE.md` 1.2 (P95<500ms transacional) + teto de "Aviso" do mesmo documento (P95>800ms) usado como teto de p99. Onda 42, ver relatório abaixo.                                    |
+| `GET /api/companies` (busca)                   | Mesma cadeia de middleware + busca por `q`                                                | p50<200ms / p95<500ms / p99<800ms | Idem.                                                                                                                                                                                 |
+| `POST /api/activities` (escrita)               | Mesma cadeia + `validateRequest` + INSERT                                                 | p50<200ms / p95<500ms / p99<800ms | Idem.                                                                                                                                                                                 |
 
 `http_req_failed` tem threshold global de `rate<0.01` (falha se mais de 1% das requisições
 falharem) nos dois scripts.
@@ -100,6 +100,7 @@ falharem) nos dois scripts.
 ### Gate de CI
 
 `.github/workflows/endpoint-latency-budget.yml`:
+
 1. Sobe Postgres + Redis (mesmos service containers de `ci.yml`).
 2. Instala dependências, gera Prisma Client, roda migrations, monta `.env.test` (com
    `API_RATE_LIMIT_MAX` elevado — ver comentário no próprio workflow: o cenário autenticado sozinho

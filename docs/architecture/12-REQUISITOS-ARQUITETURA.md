@@ -117,36 +117,36 @@ erDiagram
 SUPER_ADMIN/SDR/CLOSER) nunca ligado a nenhuma rota; foi eliminado antes desta mudança (comentário
 no topo do próprio arquivo) — **não recriar um terceiro sistema**.
 
-| Papel | Nível | Descrição |
-| --- | --- | --- |
-| `ADMIN` | 100 | Acesso total à própria organização, inclusive configuração/segurança |
-| `GESTOR` | 75 | Gestão comercial — vê e edita tudo, exceto administração da conta |
-| `VENDEDOR` | 50 | Opera seu próprio pipeline — cria/edita, não apaga nem administra |
-| `VISUALIZADOR` | 10 | Somente leitura + pode relatar problema |
+| Papel          | Nível | Descrição                                                            |
+| -------------- | ----- | -------------------------------------------------------------------- |
+| `ADMIN`        | 100   | Acesso total à própria organização, inclusive configuração/segurança |
+| `GESTOR`       | 75    | Gestão comercial — vê e edita tudo, exceto administração da conta    |
+| `VENDEDOR`     | 50    | Opera seu próprio pipeline — cria/edita, não apaga nem administra    |
+| `VISUALIZADOR` | 10    | Somente leitura + pode relatar problema                              |
 
 `hasRequiredRole` compara por nível: satisfaz qualquer checagem cujo papel mínimo exigido seja
 igual ou inferior ao do usuário. Matriz por módulo (levantada diretamente do código —
 `grep -rn "requireRole(" src`, não de memória):
 
-| Módulo / Rota | Leitura | Escrita | Exclusão / ação sensível |
-| --- | --- | --- | --- |
-| Companies / Contacts | todos autenticados do tenant | ADMIN, GESTOR, VENDEDOR | ADMIN, GESTOR |
-| Leads / CRM 360 (mover estágio, converter) | todos | ADMIN, GESTOR, VENDEDOR | gestão: ADMIN, GESTOR |
-| Activities | todos | ADMIN, GESTOR, VENDEDOR | ADMIN, GESTOR |
-| Notes | todos | ADMIN, GESTOR, VENDEDOR | ADMIN, GESTOR |
-| Knowledge (RAG) | todos | ADMIN, GESTOR, VENDEDOR | ADMIN, GESTOR |
-| Prompts (override por tenant) | todos | — | ADMIN, GESTOR |
-| Team (gestão de usuários) | ADMIN | ADMIN | ADMIN |
-| LGPD (exclusão/exportação de titular) | todos (export) | — | ADMIN, GESTOR (erase) |
-| Comercial Inteligente (executivo) | ADMIN, GESTOR | ADMIN, GESTOR | ADMIN, GESTOR |
-| AI Settings (`/ai-settings`) | todos | ADMIN | ADMIN |
-| Integrações (Bitrix/WhatsApp/3CX/Google) | todos | ADMIN, GESTOR, VENDEDOR (ações) | ADMIN, GESTOR (config) |
-| **Feature Flags** (novo) | todos autenticados | — | **ADMIN** (override do próprio tenant) |
-| **Bug Reports** (novo) | — | **todos autenticados** (criar relato) | **ADMIN, GESTOR** (listar/triagem) |
+| Módulo / Rota                              | Leitura                      | Escrita                               | Exclusão / ação sensível               |
+| ------------------------------------------ | ---------------------------- | ------------------------------------- | -------------------------------------- |
+| Companies / Contacts                       | todos autenticados do tenant | ADMIN, GESTOR, VENDEDOR               | ADMIN, GESTOR                          |
+| Leads / CRM 360 (mover estágio, converter) | todos                        | ADMIN, GESTOR, VENDEDOR               | gestão: ADMIN, GESTOR                  |
+| Activities                                 | todos                        | ADMIN, GESTOR, VENDEDOR               | ADMIN, GESTOR                          |
+| Notes                                      | todos                        | ADMIN, GESTOR, VENDEDOR               | ADMIN, GESTOR                          |
+| Knowledge (RAG)                            | todos                        | ADMIN, GESTOR, VENDEDOR               | ADMIN, GESTOR                          |
+| Prompts (override por tenant)              | todos                        | —                                     | ADMIN, GESTOR                          |
+| Team (gestão de usuários)                  | ADMIN                        | ADMIN                                 | ADMIN                                  |
+| LGPD (exclusão/exportação de titular)      | todos (export)               | —                                     | ADMIN, GESTOR (erase)                  |
+| Comercial Inteligente (executivo)          | ADMIN, GESTOR                | ADMIN, GESTOR                         | ADMIN, GESTOR                          |
+| AI Settings (`/ai-settings`)               | todos                        | ADMIN                                 | ADMIN                                  |
+| Integrações (Bitrix/WhatsApp/3CX/Google)   | todos                        | ADMIN, GESTOR, VENDEDOR (ações)       | ADMIN, GESTOR (config)                 |
+| **Feature Flags** (novo)                   | todos autenticados           | —                                     | **ADMIN** (override do próprio tenant) |
+| **Bug Reports** (novo)                     | —                            | **todos autenticados** (criar relato) | **ADMIN, GESTOR** (listar/triagem)     |
 
 O desenho de RBAC dos dois módulos novos segue o mesmo raciocínio de menor privilégio já usado no
-resto do sistema: quem pode *fazer* uma ação sensível (alterar comportamento de toda a
-organização; ver relatos de outros usuários) é sempre ADMIN/GESTOR; quem só *usa* uma
+resto do sistema: quem pode _fazer_ uma ação sensível (alterar comportamento de toda a
+organização; ver relatos de outros usuários) é sempre ADMIN/GESTOR; quem só _usa_ uma
 funcionalidade (ler flags resolvidas; relatar um bug) é qualquer papel autenticado — inclusive
 VISUALIZADOR, de propósito, no caso de Bug Reports (restringir quem pode relatar um problema seria
 o oposto do objetivo do módulo).
@@ -229,6 +229,7 @@ redeploy de qualquer forma; o sistema novo cobre o caso que faltava: um ADMIN li
 algo em runtime, pela própria interface.
 
 **Desenho**:
+
 - Catálogo de chaves conhecidas declarado em código (`src/features/feature-flags/featureFlags.registry.ts`,
   revisado em PR) — sincronizado com a tabela `FeatureFlag` a cada boot do servidor
   (`featureFlagsService.syncRegistry()`, idempotente). Uma organização **não pode criar uma chave
@@ -255,6 +256,7 @@ serviço de error tracking (Sentry etc., que este projeto conscientemente não u
 `performance/SKILL.md` sobre não adicionar dependência sem necessidade real).
 
 **Desenho**:
+
 - Botão flutuante global (`src/components/ui/BugReportButton.tsx`), montado em `MainLayout.tsx`
   (canto inferior esquerdo, para não colidir com `AtlasChatbotTrigger`/`VoiceCommandWidget` no
   canto direito), visível para todo usuário autenticado — controlado pelo próprio sistema de
@@ -355,20 +357,20 @@ Processo já existente, não recriado:
 
 ## Resumo de status
 
-| # | Requisito | Status | Onde |
-| --- | --- | --- | --- |
-| 1 | PRD | ✅ Consolidado neste documento | seção 1 |
-| 2 | UML (componentes + ER) | ✅ Novo, neste documento | seção 2 |
-| 3 | Matriz RBAC | ✅ Levantada do código real, neste documento | seção 3 |
-| 4 | Multi-tenant | ✅ Já implementado, reusado pelos módulos novos | `src/lib/tenant-prisma.ts` |
-| 5 | Travas de banco / RLS | ✅ Já implementado + estendido | migration `20260815030000_*` |
-| 6 | Sem segredo no código | ✅ Já implementado; gap de Vault conhecido e aceito | `src/config/env.ts` |
-| 7 | Feature Flags | ✅ **Novo nesta mudança** | `src/features/feature-flags/` |
-| 8 | Reportar Problemas | ✅ **Novo nesta mudança** | `src/features/bug-reports/` |
-| 9 | Testes automáticos | ✅ Unit + integração + e2e/acessibilidade verdes no CI (PR #127) | `tests/unit/`, `tests/integration/`, `.github/workflows/ci.yml` |
-| 10 | Auditoria de segurança/pentest | ✅ Processo já existe; docs de segurança corrigidos nesta mudança | `.github/workflows/ci.yml`, `docs/security/` |
-| 11 | WAF / Rate limiting | ✅ Já implementado + limiter dedicado novo | `server.ts` |
-| 12 | HTTPS / Criptografia | ✅ Já implementado; `BugReport.context` sanitizado | `docs/deploy/producao.md` |
+| #   | Requisito                      | Status                                                            | Onde                                                            |
+| --- | ------------------------------ | ----------------------------------------------------------------- | --------------------------------------------------------------- |
+| 1   | PRD                            | ✅ Consolidado neste documento                                    | seção 1                                                         |
+| 2   | UML (componentes + ER)         | ✅ Novo, neste documento                                          | seção 2                                                         |
+| 3   | Matriz RBAC                    | ✅ Levantada do código real, neste documento                      | seção 3                                                         |
+| 4   | Multi-tenant                   | ✅ Já implementado, reusado pelos módulos novos                   | `src/lib/tenant-prisma.ts`                                      |
+| 5   | Travas de banco / RLS          | ✅ Já implementado + estendido                                    | migration `20260815030000_*`                                    |
+| 6   | Sem segredo no código          | ✅ Já implementado; gap de Vault conhecido e aceito               | `src/config/env.ts`                                             |
+| 7   | Feature Flags                  | ✅ **Novo nesta mudança**                                         | `src/features/feature-flags/`                                   |
+| 8   | Reportar Problemas             | ✅ **Novo nesta mudança**                                         | `src/features/bug-reports/`                                     |
+| 9   | Testes automáticos             | ✅ Unit + integração + e2e/acessibilidade verdes no CI (PR #127)  | `tests/unit/`, `tests/integration/`, `.github/workflows/ci.yml` |
+| 10  | Auditoria de segurança/pentest | ✅ Processo já existe; docs de segurança corrigidos nesta mudança | `.github/workflows/ci.yml`, `docs/security/`                    |
+| 11  | WAF / Rate limiting            | ✅ Já implementado + limiter dedicado novo                        | `server.ts`                                                     |
+| 12  | HTTPS / Criptografia           | ✅ Já implementado; `BugReport.context` sanitizado                | `docs/deploy/producao.md`                                       |
 
 ## Follow-ups — status
 
@@ -396,13 +398,13 @@ Processo já existente, não recriado:
      não-commit (gitleaks no CI), mas não cobre: rotação automática, auditoria de acesso a
      segredo individual, nem short-lived credentials.
    - **Opções avaliadas**:
-     - *HashiCorp Vault* — mais completo (dynamic secrets, leasing), mas exige operar um
+     - _HashiCorp Vault_ — mais completo (dynamic secrets, leasing), mas exige operar um
        serviço adicional com HA própria; desproporcional ao tamanho atual da equipe/infra
        (Render + Supabase, sem Kubernetes).
-     - *AWS Secrets Manager / GCP Secret Manager* — só faz sentido se a infra migrar para esse
+     - _AWS Secrets Manager / GCP Secret Manager_ — só faz sentido se a infra migrar para esse
        provedor de nuvem; hoje o deploy é Render, que não integra nativamente com nenhum dos
        dois sem trabalho extra de rede/IAM.
-     - *Doppler / Infisical* — SaaS gerenciado, menor custo operacional, integra com Render via
+     - _Doppler / Infisical_ — SaaS gerenciado, menor custo operacional, integra com Render via
        env var sync ou CLI no build; mais próximo do modelo atual (env var), com rotação e
        auditoria de acesso como cima.
    - **Decisão**: Infisical (menor custo de adoção sobre a infra atual do que Vault) — ver

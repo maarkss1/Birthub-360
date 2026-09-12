@@ -7,7 +7,10 @@ import { setupDI } from '../../src/shared/di/setup';
 import { runAgentCatalogImport } from '../../scripts/import-agent-catalog';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
-import { assignJobRole, getJobRoleByCode } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  assignJobRole,
+  getJobRoleByCode,
+} from '../../src/features/job-roles/services/jobRole.service';
 import { runAgentExecution } from '../../src/features/job-roles/services/agentRuntime.service';
 import {
   MemoryServiceError,
@@ -24,7 +27,11 @@ const ORG_ID = 'test-org-id';
 const OTHER_ORG_ID = 'test-org-id-2';
 
 let userCounter = 0;
-async function makeUserWithJobRole(jobRoleCode: string | null, userRole = 'SDR', organizationId = ORG_ID) {
+async function makeUserWithJobRole(
+  jobRoleCode: string | null,
+  userRole = 'SDR',
+  organizationId = ORG_ID,
+) {
   userCounter++;
   const user = await prisma.user.create({
     data: {
@@ -104,7 +111,9 @@ describe('Memória + Aprendizado Contínuo Governado (PROMPT 9)', () => {
     await prisma.agentExecution.deleteMany({ where: { organizationId: ORG_ID } });
     await prisma.auditLog.deleteMany({ where: { entity: 'LearningCandidate' } });
     await prisma.auditLog.deleteMany({ where: { entity: { contains: 'MemoryRecord' } } });
-    await prisma.userJobRole.deleteMany({ where: { organizationId: { in: [ORG_ID, OTHER_ORG_ID] } } });
+    await prisma.userJobRole.deleteMany({
+      where: { organizationId: { in: [ORG_ID, OTHER_ORG_ID] } },
+    });
     await prisma.user.deleteMany({ where: { email: { contains: 'memory.test' } } });
     await prisma.agentCapabilityGrant.deleteMany({
       where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },

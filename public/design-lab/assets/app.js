@@ -1,48 +1,660 @@
-const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const state={page:location.pathname.includes('components-v2')?'components':'command',view:'after',workspace:'Overview',crm:'Table',metric:'Receita',selected:null,done:new Set(),actions:[],sort:false,dense:false,filter:'',audit:'ALL',recent:[],motion:{duration:420,easing:'standard',stiffness:180,damping:20,glow:12,magnetic:3}};
-const deals=[{name:'Grupo Porto Real',value:84000,stage:'Negociação',risk:'Alto',owner:'Ana Martins',days:8,next:'Alinhar com o decisor',prob:65},{name:'Nexus Tecnologia',value:68000,stage:'Proposta',risk:'Alto',owner:'Lucas Silva',days:6,next:'Revisar escopo técnico',prob:55},{name:'Vértice Logística',value:32000,stage:'Negociação',risk:'Médio',owner:'Marina Costa',days:5,next:'Confirmar cronograma',prob:70},{name:'Aurora Energia',value:126000,stage:'Qualificação',risk:'Baixo',owner:'Ana Martins',days:2,next:'Agendar diagnóstico',prob:35}];
-const money=n=>'R$ '+n.toLocaleString('pt-BR');
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function mobileNav(){return '<nav class="only-mobile mobile-nav"><a href="/design-lab/command-language">Command</a><a href="/design-lab/components-v2">Components</a><button data-page="motion">Motion</button><button data-page="audit">Auditoria</button><button data-page="patterns">Padrões</button></nav>'}
-function head(title,sub,controls=''){return `${mobileNav()}<div class="page-head"><div><div class="eyebrow">BIRTHUB DESIGN LAB / 2026</div><h1>${title}<span class="version">EXPERIMENTAL</span></h1><p>${sub}</p></div>${controls}</div>`}
-function ribbon(){return `<div class="ribbon" aria-label="Métricas estratégicas">${[['Receita','R$ 1,28M','↑ 14,2% vs. agosto'],['Forecast','R$ 1,46M','91,3% da meta'],['Gap','R$ 140K','para a meta de R$ 1,60M'],['Coverage','3,1×','cobertura de pipeline']].map(([l,v,s])=>`<button class="metric ${state.metric===l?'active':''}" data-metric="${l}" aria-pressed="${state.metric===l}"><span class="label">${l.toUpperCase()}</span><strong>${v}</strong><small class="${l==='Receita'?'positive':''}">${s}</small>${l==='Receita'?'<svg class="spark" viewBox="0 0 70 25"><path d="M1 22L10 18 18 20 27 10 36 13 44 6 55 9 68 1" fill="none" stroke="#83c6ad" stroke-width="1.5"/></svg>':''}</button>`).join('')}</div>`}
-function switcher(items,active,attr='workspace'){return `<nav class="workspace-switcher" aria-label="Alternar ${attr}">${items.map(x=>`<button data-${attr}="${x}" class="${active===x?'active':''}" aria-pressed="${active===x}">${x}</button>`).join('')}</nav>`}
-function chart(){return `<div class="chart-wrap"><div id="chart-tip" class="chart-tip">10 set · realizado R$ 1,28M</div><svg class="trajectory" viewBox="0 0 650 220" role="img" aria-label="Receita acumulada: realizado em 10 de setembro de 1,28 milhão; projeção até 30 de setembro de 1,46 milhão; meta de 1,60 milhão"><g stroke="#263040" stroke-width="1"><path d="M40 35H615M40 85H615M40 135H615M40 185H615"/></g><g><text x="3" y="38">1,6M</text><text x="3" y="88">1,4M</text><text x="3" y="138">1,2M</text><text x="3" y="188">1,0M</text><text x="42" y="213">01 set</text><text x="214" y="213">10 set</text><text x="392" y="213">20 set</text><text x="576" y="213">30 set</text></g><path d="M40 35H615" stroke="#8b95a5" stroke-dasharray="4 5"/><text x="560" y="25">META</text><path d="M232 115L410 84 610 52 610 94 410 113Z" fill="#5b21b61b"/><path d="M40 170L104 157 170 137 232 115" fill="none" stroke="#d4af37" stroke-width="2.5"/><path d="M232 115L410 100 610 70" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="5 5"/><path d="M40 180L105 169 170 155 232 139 410 117 610 100" fill="none" stroke="#76aeef" stroke-width="1.5" opacity=".7"/><path d="M232 35V188" stroke="#d4af3735"/>${[[40,170,'01 set · R$ 1,06M'],[104,157,'04 set · R$ 1,11M'],[170,137,'07 set · R$ 1,19M'],[232,115,'10 set · R$ 1,28M'],[410,100,'20 set · projeção R$ 1,34M'],[610,70,'30 set · projeção R$ 1,46M']].map(([x,y,label])=>`<circle class="chart-point" cx="${x}" cy="${y}" r="4" fill="#0c1019" stroke="#d4af37" tabindex="0" role="button" aria-label="${label}: analisar período" data-period="${label}"/>`).join('')}</svg></div><div class="chart-legend"><span><i></i>Receita / projeção</span><span><i></i>Período anterior</span><span class="iris">Faixa de incerteza</span></div>`}
-function pulse(){return `<section><div class="region-head"><h2>Pulso operacional</h2><span class="eyebrow">SETEMBRO · 01—30</span></div><div class="pulse-header"><div><strong>Crescimento com exposição concentrada</strong><p>O ritmo melhora. Três negociações exigem atenção.</p></div><span class="positive mono">+14,2%</span></div>${chart()}<div class="pulse-strip"><div><small>VELOCIDADE</small><strong>R$ 9K / dia <span class="positive">↑</span></strong></div><div><small>RITMO NECESSÁRIO</small><strong>R$ 16K / dia</strong></div><div><small>DESVIO PROJETADO</small><strong class="risk">−8,8% da meta</strong></div></div></section>`}
-function signals(){return `<div class="signals"><div class="region-head"><h2>Sinais</h2><small>03 ativos</small></div>${[{tag:'FORECAST',cls:'risk',time:'há 4 min',title:'R$ 184K estão em risco.',text:'Porto Real, Nexus e Vértice concentram 71% da exposição total de R$ 259K.',evidence:'CRM · atividades até 10 set, 09:41. Porto Real: 8 dias sem reunião; Nexus: revisão de escopo pendente; Vértice: prazo não confirmado. Confiança do modelo: 87%; não é probabilidade de ganho.',action:'Investigar exposição',id:0},{tag:'VELOCIDADE',cls:'blue',time:'há 12 min',title:'O ciclo encurtou 4 dias.',text:'De 32 para 28 dias nas 12 vendas encerradas neste mês.',evidence:'CRM · datas de criação e fechamento de 12 negócios. Amostra pequena; efeito pode mudar com novas vendas. Confiança 78%.',action:'Explorar mudança',id:1},{tag:'OPORTUNIDADE',cls:'positive',time:'há 23 min',title:'Aurora retomou o contato.',text:'Decisor respondeu após o diagnóstico. Próxima reunião ainda não marcada.',evidence:'Atividade demonstrativa · retorno registrado às 09:22. Um evento isolado não comprova intenção de compra. Confiança 72%.',action:'Abrir oportunidade',id:3}].map(s=>`<article class="signal"><div class="signal-top"><span class="${s.cls}">⌁ ${s.tag}</span><time>${s.time}</time></div><h3>${s.title}</h3><p>${s.text}</p><details><summary>Evidências e confiança</summary><p>${s.evidence}</p></details><button class="link" data-lens="${s.id}">${s.action} ↗</button></article>`).join('')}</div>`}
-function lens(){const d=state.selected===null?deals[0]:deals[state.selected];return `<div class="lens-content"><div class="lens-label">${state.selected===null?'CONTEXTO · '+state.metric.toUpperCase():'ENTIDADE · '+d.stage.toUpperCase()}</div><h3>${state.selected===null?'O que sustenta o forecast?':d.name}</h3><p>${state.selected===null?'O crescimento da receita não elimina a concentração do risco. A projeção depende de negociações com próximos passos pendentes.':`${money(d.value)} em ${d.stage.toLowerCase()}. Última atividade há ${d.days} dias. Responsável: ${d.owner}.`}</p><div class="confidence"><i></i>87% de confiança <span class="muted">· modelo demonstrativo</span></div><div class="lens-label">EVIDÊNCIAS</div><div class="evidence-row"><span>Negociações expostas</span><span>3 de 12</span></div><div class="evidence-row"><span>Valor concentrado</span><span class="mono">R$ 184K</span></div><div class="evidence-row"><span>Contato mais antigo</span><span>8 dias</span></div><details class="signal"><summary>Por que a confiança é 87%?</summary><p>Exemplo de explicação: completude dos registros, recência das atividades e consistência entre etapas. Pesos e calibração precisam ser validados no produto. Faltam intenções de compra confirmadas.</p></details><div class="next-action"><small class="gold">PRÓXIMA MELHOR AÇÃO</small><p>${d.next} para reduzir incerteza. Impacto potencial: proteger ${money(d.value)}; sem garantia de conversão.</p><button class="btn intelligence" data-decision="${state.selected??0}">✦ Preparar decisão <span>↗</span></button></div></div>`}
-function ledger(){let list=deals.map((d,i)=>({...d,i})).filter(d=>d.name.toLowerCase().includes(state.filter.toLowerCase()));if(state.metric==='Gap'||state.crm==='Risk')list=list.filter(d=>d.risk!=='Baixo');if(state.sort)list.sort((a,b)=>b.value-a.value);return `<section class="ledger"><div class="region-head"><h2>Oportunidades em foco</h2><div class="toolbar"><button class="link" data-density>${state.dense?'Confortável':'Compactar'}</button><small>${list.length} negócios</small></div></div>${switcher(['Pipeline','Table','Matrix','Focus','Forecast','Risk','Timeline'],state.crm,'crm')}<div class="toolbar" style="padding:13px 0"><input id="deal-search" aria-label="Buscar empresa" placeholder="Buscar empresa..." value="${esc(state.filter)}"><small>${state.metric==='Gap'?'Contexto: negócios expostos · ':''}Selecione uma entidade para investigar</small></div><div id="ledger-content">${crmContent(list)}</div></section>`}
-function crmContent(list){if(!list.length)return '<div class="state-demo"><h3>Nenhuma oportunidade neste filtro</h3><p>Remova o termo ou amplie o contexto.</p><button class="link" data-clear-filter>Limpar filtros</button></div>';if(state.crm==='Matrix'||state.crm==='Risk')return `<div class="matrix"><div>IMPACTO ↑</div><div>Baixo risco</div><div>Médio risco</div><div>Alto risco</div><div>&gt; R$ 60K</div><div>${list.filter(d=>d.value>60000&&d.risk==='Baixo').map(entityLink).join('')}</div><div></div><div class="high">${list.filter(d=>d.risk==='Alto').map(entityLink).join('')}</div><div>≤ R$ 60K</div><div></div><div>${list.filter(d=>d.risk==='Médio').map(entityLink).join('')}</div><div></div></div>`;if(state.crm==='Focus'){const d=list[0];return `<div class="entity-header"><small>ENTITY SURFACE / PRÓXIMA DECISÃO</small><h2>${d.name}</h2><div class="row"><span class="strategic">${money(d.value)}</span><span>${d.stage}</span><span class="risk">Risco ${d.risk.toLowerCase()}</span></div><p class="muted" style="margin-top:14px;font-size:13px">${d.next} · ${d.owner}</p><button class="link" data-entity="${d.i}">Abrir workspace da entidade ↗</button></div>`}if(state.crm==='Pipeline')return `<div class="flow">${['Qualificação','Proposta','Negociação'].map(stage=>`<div class="step"><small>${stage.toUpperCase()}</small>${list.filter(d=>d.stage===stage).map(d=>`<div class="entity-header">${entityLink(d)}<span class="mono">${money(d.value)}</span><small>Risco ${d.risk} · ${d.days}d sem atividade</small><button class="link" data-decision="${d.i}">${d.next} →</button></div>`).join('')||'<small>Sem negócios nesta etapa</small>'}</div>`).join('')}</div>`;if(state.crm==='Timeline')return `<div class="timeline">${list.map(d=>`<div>${entityLink(d)}<small>Último contato: ${10-d.days} set · ${d.stage}</small><p>${d.next}</p></div>`).join('')}</div>`;if(state.crm==='Forecast')return `<div class="table-scroll"><table><thead><tr><th>EMPRESA</th><th>VALOR</th><th>PROBABILIDADE</th><th>PONDERADO</th></tr></thead><tbody>${list.map(d=>`<tr><td>${entityLink(d)}</td><td>${money(d.value)}</td><td>${d.prob}%</td><td class="mono gold">${money(d.value*d.prob/100)}</td></tr>`).join('')}</tbody></table><p class="meta" style="margin:15px 0">Recorte de quatro negócios; não representa todo o forecast da operação. Probabilidade de ganho é diferente de confiança da inferência.</p></div>`;return `<div class="table-scroll"><table class="${state.dense?'compact':''}"><thead><tr><th>EMPRESA / PRÓXIMA AÇÃO</th><th><button data-sort>VALOR ${state.sort?'↓':'↕'}</button></th><th>ETAPA</th><th>RISCO</th><th aria-label="Ações"></th></tr></thead><tbody>${list.map(d=>`<tr class="${state.selected===d.i?'selected':''}"><td><button class="entity" data-entity="${d.i}"><strong>${d.name}</strong><small>${d.next}</small></button></td><td class="mono">${money(d.value)}</td><td>${d.stage}</td><td class="${d.risk==='Alto'?'risk':d.risk==='Baixo'?'positive':'gold'}">${d.risk}</td><td><button class="table-action link" data-lens="${d.i}" aria-label="Investigar ${d.name}">↗</button><button class="table-action" data-expand="${d.i}" aria-label="Expandir ${d.name}">⌄</button></td></tr><tr id="expand-${d.i}" hidden><td colspan="5"><div class="row between"><span>${d.owner} · ${d.days} dias sem atividade · ${d.prob}% probabilidade de ganho</span><button class="link" data-decision="${d.i}">Preparar ação →</button></div></td></tr>`).join('')}</tbody></table></div>`}
-function entityLink(d){return `<button class="link" data-entity="${d.i??deals.indexOf(d)}">${d.name} ↗</button>`}
-function queue(){const actions=[{title:'Alinhar próximo passo com Porto Real',why:'8 dias sem reunião · sinal de forecast',owner:'Ana Martins',due:'Hoje, 14h',id:'porto'},{title:'Revisar escopo da Nexus',why:'Dependência: validação técnica · proteger R$ 68K',owner:'Lucas Silva',due:'Amanhã',id:'nexus'},...state.actions];return `<section class="queue" id="execution"><div class="region-head"><h2>Fila de execução</h2><small>${actions.filter(a=>!state.done.has(a.id)).length} pendentes · demonstração local</small></div>${actions.map((a,i)=>`<div class="queue-item"><span class="index">${String(i+1).padStart(2,'0')}</span><div><strong>${a.title}</strong><small>${a.why} · <span class="gold">${a.due}</span></small></div><div class="queue-owner"><small>${a.owner}</small><small>${i===0?'Prioridade alta':'Prioridade média'}</small></div><button class="btn ${state.done.has(a.id)?'success':'execute'}" data-execute="${a.id}" ${state.done.has(a.id)?'disabled':''}>${state.done.has(a.id)?'✓ Concluído':'Executar →'}</button></div>`).join('')}<div id="activity-log" class="timeline" ${state.done.size?'':'hidden'}>${[...state.done].map(id=>`<div>Execução simulada concluída<small>${id} · tarefa registrada; resultado comercial ainda não medido.</small></div>`).join('')}</div></section>`}
-function commandPage(){return head('Command Language','Uma linguagem para perceber, decidir e agir.',`<div class="segmented" aria-label="Modo de comparação"><button data-view="before" class="${state.view==='before'?'active':''}">Before</button><button data-view="after" class="${state.view==='after'?'active':''}">After</button><button data-view="compare" class="${state.view==='compare'?'active':''}">Comparar</button></div>`)+(state.view==='compare'?comparisons():state.view==='before'?beforePage():`<div class="sectionbar"><div class="row"><h2>Central de receita</h2><small>WORKSPACE COMERCIAL</small></div><span class="meta">10 set 2026 <span class="gold">·</span> 09:45</span></div>${switcher(['Overview','Intelligence','Pipeline','Automation','Analytics'],state.workspace)}${ribbon()}<div class="command-grid"><div>${workspaceContent()}</div><aside class="context-rail" aria-label="Intelligence Lens"><div class="region-head"><h2 class="iris">✦ Intelligence Lens</h2><small>EXPLICÁVEL</small></div>${lens()}${signals()}</aside></div>`)}
-function workspaceContent(){if(state.workspace==='Intelligence')return `${pulse()}${signals()}${queue()}`;if(state.workspace==='Pipeline')return `${ledger()}${queue()}`;if(state.workspace==='Automation')return `<div class="region-head"><h2>Da decisão ao resultado</h2></div><div class="flow"><div class="step">Sinal<small>Exposição detectada</small></div><span>→</span><div class="step">Decisão<small>Priorizar contato</small></div><span>→</span><div class="step">Ação<small>Execução assistida</small></div><span>→</span><div class="step">Resultado<small>Aguardar evidência</small></div></div>${queue()}`;if(state.workspace==='Analytics')return `${pulse()}<div class="notice">Receita: realizado. Forecast: cenário modelado. Gap: diferença para a meta. Selecione um ponto do gráfico para governar o contexto temporal.</div>${ledger()}`;return `${pulse()}${ledger()}${queue()}`}
-function beforePage(){return `<div class="notice">Reconstrução representativa do catálogo fornecido. Os valores foram harmonizados com o After para comparar a hierarquia; esta não é uma captura das telas do produto.</div><div class="old"><div class="old-tabs">${['Overview','Pipeline','Analytics'].map(t=>`<div class="old-card">▦<strong>${t}</strong>Visão do módulo →</div>`).join('')}</div><div class="old-grid">${['Receita|R$ 1,28M','Forecast|R$ 1,46M','Gap|R$ 140K','Coverage|3,1×'].map(x=>`<div class="old-card">◈ ${x.split('|')[0]}<strong>${x.split('|')[1]}</strong><span class="old-badge">Atualizado</span><span> Ver detalhes →</span></div>`).join('')}</div><div class="old-card" style="background:linear-gradient(100deg,#f8ebc8,#e8e8fc)">✦ Dica da IA do Hub<strong style="font:14px Inter">3 leads não têm follow-up há mais de 5 dias.</strong></div><div class="old-grid"><div class="old-card">✓ Taxa de resposta subiu 18%</div><div class="old-card">① Ligar para o decisor até sexta</div></div><div class="old-grid">${deals.map(d=>`<div class="old-card"><span class="old-badge">${d.stage}</span><strong>${d.name}</strong>${money(d.value)}<br><span class="old-badge">Score 82</span><span class="old-badge">Bitrix</span><span class="old-badge">há ${d.days}d</span><p>↻ Converter　✦ Enriquecer</p></div>`).join('')}</div></div>`}
-function comparisons(){const old=(s)=>`<div class="old">${s}</div>`;const pairs=[['KPI Cards → MetricRibbon',old('<div class="old-grid"><div class="old-card">Receita<strong>R$ 1,28M</strong>↑14,2%</div><div class="old-card">Forecast<strong>R$ 1,46M</strong>Atualizado</div></div>'),ribbon(),'Métricas compartilham baseline e separadores. A seleção governa o contexto.'],['ContextualTip → SignalItem',old('<div class="old-card">✦ Dica da IA do Hub<p>3 leads sem follow-up há mais de 5 dias.</p></div>'),signals(),'Uma ocorrência com origem, relevância, evidência e ação.'],['FindingsList → SignalStream',old('<div class="old-card">✓ Taxa de resposta subiu 18%</div><div class="old-card">! Forecast em risco</div>'),signals(),'Fluxo ordenado por impacto e recência; evidências se expandem no próprio sinal.'],['ActionPlanSteps → ExecutionQueue',old('<div class="old-card">① Ligar para o decisor até sexta</div>'),queue(),'Responsabilidade, prazo, dependência e resultado fazem parte da ação.'],['TabNavCards → WorkspaceSwitcher',old('<div class="old-tabs"><div class="old-card">▦ Overview</div><div class="old-card">◈ Pipeline</div></div>'),switcher(['Overview','Intelligence','Pipeline','Automation'],state.workspace),'Navegação compacta com indicador contínuo.'],['Copilot + Voice + Palette → CommandDock',old('<div class="row"><div class="old-card">IA</div><div class="old-card">Voz</div><div class="old-card">Busca</div></div>'),'<button class="btn outline" data-command style="width:100%;justify-content:space-between">⌘ Pergunte, procure ou execute... <kbd>Ctrl K</kbd></button>','Uma entrada para busca, navegação, criação, IA e execução.'],['DealsGrid → OpportunityLedger',old('<div class="old-grid"><div class="old-card">Porto Real<strong>R$ 84K</strong><span class="old-badge">Negociação</span></div><div class="old-card">Nexus<strong>R$ 68K</strong><span class="old-badge">Proposta</span></div></div>'),ledger(),'Comparação tabular, seleção contextual e detalhes sob demanda.'],['KanbanCard → Entity / Opportunity',old('<div class="old-card"><strong>Grupo Porto Real</strong><span class="old-badge">Score 82</span><span class="old-badge">Bitrix</span><span class="old-badge">há 2d</span><p>↻ Converter　✦ Enriquecer</p></div>'),`<div class="entity-header"><small>NEGOCIAÇÃO · RISCO ALTO</small><h2>Grupo Porto Real</h2><span class="strategic">R$ 84.000</span><p class="muted">Próxima ação: alinhar com o decisor.</p><button class="link" data-entity="0">Abrir workspace ↗</button></div>`,'A entidade tem hierarquia própria; metadados não disputam atenção.']];return pairs.map(([title,b,a,n],i)=>`<section class="lab-section"><h2><span class="section-index">0${i+1}</span>${title}</h2><p>${n}</p><div class="comparison"><div><div class="compare-label">BEFORE · CATÁLOGO</div>${b}</div><div><div class="compare-label after">AFTER · COMMAND LANGUAGE</div>${a}</div></div></section>`).join('')}
-function render(){const names={command:'Command Language',components:'Components V2',motion:'Motion Playground',audit:'Auditoria & migração',patterns:'Biblioteca de padrões'};$('#crumb').textContent=names[state.page];$('#main').innerHTML=state.page==='command'?commandPage():state.page==='components'?componentsPage():state.page==='motion'?motionPage():state.page==='audit'?auditPage():patternsPage();$$('#side-nav a,#side-nav button').forEach(el=>{el.classList.toggle('active',(el.dataset.route||el.dataset.page)===state.page);el.title=el.textContent.trim()});setupIndicators();if(state.page==='motion')setupMotion();}
-function setupIndicators(){$$('.workspace-switcher').forEach(nav=>{const active=$('button.active',nav);if(!active)return;nav.classList.add('has-indicator');const indicator=$('.indicator',nav)||document.createElement('span');indicator.className='indicator';if(!indicator.parentElement)nav.append(indicator);indicator.style.width=active.offsetWidth+'px';indicator.style.transform=`translateX(${active.offsetLeft}px)`})}
-function toast(text,undo,error=false,actionLabel='Desfazer'){const el=document.createElement('div');el.className='toast'+(error?' error':'');const mark=document.createElement('span');mark.className=error?'risk':'positive';mark.textContent=error?'!':'✓';const msg=document.createElement('span');msg.textContent=text;el.append(mark,msg);if(undo){const b=document.createElement('button');b.textContent=actionLabel;b.onclick=()=>{undo();el.remove()};el.append(b)}const close=document.createElement('button');close.textContent='×';close.setAttribute('aria-label','Dispensar');close.onclick=()=>el.remove();el.append(close);$('#toasts').append(el);while($('#toasts').children.length>3)$('#toasts').firstChild.remove();setTimeout(()=>el.remove(),10000)}
-function navigate(page){state.page=page;history.pushState({},'',page==='components'?'/design-lab/components-v2':page==='command'?'/design-lab/command-language':'/design-lab/command-language#'+page);render();window.scrollTo(0,0)}
-document.addEventListener('click',e=>{const b=e.target.closest('button,a');if(!b)return;if(b.dataset.route){e.preventDefault();navigate(b.dataset.route)}if(b.dataset.page)navigate(b.dataset.page);if(b.dataset.view){state.view=b.dataset.view;render()}if(b.dataset.workspace){state.workspace=b.dataset.workspace;moveIndicator(b);if(state.page==='command'&&state.view==='after'){const region=$('.command-grid>div');if(region){region.innerHTML=workspaceContent();setupIndicators()}}else if($('#tab-context'))$('#tab-context').textContent='Contexto ativo: '+state.workspace}if(b.dataset.crm){state.crm=b.dataset.crm;moveIndicator(b);const list=filteredDeals();const content=$('#ledger-content');if(content)content.innerHTML=crmContent(list)}if(b.dataset.metric){state.metric=b.dataset.metric;state.selected=null;render();toast(b.dataset.metric+' governa o contexto da análise')}if(b.dataset.lens!==undefined){state.selected=+b.dataset.lens;render();if(innerWidth<960)openEntity(state.selected);else $('.context-rail')?.scrollIntoView({block:'nearest',behavior:'smooth'})}if(b.dataset.entity!==undefined)openEntity(+b.dataset.entity);if(b.dataset.decision!==undefined)decision(+b.dataset.decision);if(b.hasAttribute('data-sort')){state.sort=!state.sort;render()}if(b.hasAttribute('data-density')){state.dense=!state.dense;render()}if(b.hasAttribute('data-clear-filter')){state.filter='';state.metric='Receita';render()}if(b.dataset.expand!==undefined){const tr=$('#expand-'+b.dataset.expand);tr.hidden=!tr.hidden;b.setAttribute('aria-expanded',!tr.hidden)}if(b.dataset.execute)execute(b.dataset.execute,b);if(b.hasAttribute('data-command'))openCommand();});
-document.addEventListener('input',e=>{if(e.target.id==='deal-search'){const pos=e.target.selectionStart;state.filter=e.target.value;const list=filteredDeals();$('#ledger-content').innerHTML=crmContent(list)}});
-document.addEventListener('pointerover',e=>{if(e.target.dataset.period&&$('#chart-tip'))$('#chart-tip').textContent=e.target.dataset.period});document.addEventListener('focusin',e=>{if(e.target.dataset.period&&$('#chart-tip'))$('#chart-tip').textContent=e.target.dataset.period});
-function selectPeriod(el){$$('.chart-point').forEach(p=>p.classList.remove('active'));el.classList.add('active');$('#chart-tip').textContent=el.dataset.period;toast('Período selecionado: '+el.dataset.period);openModal('Contexto temporal',`<p>${esc(el.dataset.period)}</p><p>Este ponto governa a análise temporal. A trajetória combina receita realizada até 10 set e projeção depois dessa data.</p><div class="notice">A faixa de incerteza não é receita confirmada. Próxima ação: revisar as negociações que sustentam a projeção.</div>`, 'intelligence-dialog')}
-document.addEventListener('click',e=>{if(e.target.dataset.period)selectPeriod(e.target)});document.addEventListener('keydown',e=>{if(e.target.dataset.period&&['Enter',' '].includes(e.key)){e.preventDefault();selectPeriod(e.target)}});
-$('#collapse').onclick=()=>{document.body.classList.toggle('collapsed');$('#collapse').textContent=document.body.classList.contains('collapsed')?'»':'«'};$('#motion-toggle').onclick=()=>{document.body.classList.toggle('reduce');const reduced=document.body.classList.contains('reduce');$('#motion-toggle').textContent=reduced?'∿ Motion off':'∿ Motion on';$('#motion-toggle').setAttribute('aria-pressed',reduced)};$('#open-command').onclick=()=>openCommand();$('#dock-ai').onclick=()=>openModal('Intelligence Lens',lens(),'intelligence-dialog');window.addEventListener('popstate',()=>{state.page=location.pathname.includes('components-v2')?'components':['motion','audit','patterns'].includes(location.hash.slice(1))?location.hash.slice(1):'command';render()});
-function openModal(title,body,cls='',foot=''){const d=$('#overlay');if(d.open)d.close();d.className=cls;d.style.height='';d.style.transform='';d.setAttribute('aria-label',title);d.innerHTML=`<div class="dialog-head"><h2>${title}</h2><button data-close aria-label="Fechar">×</button></div><div class="dialog-body">${body}</div>${foot?`<div class="dialog-foot">${foot}</div>`:''}`;d.showModal();if(cls==='drawer')document.body.classList.add('drawer-open');$('[data-close]',d).onclick=()=>d.close();return d}
-$('#overlay').addEventListener('close',()=>document.body.classList.remove('drawer-open'));$('#overlay').addEventListener('click',e=>{if(e.target===$('#overlay')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}});
-function openEntity(i){state.selected=i;const d=deals[i];openModal(d.name,`<small>ENTITY SURFACE · CRM / ${d.stage.toUpperCase()}</small><div class="entity-header"><h2>${money(d.value)}</h2><div class="row"><span>Em andamento</span><span class="risk">Risco ${d.risk.toLowerCase()}</span></div></div><div class="lens-label">CONTEXTO</div><p>${d.owner} · ${d.days} dias sem atividade · ${d.prob}% de probabilidade de ganho.</p><div class="lens-label">RELAÇÕES</div><p>Empresa → Ana Diretora, decisora → proposta anual → negociação.</p><div class="lens-label">SINAL DA ENTIDADE</div><p>Próximo passo pendente: ${d.next}. Origem: atividades do CRM demonstrativo.</p><details><summary>Inteligência e evidências</summary><p>Os registros recentes indicam ausência de próximo passo confirmado. A intenção de compra não foi verificada. Confiança ilustrativa: 87%.</p></details><div class="timeline"><div>Proposta em revisão<small>Hoje · responsável ${d.owner}</small></div><div>Último contato registrado<small>Há ${d.days} dias</small></div></div>`, 'drawer',`<button class="btn intelligence" data-decision="${i}">✦ Preparar próxima ação</button>`)}
-function decision(i){const d=deals[i];openModal('Decisão → execução',`<small class="iris">ORIGEM · SINAL DE FORECAST / ${d.name.toUpperCase()}</small><h3 style="margin:16px 0">${d.next}</h3><p>Motivo: ${d.days} dias sem atividade e próximo passo não confirmado. Impacto potencial: reduzir incerteza sobre ${money(d.value)}.</p><div class="evidence-row"><span>Responsável</span><span>${d.owner}</span></div><div class="evidence-row"><span>Prazo</span><span>Hoje, 17h</span></div><div class="evidence-row"><span>Dependência</span><span>Disponibilidade do decisor</span></div><p style="margin-top:15px">Automação disponível: criar tarefa de acompanhamento. A demonstração não envia mensagens nem altera o CRM.</p>`, 'intelligence-dialog','<button class="btn ghost" data-close-decision>Voltar</button><button class="btn primary" id="queue-decision">Adicionar à fila →</button>');$('[data-close-decision]').onclick=()=>$('#overlay').close();$('#queue-decision').onclick=()=>{const id='decision-'+i;if(!state.actions.some(a=>a.id===id)){state.actions.push({title:d.next+' · '+d.name,why:'Origem: decisão do sinal · proteger '+money(d.value),owner:d.owner,due:'Hoje, 17h',id});toast('Decisão adicionada à fila de execução',()=>{state.actions=state.actions.filter(a=>a.id!==id);render()})}else toast('Esta decisão já está na fila');$('#overlay').close();state.workspace='Automation';state.view='after';state.page='command';render()}}
-async function execute(id,b){if(state.done.has(id))return;b.disabled=true;b.setAttribute('aria-busy','true');b.classList.add('processing');b.textContent='Executando';await new Promise(r=>setTimeout(r,1200));state.done.add(id);state.recent.unshift('Execução '+id);b.classList.remove('processing');b.classList.add('success');b.textContent='✓ Concluído';b.setAttribute('aria-busy','false');const log=$('#activity-log');if(log){log.hidden=false;log.innerHTML=[...state.done].map(item=>'<div>Execução simulada concluída<small>'+esc(item)+' · tarefa registrada; resultado comercial ainda não medido.</small></div>').join('')}if(state.sound)playSound();toast('Tarefa simulada concluída. Resultado comercial pendente.',()=>{state.done.delete(id);render()})}
+const $ = (s, r = document) => r.querySelector(s),
+  $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const state = {
+  page: location.pathname.includes('components-v2') ? 'components' : 'command',
+  view: 'after',
+  workspace: 'Overview',
+  crm: 'Table',
+  metric: 'Receita',
+  selected: null,
+  done: new Set(),
+  actions: [],
+  sort: false,
+  dense: false,
+  filter: '',
+  audit: 'ALL',
+  recent: [],
+  motion: { duration: 420, easing: 'standard', stiffness: 180, damping: 20, glow: 12, magnetic: 3 },
+};
+const deals = [
+  {
+    name: 'Grupo Porto Real',
+    value: 84000,
+    stage: 'Negociação',
+    risk: 'Alto',
+    owner: 'Ana Martins',
+    days: 8,
+    next: 'Alinhar com o decisor',
+    prob: 65,
+  },
+  {
+    name: 'Nexus Tecnologia',
+    value: 68000,
+    stage: 'Proposta',
+    risk: 'Alto',
+    owner: 'Lucas Silva',
+    days: 6,
+    next: 'Revisar escopo técnico',
+    prob: 55,
+  },
+  {
+    name: 'Vértice Logística',
+    value: 32000,
+    stage: 'Negociação',
+    risk: 'Médio',
+    owner: 'Marina Costa',
+    days: 5,
+    next: 'Confirmar cronograma',
+    prob: 70,
+  },
+  {
+    name: 'Aurora Energia',
+    value: 126000,
+    stage: 'Qualificação',
+    risk: 'Baixo',
+    owner: 'Ana Martins',
+    days: 2,
+    next: 'Agendar diagnóstico',
+    prob: 35,
+  },
+];
+const money = (n) => 'R$ ' + n.toLocaleString('pt-BR');
+const esc = (s) =>
+  String(s).replace(
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+  );
+function mobileNav() {
+  return '<nav class="only-mobile mobile-nav"><a href="/design-lab/command-language">Command</a><a href="/design-lab/components-v2">Components</a><button data-page="motion">Motion</button><button data-page="audit">Auditoria</button><button data-page="patterns">Padrões</button></nav>';
+}
+function head(title, sub, controls = '') {
+  return `${mobileNav()}<div class="page-head"><div><div class="eyebrow">BIRTHUB DESIGN LAB / 2026</div><h1>${title}<span class="version">EXPERIMENTAL</span></h1><p>${sub}</p></div>${controls}</div>`;
+}
+function ribbon() {
+  return `<div class="ribbon" aria-label="Métricas estratégicas">${[
+    ['Receita', 'R$ 1,28M', '↑ 14,2% vs. agosto'],
+    ['Forecast', 'R$ 1,46M', '91,3% da meta'],
+    ['Gap', 'R$ 140K', 'para a meta de R$ 1,60M'],
+    ['Coverage', '3,1×', 'cobertura de pipeline'],
+  ]
+    .map(
+      ([l, v, s]) =>
+        `<button class="metric ${state.metric === l ? 'active' : ''}" data-metric="${l}" aria-pressed="${state.metric === l}"><span class="label">${l.toUpperCase()}</span><strong>${v}</strong><small class="${l === 'Receita' ? 'positive' : ''}">${s}</small>${l === 'Receita' ? '<svg class="spark" viewBox="0 0 70 25"><path d="M1 22L10 18 18 20 27 10 36 13 44 6 55 9 68 1" fill="none" stroke="#83c6ad" stroke-width="1.5"/></svg>' : ''}</button>`,
+    )
+    .join('')}</div>`;
+}
+function switcher(items, active, attr = 'workspace') {
+  return `<nav class="workspace-switcher" aria-label="Alternar ${attr}">${items.map((x) => `<button data-${attr}="${x}" class="${active === x ? 'active' : ''}" aria-pressed="${active === x}">${x}</button>`).join('')}</nav>`;
+}
+function chart() {
+  return `<div class="chart-wrap"><div id="chart-tip" class="chart-tip">10 set · realizado R$ 1,28M</div><svg class="trajectory" viewBox="0 0 650 220" role="img" aria-label="Receita acumulada: realizado em 10 de setembro de 1,28 milhão; projeção até 30 de setembro de 1,46 milhão; meta de 1,60 milhão"><g stroke="#263040" stroke-width="1"><path d="M40 35H615M40 85H615M40 135H615M40 185H615"/></g><g><text x="3" y="38">1,6M</text><text x="3" y="88">1,4M</text><text x="3" y="138">1,2M</text><text x="3" y="188">1,0M</text><text x="42" y="213">01 set</text><text x="214" y="213">10 set</text><text x="392" y="213">20 set</text><text x="576" y="213">30 set</text></g><path d="M40 35H615" stroke="#8b95a5" stroke-dasharray="4 5"/><text x="560" y="25">META</text><path d="M232 115L410 84 610 52 610 94 410 113Z" fill="#5b21b61b"/><path d="M40 170L104 157 170 137 232 115" fill="none" stroke="#d4af37" stroke-width="2.5"/><path d="M232 115L410 100 610 70" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="5 5"/><path d="M40 180L105 169 170 155 232 139 410 117 610 100" fill="none" stroke="#76aeef" stroke-width="1.5" opacity=".7"/><path d="M232 35V188" stroke="#d4af3735"/>${[
+    [40, 170, '01 set · R$ 1,06M'],
+    [104, 157, '04 set · R$ 1,11M'],
+    [170, 137, '07 set · R$ 1,19M'],
+    [232, 115, '10 set · R$ 1,28M'],
+    [410, 100, '20 set · projeção R$ 1,34M'],
+    [610, 70, '30 set · projeção R$ 1,46M'],
+  ]
+    .map(
+      ([x, y, label]) =>
+        `<circle class="chart-point" cx="${x}" cy="${y}" r="4" fill="#0c1019" stroke="#d4af37" tabindex="0" role="button" aria-label="${label}: analisar período" data-period="${label}"/>`,
+    )
+    .join(
+      '',
+    )}</svg></div><div class="chart-legend"><span><i></i>Receita / projeção</span><span><i></i>Período anterior</span><span class="iris">Faixa de incerteza</span></div>`;
+}
+function pulse() {
+  return `<section><div class="region-head"><h2>Pulso operacional</h2><span class="eyebrow">SETEMBRO · 01—30</span></div><div class="pulse-header"><div><strong>Crescimento com exposição concentrada</strong><p>O ritmo melhora. Três negociações exigem atenção.</p></div><span class="positive mono">+14,2%</span></div>${chart()}<div class="pulse-strip"><div><small>VELOCIDADE</small><strong>R$ 9K / dia <span class="positive">↑</span></strong></div><div><small>RITMO NECESSÁRIO</small><strong>R$ 16K / dia</strong></div><div><small>DESVIO PROJETADO</small><strong class="risk">−8,8% da meta</strong></div></div></section>`;
+}
+function signals() {
+  return `<div class="signals"><div class="region-head"><h2>Sinais</h2><small>03 ativos</small></div>${[
+    {
+      tag: 'FORECAST',
+      cls: 'risk',
+      time: 'há 4 min',
+      title: 'R$ 184K estão em risco.',
+      text: 'Porto Real, Nexus e Vértice concentram 71% da exposição total de R$ 259K.',
+      evidence:
+        'CRM · atividades até 10 set, 09:41. Porto Real: 8 dias sem reunião; Nexus: revisão de escopo pendente; Vértice: prazo não confirmado. Confiança do modelo: 87%; não é probabilidade de ganho.',
+      action: 'Investigar exposição',
+      id: 0,
+    },
+    {
+      tag: 'VELOCIDADE',
+      cls: 'blue',
+      time: 'há 12 min',
+      title: 'O ciclo encurtou 4 dias.',
+      text: 'De 32 para 28 dias nas 12 vendas encerradas neste mês.',
+      evidence:
+        'CRM · datas de criação e fechamento de 12 negócios. Amostra pequena; efeito pode mudar com novas vendas. Confiança 78%.',
+      action: 'Explorar mudança',
+      id: 1,
+    },
+    {
+      tag: 'OPORTUNIDADE',
+      cls: 'positive',
+      time: 'há 23 min',
+      title: 'Aurora retomou o contato.',
+      text: 'Decisor respondeu após o diagnóstico. Próxima reunião ainda não marcada.',
+      evidence:
+        'Atividade demonstrativa · retorno registrado às 09:22. Um evento isolado não comprova intenção de compra. Confiança 72%.',
+      action: 'Abrir oportunidade',
+      id: 3,
+    },
+  ]
+    .map(
+      (s) =>
+        `<article class="signal"><div class="signal-top"><span class="${s.cls}">⌁ ${s.tag}</span><time>${s.time}</time></div><h3>${s.title}</h3><p>${s.text}</p><details><summary>Evidências e confiança</summary><p>${s.evidence}</p></details><button class="link" data-lens="${s.id}">${s.action} ↗</button></article>`,
+    )
+    .join('')}</div>`;
+}
+function lens() {
+  const d = state.selected === null ? deals[0] : deals[state.selected];
+  return `<div class="lens-content"><div class="lens-label">${state.selected === null ? 'CONTEXTO · ' + state.metric.toUpperCase() : 'ENTIDADE · ' + d.stage.toUpperCase()}</div><h3>${state.selected === null ? 'O que sustenta o forecast?' : d.name}</h3><p>${state.selected === null ? 'O crescimento da receita não elimina a concentração do risco. A projeção depende de negociações com próximos passos pendentes.' : `${money(d.value)} em ${d.stage.toLowerCase()}. Última atividade há ${d.days} dias. Responsável: ${d.owner}.`}</p><div class="confidence"><i></i>87% de confiança <span class="muted">· modelo demonstrativo</span></div><div class="lens-label">EVIDÊNCIAS</div><div class="evidence-row"><span>Negociações expostas</span><span>3 de 12</span></div><div class="evidence-row"><span>Valor concentrado</span><span class="mono">R$ 184K</span></div><div class="evidence-row"><span>Contato mais antigo</span><span>8 dias</span></div><details class="signal"><summary>Por que a confiança é 87%?</summary><p>Exemplo de explicação: completude dos registros, recência das atividades e consistência entre etapas. Pesos e calibração precisam ser validados no produto. Faltam intenções de compra confirmadas.</p></details><div class="next-action"><small class="gold">PRÓXIMA MELHOR AÇÃO</small><p>${d.next} para reduzir incerteza. Impacto potencial: proteger ${money(d.value)}; sem garantia de conversão.</p><button class="btn intelligence" data-decision="${state.selected ?? 0}">✦ Preparar decisão <span>↗</span></button></div></div>`;
+}
+function ledger() {
+  let list = deals
+    .map((d, i) => ({ ...d, i }))
+    .filter((d) => d.name.toLowerCase().includes(state.filter.toLowerCase()));
+  if (state.metric === 'Gap' || state.crm === 'Risk') list = list.filter((d) => d.risk !== 'Baixo');
+  if (state.sort) list.sort((a, b) => b.value - a.value);
+  return `<section class="ledger"><div class="region-head"><h2>Oportunidades em foco</h2><div class="toolbar"><button class="link" data-density>${state.dense ? 'Confortável' : 'Compactar'}</button><small>${list.length} negócios</small></div></div>${switcher(['Pipeline', 'Table', 'Matrix', 'Focus', 'Forecast', 'Risk', 'Timeline'], state.crm, 'crm')}<div class="toolbar" style="padding:13px 0"><input id="deal-search" aria-label="Buscar empresa" placeholder="Buscar empresa..." value="${esc(state.filter)}"><small>${state.metric === 'Gap' ? 'Contexto: negócios expostos · ' : ''}Selecione uma entidade para investigar</small></div><div id="ledger-content">${crmContent(list)}</div></section>`;
+}
+function crmContent(list) {
+  if (!list.length)
+    return '<div class="state-demo"><h3>Nenhuma oportunidade neste filtro</h3><p>Remova o termo ou amplie o contexto.</p><button class="link" data-clear-filter>Limpar filtros</button></div>';
+  if (state.crm === 'Matrix' || state.crm === 'Risk')
+    return `<div class="matrix"><div>IMPACTO ↑</div><div>Baixo risco</div><div>Médio risco</div><div>Alto risco</div><div>&gt; R$ 60K</div><div>${list
+      .filter((d) => d.value > 60000 && d.risk === 'Baixo')
+      .map(entityLink)
+      .join('')}</div><div></div><div class="high">${list
+      .filter((d) => d.risk === 'Alto')
+      .map(entityLink)
+      .join('')}</div><div>≤ R$ 60K</div><div></div><div>${list
+      .filter((d) => d.risk === 'Médio')
+      .map(entityLink)
+      .join('')}</div><div></div></div>`;
+  if (state.crm === 'Focus') {
+    const d = list[0];
+    return `<div class="entity-header"><small>ENTITY SURFACE / PRÓXIMA DECISÃO</small><h2>${d.name}</h2><div class="row"><span class="strategic">${money(d.value)}</span><span>${d.stage}</span><span class="risk">Risco ${d.risk.toLowerCase()}</span></div><p class="muted" style="margin-top:14px;font-size:13px">${d.next} · ${d.owner}</p><button class="link" data-entity="${d.i}">Abrir workspace da entidade ↗</button></div>`;
+  }
+  if (state.crm === 'Pipeline')
+    return `<div class="flow">${['Qualificação', 'Proposta', 'Negociação']
+      .map(
+        (stage) =>
+          `<div class="step"><small>${stage.toUpperCase()}</small>${
+            list
+              .filter((d) => d.stage === stage)
+              .map(
+                (d) =>
+                  `<div class="entity-header">${entityLink(d)}<span class="mono">${money(d.value)}</span><small>Risco ${d.risk} · ${d.days}d sem atividade</small><button class="link" data-decision="${d.i}">${d.next} →</button></div>`,
+              )
+              .join('') || '<small>Sem negócios nesta etapa</small>'
+          }</div>`,
+      )
+      .join('')}</div>`;
+  if (state.crm === 'Timeline')
+    return `<div class="timeline">${list.map((d) => `<div>${entityLink(d)}<small>Último contato: ${10 - d.days} set · ${d.stage}</small><p>${d.next}</p></div>`).join('')}</div>`;
+  if (state.crm === 'Forecast')
+    return `<div class="table-scroll"><table><thead><tr><th>EMPRESA</th><th>VALOR</th><th>PROBABILIDADE</th><th>PONDERADO</th></tr></thead><tbody>${list.map((d) => `<tr><td>${entityLink(d)}</td><td>${money(d.value)}</td><td>${d.prob}%</td><td class="mono gold">${money((d.value * d.prob) / 100)}</td></tr>`).join('')}</tbody></table><p class="meta" style="margin:15px 0">Recorte de quatro negócios; não representa todo o forecast da operação. Probabilidade de ganho é diferente de confiança da inferência.</p></div>`;
+  return `<div class="table-scroll"><table class="${state.dense ? 'compact' : ''}"><thead><tr><th>EMPRESA / PRÓXIMA AÇÃO</th><th><button data-sort>VALOR ${state.sort ? '↓' : '↕'}</button></th><th>ETAPA</th><th>RISCO</th><th aria-label="Ações"></th></tr></thead><tbody>${list.map((d) => `<tr class="${state.selected === d.i ? 'selected' : ''}"><td><button class="entity" data-entity="${d.i}"><strong>${d.name}</strong><small>${d.next}</small></button></td><td class="mono">${money(d.value)}</td><td>${d.stage}</td><td class="${d.risk === 'Alto' ? 'risk' : d.risk === 'Baixo' ? 'positive' : 'gold'}">${d.risk}</td><td><button class="table-action link" data-lens="${d.i}" aria-label="Investigar ${d.name}">↗</button><button class="table-action" data-expand="${d.i}" aria-label="Expandir ${d.name}">⌄</button></td></tr><tr id="expand-${d.i}" hidden><td colspan="5"><div class="row between"><span>${d.owner} · ${d.days} dias sem atividade · ${d.prob}% probabilidade de ganho</span><button class="link" data-decision="${d.i}">Preparar ação →</button></div></td></tr>`).join('')}</tbody></table></div>`;
+}
+function entityLink(d) {
+  return `<button class="link" data-entity="${d.i ?? deals.indexOf(d)}">${d.name} ↗</button>`;
+}
+function queue() {
+  const actions = [
+    {
+      title: 'Alinhar próximo passo com Porto Real',
+      why: '8 dias sem reunião · sinal de forecast',
+      owner: 'Ana Martins',
+      due: 'Hoje, 14h',
+      id: 'porto',
+    },
+    {
+      title: 'Revisar escopo da Nexus',
+      why: 'Dependência: validação técnica · proteger R$ 68K',
+      owner: 'Lucas Silva',
+      due: 'Amanhã',
+      id: 'nexus',
+    },
+    ...state.actions,
+  ];
+  return `<section class="queue" id="execution"><div class="region-head"><h2>Fila de execução</h2><small>${actions.filter((a) => !state.done.has(a.id)).length} pendentes · demonstração local</small></div>${actions.map((a, i) => `<div class="queue-item"><span class="index">${String(i + 1).padStart(2, '0')}</span><div><strong>${a.title}</strong><small>${a.why} · <span class="gold">${a.due}</span></small></div><div class="queue-owner"><small>${a.owner}</small><small>${i === 0 ? 'Prioridade alta' : 'Prioridade média'}</small></div><button class="btn ${state.done.has(a.id) ? 'success' : 'execute'}" data-execute="${a.id}" ${state.done.has(a.id) ? 'disabled' : ''}>${state.done.has(a.id) ? '✓ Concluído' : 'Executar →'}</button></div>`).join('')}<div id="activity-log" class="timeline" ${state.done.size ? '' : 'hidden'}>${[...state.done].map((id) => `<div>Execução simulada concluída<small>${id} · tarefa registrada; resultado comercial ainda não medido.</small></div>`).join('')}</div></section>`;
+}
+function commandPage() {
+  return (
+    head(
+      'Command Language',
+      'Uma linguagem para perceber, decidir e agir.',
+      `<div class="segmented" aria-label="Modo de comparação"><button data-view="before" class="${state.view === 'before' ? 'active' : ''}">Before</button><button data-view="after" class="${state.view === 'after' ? 'active' : ''}">After</button><button data-view="compare" class="${state.view === 'compare' ? 'active' : ''}">Comparar</button></div>`,
+    ) +
+    (state.view === 'compare'
+      ? comparisons()
+      : state.view === 'before'
+        ? beforePage()
+        : `<div class="sectionbar"><div class="row"><h2>Central de receita</h2><small>WORKSPACE COMERCIAL</small></div><span class="meta">10 set 2026 <span class="gold">·</span> 09:45</span></div>${switcher(['Overview', 'Intelligence', 'Pipeline', 'Automation', 'Analytics'], state.workspace)}${ribbon()}<div class="command-grid"><div>${workspaceContent()}</div><aside class="context-rail" aria-label="Intelligence Lens"><div class="region-head"><h2 class="iris">✦ Intelligence Lens</h2><small>EXPLICÁVEL</small></div>${lens()}${signals()}</aside></div>`)
+  );
+}
+function workspaceContent() {
+  if (state.workspace === 'Intelligence') return `${pulse()}${signals()}${queue()}`;
+  if (state.workspace === 'Pipeline') return `${ledger()}${queue()}`;
+  if (state.workspace === 'Automation')
+    return `<div class="region-head"><h2>Da decisão ao resultado</h2></div><div class="flow"><div class="step">Sinal<small>Exposição detectada</small></div><span>→</span><div class="step">Decisão<small>Priorizar contato</small></div><span>→</span><div class="step">Ação<small>Execução assistida</small></div><span>→</span><div class="step">Resultado<small>Aguardar evidência</small></div></div>${queue()}`;
+  if (state.workspace === 'Analytics')
+    return `${pulse()}<div class="notice">Receita: realizado. Forecast: cenário modelado. Gap: diferença para a meta. Selecione um ponto do gráfico para governar o contexto temporal.</div>${ledger()}`;
+  return `${pulse()}${ledger()}${queue()}`;
+}
+function beforePage() {
+  return `<div class="notice">Reconstrução representativa do catálogo fornecido. Os valores foram harmonizados com o After para comparar a hierarquia; esta não é uma captura das telas do produto.</div><div class="old"><div class="old-tabs">${['Overview', 'Pipeline', 'Analytics'].map((t) => `<div class="old-card">▦<strong>${t}</strong>Visão do módulo →</div>`).join('')}</div><div class="old-grid">${['Receita|R$ 1,28M', 'Forecast|R$ 1,46M', 'Gap|R$ 140K', 'Coverage|3,1×'].map((x) => `<div class="old-card">◈ ${x.split('|')[0]}<strong>${x.split('|')[1]}</strong><span class="old-badge">Atualizado</span><span> Ver detalhes →</span></div>`).join('')}</div><div class="old-card" style="background:linear-gradient(100deg,#f8ebc8,#e8e8fc)">✦ Dica da IA do Hub<strong style="font:14px Inter">3 leads não têm follow-up há mais de 5 dias.</strong></div><div class="old-grid"><div class="old-card">✓ Taxa de resposta subiu 18%</div><div class="old-card">① Ligar para o decisor até sexta</div></div><div class="old-grid">${deals.map((d) => `<div class="old-card"><span class="old-badge">${d.stage}</span><strong>${d.name}</strong>${money(d.value)}<br><span class="old-badge">Score 82</span><span class="old-badge">Bitrix</span><span class="old-badge">há ${d.days}d</span><p>↻ Converter　✦ Enriquecer</p></div>`).join('')}</div></div>`;
+}
+function comparisons() {
+  const old = (s) => `<div class="old">${s}</div>`;
+  const pairs = [
+    [
+      'KPI Cards → MetricRibbon',
+      old(
+        '<div class="old-grid"><div class="old-card">Receita<strong>R$ 1,28M</strong>↑14,2%</div><div class="old-card">Forecast<strong>R$ 1,46M</strong>Atualizado</div></div>',
+      ),
+      ribbon(),
+      'Métricas compartilham baseline e separadores. A seleção governa o contexto.',
+    ],
+    [
+      'ContextualTip → SignalItem',
+      old(
+        '<div class="old-card">✦ Dica da IA do Hub<p>3 leads sem follow-up há mais de 5 dias.</p></div>',
+      ),
+      signals(),
+      'Uma ocorrência com origem, relevância, evidência e ação.',
+    ],
+    [
+      'FindingsList → SignalStream',
+      old(
+        '<div class="old-card">✓ Taxa de resposta subiu 18%</div><div class="old-card">! Forecast em risco</div>',
+      ),
+      signals(),
+      'Fluxo ordenado por impacto e recência; evidências se expandem no próprio sinal.',
+    ],
+    [
+      'ActionPlanSteps → ExecutionQueue',
+      old('<div class="old-card">① Ligar para o decisor até sexta</div>'),
+      queue(),
+      'Responsabilidade, prazo, dependência e resultado fazem parte da ação.',
+    ],
+    [
+      'TabNavCards → WorkspaceSwitcher',
+      old(
+        '<div class="old-tabs"><div class="old-card">▦ Overview</div><div class="old-card">◈ Pipeline</div></div>',
+      ),
+      switcher(['Overview', 'Intelligence', 'Pipeline', 'Automation'], state.workspace),
+      'Navegação compacta com indicador contínuo.',
+    ],
+    [
+      'Copilot + Voice + Palette → CommandDock',
+      old(
+        '<div class="row"><div class="old-card">IA</div><div class="old-card">Voz</div><div class="old-card">Busca</div></div>',
+      ),
+      '<button class="btn outline" data-command style="width:100%;justify-content:space-between">⌘ Pergunte, procure ou execute... <kbd>Ctrl K</kbd></button>',
+      'Uma entrada para busca, navegação, criação, IA e execução.',
+    ],
+    [
+      'DealsGrid → OpportunityLedger',
+      old(
+        '<div class="old-grid"><div class="old-card">Porto Real<strong>R$ 84K</strong><span class="old-badge">Negociação</span></div><div class="old-card">Nexus<strong>R$ 68K</strong><span class="old-badge">Proposta</span></div></div>',
+      ),
+      ledger(),
+      'Comparação tabular, seleção contextual e detalhes sob demanda.',
+    ],
+    [
+      'KanbanCard → Entity / Opportunity',
+      old(
+        '<div class="old-card"><strong>Grupo Porto Real</strong><span class="old-badge">Score 82</span><span class="old-badge">Bitrix</span><span class="old-badge">há 2d</span><p>↻ Converter　✦ Enriquecer</p></div>',
+      ),
+      `<div class="entity-header"><small>NEGOCIAÇÃO · RISCO ALTO</small><h2>Grupo Porto Real</h2><span class="strategic">R$ 84.000</span><p class="muted">Próxima ação: alinhar com o decisor.</p><button class="link" data-entity="0">Abrir workspace ↗</button></div>`,
+      'A entidade tem hierarquia própria; metadados não disputam atenção.',
+    ],
+  ];
+  return pairs
+    .map(
+      ([title, b, a, n], i) =>
+        `<section class="lab-section"><h2><span class="section-index">0${i + 1}</span>${title}</h2><p>${n}</p><div class="comparison"><div><div class="compare-label">BEFORE · CATÁLOGO</div>${b}</div><div><div class="compare-label after">AFTER · COMMAND LANGUAGE</div>${a}</div></div></section>`,
+    )
+    .join('');
+}
+function render() {
+  const names = {
+    command: 'Command Language',
+    components: 'Components V2',
+    motion: 'Motion Playground',
+    audit: 'Auditoria & migração',
+    patterns: 'Biblioteca de padrões',
+  };
+  $('#crumb').textContent = names[state.page];
+  $('#main').innerHTML =
+    state.page === 'command'
+      ? commandPage()
+      : state.page === 'components'
+        ? componentsPage()
+        : state.page === 'motion'
+          ? motionPage()
+          : state.page === 'audit'
+            ? auditPage()
+            : patternsPage();
+  $$('#side-nav a,#side-nav button').forEach((el) => {
+    el.classList.toggle('active', (el.dataset.route || el.dataset.page) === state.page);
+    el.title = el.textContent.trim();
+  });
+  setupIndicators();
+  if (state.page === 'motion') setupMotion();
+}
+function setupIndicators() {
+  $$('.workspace-switcher').forEach((nav) => {
+    const active = $('button.active', nav);
+    if (!active) return;
+    nav.classList.add('has-indicator');
+    const indicator = $('.indicator', nav) || document.createElement('span');
+    indicator.className = 'indicator';
+    if (!indicator.parentElement) nav.append(indicator);
+    indicator.style.width = active.offsetWidth + 'px';
+    indicator.style.transform = `translateX(${active.offsetLeft}px)`;
+  });
+}
+function toast(text, undo, error = false, actionLabel = 'Desfazer') {
+  const el = document.createElement('div');
+  el.className = 'toast' + (error ? ' error' : '');
+  const mark = document.createElement('span');
+  mark.className = error ? 'risk' : 'positive';
+  mark.textContent = error ? '!' : '✓';
+  const msg = document.createElement('span');
+  msg.textContent = text;
+  el.append(mark, msg);
+  if (undo) {
+    const b = document.createElement('button');
+    b.textContent = actionLabel;
+    b.onclick = () => {
+      undo();
+      el.remove();
+    };
+    el.append(b);
+  }
+  const close = document.createElement('button');
+  close.textContent = '×';
+  close.setAttribute('aria-label', 'Dispensar');
+  close.onclick = () => el.remove();
+  el.append(close);
+  $('#toasts').append(el);
+  while ($('#toasts').children.length > 3) $('#toasts').firstChild.remove();
+  setTimeout(() => el.remove(), 10000);
+}
+function navigate(page) {
+  state.page = page;
+  history.pushState(
+    {},
+    '',
+    page === 'components'
+      ? '/design-lab/components-v2'
+      : page === 'command'
+        ? '/design-lab/command-language'
+        : '/design-lab/command-language#' + page,
+  );
+  render();
+  window.scrollTo(0, 0);
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button,a');
+  if (!b) return;
+  if (b.dataset.route) {
+    e.preventDefault();
+    navigate(b.dataset.route);
+  }
+  if (b.dataset.page) navigate(b.dataset.page);
+  if (b.dataset.view) {
+    state.view = b.dataset.view;
+    render();
+  }
+  if (b.dataset.workspace) {
+    state.workspace = b.dataset.workspace;
+    moveIndicator(b);
+    if (state.page === 'command' && state.view === 'after') {
+      const region = $('.command-grid>div');
+      if (region) {
+        region.innerHTML = workspaceContent();
+        setupIndicators();
+      }
+    } else if ($('#tab-context'))
+      $('#tab-context').textContent = 'Contexto ativo: ' + state.workspace;
+  }
+  if (b.dataset.crm) {
+    state.crm = b.dataset.crm;
+    moveIndicator(b);
+    const list = filteredDeals();
+    const content = $('#ledger-content');
+    if (content) content.innerHTML = crmContent(list);
+  }
+  if (b.dataset.metric) {
+    state.metric = b.dataset.metric;
+    state.selected = null;
+    render();
+    toast(b.dataset.metric + ' governa o contexto da análise');
+  }
+  if (b.dataset.lens !== undefined) {
+    state.selected = +b.dataset.lens;
+    render();
+    if (innerWidth < 960) openEntity(state.selected);
+    else $('.context-rail')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  if (b.dataset.entity !== undefined) openEntity(+b.dataset.entity);
+  if (b.dataset.decision !== undefined) decision(+b.dataset.decision);
+  if (b.hasAttribute('data-sort')) {
+    state.sort = !state.sort;
+    render();
+  }
+  if (b.hasAttribute('data-density')) {
+    state.dense = !state.dense;
+    render();
+  }
+  if (b.hasAttribute('data-clear-filter')) {
+    state.filter = '';
+    state.metric = 'Receita';
+    render();
+  }
+  if (b.dataset.expand !== undefined) {
+    const tr = $('#expand-' + b.dataset.expand);
+    tr.hidden = !tr.hidden;
+    b.setAttribute('aria-expanded', !tr.hidden);
+  }
+  if (b.dataset.execute) execute(b.dataset.execute, b);
+  if (b.hasAttribute('data-command')) openCommand();
+});
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'deal-search') {
+    const pos = e.target.selectionStart;
+    state.filter = e.target.value;
+    const list = filteredDeals();
+    $('#ledger-content').innerHTML = crmContent(list);
+  }
+});
+document.addEventListener('pointerover', (e) => {
+  if (e.target.dataset.period && $('#chart-tip'))
+    $('#chart-tip').textContent = e.target.dataset.period;
+});
+document.addEventListener('focusin', (e) => {
+  if (e.target.dataset.period && $('#chart-tip'))
+    $('#chart-tip').textContent = e.target.dataset.period;
+});
+function selectPeriod(el) {
+  $$('.chart-point').forEach((p) => p.classList.remove('active'));
+  el.classList.add('active');
+  $('#chart-tip').textContent = el.dataset.period;
+  toast('Período selecionado: ' + el.dataset.period);
+  openModal(
+    'Contexto temporal',
+    `<p>${esc(el.dataset.period)}</p><p>Este ponto governa a análise temporal. A trajetória combina receita realizada até 10 set e projeção depois dessa data.</p><div class="notice">A faixa de incerteza não é receita confirmada. Próxima ação: revisar as negociações que sustentam a projeção.</div>`,
+    'intelligence-dialog',
+  );
+}
+document.addEventListener('click', (e) => {
+  if (e.target.dataset.period) selectPeriod(e.target);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.target.dataset.period && ['Enter', ' '].includes(e.key)) {
+    e.preventDefault();
+    selectPeriod(e.target);
+  }
+});
+$('#collapse').onclick = () => {
+  document.body.classList.toggle('collapsed');
+  $('#collapse').textContent = document.body.classList.contains('collapsed') ? '»' : '«';
+};
+$('#motion-toggle').onclick = () => {
+  document.body.classList.toggle('reduce');
+  const reduced = document.body.classList.contains('reduce');
+  $('#motion-toggle').textContent = reduced ? '∿ Motion off' : '∿ Motion on';
+  $('#motion-toggle').setAttribute('aria-pressed', reduced);
+};
+$('#open-command').onclick = () => openCommand();
+$('#dock-ai').onclick = () => openModal('Intelligence Lens', lens(), 'intelligence-dialog');
+window.addEventListener('popstate', () => {
+  state.page = location.pathname.includes('components-v2')
+    ? 'components'
+    : ['motion', 'audit', 'patterns'].includes(location.hash.slice(1))
+      ? location.hash.slice(1)
+      : 'command';
+  render();
+});
+function openModal(title, body, cls = '', foot = '') {
+  const d = $('#overlay');
+  if (d.open) d.close();
+  d.className = cls;
+  d.style.height = '';
+  d.style.transform = '';
+  d.setAttribute('aria-label', title);
+  d.innerHTML = `<div class="dialog-head"><h2>${title}</h2><button data-close aria-label="Fechar">×</button></div><div class="dialog-body">${body}</div>${foot ? `<div class="dialog-foot">${foot}</div>` : ''}`;
+  d.showModal();
+  if (cls === 'drawer') document.body.classList.add('drawer-open');
+  $('[data-close]', d).onclick = () => d.close();
+  return d;
+}
+$('#overlay').addEventListener('close', () => document.body.classList.remove('drawer-open'));
+$('#overlay').addEventListener('click', (e) => {
+  if (e.target === $('#overlay')) {
+    const r = e.target.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)
+      e.target.close();
+  }
+});
+function openEntity(i) {
+  state.selected = i;
+  const d = deals[i];
+  openModal(
+    d.name,
+    `<small>ENTITY SURFACE · CRM / ${d.stage.toUpperCase()}</small><div class="entity-header"><h2>${money(d.value)}</h2><div class="row"><span>Em andamento</span><span class="risk">Risco ${d.risk.toLowerCase()}</span></div></div><div class="lens-label">CONTEXTO</div><p>${d.owner} · ${d.days} dias sem atividade · ${d.prob}% de probabilidade de ganho.</p><div class="lens-label">RELAÇÕES</div><p>Empresa → Ana Diretora, decisora → proposta anual → negociação.</p><div class="lens-label">SINAL DA ENTIDADE</div><p>Próximo passo pendente: ${d.next}. Origem: atividades do CRM demonstrativo.</p><details><summary>Inteligência e evidências</summary><p>Os registros recentes indicam ausência de próximo passo confirmado. A intenção de compra não foi verificada. Confiança ilustrativa: 87%.</p></details><div class="timeline"><div>Proposta em revisão<small>Hoje · responsável ${d.owner}</small></div><div>Último contato registrado<small>Há ${d.days} dias</small></div></div>`,
+    'drawer',
+    `<button class="btn intelligence" data-decision="${i}">✦ Preparar próxima ação</button>`,
+  );
+}
+function decision(i) {
+  const d = deals[i];
+  openModal(
+    'Decisão → execução',
+    `<small class="iris">ORIGEM · SINAL DE FORECAST / ${d.name.toUpperCase()}</small><h3 style="margin:16px 0">${d.next}</h3><p>Motivo: ${d.days} dias sem atividade e próximo passo não confirmado. Impacto potencial: reduzir incerteza sobre ${money(d.value)}.</p><div class="evidence-row"><span>Responsável</span><span>${d.owner}</span></div><div class="evidence-row"><span>Prazo</span><span>Hoje, 17h</span></div><div class="evidence-row"><span>Dependência</span><span>Disponibilidade do decisor</span></div><p style="margin-top:15px">Automação disponível: criar tarefa de acompanhamento. A demonstração não envia mensagens nem altera o CRM.</p>`,
+    'intelligence-dialog',
+    '<button class="btn ghost" data-close-decision>Voltar</button><button class="btn primary" id="queue-decision">Adicionar à fila →</button>',
+  );
+  $('[data-close-decision]').onclick = () => $('#overlay').close();
+  $('#queue-decision').onclick = () => {
+    const id = 'decision-' + i;
+    if (!state.actions.some((a) => a.id === id)) {
+      state.actions.push({
+        title: d.next + ' · ' + d.name,
+        why: 'Origem: decisão do sinal · proteger ' + money(d.value),
+        owner: d.owner,
+        due: 'Hoje, 17h',
+        id,
+      });
+      toast('Decisão adicionada à fila de execução', () => {
+        state.actions = state.actions.filter((a) => a.id !== id);
+        render();
+      });
+    } else toast('Esta decisão já está na fila');
+    $('#overlay').close();
+    state.workspace = 'Automation';
+    state.view = 'after';
+    state.page = 'command';
+    render();
+  };
+}
+async function execute(id, b) {
+  if (state.done.has(id)) return;
+  b.disabled = true;
+  b.setAttribute('aria-busy', 'true');
+  b.classList.add('processing');
+  b.textContent = 'Executando';
+  await new Promise((r) => setTimeout(r, 1200));
+  state.done.add(id);
+  state.recent.unshift('Execução ' + id);
+  b.classList.remove('processing');
+  b.classList.add('success');
+  b.textContent = '✓ Concluído';
+  b.setAttribute('aria-busy', 'false');
+  const log = $('#activity-log');
+  if (log) {
+    log.hidden = false;
+    log.innerHTML = [...state.done]
+      .map(
+        (item) =>
+          '<div>Execução simulada concluída<small>' +
+          esc(item) +
+          ' · tarefa registrada; resultado comercial ainda não medido.</small></div>',
+      )
+      .join('');
+  }
+  if (state.sound) playSound();
+  toast('Tarefa simulada concluída. Resultado comercial pendente.', () => {
+    state.done.delete(id);
+    render();
+  });
+}
 // Lab sections are composed by lab.js before the first render.
-function componentsPage(){return head('Components V2','Anatomia, comportamento e estados com assinatura própria.')}
-function motionPage(){return head('Motion Playground','Transições que explicam origem, destino e mudança.')}
-function auditPage(){return head('Auditoria & migração','Evidências do catálogo e plano de adoção gradual.')}
-function patternsPage(){return head('Biblioteca de padrões','Composição própria para cada função operacional.')}
-function setupMotion(){}
-function openCommand(){openModal('Command Dock','<p>Buscar, navegar ou executar no laboratório.</p>')}
-$('#voice').onclick=()=>toast('Voz disponível no Command Dock após a configuração do navegador.');
-if(['motion','audit','patterns'].includes(location.hash.slice(1)))state.page=location.hash.slice(1);
+function componentsPage() {
+  return head('Components V2', 'Anatomia, comportamento e estados com assinatura própria.');
+}
+function motionPage() {
+  return head('Motion Playground', 'Transições que explicam origem, destino e mudança.');
+}
+function auditPage() {
+  return head('Auditoria & migração', 'Evidências do catálogo e plano de adoção gradual.');
+}
+function patternsPage() {
+  return head('Biblioteca de padrões', 'Composição própria para cada função operacional.');
+}
+function setupMotion() {}
+function openCommand() {
+  openModal('Command Dock', '<p>Buscar, navegar ou executar no laboratório.</p>');
+}
+$('#voice').onclick = () =>
+  toast('Voz disponível no Command Dock após a configuração do navegador.');
+if (['motion', 'audit', 'patterns'].includes(location.hash.slice(1)))
+  state.page = location.hash.slice(1);
 
-function filteredDeals(){let list=deals.map((d,i)=>({...d,i})).filter(d=>d.name.toLowerCase().includes(state.filter.toLowerCase()));if(state.metric==='Gap'||state.crm==='Risk')list=list.filter(d=>d.risk!=='Baixo');if(state.sort)list.sort((a,b)=>b.value-a.value);return list}
-function moveIndicator(button){const nav=button.closest('.workspace-switcher');if(!nav)return;$$('button',nav).forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',b===button)});const indicator=$('.indicator',nav);if(indicator){indicator.style.width=button.offsetWidth+'px';indicator.style.transform='translateX('+button.offsetLeft+'px)'}}
+function filteredDeals() {
+  let list = deals
+    .map((d, i) => ({ ...d, i }))
+    .filter((d) => d.name.toLowerCase().includes(state.filter.toLowerCase()));
+  if (state.metric === 'Gap' || state.crm === 'Risk') list = list.filter((d) => d.risk !== 'Baixo');
+  if (state.sort) list.sort((a, b) => b.value - a.value);
+  return list;
+}
+function moveIndicator(button) {
+  const nav = button.closest('.workspace-switcher');
+  if (!nav) return;
+  $$('button', nav).forEach((b) => {
+    b.classList.toggle('active', b === button);
+    b.setAttribute('aria-pressed', b === button);
+  });
+  const indicator = $('.indicator', nav);
+  if (indicator) {
+    indicator.style.width = button.offsetWidth + 'px';
+    indicator.style.transform = 'translateX(' + button.offsetLeft + 'px)';
+  }
+}

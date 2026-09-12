@@ -375,18 +375,37 @@ workspace/kb/structural_index.jsonl  # Compatibility pointer
     "kind": "local-build|baseline+overlay|remote",
     "catalog": "catalog.sqlite",
     "backend_versions": {
-      "cpp": {"backend_name": "tree-sitter", "backend_version": "0.20.8", "precision": "ast"},
-      "go": {"backend_name": "scip-clangd", "backend_version": "0.2.3", "precision": "semantic"}
+      "cpp": { "backend_name": "tree-sitter", "backend_version": "0.20.8", "precision": "ast" },
+      "go": { "backend_name": "scip-clangd", "backend_version": "0.2.3", "precision": "semantic" }
     }
   },
-  "units": {"total": 0, "reused": 0, "rebuild": 0, "failed": 0},
-  "coverage": {"total_files": 0, "indexed_files": 0, "failed_files": 0, "deferred_files": 0},
-  "shards": [{"id": "", "path": "", "checksum": "", "partition_key": "", "symbol_count": 0, "edge_count": 0}],
-  "deferred_units": [{"unit_id": "", "language": "", "files": [], "priority": 4, "reason": ""}],
-  "native_indexes": [{"kind": "scip", "path": "", "snapshot_id": "", "root_fingerprint": "", "language": "", "indexer": "", "precision": ""}],
-  "baseline": {"source": "ci|local|none", "snapshot_id": "", "manifest_path": ""},
-  "overlay": {"units_added": 0, "units_modified": 0, "files": []},
-  "compat_pointer": {"path": "structural_index.jsonl", "full_export": true, "symbol_count": 0},
+  "units": { "total": 0, "reused": 0, "rebuild": 0, "failed": 0 },
+  "coverage": { "total_files": 0, "indexed_files": 0, "failed_files": 0, "deferred_files": 0 },
+  "shards": [
+    {
+      "id": "",
+      "path": "",
+      "checksum": "",
+      "partition_key": "",
+      "symbol_count": 0,
+      "edge_count": 0
+    }
+  ],
+  "deferred_units": [{ "unit_id": "", "language": "", "files": [], "priority": 4, "reason": "" }],
+  "native_indexes": [
+    {
+      "kind": "scip",
+      "path": "",
+      "snapshot_id": "",
+      "root_fingerprint": "",
+      "language": "",
+      "indexer": "",
+      "precision": ""
+    }
+  ],
+  "baseline": { "source": "ci|local|none", "snapshot_id": "", "manifest_path": "" },
+  "overlay": { "units_added": 0, "units_modified": 0, "files": [] },
+  "compat_pointer": { "path": "structural_index.jsonl", "full_export": true, "symbol_count": 0 },
   "created_at": "<ISO 8601>",
   "build_duration_ms": 0
 }
@@ -587,7 +606,7 @@ pointer is written. Large consumers MUST use the query interface.
 Line 1 — provenance header:
 
 ```json
-{"_provenance": true, "snapshot_id": "abc123", "tool": "tree-sitter"}
+{ "_provenance": true, "snapshot_id": "abc123", "tool": "tree-sitter" }
 ```
 
 Lines 2+ — structural records (one per line, `_type` discriminator):

@@ -32,22 +32,22 @@ contra Postgres/Redis reais provisionados neste ambiente (ver seção 2).
 14 filas BullMQ distintas (recontagem por `grep` de `new Queue(`/`new Worker(` em todo o
 repositório, não por confiança no comentário do prompt original, que citava 13):
 
-| # | Fila | Arquivo dono | Scheduler recorrente |
-|---|---|---|---|
-| 1 | `leads-enrichment` | `src/lib/queue/index.ts` | — (sob demanda) |
-| 2 | `intelligence-agents` | `src/lib/queue/agent.worker.ts` | — (sob demanda) |
-| 3 | `enrichment-queue` | `src/lib/queue/enrichment.queue.ts` | — (sob demanda) |
-| 4 | `search-indexing` | `src/lib/queue/search.queue.ts` | — (gated por `ENABLE_SEARCH`) |
-| 5 | `whatsapp-conversation-signal` | `src/lib/queue/whatsappSignal.worker.ts` | — (sob demanda) |
-| 6 | `bitrix-sync` | `src/lib/queue/bitrixSync.worker.ts` | `scheduleBitrixSync()` |
-| 7 | `whatsapp-followup-queue` | `src/features/crm/jobs/followUp.worker.ts` | cron `0 9 * * *` |
-| 8 | `daily-executive-summary-queue` | `.../dailyExecutiveSummary.worker.ts` | cron `0 18 * * *` |
-| 9 | `deduplication-queue` | `.../deduplication.worker.ts` | cron `0 0 * * 0` |
-| 10 | `win-loss-analysis-queue` | `winLossAnalysis.worker.ts` | cron `0 19 * * 5` |
-| 11 | `weekly-pdf-report-queue` | `.../weeklyPdfReport.worker.ts` | cron `0 20 * * 5` |
-| 12 | `auto-anonymize-disqualified-queue` | `.../autoAnonymizeDisqualified.worker.ts` | — (sob demanda) |
-| 13 | `sdr-cold-call` | `src/lib/queue/coldCall.worker.ts` | gated por org habilitada |
-| 14 | `swarm-scheduler` | `src/lib/queue/swarmScheduler.worker.ts` | gated por org habilitada |
+| #   | Fila                                | Arquivo dono                               | Scheduler recorrente          |
+| --- | ----------------------------------- | ------------------------------------------ | ----------------------------- |
+| 1   | `leads-enrichment`                  | `src/lib/queue/index.ts`                   | — (sob demanda)               |
+| 2   | `intelligence-agents`               | `src/lib/queue/agent.worker.ts`            | — (sob demanda)               |
+| 3   | `enrichment-queue`                  | `src/lib/queue/enrichment.queue.ts`        | — (sob demanda)               |
+| 4   | `search-indexing`                   | `src/lib/queue/search.queue.ts`            | — (gated por `ENABLE_SEARCH`) |
+| 5   | `whatsapp-conversation-signal`      | `src/lib/queue/whatsappSignal.worker.ts`   | — (sob demanda)               |
+| 6   | `bitrix-sync`                       | `src/lib/queue/bitrixSync.worker.ts`       | `scheduleBitrixSync()`        |
+| 7   | `whatsapp-followup-queue`           | `src/features/crm/jobs/followUp.worker.ts` | cron `0 9 * * *`              |
+| 8   | `daily-executive-summary-queue`     | `.../dailyExecutiveSummary.worker.ts`      | cron `0 18 * * *`             |
+| 9   | `deduplication-queue`               | `.../deduplication.worker.ts`              | cron `0 0 * * 0`              |
+| 10  | `win-loss-analysis-queue`           | `winLossAnalysis.worker.ts`                | cron `0 19 * * 5`             |
+| 11  | `weekly-pdf-report-queue`           | `.../weeklyPdfReport.worker.ts`            | cron `0 20 * * 5`             |
+| 12  | `auto-anonymize-disqualified-queue` | `.../autoAnonymizeDisqualified.worker.ts`  | — (sob demanda)               |
+| 13  | `sdr-cold-call`                     | `src/lib/queue/coldCall.worker.ts`         | gated por org habilitada      |
+| 14  | `swarm-scheduler`                   | `src/lib/queue/swarmScheduler.worker.ts`   | gated por org habilitada      |
 
 Mais o cron não-BullMQ `cold-leads-scanner` (`node-cron`, `0 2 * * *`), com trava distribuída própria.
 
@@ -59,6 +59,7 @@ nenhuma fila nova foi criada.
 `docker info` falhou (`DOCKER_UNAVAILABLE`) — os scripts `pretest:integration`/`test:containers` que
 dependem de `docker compose up` não rodam aqui. Em vez de reportar isso como bloqueio passivo,
 provisionei o equivalente **sem Docker**, nesta máquina:
+
 - PostgreSQL 16 nativo (`apt-get install postgresql-16-pgvector`, extensão `vector` criada,
   papel `prospector_app` via `scripts/db/create-app-role.sql`, banco `prospectordb_test`);
 - Redis nativo (`redis-server`, sem auth, `PONG` confirmado);
@@ -114,6 +115,7 @@ Postgres/Redis reais (backup/restore, sweep de QA).
 
 Chamei `runColdLeadsScan()` duas vezes em paralelo (`Promise.all`) contra o mesmo Redis, simulando
 "dois processos worker sobem ao mesmo tempo". Log:
+
 - `"Cold leads scan iniciada."` — **uma única vez** (a execução que adquiriu a trava SETNX);
 - `"Cold leads scan pulada: outra instância já está executando."` — a segunda tentativa.
 
@@ -122,9 +124,9 @@ Confirma a trava distribuída (`acquireDistributedLock`, `cold-leads-scanner:loc
 feito.
 
 **Achado não-bloqueador registrado, não corrigido nesta rodada**: `acquireDistributedLock` falha
-*aberto* (`acquired: true`) quando o Redis responde com erro na tentativa de `SET NX` —综ado para o
+_aberto_ (`acquired: true`) quando o Redis responde com erro na tentativa de `SET NX` —综ado para o
 caso "sem Redis configurado, instância única" (comportamento intencional, comentado no código). Em
-teoria, uma falha *transitória* de conectividade Redis (não "Redis desligado de propósito") faria
+teoria, uma falha _transitória_ de conectividade Redis (não "Redis desligado de propósito") faria
 duas instâncias reais acharem que adquiriram a trava ao mesmo tempo. Não é o cenário testado aqui
 (testei contra Redis saudável) e não é uma regressão desta fase — é um gap pré-existente,
 registrado para o dono do arquivo (`src/lib/queue/distributedLock.ts`, hoje sem dono explícito no
@@ -144,8 +146,8 @@ lacuna escondida.
 ## 7. Sessões Baileys (WhatsApp) — achado novo relevante
 
 O handoff `onda-6/16-para-06-plano-migracao-baileys.md` (Onda 7) tinha identificado como
-pré-requisito bloqueador: *"a pasta `whatsapp_auth/` precisa deixar de ser filesystem local
-efêmero antes de mover a criação da sessão para `worker.ts`"*. Ao ler o código atual (não estava
+pré-requisito bloqueador: _"a pasta `whatsapp_auth/` precisa deixar de ser filesystem local
+efêmero antes de mover a criação da sessão para `worker.ts`"_. Ao ler o código atual (não estava
 documentado em nenhum handoff/completion que eu tenha encontrado), esse pré-requisito **já foi
 resolvido numa onda posterior não registrada nestes documentos**: `whatsapp.service.ts` usa
 `useRedisAuthState()` (`src/features/integrations/whatsapp/useRedisAuthState.ts`), que persiste
@@ -155,7 +157,7 @@ mais em disco local efêmero.
 O que **continua não resolvido** (e não deveria ser resolvido nesta fase sem acordo explícito do
 dono de `src/features/integrations/whatsapp/**`, hoje sob o escopo do Agente 06): o **socket vivo**
 (`WASocket`, `Map<organizationId, TenantSession>` module-level em `whatsapp.service.ts`) continua
-não-serializável e vive no processo que o abriu. Mover a *abertura* da sessão para `worker.ts`
+não-serializável e vive no processo que o abriu. Mover a _abertura_ da sessão para `worker.ts`
 ainda exige o "canal de consulta/comando" entre HTTP e worker (opção BullMQ vs. API HTTP interna)
 que o plano original da Onda 6 já tinha levantado — decisão de arquitetura real, não mecânica, que
 não tomei por conta própria. Registrado abaixo como pendência explícita, não como bloqueio silencioso.
@@ -172,6 +174,7 @@ A missão pede isolamento por worktree/branch por especialista e matriz de propr
 antes de disparar agentes em paralelo. Nesta rodada **não houve trabalho paralelo de múltiplos
 especialistas** — toda a investigação e prova foi feita em série, numa única sessão, sem edição
 concorrente de arquivo compartilhado, porque:
+
 1. o escopo real remanescente (depois de descobrir que a arquitetura já estava implementada) era
    **verificação com evidência viva**, não desenvolvimento de feature nova — não há necessidade de
    isolamento de working tree para rodar testes;

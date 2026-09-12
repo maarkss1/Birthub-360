@@ -24,7 +24,7 @@ import { signUpRealUser, withRlsBypass, type RealSessionUser } from '../helpers/
 // silenciosamente "pula" a cobertura.
 if (!env.PLATFORM_OPERATOR_TOKEN) {
   throw new Error(
-    'PLATFORM_OPERATOR_TOKEN ausente em .env.test — necessário para tests/integration/sec001-bullboard-access.test.ts (SEC-001).'
+    'PLATFORM_OPERATOR_TOKEN ausente em .env.test — necessário para tests/integration/sec001-bullboard-access.test.ts (SEC-001).',
   );
 }
 const OPERATOR_TOKEN = env.PLATFORM_OPERATOR_TOKEN;
@@ -38,7 +38,7 @@ function buildAdminQueuesApp(): Express {
     requireTenant,
     requireRole(['ADMIN']),
     requirePlatformOperator,
-    (_req, res) => res.status(200).json({ success: true, mounted: 'bullboard-stub' })
+    (_req, res) => res.status(200).json({ success: true, mounted: 'bullboard-stub' }),
   );
   app.use(errorHandler);
   return app;

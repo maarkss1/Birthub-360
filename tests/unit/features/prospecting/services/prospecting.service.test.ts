@@ -6,121 +6,131 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // exercitado aqui; o mock existe só para o import de withRlsContext resolver.
 const txQueryRaw = vi.fn();
 vi.mock('../../../../../src/lib/prisma.js', () => ({
-    prisma: {
-        company: { findFirst: vi.fn(), create: vi.fn() },
-        contact: { create: vi.fn() },
-        lead: { findFirst: vi.fn(), create: vi.fn() },
-    },
-    withRlsContext: (fn: (tx: { $queryRaw: typeof txQueryRaw }) => unknown) => fn({ $queryRaw: txQueryRaw }),
+  prisma: {
+    company: { findFirst: vi.fn(), create: vi.fn() },
+    contact: { create: vi.fn() },
+    lead: { findFirst: vi.fn(), create: vi.fn() },
+  },
+  withRlsContext: (fn: (tx: { $queryRaw: typeof txQueryRaw }) => unknown) =>
+    fn({ $queryRaw: txQueryRaw }),
 }));
 
 vi.mock('../../../../../src/features/prospecting/services/enrichment.service', () => ({
-    enrichCompany: vi.fn(),
+  enrichCompany: vi.fn(),
 }));
 
 vi.mock('../../../../../src/lib/logger', () => ({
-    logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
 import { prisma } from '../../../../../src/lib/prisma.js';
 import { enrichCompany } from '../../../../../src/features/prospecting/services/enrichment.service';
-import { promoteToCrm, type PromoteInput } from '../../../../../src/features/prospecting/services/prospecting.service';
+import {
+  promoteToCrm,
+  type PromoteInput,
+} from '../../../../../src/features/prospecting/services/prospecting.service';
 
-const companyMock = prisma.company as unknown as { findFirst: ReturnType<typeof vi.fn>; create: ReturnType<typeof vi.fn> };
-const leadMock = prisma.lead as unknown as { findFirst: ReturnType<typeof vi.fn>; create: ReturnType<typeof vi.fn> };
+const companyMock = prisma.company as unknown as {
+  findFirst: ReturnType<typeof vi.fn>;
+  create: ReturnType<typeof vi.fn>;
+};
+const leadMock = prisma.lead as unknown as {
+  findFirst: ReturnType<typeof vi.fn>;
+  create: ReturnType<typeof vi.fn>;
+};
 const mockEnrichCompany = vi.mocked(enrichCompany);
 
 const baseInput: PromoteInput = {
-    tradeName: 'Transportadora Exemplo',
-    source: 'Descoberta',
-    organizationId: 'org-1',
+  tradeName: 'Transportadora Exemplo',
+  source: 'Descoberta',
+  organizationId: 'org-1',
 };
 
 beforeEach(() => {
-    vi.clearAllMocks();
-    companyMock.findFirst.mockResolvedValue(null);
-    leadMock.findFirst.mockResolvedValue(null);
+  vi.clearAllMocks();
+  companyMock.findFirst.mockResolvedValue(null);
+  leadMock.findFirst.mockResolvedValue(null);
 });
 
 describe('promoteToCrm', () => {
-    it('cria Company + Lead de verdade quando tudo dá certo', async () => {
-        companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
-        mockEnrichCompany.mockResolvedValue(undefined as never);
-        leadMock.create.mockResolvedValue({
-            id: 'lead-1',
-            status: 'Novo_Lead',
-            company: { id: 'comp-1', status: 'Ativo' },
-            contact: null,
-        });
-
-        const result = await promoteToCrm(baseInput);
-
-        expect(companyMock.create).toHaveBeenCalledTimes(1);
-        expect(leadMock.create).toHaveBeenCalledTimes(1);
-        expect(result.lead.id).toBe('lead-1');
+  it('cria Company + Lead de verdade quando tudo dá certo', async () => {
+    companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
+    mockEnrichCompany.mockResolvedValue(undefined as never);
+    leadMock.create.mockResolvedValue({
+      id: 'lead-1',
+      status: 'Novo_Lead',
+      company: { id: 'comp-1', status: 'Ativo' },
+      contact: null,
     });
 
-    // Regressão: promoteToCrm já teve um catch geral que, em qualquer falha (banco fora do ar,
-    // erro de validação, enriquecimento quebrando), devolvia uma Company/Lead inteiramente
-    // fabricados com HTTP 201 de sucesso — o usuário achava que tinha criado um lead real que
-    // nunca foi persistido. Uma falha real de escrita tem que subir como erro, não virar sucesso
-    // fake.
-    it('propaga o erro real em vez de devolver um lead fabricado quando a escrita falha', async () => {
-        companyMock.create.mockRejectedValue(new Error('conexão com o banco perdida'));
+    const result = await promoteToCrm(baseInput);
 
-        await expect(promoteToCrm(baseInput)).rejects.toThrow('conexão com o banco perdida');
-        expect(leadMock.create).not.toHaveBeenCalled();
+    expect(companyMock.create).toHaveBeenCalledTimes(1);
+    expect(leadMock.create).toHaveBeenCalledTimes(1);
+    expect(result.lead.id).toBe('lead-1');
+  });
+
+  // Regressão: promoteToCrm já teve um catch geral que, em qualquer falha (banco fora do ar,
+  // erro de validação, enriquecimento quebrando), devolvia uma Company/Lead inteiramente
+  // fabricados com HTTP 201 de sucesso — o usuário achava que tinha criado um lead real que
+  // nunca foi persistido. Uma falha real de escrita tem que subir como erro, não virar sucesso
+  // fake.
+  it('propaga o erro real em vez de devolver um lead fabricado quando a escrita falha', async () => {
+    companyMock.create.mockRejectedValue(new Error('conexão com o banco perdida'));
+
+    await expect(promoteToCrm(baseInput)).rejects.toThrow('conexão com o banco perdida');
+    expect(leadMock.create).not.toHaveBeenCalled();
+  });
+
+  it('não deixa uma falha no enriquecimento derrubar a criação do lead', async () => {
+    companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
+    mockEnrichCompany.mockRejectedValue(new Error('Apollo indisponível'));
+    leadMock.create.mockResolvedValue({
+      id: 'lead-1',
+      status: 'Novo_Lead',
+      company: { id: 'comp-1', status: 'Ativo' },
+      contact: null,
     });
 
-    it('não deixa uma falha no enriquecimento derrubar a criação do lead', async () => {
-        companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
-        mockEnrichCompany.mockRejectedValue(new Error('Apollo indisponível'));
-        leadMock.create.mockResolvedValue({
-            id: 'lead-1',
-            status: 'Novo_Lead',
-            company: { id: 'comp-1', status: 'Ativo' },
-            contact: null,
-        });
+    const result = await promoteToCrm(baseInput);
 
-        const result = await promoteToCrm(baseInput);
+    expect(result.lead.id).toBe('lead-1');
+    expect(result.enrichment).toBeNull();
+  });
 
-        expect(result.lead.id).toBe('lead-1');
-        expect(result.enrichment).toBeNull();
+  // Onda 40 (auditoria CPI — "funil quebra no primeiro elo, busca→lead"): quando o candidato
+  // promovido veio de uma SavedSearch, o Lead criado precisa guardar essa proveniência.
+  it('persiste savedSearchId no Lead quando informado', async () => {
+    companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
+    mockEnrichCompany.mockResolvedValue(undefined as never);
+    leadMock.create.mockResolvedValue({
+      id: 'lead-1',
+      status: 'Novo_Lead',
+      company: { id: 'comp-1', status: 'Ativo' },
+      contact: null,
     });
 
-    // Onda 40 (auditoria CPI — "funil quebra no primeiro elo, busca→lead"): quando o candidato
-    // promovido veio de uma SavedSearch, o Lead criado precisa guardar essa proveniência.
-    it('persiste savedSearchId no Lead quando informado', async () => {
-        companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
-        mockEnrichCompany.mockResolvedValue(undefined as never);
-        leadMock.create.mockResolvedValue({
-            id: 'lead-1',
-            status: 'Novo_Lead',
-            company: { id: 'comp-1', status: 'Ativo' },
-            contact: null,
-        });
+    await promoteToCrm({ ...baseInput, savedSearchId: 'search-1' });
 
-        await promoteToCrm({ ...baseInput, savedSearchId: 'search-1' });
+    expect(leadMock.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ savedSearchId: 'search-1' }) }),
+    );
+  });
 
-        expect(leadMock.create).toHaveBeenCalledWith(
-            expect.objectContaining({ data: expect.objectContaining({ savedSearchId: 'search-1' }) }),
-        );
+  it('savedSearchId fica null quando o candidato não veio de uma busca salva', async () => {
+    companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
+    mockEnrichCompany.mockResolvedValue(undefined as never);
+    leadMock.create.mockResolvedValue({
+      id: 'lead-1',
+      status: 'Novo_Lead',
+      company: { id: 'comp-1', status: 'Ativo' },
+      contact: null,
     });
 
-    it('savedSearchId fica null quando o candidato não veio de uma busca salva', async () => {
-        companyMock.create.mockResolvedValue({ id: 'comp-1', cnpj: null });
-        mockEnrichCompany.mockResolvedValue(undefined as never);
-        leadMock.create.mockResolvedValue({
-            id: 'lead-1',
-            status: 'Novo_Lead',
-            company: { id: 'comp-1', status: 'Ativo' },
-            contact: null,
-        });
+    await promoteToCrm(baseInput);
 
-        await promoteToCrm(baseInput);
-
-        expect(leadMock.create).toHaveBeenCalledWith(
-            expect.objectContaining({ data: expect.objectContaining({ savedSearchId: null }) }),
-        );
-    });
+    expect(leadMock.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ savedSearchId: null }) }),
+    );
+  });
 });

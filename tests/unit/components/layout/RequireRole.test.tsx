@@ -16,23 +16,35 @@ vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => useAuthMock() }));
 import { RequireRole } from '@/components/layout/RequireRole';
 
 describe('RequireRole', () => {
-    it('renderiza o conteúdo quando o papel do usuário satisfaz allowedRoles', () => {
-        useAuthMock.mockReturnValue({ currentUser: { role: 'ADMIN' } });
-        render(<RequireRole allowedRoles={['ADMIN']}><p>Conteúdo restrito</p></RequireRole>);
-        expect(screen.getByText('Conteúdo restrito')).toBeInTheDocument();
-    });
+  it('renderiza o conteúdo quando o papel do usuário satisfaz allowedRoles', () => {
+    useAuthMock.mockReturnValue({ currentUser: { role: 'ADMIN' } });
+    render(
+      <RequireRole allowedRoles={['ADMIN']}>
+        <p>Conteúdo restrito</p>
+      </RequireRole>,
+    );
+    expect(screen.getByText('Conteúdo restrito')).toBeInTheDocument();
+  });
 
-    it('bloqueia com mensagem explícita em PT-BR quando o papel não satisfaz (nunca uma tela em branco)', () => {
-        useAuthMock.mockReturnValue({ currentUser: { role: 'SDR' } });
-        render(<RequireRole allowedRoles={['ADMIN']}><p>Conteúdo restrito</p></RequireRole>);
-        expect(screen.queryByText('Conteúdo restrito')).not.toBeInTheDocument();
-        expect(screen.getByText('Acesso restrito')).toBeInTheDocument();
-        expect(screen.getByText(/permissão de ADMIN/)).toBeInTheDocument();
-    });
+  it('bloqueia com mensagem explícita em PT-BR quando o papel não satisfaz (nunca uma tela em branco)', () => {
+    useAuthMock.mockReturnValue({ currentUser: { role: 'SDR' } });
+    render(
+      <RequireRole allowedRoles={['ADMIN']}>
+        <p>Conteúdo restrito</p>
+      </RequireRole>,
+    );
+    expect(screen.queryByText('Conteúdo restrito')).not.toBeInTheDocument();
+    expect(screen.getByText('Acesso restrito')).toBeInTheDocument();
+    expect(screen.getByText(/permissão de ADMIN/)).toBeInTheDocument();
+  });
 
-    it('bloqueia quando não há usuário autenticado', () => {
-        useAuthMock.mockReturnValue({ currentUser: null });
-        render(<RequireRole allowedRoles={['ADMIN']}><p>Conteúdo restrito</p></RequireRole>);
-        expect(screen.getByText('Acesso restrito')).toBeInTheDocument();
-    });
+  it('bloqueia quando não há usuário autenticado', () => {
+    useAuthMock.mockReturnValue({ currentUser: null });
+    render(
+      <RequireRole allowedRoles={['ADMIN']}>
+        <p>Conteúdo restrito</p>
+      </RequireRole>,
+    );
+    expect(screen.getByText('Acesso restrito')).toBeInTheDocument();
+  });
 });

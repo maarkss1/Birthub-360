@@ -35,8 +35,10 @@ import { requestContext } from '../../src/lib/async-context';
  * nesta mesma mudança para não depender mais de bypass em tabela fora do allowlist.
  */
 
-const withBypass = <T>(fn: () => Promise<T>): Promise<T> => requestContext.run({ bypassRls: true }, fn);
-const asOrg = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> => requestContext.run({ tenantId }, fn);
+const withBypass = <T>(fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ bypassRls: true }, fn);
+const asOrg = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ tenantId }, fn);
 
 const ORG_A = 'test-rls-allowlist-org-a';
 const ORG_B = 'test-rls-allowlist-org-b';
@@ -44,19 +46,26 @@ const ORG_B = 'test-rls-allowlist-org-b';
 describe('Raio de explosão do bypass de RLS — allowlist real a nível de banco (ITEM-02)', () => {
   afterAll(async () => {
     await asOrg(ORG_A, () => prisma.prompt.deleteMany({ where: { organizationId: ORG_A } }));
-    await withBypass(() => prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }));
+    await withBypass(() =>
+      prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }),
+    );
   });
 
   it('bypass_rls=on NÃO concede mais leitura cross-tenant em Company (fora do allowlist)', async () => {
     await withBypass(async () => {
-      for (const [id, name] of [[ORG_A, 'RLS Allowlist Org A'], [ORG_B, 'RLS Allowlist Org B']] as const) {
+      for (const [id, name] of [
+        [ORG_A, 'RLS Allowlist Org A'],
+        [ORG_B, 'RLS Allowlist Org B'],
+      ] as const) {
         const exists = await prisma.organization.findUnique({ where: { id } });
         if (!exists) await prisma.organization.create({ data: { id, name } });
       }
     });
 
     const company = await asOrg(ORG_A, () =>
-      prisma.company.create({ data: { legalName: 'Empresa Allowlist A', tradeName: 'Empresa A', organizationId: ORG_A } }),
+      prisma.company.create({
+        data: { legalName: 'Empresa Allowlist A', tradeName: 'Empresa A', organizationId: ORG_A },
+      }),
     );
 
     // Antes desta correção, isto devolvia a linha (bypass_rls='on' bastava, current_tenant_id nem
@@ -69,7 +78,9 @@ describe('Raio de explosão do bypass de RLS — allowlist real a nível de banc
 
     // Confirma que a linha existe de verdade e é visível no contexto de tenant correto — não é um
     // falso positivo por a linha nunca ter sido criada.
-    const seenAsOwner = await asOrg(ORG_A, () => prisma.company.findUnique({ where: { id: company.id } }));
+    const seenAsOwner = await asOrg(ORG_A, () =>
+      prisma.company.findUnique({ where: { id: company.id } }),
+    );
     expect(seenAsOwner?.id).toBe(company.id);
 
     await asOrg(ORG_A, () => prisma.company.delete({ where: { id: company.id } }));
@@ -78,7 +89,8 @@ describe('Raio de explosão do bypass de RLS — allowlist real a nível de banc
   it('bypass_rls=on NÃO concede mais escrita cross-tenant em Prompt (fora do allowlist) — fecha o INSERT cross-tenant real', async () => {
     await withBypass(async () => {
       const exists = await prisma.organization.findUnique({ where: { id: ORG_B } });
-      if (!exists) await prisma.organization.create({ data: { id: ORG_B, name: 'RLS Allowlist Org B' } });
+      if (!exists)
+        await prisma.organization.create({ data: { id: ORG_B, name: 'RLS Allowlist Org B' } });
     });
 
     // Reprodução do PoC documentado na migration: mesmo com bypass_rls='on' (sem tenant nenhum
@@ -89,8 +101,14 @@ describe('Raio de explosão do bypass de RLS — allowlist real a nível de banc
         prisma.prompt.create({
           data: {
             id: 'prompt-allowlist-blast-radius',
-            name: 'p', version: '1.0', owner: ORG_B, category: 'cat',
-            organizationId: ORG_B, variables: {}, history: [], approved: true,
+            name: 'p',
+            version: '1.0',
+            owner: ORG_B,
+            category: 'cat',
+            organizationId: ORG_B,
+            variables: {},
+            history: [],
+            approved: true,
           },
         }),
       ),
@@ -102,8 +120,14 @@ describe('Raio de explosão do bypass de RLS — allowlist real a nível de banc
       prisma.prompt.create({
         data: {
           id: 'prompt-allowlist-legit',
-          name: 'p', version: '1.0', owner: ORG_B, category: 'cat',
-          organizationId: ORG_B, variables: {}, history: [], approved: true,
+          name: 'p',
+          version: '1.0',
+          owner: ORG_B,
+          category: 'cat',
+          organizationId: ORG_B,
+          variables: {},
+          history: [],
+          approved: true,
         },
       }),
     );

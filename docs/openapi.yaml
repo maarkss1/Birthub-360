@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Birth Hub 360º API
-  version: "1.0.0"
+  version: '1.0.0'
   description: |
     Documentação da API do Birth Hub 360º (CRM comercial + prospecção + IA).
 
@@ -155,17 +155,33 @@ paths:
       description: Filtros, ordenação e paginação são executados no PostgreSQL. pageSize máximo 200.
       parameters:
         - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
-        - { name: pageSize, in: query, schema: { type: integer, minimum: 1, maximum: 200, default: 50 } }
+        - {
+            name: pageSize,
+            in: query,
+            schema: { type: integer, minimum: 1, maximum: 200, default: 50 },
+          }
         - { name: cnpj, in: query, schema: { type: string } }
         - { name: razaoSocial, in: query, schema: { type: string, minLength: 2 } }
         - { name: nomeFantasia, in: query, schema: { type: string, minLength: 2 } }
         - { name: cnae, in: query, schema: { type: string } }
-        - { name: cnaeScope, in: query, schema: { type: string, enum: [principal, all], default: all } }
+        - {
+            name: cnaeScope,
+            in: query,
+            schema: { type: string, enum: [principal, all], default: all },
+          }
         - { name: municipio, in: query, schema: { type: string } }
         - { name: municipioIbge, in: query, schema: { type: string, pattern: '^\d{7}$' } }
         - { name: uf, in: query, schema: { type: string, pattern: '^[A-Z]{2}$' } }
-        - { name: situacaoCadastral, in: query, schema: { type: string, enum: [ATIVA, SUSPENSA, INAPTA, BAIXADA, NULA] } }
-        - { name: icpMinimo, in: query, schema: { type: string, enum: [MUITO_ALTO, ALTO, MEDIO, BAIXO, FORA_DO_ICP] } }
+        - {
+            name: situacaoCadastral,
+            in: query,
+            schema: { type: string, enum: [ATIVA, SUSPENSA, INAPTA, BAIXADA, NULA] },
+          }
+        - {
+            name: icpMinimo,
+            in: query,
+            schema: { type: string, enum: [MUITO_ALTO, ALTO, MEDIO, BAIXO, FORA_DO_ICP] },
+          }
         - { name: matrizFilial, in: query, schema: { type: string, enum: [MATRIZ, FILIAL] } }
         - { name: rntrc, in: query, schema: { type: boolean } }
         - { name: porte, in: query, schema: { type: string } }
@@ -173,7 +189,15 @@ paths:
         - { name: mei, in: query, schema: { type: string, enum: [SIM, NAO, NAO_INFORMADO] } }
         - { name: capitalSocialMin, in: query, schema: { type: number, minimum: 0 } }
         - { name: capitalSocialMax, in: query, schema: { type: number, minimum: 0 } }
-        - { name: sort, in: query, schema: { type: string, enum: [razaoSocial, nomeFantasia, capitalSocial, icpScore, dataInicioAtividade] } }
+        - {
+            name: sort,
+            in: query,
+            schema:
+              {
+                type: string,
+                enum: [razaoSocial, nomeFantasia, capitalSocial, icpScore, dataInicioAtividade],
+              },
+          }
         - { name: order, in: query, schema: { type: string, enum: [asc, desc] } }
       responses:
         '200': { description: Página de empresas e metadados da competência }
@@ -189,7 +213,8 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '200': { description: Identificação, CNAE, endereço, contato público, ICP, RNTRC e proveniência }
+        '200':
+          { description: Identificação, CNAE, endereço, contato público, ICP, RNTRC e proveniência }
         '400': { description: CNPJ inválido }
         '404': { description: CNPJ ausente no snapshot publicado }
   /market-intelligence/companies/{cnpj}/approve-to-pipeline:
@@ -267,7 +292,17 @@ paths:
               properties:
                 outcome:
                   type: string
-                  enum: [contato, reuniao_agendada, reuniao_realizada, retorno, convertido, sem_fit, dados_invalidos, revisao]
+                  enum:
+                    [
+                      contato,
+                      reuniao_agendada,
+                      reuniao_realizada,
+                      retorno,
+                      convertido,
+                      sem_fit,
+                      dados_invalidos,
+                      revisao,
+                    ]
                 note: { type: string }
                 bitrixStatusId: { type: string }
                 lossReasonId:
@@ -396,7 +431,8 @@ paths:
               required: [durationMinutes]
               properties:
                 durationMinutes: { type: number, description: Duração do bloco em minutos }
-                cycleNumber: { type: number, description: Número do ciclo dentro da sequência Pomodoro }
+                cycleNumber:
+                  { type: number, description: Número do ciclo dentro da sequência Pomodoro }
       responses:
         '200':
           description: Bloco de foco registrado
@@ -624,18 +660,34 @@ paths:
         (matriz + filiais) para busca por `startsWith` — usado por CompanyBranchesView.tsx.
       parameters:
         - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
-        - { name: pageSize, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 25 } }
+        - {
+            name: pageSize,
+            in: query,
+            schema: { type: integer, minimum: 1, maximum: 100, default: 25 },
+          }
         - { name: q, in: query, schema: { type: string } }
         - { name: cnpj, in: query, schema: { type: string } }
         - { name: uf, in: query, schema: { type: string, pattern: '^[A-Z]{2}$' } }
         - { name: municipio, in: query, schema: { type: string } }
         - { name: municipioIbge, in: query, schema: { type: string, pattern: '^\d{7}$' } }
         - { name: cnae, in: query, schema: { type: string } }
-        - { name: situacao, in: query, schema: { type: string, description: "'TODAS' remove o filtro padrão (ATIVA)" } }
+        - {
+            name: situacao,
+            in: query,
+            schema: { type: string, description: "'TODAS' remove o filtro padrão (ATIVA)" },
+          }
         - { name: porte, in: query, schema: { type: string } }
-        - { name: icpTier, in: query, schema: { type: string, enum: [MUITO_ALTO, ALTO, MEDIO, BAIXO, FORA_DO_ICP] } }
+        - {
+            name: icpTier,
+            in: query,
+            schema: { type: string, enum: [MUITO_ALTO, ALTO, MEDIO, BAIXO, FORA_DO_ICP] },
+          }
         - { name: matrizFilial, in: query, schema: { type: string, enum: [MATRIZ, FILIAL] } }
-        - { name: sort, in: query, schema: { type: string, enum: [name, capital, icp], default: name } }
+        - {
+            name: sort,
+            in: query,
+            schema: { type: string, enum: [name, capital, icp], default: name },
+          }
       responses:
         '200':
           description: Página de empresas do catálogo, metadados de paginação e proveniência do snapshot
@@ -1329,7 +1381,12 @@ paths:
               properties:
                 tradeName: { type: string }
                 source: { type: string }
-                savedSearchId: { type: string, nullable: true, description: 'Id da SavedSearch cujo candidato está sendo promovido, quando aplicável (onda 40 — rastreabilidade busca→lead).' }
+                savedSearchId:
+                  {
+                    type: string,
+                    nullable: true,
+                    description: 'Id da SavedSearch cujo candidato está sendo promovido, quando aplicável (onda 40 — rastreabilidade busca→lead).',
+                  }
       responses:
         '201':
           description: Recursos criados no CRM
@@ -2239,7 +2296,11 @@ paths:
                     type: object
                     required: [token, value]
                     properties:
-                      token: { type: string, description: 'Placeholder que substitui o valor, ex.: "[NOME_DO_CONTATO]"' }
+                      token:
+                        {
+                          type: string,
+                          description: 'Placeholder que substitui o valor, ex.: "[NOME_DO_CONTATO]"',
+                        }
                       value: { type: string, nullable: true }
       responses:
         '200':
@@ -4222,7 +4283,12 @@ paths:
       tags: [Birth Voice]
       summary: Lista as conexões com o Birth Voices Hub configuradas para o tenant
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /integrations/birth-voice/connect:
     post:
       tags: [Birth Voice]
@@ -4233,7 +4299,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/birth-voice/connections/{connectionId}/test:
     parameters:
@@ -4247,7 +4318,12 @@ paths:
         Testa a conectividade com o Hub (somente `/health`, sem autenticação — nunca confirma
         API key/agentId cadastrados). Somente ADMIN/GESTOR.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
         '404': { description: Conexão não encontrada }
   /integrations/birth-voice/disconnect/{connectionId}:
@@ -4260,7 +4336,12 @@ paths:
       tags: [Birth Voice]
       summary: Desconecta a conexão com o Birth Voices Hub (somente ADMIN/GESTOR)
       responses:
-        '200': { description: Desconectada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Desconectada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/birth-voice/calls:
     get:
@@ -4278,7 +4359,12 @@ paths:
           required: false
           schema: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /integrations/birth-voice/calls/{id}:
     parameters:
       - name: id
@@ -4289,7 +4375,12 @@ paths:
       tags: [Birth Voice]
       summary: Detalhe de uma chamada de voz IA (transcrição completa incluída)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { description: Chamada não encontrada }
 
   # ═══════════════════════════════════════════════════════════════════════════════════
@@ -4668,13 +4759,18 @@ paths:
           application/json:
             schema:
               type: object
-              required: [brand, segment, persona, framework, questionCategory, questionText, idealAnswer]
+              required:
+                [brand, segment, persona, framework, questionCategory, questionText, idealAnswer]
               properties:
                 brand: { type: string, enum: [atlasgr, totaltrac] }
                 segment: { type: string }
                 persona: { type: string }
                 framework: { type: string, enum: [SPIN, BANT, MEDDPICC, SNAP, CHALLENGER] }
-                questionCategory: { type: string, enum: ['Situação', 'Problema', 'Implicação/Custo', 'Necessidade/ROI'] }
+                questionCategory:
+                  {
+                    type: string,
+                    enum: ['Situação', 'Problema', 'Implicação/Custo', 'Necessidade/ROI'],
+                  }
                 questionText: { type: string }
                 idealAnswer: { type: string }
       responses:
@@ -4730,7 +4826,16 @@ paths:
           application/json:
             schema:
               type: object
-              required: [brand, segment, persona, objectionTitle, objectionText, responseScript, keyDifferentiator]
+              required:
+                [
+                  brand,
+                  segment,
+                  persona,
+                  objectionTitle,
+                  objectionText,
+                  responseScript,
+                  keyDifferentiator,
+                ]
               properties:
                 brand: { type: string, enum: [atlasgr, totaltrac] }
                 segment: { type: string }
@@ -4777,63 +4882,108 @@ paths:
       tags: [Comercial Inteligente]
       summary: Visão executiva geral (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/pipeline-creation:
     get:
       tags: [Comercial Inteligente]
       summary: Criação de pipeline no período (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/performance:
     get:
       tags: [Comercial Inteligente]
       summary: Métricas de performance comparativa (funil, ticket médio, ciclo de venda) — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/aging:
     get:
       tags: [Comercial Inteligente]
       summary: Relatório de aging (tempo parado por etapa) — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/losses:
     get:
       tags: [Comercial Inteligente]
       summary: Análise de perdas por motivo (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/leading-indicators:
     get:
       tags: [Comercial Inteligente]
       summary: Indicadores antecedentes (leading indicators) — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/alerts:
     get:
       tags: [Comercial Inteligente]
       summary: Alertas executivos ativos (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/crm-quality:
     get:
       tags: [Comercial Inteligente]
       summary: Índice de qualidade de dados do CRM (campos obrigatórios ausentes, falhas de sync) — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/deals:
     get:
       tags: [Comercial Inteligente]
       summary: Lista de negócios para drill-down executivo (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/deals/{leadId}/forecast:
     parameters:
@@ -4845,7 +4995,12 @@ paths:
       tags: [Comercial Inteligente]
       summary: Explicação do forecast de um negócio específico (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/metrics-dictionary:
     get:
@@ -4854,7 +5009,12 @@ paths:
         Dicionário de métricas (definição de cada indicador exibido) — para que dashboard,
         relatório exportado e API não divirjam silenciosamente. Somente ADMIN/GESTOR.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/filter-options:
     get:
@@ -4863,7 +5023,12 @@ paths:
         Opções válidas para os filtros da tela (vendedores/produtos/origens/ICPs conhecidos)
         (Agente 18, achado de auditoria: endpoint real, sem entrada aqui). Somente ADMIN/GESTOR.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/trends:
     get:
@@ -4889,7 +5054,12 @@ paths:
           in: query
           schema: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/export:
     get:
@@ -4922,35 +5092,60 @@ paths:
       tags: [Comercial Inteligente]
       summary: Health Score composto (6 pilares explicáveis; Confiabilidade de Forecast lê snapshots reais) — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/forecast-accuracy:
     get:
       tags: [Comercial Inteligente]
       summary: Erro histórico do Forecast (snapshot mais antigo de cada mês encerrado vs. realizado) — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/close-date-intelligence:
     get:
       tags: [Comercial Inteligente]
       summary: CLOSEDATE Intelligence — adiamentos/antecipações da data prevista por negócio, vendedor, produto e etapa — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/journey:
     get:
       tags: [Comercial Inteligente]
       summary: Jornada — handoffs, reentradas (recuperados/reativados), clientes sem interação e mapa de transições — somente ADMIN/GESTOR
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/goals:
     get:
       tags: [Comercial Inteligente]
       summary: Metas comerciais do período (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
     put:
       tags: [Comercial Inteligente]
@@ -4961,7 +5156,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: Atualizada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Atualizada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/ai/mentor-playbook:
     post:
@@ -4971,7 +5171,12 @@ paths:
         achado de auditoria: endpoint real, sem entrada aqui; somente ADMIN/GESTOR, mesmo
         limitador de IA dedicado dos demais endpoints `ai/*` deste módulo).
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
   /commercial-intelligence/ai/executive-summary:
@@ -4981,7 +5186,12 @@ paths:
         Gera um resumo executivo via IA a partir das métricas já calculadas (somente ADMIN/GESTOR;
         limitador de taxa dedicado por organização, mesmo desenho do `aiLimiter` de `server.ts`)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
   /commercial-intelligence/ai/bitrix-note:
@@ -4991,7 +5201,12 @@ paths:
         Gera uma nota via IA para publicar no Bitrix a partir de um negócio (somente ADMIN/GESTOR;
         mesmo limitador de IA dedicado do endpoint acima)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
 
@@ -5642,7 +5857,11 @@ paths:
               required: [capabilityCode, resource, reason]
               properties:
                 capabilityCode: { type: string }
-                resource: { type: object, description: 'Escopo do pedido, ex.: { "type": "LEAD", "id": "..." } — nunca vazio.' }
+                resource:
+                  {
+                    type: object,
+                    description: 'Escopo do pedido, ex.: { "type": "LEAD", "id": "..." } — nunca vazio.',
+                  }
                 reason: { type: string }
       responses:
         '201':
@@ -5782,7 +6001,12 @@ paths:
           application/json:
             schema: { type: object, required: [reason], properties: { reason: { type: string } } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -5808,7 +6032,17 @@ paths:
           application/json:
             schema:
               type: object
-              required: [missionId, conversationId, fromAgent, fromRole, toAgent, toRole, requestType, requestedCapability]
+              required:
+                [
+                  missionId,
+                  conversationId,
+                  fromAgent,
+                  fromRole,
+                  toAgent,
+                  toRole,
+                  requestType,
+                  requestedCapability,
+                ]
               properties:
                 missionId: { type: string }
                 conversationId: { type: string }
@@ -6032,14 +6266,27 @@ paths:
           application/json:
             schema:
               type: object
-              required: [sourceExecutionId, targetScope, topic, category, proposedContent, reflection]
+              required:
+                [sourceExecutionId, targetScope, topic, category, proposedContent, reflection]
               properties:
                 sourceExecutionId: { type: string, description: 'AgentExecution.id de origem.' }
                 targetScope: { type: string, enum: [AGENT, ROLE, ORGANIZATION] }
-                topic: { type: string, description: 'Chave de conflito/supersede dentro do escopo.' }
+                topic:
+                  { type: string, description: 'Chave de conflito/supersede dentro do escopo.' }
                 category:
                   type: string
-                  enum: [PRICING, DISCOUNT, FORECAST_RULE, CONTRACT, FINANCE, COMPLIANCE, WRITE_AUTOMATION, CAPABILITY, OPERATIONAL]
+                  enum:
+                    [
+                      PRICING,
+                      DISCOUNT,
+                      FORECAST_RULE,
+                      CONTRACT,
+                      FINANCE,
+                      COMPLIANCE,
+                      WRITE_AUTOMATION,
+                      CAPABILITY,
+                      OPERATIONAL,
+                    ]
                 proposedContent:
                   type: object
                   required: [summary]
@@ -6078,7 +6325,11 @@ paths:
         - name: status
           in: query
           required: false
-          schema: { type: string, enum: [PROPOSED, UNDER_REVIEW, APPROVED, REJECTED, SUPERSEDED, ROLLED_BACK] }
+          schema:
+            {
+              type: string,
+              enum: [PROPOSED, UNDER_REVIEW, APPROVED, REJECTED, SUPERSEDED, ROLLED_BACK],
+            }
       responses:
         '200':
           description: Lista de LearningCandidate — ver `data.candidates`
@@ -6096,7 +6347,12 @@ paths:
       tags: [Cargos e Agentes]
       summary: Detalha um LearningCandidate pelo id
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -6173,7 +6429,12 @@ paths:
       tags: [Cargos e Agentes]
       summary: Memória ATIVA (status APPROVED) de um agente — nunca inclui PROPOSED/UNDER_REVIEW/REJECTED/SUPERSEDED/ROLLED_BACK
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /memory/role/{code}:
     parameters:
@@ -6185,14 +6446,24 @@ paths:
       tags: [Cargos e Agentes]
       summary: Memória ATIVA (status APPROVED) de um cargo
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /memory/organization:
     get:
       tags: [Cargos e Agentes]
       summary: Memória ATIVA (status APPROVED) compartilhada pela organização inteira
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /memory/{scope}/{id}/rollback:
     parameters:
@@ -6217,7 +6488,12 @@ paths:
           application/json:
             schema: { type: object, required: [reason], properties: { reason: { type: string } } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -6246,7 +6522,11 @@ paths:
               type: object
               required: [need]
               properties:
-                need: { type: string, description: 'Necessidade em texto livre — nunca reformulada antes de buscar.' }
+                need:
+                  {
+                    type: string,
+                    description: 'Necessidade em texto livre — nunca reformulada antes de buscar.',
+                  }
                 targetJobRoleCode: { type: string }
                 domain: { type: string }
       responses:
@@ -6266,7 +6546,11 @@ paths:
         - name: status
           in: query
           required: false
-          schema: { type: string, enum: [DRAFT, GAP_NOT_CONFIRMED, UNDER_REVIEW, APPROVED_FOR_DEVELOPMENT, REJECTED] }
+          schema:
+            {
+              type: string,
+              enum: [DRAFT, GAP_NOT_CONFIRMED, UNDER_REVIEW, APPROVED_FOR_DEVELOPMENT, REJECTED],
+            }
       responses:
         '200':
           description: Lista de propostas — ver `data.proposals`
@@ -6284,7 +6568,12 @@ paths:
       tags: [Cargos e Agentes]
       summary: Detalha uma proposta do Agent Builder pelo id (spec completo + gapAnalysis + riskReview)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -6352,7 +6641,12 @@ paths:
       tags: [Bitrix24]
       summary: Lista as conexões Bitrix24 configuradas para o tenant
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/connect:
     post:
       tags: [Bitrix24]
@@ -6363,7 +6657,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '201': { description: Criada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/connections/{connectionId}/test:
     parameters:
@@ -6375,7 +6674,12 @@ paths:
       tags: [Bitrix24]
       summary: Testa a conexão Bitrix24 (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/disconnect/{connectionId}:
     parameters:
@@ -6387,7 +6691,12 @@ paths:
       tags: [Bitrix24]
       summary: Desconecta e remove a conexão Bitrix24 (somente ADMIN/GESTOR)
       responses:
-        '200': { description: Desconectada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Desconectada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/connections/{connectionId}/webhook-secret:
     parameters:
@@ -6399,7 +6708,12 @@ paths:
       tags: [Bitrix24]
       summary: Regenera o segredo do webhook de entrada da conexão (somente ADMIN/GESTOR) — a URL é a credencial
       responses:
-        '200': { description: Regenerado, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Regenerado,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/connections/{connectionId}/inbound-events:
     parameters:
@@ -6416,14 +6730,24 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: Atualizado, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Atualizado,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/leads:
     get:
       tags: [Bitrix24]
       summary: Lista leads do Bitrix24 disponíveis para importação
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/leads/import:
     post:
       tags: [Bitrix24]
@@ -6434,14 +6758,24 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: Importados, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Importados,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/deals:
     get:
       tags: [Bitrix24]
       summary: Lista negócios/deals do Bitrix24 disponíveis para importação
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/deals/import:
     post:
       tags: [Bitrix24]
@@ -6452,38 +6786,68 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: Importados, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Importados,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/deal-pipelines:
     get:
       tags: [Bitrix24]
       summary: Pipelines de negócio configurados no Bitrix24
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/deal-stages:
     get:
       tags: [Bitrix24]
       summary: Etapas de negócio configuradas no Bitrix24
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/lead-statuses:
     get:
       tags: [Bitrix24]
       summary: Status de lead configurados no Bitrix24
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/users:
     get:
       tags: [Bitrix24]
       summary: Usuários do Bitrix24, para mapeamento de responsável
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/fields:
     get:
       tags: [Bitrix24]
       summary: Campos customizados disponíveis na entidade do Bitrix24
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/daily-plan:
     get:
       tags: [Bitrix24]
@@ -6496,7 +6860,12 @@ paths:
           required: false
           schema: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/daily-plan/sync:
     post:
       tags: [Bitrix24]
@@ -6509,7 +6878,12 @@ paths:
               properties:
                 assignedById: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/daily-plan/complete:
     post:
       tags: [Bitrix24]
@@ -6525,7 +6899,12 @@ paths:
                 itemType: { type: string }
                 itemId: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/daily-plan/note:
     post:
@@ -6542,10 +6921,19 @@ paths:
                 itemType: { type: string }
                 itemId: { type: string }
                 note: { type: string }
-                entityType: { type: string, description: 'lead|deal|contact|company — ver DailyPlanItem.bitrixEntityType' }
+                entityType:
+                  {
+                    type: string,
+                    description: 'lead|deal|contact|company — ver DailyPlanItem.bitrixEntityType',
+                  }
                 entityId: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/daily-plan/notes:
     get:
@@ -6572,7 +6960,12 @@ paths:
           required: false
           schema: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/daily-plan/activity:
     post:
@@ -6594,7 +6987,12 @@ paths:
                 observations: { type: string }
                 leadId: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/daily-plan/closing/pending:
     get:
@@ -6604,7 +7002,12 @@ paths:
         anterior com atividades locais e sem `DailyPlanClosing` registrado) — usado pelo
         DailyClosingGate para decidir se bloqueia o app.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/daily-plan/closing:
     post:
       tags: [Bitrix24]
@@ -6623,7 +7026,12 @@ paths:
                 userComment: { type: string }
                 nextDayGoals: { type: array, items: { type: string } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/hub-tasks:
     get:
@@ -6633,7 +7041,12 @@ paths:
         tarefas reais do Bitrix24 (`tasks.task.list`), não estado local. Devolve também a lista de
         colegas ativos do Bitrix24 para o seletor "Designar para".
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
     post:
       tags: [Bitrix24]
@@ -6649,7 +7062,12 @@ paths:
                 text: { type: string }
                 assigneeId: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/hub-tasks/{id}/toggle:
     parameters:
@@ -6672,7 +7090,12 @@ paths:
               properties:
                 done: { type: boolean }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
   /bitrix/leads/{leadId}/comment:
     parameters:
@@ -6689,7 +7112,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: Publicado, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Publicado,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/leads/{leadId}/export:
     parameters:
@@ -6712,7 +7140,12 @@ paths:
                 statusId: { type: string }
                 assignedById: { type: string }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/leads/export-batch:
     post:
@@ -6750,7 +7183,12 @@ paths:
       tags: [Bitrix24]
       summary: Lista as regras de sincronização automática configuradas
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
     post:
       tags: [Bitrix24]
       summary: >-
@@ -6762,7 +7200,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '201': { description: Criada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/sync-rules/{id}:
     parameters:
@@ -6776,7 +7219,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: Atualizada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Atualizada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
     delete:
       tags: [Bitrix24]
@@ -6797,7 +7245,12 @@ paths:
           in: query
           schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /bitrix/extractions:
     get:
       tags: [Bitrix24]
@@ -6805,7 +7258,12 @@ paths:
         Lista as extrações históricas do Bitrix24 (somente ADMIN/GESTOR — uma extração pode trazer
         todo o dado histórico da conta)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
     post:
       tags: [Bitrix24]
@@ -6816,7 +7274,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '202': { description: Extração iniciada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '202':
+          {
+            description: Extração iniciada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/extractions/{id}:
     parameters:
@@ -6825,7 +7288,12 @@ paths:
       tags: [Bitrix24]
       summary: Status/detalhe de uma extração (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
     delete:
       tags: [Bitrix24]
@@ -6840,7 +7308,12 @@ paths:
       tags: [Bitrix24]
       summary: Cancela uma extração em andamento (somente ADMIN/GESTOR)
       responses:
-        '200': { description: Cancelada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Cancelada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /bitrix/extractions/{id}/download:
     parameters:
@@ -6862,7 +7335,12 @@ paths:
       tags: [3CX]
       summary: Lista as conexões 3CX configuradas para o tenant
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
   /integrations/3cx/connect:
     post:
       tags: [3CX]
@@ -6873,7 +7351,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '201': { description: Criada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/3cx/connections/{connectionId}/test:
     parameters:
@@ -6885,7 +7368,12 @@ paths:
       tags: [3CX]
       summary: Testa a conexão 3CX (somente ADMIN/GESTOR)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/3cx/disconnect/{connectionId}:
     parameters:
@@ -6897,7 +7385,12 @@ paths:
       tags: [3CX]
       summary: Desconecta a conexão 3CX (somente ADMIN/GESTOR)
       responses:
-        '200': { description: Desconectada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Desconectada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/3cx/call:
     post:
@@ -6909,7 +7402,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: Ligação iniciada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: Ligação iniciada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
 
   # ───────────────────────────── Copiloto IA ─────────────────────────────
@@ -6937,18 +7435,33 @@ paths:
                 companyId: { type: string }
                 contactId: { type: string }
       responses:
-        '201': { description: Conversa criada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Conversa criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
     get:
       tags: [Copiloto IA]
       summary: Lista conversas do tenant, filtráveis por status/lead/empresa/contato
       parameters:
-        - { name: status, in: query, schema: { type: string, enum: [SCHEDULED, CAPTURING, PROCESSING, READY, FAILED, CANCELLED] } }
+        - {
+            name: status,
+            in: query,
+            schema:
+              { type: string, enum: [SCHEDULED, CAPTURING, PROCESSING, READY, FAILED, CANCELLED] },
+          }
         - { name: leadId, in: query, schema: { type: string } }
         - { name: companyId, in: query, schema: { type: string } }
         - { name: contactId, in: query, schema: { type: string } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /copiloto-ia/conversations/{id}:
     parameters:
@@ -6957,7 +7470,12 @@ paths:
       tags: [Copiloto IA]
       summary: Detalhe de uma conversa
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/start:
@@ -6967,7 +7485,12 @@ paths:
       tags: [Copiloto IA]
       summary: Marca o início da captura de áudio da conversa (SCHEDULED → CAPTURING)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/stop:
@@ -6977,7 +7500,12 @@ paths:
       tags: [Copiloto IA]
       summary: Encerra a captura de áudio (CAPTURING → PROCESSING)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/ready:
@@ -6987,7 +7515,12 @@ paths:
       tags: [Copiloto IA]
       summary: Marca a conversa como pronta (transcrição/análise concluídas — PROCESSING → READY)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/fail:
@@ -6997,7 +7530,12 @@ paths:
       tags: [Copiloto IA]
       summary: Marca a conversa como falha (ex. erro de transcrição — qualquer estado → FAILED)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/cancel:
@@ -7007,7 +7545,12 @@ paths:
       tags: [Copiloto IA]
       summary: Cancela a conversa (qualquer estado → CANCELLED)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/consent:
@@ -7028,10 +7571,16 @@ paths:
               properties:
                 granted: { type: boolean }
                 method: { type: string, description: 'Ex.: verbal, checkbox, e-mail' }
-                textVersion: { type: string, description: 'Versão do texto de consentimento apresentado' }
+                textVersion:
+                  { type: string, description: 'Versão do texto de consentimento apresentado' }
                 actorId: { type: string, description: 'Default: usuário autenticado' }
       responses:
-        '201': { description: Consentimento registrado, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Consentimento registrado,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -7077,7 +7626,12 @@ paths:
                 sizeBytes: { type: number }
                 durationMs: { type: number }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -7107,7 +7661,12 @@ paths:
                       text: { type: string }
                       confidence: { type: number }
       responses:
-        '201': { description: Segmentos criados, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Segmentos criados,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -7132,14 +7691,24 @@ paths:
                 confidence: { type: number }
                 evidenceSegmentIds: { type: array, items: { type: string } }
       responses:
-        '201': { description: Insight criado, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Insight criado,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
     get:
       tags: [Copiloto IA]
       summary: Lista os insights extraídos desta conversa
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/crm-field-suggestions:
@@ -7163,7 +7732,12 @@ paths:
                 suggestedValue: { type: string }
                 confidence: { type: number }
       responses:
-        '201': { description: Sugestão criada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Sugestão criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -7174,7 +7748,12 @@ paths:
       tags: [Copiloto IA]
       summary: Aprova uma sugestão de campo de CRM (PENDING → APPROVED) — auditado explicitamente
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/crm-field-suggestions/{id}/reject:
@@ -7184,7 +7763,12 @@ paths:
       tags: [Copiloto IA]
       summary: Rejeita uma sugestão de campo de CRM (PENDING → REJECTED) — auditado explicitamente
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/leads/lookup:
@@ -7194,7 +7778,12 @@ paths:
       parameters:
         - { name: q, in: query, required: true, schema: { type: string } }
       responses:
-        '200': { description: 'OK (data é null se nenhum Lead corresponder à consulta)', content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: 'OK (data é null se nenhum Lead corresponder à consulta)',
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /copiloto-ia/leads/search:
     get:
@@ -7205,9 +7794,20 @@ paths:
         Bitrix24/id), que resolve para no máximo um resultado exato. Usada pela extensão Chrome
         quando o vendedor busca pelo nome em vez de colar e-mail/link/id.
       parameters:
-        - { name: q, in: query, required: true, schema: { type: string }, description: 'Mínimo de 2 caracteres.' }
+        - {
+            name: q,
+            in: query,
+            required: true,
+            schema: { type: string },
+            description: 'Mínimo de 2 caracteres.',
+          }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
 
   /copiloto-ia/leads/{leadId}/deal-health:
@@ -7220,7 +7820,12 @@ paths:
       tags: [Copiloto IA]
       summary: Histórico de snapshots de Deal Health Score do lead
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
     post:
       tags: [Copiloto IA]
       summary: Registra um novo snapshot de Deal Health Score do lead
@@ -7235,7 +7840,12 @@ paths:
                 score: { type: number }
                 factorsJson: { type: object }
       responses:
-        '201': { description: Snapshot criado, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Snapshot criado,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
 
   # ─── Onda 6 — Coaching + Handoff ────────────────────────────────────
@@ -7248,7 +7858,12 @@ paths:
         Avaliação de coaching da conversa (rubrica + score geral), quando já calculada —
         `data` vem `null` se ainda não houver avaliação registrada
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /copiloto-ia/conversations/{id}/handoff:
@@ -7262,7 +7877,12 @@ paths:
         já foi extraído, sem chamada de IA nova. `isComplete`/`missingParts` sinalizam handoff
         incompleto de forma objetiva.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   # ─── Onda 4 — mapeamento de campo Bitrix + writeback (ADMIN/GESTOR) ───
@@ -7271,7 +7891,12 @@ paths:
       tags: [Copiloto IA]
       summary: Lista o mapeamento semantic_field → campo Bitrix configurado para o tenant
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
     post:
       tags: [Copiloto IA]
@@ -7288,7 +7913,12 @@ paths:
                 semanticField: { type: string }
                 bitrixFieldCode: { type: string }
       responses:
-        '201': { description: Mapeamento salvo, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '201':
+          {
+            description: Mapeamento salvo,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '400': { $ref: '#/components/responses/BadRequest' }
         '403': { $ref: '#/components/responses/Forbidden' }
 
@@ -7312,7 +7942,12 @@ paths:
         Dispara a escrita real da sugestão aprovada no Bitrix24 (mesmo vocabulário de auditoria
         `EXPORT` usado por exportLeadToBitrixNow) — exige mapeamento de campo configurado
       responses:
-        '200': { description: OK (ver status/writebackError no corpo), content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK (ver status/writebackError no corpo),
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -7328,7 +7963,12 @@ paths:
         SLA/tempo de resposta no WhatsApp do lead (Onda 7) — primeira resposta, média e mediana
         por rajada de mensagens inbound consecutivas (ver computeWhatsAppResponseTimeStats)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '404': { $ref: '#/components/responses/NotFound' }
 
   # ───────────────────────────── Webhooks (corpo cru) ─────────────────────────────
@@ -7420,7 +8060,11 @@ paths:
               required: [organizationId, providerMessageId, fromEmail]
               properties:
                 organizationId: { type: string }
-                leadId: { type: string, description: 'Dica direta de lead — resolvido por e-mail do contato quando ausente.' }
+                leadId:
+                  {
+                    type: string,
+                    description: 'Dica direta de lead — resolvido por e-mail do contato quando ausente.',
+                  }
                 providerMessageId: { type: string }
                 inReplyTo: { type: string, nullable: true }
                 fromEmail: { type: string }
@@ -7461,8 +8105,17 @@ paths:
               properties:
                 provider: { type: string, example: govbr }
                 providerRequestId: { type: string }
-                status: { type: string, enum: [created, sent, viewed, signed, declined, expired, cancelled] }
-                evidenceRef: { type: string, nullable: true, description: 'URL/id do certificado de assinatura devolvido pelo provedor.' }
+                status:
+                  {
+                    type: string,
+                    enum: [created, sent, viewed, signed, declined, expired, cancelled],
+                  }
+                evidenceRef:
+                  {
+                    type: string,
+                    nullable: true,
+                    description: 'URL/id do certificado de assinatura devolvido pelo provedor.',
+                  }
       responses:
         '200':
           description: Processado (outcome applied | ignored, com reason not-found | invalid-transition quando ignored)
@@ -7523,7 +8176,12 @@ paths:
         (`LeadController.importFromBitrix24` → `leadUseCases.importRecentBitrixLeads`) não aceita
         query nem corpo, só usa o `organizationId` da sessão). Restrito a ADMIN/GESTOR.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /leads/enrich-batch:
     post:
@@ -7539,7 +8197,12 @@ paths:
               properties:
                 leadIds: { type: array, items: { type: string } }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /prospecting/ocr:
     post:
@@ -7551,7 +8214,12 @@ paths:
           multipart/form-data:
             schema: { type: object, description: 'Upload de imagem/PDF — ver ocr.service.ts' }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /prospecting/cold-email:
     post:
@@ -7563,7 +8231,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /intelligence/agents/sdr/status/{sessionId}:
     parameters:
@@ -7592,7 +8265,8 @@ paths:
                   status: { type: string, enum: [completed, failed] }
                   sessionId: { type: string }
                   messages: { description: 'Presente quando status=completed.' }
-                  error: { type: string, nullable: true, description: 'Presente quando status=failed.' }
+                  error:
+                    { type: string, nullable: true, description: 'Presente quando status=failed.' }
         '202':
           description: Ainda não há registro para esta sessão (pendente ou nunca iniciada).
           content:
@@ -7609,7 +8283,12 @@ paths:
       tags: [Intelligence]
       summary: Último relatório executivo gerado sob demanda (ReportsHub) para o tenant — nunca inclui o resumo automático diário (ver ReportSource)
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /intelligence/report/daily-summaries:
     get:
@@ -7619,7 +8298,12 @@ paths:
         (dailyExecutiveSummary.worker.ts, ReportSource=DAILY_AUTO) — somente leitura, exibido no
         ReportsHub separado do relatório sob demanda.
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /intelligence/win-loss-analysis:
     post:
@@ -7630,7 +8314,12 @@ paths:
           application/json:
             schema: { type: object }
       responses:
-        '202': { description: Análise enfileirada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '202':
+          {
+            description: Análise enfileirada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /notifications/stream:
     get:
@@ -7667,7 +8356,12 @@ paths:
         Dispara manualmente a varredura de leads estagnados/frios (mesma lógica do cron diário) —
         somente ADMIN, varredura cross-tenant administrativa
       responses:
-        '202': { description: Varredura iniciada, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '202':
+          {
+            description: Varredura iniciada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
         '403': { $ref: '#/components/responses/Forbidden' }
 
   /whatsapp/conversations:
@@ -7675,14 +8369,24 @@ paths:
       tags: [WhatsApp]
       summary: Lista as conversas de WhatsApp do tenant com sinais de intenção detectados
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /whatsapp/signals:
     get:
       tags: [WhatsApp]
       summary: Sinais de conversa detectados (conversation intelligence) para o tenant
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
   /google/disconnect:
     post:
@@ -7703,7 +8407,12 @@ paths:
       tags: [Google]
       summary: Próximos eventos do Google Calendar conectado
       responses:
-        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } } }
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
 
 components:
   securitySchemes:
@@ -7762,8 +8471,16 @@ components:
       required: [success, error]
       properties:
         success: { type: boolean, example: false }
-        error: { type: string, description: 'Mensagem de erro legível, já existente antes da extensão de contrato.' }
-        message: { type: string, description: 'Reservado no envelope de resposta; não é populado hoje por `errorHandler.ts`.' }
+        error:
+          {
+            type: string,
+            description: 'Mensagem de erro legível, já existente antes da extensão de contrato.',
+          }
+        message:
+          {
+            type: string,
+            description: 'Reservado no envelope de resposta; não é populado hoje por `errorHandler.ts`.',
+          }
         details:
           description: 'Detalhe estruturado do erro quando disponível (ex.: `issues` do ZodError).'
         code:
@@ -7808,11 +8525,16 @@ components:
       properties:
         success: { type: boolean, example: true }
         data: {}
-        meta: { type: object, description: 'Presente em listagens paginadas (page, limit, total, etc.)' }
+        meta:
+          {
+            type: object,
+            description: 'Presente em listagens paginadas (page, limit, total, etc.)',
+          }
 
     AIPendingAction:
       type: object
-      required: [id, entity, action, payload, riskLevel, approved, executed, attempts, createdAt, updatedAt]
+      required:
+        [id, entity, action, payload, riskLevel, approved, executed, attempts, createdAt, updatedAt]
       properties:
         id: { type: string }
         entity: { type: string, example: Lead }
@@ -7831,9 +8553,19 @@ components:
         idempotencyKey: { type: string, nullable: true }
         approved: { type: boolean }
         approvedAt: { type: string, format: date-time, nullable: true }
-        approvedBy: { type: string, nullable: true, description: 'Id do usuário (User.id) que aprovou — onda 39, trilha de aprovação.' }
+        approvedBy:
+          {
+            type: string,
+            nullable: true,
+            description: 'Id do usuário (User.id) que aprovou — onda 39, trilha de aprovação.',
+          }
         discardedAt: { type: string, format: date-time, nullable: true }
-        discardedBy: { type: string, nullable: true, description: 'Id do usuário (User.id) que descartou — onda 39, trilha de aprovação.' }
+        discardedBy:
+          {
+            type: string,
+            nullable: true,
+            description: 'Id do usuário (User.id) que descartou — onda 39, trilha de aprovação.',
+          }
         executed: { type: boolean }
         executedAt: { type: string, format: date-time, nullable: true }
         executionError: { type: string, nullable: true }

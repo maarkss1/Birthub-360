@@ -107,8 +107,8 @@ takes Block A step 0's FINDINGS-ONLY path: SKIP Block A steps 2–6, but STILL
 read `active_snapshot` from state for provenance, and NEVER stop merely because
 a code root is unset or unpinned.
 
-Maintain a high-level Threat Model that explicitly defines *who* the attackers
-are and *where* they can interact with the system, relying on the pre-processed
+Maintain a high-level Threat Model that explicitly defines _who_ the attackers
+are and _where_ they can interact with the system, relying on the pre-processed
 entities in the KB.
 
 Execute the threat modeling process as follows:

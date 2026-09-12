@@ -196,9 +196,8 @@ describe('runEnrichmentCascade', () => {
     });
 
     it('preenche emailStatus do Contact novo com o resultado de resolveEmailStatus (achado corrigido: antes ficava sempre null)', async () => {
-      const { resolveEmailStatus } = await import(
-        '@/features/prospecting/services/enrichment/domainGuess.js'
-      );
+      const { resolveEmailStatus } =
+        await import('@/features/prospecting/services/enrichment/domainGuess.js');
       vi.mocked(resolveEmailStatus).mockResolvedValue('verified');
 
       vi.mocked(prisma.company.findFirst).mockResolvedValue({ ...baseCompany } as never);

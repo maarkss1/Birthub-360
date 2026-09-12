@@ -27,26 +27,30 @@ override, tratado como configuração). Também toquei `knowledge.routes.ts` e `
 dessas pastas; se não for, ignore essa parte.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/intelligence/routes/intelligence.routes.ts` — `PUT /ai-settings` → ADMIN (config
   global, sem tenant).
 - `src/features/intelligence/routes/agent.routes.ts` — `POST /swarm/mission`, `POST /swarm/stream` → VENDEDOR+.
 - `src/features/intelligence/routes/prompt.routes.ts` — `POST /`, `PUT /:id` → GESTOR+.
 - `src/features/knowledge/knowledge.routes.ts` — `POST /`, `POST /upload`, `PUT /:id`, `POST
-  /:id/reembed` → VENDEDOR+; `DELETE /:id` → GESTOR+.
+/:id/reembed` → VENDEDOR+; `DELETE /:id` → GESTOR+.
 - `src/features/notes/routes/note.routes.ts` — `POST /` → VENDEDOR+; `DELETE /:noteId` → GESTOR+.
 
 ## Alteração necessária
+
 Nenhuma ação obrigatória — a correção do `ai-settings` já está completa e testada. Vale considerar,
 como melhoria futura (não bloqueador), se `AiEngineSetting` deveria ganhar um override por tenant
 em vez de ser puramente global — mas isso é decisão de produto/arquitetura, não algo que eu deveria
 decidir sozinho no meu escopo de segurança.
 
 ## Teste esperado
+
 Já entregue para `ai-settings` (6 casos). Os demais arquivos (`agent.routes.ts`, `prompt.routes.ts`,
 `knowledge.routes.ts`, `note.routes.ts`) não ganharam teste de matriz de acesso dedicado nesta
 rodada — considerar ao tocar neles na Onda 2.
 
 ## Contexto adicional
+
 `ai-settings.service.ts` usa `prisma.aiEngineSetting` sem filtro de tenant nenhum — isso é
 proposital dado o schema atual (não é um bug de "esqueceram o filtro"), mas fica registrado aqui
 porque é fácil de reintroduzir a mesma falha de autorização se um dia esse modelo ganhar
@@ -54,6 +58,7 @@ porque é fácil de reintroduzir a mesma falha de autorização se um dia esse m
 resolve.
 
 ## Resolução — Onda 2.5
+
 O handoff estava documentalmente aberto apesar de o próprio conteúdo registrar a correção como
 concluída e testada. A Onda 2.5 fecha o status para refletir o estado técnico já entregue. Nenhuma
 regra de autorização foi relaxada e nenhuma alteração funcional adicional foi necessária neste

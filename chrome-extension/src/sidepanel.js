@@ -224,7 +224,9 @@ async function saveConversationForTab() {
 
 function notifyCaptureState(capturing) {
   if (activeTabId == null) return;
-  chrome.runtime.sendMessage({ type: 'ATLAS_SET_CAPTURE_STATE', tabId: activeTabId, capturing }).catch(() => {});
+  chrome.runtime
+    .sendMessage({ type: 'ATLAS_SET_CAPTURE_STATE', tabId: activeTabId, capturing })
+    .catch(() => {});
 }
 
 function render() {
@@ -258,9 +260,7 @@ function render() {
   linkLeadEl.textContent = conversation ? 'Reunião já vinculada' : 'Vincular reunião a este Lead';
   leadIdEl.disabled = !!conversation;
   skipLeadEl.disabled = !meetContext || !!conversation;
-  skipLeadEl.textContent = conversation
-    ? 'Sessão já iniciada'
-    : 'Capturar sem vincular a um Lead';
+  skipLeadEl.textContent = conversation ? 'Sessão já iniciada' : 'Capturar sem vincular a um Lead';
 
   // Consent card
   const hasConversation = !!conversation;
@@ -270,16 +270,21 @@ function render() {
     consentEl.checked = granted;
     consentEl.disabled = granted;
     registerConsentEl.disabled = granted || !consentEl.checked;
-    registerConsentEl.textContent = granted ? 'Consentimento registrado' : 'Registrar consentimento';
+    registerConsentEl.textContent = granted
+      ? 'Consentimento registrado'
+      : 'Registrar consentimento';
   }
 
   // Capture card
   captureCardEl.hidden = !hasConversation;
   if (hasConversation) {
-    const canStart = conversation.status === 'SCHEDULED' && conversation.consentStatus === 'GRANTED';
+    const canStart =
+      conversation.status === 'SCHEDULED' && conversation.consentStatus === 'GRANTED';
     const isCapturing = conversation.status === 'CAPTURING';
     toggleCaptureEl.disabled = !(canStart || isCapturing);
-    toggleCaptureEl.textContent = isCapturing ? 'Parar sessão de captura' : 'Iniciar sessão de captura';
+    toggleCaptureEl.textContent = isCapturing
+      ? 'Parar sessão de captura'
+      : 'Iniciar sessão de captura';
     toggleCaptureEl.className = isCapturing ? 'danger' : '';
   }
 
@@ -289,7 +294,11 @@ function render() {
   // IA/writeback card — só quando a transcrição+resumo já terminaram (AGENT_04: "exibir sugestões
   // da IA"/"confirmar/editar/descartar writebacks" direto na extensão).
   aiCardEl.hidden = !hasConversation || conversation.status !== 'READY';
-  if (hasConversation && conversation.status === 'READY' && conversation.id !== handoffLoadedForConversationId) {
+  if (
+    hasConversation &&
+    conversation.status === 'READY' &&
+    conversation.id !== handoffLoadedForConversationId
+  ) {
     handoffLoadedForConversationId = conversation.id;
     loadHandoff();
   }
@@ -348,10 +357,16 @@ async function startConversation(extra) {
 linkLeadEl.addEventListener('click', () =>
   withErrorHandling(async () => {
     const query = leadIdEl.value.trim();
-    if (!query) throw new Error('Informe o nome, e-mail, o link do Bitrix24 ou o id do Lead antes de vincular.');
+    if (!query)
+      throw new Error(
+        'Informe o nome, e-mail, o link do Bitrix24 ou o id do Lead antes de vincular.',
+      );
     // Lead escolhido na lista de busca por nome já traz o id — não faz sentido mandar o título de
     // volta pro backend tentar (de novo) classificar como e-mail/URL/id cru.
-    if (selectedLead && leadIdEl.value.trim() === (selectedLead.title || selectedLead.companyName || selectedLead.id)) {
+    if (
+      selectedLead &&
+      leadIdEl.value.trim() === (selectedLead.title || selectedLead.companyName || selectedLead.id)
+    ) {
       await startConversation({ leadId: selectedLead.id });
       return;
     }
@@ -389,7 +404,8 @@ consentEl.addEventListener('change', () => {
 
 registerConsentEl.addEventListener('click', () =>
   withErrorHandling(async () => {
-    if (!conversation) throw new Error('Vincule a reunião a um Lead antes de registrar consentimento.');
+    if (!conversation)
+      throw new Error('Vincule a reunião a um Lead antes de registrar consentimento.');
     await copilotoApi.recordConsent(conversation.id, {
       method: 'meet_banner',
       textVersion: 'v1',
@@ -506,8 +522,12 @@ function renderHandoff() {
     actions.className = 'ai-suggestion-actions';
     if (suggestion.status === 'PENDING') {
       actions.append(
-        createSuggestionActionButton('Aprovar', () => handleSuggestionAction('approve', suggestion.id)),
-        createSuggestionActionButton('Rejeitar', () => handleSuggestionAction('reject', suggestion.id)),
+        createSuggestionActionButton('Aprovar', () =>
+          handleSuggestionAction('approve', suggestion.id),
+        ),
+        createSuggestionActionButton('Rejeitar', () =>
+          handleSuggestionAction('reject', suggestion.id),
+        ),
       );
     } else if (suggestion.status === 'APPROVED' || suggestion.status === 'FAILED') {
       // A extensão não sabe o role do usuário logado — o botão sempre aparece, e o backend
@@ -587,7 +607,11 @@ async function pollConversationStatus() {
   } catch {
     return;
   }
-  if (!conversation || conversation.id !== conversationId || updated.status === conversation.status) {
+  if (
+    !conversation ||
+    conversation.id !== conversationId ||
+    updated.status === conversation.status
+  ) {
     return;
   }
   conversation.status = updated.status;
@@ -602,7 +626,10 @@ function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   const isLight = theme === 'light';
   themeToggleEl.textContent = isLight ? '☀️' : '🌙';
-  themeToggleEl.setAttribute('aria-label', isLight ? 'Alternar para tema escuro' : 'Alternar para tema claro');
+  themeToggleEl.setAttribute(
+    'aria-label',
+    isLight ? 'Alternar para tema escuro' : 'Alternar para tema claro',
+  );
 }
 
 async function loadTheme() {

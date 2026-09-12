@@ -63,11 +63,7 @@ export interface RoleSupervisorStepResult {
 }
 
 export type RoleSupervisorStatus =
-  | 'NO_JOB_ROLE'
-  | 'INACTIVE_JOB_ROLE'
-  | 'NO_SUPERVISOR_PROFILE'
-  | 'COMPLETED'
-  | 'HALTED';
+  'NO_JOB_ROLE' | 'INACTIVE_JOB_ROLE' | 'NO_SUPERVISOR_PROFILE' | 'COMPLETED' | 'HALTED';
 
 export interface RoleSupervisorResultDto {
   status: RoleSupervisorStatus;

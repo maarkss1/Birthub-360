@@ -5,6 +5,7 @@
 - Prioridade: alto
 
 ## Problema
+
 `src/features/crm360/services/crm360.service.ts` tem 5 ocorrências de `as any` num limite de
 contrato: 2 escondem a forma real do retorno de agregação do Prisma (`groupBy`/`_count`/`_sum`) com
 fallback silencioso para `0` se o shape mudar, e 3 escondem o tipo de entrada de campo `Json`
@@ -14,12 +15,14 @@ propriedade: `crm360` não está listado explicitamente em nenhum `.agents/promp
 redirecione para quem for.)
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/crm360/services/crm360.service.ts:200` — `count: (row._count as any)._all ?? 0,`
 - `src/features/crm360/services/crm360.service.ts:201` — `amount: (row._sum as any).amount ?? 0,`
 - `src/features/crm360/services/crm360.service.ts:339,404,431` — `customFields: input.customFields as any,`
   (em `createDeal`, `createProduct`, `updateProduct`)
 
 ## Alteração necessária
+
 **Linhas 200-201 (risco alto)**: `count`/`amount` alimentam o resumo do dashboard CRM360 —
 `amount` é valor monetário de negócio. O fallback `?? 0` some silenciosamente se a forma real do
 retorno do `groupBy` do Prisma mudar (ex.: numa migração de versão do Prisma, ou se o agrupamento
@@ -36,11 +39,13 @@ mais barata: trocar `as any` por `as Prisma.InputJsonValue` (ou o tipo equivalen
 Prisma Client), que preserva a intenção sem abrir mão de qualquer checagem.
 
 ## Teste esperado
+
 - `npx tsc --noEmit` sem erros novos após a troca de tipo.
 - Testes de `tests/unit/features/crm360/**` (se existirem) continuam passando, incluindo qualquer
   teste que exercite o resumo `count`/`amount` do dashboard.
 
 ## Contexto adicional
+
 Classificação de risco desta varredura: alto = pode mascarar drift num valor monetário/de negócio
 sem erro visível; médio = fricção de tipagem interna sem exposição externa de contrato.
 
@@ -62,16 +67,18 @@ Correção real: extraída a chamada `prisma.lead.groupBy({...})` para uma vari�
 `Array<{ funnel, status, _count: { _all: number }, _sum: { amount: number | null } }>`, e esse tipo
 já resolvido é preservado quando a promise entra no array do `$transaction` (não precisa ser
 re-inferido lá). Resultado:
+
 ```ts
 const stageCountsQuery = prisma.lead.groupBy({
-    where: { organizationId },
-    by: ['funnel', 'status'],
-    _count: { _all: true },
-    _sum: { amount: true },
-    orderBy: { funnel: 'asc' },
+  where: { organizationId },
+  by: ['funnel', 'status'],
+  _count: { _all: true },
+  _sum: { amount: true },
+  orderBy: { funnel: 'asc' },
 });
 // ... dentro do array do $transaction: stageCountsQuery no lugar do groupBy inline
 ```
+
 ```ts
 stageCounts: stageCounts.map((row) => ({
     funnel: row.funnel,
@@ -82,6 +89,7 @@ stageCounts: stageCounts.map((row) => ({
                                    // não mais um mascaramento de shape desconhecida
 })),
 ```
+
 Nenhum `any` explícito ou implícito restante nesse trecho — `npx tsc --noEmit -p .` confirma.
 
 **Linhas 339/404/431 (risco médio) — resolvido conforme proposto.** Os 3 `as any` de

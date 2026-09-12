@@ -1,4 +1,5 @@
 # PRODUCT EXPERIENCE — CENTRAL DE INTELIGÊNCIA COMERCIAL BIRTH HUB 360
+
 **Fase 1 do mandato: Inventário real, mapa de fricção e primeira correção.**
 Gerado a partir de leitura direta do código (não de nomes de arquivos) em 2026-08-07.
 
@@ -14,34 +15,34 @@ A plataforma é um SPA React 19 + Vite servido por um backend Express único (`s
 
 ## 2. Product Map (módulos confirmados no código)
 
-| Módulo | Arquivo principal | Status real |
-|---|---|---|
-| Dashboard | `src/features/dashboard/components/SinglePageDashboard.tsx` | ✅ Completo |
-| Prospecção | `src/features/prospecting/components/ProspectingHub.tsx` | ✅ Completo (CNPJ, Discovery, OCR) |
-| CRM / Pipeline | `src/components/CrmBoard.tsx` | ✅ Completo (Kanban dnd-kit, 11 estágios) |
-| Empresas | `src/features/companies/components/CompanyList.tsx` | ✅ Completo |
-| Contatos | `src/features/contacts/components/ContactList.tsx` | ✅ Completo |
-| Atividades | `src/features/activities/components/ActivityList.tsx` | ✅ Completo |
-| Inteligência (Hub de IA) | `src/features/intelligence/components/IntelligenceHub.tsx` | ⚠️ 8/9 sub-telas estavam inacessíveis — **corrigido** |
-| Chatbook | `ChatbookHub.tsx` + `FloatingChatbook.tsx` | ⚠️ Duas implementações sobrepostas |
-| Roleplay | `src/features/roleplay/components/RoleplayHub.tsx` | ✅ Completo, mas duplicado em 2 outros lugares |
-| Matriz de Qualificação | `src/features/playbook/components/QualificationMatrixPage.tsx` | ✅ Completo (estático) |
-| Matriz de Objeções | `src/features/playbook/components/ObjectionsMatrixPage.tsx` | ✅ Completo (estático) |
-| Academia | `TopicTrainingAcademy.tsx` | ✅ Completo |
-| Bitrix (guia) | `BitrixGuideHub.tsx` | ⚠️ Estático, duplica a integração real |
-| Bitrix (integração real) | `src/features/integrations/components/Integrations.tsx` | ✅ Completo |
-| Relatórios | `ReportsHub.tsx` | ✅ Completo, sobrepõe conceitualmente Analytics |
-| Integrações | `Integrations.tsx` (WhatsApp/Google/Bitrix/3CX) | ✅ Completo |
-| Base de Conhecimento | `src/features/knowledge/components/Base.tsx` | ✅ Completo (RAG real) |
-| Editor de Documentos | `src/features/document-editor/components/Editor.tsx` | ⚠️ É o mesmo domínio da Base de Conhecimento, não um editor geral |
-| Analytics | `src/features/analytics/components/Analytics.tsx` | ✅ Completo |
-| Calendário | `src/features/calendar/components/Calendar.tsx` | ✅ Completo |
-| Notificações | `src/features/notifications/components/Notifications.tsx` | ✅ Completo |
-| Automações | `src/features/automations/components/Automations.tsx` | ✅ Completo (regra-real, distinta do "Guia de Automação" dentro do Hub de IA) |
-| Equipe | `src/features/team/components/Team.tsx` | ✅ Completo, admin-only |
-| Configurações | `src/features/settings/components/Settings.tsx` | ❌ Stub ("Em breve"), **nem está roteado** no Sidebar/App.tsx |
-| Login/Onboarding | `LoginScreen.tsx`, `OnboardingTour.tsx` | ✅ Completo |
-| IA Global / AI Dock | `AIDockWidget.tsx` + `AtlasChatbotTrigger.tsx` | ⚠️ Flutuante, mas não sabe qual registro está aberto |
+| Módulo                   | Arquivo principal                                              | Status real                                                                   |
+| ------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Dashboard                | `src/features/dashboard/components/SinglePageDashboard.tsx`    | ✅ Completo                                                                   |
+| Prospecção               | `src/features/prospecting/components/ProspectingHub.tsx`       | ✅ Completo (CNPJ, Discovery, OCR)                                            |
+| CRM / Pipeline           | `src/components/CrmBoard.tsx`                                  | ✅ Completo (Kanban dnd-kit, 11 estágios)                                     |
+| Empresas                 | `src/features/companies/components/CompanyList.tsx`            | ✅ Completo                                                                   |
+| Contatos                 | `src/features/contacts/components/ContactList.tsx`             | ✅ Completo                                                                   |
+| Atividades               | `src/features/activities/components/ActivityList.tsx`          | ✅ Completo                                                                   |
+| Inteligência (Hub de IA) | `src/features/intelligence/components/IntelligenceHub.tsx`     | ⚠️ 8/9 sub-telas estavam inacessíveis — **corrigido**                         |
+| Chatbook                 | `ChatbookHub.tsx` + `FloatingChatbook.tsx`                     | ⚠️ Duas implementações sobrepostas                                            |
+| Roleplay                 | `src/features/roleplay/components/RoleplayHub.tsx`             | ✅ Completo, mas duplicado em 2 outros lugares                                |
+| Matriz de Qualificação   | `src/features/playbook/components/QualificationMatrixPage.tsx` | ✅ Completo (estático)                                                        |
+| Matriz de Objeções       | `src/features/playbook/components/ObjectionsMatrixPage.tsx`    | ✅ Completo (estático)                                                        |
+| Academia                 | `TopicTrainingAcademy.tsx`                                     | ✅ Completo                                                                   |
+| Bitrix (guia)            | `BitrixGuideHub.tsx`                                           | ⚠️ Estático, duplica a integração real                                        |
+| Bitrix (integração real) | `src/features/integrations/components/Integrations.tsx`        | ✅ Completo                                                                   |
+| Relatórios               | `ReportsHub.tsx`                                               | ✅ Completo, sobrepõe conceitualmente Analytics                               |
+| Integrações              | `Integrations.tsx` (WhatsApp/Google/Bitrix/3CX)                | ✅ Completo                                                                   |
+| Base de Conhecimento     | `src/features/knowledge/components/Base.tsx`                   | ✅ Completo (RAG real)                                                        |
+| Editor de Documentos     | `src/features/document-editor/components/Editor.tsx`           | ⚠️ É o mesmo domínio da Base de Conhecimento, não um editor geral             |
+| Analytics                | `src/features/analytics/components/Analytics.tsx`              | ✅ Completo                                                                   |
+| Calendário               | `src/features/calendar/components/Calendar.tsx`                | ✅ Completo                                                                   |
+| Notificações             | `src/features/notifications/components/Notifications.tsx`      | ✅ Completo                                                                   |
+| Automações               | `src/features/automations/components/Automations.tsx`          | ✅ Completo (regra-real, distinta do "Guia de Automação" dentro do Hub de IA) |
+| Equipe                   | `src/features/team/components/Team.tsx`                        | ✅ Completo, admin-only                                                       |
+| Configurações            | `src/features/settings/components/Settings.tsx`                | ❌ Stub ("Em breve"), **nem está roteado** no Sidebar/App.tsx                 |
+| Login/Onboarding         | `LoginScreen.tsx`, `OnboardingTour.tsx`                        | ✅ Completo                                                                   |
+| IA Global / AI Dock      | `AIDockWidget.tsx` + `AtlasChatbotTrigger.tsx`                 | ⚠️ Flutuante, mas não sabe qual registro está aberto                          |
 
 ---
 
@@ -62,6 +63,7 @@ O AI Dock (`AIDockWidget`) e o Chatbook flutuante são globais (aparecem em toda
 ## 5. Arquitetura de dados (Prisma) — riscos que precisam de decisão do usuário antes de qualquer alteração
 
 Estes **não** foram tocados (mudança de schema tem alto raio de impacto e pode quebrar sync com Bitrix/produção) — ficam registrados para priorização:
+
 - 3 modelos de RAG sobrepostos: `KnowledgeDocument` (órfão, zero relações) vs `Document`/`DocumentChunk` (em uso) vs `KnowledgeChunk` (paralelo).
 - `Prospect` duplica `Company`/`Lead` (mesmo cnpj/score/enriquecimento) como pipeline paralelo não relacionado.
 - `AIGovernancePolicy` e `AIEvaluation` sem `organizationId` — quebram o padrão de isolamento multi-tenant usado em todo o resto do schema.
@@ -76,18 +78,18 @@ Praticamente inexistentes hoje: nenhum hook de media query no projeto, sidebar f
 
 ## 7. Top Problems (impacto = frequência × tempo perdido × nº usuários × impacto comercial × risco)
 
-| # | Problema | Persona afetada | Prioridade | Esforço |
-|---|---|---|---|---|
-| 1 | 8/9 sub-telas do Hub de IA inacessíveis | SDR, Closer, Gestor | **P0** | Baixo — **✅ corrigido nesta sessão** |
-| 2 | Command palette falso (Etapa 10 do mandato, 0% real) | Todos | P1 | Médio |
-| 3 | 4 superfícies de IA conversacional sem porta única | SDR, Closer | P1 | Médio–Alto (decisão de produto) |
-| 4 | IA não é contextual ao registro aberto | SDR, Closer | P1 | Médio |
-| 5 | Bitrix guia-vs-integração confuso | SDR, RevOps | P2 | Baixo |
-| 6 | Settings stub não roteado | Admin | P2 | Baixo |
-| 7 | Navegação morta (`nav.ts`/`Topbar.tsx`) ocupando espaço mental de manutenção | Eng/RevOps | P3 | Baixo |
-| 8 | Mobile praticamente ausente | SDR em campo | P2 | Alto |
-| 9 | Modelos Prisma órfãos/duplicados (RAG, Prospect) | RevOps/Eng | P2 | Alto (requer migração de dados) |
-| 10 | `User.role` não é enum | RevOps/Eng | P3 | Médio |
+| #   | Problema                                                                     | Persona afetada     | Prioridade | Esforço                               |
+| --- | ---------------------------------------------------------------------------- | ------------------- | ---------- | ------------------------------------- |
+| 1   | 8/9 sub-telas do Hub de IA inacessíveis                                      | SDR, Closer, Gestor | **P0**     | Baixo — **✅ corrigido nesta sessão** |
+| 2   | Command palette falso (Etapa 10 do mandato, 0% real)                         | Todos               | P1         | Médio                                 |
+| 3   | 4 superfícies de IA conversacional sem porta única                           | SDR, Closer         | P1         | Médio–Alto (decisão de produto)       |
+| 4   | IA não é contextual ao registro aberto                                       | SDR, Closer         | P1         | Médio                                 |
+| 5   | Bitrix guia-vs-integração confuso                                            | SDR, RevOps         | P2         | Baixo                                 |
+| 6   | Settings stub não roteado                                                    | Admin               | P2         | Baixo                                 |
+| 7   | Navegação morta (`nav.ts`/`Topbar.tsx`) ocupando espaço mental de manutenção | Eng/RevOps          | P3         | Baixo                                 |
+| 8   | Mobile praticamente ausente                                                  | SDR em campo        | P2         | Alto                                  |
+| 9   | Modelos Prisma órfãos/duplicados (RAG, Prospect)                             | RevOps/Eng          | P2         | Alto (requer migração de dados)       |
+| 10  | `User.role` não é enum                                                       | RevOps/Eng          | P3         | Médio                                 |
 
 ---
 
@@ -124,6 +126,7 @@ Praticamente inexistentes hoje: nenhum hook de media query no projeto, sidebar f
 **O que existia:** `AppTopbar.tsx` mostrava uma barra de busca com badge "⌘K", mas era decoração pura — `<span>` estático, sem input, sem listener de teclado, sem lógica.
 
 **O que foi construído**, tudo aditivo (nenhum componente/tela existente foi removido ou teve contrato alterado):
+
 - `src/components/ui/CommandPalette.tsx` — paleta global acionada por `⌘K`/`Ctrl+K` (de qualquer tela) ou clicando na barra do topbar. Navegação por setas + Enter, fechamento por Escape ou clique fora.
 - **Navegar**: busca fuzzy (com normalização de acentos) sobre os 23 módulos do app — reaproveita o mesmo mapa `TAB_META` que o topbar já usava, agora extraído para `src/components/layout/tabMeta.ts` como fonte única (elimina duplicação futura).
 - **Empresas/Decisores**: busca real, debounced (300ms), contra os endpoints já existentes `/api/companies?q=` e `/api/contacts?q=` — os mesmos que acabaram de ser corrigidos no item 8b. Selecionar um resultado navega até o módulo já filtrado pelo nome encontrado.
@@ -149,12 +152,14 @@ Durante este trabalho, identifiquei outra sessão editando o mesmo repositório 
 ## 8f. Consolidação das superfícies de IA sobrepostas (aprovada pelo usuário)
 
 Antes de mexer, investiguei a fundo em vez de assumir duplicação pela aparência: `AIDockWidget` (dock flutuante centro-inferior) e `FloatingChatbook` (drawer lateral) não eram cópias uma da outra — falavam com **backends de IA diferentes**. `AIDockWidget` usava `/api/agent/*`, com prompt de sistema dedicado por modo (`copilot`, `groq`, `objections`, `qualification`, `playbook`), cada um com temperatura própria (`src/features/intelligence/routes/agent.routes.ts`). Dois desses modos eram capacidades reais e únicas, ausentes em qualquer outro lugar do app:
+
 - **`objections`**: gera uma resposta de contorno sob medida para a objeção específica que o vendedor digitar (não é busca — é geração via LLM).
 - **`qualification`**: gera de 4 a 6 perguntas SPIN/BANT sob medida a partir do contexto do lead/segmento informado.
 
 A aba "Matrizes & Objeções" do `FloatingChatbook`, por outro lado, era **busca estática** numa lista fixa de objeções/qualificações pré-escritas (`BRAND_OBJECTIONS`/`BRAND_QUALIFICATIONS`), sem geração nenhuma. Remover o `AIDockWidget` sem preservar esses dois modos teria sido regressão real, não limpeza — por isso não apaguei nada até confirmar isso e alinhar o plano com o usuário.
 
 **O que fiz, com aprovação explícita do usuário para este plano:**
+
 1. Criei `src/hooks/useAiPlaybookGenerator.ts`, chamando os mesmos endpoints (`/api/agent/chat` com `tool: 'objections'`, `/api/agent/qualification`) que o `AIDockWidget` já usava.
 2. Adicionei um alternador "Buscar pronto" / "Gerar com IA" dentro da aba "Matrizes & Objeções" do `FloatingChatbook` (`src/features/chatbook/components/FloatingChatbook.tsx`) — a busca estática que já existia continua exatamente igual; o modo "Gerar com IA" é novo e expõe as duas capacidades que estavam presas no widget duplicado.
 3. Só depois disso testado (`tsc`, `eslint`, `vite build`, todos limpos, e o chunk `AIDockWidget` sumiu do bundle final — confirma que nada mais o referencia), removi `<AIDockWidget />` de `src/App.tsx`. **O arquivo `AIDockWidget.tsx` não foi apagado** — só parou de ser renderizado — para manter a reversão trivial caso algo precise ser recuperado.
@@ -182,16 +187,17 @@ Antes desta mudança, o copiloto (`useAssistantChat`) só recebia `activeBrand`/
 
 Investiguei se `RoleplayHub` (página dedicada) e a aba "Roleplay" do `FloatingChatbook` (widget flutuante) eram duplicação, como suspeitava. **Não são.** Os dois usam o mesmo backend (`/api/intelligence/studio`, `kind: 'roleplay'` — sem fragmentação de backend aqui, ao contrário do caso do AIDockWidget). A diferença é de profundidade, e é uma diferença legítima:
 
-| | `RoleplayHub` (dedicado) | Aba Roleplay do `FloatingChatbook` |
-|---|---|---|
-| Modalidade | Voz (microfone + texto-para-fala) | Só texto |
-| Dificuldade | 3 níveis selecionáveis | Não tem |
-| Personas | 3 por marca, descrições ricas | 3 genéricas, iguais nas duas marcas |
-| Ao final | Relatório de análise dedicado (pontuação média, pontos fortes, melhorias) | Nota inline por turno, sem relatório final |
+|             | `RoleplayHub` (dedicado)                                                  | Aba Roleplay do `FloatingChatbook`         |
+| ----------- | ------------------------------------------------------------------------- | ------------------------------------------ |
+| Modalidade  | Voz (microfone + texto-para-fala)                                         | Só texto                                   |
+| Dificuldade | 3 níveis selecionáveis                                                    | Não tem                                    |
+| Personas    | 3 por marca, descrições ricas                                             | 3 genéricas, iguais nas duas marcas        |
+| Ao final    | Relatório de análise dedicado (pontuação média, pontos fortes, melhorias) | Nota inline por turno, sem relatório final |
 
 Ou seja: uma é a sessão de treino completa, a outra é a prática rápida sem sair do que você está fazendo. É o padrão correto — como uma barra de resposta rápida ao lado de uma janela de composição completa. **Não mexi em nenhuma delas.**
 
 O único problema real era de descoberta: nada dentro do widget rápido avisava que a versão completa existe. Corrigido de forma mínima:
+
 - `AtlasChatbotTrigger.tsx` e `FloatingChatbook.tsx` ganharam uma prop `onNavigate` opcional (mesmo padrão já usado pelo Command Palette), passada por `MainLayout.tsx`.
 - A aba Roleplay do `FloatingChatbook` agora mostra um aviso no topo: "Isto é a prática rápida por texto. Para simulação completa por voz e nota final, abra o Roleplay dedicado" — clicar leva direto ao módulo `RoleplayHub` e fecha o widget.
 

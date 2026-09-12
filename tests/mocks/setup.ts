@@ -12,18 +12,18 @@ import { server } from './server';
 // componente com Dialog aberto (CompanyForm, ContactForm etc.) quebra com
 // "TypeError: dialog.showModal is not a function".
 if (typeof HTMLDialogElement !== 'undefined' && !HTMLDialogElement.prototype.showModal) {
-    HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
-        this.open = true;
-    };
-    HTMLDialogElement.prototype.close = function (this: HTMLDialogElement) {
-        this.open = false;
-        this.dispatchEvent(new Event('close'));
-    };
+  HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
+    this.open = true;
+  };
+  HTMLDialogElement.prototype.close = function (this: HTMLDialogElement) {
+    this.open = false;
+    this.dispatchEvent(new Event('close'));
+  };
 }
 
 server.listen({ onUnhandledRequest: 'bypass' });
 if (typeof window !== 'undefined') {
-    window.fetch = globalThis.fetch;
+  window.fetch = globalThis.fetch;
 }
 
 afterEach(() => server.resetHandlers());

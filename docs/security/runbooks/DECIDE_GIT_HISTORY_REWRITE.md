@@ -44,6 +44,7 @@ não para empurrar uma recomendação disfarçada de fato consumado.
 (assumindo `backups/` no `.gitignore` — verificar no Passo 0 abaixo).
 
 **Custo/risco de escolher este caminho:**
+
 - O dump com PII real continua permanentemente recuperável por qualquer clone existente ou futuro
   do repositório, incluindo forks já feitos antes da remoção — mesmo que o remote principal seja
   tornado privado depois, cópias já clonadas mantêm o histórico completo.
@@ -65,6 +66,7 @@ branch paralelas), o merge `5467e2a8` (que as une) e todo commit descendente del
 **hashes novos**.
 
 **Custo/risco de escolher este caminho:**
+
 - Qualquer branch local, fork ou PR aberto baseado no histórico antigo fica divergente — precisa
   ser re-clonado ou re-baseado manualmente por cada pessoa/agente com uma cópia. Neste repositório
   isso inclui, no mínimo, todos os worktrees de agente ativos no momento da reescrita
@@ -177,11 +179,11 @@ rotaciona como uma chave".
 ver nota de escopo):
 
 1. Clone `--mirror` isolado, `git filter-repo --path test-gemini.ts --path test-gemini-quota.ts
-   --path backups/ --invert-paths --force`.
+--path backups/ --invert-paths --force`.
 2. Verificado antes do push: `git rev-list --objects --all | grep -iE '\.dump$|test-gemini'` vazio
    no mirror reescrito.
 3. Concorrência real detectada e tratada: 2 commits novos chegaram em `main` (`41082d2c`, `3903d943
-   "Update launch.json"`) enquanto o mirror estava sendo preparado — o mirror foi re-clonado do
+"Update launch.json"`) enquanto o mirror estava sendo preparado — o mirror foi re-clonado do
    zero e a filtragem refeita antes do push, em vez de arriscar perder esses commits. O mesmo se
    repetiu depois do merge do PR #350 (mais uma re-clonagem + refiltragem) — nenhum commit legítimo
    foi perdido.
@@ -189,7 +191,7 @@ ver nota de escopo):
    duas vezes por proteção de branch do GitHub (`GH006`) até o dono desabilitar temporariamente
    "Allow force pushes" nas configurações da branch; reabilitada logo em seguida.
 5. **Nota de escopo (diferença do Passo 1 original abaixo):** por ter sido feito via `clone
-   --mirror` (necessário para capturar o dump, que só existia em commits antigos fora do alcance
+--mirror` (necessário para capturar o dump, que só existia em commits antigos fora do alcance
    de um clone raso), o `filter-repo` reescreveu tecnicamente as 82 branches remotas do
    repositório, não só `main`. **Só `main` foi de fato force-pushada** — as outras 81 branches
    remotas continuaram apontando pros commits originais (não tocadas), por escolha explícita do
@@ -204,10 +206,12 @@ branch foram feitos pelo próprio dono do repositório, seguindo a regra deste r
 humano executa o force-push final").
 
 **Verificação pós-reescrita, contra o remote real:**
+
 ```
 git ls-remote https://github.com/maarkss1/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR refs/heads/main
 # b5d47d1f94f500652873fdac21f5f13086723efc — hash novo, confirmado
 ```
+
 `git rev-list --objects main` (sem `--all`) no worktree sincronizado com o `main` pós-reescrita não
 retorna mais nenhum blob de `.dump`/`test-gemini*`.
 
@@ -283,6 +287,7 @@ procedimento original (Passo 1 desta página) nunca cobriu para tags.
 
 **Dependência de infraestrutura/CI/deploy nesta tag especificamente — verificado, nenhuma
 encontrada:**
+
 - `render.yaml`: os dois serviços (`prospector-atlas` web e `prospector-atlas-worker`) fazem
   deploy por branch (`autoDeployTrigger: commit` no push a `main`), não por tag — nenhuma menção a
   `v0.0.1`/`v1.0.0-rc.1`/`v2.0.0-recovery` no arquivo.

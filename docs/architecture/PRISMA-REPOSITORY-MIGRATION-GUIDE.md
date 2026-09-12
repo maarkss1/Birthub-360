@@ -89,7 +89,7 @@ Inventar um terceiro estilo para um módulo novo é o erro a evitar.
     antes, shape de retorno idêntico. Exporta `prismaModuleAccessRepository` (singleton).
   - `services/moduleAccess.service.ts` — agora define `class ModuleAccessService` com o
     repository injetado por construtor (`constructor(repository: ModuleAccessRepository =
-    prismaModuleAccessRepository)`) e exporta `moduleAccessService` (instância com a
+prismaModuleAccessRepository)`) e exporta `moduleAccessService` (instância com a
     implementação real). **As 4 funções livres originais continuam exportadas** como wrappers
     finos que delegam para `moduleAccessService` — decisão deliberada para não precisar tocar
     `moduleAccess.routes.ts` (zero mudança de comportamento, zero risco de regressão no único

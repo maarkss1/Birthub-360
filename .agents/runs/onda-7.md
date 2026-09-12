@@ -14,6 +14,7 @@ ser afrouxada: a transição para `Negócios Ganhos` continua exigindo evento ve
 (aceite/assinatura/confirmação de CRM), nunca texto gerado por modelo.
 
 Handoffs abertos relevantes para agentes desta onda (nenhum bloqueador):
+
 - `onda-5/01-para-06-persistencia-3cx-implementada.md` → 06
 - `onda-6/01A-para-06-bitrix-extraction-run-schema.md` → 06/06A (retenção já confirmada em 90 dias)
 - `onda-6/16-para-06-plano-migracao-baileys.md` → 06 (plano de coordenação futura, não executar
@@ -24,15 +25,15 @@ Handoffs abertos relevantes para agentes desta onda (nenhum bloqueador):
 
 Publicada antes do primeiro agente ser disparado — 7 especialistas simultâneos.
 
-| Agente | Branch | Worktree | Propriedade exclusiva nesta onda |
-|---|---|---|---|
-| **13** | `agente/13-enxame-governanca` | `../wt-agente-13` | `src/features/intelligence/agents/**`; `src/features/intelligence/services/{guardrails,aiPendingAction,pending-actions,autonomyRoleRunner,swarmScheduler}.service.ts`; `src/features/intelligence/services/winLossAnalysis.worker.ts`; `src/features/intelligence/components/{SwarmDashboard,AIPendingActions}.tsx`; `src/lib/queue/swarmScheduler.worker.ts`; `src/lib/queue/agent.worker.ts`; `src/lib/security/piiSanitizer.ts` |
-| **07** | `agente/07-ia-automacoes` | `../wt-agente-07` | `src/features/intelligence/**` **exceto** o que pertence ao 13 acima; `src/features/knowledge/**`; `src/features/automations/**` **exceto** `coldCallCampaign.api.ts` (12); `src/features/roleplay/**`; `src/lib/ai/**`; `src/lib/queue/**` **exceto** `coldCall.worker.ts` (12), `swarmScheduler.worker.ts` e `agent.worker.ts` (13); `server/ai/**` |
-| **12** | `agente/12-voz-telefonia` | `../wt-agente-12` | `src/features/integrations/birth-voice/**`; `src/features/integrations/threecx/**`; `src/lib/queue/coldCall.worker.ts`; `src/features/automations/coldCallCampaign.api.ts`; `src/features/intelligence/services/voicebox.service.ts` |
-| **17** | `agente/17-cadencia-ciclo-receita` | `../wt-agente-17` | `src/features/cadence/**` (novo) |
-| **06** | `agente/06-integracoes-bitrix` | `../wt-agente-06` | `src/features/integrations/**` **exceto** `birth-voice/**` e `threecx/**` (12) |
-| **05** | `agente/05-prospeccao` | `../wt-agente-05` | `src/features/prospecting/**`, `src/lib/enrichment/**` |
-| **04** | `agente/04-crm-bi` | `../wt-agente-04` | `src/features/crm/**`, `src/features/companies/**`, `src/features/contacts/**`, `src/features/calendar/**`, `src/features/activities/**`, `src/features/analytics/**`, `src/features/reports/**` |
+| Agente | Branch                             | Worktree          | Propriedade exclusiva nesta onda                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------ | ---------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **13** | `agente/13-enxame-governanca`      | `../wt-agente-13` | `src/features/intelligence/agents/**`; `src/features/intelligence/services/{guardrails,aiPendingAction,pending-actions,autonomyRoleRunner,swarmScheduler}.service.ts`; `src/features/intelligence/services/winLossAnalysis.worker.ts`; `src/features/intelligence/components/{SwarmDashboard,AIPendingActions}.tsx`; `src/lib/queue/swarmScheduler.worker.ts`; `src/lib/queue/agent.worker.ts`; `src/lib/security/piiSanitizer.ts` |
+| **07** | `agente/07-ia-automacoes`          | `../wt-agente-07` | `src/features/intelligence/**` **exceto** o que pertence ao 13 acima; `src/features/knowledge/**`; `src/features/automations/**` **exceto** `coldCallCampaign.api.ts` (12); `src/features/roleplay/**`; `src/lib/ai/**`; `src/lib/queue/**` **exceto** `coldCall.worker.ts` (12), `swarmScheduler.worker.ts` e `agent.worker.ts` (13); `server/ai/**`                                                                              |
+| **12** | `agente/12-voz-telefonia`          | `../wt-agente-12` | `src/features/integrations/birth-voice/**`; `src/features/integrations/threecx/**`; `src/lib/queue/coldCall.worker.ts`; `src/features/automations/coldCallCampaign.api.ts`; `src/features/intelligence/services/voicebox.service.ts`                                                                                                                                                                                               |
+| **17** | `agente/17-cadencia-ciclo-receita` | `../wt-agente-17` | `src/features/cadence/**` (novo)                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **06** | `agente/06-integracoes-bitrix`     | `../wt-agente-06` | `src/features/integrations/**` **exceto** `birth-voice/**` e `threecx/**` (12)                                                                                                                                                                                                                                                                                                                                                     |
+| **05** | `agente/05-prospeccao`             | `../wt-agente-05` | `src/features/prospecting/**`, `src/lib/enrichment/**`                                                                                                                                                                                                                                                                                                                                                                             |
+| **04** | `agente/04-crm-bi`                 | `../wt-agente-04` | `src/features/crm/**`, `src/features/companies/**`, `src/features/contacts/**`, `src/features/calendar/**`, `src/features/activities/**`, `src/features/analytics/**`, `src/features/reports/**`                                                                                                                                                                                                                                   |
 
 **Confirmação de disjunção:** os 7 conjuntos de arquivos acima não se sobrepõem — a divisão dentro
 de `src/features/intelligence/**` (13 vs 07) e `src/lib/queue/**` (13/12/07) foi explicitada linha
@@ -41,6 +42,7 @@ a linha para evitar exatamente o tipo de colisão que já ocorreu uma vez na his
 aberto no momento do disparo.
 
 **Arquivos de dono único fora desta onda** (nenhum dos 7 tem permissão de editar — abrem handoff):
+
 - `server.ts`, `package.json`+lockfile, `prisma/schema.prisma`+migrations → aprovação do 00/01A
 - `.github/workflows/**`, `Dockerfile`, `docker-compose*.yml`, `render.yaml` → 08
 - `src/App.tsx`, navegação, Sidebar → 02
@@ -237,6 +239,7 @@ Playwright) travou em **38 falhas** — todas `net::ERR_CONNECTION_REFUSED` a pa
 o processo Express caiu no meio da suíte (mesmo padrão que o Agente 17 já tinha relatado
 isoladamente no próprio worktree, antes de qualquer merge desta onda). Investigado antes de aceitar
 como regressão:
+
 1. Reproduzido o fluxo exato do primeiro teste que falhou (cadastro + login com senha errada) via
    `curl` direto contra a API — sem crash.
 2. Subido o servidor manualmente (`npm run start:e2e`, log próprio capturado) e rodado só
@@ -258,13 +261,13 @@ ele. Nunca aceitar a falha em massa como regressão sem esse passo.
 
 ## Resultado final do gate (todos os 7 agentes, branch `integracao/onda-7`)
 
-| Check | Resultado |
-|---|---|
-| `tsc --noEmit` | limpo |
-| `lint` | 0 erros, 101 warnings (baseline conhecida) |
-| `test:unit` | 1046/1046 |
-| `test:integration` | 71/73 (2 falhas: bug de plataforma pré-existente em `src/lib/prisma.ts`, não é regressão — ver acima) |
-| `build` | ok |
-| `test:e2e` | 45/45 (+ 5 skipped, pendência conhecida de baseline visual) — confirmado estável contra servidor próprio |
+| Check              | Resultado                                                                                                |
+| ------------------ | -------------------------------------------------------------------------------------------------------- |
+| `tsc --noEmit`     | limpo                                                                                                    |
+| `lint`             | 0 erros, 101 warnings (baseline conhecida)                                                               |
+| `test:unit`        | 1046/1046                                                                                                |
+| `test:integration` | 71/73 (2 falhas: bug de plataforma pré-existente em `src/lib/prisma.ts`, não é regressão — ver acima)    |
+| `build`            | ok                                                                                                       |
+| `test:e2e`         | 45/45 (+ 5 skipped, pendência conhecida de baseline visual) — confirmado estável contra servidor próprio |
 
 Onda 7 pronta para PR.

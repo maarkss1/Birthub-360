@@ -19,7 +19,7 @@ separados). Hipótese **não verificada** nessa tentativa.
   agente.
 - Branch criada: `git checkout -b agente/01A-rls-critico-onda9`.
 - Setup: `node scripts/test/prepare-integration-env.js && npx dotenv-cli -e .env.test -- npx prisma
-  migrate deploy` — aplicou 1 migration pendente (`20260815020000_bitrix_extraction_run`), sem
+migrate deploy` — aplicou 1 migration pendente (`20260815020000_bitrix_extraction_run`), sem
   erros.
 
 ### Passo 1 — reprodução isolada, antes de qualquer mudança de código
@@ -55,21 +55,23 @@ Investigação com instrumentação temporária (`$on('query')` no `basePrisma`,
 1. **A hipótese registrada nos handoffs da Onda 7 estava errada.** Troquei `executeWithRls` de
    array-form (`basePrisma.$transaction([setConfig, prismaPromise])`) para transação interativa
    (`basePrisma.$transaction(async (tx) => { await tx.$executeRawUnsafe(setConfig...); return
-   build(tx); })`, com todos os call-sites internos passando a construir a operação a partir do
+build(tx); })`, com todos os call-sites internos passando a construir a operação a partir do
    `client`/`tx` recebido em vez de uma `PrismaPromise` pré-construída) — mudança arquiteturalmente
    correta e documentada como o padrão recomendado do Prisma para RLS, mas **o sintoma persistiu
    idêntico** com as duas formas. Isso descartou a hipótese do array-form como causa raiz.
 2. Instrumentação mais profunda (logging de SQL real, comparando o valor devolvido por
    `requestContext.getStore()` dentro do callback do teste com o valor efetivamente usado no
    `set_config` da query) revelou a causa raiz verdadeira: **`PrismaClient` devolve uma
-   `PrismaPromise` *lazy*** — um thenable customizado que só começa a executar de verdade quando
+   `PrismaPromise` _lazy_** — um thenable customizado que só começa a executar de verdade quando
    `.then()`/`await` é chamado por quem consome o valor, não quando `.create()`/`.findMany()` é
    invocado. O padrão usado em todo o código de teste (e, por extensão, potencialmente em código de
    produção) —
+
    ```ts
    const asOrg = (id, fn) => requestContext.run({ tenantId: id }, fn);
    await asOrg(ORG_A, () => prisma.model.findMany(...));
    ```
+
    — devolve a `PrismaPromise` lazy de dentro do callback de `requestContext.run()` **sem dar
    `await` nela internamente**. `AsyncLocalStorage.run(store, callback)` do Node só garante a store
    ativa durante a extensão síncrona do `callback` (mais qualquer continuação de Promise nativa
@@ -80,12 +82,18 @@ Investigação com instrumentação temporária (`$on('query')` no `basePrisma`,
    (mutação persistente, não escopada), e esse era o valor que a query real via.
 
    Confirmado isoladamente, sem Prisma, com um thenable customizado equivalente:
+
    ```js
-   const lazyOp = () => ({ then(resolve) { setTimeout(() => resolve(als.getStore()), 10); } });
+   const lazyOp = () => ({
+     then(resolve) {
+       setTimeout(() => resolve(als.getStore()), 10);
+     },
+   });
    als.enterWith('outer-leaked-context');
    const result = await als.run('ORG_A', () => lazyOp());
    // result === 'outer-leaked-context', não 'ORG_A'
    ```
+
    E confirmado que envolver o callback de `run()` numa função `async` que dá `await` internamente
    resolve o problema (`als.run(store, async () => await fn())` devolve corretamente `'ORG_A'`).
 

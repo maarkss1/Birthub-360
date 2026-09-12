@@ -9,7 +9,12 @@ import { requireRole } from '../../src/shared/middlewares/requireRole';
 import { usageRoutes } from '../../src/features/billing/routes/usage.routes';
 import { errorHandler } from '../../src/shared/middlewares/errorHandler';
 import { setupDI } from '../../src/shared/di/setup';
-import { withRlsBypass, withTenant, signUpRealUser, type RealSessionUser } from '../helpers/rbac-e2e-helpers';
+import {
+  withRlsBypass,
+  withTenant,
+  signUpRealUser,
+  type RealSessionUser,
+} from '../helpers/rbac-e2e-helpers';
 
 /**
  * RBAC ponta-a-ponta de GET /api/usage — lacuna documentada no Piloto 022 (`.claude/PILOTS.md`):

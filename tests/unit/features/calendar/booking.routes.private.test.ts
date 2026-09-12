@@ -79,7 +79,9 @@ describe('PATCH /booking-links/:id — ativa/desativa link de agendamento', () =
   it('404 (não 403) quando o link pertence a outro usuário e quem chama não é ADMIN/GESTOR — nunca chama update', async () => {
     publicBookingLinkFindFirst.mockResolvedValue(null);
 
-    const res = await request(app).patch('/booking-links/link-de-outro-vendedor').send({ active: false });
+    const res = await request(app)
+      .patch('/booking-links/link-de-outro-vendedor')
+      .send({ active: false });
 
     expect(res.status).toBe(404);
     expect(publicBookingLinkUpdate).not.toHaveBeenCalled();
@@ -127,7 +129,9 @@ describe('PATCH /booking-links/:id — ativa/desativa link de agendamento', () =
     currentUser = { id: 'admin-1', organizationId: 'org-1', role: 'ADMIN' };
     publicBookingLinkFindFirst.mockResolvedValue(null);
 
-    const res = await request(app).patch('/booking-links/link-de-outro-tenant').send({ active: false });
+    const res = await request(app)
+      .patch('/booking-links/link-de-outro-tenant')
+      .send({ active: false });
 
     expect(res.status).toBe(404);
     expect(publicBookingLinkFindFirst).toHaveBeenCalledWith({

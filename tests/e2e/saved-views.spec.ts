@@ -66,7 +66,9 @@ test.describe('Saved Views do pipeline CRM', () => {
       const q = new URL(page.url()).searchParams.get('q');
       expect(q).toBe(company.tradeName);
     }).toPass({ timeout: 5_000 });
-    await expect(page.getByRole('button', { name: new RegExp(`^${company.tradeName}`) })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: new RegExp(`^${company.tradeName}`) }),
+    ).toBeVisible();
   });
 
   test('views salvas são pessoais — outro usuário não vê a view de ninguém mais', async ({

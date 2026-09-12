@@ -38,6 +38,7 @@ abaixo).
 > salvos (histórico local + `relatorios/forecast-semanal/historico.json`).
 
 ### 1. `index.html` — Home do portal
+
 - Cabeçalho/hero simples, ticker do Cockpit ao vivo (`#cockpitTicker`,
   auto-atualiza a cada 5 min **se** o webhook já estiver salvo no navegador —
   reaproveita `cockpitAtualizarTicker`/`cockpitIniciarAutoAtualizacao` de
@@ -54,6 +55,7 @@ abaixo).
   `extracao.html?relatorio=chave`.
 
 ### 2. `cockpit.html` — Cockpit Comercial Executivo
+
 - Card de conexão com o Bitrix (compacto).
 - O painel completo do Cockpit (`#cockpit-executivo`): cabeçalho, filtros,
   os 10 `.cockpit-bloco` (Alertas, Resultado do Mês, Forecast, Saúde do
@@ -65,6 +67,7 @@ abaixo).
   aqui, já que esta página é dedicada só a ele.
 
 ### 3. `extracao.html` — Extração & Diagnóstico
+
 - Troca real de tela, não accordion: a seção `#inicio` (busca + grade de
   cards de relatório) e o wrapper `<div class="oculto" id="fluxo-extracao">`
   (passos 1–8: Conexão, Escolha o que fazer, Período, Campos, Executar
@@ -91,6 +94,7 @@ abaixo).
   Inteligência v10 embutida): abre a aba de IA já com o relatório em foco.
 
 ### 4. `forecast.html` — 📈 Relatórios Comerciais
+
 - Grade de cards **só** do grupo "Comercial & Receita" (`RELATORIOS`
   filtrado por `grupo`, via a nova função `renderizarAtalhosRelatoriosGrupo`
   em `js/ui.js` — reaproveita o mesmo template de card, não duplica).
@@ -110,6 +114,7 @@ abaixo).
   "Decisões conservadoras" abaixo.
 
 ### 5. `sdr.html` — 📞 SDR & Operação
+
 - Grade de cards só do grupo "SDR & Leads".
 - Card de conexão compacto.
 - Os blocos dedicados de **Diário SDR** e **Análise SDR** (João Reis)
@@ -122,6 +127,7 @@ abaixo).
 - Mesmos elementos ocultos do motor genérico que `forecast.html` tem.
 
 ### 6. `evolucao.html` — 📈 Evolução (adicionada depois, ver nota no topo)
+
 - Sem card de conexão com o Bitrix e sem nenhum elemento do motor genérico —
   é só leitura de dados já salvos, não faz nenhuma chamada ao Bitrix.
 - Junta duas fontes de histórico do Forecast (função `iniciarPaginaEvolucao()`,
@@ -198,7 +204,7 @@ risco (resumido nas páginas compactas, com link para o aviso completo em
   em qualquer página sem o motor genérico completo (`index.html`,
   `cockpit.html`).
 - **`js/ui.js` → cards de relatório**: extraído `cardRelatorioRapidoHTML(chave,
-  rel)` do corpo de `renderizarAtalhosRelatorios()`; nova
+rel)` do corpo de `renderizarAtalhosRelatorios()`; nova
   `renderizarAtalhosRelatoriosGrupo(nomeGrupo, containerId)` reaproveita o
   mesmo template para os mini-portais.
 - **`js/ui.js` → `selecionarRelatorioRapido`**: ver seção "Navegação entre

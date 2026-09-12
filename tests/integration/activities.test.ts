@@ -17,10 +17,17 @@ describe('ActivityService Integration', () => {
       delete companyData.id;
       const company = await prisma.company.create({ data: companyData as any });
 
-      const leadData = LeadFactory.build({ companyId: company.id, organizationId: 'test-org-id', status: 'Lead_Recebido' });
+      const leadData = LeadFactory.build({
+        companyId: company.id,
+        organizationId: 'test-org-id',
+        status: 'Lead_Recebido',
+      });
       const lead = await prisma.lead.create({ data: leadData as never });
-      
-      const data = ActivityFactory.build({ leadId: lead.id, date: new Date().toISOString() as never });
+
+      const data = ActivityFactory.build({
+        leadId: lead.id,
+        date: new Date().toISOString() as never,
+      });
       delete (data as any).lead;
       delete (data as any).organizationId;
       data.status = 'Pendente';
@@ -33,7 +40,9 @@ describe('ActivityService Integration', () => {
       const activities = await prisma.activity.findMany({ where: { leadId: lead.id } });
       expect(activities.length).toBeGreaterThan(0);
 
-      const timelineEvents = await prisma.timelineEvent.findMany({ where: { leadId: lead.id, type: 'activity' } });
+      const timelineEvents = await prisma.timelineEvent.findMany({
+        where: { leadId: lead.id, type: 'activity' },
+      });
       expect(timelineEvents.length).toBeGreaterThan(0);
     });
   });

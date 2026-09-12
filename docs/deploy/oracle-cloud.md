@@ -34,12 +34,12 @@ No Oracle Cloud, o tráfego externo pode ser filtrado tanto pela **Security List
 
 Acesse **Networking → Virtual Cloud Networks → sua VCN → Security Lists/Network Security Groups** e libere somente o necessário:
 
-| Source CIDR | IP Protocol | Destination Port | Uso |
-|---|---|---:|---|
-| `0.0.0.0/0` | TCP | `80` | HTTP / ACME |
-| `0.0.0.0/0` | TCP | `443` | HTTPS |
-| IPs administrativos confiáveis | TCP | `22` | SSH |
-| IPs das máquinas de desenvolvimento (`/32` cada) | TCP | `5432` | Postgres direto (seção 4.2) — **nunca** `0.0.0.0/0` |
+| Source CIDR                                      | IP Protocol | Destination Port | Uso                                                 |
+| ------------------------------------------------ | ----------- | ---------------: | --------------------------------------------------- |
+| `0.0.0.0/0`                                      | TCP         |             `80` | HTTP / ACME                                         |
+| `0.0.0.0/0`                                      | TCP         |            `443` | HTTPS                                               |
+| IPs administrativos confiáveis                   | TCP         |             `22` | SSH                                                 |
+| IPs das máquinas de desenvolvimento (`/32` cada) | TCP         |           `5432` | Postgres direto (seção 4.2) — **nunca** `0.0.0.0/0` |
 
 Evite expor SSH para `0.0.0.0/0` quando puder restringir por IP de origem ou usar outro mecanismo de acesso seguro.
 
@@ -116,12 +116,12 @@ roda exatamente os mesmos passos manuais (`git fetch`/`reset --hard origin/main`
 **Ativação pendente** até estes 4 secrets existirem em Settings → Secrets and variables → Actions
 do repositório (o workflow falha de propósito, com mensagem explícita, enquanto faltar algum):
 
-| Secret | Valor |
-| --- | --- |
-| `OCI_SSH_HOST` | IP público da instância (ex.: `168.138.147.145`) |
-| `OCI_SSH_USER` | usuário SSH da instância (ex.: `opc` para Oracle Linux, `ubuntu` para Ubuntu) |
+| Secret                | Valor                                                                                                                                                                      |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `OCI_SSH_HOST`        | IP público da instância (ex.: `168.138.147.145`)                                                                                                                           |
+| `OCI_SSH_USER`        | usuário SSH da instância (ex.: `opc` para Oracle Linux, `ubuntu` para Ubuntu)                                                                                              |
 | `OCI_SSH_PRIVATE_KEY` | conteúdo completo da chave privada SSH (recomenda-se uma chave **dedicada** a este workflow, gerada só para deploy — não a chave pessoal de acesso interativo do operador) |
-| `OCI_DEPLOY_PATH` | caminho absoluto do clone do repositório na instância (ex.: `/home/opc/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR`) |
+| `OCI_DEPLOY_PATH`     | caminho absoluto do clone do repositório na instância (ex.: `/home/opc/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR`)                                                         |
 
 Secret opcional `OCI_SSH_KNOWN_HOSTS` (saída de `ssh-keyscan -H <host>` capturada manualmente) fixa
 a chave do host em vez de confiar em trust-on-first-use a cada execução — mais resistente a MITM na
@@ -190,13 +190,13 @@ máquinas de desenvolvimento. O container `postgres` desta stack é o único ban
 toda `DATABASE_URL` (produção dentro da instância e desenvolvimento fora dela) aponta para ele.
 O que muda em relação ao desenho original (loopback only):
 
-| Onde | O que foi feito |
-| --- | --- |
-| `docker-compose.oci.yml` | `postgres` publica `5432:5432` (todas as interfaces) e sobe com `ssl=on` |
-| `docker/postgres/Dockerfile` | instala `openssl` e gera certificado autoassinado no build (chave nunca sai da instância) |
-| `scripts/deploy-oci.sh` | libera 5432 no firewall do host (iptables/firewalld/ufw) |
+| Onde                         | O que foi feito                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| `docker-compose.oci.yml`     | `postgres` publica `5432:5432` (todas as interfaces) e sobe com `ssl=on`                         |
+| `docker/postgres/Dockerfile` | instala `openssl` e gera certificado autoassinado no build (chave nunca sai da instância)        |
+| `scripts/deploy-oci.sh`      | libera 5432 no firewall do host (iptables/firewalld/ufw)                                         |
 | `docker-compose.yml` (local) | serviço `postgres` removido; legado opt-in em `docker-compose.postgres-local.yml` só para testes |
-| `.env.example` / `.env` | `DATABASE_URL` direto para o IP público, com `?sslmode=require&uselibpqcompat=true` |
+| `.env.example` / `.env`      | `DATABASE_URL` direto para o IP público, com `?sslmode=require&uselibpqcompat=true`              |
 
 **Procedimento na instância** (uma vez, via SSH — recria o container `postgres`, ~30 s de
 indisponibilidade do banco; o volume `oci_pgdata` é preservado):
@@ -311,17 +311,16 @@ DOMAIN=app.atlasgr.com.br CHROME_EXTENSION_ID=abcdefghijklmnopqrstuvwxyz ACME_EM
 
 O script então ajusta em `.env.production` (preservando valores já customizados manualmente):
 
-| Variável | Valor definido |
-| --- | --- |
+| Variável          | Valor definido                                              |
+| ----------------- | ----------------------------------------------------------- |
 | `ALLOWED_ORIGINS` | `https://<DOMAIN>,chrome-extension://<CHROME_EXTENSION_ID>` |
-| `BETTER_AUTH_URL` | `https://<DOMAIN>` |
-| `PUBLIC_BASE_URL` | `https://<DOMAIN>` |
-| `COOKIE_DOMAIN` | `<DOMAIN>` |
-| `SECURE_COOKIES` | `true` |
-| `TRUST_PROXY` | `true` (Caddy é o proxy na frente da aplicação) |
+| `BETTER_AUTH_URL` | `https://<DOMAIN>`                                          |
+| `PUBLIC_BASE_URL` | `https://<DOMAIN>`                                          |
+| `COOKIE_DOMAIN`   | `<DOMAIN>`                                                  |
+| `SECURE_COOKIES`  | `true`                                                      |
+| `TRUST_PROXY`     | `true` (Caddy é o proxy na frente da aplicação)             |
 
 > **Extensão Chrome em Produção**: Se a extensão do Chrome for usada contra o backend em produção, a sua origem (`chrome-extension://<id>`) deve estar explicitamente incluída na lista `ALLOWED_ORIGINS` separada por vírgulas. Sem este passo, as requisições autenticadas da extensão falham com erro de CORS no navegador.
-
 
 Antes do cutover de DNS, confirme também (fora do escopo do script, ação humana):
 
@@ -400,7 +399,7 @@ corte em si. Procedimento recomendado, na ordem:
 3. **Validar integridade**: comparar contagem de linhas por tabela entre origem e dump (mesmo
    método já usado na migração Supabase→Neon, seção 1.2 de `docs/deploy/producao.md`).
 4. **Restaurar em um Postgres da Oracle de teste** (`./scripts/restore-oci.sh <dump> --target-db
-   prospectordb_migracao_drill`), nunca direto em `prospectordb`.
+prospectordb_migracao_drill`), nunca direto em `prospectordb`.
 5. **Testar a aplicação real contra esse banco restaurado** (login, CRM, Prospecção — mesmo roteiro
    do smoke da seção "Smoke Oracle" do checklist de Go-Live) antes de considerar o dado migrado
    utilizável.
@@ -420,18 +419,18 @@ Comandos como `DROP DATABASE`, `TRUNCATE`, `prisma migrate reset` ou qualquer de
 Ao validar `.env.production` na instância real, reporte apenas o status de cada variável — nunca o
 valor:
 
-| Variável | O que verificar |
-| --- | --- |
-| `DATABASE_URL` | Gerada automaticamente pelo Compose a partir de `APP_DB_PASSWORD` — CONFIGURADO se o container `postgres` está `healthy` |
-| `BETTER_AUTH_SECRET` | CONFIGURADO (gerado por `scripts/deploy-oci.sh`) |
-| `CREDENTIALS_ENCRYPTION_KEY` | CONFIGURADO (gerado por `scripts/deploy-oci.sh`, base64 32 bytes) |
-| `PII_BLIND_INDEX_KEY` | CONFIGURADO (gerado por `scripts/deploy-oci.sh`, base64 32 bytes) |
-| `APOLLO_API_KEY` / `HUNTER_API_KEY` / `GOOGLE_MAPS_API_KEY` | CONFIGURADO se a organização usa o provedor correspondente, senão NÃO NECESSÁRIO (`PROSPECTING_PROVIDER_MODE=free` funciona sem eles) |
-| `GROQ_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` | CONFIGURADO apenas para os provedores de IA realmente usados |
-| `BITRIX24_WEBHOOK_URL` | CONFIGURADO se a organização usa Bitrix24, senão NÃO NECESSÁRIO |
-| `BIRTH_VOICES_WEBHOOK_SECRET` | CONFIGURADO se Copiloto de voz/discagem estiver habilitado, senão NÃO NECESSÁRIO |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | CONFIGURADO se "Entrar com Google" for oferecido, senão AUSENTE (login por e-mail/senha continua funcionando) |
-| SMTP (`SMTP_HOST` etc.) | CONFIGURADO apenas se o e-mail de redefinição de senha precisar sair de fato — sem isso, o fluxo de reset continua funcionando tecnicamente (token gerado/validado), só o e-mail não é enviado |
+| Variável                                                    | O que verificar                                                                                                                                                                                |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                              | Gerada automaticamente pelo Compose a partir de `APP_DB_PASSWORD` — CONFIGURADO se o container `postgres` está `healthy`                                                                       |
+| `BETTER_AUTH_SECRET`                                        | CONFIGURADO (gerado por `scripts/deploy-oci.sh`)                                                                                                                                               |
+| `CREDENTIALS_ENCRYPTION_KEY`                                | CONFIGURADO (gerado por `scripts/deploy-oci.sh`, base64 32 bytes)                                                                                                                              |
+| `PII_BLIND_INDEX_KEY`                                       | CONFIGURADO (gerado por `scripts/deploy-oci.sh`, base64 32 bytes)                                                                                                                              |
+| `APOLLO_API_KEY` / `HUNTER_API_KEY` / `GOOGLE_MAPS_API_KEY` | CONFIGURADO se a organização usa o provedor correspondente, senão NÃO NECESSÁRIO (`PROSPECTING_PROVIDER_MODE=free` funciona sem eles)                                                          |
+| `GROQ_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY`        | CONFIGURADO apenas para os provedores de IA realmente usados                                                                                                                                   |
+| `BITRIX24_WEBHOOK_URL`                                      | CONFIGURADO se a organização usa Bitrix24, senão NÃO NECESSÁRIO                                                                                                                                |
+| `BIRTH_VOICES_WEBHOOK_SECRET`                               | CONFIGURADO se Copiloto de voz/discagem estiver habilitado, senão NÃO NECESSÁRIO                                                                                                               |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`                 | CONFIGURADO se "Entrar com Google" for oferecido, senão AUSENTE (login por e-mail/senha continua funcionando)                                                                                  |
+| SMTP (`SMTP_HOST` etc.)                                     | CONFIGURADO apenas se o e-mail de redefinição de senha precisar sair de fato — sem isso, o fluxo de reset continua funcionando tecnicamente (token gerado/validado), só o e-mail não é enviado |
 
 ---
 

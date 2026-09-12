@@ -17,32 +17,32 @@ a connection string.
 
 ## Variáveis obrigatórias para produção
 
-| Variável | Onde obter | Observação |
-| --- | --- | --- |
-| `DATABASE_URL` | Session Pooler do Supabase | Ver `producao.md` seção 1.1. Não é mais preenchida automaticamente — o Render não provisiona mais o Postgres. |
-| `DIRECT_URL` | Direct connection do Supabase | Opcional — só se `prisma migrate deploy` falhar via pooler. |
-| `BETTER_AUTH_URL` | URL pública do serviço Render (ou domínio custom) | Exemplo: `https://prospector-atlas.onrender.com` ou `https://app.atlasgr.com.br`. |
-| `PUBLIC_BASE_URL` | URL pública do serviço Render | Use o mesmo host público para callbacks/webhooks. |
-| `ALLOWED_ORIGINS` | Domínios permitidos | Separe múltiplas origens por vírgula. |
-| `BETTER_AUTH_SECRET` | Gerado pelo Render | O blueprint usa `generateValue: true`. |
-| `STORAGE_*` | Supabase Storage → S3 Connection | Ver `producao.md` seção 1.2. Opcional — sem elas o storage de objetos fica inerte. |
+| Variável             | Onde obter                                        | Observação                                                                                                    |
+| -------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`       | Session Pooler do Supabase                        | Ver `producao.md` seção 1.1. Não é mais preenchida automaticamente — o Render não provisiona mais o Postgres. |
+| `DIRECT_URL`         | Direct connection do Supabase                     | Opcional — só se `prisma migrate deploy` falhar via pooler.                                                   |
+| `BETTER_AUTH_URL`    | URL pública do serviço Render (ou domínio custom) | Exemplo: `https://prospector-atlas.onrender.com` ou `https://app.atlasgr.com.br`.                             |
+| `PUBLIC_BASE_URL`    | URL pública do serviço Render                     | Use o mesmo host público para callbacks/webhooks.                                                             |
+| `ALLOWED_ORIGINS`    | Domínios permitidos                               | Separe múltiplas origens por vírgula.                                                                         |
+| `BETTER_AUTH_SECRET` | Gerado pelo Render                                | O blueprint usa `generateValue: true`.                                                                        |
+| `STORAGE_*`          | Supabase Storage → S3 Connection                  | Ver `producao.md` seção 1.2. Opcional — sem elas o storage de objetos fica inerte.                            |
 
 ## Chaves de prospecção e IA
 
 Para habilitar Apollo, Google Places/Maps e Hunter em produção, mantenha `PROSPECTING_PROVIDER_MODE=hybrid` e cadastre os secrets abaixo no Render:
 
-| Variável | Plataforma |
-| --- | --- |
-| `APOLLO_API_KEY` | Apollo |
+| Variável              | Plataforma                        |
+| --------------------- | --------------------------------- |
+| `APOLLO_API_KEY`      | Apollo                            |
 | `GOOGLE_MAPS_API_KEY` | Google Maps Platform / Places API |
-| `HUNTER_API_KEY` | Hunter |
-| `GROQ_API_KEY` | Groq |
+| `HUNTER_API_KEY`      | Hunter                            |
+| `GROQ_API_KEY`        | Groq                              |
 
 ## Bitrix24
 
-| Variável | Plataforma |
-| --- | --- |
-| `BITRIX24_WEBHOOK_URL` | Webhook de entrada Bitrix24 |
+| Variável                      | Plataforma                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| `BITRIX24_WEBHOOK_URL`        | Webhook de entrada Bitrix24                                                             |
 | `BIRTH_VOICES_WEBHOOK_SECRET` | Segredo compartilhado para webhooks assinados, quando a integração de voz estiver ativa |
 
 O webhook de saída do Bitrix24 deve apontar para a URL pública do Render, não para IP local. Use a base `PUBLIC_BASE_URL` do serviço publicado e o caminho esperado pela integração que receberá o evento.

@@ -6,8 +6,8 @@
 - **Escopo deste documento:** item único da missão do Agente 08 na Onda 8 — "01 garante controle
   de acesso... e mecanismo técnico de exclusão/anonimização de dado pessoal mediante solicitação"
   (`.agents/completion/01-bloqueadores.md`) e a responsabilidade do 08 em `/AGENTS.md` → "LGPD e
-  dados pessoais": *"08 garante, na checklist de release, que existe caminho operacional para
-  atender solicitação de titular (acesso, correção, exclusão) e que isso está documentado."*
+  dados pessoais": _"08 garante, na checklist de release, que existe caminho operacional para
+  atender solicitação de titular (acesso, correção, exclusão) e que isso está documentado."_
   Não é a checklist de release completa (versão/gates/rollback/observabilidade) — essa já existe,
   como placeholder desatualizado, em `docs/reports/RELATORIO_PRODUCTION_READINESS.md` (Onda 3) e
   não foi tocada aqui para não criar duplicata nem afirmar status que não foi reverificado nesta
@@ -38,12 +38,12 @@ prioridade **alta**, não um bloqueador de go-live — ver seção 5 e 6 para pr
 
 ## 2. Mecanismos técnicos mapeados (lidos no código, não supostos)
 
-| Direito (Art. 18 LGPD) | Mecanismo | Arquivo | Como se aciona hoje |
-|---|---|---|---|
-| **Acesso / Portabilidade** (Art. 18 II/V) | `GET /api/lgpd/titular/:contactId/export` | `src/features/lgpd/lgpd.routes.ts`, `src/features/lgpd/lgpd.service.ts` (`exportContactData`) | Chamada HTTP autenticada (qualquer papel do tenant — sem `requireRole` adicional além de `authenticateToken`/`requireTenant`), retorna JSON estruturado com todos os campos de PII do `Contact` + leads associados + contagem de mensagens WhatsApp |
-| **Correção** (Art. 18 III) | `PUT /api/contacts/:id` | `src/features/contacts/routes/contact.routes.ts` (linha 23, `writeRoles = requireRole(['ADMIN','GESTOR','VENDEDOR'])`) | **Já é self-service**: é a mesma tela de edição de contato do CRM (`src/features/contacts/components/ContactForm.tsx`) que qualquer VENDEDOR/GESTOR/ADMIN já usa no dia a dia — não precisa de mecanismo novo, a correção de dado do titular é uma edição de contato comum |
-| **Exclusão / Anonimização** (Art. 18 IV/VI) | `DELETE /api/lgpd/titular/:contactId` → `eraseDataSubject()` | `src/features/lgpd/lgpd.routes.ts` (`requireRole(['ADMIN','GESTOR'])`), `src/shared/services/dataSubjectErasure.service.ts` | Chamada HTTP autenticada como ADMIN/GESTOR, **ou** `npx tsx scripts/lgpd-erase-data-subject.ts <organizationId> <contactId>` via linha de comando no ambiente de deploy |
-| **Exclusão automática por retenção** (complementar, não é pedido do titular) | Worker BullMQ diário (`0 3 * * *`) | `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts` | Automático — anonimiza leads em `Negocios_Perdidos` há mais de 90 dias sem interação, reaproveitando o mesmo `eraseDataSubject()` |
+| Direito (Art. 18 LGPD)                                                       | Mecanismo                                                    | Arquivo                                                                                                                     | Como se aciona hoje                                                                                                                                                                                                                                                        |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Acesso / Portabilidade** (Art. 18 II/V)                                    | `GET /api/lgpd/titular/:contactId/export`                    | `src/features/lgpd/lgpd.routes.ts`, `src/features/lgpd/lgpd.service.ts` (`exportContactData`)                               | Chamada HTTP autenticada (qualquer papel do tenant — sem `requireRole` adicional além de `authenticateToken`/`requireTenant`), retorna JSON estruturado com todos os campos de PII do `Contact` + leads associados + contagem de mensagens WhatsApp                        |
+| **Correção** (Art. 18 III)                                                   | `PUT /api/contacts/:id`                                      | `src/features/contacts/routes/contact.routes.ts` (linha 23, `writeRoles = requireRole(['ADMIN','GESTOR','VENDEDOR'])`)      | **Já é self-service**: é a mesma tela de edição de contato do CRM (`src/features/contacts/components/ContactForm.tsx`) que qualquer VENDEDOR/GESTOR/ADMIN já usa no dia a dia — não precisa de mecanismo novo, a correção de dado do titular é uma edição de contato comum |
+| **Exclusão / Anonimização** (Art. 18 IV/VI)                                  | `DELETE /api/lgpd/titular/:contactId` → `eraseDataSubject()` | `src/features/lgpd/lgpd.routes.ts` (`requireRole(['ADMIN','GESTOR'])`), `src/shared/services/dataSubjectErasure.service.ts` | Chamada HTTP autenticada como ADMIN/GESTOR, **ou** `npx tsx scripts/lgpd-erase-data-subject.ts <organizationId> <contactId>` via linha de comando no ambiente de deploy                                                                                                    |
+| **Exclusão automática por retenção** (complementar, não é pedido do titular) | Worker BullMQ diário (`0 3 * * *`)                           | `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts`                                                                 | Automático — anonimiza leads em `Negocios_Perdidos` há mais de 90 dias sem interação, reaproveitando o mesmo `eraseDataSubject()`                                                                                                                                          |
 
 O que `eraseDataSubject()` efetivamente apaga/mascara (não é um `DELETE` de linha, é anonimização
 irreversível — decisão de design documentada no próprio arquivo, compatível com LGPD Art. 12, que
@@ -61,10 +61,11 @@ trata dado anonimizado como fora do escopo da lei):
 
 Gaps conhecidos e já documentados no próprio código-fonte (não descobertos agora, apenas
 confirmados por leitura):
+
 - `AgentMemory` (sessões de IA) **não é alcançável** por este mecanismo — não tem `contactId`
   estruturado, só `sessionId`/`organizationId`; pode conter PII em texto livre dentro do blob JSON
   de mensagens. Registrado em `.agents/handoffs/onda-6/01A-para-07-agentmemory-sem-vinculo-
-  titular.md`.
+titular.md`.
 - `AILog`/`EnrichmentLog` avaliados e considerados fora de escopo (telemetria sem PII de titular
   pessoa física, ou chave por `companyId` e não por titular).
 
@@ -77,6 +78,7 @@ Docker estava disponível neste ambiente ao longo desta execução (verificado c
 Usei essa janela para ir além do que a nota de `.agents/runs/onda-8.md` antecipava como possível.
 
 **a) Testes automatizados executados nesta sessão:**
+
 ```bash
 npx vitest run -c vitest.unit.config.ts tests/unit/features/lgpd/lgpd.routes.test.ts \
   src/shared/services/__tests__/dataSubjectErasure.unit.test.ts
@@ -86,6 +88,7 @@ npx dotenv-cli -e .env.test -- npx vitest run -c vitest.integration.config.ts \
   tests/integration/lgpd-erasure-cross-tenant.test.ts
 # Test Files  1 passed (1) | Tests  1 passed (1)
 ```
+
 O teste de integração roda contra **Postgres real com RLS real** (não bypass no caminho sob
 teste): cria titulares em duas organizações, apaga o de `ORG_A` via `eraseDataSubject()`, e
 comprova sob RLS real que `ORG_B` não enxerga nada de `ORG_A` (`Contact`, `WhatsAppMessage`,
@@ -149,6 +152,7 @@ que já defina isso (busquei por "encarregado"/"DPO"/canal de privacidade em `do
 agente decide sozinho, não vou inventar um responsável — isso vai para a seção 5 como risco.
 
 O que existe, tecnicamente, hoje:
+
 - **Acesso/portabilidade**: qualquer usuário autenticado do tenant (qualquer papel) pode chamar
   `GET /api/lgpd/titular/:contactId/export` — operacionalmente, isso significa que **qualquer
   pessoa do time comercial com login no CRM** pode extrair os dados de um titular para responder
@@ -163,14 +167,14 @@ O que existe, tecnicamente, hoje:
 
 ## 5. Riscos / lacunas explícitas (não maquiadas como resolvidas)
 
-| # | Risco | Severidade | Situação |
-|---|---|---|---|
-| R1 | **Sem self-service via UI** para exclusão/anonimização — depende de alguém com acesso técnico (API direta ou terminal) para acionar `DELETE /api/lgpd/titular/:contactId` ou o script. Um ADMIN/GESTOR de negócio (não-técnico) não consegue, sozinho, atender um pedido de exclusão de titular sem pedir ajuda a alguém com acesso a Postman/terminal. | **Alto** | Aberto — mecanismo técnico correto existe, mas operação real depende de intermediário técnico |
-| R2 | **Sem canal de intake documentado** para o titular enviar o pedido (e-mail de DPO, formulário) e sem prazo de atendimento formalmente definido em nenhum documento do repositório (busquei; não encontrei) | **Alto** | Aberto — decisão de negócio/operação, não de código; nenhum agente deve inventar um responsável ou prazo sem essa decisão |
-| R3 | `GET /api/lgpd/titular/:contactId/export` não tem `requireRole` adicional (qualquer papel autenticado do tenant, inclusive VISUALIZADOR, pode exportar PII completa de qualquer titular do tenant) — pode ser aceitável (é leitura, dentro do próprio tenant, já sob RLS) mas vale revisão de negócio: talvez devesse exigir papel mínimo como a exclusão exige | Médio | Aberto — comportamento intencional ou descuido, não fica claro no código; recomendo confirmar com o 01/00 |
-| R4 | `AgentMemory` (histórico de conversas de IA) não é alcançado pelo mecanismo de exclusão — pode reter PII de titular em texto livre indefinidamente | Médio | Gap conhecido, já documentado em handoff da Onda 6 (`.agents/handoffs/onda-6/01A-para-07-agentmemory-sem-vinculo-titular.md`), não resolvido |
-| R5 | Nenhuma ação de acesso/exclusão de titular é persistida em `AuditLog` — fica só em log estruturado (`logger.info`), não em uma trilha de auditoria consultável no banco | Médio | Débito já mapeado em `docs/compliance/COMPLIANCE_MATRIX.md` ("Auditoria e LGPD ❌ Ausente") — não descoberto agora, apenas confirmado que segue sem correção |
-| R6 | Worker automático de 90 dias não foi exercitado em execução real nesta rodada | Baixo | Ver seção 3.2 — risco de teste, não de mecanismo (a função subjacente já foi validada duas vezes) |
+| #   | Risco                                                                                                                                                                                                                                                                                                                                                           | Severidade | Situação                                                                                                                                                     |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| R1  | **Sem self-service via UI** para exclusão/anonimização — depende de alguém com acesso técnico (API direta ou terminal) para acionar `DELETE /api/lgpd/titular/:contactId` ou o script. Um ADMIN/GESTOR de negócio (não-técnico) não consegue, sozinho, atender um pedido de exclusão de titular sem pedir ajuda a alguém com acesso a Postman/terminal.         | **Alto**   | Aberto — mecanismo técnico correto existe, mas operação real depende de intermediário técnico                                                                |
+| R2  | **Sem canal de intake documentado** para o titular enviar o pedido (e-mail de DPO, formulário) e sem prazo de atendimento formalmente definido em nenhum documento do repositório (busquei; não encontrei)                                                                                                                                                      | **Alto**   | Aberto — decisão de negócio/operação, não de código; nenhum agente deve inventar um responsável ou prazo sem essa decisão                                    |
+| R3  | `GET /api/lgpd/titular/:contactId/export` não tem `requireRole` adicional (qualquer papel autenticado do tenant, inclusive VISUALIZADOR, pode exportar PII completa de qualquer titular do tenant) — pode ser aceitável (é leitura, dentro do próprio tenant, já sob RLS) mas vale revisão de negócio: talvez devesse exigir papel mínimo como a exclusão exige | Médio      | Aberto — comportamento intencional ou descuido, não fica claro no código; recomendo confirmar com o 01/00                                                    |
+| R4  | `AgentMemory` (histórico de conversas de IA) não é alcançado pelo mecanismo de exclusão — pode reter PII de titular em texto livre indefinidamente                                                                                                                                                                                                              | Médio      | Gap conhecido, já documentado em handoff da Onda 6 (`.agents/handoffs/onda-6/01A-para-07-agentmemory-sem-vinculo-titular.md`), não resolvido                 |
+| R5  | Nenhuma ação de acesso/exclusão de titular é persistida em `AuditLog` — fica só em log estruturado (`logger.info`), não em uma trilha de auditoria consultável no banco                                                                                                                                                                                         | Médio      | Débito já mapeado em `docs/compliance/COMPLIANCE_MATRIX.md` ("Auditoria e LGPD ❌ Ausente") — não descoberto agora, apenas confirmado que segue sem correção |
+| R6  | Worker automático de 90 dias não foi exercitado em execução real nesta rodada                                                                                                                                                                                                                                                                                   | Baixo      | Ver seção 3.2 — risco de teste, não de mecanismo (a função subjacente já foi validada duas vezes)                                                            |
 
 Nenhum destes riscos invalida o mecanismo técnico em si — o bloqueador #13 de `/AGENTS.md`
 ("tratamento de dados pessoais sem... meio de exclusão") está coberto tecnicamente e testado. O

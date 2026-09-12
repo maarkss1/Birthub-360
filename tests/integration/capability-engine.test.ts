@@ -56,7 +56,9 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
   afterAll(async () => {
     await prisma.userJobRole.deleteMany({ where: { organizationId: ORG_ID } });
-    await prisma.user.deleteMany({ where: { organizationId: ORG_ID, email: { contains: 'capability.test' } } });
+    await prisma.user.deleteMany({
+      where: { organizationId: ORG_ID, email: { contains: 'capability.test' } },
+    });
     await prisma.agentCapabilityGrant.deleteMany({
       where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
     });
@@ -64,8 +66,12 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
       where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
     });
     await prisma.capabilityDefinition.deleteMany({ where: { code: { in: CAPABILITY_CODES } } });
-    await prisma.roleAgentGrant.deleteMany({ where: { agentDefinition: { code: { in: sourceAgentCodes } } } });
-    await prisma.agentVersion.deleteMany({ where: { agentDefinition: { code: { in: sourceAgentCodes } } } });
+    await prisma.roleAgentGrant.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
+    await prisma.agentVersion.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
     await prisma.agentDefinition.deleteMany({ where: { code: { in: sourceAgentCodes } } });
   });
 
@@ -73,7 +79,9 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
     it('reexecutar o seed do Capability Engine não duplica nada', async () => {
       // Timeout maior: o seed grava ~1000 grants sequencialmente (927 AgentCapabilityGrant + 113
       // RoleCapabilityGrant) — rodar 2x dentro de um mesmo teste passa do timeout default (5s).
-      const before = await prisma.capabilityDefinition.count({ where: { code: { in: CAPABILITY_CODES } } });
+      const before = await prisma.capabilityDefinition.count({
+        where: { code: { in: CAPABILITY_CODES } },
+      });
       const beforeAgentGrants = await prisma.agentCapabilityGrant.count({
         where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
       });
@@ -84,7 +92,9 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
       await runCapabilityEngineSeed();
       await runCapabilityEngineSeed();
 
-      const after = await prisma.capabilityDefinition.count({ where: { code: { in: CAPABILITY_CODES } } });
+      const after = await prisma.capabilityDefinition.count({
+        where: { code: { in: CAPABILITY_CODES } },
+      });
       const afterAgentGrants = await prisma.agentCapabilityGrant.count({
         where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
       });
@@ -128,12 +138,17 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
       const allCodes = [...sourceAgentCodes, ...COMMERCIAL_AGENT_REGISTRY.map((a) => a.id)];
       const agents = await prisma.agentDefinition.findMany({
         where: { code: { in: allCodes } },
-        select: { id: true, code: true, capabilityGrants: { where: { isActive: true }, select: { id: true } } },
+        select: {
+          id: true,
+          code: true,
+          capabilityGrants: { where: { isActive: true }, select: { id: true } },
+        },
       });
       const withoutAny = agents.filter((a) => a.capabilityGrants.length === 0);
-      expect(withoutAny, `agentes sem nenhuma capability: ${withoutAny.map((a) => a.code).join(', ')}`).toEqual(
-        [],
-      );
+      expect(
+        withoutAny,
+        `agentes sem nenhuma capability: ${withoutAny.map((a) => a.code).join(', ')}`,
+      ).toEqual([]);
     });
   });
 
@@ -199,7 +214,9 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
     it('INACTIVE_AGENT: agente existe mas está desativado', async () => {
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       await prisma.agentDefinition.update({ where: { id: agent.id }, data: { isActive: false } });
       try {
         const decision = await authorizeCapability({
@@ -226,10 +243,14 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
     it('AGENT_NOT_GRANTED_TO_ROLE (revogado): revogar um RoleAgentGrant ativo passa a negar', async () => {
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('LDR');
       const grant = await prisma.roleAgentGrant.findUniqueOrThrow({
-        where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id } },
+        where: {
+          jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id },
+        },
       });
       await prisma.roleAgentGrant.update({ where: { id: grant.id }, data: { isActive: false } });
       try {
@@ -256,8 +277,13 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
     it('INACTIVE_CAPABILITY: capability existe mas está desativada', async () => {
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
-      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({ where: { code: 'lead.read' } });
-      await prisma.capabilityDefinition.update({ where: { id: capability.id }, data: { isActive: false } });
+      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({
+        where: { code: 'lead.read' },
+      });
+      await prisma.capabilityDefinition.update({
+        where: { id: capability.id },
+        data: { isActive: false },
+      });
       try {
         const decision = await authorizeCapability({
           actor: actorFor(user),
@@ -266,7 +292,10 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
         });
         expect(decision.reason).toBe('INACTIVE_CAPABILITY');
       } finally {
-        await prisma.capabilityDefinition.update({ where: { id: capability.id }, data: { isActive: true } });
+        await prisma.capabilityDefinition.update({
+          where: { id: capability.id },
+          data: { isActive: true },
+        });
       }
     });
   });
@@ -274,11 +303,20 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
   describe('semântica de access level (DISCOVER/READ/EXECUTE/REQUEST)', () => {
     it('DISCOVER (nível do AGENTE): nunca executa', async () => {
       const { user } = await makeUserWithJobRole('SDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('SDR');
       const grant = await prisma.roleAgentGrant.upsert({
-        where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id } },
-        create: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id, accessLevel: 'DISCOVER', isActive: true },
+        where: {
+          jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          agentDefinitionId: agent.id,
+          accessLevel: 'DISCOVER',
+          isActive: true,
+        },
         update: { accessLevel: 'DISCOVER', isActive: true },
       });
       try {
@@ -296,11 +334,20 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
     it('REQUEST (nível do AGENTE): nunca executa direto, exige aprovação (CROSS_ROLE_REQUEST_REQUIRED)', async () => {
       const { user } = await makeUserWithJobRole('SDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('SDR');
       const grant = await prisma.roleAgentGrant.upsert({
-        where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id } },
-        create: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id, accessLevel: 'REQUEST', isActive: true },
+        where: {
+          jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          agentDefinitionId: agent.id,
+          accessLevel: 'REQUEST',
+          isActive: true,
+        },
         update: { accessLevel: 'REQUEST', isActive: true },
       });
       try {
@@ -319,19 +366,39 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
     it('READ (nível do AGENTE) nunca autoriza uma capability WRITE (READ_ONLY_ACCESS)', async () => {
       const { user } = await makeUserWithJobRole('SDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('SDR');
       const grant = await prisma.roleAgentGrant.upsert({
-        where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id } },
-        create: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id, accessLevel: 'READ', isActive: true },
+        where: {
+          jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          agentDefinitionId: agent.id,
+          accessLevel: 'READ',
+          isActive: true,
+        },
         update: { accessLevel: 'READ', isActive: true },
       });
       // Concede a capability WRITE "lead.update" tanto ao agente quanto ao cargo, para provar que
       // é especificamente o accessLevel=READ do agente que bloqueia — não a ausência de grant.
-      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({ where: { code: 'lead.update' } });
+      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({
+        where: { code: 'lead.update' },
+      });
       await prisma.agentCapabilityGrant.upsert({
-        where: { agentDefinitionId_capabilityDefinitionId: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id } },
-        create: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id, isActive: true },
+        where: {
+          agentDefinitionId_capabilityDefinitionId: {
+            agentDefinitionId: agent.id,
+            capabilityDefinitionId: capability.id,
+          },
+        },
+        create: {
+          agentDefinitionId: agent.id,
+          capabilityDefinitionId: capability.id,
+          isActive: true,
+        },
         update: { isActive: true },
       });
       try {
@@ -353,13 +420,27 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
       // "signature.request" é concedido ao cargo CONTRATOS_ASSINATURA/CLOSER, mas "ldr-intelligence"
       // nunca recebe essa capability (fora do domínio de LDR).
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('LDR');
-      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({ where: { code: 'signature.request' } });
+      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({
+        where: { code: 'signature.request' },
+      });
       // Garante que o CARGO (LDR) tenha o grant, isolando a ausência no lado do AGENTE.
       const roleGrant = await prisma.roleCapabilityGrant.upsert({
-        where: { jobRoleId_capabilityDefinitionId: { jobRoleId: jobRole!.id, capabilityDefinitionId: capability.id } },
-        create: { jobRoleId: jobRole!.id, capabilityDefinitionId: capability.id, accessLevel: 'EXECUTE', isActive: true },
+        where: {
+          jobRoleId_capabilityDefinitionId: {
+            jobRoleId: jobRole!.id,
+            capabilityDefinitionId: capability.id,
+          },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          capabilityDefinitionId: capability.id,
+          accessLevel: 'EXECUTE',
+          isActive: true,
+        },
         update: { accessLevel: 'EXECUTE', isActive: true },
       });
       try {
@@ -377,13 +458,26 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
     it('CAPABILITY_NOT_GRANTED_TO_ROLE: o agente foi desenhado para a capability, mas o cargo não a concede', async () => {
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
-      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({ where: { code: 'billing.reconcile' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
+      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({
+        where: { code: 'billing.reconcile' },
+      });
       // Garante que o AGENTE tenha o grant, isolando a ausência no lado do CARGO (LDR nunca
       // recebe billing.reconcile).
       const agentGrant = await prisma.agentCapabilityGrant.upsert({
-        where: { agentDefinitionId_capabilityDefinitionId: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id } },
-        create: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id, isActive: true },
+        where: {
+          agentDefinitionId_capabilityDefinitionId: {
+            agentDefinitionId: agent.id,
+            capabilityDefinitionId: capability.id,
+          },
+        },
+        create: {
+          agentDefinitionId: agent.id,
+          capabilityDefinitionId: capability.id,
+          isActive: true,
+        },
         update: { isActive: true },
       });
       try {
@@ -441,17 +535,40 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
       // mapeado) — concede ad-hoc tanto ao agente quanto ao cargo para isolar o teste
       // especificamente no motivo de indisponibilidade do ToolBinding (etapa 11), não numa
       // ausência de grant (etapas 8/9).
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'sdr-qualification' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'sdr-qualification' },
+      });
       const jobRole = await getJobRoleByCode('SDR');
-      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({ where: { code: 'meeting.read' } });
+      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({
+        where: { code: 'meeting.read' },
+      });
       const agentGrant = await prisma.agentCapabilityGrant.upsert({
-        where: { agentDefinitionId_capabilityDefinitionId: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id } },
-        create: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id, isActive: true },
+        where: {
+          agentDefinitionId_capabilityDefinitionId: {
+            agentDefinitionId: agent.id,
+            capabilityDefinitionId: capability.id,
+          },
+        },
+        create: {
+          agentDefinitionId: agent.id,
+          capabilityDefinitionId: capability.id,
+          isActive: true,
+        },
         update: { isActive: true },
       });
       const roleGrant = await prisma.roleCapabilityGrant.upsert({
-        where: { jobRoleId_capabilityDefinitionId: { jobRoleId: jobRole!.id, capabilityDefinitionId: capability.id } },
-        create: { jobRoleId: jobRole!.id, capabilityDefinitionId: capability.id, accessLevel: 'EXECUTE', isActive: true },
+        where: {
+          jobRoleId_capabilityDefinitionId: {
+            jobRoleId: jobRole!.id,
+            capabilityDefinitionId: capability.id,
+          },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          capabilityDefinitionId: capability.id,
+          accessLevel: 'EXECUTE',
+          isActive: true,
+        },
         update: { accessLevel: 'EXECUTE', isActive: true },
       });
       try {
@@ -485,13 +602,26 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
 
     it('CRITICAL: bitrix.configure exige aprovação mesmo para o dono (BITRIX_GUARDIAN)', async () => {
       const { user } = await makeUserWithJobRole('BITRIX_GUARDIAN', 'GESTOR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'bitrix-guardian' } });
-      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({ where: { code: 'bitrix.configure' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'bitrix-guardian' },
+      });
+      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({
+        where: { code: 'bitrix.configure' },
+      });
       // bitrix-guardian (agente) não tem bitrix.configure por padrão nesta onda — concede ad-hoc
       // para isolar o teste no critério de risco/aprovação, não na ausência de grant.
       const agentGrant = await prisma.agentCapabilityGrant.upsert({
-        where: { agentDefinitionId_capabilityDefinitionId: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id } },
-        create: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id, isActive: true },
+        where: {
+          agentDefinitionId_capabilityDefinitionId: {
+            agentDefinitionId: agent.id,
+            capabilityDefinitionId: capability.id,
+          },
+        },
+        create: {
+          agentDefinitionId: agent.id,
+          capabilityDefinitionId: capability.id,
+          isActive: true,
+        },
         update: { isActive: true },
       });
       try {
@@ -686,7 +816,7 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
     it('capabilityCode com conteúdo de injeção nunca corresponde a uma capability real (nega, não quebra)', async () => {
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
       const maliciousCodes = [
-        "lead.read'; DROP TABLE \"CapabilityDefinition\"; --",
+        'lead.read\'; DROP TABLE "CapabilityDefinition"; --',
         '{{__proto__.polluted}}',
         'lead.read\nagent.execute',
       ];
@@ -700,7 +830,9 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
         expect(decision.reason).toBe('UNKNOWN_CAPABILITY');
       }
       // A tabela real continua intacta — a tentativa de injeção não teve efeito nenhum.
-      const stillThere = await prisma.capabilityDefinition.findUnique({ where: { code: 'lead.read' } });
+      const stillThere = await prisma.capabilityDefinition.findUnique({
+        where: { code: 'lead.read' },
+      });
       expect(stillThere).not.toBeNull();
     });
 
@@ -724,7 +856,9 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
       for (const code of JOB_ROLE_CODES) {
         const jobRole = await getJobRoleByCode(code);
         const count = await prisma.roleCapabilityGrant.count({ where: { jobRoleId: jobRole!.id } });
-        expect(count, `cargo ${code} deveria ter ao menos 1 capability concedida`).toBeGreaterThan(0);
+        expect(count, `cargo ${code} deveria ter ao menos 1 capability concedida`).toBeGreaterThan(
+          0,
+        );
       }
     });
   });

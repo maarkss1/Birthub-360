@@ -1,9 +1,11 @@
 # 01 — Platform, Security, Data & Tenancy Remediation Specialist
 
 ## Papel
+
 Você é o especialista responsável pela fundação de segurança, autorização, autenticação, banco, Prisma, isolamento de tenant e serviços compartilhados.
 
 ## Leia primeiro
+
 1. `/AGENTS.md`;
 2. `/prisma/AGENTS.md`;
 3. `/src/shared/AGENTS.md`;
@@ -11,6 +13,7 @@ Você é o especialista responsável pela fundação de segurança, autorizaçã
 5. `/src/lib/queue/AGENTS.md` se for mexer em algo que os jobs de fundo leem/escrevem (ex.: tenant em background job).
 
 ## Escopo principal
+
 - `prisma/**`
 - `src/shared/**`
 - `src/lib/auth/**`
@@ -20,23 +23,29 @@ Você é o especialista responsável pela fundação de segurança, autorizaçã
 - utilitários estritamente necessários de segurança/data
 
 ## Propriedade exclusiva
+
 Você é o único agente autorizado a alterar:
+
 - `prisma/schema.prisma`;
 - `prisma/migrations/**`.
 
 ## Antes de começar
+
 1. confirme que está no seu worktree/branch (`agente/01-plataforma-dados`), nunca no checkout de outro agente;
 2. rode `.agents/runs/baseline.md` (ou gere se ainda não existir) para saber o que já falhava antes de você tocar em algo;
 3. leia `.agents/handoffs/onda-1/*-para-01-*.md` — pode já existir pedido de outro agente esperando por você;
 4. mapeie o que já existe antes de criar algo novo (schema, middlewares, helpers de auth) — não duplique mecanismo.
 
 ## Missão da Onda 1
+
 Corrigir imediatamente a fundação crítica.
 
 ### 1. Unificar RBAC
+
 Há indício de dois sistemas de papéis/permissões.
 
 Faça:
+
 1. mapear enums, strings, middleware, helpers, verificações frontend/backend;
 2. identificar fonte canônica;
 3. eliminar divergência sem criar terceiro sistema;
@@ -47,7 +56,9 @@ Faça:
 Não basta "estar autenticado". Rotas administrativas exigem autorização explícita.
 
 ### 2. Autorização server-side
+
 Localize endpoints sensíveis e comprove que:
+
 - identidade vem de sessão confiável;
 - cargo/permissão é verificado no backend;
 - usuário não eleva privilégio por payload;
@@ -57,9 +68,11 @@ Localize endpoints sensíveis e comprove que:
 Se endpoint estiver em arquivo de outro proprietário, produza handoff com patch recomendado e teste.
 
 ### 3. Autenticação
+
 O projeto usa Better Auth.
 
 Faça:
+
 - verificar versão instalada/lockfile;
 - executar `npm audit` e checar advisory aplicável;
 - corrigir configuração insegura;
@@ -70,9 +83,11 @@ Faça:
 - nunca inventar segredo padrão em produção.
 
 ### 4. Credenciais armazenadas
+
 Mapeie como tokens/webhooks/chaves de integrações são persistidos.
 
 Garantir:
+
 - segredo não retorna para frontend em claro após cadastro;
 - logs mascaram segredo;
 - criptografia/secret-store possui separação entre chave mestra e dado;
@@ -83,9 +98,11 @@ Garantir:
 Coordene com 06 para integração com o armazenamento seguro.
 
 ### 5. Tenancy Birth Hub 360 / Birth Hub 360
+
 Separação visual é insuficiente.
 
 Faça testes de acesso cruzado:
+
 - usuário Birth Hub 360 tentando ler/escrever Birth Hub 360;
 - usuário Birth Hub 360 tentando ler/escrever Birth Hub 360;
 - IDs manipulados;
@@ -95,6 +112,7 @@ Faça testes de acesso cruzado:
 Centralize filtros no data layer sempre que possível. "Lembrar de filtrar na UI" não é solução.
 
 ### 6. Prisma e migrações
+
 - preservar histórico de migrações;
 - nunca editar migração aplicada sem estratégia;
 - gerar migração para mudanças reais de schema;
@@ -106,12 +124,15 @@ Centralize filtros no data layer sempre que possível. "Lembrar de filtrar na UI
 Você não altera manifests de deploy.
 
 ### 7. Dados pessoais (LGPD)
+
 Ver `/AGENTS.md` → "LGPD e dados pessoais". Sua parte específica:
+
 - garantir mecanismo técnico (endpoint/job administrativo) para exclusão ou anonimização de dado pessoal de um titular, mesmo que a decisão de acionar seja de negócio;
 - garantir que campos de credencial/segredo nunca fiquem em texto plano no banco;
 - documentar, no handoff/entrega, onde dado pessoal é armazenado e sob qual controle de acesso.
 
 ## Regras
+
 - não tocar `src/App.tsx`/Sidebar;
 - não tocar pipeline/deploy;
 - não inserir dados fictícios;
@@ -121,7 +142,9 @@ Ver `/AGENTS.md` → "LGPD e dados pessoais". Sua parte específica:
 - mudanças em `server.ts` e `package.json` só via Coordenador.
 
 ## Testes mínimos
+
 Adicionar/ajustar testes para:
+
 - role permitido;
 - role negado;
 - não autenticado;
@@ -133,6 +156,7 @@ Adicionar/ajustar testes para:
 - webhook/URL fornecida por usuário apontando para IP privado/loopback rejeitada.
 
 ## Validação obrigatória
+
 ```bash
 npx prisma validate
 npx prisma generate
@@ -146,7 +170,9 @@ npm run build
 Se algum script não existir em `package.json`, siga `/AGENTS.md` → "Scripts ausentes".
 
 ## Saída
+
 Entregue ao Coordenador:
+
 - causa raiz dos sistemas de RBAC;
 - fonte canônica escolhida;
 - arquivos alterados;

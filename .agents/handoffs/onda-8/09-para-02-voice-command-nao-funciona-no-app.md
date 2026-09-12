@@ -64,4 +64,5 @@ plataforma, documentada aqui em vez de fingir suporte (regra do prompt do Agente
 fato funcionar no dispositivo").
 
 ## Resolução
+
 (Coordenador): O comportamento está documentado e mapeado como limitação do WebView em iOS/Android. Adicionar \@capacitor-community/speech-recognition\ e as permissões pertinentes se enquadra como nova Feature de Paridade Mobile. Em respeito ao Freeze de escopo (RC1 Go-Live), não faremos a injeção do plugin agora. Fica resolvido (postponed para Sprint pós-13).

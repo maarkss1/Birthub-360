@@ -5,10 +5,12 @@
 - Prioridade: normal
 
 ## Problema
+
 Durante a varredura de duplicação de contrato motivada pela missão "OverviewMetrics: uma fonte,
 não duas" (`.agents/prompts/18-contratos-api-docs.md`), encontrei uma instância bem maior do mesmo
 padrão em Comercial Inteligente: **18 interfaces** quase 100% idênticas campo a campo, declaradas
 de forma independente em backend e frontend, sem nenhuma relação de import:
+
 - `src/features/commercial-intelligence/domain/CommercialIntelligence.ts` (linhas 1-425)
 - `src/features/commercial-intelligence/commercialIntelligence.api.ts` (linhas 1-149)
 
@@ -25,10 +27,12 @@ repositório — muito maior que `OverviewMetrics`, e não estava registrada em 
 desta varredura.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/commercial-intelligence/domain/CommercialIntelligence.ts`
 - `src/features/commercial-intelligence/commercialIntelligence.api.ts`
 
 ## Alteração necessária
+
 Não apliquei a extração eu mesmo — é grande demais para tratar como parte da unificação pontual de
 `OverviewMetrics`, e as 18 interfaces são lógica de domínio de BI executivo, do seu domínio.
 Proposta: criar `src/shared/contracts/commercialIntelligence.contract.ts` (mesmo padrão de
@@ -41,11 +45,13 @@ confirmação primeiro, diferente do que fiz com `analytics.contract.ts` (que er
 explicitamente na minha missão desta onda).
 
 ## Teste esperado
+
 - `npx tsc --noEmit` sem erros novos após a extração.
 - Testes existentes de `tests/unit/features/commercial-intelligence/**` (se existirem) continuam
   passando sem alteração de asserção.
 
 ## Contexto adicional
+
 Ver também a varredura mais ampla de duplicação (não limitada a este módulo) registrada em
 `.agents/handoffs/onda-8/18-para-00-varredura-duplicacao-contratos.md`, que lista outras 6
 instâncias menores do mesmo padrão espalhadas por outros domínios (activities, knowledge,
@@ -53,4 +59,5 @@ notifications, automations, calendar, entidades de CRM) para que o Coordenador d
 de tratamento entre ondas.
 
 ## Resolução
+
 (Coordenador): Essa unificação já foi tentada por mim na Sprint 00, resultando numa quebra do tipo de contrato com a API frontend devido a acoplamento forte. O revert foi feito em prol da estabilidade do Go-Live. Handoff rejeitado, resolvido.

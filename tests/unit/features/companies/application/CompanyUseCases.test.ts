@@ -7,37 +7,37 @@ import type { CompanyRepository } from '@/features/companies/domain/Company';
 // tratava isso como 500 e mascarava a mensagem em produção. Este teste prova que a regressão
 // (voltar a usar `throw new Error(...)`) seria pega automaticamente.
 vi.mock('@/features/prospecting/services/enrichment.service', () => ({
-    enrichCompany: vi.fn(),
+  enrichCompany: vi.fn(),
 }));
 
 vi.mock('@/lib/queue/enrichment.queue', () => ({
-    enrichmentQueue: { add: vi.fn() },
+  enrichmentQueue: { add: vi.fn() },
 }));
 
 function makeRepository(overrides: Partial<CompanyRepository> = {}): CompanyRepository {
-    return {
-        findById: vi.fn(),
-        create: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
-        findAllWithFilters: vi.fn(),
-        ...overrides,
-    } as unknown as CompanyRepository;
+  return {
+    findById: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    findAllWithFilters: vi.fn(),
+    ...overrides,
+  } as unknown as CompanyRepository;
 }
 
 describe('CompanyUseCases.enrichCompany', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-    it('lança AppError 404 quando a empresa não existe', async () => {
-        const repository = makeRepository({ findById: vi.fn().mockResolvedValue(null) });
-        const useCases = new CompanyUseCases(repository);
+  it('lança AppError 404 quando a empresa não existe', async () => {
+    const repository = makeRepository({ findById: vi.fn().mockResolvedValue(null) });
+    const useCases = new CompanyUseCases(repository);
 
-        await expect(useCases.enrichCompany('org-1', 'empresa-inexistente')).rejects.toMatchObject({
-            constructor: AppError,
-            statusCode: 404,
-            message: 'Company not found',
-        });
+    await expect(useCases.enrichCompany('org-1', 'empresa-inexistente')).rejects.toMatchObject({
+      constructor: AppError,
+      statusCode: 404,
+      message: 'Company not found',
     });
+  });
 });

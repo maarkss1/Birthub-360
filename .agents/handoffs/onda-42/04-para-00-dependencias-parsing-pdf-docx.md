@@ -111,7 +111,9 @@ documenta. Um `npm ci` limpo a partir do commit desta onda volta a falhar até e
 resolvido.
 
 ## Resolução
+
 (preenchido pelo agente 00 ao resolver)
 
 ## Resolução
+
 pdf-parse instalado.
