@@ -122,7 +122,6 @@ export interface EmbeddedWorkersHandle {
   copilotoTranscriptionWorker: CloseableWorker;
   /** ACH-16-05: já registrados em worker.ts, faltavam aqui — ver comentário nos imports acima. */
   newsMonitorWorker: CloseableWorker;
-  enrichmentCascadeWorker: CloseableWorker;
   cadenceRunWorker: CloseableWorker;
   agentMemoryCleanupWorker: CloseableWorker;
   accountIntelligenceInsightsWorker: CloseableWorker;
@@ -170,7 +169,6 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
       ? createCopilotoTranscriptionWorker({ meetingSynthesisPort: new MeetingSynthesisService() })
       : null,
     newsMonitorWorker: embeddedWorkersEnabled ? createNewsMonitorWorker() : null,
-    enrichmentCascadeWorker: embeddedWorkersEnabled ? createEnrichmentCascadeWorker() : null,
     cadenceRunWorker: embeddedWorkersEnabled ? createCadenceRunWorker() : null,
     agentMemoryCleanupWorker: embeddedWorkersEnabled ? createAgentMemoryCleanupWorker() : null,
     accountIntelligenceInsightsWorker: embeddedWorkersEnabled
