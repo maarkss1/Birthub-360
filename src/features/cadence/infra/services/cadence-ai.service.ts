@@ -52,7 +52,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       // previousInteraction, valueProposition) vai só na HumanMessage abaixo, nunca no system
       // prompt.
       const response = await model.invoke([
-        // codeql[js/prompt-injection]
+        // codeql[js/system-prompt-injection]
         new SystemMessage(systemPrompt),
         new HumanMessage(`Dados da Cadência:\n${JSON.stringify(context, null, 2)}`),
       ]);
