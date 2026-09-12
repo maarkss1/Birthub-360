@@ -269,10 +269,7 @@ async function isEnrichCascadeQueueReachable(): Promise<boolean> {
     timeoutHandle = setTimeout(() => resolve(false), ENRICH_CASCADE_QUEUE_PING_TIMEOUT_MS);
   });
   try {
-    return await Promise.race([
-      pingRedis(bullmqRedisConnection).then(() => true),
-      timeout,
-    ]);
+    return await Promise.race([pingRedis(bullmqRedisConnection).then(() => true), timeout]);
   } catch {
     return false;
   } finally {
@@ -298,9 +295,11 @@ router.post(
             organizationId,
             options,
           });
-          res
-            .status(202)
-            .json({ success: true, message: 'Enriquecimento em cascata enfileirado', jobId: job.id });
+          res.status(202).json({
+            success: true,
+            message: 'Enriquecimento em cascata enfileirado',
+            jobId: job.id,
+          });
           return;
         }
         logger.warn(

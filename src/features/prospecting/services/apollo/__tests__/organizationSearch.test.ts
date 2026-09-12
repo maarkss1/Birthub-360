@@ -147,7 +147,9 @@ describe('fetchApolloCandidates (Apollo Organization Search)', () => {
         organizations: [{ name: 'Transportadora Exemplo', primary_domain: 'exemplo.com.br' }],
       }),
     );
-    enrichCandidatesWithDecisionMakersMock.mockRejectedValue(new Error('Hunter e Apollo indisponíveis'));
+    enrichCandidatesWithDecisionMakersMock.mockRejectedValue(
+      new Error('Hunter e Apollo indisponíveis'),
+    );
 
     const result = await fetchApolloCandidates(baseCriteria, 10);
 

@@ -86,7 +86,10 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
         .send({ contacts: [{ name: 'Fulano de Tal' }], companyContext: 'x' });
 
       expect(res.status).toBe(403);
-      expect(res.body).toEqual({ success: false, error: expect.stringContaining('org-sem-consentimento') });
+      expect(res.body).toEqual({
+        success: false,
+        error: expect.stringContaining('org-sem-consentimento'),
+      });
       expect(mapCommitteeMock).not.toHaveBeenCalled();
     });
 
@@ -98,7 +101,10 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
         .send({ name: 'Fulano de Tal', email: 'fulano@example.com' });
 
       expect(res.status).toBe(403);
-      expect(res.body).toEqual({ success: false, error: expect.stringContaining('org-sem-consentimento') });
+      expect(res.body).toEqual({
+        success: false,
+        error: expect.stringContaining('org-sem-consentimento'),
+      });
       expect(sanitizeLeadDataMock).not.toHaveBeenCalled();
     });
 
@@ -110,7 +116,10 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
         .send({ text: 'CPF 123.456.789-00 de Fulano de Tal' });
 
       expect(res.status).toBe(403);
-      expect(res.body).toEqual({ success: false, error: expect.stringContaining('org-sem-consentimento') });
+      expect(res.body).toEqual({
+        success: false,
+        error: expect.stringContaining('org-sem-consentimento'),
+      });
       expect(sanitizeTextMock).not.toHaveBeenCalled();
     });
 
@@ -122,7 +131,10 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
         .send({ description: 'Ocorrência envolvendo dados bancários do cliente' });
 
       expect(res.status).toBe(403);
-      expect(res.body).toEqual({ success: false, error: expect.stringContaining('org-sem-consentimento') });
+      expect(res.body).toEqual({
+        success: false,
+        error: expect.stringContaining('org-sem-consentimento'),
+      });
       expect(triageIncidentMock).not.toHaveBeenCalled();
     });
   });
@@ -155,7 +167,9 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({ success: true, data: { sanitized: true } });
-      expect(sanitizeLeadDataMock).toHaveBeenCalledWith({ companyName: 'Fulano de Tal Transportes' });
+      expect(sanitizeLeadDataMock).toHaveBeenCalledWith({
+        companyName: 'Fulano de Tal Transportes',
+      });
     });
 
     it('permite POST /lgpd/sanitize normalmente', async () => {
@@ -175,14 +189,12 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
       triageIncidentMock.mockResolvedValue({ severity: 'low' });
       const app = buildApp('org-autorizada');
 
-      const res = await request(app)
-        .post('/api/intelligence/suite/mesa/triage')
-        .send({
-          alertId: 'alert-1',
-          clientName: 'Fulano de Tal',
-          alertType: 'desvio-rota',
-          telemetryDataSummary: 'Ocorrência envolvendo dados bancários do cliente',
-        });
+      const res = await request(app).post('/api/intelligence/suite/mesa/triage').send({
+        alertId: 'alert-1',
+        clientName: 'Fulano de Tal',
+        alertType: 'desvio-rota',
+        telemetryDataSummary: 'Ocorrência envolvendo dados bancários do cliente',
+      });
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({ success: true, data: { severity: 'low' } });

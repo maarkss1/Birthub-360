@@ -296,7 +296,11 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
   const untrustedOrganizationId =
     typeof untrustedContext.organizationId === 'string' ? untrustedContext.organizationId : null;
 
-  const authResult = await resolveTrustedOrganizationId(rawBody, signature, untrustedOrganizationId);
+  const authResult = await resolveTrustedOrganizationId(
+    rawBody,
+    signature,
+    untrustedOrganizationId,
+  );
   if (!authResult.ok) {
     if (authResult.reason === 'not-configured') {
       // Fail-closed: sem segredo de conexão para esta organização nem segredo global, não há

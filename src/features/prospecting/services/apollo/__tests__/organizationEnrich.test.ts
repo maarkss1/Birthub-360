@@ -63,7 +63,9 @@ describe('enrichOrganizationByDomain (Apollo Organization Enrich)', () => {
     expect(result).toEqual({ organization });
     expect(fetchWithProviderRetryMock).toHaveBeenCalledWith(
       expect.stringContaining('domain=empresa.com.br'),
-      expect.objectContaining({ headers: expect.objectContaining({ 'X-Api-Key': 'fake-apollo-key' }) }),
+      expect.objectContaining({
+        headers: expect.objectContaining({ 'X-Api-Key': 'fake-apollo-key' }),
+      }),
       expect.objectContaining({ providerName: 'Apollo-OrganizationEnrich', billable: true }),
     );
   });

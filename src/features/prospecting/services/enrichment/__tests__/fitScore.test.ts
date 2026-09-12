@@ -171,7 +171,8 @@ describe('computeFitScore', () => {
       expect(result.breakdown).toContainEqual({
         label: 'Stack de ERP/TMS (Apollo)',
         points: 5,
-        detail: 'Usa "SAP Business One" — indício de operação já digitalizada, mais fácil de integrar',
+        detail:
+          'Usa "SAP Business One" — indício de operação já digitalizada, mais fácil de integrar',
       });
     });
 

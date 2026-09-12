@@ -127,41 +127,37 @@ describe('POST /api/prospecting/companies/:id/enrich-cascade (async)', () => {
     expect(runEnrichmentCascadeMock).not.toHaveBeenCalled();
   });
 
-  it(
-    'cai para o caminho síncrono, sem travar a requisição, quando REDIS_URL está configurado mas o Redis está inatingível (ping nunca resolve)',
-    async () => {
-      // Simula exatamente o cenário do bug: REDIS_URL presente (queuesEnabled/redisConfigured
-      // true, por isso enrichmentCascadeQueue existe), mas a conexão nunca resolve nem rejeita —
-      // o mesmo comportamento que .add() teria contra um Redis inatingível antes da correção.
-      // Timers reais de propósito: fake timers travam a pilha real de I/O do supertest/Node aqui,
-      // então o teste mede o tempo de parede real (a rota deve responder pouco depois dos ~3s do
-      // timeout do health-check, nunca ficar pendurada até o timeout do teste).
-      pingRedisMock.mockReturnValue(new Promise(() => {}));
-      runEnrichmentCascadeMock.mockResolvedValue({
-        apolloEnriched: false,
-        hunterEnriched: false,
-        googlePlacesEnriched: false,
-        contactsAdded: 0,
-      });
-      const app = buildApp();
+  it('cai para o caminho síncrono, sem travar a requisição, quando REDIS_URL está configurado mas o Redis está inatingível (ping nunca resolve)', async () => {
+    // Simula exatamente o cenário do bug: REDIS_URL presente (queuesEnabled/redisConfigured
+    // true, por isso enrichmentCascadeQueue existe), mas a conexão nunca resolve nem rejeita —
+    // o mesmo comportamento que .add() teria contra um Redis inatingível antes da correção.
+    // Timers reais de propósito: fake timers travam a pilha real de I/O do supertest/Node aqui,
+    // então o teste mede o tempo de parede real (a rota deve responder pouco depois dos ~3s do
+    // timeout do health-check, nunca ficar pendurada até o timeout do teste).
+    pingRedisMock.mockReturnValue(new Promise(() => {}));
+    runEnrichmentCascadeMock.mockResolvedValue({
+      apolloEnriched: false,
+      hunterEnriched: false,
+      googlePlacesEnriched: false,
+      contactsAdded: 0,
+    });
+    const app = buildApp();
 
-      const startedAt = Date.now();
-      const res = await request(app)
-        .post('/api/prospecting/companies/company-1/enrich-cascade')
-        .send({ async: true });
-      const elapsedMs = Date.now() - startedAt;
+    const startedAt = Date.now();
+    const res = await request(app)
+      .post('/api/prospecting/companies/company-1/enrich-cascade')
+      .send({ async: true });
+    const elapsedMs = Date.now() - startedAt;
 
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
-      expect(enrichmentCascadeQueueAddMock).not.toHaveBeenCalled();
-      expect(runEnrichmentCascadeMock).toHaveBeenCalledWith('org-1', 'company-1', {});
-      // Não trava indefinidamente: resolve pouco depois do timeout de ~3s do health-check, não só
-      // quando o teste inteiro estourar.
-      expect(elapsedMs).toBeGreaterThanOrEqual(2_900);
-      expect(elapsedMs).toBeLessThan(4_500);
-    },
-    10_000,
-  );
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(enrichmentCascadeQueueAddMock).not.toHaveBeenCalled();
+    expect(runEnrichmentCascadeMock).toHaveBeenCalledWith('org-1', 'company-1', {});
+    // Não trava indefinidamente: resolve pouco depois do timeout de ~3s do health-check, não só
+    // quando o teste inteiro estourar.
+    expect(elapsedMs).toBeGreaterThanOrEqual(2_900);
+    expect(elapsedMs).toBeLessThan(4_500);
+  }, 10_000);
 
   it('cai para o caminho síncrono quando o ping ao Redis rejeita (ex.: conexão recusada)', async () => {
     pingRedisMock.mockRejectedValue(new Error('connect ECONNREFUSED'));

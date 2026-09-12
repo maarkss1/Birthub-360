@@ -98,12 +98,14 @@ export function VoiceHubConnectionPanel() {
               </CapabilityPill>
               <CapabilityPill
                 status={
-                  voiceHubConnections.length > 0 && voiceHubConnections.every((c) => c.hasWebhookSecret)
+                  voiceHubConnections.length > 0 &&
+                  voiceHubConnections.every((c) => c.hasWebhookSecret)
                     ? 'connected'
                     : 'pending'
                 }
               >
-                {voiceHubConnections.length > 0 && voiceHubConnections.every((c) => c.hasWebhookSecret)
+                {voiceHubConnections.length > 0 &&
+                voiceHubConnections.every((c) => c.hasWebhookSecret)
                   ? 'cada conexão tem segredo próprio de webhook'
                   : 'alguma conexão ainda depende do segredo global do servidor'}
               </CapabilityPill>
@@ -143,7 +145,9 @@ export function VoiceHubConnectionPanel() {
                         size="sm"
                         onClick={() => handleVoiceHubTest(conn.id)}
                         disabled={!canManage}
-                        title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
+                        title={
+                          canManage ? undefined : 'Requer permissão de Gestor ou Administrador'
+                        }
                       >
                         Testar conexão
                       </Button>
@@ -154,7 +158,9 @@ export function VoiceHubConnectionPanel() {
                         onClick={() => handleVoiceHubDisconnect(conn.id)}
                         loading={voiceHubLoading}
                         disabled={!canManage}
-                        title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
+                        title={
+                          canManage ? undefined : 'Requer permissão de Gestor ou Administrador'
+                        }
                       >
                         Desconectar
                       </Button>
