@@ -45,3 +45,9 @@ descrita aqui **não é a mesma coisa** que a integração real de voz em produ�
 Nenhuma ação de remoção de código foi necessária — não há código para remover. Registrando isso
 para que auditorias futuras não confundam este achado histórico (BT-048) com o trabalho real de
 voz. Status alterado de `aberto` para `resolvido`.
+
+Confirmado de novo de forma independente (ACH-18-04, Agente 18/Fase 3), mesma conclusão. Achado
+residual adicional, fora do escopo deste handoff: `docs/architecture/BRAIN_TRUTH_MAP.md` linha 117
+ainda lista BT-048 com status `ORPHAN` referenciando essa pasta — desatualizado já que o achado
+nunca foi persistido no repositório, mas atualizá-lo é edição de um documento de terceiros fora do
+escopo objetivo deste item, sinalizado aqui para quem tocar esse arquivo em seguida.

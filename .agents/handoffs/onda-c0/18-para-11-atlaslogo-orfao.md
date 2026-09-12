@@ -49,3 +49,5 @@ pedia apenas confirmar ausência do arquivo e atualizar o status) e não quebrar
 
 Nenhum desses é consumidor funcional; não bloqueiam a resolução deste item. Status alterado de
 `aberto` para `resolvido`.
+
+Confirmado de novo de forma independente (ACH-18-04, Agente 18/Fase 3), mesma conclusão.
