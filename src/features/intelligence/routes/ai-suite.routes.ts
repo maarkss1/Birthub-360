@@ -5,6 +5,10 @@ import { searchService } from '../../knowledge/search.service.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import {
+  assertPiiExternalConsent,
+  PiiConsentRequiredError,
+} from '../../../shared/services/aiPiiConsent.service.js';
 
 export const aiSuiteRouter = Router();
 
@@ -17,6 +21,21 @@ export const aiSuiteRouter = Router();
 // sanitização de LGPD e o restante do catálogo de ações de IA. Mesmo conjunto de papéis já usado
 // para "qualquer papel que age" em `intelligence.routes.ts` (`pendingActionRoles`).
 aiSuiteRouter.use(requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']));
+
+// Gate de consentimento LGPD antes de enviar dados para provedores de IA externos (ACH-07-01).
+aiSuiteRouter.use((req: Request, res: Response, next: NextFunction) => {
+  try {
+    const orgId = (req as AuthRequest).user?.organizationId;
+    assertPiiExternalConsent(orgId);
+    next();
+  } catch (err) {
+    if (err instanceof PiiConsentRequiredError) {
+      res.status(403).json({ success: false, error: err.message });
+      return;
+    }
+    next(err);
+  }
+});
 
 const knowledgeCopilotSchema = z.object({
   question: z
