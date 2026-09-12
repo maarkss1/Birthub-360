@@ -21,6 +21,9 @@ import { useGoogleIntegration } from '../../../hooks/useGoogleIntegration';
 import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
 import { use3CXIntegration } from '../../../hooks/use3CXIntegration';
 import { VoiceHubConnectionPanel } from '../birth-voice/components/VoiceHubConnectionPanel';
+import { SlackConnectionPanel } from '../slack/components/SlackConnectionPanel';
+import { StripeConnectionPanel } from '../stripe/components/StripeConnectionPanel';
+import { OmieConnectionPanel } from '../omie/components/OmieConnectionPanel';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { IntegrationStatusBadge } from './IntegrationStatusBadge';
@@ -152,7 +155,16 @@ export function Integrations() {
     handle3CXTest,
   } = use3CXIntegration();
 
-  type Tab = 'whatsapp' | 'google' | 'bitrix' | '3cx' | 'voice-hub' | 'webhooks';
+  type Tab =
+    | 'whatsapp'
+    | 'google'
+    | 'bitrix'
+    | '3cx'
+    | 'voice-hub'
+    | 'slack'
+    | 'stripe'
+    | 'omie'
+    | 'webhooks';
   const [activeTab, setActiveTab] = useState<Tab>('whatsapp');
 
   return (
@@ -230,6 +242,36 @@ export function Integrations() {
             className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'voice-hub' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">🎙️</span> SDR de Voz IA
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('slack');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'slack' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">💬</span> Slack
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('stripe');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'stripe' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">💳</span> Stripe
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('omie');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'omie' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">🧾</span> Omie
           </button>
           <button
             type="button"
@@ -933,6 +975,12 @@ export function Integrations() {
               (hotspot: este arquivo já estava perto do limite de 1000 linhas do gate de
               arquitetura) */}
           {activeTab === 'voice-hub' && <VoiceHubConnectionPanel />}
+
+          {activeTab === 'slack' && <SlackConnectionPanel />}
+
+          {activeTab === 'stripe' && <StripeConnectionPanel />}
+
+          {activeTab === 'omie' && <OmieConnectionPanel />}
 
           {activeTab === 'webhooks' && <WebhookMonitor />}
         </div>

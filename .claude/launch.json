@@ -33,6 +33,24 @@
       }
     },
     {
+      "name": "prospector-dev-verify-connectors",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3811,
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3811",
+        "DATABASE_URL": "postgresql://prospector_app:prospector_app_pass@localhost:5434/prospectordb_test",
+        "REDIS_URL": "redis://:prospector_redis_pass@localhost:6379",
+        "BETTER_AUTH_URL": "http://localhost:3811",
+        "ALLOWED_ORIGINS": "http://localhost:3811,http://localhost:3000,http://localhost:5173",
+        "OTEL_SDK_DISABLED": "true"
+      }
+    },
+    {
       "name": "portal-comercial-static",
       "runtimeExecutable": "npx",
       "runtimeArgs": [

@@ -834,6 +834,9 @@ model Organization {
   threeCXConnections            ThreeCXConnection[]
   voiceHubConnections           VoiceHubConnection[]
   voiceCallLogs                 VoiceCallLog[]
+  slackConnections               SlackConnection[]
+  stripeConnections              StripeConnection[]
+  omieConnections                OmieConnection[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
   crmProducts                   CrmProduct[]
@@ -2674,6 +2677,92 @@ model VoiceHubConnection {
   /// Liga/desliga esta conexão sem apagá-la — `birthVoice.service.ts` só considera conexões com
   /// enabled=true ao escolher qual usar.
   enabled Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+/// Conexão do Slack de uma organização — usada para enviar notificações/alertas (ex.: negócio
+/// estagnado, meta batida) para um canal do Slack do time. Mesmo padrão de BitrixConnection/
+/// ThreeCXConnection: não é @unique por organizationId (uma organização pode ter mais de um canal
+/// configurado, ex. um Slack por marca/time comercial). Suporta as duas formas de autenticação do
+/// Slack — Incoming Webhook (mais simples, um canal fixo por URL) OU Bot Token (chat.postMessage,
+/// permite escolher o canal por chamada) — pelo menos uma das duas precisa estar preenchida
+/// (validado em slack.service.ts, não no schema).
+model SlackConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Nome de exibição pra distinguir as conexões na tela — livre, mesmo espírito de
+  /// BitrixConnection.label.
+  label String @default("Slack")
+
+  /// URL do Incoming Webhook do Slack (https://hooks.slack.com/services/...) — URL de
+  /// usuário/tenant, por isso validada com assertSafeExternalUrl/safeFetch (SSRF) em
+  /// slack.service.ts, diferente das chamadas fixas a slack.com/api/chat.postMessage abaixo.
+  /// Cifrada em repouso (AES-256-GCM) de forma transparente pela extensão Prisma em
+  /// src/lib/prisma.ts — ver ENCRYPTED_FIELDS, mesmo tratamento de BitrixConnection.webhookUrl.
+  webhookUrl String? @db.Text
+
+  /// Bot User OAuth Token (xoxb-...) para enviar via chat.postMessage — permite escolher o canal
+  /// de destino por chamada em vez de um único webhook fixo. Cifrado em repouso do mesmo jeito
+  /// que webhookUrl.
+  botToken String? @db.Text
+
+  /// Canal padrão (ex.: "#vendas-alertas") usado quando a chamada não informa outro — só
+  /// relevante junto com botToken (o Incoming Webhook já tem seu próprio canal fixo configurado
+  /// no lado do Slack).
+  defaultChannel String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+/// Conexão com a API do Stripe de uma organização — cobrança/consulta de pagamento
+/// (payment_intents). Mesmo padrão de não ser @unique por organizationId das conexões acima.
+model StripeConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Nome de exibição — livre, mesmo espírito de BitrixConnection.label.
+  label String @default("Stripe")
+
+  /// Chave secreta da API do Stripe (sk_live_.../sk_test_...). Cifrada em repouso (AES-256-GCM)
+  /// de forma transparente pela extensão Prisma em src/lib/prisma.ts — ver ENCRYPTED_FIELDS,
+  /// mesmo tratamento das demais credenciais de integração acima. api.stripe.com é destino FIXO
+  /// do próprio código (não uma URL de usuário) — chamadas usam fetchWithTimeout com allowlist
+  /// (src/lib/http.ts), não o guard de SSRF de URL de tenant.
+  secretKey String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+/// Conexão com a API do Omie (ERP/financeiro brasileiro) de uma organização — sincronização de
+/// clientes (upsert). Mesmo padrão de não ser @unique por organizationId das conexões acima.
+model OmieConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Nome de exibição — livre, mesmo espírito de BitrixConnection.label.
+  label String @default("Omie")
+
+  /// Credenciais de aplicativo do Omie (Cadastros > Empresas > Chave de Integração). Cifradas em
+  /// repouso (AES-256-GCM) de forma transparente pela extensão Prisma em src/lib/prisma.ts — ver
+  /// ENCRYPTED_FIELDS, mesmo tratamento das demais credenciais de integração acima.
+  /// app.omie.com.br é destino FIXO do próprio código — mesma observação de
+  /// StripeConnection.secretKey acima.
+  appKey    String @db.Text
+  appSecret String @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
