@@ -151,11 +151,11 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
 
       const res = await request(app)
         .post('/api/intelligence/suite/bitrix-hygiene')
-        .send({ name: 'Fulano de Tal' });
+        .send({ companyName: 'Fulano de Tal Transportes' });
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({ success: true, data: { sanitized: true } });
-      expect(sanitizeLeadDataMock).toHaveBeenCalledWith({ name: 'Fulano de Tal' });
+      expect(sanitizeLeadDataMock).toHaveBeenCalledWith({ companyName: 'Fulano de Tal Transportes' });
     });
 
     it('permite POST /lgpd/sanitize normalmente', async () => {
@@ -164,7 +164,7 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
 
       const res = await request(app)
         .post('/api/intelligence/suite/lgpd/sanitize')
-        .send({ text: 'CPF 123.456.789-00 de Fulano de Tal' });
+        .send({ rawText: 'CPF 123.456.789-00 de Fulano de Tal', maskLevel: 'estrito' });
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({ success: true, data: { text: '[CPF OCULTADO]' } });
@@ -177,7 +177,12 @@ describe('AI Suite Hub — trava de consentimento LGPD (ACH-07-01)', () => {
 
       const res = await request(app)
         .post('/api/intelligence/suite/mesa/triage')
-        .send({ description: 'Ocorrência envolvendo dados bancários do cliente' });
+        .send({
+          alertId: 'alert-1',
+          clientName: 'Fulano de Tal',
+          alertType: 'desvio-rota',
+          telemetryDataSummary: 'Ocorrência envolvendo dados bancários do cliente',
+        });
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({ success: true, data: { severity: 'low' } });

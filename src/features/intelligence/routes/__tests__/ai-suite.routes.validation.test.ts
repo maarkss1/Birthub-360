@@ -10,12 +10,23 @@
  * seus próprios testes) e foca só no contrato do router — 400 quando o payload não bate com o
  * schema, e o service NÃO é chamado quando a validação falha. Não cobre RBAC (`requireRole`, já
  * coberto por `hasRequiredRole`/`authorization.ts`) nem o gate de consentimento LGPD do ACH-07-01
- * (fora do escopo deste achado — ver `.claude/PILOTS.md`/relatório de auditoria).
+ * (fora do escopo deste achado — ver `.claude/PILOTS.md`/relatório de auditoria) — a organização
+ * de teste é autorizada via `AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS` só para não bloquear as
+ * requisições antes da validação Zod que este arquivo cobre; a checagem 403 do gate em si tem
+ * cobertura própria e completa em `ai-suite.routes.test.ts`.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
+
+// vi.mock é hoisted para o topo — precisa vir antes do import de `errorHandler` acima na cadeia de
+// avaliação (mesmo padrão de ai-suite.routes.test.ts) para o gate de consentimento LGPD
+// (ACH-07-01) não interceptar as requisições que este arquivo usa para testar só a validação Zod.
+const mockEnv = vi.hoisted(() => ({
+  AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS: 'org-1' as string | undefined,
+}));
+vi.mock('../../../../config/env.js', () => ({ env: mockEnv }));
 
 const mapCommitteeMock = vi.fn();
 const sanitizeLeadDataMock = vi.fn();
