@@ -55,24 +55,12 @@ export function createGracefulShutdown(deps: ShutdownDeps): (signal: string) => 
     exit = (code: number) => process.exit(code),
   } = deps;
 
-  const workerList = () => [
-    workers.leadsWorker,
-    workers.agentWorker,
-    workers.searchWorker,
-    workers.enrichmentWorker,
-    workers.whatsappSignalWorker,
-    workers.bitrixSyncWorker,
-    workers.followUpWorker,
-    workers.execSummaryWorker,
-    workers.deduplicationWorker,
-    workers.winLossWorker,
-    workers.pdfWorker,
-    workers.autoAnonymizeWorker,
-    workers.coldCallWorker,
-    workers.swarmSchedulerWorker,
-    workers.coldLeadsScannerWorker,
-    workers.stagnationScannerWorker,
-  ];
+  // Deriva a lista de `EmbeddedWorkersHandle` em vez de enumerar campo por campo: uma lista
+  // mantida à mão ficou incompleta duas vezes (workers nunca fechados no shutdown, mesmo já
+  // registrados em `startEmbeddedWorkers`) — todo campo do handle é um CloseableWorker, então não
+  // há necessidade de seletividade aqui, só de nunca esquecer um campo novo.
+  const workerList = (): EmbeddedWorkersHandle[keyof EmbeddedWorkersHandle][] =>
+    Object.values(workers);
 
   return async function shutdown(signal: string): Promise<void> {
     logger.info(`${signal} received: closing gracefully`);
