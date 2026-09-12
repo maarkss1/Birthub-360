@@ -215,7 +215,10 @@ export function WelcomeScreen() {
         animate="show"
         className="relative z-10 flex w-full max-w-3xl flex-col items-center px-6 text-center"
       >
-        <motion.div variants={staggerItem} className="relative mb-8 flex items-center justify-center">
+        <motion.div
+          variants={staggerItem}
+          className="relative mb-8 flex items-center justify-center"
+        >
           {/* Anéis orbitais — mesma composição da órbita 360º do brand book (núcleo, anel,
               órbita), só que aqui como halo giratório em vez de estático: o emblema real
               (`BirthHubLogo`, gerado do SVG mestre — geometria nunca editada à mão) ganha peso
