@@ -5,8 +5,9 @@ import { logger } from '../lib/logger.js';
 import { queuesEnabled } from '../lib/queue/redis.js';
 import { createLeadsWorker } from '../lib/queue/index.js';
 import { createAgentWorker } from '../lib/queue/agent.worker.js';
-import { createEnrichmentWorker } from '../lib/queue/enrichment.queue.js';
-import { createSearchWorker } from '../lib/queue/search.queue.js';
+import { createEnrichmentWorker } from '../lib/queue/enrichment.worker.js';
+import { createEnrichmentCascadeWorker } from '../lib/queue/enrichmentCascade.worker.js';
+import { createSearchWorker } from '../lib/queue/search.worker.js';
 import { initMeiliIndexes } from '../lib/search/index.js';
 import { createColdCallWorker, scheduleColdCallCampaigns } from '../lib/queue/coldCall.worker.js';
 import { createWhatsAppSignalWorker } from '../lib/queue/whatsappSignal.worker.js';
@@ -79,6 +80,7 @@ export interface EmbeddedWorkersHandle {
   leadsWorker: CloseableWorker;
   agentWorker: CloseableWorker;
   enrichmentWorker: CloseableWorker;
+  enrichmentCascadeWorker: CloseableWorker;
   whatsappSignalWorker: CloseableWorker;
   bitrixSyncWorker: CloseableWorker;
   followUpWorker: CloseableWorker;
@@ -118,6 +120,7 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     leadsWorker: embeddedWorkersEnabled ? createLeadsWorker() : null,
     agentWorker: embeddedWorkersEnabled ? createAgentWorker() : null,
     enrichmentWorker: embeddedWorkersEnabled ? createEnrichmentWorker() : null,
+    enrichmentCascadeWorker: embeddedWorkersEnabled ? createEnrichmentCascadeWorker() : null,
     whatsappSignalWorker: embeddedWorkersEnabled ? createWhatsAppSignalWorker() : null,
     bitrixSyncWorker: embeddedWorkersEnabled ? createBitrixSyncWorker() : null,
     followUpWorker: embeddedWorkersEnabled ? createFollowUpWorker() : null,

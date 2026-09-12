@@ -28,6 +28,7 @@ import {
 } from './src/shared/middlewares/requirePlatformOperator.js';
 import { createAgentWorker } from './src/lib/queue/agent.worker.js';
 import { createEnrichmentWorker } from './src/lib/queue/enrichment.queue.js';
+import { createEnrichmentCascadeWorker } from './src/lib/queue/enrichmentCascade.worker.js';
 import { createSearchWorker } from './src/lib/queue/search.queue.js';
 import { dailyReportWorker } from './src/lib/queue/dailyReport.worker.js';
 import { initMeiliIndexes } from './src/lib/search/index.js';
@@ -78,6 +79,7 @@ async function startWorkerProcess() {
     const leadsWorker = createLeadsWorker();
     const agentWorker = createAgentWorker();
     const enrichmentWorker = createEnrichmentWorker();
+    const enrichmentCascadeWorker = createEnrichmentCascadeWorker();
     const whatsappSignalWorker = createWhatsAppSignalWorker();
     const whatsappCommandWorker = createWhatsAppCommandWorker();
     const bitrixSyncWorker = createBitrixSyncWorker();
@@ -141,6 +143,7 @@ async function startWorkerProcess() {
         { name: 'leads-enrichment', worker: leadsWorker },
         { name: 'intelligence-agents', worker: agentWorker },
         { name: 'enrichment-queue', worker: enrichmentWorker },
+        { name: 'enrichment-cascade-queue', worker: enrichmentCascadeWorker },
         { name: 'search-indexing', worker: searchWorker },
         { name: 'whatsapp-conversation-signal', worker: whatsappSignalWorker },
         { name: 'whatsapp-command', worker: whatsappCommandWorker },
