@@ -13,7 +13,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: maarkss1/central-de-inteligencia-comecial-atlasgr
+  # Nome antigo do repositório (pré-rebranding para Birthub-360), corrigido para o padrão já usado
+  # em production.yaml/cd-homolog.yml — evita o mesmo tipo de drift documentado em
+  # .agents/handoffs/onda-c0/11-para-10-argocd-ghcr-nome-antigo.md.
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   publish:
