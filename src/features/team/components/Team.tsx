@@ -409,7 +409,7 @@ export function Team() {
                         <Link2 size={11} /> #{member.bitrixUserId}
                       </span>
                     )}
-                    <span className="text-[10px] px-2.5 py-1 rounded-full bg-info/15 text-info-active dark:text-[color-mix(in_srgb,white_10%,var(--color-info))] font-bold">
+                    <span className="text-[10px] px-2.5 py-1 rounded-full bg-info/15 text-info-active dark:text-info font-bold">
                       {ROLE_LABELS[member.role] || member.role}
                     </span>
                     {isLocked(member) && (
