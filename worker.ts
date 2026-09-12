@@ -55,6 +55,19 @@ import { createAccountIntelligenceInsightsWorker, scheduleAccountIntelligenceIns
 import { createForecastSnapshotWorker, scheduleForecastSnapshotJob } from './src/features/commercial-intelligence/jobs/forecastSnapshotWeekly.worker.js';
 import { createCopilotoTranscriptionWorker } from './src/features/copiloto-ia/jobs/transcribeConversation.worker.js';
 import { MeetingSynthesisService } from './src/features/chatbook/services/meeting-synthesis.service.js';
+// ACH-16-05: as duas fábricas abaixo existiam sem estar registradas em nenhum entrypoint (nem
+// aqui, nem em src/bootstrap/workers.ts) — o teste de paridade
+// (tests/unit/architecture/worker-registry-parity.test.ts) pegou isso. `createEnrichmentCascadeWorker`
+// processa `enrichmentCascadeQueue`, que já recebia jobs via POST em
+// src/features/prospecting/routes/prospecting.routes.ts sem nenhum worker para consumi-los.
+// `createAccountIntelligenceSchedulerWorker` (LDR Fase 5) só rodava em modo embutido
+// (ENABLE_EMBEDDED_WORKERS=true) — proibido em produção por src/lib/queue/redis.ts, o que
+// significava que o scheduler autônomo do LDR nunca rodava em produção.
+import { createEnrichmentCascadeWorker } from './src/lib/queue/enrichmentCascade.worker.js';
+import {
+    createAccountIntelligenceSchedulerWorker,
+    accountIntelligenceSchedulerQueue,
+} from './src/features/market-intelligence/jobs/accountIntelligenceScheduler.worker.js';
 
 const WORKER_PORT = parseInt(process.env.WORKER_HEALTH_PORT || '3006', 10);
 const SHUTDOWN_TIMEOUT_MS = 25_000;
@@ -98,6 +111,8 @@ async function startWorkerProcess() {
     const copilotoTranscriptionWorker = createCopilotoTranscriptionWorker({
         meetingSynthesisPort: new MeetingSynthesisService(),
     });
+    const enrichmentCascadeWorker = createEnrichmentCascadeWorker();
+    const accountIntelligenceSchedulerWorker = createAccountIntelligenceSchedulerWorker();
 
     await Promise.all([
         scheduleBitrixSync(),
@@ -115,6 +130,14 @@ async function startWorkerProcess() {
         scheduleGlobalNewsScan(),
         scheduleAccountIntelligenceInsightsJob(),
         scheduleForecastSnapshotJob(),
+        // Mesmo agendamento ('daily-ldr-scheduler', cron diário às 02h) já usado no modo embutido
+        // (src/bootstrap/workers.ts) — upsertJobScheduler é idempotente por id, então registrar o
+        // mesmo agendamento nos dois entrypoints segue o padrão já usado pelos demais jobs acima.
+        accountIntelligenceSchedulerQueue.upsertJobScheduler(
+            'daily-ldr-scheduler',
+            { pattern: '0 2 * * *' },
+            { name: 'accountIntelligenceScheduler', data: {} },
+        ),
     ]);
 
     const searchWorker = env.ENABLE_SEARCH ? createSearchWorker() : null;
@@ -163,6 +186,8 @@ async function startWorkerProcess() {
         { name: 'account-intelligence-insights', worker: accountIntelligenceInsightsWorker },
         { name: 'forecast-snapshot-weekly-queue', worker: forecastSnapshotWorker },
         { name: 'copiloto-ia-transcription-queue', worker: copilotoTranscriptionWorker },
+        { name: 'enrichment-cascade-queue', worker: enrichmentCascadeWorker },
+        { name: 'account-intelligence-scheduler', worker: accountIntelligenceSchedulerWorker },
     ];
 
     for (const { name, worker } of registeredWorkers) {

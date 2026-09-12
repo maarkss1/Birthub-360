@@ -13,6 +13,7 @@ function buildDeps(calls: string[], overrides: Partial<ShutdownDeps> = {}): Shut
         agentWorker: fakeWorker('agent', calls),
         enrichmentWorker: null,
         whatsappSignalWorker: null,
+        whatsappCommandWorker: null,
         bitrixSyncWorker: null,
         followUpWorker: null,
         execSummaryWorker: null,
@@ -22,6 +23,14 @@ function buildDeps(calls: string[], overrides: Partial<ShutdownDeps> = {}): Shut
         autoAnonymizeWorker: null,
         coldLeadsScannerWorker: null,
         stagnationScannerWorker: null,
+        accountIntelligenceSchedulerWorker: null,
+        forecastSnapshotWorker: null,
+        copilotoTranscriptionWorker: null,
+        newsMonitorWorker: null,
+        enrichmentCascadeWorker: null,
+        cadenceRunWorker: null,
+        agentMemoryCleanupWorker: null,
+        accountIntelligenceInsightsWorker: null,
         searchWorker: null,
         coldCallWorker: fakeWorker('coldCall', calls),
         swarmSchedulerWorker: null,
@@ -100,6 +109,37 @@ describe('bootstrap/shutdown', () => {
         expect(deps.workers.leadsWorker?.close).toHaveBeenCalledTimes(1);
         expect(deps.workers.agentWorker?.close).toHaveBeenCalledTimes(1);
         expect(deps.workers.coldCallWorker?.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('fecha todo campo não nulo de EmbeddedWorkersHandle, não só uma lista mantida à mão', async () => {
+        // Regressão: workerList() já ficou incompleta em relação a EmbeddedWorkersHandle (campos
+        // novos registrados em startEmbeddedWorkers mas nunca fechados no shutdown). Constrói um
+        // handle com um worker fake em CADA campo e confirma que todos são fechados, para que
+        // adicionar um campo novo ao handle sem tocar em shutdown.ts quebre este teste.
+        const workerFieldNames = [
+            'leadsWorker', 'agentWorker', 'enrichmentWorker', 'whatsappSignalWorker',
+            'whatsappCommandWorker', 'bitrixSyncWorker', 'followUpWorker', 'execSummaryWorker',
+            'deduplicationWorker', 'winLossWorker', 'pdfWorker', 'autoAnonymizeWorker',
+            'coldLeadsScannerWorker', 'stagnationScannerWorker', 'accountIntelligenceSchedulerWorker',
+            'forecastSnapshotWorker', 'copilotoTranscriptionWorker', 'newsMonitorWorker',
+            'enrichmentCascadeWorker', 'cadenceRunWorker', 'agentMemoryCleanupWorker',
+            'accountIntelligenceInsightsWorker', 'searchWorker', 'coldCallWorker',
+            'swarmSchedulerWorker',
+        ] as const satisfies readonly (keyof EmbeddedWorkersHandle)[];
+
+        const fullCalls: string[] = [];
+        const workers = Object.fromEntries(
+            workerFieldNames.map((name) => [name, fakeWorker(name, fullCalls)]),
+        ) as EmbeddedWorkersHandle;
+
+        const deps = buildDeps(fullCalls, { workers });
+        const shutdown = createGracefulShutdown(deps);
+
+        await shutdown('SIGTERM');
+
+        for (const name of workerFieldNames) {
+            expect(workers[name]?.close, `${name}.close() não foi chamado`).toHaveBeenCalledTimes(1);
+        }
     });
 
     it('continua o shutdown mesmo se o fechamento do servidor HTTP reportar erro', async () => {
