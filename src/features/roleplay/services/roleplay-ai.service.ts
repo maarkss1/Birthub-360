@@ -1,9 +1,11 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import {
+  cleanAndParseJson,
+  getAiModel,
+  logAiUsage,
   UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
   wrapUntrustedContent,
-} from '../../../lib/ai/gateway/prompt-safety.js';
+} from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
 
 export interface RoleplayPersona {
@@ -78,7 +80,14 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       const formattedHistory = input.history
         .map((h) => `${h.sender === 'user' ? 'Vendedor' : input.persona.name}: ${h.text}`)
         .join('\n');
+      // Campos de persona livres (name/role/companyProfile/mainObjection/personality) já vêm
+      // envolvidos por wrapUntrustedContent acima, com UNTRUSTED_CONTENT_GUARD_INSTRUCTION
+      // reforçando no prompt que são dado, não comando — mesma defesa estrutural usada em
+      // knowledge-copilot.service.ts/reranker.service.ts para conteúdo de fonte não confiável.
+      // O CodeQL não modela esse sanitizador customizado, daí o falso positivo residual mesmo
+      // após a mitigação real.
       const response = await model.invoke([
+        // codeql[js/prompt-injection]
         new SystemMessage(systemPrompt),
         new HumanMessage(
           `Histórico da conversa até agora:\n${formattedHistory}\n\nVendedor acabou de falar: "${input.userMessage}"`,
