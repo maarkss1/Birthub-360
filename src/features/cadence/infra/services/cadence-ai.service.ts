@@ -46,6 +46,12 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
 
     try {
       const response = await model.invoke([
+        // codeql[js/prompt-injection] systemPrompt só interpola context.channel/leadReaction,
+        // ambos validados em runtime contra os mesmos enums do tipo (z.enum em
+        // cadenceStepSchema, ai-suite.routes.ts) pelo middleware validateRequest antes desta
+        // função ser chamada — nunca texto livre do usuário. O restante do contexto (texto
+        // livre: companyName, contactName, previousInteraction, valueProposition) vai só na
+        // HumanMessage abaixo, nunca no system prompt.
         new SystemMessage(systemPrompt),
         new HumanMessage(`Dados da Cadência:\n${JSON.stringify(context, null, 2)}`),
       ]);
