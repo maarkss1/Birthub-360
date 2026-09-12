@@ -4,7 +4,7 @@ import type { QualificationMatrixItemInput, ObjectionMatrixItemInput } from './p
 export interface QualificationMatrixItem {
   id: string;
   organizationId: string;
-  brand: 'atlasgr' | 'totaltrac';
+  brand: 'birthub360';
   segment: string;
   persona: string;
   framework: 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER';
@@ -18,7 +18,7 @@ export interface QualificationMatrixItem {
 export interface ObjectionMatrixItem {
   id: string;
   organizationId: string;
-  brand: 'atlasgr' | 'totaltrac';
+  brand: 'birthub360';
   segment: string;
   persona: string;
   objectionTitle: string;

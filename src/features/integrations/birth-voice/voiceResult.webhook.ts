@@ -27,7 +27,7 @@ import type { CopilotoVoiceIngestionPort } from '../../../shared/contracts/copil
  *     na desestruturação (o webhook nunca funcionou nessa forma).
  *  2. Segredo com fallback hardcoded ('segredo_compartilhado_atlasgr_123') versionado no git —
  *     sem a env definida, qualquer um que lesse o repositório podia forjar resultados de chamada.
- *     Agora é fail-closed: sem ATLASGR_WEBHOOK_SECRET configurado, responde 503 (mesmo padrão do
+ *     Agora é fail-closed: sem BIRTHUB360_WEBHOOK_SECRET configurado, responde 503 (mesmo padrão do
  *     BIRTH_VOICES_WEBHOOK_SECRET em birthVoice.webhook.ts).
  *  3. Busca de lead por sufixo de telefone SEM filtro de organização e fora de qualquer
  *     requestContext — dependendo do papel do Postgres, ou vazava cross-tenant ou a RLS fazia a
@@ -100,16 +100,16 @@ function secretMatches(provided: string | undefined, expected: string): boolean 
 }
 
 async function handleVoiceResult(req: Request, res: Response): Promise<void> {
-  const expectedSecret = env.ATLASGR_WEBHOOK_SECRET;
+  const expectedSecret = env.BIRTHUB360_WEBHOOK_SECRET;
   if (!expectedSecret) {
     // Fail-closed: sem segredo configurado não há como distinguir a Bland de qualquer um que
     // descubra esta URL. Nunca cair para um valor default versionado no repositório.
-    logger.error('Webhook voice-result recebido, mas ATLASGR_WEBHOOK_SECRET não está configurado.');
+    logger.error('Webhook voice-result recebido, mas BIRTHUB360_WEBHOOK_SECRET não está configurado.');
     res.status(503).json({ success: false, error: 'Webhook não configurado.' });
     return;
   }
 
-  const provided = req.headers['x-atlasgr-webhook-secret'];
+  const provided = req.headers['x-birthub360-webhook-secret'];
   if (!secretMatches(typeof provided === 'string' ? provided : undefined, expectedSecret)) {
     res.status(401).json({ success: false, error: 'Unauthorized webhook secret' });
     return;

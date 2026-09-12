@@ -92,14 +92,14 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function ProspectingHub() {
-  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { info: playbookMeta } = useActivePlaybook();
   const accent = useBrandAccent();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
 
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = false ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
   const activePersonaOptions =
-    playbook === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
+    false ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
 
   // --- CNPJ real lookup ---
   const [cnpjInput, setCnpjInput] = useState('');

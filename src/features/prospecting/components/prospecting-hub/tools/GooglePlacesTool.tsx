@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Cpu, Loader2, MapPin } from 'lucide-react';
 import { api } from '../../../../../lib/api';
 import { BRAND } from '../../../../../config/brand';
-import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
@@ -22,8 +21,7 @@ interface GooglePlacesCriteria {
 }
 
 export function GooglePlacesTool({ configured }: { configured: boolean }) {
-  const { playbook } = useActivePlaybook();
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = false ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
 
   const [criteria, setCriteria] = useState<GooglePlacesCriteria>({
     segmento: activeSegments[0],

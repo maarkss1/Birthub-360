@@ -20,7 +20,7 @@ const FRAMEWORKS = ['SPIN', 'BANT', 'MEDDPICC', 'SNAP', 'CHALLENGER'] as const;
 const CATEGORIES = ['Situação', 'Problema', 'Implicação/Custo', 'Necessidade/ROI'] as const;
 
 const emptyDefaults: QualificationMatrixItemInput = {
-  brand: 'atlasgr',
+  brand: 'birthub360',
   segment: '',
   persona: '',
   framework: 'SPIN',
@@ -31,7 +31,7 @@ const emptyDefaults: QualificationMatrixItemInput = {
 
 interface QualificationItemFormProps {
   item?: QualificationMatrixItem | null;
-  defaultBrand: 'atlasgr' | 'totaltrac';
+  defaultBrand: 'birthub360';
   onClose: () => void;
   onSave: () => void;
 }

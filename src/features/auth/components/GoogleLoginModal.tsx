@@ -8,7 +8,7 @@ interface GoogleLoginModalProps {
   onClose: () => void;
   /** Carteira comercial escolhida antes do login social, persistida para a sessão. Chave de
    *  dado comercial (não de marca da plataforma) — ver src/config/brand.ts. */
-  selectedBrand: 'atlasgr' | 'totaltrac' | null;
+  selectedBrand: 'birthub360' | null;
 }
 
 export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLoginModalProps) {

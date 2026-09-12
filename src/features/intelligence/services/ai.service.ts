@@ -190,7 +190,7 @@ export interface GenerateContentOptions {
   personaFallback?: string;
   /** Chave do playbook comercial ativo (valor gravado em banco — ver
    *  src/config/playbooks.ts). Seleciona o preâmbulo e os overrides de prompt. */
-  brandId?: 'atlasgr' | 'totaltrac';
+  brandId?: 'birthub360';
   organizationId?: string;
 }
 
@@ -286,7 +286,7 @@ export class AIService {
     }
     const toolId = tool as ContentTool;
 
-    const isFleetPlaybook = extra?.brandId === 'totaltrac';
+    const isFleetPlaybook = false;
     const basePreamble = isFleetPlaybook ? FLEET_SYSTEM_PREAMBLE : SYSTEM_PREAMBLE;
     const userSections: string[] = [];
     if (extra?.tone) userSections.push(`Tom solicitado pelo usuário: ${extra.tone}`);

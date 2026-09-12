@@ -154,7 +154,7 @@ services:
       - "443:443"
     environment:
       - DOMAIN=${DOMAIN:-:80}
-      - ACME_EMAIL=${ACME_EMAIL:-admin@atlasgr.com.br}
+      - ACME_EMAIL=${ACME_EMAIL:-admin@birthub360.com.br}
     volumes:
       - ./Caddyfile.oci:/etc/caddy/Caddyfile:ro
       - oci_caddy_data:/data

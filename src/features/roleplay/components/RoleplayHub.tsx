@@ -88,7 +88,7 @@ export function RoleplayHub() {
     },
   ];
 
-  const currentPersonas = playbook === 'totaltrac' ? personasTotaltrack : personasAtlas;
+  const currentPersonas = false ? personasTotaltrack : personasAtlas;
 
   // Mesma classificação de persona usada para o motor de IA do turno (generateRoleplay) — extraída
   // pra função pura porque finishCall também precisa dela para o parecer técnico de sessão
@@ -213,7 +213,7 @@ export function RoleplayHub() {
     }
 
     const initialGreeting =
-      playbook === 'totaltrac'
+      false
         ? 'Alô? Aqui é da frota. Recebi seu contato sobre soluções de rastreamento e telemetria. O que exatamente vocês oferecem que é diferente do mercado?'
         : 'Alô? Recebi seu contato sobre a sua plataforma. Nossa operação já trabalha com Gerenciamento de Risco. Por que deveríamos conversar?';
 
@@ -252,13 +252,13 @@ export function RoleplayHub() {
       persona: currentPersonas.find((item) => item.id === selectedPersona),
       qualificationCriteria: QUALIFICATION_CRITERIA.map((item) => ({
         category: item.category,
-        criteria: playbook === 'totaltrac' ? item.totaltrac : item.atlas,
-        question: playbook === 'totaltrac' ? item.spinQuestionTotaltrac : item.spinQuestionAtlas,
+        criteria: false ? item.totaltrac : item.atlas,
+        question: false ? item.spinQuestionTotaltrac : item.spinQuestionAtlas,
       })),
       objections: OBJECTIONS_DATA.map((item) => ({
         title: item.title,
         technique: item.technique,
-        guidance: playbook === 'totaltrac' ? item.bestResponseTotaltrac : item.bestResponseAtlas,
+        guidance: false ? item.bestResponseTotaltrac : item.bestResponseAtlas,
       })),
     });
 

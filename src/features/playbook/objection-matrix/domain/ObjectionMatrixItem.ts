@@ -1,6 +1,6 @@
 import type { Repository } from '../../../../shared/domain/Repository';
 
-export type ObjectionBrand = 'atlasgr' | 'totaltrac';
+export type ObjectionBrand = 'birthub360';
 
 export interface ObjectionMatrixItem {
   id: string;

@@ -44,10 +44,10 @@ export function DecisionMakerSearch({
   appearance = 'dark',
   alreadyFoundCount,
 }: DecisionMakerSearchProps) {
-  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { info: playbookMeta } = useActivePlaybook();
   const light = appearance === 'light';
   const personaOptions =
-    playbook === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
+    false ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
   const [open, setOpen] = useState(false);
   const [criteria, setCriteria] = useState<DecisionMakerCriteria>({
     apenasEmailVerificado: true,

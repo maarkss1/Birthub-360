@@ -18,7 +18,7 @@ export interface UserSession {
   roleTitle: string;
   /** Operação (tenant) a que a conta pertence — derivada do domínio do e-mail.
    *  NÃO é a marca do produto: a plataforma tem uma marca só, em src/config/brand.ts. */
-  tenant: 'atlasgr' | 'totaltrac';
+  tenant: 'birthub360';
   permissions: string[];
   avatarBg: string;
   mustChangePassword: boolean;
@@ -32,7 +32,7 @@ interface AuthContextType {
   isAdmin: boolean;
   logout: () => void;
   canAccessAdminPanel: () => boolean;
-  canAccessTenant: (tenant: 'atlasgr' | 'totaltrac') => boolean;
+  canAccessTenant: (tenant: 'birthub360') => boolean;
   /** Comercial Inteligente (Revenue Command Center executivo) — ADMIN/GESTOR, ver src/lib/auth/authorization.ts. */
   canAccessCommercialIntelligence: boolean;
   /** Copiloto Comercial IA — ADMIN/GESTOR/CLOSER/SDR, ver COPILOTO_IA_ROLES em src/lib/auth/authorization.ts. */
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data, isPending } = authClient.useSession();
   const sessionUser = data?.user as SessionUser | undefined;
 
-  const savedTenant = localStorage.getItem('selectedBrand') as 'atlasgr' | 'totaltrac' | null;
+  const savedTenant = localStorage.getItem('selectedBrand') as 'birthub360' | null;
 
   const currentUser: UserSession | null = sessionUser
     ? (() => {
@@ -141,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const canAccessAdminPanel = () => isAdmin;
 
-  const canAccessTenant = (tenant: 'atlasgr' | 'totaltrac') => {
+  const canAccessTenant = (tenant: 'birthub360') => {
     // Isolamento de tenant nunca é decidido no cliente por papel — cada usuário pertence a UMA
     // Organization; a separação de verdade é aplicada no backend por organizationId (ver
     // src/lib/tenant-prisma.ts). Este helper só decide o que a UI mostra por padrão, sempre

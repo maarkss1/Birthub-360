@@ -180,7 +180,7 @@ const envSchema = z
 
     // Segredo do webhook /api/webhooks/voice-result (Bland AI). Fail-closed: sem ele o webhook
     // responde 503 (ver voiceResult.webhook.ts) — nunca cai para um valor default versionado.
-    ATLASGR_WEBHOOK_SECRET: z.string().optional(),
+    BIRTHUB360_WEBHOOK_SECRET: z.string().optional(),
 
     // ── Telefonia PABX 3CX ────────────────────────────────────────────────────
     // Segredo compartilhado que valida a assinatura HMAC do webhook de eventos de chamada do 3CX

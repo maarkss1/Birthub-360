@@ -104,7 +104,7 @@ const CAPABILITIES: AICapability[] = [
     modelDefault: 'llama3.1:8b',
     samplePayload: {
       metrics: { totalLeads: 42, closedThisMonth: 6, pipelineValue: 350000 },
-      brandId: 'atlasgr',
+      brandId: 'birthub360',
     },
   },
   {

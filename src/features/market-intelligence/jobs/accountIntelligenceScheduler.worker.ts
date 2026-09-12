@@ -98,3 +98,15 @@ export function createAccountIntelligenceSchedulerWorker() {
     { connection },
   );
 }
+
+export async function scheduleAccountIntelligenceSchedulerJob(): Promise<void> {
+  if (!accountIntelligenceSchedulerQueue) return;
+  await accountIntelligenceSchedulerQueue.add(
+    'daily-ldr-scheduler',
+    {},
+    {
+      repeat: { pattern: '0 4 * * *' },
+      jobId: 'daily-ldr-scheduler',
+    },
+  );
+}

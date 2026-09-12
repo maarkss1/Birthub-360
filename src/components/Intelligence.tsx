@@ -151,7 +151,7 @@ const ATLAS_PERSONAS = [
   'Head / Gerente de GR (Risco)',
   'TI / Compras',
 ];
-const TOTALTRAC_PERSONAS = [
+const BIRTHUB360_TELEMETRIA_PERSONAS = [
   'Dono / CEO',
   'Gestor de Frota',
   'Diretor de Operações / Logística',
@@ -162,8 +162,8 @@ const TOTALTRAC_PERSONAS = [
 export function Intelligence() {
   const accent = useBrandAccent();
   const { playbook, info: playbookMeta } = useActivePlaybook();
-  const suggestedCompetitors = playbook === 'atlasgr' ? ATLAS_COMPETITORS : [];
-  const personas = playbook === 'atlasgr' ? ATLAS_PERSONAS : TOTALTRAC_PERSONAS;
+  const suggestedCompetitors = playbook === 'birthub360' ? ATLAS_COMPETITORS : [];
+  const personas = playbook === 'birthub360' ? ATLAS_PERSONAS : BIRTHUB360_TELEMETRIA_PERSONAS;
   const [activeTool, setActiveTool] = useState<ToolType>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string | null>(null);

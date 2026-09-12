@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Building2, ChevronDown, ChevronUp, Cpu, Loader2, SlidersHorizontal } from 'lucide-react';
 import { api } from '../../../../../lib/api';
 import { BRAND } from '../../../../../config/brand';
-import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
 import {
   ESTADO_OPTIONS,
   PORTE_OPTIONS,
@@ -15,8 +14,7 @@ import { NotConfiguredBanner } from './NotConfiguredBanner';
 import { getErrorMessage, type PromoteResult } from './shared';
 
 export function ApolloTool({ configured }: { configured: boolean }) {
-  const { playbook } = useActivePlaybook();
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  const activeSegments = false ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
 
   const [criteria, setCriteria] = useState<ProspectCriteria>({
     segmento: activeSegments[0],

@@ -12,7 +12,7 @@ import type {
  * `brandMatrices.ts` — agora vêm do banco, já filtrados por marca pelo backend).
  */
 export function usePlaybookMatrixFilters(
-  selectedBrand: 'atlasgr' | 'totaltrac',
+  selectedBrand: 'birthub360',
   objections: ObjectionMatrixItem[],
   qualifications: QualificationMatrixItem[],
 ) {

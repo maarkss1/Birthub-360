@@ -5,7 +5,7 @@ replicaCount: 2
 # (ghcr.io/${{ github.repository }}, resolvido em minúsculas pelo GHCR) — antes apontava só para
 # "prospector-atlas", um nome de imagem sem registro/owner que não corresponde a nada publicado.
 image:
-  repository: ghcr.io/maarkss1/central-de-inteligencia-comecial-atlasgr
+  repository: ghcr.io/maarkss1/central-de-inteligencia-comecial-birthub360
   pullPolicy: IfNotPresent
   tag: "latest"
 

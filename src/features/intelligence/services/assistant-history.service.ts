@@ -14,7 +14,7 @@ const HISTORY_LIMIT = 20;
 export async function listAssistantHistory(
   organizationId: string,
   userId: string,
-  brand: 'atlasgr' | 'totaltrac',
+  brand: 'birthub360',
 ): Promise<AssistantHistoryMessage[]> {
   const rows = await prisma.assistantMessage.findMany({
     where: { organizationId, userId, brand },
@@ -37,7 +37,7 @@ export async function listAssistantHistory(
 export async function appendAssistantTurn(
   organizationId: string,
   userId: string,
-  brand: 'atlasgr' | 'totaltrac',
+  brand: 'birthub360',
   userText: string,
   assistantText: string,
 ): Promise<void> {

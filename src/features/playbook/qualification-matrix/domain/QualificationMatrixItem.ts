@@ -1,6 +1,6 @@
 import type { Repository } from '../../../../shared/domain/Repository';
 
-export type QualificationBrand = 'atlasgr' | 'totaltrac';
+export type QualificationBrand = 'birthub360';
 export type QualificationFramework = 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER';
 export type QualificationCategory =
   | 'Situação'

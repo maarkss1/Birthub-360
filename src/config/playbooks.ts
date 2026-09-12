@@ -3,29 +3,12 @@
  * plataforma: playbook, matriz de objeções, matriz de qualificação, personas de
  * roleplay e histórico do copiloto.
  *
- * Antes este eixo se chamava "marca ativa" e vinha de `BRAND_CONFIGS`
- * (`src/contexts/BrandContext.tsx`), misturando duas coisas diferentes: a
- * identidade visual do produto e a carteira comercial de quem o usa. Ao trocar
- * a plataforma inteira para a marca Birth Hub 360, as duas se separaram — a
- * identidade é única (`src/config/brand.ts`) e o playbook continua sendo um dado
- * comercial, de qualquer empresa que use a plataforma.
- *
- * As CHAVES (`atlasgr`, `totaltrac`) são valores gravados em banco e validados
- * na API (`PlaybookObjectionItem.brand`, `PlaybookQualificationItem.brand`,
- * `AssistantMessage.brand`, `RoleplaySession.brand`, além do parâmetro `brand`
- * em `src/features/intelligence/routes/intelligence.routes.ts`). Renomeá-las
- * exigiria migração de dados e quebraria o histórico já gravado, então elas
- * ficam como identificadores opacos — o que muda é o RÓTULO exibido, que agora
- * descreve o segmento de mercado, não a empresa.
- *
- * O rótulo NÃO é "segmento" na interface: as matrizes já têm um filtro de
- * segmento de mercado ("Logística & Transportes" etc.) DENTRO de cada playbook.
- * Este eixo é o playbook inteiro.
- *
- * Para acrescentar um playbook novo: adicione aqui, permita a chave na validação
- * da rota e crie a migração que amplia o domínio da coluna.
+ * Após a migração para a marca única Birth Hub 360, removemos a distinção
+ * forçada de playbook por "marca" (antigos atlasgr e totaltrac) e unificamos
+ * em um único tenant de playbook padrão. A segmentação (Logística, Telemetria)
+ * ocorre naturalmente dentro do filtro de segmento de cada playbook.
  */
-export type PlaybookKey = 'atlasgr' | 'totaltrac';
+export type PlaybookKey = 'birthub360';
 
 export interface PlaybookInfo {
   key: PlaybookKey;
@@ -37,26 +20,16 @@ export interface PlaybookInfo {
 
 export const PLAYBOOKS: readonly PlaybookInfo[] = [
   {
-    key: 'atlasgr',
-    label: 'Logística & Risco',
-    description:
-      'Gestão de risco de carga, scoring de transportadoras e prospecção preditiva em logística.',
-  },
-  {
-    key: 'totaltrac',
-    label: 'Telemetria de Frota',
-    description:
-      'Telemetria CAN, videotelemetria com IA, controle de jornada e rastreamento de frota.',
+    key: 'birthub360',
+    label: 'Birth Hub 360',
+    description: 'Playbook unificado Birth Hub 360.',
   },
 ] as const;
 
-export const DEFAULT_PLAYBOOK: PlaybookKey = 'atlasgr';
+export const DEFAULT_PLAYBOOK: PlaybookKey = 'birthub360';
 
 const BY_KEY = new Map(PLAYBOOKS.map((s) => [s.key, s]));
 
-// PLAYBOOKS[0] em vez de BY_KEY.get(DEFAULT_PLAYBOOK)! — mesmo fallback, sem non-null assertion:
-// PLAYBOOKS é um array literal não-vazio, então o find() só cai no ?? em teoria (DEFAULT_PLAYBOOK
-// sempre está na lista), mas o tipo fica provado sem precisar "confiar" numa asserção.
 const DEFAULT_PLAYBOOK_INFO: PlaybookInfo =
   PLAYBOOKS.find((p) => p.key === DEFAULT_PLAYBOOK) ?? PLAYBOOKS[0];
 

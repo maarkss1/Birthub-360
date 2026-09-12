@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const qualificationMatrixItemSchema = z.object({
-  brand: z.enum(['atlasgr', 'totaltrac']),
+  brand: z.enum(['birthub360']),
   segment: z.string().trim().min(1).max(120),
   persona: z.string().trim().min(1).max(120),
   framework: z.enum(['SPIN', 'BANT', 'MEDDPICC', 'SNAP', 'CHALLENGER']),
@@ -13,7 +13,7 @@ export const qualificationMatrixItemSchema = z.object({
 export type QualificationMatrixItemInput = z.infer<typeof qualificationMatrixItemSchema>;
 
 export const objectionMatrixItemSchema = z.object({
-  brand: z.enum(['atlasgr', 'totaltrac']),
+  brand: z.enum(['birthub360']),
   segment: z.string().trim().min(1).max(120),
   persona: z.string().trim().min(1).max(120),
   objectionTitle: z.string().trim().min(1).max(180),

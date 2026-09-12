@@ -7,7 +7,7 @@
 // novo aqui NÃO cria a tela nem a rota sozinho — só o habilita para ser concedido no painel.
 export type ModuleKey =
   | 'social-selling'
-  | 'treinamento-atlasgr'
+  | 'treinamento-birthub360'
   | 'proposta-comercial'
   | 'hub-inteligencia-marketing';
 
@@ -24,7 +24,7 @@ export const MODULE_CATALOG: ModuleCatalogEntry[] = [
     description: 'Playbook e acervo de social selling para prospecção em redes sociais.',
   },
   {
-    key: 'treinamento-atlasgr',
+    key: 'treinamento-birthub360',
     label: 'Treinamento Comercial',
     description: 'Trilha de treinamento institucional da operação comercial.',
   },
@@ -79,35 +79,35 @@ export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
     key: 'connect',
     label: 'Connect',
     description: 'Portal — página principal',
-    url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php',
+    url: 'https://connect.birthub360.com.br/portalatlas/Atlas_Principal.php',
     iconKey: 'connect',
   },
   {
     key: 'new-connect',
     label: 'New Connect',
     description: 'Novo portal — dashboard',
-    url: 'https://newconnect.atlasgr.com.br/dashboard',
+    url: 'https://newconnect.birthub360.com.br/dashboard',
     iconKey: 'newConnect',
   },
   {
     key: 'perfil-securitario',
     label: 'Perfil Securitário',
     description: 'Registros recentes de perfil securitário',
-    url: 'https://perfil-securitario.atlasgr.com.br/report/recentRecords',
+    url: 'https://perfil-securitario.birthub360.com.br/report/recentRecords',
     iconKey: 'securitario',
   },
   {
     key: 'bitrix24',
     label: 'Bitrix24',
     description: 'CRM Bitrix24 da operação',
-    url: 'https://atlasgr.bitrix24.com.br/',
+    url: 'https://birthub360.bitrix24.com.br/',
     iconKey: 'bitrix24',
   },
   {
     key: 'webmail',
     label: 'Webmail',
     description: 'E-mail corporativo da operação',
-    url: 'https://webmail.atlasgr.com.br/?_task=mail&_mbox=INBOX',
+    url: 'https://webmail.birthub360.com.br/?_task=mail&_mbox=INBOX',
     iconKey: 'webmail',
   },
   {

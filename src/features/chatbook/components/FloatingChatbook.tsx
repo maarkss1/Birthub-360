@@ -554,7 +554,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         className="w-full px-2.5 py-1.5 rounded-xl bg-surface text-ink border border-line focus:outline-none focus:ring-1 focus:ring-brand"
                       >
                         <option value="todos">Todos os Segmentos</option>
-                        {playbook === 'atlasgr' ? (
+                        {playbook === 'birthub360' ? (
                           <>
                             <option value="SaaS">SaaS & Tecnologia</option>
                             <option value="Indústria">Indústria & Manufatura</option>
@@ -587,7 +587,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         className="w-full px-2.5 py-1.5 rounded-xl bg-surface text-ink border border-line focus:outline-none focus:ring-1 focus:ring-brand"
                       >
                         <option value="todos">Todas as Personas</option>
-                        {playbook === 'atlasgr' ? (
+                        {playbook === 'birthub360' ? (
                           <>
                             <option value="VP de Vendas">VP / Diretor Comercial</option>
                             <option value="CFO">CFO / Financeiro</option>

@@ -94,8 +94,8 @@ router.get(
     try {
       const { organizationId, id: userId } = (req as AuthRequest).user;
       const brand = String(req.query.brand || '');
-      if (brand !== 'atlasgr' && brand !== 'totaltrac') {
-        res.status(400).json({ success: false, error: 'brand deve ser "atlasgr" ou "totaltrac".' });
+      if (brand !== 'birthub360') {
+        res.status(400).json({ success: false, error: 'brand deve ser "birthub360".' });
         return;
       }
       const messages = await listAssistantHistory(organizationId, userId, brand);
@@ -133,7 +133,7 @@ router.post(
       await appendAssistantTurn(
         organizationId,
         userId,
-        request.brandKey,
+        'birthub360',
         request.inputs.question,
         result.answer,
       );
@@ -158,7 +158,7 @@ router.post(
 // (antes só existia em memória no componente, perdido ao recarregar — Piloto 008 em
 // .claude/PILOTS.md).
 const roleplayFinishSchema = z.object({
-  brand: z.enum(['atlasgr', 'totaltrac']),
+  brand: z.enum(['birthub360']),
   brandName: z.string().trim().min(1).max(80),
   brandDescription: z.string().trim().min(1).max(500),
   personaId: z.string().trim().min(1).max(80),
@@ -215,8 +215,8 @@ router.get(
     try {
       const { organizationId, id: userId } = (req as AuthRequest).user;
       const brand = String(req.query.brand || '');
-      if (brand !== 'atlasgr' && brand !== 'totaltrac') {
-        res.status(400).json({ success: false, error: 'brand deve ser "atlasgr" ou "totaltrac".' });
+      if (brand !== 'birthub360') {
+        res.status(400).json({ success: false, error: 'brand deve ser "birthub360".' });
         return;
       }
       const sessions = await listRoleplaySessions(organizationId, userId, brand);
@@ -235,7 +235,7 @@ const contentGenerationSchema = z.object({
   tone: z.string().trim().max(80).optional(),
   objective: z.string().trim().max(100).optional(),
   personaFallback: z.string().trim().max(200).optional(),
-  brandId: z.enum(['atlasgr', 'totaltrac']).default('atlasgr'),
+  brandId: z.enum(['birthub360']).default('birthub360'),
 });
 
 router.post(
@@ -604,13 +604,11 @@ router.put(
 // (mesmo /api/analytics/overview usado no LiveStatsWidget) e devolve uma leitura executiva em Markdown.
 const reportSchema = z.object({
   metrics: z.record(z.string(), z.unknown()),
-  brandId: z.enum(['atlasgr', 'totaltrac']).default('atlasgr'),
+  brandId: z.enum(['birthub360']).default('birthub360'),
 });
 
-function reportBrandContext(brandId: 'atlasgr' | 'totaltrac'): string {
-  return brandId === 'totaltrac'
-    ? 'Birth Hub 360 (tecnologia para telemetria, videotelemetria, jornada e proteção de frotas)'
-    : 'Birth Hub 360 (inteligência comercial e gestão de risco logístico)';
+function reportBrandContext(_brandId: 'birthub360'): string {
+  return 'Birth Hub 360';
 }
 
 function reportPrompt(brandContext: string): string {

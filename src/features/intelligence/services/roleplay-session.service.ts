@@ -18,7 +18,7 @@ export interface RoleplayFinishTurnEvaluation {
 export interface RoleplayFinishInput {
   organizationId: string;
   userId: string;
-  brand: 'atlasgr' | 'totaltrac';
+  brand: 'birthub360';
   brandName: string;
   brandDescription: string;
   personaId: string;
@@ -139,7 +139,7 @@ export async function finishRoleplaySession(
 export async function listRoleplaySessions(
   organizationId: string,
   userId: string,
-  brand: 'atlasgr' | 'totaltrac',
+  brand: 'birthub360',
 ): Promise<RoleplaySessionHistoryItem[]> {
   const rows = await prisma.roleplaySession.findMany({
     where: { organizationId, userId, brand },

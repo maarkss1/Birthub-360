@@ -36,7 +36,7 @@ const evaluation = {
 const input = {
   organizationId: 'org_1',
   userId: 'user_1',
-  brand: 'atlasgr' as const,
+  brand: 'birthub360' as const,
   brandName: 'Birth Hub 360',
   brandDescription: 'Revenue OS de logística',
   personaId: 'gerente_risco',
@@ -77,7 +77,7 @@ describe('roleplay-session.service — finishRoleplaySession (parecer técnico d
     expect(createArgs.data).toMatchObject({
       organizationId: 'org_1',
       userId: 'user_1',
-      brand: 'atlasgr',
+      brand: 'birthub360',
       personaId: 'gerente_risco',
       personaLabel: 'Gerente de Risco (GR)',
       difficulty: 'dificil',
@@ -133,10 +133,10 @@ describe('roleplay-session.service — listRoleplaySessions (histórico de liga�
       },
     ]);
 
-    const result = await listRoleplaySessions('org_1', 'user_1', 'atlasgr');
+    const result = await listRoleplaySessions('org_1', 'user_1', 'birthub360');
 
     expect(roleplaySessionFindManyMock).toHaveBeenCalledWith({
-      where: { organizationId: 'org_1', userId: 'user_1', brand: 'atlasgr' },
+      where: { organizationId: 'org_1', userId: 'user_1', brand: 'birthub360' },
       orderBy: { createdAt: 'desc' },
       take: 20,
     });
@@ -162,7 +162,7 @@ describe('roleplay-session.service — listRoleplaySessions (histórico de liga�
   it('devolve lista vazia quando o usuário nunca fez uma ligação nesta marca', async () => {
     roleplaySessionFindManyMock.mockResolvedValueOnce([]);
 
-    const result = await listRoleplaySessions('org_1', 'user_1', 'totaltrac');
+    const result = await listRoleplaySessions('org_1', 'user_1', 'birthub360');
 
     expect(result).toEqual([]);
   });

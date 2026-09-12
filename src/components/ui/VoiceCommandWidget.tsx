@@ -68,12 +68,12 @@ export function VoiceCommandWidget() {
         } else if (textLower.includes('logística') || textLower.includes('logistica')) {
           // Estes dois comandos alternavam a marca ativa; hoje alternam o PLAYBOOK
           // comercial, que era o efeito real que eles tinham sobre o conteúdo.
-          setPlaybook('atlasgr');
-          setLastAction(`Playbook ativo: ${playbookInfo('atlasgr').label}`);
+          setPlaybook('birthub360');
+          setLastAction(`Playbook ativo: ${playbookInfo('birthub360').label}`);
           stopListening();
         } else if (textLower.includes('frota') || textLower.includes('telemetria')) {
-          setPlaybook('totaltrac');
-          setLastAction(`Playbook ativo: ${playbookInfo('totaltrac').label}`);
+          setPlaybook('birthub360');
+          setLastAction(`Playbook ativo: ${playbookInfo('birthub360').label}`);
           stopListening();
         } else if (textLower.includes('inteligência') || textLower.includes('metodologia')) {
           navigateOrReportFailure('intelligence', 'Abriu o Hub de IA');

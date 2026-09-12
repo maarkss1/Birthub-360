@@ -14,7 +14,7 @@ import { toast } from '../../../lib/toast';
 import { PLAYBOOKS } from '../../../config/playbooks';
 
 const emptyDefaults: ObjectionMatrixItemInput = {
-  brand: 'atlasgr',
+  brand: 'birthub360',
   segment: '',
   persona: '',
   objectionTitle: '',
@@ -25,7 +25,7 @@ const emptyDefaults: ObjectionMatrixItemInput = {
 
 interface ObjectionItemFormProps {
   item?: ObjectionMatrixItem | null;
-  defaultBrand: 'atlasgr' | 'totaltrac';
+  defaultBrand: 'birthub360';
   onClose: () => void;
   onSave: () => void;
 }

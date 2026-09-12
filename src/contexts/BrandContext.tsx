@@ -9,7 +9,7 @@ export type { BrandInfo };
  * Identidade da plataforma exposta a componentes.
  *
  * Este módulo era um contexto de troca de marca em runtime: mantinha
- * `activeBrand` ('atlasgr' | 'totaltrac'), reescrevia `--brand`/`--brand-2` via
+ * `activeBrand` ('birthub360'), reescrevia `--brand`/`--brand-2` via
  * `documentElement.style.setProperty` e marcava `data-brand` no `<html>` para o
  * CSS reagir. A plataforma passou a ter uma marca só (Birth Hub 360), então não
  * há mais estado: `useBrand()` devolve uma constante e as cores vivem

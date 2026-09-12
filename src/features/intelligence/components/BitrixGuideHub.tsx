@@ -35,7 +35,7 @@ export function BitrixGuideHub() {
   const [activeTab, setActiveTab] = useState<
     'practices' | 'pipeline' | 'field_mapping' | 'tutorials'
   >('practices');
-  const isAtlas = playbook === 'atlasgr';
+  const isAtlas = playbook === 'birthub360';
 
   const practices = isAtlas
     ? [

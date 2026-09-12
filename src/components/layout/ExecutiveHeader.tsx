@@ -46,9 +46,9 @@ export function ExecutiveHeader({
   const hubs = [
     { id: 'social-selling', label: 'Social Selling', path: '/social-selling', icon: Share2 },
     {
-      id: 'treinamento-atlasgr',
+      id: 'treinamento-birthub360',
       label: 'Treinamento Comercial',
-      path: '/treinamento-atlasgr',
+      path: '/treinamento-birthub360',
       icon: GraduationCap,
     },
     {
