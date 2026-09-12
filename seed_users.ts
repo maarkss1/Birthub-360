@@ -78,6 +78,15 @@ async function seed() {
                 // trocada por uma gerada aleatoriamente sem aviso.
                 const explicitPassword = u.passwordEnvVar && process.env[u.passwordEnvVar];
                 if (explicitPassword) {
+                    // Só o NOME da env var é logado (ex.: "SEED_PASSWORD_MARCELO"), nunca
+                    // process.env[u.passwordEnvVar] — a checagem de taint do CodeQL segue
+                    // `explicitPassword` (calculada a partir do valor sensível) até este
+                    // console.log próximo, mas o valor em si não é interpolado aqui. O valor real
+                    // só é impresso mais abaixo, no bloco de credenciais geradas — impressão
+                    // intencional, é o mecanismo de entrega segura deste script (ver docstring no
+                    // topo do arquivo). Achado do CodeQL tratado via paths-ignore em
+                    // .github/codeql/codeql-config.yml (comentário de supressão por linha
+                    // confirmado sem efeito neste repositório).
                     console.log(`User ${u.email} already exists — updating password (from ${u.passwordEnvVar}) and role...`);
                     await client.query('UPDATE account SET password = $1 WHERE "userId" = $2 AND "providerId" = $3', [hashedPassword, res.rows[0].id, 'credential']);
                     generatedCredentials.push({ email: u.email, password });
@@ -106,8 +115,12 @@ async function seed() {
                 [userId, u.name, u.email, u.role, targetOrgId, true]);
 
             // Create account
+            // Bug real encontrado em sessão de debug (11/09/2026): better-auth exige accountId ===
+            // userId para o provider "credential" (confirmado comparando com uma conta que já
+            // logava de verdade) — accountId = e-mail parecia razoável mas faz sign-in/email falhar
+            // sempre com "Invalid email or password", mesmo com hash de senha correto.
             await client.query('INSERT INTO account (id, "accountId", "providerId", "userId", password, "updatedAt") VALUES ($1, $2, $3, $4, $5, NOW())',
-                [accountId, u.email, 'credential', userId, hashedPassword]);
+                [accountId, userId, 'credential', userId, hashedPassword]);
 
             generatedCredentials.push({ email: u.email, password });
             console.log(`Created user: ${u.email}`);
@@ -119,6 +132,11 @@ async function seed() {
     if (generatedCredentials.length > 0) {
         console.log('\n=== Credenciais geradas nesta execução (repasse por canal seguro; não ficam salvas em nenhum arquivo) ===');
         for (const { email, password } of generatedCredentials) {
+            // Intencional, não um vazamento: este script existe justamente para imprimir a senha
+            // gerada UMA vez no terminal, pra ser repassada ao titular por canal seguro
+            // (gerenciador de senhas etc.) — ver docstring no topo do arquivo. Nunca grava em
+            // arquivo/log persistente, só stdout desta execução manual. Achado do CodeQL tratado
+            // via paths-ignore em .github/codeql/codeql-config.yml.
             console.log(`${email} -> ${password}`);
         }
         console.log('=== Fim da lista de credenciais ===\n');
