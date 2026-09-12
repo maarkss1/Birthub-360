@@ -3461,3 +3461,81 @@ transparent 63%, #000 64%, #000 80%, ...)` da coroa de traços mede em **farthes
   registrado como bloqueio real, não como sucesso assumido — pendente de confirmação num ambiente
   com backend antes de considerar `tests/e2e/workspace.spec.ts`/`visual.spec.ts` confirmados verdes
   contra o código novo.
+
+## Fix — `/app/sdr-diagnostic-joao` reaproveitada silenciosamente pelo Plano Diário (ACH-02-01)
+
+- **O que quebrou**: o commit `15c1e74d` ("plano diário pessoal universal com sincronização
+  Bitrix24") trocou o import de `JoaoReisDiagnosticHub` por `DailyPlanHub` em `App.tsx` e
+  reaproveitou a rota `sdr-diagnostic-joao` (que já existia, real, para o diagnóstico comercial —
+  ver Pilot "JoaoReisDiagnosticHub" acima) para renderizar `DailyPlanHub`. Isso deixou
+  `JoaoReisDiagnosticHub.tsx` órfão (nenhuma `<Route>` apontava mais pra ele) e criou dois
+  resultados idênticos "Plano Diário" no Command Palette (`tabMeta.ts` tinha o mesmo label nas
+  chaves `daily-plan` e `sdr-diagnostic-joao`), sem nenhuma decisão registrada — a tela real de
+  diagnóstico (5 abas, dado Bitrix real, QA'da e documentada nos dois Pilots acima) virou código
+  morto silenciosamente.
+- **Decisão (Opção A — restaurar, não Opção B — remover)**: `JoaoReisDiagnosticHub.tsx` representa
+  múltiplas sessões de QA real documentadas (extração de estilo do relatório HTML de origem,
+  correção de alias de cor, refatoração para os primitivos `ui/` novos, QA visual ponta-a-ponta em
+  claro/escuro com usuário real) — descartá-la exigiria justificar a perda dessa funcionalidade já
+  QA'da (Constituição §6, itens 1/4: conteúdo e funcionalidade exigem preferir refinamento à
+  remoção). Não havia nenhum sinal de que o Plano Diário universal deveria *substituir* o
+  diagnóstico específico do SDR — são conteúdos diferentes (plano de execução do dia vs. relatório
+  histórico de performance) — então restaurar é a opção mais conservadora e correta aqui.
+- **O que mudou**: `App.tsx` volta a importar `JoaoReisDiagnosticHub` (lazy) e a rota
+  `sdr-diagnostic-joao` volta a renderizar `<JoaoReisDiagnosticHub />`; `daily-plan` continua
+  apontando para `DailyPlanHub` (rota própria, já existia e não precisou mudar de nome).
+  `tabMeta.ts`: `sdr-diagnostic-joao` ganhou label próprio "Diagnóstico SDR" com ícone
+  `Stethoscope` (era `CalendarCheck`/"Plano Diário", duplicado com `daily-plan`) — como
+  `CommandPalette.tsx` deriva o label direto de `TAB_META`, o item duplicado no Command Palette
+  some sem precisar tocar em `CommandPalette.tsx`. `navigationBus.ts` já tinha
+  `'sdr-diagnostic-joao': true` (não precisou mudar). `Sidebar.tsx` não lista essa rota
+  diretamente (alcançável só via Command Palette/URL direta/`navigationBus`, mesmo padrão de antes
+  do regressão).
+- **Verificação**: `npx tsc --noEmit` — 0 erros novos (o único erro do run é pré-existente em
+  `src/shared/security/urlGuard.ts`, incompatibilidade de tipo `RequestInit`/`undici`, não
+  relacionado a este fix e fora dos arquivos tocados). `npx eslint` nos dois arquivos alterados
+  (`App.tsx`, `tabMeta.ts`) — limpo. Não existe teste e2e/unit dedicado a essas duas rotas
+  específicas hoje (`tests/e2e/**` não referencia `sdr-diagnostic-joao`/`daily-plan`/
+  `JoaoReisDiagnosticHub`); rodados os testes unitários dos componentes de UI consumidos por
+  `JoaoReisDiagnosticHub` (`ChannelDonut`, `CompareBar`, `DealsGrid`, `FunnelBars`, `KpiCard`) —
+  24/24 passando, nenhuma quebra. `test:e2e`/`test:integration` não rodados nesta sessão: os
+  containers Docker (Postgres/Redis/Meilisearch) são compartilhados entre várias worktrees
+  simultâneas e `pretest:e2e`/`pretest:integration` rodam `prisma migrate deploy` contra esse
+  Postgres compartilhado — risco real de conflito com outras sessões em paralelo, então não
+  forçado; documentado aqui como limitação de ambiente, não como sucesso assumido.
+
+## ACH-03-05 — `GlowChart.tsx`: halo decorativo em loop contínuo sem gate de viewport
+
+Item de higiene de performance (auditoria externa, sev P3). O halo `aria-hidden` do card
+"Pulso comercial" (`src/features/analytics/components/GlowChart.tsx`) animava
+`repeat: Infinity` (7s, scale+opacity) incondicionalmente, mesmo com o card fora da viewport —
+violação direta da regra de performance da Constituição (seção 11: "nenhuma animação ou render
+contínuo fora da viewport/aba ativa"). O prompt do item pedia avaliar `useInView` ou documentar
+por que o custo (um único blur, sem 3D) seria aceitável; optei por implementar o gate, porque a
+constituição já trata isso como regra dura, não como preferência estética — não havia motivo pra
+abrir uma exceção.
+
+Fix: `useInView` (Framer Motion, já dependência do projeto — primeiro uso desse hook no repo)
+observando a própria `<section>` do card (`amount: 0.2, once: false`, ou seja, volta a pausar se
+o usuário rolar o card pra fora de novo). Fora da viewport, o halo cai pra um estado estático
+(`scale: 1, opacity: 0.34`, transição de 0.3s) em vez de continuar consumindo frames. `prefers-
+reduced-motion` já era coberto globalmente por `MotionConfig reducedMotion="user"` em `App.tsx` —
+não precisou de tratamento adicional aqui. `data-testid="dashboard-analytics-chart"` preservado
+(já mascarado em `tests/e2e/visual.spec.ts`, então a regressão visual não é afetada).
+
+**Efeito colateral real pego pela própria suíte, não hipotético**: jsdom não implementa
+`IntersectionObserver`, então `useInView` derrubava (`ReferenceError`) qualquer teste que
+renderizasse `GlowChart` de passagem — 10 testes de `ReportsHub.test.tsx` (que só monta o
+dashboard, não testa o halo) quebraram na primeira rodada de `test:unit`. Fix: stub mínimo de
+`IntersectionObserver` em `tests/mocks/setup.ts` (nunca dispara callback — equivalente a "nunca
+visível", inofensivo em jsdom, que não tem layout real de qualquer forma), no mesmo padrão já
+usado ali para o gap de `HTMLDialogElement.showModal`. Primeiro uso de `useInView` no repo, então
+primeira vez que esse gap apareceu — fica registrado para não ser redescoberto.
+
+Verificação: `npx tsc --noEmit` sem erros novos (o único erro do projeto, `urlGuard.ts` TS2345, é
+pré-existente em `origin/main`, fora do escopo deste item); `npx biome lint
+src/features/analytics/components/GlowChart.tsx` limpo; `npx vitest run -c
+vitest.unit.config.ts` **2945/2945 testes passando** (364/364 arquivos), incluindo os 10 de
+`ReportsHub.test.tsx` que só voltaram a passar depois do stub acima. `test:integration`/`test:e2e`
+não puderam rodar (Docker Desktop inacessível nesta rodada) — não é regressão nova, é limitação de
+ambiente já conhecida.

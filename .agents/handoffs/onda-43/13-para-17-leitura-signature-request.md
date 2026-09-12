@@ -1,7 +1,7 @@
 - De: 13
 - Para: 17
 - Onda: 43
-- Status: aberto
+- Status: fechado (ACH-17-02)
 - Prioridade: normal
 
 ## Problema
@@ -43,3 +43,19 @@ pendência 1) para o racional completo — os outros 2 agentes bloqueados pela m
 problema (`revenue-intelligence`, `churn-retention`) já foram resolvidos nesta onda registrando o
 serviço real no container de DI compartilhado; o mesmo caminho serve aqui assim que o método de
 leitura acima existir.
+
+## Resolução (ACH-17-02)
+
+`SignatureRequestRepositoryPort.findByDocumentId(organizationId, documentId)` implementado em
+`documentSignature.ts`/`PrismaSignatureRequestRepository.ts` — RLS normal (sem bypass), devolve a
+solicitação mais recente por `requestedAt` ou `null` quando o documento nunca teve solicitação.
+Registrado no container (`SignatureRequestRepositoryPort`, `src/shared/di/setup.ts`) e consumido
+pela nova rota `POST /commercial-cell/contract-signature/run`
+(`src/features/intelligence/routes/agent.routes.ts`), mesmo padrão de `revenue-intelligence`/
+`churn-retention`: resolvida via `container.resolve()`, nunca por import direto cross-feature.
+`ContractSignatureAgent` continua nunca chamando `requestDocumentSignature`/
+`applySignatureStatusUpdate` — só narra o status real já lido.
+
+Teste unitário em `tests/unit/features/cadence/infra/PrismaSignatureRequestRepository.test.ts`
+(`describe('findByDocumentId')`) cobre: documento sem solicitação (null), solicitação em andamento
+(`sent`), e os 4 estados terminais (`signed`/`declined`/`expired`/`cancelled`).

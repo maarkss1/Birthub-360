@@ -20,9 +20,20 @@ import { toast } from '../../../lib/toast';
 
 type ExtractionEntity = 'lead' | 'deal' | 'company' | 'contact' | 'activity' | 'user';
 type ExtractionPeriod =
-  'today' | 'last7days' | 'thisMonth' | 'thisQuarter' | 'thisSemester' | 'all' | 'custom';
+  | 'today'
+  | 'last7days'
+  | 'thisMonth'
+  | 'thisQuarter'
+  | 'thisSemester'
+  | 'all'
+  | 'custom';
 type ExtractionStatus =
-  'queued' | 'running' | 'completed' | 'completed_partial' | 'failed' | 'cancelled';
+  | 'queued'
+  | 'running'
+  | 'completed'
+  | 'completed_partial'
+  | 'failed'
+  | 'cancelled';
 
 const ENTITY_OPTIONS: { value: ExtractionEntity; label: string }[] = [
   { value: 'lead', label: 'Leads' },
@@ -513,7 +524,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                 )}
 
                 {run.status === 'cancelled' && (
-                  <p className="text-xs text-amber-600 dark:text-amber-400">
+                  <p className="text-xs text-warning-active dark:text-warning">
                     Cancelada — nenhum arquivo foi gerado.{' '}
                     {run.totalCount > 0
                       ? `${run.totalCount} registro(s) já haviam sido lidos antes do cancelamento.`

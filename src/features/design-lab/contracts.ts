@@ -86,7 +86,14 @@ export type ActionOutcome = {
 export type Entity = {
   id: string;
   kind:
-    'company' | 'contact' | 'deal' | 'person' | 'project' | 'automation' | 'document' | 'process';
+    | 'company'
+    | 'contact'
+    | 'deal'
+    | 'person'
+    | 'project'
+    | 'automation'
+    | 'document'
+    | 'process';
   name: string;
   stage?: string;
   state: string;

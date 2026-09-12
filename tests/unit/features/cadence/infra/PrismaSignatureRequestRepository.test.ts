@@ -3,6 +3,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 const signatureRequestCreate = vi.fn().mockResolvedValue({ id: 'request-1' });
 const signatureRequestUpdate = vi.fn().mockResolvedValue({});
 const signatureRequestFindFirst = vi.fn().mockResolvedValue(null);
+const dealClosureEventCreate = vi.fn().mockResolvedValue({});
+const leadFindUnique = vi.fn().mockResolvedValue(null);
+const leadUpdate = vi.fn().mockResolvedValue({});
 
 vi.mock('../../../../../src/lib/prisma.js', () => ({
   prisma: {
@@ -11,8 +14,18 @@ vi.mock('../../../../../src/lib/prisma.js', () => ({
       update: (...args: unknown[]) => signatureRequestUpdate(...args),
       findFirst: (...args: unknown[]) => signatureRequestFindFirst(...args),
     },
+    dealClosureEvent: {
+      create: (...args: unknown[]) => dealClosureEventCreate(...args),
+    },
+    lead: {
+      findUnique: (...args: unknown[]) => leadFindUnique(...args),
+      update: (...args: unknown[]) => leadUpdate(...args),
+    },
   },
 }));
+
+const REQUESTED_AT = new Date('2026-01-10T12:00:00.000Z');
+const RESPONDED_AT = new Date('2026-01-12T09:30:00.000Z');
 
 vi.mock('@prisma/client', () => ({
   SignatureRequestStatus: {
@@ -24,7 +37,13 @@ vi.mock('@prisma/client', () => ({
     Expired: 'Expired',
     Cancelled: 'Cancelled',
   },
+  LeadStatus: { Negocios_Ganhos: 'Negocios_Ganhos' },
   Prisma: {},
+}));
+
+const broadcastEvent = vi.fn();
+vi.mock('../../../../../src/lib/eventsBus.js', () => ({
+    broadcastEvent: (...args: unknown[]) => broadcastEvent(...args),
 }));
 
 const contextRuns: Array<Record<string, unknown>> = [];
@@ -94,6 +113,7 @@ describe('prismaSignatureRequestRepository', () => {
       id: 'request-1',
       organizationId: 'org-1',
       status: 'Signed',
+      document: { leadId: null },
     });
 
     const result = await prismaSignatureRequestRepository.findByProviderRequestId(
@@ -101,7 +121,12 @@ describe('prismaSignatureRequestRepository', () => {
       'provider-request-1',
     );
 
-    expect(result).toEqual({ id: 'request-1', organizationId: 'org-1', status: 'signed' });
+    expect(result).toEqual({
+      id: 'request-1',
+      organizationId: 'org-1',
+      status: 'signed',
+      leadId: null,
+    });
   });
 
   it('updateStatus: grava status/respondedAt/evidenceRef/rawWebhookPayload, escopado pelo tenant resolvido', async () => {
@@ -135,5 +160,141 @@ describe('prismaSignatureRequestRepository', () => {
 
     const call = signatureRequestUpdate.mock.calls[0][0];
     expect(call.data).not.toHaveProperty('evidenceRef');
+  });
+
+  // ACH-17-02 (onda-43, handoff 13→17): leitura por documento — sem ela o Agente de Contratos &
+  // Assinatura não tinha forma de verificar o status real de uma solicitação.
+  describe('findByDocumentId', () => {
+    it('documento sem solicitação de assinatura: devolve null (sem bypass de RLS)', async () => {
+      const result = await prismaSignatureRequestRepository.findByDocumentId('org-1', 'doc-1');
+
+      expect(result).toBeNull();
+      expect(signatureRequestFindFirst).toHaveBeenCalledWith({
+        where: { documentId: 'doc-1', organizationId: 'org-1' },
+        orderBy: { requestedAt: 'desc' },
+        select: {
+          id: true,
+          status: true,
+          provider: true,
+          signerEmail: true,
+          requestedAt: true,
+          respondedAt: true,
+        },
+      });
+      // Diferente de findByProviderRequestId, este método roda com RLS normal — nunca bypassRls.
+      expect(contextRuns).toEqual([]);
+    });
+
+    it('documento com solicitação em andamento: devolve status mapeado e respondedAt null', async () => {
+      signatureRequestFindFirst.mockResolvedValueOnce({
+        id: 'request-1',
+        status: 'Sent',
+        provider: 'govbr',
+        signerEmail: 'signer@exemplo.com',
+        requestedAt: REQUESTED_AT,
+        respondedAt: null,
+      });
+
+      const result = await prismaSignatureRequestRepository.findByDocumentId('org-1', 'doc-1');
+
+      expect(result).toEqual({
+        id: 'request-1',
+        status: 'sent',
+        provider: 'govbr',
+        signerEmail: 'signer@exemplo.com',
+        requestedAt: REQUESTED_AT,
+        respondedAt: null,
+      });
+    });
+
+    it.each(['Signed', 'Declined', 'Expired', 'Cancelled'] as const)(
+      'documento com solicitação em estado terminal (%s): devolve status mapeado com respondedAt',
+      async (dbStatus) => {
+        signatureRequestFindFirst.mockResolvedValueOnce({
+          id: 'request-1',
+          status: dbStatus,
+          provider: 'govbr',
+          signerEmail: 'signer@exemplo.com',
+          requestedAt: REQUESTED_AT,
+          respondedAt: RESPONDED_AT,
+        });
+
+        const result = await prismaSignatureRequestRepository.findByDocumentId('org-1', 'doc-1');
+
+        expect(result).toEqual({
+          id: 'request-1',
+          status: dbStatus.toLowerCase(),
+          provider: 'govbr',
+          signerEmail: 'signer@exemplo.com',
+          requestedAt: REQUESTED_AT,
+          respondedAt: RESPONDED_AT,
+        });
+      },
+    );
+  });
+
+  // ACH-17-01: recordSignatureDealClosure é o lado de persistência do fechamento determinístico
+  // disparado pelo webhook de assinatura — grava o DealClosureEvent (type SignatureCompleted no
+  // Postgres) e move o Lead para "Negócios Ganhos", escopado pelo tenant do evento.
+  describe('recordSignatureDealClosure', () => {
+    const event = {
+      id: 'closure-1',
+      organizationId: 'org-1',
+      leadId: 'lead-1',
+      type: 'signature_completed' as const,
+      evidenceRef: 'request-1',
+      triggeredBy: 'webhook:govbr',
+      occurredAt: new Date('2026-01-01T00:00:00.000Z'),
+    };
+
+    it('grava o DealClosureEvent com o type mapeado para o enum do Postgres', async () => {
+      await prismaSignatureRequestRepository.recordSignatureDealClosure(event);
+
+      expect(dealClosureEventCreate).toHaveBeenCalledWith({
+        data: {
+          id: 'closure-1',
+          organizationId: 'org-1',
+          leadId: 'lead-1',
+          type: 'SignatureCompleted',
+          evidenceRef: 'request-1',
+          triggeredBy: 'webhook:govbr',
+          occurredAt: event.occurredAt,
+        },
+      });
+      expect(contextRuns).toContainEqual({ tenantId: 'org-1' });
+    });
+
+    it('move o Lead para Negocios_Ganhos e grava closedAt quando o lead ainda não tinha fechamento', async () => {
+      leadFindUnique.mockResolvedValueOnce({ closedAt: null });
+
+      await prismaSignatureRequestRepository.recordSignatureDealClosure(event);
+
+      expect(leadUpdate).toHaveBeenCalledWith({
+        where: { id: 'lead-1' },
+        data: { status: 'Negocios_Ganhos', closedAt: event.occurredAt },
+      });
+    });
+
+    it('não sobrescreve closedAt quando o lead já tinha sido fechado antes', async () => {
+      const previousClosedAt = new Date('2025-06-01T00:00:00.000Z');
+      leadFindUnique.mockResolvedValueOnce({ closedAt: previousClosedAt });
+
+      await prismaSignatureRequestRepository.recordSignatureDealClosure(event);
+
+      expect(leadUpdate).toHaveBeenCalledWith({
+        where: { id: 'lead-1' },
+        data: { status: 'Negocios_Ganhos' },
+      });
+    });
+
+    it('emite o evento DEAL_WON depois de gravar', async () => {
+      await prismaSignatureRequestRepository.recordSignatureDealClosure(event);
+
+      expect(broadcastEvent).toHaveBeenCalledWith({
+        type: 'DEAL_WON',
+        organizationId: 'org-1',
+        payload: { leadId: 'lead-1' },
+      });
+    });
   });
 });

@@ -132,3 +132,29 @@ Nenhuma linha de `whatsapp.service.ts`/`whatsapp.routes.ts` foi alterada — só
 A decisão de mover a sessão para `worker.ts` (contrato BullMQ vs. API HTTP interna, ver opções (a)
 e (b) do seu plano) continua em aberto, pendente de acordo por escrito entre 06/16 antes de
 qualquer execução, como o seu handoff original pedia.
+
+## Resolução final (Onda 41)
+
+O plano foi executado. A sessão Baileys hoje vive de fato no processo worker dedicado, não no
+processo HTTP:
+
+- `src/lib/queue/redis.ts` exporta `isDedicatedWorkerProcess` (detecta o entrypoint `worker.ts` por
+  regex) — este é o sinal usado em todo o serviço para decidir quem é dono do `WASocket` real.
+  `whatsapp.service.ts` usa esse sinal em `sendWhatsAppMessage` (RUN-007b/Onda 14): qualquer
+  processo que não seja o worker dedicado e não tenha socket local enfileira via broker
+  (`enqueueWhatsAppCommand`) em vez de tentar falar com um socket que não existe naquele processo.
+- `worker.ts` registra `whatsappSignalWorker`/`whatsappCommandWorker`
+  (`src/lib/queue/whatsappSignal.worker.ts`, `whatsappCommand.worker.ts`) e chama
+  `shutdownWhatsAppSessions()` no encerramento — a opção (a) do plano original (BullMQ para o
+  contrato HTTP↔worker), não a (b).
+- A limitação de persistência descrita acima (`whatsapp_auth/` em disco local efêmero) foi resolvida
+  substituindo o `useMultiFileAuthState` em disco por `src/features/integrations/whatsapp/useRedisAuthState.ts`
+  — credenciais Baileys (creds/keys) agora persistem no Redis, cifradas em repouso com o mesmo
+  AES-256-GCM de `secretFields.ts` (SEC-014), em vez do filesystem do container. Isso resolve o
+  pré-requisito do item 4 do plano original (a sessão não pode depender de disco local se o processo
+  que a hospeda pode rodar em host diferente do processo HTTP).
+
+Ou seja: os dois riscos levantados neste handoff — socket não serializável (confirmado, não mudou) e
+persistência de credencial em disco efêmero (resolvido via Redis) — já foram endereçados no código
+atual. Não há mais plano pendente de execução aqui; qualquer novo ajuste neste fluxo é trabalho novo,
+não a conclusão deste handoff.

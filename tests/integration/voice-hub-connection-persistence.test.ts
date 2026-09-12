@@ -18,9 +18,10 @@ import {
  * mesmo contrato exposto pela rota `GET /api/integrations/birth-voice/connections`
  * (`birthVoice.routes.ts`), que apenas chama `listVoiceHubConnections` sem lógica adicional.
  *
- * Não testa `webhookSecret`: o campo foi removido do schema nesta mesma mudança por nunca ter
- * existido de verdade na migration nem em ENCRYPTED_MODEL_FIELDS (ver comentário em
- * prisma/schema.prisma, model VoiceHubConnection).
+ * Não testa `webhookSecret` diretamente: campo revisitado por ACH-06-01 na mesma auditoria
+ * (mantido de verdade, com migration própria, por ser necessário para o segredo de webhook
+ * por-organização) — cobertura de cifra/HMAC desse campo específico vive em
+ * birthVoice.webhook.test.ts, não aqui.
  *
  * Organizações com id próprio por execução (não o fixture compartilhado `test-org-id`) pelo mesmo
  * motivo documentado em threecx-persistence.test.ts: vários agentes rodam `test:integration` em

@@ -1,7 +1,8 @@
 - De: Agente 06 (Integrações e Bitrix)
 - Para: Agente 16 (Runtime, Workers e Escala) — com cópia de contexto para 06A (Extrações Bitrix) e 01A (Confiabilidade de Dados, RLS e Retenção)
 - Onda: 40
-- Status: aberto
+- Status: resolvido (worker implementado — ver seção "Resolução"; ativação em produção continua
+  pendente de decisão humana)
 - Prioridade: normal
 
 ## Problema
@@ -112,3 +113,22 @@ Nenhuma alteração de código foi feita para este item — meu escopo nesta rod
 (`src/features/integrations/bitrix/**`) não inclui `worker.ts` nem justificaria eu construir um
 worker novo sem a confirmação humana acima, então documentei e registrei este handoff em vez de
 ativar a flag ou implementar o worker sozinho.
+
+## Resolução
+
+O worker de expurgo descrito acima foi construído e registrado desde então:
+
+- `src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.ts` — implementa
+  `runBitrixExtractionPurgeSweep` (fail-safe explícito: com `BITRIX_EXTRACTION_PURGE_ENABLED=false`
+  o job dispara e não consulta nem altera nenhuma linha), `createBitrixExtractionPurgeWorker` e
+  `scheduleBitrixExtractionPurgeJob` (cron diário `0 5 * * *`).
+- `worker.ts` registra o worker (`createBitrixExtractionPurgeWorker()`) e agenda o job
+  (`scheduleBitrixExtractionPurgeJob()`), seguindo o mesmo padrão de fila BullMQ dos demais workers
+  do processo dedicado.
+
+**A flag continua desligada por padrão** — `BITRIX_EXTRACTION_PURGE_ENABLED` mantém
+`default('false')` em `src/config/env.ts`. Isso não é um resíduo esquecido: a decisão humana
+pendente listada acima (DELETE físico vs. anonimização, revalidação da janela de 45 dias, dry-run
+antes de ativar em produção) segue sem confirmação registrada. Ligar a flag em produção continua
+sendo uma decisão de produto pendente, não uma tarefa técnica — este handoff é encerrado do lado da
+implementação, mas o gate de ativação permanece aberto até essa confirmação existir.

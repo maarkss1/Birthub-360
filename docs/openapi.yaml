@@ -3024,6 +3024,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/DataEnvelope'
 
+  /agent/commercial-cell/contract-signature/run:
+    post:
+      tags: [Agent]
+      summary: >-
+        Executa o agente de Contract Signature sobre o status real de assinatura (verificado via
+        SignatureRequestRepositoryPort, nunca presumido) do documento informado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [documentId]
+              properties:
+                documentId: { type: string }
+                contractTitle: { type: string }
+                requiredSignatories:
+                  type: array
+                  items:
+                    type: object
+                    required: [email]
+                    properties:
+                      name: { type: string }
+                      email: { type: string, format: email }
+                missingData:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelope'
+
   /agent/commercial-cell/churn-retention/run:
     post:
       tags: [Agent]

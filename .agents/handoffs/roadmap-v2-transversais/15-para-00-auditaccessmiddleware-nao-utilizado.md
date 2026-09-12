@@ -1,7 +1,7 @@
 - De: Agente 15 — Segurança Aplicada e Rotação de Segredos
 - Para: Agente 00 — Coordenador
 - Onda: roadmap-v2-transversais
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema
@@ -67,3 +67,25 @@ Achado durante auditoria de `src/lib/security/` desta onda (roadmap-v2-transvers
 bloqueador da lista "Bloqueadores prioritários" do `/AGENTS.md` (não é RBAC ausente nem rota sem
 autorização — é lacuna de trilha de auditoria, não de controle de acesso), por isso classifiquei
 como prioridade normal, não bloqueador.
+
+## Resolução
+
+Opção 1 foi aplicada: `auditAccessMiddleware` está montado em
+`src/features/crm/routes/lead.routes.ts` (commit `fbcad9a1`, "fix(00): resolve os 5 handoffs
+residuais do Roadmap v2 (#291)").
+
+Evidências:
+
+- `router.get('/export/csv', managementRoles, auditAccessMiddleware('Lead'), ...)` em
+  `src/features/crm/routes/lead.routes.ts:25` — a exportação CSV de leads (dado sensível de LGPD)
+  agora grava `AuditLog` com `action: 'EXPORT'` para toda resposta 2xx.
+- O comentário acima da rota (`src/features/crm/routes/lead.routes.ts:22-24`) referencia
+  explicitamente este handoff como motivação da mudança.
+- `grep -rn "auditAccessMiddleware" src/ server.ts` já não retorna só a definição do arquivo —
+  passa a incluir o import e o uso real em `lead.routes.ts`.
+
+Este handoff cobria apenas a decisão de montar ou remover o middleware — não exigia o teste de
+integração/rota da seção "Teste esperado" como condição de fechamento (a decisão em si era o
+entregável). Rotas adicionais fora de `lead.routes.ts` (contatos/empresas) não foram cobertas por
+este commit; se cobertura de auditoria nelas for necessária, deve ser aberto um novo handoff
+específico em vez de reabrir este.

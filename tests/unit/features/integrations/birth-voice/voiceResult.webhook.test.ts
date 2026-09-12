@@ -13,11 +13,9 @@ const leadUpdate = vi.fn().mockResolvedValue({});
 const noteFindFirst = vi.fn();
 const noteCreate = vi.fn().mockResolvedValue({});
 const timelineCreate = vi.fn().mockResolvedValue({});
-// VoiceCallLog: projeção estruturada do mesmo resultado (ver comentário em voiceResult.webhook.ts)
-// — precisa existir no mock pro handler não quebrar com "Cannot read properties of undefined",
-// mas nenhum teste deste arquivo faz asserção sobre ela (cobertura própria em
-// mesaTratamento.priority.test.ts não se aplica aqui; a cobertura real de VoiceCallLog fica pro
-// teste dedicado do model/rota, não deste webhook legado da Bland).
+// VoiceCallLog: projeção estruturada do mesmo resultado (ver comentário em voiceResult.webhook.ts).
+// A maioria dos testes deste arquivo não faz asserção sobre ela; o teste ACH-12-02 abaixo cobre
+// especificamente o fallback de providerCallId (randomUUID) quando falta call_id no payload.
 const voiceCallLogCreate = vi.fn().mockResolvedValue({});
 const sendWhatsAppMessage = vi.fn().mockResolvedValue(undefined);
 const notifyVoiceQualified = vi.fn();
@@ -152,6 +150,25 @@ describe('POST /api/webhooks/voice-result', () => {
     expect(res.status).toBe(200);
     expect(res.body.lead_found).toBe(false);
     expect(leadFindFirst).not.toHaveBeenCalled();
+  });
+
+  it('cria o VoiceCallLog mesmo sem call_id, com providerCallId gerado (randomUUID), igual ao webhook novo', async () => {
+    const res = await request(buildApp())
+      .post('/api/webhooks/voice-result')
+      .set(VALID_HEADERS)
+      .send(blandPayload({ call_id: undefined }));
+
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ success: true, lead_found: true, duplicate: false });
+    expect(voiceCallLogCreate).toHaveBeenCalledTimes(1);
+    const [{ data }] = voiceCallLogCreate.mock.calls[0];
+    expect(data.leadId).toBe('lead-1');
+    expect(data.organizationId).toBe('org-1');
+    // Nunca o literal fixo 'sem-id' — colidiria com o índice único (organizationId,
+    // providerCallId) numa segunda chamada sem call_id da mesma organização.
+    expect(data.providerCallId).not.toBe('sem-id');
+    expect(typeof data.providerCallId).toBe('string');
+    expect(data.providerCallId.length).toBeGreaterThan(0);
   });
 
   it('registra nota, timeline e voiceQualified dentro do contexto do tenant', async () => {
@@ -364,6 +381,74 @@ describe('POST /api/webhooks/voice-result', () => {
 
       expect(res.body.duplicate).toBe(true);
       expect(sendWhatsAppMessage).not.toHaveBeenCalled();
+    });
+  });
+
+  // ACH-06-03: recording_url é eco de payload externo da Bland, persistido em VoiceCallLog e
+  // renderizado como link clicável (nota em texto livre aqui + <a href> em
+  // VoiceCallActivity.tsx). Sem validar o esquema, um valor não-HTTP (ex.: `javascript:`)
+  // sobreviveria como string não-vazia e teria comportamento não-HTTP ao ser clicado.
+  describe('recording_url — só persiste esquema http(s)', () => {
+    it('esquema http(s) válido é persistido e aparece no link da nota', async () => {
+      const res = await request(buildApp())
+        .post('/api/webhooks/voice-result')
+        .set(VALID_HEADERS)
+        .send(blandPayload({ recording_url: 'https://cdn.bland.ai/rec/abc.mp3' }));
+
+      expect(res.status).toBe(200);
+      expect(voiceCallLogCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ recordingUrl: 'https://cdn.bland.ai/rec/abc.mp3' }),
+        }),
+      );
+      expect(noteCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            content: expect.stringContaining(
+              '[Ouvir Gravação](https://cdn.bland.ai/rec/abc.mp3)',
+            ),
+          }),
+        }),
+      );
+    });
+
+    it('esquema javascript: é tratado como null (fail-safe), nunca derruba o webhook', async () => {
+      const res = await request(buildApp())
+        .post('/api/webhooks/voice-result')
+        .set(VALID_HEADERS)
+        .send(blandPayload({ recording_url: 'javascript:alert(document.cookie)' }));
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(voiceCallLogCreate).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ recordingUrl: null }) }),
+      );
+      expect(noteCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            content: expect.stringContaining('Sem gravação de áudio.'),
+          }),
+        }),
+      );
+      expect(noteCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            content: expect.not.stringContaining('javascript:'),
+          }),
+        }),
+      );
+    });
+
+    it('esquema data: também é tratado como null', async () => {
+      const res = await request(buildApp())
+        .post('/api/webhooks/voice-result')
+        .set(VALID_HEADERS)
+        .send(blandPayload({ recording_url: 'data:text/html,<script>alert(1)</script>' }));
+
+      expect(res.status).toBe(200);
+      expect(voiceCallLogCreate).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ recordingUrl: null }) }),
+      );
     });
   });
 });
