@@ -4,24 +4,29 @@ replicaCount: 2
 # repository aponta para o registro real onde .github/workflows/cd-homolog.yml publica a imagem
 # (ghcr.io/${{ github.repository }}, resolvido em minúsculas pelo GHCR) — antes apontava só para
 # "prospector-atlas", um nome de imagem sem registro/owner que não corresponde a nada publicado.
+# Atualizado em 2026-09-11 (achado da Onda C0 do BIRTHUB-BRAIN-REORG,
+# docs/architecture/LEGACY_BRAND_CONTENT_MAP.md §2.1): o valor anterior
+# ("ghcr.io/maarksn/central-de-inteligencia-comecial-atlasgr") já não corresponde a
+# `github.repository` — o dono da conta é "maarkss1" (não "maarksn") e o repositório foi
+# renomeado para "Birthub-360". Confirmado via API do GitHub que o nome antigo apenas
+# redireciona para o repositório atual (mesmo `id`); não é garantia permanente.
 image:
-  repository: ghcr.io/maarkss1/central-de-inteligencia-comecial-atlasgr
+  repository: ghcr.io/maarkss1/birthub-360
   pullPolicy: IfNotPresent
-  tag: "latest"
+  tag: 'latest'
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: ''
+fullnameOverride: ''
 
 blueGreen:
   enabled: true
   autoPromotionSeconds: 30 # Time to wait before automatically promoting the green version
 
-
 serviceAccount:
   create: true
   annotations: {}
-  name: ""
+  name: ''
 
 podAnnotations: {}
 
@@ -31,7 +36,7 @@ podSecurityContext:
 securityContext:
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: false
   runAsNonRoot: true
   runAsUser: 1001
@@ -43,10 +48,10 @@ service:
 
 ingress:
   enabled: true
-  className: "nginx"
+  className: 'nginx'
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
   hosts:
     - host: prospector-atlas.local
       paths:
@@ -87,8 +92,8 @@ migrations:
   # Por padrão usa a mesma imagem do app (image.repository/image.tag acima). Só preencha aqui se
   # quiser rodar a migração a partir de uma imagem "migrator" separada que preserve a CLI prisma.
   image:
-    repository: ""
-    tag: ""
+    repository: ''
+    tag: ''
   resources:
     limits:
       cpu: 500m
@@ -134,15 +139,15 @@ tolerations: []
 affinity: {}
 
 env:
-  NODE_ENV: "production"
-  PORT: "3000"
+  NODE_ENV: 'production'
+  PORT: '3000'
   # O processo web apenas publica jobs. Processadores existem exclusivamente no Deployment
   # dedicado abaixo; manter isto explícito evita que um upgrade/restart passe a executar cada
   # fila também nas réplicas HTTP.
-  ENABLE_QUEUES: "true"
-  ENABLE_EMBEDDED_WORKERS: "false"
-  WORKER_HEALTH_PORT: "3006"
-  LITELLM_URL: "http://prospector-atlas-litellm:4000"
+  ENABLE_QUEUES: 'true'
+  ENABLE_EMBEDDED_WORKERS: 'false'
+  WORKER_HEALTH_PORT: '3006'
+  LITELLM_URL: 'http://prospector-atlas-litellm:4000'
 
 secrets:
   # JWT_SECRET: "secret"

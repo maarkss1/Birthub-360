@@ -43,6 +43,7 @@ listados em /AGENTS.md. Ao final de cada onda, produza o relatório em
 ## Onda 1 — Fundação
 
 ### Agente 01 — Plataforma, Segurança e Dados
+
 ```
 Você é o Agente 01 — Plataforma, Segurança e Dados da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
 
@@ -62,6 +63,7 @@ de outro agente. Não altere nada fora da sua propriedade/escopo definido em /AG
 ```
 
 ### Agente 02 — Produto e UX
+
 ```
 Você é o Agente 02 — Produto, Navegação e UX da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
 
@@ -80,6 +82,7 @@ por voz com o Agente 06). Não altere nada fora da sua propriedade/escopo defini
 ```
 
 ### Agente 06 — Integrações e Bitrix (inclui 06A — Extrações Bitrix)
+
 ```
 Você é o Agente 06 — Integrações, Bitrix, Google, WhatsApp, 3CX e Voz da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -108,6 +111,7 @@ de navegação por voz). Não altere nada fora da sua propriedade/escopo definid
 ## Onda 2 — Operação Comercial
 
 ### Agente 04 — CRM e BI
+
 ```
 Você é o Agente 04 — CRM, Revenue Intelligence, Analytics e BI da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -128,6 +132,7 @@ definido em /AGENTS.md.
 ```
 
 ### Agente 05 — Prospecção
+
 ```
 Você é o Agente 05 — Prospecção, Enriquecimento e Lead Scoring da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -146,6 +151,7 @@ propriedade/escopo definido em /AGENTS.md.
 ```
 
 ### Agente 07 — IA e Automações
+
 ```
 Você é o Agente 07 — IA, RAG, Agentes, Filas e Automações da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -169,6 +175,7 @@ que dependa de outro agente (rota/menu com o Agente 02, integração externa com
 ## Onda 3 — Acabamento e Release
 
 ### Agente 03 — Design e Acessibilidade
+
 ```
 Você é o Agente 03 — Design System, Marca, Responsividade e Acessibilidade da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -188,6 +195,7 @@ altere nada fora da sua propriedade/escopo definido em /AGENTS.md.
 ```
 
 ### Agente 08 — QA e Release
+
 ```
 Você é o Agente 08 — QA, Documentação, CI/CD e Release Gatekeeper da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -211,6 +219,7 @@ BLOCKED. Não altere nada fora da sua propriedade/escopo definido em /AGENTS.md.
 ## Onda 4 — Extensões (pode rodar em paralelo à Onda 3, se preferir priorizar)
 
 ### Agente 09 — Mobile (Capacitor/Android)
+
 ```
 Você é o Agente 09 — Mobile (Capacitor/Android) da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
 
@@ -228,6 +237,7 @@ Não altere nada fora da sua propriedade/escopo definido em /AGENTS.md.
 ```
 
 ### Agente 10 — Infraestrutura, Observabilidade e SRE
+
 ```
 Você é o Agente 10 — Infraestrutura, Observabilidade e SRE da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -248,6 +258,7 @@ da raiz nem `.github/workflows/**` sem handoff para o Agente 08.
 ```
 
 ### Agente 11 — Marca e Ativos Institucionais
+
 ```
 Você é o Agente 11 — Marca e Ativos Institucionais da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -275,6 +286,7 @@ migrations aplicadas. **Dispare o Agente 14 primeiro** — enquanto o ENV-001 ex
 aprovação de onda é honesta.
 
 ### Agente 14 — Ambiente de Execução e Test Harness
+
 ```
 Você é o Agente 14 — Ambiente de Execução e Test Harness da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -296,6 +308,7 @@ com gate marcado "não aplicável".
 ```
 
 ### Agente 01A — Confiabilidade de Dados, RLS e Retenção
+
 ```
 Você é o Agente 01A — Confiabilidade de Dados, RLS e Retenção da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR. Você é especialista interno do Agente 01 e ocupa
@@ -317,6 +330,7 @@ fechado uma vez só por leitura de código e reabriu. Ao final, rode o "Gate" e 
 ```
 
 ### Agente 15 — Segurança Aplicada e Rotação de Segredos
+
 ```
 Você é o Agente 15 — Segurança Aplicada e Rotação de Segredos da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -337,6 +351,7 @@ real. Runbook que termina em "peça para alguém rotacionar" não serve. Não ed
 ```
 
 ### Agente 16 — Runtime, Workers e Escala
+
 ```
 Você é o Agente 16 — Runtime, Workers e Escala da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -361,6 +376,7 @@ Agente 08; sessões Baileys se acordam com o Agente 06 por escrito.
 ## Onda 7 — Autonomia Comercial Real
 
 ### Agente 12 — Voz e Telefonia (Birthub Voices / 3CX)
+
 ```
 Você é o Agente 12 — Voz e Telefonia da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
 
@@ -381,6 +397,7 @@ provedor.
 ```
 
 ### Agente 13 — Enxame Autônomo e Governança de Agentes
+
 ```
 Você é o Agente 13 — Enxame Autônomo e Governança de Agentes de Runtime da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR. Seu domínio são os agentes de IA que o CLIENTE
@@ -402,6 +419,7 @@ ser fabricada para preencher a interface.
 ```
 
 ### Agente 17 — Cadência Multicanal e Ciclo de Receita
+
 ```
 Você é o Agente 17 — Cadência Multicanal e Ciclo de Receita da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -427,6 +445,7 @@ não couber inteira, entregue as três primeiras completas em vez de cinco pela 
 ## Onda 8 — Acabamento e Go-Live
 
 ### Agente 18 — Contratos, API e Documentação Viva
+
 ```
 Você é o Agente 18 — Contratos, API e Documentação Viva da
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
@@ -449,7 +468,9 @@ contrato; quem corrige implementação é o dono de cada domínio.
 ---
 
 ## Dica prática
+
 Se você for rodar isso manualmente (um terminal por agente), a sequência mais simples é:
+
 1. Cole o prompt do Agente 00 numa sessão, deixe ele preparar a Onda 0 e te dizer o que abrir.
 2. Abra uma sessão por especialista da onda atual (quantidade conforme `/AGENTS.md` → "Regra de concorrência"), cole o prompt correspondente.
 3. Quando os três terminarem, volte para a sessão do Agente 00 e peça para ele revisar `git diff` de cada branch, integrar em `integracao/onda-<n>` e rodar o gate da onda.

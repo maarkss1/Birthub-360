@@ -7,7 +7,10 @@ import { setupDI } from '../../src/shared/di/setup';
 import { runAgentCatalogImport } from '../../scripts/import-agent-catalog';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
-import { assignJobRole, getJobRoleByCode } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  assignJobRole,
+  getJobRoleByCode,
+} from '../../src/features/job-roles/services/jobRole.service';
 import {
   AgentBuilderServiceError,
   decideAgentBuildProposal,
@@ -59,7 +62,9 @@ describe('Agent Builder / Fábrica de Agentes (PROMPT 10)', () => {
       await prisma.agentBuildProposal.deleteMany({ where: { organizationId: ORG_ID } });
     });
     await prisma.auditLog.deleteMany({ where: { entity: 'AgentBuildProposal' } });
-    await prisma.userJobRole.deleteMany({ where: { organizationId: { in: [ORG_ID, OTHER_ORG_ID] } } });
+    await prisma.userJobRole.deleteMany({
+      where: { organizationId: { in: [ORG_ID, OTHER_ORG_ID] } },
+    });
     await prisma.user.deleteMany({ where: { email: { contains: 'agent-builder.test' } } });
     await prisma.agentCapabilityGrant.deleteMany({
       where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },

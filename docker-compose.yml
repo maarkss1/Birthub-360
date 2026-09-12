@@ -11,14 +11,15 @@ services:
     container_name: birthhub_redis
     command: redis-server --requirepass ${REDIS_PASSWORD:-prospector_redis_pass}
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - birthhub_redisdata:/data
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD:-prospector_redis_pass} ping | grep -q PONG"]
+      test:
+        ['CMD-SHELL', 'redis-cli -a ${REDIS_PASSWORD:-prospector_redis_pass} ping | grep -q PONG']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,7 +31,7 @@ services:
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-birthhub_meili_master_key}
       - MEILI_ENV=development
     ports:
-      - "7700:7700"
+      - '7700:7700'
     volumes:
       - birthhub_meilidata:/meili_data
     security_opt:
@@ -41,7 +42,7 @@ services:
       # container e não cai para IPv4 depois do connection refused, então o healthcheck falhava
       # sempre (FailingStreak crescendo indefinidamente) mesmo com o Meilisearch respondendo 200
       # normalmente em /health — confirmado rodando o mesmo comando manualmente dentro do container.
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:7700/health"]
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:7700/health']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -58,15 +59,15 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-birthhub}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-birthhub_minio_dev_only}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     volumes:
       - birthhub_miniodata:/data
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -86,20 +87,20 @@ services:
       "
     security_opt:
       - no-new-privileges:true
-    restart: "no"
+    restart: 'no'
 
   litellm:
     image: ghcr.io/berriai/litellm:main-stable
     container_name: birthhub_litellm
     ports:
-      - "4000:4000"
+      - '4000:4000'
     volumes:
       - ./litellm-config.yaml:/app/config.yaml:ro
-    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    command: ['--config', '/app/config.yaml', '--port', '4000']
     # host.docker.internal já resolve nativamente no Docker Desktop (Windows/Mac); o mapeamento
     # explícito abaixo é só para portabilidade caso alguém rode isso num host Linux.
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
@@ -109,7 +110,13 @@ services:
       # "unhealthy" pra sempre mesmo respondendo normalmente. Python já vem na imagem (usado pela
       # própria aplicação), então serve de cliente HTTP mínimo aqui. 127.0.0.1, não "localhost",
       # pelo mesmo motivo do healthcheck do Meilisearch acima (evita a resolução para ::1).
-      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4000/health/liveliness')"]
+      test:
+        [
+          'CMD',
+          'python3',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4000/health/liveliness')",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -119,14 +126,14 @@ services:
     image: ollama/ollama:latest
     container_name: birthhub_ollama
     ports:
-      - "11434:11434"
+      - '11434:11434'
     volumes:
       - birthhub_ollamadata:/root/.ollama
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "ollama list || exit 1"]
+      test: ['CMD-SHELL', 'ollama list || exit 1']
       interval: 10s
       timeout: 5s
       retries: 5

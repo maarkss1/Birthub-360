@@ -8,7 +8,10 @@ import { setupDI } from '../../src/shared/di/setup';
 import { runAgentCatalogImport } from '../../scripts/import-agent-catalog';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
-import { assignJobRole, getJobRoleByCode } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  assignJobRole,
+  getJobRoleByCode,
+} from '../../src/features/job-roles/services/jobRole.service';
 import { getWorkspaceForUser } from '../../src/features/job-roles/services/workspace.service';
 
 const ORG_ID = 'test-org-id';

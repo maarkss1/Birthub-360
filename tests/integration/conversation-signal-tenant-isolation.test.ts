@@ -15,8 +15,10 @@ import { requestContext } from '../../src/lib/async-context';
 // a `requestContext.run()` precisa ser uma função `async`, mesmo sem `await` explícito no corpo —
 // senão o motor de query do Prisma processa a chamada fora da janela em que o AsyncLocalStorage
 // considera o contexto "ativo", e a policy de RLS nega a operação por falta de tenantId/bypassRls.
-const withBypass = <T>(fn: () => Promise<T>): Promise<T> => requestContext.run({ bypassRls: true }, fn);
-const withTenant = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> => requestContext.run({ tenantId }, fn);
+const withBypass = <T>(fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ bypassRls: true }, fn);
+const withTenant = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ tenantId }, fn);
 
 const suffix = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
 const ORG_A = `test-cs-tenant-org-a-${suffix}`;
@@ -25,8 +27,12 @@ const ORG_B = `test-cs-tenant-org-b-${suffix}`;
 describe('ConversationSignal — isolamento de tenant (integração real, RLS real)', () => {
   afterAll(async () => {
     // ConversationSignal não está no allowlist de bypass (ITEM-02) — limpa por tenant.
-    await withTenant(ORG_A, () => prisma.conversationSignal.deleteMany({ where: { organizationId: ORG_A } }));
-    await withTenant(ORG_B, () => prisma.conversationSignal.deleteMany({ where: { organizationId: ORG_B } }));
+    await withTenant(ORG_A, () =>
+      prisma.conversationSignal.deleteMany({ where: { organizationId: ORG_A } }),
+    );
+    await withTenant(ORG_B, () =>
+      prisma.conversationSignal.deleteMany({ where: { organizationId: ORG_B } }),
+    );
     await withBypass(async () => {
       await prisma.lead.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
       await prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } });

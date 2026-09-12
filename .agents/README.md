@@ -1,6 +1,7 @@
 # Sistema de Agentes — CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR
 
 ## Arquivos
+
 - `prompts/00-coordenador.md`
 - `prompts/01-plataforma-dados.md`
 - `prompts/02-produto-ux.md`
@@ -25,11 +26,13 @@
 - `COMO-CHAMAR-OS-AGENTES.md` — prompts prontos para colar, um por agente, para abrir a sessão correspondente em qualquer ferramenta de agente de código
 
 ## Pastas de execução (criadas em runtime, não versionadas com conteúdo sensível)
+
 - `runs/` — relatórios de onda do Coordenador (`baseline.md`, `onda-2.md`, `onda-2.5.md`, `onda-4.md`, `onda-5.md`, …). Somente o Coordenador escreve aqui. Inclui a matriz de propriedade que `/AGENTS.md` → "Regra de concorrência" exige antes de disparar uma onda com mais de 3 especialistas.
 - `completion/` — mapa da plataforma, inventário, bloqueadores e o plano das Ondas 6–8 de finalização.
 - `handoffs/onda-<n>/` — um arquivo por handoff, formato definido em `/AGENTS.md` → "Protocolo de handoff". Qualquer agente cria o próprio arquivo.
 
 ## Como executar
+
 1. Inicie o agente 00.
 2. Dê ao coordenador acesso ao repositório completo.
 3. Ele deve ler `/AGENTS.md`.
@@ -41,4 +44,5 @@
 9. Revise handoffs abertos em `.agents/handoffs/onda-<n>/` antes de aprovar a onda.
 
 ## Observação
+
 Os `AGENTS.md` locais definem propriedade e evitam que especialistas editem as mesmas áreas de forma concorrente. Nenhum agente edita os arquivos em `prompts/` — ajuste de prompt é decisão humana fora do ciclo de execução.

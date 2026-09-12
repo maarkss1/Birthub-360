@@ -1,75 +1,221 @@
-async function mapaOrigensRelatorio(webhook){
-  const a=await carregarListaPaginada(webhook,"crm.status.list",{"filter[ENTITY_ID]":"SOURCE","order[SORT]":"ASC"});
-  const m={};a.forEach((x)=>m[String(x.STATUS_ID)]=x.NAME||x.STATUS_ID);return m;
+async function mapaOrigensRelatorio(webhook) {
+  const a = await carregarListaPaginada(webhook, 'crm.status.list', {
+    'filter[ENTITY_ID]': 'SOURCE',
+    'order[SORT]': 'ASC',
+  });
+  const m = {};
+  a.forEach((x) => (m[String(x.STATUS_ID)] = x.NAME || x.STATUS_ID));
+  return m;
 }
 
-async function baseDealsCatalogo(webhook,somenteComercial=false){
-  const [meta]=await Promise.all([buscarMetadadosFunisEEstagios(webhook),buscarUsuariosJornada(webhook)]);
-  let cats=[];
-  if(somenteComercial){cats=encontrarCategoriasPorPalavras(meta,["comercial"],true);if(!cats.length&&meta.categorias?.["0"])cats=["0"];}
-  const filtro={};if(somenteComercial&&cats.length===1)filtro.CATEGORY_ID=cats[0];else if(somenteComercial&&cats.length>1)filtro["@CATEGORY_ID"]=cats;
-  const busca=await listarCompletoRelatorio(webhook,"crm.deal.list",[
-    "ID","TITLE","CATEGORY_ID","STAGE_ID","STAGE_SEMANTIC_ID","PROBABILITY","OPPORTUNITY","CURRENCY_ID",
-    "ASSIGNED_BY_ID","CREATED_BY_ID","MODIFY_BY_ID","MOVED_BY_ID","COMPANY_ID","CONTACT_ID","LEAD_ID",
-    "SOURCE_ID","UTM_SOURCE","UTM_MEDIUM","UTM_CAMPAIGN","UTM_CONTENT","UTM_TERM","DATE_CREATE","DATE_MODIFY",
-    "MOVED_TIME","CLOSEDATE","BEGINDATE","UF_CRM_1770928318695","CLOSED","LAST_ACTIVITY_TIME","LAST_ACTIVITY_BY"
-  ],filtro,{ID:"ASC"},"Relatório: buscando negócios...");
-  const ids=[...new Set(busca.dados.map((d)=>d.COMPANY_ID).filter(idBitrixValido).map(idBitrixString))];
-  const empresas=await buscarEntidadesPorIds(webhook,"crm.company.list",ids,["ID","TITLE","PHONE","EMAIL","DATE_CREATE","ASSIGNED_BY_ID"]);
-  return{meta,deals:busca.dados,empresas,busca};
+async function baseDealsCatalogo(webhook, somenteComercial = false) {
+  const [meta] = await Promise.all([
+    buscarMetadadosFunisEEstagios(webhook),
+    buscarUsuariosJornada(webhook),
+  ]);
+  let cats = [];
+  if (somenteComercial) {
+    cats = encontrarCategoriasPorPalavras(meta, ['comercial'], true);
+    if (!cats.length && meta.categorias?.['0']) cats = ['0'];
+  }
+  const filtro = {};
+  if (somenteComercial && cats.length === 1) filtro.CATEGORY_ID = cats[0];
+  else if (somenteComercial && cats.length > 1) filtro['@CATEGORY_ID'] = cats;
+  const busca = await listarCompletoRelatorio(
+    webhook,
+    'crm.deal.list',
+    [
+      'ID',
+      'TITLE',
+      'CATEGORY_ID',
+      'STAGE_ID',
+      'STAGE_SEMANTIC_ID',
+      'PROBABILITY',
+      'OPPORTUNITY',
+      'CURRENCY_ID',
+      'ASSIGNED_BY_ID',
+      'CREATED_BY_ID',
+      'MODIFY_BY_ID',
+      'MOVED_BY_ID',
+      'COMPANY_ID',
+      'CONTACT_ID',
+      'LEAD_ID',
+      'SOURCE_ID',
+      'UTM_SOURCE',
+      'UTM_MEDIUM',
+      'UTM_CAMPAIGN',
+      'UTM_CONTENT',
+      'UTM_TERM',
+      'DATE_CREATE',
+      'DATE_MODIFY',
+      'MOVED_TIME',
+      'CLOSEDATE',
+      'BEGINDATE',
+      'UF_CRM_1770928318695',
+      'CLOSED',
+      'LAST_ACTIVITY_TIME',
+      'LAST_ACTIVITY_BY',
+    ],
+    filtro,
+    { ID: 'ASC' },
+    'Relatório: buscando negócios...',
+  );
+  const ids = [
+    ...new Set(
+      busca.dados
+        .map((d) => d.COMPANY_ID)
+        .filter(idBitrixValido)
+        .map(idBitrixString),
+    ),
+  ];
+  const empresas = await buscarEntidadesPorIds(webhook, 'crm.company.list', ids, [
+    'ID',
+    'TITLE',
+    'PHONE',
+    'EMAIL',
+    'DATE_CREATE',
+    'ASSIGNED_BY_ID',
+  ]);
+  return { meta, deals: busca.dados, empresas, busca };
 }
 
-function enriquecerDealCatalogo(d,b){
-  const cat=String(d.CATEGORY_ID??""),sm=b.meta.estagios?.[cat]?.[String(d.STAGE_ID)]||{},sem=semanticaDeal(d,sm);
-  const emp=idBitrixValido(d.COMPANY_ID)?b.empresas[idBitrixString(d.COMPANY_ID)]:null;
-  return{...d,_FUNIL:nomeFunilSemCodigo(b.meta.categorias?.[cat]||`Categoria ${cat}`),_ESTAGIO:sm.label||d.STAGE_ID||"",
-    _SEMANTICA:sem,_CLIENTE:emp?.TITLE||d.TITLE||"",_RESPONSAVEL:nomeUsuario(d.ASSIGNED_BY_ID)||(d.ASSIGNED_BY_ID?`ID ${d.ASSIGNED_BY_ID}`:"Sem responsável"),
-    _VALOR:valorDeal(d),_FECHAMENTO:fecharDataDeal(d),_CICLO:cicloDealDias(d)};
+function enriquecerDealCatalogo(d, b) {
+  const cat = String(d.CATEGORY_ID ?? ''),
+    sm = b.meta.estagios?.[cat]?.[String(d.STAGE_ID)] || {},
+    sem = semanticaDeal(d, sm);
+  const emp = idBitrixValido(d.COMPANY_ID) ? b.empresas[idBitrixString(d.COMPANY_ID)] : null;
+  return {
+    ...d,
+    _FUNIL: nomeFunilSemCodigo(b.meta.categorias?.[cat] || `Categoria ${cat}`),
+    _ESTAGIO: sm.label || d.STAGE_ID || '',
+    _SEMANTICA: sem,
+    _CLIENTE: emp?.TITLE || d.TITLE || '',
+    _RESPONSAVEL:
+      nomeUsuario(d.ASSIGNED_BY_ID) ||
+      (d.ASSIGNED_BY_ID ? `ID ${d.ASSIGNED_BY_ID}` : 'Sem responsável'),
+    _VALOR: valorDeal(d),
+    _FECHAMENTO: fecharDataDeal(d),
+    _CICLO: cicloDealDias(d),
+  };
 }
 
-async function baseLeadsCatalogo(webhook){
-  const [st]=await Promise.all([carregarListaPaginada(webhook,"crm.status.list",{"filter[ENTITY_ID]":"STATUS","order[SORT]":"ASC"}),buscarUsuariosJornada(webhook)]);
-  const sm={};st.forEach((x)=>sm[String(x.STATUS_ID)]=x);
-  const busca=await listarCompletoRelatorio(webhook,"crm.lead.list",[
-    "ID","TITLE","NAME","LAST_NAME","COMPANY_ID","COMPANY_TITLE","CONTACT_ID","STATUS_ID","STATUS_SEMANTIC_ID",
-    "SOURCE_ID","UTM_SOURCE","UTM_MEDIUM","UTM_CAMPAIGN","UTM_CONTENT","UTM_TERM","OPPORTUNITY","ASSIGNED_BY_ID",
-    "CREATED_BY_ID","DATE_CREATE","DATE_MODIFY","MOVED_TIME","DATE_CLOSED","LAST_ACTIVITY_TIME","LAST_ACTIVITY_BY","PHONE","EMAIL"
-  ],{},{ID:"ASC"},"Relatório: buscando Leads...");
-  return{leads:busca.dados,statusMap:sm,statusLeads:st,busca};
+async function baseLeadsCatalogo(webhook) {
+  const [st] = await Promise.all([
+    carregarListaPaginada(webhook, 'crm.status.list', {
+      'filter[ENTITY_ID]': 'STATUS',
+      'order[SORT]': 'ASC',
+    }),
+    buscarUsuariosJornada(webhook),
+  ]);
+  const sm = {};
+  st.forEach((x) => (sm[String(x.STATUS_ID)] = x));
+  const busca = await listarCompletoRelatorio(
+    webhook,
+    'crm.lead.list',
+    [
+      'ID',
+      'TITLE',
+      'NAME',
+      'LAST_NAME',
+      'COMPANY_ID',
+      'COMPANY_TITLE',
+      'CONTACT_ID',
+      'STATUS_ID',
+      'STATUS_SEMANTIC_ID',
+      'SOURCE_ID',
+      'UTM_SOURCE',
+      'UTM_MEDIUM',
+      'UTM_CAMPAIGN',
+      'UTM_CONTENT',
+      'UTM_TERM',
+      'OPPORTUNITY',
+      'ASSIGNED_BY_ID',
+      'CREATED_BY_ID',
+      'DATE_CREATE',
+      'DATE_MODIFY',
+      'MOVED_TIME',
+      'DATE_CLOSED',
+      'LAST_ACTIVITY_TIME',
+      'LAST_ACTIVITY_BY',
+      'PHONE',
+      'EMAIL',
+    ],
+    {},
+    { ID: 'ASC' },
+    'Relatório: buscando Leads...',
+  );
+  return { leads: busca.dados, statusMap: sm, statusLeads: st, busca };
 }
-function semanticaLead(l){
-  const s=String(l.STATUS_SEMANTIC_ID||"").toLowerCase();
-  if(s==="s"||s==="success"||String(l.STATUS_ID)==="CONVERTED")return"success";
-  if(s==="f"||s==="failure"||String(l.STATUS_ID)==="JUNK")return"failure";
-  return"process";
+function semanticaLead(l) {
+  const s = String(l.STATUS_SEMANTIC_ID || '').toLowerCase();
+  if (s === 's' || s === 'success' || String(l.STATUS_ID) === 'CONVERTED') return 'success';
+  if (s === 'f' || s === 'failure' || String(l.STATUS_ID) === 'JUNK') return 'failure';
+  return 'process';
 }
-async function atividadesCatalogo(webhook,completed,inicio="",fim=""){
-  const f={};if(completed!==null)f.COMPLETED=completed?"Y":"N";
-  if(inicio)f[">=END_TIME"]=`${inicio}T00:00:00-03:00`;if(fim)f["<=END_TIME"]=`${fim}T23:59:59-03:00`;
+async function atividadesCatalogo(webhook, completed, inicio = '', fim = '') {
+  const f = {};
+  if (completed !== null) f.COMPLETED = completed ? 'Y' : 'N';
+  if (inicio) f['>=END_TIME'] = `${inicio}T00:00:00-03:00`;
+  if (fim) f['<=END_TIME'] = `${fim}T23:59:59-03:00`;
   await buscarUsuariosJornada(webhook);
-  return listarCompletoRelatorio(webhook,"crm.activity.list",[
-    "ID","OWNER_ID","OWNER_TYPE_ID","TYPE_ID","PROVIDER_ID","PROVIDER_TYPE_ID","SUBJECT","COMPLETED",
-    "RESPONSIBLE_ID","AUTHOR_ID","CREATED","LAST_UPDATED","START_TIME","END_TIME","DEADLINE","DIRECTION","BINDINGS"
-  ],f,{ID:"ASC"},"Relatório: buscando atividades...");
+  return listarCompletoRelatorio(
+    webhook,
+    'crm.activity.list',
+    [
+      'ID',
+      'OWNER_ID',
+      'OWNER_TYPE_ID',
+      'TYPE_ID',
+      'PROVIDER_ID',
+      'PROVIDER_TYPE_ID',
+      'SUBJECT',
+      'COMPLETED',
+      'RESPONSIBLE_ID',
+      'AUTHOR_ID',
+      'CREATED',
+      'LAST_UPDATED',
+      'START_TIME',
+      'END_TIME',
+      'DEADLINE',
+      'DIRECTION',
+      'BINDINGS',
+    ],
+    f,
+    { ID: 'ASC' },
+    'Relatório: buscando atividades...',
+  );
 }
 
-function criarResultadoCatalogo(chave,titulo,subtitulo,kpis,tabelas,nota=""){
-  resultadoRelatorioCatalogo={chave,titulo,subtitulo,kpis,tabelas,nota};
-  const t=tabelas?.find((x)=>x.dados?.length);dadosExtraidos=t?.dados||[];camposExtraidos=camposDeDados(dadosExtraidos);
+function criarResultadoCatalogo(chave, titulo, subtitulo, kpis, tabelas, nota = '') {
+  resultadoRelatorioCatalogo = { chave, titulo, subtitulo, kpis, tabelas, nota };
+  const t = tabelas?.find((x) => x.dados?.length);
+  dadosExtraidos = t?.dados || [];
+  camposExtraidos = camposDeDados(dadosExtraidos);
   renderizarRelatorioCatalogo();
 }
-function renderizarRelatorioCatalogo(){
-  const r=resultadoRelatorioCatalogo;if(!r?.titulo)return;
-  document.getElementById("bloco-relatorio-catalogo").classList.remove("oculto");
-  document.getElementById("relatorioResultadoTitulo").textContent=r.titulo;
-  document.getElementById("relatorioResultadoSubtitulo").innerHTML=r.subtitulo||"";
-  document.getElementById("relatorioResultadoKpis").innerHTML=(r.kpis||[]).map((x)=>kpiCardHtml(x.rotulo,x.valor,r.tabelas?.length?"relatorioResultadoTabelas":undefined)).join("");
-  const metaBarrasEl=document.getElementById("relatorioResultadoMetaBarras");if(metaBarrasEl)metaBarrasEl.innerHTML=r.barra_meta||"";
-  document.getElementById("relatorioResultadoTabelas").innerHTML=(r.tabelas||[]).map((t)=>`<div class="relatorio-subtitulo">${escapeHtmlRelatorio(t.titulo)}</div><div class="relatorio-scroll">${tabelaRelatorio(t.colunas,t.dados||[],t.limite||300)}</div>`).join("");
-  document.getElementById("relatorioResultadoNota").textContent=r.nota||"";
-  const temVisual=!!(r.titulo&&(r.kpis?.length||r.tabelas?.length));
-  document.getElementById("btnAbrirVisualCatalogo")?.classList.toggle("oculto",!temVisual);
-  document.getElementById("btnBaixarVisualCatalogo")?.classList.toggle("oculto",!temVisual);
+function renderizarRelatorioCatalogo() {
+  const r = resultadoRelatorioCatalogo;
+  if (!r?.titulo) return;
+  document.getElementById('bloco-relatorio-catalogo').classList.remove('oculto');
+  document.getElementById('relatorioResultadoTitulo').textContent = r.titulo;
+  document.getElementById('relatorioResultadoSubtitulo').innerHTML = r.subtitulo || '';
+  document.getElementById('relatorioResultadoKpis').innerHTML = (r.kpis || [])
+    .map((x) =>
+      kpiCardHtml(x.rotulo, x.valor, r.tabelas?.length ? 'relatorioResultadoTabelas' : undefined),
+    )
+    .join('');
+  const metaBarrasEl = document.getElementById('relatorioResultadoMetaBarras');
+  if (metaBarrasEl) metaBarrasEl.innerHTML = r.barra_meta || '';
+  document.getElementById('relatorioResultadoTabelas').innerHTML = (r.tabelas || [])
+    .map(
+      (t) =>
+        `<div class="relatorio-subtitulo">${escapeHtmlRelatorio(t.titulo)}</div><div class="relatorio-scroll">${tabelaRelatorio(t.colunas, t.dados || [], t.limite || 300)}</div>`,
+    )
+    .join('');
+  document.getElementById('relatorioResultadoNota').textContent = r.nota || '';
+  const temVisual = !!(r.titulo && (r.kpis?.length || r.tabelas?.length));
+  document.getElementById('btnAbrirVisualCatalogo')?.classList.toggle('oculto', !temVisual);
+  document.getElementById('btnBaixarVisualCatalogo')?.classList.toggle('oculto', !temVisual);
 }
 // v11 — modelo visual genérico: mesmo letterhead/hero/kpis do modelo do Forecast,
 // aplicado a QUALQUER relatório do catálogo (chave/titulo/subtitulo/kpis/tabelas),
@@ -80,73 +226,183 @@ function renderizarRelatorioCatalogo(){
 // do catálogo/Diário SDR/Jornada sem precisar de lógica dedicada por
 // relatório, já que só olha rótulo + valor numérico dos KPIs que o próprio
 // relatório já calculou.
-function pontosDeAtencaoGenerico(kpis){
-  const PADROES=/vencid|atrasad|sem atividade|sem closedate|sem clientedate|fora do sla|fora sla|cr[ií]tico|sem contato|pendente|não localizado/i;
-  const achados=(kpis||[]).filter((x)=>{
-    const n=Number(String(x.valor).replace(/[^\d,.-]/g,"").replace(",","."));
-    return PADROES.test(x.rotulo||"")&&Number.isFinite(n)&&n>0;
+function pontosDeAtencaoGenerico(kpis) {
+  const PADROES =
+    /vencid|atrasad|sem atividade|sem closedate|sem clientedate|fora do sla|fora sla|cr[ií]tico|sem contato|pendente|não localizado/i;
+  const achados = (kpis || []).filter((x) => {
+    const n = Number(
+      String(x.valor)
+        .replace(/[^\d,.-]/g, '')
+        .replace(',', '.'),
+    );
+    return PADROES.test(x.rotulo || '') && Number.isFinite(n) && n > 0;
   });
-  if(!achados.length)return "";
-  const itens=achados.map((x)=>`<li><strong>${escapeHtmlRelatorio(x.valor)}</strong> — ${escapeHtmlRelatorio(x.rotulo)}</li>`).join("");
+  if (!achados.length) return '';
+  const itens = achados
+    .map(
+      (x) =>
+        `<li><strong>${escapeHtmlRelatorio(x.valor)}</strong> — ${escapeHtmlRelatorio(x.rotulo)}</li>`,
+    )
+    .join('');
   return `<div class="alert-banner warn" style="align-items:flex-start;"><span class="icon">⚠️</span><div><strong>Pontos de atenção encontrados neste relatório:</strong><ul style="margin:6px 0 0;padding-left:18px;">${itens}</ul></div></div>`;
 }
-function gerarHTMLRelatorioVisualGenerico(r){
-  if(!r?.titulo)return "";
-  const marca=marcaAtiva();
-  const kpisHtml=(r.kpis||[]).map((x)=>`<div class="kpi"><div class="label">${escapeHtmlRelatorio(x.rotulo)}</div><div class="value valor-pisca">${escapeHtmlRelatorio(x.valor)}</div></div>`).join("");
-  const atencaoHtml=pontosDeAtencaoGenerico(r.kpis);
-  const tabelasHtml=(r.tabelas||[]).map((t,i)=>{
-    const tabela=tabelaModelo((t.colunas||[]).map((c)=>({label:c.label,valor:typeof c.valor==="function"?c.valor:(row)=>row[c.valor],html:!!c.html})),(t.dados||[]).slice(0,t.limite||300));
-    return `<details class="vcard section-card"${i===0?" open":""}><summary><span class="vcard-name">${escapeHtmlRelatorio(t.titulo||`Tabela ${i+1}`)}</span><span class="vcard-stats">${(t.dados||[]).length} registro(s)</span><span class="vcard-chevron">▾</span></summary><div class="vcard-body">${tabela}</div></details>`;
-  }).join("");
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtmlRelatorio(r.titulo)} · ${escapeHtmlRelatorio(marca.nome)}</title><style>${modeloExecutivoCssParaMarca(marca)}</style></head><body>`+
-  `<div class="letterhead"><div class="letterhead-inner"><div class="letterhead-brand">${marca.logoSvg}<div class="letterhead-divider"></div><div class="letterhead-tagline">${escapeHtmlRelatorio(marca.tagline)}</div></div><div class="letterhead-ref"><strong>Relatório Comercial</strong><br>Extraído do Bitrix24 em ${formatarDataBR(formatarDataISO(new Date()))}</div></div></div>`+
-  `<header class="hero"><div class="hero-inner"><p class="eyebrow">Relatório Comercial · Bitrix24</p><h1>${escapeHtmlRelatorio(r.titulo)}</h1><p class="subtitle">${(r.subtitulo||"").replace(/<[^>]+>/g,"")||`Extraído automaticamente pelo extrator ${escapeHtmlRelatorio(marca.nome)}.`}</p></div></header>`+
-  `<div class="wrap"><div class="overview-panel" id="visao-geral"><h2 class="section" style="margin-top:0;">Visão geral</h2>${atencaoHtml}<div class="kpis">${kpisHtml||'<p class="small-note">Sem indicadores.</p>'}</div></div>`+
-  `<h2 class="section">Detalhamento</h2><div class="top3grid">${tabelasHtml||'<p class="small-note">Sem tabelas neste relatório.</p>'}</div>`+
-  (r.nota?`<div class="note">${escapeHtmlRelatorio(r.nota)}</div>`:"")+
-  `<a class="back-to-overview" href="#visao-geral">↑ Voltar à Visão geral</a></div><footer><div class="footer-brand">${marca.logoSvg}<span>${escapeHtmlRelatorio(marca.nome)}</span></div>${escapeHtmlRelatorio(marca.nome)} · ${escapeHtmlRelatorio(r.titulo)}</footer></body></html>`;
+function gerarHTMLRelatorioVisualGenerico(r) {
+  if (!r?.titulo) return '';
+  const marca = marcaAtiva();
+  const kpisHtml = (r.kpis || [])
+    .map(
+      (x) =>
+        `<div class="kpi"><div class="label">${escapeHtmlRelatorio(x.rotulo)}</div><div class="value valor-pisca">${escapeHtmlRelatorio(x.valor)}</div></div>`,
+    )
+    .join('');
+  const atencaoHtml = pontosDeAtencaoGenerico(r.kpis);
+  const tabelasHtml = (r.tabelas || [])
+    .map((t, i) => {
+      const tabela = tabelaModelo(
+        (t.colunas || []).map((c) => ({
+          label: c.label,
+          valor: typeof c.valor === 'function' ? c.valor : (row) => row[c.valor],
+          html: !!c.html,
+        })),
+        (t.dados || []).slice(0, t.limite || 300),
+      );
+      return `<details class="vcard section-card"${i === 0 ? ' open' : ''}><summary><span class="vcard-name">${escapeHtmlRelatorio(t.titulo || `Tabela ${i + 1}`)}</span><span class="vcard-stats">${(t.dados || []).length} registro(s)</span><span class="vcard-chevron">▾</span></summary><div class="vcard-body">${tabela}</div></details>`;
+    })
+    .join('');
+  return (
+    `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtmlRelatorio(r.titulo)} · ${escapeHtmlRelatorio(marca.nome)}</title><style>${modeloExecutivoCssParaMarca(marca)}</style></head><body>` +
+    `<div class="letterhead"><div class="letterhead-inner"><div class="letterhead-brand">${marca.logoSvg}<div class="letterhead-divider"></div><div class="letterhead-tagline">${escapeHtmlRelatorio(marca.tagline)}</div></div><div class="letterhead-ref"><strong>Relatório Comercial</strong><br>Extraído do Bitrix24 em ${formatarDataBR(formatarDataISO(new Date()))}</div></div></div>` +
+    `<header class="hero"><div class="hero-inner"><p class="eyebrow">Relatório Comercial · Bitrix24</p><h1>${escapeHtmlRelatorio(r.titulo)}</h1><p class="subtitle">${(r.subtitulo || '').replace(/<[^>]+>/g, '') || `Extraído automaticamente pelo extrator ${escapeHtmlRelatorio(marca.nome)}.`}</p></div></header>` +
+    `<div class="wrap"><div class="overview-panel" id="visao-geral"><h2 class="section" style="margin-top:0;">Visão geral</h2>${atencaoHtml}<div class="kpis">${kpisHtml || '<p class="small-note">Sem indicadores.</p>'}</div></div>` +
+    `<h2 class="section">Detalhamento</h2><div class="top3grid">${tabelasHtml || '<p class="small-note">Sem tabelas neste relatório.</p>'}</div>` +
+    (r.nota ? `<div class="note">${escapeHtmlRelatorio(r.nota)}</div>` : '') +
+    `<a class="back-to-overview" href="#visao-geral">↑ Voltar à Visão geral</a></div><footer><div class="footer-brand">${marca.logoSvg}<span>${escapeHtmlRelatorio(marca.nome)}</span></div>${escapeHtmlRelatorio(marca.nome)} · ${escapeHtmlRelatorio(r.titulo)}</footer></body></html>`
+  );
 }
-function abrirRelatorioVisualCatalogo(){
-  const r=resultadoRelatorioCatalogo;if(!r?.titulo)return;
-  const h=(r.chave==="forecast_mensal"&&r.modelo_visual)?gerarHTMLForecastModelo(r,"mensal"):gerarHTMLRelatorioVisualGenerico(r);
-  if(h)mostrarRelatorioVisualInline(h,r.titulo);
+function abrirRelatorioVisualCatalogo() {
+  const r = resultadoRelatorioCatalogo;
+  if (!r?.titulo) return;
+  const h =
+    r.chave === 'forecast_mensal' && r.modelo_visual
+      ? gerarHTMLForecastModelo(r, 'mensal')
+      : gerarHTMLRelatorioVisualGenerico(r);
+  if (h) mostrarRelatorioVisualInline(h, r.titulo);
 }
-function baixarHTMLRelatorioVisualCatalogo(){
-  const r=resultadoRelatorioCatalogo;if(!r?.titulo)return;
-  const h=(r.chave==="forecast_mensal"&&r.modelo_visual)?gerarHTMLForecastModelo(r,"mensal"):gerarHTMLRelatorioVisualGenerico(r);
-  if(h)baixarArquivo(h,`bitrix_${r.chave}_modelo_atlas_${dataHoje()}.html`,"text/html;charset=utf-8;");
+function baixarHTMLRelatorioVisualCatalogo() {
+  const r = resultadoRelatorioCatalogo;
+  if (!r?.titulo) return;
+  const h =
+    r.chave === 'forecast_mensal' && r.modelo_visual
+      ? gerarHTMLForecastModelo(r, 'mensal')
+      : gerarHTMLRelatorioVisualGenerico(r);
+  if (h)
+    baixarArquivo(
+      h,
+      `bitrix_${r.chave}_modelo_atlas_${dataHoje()}.html`,
+      'text/html;charset=utf-8;',
+    );
 }
-function baixarCSVRelatorioCatalogo(){
-  const t=resultadoRelatorioCatalogo?.tabelas?.find((x)=>x.dados?.length);if(t)baixarCsvDatasetEspecial(t.dados,`bitrix_${resultadoRelatorioCatalogo.chave}_${dataHoje()}.csv`);
+function baixarCSVRelatorioCatalogo() {
+  const t = resultadoRelatorioCatalogo?.tabelas?.find((x) => x.dados?.length);
+  if (t)
+    baixarCsvDatasetEspecial(
+      t.dados,
+      `bitrix_${resultadoRelatorioCatalogo.chave}_${dataHoje()}.csv`,
+    );
 }
-function baixarJSONRelatorioCatalogo(){
-  if(resultadoRelatorioCatalogo?.titulo)baixarArquivo(JSON.stringify(resultadoRelatorioCatalogo,null,2),`bitrix_${resultadoRelatorioCatalogo.chave}_${dataHoje()}.json`,"application/json;charset=utf-8;");
+function baixarJSONRelatorioCatalogo() {
+  if (resultadoRelatorioCatalogo?.titulo)
+    baixarArquivo(
+      JSON.stringify(resultadoRelatorioCatalogo, null, 2),
+      `bitrix_${resultadoRelatorioCatalogo.chave}_${dataHoje()}.json`,
+      'application/json;charset=utf-8;',
+    );
 }
 
-async function extrairRelatorioCatalogo(webhook,chave){
-  document.getElementById("spinner").style.display="inline-block";document.getElementById("btnExtrair").disabled=true;document.getElementById("btnParar").disabled=false;
-  extracaoCancelada=false;esconderErro();resultadoRelatorioCatalogo={};
-  try{
-    const p=periodoCatalogo();
+async function extrairRelatorioCatalogo(webhook, chave) {
+  document.getElementById('spinner').style.display = 'inline-block';
+  document.getElementById('btnExtrair').disabled = true;
+  document.getElementById('btnParar').disabled = false;
+  extracaoCancelada = false;
+  esconderErro();
+  resultadoRelatorioCatalogo = {};
+  try {
+    const p = periodoCatalogo();
 
-    if(chave==="forecast_mensal"){
-      const b=await baseDealsCatalogo(webhook,true),ds=b.deals.map((d)=>enriquecerDealCatalogo(d,b));
-      const campoMetaCatalogo=document.getElementById("metaRelatorioComercial");
-      let meta=Number(campoMetaCatalogo?.value)||0;
-      if(!meta){meta=metaMensalPadrao(p.fim||p.referencia);if(campoMetaCatalogo&&meta)campoMetaCatalogo.value=meta;}
+    if (chave === 'forecast_mensal') {
+      const b = await baseDealsCatalogo(webhook, true),
+        ds = b.deals.map((d) => enriquecerDealCatalogo(d, b));
+      const campoMetaCatalogo = document.getElementById('metaRelatorioComercial');
+      let meta = Number(campoMetaCatalogo?.value) || 0;
+      if (!meta) {
+        meta = metaMensalPadrao(p.fim || p.referencia);
+        if (campoMetaCatalogo && meta) campoMetaCatalogo.value = meta;
+      }
       // v12 — deixa explícita a divisão da meta mensal pelas semanas do mês, igual ao Forecast semanal.
-      const refMesCatalogo=p.fim||p.referencia;
-      const [anoMesCatalogo,mesMesCatalogo]=refMesCatalogo.split("-").map(Number);
-      const semanasNoMesCatalogo=Math.ceil(new Date(anoMesCatalogo,mesMesCatalogo,0).getDate()/7);
-      const metaSemanalImplicita=meta>0?Math.round((meta/semanasNoMesCatalogo)*100)/100:0;
-      let fechado=0,commit=0,best=0,pipe=0,pond=0,semData=0,vencidas=0;const rows=[];
-      ds.forEach((d)=>{const pr=Number(d.PROBABILITY),usa=Number.isFinite(pr)&&pr>0&&pr<=100,prob=usa?pr:probabilidadeFallbackForecast(d._ESTAGIO,d._SEMANTICA),bucket=classificarBucketForecast(prob,d._SEMANTICA);let sit="Fora",fp=0;
-        if(d._SEMANTICA==="success"&&dentroPeriodoCatalogo(d._FECHAMENTO,p)){fechado+=d._VALOR;sit="Ganho no mês"}
-        else if(d._SEMANTICA==="process"&&!ehEstagioPiloto(d.STAGE_ID,d._ESTAGIO)){const cd=parteDataISO(d.CLOSEDATE);if(!cd){semData++;sit="Sem CLOSEDATE"}else if(p.inicio&&cd<p.inicio){vencidas++;sit="CLOSEDATE vencida"}else if(dentroPeriodoCatalogo(cd,p)){sit="Previsto no mês";fp=d._VALOR*prob/100;pond+=fp;if(bucket==="Commit")commit+=d._VALOR;else if(bucket==="Best Case")best+=d._VALOR;else pipe+=d._VALOR}}
-        if(sit!=="Fora")rows.push({DEAL_ID:d.ID,CLIENTE:d._CLIENTE,ESTAGIO:d._ESTAGIO,RESPONSAVEL:d._RESPONSAVEL,CLOSEDATE:parteDataISO(d.CLOSEDATE),VALOR:d._VALOR,PROBABILIDADE:prob,FONTE_PROBABILIDADE:usa?"Bitrix":"Fallback",BUCKET:bucket,SITUACAO:sit,FORECAST_PONDERADO:fp});
+      const refMesCatalogo = p.fim || p.referencia;
+      const [anoMesCatalogo, mesMesCatalogo] = refMesCatalogo.split('-').map(Number);
+      const semanasNoMesCatalogo = Math.ceil(
+        new Date(anoMesCatalogo, mesMesCatalogo, 0).getDate() / 7,
+      );
+      const metaSemanalImplicita =
+        meta > 0 ? Math.round((meta / semanasNoMesCatalogo) * 100) / 100 : 0;
+      let fechado = 0,
+        commit = 0,
+        best = 0,
+        pipe = 0,
+        pond = 0,
+        semData = 0,
+        vencidas = 0;
+      const rows = [];
+      ds.forEach((d) => {
+        const pr = Number(d.PROBABILITY),
+          usa = Number.isFinite(pr) && pr > 0 && pr <= 100,
+          prob = usa ? pr : probabilidadeFallbackForecast(d._ESTAGIO, d._SEMANTICA),
+          bucket = classificarBucketForecast(prob, d._SEMANTICA);
+        let sit = 'Fora',
+          fp = 0;
+        if (d._SEMANTICA === 'success' && dentroPeriodoCatalogo(d._FECHAMENTO, p)) {
+          fechado += d._VALOR;
+          sit = 'Ganho no mês';
+        } else if (d._SEMANTICA === 'process' && !ehEstagioPiloto(d.STAGE_ID, d._ESTAGIO)) {
+          const cd = parteDataISO(d.CLOSEDATE);
+          if (!cd) {
+            semData++;
+            sit = 'Sem CLOSEDATE';
+          } else if (p.inicio && cd < p.inicio) {
+            vencidas++;
+            sit = 'CLOSEDATE vencida';
+          } else if (dentroPeriodoCatalogo(cd, p)) {
+            sit = 'Previsto no mês';
+            fp = (d._VALOR * prob) / 100;
+            pond += fp;
+            if (bucket === 'Commit') commit += d._VALOR;
+            else if (bucket === 'Best Case') best += d._VALOR;
+            else pipe += d._VALOR;
+          }
+        }
+        if (sit !== 'Fora')
+          rows.push({
+            DEAL_ID: d.ID,
+            CLIENTE: d._CLIENTE,
+            ESTAGIO: d._ESTAGIO,
+            RESPONSAVEL: d._RESPONSAVEL,
+            CLOSEDATE: parteDataISO(d.CLOSEDATE),
+            VALOR: d._VALOR,
+            PROBABILIDADE: prob,
+            FONTE_PROBABILIDADE: usa ? 'Bitrix' : 'Fallback',
+            BUCKET: bucket,
+            SITUACAO: sit,
+            FORECAST_PONDERADO: fp,
+          });
       });
-      const modeloVisualMensal=await construirDadosModeloForecast(webhook,b.meta,p.inicio,p.fim,b.deals);
+      const modeloVisualMensal = await construirDadosModeloForecast(
+        webhook,
+        b.meta,
+        p.inicio,
+        p.fim,
+        b.deals,
+      );
       // v24 — "Fechado" (e tudo que deriva dele: Forecast total, Gap, barra de
       // atingimento) usa a MESMA base de modelo_visual.resumo.FECHADOS_VALOR
       // (negócios no Financeiro em "Contrato assinado") em vez do `fechado`
@@ -155,256 +411,1640 @@ async function extrairRelatorioCatalogo(webhook,chave){
       // (mostrado antes de abrir o modelo visual) não voltar a divergir do
       // valor que a seção "✅ Fechados" do relatório mostra. `pond` (pipeline
       // aberto ponderado) já é independente dessa base.
-      const fechadoConsistente=modeloVisualMensal.resumo.FECHADOS_VALOR;
-      const forecast=fechadoConsistente+pond;
-      criarResultadoCatalogo(chave,"Forecast mensal • Comercial",`<strong>${escapeHtmlRelatorio(formatarDataBR(p.inicio))} a ${escapeHtmlRelatorio(formatarDataBR(p.fim))}</strong>`,
-        [kpi("Fechado",moedaRelatorio(fechadoConsistente)),kpi("Forecast total",moedaRelatorio(forecast)),kpi("Commit",moedaRelatorio(commit)),kpi("Best Case",moedaRelatorio(best)),kpi("Pipeline",moedaRelatorio(pipe)),kpi("Sem CLOSEDATE",semData),kpi("CLOSEDATE vencida",vencidas),kpi(meta?"Gap para meta":"Meta",meta?moedaRelatorio(Math.max(0,meta-fechadoConsistente)):"não informada"),kpi(`Meta semanal (÷${semanasNoMesCatalogo} semanas)`,metaSemanalImplicita?moedaRelatorio(metaSemanalImplicita):"—")],
-        [{titulo:"Negócios do forecast",dados:rows,colunas:[{label:"Deal",valor:"DEAL_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Estágio",valor:"ESTAGIO"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"CLOSEDATE",valor:"CLOSEDATE"},{label:"Valor",valor:(x)=>moedaRelatorio(x.VALOR),html:true},{label:"Prob.",valor:(x)=>`${x.PROBABILIDADE}%`},{label:"Bucket",valor:"BUCKET"},{label:"Situação",valor:"SITUACAO"},{label:"Ponderado",valor:(x)=>moedaRelatorio(x.FORECAST_PONDERADO),html:true}]}],
-        "PROBABILITY do Bitrix tem prioridade; quando zerada, usa fallback por estágio.");
-      resultadoRelatorioCatalogo.modelo_visual=modeloVisualMensal;
-      resultadoRelatorioCatalogo.meta_visual=meta;
-      resultadoRelatorioCatalogo.meta_semanal_implicita=metaSemanalImplicita;
-      resultadoRelatorioCatalogo.resumo={FECHADO:fechadoConsistente,FORECAST_TOTAL:forecast};
-      resultadoRelatorioCatalogo.barra_meta=barraAtingimentoMeta(`Atingimento da meta mensal (${mesAnoBR(p.fim||p.referencia)})`,fechadoConsistente,meta);
+      const fechadoConsistente = modeloVisualMensal.resumo.FECHADOS_VALOR;
+      const forecast = fechadoConsistente + pond;
+      criarResultadoCatalogo(
+        chave,
+        'Forecast mensal • Comercial',
+        `<strong>${escapeHtmlRelatorio(formatarDataBR(p.inicio))} a ${escapeHtmlRelatorio(formatarDataBR(p.fim))}</strong>`,
+        [
+          kpi('Fechado', moedaRelatorio(fechadoConsistente)),
+          kpi('Forecast total', moedaRelatorio(forecast)),
+          kpi('Commit', moedaRelatorio(commit)),
+          kpi('Best Case', moedaRelatorio(best)),
+          kpi('Pipeline', moedaRelatorio(pipe)),
+          kpi('Sem CLOSEDATE', semData),
+          kpi('CLOSEDATE vencida', vencidas),
+          kpi(
+            meta ? 'Gap para meta' : 'Meta',
+            meta ? moedaRelatorio(Math.max(0, meta - fechadoConsistente)) : 'não informada',
+          ),
+          kpi(
+            `Meta semanal (÷${semanasNoMesCatalogo} semanas)`,
+            metaSemanalImplicita ? moedaRelatorio(metaSemanalImplicita) : '—',
+          ),
+        ],
+        [
+          {
+            titulo: 'Negócios do forecast',
+            dados: rows,
+            colunas: [
+              { label: 'Deal', valor: 'DEAL_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Estágio', valor: 'ESTAGIO' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'CLOSEDATE', valor: 'CLOSEDATE' },
+              { label: 'Valor', valor: (x) => moedaRelatorio(x.VALOR), html: true },
+              { label: 'Prob.', valor: (x) => `${x.PROBABILIDADE}%` },
+              { label: 'Bucket', valor: 'BUCKET' },
+              { label: 'Situação', valor: 'SITUACAO' },
+              {
+                label: 'Ponderado',
+                valor: (x) => moedaRelatorio(x.FORECAST_PONDERADO),
+                html: true,
+              },
+            ],
+          },
+        ],
+        'PROBABILITY do Bitrix tem prioridade; quando zerada, usa fallback por estágio.',
+      );
+      resultadoRelatorioCatalogo.modelo_visual = modeloVisualMensal;
+      resultadoRelatorioCatalogo.meta_visual = meta;
+      resultadoRelatorioCatalogo.meta_semanal_implicita = metaSemanalImplicita;
+      resultadoRelatorioCatalogo.resumo = { FECHADO: fechadoConsistente, FORECAST_TOTAL: forecast };
+      resultadoRelatorioCatalogo.barra_meta = barraAtingimentoMeta(
+        `Atingimento da meta mensal (${mesAnoBR(p.fim || p.referencia)})`,
+        fechadoConsistente,
+        meta,
+      );
       // v20 — mesma "foto" do dia salva pelo Forecast semanal (js/jornada.js), para
       // que a tendência do relatório visual funcione também vindo do catálogo.
-      if(meta>0)salvarHistoricoForecastLocal({data:formatarDataISO(new Date()),metaMensal:meta,fechadoMes:fechadoConsistente,projecaoMes:forecast});
+      if (meta > 0)
+        salvarHistoricoForecastLocal({
+          data: formatarDataISO(new Date()),
+          metaMensal: meta,
+          fechadoMes: fechadoConsistente,
+          projecaoMes: forecast,
+        });
       renderizarRelatorioCatalogo();
-    }
-
-    else if(chave==="pipeline_coverage"){
-      const b=await baseDealsCatalogo(webhook,true),ref=new Date(`${p.referencia}T12:00:00`);
-      const campoMetaCoverage=document.getElementById("metaRelatorioComercial");
-      let meta=Number(campoMetaCoverage?.value)||0;
-      if(!meta){meta=metaMensalPadrao(p.fim||p.referencia);if(campoMetaCoverage&&meta)campoMetaCoverage.value=meta;}
-      const ab=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>d._SEMANTICA==="process"&&!ehEstagioPiloto(d.STAGE_ID,d._ESTAGIO));let total=0,pond=0,d30=0,d60=0,d90=0,sem=0;const g={};
-      ab.forEach((d)=>{total+=d._VALOR;const pr=Number(d.PROBABILITY),prob=(Number.isFinite(pr)&&pr>0&&pr<=100)?pr:probabilidadeFallbackForecast(d._ESTAGIO,d._SEMANTICA);pond+=d._VALOR*prob/100;const cd=parteDataISO(d.CLOSEDATE);if(!cd)sem++;else{const dias=Math.floor((new Date(`${cd}T12:00:00`)-ref)/86400000);if(dias<=30)d30+=d._VALOR;else if(dias<=60)d60+=d._VALOR;else if(dias<=90)d90+=d._VALOR}
-        const k=`${d._RESPONSAVEL}|||${d._ESTAGIO}`;(g[k]||=( {RESPONSAVEL:d._RESPONSAVEL,ESTAGIO:d._ESTAGIO,NEGOCIOS:0,PIPELINE:0,PONDERADO:0}));g[k].NEGOCIOS++;g[k].PIPELINE+=d._VALOR;g[k].PONDERADO+=d._VALOR*prob/100;});
-      criarResultadoCatalogo(chave,"Pipeline & Coverage • 30/60/90 dias",`Referência: <strong>${escapeHtmlRelatorio(p.referencia)}</strong>`,
-        [kpi("Pipeline aberto",moedaRelatorio(total)),kpi("Ponderado",moedaRelatorio(pond)),kpi("0–30 dias",moedaRelatorio(d30)),kpi("31–60 dias",moedaRelatorio(d60)),kpi("61–90 dias",moedaRelatorio(d90)),kpi("Sem CLOSEDATE",sem),kpi("Coverage 90d",meta?`${((d30+d60+d90)/meta).toFixed(2)}x`:"meta não informada"),kpi("Oportunidades",ab.length)],
-        [{titulo:"Pipeline por responsável e estágio",dados:Object.values(g).sort((a,b)=>b.PIPELINE-a.PIPELINE),colunas:[{label:"Responsável",valor:"RESPONSAVEL"},{label:"Estágio",valor:"ESTAGIO"},{label:"Negócios",valor:"NEGOCIOS"},{label:"Pipeline",valor:(x)=>moedaRelatorio(x.PIPELINE),html:true},{label:"Ponderado",valor:(x)=>moedaRelatorio(x.PONDERADO),html:true}]}],
-        "Coverage 90d = pipeline com fechamento em até 90 dias ÷ meta informada.");
-    }
-
-    else if(chave==="conversao_comercial"){
-      const b=await baseDealsCatalogo(webhook,true),co=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>dentroPeriodoCatalogo(d.DATE_CREATE,p)),won=co.filter((d)=>d._SEMANTICA==="success"),lost=co.filter((d)=>d._SEMANTICA==="failure"),closed=won.length+lost.length;
-      const hist=await buscarHistoricoEntidadeSDR(webhook,2,co.map((d)=>d.ID)),vis={};hist.forEach((h)=>{const d=co.find((x)=>String(x.ID)===String(h.OWNER_ID));if(!d)return;const cat=String(h.CATEGORY_ID??d.CATEGORY_ID),sid=String(h.STAGE_ID||""),lab=b.meta.estagios?.[cat]?.[sid]?.label||sid;(vis[lab]||=new Set()).add(String(h.OWNER_ID));});
-      const wids=new Set(won.map((d)=>String(d.ID))),rows=Object.entries(vis).map(([stage,set])=>({ESTAGIO:stage,VISITARAM:set.size,GANHOS:[...set].filter((id)=>wids.has(id)).length})).map((x)=>({...x,CONVERSAO_PCT:taxaPct(x.GANHOS,x.VISITARAM)})).sort((a,b)=>b.VISITARAM-a.VISITARAM);
-      criarResultadoCatalogo(chave,"Conversão Comercial • funil e Win Rate",`Coorte criada entre <strong>${escapeHtmlRelatorio(p.inicio||"início")}</strong> e <strong>${escapeHtmlRelatorio(p.fim||"hoje")}</strong>.`,
-        [kpi("Oportunidades",co.length),kpi("Ganhos",won.length),kpi("Perdas",lost.length),kpi("Em aberto",co.filter((d)=>d._SEMANTICA==="process"&&!ehEstagioPiloto(d.STAGE_ID,d._ESTAGIO)).length),kpi("Win Rate",`${taxaPct(won.length,closed)}%`),kpi("Taxa fechamento",`${taxaPct(closed,co.length)}%`),kpi("Receita ganha",moedaRelatorio(won.reduce((a,d)=>a+d._VALOR,0))),kpi("Ticket médio",moedaRelatorio(won.length?won.reduce((a,d)=>a+d._VALOR,0)/won.length:0))],
-        [{titulo:"Conversão histórica por estágio",dados:rows,colunas:[{label:"Estágio",valor:"ESTAGIO"},{label:"Deals que passaram",valor:"VISITARAM"},{label:"Ganhos",valor:"GANHOS"},{label:"Conversão para ganho",valor:(x)=>`${x.CONVERSAO_PCT}%`}]}],
-        "Conversão por estágio considera negócios da coorte que historicamente passaram pela etapa.");
-    }
-
-    else if(chave==="aging_sla"){
-      const b=await baseDealsCatalogo(webhook,true),sla=Math.max(1,Number(document.getElementById("slaAgingRelatorio").value)||30),ref=new Date(`${p.referencia}T12:00:00`);
-      const rows=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>d._SEMANTICA==="process"&&!ehEstagioPiloto(d.STAGE_ID,d._ESTAGIO)).map((d)=>{const mt=parteDataISO(d.MOVED_TIME),dias=mt?Math.max(0,Math.floor((ref-new Date(`${mt}T12:00:00`))/86400000)):"";return{DEAL_ID:d.ID,CLIENTE:d._CLIENTE,ESTAGIO:d._ESTAGIO,RESPONSAVEL:d._RESPONSAVEL,VALOR:d._VALOR,DIAS_NO_ESTAGIO:dias,FORA_SLA:dias!==""&&dias>sla?"S":"N"}}).sort((a,b)=>Number(b.DIAS_NO_ESTAGIO||-1)-Number(a.DIAS_NO_ESTAGIO||-1));
-      const crit=rows.filter((x)=>x.FORA_SLA==="S");
-      criarResultadoCatalogo(chave,"Aging & SLA Comercial",`SLA: <strong>${sla} dias</strong>.`,
-        [kpi("Abertas",rows.length),kpi("Fora SLA",crit.length),kpi("% fora SLA",`${taxaPct(crit.length,rows.length)}%`),kpi("Pipeline fora SLA",moedaRelatorio(crit.reduce((a,x)=>a+x.VALOR,0))),kpi(">30d",rows.filter((x)=>Number(x.DIAS_NO_ESTAGIO)>30).length),kpi(">60d",rows.filter((x)=>Number(x.DIAS_NO_ESTAGIO)>60).length),kpi(">90d",rows.filter((x)=>Number(x.DIAS_NO_ESTAGIO)>90).length),kpi("Sem MOVED_TIME",rows.filter((x)=>x.DIAS_NO_ESTAGIO==="").length)],
-        [{titulo:"Aging por oportunidade",dados:rows,colunas:[{label:"Deal",valor:"DEAL_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Estágio",valor:"ESTAGIO"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Dias",valor:"DIAS_NO_ESTAGIO"},{label:"Fora SLA",valor:"FORA_SLA"},{label:"Valor",valor:(x)=>moedaRelatorio(x.VALOR),html:true}]}],
-        "Aging usa MOVED_TIME do estágio atual.");
-    }
-
-    else if(chave==="performance_vendedores"){
-      const b=await baseDealsCatalogo(webhook,true),ds=b.deals.map((d)=>enriquecerDealCatalogo(d,b)),m={};
-      const get=(d)=>{const k=String(d.ASSIGNED_BY_ID||"0");return m[k]||(m[k]={RESPONSAVEL:d._RESPONSAVEL,CRIADAS:0,PIPELINE:0,GANHOS:0,RECEITA:0,PERDAS:0,PERDIDO:0,CICLO_SOMA:0,CICLO_N:0})};
-      ds.forEach((d)=>{const r=get(d);if(dentroPeriodoCatalogo(d.DATE_CREATE,p))r.CRIADAS++;if(d._SEMANTICA==="process"&&!ehEstagioPiloto(d.STAGE_ID,d._ESTAGIO))r.PIPELINE+=d._VALOR;if(dentroPeriodoCatalogo(d._FECHAMENTO,p)){if(d._SEMANTICA==="success"){r.GANHOS++;r.RECEITA+=d._VALOR}else if(d._SEMANTICA==="failure"){r.PERDAS++;r.PERDIDO+=d._VALOR}if(d._CICLO!==""){r.CICLO_SOMA+=Number(d._CICLO);r.CICLO_N++}}});
-      const rows=Object.values(m).map((r)=>({...r,WIN_RATE:taxaPct(r.GANHOS,r.GANHOS+r.PERDAS),TICKET:r.GANHOS?r.RECEITA/r.GANHOS:0,CICLO:r.CICLO_N?Math.round(r.CICLO_SOMA/r.CICLO_N*10)/10:0})).sort((a,b)=>b.RECEITA-a.RECEITA);
-      criarResultadoCatalogo(chave,"Performance por vendedor",`Período: <strong>${escapeHtmlRelatorio(p.inicio||"todas")}</strong> a <strong>${escapeHtmlRelatorio(p.fim||"hoje")}</strong>.`,
-        [kpi("Vendedores",rows.length),kpi("Receita",moedaRelatorio(rows.reduce((a,r)=>a+r.RECEITA,0))),kpi("Ganhos",rows.reduce((a,r)=>a+r.GANHOS,0)),kpi("Perdas",rows.reduce((a,r)=>a+r.PERDAS,0)),kpi("Pipeline aberto",moedaRelatorio(rows.reduce((a,r)=>a+r.PIPELINE,0))),kpi("Criadas",rows.reduce((a,r)=>a+r.CRIADAS,0)),kpi("Win Rate geral",`${taxaPct(rows.reduce((a,r)=>a+r.GANHOS,0),rows.reduce((a,r)=>a+r.GANHOS+r.PERDAS,0))}%`),kpi("Atribuição","responsável atual")],
-        [{titulo:"Performance por responsável",dados:rows,colunas:[{label:"Responsável",valor:"RESPONSAVEL"},{label:"Criadas",valor:"CRIADAS"},{label:"Ganhos",valor:"GANHOS"},{label:"Perdas",valor:"PERDAS"},{label:"Win Rate",valor:(x)=>`${x.WIN_RATE}%`},{label:"Receita",valor:(x)=>moedaRelatorio(x.RECEITA),html:true},{label:"Ticket",valor:(x)=>moedaRelatorio(x.TICKET),html:true},{label:"Ciclo médio",valor:(x)=>`${x.CICLO}d`},{label:"Pipeline",valor:(x)=>moedaRelatorio(x.PIPELINE),html:true}]}],
-        "ASSIGNED_BY_ID representa o responsável atual, não todo o histórico de ownership.");
-    }
-
-    else if(chave==="ganhos_perdas_ciclo"){
-      const b=await baseDealsCatalogo(webhook,true),fs=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>d._SEMANTICA!=="process"&&dentroPeriodoCatalogo(d._FECHAMENTO,p)),won=fs.filter((d)=>d._SEMANTICA==="success"),lost=fs.filter((d)=>d._SEMANTICA==="failure");
-      const rows=fs.map((d)=>({DEAL_ID:d.ID,CLIENTE:d._CLIENTE,RESULTADO:d._SEMANTICA==="success"?"Ganho":"Perdido",RESPONSAVEL:d._RESPONSAVEL,FECHAMENTO:d._FECHAMENTO,VALOR:d._VALOR,CICLO_DIAS:d._CICLO}));const cs=rows.map((x)=>Number(x.CICLO_DIAS)).filter(Number.isFinite);
-      criarResultadoCatalogo(chave,"Ganhos, perdas e ciclo de vendas","Fechamentos no período selecionado.",
-        [kpi("Fechados",rows.length),kpi("Ganhos",won.length),kpi("Perdas",lost.length),kpi("Win Rate",`${taxaPct(won.length,rows.length)}%`),kpi("Receita ganha",moedaRelatorio(won.reduce((a,d)=>a+d._VALOR,0))),kpi("Valor perdido",moedaRelatorio(lost.reduce((a,d)=>a+d._VALOR,0))),kpi("Ticket ganho",moedaRelatorio(won.length?won.reduce((a,d)=>a+d._VALOR,0)/won.length:0)),kpi("Ciclo médio",cs.length?`${Math.round(cs.reduce((a,b)=>a+b,0)/cs.length*10)/10}d`:"—")],
-        [{titulo:"Negócios fechados",dados:rows,colunas:[{label:"Deal",valor:"DEAL_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Resultado",valor:"RESULTADO"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Fechamento",valor:"FECHAMENTO"},{label:"Valor",valor:(x)=>moedaRelatorio(x.VALOR),html:true},{label:"Ciclo",valor:(x)=>x.CICLO_DIAS===""?"":`${x.CICLO_DIAS}d`}]}]);
-    }
-
-    else if(chave==="origens_canais"){
-      const [lb,db,om]=await Promise.all([baseLeadsCatalogo(webhook),baseDealsCatalogo(webhook,true),mapaOrigensRelatorio(webhook)]),ls=lb.leads.filter((l)=>dentroPeriodoCatalogo(l.DATE_CREATE,p)),by={};
-      db.deals.forEach((d)=>{if(idBitrixValido(d.LEAD_ID))(by[String(d.LEAD_ID)]||=[]).push(enriquecerDealCatalogo(d,db))});
-      const m={};ls.forEach((l)=>{const src=String(l.UTM_SOURCE||"").trim()?`UTM: ${l.UTM_SOURCE}`:(om[String(l.SOURCE_ID)]||l.SOURCE_ID||"Sem origem");if(!m[src])m[src]={ORIGEM:src,LEADS:0,LEADS_COM_OPP:0,OPORTUNIDADES:0,GANHOS:0,RECEITA:0};const r=m[src];r.LEADS++;const ds=by[String(l.ID)]||[];if(ds.length)r.LEADS_COM_OPP++;r.OPORTUNIDADES+=ds.length;const w=ds.filter((d)=>d._SEMANTICA==="success");r.GANHOS+=w.length;r.RECEITA+=w.reduce((a,d)=>a+d._VALOR,0)});
-      const rows=Object.values(m).map((r)=>({...r,LEAD_OPP:taxaPct(r.LEADS_COM_OPP,r.LEADS),OPP_GANHO:taxaPct(r.GANHOS,r.OPORTUNIDADES)})).sort((a,b)=>b.LEADS-a.LEADS);
-      criarResultadoCatalogo(chave,"Origens, canais e conversão","UTM_SOURCE tem prioridade; fallback para SOURCE_ID.",
-        [kpi("Leads",ls.length),kpi("Origens",rows.length),kpi("Leads com Opp",rows.reduce((a,r)=>a+r.LEADS_COM_OPP,0)),kpi("Oportunidades",rows.reduce((a,r)=>a+r.OPORTUNIDADES,0)),kpi("Ganhos",rows.reduce((a,r)=>a+r.GANHOS,0)),kpi("Receita",moedaRelatorio(rows.reduce((a,r)=>a+r.RECEITA,0))),kpi("Lead → Opp",`${taxaPct(rows.reduce((a,r)=>a+r.LEADS_COM_OPP,0),ls.length)}%`),kpi("Sem origem",rows.find((r)=>r.ORIGEM==="Sem origem")?.LEADS||0)],
-        [{titulo:"Conversão por origem",dados:rows,colunas:[{label:"Origem",valor:"ORIGEM"},{label:"Leads",valor:"LEADS"},{label:"Leads c/ Opp",valor:"LEADS_COM_OPP"},{label:"Lead → Opp",valor:(x)=>`${x.LEAD_OPP}%`},{label:"Oportunidades",valor:"OPORTUNIDADES"},{label:"Ganhos",valor:"GANHOS"},{label:"Opp → Ganho",valor:(x)=>`${x.OPP_GANHO}%`},{label:"Receita",valor:(x)=>moedaRelatorio(x.RECEITA),html:true}]}]);
-    }
-
-    else if(chave==="produtos_receita"){
-      const b=await baseDealsCatalogo(webhook,true),won=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>d._SEMANTICA==="success"&&dentroPeriodoCatalogo(d._FECHAMENTO,p)),m={};let linhas=0,com=0;
-      for(let i=0;i<won.length;i++){if(extracaoCancelada)break;const d=won[i];atualizarStatus(`Produtos: negócio ${i+1}/${won.length}`);const body=await bitrixFetchComRetentativa(`${webhook.replace(/\/$/,"")}/crm.deal.productrows.get.json?id=${encodeURIComponent(d.ID)}`),it=body.result||[];if(it.length)com++;it.forEach((x)=>{linhas++;const n=x.PRODUCT_NAME||`Produto ${x.PRODUCT_ID||""}`;if(!m[n])m[n]={PRODUTO:n,NEGOCIOS:new Set(),QUANTIDADE:0,RECEITA:0};m[n].NEGOCIOS.add(String(d.ID));m[n].QUANTIDADE+=Number(x.QUANTITY)||0;const pa=Number(x.PRICE_ACCOUNT);m[n].RECEITA+=(Number.isFinite(pa)&&pa!==0)?pa:(Number(x.PRICE)||0)*(Number(x.QUANTITY)||0)});await aguardar(100)}
-      const rows=Object.values(m).map((r)=>({PRODUTO:r.PRODUTO,NEGOCIOS:r.NEGOCIOS.size,QUANTIDADE:Math.round(r.QUANTIDADE*100)/100,RECEITA:r.RECEITA})).sort((a,b)=>b.RECEITA-a.RECEITA);
-      criarResultadoCatalogo(chave,"Produtos e receita","Produtos dos negócios ganhos no período.",
-        [kpi("Deals ganhos",won.length),kpi("Deals com produto",com),kpi("Linhas produto",linhas),kpi("Produtos",rows.length),kpi("Receita linhas",moedaRelatorio(rows.reduce((a,r)=>a+r.RECEITA,0))),kpi("Receita deals",moedaRelatorio(won.reduce((a,d)=>a+d._VALOR,0))),kpi("Deals sem produto",won.length-com),kpi("Cobertura",`${taxaPct(com,won.length)}%`)],
-        [{titulo:"Produtos vendidos",dados:rows,colunas:[{label:"Produto",valor:"PRODUTO"},{label:"Negócios",valor:"NEGOCIOS"},{label:"Quantidade",valor:"QUANTIDADE"},{label:"Receita linhas",valor:(x)=>moedaRelatorio(x.RECEITA),html:true}]}],
-        "PRICE_ACCOUNT é usado quando disponível; fallback PRICE × QUANTITY.");
-    }
-
-    else if(chave==="clientes_receita"){
-      const b=await baseDealsCatalogo(webhook,true),won=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>d._SEMANTICA==="success"&&dentroPeriodoCatalogo(d._FECHAMENTO,p)),m={};
-      won.forEach((d)=>{const k=idBitrixValido(d.COMPANY_ID)?`C:${idBitrixString(d.COMPANY_ID)}`:`N:${normalizarTextoChave(d._CLIENTE)}`;if(!m[k])m[k]={CLIENTE:d._CLIENTE,NEGOCIOS:0,RECEITA:0,PRIMEIRO:d._FECHAMENTO,ULTIMO:d._FECHAMENTO};const r=m[k];r.NEGOCIOS++;r.RECEITA+=d._VALOR;if(d._FECHAMENTO<r.PRIMEIRO)r.PRIMEIRO=d._FECHAMENTO;if(d._FECHAMENTO>r.ULTIMO)r.ULTIMO=d._FECHAMENTO});
-      const rows=Object.values(m).map((r)=>({...r,TICKET:r.NEGOCIOS?r.RECEITA/r.NEGOCIOS:0})).sort((a,b)=>b.RECEITA-a.RECEITA),total=rows.reduce((a,r)=>a+r.RECEITA,0),top10=rows.slice(0,10).reduce((a,r)=>a+r.RECEITA,0);
-      criarResultadoCatalogo(chave,"Clientes, receita e concentração","Receita pelos negócios ganhos no período.",
-        [kpi("Clientes",rows.length),kpi("Negócios ganhos",won.length),kpi("Receita",moedaRelatorio(total)),kpi("Ticket médio",moedaRelatorio(won.length?total/won.length:0)),kpi("Clientes recorrentes",rows.filter((r)=>r.NEGOCIOS>1).length),kpi("Receita Top 10",moedaRelatorio(top10)),kpi("Top 10",`${taxaPct(top10,total)}%`),kpi("Maior cliente",rows[0]?.CLIENTE||"—")],
-        [{titulo:"Receita por cliente",dados:rows,colunas:[{label:"Cliente",valor:"CLIENTE"},{label:"Negócios",valor:"NEGOCIOS"},{label:"Receita",valor:(x)=>moedaRelatorio(x.RECEITA),html:true},{label:"Ticket",valor:(x)=>moedaRelatorio(x.TICKET),html:true},{label:"Primeiro",valor:"PRIMEIRO"},{label:"Último",valor:"ULTIMO"}]}]);
-    }
-
-    else if(chave==="funil_leads"){
-      const [lb,db]=await Promise.all([baseLeadsCatalogo(webhook),baseDealsCatalogo(webhook,false)]),ls=lb.leads.filter((l)=>dentroPeriodoCatalogo(l.DATE_CREATE,p)),by={};db.deals.forEach((d)=>{if(idBitrixValido(d.LEAD_ID))(by[String(d.LEAD_ID)]||=[]).push(d)});
-      const m={};let conv=0,junk=0,opp=0,wins=0;ls.forEach((l)=>{const lab=labelStatusLead(lb.statusMap,l.STATUS_ID);if(!m[lab])m[lab]={STATUS:lab,LEADS:0,COM_OPP:0,GANHOS:0};m[lab].LEADS++;const ds=by[String(l.ID)]||[];if(ds.length){opp++;m[lab].COM_OPP++}const w=ds.filter((d)=>["s","success"].includes(String(d.STAGE_SEMANTIC_ID||"").toLowerCase()));if(w.length){wins++;m[lab].GANHOS+=w.length}const s=semanticaLead(l);if(s==="success")conv++;if(s==="failure")junk++});
-      const rows=Object.values(m).sort((a,b)=>b.LEADS-a.LEADS);
-      criarResultadoCatalogo(chave,"Funil de Leads & conversão SDR","Coorte de Leads criada no período.",
-        [kpi("Leads",ls.length),kpi("Convertidos",conv),kpi("Desqualificados",junk),kpi("Leads com Opp",opp),kpi("Lead → Opp",`${taxaPct(opp,ls.length)}%`),kpi("Leads com ganho",wins),kpi("Lead → Ganho",`${taxaPct(wins,ls.length)}%`),kpi("Em processamento",ls.filter((l)=>semanticaLead(l)==="process").length)],
-        [{titulo:"Status atual dos Leads",dados:rows,colunas:[{label:"Status",valor:"STATUS"},{label:"Leads",valor:"LEADS"},{label:"Com oportunidade",valor:"COM_OPP"},{label:"Ganhos",valor:"GANHOS"}]}]);
-    }
-
-    else if(chave==="produtividade_atividades"){
-      const a=await atividadesCatalogo(webhook,true,p.inicio,p.fim),m={};a.dados.forEach((x)=>{const id=idBitrixString(x.RESPONSIBLE_ID),nome=nomeUsuario(id)||(id?`ID ${id}`:"Sem responsável");if(!m[id||"0"])m[id||"0"]={RESPONSAVEL:nome,ATIVIDADES:0,LIGACOES:0,REUNIOES:0,TAREFAS:0,EMAILS:0,WHATSAPP:0,LEADS:new Set(),NEGOCIOS:new Set(),DIAS:new Set()};const r=m[id||"0"];r.ATIVIDADES++;const c=canalAtividadeSDR(x);if(c==="Ligação")r.LIGACOES++;else if(c==="Reunião")r.REUNIOES++;else if(c==="Tarefa")r.TAREFAS++;else if(c==="E-mail")r.EMAILS++;else if(c==="WhatsApp")r.WHATSAPP++;bindingsDaAtividade(x).forEach((b)=>{if(b.OWNER_TYPE_ID==="1")r.LEADS.add(b.OWNER_ID);if(b.OWNER_TYPE_ID==="2")r.NEGOCIOS.add(b.OWNER_ID)});const d=parteDataISO(x.END_TIME);if(d)r.DIAS.add(d)});
-      const rows=Object.values(m).map((r)=>({RESPONSAVEL:r.RESPONSAVEL,ATIVIDADES:r.ATIVIDADES,LIGACOES:r.LIGACOES,REUNIOES:r.REUNIOES,TAREFAS:r.TAREFAS,EMAILS:r.EMAILS,WHATSAPP:r.WHATSAPP,LEADS_UNICOS:r.LEADS.size,NEGOCIOS_UNICOS:r.NEGOCIOS.size,MEDIA_DIA:r.DIAS.size?Math.round(r.ATIVIDADES/r.DIAS.size*100)/100:0})).sort((a,b)=>b.ATIVIDADES-a.ATIVIDADES);
-      criarResultadoCatalogo(chave,"Produtividade de atividades por responsável","Atividades concluídas no período.",
-        [kpi("Atividades",a.dados.length),kpi("Responsáveis",rows.length),kpi("Ligações",rows.reduce((s,r)=>s+r.LIGACOES,0)),kpi("Reuniões",rows.reduce((s,r)=>s+r.REUNIOES,0)),kpi("WhatsApp",rows.reduce((s,r)=>s+r.WHATSAPP,0)),kpi("E-mails",rows.reduce((s,r)=>s+r.EMAILS,0)),kpi("Leads únicos",new Set(a.dados.flatMap((x)=>bindingsDaAtividade(x).filter((b)=>b.OWNER_TYPE_ID==="1").map((b)=>b.OWNER_ID))).size),kpi("Negócios únicos",new Set(a.dados.flatMap((x)=>bindingsDaAtividade(x).filter((b)=>b.OWNER_TYPE_ID==="2").map((b)=>b.OWNER_ID))).size)],
-        [{titulo:"Produtividade por responsável",dados:rows,colunas:[{label:"Responsável",valor:"RESPONSAVEL"},{label:"Atividades",valor:"ATIVIDADES"},{label:"Média/dia",valor:"MEDIA_DIA"},{label:"Ligações",valor:"LIGACOES"},{label:"Reuniões",valor:"REUNIOES"},{label:"WhatsApp",valor:"WHATSAPP"},{label:"E-mails",valor:"EMAILS"},{label:"Leads",valor:"LEADS_UNICOS"},{label:"Negócios",valor:"NEGOCIOS_UNICOS"}]}]);
-    }
-
-    else if(chave==="sla_primeiro_contato"){
-      const lb=await baseLeadsCatalogo(webhook),ls=lb.leads.filter((l)=>dentroPeriodoCatalogo(l.DATE_CREATE,p)),a=await atividadesCatalogo(webhook,true,p.inicio,p.fim),by={};a.dados.forEach((x)=>bindingsDaAtividade(x).forEach((b)=>{if(b.OWNER_TYPE_ID==="1")(by[b.OWNER_ID]||=[]).push(x)}));const sla=Math.max(1,Number(document.getElementById("slaPrimeiroContatoHoras").value)||4);
-      const rows=ls.map((l)=>{const created=new Date(l.DATE_CREATE),arr=(by[String(l.ID)]||[]).filter((x)=>new Date(x.END_TIME)>=created).sort((a,b)=>new Date(a.END_TIME)-new Date(b.END_TIME)),f=arr[0];let h="";if(f)h=Math.round(((new Date(f.END_TIME)-created)/3600000)*100)/100;return{LEAD_ID:l.ID,CLIENTE:l.COMPANY_TITLE||`${l.NAME||""} ${l.LAST_NAME||""}`.trim()||l.TITLE||"",STATUS:labelStatusLead(lb.statusMap,l.STATUS_ID),RESPONSAVEL:nomeUsuario(l.ASSIGNED_BY_ID),CRIADO:l.DATE_CREATE||"",PRIMEIRO_CONTATO:f?.END_TIME||"",HORAS:h,SLA:h!==""&&h<=sla?"S":(h===""?"SEM ATIVIDADE":"N")}});const ct=rows.filter((x)=>x.HORAS!==""),ok=rows.filter((x)=>x.SLA==="S"),hs=ct.map((x)=>Number(x.HORAS)).sort((a,b)=>a-b),med=hs.length?hs[Math.floor((hs.length-1)/2)]:0;
-      criarResultadoCatalogo(chave,"SLA de primeiro contato",`SLA configurado: <strong>${sla} hora(s)</strong>.`,
-        [kpi("Leads",rows.length),kpi("Com contato",ct.length),kpi("Sem atividade",rows.length-ct.length),kpi("Dentro SLA",ok.length),kpi("% dentro SLA",`${taxaPct(ok.length,rows.length)}%`),kpi("Mediana",`${med}h`),kpi("≤1h",rows.filter((x)=>x.HORAS!==""&&x.HORAS<=1).length),kpi("≤24h",rows.filter((x)=>x.HORAS!==""&&x.HORAS<=24).length)],
-        [{titulo:"SLA por Lead",dados:rows,colunas:[{label:"Lead",valor:"LEAD_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Status",valor:"STATUS"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Criado",valor:"CRIADO"},{label:"Primeiro contato",valor:"PRIMEIRO_CONTATO"},{label:"Horas",valor:"HORAS"},{label:"SLA",valor:"SLA"}]}],
-        "Primeiro contato = primeira atividade concluída vinculada ao Lead dentro da janela analisada.");
-    }
-
-    else if(chave==="handoffs"){
-      const b=await baseDealsCatalogo(webhook,false),ds=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>classificarFunilJornada(d.CATEGORY_ID)!=="INTERNO"),lids=[...new Set(ds.map((d)=>d.LEAD_ID).filter(idBitrixValido).map(idBitrixString))],lm=await buscarEntidadesPorIds(webhook,"crm.lead.list",lids,["ID","ASSIGNED_BY_ID","TITLE"]),g={},rows=[];
-      ds.forEach((d)=>{let k=idBitrixValido(d.COMPANY_ID)?`C:${idBitrixString(d.COMPANY_ID)}`:idBitrixValido(d.CONTACT_ID)?`T:${idBitrixString(d.CONTACT_ID)}`:idBitrixValido(d.LEAD_ID)?`L:${idBitrixString(d.LEAD_ID)}`:`D:${d.ID}`;(g[k]||=[]).push(d)});
-      Object.values(g).forEach((a)=>{a.sort((x,y)=>String(x.DATE_CREATE).localeCompare(String(y.DATE_CREATE)));let prev=null;a.forEach((d)=>{if(prev&&idBitrixValido(prev.ASSIGNED_BY_ID)&&idBitrixValido(d.ASSIGNED_BY_ID)&&idBitrixString(prev.ASSIGNED_BY_ID)!==idBitrixString(d.ASSIGNED_BY_ID))rows.push({CLIENTE:d._CLIENTE,DEAL_ID:d.ID,DE:nomeUsuario(prev.ASSIGNED_BY_ID),PARA:d._RESPONSAVEL,FUNIL_DE:prev._FUNIL,FUNIL_PARA:d._FUNIL,TIPO:prev._FUNIL===d._FUNIL?"TROCA_MESMO_FUNIL":"HANDOFF_ENTRE_FUNIS"});const l=idBitrixValido(d.LEAD_ID)?lm[idBitrixString(d.LEAD_ID)]:null;if(l&&idBitrixValido(l.ASSIGNED_BY_ID)&&idBitrixValido(d.ASSIGNED_BY_ID)&&idBitrixString(l.ASSIGNED_BY_ID)!==idBitrixString(d.ASSIGNED_BY_ID))rows.push({CLIENTE:d._CLIENTE,DEAL_ID:d.ID,DE:nomeUsuario(l.ASSIGNED_BY_ID),PARA:d._RESPONSAVEL,FUNIL_DE:"Lead",FUNIL_PARA:d._FUNIL,TIPO:"LEAD_PARA_NEGOCIO"});prev=d})});
-      criarResultadoCatalogo(chave,"Handoffs e trocas de responsável","Diferenças observáveis entre os registros extraídos.",
-        [kpi("Eventos",rows.length),kpi("Mesmo funil",rows.filter((x)=>x.TIPO==="TROCA_MESMO_FUNIL").length),kpi("Entre funis",rows.filter((x)=>x.TIPO==="HANDOFF_ENTRE_FUNIS").length),kpi("Lead → Negócio",rows.filter((x)=>x.TIPO==="LEAD_PARA_NEGOCIO").length),kpi("Clientes",new Set(rows.map((x)=>x.CLIENTE)).size),kpi("Origens",new Set(rows.map((x)=>x.DE).filter(Boolean)).size),kpi("Destinos",new Set(rows.map((x)=>x.PARA).filter(Boolean)).size),kpi("Owner histórico","limitado")],
-        [{titulo:"Handoffs e trocas",dados:rows,colunas:[{label:"Cliente",valor:"CLIENTE"},{label:"Deal",valor:"DEAL_ID"},{label:"De",valor:"DE"},{label:"Para",valor:"PARA"},{label:"Funil origem",valor:"FUNIL_DE"},{label:"Funil destino",valor:"FUNIL_PARA"},{label:"Tipo",valor:"TIPO"}]}],
-        "Não reconstrói todas as alterações históricas de ASSIGNED_BY_ID dentro do mesmo card.");
-    }
-
-    else if(chave==="reentradas"){
-      const b=await baseDealsCatalogo(webhook,false),ids=b.deals.map((d)=>d.ID),hist=await buscarHistoricoEntidadeSDR(webhook,2,ids),by={};hist.forEach((h)=>(by[String(h.OWNER_ID)]||=[]).push(h));const rows=[];let re=0,mud=0;const dealsRe=new Set();
-      Object.entries(by).forEach(([id,a])=>{a.sort((x,y)=>String(x.CREATED_TIME).localeCompare(String(y.CREATED_TIME)));const seen=new Set();let ps="",pc="";a.forEach((h)=>{const c=String(h.CATEGORY_ID??""),s=String(h.STAGE_ID||""),key=`${c}|${s}`,f=nomeFunilSemCodigo(b.meta.categorias?.[c]||`Categoria ${c}`),lab=b.meta.estagios?.[c]?.[s]?.label||s;if(seen.has(key)&&key!==ps){re++;dealsRe.add(id);rows.push({DEAL_ID:id,TIPO:"REENTRADA_ESTAGIO",FUNIL:f,ETAPA:lab,DATA:h.CREATED_TIME||""})}if(pc&&c!==pc){mud++;rows.push({DEAL_ID:id,TIPO:"MUDANCA_PIPELINE",FUNIL:`${nomeFunilSemCodigo(b.meta.categorias?.[pc]||pc)} → ${f}`,ETAPA:lab,DATA:h.CREATED_TIME||""})}seen.add(key);ps=key;pc=c})});
-      criarResultadoCatalogo(chave,"Reentradas, retrabalho e mudanças de pipeline","Histórico de estágios dos negócios.",
-        [kpi("Eventos históricos",hist.length),kpi("Reentradas",re),kpi("Deals c/ reentrada",dealsRe.size),kpi("Mudanças pipeline",mud),kpi("Deals analisados",ids.length),kpi("Fonte","stagehistory"),kpi("Reabertura legítima","possível"),kpi("Diagnóstico","investigar")],
-        [{titulo:"Eventos históricos relevantes",dados:rows,colunas:[{label:"Deal",valor:"DEAL_ID"},{label:"Tipo",valor:"TIPO"},{label:"Funil / rota",valor:"FUNIL"},{label:"Etapa",valor:"ETAPA"},{label:"Data",valor:"DATA"}]}],
-        "Reentrada é sinal para auditoria, não prova automática de retrabalho.");
-    }
-
-    else if(chave==="duplicidades"){
-      await buscarUsuariosJornada(webhook);const cb=await listarCompletoRelatorio(webhook,"crm.company.list",["ID","TITLE","PHONE","EMAIL","DATE_CREATE","ASSIGNED_BY_ID"],{},{ID:"ASC"},"Duplicidade: empresas..."),cm={};cb.dados.forEach((x)=>cm[String(x.ID)]=x);const sig=construirSinaisDuplicidadeEmpresas(cm),dup=Object.entries(sig).filter(([id,s])=>s.duplicado).map(([id,s])=>({COMPANY_ID:id,EMPRESA:cm[id]?.TITLE||"",MOTIVOS:s.motivos.join(" | "),RELACIONADOS:s.ids.join(" | ")}));
-      const b=await baseDealsCatalogo(webhook,false),m={};b.deals.forEach((d)=>{if(classificarFunilJornada(d.CATEGORY_ID)==="INTERNO")return;const n=idBitrixValido(d.COMPANY_ID)?`C:${idBitrixString(d.COMPANY_ID)}`:`N:${normalizarTextoChave(d.TITLE||"")}`,k=`${n}|||${d.CATEGORY_ID}`;(m[k]||=[]).push(d)});const rep=Object.values(m).filter((a)=>a.length>1).map((a)=>({CLIENTE:enriquecerDealCatalogo(a[0],b)._CLIENTE,FUNIL:enriquecerDealCatalogo(a[0],b)._FUNIL,NEGOCIOS:a.length,IDS:a.map((d)=>d.ID).join(" | ")})).sort((a,b)=>b.NEGOCIOS-a.NEGOCIOS);
-      criarResultadoCatalogo(chave,"Duplicidades e identidade do cliente","Sinais cadastrais e repetição no pipeline.",
-        [kpi("Empresas",cb.dados.length),kpi("Cadastros sinalizados",dup.length),kpi("Grupos repetidos",rep.length),kpi("Cards nesses grupos",rep.reduce((a,r)=>a+r.NEGOCIOS,0)),kpi("COMPANY_ID 0","ignorado"),kpi("Fusão automática","não"),kpi("IDs","preservados"),kpi("Critério","nome/e-mail/telefone")],
-        [{titulo:"Cliente repetido no mesmo pipeline",dados:rep,colunas:[{label:"Cliente",valor:"CLIENTE"},{label:"Funil",valor:"FUNIL"},{label:"Negócios",valor:"NEGOCIOS"},{label:"IDs",valor:"IDS"}]},{titulo:"Possíveis cadastros duplicados",dados:dup,colunas:[{label:"Company ID",valor:"COMPANY_ID"},{label:"Empresa",valor:"EMPRESA"},{label:"Motivos",valor:"MOTIVOS"},{label:"Relacionados",valor:"RELACIONADOS"}]}],
-        "Sinal de duplicidade não implica mesclagem automática.");
-    }
-
-    else if(chave==="implantacao_posvenda"){
-      const b=await baseDealsCatalogo(webhook,false),cats=encontrarCategoriasPorPalavras(b.meta,["financeiro","implantacao","implantação","sucesso do cliente","pos vendas","pós vendas","perfil securitario","perfil securitário"],false),ref=new Date(`${p.referencia}T12:00:00`);
-      const rows=b.deals.map((d)=>enriquecerDealCatalogo(d,b)).filter((d)=>cats.includes(String(d.CATEGORY_ID))).map((d)=>{const mt=parteDataISO(d.MOVED_TIME),dias=mt?Math.max(0,Math.floor((ref-new Date(`${mt}T12:00:00`))/86400000)):"";return{DEAL_ID:d.ID,CLIENTE:d._CLIENTE,PIPELINE:d._FUNIL,ETAPA:d._ESTAGIO,STATUS:d._SEMANTICA,RESPONSAVEL:d._RESPONSAVEL,DIAS_NO_ESTAGIO:dias,VALOR:d._VALOR,PILOTO:ehEstagioPiloto(d.STAGE_ID,d._ESTAGIO)}});
+    } else if (chave === 'pipeline_coverage') {
+      const b = await baseDealsCatalogo(webhook, true),
+        ref = new Date(`${p.referencia}T12:00:00`);
+      const campoMetaCoverage = document.getElementById('metaRelatorioComercial');
+      let meta = Number(campoMetaCoverage?.value) || 0;
+      if (!meta) {
+        meta = metaMensalPadrao(p.fim || p.referencia);
+        if (campoMetaCoverage && meta) campoMetaCoverage.value = meta;
+      }
+      const ab = b.deals
+        .map((d) => enriquecerDealCatalogo(d, b))
+        .filter((d) => d._SEMANTICA === 'process' && !ehEstagioPiloto(d.STAGE_ID, d._ESTAGIO));
+      let total = 0,
+        pond = 0,
+        d30 = 0,
+        d60 = 0,
+        d90 = 0,
+        sem = 0;
+      const g = {};
+      ab.forEach((d) => {
+        total += d._VALOR;
+        const pr = Number(d.PROBABILITY),
+          prob =
+            Number.isFinite(pr) && pr > 0 && pr <= 100
+              ? pr
+              : probabilidadeFallbackForecast(d._ESTAGIO, d._SEMANTICA);
+        pond += (d._VALOR * prob) / 100;
+        const cd = parteDataISO(d.CLOSEDATE);
+        if (!cd) sem++;
+        else {
+          const dias = Math.floor((new Date(`${cd}T12:00:00`) - ref) / 86400000);
+          if (dias <= 30) d30 += d._VALOR;
+          else if (dias <= 60) d60 += d._VALOR;
+          else if (dias <= 90) d90 += d._VALOR;
+        }
+        const k = `${d._RESPONSAVEL}|||${d._ESTAGIO}`;
+        g[k] ||= {
+          RESPONSAVEL: d._RESPONSAVEL,
+          ESTAGIO: d._ESTAGIO,
+          NEGOCIOS: 0,
+          PIPELINE: 0,
+          PONDERADO: 0,
+        };
+        g[k].NEGOCIOS++;
+        g[k].PIPELINE += d._VALOR;
+        g[k].PONDERADO += (d._VALOR * prob) / 100;
+      });
+      criarResultadoCatalogo(
+        chave,
+        'Pipeline & Coverage • 30/60/90 dias',
+        `Referência: <strong>${escapeHtmlRelatorio(p.referencia)}</strong>`,
+        [
+          kpi('Pipeline aberto', moedaRelatorio(total)),
+          kpi('Ponderado', moedaRelatorio(pond)),
+          kpi('0–30 dias', moedaRelatorio(d30)),
+          kpi('31–60 dias', moedaRelatorio(d60)),
+          kpi('61–90 dias', moedaRelatorio(d90)),
+          kpi('Sem CLOSEDATE', sem),
+          kpi(
+            'Coverage 90d',
+            meta ? `${((d30 + d60 + d90) / meta).toFixed(2)}x` : 'meta não informada',
+          ),
+          kpi('Oportunidades', ab.length),
+        ],
+        [
+          {
+            titulo: 'Pipeline por responsável e estágio',
+            dados: Object.values(g).sort((a, b) => b.PIPELINE - a.PIPELINE),
+            colunas: [
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Estágio', valor: 'ESTAGIO' },
+              { label: 'Negócios', valor: 'NEGOCIOS' },
+              { label: 'Pipeline', valor: (x) => moedaRelatorio(x.PIPELINE), html: true },
+              { label: 'Ponderado', valor: (x) => moedaRelatorio(x.PONDERADO), html: true },
+            ],
+          },
+        ],
+        'Coverage 90d = pipeline com fechamento em até 90 dias ÷ meta informada.',
+      );
+    } else if (chave === 'conversao_comercial') {
+      const b = await baseDealsCatalogo(webhook, true),
+        co = b.deals
+          .map((d) => enriquecerDealCatalogo(d, b))
+          .filter((d) => dentroPeriodoCatalogo(d.DATE_CREATE, p)),
+        won = co.filter((d) => d._SEMANTICA === 'success'),
+        lost = co.filter((d) => d._SEMANTICA === 'failure'),
+        closed = won.length + lost.length;
+      const hist = await buscarHistoricoEntidadeSDR(
+          webhook,
+          2,
+          co.map((d) => d.ID),
+        ),
+        vis = {};
+      hist.forEach((h) => {
+        const d = co.find((x) => String(x.ID) === String(h.OWNER_ID));
+        if (!d) return;
+        const cat = String(h.CATEGORY_ID ?? d.CATEGORY_ID),
+          sid = String(h.STAGE_ID || ''),
+          lab = b.meta.estagios?.[cat]?.[sid]?.label || sid;
+        (vis[lab] ||= new Set()).add(String(h.OWNER_ID));
+      });
+      const wids = new Set(won.map((d) => String(d.ID))),
+        rows = Object.entries(vis)
+          .map(([stage, set]) => ({
+            ESTAGIO: stage,
+            VISITARAM: set.size,
+            GANHOS: [...set].filter((id) => wids.has(id)).length,
+          }))
+          .map((x) => ({ ...x, CONVERSAO_PCT: taxaPct(x.GANHOS, x.VISITARAM) }))
+          .sort((a, b) => b.VISITARAM - a.VISITARAM);
+      criarResultadoCatalogo(
+        chave,
+        'Conversão Comercial • funil e Win Rate',
+        `Coorte criada entre <strong>${escapeHtmlRelatorio(p.inicio || 'início')}</strong> e <strong>${escapeHtmlRelatorio(p.fim || 'hoje')}</strong>.`,
+        [
+          kpi('Oportunidades', co.length),
+          kpi('Ganhos', won.length),
+          kpi('Perdas', lost.length),
+          kpi(
+            'Em aberto',
+            co.filter((d) => d._SEMANTICA === 'process' && !ehEstagioPiloto(d.STAGE_ID, d._ESTAGIO))
+              .length,
+          ),
+          kpi('Win Rate', `${taxaPct(won.length, closed)}%`),
+          kpi('Taxa fechamento', `${taxaPct(closed, co.length)}%`),
+          kpi('Receita ganha', moedaRelatorio(won.reduce((a, d) => a + d._VALOR, 0))),
+          kpi(
+            'Ticket médio',
+            moedaRelatorio(won.length ? won.reduce((a, d) => a + d._VALOR, 0) / won.length : 0),
+          ),
+        ],
+        [
+          {
+            titulo: 'Conversão histórica por estágio',
+            dados: rows,
+            colunas: [
+              { label: 'Estágio', valor: 'ESTAGIO' },
+              { label: 'Deals que passaram', valor: 'VISITARAM' },
+              { label: 'Ganhos', valor: 'GANHOS' },
+              { label: 'Conversão para ganho', valor: (x) => `${x.CONVERSAO_PCT}%` },
+            ],
+          },
+        ],
+        'Conversão por estágio considera negócios da coorte que historicamente passaram pela etapa.',
+      );
+    } else if (chave === 'aging_sla') {
+      const b = await baseDealsCatalogo(webhook, true),
+        sla = Math.max(1, Number(document.getElementById('slaAgingRelatorio').value) || 30),
+        ref = new Date(`${p.referencia}T12:00:00`);
+      const rows = b.deals
+        .map((d) => enriquecerDealCatalogo(d, b))
+        .filter((d) => d._SEMANTICA === 'process' && !ehEstagioPiloto(d.STAGE_ID, d._ESTAGIO))
+        .map((d) => {
+          const mt = parteDataISO(d.MOVED_TIME),
+            dias = mt ? Math.max(0, Math.floor((ref - new Date(`${mt}T12:00:00`)) / 86400000)) : '';
+          return {
+            DEAL_ID: d.ID,
+            CLIENTE: d._CLIENTE,
+            ESTAGIO: d._ESTAGIO,
+            RESPONSAVEL: d._RESPONSAVEL,
+            VALOR: d._VALOR,
+            DIAS_NO_ESTAGIO: dias,
+            FORA_SLA: dias !== '' && dias > sla ? 'S' : 'N',
+          };
+        })
+        .sort((a, b) => Number(b.DIAS_NO_ESTAGIO || -1) - Number(a.DIAS_NO_ESTAGIO || -1));
+      const crit = rows.filter((x) => x.FORA_SLA === 'S');
+      criarResultadoCatalogo(
+        chave,
+        'Aging & SLA Comercial',
+        `SLA: <strong>${sla} dias</strong>.`,
+        [
+          kpi('Abertas', rows.length),
+          kpi('Fora SLA', crit.length),
+          kpi('% fora SLA', `${taxaPct(crit.length, rows.length)}%`),
+          kpi('Pipeline fora SLA', moedaRelatorio(crit.reduce((a, x) => a + x.VALOR, 0))),
+          kpi('>30d', rows.filter((x) => Number(x.DIAS_NO_ESTAGIO) > 30).length),
+          kpi('>60d', rows.filter((x) => Number(x.DIAS_NO_ESTAGIO) > 60).length),
+          kpi('>90d', rows.filter((x) => Number(x.DIAS_NO_ESTAGIO) > 90).length),
+          kpi('Sem MOVED_TIME', rows.filter((x) => x.DIAS_NO_ESTAGIO === '').length),
+        ],
+        [
+          {
+            titulo: 'Aging por oportunidade',
+            dados: rows,
+            colunas: [
+              { label: 'Deal', valor: 'DEAL_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Estágio', valor: 'ESTAGIO' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Dias', valor: 'DIAS_NO_ESTAGIO' },
+              { label: 'Fora SLA', valor: 'FORA_SLA' },
+              { label: 'Valor', valor: (x) => moedaRelatorio(x.VALOR), html: true },
+            ],
+          },
+        ],
+        'Aging usa MOVED_TIME do estágio atual.',
+      );
+    } else if (chave === 'performance_vendedores') {
+      const b = await baseDealsCatalogo(webhook, true),
+        ds = b.deals.map((d) => enriquecerDealCatalogo(d, b)),
+        m = {};
+      const get = (d) => {
+        const k = String(d.ASSIGNED_BY_ID || '0');
+        return (
+          m[k] ||
+          (m[k] = {
+            RESPONSAVEL: d._RESPONSAVEL,
+            CRIADAS: 0,
+            PIPELINE: 0,
+            GANHOS: 0,
+            RECEITA: 0,
+            PERDAS: 0,
+            PERDIDO: 0,
+            CICLO_SOMA: 0,
+            CICLO_N: 0,
+          })
+        );
+      };
+      ds.forEach((d) => {
+        const r = get(d);
+        if (dentroPeriodoCatalogo(d.DATE_CREATE, p)) r.CRIADAS++;
+        if (d._SEMANTICA === 'process' && !ehEstagioPiloto(d.STAGE_ID, d._ESTAGIO))
+          r.PIPELINE += d._VALOR;
+        if (dentroPeriodoCatalogo(d._FECHAMENTO, p)) {
+          if (d._SEMANTICA === 'success') {
+            r.GANHOS++;
+            r.RECEITA += d._VALOR;
+          } else if (d._SEMANTICA === 'failure') {
+            r.PERDAS++;
+            r.PERDIDO += d._VALOR;
+          }
+          if (d._CICLO !== '') {
+            r.CICLO_SOMA += Number(d._CICLO);
+            r.CICLO_N++;
+          }
+        }
+      });
+      const rows = Object.values(m)
+        .map((r) => ({
+          ...r,
+          WIN_RATE: taxaPct(r.GANHOS, r.GANHOS + r.PERDAS),
+          TICKET: r.GANHOS ? r.RECEITA / r.GANHOS : 0,
+          CICLO: r.CICLO_N ? Math.round((r.CICLO_SOMA / r.CICLO_N) * 10) / 10 : 0,
+        }))
+        .sort((a, b) => b.RECEITA - a.RECEITA);
+      criarResultadoCatalogo(
+        chave,
+        'Performance por vendedor',
+        `Período: <strong>${escapeHtmlRelatorio(p.inicio || 'todas')}</strong> a <strong>${escapeHtmlRelatorio(p.fim || 'hoje')}</strong>.`,
+        [
+          kpi('Vendedores', rows.length),
+          kpi('Receita', moedaRelatorio(rows.reduce((a, r) => a + r.RECEITA, 0))),
+          kpi(
+            'Ganhos',
+            rows.reduce((a, r) => a + r.GANHOS, 0),
+          ),
+          kpi(
+            'Perdas',
+            rows.reduce((a, r) => a + r.PERDAS, 0),
+          ),
+          kpi('Pipeline aberto', moedaRelatorio(rows.reduce((a, r) => a + r.PIPELINE, 0))),
+          kpi(
+            'Criadas',
+            rows.reduce((a, r) => a + r.CRIADAS, 0),
+          ),
+          kpi(
+            'Win Rate geral',
+            `${taxaPct(
+              rows.reduce((a, r) => a + r.GANHOS, 0),
+              rows.reduce((a, r) => a + r.GANHOS + r.PERDAS, 0),
+            )}%`,
+          ),
+          kpi('Atribuição', 'responsável atual'),
+        ],
+        [
+          {
+            titulo: 'Performance por responsável',
+            dados: rows,
+            colunas: [
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Criadas', valor: 'CRIADAS' },
+              { label: 'Ganhos', valor: 'GANHOS' },
+              { label: 'Perdas', valor: 'PERDAS' },
+              { label: 'Win Rate', valor: (x) => `${x.WIN_RATE}%` },
+              { label: 'Receita', valor: (x) => moedaRelatorio(x.RECEITA), html: true },
+              { label: 'Ticket', valor: (x) => moedaRelatorio(x.TICKET), html: true },
+              { label: 'Ciclo médio', valor: (x) => `${x.CICLO}d` },
+              { label: 'Pipeline', valor: (x) => moedaRelatorio(x.PIPELINE), html: true },
+            ],
+          },
+        ],
+        'ASSIGNED_BY_ID representa o responsável atual, não todo o histórico de ownership.',
+      );
+    } else if (chave === 'ganhos_perdas_ciclo') {
+      const b = await baseDealsCatalogo(webhook, true),
+        fs = b.deals
+          .map((d) => enriquecerDealCatalogo(d, b))
+          .filter((d) => d._SEMANTICA !== 'process' && dentroPeriodoCatalogo(d._FECHAMENTO, p)),
+        won = fs.filter((d) => d._SEMANTICA === 'success'),
+        lost = fs.filter((d) => d._SEMANTICA === 'failure');
+      const rows = fs.map((d) => ({
+        DEAL_ID: d.ID,
+        CLIENTE: d._CLIENTE,
+        RESULTADO: d._SEMANTICA === 'success' ? 'Ganho' : 'Perdido',
+        RESPONSAVEL: d._RESPONSAVEL,
+        FECHAMENTO: d._FECHAMENTO,
+        VALOR: d._VALOR,
+        CICLO_DIAS: d._CICLO,
+      }));
+      const cs = rows.map((x) => Number(x.CICLO_DIAS)).filter(Number.isFinite);
+      criarResultadoCatalogo(
+        chave,
+        'Ganhos, perdas e ciclo de vendas',
+        'Fechamentos no período selecionado.',
+        [
+          kpi('Fechados', rows.length),
+          kpi('Ganhos', won.length),
+          kpi('Perdas', lost.length),
+          kpi('Win Rate', `${taxaPct(won.length, rows.length)}%`),
+          kpi('Receita ganha', moedaRelatorio(won.reduce((a, d) => a + d._VALOR, 0))),
+          kpi('Valor perdido', moedaRelatorio(lost.reduce((a, d) => a + d._VALOR, 0))),
+          kpi(
+            'Ticket ganho',
+            moedaRelatorio(won.length ? won.reduce((a, d) => a + d._VALOR, 0) / won.length : 0),
+          ),
+          kpi(
+            'Ciclo médio',
+            cs.length
+              ? `${Math.round((cs.reduce((a, b) => a + b, 0) / cs.length) * 10) / 10}d`
+              : '—',
+          ),
+        ],
+        [
+          {
+            titulo: 'Negócios fechados',
+            dados: rows,
+            colunas: [
+              { label: 'Deal', valor: 'DEAL_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Resultado', valor: 'RESULTADO' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Fechamento', valor: 'FECHAMENTO' },
+              { label: 'Valor', valor: (x) => moedaRelatorio(x.VALOR), html: true },
+              { label: 'Ciclo', valor: (x) => (x.CICLO_DIAS === '' ? '' : `${x.CICLO_DIAS}d`) },
+            ],
+          },
+        ],
+      );
+    } else if (chave === 'origens_canais') {
+      const [lb, db, om] = await Promise.all([
+          baseLeadsCatalogo(webhook),
+          baseDealsCatalogo(webhook, true),
+          mapaOrigensRelatorio(webhook),
+        ]),
+        ls = lb.leads.filter((l) => dentroPeriodoCatalogo(l.DATE_CREATE, p)),
+        by = {};
+      db.deals.forEach((d) => {
+        if (idBitrixValido(d.LEAD_ID))
+          (by[String(d.LEAD_ID)] ||= []).push(enriquecerDealCatalogo(d, db));
+      });
+      const m = {};
+      ls.forEach((l) => {
+        const src = String(l.UTM_SOURCE || '').trim()
+          ? `UTM: ${l.UTM_SOURCE}`
+          : om[String(l.SOURCE_ID)] || l.SOURCE_ID || 'Sem origem';
+        if (!m[src])
+          m[src] = {
+            ORIGEM: src,
+            LEADS: 0,
+            LEADS_COM_OPP: 0,
+            OPORTUNIDADES: 0,
+            GANHOS: 0,
+            RECEITA: 0,
+          };
+        const r = m[src];
+        r.LEADS++;
+        const ds = by[String(l.ID)] || [];
+        if (ds.length) r.LEADS_COM_OPP++;
+        r.OPORTUNIDADES += ds.length;
+        const w = ds.filter((d) => d._SEMANTICA === 'success');
+        r.GANHOS += w.length;
+        r.RECEITA += w.reduce((a, d) => a + d._VALOR, 0);
+      });
+      const rows = Object.values(m)
+        .map((r) => ({
+          ...r,
+          LEAD_OPP: taxaPct(r.LEADS_COM_OPP, r.LEADS),
+          OPP_GANHO: taxaPct(r.GANHOS, r.OPORTUNIDADES),
+        }))
+        .sort((a, b) => b.LEADS - a.LEADS);
+      criarResultadoCatalogo(
+        chave,
+        'Origens, canais e conversão',
+        'UTM_SOURCE tem prioridade; fallback para SOURCE_ID.',
+        [
+          kpi('Leads', ls.length),
+          kpi('Origens', rows.length),
+          kpi(
+            'Leads com Opp',
+            rows.reduce((a, r) => a + r.LEADS_COM_OPP, 0),
+          ),
+          kpi(
+            'Oportunidades',
+            rows.reduce((a, r) => a + r.OPORTUNIDADES, 0),
+          ),
+          kpi(
+            'Ganhos',
+            rows.reduce((a, r) => a + r.GANHOS, 0),
+          ),
+          kpi('Receita', moedaRelatorio(rows.reduce((a, r) => a + r.RECEITA, 0))),
+          kpi(
+            'Lead → Opp',
+            `${taxaPct(
+              rows.reduce((a, r) => a + r.LEADS_COM_OPP, 0),
+              ls.length,
+            )}%`,
+          ),
+          kpi('Sem origem', rows.find((r) => r.ORIGEM === 'Sem origem')?.LEADS || 0),
+        ],
+        [
+          {
+            titulo: 'Conversão por origem',
+            dados: rows,
+            colunas: [
+              { label: 'Origem', valor: 'ORIGEM' },
+              { label: 'Leads', valor: 'LEADS' },
+              { label: 'Leads c/ Opp', valor: 'LEADS_COM_OPP' },
+              { label: 'Lead → Opp', valor: (x) => `${x.LEAD_OPP}%` },
+              { label: 'Oportunidades', valor: 'OPORTUNIDADES' },
+              { label: 'Ganhos', valor: 'GANHOS' },
+              { label: 'Opp → Ganho', valor: (x) => `${x.OPP_GANHO}%` },
+              { label: 'Receita', valor: (x) => moedaRelatorio(x.RECEITA), html: true },
+            ],
+          },
+        ],
+      );
+    } else if (chave === 'produtos_receita') {
+      const b = await baseDealsCatalogo(webhook, true),
+        won = b.deals
+          .map((d) => enriquecerDealCatalogo(d, b))
+          .filter((d) => d._SEMANTICA === 'success' && dentroPeriodoCatalogo(d._FECHAMENTO, p)),
+        m = {};
+      let linhas = 0,
+        com = 0;
+      for (let i = 0; i < won.length; i++) {
+        if (extracaoCancelada) break;
+        const d = won[i];
+        atualizarStatus(`Produtos: negócio ${i + 1}/${won.length}`);
+        const body = await bitrixFetchComRetentativa(
+            `${webhook.replace(/\/$/, '')}/crm.deal.productrows.get.json?id=${encodeURIComponent(d.ID)}`,
+          ),
+          it = body.result || [];
+        if (it.length) com++;
+        it.forEach((x) => {
+          linhas++;
+          const n = x.PRODUCT_NAME || `Produto ${x.PRODUCT_ID || ''}`;
+          if (!m[n]) m[n] = { PRODUTO: n, NEGOCIOS: new Set(), QUANTIDADE: 0, RECEITA: 0 };
+          m[n].NEGOCIOS.add(String(d.ID));
+          m[n].QUANTIDADE += Number(x.QUANTITY) || 0;
+          const pa = Number(x.PRICE_ACCOUNT);
+          m[n].RECEITA +=
+            Number.isFinite(pa) && pa !== 0
+              ? pa
+              : (Number(x.PRICE) || 0) * (Number(x.QUANTITY) || 0);
+        });
+        await aguardar(100);
+      }
+      const rows = Object.values(m)
+        .map((r) => ({
+          PRODUTO: r.PRODUTO,
+          NEGOCIOS: r.NEGOCIOS.size,
+          QUANTIDADE: Math.round(r.QUANTIDADE * 100) / 100,
+          RECEITA: r.RECEITA,
+        }))
+        .sort((a, b) => b.RECEITA - a.RECEITA);
+      criarResultadoCatalogo(
+        chave,
+        'Produtos e receita',
+        'Produtos dos negócios ganhos no período.',
+        [
+          kpi('Deals ganhos', won.length),
+          kpi('Deals com produto', com),
+          kpi('Linhas produto', linhas),
+          kpi('Produtos', rows.length),
+          kpi('Receita linhas', moedaRelatorio(rows.reduce((a, r) => a + r.RECEITA, 0))),
+          kpi('Receita deals', moedaRelatorio(won.reduce((a, d) => a + d._VALOR, 0))),
+          kpi('Deals sem produto', won.length - com),
+          kpi('Cobertura', `${taxaPct(com, won.length)}%`),
+        ],
+        [
+          {
+            titulo: 'Produtos vendidos',
+            dados: rows,
+            colunas: [
+              { label: 'Produto', valor: 'PRODUTO' },
+              { label: 'Negócios', valor: 'NEGOCIOS' },
+              { label: 'Quantidade', valor: 'QUANTIDADE' },
+              { label: 'Receita linhas', valor: (x) => moedaRelatorio(x.RECEITA), html: true },
+            ],
+          },
+        ],
+        'PRICE_ACCOUNT é usado quando disponível; fallback PRICE × QUANTITY.',
+      );
+    } else if (chave === 'clientes_receita') {
+      const b = await baseDealsCatalogo(webhook, true),
+        won = b.deals
+          .map((d) => enriquecerDealCatalogo(d, b))
+          .filter((d) => d._SEMANTICA === 'success' && dentroPeriodoCatalogo(d._FECHAMENTO, p)),
+        m = {};
+      won.forEach((d) => {
+        const k = idBitrixValido(d.COMPANY_ID)
+          ? `C:${idBitrixString(d.COMPANY_ID)}`
+          : `N:${normalizarTextoChave(d._CLIENTE)}`;
+        if (!m[k])
+          m[k] = {
+            CLIENTE: d._CLIENTE,
+            NEGOCIOS: 0,
+            RECEITA: 0,
+            PRIMEIRO: d._FECHAMENTO,
+            ULTIMO: d._FECHAMENTO,
+          };
+        const r = m[k];
+        r.NEGOCIOS++;
+        r.RECEITA += d._VALOR;
+        if (d._FECHAMENTO < r.PRIMEIRO) r.PRIMEIRO = d._FECHAMENTO;
+        if (d._FECHAMENTO > r.ULTIMO) r.ULTIMO = d._FECHAMENTO;
+      });
+      const rows = Object.values(m)
+          .map((r) => ({ ...r, TICKET: r.NEGOCIOS ? r.RECEITA / r.NEGOCIOS : 0 }))
+          .sort((a, b) => b.RECEITA - a.RECEITA),
+        total = rows.reduce((a, r) => a + r.RECEITA, 0),
+        top10 = rows.slice(0, 10).reduce((a, r) => a + r.RECEITA, 0);
+      criarResultadoCatalogo(
+        chave,
+        'Clientes, receita e concentração',
+        'Receita pelos negócios ganhos no período.',
+        [
+          kpi('Clientes', rows.length),
+          kpi('Negócios ganhos', won.length),
+          kpi('Receita', moedaRelatorio(total)),
+          kpi('Ticket médio', moedaRelatorio(won.length ? total / won.length : 0)),
+          kpi('Clientes recorrentes', rows.filter((r) => r.NEGOCIOS > 1).length),
+          kpi('Receita Top 10', moedaRelatorio(top10)),
+          kpi('Top 10', `${taxaPct(top10, total)}%`),
+          kpi('Maior cliente', rows[0]?.CLIENTE || '—'),
+        ],
+        [
+          {
+            titulo: 'Receita por cliente',
+            dados: rows,
+            colunas: [
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Negócios', valor: 'NEGOCIOS' },
+              { label: 'Receita', valor: (x) => moedaRelatorio(x.RECEITA), html: true },
+              { label: 'Ticket', valor: (x) => moedaRelatorio(x.TICKET), html: true },
+              { label: 'Primeiro', valor: 'PRIMEIRO' },
+              { label: 'Último', valor: 'ULTIMO' },
+            ],
+          },
+        ],
+      );
+    } else if (chave === 'funil_leads') {
+      const [lb, db] = await Promise.all([
+          baseLeadsCatalogo(webhook),
+          baseDealsCatalogo(webhook, false),
+        ]),
+        ls = lb.leads.filter((l) => dentroPeriodoCatalogo(l.DATE_CREATE, p)),
+        by = {};
+      db.deals.forEach((d) => {
+        if (idBitrixValido(d.LEAD_ID)) (by[String(d.LEAD_ID)] ||= []).push(d);
+      });
+      const m = {};
+      let conv = 0,
+        junk = 0,
+        opp = 0,
+        wins = 0;
+      ls.forEach((l) => {
+        const lab = labelStatusLead(lb.statusMap, l.STATUS_ID);
+        if (!m[lab]) m[lab] = { STATUS: lab, LEADS: 0, COM_OPP: 0, GANHOS: 0 };
+        m[lab].LEADS++;
+        const ds = by[String(l.ID)] || [];
+        if (ds.length) {
+          opp++;
+          m[lab].COM_OPP++;
+        }
+        const w = ds.filter((d) =>
+          ['s', 'success'].includes(String(d.STAGE_SEMANTIC_ID || '').toLowerCase()),
+        );
+        if (w.length) {
+          wins++;
+          m[lab].GANHOS += w.length;
+        }
+        const s = semanticaLead(l);
+        if (s === 'success') conv++;
+        if (s === 'failure') junk++;
+      });
+      const rows = Object.values(m).sort((a, b) => b.LEADS - a.LEADS);
+      criarResultadoCatalogo(
+        chave,
+        'Funil de Leads & conversão SDR',
+        'Coorte de Leads criada no período.',
+        [
+          kpi('Leads', ls.length),
+          kpi('Convertidos', conv),
+          kpi('Desqualificados', junk),
+          kpi('Leads com Opp', opp),
+          kpi('Lead → Opp', `${taxaPct(opp, ls.length)}%`),
+          kpi('Leads com ganho', wins),
+          kpi('Lead → Ganho', `${taxaPct(wins, ls.length)}%`),
+          kpi('Em processamento', ls.filter((l) => semanticaLead(l) === 'process').length),
+        ],
+        [
+          {
+            titulo: 'Status atual dos Leads',
+            dados: rows,
+            colunas: [
+              { label: 'Status', valor: 'STATUS' },
+              { label: 'Leads', valor: 'LEADS' },
+              { label: 'Com oportunidade', valor: 'COM_OPP' },
+              { label: 'Ganhos', valor: 'GANHOS' },
+            ],
+          },
+        ],
+      );
+    } else if (chave === 'produtividade_atividades') {
+      const a = await atividadesCatalogo(webhook, true, p.inicio, p.fim),
+        m = {};
+      a.dados.forEach((x) => {
+        const id = idBitrixString(x.RESPONSIBLE_ID),
+          nome = nomeUsuario(id) || (id ? `ID ${id}` : 'Sem responsável');
+        if (!m[id || '0'])
+          m[id || '0'] = {
+            RESPONSAVEL: nome,
+            ATIVIDADES: 0,
+            LIGACOES: 0,
+            REUNIOES: 0,
+            TAREFAS: 0,
+            EMAILS: 0,
+            WHATSAPP: 0,
+            LEADS: new Set(),
+            NEGOCIOS: new Set(),
+            DIAS: new Set(),
+          };
+        const r = m[id || '0'];
+        r.ATIVIDADES++;
+        const c = canalAtividadeSDR(x);
+        if (c === 'Ligação') r.LIGACOES++;
+        else if (c === 'Reunião') r.REUNIOES++;
+        else if (c === 'Tarefa') r.TAREFAS++;
+        else if (c === 'E-mail') r.EMAILS++;
+        else if (c === 'WhatsApp') r.WHATSAPP++;
+        bindingsDaAtividade(x).forEach((b) => {
+          if (b.OWNER_TYPE_ID === '1') r.LEADS.add(b.OWNER_ID);
+          if (b.OWNER_TYPE_ID === '2') r.NEGOCIOS.add(b.OWNER_ID);
+        });
+        const d = parteDataISO(x.END_TIME);
+        if (d) r.DIAS.add(d);
+      });
+      const rows = Object.values(m)
+        .map((r) => ({
+          RESPONSAVEL: r.RESPONSAVEL,
+          ATIVIDADES: r.ATIVIDADES,
+          LIGACOES: r.LIGACOES,
+          REUNIOES: r.REUNIOES,
+          TAREFAS: r.TAREFAS,
+          EMAILS: r.EMAILS,
+          WHATSAPP: r.WHATSAPP,
+          LEADS_UNICOS: r.LEADS.size,
+          NEGOCIOS_UNICOS: r.NEGOCIOS.size,
+          MEDIA_DIA: r.DIAS.size ? Math.round((r.ATIVIDADES / r.DIAS.size) * 100) / 100 : 0,
+        }))
+        .sort((a, b) => b.ATIVIDADES - a.ATIVIDADES);
+      criarResultadoCatalogo(
+        chave,
+        'Produtividade de atividades por responsável',
+        'Atividades concluídas no período.',
+        [
+          kpi('Atividades', a.dados.length),
+          kpi('Responsáveis', rows.length),
+          kpi(
+            'Ligações',
+            rows.reduce((s, r) => s + r.LIGACOES, 0),
+          ),
+          kpi(
+            'Reuniões',
+            rows.reduce((s, r) => s + r.REUNIOES, 0),
+          ),
+          kpi(
+            'WhatsApp',
+            rows.reduce((s, r) => s + r.WHATSAPP, 0),
+          ),
+          kpi(
+            'E-mails',
+            rows.reduce((s, r) => s + r.EMAILS, 0),
+          ),
+          kpi(
+            'Leads únicos',
+            new Set(
+              a.dados.flatMap((x) =>
+                bindingsDaAtividade(x)
+                  .filter((b) => b.OWNER_TYPE_ID === '1')
+                  .map((b) => b.OWNER_ID),
+              ),
+            ).size,
+          ),
+          kpi(
+            'Negócios únicos',
+            new Set(
+              a.dados.flatMap((x) =>
+                bindingsDaAtividade(x)
+                  .filter((b) => b.OWNER_TYPE_ID === '2')
+                  .map((b) => b.OWNER_ID),
+              ),
+            ).size,
+          ),
+        ],
+        [
+          {
+            titulo: 'Produtividade por responsável',
+            dados: rows,
+            colunas: [
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Atividades', valor: 'ATIVIDADES' },
+              { label: 'Média/dia', valor: 'MEDIA_DIA' },
+              { label: 'Ligações', valor: 'LIGACOES' },
+              { label: 'Reuniões', valor: 'REUNIOES' },
+              { label: 'WhatsApp', valor: 'WHATSAPP' },
+              { label: 'E-mails', valor: 'EMAILS' },
+              { label: 'Leads', valor: 'LEADS_UNICOS' },
+              { label: 'Negócios', valor: 'NEGOCIOS_UNICOS' },
+            ],
+          },
+        ],
+      );
+    } else if (chave === 'sla_primeiro_contato') {
+      const lb = await baseLeadsCatalogo(webhook),
+        ls = lb.leads.filter((l) => dentroPeriodoCatalogo(l.DATE_CREATE, p)),
+        a = await atividadesCatalogo(webhook, true, p.inicio, p.fim),
+        by = {};
+      a.dados.forEach((x) =>
+        bindingsDaAtividade(x).forEach((b) => {
+          if (b.OWNER_TYPE_ID === '1') (by[b.OWNER_ID] ||= []).push(x);
+        }),
+      );
+      const sla = Math.max(
+        1,
+        Number(document.getElementById('slaPrimeiroContatoHoras').value) || 4,
+      );
+      const rows = ls.map((l) => {
+        const created = new Date(l.DATE_CREATE),
+          arr = (by[String(l.ID)] || [])
+            .filter((x) => new Date(x.END_TIME) >= created)
+            .sort((a, b) => new Date(a.END_TIME) - new Date(b.END_TIME)),
+          f = arr[0];
+        let h = '';
+        if (f) h = Math.round(((new Date(f.END_TIME) - created) / 3600000) * 100) / 100;
+        return {
+          LEAD_ID: l.ID,
+          CLIENTE:
+            l.COMPANY_TITLE || `${l.NAME || ''} ${l.LAST_NAME || ''}`.trim() || l.TITLE || '',
+          STATUS: labelStatusLead(lb.statusMap, l.STATUS_ID),
+          RESPONSAVEL: nomeUsuario(l.ASSIGNED_BY_ID),
+          CRIADO: l.DATE_CREATE || '',
+          PRIMEIRO_CONTATO: f?.END_TIME || '',
+          HORAS: h,
+          SLA: h !== '' && h <= sla ? 'S' : h === '' ? 'SEM ATIVIDADE' : 'N',
+        };
+      });
+      const ct = rows.filter((x) => x.HORAS !== ''),
+        ok = rows.filter((x) => x.SLA === 'S'),
+        hs = ct.map((x) => Number(x.HORAS)).sort((a, b) => a - b),
+        med = hs.length ? hs[Math.floor((hs.length - 1) / 2)] : 0;
+      criarResultadoCatalogo(
+        chave,
+        'SLA de primeiro contato',
+        `SLA configurado: <strong>${sla} hora(s)</strong>.`,
+        [
+          kpi('Leads', rows.length),
+          kpi('Com contato', ct.length),
+          kpi('Sem atividade', rows.length - ct.length),
+          kpi('Dentro SLA', ok.length),
+          kpi('% dentro SLA', `${taxaPct(ok.length, rows.length)}%`),
+          kpi('Mediana', `${med}h`),
+          kpi('≤1h', rows.filter((x) => x.HORAS !== '' && x.HORAS <= 1).length),
+          kpi('≤24h', rows.filter((x) => x.HORAS !== '' && x.HORAS <= 24).length),
+        ],
+        [
+          {
+            titulo: 'SLA por Lead',
+            dados: rows,
+            colunas: [
+              { label: 'Lead', valor: 'LEAD_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Status', valor: 'STATUS' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Criado', valor: 'CRIADO' },
+              { label: 'Primeiro contato', valor: 'PRIMEIRO_CONTATO' },
+              { label: 'Horas', valor: 'HORAS' },
+              { label: 'SLA', valor: 'SLA' },
+            ],
+          },
+        ],
+        'Primeiro contato = primeira atividade concluída vinculada ao Lead dentro da janela analisada.',
+      );
+    } else if (chave === 'handoffs') {
+      const b = await baseDealsCatalogo(webhook, false),
+        ds = b.deals
+          .map((d) => enriquecerDealCatalogo(d, b))
+          .filter((d) => classificarFunilJornada(d.CATEGORY_ID) !== 'INTERNO'),
+        lids = [
+          ...new Set(
+            ds
+              .map((d) => d.LEAD_ID)
+              .filter(idBitrixValido)
+              .map(idBitrixString),
+          ),
+        ],
+        lm = await buscarEntidadesPorIds(webhook, 'crm.lead.list', lids, [
+          'ID',
+          'ASSIGNED_BY_ID',
+          'TITLE',
+        ]),
+        g = {},
+        rows = [];
+      ds.forEach((d) => {
+        let k = idBitrixValido(d.COMPANY_ID)
+          ? `C:${idBitrixString(d.COMPANY_ID)}`
+          : idBitrixValido(d.CONTACT_ID)
+            ? `T:${idBitrixString(d.CONTACT_ID)}`
+            : idBitrixValido(d.LEAD_ID)
+              ? `L:${idBitrixString(d.LEAD_ID)}`
+              : `D:${d.ID}`;
+        (g[k] ||= []).push(d);
+      });
+      Object.values(g).forEach((a) => {
+        a.sort((x, y) => String(x.DATE_CREATE).localeCompare(String(y.DATE_CREATE)));
+        let prev = null;
+        a.forEach((d) => {
+          if (
+            prev &&
+            idBitrixValido(prev.ASSIGNED_BY_ID) &&
+            idBitrixValido(d.ASSIGNED_BY_ID) &&
+            idBitrixString(prev.ASSIGNED_BY_ID) !== idBitrixString(d.ASSIGNED_BY_ID)
+          )
+            rows.push({
+              CLIENTE: d._CLIENTE,
+              DEAL_ID: d.ID,
+              DE: nomeUsuario(prev.ASSIGNED_BY_ID),
+              PARA: d._RESPONSAVEL,
+              FUNIL_DE: prev._FUNIL,
+              FUNIL_PARA: d._FUNIL,
+              TIPO: prev._FUNIL === d._FUNIL ? 'TROCA_MESMO_FUNIL' : 'HANDOFF_ENTRE_FUNIS',
+            });
+          const l = idBitrixValido(d.LEAD_ID) ? lm[idBitrixString(d.LEAD_ID)] : null;
+          if (
+            l &&
+            idBitrixValido(l.ASSIGNED_BY_ID) &&
+            idBitrixValido(d.ASSIGNED_BY_ID) &&
+            idBitrixString(l.ASSIGNED_BY_ID) !== idBitrixString(d.ASSIGNED_BY_ID)
+          )
+            rows.push({
+              CLIENTE: d._CLIENTE,
+              DEAL_ID: d.ID,
+              DE: nomeUsuario(l.ASSIGNED_BY_ID),
+              PARA: d._RESPONSAVEL,
+              FUNIL_DE: 'Lead',
+              FUNIL_PARA: d._FUNIL,
+              TIPO: 'LEAD_PARA_NEGOCIO',
+            });
+          prev = d;
+        });
+      });
+      criarResultadoCatalogo(
+        chave,
+        'Handoffs e trocas de responsável',
+        'Diferenças observáveis entre os registros extraídos.',
+        [
+          kpi('Eventos', rows.length),
+          kpi('Mesmo funil', rows.filter((x) => x.TIPO === 'TROCA_MESMO_FUNIL').length),
+          kpi('Entre funis', rows.filter((x) => x.TIPO === 'HANDOFF_ENTRE_FUNIS').length),
+          kpi('Lead → Negócio', rows.filter((x) => x.TIPO === 'LEAD_PARA_NEGOCIO').length),
+          kpi('Clientes', new Set(rows.map((x) => x.CLIENTE)).size),
+          kpi('Origens', new Set(rows.map((x) => x.DE).filter(Boolean)).size),
+          kpi('Destinos', new Set(rows.map((x) => x.PARA).filter(Boolean)).size),
+          kpi('Owner histórico', 'limitado'),
+        ],
+        [
+          {
+            titulo: 'Handoffs e trocas',
+            dados: rows,
+            colunas: [
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Deal', valor: 'DEAL_ID' },
+              { label: 'De', valor: 'DE' },
+              { label: 'Para', valor: 'PARA' },
+              { label: 'Funil origem', valor: 'FUNIL_DE' },
+              { label: 'Funil destino', valor: 'FUNIL_PARA' },
+              { label: 'Tipo', valor: 'TIPO' },
+            ],
+          },
+        ],
+        'Não reconstrói todas as alterações históricas de ASSIGNED_BY_ID dentro do mesmo card.',
+      );
+    } else if (chave === 'reentradas') {
+      const b = await baseDealsCatalogo(webhook, false),
+        ids = b.deals.map((d) => d.ID),
+        hist = await buscarHistoricoEntidadeSDR(webhook, 2, ids),
+        by = {};
+      hist.forEach((h) => (by[String(h.OWNER_ID)] ||= []).push(h));
+      const rows = [];
+      let re = 0,
+        mud = 0;
+      const dealsRe = new Set();
+      Object.entries(by).forEach(([id, a]) => {
+        a.sort((x, y) => String(x.CREATED_TIME).localeCompare(String(y.CREATED_TIME)));
+        const seen = new Set();
+        let ps = '',
+          pc = '';
+        a.forEach((h) => {
+          const c = String(h.CATEGORY_ID ?? ''),
+            s = String(h.STAGE_ID || ''),
+            key = `${c}|${s}`,
+            f = nomeFunilSemCodigo(b.meta.categorias?.[c] || `Categoria ${c}`),
+            lab = b.meta.estagios?.[c]?.[s]?.label || s;
+          if (seen.has(key) && key !== ps) {
+            re++;
+            dealsRe.add(id);
+            rows.push({
+              DEAL_ID: id,
+              TIPO: 'REENTRADA_ESTAGIO',
+              FUNIL: f,
+              ETAPA: lab,
+              DATA: h.CREATED_TIME || '',
+            });
+          }
+          if (pc && c !== pc) {
+            mud++;
+            rows.push({
+              DEAL_ID: id,
+              TIPO: 'MUDANCA_PIPELINE',
+              FUNIL: `${nomeFunilSemCodigo(b.meta.categorias?.[pc] || pc)} → ${f}`,
+              ETAPA: lab,
+              DATA: h.CREATED_TIME || '',
+            });
+          }
+          seen.add(key);
+          ps = key;
+          pc = c;
+        });
+      });
+      criarResultadoCatalogo(
+        chave,
+        'Reentradas, retrabalho e mudanças de pipeline',
+        'Histórico de estágios dos negócios.',
+        [
+          kpi('Eventos históricos', hist.length),
+          kpi('Reentradas', re),
+          kpi('Deals c/ reentrada', dealsRe.size),
+          kpi('Mudanças pipeline', mud),
+          kpi('Deals analisados', ids.length),
+          kpi('Fonte', 'stagehistory'),
+          kpi('Reabertura legítima', 'possível'),
+          kpi('Diagnóstico', 'investigar'),
+        ],
+        [
+          {
+            titulo: 'Eventos históricos relevantes',
+            dados: rows,
+            colunas: [
+              { label: 'Deal', valor: 'DEAL_ID' },
+              { label: 'Tipo', valor: 'TIPO' },
+              { label: 'Funil / rota', valor: 'FUNIL' },
+              { label: 'Etapa', valor: 'ETAPA' },
+              { label: 'Data', valor: 'DATA' },
+            ],
+          },
+        ],
+        'Reentrada é sinal para auditoria, não prova automática de retrabalho.',
+      );
+    } else if (chave === 'duplicidades') {
+      await buscarUsuariosJornada(webhook);
+      const cb = await listarCompletoRelatorio(
+          webhook,
+          'crm.company.list',
+          ['ID', 'TITLE', 'PHONE', 'EMAIL', 'DATE_CREATE', 'ASSIGNED_BY_ID'],
+          {},
+          { ID: 'ASC' },
+          'Duplicidade: empresas...',
+        ),
+        cm = {};
+      cb.dados.forEach((x) => (cm[String(x.ID)] = x));
+      const sig = construirSinaisDuplicidadeEmpresas(cm),
+        dup = Object.entries(sig)
+          .filter(([id, s]) => s.duplicado)
+          .map(([id, s]) => ({
+            COMPANY_ID: id,
+            EMPRESA: cm[id]?.TITLE || '',
+            MOTIVOS: s.motivos.join(' | '),
+            RELACIONADOS: s.ids.join(' | '),
+          }));
+      const b = await baseDealsCatalogo(webhook, false),
+        m = {};
+      b.deals.forEach((d) => {
+        if (classificarFunilJornada(d.CATEGORY_ID) === 'INTERNO') return;
+        const n = idBitrixValido(d.COMPANY_ID)
+            ? `C:${idBitrixString(d.COMPANY_ID)}`
+            : `N:${normalizarTextoChave(d.TITLE || '')}`,
+          k = `${n}|||${d.CATEGORY_ID}`;
+        (m[k] ||= []).push(d);
+      });
+      const rep = Object.values(m)
+        .filter((a) => a.length > 1)
+        .map((a) => ({
+          CLIENTE: enriquecerDealCatalogo(a[0], b)._CLIENTE,
+          FUNIL: enriquecerDealCatalogo(a[0], b)._FUNIL,
+          NEGOCIOS: a.length,
+          IDS: a.map((d) => d.ID).join(' | '),
+        }))
+        .sort((a, b) => b.NEGOCIOS - a.NEGOCIOS);
+      criarResultadoCatalogo(
+        chave,
+        'Duplicidades e identidade do cliente',
+        'Sinais cadastrais e repetição no pipeline.',
+        [
+          kpi('Empresas', cb.dados.length),
+          kpi('Cadastros sinalizados', dup.length),
+          kpi('Grupos repetidos', rep.length),
+          kpi(
+            'Cards nesses grupos',
+            rep.reduce((a, r) => a + r.NEGOCIOS, 0),
+          ),
+          kpi('COMPANY_ID 0', 'ignorado'),
+          kpi('Fusão automática', 'não'),
+          kpi('IDs', 'preservados'),
+          kpi('Critério', 'nome/e-mail/telefone'),
+        ],
+        [
+          {
+            titulo: 'Cliente repetido no mesmo pipeline',
+            dados: rep,
+            colunas: [
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Funil', valor: 'FUNIL' },
+              { label: 'Negócios', valor: 'NEGOCIOS' },
+              { label: 'IDs', valor: 'IDS' },
+            ],
+          },
+          {
+            titulo: 'Possíveis cadastros duplicados',
+            dados: dup,
+            colunas: [
+              { label: 'Company ID', valor: 'COMPANY_ID' },
+              { label: 'Empresa', valor: 'EMPRESA' },
+              { label: 'Motivos', valor: 'MOTIVOS' },
+              { label: 'Relacionados', valor: 'RELACIONADOS' },
+            ],
+          },
+        ],
+        'Sinal de duplicidade não implica mesclagem automática.',
+      );
+    } else if (chave === 'implantacao_posvenda') {
+      const b = await baseDealsCatalogo(webhook, false),
+        cats = encontrarCategoriasPorPalavras(
+          b.meta,
+          [
+            'financeiro',
+            'implantacao',
+            'implantação',
+            'sucesso do cliente',
+            'pos vendas',
+            'pós vendas',
+            'perfil securitario',
+            'perfil securitário',
+          ],
+          false,
+        ),
+        ref = new Date(`${p.referencia}T12:00:00`);
+      const rows = b.deals
+        .map((d) => enriquecerDealCatalogo(d, b))
+        .filter((d) => cats.includes(String(d.CATEGORY_ID)))
+        .map((d) => {
+          const mt = parteDataISO(d.MOVED_TIME),
+            dias = mt ? Math.max(0, Math.floor((ref - new Date(`${mt}T12:00:00`)) / 86400000)) : '';
+          return {
+            DEAL_ID: d.ID,
+            CLIENTE: d._CLIENTE,
+            PIPELINE: d._FUNIL,
+            ETAPA: d._ESTAGIO,
+            STATUS: d._SEMANTICA,
+            RESPONSAVEL: d._RESPONSAVEL,
+            DIAS_NO_ESTAGIO: dias,
+            VALOR: d._VALOR,
+            PILOTO: ehEstagioPiloto(d.STAGE_ID, d._ESTAGIO),
+          };
+        });
       // Piloto continua contado em Negócios/Concluídos/Pipelines (é uma etapa real de onboarding),
       // mas sai de Abertos/Pipeline aberto/Backlog operacional — mesma regra usada no resto do pedido.
-      const g={};rows.forEach((x)=>{if(!g[x.PIPELINE])g[x.PIPELINE]={PIPELINE:x.PIPELINE,NEGOCIOS:0,ABERTOS:0,CONCLUIDOS:0,FORA_30D:0};const r=g[x.PIPELINE];r.NEGOCIOS++;if(x.STATUS==="process"){if(!x.PILOTO)r.ABERTOS++;}else r.CONCLUIDOS++;if(Number(x.DIAS_NO_ESTAGIO)>30)r.FORA_30D++});
-      criarResultadoCatalogo(chave,"Implantação, Onboarding e Pós-Venda","Pipelines posteriores ao Comercial.",
-        [kpi("Negócios",rows.length),kpi("Abertos",rows.filter((x)=>x.STATUS==="process"&&!x.PILOTO).length),kpi("Concluídos",rows.filter((x)=>x.STATUS!=="process").length),kpi(">30d",rows.filter((x)=>Number(x.DIAS_NO_ESTAGIO)>30).length),kpi("Pipelines",Object.keys(g).length),kpi("Clientes",new Set(rows.map((x)=>x.CLIENTE)).size),kpi("Pipeline aberto",moedaRelatorio(rows.filter((x)=>x.STATUS==="process"&&!x.PILOTO).reduce((a,x)=>a+x.VALOR,0))),kpi("Responsáveis",new Set(rows.map((x)=>x.RESPONSAVEL)).size)],
-        [{titulo:"Resumo por pipeline",dados:Object.values(g),colunas:[{label:"Pipeline",valor:"PIPELINE"},{label:"Negócios",valor:"NEGOCIOS"},{label:"Abertos",valor:"ABERTOS"},{label:"Concluídos",valor:"CONCLUIDOS"},{label:">30d",valor:"FORA_30D"}]},{titulo:"Backlog operacional",dados:rows.filter((x)=>x.STATUS==="process"&&!x.PILOTO),colunas:[{label:"Deal",valor:"DEAL_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Pipeline",valor:"PIPELINE"},{label:"Etapa",valor:"ETAPA"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Dias",valor:"DIAS_NO_ESTAGIO"}]}]);
-    }
-
-    else if(chave==="atividades_pendentes"){
-      const a=await atividadesCatalogo(webhook,false,"",""),ref=p.referencia,m={};const rows=a.dados.map((x)=>{const id=idBitrixString(x.RESPONSIBLE_ID),resp=nomeUsuario(id)||(id?`ID ${id}`:"Sem responsável"),prazo=parteDataISO(x.DEADLINE);let sit="Sem prazo";if(prazo)sit=prazo<ref?"Atrasada":prazo===ref?"Vence hoje":"Futura";return{ATIVIDADE_ID:x.ID,RESPONSAVEL:resp,CANAL:canalAtividadeSDR(x),ASSUNTO:x.SUBJECT||"",DEADLINE:x.DEADLINE||"",SITUACAO:sit,VINCULOS:bindingsDaAtividade(x).map((b)=>`${nomeTipoEntidadeCRM(b.OWNER_TYPE_ID)}:${b.OWNER_ID}`).join(" | ")}});rows.forEach((x)=>{if(!m[x.RESPONSAVEL])m[x.RESPONSAVEL]={RESPONSAVEL:x.RESPONSAVEL,PENDENTES:0,ATRASADAS:0,HOJE:0,SEM_PRAZO:0};const r=m[x.RESPONSAVEL];r.PENDENTES++;if(x.SITUACAO==="Atrasada")r.ATRASADAS++;if(x.SITUACAO==="Vence hoje")r.HOJE++;if(x.SITUACAO==="Sem prazo")r.SEM_PRAZO++});
-      criarResultadoCatalogo(chave,"Atividades pendentes e atrasadas",`Referência: <strong>${escapeHtmlRelatorio(ref)}</strong>.`,
-        [kpi("Pendentes",rows.length),kpi("Atrasadas",rows.filter((x)=>x.SITUACAO==="Atrasada").length),kpi("Vencem hoje",rows.filter((x)=>x.SITUACAO==="Vence hoje").length),kpi("Sem prazo",rows.filter((x)=>x.SITUACAO==="Sem prazo").length),kpi("Responsáveis",Object.keys(m).length),kpi("Ligações",rows.filter((x)=>x.CANAL==="Ligação").length),kpi("Reuniões",rows.filter((x)=>x.CANAL==="Reunião").length),kpi("Tarefas",rows.filter((x)=>x.CANAL==="Tarefa").length)],
-        [{titulo:"Resumo por responsável",dados:Object.values(m).sort((a,b)=>b.ATRASADAS-a.ATRASADAS),colunas:[{label:"Responsável",valor:"RESPONSAVEL"},{label:"Pendentes",valor:"PENDENTES"},{label:"Atrasadas",valor:"ATRASADAS"},{label:"Hoje",valor:"HOJE"},{label:"Sem prazo",valor:"SEM_PRAZO"}]},{titulo:"Atividades abertas",dados:rows,colunas:[{label:"ID",valor:"ATIVIDADE_ID"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Canal",valor:"CANAL"},{label:"Assunto",valor:"ASSUNTO"},{label:"Deadline",valor:"DEADLINE"},{label:"Situação",valor:"SITUACAO"},{label:"Vínculos",valor:"VINCULOS"}]}]);
-    }
-
-    else if(chave==="qualidade_crm"){
-      const [db,lb]=await Promise.all([baseDealsCatalogo(webhook,false),baseLeadsCatalogo(webhook)]),ds=db.deals,ls=lb.leads;
-      const open=ds.filter((d)=>semanticaDeal(d,db.meta.estagios?.[String(d.CATEGORY_ID)]?.[String(d.STAGE_ID)]||{})==="process"&&!ehEstagioPiloto(d.STAGE_ID,db.meta.estagios?.[String(d.CATEGORY_ID)]?.[String(d.STAGE_ID)]?.label));
-      const checks=[
-        {ENTIDADE:"Negócios",CAMPO:"Vínculo cliente",TOTAL:ds.length,FALTANTES:ds.filter((d)=>!idBitrixValido(d.COMPANY_ID)&&!idBitrixValido(d.CONTACT_ID)&&!idBitrixValido(d.LEAD_ID)).length},
-        {ENTIDADE:"Negócios",CAMPO:"SOURCE_ID",TOTAL:ds.length,FALTANTES:ds.filter((d)=>!String(d.SOURCE_ID||"").trim()).length},
-        {ENTIDADE:"Negócios",CAMPO:"ASSIGNED_BY_ID",TOTAL:ds.length,FALTANTES:ds.filter((d)=>!idBitrixValido(d.ASSIGNED_BY_ID)).length},
-        {ENTIDADE:"Negócios",CAMPO:"OPPORTUNITY > 0",TOTAL:ds.length,FALTANTES:ds.filter((d)=>!(Number(d.OPPORTUNITY)>0)).length},
-        {ENTIDADE:"Negócios abertos",CAMPO:"CLOSEDATE",TOTAL:open.length,FALTANTES:open.filter((d)=>!parteDataISO(d.CLOSEDATE)).length},
-        {ENTIDADE:"Leads",CAMPO:"SOURCE_ID",TOTAL:ls.length,FALTANTES:ls.filter((l)=>!String(l.SOURCE_ID||"").trim()).length},
-        {ENTIDADE:"Leads",CAMPO:"ASSIGNED_BY_ID",TOTAL:ls.length,FALTANTES:ls.filter((l)=>!idBitrixValido(l.ASSIGNED_BY_ID)).length},
-        {ENTIDADE:"Leads",CAMPO:"Empresa / nome",TOTAL:ls.length,FALTANTES:ls.filter((l)=>!String(l.COMPANY_TITLE||l.NAME||l.TITLE||"").trim()).length},
-        {ENTIDADE:"Leads",CAMPO:"Telefone ou e-mail",TOTAL:ls.length,FALTANTES:ls.filter((l)=>!(valoresMulticampo(l.PHONE).length||valoresMulticampo(l.EMAIL).length)).length}
-      ].map((x)=>({...x,COMPLETUDE_PCT:x.TOTAL?Math.round((1-x.FALTANTES/x.TOTAL)*10000)/100:100}));
-      criarResultadoCatalogo(chave,"Qualidade do CRM & campos faltantes","Completude dos campos operacionais já mapeados.",
-        [kpi("Negócios",ds.length),kpi("Leads",ls.length),kpi("Checks",checks.length),kpi("Ocorrências faltantes",checks.reduce((a,x)=>a+x.FALTANTES,0)),kpi("Deals sem cliente",checks[0].FALTANTES),kpi("Deals sem origem",checks[1].FALTANTES),kpi("Leads sem origem",checks[5].FALTANTES),kpi("Leads sem contato",checks[8].FALTANTES)],
-        [{titulo:"Completude por regra",dados:checks,colunas:[{label:"Entidade",valor:"ENTIDADE"},{label:"Campo/regra",valor:"CAMPO"},{label:"Total",valor:"TOTAL"},{label:"Faltantes",valor:"FALTANTES"},{label:"Completude",valor:(x)=>`${x.COMPLETUDE_PCT}%`}]}],
-        "Completude mede disponibilidade para operação e análise; não afirma que todo campo seja obrigatório.");
-    }
-
-    else if(chave==="auditoria_sdr"){
-      const lb=await baseLeadsCatalogo(webhook),ls=lb.leads.filter((l)=>dentroPeriodoCatalogo(l.DATE_CREATE,p));
-      const a=await atividadesCatalogo(webhook,null,p.inicio,p.fim),by={};
-      a.dados.forEach((x)=>bindingsDaAtividade(x).forEach((b)=>{if(b.OWNER_TYPE_ID==="1")(by[b.OWNER_ID]||=[]).push(x)}));
-      const semAtividade=ls.filter((l)=>!(by[String(l.ID)]||[]).length);
-      const concluidasSemAssunto=a.dados.filter((x)=>x.COMPLETED==="Y"&&!String(x.SUBJECT||"").trim());
-      const abertos=ls.filter((l)=>semanticaLead(l)==="process");
-      const semContatoRecente=abertos.filter((l)=>{
-        const ultimas=(by[String(l.ID)]||[]).map((x)=>new Date(x.END_TIME)).filter((d)=>!isNaN(d)).sort((x,y)=>y-x);
-        const ref=ultimas[0]||(l.LAST_ACTIVITY_TIME?new Date(l.LAST_ACTIVITY_TIME):new Date(l.DATE_CREATE));
-        return !isNaN(ref)&&(new Date()-ref)/86400000>7;
+      const g = {};
+      rows.forEach((x) => {
+        if (!g[x.PIPELINE])
+          g[x.PIPELINE] = {
+            PIPELINE: x.PIPELINE,
+            NEGOCIOS: 0,
+            ABERTOS: 0,
+            CONCLUIDOS: 0,
+            FORA_30D: 0,
+          };
+        const r = g[x.PIPELINE];
+        r.NEGOCIOS++;
+        if (x.STATUS === 'process') {
+          if (!x.PILOTO) r.ABERTOS++;
+        } else r.CONCLUIDOS++;
+        if (Number(x.DIAS_NO_ESTAGIO) > 30) r.FORA_30D++;
       });
-      const checks=[
-        {ENTIDADE:"Leads",CAMPO:"Ao menos 1 atividade vinculada",TOTAL:ls.length,FALTANTES:semAtividade.length},
-        {ENTIDADE:"Atividades concluídas",CAMPO:"Assunto/resultado preenchido",TOTAL:a.dados.filter((x)=>x.COMPLETED==="Y").length,FALTANTES:concluidasSemAssunto.length},
-        {ENTIDADE:"Leads em aberto",CAMPO:"Contato nos últimos 7 dias",TOTAL:abertos.length,FALTANTES:semContatoRecente.length},
-        {ENTIDADE:"Leads",CAMPO:"Telefone ou e-mail",TOTAL:ls.length,FALTANTES:ls.filter((l)=>!(valoresMulticampo(l.PHONE).length||valoresMulticampo(l.EMAIL).length)).length},
-        {ENTIDADE:"Leads",CAMPO:"Origem (SOURCE_ID)",TOTAL:ls.length,FALTANTES:ls.filter((l)=>!String(l.SOURCE_ID||"").trim()).length},
-        {ENTIDADE:"Leads",CAMPO:"Responsável atribuído",TOTAL:ls.length,FALTANTES:ls.filter((l)=>!idBitrixValido(l.ASSIGNED_BY_ID)).length}
-      ].map((x)=>({...x,COMPLETUDE_PCT:x.TOTAL?Math.round((1-x.FALTANTES/x.TOTAL)*10000)/100:100}));
-      const linhaLead=(l)=>({LEAD_ID:l.ID,CLIENTE:l.COMPANY_TITLE||`${l.NAME||""} ${l.LAST_NAME||""}`.trim()||l.TITLE||"",STATUS:labelStatusLead(lb.statusMap,l.STATUS_ID),RESPONSAVEL:nomeUsuario(l.ASSIGNED_BY_ID),CRIADO:l.DATE_CREATE||""});
-      criarResultadoCatalogo(chave,"Auditoria SDR • validar dados e plano",`Leads criados entre <strong>${escapeHtmlRelatorio(p.inicio||"início")}</strong> e <strong>${escapeHtmlRelatorio(p.fim||"hoje")}</strong>.`,
-        [kpi("Leads no período",ls.length),kpi("Sem nenhuma atividade",semAtividade.length),kpi("Atividades sem resultado",concluidasSemAssunto.length),kpi("Abertos sem contato 7d+",semContatoRecente.length),kpi("Checks",checks.length),kpi("Ocorrências faltantes",checks.reduce((a,x)=>a+x.FALTANTES,0))],
-        [{titulo:"Completude e aderência ao plano de contato",dados:checks,colunas:[{label:"Entidade",valor:"ENTIDADE"},{label:"Campo/regra",valor:"CAMPO"},{label:"Total",valor:"TOTAL"},{label:"Faltantes",valor:"FALTANTES"},{label:"Completude",valor:(x)=>`${x.COMPLETUDE_PCT}%`}]},
-         {titulo:"Leads sem nenhuma atividade",dados:semAtividade.map(linhaLead),colunas:[{label:"Lead",valor:"LEAD_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Status",valor:"STATUS"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Criado",valor:"CRIADO"}]},
-         {titulo:"Leads em aberto sem contato recente (7d+)",dados:semContatoRecente.map(linhaLead),colunas:[{label:"Lead",valor:"LEAD_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Status",valor:"STATUS"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Criado",valor:"CRIADO"}]}],
-        "Auditoria usa apenas atividades e campos já mapeados pelo extrator; valida existência e completude, não a qualidade do conteúdo registrado em cada atividade.");
-    }
+      criarResultadoCatalogo(
+        chave,
+        'Implantação, Onboarding e Pós-Venda',
+        'Pipelines posteriores ao Comercial.',
+        [
+          kpi('Negócios', rows.length),
+          kpi('Abertos', rows.filter((x) => x.STATUS === 'process' && !x.PILOTO).length),
+          kpi('Concluídos', rows.filter((x) => x.STATUS !== 'process').length),
+          kpi('>30d', rows.filter((x) => Number(x.DIAS_NO_ESTAGIO) > 30).length),
+          kpi('Pipelines', Object.keys(g).length),
+          kpi('Clientes', new Set(rows.map((x) => x.CLIENTE)).size),
+          kpi(
+            'Pipeline aberto',
+            moedaRelatorio(
+              rows
+                .filter((x) => x.STATUS === 'process' && !x.PILOTO)
+                .reduce((a, x) => a + x.VALOR, 0),
+            ),
+          ),
+          kpi('Responsáveis', new Set(rows.map((x) => x.RESPONSAVEL)).size),
+        ],
+        [
+          {
+            titulo: 'Resumo por pipeline',
+            dados: Object.values(g),
+            colunas: [
+              { label: 'Pipeline', valor: 'PIPELINE' },
+              { label: 'Negócios', valor: 'NEGOCIOS' },
+              { label: 'Abertos', valor: 'ABERTOS' },
+              { label: 'Concluídos', valor: 'CONCLUIDOS' },
+              { label: '>30d', valor: 'FORA_30D' },
+            ],
+          },
+          {
+            titulo: 'Backlog operacional',
+            dados: rows.filter((x) => x.STATUS === 'process' && !x.PILOTO),
+            colunas: [
+              { label: 'Deal', valor: 'DEAL_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Pipeline', valor: 'PIPELINE' },
+              { label: 'Etapa', valor: 'ETAPA' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Dias', valor: 'DIAS_NO_ESTAGIO' },
+            ],
+          },
+        ],
+      );
+    } else if (chave === 'atividades_pendentes') {
+      const a = await atividadesCatalogo(webhook, false, '', ''),
+        ref = p.referencia,
+        m = {};
+      const rows = a.dados.map((x) => {
+        const id = idBitrixString(x.RESPONSIBLE_ID),
+          resp = nomeUsuario(id) || (id ? `ID ${id}` : 'Sem responsável'),
+          prazo = parteDataISO(x.DEADLINE);
+        let sit = 'Sem prazo';
+        if (prazo) sit = prazo < ref ? 'Atrasada' : prazo === ref ? 'Vence hoje' : 'Futura';
+        return {
+          ATIVIDADE_ID: x.ID,
+          RESPONSAVEL: resp,
+          CANAL: canalAtividadeSDR(x),
+          ASSUNTO: x.SUBJECT || '',
+          DEADLINE: x.DEADLINE || '',
+          SITUACAO: sit,
+          VINCULOS: bindingsDaAtividade(x)
+            .map((b) => `${nomeTipoEntidadeCRM(b.OWNER_TYPE_ID)}:${b.OWNER_ID}`)
+            .join(' | '),
+        };
+      });
+      rows.forEach((x) => {
+        if (!m[x.RESPONSAVEL])
+          m[x.RESPONSAVEL] = {
+            RESPONSAVEL: x.RESPONSAVEL,
+            PENDENTES: 0,
+            ATRASADAS: 0,
+            HOJE: 0,
+            SEM_PRAZO: 0,
+          };
+        const r = m[x.RESPONSAVEL];
+        r.PENDENTES++;
+        if (x.SITUACAO === 'Atrasada') r.ATRASADAS++;
+        if (x.SITUACAO === 'Vence hoje') r.HOJE++;
+        if (x.SITUACAO === 'Sem prazo') r.SEM_PRAZO++;
+      });
+      criarResultadoCatalogo(
+        chave,
+        'Atividades pendentes e atrasadas',
+        `Referência: <strong>${escapeHtmlRelatorio(ref)}</strong>.`,
+        [
+          kpi('Pendentes', rows.length),
+          kpi('Atrasadas', rows.filter((x) => x.SITUACAO === 'Atrasada').length),
+          kpi('Vencem hoje', rows.filter((x) => x.SITUACAO === 'Vence hoje').length),
+          kpi('Sem prazo', rows.filter((x) => x.SITUACAO === 'Sem prazo').length),
+          kpi('Responsáveis', Object.keys(m).length),
+          kpi('Ligações', rows.filter((x) => x.CANAL === 'Ligação').length),
+          kpi('Reuniões', rows.filter((x) => x.CANAL === 'Reunião').length),
+          kpi('Tarefas', rows.filter((x) => x.CANAL === 'Tarefa').length),
+        ],
+        [
+          {
+            titulo: 'Resumo por responsável',
+            dados: Object.values(m).sort((a, b) => b.ATRASADAS - a.ATRASADAS),
+            colunas: [
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Pendentes', valor: 'PENDENTES' },
+              { label: 'Atrasadas', valor: 'ATRASADAS' },
+              { label: 'Hoje', valor: 'HOJE' },
+              { label: 'Sem prazo', valor: 'SEM_PRAZO' },
+            ],
+          },
+          {
+            titulo: 'Atividades abertas',
+            dados: rows,
+            colunas: [
+              { label: 'ID', valor: 'ATIVIDADE_ID' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Canal', valor: 'CANAL' },
+              { label: 'Assunto', valor: 'ASSUNTO' },
+              { label: 'Deadline', valor: 'DEADLINE' },
+              { label: 'Situação', valor: 'SITUACAO' },
+              { label: 'Vínculos', valor: 'VINCULOS' },
+            ],
+          },
+        ],
+      );
+    } else if (chave === 'qualidade_crm') {
+      const [db, lb] = await Promise.all([
+          baseDealsCatalogo(webhook, false),
+          baseLeadsCatalogo(webhook),
+        ]),
+        ds = db.deals,
+        ls = lb.leads;
+      const open = ds.filter(
+        (d) =>
+          semanticaDeal(
+            d,
+            db.meta.estagios?.[String(d.CATEGORY_ID)]?.[String(d.STAGE_ID)] || {},
+          ) === 'process' &&
+          !ehEstagioPiloto(
+            d.STAGE_ID,
+            db.meta.estagios?.[String(d.CATEGORY_ID)]?.[String(d.STAGE_ID)]?.label,
+          ),
+      );
+      const checks = [
+        {
+          ENTIDADE: 'Negócios',
+          CAMPO: 'Vínculo cliente',
+          TOTAL: ds.length,
+          FALTANTES: ds.filter(
+            (d) =>
+              !idBitrixValido(d.COMPANY_ID) &&
+              !idBitrixValido(d.CONTACT_ID) &&
+              !idBitrixValido(d.LEAD_ID),
+          ).length,
+        },
+        {
+          ENTIDADE: 'Negócios',
+          CAMPO: 'SOURCE_ID',
+          TOTAL: ds.length,
+          FALTANTES: ds.filter((d) => !String(d.SOURCE_ID || '').trim()).length,
+        },
+        {
+          ENTIDADE: 'Negócios',
+          CAMPO: 'ASSIGNED_BY_ID',
+          TOTAL: ds.length,
+          FALTANTES: ds.filter((d) => !idBitrixValido(d.ASSIGNED_BY_ID)).length,
+        },
+        {
+          ENTIDADE: 'Negócios',
+          CAMPO: 'OPPORTUNITY > 0',
+          TOTAL: ds.length,
+          FALTANTES: ds.filter((d) => !(Number(d.OPPORTUNITY) > 0)).length,
+        },
+        {
+          ENTIDADE: 'Negócios abertos',
+          CAMPO: 'CLOSEDATE',
+          TOTAL: open.length,
+          FALTANTES: open.filter((d) => !parteDataISO(d.CLOSEDATE)).length,
+        },
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'SOURCE_ID',
+          TOTAL: ls.length,
+          FALTANTES: ls.filter((l) => !String(l.SOURCE_ID || '').trim()).length,
+        },
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'ASSIGNED_BY_ID',
+          TOTAL: ls.length,
+          FALTANTES: ls.filter((l) => !idBitrixValido(l.ASSIGNED_BY_ID)).length,
+        },
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'Empresa / nome',
+          TOTAL: ls.length,
+          FALTANTES: ls.filter((l) => !String(l.COMPANY_TITLE || l.NAME || l.TITLE || '').trim())
+            .length,
+        },
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'Telefone ou e-mail',
+          TOTAL: ls.length,
+          FALTANTES: ls.filter(
+            (l) => !(valoresMulticampo(l.PHONE).length || valoresMulticampo(l.EMAIL).length),
+          ).length,
+        },
+      ].map((x) => ({
+        ...x,
+        COMPLETUDE_PCT: x.TOTAL ? Math.round((1 - x.FALTANTES / x.TOTAL) * 10000) / 100 : 100,
+      }));
+      criarResultadoCatalogo(
+        chave,
+        'Qualidade do CRM & campos faltantes',
+        'Completude dos campos operacionais já mapeados.',
+        [
+          kpi('Negócios', ds.length),
+          kpi('Leads', ls.length),
+          kpi('Checks', checks.length),
+          kpi(
+            'Ocorrências faltantes',
+            checks.reduce((a, x) => a + x.FALTANTES, 0),
+          ),
+          kpi('Deals sem cliente', checks[0].FALTANTES),
+          kpi('Deals sem origem', checks[1].FALTANTES),
+          kpi('Leads sem origem', checks[5].FALTANTES),
+          kpi('Leads sem contato', checks[8].FALTANTES),
+        ],
+        [
+          {
+            titulo: 'Completude por regra',
+            dados: checks,
+            colunas: [
+              { label: 'Entidade', valor: 'ENTIDADE' },
+              { label: 'Campo/regra', valor: 'CAMPO' },
+              { label: 'Total', valor: 'TOTAL' },
+              { label: 'Faltantes', valor: 'FALTANTES' },
+              { label: 'Completude', valor: (x) => `${x.COMPLETUDE_PCT}%` },
+            ],
+          },
+        ],
+        'Completude mede disponibilidade para operação e análise; não afirma que todo campo seja obrigatório.',
+      );
+    } else if (chave === 'auditoria_sdr') {
+      const lb = await baseLeadsCatalogo(webhook),
+        ls = lb.leads.filter((l) => dentroPeriodoCatalogo(l.DATE_CREATE, p));
+      const a = await atividadesCatalogo(webhook, null, p.inicio, p.fim),
+        by = {};
+      a.dados.forEach((x) =>
+        bindingsDaAtividade(x).forEach((b) => {
+          if (b.OWNER_TYPE_ID === '1') (by[b.OWNER_ID] ||= []).push(x);
+        }),
+      );
+      const semAtividade = ls.filter((l) => !(by[String(l.ID)] || []).length);
+      const concluidasSemAssunto = a.dados.filter(
+        (x) => x.COMPLETED === 'Y' && !String(x.SUBJECT || '').trim(),
+      );
+      const abertos = ls.filter((l) => semanticaLead(l) === 'process');
+      const semContatoRecente = abertos.filter((l) => {
+        const ultimas = (by[String(l.ID)] || [])
+          .map((x) => new Date(x.END_TIME))
+          .filter((d) => !isNaN(d))
+          .sort((x, y) => y - x);
+        const ref =
+          ultimas[0] ||
+          (l.LAST_ACTIVITY_TIME ? new Date(l.LAST_ACTIVITY_TIME) : new Date(l.DATE_CREATE));
+        return !isNaN(ref) && (new Date() - ref) / 86400000 > 7;
+      });
+      const checks = [
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'Ao menos 1 atividade vinculada',
+          TOTAL: ls.length,
+          FALTANTES: semAtividade.length,
+        },
+        {
+          ENTIDADE: 'Atividades concluídas',
+          CAMPO: 'Assunto/resultado preenchido',
+          TOTAL: a.dados.filter((x) => x.COMPLETED === 'Y').length,
+          FALTANTES: concluidasSemAssunto.length,
+        },
+        {
+          ENTIDADE: 'Leads em aberto',
+          CAMPO: 'Contato nos últimos 7 dias',
+          TOTAL: abertos.length,
+          FALTANTES: semContatoRecente.length,
+        },
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'Telefone ou e-mail',
+          TOTAL: ls.length,
+          FALTANTES: ls.filter(
+            (l) => !(valoresMulticampo(l.PHONE).length || valoresMulticampo(l.EMAIL).length),
+          ).length,
+        },
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'Origem (SOURCE_ID)',
+          TOTAL: ls.length,
+          FALTANTES: ls.filter((l) => !String(l.SOURCE_ID || '').trim()).length,
+        },
+        {
+          ENTIDADE: 'Leads',
+          CAMPO: 'Responsável atribuído',
+          TOTAL: ls.length,
+          FALTANTES: ls.filter((l) => !idBitrixValido(l.ASSIGNED_BY_ID)).length,
+        },
+      ].map((x) => ({
+        ...x,
+        COMPLETUDE_PCT: x.TOTAL ? Math.round((1 - x.FALTANTES / x.TOTAL) * 10000) / 100 : 100,
+      }));
+      const linhaLead = (l) => ({
+        LEAD_ID: l.ID,
+        CLIENTE: l.COMPANY_TITLE || `${l.NAME || ''} ${l.LAST_NAME || ''}`.trim() || l.TITLE || '',
+        STATUS: labelStatusLead(lb.statusMap, l.STATUS_ID),
+        RESPONSAVEL: nomeUsuario(l.ASSIGNED_BY_ID),
+        CRIADO: l.DATE_CREATE || '',
+      });
+      criarResultadoCatalogo(
+        chave,
+        'Auditoria SDR • validar dados e plano',
+        `Leads criados entre <strong>${escapeHtmlRelatorio(p.inicio || 'início')}</strong> e <strong>${escapeHtmlRelatorio(p.fim || 'hoje')}</strong>.`,
+        [
+          kpi('Leads no período', ls.length),
+          kpi('Sem nenhuma atividade', semAtividade.length),
+          kpi('Atividades sem resultado', concluidasSemAssunto.length),
+          kpi('Abertos sem contato 7d+', semContatoRecente.length),
+          kpi('Checks', checks.length),
+          kpi(
+            'Ocorrências faltantes',
+            checks.reduce((a, x) => a + x.FALTANTES, 0),
+          ),
+        ],
+        [
+          {
+            titulo: 'Completude e aderência ao plano de contato',
+            dados: checks,
+            colunas: [
+              { label: 'Entidade', valor: 'ENTIDADE' },
+              { label: 'Campo/regra', valor: 'CAMPO' },
+              { label: 'Total', valor: 'TOTAL' },
+              { label: 'Faltantes', valor: 'FALTANTES' },
+              { label: 'Completude', valor: (x) => `${x.COMPLETUDE_PCT}%` },
+            ],
+          },
+          {
+            titulo: 'Leads sem nenhuma atividade',
+            dados: semAtividade.map(linhaLead),
+            colunas: [
+              { label: 'Lead', valor: 'LEAD_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Status', valor: 'STATUS' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Criado', valor: 'CRIADO' },
+            ],
+          },
+          {
+            titulo: 'Leads em aberto sem contato recente (7d+)',
+            dados: semContatoRecente.map(linhaLead),
+            colunas: [
+              { label: 'Lead', valor: 'LEAD_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Status', valor: 'STATUS' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Criado', valor: 'CRIADO' },
+            ],
+          },
+        ],
+        'Auditoria usa apenas atividades e campos já mapeados pelo extrator; valida existência e completude, não a qualidade do conteúdo registrado em cada atividade.',
+      );
+    } else if (chave === 'decisao_final_sdr') {
+      const lb = await baseLeadsCatalogo(webhook),
+        diasLimite = Math.max(1, Number(document.getElementById('diasEstagnacaoSDR').value) || 15);
+      const a = await atividadesCatalogo(webhook, null, '', ''),
+        by = {};
+      a.dados.forEach((x) =>
+        bindingsDaAtividade(x).forEach((b) => {
+          if (b.OWNER_TYPE_ID === '1') (by[b.OWNER_ID] ||= []).push(x);
+        }),
+      );
+      const agora = new Date();
+      const candidatos = lb.leads
+        .filter((l) => semanticaLead(l) === 'process')
+        .map((l) => {
+          const atividadesLead = by[String(l.ID)] || [],
+            tentativas = atividadesLead.length;
+          const refParado = parteDataISO(l.MOVED_TIME) || parteDataISO(l.DATE_CREATE);
+          const diasParado = refParado
+            ? Math.max(0, Math.floor((agora - new Date(`${refParado}T12:00:00`)) / 86400000))
+            : '';
+          let acao = 'Manter em nutrição';
+          if (diasParado === '' || diasParado < diasLimite) acao = null;
+          else if (tentativas === 0) acao = 'Recontatar';
+          else if (diasParado > diasLimite * 3) acao = 'Desqualificar';
+          else if (tentativas >= 3 || Number(l.OPPORTUNITY) > 0) acao = 'Escalar para Comercial';
+          return {
+            LEAD_ID: l.ID,
+            CLIENTE:
+              l.COMPANY_TITLE || `${l.NAME || ''} ${l.LAST_NAME || ''}`.trim() || l.TITLE || '',
+            STATUS: labelStatusLead(lb.statusMap, l.STATUS_ID),
+            RESPONSAVEL: nomeUsuario(l.ASSIGNED_BY_ID),
+            DIAS_PARADO: diasParado,
+            TENTATIVAS: tentativas,
+            ACAO_RECOMENDADA: acao,
+          };
+        })
+        .filter((x) => x.ACAO_RECOMENDADA)
+        .sort((x, y) => Number(y.DIAS_PARADO) - Number(x.DIAS_PARADO));
+      const porAcao = {};
+      candidatos.forEach((x) => {
+        porAcao[x.ACAO_RECOMENDADA] = (porAcao[x.ACAO_RECOMENDADA] || 0) + 1;
+      });
+      criarResultadoCatalogo(
+        chave,
+        'Decisão Final SDR • saneamento seguro',
+        `Leads em aberto estagnados há <strong>${diasLimite}+ dias</strong> sem mudança de etapa.`,
+        [
+          kpi('Leads estagnados', candidatos.length),
+          kpi('Recontatar', porAcao['Recontatar'] || 0),
+          kpi('Desqualificar', porAcao['Desqualificar'] || 0),
+          kpi('Escalar para Comercial', porAcao['Escalar para Comercial'] || 0),
+          kpi('Manter em nutrição', porAcao['Manter em nutrição'] || 0),
+          kpi('Limiar de estagnação', `${diasLimite} dias`),
+        ],
+        [
+          {
+            titulo: 'Leads estagnados e ação recomendada',
+            dados: candidatos,
+            colunas: [
+              { label: 'Lead', valor: 'LEAD_ID' },
+              { label: 'Cliente', valor: 'CLIENTE' },
+              { label: 'Status', valor: 'STATUS' },
+              { label: 'Responsável', valor: 'RESPONSAVEL' },
+              { label: 'Dias parado', valor: 'DIAS_PARADO' },
+              { label: 'Tentativas de contato', valor: 'TENTATIVAS' },
+              { label: 'Ação recomendada', valor: 'ACAO_RECOMENDADA' },
+            ],
+          },
+        ],
+        'Apoio a decisão apenas — nenhuma alteração é enviada ao Bitrix automaticamente. Para aplicar uma ação, use a seção de Sincronização com o registro e o novo status.',
+      );
+    } else throw new Error(`Relatório "${chave}" ainda não possui implementação.`);
 
-    else if(chave==="decisao_final_sdr"){
-      const lb=await baseLeadsCatalogo(webhook),diasLimite=Math.max(1,Number(document.getElementById("diasEstagnacaoSDR").value)||15);
-      const a=await atividadesCatalogo(webhook,null,"",""),by={};
-      a.dados.forEach((x)=>bindingsDaAtividade(x).forEach((b)=>{if(b.OWNER_TYPE_ID==="1")(by[b.OWNER_ID]||=[]).push(x)}));
-      const agora=new Date();
-      const candidatos=lb.leads.filter((l)=>semanticaLead(l)==="process").map((l)=>{
-        const atividadesLead=by[String(l.ID)]||[],tentativas=atividadesLead.length;
-        const refParado=parteDataISO(l.MOVED_TIME)||parteDataISO(l.DATE_CREATE);
-        const diasParado=refParado?Math.max(0,Math.floor((agora-new Date(`${refParado}T12:00:00`))/86400000)):"";
-        let acao="Manter em nutrição";
-        if(diasParado===""||diasParado<diasLimite)acao=null;
-        else if(tentativas===0)acao="Recontatar";
-        else if(diasParado>diasLimite*3)acao="Desqualificar";
-        else if(tentativas>=3||Number(l.OPPORTUNITY)>0)acao="Escalar para Comercial";
-        return{LEAD_ID:l.ID,CLIENTE:l.COMPANY_TITLE||`${l.NAME||""} ${l.LAST_NAME||""}`.trim()||l.TITLE||"",STATUS:labelStatusLead(lb.statusMap,l.STATUS_ID),RESPONSAVEL:nomeUsuario(l.ASSIGNED_BY_ID),DIAS_PARADO:diasParado,TENTATIVAS:tentativas,ACAO_RECOMENDADA:acao};
-      }).filter((x)=>x.ACAO_RECOMENDADA).sort((x,y)=>Number(y.DIAS_PARADO)-Number(x.DIAS_PARADO));
-      const porAcao={};candidatos.forEach((x)=>{porAcao[x.ACAO_RECOMENDADA]=(porAcao[x.ACAO_RECOMENDADA]||0)+1});
-      criarResultadoCatalogo(chave,"Decisão Final SDR • saneamento seguro",`Leads em aberto estagnados há <strong>${diasLimite}+ dias</strong> sem mudança de etapa.`,
-        [kpi("Leads estagnados",candidatos.length),kpi("Recontatar",porAcao["Recontatar"]||0),kpi("Desqualificar",porAcao["Desqualificar"]||0),kpi("Escalar para Comercial",porAcao["Escalar para Comercial"]||0),kpi("Manter em nutrição",porAcao["Manter em nutrição"]||0),kpi("Limiar de estagnação",`${diasLimite} dias`)],
-        [{titulo:"Leads estagnados e ação recomendada",dados:candidatos,colunas:[{label:"Lead",valor:"LEAD_ID"},{label:"Cliente",valor:"CLIENTE"},{label:"Status",valor:"STATUS"},{label:"Responsável",valor:"RESPONSAVEL"},{label:"Dias parado",valor:"DIAS_PARADO"},{label:"Tentativas de contato",valor:"TENTATIVAS"},{label:"Ação recomendada",valor:"ACAO_RECOMENDADA"}]}],
-        "Apoio a decisão apenas — nenhuma alteração é enviada ao Bitrix automaticamente. Para aplicar uma ação, use a seção de Sincronização com o registro e o novo status.");
-    }
-
-    else throw new Error(`Relatório "${chave}" ainda não possui implementação.`);
-
-    atualizarStatus(`Relatório concluído: ${RELATORIOS[chave]?.label||chave}.`);
-  }catch(e){mostrarErro("Não foi possível montar o relatório selecionado.\\n\\nDetalhe técnico: "+e.message);}
-  finally{document.getElementById("spinner").style.display="none";document.getElementById("btnExtrair").disabled=false;document.getElementById("btnParar").disabled=true;}
+    atualizarStatus(`Relatório concluído: ${RELATORIOS[chave]?.label || chave}.`);
+  } catch (e) {
+    mostrarErro(
+      'Não foi possível montar o relatório selecionado.\\n\\nDetalhe técnico: ' + e.message,
+    );
+  } finally {
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('btnExtrair').disabled = false;
+    document.getElementById('btnParar').disabled = true;
+  }
 }
-
 
 const MODELO_EXECUTIVO_CSS = String.raw`
   :root {
@@ -908,9 +2548,7 @@ const MODELO_EXECUTIVO_LOGO_TOTALTRAC = String.raw`<svg viewBox="0 0 620 120" xm
 // substituição simples reskinha todo o relatório exportado sem duplicar o
 // CSS inteiro por marca.
 function modeloExecutivoCssParaMarca(marca) {
-  return MODELO_EXECUTIVO_CSS
-    .replace("#FF5618", marca.corPrimaria)
-    .replace("#FF8008", marca.corSecundaria1)
-    .replace("#FF6B10", marca.corSecundaria2);
+  return MODELO_EXECUTIVO_CSS.replace('#FF5618', marca.corPrimaria)
+    .replace('#FF8008', marca.corSecundaria1)
+    .replace('#FF6B10', marca.corSecundaria2);
 }
-

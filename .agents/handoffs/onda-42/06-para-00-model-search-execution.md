@@ -170,10 +170,10 @@ aplicação (não requer nova migration, só edição de TS):
    `prisma.prospectingSearchExecution` direto (tipos gerados pela Prisma Client real).
 2. Rodar `npm run test:unit` de novo — os testes de `searchExecution.service.test.ts` e
    `prospecting.service.searchExecution.test.ts` continuam válidos (mockam `prisma.
-   prospectingSearchExecution` do mesmo jeito que já mockam `prisma.company`/`prisma.lead` hoje),
+prospectingSearchExecution` do mesmo jeito que já mockam `prisma.company`/`prisma.lead` hoje),
    sem precisar reescrever nada neles.
 3. Escrever um teste de integração real contra Postgres (`tests/integration/
-   prospecting-search-execution-rls.test.ts`), no mesmo padrão de
+prospecting-search-execution-rls.test.ts`), no mesmo padrão de
    `tests/integration/prospecting-rls.test.ts` (dois tenants dedicados, `asTenant`/`asBypass`,
    confirma que uma execução de um tenant nunca aparece em `findSearchExecution` de outro tenant, e
    que a policy de RLS bloqueia leitura sem `app.current_tenant_id`/`app.bypass_rls` setados). Não

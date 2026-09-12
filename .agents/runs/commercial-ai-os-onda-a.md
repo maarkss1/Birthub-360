@@ -23,6 +23,7 @@ Saved Views, Undo, Next Best Action, IA agentic, etc.), não como revogação ge
 
 Rodada uma auditoria completa do código real (não de `.agents/runs/` antigos) antes de tocar em
 qualquer arquivo. Achados relevantes para esta onda:
+
 - Já existem: Command Palette (`⌘K`) robusto, Kanban real (`@dnd-kit`) com batch actions e rollback
   otimista, Timeline estruturada (`TimelineEvent`+`LeadStageHistory`+`LeadFieldChange`),
   `AIPendingAction` (aprovação humana/confidence/riskLevel/idempotency) e `AuditLog` no schema,
@@ -68,11 +69,13 @@ typecheck. `test:e2e` restrito ao Chromium local (`PLAYWRIGHT_CHROMIUM_EXECUTABL
 documentado em `playwright.config.ts` para este tipo de ambiente).
 
 Testes novos adicionados em `tests/e2e/crm-kanban.spec.ts` (describe `LeadDetailDrawer`):
+
 - `abrir o card grava o lead na URL; reload com ?lead= reabre o mesmo drawer`
 - `botão Voltar do navegador fecha o drawer sem sair de /app/crm`
 
 Resultado real de execução (Chromium, banco de teste isolado `prospectordb_test`, migrations
 aplicadas):
+
 - `npx tsc --noEmit` → **limpo, 0 erros**.
 - `npm run lint` → **exit 0**, 38 warnings pré-existentes (nenhum em `CrmBoard.tsx`).
 - `npm run test:architecture` (dependency-cruiser + hotspots) → **✅ 0 violações**; `CrmBoard.tsx`
@@ -95,11 +98,11 @@ listado acima.
 
 ## Definition of Done — capabilities tocadas nesta onda
 
-| # | Capability | Estado | Evidência |
-|---|---|---|---|
-| P0-1 | Deep links de leads/oportunidades | **VERIFIED** (via `/app/crm?funnel=&lead=`) | `crm-kanban.spec.ts` (2 testes novos, passando) |
-| P0-2 | Persistência de filtros/visão/registro aberto na URL | **VERIFIED** para o que existe hoje (funnel + registro aberto); não há outros filtros no Kanban ainda a persistir | mesmo teste acima + `crm.spec.ts` (reload/back pré-existentes, continuam passando) |
-| P0-3 a P0-14, P1-15 a P1-24 | — | **NOT_STARTED** | fora do escopo desta onda |
+| #                           | Capability                                           | Estado                                                                                                            | Evidência                                                                          |
+| --------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| P0-1                        | Deep links de leads/oportunidades                    | **VERIFIED** (via `/app/crm?funnel=&lead=`)                                                                       | `crm-kanban.spec.ts` (2 testes novos, passando)                                    |
+| P0-2                        | Persistência de filtros/visão/registro aberto na URL | **VERIFIED** para o que existe hoje (funnel + registro aberto); não há outros filtros no Kanban ainda a persistir | mesmo teste acima + `crm.spec.ts` (reload/back pré-existentes, continuam passando) |
+| P0-3 a P0-14, P1-15 a P1-24 | —                                                    | **NOT_STARTED**                                                                                                   | fora do escopo desta onda                                                          |
 
 ## Commits
 

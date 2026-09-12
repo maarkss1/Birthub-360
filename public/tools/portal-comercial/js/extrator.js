@@ -1,10 +1,10 @@
 async function executarLoteExtracao() {
   const ctx = extracaoContexto;
   esconderErro();
-  document.getElementById("spinner").style.display = "inline-block";
-  document.getElementById("btnExtrair").disabled = true;
-  document.getElementById("btnParar").disabled = false;
-  document.getElementById("btnContinuar").classList.add("oculto");
+  document.getElementById('spinner').style.display = 'inline-block';
+  document.getElementById('btnExtrair').disabled = true;
+  document.getElementById('btnParar').disabled = false;
+  document.getElementById('btnContinuar').classList.add('oculto');
   extracaoCancelada = false;
 
   const metaDoLote = ctx.acumulado.length + TAMANHO_LOTE_SEGURANCA;
@@ -12,26 +12,34 @@ async function executarLoteExtracao() {
   try {
     while (true) {
       if (extracaoCancelada) {
-        atualizarStatus(`Parado pelo usuário. ${ctx.acumulado.length} registros extraídos até aqui.`);
+        atualizarStatus(
+          `Parado pelo usuário. ${ctx.acumulado.length} registros extraídos até aqui.`,
+        );
         break;
       }
       const url = montarUrl(ctx.webhook, ctx.ent.method, ctx.campos, ctx.filtro, ctx.start);
-      atualizarStatus(`Buscando... ${ctx.acumulado.length}${ctx.total !== null ? " / " + ctx.total : ""} registros`);
+      atualizarStatus(
+        `Buscando... ${ctx.acumulado.length}${ctx.total !== null ? ' / ' + ctx.total : ''} registros`,
+      );
       const body = await bitrixFetchComRetentativa(url);
       const chunk = Array.isArray(body.result) ? body.result : Object.values(body.result || {});
       const merge = mesclarSemDuplicarPorId(ctx.acumulado, chunk);
       ctx.acumulado = merge.dados;
       ctx.duplicadosAPI = (ctx.duplicadosAPI || 0) + merge.duplicados;
-      ctx.total = typeof body.total === "number" ? body.total : ctx.total;
-      atualizarStatus(`Buscando... ${ctx.acumulado.length}${ctx.total !== null ? " / " + ctx.total : ""} registros`);
+      ctx.total = typeof body.total === 'number' ? body.total : ctx.total;
+      atualizarStatus(
+        `Buscando... ${ctx.acumulado.length}${ctx.total !== null ? ' / ' + ctx.total : ''} registros`,
+      );
 
       const acabou = !body.next || chunk.length === 0;
       const bateuTeto = ctx.acumulado.length >= metaDoLote;
       if (acabou || bateuTeto) {
         ctx.terminou = acabou;
         if (bateuTeto && !acabou) {
-          document.getElementById("btnContinuar").classList.remove("oculto");
-          atualizarStatus(`Parado em ${ctx.acumulado.length} registros (lote de segurança de ${TAMANHO_LOTE_SEGURANCA} por vez${ctx.total !== null ? ", de " + ctx.total + " no total" : ""}). Clique em "Continuar extração" para buscar o restante.`);
+          document.getElementById('btnContinuar').classList.remove('oculto');
+          atualizarStatus(
+            `Parado em ${ctx.acumulado.length} registros (lote de segurança de ${TAMANHO_LOTE_SEGURANCA} por vez${ctx.total !== null ? ', de ' + ctx.total + ' no total' : ''}). Clique em "Continuar extração" para buscar o restante.`,
+          );
         }
         break;
       }
@@ -41,43 +49,51 @@ async function executarLoteExtracao() {
 
     dadosExtraidos = ctx.acumulado;
     camposExtraidos = ctx.campos;
-    if (ctx.chave === "negocios") calcularDiasParadoNoEstagio();
+    if (ctx.chave === 'negocios') calcularDiasParadoNoEstagio();
     mostrarResultado();
     gerarCodigoPython(ctx.webhook, ctx.ent.method, ctx.campos, ctx.filtro);
     if (!extracaoCancelada && ctx.terminou) {
-      atualizarStatus(`Concluído: ${ctx.acumulado.length} registros únicos${ctx.duplicadosAPI ? ` (${ctx.duplicadosAPI} duplicado(s) de paginação ignorado(s))` : ""}.`);
+      atualizarStatus(
+        `Concluído: ${ctx.acumulado.length} registros únicos${ctx.duplicadosAPI ? ` (${ctx.duplicadosAPI} duplicado(s) de paginação ignorado(s))` : ''}.`,
+      );
     }
   } catch (e) {
     mostrarErro(
-      "A extração parou por causa de um erro" + (e.definitivo ? "" : " (mesmo após tentar de novo várias vezes)") + ".\n\n" +
-      "Detalhe técnico: " + e.message + "\n\n" +
-      (e.definitivo
-        ? "Esse erro veio do próprio Bitrix (filtro, permissão do webhook ou campo inválido) — confira os filtros e o campo selecionado acima."
-        : "Se o erro persistir, o motivo mais provável é bloqueio de CORS do Bitrix para chamadas feitas " +
-          "de um arquivo HTML local (isso não é um erro no seu webhook). " +
-          "Solução: copie o código Python equivalente e rode localmente — " +
-          "ele usa a mesma variável de ambiente BITRIX_WEBHOOK_URL dos outros " +
-          "scripts deste projeto.") +
-      (ctx.acumulado.length ? `\n\n${ctx.acumulado.length} registros já haviam sido extraídos antes do erro — clique em "Continuar extração" para tentar retomar de onde parou.` : "")
+      'A extração parou por causa de um erro' +
+        (e.definitivo ? '' : ' (mesmo após tentar de novo várias vezes)') +
+        '.\n\n' +
+        'Detalhe técnico: ' +
+        e.message +
+        '\n\n' +
+        (e.definitivo
+          ? 'Esse erro veio do próprio Bitrix (filtro, permissão do webhook ou campo inválido) — confira os filtros e o campo selecionado acima.'
+          : 'Se o erro persistir, o motivo mais provável é bloqueio de CORS do Bitrix para chamadas feitas ' +
+            'de um arquivo HTML local (isso não é um erro no seu webhook). ' +
+            'Solução: copie o código Python equivalente e rode localmente — ' +
+            'ele usa a mesma variável de ambiente BITRIX_WEBHOOK_URL dos outros ' +
+            'scripts deste projeto.') +
+        (ctx.acumulado.length
+          ? `\n\n${ctx.acumulado.length} registros já haviam sido extraídos antes do erro — clique em "Continuar extração" para tentar retomar de onde parou.`
+          : ''),
     );
     if (ctx.acumulado.length) {
       dadosExtraidos = ctx.acumulado;
       camposExtraidos = ctx.campos;
-      if (ctx.chave === "negocios") calcularDiasParadoNoEstagio();
+      if (ctx.chave === 'negocios') calcularDiasParadoNoEstagio();
       mostrarResultado();
-      document.getElementById("btnContinuar").classList.remove("oculto");
+      document.getElementById('btnContinuar').classList.remove('oculto');
     }
     gerarCodigoPython(ctx.webhook, ctx.ent.method, ctx.campos, ctx.filtro);
   } finally {
-    document.getElementById("spinner").style.display = "none";
-    document.getElementById("btnExtrair").disabled = false;
-    document.getElementById("btnParar").disabled = true;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('btnExtrair').disabled = false;
+    document.getElementById('btnParar').disabled = true;
   }
 }
 
 async function extrair() {
   if (window.limparCacheBitrix) window.limparCacheBitrix();
-  const webhook = document.getElementById("webhook").value.trim();
+  const webhook = document.getElementById('webhook').value.trim();
   const erroWebhook = validarWebhook(webhook);
   if (erroWebhook) {
     mostrarErro(erroWebhook);
@@ -89,34 +105,34 @@ async function extrair() {
     return;
   }
 
-  const chaveEnt = document.getElementById("entidade").value;
+  const chaveEnt = document.getElementById('entidade').value;
   const ent = ENTIDADES[chaveEnt];
 
-  document.getElementById("bloco-resultado").classList.add("oculto");
-  document.getElementById("bloco-resultado-completo").classList.add("oculto");
-  document.getElementById("bloco-auditoria-jornada").classList.add("oculto");
-  document.getElementById("bloco-forecast-semanal").classList.add("oculto");
-  document.getElementById("bloco-diario-sdr").classList.add("oculto");
-  document.getElementById("bloco-analise-sdr").classList.add("oculto");
-  document.getElementById("bloco-relatorio-catalogo").classList.add("oculto");
-  document.getElementById("bloco-produtos").classList.add("oculto");
-  document.getElementById("bloco-python").classList.add("oculto");
-  document.getElementById("btnContinuar").classList.add("oculto");
+  document.getElementById('bloco-resultado').classList.add('oculto');
+  document.getElementById('bloco-resultado-completo').classList.add('oculto');
+  document.getElementById('bloco-auditoria-jornada').classList.add('oculto');
+  document.getElementById('bloco-forecast-semanal').classList.add('oculto');
+  document.getElementById('bloco-diario-sdr').classList.add('oculto');
+  document.getElementById('bloco-analise-sdr').classList.add('oculto');
+  document.getElementById('bloco-relatorio-catalogo').classList.add('oculto');
+  document.getElementById('bloco-produtos').classList.add('oculto');
+  document.getElementById('bloco-python').classList.add('oculto');
+  document.getElementById('btnContinuar').classList.add('oculto');
   dadosProdutos = [];
   resultadoForecastSemanal = {};
   resultadoDiarioSDR = {};
   resultadoAnaliseSDR = {};
   resultadoRelatorioCatalogo = {};
 
-  const chaveRelatorio = document.getElementById("relatorio").value;
+  const chaveRelatorio = document.getElementById('relatorio').value;
   if (chaveRelatorio) {
     resultadoCompleto = {};
     dadosExtraidos = [];
     const rel = RELATORIOS[chaveRelatorio];
-    if (rel.handler === "jornada") await extrairJornada(webhook);
-    else if (rel.handler === "forecast_semanal") await extrairForecastSemanal(webhook);
-    else if (rel.handler === "diario_sdr") await extrairDiarioSDR(webhook);
-    else if (rel.handler === "analise_sdr") await extrairAnaliseSDR(webhook);
+    if (rel.handler === 'jornada') await extrairJornada(webhook);
+    else if (rel.handler === 'forecast_semanal') await extrairForecastSemanal(webhook);
+    else if (rel.handler === 'diario_sdr') await extrairDiarioSDR(webhook);
+    else if (rel.handler === 'analise_sdr') await extrairAnaliseSDR(webhook);
     else await extrairRelatorioCatalogo(webhook, chaveRelatorio);
     return;
   }
@@ -140,13 +156,24 @@ async function extrair() {
 
   const campos = camposSelecionados();
   if (campos.length === 0) {
-    mostrarErro("Selecione pelo menos um campo para extrair.");
+    mostrarErro('Selecione pelo menos um campo para extrair.');
     return;
   }
   const filtro = montarFiltro();
   resultadoCompleto = {};
 
-  extracaoContexto = { webhook, ent, chave: chaveEnt, campos, filtro, start: 0, total: null, acumulado: [], terminou: false, duplicadosAPI: 0 };
+  extracaoContexto = {
+    webhook,
+    ent,
+    chave: chaveEnt,
+    campos,
+    filtro,
+    start: 0,
+    total: null,
+    acumulado: [],
+    terminou: false,
+    duplicadosAPI: 0,
+  };
   await executarLoteExtracao();
 }
 
@@ -156,20 +183,22 @@ async function extrair() {
 // ---------------------------------------------------------------------------
 
 async function buscarCamposDinamicos(webhook, fieldsMethod) {
-  const url = `${webhook.replace(/\/$/, "")}/${fieldsMethod}.json`;
+  const url = `${webhook.replace(/\/$/, '')}/${fieldsMethod}.json`;
   const body = await bitrixFetchComRetentativa(url);
   return Object.keys(body.result || {});
 }
 
 async function extrairEntidadeCompleta(webhook, sub) {
-  const campos = sub.fieldsMethod ? await buscarCamposDinamicos(webhook, sub.fieldsMethod) : sub.camposFixos;
+  const campos = sub.fieldsMethod
+    ? await buscarCamposDinamicos(webhook, sub.fieldsMethod)
+    : sub.camposFixos;
 
   const filtro = {};
   if (!sub.semFiltroData) {
-    const inicio = document.getElementById("dataInicio").value;
-    const fim = document.getElementById("dataFim").value;
-    if (inicio) filtro[">=" + sub.campoData] = inicio + "T00:00:00-03:00";
-    if (fim) filtro["<=" + sub.campoData] = fim + "T23:59:59-03:00";
+    const inicio = document.getElementById('dataInicio').value;
+    const fim = document.getElementById('dataFim').value;
+    if (inicio) filtro['>=' + sub.campoData] = inicio + 'T00:00:00-03:00';
+    if (fim) filtro['<=' + sub.campoData] = fim + 'T23:59:59-03:00';
   }
 
   let start = 0;
@@ -178,25 +207,33 @@ async function extrairEntidadeCompleta(webhook, sub) {
   while (true) {
     if (extracaoCancelada) break;
     const url = montarUrl(webhook, sub.method, campos, filtro, start);
-    atualizarStatus(`[${sub.label}] buscando... ${acumulado.length}${total !== null ? " / " + total : ""} registros`);
+    atualizarStatus(
+      `[${sub.label}] buscando... ${acumulado.length}${total !== null ? ' / ' + total : ''} registros`,
+    );
     const body = await bitrixFetchComRetentativa(url);
     const chunk = Array.isArray(body.result) ? body.result : Object.values(body.result || {});
     const merge = mesclarSemDuplicarPorId(acumulado, chunk);
     acumulado = merge.dados;
-    total = typeof body.total === "number" ? body.total : total;
+    total = typeof body.total === 'number' ? body.total : total;
 
     const acabou = !body.next || chunk.length === 0;
     if (acabou) break;
     start = body.next;
     await aguardar(ATRASO_ENTRE_PAGINAS_MS);
   }
-  return { label: sub.label, campos, dados: acumulado, total, completo: total === null || acumulado.length === total };
+  return {
+    label: sub.label,
+    campos,
+    dados: acumulado,
+    total,
+    completo: total === null || acumulado.length === total,
+  };
 }
 
 async function extrairTudo(webhook) {
-  document.getElementById("spinner").style.display = "inline-block";
-  document.getElementById("btnExtrair").disabled = true;
-  document.getElementById("btnParar").disabled = false;
+  document.getElementById('spinner').style.display = 'inline-block';
+  document.getElementById('btnExtrair').disabled = true;
+  document.getElementById('btnParar').disabled = false;
   extracaoCancelada = false;
   esconderErro();
   resultadoCompleto = {};
@@ -204,48 +241,65 @@ async function extrairTudo(webhook) {
   try {
     for (const sub of SUBENTIDADES_TUDO) {
       if (extracaoCancelada) {
-        atualizarStatus(`Parado pelo usuário após ${Object.keys(resultadoCompleto).length} de ${SUBENTIDADES_TUDO.length} entidades.`);
+        atualizarStatus(
+          `Parado pelo usuário após ${Object.keys(resultadoCompleto).length} de ${SUBENTIDADES_TUDO.length} entidades.`,
+        );
         break;
       }
       resultadoCompleto[sub.chave] = await extrairEntidadeCompleta(webhook, sub);
-      atualizarStatus(`[${sub.label}] concluído: ${resultadoCompleto[sub.chave].dados.length} registros.`);
+      atualizarStatus(
+        `[${sub.label}] concluído: ${resultadoCompleto[sub.chave].dados.length} registros.`,
+      );
       await aguardar(ATRASO_ENTRE_PAGINAS_MS);
     }
     mostrarResultadoCompleto();
     if (!extracaoCancelada) {
-      const totalGeral = Object.values(resultadoCompleto).reduce((acc, r) => acc + r.dados.length, 0);
-      atualizarStatus(`Extração completa concluída: ${totalGeral} registros no total, em ${Object.keys(resultadoCompleto).length} entidades. Veja o resumo abaixo.`);
+      const totalGeral = Object.values(resultadoCompleto).reduce(
+        (acc, r) => acc + r.dados.length,
+        0,
+      );
+      atualizarStatus(
+        `Extração completa concluída: ${totalGeral} registros no total, em ${Object.keys(resultadoCompleto).length} entidades. Veja o resumo abaixo.`,
+      );
     }
   } catch (e) {
     mostrarErro(
-      "A extração completa parou por causa de um erro" + (e.definitivo ? "" : " (mesmo após tentar de novo várias vezes)") + ".\n\n" +
-      "Detalhe técnico: " + e.message + "\n\n" +
-      (e.definitivo
-        ? "Esse erro veio do próprio Bitrix — confira se o webhook tem permissão de leitura de CRM (negócios, leads, empresas, contatos, atividades) e de usuários."
-        : "Se persistir, o motivo mais provável é bloqueio de CORS do Bitrix para chamadas feitas de um arquivo HTML local — use o código Python equivalente do passo 8 rodando localmente.") +
-      (Object.keys(resultadoCompleto).length ? `\n\nAs entidades já concluídas antes do erro (${Object.keys(resultadoCompleto).map((k) => resultadoCompleto[k].label).join(", ")}) foram mantidas no resumo abaixo.` : "")
+      'A extração completa parou por causa de um erro' +
+        (e.definitivo ? '' : ' (mesmo após tentar de novo várias vezes)') +
+        '.\n\n' +
+        'Detalhe técnico: ' +
+        e.message +
+        '\n\n' +
+        (e.definitivo
+          ? 'Esse erro veio do próprio Bitrix — confira se o webhook tem permissão de leitura de CRM (negócios, leads, empresas, contatos, atividades) e de usuários.'
+          : 'Se persistir, o motivo mais provável é bloqueio de CORS do Bitrix para chamadas feitas de um arquivo HTML local — use o código Python equivalente do passo 8 rodando localmente.') +
+        (Object.keys(resultadoCompleto).length
+          ? `\n\nAs entidades já concluídas antes do erro (${Object.keys(resultadoCompleto)
+              .map((k) => resultadoCompleto[k].label)
+              .join(', ')}) foram mantidas no resumo abaixo.`
+          : ''),
     );
     if (Object.keys(resultadoCompleto).length) mostrarResultadoCompleto();
   } finally {
-    document.getElementById("spinner").style.display = "none";
-    document.getElementById("btnExtrair").disabled = false;
-    document.getElementById("btnParar").disabled = true;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('btnExtrair').disabled = false;
+    document.getElementById('btnParar').disabled = true;
   }
 }
 
 function mostrarResultadoCompleto() {
-  const bloco = document.getElementById("bloco-resultado-completo");
-  bloco.classList.remove("oculto");
-  const cont = document.getElementById("entidades-lista");
-  cont.innerHTML = "";
+  const bloco = document.getElementById('bloco-resultado-completo');
+  bloco.classList.remove('oculto');
+  const cont = document.getElementById('entidades-lista');
+  cont.innerHTML = '';
 
   Object.entries(resultadoCompleto).forEach(([chave, r]) => {
-    const div = document.createElement("div");
-    div.className = "entidade-card";
+    const div = document.createElement('div');
+    div.className = 'entidade-card';
     div.innerHTML = `
       <h3>${r.label}</h3>
       <div class="contagem">${r.dados.length}</div>
-      <div class="campos-info">registro(s) · ${r.campos.length} campos${r.total !== null ? " · " + r.total + " no total do Bitrix" : ""}${r.completo === false ? ' · <span style="color:var(--danger);">incompleto</span>' : ""}</div>
+      <div class="campos-info">registro(s) · ${r.campos.length} campos${r.total !== null ? ' · ' + r.total + ' no total do Bitrix' : ''}${r.completo === false ? ' · <span style="color:var(--danger);">incompleto</span>' : ''}</div>
       <div class="botoes">
         <button type="button" class="secundario" onclick="baixarCSVEntidade('${chave}')">CSV</button>
         <button type="button" class="secundario" onclick="baixarJSONEntidade('${chave}')">JSON</button>
@@ -263,8 +317,6 @@ function mostrarResultadoCompleto() {
 // Financeiro → Implantação → Pós-Vendas → Sucesso do Cliente).
 // ---------------------------------------------------------------------------
 
-
-
 async function continuarExtracao() {
   if (!extracaoContexto) return;
   await executarLoteExtracao();
@@ -275,7 +327,7 @@ function pararExtracao() {
 }
 
 function atualizarStatus(msg) {
-  const el = document.getElementById("statusTexto");
+  const el = document.getElementById('statusTexto');
   if (el) el.textContent = msg;
 }
 
@@ -286,21 +338,24 @@ function atualizarStatus(msg) {
 // (a chamada a document.getElementById("areaErro") retornava null e quebrava
 // silenciosamente), deixando só a pilula "Falha na conexão" sem explicação.
 function mostrarErro(msg) {
-  let area = document.getElementById("areaErro");
+  let area = document.getElementById('areaErro');
   if (!area) {
-    const ancora = document.getElementById("conexao");
-    if (!ancora) { console.error(msg); return; }
-    area = document.createElement("div");
-    area.id = "areaErro";
-    area.className = "erro oculto";
+    const ancora = document.getElementById('conexao');
+    if (!ancora) {
+      console.error(msg);
+      return;
+    }
+    area = document.createElement('div');
+    area.id = 'areaErro';
+    area.className = 'erro oculto';
     ancora.appendChild(area);
   }
   area.textContent = msg;
-  area.classList.remove("oculto");
+  area.classList.remove('oculto');
 }
 
 function esconderErro() {
-  document.getElementById("areaErro")?.classList.add("oculto");
+  document.getElementById('areaErro')?.classList.add('oculto');
 }
 
 // ---------------------------------------------------------------------------
@@ -311,15 +366,15 @@ function esconderErro() {
 // ---------------------------------------------------------------------------
 
 function calcularDiasParadoNoEstagio() {
-  const CAMPO = "DIAS_PARADO_NO_ESTAGIO";
-  if (!camposExtraidos.includes("MOVED_TIME")) {
+  const CAMPO = 'DIAS_PARADO_NO_ESTAGIO';
+  if (!camposExtraidos.includes('MOVED_TIME')) {
     camposExtraidos = camposExtraidos.filter((c) => c !== CAMPO);
     return;
   }
   const agora = Date.now();
   dadosExtraidos.forEach((registro) => {
     if (!registro.MOVED_TIME) {
-      registro[CAMPO] = "";
+      registro[CAMPO] = '';
       return;
     }
     const dias = Math.floor((agora - new Date(registro.MOVED_TIME).getTime()) / 86400000);
@@ -335,49 +390,51 @@ function calcularDiasParadoNoEstagio() {
 // ---------------------------------------------------------------------------
 
 function mostrarResultado() {
-  const bloco = document.getElementById("bloco-resultado");
-  bloco.classList.remove("oculto");
-  document.getElementById("totalRegistros").textContent = `${dadosExtraidos.length} registros`;
+  const bloco = document.getElementById('bloco-resultado');
+  bloco.classList.remove('oculto');
+  document.getElementById('totalRegistros').textContent = `${dadosExtraidos.length} registros`;
 
-  const chaveEnt = document.getElementById("entidade").value;
-  const btnProdutos = document.getElementById("btnProdutos");
-  const podeProdutos = chaveEnt === "negocios" && dadosExtraidos.length > 0 && camposExtraidos.includes("ID");
-  btnProdutos.classList.toggle("oculto", !podeProdutos);
-  document.getElementById("bloco-campos-produtos").classList.toggle("oculto", !podeProdutos);
-  document.getElementById("bloco-produtos").classList.add("oculto");
+  const chaveEnt = document.getElementById('entidade').value;
+  const btnProdutos = document.getElementById('btnProdutos');
+  const podeProdutos =
+    chaveEnt === 'negocios' && dadosExtraidos.length > 0 && camposExtraidos.includes('ID');
+  btnProdutos.classList.toggle('oculto', !podeProdutos);
+  document.getElementById('bloco-campos-produtos').classList.toggle('oculto', !podeProdutos);
+  document.getElementById('bloco-produtos').classList.add('oculto');
   dadosProdutos = [];
 
-  if (camposExtraidos.includes("OPPORTUNITY")) {
+  if (camposExtraidos.includes('OPPORTUNITY')) {
     const soma = dadosExtraidos.reduce((acc, r) => acc + (parseFloat(r.OPPORTUNITY) || 0), 0);
-    document.getElementById("totalValor").textContent =
-      "Soma de OPPORTUNITY: R$ " + soma.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('totalValor').textContent =
+      'Soma de OPPORTUNITY: R$ ' +
+      soma.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   } else {
-    document.getElementById("totalValor").textContent = "";
+    document.getElementById('totalValor').textContent = '';
   }
 
-  const wrapper = document.getElementById("tabela-wrapper");
-  wrapper.innerHTML = "";
+  const wrapper = document.getElementById('tabela-wrapper');
+  wrapper.innerHTML = '';
   if (dadosExtraidos.length === 0) {
     wrapper.innerHTML = "<p class='rodape-nota'>Nenhum registro encontrado com esses filtros.</p>";
     return;
   }
-  const tabela = document.createElement("table");
-  const thead = document.createElement("thead");
-  const trHead = document.createElement("tr");
+  const tabela = document.createElement('table');
+  const thead = document.createElement('thead');
+  const trHead = document.createElement('tr');
   camposExtraidos.forEach((c) => {
-    const th = document.createElement("th");
+    const th = document.createElement('th');
     th.textContent = c;
     trHead.appendChild(th);
   });
   thead.appendChild(trHead);
   tabela.appendChild(thead);
 
-  const tbody = document.createElement("tbody");
+  const tbody = document.createElement('tbody');
   dadosExtraidos.slice(0, 50).forEach((registro) => {
-    const tr = document.createElement("tr");
+    const tr = document.createElement('tr');
     camposExtraidos.forEach((c) => {
-      const td = document.createElement("td");
-      td.textContent = registro[c] ?? "";
+      const td = document.createElement('td');
+      td.textContent = registro[c] ?? '';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -393,10 +450,10 @@ function mostrarResultado() {
 // ---------------------------------------------------------------------------
 
 async function buscarProdutosDosNegocios() {
-  const chaveEnt = document.getElementById("entidade").value;
-  if (chaveEnt !== "negocios" || !dadosExtraidos.length) return;
+  const chaveEnt = document.getElementById('entidade').value;
+  if (chaveEnt !== 'negocios' || !dadosExtraidos.length) return;
 
-  const webhook = document.getElementById("webhook").value.trim();
+  const webhook = document.getElementById('webhook').value.trim();
   const erroWebhook = validarWebhook(webhook);
   if (erroWebhook) {
     mostrarErro(erroWebhook);
@@ -404,15 +461,15 @@ async function buscarProdutosDosNegocios() {
   }
   const campos = camposProdutosSelecionados();
   if (campos.length === 0) {
-    mostrarErro("Selecione pelo menos um campo de produto (seção acima) antes de buscar.");
+    mostrarErro('Selecione pelo menos um campo de produto (seção acima) antes de buscar.');
     return;
   }
   camposProdutosAtual = campos;
 
   esconderErro();
-  document.getElementById("spinner").style.display = "inline-block";
-  document.getElementById("btnProdutos").disabled = true;
-  document.getElementById("btnParar").disabled = false;
+  document.getElementById('spinner').style.display = 'inline-block';
+  document.getElementById('btnProdutos').disabled = true;
+  document.getElementById('btnParar').disabled = false;
   extracaoCancelada = false;
 
   const cacheEmpresas = {};
@@ -425,12 +482,14 @@ async function buscarProdutosDosNegocios() {
         break;
       }
       const negocio = dadosExtraidos[i];
-      atualizarStatus(`Buscando produtos... negócio ${i + 1}/${dadosExtraidos.length} (ID ${negocio.ID})`);
+      atualizarStatus(
+        `Buscando produtos... negócio ${i + 1}/${dadosExtraidos.length} (ID ${negocio.ID})`,
+      );
 
-      let nomeCliente = negocio.TITLE || "";
+      let nomeCliente = negocio.TITLE || '';
       if (negocio.COMPANY_ID) {
         if (!(negocio.COMPANY_ID in cacheEmpresas)) {
-          const urlEmpresa = `${webhook.replace(/\/$/, "")}/crm.company.get.json?id=${encodeURIComponent(negocio.COMPANY_ID)}`;
+          const urlEmpresa = `${webhook.replace(/\/$/, '')}/crm.company.get.json?id=${encodeURIComponent(negocio.COMPANY_ID)}`;
           const bodyEmpresa = await bitrixFetchComRetentativa(urlEmpresa);
           cacheEmpresas[negocio.COMPANY_ID] = (bodyEmpresa.result || {}).TITLE || null;
           await aguardar(ATRASO_ENTRE_PAGINAS_MS);
@@ -438,7 +497,7 @@ async function buscarProdutosDosNegocios() {
         nomeCliente = cacheEmpresas[negocio.COMPANY_ID] || nomeCliente;
       }
 
-      const urlProdutos = `${webhook.replace(/\/$/, "")}/crm.deal.productrows.get.json?id=${encodeURIComponent(negocio.ID)}`;
+      const urlProdutos = `${webhook.replace(/\/$/, '')}/crm.deal.productrows.get.json?id=${encodeURIComponent(negocio.ID)}`;
       const bodyProdutos = await bitrixFetchComRetentativa(urlProdutos);
       const produtos = bodyProdutos.result || [];
       await aguardar(ATRASO_ENTRE_PAGINAS_MS);
@@ -456,16 +515,24 @@ async function buscarProdutosDosNegocios() {
     mostrarResultadoProdutos();
     gerarCodigoPythonProdutos(dadosExtraidos, campos);
     if (!extracaoCancelada) {
-      atualizarStatus(`Concluído: produtos de ${dadosExtraidos.length} negócio(s) extraídos (${linhas.length} linha(s)).`);
+      atualizarStatus(
+        `Concluído: produtos de ${dadosExtraidos.length} negócio(s) extraídos (${linhas.length} linha(s)).`,
+      );
     }
   } catch (e) {
     mostrarErro(
-      "A busca de produtos parou por causa de um erro" + (e.definitivo ? "" : " (mesmo após tentar de novo várias vezes)") + ".\n\n" +
-      "Detalhe técnico: " + e.message + "\n\n" +
-      (e.definitivo
-        ? "Esse erro veio do próprio Bitrix — confira se o webhook tem permissão de leitura para crm.deal.productrows.get e crm.company.get."
-        : "Se persistir, o motivo mais provável é bloqueio de CORS do Bitrix para chamadas feitas de um arquivo HTML local — use o código Python gerado logo abaixo (passo 8), que já roda essa mesma busca localmente.") +
-      (linhas.length ? `\n\n${linhas.length} linha(s) de produto já haviam sido extraídas antes do erro — foram mantidas no resultado abaixo.` : "")
+      'A busca de produtos parou por causa de um erro' +
+        (e.definitivo ? '' : ' (mesmo após tentar de novo várias vezes)') +
+        '.\n\n' +
+        'Detalhe técnico: ' +
+        e.message +
+        '\n\n' +
+        (e.definitivo
+          ? 'Esse erro veio do próprio Bitrix — confira se o webhook tem permissão de leitura para crm.deal.productrows.get e crm.company.get.'
+          : 'Se persistir, o motivo mais provável é bloqueio de CORS do Bitrix para chamadas feitas de um arquivo HTML local — use o código Python gerado logo abaixo (passo 8), que já roda essa mesma busca localmente.') +
+        (linhas.length
+          ? `\n\n${linhas.length} linha(s) de produto já haviam sido extraídas antes do erro — foram mantidas no resultado abaixo.`
+          : ''),
     );
     if (linhas.length) {
       dadosProdutos = linhas;
@@ -473,9 +540,9 @@ async function buscarProdutosDosNegocios() {
     }
     gerarCodigoPythonProdutos(dadosExtraidos, campos);
   } finally {
-    document.getElementById("spinner").style.display = "none";
-    document.getElementById("btnProdutos").disabled = false;
-    document.getElementById("btnParar").disabled = true;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('btnProdutos').disabled = false;
+    document.getElementById('btnParar').disabled = true;
   }
 }
 
@@ -486,14 +553,15 @@ async function buscarProdutosDosNegocios() {
 function construirLinhaProduto(nomeCliente, negocio, p, camposAlvo) {
   const registro = {};
   camposAlvo.forEach((code) => {
-    if (code === "cliente") registro.cliente = nomeCliente;
-    else if (code === "negocio_id") registro.negocio_id = negocio.ID;
-    else if (code === "negocio_titulo") registro.negocio_titulo = negocio.TITLE || "";
-    else if (code === "valor_total_negocio") registro.valor_total_negocio = negocio.OPPORTUNITY || "";
-    else registro[code] = p ? (p[code] ?? "") : "";
+    if (code === 'cliente') registro.cliente = nomeCliente;
+    else if (code === 'negocio_id') registro.negocio_id = negocio.ID;
+    else if (code === 'negocio_titulo') registro.negocio_titulo = negocio.TITLE || '';
+    else if (code === 'valor_total_negocio')
+      registro.valor_total_negocio = negocio.OPPORTUNITY || '';
+    else registro[code] = p ? (p[code] ?? '') : '';
   });
-  if (!p && camposAlvo.includes("PRODUCT_NAME")) {
-    registro.PRODUCT_NAME = "(sem linhas de produto no CRM)";
+  if (!p && camposAlvo.includes('PRODUCT_NAME')) {
+    registro.PRODUCT_NAME = '(sem linhas de produto no CRM)';
   }
   return registro;
 }
@@ -503,16 +571,16 @@ function construirLinhaProduto(nomeCliente, negocio, p, camposAlvo) {
 // já extraídos — mesmo padrão de gerarCodigoPython(): lê o webhook de
 // BITRIX_WEBHOOK_URL, nunca embute o valor da chave no código gerado.
 function gerarCodigoPythonProdutos(negocios, campos) {
-  const bloco = document.getElementById("bloco-python");
-  bloco.classList.remove("oculto");
+  const bloco = document.getElementById('bloco-python');
+  bloco.classList.remove('oculto');
 
   const dealsPy = negocios
     .map((n) => {
-      const companyPy = n.COMPANY_ID ? `"${n.COMPANY_ID}"` : "None";
-      return `    {"ID": "${n.ID}", "TITLE": ${JSON.stringify(n.TITLE || "")}, "COMPANY_ID": ${companyPy}, "OPPORTUNITY": "${n.OPPORTUNITY || ""}"},`;
+      const companyPy = n.COMPANY_ID ? `"${n.COMPANY_ID}"` : 'None';
+      return `    {"ID": "${n.ID}", "TITLE": ${JSON.stringify(n.TITLE || '')}, "COMPANY_ID": ${companyPy}, "OPPORTUNITY": "${n.OPPORTUNITY || ''}"},`;
     })
-    .join("\n");
-  const camposPy = campos.map((c) => `"${c}"`).join(", ");
+    .join('\n');
+  const camposPy = campos.map((c) => `"${c}"`).join(', ');
 
   const codigo = `import os, json, csv, time, urllib.request, urllib.parse, urllib.error
 
@@ -620,13 +688,13 @@ def main():
 if __name__ == "__main__":
     main()
 `;
-  document.getElementById("codigoPython").textContent = codigo;
+  document.getElementById('codigoPython').textContent = codigo;
 }
 
 let dadosProdutosFiltrados = [];
 
 function mostrarResultadoProdutos() {
-  document.getElementById("filtroProduto").value = "";
+  document.getElementById('filtroProduto').value = '';
   aplicarFiltroProdutos();
 }
 
@@ -634,44 +702,50 @@ function mostrarResultadoProdutos() {
 // resultado já extraído — o Bitrix não permite filtrar a lista de negócios
 // por produto na consulta, então isso é feito no navegador depois da busca.
 function aplicarFiltroProdutos() {
-  const termo = document.getElementById("filtroProduto").value.trim().toLowerCase();
+  const termo = document.getElementById('filtroProduto').value.trim().toLowerCase();
   dadosProdutosFiltrados = !termo
     ? dadosProdutos
-    : dadosProdutos.filter((r) => Object.values(r).some((v) => String(v ?? "").toLowerCase().includes(termo)));
+    : dadosProdutos.filter((r) =>
+        Object.values(r).some((v) =>
+          String(v ?? '')
+            .toLowerCase()
+            .includes(termo),
+        ),
+      );
   renderizarTabelaProdutos();
 }
 
 function renderizarTabelaProdutos() {
-  const bloco = document.getElementById("bloco-produtos");
-  bloco.classList.remove("oculto");
-  document.getElementById("totalLinhasProdutos").textContent =
+  const bloco = document.getElementById('bloco-produtos');
+  bloco.classList.remove('oculto');
+  document.getElementById('totalLinhasProdutos').textContent =
     dadosProdutosFiltrados.length === dadosProdutos.length
       ? `${dadosProdutos.length} linha(s) de produto`
       : `${dadosProdutosFiltrados.length} de ${dadosProdutos.length} linha(s) de produto`;
 
-  const wrapper = document.getElementById("tabela-produtos-wrapper");
-  wrapper.innerHTML = "";
+  const wrapper = document.getElementById('tabela-produtos-wrapper');
+  wrapper.innerHTML = '';
   if (dadosProdutosFiltrados.length === 0) {
     wrapper.innerHTML = "<p class='rodape-nota'>Nenhuma linha de produto encontrada.</p>";
     return;
   }
-  const tabela = document.createElement("table");
-  const thead = document.createElement("thead");
-  const trHead = document.createElement("tr");
+  const tabela = document.createElement('table');
+  const thead = document.createElement('thead');
+  const trHead = document.createElement('tr');
   camposProdutosAtual.forEach((c) => {
-    const th = document.createElement("th");
+    const th = document.createElement('th');
     th.textContent = c;
     trHead.appendChild(th);
   });
   thead.appendChild(trHead);
   tabela.appendChild(thead);
 
-  const tbody = document.createElement("tbody");
+  const tbody = document.createElement('tbody');
   dadosProdutosFiltrados.slice(0, 200).forEach((registro) => {
-    const tr = document.createElement("tr");
+    const tr = document.createElement('tr');
     camposProdutosAtual.forEach((c) => {
-      const td = document.createElement("td");
-      td.textContent = registro[c] ?? "";
+      const td = document.createElement('td');
+      td.textContent = registro[c] ?? '';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -682,22 +756,29 @@ function renderizarTabelaProdutos() {
 
 function baixarCSVProdutos() {
   if (dadosProdutosFiltrados.length === 0) return;
-  const linhas = [camposProdutosAtual.join(";")];
+  const linhas = [camposProdutosAtual.join(';')];
   dadosProdutosFiltrados.forEach((registro) => {
     const linha = camposProdutosAtual.map((c) => {
       let v = registro[c];
-      if (v === null || v === undefined) v = "";
+      if (v === null || v === undefined) v = '';
       v = String(v).replace(/"/g, '""');
-      if (v.includes(";") || v.includes("\n") || v.includes('"')) v = `"${v}"`;
+      if (v.includes(';') || v.includes('\n') || v.includes('"')) v = `"${v}"`;
       return v;
     });
-    linhas.push(linha.join(";"));
+    linhas.push(linha.join(';'));
   });
-  baixarArquivo("﻿" + linhas.join("\r\n"), `bitrix_produtos_negocios_${dataHoje()}.csv`, "text/csv;charset=utf-8;");
+  baixarArquivo(
+    '﻿' + linhas.join('\r\n'),
+    `bitrix_produtos_negocios_${dataHoje()}.csv`,
+    'text/csv;charset=utf-8;',
+  );
 }
 
 function baixarJSONProdutos() {
   if (dadosProdutosFiltrados.length === 0) return;
-  baixarArquivo(JSON.stringify(dadosProdutosFiltrados, null, 2), `bitrix_produtos_negocios_${dataHoje()}.json`, "application/json;charset=utf-8;");
+  baixarArquivo(
+    JSON.stringify(dadosProdutosFiltrados, null, 2),
+    `bitrix_produtos_negocios_${dataHoje()}.json`,
+    'application/json;charset=utf-8;',
+  );
 }
-

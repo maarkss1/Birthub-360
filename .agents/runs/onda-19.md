@@ -1,6 +1,7 @@
 # Onda 19 — Sprint 07: construção do runtime de cadência (CYC-008)
 
 ## Identificação
+
 - Sprint: 07 (continuação direta do CYC-008 documentado como pendência na Onda 18)
 - Onda: 19
 - SHA de entrada: `7f0e65a` (main, após merge do PR #166/onda-18)
@@ -74,7 +75,7 @@ Ao escrever o teste de integração contra Postgres real, `scanAndAdvanceCadence
 `CadenceSequence` têm `FORCE ROW LEVEL SECURITY` (`current_setting('app.current_tenant_id') =
 organizationId OR current_setting('app.bypass_rls') = 'on'`) — uma leitura sem nenhum dos dois
 setados devolve zero linhas sempre, e um worker que precisa descobrir "quais organizações têm run
-ativo" *antes* de saber qual tenant escopar não tinha como fazer essa pergunta: nem uma leitura sem
+ativo" _antes_ de saber qual tenant escopar não tinha como fazer essa pergunta: nem uma leitura sem
 contexto (RLS nega), nem `bypassRls:true`, porque em produção o bypass só é honrado para models na
 allowlist `BYPASS_RLS_ALLOWED_MODELS` (`src/lib/prisma.ts`), e `CadenceRun`/`CadenceSequence` não
 estavam nela.
@@ -105,6 +106,7 @@ que tocar cadência/follow-up.
   exporem o id real da mensagem enviada.
 
 ## Gate final
+
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 82 warnings (era 80 antes desta sprint; os 2 novos são
   `no-explicit-any` no cast de conexão ioredis/BullMQ do novo worker, mesmo padrão já presente em
@@ -127,15 +129,17 @@ pg_trgm` sem privilégio) que deixou uma migration em estado `failed`. Resolvido
 regressão desta sprint, é drift de ambiente do sandbox já visto antes nesta série.
 
 ## Skips e flakes
+
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Riscos restantes
-| Risco | Dono | Motivo do aceite | Revisar em |
-|---|---|---|---|
-| `followUp.worker.ts` pode estar processando sempre 0 leads em produção (mesmo padrão de RLS sem contexto encontrado e corrigido no worker de cadência) | 16 (runtime/workers) | Não investigado nesta rodada — é outro worker/feature, merece verificação própria antes de qualquer mudança | Próxima rodada que tocar follow-up de WhatsApp, com prioridade alta dado o impacto potencial |
-| Runtime de cadência construído mas ocioso — não existe rota/UI para iniciar uma `CadenceRun` | 17 (cadência) + 00 (produto) | Decisão de produto (quem inicia, com que conteúdo) não pode ser inventada por uma correção de infraestrutura | Quando CYC-009 (UI) ou uma decisão de produto para gatilho de cadência for priorizada |
-| `providerMessageId` de WhatsApp permanece `null` | 06 (integrações) | `sendWhatsAppMessage` não expõe o id do Baileys hoje; mudar essa função tem blast radius maior (outros callers) | Quando o campo for realmente necessário para suporte/depuração |
-| Riscos já registrados na Onda 18 (CYC-002 a CYC-007, CYC-009) | vários | Não revisitados nesta rodada | Ver `docs/CADENCE-CYCLE-AUDIT.md` |
+
+| Risco                                                                                                                                                  | Dono                         | Motivo do aceite                                                                                                | Revisar em                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `followUp.worker.ts` pode estar processando sempre 0 leads em produção (mesmo padrão de RLS sem contexto encontrado e corrigido no worker de cadência) | 16 (runtime/workers)         | Não investigado nesta rodada — é outro worker/feature, merece verificação própria antes de qualquer mudança     | Próxima rodada que tocar follow-up de WhatsApp, com prioridade alta dado o impacto potencial |
+| Runtime de cadência construído mas ocioso — não existe rota/UI para iniciar uma `CadenceRun`                                                           | 17 (cadência) + 00 (produto) | Decisão de produto (quem inicia, com que conteúdo) não pode ser inventada por uma correção de infraestrutura    | Quando CYC-009 (UI) ou uma decisão de produto para gatilho de cadência for priorizada        |
+| `providerMessageId` de WhatsApp permanece `null`                                                                                                       | 06 (integrações)             | `sendWhatsAppMessage` não expõe o id do Baileys hoje; mudar essa função tem blast radius maior (outros callers) | Quando o campo for realmente necessário para suporte/depuração                               |
+| Riscos já registrados na Onda 18 (CYC-002 a CYC-007, CYC-009)                                                                                          | vários                       | Não revisitados nesta rodada                                                                                    | Ver `docs/CADENCE-CYCLE-AUDIT.md`                                                            |
 
 ## Decisão
 

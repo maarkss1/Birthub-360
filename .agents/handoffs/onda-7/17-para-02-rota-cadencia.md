@@ -3,7 +3,9 @@
 - Onda: 7
 - Status: resolvido
 - Prioridade: alto
+
 ## Problema
+
 `src/features/cadence/**` (Agente 17, Onda 7) implementa a lógica de domínio da cadência
 multicanal e do ciclo de fechamento, mas não tem rota nem entrada de menu — sem isso a
 funcionalidade fica invisível para o vendedor, exatamente o risco que o próprio prompt do 17 aponta
@@ -12,6 +14,7 @@ funcionalidade fica invisível para o vendedor, exatamente o risco que o própri
 arquivos"). Esta é uma proposta pronta para você aplicar, não uma edição feita por mim.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/App.tsx` (rota nova)
 - `src/components/layout/Sidebar.tsx` (item de menu novo) — ou o arquivo que hoje concentra
   `TabType`/itens de navegação, se tiver sido renomeado depois da Onda 6.
@@ -19,11 +22,15 @@ arquivos"). Esta é uma proposta pronta para você aplicar, não uma edição fe
 ## Alteração necessária
 
 ### Rota
+
 ```tsx
-const CadenceHub = lazy(() => import('./features/cadence/components/CadenceHub').then(m => ({ default: m.CadenceHub })));
+const CadenceHub = lazy(() =>
+  import('./features/cadence/components/CadenceHub').then((m) => ({ default: m.CadenceHub })),
+);
 // ...
-<Route path="cadence" element={<CadenceHub />} />
+<Route path="cadence" element={<CadenceHub />} />;
 ```
+
 Mesmo padrão de lazy-loading por rota já usado em todas as entradas de `src/App.tsx` (ver
 `performance/SKILL.md` — lazy loading por rota é o padrão obrigatório deste projeto, não opcional
 para telas novas).
@@ -35,6 +42,7 @@ domínio estiver testada; se você aplicar a rota antes disso, o import falhará
 componente — trate como esperado, não como bug seu.
 
 ### Menu
+
 Sugestão de posição: entre `activities` ("Agenda") e `analytics`, no mesmo grupo funcional do CRM
 operacional (é onde o vendedor já olha follow-up e próxima ação — cadência é a extensão natural
 disso, não uma ferramenta separada de automação).
@@ -42,10 +50,12 @@ disso, não uma ferramenta separada de automação).
 ```tsx
 { id: 'cadence' as TabType, label: 'Cadência', icon: <Repeat size={20} /> },
 ```
+
 (`Repeat` de `lucide-react`, já é dependência do projeto — qualquer ícone de sequência/ciclo serve,
 a escolha é sua como dono de UX; sugestão, não exigência.)
 
 ## Teste esperado
+
 - `npm run build` continua verde depois de adicionar a rota (mesmo com `CadenceHub` ainda
   minimalista ou com placeholder de "em construção" se aplicado antes da entrega do componente).
 - Navegação por teclado até o item novo do menu funciona (ver `accessibility/SKILL.md`, seu domínio
@@ -54,6 +64,7 @@ a escolha é sua como dono de UX; sugestão, não exigência.)
   já usados por outras rotas).
 
 ## Contexto adicional
+
 Referência: `AUTONOMIA_COMERCIAL_24X7.md` → "Próximas integrações para autonomia de ciclo
 completo" e `.agents/prompts/17-cadencia-ciclo-receita.md`. A tela real (`CadenceHub.tsx`) vai
 listar: registros de opt-out por lead/canal, execuções de cadência ativas/pausadas/paradas com
@@ -71,7 +82,7 @@ export que este handoff pedia:
 
 - `src/features/cadence/components/CadenceHub.tsx` — export nomeado `CadenceHub`, sem export
   default, mesmo import esperado (`import('./features/cadence/components/CadenceHub').then(m => ({
-  default: m.CadenceHub }))`).
+default: m.CadenceHub }))`).
 - Consome `src/features/cadence/cadence.api.ts` → `GET /api/cadence/opt-outs` e
   `GET /api/cadence/runs` (montados em `server.ts` sob `/api/cadence`, atrás de
   `authenticateToken`/`requireTenant`, mesmo padrão dos ~15 routers já montados ali).
@@ -100,7 +111,7 @@ default — import por `.then(m => ({ default: m.CadenceHub }))`, igual ao padr�
   `ActivityList`), e `<Route path="cadence" element={<CadenceHub />} />` logo após
   `<Route path="activities" ...>`, antes do catch-all `path="*"`.
 - **`src/components/layout/Sidebar.tsx`** — item `{ id: 'cadence', label: 'Cadência', icon:
-  <Repeat size={20} /> }` adicionado em `coreTools`, entre `activities` ("Agenda") e `analytics`,
+<Repeat size={20} /> }` adicionado em `coreTools`, entre `activities` ("Agenda") e `analytics`,
   posição sugerida pelo handoff (extensão natural do follow-up operacional que o vendedor já
   acompanha ali). Ícone `Repeat` de `lucide-react`, como sugerido.
 - **Contrato de navegação** (para não repetir o erro inverso da limpeza de `enrich`/`prompts` desta
@@ -119,6 +130,7 @@ Arquivo `src/features/cadence/components/CadenceHub.tsx` não foi tocado — seg
 propriedade do Agente 17.
 
 ### Gate (ambiente sem Docker/Postgres — `npm ci` + `npx prisma generate` já rodados)
+
 - `npx tsc --noEmit -p .` — limpo, 0 erros.
 - `npm run lint` — 0 erros; 68 warnings pré-existentes em arquivos não tocados por esta mudança
   (`no-explicit-any`, `jsx-a11y/click-events-have-key-events` etc.), nenhum novo.

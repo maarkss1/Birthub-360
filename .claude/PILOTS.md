@@ -177,7 +177,7 @@ entrada nova.
 - **Bug real de infraestrutura de teste encontrado ao escrever o e2e de RBAC** (não por leitura de
   código): um helper de teste que muda o papel de um usuário direto no banco
   (`tests/e2e/helpers.ts`, `setUserRole`) usando `requestContext.run({bypassRls:true}, () =>
-  prisma.user.update(...))` falhava com "record not found" mesmo o registro existindo — porque
+prisma.user.update(...))` falhava com "record not found" mesmo o registro existindo — porque
   `prisma.user.update(...)` devolve um `PrismaPromise` preguiçoso, e o hook `$allOperations` da
   extensão do Prisma (`src/lib/prisma.ts`) que lê `requestContext.getStore()` só roda quando a
   promise é de fato `await`ada, depois que o `.run(store, callback)` síncrono já retornou —
@@ -186,11 +186,11 @@ entrada nova.
   escopar a um callback. Vale como alerta geral: `AsyncLocalStorage.run()` com um `PrismaPromise`
   lazy dentro é uma armadilha real neste código-base, não só teoria.
 - **Arquitetura**: espelha `src/features/analytics/` (domain/application/infra/presentation/routes
-  + registro em `src/shared/di/setup.ts`), a estrutura de clean architecture já estabelecida para
-  módulos de agregação read-heavy — não a estrutura `pages/` sugerida pelo prompt de produto
-  (explicitamente condicional a "se o repositório não tiver padrão definido", e este já tinha).
-  Frontend é um "hub" com abas internas (`CommercialIntelligenceHub.tsx`), mesmo padrão de
-  `IntelligenceHub.tsx`/`ChatbookHub.tsx`, em vez de 9 rotas/itens de menu separados.
+  - registro em `src/shared/di/setup.ts`), a estrutura de clean architecture já estabelecida para
+    módulos de agregação read-heavy — não a estrutura `pages/` sugerida pelo prompt de produto
+    (explicitamente condicional a "se o repositório não tiver padrão definido", e este já tinha).
+    Frontend é um "hub" com abas internas (`CommercialIntelligenceHub.tsx`), mesmo padrão de
+    `IntelligenceHub.tsx`/`ChatbookHub.tsx`, em vez de 9 rotas/itens de menu separados.
 - **Validações executadas**: `npx tsc --noEmit` (0 erros), `npm run lint` (0 erros, mesmos
   warnings pré-existentes), `npm run build` (limpo), `npm run test:unit` (557 testes, incl. 4
   arquivos novos — `forecastEngine`, `pipelineEligibility`, `lossTaxonomy`,
@@ -224,7 +224,7 @@ entrada nova.
   padrão de `ChurnPredictionService`), mas se a IA falhar ou o JSON não parsear, as recomendações
   são derivadas deterministicamente de `alerts`/negócios em risco — o painel nunca fica vazio só
   porque o modelo falhou, e a UI (`MentorPlaybookCard`) rotula explicitamente `source: 'ai' |
-  'fallback'`, nunca apresenta o fallback como se fosse gerado por IA.
+'fallback'`, nunca apresenta o fallback como se fosse gerado por IA.
 - **Centro de Decisão reaproveita, não duplica**: `dealsDrillDown` ganhou `sort: 'riskImpact'`
   (valor × probabilidade de não fechar) e `ids` (filtro por IDs específicos) — nenhum endpoint
   novo, nenhum cálculo novo, só uma ordenação/filtro alternativos do mesmo `forecastEngine` já
@@ -337,7 +337,7 @@ entrada nova.
   de `prospecting.routes.ts` — multer, IcebreakerService — em qualquer teste que só precisasse do
   schema).
 - **Gate de documentação viva pegou a mudança de verdade**: `tests/unit/shared/
-  openapiRouteInventory.test.ts` (Agente 18) falhou até `docs/openapi.yaml` ganhar as 5 rotas novas
+openapiRouteInventory.test.ts` (Agente 18) falhou até `docs/openapi.yaml` ganhar as 5 rotas novas
   — confirma que esse teste funciona como pretendido. `auth-extra` já estava undocumented antes
   desta sessão (confirmado via `git stash`); não corrigido aqui (fora de escopo), reportado à parte.
 - **Bug real encontrado só ao testar com dados reais, não por leitura de código**: o Hunter.io
@@ -357,12 +357,12 @@ entrada nova.
 - **QA em navegador real, ponta a ponta, com dados reais**: as 3 integrações pagas estavam de fato
   configuradas neste ambiente de dev (`PROSPECTING_PROVIDER_MODE=hybrid` com chaves reais) — os
   quatro cards mostraram sem badge "não configurado", e cada ferramenta foi testada com busca real
-  + promoção real pro CRM (`POST /promote` → 201 Created em Google Places, Apollo, Hunter e no
-  gerador manual do LinkedIn), sem nenhum erro no console. Sessão de teste criada via o próprio
-  formulário de signup (mesmo caminho que `tests/e2e/helpers.ts::signUp` usa), não atalho de API.
-  Verificado também: dark mode ativo (cor de marca `#FF5618` legível sobre fundo escuro) — troca
-  para Total Trac não foi exercitada nesta rodada (a cor vem 100% de `useBrandAccent()`, já
-  validado em outras telas, nenhuma lógica de cor nova introduzida aqui).
+  - promoção real pro CRM (`POST /promote` → 201 Created em Google Places, Apollo, Hunter e no
+    gerador manual do LinkedIn), sem nenhum erro no console. Sessão de teste criada via o próprio
+    formulário de signup (mesmo caminho que `tests/e2e/helpers.ts::signUp` usa), não atalho de API.
+    Verificado também: dark mode ativo (cor de marca `#FF5618` legível sobre fundo escuro) — troca
+    para Total Trac não foi exercitada nesta rodada (a cor vem 100% de `useBrandAccent()`, já
+    validado em outras telas, nenhuma lógica de cor nova introduzida aqui).
 - **`computer` (click por coordenada) não disparou eventos de forma confiável nesta sessão** (pane
   sem compositing — `screenshot` falhou o tempo todo com "Browser pane is not displayed") —
   cliques reais precisaram de `button.click()` via `javascript_tool` como alternativa. Registrado
@@ -404,7 +404,7 @@ entrada nova.
   não reage.
 - **Bug real e pré-existente encontrado pelo axe-core, não pela migração**: a aba ativa do seletor
   em `src/pages/MarketIntelligence.tsx` (Territorial/Economia/Empresas/LDR) usava `bg-white
-  text-[#C43E0E]` — ao virar `bg-surface text-[#C43E0E]` (tema-reativo), `#C43E0E` sobre
+text-[#C43E0E]` — ao virar `bg-surface text-[#C43E0E]` (tema-reativo), `#C43E0E` sobre
   `--surface` escuro mede 3.57:1, abaixo do mínimo AA. Não era bug pré-existente por acaso: no
   tema claro original o par já funcionava (laranja sobre branco), e só ficou mensurável ao virar
   reativo. Corrigido trocando para o padrão já estabelecido no restante do app para "aba ativa"
@@ -471,7 +471,7 @@ entrada nova.
     e hover claro incoerente sobre superfície escura. Trocados por `border-line`/`hover:bg-surface-2`/
     `hover:bg-line`, mesmo idioma já usado pelos itens de navegação da própria `Sidebar.tsx`.
   - `.glass-panel`/`.glass-panel-elevated` (`globals.css`): hairline de topo (`inset 0 1px 0 0
-    rgba(255,255,255,...)`, somado à sombra existente, não substituindo) — reforça a leitura de
+rgba(255,255,255,...)`, somado à sombra existente, não substituindo) — reforça a leitura de
     "painel de instrumento" pedida pela personalidade "controle/precisão", sem introduzir blur ou
     gradiente novo; imperceptível no tema claro de propósito (não deve competir com conteúdo ali).
 - **Decisões explícitas de não-fazer** (registradas aqui pra sessão futura não "redescobrir" e
@@ -479,20 +479,20 @@ entrada nova.
   radar/grid/rede; sem alterar `EASE_PREMIUM`/springs de `src/lib/motion.ts`; sem tocar
   `AtlasOrb.tsx`/`SpaceGame.tsx` (3D decorativo já contido/aceito, fora do escopo pedido); sem
   implementar feedback sonoro de UI (iniciativa Onda 38, `.agents/handoffs/onda-38/
-  00-para-02-03-redesign-plataforma.md`, explicitamente congelada pelo freeze de escopo — não
+00-para-02-03-redesign-plataforma.md`, explicitamente congelada pelo freeze de escopo — não
   reaberta aqui); sem tocar `--bg`/`--surface`/`--ink` (hex base) — mudar luminância de base
   invalidaria toda a matemática de contraste WCAG AA já corrigida em pilotos anteriores
   (`--critical`, `--color-brand-active`, `--ok-active` etc.), risco desproporcional ao pedido.
 - **Ambiente sem Docker (mesmo padrão dos Pilotos 003/005)**: `docker.sock` inexistente;
   `postgresql-16-pgvector` instalado via `apt-get`, cluster local + Redis provisionados
   manualmente, `prospectordb_test` criado com `scripts/db/create-app-role.sql`, `prisma migrate
-  deploy` real, servidor Express real (`tsx server.ts`) no ar, sessão criada via signup real pelo
+deploy` real, servidor Express real (`tsx server.ts`) no ar, sessão criada via signup real pelo
   formulário (mesmo caminho de `tests/e2e/helpers.ts::signUp`). `.env.test`/banco/servidor
   removidos ao final da sessão.
 - **Validação**: `npx tsc -b --noEmit` (0 erros), `npm run lint` (0 erros/warnings nos 3 arquivos
   tocados — os 2 erros e 156 warnings pré-existentes no restante do projeto continuam idênticos,
   não relacionados a esta mudança), `npx vite build` (limpo; CSS gerado conferido — `shadow-card-
-  hover`, `--font-brand-display`, hairline do `.glass-panel` compilam com os valores esperados).
+hover`, `--font-brand-display`, hairline do `.glass-panel` compilam com os valores esperados).
   `tests/e2e/accessibility.spec.ts` completo rodou contra o servidor real: 34/35 passando: a 1
   falha ("Chatbook") é contraste pré-existente num badge `bg-emerald-500/20 text-emerald-500`
   ("Groq IA") não relacionado a `Card`/`Button`/`globals.css` — confirmado pré-existente rodando o
@@ -577,7 +577,7 @@ entrada nova.
   explicitamente pelo usuário em todo o produto (30 rotas/módulos). Em vez de redesenhar tudo de
   uma vez, seguido o processo obrigatório da constituição (`CLAUDE.md` seção 12): pilotar uma tela
   por vez, começando pela mais vista no dia a dia (`src/features/dashboard/components/
-  SinglePageDashboard.tsx`) e pela que concentrava o maior gap real entre backend e UI. As demais
+SinglePageDashboard.tsx`) e pela que concentrava o maior gap real entre backend e UI. As demais
   telas ficam como roadmap para pilotos futuros (Roleplay, Analytics/Commercial Intelligence,
   Chatbook, Integrations, AI Suite, e os módulos ainda sem piloto).
 - **Correção de premissa registrada por escrito (achado de leitura de código, antes de
@@ -608,7 +608,7 @@ entrada nova.
      `byOwner` já calculado por `GET /api/analytics/dashboard` (sem restrição de role) — a mecânica
      de jogo é o próprio ranking por negócios fechados reais, sem XP/nível/sequência inventados.
   2. **Coaching semanal por IA** (`SellerCoachingCard.tsx` + rota nova `POST /api/gamification/
-     coaching/weekly`, complementar, sob demanda): novo `sellerPerformanceAggregator.service.ts`
+coaching/weekly`, complementar, sob demanda): novo `sellerPerformanceAggregator.service.ts`
      calcula `callsMade`/`meetingsScheduled`/`dealsClosed`/`avgTicket`/`conversionRatePercent`/
      `topLossReason` a partir de `Activity`/`Lead` reais via Prisma, escopados a
      `organizationId`+`owner` (nome do vendedor autenticado, resolvido no servidor via
@@ -682,13 +682,13 @@ entrada nova.
   kind=`roleplay` → `generateRoleplay()`, schema-validado, sem fallback falso — lança erro em vez de
   inventar resposta, `AGENTS.md` da pasta já proíbe isso). O outro
   (`src/features/roleplay/services/roleplay-ai.service.ts` + rotas `/api/intelligence/suite/roleplay/
-  turn|evaluate`) é órfão, só consumido por um painel interno de demonstração (`AISuiteHub.tsx`), não
+turn|evaluate`) é órfão, só consumido por um painel interno de demonstração (`AISuiteHub.tsx`), não
   pela tela de produção. Unificar os dois é decisão de arquitetura de backend, sinalizada como tarefa
   separada, não misturada neste diff.
 - **Correção de bugs reais encontrados durante a auditoria/implementação (regra visual 3/7 —
   token de marca estático em vez de dinâmico)**:
   - `RoleplayHub.tsx`, `CallSetup.tsx`, `ActiveCallView.tsx` tinham o ternário `activeBrand ===
-    'totaltrac' ? '...sky...' : '...orange/atlas...'` repetido em ~10 lugares — substituído por
+'totaltrac' ? '...sky...' : '...orange/atlas...'` repetido em ~10 lugares — substituído por
     classes de token dinâmico (`text-brand`, `border-brand`, `bg-brand-active`, `bg-brand/10`
     etc.), que já reagem à marca via `--brand`/`--brand-2` reescritos em runtime por
     `BrandContext.tsx`. Blur ambiente de `RoleplayHub.tsx` (antes `orange-400`/`blue-400` fixos,
@@ -711,7 +711,7 @@ entrada nova.
 - **Acessibilidade real corrigida (seção 10 da constituição)**:
   - `CallSetup.tsx`: cards de persona eram `<motion.div onClick>` sem `role`/teclado —
     inacessíveis via Tab/Enter/leitor de tela. Viraram `<motion.button type="button"
-    aria-pressed={...}>` reais, mantendo hover/tap do Framer Motion.
+aria-pressed={...}>` reais, mantendo hover/tap do Framer Motion.
   - `ActiveCallView.tsx`: os 3 botões-ícone (microfone, enviar, encerrar) só tinham `title` —
     ganharam `aria-label` explícito e dinâmico (mic alterna "Ativar microfone"/"Desativar
     microfone" conforme o estado).
@@ -752,13 +752,12 @@ entrada nova.
   servidor alheio, servindo uma versão de UI de login diferente da do repositório atual
   ("Torre de controle"/"Criar conta", texto que não existe em `LoginScreen.tsx`). Resolvido rodando
   com `PORT=3001` (porta isolada, livre), sem tocar no processo da outra sessão. Por essa mesma
-  razão, a infraestrutura Docker **não foi desligada** ao final desta sessão (diferente do Pilot
-  007) — a outra sessão pode depender do mesmo Postgres/Redis compartilhado.
+  razão, a infraestrutura Docker **não foi desligada** ao final desta sessão (diferente do Pilot 007) — a outra sessão pode depender do mesmo Postgres/Redis compartilhado.
 - **Aprendizado incorporado**: segunda confirmação (após o Pilot 007) de que o padrão "vitrine de
   dado real subaproveitado" se repete — vale registrar como princípio explícito numa futura revisão
   de `frontend-design/SKILL.md`: antes de propor uma feature nova, perguntar se o backend já calcula
   algo parecido que só falta aparecer na tela. Também confirma que o par `isAtlas ? --brand :
-  --brand-2` (já usado em `GlowChart.tsx`/`useBrandAccent.ts`) é o padrão correto sempre que um
+--brand-2` (já usado em `GlowChart.tsx`/`useBrandAccent.ts`) é o padrão correto sempre que um
   elemento precisa de contraste/glow sobre um fundo intencionalmente escuro — vale documentar isso
   em `design-system/SKILL.md` para não ser redescoberto a cada piloto.
 
@@ -908,11 +907,11 @@ entrada nova.
   `WebhookMonitor.tsx` já teve um bug real de dado fabricado corrigido antes (4 eventos inventados,
   comentário no próprio arquivo documenta o achado da Onda 1). Escopo calibrado por
   proporcionalidade: não retokenizadas as ~890 linhas do arquivo inteiro (usa `bg-white
-  dark:bg-white/5` pareado corretamente — funciona nos dois temas, é debt de consistência, não bug
+dark:bg-white/5` pareado corretamente — funciona nos dois temas, é debt de consistência, não bug
   visível; mexer nisso tudo seria desproporcional a um piloto).
 - **Achados reais**:
   - Barra de navegação das 5 abas usava `bg-orange-50 text-orange-700` (ativo)/`text-gray-600
-    hover:bg-gray-50` (inativo) **sem nenhuma variante `dark:`** — quebrava de verdade no tema
+hover:bg-gray-50` (inativo) **sem nenhuma variante `dark:`** — quebrava de verdade no tema
     escuro (diferente do resto do arquivo, que pareia corretamente). Laranja fixo como "ativo"
     também é a mesma classe de bug já corrigida nos Pilots 008/009/010 (UI do próprio produto
     deveria reagir a `--brand`, não ser uma cor de marca de terceiro).
@@ -942,7 +941,7 @@ entrada nova.
     `listBitrixConnections` (inicial + pós-autoconnect) e o `.map()` final passaram a incluí-lo.
     Renderizado como "Última sincronização: {data}" / "Nunca sincronizado" na linha de conexão.
   - `WebhookMonitor.tsx`: campo de busca ganhou `aria-label`; modal reescrito com `<Dialog isOpen
-    onClose title maxWidth="max-w-xl">` — resolveu o gap de acessibilidade e reduziu código
+onClose title maxWidth="max-w-xl">` — resolveu o gap de acessibilidade e reduziu código
     duplicado de graça.
 - **Fora de escopo, documentado**: WhatsApp/Google/3CX não têm métricas agregadas além de um
   booleano de conexão (confirmado por auditoria de backend) — nada inventado para essas três.
@@ -998,8 +997,7 @@ entrada nova.
     escondidas ou fabricadas com um número — mesmo princípio de honestidade de
     `IntegrationTruthBox` (Pilot 011). Segunda seção resume o Golden Dataset (versão, total de
     casos, contagem por categoria, validação real de casos de uso de ferramenta contra o schema).
-    Nova aba "Qualidade do Enxame" em `IntelligenceHub.tsx` → `TOOL_TABS`, mesmo padrão das outras
-    11. Sem restrição de papel no frontend — os 2 endpoints não têm `requireRole` no backend além de
+    Nova aba "Qualidade do Enxame" em `IntelligenceHub.tsx` → `TOOL_TABS`, mesmo padrão das outras 11. Sem restrição de papel no frontend — os 2 endpoints não têm `requireRole` no backend além de
     tenant, então nenhuma restrição foi inventada.
   - `AISuiteHub.tsx`: `<div onClick>` → `<button type="button" aria-pressed>`; cores de status →
     tokens `success`/`brand`/`danger` (mantido o `animate-pulse` do badge "Ready" — comunica sistema
@@ -1088,7 +1086,7 @@ entrada nova.
   outra sessão está no meio de uma remoção grande da integração Bitrix (todo
   `src/features/integrations/bitrix/*` deletado, referências ainda pendentes em ~15 arquivos não
   relacionados a Contacts). Isso deixa o projeto inteiro num estado transitório quebrado: `npx tsc
-  --noEmit` mostra ~20 erros, todos em módulos bitrix/mesa-tratamento/prospecting/crm não tocados
+--noEmit` mostra ~20 erros, todos em módulos bitrix/mesa-tratamento/prospecting/crm não tocados
   por este piloto (confirmado por grep — zero menção a `contacts` nos erros); `npx vite build`
   falha ao resolver `bitrix.api` a partir de `CrmBoard.tsx`; o próprio `server.ts` não sobe
   (`ERR_MODULE_NOT_FOUND` em `bitrix.webhook.js`), bloqueando **toda** a suíte e2e, não só a deste
@@ -1139,7 +1137,7 @@ entrada nova.
   - Retokenização completa de `CompanyDetail.tsx` para o mesmo sistema já usado em `CompanyList.tsx`:
     ícones informativos → `text-ink/70 dark:text-ink-2` (CNPJ/local/segmento/Users/ShieldCheck),
     avatar/bolha de ícone → `bg-soft border-brand/30 text-brand` / `bg-brand/10 border-brand/20
-    text-brand` (mesmo padrão de bolha usado em Contacts), chips de link externo (site/LinkedIn) →
+text-brand` (mesmo padrão de bolha usado em Contacts), chips de link externo (site/LinkedIn) →
     token `info`, badge "Ativo" → cópia exata do padrão já auditado em `CompanyList.tsx`
     (`bg-success/10 text-emerald-700 dark:text-success`), botão "Enriquecer com IA" → mesma
     combinação âmbar auditada de `CompanyList.tsx` (preserva a categoria "âmbar = ação de IA", já
@@ -1199,8 +1197,8 @@ entrada nova.
   integração foi mantida, não removida).
 - **Verificação**: `npx eslint --no-cache` nos 2 arquivos (limpo), `npx tsc --noEmit -p .` (0 erros
   no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c vitest.unit.config.ts
-  tests/unit/features/companies` (10/10 passando), `PORT=3050 npx playwright test
-  tests/e2e/contact-company-forms.spec.ts` (3/3 passando). Primeira verificação totalmente completa
+tests/unit/features/companies` (10/10 passando), `PORT=3050 npx playwright test
+tests/e2e/contact-company-forms.spec.ts` (3/3 passando). Primeira verificação totalmente completa
   (sem bloqueio de ambiente) desde o Piloto 012.
 - **Aprendizado incorporado**: oitava confirmação do padrão "vitrine de dado real subaproveitado" —
   desta vez dentro de uma tela que já existia e já era usada, não um stub morto: o dado (horário de
@@ -1349,7 +1347,7 @@ entrada nova.
 - **Fora de escopo, documentado**: `CadenceSequence.active`/`deletedAt` existem e são filtrados nas
   queries, mas não há nenhuma ação de desativar/excluir sequência na UI — exigiria rota backend nova
   (`DELETE`/`PATCH`), não só front-end; sinalizado para task futura. `CadenceTouchAttempt.
-  providerMessageId` (id da mensagem no provedor, coletado para depuração) não exibido na tabela de
+providerMessageId` (id da mensagem no provedor, coletado para depuração) não exibido na tabela de
   tentativas expandida — valor limitado sem uma ferramenta de suporte que o consuma, não crítico
   como os achados acima. `CadenceRun.calendarEvents` (relação criada pela rota de agendamento) ainda
   sem visualização própria na tela — resolvido parcialmente ao dar à rota um ponto de entrada, mas
@@ -1365,9 +1363,9 @@ entrada nova.
 - **Verificação**: `npx eslint --no-cache` nos 3 arquivos tocados (limpo, após remover um
   `eslint-disable` que ficou desnecessário), `npx tsc --noEmit -p .` (0 erros no projeto inteiro),
   `npx vite build` (sucesso), `npx vitest run -c vitest.unit.config.ts tests/unit/features/cadence
-  src/features/cadence/__tests__` (200/200 passando), `PORT=3070 npx playwright test
-  tests/e2e/cadence.spec.ts` (2/2 passando), `npx vitest run -c vitest.integration.config.ts
-  tests/integration/cadence-start.routes.test.ts tests/integration/cadence-schedule-meeting.routes.test.ts`
+src/features/cadence/__tests__` (200/200 passando), `PORT=3070 npx playwright test
+tests/e2e/cadence.spec.ts` (2/2 passando), `npx vitest run -c vitest.integration.config.ts
+tests/integration/cadence-start.routes.test.ts tests/integration/cadence-schedule-meeting.routes.test.ts`
   (22/23 passando — 1 falha real mas **pré-existente e confirmada não relacionada a este piloto**:
   `git stash` das minhas mudanças reproduziu a mesma falha idêntica em
   `cadence-start.routes.test.ts`, "409 quando o lead já tem uma cadência ativa" recebendo 201 em vez
@@ -1395,7 +1393,7 @@ entrada nova.
   (`qualification-matrix.routes.ts`, `objection-matrix.routes.ts`), mas nenhuma das duas telas lia
   o papel do usuário — um SDR/CLOSER (que podem criar/editar) via o botão "Excluir" e recebia um
   403 sem explicação ao clicar. Corrigido: `canDelete = hasRequiredRole(currentUser.role, ['ADMIN',
-  'GESTOR'])` (mesmo padrão já usado em `Integrations.tsx`/`BitrixSyncRulesPanel.tsx`/
+'GESTOR'])` (mesmo padrão já usado em `Integrations.tsx`/`BitrixSyncRulesPanel.tsx`/
   `BitrixImportPanel.tsx`) esconde o botão para quem não tem permissão, nas duas telas.
 - **Achado de cor**: `ObjectionsMatrixPage.tsx` tinha `text-amber-500` cru no ícone de
   `AlertTriangle` do título de cada objeção — coincidentemente o mesmo hex do token
@@ -1414,7 +1412,7 @@ entrada nova.
   - `confirm()` nativo em `handleDelete` das duas páginas — mesmo padrão já registrado como fora de
     escopo nos Pilotos 014/015 (usado em 12+ arquivos do app inteiro).
   - Paginação real implementada nos dois repositórios Prisma (`meta: {total, page, limit,
-    totalPages}`), mas os use cases sempre chamam `findAll(..., 1, 200)` fixo e o client HTTP
+totalPages}`), mas os use cases sempre chamam `findAll(..., 1, 200)` fixo e o client HTTP
     descarta `meta` (`.then(res => res.data)`) — se uma organização passar de 200 perguntas/objeções
     por marca, os itens excedentes somem silenciosamente da tela. Sem sintoma visível hoje (nenhuma
     organização real chegou perto desse volume), mas é um bug latente real; corrigir exigiria mudar
@@ -1430,11 +1428,11 @@ entrada nova.
     achado de UI deste piloto.
 - **Preservado**: nenhuma migração. Rotas/textos exatos de `tests/e2e/accessibility.spec.ts`
   (`'Matriz de Qualificação não tem violações críticas/sérias'`, `'Matriz de Objeções não tem
-  violações críticas/sérias'`, `/app/qualification_matrix`, `/app/objections_matrix`) e do array
+violações críticas/sérias'`, `/app/qualification_matrix`, `/app/objections_matrix`) e do array
   `MODULES` de `tests/e2e/mobile-sweep.spec.ts` intactos.
 - **Verificação**: `npx eslint --no-cache` nos 2 arquivos (limpo), `npx tsc --noEmit -p .` (0 erros
   no projeto inteiro), `npx vite build` (sucesso), `PORT=3085 npx playwright test
-  tests/e2e/accessibility.spec.ts -g "Matriz de Qualifica|Matriz de Objeç"` (2/2 passando). Não
+tests/e2e/accessibility.spec.ts -g "Matriz de Qualifica|Matriz de Objeç"` (2/2 passando). Não
   existe `tests/unit/features/playbook/**` no repositório (pasta inexistente) — nada rodado ali por
   não haver o que rodar, não por bloqueio.
 - **Aprendizado incorporado**: primeiro módulo desta série de 5 pilotos sem bug funcional
@@ -1467,7 +1465,7 @@ entrada nova.
   `Automations.tsx` não lia o papel do usuário — SDR/CLOSER (os papéis mais numerosos numa operação
   comercial) viam todos os controles de escrita habilitados e só descobriam a falta de permissão
   com um 403 genérico ao clicar. Corrigido com o mesmo `canManage = hasRequiredRole(currentUser.role,
-  ['ADMIN', 'GESTOR'])` já usado em Playbook/Integrations/BitrixSyncRulesPanel — esconde "Nova
+['ADMIN', 'GESTOR'])` já usado em Playbook/Integrations/BitrixSyncRulesPanel — esconde "Nova
   automação", simular, versões, editar e excluir; o switch ativa/pausa continua visível (é leitura
   de estado) mas fica desabilitado. Novo teste unitário cobre exatamente esse cenário (papel `SDR`).
 - **Vitrine de dado real subaproveitado, versão "capacidade" em vez de "campo"**: o sistema de
@@ -1508,7 +1506,7 @@ entrada nova.
   testes pré-existentes de `automations-ui.test.tsx` continuam intactos (textos exatos:
   `'Nenhuma automação ainda'`, `/Criar a primeira/`, `'Avisar em Proposta Enviada'`,
   `/Quando "Lead mudou de status"/`, `'ainda não disparou'`, `'1 regra · 1 ativa(s)'`, `getByRole
-  ('switch', {name: /Pausar .../})`, `getByLabelText('Nome')`/`getByLabelText(/Somente na etapa/)`).
+('switch', {name: /Pausar .../})`, `getByLabelText('Nome')`/`getByLabelText(/Somente na etapa/)`).
 - **Achado ambiental durante a implementação — teste quebrado pela minha própria correção,
   corrigido no mesmo diff**: ao adicionar `useAuth()` a `Automations.tsx` para o RBAC, os 8 testes
   de `automations-ui.test.tsx` que renderizam `<Automations />` passaram a falhar com "useAuth deve
@@ -1521,7 +1519,7 @@ entrada nova.
   (regressão do bug do schema + verificação de RBAC) adicionados no processo.
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts` em todo o escopo de testes do módulo Automations — unit, engine, dry-run,
+vitest.unit.config.ts` em todo o escopo de testes do módulo Automations — unit, engine, dry-run,
   versionamento, idempotência, scanners, controller (132/132 passando, incluindo os 2 testes novos
   deste piloto).
 - **Aprendizado incorporado**: primeira vez nesta série em que a própria correção de um piloto
@@ -1562,7 +1560,7 @@ entrada nova.
 - **Vitrine de dado real subaproveitado**: `Document.version` (mesmo campo do achado acima) nunca
   era sequer selecionado na query de listagem (`ingestion.service.ts:list`, `select` não incluía a
   coluna) nem exibido — adicionado ao `select` e um badge "editado · vN" aparece quando `version >
-  1`. `sourceType` já estava no tipo do frontend mas nunca renderizado — como só `sourceName` (nulo
+1`. `sourceType` já estava no tipo do frontend mas nunca renderizado — como só `sourceName` (nulo
   para texto colado) aparecia, não havia como distinguir visualmente "documento colado" de "arquivo
   enviado" na listagem; agora mostra "· texto colado" quando não há `sourceName`.
 - **Cosmético**: `<mark>` de destaque de busca (`bg-amber-400/25 text-amber-100`) — **exceção
@@ -1599,9 +1597,9 @@ entrada nova.
     teste existente (`spyOn(window, 'confirm')`), então trocar exigiria atualizar esse teste também.
 - **Preservado**: nenhuma migração. Textos exatos de `tests/unit/features/knowledge-base.test.tsx`
   (`'Nenhum documento ainda'`, `/12 trechos · .* · playbook\.docx/`, `/1 documento · 12 trechos
-  indexados/`, `'Banco indisponível'`, payloads exatos de busca/ingestão, `getByTitle('Remover
-  documento')`) intactos; `tests/e2e/accessibility.spec.ts` (`'Base de Conhecimento não tem
-  violações críticas/sérias'`, rota `/app/knowledge`) intacto.
+indexados/`, `'Banco indisponível'`, payloads exatos de busca/ingestão, `getByTitle('Remover
+documento')`) intactos; `tests/e2e/accessibility.spec.ts` (`'Base de Conhecimento não tem
+violações críticas/sérias'`, rota `/app/knowledge`) intacto.
 - **Achado ambiental — mesma quebra do Piloto 018, corrigida da mesma forma**: adicionar `useAuth()`
   a `Base.tsx` quebrou os 8 testes existentes de `knowledge-base.test.tsx`
   ("useAuth deve ser usado dentro de um AuthProvider"), corrigido com o mesmo
@@ -1611,10 +1609,10 @@ entrada nova.
   mesmo diff.
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts` em `knowledge-base.test.tsx` (9/9, incluindo o teste novo) + todo o resto
+vitest.unit.config.ts` em `knowledge-base.test.tsx` (9/9, incluindo o teste novo) + todo o resto
   do módulo (`chunking`, `vector-support`, `reranker.service`, `knowledge-copilot.service`,
   extração de texto — 63/63 passando), `PORT=3090 npx playwright test
-  tests/e2e/accessibility.spec.ts -g "Base de Conhecimento"` (1/1 passando).
+tests/e2e/accessibility.spec.ts -g "Base de Conhecimento"` (1/1 passando).
 - **Aprendizado incorporado**: quarta confirmação seguida (Pilotos 016-019) do princípio "o que o
   backend já sabe fazer que a UI nunca chama" — desta vez um sistema de versionamento por
   freshness inteiro (campo + rota + serviço) ficou órfão desde a Onda 40 até este piloto. Segunda
@@ -1643,7 +1641,7 @@ entrada nova.
   sugeria que arrastar funcionava, e os botões de ação apareciam sempre habilitados, para só falhar
   com 403 depois do clique (revertendo a posição/status na tela). Corrigido com `canWrite`
   (`hasRequiredRole`, mesmo padrão dos 3 pilotos anteriores): `useDraggable({ disabled: !canWrite
-  })` desliga o drag pelo próprio dnd-kit (não só via CSS), e os botões "Cancelar"/"Concluir" do
+})` desliga o drag pelo próprio dnd-kit (não só via CSS), e os botões "Cancelar"/"Concluir" do
   modal de detalhe somem por completo. O botão "Links de Agendamento" e o CRUD dentro do modal
   **não** foram alterados — `privateBookingRouter` não tem `requireRole` (qualquer papel autenticado
   gerencia os próprios links), então UI e backend já concordavam, sem desalinhamento real ali.
@@ -1672,7 +1670,7 @@ entrada nova.
   `text-ink-2`; backdrops `bg-slate-950/80` (`Calendar.tsx`) e `bg-black/60` (`BookingLinksModal.tsx`)
   — duas cores diferentes pra mesma função dentro do mesmo módulo → unificados em `bg-ink/50` (mesmo
   token dos Pilotos 018/019); botão de copiar (`bg-emerald-500`) e botão de excluir (`bg-red-50
-  text-red-500`) em `BookingLinksModal.tsx` → tokens `success`/`danger`. `aria-label` adicionado ao
+text-red-500`) em `BookingLinksModal.tsx` → tokens `success`/`danger`. `aria-label` adicionado ao
   botão de fechar (X) e ao botão de excluir de `BookingLinksModal.tsx` (mantendo o `title` em
   ambos). `type="button"` adicionado em todos os botões/`Button` sem ele em `Calendar.tsx`.
 - **Erro cometido e corrigido no mesmo diff — regressão de contraste real introduzida por mim**: ao
@@ -1688,10 +1686,10 @@ entrada nova.
   claro é só estético".
 - **Preservado**: nenhuma migração. Textos exatos de `tests/unit/features/calendar.test.tsx`
   (`'Nenhuma atividade neste mês'`, `'Transportes Vale'`, `getByLabelText(/Reunião — Transportes
-  Vale/)`, `getByRole('button', {name: /Concluir/})`) e de
+Vale/)`, `getByRole('button', {name: /Concluir/})`) e de
   `tests/unit/features/calendar/booking.routes.test.ts` (todas as 8 asserções de RLS/tenancy/owner
   já existentes) intactos; `tests/e2e/accessibility.spec.ts` (`'Agenda não tem violações críticas/
-  sérias'`, rota `/app/calendar`) intacto.
+sérias'`, rota `/app/calendar`) intacto.
 - **Achado ambiental — mesma quebra dos Pilotos 018/019, corrigida da mesma forma**: adicionar
   `useAuth()` a `Calendar.tsx` quebrou o teste de componente existente
   (`'useAuth deve ser usado dentro de um AuthProvider'`), corrigido com o mesmo padrão
@@ -1702,10 +1700,10 @@ entrada nova.
   conflito) e um teste novo de regressão (409 quando já existe uma Activity no mesmo horário).
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts` em `calendar.test.tsx` (9/9, incluindo o teste novo de RBAC),
+vitest.unit.config.ts` em `calendar.test.tsx` (9/9, incluindo o teste novo de RBAC),
   `calendar/booking.routes.test.ts` (14/14, incluindo o teste novo de conflito de horário) e
   `src/features/calendar/__tests__` (calendar.util, 11/11) — 34/34 no total, `PORT=3096 npx
-  playwright test tests/e2e/accessibility.spec.ts -g "Agenda"` (1/1 passando, depois de corrigir a
+playwright test tests/e2e/accessibility.spec.ts -g "Agenda"` (1/1 passando, depois de corrigir a
   regressão de contraste introduzida e detectada pelo próprio teste).
 - **Aprendizado incorporado**: quinta confirmação seguida (Pilotos 017-020) do padrão de RBAC
   desalinhado — já é previsível o suficiente para checar por padrão em qualquer módulo novo, não
@@ -1790,10 +1788,10 @@ entrada nova.
   permissão de gerenciar broadcast).
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts` em `notifications.test.tsx` (12/12, incluindo os 2 testes novos) e
+vitest.unit.config.ts` em `notifications.test.tsx` (12/12, incluindo os 2 testes novos) e
   `notification-service.test.ts` (16/16, incluindo os 2 testes novos de `remove`) — 24/24 no
   total (mais os que já rodavam antes do piloto), `PORT=3100 npx playwright test
-  tests/e2e/accessibility.spec.ts -g "Notificações"` (1/1 passando).
+tests/e2e/accessibility.spec.ts -g "Notificações"` (1/1 passando).
 - **Aprendizado incorporado**: primeira vez nesta série em que o achado de maior severidade não é
   "UI oferece ação que o backend sempre rejeita" (padrão dos Pilotos 017-020) nem "campo/rota
   órfã", mas uma regra de posse real que estava genuinamente errada para o caso de uso majoritário
@@ -1850,19 +1848,19 @@ entrada nova.
   middleware de verdade. Não corrigido neste piloto (é uma lacuna de teste de infraestrutura, não
   um bug de UI); sinalizado para task futura.
 - **Preservado**: nenhuma migração. Textos exatos de `tests/unit/features/billing/components/
-  Billing.test.tsx` (`'Consumo de IA'`, `'US$ 12.35'`, `'gpt-4o-mini'`, `'Nenhuma chamada de IA no
-  período'`, `'Tentar novamente'`, rótulo `'7d'`) e de `usage.routes.test.ts` (saturação 7/90 dias,
+Billing.test.tsx` (`'Consumo de IA'`, `'US$ 12.35'`, `'gpt-4o-mini'`, `'Nenhuma chamada de IA no
+período'`, `'Tentar novamente'`, rótulo `'7d'`) e de `usage.routes.test.ts` (saturação 7/90 dias,
   propagação de erro) intactos — nenhum já dependia da ausência de `byPrompt`, e o novo campo foi
   adicionado com checagem nula (`data.byPrompt && ...`) para não quebrar se algum mock antigo não
   o incluir. `tests/e2e/accessibility.spec.ts` (`'Uso/Faturamento não tem violações críticas/
-  sérias'`) intacto — confirmado que `signUp()` do e2e sempre cria um `ADMIN` (primeiro usuário de
+sérias'`) intacto — confirmado que `signUp()` do e2e sempre cria um `ADMIN` (primeiro usuário de
   uma organização nova), então o novo `RequireRole` não interfere no caminho feliz do teste.
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts tests/unit/features/billing` (12/12 passando, sem nenhuma quebra —
+vitest.unit.config.ts tests/unit/features/billing` (12/12 passando, sem nenhuma quebra —
   `Billing.tsx` não usa `useAuth()` diretamente, o RBAC vive inteiramente no roteamento via
   `RequireRole`, então não houve a quebra de `AuthProvider` vista nos Pilotos 018-021), `PORT=3105
-  npx playwright test tests/e2e/accessibility.spec.ts -g "Uso"` (1/1 passando).
+npx playwright test tests/e2e/accessibility.spec.ts -g "Uso"` (1/1 passando).
 - **Aprendizado incorporado**: primeiro módulo desta série em que o achado de RBAC é "rota de
   frontend sem guarda" em vez de "UI mostra ação que o backend rejeita" — mesma família de bug
   (usuário vê algo que não devia), mas o mecanismo de correção certo já existe pronto no próprio
@@ -1893,7 +1891,7 @@ entrada nova.
   (mantendo a leitura liberada, já que `GET` não exige papel — diferente de simplesmente esconder a
   tela inteira atrás de um `<RequireRole>` de rota, que bloquearia até a leitura que o backend já
   permite). Criado o primeiro teste automatizado da tela (`tests/unit/features/
-  document-editor.test.tsx`, zero cobertura antes deste piloto): 5 casos incluindo o cenário de
+document-editor.test.tsx`, zero cobertura antes deste piloto): 5 casos incluindo o cenário de
   RBAC (`VISUALIZADOR` não vê os botões e os campos ficam `readOnly`).
 - **Retrabalho corrigido**: `Editor.tsx` chamava `api.get`/`api.put` cru com paths hardcoded em vez
   de usar `knowledgeApi.get`/`knowledgeApi.update` (client já existente, testado, tipado — criado
@@ -1919,12 +1917,12 @@ entrada nova.
   corrigido.
 - **Preservado**: nenhuma migração. Único teste e2e pré-existente
   (`tests/e2e/accessibility.spec.ts:276-281`, `'Editor de documentos não tem violações críticas/
-  sérias'`) intacto — confirmado que roda sempre como `ADMIN` (mesmo `signUp()` dos outros
+sérias'`) intacto — confirmado que roda sempre como `ADMIN` (mesmo `signUp()` dos outros
   pilotos), então nunca exercitava o bug de RBAC corrigido aqui; a cobertura de RBAC agora vem do
   novo teste unitário, não do e2e.
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts tests/unit/features/document-editor.test.tsx` (5/5 passando, arquivo novo),
+vitest.unit.config.ts tests/unit/features/document-editor.test.tsx` (5/5 passando, arquivo novo),
   `PORT=3110 npx playwright test tests/e2e/accessibility.spec.ts -g "Editor de documentos"` (1/1
   passando).
 - **Aprendizado incorporado**: primeira vez nesta série em que uma correção de RBAC já tinha um
@@ -1985,10 +1983,10 @@ entrada nova.
 - **Preservado**: nenhuma migração. Textos exatos de `tests/unit/components/layout/Sidebar.test.tsx`
   (regex `/^Equipe$/`/`/Equipe/` por papel) e `RequireRole.test.tsx` (`'Acesso restrito'`,
   `/permissão de ADMIN/`) intactos; `tests/e2e/accessibility.spec.ts` (`'Equipe não tem violações
-  críticas/sérias'`) intacto.
+críticas/sérias'`) intacto.
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts` em `tests/unit/features/team/team.service.test.ts` (7/7, arquivo novo —
+vitest.unit.config.ts` em `tests/unit/features/team/team.service.test.ts` (7/7, arquivo novo —
   trava do último ADMIN + desbloqueio) e `tests/unit/features/team/Team.test.tsx` (5/5, arquivo
   novo — listagem, auto-exclusão desabilitada, badge/botão de desbloqueio, criação de usuário),
   mais confirmação de que `Sidebar.test.tsx`/`RequireRole.test.tsx` continuam passando sem
@@ -2054,27 +2052,27 @@ entrada nova.
   `ADMIN`/`GESTOR`-only (corrigido acima), então o novo componente herda o mesmo gate do backend
   sem precisar de checagem própria.
 - **Cosmético**: `bg-red-500/10 text-red-400` no card de erro de `AuditLogs.tsx` → `bg-danger/10
-  text-danger-active dark:text-danger`; `<select>` de filtro de ação sem `<label htmlFor>`
+text-danger-active dark:text-danger`; `<select>` de filtro de ação sem `<label htmlFor>`
   associado (só um `<span>` solto) → `<label htmlFor="audit-filter-action">` real.
 - **Fora de escopo, documentado**: `confirm()` nativo em `Team.tsx` (reset de senha/exclusão) —
   mesmo padrão já registrado fora de escopo em 6 pilotos anteriores. Knob branco do switch de
   Feature Flags (`bg-white` sem par `dark:`) — convenção universal de controle físico de toggle,
   baixo risco, não corrigido. `User.image` (avatar) nunca exibido no card de perfil — campo real
   mas sem indicação de que algum provedor OAuth o popula hoje; `OrganizationFeatureFlag.
-  updatedByUserId`/`updatedAt` (quem alterou um flag e quando) gravados no backend mas nunca
+updatedByUserId`/`updatedAt` (quem alterou um flag e quando) gravados no backend mas nunca
   expostos na API nem na UI — ambos achados reais de "vitrine de dado subaproveitado" (décima
   terceira confirmação da série), mas de valor menor que os 4 achados acima; não corrigidos, para
   não diluir o foco deste piloto já grande. Falta de um caminho de troca de senha voluntária para
   um usuário comum (hoje só um ADMIN pode resetar via aba Usuários) — lacuna funcional plausível,
   não necessariamente um bug; sinalizado, não construído (feature nova, fora de escopo pontual).
 - **Preservado**: nenhuma migração. `tests/e2e/accessibility.spec.ts` (`'Configurações não tem
-  violações críticas/sérias'`) intacto; `tests/unit/features/lgpd/lgpd.routes.test.ts` (RBAC de
+violações críticas/sérias'`) intacto; `tests/unit/features/lgpd/lgpd.routes.test.ts` (RBAC de
   exclusão/exportação) e `tests/unit/features/feature-flags/featureFlags.service.test.ts`
   continuam passando sem alteração (nenhum dos dois toca a rota de auditoria nem o componente
   Settings).
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros no projeto inteiro), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts` em `tests/unit/features/settings/Settings.test.tsx` (5/5, arquivo novo —
+vitest.unit.config.ts` em `tests/unit/features/settings/Settings.test.tsx` (5/5, arquivo novo —
   idempotência do tema + RBAC de aba), `tests/unit/features/lgpd/AuditLogs.test.tsx` (3/3, arquivo
   novo — regressão do envelope), mais `lgpd`/`feature-flags` pré-existentes intactos (22/22 no
   total), `PORT=3120 npx playwright test tests/e2e/accessibility.spec.ts -g "Configurações"` (1/1
@@ -2088,7 +2086,7 @@ entrada nova.
   erro visível" (o erro existia, só era engolido pelo próprio `try/catch` genérico do componente).
   Primeira vez em que um achado de RBAC foi na direção "esconder demais" em vez de "revelar
   demais" — reforça que o checklist de RBAC de cada piloto precisa comparar a condição da UI
-  contra a lista *completa* de papéis do `requireRole` do backend, não só perguntar "isso é
+  contra a lista _completa_ de papéis do `requireRole` do backend, não só perguntar "isso é
   ADMIN-only?". Este foi o décimo terceiro e último módulo do roadmap original (Contacts →
   Settings) — antes de continuar para módulos fora dessa lista original (ex.: Mesa de Tratamento),
   vale perguntar ao usuário se o ciclo deve continuar ou está concluído.
@@ -2110,7 +2108,7 @@ entrada nova.
   não travava o fluxo, só deixava uma das duas funcionalidades centrais da tela ("mover etapa
   direto da Mesa de Tratamento") inutilizável.
 - **Achado secundário — divergência de dado real entre Atlas e Bitrix**: `POST
-  /lead/:id/register` gravava o novo status local (`prisma.lead.update`, ex.
+/lead/:id/register` gravava o novo status local (`prisma.lead.update`, ex.
   `Lead_Desqualificado`) **antes** de escrever no Bitrix (`postCommentToBitrix`/
   `exportLeadToBitrixNow`). Se a escrita no Bitrix falhasse depois (rede, webhook inválido, rate
   limit), o Atlas já tinha mudado localmente — o lead podia sumir da fila (filtro
@@ -2164,7 +2162,7 @@ entrada nova.
   imutabilidade do array de entrada, etapa desconhecida no fim da fila).
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo), `npx tsc --noEmit -p .`
   (0 erros atribuíveis a este piloto), `npx vite build` (sucesso), `npx vitest run -c
-  vitest.unit.config.ts tests/unit/features/mesa-tratamento` (6/6, arquivo novo).
+vitest.unit.config.ts tests/unit/features/mesa-tratamento` (6/6, arquivo novo).
 - **Aprendizado incorporado**: primeiro piloto desta série cujo achado principal é um bug de
   contrato de nome de campo (`label` vs. `name`) entre backend e frontend dentro do próprio módulo
   — mesma classe de vigilância já registrada no Piloto 025 (Settings), mas ali era API↔UI; aqui é
@@ -2471,16 +2469,16 @@ entrada nova.
   auth/RLS/crypto — risco alto pra decidir sem o usuário).
 - **`preview_start({name:...})` deu boot silencioso (mesmo sintoma do Piloto 003/004: processo
   vivo, só banner do npm, porta nunca abre)** — contorno já documentado aplicado: `npx tsx watch
-  server.ts` via Bash `run_in_background` com as env vars de `.claude/launch.json`
+server.ts` via Bash `run_in_background` com as env vars de `.claude/launch.json`
   (`prospector-dev`) copiadas à mão, `curl` em loop até a porta responder, depois
   `preview_start({url:...})` na porta já viva. **Achado novo de ambiente**: esta máquina tinha,
   simultaneamente, múltiplos outros processos `tsx watch server.ts` já rodando contra este MESMO
   checkout (não um worktree) — de pelo menos uma sessão Codex concorrente (`C:\Users\Marks\
-  Documents\Codex\...`) editando `src/features/copiloto-ia/*` ao vivo — o que causava reinícios em
+Documents\Codex\...`) editando `src/features/copiloto-ia/*` ao vivo — o que causava reinícios em
   cadeia do meu próprio servidor (arquivo mudou → tsx reinicia) e um `EADDRINUSE` real na minha
   segunda tentativa de subir o servidor (a primeira nunca tinha de fato morrido, só o processo
   "pai" do Bash retornou antes do processo real desanexar). Confirmado via `Get-CimInstance
-  Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o meu (caminho do
+Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o meu (caminho do
   checkout principal, não de worktree) antes de confiar na sessão do navegador — o mesmo cuidado já
   registrado no adendo do Piloto 003.
 - **QA visual real, ponta a ponta, com sessão própria**: usuário de teste criado pelo formulário de
@@ -2523,7 +2521,7 @@ entrada nova.
 - **Achado que redirecionou a implementação**: o CSS colado é, na prática, a mesma especificação
   visual do relatório `diagnosticosdrjoaoreisjulago2026.html` já extraído no Pilot anterior
   (“JoaoReisDiagnosticHub”, entrada logo acima) — mesmos tokens (`--bg/--surface/--ink/--brand/
-  --brand-2/--gold/--ok/--soft`, `--font-mono`), mesmo vocabulário de componente (KPI/funil/canal/
+--brand-2/--gold/--ok/--soft`, `--font-mono`), mesmo vocabulário de componente (KPI/funil/canal/
   negócios/comparativo). Aquele pilot **decidiu deliberadamente manter os 6 componentes
   (`KpiStat`, `FunnelBars`, `ChannelDonut`, `DealsGrid`, `CompareBar`, `DeltaPill`) locais ao
   arquivo**, "por ainda não ter um segundo consumidor real fora desta tela" (mesma lógica do Pilot
@@ -2536,7 +2534,7 @@ entrada nova.
   negócio em componente base"). `JoaoReisDiagnosticHub.tsx` foi refatorado pra consumir os novos
   primitivos em vez das cópias locais — nenhuma prop de uso visível mudou pro usuário final.
 - **Correção de contraste feita na extração (achado documentado, não novo)**: o Pilot 003 (adendo
-  "Centro de Decisão") já tinha *flagado, sem corrigir*, que `--ok`/`--warn` crus sobre `--surface`
+  "Centro de Decisão") já tinha _flagado, sem corrigir_, que `--ok`/`--warn` crus sobre `--surface`
   clara ficam abaixo de 4.5:1 (mesmo padrão do bug real já corrigido em `--critical`/`--danger` e no
   `Badge.tsx`, que usa `text-X-active dark:text-X`). Ao promover `KpiCard`/`DealCard`/`DeltaPill`
   pra primitivo compartilhado, apliquei esse mesmo padrão (`text-ok-active dark:text-ok`,
@@ -2678,7 +2676,7 @@ entrada nova.
     `http-server` improvisado da vez anterior) — reproduziu o "boot silencioso" já documentado no
     pilot JoaoReisDiagnosticHub (`preview_start({name:'prospector-dev'})` fica preso no banner do
     npm, porta nunca abre). Contornado com o mesmo workaround já documentado: `npx tsx watch
-    server.ts` direto via Bash `run_in_background` (sem `&`/`disown` — a primeira tentativa com
+server.ts` direto via Bash `run_in_background` (sem `&`/`disown` — a primeira tentativa com
     `&`/`disown` fez o harness perder o processo, achado novo desta sessão) + polling até a porta
     responder, depois `preview_start({url:...})`. `node --check` limpo em `jornada.js`. Simulado
     `pontosAtencaoEvolucaoHtml([...])` via console com contagens fabricadas só pra teste
@@ -2780,7 +2778,7 @@ entrada nova.
 - **Achados grandes demais pra essa auditoria, não corrigidos — cada um precisa de sua própria
   sessão dedicada** (documentado em vez de mexido às pressas, mesmo espírito do Pilot 005 sobre
   regex cego):
-  - **`src/features/integrations/components/` (Bitrix*.tsx + Integrations.tsx)** — achado maior
+  - _*`src/features/integrations/components/` (Bitrix*.tsx + Integrations.tsx)_* — achado maior
     desta rodada: `grep -oE "orange-[0-9]+"` conta **147 ocorrências** (104 só em
     `BitrixImportPanel.tsx`) de laranja cru (`orange-500`/`600` etc.) em vez de `var(--brand)`. O
     módulo inteiro de integrações Bitrix fica sempre laranja AtlasGR, mesmo com Total Trac ativa —
@@ -2791,7 +2789,7 @@ entrada nova.
     mesmo problema de reatividade à marca do item acima (`purple-600`/`sky-600` nunca reagem a
     Total Trac).
   - **`OnboardingTour.tsx`** — já funciona nos dois temas (`theme === 'light' ? 'bg-white/70...' :
-    'bg-slate-900/80...'` ramificado manualmente), só não usa os tokens que fariam o mesmo sem a
+'bg-slate-900/80...'` ramificado manualmente), só não usa os tokens que fariam o mesmo sem a
     ramificação manual. Baixo risco, baixa prioridade (não é bug visível).
   - **`LdrAccountIntelligence.tsx`** — inconsistência interna real encontrada (linha ~209 sugere
     vidro translúcido sobre fundo escuro fixo, tipo `Account360.tsx`; linha ~353 usa
@@ -2859,8 +2857,8 @@ entrada nova.
 - **Verificação**: `npx eslint --no-cache` nos arquivos tocados (limpo, só os 2 warnings
   pré-existentes de `connection as any`, já presentes antes desta sessão), `npx tsc --noEmit -p .`
   (0 erros), `npx vite build` (sucesso), `npx vitest run -c vitest.unit.config.ts
-  tests/unit/features/mesa-tratamento tests/unit/features/intelligence/services/
-  winLossAnalysis.worker.test.ts` (16/16, incl. os 10 testes novos desta sessão).
+tests/unit/features/mesa-tratamento tests/unit/features/intelligence/services/
+winLossAnalysis.worker.test.ts` (16/16, incl. os 10 testes novos desta sessão).
 - **Aprendizado incorporado**: primeiro achado de segurança cross-tenant real desta série (os
   achados de RBAC anteriores eram sobre papel dentro do mesmo tenant, nunca vazamento entre
   tenants) — reforça que todo `prisma.<model>.findMany` dentro de um worker/cron (que não passa
@@ -2893,7 +2891,7 @@ entrada nova.
   nada a quebrar; `tests/e2e/accessibility.spec.ts` ("Academia de Treinamento...") só testa o
   estado inicial vazio, intacto.
 - **Verificação**: `npx eslint --no-cache` (limpo), `npx tsc --noEmit -p .` (0 erros), `npx vite
-  build` (sucesso).
+build` (sucesso).
 
 ## Piloto 029 — Reports Hub
 
@@ -2916,13 +2914,13 @@ entrada nova.
   streaming) é rota órfã, sem nenhum consumidor de UI (a tela só chama `/report/stream`);
   `src/lib/queue/dailyReport.worker.ts` é um worker registrado mas **nunca agendado/enfileirado**
   por nada no repositório, e mesmo se fosse, só faz `logger.info('Simulando envio de
-  e-mail...')` em vez de enviar de verdade — ao contrário do irmão real `weeklyPdfReport.worker.ts`
+e-mail...')` em vez de enviar de verdade — ao contrário do irmão real `weeklyPdfReport.worker.ts`
   (agendado de verdade, envia e-mail real). Os 3 achados são reais mas cada um é escopo de feature
   nova (UI de histórico, decidir remover ou terminar a rota órfã, decidir se o e-mail diário deve
   existir de verdade) — sinalizados, não decididos unilateralmente aqui.
 - **Verificação**: `npx eslint --no-cache` (limpo), `npx tsc --noEmit -p .` (0 erros), `npx vite
-  build` (sucesso), `npx vitest run -c vitest.unit.config.ts
-  tests/unit/features/intelligence/components/ReportsHub.test.tsx` (8/8, preservando as 6
+build` (sucesso), `npx vitest run -c vitest.unit.config.ts
+tests/unit/features/intelligence/components/ReportsHub.test.tsx` (8/8, preservando as 6
   asserções de texto/contrato de payload já existentes).
 
 ## Piloto 030 — CRM 360 / Propostas
@@ -2942,7 +2940,7 @@ entrada nova.
   "Solicitar assinatura" todos habilitados normalmente, só recebendo um 403 do backend ao tentar.
   Corrigido com `canWrite` (`useAuth` + `hasRequiredRole`, mesmo padrão de `Base.tsx`) escondendo
   os 4 controles nos 2 componentes. Novo `tests/unit/features/crm360/components/
-  PropostasList.test.tsx` (4 casos: ADMIN/SDR veem o botão, VISUALIZADOR e sessão nula não veem).
+PropostasList.test.tsx` (4 casos: ADMIN/SDR veem o botão, VISUALIZADOR e sessão nula não veem).
 - **Achado secundário, corrigido — funcionalidade de vínculo 100% modelada mas nunca preenchível**:
   `CrmCommercialDocument.leadId`/`companyId`/`contactId` são reais no schema, já aceitos por
   `crm360Api.createDocument`, já exibidos em `PropostaDetail.tsx` ("Registro vinculado") e
@@ -2964,7 +2962,7 @@ entrada nova.
   `dark:` explícito (`dark:bg-purple-500/20 dark:text-purple-400`) em vez de inventar um token
   novo pra 3 ocorrências.
 - **Achado de acessibilidade, corrigido**: `PropostasList.tsx`, a linha da tabela (`&lt;tr
-  onClick&gt;`) que abre o detalhe de um documento não tinha `tabIndex`/`role="button"`/`onKeyDown`
+onClick&gt;`) que abre o detalhe de um documento não tinha `tabIndex`/`role="button"`/`onKeyDown`
   — inacessível por teclado. Corrigido com os 3 atributos + `aria-label` descritivo +
   `focus-visible:ring`.
 - **Achado de manutenção, corrigido**: o e-mail do gate `RequireUserAllowed` dos 4 hubs executivos
@@ -2989,7 +2987,7 @@ entrada nova.
   pré-existente em `CommandPalette.tsx` não relacionado — `useMemo` sem `currentUser` nas deps,
   confirmado via diff que a linha não foi tocada por esta sessão), `npx tsc --noEmit -p .` (0
   erros), `npx vite build` (sucesso), `npx vitest run -c vitest.unit.config.ts
-  tests/unit/features/crm360` (8/8, incl. os 4 testes novos de RBAC).
+tests/unit/features/crm360` (8/8, incl. os 4 testes novos de RBAC).
 - **Aprendizado incorporado**: primeira vez nesta série em que múltiplos agentes paralelos falham
   por rate limit no meio do trabalho — o protocolo que funcionou foi: (1) checar `git status`/
   `git diff` de cada arquivo antes de assumir que nada foi feito ou que tudo foi feito; (2)
@@ -2997,7 +2995,7 @@ entrada nova.
   duplicar trabalho já correto); (3) um teste novo que parecia estar testando o comportamento
   errado (`getByRole`/`getByText` "não encontrando" o elemento) na verdade só estava sem
   `import '@testing-library/jest-dom/vitest'` — o erro real (`Invalid Chai property:
-  toBeInTheDocument`) fica enterrado dentro do output de timeout do `waitFor` a menos que se busque
+toBeInTheDocument`) fica enterrado dentro do output de timeout do `waitFor` a menos que se busque
   a mensagem de erro exata em vez de confiar no snapshot de DOM impresso; vale conferir esse import
   primeiro sempre que `toBeInTheDocument`/matchers do jest-dom "não funcionam" num teste novo.
 
@@ -3045,8 +3043,8 @@ entrada nova.
   já com pares `dark:` corretos.
 - **Botões sólidos de marca**: em vez de inventar uma cor nova pro "laranja escuro" de hover
   (`orange-700`), reaproveitado o padrão já estabelecido em `Button.tsx` (`bg-brand-active
-  hover:bg-brand-2`, ou `hover:brightness-110` nos casos com gradiente `from-brand-active
-  to-brand-2`) — mesmo motivo do comentário em `Button.tsx`: texto branco direto sobre `--brand`
+hover:bg-brand-2`, ou `hover:brightness-110` nos casos com gradiente `from-brand-active
+to-brand-2`) — mesmo motivo do comentário em `Button.tsx`: texto branco direto sobre `--brand`
   cru não atinge 4.5:1 AA em nenhuma das duas marcas.
 - **Verificação real do dev server travou nesta sessão, com um sintoma novo em relação aos
   Pilotos 003/004/P3**: `preview_start({name: 'prospector-dev-uxcheck'})` reproduziu o boot
@@ -3054,8 +3052,7 @@ entrada nova.
   confirmado por `navigate` recusando conexão depois de 90s+ de espera). O contorno documentado
   (subir via `npx tsx watch server.ts` manual + `run_in_background`) **não funcionou como nas
   rodadas anteriores**: a primeira tentativa manual travou sem log (mesmo padrão), e a segunda
-  tentativa (porta diferente, variáveis de ambiente completas) foi encerrada por `SIGTERM` (exit
-  143) segundos após o start, antes de qualquer log de aplicação — não foi possível confirmar se é
+  tentativa (porta diferente, variáveis de ambiente completas) foi encerrada por `SIGTERM` (exit 143) segundos após o start, antes de qualquer log de aplicação — não foi possível confirmar se é
   limite de processo em background deste ambiente Windows/Git Bash específico (diferente dos
   ambientes Linux com `apt-get`/Docker completo dos Pilotos 003/004/P3) ou concorrência entre as
   duas tentativas simultâneas. Log de uma tentativa anterior revelou uma causa real conjunta:
@@ -3129,9 +3126,9 @@ entrada nova.
   (`requestContext.enterWith({ tenantId })` — não `bypassRls`, porque `ModuleAccessGrant` foi
   deliberadamente excluído do allowlist de bypass RLS numa migration de segurança anterior),
   navega para `/hub`, confirma visualmente (screenshot real) o destino primário + módulo concedido
-  + as 5 ferramentas, depois navega para `/app`, confirma o novo botão "Hub Executivo" na Sidebar e
-  clica nele até confirmar a navegação de volta a `/hub`. A primeira rodada desse teste (antes do
-  fix do `animate="visible"`) foi o que expôs o bug acima.
+  - as 5 ferramentas, depois navega para `/app`, confirma o novo botão "Hub Executivo" na Sidebar e
+    clica nele até confirmar a navegação de volta a `/hub`. A primeira rodada desse teste (antes do
+    fix do `animate="visible"`) foi o que expôs o bug acima.
 - **Entrada de navegação nova em `Sidebar.tsx`**: botão "Hub Executivo" (ícone `LayoutGrid`)
   inserido logo abaixo do switch de marca "Operação Atual", fora do sistema `TabType`/`selectTab`
   (que sempre assume `/app/:tab`) — chama `navigate('/hub')` direto, porque `/hub` é rota
@@ -3171,7 +3168,7 @@ entrada nova.
   `window.location.href` final passam de `/app` para `/hub`; o guard de usuário já autenticado
   (`<Navigate to="/app" replace />`) também passa a apontar pro Hub. `/app` (CRM) continua existindo
   e acessível a partir do círculo central "Central Comercial" — nada foi removido, só o destino
-  *padrão* mudou. Comentário de `App.tsx` que documentava a decisão antiga do Piloto 031 foi
+  _padrão_ mudou. Comentário de `App.tsx` que documentava a decisão antiga do Piloto 031 foi
   atualizado para refletir a nova.
 - **Blast radius real no e2e, medido antes de mudar**: `tests/e2e/helpers.ts::signUp()` é consumido
   por ~15 arquivos de spec (incluindo os 5 citados na regra #10 da constituição:
@@ -3262,12 +3259,12 @@ entrada nova.
   `playwright.config.ts` já antecipa exatamente isso (`PLAYWRIGHT_CHROMIUM_EXECUTABLE`, comentário
   "ambientes que já vêm com um Chromium provisionado... costumam ter uma build diferente") — a
   correção foi só usar a variável já prevista (`PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/
-  chromium`), nunca do código da tela.
+chromium`), nunca do código da tela.
 - **Bug real de RLS encontrado e corrigido no teste (não no produto)**: `assignJobRole`
   (`jobRole.service.ts`) abre sua própria transação interativa (`prisma.$transaction`) — chamá-la
   a partir de um teste com `requestContext.enterWith({ bypassRls: true })` falhava com "new row
   violates row-level security policy for table UserJobRole", porque o `SET LOCAL
-  app.current_tenant_id` que a extensão de RLS de `src/lib/prisma.ts` injeta em operações de model
+app.current_tenant_id` que a extensão de RLS de `src/lib/prisma.ts` injeta em operações de model
   só bate com o `organizationId` real da linha quando o contexto carrega `tenantId`, não
   `bypassRls` sozinho (mesmo padrão que `tests/helpers/integration-setup.ts` já usa no
   `beforeEach` global — `tenantId`, nunca bypass, para escrita comum dentro do próprio tenant).
@@ -3309,9 +3306,9 @@ entrada nova.
   `identidade-visual/totaltrac/tokens/totaltrac.css` (`#374898`/`#2D3B78`), sem cair em preto/branco
   puro. Os `colorRgb` do burst de partículas em `HubScreen.tsx` (canvas 2D, não entende `var()`)
   também eram laranja fixo — agora calculados via `hexToRgbString(brandInfo.primaryColor|
-  accentColor)`, únicos no repo (não havia utilitário equivalente).
+accentColor)`, únicos no repo (não havia utilitário equivalente).
 - **Achado secundário, corrigido — mesmo arquivo, não introduzido por esta sessão**: `var(--brand-
-  active)` em 8 pontos de `hub-orbit.css` e 4 de `HubIcons.tsx` nunca resolvia — Tailwind 4 registra
+active)` em 8 pontos de `hub-orbit.css` e 4 de `HubIcons.tsx` nunca resolvia — Tailwind 4 registra
   esse token como `--color-brand-active` dentro do `@theme` (`src/styles/globals.css`), não
   `--brand-active` puro, que não é setado em lugar nenhum do projeto (`grep` confirmou). O efeito
   era silencioso: eyebrow/tagline/relógio/calendário/ícone hover/label caíam para preto (`--ink`
@@ -3350,8 +3347,8 @@ entrada nova.
   logotipo foram **vetorizados dos próprios .woff2 do brand book** (Playfair Display italic 800 e
   Bodoni Moda 800, via fontTools) — o logo não depende de fonte instalada em ninguém.
   - **Achado que só apareceu na comparação lado a lado**: a máscara `radial-gradient(circle,
-    transparent 63%, #000 64%, #000 80%, ...)` da coroa de traços mede em **farthest-corner**
-    (raio × √2), não no raio. Lendo como percentual do raio, a coroa cai *em cima* do anel; lida
+transparent 63%, #000 64%, #000 80%, ...)` da coroa de traços mede em **farthest-corner**
+    (raio × √2), não no raio. Lendo como percentual do raio, a coroa cai _em cima_ do anel; lida
     corretamente, ela vive fora dele, com folga visível. A primeira versão estava errada e passou
     despercebida até renderizar o HTML original ao lado do SVG na mesma tela.
   - Dois outros desvios só apareceram nessa comparação: gradientes de arco em `objectBoundingBox`

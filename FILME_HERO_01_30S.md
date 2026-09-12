@@ -11,8 +11,8 @@ Posicionar o Birth Hub 360 Revenue OS como a camada de inteligência que conecta
 prioridade e execução comercial — não "mais um CRM", não "IA que faz tudo sozinha". Público-alvo
 deste corte: Diretores Comerciais, Heads de Vendas, Revenue Managers e CROs (público primário,
 Seção 12 do briefing) vendo a peça no LinkedIn ou em contexto de apresentação comercial. Percepção
-que queremos construir: *"eu consigo ver melhor o que está acontecendo na minha operação e onde
-agir."*
+que queremos construir: _"eu consigo ver melhor o que está acontecendo na minha operação e onde
+agir."_
 
 ## 2. Conceito criativo
 
@@ -36,13 +36,13 @@ importa. O Birth Hub 360 não cria dado novo, ele torna o dado existente acioná
 
 ## 6. Storytelling — estrutura dos 30s
 
-| Beat | Tempo | Função narrativa |
-|---|---|---|
-| Problema | 0:00–0:04 | Sinais dispersos, sem direção |
-| Contexto | 0:04–0:09 | A plataforma organiza os sinais |
-| Produto | 0:09–0:20 | Descobrir → Priorizar → Executar, módulos reais em sequência |
-| Ação | 0:20–0:26 | Execução concreta acontecendo |
-| Marca | 0:26–0:30 | Assinatura e mensagem principal |
+| Beat     | Tempo     | Função narrativa                                             |
+| -------- | --------- | ------------------------------------------------------------ |
+| Problema | 0:00–0:04 | Sinais dispersos, sem direção                                |
+| Contexto | 0:04–0:09 | A plataforma organiza os sinais                              |
+| Produto  | 0:09–0:20 | Descobrir → Priorizar → Executar, módulos reais em sequência |
+| Ação     | 0:20–0:26 | Execução concreta acontecendo                                |
+| Marca    | 0:26–0:30 | Assinatura e mensagem principal                              |
 
 ## 7. Roteiro completo
 
@@ -57,19 +57,19 @@ importa. O Birth Hub 360 não cria dado novo, ele torna o dado existente acioná
 - **Transição:** continuidade espacial entre módulos (padrão `pageTransition` de
   `src/lib/motion.ts`, sem corte seco) — ver Seção 11
 - **Sound design:** ver Seção 12-13
-- **CTA:** *Explore o Revenue OS*
+- **CTA:** _Explore o Revenue OS_
 
 ## 8. Storyboard cena a cena
 
-| # | Tempo | Visual | Produto/Tela (origem real) | Movimento | Copy na tela | Locução (opcional) | Som |
-|---|---|---|---|---|---|---|---|
-| 1 | 0:00–0:04 | Fragmentos de informação isolados: recortes pequenos de tela flutuando sem conexão aparente — cada recorte é um crop real do Painel Central, não uma tela cheia | `/app` — `SinglePageDashboard.tsx` (KPIs ao vivo, agenda do dia) | Elementos entram espalhados, sem ordem, câmera parada | "Toda operação comercial deixa sinais." | "Toda operação comercial deixa sinais." | Sons discretos, pequenos eventos de notificação, fragmentados, sem ritmo definido |
-| 2 | 0:04–0:09 | Os recortes começam a se aproximar e se organizar em uma composição única — revela o Cockpit CRM360 completo | `/app/crm360` — `CrmOverview.tsx` (KPIs consolidados por intenção: brand/success/warning/violet) | `staggerContainer`: cards entrando em sequência, convergindo para grid organizado | "Contexto transforma informação em direção." | "O Birth Hub 360 conecta esse contexto." | Elemento musical começa a se organizar, batida entra suave |
-| 3a | 0:09–0:13 | Zoom editorial em busca de empresa/lead — cursor real interagindo | `/app/prospect` — `ProspectingHub.tsx` (busca por CNPJ / descoberta por critério) | `fadeInUp` com blur de entrada — resultado ganhando foco | "Encontre onde existe movimento." | — | Redução de ruído começa |
-| 3b | 0:13–0:16 | Fila de leads priorizada, cursor seleciona o próximo item da fila | `/app/mesa-tratamento` — `MesaTratamento.tsx` (`QueueList`/`CurrentLeadCard`) | Item em destaque ganha foco visual (escala sutil, sem exagero) | "Veja o que exige atenção." | — | Um elemento sonoro único ganha foco, resto do som recua |
-| 3c | 0:16–0:20 | Pipeline Kanban, card de lead sendo arrastado de um estágio para o seguinte | `/app/crm` — `CrmBoard.tsx` (drag-and-drop real via `@dnd-kit`) | Drag-and-drop real capturado em tela, movimento físico e preciso (`SPRING_SNAPPY`) | "Contexto vira execução." | "Contexto certo, execução real." | Clique/feedback preciso ao soltar o card |
-| 4 | 0:20–0:26 | Corte para tela cheia do Kanban com o card já no novo estágio, painel lateral de detalhe do lead abre (`LeadDetailDrawer`) | `/app/crm` — `CrmBoard.tsx` + `LeadDetailDrawer.tsx` | `Drawer` desliza lateralmente (`framer-motion`), confirmação de ação | "O próximo movimento, executado." | — | Confirmação curta, resolução rítmica |
-| 5 | 0:26–0:30 | Fundo escuro/grafite, logotipo Birth Hub 360 centralizado, assinatura abaixo | Tela de encerramento (assets de `identidade-visual/atlasgr/`, não é captura de produto) | Fade suave, sem movimento gratuito | "Birth Hub 360 Revenue OS — Inteligência & Aceleração Comercial B2B — Explore o Revenue OS" | "Inteligência que encontra o próximo movimento." | Maior espaço, resolução musical, assinatura sonora Birth Hub 360 (1-2s, a produzir) |
+| #   | Tempo     | Visual                                                                                                                                                          | Produto/Tela (origem real)                                                                       | Movimento                                                                          | Copy na tela                                                                                | Locução (opcional)                               | Som                                                                                 |
+| --- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| 1   | 0:00–0:04 | Fragmentos de informação isolados: recortes pequenos de tela flutuando sem conexão aparente — cada recorte é um crop real do Painel Central, não uma tela cheia | `/app` — `SinglePageDashboard.tsx` (KPIs ao vivo, agenda do dia)                                 | Elementos entram espalhados, sem ordem, câmera parada                              | "Toda operação comercial deixa sinais."                                                     | "Toda operação comercial deixa sinais."          | Sons discretos, pequenos eventos de notificação, fragmentados, sem ritmo definido   |
+| 2   | 0:04–0:09 | Os recortes começam a se aproximar e se organizar em uma composição única — revela o Cockpit CRM360 completo                                                    | `/app/crm360` — `CrmOverview.tsx` (KPIs consolidados por intenção: brand/success/warning/violet) | `staggerContainer`: cards entrando em sequência, convergindo para grid organizado  | "Contexto transforma informação em direção."                                                | "O Birth Hub 360 conecta esse contexto."         | Elemento musical começa a se organizar, batida entra suave                          |
+| 3a  | 0:09–0:13 | Zoom editorial em busca de empresa/lead — cursor real interagindo                                                                                               | `/app/prospect` — `ProspectingHub.tsx` (busca por CNPJ / descoberta por critério)                | `fadeInUp` com blur de entrada — resultado ganhando foco                           | "Encontre onde existe movimento."                                                           | —                                                | Redução de ruído começa                                                             |
+| 3b  | 0:13–0:16 | Fila de leads priorizada, cursor seleciona o próximo item da fila                                                                                               | `/app/mesa-tratamento` — `MesaTratamento.tsx` (`QueueList`/`CurrentLeadCard`)                    | Item em destaque ganha foco visual (escala sutil, sem exagero)                     | "Veja o que exige atenção."                                                                 | —                                                | Um elemento sonoro único ganha foco, resto do som recua                             |
+| 3c  | 0:16–0:20 | Pipeline Kanban, card de lead sendo arrastado de um estágio para o seguinte                                                                                     | `/app/crm` — `CrmBoard.tsx` (drag-and-drop real via `@dnd-kit`)                                  | Drag-and-drop real capturado em tela, movimento físico e preciso (`SPRING_SNAPPY`) | "Contexto vira execução."                                                                   | "Contexto certo, execução real."                 | Clique/feedback preciso ao soltar o card                                            |
+| 4   | 0:20–0:26 | Corte para tela cheia do Kanban com o card já no novo estágio, painel lateral de detalhe do lead abre (`LeadDetailDrawer`)                                      | `/app/crm` — `CrmBoard.tsx` + `LeadDetailDrawer.tsx`                                             | `Drawer` desliza lateralmente (`framer-motion`), confirmação de ação               | "O próximo movimento, executado."                                                           | —                                                | Confirmação curta, resolução rítmica                                                |
+| 5   | 0:26–0:30 | Fundo escuro/grafite, logotipo Birth Hub 360 centralizado, assinatura abaixo                                                                                    | Tela de encerramento (assets de `identidade-visual/atlasgr/`, não é captura de produto)          | Fade suave, sem movimento gratuito                                                 | "Birth Hub 360 Revenue OS — Inteligência & Aceleração Comercial B2B — Explore o Revenue OS" | "Inteligência que encontra o próximo movimento." | Maior espaço, resolução musical, assinatura sonora Birth Hub 360 (1-2s, a produzir) |
 
 ## 9. Produto utilizado (rotas reais)
 
@@ -115,19 +115,20 @@ conforme coluna "Locução" da tabela de storyboard, lido em tom executivo, dire
 
 ## 16. Adaptações
 
-| Canal | Formato | Ajuste específico |
-|---|---|---|
-| LinkedIn | 16:9 / 1:1 / 4:5 | Master 16:9 funciona direto; para 1:1/4:5, recompor cena 1 e 2 para crops centralizados (os recortes de tela já são pequenos, favorece corte quadrado) |
-| Reels/Shorts | 9:16 | Priorizar cenas 3b/3c (Mesa de Tratamento → Kanban) nos primeiros 2s como hook, já que é a cena com movimento mais imediato; comprimir beat 1 para 2s |
-| Stories | 9:16 | Mesma base do Reels, respeitar safe area (topo/base ~14% reservados) |
-| Site | 16:9 responsivo | Pode rodar sem áudio por padrão (autoplay mudo) — copy na tela já carrega a mensagem sozinha |
-| Eventos | 16:9 | Aumentar tamanho de copy on-screen para leitura à distância; reduzir texto por frame (usar só a mensagem principal, cortar secundárias) |
-| Apresentação comercial | 16:9 | Pode ganhar 5-8s extra de respiração entre beats se apresentada com narração ao vivo — não é obrigatório manter os 30s exatos neste contexto |
+| Canal                  | Formato          | Ajuste específico                                                                                                                                      |
+| ---------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LinkedIn               | 16:9 / 1:1 / 4:5 | Master 16:9 funciona direto; para 1:1/4:5, recompor cena 1 e 2 para crops centralizados (os recortes de tela já são pequenos, favorece corte quadrado) |
+| Reels/Shorts           | 9:16             | Priorizar cenas 3b/3c (Mesa de Tratamento → Kanban) nos primeiros 2s como hook, já que é a cena com movimento mais imediato; comprimir beat 1 para 2s  |
+| Stories                | 9:16             | Mesma base do Reels, respeitar safe area (topo/base ~14% reservados)                                                                                   |
+| Site                   | 16:9 responsivo  | Pode rodar sem áudio por padrão (autoplay mudo) — copy na tela já carrega a mensagem sozinha                                                           |
+| Eventos                | 16:9             | Aumentar tamanho de copy on-screen para leitura à distância; reduzir texto por frame (usar só a mensagem principal, cortar secundárias)                |
+| Apresentação comercial | 16:9             | Pode ganhar 5-8s extra de respiração entre beats se apresentada com narração ao vivo — não é obrigatório manter os 30s exatos neste contexto           |
 
 ## 17. Plano de produção
 
 **Capturas necessárias** (todas em ambiente de demonstração, dados criados para a gravação — ver
 checklist do Truth Map):
+
 1. Painel Central (`/app`) — estado limpo, sem notificação pendente, com agenda do dia preenchida.
 2. Cockpit CRM360 (`/app/crm360`) — KPIs com dado de demonstração plausível, sem número inventado
    na pós-produção.

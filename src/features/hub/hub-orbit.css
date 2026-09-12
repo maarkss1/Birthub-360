@@ -100,7 +100,7 @@
   color: var(--color-brand-active);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .hub-greeting .eyebrow {
+  :root:not([data-theme='light']) .hub-greeting .eyebrow {
     color: var(--brand-2);
   }
 }
@@ -125,7 +125,7 @@
   letter-spacing: -0.01em;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .hub-greeting .tagline {
+  :root:not([data-theme='light']) .hub-greeting .tagline {
     color: var(--brand-2);
   }
 }
@@ -160,7 +160,7 @@
   color: var(--color-brand-active);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .clock-widget .time {
+  :root:not([data-theme='light']) .clock-widget .time {
     color: var(--brand-2);
   }
 }
@@ -172,7 +172,7 @@
   margin-top: 2px;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .clock-widget .date {
+  :root:not([data-theme='light']) .clock-widget .date {
     color: #ffe066;
   }
 }
@@ -190,7 +190,7 @@
   letter-spacing: 0.04em;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .cal-widget .cal-head {
+  :root:not([data-theme='light']) .cal-widget .cal-head {
     color: var(--brand-2);
   }
 }
@@ -207,7 +207,7 @@
   opacity: 0.85;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .cal-grid span {
+  :root:not([data-theme='light']) .cal-grid span {
     color: #ffe066;
   }
 }
@@ -355,7 +355,7 @@
   gap: 10px;
 }
 .hub-section-label::after {
-  content: "";
+  content: '';
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, var(--line), transparent);
@@ -437,7 +437,7 @@
 }
 
 .hc-orb::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: -40%;
   opacity: 0.45;
@@ -467,7 +467,7 @@
     color 0.3s ease;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .hc-orb .hc-icon-wrap {
+  :root:not([data-theme='light']) .hc-orb .hc-icon-wrap {
     color: var(--brand-2);
   }
 }
@@ -575,7 +575,7 @@
   }
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .hc-title {
+  :root:not([data-theme='light']) .hc-title {
     --title-light: color-mix(in srgb, var(--brand) 22%, white);
     --title-dark: var(--brand);
   }
@@ -621,7 +621,7 @@
   flex-shrink: 0;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .label-logo {
+  :root:not([data-theme='light']) .label-logo {
     color: var(--brand-2);
   }
 }

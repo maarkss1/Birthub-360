@@ -69,7 +69,8 @@ export const DOCUMENTED_LARGE_CHUNKS = [
     // condicional, entao o risco de regressao de performance percebida e baixo.
     pattern: /^OnboardingTour-/,
     maxGzipBytes: 260 * 1024,
-    reason: 'OnboardingTour (three.js via AtlasOrb) — lazy + gate condicional, fora do load inicial.',
+    reason:
+      'OnboardingTour (three.js via AtlasOrb) — lazy + gate condicional, fora do load inicial.',
   },
   {
     // LoginScreen tambem usa o BrandOrb (esfera 3D decorativa na cor da marca). Agora que
@@ -82,7 +83,8 @@ export const DOCUMENTED_LARGE_CHUNKS = [
     // pequenas.
     pattern: /^AtlasOrb-/,
     maxGzipBytes: 260 * 1024,
-    reason: 'AtlasOrb (three.js) compartilhado entre OnboardingTour e LoginScreen — ambos lazy e adiados.',
+    reason:
+      'AtlasOrb (three.js) compartilhado entre OnboardingTour e LoginScreen — ambos lazy e adiados.',
   },
   {
     // Float (@react-three/drei, usado por SignalScene em RevenueSignalOrb.tsx no dashboard) e
@@ -106,7 +108,8 @@ export const DOCUMENTED_LARGE_CHUNKS = [
     // import dinamico de cada feature — nunca no chunk de entrada.
     pattern: /^CartesianChart-/,
     maxGzipBytes: 110 * 1024,
-    reason: 'recharts (graficos) — chunk compartilhado, carregado sob demanda pelas telas de analytics.',
+    reason:
+      'recharts (graficos) — chunk compartilhado, carregado sob demanda pelas telas de analytics.',
   },
   {
     // echarts (src/components/charts) e importado direto por Analytics.tsx, mas Analytics.tsx em
@@ -114,7 +117,8 @@ export const DOCUMENTED_LARGE_CHUNKS = [
     // em nenhuma outra tela carregada por padrao.
     pattern: /^vendor-echarts-/,
     maxGzipBytes: 230 * 1024,
-    reason: 'echarts (graficos) — chunk de vendor, so carregado ao entrar na rota /analytics (lazy).',
+    reason:
+      'echarts (graficos) — chunk de vendor, so carregado ao entrar na rota /analytics (lazy).',
   },
 ];
 
@@ -139,7 +143,9 @@ export function collectAssetSizes(dir = DIST_ASSETS_DIR) {
     throw error;
   }
   return entries
-    .filter((entry) => entry.isFile() && (entry.name.endsWith('.js') || entry.name.endsWith('.css')))
+    .filter(
+      (entry) => entry.isFile() && (entry.name.endsWith('.js') || entry.name.endsWith('.css')),
+    )
     .map((entry) => {
       const fullPath = path.join(dir, entry.name);
       const buf = readFileSync(fullPath);
@@ -156,7 +162,11 @@ export function collectAssetSizes(dir = DIST_ASSETS_DIR) {
  */
 export function evaluateBudget(
   assets,
-  { maxTotalGzipBytes = MAX_TOTAL_GZIP_BYTES, maxFileGzipBytes = MAX_FILE_GZIP_BYTES, documentedLargeChunks = DOCUMENTED_LARGE_CHUNKS } = {},
+  {
+    maxTotalGzipBytes = MAX_TOTAL_GZIP_BYTES,
+    maxFileGzipBytes = MAX_FILE_GZIP_BYTES,
+    documentedLargeChunks = DOCUMENTED_LARGE_CHUNKS,
+  } = {},
 ) {
   const totalRawBytes = assets.reduce((sum, a) => sum + a.rawBytes, 0);
   const totalGzipBytes = assets.reduce((sum, a) => sum + a.gzipBytes, 0);
@@ -223,7 +233,10 @@ function main() {
   const assets = collectAssetSizes();
   if (assets === null) {
     console.log(
-      JSON.stringify({ status: 'skipped', reason: 'dist/assets nao existe — rode `npm run build` antes.' }),
+      JSON.stringify({
+        status: 'skipped',
+        reason: 'dist/assets nao existe — rode `npm run build` antes.',
+      }),
     );
     process.exitCode = 1;
     return;

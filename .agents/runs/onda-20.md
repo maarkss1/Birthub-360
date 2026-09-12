@@ -1,6 +1,7 @@
 # Onda 20 — Sprint 07: IA, enxame, guardrails e evaluation
 
 ## Identificação
+
 - Sprint: 07 (roadmap `SPRINT-07-IA-ENXAME-EVALUATION.md`; o próprio arquivo do roadmap se
   autodenomina "Onda 19", mas esse número já estava em uso neste repo pelo CYC-008/runtime de
   cadência — este relatório usa onda-20 para não colidir com `.agents/runs/onda-19.md`)
@@ -20,13 +21,13 @@ os 11 itens antes de qualquer correção — mesmo padrão das sprints anteriore
 
 ## Matriz de propriedade da auditoria
 
-| Agente | Escopo | Resultado |
-|---|---|---|
-| Auditoria 1 | AI-001 (nomes SDR) + AI-008 (classificação de tools) | Rename mecânico + achado já resolvido na onda 7 |
-| Auditoria 2 | AI-002 (checkpointer) + AI-003 (AgentMemory) | Dois gaps reais confirmados |
-| Auditoria 3 | AI-004 (structured output) + AI-007 (base legal PII) | Bug ativo de segurança + gap de consentimento |
-| Auditoria 4 | AI-005 (golden dataset) + AI-006 (métricas) | Ambos ausentes/incompletos |
-| Auditoria 5 | AI-009 (SLO) + AI-010 (RAG) + AI-011 (budget) | SLO quase pronto (rota faltando); RAG com citação alucinada; budget sem corte real |
+| Agente      | Escopo                                               | Resultado                                                                          |
+| ----------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Auditoria 1 | AI-001 (nomes SDR) + AI-008 (classificação de tools) | Rename mecânico + achado já resolvido na onda 7                                    |
+| Auditoria 2 | AI-002 (checkpointer) + AI-003 (AgentMemory)         | Dois gaps reais confirmados                                                        |
+| Auditoria 3 | AI-004 (structured output) + AI-007 (base legal PII) | Bug ativo de segurança + gap de consentimento                                      |
+| Auditoria 4 | AI-005 (golden dataset) + AI-006 (métricas)          | Ambos ausentes/incompletos                                                         |
+| Auditoria 5 | AI-009 (SLO) + AI-010 (RAG) + AI-011 (budget)        | SLO quase pronto (rota faltando); RAG com citação alucinada; budget sem corte real |
 
 Detalhe completo por item em [`docs/AI-SWARM-GOVERNANCE-AUDIT.md`](../../docs/AI-SWARM-GOVERNANCE-AUDIT.md).
 
@@ -76,17 +77,18 @@ Classificação por impacto das 9 tools já fechada na onda 7. Só a contagem em
 
 Resumo em `docs/AI-SWARM-GOVERNANCE-AUDIT.md`; motivo do não-tratamento em cada caso:
 
-| Item | Situação real | Por que não construído nesta sprint |
-|---|---|---|
-| AI-002 (checkpointer persistente) | `MemorySaver` continua em RAM, sem recovery de restart | Dependência nova + política de TTL é feature nova |
-| AI-003 (memória honesta) | 4/5 escritas em `AgentMemory` engolem erro; polling trata ausência como "pendente para sempre" | Exige migration (unique constraint) + redesenho de contrato de API |
-| AI-005 (Golden Dataset) | Não existe | Construção de feature nova completa |
-| AI-006 (métricas de avaliação) | Só 3/9 dimensões capturadas | Depende de AI-005 para a maioria |
-| AI-007 (BDR/Closer/CRM) | Enxame autônomo sem gate de consentimento | Blast radius maior + decisão de produto sobre política do enxame |
-| AI-010 (RAG com proveniência) | `/knowledge/copilot` cita fonte inventada pelo LLM, não rastreável | Wiring de retrieval real + mudança de contrato de resposta |
-| AI-011 (budget/circuit breaker) | Sem corte automático por custo | Decisão de produto sobre o que "cortar" significa |
+| Item                              | Situação real                                                                                  | Por que não construído nesta sprint                                |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| AI-002 (checkpointer persistente) | `MemorySaver` continua em RAM, sem recovery de restart                                         | Dependência nova + política de TTL é feature nova                  |
+| AI-003 (memória honesta)          | 4/5 escritas em `AgentMemory` engolem erro; polling trata ausência como "pendente para sempre" | Exige migration (unique constraint) + redesenho de contrato de API |
+| AI-005 (Golden Dataset)           | Não existe                                                                                     | Construção de feature nova completa                                |
+| AI-006 (métricas de avaliação)    | Só 3/9 dimensões capturadas                                                                    | Depende de AI-005 para a maioria                                   |
+| AI-007 (BDR/Closer/CRM)           | Enxame autônomo sem gate de consentimento                                                      | Blast radius maior + decisão de produto sobre política do enxame   |
+| AI-010 (RAG com proveniência)     | `/knowledge/copilot` cita fonte inventada pelo LLM, não rastreável                             | Wiring de retrieval real + mudança de contrato de resposta         |
+| AI-011 (budget/circuit breaker)   | Sem corte automático por custo                                                                 | Decisão de produto sobre o que "cortar" significa                  |
 
 ## Gate final
+
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 82 warnings (mesmo nível da onda anterior)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **169/169 arquivos, 1313/1313 testes** (era
@@ -99,16 +101,18 @@ Resumo em `docs/AI-SWARM-GOVERNANCE-AUDIT.md`; motivo do não-tratamento em cada
 - e2e: não executado nesta rodada (nenhuma mudança de UI)
 
 ## Skips e flakes
+
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Riscos restantes
-| Risco | Dono | Motivo do aceite | Revisar em |
-|---|---|---|---|
-| `followUp.worker.ts` pode estar processando sempre 0 leads em produção (mesma classe de bug de RLS sem contexto corrigida no worker de cadência, onda 19) | 16 | Não investigado nesta rodada — outro worker | Próxima rodada de follow-up/cadência, prioridade alta |
-| BDR/Closer/CRM do enxame sem gate de consentimento LGPD | 13 + 01A | Blast radius + decisão de produto | Sprint dedicada a AI-007 |
-| `AgentMemory` pode duplicar sob concorrência; falha de escrita invisível | 07 | Exige migration | Quando AI-003 for priorizada |
-| Citação de fonte em RAG copilot é alucinada, não rastreável | 07 | Wiring + mudança de contrato | Quando AI-010 for priorizada |
-| Sem teto de custo real por tenant | 13 | Decisão de produto | Quando AI-011 for priorizada |
+
+| Risco                                                                                                                                                     | Dono     | Motivo do aceite                            | Revisar em                                            |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------- | ----------------------------------------------------- |
+| `followUp.worker.ts` pode estar processando sempre 0 leads em produção (mesma classe de bug de RLS sem contexto corrigida no worker de cadência, onda 19) | 16       | Não investigado nesta rodada — outro worker | Próxima rodada de follow-up/cadência, prioridade alta |
+| BDR/Closer/CRM do enxame sem gate de consentimento LGPD                                                                                                   | 13 + 01A | Blast radius + decisão de produto           | Sprint dedicada a AI-007                              |
+| `AgentMemory` pode duplicar sob concorrência; falha de escrita invisível                                                                                  | 07       | Exige migration                             | Quando AI-003 for priorizada                          |
+| Citação de fonte em RAG copilot é alucinada, não rastreável                                                                                               | 07       | Wiring + mudança de contrato                | Quando AI-010 for priorizada                          |
+| Sem teto de custo real por tenant                                                                                                                         | 13       | Decisão de produto                          | Quando AI-011 for priorizada                          |
 
 ## Decisão
 

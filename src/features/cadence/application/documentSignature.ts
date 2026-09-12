@@ -49,8 +49,7 @@ export async function requestDocumentSignature(
 }
 
 export type ApplySignatureStatusUpdateResult =
-  | { applied: true }
-  | { applied: false; reason: 'not-found' | 'invalid-transition' };
+  { applied: true } | { applied: false; reason: 'not-found' | 'invalid-transition' };
 
 /**
  * Aplica um evento de status vindo do provedor (webhook). Idempotente/seguro contra reentrega e

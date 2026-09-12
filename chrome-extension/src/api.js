@@ -8,7 +8,7 @@
 // HTTP na porta 80 (sem domínio/TLS configurado ainda, ver docs/deploy/oracle-cloud.md §7 e o
 // commit "fix(oci): default DOMAIN to :80..."). Trocar para https://<domínio> assim que o cutover
 // de domínio/TLS acontecer (aí some o mixed-content risk de rodar a extensão em http:// puro).
-const DEFAULT_API_BASE_URL = 'http://163.176.150.147';
+const DEFAULT_API_BASE_URL = 'http://168.138.147.145';
 const STORAGE_KEY = 'atlasApiBaseUrl';
 
 export async function getApiBaseUrl() {
@@ -74,16 +74,18 @@ async function request(path, options = {}) {
     );
   }
   if (!res.ok) {
-    throw new ApiError(body?.error || `Erro ${res.status} ao chamar ${path}.`, res.status, body?.code);
+    throw new ApiError(
+      body?.error || `Erro ${res.status} ao chamar ${path}.`,
+      res.status,
+      body?.code,
+    );
   }
   return body?.data;
 }
 
 export const copilotoApi = {
-  lookupLead: (query) =>
-    request(`/api/copiloto-ia/leads/lookup?q=${encodeURIComponent(query)}`),
-  searchLeads: (query) =>
-    request(`/api/copiloto-ia/leads/search?q=${encodeURIComponent(query)}`),
+  lookupLead: (query) => request(`/api/copiloto-ia/leads/lookup?q=${encodeURIComponent(query)}`),
+  searchLeads: (query) => request(`/api/copiloto-ia/leads/search?q=${encodeURIComponent(query)}`),
   createConversation: (payload) =>
     request('/api/copiloto-ia/conversations', { method: 'POST', body: JSON.stringify(payload) }),
   getConversation: (id) => request(`/api/copiloto-ia/conversations/${id}`),
@@ -94,7 +96,8 @@ export const copilotoApi = {
     }),
   startCapture: (id) => request(`/api/copiloto-ia/conversations/${id}/start`, { method: 'POST' }),
   stopCapture: (id) => request(`/api/copiloto-ia/conversations/${id}/stop`, { method: 'POST' }),
-  cancelConversation: (id) => request(`/api/copiloto-ia/conversations/${id}/cancel`, { method: 'POST' }),
+  cancelConversation: (id) =>
+    request(`/api/copiloto-ia/conversations/${id}/cancel`, { method: 'POST' }),
   requestAudioUploadUrl: (id, mimeType) =>
     request(`/api/copiloto-ia/conversations/${id}/audio/upload-url`, {
       method: 'POST',

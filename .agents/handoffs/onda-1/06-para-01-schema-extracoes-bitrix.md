@@ -21,6 +21,7 @@ resto (status, retry, backoff, idempotência, correlation id, contagem de itens)
 implementado em `service/client.ts`/`service/syncRules.ts`.
 
 ## Arquivo(s) envolvido(s)
+
 - `prisma/schema.prisma` — `BitrixSyncRule` precisa de um campo a mais, ex.:
   `lastErrorMessage String? @db.Text` (nullable — só preenchido quando a última tentativa falhou;
   seria limpo/setado como `null` na próxima execução bem-sucedida).
@@ -29,16 +30,19 @@ implementado em `service/client.ts`/`service/syncRules.ts`.
   no `update` de erro, e limpar (`null`) no `update` de sucesso.
 
 ## Alteração necessária
+
 1. Adicionar o campo ao modelo `BitrixSyncRule` e gerar migração.
 2. Eu assumo a gravação/leitura desse campo em `syncRules.ts` e a exposição na tela assim que o
    campo existir (é código dentro do meu escopo).
 
 ## Teste esperado
+
 Teste de integração/unitário cobrindo: regra que falha → `lastErrorMessage` preenchido com
 mensagem sanitizada (sem stack trace/detalhe interno); regra que depois roda com sucesso →
 `lastErrorMessage` volta a `null`.
 
 ## Contexto adicional
+
 Mensagem sanitizada é importante aqui pelo mesmo motivo de segurança já aplicado no resto do
 Bitrix client: nunca expor detalhe de infraestrutura (stack trace, IP interno, nome de host) numa
 mensagem que vai parar na tela de um usuário de negócio — só a causa em linguagem simples (ex.:

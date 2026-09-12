@@ -11,7 +11,12 @@ import { bitrixRoutes } from '../../src/features/integrations/bitrix/bitrix.rout
 import { errorHandler } from '../../src/shared/middlewares/errorHandler';
 import { setupDI } from '../../src/shared/di/setup';
 import { LeadFactory } from '../helpers/factories';
-import { withRlsBypass, withTenant, signUpRealUser, type RealSessionUser } from '../helpers/rbac-e2e-helpers';
+import {
+  withRlsBypass,
+  withTenant,
+  signUpRealUser,
+  type RealSessionUser,
+} from '../helpers/rbac-e2e-helpers';
 
 // Estende a cobertura de TEST-006 (rbac-e2e.test.ts, só DELETE /api/leads/:id) às demais
 // operações sensíveis do CRM listadas na Etapa 02 (auditoria RBAC) que ainda não tinham teste
@@ -35,8 +40,9 @@ function buildCrmApp(): Express {
 }
 
 async function createLead(organizationId: string): Promise<{ id: string }> {
-  return withTenant(organizationId, () =>
-    prisma.lead.create({ data: LeadFactory.build() }) as unknown as Promise<{ id: string }>
+  return withTenant(
+    organizationId,
+    () => prisma.lead.create({ data: LeadFactory.build() }) as unknown as Promise<{ id: string }>,
   );
 }
 
@@ -48,11 +54,13 @@ async function createLead(organizationId: string): Promise<{ id: string }> {
  * manualmente em paralelo ao real, sem nenhum import fora de si mesma). */
 async function firstDealStageId(organizationId: string): Promise<string> {
   return withTenant(organizationId, async () => {
-    const { PrismaCrm360Repository } = await import('../../src/features/crm360/infra/PrismaCrm360Repository');
+    const { PrismaCrm360Repository } =
+      await import('../../src/features/crm360/infra/PrismaCrm360Repository');
     const pipelines = await new PrismaCrm360Repository().getPipelines(organizationId);
     const dealPipeline = pipelines.find((p) => p.entity === 'Negocio');
     const stage = dealPipeline?.stages[0];
-    if (!stage) throw new Error('Pipeline de Negócio sem etapa inicial — setup do teste está errado.');
+    if (!stage)
+      throw new Error('Pipeline de Negócio sem etapa inicial — setup do teste está errado.');
     return stage.id;
   });
 }
@@ -86,7 +94,9 @@ describe('RBAC ponta-a-ponta — operações do CRM (Etapa 02)', () => {
   afterAll(async () => {
     await withRlsBypass(async () => {
       await prisma.lead.deleteMany({ where: { organizationId: { in: createdOrgIds } } });
-      await prisma.crmPipelineStage.deleteMany({ where: { pipeline: { organizationId: { in: createdOrgIds } } } });
+      await prisma.crmPipelineStage.deleteMany({
+        where: { pipeline: { organizationId: { in: createdOrgIds } } },
+      });
       await prisma.crmPipeline.deleteMany({ where: { organizationId: { in: createdOrgIds } } });
       await prisma.user.deleteMany({ where: { id: { in: createdUserIds } } });
       await prisma.organization.deleteMany({ where: { id: { in: createdOrgIds } } });
@@ -115,7 +125,9 @@ describe('RBAC ponta-a-ponta — operações do CRM (Etapa 02)', () => {
       // capturar o estado "antes", senão o teste compara contra um estado que ainda ia mudar por
       // um motivo não relacionado ao RBAC sendo testado aqui.
       const stageId = await firstDealStageId(viewerA.organizationId);
-      const before = await withTenant(viewerA.organizationId, () => prisma.lead.findUnique({ where: { id: lead.id } }));
+      const before = await withTenant(viewerA.organizationId, () =>
+        prisma.lead.findUnique({ where: { id: lead.id } }),
+      );
 
       const res = await request(app)
         .put(`/api/crm/records/${lead.id}/stage`)
@@ -124,7 +136,9 @@ describe('RBAC ponta-a-ponta — operações do CRM (Etapa 02)', () => {
 
       expect(res.status).toBe(403);
 
-      const untouched = await withTenant(viewerA.organizationId, () => prisma.lead.findUnique({ where: { id: lead.id } }));
+      const untouched = await withTenant(viewerA.organizationId, () =>
+        prisma.lead.findUnique({ where: { id: lead.id } }),
+      );
       expect(untouched?.pipelineStageId).toBe(before?.pipelineStageId);
       expect(untouched?.pipelineStageId).not.toBe(stageId);
     });
@@ -143,7 +157,9 @@ describe('RBAC ponta-a-ponta — operações do CRM (Etapa 02)', () => {
       // mapeia como 2xx.
       expect(res.status).not.toBe(200);
 
-      const untouched = await withTenant(adminA.organizationId, () => prisma.lead.findUnique({ where: { id: leadFromOrgA.id } }));
+      const untouched = await withTenant(adminA.organizationId, () =>
+        prisma.lead.findUnique({ where: { id: leadFromOrgA.id } }),
+      );
       expect(untouched?.pipelineStageId).toBeNull();
       expect(untouched?.organizationId).toBe(adminA.organizationId);
     });
@@ -189,7 +205,9 @@ describe('RBAC ponta-a-ponta — operações do CRM (Etapa 02)', () => {
 
       expect(res.status).toBe(403);
 
-      const untouched = await withTenant(viewerA.organizationId, () => prisma.lead.findUnique({ where: { id: lead.id } }));
+      const untouched = await withTenant(viewerA.organizationId, () =>
+        prisma.lead.findUnique({ where: { id: lead.id } }),
+      );
       expect(untouched?.funnel).toBe('Lead');
     });
 
@@ -202,7 +220,9 @@ describe('RBAC ponta-a-ponta — operações do CRM (Etapa 02)', () => {
 
       expect(res.status).not.toBe(200);
 
-      const untouched = await withTenant(adminA.organizationId, () => prisma.lead.findUnique({ where: { id: leadFromOrgA.id } }));
+      const untouched = await withTenant(adminA.organizationId, () =>
+        prisma.lead.findUnique({ where: { id: leadFromOrgA.id } }),
+      );
       expect(untouched?.funnel).toBe('Lead');
     });
   });

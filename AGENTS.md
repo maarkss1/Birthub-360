@@ -1,6 +1,7 @@
 # AGENTS.md — Governança Global de Agentes
 
 ## Projeto
+
 CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR
 
 Este arquivo é a regra global para qualquer agente que trabalhe neste repositório. Regras locais em `AGENTS.md` dentro de subpastas refinam o escopo, mas nunca anulam as regras de segurança, qualidade e coordenação deste arquivo. Em caso de conflito entre um `AGENTS.md` local e este arquivo, este arquivo vence.
@@ -102,7 +103,7 @@ Rodar mais de 3 especialistas simultâneos exige **todas** as condições abaixo
    não prova ausência de conflito semântico entre elas — a Onda 5 provou isso na prática (falha de
    RLS do `AILog` só apareceu no gate da integração).
 4. **Sem bloqueador mútuo.** Nenhum par de agentes ativos depende de um handoff `Prioridade:
-   bloqueador` em aberto direcionado ao outro.
+bloqueador` em aberto direcionado ao outro.
 5. **Dono único para arquivo compartilhado.** `server.ts`, `package.json`/lockfile e
    `prisma/schema.prisma` mantêm dono único por onda, conforme "Propriedade exclusiva de arquivos".
    Quem precisar deles abre handoff — não edita.
@@ -114,25 +115,33 @@ Ao subir de 3 para um número maior pela primeira vez num repositório ou ferram
 validar o salto com um passo de cada vez (3 → 4 → 6) em vez de ir direto ao teto.
 
 ### Onda 1 — Fundação
+
 Executar em paralelo:
+
 1. Agente 01 — Plataforma, Segurança e Dados
 2. Agente 02 — Produto e UX
 3. Agente 06 — Integrações e Bitrix
 
 ### Onda 2 — Operação Comercial
+
 Executar em paralelo:
+
 1. Agente 04 — CRM e BI
 2. Agente 05 — Prospecção
 3. Agente 07 — IA e Automações
 
 ### Onda 3 — Acabamento
+
 Executar em paralelo:
+
 1. Agente 03 — Design e Acessibilidade
 2. Agente 08 — QA e Release
 3. Um agente anterior por vez para remediações apontadas por QA
 
 ### Onda 4 — Extensões (Mobile, Infraestrutura, Marca)
+
 Executar em paralelo, depois de `RELEASE APPROVED` na Onda 3 (ou antes, se o Coordenador decidir que uma dessas frentes é prioridade de negócio — nenhuma delas depende de bloqueador das Ondas 1–3):
+
 1. Agente 09 — Mobile (Capacitor/Android)
 2. Agente 10 — Infraestrutura, Observabilidade e SRE
 3. Agente 11 — Marca e Ativos Institucionais
@@ -144,18 +153,21 @@ Escopo isolado entre si (pastas diferentes), mas ainda assim respeitando a regra
 Agentes rodando "em paralelo" nunca podem compartilhar o mesmo working tree. Edição simultânea no mesmo checkout corrompe o trabalho uns dos outros mesmo sem conflito de merge (arquivos meio escritos, index inconsistente, testes lendo estado de outro agente).
 
 Antes de iniciar uma onda, o Coordenador:
+
 1. cria/atualiza a branch de integração da onda: `integracao/onda-<n>`, a partir da última onda aprovada (ou de `main`/`develop` na Onda 1);
 2. cria uma branch por especialista ativo a partir dessa branch de integração: `agente/<numero>-<slug>`, por exemplo `agente/01-plataforma-dados`;
 3. cria um `git worktree` dedicado por especialista ativo, apontando para a branch dele, por exemplo `git worktree add ../wt-agente-01 agente/01-plataforma-dados`;
 4. entrega a cada especialista apenas o caminho do seu próprio worktree — nunca o worktree de outro agente.
 
 Cada especialista:
+
 - trabalha exclusivamente dentro do seu worktree;
 - commita em commits pequenos e coerentes, prefixados com o próprio id: `feat(01): ...`, `fix(06): ...`, `test(05): ...`;
 - nunca faz `git push --force` nem reescreve histórico compartilhado;
 - ao concluir sua missão da onda (ou ao atingir um ponto seguro de handoff), roda o próprio gate local no seu worktree antes de sinalizar pronto para integração.
 
 O Coordenador, ao final (ou durante) da onda:
+
 1. revisa o `git diff` de cada branch de especialista;
 2. confirma que nenhum arquivo fora do escopo/propriedade do especialista foi tocado;
 3. faz merge de cada branch aprovada em `integracao/onda-<n>`, **em levas de 2–3 merges** (ver "Regra de concorrência" → condição 3), nunca acumulando a onda inteira para uma única integração;
@@ -170,20 +182,27 @@ Se a ferramenta/ambiente de execução não suportar múltiplos worktrees simult
 Handoff nunca é apenas texto solto na saída do agente — é um artefato rastreável.
 
 Formato: um arquivo por handoff em `.agents/handoffs/onda-<n>/<de>-para-<para>-<slug>.md`, por exemplo `.agents/handoffs/onda-1/06-para-01-schema-extracoes-bitrix.md`, contendo:
+
 ```markdown
 - De: <agente origem>
 - Para: <agente destino>
 - Onda: <n>
 - Status: aberto | em-andamento | resolvido
 - Prioridade: bloqueador | alto | normal
+
 ## Problema
+
 ## Arquivo(s) envolvido(s)
+
 ## Alteração necessária
+
 ## Teste esperado
+
 ## Contexto adicional
 ```
 
 Regras:
+
 - qualquer agente pode criar seu próprio arquivo de handoff dentro de `.agents/handoffs/**`;
 - um agente não edita o handoff criado por outro agente, exceto para atualizar o campo `Status` quando ele é o destinatário que resolveu o item (adicionar uma seção `## Resolução` abaixo, nunca apagar o pedido original);
 - o Coordenador não aprova uma onda com handoff `Status: aberto` marcado como `Prioridade: bloqueador` direcionado a um bloqueador da lista abaixo;
@@ -192,12 +211,15 @@ Regras:
 ## Scripts ausentes
 
 Antes de rodar qualquer `npm run <script>` de um gate, o agente verifica se o script existe em `package.json` → `scripts`. Se não existir:
+
 - não trate como sucesso silencioso e não pule a linha sem registro;
 - registre explicitamente na evidência: "script `<nome>` inexistente em package.json — gate não aplicável nesta execução";
 - se o script deveria existir para o domínio do agente (ex.: `verify:integrations` ausente enquanto 06 mexe em integrações), abra handoff para 08 propondo a criação do script, com prioridade alto.
 
 ## Bloqueadores prioritários
+
 Antes de adicionar novas funcionalidades, eliminar ou validar como resolvidos:
+
 1. RBAC duplicado ou divergente.
 2. Rotas administrativas autenticadas sem autorização por cargo/permissão.
 3. Risco conhecido ou dependência insegura no sistema de autenticação.
@@ -234,9 +256,11 @@ Decisão de governança da Sprint 00/Onda 12 (GOV-003), vigente até a Sprint 13
   em caso de dúvida, e registra a decisão no relatório da onda em questão.
 
 ## Regra de autonomia
+
 Não interromper o usuário para decisões técnicas rotineiras.
 
 Quando houver um problema solucionável no repositório:
+
 1. Reproduzir.
 2. Identificar causa raiz.
 3. Corrigir no escopo do agente responsável.
@@ -248,6 +272,7 @@ Quando houver um problema solucionável no repositório:
 Perguntas ao usuário são último recurso e apenas para fatos externos realmente indisponíveis, como credenciais, decisões comerciais irreversíveis ou permissões de produção.
 
 ## Propriedade exclusiva de arquivos
+
 - `prisma/schema.prisma`: somente Agente 01.
 - Migrações Prisma: somente Agente 01 cria/edita.
 - `src/App.tsx`, navegação principal e Sidebar: somente Agente 02.
@@ -264,6 +289,7 @@ Perguntas ao usuário são último recurso e apenas para fatos externos realment
 - Agentes não devem reformatar ou editar arquivos fora do próprio escopo sem necessidade comprovada.
 
 ## Regras de conflito
+
 1. O agente que não é dono do arquivo não faz a alteração.
 2. Produza um handoff curto com: problema, arquivo, alteração necessária, teste esperado (ver Protocolo de handoff).
 3. O coordenador encaminha ao dono.
@@ -271,7 +297,9 @@ Perguntas ao usuário são último recurso e apenas para fatos externos realment
 5. Nunca resolver conflito apagando a mudança de outro agente.
 
 ## Segurança e higiene
+
 Nunca commitar ou copiar para pacote:
+
 - `.env` real;
 - tokens, chaves, senhas, cookies ou webhooks secretos;
 - `.git/`;
@@ -290,15 +318,18 @@ Antes de finalizar qualquer onda, rodar varredura de segredo versionado (ferrame
 **Achado conhecido, parcialmente remediado:** `backups/prospector-*.dump` chegou a ser versionado no git deste repositório, violando a regra acima, com dado pessoal real de prospecção. Estado atual (verificado nesta onda, Sprint 00/Onda 12 — GOV-002): o arquivo **já foi removido do working tree atual** (`git ls-files` não retorna nenhum `.dump`; `backups/` só contém `AGENTS.md`) e `.gitignore` cobre `backups/*.dump`, `*.sql`, `*.backup`, `*.tar`, `*.tar.gz` e `*.gz`, então não há reincidência silenciosa. Isso **não** significa que o dado desapareceu: **o histórico do git continua recuperável** — o arquivo ainda existe nos commits antigos para quem tiver acesso ao repositório e souber navegar o histórico, então o risco de exposição de dado pessoal não está eliminado, só contido no HEAD. Pendências reais, nesta ordem: (1) confirmar com o Agente 01 se algum segredo/credencial estava embutido no dump e rotacionar se ainda não foi feito; (2) decidir com o dono do repositório se vale reescrever o histórico (`git filter-repo`/BFG) para remover definitivamente — isso reescreve hashes de commit e exige coordenação com PRs abertos, portanto continua sendo **decisão humana separada, não automática de agente**, e não é aprovada nem rejeitada por esta onda.
 
 ## Dados reais x demonstração
+
 - Dados de demonstração devem ser explicitamente rotulados e isolados.
 - Produção e homologação não podem misturar valores inventados com indicadores reais.
 - Dashboards devem apresentar loading, empty, error e stale state de forma explícita.
 - Nenhuma métrica comercial pode ser fabricada para "preencher" a interface.
 
 ## Tenancy Birth Hub 360 / Birth Hub 360
+
 Separação visual não é prova de isolamento.
 
 Toda leitura e escrita de dados sensíveis a empresa/tenant deve comprovar:
+
 - origem do tenant;
 - filtro aplicado no backend/data layer;
 - autorização;
@@ -310,11 +341,13 @@ Toda leitura e escrita de dados sensíveis a empresa/tenant deve comprovar:
 A plataforma processa dados pessoais reais de leads, contatos e clientes (nome, telefone, e-mail, cargo, empresa, e em alguns casos dados enriquecidos por terceiros). A Lei Geral de Proteção de Dados (Lei 13.709/2018) se aplica integralmente, mesmo em ambiente de homologação com dados reais.
 
 Regra geral, válida para todos os agentes:
+
 - nunca armazenar mais dado pessoal do que o necessário para a finalidade comercial declarada (minimização);
 - nunca criar novo destino de armazenamento/replicação de dado pessoal (planilha paralela, cache não governado, log persistente) sem que ele herde as mesmas proteções de tenant, retenção e auditoria dos dados de origem;
 - todo dado pessoal deve ser rastreável a uma origem e, quando obtido por enriquecimento/terceiro, à base legal e ao fornecedor.
 
 Responsabilidade por domínio:
+
 - **01** garante controle de acesso, criptografia/mascaramento de credenciais e mecanismo técnico de exclusão/anonimização de dado pessoal mediante solicitação;
 - **04** garante que campos comerciais com dado pessoal tenham dono, proveniência e não sejam expostos além do necessário em relatórios agregados;
 - **05** garante proveniência, rotulagem de dado inferido vs. confirmado e não enriquece além do estritamente necessário para qualificação comercial;
@@ -325,7 +358,9 @@ Responsabilidade por domínio:
 Nenhum agente deve tratar este tema como "fora de escopo" — cada um trata a fatia que lhe cabe dentro da própria missão de onda.
 
 ## Gate obrigatório por onda
+
 A onda não termina sem:
+
 ```bash
 npx tsc --noEmit
 npm run lint
@@ -345,6 +380,7 @@ antes deste gate está grandfathered em `.dependency-cruiser-known-violations.js
 violação **nova**, fora dessa baseline, quebra o gate.
 
 Quando aplicável:
+
 ```bash
 npm run verify:integrations
 npm run verify:ai
@@ -355,7 +391,9 @@ Ver seção "Scripts ausentes" para o caso de script não existir.
 Não marcar teste como "aprovado" se não foi executado. Corrigir ambiente/teste até conseguir evidência, salvo dependência externa impossível de provisionar localmente. Nesse caso, o coordenador deve registrar o bloqueio como impeditivo de release, nunca como sucesso.
 
 ## Definição global de pronto
+
 Uma tarefa só está concluída quando:
+
 - causa raiz foi tratada;
 - não existe fallback enganoso;
 - erros relevantes ficam visíveis/observáveis;
@@ -367,6 +405,7 @@ Uma tarefa só está concluída quando:
 - o agente fornece arquivos alterados, comandos executados e resultados.
 
 ## Proibição de "auditoria sem correção"
+
 Encontrou problema corrigível? Corrija agora dentro do escopo.
 
 Backlog só é aceitável para dependências externas, decisões de negócio ou mudanças que exigem dono diferente. Mesmo nesses casos, produzir handoff acionável.

@@ -6,7 +6,7 @@
 # PR em resultado `level: error` (achado de alta confiança); as queries extras de
 # `security-extended` que saem como `warning`/`note` ficam visíveis na aba Security sem travar o
 # gate, então não há custo de falso-positivo bloqueante em usar o suite mais amplo.
-name: "Central Birth Hub 360 — CodeQL"
+name: 'Central Birth Hub 360 — CodeQL'
 
 queries:
   - uses: security-extended
@@ -18,7 +18,7 @@ paths-ignore:
   - coverage
   - playwright-report
   - android/**/build
-  - "**/*.min.js"
+  - '**/*.min.js'
   - identidade-visual/**
   # Dono: Agente 15 / Agente 00. Data: 2026-09-08. Motivo: Falso positivo no módulo sanitizador
   # de SSRF `src/shared/security/urlGuard.ts`, cuja função explícita é validar a URL do usuário

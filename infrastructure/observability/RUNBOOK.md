@@ -15,10 +15,10 @@ Runbook de resposta a incidentes e de go-live para os cenários já mapeados com
 > permanece correto como **procedimento** para quando cada caminho for reativado — só a coluna
 > "Status" está desatualizada.
 
-| Caminho | Status (histórico, ver correção acima) | Onde |
-| --- | --- | --- |
-| Render (monólito Express: API + estático do Vite) + Supabase (Postgres/Storage) + Cloudflare (DNS/CDN) | Foi ativo em produção; **congelado** desde a migração local-first | `render.yaml`, `docs/deploy/producao.md` |
-| Kubernetes/Helm/ArgoCD (`k8s/`, `charts/`, `argocd/`) | Aspiracional/legado, nenhum cluster real registrado | `charts/README.md`, `argocd/README.md`, `k8s/README.md` |
+| Caminho                                                                                                | Status (histórico, ver correção acima)                            | Onde                                                    |
+| ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------------- |
+| Render (monólito Express: API + estático do Vite) + Supabase (Postgres/Storage) + Cloudflare (DNS/CDN) | Foi ativo em produção; **congelado** desde a migração local-first | `render.yaml`, `docs/deploy/producao.md`                |
+| Kubernetes/Helm/ArgoCD (`k8s/`, `charts/`, `argocd/`)                                                  | Aspiracional/legado, nenhum cluster real registrado               | `charts/README.md`, `argocd/README.md`, `k8s/README.md` |
 
 > **Correção de registro (Onda 8):** a missão desta rodada citava "Render+Vercel" como caminho
 > real. Verificado nesta rodada — via `docs/deploy/producao.md` (decisão arquitetural explícita:
@@ -116,6 +116,7 @@ documento existente (`/AGENTS.md`, `docs/deploy/**`, `.agents/**`), quem tem aut
 acionar um rollback em produção nem um canal de escalonamento (on-call, Slack, telefone). Isso não
 é algo que este agente pode decidir por conta própria — é uma decisão organizacional. Registrado
 aqui como pendência explícita para o usuário/gestão definir antes do primeiro incidente real:
+
 - quem tem acesso ao dashboard Render do workspace de produção (rollback de código é uma ação
   manual do dashboard, ver seção 6 — não há automação scriptável para isso hoje);
 - canal de decisão para autorizar rollback quando o incidente também envolve dado (migration
@@ -187,12 +188,12 @@ relato de leads não enriquecidos/mensagens não enviadas.
    (comportamento padrão hoje no Render, ver `render.yaml`), a fila está **desligada por
    design**, não travada. Confirme isso antes de tratar como incidente.
 3. **Quem processa a fila hoje (Render real)**: o serviço `prospector-atlas-worker` (`type:
-   worker` em `render.yaml`, preparado pelo Agente 16/08 na Onda 6) **ainda não foi criado de
+worker` em `render.yaml`, preparado pelo Agente 16/08 na Onda 6) **ainda não foi criado de
    verdade no Render** — confirmado nesta rodada consultando o workspace real via API: só existe
    o serviço web `prospector-atlas`. Se `ENABLE_QUEUES=true` for ligado sem o worker dedicado
    ativo, é o próprio `server.ts` quem processa os jobs (workers ainda não foram removidos de lá —
    ver `.agents/handoffs/onda-6/16-para-00-remover-workers-de-server-ts.md`, `status:
-   em-andamento`, corte proposital ainda não aplicado). Não assuma que o worker dedicado está
+em-andamento`, corte proposital ainda não aplicado). Não assuma que o worker dedicado está
    rodando só porque `render.yaml` o declara.
 4. Se Redis está acessível mas jobs não avançam: checar logs do processo que está de fato
    processando (server.ts hoje, ou o worker dedicado quando for ativado) por exceção repetida no
@@ -281,7 +282,7 @@ MCP Render — não é suposição:
   daquele deploy antigo. Se o incidente foi causado por uma env var nova mal configurada (não pelo
   código), rollback de deploy não resolve — corrija a env var diretamente.
 - **Migração não é desfeita pelo rollback**: `startCommand: npx prisma migrate deploy && npm run
-  start` roda a cada deploy, incluindo um rollback (que é, mecanicamente, um novo deploy do commit
+start` roda a cada deploy, incluindo um rollback (que é, mecanicamente, um novo deploy do commit
   antigo). Se a migration mais recente já rodou e é destrutiva (coluna removida, tipo alterado),
   reverter só o código não desfaz o schema — o código antigo pode nem funcionar contra o schema
   novo. Avaliar com o Agente 01 se é necessária uma migration de compensação antes do rollback.
@@ -311,6 +312,7 @@ avaliar com o Agente 01 se é necessária uma migration de compensação antes o
 de código. Nunca assumir que "reverter o deploy" também reverte o banco.
 
 ### Rollback via ArgoCD (caminho documentado como ativo em `argocd/README.md`, quando houver
+
 cluster real)
 
 ```bash
@@ -369,7 +371,7 @@ quando ele for ativado, não um estado atual:
    workers exponha `/metrics` com `EXPOSE_METRICS=true`.
 3. **Contagem de workers ativos / shutdown por timeout**: `worker.ts` já loga
    `activeWorkers`/`totalRegistered` na inicialização e `worker.ts: shutdown excedeu o timeout —
-   forçando saída` como `error` quando `SIGTERM` não drena a tempo (25s). Sem um coletor de logs
+forçando saída` como `error` quando `SIGTERM` não drena a tempo (25s). Sem um coletor de logs
    estruturado versionado neste repositório com alerta por padrão de mensagem (Loki/Grafana Loki
    local existe via `infrastructure/observability/loki.yml`, mas sem regra de alerta baseada em
    `LogQL` neste arquivo — Prometheus só lê métricas, não logs), este item fica como
@@ -385,16 +387,16 @@ grupos `ativos-hoje` deste arquivo) para promover isso a uma regra real.
 
 ## 8. Lacunas conhecidas (Onda 8 — não inventadas, documentadas para decisão)
 
-| Lacuna | Detalhe | Quem decide/resolve |
-| --- | --- | --- |
-| Sem dashboard Grafana versionado | `infrastructure/observability/` tem datasources (`grafana-datasources.yml`) mas nenhum `dashboards/*.json` — Grafana sobe "em branco", só com os datasources provisionados. Não criado nesta rodada por falta de tempo dentro do escopo de go-live (priorizado runbook/alertas executáveis) — fica como próximo passo, não crítico para o go-live em si (Prometheus `/alerts` e consultas ad-hoc já cobrem o mínimo). | Agente 10, próxima rodada |
-| `AI_MONTHLY_BUDGET_USD` possivelmente não configurada em produção | Não está em `render.yaml`; não é possível confirmar via API/MCP se foi setada manualmente no dashboard. Sem ela, `AIBudgetOverrun` fica `unknown` para sempre. | Confirmação humana (dashboard Render) + decisão de negócio do valor do orçamento |
-| Métrica HTTP por status code (`HighErrorRate5xx`) | Auto-instrumentação OTel emite métricas de runtime/GC mas não a métrica HTTP com a versão instalada de `instrumentation-http`. Ver `alert.rules.yml` para o diagnóstico completo. | Agente 01 (dono de `src/lib/tracing.ts`) |
-| `MigrationJobFailed` (grupo k8s) não tem contraparte real no Render | Não é uma lacuna a fechar — é a confirmação de que o caminho k8s é aspiracional. A garantia equivalente no Render já existe via `startCommand`+`healthCheckPath` (seção 0.2). Nenhuma ação necessária a menos que o projeto migre para k8s de verdade. | N/A |
-| Quem aciona rollback e por qual canal | Ver seção 0.4 — decisão organizacional, não técnica. | Usuário/gestão |
-| Worker dedicado sem observabilidade aplicável | Ver seção 7 — não há processo separado rodando ainda. | Agente 08 (ativação) + Agente 10 (regra de alerta quando ativar) |
-| `http_request_count` nativo do Render vazio para `prospector-atlas` | Confirmado via `get_metrics` do MCP Render nesta rodada — pode ser limitação do plano `free`, falta de tráfego capturado no intervalo consultado, ou outra causa não identificada. Não impede os `/health/*` nem os logs de servirem como fonte de verdade, mas reduz a confiança em métricas nativas do Render para SLO de erro 5xx (reforça a importância de resolver a lacuna de `HighErrorRate5xx` acima). | Confirmação humana (dashboard Render, plano pago) se for crítico |
-| Sem Alertmanager configurado | Já documentado no cabeçalho de `alert.rules.yml` desde a Onda 4 — alertas ficam visíveis em `/alerts` do Prometheus mas não notificam ninguém (Slack/e-mail/PagerDuty) até um receptor ser configurado. Continua verdade nesta rodada. | Decisão de produto/operação (qual canal usar) |
+| Lacuna                                                              | Detalhe                                                                                                                                                                                                                                                                                                                                                                                                               | Quem decide/resolve                                                              |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Sem dashboard Grafana versionado                                    | `infrastructure/observability/` tem datasources (`grafana-datasources.yml`) mas nenhum `dashboards/*.json` — Grafana sobe "em branco", só com os datasources provisionados. Não criado nesta rodada por falta de tempo dentro do escopo de go-live (priorizado runbook/alertas executáveis) — fica como próximo passo, não crítico para o go-live em si (Prometheus `/alerts` e consultas ad-hoc já cobrem o mínimo). | Agente 10, próxima rodada                                                        |
+| `AI_MONTHLY_BUDGET_USD` possivelmente não configurada em produção   | Não está em `render.yaml`; não é possível confirmar via API/MCP se foi setada manualmente no dashboard. Sem ela, `AIBudgetOverrun` fica `unknown` para sempre.                                                                                                                                                                                                                                                        | Confirmação humana (dashboard Render) + decisão de negócio do valor do orçamento |
+| Métrica HTTP por status code (`HighErrorRate5xx`)                   | Auto-instrumentação OTel emite métricas de runtime/GC mas não a métrica HTTP com a versão instalada de `instrumentation-http`. Ver `alert.rules.yml` para o diagnóstico completo.                                                                                                                                                                                                                                     | Agente 01 (dono de `src/lib/tracing.ts`)                                         |
+| `MigrationJobFailed` (grupo k8s) não tem contraparte real no Render | Não é uma lacuna a fechar — é a confirmação de que o caminho k8s é aspiracional. A garantia equivalente no Render já existe via `startCommand`+`healthCheckPath` (seção 0.2). Nenhuma ação necessária a menos que o projeto migre para k8s de verdade.                                                                                                                                                                | N/A                                                                              |
+| Quem aciona rollback e por qual canal                               | Ver seção 0.4 — decisão organizacional, não técnica.                                                                                                                                                                                                                                                                                                                                                                  | Usuário/gestão                                                                   |
+| Worker dedicado sem observabilidade aplicável                       | Ver seção 7 — não há processo separado rodando ainda.                                                                                                                                                                                                                                                                                                                                                                 | Agente 08 (ativação) + Agente 10 (regra de alerta quando ativar)                 |
+| `http_request_count` nativo do Render vazio para `prospector-atlas` | Confirmado via `get_metrics` do MCP Render nesta rodada — pode ser limitação do plano `free`, falta de tráfego capturado no intervalo consultado, ou outra causa não identificada. Não impede os `/health/*` nem os logs de servirem como fonte de verdade, mas reduz a confiança em métricas nativas do Render para SLO de erro 5xx (reforça a importância de resolver a lacuna de `HighErrorRate5xx` acima).        | Confirmação humana (dashboard Render, plano pago) se for crítico                 |
+| Sem Alertmanager configurado                                        | Já documentado no cabeçalho de `alert.rules.yml` desde a Onda 4 — alertas ficam visíveis em `/alerts` do Prometheus mas não notificam ninguém (Slack/e-mail/PagerDuty) até um receptor ser configurado. Continua verdade nesta rodada.                                                                                                                                                                                | Decisão de produto/operação (qual canal usar)                                    |
 
 ## 9. Verificação pós-incidente
 

@@ -158,7 +158,9 @@ export function setup() {
 
   const cookie = extractSessionCookie(signUpRes);
   if (!cookie) {
-    throw new Error('Sign-up respondeu 200 mas nao trouxe cookie de sessao (better-auth.session_token).');
+    throw new Error(
+      'Sign-up respondeu 200 mas nao trouxe cookie de sessao (better-auth.session_token).',
+    );
   }
   const headers = jsonHeaders(cookie);
 
@@ -192,7 +194,11 @@ export function setup() {
   const leadIds = [];
   for (let batchStart = 0; batchStart < LEAD_SEED_COUNT; batchStart += LEAD_SEED_BATCH_SIZE) {
     const leadRequests = [];
-    for (let i = batchStart; i < Math.min(batchStart + LEAD_SEED_BATCH_SIZE, LEAD_SEED_COUNT); i++) {
+    for (
+      let i = batchStart;
+      i < Math.min(batchStart + LEAD_SEED_BATCH_SIZE, LEAD_SEED_COUNT);
+      i++
+    ) {
       leadRequests.push([
         'POST',
         `${baseUrl}/api/leads`,

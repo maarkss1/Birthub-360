@@ -64,7 +64,7 @@ transição de status, webhook de entrada real — é real e testado contra Post
 - `npm run lint` — 0 erros, 89 warnings (baseline herdado, nenhum novo)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **187/187 arquivos, 1457/1457 testes**
 - integration (Postgres+Redis reais): `npx dotenv-cli -e .env.test -- npx vitest run -c
-  vitest.integration.config.ts` — **41/41 arquivos, 197/197 testes**, incluindo os 9 casos novos de
+vitest.integration.config.ts` — **41/41 arquivos, 197/197 testes**, incluindo os 9 casos novos de
   `tests/integration/document-signature.routes.test.ts` (solicitação real com e-mail do contato;
   signerEmail explícito sobrescreve; 422 sem contato/signerEmail; 404 documento inexistente; 400
   e-mail inválido; 403 sem papel de escrita; fluxo completo created→sent→viewed→signed aplicado e

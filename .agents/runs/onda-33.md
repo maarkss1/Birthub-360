@@ -64,7 +64,7 @@ produto em aberto — a auditoria original já apontava exatamente esse arquivo 
 - unit: `npx vitest run -c vitest.unit.config.ts` — **193/193 arquivos, 1492/1492 testes** (4 casos
   novos em `base.agent.consent.test.ts`; `base.agent.budget.test.ts` ajustado)
 - integration (Postgres+Redis reais): `npx dotenv-cli -e .env.test -- npx vitest run -c
-  vitest.integration.config.ts` — **44/44 arquivos, 221/221 testes**, incluindo
+vitest.integration.config.ts` — **44/44 arquivos, 221/221 testes**, incluindo
   `swarm-autonomous-mission-e2e.test.ts`, que exercita o `CRMAgent` real ponta a ponta através do
   novo gate (já rodava com `AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS: '*'` para a organização de
   teste, sem precisar de ajuste)

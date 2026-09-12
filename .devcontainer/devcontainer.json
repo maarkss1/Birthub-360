@@ -1,9 +1,6 @@
 {
   "name": "Central de Inteligência Comercial ATLASGR",
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "docker-compose.yml"
-  ],
+  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
   "service": "app",
   "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",

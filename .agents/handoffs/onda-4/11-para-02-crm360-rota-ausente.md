@@ -5,6 +5,7 @@
 - Prioridade: bloqueador
 
 ## Problema
+
 O item de menu "Cockpit CRM" (`crm360`) está presente na Sidebar (`coreTools`) e em `TAB_META`,
 navega para `/app/crm360`, mas não existe nenhuma `<Route path="crm360">` dentro do bloco `/app/*`
 em `src/App.tsx`. O React Router cai no catch-all (`<Route path="*" element={<Navigate to="/app"
@@ -22,24 +23,26 @@ navegar sem realizar navegação") — aqui é um item de menu, não um comando 
 o usuário é idêntico: a interface promete uma navegação que não acontece.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/App.tsx` (falta a `<Route path="crm360" element={<CrmOverview />} />` ou o wrapper correto,
   dentro do bloco de rotas relativas a `/app/*`, por volta da linha 84-119).
 - `src/lib/navigationBus.ts` (linha 53-60) — **erro de compilação confirmado**. `TAB_ROUTE_SET:
-  Record<TabType, true>` não inclui a chave `crm360`, então `npx tsc --noEmit` falha agora com:
+Record<TabType, true>` não inclui a chave `crm360`, então `npx tsc --noEmit` falha agora com:
   `error TS2741: Property 'crm360' is missing in type '{...}' but required in type
-  'Record<TabType, true>'`. Isso não é só um erro de tipo cosmético: `isKnownTab()` usa esse mapa
+'Record<TabType, true>'`. Isso não é só um erro de tipo cosmético: `isKnownTab()` usa esse mapa
   para decidir se `requestNavigation(tab)` (usado pelo comando de voz / navegação global) deve
   disparar a navegação — com `crm360` ausente, `isKnownTab('crm360')` retorna `false` e o comando de
   voz também falharia silenciosamente para este módulo, o mesmo padrão do bloqueador #7 global.
 - Consumidores já existentes, não precisam de mudança: `src/components/layout/Sidebar.tsx` (linha
   47), `src/components/layout/tabMeta.ts` (linha 17), `src/features/crm360/components/
-  CrmOverview.tsx`.
+CrmOverview.tsx`.
 
 **Este erro de compilação bloqueia o gate obrigatório da onda (`npx tsc --noEmit`) para qualquer
 branch que baixar a partir de `integracao/onda-4` até ser corrigido** — não é exclusivo do escopo
 do Agente 11, mas foi descoberto rodando o gate aqui.
 
 ## Alteração necessária
+
 1. Adicionar a rota `crm360` no bloco de `<Routes>` de `AppLayout()` em `src/App.tsx`, apontando
    para o componente de apresentação do módulo (`CrmOverview` ou o componente que ele expõe hoje).
 2. Adicionar `crm360: true,` em `TAB_ROUTE_SET` (`src/lib/navigationBus.ts`, linha ~53-60) para
@@ -50,9 +53,10 @@ do Agente 11, mas foi descoberto rodando o gate aqui.
    remover temporariamente o item "Cockpit CRM" do menu para não expor uma ação quebrada ao
    usuário — ou aceitar o risco até a próxima onda, já que a Onda 3 explicitamente "ligou" este
    módulo (commit `3f6e336e feat(02): liga o Cockpit CRM (crm360), modulo orfao sem rota nem
-   menu`) e parece ter faltado a rota nesse commit.
+menu`) e parece ter faltado a rota nesse commit.
 
 ## Teste esperado
+
 - Login → clicar em "Cockpit CRM" na Sidebar → URL muda para `/app/crm360` e permanece lá,
   renderizando o Cockpit CRM (não redireciona de volta para `/app`).
 - `npx tsc --noEmit`, `npm run lint`, `npm run build` continuam verdes.
@@ -61,6 +65,7 @@ do Agente 11, mas foi descoberto rodando o gate aqui.
   navegação silenciosamente incorreta).
 
 ## Contexto adicional
+
 Encontrado durante auditoria de conteúdo institucional (Agente 11, Onda 4) ao conferir se
 `documentacao-aplicacao/inventario/mapa-de-navegacao.md` batia com a estrutura real do menu.
 Também notei, no mesmo arquivo `tabMeta.ts`, dois identificadores de `TabType` sem item de menu e
@@ -71,12 +76,14 @@ nenhuma lista de Sidebar), mas é código morto que vale limpar quando o Agente 
 arquivo novamente — prioridade normal, não abri isso como um segundo handoff separado.
 
 ## Resolução
+
 Corrigido diretamente pelo Coordenador (00) durante a integração da Onda 4, por ser pequeno,
 mecânico e seguir exatamente o padrão das outras 20+ rotas de `App.tsx` — em vez de esperar um ciclo
 de remediação do Agente 02 para destravar o gate da onda:
+
 - `src/lib/navigationBus.ts`: `crm360: true,` adicionado a `TAB_ROUTE_SET` (commit `7040c003`).
 - `src/App.tsx`: lazy import de `CrmOverview` + `<Route path="crm360" element={<CrmOverview
-  onNavigate={handleCrmOverviewNavigate} />} />`, com `handleCrmOverviewNavigate` usando
+onNavigate={handleCrmOverviewNavigate} />} />`, com `handleCrmOverviewNavigate` usando
   `useNavigate()` para navegar para `/app/<tab>` (commit `241afea0`).
 
 Verificado: `npx tsc --noEmit` limpo, `npm run lint` sem novos erros, `npm run build` passa. Não

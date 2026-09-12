@@ -459,9 +459,8 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
 
   async importRecentBitrixLeads(organizationId: string) {
     const { prisma } = await import('../../../lib/prisma.js');
-    const { findUnimportedBitrixLeadIds, importSelectedBitrixLeads, connectBitrix } = await import(
-      '../../integrations/bitrix/bitrix.service.js'
-    );
+    const { findUnimportedBitrixLeadIds, importSelectedBitrixLeads, connectBitrix } =
+      await import('../../integrations/bitrix/bitrix.service.js');
 
     let connection = await prisma.bitrixConnection.findFirst({
       where: { organizationId },
@@ -636,9 +635,8 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
           });
           if (dataToUpdate.owner !== undefined) {
             // Handoffs (Jornada): troca de responsável em lote também é uma troca real.
-            const { recordLeadFieldChanges } = await import(
-              '../../../shared/services/leadFieldChangeHistory.service.js'
-            );
+            const { recordLeadFieldChanges } =
+              await import('../../../shared/services/leadFieldChangeHistory.service.js');
             await recordLeadFieldChanges(
               organizationId,
               lead.id,

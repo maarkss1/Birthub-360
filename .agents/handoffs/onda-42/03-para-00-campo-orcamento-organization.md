@@ -160,5 +160,5 @@ de forma material e merece decisão explícita antes de eu ajustar.
 ## Teste esperado depois da migration
 
 - Teste de integração (banco real) confirmando que `prisma.organization.findUnique({ select: {
-  monthlyAiBudgetUsd: true } })` funciona sem cast e sem erro, e que o valor default de uma
+monthlyAiBudgetUsd: true } })` funciona sem cast e sem erro, e que o valor default de uma
   organização recém-criada é `null` (sem teto) — não `0`.

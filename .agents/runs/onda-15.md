@@ -1,6 +1,7 @@
 # Onda 15 — Sprint 03: Backup, Restore, Observabilidade e SRE
 
 ## Identificação
+
 - Sprint: 03
 - Onda: 15
 - SHA de entrada: `2bc7ccb` (branch `claude/sprint-01-seguranca-tenancy-51974`, pós-fechamento da Onda 14)
@@ -178,8 +179,8 @@ estado do código de aplicação nesta mesma branch.
 coberto ou corretamente documentado como pendência do dono — mesmo padrão de veredito binário já
 usado em `final-fase-3.md`.**
 
-Esta sprint não fecha porque o critério de aceite do roadmap é explícito: *"Restore, receptor de
-alerta e rollback comprovados. Nenhum destes pode ficar como documentação aspiracional."* Hoje:
+Esta sprint não fecha porque o critério de aceite do roadmap é explícito: _"Restore, receptor de
+alerta e rollback comprovados. Nenhum destes pode ficar como documentação aspiracional."_ Hoje:
 
 - **Restore**: mecanismo comprovado de novo nesta rodada, com dados atuais — mas só em ambiente
   isolado, nunca contra um backup real de produção (porque esse backup real ainda não existe —

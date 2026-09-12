@@ -5,6 +5,10 @@ import { searchService } from '../../knowledge/search.service.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import {
+  assertPiiExternalConsent,
+  PiiConsentRequiredError,
+} from '../services/guardrails.service.js';
 
 export const aiSuiteRouter = Router();
 
@@ -17,6 +21,31 @@ export const aiSuiteRouter = Router();
 // sanitização de LGPD e o restante do catálogo de ações de IA. Mesmo conjunto de papéis já usado
 // para "qualquer papel que age" em `intelligence.routes.ts` (`pendingActionRoles`).
 aiSuiteRouter.use(requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']));
+
+// ACH-07-01 (P0): achado real de segurança/LGPD — 12 dos 20 recursos deste hub (decision-committee,
+// bitrix-hygiene, o "Higienizador LGPD" em /lgpd/sanitize, mesa/triage e outros) recebiam
+// nome/e-mail/telefone/CPF/CNH/dados bancários no corpo da requisição e despachavam esse conteúdo
+// para Groq/OpenAI sem checar base legal — diferente dos caminhos de WhatsApp
+// (`conversation-intelligence.service.ts`) e Birth Voice (`birthVoice.service.ts`), que já usam
+// `assertPiiExternalConsent` desde as Ondas 7/43. Aplicado aqui como middleware do próprio router
+// (em vez de em cada handler) para cobrir todo o catálogo de uma vez e não depender de cada
+// endpoint novo lembrar de chamar o gate individualmente. Mesmo padrão fail-closed por organização
+// de `AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS` (ver aiPiiConsent.service.ts) e mesmo formato de
+// resposta 403 (`{ success: false, error }`) já usado em intelligence.routes.ts e
+// birthVoice.routes.ts para o mesmo erro.
+aiSuiteRouter.use((req: Request, res: Response, next: NextFunction) => {
+  try {
+    const organizationId = (req as AuthRequest).user?.organizationId ?? null;
+    assertPiiExternalConsent(organizationId);
+    next();
+  } catch (error) {
+    if (error instanceof PiiConsentRequiredError) {
+      res.status(403).json({ success: false, error: error.message });
+      return;
+    }
+    next(error);
+  }
+});
 
 const knowledgeCopilotSchema = z.object({
   question: z

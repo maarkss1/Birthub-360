@@ -29,9 +29,7 @@ import {
 } from '../../src/features/job-roles/config/tool-bindings.js';
 import { JOB_ROLE_CODES, type JobRoleCode } from '../../src/config/job-role-catalog.js';
 import { COMMERCIAL_AGENT_REGISTRY } from '../../src/features/intelligence/agents/commercialAgentRegistry.js';
-import normalizedBirthHubCatalog from '../../src/features/job-roles/catalog/agents.normalized.json' with {
-  type: 'json',
-};
+import normalizedBirthHubCatalog from '../../src/features/job-roles/catalog/agents.normalized.json' with { type: 'json' };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

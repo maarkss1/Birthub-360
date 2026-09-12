@@ -82,7 +82,7 @@ limpa via `prisma migrate deploy`, `prisma migrate status` confirma "up to date"
   chamada Node completamente separada (novo processo), sem nenhum estado compartilhado além do
   Postgres — o registro veio de volta intacto.
 - **Criptografia em repouso confirmada line a linha**: `SELECT "apiKey", "apiSecret" FROM
-  "ThreeCXConnection"` direto no Postgres (bypassando a extensão do Prisma) devolve
+"ThreeCXConnection"` direto no Postgres (bypassando a extensão do Prisma) devolve
   `enc:v1:<iv>:<authTag>:<ciphertext>` — nunca o texto original —, e a leitura pela extensão do
   Prisma (`src/lib/prisma.ts`, mesmo tratamento de `BitrixConnection`/`GoogleWorkspaceConnection`)
   decifra corretamente de volta ao valor original.

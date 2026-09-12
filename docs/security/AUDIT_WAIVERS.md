@@ -141,7 +141,7 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
 ## Histórico
 
 - 2026-09-11 — Auditoria de rotina (Agente 15) encontrou 5 achados `moderate` novos em `npm audit
-  --json`, todos a mesma cadeia raiz `@opentelemetry/core` (`GHSA-8988-4f7v-96qf`/`CVE-2026-54285`,
+--json`, todos a mesma cadeia raiz `@opentelemetry/core` (`GHSA-8988-4f7v-96qf`/`CVE-2026-54285`,
   "Unbounded memory allocation in W3C Baggage propagation"), não registrados em nenhum dos 3 arquivos
   de waiver. Confirmado o advisory real (severidade moderate/CVSS 5.3, patch em `core@2.8.0`,
   `fixAvailable: false`) e o raio de exposição: a cadeia vulnerável vem só de
@@ -191,7 +191,7 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   em ambos os jobs era ignorado silenciosamente, e o `exit-code: 1` avaliava achados de qualquer
   severidade (inclusive MEDIUM/LOW/UNKNOWN), contradizendo o nome e os comentários dos dois jobs.
   Confirmado rodando `trivy fs .` v0.70.0 localmente contra o repositório: com `--severity
-  HIGH,CRITICAL` (comportamento pretendido) o achado não aparece; sem essa flag (comportamento
+HIGH,CRITICAL` (comportamento pretendido) o achado não aparece; sem essa flag (comportamento
   real dos jobs antes desta correção), aparece. Corrigido adicionando
   `limit-severities-for-sarif: true` em `security-trivy.yml` (job `trivy-fs-pr-gate`) e em
   `production.yaml` (scan de imagem) — nenhum waiver novo foi necessário, o achado está
@@ -219,7 +219,7 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   na entrada abaixo) falhou na primeira execução real em CI — `trivy fs` reportou HIGH em
   `package-lock.json` mesmo com o waiver `GHSA-ggr8-5vv4-36mx` já em `.trivyignore.yaml`.
   Investigado rodando `trivy fs --severity HIGH,CRITICAL --ignorefile .trivyignore.yaml --format
-  table` localmente (via `docker run --network host` com a CA/proxy do ambiente de agente — o
+table` localmente (via `docker run --network host` com a CA/proxy do ambiente de agente — o
   mesmo achado, não um achado novo): o Trivy indexa esta vulnerabilidade por `CVE-2026-40345`, não
   pelo GHSA ID que `npm audit` usa. Adicionado `CVE-2026-40345` como segunda entrada em
   `.trivyignore.yaml`, mesmo `expired_at`, e a entrada do waiver acima atualizada para citar os
@@ -231,7 +231,7 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   javascript-typescript + python, com gate real de `level: error` em
   `scripts/security/check-codeql-sarif.ts` — `codeql-action/analyze` sozinho não falha o
   workflow), Dependency Review (`.github/workflows/dependency-review.yml`, `fail-on-severity:
-  high` no diff de manifests do PR) e Trivy passando a rodar também em PR de forma bloqueante
+high` no diff de manifests do PR) e Trivy passando a rodar também em PR de forma bloqueante
   (`.github/workflows/security-trivy.yml`, job `trivy-fs-pr-gate` — o scan semanal existente
   continua não-bloqueante, agora só nos eventos `schedule`/`workflow_dispatch`). O scan de imagem
   Docker (`production.yaml`, job `publish`) também passou a rodar Trivy antes do `docker push`,

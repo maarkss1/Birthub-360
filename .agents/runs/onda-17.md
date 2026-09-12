@@ -1,6 +1,7 @@
 # Onda 17 — Sprint 05: Contrato de dados, CRM, Analytics e BI
 
 ## Identificação
+
 - Sprint: 05
 - Onda: 17
 - SHA de entrada: `364a673` (main, pós-merge do PR #148 — Sprint 01/gap-fill 02-03/Sprint 04)
@@ -26,6 +27,7 @@ escopo, a rodada seguiu em duas fases:
 ## Achados corrigidos nesta rodada
 
 ### DATA-003 — Owner: bug ativo de escrita corrigido
+
 `src/features/crm/components/LeadDetailDrawer.tsx` gravava o **nome** do responsável em vez do
 `User.id` a cada reatribuição manual pelo dropdown "Responsável" — reintroduzia, na superfície de
 escrita mais usada do produto (UI humana), o mesmo bug que a Onda 10 já tinha corrigido no import
@@ -34,6 +36,7 @@ Bitrix (`.agents/handoffs/onda-7/04-para-06-owner-bitrix-nome-nao-id.md`). Corri
 legado), então a correção não quebra a exibição de dados históricos.
 
 ### DATA-004 — `closedAt`: 3 implementações divergentes unificadas
+
 `PrismaLeadRepository.update()` (2 status fecham), `PrismaLeadRepository.updateStatus()` (4
 status) e `PrismaCrm360Repository.updateLeadStage()` (2 status) mantinham listas divergentes do
 que conta como "lead fechado" — a mesma transição de status fechava `closedAt` por uma rota da API
@@ -44,6 +47,7 @@ fechamento, igual ao terceiro já fazia. Teste unitário novo (`tests/unit/lib/e
 fixa o contrato.
 
 ### DATA-004/005 — `funnel` nunca escrito no import de Deal do Bitrix
+
 `src/features/integrations/bitrix/service/deals.ts` criava o `Lead` sem setar `funnel`, caindo no
 default do schema (`LeadFunnel.Lead`) mesmo vindo de `crm.deal.get` — quebrava a segmentação usada
 por `PrismaCommercialIntelligenceRepository`/`PrismaCrm360Repository` (que esperam
@@ -51,6 +55,7 @@ por `PrismaCommercialIntelligenceRepository`/`PrismaCrm360Repository` (que esper
 `leads.ts` (import de Lead) já estava correto — o default `Lead` bate com `crm.lead.get`.
 
 ### Código morto removido
+
 - `LEAD_FUNNEL_STATUS`, `DEAL_FUNNEL_STATUS`, `LEAD_FUNNEL = ['LEADS','DEALS']`
   (`src/lib/zod.ts`) — nunca importados em lugar nenhum, valores divergentes dos enums reais,
   risco de confusão futura por colisão de nome com `LeadFunnel` real.
@@ -69,21 +74,21 @@ por `PrismaCommercialIntelligenceRepository`/`PrismaCrm360Repository` (que esper
 Cada um está detalhado com arquivo:linha em `docs/DATA-CONTRACT-LEAD.md`. Resumo do motivo de cada
 adiamento:
 
-| Achado | Por que não corrigido agora |
-|---|---|
-| `status` interno nunca reflete `STATUS_ID`/`STAGE_ID` real no import Bitrix (sempre `Lead_Recebido`) | Exige decisão de produto — mapa `STATUS_ID`→`LeadStatus` varia por portal Bitrix, não é um bug de código isolado |
-| 8 campos comerciais (resumeDate, cadenceStage, dealPackage, dealStatus, relationshipLevel, commissionPercent, partnerBroker, qualificationValidatedByAM) sem UI, sem Zod no caminho padrão | Construir UI + rota + validação é escopo de feature nova, não correção de contrato |
-| `lossReason` com contrato de valor ambíguo (ID Bitrix cru via Mesa de Tratamento vs. texto via sync) | Toca em outro módulo (Mesa de Tratamento), precisa validação com o dono do fluxo |
-| `amount` buscado (`OPPORTUNITY`) e descartado no import de Deal | Correção real, mas requer confirmar com o dono se `Lead.amount` deve refletir o Bitrix automaticamente ou se é intencionalmente editado só no Atlas |
-| `qualificationValidatedByAM`: falha de tradução vira `false` persistido | Bug real e pequeno, mas de menor prioridade que os corrigidos — falha de tradução é rara (cache de 10 min já mitiga) |
-| `currency` existe no schema mas `DealRow`/repositório o descarta — somas cross-currency sem conversão | Sem UI editando `currency` hoje, risco não se manifesta; registrado para não ser "descoberto" de novo no futuro |
-| `docs/openapi.yaml`: `LeadStatus` documenta só 11/18 valores; `funnel`/`amount`/`closedAt`/`expectedCloseAt` ausentes; zero contract test real cobrindo o modelo (DATA-008) | Atualizar o YAML manualmente sem um contract test automatizado (CI) tem o mesmo risco de voltar a divergir — corrigir os dois juntos é a próxima rodada correta |
-| `monthRange()`/`currentPeriod()` (commercial-intelligence) e `startOfCurrentMonth()` (analytics legado) usam UTC puro, não BRT — deslocam fechamentos perto da virada de mês | Mudança em cálculo de métrica já em produção; precisa de teste de regressão dedicado antes de mexer, não uma correção no meio de uma sprint ampla |
-| `currentMonth()` frontend (local) vs `currentPeriod()` backend (UTC) — "mês atual" pode divergir | Mesma cautela do item de timezone acima |
-| `buildForecastRange`/`computeTrendMomentum` duplicados linha a linha entre backend e frontend | Mudança arquitetural (frontend deveria consumir do backend), não um fix pontual |
-| `analytics.service.ts:conversionRate` retorna `0` fabricado em vez de `null` quando denominador zero | `conversionRate: number` é tipo de contrato compartilhado consumido por 6+ componentes de UI com `.toFixed()` — mudar para `number \| null` é mudança de contrato em cascata |
-| Índices ausentes em `Lead.owner`/`Lead.closedAt` (ambos usados em filtro/analytics) | Aplicar índice é geralmente seguro, mas decidir sem medir volume/padrão de query real em produção é chute — registrado para sprint de performance dedicada |
-| Zero cobertura de teste para import Bitrix de Leads/Deals (`leads.ts`/`deals.ts`) | Construir harness mockando toda a API HTTP do Bitrix é esforço substancial, fora do escopo de uma correção pontual — a correção do `funnel` em si é uma linha de baixíssimo risco (adição a objeto literal) |
+| Achado                                                                                                                                                                                     | Por que não corrigido agora                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `status` interno nunca reflete `STATUS_ID`/`STAGE_ID` real no import Bitrix (sempre `Lead_Recebido`)                                                                                       | Exige decisão de produto — mapa `STATUS_ID`→`LeadStatus` varia por portal Bitrix, não é um bug de código isolado                                                                                            |
+| 8 campos comerciais (resumeDate, cadenceStage, dealPackage, dealStatus, relationshipLevel, commissionPercent, partnerBroker, qualificationValidatedByAM) sem UI, sem Zod no caminho padrão | Construir UI + rota + validação é escopo de feature nova, não correção de contrato                                                                                                                          |
+| `lossReason` com contrato de valor ambíguo (ID Bitrix cru via Mesa de Tratamento vs. texto via sync)                                                                                       | Toca em outro módulo (Mesa de Tratamento), precisa validação com o dono do fluxo                                                                                                                            |
+| `amount` buscado (`OPPORTUNITY`) e descartado no import de Deal                                                                                                                            | Correção real, mas requer confirmar com o dono se `Lead.amount` deve refletir o Bitrix automaticamente ou se é intencionalmente editado só no Atlas                                                         |
+| `qualificationValidatedByAM`: falha de tradução vira `false` persistido                                                                                                                    | Bug real e pequeno, mas de menor prioridade que os corrigidos — falha de tradução é rara (cache de 10 min já mitiga)                                                                                        |
+| `currency` existe no schema mas `DealRow`/repositório o descarta — somas cross-currency sem conversão                                                                                      | Sem UI editando `currency` hoje, risco não se manifesta; registrado para não ser "descoberto" de novo no futuro                                                                                             |
+| `docs/openapi.yaml`: `LeadStatus` documenta só 11/18 valores; `funnel`/`amount`/`closedAt`/`expectedCloseAt` ausentes; zero contract test real cobrindo o modelo (DATA-008)                | Atualizar o YAML manualmente sem um contract test automatizado (CI) tem o mesmo risco de voltar a divergir — corrigir os dois juntos é a próxima rodada correta                                             |
+| `monthRange()`/`currentPeriod()` (commercial-intelligence) e `startOfCurrentMonth()` (analytics legado) usam UTC puro, não BRT — deslocam fechamentos perto da virada de mês               | Mudança em cálculo de métrica já em produção; precisa de teste de regressão dedicado antes de mexer, não uma correção no meio de uma sprint ampla                                                           |
+| `currentMonth()` frontend (local) vs `currentPeriod()` backend (UTC) — "mês atual" pode divergir                                                                                           | Mesma cautela do item de timezone acima                                                                                                                                                                     |
+| `buildForecastRange`/`computeTrendMomentum` duplicados linha a linha entre backend e frontend                                                                                              | Mudança arquitetural (frontend deveria consumir do backend), não um fix pontual                                                                                                                             |
+| `analytics.service.ts:conversionRate` retorna `0` fabricado em vez de `null` quando denominador zero                                                                                       | `conversionRate: number` é tipo de contrato compartilhado consumido por 6+ componentes de UI com `.toFixed()` — mudar para `number \| null` é mudança de contrato em cascata                                |
+| Índices ausentes em `Lead.owner`/`Lead.closedAt` (ambos usados em filtro/analytics)                                                                                                        | Aplicar índice é geralmente seguro, mas decidir sem medir volume/padrão de query real em produção é chute — registrado para sprint de performance dedicada                                                  |
+| Zero cobertura de teste para import Bitrix de Leads/Deals (`leads.ts`/`deals.ts`)                                                                                                          | Construir harness mockando toda a API HTTP do Bitrix é esforço substancial, fora do escopo de uma correção pontual — a correção do `funnel` em si é uma linha de baixíssimo risco (adição a objeto literal) |
 
 ## Achados adicionais descobertos durante a correção (não previstos no roadmap original)
 
@@ -103,6 +108,7 @@ adiamento:
   código; só a referência ao arquivo morto foi corrigida.
 
 ## Gate final
+
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 80 warnings (mesmo nível pré-existente)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **163/163 arquivos, 1288/1288 testes** (era
@@ -118,16 +124,18 @@ adiamento:
   CI tiver Playwright disponível (o workflow do GitHub Actions tem)
 
 ## Skips e flakes
+
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Riscos restantes
-| Risco | Dono | Motivo do aceite | Revisar em |
-|---|---|---|---|
-| `status` do Bitrix nunca mapeado corretamente no import (sempre `Lead_Recebido`) | Produto + 06 (Bitrix) | Requer mapa por portal, decisão de produto | Próxima sprint de integração Bitrix |
-| 8 campos comerciais sem UI | Produto + 02/04 | Feature nova, não bug de contrato | Quando priorizado |
-| Timezone UTC em métricas de fechamento (analytics) | 04 (CRM/BI) | Mudança em cálculo de produção precisa de teste de regressão dedicado | Sprint de analytics dedicada |
-| `docs/openapi.yaml` desatualizado, sem contract test real | 18 (contratos/API) | Corrigir sem automação reintroduz drift | DATA-008, sprint futura |
-| `amount` descartado no import de Deal do Bitrix | 06 (Bitrix) + Produto | Requer confirmar se deve refletir o Bitrix automaticamente | Junto com correção de `status` |
+
+| Risco                                                                            | Dono                  | Motivo do aceite                                                      | Revisar em                          |
+| -------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------- | ----------------------------------- |
+| `status` do Bitrix nunca mapeado corretamente no import (sempre `Lead_Recebido`) | Produto + 06 (Bitrix) | Requer mapa por portal, decisão de produto                            | Próxima sprint de integração Bitrix |
+| 8 campos comerciais sem UI                                                       | Produto + 02/04       | Feature nova, não bug de contrato                                     | Quando priorizado                   |
+| Timezone UTC em métricas de fechamento (analytics)                               | 04 (CRM/BI)           | Mudança em cálculo de produção precisa de teste de regressão dedicado | Sprint de analytics dedicada        |
+| `docs/openapi.yaml` desatualizado, sem contract test real                        | 18 (contratos/API)    | Corrigir sem automação reintroduz drift                               | DATA-008, sprint futura             |
+| `amount` descartado no import de Deal do Bitrix                                  | 06 (Bitrix) + Produto | Requer confirmar se deve refletir o Bitrix automaticamente            | Junto com correção de `status`      |
 
 ## Decisão
 

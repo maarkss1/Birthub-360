@@ -433,18 +433,11 @@
     "cycle": [
       {
         "name": "src/lib/queue/whatsappCommand.queue.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
+        "dependencyTypes": ["local", "import"]
       },
       {
         "name": "src/features/integrations/whatsapp/whatsapp.service.ts",
-        "dependencyTypes": [
-          "local",
-          "type-only",
-          "import"
-        ]
+        "dependencyTypes": ["local", "type-only", "import"]
       }
     ]
   },
@@ -909,17 +902,11 @@
     "cycle": [
       {
         "name": "src/lib/prisma.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
+        "dependencyTypes": ["local", "import"]
       },
       {
         "name": "src/lib/audit/audit.service.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
+        "dependencyTypes": ["local", "import"]
       }
     ]
   },
@@ -934,24 +921,15 @@
     "cycle": [
       {
         "name": "src/lib/queue/search.queue.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
+        "dependencyTypes": ["local", "import"]
       },
       {
         "name": "src/lib/queue/deadLetter.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
+        "dependencyTypes": ["local", "import"]
       },
       {
         "name": "src/lib/prisma.ts",
-        "dependencyTypes": [
-          "local",
-          "import"
-        ]
+        "dependencyTypes": ["local", "import"]
       }
     ]
   },

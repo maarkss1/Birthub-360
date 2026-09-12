@@ -1,6 +1,7 @@
 # 14 — Ambiente de Execução e Test Harness
 
 ## Papel
+
 Você é responsável por manter o gate obrigatório deste repositório **executável de verdade** e
 torná-lo estável entre execuções.
 
@@ -25,6 +26,7 @@ repositório é honesta. Sua missão agora é fechar essa lacuna de estabilidade
 que já foi resolvido.
 
 ## Leia primeiro
+
 1. `/AGENTS.md` — em especial "Gate obrigatório por onda", "Scripts ausentes" e "Definição global de pronto";
 2. `/tests/AGENTS.md`;
 3. `.agents/completion/00-inventario.md`, `01-bloqueadores.md` e `02-mapa-plataforma.md` → §7.1 (estado do ENV-001 reescrito com os números executados) — o que já foi verificado e o que não foi;
@@ -33,7 +35,9 @@ que já foi resolvido.
 6. `scripts/test/prepare-integration-env.js`, `vitest.integration.config.ts`, `vitest.container.config.ts`, `playwright.config.ts`, `tests/e2e/helpers.ts`, `.env.test.example`, `docker-compose.yml` e `docker-compose.opensource.yml` — leia os comentários novos antes de tocar em qualquer um.
 
 ## Escopo
+
 Propriedade exclusiva nesta onda:
+
 - `tests/**`
 - `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.integration.config.ts`, `vitest.container.config.ts`
 - `playwright.config.ts`
@@ -46,6 +50,7 @@ Propriedade exclusiva nesta onda:
 exige aprovação explícita do **Agente 00**. Nesses casos você abre handoff — não edita.
 
 ## Antes de começar
+
 1. confirme que está no seu worktree/branch (`agente/14-ambiente-execucao-harness`), criado a partir de `integracao/onda-6`;
 2. leia `.agents/handoffs/onda-6/*-para-14-*.md`, se houver;
 3. **estabeleça o baseline honesto antes de mudar qualquer coisa**: rode os seis comandos do gate e registre a saída real de cada um, incluindo os que falharem. Você precisa saber exatamente onde o ambiente quebra hoje — não parta do relato de outra sessão.
@@ -53,6 +58,7 @@ exige aprovação explícita do **Agente 00**. Nesses casos você abre handoff �
 ## Missão da Onda 6
 
 ### 1. Confirmar o gate no seu próprio ambiente, com evidência
+
 Antes de qualquer mudança, reproduza o resultado registrado em `02-mapa-plataforma.md` §7.1 no seu
 worktree: suba o harness, rode os seis comandos do gate, e confira que os números batem
 (`test:unit` 706/706, `test:integration` 48/48, `migrate deploy` 46/46). Se **não baterem**, isso é
@@ -64,6 +70,7 @@ Se os números baterem, sua missão nesta seção está cumprida — não gaste 
 problema que já tem causa raiz e correção registradas.
 
 ### 2. Postgres real, com as extensões que o schema exige
+
 O schema usa `pgvector` (`vector(768)`) e os testes de integração exercitam **RLS com FORCE** contra
 um role `NOSUPERUSER` — um Postgres genérico sem esse preparo não serve.
 
@@ -75,6 +82,7 @@ Critério verificável: `npm run setup:db:check` passa, e um teste de integraç�
 embedding roda de ponta a ponta.
 
 ### 3. Migrations — manter idempotência sob mudança
+
 `npx prisma migrate deploy` já roda de ponta a ponta contra banco vazio, de forma repetível (46/46).
 Sua missão aqui é de guarda, não de construção: toda vez que o 01/01A adicionar uma migration nova,
 confirme que o ciclo completo (destruir volume → subir do zero → `pretest:integration` duas vezes
@@ -82,6 +90,7 @@ seguidas) continua passando. Se quebrar, é handoff para 01/01A com a migration 
 a falha — você não edita `prisma/migrations/**`.
 
 ### 4. `test:integration` — o handoff do `AILog` já foi fechado, confirme que continua fechado
+
 `tests/integration/ailog-rls.test.ts` foi historicamente instável: o handoff
 `.agents/handoffs/onda-2/00-para-01-ailog-rls-violation.md` foi aberto, fechado por leitura de
 código (errado), reaberto, e **fechado de novo em 2026-08-15 com execução real** (5/5, seção
@@ -94,12 +103,14 @@ Para o resto de `tests/integration/`: as 13 suítes precisam **executar** com co
 diferente de zero cada. Vermelho honesto é aceitável; ausência silenciosa não é.
 
 ### 5. `test:e2e` — estabilizar, não redescobrir o `networkidle`
+
 Os 45 falsos-negativos que existiam por `waitForLoadState('networkidle')` (impossível de satisfazer
 com o `EventSource` de `CrmBoard.tsx` aberto) já foram substituídos por `waitForAppReady()` em
 `tests/e2e/helpers.ts`. Não reintroduza `networkidle` em nenhum spec novo — é o padrão errado
 para este app, documentado no próprio comentário do helper.
 
 O que ainda não está fechado e é seu:
+
 - **Baselines visuais Linux ausentes** (`tests/e2e/visual.spec.ts` está em `describe.skip` — só há
   baseline `*-chromium-win32.png`). Gerar exige rodar `--update-snapshots` **dentro do CI**
   (`ubuntu-latest`), nunca localmente — commitar baseline gerada fora do CI cria falsos positivos/negativos
@@ -115,13 +126,16 @@ fechar verde (2 retries cobrindo flake ocasional é aceitável; suíte que só f
 consumidos em toda execução não é estável, é sorte).
 
 ### 6. Documentar o caminho, para não depender de você
+
 Escreva em `tests/AGENTS.md` (que você possui) o procedimento reproduzível: o que subir, em que
 ordem, com quais variáveis, e como derrubar. Alguém que clone o repositório amanhã precisa
 conseguir rodar o gate inteiro seguindo esse texto.
 
 ### 7. Se o ambiente realmente não sustentar
+
 Se, depois de tudo acima, alguma etapa comprovadamente não puder rodar neste ambiente (ex.: `dockerd`
 não sobe por falta de permissão), então:
+
 - registre a evidência exata;
 - entregue o caminho que **funciona em CI**, via handoff para o 08, com os serviços necessários declarados;
 - **abra handoff `Prioridade: bloqueador`** para o Agente 00 registrando que o gate segue não
@@ -131,6 +145,7 @@ O que você **não pode** fazer: relatar a onda como concluída com o gate marca
 Onda 6 falha nesse caso — e falhar honestamente é o resultado correto.
 
 ## Mentira mais provável do seu domínio
+
 **Gate marcado como "não aplicável por limitação de ambiente" e a onda seguindo em frente.** Foi
 exatamente isso que manteve o ENV-001 "vivo" por várias rodadas, quando a causa real era ninguém ter
 tentado subir o `dockerd` e mostrado o erro. Também vale para: teste que passa porque
@@ -141,6 +156,7 @@ que ele mesmo pede para rodar. Sempre confira a **contagem** de testes executado
 de saída, e nunca feche um handoff de teste sem colar a saída real do comando.
 
 ## LGPD e tenancy no seu domínio
+
 - fixtures e seeds de teste **nunca** carregam dado pessoal real — nem telefone, nem e-mail, nem
   nome de contato de cliente. Este repositório já teve telefone pessoal real versionado em 7
   scripts (P0 da Onda Zero); não reintroduza a classe;
@@ -150,13 +166,16 @@ de saída, e nunca feche um handoff de teste sem colar a saída real do comando.
   não os enfraqueça para fazê-los passar.
 
 ## Coordenação
+
 - CI, Docker, deploy → **08** (`.agents/handoffs/onda-6/14-para-08-<slug>.md`);
 - schema, migration, RLS → **01/01A** (`14-para-01-<slug>.md`);
 - `package.json` e lockfile → **00** (`14-para-00-<slug>.md`);
 - infraestrutura/observabilidade → **10**.
 
 ## Testes
+
 Cobrir:
+
 - subida do banco a partir do zero (volume destruído);
 - `migrate deploy` idempotente (duas execuções seguidas);
 - extensão `pgvector` presente e operante;
@@ -166,6 +185,7 @@ Cobrir:
 - contagem de testes executados diferente de zero em cada suíte.
 
 ## Gate
+
 ```bash
 npx tsc --noEmit
 npm run lint
@@ -176,6 +196,7 @@ npm run build
 ```
 
 Específicos do seu domínio:
+
 ```bash
 npm run setup:db:check
 npm run test:containers
@@ -185,7 +206,9 @@ Se algum script não existir em `package.json`, siga `/AGENTS.md` → "Scripts a
 explicitamente, não trate como sucesso silencioso.
 
 ## Entrega
+
 Forneça:
+
 - confirmação (com saída real) de que os números de 2026-08-15 se reproduzem no seu ambiente, ou o
   diagnóstico de regressão se não se reproduzirem;
 - estado das baselines visuais Linux — geradas via CI, ou handoff aberto para 08 com o plano;

@@ -20,7 +20,7 @@ Isso quebra pelo menos dois pontos que assumem `Lead.owner === User.id`:
 
 1. **`src/shared/middlewares/requireLeadOwnership.ts`** — RBAC que restringe um VENDEDOR a só
    editar/excluir/reenriquecer os leads que ele mesmo capturou, comparando `lead.owner ===
-   user.id`. Para um lead importado do Bitrix, `lead.owner` é o NOME do vendedor, não o id — a
+user.id`. Para um lead importado do Bitrix, `lead.owner` é o NOME do vendedor, não o id — a
    comparação falha sempre, e o vendedor legítimo leva 403 tentando editar o próprio lead. Já
    apliquei um fallback defensivo nesse arquivo (compara também contra `User.name` do usuário
    autenticado) para não deixar o bug ativo enquanto isso não é corrigido na origem — mas é
@@ -31,12 +31,15 @@ Isso quebra pelo menos dois pontos que assumem `Lead.owner === User.id`:
    contagem real dela e distorcendo o relatório de performance por vendedor.
 
 ## Arquivo(s) envolvido(s)
+
 - `src/features/integrations/bitrix/service/userMapping.ts` (`resolveAtlasUserNameByEmail`)
 - `src/features/integrations/bitrix/service/leads.ts:258`
 - `src/features/integrations/bitrix/service/deals.ts:349`
 
 ## Alteração necessária
+
 Padronizar `Lead.owner` para sempre gravar `User.id`, também no caminho de import do Bitrix:
+
 - Adicionar `resolveAtlasUserIdByEmail` (ou alterar a função existente para devolver `id` em vez
   de `name`, ajustando os dois call sites) em `userMapping.ts`, mesma regra de "sem correspondência
   devolve `null`, nunca inventa vínculo" já usada hoje.
@@ -46,12 +49,14 @@ Padronizar `Lead.owner` para sempre gravar `User.id`, também no caminho de impo
   cabe eu decidir/rodar sozinho.
 
 ## Teste esperado
+
 - Teste de integração/unitário em `bitrix/service/leads.ts`/`deals.ts` confirmando que o `Lead`
   importado grava `owner` = `User.id` do responsável casado por e-mail (não o nome).
 - Regressão em `requireLeadOwnership` (ou no meu fallback, se ele continuar existindo depois da
   correção): um VENDEDOR consegue editar um lead importado do Bitrix atribuído a ele.
 
 ## Contexto adicional
+
 Achado durante a auditoria de forecast/BI da Onda 7 (mission do Agente 04: "Sem owner fictício" e
 "Métricas comerciais com dono e origem"). Não é owner fictício (nenhum lado inventa um vínculo sem
 correspondência real) — é convenção inconsistente do mesmo campo, o que já é suficiente para

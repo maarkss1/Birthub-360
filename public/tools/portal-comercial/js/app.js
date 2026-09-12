@@ -11,15 +11,16 @@
 // ---------------------------------------------------------------------------
 iniciar(); // seguro em qualquer página: só popula #entidade/#relatorio se ambos existirem (ver js/ui.js)
 iniciarExperienciaV7(); // seguro em qualquer página: cada passo interno já é protegido por checagem de elemento
-if (document.getElementById("central-inteligencia-v10")) iniciarCentralInteligenciaV10();
-if (document.getElementById("ferramentasFlutuantes")) iniciarFerramentasFlutuantes();
+if (document.getElementById('central-inteligencia-v10')) iniciarCentralInteligenciaV10();
+if (document.getElementById('ferramentasFlutuantes')) iniciarFerramentasFlutuantes();
 // cockpit.html tem o painel completo (#cockpit-executivo); index.html só tem o
 // ticker ao vivo (#cockpitTicker) — iniciarCockpitExecutivo() é seguro nos dois
 // casos (cada passo interno já é protegido por checagem de elemento).
-if (document.getElementById("cockpit-executivo") || document.getElementById("cockpitTicker")) iniciarCockpitExecutivo();
+if (document.getElementById('cockpit-executivo') || document.getElementById('cockpitTicker'))
+  iniciarCockpitExecutivo();
 // v25 — Esc fecha o modal de "Abrir modelo visual", em qualquer página que o tenha.
-document.addEventListener("keydown", (ev) => {
-  if (ev.key !== "Escape") return;
-  const modal = document.getElementById("relatorioVisualInlineCard");
-  if (modal && !modal.classList.contains("oculto")) fecharRelatorioVisualInline();
+document.addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Escape') return;
+  const modal = document.getElementById('relatorioVisualInlineCard');
+  if (modal && !modal.classList.contains('oculto')) fecharRelatorioVisualInline();
 });

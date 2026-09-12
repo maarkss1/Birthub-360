@@ -62,32 +62,32 @@ que um usuário percorre, sem atalho de API), sessão ADMIN autêntica.
 navigation, equivalente a deep-link/F5/bookmark) e confirmar que o conteúdo real renderiza — sem
 tela em branco, sem `ErrorBoundary` disparado, com captura de tela de evidência para cada um.
 
-| Módulo | Resultado | Evidência |
-|---|---|---|
-| crm360 (Cockpit CRM) | OK — estados vazios corretos ("O funil começa a aparecer quando os primeiros registros forem criados", "Nenhuma atividade pendente.") | screenshot |
-| mesa-tratamento | OK | screenshot |
-| propostas | **BUG ENCONTRADO E CORRIGIDO** — ver seção 4 | screenshot antes/depois |
-| cadence | OK | screenshot |
-| roleplay | OK | screenshot |
-| qualification_matrix | OK | screenshot |
-| objections_matrix | OK | screenshot |
-| chatbook | OK | screenshot |
-| intelligence | OK | screenshot |
-| market-intelligence | OK | screenshot |
-| topic_training | OK | screenshot |
-| bitrix | OK | screenshot |
-| reports | OK | screenshot |
-| integrations | OK | screenshot |
-| knowledge | OK | screenshot |
-| winloss | OK | screenshot |
-| calendar | OK | screenshot |
-| notifications | OK | screenshot |
-| automations | OK | screenshot |
-| usage | OK | screenshot |
-| editor | OK | screenshot |
-| team | OK — formulário de criar usuário + lista de usuários da org renderizam de verdade | screenshot |
-| prospect | OK | screenshot |
-| dashboard | OK | screenshot |
+| Módulo               | Resultado                                                                                                                             | Evidência               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| crm360 (Cockpit CRM) | OK — estados vazios corretos ("O funil começa a aparecer quando os primeiros registros forem criados", "Nenhuma atividade pendente.") | screenshot              |
+| mesa-tratamento      | OK                                                                                                                                    | screenshot              |
+| propostas            | **BUG ENCONTRADO E CORRIGIDO** — ver seção 4                                                                                          | screenshot antes/depois |
+| cadence              | OK                                                                                                                                    | screenshot              |
+| roleplay             | OK                                                                                                                                    | screenshot              |
+| qualification_matrix | OK                                                                                                                                    | screenshot              |
+| objections_matrix    | OK                                                                                                                                    | screenshot              |
+| chatbook             | OK                                                                                                                                    | screenshot              |
+| intelligence         | OK                                                                                                                                    | screenshot              |
+| market-intelligence  | OK                                                                                                                                    | screenshot              |
+| topic_training       | OK                                                                                                                                    | screenshot              |
+| bitrix               | OK                                                                                                                                    | screenshot              |
+| reports              | OK                                                                                                                                    | screenshot              |
+| integrations         | OK                                                                                                                                    | screenshot              |
+| knowledge            | OK                                                                                                                                    | screenshot              |
+| winloss              | OK                                                                                                                                    | screenshot              |
+| calendar             | OK                                                                                                                                    | screenshot              |
+| notifications        | OK                                                                                                                                    | screenshot              |
+| automations          | OK                                                                                                                                    | screenshot              |
+| usage                | OK                                                                                                                                    | screenshot              |
+| editor               | OK                                                                                                                                    | screenshot              |
+| team                 | OK — formulário de criar usuário + lista de usuários da org renderizam de verdade                                                     | screenshot              |
+| prospect             | OK                                                                                                                                    | screenshot              |
+| dashboard            | OK                                                                                                                                    | screenshot              |
 
 **23/24 OK na primeira passagem, 1/24 com defeito real encontrado, corrigido e revalidado.**
 

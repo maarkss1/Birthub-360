@@ -23,7 +23,11 @@ import {
 
 const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
 
-const ENV_KEYS = ['RESET_PASSWORD_VALUE', 'RESET_PASSWORDS_ACTOR', 'RESET_PASSWORDS_ALLOW_ALL'] as const;
+const ENV_KEYS = [
+  'RESET_PASSWORD_VALUE',
+  'RESET_PASSWORDS_ACTOR',
+  'RESET_PASSWORDS_ALLOW_ALL',
+] as const;
 const originalEnv: Record<string, string | undefined> = {};
 
 beforeEach(() => {
@@ -131,9 +135,9 @@ describe('resetPasswords', () => {
     });
 
     it('recusa --all com a flag mas sem a variável de ambiente de confirmação', async () => {
-      await expect(
-        resetPasswords(['--all', ALL_CONFIRMATION_FLAG]),
-      ).rejects.toBeInstanceOf(ResetPasswordsUsageError);
+      await expect(resetPasswords(['--all', ALL_CONFIRMATION_FLAG])).rejects.toBeInstanceOf(
+        ResetPasswordsUsageError,
+      );
       expect(prismaMock.user.findMany).not.toHaveBeenCalled();
     });
 

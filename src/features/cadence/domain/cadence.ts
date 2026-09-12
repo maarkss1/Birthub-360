@@ -53,11 +53,7 @@ export interface CadenceSequenceDefinition {
  */
 export type CadenceRunStatus = 'active' | 'paused' | 'stopped' | 'completed' | 'failed';
 export type CadenceStopReason =
-  | 'opt-out'
-  | 'lead-reply'
-  | 'completed'
-  | 'manual-stop'
-  | 'policy-guardrail';
+  'opt-out' | 'lead-reply' | 'completed' | 'manual-stop' | 'policy-guardrail';
 export type CadenceTouchResult = 'sent' | 'failed' | 'skipped';
 /**
  * `contact-rate-limit`/`domain-rate-limit` (auditoria transversal, Agente 17): o mesmo contato (ou
@@ -66,11 +62,7 @@ export type CadenceTouchResult = 'sent' | 'failed' | 'skipped';
  * `application/rateLimitService.ts` para a contagem real (I/O).
  */
 export type CadenceSkipReason =
-  | 'outside-business-window'
-  | 'opt-out'
-  | 'lead-replied'
-  | 'paused'
-  | RateLimitBlockReason;
+  'outside-business-window' | 'opt-out' | 'lead-replied' | 'paused' | RateLimitBlockReason;
 
 export interface CadenceTouchAttempt {
   touchOrder: number;

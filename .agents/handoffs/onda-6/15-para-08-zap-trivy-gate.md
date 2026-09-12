@@ -5,6 +5,7 @@
 - Prioridade: normal
 
 ## Problema
+
 `npm run security:zap` e `npm run security:trivy` existem em `package.json` (apontando para
 `docker compose -f docker-compose.yml -f docker-compose.opensource.yml --profile tools run --rm
 <zap|trivy>`), mas não constam de nenhum gate — nem CI, nem gate de onda. Executei os dois neste
@@ -13,10 +14,10 @@ motivos diferentes e ambos externos ao código da aplicação:
 
 - **`security:trivy`**: falha ao baixar o banco de vulnerabilidades
   (`mirror.gcr.io/aquasec/trivy-db:2`) — `tls: failed to verify certificate: x509: certificate
-  signed by unknown authority`. É o proxy TLS deste ambiente de execução (ver
+signed by unknown authority`. É o proxy TLS deste ambiente de execução (ver
   `/root/.ccr/README.md` citado no ambiente), não um problema do compose/imagem.
 - **`security:zap`**: o scan de OpenAPI (`zap-api-scan.py -t
-  http://host.docker.internal:3000/api-docs/openapi.yaml`) falhou porque não havia nenhuma
+http://host.docker.internal:3000/api-docs/openapi.yaml`) falhou porque não havia nenhuma
   instância da aplicação rodando em `:3000` neste worktree no momento do teste — `zap` precisa de
   um alvo vivo, não roda contra código estático.
 
@@ -27,11 +28,13 @@ já no ar para o ZAP escanear. Isso aponta para onde eles devem entrar no proces
 quebrados".
 
 ## Arquivo(s) envolvido(s)
+
 - `package.json` (scripts `security:zap`, `security:trivy`) — fora do meu escopo, só leitura.
 - `docker-compose.opensource.yml` (serviços `zap`, `trivy`, perfil `tools`) — fora do meu escopo.
 - `.github/workflows/ci.yml` — fora do meu escopo, dono é 08.
 
 ## Alteração necessária (proposta, não uma exigência de forma específica)
+
 1. **`security:trivy`** (scan de filesystem/dependências, não precisa de app rodando): melhor
    encaixe é um **job agendado de CI** (ex.: diário/semanal, não em todo PR — baixar o DB do Trivy
    em toda execução de PR é caro) rodando num runner com rede irrestrita (o GitHub Actions hosted
@@ -46,12 +49,14 @@ quebrados".
    manualmente antes de um release, e o 08 decide se automatiza como job agendado/pré-release.
 
 ## Teste esperado
+
 - `security:trivy` rodando num runner de CI com rede normal deve baixar o DB e completar (sucesso
   ou lista de CVEs HIGH/CRITICAL, ver `--exit-code 1 --severity HIGH,CRITICAL` no compose).
 - `security:zap` rodando contra uma instância real (staging ou stack local subida antes do scan)
   deve gerar `reports/zap-report.html` sem erro de conexão.
 
 ## Contexto adicional
+
 Evidência bruta da tentativa (sem segredo, saída pública das ferramentas) disponível no log desta
 sessão; não anexei os logs completos aqui para não poluir o handoff — reproduzível com os dois
 comandos `npm run security:trivy` / `npm run security:zap` neste worktree.

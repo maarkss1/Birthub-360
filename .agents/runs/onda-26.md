@@ -1,6 +1,7 @@
 # Onda 26 — Item 5/15: CYC-003, reply tracking de e-mail (stub de transporte)
 
 ## Identificação
+
 - Origem: `docs/CADENCE-CYCLE-AUDIT.md`, seção CYC-003 — só a "porta" de domínio
   (`replyTracking.ts`) e o schema (`EmailMessage`) existiam, ambos órfãos: sem IMAP/webhook de
   entrada, sem persistência, sem `ConversationSignal` de canal `email` gravado.
@@ -16,6 +17,7 @@
 ## O que foi construído
 
 ### Gap adicional encontrado além do que o audit descrevia
+
 Além de "sem transporte de entrada", a investigação encontrou que mesmo persistir `EmailMessage`
 não teria efeito nenhum na cadência: `hasLeadReplied.ts` (o sinal real que `advanceCadenceRun`
 usa para decidir `{ type: 'stop', reason: 'lead-reply' }`) só consultava `WhatsAppMessage`. Sem
@@ -23,6 +25,7 @@ estender essa checagem, uma cadência com toques de e-mail continuaria nunca par
 uma resposta que só chegasse por e-mail — corrigido no mesmo PR (ver abaixo).
 
 ### Transporte de entrada (stub) — `POST /api/webhooks/email/webhook`
+
 - `src/features/integrations/email/emailReply.webhook.ts` (novo) — mesmo esquema de
   `birthVoice.webhook.ts`: fail-closed (503 sem `EMAIL_INBOUND_WEBHOOK_SECRET`), assinatura HMAC
   sobre o corpo cru (`express.raw`, montada antes do `express.json()` global), idempotente por
@@ -44,9 +47,10 @@ uma resposta que só chegasse por e-mail — corrigido no mesmo PR (ver abaixo).
   ainda é persistida (auditoria, `leadId` nulo) mas não classifica nem grava sinal/timeline.
 - Réplica genuína com lead resolvido: chama `handleEmailReply` (domínio já existente, sem
   alterações) com o classificador e o port novos abaixo, grava `EmailMessage` (`direction:
-  'inbound'`) e um evento de timeline (`type: 'email'`).
+'inbound'`) e um evento de timeline (`type: 'email'`).
 
 ### Classificador de intenção — `emailIntentClassifier.ts`
+
 - `src/features/cadence/infra/emailIntentClassifier.ts` (novo) — implementação real de
   `IntentClassifierPort` (porta já definida em `replyTracking.ts`), mesmo padrão de extração
   (prompt/parse/vocabulário permitido) já usado para WhatsApp em
@@ -54,23 +58,27 @@ uma resposta que só chegasse por e-mail — corrigido no mesmo PR (ver abaixo).
   `handleEmailReply` monta.
 
 ### Persistência do sinal — `PrismaConversationSignalPort.ts`
+
 - `src/features/cadence/infra/PrismaConversationSignalPort.ts` (novo) — implementação real de
   `ConversationSignalPort`, grava `ConversationSignal` com `channel: 'email'` (coluna já existia,
   adicionada em antecipação a este item) e um evento de timeline com o resumo extraído.
 
 ### `hasLeadReplied` cobre e-mail
+
 - `src/features/cadence/infra/hasLeadReplied.ts` — passou a checar `EmailMessage.direction ===
-  'inbound'` além de `WhatsAppMessage`, em paralelo. Como só réplicas genuínas chegam a virar linha
+'inbound'` além de `WhatsAppMessage`, em paralelo. Como só réplicas genuínas chegam a virar linha
   em `EmailMessage` (filtro aplicado no webhook, antes da escrita), nenhuma checagem extra de
   genuinidade é necessária aqui.
 
 ### Documentação
+
 - `docs/openapi.yaml` — nova entrada `POST /webhooks/email/webhook` (tag Webhooks), mesmo nível de
   detalhe da entrada de `voice-result`.
 - `src/config/env.ts` / `.env.example` — `EMAIL_INBOUND_WEBHOOK_SECRET` (opcional, fail-closed sem
   ela).
 
 ## Correções durante a implementação
+
 - Nenhum bug pré-existente novo descoberto nesta rodada (diferente das ondas 24/25). O bug de
   soft-delete com `select` estreito (`src/lib/prisma.ts`, documentado na onda-25) não foi
   reencontrado porque nenhuma query desta rodada usa `select` estreito em `findUnique(OrThrow)` de
@@ -83,6 +91,7 @@ uma resposta que só chegasse por e-mail — corrigido no mesmo PR (ver abaixo).
   da dica.
 
 ## Fora de escopo desta rodada (documentado, não corrigido)
+
 - **Provedor real de inbound-parse de e-mail**: nenhum IMAP/webhook de SendGrid/Postmark/Mailgun
   real está plugado — decisão explícita do usuário (stub primeiro).
 - **Resolução de `organizationId` a partir de uma caixa de e-mail real**: como uma organização vai
@@ -93,6 +102,7 @@ uma resposta que só chegasse por e-mail — corrigido no mesmo PR (ver abaixo).
   WhatsApp que motivou o debounce lá; se isso mudar com um provedor real de alto volume, revisar.
 
 ## Gate final
+
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 80 warnings (mesmo nível pré-existente do branch base)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **175/175 arquivos, 1352/1352 testes**,
@@ -113,6 +123,7 @@ uma resposta que só chegasse por e-mail — corrigido no mesmo PR (ver abaixo).
 - e2e: não executado (sem UI nova — item é backend/webhook)
 
 ## Skips e flakes
+
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Decisão

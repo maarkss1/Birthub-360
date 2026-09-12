@@ -29,14 +29,14 @@ import express from 'express';
 const listPendingActionsMock = vi.fn();
 
 vi.mock('@/features/intelligence/services/pending-actions.service', () => ({
-    listPendingActions: (...args: unknown[]) => listPendingActionsMock(...args),
-    approvePendingAction: vi.fn(),
-    discardPendingAction: vi.fn(),
+  listPendingActions: (...args: unknown[]) => listPendingActionsMock(...args),
+  approvePendingAction: vi.fn(),
+  discardPendingAction: vi.fn(),
 }));
 
 vi.mock('@/features/intelligence/services/ai-settings.service', () => ({
-    listAiSettings: vi.fn(),
-    saveAiSettings: vi.fn(),
+  listAiSettings: vi.fn(),
+  saveAiSettings: vi.fn(),
 }));
 
 import { intelligenceRoutes } from '@/features/intelligence/routes/intelligence.routes';
@@ -51,73 +51,73 @@ const FORGED_ORG = 'org-outra-tentativa-maliciosa';
  * depender de auth/DB reais. A app monta a rota de verdade (intelligenceRoutes), não um double.
  */
 function buildApp(organizationId: string) {
-    const app = express();
-    app.use(express.json());
-    app.use((req, _res, next) => {
-        (req as unknown as { user: { id: string; organizationId: string; role: string } }).user = {
-            id: 'test-user',
-            organizationId,
-            role: 'ADMIN',
-        };
-        next();
-    });
-    app.use('/api/intelligence', intelligenceRoutes);
-    app.use(errorHandler);
-    return app;
+  const app = express();
+  app.use(express.json());
+  app.use((req, _res, next) => {
+    (req as unknown as { user: { id: string; organizationId: string; role: string } }).user = {
+      id: 'test-user',
+      organizationId,
+      role: 'ADMIN',
+    };
+    next();
+  });
+  app.use('/api/intelligence', intelligenceRoutes);
+  app.use(errorHandler);
+  return app;
 }
 
 beforeEach(() => {
-    vi.clearAllMocks();
-    listPendingActionsMock.mockResolvedValue([]);
+  vi.clearAllMocks();
+  listPendingActionsMock.mockResolvedValue([]);
 });
 
 describe('GET /api/intelligence/pending — organizationId nunca vem do cliente (onda-40)', () => {
-    it('usa o organizationId de req.user quando nenhuma forja é tentada', async () => {
-        const res = await request(buildApp(REAL_ORG)).get('/api/intelligence/pending');
+  it('usa o organizationId de req.user quando nenhuma forja é tentada', async () => {
+    const res = await request(buildApp(REAL_ORG)).get('/api/intelligence/pending');
 
-        expect(res.status).toBe(200);
-        expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
-    });
+    expect(res.status).toBe(200);
+    expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
+  });
 
-    it('ignora organizationId forjado via header X-Organization-Id', async () => {
-        const res = await request(buildApp(REAL_ORG))
-            .get('/api/intelligence/pending')
-            .set('X-Organization-Id', FORGED_ORG);
+  it('ignora organizationId forjado via header X-Organization-Id', async () => {
+    const res = await request(buildApp(REAL_ORG))
+      .get('/api/intelligence/pending')
+      .set('X-Organization-Id', FORGED_ORG);
 
-        expect(res.status).toBe(200);
-        expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
-        expect(listPendingActionsMock).not.toHaveBeenCalledWith(expect.anything(), FORGED_ORG);
-    });
+    expect(res.status).toBe(200);
+    expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
+    expect(listPendingActionsMock).not.toHaveBeenCalledWith(expect.anything(), FORGED_ORG);
+  });
 
-    it('ignora organizationId forjado via querystring', async () => {
-        const res = await request(buildApp(REAL_ORG)).get(
-            `/api/intelligence/pending?organizationId=${FORGED_ORG}`,
-        );
+  it('ignora organizationId forjado via querystring', async () => {
+    const res = await request(buildApp(REAL_ORG)).get(
+      `/api/intelligence/pending?organizationId=${FORGED_ORG}`,
+    );
 
-        expect(res.status).toBe(200);
-        expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
-        expect(listPendingActionsMock).not.toHaveBeenCalledWith(expect.anything(), FORGED_ORG);
-    });
+    expect(res.status).toBe(200);
+    expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
+    expect(listPendingActionsMock).not.toHaveBeenCalledWith(expect.anything(), FORGED_ORG);
+  });
 
-    it('ignora organizationId forjado no body, header e querystring simultaneamente', async () => {
-        const res = await request(buildApp(REAL_ORG))
-            .get(`/api/intelligence/pending?organizationId=${FORGED_ORG}`)
-            .set('X-Organization-Id', FORGED_ORG)
-            .set('X-Tenant-Id', FORGED_ORG)
-            .send({ organizationId: FORGED_ORG });
+  it('ignora organizationId forjado no body, header e querystring simultaneamente', async () => {
+    const res = await request(buildApp(REAL_ORG))
+      .get(`/api/intelligence/pending?organizationId=${FORGED_ORG}`)
+      .set('X-Organization-Id', FORGED_ORG)
+      .set('X-Tenant-Id', FORGED_ORG)
+      .send({ organizationId: FORGED_ORG });
 
-        expect(res.status).toBe(200);
-        expect(listPendingActionsMock).toHaveBeenCalledTimes(1);
-        expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
-    });
+    expect(res.status).toBe(200);
+    expect(listPendingActionsMock).toHaveBeenCalledTimes(1);
+    expect(listPendingActionsMock).toHaveBeenCalledWith(expect.anything(), REAL_ORG);
+  });
 
-    it('duas organizações distintas continuam isoladas uma da outra (nenhum vazamento cruzado)', async () => {
-        const resA = await request(buildApp('org-a')).get('/api/intelligence/pending');
-        const resB = await request(buildApp('org-b')).get('/api/intelligence/pending');
+  it('duas organizações distintas continuam isoladas uma da outra (nenhum vazamento cruzado)', async () => {
+    const resA = await request(buildApp('org-a')).get('/api/intelligence/pending');
+    const resB = await request(buildApp('org-b')).get('/api/intelligence/pending');
 
-        expect(resA.status).toBe(200);
-        expect(resB.status).toBe(200);
-        expect(listPendingActionsMock).toHaveBeenNthCalledWith(1, expect.anything(), 'org-a');
-        expect(listPendingActionsMock).toHaveBeenNthCalledWith(2, expect.anything(), 'org-b');
-    });
+    expect(resA.status).toBe(200);
+    expect(resB.status).toBe(200);
+    expect(listPendingActionsMock).toHaveBeenNthCalledWith(1, expect.anything(), 'org-a');
+    expect(listPendingActionsMock).toHaveBeenNthCalledWith(2, expect.anything(), 'org-b');
+  });
 });

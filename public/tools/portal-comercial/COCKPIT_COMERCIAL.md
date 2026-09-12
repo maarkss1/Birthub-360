@@ -6,6 +6,7 @@ nova visão dentro da mesma ferramenta client-side (`Relatorios AtlasGR.html`),
 não um projeto novo, e não removeu nenhuma funcionalidade existente.
 
 Arquivos alterados/criados:
+
 - `js/cockpit.js` (novo) — toda a lógica do Cockpit.
 - `Relatorios AtlasGR.html` — nova seção `#cockpit-executivo` (landing), nav
   reorganizada em 4 áreas, modal de drill-down, `<script src="js/cockpit.js">`.
@@ -33,6 +34,7 @@ por `enriquecerDealCatalogo` (`js/catalogo-relatorios.js:22`), que já calcula
 e `_CICLO` — o Cockpit não recalcula essas fórmulas, só as consome.
 
 ### 1. Resultado do Mês (`cockpitCalcular`, `js/cockpit.js:257`, bloco A)
+
 - **Fonte**: negócios com `_SEMANTICA==="success"` e `_FECHAMENTO` dentro do
   **mês-calendário atual** (`cockpitMesAtual`, `js/cockpit.js:238` — mesma
   convenção do Forecast semanal, que também sempre olha o mês atual
@@ -47,6 +49,7 @@ e `_CICLO` — o Cockpit não recalcula essas fórmulas, só as consome.
 - **Ticket médio** = `Fechado / Negócios ganhos`.
 
 ### 2. Forecast (`js/cockpit.js`, bloco B)
+
 - **Fonte**: negócios abertos (`_SEMANTICA==="process"`), **excluindo
   estágios "Piloto"** (`ehEstagioPiloto`, `js/jornada.js:421`), com
   `CLOSEDATE` dentro do mês atual.
@@ -62,7 +65,7 @@ e `_CICLO` — o Cockpit não recalcula essas fórmulas, só as consome.
   Inteligência Comercial" abaixo para o motivo.
 - **Commit / Best Case** = soma de `_VALOR` **em valor cheio** (não ponderado).
 - **Pipeline** = soma de `_VALOR` (bruto) **e** soma de `_VALOR × probabilidade
-  / 100` (ponderado) — só o ponderado entra no Forecast total.
+/ 100` (ponderado) — só o ponderado entra no Forecast total.
 - **Upside** = soma de `_VALOR` (probabilidade <10%) — mostrado só como
   referência, **não entra no Forecast total** (nem cheio, nem ponderado).
 - **Forecast total do mês** = Fechado do mês + Commit (cheio) + Best Case
@@ -73,6 +76,7 @@ e `_CICLO` — o Cockpit não recalcula essas fórmulas, só as consome.
   aqui como previsão** — requisito P0 do escopo.
 
 ### 3. Saúde do Pipeline (bloco C)
+
 - **Pipeline Total** = soma de `_VALOR` de todos os negócios abertos do
   Comercial (inclui estágios "Piloto" — é o valor bruto do funil, não uma
   previsão).
@@ -93,13 +97,14 @@ e `_CICLO` — o Cockpit não recalcula essas fórmulas, só as consome.
   Se o Gap for zero, mostra "meta batida"; se a meta não foi informada,
   mostra "não disponível".
 - **Coverage recomendado** (novo) = `1 ÷ (Win Rate histórico do período
-  filtrado / 100)` — ver "Convergência com a Central" abaixo. Mostrado ao
+filtrado / 100)` — ver "Convergência com a Central" abaixo. Mostrado ao
   lado do Coverage atual, "não disponível" se o Win Rate não for calculável.
 - **Pipeline criado no período** = soma de `_VALOR` dos negócios cujo
   `DATE_CREATE` cai no período filtrado.
 - **Ticket médio do pipeline** = `Pipeline Total ÷ quantidade de negócios abertos`.
 
 ### 4. Proteção de Receita M / M+1 / M+2 / M+3 (bloco D)
+
 - Para cada um dos 4 meses (atual + 3 seguintes): Meta (campo editável,
   pré-preenchida por `metaMensalPadrao` do mês correspondente), Pipeline
   Elegível daquele mês (mesma regra de "aberto + não-Piloto + `CLOSEDATE` no
@@ -128,6 +133,7 @@ JavaScript vanilla** (sem import/export, no padrão já existente deste
 arquivo) — nenhum código React foi copiado.
 
 ### Divergência 1 — Forecast total
+
 - **Fonte de verdade**: `forecastEngine.ts` (`FORECAST_RULES`) e
   `CommercialIntelligenceUseCases.executiveOverview` da Central.
 - **Fórmula antiga (`js/cockpit.js`, bloco B)**: todo o pipeline aberto do
@@ -138,7 +144,7 @@ arquivo) — nenhum código React foi copiado.
   "Pipeline" entra ponderado; o novo tier "Upside" (probabilidade <10%,
   antes misturado dentro de "Pipeline") **não entra** no forecast total.
   `ForecastTotal = Fechado + Commit(bruto) + BestCase(bruto) +
-  Pipeline(ponderado)`. Thresholds de bucket: Commit ≥70%, Best Case ≥40%,
+Pipeline(ponderado)`. Thresholds de bucket: Commit ≥70%, Best Case ≥40%,
   Pipeline ≥10%, Upside <10%.
 - **Implementação**: nova função `cockpitClassificarBucketForecast`
   (`js/cockpit.js`), **isolada** da `classificarBucketForecast` compartilhada
@@ -151,6 +157,7 @@ arquivo) — nenhum código React foi copiado.
   auditoria de comparação).
 
 ### Divergência 2 — Pipeline Elegível
+
 - **Fonte de verdade**: `pipelineEligibility.ts` (`checkEligibility`) da
   Central, validado por `pipelineEligibility.unit.test.ts`.
 - **Fórmula antiga (`js/cockpit.js`, bloco C)**: um negócio era "elegível" se
@@ -177,13 +184,14 @@ arquivo) — nenhum código React foi copiado.
   auditoria de comparação).
 
 ### Divergência 3 — Coverage recomendado
+
 - **Fonte de verdade**: `CommercialIntelligenceUseCases.ts`
   (`coverageRecommended = 1 / (winRate/100)`) da Central.
 - **Fórmula antiga (`js/cockpit.js`, `cockpitStatusProtecao`)**: threshold
   fixo hardcoded — `<2x` crítico, `2x–3x` atenção, `≥3x` saudável —
   documentado como "não validado com a diretoria".
 - **Fórmula nova**: adicionado `coverageRecomendado = 1 ÷ (Win Rate
-  histórico do período filtrado / 100)`, calculado a partir do Win Rate já
+histórico do período filtrado / 100)`, calculado a partir do Win Rate já
   calculado no bloco Eficiência da Máquina. Exibido **ao lado** do threshold
   fixo (ex.: "Coverage atual: 2,10x · recomendado (Win Rate histórico):
   2,80x"), sem remover o semáforo fixo existente — ele continua útil como um
@@ -193,6 +201,7 @@ arquivo) — nenhum código React foi copiado.
   auditoria de comparação).
 
 ### 5. Pipeline por Estágio (bloco G, `js/cockpit.js:339-354`)
+
 - Agrupa **todos** os negócios abertos do Comercial (inclui "Piloto", para
   mostrar o funil completo) por `_ESTAGIO`.
 - Por estágio: quantidade, soma de valor, % do total, e **aging médio** —
@@ -203,6 +212,7 @@ arquivo) — nenhum código React foi copiado.
 - Clique no estágio abre o drill-down com os negócios daquele estágio.
 
 ### 6. Eficiência da Máquina (bloco F, `js/cockpit.js:325-336`)
+
 - **Fonte**: negócios fechados (`_SEMANTICA!=="process"`) com `_FECHAMENTO`
   dentro do período filtrado — mesmo recorte do relatório
   `ganhos_perdas_ciclo` (`js/catalogo-relatorios.js:190-196`).
@@ -215,6 +225,7 @@ arquivo) — nenhum código React foi copiado.
   explicitamente na nota abaixo do bloco.
 
 ### 7. Geração de Pipeline (bloco H, `cockpitCalcularGeracaoPipeline`, `js/cockpit.js`)
+
 - **Pipeline criado no período** = soma de `_VALOR` dos negócios (do funil Comercial,
   filtrados por vendedor/origem) cujo `DATE_CREATE` cai no período selecionado
   (mesmo período usado em "Pipeline criado no período" da Saúde do Pipeline).
@@ -232,9 +243,10 @@ arquivo) — nenhum código React foi copiado.
   `js/sdr.js`) para calcular quanto de pipeline necessário já deveria ter
   sido criado até hoje (`esperado até hoje = necessário × decorridos/total`),
   o gap contra o que foi realmente criado, e o ritmo em % (`criado ÷
-  esperado × 100`).
+esperado × 100`).
 
 ### 8. SDR — resumo executivo (bloco I, `cockpitCalcularResumoSdr`, `js/cockpit.js`)
+
 - Bloco compacto, **não substitui** os relatórios completos de SDR
   (`js/sdr.js`: Diário SDR e Análise SDR), que continuam acessíveis por
   links diretos no próprio bloco do Cockpit.
@@ -253,6 +265,7 @@ arquivo) — nenhum código React foi copiado.
   `crm.lead.list` e `crm.activity.list` por usuário SDR configurado.
 
 ### 9. Qualidade dos Dados (CRM) — Data Quality Score (bloco J, `cockpitCalcularQualidadeDados`, `js/cockpit.js`)
+
 - **Nunca chamar de "Forecast Confidence" ou similar** — é só completude de
   cadastro no CRM, sem nenhuma relação com `PROBABILITY`/bucket de forecast.
   Documentado em comentário no código, acima da função.
@@ -272,6 +285,7 @@ arquivo) — nenhum código React foi copiado.
   disponível para calcular — entraria só se um campo real existisse).
 
 ### 10. Alertas Gerenciais (seção 28, `cockpitCalcularAlertas`, `js/cockpit.js`)
+
 - Renderizado no topo do Cockpit, logo abaixo do cabeçalho/filtros, em
   `#cockpitAlertas` (`cockpitRenderAlertas`). Cada alerta tem nível (🔴
   crítico / 🟡 atenção / 🟢 positivo), motivo, valor/quantidade e uma ação
@@ -307,6 +321,7 @@ arquivo) — nenhum código React foi copiado.
   isso esse alerta não foi implementado.
 
 ### 11. "⚡ Situação Comercial Agora" (`cockpitGerarSituacaoAgora`, `js/cockpit.js`)
+
 - Botão no cabeçalho do Cockpit ("⚡ Gerar Situação Agora"), ao lado de
   "↻ Atualizar agora". Abre um modal compacto (reaproveita a mesma estrutura
   visual `.help-modal`/`.help-dialog` do modal de ajuda e do drill-down) com

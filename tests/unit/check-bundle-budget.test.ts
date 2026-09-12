@@ -26,7 +26,10 @@ describe('bundle budget gate (ITEM-15)', () => {
       { name: 'b.js', rawBytes: 100, gzipBytes: 600_000 },
     ];
 
-    const result = evaluateBudget(assets, { maxTotalGzipBytes: 1_000_000, maxFileGzipBytes: 700_000 });
+    const result = evaluateBudget(assets, {
+      maxTotalGzipBytes: 1_000_000,
+      maxFileGzipBytes: 700_000,
+    });
 
     expect(result.status).toBe('fail');
     expect(result.violations).toHaveLength(1);
@@ -34,9 +37,14 @@ describe('bundle budget gate (ITEM-15)', () => {
   });
 
   it('fails when an undocumented chunk exceeds the generic per-file budget', () => {
-    const assets = [{ name: 'some-new-heavy-feature-xyz.js', rawBytes: 900_000, gzipBytes: 300_000 }];
+    const assets = [
+      { name: 'some-new-heavy-feature-xyz.js', rawBytes: 900_000, gzipBytes: 300_000 },
+    ];
 
-    const result = evaluateBudget(assets, { maxTotalGzipBytes: 10_000_000, maxFileGzipBytes: 160 * 1024 });
+    const result = evaluateBudget(assets, {
+      maxTotalGzipBytes: 10_000_000,
+      maxFileGzipBytes: 160 * 1024,
+    });
 
     expect(result.status).toBe('fail');
     expect(result.violations).toHaveLength(1);
@@ -47,7 +55,10 @@ describe('bundle budget gate (ITEM-15)', () => {
   it('lets a documented large chunk (e.g. exceljs) stay under its own, higher ceiling', () => {
     const assets = [{ name: 'exceljs.min-BPuRbAmC.js', rawBytes: 1_069_254, gzipBytes: 267_932 }];
 
-    const result = evaluateBudget(assets, { maxTotalGzipBytes: 10_000_000, maxFileGzipBytes: 160 * 1024 });
+    const result = evaluateBudget(assets, {
+      maxTotalGzipBytes: 10_000_000,
+      maxFileGzipBytes: 160 * 1024,
+    });
 
     expect(result.status).toBe('ok');
   });
@@ -55,7 +66,10 @@ describe('bundle budget gate (ITEM-15)', () => {
   it('still fails a documented large chunk if it grows past its own ceiling', () => {
     const assets = [{ name: 'exceljs.min-BPuRbAmC.js', rawBytes: 2_000_000, gzipBytes: 400_000 }];
 
-    const result = evaluateBudget(assets, { maxTotalGzipBytes: 10_000_000, maxFileGzipBytes: 160 * 1024 });
+    const result = evaluateBudget(assets, {
+      maxTotalGzipBytes: 10_000_000,
+      maxFileGzipBytes: 160 * 1024,
+    });
 
     expect(result.status).toBe('fail');
     expect(result.violations[0].type).toBe('documented-chunk-budget');

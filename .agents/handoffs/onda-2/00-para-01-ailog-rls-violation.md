@@ -5,6 +5,7 @@
 - Prioridade: alto
 
 ## Problema
+
 Ao rodar o gate `npm run verify:ai` na branch de integração da Onda 2 (com credenciais reais de
 provider funcionando — a geração de conteúdo teve sucesso, `{"kind":"b2b_matrix","ok":true,...}`),
 toda tentativa de persistir o log de uso de IA falhou com:
@@ -21,6 +22,7 @@ automações observáveis", limites de custo/uso por tenant que o Agente 07 apli
 presumindo que o log de uso funciona).
 
 ## Arquivo(s) envolvido(s)
+
 - Policy RLS da tabela `AILog` (migração em `prisma/migrations/`, provável candidata:
   `20260808120000_ai_autonomy_action_lifecycle` ou outra migração que habilitou RLS em lote —
   ver `20260722020322_enable_rls`, `20260722025537_enable_rls_auto`,
@@ -29,6 +31,7 @@ presumindo que o log de uso funciona).
   ilustra o sintoma).
 
 ## Alteração necessária
+
 Investigar por que a policy de RLS de `AILog` rejeita o insert do próprio contexto de execução do
 gateway (provavelmente falta `organizationId`/tenant no contexto de sessão do Postgres no momento
 do insert, ou a policy exige uma claim que o pool de conexão do gateway não está setando — o mesmo
@@ -37,6 +40,7 @@ Não é algo que eu (Coordenador) ou os Agentes 04/05/07 devemos alterar — mex
 propriedade exclusiva do Agente 01.
 
 ## Teste esperado
+
 Reproduzir com `npm run verify:ai` (requer credencial real de um provider configurada em
 `.env`/`.env.test`) e confirmar ausência do erro `new row violates row-level security policy for
 table "AILog"` no output. Idealmente, adicionar teste de integração cobrindo insert real em
@@ -44,6 +48,7 @@ table "AILog"` no output. Idealmente, adicionar teste de integração cobrindo i
 adicionado pelo Agente 07 nesta onda).
 
 ## Contexto adicional
+
 Não é regressão introduzida pela Onda 2 — nenhum dos três especialistas (04, 05, 07) tocou
 `prisma/schema.prisma` ou migrações. É falha pré-existente, só ficou visível agora porque esta foi
 a primeira vez que `verify:ai` rodou com credencial de provider realmente válida (o baseline da
@@ -53,6 +58,7 @@ sucesso — só o log de uso falha silenciosamente, exatamente o tipo de "falha 
 `AGENTS.md` pede para nunca aceitar como sucesso).
 
 ## Reabertura (correção de registro — Onda 5)
+
 Eu (Coordenador) tinha marcado este handoff como "resolvido" na integração da Onda 4 só por
 confirmar que a migration `20260813230000_fix_ailog_rls_unattributed_internal_writes` e o teste
 `tests/integration/ailog-rls.test.ts` EXISTEM no código — sem rodar o teste de fato. Isso foi um
@@ -83,6 +89,7 @@ Prisma (`src/lib/prisma.ts`) como/quando `app.current_tenant_id` é setado por c
 transação, não só reler a migration.
 
 ## Resolução (real, confirmada — reconciliação com origin/main)
+
 A causa raiz não era a policy de RLS, e sim um bug no PRÓPRIO teste: `PrismaPromise` é lazy, então
 `requestContext.run(ctx, () => prisma.model.create(...))` sem `await` **dentro** do callback deixa a
 query realmente executar depois que o `AsyncLocalStorage` já restaurou o contexto externo — a
@@ -97,8 +104,8 @@ pela reabertura anterior, que também foi apressada (dessa vez sem rodar contra 
 Recomendo ao dono humano rodar `npm run test:integration` uma vez com Docker de volta para
 confirmar 5/5 verdes antes de considerar isto definitivamente fechado.
 
-
 ## Confirmação executada (2026-08-15) — fechado
+
 A verificação que a seção anterior pediu ao dono humano ("rodar `npm run test:integration` uma vez
 com Docker de volta para confirmar 5/5 verdes") foi executada:
 

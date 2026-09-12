@@ -57,9 +57,9 @@ const config: CapacitorConfig = {
       launchAutoHide: true,
       // Obsidian: a marca é escura por padrão (identidade-visual/birthhub360). Splash
       // branco criava um flash claro antes do app pintar a própria superfície.
-      backgroundColor: "#0B132B",
-      androidSplashResourceName: "splash",
-      androidScaleType: "CENTER_CROP",
+      backgroundColor: '#0B132B',
+      androidSplashResourceName: 'splash',
+      androidScaleType: 'CENTER_CROP',
       showSpinner: false,
       splashFullScreen: true,
       splashImmersive: true,
@@ -67,9 +67,9 @@ const config: CapacitorConfig = {
     StatusBar: {
       // "LIGHT" = conteúdo claro sobre barra escura (nomenclatura do Capacitor),
       // combinando com o Obsidian do splash e do tema escuro.
-      style: "LIGHT",
+      style: 'LIGHT',
       overlaysWebView: false,
-      backgroundColor: "#0B132B",
+      backgroundColor: '#0B132B',
     },
   },
 };

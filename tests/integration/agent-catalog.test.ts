@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { prisma } from '../../src/lib/prisma';
 import { JOB_ROLE_CATALOG } from '../../src/config/job-role-catalog';
-import { seedCanonicalJobRoles, getJobRoleByCode } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  seedCanonicalJobRoles,
+  getJobRoleByCode,
+} from '../../src/features/job-roles/services/jobRole.service';
 import {
   upsertAgentDefinition,
   upsertAgentVersion,
@@ -41,17 +44,31 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
   });
 
   it('reexecutar o upsert do mesmo `code` não cria uma segunda linha (idempotente)', async () => {
-    await upsertAgentDefinition({ code: 'test-idempotent-agent', name: 'v1', status: 'CATALOG_ONLY' });
-    await upsertAgentDefinition({ code: 'test-idempotent-agent', name: 'v2', status: 'PRODUCTION_READY' });
+    await upsertAgentDefinition({
+      code: 'test-idempotent-agent',
+      name: 'v1',
+      status: 'CATALOG_ONLY',
+    });
+    await upsertAgentDefinition({
+      code: 'test-idempotent-agent',
+      name: 'v2',
+      status: 'PRODUCTION_READY',
+    });
 
-    const rows = await prisma.agentDefinition.findMany({ where: { code: 'test-idempotent-agent' } });
+    const rows = await prisma.agentDefinition.findMany({
+      where: { code: 'test-idempotent-agent' },
+    });
     expect(rows).toHaveLength(1);
     expect(rows[0].name).toBe('v2');
     expect(rows[0].status).toBe('PRODUCTION_READY');
   });
 
   it('agente inativo não aparece na listagem `activeOnly`', async () => {
-    const agent = await upsertAgentDefinition({ code: 'test-inactive-agent', name: 'Inativo', status: 'DEPRECATED' });
+    const agent = await upsertAgentDefinition({
+      code: 'test-inactive-agent',
+      name: 'Inativo',
+      status: 'DEPRECATED',
+    });
     await prisma.agentDefinition.update({ where: { id: agent.id }, data: { isActive: false } });
 
     const activeList = await listAgentDefinitions({ activeOnly: true });
@@ -62,9 +79,23 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
   });
 
   it('versiona um agente sem sobrescrever a versão anterior', async () => {
-    const agent = await upsertAgentDefinition({ code: 'test-versioned-agent', name: 'Versionado', status: 'PROMPT_READY' });
-    await upsertAgentVersion({ agentDefinitionId: agent.id, version: 1, systemPrompt: 'prompt v1', status: 'DEPRECATED' });
-    await upsertAgentVersion({ agentDefinitionId: agent.id, version: 2, systemPrompt: 'prompt v2', status: 'ACTIVE' });
+    const agent = await upsertAgentDefinition({
+      code: 'test-versioned-agent',
+      name: 'Versionado',
+      status: 'PROMPT_READY',
+    });
+    await upsertAgentVersion({
+      agentDefinitionId: agent.id,
+      version: 1,
+      systemPrompt: 'prompt v1',
+      status: 'DEPRECATED',
+    });
+    await upsertAgentVersion({
+      agentDefinitionId: agent.id,
+      version: 2,
+      systemPrompt: 'prompt v2',
+      status: 'ACTIVE',
+    });
 
     const detail = await getAgentDefinitionById(agent.id);
     expect(detail?.versions).toHaveLength(2);
@@ -81,7 +112,11 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
   });
 
   it('rejeita uma segunda versão ACTIVE para o mesmo agente (índice único parcial no banco)', async () => {
-    const agent = await upsertAgentDefinition({ code: 'test-double-active-agent', name: 'Dupla ativa', status: 'PROMPT_READY' });
+    const agent = await upsertAgentDefinition({
+      code: 'test-double-active-agent',
+      name: 'Dupla ativa',
+      status: 'PROMPT_READY',
+    });
     await upsertAgentVersion({ agentDefinitionId: agent.id, version: 1, status: 'ACTIVE' });
 
     await expect(
@@ -105,12 +140,26 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
       status: 'PRODUCTION_READY',
     });
 
-    await grantAgentToRole({ jobRoleId: sdr!.id, agentDefinitionId: agent.id, accessLevel: 'EXECUTE' });
-    await grantAgentToRole({ jobRoleId: bdr!.id, agentDefinitionId: agent.id, accessLevel: 'EXECUTE' });
-    await grantAgentToRole({ jobRoleId: closer!.id, agentDefinitionId: agent.id, accessLevel: 'READ' });
+    await grantAgentToRole({
+      jobRoleId: sdr!.id,
+      agentDefinitionId: agent.id,
+      accessLevel: 'EXECUTE',
+    });
+    await grantAgentToRole({
+      jobRoleId: bdr!.id,
+      agentDefinitionId: agent.id,
+      accessLevel: 'EXECUTE',
+    });
+    await grantAgentToRole({
+      jobRoleId: closer!.id,
+      agentDefinitionId: agent.id,
+      accessLevel: 'READ',
+    });
 
     // Continua existindo uma única linha de AgentDefinition — nunca clonada por cargo.
-    const definitions = await prisma.agentDefinition.findMany({ where: { code: 'company-research' } });
+    const definitions = await prisma.agentDefinition.findMany({
+      where: { code: 'company-research' },
+    });
     expect(definitions).toHaveLength(1);
 
     const sdrAgents = await listAgentsForJobRole(sdr!.id);
@@ -125,12 +174,20 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
   it('nega (revoga) o acesso de um cargo a um agente sem afetar outros cargos', async () => {
     const sdr = await getJobRoleByCode('SDR');
     const bdr = await getJobRoleByCode('BDR');
-    const agent = await upsertAgentDefinition({ code: 'test-revoke-agent', name: 'Revogável', status: 'PRODUCTION_READY' });
+    const agent = await upsertAgentDefinition({
+      code: 'test-revoke-agent',
+      name: 'Revogável',
+      status: 'PRODUCTION_READY',
+    });
 
     await grantAgentToRole({ jobRoleId: sdr!.id, agentDefinitionId: agent.id });
     await grantAgentToRole({ jobRoleId: bdr!.id, agentDefinitionId: agent.id });
 
-    await revokeAgentFromRole({ jobRoleId: sdr!.id, agentDefinitionId: agent.id, actorId: 'admin-1' });
+    await revokeAgentFromRole({
+      jobRoleId: sdr!.id,
+      agentDefinitionId: agent.id,
+      actorId: 'admin-1',
+    });
 
     const sdrAgents = await listAgentsForJobRole(sdr!.id);
     const bdrAgents = await listAgentsForJobRole(bdr!.id);
@@ -140,7 +197,11 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
 
   it('rejeita revogar uma concessão inexistente', async () => {
     const sdr = await getJobRoleByCode('SDR');
-    const agent = await upsertAgentDefinition({ code: 'test-never-granted', name: 'Nunca concedido', status: 'CATALOG_ONLY' });
+    const agent = await upsertAgentDefinition({
+      code: 'test-never-granted',
+      name: 'Nunca concedido',
+      status: 'CATALOG_ONLY',
+    });
 
     await expect(
       revokeAgentFromRole({ jobRoleId: sdr!.id, agentDefinitionId: agent.id, actorId: 'admin-1' }),
