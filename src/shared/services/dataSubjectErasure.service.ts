@@ -18,6 +18,7 @@ export interface ErasureResult {
   whatsAppMessagesMasked: number;
   conversationSignalsRedacted: number;
   timelineEventsRedacted: number;
+  voiceCallLogsRedacted: number;
   alreadyAnonymized: boolean;
 }
 
@@ -40,8 +41,9 @@ export const ANONYMIZED_CONTACT_NAME = '[titular anonimizado — LGPD]';
  * Idempotente: rodar de novo sobre um contato já anonimizado não falha nem duplica efeito.
  *
  * Cobertura de tabelas derivadas (Onda 6, Agente 01A — ver
- * .agents/prompts/01A-dados-rls-retencao.md, item 4):
+ * .agents/prompts/01A-dados-rls-retencao.md, item 4; atualizado ACH-01-02):
  * - `WhatsAppMessage` (já cobria antes desta onda) — `contactId` direto.
+ * - `VoiceCallLog` — alcançado via `Lead.contactId`, redige `transcript`, `summary` e `recordingUrl`.
  * - `ConversationSignal`/`TimelineEvent` — sem `contactId` próprio, alcançados via `Lead.contactId`
  *   (um titular pode ter mais de um Lead ao longo do tempo). Campos de texto livre que podem citar
  *   o titular (`summary`, `nextStep`, `objections`, `rawModelOutput` em ConversationSignal;
@@ -109,6 +111,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
 
       let conversationSignalsRedacted = 0;
       let timelineEventsRedacted = 0;
+      let voiceCallLogsRedacted = 0;
 
       if (leadIds.length > 0) {
         const { count: signalsCount } = await prisma.conversationSignal.updateMany({
@@ -127,6 +130,16 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
           data: { description: '[evento anonimizado — LGPD]' },
         });
         timelineEventsRedacted = timelineCount;
+
+        const { count: voiceLogsCount } = await prisma.voiceCallLog.updateMany({
+          where: { leadId: { in: leadIds }, organizationId: target.organizationId },
+          data: {
+            transcript: null,
+            summary: null,
+            recordingUrl: null,
+          },
+        });
+        voiceCallLogsRedacted = voiceLogsCount;
       }
 
       logger.info(
@@ -136,6 +149,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
           whatsAppMessagesMasked,
           conversationSignalsRedacted,
           timelineEventsRedacted,
+          voiceCallLogsRedacted,
           alreadyAnonymized,
         },
         '[lgpd] Titular anonimizado a pedido de exercício de direito (LGPD art. 18).',
@@ -146,6 +160,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
         whatsAppMessagesMasked,
         conversationSignalsRedacted,
         timelineEventsRedacted,
+        voiceCallLogsRedacted,
         alreadyAnonymized,
       };
     },
