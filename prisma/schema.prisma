@@ -1591,9 +1591,27 @@ model CrmCommercialDocument {
   versions          CrmCommercialDocumentVersion[]
   signatureRequests CrmDocumentSignatureRequest[]
 
+  /// BILLING-003 (onda 5): vínculo com uma cobrança Stripe REAL — antes disto, `Pago` de uma
+  /// Fatura era uma transição manual livre (qualquer ADMIN/GESTOR/CLOSER/SDR podia marcar, sem
+  /// nenhum dado financeiro por trás). Só populado por
+  /// `PrismaCrm360Repository.reconcileFaturaStripePayment`, depois de confirmar AO VIVO contra a
+  /// API do Stripe (`getStripeCharge`) que o PaymentIntent existe, está `succeeded` e bate em
+  /// valor/moeda com este documento — nunca a partir de um valor só informado pelo chamador.
+  /// `onDelete: SetNull` (não Cascade): desconectar a integração Stripe não pode apagar o fato de
+  /// que esta Fatura foi paga, só perder a referência à conexão usada (mesmo raciocínio de
+  /// BitrixSyncLog.connectionId).
+  stripeConnectionId    String?
+  stripeConnection      StripeConnection? @relation(fields: [stripeConnectionId], references: [id], onDelete: SetNull)
+  stripePaymentIntentId String?
+  paymentReconciledAt   DateTime?
+
   @@unique([organizationId, number])
   @@index([organizationId, type, status])
   @@index([leadId])
+  // Impede que a MESMA cobrança Stripe reconcilie duas Faturas diferentes (reuso indevido/erro de
+  // digitação de paymentIntentId) — múltiplos NULLs continuam permitidos (documentos sem
+  // reconciliação nunca colidem entre si), comportamento padrão de unique constraint no Postgres.
+  @@unique([organizationId, stripePaymentIntentId])
 }
 
 model Session {
@@ -2874,6 +2892,10 @@ model StripeConnection {
   /// até a pessoa configurar (BILLING-007): a ausência já é o "webhook não configurado" — sem flag
   /// separado de enabled/disabled.
   webhookSecret String? @db.Text
+
+  /// BILLING-003: Faturas reconciliadas contra uma cobrança real desta conexão — ver
+  /// CrmCommercialDocument.stripeConnectionId.
+  reconciledDocuments CrmCommercialDocument[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
