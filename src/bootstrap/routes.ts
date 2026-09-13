@@ -17,6 +17,7 @@ import { companyRoutes } from '../features/companies/routes/company.routes.js';
 import { contactRoutes } from '../features/contacts/routes/contact.routes.js';
 import { copilotoIaRoutes } from '../features/copiloto-ia/routes/copilotoIa.routes.js';
 import { leadRoutes } from '../features/crm/routes/lead.routes.js';
+import { leadDedupRoutes } from '../features/crm/routes/leadDedup.routes.js';
 import { savedViewRoutes } from '../features/crm/routes/savedView.routes.js';
 import { crm360Routes } from '../features/crm360/routes/crm360.routes.js';
 import { featureFlagsRouter } from '../features/feature-flags/routes/featureFlags.routes.js';
@@ -79,6 +80,9 @@ export function mountFeatureRoutes(app: Express): void {
   );
   app.use('/api/companies', authenticateToken, requireTenant, companyRoutes);
   app.use('/api/contacts', authenticateToken, requireTenant, contactRoutes);
+  // Montado ANTES de /api/leads de propósito: rota mais específica primeiro (mesmo que hoje não
+  // colida com nenhum padrão de lead.routes.ts, evita qualquer ambiguidade futura).
+  app.use('/api/leads/dedup', authenticateToken, requireTenant, leadDedupRoutes);
   app.use('/api/leads', authenticateToken, requireTenant, leadRoutes);
   app.use('/api/crm/saved-views', authenticateToken, requireTenant, savedViewRoutes);
   app.use('/api/crm', authenticateToken, requireTenant, crm360Routes);

@@ -78,6 +78,8 @@ import { ActivityController } from '../../features/activities/presentation/Activ
 import { ContactController } from '../../features/contacts/presentation/ContactController';
 import { CompanyController } from '../../features/companies/presentation/CompanyController';
 import { LeadController } from '../../features/crm/presentation/LeadController';
+import { LeadDedupController } from '../../features/crm/presentation/LeadDedupController';
+import { LeadDeduplicationService } from '../../features/crm/application/LeadDeduplicationService';
 import { AutomationController } from '../../features/automations/presentation/AutomationController';
 import { AnalyticsController } from '../../features/analytics/presentation/AnalyticsController';
 import { CommercialIntelligenceController } from '../../features/commercial-intelligence/presentation/CommercialIntelligenceController';
@@ -219,6 +221,10 @@ export function setupDI() {
   container.register('ContactController', new ContactController(contactUseCases));
   container.register('CompanyController', new CompanyController(companyUseCases));
   container.register('LeadController', new LeadController(leadUseCases));
+  container.register(
+    'LeadDedupController',
+    new LeadDedupController(new LeadDeduplicationService()),
+  );
   container.register('AutomationController', new AutomationController(automationUseCases));
   container.register('AnalyticsController', new AnalyticsController(analyticsUseCases));
   container.register(
