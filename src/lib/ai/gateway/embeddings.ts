@@ -6,6 +6,7 @@
 import { callProvider } from './circuit-breaker.js';
 import { readProviderError } from './redaction.js';
 import { normalizeApiBaseUrl, resolveEmbeddingTimeoutMs } from './http-client.js';
+import { EMBEDDING_DIMENSIONS } from '../local-embeddings.js';
 
 const MAX_EMBEDDING_INPUT_CHARS = 100_000;
 
@@ -54,6 +55,14 @@ export const generateEmbedding = async (
     const embedding = data.data?.[0]?.embedding;
     if (!Array.isArray(embedding) || embedding.length === 0 || !embedding.every(Number.isFinite)) {
       throw new Error('O provedor retornou um embedding inválido.');
+    }
+    // Mesma guarda de local-embeddings.ts: a coluna é vector(768) — um provedor gateway que
+    // devolva outra dimensão (ex.: text-embedding-3-small da OpenAI, 1536) precisa falhar aqui,
+    // dentro do try/catch de "falha de embedding", em vez de estourar sem tratamento no INSERT.
+    if (embedding.length !== EMBEDDING_DIMENSIONS) {
+      throw new Error(
+        `O provedor gateway devolveu ${embedding.length} dimensões, mas a coluna espera ${EMBEDDING_DIMENSIONS}.`,
+      );
     }
     return embedding as number[];
   });
