@@ -1,4 +1,4 @@
-import { MODULE_KEYS, isModuleKey } from '../../../config/module-catalog.js';
+import { isModuleKey, MODULE_KEYS } from '../../../config/module-catalog.js';
 import type {
   GrantModuleAccessInput,
   ModuleAccessMatrixUser,

@@ -1,5 +1,5 @@
-import { connection } from '../../../lib/queue/redis.js';
 import { prisma } from '../../../lib/prisma.js';
+import { connection } from '../../../lib/queue/redis.js';
 
 /**
  * Assigns a lead to the next available CLOSER in the organization using a round-robin strategy.

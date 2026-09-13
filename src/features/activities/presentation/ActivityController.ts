@@ -1,8 +1,8 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { ActivityUseCases } from '../application/ActivityUseCases';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { NextFunction, Request, Response } from 'express';
 import type { ActivityStatus, ActivityType } from '../../../lib/zod';
 import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { ActivityUseCases } from '../application/ActivityUseCases';
 
 export class ActivityController {
   constructor(private activityUseCases: ActivityUseCases) {}

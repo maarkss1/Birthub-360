@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { ContactUseCases } from '../application/ContactUseCases';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { ContactUseCases } from '../application/ContactUseCases';
 
 export class ContactController {
   constructor(private contactUseCases: ContactUseCases) {}

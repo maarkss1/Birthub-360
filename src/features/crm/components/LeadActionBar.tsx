@@ -1,4 +1,4 @@
-import { Loader2, Sparkles, Trash, PhoneCall, MessageCircle, Send } from 'lucide-react';
+import { Loader2, MessageCircle, PhoneCall, Send, Sparkles, Trash } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import type { Lead } from '../../../types';
 

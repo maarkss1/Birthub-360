@@ -1,12 +1,12 @@
-import { withRlsContext } from '../../lib/prisma.js';
-import { logger } from '../../lib/logger.js';
+import { env } from '../../config/env.js';
 import { generateEmbedding } from '../../lib/ai/gateway.js';
 import { fetchWithTimeout } from '../../lib/http.js';
+import { logger } from '../../lib/logger.js';
+import { withRlsContext } from '../../lib/prisma.js';
 import { toVectorLiteral } from './ingestion.service.js';
-import { hasVectorSupport } from './vector-support.js';
-import { env } from '../../config/env.js';
-import { rerankerService } from './services/reranker.service.js';
 import type { SearchHit, SearchResponse } from './knowledge.types.js';
+import { rerankerService } from './services/reranker.service.js';
+import { hasVectorSupport } from './vector-support.js';
 
 export type { SearchHit, SearchResponse } from './knowledge.types.js';
 

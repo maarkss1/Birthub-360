@@ -10,22 +10,22 @@
 // `authorizeCapability` (que também depende do agente específico), que continua rodando de verdade
 // em toda execução real (`agentRuntime.service.ts`/`roleSupervisor.service.ts`).
 import type { AgentAccessLevel } from '@prisma/client';
+import { getCapabilityCatalogEntry } from '../../../config/capability-catalog.js';
 import {
   COMMERCIAL_INTELLIGENCE_ROLES,
   COPILOTO_IA_ROLES,
-  MESA_TRATAMENTO_ROLES,
   hasRequiredRole,
+  MESA_TRATAMENTO_ROLES,
 } from '../../../lib/auth/authorization.js';
-import { getCapabilityCatalogEntry } from '../../../config/capability-catalog.js';
-import { getToolBinding } from '../config/tool-bindings.js';
+import { getSupervisorProfile } from '../config/role-supervisor-profiles.js';
 import {
   getWorkspaceDefinition,
   type WorkspaceWidgetKey,
 } from '../config/role-workspace-definitions.js';
-import { getSupervisorProfile } from '../config/role-supervisor-profiles.js';
-import { getJobRoleById, getPrimaryActiveJobRoleForUser } from './jobRole.service.js';
+import { getToolBinding } from '../config/tool-bindings.js';
 import { listAgentsForJobRole } from './agentCatalog.service.js';
 import { listCapabilitiesForJobRole } from './capability.service.js';
+import { getJobRoleById, getPrimaryActiveJobRoleForUser } from './jobRole.service.js';
 
 export type WorkspaceStatus = 'READY' | 'NO_JOB_ROLE' | 'NO_WORKSPACE_DEFINITION';
 

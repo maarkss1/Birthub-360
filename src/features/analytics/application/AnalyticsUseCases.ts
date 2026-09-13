@@ -1,20 +1,20 @@
 import {
-  fromPrismaLeadStatus,
-  fromPrismaActivityType,
   fromPrismaActivityStatus,
+  fromPrismaActivityType,
+  fromPrismaLeadStatus,
 } from '../../../lib/enumMap.js';
 import {
-  FUNNEL_STAGES,
-  WON,
-  LOST,
-  type OverviewMetrics,
-  type DistributionSlice,
-  type FunnelStage,
-  type MonthlyPoint,
   type AnalyticsDashboard,
   type AnalyticsRepository,
-  type GroupCount,
   type CohortRow,
+  type DistributionSlice,
+  FUNNEL_STAGES,
+  type FunnelStage,
+  type GroupCount,
+  LOST,
+  type MonthlyPoint,
+  type OverviewMetrics,
+  WON,
 } from '../domain/Analytics';
 
 // UTC, não hora local: `Lead.createdAt`/`closedAt` chegam do Postgres como instantes UTC, e o

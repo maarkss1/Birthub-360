@@ -1,16 +1,16 @@
 import { motion } from 'framer-motion';
 import {
-  Search,
-  Loader2,
   AlertTriangle,
-  Globe,
   CheckCircle2,
   Database,
-  UserPlus,
+  Globe,
+  Loader2,
   RefreshCw,
+  Search,
+  UserPlus,
 } from 'lucide-react';
-import type { ProspectCandidate } from '../../services/prospecting.service';
 import type { FitScoreResult } from '../../services/enrichment.service';
+import type { ProspectCandidate } from '../../services/prospecting.service';
 import { CandidateCard } from './CandidateCard';
 
 interface PromoteResult {

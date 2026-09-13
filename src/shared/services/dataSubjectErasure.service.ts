@@ -1,6 +1,6 @@
-import { prisma } from '../../lib/prisma.js';
 import { requestContext } from '../../lib/async-context.js';
 import { logger } from '../../lib/logger.js';
+import { prisma } from '../../lib/prisma.js';
 
 export interface ErasureTarget {
   organizationId: string;

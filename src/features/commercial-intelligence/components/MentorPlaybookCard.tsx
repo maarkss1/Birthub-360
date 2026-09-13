@@ -1,11 +1,11 @@
+import { AlertTriangle, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Sparkles, Loader2, AlertTriangle, ArrowRight } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import {
-  commercialIntelligenceApi,
   type CommercialFilter,
+  commercialIntelligenceApi,
   type MentorRecommendation,
   type MentorRecommendationPriority,
 } from '../commercialIntelligence.api';

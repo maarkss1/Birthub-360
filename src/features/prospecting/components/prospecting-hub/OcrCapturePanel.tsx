@@ -1,29 +1,29 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  AlertCircle,
+  Aperture,
+  Briefcase,
+  Building2,
   Camera,
+  CheckCircle2,
+  Clipboard,
+  ExternalLink,
+  Globe,
   Loader2,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+  RefreshCw,
+  Search,
   Sparkles,
   UploadCloud,
-  CheckCircle2,
-  AlertCircle,
-  Building2,
-  Aperture,
-  X,
-  Phone,
-  Mail,
-  Globe,
   User,
-  Briefcase,
-  MapPin,
-  Search,
-  MessageSquare,
-  ExternalLink,
-  RefreshCw,
-  Clipboard,
+  X,
 } from 'lucide-react';
-import { api } from '../../../../lib/api';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BRAND } from '../../../../config/brand';
 import { useActivePlaybook } from '../../../../hooks/useActivePlaybook';
+import { api } from '../../../../lib/api';
 import type { ProspectCandidate } from '../../services/prospecting.service';
 
 interface PromoteResult {

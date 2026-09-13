@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { container } from '../../../../shared/di/container.js';
-import type { ObjectionMatrixController } from '../presentation/ObjectionMatrixController.js';
-import { validateRequest } from '../../../../shared/middlewares/validateRequest.js';
 import { requireRole } from '../../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../../shared/middlewares/validateRequest.js';
 import { objectionMatrixItemSchema } from '../../playbook.schema.js';
+import type { ObjectionMatrixController } from '../presentation/ObjectionMatrixController.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);

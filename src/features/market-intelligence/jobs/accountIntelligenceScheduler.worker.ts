@@ -1,13 +1,12 @@
-import { Worker, Queue, type Job } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
+import { type Job, Queue, Worker } from 'bullmq';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma, withRlsContext } from '../../../lib/prisma.js';
 import { connection } from '../../../lib/queue/redis.js';
 import {
   AccountIntelligenceService,
   type TenantDb,
 } from '../server/accountIntelligence.service.js';
-import { withRlsContext } from '../../../lib/prisma.js';
 
 export const accountIntelligenceSchedulerQueueName = 'account-intelligence-scheduler';
 

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '../prisma.js';
-import { logger } from '../logger.js';
 import { requestContext } from '../async-context.js';
+import { logger } from '../logger.js';
+import { prisma } from '../prisma.js';
 import { estimateCostUsd } from './gateway/pricing.js';
 import type { AiUsageLogInput } from './gateway/types.js';
 

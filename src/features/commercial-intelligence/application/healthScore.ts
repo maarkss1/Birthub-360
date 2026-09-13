@@ -26,8 +26,8 @@ import type {
   PerformanceMetrics,
 } from '../domain/CommercialIntelligence';
 import {
-  classifyCoverageProtection,
   COVERAGE_PROTECTION_FALLBACK_HEALTHY,
+  classifyCoverageProtection,
 } from './coverageProtection';
 import { roundMoney } from './shared/mathUtils';
 

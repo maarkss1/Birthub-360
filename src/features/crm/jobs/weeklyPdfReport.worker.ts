@@ -1,13 +1,13 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { connection } from '../../../lib/queue/redis.js';
-import { requestContext } from '../../../lib/async-context.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
-import { analyticsService } from '../../analytics/analytics.service.js';
-import { sendEmail } from '../../../lib/email/mailer.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { env } from '../../../config/env.js';
+import { requestContext } from '../../../lib/async-context.js';
 import { COMMERCIAL_INTELLIGENCE_ROLES } from '../../../lib/auth/authorization.js';
+import { sendEmail } from '../../../lib/email/mailer.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { connection } from '../../../lib/queue/redis.js';
+import { analyticsService } from '../../analytics/analytics.service.js';
 
 export const WEEKLY_PDF_QUEUE_NAME = 'weekly-pdf-report-queue';
 

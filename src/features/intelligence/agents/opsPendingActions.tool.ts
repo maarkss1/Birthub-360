@@ -1,7 +1,7 @@
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { prisma } from '../../../lib/prisma.js';
 import { getTenantId } from '../../../lib/async-context.js';
+import { prisma } from '../../../lib/prisma.js';
 import { ACTIVITY_TYPE } from '../../../lib/zod.js';
 import type { NotificationKind } from '../../notifications/notification.service.js';
 

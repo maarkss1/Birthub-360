@@ -1,27 +1,27 @@
 import { randomUUID } from 'node:crypto';
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
+import { prisma } from '../../lib/prisma.js';
 import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js';
 import { AppError } from '../../shared/middlewares/errorHandler.js';
 import { requireRole } from '../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../shared/middlewares/validateRequest.js';
-import { prisma } from '../../lib/prisma.js';
-import { prismaOptOutRepository } from './infra/PrismaOptOutRepository.js';
-import { prismaCadenceRunRepository } from './infra/PrismaCadenceRunRepository.js';
-import { parseCadenceSequenceDefinition } from './jobs/cadenceRun.worker.js';
-import {
-  startCadenceRun,
-  validateSequence,
-  pauseCadenceRun,
-  resumeCadenceRun,
-  stopCadenceManually,
-  type CadenceRunStatus,
-} from './domain/cadence.js';
 import { scheduleVerifiedMeeting } from './application/scheduleMeeting.js';
 import { deactivateCadenceSequence } from './application/sequenceService.js';
-import { prismaMeetingConfirmationNotePort } from './infra/PrismaMeetingConfirmationNotePort.js';
-import { prismaCalendarSchedulerPort } from './infra/PrismaCalendarSchedulerPort.js';
+import {
+  type CadenceRunStatus,
+  pauseCadenceRun,
+  resumeCadenceRun,
+  startCadenceRun,
+  stopCadenceManually,
+  validateSequence,
+} from './domain/cadence.js';
+import { prismaCadenceRunRepository } from './infra/PrismaCadenceRunRepository.js';
 import { prismaCadenceSequenceRepository } from './infra/PrismaCadenceSequenceRepository.js';
+import { prismaCalendarSchedulerPort } from './infra/PrismaCalendarSchedulerPort.js';
+import { prismaMeetingConfirmationNotePort } from './infra/PrismaMeetingConfirmationNotePort.js';
+import { prismaOptOutRepository } from './infra/PrismaOptOutRepository.js';
+import { parseCadenceSequenceDefinition } from './jobs/cadenceRun.worker.js';
 
 /**
  * Router de cadência multicanal e opt-out unificado. Leitura (opt-outs/runs) desde a Onda 10;
@@ -128,8 +128,8 @@ router.get('/runs', async (req: Request, res: Response, next: NextFunction): Pro
   }
 });
 
-import { CADENCE_JOURNEY_TEMPLATES } from './domain/cadenceTemplates.js';
 import { routeParam } from '../../shared/http/routeParams.js';
+import { CADENCE_JOURNEY_TEMPLATES } from './domain/cadenceTemplates.js';
 
 router.get('/templates', (_req: Request, res: Response): void => {
   res.json({ success: true, data: CADENCE_JOURNEY_TEMPLATES });

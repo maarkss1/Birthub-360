@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Gap real de auditoria (SSRF/upload security): `testBitrixConnection` lê `webhookUrl` JÁ
 // persistida do banco e chama `testWebhook` (fetch real) SEM revalidar a URL contra SSRF antes —

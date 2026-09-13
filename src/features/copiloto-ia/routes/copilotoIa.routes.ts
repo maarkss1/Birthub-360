@@ -1,10 +1,10 @@
 import { Router } from 'express';
+import {
+  COPILOTO_IA_MANAGEMENT_ROLES,
+  COPILOTO_IA_ROLES,
+} from '../../../lib/auth/authorization.js';
 import { container } from '../../../shared/di/container.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import {
-  COPILOTO_IA_ROLES,
-  COPILOTO_IA_MANAGEMENT_ROLES,
-} from '../../../lib/auth/authorization.js';
 import type { CopilotoIaController } from '../presentation/CopilotoIaController.js';
 
 const router = Router();

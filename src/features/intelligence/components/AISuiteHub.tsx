@@ -1,30 +1,30 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Sparkles,
-  Shield,
-  Users,
-  TrendingUp,
+  Activity,
+  AlertCircle,
+  BookOpen,
+  Briefcase,
+  Check,
+  Compass,
+  Copy,
+  Cpu,
   FileCheck,
+  GraduationCap,
+  Layers,
   MessageSquare,
   PhoneCall,
-  Briefcase,
-  BookOpen,
-  AlertCircle,
-  Copy,
-  Check,
-  Cpu,
-  Target,
   RefreshCw,
-  Activity,
-  Layers,
-  Compass,
-  GraduationCap,
-  SlidersHorizontal,
   Send,
+  Shield,
+  SlidersHorizontal,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
-import { Card, CardTitle, CardDescription } from '../../../components/ui/Card';
+import { useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { Card, CardDescription, CardTitle } from '../../../components/ui/Card';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
 

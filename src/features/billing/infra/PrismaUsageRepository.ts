@@ -1,9 +1,9 @@
 import { prisma } from '../../../lib/prisma.js';
 import type {
-  UsageRepository,
-  UsageLogRow,
   UsageByModelRow,
   UsageByPromptRow,
+  UsageLogRow,
+  UsageRepository,
 } from '../domain/Usage.js';
 
 export class PrismaUsageRepository implements UsageRepository {

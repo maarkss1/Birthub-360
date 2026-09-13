@@ -1,9 +1,9 @@
 import {
-  isVerifiableConfirmation,
-  scheduleMeetingIfConfirmed,
   type AvailabilityConfirmation,
   type CalendarSchedulerPort,
+  isVerifiableConfirmation,
   type ScheduleMeetingResult,
+  scheduleMeetingIfConfirmed,
 } from '../domain/scheduling.js';
 
 /**

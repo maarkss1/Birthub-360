@@ -1,7 +1,7 @@
-import type { Express } from 'express';
 import { toNodeHandler } from 'better-auth/node';
-import { auth } from '../lib/auth.js';
+import type { Express } from 'express';
 import { requestContext } from '../lib/async-context.js';
+import { auth } from '../lib/auth.js';
 
 /**
  * Monta o handler do Better Auth em /api/auth. As tabelas Organization/user/session/account/

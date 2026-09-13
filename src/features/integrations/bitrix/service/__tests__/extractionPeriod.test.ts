@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  resolvePeriodRange,
-  InvalidExtractionPeriodError,
   EXTRACTION_PERIODS,
+  InvalidExtractionPeriodError,
+  resolvePeriodRange,
 } from '../extractionPeriod.js';
 
 // "now" fixo para todo o arquivo: 15/08/2026 14:30 UTC = 11:30 em Brasília (UTC-03:00) — meio do

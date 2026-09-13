@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '../../../../lib/prisma.js';
 import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { assertSafeExternalUrl, safeFetch } from '../../../../shared/security/urlGuard.js';
 

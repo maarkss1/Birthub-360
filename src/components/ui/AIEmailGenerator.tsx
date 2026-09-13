@@ -1,21 +1,21 @@
-import { useState } from 'react';
 import {
-  Sparkles,
-  Copy,
-  Check,
-  Send,
-  Bot,
-  RefreshCw,
-  ShieldCheck,
-  Zap,
   AlertCircle,
+  Bot,
+  Check,
+  Copy,
   Mail,
-  Phone,
   MessageCircle,
+  Phone,
+  RefreshCw,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
-import { Button } from './Button';
+import { useState } from 'react';
 import { useActivePlaybook } from '../../hooks/useActivePlaybook';
 import { api } from '../../lib/api';
+import { Button } from './Button';
 
 type Channel = 'email' | 'call' | 'message';
 type Tone = 'consultative' | 'direct' | 'roi_focused' | 'hyper_personalized';

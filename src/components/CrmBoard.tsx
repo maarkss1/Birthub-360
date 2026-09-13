@@ -1,46 +1,47 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- regiões roláveis focáveis por teclado */
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+
 import {
-  Download,
-  WifiOff,
-  Sparkles,
-  CheckSquare,
-  Send,
-  X,
-  Loader2,
-  Search,
-  Bookmark,
-} from 'lucide-react';
-import type { Lead, LeadStatus } from '../types';
-import { KanbanColumn } from '../features/crm/components/KanbanColumn';
-import { KanbanCard } from '../features/crm/components/KanbanCard';
-import { LeadDetailDrawer } from '../features/crm/components/LeadDetailDrawer';
-import { BitrixImportModal } from '../features/crm/components/BitrixImportModal';
-import { SavedViewsPanel, type SavedViewItem } from '../features/crm/components/SavedViewsPanel';
-import { bitrixApi } from '../features/integrations/bitrix/bitrix.api';
-import { api } from '../lib/api';
-import { ContextualTip } from './ui/ContextualTip';
-import { EmptyState } from './ui/EmptyState';
-import { Button } from './ui/Button';
-import { BRAND } from '../config/brand';
-import { toast } from '../lib/toast';
-import { clientLogger } from '../lib/clientLogger';
-import { SoundFX } from '../lib/soundEffects';
-import { useCrmBoardController } from '../hooks/useCrmBoardController';
-import {
-  DndContext,
+  type Announcements,
   closestCenter,
-  KeyboardSensor,
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
   KeyboardCode,
+  KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragOverlay,
-  type DragStartEvent,
-  type DragEndEvent,
-  type Announcements,
 } from '@dnd-kit/core';
+import {
+  Bookmark,
+  CheckSquare,
+  Download,
+  Loader2,
+  Search,
+  Send,
+  Sparkles,
+  WifiOff,
+  X,
+} from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { BRAND } from '../config/brand';
+import { BitrixImportModal } from '../features/crm/components/BitrixImportModal';
+import { KanbanCard } from '../features/crm/components/KanbanCard';
+import { KanbanColumn } from '../features/crm/components/KanbanColumn';
+import { LeadDetailDrawer } from '../features/crm/components/LeadDetailDrawer';
+import { type SavedViewItem, SavedViewsPanel } from '../features/crm/components/SavedViewsPanel';
+import { bitrixApi } from '../features/integrations/bitrix/bitrix.api';
+import { useCrmBoardController } from '../hooks/useCrmBoardController';
+import { api } from '../lib/api';
+import { clientLogger } from '../lib/clientLogger';
+import { SoundFX } from '../lib/soundEffects';
+import { toast } from '../lib/toast';
+import type { Lead, LeadStatus } from '../types';
+import { Button } from './ui/Button';
+import { ContextualTip } from './ui/ContextualTip';
+import { EmptyState } from './ui/EmptyState';
 
 // dnd-kit ativa drag por teclado em Space E Enter por padrão — mas KanbanCard também usa Enter pra
 // abrir o LeadDetailDrawer (mesma tecla, dois significados). Restringindo o sensor a Space, Enter

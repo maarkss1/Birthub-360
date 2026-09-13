@@ -1,11 +1,11 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
 
 import { logger } from '../../../lib/logger.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { synthesizeSpeech } from '../services/voicebox.service.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { synthesizeSpeech } from '../services/voicebox.service.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);
@@ -30,18 +30,18 @@ router.post(
   },
 );
 
+import {
+  approveLearningProfileVersion,
+  getLearningProfileHistory,
+  LearningAgent,
+  rejectLearningProfileVersion,
+  rollbackLearningProfile,
+} from '../agents/learning.agent.js';
 // --- SWARM & CONTINUOUS LEARNING ENDPOINTS ---
 import { SwarmOrchestrator } from '../agents/supervisor.agent.js';
-import {
-  LearningAgent,
-  getLearningProfileHistory,
-  rollbackLearningProfile,
-  approveLearningProfileVersion,
-  rejectLearningProfileVersion,
-} from '../agents/learning.agent.js';
-import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
-import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service.js';
 import { getDatasetSummary, validateToolUseCases } from '../evaluation/goldenDataset.service.js';
+import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service.js';
+import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
 
 const swarmMissionSchema = z.object({
   mission: z.string().trim().min(1, 'A missão é obrigatória.').max(4_000),
@@ -201,12 +201,12 @@ router.get('/swarm/learn/history', async (req: Request, res: Response, next: Nex
   }
 });
 
+import { container } from '../../../shared/di/container.js';
+import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
 // --- CÉLULA COMERCIAL DE AGENTES (onda 43, Agente 13) ---
 import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry.js';
-import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
-import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
 import { ContractSignatureAgent } from '../agents/contractSignature.agent.js';
-import { container } from '../../../shared/di/container.js';
+import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
 
 // AI-005/golden-dataset acima já estabelece o precedente: catálogo estático (não dado de tenant)
 // só reaproveita a autenticação de '/api/agent'. `COMMERCIAL_AGENT_REGISTRY` é o mesmo caso —

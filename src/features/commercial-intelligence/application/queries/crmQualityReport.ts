@@ -11,10 +11,10 @@ import type {
   DealRow,
 } from '../../domain/CommercialIntelligence';
 import { computeDataReadiness } from '../dataReadiness';
-import { roundMoney } from '../shared/mathUtils';
+import { isDealOpen } from '../pipelineEligibility';
 import { loadScoredDeals } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
-import { isDealOpen } from '../pipelineEligibility';
+import { roundMoney } from '../shared/mathUtils';
 import { computeBitrixSyncHealth } from './bitrixSyncHealthReport';
 
 const FIELD_CHECKS: Array<{ field: string; label: string; test: (d: DealRow) => boolean }> = [

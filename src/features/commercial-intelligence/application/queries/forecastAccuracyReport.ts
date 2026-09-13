@@ -20,9 +20,9 @@ import {
   hasPeriodClosed,
   summarizeForecastAccuracy,
 } from '../forecastAccuracy';
+import { loadScoredDeals } from '../scoring/dealScoring';
 import { roundMoney } from '../shared/mathUtils';
 import { monthRange } from '../shared/period';
-import { loadScoredDeals } from '../scoring/dealScoring';
 
 export async function buildForecastAccuracy(
   repository: CommercialIntelligenceRepository,

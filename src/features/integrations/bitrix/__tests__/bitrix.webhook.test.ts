@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { bitrixSyncFailuresTotal } from '../service/metrics.js';
 
 vi.mock('@/lib/logger', () => ({

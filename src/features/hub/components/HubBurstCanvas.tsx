@@ -5,8 +5,9 @@
  * Portado do protótipo original do portal (função `burstAt`). Expõe uma ref de
  * função `trigger(x, y, colorRgb)` que o HubScreen chama ao clicar num card.
  */
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+
 import { useReducedMotion } from 'framer-motion';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 export interface BurstHandle {
   trigger: (x: number, y: number, colorRgb: string) => void;

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, Plus, Search, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
-import { Plus, Trash2, Search, Loader2 } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Dialog } from '../../../components/ui/Dialog';
 import { Input } from '../../../components/ui/Input';
@@ -12,9 +12,9 @@ import { Textarea } from '../../../components/ui/Textarea';
 import { clientLogger } from '../../../lib/clientLogger';
 import { companiesDB } from '../../../lib/db';
 import { toast } from '../../../lib/toast';
+import type { Company } from '../../../types';
 import { crm360Api } from '../crm360.api';
 import type { CrmCommercialDocument, CrmProduct } from '../crm360.types';
-import type { Company } from '../../../types';
 
 const DOCUMENT_TYPES = ['Orcamento', 'Proposta', 'Fatura', 'Contrato'] as const;
 

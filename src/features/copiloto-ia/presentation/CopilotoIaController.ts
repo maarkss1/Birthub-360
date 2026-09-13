@@ -1,18 +1,18 @@
 import { randomUUID } from 'node:crypto';
-import type { Request, Response, NextFunction } from 'express';
-import { AppError } from '../../../shared/middlewares/errorHandler';
+import type { NextFunction, Request, Response } from 'express';
 import { AuditService } from '../../../lib/audit/audit.service';
 import { getUploadUrl } from '../../../lib/storage/index.js';
-import { enqueueTranscribeConversationJob } from '../jobs/transcribeConversation.worker.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 import { routeParam } from '../../../shared/http/routeParams';
-import type { CopilotoIaUseCases } from '../application/CopilotoIaUseCases';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 import type { CopilotoBitrixWritebackUseCases } from '../application/CopilotoBitrixWritebackUseCases';
+import type { CopilotoIaUseCases } from '../application/CopilotoIaUseCases';
 import type {
   CopilotoConversationSource,
   CopilotoConversationStatus,
   CopilotoCrmEntityType,
 } from '../domain/CopilotoIa';
+import { enqueueTranscribeConversationJob } from '../jobs/transcribeConversation.worker.js';
 
 const VALID_SOURCES: CopilotoConversationSource[] = ['MEET', 'CALL', 'WHATSAPP', 'MANUAL', 'OTHER'];
 const VALID_STATUSES: CopilotoConversationStatus[] = [

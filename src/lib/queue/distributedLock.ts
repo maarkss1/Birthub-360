@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { cacheConnection, redisConfigured } from './redis.js';
 import { logger } from '../logger.js';
+import { cacheConnection, redisConfigured } from './redis.js';
 
 export type DistributedLockReason =
   | 'acquired'

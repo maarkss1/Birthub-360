@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { buildForecastSnapshot } from '../application/forecastSnapshot';
+import { describe, expect, it } from 'vitest';
 import { FORECAST_RULES_VERSION } from '../application/forecastEngine';
-import { InMemoryForecastSnapshotStore } from '../infra/InMemoryForecastSnapshotStore';
+import { buildForecastSnapshot } from '../application/forecastSnapshot';
 import type { ExecutiveOverview } from '../domain/CommercialIntelligence';
+import { InMemoryForecastSnapshotStore } from '../infra/InMemoryForecastSnapshotStore';
 
 const ORG = 'org-1';
 const NOW = new Date('2026-08-15T12:00:00Z');

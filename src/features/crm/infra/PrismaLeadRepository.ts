@@ -1,17 +1,17 @@
-import type { Lead, LeadRepository } from '../domain/Lead';
-import { prisma } from '../../../lib/prisma';
-import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
 import type { LeadFunnel, Prisma } from '@prisma/client';
-import type { LeadStatus } from '../../../lib/zod';
 import {
-  toPrismaLeadStatus,
-  fromPrismaLeadStatus,
-  fromPrismaCompanyStatus,
-  fromPrismaActivityType,
   fromPrismaActivityStatus,
+  fromPrismaActivityType,
+  fromPrismaCompanyStatus,
+  fromPrismaLeadStatus,
   isLeadClosingStatus,
+  toPrismaLeadStatus,
 } from '../../../lib/enumMap';
+import { prisma } from '../../../lib/prisma';
 import { searchLeadIds } from '../../../lib/search/index.js';
+import type { LeadStatus } from '../../../lib/zod';
+import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
+import type { Lead, LeadRepository } from '../domain/Lead';
 
 function serializeLead<
   T extends {

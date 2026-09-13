@@ -1,5 +1,5 @@
+import { AlertTriangle, Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { AlertTriangle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import {

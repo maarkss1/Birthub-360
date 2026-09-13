@@ -10,10 +10,11 @@
  *     <CarouselSlide>Slide 2</CarouselSlide>
  *   </Carousel>
  */
-import { type ReactNode, useCallback, useEffect, useState } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
+
 import Autoplay from 'embla-carousel-autoplay';
+import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 
 interface CarouselProps {
   children: ReactNode;

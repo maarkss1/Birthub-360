@@ -1,20 +1,20 @@
-import type {
-  Activity,
-  ActivityRepository,
-  ActivityListFilters,
-  ActivityPage,
-} from '../domain/Activity';
-import { prisma } from '../../../lib/prisma';
 import type { Prisma } from '@prisma/client';
 import {
-  toPrismaActivityType,
-  fromPrismaActivityType,
-  toPrismaActivityStatus,
   fromPrismaActivityStatus,
-  fromPrismaLeadStatus,
+  fromPrismaActivityType,
   fromPrismaCompanyStatus,
+  fromPrismaLeadStatus,
+  toPrismaActivityStatus,
+  toPrismaActivityType,
 } from '../../../lib/enumMap';
-import type { ActivityType, ActivityStatus } from '../../../lib/zod';
+import { prisma } from '../../../lib/prisma';
+import type { ActivityStatus, ActivityType } from '../../../lib/zod';
+import type {
+  Activity,
+  ActivityListFilters,
+  ActivityPage,
+  ActivityRepository,
+} from '../domain/Activity';
 
 function serializeActivity<
   T extends {

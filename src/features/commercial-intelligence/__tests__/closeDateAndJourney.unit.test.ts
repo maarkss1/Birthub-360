@@ -1,21 +1,21 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { diffTrackedFields } from '../../../shared/services/leadFieldChangeHistory.service';
 import { CommercialIntelligenceUseCases } from '../application/CommercialIntelligenceUseCases';
 import {
-  scoreOpportunity,
   FORECAST_RULES,
   FORECAST_RULES_VERSION,
+  scoreOpportunity,
 } from '../application/forecastEngine';
 import { summarizeCloseDateChanges } from '../application/scoring/dealScoring';
-import { diffTrackedFields } from '../../../shared/services/leadFieldChangeHistory.service';
-import { InMemoryForecastSnapshotStore } from '../infra/InMemoryForecastSnapshotStore';
 import type {
+  CommercialGoalDTO,
   CommercialIntelligenceRepository,
   DealRow,
-  StageDefinition,
-  CommercialGoalDTO,
   GoalMetric,
   LeadFieldChangeRow,
+  StageDefinition,
 } from '../domain/CommercialIntelligence';
+import { InMemoryForecastSnapshotStore } from '../infra/InMemoryForecastSnapshotStore';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';

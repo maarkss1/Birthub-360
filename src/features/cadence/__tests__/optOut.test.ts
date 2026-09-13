@@ -1,18 +1,18 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
-  recordOptOut,
-  isOptedOut,
   assertNotOptedOut,
+  isOptedOut,
   OptOutBlockedError,
+  recordOptOut,
 } from '../application/optOutService';
 import {
-  normalizeOptOutSubject,
-  hasAnyIdentifier,
-  subjectsMatch,
-  scopeBlocksChannel,
   type CadenceChannel,
+  hasAnyIdentifier,
+  normalizeOptOutSubject,
+  scopeBlocksChannel,
+  subjectsMatch,
 } from '../domain/optOut';
+import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
 
 const ORG = 'org-1';
 const OTHER_ORG = 'org-2';

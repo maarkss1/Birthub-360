@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { AlertTriangle, ChevronRight, Loader2, ShieldAlert } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
+import { useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { staggerContainer, staggerItem } from '../../../lib/motion';
 import {
-  commercialIntelligenceApi,
-  formatCurrency,
   type CommercialFilter,
+  commercialIntelligenceApi,
   type DealDrillDownRow,
+  formatCurrency,
 } from '../commercialIntelligence.api';
 import type { DrillDownQuery } from './DealDrillDownDrawer';
 

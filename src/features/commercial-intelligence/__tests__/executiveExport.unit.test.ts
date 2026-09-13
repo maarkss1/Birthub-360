@@ -1,16 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+  buildExecutiveExport,
+  buildExecutiveExportHtml,
+  buildExecutiveExportJson,
   buildExecutiveExportRows,
   rowsToCsv,
-  buildExecutiveExportJson,
-  buildExecutiveExportHtml,
-  buildExecutiveExport,
 } from '../application/executiveExport';
 import type {
+  ExecutiveAlert,
   ExecutiveOverview,
   PerformanceMetrics,
   PipelineCreation,
-  ExecutiveAlert,
 } from '../domain/CommercialIntelligence';
 
 const NOW = new Date('2026-08-15T12:00:00Z');

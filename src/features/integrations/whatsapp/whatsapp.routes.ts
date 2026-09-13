@@ -1,11 +1,11 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
+import { toE164BR } from '../../../lib/phone.js';
+import { prisma } from '../../../lib/prisma.js';
+import { enqueueWhatsAppCommand } from '../../../lib/queue/whatsappCommand.queue.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { getWhatsAppStatus } from './whatsapp.service.js';
 import { listConversations } from './whatsappMessage.service.js';
-import { prisma } from '../../../lib/prisma.js';
-import { toE164BR } from '../../../lib/phone.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { enqueueWhatsAppCommand } from '../../../lib/queue/whatsappCommand.queue.js';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

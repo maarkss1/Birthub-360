@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 
 export type SaveAgentMemoryStatus = 'Completed' | 'Failed';
 

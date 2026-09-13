@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+  agingInStageDays,
   checkEligibility,
   isDealOpen,
-  agingInStageDays,
   STAGE_AGING_CRITICAL_DAYS,
 } from '../application/pipelineEligibility';
 import type { DealRow } from '../domain/CommercialIntelligence';

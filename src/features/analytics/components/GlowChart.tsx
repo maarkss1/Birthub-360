@@ -1,15 +1,15 @@
-import { useMemo, useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { AlertTriangle, CircleDot, Eye, EyeOff } from 'lucide-react';
+import { useMemo, useRef, useState } from 'react';
 import {
-  AreaChart,
   Area,
+  AreaChart,
   CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
-import { motion, useInView } from 'framer-motion';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { formatMonthLabel, type MonthlyPoint } from '../analytics.api';
 

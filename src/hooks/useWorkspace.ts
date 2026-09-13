@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { workspaceApi, type Workspace } from '../features/workspace/workspace.api';
+import { type Workspace, workspaceApi } from '../features/workspace/workspace.api';
 
 // Mesmo padrão de cache em memória de useModuleAccess.ts/useFeatureFlags.ts — evita um
 // GET /api/workspace/me redundante por componente montado (Sidebar, WorkspaceHome).

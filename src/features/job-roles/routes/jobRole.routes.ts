@@ -1,19 +1,19 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
+import { routeParam } from '../../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import {
-  listJobRoles,
-  getJobRoleById,
-  getJobRoleAssignmentMatrix,
-  assignJobRole,
-  deactivateUserJobRole,
-  JobRoleServiceError,
-} from '../services/jobRole.service.js';
 import { listAgentsForJobRole } from '../services/agentCatalog.service.js';
 import { listCapabilitiesForJobRole } from '../services/capability.service.js';
+import {
+  assignJobRole,
+  deactivateUserJobRole,
+  getJobRoleAssignmentMatrix,
+  getJobRoleById,
+  JobRoleServiceError,
+  listJobRoles,
+} from '../services/jobRole.service.js';
 
 const router = Router();
 

@@ -9,10 +9,10 @@ import type {
   LossAnalysis,
 } from '../../domain/CommercialIntelligence';
 import { classifyLossReason } from '../lossTaxonomy';
-import { roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
 import { loadScoredDeals } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
+import { roundMoney } from '../shared/mathUtils';
+import { monthRange } from '../shared/period';
 
 export async function buildLosses(
   repository: CommercialIntelligenceRepository,

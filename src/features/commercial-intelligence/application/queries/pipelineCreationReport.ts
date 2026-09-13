@@ -10,12 +10,12 @@ import type {
   PipelineCarryover,
   PipelineCreation,
 } from '../../domain/CommercialIntelligence';
-import { isDealOpen } from '../pipelineEligibility';
 import { countBusinessDays } from '../executiveCalendar';
-import { roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+import { isDealOpen } from '../pipelineEligibility';
 import { loadScoredDeals } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
+import { roundMoney } from '../shared/mathUtils';
+import { monthRange } from '../shared/period';
 
 export async function buildPipelineCreation(
   repository: CommercialIntelligenceRepository,

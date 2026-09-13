@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // ARCH-009 (studio.service.ts decomposto em studio/generators/*, 2026-08-27): shared.ts é o único
 // lugar que fala com o gateway de IA/guardrails de PII para todos os 12 geradores — antes desta
@@ -40,16 +40,16 @@ vi.mock('../../guardrails.service.js', () => ({
   createStreamingRedactor: createStreamingRedactorMock,
 }));
 
-import {
-  jsonOnlyInstruction,
-  stripCodeFence,
-  safeIdentifier,
-  invokeText,
-  invokeStructured,
-  streamText,
-  SYSTEM_RULES,
-} from '../shared.js';
 import { z } from 'zod';
+import {
+  invokeStructured,
+  invokeText,
+  jsonOnlyInstruction,
+  SYSTEM_RULES,
+  safeIdentifier,
+  streamText,
+  stripCodeFence,
+} from '../shared.js';
 
 function aiResult(content: string, model = 'local-llama3') {
   return {

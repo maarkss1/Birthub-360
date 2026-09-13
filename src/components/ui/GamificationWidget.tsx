@@ -1,6 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { Award, Check, ChevronRight, Flame, Trophy, Zap } from 'lucide-react';
 import { useState } from 'react';
-import { Trophy, Zap, Award, Flame, ChevronRight, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface GamificationWidgetProps {
   initialXp?: number;

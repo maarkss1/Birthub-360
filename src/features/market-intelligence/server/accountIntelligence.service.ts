@@ -1,9 +1,8 @@
 import { createHash } from 'node:crypto';
-import { Prisma } from '@prisma/client';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-
-import { withRlsContext } from '../../../lib/prisma.js';
+import { Prisma } from '@prisma/client';
 import { getAiModel } from '../../../lib/ai/gateway.js';
+import { withRlsContext } from '../../../lib/prisma.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import type {
@@ -13,12 +12,12 @@ import type {
   RelationshipQuery,
   SignalQuery,
 } from './accountIntelligence.schemas.js';
-import { getMarketIntelligenceCompany } from './marketIntelligenceCompany.service.js';
 import {
   computeDataQualityReport,
-  fetchDataQualityReportInputs,
   type DataQualityReport,
+  fetchDataQualityReportInputs,
 } from './dataQualityReport.service.js';
+import { getMarketIntelligenceCompany } from './marketIntelligenceCompany.service.js';
 
 export type TenantDb = NonNullable<AuthRequest['db']>;
 type KnowledgeType = 'FACT' | 'INFERENCE' | 'RECOMMENDATION';

@@ -16,13 +16,13 @@
  */
 import {
   Document,
+  type DocumentProps,
+  Font,
   Page,
+  PDFDownloadLink,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  PDFDownloadLink,
-  Font,
-  type DocumentProps,
 } from '@react-pdf/renderer';
 import { Download, Loader2 } from 'lucide-react';
 

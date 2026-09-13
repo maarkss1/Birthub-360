@@ -1,9 +1,9 @@
 import { prisma } from '../../../../lib/prisma.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import type {
   DailyClosingMetrics,
   PendingDailyClosing,
 } from '../../../../shared/contracts/dailyPlan.contract.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { toPlanDate } from './dailyPlan.service.js';
 
 export type {

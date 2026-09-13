@@ -5,16 +5,28 @@ import {
   LeadStatus,
   Prisma,
 } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
 import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
   fromPrismaLeadStatus,
-  toPrismaLeadStatus,
   LEAD_CLOSING_STATUSES,
+  toPrismaLeadStatus,
 } from '../../../lib/enumMap.js';
+import { prisma } from '../../../lib/prisma.js';
+import {
+  draftNextProposalVersion,
+  type ProposalSnapshot,
+  type ProposalVersion,
+} from '../../../shared/domain/proposal.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
+import { requestDocumentSignature as requestDocumentSignatureUseCase } from '../../cadence/application/documentSignature.js';
+import { govBrSignatureProviderPort } from '../../cadence/infra/GovBrSignatureProviderPort.js';
+import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
+import { recordStageTransition } from '../../commercial-intelligence/infra/stageHistory.js';
+import { ensureManualDealClosureAllowed } from '../../crm/application/dealClosureGate.js';
+import { prismaDealClosureGate } from '../../crm/infra/PrismaDealClosureGate.js';
 import type {
   CrmDealItemInput,
   CrmDocumentInput,
@@ -22,9 +34,6 @@ import type {
   CrmDocumentUpdateInput,
   CrmProductInput,
 } from '../crm360.schema.js';
-import { recordStageTransition } from '../../commercial-intelligence/infra/stageHistory.js';
-import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
-import type { ICrm360Repository } from '../domain/ICrm360Repository.js';
 import type {
   CrmCommercialDocument,
   CrmCommercialDocumentVersionDTO,
@@ -34,16 +43,7 @@ import type {
   CrmProduct,
   CrmPublicDocumentView,
 } from '../crm360.types.js';
-import { ensureManualDealClosureAllowed } from '../../crm/application/dealClosureGate.js';
-import { prismaDealClosureGate } from '../../crm/infra/PrismaDealClosureGate.js';
-import {
-  draftNextProposalVersion,
-  type ProposalSnapshot,
-  type ProposalVersion,
-} from '../../../shared/domain/proposal.js';
-import { requestDocumentSignature as requestDocumentSignatureUseCase } from '../../cadence/application/documentSignature.js';
-import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
-import { govBrSignatureProviderPort } from '../../cadence/infra/GovBrSignatureProviderPort.js';
+import type { ICrm360Repository } from '../domain/ICrm360Repository.js';
 
 type DefaultStage = {
   name: string;

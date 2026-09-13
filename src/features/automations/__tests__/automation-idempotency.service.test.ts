@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Onda 7 (Agente 07) — gap real de idempotência: o mesmo evento de gatilho podia chegar ao motor
 // mais de uma vez (replay, corrida entre workers) e rodar a ação duas vezes. Este arquivo testa o

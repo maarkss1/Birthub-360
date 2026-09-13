@@ -15,7 +15,7 @@ vi.mock('../../../../lib/ai/memory/mem0.js', () => ({
   },
 }));
 
-import { supervisorDecisionSchema, fallbackDecision, enforceLeadGuard } from '../supervisor.agent';
+import { enforceLeadGuard, fallbackDecision, supervisorDecisionSchema } from '../supervisor.agent';
 
 describe('supervisorDecisionSchema', () => {
   it('aceita uma decisão bem formada', () => {

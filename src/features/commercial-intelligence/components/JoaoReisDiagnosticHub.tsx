@@ -1,40 +1,42 @@
 import type React from 'react';
 import { DailyPlanHub } from './DailyPlanHub';
+
 export { DailyPlanHub };
-import { useState } from 'react';
+
 import {
+  AlertTriangle,
+  BarChart3,
+  BookOpen,
+  Bot,
   Calendar,
   CalendarCheck,
-  BarChart3,
-  Inbox,
+  Check,
+  CheckCircle,
+  CheckSquare,
   ClipboardCheck,
+  Copy,
+  FileText,
+  Flame,
+  Inbox,
+  Printer,
+  RotateCcw,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  Square,
+  Target,
   UserPlus,
   Users,
-  CheckCircle,
-  AlertTriangle,
-  Sparkles,
-  CheckSquare,
-  Square,
-  RotateCcw,
-  BookOpen,
-  ShieldCheck,
-  Target,
-  FileText,
   Zap,
-  Bot,
-  Flame,
-  Send,
-  Printer,
-  Copy,
-  Check,
 } from 'lucide-react';
-import { useAuth } from '../../../contexts/AuthContext';
-import { KpiCard } from '../../../components/ui/KpiCard';
-import { FunnelBars, type FunnelBarItem } from '../../../components/ui/FunnelBars';
+import { useState } from 'react';
 import { ChannelDonut } from '../../../components/ui/ChannelDonut';
 import { CompareBar, DeltaPill } from '../../../components/ui/CompareBar';
-import { DealsGrid, type DealCardData } from '../../../components/ui/DealsGrid';
+import { type DealCardData, DealsGrid } from '../../../components/ui/DealsGrid';
 import { Dialog } from '../../../components/ui/Dialog';
+import { type FunnelBarItem, FunnelBars } from '../../../components/ui/FunnelBars';
+import { KpiCard } from '../../../components/ui/KpiCard';
+import { useAuth } from '../../../contexts/AuthContext';
 
 // Dataset extraído do Diagnóstico SDR — João Reis (BDR ID 392, Birth Hub 360)
 const DIAGNOSTIC_DATA = {

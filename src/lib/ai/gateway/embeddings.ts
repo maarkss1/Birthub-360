@@ -4,8 +4,8 @@
  * Vetorial (RAG) do Agente SDR via pgvector.
  */
 import { callProvider } from './circuit-breaker.js';
-import { readProviderError } from './redaction.js';
 import { normalizeApiBaseUrl, resolveEmbeddingTimeoutMs } from './http-client.js';
+import { readProviderError } from './redaction.js';
 
 const MAX_EMBEDDING_INPUT_CHARS = 100_000;
 

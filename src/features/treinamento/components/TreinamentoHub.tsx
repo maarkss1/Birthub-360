@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
 import {
-  GraduationCap,
-  ExternalLink,
-  BookOpen,
   Award,
+  BookOpen,
   CheckCircle,
-  Search,
+  ExternalLink,
+  GraduationCap,
   Layers,
+  Search,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader';
 
 export function TreinamentoHub() {

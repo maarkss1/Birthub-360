@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { Cpu, Loader2, MapPin } from 'lucide-react';
-import { api } from '../../../../../lib/api';
+import { useState } from 'react';
 import { BRAND } from '../../../../../config/brand';
+import { api } from '../../../../../lib/api';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,

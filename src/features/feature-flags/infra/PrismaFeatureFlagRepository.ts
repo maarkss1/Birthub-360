@@ -1,8 +1,8 @@
 import { prisma } from '../../../lib/prisma.js';
 import type {
-  FeatureFlagRepository,
   FeatureFlagDefinition,
   FeatureFlagRecord,
+  FeatureFlagRepository,
   OrganizationOverride,
 } from '../domain/FeatureFlag.js';
 

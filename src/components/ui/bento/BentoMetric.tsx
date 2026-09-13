@@ -1,6 +1,6 @@
 import type React from 'react';
-import { BentoCard, type BentoCardProps } from './BentoCard';
 import { cn } from '../../../lib/utils';
+import { BentoCard, type BentoCardProps } from './BentoCard';
 
 export interface BentoMetricProps extends Omit<BentoCardProps, 'children'> {
   title: string;

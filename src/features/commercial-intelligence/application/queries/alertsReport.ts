@@ -11,13 +11,13 @@ import type {
   CommercialIntelligenceRepository,
   ExecutiveAlert,
 } from '../../domain/CommercialIntelligence';
-import { roundMoney } from '../shared/mathUtils';
-import { loadScoredDeals } from '../scoring/dealScoring';
 import { isDealOpen } from '../pipelineEligibility';
-import { buildExecutiveOverview } from './executiveOverviewReport';
-import { buildPipelineCreation } from './pipelineCreationReport';
+import { loadScoredDeals } from '../scoring/dealScoring';
+import { roundMoney } from '../shared/mathUtils';
 import { buildAging } from './agingReport';
+import { buildExecutiveOverview } from './executiveOverviewReport';
 import { buildPerformance } from './performanceReport';
+import { buildPipelineCreation } from './pipelineCreationReport';
 
 export async function buildAlerts(
   repository: CommercialIntelligenceRepository,

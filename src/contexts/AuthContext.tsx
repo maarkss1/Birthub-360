@@ -1,13 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, type ReactNode } from 'react';
-import { authClient } from '../lib/auth-client';
+import { createContext, type ReactNode, useContext } from 'react';
 import {
-  hasRequiredRole,
-  isKnownRole,
   canAccessCommercialIntelligence,
   canAccessCopilotoIa,
+  hasRequiredRole,
+  isKnownRole,
   type Role,
 } from '../lib/auth/authorization';
+import { authClient } from '../lib/auth-client';
 
 export interface UserSession {
   id: string;

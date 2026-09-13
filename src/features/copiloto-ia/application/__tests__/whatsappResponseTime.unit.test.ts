@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { computeWhatsAppResponseTimeStats } from '../whatsappResponseTime';
 
 const at = (isoOffset: string) =>

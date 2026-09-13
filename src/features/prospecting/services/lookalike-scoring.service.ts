@@ -1,7 +1,7 @@
 import type { Company, Prisma } from '@prisma/client';
-import { prisma, withRlsContext } from '../../../lib/prisma.js';
 import { generateEmbedding } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma, withRlsContext } from '../../../lib/prisma.js';
 
 // Um ou dois "vizinhos" não são sinal, são ruído — sem um mínimo de empresas já ganhas no tenant,
 // devolvemos null em vez de fingir confiança que não existe (cold start).

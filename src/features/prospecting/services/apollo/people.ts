@@ -1,25 +1,26 @@
 // Ver domain/prospectTypes.ts para o porquê deste import vir de domain/, não de
 // ../prospecting.service (quebra um ciclo real com services/apollo/*, ARCH-009 2026-08-28).
-import type { ProspectCandidate, DecisionMaker } from '../../domain/prospectTypes.js';
-import { findEmailViaHunter, findPeopleViaDomainSearch } from '../hunter.service';
+
 import { getPaidProspectingKey } from '../../../../config/prospecting-integrations.js';
 import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
+import type { DecisionMaker, ProspectCandidate } from '../../domain/prospectTypes.js';
+import { findEmailViaHunter, findPeopleViaDomainSearch } from '../hunter.service';
+import { assertProspectingBudgetNotExceeded } from '../providerBudget.js';
+import { buildProviderCacheKey, withProviderCache } from '../providerCache.js';
+import { recordProviderCallCost } from '../providerCostMetrics.js';
+import { checkProviderRateLimit } from '../providerRateLimit.js';
 import {
-  APOLLO_PEOPLE_SEARCH_URL,
   APOLLO_PEOPLE_MATCH_URL,
+  APOLLO_PEOPLE_SEARCH_URL,
   MAX_DECISION_MAKER_LOOKUPS,
   parsePlanRestriction,
 } from './client.js';
 import type {
-  ApolloOrganization,
   ApolloContact,
+  ApolloOrganization,
   ApolloPersonRaw,
   DecisionMakerCriteria,
 } from './types.js';
-import { checkProviderRateLimit } from '../providerRateLimit.js';
-import { withProviderCache, buildProviderCacheKey } from '../providerCache.js';
-import { recordProviderCallCost } from '../providerCostMetrics.js';
-import { assertProspectingBudgetNotExceeded } from '../providerBudget.js';
 
 /**
  * Enriquecimento de UMA pessoa específica já identificada (nome + empresa/domínio) via

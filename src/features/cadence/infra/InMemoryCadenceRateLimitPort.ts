@@ -1,5 +1,5 @@
-import { extractEmailDomain, type LastSentTouch } from '../domain/rateLimit.js';
 import type { CadenceRateLimitPort } from '../application/rateLimitService.js';
+import { extractEmailDomain, type LastSentTouch } from '../domain/rateLimit.js';
 import type { InMemoryCadenceRunRepository } from './InMemoryCadenceRunRepository.js';
 
 /**

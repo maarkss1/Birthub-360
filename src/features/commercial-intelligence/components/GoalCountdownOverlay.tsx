@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Target, Trophy, Clock, CalendarDays, TrendingUp } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CalendarDays, Clock, Target, TrendingUp, Trophy, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { formatCurrency, formatPercent } from '../commercialIntelligence.api';
 
 interface GoalCountdownOverlayProps {

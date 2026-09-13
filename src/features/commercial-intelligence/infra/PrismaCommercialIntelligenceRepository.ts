@@ -1,12 +1,12 @@
 import { LeadFunnel, LeadStatus } from '@prisma/client';
 import { prisma } from '../../../lib/prisma.js';
 import type {
+  CommercialGoalDTO,
   CommercialIntelligenceRepository,
   DealRow,
-  StageDefinition,
-  CommercialGoalDTO,
   GoalMetric,
   LeadFieldChangeRow,
+  StageDefinition,
   TrackedLeadField,
 } from '../domain/CommercialIntelligence';
 

@@ -1,41 +1,41 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
+  Activity as ActivityIcon,
+  AlertCircle,
   Calendar,
   CheckCircle2,
-  Clock,
-  Phone,
-  Mail,
-  MessageCircle,
-  Users,
-  MapPin,
-  RefreshCw,
   CheckSquare,
-  Activity as ActivityIcon,
-  Plus,
-  Search,
-  Trash2,
-  Loader2,
-  X,
-  Save,
-  AlertCircle,
-  Sparkles,
-  Moon,
+  Clock,
   Download,
+  Loader2,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Moon,
+  Phone,
+  Plus,
+  RefreshCw,
+  Save,
+  Search,
+  Sparkles,
+  Trash2,
+  Users,
+  X,
 } from 'lucide-react';
-import { useActivities } from '../../../hooks/useDatabase';
-import { useAuth } from '../../../contexts/AuthContext';
-import type { Activity, Lead } from '../../../types';
-import { api, downloadFile } from '../../../lib/api';
-import { leadsDB } from '../../../lib/db';
-import { toast } from '../../../lib/toast';
-import { clientLogger } from '../../../lib/clientLogger';
-import type { PaletteIntent } from '../../../lib/paletteIntent';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { Button } from '../../../components/ui/Button';
-import { SoundFX } from '../../../lib/soundEffects';
 import type React from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '../../../components/ui/Button';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useActivities } from '../../../hooks/useDatabase';
+import { api, downloadFile } from '../../../lib/api';
+import { clientLogger } from '../../../lib/clientLogger';
+import { leadsDB } from '../../../lib/db';
+import type { PaletteIntent } from '../../../lib/paletteIntent';
+import { SoundFX } from '../../../lib/soundEffects';
+import { toast } from '../../../lib/toast';
+import type { Activity, Lead } from '../../../types';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
   ligação: <Phone className="w-4 h-4" />,

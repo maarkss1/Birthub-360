@@ -1,6 +1,6 @@
-import { logger } from '../../../lib/logger';
 import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
-import { withProviderCache, buildProviderCacheKey } from './providerCache.js';
+import { logger } from '../../../lib/logger';
+import { buildProviderCacheKey, withProviderCache } from './providerCache.js';
 
 /**
  * YouTube oEmbed (endpoint público oficial, sem chave de API) — devolve metadados de UM vídeo já

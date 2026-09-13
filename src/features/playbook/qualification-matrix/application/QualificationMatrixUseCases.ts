@@ -1,12 +1,12 @@
+import { BaseUseCases } from '../../../../shared/application/BaseUseCases';
+import {
+  type QualificationMatrixItemInput,
+  qualificationMatrixItemSchema,
+} from '../../playbook.schema';
 import type {
   QualificationMatrixItem,
   QualificationMatrixItemRepository,
 } from '../domain/QualificationMatrixItem';
-import {
-  qualificationMatrixItemSchema,
-  type QualificationMatrixItemInput,
-} from '../../playbook.schema';
-import { BaseUseCases } from '../../../../shared/application/BaseUseCases';
 
 export class QualificationMatrixUseCases extends BaseUseCases<
   QualificationMatrixItem,

@@ -1,21 +1,18 @@
 // Re-export domain enum types from the single source of truth (zod.ts)
 // This ensures frontend types stay in sync with backend validation schemas.
 export type {
-  CompanyStatus,
-  LeadStatus,
-  ActivityType,
-  ActivityStatus,
-  LeadTemperature,
-  ContactStatus,
-} from '../lib/zod';
-
-export type {
-  COMPANY_STATUS,
-  LEAD_STATUS,
-  ACTIVITY_TYPE,
   ACTIVITY_STATUS,
-  LEAD_TEMPERATURE,
+  ACTIVITY_TYPE,
+  ActivityStatus,
+  ActivityType,
+  COMPANY_STATUS,
   CONTACT_STATUS,
+  CompanyStatus,
+  ContactStatus,
+  LEAD_STATUS,
+  LEAD_TEMPERATURE,
+  LeadStatus,
+  LeadTemperature,
 } from '../lib/zod';
 // Arrays das etapas de cada funil (não tipos) — usados pelos dois Kanbans para montar as colunas.
 

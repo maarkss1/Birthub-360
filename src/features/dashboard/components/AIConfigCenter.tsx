@@ -1,15 +1,15 @@
+import { AlertTriangle, Check, Cpu, Loader2, Save } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { Cpu, Loader2, Save, Check, AlertTriangle } from 'lucide-react';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/Card';
 import { api } from '../../../lib/api';
 
 /** Perfis realmente disponíveis no runtime atual. Os values são aliases lógicos do gateway. */

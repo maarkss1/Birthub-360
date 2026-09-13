@@ -1,24 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
 import {
-  X,
-  Download,
-  Search,
-  Loader2,
-  CheckSquare,
-  Square,
-  Building2,
-  User,
-  Phone,
   AlertCircle,
+  Building2,
+  CheckSquare,
+  Download,
+  Loader2,
+  Phone,
   RefreshCw,
+  Search,
+  Square,
+  User,
+  X,
 } from 'lucide-react';
-import {
-  bitrixApi,
-  type BitrixConnectionItem,
-  type BitrixLeadItem,
-  type BitrixDealItem,
-} from '../../integrations/bitrix/bitrix.api';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../../../lib/toast';
+import {
+  type BitrixConnectionItem,
+  type BitrixDealItem,
+  type BitrixLeadItem,
+  bitrixApi,
+} from '../../integrations/bitrix/bitrix.api';
 
 interface BitrixImportModalProps {
   isOpen: boolean;

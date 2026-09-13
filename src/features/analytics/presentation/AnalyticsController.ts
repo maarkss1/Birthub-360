@@ -1,6 +1,6 @@
-import type { Request, Response, NextFunction } from 'express';
-import { type AnalyticsUseCases, buildCohortCsv } from '../application/AnalyticsUseCases';
+import type { NextFunction, Request, Response } from 'express';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { type AnalyticsUseCases, buildCohortCsv } from '../application/AnalyticsUseCases';
 
 /** Limites do parâmetro `months` do dashboard. */
 const MIN_MONTHS = 3;

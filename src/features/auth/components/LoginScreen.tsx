@@ -1,33 +1,33 @@
 /* eslint-disable jsx-a11y/no-autofocus -- campo revelado por ação do usuário, ver comentário no local de uso */
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import {
-  Loader2,
-  AlertCircle,
-  ArrowRight,
-  Mail,
-  Building2,
-  ListChecks,
-  Sparkles,
-  LayoutGrid,
-  Clock,
-  CalendarDays,
-  Sun,
-  Moon,
-  type LucideIcon,
-} from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
+
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { motion, useReducedMotion } from 'framer-motion';
+import {
+  AlertCircle,
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  Clock,
+  LayoutGrid,
+  ListChecks,
+  Loader2,
+  type LucideIcon,
+  Mail,
+  Moon,
+  Sparkles,
+  Sun,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
+import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { useAuth } from '../../../contexts/AuthContext';
-
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { authClient } from '../../../lib/auth-client';
-import { isAuthorizedLoginEmail } from '../../../config/access-policy';
-import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
+import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic } from '../../../lib/motion';
 import { SoundFX } from '../../../lib/soundEffects';
-import { fadeInUp, SPRING_SOFT, EASE_PREMIUM, useMagnetic } from '../../../lib/motion';
 
 const FEATURES = [
   {

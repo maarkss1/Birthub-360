@@ -4,24 +4,25 @@
 // apesar do tamanho: era um if-chain reto, não lógica emaranhada). Decomposto em
 // studio/schema.ts (contratos), studio/shared.ts (helpers de invocação de modelo compartilhados)
 // e studio/generators/*.ts (um gerador por "kind"). Este arquivo agora só orquestra.
-import type { StudioGenerationRequest } from './studio/schema.js';
-import { generateEmail } from './studio/generators/email.js';
-import { generateCallScript } from './studio/generators/callScript.js';
-import { generateMessage } from './studio/generators/message.js';
-import { generateOcrExtract } from './studio/generators/ocrExtract.js';
-import { generateB2bMatrix } from './studio/generators/b2bMatrix.js';
-import { generateTraining } from './studio/generators/training.js';
-import { generateMethodology } from './studio/generators/methodology.js';
-import { generateScript } from './studio/generators/script.js';
-import { generateAutomation } from './studio/generators/automation.js';
+
 import { generateAssistant } from './studio/generators/assistant.js';
+import { generateAutomation } from './studio/generators/automation.js';
+import { generateB2bMatrix } from './studio/generators/b2bMatrix.js';
+import { generateCallScript } from './studio/generators/callScript.js';
+import { generateEmail } from './studio/generators/email.js';
+import { generateMessage } from './studio/generators/message.js';
+import { generateMethodology } from './studio/generators/methodology.js';
+import { generateOcrExtract } from './studio/generators/ocrExtract.js';
 import { generateRoleplay, generateRoleplayEvaluation } from './studio/generators/roleplay.js';
+import { generateScript } from './studio/generators/script.js';
 import { generateSuperagent } from './studio/generators/superagent.js';
+import { generateTraining } from './studio/generators/training.js';
+import type { StudioGenerationRequest } from './studio/schema.js';
 
 export {
-  studioGenerationSchema,
   assistantRequestSchema,
   type StudioGenerationRequest,
+  studioGenerationSchema,
 } from './studio/schema.js';
 
 export class StudioService {

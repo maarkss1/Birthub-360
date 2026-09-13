@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Proveniência ponta a ponta do RAG (Onda 7): toda resposta desta ferramenta precisa citar o
 // documento de origem de cada trecho, nunca apresentar o texto como se fosse conhecimento do

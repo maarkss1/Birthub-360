@@ -1,35 +1,35 @@
-import { useState, type ReactNode } from 'react';
 import {
-  ShieldAlert,
-  Copy,
-  KeyRound,
+  Activity,
   AlertTriangle,
   type CheckCircle2,
   Clock3,
+  Copy,
   Eye,
+  KeyRound,
   Pencil,
   PlugZap,
+  ShieldAlert,
 } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
+import { type ReactNode, useState } from 'react';
 import { IconWrench } from '../../../components/icons';
-import { BitrixImportPanel } from './BitrixImportPanel';
-import { BitrixSyncRulesPanel } from './BitrixSyncRulesPanel';
-import { BitrixExtractionPanel } from './BitrixExtractionPanel';
-import { WhatsAppWebPanel } from '../whatsapp/components/WhatsAppWebPanel';
-import { useWhatsAppIntegration } from '../../../hooks/useWhatsAppIntegration';
-import { useGoogleIntegration } from '../../../hooks/useGoogleIntegration';
-import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
+import { Card } from '../../../components/ui/Card';
+import { useAuth } from '../../../contexts/AuthContext';
 import { use3CXIntegration } from '../../../hooks/use3CXIntegration';
+import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
+import { useGoogleIntegration } from '../../../hooks/useGoogleIntegration';
+import { useWhatsAppIntegration } from '../../../hooks/useWhatsAppIntegration';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { SoundFX } from '../../../lib/soundEffects';
 import { VoiceHubConnectionPanel } from '../birth-voice/components/VoiceHubConnectionPanel';
+import { OmieConnectionPanel } from '../omie/components/OmieConnectionPanel';
 import { SlackConnectionPanel } from '../slack/components/SlackConnectionPanel';
 import { StripeConnectionPanel } from '../stripe/components/StripeConnectionPanel';
-import { OmieConnectionPanel } from '../omie/components/OmieConnectionPanel';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { WhatsAppWebPanel } from '../whatsapp/components/WhatsAppWebPanel';
+import { BitrixExtractionPanel } from './BitrixExtractionPanel';
+import { BitrixImportPanel } from './BitrixImportPanel';
+import { BitrixSyncRulesPanel } from './BitrixSyncRulesPanel';
 import { IntegrationStatusBadge } from './IntegrationStatusBadge';
 import { WebhookMonitor } from './WebhookMonitor';
-import { Activity } from 'lucide-react';
-import { SoundFX } from '../../../lib/soundEffects';
 
 type IntegrationCapabilityStatus = 'connected' | 'read' | 'write' | 'stub' | 'error' | 'pending';
 

@@ -1,11 +1,11 @@
-import type { Request, Response, NextFunction } from 'express';
-import { auth } from '../../lib/auth.js';
-import { logger } from '../../lib/logger.js';
 import { fromNodeHeaders } from 'better-auth/node';
+import type { NextFunction, Request, Response } from 'express';
 import { isAuthorizedLoginEmail } from '../../config/access-policy.js';
-import type { getTenantPrisma } from '../../lib/tenant-prisma.js';
 import { requestContext } from '../../lib/async-context.js';
 import { UNVERIFIED_ROLE } from '../../lib/auth/authorization.js';
+import { auth } from '../../lib/auth.js';
+import { logger } from '../../lib/logger.js';
+import type { getTenantPrisma } from '../../lib/tenant-prisma.js';
 
 export interface AuthUser {
   id: string;

@@ -1,5 +1,5 @@
 import { Card } from '../../../components/ui/Card';
-import { formatCurrency, type FunnelStageConversion } from '../commercialIntelligence.api';
+import { type FunnelStageConversion, formatCurrency } from '../commercialIntelligence.api';
 
 interface PipelineByStageCardProps {
   funnel: FunnelStageConversion[];

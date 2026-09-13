@@ -20,8 +20,8 @@ vi.mock('../studio/generators/assistant.js', () => ({ generateAssistant: () => '
 vi.mock('../studio/generators/roleplay.js', () => ({ generateRoleplay: () => 'roleplay' }));
 vi.mock('../studio/generators/superagent.js', () => ({ generateSuperagent: () => 'superagent' }));
 
-import { studioService } from '../studio.service.js';
 import type { StudioGenerationRequest } from '../studio.service.js';
+import { studioService } from '../studio.service.js';
 
 const KINDS: StudioGenerationRequest['kind'][] = [
   'email',

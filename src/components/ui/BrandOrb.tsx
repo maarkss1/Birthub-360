@@ -1,7 +1,7 @@
-import { useRef, type ComponentRef } from 'react';
+import { Float, MeshDistortMaterial, Sparkles, Sphere } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { Float, Sparkles, Sphere, MeshDistortMaterial } from '@react-three/drei';
 import { useReducedMotion } from 'framer-motion';
+import { type ComponentRef, useRef } from 'react';
 import { BRAND } from '../../config/brand';
 
 function OrbCore() {

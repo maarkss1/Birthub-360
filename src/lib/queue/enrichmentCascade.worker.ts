@@ -1,13 +1,13 @@
-import { Queue, Worker, type Job } from 'bullmq';
-import { connection, queuesEnabled } from './redis.js';
-import { logger } from '../logger.js';
+import { type Job, Queue, Worker } from 'bullmq';
 import {
-  runEnrichmentCascade,
   type CascadeEnrichmentOptions,
+  runEnrichmentCascade,
 } from '../../features/prospecting/services/enrichmentCascade.service.js';
 import { requestContext } from '../async-context.js';
-import { registerQueueForMetrics, recordQueueJobCompleted } from './metrics.js';
-import { recordDeadLetter, isFinalAttempt } from './deadLetter.js';
+import { logger } from '../logger.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
+import { connection, queuesEnabled } from './redis.js';
 
 export const ENRICHMENT_CASCADE_QUEUE_NAME = 'enrichment-cascade-queue';
 

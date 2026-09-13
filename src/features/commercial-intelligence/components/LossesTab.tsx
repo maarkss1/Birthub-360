@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
 import { EmptyState } from '../../../components/ui/EmptyState';
-import { KpiTile } from './KpiTile';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import {
+  type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
-  type CommercialFilter,
   type LossAnalysis,
 } from '../commercialIntelligence.api';
+import { KpiTile } from './KpiTile';
 
 export function LossesTab({ filter }: { filter: CommercialFilter }) {
   const [data, setData] = useState<LossAnalysis | null>(null);

@@ -1,19 +1,20 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- região rolável focável por teclado */
-import { useEffect, useState } from 'react';
+
 import { AlertTriangle, CalendarClock } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
+import { useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { KpiTile } from './KpiTile';
-import { MetricInfo } from './MetricInfo';
-import type { DrillDownQuery } from './DealDrillDownDrawer';
 import {
-  commercialIntelligenceApi,
-  formatCurrency,
   type CloseDateBreakdown,
   type CloseDateIntelligenceReport,
   type CommercialFilter,
+  commercialIntelligenceApi,
+  formatCurrency,
 } from '../commercialIntelligence.api';
+import type { DrillDownQuery } from './DealDrillDownDrawer';
+import { KpiTile } from './KpiTile';
+import { MetricInfo } from './MetricInfo';
 
 function formatDate(iso: string | null): string {
   if (!iso) return '—';

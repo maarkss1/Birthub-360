@@ -1,8 +1,8 @@
 import { logger } from '../../../../lib/logger.js';
 import type { DailyPlanItemOrigin } from '../../../../shared/contracts/dailyPlan.contract.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
-import { getBitrixUsers } from './deals.js';
 import { parseDate, resolvePlanConnection, toPlanDate, toPlanTime } from './dailyPlan.service.js';
+import { getBitrixUsers } from './deals.js';
 
 /**
  * Histórico real de comentários do Bitrix24 para um item do Plano Diário — extraído de

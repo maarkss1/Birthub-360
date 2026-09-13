@@ -1,14 +1,14 @@
+import { FileEdit, HelpCircle, MessageSquare, Mic, Phone, RotateCcw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Mic, Phone, MessageSquare, FileEdit, HelpCircle, RotateCcw } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { EmptyState } from '../../../components/ui/EmptyState';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
+import { EmptyState } from '../../../components/ui/EmptyState';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import {
-  copilotoIaApi,
   type CopilotoConversationDTO,
   type CopilotoConversationStatus,
+  copilotoIaApi,
 } from '../copilotoIa.api';
 import { ConversationDetailDrawer } from './ConversationDetailDrawer';
 

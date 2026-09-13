@@ -1,5 +1,5 @@
 import type { StudioGenerationRequest } from '../schema.js';
-import { SYSTEM_RULES, invokeText, stripCodeFence } from '../shared.js';
+import { invokeText, SYSTEM_RULES, stripCodeFence } from '../shared.js';
 
 function buildAutomationManifest(
   request: Extract<StudioGenerationRequest, { kind: 'automation' }>,

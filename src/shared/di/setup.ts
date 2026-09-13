@@ -1,17 +1,9 @@
-import { container } from './container.js';
-import { InMemoryEventBus } from '../infra/events/InMemoryEventBus.js';
-
-// Repositories
-import { PrismaNoteRepository } from '../../features/notes/infra/PrismaNoteRepository';
+import { ActivityUseCases } from '../../features/activities/application/ActivityUseCases';
 import { PrismaActivityRepository } from '../../features/activities/infra/PrismaActivityRepository';
-import { PrismaContactRepository } from '../../features/contacts/infra/PrismaContactRepository';
-import { PrismaCompanyRepository } from '../../features/companies/infra/PrismaCompanyRepository';
-import { PrismaLeadRepository } from '../../features/crm/infra/PrismaLeadRepository';
-import { PrismaAutomationRepository } from '../../features/automations/infra/PrismaAutomationRepository';
+import { ActivityController } from '../../features/activities/presentation/ActivityController';
+import { AnalyticsUseCases } from '../../features/analytics/application/AnalyticsUseCases';
 import { PrismaAnalyticsRepository } from '../../features/analytics/infra/PrismaAnalyticsRepository';
-import { PrismaCommercialIntelligenceRepository } from '../../features/commercial-intelligence/infra/PrismaCommercialIntelligenceRepository';
-import { CommercialIntelligenceAiService } from '../../features/commercial-intelligence/infra/CommercialIntelligenceAiService';
-import { currentPeriod } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases.js';
+import { AnalyticsController } from '../../features/analytics/presentation/AnalyticsController';
 // Onda 43 (Agente 13, Célula Comercial): registrados aqui — não importados diretamente por
 // src/features/intelligence/** — porque `no-cross-feature-imports` (dependency-cruiser) proíbe uma
 // feature de importar internals de outra. Este é o composition root (src/shared/), o único lugar
@@ -19,72 +11,77 @@ import { currentPeriod } from '../../features/commercial-intelligence/applicatio
 // com um tipo estrutural local (mesmo padrão já usado por commercialIntelligence.routes.ts para
 // `CommercialIntelligenceController`), nunca via import direto do outro domínio.
 import { ChurnPredictionService } from '../../features/analytics/services/churn-prediction.service';
+import { AutomationUseCases } from '../../features/automations/application/AutomationUseCases';
+import { PrismaAutomationRepository } from '../../features/automations/infra/PrismaAutomationRepository';
+import { AutomationController } from '../../features/automations/presentation/AutomationController';
+import { UsageUseCases } from '../../features/billing/application/UsageUseCases';
+import { PrismaUsageRepository } from '../../features/billing/infra/PrismaUsageRepository';
+import { UsageController } from '../../features/billing/presentation/UsageController';
+import { BugReportUseCases } from '../../features/bug-reports/application/BugReportUseCases';
+import { PrismaBugReportRepository } from '../../features/bug-reports/infra/PrismaBugReportRepository';
+import { BugReportController } from '../../features/bug-reports/presentation/BugReportController';
 // ACH-17-02 (onda-43, handoff 13→17): motor real por trás do Agente Contratos & Assinatura da
 // Célula Comercial (src/features/intelligence/agents/contractSignature.agent.ts) — mesmo motivo do
 // comentário acima: `intelligence/**` não pode importar `cadence/**` diretamente
 // (no-cross-feature-imports), então a rota resolve este repositório via container com um tipo
 // estrutural local (mesmo padrão de `ChurnPredictionService`/`CommercialIntelligenceAiService`).
 import { prismaSignatureRequestRepository } from '../../features/cadence/infra/PrismaSignatureRequestRepository.js';
-import { PrismaForecastSnapshotStore } from '../../features/commercial-intelligence/infra/PrismaForecastSnapshotStore';
-import { PrismaCrm360Repository } from '../../features/crm360/infra/PrismaCrm360Repository';
-import { PrismaQualificationMatrixRepository } from '../../features/playbook/qualification-matrix/infra/PrismaQualificationMatrixRepository';
-import { PrismaObjectionMatrixRepository } from '../../features/playbook/objection-matrix/infra/PrismaObjectionMatrixRepository';
-import { PrismaBugReportRepository } from '../../features/bug-reports/infra/PrismaBugReportRepository';
-import { PrismaUsageRepository } from '../../features/billing/infra/PrismaUsageRepository';
-import { PrismaFeatureFlagRepository } from '../../features/feature-flags/infra/PrismaFeatureFlagRepository';
-import { PrismaCopilotoIaRepository } from '../../features/copiloto-ia/infra/PrismaCopilotoIaRepository';
-import { CopilotoVoiceIngestionAdapter } from '../../features/copiloto-ia/infra/CopilotoVoiceIngestionAdapter';
-import { BitrixLeadWritebackAdapter } from '../../features/integrations/bitrix/infra/BitrixLeadWritebackAdapter';
 import { MeetingSynthesisService } from '../../features/chatbook/services/meeting-synthesis.service';
+import { CommercialIntelligenceUseCases } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases';
+import { currentPeriod } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases.js';
+import { CommercialIntelligenceAiService } from '../../features/commercial-intelligence/infra/CommercialIntelligenceAiService';
+import { PrismaCommercialIntelligenceRepository } from '../../features/commercial-intelligence/infra/PrismaCommercialIntelligenceRepository';
+import { PrismaForecastSnapshotStore } from '../../features/commercial-intelligence/infra/PrismaForecastSnapshotStore';
+import { CommercialIntelligenceController } from '../../features/commercial-intelligence/presentation/CommercialIntelligenceController';
+import { CompanyUseCases } from '../../features/companies/application/CompanyUseCases';
+import { PrismaCompanyRepository } from '../../features/companies/infra/PrismaCompanyRepository';
+import { CompanyController } from '../../features/companies/presentation/CompanyController';
+import { ContactUseCases } from '../../features/contacts/application/ContactUseCases';
+import { PrismaContactRepository } from '../../features/contacts/infra/PrismaContactRepository';
+import { ContactController } from '../../features/contacts/presentation/ContactController';
+import { CopilotoBitrixWritebackUseCases } from '../../features/copiloto-ia/application/CopilotoBitrixWritebackUseCases';
+import { CopilotoIaUseCases } from '../../features/copiloto-ia/application/CopilotoIaUseCases';
+import { CopilotoVoiceIngestionAdapter } from '../../features/copiloto-ia/infra/CopilotoVoiceIngestionAdapter';
+import { PrismaCopilotoIaRepository } from '../../features/copiloto-ia/infra/PrismaCopilotoIaRepository';
+import { CopilotoIaController } from '../../features/copiloto-ia/presentation/CopilotoIaController';
+import { LeadUseCases } from '../../features/crm/application/LeadUseCases';
+import { PrismaLeadRepository } from '../../features/crm/infra/PrismaLeadRepository';
+import { LeadController } from '../../features/crm/presentation/LeadController';
+import { Crm360UseCases } from '../../features/crm360/application/Crm360UseCases';
+import { PrismaCrm360Repository } from '../../features/crm360/infra/PrismaCrm360Repository';
+import { Crm360Controller } from '../../features/crm360/presentation/Crm360Controller';
+import { FeatureFlagsUseCases } from '../../features/feature-flags/application/FeatureFlagsUseCases';
+import { PrismaFeatureFlagRepository } from '../../features/feature-flags/infra/PrismaFeatureFlagRepository';
+import { FeatureFlagsController } from '../../features/feature-flags/presentation/FeatureFlagsController';
+import { BitrixLeadWritebackAdapter } from '../../features/integrations/bitrix/infra/BitrixLeadWritebackAdapter';
+import { testBitrixConnection } from '../../features/integrations/bitrix/service/connections.js';
 // Meeting Hub (Google Meet no agendamento público) — mesmo motivo do comentário da Onda 43 acima:
 // `src/features/calendar/routes/booking.routes.ts` não pode importar
 // `integrations/google/google.service.ts` diretamente (no-cross-feature-imports). Registrado aqui
 // e resolvido via `container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService')` com
 // o tipo estrutural local já usado por `agent.routes.ts`.
 import { createCalendarEvent } from '../../features/integrations/google/google.service.js';
+import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
+import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
 // Agent Runtime Genérico (PROMPT 4) — mesmo motivo do comentário da Onda 43 acima:
 // `src/features/job-roles/**` (dono do CapabilityAuthorizationService/AgentRuntime) não pode
 // importar `knowledge`/`intelligence/agents`/`integrations/bitrix` diretamente. Registrados aqui e
 // resolvidos via `container.resolve<T>(name)` em `toolExecutors.ts`, com tipos estruturais locais.
 import { searchService } from '../../features/knowledge/search.service.js';
-import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
-import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
-import { testBitrixConnection } from '../../features/integrations/bitrix/service/connections.js';
-
 // Use Cases
 import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
-import { ActivityUseCases } from '../../features/activities/application/ActivityUseCases';
-import { ContactUseCases } from '../../features/contacts/application/ContactUseCases';
-import { CompanyUseCases } from '../../features/companies/application/CompanyUseCases';
-import { LeadUseCases } from '../../features/crm/application/LeadUseCases';
-import { AutomationUseCases } from '../../features/automations/application/AutomationUseCases';
-import { AnalyticsUseCases } from '../../features/analytics/application/AnalyticsUseCases';
-import { CommercialIntelligenceUseCases } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases';
-import { Crm360UseCases } from '../../features/crm360/application/Crm360UseCases';
-import { QualificationMatrixUseCases } from '../../features/playbook/qualification-matrix/application/QualificationMatrixUseCases';
-import { ObjectionMatrixUseCases } from '../../features/playbook/objection-matrix/application/ObjectionMatrixUseCases';
-import { BugReportUseCases } from '../../features/bug-reports/application/BugReportUseCases';
-import { UsageUseCases } from '../../features/billing/application/UsageUseCases';
-import { FeatureFlagsUseCases } from '../../features/feature-flags/application/FeatureFlagsUseCases';
-import { CopilotoIaUseCases } from '../../features/copiloto-ia/application/CopilotoIaUseCases';
-import { CopilotoBitrixWritebackUseCases } from '../../features/copiloto-ia/application/CopilotoBitrixWritebackUseCases';
-
+// Repositories
+import { PrismaNoteRepository } from '../../features/notes/infra/PrismaNoteRepository';
 // Controllers
 import { NoteController } from '../../features/notes/presentation/NoteController';
-import { ActivityController } from '../../features/activities/presentation/ActivityController';
-import { ContactController } from '../../features/contacts/presentation/ContactController';
-import { CompanyController } from '../../features/companies/presentation/CompanyController';
-import { LeadController } from '../../features/crm/presentation/LeadController';
-import { AutomationController } from '../../features/automations/presentation/AutomationController';
-import { AnalyticsController } from '../../features/analytics/presentation/AnalyticsController';
-import { CommercialIntelligenceController } from '../../features/commercial-intelligence/presentation/CommercialIntelligenceController';
-import { Crm360Controller } from '../../features/crm360/presentation/Crm360Controller';
-import { QualificationMatrixController } from '../../features/playbook/qualification-matrix/presentation/QualificationMatrixController';
+import { ObjectionMatrixUseCases } from '../../features/playbook/objection-matrix/application/ObjectionMatrixUseCases';
+import { PrismaObjectionMatrixRepository } from '../../features/playbook/objection-matrix/infra/PrismaObjectionMatrixRepository';
 import { ObjectionMatrixController } from '../../features/playbook/objection-matrix/presentation/ObjectionMatrixController';
-import { BugReportController } from '../../features/bug-reports/presentation/BugReportController';
-import { UsageController } from '../../features/billing/presentation/UsageController';
-import { FeatureFlagsController } from '../../features/feature-flags/presentation/FeatureFlagsController';
-import { CopilotoIaController } from '../../features/copiloto-ia/presentation/CopilotoIaController';
+import { QualificationMatrixUseCases } from '../../features/playbook/qualification-matrix/application/QualificationMatrixUseCases';
+import { PrismaQualificationMatrixRepository } from '../../features/playbook/qualification-matrix/infra/PrismaQualificationMatrixRepository';
+import { QualificationMatrixController } from '../../features/playbook/qualification-matrix/presentation/QualificationMatrixController';
+import { InMemoryEventBus } from '../infra/events/InMemoryEventBus.js';
+import { container } from './container.js';
 
 export function setupDI() {
   // 1. Shared

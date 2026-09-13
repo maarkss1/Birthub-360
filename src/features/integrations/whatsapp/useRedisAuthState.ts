@@ -1,13 +1,13 @@
 import {
-  initAuthCreds,
-  BufferJSON,
-  type AuthenticationState,
   type AuthenticationCreds,
+  type AuthenticationState,
+  BufferJSON,
+  initAuthCreds,
   type SignalDataSet,
   type SignalDataTypeMap,
 } from '@whiskeysockets/baileys';
 import type { Redis } from 'ioredis';
-import { encryptField, decryptField } from '../../../lib/crypto/secretFields.js';
+import { decryptField, encryptField } from '../../../lib/crypto/secretFields.js';
 
 /**
  * Adaptador de estado de autenticação do Baileys (WhatsApp) para o Redis.

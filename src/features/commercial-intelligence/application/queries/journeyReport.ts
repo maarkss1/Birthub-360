@@ -32,10 +32,10 @@ import type {
 } from '../../domain/JourneyIntelligence';
 import { FORECAST_RULES } from '../forecastEngine';
 import { isDealOpen } from '../pipelineEligibility';
-import { daysBetween, median, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
 import { loadScoredDeals, type ScoredDeal, type StageHistoryRow } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
+import { daysBetween, median, roundMoney } from '../shared/mathUtils';
+import { monthRange } from '../shared/period';
 
 const RECENT_LIMIT = 50;
 

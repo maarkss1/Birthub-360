@@ -1,17 +1,17 @@
-import express, { Router, type Request, type Response } from 'express';
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import express, { type Request, type Response, Router } from 'express';
 import { env } from '../../../config/env.js';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
 import { requestContext } from '../../../lib/async-context.js';
+import { contactEmailIndex } from '../../../lib/crypto/piiIndex.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import {
-  isGenuineLeadReply,
   handleEmailReply,
   type InboundEmailReply,
+  isGenuineLeadReply,
 } from '../../../shared/domain/replyTracking.js';
 import { emailIntentClassifier } from '../../cadence/infra/emailIntentClassifier.js';
 import { prismaConversationSignalPort } from '../../cadence/infra/PrismaConversationSignalPort.js';
-import { contactEmailIndex } from '../../../lib/crypto/piiIndex.js';
 
 /**
  * CYC-003 (onda 26) — transporte de ENTRADA de e-mail, hoje um stub: nenhum provedor real

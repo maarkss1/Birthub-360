@@ -1,5 +1,5 @@
 import { Card } from '../../../components/ui/Card';
-import { formatPercent, type FunnelStageConversion } from '../commercialIntelligence.api';
+import { type FunnelStageConversion, formatPercent } from '../commercialIntelligence.api';
 
 interface FunnelConversionCardProps {
   funnel: FunnelStageConversion[];

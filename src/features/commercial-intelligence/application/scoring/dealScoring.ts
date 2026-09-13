@@ -12,7 +12,7 @@ import type {
   DealRow,
   LeadFieldChangeRow,
 } from '../../domain/CommercialIntelligence';
-import { scoreOpportunity, type ForecastResult } from '../forecastEngine';
+import { type ForecastResult, scoreOpportunity } from '../forecastEngine';
 import { agingInStageDays } from '../pipelineEligibility';
 import { daysBetween } from '../shared/mathUtils';
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const invokeStructuredMock = vi.fn();
 vi.mock('../../shared.js', () => ({
@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { generateMethodology } from '../methodology.js';
 import { methodologyResultSchema } from '../../schema.js';
+import { generateMethodology } from '../methodology.js';
 
 function buildRequest(framework: 'spin' | 'meddpicc' | 'aida' | 'snap' | 'challenger') {
   return {

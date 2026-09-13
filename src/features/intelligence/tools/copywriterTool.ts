@@ -1,8 +1,8 @@
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
 import { getTenantId } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 
 const copywriterSchema = z.object({
   leadId: z.string().describe('O ID do Lead (obrigatório para salvar a nota internamente)'),

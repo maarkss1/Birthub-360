@@ -1,8 +1,8 @@
-import { Worker } from 'bullmq';
-import { connection } from './redis.js';
-import { logger } from '../logger.js';
-import { getAiModel, LOCAL_MODEL } from '../ai/gateway.js';
 import { HumanMessage } from '@langchain/core/messages';
+import { Worker } from 'bullmq';
+import { getAiModel, LOCAL_MODEL } from '../ai/gateway.js';
+import { logger } from '../logger.js';
+import { connection } from './redis.js';
 
 export const dailyReportWorker = new Worker(
   'daily-report',

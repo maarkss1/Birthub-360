@@ -13,19 +13,19 @@ import type {
   ForecastConfidence,
   PreviousPeriodComparison,
 } from '../../domain/CommercialIntelligence';
-import { checkEligibility, isDealOpen } from '../pipelineEligibility';
-import { shiftMonth, monthLabelPt } from '../executiveCalendar';
 import { classifyCoverageProtection } from '../coverageProtection';
 import {
+  classifyCompleteness,
   DEAL_FIELD_TESTS,
   FORECAST_CONFIDENCE_FIELDS,
-  classifyCompleteness,
   weightedCompletenessScore,
 } from '../dataReadiness';
-import { DAY_MS, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+import { monthLabelPt, shiftMonth } from '../executiveCalendar';
+import { checkEligibility, isDealOpen } from '../pipelineEligibility';
 import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
+import { DAY_MS, roundMoney } from '../shared/mathUtils';
+import { monthRange } from '../shared/period';
 
 /**
  * Forecast Confidence (seção 22) — combina completude dos campos que o `forecastEngine` usa

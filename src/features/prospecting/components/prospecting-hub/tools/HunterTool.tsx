@@ -1,11 +1,11 @@
-import { useState } from 'react';
 import { CheckCircle2, Loader2, Mail, Phone, Search, ShieldCheck, User } from 'lucide-react';
-import { api } from '../../../../../lib/api';
+import { useState } from 'react';
 import { BRAND } from '../../../../../config/brand';
-import { normalizeCompanyDomain } from '../../../utils/domain';
-import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
+import { api } from '../../../../../lib/api';
 import { getTelephoneLink, getWhatsAppLink } from '../../../../../shared/utils/contact-links';
 import type { HunterPersonContact } from '../../../services/hunter.service';
+import { normalizeCompanyDomain } from '../../../utils/domain';
+import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
 import { NotConfiguredBanner } from './NotConfiguredBanner';
 import { getErrorMessage, type PromoteResult } from './shared';
 
