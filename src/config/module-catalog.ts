@@ -43,7 +43,7 @@ export function moduleLabel(key: string): string {
   return MODULE_CATALOG.find((m) => m.key === key)?.label ?? key;
 }
 
-// Atalhos para sistemas EXTERNOS da operação do cliente (portal legado, Bitrix24, webmail...).
+// Atalhos para sistemas EXTERNOS de uso genérico da equipe comercial (Gmail, Google Workspace).
 // Não são telas desta plataforma: cada card abre a URL de um sistema de terceiro em nova aba, e
 // por isso os rótulos descrevem o sistema de destino, não a marca do produto.
 // Deliberadamente FORA do sistema de concessão por usuário acima (ModuleAccessGrant): são
@@ -52,57 +52,22 @@ export function moduleLabel(key: string): string {
 // guarda credencial). `iconKey` é só um identificador — o mapeamento pro componente de ícone
 // (lucide-react) fica no Hub (frontend), nunca aqui, porque este arquivo também é importado pelo
 // backend (ver módulo-access.service.ts) e não deve carregar dependência de UI.
+//
+// Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+// existir"): removidas as 5 entradas que apontavam pra sistemas internos da operação Atlas GR
+// (portal Connect/New Connect, Perfil Securitário, Bitrix24 e webmail da própria Atlas GR —
+// domínios `*.atlasgr.com.br`/`atlasgr.bitrix24.com.br`) — eram atalhos institucionais de uma
+// empresa terceira específica, sem sentido pra qualquer outro tenant da Birth Hub 360. Restam só
+// as duas entradas genéricas (Gmail, Google Workspace), que servem qualquer operação comercial.
 export interface ExternalLinkEntry {
   key: string;
   label: string;
   description: string;
   url: string;
-  iconKey:
-    | 'connect'
-    | 'newConnect'
-    | 'securitario'
-    | 'bitrix24'
-    | 'webmail'
-    | 'gmail'
-    | 'workspace';
+  iconKey: 'gmail' | 'workspace';
 }
 
 export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
-  {
-    key: 'connect',
-    label: 'Connect',
-    description: 'Portal — página principal',
-    url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php',
-    iconKey: 'connect',
-  },
-  {
-    key: 'new-connect',
-    label: 'New Connect',
-    description: 'Novo portal — dashboard',
-    url: 'https://newconnect.atlasgr.com.br/dashboard',
-    iconKey: 'newConnect',
-  },
-  {
-    key: 'perfil-securitario',
-    label: 'Perfil Securitário',
-    description: 'Registros recentes de perfil securitário',
-    url: 'https://perfil-securitario.atlasgr.com.br/report/recentRecords',
-    iconKey: 'securitario',
-  },
-  {
-    key: 'bitrix24',
-    label: 'Bitrix24',
-    description: 'CRM Bitrix24 da operação',
-    url: 'https://atlasgr.bitrix24.com.br/',
-    iconKey: 'bitrix24',
-  },
-  {
-    key: 'webmail',
-    label: 'Webmail',
-    description: 'E-mail corporativo da operação',
-    url: 'https://webmail.atlasgr.com.br/?_task=mail&_mbox=INBOX',
-    iconKey: 'webmail',
-  },
   {
     key: 'gmail',
     label: 'Gmail',

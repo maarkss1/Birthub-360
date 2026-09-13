@@ -137,91 +137,12 @@ export const HubIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> =
       <circle cx="42" cy="8" r="2.6" fill="currentColor" />
     </svg>
   ),
-  connect: (props) => (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-      <polyline points="10 17 15 12 10 7" />
-      <line x1="15" y1="12" x2="3" y2="12" />
-    </svg>
-  ),
-  'new-connect': (props) => (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-  ),
-  securitario: (props) => (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  ),
-  bitrix24: (props) => (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M6 22V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v18" />
-      <path d="M14 9h5a1 1 0 0 1 1 1v12" />
-      <path d="M2 22h20" />
-      <path d="M9 6h1M9 10h1M9 14h1M9 18h1" />
-      <path d="M17 13h1M17 17h1" />
-    </svg>
-  ),
-  webmail: (props) => (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m2 7 10 6 10-6" />
-    </svg>
-  ),
+  // Nota (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+  // existir"): existiam aqui ícones dedicados a 'connect'/'new-connect'/'securitario'/'bitrix24'/
+  // 'webmail' — ilustravam os 5 atalhos de EXTERNAL_LINKS (module-catalog.ts) que apontavam pra
+  // sistemas internos da própria Atlas GR (portal Connect, Perfil Securitário, Bitrix24 e webmail
+  // daquela operação). Removidos junto com as entradas do catálogo que os usavam. Restam só os
+  // ícones dos 2 atalhos genéricos (Gmail, Google Workspace).
   gmail: (props) => (
     <svg
       width="40"
