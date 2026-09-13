@@ -101,21 +101,44 @@ commit.
   (`localhost:5434/prospectordb_test`); confirmado depois que era colisão de containers Docker,
   não drift real — nenhuma ação necessária aqui.
 
-## Bloqueado / precisa de decisão do usuário antes de continuar
+## Decisão do usuário sobre os itens de RevOps (2026-09-13)
 
-- **REVOPS-002 (MRR/ARR real)**: bloqueado — ver reaudite acima. Não há fonte real de receita
-  recorrente no repositório hoje (Stripe/Omie só fazem cobrança avulsa/push de cliente). Construir
-  isso "de verdade" exige decidir primeiro o que conta como "recorrente" e instrumentar um
-  webhook/ledger real do Stripe (ou equivalente) — um projeto de infraestrutura de billing, não
-  uma tarefa de "ligar aos dados que a Onda 5 já trouxe" como o .txt original assumia.
-- **REVOPS-003 (Health Score com dado real)**: parcialmente bloqueado pelo mesmo motivo
-  (`monthlyRecurringRevenue`, `paymentDelaysLast90Days` do input de `ChurnPredictionService`
-  dependem de billing real, que não existe). `platformUsageDropPercentage` PODERIA ser ligado a
-  dado real de uso de IA (`AILog`/`UsageUseCases`, que já existe) sem depender de billing — viável
-  isoladamente se o usuário quiser esse recorte menor. Não existe também nenhum sistema de
-  chamados/reclamações no schema (`openSupportTickets`/`unresolvedComplaints` também ficam sem
-  fonte real).
-- **Pipeline Velocity**: não bloqueado por billing — é computável a partir de
-  `LeadStageHistory`/`closedAt`/`amount`, seguindo a mesma disciplina de Forecast/Commit/Health
-  Score (nunca fabricar um KPI). Não implementado ainda nesta sessão por escopo/tempo — fica para
-  o usuário decidir se entra numa próxima rodada.
+- **REVOPS-002 (MRR/ARR real)**: usuário decidiu **pular, só documentar a lacuna** (opção
+  recomendada). Continua bloqueado — ver reaudite acima: não há fonte real de receita recorrente
+  no repositório hoje (Stripe/Omie só fazem cobrança avulsa/push de cliente). Construir isso "de
+  verdade" exige decidir primeiro o que conta como "recorrente" e instrumentar um webhook/ledger
+  real do Stripe (ou equivalente) — um projeto de infraestrutura de billing, não uma tarefa de
+  "ligar aos dados que a Onda 5 já trouxe" como o .txt original assumia. Não implementado.
+- **REVOPS-003 (Health Score com dado real)**: usuário decidiu **pular inteiramente, só
+  documentar** (mesmo o recorte menor de `platformUsageDropPercentage` via AILog não foi feito).
+  `monthlyRecurringRevenue`/`paymentDelaysLast90Days` continuam sem fonte real (mesmo bloqueio de
+  billing do REVOPS-002); `openSupportTickets`/`unresolvedComplaints` também não têm fonte real
+  (nenhum sistema de chamados no schema). Não implementado.
+- **Pipeline Velocity**: usuário decidiu **construir agora** — feito. `PipelineVelocityStats`
+  novo (`(Oportunidades abertas × Win Rate ÷ 100 × Ticket Médio aberto) ÷ Ciclo de Venda
+  (mediana, dias)`), computado em `performanceReport.ts` a partir de números que `buildPerformance`
+  já calculava (nenhuma query nova), exposto em `PerformanceMetrics`, documentado em
+  `metricsDictionary.ts` e exibido como novo KpiTile em `PerformanceTab.tsx`. `null` quando
+  qualquer uma das 4 entradas não está disponível — mesma disciplina de Forecast/Commit/Health
+  Score. 2 testes novos + 2 fixtures existentes atualizadas.
+
+## Estado final desta sessão
+
+Branch `fix/onda-crm-revops`, 9 commits à frente de `origin/main` (8ae48bd6 no momento em que a
+sessão começou; a branch foi rebaseada uma vez no meio do caminho para incorporar PR #460/#459/
+#462 já mergeados por outras sessões do enxame). Todos os 8 itens de CRM da onda (001, 002, 003,
+004, 005, 008, 010, 011) mais Pipeline Velocity concluídos. REVOPS-002/003 documentados como
+bloqueados por decisão explícita do usuário — não é trabalho pendente por falta de tempo, é escopo
+fechado para esta onda.
+
+Verificação final (rodada de novo depois do último commit): `npx prisma generate` +
+`tsc --noEmit` limpo, `biome lint` limpo em todos os arquivos tocados, `npm run lint:architecture`
+(dependency-cruiser) sem violação nova, `npm run build` (vite + esbuild do server) completo sem
+erro, suíte unitária de crm/contacts/companies/commercial-intelligence/intelligence (~230 testes
+nos arquivos afetados) passando.
+
+**Não fica pronto para merge sozinho** — falta rodar as duas migrations
+(`20260913000000_lead_native_tags`, `20260913000100_notes_cross_entity_and_attachments`) contra
+um Postgres real (sem acesso a um neste ambiente) e rodar a suíte de integração/e2e real, que
+também dependem de banco. Ver protocolo da onda: encaminhado para a Patricia revisar antes de
+qualquer PR — é o que esta sessão está fazendo agora.
