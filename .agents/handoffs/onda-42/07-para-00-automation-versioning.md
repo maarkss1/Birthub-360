@@ -2,9 +2,7 @@
 - Para: Agente 00 (Coordenador) — para rotear ao Agente 01 (Plataforma, Segurança e Dados), dono
   exclusivo de `prisma/schema.prisma`/`prisma/migrations/**`
 - Onda: 42 (dossiê CPI, DEC-14, opção A — "simular antes de ativar" + versionamento de regras)
-- Status: resolvido — migration `20260827210000_onda42_decisoes_schema` criou o model
-  `AutomationVersion` (com RLS) e `PrismaAutomationVersionStore` já está em uso real na
-  composição de `automation-versioning.service.ts` (substituiu `InMemoryAutomationVersionStore`).
+- Status: aberto
 - Prioridade: alto
 
 ## Problema

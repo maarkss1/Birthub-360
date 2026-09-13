@@ -23,7 +23,7 @@ name: Security - Trivy
 
 on:
   pull_request:
-    branches: [main, master]
+    branches: [ main, master ]
   schedule:
     # Toda segunda-feira, 06:00 UTC (03:00 America/Sao_Paulo) — fora do horário comercial, não
     # compete por runner com os jobs de push/PR do ci.yml.
@@ -37,7 +37,7 @@ permissions:
 
 jobs:
   trivy-fs-pr-gate:
-    name: 'Trivy — gate de PR (fs/dependências, HIGH/CRITICAL, bloqueante)'
+    name: "Trivy — gate de PR (fs/dependências, HIGH/CRITICAL, bloqueante)"
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -80,7 +80,7 @@ jobs:
           if-no-files-found: warn
 
   trivy-fs-scan:
-    name: 'Trivy — scan semanal de filesystem/dependências (HIGH/CRITICAL, não bloqueante)'
+    name: "Trivy — scan semanal de filesystem/dependências (HIGH/CRITICAL, não bloqueante)"
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:

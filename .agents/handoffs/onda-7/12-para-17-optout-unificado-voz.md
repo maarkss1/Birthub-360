@@ -31,7 +31,7 @@ próxima ligação de voz).
 - `prisma/schema.prisma` → `CallSuppression` (meu domínio de leitura/escrita; schema é do 01/01A).
 - `src/features/integrations/birth-voice/callSuppression.service.ts` (meu).
 - `Lead.customFields.optOutWhatsApp`, escrito por `src/features/integrations/whatsapp/
-whatsappMessage.service.ts` (06).
+  whatsappMessage.service.ts` (06).
 - `src/features/cadence/**` (seu, novo nesta onda).
 
 ## Alteração necessária
@@ -60,5 +60,4 @@ WhatsApp antes). O que falta é a unificação cross-canal em si, que é justame
 coordenação.
 
 ## Resolução
-
 O model \OptOutRecord\ já foi criado no banco pelo Agente 01A na Onda 10 com a abstração unificada. A lógica que fará as pontes entre os domínios (WhatsApp/Voz/E-mail) para unificar o Opt-out deve ser implementada no escopo do Agente 17.

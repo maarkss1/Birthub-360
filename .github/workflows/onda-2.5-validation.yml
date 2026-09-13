@@ -2,7 +2,7 @@ name: Onda 2.5 Validation
 
 on:
   pull_request:
-    branches: [validation/onda-2.5-base]
+    branches: [ validation/onda-2.5-base ]
 
 permissions:
   contents: read

@@ -17,11 +17,11 @@ feature nova.
 
 ## 2. Especialistas e matriz de propriedade
 
-| Agente                                     | Missão                                                                                                                                                                                                                       | Pastas/arquivos de propriedade                          |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| 09 — Mobile (Capacitor/Android)            | Auditar o build Android/Capacitor quanto a configuração real vs. aspiracional, permissões nativas excessivas, e deep link/navegação mobile quebrada.                                                                         | `android/**`, `capacitor.config.ts`                     |
-| 10 — Infraestrutura, Observabilidade e SRE | Auditar manifests k8s/Helm/ArgoCD quanto a probes de saúde reais, `resources.limits`, e paridade com o `docker-compose.oci.yml`/migration-job já corrigidos na Onda 3 (não retrabalhar isso, só confirmar consistência).     | `k8s/**`, `argocd/**`, `charts/**`, `infrastructure/**` |
-| 11 — Marca e Ativos Institucionais         | Auditar consistência de tokens/ativos de marca entre `identidade-visual/{atlasgr,totaltrac}/` e o que `src/styles/globals.css` (dono: 03) realmente consome — divergência de cor/token é handoff para 03, não edição direta. | `identidade-visual/**`, `documentacao-aplicacao/**`     |
+| Agente | Missão | Pastas/arquivos de propriedade |
+|---|---|---|
+| 09 — Mobile (Capacitor/Android) | Auditar o build Android/Capacitor quanto a configuração real vs. aspiracional, permissões nativas excessivas, e deep link/navegação mobile quebrada. | `android/**`, `capacitor.config.ts` |
+| 10 — Infraestrutura, Observabilidade e SRE | Auditar manifests k8s/Helm/ArgoCD quanto a probes de saúde reais, `resources.limits`, e paridade com o `docker-compose.oci.yml`/migration-job já corrigidos na Onda 3 (não retrabalhar isso, só confirmar consistência). | `k8s/**`, `argocd/**`, `charts/**`, `infrastructure/**` |
+| 11 — Marca e Ativos Institucionais | Auditar consistência de tokens/ativos de marca entre `identidade-visual/{atlasgr,totaltrac}/` e o que `src/styles/globals.css` (dono: 03) realmente consome — divergência de cor/token é handoff para 03, não edição direta. | `identidade-visual/**`, `documentacao-aplicacao/**` |
 
 Nenhuma sobreposição com as Ondas 1-3 (04,05,07,03,08,01,02,06) em execução.
 

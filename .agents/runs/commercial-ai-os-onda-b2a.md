@@ -73,7 +73,6 @@ externo do card (`rounded-2xl`) via `xpath=ancestor::`. Não é uma regressão d
 já era assim antes; só nunca tinha sido testada.
 
 Testes novos em `tests/e2e/crm-kanban.spec.ts` (`describe('Kanban do CRM — Filtros')`):
-
 - `busca por texto filtra os cards visíveis` — dois leads, busca por um, confirma que só ele fica
   visível, "Limpar filtros" reaparece o outro.
 - `reatribuir em lote grava o dono como id; card e filtro mostram o nome resolvido, não o id cru` —
@@ -83,7 +82,6 @@ Testes novos em `tests/e2e/crm-kanban.spec.ts` (`describe('Kanban do CRM — Fil
 
 Resultado real de execução (Chromium, banco de teste isolado, 2 migrations novas do `main`
 aplicadas):
-
 - `npx tsc --noEmit` → limpo.
 - `npm run lint` → exit 0 (1 warning pré-existente, fora dos arquivos desta onda).
 - `npm run format:check` → limpo.
@@ -102,11 +100,11 @@ conflito real, nenhum dos arquivos tocados por esta onda foi alterado por esse o
 
 ## Definition of Done — capabilities tocadas nesta fatia
 
-| #    | Capability                                                              | Estado                                            | Evidência                                                                                 |
-| ---- | ----------------------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| —    | Filtros reais do pipeline (busca + dono), pré-requisito de P0-8         | **VERIFIED**                                      | 2 testes novos, 27/27 E2E passando                                                        |
-| —    | Correção de contrato `Lead.owner` (id vs. nome) na reatribuição em lote | **VERIFIED** (código); dado histórico não migrado | mesmo teste, payload verificado                                                           |
-| P0-8 | Saved Views                                                             | **NOT_STARTED**                                   | Onda B2b — precisa de migration nova (`SavedView`), decisão de escopo já tomada (pessoal) |
+| # | Capability | Estado | Evidência |
+|---|---|---|---|
+| — | Filtros reais do pipeline (busca + dono), pré-requisito de P0-8 | **VERIFIED** | 2 testes novos, 27/27 E2E passando |
+| — | Correção de contrato `Lead.owner` (id vs. nome) na reatribuição em lote | **VERIFIED** (código); dado histórico não migrado | mesmo teste, payload verificado |
+| P0-8 | Saved Views | **NOT_STARTED** | Onda B2b — precisa de migration nova (`SavedView`), decisão de escopo já tomada (pessoal) |
 
 ## Próximo passo
 

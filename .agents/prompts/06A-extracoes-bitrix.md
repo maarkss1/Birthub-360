@@ -54,7 +54,6 @@ Toda operação Bitrix24 acontece no servidor, com autenticação, autorização
 Um usuário de uma organização nunca pode listar, usar, consultar, cancelar, baixar ou analisar via IA dados/conexões/extrações de outra organização.
 
 O histórico de extração contém dado pessoal real (nomes, e-mails, telefones de leads/contatos). Trate como dado pessoal sob LGPD (ver `/AGENTS.md` → "LGPD e dados pessoais"):
-
 - retenção do histórico e dos arquivos gerados deve ter um critério definido (ex.: expurgo após N dias, ou retenção indefinida com justificativa registrada) — não deixe indefinido por omissão;
 - exclusão de uma extração deve remover também o arquivo exportado associado, não só o registro de histórico;
 - exportações nunca incluem webhook, token, API key, segredo de conexão, cookie ou credencial interna.
@@ -166,7 +165,6 @@ Nunca incluir webhook, token, API key, segredo de conexão, cookie ou credenciai
 Persistir em PostgreSQL: organização, usuário, conexão Bitrix, entidades, campos, filtros, status, progresso, quantidade total, quantidade por entidade, erros sanitizados, datas de criação/início/conclusão, cancelamento, informações dos arquivos gerados, correlation id, tentativas/retries quando útil.
 
 ## Schema
-
 Você não altera Prisma diretamente. Crie um handoff para o Agente 01 em `.agents/handoffs/onda-1/06-para-01-schema-extracoes-bitrix.md` contendo: entidades/modelos necessários, campos, índices, relacionamentos, constraints, tenant keys, estratégia de retenção (ver seção 2 — LGPD) e testes esperados.
 
 Somente após a migração do Agente 01, integre o módulo.
@@ -178,11 +176,9 @@ Somente após a migração do Agente 01, integre o módulo.
 Depois da extração, disponibilizar **Analisar com IA**, que pode identificar resumo executivo, negócios parados, gargalos do funil, oportunidades prioritárias, atividades atrasadas, distribuição por responsável e próximas ações recomendadas.
 
 ## Consentimento obrigatório
-
 Antes de enviar qualquer dado para IA: abrir confirmação; informar quais dados serão utilizados, quantidade aproximada e entidade(s); permitir cancelar; registrar consentimento quando arquitetura permitir. Não enviar dados automaticamente. Este é o padrão de referência que o Agente 07 deve replicar em qualquer outro ponto do Hub de IA que toque dado pessoal real.
 
 ## Infraestrutura
-
 Reutilizar `src/lib/ai/**` e demais serviços existentes. O Agente 07 é o dono da infraestrutura de IA — se precisar de alteração, produza handoff (`.agents/handoffs/onda-1/06-para-07-<slug>.md`), não crie gateway paralelo.
 
 Nunca enviar segredo, expor chave no frontend, misturar tenants, ou afirmar análise concluída se o provider falhou.

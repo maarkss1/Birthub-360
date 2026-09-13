@@ -1,7 +1,6 @@
 # Onda 13 — Sprint 01: Segurança, Tenancy e Superfícies Administrativas
 
 ## Identificação
-
 - Sprint: 01
 - Onda: 13
 - SHA de entrada: `26e29b5` (main pós-merge PR #146, Sprint 00/Onda 12)
@@ -11,7 +10,6 @@
 - Agentes: liderança **15 (Segurança Aplicada)**; sequenciais no mesmo slot **01 depois 01A**; apoio **08, 10, 14**; `server.ts`/`package.json` aprovados por **00**.
 
 ## Origem
-
 Pacote `ATLASGR_ROADMAP_FINALIZACAO_SPRINTS` (fornecido pelo usuário), `SPRINT-01-SEGURANCA-TENANCY.md`.
 7 pacotes: SEC-001 a SEC-007.
 
@@ -218,11 +216,11 @@ conferido antes do merge.
 
 ## Achados
 
-| ID               | Severidade         | Dono | Status                     | Evidência                                                                                                                                                                                                  |
-| ---------------- | ------------------ | ---- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SEC-BUG-001      | **Crítico (LGPD)** | 01A  | Corrigido                  | Worker de anonimização automática nunca executava de fato em produção (RLS negava silenciosamente) — ver SEC-007 acima. Commit `a92a0c7`.                                                                  |
-| SEC-001-residual | Médio, aceito      | 15   | Documentado, não corrigido | ADMIN de uma organização com token de operador ainda enxerga jobs de fila de outras organizações no BullBoard — ferramenta não segmenta por tenant. `docs/security/SECURITY_GUIDE.md`.                     |
-| SEC-004-drift    | Baixo              | 15   | Parcialmente corrigido     | `.agents/prompts/15-seguranca-aplicada.md` ainda cita hashes de commit incorretos (`2e30b2f`/`543c5b0`/`8b1bc38`) — não corrigido por regra (`.agents/prompts/**` é edição humana, fora do ciclo de onda). |
+| ID | Severidade | Dono | Status | Evidência |
+|---|---|---|---|---|
+| SEC-BUG-001 | **Crítico (LGPD)** | 01A | Corrigido | Worker de anonimização automática nunca executava de fato em produção (RLS negava silenciosamente) — ver SEC-007 acima. Commit `a92a0c7`. |
+| SEC-001-residual | Médio, aceito | 15 | Documentado, não corrigido | ADMIN de uma organização com token de operador ainda enxerga jobs de fila de outras organizações no BullBoard — ferramenta não segmenta por tenant. `docs/security/SECURITY_GUIDE.md`. |
+| SEC-004-drift | Baixo | 15 | Parcialmente corrigido | `.agents/prompts/15-seguranca-aplicada.md` ainda cita hashes de commit incorretos (`2e30b2f`/`543c5b0`/`8b1bc38`) — não corrigido por regra (`.agents/prompts/**` é edição humana, fora do ciclo de onda). |
 
 ## Decisão
 

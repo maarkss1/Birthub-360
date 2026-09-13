@@ -834,6 +834,9 @@ model Organization {
   threeCXConnections            ThreeCXConnection[]
   voiceHubConnections           VoiceHubConnection[]
   voiceCallLogs                 VoiceCallLog[]
+  slackConnections               SlackConnection[]
+  stripeConnections              StripeConnection[]
+  omieConnections                OmieConnection[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
   crmProducts                   CrmProduct[]
@@ -1269,8 +1272,23 @@ model AccountRecommendation {
   updatedAt             DateTime                    @updatedAt
 
   @@unique([organizationId, companyId, actionType, inputHash])
-  // Unicidade quando preenchida e garantida por indice parcial na migration; indice parcial nao
-  // e representavel na DSL do Prisma e por isso nao aparece como @@unique aqui.
+  // PARTIAL unique index — quando idempotencyKey esta preenchida, a unicidade e garantida por um
+  // indice parcial (WHERE "idempotencyKey" IS NOT NULL) criado em
+  // prisma/migrations/20260818100000_ldr_account_intelligence_foundation/migration.sql, que
+  // escreve o nome "AccountRecommendation_organizationId_companyId_idempotencyKey_unique" (68
+  // bytes). ATENCAO — bug separado descoberto ao documentar este indice: esse nome excede o limite
+  // de identificador do Postgres (NAMEDATALEN-1 = 63 bytes) e o Postgres TRUNCA identificadores
+  // longos silenciosamente, sem erro. O nome real gravado no banco quase certamente NAO e o que a
+  // migration.sql escreve, e sim os primeiros 63 bytes:
+  // "AccountRecommendation_organizationId_companyId_idempotencyKey_u" — confirme com
+  // `select indexname from pg_indexes where tablename = 'AccountRecommendation'` antes de
+  // confiar neste nome para qualquer operacao (o Prisma CLI tambem rejeita `map` acima de 63
+  // bytes, o que confirma o limite). A sintaxe do Prisma schema tambem nao expressa a condicao
+  // WHERE parcial, entao o @@index abaixo e propositalmente NAO unico: ele so documenta/mapeia o
+  // nome (truncado) real do indice para que `prisma migrate dev`/`migrate diff` nao o tratem como
+  // drift nao gerenciado. NAO rode `prisma db push` contra um banco novo sem antes aplicar as
+  // migrations — sem elas, essa constraint de unicidade nao vai existir de forma alguma.
+  @@index([organizationId, companyId, idempotencyKey], map: "AccountRecommendation_organizationId_companyId_idempotencyKey_u")
   @@index([organizationId, companyId, status, generatedAt(sort: Desc)])
   @@index([organizationId, status, priority])
   @@index([snapshotId])
@@ -2690,6 +2708,92 @@ model VoiceHubConnection {
   @@index([organizationId])
 }
 
+/// Conexão do Slack de uma organização — usada para enviar notificações/alertas (ex.: negócio
+/// estagnado, meta batida) para um canal do Slack do time. Mesmo padrão de BitrixConnection/
+/// ThreeCXConnection: não é @unique por organizationId (uma organização pode ter mais de um canal
+/// configurado, ex. um Slack por marca/time comercial). Suporta as duas formas de autenticação do
+/// Slack — Incoming Webhook (mais simples, um canal fixo por URL) OU Bot Token (chat.postMessage,
+/// permite escolher o canal por chamada) — pelo menos uma das duas precisa estar preenchida
+/// (validado em slack.service.ts, não no schema).
+model SlackConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Nome de exibição pra distinguir as conexões na tela — livre, mesmo espírito de
+  /// BitrixConnection.label.
+  label String @default("Slack")
+
+  /// URL do Incoming Webhook do Slack (https://hooks.slack.com/services/...) — URL de
+  /// usuário/tenant, por isso validada com assertSafeExternalUrl/safeFetch (SSRF) em
+  /// slack.service.ts, diferente das chamadas fixas a slack.com/api/chat.postMessage abaixo.
+  /// Cifrada em repouso (AES-256-GCM) de forma transparente pela extensão Prisma em
+  /// src/lib/prisma.ts — ver ENCRYPTED_FIELDS, mesmo tratamento de BitrixConnection.webhookUrl.
+  webhookUrl String? @db.Text
+
+  /// Bot User OAuth Token (xoxb-...) para enviar via chat.postMessage — permite escolher o canal
+  /// de destino por chamada em vez de um único webhook fixo. Cifrado em repouso do mesmo jeito
+  /// que webhookUrl.
+  botToken String? @db.Text
+
+  /// Canal padrão (ex.: "#vendas-alertas") usado quando a chamada não informa outro — só
+  /// relevante junto com botToken (o Incoming Webhook já tem seu próprio canal fixo configurado
+  /// no lado do Slack).
+  defaultChannel String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+/// Conexão com a API do Stripe de uma organização — cobrança/consulta de pagamento
+/// (payment_intents). Mesmo padrão de não ser @unique por organizationId das conexões acima.
+model StripeConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Nome de exibição — livre, mesmo espírito de BitrixConnection.label.
+  label String @default("Stripe")
+
+  /// Chave secreta da API do Stripe (sk_live_.../sk_test_...). Cifrada em repouso (AES-256-GCM)
+  /// de forma transparente pela extensão Prisma em src/lib/prisma.ts — ver ENCRYPTED_FIELDS,
+  /// mesmo tratamento das demais credenciais de integração acima. api.stripe.com é destino FIXO
+  /// do próprio código (não uma URL de usuário) — chamadas usam fetchWithTimeout com allowlist
+  /// (src/lib/http.ts), não o guard de SSRF de URL de tenant.
+  secretKey String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+/// Conexão com a API do Omie (ERP/financeiro brasileiro) de uma organização — sincronização de
+/// clientes (upsert). Mesmo padrão de não ser @unique por organizationId das conexões acima.
+model OmieConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Nome de exibição — livre, mesmo espírito de BitrixConnection.label.
+  label String @default("Omie")
+
+  /// Credenciais de aplicativo do Omie (Cadastros > Empresas > Chave de Integração). Cifradas em
+  /// repouso (AES-256-GCM) de forma transparente pela extensão Prisma em src/lib/prisma.ts — ver
+  /// ENCRYPTED_FIELDS, mesmo tratamento das demais credenciais de integração acima.
+  /// app.omie.com.br é destino FIXO do próprio código — mesma observação de
+  /// StripeConnection.secretKey acima.
+  appKey    String @db.Text
+  appSecret String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
 /// Log estruturado de cada chamada de voz IA (Birth Voices Hub / Bland AI) — antes desta tabela, o
 /// resultado só existia como texto livre dentro de `Note` (`voiceResult.webhook.ts`), sem jeito de
 /// listar/filtrar chamadas recentes fora do card de um lead específico (ver
@@ -2795,51 +2899,51 @@ model ColdCallRun {
 }
 
 model AIPendingAction {
-  id             String        @id @default(cuid())
-  entity         String
-  action         String
-  payload        Json
+  id                String                 @id @default(cuid())
+  entity            String
+  action            String
+  payload           Json
   /// Papel que originou a decisão (SDR, BDR, CLOSER, CRM, OPS ou SUPERVISOR).
-  agentRole      String?
+  agentRole         String?
   /// Classificação de risco operacional para a UI e para políticas de autoexecução.
-  riskLevel      String        @default("medium")
+  riskLevel         String                 @default("medium")
   /// Confiança declarada/derivada da decisão, normalizada entre 0 e 1.
-  confidence     Float?
+  confidence        Float?
   /// Chave de idempotência por tenant. Impede que um worker repetido proponha/envie a mesma ação.
-  idempotencyKey String?
-  approved       Boolean       @default(false)
-  approvedAt     DateTime?
+  idempotencyKey    String?
+  approved          Boolean                @default(false)
+  approvedAt        DateTime?
   /// Onda 39 (auditoria CPI — "trilha completa de aprovação"): id do usuário (User.id) que
   /// aprovou/descartou esta ação, nunca inferido — ambos vêm de req.user na rota autenticada, o
   /// mesmo usuário já responsável pelo RBAC de /pending/:id (ver pending-actions.service.ts).
-  approvedBy     String?
-  discardedAt    DateTime?
-  discardedBy    String?
+  approvedBy        String?
+  discardedAt       DateTime?
+  discardedBy       String?
   /// Se a ação aprovada foi de fato executada (ex: e-mail enviado de verdade via SMTP). Sem este
   /// campo, "aprovar" só marcava um flag no banco e nada consumia isso depois (IA-005) — o
   /// executor real fica em src/features/intelligence/services/aiPendingAction.service.ts.
-  executed       Boolean       @default(false)
-  executedAt     DateTime?
+  executed          Boolean                @default(false)
+  executedAt        DateTime?
   /// Preenchido quando a execução foi tentada e falhou (ex: SMTP fora do ar). `executed`
   /// continua false nesse caso — a tela usa isso para decidir se ainda oferece o fallback manual.
-  executionError String?
-  attempts       Int           @default(0)
-  lastAttemptAt  DateTime?
+  executionError    String?
+  attempts          Int                    @default(0)
+  lastAttemptAt     DateTime?
   /// Item 103 da constituição de produto (Closed-Loop Intelligence): até aqui o ciclo parava em
   /// "foi executado tecnicamente" — nada registrava o resultado de negócio depois disso
   /// (signal→recommendation→decision→action→execution existiam; outcome→measurement→learning,
   /// não). Captura MANUAL nesta primeira fatia (um humano registra o que aconteceu), nunca
   /// inferida — detecção automática (ex.: reply de e-mail) é escopo do Agente 17
   /// (`.agents/prompts/17-cadencia-ciclo-receita.md`), não duplicada aqui.
-  outcomeStatus  AIPendingActionOutcome @default(UNMEASURED)
-  outcome        Json?
-  outcomeNotes   String?
+  outcomeStatus     AIPendingActionOutcome @default(UNMEASURED)
+  outcome           Json?
+  outcomeNotes      String?
   outcomeMeasuredAt DateTime?
   outcomeMeasuredBy String?
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  organizationId    String?
+  organization      Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
 
   @@unique([organizationId, idempotencyKey])
   @@index([organizationId, approved])
@@ -3164,8 +3268,8 @@ model CadenceSequence {
 ///
 /// `CadenceRun_leadId_active_unique` (índice único parcial `WHERE status = 'Active'`) garante em
 /// banco que um lead nunca tem duas cadências ativas concorrendo pelo mesmo canal — constraint só
-/// na migration SQL, não representável nesta DSL (ver nota no topo da seção). O
-/// `@@index([leadId])` abaixo é só para a consulta comum, não substitui a garantia de unicidade.
+/// na migration SQL, não representável nesta DSL (ver nota no topo da seção e no `@@index` mapeado
+/// abaixo, que documenta o nome real do índice sem substituir a garantia de unicidade).
 model CadenceRun {
   id             String       @id @default(cuid())
   organizationId String
@@ -3192,7 +3296,14 @@ model CadenceRun {
   calendarEvents CadenceCalendarEvent[]
 
   @@index([organizationId, status])
-  @@index([leadId])
+  /// PARTIAL unique index — a condição `WHERE "status" = 'Active'` vive só na migration SQL
+  /// (`prisma/migrations/20260816120000_cadence_scheduling_signature/migration.sql`); a sintaxe
+  /// do Prisma schema não consegue expressar a condição WHERE parcial, então este `@@index` é
+  /// propositalmente NÃO único: ele documenta/mapeia o nome real do índice (para que
+  /// `prisma migrate dev`/`migrate diff` não o tratem como drift não gerenciado) e também serve à
+  /// consulta comum por `leadId`. NÃO rode `prisma db push` contra um banco novo sem antes aplicar
+  /// as migrations — sem elas, essa constraint de unicidade não vai existir.
+  @@index([leadId], map: "CadenceRun_leadId_active_unique")
 }
 
 /// Uma tentativa real de disparo de um toque de cadência — nunca `Sent` sem confirmação real do
@@ -3674,7 +3785,15 @@ model UserJobRole {
 
   @@unique([userId, jobRoleId])
   @@index([organizationId])
-  @@index([userId])
+  /// PARTIAL unique index — a condição `WHERE "isPrimary" = true AND "isActive" = true` vive só
+  /// na migration SQL
+  /// (`prisma/migrations/20260908020000_multi_cargo_agent_governance_foundation/migration.sql`);
+  /// a sintaxe do Prisma schema não consegue expressar a condição WHERE parcial, então este
+  /// `@@index` é propositalmente NÃO único: ele documenta/mapeia o nome real do índice (para que
+  /// `prisma migrate dev`/`migrate diff` não o tratem como drift não gerenciado) e também serve à
+  /// consulta comum por `userId`. NÃO rode `prisma db push` contra um banco novo sem antes aplicar
+  /// as migrations — sem elas, essa constraint de unicidade não vai existir.
+  @@index([userId], map: "UserJobRole_one_active_primary_per_user")
 }
 
 /// Catálogo de agentes — IDENTIDADE e estado administrativo, nunca a implementação em si (código
@@ -3740,6 +3859,14 @@ model AgentVersion {
 
   @@unique([agentDefinitionId, version])
   @@index([agentDefinitionId, status])
+  /// PARTIAL unique index — a condição `WHERE "status" = 'ACTIVE'` vive só na migration SQL
+  /// (`prisma/migrations/20260908020000_multi_cargo_agent_governance_foundation/migration.sql`);
+  /// a sintaxe do Prisma schema não consegue expressar a condição WHERE parcial, então este
+  /// `@@index` é propositalmente NÃO único: ele só documenta/mapeia o nome real do índice (para
+  /// que `prisma migrate dev`/`migrate diff` não o tratem como drift não gerenciado). NÃO rode
+  /// `prisma db push` contra um banco novo sem antes aplicar as migrations — sem elas, essa
+  /// constraint de unicidade não vai existir.
+  @@index([agentDefinitionId], map: "AgentVersion_one_active_per_agent")
 }
 
 /// Responde "quais agentes este cargo pode usar?" — um mesmo `AgentDefinition` pode ser

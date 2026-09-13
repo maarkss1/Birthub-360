@@ -1,6 +1,7 @@
 import type { Repository } from '../../../../shared/domain/Repository';
+import type { PlaybookKey } from '../../../../config/playbooks';
 
-export type QualificationBrand = 'atlasgr' | 'totaltrac';
+export type QualificationBrand = PlaybookKey;
 export type QualificationFramework = 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER';
 export type QualificationCategory =
   | 'Situação'

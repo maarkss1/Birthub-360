@@ -6,10 +6,8 @@
   explicitamente NÃO movidas nesta execução, conforme instrução do meu prompt)
 
 ## Problema
-
 As sessões Baileys (WhatsApp Web) vivem em memória no processo HTTP (`server.ts` → rotas em
 `src/features/integrations/whatsapp/whatsapp.routes.js`). Isso significa:
-
 - qualquer restart do processo HTTP (deploy, crash, scale) derruba a sessão de WhatsApp pareada,
   exigindo novo QR code;
 - múltiplas réplicas do processo HTTP não podem compartilhar a mesma sessão — cada réplica teria
@@ -22,11 +20,9 @@ integração de WhatsApp inteira para (mensagens não chegam, follow-ups automá
 Não movi nada nesta onda — só o plano abaixo, para acordo por escrito antes de qualquer execução.
 
 ## Arquivo(s) envolvido(s)
-
 `src/features/integrations/whatsapp/**` (propriedade do Agente 06 — não toquei)
 
 ## Alteração necessária (plano proposto, não implementado)
-
 1. **Levantamento prévio** (Agente 06 confirma): onde exatamente a sessão Baileys vive hoje em
    memória — um `Map<organizationId, WASocket>` module-level, ou algo persistido em disco/banco
    entre reconexões? Preciso saber a forma de persistência de credenciais (`auth_info_baileys` ou
@@ -39,7 +35,7 @@ Não movi nada nesta onda — só o plano abaixo, para acordo por escrito antes 
    - consultar status da sessão (conectada/desconectada/aguardando QR);
    - obter o QR code atual durante o pareamento;
    - **enviar mensagens** (hoje provavelmente uma chamada direta ao socket Baileys em memória).
-     Duas opções de contrato, a decidir com o Agente 06:
+   Duas opções de contrato, a decidir com o Agente 06:
    - (a) BullMQ: o processo HTTP enfileira uma "intenção" (`send-message`, `get-qr`,
      `get-status`) numa fila dedicada e o worker responde por um canal de resultado (job
      result/pub-sub Redis) — assíncrono, mas alinhado ao padrão já usado por todas as outras 14
@@ -59,12 +55,10 @@ Não movi nada nesta onda — só o plano abaixo, para acordo por escrito antes 
    abrupto, dado o risco de reconexão falhar silenciosamente.
 
 ## Teste esperado
-
 - QR code pareado com sucesso, mensagem enviada e recebida, processo HTTP reiniciado sem derrubar
   a sessão do worker, worker reiniciado sem duplicar sessão.
 
 ## Contexto adicional
-
 Nenhuma linha de `src/features/integrations/whatsapp/**` foi alterada nesta execução — este handoff
 é só o plano solicitado pelo meu prompt ("documente apenas o plano detalhado como handoff para
 coordenação futura com o 06"). Aguardo confirmação do Agente 06 sobre o formato de persistência
@@ -105,7 +99,7 @@ alcançar o socket.
    (`cacheConnection`, chave `whatsapp:session-status:<organizationId>`, TTL de 24h) a cada
    mudança, especificamente para que outra réplica HTTP consiga responder "conectado"/"QR
    pendente" sem ter o socket local (`getWhatsAppStatus` lê do Redis primeiro, cai para o `Map`
-   local só se o Redis falhar). Isto já resolve a _leitura_ de status entre réplicas — não resolve
+   local só se o Redis falhar). Isto já resolve a *leitura* de status entre réplicas — não resolve
    enviar/receber mensagem, que exige o socket real.
 
 ### O que isso significa para o seu plano
@@ -127,34 +121,7 @@ alcançar o socket.
   item 4, não resolvido aqui.
 
 ### Não fiz nesta rodada
-
 Nenhuma linha de `whatsapp.service.ts`/`whatsapp.routes.ts` foi alterada — só este levantamento.
 A decisão de mover a sessão para `worker.ts` (contrato BullMQ vs. API HTTP interna, ver opções (a)
 e (b) do seu plano) continua em aberto, pendente de acordo por escrito entre 06/16 antes de
 qualquer execução, como o seu handoff original pedia.
-
-## Resolução final (Onda 41)
-
-O plano foi executado. A sessão Baileys hoje vive de fato no processo worker dedicado, não no
-processo HTTP:
-
-- `src/lib/queue/redis.ts` exporta `isDedicatedWorkerProcess` (detecta o entrypoint `worker.ts` por
-  regex) — este é o sinal usado em todo o serviço para decidir quem é dono do `WASocket` real.
-  `whatsapp.service.ts` usa esse sinal em `sendWhatsAppMessage` (RUN-007b/Onda 14): qualquer
-  processo que não seja o worker dedicado e não tenha socket local enfileira via broker
-  (`enqueueWhatsAppCommand`) em vez de tentar falar com um socket que não existe naquele processo.
-- `worker.ts` registra `whatsappSignalWorker`/`whatsappCommandWorker`
-  (`src/lib/queue/whatsappSignal.worker.ts`, `whatsappCommand.worker.ts`) e chama
-  `shutdownWhatsAppSessions()` no encerramento — a opção (a) do plano original (BullMQ para o
-  contrato HTTP↔worker), não a (b).
-- A limitação de persistência descrita acima (`whatsapp_auth/` em disco local efêmero) foi resolvida
-  substituindo o `useMultiFileAuthState` em disco por `src/features/integrations/whatsapp/useRedisAuthState.ts`
-  — credenciais Baileys (creds/keys) agora persistem no Redis, cifradas em repouso com o mesmo
-  AES-256-GCM de `secretFields.ts` (SEC-014), em vez do filesystem do container. Isso resolve o
-  pré-requisito do item 4 do plano original (a sessão não pode depender de disco local se o processo
-  que a hospeda pode rodar em host diferente do processo HTTP).
-
-Ou seja: os dois riscos levantados neste handoff — socket não serializável (confirmado, não mudou) e
-persistência de credencial em disco efêmero (resolvido via Redis) — já foram endereçados no código
-atual. Não há mais plano pendente de execução aqui; qualquer novo ajuste neste fluxo é trabalho novo,
-não a conclusão deste handoff.

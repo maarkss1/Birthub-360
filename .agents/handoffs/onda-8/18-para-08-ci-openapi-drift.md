@@ -5,11 +5,9 @@
 - Prioridade: alto
 
 ## Resolução
-
 Script `verify:openapi-drift` adicionado ao `package.json` e ao pipeline de CI (`.github/workflows/ci.yml`) após o Type Check.
 
 ## Problema
-
 `docs/openapi.yaml` não tinha nenhuma verificação automatizada que comparasse o documento com as
 rotas reais de `server.ts`. Medi a deriva no início desta onda (tabela completa na seção "Contexto
 adicional") e corrigi o documento — mas sem uma verificação no CI, a deriva volta a acontecer na
@@ -22,7 +20,6 @@ não a tenho registrada nesta onda. Peço que você (ou o Coordenador, se prefer
 adicione a linha abaixo.
 
 ## Arquivo(s) envolvido(s)
-
 - `src/shared/contracts/openapiRouteInventory.ts` (**novo**) — função pura `computeOpenApiDrift`,
   testada em `tests/unit/shared/openapiRouteInventory.test.ts` (7 testes, todos passando,
   incluindo os dois que pram a verificação falhar quando deve — ver "Teste esperado").
@@ -41,7 +38,6 @@ adicione a linha abaixo.
   ```
 
 ## Alteração necessária
-
 1. Adicionar o script a `package.json` (ver acima).
 2. Adicionar o step ao workflow de CI (ver acima) — em qualquer ponto depois de `npm ci`, não
    depende de nenhum service container.
@@ -49,7 +45,6 @@ adicione a linha abaixo.
    0 e imprime "✅ Nenhuma deriva estrutural encontrada" contra o estado atual do repositório).
 
 ## Teste esperado
-
 - `npx vitest run -c vitest.unit.config.ts tests/unit/shared/openapiRouteInventory.test.ts` — 7/7
   passando, incluindo:
   - prova de que a verificação passa hoje contra `server.ts`/`docs/openapi.yaml` reais;
@@ -64,10 +59,8 @@ adicione a linha abaixo.
   job falhar no step novo — é o critério verificável explícito desta missão.
 
 ## Contexto adicional
-
 **Tabela de deriva medida no início da onda** (antes da correção desta sessão, feita por leitura
 direta de `server.ts` + todos os routers montados):
-
 - Documentação fantasma (path documentado sem rota real): **0** — o documento nunca inventou
   endpoint, só tinha cobertura incompleta.
 - Rotas existentes não documentadas: **~84 endpoints individuais + 4 webhooks + 2 superfícies
@@ -85,7 +78,7 @@ direta de `server.ts` + todos os routers montados):
   200 JSON quando na verdade é sempre um redirect 302; e 5 endpoints com papel exigido mais
   restrito do que o documento sugeria (`PUT /intelligence/ai-settings` exige ADMIN, não
   ADMIN/GESTOR; `DELETE /knowledge/{id}`, `POST/PUT /prompts`, `GET /leads/export/csv`, `POST
-/leads/export/bitrix24` exigem ADMIN/GESTOR sem estarem anotados como tal).
+  /leads/export/bitrix24` exigem ADMIN/GESTOR sem estarem anotados como tal).
 - **Depois da correção desta sessão**: todos os itens acima documentados (146 paths totais no
   documento, contra ~60 antes), os 6 contratos divergentes corrigidos, e
   `npx tsx scripts/verify-openapi-drift.ts` confirma 0 deriva estrutural.

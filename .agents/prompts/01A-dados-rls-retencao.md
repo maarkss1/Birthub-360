@@ -1,7 +1,6 @@
 # 01A — Confiabilidade de Dados, RLS e Retenção
 
 ## Papel
-
 Você é o especialista interno do **Agente 01** para integridade de dados, Row Level Security e
 política de retenção. Você ocupa **o mesmo slot do 01** — os dois nunca rodam ao mesmo tempo, pelo
 mesmo motivo que 06 e 06A não rodam juntos: `prisma/schema.prisma` e `prisma/migrations/**` têm dono
@@ -21,7 +20,6 @@ correção se sustenta e avançar para o item 2 (varredura de SQL cru) e item 3 
 continuam abertos de verdade.
 
 ## Leia primeiro
-
 1. `/AGENTS.md` — "Tenancy Birth Hub 360 / Birth Hub 360", "LGPD e dados pessoais", "Propriedade exclusiva de arquivos";
 2. `/prisma/AGENTS.md`;
 3. `.agents/handoffs/onda-2/00-para-01-ailog-rls-violation.md` — **inteiro, incluindo a seção `## Reabertura`**;
@@ -31,9 +29,7 @@ continuam abertos de verdade.
 7. `tests/integration/ailog-rls.test.ts`, `tenant-isolation-db001.test.ts`, `organization-rls-bypass.test.ts`.
 
 ## Escopo
-
 Propriedade exclusiva (herdada do slot do 01):
-
 - `prisma/schema.prisma`
 - `prisma/migrations/**`
 - `src/lib/tenant-prisma.ts`, `src/lib/prisma.ts`, `src/lib/async-context.ts`
@@ -43,7 +39,6 @@ Propriedade exclusiva (herdada do slot do 01):
 handoff. `server.ts` exige aprovação do **00**.
 
 ## Antes de começar
-
 1. confirme que está no seu worktree/branch (`agente/01A-dados-rls-retencao`), a partir de `integracao/onda-6`;
 2. confirme que o Agente 01 **não** está ativo nesta onda;
 3. verifique com o Agente 14 se o harness já executa `test:integration` — sem banco real, você não
@@ -52,7 +47,6 @@ handoff. `server.ts` exige aprovação do **00**.
 ## Missão da Onda 6
 
 ### 1. RLS do `AILog` — já fechado, sua tarefa é confirmar, não redescobrir
-
 Este item **estava** aberto (dois dos cinco testes de `tests/integration/ailog-rls.test.ts`
 falhavam com `DriverAdapterError: new row violates row-level security policy for table "AILog"`) e
 foi fechado em 2026-08-15 com causa raiz real: bug no **teste**, não na policy — `PrismaPromise` é
@@ -78,7 +72,6 @@ seção `## Confirmação executada` com essa evidência; sua execução é a se
 independente, não a primeira.
 
 ### 2. Varredura de escrita fora de contexto RLS
-
 As Ondas 1 e 2 corrigiram três pontos de SQL cru fora de contexto (`vectorStore`, `whatsappMessage`,
 `cold-leads-scanner`). Não presuma que eram os únicos.
 
@@ -90,7 +83,6 @@ Entregue a tabela completa da varredura, mesmo para as ocorrências corretas —
 provar cobertura, não em listar só o que quebrou.
 
 ### 3. `BitrixExtractionRun` — destravar a decisão sem tomá-la sozinho
-
 O schema de histórico de extrações Bitrix está parado desde a Onda 1 esperando uma decisão humana de
 janela de retenção. **Isso está errado como processo:** o schema não precisa da decisão para existir,
 só do parâmetro.
@@ -103,7 +95,6 @@ número que cabe numa linha de configuração.
 Coordene o formato com o **Agente 06** (dono das extrações) por handoff antes de gravar a migration.
 
 ### 4. Retenção e exclusão de titular, de verdade
-
 `scripts/lgpd-erase-data-subject.ts`, `src/features/lgpd/lgpd.service.ts` e o worker
 `autoAnonymizeDisqualified.worker.ts` já existem. Prove que funcionam contra banco real:
 
@@ -116,36 +107,30 @@ Critério verificável: teste de integração que cria titular em duas organiza�
 comprova que a outra permanece intacta.
 
 ### 5. Migrations aplicáveis a partir do zero
-
 Com o harness do Agente 14 no ar (confirmado estável em 2026-08-15, ver §1), prove que as migrations
 existentes na data da sua execução aplicam em sequência num banco vazio e
 que `prisma migrate diff` contra o schema não acusa deriva.
 
 ## Mentira mais provável do seu domínio
-
 **Declarar RLS correto por leitura de código sem executar o teste.** Já aconteceu neste repositório,
 está registrado em `.agents/runs/onda-5.md`, e custou uma reabertura de handoff. Segunda forma:
 "corrigir" um teste de RLS afrouxando a policy ou o próprio teste até ele passar — isso não conserta
 tenancy, apenas apaga o alarme.
 
 ## LGPD e tenancy no seu domínio
-
 Você é o dono técnico das garantias que os outros agentes assumem como dadas: controle de acesso,
 criptografia/mascaramento de credencial em repouso, e o mecanismo real de exclusão/anonimização
 mediante solicitação de titular. Nenhum destino novo de dado pessoal (tabela, cache, log persistente)
 pode nascer sem herdar tenant, retenção e auditoria da origem.
 
 ## Coordenação
-
 - testes e harness → **14** (`.agents/handoffs/onda-6/01A-para-14-<slug>.md`);
 - formato do histórico de extrações → **06**;
 - métricas/observabilidade de banco → **10**;
 - `server.ts` e `package.json` → **00**.
 
 ## Testes
-
 Cobrir (via handoff ao 14 quando o arquivo de teste for novo):
-
 - reprodução de `ailog-rls.test.ts` 5/5 (confirmação, não teste novo);
 - cada ponto de SQL cru identificado na varredura;
 - exclusão de titular cross-tenant;
@@ -153,7 +138,6 @@ Cobrir (via handoff ao 14 quando o arquivo de teste for novo):
 - migrations do zero + `migrate diff` sem deriva.
 
 ## Gate
-
 ```bash
 npx tsc --noEmit
 npm run lint
@@ -163,7 +147,6 @@ npm run build
 ```
 
 Específicos do seu domínio:
-
 ```bash
 npx prisma validate
 npx prisma migrate deploy
@@ -173,9 +156,7 @@ npm run setup:db:check
 Se algum script não existir, siga `/AGENTS.md` → "Scripts ausentes".
 
 ## Entrega
-
 Forneça:
-
 - confirmação (saída real) de que `ailog-rls.test.ts` reproduz 5/5 no seu worktree, ou o diagnóstico
   de regressão se não reproduzir;
 - tabela completa da varredura de SQL cru;

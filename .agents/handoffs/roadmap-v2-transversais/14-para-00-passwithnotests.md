@@ -1,10 +1,7 @@
 - De: 14 — Ambiente de Execução e Test Harness
 - Para: 00 — Coordenador (edição de `package.json` exige aprovação explícita, ver `/AGENTS.md` → "Propriedade exclusiva de arquivos")
 - Onda: roadmap-v2-transversais
-- Status: resolvido — `--passWithNoTests` removido de `test:unit`/`test:integration` em
-  `package.json` no commit `525ddb0c` ("fix(00): resolve os 5 handoffs residuais do Roadmap v2",
-  2026-08-26). Verificado no HEAD atual (`origin/main`): nenhum script em `package.json` usa mais
-  a flag.
+- Status: aberto
 - Prioridade: normal
 
 ## Problema

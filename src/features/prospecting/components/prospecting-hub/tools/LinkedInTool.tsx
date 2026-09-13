@@ -13,7 +13,6 @@ import {
 import { LinkedinIcon as Linkedin } from '../../../../../components/ui/icons/LinkedinIcon';
 import { api } from '../../../../../lib/api';
 import { BRAND } from '../../../../../config/brand';
-import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
@@ -33,8 +32,9 @@ import { getErrorMessage, type PromoteResult } from './shared';
 type SubTab = 'empresas' | 'decisores';
 
 export function LinkedInTool({ configured }: { configured: boolean }) {
-  const { playbook } = useActivePlaybook();
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção.
+  const activeSegments = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
   const [subTab, setSubTab] = useState<SubTab>('empresas');
 
   // --- Empresas (Apollo Organization Search filtrado por linkedinUrl) ---

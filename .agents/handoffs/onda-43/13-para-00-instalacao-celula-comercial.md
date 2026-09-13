@@ -23,7 +23,7 @@ pontos antes que os agentes novos avancem para uso real (rota/UI/Supervisor).
    gov.br, hoje stub de transporte documentado, mas o resto é real). Reclassificado para risco
    MÉDIO.
 2. `revenue-intelligence`: `src/features/commercial-intelligence/infra/
-CommercialIntelligenceAiService.ts` (resumo executivo + mentor playbook) já cobre boa parte
+   CommercialIntelligenceAiService.ts` (resumo executivo + mentor playbook) já cobre boa parte
    desta missão, grounded em `CommercialIntelligenceUseCases`. Não recriei esse cálculo.
 3. `churn-retention`: `src/features/analytics/services/churn-prediction.service.ts` já é o motor
    real de risco de churn (LLM + fallback determinístico). Não criei uma segunda opinião de IA.
@@ -31,7 +31,7 @@ CommercialIntelligenceAiService.ts` (resumo executivo + mentor playbook) já cob
    componente já chamado `LdrAccountIntelligence.tsx`) já é, na prática, o "LDR" do produto — o
    pacote não sabia disso.
 5. `billing-revenue`: confirmado que **não existe** fonte real de faturamento — `src/features/
-billing/**` é custo de consumo de IA (tokens), não faturamento de venda (o próprio arquivo já
+   billing/**` é custo de consumo de IA (tokens), não faturamento de venda (o próprio arquivo já
    documenta isso). Mantido em modo `SOURCE_REQUIRED`, nunca fabrica "faturado".
 
 Detalhe técnico relevante: tentei inicialmente fazer os 3 primeiros agentes (`revenue-intelligence`,
@@ -48,7 +48,6 @@ existe** — ver pendência 2 abaixo.
 
 Arquivos novos (nenhum arquivo existente foi alterado — zero risco de regressão no swarm em
 produção):
-
 - `src/features/intelligence/agents/commercialAgentTypes.ts` — envelope `AgentExecutionResult`/
   `AgentHandoff`/`AgentReflection` (contrato do pacote, `prompts/shared/base-agent.md` e
   `reflection.md`).
@@ -65,14 +64,13 @@ produção):
   Failed), mesmo padrão de `base.agent.consent.test.ts`.
 
 O que **não** foi tocado, deliberadamente:
-
 - `bdr.agent.ts`, `sdrQualification.agent.ts`, `closer.agent.ts`, `crm.agent.ts`, `ops.agent.ts`,
   `supervisor.agent.ts` — já em produção. O pacote pede "refinamento de prompt" para BDR/SDR/Closer
   (regras reais de escalonamento, consentimento por canal); decidi não misturar isso nesta onda
   para manter o diff 100% aditivo e não arriscar a voz/formatação já tunada desses 3 agentes. Fica
   como trabalho futuro (pendência 3 abaixo), não esquecido.
 - Nenhuma rota nova, nenhuma seção de UI ("Equipe IA Comercial" pedida pelo `PROMPT_MESTRE_
-INSERCAO.md`), nenhuma mudança no roteamento do Supervisor (`AGENT_INFO`/`SwarmAgentKey`) — os 8
+  INSERCAO.md`), nenhuma mudança no roteamento do Supervisor (`AGENT_INFO`/`SwarmAgentKey`) — os 8
   agentes novos existem mas não são chamados por nenhum caminho de produção ainda. Nada observável
   mudou para o usuário final; por isso considero isto **dentro do freeze de escopo Sprint 00→13**
   (código morto/dormente, não feature nova exposta) — mas a decisão de expor é sua, ver pendência 1.
@@ -108,7 +106,6 @@ INSERCAO.md`), nenhuma mudança no roteamento do Supervisor (`AGENT_INFO`/`Swarm
 ## Teste esperado
 
 Executado nesta onda (evidência real, não assumida):
-
 ```
 npx tsc --noEmit          → sem erro novo (mesmos 5 erros pré-existentes em moduleAccess.service.ts,
                              não relacionados a esta mudança — ambiente local sem `prisma generate`
@@ -119,7 +116,6 @@ npm run test:architecture → 0 violações novas (as 6 violações de cross-fea
 npx vitest run -c vitest.unit.config.ts src/features/intelligence/agents/__tests__/
                           → 13 arquivos de teste, 73 testes, todos passando (nenhuma regressão)
 ```
-
 Não executado nesta onda (ambiente/tempo): `npm run test:integration`, `npm run test:e2e`,
 `npm run build` — nenhum destes 8 agentes novos é chamado por nenhum código de produção ainda
 (dormentes), então integration/e2e não exercitam este código; build não foi rodado por ser uma
@@ -152,7 +148,6 @@ correta entre features neste repositório NÃO é import direto nem HTTP self-ca
 DI compartilhado (`src/shared/di/container.ts`, já usado por `commercialIntelligence.routes.ts`
 para resolver `CommercialIntelligenceController` por chave string, sem edge de import). Apliquei o
 mesmo padrão:
-
 - `src/shared/di/setup.ts`: registrado `CommercialIntelligenceAiService` e (novo) `ChurnPredictionService` no container.
 - `src/features/intelligence/routes/agent.routes.ts`: 2 rotas novas, reais, testáveis —
   `POST /api/agent/commercial-cell/revenue-intelligence/run` (resolve `CommercialIntelligenceAiService`
@@ -181,7 +176,6 @@ frontend) — os arquivos (`commercialAgentCell.api.ts`, `CommercialAgentCellPan
 `src/features/hub/`, não em `intelligence/`.
 
 **Gate rodado depois de tudo isso** (evidência real):
-
 ```
 npm run test:architecture → 0 violações novas
 npx tsc --noEmit          → sem erro novo (mesmo baseline pré-existente)
@@ -189,7 +183,6 @@ npm run lint (biome)      → sem apontamento novo (3 warnings pré-existentes e
                              não tocados por esta mudança, mesmo diff confirmado)
 vitest intelligence/agents/__tests__/ → 13 arquivos, 73 testes, 0 falha
 ```
-
 **Não verificado**: renderização real do painel no navegador (precisaria de login válido; não
 persegui credencial de teste nesta sessão) e `test:integration`/`test:e2e`/`build` completos das 2
 rotas novas — nenhum teste automatizado cobre as 2 rotas novas ainda (só os agentes que elas

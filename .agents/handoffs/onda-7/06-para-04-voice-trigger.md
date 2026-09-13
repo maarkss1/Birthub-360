@@ -3,25 +3,15 @@
 - Onda: 7
 - Status: resolvido
 - Prioridade: normal
-
 ## Problema
-
 É necessário adicionar um botão "Qualificar via Voz" na interface do CRM.
-
 ## Arquivo(s) envolvido(s)
-
 src/features/crm/components/LeadDetailDrawer.tsx
-
 ## Alteração necessária
-
 Injetar um botão "Qualificar via Voz" que faça uma requisição POST fetch para http://localhost:3000/api/webhooks/bland passando name, phone_number, e company.
-
 ## Teste esperado
-
 Disparar a requisição POST com o payload correto.
-
 ## Contexto adicional
-
 Fora do escopo do Agente 06. Favor implementar.
 
 ## Resolução
@@ -35,7 +25,6 @@ qualquer erro com uma mensagem genérica única.
 
 Investigação (Onda 2, Agente 04) encontrou que já existe uma integração real e completa em
 `src/features/integrations/birth-voice/` (dono: Agente 06/12 — não alterada por mim):
-
 - `birthVoice.service.ts::callLead(organizationId, leadId)` — resolve o telefone discável do lead
   (`pickCallablePhone`), valida config do SDR de voz, e **checa a lista de opt-out antes de ligar**
   (o fetch direto do frontend ignorava essa checagem por completo — um risco de compliance real).

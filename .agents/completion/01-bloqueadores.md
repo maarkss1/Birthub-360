@@ -41,24 +41,21 @@
    registrada: o dump ainda existe, com PII real, recuperável por quem tiver acesso ao histórico.
    Remoção definitiva exige `git filter-repo`/BFG — reescreve hashes, decisão humana (ver
    AGENTS.md → Segurança e higiene).
-   **Decidido na Fase Final 0 (2026-08-16), reafirmado na Sprint 01/Onda 13 (2026-08-18):** dono
-   do repositório escolheu o Caminho A (manter histórico, mitigar daqui pra frente) — sem
-   force-push. Risco residual aceito e registrado, ver runbook
-   `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`.
-   **Atualização (2026-09-11, ACH-15-01):** decisão foi revista em 2026-09-05 — Caminho B
-   (`git filter-repo`) foi de fato executado contra `refs/heads/main` (force-push feito pelo dono,
-   não por agente). `main` hoje não alcança mais o dump nem `test-gemini*.ts`. **Lacuna nova
-   encontrada e ainda não fechada:** as tags publicadas `v0.0.1` (commit `8fd8fa22…`) e
-   `v1.0.0-rc.1` (commit `e8fb1c1c…`) continuam no remote (`git ls-remote --tags origin`,
-   confirmado nesta sessão) e **ainda alcançam os mesmos blobs sensíveis** (dump de 166075 bytes +
-   `test-gemini.ts`/`test-gemini-quota.ts`) — `git fetch --tags && git checkout v0.0.1` hoje
-   recupera o dado que o rewrite de `main` removeu. Nenhuma dependência de deploy/CI nessas tags
-   foi encontrada (`render.yaml` e workflows fazem deploy por branch, não por tag). Comando exato
-   para o dono executar e passo de verificação pós-ação: ver seção nova "Lacuna encontrada
-   pós-reescrita — tags publicadas não foram tocadas (ACH-15-01, 2026-09-11)" no runbook
-   `DECIDE_GIT_HISTORY_REWRITE.md`. **Nenhuma ação destrutiva foi executada por este agente** —
-   `git push origin --delete tag`/`git tag -d` seguem pendentes de decisão e execução manual do
-   dono do repositório.
+   **Decisão revista (2026-09-05) e executada (Caminho B):** o dono do repositório escolheu o
+   Caminho B (reescrever histórico e force-push em main) para remover definitivamente este dump e
+   as chaves do Gemini. A reescrita foi executada, conforme detalhado em
+   `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`. `main` hoje não alcança mais o dump nem
+   `test-gemini*.ts`.
+   **Pendência residual da tag `v0.0.1` (commit `8fd8fa22…`) resolvida (ACH-15-01):** deletada do
+   remote em 12/09/2026, confirmado via `git ls-remote --tags`.
+   **Nova lacuna encontrada nesta reconciliação (12/09/2026): a tag `v1.0.0-rc.1` (commit
+   `e8fb1c1c…`) CONTINUA publicada no remote** (`git ls-remote --tags origin`, reconfirmado ao
+   resolver este merge) e ainda alcança os mesmos blobs sensíveis (dump de 166075 bytes +
+   `test-gemini.ts`/`test-gemini-quota.ts`) — `git fetch --tags && git checkout v1.0.0-rc.1` hoje
+   recupera o dado que o rewrite de `main` removeu. Nenhuma dependência de deploy/CI nessa tag foi
+   encontrada (`render.yaml` e workflows fazem deploy por branch, não por tag). Mesma decisão
+   pendente do dono do repositório que já valeu para `v0.0.1`: `git push origin --delete tag
+   v1.0.0-rc.1` — nenhuma ação destrutiva foi executada por nenhum agente até este ponto.
 
 ## P0 — Plataforma quebrada no main (remediados)
 

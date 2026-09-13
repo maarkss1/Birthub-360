@@ -13,27 +13,27 @@ O histórico local identifica como últimos commits: `3f92c44` (roadmap), `b7e1f
 
 ## 2. Inventário externo solicitado
 
-| Item                        | Estado real nesta execução                                                                                                                                                                                                                                          |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PRs abertos / PR #241       | Não verificável: checkout sem remote e GitHub CLI sem autenticação.                                                                                                                                                                                                 |
-| Issues abertas / issue #242 | Não verificável no GitHub; defeito reproduzido estaticamente no código local.                                                                                                                                                                                       |
-| Status checks e runs        | Não verificável remotamente pelo mesmo bloqueio.                                                                                                                                                                                                                    |
-| Branches relevantes         | Apenas `work` existia antes desta execução; nenhuma ref `main` ou remota.                                                                                                                                                                                           |
-| Workflows locais            | Presentes em `.github/workflows/**`; incluem quality, production, mobile, deploy, backup/security e ETLs de Market Intelligence. A atribuição a este repositório só pode ser provada após restaurar remote/metadados GitHub.                                        |
-| Handoffs                    | Sem bloqueador aberto identificado. Permanecem `onda-6/16-para-08-deploy-worker-service.md` (em andamento/alto), `onda-6/16-para-10-observabilidade-worker.md` (em andamento/normal) e `onda-8/18-para-00-varredura-duplicacao-contratos.md` (em andamento/normal). |
+| Item | Estado real nesta execução |
+|---|---|
+| PRs abertos / PR #241 | Não verificável: checkout sem remote e GitHub CLI sem autenticação. |
+| Issues abertas / issue #242 | Não verificável no GitHub; defeito reproduzido estaticamente no código local. |
+| Status checks e runs | Não verificável remotamente pelo mesmo bloqueio. |
+| Branches relevantes | Apenas `work` existia antes desta execução; nenhuma ref `main` ou remota. |
+| Workflows locais | Presentes em `.github/workflows/**`; incluem quality, production, mobile, deploy, backup/security e ETLs de Market Intelligence. A atribuição a este repositório só pode ser provada após restaurar remote/metadados GitHub. |
+| Handoffs | Sem bloqueador aberto identificado. Permanecem `onda-6/16-para-08-deploy-worker-service.md` (em andamento/alto), `onda-6/16-para-10-observabilidade-worker.md` (em andamento/normal) e `onda-8/18-para-00-varredura-duplicacao-contratos.md` (em andamento/normal). |
 
 ## 3. Baseline executado
 
 Todos os comandos foram executados sem mutação intencional de fonte. Duração é wall clock em segundos.
 
-| Comando                    | Exit code | Duração | Resultado / reprodução                                                                                                                                               |
-| -------------------------- | --------: | ------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npx tsc --noEmit`         |         0 |    47 s | PASS.                                                                                                                                                                |
-| `npx eslint src`           |         0 |    19 s | PASS; usado diretamente porque `npm run lint` contém `--fix`.                                                                                                        |
-| `npm run test:unit`        |       124 |   500 s | FAIL: suíte deixou de produzir progresso e foi encerrada após ~8m20s; logs finais estavam em casos de Market Intelligence/tenancy. Reproduzir com o comando literal. |
-| `npm run test:integration` |         1 |    <1 s | FAIL no `pretest`: `prepare-integration-env.js` não conseguiu subir Postgres/Redis/Meilisearch; runtime não dispõe de `docker`.                                      |
-| `npm run test:e2e`         |         1 |     1 s | FAIL no mesmo provisionamento obrigatório.                                                                                                                           |
-| `npm run build`            |         0 |    36 s | PASS; Vite e bundle do servidor concluíram. Há warning não bloqueante de chunks >500 kB.                                                                             |
+| Comando | Exit code | Duração | Resultado / reprodução |
+|---|---:|---:|---|
+| `npx tsc --noEmit` | 0 | 47 s | PASS. |
+| `npx eslint src` | 0 | 19 s | PASS; usado diretamente porque `npm run lint` contém `--fix`. |
+| `npm run test:unit` | 124 | 500 s | FAIL: suíte deixou de produzir progresso e foi encerrada após ~8m20s; logs finais estavam em casos de Market Intelligence/tenancy. Reproduzir com o comando literal. |
+| `npm run test:integration` | 1 | <1 s | FAIL no `pretest`: `prepare-integration-env.js` não conseguiu subir Postgres/Redis/Meilisearch; runtime não dispõe de `docker`. |
+| `npm run test:e2e` | 1 | 1 s | FAIL no mesmo provisionamento obrigatório. |
+| `npm run build` | 0 | 36 s | PASS; Vite e bundle do servidor concluíram. Há warning não bloqueante de chunks >500 kB. |
 
 Os artefatos brutos foram resumidos neste relatório e removidos antes do commit para não versionar logs operacionais; nenhuma linha falha é alegada como sucesso. O gate W0 está vermelho.
 
@@ -64,24 +64,24 @@ O histórico local posterior e adjacente ao último checkpoint inclui Hub Suitab
 
 A matriz é publicada **antes** do disparo. A capacidade efetiva desta ferramenta é Coordenador + 3 especialistas; portanto a onda começa com 01, 14 e 08 em paralelo, cada um em branch/worktree exclusivo. 15 e 10 entram sequencialmente após liberação de slot.
 
-| Agente                      | Missão                                                                                                                                                     | Propriedade permitida                                                                                                                                                                                              | Proibido/owner único                                           |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
-| 01                          | Remover reset global do boot, preservar ação explícita one-shot, testar auth/RBAC/tenant/reset.                                                            | `package.json`, `package-lock.json` (aprovação explícita do 00 concedida apenas para corrigir `start`), `scripts/emergency-reset-all-passwords.ts`, auth/data tests; schema/migrations se estritamente necessário. | `server.ts` permanece do 00; workflows são do 08.              |
-| 14                          | Tornar baseline unit/integration/E2E reproduzível; diagnosticar hang sem mascará-lo; provar matriz de acesso e tenant.                                     | `scripts/test/**`, configs Vitest/Playwright e testes de harness.                                                                                                                                                  | Não altera package/lock, workflows, server, schema/migrations. |
-| 08                          | Reconciliar CI/status checks deste repo e adicionar regressão/gates de segurança pertinentes.                                                              | `.github/workflows/**` e testes/checklists de release.                                                                                                                                                             | Não altera package/lock, server, schema/migrations.            |
-| 15                          | Varredura aplicada: segredos, audit policy, PII/credenciais e evidência de rotação possível.                                                               | `scripts/security/**`, testes de segurança e documentação de segurança aplicável.                                                                                                                                  | Não altera arquivos compartilhados sem handoff.                |
-| 10                          | Boot/runtime real: reinício sem reset/worker duplicado, health/observabilidade.                                                                            | infra/runtime docs e testes operacionais; `k8s/**`, `argocd/**`, `charts/**`, `infrastructure/**`.                                                                                                                 | `server.ts` reservado ao 00; package/lock do 01 nesta onda.    |
-| 03 (correção P1 programada) | Corrigir o primitive Dialog e coordenar validação de consumidores; a propriedade local exige 03, justificando redistribuição em relação à missão 02 da W4. | `src/components/ui/Dialog.tsx` e teste unitário do primitive; consumidores ficam com seus donos por handoff.                                                                                                       | Sem package/lock, server, workflow ou schema.                  |
+| Agente | Missão | Propriedade permitida | Proibido/owner único |
+|---|---|---|---|
+| 01 | Remover reset global do boot, preservar ação explícita one-shot, testar auth/RBAC/tenant/reset. | `package.json`, `package-lock.json` (aprovação explícita do 00 concedida apenas para corrigir `start`), `scripts/emergency-reset-all-passwords.ts`, auth/data tests; schema/migrations se estritamente necessário. | `server.ts` permanece do 00; workflows são do 08. |
+| 14 | Tornar baseline unit/integration/E2E reproduzível; diagnosticar hang sem mascará-lo; provar matriz de acesso e tenant. | `scripts/test/**`, configs Vitest/Playwright e testes de harness. | Não altera package/lock, workflows, server, schema/migrations. |
+| 08 | Reconciliar CI/status checks deste repo e adicionar regressão/gates de segurança pertinentes. | `.github/workflows/**` e testes/checklists de release. | Não altera package/lock, server, schema/migrations. |
+| 15 | Varredura aplicada: segredos, audit policy, PII/credenciais e evidência de rotação possível. | `scripts/security/**`, testes de segurança e documentação de segurança aplicável. | Não altera arquivos compartilhados sem handoff. |
+| 10 | Boot/runtime real: reinício sem reset/worker duplicado, health/observabilidade. | infra/runtime docs e testes operacionais; `k8s/**`, `argocd/**`, `charts/**`, `infrastructure/**`. | `server.ts` reservado ao 00; package/lock do 01 nesta onda. |
+| 03 (correção P1 programada) | Corrigir o primitive Dialog e coordenar validação de consumidores; a propriedade local exige 03, justificando redistribuição em relação à missão 02 da W4. | `src/components/ui/Dialog.tsx` e teste unitário do primitive; consumidores ficam com seus donos por handoff. | Sem package/lock, server, workflow ou schema. |
 
 ### Arquivos compartilhados e dono único
 
-| Arquivo                                        | Dono na W1                                                      |
-| ---------------------------------------------- | --------------------------------------------------------------- |
-| `package.json`, `package-lock.json`            | 01, com aprovação do 00 limitada à remoção do reset de `start`. |
-| `server.ts`                                    | 00; nenhum especialista edita sem novo handoff/aprovação.       |
-| `prisma/schema.prisma`, `prisma/migrations/**` | 01; 01A não executa nesta onda.                                 |
-| `.github/workflows/**`                         | 08.                                                             |
-| `src/components/ui/Dialog.tsx`                 | 03, em subfase/slot posterior.                                  |
+| Arquivo | Dono na W1 |
+|---|---|
+| `package.json`, `package-lock.json` | 01, com aprovação do 00 limitada à remoção do reset de `start`. |
+| `server.ts` | 00; nenhum especialista edita sem novo handoff/aprovação. |
+| `prisma/schema.prisma`, `prisma/migrations/**` | 01; 01A não executa nesta onda. |
+| `.github/workflows/**` | 08. |
+| `src/components/ui/Dialog.tsx` | 03, em subfase/slot posterior. |
 
 Não há sobreposição de escrita entre os três primeiros especialistas. Dependência: 14 valida o comportamento produzido por 01; 08 consome comandos estabilizados por 14, sem editar os mesmos arquivos. 15/10 recebem o SHA após a primeira leva. O item Dialog é independente e pode ocupar o próximo slot, mas não será misturado à propriedade dos demais.
 

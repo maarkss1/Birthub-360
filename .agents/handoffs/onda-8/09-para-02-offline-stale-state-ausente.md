@@ -80,7 +80,7 @@ Itens 1 e 2 (obrigatórios) implementados:
    no topo do layout, empurrando Sidebar/Topbar para baixo com uma transição de altura (Framer
    Motion, respeitando `prefers-reduced-motion` via `MotionConfig reducedMotion="user"` já
    configurado em `App.tsx`) em vez de sobrepor a busca/notificações do Topbar. `role="status"
-aria-live="polite"` fica sempre montado (só o conteúdo interno entra/sai), para leitor de tela
+   aria-live="polite"` fica sempre montado (só o conteúdo interno entra/sai), para leitor de tela
    anunciar tanto o aparecimento quanto o desaparecimento da mensagem.
 
 Item 3 (timestamp "atualizado há Xmin" nas telas agregadas de dashboard/analytics) **não foi

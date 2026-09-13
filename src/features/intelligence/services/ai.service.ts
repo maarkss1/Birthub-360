@@ -189,8 +189,14 @@ export interface GenerateContentOptions {
   objective?: string;
   personaFallback?: string;
   /** Chave do playbook comercial ativo (valor gravado em banco — ver
-   *  src/config/playbooks.ts). Seleciona o preâmbulo e os overrides de prompt. */
-  brandId?: 'atlasgr' | 'totaltrac';
+   *  src/config/playbooks.ts). Seleciona o preâmbulo e os overrides de prompt.
+   *  Tipado como `string` (não `PlaybookKey`) de propósito: os prompts
+   *  FLEET_SYSTEM_PREAMBLE/FLEET_TOOL_OVERRIDES abaixo ainda não foram
+   *  revisados na remoção dos playbooks atlasgr/totaltrac — nenhum caminho novo
+   *  envia mais 'totaltrac' aqui, mas o conteúdo do prompt em si fica para uma
+   *  rodada dedicada de revisão de conteúdo, não para não perder texto de IA
+   *  já escrito sem revisão de negócio. */
+  brandId?: string;
   organizationId?: string;
 }
 

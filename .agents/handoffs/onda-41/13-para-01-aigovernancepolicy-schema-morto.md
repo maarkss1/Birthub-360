@@ -103,7 +103,6 @@ comportamento novo sem mandato de produto, não destravar um ponto de integraç�
   dimensões, que não têm tabela própria).
 
 ## Alteração necessária (fora do meu escopo — `prisma/schema.prisma` é arquivo de propriedade
-
 exclusiva do Agente 01/01A)
 
 Adicionar um comentário `///`/`//` acima de `AIGovernancePolicy` e `AIEvaluation` documentando que

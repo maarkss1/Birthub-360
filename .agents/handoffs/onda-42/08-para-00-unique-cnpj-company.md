@@ -2,33 +2,10 @@
 - Para: 00 (roteamento) / Agente 01 (dono real de `prisma/schema.prisma` e migrações, por
   `AGENTS.md` linhas 251-252)
 - Onda: 42
-- Status: resolvido — `@@unique([organizationId, cnpj])` está aplicado em `Company`
-  (`prisma/schema.prisma` linha ~299) e em `Prospect` (linha ~2903), pelas duas migrations
-  `prisma/migrations/20260830120000_company_organization_cnpj_unique/migration.sql` e
-  `prisma/migrations/20260902040000_prospect_organization_cnpj_unique/migration.sql`, ambas já
-  aplicadas. As duas seguem exatamente o roteiro pedido neste handoff: normalizam o CNPJ existente
-  para dígitos puros (tratando `''` como `NULL`), abortam com `RAISE EXCEPTION` se sobrar grupo
-  duplicado real depois da normalização (decisão de merge fica para humano, não para a migration),
-  e só então criam o índice único composto por `organizationId`. A migration de `Prospect` também
-  corrigiu, de quebra, um unique global indevido (`Prospect_cnpj_key`, sem escopo de tenant —
-  bloqueava uma organização de cadastrar um CNPJ já usado por outra), substituindo-o pelo unique
-  por tenant.
-- Item separado, ainda pendente (não implementado neste handoff — fora do escopo do item de
-  auditoria ACH-08-03, que pediu só a atualização deste status): tratamento explícito do erro
-  Prisma `P2002` na criação de `Company`. Confirmado no código atual que nenhum dos dois pontos de
-  escrita trata a colisão:
-  - `PrismaCompanyRepository.ts::create` (`src/features/companies/infra/PrismaCompanyRepository.ts`,
-    linha ~92-101) chama `prisma.company.create` sem `try/catch` — uma colisão de
-    `(organizationId, cnpj)` sobe hoje como erro 500 cru em vez de uma mensagem "empresa com este
-    CNPJ já existe".
-  - O fluxo de aprovação 1-clique do catálogo de Market Intelligence também não trata `P2002` no
-    `prisma.company.create` (linha ~341). O arquivo mudou de nome desde que este handoff foi
-    escrito — era `marketIntelligence.service.ts`, hoje é
-    `src/features/market-intelligence/server/marketIntelligenceCompany.service.ts`, função
-    `approveToPipeline` — mas o comportamento (sem tratamento de `P2002`) é o mesmo.
-- Prioridade (item pendente acima): média-alta (bloqueia a garantia real de identidade única de
-  empresa; não bloqueia o que esta onda entregou — a resolução determinística já funciona sem o
-  `@@unique`, só não é garantida em nível de banco)
+- Status: aberto
+- Prioridade: média-alta (bloqueia a garantia real de identidade única de empresa; não bloqueia o
+  que esta onda entregou — a resolução determinística já funciona sem o `@@unique`, só não é
+  garantida em nível de banco)
 
 ## Contexto (dossiê CPI, DEC-16, opção A)
 
@@ -75,25 +52,23 @@ não por query real. **A migration real precisa rodar a query de verificação a
 aplicar o `@@unique`, em vez de confiar só nesta análise.**
 
 ### 1. O valor de `cnpj` não é normalizado hoje — o mesmo CNPJ pode estar gravado em formatos
-
-diferentes, o que faz um `@@unique` ingênuo (sobre a string crua) NÃO pegar duplicatas reais
+   diferentes, o que faz um `@@unique` ingênuo (sobre a string crua) NÃO pegar duplicatas reais
 
 Encontrei **três pontos de escrita em `Company.cnpj` com normalização diferente entre si**, dois
 deles fora do escopo desta onda (`src/features/prospecting/services/`) então não alterados aqui —
 só documentados:
 
-| Caminho de criação                                                                                                      | Arquivo                                                              | Formato gravado                                                                                                                                                            | Dedupe hoje                                                                                                                                                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Promoção prospect → CRM                                                                                                 | `prospecting.service.ts::promoteToCrm` (esta onda)                   | **dígitos só** (`toDeterministicCnpj`, 14 dígitos)                                                                                                                         | Sim — `resolveCompanyIdentity`, normaliza com `regexp_replace` antes de comparar                                                                                                                                                                                                                               |
-| Aprovação 1-clique do catálogo de Market Intelligence                                                                   | `marketIntelligence.service.ts::approveToPipeline` (linhas ~309-345) | **com pontuação** (`formatCnpj(normalized)`, ex. `11.222.333/0001-81`) — usa um `formatCnpj` próprio importado de `marketIntelligence.schemas.js`, não o de `cnpj.util.ts` | Parcial — compara `cnpj: formatCnpj(normalized)` por igualdade EXATA contra o valor gravado, sem normalizar o lado do banco. **Não encontra uma Company cujo CNPJ foi gravado só em dígitos** (ex. pela promoção de prospect) — o mesmo CNPJ real cairia como "não encontrado" e criaria uma segunda `Company` |
-| Cadastro manual no CRM (`CompanyForm.tsx` → `CompanyController` → `CompanyUseCases` → `PrismaCompanyRepository.create`) | `PrismaCompanyRepository.ts::create`                                 | **o que o usuário digitou, sem normalização nem validação nenhuma** — nem checa dígito verificador, nem remove máscara                                                     | Nenhum — `create()` grava direto, sem checar CNPJ existente                                                                                                                                                                                                                                                    |
+| Caminho de criação | Arquivo | Formato gravado | Dedupe hoje |
+|---|---|---|---|
+| Promoção prospect → CRM | `prospecting.service.ts::promoteToCrm` (esta onda) | **dígitos só** (`toDeterministicCnpj`, 14 dígitos) | Sim — `resolveCompanyIdentity`, normaliza com `regexp_replace` antes de comparar |
+| Aprovação 1-clique do catálogo de Market Intelligence | `marketIntelligence.service.ts::approveToPipeline` (linhas ~309-345) | **com pontuação** (`formatCnpj(normalized)`, ex. `11.222.333/0001-81`) — usa um `formatCnpj` próprio importado de `marketIntelligence.schemas.js`, não o de `cnpj.util.ts` | Parcial — compara `cnpj: formatCnpj(normalized)` por igualdade EXATA contra o valor gravado, sem normalizar o lado do banco. **Não encontra uma Company cujo CNPJ foi gravado só em dígitos** (ex. pela promoção de prospect) — o mesmo CNPJ real cairia como "não encontrado" e criaria uma segunda `Company` |
+| Cadastro manual no CRM (`CompanyForm.tsx` → `CompanyController` → `CompanyUseCases` → `PrismaCompanyRepository.create`) | `PrismaCompanyRepository.ts::create` | **o que o usuário digitou, sem normalização nem validação nenhuma** — nem checa dígito verificador, nem remove máscara | Nenhum — `create()` grava direto, sem checar CNPJ existente |
 
 Ou seja: hoje já é possível (e, por este desenho, bastante provável ao longo do tempo) ter a MESMA
 empresa real representada por duas ou três linhas de `Company` na mesma organização, cada uma com
 o CNPJ gravado num formato diferente — porque cada caminho de escrita resolve dedupe (quando
 resolve) contra o próprio formato, não contra um formato canônico único. Um `@@unique([organizationId, cnpj])`
 aplicado direto sobre a coluna como está hoje:
-
 - não teria detectado essas duplicatas na hora de criar (formatos diferentes = strings diferentes
   = sem conflito para o Postgres);
 - ao ser adicionado agora, **falharia a migration** se alguma dessas duplicatas já existir com o
@@ -133,8 +108,7 @@ aplicado direto sobre a coluna como está hoje:
 4. **Só depois de 1-3 confirmarem zero grupos duplicados**, aplicar `@@unique([organizationId, cnpj])`.
 
 ### 2. Unificar os pontos de escrita para o mesmo formato canônico (fora do escopo desta onda, mas
-
-pré-requisito real para o `@@unique` não ser recontornado no futuro)
+   pré-requisito real para o `@@unique` não ser recontornado no futuro)
 
 Mesmo depois do backfill + unique, se `approveToPipeline` (Market Intelligence) continuar gravando
 `formatCnpj(normalized)` (com pontuação) enquanto `promoteToCrm` (Prospecção) continua gravando só
@@ -161,7 +135,7 @@ existente; recomendo também garantir que nenhum caminho de escrita grave `''` d
 ## Teste esperado depois da migration
 
 - `tests/integration/prospecting-rls.test.ts` (já existente, describe `findExistingCompany dedupe
-por CNPJ`) continua passando sem alteração — o `@@unique` reforça em nível de banco o que o
+  por CNPJ`) continua passando sem alteração — o `@@unique` reforça em nível de banco o que o
   código já garante hoje por busca prévia; não deveria mudar nenhum resultado desses testes.
 - Um teste de integração novo (sugestão, não escrito por mim — fora do meu arquivo de propriedade):
   tentar `prisma.company.create` duas vezes com o mesmo `(organizationId, cnpj)` fora do caminho de

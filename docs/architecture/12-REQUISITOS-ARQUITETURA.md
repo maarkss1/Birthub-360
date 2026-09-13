@@ -139,7 +139,7 @@ igual ou inferior ao do usuário. Matriz por módulo (levantada diretamente do c
 | Team (gestão de usuários)                  | ADMIN                        | ADMIN                                 | ADMIN                                  |
 | LGPD (exclusão/exportação de titular)      | todos (export)               | —                                     | ADMIN, GESTOR (erase)                  |
 | Comercial Inteligente (executivo)          | ADMIN, GESTOR                | ADMIN, GESTOR                         | ADMIN, GESTOR                          |
-| AI Settings (`/ai-settings`)               | todos                        | ADMIN                                 | ADMIN                                  |
+| AI Settings (`/ai-settings`)               | todos                        | ADMIN + token de operador de plataforma (`requirePlatformOperator`; TENANT-002) | ADMIN + token de operador de plataforma |
 | Integrações (Bitrix/WhatsApp/3CX/Google)   | todos                        | ADMIN, GESTOR, VENDEDOR (ações)       | ADMIN, GESTOR (config)                 |
 | **Feature Flags** (novo)                   | todos autenticados           | —                                     | **ADMIN** (override do próprio tenant) |
 | **Bug Reports** (novo)                     | —                            | **todos autenticados** (criar relato) | **ADMIN, GESTOR** (listar/triagem)     |

@@ -3,8 +3,12 @@ set -euo pipefail
 
 # ==============================================================================
 # Script de Deploy e Configuração no Oracle Cloud Infrastructure (OCI)
-# Central de Inteligência Comercial AtlasGR
+# Central de Inteligência Comercial Birth Hub 360º
 # ==============================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/oci-containers.sh
+source "${SCRIPT_DIR}/lib/oci-containers.sh"
 
 ENV_FILE=".env.production"
 COMPOSE_FILE="docker-compose.oci.yml"
@@ -288,18 +292,18 @@ $DOCKER_COMPOSE_CMD --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "${COMPOSE_PROFILE
 # 5. Aguarda o banco ficar pronto e executa as migrações Prisma
 echo "⏳ 5. Aguardando banco de dados inicializar..."
 RETRIES=30
-until docker exec -i atlasgr_postgres pg_isready -U prospector -d prospectordb 2>/dev/null || [ "$RETRIES" -le 0 ]; do
+until docker exec -i "$OCI_POSTGRES_CONTAINER" pg_isready -U prospector -d prospectordb 2>/dev/null || [ "$RETRIES" -le 0 ]; do
   echo "Aguardando Postgres ($RETRIES tentativas restantes)..."
   sleep 2
   RETRIES=$((RETRIES - 1))
 done
 
 echo "🗄️ 6. Executando migrações Prisma..."
-docker exec -i atlasgr_app npx prisma migrate deploy
+docker exec -i "$OCI_APP_CONTAINER" npx prisma migrate deploy
 
 # 7. Executa o seed para garantir o usuário único administrador se disponível
 echo "👤 7. Configurando usuário único administrador..."
-docker exec -i atlasgr_app npx tsx scripts/seed-team.ts 2>/dev/null || true
+docker exec -i "$OCI_APP_CONTAINER" npx tsx scripts/seed-team.ts 2>/dev/null || true
 
 echo "========================================================"
 echo "✅ Deploy no Oracle Cloud concluído com sucesso!"
