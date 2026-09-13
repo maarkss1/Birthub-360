@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { AppError } from '../../../../shared/middlewares/errorHandler';
 import { CopilotoIaUseCases } from '../CopilotoIaUseCases';
 import type {
   CopilotoIaRepository,
@@ -646,6 +647,72 @@ describe('CopilotoIaUseCases', () => {
       });
       expect(updated.audioObjectKey).toBe('copiloto-ia/org-1/conv-1/audio.webm');
       expect(updated.audioDurationMs).toBe(60_000);
+    });
+
+    // TENANT-001 — regressão do audit de segurança: `objectKey` é enviado pelo cliente
+    // (chrome-extension/tela de captura), então o único jeito de garantir que ele pertence a ESTA
+    // organização/conversa é validar o prefixo `copiloto-ia/{organizationId}/{conversationId}/`
+    // gravado em `requestAudioUploadUrl`. Sem essa checagem, um cliente malicioso ou com bug podia
+    // enviar o objectKey de OUTRA organização e tê-lo anexado como se fosse desta conversa.
+    it('rejeita objectKey de outra organização (cross-tenant) com erro de autorização (403)', async () => {
+      const conversation = await useCases.createConversation(
+        ORG_ID,
+        { source: 'MEET', leadId: 'lead-1' },
+        'user-1',
+      );
+      await useCases.recordConsent(ORG_ID, conversation.id, {
+        method: 'meet_banner',
+        textVersion: 'v1',
+        granted: true,
+      });
+      await useCases.startCapture(ORG_ID, conversation.id);
+
+      const foreignObjectKey = 'copiloto-ia/org-2/conv-999/audio.webm';
+      await expect(
+        useCases.completeAudioUpload(ORG_ID, conversation.id, {
+          objectKey: foreignObjectKey,
+          mimeType: 'audio/webm',
+          sizeBytes: 2048,
+        }),
+      ).rejects.toThrow('objectKey não pertence a esta organização/conversa.');
+
+      try {
+        await useCases.completeAudioUpload(ORG_ID, conversation.id, {
+          objectKey: foreignObjectKey,
+          mimeType: 'audio/webm',
+          sizeBytes: 2048,
+        });
+        expect.unreachable('deveria ter lançado AppError 403');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).statusCode).toBe(403);
+      }
+
+      // Confirma que o objectKey estrangeiro não foi gravado silenciosamente na conversa.
+      const stillClean = await useCases.getConversation(ORG_ID, conversation.id);
+      expect(stillClean.audioObjectKey).toBeNull();
+    });
+
+    it('rejeita objectKey de outra conversa dentro da MESMA organização', async () => {
+      const conversation = await useCases.createConversation(
+        ORG_ID,
+        { source: 'MEET', leadId: 'lead-1' },
+        'user-1',
+      );
+      await useCases.recordConsent(ORG_ID, conversation.id, {
+        method: 'meet_banner',
+        textVersion: 'v1',
+        granted: true,
+      });
+      await useCases.startCapture(ORG_ID, conversation.id);
+
+      await expect(
+        useCases.completeAudioUpload(ORG_ID, conversation.id, {
+          objectKey: `copiloto-ia/${ORG_ID}/outra-conversa/audio.webm`,
+          mimeType: 'audio/webm',
+          sizeBytes: 2048,
+        }),
+      ).rejects.toThrow('objectKey não pertence a esta organização/conversa.');
     });
   });
 
