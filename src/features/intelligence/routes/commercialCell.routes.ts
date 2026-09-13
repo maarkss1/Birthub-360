@@ -17,24 +17,23 @@
  *   3. a rota busca e FORMATA o dado real; o agente apenas narra (nunca busca dado sozinho);
  *   4. resposta `{ success: true, data: <resultado do agente> }`.
  */
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { container } from '../../../shared/di/container.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { container } from '../../../shared/di/container.js';
-import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry.js';
-import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { BitrixGuardianAgent } from '../agents/bitrixGuardian.agent.js';
 import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
+import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry.js';
 import { ContractSignatureAgent } from '../agents/contractSignature.agent.js';
+import { CoordinatorCommercialAgent } from '../agents/coordinatorCommercial.agent.js';
+import { ExecutiveDirectorAgent } from '../agents/executiveDirector.agent.js';
 // AIAGENT-004 (onda 6): os 5 agentes da célula que a onda 43 deixou sem caminho de entrega.
 // `billingRevenue.agent.ts` continua deliberadamente fora — ver `commercialAgentRegistry.ts`.
 import { LdrIntelligenceAgent } from '../agents/ldrIntelligence.agent.js';
-import { CoordinatorCommercialAgent } from '../agents/coordinatorCommercial.agent.js';
 import { ManagerCommercialAgent } from '../agents/managerCommercial.agent.js';
-import { ExecutiveDirectorAgent } from '../agents/executiveDirector.agent.js';
-import { BitrixGuardianAgent } from '../agents/bitrixGuardian.agent.js';
+import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
 
 const router = Router();
 // Mesmos papéis de escrita aplicados em `agent.routes.ts` — replicado (e não importado) porque o

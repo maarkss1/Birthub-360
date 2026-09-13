@@ -48,13 +48,13 @@ describe('Module Access Grant Integration', () => {
     await grantModuleAccess({
       organizationId: ORG_ID,
       userId: user.id,
-      moduleKey: 'proposta-comercial',
+      moduleKey: 'social-selling',
       grantedByUserId: 'admin-1',
     });
     await grantModuleAccess({
       organizationId: ORG_ID,
       userId: user.id,
-      moduleKey: 'proposta-comercial',
+      moduleKey: 'social-selling',
       grantedByUserId: 'admin-2',
     });
 
@@ -73,13 +73,13 @@ describe('Module Access Grant Integration', () => {
     await grantModuleAccess({
       organizationId: ORG_ID,
       userId: user.id,
-      moduleKey: 'treinamento-atlasgr',
+      moduleKey: 'social-selling',
       grantedByUserId: 'admin-1',
     });
 
     const matrix = await getModuleAccessMatrix(ORG_ID);
     const row = matrix.find((m) => m.id === user.id);
-    expect(row?.grantedModules).toEqual(['treinamento-atlasgr']);
+    expect(row?.grantedModules).toEqual(['social-selling']);
   });
 
   it('rejects an unknown moduleKey', async () => {
@@ -99,6 +99,31 @@ describe('Module Access Grant Integration', () => {
         grantedByUserId: 'admin-1',
       }),
     ).rejects.toThrow(ModuleAccessServiceError);
+  });
+
+  it('rejects the retired moduleKeys (treinamento-atlasgr, proposta-comercial, hub-inteligencia-marketing) — conteúdo proprietário Atlas GR aposentado em 09/2026', async () => {
+    const user = await prisma.user.create({
+      data: {
+        name: 'Erik Retirado',
+        email: 'erik.retirado@module-access.test',
+        organizationId: ORG_ID,
+      },
+    });
+
+    for (const retiredKey of [
+      'treinamento-atlasgr',
+      'proposta-comercial',
+      'hub-inteligencia-marketing',
+    ]) {
+      await expect(
+        grantModuleAccess({
+          organizationId: ORG_ID,
+          userId: user.id,
+          moduleKey: retiredKey,
+          grantedByUserId: 'admin-1',
+        }),
+      ).rejects.toThrow(ModuleAccessServiceError);
+    }
   });
 
   it('ADMIN vê todos os módulos do catálogo automaticamente, sem precisar de concessão', async () => {
