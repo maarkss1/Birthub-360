@@ -1,51 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (CloseableWorker) */
 import type { Worker } from 'bullmq';
 import { env } from '../config/env.js';
-import { logger } from '../lib/logger.js';
-import { queuesEnabled } from '../lib/queue/redis.js';
-import { createLeadsWorker } from '../lib/queue/index.js';
-import { createAgentWorker } from '../lib/queue/agent.worker.js';
-import { createEnrichmentWorker } from '../lib/queue/enrichment.queue.js';
-import { createEnrichmentCascadeWorker } from '../lib/queue/enrichmentCascade.worker.js';
-import { createSearchWorker } from '../lib/queue/search.queue.js';
-import { initMeiliIndexes } from '../lib/search/index.js';
-import { createColdCallWorker, scheduleColdCallCampaigns } from '../lib/queue/coldCall.worker.js';
-import { createWhatsAppSignalWorker } from '../lib/queue/whatsappSignal.worker.js';
-import { enabledOrganizations } from '../features/integrations/birth-voice/coldCall.service.js';
-import {
-  createSwarmSchedulerWorker,
-  scheduleSwarmScheduler,
-} from '../lib/queue/swarmScheduler.worker.js';
-import { enabledOrganizations as swarmSchedulerEnabledOrganizations } from '../features/intelligence/services/swarmScheduler.service.js';
-import { createBitrixSyncWorker, scheduleBitrixSync } from '../lib/queue/bitrixSync.worker.js';
-import {
-  createFollowUpWorker,
-  scheduleFollowUpJobs,
-} from '../features/crm/jobs/followUp.worker.js';
-import {
-  createExecutiveSummaryWorker,
-  scheduleExecutiveSummaryJob,
-} from '../features/crm/jobs/dailyExecutiveSummary.worker.js';
-import {
-  createDeduplicationWorker,
-  scheduleDeduplicationJob,
-} from '../features/crm/jobs/deduplication.worker.js';
-import {
-  createAccountIntelligenceSchedulerWorker,
-  accountIntelligenceSchedulerQueue,
-} from '../features/market-intelligence/jobs/accountIntelligenceScheduler.worker.js';
-import {
-  createWinLossAnalysisWorker,
-  scheduleWinLossAnalysisJob,
-} from '../features/intelligence/services/winLossAnalysis.worker.js';
-import {
-  createWeeklyPdfReportWorker,
-  scheduleWeeklyPdfReportJob,
-} from '../features/crm/jobs/weeklyPdfReport.worker.js';
-import {
-  createAutoAnonymizeWorker,
-  scheduleAutoAnonymizeJob,
-} from '../features/crm/jobs/autoAnonymizeDisqualified.worker.js';
 import {
   createColdLeadsScannerWorker,
   scheduleColdLeadsScannerJob,
@@ -65,13 +20,50 @@ import {
 } from '../features/commercial-intelligence/jobs/forecastSnapshotWeekly.worker.js';
 import { createCopilotoTranscriptionWorker } from '../features/copiloto-ia/jobs/transcribeConversation.worker.js';
 import {
+  createAutoAnonymizeWorker,
+  scheduleAutoAnonymizeJob,
+} from '../features/crm/jobs/autoAnonymizeDisqualified.worker.js';
+import {
+  createExecutiveSummaryWorker,
+  scheduleExecutiveSummaryJob,
+} from '../features/crm/jobs/dailyExecutiveSummary.worker.js';
+import {
+  createDeduplicationWorker,
+  scheduleDeduplicationJob,
+} from '../features/crm/jobs/deduplication.worker.js';
+import {
+  createFollowUpWorker,
+  scheduleFollowUpJobs,
+} from '../features/crm/jobs/followUp.worker.js';
+import {
+  createWeeklyPdfReportWorker,
+  scheduleWeeklyPdfReportJob,
+} from '../features/crm/jobs/weeklyPdfReport.worker.js';
+import { enabledOrganizations } from '../features/integrations/birth-voice/coldCall.service.js';
+import {
   createAgentMemoryCleanupWorker,
   scheduleAgentMemoryCleanupJob,
 } from '../features/intelligence/jobs/agentMemoryCleanup.worker.js';
+import { enabledOrganizations as swarmSchedulerEnabledOrganizations } from '../features/intelligence/services/swarmScheduler.service.js';
+import {
+  createWinLossAnalysisWorker,
+  scheduleWinLossAnalysisJob,
+} from '../features/intelligence/services/winLossAnalysis.worker.js';
 import {
   createAccountIntelligenceInsightsWorker,
   scheduleAccountIntelligenceInsightsJob,
 } from '../features/market-intelligence/jobs/accountIntelligenceInsights.worker.js';
+import {
+  accountIntelligenceSchedulerQueue,
+  createAccountIntelligenceSchedulerWorker,
+} from '../features/market-intelligence/jobs/accountIntelligenceScheduler.worker.js';
+import { logger } from '../lib/logger.js';
+import { createAgentWorker } from '../lib/queue/agent.worker.js';
+import { createBitrixSyncWorker, scheduleBitrixSync } from '../lib/queue/bitrixSync.worker.js';
+import { createColdCallWorker, scheduleColdCallCampaigns } from '../lib/queue/coldCall.worker.js';
+import { createEnrichmentWorker } from '../lib/queue/enrichment.queue.js';
+import { createEnrichmentCascadeWorker } from '../lib/queue/enrichmentCascade.worker.js';
+import { createLeadsWorker } from '../lib/queue/index.js';
 // ACH-16-05: as 4 fábricas abaixo (agent-memory-cleanup acima, news-monitor e whatsapp-command
 // abaixo, account-intelligence-insights acima) já eram criadas em worker.ts (processo dedicado)
 // mas ficavam de fora do modo embutido — tests/unit/architecture/worker-registry-parity.test.ts
@@ -82,7 +74,15 @@ import {
   createNewsMonitorWorker,
   scheduleGlobalNewsScan,
 } from '../lib/queue/newsMonitor.worker.js';
+import { queuesEnabled } from '../lib/queue/redis.js';
+import { createSearchWorker } from '../lib/queue/search.queue.js';
+import {
+  createSwarmSchedulerWorker,
+  scheduleSwarmScheduler,
+} from '../lib/queue/swarmScheduler.worker.js';
 import { createWhatsAppCommandWorker } from '../lib/queue/whatsappCommand.worker.js';
+import { createWhatsAppSignalWorker } from '../lib/queue/whatsappSignal.worker.js';
+import { initMeiliIndexes } from '../lib/search/index.js';
 
 // `unknown` não serve aqui: os workers reais guardados neste handle têm DataType/ResultType todos
 // diferentes entre si (AgentJobData, EnrichmentJobData, WhatsAppSignalJobData, void, objetos de

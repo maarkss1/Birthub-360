@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { Queue } from 'bullmq';
-import { connection, queuesEnabled } from './redis.js';
+import type { SendWhatsAppMessageContext } from '../../features/integrations/whatsapp/whatsapp.service.js';
 import { logger } from '../logger.js';
 import { registerQueueForMetrics } from './metrics.js';
-import type { SendWhatsAppMessageContext } from '../../features/integrations/whatsapp/whatsapp.service.js';
+import { connection, queuesEnabled } from './redis.js';
 
 export const WHATSAPP_COMMAND_QUEUE_NAME = 'whatsapp-command';
 

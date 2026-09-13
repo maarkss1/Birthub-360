@@ -23,6 +23,7 @@ vi.mock('../../logger.js', () => ({
   },
 }));
 
+import * as budgetModule from '../budget.js';
 import {
   __resetCircuitBreakerForTests,
   cleanAndParseJson,
@@ -30,7 +31,6 @@ import {
   getAiModel,
   toChatCompletionMessages,
 } from '../gateway';
-import * as budgetModule from '../budget.js';
 
 const originalEnv = {
   GROQ_API_KEY: process.env.GROQ_API_KEY,
@@ -178,16 +178,17 @@ describe('AI gateway', () => {
     const anterior = process.env.EMBEDDINGS_PROVIDER;
     process.env.EMBEDDINGS_PROVIDER = 'gateway';
     try {
+      const fakeEmbedding = new Array(768).fill(0.01);
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue(
           jsonResponse({
-            data: [{ embedding: [0.1, 0.2, 0.3] }],
+            data: [{ embedding: fakeEmbedding }],
           }),
         ),
       );
 
-      await expect(generateEmbedding('  conteúdo útil  ')).resolves.toEqual([0.1, 0.2, 0.3]);
+      await expect(generateEmbedding('  conteúdo útil  ')).resolves.toEqual(fakeEmbedding);
       await expect(generateEmbedding('   ')).rejects.toThrow('não pode ser vazio');
     } finally {
       if (anterior === undefined) delete process.env.EMBEDDINGS_PROVIDER;

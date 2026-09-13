@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react';
-import { Search, Users, Building2, Globe, Mail, Phone, MessageCircle, Loader2 } from 'lucide-react';
+import { Building2, Globe, Loader2, Mail, MessageCircle, Phone, Search, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
+import { useActivePlaybook } from '../../../../hooks/useActivePlaybook';
 import { api } from '../../../../lib/api';
-import type { DecisionMaker } from '../../services/prospecting.service';
-import type { DecisionMakerCriteria } from '../../services/apollo.service';
 import {
   ATLAS_PERSONA_OPTIONS,
   TOTALTRAC_PERSONA_OPTIONS,
 } from '../../../../shared/constants/icp-options';
-import { useActivePlaybook } from '../../../../hooks/useActivePlaybook';
-import { findCompanyDomain, normalizeCompanyDomain } from '../../utils/domain';
-import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
 import {
   getTelephoneLink,
   getWhatsAppLink,
   validContactEmails,
   validContactPhones,
 } from '../../../../shared/utils/contact-links';
+import type { DecisionMakerCriteria } from '../../services/apollo.service';
+import type { DecisionMaker } from '../../services/prospecting.service';
+import { findCompanyDomain, normalizeCompanyDomain } from '../../utils/domain';
+import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
 
 function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;

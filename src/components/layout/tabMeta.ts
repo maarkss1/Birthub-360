@@ -1,39 +1,39 @@
 import {
-  Home,
-  Search,
-  LayoutTemplate,
-  Users,
-  Building2,
   Activity,
-  BookOpen,
-  Layers,
-  FileBarChart,
-  Zap,
-  MessageSquare,
-  Globe,
-  Bell,
   BarChart3,
+  Bell,
+  BookOpen,
+  Bot,
+  Briefcase,
+  Building2,
+  CalendarCheck,
   CalendarDays,
   Cpu,
-  Wallet,
-  FileText,
   Database,
-  PhoneCall,
-  Target,
-  Shield,
-  UserCog,
-  Settings as SettingsIcon,
-  LineChart,
-  Gauge,
-  Repeat,
+  FileBarChart,
   FileSignature,
+  FileText,
+  Gauge,
+  Globe,
   Headset,
-  Bot,
-  CalendarCheck,
-  ShieldCheck,
+  Home,
+  Layers,
+  LayoutTemplate,
+  LineChart,
+  MessageSquare,
   Mic,
-  Briefcase,
+  PhoneCall,
+  Repeat,
+  Search,
+  Settings as SettingsIcon,
+  Shield,
+  ShieldCheck,
   Stethoscope,
+  Target,
+  UserCog,
+  Users,
+  Wallet,
+  Zap,
 } from 'lucide-react';
 
 /**
@@ -56,6 +56,12 @@ import {
  * top-level em App.tsx (fora de `/app/*`, sem MainLayout/Sidebar), guardadas por
  * `RequireModuleAccess` em vez de `RequireUserAllowed` — ver ModuleAccessGrant em
  * prisma/schema.prisma e src/features/module-access/.
+ *
+ * Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+ * existir"): de `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing` acima,
+ * só resta a menção histórica neste comentário — os módulos em si (catálogo, rotas top-level,
+ * componentes, conteúdo estático) foram removidos por completo, não só do CRM. `social-selling`
+ * continua existindo como rota top-level (ver App.tsx), rerotulado para a marca Birth Hub 360.
  */
 export type TabType =
   | 'dashboard'

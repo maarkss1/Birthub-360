@@ -1,9 +1,9 @@
 import { logger } from '../../../lib/logger.js';
 import {
   anyRecordBlocksChannel,
+  type CadenceChannel,
   hasAnyIdentifier,
   normalizeOptOutSubject,
-  type CadenceChannel,
   type OptOutRecord,
   type OptOutRepository,
   type OptOutSubject,
@@ -102,5 +102,5 @@ export async function assertNotOptedOut(
   }
 }
 
-export { normalizeOptOutSubject };
 export type { CadenceChannel, OptOutRecord, OptOutRepository, OptOutSubject };
+export { normalizeOptOutSubject };

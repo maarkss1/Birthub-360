@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { Crm360UseCases } from '../application/Crm360UseCases.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { Crm360UseCases } from '../application/Crm360UseCases.js';
 
 export class Crm360Controller {
   constructor(private crm360UseCases: Crm360UseCases) {}
@@ -177,12 +177,13 @@ export class Crm360Controller {
 
   updateDocumentStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const orgId = (req as AuthRequest).user.organizationId;
+      const { organizationId: orgId, id: actorUserId } = (req as AuthRequest).user;
       const { status } = req.body;
       const data = await this.crm360UseCases.updateDocumentStatus(
         orgId,
         routeParam(req.params.id, 'id'),
         status,
+        actorUserId,
       );
       res.json({ success: true, data });
     } catch (error) {

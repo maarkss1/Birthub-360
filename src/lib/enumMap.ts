@@ -1,4 +1,4 @@
-import type { LeadStatus, CompanyStatus, ActivityType, ActivityStatus } from './zod';
+import type { ActivityStatus, ActivityType, CompanyStatus, LeadStatus } from './zod';
 
 // O schema.prisma usa identificadores de enum (ex: Lead_Recebido) com @map para o texto
 // exibido na UI (ex: "Lead Recebido"). Este módulo faz a ponte entre os dois mundos:
@@ -52,7 +52,6 @@ export type AutomationTriggerLabel =
   | 'Lead criado'
   | 'Lead mudou de status'
   | 'Atividade concluída'
-  | 'Lead sem interação'
   | 'Lead estagnado';
 export type AutomationActionLabel = 'Notificar equipe' | 'Criar atividade' | 'Ligar via SDR de Voz';
 
@@ -60,7 +59,6 @@ const AUTOMATION_TRIGGER_TO_PRISMA: Record<AutomationTriggerLabel, string> = {
   'Lead criado': 'Lead_Criado',
   'Lead mudou de status': 'Lead_Mudou_Status',
   'Atividade concluída': 'Atividade_Concluida',
-  'Lead sem interação': 'Lead_Sem_Interacao',
   'Lead estagnado': 'Lead_Estagnado',
 };
 

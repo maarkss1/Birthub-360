@@ -1,7 +1,7 @@
-import { logger } from '../../../lib/logger';
 import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
+import { logger } from '../../../lib/logger';
+import { buildProviderCacheKey, withProviderCache } from './providerCache.js';
 import { checkProviderRateLimit } from './providerRateLimit.js';
-import { withProviderCache, buildProviderCacheKey } from './providerCache.js';
 
 /**
  * Busca gratuita, sem chave, via API pública do GitHub — a fonte "sem chave" mais próxima do que

@@ -1,5 +1,5 @@
+import type { ActivityStatus, ActivityType } from '../../../lib/zod';
 import type { Repository } from '../../../shared/domain/Repository';
-import type { ActivityType, ActivityStatus } from '../../../lib/zod';
 
 export interface Activity {
   id: string;

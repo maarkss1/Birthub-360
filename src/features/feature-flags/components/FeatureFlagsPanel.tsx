@@ -1,16 +1,16 @@
-import { useState } from 'react';
 import { RotateCcw } from 'lucide-react';
+import { useState } from 'react';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { useFeatureFlags } from '../../../hooks/useFeatureFlags';
-import { featureFlagsApi, type ResolvedFeatureFlag } from '../featureFlags.api';
 import { toast } from '../../../lib/toast';
+import { featureFlagsApi, type ResolvedFeatureFlag } from '../featureFlags.api';
 
 /** Switch acessível mínimo (role="switch") — não há um primitivo Switch em src/components/ui/
  *  hoje; introduzir um componente genérico novo só para este único uso seria antecipar reuso que

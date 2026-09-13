@@ -1,9 +1,10 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { connection } from '../../../lib/queue/redis.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { requestContext } from '../../../lib/async-context.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
+import { connection } from '../../../lib/queue/redis.js';
 import { sendWhatsAppMessage } from '../../integrations/whatsapp/whatsapp.service.js';
 
 export const FOLLOWUP_QUEUE_NAME = 'whatsapp-followup-queue';
@@ -123,6 +124,7 @@ export async function scheduleFollowUpJobs() {
   const queue = new Queue(FOLLOWUP_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(FOLLOWUP_QUEUE_NAME, queue);
 
   // Roda todo dia as 09:00.
   // BullMQ v6 removeu `repeat` de `Queue.add` (viraria um job avulso, nunca mais se repete) —

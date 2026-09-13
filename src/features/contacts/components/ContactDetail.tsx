@@ -1,22 +1,24 @@
-import { useEffect, useState } from 'react';
 import {
-  Building2,
+  AlertTriangle,
   Briefcase,
+  Building2,
   Calendar,
   Mail,
-  Phone,
   MessageCircle,
+  Phone,
   ShieldCheck,
   ShieldQuestion,
-  AlertTriangle,
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
+import { useEffect, useState } from 'react';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
+import { EntityNotes } from '../../../components/crm/EntityNotes';
 import { Drawer } from '../../../components/ui/Drawer';
+import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { contactsDB } from '../../../lib/db';
-import { getWhatsAppLink } from '../../../shared/utils/contact-links';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { contactsDB } from '../../../lib/db';
 import { LEAD_STATUS_EMOJI } from '../../../lib/enumMap';
+import { getWhatsAppLink } from '../../../shared/utils/contact-links';
 import type { Contact } from '../../../types';
 
 interface ContactDetailProps {
@@ -241,6 +243,9 @@ export function ContactDetail({ contactId, onClose }: ContactDetailProps) {
               <p className="text-sm text-ink-2">Nenhum negócio vinculado a este contato ainda.</p>
             )}
           </section>
+
+          <EntityNotes entityType="contact" entityId={contact.id} />
+          <EntityAttachments entityType="contact" entityId={contact.id} />
         </div>
       )}
     </Drawer>

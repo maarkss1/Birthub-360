@@ -1,18 +1,19 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- regiões roláveis focáveis por teclado */
-import { useEffect, useState } from 'react';
+
 import { AlertTriangle, ArrowRightLeft, RotateCcw, Route, UserX } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
+import { useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { KpiTile } from './KpiTile';
-import { MetricInfo } from './MetricInfo';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
 import {
+  type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
-  type CommercialFilter,
   type JourneyReport,
 } from '../commercialIntelligence.api';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
+import { KpiTile } from './KpiTile';
+import { MetricInfo } from './MetricInfo';
 
 function formatDate(iso: string | null): string {
   if (!iso) return '—';

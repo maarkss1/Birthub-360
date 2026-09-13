@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
 import {
-  Clock,
+  AlertTriangle,
   Calendar as CalendarIcon,
   CheckCircle2,
+  Clock,
   Sparkles,
-  AlertTriangle,
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useActivities } from '../../hooks/useDatabase';
 
 export function ClockCalendarWidget() {

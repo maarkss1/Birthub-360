@@ -1,5 +1,5 @@
-import type React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import type React from 'react';
 import { useTilt } from '../../lib/motion';
 import { cn } from '../../lib/utils';
 

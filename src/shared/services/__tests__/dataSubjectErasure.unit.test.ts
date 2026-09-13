@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const findFirstMock = vi.fn();
 const updateMock = vi.fn();
@@ -45,9 +45,9 @@ vi.mock('@/lib/prisma', () => ({
 }));
 
 import {
-  eraseDataSubject,
   ANONYMIZED_CONTACT_NAME,
   ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT,
+  eraseDataSubject,
 } from '@/shared/services/dataSubjectErasure.service';
 
 const ORG_ID = 'org-1';

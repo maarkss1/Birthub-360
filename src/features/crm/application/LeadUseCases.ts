@@ -1,15 +1,15 @@
-import { logger } from '../../../lib/logger.js';
-import type { Lead, LeadRepository } from '../domain/Lead';
-import type { z } from 'zod';
-import { leadSchema } from '../../../lib/zod';
-import { enrichCompany } from '../../prospecting/services/enrichment.service';
-import { fromPrismaLeadStatus } from '../../../lib/enumMap';
 import type { LeadFunnel } from '@prisma/client';
+import type { z } from 'zod';
+import { fromPrismaLeadStatus } from '../../../lib/enumMap';
+import { broadcastEvent } from '../../../lib/eventsBus.js';
+import { logger } from '../../../lib/logger.js';
+import { leadSchema } from '../../../lib/zod';
 import { BaseUseCases } from '../../../shared/application/BaseUseCases';
 import { AppError } from '../../../shared/middlewares/errorHandler';
-import { ensureManualDealClosureAllowed } from './dealClosureGate.js';
+import { enrichCompany } from '../../prospecting/services/enrichment.service';
+import type { Lead, LeadRepository } from '../domain/Lead';
 import { prismaDealClosureGate } from '../infra/PrismaDealClosureGate.js';
-import { broadcastEvent } from '../../../lib/eventsBus.js';
+import { ensureManualDealClosureAllowed } from './dealClosureGate.js';
 
 /** Mesmo rótulo usado em `LEAD_STATUS_TO_PRISMA`/`LEAD_CLOSING_STATUSES` (src/lib/enumMap.ts) — único status que exige o gate de fechamento determinístico (CYC-007). */
 const WON_STATUS_LABEL = 'Negócios Ganhos';
@@ -583,7 +583,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     const { prisma } = await import('../../../lib/prisma.js');
     const leads = await prisma.lead.findMany({
       where: { id: { in: leadIds }, organizationId, deletedAt: null },
-      select: { id: true, status: true, customFields: true, owner: true },
+      select: { id: true, status: true, tags: true, owner: true },
     });
 
     let updatedCount = 0;
@@ -603,20 +603,10 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
         if (updates.owner !== undefined) {
           dataToUpdate.owner = updates.owner;
         }
-        const customFieldsObj =
-          lead.customFields &&
-          typeof lead.customFields === 'object' &&
-          !Array.isArray(lead.customFields)
-            ? { ...(lead.customFields as Record<string, unknown>) }
-            : {};
-
         if (updates.tags) {
-          customFieldsObj.tags = updates.tags;
-          dataToUpdate.customFields = customFieldsObj;
+          dataToUpdate.tags = updates.tags;
         } else if (updates.addTags || updates.removeTags) {
-          let currentTags = Array.isArray(customFieldsObj.tags)
-            ? [...(customFieldsObj.tags as string[])]
-            : [];
+          let currentTags = Array.isArray(lead.tags) ? [...lead.tags] : [];
           if (updates.addTags) {
             for (const tag of updates.addTags) {
               if (!currentTags.includes(tag)) currentTags.push(tag);
@@ -625,8 +615,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
           if (updates.removeTags) {
             currentTags = currentTags.filter((t) => !updates.removeTags?.includes(t));
           }
-          customFieldsObj.tags = currentTags;
-          dataToUpdate.customFields = customFieldsObj;
+          dataToUpdate.tags = currentTags;
         }
 
         if (Object.keys(dataToUpdate).length > 0) {

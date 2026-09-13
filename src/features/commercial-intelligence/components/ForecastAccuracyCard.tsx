@@ -1,16 +1,17 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- região rolável focável por teclado */
-import { useEffect, useState } from 'react';
+
 import { AlertTriangle, History } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { MetricInfo } from './MetricInfo';
 import {
   commercialIntelligenceApi,
-  formatCurrency,
-  formatPercent,
   type ForecastAccuracyResult,
   type ForecastAccuracySummary,
+  formatCurrency,
+  formatPercent,
 } from '../commercialIntelligence.api';
+import { MetricInfo } from './MetricInfo';
 
 const REASON_LABEL: Record<NonNullable<ForecastAccuracyResult['reason']>, string> = {
   periodo_nao_fechou: 'Mês ainda em andamento',

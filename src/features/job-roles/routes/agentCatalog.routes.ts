@@ -1,11 +1,11 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
+import { routeParam } from '../../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import { listAgentDefinitions, getAgentDefinitionById } from '../services/agentCatalog.service.js';
-import { listCapabilitiesForAgent } from '../services/capability.service.js';
+import { getAgentDefinitionById, listAgentDefinitions } from '../services/agentCatalog.service.js';
 import { runAgentExecution } from '../services/agentRuntime.service.js';
+import { listCapabilitiesForAgent } from '../services/capability.service.js';
 
 const router = Router();
 

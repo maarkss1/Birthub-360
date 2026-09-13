@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { CompanyUseCases } from '../application/CompanyUseCases';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { CompanyUseCases } from '../application/CompanyUseCases';
 
 export class CompanyController {
   constructor(private companyUseCases: CompanyUseCases) {}
@@ -10,7 +10,7 @@ export class CompanyController {
     try {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const page = parseInt(req.query.page as string, 10) || 1;
-      const limit = parseInt(req.query.limit as string, 10) || 50;
+      const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 200);
       // Mesmo padrão de ContactController.getContacts: `req.query.q` pode chegar como array
       // (`?q=a&q=b`) ou objeto (`?q[x]=y`), não só string — `as string | undefined` só
       // engana o TypeScript, não o runtime (CodeQL: "Type confusion through parameter

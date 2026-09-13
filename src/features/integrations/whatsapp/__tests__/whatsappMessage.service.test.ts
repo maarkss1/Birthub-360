@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // findContactByPhone roda SQL cru (regexp_replace nos últimos 9 dígitos) fora do que a extensão
 // $allOperations de prisma.ts intercepta — por isso passa por withRlsContext (ver
@@ -31,8 +31,8 @@ vi.mock('../../../../lib/logger.js', () => ({
 import { prisma } from '../../../../lib/prisma.js';
 import {
   extractMessageText,
-  persistWhatsAppMessage,
   listConversations,
+  persistWhatsAppMessage,
 } from '../whatsappMessage.service.js';
 
 const messageMock = prisma.whatsAppMessage as unknown as {

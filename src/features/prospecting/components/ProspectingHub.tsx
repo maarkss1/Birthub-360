@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Database, Landmark, Sparkles, Camera, Wrench, Bookmark } from 'lucide-react';
-import { api } from '../../../lib/api';
-import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service';
-import type {
-  ProspectCandidate,
-  ProspectCriteria,
-  DiscoverResult,
-} from '../services/prospecting.service';
-import {
-  SEGMENTO_OPTIONS,
-  TOTALTRAC_SEGMENTO_OPTIONS,
-  ATLAS_PERSONA_OPTIONS,
-  TOTALTRAC_PERSONA_OPTIONS,
-} from '../../../shared/constants/icp-options';
+import { Bookmark, Camera, Database, Landmark, Sparkles, Wrench } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { GamificationWidget } from '../../../components/ui/GamificationWidget';
 import { BRAND } from '../../../config/brand';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { api } from '../../../lib/api';
 import { SoundFX } from '../../../lib/soundEffects';
-import { GamificationWidget } from '../../../components/ui/GamificationWidget';
+import {
+  ATLAS_PERSONA_OPTIONS,
+  SEGMENTO_OPTIONS,
+  TOTALTRAC_PERSONA_OPTIONS,
+  TOTALTRAC_SEGMENTO_OPTIONS,
+} from '../../../shared/constants/icp-options';
+import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service';
+import type {
+  DiscoverResult,
+  ProspectCandidate,
+  ProspectCriteria,
+} from '../services/prospecting.service';
 import { CnpjSearchPanel } from './prospecting-hub/CnpjSearchPanel';
 import { DiscoveryFilterPanel } from './prospecting-hub/DiscoveryFilterPanel';
 import { DiscoveryResultsPanel } from './prospecting-hub/DiscoveryResultsPanel';
@@ -542,7 +542,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('ocr');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'ocr' ? 'bg-info-active text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'ocr' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Camera size={18} /> Cadastrar por Foto (OCR)
             </button>
@@ -552,7 +552,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('tools');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'tools' ? 'bg-info-active text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'tools' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Wrench size={18} /> Ferramentas
             </button>

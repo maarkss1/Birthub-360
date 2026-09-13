@@ -9,9 +9,10 @@
  * router (aplicados em server.ts ao montar `/api/prospecting/tools`) — o `req.user` é injetado
  * diretamente, como nos demais testes de rota do projeto.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+
 import express from 'express';
+import request from 'supertest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
 
 const discoverViaGooglePlacesMock = vi.fn();

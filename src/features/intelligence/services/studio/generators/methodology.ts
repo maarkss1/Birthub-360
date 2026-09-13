@@ -1,6 +1,6 @@
 import type { StudioGenerationRequest } from '../schema.js';
 import { methodologyResultSchema } from '../schema.js';
-import { SYSTEM_RULES, invokeStructured, jsonOnlyInstruction } from '../shared.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
 
 const FORMATS = {
   spin: '{"type":"spin","meta":{"persona":"string","icpSize":"string","fitAssessment":"string"},"situation":["3-5 perguntas"],"problem":["3-5 perguntas"],"implication":["3-5 perguntas"],"needPayoff":["3-5 perguntas"]}',

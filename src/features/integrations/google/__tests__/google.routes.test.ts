@@ -22,9 +22,10 @@
  * handlers quebram ao desestruturar `req.user` e a requisição cai no errorHandler global como 500 —
  * é o `authenticateToken` upstream que impede isso de acontecer em produção.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+
 import express from 'express';
+import request from 'supertest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { errorHandler } from '@/shared/middlewares/errorHandler';
 
 const getGoogleAuthUrlMock = vi.fn();

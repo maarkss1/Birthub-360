@@ -34,7 +34,7 @@ import type {
   UserDailyPlanSummary,
 } from '../../../shared/contracts/dailyPlan.contract';
 import { commercialIntelligenceApi } from '../commercialIntelligence.api';
-import { DEFAULT_DAILY_PLAN, type DailyTask, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
+import { type DailyTask, DEFAULT_DAILY_PLAN, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
 import { NewActivityModal } from './NewActivityModal';
 
 /** "YYYY-MM-DD" → "DD/MM" sem passar por `Date` (evita deslocar o dia pelo fuso do navegador). */

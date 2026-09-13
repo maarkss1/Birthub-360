@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
 import { Check, RefreshCw, Sparkles, X } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Badge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Badge } from '../../../components/ui/Badge';
 import { api } from '../../../lib/api';
 
 // Consome só `/api/agent/swarm/learn/**` (feature intelligence) via HTTP — mesmo motivo de

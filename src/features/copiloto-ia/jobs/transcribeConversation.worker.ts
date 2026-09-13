@@ -23,31 +23,32 @@
 // (.dependency-cruiser.cjs) proíbe `copiloto-ia` importar internals de `chatbook`. Quem monta a
 // instância real (`new MeetingSynthesisService()`) é a composição root de cada processo
 // (`worker.ts`/`src/bootstrap/workers.ts`), passada para `createCopilotoTranscriptionWorker(...)`.
-import { Worker, Queue, type Job, type ConnectionOptions } from 'bullmq';
-import { connection, queuesEnabled } from '../../../lib/queue/redis.js';
-import { requestContext } from '../../../lib/async-context.js';
+import { type ConnectionOptions, type Job, Queue, Worker } from 'bullmq';
 import { assertAiBudgetNotExceeded } from '../../../lib/ai/budget.js';
-import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
-import { prisma } from '../../../lib/prisma.js';
+import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
+import { connection, queuesEnabled } from '../../../lib/queue/redis.js';
 import { getDownloadUrl } from '../../../lib/storage/index.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract.js';
+import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
+import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases.js';
 import {
-  transcribeAudioWithWhisper,
-  isWhisperConfigured,
-  WHISPER_USD_PER_MINUTE,
-} from '../infra/whisperTranscription.service.js';
-import { extractConversationIntelligence } from '../infra/conversationIntelligence.service.js';
-import { evaluateConversationCoaching } from '../infra/coachingEvaluation.service.js';
-import {
-  computeDealHealthScore,
   computeChurnRiskScore,
+  computeDealHealthScore,
   type SentimentScore,
 } from '../application/dealHealthScoring.js';
 import { computeAiProbabilityAdjustment } from '../application/forecastAdjustment.js';
-import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases.js';
+import { evaluateConversationCoaching } from '../infra/coachingEvaluation.service.js';
+import { extractConversationIntelligence } from '../infra/conversationIntelligence.service.js';
 import { PrismaCopilotoIaRepository } from '../infra/PrismaCopilotoIaRepository.js';
-import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract.js';
+import {
+  isWhisperConfigured,
+  transcribeAudioWithWhisper,
+  WHISPER_USD_PER_MINUTE,
+} from '../infra/whisperTranscription.service.js';
 
 export const COPILOTO_TRANSCRIPTION_QUEUE_NAME = 'copiloto-ia-transcription-queue';
 
@@ -342,6 +343,7 @@ export const copilotoTranscriptionQueue = queuesEnabled
       },
     })
   : null;
+registerQueueForMetrics(COPILOTO_TRANSCRIPTION_QUEUE_NAME, copilotoTranscriptionQueue);
 
 /**
  * Enfileira a transcrição — silencioso (loga e segue) quando a fila está desabilitada, mesmo

@@ -1,15 +1,5 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Share2,
-  GraduationCap,
-  FileSignature,
-  PieChart,
-  Maximize2,
-  Minimize2,
-  RefreshCw,
-  ShieldCheck,
-} from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2, RefreshCw, Share2, ShieldCheck } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useModuleAccess } from '../../hooks/useModuleAccess';
 
 interface ExecutiveHeaderProps {
@@ -35,36 +25,22 @@ export function ExecutiveHeader({
 
   // Mesmo padrão do botão "Voltar" do AppTopbar (src/components/layout/AppTopbar.tsx): usa o
   // histórico real de navegação desta sessão quando existe; cai para o Hub Executivo (`/hub`) —
-  // a origem real de quem chega a qualquer um dos 4 módulos executivos, ver o switcher abaixo —
-  // em deep link direto, sem histórico. Estes 4 módulos vivem fora de `/app/*` de propósito, então
-  // não usam AppTopbar; o botão de voltar deles precisa estar aqui, no header que os 4 compartilham.
+  // a origem real de quem chega a qualquer um dos módulos executivos, ver o switcher abaixo — em
+  // deep link direto, sem histórico. Estes módulos vivem fora de `/app/*` de propósito, então não
+  // usam AppTopbar; o botão de voltar deles precisa estar aqui, no header que eles compartilham.
   const handleBack = () => {
     if (location.key !== 'default') navigate(-1);
     else navigate('/hub');
   };
 
+  // Atualização (09/2026, pedido explícito do usuário): existiam mais 3 entradas aqui
+  // (`treinamento-atlasgr`, `proposta-comercial`, `hub-inteligencia-marketing`) — aposentadas
+  // junto com seus módulos no catálogo (ver src/config/module-catalog.ts), conteúdo proprietário
+  // da Atlas GR. `social-selling` continua, rerotulado para a marca Birth Hub 360.
   const hubs = [
     { id: 'social-selling', label: 'Social Selling', path: '/social-selling', icon: Share2 },
-    {
-      id: 'treinamento-atlasgr',
-      label: 'Treinamento Comercial',
-      path: '/treinamento-atlasgr',
-      icon: GraduationCap,
-    },
-    {
-      id: 'proposta-comercial',
-      label: 'Proposta Comercial',
-      path: '/proposta-comercial',
-      icon: FileSignature,
-    },
-    {
-      id: 'hub-inteligencia-marketing',
-      label: 'Hub Inteligência & Mkt',
-      path: '/hub-inteligencia-marketing',
-      icon: PieChart,
-    },
     // Só mostra no switcher os módulos que o usuário logado realmente tem concedidos (ver
-    // ModuleAccessGrant/ModuleAccessAdmin) — antes deste piloto os 4 hubs apareciam para
+    // ModuleAccessGrant/ModuleAccessAdmin) — antes deste piloto os hubs apareciam para
     // qualquer usuário que passasse pelo gate único por e-mail; agora a concessão é individual,
     // então o switcher não pode mais assumir "tudo ou nada".
   ].filter((hub) => grantedModules.includes(hub.id));
@@ -142,7 +118,7 @@ export function ExecutiveHeader({
             onClick={onToggleFullscreen}
             className={`px-2.5 py-1 text-[11px] font-medium rounded-lg border flex items-center gap-1 transition-colors shadow-sm ${
               isFullscreen
-                ? 'bg-warning-active text-white border-warning hover:bg-warning'
+                ? 'bg-warning-solid text-white border-warning-solid hover:brightness-110'
                 : 'bg-soft text-ink hover:bg-line border-line'
             }`}
             title={isFullscreen ? 'Sair do Modo Tela Cheia' : 'Modo Tela Cheia Imersivo'}

@@ -1,9 +1,4 @@
-import { describe, it, expect } from 'vitest';
-import {
-  startCadenceRun,
-  type CadenceSequenceDefinition,
-  type CadenceTouch,
-} from '../domain/cadence';
+import { describe, expect, it } from 'vitest';
 import {
   advanceCadenceRun,
   type CadenceDispatcher,
@@ -11,6 +6,11 @@ import {
   type CadenceRunLockPort,
   type LeadSubjectResolver,
 } from '../application/cadenceService';
+import {
+  type CadenceSequenceDefinition,
+  type CadenceTouch,
+  startCadenceRun,
+} from '../domain/cadence';
 import { InMemoryCadenceRunRepository } from '../infra/InMemoryCadenceRunRepository';
 import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
 

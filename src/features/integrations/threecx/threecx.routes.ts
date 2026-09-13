@@ -1,22 +1,22 @@
-import express, { Router, type Request, type Response, type NextFunction } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import express, { type NextFunction, type Request, type Response, Router } from 'express';
 import { env } from '../../../config/env.js';
 import { logger } from '../../../lib/logger.js';
-import { isValidSignature } from '../birth-voice/birthVoice.helpers.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
 } from '../../../shared/security/webhookReplayGuard.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
+import { isValidSignature } from '../birth-voice/birthVoice.helpers.js';
 import {
-  list3CXConnections,
   connect3CX,
-  test3CXConnection,
   disconnect3CX,
+  list3CXConnections,
   make3CXCall,
   process3CXWebhook,
+  test3CXConnection,
 } from './threecx.service.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

@@ -1,14 +1,14 @@
 import type { AIPendingAction } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
+import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
 import { logger } from '../../../lib/logger.js';
-import { sendEmail, MailerNotConfiguredError } from '../../../lib/email/mailer.js';
-import { container } from '../../../shared/di/container.js';
-import type { NoteUseCases } from '../../notes/application/NoteUseCases.js';
-import { activityService } from '../../activities/services/activity.service.js';
+import { prisma } from '../../../lib/prisma.js';
 import type { ActivityType } from '../../../lib/zod.js';
+import { container } from '../../../shared/di/container.js';
+import { activityService } from '../../activities/services/activity.service.js';
+import type { NoteUseCases } from '../../notes/application/NoteUseCases.js';
 import {
-  notificationService,
   type NotificationKind,
+  notificationService,
 } from '../../notifications/notification.service.js';
 
 export interface ExecutionResult {
@@ -70,7 +70,7 @@ export async function executeAction(action: ExecutableAction): Promise<Execution
       }
       await container
         .resolve<NoteUseCases>('NoteUseCases')
-        .createNote(action.organizationId, payload.leadId, {
+        .createNote(action.organizationId, 'lead', payload.leadId, {
           author: 'Enxame de IA da Birth Hub 360',
           content: [
             'Recomendação autônoma aprovada',

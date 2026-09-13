@@ -214,7 +214,6 @@ model Company {
   city              String?
   state             String?
   zipCode           String?
-  owner             String?
   status            CompanyStatus @default(Ativo)
   tags              String[]
   observations      String?
@@ -269,6 +268,15 @@ model Company {
   sourceEconomicRelationships EconomicRelationship[]        @relation("EconomicRelationshipSource")
   targetEconomicRelationships EconomicRelationship[]        @relation("EconomicRelationshipTarget")
   copilotoConversations       CopilotoConversation[]
+  notes                       Note[]
+  attachments                 Attachment[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId              String?
   organization                Organization?                 @relation(fields: [organizationId], references: [id])
   deletedAt                   DateTime?
@@ -511,6 +519,15 @@ model Contact {
   leads                 Lead[]
   whatsAppMessages      WhatsAppMessage[]
   copilotoConversations CopilotoConversation[]
+  notes                 Note[]
+  attachments           Attachment[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId        String?
   organization          Organization?          @relation(fields: [organizationId], references: [id])
   decisionMakerProfiles DecisionMaker[]
@@ -584,6 +601,13 @@ model Lead {
   probability     Int?
   expectedCloseAt DateTime?
   customFields    Json?
+  // CRM-011 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`):
+  // antes desta coluna, tags de Lead viviam só dentro de `customFields.tags` (JSON não tipado,
+  // sem índice, invisível ao Meilisearch por padrão), enquanto Company já usava uma coluna
+  // nativa `String[]`. Reconciliado seguindo o padrão de Company — ver migration
+  // `20260913000000_lead_native_tags` para o backfill dos valores que já existiam em
+  // `customFields.tags`.
+  tags            String[]         @default([])
 
   // Funil do Lead (objeto Lead x objeto Negócio do Bitrix24) e campos comerciais que só existiam
   // no Bitrix — ver migration 20260805220000_two_funnels_and_bitrix_fields para o remapeamento
@@ -651,6 +675,7 @@ model Lead {
   mesaTratamentoTreatments    MesaTratamentoTreatment[]
   timeline                    TimelineEvent[]
   internalNotes               Note[]
+  attachments                 Attachment[]
   whatsAppMessages            WhatsAppMessage[]
   conversationSignals         ConversationSignal[]
   dealItems                   CrmDealItem[]
@@ -666,6 +691,13 @@ model Lead {
   dealClosureEvents           DealClosureEvent[]
   copilotoConversations       CopilotoConversation[]
   copilotoDealHealthSnapshots CopilotoDealHealthSnapshot[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId              String?
   organization                Organization?                @relation(fields: [organizationId], references: [id])
 
@@ -702,6 +734,14 @@ model Activity {
 
   leadId         String
   lead           Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje, incluindo o único caso de injeção implícita (birthVoice.webhook.ts, dentro de
+  // requestContext.run({tenantId})). Nenhuma linha órfã é esperada; migrar para NOT NULL +
+  // ON DELETE CASCADE (alinhado aos ~90 outros models filhos de Organization) é a correção
+  // pendente, condicionada a verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
@@ -730,11 +770,70 @@ model Note {
   content String // Rich text
   author  String
 
-  leadId String
-  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // CRM-004 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`):
+  // antes desta mudança, Note só anexava a Lead — Company/Contact não tinham como registrar uma
+  // nota. Os três FKs abaixo são opcionais de propósito; exatamente um deles é preenchido por
+  // registro (trava real via CHECK constraint na migration `20260913000100_notes_cross_entity_and_attachments`,
+  // não só validação de aplicação) — mantém a mesma linha "Note" servindo as três entidades em vez
+  // de três tabelas quase idênticas.
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([companyId])
+  @@index([contactId])
+}
+
+// CRM-005 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`):
+// antes deste model, não existia NENHUM modelo de arquivo/anexo para nenhuma entidade de CRM.
+// O binário em si vive no storage S3-compatível já usado por outras features (MinIO/R2/Supabase
+// Storage, ver src/lib/storage/index.ts e o precedente real em CopilotoIaController — upload de
+// áudio via URL assinada) — esta tabela guarda só o metadado e o `objectKey`, nunca o binário.
+model Attachment {
+  id String @id @default(cuid())
+
+  // Mesmo padrão de Note acima: exatamente um dos três FKs é preenchido (CHECK constraint na
+  // migration `20260913000100_notes_cross_entity_and_attachments`).
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  fileName  String
+  mimeType  String
+  sizeBytes Int
+  // Chave do objeto no bucket S3-compatível (nunca a URL assinada, que expira em 1h — ver
+  // getUploadUrl/getDownloadUrl). Único porque cada upload gera um UUID novo (ver
+  // AttachmentController) — nunca reaproveitado entre registros.
+  objectKey String @unique
+
+  uploadedBy String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+  deletedBy    String?
+  deleteReason String?
+
+  @@index([organizationId])
+  @@index([leadId])
+  @@index([companyId])
+  @@index([contactId])
 }
 
 model AuditLog {
@@ -837,6 +936,7 @@ model Organization {
   slackConnections               SlackConnection[]
   stripeConnections              StripeConnection[]
   omieConnections                OmieConnection[]
+  attachments                    Attachment[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
   crmProducts                   CrmProduct[]
@@ -1747,7 +1847,7 @@ model RoleplaySession {
   organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId          String
   user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  brand           String // 'atlasgr' | 'totaltrac'
+  brand           String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
   personaId       String
   personaLabel    String
   difficulty      String // 'facil' | 'medio' | 'dificil'
@@ -1782,7 +1882,7 @@ model QualificationMatrixItem {
   id               String       @id @default(cuid())
   organizationId   String
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand            String // 'atlasgr' | 'totaltrac'
+  brand            String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
   segment          String
   persona          String
   framework        String // 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER'
@@ -2998,6 +3098,14 @@ model Prospect {
   lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   // Controle de Tenant
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Company/Contact/Lead/Activity, este model não tem nenhum write path real hoje
+  // (grep não encontra nenhum prospect.create/upsert/update em src/ ou scripts/ — schema
+  // declarado, nunca escrito) e está fora do allowlist tenantModels de src/lib/prisma.ts, então
+  // não recebe injeção automática de organizationId. Inofensivo enquanto permanecer sem uso
+  // (inclusive para o @@unique([organizationId, cnpj]) abaixo, que não colide entre linhas NULL);
+  // se um write path for adicionado, inclua Prospect em tenantModels ou passe organizationId
+  // explicitamente em todo create.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 

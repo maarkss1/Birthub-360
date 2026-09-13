@@ -1,15 +1,15 @@
 import type { MetricDefinition } from '../domain/CommercialIntelligence';
-import { STAGE_AGING_CRITICAL_DAYS } from './pipelineEligibility';
-import { FORECAST_RULES, FORECAST_RULES_VERSION } from './forecastEngine';
 import {
   COVERAGE_PROTECTION_FALLBACK_HEALTHY,
   COVERAGE_PROTECTION_FALLBACK_WARNING,
 } from './coverageProtection';
 import {
-  DATA_READINESS_OPEN_FIELD_WEIGHTS,
   DATA_READINESS_LOSS_FIELD_WEIGHT,
+  DATA_READINESS_OPEN_FIELD_WEIGHTS,
 } from './dataReadiness';
+import { FORECAST_RULES, FORECAST_RULES_VERSION } from './forecastEngine';
 import { HEALTH_SCORE_RULES } from './healthScore';
+import { STAGE_AGING_CRITICAL_DAYS } from './pipelineEligibility';
 
 /**
  * Dicionário de métricas (seção 39 do prompt de produto) — fonte única de nome/fórmula/fonte/
@@ -196,6 +196,20 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
     period: 'Negócios fechados no período',
     inclusionRules: 'Só negócios fechados (ganhos ou perdidos).',
     exclusionRules: 'Amostra vazia retorna "Não disponível".',
+  },
+  {
+    key: 'pipeline_velocity',
+    name: 'Pipeline Velocity',
+    description:
+      'Quanto de receita o pipeline aberto tende a gerar por dia, combinando quantidade, conversão histórica, ticket médio e tempo de ciclo em um único número.',
+    formula:
+      '(Oportunidades abertas × Win Rate ÷ 100 × Ticket Médio dos negócios abertos) ÷ Ciclo de Venda (MEDIANA, dias).',
+    source: 'Derivado (application/queries/performanceReport.ts)',
+    period: 'Período selecionado (mesmo escopo de Win Rate/Ticket Médio/Sales Cycle)',
+    inclusionRules:
+      'Usa a MEDIANA do ciclo de venda (não a média) — mesmo motivo de robustez a outliers documentado em Sales Cycle.',
+    exclusionRules:
+      'Sem Win Rate, Ticket Médio (aberto) ou Sales Cycle calculável (amostra vazia), retorna "Não disponível" — nunca assume 0/1 implícito para a entrada faltante.',
   },
   {
     key: 'first_contact_sla',

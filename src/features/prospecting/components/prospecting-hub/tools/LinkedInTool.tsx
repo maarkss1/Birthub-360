@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Building2,
   CheckCircle2,
@@ -10,21 +9,22 @@ import {
   Users,
   Wand2,
 } from 'lucide-react';
+import { useState } from 'react';
 import { LinkedinIcon as Linkedin } from '../../../../../components/ui/icons/LinkedinIcon';
-import { api } from '../../../../../lib/api';
 import { BRAND } from '../../../../../config/brand';
+import { api } from '../../../../../lib/api';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
   TOTALTRAC_SEGMENTO_OPTIONS,
 } from '../../../../../shared/constants/icp-options';
-import { normalizeCompanyDomain } from '../../../utils/domain';
-import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
 import type {
   DecisionMaker,
   ProspectCandidate,
   ProspectCriteria,
 } from '../../../services/prospecting.service';
+import { normalizeCompanyDomain } from '../../../utils/domain';
+import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
 import { CandidateCard } from '../CandidateCard';
 import { NotConfiguredBanner } from './NotConfiguredBanner';
 import { getErrorMessage, type PromoteResult } from './shared';

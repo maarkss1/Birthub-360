@@ -1,7 +1,7 @@
-import type { Contact, ContactRepository } from '../domain/Contact';
-import { prisma } from '../../../lib/prisma';
 import type { Prisma } from '@prisma/client';
 import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex.js';
+import { prisma } from '../../../lib/prisma';
+import type { Contact, ContactRepository } from '../domain/Contact';
 
 export class PrismaContactRepository implements ContactRepository {
   async findAllWithFilters(

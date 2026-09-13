@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import client from 'prom-client';
-import { bitrixSyncFailuresTotal, bitrixExtractionPartialTotal } from '../metrics.js';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { bitrixExtractionPartialTotal, bitrixSyncFailuresTotal } from '../metrics.js';
 
 async function getMetricValue(tenant: string, entity: string): Promise<number> {
   const metric = await bitrixSyncFailuresTotal.get();

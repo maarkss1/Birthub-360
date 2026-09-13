@@ -1,31 +1,31 @@
-import makeWASocket, {
-  DisconnectReason,
-  Browsers,
-  type WASocket,
-  fetchLatestBaileysVersion,
-} from '@whiskeysockets/baileys';
-import type { Boom } from '@hapi/boom';
-import qrcode from 'qrcode';
-import pino from 'pino';
-import path from 'node:path';
-import fs from 'node:fs';
 import { EventEmitter } from 'node:events';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { Boom } from '@hapi/boom';
+import makeWASocket, {
+  Browsers,
+  DisconnectReason,
+  fetchLatestBaileysVersion,
+  type WASocket,
+} from '@whiskeysockets/baileys';
+import pino from 'pino';
+import qrcode from 'qrcode';
 import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { extractMessageText, persistWhatsAppMessage } from './whatsappMessage.service.js';
-import { recordDeadLetter } from '../../../lib/queue/deadLetter.js';
-import { cacheConnection, isDedicatedWorkerProcess } from '../../../lib/queue/redis.js';
-import { enqueueWhatsAppCommand } from '../../../lib/queue/whatsappCommand.queue.js';
 import { withTimeout } from '../../../lib/http.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { logger } from '../../../lib/logger.js';
 import { toE164BR } from '../../../lib/phone.js';
-import { isOptedOut } from '../../cadence/application/optOutService.js';
-import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
-import { useRedisAuthState } from './useRedisAuthState.js';
+import { recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import {
   acquireDistributedLock,
   type DistributedLock,
 } from '../../../lib/queue/distributedLock.js';
+import { cacheConnection, isDedicatedWorkerProcess } from '../../../lib/queue/redis.js';
+import { enqueueWhatsAppCommand } from '../../../lib/queue/whatsappCommand.queue.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { isOptedOut } from '../../cadence/application/optOutService.js';
+import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
+import { useRedisAuthState } from './useRedisAuthState.js';
+import { extractMessageText, persistWhatsAppMessage } from './whatsappMessage.service.js';
 
 const BAILEYS_CALL_TIMEOUT_MS = 15_000;
 

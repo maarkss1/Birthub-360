@@ -1,10 +1,10 @@
 import { LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BRAND } from '../../config/brand';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
 import { SoundFX } from '../../lib/soundEffects';
-import { BRAND } from '../../config/brand';
 import { BirthHubLogo, BirthHubSignature } from '../brand/BirthHubLogo';
 import { TAB_META, type TabType } from './tabMeta';
 

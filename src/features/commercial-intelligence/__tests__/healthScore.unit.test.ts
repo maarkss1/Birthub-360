@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { HealthScoreInput } from '../application/healthScore';
 import {
   computeHealthScore,
   HEALTH_PILLAR_ORDER,
@@ -12,7 +13,6 @@ import type {
   LeadingIndicatorsReport,
   PerformanceMetrics,
 } from '../domain/CommercialIntelligence';
-import type { HealthScoreInput } from '../application/healthScore';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';
@@ -104,6 +104,13 @@ function basePerformance(overrides: Partial<PerformanceMetrics> = {}): Performan
     },
     averageTicket: { created: null, open: null, won: null, lost: null },
     salesCycle: { meanDays: null, medianDays: null, sampleSize: 0 },
+    pipelineVelocity: {
+      value: null,
+      openOpportunities: 0,
+      winRatePct: null,
+      averageOpenDealValue: null,
+      salesCycleMedianDays: null,
+    },
     funnel: [],
     funnelHistoricalTrackingSince: null,
     firstContactSla: {

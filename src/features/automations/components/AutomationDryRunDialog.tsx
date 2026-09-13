@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
 import {
-  FlaskConical,
-  Loader2,
   AlertTriangle,
   CheckCircle2,
   CircleSlash,
+  FlaskConical,
+  Loader2,
   RefreshCw,
 } from 'lucide-react';
-
-import { Dialog } from '../../../components/ui/Dialog';
-import { Button } from '../../../components/ui/Button';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '../../../components/ui/Badge';
-import { automationsApi, type Automation, type DryRunRecord } from '../automations.api';
+import { Button } from '../../../components/ui/Button';
+import { Dialog } from '../../../components/ui/Dialog';
+import { type Automation, automationsApi, type DryRunRecord } from '../automations.api';
 
 /** Uma linha do que "aconteceria" — mensagem curta e específica por tipo de ação, montada a partir
  *  de `outcome.details` (o mesmo objeto que o backend já monta pronto para exibição). */

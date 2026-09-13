@@ -1,12 +1,13 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../../../../lib/prisma.js';
-import { logger } from '../../../../lib/logger.js';
-import { connection } from '../../../../lib/queue/redis.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../../lib/queue/deadLetter.js';
-import { requestContext } from '../../../../lib/async-context.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { env } from '../../../../config/env.js';
+import { requestContext } from '../../../../lib/async-context.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../../lib/queue/metrics.js';
+import { connection } from '../../../../lib/queue/redis.js';
 import { deleteExtractionRunFiles } from '../service/extractionFiles.js';
 
 // ── Expurgo LGPD de BitrixExtractionRun (Onda 42, dossiê CPI DEC-04, opção B) ───────────────────
@@ -251,6 +252,7 @@ export async function scheduleBitrixExtractionPurgeJob() {
   const queue = new Queue(BITRIX_EXTRACTION_PURGE_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(BITRIX_EXTRACTION_PURGE_QUEUE_NAME, queue);
   // Roda todo dia às 5h da manhã — fora do horário de auto-anonimização de leads (3h), do
   // expurgo de AgentMemory (4h) e do follow-up diário (9h). BullMQ v6 removeu `repeat` de
   // `Queue.add` (viraria um job avulso, nunca mais se repete) — agendamento recorrente exige
