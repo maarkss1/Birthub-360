@@ -1,8 +1,8 @@
-import type { Request, Response, NextFunction } from 'express';
-import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
-import { logger } from '../../lib/logger.js';
+import type { NextFunction, Request, Response } from 'express';
+import { ZodError } from 'zod';
 import { env } from '../../config/env.js';
+import { logger } from '../../lib/logger.js';
 import type { IObservabilityRequest } from './observability.js';
 
 /**

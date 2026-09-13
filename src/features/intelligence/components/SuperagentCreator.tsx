@@ -1,25 +1,25 @@
-import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  AlertCircle,
   Bot,
-  Sparkles,
   Brain,
+  Check,
+  ChevronDown,
+  Code2,
+  Copy,
   Cpu,
   Database,
+  Download,
   Network,
   Power,
-  ChevronDown,
-  Check,
-  Terminal,
-  Copy,
-  Download,
   Sliders,
+  Sparkles,
+  Terminal,
   Zap,
-  Code2,
-  AlertCircle,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { useState } from 'react';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
 
 const PROVIDERS = [

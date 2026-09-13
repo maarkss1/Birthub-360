@@ -1,9 +1,9 @@
+import { BaseUseCases } from '../../../../shared/application/BaseUseCases';
+import { type ObjectionMatrixItemInput, objectionMatrixItemSchema } from '../../playbook.schema';
 import type {
   ObjectionMatrixItem,
   ObjectionMatrixItemRepository,
 } from '../domain/ObjectionMatrixItem';
-import { objectionMatrixItemSchema, type ObjectionMatrixItemInput } from '../../playbook.schema';
-import { BaseUseCases } from '../../../../shared/application/BaseUseCases';
 
 export class ObjectionMatrixUseCases extends BaseUseCases<
   ObjectionMatrixItem,

@@ -1,10 +1,10 @@
-import type { Company, CompanyRepository } from '../domain/Company';
-import type { CompanyStatus } from '../../../lib/zod';
-import { prisma } from '../../../lib/prisma';
 import type { Prisma } from '@prisma/client';
 import { env } from '../../../config/env';
+import { fromPrismaCompanyStatus, toPrismaCompanyStatus } from '../../../lib/enumMap';
+import { prisma } from '../../../lib/prisma';
 import { searchCompanyIds } from '../../../lib/search/index';
-import { toPrismaCompanyStatus, fromPrismaCompanyStatus } from '../../../lib/enumMap';
+import type { CompanyStatus } from '../../../lib/zod';
+import type { Company, CompanyRepository } from '../domain/Company';
 
 // O Prisma Client devolve a CHAVE do enum (ex.: "Em_analise"), nao o valor mapeado via @map no
 // schema (ex.: "Em análise") — e so aceita a mesma chave em escritas. Ja era tratado para Company

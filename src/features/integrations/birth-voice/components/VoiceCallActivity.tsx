@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
 import { Loader2, PhoneCall, RefreshCw } from 'lucide-react';
-import { Card, CardHeader, CardTitle } from '../../../../components/ui/Card';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '../../../../components/ui/Badge';
+import { Card, CardHeader, CardTitle } from '../../../../components/ui/Card';
 import { EmptyState } from '../../../../components/ui/EmptyState';
 import { clientLogger } from '../../../../lib/clientLogger';
 

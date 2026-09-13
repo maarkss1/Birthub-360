@@ -1,3 +1,4 @@
+import { BarChart3, Clock, Target, TrendingDown, TrendingUp, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import {
   Area,
@@ -15,18 +16,17 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { BarChart3, Clock, Target, TrendingDown, TrendingUp, Users } from 'lucide-react';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import { KpiCard } from '../../../components/ui/KpiCard';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { EmptyState } from '../../../components/ui/EmptyState';
 import { toast } from '../../../lib/toast';
 import {
+  type DashboardPeriod,
+  type LeadOutcome,
+  MANAGEMENT_OUTCOME_LABELS,
+  type MesaDashboardResponse,
   mesaTratamentoApi,
   OUTCOME_LABELS,
-  MANAGEMENT_OUTCOME_LABELS,
-  type DashboardPeriod,
-  type MesaDashboardResponse,
-  type LeadOutcome,
 } from '../mesaTratamento.api';
 
 const PERIOD_TABS: Array<{ value: DashboardPeriod; label: string }> = [

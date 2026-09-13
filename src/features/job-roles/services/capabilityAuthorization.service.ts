@@ -1,6 +1,6 @@
 import type { AgentAccessLevel, CapabilityActionType, CapabilityRiskLevel } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
 import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { prisma } from '../../../lib/prisma.js';
 import { getToolBinding } from '../config/tool-bindings.js';
 
 /** Canonicaliza um `resource` (ordena chaves recursivamente) para comparar por igualdade

@@ -1,23 +1,23 @@
-import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  AlertCircle,
+  Braces,
+  Check,
+  CheckCircle2,
+  ChevronDown,
   Code2,
+  Copy,
+  Download,
+  Globe,
+  Layers,
+  ShieldCheck,
+  Sparkles,
   Terminal,
   TerminalSquare,
-  Copy,
-  Sparkles,
-  CheckCircle2,
-  Globe,
-  Braces,
-  Layers,
-  ChevronDown,
-  Check,
-  Download,
-  ShieldCheck,
-  AlertCircle,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { useState } from 'react';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
 
 const LANGUAGES = [

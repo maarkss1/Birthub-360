@@ -1,9 +1,9 @@
 import { prisma } from '../../../lib/prisma.js';
 import type {
   AnalyticsRepository,
-  GroupCount,
   ClosedLead,
   CohortLeadRow,
+  GroupCount,
 } from '../domain/Analytics';
 import { CLOSED_STATUSES } from '../domain/Analytics';
 

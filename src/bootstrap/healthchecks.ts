@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from 'express';
-import { prisma } from '../lib/prisma.js';
-import { queuesEnabled, connection } from '../lib/queue/redis.js';
 import { logger } from '../lib/logger.js';
+import { prisma } from '../lib/prisma.js';
+import { connection, queuesEnabled } from '../lib/queue/redis.js';
 
 export function handleLiveness(_req: Request, res: Response): void {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import {
-  Calendar,
-  Clock,
-  User,
-  CheckCircle2,
   AlertCircle,
-  Loader2,
   Building2,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Loader2,
   Mail,
   Phone,
+  User,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { api } from '../../../lib/api';
 
 interface BookingLinkData {

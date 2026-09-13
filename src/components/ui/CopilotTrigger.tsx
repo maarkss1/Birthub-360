@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
 import { Bot, Sparkles } from 'lucide-react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { BRAND } from '../../config/brand';
 import { useBrandAccent } from '../../hooks/useBrandAccent';
 import { OPEN_AI_CHAT_EVENT } from '../../lib/paletteIntent';

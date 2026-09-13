@@ -1,9 +1,9 @@
+import type { Company } from '@prisma/client';
 import { describe, expect, it } from 'vitest';
 import {
-  isEnrichmentFresh,
   buildCachedEnrichmentResult,
+  isEnrichmentFresh,
 } from '@/features/prospecting/services/enrichment.service';
-import type { Company } from '@prisma/client';
 
 // ACH-05-04 (auditoria 2026-09-11, agente 05): enrichment.service.ts (846L, o orquestrador mais
 // complexo do domínio de prospecção) não tinha nenhum teste dedicado. Este arquivo cobre as duas

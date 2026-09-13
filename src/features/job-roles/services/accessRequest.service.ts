@@ -9,8 +9,8 @@
 // `CROSS_ROLE_REQUEST_REQUIRED`/`APPROVAL_REQUIRED`. Nunca decide autorização de execução aqui —
 // isso continua 100% em `authorizeCapability`.
 import type { AccessRequestCategory, AccessRequestStatus } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
 import { AuditService } from '../../../lib/audit/audit.service.js';
+import { prisma } from '../../../lib/prisma.js';
 import {
   getAccessRequestCategory,
   getApprovalPolicy,

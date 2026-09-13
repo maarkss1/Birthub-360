@@ -20,10 +20,10 @@ import type {
 } from '../../domain/JourneyIntelligence';
 import { FORECAST_RULES, FORECAST_RULES_VERSION } from '../forecastEngine';
 import { isDealOpen } from '../pipelineEligibility';
-import { daysBetween, mean, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
 import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
+import { daysBetween, mean, roundMoney } from '../shared/mathUtils';
+import { monthRange } from '../shared/period';
 
 function breakdown(
   rows: Array<{ deal: ScoredDeal; slips: number; chronic: boolean }>,

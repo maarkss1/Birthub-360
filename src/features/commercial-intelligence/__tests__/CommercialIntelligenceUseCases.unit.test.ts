@@ -1,20 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   CommercialIntelligenceUseCases,
   classifyCoverageProtection,
 } from '../application/CommercialIntelligenceUseCases';
 import {
-  summarizeForecastAccuracy,
   computeForecastAccuracy,
+  summarizeForecastAccuracy,
 } from '../application/forecastAccuracy';
 import { HEALTH_PILLAR_ORDER } from '../application/healthScore';
 import type {
+  CommercialGoalDTO,
   CommercialIntelligenceRepository,
   DealRow,
-  StageDefinition,
-  CommercialGoalDTO,
   GoalMetric,
   LeadFieldChangeRow,
+  StageDefinition,
 } from '../domain/CommercialIntelligence';
 
 const NOW = new Date('2026-08-15T12:00:00Z');

@@ -1,11 +1,11 @@
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { z } from 'zod';
-import { getAiModel } from './gateway.js';
 import {
   minimizePii,
-  rehydratePii,
   type PiiToken,
+  rehydratePii,
 } from '../../features/intelligence/services/guardrails.service.js';
+import { getAiModel } from './gateway.js';
 
 /**
  * Valor de PII opcional que o chamador pode fornecer (ex.: nome do contato de um lead) para que

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Compass } from 'lucide-react';
-import { useWorkspace } from '../../../hooks/useWorkspace';
 import { WorkspaceReadySection } from '../../../components/workspace/WorkspaceReadySection';
+import { useWorkspace } from '../../../hooks/useWorkspace';
 import { SinglePageDashboard } from './SinglePageDashboard';
 
 /**

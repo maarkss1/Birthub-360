@@ -1,7 +1,7 @@
 import { LeadStatus } from '@prisma/client';
+import { contactEmailIndex, contactPhoneIndex } from '../../../../lib/crypto/piiIndex.js';
 import { prisma } from '../../../../lib/prisma.js';
 import { notificationService } from '../../../notifications/notification.service.js';
-import { contactEmailIndex, contactPhoneIndex } from '../../../../lib/crypto/piiIndex.js';
 
 /**
  * Status terminais usados só para decidir se um Lead/Negócio já existente ainda "conta" como

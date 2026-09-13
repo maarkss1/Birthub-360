@@ -1,21 +1,21 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  startCadenceRun,
-  type CadenceSequenceDefinition,
-  type CadenceTouch,
-  type CadenceRunState,
-} from '../domain/cadence';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   advanceCadenceRun,
   type CadenceDispatcher,
+  type CadenceRateLimitPort,
   type CadenceRunLockPort,
   type CadenceRunRepository,
-  type CadenceRateLimitPort,
   type LeadSubjectResolver,
 } from '../application/cadenceService';
+import { recordOptOut } from '../application/optOutService';
+import {
+  type CadenceRunState,
+  type CadenceSequenceDefinition,
+  type CadenceTouch,
+  startCadenceRun,
+} from '../domain/cadence';
 import { InMemoryCadenceRunRepository } from '../infra/InMemoryCadenceRunRepository';
 import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
-import { recordOptOut } from '../application/optOutService';
 
 /** Rate limit sempre liberado — o comportamento real do rate limit é coberto à parte, em `rateLimitService.test.ts`. */
 function noopRateLimit(): CadenceRateLimitPort {

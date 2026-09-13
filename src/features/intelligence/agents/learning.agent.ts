@@ -1,10 +1,10 @@
-import { SystemMessage, HumanMessage } from '@langchain/core/messages';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { getAiModel } from '../../../lib/ai/gateway.js';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { saveAgentMemory, loadAgentMemory } from './agentMemory.store.js';
-import { assertPiiExternalConsent } from '../services/guardrails.service.js';
 import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { assertPiiExternalConsent } from '../services/guardrails.service.js';
+import { loadAgentMemory, saveAgentMemory } from './agentMemory.store.js';
 
 // AgentMemory não tem colunas dedicadas para "perfil de aprendizado", mas sessionId+agentType já
 // bastam pra guardar um registro por (tenant, ator) sem precisar de migração nova.

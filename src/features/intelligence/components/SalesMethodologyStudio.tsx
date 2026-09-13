@@ -1,22 +1,22 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Target,
-  Zap,
-  Flame,
-  Sparkles,
-  Copy,
-  Check,
-  RefreshCw,
+  Award,
   BookOpen,
+  Check,
+  Compass,
+  Copy,
+  FileText,
+  Flame,
   HelpCircle,
   Lightbulb,
+  RefreshCw,
   ShieldAlert,
   ShieldCheck,
-  Award,
-  FileText,
-  Compass,
+  Sparkles,
+  Target,
+  Zap,
 } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '../../../components/ui/Button';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';

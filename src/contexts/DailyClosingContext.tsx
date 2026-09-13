@@ -1,15 +1,15 @@
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
-  type ReactNode,
 } from 'react';
-import { useAuth } from './AuthContext';
 import { commercialIntelligenceApi } from '../features/commercial-intelligence/commercialIntelligence.api';
 import type { PendingDailyClosing } from '../shared/contracts/dailyPlan.contract';
+import { useAuth } from './AuthContext';
 
 interface DailyClosingContextType {
   /** undefined enquanto a checagem ainda não rodou (ou está em voo) para o usuário atual. */

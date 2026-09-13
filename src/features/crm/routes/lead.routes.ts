@@ -1,11 +1,10 @@
 import { Router } from 'express';
-
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { requireLeadOwnership } from '../../../shared/middlewares/requireLeadOwnership.js';
 import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware.js';
 import { leadSchema } from '../../../lib/zod.js';
 import { container } from '../../../shared/di/container.js';
+import { requireLeadOwnership } from '../../../shared/middlewares/requireLeadOwnership.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import type { LeadController } from '../presentation/LeadController.js';
 
 const router = Router();

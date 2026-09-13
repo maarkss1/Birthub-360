@@ -1,5 +1,5 @@
+import { ExternalLink, FileSignature, Gauge, Layers, Search, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { FileSignature, ExternalLink, Search, Sparkles, Layers, Gauge } from 'lucide-react';
 import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader';
 import { SoundFX } from '../../../lib/soundEffects';
 

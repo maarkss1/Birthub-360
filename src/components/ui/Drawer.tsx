@@ -1,7 +1,7 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { X } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface DrawerProps {
   isOpen: boolean;

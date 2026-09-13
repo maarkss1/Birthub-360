@@ -10,10 +10,10 @@ import type {
   CommercialIntelligenceRepository,
   StageAging,
 } from '../../domain/CommercialIntelligence';
-import { STAGE_AGING_CRITICAL_DAYS, isDealOpen } from '../pipelineEligibility';
-import { daysBetween, mean, roundMoney } from '../shared/mathUtils';
+import { isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility';
 import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
+import { daysBetween, mean, roundMoney } from '../shared/mathUtils';
 
 export async function buildAging(
   repository: CommercialIntelligenceRepository,

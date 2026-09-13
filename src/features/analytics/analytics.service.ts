@@ -1,11 +1,11 @@
 import type { LeadStatus as PrismaLeadStatus } from '@prisma/client';
+import {
+  fromPrismaActivityStatus,
+  fromPrismaActivityType,
+  fromPrismaLeadStatus,
+} from '../../lib/enumMap.js';
 import { prisma } from '../../lib/prisma.js';
 import { connection } from '../../lib/queue/redis.js';
-import {
-  fromPrismaLeadStatus,
-  fromPrismaActivityType,
-  fromPrismaActivityStatus,
-} from '../../lib/enumMap.js';
 import type { OverviewMetrics } from '../../shared/contracts/analytics.contract.js';
 import {
   brazilMonthKey,

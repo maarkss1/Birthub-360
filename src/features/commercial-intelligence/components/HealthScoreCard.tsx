@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
 import { AlertTriangle, HeartPulse } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { MetricInfo } from './MetricInfo';
 import {
-  commercialIntelligenceApi,
   type CommercialFilter,
+  commercialIntelligenceApi,
   type HealthClassification,
   type HealthPillarScore,
   type HealthScoreResult,
 } from '../commercialIntelligence.api';
+import { MetricInfo } from './MetricInfo';
 
 const CLASSIFICATION_STYLE: Record<
   HealthClassification,

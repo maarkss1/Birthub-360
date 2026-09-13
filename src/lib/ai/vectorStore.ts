@@ -1,6 +1,6 @@
-import { logger } from '../logger.js';
-import { getTenantId } from '../async-context.js';
 import { searchService } from '../../features/knowledge/search.service.js';
+import { getTenantId } from '../async-context.js';
+import { logger } from '../logger.js';
 
 export interface SearchResult {
   id: string;

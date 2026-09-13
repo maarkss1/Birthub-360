@@ -1,16 +1,15 @@
+import { AlertTriangle, FileText, Loader2, RotateCcw, Save, Search } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FileText, Save, Loader2, AlertTriangle, RotateCcw, Search } from 'lucide-react';
-
-import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { Card } from '../../../components/ui/Card';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { toast } from '../../../lib/toast';
 import {
-  knowledgeApi,
-  type KnowledgeDocumentSummary,
   type KnowledgeDocument,
+  type KnowledgeDocumentSummary,
+  knowledgeApi,
 } from '../../knowledge/knowledge.api';
 
 function formatDate(iso: string): string {

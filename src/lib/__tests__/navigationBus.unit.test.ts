@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { navigationBus } from '../navigationBus';
 
 // Bloqueador #7 do AGENTS.md ("comando de voz que afirma navegar sem realizar navegação") — este

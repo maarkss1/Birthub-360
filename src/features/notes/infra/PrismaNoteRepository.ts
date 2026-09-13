@@ -1,5 +1,5 @@
-import type { Note, NoteRepository } from '../domain/Note';
 import { prisma } from '../../../lib/prisma';
+import type { Note, NoteRepository } from '../domain/Note';
 
 export class PrismaNoteRepository implements NoteRepository {
   async verifyLead(organizationId: string, leadId: string): Promise<boolean> {

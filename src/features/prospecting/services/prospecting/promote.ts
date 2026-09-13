@@ -1,15 +1,15 @@
+import type { Prisma } from '@prisma/client';
+import {
+  fromPrismaCompanyStatus,
+  fromPrismaLeadStatus,
+  toPrismaLeadStatus,
+} from '../../../../lib/enumMap';
 import { logger } from '../../../../lib/logger';
 import { prisma } from '../../../../lib/prisma.js';
-import type { Prisma } from '@prisma/client';
+import { pushLeadToBitrix } from '../../../integrations/bitrix/bitrix.service.js';
 import { toDeterministicCnpj } from '../cnpj.util';
 import { resolveCompanyIdentity } from '../companyIdentity.service';
 import { enrichCompany } from '../enrichment.service';
-import {
-  toPrismaLeadStatus,
-  fromPrismaLeadStatus,
-  fromPrismaCompanyStatus,
-} from '../../../../lib/enumMap';
-import { pushLeadToBitrix } from '../../../integrations/bitrix/bitrix.service.js';
 import type { PromoteInput } from './types.js';
 
 function splitLocation(location?: string | null): { city?: string; state?: string } {

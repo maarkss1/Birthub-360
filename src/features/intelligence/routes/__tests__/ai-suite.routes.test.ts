@@ -15,9 +15,10 @@
  * `src/features/prospecting/routes/__tests__/prospecting-tools.routes.test.ts`: mocka a camada de
  * serviço (`CentralAISuiteService.js`) e foca só no contrato do router.
  */
-import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+
 import express from 'express';
+import request from 'supertest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
 
 // `vi.mock` é hoisted para o topo do arquivo — antes até do `import { errorHandler }` acima, que

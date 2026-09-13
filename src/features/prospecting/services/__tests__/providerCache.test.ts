@@ -6,7 +6,7 @@
  * (`cacheConnection`) quando configurado, fallback em memória quando não, e o requisito central —
  * "segunda chamada idêntica não bate o provider de novo" — via `withProviderCache`.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 let redisConfiguredValue = false;
 const cacheGet = vi.fn();
@@ -27,9 +27,9 @@ vi.mock('@/lib/logger.js', () => ({
 
 import {
   buildProviderCacheKey,
-  withProviderCache,
-  resetProviderCacheForTests,
   DEFAULT_PROVIDER_CACHE_TTL_SECONDS,
+  resetProviderCacheForTests,
+  withProviderCache,
 } from '../providerCache.js';
 
 beforeEach(async () => {

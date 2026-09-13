@@ -6,14 +6,14 @@
  * alto nível (`checkProviderRateLimit`): bloqueia acima do limite/minuto configurado e libera de
  * novo depois que a janela permite recompor tokens.
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
-  tryConsumeToken,
   checkProviderRateLimit,
-  getRateLimitPerMinute,
-  resetProviderRateLimitersForTests,
   DEFAULT_RATE_LIMIT_PER_MINUTE,
+  getRateLimitPerMinute,
   type ProspectingRateLimitedProvider,
+  resetProviderRateLimitersForTests,
+  tryConsumeToken,
 } from '../providerRateLimit.js';
 
 beforeEach(() => {

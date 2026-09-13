@@ -1,6 +1,6 @@
 import type { LeadStatus as PrismaLeadStatus } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 
 const WON: PrismaLeadStatus = 'Negocios_Ganhos';
 

@@ -1,15 +1,15 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
 import { env } from '../../../config/env.js';
+import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
+import { buildMeetingInviteEmail } from '../../../lib/email/meetingInvite.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { createCalendarEvent } from '../../integrations/google/google.service.js';
 import type {
   CalendarEventDraft,
   CalendarSchedulerPort,
   ConfirmationEvidenceType,
 } from '../domain/scheduling.js';
-import { createCalendarEvent } from '../../integrations/google/google.service.js';
-import { sendEmail, MailerNotConfiguredError } from '../../../lib/email/mailer.js';
-import { buildMeetingInviteEmail } from '../../../lib/email/meetingInvite.js';
 
 /**
  * CYC-004 (onda 27) — implementação real de `CalendarSchedulerPort` (`scheduling.ts`).

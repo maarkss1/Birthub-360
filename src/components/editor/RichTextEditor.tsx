@@ -12,23 +12,24 @@
  *     placeholder="Comece a digitar ou pressione / para comandos…"
  *   />
  */
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Placeholder from '@tiptap/extension-placeholder';
+
 import CharacterCount from '@tiptap/extension-character-count';
+import Placeholder from '@tiptap/extension-placeholder';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import {
+  AlignLeft,
   Bold,
-  Italic,
-  Strikethrough,
   Code,
+  Hash,
+  Italic,
   List,
   ListOrdered,
-  Quote,
   Minus,
-  Undo,
+  Quote,
   Redo,
-  AlignLeft,
-  Hash,
+  Strikethrough,
+  Undo,
 } from 'lucide-react';
 
 interface RichTextEditorProps {

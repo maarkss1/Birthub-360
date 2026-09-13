@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { logger } from '../../../lib/logger.js';
-import type { SignatureProviderPort } from '../application/documentSignature.js';
 import type { SignatureRequestDraft } from '../../../shared/domain/signature.js';
+import type { SignatureProviderPort } from '../application/documentSignature.js';
 
 /**
  * CYC-006 (onda 28) — implementação real de `SignatureProviderPort` para o provedor `'govbr'`

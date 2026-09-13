@@ -1,9 +1,9 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { connection } from '../../../lib/queue/redis.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { requestContext } from '../../../lib/async-context.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { connection } from '../../../lib/queue/redis.js';
 import { sendWhatsAppMessage } from '../../integrations/whatsapp/whatsapp.service.js';
 
 export const FOLLOWUP_QUEUE_NAME = 'whatsapp-followup-queue';

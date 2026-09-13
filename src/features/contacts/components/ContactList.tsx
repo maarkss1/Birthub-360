@@ -1,34 +1,34 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  User,
   Building,
+  Edit,
+  Eye,
+  Loader2,
   Mail,
+  MessageCircle,
   Phone,
   Plus,
   Search,
-  Edit,
-  Trash2,
   Sparkles,
-  Loader2,
+  Trash2,
+  User,
   WifiOff,
-  MessageCircle,
-  Eye,
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
-import type { Contact } from '../../../types';
-import { ContactForm } from './ContactForm';
-import { ContactDetail } from './ContactDetail';
-import { useContacts } from '../../../hooks/useDatabase';
-import { contactsDB } from '../../../lib/db';
-import { getWhatsAppLink } from '../../../shared/utils/contact-links';
-import { toast } from '../../../lib/toast';
-import { clientLogger } from '../../../lib/clientLogger';
-import type { PaletteIntent } from '../../../lib/paletteIntent';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Pagination } from '../../../components/ui/Pagination';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { EmptyState } from '../../../components/ui/EmptyState';
+import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
+import { Pagination } from '../../../components/ui/Pagination';
+import { useContacts } from '../../../hooks/useDatabase';
+import { clientLogger } from '../../../lib/clientLogger';
+import { contactsDB } from '../../../lib/db';
+import type { PaletteIntent } from '../../../lib/paletteIntent';
+import { toast } from '../../../lib/toast';
+import { getWhatsAppLink } from '../../../shared/utils/contact-links';
+import type { Contact } from '../../../types';
+import { ContactDetail } from './ContactDetail';
+import { ContactForm } from './ContactForm';
 
 // Cor categórica por senioridade (sem significado semântico de estado — não é ok/warn/danger, por
 // isso não usa os tokens de marca/semânticos do projeto). Achado real: só tinha a variante clara

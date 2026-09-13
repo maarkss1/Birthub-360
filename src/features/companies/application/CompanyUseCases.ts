@@ -1,10 +1,10 @@
-import type { Company, CompanyRepository } from '../domain/Company';
 import type { z } from 'zod';
-import { companySchema } from '../../../lib/zod';
-import { enrichCompany } from '../../prospecting/services/enrichment.service';
 import { enrichmentQueue } from '../../../lib/queue/enrichment.queue';
+import { companySchema } from '../../../lib/zod';
 import { BaseUseCases } from '../../../shared/application/BaseUseCases';
 import { AppError } from '../../../shared/middlewares/errorHandler';
+import { enrichCompany } from '../../prospecting/services/enrichment.service';
+import type { Company, CompanyRepository } from '../domain/Company';
 
 export class CompanyUseCases extends BaseUseCases<Company, CompanyRepository> {
   // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI

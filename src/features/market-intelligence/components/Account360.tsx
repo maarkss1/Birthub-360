@@ -1,26 +1,26 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Card.js';
-import { Button } from '../../../components/ui/Button.js';
-import { Badge } from '../../../components/ui/Badge.js';
-import { EmptyState } from '../../../components/ui/EmptyState.js';
-import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
-  Building2,
   AlertCircle,
-  Loader2,
   ArrowLeft,
+  BrainCircuit,
+  Building2,
+  Loader2,
   Target,
   TrendingUp,
-  Zap,
   Users,
-  BrainCircuit,
+  Zap,
 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
 import { api } from '../../../lib/api.js';
 import { toast } from '../../../lib/toast.js';
-import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
-import { VisualOrgChart } from './VisualOrgChart.js';
 import { CompanyBranchesView } from './CompanyBranchesView.js';
+import { VisualOrgChart } from './VisualOrgChart.js';
 
 interface AccountIntelligenceSummary {
   account: { id: string; legalName: string; tradeName: string | null; cnpj: string | null };

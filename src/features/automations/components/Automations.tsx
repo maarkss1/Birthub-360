@@ -1,45 +1,45 @@
 /* eslint-disable jsx-a11y/no-autofocus -- modal aberto por ação do usuário, ver comentário no local de uso */
-import { useCallback, useEffect, useState } from 'react';
+
 import {
-  Cpu,
-  Plus,
-  Trash2,
-  Loader2,
   AlertTriangle,
-  Zap,
-  Play,
+  Cpu,
   Filter,
-  ZapIcon,
   FlaskConical,
   History,
-  Pencil,
-  RefreshCw,
+  Loader2,
   type LucideIcon,
+  Pencil,
+  Play,
+  Plus,
+  RefreshCw,
+  Trash2,
+  Zap,
+  ZapIcon,
 } from 'lucide-react';
-
-import { Card } from '../../../components/ui/Card';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
+import { Card } from '../../../components/ui/Card';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { Dialog } from '../../../components/ui/Dialog';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { toast } from '../../../lib/toast';
 import { SoundFX } from '../../../lib/soundEffects';
+import { toast } from '../../../lib/toast';
 import {
-  automationsApi,
-  describeAutomation,
-  TRIGGERS,
   ACTIONS,
-  LEAD_STATUSES,
   type Automation,
-  type AutomationTrigger,
   type AutomationAction,
   type AutomationConditions,
+  type AutomationTrigger,
+  automationsApi,
+  describeAutomation,
+  LEAD_STATUSES,
+  TRIGGERS,
 } from '../automations.api';
-import { ColdCallStatusCard } from './ColdCallStatusCard';
 import { AutomationDryRunDialog } from './AutomationDryRunDialog';
 import { AutomationVersionsDialog } from './AutomationVersionsDialog';
+import { ColdCallStatusCard } from './ColdCallStatusCard';
 
 const inputClass =
   'w-full bg-surface-2 border border-line rounded-xl px-3 py-2 text-sm text-ink placeholder-ink-2 outline-none focus:border-brand transition-colors';

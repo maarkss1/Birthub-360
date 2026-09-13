@@ -15,13 +15,14 @@
  * writeback falha explicitamente (mesmo padrão de "Lead sem bitrixLeadId" abaixo), nunca tenta
  * adivinhar ou criar um registro novo do lado do Bitrix.
  */
-import { AppError } from '../../../shared/middlewares/errorHandler';
+
 import type { BitrixLeadWritebackPort } from '../../../shared/contracts/bitrixWriteback.contract';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 import type {
-  CopilotoIaRepository,
   CopilotoBitrixFieldMappingDTO,
-  UpsertBitrixFieldMappingInput,
   CopilotoCrmFieldSuggestionDTO,
+  CopilotoIaRepository,
+  UpsertBitrixFieldMappingInput,
 } from '../domain/CopilotoIa';
 
 export class CopilotoBitrixWritebackUseCases {

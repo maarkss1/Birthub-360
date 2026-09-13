@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, Sparkles, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
-import { Select } from '../../../components/ui/Select';
 import { Label } from '../../../components/ui/Label';
-import { fadeInUp } from '../../../lib/motion';
+import { Select } from '../../../components/ui/Select';
 import { api } from '../../../lib/api';
+import { fadeInUp } from '../../../lib/motion';
 
 type SellerRole = 'SDR / Hunter' | 'Closer / Executivo de Contas' | 'Account Manager / Farmer';
 

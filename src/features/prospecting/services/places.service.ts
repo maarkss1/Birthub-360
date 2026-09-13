@@ -1,6 +1,6 @@
-import { logger } from '../../../lib/logger';
 import { getPaidProspectingKey } from '../../../config/prospecting-integrations.js';
 import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
+import { logger } from '../../../lib/logger';
 
 export interface PlaceCandidate {
   tradeName: string;

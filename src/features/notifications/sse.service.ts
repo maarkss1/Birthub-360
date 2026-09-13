@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { connection, queuesEnabled } from '../../lib/queue/redis.js';
 import { logger } from '../../lib/logger.js';
+import { connection, queuesEnabled } from '../../lib/queue/redis.js';
 
 const clients = new Set<{ id: string; orgId: string; res: Response }>();
 

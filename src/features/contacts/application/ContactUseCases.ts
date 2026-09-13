@@ -1,9 +1,9 @@
-import type { Contact, ContactRepository } from '../domain/Contact';
 import type { z } from 'zod';
 import { contactSchema } from '../../../lib/zod';
-import { enrichCompany } from '../../prospecting/services/enrichment.service';
 import { BaseUseCases } from '../../../shared/application/BaseUseCases';
 import { AppError } from '../../../shared/middlewares/errorHandler';
+import { enrichCompany } from '../../prospecting/services/enrichment.service';
+import type { Contact, ContactRepository } from '../domain/Contact';
 
 export class ContactUseCases extends BaseUseCases<Contact, ContactRepository> {
   // biome-ignore lint/complexity/noUselessConstructor: expõe publicamente o construtor protected da base para a DI

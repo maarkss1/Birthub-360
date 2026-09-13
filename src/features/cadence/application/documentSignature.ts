@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import { type DealClosureEvent, evaluateDealClosure } from '../../../shared/domain/dealClosure.js';
 import {
   buildSignatureRequestDraft,
   isValidSignatureTransition,
   type SignatureRequestDraft,
   type SignatureStatus,
 } from '../../../shared/domain/signature.js';
-import { evaluateDealClosure, type DealClosureEvent } from '../../../shared/domain/dealClosure.js';
 
 /** Envia a solicitação ao provedor real (ou stub) e devolve o id que ele atribuiu — usado depois para casar o webhook de status com a solicitação certa. */
 export interface SignatureProviderPort {

@@ -1,5 +1,5 @@
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Bot, Mic, MicOff, Send, PhoneOff } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { Bot, Mic, MicOff, PhoneOff, Send } from 'lucide-react';
 import type { CallMessage, Persona } from './types';
 
 // Fundo sempre escuro (independente do tema claro/escuro do resto do app): exceção justificada

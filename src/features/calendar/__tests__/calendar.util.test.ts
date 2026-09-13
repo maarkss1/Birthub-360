@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  dayKey,
-  dayKeyToDate,
-  isSameDay,
   addMonths,
   buildMonthGrid,
+  dayKey,
+  dayKeyToDate,
+  groupByDay,
+  isSameDay,
   monthGridRange,
   moveToDay,
-  groupByDay,
 } from '../calendar.util';
 
 describe('dayKey', () => {

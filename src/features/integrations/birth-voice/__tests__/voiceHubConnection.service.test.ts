@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mesmo espírito de threecx.service.test.ts: prova que a conexão com o Birth Voices Hub é 100%
 // persistida via Prisma (nada em memória module-level), nunca vaza/apaga dado de outra
@@ -33,9 +33,9 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 import {
-  listVoiceHubConnections,
   connectVoiceHub,
   disconnectVoiceHub,
+  listVoiceHubConnections,
   testVoiceHubConnection,
 } from '@/features/integrations/birth-voice/voiceHubConnection.service';
 import { AppError } from '@/shared/middlewares/errorHandler';

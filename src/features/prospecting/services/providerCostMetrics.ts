@@ -1,5 +1,5 @@
 import client from 'prom-client';
-import { recordProspectingProviderSpend, type ProspectingCostProvider } from './providerBudget.js';
+import { type ProspectingCostProvider, recordProspectingProviderSpend } from './providerBudget.js';
 
 // Onda 42 (DEC-09): `ProspectingCostProvider` é definido em `providerBudget.ts`, não aqui — este
 // arquivo já depende daquele em runtime (`recordProspectingProviderSpend`, logo abaixo), então

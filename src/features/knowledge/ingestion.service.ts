@@ -1,10 +1,10 @@
 import type { Prisma } from '@prisma/client';
-import { prisma, withRlsContext } from '../../lib/prisma.js';
-import { logger } from '../../lib/logger.js';
 import { generateEmbedding } from '../../lib/ai/gateway.js';
+import { logger } from '../../lib/logger.js';
+import { prisma, withRlsContext } from '../../lib/prisma.js';
+import type { IngestResult } from '../../shared/contracts/ingestion.contract.js';
 import { chunkText } from './chunking.js';
 import { hasVectorSupport } from './vector-support.js';
-import type { IngestResult } from '../../shared/contracts/ingestion.contract.js';
 
 /** Quantos embeddings pedimos em paralelo ao provedor. Acima disso o LiteLLM começa a dar 429. */
 const EMBEDDING_CONCURRENCY = 4;
@@ -379,6 +379,6 @@ export class IngestionService {
 
 export const ingestionService = new IngestionService();
 
+export type { Prisma };
 // Reexportado para os testes e para quem precisar montar o literal fora daqui.
 export { toVectorLiteral };
-export type { Prisma };

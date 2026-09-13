@@ -1,34 +1,33 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Database,
-  Search,
-  Upload,
-  FileText,
-  Trash2,
-  Loader2,
-  X,
   AlertTriangle,
-  Sparkles,
-  Type,
-  RefreshCw,
-  FileQuestion,
-  Pencil,
   ArrowUpDown,
+  Database,
+  FileQuestion,
+  FileText,
+  Loader2,
+  Pencil,
+  RefreshCw,
+  Search,
+  Sparkles,
+  Trash2,
+  Type,
+  Upload,
+  X,
 } from 'lucide-react';
-
-import { Card } from '../../../components/ui/Card';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { toast } from '../../../lib/toast';
 import {
-  knowledgeApi,
-  fileToBase64,
   ACCEPTED_EXTENSIONS,
+  fileToBase64,
   type KnowledgeDocumentSummary,
   type KnowledgeSearchResponse,
+  knowledgeApi,
 } from '../knowledge.api';
 import { EditorIA } from './EditorIA';
 

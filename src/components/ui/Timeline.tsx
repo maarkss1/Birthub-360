@@ -1,4 +1,4 @@
-import { Clock, User, CheckCircle2, MessageSquare, AlertCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Clock, MessageSquare, User } from 'lucide-react';
 
 export interface TimelineItem {
   id: string;

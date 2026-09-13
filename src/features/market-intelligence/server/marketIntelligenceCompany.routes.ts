@@ -6,8 +6,8 @@ import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { getAccountIntelligence } from './accountIntelligence.service.js';
 import {
-  CompanyCatalogValidationError,
   approveToPipeline,
+  CompanyCatalogValidationError,
   listMarketIntelligenceCompanies,
   parseCompanyCatalogQuery,
 } from './marketIntelligenceCompany.service.js';

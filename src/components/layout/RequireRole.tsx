@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import { ShieldAlert } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, type Role } from '../../lib/auth/authorization';
 

@@ -1,7 +1,7 @@
+import { Loader2, Lock, Plus, Trash2, Zap } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Loader2, Plus, Trash2, Zap, Lock } from 'lucide-react';
-import { api } from '../../../lib/api';
 import { useAuth } from '../../../contexts/AuthContext';
+import { api } from '../../../lib/api';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 
 interface BitrixDealPipeline {

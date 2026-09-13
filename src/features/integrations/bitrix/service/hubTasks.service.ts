@@ -3,7 +3,7 @@ import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import { listBitrixConnections } from './connections.js';
 import { getBitrixUsers } from './deals.js';
-import { resolveOwnBitrixUserId, type BitrixUserOption } from './userMapping.js';
+import { type BitrixUserOption, resolveOwnBitrixUserId } from './userMapping.js';
 
 export type { BitrixUserOption } from './userMapping.js';
 

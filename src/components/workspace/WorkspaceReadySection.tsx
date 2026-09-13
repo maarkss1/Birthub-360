@@ -1,9 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Bot, Layers, Sparkles } from 'lucide-react';
-import { TAB_META, type TabType } from '../layout/tabMeta';
-import { Badge, type BadgeProps } from '../ui/Badge';
-import { EmptyState } from '../ui/EmptyState';
-import { cn } from '../../lib/utils';
+import { useNavigate } from 'react-router-dom';
 import type {
   Workspace,
   WorkspaceAgentGroup,
@@ -12,6 +8,10 @@ import type {
   WorkspaceModule,
   WorkspaceQuickAction,
 } from '../../features/workspace/workspace.api';
+import { cn } from '../../lib/utils';
+import { TAB_META, type TabType } from '../layout/tabMeta';
+import { Badge, type BadgeProps } from '../ui/Badge';
+import { EmptyState } from '../ui/EmptyState';
 
 // Vive fora de src/features/** de propósito: é reaproveitado por duas features (`workspace`, tela
 // dedicada em /app/workspace, e `dashboard`, seção da home unificada em /app e /app/dashboard) —

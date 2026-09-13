@@ -1,17 +1,17 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
+import { routeParam } from '../../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
-  listTeamMembers,
-  listAssignableOwners,
-  createTeamMember,
-  resetTeamMemberPassword,
-  deleteTeamMember,
-  unlockTeamMember,
-  TeamServiceError,
   ASSIGNABLE_ROLES,
+  createTeamMember,
+  deleteTeamMember,
+  listAssignableOwners,
+  listTeamMembers,
+  resetTeamMemberPassword,
+  TeamServiceError,
+  unlockTeamMember,
 } from '../services/team.service.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
 
 const router = Router();
 

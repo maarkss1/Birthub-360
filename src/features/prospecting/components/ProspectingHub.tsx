@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Database, Landmark, Sparkles, Camera, Wrench, Bookmark } from 'lucide-react';
-import { api } from '../../../lib/api';
-import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service';
-import type {
-  ProspectCandidate,
-  ProspectCriteria,
-  DiscoverResult,
-} from '../services/prospecting.service';
-import {
-  SEGMENTO_OPTIONS,
-  TOTALTRAC_SEGMENTO_OPTIONS,
-  ATLAS_PERSONA_OPTIONS,
-  TOTALTRAC_PERSONA_OPTIONS,
-} from '../../../shared/constants/icp-options';
+import { Bookmark, Camera, Database, Landmark, Sparkles, Wrench } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { GamificationWidget } from '../../../components/ui/GamificationWidget';
 import { BRAND } from '../../../config/brand';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { api } from '../../../lib/api';
 import { SoundFX } from '../../../lib/soundEffects';
-import { GamificationWidget } from '../../../components/ui/GamificationWidget';
+import {
+  ATLAS_PERSONA_OPTIONS,
+  SEGMENTO_OPTIONS,
+  TOTALTRAC_PERSONA_OPTIONS,
+  TOTALTRAC_SEGMENTO_OPTIONS,
+} from '../../../shared/constants/icp-options';
+import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service';
+import type {
+  DiscoverResult,
+  ProspectCandidate,
+  ProspectCriteria,
+} from '../services/prospecting.service';
 import { CnpjSearchPanel } from './prospecting-hub/CnpjSearchPanel';
 import { DiscoveryFilterPanel } from './prospecting-hub/DiscoveryFilterPanel';
 import { DiscoveryResultsPanel } from './prospecting-hub/DiscoveryResultsPanel';

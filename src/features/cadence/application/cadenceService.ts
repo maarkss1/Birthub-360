@@ -1,21 +1,21 @@
 import { logger } from '../../../lib/logger.js';
 import {
   applyStopDecision,
-  decideCadenceAction,
-  recordTouchAttempt,
   type CadenceDecision,
   type CadenceRunState,
   type CadenceRunStatus,
   type CadenceSequenceDefinition,
   type CadenceTouch,
+  decideCadenceAction,
+  recordTouchAttempt,
 } from '../domain/cadence.js';
-import { isOptedOut } from './optOutService.js';
 import type { OptOutRepository, OptOutSubject } from '../domain/optOut.js';
-import {
-  evaluateRateLimitForUpcomingTouch,
-  type CadenceRateLimitPort,
-} from './rateLimitService.js';
 import type { CadenceRateLimitPolicy, RateLimitBlockReason } from '../domain/rateLimit.js';
+import { isOptedOut } from './optOutService.js';
+import {
+  type CadenceRateLimitPort,
+  evaluateRateLimitForUpcomingTouch,
+} from './rateLimitService.js';
 
 /**
  * Orquestra um ciclo da cadência: decide a ação (`decideCadenceAction`), consulta o opt-out

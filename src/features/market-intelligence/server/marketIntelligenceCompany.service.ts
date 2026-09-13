@@ -1,7 +1,6 @@
 import { MarketIntelligenceIcpTier, type Prisma } from '@prisma/client';
-
-import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 export const CNPJ_CATALOG_PATTERN = /^[A-Z0-9]{12}[0-9]{2}$/;

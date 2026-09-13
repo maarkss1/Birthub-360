@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { KpiTile } from './KpiTile';
-import { FunnelConversionCard } from './FunnelConversionCard';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
 import {
+  type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
   formatPercent,
-  type CommercialFilter,
-  type PerformanceMetrics,
   type HistoricalTrendsReport,
+  type PerformanceMetrics,
 } from '../commercialIntelligence.api';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
+import { FunnelConversionCard } from './FunnelConversionCard';
+import { KpiTile } from './KpiTile';
 
 function DaysLabel(days: number | null): string {
   if (days == null) return 'Não disponível';

@@ -3,13 +3,13 @@
  * (o que foi OBSERVADO), prova que `evaluateCandidateRequirements` nunca trata um critério apenas
  * pedido como se fosse confirmado — a fabricação sutil que este motor existe para evitar.
  */
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { ProspectCandidate } from '../prospectTypes.js';
 import {
   buildRequirementsFromSearchIntent,
   evaluateCandidateRequirements,
 } from '../requirementEngine.js';
 import type { SearchIntent } from '../searchIntent.js';
-import type { ProspectCandidate } from '../prospectTypes.js';
 
 function baseIntent(overrides: Partial<SearchIntent> = {}): SearchIntent {
   return {

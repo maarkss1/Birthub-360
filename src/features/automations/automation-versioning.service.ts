@@ -1,12 +1,12 @@
 import { logger } from '../../lib/logger.js';
 import type { Automation } from './domain/Automation';
 import {
-  diffAutomationSnapshots,
   type AutomationDiffLine,
   type AutomationVersionChangeReason,
   type AutomationVersionRecord,
   type AutomationVersionSnapshot,
   type AutomationVersionStore,
+  diffAutomationSnapshots,
 } from './domain/AutomationVersion';
 import { PrismaAutomationVersionStore } from './infra/PrismaAutomationVersionStore.js';
 

@@ -1,18 +1,18 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 import {
   type CommercialIntelligenceUseCases,
   currentPeriod,
 } from '../application/CommercialIntelligenceUseCases';
 import { METRICS_DICTIONARY } from '../application/metricsDictionary';
-import type { CommercialIntelligenceAiService } from '../infra/CommercialIntelligenceAiService';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 import type {
   CommercialIntelligenceFilter,
   DealDrillDownQuery,
-  ForecastTier,
   ExportFormat,
+  ForecastTier,
 } from '../domain/CommercialIntelligence';
-import { routeParam } from '../../../shared/http/routeParams';
+import type { CommercialIntelligenceAiService } from '../infra/CommercialIntelligenceAiService';
 
 const MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
 

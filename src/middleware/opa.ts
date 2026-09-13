@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import type { AuthRequest } from '../shared/middlewares/authenticateToken.js';
 
 export const opaMiddleware = async (req: Request, res: Response, next: NextFunction) => {

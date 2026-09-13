@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { api } from '../lib/api';
-import { readSseStream, sseRequestInit } from '../lib/sse';
+import { BRAND } from '../config/brand';
+import type { PlaybookInfo, PlaybookKey } from '../config/playbooks';
 import type {
   ObjectionMatrixItem,
   QualificationMatrixItem,
 } from '../features/playbook/playbook.api';
-import { BRAND } from '../config/brand';
-import type { PlaybookInfo, PlaybookKey } from '../config/playbooks';
-import { useActiveRecord } from './useActiveRecord';
+import { api } from '../lib/api';
+import { clientLogger } from '../lib/clientLogger';
+import { readSseStream, sseRequestInit } from '../lib/sse';
 import {
+  type AssistantContextSource,
   buildAssistantLocalContext,
   getAssistantRouteContext,
-  type AssistantContextSource,
 } from './assistantContext';
-import { clientLogger } from '../lib/clientLogger';
+import { useActiveRecord } from './useActiveRecord';
 
 export interface ChatMessage {
   id: string;

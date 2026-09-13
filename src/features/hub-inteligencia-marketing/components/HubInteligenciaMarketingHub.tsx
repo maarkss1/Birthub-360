@@ -1,5 +1,5 @@
+import { Compass, Database, ExternalLink, FileText, PieChart, Search } from 'lucide-react';
 import { useState } from 'react';
-import { PieChart, ExternalLink, FileText, Search, Compass, Database } from 'lucide-react';
 import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader';
 
 export function HubInteligenciaMarketingHub() {

@@ -1,12 +1,12 @@
 import type { Express } from 'express';
-import { emailReplyWebhookRoutes } from '../features/integrations/email/emailReply.webhook.js';
-import { signatureStatusWebhookRoutes } from '../features/integrations/signature/signatureStatus.webhook.js';
+import { crm360PublicRoutes } from '../features/crm360/routes/crm360Public.routes.js';
 import { birthVoiceWebhookRoutes } from '../features/integrations/birth-voice/birthVoice.webhook.js';
 import { voiceResultWebhookRoutes } from '../features/integrations/birth-voice/voiceResult.webhook.js';
 import { bitrixWebhookRoutes } from '../features/integrations/bitrix/bitrix.webhook.js';
-import { threecxWebhookRouter } from '../features/integrations/threecx/threecx.routes.js';
 import { chatwootWebhookRoutes } from '../features/integrations/chatwoot/chatwoot.webhook.js';
-import { crm360PublicRoutes } from '../features/crm360/routes/crm360Public.routes.js';
+import { emailReplyWebhookRoutes } from '../features/integrations/email/emailReply.webhook.js';
+import { signatureStatusWebhookRoutes } from '../features/integrations/signature/signatureStatus.webhook.js';
+import { threecxWebhookRouter } from '../features/integrations/threecx/threecx.routes.js';
 
 /**
  * Monta as rotas que precisam ficar ANTES do `express.json()` global (webhooks cuja autenticidade

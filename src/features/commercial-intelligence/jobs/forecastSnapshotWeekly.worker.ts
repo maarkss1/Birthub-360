@@ -5,19 +5,19 @@
 // semana, para cada organização com pipeline ativo, calcula o ExecutiveOverview do mês corrente e
 // grava um snapshot append-only (nunca sobrescreve — permite comparar previsto-vs-realizado
 // depois, ver forecastAccuracy.ts).
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { connection } from '../../../lib/queue/redis.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { requestContext } from '../../../lib/async-context.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { connection } from '../../../lib/queue/redis.js';
 import {
   CommercialIntelligenceUseCases,
   currentPeriod,
 } from '../application/CommercialIntelligenceUseCases.js';
+import { buildForecastSnapshot } from '../application/forecastSnapshot.js';
 import { PrismaCommercialIntelligenceRepository } from '../infra/PrismaCommercialIntelligenceRepository.js';
 import { PrismaForecastSnapshotStore } from '../infra/PrismaForecastSnapshotStore.js';
-import { buildForecastSnapshot } from '../application/forecastSnapshot.js';
 
 export const FORECAST_SNAPSHOT_QUEUE_NAME = 'forecast-snapshot-weekly-queue';
 

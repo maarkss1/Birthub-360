@@ -9,26 +9,28 @@
  *   import { FunnelChart } from '@/components/charts';
  *   <FunnelChart data={stageData} title="Pipeline de Vendas" />
  */
-import { useEffect, useRef } from 'react';
-import type { EChartsOption, TooltipComponentFormatterCallbackParams } from 'echarts';
-import { useTheme } from '../../contexts/ThemeContext';
 
-// Importa apenas os módulos necessários (tree-shaking manual do ECharts)
-import * as echarts from 'echarts/core';
-import { FunnelChart as EFunnelChart } from 'echarts/charts';
-import { SankeyChart as ESankeyChart } from 'echarts/charts';
-import { HeatmapChart as EHeatmapChart } from 'echarts/charts';
-import { BarChart as EBarChart } from 'echarts/charts';
-import { LineChart as ELineChart } from 'echarts/charts';
+import type { EChartsOption, TooltipComponentFormatterCallbackParams } from 'echarts';
 import {
+  BarChart as EBarChart,
+  FunnelChart as EFunnelChart,
+  HeatmapChart as EHeatmapChart,
+  LineChart as ELineChart,
+  SankeyChart as ESankeyChart,
+} from 'echarts/charts';
+import {
+  CalendarComponent,
+  GridComponent,
+  LegendComponent,
   TitleComponent,
   TooltipComponent,
-  LegendComponent,
-  GridComponent,
   VisualMapComponent,
-  CalendarComponent,
 } from 'echarts/components';
+// Importa apenas os módulos necessários (tree-shaking manual do ECharts)
+import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
+import { useEffect, useRef } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 echarts.use([
   EFunnelChart,

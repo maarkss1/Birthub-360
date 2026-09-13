@@ -26,8 +26,8 @@ import {
   findEmailViaHunter,
   findPeopleViaDomainSearch,
 } from '@/features/prospecting/services/hunter.service';
-import { resetProviderRateLimitersForTests } from '@/features/prospecting/services/providerRateLimit';
 import { resetProviderCacheForTests } from '@/features/prospecting/services/providerCache';
+import { resetProviderRateLimitersForTests } from '@/features/prospecting/services/providerRateLimit';
 
 function jsonResponse(status: number, body: unknown): Response {
   return {

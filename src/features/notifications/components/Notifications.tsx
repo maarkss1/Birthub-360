@@ -1,29 +1,28 @@
-import { useCallback, useEffect, useState } from 'react';
 import {
+  AlertTriangle,
   Bell,
   CheckCheck,
-  Trash2,
-  Loader2,
-  AlertTriangle,
-  Info,
   CircleCheck,
-  TriangleAlert,
   CircleX,
   Cpu,
+  Info,
+  Loader2,
+  Trash2,
+  TriangleAlert,
 } from 'lucide-react';
-
-import { Card } from '../../../components/ui/Card';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { toast } from '../../../lib/toast';
 import {
-  notificationsApi,
-  relativeTime,
   type NotificationItem,
   type NotificationKind,
+  notificationsApi,
+  relativeTime,
 } from '../notifications.api';
 
 /**

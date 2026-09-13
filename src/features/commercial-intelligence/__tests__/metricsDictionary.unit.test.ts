@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { METRICS_DICTIONARY } from '../application/metricsDictionary';
 
 describe('metricsDictionary — fonte única de verdade de fórmula/origem/limitação de cada KPI', () => {

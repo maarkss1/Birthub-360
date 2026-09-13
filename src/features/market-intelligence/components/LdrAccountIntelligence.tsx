@@ -1,5 +1,3 @@
-import { type FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
   Bot,
@@ -13,6 +11,8 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
+import { type FormEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 type Capability = {
   status: 'AVAILABLE' | 'PARTIAL' | 'NOT_AVAILABLE';

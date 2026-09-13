@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import {
-  Target,
-  Sparkles,
+  Activity,
   AlertCircle,
+  BrainCircuit,
+  Compass,
   MessageSquare,
   ShieldAlert,
+  Sparkles,
+  Target,
   Zap,
-  Compass,
-  BrainCircuit,
-  Activity,
 } from 'lucide-react';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { useState } from 'react';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
 
 interface B2BMatrixResult {

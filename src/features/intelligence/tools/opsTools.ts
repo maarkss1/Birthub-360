@@ -8,13 +8,13 @@
 
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { prisma } from '../../../lib/prisma.js';
 import { getTenantId } from '../../../lib/async-context.js';
+import { prisma } from '../../../lib/prisma.js';
 import { ACTIVITY_TYPE } from '../../../lib/zod.js';
 import { activityService } from '../../activities/services/activity.service.js';
 import {
-  notificationService,
   type NotificationKind,
+  notificationService,
 } from '../../notifications/notification.service.js';
 
 // ATENÇÃO — módulo MORTO em produção, mantido no repo de propósito (histórico/referência), NÃO é

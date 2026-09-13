@@ -1,9 +1,9 @@
+import { AlertCircle, Brain, ChevronRight, Loader2, TrendingDown, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Loader2, Brain, TrendingUp, TrendingDown, AlertCircle, ChevronRight } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { api } from '../../../lib/api';
-import { analyticsApi, type AnalyticsDashboard } from '../analytics.api';
+import { type AnalyticsDashboard, analyticsApi } from '../analytics.api';
 
 interface WinLossResult {
   analysis: string;

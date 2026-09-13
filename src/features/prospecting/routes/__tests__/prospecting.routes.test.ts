@@ -12,9 +12,10 @@
  * `requireTenant` não fazem parte deste router (aplicados em bootstrap/routes.ts ao montar
  * `/api/prospecting`) — o `req.user` é injetado diretamente, como nos demais testes de rota.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+
 import express from 'express';
+import request from 'supertest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
 
 const discoverCandidatesMock = vi.fn();

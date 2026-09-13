@@ -1,13 +1,13 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { env } from '../../../config/env.js';
 import {
   cleanAndParseJson,
   getAiModel,
   logAiUsage,
-  wrapUntrustedContent,
   UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
+  wrapUntrustedContent,
 } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
-import { env } from '../../../config/env.js';
 import type { SearchHit } from '../knowledge.types.js';
 
 /**

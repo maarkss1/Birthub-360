@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const sendMailMock = vi.fn();
 const createTransportMock = vi.fn((..._args: unknown[]) => ({ sendMail: sendMailMock }));

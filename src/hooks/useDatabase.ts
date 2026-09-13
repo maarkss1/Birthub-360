@@ -3,10 +3,10 @@
  * Provides loading state, error handling, refetch, and CRUD mutations for all modules.
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { companiesDB, contactsDB, leadsDB, activitiesDB, analyticsDB } from '../lib/db';
+import { useCallback, useEffect, useState } from 'react';
 import { analyticsApi } from '../features/analytics/analytics.api';
-import type { Company, Contact, Lead, Activity, PaginatedResponse } from '../types';
+import { activitiesDB, analyticsDB, companiesDB, contactsDB, leadsDB } from '../lib/db';
+import type { Activity, Company, Contact, Lead, PaginatedResponse } from '../types';
 
 // ─── Generic fetch hook ────────────────────────────────────────────────────────
 function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Info } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { commercialIntelligenceApi, type MetricDefinition } from '../commercialIntelligence.api';
 
 /**

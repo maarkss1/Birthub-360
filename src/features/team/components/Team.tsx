@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
 import {
   AlertCircle,
   BadgeCheck,
@@ -13,10 +12,11 @@ import {
   UserPlus,
   Users,
 } from 'lucide-react';
-import { api } from '../../../lib/api';
-import { useAuth } from '../../../contexts/AuthContext';
-import { toast } from '../../../lib/toast';
+import { useCallback, useEffect, useState } from 'react';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { useAuth } from '../../../contexts/AuthContext';
+import { api } from '../../../lib/api';
+import { toast } from '../../../lib/toast';
 
 interface TeamMember {
   id: string;

@@ -1,7 +1,7 @@
+import compression from 'compression';
+import cors from 'cors';
 import type { Express } from 'express';
 import helmet from 'helmet';
-import cors from 'cors';
-import compression from 'compression';
 import { env } from '../config/env.js';
 
 // Sem isto, esquecer de definir ALLOWED_ORIGINS em produção fazia o servidor subir "com sucesso"

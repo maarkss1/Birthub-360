@@ -8,11 +8,12 @@
  * tabela não tem UNIQUE por (organizationId, period) de propósito, para preservar o histórico de
  * revisões quando o snapshot semanal roda mais de uma vez no mesmo período.
  */
+
+import { prisma } from '../../../lib/prisma.js';
 import type {
   ForecastSnapshotRecord,
   ForecastSnapshotStore,
 } from '../domain/CommercialIntelligence';
-import { prisma } from '../../../lib/prisma.js';
 
 function toRecord(row: {
   id: string;

@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import {
   Bot,
   BrainCircuit,
@@ -11,6 +10,7 @@ import {
   ThumbsUp,
   X,
 } from 'lucide-react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { api } from '../../../lib/api';
 import { clientLogger } from '../../../lib/clientLogger';
 

@@ -4,10 +4,10 @@
  * lidos do mesmo módulo que os instrumenta — não duplicados aqui) e que `isProviderAvailable`
  * decide corretamente o portão de modo pago/gratuito.
  */
-import { describe, it, expect } from 'vitest';
-import { PROVIDER_CAPABILITIES, isProviderAvailable } from '../providerCapabilities.js';
+import { describe, expect, it } from 'vitest';
 import { getCostPerCallUsd } from '../../services/providerCostMetrics.js';
 import { getRateLimitPerMinute } from '../../services/providerRateLimit.js';
+import { isProviderAvailable, PROVIDER_CAPABILITIES } from '../providerCapabilities.js';
 
 describe('PROVIDER_CAPABILITIES', () => {
   it('declara os 4 providers do domínio (Apollo, Google Places, Hunter, Nominatim)', () => {

@@ -1,14 +1,14 @@
-import { prisma } from '../../../../lib/prisma.js';
 import { LeadStatus, type Prisma } from '@prisma/client';
-import { logger } from '../../../../lib/logger.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
-import { callBitrix, getStatusLabels, getConnectionWebhookUrl } from './client.js';
-import { resolveEnumMaps, applyInboundCustomFields } from './customFields.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { BITRIX_FIELD_MAP } from '../bitrixFieldMap.js';
-import { getBitrixUsers, type BitrixDealStage } from './deals.js';
-import { resolveAtlasUserIdByEmail } from './userMapping.js';
+import { callBitrix, getConnectionWebhookUrl, getStatusLabels } from './client.js';
+import { applyInboundCustomFields, resolveEnumMaps } from './customFields.js';
+import { type BitrixDealStage, getBitrixUsers } from './deals.js';
 import { findOwnershipConflict, notifyOwnershipConflict } from './ownershipGuard.js';
+import { resolveAtlasUserIdByEmail } from './userMapping.js';
 
 const LEAD_UF_CRM_CODES = BITRIX_FIELD_MAP.map((m) => m.leadCode).filter((c): c is string =>
   Boolean(c),

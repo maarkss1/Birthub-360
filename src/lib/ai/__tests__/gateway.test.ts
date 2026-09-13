@@ -23,6 +23,7 @@ vi.mock('../../logger.js', () => ({
   },
 }));
 
+import * as budgetModule from '../budget.js';
 import {
   __resetCircuitBreakerForTests,
   cleanAndParseJson,
@@ -30,7 +31,6 @@ import {
   getAiModel,
   toChatCompletionMessages,
 } from '../gateway';
-import * as budgetModule from '../budget.js';
 
 const originalEnv = {
   GROQ_API_KEY: process.env.GROQ_API_KEY,

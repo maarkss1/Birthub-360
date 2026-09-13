@@ -1,9 +1,9 @@
 import type { Express } from 'express';
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
-import { RedisStore, type RedisReply } from 'rate-limit-redis';
+import { type RedisReply, RedisStore } from 'rate-limit-redis';
 import { env } from '../config/env.js';
-import { rateLimiterConnection, queuesEnabled } from '../lib/queue/redis.js';
-import { authenticateToken, type AuthRequest } from '../shared/middlewares/authenticateToken.js';
+import { queuesEnabled, rateLimiterConnection } from '../lib/queue/redis.js';
+import { type AuthRequest, authenticateToken } from '../shared/middlewares/authenticateToken.js';
 
 const sendRateLimitCommand = (...args: string[]): Promise<RedisReply> =>
   rateLimiterConnection.call(args[0], ...args.slice(1)) as Promise<RedisReply>;

@@ -1,13 +1,14 @@
 /* eslint-disable jsx-a11y/media-has-caption -- trilha instrumental sem fala */
-import { useRef, useState, useEffect } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+
 import { motion } from 'framer-motion';
 import { ArrowRight, MessageCircle, Phone, Volume2, VolumeX } from 'lucide-react';
-import { clientLogger } from '../../../lib/clientLogger';
-import { BRAND } from '../../../config/brand';
+import { useEffect, useRef, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { BirthHubLogo, BirthHubWordmark } from '../../../components/brand/BirthHubLogo';
-import { staggerContainer, staggerItem } from '../../../lib/motion';
+import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
+import { clientLogger } from '../../../lib/clientLogger';
+import { staggerContainer, staggerItem } from '../../../lib/motion';
 
 // Marcas de redes sociais não existem no lucide-react (biblioteca de ícones genéricos do
 // projeto) — ícones de marca de terceiros vivem como SVG inline em vez de puxar uma segunda lib

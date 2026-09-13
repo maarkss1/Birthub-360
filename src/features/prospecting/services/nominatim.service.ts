@@ -1,6 +1,6 @@
+import { fetchWithTimeout } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger';
 import type { PlaceCandidate, PlaceSearchResult } from './places.service';
-import { fetchWithTimeout } from '../../../lib/http.js';
 
 const NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org/search';
 const NOMINATIM_HEADERS = {

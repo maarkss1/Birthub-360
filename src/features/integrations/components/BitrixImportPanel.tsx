@@ -1,40 +1,40 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
 import {
-  Loader2,
-  Download,
-  CheckCircle2,
   AlertTriangle,
+  ArrowUpDown,
+  Building2,
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  CheckSquare,
+  DollarSign,
+  Download,
+  Edit3,
+  ExternalLink,
+  Filter,
+  Flame,
+  Info,
+  Layers,
+  Loader2,
+  Lock,
+  Mail,
+  Phone,
   RefreshCw,
   Search,
-  X,
-  Filter,
+  ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
+  Square,
   Tag,
   Users,
-  Lock,
-  CalendarDays,
-  Info,
-  SlidersHorizontal,
-  CheckSquare,
-  Square,
-  Edit3,
-  Flame,
-  Phone,
-  Mail,
-  Building2,
-  DollarSign,
-  Sparkles,
-  Layers,
-  Check,
-  ExternalLink,
-  ArrowUpDown,
-  ShieldCheck,
-  Zap,
+  X,
   XCircle,
+  Zap,
 } from 'lucide-react';
-import { api } from '../../../lib/api';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Dialog } from '../../../components/ui/Dialog';
+import { useAuth } from '../../../contexts/AuthContext';
+import { api } from '../../../lib/api';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
 
 interface BitrixLeadSummary {
   id: string;

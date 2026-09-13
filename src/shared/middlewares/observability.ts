@@ -1,6 +1,6 @@
-import type { Request, Response, NextFunction } from 'express';
+import { context, trace } from '@opentelemetry/api';
+import type { NextFunction, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { trace, context } from '@opentelemetry/api';
 import { logger } from '../../lib/logger.js';
 import type { AuthRequest } from './authenticateToken.js';
 

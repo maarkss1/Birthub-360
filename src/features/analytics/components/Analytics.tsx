@@ -1,20 +1,19 @@
+import { motion } from 'framer-motion';
+import { AlertTriangle, BarChart3, Download, Loader2, RefreshCw, Table2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { BarChart, LineChart } from '../../../components/charts';
-import { BarChart3, AlertTriangle, Loader2, RefreshCw, Table2, Download } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
-import { CohortAnalysis } from './CohortAnalysis';
+import { Card } from '../../../components/ui/Card';
 import {
+  type AnalyticsDashboard,
   analyticsApi,
   formatMonthLabel,
   PERIOD_OPTIONS,
-  type AnalyticsDashboard,
 } from '../analytics.api';
+import { CohortAnalysis } from './CohortAnalysis';
 import {
-  HeatmapWidget,
   AgentPerformanceWidget,
+  HeatmapWidget,
   LostReasonsWidget,
   TmqTile,
 } from './DashboardExtensions';

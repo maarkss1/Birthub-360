@@ -1,8 +1,8 @@
-import { type ReactNode, lazy, Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
+import { lazy, type ReactNode, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDailyClosingGate } from '../../contexts/DailyClosingContext';
-import { Loader2 } from 'lucide-react';
 
 const ChangePasswordGate = lazy(() =>
   import('../../features/auth/components/ChangePasswordGate').then((m) => ({

@@ -1,5 +1,5 @@
+import type { NextFunction, Request, Response } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Request, Response, NextFunction } from 'express';
 
 /**
  * `LeadController` nunca tinha teste unitário próprio. Cobre o contrato HTTP (200/201/204/404,

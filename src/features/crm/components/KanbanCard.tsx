@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  Building2,
-  User,
-  Calendar,
-  Sparkles,
-  Loader2,
-  ArrowRightCircle,
-  CheckSquare,
-  Square,
-} from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import {
+  ArrowRightCircle,
+  Building2,
+  Calendar,
+  CheckSquare,
+  Loader2,
+  Sparkles,
+  Square,
+  User,
+} from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TechToolLogo } from '../../../components/ui/TechToolLogo';
 import type { Lead } from '../../../types';
 

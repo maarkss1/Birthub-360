@@ -1,37 +1,37 @@
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import {
-  Radar,
-  KanbanSquare,
-  TrendingUp,
-  Handshake,
-  Clock,
-  Phone,
-  Mail,
-  MessageCircle,
-  Users,
-  MapPin,
-  RefreshCw,
-  CheckSquare,
   Activity as ActivityIcon,
   AlertTriangle,
+  CheckSquare,
+  Clock,
+  Handshake,
+  KanbanSquare,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Radar,
+  RefreshCw,
+  Sparkles,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
 import { ClockCalendarWidget } from '../../../components/ui/ClockCalendarWidget';
 import { LiveStatsWidget } from '../../../components/ui/LiveStatsWidget';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { MetricSkeleton } from '../../../components/ui/Skeleton';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useAnalytics, useActivities, useAnalyticsDashboard } from '../../../hooks/useDatabase';
+import { useExperienceMode } from '../../../contexts/ExperienceModeContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { useActivities, useAnalytics, useAnalyticsDashboard } from '../../../hooks/useDatabase';
 import { SoundFX } from '../../../lib/soundEffects';
-import { RealtimeFeed } from './RealtimeFeed';
 import { GlowChart } from '../../analytics/components/GlowChart';
-import { TeamRankingWidget } from './TeamRankingWidget';
-import { SellerCoachingCard } from './SellerCoachingCard';
 import { AiGatewayShowcase } from './AiGatewayShowcase';
 import { DeferredRevenueSignalOrb } from './DeferredRevenueSignalOrb';
-import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
-import { MetricSkeleton } from '../../../components/ui/Skeleton';
-import { useExperienceMode } from '../../../contexts/ExperienceModeContext';
-import { Sparkles } from 'lucide-react';
+import { RealtimeFeed } from './RealtimeFeed';
+import { SellerCoachingCard } from './SellerCoachingCard';
+import { TeamRankingWidget } from './TeamRankingWidget';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
   ligação: <Phone className="w-4 h-4" />,

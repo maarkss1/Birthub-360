@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  isWithinCallWindow,
-  evaluateLead,
   DEFAULT_CALL_WINDOW,
   type DialPolicy,
+  evaluateLead,
+  isWithinCallWindow,
 } from '../coldCall.policy';
 
 // Todas as datas são UTC de propósito: é assim que o servidor enxerga o tempo, e o ponto destes

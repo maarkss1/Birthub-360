@@ -1,9 +1,9 @@
-import React from 'react';
-import type { LeadStatus, Lead } from '../../../types';
-import { KanbanCard } from './KanbanCard';
 import { useDroppable } from '@dnd-kit/core';
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
+import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
+import React from 'react';
 import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap';
+import type { Lead, LeadStatus } from '../../../types';
+import { KanbanCard } from './KanbanCard';
 
 interface KanbanColumnProps {
   status: LeadStatus;

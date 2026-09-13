@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
 import { AlertTriangle, ArrowLeft, Copy, ExternalLink, Loader2, Pencil, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Select } from '../../../components/ui/Select';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
-import { useActiveRecord } from '../../../hooks/useActiveRecord';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { crm360Api } from '../crm360.api';
 import type { CrmCommercialDocument, CrmCommercialDocumentVersionDTO } from '../crm360.types';
 import { diffProposalVersions } from './proposalVersionDiff';

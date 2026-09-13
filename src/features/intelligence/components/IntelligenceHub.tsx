@@ -1,42 +1,41 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Database,
-  Bot,
-  GraduationCap,
-  Settings,
-  Sparkles,
-  FileText,
-  Workflow,
-  CheckSquare,
-  Wand2,
-  Search,
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
-  Loader2,
-  AlertTriangle,
   ArrowUpRight,
+  Bot,
+  CheckSquare,
+  Cpu,
+  Database,
+  FileText,
+  GraduationCap,
+  Loader2,
+  Search,
+  Settings,
   ShieldCheck,
+  Sparkles,
+  Wand2,
+  Workflow,
 } from 'lucide-react';
-import { AIPendingActions } from './AIPendingActions';
-import { AgentQualityPanel } from './AgentQualityPanel';
-import { B2BGenerator } from './B2BGenerator';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Intelligence } from '../../../components/Intelligence';
-import { SuperagentCreator } from './SuperagentCreator';
-import { RobustScriptGenerator } from './RobustScriptGenerator';
-import { AutomationGuide } from './AutomationGuide';
-import { SalesMethodologyStudio } from './SalesMethodologyStudio';
-import { AIConfigCenter } from '../../dashboard/components/AIConfigCenter';
-import { Card, CardTitle, CardDescription } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Card, CardDescription, CardTitle } from '../../../components/ui/Card';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { fadeInUp, staggerContainer, staggerItem, SPRING_SOFT } from '../../../lib/motion';
-import { knowledgeApi, type KnowledgeDocumentSummary } from '../../knowledge/knowledge.api';
-
-import { SwarmDashboard } from './SwarmDashboard';
+import { fadeInUp, SPRING_SOFT, staggerContainer, staggerItem } from '../../../lib/motion';
+import { AIConfigCenter } from '../../dashboard/components/AIConfigCenter';
+import { type KnowledgeDocumentSummary, knowledgeApi } from '../../knowledge/knowledge.api';
+import { AgentQualityPanel } from './AgentQualityPanel';
+import { AIPendingActions } from './AIPendingActions';
 import { AISuiteHub } from './AISuiteHub';
-import { Cpu } from 'lucide-react';
+import { AutomationGuide } from './AutomationGuide';
+import { B2BGenerator } from './B2BGenerator';
+import { RobustScriptGenerator } from './RobustScriptGenerator';
+import { SalesMethodologyStudio } from './SalesMethodologyStudio';
+import { SuperagentCreator } from './SuperagentCreator';
+import { SwarmDashboard } from './SwarmDashboard';
 
 export type IntelligenceTab =
   | 'ai_suite'

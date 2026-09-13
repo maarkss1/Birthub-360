@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { FeatureFlagsUseCases } from '../application/FeatureFlagsUseCases.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { FeatureFlagsUseCases } from '../application/FeatureFlagsUseCases.js';
 
 export class FeatureFlagsController {
   constructor(private featureFlagsUseCases: FeatureFlagsUseCases) {}

@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
 import type { SVGProps } from 'react';
+import { forwardRef } from 'react';
 
 interface YoutubeIconProps extends SVGProps<SVGSVGElement> {
   size?: number | string;

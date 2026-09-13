@@ -1,7 +1,7 @@
-import type { VoiceHubConnection } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
-import { prisma } from '../../../lib/prisma.js';
+import type { VoiceHubConnection } from '@prisma/client';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
 

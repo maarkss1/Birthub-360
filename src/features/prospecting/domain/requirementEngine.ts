@@ -1,5 +1,5 @@
-import type { SearchIntent } from './searchIntent.js';
 import type { ProspectCandidate, RequirementEvaluation } from './prospectTypes.js';
+import type { SearchIntent } from './searchIntent.js';
 
 /**
  * Requirement Engine — avalia, por critério pedido numa busca (`SearchIntent`), se o que foi
