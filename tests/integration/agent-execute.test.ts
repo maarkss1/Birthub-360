@@ -160,6 +160,13 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'ceo', jobRole: 'DIRETOR_COMERCIAL' },
       { code: 'account-manager', jobRole: 'CHURN_RETENCAO' },
       { code: 'closer-copilot', jobRole: 'CLOSER' },
+      // Onda 9 — lote 6 (Marketing/LLM_PROMPT, último lote do domínio), amostra de 2 dos 20 novos
+      // systemPrompt curados em scripts/agent-import/source-prompts.ts. Só 2 (não 3, como nos
+      // lotes anteriores): a maioria dos agentes deste lote não tem primaryJobRole (agentes
+      // cross-funcionais de martech/conteúdo sem dono único de cargo comercial), então não ganham
+      // RoleAgentGrant automático no import e não servem de amostra para este teste.
+      { code: 'lead-magnet-creator', jobRole: 'BDR' },
+      { code: 'sentiment-shift-alerter', jobRole: 'CHURN_RETENCAO' },
     ])(
       '$code (systemPrompt real) executa via agent.execute e retorna SUCCEEDED com output do modelo',
       async ({ code, jobRole }) => {
