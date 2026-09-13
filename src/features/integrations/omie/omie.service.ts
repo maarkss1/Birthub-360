@@ -1,13 +1,22 @@
-import { fetchWithTimeout } from '../../../lib/http.js';
+import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import {
+  parseRetryAfterMs,
+  retryWithBackoff,
+  TransientHttpError,
+} from '../../../shared/http/retryWithBackoff.js';
 
 // app.omie.com.br é destino FIXO do próprio código (não uma URL de tenant) — usa fetchWithTimeout
 // com allowlist (src/lib/http.ts), mesma observação de stripe.service.ts.
 const OMIE_API_BASE = 'https://app.omie.com.br';
 const OMIE_ALLOWED_HOSTS = ['app.omie.com.br'];
 const OMIE_TIMEOUT_MS = 15_000;
+// INTEGRATION-002: mesma estratégia de retry/backoff do Bitrix/Stripe (src/shared/http/
+// retryWithBackoff.ts) — rede/timeout/429/5xx é recuperável; qualquer resposta HTTP (mesmo um
+// erro "de negócio" no corpo, tipo faultstring de credencial inválida) é definitiva.
+const OMIE_MAX_ATTEMPTS = 4;
 
 export interface OmieConnectionInput {
   label?: string;
@@ -55,15 +64,53 @@ async function callOmieRpc(
   call: string,
   param: Record<string, unknown>,
 ): Promise<OmieResponse> {
-  const res = await fetchWithTimeout(
-    `${OMIE_API_BASE}${endpoint}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ call, app_key: appKey, app_secret: appSecret, param: [param] }),
+  const res = await retryWithBackoff(
+    async () => {
+      let response: Response;
+      try {
+        response = await fetchWithTimeout(
+          `${OMIE_API_BASE}${endpoint}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ call, app_key: appKey, app_secret: appSecret, param: [param] }),
+          },
+          OMIE_TIMEOUT_MS,
+          OMIE_ALLOWED_HOSTS,
+        );
+      } catch (err) {
+        if (err instanceof DisallowedHostError) throw err;
+        if (err instanceof HttpTimeoutError) {
+          throw new TransientHttpError(
+            `Tempo limite esgotado ao comunicar com o Omie (timeout ${OMIE_TIMEOUT_MS / 1000}s).`,
+            undefined,
+            undefined,
+            err,
+          );
+        }
+        throw new TransientHttpError(
+          'Falha de rede ao comunicar com o Omie.',
+          undefined,
+          undefined,
+          err,
+        );
+      }
+      if (response.status === 429) {
+        throw new TransientHttpError(
+          'Omie aplicou limite de chamadas (HTTP 429).',
+          429,
+          parseRetryAfterMs(response) ?? undefined,
+        );
+      }
+      if (response.status >= 500) {
+        throw new TransientHttpError(
+          `Omie respondeu com erro de servidor (HTTP ${response.status}).`,
+          response.status,
+        );
+      }
+      return response;
     },
-    OMIE_TIMEOUT_MS,
-    OMIE_ALLOWED_HOSTS,
+    { label: 'omie', maxAttempts: OMIE_MAX_ATTEMPTS },
   );
 
   const json = (await res.json().catch(() => ({}))) as OmieResponse;

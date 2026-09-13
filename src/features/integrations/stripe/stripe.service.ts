@@ -1,7 +1,12 @@
-import { fetchWithTimeout } from '../../../lib/http.js';
+import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import {
+  parseRetryAfterMs,
+  retryWithBackoff,
+  TransientHttpError,
+} from '../../../shared/http/retryWithBackoff.js';
 
 // api.stripe.com é destino FIXO do próprio código (não uma URL de tenant) — usa fetchWithTimeout
 // com allowlist (src/lib/http.ts), não o guard de SSRF de URL de usuário/tenant
@@ -9,6 +14,12 @@ import { AppError } from '../../../shared/middlewares/errorHandler.js';
 const STRIPE_API_BASE = 'https://api.stripe.com';
 const STRIPE_ALLOWED_HOSTS = ['api.stripe.com'];
 const STRIPE_TIMEOUT_MS = 10_000;
+// INTEGRATION-002 (auditoria de débito técnico): mesma estratégia de retry/backoff do Bitrix
+// (callBitrix, extraída para src/shared/http/retryWithBackoff.ts) — falha de rede/timeout/429/5xx
+// é recuperável e reintentada; qualquer outra resposta HTTP (2xx de sucesso, ou 4xx "de negócio"
+// como 401 chave inválida/400 payload inválido) é definitiva e retorna imediatamente, sem
+// consumir tentativas à toa.
+const STRIPE_MAX_ATTEMPTS = 4;
 
 export interface StripeConnectionInput {
   label?: string;
@@ -41,26 +52,71 @@ async function stripeRequest(
   path: string,
   init: { method?: string; body?: URLSearchParams; idempotencyKey?: string } = {},
 ): Promise<{ ok: boolean; status: number; json: Record<string, unknown> }> {
-  const res = await fetchWithTimeout(
-    `${STRIPE_API_BASE}${path}`,
-    {
-      method: init.method ?? 'GET',
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-        ...(init.body ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
-        // INTEGRATION-001 (auditoria de débito técnico, HIGH/P1 financeiro): sem este header a
-        // Stripe trata cada requisição como uma cobrança nova — um retry de rede (timeout
-        // esperando a resposta, mas a cobrança já foi processada do lado da Stripe) ou um duplo
-        // clique no caller vira uma SEGUNDA cobrança real no cartão do cliente. Só é enviado
-        // quando `idempotencyKey` é passado explicitamente (hoje só createStripeCharge o faz) —
-        // ver ali a justificativa completa de como essa chave precisa ser gerada e mantida
-        // estável entre tentativas.
-        ...(init.idempotencyKey ? { 'Idempotency-Key': init.idempotencyKey } : {}),
-      },
-      body: init.body,
+  const res = await retryWithBackoff(
+    async () => {
+      let response: Response;
+      try {
+        response = await fetchWithTimeout(
+          `${STRIPE_API_BASE}${path}`,
+          {
+            method: init.method ?? 'GET',
+            headers: {
+              Authorization: `Bearer ${secretKey}`,
+              ...(init.body ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+              // INTEGRATION-001 (auditoria de débito técnico, HIGH/P1 financeiro): sem este header
+              // a Stripe trata cada requisição como uma cobrança nova — um retry de rede (timeout
+              // esperando a resposta, mas a cobrança já foi processada do lado da Stripe) ou um
+              // duplo clique no caller vira uma SEGUNDA cobrança real no cartão do cliente. Só é
+              // enviado quando `idempotencyKey` é passado explicitamente (hoje só
+              // createStripeCharge o faz) — ver ali a justificativa completa de como essa chave
+              // precisa ser gerada e mantida estável entre tentativas (inclusive entre as
+              // tentativas do retry abaixo — o mesmo header vai em toda tentativa desta mesma
+              // chamada, nunca um valor novo por tentativa).
+              ...(init.idempotencyKey ? { 'Idempotency-Key': init.idempotencyKey } : {}),
+            },
+            body: init.body,
+          },
+          STRIPE_TIMEOUT_MS,
+          STRIPE_ALLOWED_HOSTS,
+        );
+      } catch (err) {
+        // DisallowedHostError nunca é transiente (bug de configuração, não vai se resolver numa
+        // próxima tentativa). HttpTimeoutError e qualquer outra falha de rede (DNS, conexão
+        // recusada) são recuperáveis — mesma classificação de attemptBitrixCall.
+        if (err instanceof DisallowedHostError) throw err;
+        if (err instanceof HttpTimeoutError) {
+          throw new TransientHttpError(
+            `Tempo limite esgotado ao comunicar com o Stripe (timeout ${STRIPE_TIMEOUT_MS / 1000}s).`,
+            undefined,
+            undefined,
+            err,
+          );
+        }
+        throw new TransientHttpError(
+          'Falha de rede ao comunicar com o Stripe.',
+          undefined,
+          undefined,
+          err,
+        );
+      }
+      if (response.status === 429) {
+        throw new TransientHttpError(
+          'Stripe aplicou limite de chamadas (HTTP 429).',
+          429,
+          parseRetryAfterMs(response) ?? undefined,
+        );
+      }
+      if (response.status >= 500) {
+        throw new TransientHttpError(
+          `Stripe respondeu com erro de servidor (HTTP ${response.status}).`,
+          response.status,
+        );
+      }
+      // Qualquer outra resposta (2xx de sucesso, ou 4xx "de negócio" como 401/400) é definitiva —
+      // retorna direto pro chamador interpretar, sem consumir mais tentativas.
+      return response;
     },
-    STRIPE_TIMEOUT_MS,
-    STRIPE_ALLOWED_HOSTS,
+    { label: 'stripe', maxAttempts: STRIPE_MAX_ATTEMPTS },
   );
   const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   return { ok: res.ok, status: res.status, json };
