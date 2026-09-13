@@ -1,12 +1,12 @@
 import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import {
   parseRetryAfterMs,
   retryWithBackoff,
   TransientHttpError,
 } from '../../../shared/http/retryWithBackoff.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 // app.omie.com.br é destino FIXO do próprio código (não uma URL de tenant) — usa fetchWithTimeout
 // com allowlist (src/lib/http.ts), mesma observação de stripe.service.ts.
