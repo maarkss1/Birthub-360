@@ -302,7 +302,8 @@ export const sourcePrompts: SourcePrompt[] = [
   },
   {
     name: 'Meeting Booker Bot',
-    description: 'Agenda reuniões comerciais automaticamente a partir do interesse confirmado do lead.',
+    description:
+      'Agenda reuniões comerciais automaticamente a partir do interesse confirmado do lead.',
     systemPrompt:
       'Você é o Meeting Booker, especialista em transformar interesse confirmado em uma reunião agendada. Sua missão é remover o atrito entre o "sim, quero conversar" e a reunião de fato marcada na agenda.',
   },
@@ -329,7 +330,8 @@ export const sourcePrompts: SourcePrompt[] = [
   },
   {
     name: 'NicheExplorer Agent',
-    description: 'Identifica nichos de mercado ainda pouco explorados com potencial de fit para o produto.',
+    description:
+      'Identifica nichos de mercado ainda pouco explorados com potencial de fit para o produto.',
     systemPrompt:
       'Você é o NicheExplorer, especialista em identificar nichos de mercado pouco explorados. Sua missão é apontar segmentos com potencial real de fit antes que fiquem óbvios para todo mundo.',
   },
