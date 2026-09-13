@@ -1,9 +1,9 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 import type { AttachmentUseCases } from '../application/AttachmentUseCases';
 import type { AttachmentEntityType } from '../domain/Attachment';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { routeParam } from '../../../shared/http/routeParams';
-import { AppError } from '../../../shared/middlewares/errorHandler';
 
 /**
  * Mesmo padrão de NoteController: este router é montado em três prefixos
@@ -11,7 +11,8 @@ import { AppError } from '../../../shared/middlewares/errorHandler';
  * /api/contacts/:contactId/attachments) — exatamente um dos três params chega preenchido.
  */
 function resolveEntity(req: Request): { entityType: AttachmentEntityType; entityId: string } {
-  if (req.params.leadId) return { entityType: 'lead', entityId: routeParam(req.params.leadId, 'leadId') };
+  if (req.params.leadId)
+    return { entityType: 'lead', entityId: routeParam(req.params.leadId, 'leadId') };
   if (req.params.companyId)
     return { entityType: 'company', entityId: routeParam(req.params.companyId, 'companyId') };
   if (req.params.contactId)

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import { Clock, FileText, Loader2, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../lib/api';
 import { toast } from '../../lib/toast';
-import { useAuth } from '../../contexts/AuthContext';
 import type { Note } from '../../types';
 
 type NoteEntityType = 'lead' | 'company' | 'contact';
@@ -109,11 +109,13 @@ export function EntityNotes({ entityType, entityId }: EntityNotesProps) {
       ) : (
         <div className="space-y-3">
           {notes.map((n) => (
-            <div key={n.id} className="p-3 bg-surface-2/40 rounded-2xl border border-line space-y-1">
+            <div
+              key={n.id}
+              className="p-3 bg-surface-2/40 rounded-2xl border border-line space-y-1"
+            >
               <p className="text-xs text-ink whitespace-pre-wrap">{n.content}</p>
               <span className="text-[10px] text-ink-2 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> {new Date(n.createdAt).toLocaleString()} ·{' '}
-                {n.author}
+                <Clock className="w-3 h-3" /> {new Date(n.createdAt).toLocaleString()} · {n.author}
               </span>
             </div>
           ))}

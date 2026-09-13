@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '../../../shared/http/routeParams';
-import { AppError } from '../../../shared/middlewares/errorHandler';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 import type { NoteUseCases } from '../application/NoteUseCases';
 import type { NoteEntityType } from '../domain/Note';
 
@@ -11,7 +11,8 @@ import type { NoteEntityType } from '../domain/Note';
  * exatamente um destes três params chega preenchido por request, dependendo de qual prefixo bateu.
  */
 function resolveEntity(req: Request): { entityType: NoteEntityType; entityId: string } {
-  if (req.params.leadId) return { entityType: 'lead', entityId: routeParam(req.params.leadId, 'leadId') };
+  if (req.params.leadId)
+    return { entityType: 'lead', entityId: routeParam(req.params.leadId, 'leadId') };
   if (req.params.companyId)
     return { entityType: 'company', entityId: routeParam(req.params.companyId, 'companyId') };
   if (req.params.contactId)

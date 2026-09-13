@@ -252,7 +252,14 @@ export class LeadDeduplicationService {
         const leads = await prisma.lead.findMany({
           where: { organizationId, contactId: dup.contactId },
           orderBy: { amount: 'desc' },
-          select: { id: true, title: true, amount: true, currency: true, status: true, createdAt: true },
+          select: {
+            id: true,
+            title: true,
+            amount: true,
+            currency: true,
+            status: true,
+            createdAt: true,
+          },
         });
         if (leads.length <= 1) continue;
         const [survivor, ...duplicateLeads] = leads;

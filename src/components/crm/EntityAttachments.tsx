@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
 import { Download, Loader2, Paperclip, Trash2, Upload } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '../../lib/api';
 import { toast } from '../../lib/toast';
 import type { Attachment } from '../../types';
+import { Button } from '../ui/Button';
 
 type AttachmentEntityType = 'lead' | 'company' | 'contact';
 
@@ -70,7 +70,11 @@ export function EntityAttachments({ entityType, entityId }: EntityAttachmentsPro
     try {
       const { signedUrl, objectKey } = await api.post<{ signedUrl: string; objectKey: string }>(
         `${baseUrl}/upload-url`,
-        { fileName: file.name, mimeType: file.type || 'application/octet-stream', sizeBytes: file.size },
+        {
+          fileName: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          sizeBytes: file.size,
+        },
       );
 
       // PUT direto pro storage S3-compatível — não passa por api.ts (não é o envelope
@@ -164,7 +168,8 @@ export function EntityAttachments({ entityType, entityId }: EntityAttachmentsPro
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-ink truncate">{a.fileName}</p>
                 <p className="text-[10px] text-ink-2">
-                  {formatFileSize(a.sizeBytes)} · {new Date(a.createdAt).toLocaleDateString('pt-BR')}
+                  {formatFileSize(a.sizeBytes)} ·{' '}
+                  {new Date(a.createdAt).toLocaleDateString('pt-BR')}
                 </p>
               </div>
               <div className="flex items-center gap-1 shrink-0">

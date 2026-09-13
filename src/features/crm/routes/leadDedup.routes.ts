@@ -1,8 +1,7 @@
 import { Router } from 'express';
-
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware.js';
 import { container } from '../../../shared/di/container.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import type { LeadDedupController } from '../presentation/LeadDedupController.js';
 
 const router = Router();

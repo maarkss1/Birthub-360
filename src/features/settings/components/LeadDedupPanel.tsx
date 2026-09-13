@@ -1,10 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
 import { GitMerge, Loader2, RefreshCw, Users } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/Card';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/Card';
 import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
 import { clientLogger } from '../../../lib/clientLogger';
+import { toast } from '../../../lib/toast';
 
 // CRM-002/003 (auditoria de débito técnico): vive em settings/components/, não em
 // features/crm/components/, porque é o único consumidor desta rota e consome só
@@ -80,8 +86,8 @@ export function LeadDedupPanel() {
             <GitMerge className="w-5 h-5 text-brand" /> Deduplicação de Leads
           </CardTitle>
           <CardDescription>
-            Leads do mesmo contato acumulados por duplicidade de importação/sincronização. O lead
-            de maior valor comercial é mantido; os demais são mesclados nele — notas, atividades,
+            Leads do mesmo contato acumulados por duplicidade de importação/sincronização. O lead de
+            maior valor comercial é mantido; os demais são mesclados nele — notas, atividades,
             histórico de etapas, anexos e todo o restante do histórico comercial são preservados,
             reatribuídos ao sobrevivente antes de os duplicados serem removidos (soft-delete,
             recuperável via auditoria).
@@ -102,7 +108,12 @@ export function LeadDedupPanel() {
                   {groups.length} grupo(s) · {totalDuplicates} lead(s) a mesclar
                 </p>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => void loadPreview()} disabled={loading}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => void loadPreview()}
+                    disabled={loading}
+                  >
                     <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Recarregar
                   </Button>
                   <Button size="sm" onClick={handleMerge} disabled={merging}>

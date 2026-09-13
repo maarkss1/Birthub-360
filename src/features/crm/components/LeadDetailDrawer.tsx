@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
 import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
 import { Button } from '../../../components/ui/Button';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
@@ -29,7 +30,6 @@ import { toast } from '../../../lib/toast';
 // LEAD_STATUS é reexportado como tipo em ../../../types (export type {...}) — o array em
 // runtime só existe na fonte original.
 import { LEAD_STATUS } from '../../../lib/zod';
-import { EntityAttachments } from '../../../components/crm/EntityAttachments';
 import type { Lead, LeadQualification, LeadStatus, Note } from '../../../types';
 // Mesmo raciocínio do WhatsAppChatPanel acima: o CRM só decide QUANDO oferecer a entrada, não
 // COMO o Copiloto Comercial IA funciona (Onda 7 — UI/UX, ver src/features/copiloto-ia/AGENTS.md).

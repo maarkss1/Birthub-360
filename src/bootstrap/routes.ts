@@ -1,8 +1,8 @@
 import type { Express } from 'express';
 import { activityRoutes } from '../features/activities/routes/activity.routes.js';
-import { attachmentRoutes } from '../features/attachments/routes/attachment.routes.js';
 import { analyticsRoutes } from '../features/analytics/routes/analytics.routes.js';
 import { eventsRoutes } from '../features/analytics/routes/events.routes.js';
+import { attachmentRoutes } from '../features/attachments/routes/attachment.routes.js';
 import { authExtraRoutes } from '../features/auth/routes/auth-extra.routes.js';
 import { automationRoutes } from '../features/automations/routes/automation.routes.js';
 import { usageRoutes } from '../features/billing/routes/usage.routes.js';

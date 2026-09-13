@@ -10,11 +10,11 @@ import {
   ShieldQuestion,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
+import { EntityNotes } from '../../../components/crm/EntityNotes';
 import { Drawer } from '../../../components/ui/Drawer';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { EntityAttachments } from '../../../components/crm/EntityAttachments';
-import { EntityNotes } from '../../../components/crm/EntityNotes';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
 import { contactsDB } from '../../../lib/db';
 import { LEAD_STATUS_EMOJI } from '../../../lib/enumMap';

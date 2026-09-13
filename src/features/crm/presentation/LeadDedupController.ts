@@ -1,6 +1,6 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { LeadDeduplicationService } from '../application/LeadDeduplicationService';
+import type { NextFunction, Request, Response } from 'express';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { LeadDeduplicationService } from '../application/LeadDeduplicationService';
 
 /**
  * CRM-002/003 (auditoria de débito técnico): caller real de LeadDeduplicationService, que até

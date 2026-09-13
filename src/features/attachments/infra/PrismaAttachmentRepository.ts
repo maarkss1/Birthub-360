@@ -1,10 +1,10 @@
+import { prisma } from '../../../lib/prisma';
 import type {
   Attachment,
   AttachmentEntityType,
   AttachmentRepository,
   CreateAttachmentInput,
 } from '../domain/Attachment';
-import { prisma } from '../../../lib/prisma';
 
 const ENTITY_FK: Record<AttachmentEntityType, 'leadId' | 'companyId' | 'contactId'> = {
   lead: 'leadId',

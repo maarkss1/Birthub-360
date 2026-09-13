@@ -1,7 +1,6 @@
 import { Router } from 'express';
-
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { container } from '../../../shared/di/container.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import type { AttachmentController } from '../presentation/AttachmentController.js';
 
 // mergeParams: montado em três prefixos (leads/:leadId, companies/:companyId, contacts/:contactId)
@@ -13,13 +12,8 @@ router.get('/', (req, res, next) =>
   container.resolve<AttachmentController>('AttachmentController').listByEntity(req, res, next),
 );
 
-router.post(
-  '/upload-url',
-  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
-  (req, res, next) =>
-    container
-      .resolve<AttachmentController>('AttachmentController')
-      .requestUploadUrl(req, res, next),
+router.post('/upload-url', requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']), (req, res, next) =>
+  container.resolve<AttachmentController>('AttachmentController').requestUploadUrl(req, res, next),
 );
 
 router.post('/', requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']), (req, res, next) =>

@@ -17,8 +17,8 @@ import { Integrations } from '../../integrations/components/Integrations';
 import { AuditLogs } from '../../lgpd/components/AuditLogs';
 import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
 import { Team } from '../../team/components/Team';
-import { LearningProfilePanel } from './LearningProfilePanel';
 import { LeadDedupPanel } from './LeadDedupPanel';
+import { LearningProfilePanel } from './LearningProfilePanel';
 import { MemoryGovernancePanel } from './MemoryGovernancePanel';
 
 export function Settings() {
