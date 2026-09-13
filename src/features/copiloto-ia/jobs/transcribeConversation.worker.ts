@@ -29,6 +29,7 @@ import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection, queuesEnabled } from '../../../lib/queue/redis.js';
 import { getDownloadUrl } from '../../../lib/storage/index.js';
 import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract.js';
@@ -342,6 +343,7 @@ export const copilotoTranscriptionQueue = queuesEnabled
       },
     })
   : null;
+registerQueueForMetrics(COPILOTO_TRANSCRIPTION_QUEUE_NAME, copilotoTranscriptionQueue);
 
 /**
  * Enfileira a transcrição — silencioso (loga e segue) quando a fila está desabilitada, mesmo

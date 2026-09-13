@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import client from 'prom-client';
 
 /**
  * Auditoria de tenancy (Onda 2, Agente 04): antes desta correção, o job semanal de vendas
@@ -56,6 +57,12 @@ beforeEach(() => {
 
 describe('runWeeklySalesReportJob — sem SMTP configurado', () => {
   it('não tenta descobrir organizações nem enviar nada; reporta o motivo explicitamente', async () => {
+    // WORKFLOW-004 (Onda 2): weeklyPdfReport.worker.ts agora chama registerQueueForMetrics, que
+    // registra gauges Prometheus no registry global (client.register) no topo do módulo. Sem
+    // limpar o registry antes do vi.resetModules()+re-import abaixo, o segundo import re-executa
+    // esse topo de módulo e tenta registrar o mesmo nome de gauge duas vezes, o que o prom-client
+    // rejeita — mesmo padrão já usado em tests/unit/lib/ai/metrics.test.ts.
+    client.register.clear();
     vi.resetModules();
     vi.doMock('../../../../src/config/env.js', () => ({ env: { SMTP_HOST: undefined } }));
     const { runWeeklySalesReportJob: run } =
