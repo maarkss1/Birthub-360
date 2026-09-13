@@ -39,7 +39,7 @@ function toSummary(conn: {
 async function stripeRequest(
   secretKey: string,
   path: string,
-  init: { method?: string; body?: URLSearchParams } = {},
+  init: { method?: string; body?: URLSearchParams; idempotencyKey?: string } = {},
 ): Promise<{ ok: boolean; status: number; json: Record<string, unknown> }> {
   const res = await fetchWithTimeout(
     `${STRIPE_API_BASE}${path}`,
@@ -48,6 +48,14 @@ async function stripeRequest(
       headers: {
         Authorization: `Bearer ${secretKey}`,
         ...(init.body ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+        // INTEGRATION-001 (auditoria de débito técnico, HIGH/P1 financeiro): sem este header a
+        // Stripe trata cada requisição como uma cobrança nova — um retry de rede (timeout
+        // esperando a resposta, mas a cobrança já foi processada do lado da Stripe) ou um duplo
+        // clique no caller vira uma SEGUNDA cobrança real no cartão do cliente. Só é enviado
+        // quando `idempotencyKey` é passado explicitamente (hoje só createStripeCharge o faz) —
+        // ver ali a justificativa completa de como essa chave precisa ser gerada e mantida
+        // estável entre tentativas.
+        ...(init.idempotencyKey ? { 'Idempotency-Key': init.idempotencyKey } : {}),
       },
       body: init.body,
     },
@@ -156,6 +164,26 @@ export interface StripeChargeInput {
    * (Stripe nunca cobra sem um método de pagamento anexado e confirmado; nunca fabricamos um
    * status "succeeded" que não veio de verdade da API — mesma honestidade de make3CXCall). */
   paymentMethodId?: string;
+  /**
+   * INTEGRATION-001 (auditoria de débito técnico, HIGH/P1 financeiro): identificador estável da
+   * TENTATIVA lógica de cobrança — não da requisição HTTP individual. Obrigatório porque este
+   * fluxo não tem hoje nenhum registro em banco criado ANTES da chamada à Stripe (não existe
+   * Invoice/Order local para esta cobrança) de onde derivar um id interno estável; sem um valor
+   * fornecido pelo chamador, cada retry geraria uma chave nova e a proteção de idempotência da
+   * Stripe nunca entraria em ação.
+   *
+   * Quem gera e possui o ciclo de vida desta chave é o CHAMADOR (rota/cliente que inicia a
+   * cobrança), não este serviço — um valor gerado aqui dentro de createStripeCharge não resolveria
+   * nada, porque um retry real (timeout esperando a resposta desta função, ou o usuário clicando
+   * "tentar novamente" depois de um erro de rede) é uma NOVA chamada a esta função, com um novo
+   * valor a cada vez. Regra para quem chama: gere um valor (ex.: `crypto.randomUUID()`) UMA vez
+   * por ação do usuário/tentativa de cobrança, guarde-o (estado do componente, coluna de um
+   * pedido/fatura local etc.) e reenvie o MESMO valor em qualquer retry dessa mesma tentativa —
+   * nunca gere um novo valor num retry, e nunca reutilize um valor antigo para uma cobrança
+   * genuinamente nova (isso faria a Stripe devolver o resultado da cobrança antiga em vez de
+   * criar uma nova).
+   */
+  idempotencyKey: string;
 }
 
 export interface StripeChargeResult {
@@ -194,6 +222,21 @@ export async function createStripeCharge(
     throw new AppError('Valor da cobrança deve ser maior que zero (em centavos).', 400);
   }
 
+  // INTEGRATION-001: nunca deixar a chave de idempotência ser opcional na prática — sem ela, um
+  // retry de rede ou duplo clique no chamador cria uma segunda cobrança real (ver justificativa em
+  // StripeChargeInput.idempotencyKey). Limite de 255 caracteres é o próprio limite da Stripe para
+  // o header Idempotency-Key.
+  const idempotencyKey = input.idempotencyKey?.trim();
+  if (!idempotencyKey) {
+    throw new AppError(
+      'idempotencyKey é obrigatório para criar uma cobrança — gere um valor estável por tentativa de cobrança (ex.: crypto.randomUUID()) e reenvie o mesmo valor em qualquer retry.',
+      400,
+    );
+  }
+  if (idempotencyKey.length > 255) {
+    throw new AppError('idempotencyKey excede o limite de 255 caracteres aceito pela Stripe.', 400);
+  }
+
   const body = new URLSearchParams();
   body.append('amount', String(Math.round(input.amountCents)));
   body.append('currency', input.currency.toLowerCase());
@@ -207,6 +250,7 @@ export async function createStripeCharge(
   const res = await stripeRequest(connection.secretKey, '/v1/payment_intents', {
     method: 'POST',
     body,
+    idempotencyKey,
   });
 
   if (!res.ok) {

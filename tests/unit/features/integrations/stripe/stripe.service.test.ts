@@ -98,6 +98,7 @@ describe('createStripeCharge — honestidade sobre status real (nunca inventa "s
       amountCents: 49900,
       currency: 'BRL',
       customerEmail: 'financeiro@cliente.com',
+      idempotencyKey: 'attempt-1',
     });
 
     expect(charge.status).toBe('requires_payment_method');
@@ -117,6 +118,7 @@ describe('createStripeCharge — honestidade sobre status real (nunca inventa "s
         amountCents: 1000,
         currency: 'BRL',
         customerEmail: 'a@b.com',
+        idempotencyKey: 'attempt-2',
       }),
     ).rejects.toThrow(/card was declined/);
   });
@@ -127,9 +129,161 @@ describe('createStripeCharge — honestidade sobre status real (nunca inventa "s
     fetchWithTimeoutMock.mockClear();
 
     await expect(
-      createStripeCharge(ORG_ID, conn.id, { amountCents: 0, currency: 'BRL', customerEmail: 'a@b.com' }),
+      createStripeCharge(ORG_ID, conn.id, {
+        amountCents: 0,
+        currency: 'BRL',
+        customerEmail: 'a@b.com',
+        idempotencyKey: 'attempt-3',
+      }),
     ).rejects.toThrow(/maior que zero/);
     expect(fetchWithTimeoutMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('createStripeCharge — INTEGRATION-001: chave de idempotência (evita cobrança duplicada em retry)', () => {
+  it('rejeita a criação da cobrança quando idempotencyKey não é informado, sem chamar a Stripe', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+    fetchWithTimeoutMock.mockClear();
+
+    await expect(
+      createStripeCharge(ORG_ID, conn.id, {
+        amountCents: 1000,
+        currency: 'BRL',
+        customerEmail: 'a@b.com',
+        // @ts-expect-error — testando exatamente a omissão do campo obrigatório
+        idempotencyKey: undefined,
+      }),
+    ).rejects.toThrow(/idempotencyKey é obrigatório/);
+    expect(fetchWithTimeoutMock).not.toHaveBeenCalled();
+  });
+
+  it('rejeita string vazia/só espaços do mesmo jeito que ausência do campo', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+    fetchWithTimeoutMock.mockClear();
+
+    await expect(
+      createStripeCharge(ORG_ID, conn.id, {
+        amountCents: 1000,
+        currency: 'BRL',
+        customerEmail: 'a@b.com',
+        idempotencyKey: '   ',
+      }),
+    ).rejects.toThrow(/idempotencyKey é obrigatório/);
+    expect(fetchWithTimeoutMock).not.toHaveBeenCalled();
+  });
+
+  it('envia o header Idempotency-Key para a Stripe com o valor exato passado pelo chamador', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+
+    fetchWithTimeoutMock.mockResolvedValueOnce(
+      jsonResponse(200, {
+        id: 'pi_abc',
+        amount: 1000,
+        currency: 'brl',
+        status: 'requires_payment_method',
+        created: 1700000000,
+      }),
+    );
+
+    await createStripeCharge(ORG_ID, conn.id, {
+      amountCents: 1000,
+      currency: 'BRL',
+      customerEmail: 'a@b.com',
+      idempotencyKey: 'charge-attempt-stable-id',
+    });
+
+    expect(fetchWithTimeoutMock).toHaveBeenCalledWith(
+      'https://api.stripe.com/v1/payment_intents',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({ 'Idempotency-Key': 'charge-attempt-stable-id' }),
+      }),
+      expect.any(Number),
+      ['api.stripe.com'],
+    );
+  });
+
+  it('simula um retry de rede: duas chamadas com o MESMO idempotencyKey enviam o MESMO header à Stripe — é isso que faz a Stripe tratar as duas como uma única cobrança em vez de duas cobranças reais', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+
+    const chargeResponse = jsonResponse(200, {
+      id: 'pi_retry',
+      amount: 5000,
+      currency: 'brl',
+      status: 'requires_payment_method',
+      created: 1700000000,
+    });
+
+    const stableKey = 'retry-of-the-same-attempt';
+    const input = {
+      amountCents: 5000,
+      currency: 'BRL',
+      customerEmail: 'a@b.com',
+      idempotencyKey: stableKey,
+    };
+
+    // Primeira tentativa (a requisição original).
+    fetchWithTimeoutMock.mockResolvedValueOnce(chargeResponse);
+    await createStripeCharge(ORG_ID, conn.id, input);
+
+    // "Retry de rede": o chamador não recebeu a resposta a tempo (ex.: timeout) e tenta de novo,
+    // reenviando o MESMO idempotencyKey — nunca um novo valor gerado na hora do retry.
+    fetchWithTimeoutMock.mockResolvedValueOnce(chargeResponse);
+    await createStripeCharge(ORG_ID, conn.id, input);
+
+    const postCalls = fetchWithTimeoutMock.mock.calls.filter(
+      ([, init]) => (init as { method?: string })?.method === 'POST',
+    );
+    expect(postCalls).toHaveLength(2);
+
+    const idempotencyHeaders = postCalls.map(
+      ([, init]) => (init as { headers: Record<string, string> }).headers['Idempotency-Key'],
+    );
+    expect(idempotencyHeaders[0]).toBe(stableKey);
+    expect(idempotencyHeaders[1]).toBe(stableKey);
+  });
+
+  it('duas tentativas de cobrança DISTINTAS (idempotencyKey diferente) enviam headers diferentes — não é uma chave fixa/hardcoded', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+
+    const chargeResponse = jsonResponse(200, {
+      id: 'pi_x',
+      amount: 2000,
+      currency: 'brl',
+      status: 'requires_payment_method',
+      created: 1700000000,
+    });
+
+    fetchWithTimeoutMock.mockResolvedValueOnce(chargeResponse);
+    await createStripeCharge(ORG_ID, conn.id, {
+      amountCents: 2000,
+      currency: 'BRL',
+      customerEmail: 'a@b.com',
+      idempotencyKey: 'attempt-A',
+    });
+
+    fetchWithTimeoutMock.mockResolvedValueOnce(chargeResponse);
+    await createStripeCharge(ORG_ID, conn.id, {
+      amountCents: 2000,
+      currency: 'BRL',
+      customerEmail: 'a@b.com',
+      idempotencyKey: 'attempt-B',
+    });
+
+    const postCalls = fetchWithTimeoutMock.mock.calls.filter(
+      ([, init]) => (init as { method?: string })?.method === 'POST',
+    );
+    const idempotencyHeaders = postCalls.map(
+      ([, init]) => (init as { headers: Record<string, string> }).headers['Idempotency-Key'],
+    );
+    expect(idempotencyHeaders[0]).toBe('attempt-A');
+    expect(idempotencyHeaders[1]).toBe('attempt-B');
+    expect(idempotencyHeaders[0]).not.toBe(idempotencyHeaders[1]);
   });
 });
 
