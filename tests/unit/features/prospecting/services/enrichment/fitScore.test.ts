@@ -98,27 +98,25 @@ describe('computeFitScore — sinais de fit com o ICP (aderência de CNAE, playb
     ).toBe(true);
   });
 
-  it('bonifica frota grande e região de risco conforme o playbook comercial Atlas', () => {
+  // ACH-05-07 bonificava frota/região de risco só quando o playbook ativo era o de logística
+  // ('atlasgr'). A unificação de playbook comercial em 'geral' (decisão do usuário, ver CLAUDE.md
+  // seção 1) removeu a única forma de saber se uma organização era desse vertical — manter o
+  // bônus pra qualquer organização contrariaria o próprio motivo do ACH-05-07 ("CRM multi-tenant
+  // não pode amarrar o produto a um vertical"), então foi removido (não redirecionado pra "vale
+  // pra todo mundo"). `fleetSizeHint`/`state`/`activePlaybook` continuam aceitos no input, só não
+  // pontuam mais nada.
+  it('fleetSizeHint/state/activePlaybook não bonificam mais o score (ACH-05-07 removido)', () => {
     const base = computeFitScore({});
     const comFrotaERegiao = computeFitScore({ fleetSizeHint: 'Acima de 50 veículos', state: 'RJ' });
-
-    expect(comFrotaERegiao.score).toBeGreaterThan(base.score);
-    expect(comFrotaERegiao.breakdown.some((i) => i.label.includes('Frota'))).toBe(true);
-    expect(comFrotaERegiao.breakdown.some((i) => i.label.includes('Região de risco'))).toBe(true);
-  });
-
-  it('ACH-05-07: playbook não-logístico (totaltrac) não recebe o bônus de frota/região, mesmo com os mesmos dados', () => {
-    const comFrotaERegiao = computeFitScore({ fleetSizeHint: 'Acima de 50 veículos', state: 'RJ' });
-    const mesmosDadosOutroPlaybook = computeFitScore({
+    const comActivePlaybook = computeFitScore({
       fleetSizeHint: 'Acima de 50 veículos',
       state: 'RJ',
-      activePlaybook: 'totaltrac',
+      activePlaybook: 'geral',
     });
 
-    expect(mesmosDadosOutroPlaybook.score).toBeLessThan(comFrotaERegiao.score);
-    expect(mesmosDadosOutroPlaybook.breakdown.some((i) => i.label.includes('Frota'))).toBe(false);
-    expect(mesmosDadosOutroPlaybook.breakdown.some((i) => i.label.includes('Região de risco'))).toBe(
-      false,
-    );
+    expect(comFrotaERegiao.score).toBe(base.score);
+    expect(comActivePlaybook.score).toBe(base.score);
+    expect(comFrotaERegiao.breakdown.some((i) => i.label.includes('Frota'))).toBe(false);
+    expect(comFrotaERegiao.breakdown.some((i) => i.label.includes('Região de risco'))).toBe(false);
   });
 });
