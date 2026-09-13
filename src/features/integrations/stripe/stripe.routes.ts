@@ -8,6 +8,7 @@ import {
   disconnectStripe,
   getStripeCharge,
   listStripeConnections,
+  setStripeWebhookSecret,
   testStripeConnection,
 } from './stripe.service.js';
 
@@ -61,6 +62,24 @@ router.post(
       const data = await testStripeConnection(
         organizationId,
         routeParam(req.params.connectionId, 'connectionId'),
+      );
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/connections/:connectionId/webhook-secret',
+  managementRoles,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await setStripeWebhookSecret(
+        organizationId,
+        routeParam(req.params.connectionId, 'connectionId'),
+        req.body?.webhookSecret,
       );
       res.json({ success: true, data });
     } catch (error) {

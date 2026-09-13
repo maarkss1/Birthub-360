@@ -2864,6 +2864,17 @@ model StripeConnection {
   /// (src/lib/http.ts), não o guard de SSRF de URL de tenant.
   secretKey String @db.Text
 
+  /// Segredo de assinatura do webhook de ENTRADA (`whsec_...`) — ao contrário de
+  /// BitrixConnection.webhookSecret (gerado por nós, colado no Bitrix), este vem DA Stripe: a
+  /// pessoa cria o endpoint no Dashboard dela apontando para webhookReceiverUrl (ver
+  /// stripe.service.ts) e cola aqui o segredo que a própria Stripe gera na hora. Comparado contra
+  /// o header `Stripe-Signature` de cada entrega (ver stripe.webhook.ts) antes de aceitar qualquer
+  /// payload — sem isto, a rota seria um endpoint público aceitando qualquer POST. Cifrado em
+  /// repouso do mesmo jeito que secretKey acima (ver ENCRYPTED_FIELDS em src/lib/prisma.ts). Nulo
+  /// até a pessoa configurar (BILLING-007): a ausência já é o "webhook não configurado" — sem flag
+  /// separado de enabled/disabled.
+  webhookSecret String? @db.Text
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

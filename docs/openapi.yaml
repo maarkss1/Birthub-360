@@ -8332,6 +8332,36 @@ paths:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }
         '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/stripe/connections/{connectionId}/webhook-secret:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Stripe]
+      summary: >-
+        Define/atualiza o segredo de assinatura (webhook signing secret) desta conexão (somente
+        ADMIN/GESTOR) — BILLING-007. O segredo vem DA Stripe (colado por quem cria o endpoint no
+        Dashboard dela, não gerado por nós) e é cifrado em repouso; usado para validar a assinatura
+        HMAC de `/integrations/stripe/webhook/{connectionId}`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [webhookSecret]
+              properties:
+                webhookSecret: { type: string }
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/stripe/connections/{connectionId}/charges:
     parameters:
       - name: connectionId
@@ -8608,6 +8638,43 @@ paths:
           description: Assinatura HMAC inválida
         '503':
           description: CHATWOOT_WEBHOOK_SECRET não configurado
+
+  /integrations/stripe/webhook/{connectionId}:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Webhooks]
+      summary: >-
+        Webhook de entrada da Stripe (BILLING-007) — eventos assíncronos de pagamento (confirmação,
+        estorno, falha) que `createStripeCharge`/`getStripeCharge` (caminho síncrono) não cobrem.
+        Autenticidade por segredo de assinatura por conexão (`StripeConnection.webhookSecret`, ver
+        `/integrations/stripe/connections/{connectionId}/webhook-secret`), verificação HMAC pura da
+        assinatura `Stripe-Signature` (janela de 5min, suporte a múltiplos `v1` para rotação de
+        segredo) — mesmo raciocínio de `BitrixConnection.webhookSecret`, só que este segredo vem DA
+        Stripe. Replay guard por id de evento. Só processa (loga)
+        `payment_intent.succeeded`/`payment_intent.payment_failed`/`charge.refunded`; qualquer
+        outro tipo é aceito e ignorado (200), para o Dashboard da Stripe não marcar o endpoint como
+        "falhando" por eventos que ainda não tratamos. Reconciliação com Fatura/
+        `CrmCommercialDocument` é BILLING-003 (fora do escopo desta rota).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: Processado, ou aceito e ignorado (evento fora do vocabulário tratado, ou reentrega duplicada)
+        '400':
+          description: Corpo não é JSON válido
+        '401':
+          description: Assinatura Stripe-Signature inválida ou timestamp fora da janela de tolerância
+        '404':
+          description: Conexão não encontrada ou sem webhookSecret configurado
+        '500':
+          description: Rota montada incorretamente (corpo já consumido pelo express.json() global)
 
   # ─────────────── Endpoints avulsos ausentes em routers já documentados ───────────────
   /leads/import/bitrix24:
