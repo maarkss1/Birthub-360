@@ -16,11 +16,6 @@ export class DisallowedHostError extends Error {
   }
 }
 
-function resolveRequestHost(input: string | URL | Request): string {
-  const raw = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-  return new URL(raw).hostname.toLowerCase();
-}
-
 /**
  * `fetchWithTimeout` é o cliente HTTP genérico para provedores externos de destino FIXO/hardcoded
  * no próprio código (Apollo, Hunter, GitHub, Google, YouTube, BrasilAPI, Nominatim, GDELT etc.) —
@@ -38,6 +33,11 @@ function resolveRequestHost(input: string | URL | Request): string {
  * um provedor com host dinâmico controlado pelo operador (env var), não pelo usuário — ex.:
  * SearXNG, Meilisearch, Voicebox — passe uma lista derivada da própria env var (ex.:
  * `[new URL(searxngUrl).hostname]`), não uma constante fixa.
+ *
+ * Importante para o CodeQL reconhecer a validação: quando `input` não é um `Request` já pronto,
+ * o `fetch` de verdade é feito com o objeto `URL` já parseado e conferido contra `allowedHosts`
+ * (`validatedUrl` abaixo) — nunca com o `input` original ainda não validado — para que o valor
+ * que chega ao sink seja provadamente o mesmo que passou pela checagem, não uma cópia dele.
  */
 export async function fetchWithTimeout(
   input: string | URL | Request,
@@ -45,7 +45,9 @@ export async function fetchWithTimeout(
   timeoutMs = 10_000,
   allowedHosts: readonly string[],
 ): Promise<Response> {
-  const host = resolveRequestHost(input);
+  const isRequestInput = input instanceof Request;
+  const validatedUrl = new URL(isRequestInput ? input.url : input);
+  const host = validatedUrl.hostname.toLowerCase();
   if (!allowedHosts.some((allowed) => allowed.toLowerCase() === host)) {
     throw new DisallowedHostError(host);
   }
@@ -57,7 +59,7 @@ export async function fetchWithTimeout(
     : controller.signal;
 
   try {
-    return await fetch(input, { ...init, signal });
+    return await fetch(isRequestInput ? input : validatedUrl, { ...init, signal });
   } catch (error) {
     if (controller.signal.aborted) throw new HttpTimeoutError(timeoutMs);
     throw error;
