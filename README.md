@@ -33,7 +33,9 @@ A estrutura atual conta com:
 - Tailwind CSS v4 para estilização com classes utilitárias
 - Prisma 7.8 com adapter `PrismaPg` via driver `pg` para melhor pooling e resiliência
 - Express para API local e fallback SSR/SPA.
-- ESLint (Flat Config) e Prettier para padronização.
+- Biome para lint e formatação de `src/` (`npm run lint`, `npm run format`) — o `eslint.config.mjs`
+  ainda existe no repositório para diagnóstico em tempo de edição (extensão recomendada no
+  devcontainer), mas não é rodado por nenhum script npm nem pelo CI.
 - Vitest para testes de unidade e integração
 - Github Actions configurado para CI (Type Check, Lint, e Build).
 
@@ -73,11 +75,11 @@ O blueprint `render.yaml` declara o serviço web, o banco PostgreSQL e as variá
 
 - `npm run dev`: Inicia o servidor backend (que injeta o Vite para HMR/middleware).
 - `npm run build`: Compila tanto a parte de client (Vite) quanto o server (esbuild).
-- `npm run lint`: Roda o ESLint validando toda a pasta `src/` **sem alterar arquivos**. É o comando
-  usado pelo CI (`.github/workflows/ci.yml` e demais gates) — deve sempre terminar com a working
-  tree limpa.
-- `npm run lint:fix`: Roda o ESLint com `--fix`, aplicando correções automáticas localmente. Use
-  este comando (não `npm run lint`) quando quiser que o ESLint corrija o código por você antes de
+- `npm run lint`: Roda o Biome (`biome lint src`) validando toda a pasta `src/` **sem alterar
+  arquivos**. É o comando usado pelo CI (`.github/workflows/ci.yml` e demais gates) — deve sempre
+  terminar com a working tree limpa.
+- `npm run lint:fix`: Roda o Biome com `--write`, aplicando correções automáticas localmente. Use
+  este comando (não `npm run lint`) quando quiser que o Biome corrija o código por você antes de
   commitar.
 - `npm run start`: Inicia o servidor compilado.
 
