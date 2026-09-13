@@ -32,6 +32,7 @@ import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { getDownloadUrl } from '../../../lib/storage/index.js';
 import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import {
   transcribeAudioWithWhisper,
   isWhisperConfigured,
@@ -342,6 +343,7 @@ export const copilotoTranscriptionQueue = queuesEnabled
       },
     })
   : null;
+registerQueueForMetrics(COPILOTO_TRANSCRIPTION_QUEUE_NAME, copilotoTranscriptionQueue);
 
 /**
  * Enfileira a transcrição — silencioso (loga e segue) quando a fila está desabilitada, mesmo

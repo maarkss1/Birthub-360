@@ -261,6 +261,7 @@ export async function runStagnationScan(): Promise<StagnationScanResult> {
 import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { connection } from '../../../lib/queue/redis.js';
 import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 
 export const STAGNATION_SCANNER_QUEUE_NAME = 'stagnation-scanner-queue';
 
@@ -300,6 +301,7 @@ export async function scheduleStagnationScannerJob() {
   const queue = new Queue(STAGNATION_SCANNER_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(STAGNATION_SCANNER_QUEUE_NAME, queue);
 
   // Roda todo dia as 03:17
   await queue.upsertJobScheduler(

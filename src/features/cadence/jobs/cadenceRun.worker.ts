@@ -4,6 +4,7 @@ import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
 import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy.js';
 import { advanceCadenceRun, type AdvanceCadenceRunDeps } from '../application/cadenceService.js';
 import {
@@ -219,6 +220,7 @@ export function createCadenceRunWorker(): Worker {
 
 export async function scheduleCadenceRunJob(): Promise<void> {
   const queue = new Queue(CADENCE_RUN_QUEUE_NAME, { connection: connection as ConnectionOptions });
+  registerQueueForMetrics(CADENCE_RUN_QUEUE_NAME, queue);
   await queue.upsertJobScheduler(
     'cadence-run-tick',
     { every: SCAN_INTERVAL_MS },

@@ -3,6 +3,7 @@ import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import {
   AccountIntelligenceService,
   type TenantDb,
@@ -20,6 +21,7 @@ export const accountIntelligenceSchedulerQueue = new Queue(accountIntelligenceSc
     removeOnFail: 500,
   },
 });
+registerQueueForMetrics(accountIntelligenceSchedulerQueueName, accountIntelligenceSchedulerQueue);
 
 interface SchedulerJobData {
   batchSize?: number;

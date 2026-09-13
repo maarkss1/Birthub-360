@@ -154,6 +154,7 @@ export async function runColdLeadsScan(): Promise<{
 import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import { connection } from '../../../lib/queue/redis.js';
 import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 
 export const COLD_LEADS_SCANNER_QUEUE_NAME = 'cold-leads-scanner-queue';
 
@@ -193,6 +194,7 @@ export async function scheduleColdLeadsScannerJob() {
   const queue = new Queue(COLD_LEADS_SCANNER_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(COLD_LEADS_SCANNER_QUEUE_NAME, queue);
 
   // Roda todo dia as 02:00
   await queue.upsertJobScheduler(

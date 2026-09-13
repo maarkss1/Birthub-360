@@ -4,6 +4,7 @@ import { prisma } from '../../../../lib/prisma.js';
 import { logger } from '../../../../lib/logger.js';
 import { connection } from '../../../../lib/queue/redis.js';
 import { recordDeadLetter, isFinalAttempt } from '../../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../../lib/queue/metrics.js';
 import { requestContext } from '../../../../lib/async-context.js';
 import { env } from '../../../../config/env.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
@@ -251,6 +252,7 @@ export async function scheduleBitrixExtractionPurgeJob() {
   const queue = new Queue(BITRIX_EXTRACTION_PURGE_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(BITRIX_EXTRACTION_PURGE_QUEUE_NAME, queue);
   // Roda todo dia às 5h da manhã — fora do horário de auto-anonimização de leads (3h), do
   // expurgo de AgentMemory (4h) e do follow-up diário (9h). BullMQ v6 removeu `repeat` de
   // `Queue.add` (viraria um job avulso, nunca mais se repete) — agendamento recorrente exige

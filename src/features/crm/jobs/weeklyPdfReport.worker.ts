@@ -4,6 +4,7 @@ import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { analyticsService } from '../../analytics/analytics.service.js';
 import { sendEmail } from '../../../lib/email/mailer.js';
 import { env } from '../../../config/env.js';
@@ -172,6 +173,7 @@ export async function scheduleWeeklyPdfReportJob() {
   const queue = new Queue(WEEKLY_PDF_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(WEEKLY_PDF_QUEUE_NAME, queue);
 
   // Roda sexta-feira 20:00 (0 20 * * 5).
   // BullMQ v6 removeu `repeat` de `Queue.add` (viraria um job avulso, nunca mais se repete) —

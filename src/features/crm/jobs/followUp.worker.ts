@@ -4,6 +4,7 @@ import { logger } from '../../../lib/logger.js';
 import { connection } from '../../../lib/queue/redis.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { sendWhatsAppMessage } from '../../integrations/whatsapp/whatsapp.service.js';
 
 export const FOLLOWUP_QUEUE_NAME = 'whatsapp-followup-queue';
@@ -123,6 +124,7 @@ export async function scheduleFollowUpJobs() {
   const queue = new Queue(FOLLOWUP_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(FOLLOWUP_QUEUE_NAME, queue);
 
   // Roda todo dia as 09:00.
   // BullMQ v6 removeu `repeat` de `Queue.add` (viraria um job avulso, nunca mais se repete) —
