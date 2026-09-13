@@ -6,10 +6,12 @@ import { noteSchema } from '../../../lib/zod.js';
 import { container } from '../../../shared/di/container.js';
 import type { NoteController } from '../presentation/NoteController.js';
 
-const router = Router({ mergeParams: true }); // mergeParams to access :leadId from parent router
+// mergeParams: montado em três prefixos (leads/:leadId, companies/:companyId, contacts/:contactId)
+// — o Controller resolve qual entidade é a partir de qual param chegou preenchido.
+const router = Router({ mergeParams: true });
 
 router.get('/', (req, res, next) =>
-  container.resolve<NoteController>('NoteController').getNotesByLead(req, res, next),
+  container.resolve<NoteController>('NoteController').getNotesByEntity(req, res, next),
 );
 
 router.post(

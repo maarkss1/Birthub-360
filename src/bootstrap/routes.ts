@@ -1,5 +1,6 @@
 import type { Express } from 'express';
 import { activityRoutes } from '../features/activities/routes/activity.routes.js';
+import { attachmentRoutes } from '../features/attachments/routes/attachment.routes.js';
 import { analyticsRoutes } from '../features/analytics/routes/analytics.routes.js';
 import { eventsRoutes } from '../features/analytics/routes/events.routes.js';
 import { authExtraRoutes } from '../features/auth/routes/auth-extra.routes.js';
@@ -94,6 +95,25 @@ export function mountFeatureRoutes(app: Express): void {
     objectionMatrixRoutes,
   );
   app.use('/api/leads/:leadId/notes', authenticateToken, requireTenant, noteRoutes);
+  // CRM-004: Note deixou de ser exclusiva de Lead — mesmo router, montado também nos prefixos de
+  // Company/Contact (NoteController resolve a entidade pelo param que realmente chegou).
+  app.use('/api/companies/:companyId/notes', authenticateToken, requireTenant, noteRoutes);
+  app.use('/api/contacts/:contactId/notes', authenticateToken, requireTenant, noteRoutes);
+  // CRM-005: primeiro modelo de anexo/arquivo para CRM — mesmo padrão de montagem em três
+  // prefixos usado acima por noteRoutes.
+  app.use('/api/leads/:leadId/attachments', authenticateToken, requireTenant, attachmentRoutes);
+  app.use(
+    '/api/companies/:companyId/attachments',
+    authenticateToken,
+    requireTenant,
+    attachmentRoutes,
+  );
+  app.use(
+    '/api/contacts/:contactId/attachments',
+    authenticateToken,
+    requireTenant,
+    attachmentRoutes,
+  );
   app.use('/api/activities', authenticateToken, requireTenant, activityRoutes);
   app.use('/api/mesa-tratamento', authenticateToken, requireTenant, mesaTratamentoRoutes);
   app.use('/api/prospecting', authenticateToken, requireTenant, prospectingRoutes);

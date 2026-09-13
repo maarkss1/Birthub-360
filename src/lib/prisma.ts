@@ -274,6 +274,9 @@ export const prisma = basePrisma.$extends({
           'CommercialGoal',
           'LeadStageHistory',
           'LeadFieldChange',
+          // CRM-005: Attachment tem organizationId direto (não herda de Lead/Company/Contact como
+          // Note) — mesmo tratamento de tenant injetado a partir do contexto da request.
+          'Attachment',
         ];
         const auditableModels = [
           'Company',
@@ -284,6 +287,7 @@ export const prisma = basePrisma.$extends({
           'CrmProduct',
           'CrmDealItem',
           'CrmCommercialDocument',
+          'Attachment',
         ];
         const isAuditable = auditableModels.includes(model as string);
 

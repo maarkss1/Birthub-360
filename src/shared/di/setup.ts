@@ -3,6 +3,7 @@ import { InMemoryEventBus } from '../infra/events/InMemoryEventBus.js';
 
 // Repositories
 import { PrismaNoteRepository } from '../../features/notes/infra/PrismaNoteRepository';
+import { PrismaAttachmentRepository } from '../../features/attachments/infra/PrismaAttachmentRepository';
 import { PrismaActivityRepository } from '../../features/activities/infra/PrismaActivityRepository';
 import { PrismaContactRepository } from '../../features/contacts/infra/PrismaContactRepository';
 import { PrismaCompanyRepository } from '../../features/companies/infra/PrismaCompanyRepository';
@@ -53,6 +54,7 @@ import { testBitrixConnection } from '../../features/integrations/bitrix/service
 
 // Use Cases
 import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
+import { AttachmentUseCases } from '../../features/attachments/application/AttachmentUseCases';
 import { ActivityUseCases } from '../../features/activities/application/ActivityUseCases';
 import { ContactUseCases } from '../../features/contacts/application/ContactUseCases';
 import { CompanyUseCases } from '../../features/companies/application/CompanyUseCases';
@@ -71,6 +73,7 @@ import { CopilotoBitrixWritebackUseCases } from '../../features/copiloto-ia/appl
 
 // Controllers
 import { NoteController } from '../../features/notes/presentation/NoteController';
+import { AttachmentController } from '../../features/attachments/presentation/AttachmentController';
 import { ActivityController } from '../../features/activities/presentation/ActivityController';
 import { ContactController } from '../../features/contacts/presentation/ContactController';
 import { CompanyController } from '../../features/companies/presentation/CompanyController';
@@ -93,6 +96,7 @@ export function setupDI() {
 
   // 2. Repositories
   const noteRepository = new PrismaNoteRepository();
+  const attachmentRepository = new PrismaAttachmentRepository();
   const activityRepository = new PrismaActivityRepository();
   const contactRepository = new PrismaContactRepository();
   const companyRepository = new PrismaCompanyRepository();
@@ -120,6 +124,7 @@ export function setupDI() {
   );
 
   container.register('NoteRepository', noteRepository);
+  container.register('AttachmentRepository', attachmentRepository);
   container.register('ActivityRepository', activityRepository);
   container.register('ContactRepository', contactRepository);
   container.register('CompanyRepository', companyRepository);
@@ -138,6 +143,7 @@ export function setupDI() {
 
   // 3. Use Cases
   const noteUseCases = new NoteUseCases(noteRepository);
+  const attachmentUseCases = new AttachmentUseCases(attachmentRepository);
   const activityUseCases = new ActivityUseCases(activityRepository);
   const contactUseCases = new ContactUseCases(contactRepository);
   const companyUseCases = new CompanyUseCases(companyRepository);
@@ -172,6 +178,7 @@ export function setupDI() {
   );
 
   container.register('NoteUseCases', noteUseCases);
+  container.register('AttachmentUseCases', attachmentUseCases);
   container.register('ActivityUseCases', activityUseCases);
   container.register('ContactUseCases', contactUseCases);
   container.register('CompanyUseCases', companyUseCases);
@@ -207,6 +214,7 @@ export function setupDI() {
 
   // 4. Controllers
   container.register('NoteController', new NoteController(noteUseCases));
+  container.register('AttachmentController', new AttachmentController(attachmentUseCases));
   container.register('ActivityController', new ActivityController(activityUseCases));
   container.register('ContactController', new ContactController(contactUseCases));
   container.register('CompanyController', new CompanyController(companyUseCases));
