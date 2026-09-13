@@ -27,11 +27,11 @@ export function SocialSellingHub() {
   // logomarca (SVG próprio da Antique Gold/Deep Iris/Orbit Blue, ver identidade-visual/birthhub360/),
   // copy de campanha e o roteiro de diagnóstico de perfil LinkedIn (antes escrito para o vertical de
   // logística/gestão de risco da Atlas GR) generalizados pro ICP real do produto ("qualquer empresa
-  // com área comercial"). Ressalva: dentro do "Kit Campanha LinkedIn" existem 4 screenshots
-  // (imagens PNG embutidas em base64 numa das simulações internas) com UI de "gerenciador de
-  // campanhas" ainda mostrando texto vertical-specific da Atlas GR — são raster, não texto, e por
-  // isso não puderam ser editados por substituição de texto; regenerá-los é tarefa de design fora
-  // do escopo desta rerotulagem — ver nota no relatório da tarefa.
+  // com área comercial"). O "Kit Campanha LinkedIn" tinha 4 screenshots (imagens PNG em base64, numa
+  // das simulações internas) com UI de "gerenciador de campanhas" mostrando texto vertical-specific
+  // da Atlas GR direto nos pixels — raster, não editável por substituição de texto. Pedido explícito
+  // do usuário: removidas (não redesenhadas) — ver o card de origem sem o preenchimento de imagem
+  // nesse HTML, ajustado pra não sobrar buraco visual, sem inventar substituto novo.
   const subTabs = [
     {
       id: 'motor',
