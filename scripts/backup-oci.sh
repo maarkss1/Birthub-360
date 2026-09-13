@@ -3,10 +3,10 @@ set -euo pipefail
 
 # ==============================================================================
 # Backup do PostgreSQL do stack self-hosted Oracle Cloud (docker-compose.oci.yml)
-# Central de Inteligência Comercial AtlasGR
+# Central de Inteligência Comercial Birth Hub 360º
 # ==============================================================================
 #
-# `pg_dump` roda DENTRO do container `atlasgr_postgres` (via `docker exec`) — não exige
+# `pg_dump` roda DENTRO do container `birthhub_postgres` (via `docker exec`) — não exige
 # postgresql-client instalado no host da VM. O dump sai comprimido (gzip) e é gravado FORA do
 # container, na pasta indicada por BACKUP_DIR (padrão: um diretório no host, não um volume
 # efêmero), cumprindo o requisito de "cópia fora do container" do checklist de Go-Live.
@@ -17,17 +17,21 @@ set -euo pipefail
 #   BACKUP_RETENTION_DAYS=30 ./scripts/backup-oci.sh
 #
 # Agendamento recomendado (crontab do usuário que tem acesso ao Docker na VM):
-#   0 3 * * * cd /caminho/do/repo && ./scripts/backup-oci.sh >> /var/log/atlasgr-backup.log 2>&1
+#   0 3 * * * cd /caminho/do/repo && ./scripts/backup-oci.sh >> /var/log/birthhub-backup.log 2>&1
 #
 # Cópia fora da própria VM (recomendado, não automatizado aqui por depender de credencial externa
 # específica do operador — ex.: `rclone`/`rsync` para object storage, outro host via `scp`):
-#   rclone copy "$BACKUP_DIR" remote:atlasgr-backups/postgres --max-age 25h
+#   rclone copy "$BACKUP_DIR" remote:birthhub-backups/postgres --max-age 25h
 #
 # Este script NUNCA executa DROP/TRUNCATE/reset — é estritamente leitura (pg_dump) contra o
 # Postgres já em execução.
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/oci-containers.sh
+source "${SCRIPT_DIR}/lib/oci-containers.sh"
+
 ENV_FILE=".env.production"
-CONTAINER="atlasgr_postgres"
+CONTAINER="$OCI_POSTGRES_CONTAINER"
 POSTGRES_DB="prospectordb"
 POSTGRES_USER="prospector"
 BACKUP_DIR="${BACKUP_DIR:-./backups/postgres}"
