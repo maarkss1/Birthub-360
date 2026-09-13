@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { calculateLeadScore } from '../domain/leadScoreCalculator';
 
 describe('Lead Score Calculator (BANT / SPIN)', () => {
@@ -79,22 +79,39 @@ describe('Lead Score Calculator (BANT / SPIN)', () => {
     expect(result.breakdown.timingScore).toBe(18);
   });
 
-  it('theftRiskPain sozinho (sem fuelCostPain) também aplica o bônus de +5 no need', () => {
-    const withoutBonus = calculateLeadScore({ need: 'moderada_otimizacao' });
-    const withBonus = calculateLeadScore({ need: 'moderada_otimizacao', theftRiskPain: true });
-
-    expect(withoutBonus.breakdown.needScore).toBe(15);
-    expect(withBonus.breakdown.needScore).toBe(20);
-  });
-
-  it('o bônus de dor específica nunca faz o needScore passar de 25 (teto do BANT)', () => {
-    const result = calculateLeadScore({
-      need: 'critica_urgente', // já 25
+  // ACH-05-07 fazia fuelCostPain/theftRiskPain bonificarem +5 no needScore só quando o playbook
+  // ativo era o de risco de carga/logística ('atlasgr'). A unificação de playbook comercial em
+  // 'geral' (decisão do usuário, ver CLAUDE.md seção 1) removeu a única forma de saber se um lead
+  // era desse vertical — manter o bônus pra qualquer organização contrariaria o próprio motivo do
+  // ACH-05-07 ("CRM multi-tenant não pode amarrar o produto a um vertical"), então o bônus foi
+  // removido (não substituído por "aplica pra todo mundo"). `fuelCostPain`/`theftRiskPain`
+  // continuam aceitos no input (não quebram chamadores existentes), só não pontuam mais nada.
+  it('fuelCostPain/theftRiskPain não bonificam mais o needScore (ACH-05-07 removido)', () => {
+    const semDores = calculateLeadScore({ need: 'moderada_otimizacao' });
+    const comFuelPain = calculateLeadScore({ need: 'moderada_otimizacao', fuelCostPain: true });
+    const comTheftPain = calculateLeadScore({ need: 'moderada_otimizacao', theftRiskPain: true });
+    const comAmbas = calculateLeadScore({
+      need: 'moderada_otimizacao',
       fuelCostPain: true,
       theftRiskPain: true,
     });
 
-    expect(result.breakdown.needScore).toBe(25);
+    expect(semDores.breakdown.needScore).toBe(15);
+    expect(comFuelPain.breakdown.needScore).toBe(15);
+    expect(comTheftPain.breakdown.needScore).toBe(15);
+    expect(comAmbas.breakdown.needScore).toBe(15);
+  });
+
+  it('activePlaybook não afeta mais o score (campo aceito, ignorado no cálculo)', () => {
+    const semPlaybook = calculateLeadScore({ need: 'moderada_otimizacao', fuelCostPain: true });
+    const comPlaybook = calculateLeadScore({
+      need: 'moderada_otimizacao',
+      fuelCostPain: true,
+      activePlaybook: 'geral',
+    });
+
+    expect(semPlaybook.breakdown.needScore).toBe(15);
+    expect(comPlaybook.breakdown.needScore).toBe(15);
   });
 
   it('valores desconhecidos de budget/authority/need/timing caem no default (0), não quebram', () => {
