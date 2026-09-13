@@ -1,13 +1,12 @@
+import { AlertTriangle, History, Loader2, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { History, Loader2, AlertTriangle, RefreshCw, Trash2, Pencil } from 'lucide-react';
-
-import { Dialog } from '../../../components/ui/Dialog';
-import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
+import { Dialog } from '../../../components/ui/Dialog';
 import {
-  automationsApi,
   type Automation,
   type AutomationVersionTimelineEntry,
+  automationsApi,
 } from '../automations.api';
 
 function formatEditedAt(iso: string): string {

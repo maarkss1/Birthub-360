@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Cobre o handoff .agents/handoffs/onda-1/06-para-01-persistencia-3cx.md: antes desta mudança,
 // threecx.service.ts guardava conexões num `Map` em memória (perdido a cada restart/redeploy,

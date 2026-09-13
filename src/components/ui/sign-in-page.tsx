@@ -1,5 +1,5 @@
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 /**

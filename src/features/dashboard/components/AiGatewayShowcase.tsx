@@ -1,19 +1,19 @@
-import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Gauge } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import {
-  BarChart,
-  Bar,
-  AreaChart,
   Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
-import { api } from '../../../lib/api';
-import { useTheme } from '../../../contexts/ThemeContext';
 import { Skeleton } from '../../../components/ui/Skeleton';
+import { useTheme } from '../../../contexts/ThemeContext';
+import { api } from '../../../lib/api';
 import { fadeInUp } from '../../../lib/motion';
 
 interface UsageByModel {

@@ -1,39 +1,40 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- região rolável focável por teclado */
+
+import { AlertTriangle, ArrowRight, Download, MonitorPlay, Pencil, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { ArrowRight, AlertTriangle, Pencil, MonitorPlay, Download, RefreshCw } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { KpiTile } from './KpiTile';
-import { AlertsPanel } from './AlertsPanel';
-import { FunnelConversionCard } from './FunnelConversionCard';
-import { PipelineByStageCard } from './PipelineByStageCard';
-import { GoalEditorDialog } from './GoalEditorDialog';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
-import { ForecastRangeCard } from './ForecastRangeCard';
-import { TrendChartCard } from './TrendChartCard';
-import { MentorPlaybookCard } from './MentorPlaybookCard';
-import { DecisionCenterPanel } from './DecisionCenterPanel';
-import { GoalCountdownOverlay } from './GoalCountdownOverlay';
-import { HealthScoreCard } from './HealthScoreCard';
 import { toast } from '../../../lib/toast';
 import {
+  type CommercialFilter,
+  type CoverageProtectionStatus,
   commercialIntelligenceApi,
   downloadExecutiveExport,
-  formatCurrency,
-  formatPercent,
-  formatMultiple,
-  type CommercialFilter,
-  type ExecutiveOverview,
   type ExecutiveAlert,
+  type ExecutiveOverview,
+  type ExportFormat,
+  formatCurrency,
+  formatMultiple,
+  formatPercent,
+  type HistoricalTrendsReport,
   type LeadingIndicatorsReport,
   type PerformanceMetrics,
   type PipelineCreation,
-  type CoverageProtectionStatus,
-  type ExportFormat,
-  type HistoricalTrendsReport,
 } from '../commercialIntelligence.api';
+import { AlertsPanel } from './AlertsPanel';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
+import { DecisionCenterPanel } from './DecisionCenterPanel';
+import { ForecastRangeCard } from './ForecastRangeCard';
+import { FunnelConversionCard } from './FunnelConversionCard';
+import { GoalCountdownOverlay } from './GoalCountdownOverlay';
+import { GoalEditorDialog } from './GoalEditorDialog';
+import { HealthScoreCard } from './HealthScoreCard';
+import { KpiTile } from './KpiTile';
+import { MentorPlaybookCard } from './MentorPlaybookCard';
+import { PipelineByStageCard } from './PipelineByStageCard';
+import { TrendChartCard } from './TrendChartCard';
 
 /** Ritmo do "Atualização automática" opcional (desligado por padrão) — regra de performance da
  * constituição: nada roda em background sem o usuário pedir. */

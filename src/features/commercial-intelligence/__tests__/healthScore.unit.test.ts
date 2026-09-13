@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { HealthScoreInput } from '../application/healthScore';
 import {
   computeHealthScore,
   HEALTH_PILLAR_ORDER,
@@ -12,7 +13,6 @@ import type {
   LeadingIndicatorsReport,
   PerformanceMetrics,
 } from '../domain/CommercialIntelligence';
-import type { HealthScoreInput } from '../application/healthScore';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';

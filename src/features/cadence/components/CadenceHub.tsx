@@ -1,4 +1,3 @@
-import { useEffect, useState, useCallback } from 'react';
 import {
   AlertTriangle,
   CalendarClock,
@@ -13,25 +12,24 @@ import {
   RefreshCw,
   Repeat,
   ShieldOff,
+  Sparkles,
   Square,
   Trash2,
-  Sparkles,
 } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge, type BadgeProps } from '../../../components/ui/Badge';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { EmptyState } from '../../../components/ui/EmptyState';
 import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
+import { Card } from '../../../components/ui/Card';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { toast } from '../../../lib/toast';
-import { leadsDB } from '../../../lib/db';
+import { Dialog } from '../../../components/ui/Dialog';
+import { EmptyState } from '../../../components/ui/EmptyState';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { leadsDB } from '../../../lib/db';
+import { toast } from '../../../lib/toast';
 import type { Lead } from '../../../types';
-import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates';
 import {
-  cadenceApi,
   type CadenceChannel,
   type CadenceRunDTO,
   type CadenceRunStatus,
@@ -39,10 +37,12 @@ import {
   type CadenceStopReason,
   type CadenceTouchInput,
   type CadenceTouchResult,
-  type OptOutRecordDTO,
+  cadenceApi,
   type OptOutOriginChannel,
+  type OptOutRecordDTO,
   type OptOutScope,
 } from '../cadence.api';
+import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates';
 
 /**
  * Tela de cadência multicanal e ciclo de receita (Agente 17, Onda 10) — ver

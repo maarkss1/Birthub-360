@@ -1,46 +1,45 @@
-import { useState, useEffect, useCallback, useRef, useId } from 'react';
 import {
-  X,
   Building2,
-  Phone,
-  Mail,
-  Globe,
-  Sparkles,
-  Loader2,
-  Send,
-  Clock,
-  User,
-  FileText,
-  ClipboardList,
   ChevronDown,
   ChevronUp,
+  ClipboardList,
+  Clock,
+  FileText,
+  Globe,
+  Loader2,
+  Mail,
+  Phone,
   Save,
+  Send,
+  Sparkles,
+  User,
+  X,
 } from 'lucide-react';
-import type { Lead, Note, LeadStatus, LeadQualification } from '../../../types';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
+import { Button } from '../../../components/ui/Button';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { api } from '../../../lib/api';
+import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap';
+import { toast } from '../../../lib/toast';
 // LEAD_STATUS é reexportado como tipo em ../../../types (export type {...}) — o array em
 // runtime só existe na fonte original.
 import { LEAD_STATUS } from '../../../lib/zod';
-import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
-import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
-import { Button } from '../../../components/ui/Button';
-import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { LeadActionBar } from './LeadActionBar';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useActiveRecord } from '../../../hooks/useActiveRecord';
-import { useAuth } from '../../../contexts/AuthContext';
+import type { Lead, LeadQualification, LeadStatus, Note } from '../../../types';
+// Mesmo raciocínio do WhatsAppChatPanel acima: o CRM só decide QUANDO oferecer a entrada, não
+// COMO o Copiloto Comercial IA funciona (Onda 7 — UI/UX, ver src/features/copiloto-ia/AGENTS.md).
+import { LeadCopilotoPanel } from '../../copiloto-ia/components/LeadCopilotoPanel';
+import { bitrixApi } from '../../integrations/bitrix/bitrix.api';
 // Painel de conversa real (histórico + envio) já usado pela Prospecção sobre a mesma integração
 // de WhatsApp (src/features/integrations/whatsapp, sessão Baileys por tenant) — reusado aqui em vez
 // de duplicar lógica de polling/envio; CRM só decide QUANDO oferecer a ação, não COMO ela funciona.
 import { WhatsAppChatPanel } from '../../integrations/whatsapp/components/WhatsAppChatPanel';
-// Mesmo raciocínio do WhatsAppChatPanel acima: o CRM só decide QUANDO oferecer a entrada, não
-// COMO o Copiloto Comercial IA funciona (Onda 7 — UI/UX, ver src/features/copiloto-ia/AGENTS.md).
-import { LeadCopilotoPanel } from '../../copiloto-ia/components/LeadCopilotoPanel';
-
-import { bitrixApi } from '../../integrations/bitrix/bitrix.api';
-import { calculateLeadScore, type BantQualificationData } from '../domain/leadScoreCalculator';
+import { type BantQualificationData, calculateLeadScore } from '../domain/leadScoreCalculator';
+import { LeadActionBar } from './LeadActionBar';
 
 const TEMPERATURE_EMOJI: Record<string, string> = { Quente: '🔥', Morno: '🌤️', Frio: '❄️' };
 
@@ -122,7 +121,7 @@ interface LeadDetailDrawerProps {
 }
 
 export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawerProps) {
-  const { info: playbookMeta } = useActivePlaybook();
+  const { playbook, info: playbookMeta } = useActivePlaybook();
   const { setActiveRecord, clearActiveRecord } = useActiveRecord();
   const { currentUser } = useAuth();
   const { confirm, dialog: confirmDialog } = useConfirmDialog();
@@ -300,7 +299,13 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
   // (budget/authority/need/timing) têm formatos diferentes — o cast pré-existente já não batia
   // campo a campo antes desta correção de lint; mantido aqui como estava (via `unknown`, não
   // `any`) para não mudar o cálculo de score como efeito colateral de uma limpeza de lint.
-  const liveScore = calculateLeadScore(qualDraft as unknown as BantQualificationData);
+  // ACH-05-07: o bônus de dor de diesel/sinistro (fuelCostPain/theftRiskPain) só vale para o
+  // playbook de risco de carga/logística — repassa o playbook ativo do navegador em vez de
+  // deixar o cálculo assumir logística para qualquer organização.
+  const liveScore = calculateLeadScore({
+    ...(qualDraft as unknown as BantQualificationData),
+    activePlaybook: playbook,
+  });
 
   const handleSaveQualification = async () => {
     if (!lead) return;

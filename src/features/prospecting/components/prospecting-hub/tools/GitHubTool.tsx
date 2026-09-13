@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { CheckCircle2, ExternalLink, Loader2, Search, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
 import { GithubIcon as Github } from '../../../../../components/ui/icons/GithubIcon';
-import { api } from '../../../../../lib/api';
 import { BRAND } from '../../../../../config/brand';
+import { api } from '../../../../../lib/api';
 import type { GithubOrgSummary } from '../../../services/github.service';
 import { getErrorMessage, type PromoteResult } from './shared';
 

@@ -1,6 +1,6 @@
 import type { StudioGenerationRequest } from '../schema.js';
 import { superagentAiResultSchema } from '../schema.js';
-import { SYSTEM_RULES, invokeStructured, jsonOnlyInstruction, safeIdentifier } from '../shared.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES, safeIdentifier } from '../shared.js';
 
 function buildSuperagentScaffolds(
   request: Extract<StudioGenerationRequest, { kind: 'superagent' }>,

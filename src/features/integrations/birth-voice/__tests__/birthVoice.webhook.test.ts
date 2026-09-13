@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createHmac } from 'node:crypto';
 import express from 'express';
 import request from 'supertest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * ACH-06-01 — antes desta correção, `handleWebhook` validava a assinatura de TODA organização

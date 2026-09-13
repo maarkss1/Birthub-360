@@ -122,62 +122,51 @@ describe('computeFitScore', () => {
     });
   });
 
-  describe('critérios do playbook comercial', () => {
-    it('frota "acima de 50" soma +15', () => {
-      const result = computeFitScore({ fleetSizeHint: 'Acima de 50 veículos' });
-      expect(result.score).toBe(40);
-      expect(result.breakdown).toContainEqual({
-        label: 'Frota (playbook comercial)',
-        points: 15,
-        detail: 'Frota acima de 50 veículos — critério de priorização',
-      });
-    });
-
-    it('faixas "150-500" e "acima de 500" também qualificam', () => {
-      expect(computeFitScore({ fleetSizeHint: '150-500 veículos' }).score).toBe(40);
-      expect(computeFitScore({ fleetSizeHint: 'Acima de 500 veículos' }).score).toBe(40);
-    });
-
-    it('frota abaixo do critério não soma nada', () => {
-      expect(computeFitScore({ fleetSizeHint: '1-10 veículos' }).score).toBe(25);
-    });
-
-    it('estado RJ ou SP soma +10 (região de maior risco de roubo de carga)', () => {
-      const result = computeFitScore({ state: 'SP', city: 'São Paulo' });
-      expect(result.score).toBe(35);
-      expect(result.breakdown).toContainEqual({
-        label: 'Região de risco (playbook comercial)',
-        points: 10,
-        detail: 'Atuação em SÃO PAULO SP — região com maior índice de roubo de carga',
+  // ACH-05-07 dava até 40 pontos (frota, região de risco, categoria de carga, stack de ERP/TMS)
+  // só quando o playbook ativo da organização era o de risco de carga/logística ('atlasgr'). A
+  // unificação de playbook comercial em 'geral' (decisão do usuário, ver CLAUDE.md seção 1)
+  // removeu a única forma de saber se uma organização era desse vertical — manter esses critérios
+  // numa avaliação universal contrariaria o próprio motivo do ACH-05-07 ("CRM multi-tenant não
+  // pode amarrar o produto a um vertical"), então foram removidos (não substituídos por "vale pra
+  // todo mundo"). Os campos continuam aceitos no input (não quebram chamadores existentes), só não
+  // pontuam mais nada.
+  describe('critérios de logística removidos (ACH-05-07 revertido pela unificação de playbook)', () => {
+    it('fleetSizeHint/state/city/technologies/segment/activePlaybook não somam mais pontos', () => {
+      const result = computeFitScore({
+        fleetSizeHint: 'Acima de 500 veículos',
+        state: 'RJ',
+        city: 'Rio de Janeiro',
+        cnaeDescription: 'Indústria alimentícia',
+        segment: 'Alimentos',
+        technologies: ['TOTVS Protheus', 'SAP Business One'],
+        activePlaybook: 'geral',
       });
 
-      expect(computeFitScore({ state: 'RJ' }).score).toBe(35);
-      expect(computeFitScore({ state: 'MG' }).score).toBe(25);
+      // Só os 25 pontos base de participação no funil.
+      expect(result.score).toBe(25);
+      expect(result.breakdown).toEqual([]);
     });
 
-    it('categoria de carga de risco (NTC) soma +10 quando o CNAE/segmento cita uma delas', () => {
-      const result = computeFitScore({ cnaeDescription: 'Indústria alimentícia' });
-      expect(result.score).toBe(35);
-      expect(result.breakdown).toContainEqual({
-        label: 'Categoria de carga de risco (NTC)',
-        points: 10,
-        detail: 'Atividade sugere transporte de carga com maior índice de roubo no Brasil',
+    it('critérios universais (situação cadastral, capital, porte, CNAE-ICP) continuam somando normalmente', () => {
+      const result = computeFitScore({
+        situacaoCadastral: 'ATIVA',
+        capitalSocial: 200_000,
+        employeeCountEstimate: 60,
+        segmentKeywords: ['Telemetria'],
+        cnaeDescription: 'Serviços de telemetria e rastreamento veicular',
+        // Estes campos teriam gerado bônus logístico antes do ACH-05-07 ser removido:
+        fleetSizeHint: 'Acima de 500 veículos',
+        state: 'SP',
       });
-    });
 
-    it('stack de ERP/TMS logístico detectado via Apollo soma +5 e cita a tecnologia encontrada', () => {
-      const result = computeFitScore({ technologies: ['Google Workspace', 'SAP Business One'] });
-      expect(result.score).toBe(30);
-      expect(result.breakdown).toContainEqual({
-        label: 'Stack de ERP/TMS (Apollo)',
-        points: 5,
-        detail:
-          'Usa "SAP Business One" — indício de operação já digitalizada, mais fácil de integrar',
-      });
-    });
-
-    it('tecnologia sem relação com ERP/TMS logístico não soma nada', () => {
-      expect(computeFitScore({ technologies: ['Slack', 'Zoom'] }).score).toBe(25);
+      expect(result.breakdown.some((i) => i.label === 'Situação cadastral')).toBe(true);
+      expect(result.breakdown.some((i) => i.label === 'Capital social')).toBe(true);
+      expect(result.breakdown.some((i) => i.label === 'Porte estimado')).toBe(true);
+      expect(result.breakdown.some((i) => i.label === 'Aderência de CNAE ao ICP')).toBe(true);
+      expect(result.breakdown.some((i) => i.label.includes('Frota'))).toBe(false);
+      expect(result.breakdown.some((i) => i.label.includes('Região de risco'))).toBe(false);
+      expect(result.breakdown.some((i) => i.label.includes('Categoria de carga'))).toBe(false);
+      expect(result.breakdown.some((i) => i.label.includes('Stack de ERP/TMS'))).toBe(false);
     });
   });
 

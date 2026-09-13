@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const ORG = 'org-1';
 
@@ -42,12 +42,12 @@ vi.mock('../birthVoice.service.js', () => ({
 
 import { prisma } from '../../../../lib/prisma.js';
 import {
+  BirthVoiceNotConfiguredError,
   callLead,
   NoPhoneNumberError,
   SuppressedNumberError,
-  BirthVoiceNotConfiguredError,
 } from '../birthVoice.service.js';
-import { runColdCallCampaign, enabledOrganizations } from '../coldCall.service.js';
+import { enabledOrganizations, runColdCallCampaign } from '../coldCall.service.js';
 
 const leadMock = prisma.lead as unknown as {
   findMany: ReturnType<typeof vi.fn>;

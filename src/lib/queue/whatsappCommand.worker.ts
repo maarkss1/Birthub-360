@@ -1,14 +1,14 @@
 import { type Job, Worker } from 'bullmq';
-import { connection } from './redis.js';
-import { logger } from '../logger.js';
-import { recordQueueJobCompleted } from './metrics.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { WHATSAPP_COMMAND_QUEUE_NAME, type WhatsAppCommand } from './whatsappCommand.queue.js';
 import {
   initWhatsApp,
   logoutWhatsApp,
   sendWhatsAppMessage,
 } from '../../features/integrations/whatsapp/whatsapp.service.js';
+import { logger } from '../logger.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted } from './metrics.js';
+import { connection } from './redis.js';
+import { WHATSAPP_COMMAND_QUEUE_NAME, type WhatsAppCommand } from './whatsappCommand.queue.js';
 
 export function createWhatsAppCommandWorker(): Worker<WhatsAppCommand> {
   const worker = new Worker<WhatsAppCommand>(

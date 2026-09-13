@@ -15,9 +15,10 @@
  * requisições antes da validação Zod que este arquivo cobre; a checagem 403 do gate em si tem
  * cobertura própria e completa em `ai-suite.routes.test.ts`.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+
 import express from 'express';
+import request from 'supertest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
 
 // vi.mock é hoisted para o topo — precisa vir antes do import de `errorHandler` acima na cadeia de

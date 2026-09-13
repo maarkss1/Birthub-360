@@ -1,9 +1,9 @@
-import { OAuth2Client } from 'google-auth-library';
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { OAuth2Client } from 'google-auth-library';
 import { env } from '../../../config/env.js';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
 import { fetchWithTimeout, withTimeout } from '../../../lib/http.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 /** Mesmo teto usado nas chamadas REST diretas (fetchWithTimeout) — google-auth-library não expõe

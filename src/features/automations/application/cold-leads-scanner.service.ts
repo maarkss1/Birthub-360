@@ -1,9 +1,9 @@
-import { prisma } from '../../../lib/prisma.js';
-import { VectorSearchService } from '../../intelligence/services/vector-search.service.js';
-import { enabledOrganizations } from '../../intelligence/services/swarmScheduler.service.js';
-import { acquireDistributedLock } from '../../../lib/queue/distributedLock.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { acquireDistributedLock } from '../../../lib/queue/distributedLock.js';
+import { enabledOrganizations } from '../../intelligence/services/swarmScheduler.service.js';
+import { VectorSearchService } from '../../intelligence/services/vector-search.service.js';
 
 /**
  * AUTO-001: correções de confiabilidade sobre a primeira versão deste serviço.
@@ -151,9 +151,9 @@ export async function runColdLeadsScan(): Promise<{
   }
 }
 
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import { connection } from '../../../lib/queue/redis.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
 
 export const COLD_LEADS_SCANNER_QUEUE_NAME = 'cold-leads-scanner-queue';
 

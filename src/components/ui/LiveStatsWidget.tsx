@@ -4,19 +4,19 @@
  * Shown on the home screen between the Clock and the 2 main cards.
  */
 
-import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Building2,
-  Users,
-  TrendingUp,
   Activity,
-  Wifi,
-  WifiOff,
+  AlertTriangle,
+  Building2,
   Loader2,
   RotateCw,
-  AlertTriangle,
+  TrendingUp,
+  Users,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { analyticsDB } from '../../lib/db';
 
 import { Badge } from './Badge';

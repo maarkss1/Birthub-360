@@ -1,19 +1,19 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import type { Contact, Company } from '../../../types';
 import { Button } from '../../../components/ui/Button';
 import { Dialog } from '../../../components/ui/Dialog';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Select } from '../../../components/ui/Select';
 import { Textarea } from '../../../components/ui/Textarea';
-import { contactSchema } from '../../../lib/zod';
-import { companiesDB, contactsDB } from '../../../lib/db';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { clientLogger } from '../../../lib/clientLogger';
+import { companiesDB, contactsDB } from '../../../lib/db';
+import { toast } from '../../../lib/toast';
+import { contactSchema } from '../../../lib/zod';
+import type { Company, Contact } from '../../../types';
 
 interface ContactFormProps {
   contact?: Contact | null;

@@ -1,5 +1,5 @@
+import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
 import { logger } from '../../../lib/logger';
-import { sendEmail, MailerNotConfiguredError } from '../../../lib/email/mailer.js';
 import { toE164BR } from '../../../lib/phone.js';
 import { isOptedOut } from '../../cadence/application/optOutService.js';
 import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
