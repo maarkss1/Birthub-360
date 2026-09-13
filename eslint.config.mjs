@@ -74,9 +74,6 @@ export default tseslint.config(
     // (position, args, castShadow, emissive, attach, intensity etc.) — falso positivo do
     // react/no-unknown-property, que não conhece o namespace de elementos do react-three-fiber.
     files: [
-      'src/features/gamification/components/SpaceGame.tsx',
-      'src/features/gamification/components/GameWidget.tsx',
-      'src/components/ui/AtlasOrb.tsx',
       'src/components/ui/BrandOrb.tsx',
       'src/features/dashboard/components/RevenueSignalOrb.tsx',
     ],

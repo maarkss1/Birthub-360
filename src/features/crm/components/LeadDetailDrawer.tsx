@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
 import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
 import { Button } from '../../../components/ui/Button';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
@@ -121,7 +122,7 @@ interface LeadDetailDrawerProps {
 }
 
 export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawerProps) {
-  const { info: playbookMeta } = useActivePlaybook();
+  const { playbook, info: playbookMeta } = useActivePlaybook();
   const { setActiveRecord, clearActiveRecord } = useActiveRecord();
   const { currentUser } = useAuth();
   const { confirm, dialog: confirmDialog } = useConfirmDialog();
@@ -299,7 +300,13 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
   // (budget/authority/need/timing) têm formatos diferentes — o cast pré-existente já não batia
   // campo a campo antes desta correção de lint; mantido aqui como estava (via `unknown`, não
   // `any`) para não mudar o cálculo de score como efeito colateral de uma limpeza de lint.
-  const liveScore = calculateLeadScore(qualDraft as unknown as BantQualificationData);
+  // ACH-05-07: o bônus de dor de diesel/sinistro (fuelCostPain/theftRiskPain) só vale para o
+  // playbook de risco de carga/logística — repassa o playbook ativo do navegador em vez de
+  // deixar o cálculo assumir logística para qualquer organização.
+  const liveScore = calculateLeadScore({
+    ...(qualDraft as unknown as BantQualificationData),
+    activePlaybook: playbook,
+  });
 
   const handleSaveQualification = async () => {
     if (!lead) return;
@@ -783,6 +790,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   ))}
                 </div>
               </section>
+
+              <EntityAttachments entityType="lead" entityId={lead.id} />
 
               {playbookMeta && (
                 <section className="space-y-4">

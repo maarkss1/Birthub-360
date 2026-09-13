@@ -198,6 +198,20 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
     exclusionRules: 'Amostra vazia retorna "Não disponível".',
   },
   {
+    key: 'pipeline_velocity',
+    name: 'Pipeline Velocity',
+    description:
+      'Quanto de receita o pipeline aberto tende a gerar por dia, combinando quantidade, conversão histórica, ticket médio e tempo de ciclo em um único número.',
+    formula:
+      '(Oportunidades abertas × Win Rate ÷ 100 × Ticket Médio dos negócios abertos) ÷ Ciclo de Venda (MEDIANA, dias).',
+    source: 'Derivado (application/queries/performanceReport.ts)',
+    period: 'Período selecionado (mesmo escopo de Win Rate/Ticket Médio/Sales Cycle)',
+    inclusionRules:
+      'Usa a MEDIANA do ciclo de venda (não a média) — mesmo motivo de robustez a outliers documentado em Sales Cycle.',
+    exclusionRules:
+      'Sem Win Rate, Ticket Médio (aberto) ou Sales Cycle calculável (amostra vazia), retorna "Não disponível" — nunca assume 0/1 implícito para a entrada faltante.',
+  },
+  {
     key: 'first_contact_sla',
     name: 'SLA de Primeiro Contato',
     description: 'Tempo entre a criação do lead e a primeira atividade concluída registrada nele.',

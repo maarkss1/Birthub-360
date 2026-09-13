@@ -154,12 +154,13 @@ Render:
    GitHub (ver `docs/deploy/oracle-cloud.md` §3.3). Enquanto isso, todo deploy é manual (`git pull`
    + `./scripts/deploy-oci.sh` via SSH) — um incidente causado por "deploy não aconteceu" pode ser
    simplesmente ninguém ter rodado o passo manual, não uma falha de infraestrutura.
-5. **Sem observabilidade centralizada (Prometheus/Grafana/Loki) para esta instância hoje** —
-   decisão de escopo registrada em `docker-compose.oci.yml` (cabeçalho) e
-   `docs/deploy/oracle-cloud.md` §11, não uma lacuna esquecida. Um incidente real na Oracle,
-   diferente do Render (que tem `InstanceDown`/`AIBudgetOverrun`/etc. via Prometheus local
-   apontando para a instância — quando alguém configurar isso), hoje só é descoberto por relato de
-   usuário ou por quem verificar `/health/*` manualmente. Ver seção 8 (lacunas conhecidas).
+5. **Prometheus opt-in desde a Onda 2 (DEVOPS-003)** — `docker-compose.oci.yml` sobe um Prometheus
+   real (profile `observability`) quando `.env.production` tem `ENABLE_OBSERVABILITY=true` antes de
+   `./scripts/deploy-oci.sh` rodar — ver `docs/deploy/oracle-cloud.md` §11 para como habilitar.
+   Grafana/Loki/tracing continuam fora do escopo (só Prometheus/`/alerts`). Sem essa flag ligada
+   (ainda o padrão em instâncias já provisionadas antes desta onda), o comportamento
+   continua o de antes: um incidente real só é descoberto por relato de usuário ou por quem
+   verificar `/health/*` manualmente. Ver seção 8 (lacunas conhecidas).
 6. **Rollback**: ver seção 6, "Rollback via Oracle Cloud (Docker Compose)".
 7. **Fila/worker**: mesmo desenho do Render (`ENABLE_QUEUES`), mas aqui `worker`+`redis` já existem
    como serviços reais no `docker-compose.oci.yml` (profile `queues`, opt-in) — não é um serviço
@@ -183,8 +184,9 @@ docker-compose.oci.yml logs app`, que já é JSON estruturado (Pino) e carrega o
 ## 1. Aplicação indisponível (5xx generalizado / instância não responde)
 
 **Sintoma**: `InstanceDown` (Prometheus, só aplicável onde o Prometheus já está de fato scrapeando
-a instância — hoje isso é só o stack local, não a instância Oracle nem o Render, ver seção 8) ou
-relato de erro 5xx generalizado.
+a instância — hoje isso é o stack local sempre, e a Oracle quando `ENABLE_OBSERVABILITY=true` foi
+ativado no deploy, ver seção 0-OCI item 5; o Render continua sem Prometheus apontado) ou relato de
+erro 5xx generalizado.
 
 1. Checar health real, não só "site no ar": `GET /health/live` (processo vivo) e
    `GET /health/ready` (confirma `SELECT 1` no Postgres — se `/health/ready` falha com
@@ -504,7 +506,7 @@ grupos `ativos-hoje` deste arquivo) para promover isso a uma regra real.
 
 | Lacuna | Detalhe | Quem decide/resolve |
 | --- | --- | --- |
-| **Produção Oracle Cloud sem observabilidade centralizada** | Alvo definitivo de produção (ADR-004) já recebendo tráfego real, mas `docker-compose.oci.yml` não sobe Prometheus/Grafana/Loki e nenhum Prometheus externo está scrapeando a instância — decisão de escopo MVP registrada em `docs/deploy/oracle-cloud.md` §11 (não uma lacuna esquecida: a barreira técnica real é que `/metrics` exige o header `x-platform-operator-token` da própria aplicação — `requirePlatformOperator` — que o `scrape_config` nativo do Prometheus não consegue enviar sem mudança de código fora do escopo desta correção). Até isso ser resolvido, um incidente real na Oracle só é descoberto por relato de usuário ou checagem manual de `/health/*` — ver seção 0-OCI item 5. | Agente 10 (mecanismo de auth compatível com scrape) + Agente 01/08 (se a solução exigir mudar `requirePlatformOperator` ou adicionar um exportador dedicado) |
+| ~~Produção Oracle Cloud sem observabilidade centralizada~~ — **fechada na Onda 2 (DEVOPS-003), opt-in** | `docker-compose.oci.yml` agora sobe um Prometheus real para a instância (profile `observability`, `ENABLE_OBSERVABILITY=true` em `.env.production` — ver `docs/deploy/oracle-cloud.md` §11), scrapeando `/metrics` via a rede interna do Compose com o token já suportado por `requirePlatformOperator` (campo nativo `params` do Prometheus, não Bearer/Basic — a barreira antes documentada aqui estava incompleta, não era uma limitação real da aplicação). Continua exigindo o operador rodar o deploy com a flag ligada na instância real — esta onda não teve acesso à instância Oracle para ativar isso de fato, só preparou/validou o caminho (`docker compose config`, testes do middleware). Grafana/Loki/Tempo continuam fora do escopo — ver `docs/deploy/oracle-cloud.md` §11.3. | Operador com acesso à instância (ativar `ENABLE_OBSERVABILITY=true`) — Agente 10 já entregou o caminho de código |
 | Sem dashboard Grafana versionado | `infrastructure/observability/` tem datasources (`grafana-datasources.yml`) mas nenhum `dashboards/*.json` — Grafana sobe "em branco", só com os datasources provisionados. Não criado nesta rodada por falta de tempo dentro do escopo de go-live (priorizado runbook/alertas executáveis) — fica como próximo passo, não crítico para o go-live em si (Prometheus `/alerts` e consultas ad-hoc já cobrem o mínimo). | Agente 10, próxima rodada |
 | `AI_MONTHLY_BUDGET_USD` possivelmente não configurada em produção | Não está em `render.yaml`; não é possível confirmar via API/MCP se foi setada manualmente no dashboard. Na Oracle, `scripts/deploy-oci.sh` também não a gera automaticamente — mesmo gap, ver seção 5. Sem ela, `AIBudgetOverrun` fica `unknown` permanentemente em ambos os caminhos. | Confirmação humana (dashboard Render / SSH na instância Oracle) + decisão de negócio do valor do orçamento |
 | Métrica HTTP por status code (`HighErrorRate5xx`) | Auto-instrumentação OTel emite métricas de runtime/GC mas não a métrica HTTP com a versão instalada de `instrumentation-http`. Ver `alert.rules.yml` para o diagnóstico completo. | Agente 01 (dono de `src/lib/tracing.ts`) |

@@ -232,6 +232,22 @@ export interface SalesCycleStats {
   sampleSize: number;
 }
 
+export interface PipelineVelocityStats {
+  /**
+   * (Oportunidades abertas × Win Rate × Ticket Médio dos negócios abertos) / Ciclo de Venda
+   * (MEDIANA, dias) — quanto de receita o pipeline atual tende a gerar por dia, mesma disciplina
+   * de nunca fabricar um KPI: `null` se qualquer uma das 4 entradas não estiver disponível
+   * (nenhuma vira 0/1 implícito).
+   */
+  value: number | null;
+  openOpportunities: number;
+  winRatePct: number | null;
+  averageOpenDealValue: number | null;
+  /** Mediana (não média) de propósito — reduz a distorção de outliers, mesmo motivo documentado
+   * em `salesCycle`/`sales_cycle` (metricsDictionary.ts). */
+  salesCycleMedianDays: number | null;
+}
+
 export interface FunnelStageConversion {
   stageId: string;
   label: string;
@@ -264,6 +280,7 @@ export interface PerformanceMetrics {
   opportunities: OpportunityCounts;
   averageTicket: AverageTicket;
   salesCycle: SalesCycleStats;
+  pipelineVelocity: PipelineVelocityStats;
   funnel: FunnelStageConversion[];
   /**
    * Data do registro mais antigo de `LeadStageHistory` da organização, ou `null` se não há

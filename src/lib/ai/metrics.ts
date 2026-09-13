@@ -73,6 +73,23 @@ export function recordOrgAiBudgetBlocked(organizationId: string): void {
   aiOrgBudgetBlockedTotal.inc({ organization: organizationId });
 }
 
+/**
+ * BILLING-009 (Onda 2): antes, `estimateCostUsd` (gateway/pricing.ts) caía silenciosamente no
+ * preço de `local-llama3-fast` para qualquer modelo sem entrada em `PRICING_PER_MILLION_TOKENS`,
+ * distorcendo o custo reportado sem nenhum sinal observável. Este contador torna esse fallback
+ * visível em Prometheus, rotulado por modelo, para detectar um modelo novo esquecido na tabela de
+ * preços antes que ele afete silenciosamente o orçamento por organização (src/lib/ai/budget.ts).
+ */
+export const aiPricingFallbackTotal = new client.Counter({
+  name: 'ai_pricing_fallback_total',
+  help: 'Chamadas de IA cujo modelo não tinha preço cadastrado e caiu no fallback de local-llama3-fast (BILLING-009), por modelo.',
+  labelNames: ['model'] as const,
+});
+
+export function recordAiPricingFallback(model: string): void {
+  aiPricingFallbackTotal.inc({ model: model || 'unknown' });
+}
+
 // Gauge de orçamento só é registrado (e, portanto, só aparece em /metrics) quando
 // AI_MONTHLY_BUDGET_USD está configurada. Sem valor configurado, a série simplesmente não existe
 // — não fabricamos um "0" que faria `ai_usage_cost_usd_total / ai_usage_budget_usd_total` virar

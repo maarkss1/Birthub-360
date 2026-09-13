@@ -26,7 +26,6 @@ export interface Company {
   city: string | null;
   state: string | null;
   zipCode: string | null;
-  owner: string | null;
   status: CompanyStatus;
   tags: string[];
   observations: string | null;

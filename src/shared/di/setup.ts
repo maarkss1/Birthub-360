@@ -11,6 +11,9 @@ import { AnalyticsController } from '../../features/analytics/presentation/Analy
 // com um tipo estrutural local (mesmo padrão já usado por commercialIntelligence.routes.ts para
 // `CommercialIntelligenceController`), nunca via import direto do outro domínio.
 import { ChurnPredictionService } from '../../features/analytics/services/churn-prediction.service';
+import { AttachmentUseCases } from '../../features/attachments/application/AttachmentUseCases';
+import { PrismaAttachmentRepository } from '../../features/attachments/infra/PrismaAttachmentRepository';
+import { AttachmentController } from '../../features/attachments/presentation/AttachmentController';
 import { AutomationUseCases } from '../../features/automations/application/AutomationUseCases';
 import { PrismaAutomationRepository } from '../../features/automations/infra/PrismaAutomationRepository';
 import { AutomationController } from '../../features/automations/presentation/AutomationController';
@@ -44,9 +47,11 @@ import { CopilotoIaUseCases } from '../../features/copiloto-ia/application/Copil
 import { CopilotoVoiceIngestionAdapter } from '../../features/copiloto-ia/infra/CopilotoVoiceIngestionAdapter';
 import { PrismaCopilotoIaRepository } from '../../features/copiloto-ia/infra/PrismaCopilotoIaRepository';
 import { CopilotoIaController } from '../../features/copiloto-ia/presentation/CopilotoIaController';
+import { LeadDeduplicationService } from '../../features/crm/application/LeadDeduplicationService';
 import { LeadUseCases } from '../../features/crm/application/LeadUseCases';
 import { PrismaLeadRepository } from '../../features/crm/infra/PrismaLeadRepository';
 import { LeadController } from '../../features/crm/presentation/LeadController';
+import { LeadDedupController } from '../../features/crm/presentation/LeadDedupController';
 import { Crm360UseCases } from '../../features/crm360/application/Crm360UseCases';
 import { PrismaCrm360Repository } from '../../features/crm360/infra/PrismaCrm360Repository';
 import { Crm360Controller } from '../../features/crm360/presentation/Crm360Controller';
@@ -68,6 +73,15 @@ import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQua
 // importar `knowledge`/`intelligence/agents`/`integrations/bitrix` diretamente. Registrados aqui e
 // resolvidos via `container.resolve<T>(name)` em `toolExecutors.ts`, com tipos estruturais locais.
 import { searchService } from '../../features/knowledge/search.service.js';
+// AIAGENT-004 (onda 6): motor real por trás do Agente LDR — Inteligência de Leads da Célula
+// Comercial (`src/features/intelligence/agents/ldrIntelligence.agent.ts`). Mesmo motivo do
+// comentário da Onda 43 acima: `intelligence/**` não pode importar `market-intelligence/**`
+// diretamente (no-cross-feature-imports). Diferente dos demais registros, este NÃO é uma
+// instância: `AccountIntelligenceService` é construído por requisição (recebe o cliente Prisma já
+// escopado por tenant, `req.db`, e o `organizationId` da sessão autenticada), então o que vai para
+// o container é uma FÁBRICA — registrar uma instância aqui vazaria o tenant da primeira requisição
+// para todas as seguintes.
+import { AccountIntelligenceService } from '../../features/market-intelligence/server/accountIntelligence.service.js';
 // Use Cases
 import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
 // Repositories
@@ -90,6 +104,7 @@ export function setupDI() {
 
   // 2. Repositories
   const noteRepository = new PrismaNoteRepository();
+  const attachmentRepository = new PrismaAttachmentRepository();
   const activityRepository = new PrismaActivityRepository();
   const contactRepository = new PrismaContactRepository();
   const companyRepository = new PrismaCompanyRepository();
@@ -117,6 +132,7 @@ export function setupDI() {
   );
 
   container.register('NoteRepository', noteRepository);
+  container.register('AttachmentRepository', attachmentRepository);
   container.register('ActivityRepository', activityRepository);
   container.register('ContactRepository', contactRepository);
   container.register('CompanyRepository', companyRepository);
@@ -135,6 +151,7 @@ export function setupDI() {
 
   // 3. Use Cases
   const noteUseCases = new NoteUseCases(noteRepository);
+  const attachmentUseCases = new AttachmentUseCases(attachmentRepository);
   const activityUseCases = new ActivityUseCases(activityRepository);
   const contactUseCases = new ContactUseCases(contactRepository);
   const companyUseCases = new CompanyUseCases(companyRepository);
@@ -169,6 +186,7 @@ export function setupDI() {
   );
 
   container.register('NoteUseCases', noteUseCases);
+  container.register('AttachmentUseCases', attachmentUseCases);
   container.register('ActivityUseCases', activityUseCases);
   container.register('ContactUseCases', contactUseCases);
   container.register('CompanyUseCases', companyUseCases);
@@ -179,6 +197,12 @@ export function setupDI() {
   container.register('CommercialIntelligenceAiService', commercialIntelligenceAiService);
   container.register('CommercialIntelligencePeriod', { currentPeriod });
   container.register('ChurnPredictionService', churnPredictionService);
+  // AIAGENT-004 (onda 6): fábrica por requisição — ver comentário no import. O chamador
+  // (`agent.routes.ts`) passa `req.db` e o `organizationId` da sessão autenticada, nunca do body.
+  container.register('AccountIntelligenceServiceFactory', {
+    create: (db: ConstructorParameters<typeof AccountIntelligenceService>[0], orgId: string) =>
+      new AccountIntelligenceService(db, orgId),
+  });
   container.register('SignatureRequestRepositoryPort', prismaSignatureRequestRepository);
   container.register('GoogleCalendarService', { createCalendarEvent });
   // Agent Runtime Genérico (PROMPT 4) — executores reais por trás de `toolExecutors.ts`
@@ -204,10 +228,15 @@ export function setupDI() {
 
   // 4. Controllers
   container.register('NoteController', new NoteController(noteUseCases));
+  container.register('AttachmentController', new AttachmentController(attachmentUseCases));
   container.register('ActivityController', new ActivityController(activityUseCases));
   container.register('ContactController', new ContactController(contactUseCases));
   container.register('CompanyController', new CompanyController(companyUseCases));
   container.register('LeadController', new LeadController(leadUseCases));
+  container.register(
+    'LeadDedupController',
+    new LeadDedupController(new LeadDeduplicationService()),
+  );
   container.register('AutomationController', new AutomationController(automationUseCases));
   container.register('AnalyticsController', new AnalyticsController(analyticsUseCases));
   container.register(

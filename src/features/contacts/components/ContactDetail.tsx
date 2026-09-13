@@ -10,6 +10,8 @@ import {
   ShieldQuestion,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
+import { EntityNotes } from '../../../components/crm/EntityNotes';
 import { Drawer } from '../../../components/ui/Drawer';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 import { Skeleton } from '../../../components/ui/Skeleton';
@@ -241,6 +243,9 @@ export function ContactDetail({ contactId, onClose }: ContactDetailProps) {
               <p className="text-sm text-ink-2">Nenhum negócio vinculado a este contato ainda.</p>
             )}
           </section>
+
+          <EntityNotes entityType="contact" entityId={contact.id} />
+          <EntityAttachments entityType="contact" entityId={contact.id} />
         </div>
       )}
     </Drawer>

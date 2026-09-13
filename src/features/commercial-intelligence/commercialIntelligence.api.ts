@@ -169,6 +169,13 @@ export interface PerformanceMetrics {
     lost: number | null;
   };
   salesCycle: { meanDays: number | null; medianDays: number | null; sampleSize: number };
+  pipelineVelocity: {
+    value: number | null;
+    openOpportunities: number;
+    winRatePct: number | null;
+    averageOpenDealValue: number | null;
+    salesCycleMedianDays: number | null;
+  };
   funnel: FunnelStageConversion[];
   funnelHistoricalTrackingSince: string | null;
   firstContactSla: {

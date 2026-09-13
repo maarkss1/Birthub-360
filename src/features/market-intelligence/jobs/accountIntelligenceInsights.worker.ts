@@ -4,6 +4,7 @@ import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
 import { classifyBuyingRole } from '../domain/accountDecisionMakers.js';
 import {
@@ -401,6 +402,7 @@ export async function scheduleAccountIntelligenceInsightsJob(): Promise<void> {
   const queue = new Queue(ACCOUNT_INSIGHTS_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(ACCOUNT_INSIGHTS_QUEUE_NAME, queue);
   await queue.upsertJobScheduler(
     'account-intelligence-insights-tick',
     { every: SCAN_INTERVAL_MS },

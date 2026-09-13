@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
+import { EntityNotes } from '../../../components/crm/EntityNotes';
 import { ContextualTip } from '../../../components/ui/ContextualTip';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 import { type TechToolInfo, TechToolLogo } from '../../../components/ui/TechToolLogo';
@@ -373,6 +375,14 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
                 </div>
               </div>
             )}
+
+            <div className="bg-surface p-6 rounded-3xl border border-line shadow-xl">
+              <EntityNotes entityType="company" entityId={company.id} />
+            </div>
+
+            <div className="bg-surface p-6 rounded-3xl border border-line shadow-xl">
+              <EntityAttachments entityType="company" entityId={company.id} />
+            </div>
           </div>
 
           {/* Sidebar lateral com Google Rating e Detalhes */}

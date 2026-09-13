@@ -43,7 +43,12 @@ export class ABTestingService {
       where: { content: { contains: `variante '${variant}' do modelo '${promptName}'` } },
       select: { leadId: true },
     });
-    const leadIds = [...new Set(notes.map((n) => n.leadId))];
+    // CRM-004: Note.leadId virou opcional (Note agora também anexa a Company/Contact) — esta
+    // varredura de A/B test só rastreia Lead (logPromptUsage sempre grava com leadId), então
+    // descarta qualquer nota que não tenha um lead associado.
+    const leadIds = [
+      ...new Set(notes.map((n) => n.leadId).filter((id): id is string => id !== null)),
+    ];
     if (leadIds.length === 0) return 0;
 
     const wonCount = await prisma.lead.count({ where: { id: { in: leadIds }, status: WON } });

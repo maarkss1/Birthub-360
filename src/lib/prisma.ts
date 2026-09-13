@@ -15,6 +15,9 @@ import { tryDecryptField } from './crypto/secretFields.js';
 import { logger } from './logger.js';
 import { queuesEnabled } from './queue/redis.js';
 import { searchQueue } from './queue/search.queue.js';
+import { TENANT_INJECTED_MODELS } from './tenant-scoping-registry.js';
+
+export { TENANT_INJECTED_MODELS };
 
 const connectionString = env.DATABASE_URL || process.env.DATABASE_URL || '';
 
@@ -259,22 +262,6 @@ export const prisma = basePrisma.$extends({
           rawBypassRls &&
           (env.NODE_ENV !== 'production' || BYPASS_RLS_ALLOWED_MODELS.includes(model as string));
 
-        const tenantModels = [
-          'Company',
-          'Contact',
-          'Lead',
-          'Activity',
-          'User',
-          'CrmPipeline',
-          'CrmProduct',
-          'CrmDealItem',
-          'CrmCommercialDocument',
-          // Comercial Inteligente (ver prisma/schema.prisma) — mesmo tratamento: organizationId
-          // é sempre injetado a partir do tenant da request, nunca aceito do corpo do payload.
-          'CommercialGoal',
-          'LeadStageHistory',
-          'LeadFieldChange',
-        ];
         const auditableModels = [
           'Company',
           'Contact',
@@ -284,10 +271,11 @@ export const prisma = basePrisma.$extends({
           'CrmProduct',
           'CrmDealItem',
           'CrmCommercialDocument',
+          'Attachment',
         ];
         const isAuditable = auditableModels.includes(model as string);
 
-        if (tenantId && tenantModels.includes(model as string)) {
+        if (tenantId && TENANT_INJECTED_MODELS.includes(model as string)) {
           const a = args as Record<string, unknown>;
           if (operation === 'create' || operation === 'createMany') {
             if (a.data) {

@@ -32,20 +32,32 @@ import { prisma } from '../../../lib/prisma.js';
  *    lead duplicado para o lead sobrevivente, para que esse conteúdo real não desapareça do
  *    histórico do contato.
  *
- *    TODO(merge real completo — fora do escopo desta correção de segurança): esta função só
- *    reatribui Note/Activity/TimelineEvent. Um "merge" completo de domínio também reatribuiria
- *    `LeadStageHistory`, `LeadFieldChange`, `CrmDealItem`, `CrmCommercialDocument`, `CadenceRun`,
- *    `WhatsAppMessage`/`EmailMessage`, `ConversationSignal`, `OptOutRecord`, `Prospect` e outras
- *    relações com `leadId` (ver `prisma/schema.prisma`) para o lead sobrevivente antes de
- *    soft-deletar os duplicados. Como esses registros não têm `deletedAt` (não são "auditable" na
- *    extensão do Prisma) e o soft-delete de Lead nunca aciona o `onDelete: Cascade` do banco (só
- *    dispara em um DELETE físico, que nunca chega a acontecer aqui), eles não são destruídos —
- *    ficam preservados no banco, só temporariamente órfãos de um lead marcado como deletado, até
- *    um merge real futuro decidir para onde reatribuí-los.
+ * CRM-002/003 (Onda CRM/RevOps, decisão do usuário: religar de vez): o TODO acima documentava um
+ * merge parcial (só Note/Activity/TimelineEvent). Completo agora — reatribui TODAS as ~19 relações
+ * restantes que referenciam `leadId` no schema (`prisma/schema.prisma`) para o lead sobrevivente,
+ * na mesma transação, antes do soft-delete: `LeadStageHistory`, `LeadFieldChange`, `CrmDealItem`,
+ * `CrmCommercialDocument`, `CallSuppression`, `WhatsAppMessage`, `ConversationSignal`,
+ * `CopilotoConversation`, `CopilotoDealHealthSnapshot`, `BitrixSyncLog`, `VoiceCallLog`,
+ * `OptOutRecord`, `Prospect`, `MesaTratamentoTreatment`, `CadenceRun`, `EmailMessage`,
+ * `CadenceCalendarEvent`, `DealClosureEvent` e `Attachment`. Nenhuma dessas 19 tem `@@unique`
+ * envolvendo `leadId` (conferido em todo o schema), então um `updateMany` em lote nunca colide com
+ * uma linha já existente do lead sobrevivente.
  *
- * Esta classe segue sem nenhum caller (rota/job/cron) nesta rodada — permanece "unreachable" até
- * alguém decidir religá-la. Este fix garante que, no dia em que for religada, ela não cause perda
- * de dado irreversível nem vazamento cross-tenant.
+ * De propósito, esta sequência NÃO usa um `prisma.$transaction([...])` envolvendo as chamadas —
+ * cada operação sobre o client estendido já abre sua PRÓPRIA transação interativa internamente
+ * (`executeWithRls` em `src/lib/prisma.ts`, necessária pra setar `app.current_tenant_id` via
+ * `SET LOCAL` antes da query real). O comentário grande em `executeWithRls` documenta um achado
+ * real do Prisma 7 (Onda 9): combinar `$executeRawUnsafe` com uma promise que atravessa a cadeia
+ * de extensão dentro de um `$transaction` array-form não garante que a segunda operação realmente
+ * chegue ao Postgres dentro da mesma transação — foi corrigido migrando para transação interativa
+ * POR CHAMADA, não combinando chamadas numa transação externa. Se uma reatribuição falhar no meio
+ * da sequência, o erro sobe (sem catch mascarando) e o Lead nunca chega a ser soft-deletado — as
+ * reatribuições já aplicadas ficam de pé (idempotentes: rodar de novo só reatribui o que ainda
+ * aponta pro duplicado), nunca um estado pior que o inicial.
+ *
+ * Agora tem caller real: `POST /api/leads/dedup/preview` (dry-run, mostra os grupos antes de
+ * mesclar) e `POST /api/leads/dedup/merge` (executa), ambos em
+ * `src/features/crm/routes/leadDedup.routes.ts` — ver UI em `LeadDedupPanel.tsx`.
  */
 export class LeadDeduplicationService {
   /**
@@ -90,8 +102,8 @@ export class LeadDeduplicationService {
             const duplicateIds = duplicateLeads.map((l) => l.id);
 
             // Preserva o conteúdo real dos leads duplicados reatribuindo pro sobrevivente ANTES
-            // de soft-deletar — ver TODO na doc da classe sobre o que fica de fora deste merge
-            // parcial.
+            // de soft-deletar — merge completo, ver doc da classe pra lista completa e por que
+            // cada chamada roda sequencial (não dentro de um $transaction externo).
             await prisma.note.updateMany({
               where: { leadId: { in: duplicateIds } },
               data: { leadId: survivor.id },
@@ -101,6 +113,82 @@ export class LeadDeduplicationService {
               data: { leadId: survivor.id },
             });
             await prisma.activity.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.attachment.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.leadStageHistory.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.leadFieldChange.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.crmDealItem.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.crmCommercialDocument.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.callSuppression.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.whatsAppMessage.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.conversationSignal.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.copilotoConversation.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.copilotoDealHealthSnapshot.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.bitrixSyncLog.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.voiceCallLog.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.optOutRecord.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.prospect.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.mesaTratamentoTreatment.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.cadenceRun.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.emailMessage.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.cadenceCalendarEvent.updateMany({
+              where: { leadId: { in: duplicateIds }, organizationId },
+              data: { leadId: survivor.id },
+            });
+            await prisma.dealClosureEvent.updateMany({
               where: { leadId: { in: duplicateIds }, organizationId },
               data: { leadId: survivor.id },
             });
@@ -128,6 +216,61 @@ export class LeadDeduplicationService {
         logger.error({ err: error, organizationId }, 'Falha na deduplicação de leads');
         throw error;
       }
+    });
+  }
+
+  /**
+   * Mesmo agrupamento de `deduplicateByEmail`, só leitura — nenhum dado é alterado. Usado pela UI
+   * (`LeadDedupPanel.tsx`) para mostrar os grupos e o sobrevivente calculado ANTES de o usuário
+   * confirmar o merge de verdade (`POST /api/leads/dedup/merge`).
+   */
+  async previewDuplicates(organizationId: string): Promise<{
+    groups: Array<{
+      contactId: string;
+      survivorId: string;
+      duplicateIds: string[];
+      leads: Array<{
+        id: string;
+        title: string | null;
+        amount: number | null;
+        currency: string;
+        status: string;
+        createdAt: Date;
+      }>;
+    }>;
+  }> {
+    return requestContext.run({ tenantId: organizationId }, async () => {
+      const duplicates = await prisma.lead.groupBy({
+        by: ['contactId'],
+        where: { organizationId, contactId: { not: null } },
+        having: { contactId: { _count: { gt: 1 } } },
+      });
+
+      const groups = [];
+      for (const dup of duplicates) {
+        if (!dup.contactId) continue;
+        const leads = await prisma.lead.findMany({
+          where: { organizationId, contactId: dup.contactId },
+          orderBy: { amount: 'desc' },
+          select: {
+            id: true,
+            title: true,
+            amount: true,
+            currency: true,
+            status: true,
+            createdAt: true,
+          },
+        });
+        if (leads.length <= 1) continue;
+        const [survivor, ...duplicateLeads] = leads;
+        groups.push({
+          contactId: dup.contactId,
+          survivorId: survivor.id,
+          duplicateIds: duplicateLeads.map((l) => l.id),
+          leads,
+        });
+      }
+      return { groups };
     });
   }
 }
