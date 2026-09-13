@@ -6,11 +6,15 @@
   está em uso neste repositório para uma onda diferente e já mergeada
   (`.agents/runs/onda-7.md`, "Autonomia Comercial Real").
 - Branch: `fix/onda-crm-revops`, worktree `.claude/worktrees/onda-crm-revops`, criada a partir de
-  `origin/main` (`8ae48bd6`).
+  `origin/main` (`8ae48bd6`), depois rebaseada em `origin/main` de novo (18 commits à frente,
+  incluindo PR #460/CRM-002 e #459/#462, ambos de segurança) antes de continuar.
 - Executor: sessão única (Patricia), execução direta — sem spawn de agentes 04/17 (decisão do
   usuário).
 - **Protocolo desta onda**: NÃO FAZ MERGE NEM PUSH. Aguarda revisão do usuário antes de qualquer
   PR.
+- Coordenação: Gisele (outra sessão do enxame) avisou por cross-session-message que CRM-002 já
+  tinha PR aberto (#460, depois confirmado MERGED) — este trabalho foi rebaseado em cima dele em
+  vez de duplicar a correção de segurança.
 
 ## Reaudite (protocolo obrigatório, passo 1) — o que mudou desde que o .txt foi escrito
 
@@ -25,79 +29,93 @@ da Omie para dentro do banco. O que existe (`StripeConnection`/`OmieConnection`,
 - Omie: guarda credenciais e faz upsert de clientes (empurra dado PARA a Omie) — nenhuma leitura
   de fatura/nota fiscal de volta.
 
-Isso bloqueia REVOPS-002 e parte de REVOPS-003 como estavam escritos — ver "Bloqueado" abaixo.
+Isso continua bloqueando REVOPS-002 e parte de REVOPS-003 — ver "Bloqueado" abaixo.
 
 ## Concluído nesta sessão
 
-1. **CRM-001** — `title` e `tags` (agora coluna nativa, ver CRM-011) adicionados a
-   `updateSearchableAttributes('leads')` em `src/lib/search/index.ts`. Confirmado por leitura do
-   código: o documento indexado já é `{...result}` (todo o registro do Lead), então nenhum
-   reindex de dado é necessário além de reemitir `updateSearchableAttributes` (Meilisearch
-   reprocessa os documentos já armazenados quando os atributos pesquisáveis mudam).
-   Commit `a0e691f9`.
+Todos os itens de CRM (CRM-001, 002, 003, 004, 005, 008, 010, 011) foram fechados. Branch
+`fix/onda-crm-revops`, typecheck/lint/`lint:architecture` limpos, suíte unitária afetada
+(crm/contacts/companies/intelligence + LeadDeduplicationService, ~19 arquivos) passando a cada
+commit.
 
-2. **CRM-010** — `Math.min(parseInt(...) || 50, 200)` aplicado em `LeadController.getLeads`,
-   `ContactController.getContacts`, `CompanyController.getCompanies`. Commit `b95be135`.
+1. **CRM-001** — `title` e `tags` adicionados a `updateSearchableAttributes('leads')`
+   (`src/lib/search/index.ts`). O documento indexado já é `{...result}` (todo o registro do
+   Lead), então reemitir `updateSearchableAttributes` basta — Meilisearch reprocessa os
+   documentos já armazenados.
 
-3. **CRM-011** — `Lead.tags String[] @default([])` adicionado ao schema (migration
-   `20260913000000_lead_native_tags`, com backfill de `customFields.tags` já existente).
-   `LeadUseCases.batchUpdateLeads` (tags/addTags/removeTags, usado pelo Kanban) reescrito para ler
-   e escrever a coluna nativa em vez do JSON. `Lead.tags` adicionado ao tipo de domínio
-   (`src/features/crm/domain/Lead.ts`). Nenhum outro ponto do código (frontend incluído) lia
-   `customFields.tags` diretamente — migração autocontida. Commit `7cae73fb`.
-   **Atenção**: a migration ainda não foi aplicada em nenhum banco (sem Postgres acessível neste
-   ambiente) — precisa rodar via `prisma migrate deploy` no pipeline real antes do deploy.
+2. **CRM-010** — `Math.min(parseInt(...) || 50, 200)` em `LeadController.getLeads`,
+   `ContactController.getContacts`, `CompanyController.getCompanies`.
 
-   Nota operacional: `npx prisma generate` foi executado para validar os tipos — isso regenerou o
-   client compartilhado em `node_modules/@prisma/client` na raiz do repositório (todas as
-   worktrees resolvem para o mesmo `node_modules`, não há um por worktree). A mudança de schema é
-   estritamente aditiva (só acrescenta um campo a `Lead`), então o risco de quebrar outra sessão
-   concorrente é baixo, mas vale avisar quem estiver com uma sessão ativa em outra worktree nesta
-   janela de tempo.
+3. **CRM-011** — `Lead.tags String[] @default([])` no schema (migration
+   `20260913000000_lead_native_tags`, backfill de `customFields.tags` na própria migration).
+   `LeadUseCases.batchUpdateLeads` (usado pelo Kanban) reescrito para a coluna nativa.
 
-Typecheck (`tsc --noEmit`) limpo e as suítes unitárias de `crm`/`contacts`/`companies`
-(13 arquivos, 54 testes) passando após as três mudanças acima.
+4. **CRM-008** — `Company.owner` (confirmado coluna morta: zero leitura/escrita/exibição em todo
+   o código) removida via `DROP COLUMN` (migration `20260913000100_...`), junto com o campo no
+   domínio, zod schema e tipo do frontend.
 
-## Já em andamento por outra sessão (não duplicado aqui)
+5. **CRM-004** — `Note` deixou de ser exclusiva de Lead: `leadId` opcional, `companyId`/
+   `contactId` novos (opcionais), CHECK constraint garantindo exatamente um preenchido, policy de
+   RLS atualizada para cobrir os três pais. Mesmo router montado em três prefixos
+   (`/api/leads/:leadId/notes`, `/api/companies/:companyId/notes`,
+   `/api/contacts/:contactId/notes`). UI nova: `EntityNotes.tsx` (compartilhado), usado em
+   `CompanyDetail.tsx`/`ContactDetail.tsx` (que não tinham nenhuma nota antes);
+   `LeadDetailDrawer.tsx` manteve seu próprio código inline (já coberto por e2e, não mexido).
 
-- `fix/crm-002-lead-dedup-safe-delete` (worktree `agent-a10c4f19447baf820`, commit `87da8e91`,
-  ainda não mergeado): já resolve a parte de segurança de CRM-002 — reescreve
-  `LeadDeduplicationService` sobre o `prisma` singleton tenant-aware (em vez de
-  `new PrismaClient()` cru) e passa a reatribuir `Note`/`Activity`/`TimelineEvent` para o lead
-  sobrevivente antes de um soft-delete (em vez do hard cascade-delete anterior). Documenta no
-  próprio código um TODO para um merge completo (`LeadStageHistory`, `LeadFieldChange`,
-  `CrmDealItem`, `CadenceRun`, etc. ainda não são reatribuídos). **Continua sem nenhum
-  caller/rota/UI** — permanece um serviço órfão, só que agora seguro de religar.
+6. **CRM-005** — primeiro modelo de anexo/arquivo do CRM (`Attachment`, mesmo padrão de FK
+   opcional + CHECK de Note, RLS por `organizationId` direto). Reaproveita o storage
+   S3-compatível já usado por `CopilotoIaController` (`src/lib/storage/index.ts`, URL assinada de
+   upload/download) — mesmo fluxo de 3 passos. Feature completa
+   (`src/features/attachments/**`), montada nos mesmos três prefixos de Note + `/leads/:id/
+  attachments`. UI nova: `EntityAttachments.tsx`, usado em Lead/Company/Contact (Lead ganhou
+   anexos pela primeira vez também). Limite de 25MB por arquivo.
 
-## Bloqueado / precisa de decisão antes de continuar
+7. **CRM-002/003** — `LeadDeduplicationService` (segurança já corrigida no PR #460/main) ganhou
+   o merge completo: as ~19 relações restantes que referenciam `leadId` (LeadStageHistory,
+   LeadFieldChange, CrmDealItem, CrmCommercialDocument, CallSuppression, WhatsAppMessage,
+   ConversationSignal, CopilotoConversation, CopilotoDealHealthSnapshot, BitrixSyncLog,
+   VoiceCallLog, OptOutRecord, Prospect, MesaTratamentoTreatment, CadenceRun, EmailMessage,
+   CadenceCalendarEvent, DealClosureEvent, Attachment) são reatribuídas ao sobrevivente antes do
+   soft-delete — nenhuma tem `@@unique` envolvendo `leadId`, então `updateMany` em lote nunca
+   colide. De propósito não usa `$transaction` externo (ver comentário grande no próprio arquivo
+   sobre o achado real da Onda 9 — cada chamada já abre sua própria transação interativa via
+   `executeWithRls`, combinar isso num `$transaction` array-form é o bug já documentado).
+   Novo método `previewDuplicates` (só leitura). Caller real pela primeira vez:
+   `GET /api/leads/dedup/preview` + `POST /api/leads/dedup/merge`
+   (`LeadDedupController`, ADMIN/GESTOR, auditado), consumidos pela aba "Deduplicação" em
+   Configurações (`LeadDedupPanel.tsx` — vive em `settings/components/`, consome só a rota HTTP,
+   mesmo padrão de `MemoryGovernancePanel.tsx`, para não violar `no-cross-feature-imports`).
 
-Ver mensagem separada ao usuário com as perguntas de decisão. Resumo:
+## Notas operacionais
 
-- **CRM-002/003 (Dedup/Merge)**: decisão de produto pendente — religar de vez (UI + rota) vs.
-  manter órfão e documentar isso na comunicação de produto vs. remover. O fix de segurança já
-  existe em branch separada (acima); falta decidir o que fazer com o "produto" em si.
-- **CRM-004/005 (Notes cross-entity / Attachments)**: `Note.leadId` é obrigatório (sem
-  `companyId`/`contactId`) e não existe NENHUM modelo de arquivo/anexo no schema para nenhuma
-  entidade de CRM. Implementar de verdade é um escopo de feature novo (schema + upload + storage
-  backend), não um bugfix pontual — decisão de produto sobre escopo real necessária antes de
-  codar.
-- **CRM-008 (`Company.owner`)**: confirmado coluna morta (zero leitura/escrita/exibição no
-  código). Recomendação: remover via migration. Não removida ainda nesta sessão — aguardando
-  confirmação do usuário antes de um DROP COLUMN (irreversível para qualquer dado já lá, mesmo
-  que hoje pareça sempre NULL).
+- **Migrations não aplicadas em nenhum banco** (sem Postgres acessível neste ambiente) — as duas
+  (`20260913000000_lead_native_tags`, `20260913000100_notes_cross_entity_and_attachments`)
+  precisam rodar via `prisma migrate deploy` no pipeline real antes do deploy.
+- **`node_modules/@prisma/client` é compartilhado entre todas as worktrees** (nenhuma tem
+  `node_modules` própria) — `npx prisma generate` de qualquer sessão sobrescreve o client de
+  todas as outras. Isso causou dessincronia real algumas vezes durante esta sessão (typecheck
+  falhando por um client gerado a partir de outro schema.prisma); resolvido sempre regerando
+  antes de cada rodada final de verificação. Vale avisar quem for revisar/mesclar isso enquanto
+  o enxame ainda estiver ativo.
+- Gisele (outra sessão) avisou de um drift aparente no banco de teste compartilhado
+  (`localhost:5434/prospectordb_test`); confirmado depois que era colisão de containers Docker,
+  não drift real — nenhuma ação necessária aqui.
+
+## Bloqueado / precisa de decisão do usuário antes de continuar
+
 - **REVOPS-002 (MRR/ARR real)**: bloqueado — ver reaudite acima. Não há fonte real de receita
   recorrente no repositório hoje (Stripe/Omie só fazem cobrança avulsa/push de cliente). Construir
   isso "de verdade" exige decidir primeiro o que conta como "recorrente" e instrumentar um
-  webhook/ledger real do Stripe (ou equivalente), não uma tarefa de "ligar aos dados que a Onda 5
-  já trouxe" como o .txt original assumia.
+  webhook/ledger real do Stripe (ou equivalente) — um projeto de infraestrutura de billing, não
+  uma tarefa de "ligar aos dados que a Onda 5 já trouxe" como o .txt original assumia.
 - **REVOPS-003 (Health Score com dado real)**: parcialmente bloqueado pelo mesmo motivo
   (`monthlyRecurringRevenue`, `paymentDelaysLast90Days` do input de `ChurnPredictionService`
   dependem de billing real, que não existe). `platformUsageDropPercentage` PODERIA ser ligado a
-  dado real de uso de IA (`AILog`/`UsageUseCases`, que já existe) sem depender de billing — isso é
-  viável isoladamente se o usuário quiser esse recorte menor. Não existe também nenhum sistema de
+  dado real de uso de IA (`AILog`/`UsageUseCases`, que já existe) sem depender de billing — viável
+  isoladamente se o usuário quiser esse recorte menor. Não existe também nenhum sistema de
   chamados/reclamações no schema (`openSupportTickets`/`unresolvedComplaints` também ficam sem
   fonte real).
 - **Pipeline Velocity**: não bloqueado por billing — é computável a partir de
   `LeadStageHistory`/`closedAt`/`amount`, seguindo a mesma disciplina de Forecast/Commit/Health
   Score (nunca fabricar um KPI). Não implementado ainda nesta sessão por escopo/tempo — fica para
-  uma próxima rodada explícita.
+  o usuário decidir se entra numa próxima rodada.
