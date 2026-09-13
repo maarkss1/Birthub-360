@@ -1,23 +1,23 @@
+import { AlertTriangle, Link2, Link2Off, Loader2, PlugZap, RefreshCw, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Link2, Link2Off, RefreshCw, Loader2, PlugZap, Zap } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { EmptyState } from '../../../components/ui/EmptyState';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
+import { EmptyState } from '../../../components/ui/EmptyState';
+import { Skeleton } from '../../../components/ui/Skeleton';
+import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
+import { api } from '../../../lib/api';
+import { toast } from '../../../lib/toast';
 import { BitrixImportPanel } from '../../integrations/components/BitrixImportPanel';
 import { BitrixSyncRulesPanel } from '../../integrations/components/BitrixSyncRulesPanel';
-import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
-import { toast } from '../../../lib/toast';
-import { api } from '../../../lib/api';
-import { KpiTile } from './KpiTile';
 import {
-  commercialIntelligenceApi,
-  formatPercent,
   type CommercialFilter,
   type CrmQualityIndex,
+  commercialIntelligenceApi,
   type DataReadinessScore,
+  formatPercent,
 } from '../commercialIntelligence.api';
+import { KpiTile } from './KpiTile';
 
 const IMPACT_LABEL: Record<'alto' | 'medio' | 'baixo', string> = {
   alto: 'Alto impacto',

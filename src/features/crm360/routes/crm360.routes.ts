@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { container } from '../../../shared/di/container.js';
-import type { Crm360Controller } from '../presentation/Crm360Controller.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
   crmDealItemSchema,
@@ -10,6 +9,7 @@ import {
   crmProductSchema,
   moveCrmRecordSchema,
 } from '../crm360.schema.js';
+import type { Crm360Controller } from '../presentation/Crm360Controller.js';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

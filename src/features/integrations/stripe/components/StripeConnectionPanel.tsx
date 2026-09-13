@@ -1,7 +1,7 @@
 import { Card } from '../../../../components/ui/Card';
 import { useAuth } from '../../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../../lib/auth/authorization';
 import { useStripeIntegration } from '../../../../hooks/useStripeIntegration';
+import { hasRequiredRole } from '../../../../lib/auth/authorization';
 
 type CapabilityStatus = 'connected' | 'pending';
 

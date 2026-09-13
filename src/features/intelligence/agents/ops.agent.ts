@@ -1,25 +1,24 @@
-import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
+import { type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { MessagesAnnotation, StateGraph } from '@langchain/langgraph';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
+import { logAiUsage } from '../../../lib/ai/gateway.js';
+import { getTenantId } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { assertPiiExternalConsent } from '../services/guardrails.service.js';
 import { getLeadContextTool, searchLeadsTool } from '../tools/crmTools.js';
 import { searchPlaybookTool } from '../tools/playbookTool.js';
+import { recordAgentFailure, saveAgentMemory } from './agentMemory.store.js';
 // GOV-13: as duas ferramentas de execução (`create_follow_up_task`/`notify_team`) agora vêm de
 // `opsPendingActions.tool.ts`, não mais de `../tools/opsTools.js` — mesmo nome/schema visível ao
 // LLM, mas em vez de executar direto elas registram uma `AIPendingAction` e a execução real só
 // acontece após aprovação humana (ver `opsPendingActions.tool.ts` para o raciocínio completo).
 import { createFollowUpTaskTool, notifyTeamTool } from './opsPendingActions.tool.js';
-import { type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { logger } from '../../../lib/logger.js';
-import { getTenantId, getUserId } from '../../../lib/async-context.js';
-import { agentMemory } from '../../../lib/ai/memory/mem0.js';
-import { logAiUsage } from '../../../lib/ai/gateway.js';
 import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
 } from './swarm.constants.js';
-import { assertPiiExternalConsent } from '../services/guardrails.service.js';
-import { saveAgentMemory, recordAgentFailure } from './agentMemory.store.js';
-import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
 
 // O Agente de Operações é o "braço executor" do enxame: não só analisa, ele age nas demais
 // ferramentas do sistema (CRM, agenda, notificações), sempre em cima de dados reais buscados
@@ -61,24 +60,6 @@ interface SerializedMessage {
 }
 
 async function callModel(state: typeof MessagesAnnotation.State) {
-  const tenantId = getTenantId() || 'system';
-  const userId = getUserId() || 'system';
-
-  const humanMessages = state.messages.filter(
-    (m) => (typeof m.getType === 'function' && m.getType() === 'human') || m.type === 'human',
-  );
-  const lastHumanMessage = humanMessages[humanMessages.length - 1];
-  const query =
-    lastHumanMessage && typeof lastHumanMessage.content === 'string'
-      ? lastHumanMessage.content
-      : 'operação';
-
-  const memories = await agentMemory.search(query, {
-    userId: `${tenantId}:${userId}`,
-    agentId: 'ops',
-  });
-
-  const memoryContext = agentMemory.formatForPrompt(memories);
   const systemPrompt = new SystemMessage(
     `${SWARM_IDENTITY} Você é o Agente de Operações (Ops): PROPÕE ações concretas nas ferramentas do sistema a partir de uma instrução, nunca apenas descreve o que deveria ser feito — mas, assim como os demais agentes do enxame (SDR/BDR/Closer/CRM), toda ação com efeito real fica pendente de aprovação humana antes de ser executada de fato; você mesmo nunca envia/cria nada diretamente.
 
@@ -90,7 +71,7 @@ DIRETRIZES DE EXECUÇÃO:
 5. Para propor um alerta à equipe comercial sobre um risco, oportunidade ou resultado importante, use 'notify_team' — isto também registra uma proposta pendente, não envia a notificação imediatamente.
 6. Encerre sempre com uma síntese clara da ação PROPOSTA (ex: tarefa/notificação registrada e aguardando aprovação humana), detalhando responsável, prazo e objetivo — nunca diga que a ação já foi executada/enviada/criada. ${SWARM_OUTPUT_CONTRACT}
 
-${memoryContext}\n\n${SWARM_UNTRUSTED_CONTENT_GUARD}`,
+${SWARM_UNTRUSTED_CONTENT_GUARD}`,
   );
 
   const startTime = Date.now();

@@ -83,7 +83,6 @@ export const companySchema = z.object({
   city: z.string().optional().nullable(),
   state: z.string().optional().nullable(),
   zipCode: z.string().optional().nullable(),
-  owner: z.string().optional().nullable(),
   status: z.enum(COMPANY_STATUS).default('Ativo'),
   tags: z.array(z.string()).optional().default([]),
   observations: z.string().optional().nullable(),
@@ -141,6 +140,30 @@ export const activitySchema = z.object({
 export const noteSchema = z.object({
   content: z.string().min(1, 'Conteúdo é obrigatório'),
   author: z.string().min(1, 'Autor é obrigatório'),
+});
+
+// CRM-005: 25MB — mesma ordem de grandeza de anexo de e-mail comum (Gmail: 25MB), sem depender de
+// upload multipart resumível que este projeto não tem. sizeBytes é informado pelo cliente nos dois
+// passos (mesmo padrão hoje aceito em completeAudioUpload/CopilotoIaController — não há uma
+// verificação server-side do tamanho real do objeto já no bucket), então este teto é defesa contra
+// erro/abuso óbvio, não uma garantia de enforcement contra um cliente malicioso.
+export const MAX_ATTACHMENT_SIZE_BYTES = 25 * 1024 * 1024;
+
+export const attachmentUploadUrlSchema = z.object({
+  fileName: z.string().min(1, 'Nome do arquivo é obrigatório').max(255),
+  mimeType: z.string().min(1, 'Tipo do arquivo é obrigatório').max(255),
+  sizeBytes: z
+    .number()
+    .int()
+    .positive('Tamanho do arquivo deve ser maior que zero')
+    .max(MAX_ATTACHMENT_SIZE_BYTES, 'Arquivo excede o limite de 25MB por anexo'),
+});
+
+export const attachmentCompleteSchema = z.object({
+  objectKey: z.string().min(1),
+  fileName: z.string().min(1).max(255),
+  mimeType: z.string().min(1).max(255),
+  sizeBytes: z.number().int().positive().max(MAX_ATTACHMENT_SIZE_BYTES),
 });
 
 export const registerSchema = z.object({

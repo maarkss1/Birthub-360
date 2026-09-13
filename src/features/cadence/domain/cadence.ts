@@ -21,8 +21,7 @@
 import type { CadenceChannel } from './optOut.js';
 import type { RateLimitBlockReason } from './rateLimit.js';
 
-export type { CadenceChannel };
-export type { RateLimitBlockReason };
+export type { CadenceChannel, RateLimitBlockReason };
 
 /** Um passo da sequência configurável (e-mail → WhatsApp → voz → e-mail…). */
 export interface CadenceTouch {

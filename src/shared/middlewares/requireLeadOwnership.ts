@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { AuthRequest } from './authenticateToken.js';
+import type { NextFunction, Request, Response } from 'express';
 import { prisma } from '../../lib/prisma.js';
 import { routeParam } from '../http/routeParams.js';
+import type { AuthRequest } from './authenticateToken.js';
 
 /**
  * CLOSER/SDR só pode editar/excluir/reenriquecer os leads que capturou — GESTOR/ADMIN já são

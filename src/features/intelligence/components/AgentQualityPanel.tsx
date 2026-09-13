@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  ShieldCheck,
   AlertTriangle,
-  DollarSign,
   Clock,
-  UserCheck,
-  RotateCcw,
-  Wrench,
-  Lock,
-  HelpCircle,
   Database,
+  DollarSign,
+  HelpCircle,
+  Lock,
+  RotateCcw,
+  ShieldCheck,
+  UserCheck,
+  Wrench,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { staggerContainer, staggerItem } from '../../../lib/motion';
 import { api } from '../../../lib/api';
+import { staggerContainer, staggerItem } from '../../../lib/motion';
 
 // Tipos duplicados localmente (não importados do serviço de backend) — mesmo padrão já usado em
 // useBitrixIntegration.ts para BitrixConnectionSummary. Espelham exatamente

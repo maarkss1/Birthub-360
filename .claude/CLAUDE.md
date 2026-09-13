@@ -44,9 +44,10 @@ aprendizado incorporado aqui e um registro curto em `.claude/PILOTS.md`. Ver Pil
   CRM). `recharts` para gráficos. `lucide-react` para ícones. Tipografia self-hosted em
   `public/fonts/`: **Bodoni Moda** (display, H1-H3) e **Inter** (interface, H4-H6 e corpo) —
   nenhuma requisição a CDN de fonte.
-  `@react-three/fiber` + `drei` + `three` já são dependências reais, usadas hoje só num widget de
-  gamificação decorativo (`src/features/gamification/components/SpaceGame.tsx`) e no
-  `BrandOrb.tsx`.
+  `@react-three/fiber` + `drei` + `three` já são dependências reais, usadas hoje em
+  `src/components/ui/BrandOrb.tsx` e em `src/features/dashboard/components/RevenueSignalOrb.tsx`
+  (Onda 8, FRONTEND-005: a menção anterior a `SpaceGame.tsx`/`GameWidget.tsx`/`AtlasOrb.tsx` citava
+  arquivos já removidos do repositório — `src/features/gamification/` hoje só tem backend).
 - **Também é um app Android** via Capacitor (`android/`, `capacitor.config.ts`) — todo layout
   precisa funcionar em viewport de celular de verdade, não só "responsivo em teoria".
 - **Público:** ferramenta de trabalho para times comerciais (SDR, closers, gestão). Não é um site

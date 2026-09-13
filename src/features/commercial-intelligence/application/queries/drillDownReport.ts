@@ -11,7 +11,7 @@ import type {
   ForecastExplain,
   ForecastTier,
 } from '../../domain/CommercialIntelligence';
-import { STAGE_AGING_CRITICAL_DAYS, isDealOpen } from '../pipelineEligibility';
+import { isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility';
 import { loadScoredDeals, riskImpactValue, type ScoredDeal } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
 

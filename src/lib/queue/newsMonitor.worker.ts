@@ -1,11 +1,11 @@
-import { Queue, Worker, type Job } from 'bullmq';
 import type { Prisma } from '@prisma/client';
-import { connection } from './redis.js';
+import { type Job, Queue, Worker } from 'bullmq';
+import { searchCompanyNews } from '../../features/prospecting/services/news.service.js';
+import { requestContext } from '../async-context.js';
 import { logger } from '../logger.js';
 import { prisma } from '../prisma.js';
-import { requestContext } from '../async-context.js';
-import { recordDeadLetter, isFinalAttempt } from './deadLetter.js';
-import { searchCompanyNews } from '../../features/prospecting/services/news.service.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { connection } from './redis.js';
 
 /**
  * D.2 do audit da Fase 0 (`.agents/runs/ldr-fase-0-auditoria.md`): este worker já existia com

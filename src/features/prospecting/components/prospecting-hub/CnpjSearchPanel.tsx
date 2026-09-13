@@ -1,4 +1,4 @@
-import { Search, Loader2, AlertTriangle, Landmark } from 'lucide-react';
+import { AlertTriangle, Landmark, Loader2, Search } from 'lucide-react';
 import type { CnpjLookupResult } from '../../services/enrichment.service';
 import { CnpjResultCard } from './CnpjResultCard';
 

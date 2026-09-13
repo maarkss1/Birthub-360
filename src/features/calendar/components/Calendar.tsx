@@ -1,52 +1,51 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   DndContext,
+  type DragEndEvent,
   DragOverlay,
+  type DragStartEvent,
   PointerSensor,
-  useSensor,
-  useSensors,
   useDraggable,
   useDroppable,
-  type DragEndEvent,
-  type DragStartEvent,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core';
 import {
+  AlertTriangle,
   CalendarDays,
+  Check,
   ChevronLeft,
   ChevronRight,
-  Loader2,
-  AlertTriangle,
-  Check,
-  X,
-  Link2,
   Download,
+  Link2,
+  Loader2,
+  X,
 } from 'lucide-react';
-
-import { Card } from '../../../components/ui/Card';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { Dialog } from '../../../components/ui/Dialog';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { toast } from '../../../lib/toast';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { downloadFile } from '../../../lib/api';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { SoundFX } from '../../../lib/soundEffects';
-import { BookingLinksModal } from './BookingLinksModal';
+import { toast } from '../../../lib/toast';
 import {
-  calendarApi,
+  type ActivityStatus,
   activitySubject,
   type CalendarActivity,
-  type ActivityStatus,
+  calendarApi,
 } from '../calendar.api';
 import {
-  buildMonthGrid,
-  monthGridRange,
-  groupByDay,
-  dayKey,
-  moveToDay,
   addMonths,
+  buildMonthGrid,
+  dayKey,
+  groupByDay,
   isSameDay,
+  monthGridRange,
+  moveToDay,
 } from '../calendar.util';
+import { BookingLinksModal } from './BookingLinksModal';
 
 const WEEKDAYS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 

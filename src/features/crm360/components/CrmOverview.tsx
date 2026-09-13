@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Activity,
@@ -16,11 +15,12 @@ import {
   Trophy,
   Users,
 } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button } from '../../../components/ui/Button';
 import { api } from '../../../lib/api';
 import { clientLogger } from '../../../lib/clientLogger';
+import { fadeInUp, staggerContainer } from '../../../lib/motion';
 import { SoundFX } from '../../../lib/soundEffects';
-import { Button } from '../../../components/ui/Button';
-import { staggerContainer, fadeInUp } from '../../../lib/motion';
 import type { CrmOverviewData } from '../crm360.types';
 
 interface CrmOverviewProps {

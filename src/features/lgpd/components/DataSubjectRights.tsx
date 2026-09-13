@@ -1,13 +1,13 @@
+import { Download, Loader2, Search, ShieldAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Download, ShieldAlert, Loader2, Search } from 'lucide-react';
+import { Button } from '../../../components/ui/Button';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { api } from '../../../lib/api';
 import { contactsDB } from '../../../lib/db';
@@ -195,9 +195,9 @@ export function DataSubjectRights() {
             </Button>
             <Button
               type="button"
+              variant="destructive"
               onClick={() => void handleErase()}
               disabled={erasing}
-              className="bg-danger-active text-white hover:brightness-110"
             >
               {erasing ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

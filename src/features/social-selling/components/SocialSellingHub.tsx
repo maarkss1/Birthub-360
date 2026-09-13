@@ -1,14 +1,5 @@
+import { Check, Copy, ExternalLink, Layers, Search, Share2, Sparkles, Target } from 'lucide-react';
 import { useState } from 'react';
-import {
-  Share2,
-  ExternalLink,
-  Layers,
-  Search,
-  Copy,
-  Check,
-  Sparkles,
-  Target,
-} from 'lucide-react';
 import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader';
 import { BRAND } from '../../../config/brand';
 

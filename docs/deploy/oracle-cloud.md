@@ -219,7 +219,7 @@ indisponibilidade do banco; o volume `oci_pgdata` é preservado):
 cd ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR
 git pull
 ./scripts/deploy-oci.sh          # rebuild da imagem do Postgres (TLS) + recreate do container
-docker exec -i atlasgr_postgres psql -U prospector -d prospectordb -tAc "show ssl"   # esperado: on
+docker exec -i birthhub_postgres psql -U prospector -d prospectordb -tAc "show ssl"   # esperado: on
 ```
 
 **Security List da VCN** (Console OCI → Networking → VCN → Security List → Ingress Rules): uma
@@ -298,7 +298,7 @@ No fluxo automatizado de OCI, um valor forte é gerado e armazenado somente em `
 Para redefinir intencionalmente a credencial, altere `INITIAL_ADMIN_PASSWORD` no ambiente seguro e execute novamente:
 
 ```bash
-docker exec -i atlasgr_app npx tsx scripts/seed-team.ts
+docker exec -i birthhub_app npx tsx scripts/seed-team.ts
 ```
 
 A variável deve ter pelo menos 16 caracteres. Depois da alteração, mantenha o arquivo protegido e trate qualquer credencial que tenha sido publicada anteriormente no histórico do Git como comprometida.
@@ -322,7 +322,7 @@ Após o deploy, valide pelo menos:
 
 ```bash
 docker compose --env-file .env.production -f docker-compose.oci.yml ps
-docker exec -i atlasgr_postgres pg_isready -U prospector -d prospectordb
+docker exec -i birthhub_postgres pg_isready -U prospector -d prospectordb
 curl -fsS http://127.0.0.1:3000/health/live
 curl -fsS http://127.0.0.1:3000/health/ready   # confirma conexão real com o banco (SELECT 1)
 ```
@@ -372,7 +372,7 @@ Antes do cutover de DNS, confirme também (fora do escopo do script, ação huma
 
 ## 8. Backup e restauração do PostgreSQL
 
-`scripts/backup-oci.sh` roda `pg_dump` dentro do container `atlasgr_postgres` (sem exigir
+`scripts/backup-oci.sh` roda `pg_dump` dentro do container `birthhub_postgres` (sem exigir
 `postgresql-client` no host), comprime o dump e grava fora do container:
 
 ```bash
@@ -470,72 +470,95 @@ valor:
 
 ---
 
-## 11. Observabilidade (Prometheus/Grafana/Loki) — fora do MVP, decisão registrada (ACH-10-01)
+## 11. Observabilidade (Prometheus) — opt-in desde a Onda 2 (DEVOPS-003)
 
 **Contexto**: ADR-004 (2026-09-05) moveu a produção definitiva para esta stack, já recebendo
 tráfego real (ver `docs/deploy/README.md` §1). `infrastructure/observability/` já tem um stack
 completo (Prometheus, Grafana, Loki, Tempo, OTel Collector) pronto e em uso no **ambiente local**
-(`docker-compose.opensource.yml`, subido por `npm run infra:up`) — mas `docker-compose.oci.yml`
-não sobe nenhum desses serviços, e nenhum Prometheus externo está apontado para esta instância.
+(`docker-compose.opensource.yml`, subido por `npm run infra:up`).
 
-**Isto é uma decisão de escopo, não uma lacuna esquecida** — e a razão não é só "faltou tempo": há
-uma barreira técnica real.
+**Atualização (Onda 2, DEVOPS-003)**: esta seção documentava uma barreira técnica que, na
+reauditoria desta onda, não se sustentou — ver 11.1. `docker-compose.oci.yml` agora sobe um
+Prometheus real para esta instância (scrape de métricas/health, seção 11.2), como profile opt-in.
+Grafana/Loki/Tempo (dashboards, logs, tracing) continuam fora deste pass — ver 11.4.
 
-### 11.1 Por que não é um simples "copiar os serviços do stack local"
+### 11.1 A barreira técnica documentada aqui não se sustentou
 
 O endpoint `GET /metrics` da aplicação (`src/bootstrap/observability.ts`,
 `mountMetricsEndpoint`) é protegido por `requirePlatformOperator`
 (`src/shared/middlewares/requirePlatformOperator.ts`) — a mesma trava de segurança usada pelo
 BullBoard (`/admin/queues`). Ele exige um token válido em **um destes três lugares**: o header
-customizado `x-platform-operator-token`, a query string `?operator_token=`, ou um cookie. O
-`scrape_config` nativo do Prometheus (`static_configs` + `authorization`/`basic_auth`) só sabe
-enviar `Authorization: Bearer <token>` ou Basic Auth — **nenhum dos dois bate com o header
-customizado que a aplicação espera**. Sem alterar `requirePlatformOperator` para também aceitar
-`Authorization: Bearer` (mudança de código de segurança, fora do escopo desta correção de
-infraestrutura — domínio do Agente 01/dono de `src/shared/middlewares/`), um Prometheus real não
-consegue autenticar contra `/metrics` nesta instância sem inventar um proxy/sidecar adicional só
-para reescrever o header, o que adicionaria complexidade e superfície de ataque não avaliadas nesta
-rodada.
+customizado `x-platform-operator-token`, a query string `?operator_token=`, ou um cookie
+(`tests/unit/shared/middlewares/requirePlatformOperator.test.ts` cobre os três).
 
-Publicar `/metrics` sem essa trava (ex.: só verificando IP de origem) também não foi escolhido:
-`/metrics` expõe cardinalidade e nomes de métrica de negócio (uso de IA por org, filas por tenant)
-que a mesma trava de "operador de plataforma" já existe precisamente para não deixar público — SEC-
-001/SEC-002 (ver o comentário de `requirePlatformOperator.ts`).
+A versão anterior desta seção afirmava que o `scrape_config` nativo do Prometheus só sabe enviar
+`Authorization: Bearer`/Basic Auth, nenhum dos dois compatível com o header customizado — o que é
+verdade para esses dois campos específicos, mas **o Prometheus também tem um campo nativo
+`params`** (parâmetros de URL arbitrários, documentado em toda versão do `scrape_config`) — e a
+aplicação já aceita o token exatamente por essa via (`?operator_token=...`, o segundo dos três
+lugares acima). Ou seja: zero mudança de código de segurança é necessária — a "barreira" era uma
+lacuna na análise da configuração do Prometheus, não uma limitação real da aplicação. Ver
+`infrastructure/observability/prometheus.oci.yml.tpl` para o `scrape_config` real usando esse
+campo.
 
-### 11.2 Decisão
+Publicar `/metrics` sem a trava de operador (ex.: só verificando IP de origem) continua não sendo o
+caminho escolhido: `/metrics` expõe cardinalidade e nomes de métrica de negócio (uso de IA por
+org, filas por tenant) que a mesma trava de "operador de plataforma" já existe precisamente para
+não deixar público — SEC-001/SEC-002 (ver o comentário de `requirePlatformOperator.ts`). O scrape
+do Prometheus desta instância nunca atravessa essa trava publicamente de qualquer forma: ele roda
+inteiramente dentro da rede interna do Docker Compose (alvo `app:3000`), nunca via domínio
+público/Caddy.
 
-**Observabilidade centralizada (Prometheus/Grafana/Loki) para a instância Oracle real fica fora do
-MVP.** Enquanto isso, um incidente real nesta instância só é descoberto por relato de usuário ou
-checagem manual de `/health/live`/`/health/ready`/logs do Docker (ver
-`infrastructure/observability/RUNBOOK.md` seção 0-OCI). Isso é uma regressão real de
-confiabilidade frente ao Render (que, apesar de também não ter Prometheus apontado, tem dashboard
-e alertas nativos da plataforma — ver `RUNBOOK.md` seção 0.3) e frente ao que o stack local já
-oferece — registrado aqui para não ser esquecido, não para ser minimizado.
+### 11.2 Como habilitar
 
-**Prazo para reativar**: antes de qualquer decisão de desligar o Render (o critério de cutover já
-documentado em `docs/deploy/README.md` §1 — "não desligar antes do Go-Live Oracle estar
-validado"), esta lacuna deve estar resolvida ou explicitamente aceita pelo dono do produto como
-risco assumido. Ela também deve ser reavaliada se/quando o volume de organizações ativas crescer o
-suficiente para que "esperar relato de usuário" deixe de ser uma janela de detecção aceitável.
+Opt-in via `ENABLE_OBSERVABILITY=true` em `.env.production` (mesmo padrão de `ENABLE_QUEUES` —
+lido do arquivo persistido, não de uma variável de shell de uma única execução, para que
+redeploys futuros continuem subindo o Prometheus sem repetir a flag):
 
-### 11.3 Pré-requisitos já corretos, independente de quando a lacuna acima for fechada
+```bash
+echo "ENABLE_OBSERVABILITY=true" >> .env.production
+./scripts/deploy-oci.sh
+```
 
-- `EXPOSE_METRICS=true` no `.env.production` da instância — sem isso, `/metrics` nem existe
-  (`mountMetricsEndpoint` retorna cedo). Hoje não é gerado automaticamente por
-  `scripts/deploy-oci.sh` (só os segredos essenciais, ver seção 3.2) — precisa ser adicionado
-  manualmente ao arquivo antes de qualquer scraper (local, temporário, ou futuro) funcionar.
-- `PLATFORM_OPERATOR_TOKEN` configurado no mesmo arquivo — sem ele, `/metrics` (e `/admin/queues`)
-  negam por padrão (fail-closed, não é um "modo aberto" acidental).
-- Reportar o status desses dois (CONFIGURADO/NÃO NECESSÁRIO), nunca o valor, seguindo o mesmo
-  padrão da seção 10 deste guia.
+Isso faz o script:
+1. Gerar `PLATFORM_OPERATOR_TOKEN` em `.env.production` se ainda não existir (mesmo mecanismo dos
+   outros segredos, seção 3.2 — nunca impresso no log).
+2. Ligar `EXPOSE_METRICS=true` no mesmo arquivo.
+3. Renderizar `infrastructure/observability/prometheus.oci.generated.yml` (git-ignorado) a partir
+   do template, substituindo o token real.
+4. Subir o profile `observability` (serviço `prometheus`, `docker-compose.oci.yml`), reaproveitando
+   `infrastructure/observability/alert.rules.yml` (mesmos alertas já usados localmente —
+   `InstanceDown`, `HighEventLoopLag`, `AIBudgetOverrun`, etc.).
 
-### 11.4 Alternativa leve, se um monitoramento mínimo for necessário antes da solução definitiva
+**Sem** `ENABLE_OBSERVABILITY=true`, o comportamento é idêntico a antes desta onda: nenhum segredo
+novo é gerado, `EXPOSE_METRICS` não é alterado, nenhum Prometheus sobe.
+
+Acesso à UI do Prometheus (`http://127.0.0.1:9090` na própria instância, loopback de propósito —
+ver comentário do serviço no compose): via túnel SSH (`ssh -L 9090:127.0.0.1:9090 <host>`) até
+existir uma rota autenticada via Caddy, fora do escopo desta correção.
+
+### 11.3 O que ainda fica fora deste pass
+
+- **Grafana/Loki/Tempo/OTel Collector** (dashboards, agregação de logs, tracing distribuído) — o
+  stack local já tem os quatro prontos (`docker-compose.opensource.yml`), mas portá-los para a OCI
+  é um esforço maior (mais serviços, mais volumes, mais decisão de retenção/storage) do que o
+  escopo desta onda (métricas/health). Prometheus sozinho já resolve o risco central documentado em
+  DEVOPS-003 (incidente só descoberto por relato de usuário) — alertas ficam visíveis em
+  `/alerts` do próprio Prometheus mesmo sem Grafana.
+- **Alertmanager** — sem receptor configurado (mesma decisão já registrada para o stack local em
+  `infrastructure/observability/prometheus.yml`); alertas ficam visíveis via `/alerts`, não
+  notificam ninguém ainda.
+- Render continua sem Prometheus apontado (não fazia parte do escopo desta onda — só um dos dois
+  ambientes com tráfego real precisava ganhar um caminho funcional).
+
+### 11.4 Alternativa leve, se um monitoramento mínimo for necessário antes de habilitar o profile acima
 
 `docker-compose.services.yml` já traz **Uptime Kuma** (ver `docs/deploy/README.md` §6.1) como
 ferramenta opcional local — ele não faz parte de nenhum caminho de deploy hoje, mas é a opção mais
 barata para um operador apontar manualmente para `https://<domínio>/health/live` de fora da
-instância (uptime binário, sem métricas de negócio) enquanto a solução de Prometheus não é
-resolvida. Isso não substitui a seção 12.2 — é só um paliativo de detecção, não de diagnóstico.
+instância (uptime binário, sem métricas de negócio) sem precisar habilitar o profile
+`observability`. Isso não substitui a seção 11.2 — é só um paliativo de detecção, não de
+diagnóstico.
 
 ## 12. O que esta sessão não pôde validar
 
@@ -545,12 +568,26 @@ ambiente de execução):
 
 - `docker compose ... config --quiet` foi executado de fato (não só lido) contra o
   `docker-compose.oci.yml` atualizado, confirmando que a interpolação de variáveis funciona tanto
-  no stack mínimo (sem `REDIS_PASSWORD`) quanto com o profile `queues` ativo.
-- Sintaxe de `scripts/deploy-oci.sh`, `scripts/backup-oci.sh` e `scripts/restore-oci.sh` validada
-  (`bash -n`).
-- **Não testado**: os três scripts contra um Postgres/Docker daemon real (o ambiente desta sessão
-  não tem um daemon Docker em execução) — a lógica foi revisada linha a linha, mas só a execução
-  real na instância Oracle (ou em qualquer host com Docker rodando) prova o comportamento de fato.
+  no stack mínimo (sem `REDIS_PASSWORD`/sem `PLATFORM_OPERATOR_TOKEN`) quanto com os profiles
+  `queues` e `observability` ativos juntos (Onda 2, DEVOPS-003).
+- Sintaxe de `scripts/deploy-oci.sh` (incluindo o novo bloco `ENABLE_OBSERVABILITY`),
+  `scripts/backup-oci.sh` e `scripts/restore-oci.sh` validada (`bash -n`).
+- O caminho de autenticação por querystring que o `scrape_config` do novo serviço `prometheus`
+  depende (`?operator_token=...`) é coberto por
+  `tests/unit/shared/middlewares/requirePlatformOperator.test.ts` (passou nesta sessão) — mas isso
+  testa o middleware Express isoladamente, não um Prometheus real fazendo o scrape.
+- **Não testado nesta sessão**: um container `prom/prometheus` real fazendo scrape de um `/metrics`
+  real via este mecanismo, ponta a ponta (esta sessão tinha um daemon Docker disponível — diferente
+  de sessões anteriores que geraram este documento — mas não foi usado para esse teste específico,
+  por escopo/tempo). O comportamento do campo `params` do Prometheus está documentado oficialmente
+  (prometheus.io/docs/prometheus/latest/configuration/configuration/) e é o mesmo mecanismo que
+  `?operator_token=` já usa nos outros dois caminhos testados, mas a validação ponta a ponta real
+  (Prometheus↔app) só acontece rodando o profile `observability` de fato — no host OCI real, ou
+  localmente com `docker compose -f docker-compose.oci.yml --profile observability up`.
+- **Não testado**: os scripts de deploy/backup/restore contra um Postgres/Docker daemon real com os
+  containers de fato subindo (esta sessão validou sintaxe e interpolação, não uma subida real da
+  stack completa) — a lógica foi revisada linha a linha, mas só a execução real na instância Oracle
+  (ou em qualquer host com Docker rodando a stack completa) prova o comportamento de fato.
 - **Não provisionado nem acessado**: a instância Oracle Cloud em si (RUNNING, SSH, firewall/NSG,
   disco, memória, CPU) — nada disso é verificável sem credenciais OCI reais.
 - **Não executado**: qualquer smoke real (login, CRM, Prospecção, Copiloto) contra um domínio

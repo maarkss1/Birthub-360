@@ -13,18 +13,19 @@ import type {
   FirstContactSlaStats,
   FunnelStageConversion,
   PerformanceMetrics,
+  PipelineVelocityStats,
   RevenueConcentrationClient,
   RevenueConcentrationStats,
 } from '../../domain/CommercialIntelligence';
-import { STAGE_AGING_CRITICAL_DAYS, checkEligibility, isDealOpen } from '../pipelineEligibility';
-import { daysBetween, mean, median, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+import { checkEligibility, isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility';
 import { buildStageDurationStats, loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
 import {
   computeHistoricalStageReach,
   countAdvancedTransitions,
 } from '../scoring/stageHistoryAnalytics';
+import { daysBetween, mean, median, roundMoney } from '../shared/mathUtils';
+import { monthRange } from '../shared/period';
 
 /** Meta de horas até o primeiro contato — mesmo tipo de constante documentada de
  * `STAGE_AGING_CRITICAL_DAYS`, não um valor fabricado por relatório. Sem meta cadastrada por
@@ -60,6 +61,35 @@ function buildFirstContactSla(
     withinTargetPct:
       hoursSamples.length > 0 ? roundMoney((withinTarget / hoursSamples.length) * 100) : null,
     targetHours: FIRST_CONTACT_SLA_TARGET_HOURS,
+  };
+}
+
+/**
+ * Pipeline Velocity — quanto de receita o pipeline aberto tende a gerar por dia, combinando
+ * quantidade, taxa de conversão histórica, ticket médio e tempo de ciclo em um único número
+ * (Fórmula clássica de Sales Velocity). Nunca fabrica um valor quando falta qualquer uma das 4
+ * entradas — mesma disciplina de Forecast/Commit/Health Score.
+ */
+function buildPipelineVelocity(
+  openCount: number,
+  winRatePct: number | null,
+  averageOpenDealValue: number | null,
+  salesCycleMedianDays: number | null,
+): PipelineVelocityStats {
+  const hasAllInputs =
+    winRatePct != null &&
+    averageOpenDealValue != null &&
+    salesCycleMedianDays != null &&
+    salesCycleMedianDays > 0;
+
+  return {
+    value: hasAllInputs
+      ? roundMoney((openCount * (winRatePct / 100) * averageOpenDealValue) / salesCycleMedianDays)
+      : null,
+    openOpportunities: openCount,
+    winRatePct,
+    averageOpenDealValue,
+    salesCycleMedianDays,
   };
 }
 
@@ -145,6 +175,13 @@ export async function buildPerformance(
     .filter((s) => s.deal.closedAt)
     .map((s) => daysBetween(s.deal.createdAt, s.deal.closedAt as Date))
     .filter((d) => d >= 0);
+
+  const pipelineVelocity = buildPipelineVelocity(
+    open.length,
+    winRate,
+    avg(open),
+    median(cycleDays),
+  );
 
   const durationStats = buildStageDurationStats(history);
   const openStages = stages
@@ -239,6 +276,7 @@ export async function buildPerformance(
       medianDays: median(cycleDays),
       sampleSize: cycleDays.length,
     },
+    pipelineVelocity,
     funnel: cumulative,
     funnelHistoricalTrackingSince,
     firstContactSla,

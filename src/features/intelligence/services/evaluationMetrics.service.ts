@@ -1,5 +1,5 @@
 import { prisma } from '../../../lib/prisma.js';
-import { getSwarmSloSnapshot, emptyRate, type SloRate } from './swarmScheduler.service.js';
+import { emptyRate, getSwarmSloSnapshot, type SloRate } from './swarmScheduler.service.js';
 
 /**
  * AI-006 (onda 35): harness real das 9 dimensões de avaliação do enxame de IA
@@ -146,7 +146,7 @@ export async function getEvaluationMetricsSnapshot(
       ),
       piiLeakageRate: available(
         piiLeakageRate,
-        'Proxy: taxa de respostas de IA em que o guardrail de saída (redactSensitiveData) precisou mascarar um CPF — mede o que o guardrail já pegou, não vazamentos que ele não detecta.',
+        'Proxy: taxa de respostas de IA em que o guardrail de saída (redactSensitiveData) precisou mascarar PII (CPF, CNPJ, e-mail ou telefone) — mede o que o guardrail já pegou, não vazamentos que ele não detecta.',
       ),
       factuality: unavailable(AI005_BLOCKED_REASON),
       playbookAdherence: unavailable(AI005_BLOCKED_REASON),

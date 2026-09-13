@@ -1,4 +1,4 @@
-import { SystemMessage, HumanMessage } from '@langchain/core/messages';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
 import type {

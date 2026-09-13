@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '../../lib/prisma.js';
-import { logger } from '../../lib/logger.js';
 import { requestContext } from '../../lib/async-context.js';
+import { fromPrismaAutomationAction, toPrismaAutomationTrigger } from '../../lib/enumMap.js';
+import { logger } from '../../lib/logger.js';
+import { prisma } from '../../lib/prisma.js';
 import {
-  notificationService,
   type NotificationKind,
+  notificationService,
 } from '../notifications/notification.service.js';
-import { toPrismaAutomationTrigger, fromPrismaAutomationAction } from '../../lib/enumMap.js';
 import { automationHistoryService } from './automation-history.service.js';
 import {
   buildTriggerIdempotencyKey,
@@ -17,7 +17,6 @@ export type AutomationTrigger =
   | 'Lead criado'
   | 'Lead mudou de status'
   | 'Atividade concluída'
-  | 'Lead sem interação'
   | 'Lead estagnado';
 export type AutomationActionType = 'Notificar equipe' | 'Criar atividade' | 'Ligar via SDR de Voz';
 

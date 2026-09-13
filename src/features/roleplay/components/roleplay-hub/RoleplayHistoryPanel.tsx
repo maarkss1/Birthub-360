@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, History } from 'lucide-react';
-import { api } from '../../../../lib/api';
+import { useEffect, useState } from 'react';
 import { Dialog } from '../../../../components/ui/Dialog';
 import { ListSkeleton } from '../../../../components/ui/Skeleton';
 import type { PlaybookKey } from '../../../../config/playbooks';
+import { api } from '../../../../lib/api';
 import { scoreTextClassOnSurface } from './scoreColor';
 import type { RoleplayHistoryItem } from './types';
 

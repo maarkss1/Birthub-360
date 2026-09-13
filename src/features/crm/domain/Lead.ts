@@ -1,5 +1,5 @@
-import type { Repository } from '../../../shared/domain/Repository';
 import type { LeadFunnel, LeadStatus, LeadTemperature } from '@prisma/client';
+import type { Repository } from '../../../shared/domain/Repository';
 
 export interface Lead {
   id: string;
@@ -11,6 +11,7 @@ export interface Lead {
   probability: number | null;
   expectedCloseAt: Date | null;
   customFields: Record<string, unknown> | null;
+  tags: string[];
   pipelineId: string | null;
   pipelineStageId: string | null;
   /** Qual dos dois Kanbans (Leads ou Negócios) este registro pertence agora. */

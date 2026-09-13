@@ -1,16 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+  buildExecutiveExport,
+  buildExecutiveExportHtml,
+  buildExecutiveExportJson,
   buildExecutiveExportRows,
   rowsToCsv,
-  buildExecutiveExportJson,
-  buildExecutiveExportHtml,
-  buildExecutiveExport,
 } from '../application/executiveExport';
 import type {
+  ExecutiveAlert,
   ExecutiveOverview,
   PerformanceMetrics,
   PipelineCreation,
-  ExecutiveAlert,
 } from '../domain/CommercialIntelligence';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
@@ -124,6 +124,13 @@ const PERFORMANCE: PerformanceMetrics = {
   },
   averageTicket: { created: 25_000, open: 40_000, won: 80_000, lost: 5_000 },
   salesCycle: { meanDays: 26, medianDays: 26, sampleSize: 2 },
+  pipelineVelocity: {
+    value: 6153.85,
+    openOpportunities: 8,
+    winRatePct: 50,
+    averageOpenDealValue: 40_000,
+    salesCycleMedianDays: 26,
+  },
   funnel: [],
   funnelHistoricalTrackingSince: '2026-01-01T00:00:00Z',
   firstContactSla: {

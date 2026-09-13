@@ -1,12 +1,11 @@
+import { AlertTriangle, Info, Loader2, RefreshCw, Wallet } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { Wallet, Loader2, AlertTriangle, RefreshCw, Info } from 'lucide-react';
-
-import { Card } from '../../../components/ui/Card';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
-import { SINGLE, INK, tooltipStyle } from '../../../shared/constants/chartPalette';
+import { INK, SINGLE, tooltipStyle } from '../../../shared/constants/chartPalette';
 
 interface UsageByModel {
   model: string;

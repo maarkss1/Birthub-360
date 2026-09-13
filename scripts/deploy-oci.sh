@@ -3,8 +3,12 @@ set -euo pipefail
 
 # ==============================================================================
 # Script de Deploy e Configuração no Oracle Cloud Infrastructure (OCI)
-# Central de Inteligência Comercial AtlasGR
+# Central de Inteligência Comercial Birth Hub 360º
 # ==============================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/oci-containers.sh
+source "${SCRIPT_DIR}/lib/oci-containers.sh"
 
 ENV_FILE=".env.production"
 COMPOSE_FILE="docker-compose.oci.yml"
@@ -277,6 +281,29 @@ else
     echo "    docs/deploy/oracle-cloud.md para como habilitar quando uma jornada real depender disso."
 fi
 
+# 2.3 Observabilidade (Prometheus) — OFF por padrão, mesmo padrão de opt-in de ENABLE_QUEUES: lido
+# de .env.production (não de uma variável de shell passada uma única vez), para que redeploys
+# futuros continuem subindo o profile sem o operador precisar lembrar de repassar a flag toda vez
+# (DEVOPS-003, Onda 2: docs/deploy/oracle-cloud.md seção 11). Sem ENABLE_OBSERVABILITY=true no
+# .env.production, o comportamento é idêntico a antes desta correção: nenhum segredo novo é
+# gerado, EXPOSE_METRICS não é alterado, nenhum container de Prometheus sobe.
+PROMETHEUS_TPL="infrastructure/observability/prometheus.oci.yml.tpl"
+PROMETHEUS_GENERATED="infrastructure/observability/prometheus.oci.generated.yml"
+if [ "$(current_value "ENABLE_OBSERVABILITY")" = "true" ]; then
+    ensure_hex_secret "PLATFORM_OPERATOR_TOKEN" 32
+    set_env_value "EXPOSE_METRICS" "true"
+    COMPOSE_PROFILE_ARGS+=(--profile observability)
+    # Nunca versionado (ver .gitignore) — regenerado a cada deploy a partir do template, sempre com
+    # o token atual de .env.production.
+    sed "s|__PLATFORM_OPERATOR_TOKEN__|$(current_value "PLATFORM_OPERATOR_TOKEN")|" \
+        "$PROMETHEUS_TPL" > "$PROMETHEUS_GENERATED"
+    chmod 600 "$PROMETHEUS_GENERATED" 2>/dev/null || true
+    echo "📈 ENABLE_OBSERVABILITY=true — subindo Prometheus (profile 'observability'), scrape via rede interna do Compose."
+else
+    echo "ℹ️  ENABLE_OBSERVABILITY=false (padrão) — Prometheus NÃO será iniciado. Ver"
+    echo "    docs/deploy/oracle-cloud.md seção 11 para como habilitar."
+fi
+
 # Valida a interpolação antes de iniciar qualquer container.
 echo "🔎 3. Validando configuração do Docker Compose..."
 $DOCKER_COMPOSE_CMD --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "${COMPOSE_PROFILE_ARGS[@]}" config --quiet
@@ -288,18 +315,18 @@ $DOCKER_COMPOSE_CMD --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "${COMPOSE_PROFILE
 # 5. Aguarda o banco ficar pronto e executa as migrações Prisma
 echo "⏳ 5. Aguardando banco de dados inicializar..."
 RETRIES=30
-until docker exec -i atlasgr_postgres pg_isready -U prospector -d prospectordb 2>/dev/null || [ "$RETRIES" -le 0 ]; do
+until docker exec -i "$OCI_POSTGRES_CONTAINER" pg_isready -U prospector -d prospectordb 2>/dev/null || [ "$RETRIES" -le 0 ]; do
   echo "Aguardando Postgres ($RETRIES tentativas restantes)..."
   sleep 2
   RETRIES=$((RETRIES - 1))
 done
 
 echo "🗄️ 6. Executando migrações Prisma..."
-docker exec -i atlasgr_app npx prisma migrate deploy
+docker exec -i "$OCI_APP_CONTAINER" npx prisma migrate deploy
 
 # 7. Executa o seed para garantir o usuário único administrador se disponível
 echo "👤 7. Configurando usuário único administrador..."
-docker exec -i atlasgr_app npx tsx scripts/seed-team.ts 2>/dev/null || true
+docker exec -i "$OCI_APP_CONTAINER" npx tsx scripts/seed-team.ts 2>/dev/null || true
 
 echo "========================================================"
 echo "✅ Deploy no Oracle Cloud concluído com sucesso!"

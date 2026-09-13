@@ -1,24 +1,25 @@
+import { BrainCircuit, Flag, GitMerge, Moon, Puzzle, Shield, Sun, User, Users } from 'lucide-react';
 import { useState } from 'react';
-import { Sun, Moon, User, Users, Puzzle, Flag, Shield, BrainCircuit } from 'lucide-react';
+import { IconSliders } from '../../../components/icons';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '../../../components/ui/Card';
-import { IconSliders } from '../../../components/icons';
-import { useTheme } from '../../../contexts/ThemeContext';
 import { useAuth } from '../../../contexts/AuthContext';
-import { SoundFX } from '../../../lib/soundEffects';
+import { useTheme } from '../../../contexts/ThemeContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { SoundFX } from '../../../lib/soundEffects';
 import { FeatureFlagsPanel } from '../../feature-flags/components/FeatureFlagsPanel';
-import { Team } from '../../team/components/Team';
 import { Integrations } from '../../integrations/components/Integrations';
 import { AuditLogs } from '../../lgpd/components/AuditLogs';
 import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
-import { MemoryGovernancePanel } from './MemoryGovernancePanel';
+import { Team } from '../../team/components/Team';
+import { LeadDedupPanel } from './LeadDedupPanel';
 import { LearningProfilePanel } from './LearningProfilePanel';
+import { MemoryGovernancePanel } from './MemoryGovernancePanel';
 
 export function Settings() {
   const { theme, setThemeMode } = useTheme();
@@ -30,7 +31,7 @@ export function Settings() {
   const canViewAudit = hasRequiredRole(currentUser?.role ?? '', ['ADMIN', 'GESTOR']);
 
   const [activeTab, setActiveTab] = useState<
-    'profile' | 'users' | 'integrations' | 'featureFlags' | 'audit' | 'memory'
+    'profile' | 'users' | 'integrations' | 'featureFlags' | 'audit' | 'memory' | 'dedup'
   >('profile');
 
   return (
@@ -141,6 +142,22 @@ export function Settings() {
                 }`}
               >
                 <BrainCircuit size={16} /> Memória & Aprendizado
+              </button>
+            )}
+            {canViewAudit && (
+              <button
+                type="button"
+                onClick={() => {
+                  SoundFX.play('navigate');
+                  setActiveTab('dedup');
+                }}
+                className={`flex items-center gap-2 pb-3 border-b-2 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
+                  activeTab === 'dedup'
+                    ? 'border-brand text-brand-ink dark:text-brand'
+                    : 'border-transparent text-ink-2 hover:text-ink hover:border-line'
+                }`}
+              >
+                <GitMerge size={16} /> Deduplicação
               </button>
             )}
           </div>
@@ -278,6 +295,14 @@ export function Settings() {
           <div className="p-6 sm:p-8">
             <div className="max-w-5xl mx-auto">
               <MemoryGovernancePanel />
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'dedup' && canViewAudit && (
+          <div className="p-6 sm:p-8">
+            <div className="max-w-5xl mx-auto">
+              <LeadDedupPanel />
             </div>
           </div>
         )}

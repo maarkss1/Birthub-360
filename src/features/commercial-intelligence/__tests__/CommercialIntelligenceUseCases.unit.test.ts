@@ -1,20 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   CommercialIntelligenceUseCases,
   classifyCoverageProtection,
 } from '../application/CommercialIntelligenceUseCases';
 import {
-  summarizeForecastAccuracy,
   computeForecastAccuracy,
+  summarizeForecastAccuracy,
 } from '../application/forecastAccuracy';
 import { HEALTH_PILLAR_ORDER } from '../application/healthScore';
 import type {
+  CommercialGoalDTO,
   CommercialIntelligenceRepository,
   DealRow,
-  StageDefinition,
-  CommercialGoalDTO,
   GoalMetric,
   LeadFieldChangeRow,
+  StageDefinition,
 } from '../domain/CommercialIntelligence';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
@@ -413,6 +413,46 @@ describe('CommercialIntelligenceUseCases', () => {
     expect(performance.salesCycle.sampleSize).toBe(2);
     expect(performance.salesCycle.meanDays).toBeCloseTo((31 + 21) / 2, 1);
     expect(performance.salesCycle.medianDays).toBeCloseTo((31 + 21) / 2, 1);
+  });
+
+  it('Pipeline Velocity: combina oportunidades abertas, Win Rate, ticket médio aberto e mediana do ciclo', async () => {
+    const won = deal({
+      id: 'pv-ganho',
+      amount: 1,
+      stageIsWon: true,
+      closedAt: new Date('2026-08-11T03:00:00Z'), // 10 dias após createdAt padrão (01/08)
+    });
+    const lost = deal({
+      id: 'pv-perdido',
+      amount: 1,
+      stageIsLost: true,
+      closedAt: new Date('2026-08-21T03:00:00Z'), // 20 dias após createdAt padrão
+    });
+    const openDeal = deal({ id: 'pv-aberto', amount: 30_000 });
+    const repo = new FakeRepository([won, lost, openDeal]);
+    const useCases = new CommercialIntelligenceUseCases(repo);
+
+    const performance = await useCases.performance(ORG, { month: PERIOD }, NOW);
+
+    expect(performance.winRate).toBe(50);
+    expect(performance.salesCycle.medianDays).toBeCloseTo((10 + 20) / 2, 1); // 15
+    expect(performance.averageTicket.open).toBe(30_000);
+    expect(performance.pipelineVelocity.openOpportunities).toBe(1);
+    // (1 oportunidade × 50% × 30.000) / 15 dias = 1.000/dia
+    expect(performance.pipelineVelocity.value).toBeCloseTo(1_000, 1);
+  });
+
+  it('Pipeline Velocity: "Não disponível" quando não há negócios fechados no período (sem Win Rate)', async () => {
+    const openDeal = deal({ id: 'pv-so-aberto', amount: 30_000 });
+    const repo = new FakeRepository([openDeal]);
+    const useCases = new CommercialIntelligenceUseCases(repo);
+
+    const performance = await useCases.performance(ORG, { month: PERIOD }, NOW);
+
+    expect(performance.winRate).toBeNull();
+    expect(performance.pipelineVelocity.value).toBeNull();
+    expect(performance.pipelineVelocity.openOpportunities).toBe(1);
+    expect(performance.pipelineVelocity.averageOpenDealValue).toBe(30_000);
   });
 
   it('SLA de primeiro contato: horas entre createdAt do lead e a primeira Activity concluída', async () => {

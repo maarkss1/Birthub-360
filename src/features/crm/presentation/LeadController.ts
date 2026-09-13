@@ -1,10 +1,10 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { LeadUseCases } from '../application/LeadUseCases';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { routeParam } from '../../../shared/http/routeParams';
-import { automationEngine } from '../../automations/automation.engine';
-import { logger } from '../../../lib/logger';
 import type { LeadFunnel } from '@prisma/client';
+import type { NextFunction, Request, Response } from 'express';
+import { logger } from '../../../lib/logger';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { automationEngine } from '../../automations/automation.engine';
+import type { LeadUseCases } from '../application/LeadUseCases';
 
 const UTF8_BOM = String.fromCharCode(0xfeff);
 
@@ -27,7 +27,7 @@ export class LeadController {
     try {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const page = parseInt(req.query.page as string, 10) || 1;
-      const limit = parseInt(req.query.limit as string, 10) || 50;
+      const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 200);
       const requestedFunnel = req.query.funnel;
       const funnel: LeadFunnel | undefined =
         requestedFunnel === 'Lead' || requestedFunnel === 'Negocio' ? requestedFunnel : undefined;

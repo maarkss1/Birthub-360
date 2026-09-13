@@ -1,11 +1,11 @@
-import type { Request, Response, NextFunction } from 'express';
-import {
-  type AutomationUseCases,
-  AUTOMATION_TRIGGERS,
-  AUTOMATION_ACTIONS,
-} from '../application/AutomationUseCases';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import {
+  AUTOMATION_ACTIONS,
+  AUTOMATION_TRIGGERS,
+  type AutomationUseCases,
+} from '../application/AutomationUseCases';
 
 export class AutomationController {
   constructor(private automationUseCases: AutomationUseCases) {}

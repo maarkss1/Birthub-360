@@ -214,7 +214,6 @@ model Company {
   city              String?
   state             String?
   zipCode           String?
-  owner             String?
   status            CompanyStatus @default(Ativo)
   tags              String[]
   observations      String?
@@ -269,6 +268,15 @@ model Company {
   sourceEconomicRelationships EconomicRelationship[]        @relation("EconomicRelationshipSource")
   targetEconomicRelationships EconomicRelationship[]        @relation("EconomicRelationshipTarget")
   copilotoConversations       CopilotoConversation[]
+  notes                       Note[]
+  attachments                 Attachment[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId              String?
   organization                Organization?                 @relation(fields: [organizationId], references: [id])
   deletedAt                   DateTime?
@@ -511,6 +519,15 @@ model Contact {
   leads                 Lead[]
   whatsAppMessages      WhatsAppMessage[]
   copilotoConversations CopilotoConversation[]
+  notes                 Note[]
+  attachments           Attachment[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId        String?
   organization          Organization?          @relation(fields: [organizationId], references: [id])
   decisionMakerProfiles DecisionMaker[]
@@ -584,6 +601,13 @@ model Lead {
   probability     Int?
   expectedCloseAt DateTime?
   customFields    Json?
+  // CRM-011 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`):
+  // antes desta coluna, tags de Lead viviam só dentro de `customFields.tags` (JSON não tipado,
+  // sem índice, invisível ao Meilisearch por padrão), enquanto Company já usava uma coluna
+  // nativa `String[]`. Reconciliado seguindo o padrão de Company — ver migration
+  // `20260913000000_lead_native_tags` para o backfill dos valores que já existiam em
+  // `customFields.tags`.
+  tags            String[]         @default([])
 
   // Funil do Lead (objeto Lead x objeto Negócio do Bitrix24) e campos comerciais que só existiam
   // no Bitrix — ver migration 20260805220000_two_funnels_and_bitrix_fields para o remapeamento
@@ -651,6 +675,7 @@ model Lead {
   mesaTratamentoTreatments    MesaTratamentoTreatment[]
   timeline                    TimelineEvent[]
   internalNotes               Note[]
+  attachments                 Attachment[]
   whatsAppMessages            WhatsAppMessage[]
   conversationSignals         ConversationSignal[]
   dealItems                   CrmDealItem[]
@@ -666,6 +691,13 @@ model Lead {
   dealClosureEvents           DealClosureEvent[]
   copilotoConversations       CopilotoConversation[]
   copilotoDealHealthSnapshots CopilotoDealHealthSnapshot[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId              String?
   organization                Organization?                @relation(fields: [organizationId], references: [id])
 
@@ -702,6 +734,14 @@ model Activity {
 
   leadId         String
   lead           Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje, incluindo o único caso de injeção implícita (birthVoice.webhook.ts, dentro de
+  // requestContext.run({tenantId})). Nenhuma linha órfã é esperada; migrar para NOT NULL +
+  // ON DELETE CASCADE (alinhado aos ~90 outros models filhos de Organization) é a correção
+  // pendente, condicionada a verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
@@ -730,11 +770,70 @@ model Note {
   content String // Rich text
   author  String
 
-  leadId String
-  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // CRM-004 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`):
+  // antes desta mudança, Note só anexava a Lead — Company/Contact não tinham como registrar uma
+  // nota. Os três FKs abaixo são opcionais de propósito; exatamente um deles é preenchido por
+  // registro (trava real via CHECK constraint na migration `20260913000100_notes_cross_entity_and_attachments`,
+  // não só validação de aplicação) — mantém a mesma linha "Note" servindo as três entidades em vez
+  // de três tabelas quase idênticas.
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([companyId])
+  @@index([contactId])
+}
+
+// CRM-005 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`):
+// antes deste model, não existia NENHUM modelo de arquivo/anexo para nenhuma entidade de CRM.
+// O binário em si vive no storage S3-compatível já usado por outras features (MinIO/R2/Supabase
+// Storage, ver src/lib/storage/index.ts e o precedente real em CopilotoIaController — upload de
+// áudio via URL assinada) — esta tabela guarda só o metadado e o `objectKey`, nunca o binário.
+model Attachment {
+  id String @id @default(cuid())
+
+  // Mesmo padrão de Note acima: exatamente um dos três FKs é preenchido (CHECK constraint na
+  // migration `20260913000100_notes_cross_entity_and_attachments`).
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  fileName  String
+  mimeType  String
+  sizeBytes Int
+  // Chave do objeto no bucket S3-compatível (nunca a URL assinada, que expira em 1h — ver
+  // getUploadUrl/getDownloadUrl). Único porque cada upload gera um UUID novo (ver
+  // AttachmentController) — nunca reaproveitado entre registros.
+  objectKey String @unique
+
+  uploadedBy String?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+  deletedBy    String?
+  deleteReason String?
+
+  @@index([organizationId])
+  @@index([leadId])
+  @@index([companyId])
+  @@index([contactId])
 }
 
 model AuditLog {
@@ -837,6 +936,7 @@ model Organization {
   slackConnections               SlackConnection[]
   stripeConnections              StripeConnection[]
   omieConnections                OmieConnection[]
+  attachments                    Attachment[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
   crmProducts                   CrmProduct[]
@@ -1272,8 +1372,23 @@ model AccountRecommendation {
   updatedAt             DateTime                    @updatedAt
 
   @@unique([organizationId, companyId, actionType, inputHash])
-  // Unicidade quando preenchida e garantida por indice parcial na migration; indice parcial nao
-  // e representavel na DSL do Prisma e por isso nao aparece como @@unique aqui.
+  // PARTIAL unique index — quando idempotencyKey esta preenchida, a unicidade e garantida por um
+  // indice parcial (WHERE "idempotencyKey" IS NOT NULL) criado em
+  // prisma/migrations/20260818100000_ldr_account_intelligence_foundation/migration.sql, que
+  // escreve o nome "AccountRecommendation_organizationId_companyId_idempotencyKey_unique" (68
+  // bytes). ATENCAO — bug separado descoberto ao documentar este indice: esse nome excede o limite
+  // de identificador do Postgres (NAMEDATALEN-1 = 63 bytes) e o Postgres TRUNCA identificadores
+  // longos silenciosamente, sem erro. O nome real gravado no banco quase certamente NAO e o que a
+  // migration.sql escreve, e sim os primeiros 63 bytes:
+  // "AccountRecommendation_organizationId_companyId_idempotencyKey_u" — confirme com
+  // `select indexname from pg_indexes where tablename = 'AccountRecommendation'` antes de
+  // confiar neste nome para qualquer operacao (o Prisma CLI tambem rejeita `map` acima de 63
+  // bytes, o que confirma o limite). A sintaxe do Prisma schema tambem nao expressa a condicao
+  // WHERE parcial, entao o @@index abaixo e propositalmente NAO unico: ele so documenta/mapeia o
+  // nome (truncado) real do indice para que `prisma migrate dev`/`migrate diff` nao o tratem como
+  // drift nao gerenciado. NAO rode `prisma db push` contra um banco novo sem antes aplicar as
+  // migrations — sem elas, essa constraint de unicidade nao vai existir de forma alguma.
+  @@index([organizationId, companyId, idempotencyKey], map: "AccountRecommendation_organizationId_companyId_idempotencyKey_u")
   @@index([organizationId, companyId, status, generatedAt(sort: Desc)])
   @@index([organizationId, status, priority])
   @@index([snapshotId])
@@ -1732,7 +1847,7 @@ model RoleplaySession {
   organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId          String
   user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  brand           String // 'atlasgr' | 'totaltrac'
+  brand           String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
   personaId       String
   personaLabel    String
   difficulty      String // 'facil' | 'medio' | 'dificil'
@@ -1767,7 +1882,7 @@ model QualificationMatrixItem {
   id               String       @id @default(cuid())
   organizationId   String
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand            String // 'atlasgr' | 'totaltrac'
+  brand            String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
   segment          String
   persona          String
   framework        String // 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER'
@@ -2884,51 +2999,51 @@ model ColdCallRun {
 }
 
 model AIPendingAction {
-  id             String        @id @default(cuid())
-  entity         String
-  action         String
-  payload        Json
+  id                String                 @id @default(cuid())
+  entity            String
+  action            String
+  payload           Json
   /// Papel que originou a decisão (SDR, BDR, CLOSER, CRM, OPS ou SUPERVISOR).
-  agentRole      String?
+  agentRole         String?
   /// Classificação de risco operacional para a UI e para políticas de autoexecução.
-  riskLevel      String        @default("medium")
+  riskLevel         String                 @default("medium")
   /// Confiança declarada/derivada da decisão, normalizada entre 0 e 1.
-  confidence     Float?
+  confidence        Float?
   /// Chave de idempotência por tenant. Impede que um worker repetido proponha/envie a mesma ação.
-  idempotencyKey String?
-  approved       Boolean       @default(false)
-  approvedAt     DateTime?
+  idempotencyKey    String?
+  approved          Boolean                @default(false)
+  approvedAt        DateTime?
   /// Onda 39 (auditoria CPI — "trilha completa de aprovação"): id do usuário (User.id) que
   /// aprovou/descartou esta ação, nunca inferido — ambos vêm de req.user na rota autenticada, o
   /// mesmo usuário já responsável pelo RBAC de /pending/:id (ver pending-actions.service.ts).
-  approvedBy     String?
-  discardedAt    DateTime?
-  discardedBy    String?
+  approvedBy        String?
+  discardedAt       DateTime?
+  discardedBy       String?
   /// Se a ação aprovada foi de fato executada (ex: e-mail enviado de verdade via SMTP). Sem este
   /// campo, "aprovar" só marcava um flag no banco e nada consumia isso depois (IA-005) — o
   /// executor real fica em src/features/intelligence/services/aiPendingAction.service.ts.
-  executed       Boolean       @default(false)
-  executedAt     DateTime?
+  executed          Boolean                @default(false)
+  executedAt        DateTime?
   /// Preenchido quando a execução foi tentada e falhou (ex: SMTP fora do ar). `executed`
   /// continua false nesse caso — a tela usa isso para decidir se ainda oferece o fallback manual.
-  executionError String?
-  attempts       Int           @default(0)
-  lastAttemptAt  DateTime?
+  executionError    String?
+  attempts          Int                    @default(0)
+  lastAttemptAt     DateTime?
   /// Item 103 da constituição de produto (Closed-Loop Intelligence): até aqui o ciclo parava em
   /// "foi executado tecnicamente" — nada registrava o resultado de negócio depois disso
   /// (signal→recommendation→decision→action→execution existiam; outcome→measurement→learning,
   /// não). Captura MANUAL nesta primeira fatia (um humano registra o que aconteceu), nunca
   /// inferida — detecção automática (ex.: reply de e-mail) é escopo do Agente 17
   /// (`.agents/prompts/17-cadencia-ciclo-receita.md`), não duplicada aqui.
-  outcomeStatus  AIPendingActionOutcome @default(UNMEASURED)
-  outcome        Json?
-  outcomeNotes   String?
+  outcomeStatus     AIPendingActionOutcome @default(UNMEASURED)
+  outcome           Json?
+  outcomeNotes      String?
   outcomeMeasuredAt DateTime?
   outcomeMeasuredBy String?
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  organizationId    String?
+  organization      Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
 
   @@unique([organizationId, idempotencyKey])
   @@index([organizationId, approved])
@@ -2983,6 +3098,14 @@ model Prospect {
   lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   // Controle de Tenant
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Company/Contact/Lead/Activity, este model não tem nenhum write path real hoje
+  // (grep não encontra nenhum prospect.create/upsert/update em src/ ou scripts/ — schema
+  // declarado, nunca escrito) e está fora do allowlist tenantModels de src/lib/prisma.ts, então
+  // não recebe injeção automática de organizationId. Inofensivo enquanto permanecer sem uso
+  // (inclusive para o @@unique([organizationId, cnpj]) abaixo, que não colide entre linhas NULL);
+  // se um write path for adicionado, inclua Prospect em tenantModels ou passe organizationId
+  // explicitamente em todo create.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
@@ -3253,8 +3376,8 @@ model CadenceSequence {
 ///
 /// `CadenceRun_leadId_active_unique` (índice único parcial `WHERE status = 'Active'`) garante em
 /// banco que um lead nunca tem duas cadências ativas concorrendo pelo mesmo canal — constraint só
-/// na migration SQL, não representável nesta DSL (ver nota no topo da seção). O
-/// `@@index([leadId])` abaixo é só para a consulta comum, não substitui a garantia de unicidade.
+/// na migration SQL, não representável nesta DSL (ver nota no topo da seção e no `@@index` mapeado
+/// abaixo, que documenta o nome real do índice sem substituir a garantia de unicidade).
 model CadenceRun {
   id             String       @id @default(cuid())
   organizationId String
@@ -3281,7 +3404,14 @@ model CadenceRun {
   calendarEvents CadenceCalendarEvent[]
 
   @@index([organizationId, status])
-  @@index([leadId])
+  /// PARTIAL unique index — a condição `WHERE "status" = 'Active'` vive só na migration SQL
+  /// (`prisma/migrations/20260816120000_cadence_scheduling_signature/migration.sql`); a sintaxe
+  /// do Prisma schema não consegue expressar a condição WHERE parcial, então este `@@index` é
+  /// propositalmente NÃO único: ele documenta/mapeia o nome real do índice (para que
+  /// `prisma migrate dev`/`migrate diff` não o tratem como drift não gerenciado) e também serve à
+  /// consulta comum por `leadId`. NÃO rode `prisma db push` contra um banco novo sem antes aplicar
+  /// as migrations — sem elas, essa constraint de unicidade não vai existir.
+  @@index([leadId], map: "CadenceRun_leadId_active_unique")
 }
 
 /// Uma tentativa real de disparo de um toque de cadência — nunca `Sent` sem confirmação real do
@@ -3763,7 +3893,15 @@ model UserJobRole {
 
   @@unique([userId, jobRoleId])
   @@index([organizationId])
-  @@index([userId])
+  /// PARTIAL unique index — a condição `WHERE "isPrimary" = true AND "isActive" = true` vive só
+  /// na migration SQL
+  /// (`prisma/migrations/20260908020000_multi_cargo_agent_governance_foundation/migration.sql`);
+  /// a sintaxe do Prisma schema não consegue expressar a condição WHERE parcial, então este
+  /// `@@index` é propositalmente NÃO único: ele documenta/mapeia o nome real do índice (para que
+  /// `prisma migrate dev`/`migrate diff` não o tratem como drift não gerenciado) e também serve à
+  /// consulta comum por `userId`. NÃO rode `prisma db push` contra um banco novo sem antes aplicar
+  /// as migrations — sem elas, essa constraint de unicidade não vai existir.
+  @@index([userId], map: "UserJobRole_one_active_primary_per_user")
 }
 
 /// Catálogo de agentes — IDENTIDADE e estado administrativo, nunca a implementação em si (código
@@ -3829,6 +3967,14 @@ model AgentVersion {
 
   @@unique([agentDefinitionId, version])
   @@index([agentDefinitionId, status])
+  /// PARTIAL unique index — a condição `WHERE "status" = 'ACTIVE'` vive só na migration SQL
+  /// (`prisma/migrations/20260908020000_multi_cargo_agent_governance_foundation/migration.sql`);
+  /// a sintaxe do Prisma schema não consegue expressar a condição WHERE parcial, então este
+  /// `@@index` é propositalmente NÃO único: ele só documenta/mapeia o nome real do índice (para
+  /// que `prisma migrate dev`/`migrate diff` não o tratem como drift não gerenciado). NÃO rode
+  /// `prisma db push` contra um banco novo sem antes aplicar as migrations — sem elas, essa
+  /// constraint de unicidade não vai existir.
+  @@index([agentDefinitionId], map: "AgentVersion_one_active_per_agent")
 }
 
 /// Responde "quais agentes este cargo pode usar?" — um mesmo `AgentDefinition` pode ser

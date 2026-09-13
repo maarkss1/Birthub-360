@@ -1,11 +1,11 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
 
 import { logger } from '../../../lib/logger.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { synthesizeSpeech } from '../services/voicebox.service.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { synthesizeSpeech } from '../services/voicebox.service.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);
@@ -30,18 +30,18 @@ router.post(
   },
 );
 
+import {
+  approveLearningProfileVersion,
+  getLearningProfileHistory,
+  LearningAgent,
+  rejectLearningProfileVersion,
+  rollbackLearningProfile,
+} from '../agents/learning.agent.js';
 // --- SWARM & CONTINUOUS LEARNING ENDPOINTS ---
 import { SwarmOrchestrator } from '../agents/supervisor.agent.js';
-import {
-  LearningAgent,
-  getLearningProfileHistory,
-  rollbackLearningProfile,
-  approveLearningProfileVersion,
-  rejectLearningProfileVersion,
-} from '../agents/learning.agent.js';
-import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
-import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service.js';
 import { getDatasetSummary, validateToolUseCases } from '../evaluation/goldenDataset.service.js';
+import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service.js';
+import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
 
 const swarmMissionSchema = z.object({
   mission: z.string().trim().min(1, 'A missão é obrigatória.').max(4_000),
@@ -201,247 +201,13 @@ router.get('/swarm/learn/history', async (req: Request, res: Response, next: Nex
   }
 });
 
-// --- CÉLULA COMERCIAL DE AGENTES (onda 43, Agente 13) ---
-import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry.js';
-import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
-import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
-import { ContractSignatureAgent } from '../agents/contractSignature.agent.js';
-import { container } from '../../../shared/di/container.js';
+// --- CÉLULA COMERCIAL DE AGENTES (onda 43, Agente 13; onda 6/AIAGENT-004) ---
+// Extraída para `commercialCell.routes.ts` na onda 6 — ver o cabeçalho daquele arquivo para o
+// motivo (gate de hotspot) e a garantia de que nenhuma URL pública mudou. Montado aqui como
+// sub-router, então os caminhos continuam `/api/agent/commercial-cell/...`.
+import { commercialCellRoutes } from './commercialCell.routes.js';
 
-// AI-005/golden-dataset acima já estabelece o precedente: catálogo estático (não dado de tenant)
-// só reaproveita a autenticação de '/api/agent'. `COMMERCIAL_AGENT_REGISTRY` é o mesmo caso —
-// metadado de produto, não dado de organização.
-router.get('/commercial-cell', (_req: Request, res: Response) => {
-  res.json({ success: true, data: COMMERCIAL_AGENT_REGISTRY });
-});
-
-// Estrutural, não importado de commercial-intelligence (no-cross-feature-imports) — espelha só os
-// 2 métodos que este agente consome de CommercialIntelligenceAiService, resolvido via DI container
-// (registrado em src/shared/di/setup.ts). Ver comentário no registro do container para o racional.
-interface RevenueIntelligenceSourceContract {
-  generateExecutiveSummary(
-    organizationId: string,
-    filter: {
-      month: string;
-      owner?: string;
-      product?: string;
-      source?: string;
-      icp?: string;
-      company?: string;
-    },
-  ): Promise<{ summary: string; generatedAt: string }>;
-  generateMentorPlaybook(
-    organizationId: string,
-    filter: {
-      month: string;
-      owner?: string;
-      product?: string;
-      source?: string;
-      icp?: string;
-      company?: string;
-    },
-  ): Promise<{
-    recommendations: {
-      priority: string;
-      title: string;
-      rationale: string;
-      suggestedAction: string;
-      relatedDealIds: string[];
-    }[];
-    source: 'ai' | 'fallback';
-    generatedAt: string;
-  }>;
-}
-
-const revenueIntelligenceRunSchema = z.object({
-  month: z
-    .string()
-    .trim()
-    .regex(/^\d{4}-\d{2}$/, 'Use o formato YYYY-MM'),
-  owner: z.string().trim().optional(),
-  product: z.string().trim().optional(),
-  source: z.string().trim().optional(),
-  icp: z.string().trim().optional(),
-  company: z.string().trim().optional(),
-});
-
-router.post(
-  '/commercial-cell/revenue-intelligence/run',
-  writeRoles,
-  validateRequest(revenueIntelligenceRunSchema),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { organizationId } = (req as AuthRequest).user;
-      const filter = req.body as z.infer<typeof revenueIntelligenceRunSchema>;
-
-      const aiService = container.resolve<RevenueIntelligenceSourceContract>(
-        'CommercialIntelligenceAiService',
-      );
-      const [summaryResult, playbook] = await Promise.all([
-        aiService.generateExecutiveSummary(organizationId, filter),
-        aiService.generateMentorPlaybook(organizationId, filter),
-      ]);
-
-      const contextLines = [
-        `- Resumo executivo do período ${filter.month}: ${summaryResult.summary}`,
-        playbook.recommendations.length > 0
-          ? `- Recomendações priorizadas (${playbook.source === 'ai' ? 'geradas por IA' : 'fallback determinístico'}):\n${playbook.recommendations
-              .map((r) => `  - [${r.priority}] ${r.title}: ${r.rationale} → ${r.suggestedAction}`)
-              .join('\n')}`
-          : '- Nenhuma recomendação priorizada disponível para o período.',
-      ];
-
-      const agent = new RevenueIntelligenceAgent();
-      const result = await agent.run(contextLines.join('\n'));
-      res.json({ success: true, data: result });
-    } catch (err) {
-      next(err);
-    }
-  },
-);
-
-const churnRetentionRunSchema = z.object({
-  clientName: z.string().trim().min(1),
-  contractAgeMonths: z.number().nonnegative(),
-  monthlyRecurringRevenue: z.number().nonnegative(),
-  openSupportTickets: z.number().int().nonnegative(),
-  unresolvedComplaints: z.number().int().nonnegative(),
-  paymentDelaysLast90Days: z.number().int().nonnegative(),
-  platformUsageDropPercentage: z.number(),
-  recentSentimentNotes: z.string().trim().optional(),
-});
-
-// Espelha (sem importar de src/features/analytics/**, ver no-cross-feature-imports) só o shape
-// mínimo de entrada/saída de ChurnPredictionService.analyzeChurnRisk — a checagem de tipo real
-// acontece em churn-prediction.service.ts (dono real), aqui é só o contrato de leitura. O
-// parâmetro de entrada reaproveita o próprio schema Zod acima (mesmo shape).
-interface ChurnPredictionSourceContract {
-  analyzeChurnRisk(account: z.infer<typeof churnRetentionRunSchema>): Promise<{
-    churnRisk: string;
-    healthScore: number;
-    primaryRiskDrivers: string[];
-    immediateRetentionPlaybook: string[];
-    suggestedRetentionDiscountOrBenefit?: string;
-    executiveAlertSummary: string;
-  }>;
-}
-
-router.post(
-  '/commercial-cell/churn-retention/run',
-  writeRoles,
-  validateRequest(churnRetentionRunSchema),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const account = req.body as z.infer<typeof churnRetentionRunSchema>;
-
-      const churnService =
-        container.resolve<ChurnPredictionSourceContract>('ChurnPredictionService');
-      const prediction = await churnService.analyzeChurnRisk(account);
-
-      const contextLines = [
-        `- Conta: ${account.clientName}`,
-        `- Nível de risco (já calculado): ${prediction.churnRisk}`,
-        `- Health Score (já calculado): ${prediction.healthScore}`,
-        `- Fatores de risco: ${prediction.primaryRiskDrivers.join('; ') || 'nenhum listado'}`,
-        `- Playbook de retenção imediato: ${prediction.immediateRetentionPlaybook.join('; ') || 'nenhum listado'}`,
-        prediction.suggestedRetentionDiscountOrBenefit
-          ? `- Benefício/desconto sugerido: ${prediction.suggestedRetentionDiscountOrBenefit}`
-          : '- Nenhum benefício/desconto sugerido pelo motor.',
-        `- Resumo executivo (já calculado): ${prediction.executiveAlertSummary}`,
-        account.monthlyRecurringRevenue
-          ? `- MRR da conta: ${account.monthlyRecurringRevenue}`
-          : '- MRR da conta: não informado.',
-      ];
-
-      const agent = new ChurnRetentionAgent();
-      const result = await agent.run(contextLines.join('\n'));
-      res.json({ success: true, data: result });
-    } catch (err) {
-      next(err);
-    }
-  },
-);
-
-// ACH-17-02 (onda-43, handoff 13→17): fecha o handoff aberto — o Agente Contratos & Assinatura
-// narrava prontidão/status sem poder verificar dado real. `SignatureRequestRepositoryPort` agora
-// expõe `findByDocumentId` (RLS normal, resolvido via `organizationId` da sessão autenticada, nunca
-// do body). Signatários esperados e dados de prontidão continuam vindo do chamador (mesmo padrão de
-// `churn-retention` acima) — não existe hoje um serviço real de checklist de contrato para grounding
-// desses campos, só do status real de assinatura.
-interface SignatureStatusSourceContract {
-  findByDocumentId(
-    organizationId: string,
-    documentId: string,
-  ): Promise<{
-    id: string;
-    status: string;
-    provider: string;
-    signerEmail: string;
-    requestedAt: Date;
-    respondedAt: Date | null;
-  } | null>;
-}
-
-const contractSignatureRunSchema = z.object({
-  documentId: z.string().trim().min(1),
-  contractTitle: z.string().trim().optional(),
-  requiredSignatories: z
-    .array(
-      z.object({
-        name: z.string().trim().optional(),
-        email: z.string().trim().email(),
-      }),
-    )
-    .optional(),
-  missingData: z.array(z.string().trim().min(1)).optional(),
-});
-
-router.post(
-  '/commercial-cell/contract-signature/run',
-  writeRoles,
-  validateRequest(contractSignatureRunSchema),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { organizationId } = (req as AuthRequest).user;
-      const { documentId, contractTitle, requiredSignatories, missingData } = req.body as z.infer<
-        typeof contractSignatureRunSchema
-      >;
-
-      const signatureRepository = container.resolve<SignatureStatusSourceContract>(
-        'SignatureRequestRepositoryPort',
-      );
-      const signatureRequest = await signatureRepository.findByDocumentId(
-        organizationId,
-        documentId,
-      );
-
-      const contextLines = [
-        `- Documento: ${contractTitle ?? documentId} (id ${documentId})`,
-        signatureRequest
-          ? `- Status real de assinatura (já verificado, não presumido): ${signatureRequest.status}, provedor ${signatureRequest.provider}, signatário ${signatureRequest.signerEmail}, solicitado em ${signatureRequest.requestedAt.toISOString()}${
-              signatureRequest.respondedAt
-                ? `, respondido em ${signatureRequest.respondedAt.toISOString()}`
-                : ', ainda sem resposta'
-            }.`
-          : '- Nenhuma solicitação de assinatura encontrada para este documento — ainda não foi enviado para assinatura.',
-        requiredSignatories && requiredSignatories.length > 0
-          ? `- Signatários esperados informados pelo chamador: ${requiredSignatories
-              .map((s) => `${s.name ?? 'sem nome'} <${s.email}>`)
-              .join('; ')}`
-          : '- Nenhum signatário adicional informado pelo chamador.',
-        missingData && missingData.length > 0
-          ? `- Dados obrigatórios ausentes reportados pelo chamador: ${missingData.join('; ')}`
-          : '- Nenhum dado obrigatório reportado como ausente pelo chamador.',
-      ];
-
-      const agent = new ContractSignatureAgent();
-      const result = await agent.run(contextLines.join('\n'));
-      res.json({ success: true, data: result });
-    } catch (err) {
-      next(err);
-    }
-  },
-);
+router.use(commercialCellRoutes);
 
 const learningRollbackSchema = z.object({
   targetVersion: z.number().int().min(1),

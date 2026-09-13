@@ -129,6 +129,7 @@ describe('executeAction', () => {
     expect(result).toEqual({ sent: true });
     expect(noteCreateMock).toHaveBeenCalledWith(
       'org-1',
+      'lead',
       'lead-1',
       expect.objectContaining({
         author: 'Enxame de IA da Birth Hub 360',
