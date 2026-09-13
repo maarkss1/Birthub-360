@@ -143,7 +143,6 @@
     "lucide-react": "^1.38.0",
     "mammoth": "^1.12.0",
     "meilisearch": "^0.60.0",
-    "mem0ai": "^3.1.7",
     "multer": "^2.2.0",
     "nodemailer": "^9.0.5",
     "pdf-parse": "^1.1.4",
