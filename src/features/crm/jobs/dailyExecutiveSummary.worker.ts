@@ -7,6 +7,7 @@ import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
 
 export const EXEC_SUMMARY_QUEUE_NAME = 'daily-executive-summary-queue';
@@ -163,6 +164,7 @@ export async function scheduleExecutiveSummaryJob() {
   const queue = new Queue(EXEC_SUMMARY_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(EXEC_SUMMARY_QUEUE_NAME, queue);
 
   // Roda todo dia as 18:00.
   // BullMQ v6 removeu `repeat` de `Queue.add` (viraria um job avulso, nunca mais se repete) —

@@ -270,6 +270,13 @@ model Company {
   copilotoConversations       CopilotoConversation[]
   notes                       Note[]
   attachments                 Attachment[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId              String?
   organization                Organization?                 @relation(fields: [organizationId], references: [id])
   deletedAt                   DateTime?
@@ -514,6 +521,13 @@ model Contact {
   copilotoConversations CopilotoConversation[]
   notes                 Note[]
   attachments           Attachment[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId        String?
   organization          Organization?          @relation(fields: [organizationId], references: [id])
   decisionMakerProfiles DecisionMaker[]
@@ -677,6 +691,13 @@ model Lead {
   dealClosureEvents           DealClosureEvent[]
   copilotoConversations       CopilotoConversation[]
   copilotoDealHealthSnapshots CopilotoDealHealthSnapshot[]
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
+  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
+  // verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId              String?
   organization                Organization?                @relation(fields: [organizationId], references: [id])
 
@@ -713,6 +734,14 @@ model Activity {
 
   leadId         String
   lead           Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
+  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
+  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
+  // não-nulo hoje, incluindo o único caso de injeção implícita (birthVoice.webhook.ts, dentro de
+  // requestContext.run({tenantId})). Nenhuma linha órfã é esperada; migrar para NOT NULL +
+  // ON DELETE CASCADE (alinhado aos ~90 outros models filhos de Organization) é a correção
+  // pendente, condicionada a verificar ausência de linhas NULL em produção antes de aplicar.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
@@ -1818,7 +1847,7 @@ model RoleplaySession {
   organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId          String
   user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  brand           String // 'atlasgr' | 'totaltrac'
+  brand           String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
   personaId       String
   personaLabel    String
   difficulty      String // 'facil' | 'medio' | 'dificil'
@@ -1853,7 +1882,7 @@ model QualificationMatrixItem {
   id               String       @id @default(cuid())
   organizationId   String
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand            String // 'atlasgr' | 'totaltrac'
+  brand            String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
   segment          String
   persona          String
   framework        String // 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER'
@@ -3069,6 +3098,14 @@ model Prospect {
   lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   // Controle de Tenant
+  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
+  // diferente de Company/Contact/Lead/Activity, este model não tem nenhum write path real hoje
+  // (grep não encontra nenhum prospect.create/upsert/update em src/ ou scripts/ — schema
+  // declarado, nunca escrito) e está fora do allowlist tenantModels de src/lib/prisma.ts, então
+  // não recebe injeção automática de organizationId. Inofensivo enquanto permanecer sem uso
+  // (inclusive para o @@unique([organizationId, cnpj]) abaixo, que não colide entre linhas NULL);
+  // se um write path for adicionado, inclua Prospect em tenantModels ou passe organizationId
+  // explicitamente em todo create.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 

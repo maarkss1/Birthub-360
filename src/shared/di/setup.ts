@@ -73,6 +73,15 @@ import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQua
 // importar `knowledge`/`intelligence/agents`/`integrations/bitrix` diretamente. Registrados aqui e
 // resolvidos via `container.resolve<T>(name)` em `toolExecutors.ts`, com tipos estruturais locais.
 import { searchService } from '../../features/knowledge/search.service.js';
+// AIAGENT-004 (onda 6): motor real por trás do Agente LDR — Inteligência de Leads da Célula
+// Comercial (`src/features/intelligence/agents/ldrIntelligence.agent.ts`). Mesmo motivo do
+// comentário da Onda 43 acima: `intelligence/**` não pode importar `market-intelligence/**`
+// diretamente (no-cross-feature-imports). Diferente dos demais registros, este NÃO é uma
+// instância: `AccountIntelligenceService` é construído por requisição (recebe o cliente Prisma já
+// escopado por tenant, `req.db`, e o `organizationId` da sessão autenticada), então o que vai para
+// o container é uma FÁBRICA — registrar uma instância aqui vazaria o tenant da primeira requisição
+// para todas as seguintes.
+import { AccountIntelligenceService } from '../../features/market-intelligence/server/accountIntelligence.service.js';
 // Use Cases
 import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
 // Repositories
@@ -188,6 +197,12 @@ export function setupDI() {
   container.register('CommercialIntelligenceAiService', commercialIntelligenceAiService);
   container.register('CommercialIntelligencePeriod', { currentPeriod });
   container.register('ChurnPredictionService', churnPredictionService);
+  // AIAGENT-004 (onda 6): fábrica por requisição — ver comentário no import. O chamador
+  // (`agent.routes.ts`) passa `req.db` e o `organizationId` da sessão autenticada, nunca do body.
+  container.register('AccountIntelligenceServiceFactory', {
+    create: (db: ConstructorParameters<typeof AccountIntelligenceService>[0], orgId: string) =>
+      new AccountIntelligenceService(db, orgId),
+  });
   container.register('SignatureRequestRepositoryPort', prismaSignatureRequestRepository);
   container.register('GoogleCalendarService', { createCalendarEvent });
   // Agent Runtime Genérico (PROMPT 4) — executores reais por trás de `toolExecutors.ts`
