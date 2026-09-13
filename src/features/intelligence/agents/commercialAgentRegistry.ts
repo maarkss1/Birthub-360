@@ -41,6 +41,20 @@ import type {
  *
  * Ver `.agents/handoffs/onda-13/13-para-00-instalacao-celula-comercial.md` para o relatório
  * completo desta reclassificação, incluindo a rejeição do gate de arquitetura.
+ *
+ * ATUALIZAÇÃO (AIAGENT-004, onda 6 — "Execução Real de Agentes de IA"): a onda 43 implementou 9
+ * agentes novos mas só conectou 3 a rotas HTTP (revenue-intelligence, churn-retention,
+ * contract-signature). Os outros 6 tinham código completo e nenhum caminho de entrega — e este
+ * catálogo, servido em `GET /api/agent/commercial-cell`, devolvia `agentModule` para todos eles
+ * sem distinguir quem era realmente invocável. Resolução:
+ *
+ * - 5 dos 6 ganharam rota própria nesta onda (`ldr-intelligence`, `coordinator-commercial`,
+ *   `manager-commercial`, `executive-director`, `bitrix-guardian`), todas seguindo exatamente o
+ *   padrão dos 3 já conectados: o motor real é resolvido via DI container (nunca importado
+ *   direto, por `no-cross-feature-imports`), o chamador formata o contexto, e o agente só narra.
+ * - `billing-revenue` continua sem rota DE PROPÓSITO — ver o comentário na própria entrada.
+ * - O campo `httpRoute` (novo) torna essa diferença explícita para quem consome o catálogo, em
+ *   vez de deixá-la implícita na presença de `agentModule`.
  */
 export interface CommercialAgentDefinition {
   id: CommercialAgentId;
@@ -57,6 +71,20 @@ export interface CommercialAgentDefinition {
   bindings: string[];
   /** Preenchido apenas quando o agente foi implementado nesta onda como wrapper fino. */
   agentModule: string | null;
+  /**
+   * AIAGENT-004 (onda 6 de execução real): caminho HTTP pelo qual este agente é REALMENTE
+   * invocável hoje. `null` significa "existe código, não existe caminho de entrega" — antes deste
+   * campo, `GET /api/agent/commercial-cell` devolvia `agentModule` para 6 agentes sem rota, o que
+   * levava um consumidor de API a presumir paridade com os que tinham rota. Nunca preencha este
+   * campo sem que a rota exista de fato em `src/features/intelligence/routes/agent.routes.ts` (ou,
+   * para os agentes do enxame de produção, em `/api/agent/swarm/mission`).
+   */
+  httpRoute: string | null;
+  /**
+   * Preenchido SOMENTE quando `httpRoute` é `null` apesar de existir `agentModule` — explica por
+   * que não há rota, para que a ausência seja uma decisão documentada e não um esquecimento.
+   */
+  noRouteReason: string | null;
 }
 
 export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
@@ -82,6 +110,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'src/features/market-intelligence/server/accountIntelligence.service.ts (AccountIntelligenceService.getIntelligence)',
     ],
     agentModule: './ldrIntelligence.agent.js',
+    httpRoute: '/api/agent/commercial-cell/ldr-intelligence/run',
+    noRouteReason: null,
   },
   {
     id: 'bdr-outbound',
@@ -103,6 +133,10 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
     handoffs: ['sdr-qualification', 'coordinator-commercial', 'bitrix-guardian'],
     bindings: ['src/features/intelligence/agents/bdr.agent.ts (BDRAgent, já em produção)'],
     agentModule: null,
+    // Agente do enxame de produção: não tem rota própria de célula comercial, é acionado pelo
+    // Supervisor (`supervisor.agent.ts`) dentro de uma missão.
+    httpRoute: '/api/agent/swarm/mission',
+    noRouteReason: null,
   },
   {
     id: 'sdr-qualification',
@@ -126,6 +160,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'src/features/intelligence/agents/sdrQualification.agent.ts (SDRQualificationAgent, já em produção)',
     ],
     agentModule: null,
+    httpRoute: '/api/agent/swarm/mission',
+    noRouteReason: null,
   },
   {
     id: 'closer-sales',
@@ -155,6 +191,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'src/features/intelligence/agents/closer.agent.ts (CloserAgent, já em produção — nunca move deal para ganho, exige evento verificável)',
     ],
     agentModule: null,
+    httpRoute: '/api/agent/swarm/mission',
+    noRouteReason: null,
   },
   {
     id: 'coordinator-commercial',
@@ -179,6 +217,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Consome texto pré-formatado pelo chamador (mesmo padrão de BDRAgent/CRMAgent) — fontes esperadas: commercial-intelligence alerts/aging/leading-indicators, Activities.',
     ],
     agentModule: './coordinatorCommercial.agent.js',
+    httpRoute: '/api/agent/commercial-cell/coordinator-commercial/run',
+    noRouteReason: null,
   },
   {
     id: 'manager-commercial',
@@ -202,6 +242,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Consome texto pré-formatado pelo chamador — fontes esperadas: commercial-intelligence overview/performance/aging/losses.',
     ],
     agentModule: './managerCommercial.agent.js',
+    httpRoute: '/api/agent/commercial-cell/manager-commercial/run',
+    noRouteReason: null,
   },
   {
     id: 'executive-director',
@@ -231,6 +273,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Consome texto pré-formatado pelo chamador — fontes esperadas: commercial-intelligence executive overview/trends/health-score/forecast-accuracy.',
     ],
     agentModule: './executiveDirector.agent.js',
+    httpRoute: '/api/agent/commercial-cell/executive-director/run',
+    noRouteReason: null,
   },
   {
     id: 'billing-revenue',
@@ -254,6 +298,20 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Vendido: commercial-intelligence (Closed Won). Faturado: SEM FONTE REAL confirmada — src/features/billing/** é custo de uso de IA, não faturamento de venda. Sempre retorna billedAmount=null + missingData quando não houver fonte informada pelo chamador.',
     ],
     agentModule: './billingRevenue.agent.js',
+    // AIAGENT-004 — decisão explícita da onda 6, NÃO um esquecimento: este é o único agente da
+    // célula que continua sem rota de propósito. Os outros 5 órfãos ganharam rota porque tinham um
+    // motor real atrás (CommercialIntelligenceUseCases / AccountIntelligenceService); este não tem.
+    // Dar-lhe uma rota hoje só produziria, em 100% das chamadas, a saída
+    // "faturado: não disponível — SOURCE_REQUIRED", porque não existe fonte de faturamento
+    // integrada neste repositório (`src/features/billing/**` é custo de consumo de IA, não
+    // faturamento de venda — ver `bindings` acima e o cabeçalho de `billingRevenue.agent.ts`).
+    // Uma rota que só sabe responder "não sei" é pior que a ausência declarada: gastaria chamada
+    // de IA e orçamento de token para devolver uma lacuna já conhecida em tempo de código.
+    // Reavaliar quando existir integração real de faturamento/ERP (fora do escopo desta onda).
+    httpRoute: null,
+    noRouteReason:
+      'Sem fonte de faturamento integrada (SOURCE_REQUIRED). Uma rota hoje devolveria sempre ' +
+      '"faturado: não disponível" — reavaliar quando houver integração real de faturamento/ERP.',
   },
   {
     id: 'churn-retention',
@@ -282,6 +340,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Consome texto pré-formatado pelo chamador com o resultado já calculado por ChurnPredictionService.analyzeChurnRisk (src/features/analytics/services/churn-prediction.service.ts) — import direto rejeitado pelo gate de arquitetura (no-cross-feature-imports).',
     ],
     agentModule: './churnRetention.agent.js',
+    httpRoute: '/api/agent/commercial-cell/churn-retention/run',
+    noRouteReason: null,
   },
   {
     id: 'contract-signature',
@@ -305,6 +365,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Espelha (sem importar) os status reais de src/shared/domain/signature.ts (SignatureStatus, movido de src/features/cadence/domain/ no ITEM-13). Nunca chama requestDocumentSignature/applySignatureStatusUpdate.',
     ],
     agentModule: './contractSignature.agent.js',
+    httpRoute: '/api/agent/commercial-cell/contract-signature/run',
+    noRouteReason: null,
   },
   {
     id: 'bitrix-guardian',
@@ -335,6 +397,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Consome texto pré-formatado pelo chamador (ex.: CrmQualityIndex.bitrixSync de commercial-intelligence, ou logs de src/features/integrations/bitrix/**). Sem acesso de escrita — writeback continua exclusivo do domínio de integrações (Agente 06).',
     ],
     agentModule: './bitrixGuardian.agent.js',
+    httpRoute: '/api/agent/commercial-cell/bitrix-guardian/run',
+    noRouteReason: null,
   },
   {
     id: 'revenue-intelligence',
@@ -375,6 +439,8 @@ export const COMMERCIAL_AGENT_REGISTRY: CommercialAgentDefinition[] = [
       'Consome texto pré-formatado pelo chamador com números já calculados por CommercialIntelligenceAiService/CommercialIntelligenceUseCases (src/features/commercial-intelligence/**) — import direto rejeitado pelo gate de arquitetura (no-cross-feature-imports).',
     ],
     agentModule: './revenueIntelligence.agent.js',
+    httpRoute: '/api/agent/commercial-cell/revenue-intelligence/run',
+    noRouteReason: null,
   },
 ];
 

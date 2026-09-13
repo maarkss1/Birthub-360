@@ -25,6 +25,15 @@ import { ChurnPredictionService } from '../../features/analytics/services/churn-
 // (no-cross-feature-imports), então a rota resolve este repositório via container com um tipo
 // estrutural local (mesmo padrão de `ChurnPredictionService`/`CommercialIntelligenceAiService`).
 import { prismaSignatureRequestRepository } from '../../features/cadence/infra/PrismaSignatureRequestRepository.js';
+// AIAGENT-004 (onda 6): motor real por trás do Agente LDR — Inteligência de Leads da Célula
+// Comercial (`src/features/intelligence/agents/ldrIntelligence.agent.ts`). Mesmo motivo do
+// comentário da Onda 43 acima: `intelligence/**` não pode importar `market-intelligence/**`
+// diretamente (no-cross-feature-imports). Diferente dos demais registros, este NÃO é uma
+// instância: `AccountIntelligenceService` é construído por requisição (recebe o cliente Prisma já
+// escopado por tenant, `req.db`, e o `organizationId` da sessão autenticada), então o que vai para
+// o container é uma FÁBRICA — registrar uma instância aqui vazaria o tenant da primeira requisição
+// para todas as seguintes.
+import { AccountIntelligenceService } from '../../features/market-intelligence/server/accountIntelligence.service.js';
 import { PrismaForecastSnapshotStore } from '../../features/commercial-intelligence/infra/PrismaForecastSnapshotStore';
 import { PrismaCrm360Repository } from '../../features/crm360/infra/PrismaCrm360Repository';
 import { PrismaQualificationMatrixRepository } from '../../features/playbook/qualification-matrix/infra/PrismaQualificationMatrixRepository';
@@ -182,6 +191,12 @@ export function setupDI() {
   container.register('CommercialIntelligenceAiService', commercialIntelligenceAiService);
   container.register('CommercialIntelligencePeriod', { currentPeriod });
   container.register('ChurnPredictionService', churnPredictionService);
+  // AIAGENT-004 (onda 6): fábrica por requisição — ver comentário no import. O chamador
+  // (`agent.routes.ts`) passa `req.db` e o `organizationId` da sessão autenticada, nunca do body.
+  container.register('AccountIntelligenceServiceFactory', {
+    create: (db: ConstructorParameters<typeof AccountIntelligenceService>[0], orgId: string) =>
+      new AccountIntelligenceService(db, orgId),
+  });
   container.register('SignatureRequestRepositoryPort', prismaSignatureRequestRepository);
   container.register('GoogleCalendarService', { createCalendarEvent });
   // Agent Runtime Genérico (PROMPT 4) — executores reais por trás de `toolExecutors.ts`
