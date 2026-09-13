@@ -24,10 +24,9 @@ real de migrations, não um problema introduzido por mim.
 
 Não incluí nada disso na minha migration: descartei o arquivo gerado automaticamente e escrevi à
 mão uma migration mínima (`20260909131444_saved_view`) só com `CREATE TABLE "SavedView"` + índices
-
-- FKs + RLS, extraídos do SQL que o Prisma já tinha calculado corretamente para essa parte
-  específica. Aplicada com sucesso via `prisma migrate deploy` (não `db execute` manual — mesmo
-  caminho que CI usa) contra o banco de teste.
++ FKs + RLS, extraídos do SQL que o Prisma já tinha calculado corretamente para essa parte
+específica. Aplicada com sucesso via `prisma migrate deploy` (não `db execute` manual — mesmo
+caminho que CI usa) contra o banco de teste.
 
 **Isto é um achado a reportar, não algo que resolvi**: existe drift de schema real neste
 repositório, fora do escopo desta fatia (não é meu de decidir se `KnowledgeChunk` deve mesmo ser
@@ -37,7 +36,6 @@ usuário nesta sessão.
 ## O que foi implementado
 
 **Schema** (`prisma/schema.prisma` + migration `20260909131444_saved_view`):
-
 - Model `SavedView` — `id`, `name`, `organizationId`, `userId`, `funnel` ('Lead'|'Negocio'),
   `filters` (Json, `{owner?, q?}` — formato livre e versionável, um filtro novo não pede migration),
   `isDefault`, timestamps. `@@unique([userId, name])` evita duas views com o mesmo nome pro mesmo
@@ -48,7 +46,6 @@ usuário nesta sessão.
   misturaria dois conceitos de produto diferentes (ver comentário no schema).
 
 **Backend**:
-
 - `src/features/crm/services/savedView.service.ts` — `listSavedViews`/`createSavedView`/
   `deleteSavedView`, sempre escopados por `organizationId` E `userId`. Conflito de nome duplicado e
   "não encontrado" reaproveitam o tratamento global de erro do Prisma já existente em
@@ -58,10 +55,9 @@ usuário nesta sessão.
   `DELETE /api/crm/saved-views/:id`, montado em `src/bootstrap/routes.ts` atrás de
   `authenticateToken`+`requireTenant` (mesmo padrão de `/api/leads`).
 - `docs/openapi.yaml` — nova tag "Saved Views" + os 3 endpoints documentados. `npm run
-verify:openapi-drift` confirmando 0 drift estrutural depois.
+  verify:openapi-drift` confirmando 0 drift estrutural depois.
 
 **Frontend**:
-
 - `src/features/crm/components/SavedViewsPanel.tsx` — mesmo padrão visual/estrutural de
   `SavedSearchesModal.tsx` (prospecção, já existente): `Dialog` + formulário de criação inline +
   lista com Aplicar/Excluir. Sem conceito de agendamento/execução (não existe aqui) — "Aplicar" só
@@ -74,7 +70,6 @@ verify:openapi-drift` confirmando 0 drift estrutural depois.
 
 Novo arquivo `tests/e2e/saved-views.spec.ts` (nome já antecipado na lista de specs do prompt do
 Agente 00 para a Onda H):
-
 - `salvar a view atual e aplicá-la restaura o filtro de busca na URL` — fluxo completo pela UI:
   aplica filtro de busca, salva como view, limpa o filtro manualmente (prova que "Aplicar" restaura
   de verdade, não que a URL nunca mudou), reabre o painel, aplica a view salva, confirma a URL e o
@@ -86,7 +81,6 @@ Agente 00 para a Onda H):
   (RLS de tenant + filtro de `userId` na aplicação), não só a intenção de design.
 
 Achados reais durante a escrita dos testes (não regressões, ajustes de locator):
-
 - `Dialog.tsx` tem DOIS controles com nome acessível "Fechar" (X do cabeçalho via `aria-label`, e o
   botão do rodapé via texto visível) — `getByRole('button', {name:'Fechar'})` é ambíguo;
   `getByText('Fechar', {exact:true})` resolve porque só o botão do rodapé tem texto visível.
@@ -95,7 +89,6 @@ Achados reais durante a escrita dos testes (não regressões, ajustes de locator
   evita depender do encoding exato.
 
 Resultado real de execução (Chromium, banco de teste isolado, migration aplicada):
-
 - `npx tsc --noEmit` → limpo.
 - `npm run lint` → exit 0 (1 warning pré-existente, fora dos arquivos desta onda).
 - `npm run format:check` / `npx prisma format` → limpo.
@@ -111,8 +104,8 @@ de `owner` já coberto por teste próprio na B2a) e `accessibility.spec.ts` comp
 
 ## Definition of Done — capability desta fatia
 
-| #    | Capability                           | Estado       | Evidência                                                                                                          |
-| ---- | ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| # | Capability | Estado | Evidência |
+|---|---|---|---|
 | P0-8 | Saved Views (pessoal, funil+filtros) | **VERIFIED** | 2 testes novos (fluxo completo + isolamento por usuário), 29/29 E2E passando, migration aditiva aplicada e com RLS |
 
 ## Empacotamento / próximo passo

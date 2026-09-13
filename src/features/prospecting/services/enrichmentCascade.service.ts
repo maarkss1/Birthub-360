@@ -357,6 +357,7 @@ export async function runEnrichmentCascade(
       // contact record, Google Places record) — nunca quando os três passos falharam ou não
       // encontraram nada (ver AGENTS.md → LGPD → "05: rotulagem de dado inferido vs. confirmado").
       dataOrigin: anyEnriched ? 'confirmado' : null,
+      appliedToCompany: anyEnriched,
       rawData: {
         apolloEnriched,
         hunterEnriched,

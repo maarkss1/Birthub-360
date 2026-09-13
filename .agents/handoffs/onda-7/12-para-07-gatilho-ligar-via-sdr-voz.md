@@ -59,7 +59,6 @@ só técnica:
 ## Alteração necessária
 
 Decidir e implementar uma das opções:
-
 1. Aplicar `isWithinCallWindow`/`callWindowFromEnv` (e, se fizer sentido para automação,
    `evaluateLead`/`dialPolicyFromEnv`) antes de chamar `callLead` no motor de automação — mesma
    trava, sem duplicar a lógica.
@@ -102,5 +101,4 @@ especial, mas não quebra nada). Um `else if (haltedBy === 'not-authorized') ret
 autorizada';` fecha a UI — não editei porque o arquivo é seu.
 
 ## Resolução
-
 Adicionada trava isWithinCallWindow(new Date(), callWindowFromEnv()) no motor de automação e label 'not-authorized' no ColdCallStatusCard.tsx. oicebox.service.ts foi mantido para fins de compatibilidade/retrocompatibilidade.

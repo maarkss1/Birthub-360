@@ -25,7 +25,6 @@ Não posso alterar `prisma/schema.prisma`/migrações (fora do meu escopo — ex
 então a correção completa depende de uma migração sua.
 
 ## Arquivo(s) envolvido(s)
-
 - `prisma/schema.prisma` — modelo `Automation` (linha ~885) precisa de uma relação 1:N para o
   histórico.
 - `src/features/automations/automation.engine.ts` — `handle()`/`runAction()` são os pontos que
@@ -68,16 +67,13 @@ recentes deste projeto (ver decisão análoga em `06A-extracoes-bitrix.md`, seç
 critério.
 
 ## Teste esperado
-
 Depois da migração, eu adiciono (no meu escopo):
-
 - toda execução (sucesso e falha) grava uma linha em `AutomationExecution`, isolada por tenant;
 - `correlationId` idêntico entre o log estruturado e a linha persistida;
 - uma automação que falha continua não impedindo as demais regras do mesmo evento (comportamento
   atual de `handle()` já isola por `try/catch` por automação — só falta persistir o resultado).
 
 ## Contexto adicional
-
 Não é bloqueador para o restante da minha entrega da Onda 2 (gateway, RAG, filas, Hub de IA,
 segurança de tool/LGPD já foram tratados nesta onda dentro do meu escopo) — mas fica registrado como
 pendência real, não como "temos histórico" por causa do `lastRunAt`/`runCount` agregado que já
@@ -87,7 +83,6 @@ com correlação nos logs — não é histórico persistente/consultável pela U
 "desaparecer" completamente sem rastro nenhum.
 
 ## Resolução
-
 Resolvido na Onda 2.5 (ver `.agents/runs/onda-2.5.md`), sem criar uma tabela redundante: a
 implementação reutiliza `AuditLog` (já persistente, tenant-scoped, sob RLS) em vez do modelo
 `AutomationExecution` sugerido aqui. Contrato persistido por execução: `automationId`/nome,

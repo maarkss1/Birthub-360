@@ -9,7 +9,7 @@ troca mecânica de hex→token da onda anterior: hex crus sem token corresponden
 
 Script utilitário reutilizável em Python (`contrast.py`, calculadora de razão de contraste WCAG a
 partir de hex fg/bg, mais `color_mix_pct`/`alpha_over` para reproduzir `color-mix()`/opacidade do
-CSS) — usado para medir _todas_ as decisões abaixo antes de aplicar qualquer mudança, nunca por
+CSS) — usado para medir *todas* as decisões abaixo antes de aplicar qualquer mudança, nunca por
 estimativa visual. Não foi commitado (ferramenta de investigação, ver `visual-qa/SKILL.md` sobre
 harness descartável não virar arquivo do repo).
 
@@ -22,12 +22,12 @@ seguindo exatamente o padrão de `--color-brand-active` (DQA-19): valor escureci
 `color-mix(..., black)` no tema claro, e igual ao token cru no tema escuro (onde o cru já passa
 4.5:1). Confirmado por medição:
 
-| Token   | Cru vs. `--surface` claro | `-active` vs. `--surface` claro | Cru vs. `--surface` escuro |
-| ------- | ------------------------- | ------------------------------- | -------------------------- |
-| success | 2.54:1 (falha)            | 6.99:1 (passa)                  | 7.32:1 (passa)             |
-| warning | 2.15:1 (falha)            | 6.18:1 (passa)                  | 8.65:1 (passa)             |
-| danger  | 3.76:1 (falha)            | 7.53:1 (passa)                  | 4.93:1 (passa)             |
-| info    | 3.68:1 (falha)            | 7.35:1 (passa)                  | 5.05:1 (passa)             |
+| Token | Cru vs. `--surface` claro | `-active` vs. `--surface` claro | Cru vs. `--surface` escuro |
+|---|---|---|---|
+| success | 2.54:1 (falha) | 6.99:1 (passa) | 7.32:1 (passa) |
+| warning | 2.15:1 (falha) | 6.18:1 (passa) | 8.65:1 (passa) |
+| danger | 3.76:1 (falha) | 7.53:1 (passa) | 4.93:1 (passa) |
+| info | 3.68:1 (falha) | 7.35:1 (passa) | 5.05:1 (passa) |
 
 Ou seja: **nenhum token novo precisou ser criado em `globals.css`** (zero linhas alteradas nesse
 arquivo) — o trabalho real foi 100% de aplicação caso a caso do padrão já existente (que uma parte
@@ -76,7 +76,7 @@ auditoria) em `src/`.
    botão `bg-brand-active` hardcoded em laranja fixo, **vazando a cor da AtlasGR pra Total Trac**
    (mesmo padrão de bug que a Constituição proíbe na seção 7.7). Trocado para `hover:brightness-110`
    — já é o padrão usado nos botões irmãos dos mesmos arquivos (`bg-brand-active
-hover:brightness-110`, ex. `LinkedInTool.tsx:318`), então a correção reaproveita convenção já
+   hover:brightness-110`, ex. `LinkedInTool.tsx:318`), então a correção reaproveita convenção já
    existente, não inventa nada.
 3. **`text-[#fff]`** (`Sidebar.tsx`) → `text-white` — trivial, `#fff` não é hex-sem-token, é
    `white` puro do Tailwind; já estava sobre `bg-brand-active` (correto).
@@ -178,17 +178,17 @@ fora porque exigem uma decisão de token nova, ou porque não bateram na busca p
 
 ## Resumo numérico
 
-| Categoria                                                                           | Quantidade                                               |
-| ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `text-success/danger/info/warning` sem `-active` — corrigidos                       | 99 ocorrências, 34 arquivos                              |
-| `text-success/danger/info/warning` sem `-active` — já OK, documentado               | 2 ocorrências (`CompanyList.tsx`)                        |
-| `text-success/danger/info/warning` sem `-active` — pendente                         | 0                                                        |
-| Hex cru sem token exato — corrigido (token aplicado ou variante de tema adicionada) | 54 ocorrências, ~20 arquivos                             |
-| Hex cru sem token exato — já OK, documentado (passa contraste real, sem mudança)    | 21 ocorrências, 6 arquivos                               |
-| Hex cru sem token exato — pendente/ambíguo                                          | 0                                                        |
-| Tokens novos criados em `globals.css`                                               | 0 (`-active` de success/warning/danger/info já existiam) |
-| Bug relacionado achado e corrigido (token `info-base` inexistente)                  | 3 arquivos                                               |
-| Achados relacionados, fora do escopo pedido, não corrigidos (listados acima)        | 3 casos — candidatos a tarefa separada                   |
+| Categoria | Quantidade |
+|---|---|
+| `text-success/danger/info/warning` sem `-active` — corrigidos | 99 ocorrências, 34 arquivos |
+| `text-success/danger/info/warning` sem `-active` — já OK, documentado | 2 ocorrências (`CompanyList.tsx`) |
+| `text-success/danger/info/warning` sem `-active` — pendente | 0 |
+| Hex cru sem token exato — corrigido (token aplicado ou variante de tema adicionada) | 54 ocorrências, ~20 arquivos |
+| Hex cru sem token exato — já OK, documentado (passa contraste real, sem mudança) | 21 ocorrências, 6 arquivos |
+| Hex cru sem token exato — pendente/ambíguo | 0 |
+| Tokens novos criados em `globals.css` | 0 (`-active` de success/warning/danger/info já existiam) |
+| Bug relacionado achado e corrigido (token `info-base` inexistente) | 3 arquivos |
+| Achados relacionados, fora do escopo pedido, não corrigidos (listados acima) | 3 casos — candidatos a tarefa separada |
 
 Nenhum caso do escopo pedido (itens 1–3 do prompt: `text-success/danger/info/warning` sem
 `-active`, e hex sem token exato) ficou pendente por ambiguidade — todos os 55+ hex e 99 ocorrências

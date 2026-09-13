@@ -3,9 +3,7 @@
 - Onda: 7
 - Status: resolvido
 - Prioridade: bloqueador
-
 ## Problema
-
 Hoje `CallSuppression` só protege o canal de voz (12). E-mail (05) e WhatsApp (06) não consultam
 nenhum registro de opt-out antes de disparar — um lead que pede para não ser incomodado num canal
 continua recebendo mensagem pelos outros dois. É a mentira mais provável do meu domínio (ver
@@ -20,7 +18,6 @@ depende da tabela `OptOutRecord`, que propus em `17-para-01-schema-cadencia-opto
 assim que o adaptador Prisma existir — a interface já está estável e testada, só falta a ligação.
 
 ## Arquivo(s) envolvido(s)
-
 - Meu: `src/features/cadence/domain/optOut.ts`, `src/features/cadence/application/optOutService.ts`
   (porta + serviço, prontos e testados).
 - Seus, quando for aplicar: cada ponto de disparo real —
@@ -32,25 +29,19 @@ assim que o adaptador Prisma existir — a interface já está estável e testad
 ## Alteração necessária
 
 ### Contrato de consulta (antes de qualquer disparo, nos 3 canais)
-
 ```ts
 import { isOptedOut } from '../../cadence/application/optOutService.js'; // caminho ilustrativo — ajusto se preferirem outro ponto de entrada público
 
-const blocked = await isOptedOut(
-  repo,
-  organizationId,
-  {
-    leadId: lead.id, // sempre que disponível — é o casamento mais forte
+const blocked = await isOptedOut(repo, organizationId, {
+    leadId: lead.id,           // sempre que disponível — é o casamento mais forte
     email: lead.contact?.email ?? null,
     phoneE164: toE164BR(lead.contact?.phone ?? lead.contact?.whatsapp),
-  },
-  'email' /* | 'whatsapp' | 'voice' */,
-);
+}, 'email' /* | 'whatsapp' | 'voice' */);
 
 if (blocked) {
-  // registrar tentativa como 'skipped' (motivo 'opt-out'), NUNCA como enviado — mesma classe de
-  // honestidade já corrigida em cold-email.service.ts (commit 2e42a557)
-  return;
+    // registrar tentativa como 'skipped' (motivo 'opt-out'), NUNCA como enviado — mesma classe de
+    // honestidade já corrigida em cold-email.service.ts (commit 2e42a557)
+    return;
 }
 ```
 
@@ -61,31 +52,27 @@ tabela de resolução de identidade separada — o casamento acontece nos três 
 (`leadId`/`email`/`phoneE164`) dentro de `isOptedOut`, não em cada canal individualmente.
 
 ### Contrato de registro (quando o canal recebe um pedido de opt-out)
-
 ```ts
 import { recordOptOut } from '../../cadence/application/optOutService.js';
 
 await recordOptOut(repo, {
-  organizationId,
-  scope: 'global', // ou 'email'/'whatsapp'/'voice' se o pedido for explicitamente restrito a um canal
-  leadId: lead?.id ?? null,
-  email: lead?.contact?.email ?? null,
-  phoneE164: toE164BR(phone),
-  originChannel: 'whatsapp', // 'email' | 'whatsapp' | 'voice' | 'manual' | 'import'
-  reason: 'Lead pediu para não receber mais mensagens',
-  evidence: mensagemOriginal, // texto/trecho real, nunca inferência
-  requestedBy: null, // ou userId, se registrado manualmente por um vendedor
+    organizationId,
+    scope: 'global', // ou 'email'/'whatsapp'/'voice' se o pedido for explicitamente restrito a um canal
+    leadId: lead?.id ?? null,
+    email: lead?.contact?.email ?? null,
+    phoneE164: toE164BR(phone),
+    originChannel: 'whatsapp', // 'email' | 'whatsapp' | 'voice' | 'manual' | 'import'
+    reason: 'Lead pediu para não receber mais mensagens',
+    evidence: mensagemOriginal, // texto/trecho real, nunca inferência
+    requestedBy: null, // ou userId, se registrado manualmente por um vendedor
 });
 ```
-
 `scope: 'global'` é a interpretação correta por padrão sempre que o lead pedir para "parar de
 contato" de forma genérica — só use `scope` restrito a um canal quando o pedido for
 inequivocamente restrito ("não me liga mais, pode mandar e-mail").
 
 ### Para o 12 especificamente — migração do `CallSuppression`
-
 Não desligo nem removo `CallSuppression` — ele é seu e está em produção. Proposta:
-
 1. `OptOutRecord` recebe (via migration, ver handoff ao 01) uma cópia inicial de todo
    `CallSuppression` existente (`scope='Voice'`, `originChannel='voice'`).
 2. A partir da aplicação do schema, `coldCall.policy`/`callSuppression.service.ts` passam a
@@ -96,9 +83,7 @@ Não desligo nem removo `CallSuppression` — ele é seu e está em produção. 
    também, fechando a lacuna: opt-out feito por WhatsApp bloqueando voz, hoje impossível.
 
 ## Teste esperado
-
 Cobrir, para cada par de canais (E-mail↔WhatsApp, E-mail↔Voz, WhatsApp↔Voz):
-
 - opt-out registrado num canal impede disparo real no outro (teste de integração no canal
   consumidor, chamando `isOptedOut` de verdade em vez de mockar).
 - opt-out `scope: 'global'` bloqueia os três.
@@ -110,7 +95,6 @@ casamento/matching em memória — o que falta é a integração de cada canal r
 o objeto deste handoff.
 
 ## Contexto adicional
-
 Prioridade `bloqueador` porque, sem essa ligação, a Onda 7 entrega um registro de opt-out que
 existe mas não protege ninguém de verdade — exatamente o cenário que o meu prompt chama de "a
 mentira mais provável do seu domínio". Não é bloqueador para eu continuar implementando dentro do

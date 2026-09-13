@@ -15,9 +15,9 @@ name: Security - CodeQL
 
 on:
   pull_request:
-    branches: [main, master]
+    branches: [ main, master ]
   push:
-    branches: [main, master]
+    branches: [ main, master ]
   schedule:
     # Quarta-feira, 06:00 UTC — deslocado do agendamento semanal do Trivy (segunda, 06:00 UTC) em
     # security-trivy.yml para não competir por runner no mesmo horário.
@@ -29,7 +29,7 @@ permissions:
 
 jobs:
   analyze:
-    name: 'CodeQL / ${{ matrix.language }}'
+    name: "CodeQL / ${{ matrix.language }}"
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -62,7 +62,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@42947a340483f03ba47bb1a039b2c519aab3df85 # v3.37.8
         with:
-          category: '/language:${{ matrix.language }}'
+          category: "/language:${{ matrix.language }}"
           output: results
           upload: always
 
@@ -75,7 +75,7 @@ jobs:
       # roda um script de gate sem dependências de app, `npx tsx` traz só o runtime TS (bem mais
       # rápido). O script é coberto por teste unitário próprio
       # (tests/unit/security-codeql-sarif.test.ts), rodado no job de aplicação normal (ci.yml).
-      - name: 'Gate: falhar em achado CodeQL error-level'
+      - name: "Gate: falhar em achado CodeQL error-level"
         run: npx --yes tsx scripts/security/check-codeql-sarif.ts results
 
       - name: Upload SARIF como artefato (auditoria/retenção)

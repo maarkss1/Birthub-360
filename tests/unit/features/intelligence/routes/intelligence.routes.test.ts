@@ -5,6 +5,12 @@
  * autorização da Onda 1), a rota não tinha `requireRole` nenhum: qualquer usuário autenticado de
  * qualquer tenant, de qualquer papel (inclusive VISUALIZADOR, que só deveria ter leitura), podia
  * mudar a configuração de IA usada pela plataforma inteira. Este teste tranca que só ADMIN grava.
+ *
+ * TENANT-002 (auditoria de débito técnico): `requireRole(['ADMIN'])` sozinho não bastava, porque
+ * ADMIN é um papel POR ORGANIZAÇÃO — o admin de QUALQUER tenant cliente conseguia mudar a
+ * configuração de IA de TODOS os outros tenants da plataforma. A rota agora também exige
+ * `requirePlatformOperator` (mesma trava de `/admin/queues`, SEC-001/SEC-002) — só um operador de
+ * infraestrutura de verdade, não um admin de cliente, pode gravar.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import request from 'supertest';
@@ -34,7 +40,14 @@ vi.mock('@/features/intelligence/services/pending-actions.service', () => ({
 // consentimento. `vi.hoisted` (em vez do truque de nome prefixado "mock") porque este arquivo já
 // tem vários blocos `vi.mock` distintos e precisa de ordem de inicialização garantida.
 const { mockEnv, summarizeLeadMock } = vi.hoisted(() => ({
-  mockEnv: { AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS: undefined as unknown },
+  mockEnv: {
+    AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS: undefined as unknown,
+    // TENANT-002: PUT /ai-settings agora também exige requirePlatformOperator, que lê este valor
+    // de `env` diretamente (src/shared/middlewares/requirePlatformOperator.ts). Fica indefinido
+    // por padrão (fail-closed) e cada teste liga quando precisa simular o operador de plataforma.
+    PLATFORM_OPERATOR_TOKEN: undefined as string | undefined,
+    NODE_ENV: 'test',
+  },
   summarizeLeadMock: vi.fn(),
 }));
 vi.mock('@/config/env', () => ({ env: mockEnv }));
@@ -98,6 +111,7 @@ beforeEach(() => {
 
 afterEach(() => {
   mockEnv.AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS = undefined;
+  mockEnv.PLATFORM_OPERATOR_TOKEN = undefined;
 });
 
 /**
@@ -173,9 +187,27 @@ describe('DELETE /api/intelligence/pending/:id — autorização (descarte de a�
 });
 
 describe('PUT /api/intelligence/ai-settings — autorização (config global, sem tenant)', () => {
-  it('ADMIN grava com sucesso (papel permitido)', async () => {
+  it('ADMIN de tenant SEM o token de operador de plataforma recebe 403 e não grava (TENANT-002)', async () => {
+    // Simula exatamente o cenário do bug: um ADMIN de tenant válido, mas sem ser operador de
+    // infraestrutura da plataforma. requirePlatformOperator nega mesmo com PLATFORM_OPERATOR_TOKEN
+    // configurado no servidor, porque nenhum token foi apresentado na requisição.
+    mockEnv.PLATFORM_OPERATOR_TOKEN = 'operator-secret-value';
+
     const res = await request(buildApp('ADMIN'))
       .put('/api/intelligence/ai-settings')
+      .send(validPayload);
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(saveAiSettingsMock).not.toHaveBeenCalled();
+  });
+
+  it('ADMIN de tenant com token de operador de plataforma CORRETO grava com sucesso', async () => {
+    mockEnv.PLATFORM_OPERATOR_TOKEN = 'operator-secret-value';
+
+    const res = await request(buildApp('ADMIN'))
+      .put('/api/intelligence/ai-settings')
+      .set('x-platform-operator-token', 'operator-secret-value')
       .send(validPayload);
 
     expect(res.status).toBe(200);
@@ -183,11 +215,37 @@ describe('PUT /api/intelligence/ai-settings — autorização (config global, se
     expect(saveAiSettingsMock).toHaveBeenCalledWith(validPayload.settings);
   });
 
+  it('ADMIN de tenant com token de operador de plataforma ERRADO recebe 403 e não grava', async () => {
+    mockEnv.PLATFORM_OPERATOR_TOKEN = 'operator-secret-value';
+
+    const res = await request(buildApp('ADMIN'))
+      .put('/api/intelligence/ai-settings')
+      .set('x-platform-operator-token', 'token-errado')
+      .send(validPayload);
+
+    expect(res.status).toBe(403);
+    expect(saveAiSettingsMock).not.toHaveBeenCalled();
+  });
+
+  it('sem PLATFORM_OPERATOR_TOKEN configurado no servidor: nega por padrão (503, fail-closed) mesmo para ADMIN', async () => {
+    mockEnv.PLATFORM_OPERATOR_TOKEN = undefined;
+
+    const res = await request(buildApp('ADMIN'))
+      .put('/api/intelligence/ai-settings')
+      .send(validPayload);
+
+    expect(res.status).toBe(503);
+    expect(saveAiSettingsMock).not.toHaveBeenCalled();
+  });
+
   it.each(['GESTOR', 'CLOSER', 'SDR', 'VISUALIZADOR'])(
-    '%s recebe 403 e não grava (papel negado)',
+    '%s recebe 403 e não grava (papel negado), mesmo apresentando o token de operador de plataforma',
     async (role) => {
+      mockEnv.PLATFORM_OPERATOR_TOKEN = 'operator-secret-value';
+
       const res = await request(buildApp(role))
         .put('/api/intelligence/ai-settings')
+        .set('x-platform-operator-token', 'operator-secret-value')
         .send(validPayload);
 
       expect(res.status).toBe(403);
@@ -197,18 +255,22 @@ describe('PUT /api/intelligence/ai-settings — autorização (config global, se
   );
 
   it('sem sessão autenticada recebe 401 e não grava', async () => {
+    mockEnv.PLATFORM_OPERATOR_TOKEN = 'operator-secret-value';
     const app = express();
     app.use(express.json());
     app.use('/api/intelligence', intelligenceRoutes);
     app.use(errorHandler);
 
-    const res = await request(app).put('/api/intelligence/ai-settings').send(validPayload);
+    const res = await request(app)
+      .put('/api/intelligence/ai-settings')
+      .set('x-platform-operator-token', 'operator-secret-value')
+      .send(validPayload);
 
     expect(res.status).toBe(401);
     expect(saveAiSettingsMock).not.toHaveBeenCalled();
   });
 
-  it('GET /api/intelligence/ai-settings continua acessível a qualquer papel autenticado (somente leitura)', async () => {
+  it('GET /api/intelligence/ai-settings continua acessível a qualquer papel autenticado (somente leitura), sem exigir token de operador', async () => {
     const res = await request(buildApp('VISUALIZADOR')).get('/api/intelligence/ai-settings');
 
     expect(res.status).toBe(200);

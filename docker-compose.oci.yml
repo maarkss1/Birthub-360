@@ -12,6 +12,17 @@
 #
 # Nunca suba `redis`/`worker` ao lado de outro processo que também consuma as mesmas filas
 # BullMQ — duplicar consumers reprocessa jobs (ver ADR-004 e docs/ADR/ADR-003, seção A).
+#
+# ACH-10-01 (auditoria de release-readiness): este stack propositalmente NÃO sobe
+# Prometheus/Grafana/Loki para a instância real. Decisão de escopo MVP, não um esquecimento — ver
+# `docs/deploy/oracle-cloud.md` seção 11 para o detalhamento completo (inclusive a barreira técnica
+# real: o endpoint `/metrics` da aplicação exige o header `x-platform-operator-token`, que o
+# `scrape_config` nativo do Prometheus não sabe enviar sem mudança de código fora do escopo desta
+# correção) e `infrastructure/observability/RUNBOOK.md` seções 0-OCI/8 para como operar um
+# incidente sem observabilidade centralizada enquanto isso não for resolvido. Pré-requisitos já
+# válidos para quando essa lacuna for fechada (não dependem do Prometheus em si): `EXPOSE_METRICS`
+# deve ser `true` no serviço `app` para o endpoint `/metrics` existir, e `PLATFORM_OPERATOR_TOKEN`
+# deve estar configurado em `.env.production` para ele responder (fail-closed sem isso).
 
 services:
   app:

@@ -35,7 +35,6 @@ Auditados todos os handoffs `Status: aberto` (27 arquivos) e todos endereçados 
 
 **Resolvidos nesta fase** (edição permitida: só o campo `Status` + seção `## Resolução`, corpo
 original preservado):
-
 - `.agents/handoffs/onda-8/18-para-00-relatorio-conformidade-handoffs.md` — o achado mais
   importante (handoff com `Prioridade: crítico`, fora do vocabulário padrão, que uma varredura
   automática por `Prioridade: bloqueador` não pegaria) foi reverificado: já está `Status: resolvido`
@@ -81,7 +80,6 @@ credencial cross-org, reset de senha em massa, segredo hardcoded no webhook voic
 achado de regressão nesta verificação.
 
 Superfícies expostas revisadas contra o código atual (não contra relatório antigo):
-
 - Os 4 webhooks montados antes de `express.json` (`birth-voice`, `voiceResult`, `bitrix`, `3cx`) —
   confirmado por leitura de código que os 3 primeiros usam `timingSafeEqual` (via
   `birthVoice.helpers.ts`) e o 3CX reutiliza a mesma função (`isValidSignature`); todos falham
@@ -100,11 +98,11 @@ Três checkpoints humanos, cada um só podendo ser respondido pelo dono do repos
 tem acesso a portal da Bland AI, ao admin do Bitrix24, ou autoridade para autorizar reescrita de
 histórico):
 
-| #   | Ação                                                    | Resposta do dono do repositório                                            | Estado               |
-| --- | ------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------- |
-| 1   | Rotacionar chave Bland AI                               | **Ainda não feito**                                                        | 🔴 Bloqueador aberto |
-| 2   | Rotacionar os 2 webhooks Bitrix24 (AtlasGR + TotalTrac) | **Ainda não feito**                                                        | 🔴 Bloqueador aberto |
-| 3   | Decisão sobre reescrever histórico do git (dump de PII) | **Caminho A** — manter histórico, mitigar daqui pra frente, sem force-push | ✅ Decidido          |
+| # | Ação | Resposta do dono do repositório | Estado |
+|---|---|---|---|
+| 1 | Rotacionar chave Bland AI | **Ainda não feito** | 🔴 Bloqueador aberto |
+| 2 | Rotacionar os 2 webhooks Bitrix24 (AtlasGR + TotalTrac) | **Ainda não feito** | 🔴 Bloqueador aberto |
+| 3 | Decisão sobre reescrever histórico do git (dump de PII) | **Caminho A** — manter histórico, mitigar daqui pra frente, sem force-push | ✅ Decidido |
 
 Runbooks executáveis já existem para os 3 itens (`docs/security/runbooks/ROTATE_BLAND_AI_KEY.md`,
 `ROTATE_BITRIX24_WEBHOOKS.md`, `DECIDE_GIT_HISTORY_REWRITE.md`) — cada um com passo de verificação
@@ -173,7 +171,7 @@ Postgres/Redis provisionados nesta fase. Fluxo dirigido via Chromium real (Playw
    (`token sk-abcdefghijklmnopqrstuvwx1234`), para provar sanitização em produção real do fluxo, não
    só em teste unitário isolado.
 4. Envio — `POST /api/bug-reports` retornou `201`, corpo `{"success":true,"data":{"id":"...",
-"status":"OPEN"}}`.
+   "status":"OPEN"}}`.
 5. Toast de sucesso "Relato enviado. Obrigado por avisar!" confirmado na UI — não é sucesso
    silencioso nem promessa sem confirmação.
 6. **Verificação direta no banco** (não confiando só na resposta HTTP): registro `BugReport`
@@ -202,12 +200,10 @@ só exige o smoke do reporter.
 **P0 de código:** 0 (nenhum encontrado ou reaberto).
 
 **P0/bloqueadores externos, fora do alcance de qualquer agente:**
-
 1. Chave Bland AI não rotacionada — 🔴 aberto.
 2. Webhooks Bitrix24 (AtlasGR + TotalTrac) não rotacionados — 🔴 aberto.
 
 **P1:**
-
 - Nenhum P1 novo de código. Débitos pré-existentes e já documentados (4→2 vulnerabilidades moderate
   do npm audit — na prática 2 hoje, a 2ª classificação de `01-bloqueadores.md` estava desatualizada
   em contagem, não em substância; skip de baseline visual Linux; `/metrics` sem auth adicional sob
@@ -236,7 +232,6 @@ público do git continua potencialmente válida, e nenhuma quantidade de correç
 exposição.
 
 **Bloqueador exato para reabrir e aprovar esta fase:**
-
 1. Rotacionar a chave Bland AI no portal (runbook: `docs/security/runbooks/ROTATE_BLAND_AI_KEY.md`) e
    confirmar que a antiga não funciona mais.
 2. Rotacionar os 2 webhooks Bitrix24 — AtlasGR e TotalTrac — (runbook:

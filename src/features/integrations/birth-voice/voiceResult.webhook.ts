@@ -1,5 +1,5 @@
 import express, { Router, type Request, type Response } from 'express';
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { env } from '../../../config/env.js';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
@@ -73,6 +73,20 @@ function asString(value: unknown): string | null {
 }
 
 /**
+ * ACH-06-03: recording_url vem do payload externo da Bland e é persistido/renderizado como link
+ * clicável (nota em texto livre aqui, e <a href> em VoiceCallActivity.tsx). Sem esta validação,
+ * um valor como `javascript:...` sobreviveria como string não-vazia em asString() e teria
+ * comportamento não-HTTP ao ser clicado. Fail-safe: nunca lança, só reduz a null quando o
+ * esquema não é http(s) — mitigado hoje pela posse do segredo do webhook, mas defesa em
+ * profundidade não deve depender só disso.
+ */
+function asHttpUrl(value: unknown): string | null {
+  const str = asString(value);
+  if (!str) return null;
+  return /^https?:\/\//i.test(str) ? str : null;
+}
+
+/**
  * O contexto (leadId/organizationId) foi enviado por nós em `request_data` ao criar a chamada
  * (birthVoice.service.ts). A Bland ecoa esse objeto no callback; algumas versões da API o expõem
  * como `metadata` ou `variables`, então os três são aceitos — sempre com a mesma validação.
@@ -132,7 +146,7 @@ async function handleVoiceResult(req: Request, res: Response): Promise<void> {
   const phoneNumber = asString(payload.phone_number) ?? asString(payload.to) ?? '';
   const summary = asString(payload.summary);
   const transcript = asString(payload.concatenated_transcript);
-  const recordingUrl = asString(payload.recording_url);
+  const recordingUrl = asHttpUrl(payload.recording_url);
   const callLength = typeof payload.call_length === 'number' ? payload.call_length : 0;
   const providerStatus = asString(payload.status) ?? asString(payload.disposition_tag);
   const answeredByMachine =
@@ -238,22 +252,25 @@ ${transcript || 'Nenhuma transcrição gravada.'}`;
       // Projeção estruturada do mesmo resultado, pra tela de atividade de voz (VoiceCallActivity
       // .tsx) conseguir listar/filtrar chamadas recentes sem precisar reabrir cada lead e ler a
       // Note em texto livre acima — nunca a fonte de verdade do resultado, só uma projeção dela.
-      // `callId !== 'sem-id'` já garantido pelo guard de idempotência mais acima (a marca no Note
-      // usa o mesmo `callId`), então esta criação não corre risco de duplicar numa reentrega.
-      if (callId !== 'sem-id') {
-        await prisma.voiceCallLog.create({
-          data: {
-            organizationId,
-            leadId: lead.id,
-            providerCallId: callId,
-            outcome: classifiedOutcome,
-            durationSeconds: Math.round(callLength * 60),
-            summary,
-            transcript,
-            recordingUrl,
-          },
-        });
-      }
+      // Alinhado com o webhook novo (birthVoice.webhook.ts): sempre cria o VoiceCallLog, mesmo sem
+      // call_id — `randomUUID()` (não um literal fixo tipo 'sem-id') evita colidir com o índice
+      // único (organizationId, providerCallId) numa segunda chamada sem call_id da mesma
+      // organização, o que derrubaria o webhook com erro de banco. O guard de idempotência acima
+      // (marca no Note usando o mesmo `callId`) já impede que esta criação duplique numa
+      // reentrega do mesmo call_id real; quando falta call_id, cada entrega é tratada como uma
+      // chamada distinta, igual ao webhook novo.
+      await prisma.voiceCallLog.create({
+        data: {
+          organizationId,
+          leadId: lead.id,
+          providerCallId: callId !== 'sem-id' ? callId : randomUUID(),
+          outcome: classifiedOutcome,
+          durationSeconds: Math.round(callLength * 60),
+          summary,
+          transcript,
+          recordingUrl,
+        },
+      });
 
       const currentFields = (lead.customFields as Record<string, unknown>) || {};
       await prisma.lead.update({

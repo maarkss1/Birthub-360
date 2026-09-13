@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Cpu, Loader2, MapPin } from 'lucide-react';
 import { api } from '../../../../../lib/api';
 import { BRAND } from '../../../../../config/brand';
-import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
@@ -22,8 +21,9 @@ interface GooglePlacesCriteria {
 }
 
 export function GooglePlacesTool({ configured }: { configured: boolean }) {
-  const { playbook } = useActivePlaybook();
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção.
+  const activeSegments = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
 
   const [criteria, setCriteria] = useState<GooglePlacesCriteria>({
     segmento: activeSegments[0],

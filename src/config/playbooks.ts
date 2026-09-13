@@ -3,29 +3,29 @@
  * plataforma: playbook, matriz de objeções, matriz de qualificação, personas de
  * roleplay e histórico do copiloto.
  *
- * Antes este eixo se chamava "marca ativa" e vinha de `BRAND_CONFIGS`
- * (`src/contexts/BrandContext.tsx`), misturando duas coisas diferentes: a
- * identidade visual do produto e a carteira comercial de quem o usa. Ao trocar
- * a plataforma inteira para a marca Birth Hub 360, as duas se separaram — a
- * identidade é única (`src/config/brand.ts`) e o playbook continua sendo um dado
- * comercial, de qualquer empresa que use a plataforma.
+ * Até 09/2026 este eixo tinha duas chaves fixas, nomeadas por empresas
+ * específicas (`atlasgr`, `totaltrac`) — fazia sentido quando a plataforma
+ * servia só essas duas operações. Com o ICP virando "qualquer empresa com área
+ * comercial que queira automatizar ponta a ponta" (ver docs/BrandConstitution.md
+ * e src/config/brand.ts), amarrar o playbook a nomes de empresa deixou de fazer
+ * sentido — removidas por pedido explícito do usuário. Hoje existe uma única
+ * chave genérica; o desenho de um playbook de fato configurável por organização
+ * (múltiplos playbooks, criados/nomeados pela própria organização) fica para uma
+ * rodada futura — o que existe agora é o suficiente para não deixar nenhuma
+ * empresa nomeada amarrada ao código.
  *
- * As CHAVES (`atlasgr`, `totaltrac`) são valores gravados em banco e validados
- * na API (`PlaybookObjectionItem.brand`, `PlaybookQualificationItem.brand`,
+ * A CHAVE (`geral`) é um valor gravado em banco e validado na API
+ * (`PlaybookObjectionItem.brand`, `PlaybookQualificationItem.brand`,
  * `AssistantMessage.brand`, `RoleplaySession.brand`, além do parâmetro `brand`
- * em `src/features/intelligence/routes/intelligence.routes.ts`). Renomeá-las
- * exigiria migração de dados e quebraria o histórico já gravado, então elas
- * ficam como identificadores opacos — o que muda é o RÓTULO exibido, que agora
- * descreve o segmento de mercado, não a empresa.
- *
- * O rótulo NÃO é "segmento" na interface: as matrizes já têm um filtro de
- * segmento de mercado ("Logística & Transportes" etc.) DENTRO de cada playbook.
- * Este eixo é o playbook inteiro.
+ * em `src/features/intelligence/routes/intelligence.routes.ts`). Linhas antigas
+ * gravadas com `atlasgr`/`totaltrac` continuam legíveis: `playbookInfo()` cai no
+ * padrão para qualquer chave desconhecida, então não precisam de migração de
+ * dado para serem exibidas — só não são mais graváveis por escrita nova.
  *
  * Para acrescentar um playbook novo: adicione aqui, permita a chave na validação
  * da rota e crie a migração que amplia o domínio da coluna.
  */
-export type PlaybookKey = 'atlasgr' | 'totaltrac';
+export type PlaybookKey = 'geral';
 
 export interface PlaybookInfo {
   key: PlaybookKey;
@@ -37,20 +37,14 @@ export interface PlaybookInfo {
 
 export const PLAYBOOKS: readonly PlaybookInfo[] = [
   {
-    key: 'atlasgr',
-    label: 'Logística & Risco',
+    key: 'geral',
+    label: 'Playbook Comercial',
     description:
-      'Gestão de risco de carga, scoring de transportadoras e prospecção preditiva em logística.',
-  },
-  {
-    key: 'totaltrac',
-    label: 'Telemetria de Frota',
-    description:
-      'Telemetria CAN, videotelemetria com IA, controle de jornada e rastreamento de frota.',
+      'Prospecção, qualificação, matriz de objeções e roleplay de vendas — cobre qualquer segmento comercial, sem amarrar a uma empresa ou vertical específica.',
   },
 ] as const;
 
-export const DEFAULT_PLAYBOOK: PlaybookKey = 'atlasgr';
+export const DEFAULT_PLAYBOOK: PlaybookKey = 'geral';
 
 const BY_KEY = new Map(PLAYBOOKS.map((s) => [s.key, s]));
 

@@ -59,7 +59,6 @@ in recovery mode" (Postgres ainda em replay de WAL logo após o daemon subir) �
 código; confirmado re-rodando do zero com o Postgres já `healthy`.
 
 Testes novos em `tests/e2e/crm-kanban.spec.ts` (describe `LeadDetailDrawer`):
-
 - `barra de ações mostra as ações da oportunidade agrupadas` — abre o drawer, confirma o grupo
   "Ações da oportunidade" e os 5 botões (Enriquecer/Qualificar via Voz/WhatsApp/Enviar ao
   Bitrix24/Excluir).
@@ -69,7 +68,6 @@ Testes novos em `tests/e2e/crm-kanban.spec.ts` (describe `LeadDetailDrawer`):
 
 Resultado real (Chromium, banco de teste isolado, migrations aplicadas — incluindo as 2 migrations
 novas que chegaram ao `main` depois da Onda A):
-
 - `npx tsc --noEmit` → limpo.
 - `npm run lint` → exit 0 (1 warning pré-existente em arquivo não tocado por esta onda).
 - `npm run format:check` → limpo.
@@ -95,12 +93,12 @@ nenhum conflito real com os arquivos desta onda (`LeadDetailDrawer.tsx`/`LeadAct
 
 ## Definition of Done — capabilities tocadas nesta fatia
 
-| #                            | Capability                                  | Estado                                          | Evidência                                          |
-| ---------------------------- | ------------------------------------------- | ----------------------------------------------- | -------------------------------------------------- |
-| P0-3                         | Action Bar completa dentro da oportunidade  | **VERIFIED** (ações existentes consolidadas)    | teste novo "barra de ações...", 25/25 E2E passando |
-| P0-4                         | Timeline/histórico operacional por entidade | **VERIFIED** (via `lead.timeline` já existente) | teste novo "linha do tempo...", 25/25 E2E passando |
-| P0-8                         | Saved Views                                 | **NOT_STARTED**                                 | fica para Onda B2 (precisa migration)              |
-| Batch actions, Kanban/Tabela | já existiam antes desta onda                | **VERIFIED** (Onda A/pilotos anteriores)        | não retocado nesta fatia                           |
+| # | Capability | Estado | Evidência |
+|---|---|---|---|
+| P0-3 | Action Bar completa dentro da oportunidade | **VERIFIED** (ações existentes consolidadas) | teste novo "barra de ações...", 25/25 E2E passando |
+| P0-4 | Timeline/histórico operacional por entidade | **VERIFIED** (via `lead.timeline` já existente) | teste novo "linha do tempo...", 25/25 E2E passando |
+| P0-8 | Saved Views | **NOT_STARTED** | fica para Onda B2 (precisa migration) |
+| Batch actions, Kanban/Tabela | já existiam antes desta onda | **VERIFIED** (Onda A/pilotos anteriores) | não retocado nesta fatia |
 
 ## Próximo passo
 

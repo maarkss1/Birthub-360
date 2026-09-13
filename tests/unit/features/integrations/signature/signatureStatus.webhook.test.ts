@@ -12,6 +12,7 @@ import { createHmac } from 'crypto';
 
 const findByProviderRequestId = vi.fn();
 const updateStatus = vi.fn().mockResolvedValue(undefined);
+const recordSignatureDealClosure = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('../../../../../src/features/cadence/infra/PrismaSignatureRequestRepository.js', () => ({
   prismaSignatureRequestRepository: {
@@ -19,6 +20,7 @@ vi.mock('../../../../../src/features/cadence/infra/PrismaSignatureRequestReposit
     markSent: vi.fn(),
     findByProviderRequestId: (...args: unknown[]) => findByProviderRequestId(...args),
     updateStatus: (...args: unknown[]) => updateStatus(...args),
+    recordSignatureDealClosure: (...args: unknown[]) => recordSignatureDealClosure(...args),
   },
 }));
 
@@ -69,6 +71,7 @@ beforeEach(() => {
     id: 'request-1',
     organizationId: 'org-1',
     status: 'sent',
+    leadId: null,
   });
 });
 
@@ -166,5 +169,62 @@ describe('POST /api/webhooks/signature/webhook', () => {
     const res = await post(statusPayload());
 
     expect(res.status).toBe(500);
+  });
+
+  // ACH-17-01: signature_completed nunca fechava negócio nenhum — cobre o caminho de ponta a
+  // ponta pelo próprio handler HTTP (applySignatureStatusUpdate não é mockado neste arquivo).
+  describe('ACH-17-01 — fechamento de negócio a partir de signature_completed', () => {
+    it('status signed com lead associado: aplica e grava o fechamento do negócio', async () => {
+      findByProviderRequestId.mockResolvedValue({
+        id: 'request-1',
+        organizationId: 'org-1',
+        status: 'sent',
+        leadId: 'lead-1',
+      });
+
+      const res = await post(statusPayload());
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ success: true, outcome: 'applied' });
+      expect(recordSignatureDealClosure).toHaveBeenCalledTimes(1);
+      expect(recordSignatureDealClosure).toHaveBeenCalledWith(
+        expect.objectContaining({
+          organizationId: 'org-1',
+          leadId: 'lead-1',
+          type: 'signature_completed',
+          triggeredBy: 'webhook:govbr',
+        }),
+      );
+    });
+
+    it('status signed sem lead associado: aplica normalmente e não lança erro nem fecha negócio', async () => {
+      findByProviderRequestId.mockResolvedValue({
+        id: 'request-1',
+        organizationId: 'org-1',
+        status: 'sent',
+        leadId: null,
+      });
+
+      const res = await post(statusPayload());
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ success: true, outcome: 'applied' });
+      expect(recordSignatureDealClosure).not.toHaveBeenCalled();
+    });
+
+    it('status diferente de signed (ex.: viewed) nunca fecha negócio, mesmo com lead associado', async () => {
+      findByProviderRequestId.mockResolvedValue({
+        id: 'request-1',
+        organizationId: 'org-1',
+        status: 'sent',
+        leadId: 'lead-1',
+      });
+
+      const res = await post(statusPayload({ status: 'viewed', evidenceRef: null }));
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ success: true, outcome: 'applied' });
+      expect(recordSignatureDealClosure).not.toHaveBeenCalled();
+    });
   });
 });

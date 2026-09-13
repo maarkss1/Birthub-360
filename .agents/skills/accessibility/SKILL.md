@@ -15,7 +15,7 @@ Este projeto já tem tooling de acessibilidade real, não é greenfield:
   `jsx-a11y/label-has-associated-control`, `click-events-have-key-events`,
   `no-static-element-interactions`, `no-noninteractive-element-interactions`, `no-autofocus`,
   `media-has-caption`. **Não aumente essas contagens de warning** em código novo — todo `<div
-onClick>` novo precisa de `role`, `tabIndex` e `onKeyDown`/`onKeyPress` desde o início; todo
+  onClick>` novo precisa de `role`, `tabIndex` e `onKeyDown`/`onKeyPress` desde o início; todo
   `<input>` novo precisa de `<label>` associado (via `htmlFor`/`id` ou `aria-labelledby`) desde o
   início.
 - `@axe-core/playwright` roda em `tests/e2e/accessibility.spec.ts` contra login, dashboard,
@@ -27,7 +27,7 @@ onClick>` novo precisa de `role`, `tabIndex` e `onKeyDown`/`onKeyPress` desde o 
   próprio. Componentes com anel de foco próprio (`focus-visible:ring-*`) continuam vencendo por
   especificidade — não remova isso ao estilizar um componente novo.
 - `@media (prefers-reduced-motion: reduce)` global já cobre CSS/keyframes; `MotionConfig
-reducedMotion="user"` cobre Framer Motion.
+  reducedMotion="user"` cobre Framer Motion.
 
 ## Bug real já encontrado e corrigido — não reintroduza
 
@@ -45,7 +45,7 @@ por teclado" numa leitura estática. Só rodando o gesto de verdade (Space → s
 board de múltiplas colunas) o bug apareceu: `sortableKeyboardCoordinates` (a opção nativa do
 dnd-kit) nunca conseguia sair da coluna vizinha, porque sua busca por distância comparava o card
 contra **todos** os droppables (cada card individual + cada coluna inteira), e o droppable da
-coluna (bem maior) sempre "ganhava". A correção real também exigiu entender _closures_: o
+coluna (bem maior) sempre "ganhava". A correção real também exigiu entender *closures*: o
 `KeyboardSensor` congela a função `coordinateGetter` no momento em que o Space ativa o drag e
 reusa essa mesma closure pelo resto do gesto — um `coordinateGetter` que lia `leads` (state) direto
 sempre via o valor de quando o drag começou, nunca o atualizado (nem trocar por uma ref sempre-atual

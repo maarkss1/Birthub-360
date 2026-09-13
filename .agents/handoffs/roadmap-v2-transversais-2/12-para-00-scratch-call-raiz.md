@@ -13,7 +13,6 @@ no git desde 2026-08-21 (commit `9a186bc`, junto de um commit não relacionado
 "feat(ui): implement design system components and refactor forms").
 
 O arquivo é um script de teste manual/debug que:
-
 - dispara uma chamada real via Bland AI (`https://api.bland.ai/v1/calls`) usando
   `process.env.BLAND_API_KEY` fora de qualquer contexto de organização/tenant;
 - contém um número de telefone (`+5516982220000`) e um nome de contato/empresa
@@ -29,14 +28,11 @@ versionado é explicitamente decisão humana/Coordenador conforme `/AGENTS.md` �
 higiene" (mesmo tratamento já dado ao caso do dump em `backups/`).
 
 ## Arquivo(s) envolvido(s)
-
 - `scratch_call.ts` (raiz do repositório, sem dono explícito na "Propriedade exclusiva de
   arquivos" de `/AGENTS.md`).
 
 ## Alteração necessária
-
 Uma das duas, a critério do Coordenador/usuário:
-
 1. Se os dados forem reais (nome/empresa de um lead de prospecção real): tratar como o mesmo tipo
    de achado do dump em `backups/**` — decidir se vale remover do working tree e/ou considerar
    reescrita de histórico (`git filter-repo`/BFG), respeitando LGPD (minimização/não-duplicação de
@@ -48,11 +44,9 @@ Uma das duas, a critério do Coordenador/usuário:
    listado nas pastas de minha propriedade.
 
 ## Teste esperado
-
 Nenhum — é uma decisão de triagem/governança, não uma correção de código.
 
 ## Contexto adicional
-
 Não é um bloqueador da minha auditoria (a integração de voz em si — `birthVoice.service.ts`,
 `callSuppression.service.ts`, webhooks — está com opt-out, fail-closed de webhook e classificação
 honesta de resultado corretamente implementados; ver relatório desta onda). Acho que vale
@@ -62,7 +56,6 @@ passa por nenhuma das travas (`isSuppressed`, janela de discagem, `SDR_COLD_CALL
 `birthVoice.service.ts`/`coldCall.service.ts` exigem para qualquer ligação de produção.
 
 ## Resolução (Coordenador, 00)
-
 Removido do working tree (`git rm scratch_call.ts`) — script solto na raiz sem dono, disparando
 chamada real de produção sem nenhuma das travas de opt-out/tenant/janela que o resto do domínio de
 voz exige, exatamente o padrão de risco descrito acima. Nenhum outro arquivo do repositório o

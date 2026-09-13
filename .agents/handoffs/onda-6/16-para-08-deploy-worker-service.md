@@ -7,25 +7,22 @@
   primeiro)
 
 ## Problema
-
 `worker.ts` (raiz do repo) é o novo entrypoint que sobe apenas os workers BullMQ, agendadores e o
 cron de `cold-leads-scanner` — sem Express/SPA/SSE. Precisa virar um Render worker service
 dedicado (ou equivalente), separado do serviço HTTP atual.
 
 ## Arquivo(s) envolvido(s)
-
 - `worker.ts` (novo, raiz — meu escopo)
 - `render.yaml`, `Dockerfile`, CI (fora do meu escopo — seus)
 - `package.json` (fora do meu escopo — precisa de aprovação do 00; ver abaixo)
 
 ## Alteração necessária
-
 1. **Script de start**: hoje só existe `dev`/`start`/`build` apontando para `server.ts`. Propor a
    inclusão (via aprovação do Agente 00, dono de `package.json`) de:
    - `"build:worker": "esbuild worker.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/worker.cjs"`
    - `"start:worker": "node dist/worker.cjs"`
    - `"dev:worker": "tsx watch worker.ts"`
-     (mesmo padrão já usado para `server.ts`/`dist/server.cjs`).
+   (mesmo padrão já usado para `server.ts`/`dist/server.cjs`).
 2. **Render**: novo `render.yaml` worker service (`type: worker`, sem porta HTTP pública exigida
    pelo Render para esse tipo de serviço — mas o processo abre uma porta de health check interna,
    ver abaixo) rodando `npm run start:worker`, com as mesmas env vars do serviço web
@@ -52,7 +49,6 @@ dedicado (ou equivalente), separado do serviço HTTP atual.
    processo antes do timeout interno completar.
 
 ## Teste esperado
-
 - Subir `worker.ts` isolado (sem `server.ts` no ar) contra o Redis/Postgres de staging e confirmar
   via `/health/ready` que todas as filas esperadas estão ativas (comparar contra o inventário no
   relatório desta onda).
@@ -60,7 +56,6 @@ dedicado (ou equivalente), separado do serviço HTTP atual.
   (volta pra fila ou completa) e que o processo sai dentro do timeout.
 
 ## Contexto adicional
-
 Inventário completo das filas + build/testes locais estão no relatório de entrega desta onda
 (Agente 16). Testei localmente com `tsx worker.ts` contra o `atlas_redis`/`atlas_postgres` do
 Docker Compose deste ambiente — funcionou (14 filas registradas, SIGTERM drenou e saiu limpo).
@@ -93,7 +88,6 @@ pelo Agente 16 nesta mesma onda — nada a fazer da minha parte além de expor a
 **Deploy real NÃO executado nesta rodada, de propósito** (instrução explícita do Coordenador):
 `render.yaml` está pronto, mas o serviço `prospector-atlas-worker` não foi criado no Render de
 verdade. Continua bloqueado, como o handoff original já apontava, por:
-
 1. `16-para-00-remover-workers-de-server-ts.md` ainda não aplicado — rodar `worker.ts` e
    `server.ts` juntos com `ENABLE_QUEUES=true` nos dois duplica processamento de fila;
 2. autorização de gasto do usuário — serviços `type: worker` do Render não têm plano free (ao

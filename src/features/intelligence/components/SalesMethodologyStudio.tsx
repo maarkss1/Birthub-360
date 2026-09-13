@@ -85,24 +85,16 @@ type MethodologyResult =
     };
 
 export function SalesMethodologyStudio() {
-  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { info: playbookMeta } = useActivePlaybook();
   const [activeTab, setActiveTab] = useState<FrameworkType>('spin');
   const [form, setForm] = useState<MethodologyFormState>({
-    targetPersona:
-      playbook === 'totaltrac'
-        ? 'Diretor de Operações / Gestor de Frota'
-        : 'Diretor de Logística / Head de GR',
-    companySegment:
-      playbook === 'totaltrac'
-        ? 'Transportadoras / Frotas corporativas'
-        : 'Logística / Transporte de cargas',
+    targetPersona: 'Diretor de Logística / Head de GR',
+    companySegment: 'Logística / Transporte de cargas',
     icpSize: 'Mid-Market (50 a 500 colaboradores)',
     techStack: 'A confirmar durante a descoberta',
     solutionName: playbookMeta.label,
     mainPainPoint:
-      playbook === 'totaltrac'
-        ? 'Baixa visibilidade sobre consumo, jornada e eventos da frota'
-        : 'Dificuldade de comprovar e auditar o cumprimento das regras de gerenciamento de risco',
+      'Dificuldade de comprovar e auditar o cumprimento das regras de gerenciamento de risco',
     mainBenefit:
       'Hipótese: reduzir trabalho manual e aumentar a previsibilidade operacional, sujeito a diagnóstico',
   });
@@ -667,7 +659,7 @@ export function SalesMethodologyStudio() {
 
                   <div className="space-y-4 text-xs">
                     <div className="p-4 rounded-2xl bg-amber-500/5 dark:bg-amber-950/30 border border-amber-500/30 space-y-1">
-                      <h4 className="font-bold text-amber-600 dark:text-amber-400 text-sm">
+                      <h4 className="font-bold text-warning-active dark:text-warning text-sm">
                         {result.teach.title}
                       </h4>
                       <p className="text-ink leading-relaxed font-medium">{result.teach.script}</p>

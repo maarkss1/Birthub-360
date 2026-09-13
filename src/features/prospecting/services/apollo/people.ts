@@ -76,7 +76,10 @@ async function enrichPersonByNameUncached(
           last_name: lastName || undefined,
           domain: domain || undefined,
           organization_name: organizationName || undefined,
-          reveal_personal_emails: true,
+          // ACH-05-03: nunca pedir e-mail pessoal do decisor — prospecção B2B só precisa do
+          // e-mail corporativo. `reveal_personal_emails` fica de fora do body de propósito (o
+          // default da Apollo já é false; omitir é mais seguro que enviar `false` explícito,
+          // que ainda documentaria a chave como algo que já cogitamos ativar).
         }),
       },
       {
@@ -362,14 +365,16 @@ async function searchDecisionMakersAdvancedUncached(
       const text = await res.text().catch(() => '');
       if (parsePlanRestriction(res.status, text)) {
         const hunterPeople = await findPeopleViaDomainSearch(domain, limit);
-        let contacts = hunterPeople.contacts.map((c): DecisionMaker => ({
-          name: c.name,
-          title: c.title,
-          email: c.email,
-          emailSource: c.email ? 'hunter' : undefined,
-          phone: c.phone,
-          linkedinUrl: c.linkedin_url,
-        }));
+        let contacts = hunterPeople.contacts.map(
+          (c): DecisionMaker => ({
+            name: c.name,
+            title: c.title,
+            email: c.email,
+            emailSource: c.email ? 'hunter' : undefined,
+            phone: c.phone,
+            linkedinUrl: c.linkedin_url,
+          }),
+        );
         if (criteria.apenasEmailVerificado) {
           contacts = contacts.filter((c) => !!c.email);
         }

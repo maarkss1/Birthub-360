@@ -60,14 +60,14 @@ vi.mock('../../../../config/prospecting-integrations.js', () => ({
 
 import { prospectingToolsRoutes } from '../prospecting-tools.routes.js';
 
-function buildApp() {
+function buildApp(role: string = 'ADMIN') {
   const app = express();
   app.use(express.json());
   app.use((req, _res, next) => {
     (req as unknown as { user: { id: string; organizationId: string; role: string } }).user = {
       id: 'test-user',
       organizationId: 'org-1',
-      role: 'ADMIN',
+      role,
     };
     next();
   });
@@ -238,6 +238,19 @@ describe('POST /api/prospecting/tools/youtube', () => {
   });
 });
 
+describe('POST /api/prospecting/tools/google-places — RBAC (ACH-05-01)', () => {
+  it('nega com 403 para VISUALIZADOR sem acionar a chamada faturável', async () => {
+    const app = buildApp('VISUALIZADOR');
+
+    const res = await request(app)
+      .post('/api/prospecting/tools/google-places')
+      .send({ segmento: 'Transportadora', localizacao: 'São Paulo', quantidade: 5 });
+
+    expect(res.status).toBe(403);
+    expect(discoverViaGooglePlacesMock).not.toHaveBeenCalled();
+  });
+});
+
 describe('POST /api/prospecting/tools/google-places', () => {
   it('rejeita quando segmento está ausente (contrato do schema compartilhado)', async () => {
     const app = buildApp();
@@ -271,6 +284,20 @@ describe('POST /api/prospecting/tools/google-places', () => {
   });
 });
 
+describe('POST /api/prospecting/tools/apollo — RBAC (ACH-05-01)', () => {
+  it('nega com 403 para VISUALIZADOR (papel somente-leitura) sem acionar a chamada faturável', async () => {
+    const app = buildApp('VISUALIZADOR');
+
+    const res = await request(app)
+      .post('/api/prospecting/tools/apollo')
+      .send({ segmento: 'Operador Logístico', quantidade: 10 });
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(fetchApolloCandidatesMock).not.toHaveBeenCalled();
+  });
+});
+
 describe('POST /api/prospecting/tools/apollo', () => {
   it('busca só via Apollo Organization Search e repassa o erro do provedor quando houver', async () => {
     fetchApolloCandidatesMock.mockResolvedValue({
@@ -293,6 +320,19 @@ describe('POST /api/prospecting/tools/apollo', () => {
       10,
       expect.anything(),
     );
+  });
+});
+
+describe('POST /api/prospecting/tools/hunter — RBAC (ACH-05-01)', () => {
+  it('nega com 403 para VISUALIZADOR sem acionar a chamada faturável', async () => {
+    const app = buildApp('VISUALIZADOR');
+
+    const res = await request(app)
+      .post('/api/prospecting/tools/hunter')
+      .send({ domain: 'empresa.com.br' });
+
+    expect(res.status).toBe(403);
+    expect(findPeopleViaDomainSearchMock).not.toHaveBeenCalled();
   });
 });
 
@@ -329,6 +369,19 @@ describe('POST /api/prospecting/tools/hunter', () => {
     expect(res.status).toBe(200);
     expect(findPeopleViaDomainSearchMock).toHaveBeenCalledWith('empresa.com.br', 5);
     expect(res.body.data.contacts).toHaveLength(1);
+  });
+});
+
+describe('POST /api/prospecting/tools/hunter/verify-email — RBAC (ACH-05-01)', () => {
+  it('nega com 403 para VISUALIZADOR sem acionar a chamada faturável', async () => {
+    const app = buildApp('VISUALIZADOR');
+
+    const res = await request(app)
+      .post('/api/prospecting/tools/hunter/verify-email')
+      .send({ domain: 'empresa.com.br', fullName: 'João Souza' });
+
+    expect(res.status).toBe(403);
+    expect(findEmailViaHunterMock).not.toHaveBeenCalled();
   });
 });
 
