@@ -3,14 +3,12 @@
 Data: 2026-09-07
 
 ## Escopo
-
 Pedido direto do usuário: instalar o pacote externo `ATLASGR_COMMERCIAL_AGENT_CELL_v1.1.0`
 (`C:\Users\Marks\Desktop\ATLASGR_COMMERCIAL_AGENT_CELL_v1.1.0`, 12 agentes comerciais) no
 repositório, seguindo o próprio `PROMPT_MESTRE_INSERCAO.md`/`REPO_REALITY_CHECK.md` do pacote
 (dono: Agente 13 — Enxame Autônomo e Governança de Agentes de Runtime).
 
 ## O que o pacote assumia x o que o código real mostrou
-
 O `REPO_REALITY_CHECK.md` do próprio pacote já avisava que suas premissas (montadas sem leitura de
 código) precisavam ser confirmadas. Confirmei lendo o código real e corrigi 5 classificações
 erradas — sempre na direção "existe mais infraestrutura real do que o pacote sabia", nunca menos:
@@ -23,7 +21,6 @@ erradas — sempre na direção "existe mais infraestrutura real do que o pacote
 handoff desta onda.
 
 ## Resultado
-
 - Registrado o catálogo dos 12 agentes (`commercialAgentRegistry.ts`) e o envelope de saída
   compartilhado (`commercialAgentTypes.ts`), fiéis a `prompts/shared/base-agent.md`/`reflection.md`
   do pacote, mas com status/risco/bindings corrigidos contra o código real.
@@ -41,13 +38,12 @@ handoff desta onda.
 - Adicionado 1 teste unitário novo (`churnRetention.agent.consent.test.ts`) cobrindo a trava de
   consentimento LGPD, mesmo padrão de `base.agent.consent.test.ts`.
 - Handoff aberto para o Coordenador (`.agents/handoffs/onda-43/13-para-00-instalacao-celula-
-comercial.md`) com 4 pendências que exigem decisão fora do meu escopo: classificação de freeze
+  comercial.md`) com 4 pendências que exigem decisão fora do meu escopo: classificação de freeze
   para os 3 papéis de gestão, dono do wiring cross-domínio para os 3 agentes bloqueados pelo gate
   de arquitetura, refinamento (não implementado) dos prompts de BDR/SDR/Closer, e seção de UI
   "Equipe IA Comercial" (propriedade do Agente 02).
 
 ## Validação
-
 ```
 npx tsc --noEmit          → sem erro novo (mesmos 5 erros pré-existentes, não relacionados)
 npm run lint (biome)      → 12 arquivos novos, sem apontamento
@@ -55,7 +51,6 @@ npm run test:architecture → 0 violações novas (6 violações de cross-featur
                              antes de fechar a onda, não ignoradas)
 vitest src/features/intelligence/agents/__tests__/ → 13 arquivos, 73 testes, 0 falha
 ```
-
 Não executados nesta onda (código ainda dormente, não exercitado por rota real):
 `test:integration`, `test:e2e`, `build`. Registrado como pendência explícita no handoff, não como
 sucesso assumido.
@@ -63,7 +58,6 @@ sucesso assumido.
 Branch: `agente/13-celula-comercial` (a partir de `main`).
 
 ## Continuação (mesma onda, mesmo dia) — merge, prompts, wiring real e UI
-
 Aprovação direta do usuário para: (1) mesclar a instalação, (2) ligar os agentes bloqueados a dados
 reais, (3) decidir freeze de Coordenador/Gerente/Diretoria, (4) refinar prompts de BDR/SDR/Closer,
 (5) seção "Equipe IA Comercial" no Hub. Detalhe completo na seção "Resolução" de

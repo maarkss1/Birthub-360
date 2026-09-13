@@ -25,12 +25,11 @@ genérica, não da execução da busca salva.
 
 Uma forma de fechar isso (não a única — avalie o que faz mais sentido para o fluxo real do
 produto):
-
 1. `SavedSearchesModal.handleRun` passa a guardar `res.candidates` em estado e exibi-los (mesmo
    componente/lista de candidato já usado em `ProspectingHub.tsx`, se puder ser reaproveitado) em
    vez de só reaplicar os critérios.
 2. O botão de promover, quando acionado a partir desses candidatos, inclui `savedSearchId:
-search.id` no body de `POST /prospecting/promote`.
+   search.id` no body de `POST /prospecting/promote`.
 
 ## Por que não fiz isso nesta onda
 

@@ -1,7 +1,6 @@
 # Onda 14 — Sprint 02: Runtime, Redis, Workers e Escala
 
 ## Identificação
-
 - Sprint: 02
 - Onda: 14
 - SHA de entrada: `dc7cbd0` (main pós-merge PR #147, Sprint 02, executado por sessão paralela)
@@ -112,19 +111,19 @@ quê" fora dos logs. `autoAnonymizeDisqualified.worker.ts` nem tinha o handler `
 Corrigido (delegado a um agente em background nesta rodada, **verificado de forma independente**
 por mim — `tsc`/lint/testes rodados novamente do zero, não confiando só no relatório do agente):
 
-| Domínio         | Worker                                | `organizationId`             | `correlationId`                                  |
-| --------------- | ------------------------------------- | ---------------------------- | ------------------------------------------------ |
-| 04 CRM          | `followUp.worker.ts`                  | —                            | — (job sem `data`)                               |
-| 04 CRM          | `deduplication.worker.ts`             | —                            | — (job sem `data`)                               |
-| 04 CRM          | `weeklyPdfReport.worker.ts`           | —                            | — (job sem `data`)                               |
-| 04 CRM          | `dailyExecutiveSummary.worker.ts`     | —                            | — (job sem `data`)                               |
-| 04 CRM          | `autoAnonymizeDisqualified.worker.ts` | —                            | — (job sem `data`)                               |
-| 07 Automations  | `stagnation-scanner.service.ts`       | —                            | — (`runId` interno, não chega ao objeto de erro) |
-| 07 Automations  | `cold-leads-scanner.service.ts`       | —                            | — (idem)                                         |
-| 07 Intelligence | `winLossAnalysis.worker.ts`           | —                            | — (job sem `data`)                               |
-| 13 Swarm/IA     | `agent.worker.ts`                     | `job.data.payload?.tenantId` | `job.data.payload?.leadId`                       |
-| 13 Swarm/IA     | `coldCall.worker.ts`                  | `job.data.organizationId`    | — (sem campo próprio)                            |
-| 13 Swarm/IA     | `swarmScheduler.worker.ts`            | `job.data.organizationId`    | — (sem campo próprio)                            |
+| Domínio | Worker | `organizationId` | `correlationId` |
+|---|---|---|---|
+| 04 CRM | `followUp.worker.ts` | — | — (job sem `data`) |
+| 04 CRM | `deduplication.worker.ts` | — | — (job sem `data`) |
+| 04 CRM | `weeklyPdfReport.worker.ts` | — | — (job sem `data`) |
+| 04 CRM | `dailyExecutiveSummary.worker.ts` | — | — (job sem `data`) |
+| 04 CRM | `autoAnonymizeDisqualified.worker.ts` | — | — (job sem `data`) |
+| 07 Automations | `stagnation-scanner.service.ts` | — | — (`runId` interno, não chega ao objeto de erro) |
+| 07 Automations | `cold-leads-scanner.service.ts` | — | — (idem) |
+| 07 Intelligence | `winLossAnalysis.worker.ts` | — | — (job sem `data`) |
+| 13 Swarm/IA | `agent.worker.ts` | `job.data.payload?.tenantId` | `job.data.payload?.leadId` |
+| 13 Swarm/IA | `coldCall.worker.ts` | `job.data.organizationId` | — (sem campo próprio) |
+| 13 Swarm/IA | `swarmScheduler.worker.ts` | `job.data.organizationId` | — (sem campo próprio) |
 
 Onde `organizationId`/`correlationId` ficaram vazios, é porque o job realmente não carrega esse
 dado (cron interno com `data: {}` ou `runId` que nunca foi propagado até o handler de erro) — não
@@ -191,16 +190,16 @@ de `registerWorkerForRuntimeMetrics`/`observeConnection`, não só a definição
 
 ## 10. Testes de aceite específicos do roadmap — estado real
 
-| Critério                                          | Estado          | Evidência                                                                                                                                            |
-| ------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| web não processa job                              | **PASS**        | Gate estrutural em `redis.ts`/`server.ts`, fail-closed em produção                                                                                   |
-| worker processa                                   | **PASS**        | 129/129 testes de integração, incl. RUN-002e novo                                                                                                    |
-| dois workers não duplicam scheduler               | **NÃO TESTADO** | `upsertJobScheduler` é idempotente por design (BullMQ), mas não há teste de execução com 2 processos reais disputando o mesmo scheduler nesta rodada |
-| Redis down muda readiness                         | **PASS**        | RUN-002e (boot) + `final-fase-2.md`/`final-fase-3.md` (server.ts, runtime, evidência viva anterior)                                                  |
-| lock fail-closed                                  | **PASS**        | `distributedLock.test.ts`, caso dedicado já existente                                                                                                |
-| SIGTERM preserva job                              | **PARCIAL**     | Evidência viva existe para uma versão anterior do mecanismo (`final-fase-2.md`); não reexecutado nesta rodada especificamente pós-Sprint-02          |
-| rate limit é global                               | **NÃO TESTADO** | Código revisado e coerente (seção 4); exigiria 2 instâncias reais de `server.ts`                                                                     |
-| command broker WhatsApp funciona entre instâncias | **PARCIAL**     | Comprovado por teste unitário/integração com mock de fila; não testado com worker+web reais                                                          |
+| Critério | Estado | Evidência |
+|---|---|---|
+| web não processa job | **PASS** | Gate estrutural em `redis.ts`/`server.ts`, fail-closed em produção |
+| worker processa | **PASS** | 129/129 testes de integração, incl. RUN-002e novo |
+| dois workers não duplicam scheduler | **NÃO TESTADO** | `upsertJobScheduler` é idempotente por design (BullMQ), mas não há teste de execução com 2 processos reais disputando o mesmo scheduler nesta rodada |
+| Redis down muda readiness | **PASS** | RUN-002e (boot) + `final-fase-2.md`/`final-fase-3.md` (server.ts, runtime, evidência viva anterior) |
+| lock fail-closed | **PASS** | `distributedLock.test.ts`, caso dedicado já existente |
+| SIGTERM preserva job | **PARCIAL** | Evidência viva existe para uma versão anterior do mecanismo (`final-fase-2.md`); não reexecutado nesta rodada especificamente pós-Sprint-02 |
+| rate limit é global | **NÃO TESTADO** | Código revisado e coerente (seção 4); exigiria 2 instâncias reais de `server.ts` |
+| command broker WhatsApp funciona entre instâncias | **PARCIAL** | Comprovado por teste unitário/integração com mock de fila; não testado com worker+web reais |
 
 Decisão de escopo explícita: não fabricar os 3 "NÃO TESTADO"/"PARCIAL" como PASS. São lacunas de
 teste de execução real (multi-processo), não bugs encontrados — ficam registradas como pendência

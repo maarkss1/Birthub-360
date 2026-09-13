@@ -3,6 +3,7 @@ import type { Prisma } from '@prisma/client';
 import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
+import { requestContext } from '../../../lib/async-context.js';
 import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
 
 // Mensagens antigas demais (fora da janela) não entram no prompt — o objetivo é ler a conversa
@@ -87,83 +88,93 @@ export async function analyzeConversation(leadId: string, organizationId: string
     return;
   }
 
-  const messages = await prisma.whatsAppMessage.findMany({
-    where: { organizationId, leadId },
-    orderBy: { receivedAt: 'desc' },
-    take: MAX_MESSAGES_IN_WINDOW,
-    select: { direction: true, body: true },
+  // Achado real (CI, application gate): esta função só é chamada pelo worker BullMQ
+  // `whatsappSignal.worker.ts`, fora de qualquer request HTTP — sem este `requestContext.run`,
+  // `requestContext.getStore()` (src/lib/async-context.ts) devolve undefined dentro dela, e as
+  // escritas abaixo em `ConversationSignal` (FORCE ROW LEVEL SECURITY, ver migration
+  // 20260825120000_scope_rls_bypass_to_bootstrap_allowlist) rodam sem `app.current_tenant_id`
+  // setado — a policy nega a linha com "new row violates row-level security policy for table
+  // ConversationSignal". Mesmo padrão já usado por todo outro worker deste código (ver
+  // followUp.worker.ts, agent.worker.ts).
+  return requestContext.run({ tenantId: organizationId }, async () => {
+    const messages = await prisma.whatsAppMessage.findMany({
+      where: { organizationId, leadId },
+      orderBy: { receivedAt: 'desc' },
+      take: MAX_MESSAGES_IN_WINDOW,
+      select: { direction: true, body: true },
+    });
+    if (messages.length === 0) return;
+
+    const ordered = messages.reverse();
+    const transcript = buildTranscript(ordered);
+    if (!transcript.trim()) return;
+
+    const model = getAiModel('local-llama3', 0.2, 'conversationIntelligence');
+    const startTime = Date.now();
+    const response = await model.invoke([
+      new SystemMessage(EXTRACTION_SYSTEM_PROMPT),
+      new HumanMessage(`Conversa:\n${transcript}`),
+    ]);
+
+    await logAiUsage({
+      model: response.response_metadata.model,
+      usage: response.response_metadata.tokenUsage,
+      latencyMs: Date.now() - startTime,
+    });
+
+    let result: ConversationSignalResult;
+    let rawModelOutput: Prisma.InputJsonValue;
+    try {
+      result = parseModelOutput(response.content);
+      rawModelOutput = cleanAndParseJson<Prisma.InputJsonValue>(response.content);
+    } catch (error) {
+      logger.warn({ err: error, leadId }, 'Falha ao interpretar sinal de conversa gerado pela IA');
+      result = {
+        intent: null,
+        urgency: null,
+        objections: [],
+        budgetMentioned: false,
+        nextStep: null,
+        summary: null,
+        confidence: null,
+      };
+      rawModelOutput = { raw: response.content };
+    }
+
+    await prisma.conversationSignal.create({
+      data: {
+        organizationId,
+        leadId,
+        messageCount: ordered.length,
+        intent: result.intent,
+        urgency: result.urgency,
+        objections: result.objections,
+        budgetMentioned: result.budgetMentioned,
+        nextStep: result.nextStep,
+        summary: result.summary,
+        confidence: result.confidence,
+        rawModelOutput,
+      },
+    });
+
+    if (result.summary) {
+      await prisma.timelineEvent
+        .create({
+          data: {
+            type: 'whatsapp',
+            description: `Sinal de conversa (IA): ${result.summary}`,
+            leadId,
+          },
+        })
+        .catch((error) => {
+          // O sinal já foi salvo — a falha aqui não pode apagar essa leitura.
+          logger.error(
+            { err: error, leadId },
+            'Falha ao registrar sinal de conversa no timeline do lead.',
+          );
+        });
+    }
   });
-  if (messages.length === 0) return;
-
-  const ordered = messages.reverse();
-  const transcript = buildTranscript(ordered);
-  if (!transcript.trim()) return;
-
-  const model = getAiModel('local-llama3', 0.2, 'conversationIntelligence');
-  const startTime = Date.now();
-  const response = await model.invoke([
-    new SystemMessage(EXTRACTION_SYSTEM_PROMPT),
-    new HumanMessage(`Conversa:\n${transcript}`),
-  ]);
-
-  await logAiUsage({
-    model: response.response_metadata.model,
-    usage: response.response_metadata.tokenUsage,
-    latencyMs: Date.now() - startTime,
-  });
-
-  let result: ConversationSignalResult;
-  let rawModelOutput: Prisma.InputJsonValue;
-  try {
-    result = parseModelOutput(response.content);
-    rawModelOutput = cleanAndParseJson<Prisma.InputJsonValue>(response.content);
-  } catch (error) {
-    logger.warn({ err: error, leadId }, 'Falha ao interpretar sinal de conversa gerado pela IA');
-    result = {
-      intent: null,
-      urgency: null,
-      objections: [],
-      budgetMentioned: false,
-      nextStep: null,
-      summary: null,
-      confidence: null,
-    };
-    rawModelOutput = { raw: response.content };
-  }
-
-  await prisma.conversationSignal.create({
-    data: {
-      organizationId,
-      leadId,
-      messageCount: ordered.length,
-      intent: result.intent,
-      urgency: result.urgency,
-      objections: result.objections,
-      budgetMentioned: result.budgetMentioned,
-      nextStep: result.nextStep,
-      summary: result.summary,
-      confidence: result.confidence,
-      rawModelOutput,
-    },
-  });
-
-  if (result.summary) {
-    await prisma.timelineEvent
-      .create({
-        data: {
-          type: 'whatsapp',
-          description: `Sinal de conversa (IA): ${result.summary}`,
-          leadId,
-        },
-      })
-      .catch((error) => {
-        // O sinal já foi salvo — a falha aqui não pode apagar essa leitura.
-        logger.error(
-          { err: error, leadId },
-          'Falha ao registrar sinal de conversa no timeline do lead.',
-        );
-      });
-  }
 }
 
 export class ConversationIntelligenceService {

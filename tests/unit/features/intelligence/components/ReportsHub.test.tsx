@@ -150,7 +150,7 @@ describe('ReportsHub', () => {
       '/api/intelligence/report/stream',
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ metrics: metricsFixture, brandId: 'atlasgr' }),
+        body: JSON.stringify({ metrics: metricsFixture, brandId: 'geral' }),
       }),
     );
   });

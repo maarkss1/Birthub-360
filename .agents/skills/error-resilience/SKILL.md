@@ -29,7 +29,7 @@ Leia o padrão de erro já correto deste projeto antes de inventar um novo:
   negócio novos em vez de `throw new Error()` genérico** — só assim o handler global classifica
   corretamente o status HTTP.
 - **`src/lib/api.ts`** já lança `Error` com mensagem legível para timeout (`"A API demorou demais
-para responder..."`) e falha de rede (`"Não foi possível conectar ao servidor."`) — reuse essas
+  para responder..."`) e falha de rede (`"Não foi possível conectar ao servidor."`) — reuse essas
   mensagens/padrão em vez de propagar o erro cru do `fetch` pra UI.
 - **AI gateway** (`src/lib/ai/gateway.ts`) já tem um circuit breaker real (Redis-backed, 3 falhas →
   30s cooldown, fallback in-memory se Redis cair) e sanitização de mensagem de erro do provedor

@@ -200,18 +200,76 @@ async function recordCallResult(
   });
 }
 
-async function handleWebhook(req: Request, res: Response): Promise<void> {
-  const secret = env.BIRTH_VOICES_WEBHOOK_SECRET;
-  if (!secret) {
-    // Fail-closed: sem segredo não há como distinguir o Hub de qualquer um que descubra esta
-    // URL, e aceitar o payload deixaria qualquer pessoa escrever atividades nos leads.
-    logger.error(
-      'Webhook do SDR de voz recebido, mas BIRTH_VOICES_WEBHOOK_SECRET não está configurado.',
+/**
+ * Valida a assinatura contra o(s) segredo(s) certo(s) para este payload — ACH-06-01: antes desta
+ * correção, TODA organização era validada contra um único segredo global do processo, e depois o
+ * handler confiava cegamente no `organizationId` vindo do próprio payload. Quem tivesse o segredo
+ * global podia forjar eventos para qualquer outra organização.
+ *
+ * Estratégia (mesmo espírito do `application_token` por conexão do Bitrix, `bitrix.webhook.ts`,
+ * adaptado porque este webhook não tem um `connectionId` na URL — é uma rota única compartilhada
+ * por todas as organizações):
+ * 1. Extrai `organizationId` do payload — NÃO confiável ainda, só usado para escolher quais
+ *    segredos tentar.
+ * 2. Se essa organização tem VoiceHubConnection(s) com segredo próprio cadastrado, a assinatura
+ *    TEM que bater contra um desses segredos — nunca cai para o segredo global (isso seria a
+ *    mesma falha de novo, só que opcional). Só depois de bater é que o `organizationId` do
+ *    payload passa a ser confiável (é o que prova que quem assinou este corpo conhece o segredo
+ *    desta organização especificamente).
+ * 3. Sem nenhuma conexão com segredo próprio para essa organização (ainda não migrou, ou nenhum
+ *    `organizationId` reconhecível no payload), o único fallback aceitável é o segredo global —
+ *    mesmo comportamento de antes desta correção, mas agora restrito a quem ainda não tem
+ *    isolamento próprio.
+ */
+type AuthResult =
+  | { ok: true; organizationId: string | null }
+  // 'invalid-signature': existia pelo menos um segredo candidato (de conexão ou global) e nenhum
+  // bateu — distinção preservada do comportamento pré-correção (401, não 503) para não perder
+  // sinal operacional de "assinatura errada" vs. "webhook nunca configurado".
+  // 'not-configured': nenhum segredo candidato existia pra tentar (organização sem conexão
+  // própria E BIRTH_VOICES_WEBHOOK_SECRET ausente) — fail-closed, mesmo 503 de antes desta
+  // correção.
+  | { ok: false; reason: 'invalid-signature' | 'not-configured' };
+
+async function resolveTrustedOrganizationId(
+  rawBody: Buffer,
+  signature: string | undefined,
+  untrustedOrganizationId: string | null,
+): Promise<AuthResult> {
+  if (untrustedOrganizationId) {
+    // bypassRls: nenhum tenant foi provado ainda nesta linha — só o organizationId (não
+    // confiável) do payload, usado apenas para restringir a busca de segredos candidatos. Nada é
+    // lido/escrito fora desta busca antes da assinatura bater.
+    const orgConnections = await requestContext.run({ bypassRls: true }, () =>
+      prisma.voiceHubConnection.findMany({
+        where: { organizationId: untrustedOrganizationId, webhookSecret: { not: null } },
+      }),
     );
-    res.status(503).json({ success: false, error: 'Webhook não configurado.' });
-    return;
+
+    if (orgConnections.length > 0) {
+      const matched = orgConnections.some((conn) =>
+        isValidSignature(rawBody, signature, conn.webhookSecret as string),
+      );
+      if (!matched) return { ok: false, reason: 'invalid-signature' };
+      // Só agora, com a assinatura validada contra um segredo específico desta organização, o
+      // organizationId do payload é confiável.
+      return { ok: true, organizationId: untrustedOrganizationId };
+    }
   }
 
+  // Nenhuma conexão com segredo próprio casou — cai para o segredo global do processo.
+  const globalSecret = env.BIRTH_VOICES_WEBHOOK_SECRET;
+  if (!globalSecret) return { ok: false, reason: 'not-configured' };
+  if (!isValidSignature(rawBody, signature, globalSecret)) {
+    return { ok: false, reason: 'invalid-signature' };
+  }
+  // Validado só contra o segredo global — organizationId do payload continua não confirmado por
+  // uma conexão específica; quem chama decide de onde tirar o organizationId final (mesmo
+  // comportamento desta rota antes da correção, restrito agora a quem não tem conexão própria).
+  return { ok: true, organizationId: null };
+}
+
+async function handleWebhook(req: Request, res: Response): Promise<void> {
   const rawBody = req.body;
   if (!Buffer.isBuffer(rawBody)) {
     logger.error(
@@ -222,11 +280,51 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
   }
 
   const signature = req.header('x-birthvoices-signature');
-  if (!isValidSignature(rawBody, signature, secret)) {
-    logger.warn('Webhook do SDR de voz com assinatura inválida — descartado.');
+
+  // Parse "otimista": o resultado só é usado para (a) decidir qual segredo tentar e (b) responder
+  // 400 depois que a assinatura já foi validada por algum segredo — nunca antes disso, e nunca
+  // para decidir um efeito colateral sem a assinatura ter batido primeiro.
+  let parsedEvent: { type?: string; data?: CallEndedData } | null = null;
+  let parseError = false;
+  try {
+    parsedEvent = JSON.parse(rawBody.toString('utf8'));
+  } catch {
+    parseError = true;
+  }
+
+  const untrustedContext = (parsedEvent?.data?.context ?? {}) as Record<string, unknown>;
+  const untrustedOrganizationId =
+    typeof untrustedContext.organizationId === 'string' ? untrustedContext.organizationId : null;
+
+  const authResult = await resolveTrustedOrganizationId(
+    rawBody,
+    signature,
+    untrustedOrganizationId,
+  );
+  if (!authResult.ok) {
+    if (authResult.reason === 'not-configured') {
+      // Fail-closed: sem segredo de conexão para esta organização nem segredo global, não há
+      // como distinguir o Hub de qualquer um que descubra esta URL.
+      logger.error(
+        { organizationId: untrustedOrganizationId },
+        'Webhook do SDR de voz recebido, mas nenhum segredo (de conexão ou global) está configurado.',
+      );
+      res.status(503).json({ success: false, error: 'Webhook não configurado.' });
+      return;
+    }
+    logger.warn(
+      { organizationId: untrustedOrganizationId },
+      'Webhook do SDR de voz com assinatura inválida — descartado.',
+    );
     res.status(401).json({ success: false, error: 'Assinatura inválida.' });
     return;
   }
+
+  if (parseError || !parsedEvent) {
+    res.status(400).json({ success: false, error: 'Corpo não é JSON válido.' });
+    return;
+  }
+  const event = parsedEvent;
 
   // A assinatura já é função do corpo cru — reenvio idêntico (retry legítimo ou captura repetida)
   // produz o mesmo fingerprint. Ver webhookReplayGuard.ts para o raciocínio completo.
@@ -239,14 +337,6 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  let event: { type?: string; data?: CallEndedData };
-  try {
-    event = JSON.parse(rawBody.toString('utf8'));
-  } catch {
-    res.status(400).json({ success: false, error: 'Corpo não é JSON válido.' });
-    return;
-  }
-
   // Eventos que ainda não tratamos são aceitos de propósito: devolver erro faria o Hub reentregar
   // cinco vezes e mandar para a fila de mortos algo que nunca vamos querer.
   if (event.type !== 'agent.call.ended') {
@@ -256,7 +346,12 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
 
   const data = event.data ?? {};
   const context = (data.context ?? {}) as Record<string, unknown>;
-  const organizationId = typeof context.organizationId === 'string' ? context.organizationId : null;
+  // organizationId confiável: o já provado por um segredo específico de conexão (authResult),
+  // com fallback pro que o payload declara SÓ quando a validação caiu no segredo global (mesmo
+  // nível de confiança que esta rota tinha antes desta correção).
+  const organizationId =
+    authResult.organizationId ??
+    (typeof context.organizationId === 'string' ? context.organizationId : null);
   const leadId = typeof context.leadId === 'string' ? context.leadId : null;
 
   if (!organizationId || !leadId) {

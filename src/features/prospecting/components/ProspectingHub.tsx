@@ -28,6 +28,13 @@ import { SavedSearchesModal } from './SavedSearchesModal';
 
 export { DecisionMakerSearch } from './prospecting-hub/DecisionMakerSearch';
 
+// Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+// num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção. Hoisted
+// para fora do componente para não recriar a referência do array a cada render (useEffect abaixo
+// depende dela).
+const ACTIVE_SEGMENTS = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
+const ACTIVE_PERSONA_OPTIONS = [...ATLAS_PERSONA_OPTIONS, ...TOTALTRAC_PERSONA_OPTIONS];
+
 type HubTab = 'cnpj' | 'discovery' | 'ocr' | 'tools';
 
 const ufMap: Record<string, string> = {
@@ -92,14 +99,13 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function ProspectingHub() {
-  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { info: playbookMeta } = useActivePlaybook();
   const accent = useBrandAccent();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
 
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
-  const activePersonaOptions =
-    playbook === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
+  const activeSegments = ACTIVE_SEGMENTS;
+  const activePersonaOptions = ACTIVE_PERSONA_OPTIONS;
 
   // --- CNPJ real lookup ---
   const [cnpjInput, setCnpjInput] = useState('');
@@ -108,19 +114,14 @@ export function ProspectingHub() {
   const [cnpjError, setCnpjError] = useState<string | null>(null);
 
   // --- discovery via open data, with optional Apollo enrichment ---
+  // `segmento` inicia no primeiro item de ACTIVE_SEGMENTS diretamente — antes precisava de um
+  // useEffect porque a lista mudava com o playbook ativo; hoje é uma constante de módulo estável.
   const [criteria, setCriteria] = useState<ProspectCriteria>({
-    segmento: '',
+    segmento: activeSegments[0],
     localizacao: '',
     estado: '',
     quantidade: 20,
   });
-
-  useEffect(() => {
-    setCriteria((prev) => ({
-      ...prev,
-      segmento: activeSegments[0],
-    }));
-  }, [activeSegments]);
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -521,7 +522,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('cnpj');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[2rem] font-bold text-sm transition-all duration-300 ${tab === 'cnpj' ? 'bg-ink text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-[2rem] font-bold text-sm transition-all duration-300 ${tab === 'cnpj' ? 'bg-obsidian text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Landmark size={18} /> Busca Direta (CNPJ/Nome)
             </button>
@@ -541,7 +542,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('ocr');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'ocr' ? 'bg-info-active text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'ocr' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Camera size={18} /> Cadastrar por Foto (OCR)
             </button>
@@ -551,7 +552,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('tools');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'tools' ? 'bg-info-active text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'tools' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Wrench size={18} /> Ferramentas
             </button>

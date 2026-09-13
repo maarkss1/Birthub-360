@@ -17,11 +17,11 @@ nova, conforme "Freeze de escopo (Sprint 00 → Sprint 13)".
 
 ## 2. Especialistas e matriz de propriedade (publicada antes do disparo)
 
-| Agente                             | Missão                                                                                                                                                            | Pastas/arquivos de propriedade                                                                                           |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| 01 — Plataforma, Segurança e Dados | Auditar autenticação, RBAC, RLS multi-tenant, credenciais e schema contra os bloqueadores prioritários de segurança/dados de `/AGENTS.md`.                        | `prisma/schema.prisma`, `prisma/migrations/**` (dono exclusivo), `src/lib/auth/`, `src/shared/`                          |
-| 02 — Produto e UX                  | Auditar navegação principal, configurações e onboarding quanto a drift entre o que o produto promete e o que o código faz, e estados vazio/erro/loading ausentes. | `src/App.tsx`, `src/components/layout/`, `src/features/settings/`, `src/features/dashboard/`, `src/features/onboarding/` |
-| 06 — Integrações e Bitrix          | Auditar sincronizações Bitrix quanto a falha silenciosa (bloqueador prioritário nº 11) e extrações incompletas tratadas como finais (nº 12).                      | `src/features/integrations/`                                                                                             |
+| Agente | Missão | Pastas/arquivos de propriedade |
+|---|---|---|
+| 01 — Plataforma, Segurança e Dados | Auditar autenticação, RBAC, RLS multi-tenant, credenciais e schema contra os bloqueadores prioritários de segurança/dados de `/AGENTS.md`. | `prisma/schema.prisma`, `prisma/migrations/**` (dono exclusivo), `src/lib/auth/`, `src/shared/` |
+| 02 — Produto e UX | Auditar navegação principal, configurações e onboarding quanto a drift entre o que o produto promete e o que o código faz, e estados vazio/erro/loading ausentes. | `src/App.tsx`, `src/components/layout/`, `src/features/settings/`, `src/features/dashboard/`, `src/features/onboarding/` |
+| 06 — Integrações e Bitrix | Auditar sincronizações Bitrix quanto a falha silenciosa (bloqueador prioritário nº 11) e extrações incompletas tratadas como finais (nº 12). | `src/features/integrations/` |
 
 Propriedade disjunta entre si e em relação às Ondas 2 e 3 já em execução (04, 05, 07, 03, 08 — ver
 `.agents/runs/roadmap-v2-onda-2.md` e `roadmap-v2-onda-3.md`). `server.ts` e `package.json`/lockfile

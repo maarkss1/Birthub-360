@@ -61,7 +61,6 @@ depender de QR Code lido do stdout do terminal do servidor).
 Decisão: **Opção A** — remoção do arquivo órfão e quebrado, sem reimplementação.
 
 Motivo:
-
 1. `whatsapp-web.js` e `qrcode-terminal` nunca foram instalados neste projeto (confirmado em
    `package.json` e `node_modules`) — o arquivo nunca funcionou em nenhum ambiente real deste
    repositório, só quebrava o typecheck.

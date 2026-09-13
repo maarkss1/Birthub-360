@@ -16,11 +16,11 @@ feature nova.
 
 ## 2. Especialistas e matriz de propriedade
 
-| Agente                                                  | Missão                                                                                                                                                                        | Pastas/arquivos de propriedade                                                                                                                       |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 12 — Voz e Telefonia (Birthub Voices/3CX)               | Auditar integração de voz quanto a comando/gatilho que afirma executar ação sem executar de verdade (bloqueador #7), e opt-out de contato por voz.                            | `src/features/integrations/birth-voice/`, `src/features/integrations/threecx/`, `src/hooks/use3CXIntegration.ts`                                     |
-| 13 — Enxame Autônomo e Governança de Agentes de Runtime | Auditar os agentes de IA que o CLIENTE usa (Supervisor/SDR/BDR/Closer/Ops), não os agentes de desenvolvimento — scheduler 24/7, `AIPendingAction`, guardrails de PII.         | `src/features/intelligence/agents/` (subpasta específica, carve-out da propriedade geral de `src/features/intelligence/` do Agente 07, já concluído) |
-| 18 — Contratos, API e Documentação Viva                 | Auditar paridade entre `docs/openapi.yaml` e as rotas reais; achado de tipo divergente em código vira handoff, não edição direta (arquivos de tipo pertencem a outros donos). | `docs/openapi.yaml`, `scripts/verify-openapi-drift.ts`                                                                                               |
+| Agente | Missão | Pastas/arquivos de propriedade |
+|---|---|---|
+| 12 — Voz e Telefonia (Birthub Voices/3CX) | Auditar integração de voz quanto a comando/gatilho que afirma executar ação sem executar de verdade (bloqueador #7), e opt-out de contato por voz. | `src/features/integrations/birth-voice/`, `src/features/integrations/threecx/`, `src/hooks/use3CXIntegration.ts` |
+| 13 — Enxame Autônomo e Governança de Agentes de Runtime | Auditar os agentes de IA que o CLIENTE usa (Supervisor/SDR/BDR/Closer/Ops), não os agentes de desenvolvimento — scheduler 24/7, `AIPendingAction`, guardrails de PII. | `src/features/intelligence/agents/` (subpasta específica, carve-out da propriedade geral de `src/features/intelligence/` do Agente 07, já concluído) |
+| 18 — Contratos, API e Documentação Viva | Auditar paridade entre `docs/openapi.yaml` e as rotas reais; achado de tipo divergente em código vira handoff, não edição direta (arquivos de tipo pertencem a outros donos). | `docs/openapi.yaml`, `scripts/verify-openapi-drift.ts` |
 
 Nenhuma sobreposição entre si nem com as ondas já concluídas.
 

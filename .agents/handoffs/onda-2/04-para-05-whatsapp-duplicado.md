@@ -12,13 +12,12 @@ usa `@whiskeysockets/baileys`, já montada em `server.ts` como `/api/whatsapp/**
 tenant/QR via web).
 
 Este arquivo específico:
-
 - importa `whatsapp-web.js` e `qrcode-terminal` — nenhum dos dois está em `package.json`
   (`dependencies` nem `devDependencies`);
 - por isso, `npx tsc --noEmit` e `npm run build` falham com módulo não encontrado sempre que este
   arquivo é incluído na compilação;
 - não é importado por nenhum outro arquivo do repositório (`grep -r "prospecting/services/
-whatsapp.service" src` não retorna nenhum resultado) — é código morto que só ainda não quebrou o
+  whatsapp.service" src` não retorna nenhum resultado) — é código morto que só ainda não quebrou o
   gate porque nada o referencia hoje.
 
 Encontrei isso ao investigar `.agents/handoffs/onda-G/05-para-04-whatsapp.md`, que pedia para o CRM
@@ -27,13 +26,10 @@ handoff) — em vez disso usei a integração real (`src/features/integrations/w
 resolve o mesmo problema com sessão real, tenant e autenticação.
 
 ## Arquivo(s) envolvido(s)
-
 - `src/features/prospecting/services/whatsapp.service.ts` (arquivo do seu domínio — não alterei).
 
 ## Alteração necessária
-
 Decidir e executar uma das duas opções:
-
 1. **Remover** o arquivo, se a prospecção não precisa de uma sessão de WhatsApp separada da do CRM
    (ambos são "a mesma organização", então a sessão de `src/features/integrations/whatsapp/` já
    cobre prospecção e CRM ao mesmo tempo — provavelmente a opção mais simples);
@@ -47,14 +43,11 @@ efetivamente incluídos na compilação/importados), mas é dívida técnica vis
 import futuro dele (inclusive acidental, por autocomplete) quebra o typecheck imediatamente.
 
 ## Teste esperado
-
 Depois da remoção/re-arquitetura: `npx tsc --noEmit` e `npm run build` continuam verdes, e não há
 mais nenhuma referência a `whatsapp-web.js`/`qrcode-terminal` no código-fonte (`grep -r "whatsapp-web.js\|qrcode-terminal" src`).
 
 ## Contexto adicional
-
 A integração real está em `src/features/integrations/whatsapp/`:
-
 - `whatsapp.service.ts` — `initWhatsApp`, `getWhatsAppStatus`, `logoutWhatsApp`,
   `sendWhatsAppMessage(organizationId, number, text)`, sessão por tenant, status espelhado no Redis.
 - `whatsapp.routes.ts` — `POST /connect`, `GET /status`, `POST /disconnect`, `POST /send`,
@@ -65,7 +58,6 @@ A integração real está em `src/features/integrations/whatsapp/`:
   a partir desta onda, também por `src/features/crm/components/LeadDetailDrawer.tsx`).
 
 ## Resolução
-
 Opção 2 (re-arquitetar) foi aplicada: `whatsapp.service.ts` hoje é um wrapper fino
 (`ProspectingWhatsAppService`) que delega para `sendWhatsAppMessage`/`getWhatsAppStatus` da
 integração real (`src/features/integrations/whatsapp/whatsapp.service.ts`), sem mais nenhuma

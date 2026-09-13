@@ -3,6 +3,7 @@ import type {
   ObjectionMatrixItem,
   QualificationMatrixItem,
 } from '../features/playbook/playbook.api';
+import type { PlaybookKey } from '../config/playbooks';
 
 /**
  * Estado/ações do filtro de matrizes de objeções/qualificação (aba "Matrizes & Objeções") do
@@ -12,7 +13,7 @@ import type {
  * `brandMatrices.ts` — agora vêm do banco, já filtrados por marca pelo backend).
  */
 export function usePlaybookMatrixFilters(
-  selectedBrand: 'atlasgr' | 'totaltrac',
+  selectedBrand: PlaybookKey,
   objections: ObjectionMatrixItem[],
   qualifications: QualificationMatrixItem[],
 ) {

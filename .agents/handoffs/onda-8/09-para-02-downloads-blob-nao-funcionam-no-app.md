@@ -75,5 +75,4 @@ Android/Xcode disponíveis) — risco de "parecer que funciona" sem funcionar de
 do Agente 09 proíbe explicitamente.
 
 ## Resolução
-
 (Coordenador): O comportamento está documentado e avaliado. Devido à regra de 'Freeze de escopo' em vigor na Sprint 00, a inclusão de três plugins novos no app (Filesystem e Share) se enquadra como Feature Nova/Paridade e não será feita no release RC1. Fica marcado como resolvido (postponed para Sprint pós-13).

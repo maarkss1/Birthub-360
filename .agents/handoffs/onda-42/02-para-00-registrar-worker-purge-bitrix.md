@@ -42,7 +42,7 @@ propriedade nesta rodada) — este handoff é o pedido para registrar o worker l
 - Falha ao processar uma organização/linha não derruba a varredura das demais (mesmo padrão de
   `agentMemoryCleanup.worker.ts`/`autoAnonymizeDisqualified.worker.ts`).
 - Auditoria: cada linha expurgada gera um `AuditService.log({ action: 'UPDATE', entity:
-'BitrixExtractionRun', ... })`.
+  'BitrixExtractionRun', ... })`.
 
 ## Snippet exato para `worker.ts`
 
@@ -50,10 +50,7 @@ Mesmo padrão usado para `agentMemoryCleanup.worker.ts` nesta mesma Onda — ver
 (import) e linhas 87/100/143 (uso). Import a adicionar junto dos demais, na mesma região:
 
 ```ts
-import {
-  createBitrixExtractionPurgeWorker,
-  scheduleBitrixExtractionPurgeJob,
-} from './src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.js';
+import { createBitrixExtractionPurgeWorker, scheduleBitrixExtractionPurgeJob } from './src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.js';
 ```
 
 Dentro de `startWorkerProcess()`, junto da criação dos demais workers (ao lado de
@@ -111,7 +108,6 @@ model BitrixExtractionRun {
 ```
 
 Se/quando esse campo for migrado, o worker deve trocar:
-
 - a query de candidatos: adicionar `purgedAt: null` ao `where` (substitui o filtro em memória
   `isAlreadyPurged`/`progress.purgedAt`);
 - o `update`: setar `purgedAt: new Date()` em vez de (ou além de) `progress.purgedAt`.
@@ -149,7 +145,6 @@ duas vezes não duplica nem falha); falha isolada numa organização/linha não 
 ## Contexto adicional
 
 Arquivos tocados nesta rodada:
-
 - `src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.ts` (novo)
 - `tests/unit/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.test.ts` (novo)
 - Este handoff (novo)
@@ -160,5 +155,4 @@ criada — `prisma/schema.prisma` não foi editado (ver campo `purgedAt` recomen
 quando puder ser migrado por quem tem essa propriedade).
 
 ## Resolução
-
 Já registrado em worker.ts.

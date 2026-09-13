@@ -3,7 +3,6 @@
 Pasta de handoffs entre agentes. Qualquer agente pode criar o próprio arquivo aqui; ninguém edita o handoff criado por outro agente, exceto para atualizar o campo `Status` e acrescentar uma seção `## Resolução` quando for o destinatário que resolveu o item.
 
 ## Estrutura
-
 ```text
 handoffs/
   onda-1/
@@ -16,7 +15,6 @@ handoffs/
 ```
 
 ## Template de arquivo
-
 ```markdown
 - De: <agente origem>
 - Para: <agente destino>
@@ -35,7 +33,6 @@ handoffs/
 ## Contexto adicional
 
 ## Resolução
-
 (preenchido pelo agente destino ao resolver)
 ```
 

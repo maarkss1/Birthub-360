@@ -122,14 +122,14 @@ Execute your task as follows:
    - List the contents of the directory and read the files in
      `workspace/findings/`. If the directory is empty or does not exist, notify
      the user and exit.
-   - _Important:_ Ignore hidden files and directories (such as the `.trash/`
+   - *Important:* Ignore hidden files and directories (such as the `.trash/`
      subdirectory) when listing or processing findings.
    - Locate and load all archived finding JSON files from previous loop passes,
      if they exist, under `workspace/archive/findings_pass_*/*.json` and
      `workspace/archive/loop*_findings/*.json`. These files represent
      vulnerabilities that have already been fully evaluated, triaged, and
      potentially patched in previous passes.
-   - _Important:_ Do NOT read or deduplicate against
+   - *Important:* Do NOT read or deduplicate against
      `workspace/historical_learnings.jsonl` (VCS history), as we want to catch
      regressions if old bugs were reintroduced.
 
@@ -213,6 +213,7 @@ Execute your task as follows:
    >   `PROVISIONALLY_VALID`, `NEEDS_RESEARCH`), `duplicate_of` MUST NOT be set,
    >   and the finding MUST NOT be moved to `.trash/`. Setting
    >   `possible_duplicate_of` is a non-terminal hint only.
+
    - **POSSIBLE REGRESSION:** if the archived match has a RESOLVED status
      (`patch_status` in {`VERIFIED_SECURE`,`MITIGATION_PROPOSED`} OR
      `status`==`FALSE_POSITIVE` OR `production_viability`==`NON_VIABLE`) AND the
@@ -256,7 +257,8 @@ Execute your task as follows:
      2. Exact `canonical_filepath + normalized CWE + target_symbol` match.
      3. Strict line proximity window ($\\le 3$ lines) on exact canonical
         filepath when target symbol is empty.
-     - _Result_: If matched, immediately inherit ancestor `lineage_id` without
+
+     - *Result*: If matched, immediately inherit ancestor `lineage_id` without
        LLM or embedding overhead.
 
    - **Tier 2 (RCA Normalization):** If Tier 1 heuristic matching does not
@@ -360,12 +362,7 @@ Execute your task as follows:
    Each line must be a self-contained JSON object documenting the transaction:
 
    ```json
-   {
-     "timestamp": "2026-07-14T15:13:00Z",
-     "action": "loop_filter | dedupe_merge",
-     "primary_uuid": "[UUID] (or null for loop_filter)",
-     "moved_uuid": "[UUID]"
-   }
+   {"timestamp": "2026-07-14T15:13:00Z", "action": "loop_filter | dedupe_merge", "primary_uuid": "[UUID] (or null for loop_filter)", "moved_uuid": "[UUID]"}
    ```
 
    This cleans up the directory for downstream stages while preserving rollback

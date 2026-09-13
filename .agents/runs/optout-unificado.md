@@ -21,7 +21,6 @@ pendentes, ambos fora do escopo de agentes que não estavam rodando nesta rodada
 RLS (Onda 9) em outra sessão ativa no repositório. Adicionado, em escopo mínimo (só o item 1 dos 5
 da proposta original do Agente 17 — os outros 4, cadência multicanal/reply tracking/agendamento/
 proposta-assinatura, ficam para quem assumir o resto do handoff de schema):
-
 - `model OptOutRecord` + `enum OptOutScope`, migration `20260815120000_opt_out_record` (com
   backfill dos bloqueios de voz já existentes em `CallSuppression`, sem alterar/remover a tabela
   original — decisão de migrar a leitura continua sendo do Agente 12).
@@ -39,11 +38,11 @@ o diretório principal (outra sessão ativa).
 
 Três, em paralelo, cada um em worktree isolado a partir de `integracao/optout-unificado`:
 
-| Agente | Branch                        | Canal                                                                  |
-| ------ | ----------------------------- | ---------------------------------------------------------------------- |
-| 05     | `agente/05-optout-cold-email` | E-mail (`cold-email.service.ts`)                                       |
-| 06     | `agente/06-optout-whatsapp`   | WhatsApp (`whatsapp.service.ts`)                                       |
-| 12     | `agente/12-optout-voz`        | Voz (`callSuppression.service.ts` + convivência com `CallSuppression`) |
+| Agente | Branch | Canal |
+|---|---|---|
+| 05 | `agente/05-optout-cold-email` | E-mail (`cold-email.service.ts`) |
+| 06 | `agente/06-optout-whatsapp` | WhatsApp (`whatsapp.service.ts`) |
+| 12 | `agente/12-optout-voz` | Voz (`callSuppression.service.ts` + convivência com `CallSuppression`) |
 
 Os 3 detectaram de forma independente que seus worktrees originais não tinham o schema/adaptador
 ainda (criados pelo Coordenador depois de os 3 já estarem em andamento) e se auto-corrigiram
@@ -64,18 +63,17 @@ como `Status: resolvido`.
 
 ## Gate final (branch de integração, os 3 agentes mesclados)
 
-| Check                      | Resultado                                                                                                                                                                                                 |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npx tsc --noEmit`         | limpo                                                                                                                                                                                                     |
-| `npm run lint`             | 0 erros, 73 warnings (mesmo débito pré-existente)                                                                                                                                                         |
-| `npm run build`            | ok                                                                                                                                                                                                        |
-| `npm run test:unit`        | 1086/1086 (143 arquivos)                                                                                                                                                                                  |
+| Check | Resultado |
+|---|---|
+| `npx tsc --noEmit` | limpo |
+| `npm run lint` | 0 erros, 73 warnings (mesmo débito pré-existente) |
+| `npm run build` | ok |
+| `npm run test:unit` | 1086/1086 (143 arquivos) |
 | `npm run test:integration` | 113/113 (24 arquivos) — inclui os 3 testes de integração cross-channel novos (`cold-email-optout`, `whatsapp-optout-gating`, `voice-optout-cross-channel`) e o `optout-record-persistence` do Coordenador |
 
 Nenhuma falha, nenhum skip inesperado. Varredura manual de segredo — nenhum achado.
 
 ## Débito consciente, registrado, não bloqueador
-
 - `CallSuppression` continua escrito em paralelo a `OptOutRecord` (decisão do 12 — migrar a leitura
   de voz para depender só do registro unificado é passo 3 da proposta original, exige confirmar
   100% de cobertura antes).

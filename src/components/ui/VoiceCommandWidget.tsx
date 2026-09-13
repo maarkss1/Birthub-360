@@ -65,15 +65,16 @@ export function VoiceCommandWidget() {
           navigateOrReportFailure('crm', 'Navegou para o CRM Board');
         } else if (textLower.includes('prospector') || textLower.includes('buscar lead')) {
           navigateOrReportFailure('prospect', 'Navegou para o Prospector');
-        } else if (textLower.includes('logística') || textLower.includes('logistica')) {
-          // Estes dois comandos alternavam a marca ativa; hoje alternam o PLAYBOOK
-          // comercial, que era o efeito real que eles tinham sobre o conteúdo.
-          setPlaybook('atlasgr');
-          setLastAction(`Playbook ativo: ${playbookInfo('atlasgr').label}`);
-          stopListening();
-        } else if (textLower.includes('frota') || textLower.includes('telemetria')) {
-          setPlaybook('totaltrac');
-          setLastAction(`Playbook ativo: ${playbookInfo('totaltrac').label}`);
+        } else if (
+          textLower.includes('logística') ||
+          textLower.includes('logistica') ||
+          textLower.includes('frota') ||
+          textLower.includes('telemetria')
+        ) {
+          // Este comando alternava entre as duas marcas então existentes (hoje um único
+          // playbook geral) — mantido como confirmação de que o playbook comercial está ativo.
+          setPlaybook('geral');
+          setLastAction(`Playbook ativo: ${playbookInfo('geral').label}`);
           stopListening();
         } else if (textLower.includes('inteligência') || textLower.includes('metodologia')) {
           navigateOrReportFailure('intelligence', 'Abriu o Hub de IA');
