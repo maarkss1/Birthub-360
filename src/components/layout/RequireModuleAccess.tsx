@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
 import { Loader2, ShieldAlert } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { type ModuleKey, moduleLabel } from '../../config/module-catalog';
 import { useModuleAccess } from '../../hooks/useModuleAccess';
-import { moduleLabel, type ModuleKey } from '../../config/module-catalog';
 
 interface RequireModuleAccessProps {
   moduleKey: ModuleKey;

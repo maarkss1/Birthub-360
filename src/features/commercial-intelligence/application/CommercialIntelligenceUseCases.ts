@@ -21,53 +21,53 @@
  * consumidores existentes.
  */
 import type {
+  AgingReport,
+  CommercialGoalDTO,
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
-  CommercialGoalDTO,
+  CrmQualityIndex,
   DealDrillDownQuery,
   DealDrillDownResult,
-  ExecutiveOverview,
-  PipelineCreation,
-  PerformanceMetrics,
-  AgingReport,
-  LossAnalysis,
-  LeadingIndicatorsReport,
   ExecutiveAlert,
-  CrmQualityIndex,
-  ForecastExplain,
-  GoalMetric,
+  ExecutiveOverview,
   ExportFormat,
   FilterOptions,
-  HistoricalTrendsReport,
   ForecastAccuracySummary,
-  HealthScoreResult,
+  ForecastExplain,
   ForecastSnapshotStore,
+  GoalMetric,
+  HealthScoreResult,
+  HistoricalTrendsReport,
+  LeadingIndicatorsReport,
+  LossAnalysis,
+  PerformanceMetrics,
+  PipelineCreation,
 } from '../domain/CommercialIntelligence';
 import type { CloseDateIntelligenceReport, JourneyReport } from '../domain/JourneyIntelligence';
+import { buildExecutiveExport, type ExecutiveExportPayload } from './executiveExport';
 import { getGoal as getGoalCommand, setGoal as setGoalCommand } from './goalCommands';
-import { buildExecutiveOverview } from './queries/executiveOverviewReport';
-import { buildPipelineCreation } from './queries/pipelineCreationReport';
-import { buildPerformance } from './queries/performanceReport';
+import { computeHealthScore } from './healthScore';
 import { buildAging } from './queries/agingReport';
-import { buildLosses } from './queries/lossesReport';
-import { buildLeadingIndicators } from './queries/leadingIndicatorsReport';
 import { buildAlerts } from './queries/alertsReport';
+import { buildCloseDateIntelligence } from './queries/closeDateIntelligenceReport';
 import { buildCrmQuality } from './queries/crmQualityReport';
 import { buildDealsDrillDown, buildForecastExplain } from './queries/drillDownReport';
-import { buildHistoricalTrends } from './queries/historicalTrendsReport';
+import { buildExecutiveOverview } from './queries/executiveOverviewReport';
 import { buildForecastAccuracy } from './queries/forecastAccuracyReport';
-import { buildCloseDateIntelligence } from './queries/closeDateIntelligenceReport';
+import { buildHistoricalTrends } from './queries/historicalTrendsReport';
 import { buildJourney } from './queries/journeyReport';
-import { buildExecutiveExport, type ExecutiveExportPayload } from './executiveExport';
-import { computeHealthScore } from './healthScore';
+import { buildLeadingIndicators } from './queries/leadingIndicatorsReport';
+import { buildLosses } from './queries/lossesReport';
+import { buildPerformance } from './queries/performanceReport';
+import { buildPipelineCreation } from './queries/pipelineCreationReport';
 
-// ─── Re-exports de compatibilidade — consumidos fora deste arquivo (ver cabeçalho) ───────────────
-export { currentPeriod } from './shared/period';
 export {
-  classifyCoverageProtection,
   COVERAGE_PROTECTION_FALLBACK_HEALTHY,
   COVERAGE_PROTECTION_FALLBACK_WARNING,
+  classifyCoverageProtection,
 } from './coverageProtection';
+// ─── Re-exports de compatibilidade — consumidos fora deste arquivo (ver cabeçalho) ───────────────
+export { currentPeriod } from './shared/period';
 
 export class CommercialIntelligenceUseCases {
   /**

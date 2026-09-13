@@ -1,18 +1,19 @@
 // Ver domain/prospectTypes.ts para o porquê deste import vir de domain/, não de
 // ../prospecting.service (quebra um ciclo real com services/apollo/*, ARCH-009 2026-08-28).
-import type { ProspectCriteria, ProspectCandidate } from '../../domain/prospectTypes.js';
-import { buildLocationLabel } from '../../domain/prospectTypes.js';
+
 import { getPaidProspectingKey } from '../../../../config/prospecting-integrations.js';
 import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
-import { validContactEmails } from '../../../../shared/utils/contact-links';
 import { logger } from '../../../../lib/logger';
-import { APOLLO_SEARCH_URL, DECISION_MAKER_PREFETCH_BUDGET_MS } from './client.js';
-import type { ApolloSearchResponse } from './types.js';
-import { enrichCandidatesWithDecisionMakers } from './people.js';
+import { validContactEmails } from '../../../../shared/utils/contact-links';
+import type { ProspectCandidate, ProspectCriteria } from '../../domain/prospectTypes.js';
+import { buildLocationLabel } from '../../domain/prospectTypes.js';
 import { ExclusionSet } from '../../utils/exclusionSet.js';
-import { checkProviderRateLimit } from '../providerRateLimit.js';
-import { recordProviderCallCost } from '../providerCostMetrics.js';
 import { assertProspectingBudgetNotExceeded } from '../providerBudget.js';
+import { recordProviderCallCost } from '../providerCostMetrics.js';
+import { checkProviderRateLimit } from '../providerRateLimit.js';
+import { APOLLO_SEARCH_URL, DECISION_MAKER_PREFETCH_BUDGET_MS } from './client.js';
+import { enrichCandidatesWithDecisionMakers } from './people.js';
+import type { ApolloSearchResponse } from './types.js';
 
 /**
  * As opções de "Região de Atuação (ampla)" do ICP (icp-options.ts) usam rótulos do playbook

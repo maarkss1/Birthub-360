@@ -1,4 +1,4 @@
-import { DEFAULT_RATE_LIMIT_POLICY, type CadenceRateLimitPolicy } from '../domain/rateLimit.js';
+import { type CadenceRateLimitPolicy, DEFAULT_RATE_LIMIT_POLICY } from '../domain/rateLimit.js';
 
 /**
  * Política de rate limit de cadência configurável por env var — nunca hardcoded sem nome no ponto

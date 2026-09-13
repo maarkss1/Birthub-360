@@ -1,27 +1,27 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  Search,
-  CornerDownLeft,
-  ArrowUp,
-  ArrowDown,
-  Building2,
-  Users,
   Activity,
-  FileBarChart,
+  ArrowDown,
+  ArrowUp,
   Bot,
+  Building2,
+  CornerDownLeft,
+  FileBarChart,
   Loader2,
+  Search,
+  Users,
 } from 'lucide-react';
-import type { TabType } from '../layout/tabMeta';
-import { TAB_META } from '../layout/tabMeta';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
-import type { Company, Contact, PaginatedResponse } from '../../types';
 import {
-  OPEN_COMMAND_PALETTE_EVENT,
   OPEN_AI_CHAT_EVENT,
+  OPEN_COMMAND_PALETTE_EVENT,
   type PaletteIntent,
 } from '../../lib/paletteIntent';
 import { SoundFX } from '../../lib/soundEffects';
+import type { Company, Contact, PaginatedResponse } from '../../types';
+import type { TabType } from '../layout/tabMeta';
+import { TAB_META } from '../layout/tabMeta';
 
 type ResultItem = {
   id: string;

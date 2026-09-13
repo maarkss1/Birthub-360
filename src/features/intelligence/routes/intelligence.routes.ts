@@ -1,73 +1,72 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (aiToolkitFunctions, COD-004) */
-import { Router, type Request, type Response, type NextFunction } from 'express';
-import type { Prisma } from '@prisma/client';
-import { z } from 'zod';
-import {
-  summarizeLead,
-  generateEmailDraft,
-  predictConversionScore,
-  generateMeetingAgenda,
-  draftFollowUp,
-  scoreLeadQuality,
-  suggestNextAction,
-  generateObjectionHandling,
-  analyzeCompetitors,
-  generateElevatorPitch,
-  identifyPainPoints,
-  createColdCallScript,
-  summarizeMeetingNotes,
-  generateLinkedInMessage,
-  evaluateDealRisk,
-  analyzeSentiment,
-  extractKeywords,
-  categorizeLead,
-  translateText,
-  extractActionItems,
-  type PiiValue,
-} from '../../../lib/ai/features.js';
 
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-
-import { aiService } from '../services/ai.service.js';
-import { leadsQueue } from '../../../lib/queue/index.js';
+import type { Prisma } from '@prisma/client';
+import { type NextFunction, type Request, type Response, Router } from 'express';
+import { z } from 'zod';
+import {
+  analyzeCompetitors,
+  analyzeSentiment,
+  categorizeLead,
+  createColdCallScript,
+  draftFollowUp,
+  evaluateDealRisk,
+  extractActionItems,
+  extractKeywords,
+  generateElevatorPitch,
+  generateEmailDraft,
+  generateLinkedInMessage,
+  generateMeetingAgenda,
+  generateObjectionHandling,
+  identifyPainPoints,
+  type PiiValue,
+  predictConversionScore,
+  scoreLeadQuality,
+  suggestNextAction,
+  summarizeLead,
+  summarizeMeetingNotes,
+  translateText,
+} from '../../../lib/ai/features.js';
+import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
+import { leadsQueue } from '../../../lib/queue/index.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requirePlatformOperator } from '../../../shared/middlewares/requirePlatformOperator.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { aiService } from '../services/ai.service.js';
+import { listAiSettings, saveAiSettings } from '../services/ai-settings.service.js';
 import {
-  listPendingActions,
+  appendAssistantTurn,
+  listAssistantHistory,
+} from '../services/assistant-history.service.js';
+import {
+  assertPiiExternalConsent,
+  PiiConsentRequiredError,
+  redactAndTrackPiiLeak,
+} from '../services/guardrails.service.js';
+import {
   approvePendingAction,
   discardPendingAction,
   listActionsAwaitingOutcome,
+  listPendingActions,
   recordActionOutcome,
 } from '../services/pending-actions.service.js';
-import { listAiSettings, saveAiSettings } from '../services/ai-settings.service.js';
-import { requirePlatformOperator } from '../../../shared/middlewares/requirePlatformOperator.js';
-import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
-import {
-  studioGenerationSchema,
-  assistantRequestSchema,
-  studioService,
-  type StudioGenerationRequest,
-} from '../services/studio.service.js';
-import { SYSTEM_RULES, streamText } from '../services/studio/shared.js';
-import { generateAssistantStream } from '../services/studio/generators/assistant.js';
-import {
-  redactAndTrackPiiLeak,
-  assertPiiExternalConsent,
-  PiiConsentRequiredError,
-} from '../services/guardrails.service.js';
-import {
-  listAssistantHistory,
-  appendAssistantTurn,
-} from '../services/assistant-history.service.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { aiSuiteRouter } from './ai-suite.routes.js';
 import {
   finishRoleplaySession,
   listRoleplaySessions,
 } from '../services/roleplay-session.service.js';
+import { generateAssistantStream } from '../services/studio/generators/assistant.js';
+import { SYSTEM_RULES, streamText } from '../services/studio/shared.js';
+import {
+  assistantRequestSchema,
+  type StudioGenerationRequest,
+  studioGenerationSchema,
+  studioService,
+} from '../services/studio.service.js';
+import { aiSuiteRouter } from './ai-suite.routes.js';
 
 const router = Router();
 
@@ -322,8 +321,8 @@ router.post('/qualify', async (req: Request, res: Response, next: NextFunction):
   }
 });
 
-import { SDRQualificationAgent } from '../agents/sdrQualification.agent.js';
 import { loadAgentMemory } from '../agents/agentMemory.store.js';
+import { SDRQualificationAgent } from '../agents/sdrQualification.agent.js';
 
 router.post(
   '/agents/sdr/qualify',

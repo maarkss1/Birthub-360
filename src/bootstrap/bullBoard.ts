@@ -1,15 +1,15 @@
-import type { Express } from 'express';
-import { ExpressAdapter } from '@bull-board/express';
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { leadsQueue } from '../lib/queue/index.js';
-import { searchQueue } from '../lib/queue/search.queue.js';
+import { ExpressAdapter } from '@bull-board/express';
+import type { Express } from 'express';
 import { agentQueue } from '../lib/queue/agent.worker.js';
+import { leadsQueue } from '../lib/queue/index.js';
 import { queuesEnabled } from '../lib/queue/redis.js';
+import { searchQueue } from '../lib/queue/search.queue.js';
 import { authenticateToken } from '../shared/middlewares/authenticateToken.js';
 import { requireTenant } from '../shared/middlewares/authorization.js';
-import { requireRole } from '../shared/middlewares/requireRole.js';
 import { requirePlatformOperator } from '../shared/middlewares/requirePlatformOperator.js';
+import { requireRole } from '../shared/middlewares/requireRole.js';
 
 /**
  * UI de monitoramento de filas (BullBoard) em /admin/queues. Painel administrativo: além de

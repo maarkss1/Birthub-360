@@ -1,25 +1,25 @@
-import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
-import { prisma } from '../../../lib/prisma.js';
-import { getLeadContextTool, updateLeadQualificationTool } from '../tools/crmTools.js';
-import { searchPlaybookTool } from '../tools/playbookTool.js';
-import { marketResearchTool } from '../tools/marketResearchTool.js';
-import { copywriterTool } from '../tools/copywriterTool.js';
-import { summarizeLeadTool } from '../tools/summarizeLeadTool.js';
 import { type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { MessagesAnnotation, StateGraph } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { logger } from '../../../lib/logger.js';
-import { getTenantId, getUserId } from '../../../lib/async-context.js';
-import { getLearningProfile } from './learning.agent.js';
-import { logAiUsage } from '../../../lib/ai/gateway.js';
-import { saveAgentMemory, recordAgentFailure } from './agentMemory.store.js';
 import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
+import { logAiUsage } from '../../../lib/ai/gateway.js';
+import { getTenantId, getUserId } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { assertPiiExternalConsent, rehydratePii } from '../services/guardrails.service.js';
+import { copywriterTool } from '../tools/copywriterTool.js';
+import { getLeadContextTool, updateLeadQualificationTool } from '../tools/crmTools.js';
+import { marketResearchTool } from '../tools/marketResearchTool.js';
+import { searchPlaybookTool } from '../tools/playbookTool.js';
+import { summarizeLeadTool } from '../tools/summarizeLeadTool.js';
+import { recordAgentFailure, saveAgentMemory } from './agentMemory.store.js';
+import { getLearningProfile } from './learning.agent.js';
 import {
+  appendLearnedStyle,
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-  appendLearnedStyle,
 } from './swarm.constants.js';
-import { rehydratePii, assertPiiExternalConsent } from '../services/guardrails.service.js';
 
 // As ferramentas que o SDR Autônomo tem acesso
 const tools = [

@@ -14,9 +14,10 @@
  * nativos como sharp e tesseract.js) são mockados — só o contrato desta rota está sob teste, como
  * em src/features/prospecting/routes/__tests__/prospecting-tools.routes.test.ts.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+
 import express from 'express';
+import request from 'supertest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
 
 const runEnrichmentCascadeMock = vi.fn();

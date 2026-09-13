@@ -1,6 +1,6 @@
 import type { prisma } from '../../../lib/prisma.js';
 import type { getTenantPrisma } from '../../../lib/tenant-prisma.js';
-import { executeAndRecord, type ExecutionResult } from './aiPendingAction.service.js';
+import { type ExecutionResult, executeAndRecord } from './aiPendingAction.service.js';
 
 // União exata dos dois valores que o caller pode passar (`req.db || prisma`, ver
 // authenticateToken.ts) — um `Pick<typeof prisma, ...>` estrutural quebra o typecheck aqui porque

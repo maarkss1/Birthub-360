@@ -1,6 +1,6 @@
-import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { toE164BR } from '../../../lib/phone.js';
+import { prisma } from '../../../lib/prisma.js';
 import {
   isOptedOut,
   recordOptOut as recordUnifiedOptOut,

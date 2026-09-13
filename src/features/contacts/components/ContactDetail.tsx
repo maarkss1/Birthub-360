@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
 import {
-  Building2,
+  AlertTriangle,
   Briefcase,
+  Building2,
   Calendar,
   Mail,
-  Phone,
   MessageCircle,
+  Phone,
   ShieldCheck,
   ShieldQuestion,
-  AlertTriangle,
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
+import { useEffect, useState } from 'react';
 import { Drawer } from '../../../components/ui/Drawer';
+import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 import { Skeleton } from '../../../components/ui/Skeleton';
-import { EntityNotes } from '../../../components/crm/EntityNotes';
 import { EntityAttachments } from '../../../components/crm/EntityAttachments';
-import { contactsDB } from '../../../lib/db';
-import { getWhatsAppLink } from '../../../shared/utils/contact-links';
+import { EntityNotes } from '../../../components/crm/EntityNotes';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { contactsDB } from '../../../lib/db';
 import { LEAD_STATUS_EMOJI } from '../../../lib/enumMap';
+import { getWhatsAppLink } from '../../../shared/utils/contact-links';
 import type { Contact } from '../../../types';
 
 interface ContactDetailProps {

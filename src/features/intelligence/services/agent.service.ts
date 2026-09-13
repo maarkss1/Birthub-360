@@ -1,8 +1,8 @@
-import { logger } from '../../../lib/logger.js';
+import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { getTenantId } from '../../../lib/async-context.js';
-import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { saveAgentMemory, loadAgentMemory } from '../agents/agentMemory.store.js';
+import { logger } from '../../../lib/logger.js';
+import { loadAgentMemory, saveAgentMemory } from '../agents/agentMemory.store.js';
 
 export interface AgentMessage {
   role: 'system' | 'user' | 'assistant';

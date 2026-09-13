@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { container } from '../../../shared/di/container.js';
-import type { ContactController } from '../presentation/ContactController.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { contactSchema } from '../../../lib/zod.js';
+import { container } from '../../../shared/di/container.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import type { ContactController } from '../presentation/ContactController.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);

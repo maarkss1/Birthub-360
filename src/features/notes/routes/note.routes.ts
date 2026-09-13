@@ -1,9 +1,8 @@
 import { Router } from 'express';
-
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { noteSchema } from '../../../lib/zod.js';
 import { container } from '../../../shared/di/container.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import type { NoteController } from '../presentation/NoteController.js';
 
 // mergeParams: montado em três prefixos (leads/:leadId, companies/:companyId, contacts/:contactId)

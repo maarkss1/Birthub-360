@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   classifyCompleteness,
-  weightedCompletenessScore,
   DEAL_FIELD_TESTS,
+  weightedCompletenessScore,
 } from '../application/dataReadiness';
 
 describe('dataReadiness', () => {

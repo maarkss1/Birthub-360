@@ -1,10 +1,10 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { LeadUseCases } from '../application/LeadUseCases';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { routeParam } from '../../../shared/http/routeParams';
-import { automationEngine } from '../../automations/automation.engine';
-import { logger } from '../../../lib/logger';
 import type { LeadFunnel } from '@prisma/client';
+import type { NextFunction, Request, Response } from 'express';
+import { logger } from '../../../lib/logger';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { automationEngine } from '../../automations/automation.engine';
+import type { LeadUseCases } from '../application/LeadUseCases';
 
 const UTF8_BOM = String.fromCharCode(0xfeff);
 

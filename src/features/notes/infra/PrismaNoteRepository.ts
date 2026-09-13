@@ -1,5 +1,5 @@
-import type { Note, NoteEntityType, NoteRepository } from '../domain/Note';
 import { prisma } from '../../../lib/prisma';
+import type { Note, NoteEntityType, NoteRepository } from '../domain/Note';
 
 const ENTITY_FK: Record<NoteEntityType, 'leadId' | 'companyId' | 'contactId'> = {
   lead: 'leadId',

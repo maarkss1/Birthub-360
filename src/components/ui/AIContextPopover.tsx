@@ -11,21 +11,22 @@
  *     <button>Ver insights</button>
  *   </AIContextPopover>
  */
-import { useState, useRef, useCallback, type ReactNode } from 'react';
+
 import {
-  useFloating,
+  arrow,
+  autoUpdate,
+  FloatingArrow,
+  FloatingPortal,
+  flip,
+  offset,
+  shift,
   useClick,
   useDismiss,
+  useFloating,
   useInteractions,
-  offset,
-  flip,
-  shift,
-  autoUpdate,
-  FloatingPortal,
-  FloatingArrow,
-  arrow,
 } from '@floating-ui/react';
 import { Bot, Loader2, Sparkles, X } from 'lucide-react';
+import { type ReactNode, useCallback, useRef, useState } from 'react';
 import { api } from '../../lib/api';
 import { OPEN_AI_CHAT_EVENT } from '../../lib/paletteIntent';
 

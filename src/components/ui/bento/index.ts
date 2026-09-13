@@ -1,5 +1,5 @@
-export * from './BentoGrid';
 export * from './BentoCard';
-export * from './BentoMetric';
+export * from './BentoGrid';
 export * from './BentoHero';
 export * from './BentoInsight';
+export * from './BentoMetric';

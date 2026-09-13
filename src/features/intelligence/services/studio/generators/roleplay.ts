@@ -1,6 +1,6 @@
 import type { StudioGenerationRequest } from '../schema.js';
-import { roleplayResultSchema, roleplayEvaluationResultSchema } from '../schema.js';
-import { SYSTEM_RULES, invokeStructured, jsonOnlyInstruction } from '../shared.js';
+import { roleplayEvaluationResultSchema, roleplayResultSchema } from '../schema.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
 
 // Cada persona tem um "jeito de falar" além da motivação — é isso que faz o comprador soar como
 // uma pessoa real ao telefone, não uma categoria de CRM lendo um resumo de cargo. O papel/descrição

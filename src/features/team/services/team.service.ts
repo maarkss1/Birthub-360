@@ -1,10 +1,10 @@
 import { randomBytes } from 'node:crypto';
 import { hashPassword } from 'better-auth/crypto';
-import { prisma } from '../../../lib/prisma.js';
 import { isAuthorizedLoginEmail } from '../../../config/access-policy.js';
 // Fonte canônica de RBAC — não duplicar a hierarquia de papéis aqui (ver comentário em
 // src/lib/auth/authorization.ts sobre o sistema de RBAC divergente que existia antes).
 import { ASSIGNABLE_ROLES, isKnownRole } from '../../../lib/auth/authorization.js';
+import { prisma } from '../../../lib/prisma.js';
 
 export { ASSIGNABLE_ROLES };
 

@@ -1,5 +1,5 @@
-import { prisma, withRlsContext } from '../../../lib/prisma.js';
 import type { Company } from '@prisma/client';
+import { prisma, withRlsContext } from '../../../lib/prisma.js';
 import { toDeterministicCnpj } from './cnpj.util.js';
 
 /**

@@ -1,19 +1,19 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  decideCadenceAction,
-  startCadenceRun,
   applyOptOutStop,
   applyPolicyGuardrailFailure,
   applyReplyStop,
   applyStopDecision,
-  stopCadenceManually,
-  pauseCadenceRun,
-  resumeCadenceRun,
-  recordTouchAttempt,
-  sanitizeTouchError,
-  validateSequence,
-  type CadenceSequenceDefinition,
   type CadenceDecisionContext,
+  type CadenceSequenceDefinition,
+  decideCadenceAction,
+  pauseCadenceRun,
+  recordTouchAttempt,
+  resumeCadenceRun,
+  sanitizeTouchError,
+  startCadenceRun,
+  stopCadenceManually,
+  validateSequence,
 } from '../domain/cadence';
 
 const NOW = new Date('2026-08-03T12:00:00Z'); // segunda, 09:00 SP

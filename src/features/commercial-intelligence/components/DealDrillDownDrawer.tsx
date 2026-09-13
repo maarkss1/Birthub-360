@@ -1,17 +1,17 @@
+import { AlertTriangle, CheckCircle2, Loader2, Send, Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { AlertTriangle, Loader2, Send, CheckCircle2, Sparkles, X } from 'lucide-react';
-import { Drawer } from '../../../components/ui/Drawer';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
+import { Drawer } from '../../../components/ui/Drawer';
 import { EmptyState } from '../../../components/ui/EmptyState';
-import { toast } from '../../../lib/toast';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { toast } from '../../../lib/toast';
 import {
-  commercialIntelligenceApi,
-  formatCurrency,
   type CommercialFilter,
+  commercialIntelligenceApi,
   type DealDrillDownRow,
   type ForecastTier,
+  formatCurrency,
 } from '../commercialIntelligence.api';
 
 export interface DrillDownQuery {
