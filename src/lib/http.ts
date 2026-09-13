@@ -29,25 +29,25 @@ function resolveRequestHost(input: string | URL | Request): string {
  * privado/reservado e faz pinning de DNS, algo que quebraria os provedores auto-hospedáveis
  * legítimos abaixo (Meilisearch/SearXNG/Voicebox rodam em endereço privado/loopback de propósito).
  *
- * `allowedHosts`, quando informado, é o único host (ou lista) para o qual esta chamada pode
- * resolver — a query string de vários desses provedores carrega texto de busca vindo de um
- * request do usuário (nome de empresa, domínio etc.), e sem essa checagem o CodeQL
- * (`js/request-forgery`) não tem como provar que esse texto nunca poderia mover o destino real da
- * chamada, mesmo quando o host de fato é sempre a constante hardcoded no arquivo de origem. Opcional
- * (e ausente por padrão) só para não quebrar chamadas internas/de teste que não têm um host fixo
- * conhecido de antemão.
+ * `allowedHosts` é o único host (ou lista) para o qual esta chamada pode resolver — a query
+ * string de vários desses provedores carrega texto de busca vindo de um request do usuário (nome
+ * de empresa, domínio etc.), e sem essa checagem o CodeQL (`js/request-forgery`) não tem como
+ * provar que esse texto nunca poderia mover o destino real da chamada, mesmo quando o host de
+ * fato é sempre a constante hardcoded no arquivo de origem. Obrigatório (não opcional): a
+ * proteção só vale alguma coisa se for impossível esquecer de passá-la num call site novo. Para
+ * um provedor com host dinâmico controlado pelo operador (env var), não pelo usuário — ex.:
+ * SearXNG, Meilisearch, Voicebox — passe uma lista derivada da própria env var (ex.:
+ * `[new URL(searxngUrl).hostname]`), não uma constante fixa.
  */
 export async function fetchWithTimeout(
   input: string | URL | Request,
   init: RequestInit = {},
   timeoutMs = 10_000,
-  allowedHosts?: readonly string[],
+  allowedHosts: readonly string[],
 ): Promise<Response> {
-  if (allowedHosts) {
-    const host = resolveRequestHost(input);
-    if (!allowedHosts.some((allowed) => allowed.toLowerCase() === host)) {
-      throw new DisallowedHostError(host);
-    }
+  const host = resolveRequestHost(input);
+  if (!allowedHosts.some((allowed) => allowed.toLowerCase() === host)) {
+    throw new DisallowedHostError(host);
   }
 
   const controller = new AbortController();

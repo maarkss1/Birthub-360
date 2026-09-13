@@ -85,7 +85,7 @@ describe('fetchWithProviderRetry — sucesso direto', () => {
     const res = await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'Test' },
+      { sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
     );
 
     expect(res.status).toBe(200);
@@ -105,7 +105,7 @@ describe('fetchWithProviderRetry — 429 transitório', () => {
     const res = await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'Test' },
+      { sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
     );
 
     expect(res.status).toBe(200);
@@ -123,7 +123,7 @@ describe('fetchWithProviderRetry — 429 transitório', () => {
     await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'Test' },
+      { sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
     );
 
     expect(noopSleep).toHaveBeenCalledWith(2000);
@@ -136,7 +136,7 @@ describe('fetchWithProviderRetry — 429 transitório', () => {
     const res = await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { retries: 2, sleep: noopSleep, providerName: 'Test' },
+      { retries: 2, sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
     );
 
     expect(res.status).toBe(429);
@@ -155,7 +155,7 @@ describe('fetchWithProviderRetry — 5xx transitório', () => {
     const res = await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'Test' },
+      { sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
     );
 
     expect(res.status).toBe(200);
@@ -173,7 +173,7 @@ describe('fetchWithProviderRetry — 4xx definitivo', () => {
       const res = await fetchWithProviderRetry(
         'https://example.com/api',
         {},
-        { sleep: noopSleep, providerName: 'Test' },
+        { sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
       );
 
       expect(res.status).toBe(status);
@@ -194,7 +194,7 @@ describe('fetchWithProviderRetry — falha de rede/timeout', () => {
     const res = await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'Test' },
+      { sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
     );
 
     expect(res.status).toBe(200);
@@ -209,7 +209,7 @@ describe('fetchWithProviderRetry — falha de rede/timeout', () => {
       fetchWithProviderRetry(
         'https://example.com/api',
         {},
-        { retries: 1, sleep: noopSleep, providerName: 'Test' },
+        { retries: 1, sleep: noopSleep, providerName: 'Test', allowedHosts: ['example.com'] },
       ),
     ).rejects.toThrow('fetch failed');
     expect(fetchMock).toHaveBeenCalledTimes(2); // 1 tentativa inicial + 1 retry
@@ -224,7 +224,7 @@ describe('fetchWithProviderRetry — contagem de volume de chamadas faturáveis'
     await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'Apollo-Test', billable: true },
+      { sleep: noopSleep, providerName: 'Apollo-Test', billable: true, allowedHosts: ['example.com'] },
     );
 
     expect(mockLogger.info).toHaveBeenCalledTimes(1);
@@ -245,7 +245,7 @@ describe('fetchWithProviderRetry — contagem de volume de chamadas faturáveis'
     await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'BrasilAPI' },
+      { sleep: noopSleep, providerName: 'BrasilAPI', allowedHosts: ['example.com'] },
     );
 
     expect(mockLogger.info).not.toHaveBeenCalled();
@@ -261,7 +261,7 @@ describe('fetchWithProviderRetry — contagem de volume de chamadas faturáveis'
     await fetchWithProviderRetry(
       'https://example.com/api',
       {},
-      { sleep: noopSleep, providerName: 'Hunter-Test', billable: true },
+      { sleep: noopSleep, providerName: 'Hunter-Test', billable: true, allowedHosts: ['example.com'] },
     );
 
     expect(mockLogger.info).toHaveBeenCalledTimes(2); // uma chamada real por tentativa, mesmo a que deu 429

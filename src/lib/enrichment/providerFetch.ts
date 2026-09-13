@@ -45,7 +45,7 @@ export interface ProviderRetryOptions {
   /** Override para testes — evita esperar de verdade no backoff. */
   sleep?: (ms: number) => Promise<void>;
   /** Repassado a `fetchWithTimeout` — ver o comentário de `allowedHosts` em `lib/http.ts`. */
-  allowedHosts?: readonly string[];
+  allowedHosts: readonly string[];
 }
 
 /** Status HTTP que valem retry: 429 (rate limit, sempre transitório) e 5xx (erro do servidor upstream). */
@@ -96,7 +96,7 @@ function parseRetryAfterMs(header: string | null): number | null {
 export async function fetchWithProviderRetry(
   input: string | URL | Request,
   init: RequestInit = {},
-  options: ProviderRetryOptions = {},
+  options: ProviderRetryOptions,
 ): Promise<Response> {
   const {
     retries = 2,
