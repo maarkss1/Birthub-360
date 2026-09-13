@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { MODULE_KEYS } from '../module-catalog';
@@ -26,7 +26,7 @@ describe('migrations não gravam moduleKey fora de MODULE_KEYS (DOCBRAND-001)', 
 
   it('todo literal de moduleKey em prisma/migrations/**/migration.sql pertence a MODULE_KEYS', () => {
     const migrationDirs = readdirSync(migrationsDir, { withFileTypes: true }).filter((entry) =>
-      entry.isDirectory()
+      entry.isDirectory(),
     );
 
     const offenders: { migration: string; value: string }[] = [];
