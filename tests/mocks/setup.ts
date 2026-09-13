@@ -21,6 +21,28 @@ if (typeof HTMLDialogElement !== 'undefined' && !HTMLDialogElement.prototype.sho
   };
 }
 
+// jsdom não implementa IntersectionObserver (usado por framer-motion `useInView` — ver
+// GlowChart.tsx, halo decorativo que só deve animar em loop com o card visível, ACH-03-05) — sem
+// isso, qualquer componente que monte esse hook quebra com "ReferenceError: IntersectionObserver
+// is not defined" assim que o efeito roda, mesmo em testes que nem afirmam nada sobre ele (ex.:
+// ReportsHub.test.tsx, que só renderiza o GlowChart de passagem). Stub mínimo: nunca dispara
+// callback (equivalente a "nunca visível" em jsdom, que não tem layout real de qualquer forma),
+// só evita o crash.
+if (typeof globalThis.IntersectionObserver === 'undefined') {
+    class IntersectionObserverStub implements IntersectionObserver {
+        readonly root: Element | Document | null = null;
+        readonly rootMargin: string = '';
+        readonly thresholds: ReadonlyArray<number> = [];
+        observe(): void {}
+        unobserve(): void {}
+        disconnect(): void {}
+        takeRecords(): IntersectionObserverEntry[] {
+            return [];
+        }
+    }
+    globalThis.IntersectionObserver = IntersectionObserverStub as unknown as typeof IntersectionObserver;
+}
+
 server.listen({ onUnhandledRequest: 'bypass' });
 if (typeof window !== 'undefined') {
   window.fetch = globalThis.fetch;

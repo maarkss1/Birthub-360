@@ -33,8 +33,9 @@ export async function assignLeadRoundRobin(
   // A atribuição por round-robin só acontece em lead recém-criado sem dono (ver
   // LeadUseCases.createLead), então o valor anterior é sempre vazio — registrado como atribuição
   // de origem 'round_robin' na Jornada (handoffs), distinguível de uma troca entre pessoas.
-  const { recordLeadFieldChanges } =
-    await import('../../../shared/services/leadFieldChangeHistory.service.js');
+  const { recordLeadFieldChanges } = await import(
+    '../../../shared/services/leadFieldChangeHistory.service.js'
+  );
   await recordLeadFieldChanges(
     organizationId,
     leadId,

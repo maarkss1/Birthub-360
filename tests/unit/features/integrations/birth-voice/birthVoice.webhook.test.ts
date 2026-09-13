@@ -22,6 +22,14 @@ const sendWhatsAppMessageMock = vi.fn().mockResolvedValue(undefined);
 // comentário em birthVoice.webhook.ts) — precisa existir no mock pro handler não quebrar; nenhum
 // teste deste arquivo faz asserção sobre ela ainda.
 const voiceCallLogCreate = vi.fn().mockResolvedValue({});
+// ACH-06-01: `handleWebhook` agora consulta VoiceHubConnection (por organizationId, ainda não
+// confiável) para tentar validar contra um segredo próprio de conexão antes de cair pro segredo
+// global — ver `resolveTrustedOrganizationId` em birthVoice.webhook.ts. Nenhum teste deste
+// arquivo cadastra conexão própria, então o retorno vazio preserva o comportamento pré-existente
+// de todos os cenários abaixo (tudo validado só contra o segredo global via mockEnv). Cobertura
+// dedicada do isolamento por conexão própria vive em
+// src/features/integrations/birth-voice/__tests__/birthVoice.webhook.test.ts.
+const voiceHubConnectionFindMany = vi.fn().mockResolvedValue([]);
 const contextRuns: Array<Record<string, unknown>> = [];
 
 vi.mock('../../../../../src/lib/prisma.js', () => ({
@@ -39,6 +47,9 @@ vi.mock('../../../../../src/lib/prisma.js', () => ({
     },
     voiceCallLog: {
       create: (...args: unknown[]) => voiceCallLogCreate(...args),
+    },
+    voiceHubConnection: {
+      findMany: (...args: unknown[]) => voiceHubConnectionFindMany(...args),
     },
   },
 }));
@@ -128,6 +139,7 @@ beforeEach(() => {
   mockEnv.BIRTH_VOICES_WEBHOOK_SECRET = 'segredo-hub-teste';
   leadFindFirst.mockResolvedValue(leadFixture);
   activityFindFirst.mockResolvedValue(null);
+  voiceHubConnectionFindMany.mockResolvedValue([]);
 });
 
 afterEach(() => {

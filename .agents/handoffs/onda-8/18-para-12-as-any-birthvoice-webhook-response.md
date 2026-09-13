@@ -5,11 +5,9 @@
 - Prioridade: alto
 
 ## Resolução
-
 Validado o schema da resposta usando Zod (`birthVoiceResponseSchema`). Agora se a API externa renomear ou remover campos retornará um payload inválido ao invés de prosseguir com undefined.
 
 ## Problema
-
 `src/features/integrations/birth-voice/birthVoice.service.ts:146` faz
 `const rawData = (await response.json()) as any;` sobre a resposta da API externa do provedor
 Birth Voices Hub/Bland AI, e em seguida acessa `rawData.call_id || rawData.sessionId` e
@@ -20,11 +18,9 @@ provedor renomear ou remover um desses campos, o código continua compilando e p
 SDR de voz, sem nenhum sinal em tempo de compilação nem de execução.
 
 ## Arquivo(s) envolvido(s)
-
 - `src/features/integrations/birth-voice/birthVoice.service.ts:146`
 
 ## Alteração necessária
-
 Definir uma interface (`BirthVoiceCallResponse` ou nome equivalente) com os campos realmente
 usados (`call_id`, `sessionId`, `status`, e qualquer outro consumido logo depois no mesmo método) e
 usar `response.json() as BirthVoiceCallResponse` — ou, melhor ainda, validar com um schema Zod
@@ -33,7 +29,6 @@ projeto, ex. webhooks) para que um payload inesperado do provedor gere um erro t
 um valor `undefined` silencioso propagado adiante.
 
 ## Teste esperado
-
 - `npx tsc --noEmit` sem erros novos.
 - Se houver teste de `tests/unit/features/integrations/birth-voice/**` cobrindo este método,
   adicionar um caso onde a resposta do provedor não tem `call_id`/`sessionId` — hoje isso
@@ -41,7 +36,6 @@ um valor `undefined` silencioso propagado adiante.
   forma visível/tratável em vez de propagar um id inválido.
 
 ## Contexto adicional
-
 Classificado como risco **alto** porque é um cast de resposta de provedor externo de voz (não
 interno), e alimenta o rastreamento de uma ligação automática real — um shape inesperado aqui tem
 efeito em produção (chamada telefônica), não só em uma métrica de dashboard.

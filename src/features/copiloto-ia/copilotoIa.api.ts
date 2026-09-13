@@ -12,11 +12,20 @@ const BASE = '/api/copiloto-ia';
 
 export type CopilotoConversationSource = 'MEET' | 'CALL' | 'WHATSAPP' | 'MANUAL' | 'OTHER';
 export type CopilotoConversationStatus =
-  'SCHEDULED' | 'CAPTURING' | 'PROCESSING' | 'READY' | 'FAILED' | 'CANCELLED';
+  | 'SCHEDULED'
+  | 'CAPTURING'
+  | 'PROCESSING'
+  | 'READY'
+  | 'FAILED'
+  | 'CANCELLED';
 export type CopilotoConsentStatus = 'PENDING' | 'GRANTED' | 'DECLINED' | 'NOT_REQUIRED';
 export type CopilotoCrmEntityType = 'LEAD' | 'COMPANY' | 'CONTACT';
 export type CopilotoSuggestionStatus =
-  'PENDING' | 'APPROVED' | 'REJECTED' | 'WRITTEN_BACK' | 'FAILED';
+  | 'PENDING'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'WRITTEN_BACK'
+  | 'FAILED';
 
 export interface CopilotoConversationDTO {
   id: string;

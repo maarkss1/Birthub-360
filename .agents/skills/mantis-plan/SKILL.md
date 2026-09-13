@@ -521,10 +521,7 @@ Execute the planning stage as follows:
     {
       "title": "Exhaustive Review: [relative_file_path]",
       "target_files": ["[relative_file_path_1]", "[relative_file_path_2]"],
-      "kb_references": [
-        "workspace/kb/entities/auth_module.md",
-        "workspace/kb/vulnerabilities/CWE-79.md"
-      ],
+      "kb_references": ["workspace/kb/entities/auth_module.md", "workspace/kb/vulnerabilities/CWE-79.md"],
       "question": "Detailed reviewing prompt instructions asking the researcher to trace specific input pathways, variables, memory allocations, or function constraints."
     }
   ]

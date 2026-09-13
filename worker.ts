@@ -28,6 +28,7 @@ import {
 } from './src/shared/middlewares/requirePlatformOperator.js';
 import { createAgentWorker } from './src/lib/queue/agent.worker.js';
 import { createEnrichmentWorker } from './src/lib/queue/enrichment.queue.js';
+import { createEnrichmentCascadeWorker } from './src/lib/queue/enrichmentCascade.worker.js';
 import { createSearchWorker } from './src/lib/queue/search.queue.js';
 import { dailyReportWorker } from './src/lib/queue/dailyReport.worker.js';
 import { initMeiliIndexes } from './src/lib/search/index.js';
@@ -98,11 +99,23 @@ import {
   scheduleAccountIntelligenceInsightsJob,
 } from './src/features/market-intelligence/jobs/accountIntelligenceInsights.worker.js';
 import {
+  createAccountIntelligenceSchedulerWorker,
+  accountIntelligenceSchedulerQueue,
+} from './src/features/market-intelligence/jobs/accountIntelligenceScheduler.worker.js';
+import {
   createForecastSnapshotWorker,
   scheduleForecastSnapshotJob,
 } from './src/features/commercial-intelligence/jobs/forecastSnapshotWeekly.worker.js';
 import { createCopilotoTranscriptionWorker } from './src/features/copiloto-ia/jobs/transcribeConversation.worker.js';
 import { MeetingSynthesisService } from './src/features/chatbook/services/meeting-synthesis.service.js';
+// ACH-16-01/16-05: createEnrichmentCascadeWorker e createAccountIntelligenceSchedulerWorker (LDR
+// Fase 5) existiam sem estar registrados em nenhum entrypoint — o teste de paridade
+// (tests/unit/architecture/worker-registry-parity.test.ts) pegou isso. `createEnrichmentCascadeWorker`
+// processa `enrichmentCascadeQueue`, que já recebia jobs via POST em
+// src/features/prospecting/routes/prospecting.routes.ts sem nenhum worker para consumi-los.
+// `createAccountIntelligenceSchedulerWorker` só rodava em modo embutido
+// (ENABLE_EMBEDDED_WORKERS=true) — proibido em produção por src/lib/queue/redis.ts, o que
+// significava que o scheduler autônomo do LDR nunca rodava em produção.
 
 const WORKER_PORT = parseInt(process.env.WORKER_HEALTH_PORT || '3006', 10);
 const SHUTDOWN_TIMEOUT_MS = 25_000;
@@ -126,6 +139,7 @@ async function startWorkerProcess() {
   const leadsWorker = createLeadsWorker();
   const agentWorker = createAgentWorker();
   const enrichmentWorker = createEnrichmentWorker();
+  const enrichmentCascadeWorker = createEnrichmentCascadeWorker();
   const whatsappSignalWorker = createWhatsAppSignalWorker();
   const whatsappCommandWorker = createWhatsAppCommandWorker();
   const bitrixSyncWorker = createBitrixSyncWorker();
@@ -142,6 +156,7 @@ async function startWorkerProcess() {
   const bitrixExtractionPurgeWorker = createBitrixExtractionPurgeWorker();
   const newsMonitorWorker = createNewsMonitorWorker();
   const accountIntelligenceInsightsWorker = createAccountIntelligenceInsightsWorker();
+  const accountIntelligenceSchedulerWorker = createAccountIntelligenceSchedulerWorker();
   const forecastSnapshotWorker = createForecastSnapshotWorker();
   const copilotoTranscriptionWorker = createCopilotoTranscriptionWorker({
     meetingSynthesisPort: new MeetingSynthesisService(),
@@ -163,6 +178,14 @@ async function startWorkerProcess() {
     scheduleGlobalNewsScan(),
     scheduleAccountIntelligenceInsightsJob(),
     scheduleForecastSnapshotJob(),
+    // Mesmo agendamento ('daily-ldr-scheduler', cron diário às 02h) já usado no modo embutido
+    // (src/bootstrap/workers.ts) — upsertJobScheduler é idempotente por id, então registrar o
+    // mesmo agendamento nos dois entrypoints segue o padrão já usado pelos demais jobs acima.
+    accountIntelligenceSchedulerQueue.upsertJobScheduler(
+      'daily-ldr-scheduler',
+      { pattern: '0 2 * * *' },
+      { name: 'accountIntelligenceScheduler', data: {} },
+    ),
   ]);
 
   const searchWorker = env.ENABLE_SEARCH ? createSearchWorker() : null;
@@ -189,6 +212,7 @@ async function startWorkerProcess() {
     { name: 'leads-enrichment', worker: leadsWorker },
     { name: 'intelligence-agents', worker: agentWorker },
     { name: 'enrichment-queue', worker: enrichmentWorker },
+    { name: 'enrichment-cascade-queue', worker: enrichmentCascadeWorker },
     { name: 'search-indexing', worker: searchWorker },
     { name: 'whatsapp-conversation-signal', worker: whatsappSignalWorker },
     { name: 'whatsapp-command', worker: whatsappCommandWorker },
@@ -209,6 +233,7 @@ async function startWorkerProcess() {
     { name: 'bitrix-extraction-purge', worker: bitrixExtractionPurgeWorker },
     { name: 'news-monitor', worker: newsMonitorWorker },
     { name: 'account-intelligence-insights', worker: accountIntelligenceInsightsWorker },
+    { name: 'account-intelligence-scheduler', worker: accountIntelligenceSchedulerWorker },
     { name: 'forecast-snapshot-weekly-queue', worker: forecastSnapshotWorker },
     { name: 'copiloto-ia-transcription-queue', worker: copilotoTranscriptionWorker },
   ];

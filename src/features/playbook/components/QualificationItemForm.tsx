@@ -14,13 +14,13 @@ import {
 import { playbookApi, type QualificationMatrixItem } from '../playbook.api';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
-import { PLAYBOOKS } from '../../../config/playbooks';
+import { PLAYBOOKS, type PlaybookKey } from '../../../config/playbooks';
 
 const FRAMEWORKS = ['SPIN', 'BANT', 'MEDDPICC', 'SNAP', 'CHALLENGER'] as const;
 const CATEGORIES = ['Situação', 'Problema', 'Implicação/Custo', 'Necessidade/ROI'] as const;
 
 const emptyDefaults: QualificationMatrixItemInput = {
-  brand: 'atlasgr',
+  brand: 'geral',
   segment: '',
   persona: '',
   framework: 'SPIN',
@@ -31,7 +31,7 @@ const emptyDefaults: QualificationMatrixItemInput = {
 
 interface QualificationItemFormProps {
   item?: QualificationMatrixItem | null;
-  defaultBrand: 'atlasgr' | 'totaltrac';
+  defaultBrand: PlaybookKey;
   onClose: () => void;
   onSave: () => void;
 }

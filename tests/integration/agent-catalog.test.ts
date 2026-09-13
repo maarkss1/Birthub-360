@@ -111,6 +111,36 @@ describe('Fundação Multi-Cargo — AgentDefinition/AgentVersion/RoleAgentGrant
     expect(active?.systemPrompt).toBe('prompt v2');
   });
 
+  it('ativar uma nova versão demove atomicamente a versão ACTIVE anterior do mesmo agente', async () => {
+    const agent = await upsertAgentDefinition({
+      code: 'test-promote-active-agent',
+      name: 'Promoção de versão',
+      status: 'PROMPT_READY',
+    });
+
+    await upsertAgentVersion({ agentDefinitionId: agent.id, version: 1, status: 'ACTIVE' });
+    let active = await getActiveAgentVersion(agent.id);
+    expect(active?.version).toBe(1);
+
+    // status default é 'ACTIVE' — precisa demover a v1 na mesma transação, não só confiar no
+    // índice único parcial pra barrar (isso derrubaria a ativação com um P2002 cru).
+    await upsertAgentVersion({ agentDefinitionId: agent.id, version: 2 });
+
+    active = await getActiveAgentVersion(agent.id);
+    expect(active?.version).toBe(2);
+
+    const detail = await getAgentDefinitionById(agent.id);
+    const v1 = detail?.versions.find((v) => v.version === 1);
+    expect(v1?.status).toBe('DEPRECATED');
+    expect(v1?.deprecatedAt).not.toBeNull();
+
+    // Nunca duas linhas ACTIVE simultâneas — a mesma garantia que o índice único parcial cobre.
+    const activeRows = await prisma.agentVersion.findMany({
+      where: { agentDefinitionId: agent.id, status: 'ACTIVE' },
+    });
+    expect(activeRows).toHaveLength(1);
+  });
+
   it('rejeita uma segunda versão ACTIVE para o mesmo agente (índice único parcial no banco)', async () => {
     const agent = await upsertAgentDefinition({
       code: 'test-double-active-agent',

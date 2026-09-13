@@ -45,7 +45,6 @@ refere ao segundo, não ao primeiro:
 **Opção (a) — manter como decoração efêmera, sem abrir handoff de schema para o Agente 01A.**
 
 Razões:
-
 - As "missões" são um checklist **auto-reportado** (o próprio usuário marca "Completar perfil do
   SDR", "Qualificar 5 novos leads hoje" etc. manualmente), não uma leitura de dado real de
   atividade/CRM. Persistir esse dado em banco de produção como se fosse histórico oficial de

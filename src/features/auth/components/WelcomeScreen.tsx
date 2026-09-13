@@ -159,6 +159,20 @@ export function WelcomeScreen() {
     return <Navigate to="/hub" replace />;
   }
 
+  // Quem já está autenticado e cai em "/" (ex.: bookmark, PWA instalado) pula direto pro Hub —
+  // mesmo guard que já existe em LoginScreen.tsx, replicado aqui porque "/" passou a renderizar
+  // este gate em vez do formulário diretamente (ver App.tsx).
+  if (isPending) {
+    return (
+      <div className="dark flex min-h-screen items-center justify-center bg-bg">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+      </div>
+    );
+  }
+  if (currentUser) {
+    return <Navigate to="/hub" replace />;
+  }
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-bg font-sans text-ink">
       {/* Trilha ambiente decorativa (piano/cordas instrumental, sem fala) — não transmite

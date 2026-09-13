@@ -47,16 +47,16 @@ registre a divergência na sua entrega em vez de propagar a suposição.
 
 Oito arquivos novos em `.agents/prompts/`:
 
-| Arquivo                           | Agente                                                                           |
-| --------------------------------- | -------------------------------------------------------------------------------- |
-| `12-voz-telefonia.md`             | Voz e Telefonia (Birthub Voices / Bland / 3CX)                                   |
-| `13-enxame-governanca-agentes.md` | Enxame Autônomo e Governança de Agentes de Runtime                               |
-| `14-ambiente-execucao-harness.md` | Ambiente de Execução e Test Harness                                              |
-| `15-seguranca-aplicada.md`        | Segurança Aplicada e Rotação de Segredos                                         |
-| `16-runtime-workers-escala.md`    | Runtime, Workers e Escala                                                        |
-| `17-cadencia-ciclo-receita.md`    | Cadência Multicanal e Ciclo de Receita                                           |
-| `18-contratos-api-docs.md`        | Contratos, API e Documentação Viva                                               |
-| `01A-dados-rls-retencao.md`       | Confiabilidade de Dados, RLS e Retenção (especialista interno do 01, mesmo slot) |
+| Arquivo | Agente |
+|---|---|
+| `12-voz-telefonia.md` | Voz e Telefonia (Birthub Voices / Bland / 3CX) |
+| `13-enxame-governanca-agentes.md` | Enxame Autônomo e Governança de Agentes de Runtime |
+| `14-ambiente-execucao-harness.md` | Ambiente de Execução e Test Harness |
+| `15-seguranca-aplicada.md` | Segurança Aplicada e Rotação de Segredos |
+| `16-runtime-workers-escala.md` | Runtime, Workers e Escala |
+| `17-cadencia-ciclo-receita.md` | Cadência Multicanal e Ciclo de Receita |
+| `18-contratos-api-docs.md` | Contratos, API e Documentação Viva |
+| `01A-dados-rls-retencao.md` | Confiabilidade de Dados, RLS e Retenção (especialista interno do 01, mesmo slot) |
 
 Mais duas atualizações:
 
@@ -79,27 +79,16 @@ Siga exatamente a estrutura dos prompts existentes, nesta ordem de seções:
 # <NN> — <Título do agente>
 
 ## Papel
-
 ## Leia primeiro
-
 ## Escopo
-
 ## Antes de começar
-
 ## Missão da Onda <n>
-
 ### 1. <subtópico>
-
 ### 2. <subtópico>
-
 ...
-
 ## Coordenação
-
 ## Testes
-
 ## Gate
-
 ## Entrega
 ```
 

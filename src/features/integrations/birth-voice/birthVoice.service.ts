@@ -5,6 +5,7 @@ import { pickCallablePhone } from './birthVoice.helpers.js';
 import { isSuppressed } from './callSuppression.service.js';
 import { buildVoicePromptForLead } from './atlasProductPlaybook.js';
 import { assertPiiExternalConsent } from '../../intelligence/services/guardrails.service.js';
+import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
 
 /** Caminho do webhook que o Birth Voices Hub chama com o resultado da ligação. */
 export const CALL_RESULT_WEBHOOK_PATH = '/api/integrations/birth-voice/webhook';
@@ -200,15 +201,41 @@ export async function callLead(
         },
       };
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: apiKeyHeader,
-    },
-    body: JSON.stringify(requestBody),
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-  });
+  // SSRF/DNS rebinding (achado de auditoria ACH-06-02): `config.baseUrl` (Hub) vem de uma
+  // `VoiceHubConnection` cadastrada por tenant ou da env global — validado uma única vez no
+  // cadastro (`connectVoiceHub`), o que deixava aberta a janela clássica de DNS rebinding entre
+  // aquela validação e cada chamada real subsequente (o host pode responder um IP público no
+  // cadastro e um IP privado agora). Revalida com `assertSafeExternalUrl` a cada chamada e usa
+  // `safeFetch`, que fixa a conexão real nos MESMOS endereços validados nesta mesma chamada — mesmo
+  // padrão já usado em `threecx.service.ts::make3CXCall`/`test3CXConnection` e no client Bitrix24.
+  //
+  // O ramo Bland (`https://api.bland.ai/v1/calls`) é um endpoint fixo/hardcoded do provedor, não
+  // uma URL de tenant/usuário — mesmo critério documentado em `urlGuard.ts` ("NÃO usar para URLs
+  // de provedor fixas/hardcoded... o destino já é conhecido e confiável, não há SSRF ali"), por
+  // isso segue usando o `fetch` global, sem o guard.
+  let response: Response;
+  if (isBland) {
+    response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: apiKeyHeader,
+      },
+      body: JSON.stringify(requestBody),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  } else {
+    await assertSafeExternalUrl(endpoint);
+    response = await safeFetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: apiKeyHeader,
+      },
+      body: JSON.stringify(requestBody),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+  }
 
   if (!response.ok) {
     const detail = await response.text().catch(() => '');

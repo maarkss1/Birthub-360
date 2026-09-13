@@ -147,7 +147,7 @@ export function ProspectingToolsHub() {
                       <Icon size={16} />
                     </div>
                     {status && configured === false && (
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-warn/15 text-amber-600 dark:text-amber-400 border border-warn/30">
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-warn/15 text-warning-active dark:text-warning border border-warn/30">
                         Não configurado
                       </span>
                     )}

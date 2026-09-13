@@ -126,7 +126,7 @@ Execute the summarize stage as follows:
    - The script must ignore non-source-code directories such as `node_modules`,
      `vendor`, `.git`, build outputs, and `tests/`.
    - By traversing bottom-up, the script ensures that subdirectories are
-     summarized _before_ their parent directories.
+     summarized *before* their parent directories.
    - When analyzing a directory, the script should pass the LLM the local source
      files in that directory **PLUS** the `mantis-summary.md` files of its
      immediate subdirectories. Do not pass the raw source files of

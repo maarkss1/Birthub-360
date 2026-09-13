@@ -6,7 +6,10 @@
 // frontend (matriz de administração + RequireModuleAccess/useModuleAccess). Adicionar um módulo
 // novo aqui NÃO cria a tela nem a rota sozinho — só o habilita para ser concedido no painel.
 export type ModuleKey =
-  'social-selling' | 'treinamento-atlasgr' | 'proposta-comercial' | 'hub-inteligencia-marketing';
+  | 'social-selling'
+  | 'treinamento-atlasgr'
+  | 'proposta-comercial'
+  | 'hub-inteligencia-marketing';
 
 export interface ModuleCatalogEntry {
   key: ModuleKey;
@@ -62,7 +65,13 @@ export interface ExternalLinkEntry {
   description: string;
   url: string;
   iconKey:
-    'connect' | 'newConnect' | 'securitario' | 'bitrix24' | 'webmail' | 'gmail' | 'workspace';
+    | 'connect'
+    | 'newConnect'
+    | 'securitario'
+    | 'bitrix24'
+    | 'webmail'
+    | 'gmail'
+    | 'workspace';
 }
 
 export const EXTERNAL_LINKS: ExternalLinkEntry[] = [

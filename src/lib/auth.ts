@@ -271,7 +271,7 @@ export const auth = betterAuth({
       sameSite: 'lax',
       secure: Boolean(
         process.env.SECURE_COOKIES === 'true' ||
-        process.env.BETTER_AUTH_URL?.startsWith('https://'),
+          process.env.BETTER_AUTH_URL?.startsWith('https://'),
       ),
     },
   },

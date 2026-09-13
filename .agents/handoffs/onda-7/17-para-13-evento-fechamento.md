@@ -3,9 +3,7 @@
 - Onda: 7
 - Status: resolvido
 - Prioridade: alto
-
 ## Problema
-
 `AUTONOMIA_COMERCIAL_24X7.md` → "Critério honesto de Closer autônomo" já proíbe o modelo de
 declarar um negócio como ganho por texto gerado, e é seu domínio (`src/features/intelligence/**`,
 guardrails) que hoje faz valer essa proibição. Minha entrega 5 (`.agents/prompts/17-cadencia-ciclo-
@@ -15,7 +13,6 @@ versionada → assinatura/aceite → `DealClosureEvent` verificável → só ent
 conta como fechamento **antes de implementar** — este handoff é esse acordo proposto.
 
 ## Arquivo(s) envolvido(s)
-
 - Meu: `src/features/cadence/domain/dealClosure.ts` (guarda pura, já implementada e testada com os
   3 tipos abaixo).
 - Proposto para schema (ver `17-para-01-schema-cadencia-optout-proposta.md`, seção 5):
@@ -31,19 +28,18 @@ livre do modelo, um id real de outro registro):
 
 ```ts
 export type DealClosureEventType =
-  | 'signature_completed' // CrmDocumentSignatureRequest.status transicionou para 'Signed' via webhook do provedor real
-  | 'payment_confirmed' // confirmação de pagamento de um gateway real (fora de escopo desta onda — placeholder para quando existir)
-  | 'manual_crm_confirmation'; // vendedor humano confirma explicitamente no CRM, com nota obrigatória
+    | 'signature_completed'   // CrmDocumentSignatureRequest.status transicionou para 'Signed' via webhook do provedor real
+    | 'payment_confirmed'     // confirmação de pagamento de um gateway real (fora de escopo desta onda — placeholder para quando existir)
+    | 'manual_crm_confirmation'; // vendedor humano confirma explicitamente no CRM, com nota obrigatória
 ```
 
 Guarda pura já implementada (`src/features/cadence/domain/dealClosure.ts`):
-
 ```ts
 export function isDeterministicCloseEvent(event: DealClosureEventInput): boolean {
-  // true só quando type é um dos 3 acima E evidenceRef é uma referência não-vazia a outro
-  // registro real (id de CrmDocumentSignatureRequest, id de transação de pagamento, ou id de
-  // Activity/Note que registra a confirmação manual) — nunca aceita texto gerado por modelo
-  // como evidenceRef, nunca aceita 'ai_inferred'/'model_judgment' como type.
+    // true só quando type é um dos 3 acima E evidenceRef é uma referência não-vazia a outro
+    // registro real (id de CrmDocumentSignatureRequest, id de transação de pagamento, ou id de
+    // Activity/Note que registra a confirmação manual) — nunca aceita texto gerado por modelo
+    // como evidenceRef, nunca aceita 'ai_inferred'/'model_judgment' como type.
 }
 ```
 
@@ -58,7 +54,6 @@ passa por ali, passa pelo serviço de fechamento em `src/features/cadence/**` re
 já validado.
 
 ## Teste esperado
-
 - Evento com `type: 'manual_crm_confirmation'` e `evidenceRef` vazio → rejeitado (não fecha nada).
 - Evento fabricado com um `type` fora dos 3 listados (ex.: um agente tentando injetar
   `'ai_judgment'`) → rejeitado.
@@ -68,7 +63,6 @@ já validado.
   escrever `Lead.status = 'Negocios_Ganhos'` fora do serviço de fechamento acima.
 
 ## Contexto adicional
-
 Sem esperar sua resposta síncrona (rodamos em paralelo nesta onda, conforme orientação do
 Coordenador) — implementei a guarda em `src/features/cadence/domain/dealClosure.ts` e
 `src/features/cadence/__tests__/dealClosure.test.ts` já assumindo esta proposta como a superfície
@@ -78,6 +72,5 @@ enum — a lista de 3 tipos acima é o mínimo que cobre a entrega 5 do meu prom
 fechada por princípio.
 
 ## Resolução (Sprint 00/Onda 12 — GOV-006, 2026-08-18)
-
 Confirmado em `prisma/schema.prisma`: modelo `DealClosureEvent` e enum `DealClosureEventType`
 presentes, refletindo o contrato proposto aqui. Status corrigido de `aberto` para `resolvido`.

@@ -166,6 +166,7 @@ Execute the critic evaluation as follows:
       architecture writes in its state-stamp step).
    3. Else `""` (no prior KB provenance). The blanket mass-mark below is gated
       as follows:
+
    - **MODE-OFF** (no `active_snapshot` in state — no `--sync`): SKIP the
      freshness gate entirely. The blanket `SAMPLE_OR_TEST` mass-mark is
      permitted as today (byte-for-byte today's behavior) — the KB was built

@@ -1,10 +1,9 @@
 # Onda 23 — Item 2/15: CYC-002, completar a máquina de estados da cadência
 
 ## Identificação
-
 - Origem: `docs/CADENCE-CYCLE-AUDIT.md`, seção CYC-002 — "3 dos 5 estados do roadmap
   implementados" (`SPRINT-06-CADENCIA-CICLO-RECEITA.md` pede `active/paused/stopped/completed/
-failed` + 5 motivos de parada incluindo `policy/guardrail`; o domínio só tinha 3 estados/4
+  failed` + 5 motivos de parada incluindo `policy/guardrail`; o domínio só tinha 3 estados/4
   motivos, com `completed` disfarçado de `stopReason` em vez de estado próprio).
 - SHA de entrada: `main` pós-merge do PR da onda-22 (item 1, rota/UI de criar sequência/iniciar run)
 - Branch: `claude/cyc-cadence-start` (continuação da mesma branch de trabalho desta rodada)
@@ -13,12 +12,11 @@ failed` + 5 motivos de parada incluindo `policy/guardrail`; o domínio só tinha
 ## O que foi construído
 
 ### Domínio (`src/features/cadence/domain/cadence.ts`)
-
 - `CadenceRunStatus`: `active | paused | stopped | completed | failed` (era `active | paused |
-stopped`). `completed` agora é estado próprio — fim natural da sequência — em vez de
+  stopped`). `completed` agora é estado próprio — fim natural da sequência — em vez de
   `stopped` com `stopReason: 'completed'`.
 - `CadenceStopReason`: adicionado `policy-guardrail` (era `opt-out | lead-reply | completed |
-manual-stop`).
+  manual-stop`).
 - `CadenceTouchAttempt.attemptNumber`: campo novo, 1-based, conta tentativas por `touchOrder`
   (não globalmente) — antes só reconstituível contando linhas.
 - `applyPolicyGuardrailFailure(run, now)`: único caminho para `status: 'failed'` — falha
@@ -34,7 +32,6 @@ manual-stop`).
   gravado).
 
 ### Runtime (`src/features/cadence/jobs/cadenceRun.worker.ts`)
-
 - Bug real corrigido: quando a `CadenceSequence` de um run ativo ficava malformada/inacessível
   (`parseCadenceSequenceDefinition` devolve `null`), o worker antes só incrementava
   `skippedInvalidSequence` e seguia — o run ficava `Active` para sempre, re-tentado (e re-pulado)
@@ -44,7 +41,6 @@ manual-stop`).
   de `skippedInvalidSequence` para `failedInvalidSequence` para refletir o novo comportamento.
 
 ### Persistência
-
 - Migration `20260819120000_cadence_state_machine_completion` (`Completed`/`Failed` no enum
   `CadenceRunStatus`, `PolicyGuardrail` no enum `CadenceStopReason`, coluna
   `CadenceTouchAttempt.attemptNumber`) — escrita à mão (não via `prisma migrate dev`) pela mesma
@@ -56,7 +52,6 @@ manual-stop`).
   e no `createMany` de `save()`.
 
 ### API e frontend
-
 - `cadence.routes.ts`: `STATUS_QUERY_TO_DOMAIN` aceita `Completed`/`Failed` na query
   `?status=...`; mensagem de erro de validação atualizada.
 - `cadence.api.ts`: `CadenceRunStatus`/`CadenceStopReason` (frontend) espelham os novos valores;
@@ -65,7 +60,6 @@ manual-stop`).
   e 5 motivos; tabela de histórico de tentativas ganhou coluna "Tentativa" (`attemptNumber`).
 
 ## Correções durante a implementação
-
 - **Regex de CPF colidia com telefone**: a primeira versão de `sanitizeTouchError` usava pontuação
   opcional no padrão de CPF (`\d{3}\.?\d{3}\.?\d{3}-?\d{2}`), que também bate com qualquer telefone
   BR de 11 dígitos sem formatação (mesma contagem de dígitos). Corrigido exigindo a pontuação
@@ -84,7 +78,6 @@ manual-stop`).
   (comportamento mudou de propósito nesta rodada, não regressão).
 
 ## Gate final
-
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 80 warnings (mesmo nível pré-existente do branch base)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **169/169 arquivos, 1320/1320 testes** (era
@@ -101,7 +94,6 @@ manual-stop`).
   item CYC-009, ainda pendente)
 
 ## Skips e flakes
-
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Decisão

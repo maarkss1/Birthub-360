@@ -77,18 +77,32 @@ quatro caminhos.
 
 ## 5. Rollback — onde está documentado cada caminho
 
-| Caminho                        | Mecanismo                                                                                                                               | Documentado em                                                                       |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Render                         | Dashboard → Deploys → "Rollback to this deploy"; sem API scriptável para commit específico; migração não é desfeita pelo rollback       | `infrastructure/observability/RUNBOOK.md` §6 "Rollback via Render"                   |
-| Helm (sem ArgoCD)              | `helm history` / `helm rollback` — não reexecuta o hook de migração                                                                     | `infrastructure/observability/RUNBOOK.md` §6 "Rollback via Helm"; `charts/README.md` |
-| ArgoCD                         | `argocd app history` / `argocd app rollback` — reverte o `sync`, não o schema                                                           | `infrastructure/observability/RUNBOOK.md` §6 "Rollback via ArgoCD"                   |
-| Manifests k8s avulsos (`k8s/`) | Sem histórico de release — reaplicar YAML de um commit anterior via `git show` + `kubectl apply`                                        | `k8s/README.md` §"Rollback"                                                          |
-| Local (docker-compose)         | `docker compose down` / restaurar volume nomeado / `git checkout` de um commit anterior + `npx prisma migrate resolve` quando aplicável | `docs/development/LOCAL_FIRST.md`                                                    |
+| Caminho | Mecanismo | Documentado em |
+| --- | --- | --- |
+| Oracle Cloud (OCI) | `git checkout <commit anterior>` + `docker compose ... up -d --build app` via SSH — sem histórico de deploy versionado nem downtime zero garantido; migração não é desfeita pelo rollback | `infrastructure/observability/RUNBOOK.md` §6 "Rollback via Oracle Cloud (Docker Compose)" |
+| Render | Dashboard → Deploys → "Rollback to this deploy"; sem API scriptável para commit específico; migração não é desfeita pelo rollback | `infrastructure/observability/RUNBOOK.md` §6 "Rollback via Render" |
+| Helm (sem ArgoCD) | `helm history` / `helm rollback` — não reexecuta o hook de migração | `infrastructure/observability/RUNBOOK.md` §6 "Rollback via Helm"; `charts/README.md` |
+| ArgoCD | `argocd app history` / `argocd app rollback` — reverte o `sync`, não o schema | `infrastructure/observability/RUNBOOK.md` §6 "Rollback via ArgoCD" |
+| Manifests k8s avulsos (`k8s/`) | Sem histórico de release — reaplicar YAML de um commit anterior via `git show` + `kubectl apply` | `k8s/README.md` §"Rollback" |
+| Local (docker-compose) | `docker compose down` / restaurar volume nomeado / `git checkout` de um commit anterior + `npx prisma migrate resolve` quando aplicável | `docs/development/LOCAL_FIRST.md` |
 
 Em todos os caminhos vale a mesma ressalva: reverter o deploy/release **não** desfaz uma migration
 já aplicada ao banco. Uma migration destrutiva exige avaliação e, se necessário, migration de
 compensação antes ou depois do rollback de código — nunca assumir que reverter o código também
 reverte o schema.
+
+## 5.1. Observabilidade em produção — status real (ACH-10-01)
+
+`infrastructure/observability/RUNBOOK.md` é a fonte de verdade operacional para incidentes; este
+índice só resume o estado atual para não divergir dele no futuro. Hoje **nenhum** dos dois
+caminhos com tráfego real (Oracle Cloud, Render) tem Prometheus apontado — o stack completo
+(Prometheus/Grafana/Loki/Tempo) só roda no ambiente local (`npm run infra:up`). Para a Oracle
+Cloud, isso é uma decisão de escopo MVP explicitamente registrada, não um esquecimento — ver
+`docs/deploy/oracle-cloud.md` §11 para o porquê (inclui uma barreira técnica real de autenticação
+do endpoint `/metrics`) e `RUNBOOK.md` §8 para o gap na lista de lacunas conhecidas. Se este
+resumo e o RUNBOOK/`oracle-cloud.md` voltarem a divergir, os arquivos de observabilidade
+(`RUNBOOK.md`, `oracle-cloud.md`) prevalecem — corrija este resumo para bater com eles, não o
+contrário.
 
 ## 6. Ambiente local reproduz o essencial da produção, sem exigir serviços desnecessários
 

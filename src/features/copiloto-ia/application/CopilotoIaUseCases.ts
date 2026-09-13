@@ -211,6 +211,19 @@ export class CopilotoIaUseCases {
   ): Promise<CopilotoConversationDTO> {
     await this.assertCanUploadAudio(organizationId, id);
     if (!input.objectKey.trim()) throw new AppError('objectKey vazio.', 400);
+    // TENANT-001: `objectKey` vem do cliente (não é regerado aqui) e o único contrato que garante
+    // que ele pertence a ESTA organização/conversa é o prefixo gravado no momento em que a URL de
+    // upload foi assinada (`requestAudioUploadUrl`, `CopilotoIaController.ts`):
+    // `copiloto-ia/{organizationId}/{conversationId}/...`. Sem esta checagem, um cliente
+    // malicioso/bugado pode enviar o objectKey de OUTRO tenant e fazer este endpoint anexá-lo à
+    // própria conversa, expondo o áudio/transcrição de terceiros. Mesmo raciocínio de escopar por
+    // organizationId usado em `leadExists`/`companyExists`/`contactExists` acima — aqui o "registro"
+    // é validado por prefixo em vez de lookup em tabela, porque o objectKey não é uma entidade
+    // persistida própria.
+    const expectedPrefix = `copiloto-ia/${organizationId}/${id}/`;
+    if (!input.objectKey.startsWith(expectedPrefix)) {
+      throw new AppError('objectKey não pertence a esta organização/conversa.', 403);
+    }
     return this.repository.updateConversationAudio(organizationId, id, input);
   }
 

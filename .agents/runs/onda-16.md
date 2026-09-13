@@ -1,7 +1,6 @@
 # Onda 16 — Sprint 04: Market Intelligence e Publicação Segura
 
 ## Identificação
-
 - Sprint: 04
 - Onda: 16
 - SHA de entrada: `459251d` (branch `claude/sprint-01-seguranca-tenancy-51974`, pós-fechamento da Onda 15)
@@ -45,11 +44,11 @@ duplicidade, tiers, matriz/filial, unmatched rate, SHA-256) contra o código rea
 `etl_cnpj_atlas.py`/`etl_rntrc_atlas.py`/`etl_rntrc_veiculos_atlas.py` e os blocos de validação
 inline dos 3 workflows. Achados principais:
 
-| Dataset | Já cobria bem                                                                                                   | Lacuna real encontrada                                                                                                        |
-| ------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| CNPJ    | IBGE, duplicidade, soma tiers, soma matriz/filial, unmatched rate, SHA-256                                      | Competência não validada contra o que já está publicado (ver MI-005)                                                          |
-| RNTRC   | IBGE, duplicidade, valores não-negativos, unmatched rate, SHA-256 (raw+derivado)                                | Nenhuma checagem de soma `etc+tac+ctc` vs `transporters` (diferente do padrão já usado em CNPJ/tiers e Frota/tipo-de-veículo) |
-| Frota   | UF válida/única, granularidade PROXY_UF, balanço tração+implementos+outros, cobertura mínima de 20 UFs, SHA-256 | Competência fixa via literal de string, nunca derivada/conferida contra o recurso baixado                                     |
+| Dataset | Já cobria bem | Lacuna real encontrada |
+|---|---|---|
+| CNPJ | IBGE, duplicidade, soma tiers, soma matriz/filial, unmatched rate, SHA-256 | Competência não validada contra o que já está publicado (ver MI-005) |
+| RNTRC | IBGE, duplicidade, valores não-negativos, unmatched rate, SHA-256 (raw+derivado) | Nenhuma checagem de soma `etc+tac+ctc` vs `transporters` (diferente do padrão já usado em CNPJ/tiers e Frota/tipo-de-veículo) |
+| Frota | UF válida/única, granularidade PROXY_UF, balanço tração+implementos+outros, cobertura mínima de 20 UFs, SHA-256 | Competência fixa via literal de string, nunca derivada/conferida contra o recurso baixado |
 
 **Corrigido**: adicionada em `market-intelligence-rntrc.yml` a checagem `etc+tac+ctc <= transporters`
 — a invariante correta é `<=`, não `==`, porque `etcEquiparada` é subconjunto de `etc` (não soma
@@ -89,7 +88,7 @@ variação nela é ruído, não sinal).
 
 Achado central da auditoria: **nenhum dos 3 workflows comparava a execução atual com o que já
 estava publicado no manifest antes de sobrescrever.** Os gates existentes (vazio, schema inválido,
-duplicidade) validam consistência _interna_ da própria execução — um recurso oficial republicado
+duplicidade) validam consistência *interna* da própria execução — um recurso oficial republicado
 com competência regredida, ou uma queda abrupta de cobertura/frota, passaria por todos eles e
 sobrescreveria silenciosamente um snapshot melhor já publicado.
 

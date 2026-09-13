@@ -1,235 +1,171 @@
-# Production Readiness — Caminho Operacional de Solicitação de Titular (LGPD)
+# Production Readiness — Birth Hub 360º
 
-- **Autor:** Agente 08 (QA, Documentação, CI/CD, Deploy e Release Gatekeeper)
-- **Onda:** 8 — Acabamento e Go-Live
-- **Data:** 2026-08-15
-- **Escopo deste documento:** item único da missão do Agente 08 na Onda 8 — "01 garante controle
-  de acesso... e mecanismo técnico de exclusão/anonimização de dado pessoal mediante solicitação"
-  (`.agents/completion/01-bloqueadores.md`) e a responsabilidade do 08 em `/AGENTS.md` → "LGPD e
-  dados pessoais": _"08 garante, na checklist de release, que existe caminho operacional para
-  atender solicitação de titular (acesso, correção, exclusão) e que isso está documentado."_
-  Não é a checklist de release completa (versão/gates/rollback/observabilidade) — essa já existe,
-  como placeholder desatualizado, em `docs/reports/RELATORIO_PRODUCTION_READINESS.md` (Onda 3) e
-  não foi tocada aqui para não criar duplicata nem afirmar status que não foi reverificado nesta
-  rodada.
+- **Documento canônico** referenciado por `/AGENTS.md` e `.agents/prompts/08-qa-release.md`
+  ("Resultado final: produzir `docs/release/PRODUCTION-READINESS.md` contendo versão/data, matriz
+  de gates, evidências, riscos, migrações, rollback, status por área, decisão RELEASE
+  APPROVED/RELEASE BLOCKED"). Esta é a única versão viva deste documento — as duas anteriores
+  ficaram fragmentadas e desatualizadas (ver "Histórico e consolidação" abaixo) e não devem ser
+  editadas como se fossem a fonte de verdade.
+- **Não é** o roadmap de execução da plataforma (`ROADMAP_FINALIZACAO_PLATAFORMA.html`, na raiz do
+  repo) — são artefatos diferentes: este documento é o gate de release (gates técnicos + decisão
+  APPROVED/BLOCKED), o roadmap é planejamento de trabalho futuro. Não misture os dois.
 
-## 1. Resumo executivo
+## Changelog
 
-A plataforma **já tem um mecanismo técnico real** — não apenas teórico — para atender os três
-direitos do titular do Art. 18 da LGPD (acesso, correção, exclusão/anonimização), implementado
-pelo Agente 01 ao longo das Ondas 1 e 6. Nesta rodada eu:
+| Data | O que mudou | Autor/origem |
+|---|---|---|
+| **2026-09-11** | **Consolidação (ACH-08-06).** Os 3 documentos de prontidão de release que existiam fragmentados e nenhum refletindo o estado atual (`docs/release/PRODUCTION-READINESS.md` de 2026-08-15 só sobre o caminho LGPD, `docs/release/FINALIZATION_REPORT_2026-09-04.md` de 2026-09-04, e o placeholder de 2 linhas `docs/reports/RELATORIO_PRODUCTION_READINESS.md`, de uma onda ainda mais antiga) foram unificados neste único arquivo, com matriz de gates rodada de novo contra o HEAD atual. Os dois documentos anteriores **não foram apagados** — outros arquivos do repositório os referenciam por caminho direto (`docs/deploy/oracle-cloud.md`, `docs/ADR/ADR-004-Producao-Oracle-Cloud.md`, `docs/security/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`) — mas agora estão marcados explicitamente como histórico, não como fonte de verdade corrente. Ver seção "Histórico e consolidação". | Sessão Claude Code (item ACH-08-06 do relatório de auditoria multiagente) |
+| 2026-09-04 | Relatório de finalização completo (triagem de PRs #339-342, 16 bugs corrigidos, gates completos rodados contra Docker real, veredito **RELEASE APPROVED** no commit `2d0a25a`/`ef5f1f0`, PR #344). Ficou congelado como registro de sessão, nunca atualizado depois. | `docs/release/FINALIZATION_REPORT_2026-09-04.md` (preservado como histórico) |
+| 2026-08-15 | Primeira versão deste arquivo — escopo único: caminho operacional de solicitação de titular (LGPD), não a checklist de release completa. | Agente 08 (Onda 8) |
 
-1. **Li o código real** de ponta a ponta (rotas, serviço, worker, script, testes) para confirmar o
-   que existe de fato, não o que a documentação anterior afirma existir.
-2. **Testei de ponta a ponta contra infraestrutura real** — Docker Desktop, ao contrário do que
-   `.agents/runs/onda-8.md` registrava no início desta onda, **estava disponível** neste ambiente
-   (containers `atlas_postgres`/`atlas_redis`/`atlas_meilisearch` já em execução, compartilhados
-   entre worktrees). Aproveitei a janela para rodar o caminho completo contra Postgres real e um
-   servidor HTTP real, não só testes unitários com mock.
-3. **Encontrei uma lacuna real** (não mecanismo teórico, não mecanismo ausente): o caminho
-   **existe e funciona**, mas **não é self-service para o time comercial nem para o titular** —
-   depende de alguém com acesso técnico (API direta ou script de linha de comando) para acionar a
-   exclusão/anonimização. Documentada na seção 5 como risco explícito, não maquiada.
+## 1. Estado atual deste documento
 
-**Decisão sobre este item:** não bloqueia release. O mecanismo técnico exigido pelo bloqueador
-#13 de `/AGENTS.md` existe, é seguro (RBAC + isolamento de tenant comprovado sob RLS real) e foi
-testado de ponta a ponta nesta rodada. A lacuna de self-service é um risco documentado de
-prioridade **alta**, não um bloqueador de go-live — ver seção 5 e 6 para prazo/mitigação.
+- **Data desta rodada:** 2026-09-11
+- **SHA verificado:** `b18f0fd4d80fc5a8338b03588d00cad44d0ddc5f` (`origin/main`, branch de trabalho
+  `fix/ach-08-06` criada a partir deste SHA)
+- **Distância da última decisão formal de release conhecida:** 265 commits desde 2026-09-04 (data
+  do `FINALIZATION_REPORT`) — inclui features grandes (motores de IA, job-roles/supervisores,
+  rebranding completo para Birth Hub 360º, integração Birth Voices) e não apenas correções pontuais.
+  **A decisão RELEASE APPROVED de 2026-09-04 não pode ser considerada válida para o SHA atual.**
 
-## 2. Mecanismos técnicos mapeados (lidos no código, não supostos)
+## 2. Escopo desta rodada (importante)
 
-| Direito (Art. 18 LGPD)                                                       | Mecanismo                                                    | Arquivo                                                                                                                     | Como se aciona hoje                                                                                                                                                                                                                                                        |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Acesso / Portabilidade** (Art. 18 II/V)                                    | `GET /api/lgpd/titular/:contactId/export`                    | `src/features/lgpd/lgpd.routes.ts`, `src/features/lgpd/lgpd.service.ts` (`exportContactData`)                               | Chamada HTTP autenticada (qualquer papel do tenant — sem `requireRole` adicional além de `authenticateToken`/`requireTenant`), retorna JSON estruturado com todos os campos de PII do `Contact` + leads associados + contagem de mensagens WhatsApp                        |
-| **Correção** (Art. 18 III)                                                   | `PUT /api/contacts/:id`                                      | `src/features/contacts/routes/contact.routes.ts` (linha 23, `writeRoles = requireRole(['ADMIN','GESTOR','VENDEDOR'])`)      | **Já é self-service**: é a mesma tela de edição de contato do CRM (`src/features/contacts/components/ContactForm.tsx`) que qualquer VENDEDOR/GESTOR/ADMIN já usa no dia a dia — não precisa de mecanismo novo, a correção de dado do titular é uma edição de contato comum |
-| **Exclusão / Anonimização** (Art. 18 IV/VI)                                  | `DELETE /api/lgpd/titular/:contactId` → `eraseDataSubject()` | `src/features/lgpd/lgpd.routes.ts` (`requireRole(['ADMIN','GESTOR'])`), `src/shared/services/dataSubjectErasure.service.ts` | Chamada HTTP autenticada como ADMIN/GESTOR, **ou** `npx tsx scripts/lgpd-erase-data-subject.ts <organizationId> <contactId>` via linha de comando no ambiente de deploy                                                                                                    |
-| **Exclusão automática por retenção** (complementar, não é pedido do titular) | Worker BullMQ diário (`0 3 * * *`)                           | `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts`                                                                 | Automático — anonimiza leads em `Negocios_Perdidos` há mais de 90 dias sem interação, reaproveitando o mesmo `eraseDataSubject()`                                                                                                                                          |
+Esta rodada é uma **consolidação documental** (item ACH-08-06 de auditoria — unificar 3 arquivos
+fragmentados em 1), não uma nova auditoria de release completa como a de 2026-09-04. Os gates
+abaixo foram executados de fato contra o HEAD atual sempre que o ambiente permitiu; onde não
+permitiu (Docker Desktop indisponível nesta sessão — daemon inacessível, não apenas conflito de
+nome/porta), isso está declarado explicitamente, não omitido nem inventado. Uma nova rodada de
+gates completa (com Postgres/Redis/Meilisearch reais) é necessária antes de qualquer nova decisão
+formal de RELEASE APPROVED/BLOCKED para o SHA atual — ver seção 6.
 
-O que `eraseDataSubject()` efetivamente apaga/mascara (não é um `DELETE` de linha, é anonimização
-irreversível — decisão de design documentada no próprio arquivo, compatível com LGPD Art. 12, que
-trata dado anonimizado como fora do escopo da lei):
+## 3. Matriz de gates — executados nesta rodada (HEAD `b18f0fd4`)
 
-- `Contact`: nome → `"[titular anonimizado — LGPD]"`, telefone/WhatsApp/e-mail/LinkedIn/data de
-  nascimento/observações/`customFields` → nulos/vazios.
-- `WhatsAppMessage.body` ligado ao contato → `null`.
-- `ConversationSignal` (via `Lead.contactId`) → `summary`/`nextStep`/`objections`/`rawModelOutput`
-  redigidos.
-- `TimelineEvent` (via `Lead.contactId`) → `description` substituída por marcador de anonimização.
-- Idempotente (rodar duas vezes não falha nem duplica efeito — `alreadyAnonymized: true` na
-  segunda chamada).
-- **Não apaga** `Lead`/negócio comercial em si (histórico comercial preservado, sem PII).
+| Gate | Comando | Status | Nota |
+|---|---|---|---|
+| Prisma Client | `npx prisma generate` | ✅ PASS | Necessário no worktree novo (client não gerado por padrão) |
+| TypeScript | `npx tsc --noEmit` | ❌ **FAIL** (1 erro pré-existente) | `src/shared/security/urlGuard.ts(177,54)`: TS2345, `RequestInit` do DOM incompatível com o `RequestInit` do `undici`. **Não introduzido nesta rodada** — já existe em `origin/main`. Já corrigido numa branch ainda não mergeada (`feat/birth-voices-hub-crm-integration`, commit `c4a210c1` "fix(ci): corrige erro real de tipo (TS2345) em urlGuard.ts"); fora do escopo desta tarefa de consolidação de docs mexer em `urlGuard.ts` |
+| Format | `npm run format:check` | ❌ **FAIL** (1 arquivo) | Mesmo arquivo/causa acima (`urlGuard.ts`) — formatação do trecho que o fix de tipo ainda não mergeado também normaliza. Mesma observação: não é regressão desta rodada, correção já existe em branch separada |
+| Lint | `npm run lint` (biome) | ✅ PASS | "Checked 1087 files... No fixes applied" — 0 erros |
+| Build (frontend + server) | `npm run build` | ✅ PASS | Warning pré-existente e não-fatal do Workbox (`brace-expansion` globbing) durante geração do service worker — mesmo warning já registrado no `FINALIZATION_REPORT_2026-09-04.md`, não é novo. Chunks >500kB pré-existentes (`vendor-echarts`, `Float`, `exceljs.min`) |
+| Testes unitários | `npm run test:unit` | ✅ **PASS** | 364 arquivos / 2945 testes, todos passando. Duração real: 564.71s (~9min24s) — suíte cresceu de 341→364 arquivos e 2695→2945 testes desde 09-04. Um `ERROR` e um `WARN` aparecem no output (log intencional de um teste que simula orçamento de IA excedido, e um teste de acesso negado por tenant ausente) — são asserções de caminho de erro sendo exercitadas, não falhas |
+| Testes de integração | `npm run test:integration` | 🚫 **Não executado** | Requer Postgres/Redis reais via Docker Compose |
+| Testes E2E | `npm run test:e2e` | 🚫 **Não executado** | Requer Docker (Postgres/Redis) + servidor real |
+| `verify:integrations` / `verify:ai` | — | 🚫 **Não executado** | Dependem de credenciais/serviços externos reais, fora do escopo desta tarefa de documentação |
+| Arquitetura | `npm run test:architecture` | 🚫 Não executado nesta rodada | Não é o foco desta tarefa (consolidação de docs); último resultado conhecido (09-04): PASS |
+| Segurança (Trivy/ZAP/k6) | `npm run security:*` / `npm run load:k6*` | 🚫 **Não executado** | Todos dependem de Docker Compose (`--profile tools`) |
 
-Gaps conhecidos e já documentados no próprio código-fonte (não descobertos agora, apenas
-confirmados por leitura):
+### 3.1 Docker Desktop — motivo real da lacuna acima
 
-- `AgentMemory` (sessões de IA) **não é alcançável** por este mecanismo — não tem `contactId`
-  estruturado, só `sessionId`/`organizationId`; pode conter PII em texto livre dentro do blob JSON
-  de mensagens. Registrado em `.agents/handoffs/onda-6/01A-para-07-agentmemory-sem-vinculo-
-titular.md`.
-- `AILog`/`EnrichmentLog` avaliados e considerados fora de escopo (telemetria sem PII de titular
-  pessoa física, ou chave por `companyId` e não por titular).
+Confirmado nesta sessão com `docker ps`:
 
-## 3. O que foi testado de fato nesta rodada (evidência real) vs. o que ficou como gap
-
-### 3.1 Testado de ponta a ponta contra infraestrutura real (não simulado)
-
-Docker estava disponível neste ambiente ao longo desta execução (verificado com `docker ps`:
-`atlas_postgres`, `atlas_redis`, `atlas_meilisearch` já rodando, compartilhados entre worktrees).
-Usei essa janela para ir além do que a nota de `.agents/runs/onda-8.md` antecipava como possível.
-
-**a) Testes automatizados executados nesta sessão:**
-
-```bash
-npx vitest run -c vitest.unit.config.ts tests/unit/features/lgpd/lgpd.routes.test.ts \
-  src/shared/services/__tests__/dataSubjectErasure.unit.test.ts
-# Test Files  2 passed (2) | Tests  10 passed (10)
-
-npx dotenv-cli -e .env.test -- npx vitest run -c vitest.integration.config.ts \
-  tests/integration/lgpd-erasure-cross-tenant.test.ts
-# Test Files  1 passed (1) | Tests  1 passed (1)
+```
+failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the
+path is correct and if the daemon is running
 ```
 
-O teste de integração roda contra **Postgres real com RLS real** (não bypass no caminho sob
-teste): cria titulares em duas organizações, apaga o de `ORG_A` via `eraseDataSubject()`, e
-comprova sob RLS real que `ORG_B` não enxerga nada de `ORG_A` (`Contact`, `WhatsAppMessage`,
-`ConversationSignal`, `TimelineEvent`, lista de `Lead` — todos vazios/nulos quando lidos do
-contexto de `ORG_B`). Também confirma idempotência na segunda chamada.
+Isto é o **daemon inteiro fora do ar** neste ambiente, não um conflito pontual de nome de
+container ou porta — condição de ambiente já conhecida e confirmada em rodadas anteriores desta
+mesma sessão de auditoria, registrada aqui em vez de contornada. Os containers Docker deste
+projeto (`atlas_postgres`, `atlas_redis`, `atlas_meilisearch`) são **compartilhados entre
+worktrees** — mesmo quando o Docker está acessível, não se deve rodar `down`/`up
+--force-recreate`/`restart` neles a partir de uma sessão isolada sem coordenação.
 
-**b) Chamada HTTP real de ponta a ponta, contra servidor e banco reais**, feita manualmente nesta
-sessão para verificar o caminho que um operador humano realmente percorreria (não só a unidade de
-código):
+### 3.2 Testes unitários — resultado real
 
-1. Subi o servidor real (`npx dotenv-cli -e .env.test -- npx tsx server.ts`) contra o Postgres de
-   teste, com as migrações já aplicadas (`npx prisma migrate deploy` — nenhuma pendente).
-2. `POST /api/auth/sign-up/email` com e-mail `@atlasgr.com.br` → criou usuário real, primeiro da
-   organização, papel `ADMIN` (fluxo real do Better Auth, mesmo caminho que `tests/e2e/helpers.ts`
-   usa nos specs Playwright) → `200`.
-3. Semeei um `Contact` real na organização criada (`Company` + `Contact` via Prisma, mesmo padrão
-   do teste de integração).
-4. `GET /api/lgpd/titular/:contactId/export` com o cookie de sessão real → `200`, JSON com os
-   dados reais do titular.
-5. `DELETE /api/lgpd/titular/:contactId` com o mesmo cookie (papel `ADMIN`) → `200`,
-   `{"message":"Dados do titular anonimizados com sucesso.", ...}`.
-6. `GET /api/lgpd/titular/:contactId/export` de novo → `200`, confirmando que o `Contact` já
-   retorna anonimizado (`name: "[titular anonimizado — LGPD]"`, demais campos PII nulos) —
-   fechando o ciclo acesso→exclusão→confirmação por acesso, contra dado real.
-7. Rebaixei o mesmo usuário para `VISUALIZADOR` direto no banco e repeti o `DELETE` → `403`,
-   `"Insufficient permissions. Required: ADMIN or GESTOR. Your role: VISUALIZADOR."` — confirma
-   que o RBAC é avaliado a cada requisição (não fica em cache/JWT desatualizado) e bloqueia de
-   verdade um papel sem permissão.
-8. Também confirmei sem autenticação: `DELETE`/`GET` em `/api/lgpd/titular/*` sem cookie → `401`
-   em ambos, confirmando que a rota está de fato protegida em produção, não só no teste.
-9. **Limpeza:** removi todo o usuário/organização/contato de teste criados para esta verificação
-   (via script descartável, não commitado) antes de encerrar — nenhum dado de teste ficou no
-   banco compartilhado entre worktrees.
+Executado (`npm run test:unit`, `vitest run -c vitest.unit.config.ts`) em background por levar
+mais de 5 minutos nesta máquina; aguardado de forma síncrona até concluir (564.71s reais).
+Resultado: **364/364 arquivos, 2945/2945 testes passando, exit code 0.** Nenhuma falha.
 
-Isto é evidência de teste real, não apenas leitura de código: os três papéis (acesso, exclusão,
-RBAC negativo) foram exercitados contra um servidor HTTP real, sessão de autenticação real e
-banco Postgres real, na sequência que um operador executaria.
+## 4. LGPD — caminho operacional de solicitação de titular (Art. 18)
 
-### 3.2 Não testado / gap explícito de teste
+Conteúdo herdado da versão de 2026-08-15 deste documento (Onda 8, Agente 08) — **não
+reverificado ponta a ponta nesta rodada**. Desde então, commits tocaram código adjacente a LGPD
+(ex.: `f6545bd2` "fix(ai): corrige 4 falhas P0 nos motores de IA (LGPD, triagem de sinistro,
+vazamento de PII)"), então o conteúdo abaixo deve ser tratado como **última verificação conhecida**,
+não como estado garantido do HEAD atual. Uma nova rodada completa (equivalente à seção 3.1 da
+versão anterior) fica registrada como pendência na seção 6.
 
-- **Não testei o script `scripts/lgpd-erase-data-subject.ts` isoladamente nesta rodada** (a função
-  que ele chama, `eraseDataSubject()`, já foi exercitada duas vezes acima — via teste de
-  integração e via rota HTTP real — então o risco residual é só o parsing de `argv`/saída do
-  script em si, não a lógica de negócio). Não bloqueia decisão porque a função subjacente está
-  coberta; registrado aqui por transparência.
-- **Não testei o worker automático de 90 dias** (`autoAnonymizeDisqualified.worker.ts`) em
-  execução real (exigiria esperar o cron ou disparar manualmente um job BullMQ e validar
-  side-effects) — reaproveita a mesma `eraseDataSubject()` já validada, mas o agendamento em si
-  (`upsertJobScheduler`) não foi exercitado nesta rodada.
-- **Não testei um cenário de titular com PII espalhada em `AgentMemory`** — porque, como
-  documentado na seção 2, esse caminho **não existe tecnicamente ainda** (gap conhecido, não
-  falha de teste).
+### 4.1 Mecanismos técnicos mapeados (última leitura de código: 2026-08-15)
 
-## 4. Quem executa hoje / processo operacional
+| Direito (Art. 18 LGPD) | Mecanismo | Arquivo | Como se aciona |
+|---|---|---|---|
+| **Acesso / Portabilidade** (Art. 18 II/V) | `GET /api/lgpd/titular/:contactId/export` | `src/features/lgpd/lgpd.routes.ts`, `lgpd.service.ts` (`exportContactData`) | Qualquer usuário autenticado do tenant (sem `requireRole` adicional) |
+| **Correção** (Art. 18 III) | `PUT /api/contacts/:id` | `src/features/contacts/routes/contact.routes.ts` (`requireRole(['ADMIN','GESTOR','VENDEDOR'])`) | Self-service — mesma tela de edição de contato do CRM (`ContactForm.tsx`) |
+| **Exclusão / Anonimização** (Art. 18 IV/VI) | `DELETE /api/lgpd/titular/:contactId` → `eraseDataSubject()` | `lgpd.routes.ts` (`requireRole(['ADMIN','GESTOR'])`), `src/shared/services/dataSubjectErasure.service.ts` | API autenticada como ADMIN/GESTOR, ou `npx tsx scripts/lgpd-erase-data-subject.ts <organizationId> <contactId>` |
+| **Exclusão automática por retenção** (complementar) | Worker BullMQ diário (`0 3 * * *`) | `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts` | Automático, reaproveita `eraseDataSubject()` |
 
-Não há, no repositório, um processo de intake documentado (ex.: e-mail de um Encarregado/DPO,
-formulário público, endereço de contato) para receber pedidos de titulares externos — isso é uma
-decisão de negócio/operação fora do escopo de código, e não encontrei nenhum documento no repo
-que já defina isso (busquei por "encarregado"/"DPO"/canal de privacidade em `docs/`). Como
-`/AGENTS.md` → "Regra de autonomia" trata decisões de processo de negócio como fora do que um
-agente decide sozinho, não vou inventar um responsável — isso vai para a seção 5 como risco.
+`eraseDataSubject()` faz anonimização irreversível (não `DELETE` de linha), idempotente, e **não**
+apaga `Lead`/negócio comercial em si. Gap conhecido: `AgentMemory` não é alcançável por este
+mecanismo (sem `contactId` estruturado) — registrado em
+`.agents/handoffs/onda-6/01A-para-07-agentmemory-sem-vinculo-titular.md`.
 
-O que existe, tecnicamente, hoje:
+### 4.2 O que foi testado ponta a ponta em 2026-08-15 (não repetido nesta rodada)
 
-- **Acesso/portabilidade**: qualquer usuário autenticado do tenant (qualquer papel) pode chamar
-  `GET /api/lgpd/titular/:contactId/export` — operacionalmente, isso significa que **qualquer
-  pessoa do time comercial com login no CRM** pode extrair os dados de um titular para responder
-  a um pedido de acesso, desde que saiba o `contactId` (hoje só via chamada de API direta —
-  Postman/curl/similar — não há botão na UI).
-- **Correção**: **self-service real** — qualquer VENDEDOR/GESTOR/ADMIN corrige o dado do titular
-  editando o contato normalmente na tela de Contatos do CRM (`ContactForm.tsx`). Nenhuma ação
-  nova necessária.
-- **Exclusão/anonimização**: só ADMIN/GESTOR, e só via chamada de API direta ou script de linha
-  de comando executado por alguém com acesso ao ambiente de deploy/terminal (tipicamente alguém
-  técnico — dev ou infra), não pela UI do CRM.
+Testes automatizados (`lgpd.routes.test.ts`, `dataSubjectErasure.unit.test.ts`,
+`lgpd-erasure-cross-tenant.test.ts` sob RLS real) e um ciclo HTTP manual completo contra servidor e
+Postgres reais (sign-up → seed de contato → export → erase → export de novo confirmando
+anonimização → downgrade de papel confirmando RBAC 403 → chamadas sem cookie confirmando 401).
+Detalhe completo no histórico (seção "Histórico e consolidação" abaixo).
 
-## 5. Riscos / lacunas explícitas (não maquiadas como resolvidas)
+## 5. Riscos conhecidos (consolidado)
 
-| #   | Risco                                                                                                                                                                                                                                                                                                                                                           | Severidade | Situação                                                                                                                                                     |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| R1  | **Sem self-service via UI** para exclusão/anonimização — depende de alguém com acesso técnico (API direta ou terminal) para acionar `DELETE /api/lgpd/titular/:contactId` ou o script. Um ADMIN/GESTOR de negócio (não-técnico) não consegue, sozinho, atender um pedido de exclusão de titular sem pedir ajuda a alguém com acesso a Postman/terminal.         | **Alto**   | Aberto — mecanismo técnico correto existe, mas operação real depende de intermediário técnico                                                                |
-| R2  | **Sem canal de intake documentado** para o titular enviar o pedido (e-mail de DPO, formulário) e sem prazo de atendimento formalmente definido em nenhum documento do repositório (busquei; não encontrei)                                                                                                                                                      | **Alto**   | Aberto — decisão de negócio/operação, não de código; nenhum agente deve inventar um responsável ou prazo sem essa decisão                                    |
-| R3  | `GET /api/lgpd/titular/:contactId/export` não tem `requireRole` adicional (qualquer papel autenticado do tenant, inclusive VISUALIZADOR, pode exportar PII completa de qualquer titular do tenant) — pode ser aceitável (é leitura, dentro do próprio tenant, já sob RLS) mas vale revisão de negócio: talvez devesse exigir papel mínimo como a exclusão exige | Médio      | Aberto — comportamento intencional ou descuido, não fica claro no código; recomendo confirmar com o 01/00                                                    |
-| R4  | `AgentMemory` (histórico de conversas de IA) não é alcançado pelo mecanismo de exclusão — pode reter PII de titular em texto livre indefinidamente                                                                                                                                                                                                              | Médio      | Gap conhecido, já documentado em handoff da Onda 6 (`.agents/handoffs/onda-6/01A-para-07-agentmemory-sem-vinculo-titular.md`), não resolvido                 |
-| R5  | Nenhuma ação de acesso/exclusão de titular é persistida em `AuditLog` — fica só em log estruturado (`logger.info`), não em uma trilha de auditoria consultável no banco                                                                                                                                                                                         | Médio      | Débito já mapeado em `docs/compliance/COMPLIANCE_MATRIX.md` ("Auditoria e LGPD ❌ Ausente") — não descoberto agora, apenas confirmado que segue sem correção |
-| R6  | Worker automático de 90 dias não foi exercitado em execução real nesta rodada                                                                                                                                                                                                                                                                                   | Baixo      | Ver seção 3.2 — risco de teste, não de mecanismo (a função subjacente já foi validada duas vezes)                                                            |
+| # | Risco | Severidade | Situação | Fonte |
+|---|---|---|---|---|
+| R1 | Exclusão/anonimização LGPD sem self-service via UI — só API direta ou script de terminal | Alto | Aberto | Onda 8 (08-15) |
+| R2 | Sem canal de intake documentado para pedido de titular (e-mail de DPO, formulário, prazo) | Alto | Aberto — decisão de negócio, não de código | Onda 8 (08-15) |
+| R3 | `GET .../export` sem `requireRole` adicional (qualquer papel do tenant exporta PII completa) | Médio | Aberto — revisão de negócio pendente | Onda 8 (08-15) |
+| R4 | `AgentMemory` não alcançado pelo mecanismo de exclusão LGPD | Médio | Gap conhecido, não resolvido | Onda 6 → Onda 8 |
+| R5 | Ações de acesso/exclusão de titular não persistidas em `AuditLog` (só log estruturado) | Médio | Débito mapeado em `docs/compliance/COMPLIANCE_MATRIX.md` ("Auditoria e LGPD ❌ Ausente") | Onda 8 (08-15) |
+| R6 | `npx tsc --noEmit` falha no HEAD atual de `main` (`urlGuard.ts`, TS2345) | Baixo | Fix já existe em branch não mergeada (`feat/birth-voices-hub-crm-integration`, `c4a210c1`) — aguardando merge | Esta rodada (09-11) |
+| R7 | 265 commits desde a última decisão formal de release (09-04) sem nova rodada completa de gates (integração/E2E/segurança) contra o HEAD atual | Alto | Aberto — ver seção 6 | Esta rodada (09-11) |
+| R8 | Worker automático de retenção de 90 dias não exercitado em execução real | Baixo | Ver seção 4.2 | Onda 8 (08-15) |
 
-Nenhum destes riscos invalida o mecanismo técnico em si — o bloqueador #13 de `/AGENTS.md`
-("tratamento de dados pessoais sem... meio de exclusão") está coberto tecnicamente e testado. O
-que falta é **processo operacional em torno do mecanismo** (R1/R2), não o mecanismo.
+Nenhum risco listado aqui foi "descoberto" nesta rodada como se fosse inédito — R1-R5 e R8 são
+carregados do documento anterior (2026-08-15); R6-R7 são específicos desta rodada de consolidação.
 
-## 6. O que falta para isso ser self-service (recomendações, não implementadas nesta rodada)
+## 6. Pendências para a próxima rodada formal de release
 
-Fora do escopo de código desta rodada (edição de `docs/release/**` apenas) — registrado como
-recomendação para handoff, não implementado:
+Fora do escopo desta tarefa de consolidação de documentação (só editou `docs/release/**`), fica
+registrado como handoff:
 
-1. **UI mínima administrativa** (ex.: uma tela em Configurações/Team, visível só para
-   ADMIN/GESTOR) com um campo de busca de contato + botão "Anonimizar dados deste titular (LGPD)"
-   chamando o endpoint já existente — não precisa de mecanismo novo no backend, só uma superfície
-   de UI para o que já existe. Dono provável: Agente 02 (Produto/UX) para o componente, ou 01 se
-   preferir manter perto do domínio de dados.
-2. **Definir e documentar** (decisão de negócio, não de código): canal de intake do pedido do
-   titular e prazo de atendimento — LGPD não fixa um prazo numérico universal como o GDPR (30
-   dias), mas a ANPD espera "prazo razoável"; prática comum no mercado brasileiro é comprometer-se
-   com um prazo explícito (frequentemente 15 dias, por analogia ao CDC Art. 43 §3º) — decisão a
-   ser tomada pelo dono do produto/negócio, não inventada aqui.
-3. **Restringir ou justificar por escrito** o acesso amplo de `GET .../export` (R3 acima).
-4. **Cobrir `AgentMemory`** no mecanismo de exclusão (R4) — decisão técnica de como localizar
-   sessões de um titular sem varredura cara; provável dono: 01/01A.
-5. **Persistir em `AuditLog`** as chamadas de acesso/exclusão de titular (R5) — já é um item mais
-   amplo de dívida de auditoria documentado no Compliance Matrix, não específico deste item.
+1. **Nova rodada completa de gates** contra o SHA atual (`b18f0fd4` ou o que for `main` no
+   momento), com Docker disponível: `test:integration`, `test:e2e`, `test:architecture`,
+   `security:trivy`, `verify:integrations`, `verify:ai` — nenhum destes foi executado nesta rodada.
+2. **Mergear `feat/birth-voices-hub-crm-integration`** (ou extrair só o commit `c4a210c1`) para
+   destravar `tsc --noEmit`/`format:check` em `main` (R6).
+3. Reverificar o caminho LGPD (seção 4) ponta a ponta, já que código adjacente mudou desde 08-15.
+4. Depois de 1-3, emitir uma nova decisão formal **RELEASE APPROVED** ou **RELEASE BLOCKED** neste
+   mesmo arquivo (seção a ser adicionada), seguindo o formato de
+   `.agents/prompts/08-qa-release.md`.
 
-## 7. Ambiente e limitações desta verificação
+## 7. Migrações e rollback
 
-- Docker Desktop **estava disponível** durante esta execução (ao contrário do que
-  `.agents/runs/onda-8.md` registrava no início da onda) — usado para rodar teste de integração
-  real e o ciclo HTTP completo descritos na seção 3.1.
-- `npx tsc --noEmit`: **limpo** nesta rodada (a primeira execução apontou erros em
-  `src/features/integrations/bitrix/service/extraction.ts` por `PrismaClient` desatualizado no
-  worktree — resolvido rodando `npx prisma generate`; não é um defeito de código, é um artefato
-  de worktree novo sem client gerado. Fora do meu domínio de edição, não fiz mudança de código,
-  só regenerei o client local).
-- `npm run lint`: **0 erros, 101 warnings** — débito de acessibilidade/`any` já conhecido e
-  documentado (`label-has-associated-control`, `no-explicit-any`), nenhum novo, nenhum no escopo
-  deste item.
-- `npm run build`: **sucesso** (avisos de chunk grande pré-existentes, não relacionados a este
-  item).
-- `npm run test:unit`/`test:integration` completos (toda a suíte, não só os arquivos de LGPD) não
-  foram executados nesta rodada — rodei apenas os testes diretamente relevantes ao item da minha
-  missão (LGPD) mais os três gates obrigatórios (`tsc`, `lint`, `build`), conforme instrução desta
-  rodada. A suíte completa é responsabilidade do gate de integração da onda, coordenado pelo
-  Agente 00 ao mesclar as branches dos 7 especialistas.
+Não re-derivado nesta rodada — pontos de verdade já existentes e válidos:
 
-## 8. Decisão sobre este item
+- **Rollback de migração Prisma/Postgres:** `docs/security/runbooks/MIGRATION_ROLLBACK.md`
+  (runbook real, referenciado por `prisma/AGENTS.md`).
+- **Deploy/infra de produção (Oracle Cloud):** `docs/deploy/oracle-cloud.md`,
+  `docs/ADR/ADR-004-Producao-Oracle-Cloud.md`.
+- **Deploy Render (histórico, migração Neon):** `docs/deploy/render.md`.
 
-**Mecanismo técnico de exclusão/anonimização de dado pessoal mediante solicitação: presente,
-testado e funcional.** Cobre o bloqueador #13 de `/AGENTS.md` na dimensão técnica.
+## 8. Decisão de release
 
-**Processo operacional em torno dele: incompleto** — funciona, mas não é self-service e não tem
-canal de intake/prazo documentado (R1/R2). Recomendo ao Coordenador registrar R1/R2 como item de
-prioridade alta para a Onda 9 ou para decisão de produto antes do go-live comercial pleno, sem
-necessariamente bloquear o release técnico desta onda — a plataforma já teria, hoje, como atender
-um pedido real de titular (por um caminho tecnicamente correto, ainda que não ergonômico), o que é
-o requisito mínimo do bloqueador #13.
+**Não emitida nesta rodada.** Esta tarefa é consolidação documental (ACH-08-06), não uma auditoria
+de release completa — emitir RELEASE APPROVED/BLOCKED sem ter rodado integração/E2E/segurança
+contra o HEAD atual seria inventar um veredito não sustentado por evidência. A última decisão
+formal real e sustentada por evidência foi **RELEASE APPROVED em 2026-09-04** (commit `2d0a25a`/
+`ef5f1f0`, PR #344) — **desatualizada** para o HEAD atual (265 commits de distância, ver seção 6).
+
+## Histórico e consolidação
+
+Os dois documentos abaixo **continuam no repositório** (outros arquivos os referenciam por caminho
+direto) mas são histórico de sessões passadas, não fonte de verdade corrente. Não editar como se
+fossem este documento:
+
+- **`docs/release/FINALIZATION_REPORT_2026-09-04.md`** — relatório completo de finalização de
+  release de 2026-09-04 (triagem de PRs, 16 bugs corrigidos com causa raiz, gates completos contra
+  Docker real, veredito RELEASE APPROVED). Referenciado por `docs/deploy/oracle-cloud.md`,
+  `docs/ADR/ADR-004-Producao-Oracle-Cloud.md` e `docs/security/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`.
+- **`docs/reports/RELATORIO_PRODUCTION_READINESS.md`** — placeholder de 2 linhas de uma onda
+  anterior a 08-15, já documentado como desatualizado pelo índice `docs/reports/README.md` (nota
+  DOC-003: "vários já estão desatualizados... não devem ser tratados como fonte de verdade").

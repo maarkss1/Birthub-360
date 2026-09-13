@@ -31,7 +31,6 @@ recebe uma linha em produção, e o pilar "Confiabilidade de Forecast" do Health
 ## Alteração necessária
 
 Um worker/scheduler semanal (ex.: toda segunda-feira de manhã) que, para cada organização ativa:
-
 1. Calcula o `ExecutiveOverview` do período corrente.
 2. Monta o registro com `buildForecastSnapshot(organizationId, overview, now)`.
 3. Persiste com `new PrismaForecastSnapshotStore().save(record)`.

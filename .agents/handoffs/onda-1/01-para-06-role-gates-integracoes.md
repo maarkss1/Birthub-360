@@ -21,7 +21,6 @@ Apliquei `requireRole` diretamente nesses arquivos (fora do meu escopo de propri
 motivo do handoff anterior: é bloqueador de onda, não item de backlog.
 
 ## Arquivo(s) envolvido(s)
-
 - `src/features/integrations/whatsapp/whatsapp.routes.ts` — `POST /send` → VENDEDOR+ (uso do dia a
   dia); `POST /connect`, `POST /disconnect` → GESTOR+ (gestão da sessão/integração).
 - `src/features/integrations/threecx/threecx.routes.ts` — `POST /call` → VENDEDOR+; `POST /connect`,
@@ -29,33 +28,29 @@ motivo do handoff anterior: é bloqueador de onda, não item de backlog.
 - `src/features/integrations/google/google.routes.ts` — `POST /disconnect` → GESTOR+ (`/auth-url` e
   `/callback` continuam abertos a qualquer autenticado — é o próprio usuário conectando sua conta).
 - `src/features/integrations/bitrix/bitrix.routes.ts` — `POST /connect`, `POST
-/connections/:id/test`, `POST /disconnect/:id`, `POST /leads/import`, `POST /deals/import`, `POST
-PUT DELETE /sync-rules*` → GESTOR+ (gestão de integração + importação em massa).
+  /connections/:id/test`, `POST /disconnect/:id`, `POST /leads/import`, `POST /deals/import`, `POST
+  PUT DELETE /sync-rules*` → GESTOR+ (gestão de integração + importação em massa).
 - `src/features/integrations/birth-voice/birthVoice.routes.ts` — `POST /call/:leadId` → VENDEDOR+
   (discagem do dia a dia); `POST /suppressions` → GESTOR+ (registro de opt-out é sensível para
   compliance de discagem).
 
 ## Alteração necessária
-
 Revisar os limiares — em particular, se `POST /suppressions` (bloqueio manual de número) deveria
 ser mais aberto (qualquer vendedor que atende um pedido de opt-out por telefone/e-mail deveria
 poder registrar na hora, sem precisar de um GESTOR por perto). Coloquei GESTOR+ por ser
 compliance-sensível, mas pode estar restritivo demais pro fluxo real de atendimento.
 
 ## Teste esperado
-
 Testes de matriz de acesso para os endpoints acima quando você tocar nesses arquivos na Onda 1/2.
 Nenhum teste automatizado cobre esses limiares específicos ainda (diferente do `ai-settings`, que
 já tem teste — ver handoff para o Agente 07).
 
 ## Contexto adicional
-
 Ver também `.agents/handoffs/onda-1/01-para-06-teste-integrations-ambiguo.md` (já existente,
 aberto antes deste) — falha real em `tests/unit/features/integrations/components/Integrations.test.tsx`
 encontrada ao rodar o gate da Onda 1, não relacionada a esta auditoria de autorização.
 
 ## Resolução
-
 Já corrigido em um ciclo anterior do Agente 06 (commit `c700ff2f fix(06): permitir opt-out imediato
 ao vendedor`) — este handoff só nunca teve o `Status` atualizado. `POST /suppressions` em
 `src/features/integrations/birth-voice/birthVoice.routes.ts` está hoje em

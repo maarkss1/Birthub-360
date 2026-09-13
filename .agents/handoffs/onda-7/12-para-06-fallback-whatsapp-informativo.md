@@ -21,7 +21,6 @@ usado, sem alterar a assinatura nem nada em `whatsapp.service.ts`.
 
 Garanti, com teste (`tests/unit/features/integrations/birth-voice/birthVoice.webhook.test.ts` e
 `voiceResult.webhook.test.ts`, novos):
-
 - nunca dispara duas vezes na reentrega do mesmo evento (o guard de idempotência do webhook cobre
   isto — a checagem de duplicidade acontece ANTES de qualquer envio);
 - nunca dispara quando a ligação teve conversa real;
@@ -52,5 +51,4 @@ Também abri `.agents/handoffs/onda-7/12-para-17-optout-unificado-voz.md` sobre 
 lados dessa fragmentação.
 
 ## Resolução (Sprint 00/Onda 12 — GOV-006, 2026-08-18)
-
 Handoff puramente informativo, sem pedido de ação — fechado sem alteração de código.
