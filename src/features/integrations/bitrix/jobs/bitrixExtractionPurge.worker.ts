@@ -1,12 +1,12 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../../../../lib/prisma.js';
-import { logger } from '../../../../lib/logger.js';
-import { connection } from '../../../../lib/queue/redis.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../../lib/queue/deadLetter.js';
-import { requestContext } from '../../../../lib/async-context.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { env } from '../../../../config/env.js';
+import { requestContext } from '../../../../lib/async-context.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../../lib/queue/deadLetter.js';
+import { connection } from '../../../../lib/queue/redis.js';
 import { deleteExtractionRunFiles } from '../service/extractionFiles.js';
 
 // ── Expurgo LGPD de BitrixExtractionRun (Onda 42, dossiê CPI DEC-04, opção B) ───────────────────

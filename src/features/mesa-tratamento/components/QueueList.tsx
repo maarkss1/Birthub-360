@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Badge } from '../../../components/ui/Badge';
 import { Lock, PlayCircle } from 'lucide-react';
+import { Badge } from '../../../components/ui/Badge';
+import { Card, CardHeader, CardTitle } from '../../../components/ui/Card';
 import type { QueueLeadSummary } from '../mesaTratamento.api';
 
 const TEMPERATURE_VARIANT: Record<string, 'danger' | 'warning' | 'info'> = {

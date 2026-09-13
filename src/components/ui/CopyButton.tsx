@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { SoundFX } from '../../lib/soundEffects';
 import { cn } from '../../lib/utils';
 

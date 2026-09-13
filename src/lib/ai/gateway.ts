@@ -35,25 +35,25 @@
  * sem exigir tocar em nenhum dos pontos de chamada.
  */
 
+export { getAiModel } from './gateway/chat-model.js';
+export { __resetCircuitBreakerForTests } from './gateway/circuit-breaker.js';
+export { generateEmbedding } from './gateway/embeddings.js';
 export { LOCAL_MODEL } from './gateway/model-routing.js';
+export { cleanAndParseJson, toChatCompletionMessages } from './gateway/parsing.js';
+export { estimateCostUsd } from './gateway/pricing.js';
+export {
+  UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
+  wrapUntrustedContent,
+} from './gateway/prompt-safety.js';
+export { withRetry } from './gateway/retry.js';
+export { streamChatCompletion } from './gateway/streaming.js';
 export type {
-  ChatCompletionMessage,
-  AiTokenUsage,
-  AiInvokeResult,
   AiChatModel,
+  AiInvokeResult,
   AiStreamChunk,
   AiStreamResult,
+  AiTokenUsage,
   AiUsageLogInput,
+  ChatCompletionMessage,
 } from './gateway/types.js';
-export { toChatCompletionMessages, cleanAndParseJson } from './gateway/parsing.js';
-export { withRetry } from './gateway/retry.js';
-export { __resetCircuitBreakerForTests } from './gateway/circuit-breaker.js';
-export { estimateCostUsd } from './gateway/pricing.js';
-export { getAiModel } from './gateway/chat-model.js';
-export { streamChatCompletion } from './gateway/streaming.js';
-export { generateEmbedding } from './gateway/embeddings.js';
 export { logAiUsage } from './usage-log.js';
-export {
-  wrapUntrustedContent,
-  UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
-} from './gateway/prompt-safety.js';

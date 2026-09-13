@@ -1,3 +1,5 @@
+import type { PlaybookKey } from '../../../config/playbooks.js';
+
 export interface BantQualificationData {
   budget?: 'aprovado' | 'em_planejamento' | 'indefinido' | 'sem_verba' | string;
   authority?:
@@ -18,6 +20,14 @@ export interface BantQualificationData {
   telematicsProvider?: string;
   fuelCostPain?: boolean;
   theftRiskPain?: boolean;
+  /**
+   * Não entra mais no cálculo do score. ACH-05-07 usava este campo pra só bonificar
+   * fuelCostPain/theftRiskPain quando o playbook ativo era o de risco de carga/logística
+   * ('atlasgr') — a unificação de playbook comercial em `'geral'` (decisão do usuário, ver
+   * CLAUDE.md seção 1) removeu a única forma de saber se uma organização era desse vertical.
+   * Campo mantido na interface só para não quebrar chamadores que ainda o preenchem.
+   */
+  activePlaybook?: PlaybookKey;
 }
 
 export interface LeadScoreResult {
@@ -95,10 +105,9 @@ export function calculateLeadScore(data: BantQualificationData = {}): LeadScoreR
       break;
   }
 
-  // Bônus se tiver dores específicas de diesel ou sinistro marcadas
-  if (data.fuelCostPain || data.theftRiskPain) {
-    needScore = Math.min(25, needScore + 5);
-  }
+  // ACH-05-07 restringia este bônus ao playbook de risco de carga/logística ('atlasgr'); a
+  // unificação de playbook em 'geral' removeu a forma de saber se o lead é desse vertical, então
+  // o bônus não é mais aplicado (ver comentário de `activePlaybook` acima).
 
   // 4. Timing (0 a 25)
   switch (data.timing) {

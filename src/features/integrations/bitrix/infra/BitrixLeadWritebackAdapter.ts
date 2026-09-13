@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { prisma } from '../../../../lib/prisma.js';
+import type { BitrixLeadWritebackPort } from '../../../../shared/contracts/bitrixWriteback.contract.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { callBitrix } from '../service/client.js';
-import type { BitrixLeadWritebackPort } from '../../../../shared/contracts/bitrixWriteback.contract.js';
 
 /**
  * Implementação real de `BitrixLeadWritebackPort` — mesmo padrão de resolução de conexão que

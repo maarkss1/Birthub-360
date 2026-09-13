@@ -1,32 +1,32 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
-  XCircle,
   Send,
   ShieldAlert,
   TrendingDown,
   TrendingUp,
+  XCircle,
 } from 'lucide-react';
-import { Drawer } from '../../../components/ui/Drawer';
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
+import { Drawer } from '../../../components/ui/Drawer';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
-import { toast } from '../../../lib/toast';
 import { useAuth } from '../../../contexts/AuthContext';
+import { toast } from '../../../lib/toast';
 import {
+  type BlockerSignal,
+  type BuyingSignalItem,
+  COACHING_DIMENSION_LABELS,
+  type CoachingRubricOutput,
+  type CompetitorSignal,
+  type ComplaintSignal,
+  type CopilotoInsightDTO,
   copilotoIaApi,
   type HandoffSummaryDTO,
-  type CopilotoInsightDTO,
   type ObjectionSignal,
-  type CompetitorSignal,
-  type BuyingSignalItem,
-  type ComplaintSignal,
   type PromiseSignal,
-  type BlockerSignal,
-  type CoachingRubricOutput,
-  COACHING_DIMENSION_LABELS,
   SUGGESTION_STATUS_LABEL,
 } from '../copilotoIa.api';
 

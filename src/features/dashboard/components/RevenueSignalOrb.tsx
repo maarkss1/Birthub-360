@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
 import { Float } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { useReducedMotion } from 'framer-motion';
-import type * as THREE from 'three';
 import { Activity, Handshake, Target } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import type * as THREE from 'three';
 import { BRAND } from '../../../config/brand';
 
 interface RevenueSignalOrbProps {

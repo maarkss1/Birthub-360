@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { requireTenant } from '../authorization';
 import type { Request, Response } from 'express';
+import { describe, expect, it, vi } from 'vitest';
+import { requireTenant } from '../authorization';
 
 describe('Authorization Middlewares', () => {
   describe('requireTenant', () => {

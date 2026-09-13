@@ -1,19 +1,5 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-
-import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema.js';
-import { discoverViaGooglePlaces, fetchKnownExclusions } from '../services/prospecting.service.js';
-import type { ProspectCriteria } from '../services/prospecting.service.js';
-import { fetchApolloCandidates } from '../services/apollo.service.js';
-import { findPeopleViaDomainSearch, findEmailViaHunter } from '../services/hunter.service.js';
-import {
-  searchGithubOrganizations,
-  getGithubOrganizationProfile,
-} from '../services/github.service.js';
-import { searchCompanyNews } from '../services/news.service.js';
-import { getYoutubeVideoInfo } from '../services/youtube.service.js';
-import { normalizeCompanyDomain } from '../utils/domain.js';
-import type { ExclusionSet } from '../utils/exclusionSet.js';
 import {
   getPaidProspectingKey,
   getProspectingProviderMode,
@@ -21,6 +7,19 @@ import {
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema.js';
+import { fetchApolloCandidates } from '../services/apollo.service.js';
+import {
+  getGithubOrganizationProfile,
+  searchGithubOrganizations,
+} from '../services/github.service.js';
+import { findEmailViaHunter, findPeopleViaDomainSearch } from '../services/hunter.service.js';
+import { searchCompanyNews } from '../services/news.service.js';
+import type { ProspectCriteria } from '../services/prospecting.service.js';
+import { discoverViaGooglePlaces, fetchKnownExclusions } from '../services/prospecting.service.js';
+import { getYoutubeVideoInfo } from '../services/youtube.service.js';
+import { normalizeCompanyDomain } from '../utils/domain.js';
+import type { ExclusionSet } from '../utils/exclusionSet.js';
 
 const router = Router();
 

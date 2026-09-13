@@ -1,7 +1,7 @@
-import type React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '../../../lib/utils';
+import type React from 'react';
 import { useTilt } from '../../../lib/motion';
+import { cn } from '../../../lib/utils';
 
 export interface BentoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   colSpan?: 1 | 2 | 3 | 4;

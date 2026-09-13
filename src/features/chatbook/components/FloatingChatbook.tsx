@@ -1,35 +1,35 @@
-import { useRef, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bot,
-  X,
-  Globe,
-  Send,
-  RefreshCw,
-  User,
-  Target,
   AlertTriangle,
-  Play,
-  StopCircle,
-  Award,
-  Database,
-  Flame,
-  Copy,
-  Check,
-  Filter,
-  Mic,
   ArrowUpRight,
+  Award,
+  Bot,
+  Check,
+  Copy,
+  Database,
+  Filter,
+  Flame,
+  Globe,
   Link2,
+  Mic,
+  Play,
+  RefreshCw,
+  Send,
+  StopCircle,
+  Target,
+  User,
+  X,
 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../../components/ui/Button';
 import { BRAND } from '../../../config/brand';
 import { PLAYBOOKS } from '../../../config/playbooks';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { Button } from '../../../components/ui/Button';
 import { useAssistantChat } from '../../../hooks/useAssistantChat';
-import { useRoleplaySimulator } from '../../../hooks/useRoleplaySimulator';
-import { usePlaybookMatrixFilters } from '../../../hooks/usePlaybookMatrixFilters';
 import { usePlaybookMatrixData } from '../../../hooks/usePlaybookMatrixData';
+import { usePlaybookMatrixFilters } from '../../../hooks/usePlaybookMatrixFilters';
+import { useRoleplaySimulator } from '../../../hooks/useRoleplaySimulator';
 
 interface FloatingChatbookProps {
   isOpen: boolean;

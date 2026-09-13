@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { loadGoldenDataset } from '../goldenDataset.service.js';
 import { evaluateGoldenDataset, scoreGoldenCase } from '../goldenDataset.scoring.js';
+import { loadGoldenDataset } from '../goldenDataset.service.js';
 import type { GoldenCase, LeadQualificationGoldenCase } from '../goldenDataset.types.js';
 
 function idealOutput(goldenCase: GoldenCase): unknown {

@@ -2185,8 +2185,9 @@ paths:
     put:
       tags: [Intelligence]
       summary: >-
-        Salva a configuração de provider/modelo/temperatura por ferramenta de IA (somente ADMIN —
-        mais restrito que o padrão ADMIN/GESTOR usado no resto da API)
+        Salva a configuração de provider/modelo/temperatura por ferramenta de IA (config global,
+        sem organizationId — exige ADMIN de tenant E o token de operador de plataforma via
+        requirePlatformOperator, mesma trava dupla de /admin/queues; TENANT-002)
       requestBody:
         required: true
         content:

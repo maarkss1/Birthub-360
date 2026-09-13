@@ -1,24 +1,24 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import client from 'prom-client';
-import { AuditService, type AuditAction } from './audit/audit.service.js';
-
-import { PrismaPg } from '@prisma/adapter-pg';
-import { searchQueue } from './queue/search.queue.js';
-import { queuesEnabled } from './queue/redis.js';
-import { logger } from './logger.js';
-import { requestContext } from './async-context.js';
 import { env } from '../config/env.js';
+import { requestContext } from './async-context.js';
+import { type AuditAction, AuditService } from './audit/audit.service.js';
 import {
+  decryptSensitiveResult,
   ENCRYPTED_MODEL_FIELDS as ENCRYPTED_FIELDS,
   encryptSensitiveFields,
-  decryptSensitiveResult,
 } from './crypto/piiFields.js';
 import { computeContactPiiIndexes } from './crypto/piiIndex.js';
 import { tryDecryptField } from './crypto/secretFields.js';
+import { logger } from './logger.js';
+import { queuesEnabled } from './queue/redis.js';
+import { searchQueue } from './queue/search.queue.js';
 import { TENANT_INJECTED_MODELS } from './tenant-scoping-registry.js';
 
 export { TENANT_INJECTED_MODELS };
+
 const connectionString = env.DATABASE_URL || process.env.DATABASE_URL || '';
 
 // Campos de credencial de integração cifrados em repouso (AES-256-GCM, ver

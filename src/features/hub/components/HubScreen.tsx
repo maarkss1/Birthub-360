@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
+  ChevronDown,
   ExternalLink,
-  Sun,
-  Moon,
-  LogOut,
   Loader2,
+  LogOut,
+  Moon,
+  Sun,
   Volume2,
   VolumeX,
-  ChevronDown,
 } from 'lucide-react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
+import { EXTERNAL_LINKS, MODULE_CATALOG } from '../../../config/module-catalog';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
-import { MODULE_CATALOG, EXTERNAL_LINKS } from '../../../config/module-catalog';
-import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
 import { SoundFX } from '../../../lib/soundEffects';
-import { HubBurstCanvas, type BurstHandle } from './HubBurstCanvas';
+import { type BurstHandle, HubBurstCanvas } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
 

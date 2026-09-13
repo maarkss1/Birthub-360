@@ -1,6 +1,6 @@
-import React from 'react';
-import { Users, Crown, Briefcase, UserCheck, Phone, Mail } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { Briefcase, Crown, Mail, Phone, UserCheck, Users } from 'lucide-react';
+import React from 'react';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 
 export interface DecisionMakerItem {

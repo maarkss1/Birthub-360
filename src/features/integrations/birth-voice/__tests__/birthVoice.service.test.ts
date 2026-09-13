@@ -3,7 +3,7 @@
  * fria. É aqui que o opt-out precisa ser respeitado; um bloqueio checado só na tela seria
  * contornado pela primeira campanha automática.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/config/env', () => ({
   env: {
@@ -58,14 +58,14 @@ vi.mock('@/shared/security/urlGuard', () => ({
   safeFetch: safeFetchMock,
 }));
 
-import { prisma } from '@/lib/prisma';
-import { isSuppressed } from '@/features/integrations/birth-voice/callSuppression.service';
 import {
   callLead,
-  SuppressedNumberError,
   NoPhoneNumberError,
+  SuppressedNumberError,
 } from '@/features/integrations/birth-voice/birthVoice.service';
+import { isSuppressed } from '@/features/integrations/birth-voice/callSuppression.service';
 import { PiiConsentRequiredError } from '@/features/intelligence/services/guardrails.service';
+import { prisma } from '@/lib/prisma';
 import { AppError } from '@/shared/middlewares/errorHandler';
 
 const leadMock = prisma.lead as unknown as { findFirst: ReturnType<typeof vi.fn> };

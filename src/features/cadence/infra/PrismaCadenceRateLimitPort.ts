@@ -1,6 +1,6 @@
+import { emailDomainIndexOf } from '../../../lib/crypto/piiIndex.js';
 import { prisma } from '../../../lib/prisma.js';
 import type { CadenceRateLimitPort } from '../application/rateLimitService.js';
-import { emailDomainIndexOf } from '../../../lib/crypto/piiIndex.js';
 import type { CadenceChannel } from '../domain/optOut.js';
 import type { LastSentTouch } from '../domain/rateLimit.js';
 

@@ -1,35 +1,35 @@
-import { prisma } from '../../../lib/prisma.js';
 import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex.js';
+import { prisma } from '../../../lib/prisma.js';
+import { parseLeadLookupQuery } from '../application/leadLookup.js';
+import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime';
 import type {
-  CopilotoIaRepository,
-  CreateConversationInput,
-  CopilotoConversationDTO,
-  CopilotoConversationDetailDTO,
+  AddTranscriptSegmentInput,
+  CompleteAudioUploadInput,
   ConversationFilter,
   ConversationStateDTO,
-  CopilotoConversationStatus,
-  CopilotoConsentStatus,
-  AddTranscriptSegmentInput,
-  CopilotoTranscriptSegmentDTO,
-  CreateInsightInput,
-  CopilotoInsightDTO,
-  CreateCrmFieldSuggestionInput,
-  CopilotoCrmFieldSuggestionDTO,
-  CopilotoSuggestionStatus,
-  CreateDealHealthSnapshotInput,
-  CopilotoDealHealthSnapshotDTO,
-  RecordConsentInput,
-  CopilotoConsentRecordDTO,
-  CompleteAudioUploadInput,
-  CopilotoCrmEntityType,
   CopilotoBitrixFieldMappingDTO,
-  UpsertBitrixFieldMappingInput,
-  CreateCoachingEvaluationInput,
   CopilotoCoachingEvaluationDTO,
+  CopilotoConsentRecordDTO,
+  CopilotoConsentStatus,
+  CopilotoConversationDetailDTO,
+  CopilotoConversationDTO,
+  CopilotoConversationStatus,
+  CopilotoCrmEntityType,
+  CopilotoCrmFieldSuggestionDTO,
+  CopilotoDealHealthSnapshotDTO,
+  CopilotoIaRepository,
+  CopilotoInsightDTO,
+  CopilotoSuggestionStatus,
+  CopilotoTranscriptSegmentDTO,
+  CreateCoachingEvaluationInput,
+  CreateConversationInput,
+  CreateCrmFieldSuggestionInput,
+  CreateDealHealthSnapshotInput,
+  CreateInsightInput,
   LeadLookupResultDTO,
+  RecordConsentInput,
+  UpsertBitrixFieldMappingInput,
 } from '../domain/CopilotoIa';
-import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime';
-import { parseLeadLookupQuery } from '../application/leadLookup.js';
 
 const CONVERSATION_DETAIL_INCLUDE = {
   transcriptSegments: { orderBy: { startMs: 'asc' as const } },

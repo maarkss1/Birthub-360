@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { renderTemplate, matchesConditions } from '../automation.engine';
+import { describe, expect, it } from 'vitest';
+import { matchesConditions, renderTemplate } from '../automation.engine';
 
 describe('renderTemplate', () => {
   it('substitui o placeholder pelo valor do evento', () => {

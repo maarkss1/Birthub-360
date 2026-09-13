@@ -1,14 +1,14 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
+import { MODULE_CATALOG } from '../../../config/module-catalog.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import { MODULE_CATALOG } from '../../../config/module-catalog.js';
 import {
   getModuleAccessMatrix,
-  listGrantedModulesForUser,
   grantModuleAccess,
-  revokeModuleAccess,
+  listGrantedModulesForUser,
   ModuleAccessServiceError,
+  revokeModuleAccess,
 } from '../services/moduleAccess.service.js';
 
 const router = Router();

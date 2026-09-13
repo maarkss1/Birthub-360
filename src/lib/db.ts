@@ -4,8 +4,8 @@
  * All methods use the existing api.ts helper (Bearer token + JSON Content-Type).
  */
 
+import type { Activity, Company, Contact, Lead, PaginatedResponse } from '../types';
 import { api } from './api';
-import type { Company, Contact, Lead, Activity, PaginatedResponse } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPANIES

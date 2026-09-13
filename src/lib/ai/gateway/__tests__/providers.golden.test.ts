@@ -13,8 +13,8 @@ vi.mock('../../../logger.js', () => ({
 
 import { __resetCircuitBreakerForTests } from '../circuit-breaker';
 import { groqProvider } from '../providers/groq.provider';
-import { openaiProvider } from '../providers/openai.provider';
 import { litellmProvider } from '../providers/litellm.provider';
+import { openaiProvider } from '../providers/openai.provider';
 import type { ProviderAdapter } from '../providers/types';
 
 const originalEnv = {
