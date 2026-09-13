@@ -1,6 +1,6 @@
 import type { StudioGenerationRequest } from '../schema.js';
 import { b2bResultSchema } from '../schema.js';
-import { SYSTEM_RULES, invokeStructured, jsonOnlyInstruction } from '../shared.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
 
 export async function generateB2bMatrix(
   request: Extract<StudioGenerationRequest, { kind: 'b2b_matrix' }>,

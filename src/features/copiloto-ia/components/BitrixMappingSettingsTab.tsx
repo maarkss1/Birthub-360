@@ -1,14 +1,14 @@
-import { useEffect, useState, type FormEvent } from 'react';
-import { Trash2, Plus } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
+import { Plus, Trash2 } from 'lucide-react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card';
 import { EmptyState } from '../../../components/ui/EmptyState';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import { toast } from '../../../lib/toast';
 import {
-  copilotoIaApi,
   type CopilotoBitrixFieldMappingDTO,
   type CopilotoCrmEntityType,
+  copilotoIaApi,
 } from '../copilotoIa.api';
 
 const ENTITY_TYPES: CopilotoCrmEntityType[] = ['LEAD', 'COMPANY', 'CONTACT'];

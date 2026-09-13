@@ -1,6 +1,6 @@
-import { logger } from '../../../lib/logger.js';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
 
 // Playwright é opcional em produção: pode não estar instalado no container mínimo.
 // Importamos de forma assíncrona e defensiva para não quebrar o boot da aplicação.

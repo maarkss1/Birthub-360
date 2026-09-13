@@ -1,21 +1,21 @@
+import { ChevronDown, ChevronUp, Gauge, Lightbulb, Mic, Square } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Mic, Square, Lightbulb, ChevronDown, ChevronUp, Gauge } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
-import { toast } from '../../../lib/toast';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { SoundFX } from '../../../lib/soundEffects';
+import { toast } from '../../../lib/toast';
 import { LOSS_REASONS } from '../constants/lossReasons';
 import { useVoiceDictation } from '../hooks/useVoiceDictation';
-import { suggestApproach } from '../mesaTratamento.approachSuggestion';
 import {
+  type BitrixLeadStageOption,
+  isDisqualifyOutcome,
+  type LeadOutcome,
   mesaTratamentoApi,
   OUTCOME_LABELS,
-  isDisqualifyOutcome,
   type QueueLeadDetail,
-  type BitrixLeadStageOption,
-  type LeadOutcome,
 } from '../mesaTratamento.api';
+import { suggestApproach } from '../mesaTratamento.approachSuggestion';
 
 interface CurrentLeadCardProps {
   lead: QueueLeadDetail;

@@ -8,8 +8,8 @@ import type {
   LeadingIndicatorPoint,
   LeadingIndicatorsReport,
 } from '../../domain/CommercialIntelligence';
-import { DAY_MS, roundMoney } from '../shared/mathUtils';
 import { countAdvancedTransitions } from '../scoring/stageHistoryAnalytics';
+import { DAY_MS, roundMoney } from '../shared/mathUtils';
 
 export async function buildLeadingIndicators(
   repository: CommercialIntelligenceRepository,

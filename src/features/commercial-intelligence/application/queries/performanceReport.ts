@@ -16,15 +16,15 @@ import type {
   RevenueConcentrationClient,
   RevenueConcentrationStats,
 } from '../../domain/CommercialIntelligence';
-import { STAGE_AGING_CRITICAL_DAYS, checkEligibility, isDealOpen } from '../pipelineEligibility';
-import { daysBetween, mean, median, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+import { checkEligibility, isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility';
 import { buildStageDurationStats, loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
 import { applyScope } from '../scoring/scopeFilter';
 import {
   computeHistoricalStageReach,
   countAdvancedTransitions,
 } from '../scoring/stageHistoryAnalytics';
+import { daysBetween, mean, median, roundMoney } from '../shared/mathUtils';
+import { monthRange } from '../shared/period';
 
 /** Meta de horas até o primeiro contato — mesmo tipo de constante documentada de
  * `STAGE_AGING_CRITICAL_DAYS`, não um valor fabricado por relatório. Sem meta cadastrada por

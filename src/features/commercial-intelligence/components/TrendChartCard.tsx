@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import {
-  ResponsiveContainer,
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
 } from 'recharts';
 import { Card } from '../../../components/ui/Card';
-import { SINGLE, INK, tooltipStyle } from '../../../shared/constants/chartPalette';
+import { INK, SINGLE, tooltipStyle } from '../../../shared/constants/chartPalette';
 import { formatPercent, type HistoricalTrendsReport } from '../commercialIntelligence.api';
 
 interface TrendChartCardProps {

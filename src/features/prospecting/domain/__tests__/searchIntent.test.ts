@@ -5,9 +5,9 @@
  * `organizationSearch.ts` antes desta camada — a intenção é que a extração NÃO mude nenhum
  * comportamento observável, só nomeie e teste o que já era verdade.
  */
-import { describe, it, expect } from 'vitest';
-import { buildSearchIntent, MAX_LEADS_PER_SEARCH } from '../searchIntent.js';
+import { describe, expect, it } from 'vitest';
 import type { ProspectCriteriaLike } from '../searchIntent.js';
+import { buildSearchIntent, MAX_LEADS_PER_SEARCH } from '../searchIntent.js';
 
 const baseCriteria: ProspectCriteriaLike = {
   segmento: 'Transportadora',

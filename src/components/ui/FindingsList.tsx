@@ -1,5 +1,5 @@
-import type { ComponentType, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import type { ComponentType, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 
 /* Novo primitivo — "achados" (findings) de um relatório: cada item marca um ganho (win) ou uma

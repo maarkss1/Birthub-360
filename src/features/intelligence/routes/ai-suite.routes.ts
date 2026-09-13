@@ -1,10 +1,10 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import { aiSuite } from '../services/CentralAISuiteService.js';
-import { searchService } from '../../knowledge/search.service.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { searchService } from '../../knowledge/search.service.js';
+import { aiSuite } from '../services/CentralAISuiteService.js';
 import {
   assertPiiExternalConsent,
   PiiConsentRequiredError,

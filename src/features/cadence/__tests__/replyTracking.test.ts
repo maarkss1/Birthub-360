@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  isGenuineLeadReply,
-  handleEmailReply,
   buildEmailTranscript,
-  type IntentClassifierPort,
+  handleEmailReply,
   type InboundEmailReply,
+  type IntentClassifierPort,
+  isGenuineLeadReply,
 } from '../../../shared/domain/replyTracking';
 
 const BASE: InboundEmailReply = {

@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  isVerifiableConfirmation,
-  scheduleMeetingIfConfirmed,
   type AvailabilityConfirmation,
   type CalendarSchedulerPort,
+  isVerifiableConfirmation,
+  scheduleMeetingIfConfirmed,
 } from '../domain/scheduling';
 
 const NOW = new Date('2026-08-03T12:00:00Z');

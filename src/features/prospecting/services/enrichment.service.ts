@@ -22,46 +22,47 @@
 // nenhuma rota real (só pelos próprios testes unitários), puro código morto duplicando esta
 // lógica. Se uma reescrita nesses moldes voltar a ser cogitada, trate como trabalho novo — não
 // há mais nada pra "migrar para consumir".
+
+import type { Prisma } from '@prisma/client';
+import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
+import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import type { Prisma } from '@prisma/client';
-import { logger } from '../../../lib/logger.js';
-import { isValidCnpj, discoverCnpjByName, sanitizeCnpj } from './cnpj.util';
 import { IcebreakerService } from '../../intelligence/services/IcebreakerService';
-import { searchGooglePlace } from './places.service';
-import { searchNominatimPlace } from './nominatim.service';
-import { enrichOrganizationWithContacts, enrichOrganizationByDomain } from './apollo.service';
-import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
-import { searchCompanyNews, type NewsMention } from './news.service';
+import { filterNewContacts } from '../utils/contactDedupe.js';
+import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service';
+import { discoverCnpjByName, isValidCnpj, sanitizeCnpj } from './cnpj.util';
 import { checkEmailDeliverability } from './email-verification.service';
-import {
-  computeLookalikeScore,
-  type LookalikeScoreResult,
-  type LookalikeMatch,
-} from './lookalike-scoring.service';
 import { fetchCnpjData } from './enrichment/cnpjLookup.js';
 import {
-  guessDomainAndEmails,
-  extractDomainFromWebsite,
-  resolveEmailStatus,
-  guessWhatsappFromPhone,
   type DomainGuess,
+  extractDomainFromWebsite,
+  guessDomainAndEmails,
+  guessWhatsappFromPhone,
+  resolveEmailStatus,
 } from './enrichment/domainGuess.js';
 import { computeFitScore } from './enrichment/fitScore.js';
-import { filterNewContacts } from '../utils/contactDedupe.js';
+import {
+  computeLookalikeScore,
+  type LookalikeMatch,
+  type LookalikeScoreResult,
+} from './lookalike-scoring.service';
+import { type NewsMention, searchCompanyNews } from './news.service';
+import { searchNominatimPlace } from './nominatim.service';
+import { searchGooglePlace } from './places.service';
 
 export {
-  fetchCnpjData,
-  fetchCepData,
-  type CnpjLookupResult,
   type CepLookupResult,
+  type CnpjLookupResult,
+  fetchCepData,
+  fetchCnpjData,
 } from './enrichment/cnpjLookup.js';
-export { guessDomainAndEmails, type DomainGuess } from './enrichment/domainGuess.js';
+export { type DomainGuess, guessDomainAndEmails } from './enrichment/domainGuess.js';
 export {
   computeFitScore,
-  type ScoreBreakdownItem,
-  type FitScoreResult,
   type FitScoreInput,
+  type FitScoreResult,
+  type ScoreBreakdownItem,
 } from './enrichment/fitScore.js';
 
 export interface EnrichCompanyOptions {

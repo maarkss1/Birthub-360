@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const invokeStructuredMock = vi.fn();
 vi.mock('../../shared.js', () => ({
@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { generateOcrExtract } from '../ocrExtract.js';
 import { ocrExtractResultSchema } from '../../schema.js';
+import { generateOcrExtract } from '../ocrExtract.js';
 
 const request = {
   kind: 'ocr_extract' as const,

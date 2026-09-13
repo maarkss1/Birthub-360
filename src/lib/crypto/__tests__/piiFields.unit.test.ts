@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockEnv = vi.hoisted(() => ({
   NODE_ENV: 'test' as string,
@@ -8,10 +8,10 @@ const mockEnv = vi.hoisted(() => ({
 vi.mock('@/config/env', () => ({ env: mockEnv }));
 
 import {
-  ENCRYPTED_MODEL_FIELDS,
-  encryptSensitiveFields,
   decryptSensitiveRecord,
   decryptSensitiveResult,
+  ENCRYPTED_MODEL_FIELDS,
+  encryptSensitiveFields,
 } from '@/lib/crypto/piiFields';
 import { _resetKeyCacheForTests } from '@/lib/crypto/secretFields';
 

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop fecha também por Escape */
+
+import { AlertTriangle, Loader2, MessageCircle, Send, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { X, Send, Loader2, MessageCircle, AlertTriangle } from 'lucide-react';
 import { api } from '../../../../lib/api';
 import { useWhatsAppMessages } from '../hooks/useWhatsAppMessages';
 

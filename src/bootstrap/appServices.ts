@@ -1,8 +1,8 @@
-import { setupDI } from '../shared/di/setup.js';
-import { container } from '../shared/di/container.js';
-import { requestContext } from '../lib/async-context.js';
 import type { FeatureFlagsUseCases } from '../features/feature-flags/application/FeatureFlagsUseCases.js';
+import { requestContext } from '../lib/async-context.js';
 import { logger } from '../lib/logger.js';
+import { container } from '../shared/di/container.js';
+import { setupDI } from '../shared/di/setup.js';
 
 /**
  * Inicializa os serviços de aplicação que não são middlewares HTTP: injeção de dependência

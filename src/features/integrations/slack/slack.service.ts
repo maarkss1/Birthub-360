@@ -1,8 +1,8 @@
-import { prisma } from '../../../lib/prisma.js';
+import { fetchWithTimeout } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
-import { fetchWithTimeout } from '../../../lib/http.js';
 
 export interface SlackConnectionInput {
   label?: string;

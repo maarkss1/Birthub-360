@@ -1,5 +1,5 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
-import { z } from 'zod';
+import { HumanMessage } from '@langchain/core/messages';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import mammoth from 'mammoth';
 // Onda 42 (CPI, DEC-10 opção A): suporte real a PDF. `pdf-parse` ainda não está no
 // package.json/lockfile deste worktree — ver handoff
@@ -7,16 +7,15 @@ import mammoth from 'mammoth';
 // justificativa. O import é estático de propósito (mesmo padrão do `mammoth` acima): assim que a
 // dependência for instalada pelo dono do package.json, este arquivo compila sem outra mudança.
 import pdfParse from 'pdf-parse';
-
-import { ingestionService } from './ingestion.service.js';
-import { searchService } from './search.service.js';
-import { validateRequest } from '../../shared/middlewares/validateRequest.js';
+import { z } from 'zod';
+import { getAiModel } from '../../lib/ai/gateway.js';
 import { logger } from '../../lib/logger.js';
+import { routeParam } from '../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../shared/middlewares/requireRole.js';
-import { routeParam } from '../../shared/http/routeParams.js';
-import { getAiModel } from '../../lib/ai/gateway.js';
-import { HumanMessage } from '@langchain/core/messages';
+import { validateRequest } from '../../shared/middlewares/validateRequest.js';
+import { ingestionService } from './ingestion.service.js';
+import { searchService } from './search.service.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);
