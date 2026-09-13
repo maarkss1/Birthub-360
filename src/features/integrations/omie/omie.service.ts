@@ -230,7 +230,10 @@ export async function upsertOmieCustomer(
   }
 
   const customerId = result.codigo_cliente_omie;
-  logger.info({ organizationId, connectionId, customerId }, '[omie] Cliente cadastrado com sucesso');
+  logger.info(
+    { organizationId, connectionId, customerId },
+    '[omie] Cliente cadastrado com sucesso',
+  );
 
   return {
     id: String(customerId),

@@ -18,7 +18,13 @@ export interface SignatureRequestRepositoryPort {
   findById(
     id: string,
     organizationId: string,
-  ): Promise<{ id: string; organizationId: string; documentId: string; status: SignatureStatus; providerRequestId?: string | null } | null>;
+  ): Promise<{
+    id: string;
+    organizationId: string;
+    documentId: string;
+    status: SignatureStatus;
+    providerRequestId?: string | null;
+  } | null>;
   findByProviderRequestId(
     provider: string,
     providerRequestId: string,

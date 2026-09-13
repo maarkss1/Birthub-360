@@ -140,10 +140,18 @@ export async function sendSlackMessage(
         { organizationId, connectionId, status: res.status },
         '[slack] Incoming Webhook respondeu erro',
       );
-      throw new AppError(`Slack respondeu com erro (HTTP ${res.status}): ${body.slice(0, 200)}`, 502);
+      throw new AppError(
+        `Slack respondeu com erro (HTTP ${res.status}): ${body.slice(0, 200)}`,
+        502,
+      );
     }
     logger.info({ organizationId, connectionId }, '[slack] Mensagem enviada via Incoming Webhook');
-    return { success: true, messageId: `slack-wh-${Date.now()}`, channel: channel ?? null, timestamp };
+    return {
+      success: true,
+      messageId: `slack-wh-${Date.now()}`,
+      channel: channel ?? null,
+      timestamp,
+    };
   }
 
   if (connection.botToken) {

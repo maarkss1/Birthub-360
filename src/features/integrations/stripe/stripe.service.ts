@@ -210,7 +210,8 @@ export async function createStripeCharge(
   });
 
   if (!res.ok) {
-    const message = (res.json.error as { message?: string } | undefined)?.message ?? 'erro desconhecido';
+    const message =
+      (res.json.error as { message?: string } | undefined)?.message ?? 'erro desconhecido';
     logger.warn({ organizationId, connectionId, message }, '[stripe] Falha ao criar cobrança');
     throw new AppError(`Falha ao criar cobrança no Stripe: ${message}`, 502);
   }

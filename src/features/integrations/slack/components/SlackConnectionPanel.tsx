@@ -143,7 +143,10 @@ export function SlackConnectionPanel() {
               />
             </div>
             <div>
-              <label htmlFor="slack-webhook" className="block text-xs font-semibold text-ink-2 mb-1">
+              <label
+                htmlFor="slack-webhook"
+                className="block text-xs font-semibold text-ink-2 mb-1"
+              >
                 URL do Incoming Webhook
               </label>
               <input
@@ -157,7 +160,10 @@ export function SlackConnectionPanel() {
             </div>
             <p className="text-xs text-ink-2">— ou, para escolher o canal por chamada —</p>
             <div>
-              <label htmlFor="slack-bot-token" className="block text-xs font-semibold text-ink-2 mb-1">
+              <label
+                htmlFor="slack-bot-token"
+                className="block text-xs font-semibold text-ink-2 mb-1"
+              >
                 Bot User OAuth Token
               </label>
               <input

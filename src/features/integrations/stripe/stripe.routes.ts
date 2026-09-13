@@ -24,15 +24,19 @@ router.get('/connections', async (req: Request, res: Response, next: NextFunctio
   }
 });
 
-router.post('/connect', managementRoles, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { organizationId } = (req as AuthRequest).user;
-    const data = await connectStripe(organizationId, req.body);
-    res.json({ success: true, data });
-  } catch (error) {
-    next(error);
-  }
-});
+router.post(
+  '/connect',
+  managementRoles,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await connectStripe(organizationId, req.body);
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.post(
   '/disconnect/:connectionId',

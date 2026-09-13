@@ -66,7 +66,13 @@ export const prismaSignatureRequestRepository: SignatureRequestRepositoryPort = 
     const request = await requestContext.run({ tenantId: organizationId }, () =>
       prisma.crmDocumentSignatureRequest.findFirst({
         where: { id, organizationId },
-        select: { id: true, organizationId: true, documentId: true, status: true, providerRequestId: true },
+        select: {
+          id: true,
+          organizationId: true,
+          documentId: true,
+          status: true,
+          providerRequestId: true,
+        },
       }),
     );
     if (!request) return null;

@@ -71,9 +71,9 @@ export function StripeConnectionPanel() {
             <CapabilityPill status="pending">cobrança exige método de pagamento</CapabilityPill>
           </div>
           <p>
-            A chave é validada de verdade contra a API do Stripe ao conectar. Criar uma cobrança
-            sem um método de pagamento anexado fica &ldquo;requires_payment_method&rdquo; — o
-            status refletido aqui é sempre o real, nunca fabricado.
+            A chave é validada de verdade contra a API do Stripe ao conectar. Criar uma cobrança sem
+            um método de pagamento anexado fica &ldquo;requires_payment_method&rdquo; — o status
+            refletido aqui é sempre o real, nunca fabricado.
           </p>
         </div>
 

@@ -81,7 +81,9 @@ export function useStripeIntegration() {
 
   const handleStripeTest = async (id: string) => {
     try {
-      const res = await fetch(`/api/integrations/stripe/connections/${id}/test`, { method: 'POST' });
+      const res = await fetch(`/api/integrations/stripe/connections/${id}/test`, {
+        method: 'POST',
+      });
       const data = await res.json();
       if (!res.ok || !data.success) {
         toast.error(data.error || 'Não foi possível testar a conexão com o Stripe.');

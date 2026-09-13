@@ -137,7 +137,14 @@ const TOOLS = [
 
 // Antes dividida entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificada num
 // único playbook geral (pedido explícito do usuário), sem descartar nenhuma das duas listas.
-const SUGGESTED_COMPETITORS = ['RasterGR', 'Buonny', 'BRK Tecnologia', 'OpentechGR', 'Apisul', 'Servis'];
+const SUGGESTED_COMPETITORS = [
+  'RasterGR',
+  'Buonny',
+  'BRK Tecnologia',
+  'OpentechGR',
+  'Apisul',
+  'Servis',
+];
 const TONES = ['Consultivo', 'Provocativo', 'Relacional', 'Técnico'];
 const OBJECTIVES = ['Descoberta', 'Follow-up', 'Fechamento'];
 const PERSONAS = [
