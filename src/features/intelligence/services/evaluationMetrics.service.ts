@@ -146,7 +146,7 @@ export async function getEvaluationMetricsSnapshot(
       ),
       piiLeakageRate: available(
         piiLeakageRate,
-        'Proxy: taxa de respostas de IA em que o guardrail de saída (redactSensitiveData) precisou mascarar um CPF — mede o que o guardrail já pegou, não vazamentos que ele não detecta.',
+        'Proxy: taxa de respostas de IA em que o guardrail de saída (redactSensitiveData) precisou mascarar PII (CPF, CNPJ, e-mail ou telefone) — mede o que o guardrail já pegou, não vazamentos que ele não detecta.',
       ),
       factuality: unavailable(AI005_BLOCKED_REASON),
       playbookAdherence: unavailable(AI005_BLOCKED_REASON),

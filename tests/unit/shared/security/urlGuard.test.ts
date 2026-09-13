@@ -63,6 +63,36 @@ describe('assertSafeExternalUrl — rejeita IP privado/loopback/metadata', () =>
     await expect(assertSafeExternalUrl('https://192.168.1.1/')).rejects.toThrow(/não permitido/i);
   });
 
+  // SEC-003 (docs/audits/repository-debt-audit/agents/SEC.md): faixa CGNAT (RFC 6598), usada em
+  // NAT compartilhado de operadora/nuvem, faltava no guard — um host aí é tão "interno" quanto
+  // RFC1918.
+  it('rejeita bloco CGNAT 100.64.0.0/10', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://100.64.0.1/')).rejects.toThrow(/não permitido/i);
+    await expect(assertSafeExternalUrl('https://100.127.255.254/')).rejects.toThrow(
+      /não permitido/i,
+    );
+  });
+
+  it('aceita 100.63.255.255 e 100.128.0.0, fora do bloco CGNAT por um endereço', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://100.63.255.255/')).resolves.toBeUndefined();
+    await expect(assertSafeExternalUrl('https://100.128.0.0/')).resolves.toBeUndefined();
+  });
+
+  it('rejeita bloco de atribuição de protocolo IETF 192.0.0.0/24 (RFC 6890)', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://192.0.0.8/')).rejects.toThrow(/não permitido/i);
+  });
+
+  it('rejeita bloco de benchmarking de rede 198.18.0.0/15 (RFC 2544)', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://198.18.0.1/')).rejects.toThrow(/não permitido/i);
+    await expect(assertSafeExternalUrl('https://198.19.255.254/')).rejects.toThrow(
+      /não permitido/i,
+    );
+  });
+
   // Nota: `net.isIP('[::1]')` (hostname de URL IPv6 vem com colchetes) devolve 0 — o mesmo
   // comportamento pré-existente herdado de `Bitrix24Adapter.ts` (não alterado nesta promoção).
   // Um IPv6 literal na URL cai no caminho de DNS lookup em vez do de IP literal e acaba
