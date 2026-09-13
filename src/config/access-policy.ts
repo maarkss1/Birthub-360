@@ -21,7 +21,19 @@ export function normalizeLoginEmail(email: string): string {
 
 // Mesmo padrão já usado em src/features/prospecting/services/email-verification.service.ts —
 // validação de formato, não de domínio autorizado.
-const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//
+// CodeQL (achado real, PR #454): a versão anterior era um único regex
+// `/^[^\s@]+@[^\s@]+\.[^\s@]+$/` — "polynomial regular expression used on
+// uncontrolled data" (ReDoS). O segmento do meio (`[^\s@]+`) aceita `.`, então
+// para uma entrada maliciosa sem `@` ou sem um `.` válido no fim (ex.:
+// `!@!.!.!.!.!.!.!...`) o motor de regex tenta todas as formas de dividir
+// esse trecho entre o `[^\s@]+` do meio e o `\.[^\s@]+$` final — custo
+// exponencial no tamanho da entrada, rodando sobre um campo de e-mail vindo
+// direto do usuário (login/cadastro) sem limite de tamanho antes desta
+// checagem. Reescrito sem regex ambíguo: cada checagem abaixo é aplicada à
+// string inteira de uma vez (sem precisar "voltar atrás" pra casar outro
+// literal na mesma região), então não há ambiguidade pra explorar.
+const NO_WHITESPACE_OR_AT = /^[^\s@]+$/;
 
 /**
  * Verifica só se o e-mail tem formato válido — não há mais restrição por
@@ -32,5 +44,15 @@ const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  */
 export function isAuthorizedLoginEmail(email: string | null | undefined): boolean {
   if (!email || typeof email !== 'string') return false;
-  return EMAIL_FORMAT.test(normalizeLoginEmail(email));
+  const normalized = normalizeLoginEmail(email);
+
+  const atIndex = normalized.indexOf('@');
+  if (atIndex <= 0 || normalized.indexOf('@', atIndex + 1) !== -1) return false;
+
+  const local = normalized.slice(0, atIndex);
+  const domain = normalized.slice(atIndex + 1);
+  if (!NO_WHITESPACE_OR_AT.test(local) || !NO_WHITESPACE_OR_AT.test(domain)) return false;
+
+  const dotIndex = domain.lastIndexOf('.');
+  return dotIndex > 0 && dotIndex < domain.length - 1;
 }

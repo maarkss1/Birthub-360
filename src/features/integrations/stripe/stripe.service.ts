@@ -224,12 +224,26 @@ export async function createStripeCharge(
   return parsePaymentIntent(res.json);
 }
 
+// CodeQL (achado real, PR #454): "server-side request forgery" — `paymentId` (route param de
+// GET /connections/:connectionId/charges/:paymentId, texto livre do chamador) era interpolado
+// direto no path da URL da API do Stripe. A concatenação sobre STRIPE_API_BASE fixo já impede
+// trocar o HOST de destino, e `STRIPE_ALLOWED_HOSTS` em fetchWithTimeout confere isso em runtime
+// — mas nenhum dos dois valida o FORMATO do id antes de compor a URL, então um paymentId malicioso
+// ainda podia injetar segmentos de path extras na chamada real ao Stripe. IDs de PaymentIntent do
+// Stripe são sempre "pi_" + alfanumérico; validar isso antes de montar a URL fecha a cadeia de
+// taint na origem, sem depender só do allowlist de host.
+const STRIPE_PAYMENT_INTENT_ID = /^pi_[A-Za-z0-9]+$/;
+
 /** Consulta o status real de um PaymentIntent já criado. */
 export async function getStripeCharge(
   organizationId: string,
   connectionId: string,
   paymentId: string,
 ): Promise<StripeChargeResult | null> {
+  if (!STRIPE_PAYMENT_INTENT_ID.test(paymentId)) {
+    throw new AppError('Id de cobrança inválido — esperado o formato "pi_..." do Stripe.', 400);
+  }
+
   const connection = await prisma.stripeConnection.findFirst({
     where: { id: connectionId, organizationId },
   });
