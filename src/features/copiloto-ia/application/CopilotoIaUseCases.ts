@@ -222,10 +222,7 @@ export class CopilotoIaUseCases {
     // persistida própria.
     const expectedPrefix = `copiloto-ia/${organizationId}/${id}/`;
     if (!input.objectKey.startsWith(expectedPrefix)) {
-      throw new AppError(
-        'objectKey não pertence a esta organização/conversa.',
-        403,
-      );
+      throw new AppError('objectKey não pertence a esta organização/conversa.', 403);
     }
     return this.repository.updateConversationAudio(organizationId, id, input);
   }
