@@ -195,9 +195,9 @@ export function DataSubjectRights() {
             </Button>
             <Button
               type="button"
+              variant="destructive"
               onClick={() => void handleErase()}
               disabled={erasing}
-              className="bg-danger-active text-white hover:brightness-110"
             >
               {erasing ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
