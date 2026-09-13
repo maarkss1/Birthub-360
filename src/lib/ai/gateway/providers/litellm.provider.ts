@@ -61,4 +61,4 @@ export const litellmProvider: ProviderAdapter = {
   },
 };
 
-export { resolveBaseUrl as resolveLitellmBaseUrl, resolveApiKey as resolveLitellmApiKey };
+export { resolveApiKey as resolveLitellmApiKey, resolveBaseUrl as resolveLitellmBaseUrl };

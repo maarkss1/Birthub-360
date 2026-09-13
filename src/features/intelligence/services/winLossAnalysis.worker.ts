@@ -1,12 +1,12 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
+import { getAiModel } from '../../../lib/ai/gateway.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
-import { connection } from '../../../lib/queue/redis.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
-import { getAiModel } from '../../../lib/ai/gateway.js';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { connection } from '../../../lib/queue/redis.js';
 
 export const WIN_LOSS_QUEUE_NAME = 'win-loss-analysis-queue';
 

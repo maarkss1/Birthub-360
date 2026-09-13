@@ -1,12 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  startCadenceRun,
-  recordTouchAttempt,
-  type CadenceSequenceDefinition,
-  type CadenceTouch,
-  type CadenceRunState,
-} from '../domain/cadence';
-import type { CadenceRateLimitPolicy } from '../domain/rateLimit';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   advanceCadenceRun,
   type CadenceDispatcher,
@@ -14,9 +6,17 @@ import {
   type LeadSubjectResolver,
 } from '../application/cadenceService';
 import { evaluateRateLimitForUpcomingTouch } from '../application/rateLimitService';
+import {
+  type CadenceRunState,
+  type CadenceSequenceDefinition,
+  type CadenceTouch,
+  recordTouchAttempt,
+  startCadenceRun,
+} from '../domain/cadence';
+import type { CadenceRateLimitPolicy } from '../domain/rateLimit';
+import { InMemoryCadenceRateLimitPort } from '../infra/InMemoryCadenceRateLimitPort';
 import { InMemoryCadenceRunRepository } from '../infra/InMemoryCadenceRunRepository';
 import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
-import { InMemoryCadenceRateLimitPort } from '../infra/InMemoryCadenceRateLimitPort';
 
 /**
  * Cobertura de integração do rate limit por contato/domínio (auditoria transversal, Agente 17) —

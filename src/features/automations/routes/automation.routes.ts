@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { automationSchema } from '../application/AutomationUseCases.js';
-import { container } from '../../../shared/di/container.js';
-import type { AutomationController } from '../presentation/AutomationController.js';
-import { runStagnationScan } from '../application/stagnation-scanner.service.js';
 import { logger } from '../../../lib/logger.js';
+import { container } from '../../../shared/di/container.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { automationSchema } from '../application/AutomationUseCases.js';
+import { runStagnationScan } from '../application/stagnation-scanner.service.js';
+import type { AutomationController } from '../presentation/AutomationController.js';
 
 const router = Router();
 // Regras de automação afetam o comportamento comercial de toda a organização — tratado como

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const invokeStructuredMock = vi.fn();
 vi.mock('../../shared.js', () => ({
@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
+import { roleplayEvaluationResultSchema, roleplayResultSchema } from '../../schema.js';
 import { generateRoleplay, generateRoleplayEvaluation } from '../roleplay.js';
-import { roleplayResultSchema, roleplayEvaluationResultSchema } from '../../schema.js';
 
 const request = {
   kind: 'roleplay' as const,

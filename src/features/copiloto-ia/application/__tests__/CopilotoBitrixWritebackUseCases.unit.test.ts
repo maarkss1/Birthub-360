@@ -1,14 +1,14 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { CopilotoBitrixWritebackUseCases } from '../CopilotoBitrixWritebackUseCases';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { BitrixLeadWritebackPort } from '../../../../shared/contracts/bitrixWriteback.contract';
 import type {
-  CopilotoIaRepository,
-  CopilotoCrmFieldSuggestionDTO,
   CopilotoBitrixFieldMappingDTO,
-  UpsertBitrixFieldMappingInput,
   CopilotoCrmEntityType,
+  CopilotoCrmFieldSuggestionDTO,
+  CopilotoIaRepository,
   CopilotoSuggestionStatus,
+  UpsertBitrixFieldMappingInput,
 } from '../../domain/CopilotoIa';
+import { CopilotoBitrixWritebackUseCases } from '../CopilotoBitrixWritebackUseCases';
 
 const ORG_ID = 'org-1';
 

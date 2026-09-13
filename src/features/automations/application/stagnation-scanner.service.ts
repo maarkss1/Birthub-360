@@ -1,8 +1,8 @@
-import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
-import { acquireDistributedLock } from '../../../lib/queue/distributedLock.js';
-import { logger } from '../../../lib/logger.js';
 import { fromPrismaLeadStatus, toPrismaLeadStatus } from '../../../lib/enumMap.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { acquireDistributedLock } from '../../../lib/queue/distributedLock.js';
 import type { LeadStatus } from '../../../lib/zod.js';
 import { automationEngine } from '../automation.engine.js';
 
@@ -258,10 +258,10 @@ export async function runStagnationScan(): Promise<StagnationScanResult> {
   }
 }
 
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { connection } from '../../../lib/queue/redis.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
+import { connection } from '../../../lib/queue/redis.js';
 
 export const STAGNATION_SCANNER_QUEUE_NAME = 'stagnation-scanner-queue';
 

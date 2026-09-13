@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import { Check } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 
 /* Novo primitivo — checklist de leitura/orientação (ex.: pontos de um relatório, não uma lista

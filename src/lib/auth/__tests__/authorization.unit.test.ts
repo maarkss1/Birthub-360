@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   ASSIGNABLE_ROLES,
-  ROLE_HIERARCHY,
-  UNVERIFIED_ROLE,
   COMMERCIAL_INTELLIGENCE_ROLES,
+  canAccessCommercialIntelligence,
   hasRequiredRole,
   isKnownRole,
-  canAccessCommercialIntelligence,
+  ROLE_HIERARCHY,
+  UNVERIFIED_ROLE,
 } from '../authorization';
 
 describe('RBAC canônico (src/lib/auth/authorization.ts)', () => {

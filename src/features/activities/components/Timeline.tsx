@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import type { TimelineEvent } from '../../../types';
-import { History, Activity, MessageCircle, ArrowRight, User } from 'lucide-react';
+import { Activity, ArrowRight, History, MessageCircle, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { clientLogger } from '../../../lib/clientLogger';
+import type { TimelineEvent } from '../../../types';
 
 interface TimelineProps {
   leadId: string;

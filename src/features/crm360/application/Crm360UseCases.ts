@@ -1,4 +1,3 @@
-import type { ICrm360Repository } from '../domain/ICrm360Repository.js';
 import type {
   CrmDealItemInput,
   CrmDocumentInput,
@@ -6,6 +5,7 @@ import type {
   CrmDocumentUpdateInput,
   CrmProductInput,
 } from '../crm360.schema.js';
+import type { ICrm360Repository } from '../domain/ICrm360Repository.js';
 
 export class Crm360UseCases {
   constructor(private crm360Repository: ICrm360Repository) {}
@@ -88,8 +88,18 @@ export class Crm360UseCases {
     return this.crm360Repository.listDocumentVersions(organizationId, documentId);
   }
 
-  async updateDocumentStatus(organizationId: string, documentId: string, status: string) {
-    return this.crm360Repository.updateDocumentStatus(organizationId, documentId, status);
+  async updateDocumentStatus(
+    organizationId: string,
+    documentId: string,
+    status: string,
+    actorUserId?: string,
+  ) {
+    return this.crm360Repository.updateDocumentStatus(
+      organizationId,
+      documentId,
+      status,
+      actorUserId,
+    );
   }
 
   /** Rota pública — sem organizationId conhecido a priori, ver `PrismaCrm360Repository.recordDocumentView`. */

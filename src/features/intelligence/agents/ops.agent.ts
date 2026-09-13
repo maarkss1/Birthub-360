@@ -1,25 +1,25 @@
-import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
+import { type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { MessagesAnnotation, StateGraph } from '@langchain/langgraph';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
+import { logAiUsage } from '../../../lib/ai/gateway.js';
+import { agentMemory } from '../../../lib/ai/memory/mem0.js';
+import { getTenantId, getUserId } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { assertPiiExternalConsent } from '../services/guardrails.service.js';
 import { getLeadContextTool, searchLeadsTool } from '../tools/crmTools.js';
 import { searchPlaybookTool } from '../tools/playbookTool.js';
+import { recordAgentFailure, saveAgentMemory } from './agentMemory.store.js';
 // GOV-13: as duas ferramentas de execução (`create_follow_up_task`/`notify_team`) agora vêm de
 // `opsPendingActions.tool.ts`, não mais de `../tools/opsTools.js` — mesmo nome/schema visível ao
 // LLM, mas em vez de executar direto elas registram uma `AIPendingAction` e a execução real só
 // acontece após aprovação humana (ver `opsPendingActions.tool.ts` para o raciocínio completo).
 import { createFollowUpTaskTool, notifyTeamTool } from './opsPendingActions.tool.js';
-import { type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { logger } from '../../../lib/logger.js';
-import { getTenantId, getUserId } from '../../../lib/async-context.js';
-import { agentMemory } from '../../../lib/ai/memory/mem0.js';
-import { logAiUsage } from '../../../lib/ai/gateway.js';
 import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
 } from './swarm.constants.js';
-import { assertPiiExternalConsent } from '../services/guardrails.service.js';
-import { saveAgentMemory, recordAgentFailure } from './agentMemory.store.js';
-import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
 
 // O Agente de Operações é o "braço executor" do enxame: não só analisa, ele age nas demais
 // ferramentas do sistema (CRM, agenda, notificações), sempre em cima de dados reais buscados

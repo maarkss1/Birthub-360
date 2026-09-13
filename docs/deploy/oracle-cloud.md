@@ -219,7 +219,7 @@ indisponibilidade do banco; o volume `oci_pgdata` é preservado):
 cd ~/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR
 git pull
 ./scripts/deploy-oci.sh          # rebuild da imagem do Postgres (TLS) + recreate do container
-docker exec -i atlasgr_postgres psql -U prospector -d prospectordb -tAc "show ssl"   # esperado: on
+docker exec -i birthhub_postgres psql -U prospector -d prospectordb -tAc "show ssl"   # esperado: on
 ```
 
 **Security List da VCN** (Console OCI → Networking → VCN → Security List → Ingress Rules): uma
@@ -298,7 +298,7 @@ No fluxo automatizado de OCI, um valor forte é gerado e armazenado somente em `
 Para redefinir intencionalmente a credencial, altere `INITIAL_ADMIN_PASSWORD` no ambiente seguro e execute novamente:
 
 ```bash
-docker exec -i atlasgr_app npx tsx scripts/seed-team.ts
+docker exec -i birthhub_app npx tsx scripts/seed-team.ts
 ```
 
 A variável deve ter pelo menos 16 caracteres. Depois da alteração, mantenha o arquivo protegido e trate qualquer credencial que tenha sido publicada anteriormente no histórico do Git como comprometida.
@@ -322,7 +322,7 @@ Após o deploy, valide pelo menos:
 
 ```bash
 docker compose --env-file .env.production -f docker-compose.oci.yml ps
-docker exec -i atlasgr_postgres pg_isready -U prospector -d prospectordb
+docker exec -i birthhub_postgres pg_isready -U prospector -d prospectordb
 curl -fsS http://127.0.0.1:3000/health/live
 curl -fsS http://127.0.0.1:3000/health/ready   # confirma conexão real com o banco (SELECT 1)
 ```
@@ -372,7 +372,7 @@ Antes do cutover de DNS, confirme também (fora do escopo do script, ação huma
 
 ## 8. Backup e restauração do PostgreSQL
 
-`scripts/backup-oci.sh` roda `pg_dump` dentro do container `atlasgr_postgres` (sem exigir
+`scripts/backup-oci.sh` roda `pg_dump` dentro do container `birthhub_postgres` (sem exigir
 `postgresql-client` no host), comprime o dump e grava fora do container:
 
 ```bash

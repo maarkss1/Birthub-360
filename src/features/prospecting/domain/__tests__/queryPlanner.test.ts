@@ -11,15 +11,15 @@
  *    requisito da tarefa de "preservar exatamente o comportamento observável de hoje como
  *    caso-base".
  */
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { ProspectingProviderMode } from '../../../../config/prospecting-integrations.js';
 import {
+  NOMINATIM_SUPPLEMENT_MIN_QUANTITY,
   planCompanyDiscovery,
   planShortfallFallback,
   scoreProvider,
-  NOMINATIM_SUPPLEMENT_MIN_QUANTITY,
 } from '../queryPlanner.js';
 import type { SearchIntent } from '../searchIntent.js';
-import type { ProspectingProviderMode } from '../../../../config/prospecting-integrations.js';
 
 function baseIntent(overrides: Partial<SearchIntent> = {}): SearchIntent {
   return {

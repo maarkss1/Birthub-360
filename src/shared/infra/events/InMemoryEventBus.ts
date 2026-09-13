@@ -1,6 +1,6 @@
-import type { EventBus } from '../../domain/events/EventBus';
-import type { DomainEvent } from '../../domain/events/DomainEvent';
 import { logger } from '../../../lib/logger';
+import type { DomainEvent } from '../../domain/events/DomainEvent';
+import type { EventBus } from '../../domain/events/EventBus';
 
 export class InMemoryEventBus implements EventBus {
   private handlers: Map<string, Array<(event: DomainEvent) => Promise<void>>> = new Map();

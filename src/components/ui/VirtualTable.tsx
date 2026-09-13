@@ -14,8 +14,9 @@
  *     onRowClick={(row) => openDetail(row)}
  *   />
  */
-import { useRef, type ReactNode, type CSSProperties } from 'react';
+
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { type CSSProperties, type ReactNode, useRef } from 'react';
 
 export interface ColumnDef<T> {
   key: string;

@@ -1,16 +1,16 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../../lib/prisma.js';
 import { env } from '../../config/env.js';
 import {
-  fromPrismaLeadStatus,
   fromPrismaActivityType,
+  fromPrismaLeadStatus,
   toPrismaActivityStatus,
 } from '../../lib/enumMap.js';
+import { prisma } from '../../lib/prisma.js';
 import {
-  matchesConditions,
-  renderTemplate,
   type AutomationActionType,
   type AutomationTrigger,
+  matchesConditions,
+  renderTemplate,
 } from './automation.engine.js';
 import type { Automation } from './domain/Automation';
 

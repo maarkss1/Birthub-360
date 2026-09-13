@@ -1,13 +1,13 @@
-import { prisma } from '../../../../lib/prisma.js';
 import { LeadFunnel, LeadStatus, type Prisma } from '@prisma/client';
-import { logger } from '../../../../lib/logger.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
-import { callBitrix, getConnectionWebhookUrl } from './client.js';
-import { resolveEnumMaps, applyInboundCustomFields } from './customFields.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { BITRIX_FIELD_MAP } from '../bitrixFieldMap.js';
-import { resolveAtlasUserIdByEmail, type BitrixUserOption } from './userMapping.js';
+import { callBitrix, getConnectionWebhookUrl } from './client.js';
+import { applyInboundCustomFields, resolveEnumMaps } from './customFields.js';
 import { findOwnershipConflict, notifyOwnershipConflict } from './ownershipGuard.js';
+import { type BitrixUserOption, resolveAtlasUserIdByEmail } from './userMapping.js';
 
 const DEAL_UF_CRM_CODES = BITRIX_FIELD_MAP.map((m) => m.dealCode).filter((c): c is string =>
   Boolean(c),

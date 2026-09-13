@@ -1,17 +1,17 @@
 import {
-  ShieldCheck,
-  CheckCircle2,
   Building2,
-  Users,
-  TrendingUp,
-  MapPin,
-  UserPlus,
+  CheckCircle2,
   Loader2,
+  MapPin,
+  ShieldCheck,
+  TrendingUp,
   Truck,
+  UserPlus,
+  Users,
 } from 'lucide-react';
-import type { CnpjLookupResult } from '../../services/enrichment.service';
-import type { RntrcRiskTier } from '../../../../shared/services/rntrcTerritorialRisk.service';
 import { Badge } from '../../../../components/ui/Badge';
+import type { RntrcRiskTier } from '../../../../shared/services/rntrcTerritorialRisk.service';
+import type { CnpjLookupResult } from '../../services/enrichment.service';
 import { InfoTile } from './InfoTile';
 
 const number = new Intl.NumberFormat('pt-BR');

@@ -1,10 +1,10 @@
-import express, { Router, type Request, type Response } from 'express';
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import express, { type Request, type Response, Router } from 'express';
 import { env } from '../../../config/env.js';
 import { logger } from '../../../lib/logger.js';
+import type { SignatureStatus } from '../../../shared/domain/signature.js';
 import { applySignatureStatusUpdate } from '../../cadence/application/documentSignature.js';
 import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
-import type { SignatureStatus } from '../../../shared/domain/signature.js';
 
 /**
  * CYC-006 (onda 28) — transporte de ENTRADA de atualização de status de assinatura. O ENVIO da

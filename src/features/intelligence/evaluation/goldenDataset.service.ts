@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import goldenDatasetRaw from './golden-dataset.json';
 import {
-  goldenDatasetFileSchema,
   GOLDEN_CASE_CATEGORIES,
   type GoldenCase,
   type GoldenCaseCategory,
   type GoldenDatasetFile,
+  goldenDatasetFileSchema,
   type ToolUseGoldenCase,
 } from './goldenDataset.types.js';
 

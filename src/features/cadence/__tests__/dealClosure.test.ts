@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  isDeterministicCloseEvent,
-  evaluateDealClosure,
   type DealClosureEventInput,
+  evaluateDealClosure,
+  isDeterministicCloseEvent,
 } from '../../../shared/domain/dealClosure';
 
 const NOW = new Date('2026-08-03T12:00:00Z');

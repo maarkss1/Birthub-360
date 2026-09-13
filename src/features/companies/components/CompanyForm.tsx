@@ -1,18 +1,18 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import type { z } from 'zod';
-import type { Company } from '../../../types';
 import { Button } from '../../../components/ui/Button';
 import { Dialog } from '../../../components/ui/Dialog';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Select } from '../../../components/ui/Select';
 import { Textarea } from '../../../components/ui/Textarea';
-import { companySchema, COMPANY_STATUS } from '../../../lib/zod';
-import { companiesDB } from '../../../lib/db';
 import { clientLogger } from '../../../lib/clientLogger';
+import { companiesDB } from '../../../lib/db';
 import { toast } from '../../../lib/toast';
+import { COMPANY_STATUS, companySchema } from '../../../lib/zod';
+import type { Company } from '../../../types';
 
 interface CompanyFormProps {
   company?: Company | null;

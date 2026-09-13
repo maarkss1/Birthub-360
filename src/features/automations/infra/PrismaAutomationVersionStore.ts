@@ -9,19 +9,20 @@
  * "Lead_Criado") via os mesmos helpers já usados pelo resto do módulo de automações
  * (`src/lib/enumMap.ts`), para não duplicar essa tabela de conversão aqui.
  */
-import type {
-  AutomationVersionInput,
-  AutomationVersionRecord,
-  AutomationVersionStore,
-} from '../domain/AutomationVersion';
-import { prisma } from '../../../lib/prisma.js';
+
+import type { Prisma } from '@prisma/client';
 import {
   fromPrismaAutomationAction,
   fromPrismaAutomationTrigger,
   toPrismaAutomationAction,
   toPrismaAutomationTrigger,
 } from '../../../lib/enumMap.js';
-import type { Prisma } from '@prisma/client';
+import { prisma } from '../../../lib/prisma.js';
+import type {
+  AutomationVersionInput,
+  AutomationVersionRecord,
+  AutomationVersionStore,
+} from '../domain/AutomationVersion';
 
 function toRecord(row: {
   id: string;

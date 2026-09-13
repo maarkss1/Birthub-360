@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import type { PlaybookKey } from '../../../config/playbooks';
 import { authClient } from '../../../lib/auth-client';
 import { clientLogger } from '../../../lib/clientLogger';
-import type { PlaybookKey } from '../../../config/playbooks';
+
 interface GoogleLoginModalProps {
   isOpen: boolean;
   onClose: () => void;

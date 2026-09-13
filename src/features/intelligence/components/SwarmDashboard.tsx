@@ -1,25 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  AlertTriangle,
   Bot,
-  Zap,
-  ShieldAlert,
+  CheckCircle2,
   Database,
-  Wrench,
+  Gauge,
   Handshake,
   Loader2,
-  Send,
-  Square,
-  CheckCircle2,
-  AlertTriangle,
-  Sparkles,
-  Gauge,
   RefreshCw,
+  Send,
+  ShieldAlert,
+  Sparkles,
+  Square,
+  Wrench,
+  Zap,
 } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { SWARM_BRAND } from '../agents/swarm.constants';
-import { clientLogger } from '../../../lib/clientLogger';
 import { api } from '../../../lib/api';
+import { clientLogger } from '../../../lib/clientLogger';
+import { SWARM_BRAND } from '../agents/swarm.constants';
 
 type SwarmAgent = 'supervisor' | 'sdr' | 'bdr' | 'closer' | 'crm' | 'ops';
 type SwarmEventType = 'routing' | 'agent_result' | 'agent_error' | 'final';
