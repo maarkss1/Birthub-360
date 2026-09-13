@@ -24,6 +24,35 @@ const noteUpdateMany = vi.fn();
 const timelineEventUpdateMany = vi.fn();
 const activityUpdateMany = vi.fn();
 
+// CRM-002/003 (merge completo, Onda CRM/RevOps): as ~19 relações restantes reatribuídas antes do
+// soft-delete — um objeto por model, todas resolvendo `{count: 0}` por padrão (o teste principal
+// abaixo confere algumas por nome; as demais só precisam existir pra não quebrar a chamada real).
+const REMAINING_LEAD_RELATION_MODELS = [
+  'attachment',
+  'leadStageHistory',
+  'leadFieldChange',
+  'crmDealItem',
+  'crmCommercialDocument',
+  'callSuppression',
+  'whatsAppMessage',
+  'conversationSignal',
+  'copilotoConversation',
+  'copilotoDealHealthSnapshot',
+  'bitrixSyncLog',
+  'voiceCallLog',
+  'optOutRecord',
+  'prospect',
+  'mesaTratamentoTreatment',
+  'cadenceRun',
+  'emailMessage',
+  'cadenceCalendarEvent',
+  'dealClosureEvent',
+] as const;
+type UpdateManyMock = ReturnType<typeof vi.fn<(...args: unknown[]) => unknown>>;
+const remainingUpdateManyMocks = Object.fromEntries(
+  REMAINING_LEAD_RELATION_MODELS.map((model) => [model, vi.fn<(...args: unknown[]) => unknown>()]),
+) as Record<(typeof REMAINING_LEAD_RELATION_MODELS)[number], UpdateManyMock>;
+
 vi.mock('../../../../lib/prisma.js', () => ({
   prisma: {
     lead: {
@@ -40,6 +69,12 @@ vi.mock('../../../../lib/prisma.js', () => ({
     activity: {
       updateMany: (...args: unknown[]) => activityUpdateMany(...args),
     },
+    ...Object.fromEntries(
+      REMAINING_LEAD_RELATION_MODELS.map((model) => [
+        model,
+        { updateMany: (...args: unknown[]) => remainingUpdateManyMocks[model](...args) },
+      ]),
+    ),
   },
 }));
 vi.mock('../../../../lib/logger', () => ({
@@ -111,12 +146,37 @@ describe('LeadDeduplicationService.deduplicateByEmail', () => {
       data: { leadId: 'lead-high-value' },
     });
 
+    // Merge completo (CRM-002/003): as ~19 relações restantes também são reatribuídas, não só
+    // notes/activities/timeline — confere uma amostra representativa (schema/DB, comunicação,
+    // fechamento de negócio) pra não deixar a lista degradar silenciosamente se alguém remover
+    // uma chamada por engano.
+    for (const model of [
+      'leadStageHistory',
+      'crmDealItem',
+      'cadenceRun',
+      'dealClosureEvent',
+      'attachment',
+    ] as const) {
+      expect(remainingUpdateManyMocks[model]).toHaveBeenCalledWith({
+        where: { leadId: { in: ['lead-mid-value', 'lead-low-value'] }, organizationId: 'org-1' },
+        data: { leadId: 'lead-high-value' },
+      });
+    }
+    // As 19 relações restantes foram todas chamadas (nenhuma esquecida silenciosamente).
+    for (const mock of Object.values(remainingUpdateManyMocks)) {
+      expect(mock).toHaveBeenCalledTimes(1);
+    }
+
     // A reatribuição do dado dependente acontece ANTES do delete dos leads duplicados — senão a
     // policy de RLS de Note/TimelineEvent (que resolve o tenant via join com Lead) já não
     // enxergaria mais o lead de origem depois do soft-delete.
     const noteOrder = noteUpdateMany.mock.invocationCallOrder[0];
+    const lastReassignOrder = Math.max(
+      ...Object.values(remainingUpdateManyMocks).map((m) => m.mock.invocationCallOrder[0]),
+    );
     const deleteOrder = leadDeleteMany.mock.invocationCallOrder[0];
     expect(noteOrder).toBeLessThan(deleteOrder);
+    expect(lastReassignOrder).toBeLessThan(deleteOrder);
 
     expect(leadDeleteMany).toHaveBeenCalledWith({
       where: { id: { in: ['lead-mid-value', 'lead-low-value'] }, organizationId: 'org-1' },
@@ -172,5 +232,70 @@ describe('LeadDeduplicationService.deduplicateByEmail', () => {
     const service = new LeadDeduplicationService();
 
     await expect(service.deduplicateByEmail('org-1')).rejects.toThrow('conexão perdida');
+  });
+});
+
+describe('LeadDeduplicationService.previewDuplicates', () => {
+  it('é somente leitura — nunca chama updateMany/deleteMany', async () => {
+    leadGroupBy.mockResolvedValue([{ contactId: 'contact-1' }]);
+    leadFindMany.mockResolvedValue([
+      {
+        id: 'lead-high-value',
+        title: 'Negócio A',
+        amount: 5000,
+        currency: 'BRL',
+        status: 'Lead_Recebido',
+        createdAt: new Date('2026-01-01'),
+      },
+      {
+        id: 'lead-low-value',
+        title: 'Negócio A (dup)',
+        amount: 100,
+        currency: 'BRL',
+        status: 'Lead_Recebido',
+        createdAt: new Date('2026-01-02'),
+      },
+    ]);
+
+    const service = new LeadDeduplicationService();
+    const result = await service.previewDuplicates('org-1');
+
+    expect(result.groups).toEqual([
+      {
+        contactId: 'contact-1',
+        survivorId: 'lead-high-value',
+        duplicateIds: ['lead-low-value'],
+        leads: [
+          {
+            id: 'lead-high-value',
+            title: 'Negócio A',
+            amount: 5000,
+            currency: 'BRL',
+            status: 'Lead_Recebido',
+            createdAt: new Date('2026-01-01'),
+          },
+          {
+            id: 'lead-low-value',
+            title: 'Negócio A (dup)',
+            amount: 100,
+            currency: 'BRL',
+            status: 'Lead_Recebido',
+            createdAt: new Date('2026-01-02'),
+          },
+        ],
+      },
+    ]);
+    expect(leadDeleteMany).not.toHaveBeenCalled();
+    expect(noteUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it('não inclui grupos onde só sobrou 1 lead ao reconsultar', async () => {
+    leadGroupBy.mockResolvedValue([{ contactId: 'contact-1' }]);
+    leadFindMany.mockResolvedValue([{ id: 'lead-only', amount: 10 }]);
+
+    const service = new LeadDeduplicationService();
+    const result = await service.previewDuplicates('org-1');
+
+    expect(result.groups).toEqual([]);
   });
 });

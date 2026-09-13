@@ -90,7 +90,6 @@ export interface Company {
   city?: string | null;
   state?: string | null;
   zipCode?: string | null;
-  owner?: string | null;
   status: import('../lib/zod').CompanyStatus;
   tags: string[];
   observations?: string | null;
@@ -235,7 +234,23 @@ export interface Note {
   id: string;
   content: string;
   author: string;
-  leadId: string;
+  leadId: string | null;
+  companyId: string | null;
+  contactId: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Attachment {
+  id: string;
+  leadId: string | null;
+  companyId: string | null;
+  contactId: string | null;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  objectKey: string;
+  uploadedBy: string | null;
+  organizationId: string;
+  createdAt: string;
 }

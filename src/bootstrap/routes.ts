@@ -2,6 +2,7 @@ import type { Express } from 'express';
 import { activityRoutes } from '../features/activities/routes/activity.routes.js';
 import { analyticsRoutes } from '../features/analytics/routes/analytics.routes.js';
 import { eventsRoutes } from '../features/analytics/routes/events.routes.js';
+import { attachmentRoutes } from '../features/attachments/routes/attachment.routes.js';
 import { authExtraRoutes } from '../features/auth/routes/auth-extra.routes.js';
 import { automationRoutes } from '../features/automations/routes/automation.routes.js';
 import { usageRoutes } from '../features/billing/routes/usage.routes.js';
@@ -16,6 +17,7 @@ import { companyRoutes } from '../features/companies/routes/company.routes.js';
 import { contactRoutes } from '../features/contacts/routes/contact.routes.js';
 import { copilotoIaRoutes } from '../features/copiloto-ia/routes/copilotoIa.routes.js';
 import { leadRoutes } from '../features/crm/routes/lead.routes.js';
+import { leadDedupRoutes } from '../features/crm/routes/leadDedup.routes.js';
 import { savedViewRoutes } from '../features/crm/routes/savedView.routes.js';
 import { crm360Routes } from '../features/crm360/routes/crm360.routes.js';
 import { featureFlagsRouter } from '../features/feature-flags/routes/featureFlags.routes.js';
@@ -78,6 +80,9 @@ export function mountFeatureRoutes(app: Express): void {
   );
   app.use('/api/companies', authenticateToken, requireTenant, companyRoutes);
   app.use('/api/contacts', authenticateToken, requireTenant, contactRoutes);
+  // Montado ANTES de /api/leads de propósito: rota mais específica primeiro (mesmo que hoje não
+  // colida com nenhum padrão de lead.routes.ts, evita qualquer ambiguidade futura).
+  app.use('/api/leads/dedup', authenticateToken, requireTenant, leadDedupRoutes);
   app.use('/api/leads', authenticateToken, requireTenant, leadRoutes);
   app.use('/api/crm/saved-views', authenticateToken, requireTenant, savedViewRoutes);
   app.use('/api/crm', authenticateToken, requireTenant, crm360Routes);
@@ -94,6 +99,25 @@ export function mountFeatureRoutes(app: Express): void {
     objectionMatrixRoutes,
   );
   app.use('/api/leads/:leadId/notes', authenticateToken, requireTenant, noteRoutes);
+  // CRM-004: Note deixou de ser exclusiva de Lead — mesmo router, montado também nos prefixos de
+  // Company/Contact (NoteController resolve a entidade pelo param que realmente chegou).
+  app.use('/api/companies/:companyId/notes', authenticateToken, requireTenant, noteRoutes);
+  app.use('/api/contacts/:contactId/notes', authenticateToken, requireTenant, noteRoutes);
+  // CRM-005: primeiro modelo de anexo/arquivo para CRM — mesmo padrão de montagem em três
+  // prefixos usado acima por noteRoutes.
+  app.use('/api/leads/:leadId/attachments', authenticateToken, requireTenant, attachmentRoutes);
+  app.use(
+    '/api/companies/:companyId/attachments',
+    authenticateToken,
+    requireTenant,
+    attachmentRoutes,
+  );
+  app.use(
+    '/api/contacts/:contactId/attachments',
+    authenticateToken,
+    requireTenant,
+    attachmentRoutes,
+  );
   app.use('/api/activities', authenticateToken, requireTenant, activityRoutes);
   app.use('/api/mesa-tratamento', authenticateToken, requireTenant, mesaTratamentoRoutes);
   app.use('/api/prospecting', authenticateToken, requireTenant, prospectingRoutes);

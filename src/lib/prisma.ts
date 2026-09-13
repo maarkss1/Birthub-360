@@ -271,6 +271,7 @@ export const prisma = basePrisma.$extends({
           'CrmProduct',
           'CrmDealItem',
           'CrmCommercialDocument',
+          'Attachment',
         ];
         const isAuditable = auditableModels.includes(model as string);
 
