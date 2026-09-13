@@ -1,9 +1,9 @@
 import { BaseAgent } from './base.agent.js';
 import {
+  appendLearnedStyle,
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-  appendLearnedStyle,
 } from './swarm.constants.js';
 
 /**

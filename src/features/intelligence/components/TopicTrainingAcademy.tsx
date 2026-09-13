@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { BookOpen, Sparkles, Award, Loader2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AlertCircle, Award, BookOpen, Loader2, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 

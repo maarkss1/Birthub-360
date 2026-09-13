@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/no-autofocus -- página de propósito único, ver comentário no local de uso */
-import { useState } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Loader2, AlertCircle, ArrowRight, Sun, Moon, CheckCircle2 } from 'lucide-react';
+
 import { motion } from 'framer-motion';
+import { AlertCircle, ArrowRight, CheckCircle2, Loader2, Moon, Sun } from 'lucide-react';
+import { useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { BirthHubSignature } from '../../../components/brand/BirthHubLogo';
 import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { authClient } from '../../../lib/auth-client';
-import { BirthHubSignature } from '../../../components/brand/BirthHubLogo';
 
 // Chegamos aqui a partir do link enviado por e-mail (ver sendResetPassword em src/lib/auth.ts):
 // better-auth redireciona pra cá com ?token=... quando o token é válido, ou ?error=INVALID_TOKEN

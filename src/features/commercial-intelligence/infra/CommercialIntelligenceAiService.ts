@@ -1,17 +1,17 @@
-import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import { getAiModel, withRetry, logAiUsage, cleanAndParseJson } from '../../../lib/ai/gateway.js';
-import { redactAndTrackPiiLeak } from '../../intelligence/services/guardrails.service.js';
-import { prisma } from '../../../lib/prisma.js';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { cleanAndParseJson, getAiModel, logAiUsage, withRetry } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { redactAndTrackPiiLeak } from '../../intelligence/services/guardrails.service.js';
 import { notificationService } from '../../notifications/notification.service.js';
 import type { CommercialIntelligenceUseCases } from '../application/CommercialIntelligenceUseCases.js';
 import { buildForecastRange, computeTrendMomentum } from '../application/predictiveForecast.js';
 import type {
   CommercialIntelligenceFilter,
+  DealDrillDownRow,
+  ExecutiveAlert,
   MentorPlaybookResult,
   MentorRecommendation,
-  ExecutiveAlert,
-  DealDrillDownRow,
 } from '../domain/CommercialIntelligence.js';
 
 /**

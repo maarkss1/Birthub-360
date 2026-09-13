@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowRight, KeyRound, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import { authClient } from '../../../lib/auth-client';
 
 // Bloqueia o acesso ao app até o usuário trocar uma senha temporária/padrão definida por um

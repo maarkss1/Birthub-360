@@ -26,6 +26,7 @@ const {
   hasPiiExternalConsent,
   assertPiiExternalConsent,
   PiiConsentRequiredError,
+  MAX_PII_PATTERN_LENGTH,
 } = await import('../guardrails.service');
 
 describe('minimizePii / rehydratePii', () => {
@@ -108,6 +109,62 @@ describe('redactSensitiveData (comportamento existente, não deve regredir)', ()
   });
 });
 
+describe('redactSensitiveData (AIAGENT-006: cobertura expandida além de CPF formatado)', () => {
+  it('mascara CNPJ formatado', () => {
+    const { text, redacted } = redactSensitiveData('CNPJ do fornecedor: 12.345.678/0001-90');
+    expect(redacted).toBe(true);
+    expect(text).toBe('CNPJ do fornecedor: [CNPJ OCULTADO]');
+  });
+
+  it('mascara e-mail', () => {
+    const { text, redacted } = redactSensitiveData('Contato: maria.silva@exemplo.com.br');
+    expect(redacted).toBe(true);
+    expect(text).toBe('Contato: [E-MAIL OCULTADO]');
+  });
+
+  it('mascara telefone com DDD entre parênteses', () => {
+    const { text, redacted } = redactSensitiveData('Ligue para (11) 91234-5678 amanhã.');
+    expect(redacted).toBe(true);
+    expect(text).toBe('Ligue para [TELEFONE OCULTADO] amanhã.');
+  });
+
+  it('mascara telefone com DDI e sem parênteses', () => {
+    const { text, redacted } = redactSensitiveData('WhatsApp: +55 11 91234-5678');
+    expect(redacted).toBe(true);
+    expect(text).toBe('WhatsApp: [TELEFONE OCULTADO]');
+  });
+
+  it('mascara CPF sem pontuação (11 dígitos soltos)', () => {
+    const { text, redacted } = redactSensitiveData('CPF: 12345678900 confirmado.');
+    expect(redacted).toBe(true);
+    expect(text).toBe('CPF: [CPF OCULTADO] confirmado.');
+  });
+
+  it('mascara múltiplos tipos de PII no mesmo texto', () => {
+    const { text, redacted } = redactSensitiveData(
+      'Contato João, CPF 123.456.789-00, e-mail joao@exemplo.com, tel (11) 91234-5678.',
+    );
+    expect(redacted).toBe(true);
+    expect(text).toBe(
+      'Contato João, CPF [CPF OCULTADO], e-mail [E-MAIL OCULTADO], tel [TELEFONE OCULTADO].',
+    );
+  });
+
+  it('não mascara texto comum sem nenhum padrão de PII', () => {
+    const { text, redacted } = redactSensitiveData('Reunião marcada para terça-feira às 10h.');
+    expect(redacted).toBe(false);
+    expect(text).toBe('Reunião marcada para terça-feira às 10h.');
+  });
+
+  it('não mascara (nem deixa dígitos residuais em) um número de pedido/nota com mais de 11 dígitos', () => {
+    // Regressão: uma versão anterior do PHONE_REGEX "deslizava" dentro de sequências numéricas
+    // longas sem relação com telefone e mascarava só um pedaço, deixando dígitos soltos no texto.
+    const { text, redacted } = redactSensitiveData('Pedido nº 1234567890123 confirmado.');
+    expect(redacted).toBe(false);
+    expect(text).toBe('Pedido nº 1234567890123 confirmado.');
+  });
+});
+
 describe('redactAndTrackPiiLeak (AI-006, onda 35: sinal real de PII leakage rate)', () => {
   afterEach(() => {
     aiGuardrailEventCreate.mockClear();
@@ -179,14 +236,44 @@ describe('createStreamingRedactor (Fase 2: guardrail de PII sob streaming, sem e
     expect(released).not.toContain('123.456.789-00');
   });
 
-  it('libera texto sem PII imediatamente conforme os chunks chegam, sem esperar o flush', () => {
+  it('mascara um e-mail mesmo quando seus caracteres chegam espalhados um chunk por vez', async () => {
+    getTenantIdMock.mockReturnValue('org-1');
+    const redactor = createStreamingRedactor('studio:assistant-stream');
+    const full = 'Envie para maria.silva@exemplo.com.br, por favor.';
+
+    let released = '';
+    for (const char of full) {
+      released += redactor.push(char);
+    }
+    released += await redactor.flush();
+
+    expect(released).toBe('Envie para [E-MAIL OCULTADO], por favor.');
+    expect(released).not.toContain('maria.silva@exemplo.com.br');
+  });
+
+  it('não libera nada enquanto o buffer não passar do maior padrão de PII (e-mail, 254 caracteres)', () => {
     const redactor = createStreamingRedactor('studio:assistant-stream');
     let released = '';
     for (const char of 'Texto totalmente comum, sem nenhum dado sensível aqui dentro.') {
       released += redactor.push(char);
     }
-    // Só os últimos 14 caracteres (tamanho do padrão de CPF) ficam retidos até o flush.
-    expect(released).toBe('Texto totalmente comum, sem nenhum dado sensíve');
+    // String bem mais curta que MAX_PII_PATTERN_LENGTH: nada é liberado antes do flush, porque
+    // qualquer sufixo do buffer ainda poderia vir a completar um e-mail em andamento.
+    expect(released).toBe('');
+  });
+
+  it('libera texto sem PII conforme os chunks chegam assim que o buffer excede o maior padrão, retendo só a cauda', () => {
+    const redactor = createStreamingRedactor('studio:assistant-stream');
+    const sentence = 'Texto totalmente comum, sem nenhum dado sensível aqui dentro. ';
+    const full = sentence.repeat(Math.ceil((MAX_PII_PATTERN_LENGTH + 20) / sentence.length));
+
+    let released = '';
+    for (const char of full) {
+      released += redactor.push(char);
+    }
+
+    expect(released).toBe(full.slice(0, full.length - MAX_PII_PATTERN_LENGTH));
+    expect(full.slice(released.length)).toHaveLength(MAX_PII_PATTERN_LENGTH);
   });
 
   it('flush() libera e mascara o que sobrou retido no buffer ao final do stream', async () => {

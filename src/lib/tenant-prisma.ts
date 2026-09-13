@@ -1,16 +1,7 @@
-import { Prisma } from '@prisma/client';
 import { prisma } from './prisma.js';
+import { MODELS_WITH_ORGANIZATION_ID } from './tenant-scoping-registry.js';
 
-// Modelos que realmente têm a coluna `organizationId` no schema — calculado a partir do DMMF em vez
-// de mantido à mão, porque uma lista fixa ("skip estes 5, força nos outros") já quebrou antes: todo
-// modelo novo sem organizationId (Prompt, AiEngineSetting, Note, etc.) explode com
-// "Unknown argument organizationId" assim que é consultado via `req.db` (o client tenant-scoped),
-// mesmo que o model nunca devesse ser filtrado por tenant.
-const MODELS_WITH_ORGANIZATION_ID = new Set(
-  Prisma.dmmf.datamodel.models
-    .filter((m) => m.fields.some((f) => f.name === 'organizationId'))
-    .map((m) => m.name),
-);
+export { MODELS_WITH_ORGANIZATION_ID };
 
 /**
  * Retorna uma instância do Prisma Client estendida para garantir o Row-Level Security (RLS)

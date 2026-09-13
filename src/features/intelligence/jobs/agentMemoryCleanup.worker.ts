@@ -1,10 +1,10 @@
-import { Worker, Queue, type ConnectionOptions } from 'bullmq';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { connection } from '../../../lib/queue/redis.js';
-import { recordDeadLetter, isFinalAttempt } from '../../../lib/queue/deadLetter.js';
-import { requestContext } from '../../../lib/async-context.js';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { env } from '../../../config/env.js';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { connection } from '../../../lib/queue/redis.js';
 
 export const AGENT_MEMORY_CLEANUP_QUEUE_NAME = 'agent-memory-cleanup-queue';
 

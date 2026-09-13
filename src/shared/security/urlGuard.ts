@@ -25,12 +25,20 @@ import { AppError } from '../middlewares/errorHandler.js';
 // só para URL que veio de um campo de banco ou de input do usuário.
 function isPrivateOrReservedIp(ip: string): boolean {
   if (net.isIPv4(ip)) {
-    const [a, b] = ip.split('.').map(Number);
+    const [a, b, c] = ip.split('.').map(Number);
     if (a === 10) return true;
     if (a === 127) return true;
     if (a === 169 && b === 254) return true;
     if (a === 172 && b >= 16 && b <= 31) return true;
     if (a === 192 && b === 168) return true;
+    // CGNAT (RFC 6598) — faixa usada por NAT de operadoras/nuvem para endereçar rede interna
+    // compartilhada entre múltiplos clientes; um host aí é tão "privado" quanto RFC1918
+    // (SEC-003, docs/audits/repository-debt-audit/agents/SEC.md).
+    if (a === 100 && b >= 64 && b <= 127) return true;
+    // Bloco de atribuição de protocolo IETF (RFC 6890) e faixa de benchmarking de rede
+    // (RFC 2544) — reservados, nunca endereçam um serviço real de tenant (SEC-003).
+    if (a === 192 && b === 0 && c === 0) return true;
+    if (a === 198 && (b === 18 || b === 19)) return true;
     if (a === 0) return true;
     if (a >= 224) return true;
     return false;

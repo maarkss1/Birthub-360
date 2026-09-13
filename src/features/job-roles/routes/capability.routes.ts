@@ -1,11 +1,11 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
+import { routeParam } from '../../../shared/http/routeParams.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
 import {
-  listCapabilityDefinitions,
   getCapabilityDefinitionByCode,
+  listCapabilityDefinitions,
 } from '../services/capability.service.js';
 import { authorizeCapability } from '../services/capabilityAuthorization.service.js';
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Onda 7 (Agente 07) — dois gaps reais fechados nesta suíte:
 // 1. Retry com backoff quando a ação de uma automação falha (antes: falhava uma vez e acabava).
@@ -65,8 +65,8 @@ vi.mock('@/lib/queue/redis', () => ({
   },
 }));
 
-import { automationEngine } from '../automation.engine';
 import type { AutomationEvent } from '../automation.engine';
+import { automationEngine } from '../automation.engine';
 
 function makeAutomation(overrides: Record<string, unknown> = {}) {
   return {

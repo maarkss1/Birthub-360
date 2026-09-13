@@ -1,15 +1,15 @@
-import { describe, it, expect } from 'vitest';
 import { createHmac } from 'node:crypto';
+import { describe, expect, it } from 'vitest';
 import {
-  isValidSignature,
-  callMarker,
   buildObservations,
-  pickCallablePhone,
+  callMarker,
+  callResultedInConversation,
+  classifyCallOutcome,
   detectOptOut,
   detectRecordingConsent,
   detectRecordingConsentFromRawTranscript,
-  classifyCallOutcome,
-  callResultedInConversation,
+  isValidSignature,
+  pickCallablePhone,
 } from '../birthVoice.helpers';
 
 const SECRET = 'segredo-compartilhado';

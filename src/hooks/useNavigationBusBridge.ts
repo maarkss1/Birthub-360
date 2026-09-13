@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { navigationBus } from '../lib/navigationBus';
 import type { TabType } from '../components/layout/tabMeta';
+import { navigationBus } from '../lib/navigationBus';
 
 /**
  * Único ponto de montagem que liga `navigationBus` (destino/navegação, dono: Agente 02) à

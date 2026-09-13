@@ -1,11 +1,11 @@
-import { useRef } from 'react';
 import {
   useMotionValue,
+  useReducedMotion,
   useSpring,
   useTransform,
-  useReducedMotion,
   type Variants,
 } from 'framer-motion';
+import { useRef } from 'react';
 
 export const EASE_PREMIUM = [0.22, 1, 0.36, 1] as const;
 export const EASE_SPRING_SOFT = [0.34, 1.56, 0.64, 1] as const;

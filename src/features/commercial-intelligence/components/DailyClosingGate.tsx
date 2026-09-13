@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import type React from 'react';
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -10,8 +8,10 @@ import {
   Target,
   Trash2,
 } from 'lucide-react';
-import { commercialIntelligenceApi } from '../commercialIntelligence.api';
+import type React from 'react';
+import { useState } from 'react';
 import type { PendingDailyClosing } from '../../../shared/contracts/dailyPlan.contract';
+import { commercialIntelligenceApi } from '../commercialIntelligence.api';
 
 const MAX_GOALS = 5;
 

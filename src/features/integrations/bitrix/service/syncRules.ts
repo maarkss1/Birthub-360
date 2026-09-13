@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import { prisma } from '../../../../lib/prisma.js';
-import { logger } from '../../../../lib/logger.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { requestContext } from '../../../../lib/async-context.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
-import { findUnimportedBitrixLeadIds, importSelectedBitrixLeads } from './leads.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { findUnimportedBitrixDealIds, importSelectedBitrixDeals } from './deals.js';
+import { findUnimportedBitrixLeadIds, importSelectedBitrixLeads } from './leads.js';
 import { bitrixSyncFailuresTotal } from './metrics.js';
 
 // ── Sincronização automática (regras) — ver bitrixSync.worker.ts ───────────────────────────────

@@ -1,9 +1,9 @@
+import type { Company } from '@prisma/client';
 import { describe, expect, it } from 'vitest';
 import {
-  isEnrichmentFresh,
   buildCachedEnrichmentResult,
+  isEnrichmentFresh,
 } from '@/features/prospecting/services/enrichment.service';
-import type { Company } from '@prisma/client';
 
 // ACH-05-04 (auditoria 2026-09-11, agente 05): enrichment.service.ts (846L, o orquestrador mais
 // complexo do domínio de prospecção) não tinha nenhum teste dedicado. Este arquivo cobre as duas
@@ -130,8 +130,11 @@ describe('buildCachedEnrichmentResult', () => {
       fleetSizeHint: 'Acima de 50 veículos',
     });
 
-    // ATIVA(+30) + capital>=100k(+20) + funcionários>=50(+20) + frota(+15) + SP(+10) + SAP(+5) + base(25) = 125 -> clamp 100
-    expect(result.fit.score).toBe(100);
+    // ATIVA(+30) + capital>=100k(+20) + funcionários>=50(+20) + base(25) = 95. fleetSizeHint/state/
+    // technologies não somam mais pontos — ACH-05-07 (bônus de frota/região/ERP-TMS logístico) foi
+    // removido depois que a unificação de playbook comercial em 'geral' tirou a única forma de
+    // saber se a organização era do vertical de logística (ver fitScore.ts).
+    expect(result.fit.score).toBe(95);
     expect(result.fit.temperature).toBe('Quente');
   });
 

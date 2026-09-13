@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
 import { PhoneCall, Target } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { toast } from '../../../lib/toast';
 import { voiceCommandBus } from '../../../lib/voiceCommandBus';
-import { mesaTratamentoApi, type MesaQueueResponse } from '../mesaTratamento.api';
-import { QueueList } from './QueueList';
+import { type MesaQueueResponse, mesaTratamentoApi } from '../mesaTratamento.api';
 import { CurrentLeadCard } from './CurrentLeadCard';
 import { ManagementPanel } from './ManagementPanel';
 import { PomodoroWidget } from './PomodoroWidget';
+import { QueueList } from './QueueList';
 import { SdrDashboard } from './SdrDashboard';
 
 type MesaTab = 'fila' | 'dashboard';

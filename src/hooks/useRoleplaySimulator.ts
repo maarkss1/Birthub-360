@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { api } from '../lib/api';
-import type { ObjectionMatrixItem } from '../features/playbook/playbook.api';
 import type { PlaybookInfo, PlaybookKey } from '../config/playbooks';
+import type { ObjectionMatrixItem } from '../features/playbook/playbook.api';
+import { api } from '../lib/api';
 
 export interface RoleplayMessage {
   sender: 'sdr' | 'buyer';

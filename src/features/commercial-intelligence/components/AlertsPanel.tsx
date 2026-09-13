@@ -1,4 +1,4 @@
-import { AlertTriangle, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';
 import type { ExecutiveAlert } from '../commercialIntelligence.api';
 

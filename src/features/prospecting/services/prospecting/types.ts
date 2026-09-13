@@ -7,13 +7,13 @@
 import type { DecisionMaker } from '../../domain/prospectTypes.js';
 
 export type {
-  ProspectCriteria,
   DecisionMaker,
-  ProspectCandidate,
   DiscoverResult,
+  ProspectCandidate,
+  ProspectCriteria,
   RequirementEvaluation,
-  RequirementType,
   RequirementStatus,
+  RequirementType,
 } from '../../domain/prospectTypes.js';
 export { buildLocationLabel } from '../../domain/prospectTypes.js';
 export type { DecisionMakerCriteria } from '../apollo.service.js';

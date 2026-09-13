@@ -5,7 +5,7 @@
  * em formatos diferentes cair na mesma chave. Um opt-out que escapa por causa de um parêntese é
  * indistinguível, na prática, de não ter opt-out nenhum.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -27,13 +27,13 @@ vi.mock('@/features/cadence/application/optOutService', () => ({
   recordOptOut: (...args: unknown[]) => recordUnifiedOptOutMock(...args),
 }));
 
-import { prisma } from '@/lib/prisma';
-import { logger } from '@/lib/logger';
 import {
   isSuppressed,
-  recordOptOut,
   normalizeSuppressionKey,
+  recordOptOut,
 } from '@/features/integrations/birth-voice/callSuppression.service';
+import { logger } from '@/lib/logger';
+import { prisma } from '@/lib/prisma';
 
 const suppressionMock = prisma.callSuppression as unknown as {
   findUnique: ReturnType<typeof vi.fn>;
