@@ -237,7 +237,23 @@ export interface Note {
   id: string;
   content: string;
   author: string;
-  leadId: string;
+  leadId: string | null;
+  companyId: string | null;
+  contactId: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Attachment {
+  id: string;
+  leadId: string | null;
+  companyId: string | null;
+  contactId: string | null;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  objectKey: string;
+  uploadedBy: string | null;
+  organizationId: string;
+  createdAt: string;
 }

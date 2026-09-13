@@ -13,6 +13,8 @@ import {
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 import { Drawer } from '../../../components/ui/Drawer';
 import { Skeleton } from '../../../components/ui/Skeleton';
+import { EntityNotes } from '../../../components/crm/EntityNotes';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
 import { contactsDB } from '../../../lib/db';
 import { getWhatsAppLink } from '../../../shared/utils/contact-links';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
@@ -241,6 +243,9 @@ export function ContactDetail({ contactId, onClose }: ContactDetailProps) {
               <p className="text-sm text-ink-2">Nenhum negócio vinculado a este contato ainda.</p>
             )}
           </section>
+
+          <EntityNotes entityType="contact" entityId={contact.id} />
+          <EntityAttachments entityType="contact" entityId={contact.id} />
         </div>
       )}
     </Drawer>

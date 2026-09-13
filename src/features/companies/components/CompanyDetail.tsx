@@ -21,6 +21,8 @@ import {
   DollarSign,
 } from 'lucide-react';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
+import { EntityNotes } from '../../../components/crm/EntityNotes';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
 import type { Company } from '../../../types';
 import { api } from '../../../lib/api';
 import { formatCnpj } from '../../../lib/cnpj';
@@ -373,6 +375,14 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
                 </div>
               </div>
             )}
+
+            <div className="bg-surface p-6 rounded-3xl border border-line shadow-xl">
+              <EntityNotes entityType="company" entityId={company.id} />
+            </div>
+
+            <div className="bg-surface p-6 rounded-3xl border border-line shadow-xl">
+              <EntityAttachments entityType="company" entityId={company.id} />
+            </div>
           </div>
 
           {/* Sidebar lateral com Google Rating e Detalhes */}

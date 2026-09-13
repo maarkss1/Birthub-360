@@ -26,6 +26,7 @@ import { toast } from '../../../lib/toast';
 import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
 import { Button } from '../../../components/ui/Button';
 import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { LeadActionBar } from './LeadActionBar';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
@@ -784,6 +785,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   ))}
                 </div>
               </section>
+
+              <EntityAttachments entityType="lead" entityId={lead.id} />
 
               {playbookMeta && (
                 <section className="space-y-4">
