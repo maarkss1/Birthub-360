@@ -1,8 +1,8 @@
-import { describe, it, expect, afterAll } from 'vitest';
+import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import fs from 'node:fs/promises';
 import * as ExcelJS from 'exceljs';
+import { afterAll, describe, expect, it } from 'vitest';
 
 // Precisa ser setado ANTES do primeiro import de src/config/env.ts (transitivo, via
 // extractionFiles.js) — env.ts lê process.env uma única vez, no module load.
@@ -97,7 +97,11 @@ describe('buildXlsxWorkbook — pacote consolidado (06A, seção 12)', () => {
     expect(buffer.length).toBeGreaterThan(0);
 
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer);
+    // TS 7 deixou o `Buffer` global genérico; o exceljs empacota sua própria cópia de
+    // @types/node (mais antiga, `Buffer` não-genérico), então mesmo `Buffer<ArrayBuffer>` não
+    // bate estruturalmente com o que `.load()` declara — mesmo objeto em runtime, é só a
+    // duplicação de tipos entre as duas dependências. `as any` bypassa a checagem estrutural.
+    await workbook.xlsx.load(buffer as any);
     expect(workbook.worksheets.map((s) => s.name)).toEqual(['Leads', 'Negócios']);
 
     const leadsSheet = workbook.getWorksheet('Leads')!;
@@ -110,7 +114,7 @@ describe('buildXlsxWorkbook — pacote consolidado (06A, seção 12)', () => {
     const { buildXlsxWorkbook } = await import('../extractionFiles.js');
     const buffer = await buildXlsxWorkbook([{ entity: 'contact', label: 'Contatos', rows: [] }]);
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer);
+    await workbook.xlsx.load(buffer as any);
     const sheet = workbook.getWorksheet('Contatos')!;
     expect(String(sheet.getRow(1).getCell(1).value)).toMatch(/nenhum registro/i);
   });

@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import {
-  evaluateDealClosure,
-  isDeterministicCloseEvent,
   type DealClosureEvent,
   type DealClosureEventType,
+  evaluateDealClosure,
+  isDeterministicCloseEvent,
 } from '../../../shared/domain/dealClosure.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 /**
  * CYC-007 (onda 24) — conecta `dealClosure.ts` (domínio puro do Agente 17, entregue na Sprint 06

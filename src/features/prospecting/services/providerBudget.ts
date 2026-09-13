@@ -1,7 +1,7 @@
 import client from 'prom-client';
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
 import { getTenantId } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import { cacheConnection, redisConfigured } from '../../../lib/queue/redis.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 

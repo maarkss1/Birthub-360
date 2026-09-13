@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
 import { AlertCircle, Check, Loader2, ShieldCheck } from 'lucide-react';
-import { moduleAccessApi, type ModuleAccessMatrixUser } from '../moduleAccess.api';
+import { useCallback, useEffect, useState } from 'react';
+import type { ModuleCatalogEntry } from '../../../config/module-catalog';
 import { invalidateModuleAccessCache } from '../../../hooks/useModuleAccess';
 import { toast } from '../../../lib/toast';
-import type { ModuleCatalogEntry } from '../../../config/module-catalog';
+import { type ModuleAccessMatrixUser, moduleAccessApi } from '../moduleAccess.api';
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: 'Administrador',

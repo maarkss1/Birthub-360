@@ -1,35 +1,35 @@
 import { randomUUID } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../../../../lib/prisma.js';
-import { logger } from '../../../../lib/logger.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
-import { callBitrix, getConnectionWebhookUrl } from './client.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { BITRIX_FIELD_MAP_VERSION } from '../bitrixFieldMap.js';
-import { bitrixExtractionFailuresTotal, bitrixExtractionPartialTotal } from './metrics.js';
+import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import {
   ALL_EXTRACTION_ENTITIES,
+  type BitrixExtractionEntity,
   EXTRACTION_ENTITY_SPECS,
   isExtractionEntity,
-  type BitrixExtractionEntity,
 } from './extractionEntities.js';
 import {
-  resolvePeriodRange,
-  EXTRACTION_PERIODS,
-  InvalidExtractionPeriodError,
-  type BitrixExtractionPeriod,
-  type PeriodRange,
-} from './extractionPeriod.js';
-import {
-  writeExtractionFile,
-  readExtractionFile,
+  buildXlsxWorkbook,
   deleteExtractionRunFiles,
+  type ExtractionEntityDataset,
+  type ExtractionFileFormat,
+  readExtractionFile,
   toCsv,
   toJson,
-  buildXlsxWorkbook,
-  type ExtractionFileFormat,
-  type ExtractionEntityDataset,
+  writeExtractionFile,
 } from './extractionFiles.js';
+import {
+  type BitrixExtractionPeriod,
+  EXTRACTION_PERIODS,
+  InvalidExtractionPeriodError,
+  type PeriodRange,
+  resolvePeriodRange,
+} from './extractionPeriod.js';
+import { bitrixExtractionFailuresTotal, bitrixExtractionPartialTotal } from './metrics.js';
 
 // ── Serviço real de Extrações Bitrix (Onda 7, Agente 06/06A) ───────────────────────────────────
 //
@@ -787,5 +787,5 @@ export async function downloadExtractionFile(
   return { buffer, filename: meta.filename, contentType };
 }
 
-export { ALL_EXTRACTION_ENTITIES, EXTRACTION_PERIODS };
 export type { BitrixExtractionEntity, BitrixExtractionPeriod };
+export { ALL_EXTRACTION_ENTITIES, EXTRACTION_PERIODS };

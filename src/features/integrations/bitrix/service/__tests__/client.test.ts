@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // assertSafeExternalUrl/safeFetch fazem DNS lookup real — indisponível/instável em ambiente de
 // teste sandboxed. A proteção SSRF em si (rejeitar IP privado/loopback) é responsabilidade do

@@ -24,23 +24,23 @@
  * 20. 🛡️ Higienização & Anonimização LGPD
  */
 
-import { IcebreakerService } from './IcebreakerService.js';
-import { CommercialAIService } from './CommercialAIService.js';
-import { ConversationIntelligenceService } from '../../integrations/whatsapp/conversation-intelligence.service.js';
-import { DecisionCommitteeService } from '../../contacts/services/decision-committee.service.js';
-import { BitrixDataHygieneService } from '../../integrations/bitrix/services/bitrix-data-hygiene.service.js';
-import { CadenceAiService } from '../../cadence/infra/services/cadence-ai.service.js';
-import { RoleplayAiService } from '../../roleplay/services/roleplay-ai.service.js';
-import { ProposalAiService } from '../../document-editor/services/proposal-ai.service.js';
 import { NextBestActionService } from '../../activities/services/next-best-action.service.js';
 import { ChurnPredictionService } from '../../analytics/services/churn-prediction.service.js';
 import { SmartLeadRouterService } from '../../automations/services/smart-lead-router.service.js';
-import { KnowledgeCopilotService } from '../../knowledge/services/knowledge-copilot.service.js';
+import { CadenceAiService } from '../../cadence/infra/services/cadence-ai.service.js';
 import { MeetingSynthesisService } from '../../chatbook/services/meeting-synthesis.service.js';
-import { MesaTriageService } from '../../mesa-tratamento/services/mesa-triage.service.js';
+import { DecisionCommitteeService } from '../../contacts/services/decision-committee.service.js';
+import { ProposalAiService } from '../../document-editor/services/proposal-ai.service.js';
 import { SellerCoachingService } from '../../gamification/services/seller-coaching.service.js';
-import { PlaybookAiService } from '../../playbook/services/playbook-ai.service.js';
+import { BitrixDataHygieneService } from '../../integrations/bitrix/services/bitrix-data-hygiene.service.js';
+import { ConversationIntelligenceService } from '../../integrations/whatsapp/conversation-intelligence.service.js';
+import { KnowledgeCopilotService } from '../../knowledge/services/knowledge-copilot.service.js';
 import { LgpdSanitizerService } from '../../lgpd/services/lgpd-sanitizer.service.js';
+import { MesaTriageService } from '../../mesa-tratamento/services/mesa-triage.service.js';
+import { PlaybookAiService } from '../../playbook/services/playbook-ai.service.js';
+import { RoleplayAiService } from '../../roleplay/services/roleplay-ai.service.js';
+import { CommercialAIService } from './CommercialAIService.js';
+import { IcebreakerService } from './IcebreakerService.js';
 
 export class CentralAISuiteService {
   // #1 Icebreaker

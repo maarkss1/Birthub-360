@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Badge, type BadgeProps } from '../../../components/ui/Badge';
 import {
-  commercialAgentCellApi,
   type CommercialAgentDefinition,
   type CommercialAgentStatus,
+  commercialAgentCellApi,
 } from '../commercialAgentCell.api';
+
 // Nota de arquitetura: este painel vive em `src/features/hub/` (não em `intelligence/`) de
 // propósito — chama só a rota HTTP `/api/agent/commercial-cell` (nunca um import direto de
 // `intelligence/agents/**`), e `no-cross-feature-imports` (dependency-cruiser) proibiria

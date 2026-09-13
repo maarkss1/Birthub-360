@@ -1,9 +1,9 @@
 import type { CadenceChannel } from '../domain/optOut.js';
 import {
+  type CadenceRateLimitPolicy,
   DEFAULT_RATE_LIMIT_POLICY,
   decideRateLimitBlock,
   extractEmailDomain,
-  type CadenceRateLimitPolicy,
   type LastSentTouch,
   type RateLimitBlockReason,
 } from '../domain/rateLimit.js';

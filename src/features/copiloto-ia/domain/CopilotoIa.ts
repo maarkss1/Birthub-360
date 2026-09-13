@@ -9,18 +9,18 @@
  * transcrição, inteligência de conversação e writeback no Bitrix ficam para as ondas seguintes.
  */
 import type {
+  CopilotoConsentStatus,
   CopilotoConversationSource,
   CopilotoConversationStatus,
-  CopilotoConsentStatus,
   CopilotoCrmEntityType,
   CopilotoSuggestionStatus,
 } from '@prisma/client';
 import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime';
 
 export type {
+  CopilotoConsentStatus,
   CopilotoConversationSource,
   CopilotoConversationStatus,
-  CopilotoConsentStatus,
   CopilotoCrmEntityType,
   CopilotoSuggestionStatus,
 };

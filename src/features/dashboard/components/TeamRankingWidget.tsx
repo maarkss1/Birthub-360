@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Trophy, Medal, Award, AlertTriangle, Users } from 'lucide-react';
+import { AlertTriangle, Award, Medal, Trophy, Users } from 'lucide-react';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { fadeInUp, staggerContainer, staggerItem } from '../../../lib/motion';
 

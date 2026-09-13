@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // GOV-13 (Agente 13): estas duas ferramentas substituem `opsTools.ts` no OpsAgent — em vez de
 // executar `activityService.create`/`notificationService.create` direto, elas só registram uma

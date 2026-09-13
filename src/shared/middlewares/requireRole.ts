@@ -1,6 +1,6 @@
-import type { Request, Response, NextFunction } from 'express';
-import type { AuthRequest } from './authenticateToken.js';
+import type { NextFunction, Request, Response } from 'express';
 import { hasRequiredRole } from '../../lib/auth/authorization.js';
+import type { AuthRequest } from './authenticateToken.js';
 
 /**
  * RBAC middleware — garante que o usuário autenticado possui pelo menos um dos

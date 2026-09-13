@@ -1,11 +1,11 @@
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card } from '../../../components/ui/Card';
 import {
   buildForecastRange,
   computeTrendMomentum,
-  formatCurrency,
   type ExecutiveOverview,
+  formatCurrency,
   type HistoricalTrendsReport,
   type TrendDirection,
 } from '../commercialIntelligence.api';

@@ -1,12 +1,12 @@
-import { Queue, Worker, type Job } from 'bullmq';
-import { connection } from './redis.js';
-import { logger } from '../logger.js';
+import { type Job, Queue, Worker } from 'bullmq';
 import {
-  runSwarmScheduler,
   enabledOrganizations,
+  runSwarmScheduler,
 } from '../../features/intelligence/services/swarmScheduler.service.js';
-import { registerQueueForMetrics, recordQueueJobCompleted } from './metrics.js';
-import { recordDeadLetter, isFinalAttempt } from './deadLetter.js';
+import { logger } from '../logger.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
+import { connection } from './redis.js';
 
 export const SWARM_SCHEDULER_QUEUE_NAME = 'swarm-scheduler';
 

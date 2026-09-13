@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
 import { FileText, Plus, Search, WifiOff } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { EmptyState } from '../../../components/ui/EmptyState';
-import { clientLogger } from '../../../lib/clientLogger';
 import { useAuth } from '../../../contexts/AuthContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { clientLogger } from '../../../lib/clientLogger';
 import { crm360Api } from '../crm360.api';
 import type { CrmCommercialDocument } from '../crm360.types';
 import { PropostaDetail } from './PropostaDetail';

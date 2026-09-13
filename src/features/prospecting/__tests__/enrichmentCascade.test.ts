@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { runEnrichmentCascade } from '@/features/prospecting/services/enrichmentCascade.service';
-import { AppError } from '@/shared/middlewares/errorHandler';
-import { prisma } from '@/lib/prisma';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   enrichOrganizationByDomain,
   enrichOrganizationWithContacts,
 } from '@/features/prospecting/services/apollo.service';
+import { runEnrichmentCascade } from '@/features/prospecting/services/enrichmentCascade.service';
 import {
   findEmailViaHunter,
   findPeopleViaDomainSearch,
 } from '@/features/prospecting/services/hunter.service';
 import { searchGooglePlaceDetailed } from '@/features/prospecting/services/places.service';
+import { prisma } from '@/lib/prisma';
+import { AppError } from '@/shared/middlewares/errorHandler';
 
 // Onda 2 (05) — critério "provider com erro silencioso": este arquivo era um placeholder que
 // nunca chamava `runEnrichmentCascade` de verdade (só afirmava fatos triviais sobre um objeto

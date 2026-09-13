@@ -1,11 +1,11 @@
-import { useState, type FormEvent } from 'react';
 import { Bug } from 'lucide-react';
-import { Dialog } from './Dialog';
-import { Button } from './Button';
+import { type FormEvent, useState } from 'react';
+import { type BugReportSeverity, bugReportApi } from '../../features/bug-reports/bugReport.api';
 import { useActivePlaybook } from '../../hooks/useActivePlaybook';
 import { useFeatureFlag } from '../../hooks/useFeatureFlags';
-import { bugReportApi, type BugReportSeverity } from '../../features/bug-reports/bugReport.api';
 import { toast } from '../../lib/toast';
+import { Button } from './Button';
+import { Dialog } from './Dialog';
 
 const SEVERITY_OPTIONS: Array<{ value: BugReportSeverity; label: string }> = [
   { value: 'LOW', label: 'Baixa — incômodo visual, não trava o trabalho' },

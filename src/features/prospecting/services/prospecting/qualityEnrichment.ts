@@ -1,9 +1,9 @@
 import { logger } from '../../../../lib/logger';
-import { discoverCnpjByName } from '../cnpj.util';
-import { enrichOrganizationWithContacts } from '../apollo.service';
-import { searchCompanyNews } from '../news.service.js';
-import { findCompanyDomain } from '../../utils/domain.js';
 import { validContactEmails } from '../../../../shared/utils/contact-links';
+import { findCompanyDomain } from '../../utils/domain.js';
+import { enrichOrganizationWithContacts } from '../apollo.service';
+import { discoverCnpjByName } from '../cnpj.util';
+import { searchCompanyNews } from '../news.service.js';
 import type { SearchExecutionTracker } from '../searchExecution.service.js';
 import type { ProspectCandidate } from './types.js';
 

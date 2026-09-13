@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Mic, Sparkles, Volume2, Command, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useActivePlaybook } from '../../hooks/useActivePlaybook';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, Command, Mic, Sparkles, Volume2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { playbookInfo } from '../../config/playbooks';
-import { navigationBus } from '../../lib/navigationBus';
-import { voiceCommandBus } from '../../lib/voiceCommandBus';
+import { useActivePlaybook } from '../../hooks/useActivePlaybook';
 import { clientLogger } from '../../lib/clientLogger';
+import { navigationBus } from '../../lib/navigationBus';
 import { toast } from '../../lib/toast';
+import { voiceCommandBus } from '../../lib/voiceCommandBus';
 
 // SpeechRecognitionLike / Window.SpeechRecognition são tipos ambient globais definidos em
 // src/types/speech-recognition.d.ts (Web Speech API não faz parte da lib "DOM" do TypeScript).

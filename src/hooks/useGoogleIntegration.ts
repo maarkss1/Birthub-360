@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from '../lib/toast';
 import { clientLogger } from '../lib/clientLogger';
+import { toast } from '../lib/toast';
 
 interface UpcomingEvent {
   id: string;

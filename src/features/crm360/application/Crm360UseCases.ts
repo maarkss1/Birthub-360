@@ -1,4 +1,3 @@
-import type { ICrm360Repository } from '../domain/ICrm360Repository.js';
 import type {
   CrmDealItemInput,
   CrmDocumentInput,
@@ -6,6 +5,7 @@ import type {
   CrmDocumentUpdateInput,
   CrmProductInput,
 } from '../crm360.schema.js';
+import type { ICrm360Repository } from '../domain/ICrm360Repository.js';
 
 export class Crm360UseCases {
   constructor(private crm360Repository: ICrm360Repository) {}

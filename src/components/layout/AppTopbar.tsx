@@ -1,13 +1,13 @@
+import { ArrowLeft, Bell, LogOut, Menu, Moon, Search, Sun, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, Sun, Moon, Menu, LogOut, Volume2, VolumeX, ArrowLeft } from 'lucide-react';
-import { type TabType, TAB_META } from './tabMeta';
-import { useLiveClock } from '../../hooks/useLiveClock';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
-import { OPEN_COMMAND_PALETTE_EVENT } from '../../lib/paletteIntent';
 import { notificationsApi } from '../../features/notifications/notifications.api';
+import { useLiveClock } from '../../hooks/useLiveClock';
+import { OPEN_COMMAND_PALETTE_EVENT } from '../../lib/paletteIntent';
 import { SoundFX } from '../../lib/soundEffects';
+import { TAB_META, type TabType } from './tabMeta';
 
 interface AppTopbarProps {
   activeTab: TabType;

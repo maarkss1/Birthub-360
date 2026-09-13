@@ -5,7 +5,7 @@
 // arquivo (dentro de `prospecting/`) violaria `no-cross-feature-imports`
 // (.dependency-cruiser.cjs). Reexportado aqui para não quebrar os imports já existentes que
 // apontam para `prospecting/services/cnpj.util`.
-export { sanitizeCnpj, formatCnpj, isValidCnpj, toDeterministicCnpj } from '../../../lib/cnpj.js';
+export { formatCnpj, isValidCnpj, sanitizeCnpj, toDeterministicCnpj } from '../../../lib/cnpj.js';
 
 import { isValidCnpj } from '../../../lib/cnpj.js';
 import { fetchWithTimeout } from '../../../lib/http.js';

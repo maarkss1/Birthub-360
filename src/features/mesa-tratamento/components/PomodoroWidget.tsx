@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { Pause, Play, RotateCcw, Timer } from 'lucide-react';
-import { usePomodoro } from '../hooks/usePomodoro';
+import { useEffect } from 'react';
 import { voiceCommandBus } from '../../../lib/voiceCommandBus';
+import { usePomodoro } from '../hooks/usePomodoro';
 
 const VOICE_OWNER_ID = 'mesa-tratamento:pomodoro';
 

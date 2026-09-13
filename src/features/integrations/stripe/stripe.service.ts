@@ -1,7 +1,7 @@
-import { prisma } from '../../../lib/prisma.js';
-import { logger } from '../../../lib/logger.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { fetchWithTimeout } from '../../../lib/http.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 // api.stripe.com é destino FIXO do próprio código (não uma URL de tenant) — usa fetchWithTimeout
 // com allowlist (src/lib/http.ts), não o guard de SSRF de URL de usuário/tenant
