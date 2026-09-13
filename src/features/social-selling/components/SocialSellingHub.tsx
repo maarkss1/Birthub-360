@@ -2,27 +2,35 @@ import { useState } from 'react';
 import {
   Share2,
   ExternalLink,
-  FileText,
-  Download,
   Layers,
   Search,
   Copy,
   Check,
   Sparkles,
   Target,
-  Award,
 } from 'lucide-react';
 import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader';
+import { BRAND } from '../../../config/brand';
 
 export function SocialSellingHub() {
-  const [activeSubTab, setActiveSubTab] = useState<
-    'motor' | 'pipeline' | 'linkedin' | 'posts' | 'materiais'
-  >('motor');
+  const [activeSubTab, setActiveSubTab] = useState<'motor' | 'pipeline' | 'linkedin' | 'posts'>(
+    'motor',
+  );
   const [iframeKey, setIframeKey] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedPostIndex, setCopiedPostIndex] = useState<number | null>(null);
 
+  // Nota (09/2026, pedido explícito do usuário): os 3 arquivos HTML abaixo (public/tools/social-selling/)
+  // são acervo legado (ver CLAUDE.md §13, "public/tools/ são aplicações legadas embutidas por
+  // iframe") com conteúdo interno real ainda amarrado à Atlas GR — não só o nome do arquivo: o
+  // "Motor" tem uma seção inteira de diagnóstico de perfil LinkedIn escrita para o vertical de
+  // logística/gestão de risco (GR), e o "Pipeline"/"LinkedIn Kit" carregam a logomarca Atlas GR
+  // embutida (SVG) e copy de campanha específica de "GR/logística". Renomear só o arquivo sem
+  // reescrever esse conteúdo interno seria cosmético, não uma debrandização real — por isso os
+  // caminhos abaixo continuam apontando pros arquivos como estão. Rótulos visíveis nesta tela
+  // (abas, cabeçalhos) já não mencionam Atlas GR; o conteúdo interno dos 3 HTMLs em si é um
+  // trabalho de conteúdo maior, fora do escopo desta rerotulagem — ver nota no relatório da tarefa.
   const subTabs = [
     {
       id: 'motor',
@@ -40,39 +48,44 @@ export function SocialSellingHub() {
       path: '/tools/social-selling/AtlasGR Kit Campanha LinkedIn Completo.html',
     },
     { id: 'posts', label: 'Posts Semanais (1-5)' },
-    { id: 'materiais', label: 'Manual & Apresentação' },
   ] as const;
 
+  // Copy regeneralizada (09/2026, pedido explícito do usuário) — os 5 posts abaixo eram escritos
+  // especificamente para o vertical de gestão de risco/seguro de transporte de carga da Atlas GR
+  // (sinistro, transportadora, score de motoristas). O ICP declarado do produto hoje é "qualquer
+  // empresa com área comercial" (src/config/brand.ts) — a estrutura de 5 semanas (maturidade
+  // operacional → tecnologia → performance → prevenção → processo escalável) foi preservada, só o
+  // vocabulário do vertical foi trocado por linguagem comercial genérica.
   const weeklyPostsData = [
     {
       semana: 'Semana 1',
       tema: 'Operação reativa vs. governável',
-      desc: 'Conceito chave sobre maturidade em Gerenciamento de Risco (GR).',
-      copy: 'Você sabia que 74% dos sinistros no transporte de carga ocorrem em operações que operam no modelo reativo? Aqui, transformamos o risco em governança preditiva. Conheça a diferença entre agir depois do sinistro e antecipar a ameaça.',
+      desc: 'Conceito chave sobre maturidade em gestão comercial.',
+      copy: 'Você sabia que grande parte das oportunidades perdidas acontece em operações comerciais que trabalham no modo reativo? Aqui, transformamos a gestão do pipeline em governança preditiva. Conheça a diferença entre agir depois que o negócio esfria e antecipar o próximo passo certo.',
     },
     {
       semana: 'Semana 2',
       tema: 'Tecnologia útil vs. cosmética',
-      desc: 'Como identificar soluções reais e ferramentas eficientes no mercado de GR.',
-      copy: 'Nem todo dashboard é tecnologia útil. Muitas soluções entregam gráficos bonitos mas falham no momento crítico da tomada de decisão. Nossa tecnologia de GR foca em resposta imediata, integração de telemetria e validação cadastral rigorosa.',
+      desc: 'Como identificar soluções reais e ferramentas eficientes para times comerciais.',
+      copy: 'Nem todo dashboard é tecnologia útil. Muitas soluções entregam gráficos bonitos mas falham no momento crítico da tomada de decisão. Nossa tecnologia de vendas foca em resposta imediata, integração de dados do cliente e qualificação rigorosa de leads.',
     },
     {
       semana: 'Semana 3',
-      tema: 'Segurança como performance',
+      tema: 'Previsibilidade como performance',
       desc: 'Redução de perdas operacionais gerando margem líquida e ROI comprovado.',
-      copy: 'Segurança logística não é custo, é alavanca de margem operacional. Cada sinistro evitado é lucro preservado diretamente na DRE da transportadora. Veja como o perfil securitário e nossas torres reduzem em até 40% a sinistralidade acumulada.',
+      copy: 'Previsibilidade comercial não é custo, é alavanca de margem operacional. Cada negócio recuperado é lucro preservado diretamente na DRE da empresa. Veja como o diagnóstico de funil e nossas cadências reduzem em até 40% a perda de oportunidades no pipeline.',
     },
     {
       semana: 'Semana 4',
-      tema: 'Risco antes do sinistro',
-      desc: 'Prevenção proativa, score preditivo e auditoria cadastral de motoristas.',
-      copy: 'O gerenciamento de risco moderno começa muito antes do caminhão ligar o motor. A análise contínua de perfil de motoristas e ajudantes garante que a carga viaje apenas com profissionais qualificados e checados.',
+      tema: 'Diagnóstico antes da perda',
+      desc: 'Prevenção proativa, score preditivo e qualificação de leads.',
+      copy: 'A gestão comercial moderna começa muito antes de o negócio esfriar. A análise contínua do perfil de leads e clientes garante que o time comercial avance apenas com oportunidades qualificadas e validadas.',
     },
     {
       semana: 'Semana 5',
       tema: 'Improviso vs. processo escalável',
-      desc: 'Estruturação de processos comerciais e operacionais em Gerenciamento de Risco.',
-      copy: 'Operações logísticas que dependem de processos manuais ou improvisos não escalam. Com uma infraestrutura comercial e tecnológica integrada, sua transportadora ganha consistência, dados auditáveis e SLA garantido.',
+      desc: 'Estruturação de processos comerciais e operacionais em times de vendas.',
+      copy: 'Times comerciais que dependem de processos manuais ou improvisos não escalam. Com uma infraestrutura comercial e tecnológica integrada, sua empresa ganha consistência, dados auditáveis e previsibilidade de receita.',
     },
   ];
 
@@ -108,7 +121,7 @@ export function SocialSellingHub() {
 
       {/* KPI Cards Bar - Compacted */}
       {!isFullscreen && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
             <div className="p-1.5 bg-brand/10 text-brand rounded-lg">
               <Sparkles className="w-4 h-4" />
@@ -134,15 +147,6 @@ export function SocialSellingHub() {
             <div>
               <div className="text-[10px] font-semibold text-ink-2">Posts LinkedIn</div>
               <div className="text-xs font-bold text-ink">5 Semanas de Copys</div>
-            </div>
-          </div>
-          <div className="p-2.5 bg-surface border border-line rounded-xl flex items-center gap-2.5">
-            <div className="p-1.5 bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg">
-              <Award className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-[10px] font-semibold text-ink-2">Manual & Deck</div>
-              <div className="text-xs font-bold text-ink">Brand + PPTX</div>
             </div>
           </div>
         </div>
@@ -218,7 +222,8 @@ export function SocialSellingHub() {
                   Acervo de Posts para LinkedIn (Semanas 1 a 5)
                 </h2>
                 <p className="text-xs text-ink-2">
-                  Textos estratégicos e copys prontas para publicação e engajamento comercial em GR.
+                  Textos estratégicos e copys prontas para publicação e engajamento comercial —{' '}
+                  {BRAND.shortName}.
                 </p>
               </div>
 
@@ -275,62 +280,6 @@ export function SocialSellingHub() {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
-
-        {activeSubTab === 'materiais' && (
-          <div className="p-6 space-y-6 overflow-y-auto">
-            <div>
-              <h2 className="text-base font-bold text-ink">Materiais e Ativos Institucionais</h2>
-              <p className="text-xs text-ink-2">
-                Documentos oficiais de apresentação e guia de marca para o Social Selling.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-5 bg-soft/40 rounded-2xl border border-line space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-red-500/10 text-red-500 rounded-xl">
-                    <FileText className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-ink">Manual de Identidade Visual</h3>
-                    <p className="text-xs text-ink-2">Guia completo de aplicação da marca (PDF)</p>
-                  </div>
-                </div>
-                <a
-                  href="/tools/social-selling/Manual de Identidade Visual – Atlas_compressed (1).pdf"
-                  target="_blank"
-                  download
-                  className="w-full py-2.5 px-4 bg-brand-active text-on-brand rounded-xl text-xs font-semibold flex items-center justify-center gap-2 hover:bg-brand-hover transition-colors shadow-sm"
-                  rel="noopener"
-                >
-                  <Download className="w-4 h-4" /> Download Manual (PDF)
-                </a>
-              </div>
-
-              <div className="p-5 bg-soft/40 rounded-2xl border border-line space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl">
-                    <FileText className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-ink">Apresentação de Social Selling</h3>
-                    <p className="text-xs text-ink-2">
-                      Deck comercial oficial de Social Selling (PPTX)
-                    </p>
-                  </div>
-                </div>
-                <a
-                  href="/tools/social-selling/Social Selling Atlas.pptx"
-                  target="_blank"
-                  download
-                  className="w-full py-2.5 px-4 bg-brand-active text-on-brand rounded-xl text-xs font-semibold flex items-center justify-center gap-2 hover:bg-brand-hover transition-colors shadow-sm"
-                  rel="noopener"
-                >
-                  <Download className="w-4 h-4" /> Download Apresentação (PPTX)
-                </a>
-              </div>
             </div>
           </div>
         )}

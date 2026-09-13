@@ -131,12 +131,7 @@ async function capture() {
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: [
-          'social-selling',
-          'treinamento-atlasgr',
-          'proposta-comercial',
-          'hub-inteligencia-marketing',
-        ],
+        data: ['social-selling'],
       }),
     });
   });
