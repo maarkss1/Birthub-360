@@ -1,6 +1,5 @@
 import { env } from '../../config/env.js';
 import { generateEmbedding } from '../../lib/ai/gateway.js';
-import { fetchWithTimeout } from '../../lib/http.js';
 import { logger } from '../../lib/logger.js';
 import { withRlsContext } from '../../lib/prisma.js';
 import { toVectorLiteral } from './ingestion.service.js';
@@ -47,17 +46,6 @@ export class SearchService {
       return { hits: [], semanticAvailable: true, query: trimmed };
     }
 
-    // Tenta primeiro o Meilisearch (engine open-source ultrarrápida <10ms) se MEILISEARCH_URL estiver configurada.
-    // DEC-11: o reranking (`applyReranking` abaixo) roda só sobre o resultado do RRF de propósito
-    // — este ramo é um motor de retrieval totalmente diferente (BM25 do Meilisearch, sem RRF) que
-    // já busca exatamente `limit` resultados, não uma janela de candidatos maior para reordenar.
-    if (process.env.MEILISEARCH_URL) {
-      const meiliHits = await this.searchMeilisearch(organizationId, trimmed, limit);
-      if (meiliHits && meiliHits.length > 0) {
-        return { hits: meiliHits, semanticAvailable: true, query: trimmed };
-      }
-    }
-
     const [semanticRows, keywordRows] = await Promise.all([
       this.semanticSearch(organizationId, trimmed),
       this.keywordSearch(organizationId, trimmed),
@@ -93,59 +81,6 @@ export class SearchService {
     const remainder = fused.slice(env.KNOWLEDGE_RERANK_CANDIDATES);
     const reranked = await rerankerService.rerank(query, window, window.length);
     return [...reranked, ...remainder];
-  }
-
-  /**
-   * Busca ultrarrápida via Meilisearch (engine open-source auto-hospedável), se MEILISEARCH_URL estiver configurada.
-   */
-  private async searchMeilisearch(
-    organizationId: string,
-    query: string,
-    limit: number,
-  ): Promise<SearchHit[] | null> {
-    const meilisearchUrl = process.env.MEILISEARCH_URL;
-    if (!meilisearchUrl) return null;
-    try {
-      const apiKey = process.env.MEILISEARCH_KEY || '';
-      const res = await fetchWithTimeout(
-        `${meilisearchUrl}/indexes/knowledge_chunks/search`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-          },
-          body: JSON.stringify({ q: query, filter: `organizationId = "${organizationId}"`, limit }),
-        },
-        3_000,
-        // Host vem de env var (decisão do operador, não de um request) — validamos contra o
-        // próprio valor configurado, não uma lista fixa (instância auto-hospedada, endereço varia).
-        [new URL(meilisearchUrl).hostname],
-      );
-      if (!res.ok) return null;
-      const data = (await res.json()) as {
-        hits?: Array<{
-          chunkId?: string;
-          documentId?: string;
-          documentTitle?: string;
-          content?: string;
-          chunkIndex?: number;
-        }>;
-      };
-      if (!data.hits || data.hits.length === 0) return null;
-      return data.hits.map((h, i) => ({
-        chunkId: h.chunkId || `meili-${i}`,
-        documentId: h.documentId || `doc-${i}`,
-        documentTitle: h.documentTitle || 'Documento Meilisearch',
-        content: h.content || '',
-        chunkIndex: h.chunkIndex || 0,
-        matchedBy: ['semantic', 'keyword'],
-        similarity: 0.95 - i * 0.05,
-        score: 1 / (RRF_K + i + 1),
-      }));
-    } catch {
-      return null;
-    }
   }
 
   /**
