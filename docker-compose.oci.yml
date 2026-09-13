@@ -13,16 +13,20 @@
 # Nunca suba `redis`/`worker` ao lado de outro processo que também consuma as mesmas filas
 # BullMQ — duplicar consumers reprocessa jobs (ver ADR-004 e docs/ADR/ADR-003, seção A).
 #
-# ACH-10-01 (auditoria de release-readiness): este stack propositalmente NÃO sobe
-# Prometheus/Grafana/Loki para a instância real. Decisão de escopo MVP, não um esquecimento — ver
-# `docs/deploy/oracle-cloud.md` seção 11 para o detalhamento completo (inclusive a barreira técnica
-# real: o endpoint `/metrics` da aplicação exige o header `x-platform-operator-token`, que o
-# `scrape_config` nativo do Prometheus não sabe enviar sem mudança de código fora do escopo desta
-# correção) e `infrastructure/observability/RUNBOOK.md` seções 0-OCI/8 para como operar um
-# incidente sem observabilidade centralizada enquanto isso não for resolvido. Pré-requisitos já
-# válidos para quando essa lacuna for fechada (não dependem do Prometheus em si): `EXPOSE_METRICS`
-# deve ser `true` no serviço `app` para o endpoint `/metrics` existir, e `PLATFORM_OPERATOR_TOKEN`
-# deve estar configurado em `.env.production` para ele responder (fail-closed sem isso).
+# DEVOPS-003 (Onda 2, docs/audits/repository-debt-audit/agents/DEVOPS.md): Prometheus para esta
+# instância agora é OPT-IN via profile `observability` (mesmo padrão de opt-in do profile
+# `queues`), não mais "fora do MVP" — a barreira técnica antes documentada aqui (ACH-10-01: "o
+# scrape_config nativo do Prometheus não sabe enviar o header customizado
+# x-platform-operator-token") estava incompleta: o Prometheus tem um campo nativo `params` para
+# parâmetros de URL, e `requirePlatformOperator` já aceita o token via querystring
+# (?operator_token=...) — mesma trava, caminho de autenticação diferente, zero mudança de código de
+# segurança. Ver `docs/deploy/oracle-cloud.md` seção 11 (revisada nesta onda) para o detalhamento e
+# `infrastructure/observability/RUNBOOK.md` para como operar com essa métrica agora disponível.
+# Para habilitar: `ENABLE_OBSERVABILITY=true` em `.env.production` antes de rodar
+# `scripts/deploy-oci.sh` (gera PLATFORM_OPERATOR_TOKEN se ainda não existir, liga EXPOSE_METRICS e
+# sobe o profile `observability` — ver o próprio script). Sem essa variável no arquivo, o
+# comportamento é idêntico a antes desta correção (nenhum Prometheus sobe, nenhum segredo novo é
+# gerado).
 
 services:
   app:
@@ -158,6 +162,31 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  # Métricas/health centralizados da instância real — só sobe com `--profile observability`
+  # (DEVOPS-003, Onda 2). Scrape roda inteiramente na rede interna do Compose (alvo `app:3000`,
+  # nunca via domínio público/Caddy). Config real é gerada por scripts/deploy-oci.sh a partir de
+  # infrastructure/observability/prometheus.oci.yml.tpl (nunca versionada com o token real).
+  prometheus:
+    profiles: ['observability']
+    image: prom/prometheus:v3.5.0
+    container_name: birthhub_prometheus
+    restart: unless-stopped
+    command: ['--config.file=/etc/prometheus/prometheus.yml']
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - ./infrastructure/observability/prometheus.oci.generated.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infrastructure/observability/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
+      - oci_prometheus_data:/prometheus
+    # Loopback de propósito (mesmo padrão de app/redis acima) — um operador acessa via túnel SSH
+    # (`ssh -L 9090:127.0.0.1:9090 ...`) até existir uma rota autenticada via Caddy, fora do escopo
+    # desta correção.
+    ports:
+      - '127.0.0.1:9090:9090'
+    security_opt:
+      - no-new-privileges:true
+
   caddy:
     image: caddy:2-alpine
     container_name: birthhub_caddy
@@ -182,3 +211,4 @@ volumes:
   oci_redisdata:
   oci_caddy_data:
   oci_caddy_config:
+  oci_prometheus_data:

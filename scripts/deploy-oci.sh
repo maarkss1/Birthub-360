@@ -277,6 +277,29 @@ else
     echo "    docs/deploy/oracle-cloud.md para como habilitar quando uma jornada real depender disso."
 fi
 
+# 2.3 Observabilidade (Prometheus) — OFF por padrão, mesmo padrão de opt-in de ENABLE_QUEUES: lido
+# de .env.production (não de uma variável de shell passada uma única vez), para que redeploys
+# futuros continuem subindo o profile sem o operador precisar lembrar de repassar a flag toda vez
+# (DEVOPS-003, Onda 2: docs/deploy/oracle-cloud.md seção 11). Sem ENABLE_OBSERVABILITY=true no
+# .env.production, o comportamento é idêntico a antes desta correção: nenhum segredo novo é
+# gerado, EXPOSE_METRICS não é alterado, nenhum container de Prometheus sobe.
+PROMETHEUS_TPL="infrastructure/observability/prometheus.oci.yml.tpl"
+PROMETHEUS_GENERATED="infrastructure/observability/prometheus.oci.generated.yml"
+if [ "$(current_value "ENABLE_OBSERVABILITY")" = "true" ]; then
+    ensure_hex_secret "PLATFORM_OPERATOR_TOKEN" 32
+    set_env_value "EXPOSE_METRICS" "true"
+    COMPOSE_PROFILE_ARGS+=(--profile observability)
+    # Nunca versionado (ver .gitignore) — regenerado a cada deploy a partir do template, sempre com
+    # o token atual de .env.production.
+    sed "s|__PLATFORM_OPERATOR_TOKEN__|$(current_value "PLATFORM_OPERATOR_TOKEN")|" \
+        "$PROMETHEUS_TPL" > "$PROMETHEUS_GENERATED"
+    chmod 600 "$PROMETHEUS_GENERATED" 2>/dev/null || true
+    echo "📈 ENABLE_OBSERVABILITY=true — subindo Prometheus (profile 'observability'), scrape via rede interna do Compose."
+else
+    echo "ℹ️  ENABLE_OBSERVABILITY=false (padrão) — Prometheus NÃO será iniciado. Ver"
+    echo "    docs/deploy/oracle-cloud.md seção 11 para como habilitar."
+fi
+
 # Valida a interpolação antes de iniciar qualquer container.
 echo "🔎 3. Validando configuração do Docker Compose..."
 $DOCKER_COMPOSE_CMD --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "${COMPOSE_PROFILE_ARGS[@]}" config --quiet
