@@ -1,3 +1,5 @@
+import { env } from '../../../config/env.js';
+import { AuditService } from '../../../lib/audit/audit.service.js';
 import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
@@ -31,12 +33,26 @@ export interface StripeConnectionSummary {
   label: string;
   secretKeyLast4: string;
   createdAt: Date;
+  /** Endpoint que esta organização deve cadastrar como webhook no Dashboard da Stripe
+   * (Developers > Webhooks > Add endpoint) — ver BILLING-007. */
+  webhookReceiverUrl: string;
+  /** Nunca o valor em si — só se um `webhookSecret` já foi colado (ver setStripeWebhookSecret). */
+  hasWebhookSecret: boolean;
+}
+
+// Mesma variável já usada pela URL de webhook do Bitrix24 (ver connections.ts) — o servidor não
+// sabe seu próprio domínio público (proxy reverso/Render), então sem isto a URL mostrada na tela
+// seria sempre um caminho relativo/localhost, inútil pra colar no Dashboard da Stripe.
+function buildWebhookReceiverUrl(connectionId: string): string {
+  const base = (env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
+  return `${base}/api/integrations/stripe/webhook/${connectionId}`;
 }
 
 function toSummary(conn: {
   id: string;
   label: string;
   secretKey: string;
+  webhookSecret: string | null;
   createdAt: Date;
 }): StripeConnectionSummary {
   return {
@@ -44,6 +60,8 @@ function toSummary(conn: {
     label: conn.label,
     secretKeyLast4: conn.secretKey.slice(-4),
     createdAt: conn.createdAt,
+    webhookReceiverUrl: buildWebhookReceiverUrl(conn.id),
+    hasWebhookSecret: Boolean(conn.webhookSecret),
   };
 }
 
@@ -179,6 +197,51 @@ export async function disconnectStripe(
 ): Promise<void> {
   await prisma.stripeConnection.deleteMany({ where: { id: connectionId, organizationId } });
   logger.info({ organizationId, connectionId }, '[stripe] Conexão Stripe removida');
+}
+
+/**
+ * Grava (ou substitui) o segredo de assinatura do webhook de ENTRADA (BILLING-007) — diferente de
+ * regenerateWebhookSecret do Bitrix, este valor NÃO é gerado por nós: a pessoa cria o endpoint no
+ * Dashboard da Stripe apontando para `webhookReceiverUrl` (ver toSummary/connectStripe acima) e
+ * cola aqui o `whsec_...` que a própria Stripe gera na hora. Comparado contra o header
+ * `Stripe-Signature` de cada entrega (ver stripe.webhook.ts) antes de aceitar qualquer payload.
+ */
+export async function setStripeWebhookSecret(
+  organizationId: string,
+  connectionId: string,
+  rawWebhookSecret: unknown,
+): Promise<StripeConnectionSummary> {
+  const webhookSecret = typeof rawWebhookSecret === 'string' ? rawWebhookSecret.trim() : '';
+  if (!webhookSecret.startsWith('whsec_')) {
+    throw new AppError(
+      'Segredo de assinatura inválido — cole o valor "whsec_..." mostrado pela Stripe ao criar o endpoint do webhook.',
+      400,
+    );
+  }
+
+  const connection = await prisma.stripeConnection.findFirst({
+    where: { id: connectionId, organizationId },
+  });
+  if (!connection) throw new AppError('Conexão Stripe não encontrada.', 404);
+
+  const updated = await prisma.stripeConnection.update({
+    where: { id: connectionId },
+    data: { webhookSecret },
+  });
+
+  await AuditService.log({
+    action: 'UPDATE',
+    entity: 'StripeConnection',
+    entityId: connectionId,
+    tenantId: organizationId,
+    afterState: { webhookSecretConfigured: true },
+  });
+  logger.info(
+    { organizationId, connectionId },
+    '[stripe] Segredo do webhook de entrada configurado',
+  );
+
+  return toSummary(updated);
 }
 
 /** Testa a comunicação com a API do Stripe — resultado honesto (nunca sucesso fabricado), mesmo

@@ -17,6 +17,14 @@ const findFirstStripeMock = vi.fn((args: { where: { id: string; organizationId: 
       null,
   );
 });
+const updateStripeMock = vi.fn(
+  (args: { where: { id: string }; data: Record<string, unknown> }) => {
+    const idx = stripeStore.findIndex((c) => c.id === args.where.id);
+    if (idx === -1) return Promise.resolve(null);
+    stripeStore[idx] = { ...stripeStore[idx], ...args.data };
+    return Promise.resolve(stripeStore[idx]);
+  },
+);
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -25,9 +33,16 @@ vi.mock('@/lib/prisma', () => ({
       findFirst: (...args: [{ where: { id: string; organizationId: string } }]) =>
         findFirstStripeMock(...args),
       findMany: () => Promise.resolve(stripeStore),
+      update: (...args: [{ where: { id: string }; data: Record<string, unknown> }]) =>
+        updateStripeMock(...args),
       deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
     },
   },
+}));
+
+const auditLogMock = vi.fn();
+vi.mock('@/lib/audit/audit.service', () => ({
+  AuditService: { log: (...args: unknown[]) => auditLogMock(...args) },
 }));
 
 const fetchWithTimeoutMock = vi.fn();
@@ -39,6 +54,7 @@ vi.mock('@/lib/http', async (importOriginal) => ({
 import {
   connectStripe,
   createStripeCharge,
+  setStripeWebhookSecret,
   testStripeConnection,
 } from '@/features/integrations/stripe/stripe.service';
 
@@ -71,11 +87,46 @@ describe('connectStripe', () => {
     const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
 
     expect(conn.secretKeyLast4).toBe('d123');
+    // BILLING-007: toda conexão nova já expõe onde cadastrar o webhook no Dashboard da Stripe,
+    // e honestamente reporta que nenhum segredo de assinatura foi configurado ainda.
+    expect(conn.webhookReceiverUrl).toContain(`/api/integrations/stripe/webhook/${conn.id}`);
+    expect(conn.hasWebhookSecret).toBe(false);
     expect(fetchWithTimeoutMock).toHaveBeenCalledWith(
       'https://api.stripe.com/v1/balance',
       expect.objectContaining({ method: 'GET' }),
       expect.any(Number),
       ['api.stripe.com'],
+    );
+  });
+});
+
+describe('setStripeWebhookSecret — BILLING-007: segredo de assinatura do webhook de entrada', () => {
+  it('recusa um valor que não tem o formato "whsec_..." da Stripe', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+
+    await expect(setStripeWebhookSecret(ORG_ID, conn.id, 'segredo-qualquer')).rejects.toThrow(
+      /whsec_/,
+    );
+    expect(updateStripeMock).not.toHaveBeenCalled();
+  });
+
+  it('recusa quando a conexão não existe para esta organização', async () => {
+    await expect(
+      setStripeWebhookSecret(ORG_ID, 'conn-inexistente', 'whsec_abc123'),
+    ).rejects.toThrow(/não encontrada/);
+  });
+
+  it('persiste o segredo e passa a reportar hasWebhookSecret: true', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+    expect(conn.hasWebhookSecret).toBe(false);
+
+    const updated = await setStripeWebhookSecret(ORG_ID, conn.id, 'whsec_test_abc123');
+
+    expect(updated.hasWebhookSecret).toBe(true);
+    expect(auditLogMock).toHaveBeenCalledWith(
+      expect.objectContaining({ entity: 'StripeConnection', entityId: conn.id, tenantId: ORG_ID }),
     );
   });
 });
