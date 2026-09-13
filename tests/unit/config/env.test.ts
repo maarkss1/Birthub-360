@@ -25,12 +25,20 @@ function setEnv(overrides: Record<string, string | undefined>) {
   }
 }
 
-/** Base mínima que satisfaz o schema (NODE_ENV/DATABASE_URL são os únicos campos obrigatórios). */
+/**
+ * Base mínima que satisfaz o schema (NODE_ENV/DATABASE_URL são os únicos campos obrigatórios).
+ * Limpa explicitamente ALLOW_DEV_AUTH_BYPASS: o job `application gate` do CI define essa variável
+ * como `true` no próprio ambiente do workflow (ver .github/workflows/ci.yml) — sem este reset, os
+ * cenários "NÃO encerra o processo" abaixo herdam esse `true` de `ORIGINAL_ENV` e disparam a trava
+ * de ALLOW_DEV_AUTH_BYPASS (já existente, correta) por um motivo alheio ao que o teste está
+ * verificando, quebrando só em CI e nunca localmente.
+ */
 async function loadEnvModule(overrides: Record<string, string | undefined>) {
   vi.resetModules();
   setEnv({
     NODE_ENV: 'production',
     DATABASE_URL: 'postgresql://user:pass@localhost:5432/db',
+    ALLOW_DEV_AUTH_BYPASS: undefined,
     ...overrides,
   });
   return import('../../../src/config/env.js');
