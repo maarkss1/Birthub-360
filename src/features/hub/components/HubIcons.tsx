@@ -77,78 +77,12 @@ export const HubIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> =
       </g>
     </svg>
   ),
-  treinamento: (props) => (
-    <svg width="44" height="44" viewBox="0 0 50 50" fill="none" {...props}>
-      <path
-        d="M25 4L9 10v14c0 11.2 6.8 21.8 16 25.5 9.2-3.7 16-14.3 16-25.5V10L25 4z"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        fill="currentColor"
-        fillOpacity=".12"
-      />
-      <path d="M25 14l11 5-11 5-11-5 11-5z" fill="currentColor" />
-      <path
-        d="M18 22v6c0 3.8 3.2 7 7 7s7-3.2 7-7v-6"
-        stroke="currentColor"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path d="M36 19v8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-    </svg>
-  ),
-  proposta: (props) => (
-    <svg width="42" height="42" viewBox="0 0 48 48" fill="none" {...props}>
-      <path
-        d="M12 4h18l8 8v30a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2Z"
-        fill="currentColor"
-        opacity=".12"
-      />
-      <path d="M30 4v8h8" stroke="currentColor" strokeWidth="2" fill="none" />
-      <path
-        d="M16 20h16M16 25h11"
-        stroke="currentColor"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        opacity=".65"
-      />
-      <path
-        d="M14 36v-4h7v4h8v-3.5h3l3 3.5v4h-2a2 2 0 11-4 0h-7a2 2 0 11-4 0h-4z"
-        fill="currentColor"
-        opacity=".9"
-      />
-      <circle cx="19" cy="40" r="1.6" fill="var(--surface)" />
-      <circle cx="30" cy="40" r="1.6" fill="var(--surface)" />
-    </svg>
-  ),
-  'hub-mkt': (props) => (
-    <svg width="42" height="42" viewBox="0 0 48 48" fill="none" {...props}>
-      <path
-        d="M6 40h36"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        opacity=".4"
-      />
-      <path
-        d="M8 34l9-12 8 7 11-13"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <circle cx="36" cy="14" r="3.2" fill="currentColor" />
-      <path
-        d="M31 10a7 7 0 0110 0M28 7a12 12 0 0116 0"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity=".5"
-      />
-      <circle cx="17" cy="22" r="2" fill="var(--brand)" />
-    </svg>
-  ),
+  // Nota (09/2026): existiam aqui ícones dedicados às chaves 'treinamento'/'proposta'/'hub-mkt' —
+  // nunca correspondiam a nenhum `ModuleKey` real (que sempre usaram o nome completo, ex.
+  // 'treinamento-atlasgr'), então já eram código morto (HubScreen.tsx usa `HubIcons[mod.key]` com
+  // o moduleKey exato do catálogo). Removidos junto com a aposentadoria dos módulos que
+  // pretendiam ilustrar (treinamento comercial, proposta comercial, hub de inteligência/mkt —
+  // conteúdo proprietário da Atlas GR, pedido explícito do usuário).
   sdr: (props) => (
     <svg width="42" height="42" viewBox="0 0 48 48" fill="none" {...props}>
       <path

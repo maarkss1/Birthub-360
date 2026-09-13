@@ -5,11 +5,19 @@
 // de `moduleKey` válido: consumido pelo backend (validação em módulo-access.service.ts) e pelo
 // frontend (matriz de administração + RequireModuleAccess/useModuleAccess). Adicionar um módulo
 // novo aqui NÃO cria a tela nem a rota sozinho — só o habilita para ser concedido no painel.
-export type ModuleKey =
-  | 'social-selling'
-  | 'treinamento-atlasgr'
-  | 'proposta-comercial'
-  | 'hub-inteligencia-marketing';
+//
+// Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+// existir"): `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing` foram
+// APOSENTADOS — eram conteúdo comercial proprietário da Atlas GR (treinamento interno, pesquisa
+// competitiva de GR, proposta nomeada a um cliente terceiro), grantável por qualquer tenant ao
+// próprio usuário apesar de não fazer sentido fora daquela operação (achado
+// docs/audits/repository-debt-audit, PRODUCT-004/DOCBRAND-002/DOCBRAND-012/FRONTEND-002/003).
+// Rotas, gate, componentes e conteúdo estático correspondentes foram removidos junto. `social-selling`
+// continua existindo — foi rerotulado para a marca Birth Hub 360 em vez de mantido como exclusivo
+// da Atlas GR. Grants antigos gravados no banco com as chaves aposentadas continuam legíveis
+// (mesma filosofia de compatibilidade de `playbooks.ts` para `atlasgr`/`totaltrac`), só não são
+// mais válidos para concessão nova — `isModuleKey()` abaixo já rejeita essas strings.
+export type ModuleKey = 'social-selling';
 
 export interface ModuleCatalogEntry {
   key: ModuleKey;
@@ -22,21 +30,6 @@ export const MODULE_CATALOG: ModuleCatalogEntry[] = [
     key: 'social-selling',
     label: 'Social Selling',
     description: 'Playbook e acervo de social selling para prospecção em redes sociais.',
-  },
-  {
-    key: 'treinamento-atlasgr',
-    label: 'Treinamento Comercial',
-    description: 'Trilha de treinamento institucional da operação comercial.',
-  },
-  {
-    key: 'proposta-comercial',
-    label: 'Proposta Comercial',
-    description: 'Modelos e acervo de propostas comerciais executivas.',
-  },
-  {
-    key: 'hub-inteligencia-marketing',
-    label: 'Hub Inteligência & Mkt',
-    description: 'Painel de inteligência de mercado e marketing.',
   },
 ];
 
