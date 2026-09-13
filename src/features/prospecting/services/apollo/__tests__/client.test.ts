@@ -60,9 +60,7 @@ describe('checkApolloConnection', () => {
 
   it('chave configurada mas inválida (401): connected false, providerMode hunter, expõe o status real', async () => {
     getPaidProspectingKeyMock.mockReturnValue('chave-invalida');
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue(new Response('Unauthorized', { status: 401 }));
+    const fetchMock = vi.fn().mockResolvedValue(new Response('Unauthorized', { status: 401 }));
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await checkApolloConnection();
@@ -88,18 +86,18 @@ describe('checkApolloConnection', () => {
 
 describe('parsePlanRestriction', () => {
   it('devolve false para qualquer status diferente de 403, mesmo com o corpo certo', () => {
-    expect(parsePlanRestriction(401, JSON.stringify({ error_code: APOLLO_PLAN_RESTRICTED_CODE }))).toBe(
-      false,
-    );
-    expect(parsePlanRestriction(500, JSON.stringify({ error_code: APOLLO_PLAN_RESTRICTED_CODE }))).toBe(
-      false,
-    );
+    expect(
+      parsePlanRestriction(401, JSON.stringify({ error_code: APOLLO_PLAN_RESTRICTED_CODE })),
+    ).toBe(false);
+    expect(
+      parsePlanRestriction(500, JSON.stringify({ error_code: APOLLO_PLAN_RESTRICTED_CODE })),
+    ).toBe(false);
   });
 
   it('403 com error_code API_INACCESSIBLE (JSON) é reconhecido como restrição de plano', () => {
-    expect(
-      parsePlanRestriction(403, JSON.stringify({ error_code: 'API_INACCESSIBLE' })),
-    ).toBe(true);
+    expect(parsePlanRestriction(403, JSON.stringify({ error_code: 'API_INACCESSIBLE' }))).toBe(
+      true,
+    );
   });
 
   it('403 com outro error_code (JSON válido) não é restrição de plano', () => {

@@ -107,7 +107,13 @@ describe('enrichOrganizationWithContacts (Apollo People Search)', () => {
     fetchWithProviderRetryMock.mockResolvedValue(apiInaccessibleResponse());
     findPeopleViaDomainSearchMock.mockResolvedValue({
       contacts: [
-        { name: 'Bruno Lima', title: 'Diretor', email: 'bruno@empresa.com.br', phone: null, linkedin_url: null },
+        {
+          name: 'Bruno Lima',
+          title: 'Diretor',
+          email: 'bruno@empresa.com.br',
+          phone: null,
+          linkedin_url: null,
+        },
       ],
     });
 
@@ -226,7 +232,13 @@ describe('searchDecisionMakersAdvanced (Apollo People Search avançado)', () => 
     fetchWithProviderRetryMock.mockResolvedValue(apiInaccessibleResponse());
     findPeopleViaDomainSearchMock.mockResolvedValue({
       contacts: [
-        { name: 'Com E-mail', title: 'CEO', email: 'ceo@empresa.com.br', phone: null, linkedin_url: null },
+        {
+          name: 'Com E-mail',
+          title: 'CEO',
+          email: 'ceo@empresa.com.br',
+          phone: null,
+          linkedin_url: null,
+        },
         { name: 'Sem E-mail', title: 'CTO', email: null, phone: null, linkedin_url: null },
       ],
     });
