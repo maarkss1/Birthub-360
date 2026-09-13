@@ -584,6 +584,13 @@ model Lead {
   probability     Int?
   expectedCloseAt DateTime?
   customFields    Json?
+  // CRM-011 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`):
+  // antes desta coluna, tags de Lead viviam só dentro de `customFields.tags` (JSON não tipado,
+  // sem índice, invisível ao Meilisearch por padrão), enquanto Company já usava uma coluna
+  // nativa `String[]`. Reconciliado seguindo o padrão de Company — ver migration
+  // `20260913000000_lead_native_tags` para o backfill dos valores que já existiam em
+  // `customFields.tags`.
+  tags            String[]         @default([])
 
   // Funil do Lead (objeto Lead x objeto Negócio do Bitrix24) e campos comerciais que só existiam
   // no Bitrix — ver migration 20260805220000_two_funnels_and_bitrix_fields para o remapeamento

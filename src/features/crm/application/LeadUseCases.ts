@@ -583,7 +583,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     const { prisma } = await import('../../../lib/prisma.js');
     const leads = await prisma.lead.findMany({
       where: { id: { in: leadIds }, organizationId, deletedAt: null },
-      select: { id: true, status: true, customFields: true, owner: true },
+      select: { id: true, status: true, tags: true, owner: true },
     });
 
     let updatedCount = 0;
@@ -603,20 +603,10 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
         if (updates.owner !== undefined) {
           dataToUpdate.owner = updates.owner;
         }
-        const customFieldsObj =
-          lead.customFields &&
-          typeof lead.customFields === 'object' &&
-          !Array.isArray(lead.customFields)
-            ? { ...(lead.customFields as Record<string, unknown>) }
-            : {};
-
         if (updates.tags) {
-          customFieldsObj.tags = updates.tags;
-          dataToUpdate.customFields = customFieldsObj;
+          dataToUpdate.tags = updates.tags;
         } else if (updates.addTags || updates.removeTags) {
-          let currentTags = Array.isArray(customFieldsObj.tags)
-            ? [...(customFieldsObj.tags as string[])]
-            : [];
+          let currentTags = Array.isArray(lead.tags) ? [...lead.tags] : [];
           if (updates.addTags) {
             for (const tag of updates.addTags) {
               if (!currentTags.includes(tag)) currentTags.push(tag);
@@ -625,8 +615,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
           if (updates.removeTags) {
             currentTags = currentTags.filter((t) => !updates.removeTags?.includes(t));
           }
-          customFieldsObj.tags = currentTags;
-          dataToUpdate.customFields = customFieldsObj;
+          dataToUpdate.tags = currentTags;
         }
 
         if (Object.keys(dataToUpdate).length > 0) {
