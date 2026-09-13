@@ -27,15 +27,15 @@ vi.mock('@/features/prospecting/services/hunter.service', () => ({
   findPeopleViaDomainSearch: (...args: unknown[]) => findPeopleViaDomainSearchMock(...args),
 }));
 
+import type { ProspectCandidate } from '@/features/prospecting/domain/prospectTypes';
 import {
+  enrichCandidatesWithDecisionMakers,
   enrichOrganizationWithContacts,
   searchDecisionMakersAdvanced,
-  enrichCandidatesWithDecisionMakers,
 } from '@/features/prospecting/services/apollo/people';
-import { resetProviderRateLimitersForTests } from '@/features/prospecting/services/providerRateLimit';
-import { resetProviderCacheForTests } from '@/features/prospecting/services/providerCache';
 import type { ApolloOrganization } from '@/features/prospecting/services/apollo/types';
-import type { ProspectCandidate } from '@/features/prospecting/domain/prospectTypes';
+import { resetProviderCacheForTests } from '@/features/prospecting/services/providerCache';
+import { resetProviderRateLimitersForTests } from '@/features/prospecting/services/providerRateLimit';
 
 function jsonResponse(status: number, body: unknown): Response {
   return {
