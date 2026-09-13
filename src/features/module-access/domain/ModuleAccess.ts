@@ -50,4 +50,10 @@ export interface ModuleAccessRepository {
   findUserId(organizationId: string, userId: string): Promise<string | null>;
   upsertGrant(input: GrantModuleAccessInput): Promise<void>;
   deleteGrant(input: RevokeModuleAccessInput): Promise<void>;
+  /**
+   * PRODUCT-004/DOCBRAND-012 (Onda 4): `Organization.hasLegacyAtlasGrModuleAccess` — só
+   * organizações com este flag podem ter/ver chaves de `LEGACY_ATLASGR_RESTRICTED_MODULE_KEYS`
+   * (hoje, o catálogo inteiro). Fail-closed: organização inexistente devolve `false`, nunca lança.
+   */
+  hasLegacyAtlasGrModuleAccess(organizationId: string): Promise<boolean>;
 }

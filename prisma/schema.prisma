@@ -801,6 +801,16 @@ model User {
 model Organization {
   id                       String                    @id @default(cuid())
   name                     String                    @unique
+  /// PRODUCT-004/DOCBRAND-012 (Onda 4, decisão do usuário): MODULE_CATALOG inteiro
+  /// (src/config/module-catalog.ts) é conteúdo proprietário da Atlas GR — não existe hoje módulo
+  /// genérico nesse catálogo. Sem este flag, qualquer ADMIN de qualquer organização deste CRM
+  /// multi-tenant conseguia conceder (ou, no caso do atalho automático de ADMIN, simplesmente
+  /// enxergar) o acervo executivo de outra empresa. `false` por padrão (fail-closed) — só marca
+  /// `true` a organização real da Atlas GR. Não expressa identidade visual/marca (isso é só CSS,
+  /// ver .claude/CLAUDE.md seção 1); é estritamente sobre elegibilidade de acesso a este catálogo
+  /// legado. Aplicado em ambos os sentidos (leitura e escrita) por
+  /// src/features/module-access/services/moduleAccess.service.ts.
+  hasLegacyAtlasGrModuleAccess Boolean                @default(false)
   users                    User[]
   companies                Company[]
   contacts                 Contact[]

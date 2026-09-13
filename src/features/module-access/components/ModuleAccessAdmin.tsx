@@ -3,7 +3,13 @@ import { AlertCircle, Check, Loader2, ShieldCheck } from 'lucide-react';
 import { moduleAccessApi, type ModuleAccessMatrixUser } from '../moduleAccess.api';
 import { invalidateModuleAccessCache } from '../../../hooks/useModuleAccess';
 import { toast } from '../../../lib/toast';
-import type { ModuleCatalogEntry } from '../../../config/module-catalog';
+import {
+  isLegacyAtlasGrRestrictedModuleKey,
+  type ModuleCatalogEntry,
+} from '../../../config/module-catalog';
+
+const RESTRICTED_MODULE_TOOLTIP =
+  'Módulo exclusivo da Atlas GR. Esta organização não está habilitada a conceder ou revogar acesso a ele.';
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: 'Administrador',
@@ -23,6 +29,7 @@ const ROLE_LABELS: Record<string, string> = {
 export function ModuleAccessAdmin() {
   const [users, setUsers] = useState<ModuleAccessMatrixUser[]>([]);
   const [modules, setModules] = useState<ModuleCatalogEntry[]>([]);
+  const [hasLegacyAtlasGrModuleAccess, setHasLegacyAtlasGrModuleAccess] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [pendingCell, setPendingCell] = useState<string | null>(null);
@@ -34,6 +41,7 @@ export function ModuleAccessAdmin() {
       const data = await moduleAccessApi.matrix();
       setUsers(data.users);
       setModules(data.modules);
+      setHasLegacyAtlasGrModuleAccess(data.hasLegacyAtlasGrModuleAccess);
     } catch (error) {
       setLoadError(error instanceof Error ? error.message : 'Falha ao carregar o painel.');
     } finally {
@@ -105,6 +113,16 @@ export function ModuleAccessAdmin() {
           </div>
         </div>
 
+        {!isLoading && !loadError && !hasLegacyAtlasGrModuleAccess && (
+          <div className="flex items-start gap-2 rounded-xl border border-line bg-surface-2/60 px-4 py-3 text-xs text-ink-2">
+            <AlertCircle size={14} className="shrink-0 mt-0.5 text-ink-2" />
+            <span>
+              Todos os módulos abaixo são conteúdo exclusivo da Atlas GR — esta organização não
+              está habilitada a concedê-los. Os toggles ficam desabilitados.
+            </span>
+          </div>
+        )}
+
         <div className="bg-surface/80 rounded-2xl border border-line overflow-hidden">
           {isLoading ? (
             <div className="p-8 flex justify-center">
@@ -150,12 +168,19 @@ export function ModuleAccessAdmin() {
                         const granted = user.grantedModules.includes(mod.key);
                         const cellId = `${user.id}:${mod.key}`;
                         const inputId = `module-access-${cellId}`;
+                        const isRestrictedAndIneligible =
+                          isLegacyAtlasGrRestrictedModuleKey(mod.key) &&
+                          !hasLegacyAtlasGrModuleAccess;
                         return (
                           <td key={mod.key} className="px-4 py-3 text-center">
                             <label htmlFor={inputId} className="sr-only">
                               {granted ? 'Revogar' : 'Conceder'} acesso de {user.name} a {mod.label}
+                              {isRestrictedAndIneligible ? ` (${RESTRICTED_MODULE_TOOLTIP})` : ''}
                             </label>
-                            <div className="flex items-center justify-center">
+                            <div
+                              className="flex items-center justify-center"
+                              title={isRestrictedAndIneligible ? RESTRICTED_MODULE_TOOLTIP : undefined}
+                            >
                               {pendingCell === cellId ? (
                                 <Loader2 size={16} className="animate-spin text-ink-2" />
                               ) : (
@@ -163,8 +188,10 @@ export function ModuleAccessAdmin() {
                                   id={inputId}
                                   type="checkbox"
                                   checked={granted}
+                                  disabled={isRestrictedAndIneligible}
+                                  aria-disabled={isRestrictedAndIneligible}
                                   onChange={(e) => toggle(user, mod.key, e.target.checked)}
-                                  className="h-4 w-4 rounded border-line text-brand-ink focus-visible:ring-2 focus-visible:ring-brand cursor-pointer"
+                                  className="h-4 w-4 rounded border-line text-brand-ink focus-visible:ring-2 focus-visible:ring-brand cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                                 />
                               )}
                             </div>

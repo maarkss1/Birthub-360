@@ -1,4 +1,8 @@
-import { MODULE_KEYS, isModuleKey } from '../../../config/module-catalog.js';
+import {
+  MODULE_KEYS,
+  isModuleKey,
+  isLegacyAtlasGrRestrictedModuleKey,
+} from '../../../config/module-catalog.js';
 import type {
   GrantModuleAccessInput,
   ModuleAccessMatrixUser,
@@ -59,19 +63,52 @@ export class ModuleAccessService {
    *  (achado real: o Hub aprovado pelo usuário sempre mostrou os módulos executivos visíveis; um
    *  Administrador nunca deveria precisar que outro ADMIN conceda acesso a ele mesmo). Os demais
    *  papéis continuam exigindo concessão explícita — o sistema de concessão por usuário não foi
-   *  removido, só ganhou este atalho para quem já administra a própria organização. */
+   *  removido, só ganhou este atalho para quem já administra a própria organização.
+   *
+   *  PRODUCT-004/DOCBRAND-012 (Onda 4): antes de devolver qualquer chave de
+   *  `LEGACY_ATLASGR_RESTRICTED_MODULE_KEYS` (hoje, o catálogo inteiro), confere
+   *  `Organization.hasLegacyAtlasGrModuleAccess`. Isto vale tanto para o atalho automático do
+   *  ADMIN quanto para concessões (`ModuleAccessGrant`) já existentes — defesa em profundidade
+   *  contra um grant legado numa organização que nunca deveria tê-lo tido (ou que perdeu o flag
+   *  depois). Fail-closed: organização não encontrada devolve `false` (ver
+   *  `PrismaModuleAccessRepository.hasLegacyAtlasGrModuleAccess`), então nenhuma chave restrita é
+   *  devolvida nesse caso. */
   async listGrantedModulesForUser(
     organizationId: string,
     userId: string,
     role: string,
   ): Promise<string[]> {
-    if (role === 'ADMIN') return [...MODULE_KEYS];
-    return this.repository.listUserGrantedModuleKeys(organizationId, userId);
+    const eligibleForRestricted = await this.repository.hasLegacyAtlasGrModuleAccess(organizationId);
+    const allowedRestrictedFilter = (key: string) =>
+      eligibleForRestricted || !isLegacyAtlasGrRestrictedModuleKey(key);
+
+    if (role === 'ADMIN') return MODULE_KEYS.filter(allowedRestrictedFilter);
+
+    const granted = await this.repository.listUserGrantedModuleKeys(organizationId, userId);
+    return granted.filter(allowedRestrictedFilter);
+  }
+
+  /** Elegibilidade da organização para o catálogo legado da Atlas GR — consumido pela tela de
+   *  admin (`ModuleAccessAdmin.tsx`) para desabilitar, com motivo explícito, os toggles de
+   *  módulos restritos numa organização não habilitada, em vez de deixar o ADMIN clicar e só
+   *  descobrir o bloqueio depois (ver `grantModuleAccess`). */
+  async organizationHasLegacyAtlasGrModuleAccess(organizationId: string): Promise<boolean> {
+    return this.repository.hasLegacyAtlasGrModuleAccess(organizationId);
   }
 
   async grantModuleAccess(input: GrantModuleAccessInput): Promise<void> {
     if (!isModuleKey(input.moduleKey)) {
       throw new ModuleAccessServiceError(`Módulo inválido. Use um de: ${MODULE_KEYS.join(', ')}.`);
+    }
+
+    if (isLegacyAtlasGrRestrictedModuleKey(input.moduleKey)) {
+      const eligible = await this.repository.hasLegacyAtlasGrModuleAccess(input.organizationId);
+      if (!eligible) {
+        throw new ModuleAccessServiceError(
+          'Este módulo é exclusivo da Atlas GR. Esta organização não está habilitada a concedê-lo.',
+          403,
+        );
+      }
     }
 
     const targetId = await this.repository.findUserId(input.organizationId, input.userId);
@@ -95,6 +132,10 @@ export const moduleAccessService = new ModuleAccessService();
 // migração. Só a implementação por trás passou a vir de `ModuleAccessService`/repository.
 export function getModuleAccessMatrix(organizationId: string): Promise<ModuleAccessMatrixUser[]> {
   return moduleAccessService.getModuleAccessMatrix(organizationId);
+}
+
+export function organizationHasLegacyAtlasGrModuleAccess(organizationId: string): Promise<boolean> {
+  return moduleAccessService.organizationHasLegacyAtlasGrModuleAccess(organizationId);
 }
 
 export function listGrantedModulesForUser(

@@ -12,6 +12,10 @@ export interface ModuleAccessMatrixUser {
 export interface ModuleAccessMatrixResponse {
   users: ModuleAccessMatrixUser[];
   modules: ModuleCatalogEntry[];
+  /** PRODUCT-004/DOCBRAND-012 (Onda 4): se `false`, nenhuma chave de
+   *  `LEGACY_ATLASGR_RESTRICTED_MODULE_KEYS` (hoje, todo o catálogo) pode ser concedida nesta
+   *  organização — usado por `ModuleAccessAdmin` para desabilitar os toggles com um motivo. */
+  hasLegacyAtlasGrModuleAccess: boolean;
 }
 
 export const moduleAccessApi = {

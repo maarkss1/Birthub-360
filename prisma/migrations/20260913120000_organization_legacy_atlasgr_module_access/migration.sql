@@ -1,0 +1,26 @@
+-- PRODUCT-004/DOCBRAND-012 (Onda 4) — restringe o catálogo de módulos executivos legado
+-- (src/config/module-catalog.ts: social-selling, treinamento-atlasgr, proposta-comercial,
+-- hub-inteligencia-marketing), hoje 100% conteúdo proprietário da Atlas GR, para que só a
+-- organização real da Atlas GR possa ter esses módulos concedidos/visíveis neste CRM
+-- multi-tenant.
+--
+-- SEM backfill de dado nesta migration: o ambiente em que esta migration foi escrita não tinha
+-- acesso a um banco de produção/homologação real para identificar com segurança qual organização
+-- já usa este catálogo legitimamente (o único Postgres alcançável era o container de
+-- desenvolvimento/teste local, sem a tabela "Organization" populada). Todas as organizações saem
+-- com `false` (fail-closed, mesmo comportamento que já protege o resto deste gate — ver
+-- moduleAccess.service.ts). Consequência real: qualquer organização que hoje já possua
+-- ModuleAccessGrant para uma dessas 4 chaves (esperado: só a própria Atlas GR) PERDE acesso até
+-- que um humano rode, contra o banco real, antes de aplicar esta migration em produção:
+--
+--   UPDATE "Organization" SET "hasLegacyAtlasGrModuleAccess" = true WHERE id = '<id da Atlas GR>';
+--
+-- (ou, para descobrir automaticamente quem já tem grant hoje:
+--   UPDATE "Organization" SET "hasLegacyAtlasGrModuleAccess" = true
+--   WHERE id IN (SELECT DISTINCT "organizationId" FROM "ModuleAccessGrant"
+--                WHERE "moduleKey" IN ('social-selling', 'treinamento-atlasgr',
+--                                      'proposta-comercial', 'hub-inteligencia-marketing'));
+-- )
+--
+-- Ver relato desta sessão para o pedido explícito de confirmação humana antes do merge.
+ALTER TABLE "Organization" ADD COLUMN "hasLegacyAtlasGrModuleAccess" BOOLEAN NOT NULL DEFAULT false;

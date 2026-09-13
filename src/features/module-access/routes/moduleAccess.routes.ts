@@ -8,6 +8,7 @@ import {
   listGrantedModulesForUser,
   grantModuleAccess,
   revokeModuleAccess,
+  organizationHasLegacyAtlasGrModuleAccess,
   ModuleAccessServiceError,
 } from '../services/moduleAccess.service.js';
 
@@ -34,8 +35,15 @@ router.use(requireRole(['ADMIN']));
 
 router.get('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const users = await getModuleAccessMatrix((req as AuthRequest).user.organizationId);
-    res.json({ success: true, data: { users, modules: MODULE_CATALOG } });
+    const organizationId = (req as AuthRequest).user.organizationId;
+    const [users, hasLegacyAtlasGrModuleAccess] = await Promise.all([
+      getModuleAccessMatrix(organizationId),
+      organizationHasLegacyAtlasGrModuleAccess(organizationId),
+    ]);
+    res.json({
+      success: true,
+      data: { users, modules: MODULE_CATALOG, hasLegacyAtlasGrModuleAccess },
+    });
   } catch (error) {
     next(error);
   }

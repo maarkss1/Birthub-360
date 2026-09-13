@@ -19,6 +19,14 @@ const ORG = 'org-1';
 class InMemoryModuleAccessRepository implements ModuleAccessRepository {
   users: ModuleAccessUserRow[] = [];
   grants: ModuleAccessGrantRow[] = [];
+  // Default `true` para não quebrar os testes pré-existentes desta suíte, que não são sobre a
+  // restrição PRODUCT-004/DOCBRAND-012 — os testes dessa restrição abaixo sobrescrevem
+  // explicitamente para `false`.
+  legacyAtlasGrEligible = true;
+
+  async hasLegacyAtlasGrModuleAccess(_organizationId: string): Promise<boolean> {
+    return this.legacyAtlasGrEligible;
+  }
 
   async listOrganizationUsers(_organizationId: string): Promise<ModuleAccessUserRow[]> {
     return this.users;
@@ -137,5 +145,73 @@ describe('ModuleAccessService', () => {
     });
 
     expect(repo.grants).toEqual([{ userId: 'u1', moduleKey: 'proposta-comercial' }]);
+  });
+
+  // PRODUCT-004/DOCBRAND-012 (Onda 4): as 4 chaves de MODULE_CATALOG são conteúdo proprietário da
+  // Atlas GR — só uma organização com `hasLegacyAtlasGrModuleAccess = true` pode concedê-las ou
+  // enxergá-las (inclusive via o atalho automático de ADMIN).
+  describe('restrição de organização para o catálogo legado da Atlas GR (PRODUCT-004/DOCBRAND-012)', () => {
+    it('grantModuleAccess rejeita conceder um módulo restrito a organização não habilitada', async () => {
+      const { repo, service } = buildService();
+      repo.legacyAtlasGrEligible = false;
+
+      await expect(
+        service.grantModuleAccess({
+          organizationId: ORG,
+          userId: 'u1',
+          moduleKey: 'social-selling',
+          grantedByUserId: 'admin-1',
+        }),
+      ).rejects.toMatchObject({ statusCode: 403 });
+      expect(repo.grants).toEqual([]);
+    });
+
+    it('grantModuleAccess permite conceder um módulo restrito a organização habilitada', async () => {
+      const { repo, service } = buildService();
+      repo.legacyAtlasGrEligible = true;
+
+      await service.grantModuleAccess({
+        organizationId: ORG,
+        userId: 'u1',
+        moduleKey: 'social-selling',
+        grantedByUserId: 'admin-1',
+      });
+
+      expect(repo.grants).toEqual([{ userId: 'u1', moduleKey: 'social-selling' }]);
+    });
+
+    it('listGrantedModulesForUser não devolve MODULE_KEYS pro ADMIN de organização não habilitada', async () => {
+      const { repo, service } = buildService();
+      repo.legacyAtlasGrEligible = false;
+
+      const granted = await service.listGrantedModulesForUser(ORG, 'u1', 'ADMIN');
+
+      expect(granted).toEqual([]);
+    });
+
+    it('listGrantedModulesForUser continua devolvendo MODULE_KEYS pro ADMIN de organização habilitada', async () => {
+      const { service } = buildService();
+
+      const granted = await service.listGrantedModulesForUser(ORG, 'u1', 'ADMIN');
+
+      expect(granted.length).toBeGreaterThan(0);
+    });
+
+    it('listGrantedModulesForUser descarta, por defesa em profundidade, um grant pré-existente numa organização que perdeu a elegibilidade', async () => {
+      const { repo, service } = buildService();
+      repo.grants = [{ userId: 'u2', moduleKey: 'social-selling' }];
+      repo.legacyAtlasGrEligible = false;
+
+      const granted = await service.listGrantedModulesForUser(ORG, 'u2', 'SDR');
+
+      expect(granted).toEqual([]);
+    });
+
+    it('organizationHasLegacyAtlasGrModuleAccess repassa o valor do repositório', async () => {
+      const { repo, service } = buildService();
+      repo.legacyAtlasGrEligible = false;
+
+      expect(await service.organizationHasLegacyAtlasGrModuleAccess(ORG)).toBe(false);
+    });
   });
 });

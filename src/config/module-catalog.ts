@@ -46,6 +46,22 @@ export function isModuleKey(value: string): value is ModuleKey {
   return (MODULE_KEYS as string[]).includes(value);
 }
 
+// RESTRIÇÃO CROSS-TENANT (PRODUCT-004/DOCBRAND-012, Onda 4) — as 4 chaves acima são conteúdo
+// proprietário da Atlas GR (playbook de risco/apólice, treinamento interno, proposta de um
+// cliente nomeado, inteligência de mercado da própria operação): nenhuma é genérica o bastante
+// pra ser concedida a outra organização deste CRM multi-tenant. Por isso, hoje, TODA chave de
+// MODULE_CATALOG só pode ser concedida/enxergada por uma organização com
+// `Organization.hasLegacyAtlasGrModuleAccess = true` (enforcement nos dois sentidos — leitura e
+// escrita — em src/features/module-access/services/moduleAccess.service.ts). Ao adicionar uma 5ª
+// entrada aqui que seja de fato genérica (sem amarra à Atlas GR), o padrão é herdar a restrição —
+// remova a key de `LEGACY_ATLASGR_RESTRICTED_MODULE_KEYS` abaixo só com essa decisão deliberada,
+// não por omissão.
+export const LEGACY_ATLASGR_RESTRICTED_MODULE_KEYS: ModuleKey[] = [...MODULE_KEYS];
+
+export function isLegacyAtlasGrRestrictedModuleKey(value: string): boolean {
+  return (LEGACY_ATLASGR_RESTRICTED_MODULE_KEYS as string[]).includes(value);
+}
+
 export function moduleLabel(key: string): string {
   return MODULE_CATALOG.find((m) => m.key === key)?.label ?? key;
 }

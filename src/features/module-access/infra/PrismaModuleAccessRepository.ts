@@ -62,6 +62,15 @@ export class PrismaModuleAccessRepository implements ModuleAccessRepository {
       },
     });
   }
+
+  async hasLegacyAtlasGrModuleAccess(organizationId: string): Promise<boolean> {
+    const organization = await prisma.organization.findUnique({
+      where: { id: organizationId },
+      select: { hasLegacyAtlasGrModuleAccess: true },
+    });
+    // Fail-closed: organização não encontrada nunca deve ser tratada como elegível.
+    return organization?.hasLegacyAtlasGrModuleAccess ?? false;
+  }
 }
 
 /** Instância única, sem estado próprio além da conexão Prisma já compartilhada pelo app — mesmo padrão de `prismaOptOutRepository`. */
