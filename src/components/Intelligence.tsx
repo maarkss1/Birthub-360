@@ -1,42 +1,42 @@
-import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import {
-  Target,
-  AlertCircle,
-  RefreshCw,
-  Copy,
-  CheckCircle2,
-  Mail,
-  UserCheck,
-  ShieldAlert,
-  Phone,
-  MessageCircle,
-  PhoneMissed,
-  Calculator,
-  Search,
-  X,
-  Building2,
-  User,
-  Swords,
-  Sparkles,
-  Zap,
-  ChevronDown,
-  Check,
-  Bot,
   Activity,
+  AlertCircle,
+  Bot,
   BrainCircuit,
+  Building2,
+  Calculator,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Copy,
   Fingerprint,
+  Mail,
+  MessageCircle,
+  Phone,
+  PhoneMissed,
+  RefreshCw,
+  Search,
+  ShieldAlert,
+  Sparkles,
+  Swords,
+  Target,
+  User,
+  UserCheck,
   Workflow,
+  X,
+  Zap,
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from './ui/icons/LinkedinIcon';
-import { api } from '../lib/api';
-import type { Lead } from '../types';
-import { PIC_OPTIONS } from '../shared/constants/icp-options';
-import { AIPendingActions } from '../features/intelligence/components/AIPendingActions';
-import { useBrandAccent } from '../hooks/useBrandAccent';
-import { useActivePlaybook } from '../hooks/useActivePlaybook';
+import { useEffect, useRef, useState } from 'react';
 import { BRAND } from '../config/brand';
+import { AIPendingActions } from '../features/intelligence/components/AIPendingActions';
+import { useActivePlaybook } from '../hooks/useActivePlaybook';
+import { useBrandAccent } from '../hooks/useBrandAccent';
+import { api } from '../lib/api';
 import { clientLogger } from '../lib/clientLogger';
+import { PIC_OPTIONS } from '../shared/constants/icp-options';
+import type { Lead } from '../types';
+import { LinkedinIcon as Linkedin } from './ui/icons/LinkedinIcon';
 
 type ToolType =
   | 'script_call'

@@ -5,7 +5,7 @@ import type {
 } from '../domain/SellerPerformance.js';
 import { prismaSellerPerformanceRepository } from '../infra/PrismaSellerPerformanceRepository.js';
 
-export type { SellerPerformancePeriod, AggregatedSellerPerformance };
+export type { AggregatedSellerPerformance, SellerPerformancePeriod };
 
 /**
  * Piloto de migração para repository (ver `docs/architecture/PRISMA-REPOSITORY-MIGRATION-GUIDE.md`):

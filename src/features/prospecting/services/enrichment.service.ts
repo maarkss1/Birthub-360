@@ -22,47 +22,48 @@
 // nenhuma rota real (só pelos próprios testes unitários), puro código morto duplicando esta
 // lógica. Se uma reescrita nesses moldes voltar a ser cogitada, trate como trabalho novo — não
 // há mais nada pra "migrar para consumir".
+
+import type { Prisma } from '@prisma/client';
+import type { PlaybookKey } from '../../../config/playbooks.js';
+import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
+import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import type { Prisma } from '@prisma/client';
-import { logger } from '../../../lib/logger.js';
-import { isValidCnpj, discoverCnpjByName, sanitizeCnpj } from './cnpj.util';
 import { IcebreakerService } from '../../intelligence/services/IcebreakerService';
-import { searchGooglePlace } from './places.service';
-import { searchNominatimPlace } from './nominatim.service';
-import { enrichOrganizationWithContacts, enrichOrganizationByDomain } from './apollo.service';
-import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
-import { searchCompanyNews, type NewsMention } from './news.service';
+import { filterNewContacts } from '../utils/contactDedupe.js';
+import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service';
+import { discoverCnpjByName, isValidCnpj, sanitizeCnpj } from './cnpj.util';
 import { checkEmailDeliverability } from './email-verification.service';
-import {
-  computeLookalikeScore,
-  type LookalikeScoreResult,
-  type LookalikeMatch,
-} from './lookalike-scoring.service';
 import { fetchCnpjData } from './enrichment/cnpjLookup.js';
 import {
-  guessDomainAndEmails,
-  extractDomainFromWebsite,
-  resolveEmailStatus,
-  guessWhatsappFromPhone,
   type DomainGuess,
+  extractDomainFromWebsite,
+  guessDomainAndEmails,
+  guessWhatsappFromPhone,
+  resolveEmailStatus,
 } from './enrichment/domainGuess.js';
 import { computeFitScore } from './enrichment/fitScore.js';
-import { filterNewContacts } from '../utils/contactDedupe.js';
-import type { PlaybookKey } from '../../../config/playbooks.js';
+import {
+  computeLookalikeScore,
+  type LookalikeMatch,
+  type LookalikeScoreResult,
+} from './lookalike-scoring.service';
+import { type NewsMention, searchCompanyNews } from './news.service';
+import { searchNominatimPlace } from './nominatim.service';
+import { searchGooglePlace } from './places.service';
 
 export {
-  fetchCnpjData,
-  fetchCepData,
-  type CnpjLookupResult,
   type CepLookupResult,
+  type CnpjLookupResult,
+  fetchCepData,
+  fetchCnpjData,
 } from './enrichment/cnpjLookup.js';
-export { guessDomainAndEmails, type DomainGuess } from './enrichment/domainGuess.js';
+export { type DomainGuess, guessDomainAndEmails } from './enrichment/domainGuess.js';
 export {
   computeFitScore,
-  type ScoreBreakdownItem,
-  type FitScoreResult,
   type FitScoreInput,
+  type FitScoreResult,
+  type ScoreBreakdownItem,
 } from './enrichment/fitScore.js';
 
 export interface EnrichCompanyOptions {
@@ -70,11 +71,12 @@ export interface EnrichCompanyOptions {
   segmentKeywords?: string[];
   fleetSizeHint?: string;
   /**
-   * Playbook comercial ativo da organização — repassado para `computeFitScore` (ACH-05-07) para
-   * que os critérios de frota/região/carga de risco/stack logístico só bonifiquem quando o
-   * playbook ativo é o de risco de carga/logística. Opcional: hoje o playbook é uma preferência
-   * resolvida no navegador (ver `useActivePlaybook.ts`), não um dado por organização persistido
-   * no backend — sem este campo, `computeFitScore` cai no padrão (mesmo comportamento de antes).
+   * Repassado para `computeFitScore`, mas não afeta mais o score (ver `fitScore.ts`). O ACH-05-07
+   * bonificava frota/região/carga de risco/stack logístico só quando o playbook ativo era o de
+   * risco de carga/logística ('atlasgr'); a unificação de playbook comercial em 'geral' (decisão
+   * do usuário, ver CLAUDE.md seção 1) removeu a única forma de saber se a organização era desse
+   * vertical, e o bônus foi removido (não substituído por "vale pra todo mundo"). Campo mantido
+   * aqui só para não quebrar os chamadores existentes.
    */
   activePlaybook?: PlaybookKey;
   /** Decisores já buscados na tela de descoberta (Apollo/Hunter) — quando presentes, evitam uma

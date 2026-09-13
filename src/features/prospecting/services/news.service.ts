@@ -1,5 +1,5 @@
-import { logger } from '../../../lib/logger';
 import { fetchWithTimeout } from '../../../lib/http.js';
+import { logger } from '../../../lib/logger';
 
 const GDELT_DOC_API = 'https://api.gdeltproject.org/api/v2/doc/doc';
 

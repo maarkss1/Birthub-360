@@ -1,37 +1,37 @@
-import { useState } from 'react';
 import {
-  TrendingUp,
+  AlertTriangle,
   Building2,
-  Users,
-  MapPin,
   Calendar,
+  CheckCircle2,
   DollarSign,
-  Wrench,
+  Globe,
+  HelpCircle,
+  IdCard,
+  Loader2,
   Mail,
+  MapPin,
   MessageCircle,
   Phone,
-  Globe,
-  Sparkles,
-  CheckCircle2,
-  Loader2,
   ShieldCheck,
+  Sparkles,
   ThumbsDown,
-  IdCard,
-  AlertTriangle,
-  HelpCircle,
+  TrendingUp,
+  Users,
+  Wrench,
 } from 'lucide-react';
+import { useState } from 'react';
 import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
-import type { FitScoreResult } from '../../services/enrichment.service';
-import type { ProspectCandidate, RequirementEvaluation } from '../../services/prospecting.service';
-import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
+import { api } from '../../../../lib/api';
 import {
   getTelephoneLink,
   getWhatsAppLink,
   validContactEmails,
 } from '../../../../shared/utils/contact-links';
-import { DecisionMakerSearch } from './DecisionMakerSearch';
 import { WhatsAppChatPanel } from '../../../integrations/whatsapp/components/WhatsAppChatPanel';
-import { api } from '../../../../lib/api';
+import type { FitScoreResult } from '../../services/enrichment.service';
+import type { ProspectCandidate, RequirementEvaluation } from '../../services/prospecting.service';
+import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
+import { DecisionMakerSearch } from './DecisionMakerSearch';
 
 interface PromoteResult {
   lead: { id: string };

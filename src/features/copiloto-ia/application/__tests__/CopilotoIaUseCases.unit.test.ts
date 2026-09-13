@@ -1,22 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { AppError } from '../../../../shared/middlewares/errorHandler';
-import { CopilotoIaUseCases } from '../CopilotoIaUseCases';
 import type {
-  CopilotoIaRepository,
-  CopilotoConversationDTO,
-  CopilotoConversationDetailDTO,
-  CopilotoConversationStatus,
-  CopilotoConsentStatus,
-  CopilotoCrmFieldSuggestionDTO,
-  CopilotoSuggestionStatus,
   ConversationStateDTO,
   CopilotoBitrixFieldMappingDTO,
-  UpsertBitrixFieldMappingInput,
-  CopilotoInsightDTO,
   CopilotoCoachingEvaluationDTO,
+  CopilotoConsentStatus,
+  CopilotoConversationDetailDTO,
+  CopilotoConversationDTO,
+  CopilotoConversationStatus,
+  CopilotoCrmFieldSuggestionDTO,
   CopilotoDealHealthSnapshotDTO,
+  CopilotoIaRepository,
+  CopilotoInsightDTO,
+  CopilotoSuggestionStatus,
   LeadLookupResultDTO,
+  UpsertBitrixFieldMappingInput,
 } from '../../domain/CopilotoIa';
+import { CopilotoIaUseCases } from '../CopilotoIaUseCases';
 import type { WhatsAppMessageTiming } from '../whatsappResponseTime';
 
 const ORG_ID = 'org-1';

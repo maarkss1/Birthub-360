@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import {
-  subjectsMatch,
   type NormalizedOptOutSubject,
   type OptOutRecord,
   type OptOutRepository,
+  subjectsMatch,
 } from '../domain/optOut.js';
 
 /**

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import type { DealRow, ForecastTier } from '../domain/CommercialIntelligence';
 import {
   buildStageDurationStats,
   currentStageEntry,
@@ -12,6 +11,7 @@ import {
   computeHistoricalStageReach,
   countAdvancedTransitions,
 } from '../application/scoring/stageHistoryAnalytics';
+import type { DealRow, ForecastTier } from '../domain/CommercialIntelligence';
 
 /**
  * Testes de domínio isolados para os módulos extraídos de `CommercialIntelligenceUseCases.ts`

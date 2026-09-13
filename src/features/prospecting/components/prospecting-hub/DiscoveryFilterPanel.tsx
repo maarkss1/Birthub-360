@@ -1,23 +1,23 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Search,
-  Loader2,
-  Cpu,
-  Database,
-  SlidersHorizontal,
   ChevronDown,
   ChevronUp,
+  Cpu,
+  Database,
+  Loader2,
   Plus,
+  Search,
+  SlidersHorizontal,
   X,
 } from 'lucide-react';
-import type { ProspectCriteria } from '../../services/prospecting.service';
-import {
-  PORTE_OPTIONS,
-  TECNOLOGIA_OPTIONS,
-  ESTADO_OPTIONS,
-  QUANTIDADE_LEADS_OPTIONS,
-} from '../../../../shared/constants/icp-options';
 import { fadeIn } from '../../../../lib/motion';
+import {
+  ESTADO_OPTIONS,
+  PORTE_OPTIONS,
+  QUANTIDADE_LEADS_OPTIONS,
+  TECNOLOGIA_OPTIONS,
+} from '../../../../shared/constants/icp-options';
+import type { ProspectCriteria } from '../../services/prospecting.service';
 
 type PersonaOption = {
   label: string;

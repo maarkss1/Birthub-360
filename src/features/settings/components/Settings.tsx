@@ -1,24 +1,24 @@
+import { BrainCircuit, Flag, Moon, Puzzle, Shield, Sun, User, Users } from 'lucide-react';
 import { useState } from 'react';
-import { Sun, Moon, User, Users, Puzzle, Flag, Shield, BrainCircuit } from 'lucide-react';
+import { IconSliders } from '../../../components/icons';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '../../../components/ui/Card';
-import { IconSliders } from '../../../components/icons';
-import { useTheme } from '../../../contexts/ThemeContext';
 import { useAuth } from '../../../contexts/AuthContext';
-import { SoundFX } from '../../../lib/soundEffects';
+import { useTheme } from '../../../contexts/ThemeContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { SoundFX } from '../../../lib/soundEffects';
 import { FeatureFlagsPanel } from '../../feature-flags/components/FeatureFlagsPanel';
-import { Team } from '../../team/components/Team';
 import { Integrations } from '../../integrations/components/Integrations';
 import { AuditLogs } from '../../lgpd/components/AuditLogs';
 import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
-import { MemoryGovernancePanel } from './MemoryGovernancePanel';
+import { Team } from '../../team/components/Team';
 import { LearningProfilePanel } from './LearningProfilePanel';
+import { MemoryGovernancePanel } from './MemoryGovernancePanel';
 
 export function Settings() {
   const { theme, setThemeMode } = useTheme();

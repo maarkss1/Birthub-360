@@ -1,8 +1,8 @@
+import { ArrowRight, Mic } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mic, ArrowRight } from 'lucide-react';
-import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { copilotoIaApi } from '../copilotoIa.api';
 

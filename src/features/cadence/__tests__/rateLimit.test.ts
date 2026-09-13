@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+  type CadenceRateLimitPolicy,
   DEFAULT_RATE_LIMIT_POLICY,
   decideRateLimitBlock,
   extractEmailDomain,
   isChannelSpacingLimited,
   isContactRateLimited,
   isDomainRateLimited,
-  type CadenceRateLimitPolicy,
   type LastSentTouch,
 } from '../domain/rateLimit';
 

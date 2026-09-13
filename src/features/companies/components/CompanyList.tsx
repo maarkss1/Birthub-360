@@ -1,37 +1,37 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Search,
-  Plus,
-  Building2,
-  MapPin,
   Building,
+  Building2,
   Edit,
-  Trash,
-  Sparkles,
-  Loader2,
+  ExternalLink,
   LayoutGrid,
   LayoutList,
-  Wrench,
-  ExternalLink,
+  Loader2,
+  MapPin,
+  Plus,
+  Search,
+  Sparkles,
+  Trash,
   WifiOff,
+  Wrench,
 } from 'lucide-react';
-import type { Company } from '../../../types';
-import { formatCnpj } from '../../../lib/cnpj';
-import { CompanyForm } from './CompanyForm';
-import { CompanyDetail } from './CompanyDetail';
-import { useCompanies } from '../../../hooks/useDatabase';
-import { companiesDB } from '../../../lib/db';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
+import { ContextualTip } from '../../../components/ui/ContextualTip';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Pagination } from '../../../components/ui/Pagination';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { VirtualTable, type ColumnDef } from '../../../components/ui/VirtualTable';
-import { TechToolLogo, type TechToolInfo } from '../../../components/ui/TechToolLogo';
+import { type TechToolInfo, TechToolLogo } from '../../../components/ui/TechToolLogo';
 import { ToolTechPopover } from '../../../components/ui/ToolTechPopover';
-import { ContextualTip } from '../../../components/ui/ContextualTip';
+import { type ColumnDef, VirtualTable } from '../../../components/ui/VirtualTable';
+import { useCompanies } from '../../../hooks/useDatabase';
 import { clientLogger } from '../../../lib/clientLogger';
+import { formatCnpj } from '../../../lib/cnpj';
+import { companiesDB } from '../../../lib/db';
 import type { PaletteIntent } from '../../../lib/paletteIntent';
 import { toast } from '../../../lib/toast';
+import type { Company } from '../../../types';
+import { CompanyDetail } from './CompanyDetail';
+import { CompanyForm } from './CompanyForm';
 
 export function CompanyList() {
   const [inputValue, setInputValue] = useState('');

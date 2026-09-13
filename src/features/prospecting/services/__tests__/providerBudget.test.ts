@@ -38,14 +38,14 @@ vi.mock('../../../../lib/queue/redis.js', () => ({
   },
 }));
 
-import {
-  recordProspectingProviderSpend,
-  getOrgMonthProspectingCostUsd,
-  assertProspectingBudgetNotExceeded,
-  ProspectingBudgetExceededError,
-  __resetProspectingBudgetForTests,
-} from '../providerBudget.js';
 import { requestContext } from '../../../../lib/async-context.js';
+import {
+  __resetProspectingBudgetForTests,
+  assertProspectingBudgetNotExceeded,
+  getOrgMonthProspectingCostUsd,
+  ProspectingBudgetExceededError,
+  recordProspectingProviderSpend,
+} from '../providerBudget.js';
 
 function mockOrgBudget(byOrgId: Record<string, number | null>): void {
   findUniqueMock.mockImplementation(async ({ where }: { where: { id: string } }) => {

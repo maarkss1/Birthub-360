@@ -1,15 +1,15 @@
-import { logger } from '../../../lib/logger.js';
-import type { Lead, LeadRepository } from '../domain/Lead';
-import type { z } from 'zod';
-import { leadSchema } from '../../../lib/zod';
-import { enrichCompany } from '../../prospecting/services/enrichment.service';
-import { fromPrismaLeadStatus } from '../../../lib/enumMap';
 import type { LeadFunnel } from '@prisma/client';
+import type { z } from 'zod';
+import { fromPrismaLeadStatus } from '../../../lib/enumMap';
+import { broadcastEvent } from '../../../lib/eventsBus.js';
+import { logger } from '../../../lib/logger.js';
+import { leadSchema } from '../../../lib/zod';
 import { BaseUseCases } from '../../../shared/application/BaseUseCases';
 import { AppError } from '../../../shared/middlewares/errorHandler';
-import { ensureManualDealClosureAllowed } from './dealClosureGate.js';
+import { enrichCompany } from '../../prospecting/services/enrichment.service';
+import type { Lead, LeadRepository } from '../domain/Lead';
 import { prismaDealClosureGate } from '../infra/PrismaDealClosureGate.js';
-import { broadcastEvent } from '../../../lib/eventsBus.js';
+import { ensureManualDealClosureAllowed } from './dealClosureGate.js';
 
 /** Mesmo rótulo usado em `LEAD_STATUS_TO_PRISMA`/`LEAD_CLOSING_STATUSES` (src/lib/enumMap.ts) — único status que exige o gate de fechamento determinístico (CYC-007). */
 const WON_STATUS_LABEL = 'Negócios Ganhos';

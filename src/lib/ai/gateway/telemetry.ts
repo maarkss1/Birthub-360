@@ -5,8 +5,8 @@
  * configurado.
  */
 import { requestContext } from '../../async-context.js';
-import { logger } from '../../logger.js';
 import { getLangfuseClient } from '../../langfuse.js';
+import { logger } from '../../logger.js';
 import type { ChatCompletionMessage, ChatCompletionResponse } from './types.js';
 
 /**

@@ -1,6 +1,6 @@
-import { prisma } from '../../../lib/prisma.js';
 import { getTenantId } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 
 const CPF_REGEX = /\d{3}\.\d{3}\.\d{3}-\d{2}/g;
 
@@ -173,7 +173,7 @@ export class GuardrailsService {
  * o nome/e-mail/telefone reais. Minimização decide O QUE sai; o gate decide SE pode sair.
  */
 export {
-  hasPiiExternalConsent,
   assertPiiExternalConsent,
+  hasPiiExternalConsent,
   PiiConsentRequiredError,
 } from '../../../shared/services/aiPiiConsent.service.js';

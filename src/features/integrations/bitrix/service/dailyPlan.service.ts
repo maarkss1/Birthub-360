@@ -1,7 +1,6 @@
 import { env } from '../../../../config/env.js';
 import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import type {
   DailyPlanItem,
   DailyPlanItemChannel,
@@ -9,15 +8,16 @@ import type {
   DailyPlanPriorityLevel,
   UserDailyPlanSummary,
 } from '../../../../shared/contracts/dailyPlan.contract.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import { listBitrixConnections } from './connections.js';
-import { getBitrixUsers } from './deals.js';
+import type { CrmEnrichedInfo, CrmEntityType } from './dailyPlanEnrichment.service.js';
 import {
   crmEntityFromTaskLink,
   crmEntityTypeFromOwnerTypeId,
   resolveCrmEnrichment,
 } from './dailyPlanEnrichment.service.js';
-import type { CrmEnrichedInfo, CrmEntityType } from './dailyPlanEnrichment.service.js';
+import { getBitrixUsers } from './deals.js';
 import { resolveOwnBitrixUserId } from './userMapping.js';
 
 export type {

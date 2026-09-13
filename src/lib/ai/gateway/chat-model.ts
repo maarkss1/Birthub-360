@@ -11,14 +11,14 @@ import { assertAiBudgetNotExceeded } from '../budget.js';
 import { recordAiUsageCost } from '../metrics.js';
 import { resolveFallbackTimeoutMs } from './http-client.js';
 import { resolveModelName } from './model-routing.js';
-import { estimateCostUsd } from './pricing.js';
 import { toChatCompletionMessages } from './parsing.js';
+import { estimateCostUsd } from './pricing.js';
+import { groqProvider } from './providers/groq.provider.js';
+import { litellmProvider } from './providers/litellm.provider.js';
+import { openaiProvider } from './providers/openai.provider.js';
+import type { ProviderAdapter } from './providers/types.js';
 import { sanitizeProviderMessage } from './redaction.js';
 import { traceAiGeneration } from './telemetry.js';
-import { groqProvider } from './providers/groq.provider.js';
-import { openaiProvider } from './providers/openai.provider.js';
-import { litellmProvider } from './providers/litellm.provider.js';
-import type { ProviderAdapter } from './providers/types.js';
 import type { AiChatModel, AiInvokeResult, ChatCompletionResponse } from './types.js';
 
 // Ordem de fallback: Groq primeiro (rápido, sem o gargalo de concorrência do modelo local),
