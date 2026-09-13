@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08",
+  "generatedAt": "2026-09-13",
   "sourcePackage": "Birth Hub 360 (ZIP fornecido pelo usuário, upload 2026-09-08)",
   "summary": {
     "totalSourceRecords": 392,
@@ -7,7 +7,7 @@
     "aliasesConsolidated": 15,
     "withPrimaryJobRole": 279,
     "withoutPrimaryJobRole": 98,
-    "withPrompt": 27,
+    "withPrompt": 52,
     "byRisk": {
       "LOW": 318,
       "MEDIUM": 34,
@@ -27,7 +27,9 @@
       "code": "ab-test-automator",
       "name": "ABTestAutomator",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ABTestAutomator Agent"],
+      "sourceIds": [
+        "cmo-growth:ABTestAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -35,9 +37,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Estrutura e prioriza testes A/B de marketing com base em hipótese, impacto esperado e amostra necessária.",
+      "systemPrompt": "Você é o ABTestAutomator, especialista em estruturar testes A/B de marketing. Sua missão é transformar uma ideia solta em um teste com hipótese clara, amostra suficiente e critério de sucesso definido antes de rodar, para o time de marketing decidir com dado, não com achismo.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -47,7 +49,9 @@
       "code": "ab-test-synthesizer",
       "name": "ABTestSynthesizer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ABTestSynthesizer Agent"],
+      "sourceIds": [
+        "coo-revops:ABTestSynthesizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -67,7 +71,9 @@
       "code": "access-right-auditor",
       "name": "AccessRightAuditor",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:AccessRightAuditor Agent"],
+      "sourceIds": [
+        "gc-compliance:AccessRightAuditor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -87,7 +93,9 @@
       "code": "account-manager",
       "name": "Account Manager",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Account Manager Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Account Manager Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -110,7 +118,9 @@
       "code": "account-mapper",
       "name": "AccountMapper",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:AccountMapper Agent"],
+      "sourceIds": [
+        "cro-vp-sales:AccountMapper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -130,7 +140,9 @@
       "code": "accrual-engine",
       "name": "AccrualEngine",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:AccrualEngine Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:AccrualEngine Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -152,7 +164,9 @@
       "code": "activation-optimizer",
       "name": "ActivationOptimizer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ActivationOptimizer Agent"],
+      "sourceIds": [
+        "cmo-growth:ActivationOptimizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -160,9 +174,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Identifica os pontos de fricção que impedem um novo usuário ou lead de ativar completamente no produto.",
+      "systemPrompt": "Você é o ActivationOptimizer, especialista em identificar fricção na jornada de ativação. Sua missão é apontar exatamente onde o usuário novo trava antes de experimentar o valor real do produto, não uma lista genérica de boas práticas de onboarding.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -172,7 +186,9 @@
       "code": "activity-analyzer",
       "name": "ActivityAnalyzer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ActivityAnalyzer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ActivityAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -192,7 +208,9 @@
       "code": "acv-growth-tracker",
       "name": "ACVGrowthTracker",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ACVGrowthTracker Agent"],
+      "sourceIds": [
+        "coo-revops:ACVGrowthTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -212,7 +230,9 @@
       "code": "ad-copy-machine",
       "name": "AdCopyMachine",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:AdCopyMachine Agent"],
+      "sourceIds": [
+        "cmo-growth:AdCopyMachine Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -220,9 +240,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Gera variações de copy para anúncios pagos adaptadas ao público e ao canal de veiculação.",
+      "systemPrompt": "Você é o AdCopyMachine, especialista em gerar copy de anúncios pagos. Sua missão é produzir variações que falam a língua do público e respeitam o formato de cada canal, nunca uma promessa que o produto não sustenta.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -232,7 +252,9 @@
       "code": "ad-fatigue-monitor",
       "name": "AdFatigueMonitor",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:AdFatigueMonitor Agent"],
+      "sourceIds": [
+        "cmo-growth:AdFatigueMonitor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -240,9 +262,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Monitora sinais de fadiga criativa em campanhas ativas e recomenda quando renovar o criativo.",
+      "systemPrompt": "Você é o AdFatigueMonitor, especialista em identificar fadiga criativa em campanhas de anúncios. Sua missão é recomendar a hora certa de renovar o criativo antes que a performance caia de forma perceptível.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -252,7 +274,9 @@
       "code": "address-proof-validator",
       "name": "AddressProofValidator",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:AddressProofValidator Agent"],
+      "sourceIds": [
+        "gc-compliance:AddressProofValidator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -272,7 +296,9 @@
       "code": "admin-ops",
       "name": "Admin Ops",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:Admin Ops Bot"],
+      "sourceIds": [
+        "coo-revops:Admin Ops Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -295,7 +321,9 @@
       "code": "adoption-metric-analyzer",
       "name": "AdoptionMetricAnalyzer",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:AdoptionMetricAnalyzer Agent"],
+      "sourceIds": [
+        "vp-customer-success:AdoptionMetricAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -315,7 +343,9 @@
       "code": "advocacy-finder",
       "name": "AdvocacyFinder",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:AdvocacyFinder Agent"],
+      "sourceIds": [
+        "vp-customer-success:AdvocacyFinder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -335,7 +365,9 @@
       "code": "agency-auditor",
       "name": "AgencyAuditor",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:AgencyAuditor Agent"],
+      "sourceIds": [
+        "cmo-growth:AgencyAuditor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -343,9 +375,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Audita a performance e a entrega de uma agência de marketing terceirizada frente ao escopo contratado.",
+      "systemPrompt": "Você é o AgencyAuditor, especialista em auditar a performance de agências de marketing terceirizadas. Sua missão é comparar objetivamente o que foi entregue com o que foi contratado, sem enfeitar nem os pontos positivos nem os negativos.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -377,7 +409,9 @@
       "code": "aging-report-sender",
       "name": "AgingReportSender",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:AgingReportSender Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:AgingReportSender Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [
@@ -404,7 +438,9 @@
       "code": "aha-moment-tracker",
       "name": "AhaMomentTracker",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:AhaMomentTracker Agent"],
+      "sourceIds": [
+        "vp-customer-success:AhaMomentTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -424,7 +460,9 @@
       "code": "alt-data-scorer",
       "name": "AltDataScorer",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:AltDataScorer Agent"],
+      "sourceIds": [
+        "gc-compliance:AltDataScorer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -444,7 +482,9 @@
       "code": "angry-customer-escalator",
       "name": "AngryCustomerEscalator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:AngryCustomerEscalator Agent"],
+      "sourceIds": [
+        "vp-customer-success:AngryCustomerEscalator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -464,7 +504,9 @@
       "code": "annual-report-analyzer",
       "name": "AnnualReportAnalyzer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:AnnualReportAnalyzer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:AnnualReportAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -484,7 +526,9 @@
       "code": "anomaly-detector",
       "name": "AnomalyDetector",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:AnomalyDetector Agent"],
+      "sourceIds": [
+        "coo-revops:AnomalyDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -504,7 +548,9 @@
       "code": "api-integration-builder",
       "name": "APIIntegrationBuilder",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:APIIntegrationBuilder Agent"],
+      "sourceIds": [
+        "coo-revops:APIIntegrationBuilder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -524,7 +570,9 @@
       "code": "api-key-configurator",
       "name": "APIKeyConfigurator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:APIKeyConfigurator Agent"],
+      "sourceIds": [
+        "vp-customer-success:APIKeyConfigurator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -544,7 +592,9 @@
       "code": "approval-workflow-router",
       "name": "ApprovalWorkflowRouter",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ApprovalWorkflowRouter Agent"],
+      "sourceIds": [
+        "coo-revops:ApprovalWorkflowRouter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -564,7 +614,9 @@
       "code": "architecture-diagrammer",
       "name": "ArchitectureDiagrammer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ArchitectureDiagrammer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ArchitectureDiagrammer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -584,7 +636,9 @@
       "code": "arr-bridge-builder",
       "name": "ARRBridgeBuilder",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ARRBridgeBuilder Agent"],
+      "sourceIds": [
+        "coo-revops:ARRBridgeBuilder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -604,7 +658,9 @@
       "code": "attribution-modeler",
       "name": "AttributionModeler",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:AttributionModeler Agent"],
+      "sourceIds": [
+        "coo-revops:AttributionModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -624,7 +680,9 @@
       "code": "audience-segment-discoverer",
       "name": "AudienceSegmentDiscoverer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:AudienceSegmentDiscoverer Agent"],
+      "sourceIds": [
+        "coo-revops:AudienceSegmentDiscoverer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -644,7 +702,9 @@
       "code": "audit-bot",
       "name": "AuditBot",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:AuditBot Agent"],
+      "sourceIds": [
+        "gc-compliance:AuditBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -664,7 +724,9 @@
       "code": "audit-prep-engine",
       "name": "AuditPrepEngine",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:AuditPrepEngine Agent"],
+      "sourceIds": [
+        "gc-compliance:AuditPrepEngine Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -684,7 +746,9 @@
       "code": "audit-trail-builder",
       "name": "AuditTrailBuilder",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:AuditTrailBuilder Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:AuditTrailBuilder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -706,7 +770,9 @@
       "code": "auto-decision-engine",
       "name": "AutoDecisionEngine",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:AutoDecisionEngine Agent"],
+      "sourceIds": [
+        "gc-compliance:AutoDecisionEngine Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -726,7 +792,9 @@
       "code": "backlink-scouter",
       "name": "BacklinkScouter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:BacklinkScouter Agent"],
+      "sourceIds": [
+        "cmo-growth:BacklinkScouter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -734,9 +802,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Identifica oportunidades legítimas de backlink (parcerias de conteúdo, menções, diretórios relevantes) para SEO.",
+      "systemPrompt": "Você é o BacklinkScouter, especialista em identificar oportunidades legítimas de backlink para SEO. Sua missão é apontar parcerias de conteúdo, menções e diretórios relevantes de verdade — nunca esquemas de link artificial ou práticas que violam as diretrizes dos buscadores.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -746,7 +814,9 @@
       "code": "bad-debt-predictor",
       "name": "BadDebtPredictor",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:BadDebtPredictor Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:BadDebtPredictor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -768,7 +838,9 @@
       "code": "bank-reconciliation-bot",
       "name": "BankReconciliationBot",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:BankReconciliationBot Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:BankReconciliationBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -790,7 +862,9 @@
       "code": "bankruptcy-risk-monitor",
       "name": "BankruptcyRiskMonitor",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:BankruptcyRiskMonitor Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:BankruptcyRiskMonitor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -812,7 +886,9 @@
       "code": "battlecard-updater",
       "name": "BattlecardUpdater",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:BattlecardUpdater Agent"],
+      "sourceIds": [
+        "cmo-growth:BattlecardUpdater Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -820,9 +896,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Atualiza o battlecard competitivo com base em mudanças recentes de posicionamento, preço ou funcionalidade do concorrente.",
+      "systemPrompt": "Você é o BattlecardUpdater, especialista em manter battlecards competitivos atualizados. Sua missão é incorporar mudanças recentes reais do concorrente, nunca informação desatualizada ou especulação não verificada.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -832,7 +908,9 @@
       "code": "best-practice-recommender",
       "name": "BestPracticeRecommender",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:BestPracticeRecommender Agent"],
+      "sourceIds": [
+        "vp-customer-success:BestPracticeRecommender Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -852,7 +930,9 @@
       "code": "bid-auto-adjuster",
       "name": "BidAutoAdjuster",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:BidAutoAdjuster Agent"],
+      "sourceIds": [
+        "cmo-growth:BidAutoAdjuster Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -860,9 +940,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Recomenda ajustes de lance em campanhas de mídia paga com base em performance recente, para aprovação do gestor de mídia.",
+      "systemPrompt": "Você é o BidAutoAdjuster, especialista em recomendar ajustes de lance em campanhas de mídia paga. Sua missão é sugerir o ajuste que melhora a eficiência de gasto com base na performance recente — toda recomendação é para aprovação do gestor de mídia, você nunca altera lances diretamente na plataforma de anúncios.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -876,7 +956,9 @@
         "ceo-chief-of-staff:Board Prep AI Premium Agent",
         "ceo-chief-of-staff:BoardPrep AI Agent"
       ],
-      "aliasNames": ["Board Prep AI Premium Agent"],
+      "aliasNames": [
+        "Board Prep AI Premium Agent"
+      ],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -897,7 +979,9 @@
       "code": "board-reporting-automator",
       "name": "BoardReportingAutomator",
       "domain": "Executivo",
-      "sourceIds": ["ceo-chief-of-staff:BoardReportingAutomator Agent"],
+      "sourceIds": [
+        "ceo-chief-of-staff:BoardReportingAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -917,7 +1001,9 @@
       "code": "bottleneck-detector",
       "name": "BottleneckDetector",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:BottleneckDetector Agent"],
+      "sourceIds": [
+        "coo-revops:BottleneckDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -937,8 +1023,13 @@
       "code": "brand-guardian",
       "name": "BrandGuardian",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:Brand Guardian Premium Agent", "cmo-growth:BrandGuardian Agent"],
-      "aliasNames": ["Brand Guardian Premium Agent"],
+      "sourceIds": [
+        "cmo-growth:Brand Guardian Premium Agent",
+        "cmo-growth:BrandGuardian Agent"
+      ],
+      "aliasNames": [
+        "Brand Guardian Premium Agent"
+      ],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -959,7 +1050,9 @@
       "code": "brand-guideline-enforcer",
       "name": "BrandGuidelineEnforcer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:BrandGuidelineEnforcer Agent"],
+      "sourceIds": [
+        "cmo-growth:BrandGuidelineEnforcer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -967,9 +1060,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Verifica se uma peça de marketing segue as diretrizes de marca (tom, visual, terminologia) antes da publicação.",
+      "systemPrompt": "Você é o BrandGuidelineEnforcer, especialista em verificar aderência às diretrizes de marca. Sua missão é apontar desvios específicos de tom, terminologia ou uso visual antes da publicação, citando a regra da diretriz que foi violada.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -983,7 +1076,9 @@
         "cfo-finance-ops:Budget Fluid Premium Agent",
         "cfo-finance-ops:BudgetFluid Agent"
       ],
-      "aliasNames": ["Budget Fluid Premium Agent"],
+      "aliasNames": [
+        "Budget Fluid Premium Agent"
+      ],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -1006,7 +1101,9 @@
       "code": "budget-variance-pinger",
       "name": "BudgetVariancePinger",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:BudgetVariancePinger Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:BudgetVariancePinger Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1028,7 +1125,9 @@
       "code": "burn-rate-monitor",
       "name": "BurnRateMonitor",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:BurnRateMonitor Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:BurnRateMonitor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1050,7 +1149,9 @@
       "code": "cacltv-modeler",
       "name": "CACLTVModeler",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:CACLTVModeler Agent"],
+      "sourceIds": [
+        "cmo-growth:CACLTVModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1058,9 +1159,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Modela a relação entre custo de aquisição (CAC) e valor do cliente ao longo do tempo (LTV) por canal ou segmento.",
+      "systemPrompt": "Você é o CACLTVModeler, especialista em modelar a relação entre CAC e LTV. Sua missão é mostrar quais canais e segmentos realmente pagam o investimento de aquisição no longo prazo, não só o custo por lead do mês.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -1070,7 +1171,9 @@
       "code": "calendar-sniper",
       "name": "CalendarSniper",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:CalendarSniper Agent"],
+      "sourceIds": [
+        "cro-vp-sales:CalendarSniper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -1090,7 +1193,9 @@
       "code": "call-review",
       "name": "Call Review",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Call Review Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Call Review Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -1110,7 +1215,9 @@
       "code": "campaign-decay-predictor",
       "name": "CampaignDecayPredictor",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CampaignDecayPredictor Agent"],
+      "sourceIds": [
+        "coo-revops:CampaignDecayPredictor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -1130,7 +1237,9 @@
       "code": "campaign-orchestrator",
       "name": "CampaignOrchestrator",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:CampaignOrchestrator Agent"],
+      "sourceIds": [
+        "cmo-growth:CampaignOrchestrator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1152,7 +1261,9 @@
       "code": "cannibalization-detector",
       "name": "CannibalizationDetector",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:CannibalizationDetector Agent"],
+      "sourceIds": [
+        "cmo-growth:CannibalizationDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1160,9 +1271,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Detecta quando duas campanhas ou páginas estão competindo pelo mesmo público ou palavra-chave, reduzindo a eficiência geral.",
+      "systemPrompt": "Você é o CannibalizationDetector, especialista em detectar canibalização entre campanhas ou páginas. Sua missão é apontar onde o próprio time está competindo consigo mesmo pelo mesmo público ou palavra-chave, desperdiçando orçamento.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -1172,7 +1283,9 @@
       "code": "cap-table-manager",
       "name": "CapTableManager",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CapTableManager Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CapTableManager Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1194,7 +1307,9 @@
       "code": "capacity-modeler",
       "name": "CapacityModeler",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:CapacityModeler Agent"],
+      "sourceIds": [
+        "gc-compliance:CapacityModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1214,7 +1329,9 @@
       "code": "capacity-planner",
       "name": "CapacityPlanner",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CapacityPlanner Agent"],
+      "sourceIds": [
+        "coo-revops:CapacityPlanner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1236,7 +1353,9 @@
       "code": "capital-adequacy-calculator",
       "name": "CapitalAdequacyCalculator",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:CapitalAdequacyCalculator Agent"],
+      "sourceIds": [
+        "gc-compliance:CapitalAdequacyCalculator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1260,7 +1379,9 @@
         "ceo-chief-of-staff:Capital Allocator Premium Agent",
         "ceo-chief-of-staff:CapitalAllocator Agent"
       ],
-      "aliasNames": ["Capital Allocator Premium Agent"],
+      "aliasNames": [
+        "Capital Allocator Premium Agent"
+      ],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -1281,7 +1402,9 @@
       "code": "cash-app-matcher",
       "name": "CashAppMatcher",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CashAppMatcher Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CashAppMatcher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1303,7 +1426,9 @@
       "code": "cash-flow-clairvoyant",
       "name": "CashFlowClairvoyant",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CashFlowClairvoyant Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CashFlowClairvoyant Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1325,7 +1450,9 @@
       "code": "central-bank-xml-generator",
       "name": "CentralBankXMLGenerator",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:CentralBankXMLGenerator Agent"],
+      "sourceIds": [
+        "gc-compliance:CentralBankXMLGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1345,7 +1472,9 @@
       "code": "ceo",
       "name": "CEO Agent",
       "domain": "Executivo",
-      "sourceIds": ["ceo:CEO Agent Pack"],
+      "sourceIds": [
+        "ceo:CEO Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -1365,7 +1494,9 @@
       "code": "cfo",
       "name": "CFO Agent",
       "domain": "Financeiro",
-      "sourceIds": ["cfo:CFO Agent Pack"],
+      "sourceIds": [
+        "cfo:CFO Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -1385,7 +1516,9 @@
       "code": "channel-attrition-predictor",
       "name": "ChannelAttritionPredictor",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ChannelAttritionPredictor Agent"],
+      "sourceIds": [
+        "coo-revops:ChannelAttritionPredictor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -1405,7 +1538,9 @@
       "code": "channel-mixer",
       "name": "ChannelMixer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ChannelMixer Agent"],
+      "sourceIds": [
+        "cmo-growth:ChannelMixer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1413,9 +1548,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Recomenda a distribuição de investimento entre canais de marketing com base em retorno histórico de cada um.",
+      "systemPrompt": "Você é o ChannelMixer, especialista em recomendar a distribuição de investimento entre canais de marketing. Sua missão é basear a recomendação no retorno histórico real de cada canal, não em uma divisão igualitária ou na moda do momento.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -1425,7 +1560,9 @@
       "code": "chargeback-dispute-automator",
       "name": "ChargebackDisputeAutomator",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:ChargebackDisputeAutomator Agent"],
+      "sourceIds": [
+        "gc-compliance:ChargebackDisputeAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1445,7 +1582,9 @@
       "code": "churn-cohort-isolator",
       "name": "ChurnCohortIsolator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ChurnCohortIsolator Agent"],
+      "sourceIds": [
+        "coo-revops:ChurnCohortIsolator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -1469,7 +1608,9 @@
         "vp-customer-success:Churn Deflector Premium Agent",
         "vp-customer-success:ChurnDeflector Agent"
       ],
-      "aliasNames": ["Churn Deflector Premium Agent"],
+      "aliasNames": [
+        "Churn Deflector Premium Agent"
+      ],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -1492,7 +1633,9 @@
       "code": "churn-win-back-sequencer",
       "name": "ChurnWinBackSequencer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ChurnWinBackSequencer Agent"],
+      "sourceIds": [
+        "cmo-growth:ChurnWinBackSequencer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -1500,9 +1643,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Estrutura a sequência de comunicação para tentar recuperar um cliente que cancelou ou está prestes a cancelar.",
+      "systemPrompt": "Você é o ChurnWinBackSequencer, especialista em estruturar sequências de win-back para clientes em risco ou já cancelados. Sua missão é ordenar as mensagens certas no momento certo, sem soar desesperado nem repetir a mesma oferta genérica em todos os contatos.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -1512,7 +1655,9 @@
       "code": "closer-copilot",
       "name": "Closer Copilot",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Closer Copilot Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Closer Copilot Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -1535,7 +1680,9 @@
       "code": "closing-forecast",
       "name": "Closing Forecast",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Closing Forecast Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Closing Forecast Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [
@@ -1560,7 +1707,9 @@
       "code": "cloud-spend-optimizer",
       "name": "CloudSpendOptimizer",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CloudSpendOptimizer Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CloudSpendOptimizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1582,7 +1731,9 @@
       "code": "cmo",
       "name": "CMO Agent",
       "domain": "Marketing",
-      "sourceIds": ["cmo:CMO Agent Pack"],
+      "sourceIds": [
+        "cmo:CMO Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -1602,7 +1753,9 @@
       "code": "cohort-analyzer",
       "name": "CohortAnalyzer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CohortAnalyzer Agent"],
+      "sourceIds": [
+        "coo-revops:CohortAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -1622,7 +1775,9 @@
       "code": "cold-call-scripter",
       "name": "ColdCallScripter",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ColdCallScripter Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ColdCallScripter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -1642,7 +1797,9 @@
       "code": "collection-agency-router",
       "name": "CollectionAgencyRouter",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CollectionAgencyRouter Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CollectionAgencyRouter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1664,7 +1821,9 @@
       "code": "comms-surveillance-bot",
       "name": "CommsSurveillanceBot",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:CommsSurveillanceBot Agent"],
+      "sourceIds": [
+        "gc-compliance:CommsSurveillanceBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1684,7 +1843,9 @@
       "code": "communication",
       "name": "Communication",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:Communication Bot"],
+      "sourceIds": [
+        "coo-revops:Communication Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -1704,7 +1865,9 @@
       "code": "comp-plan-calculator",
       "name": "CompPlanCalculator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:CompPlanCalculator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:CompPlanCalculator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [
@@ -1729,7 +1892,9 @@
       "code": "competitor-displacement",
       "name": "CompetitorDisplacement",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:CompetitorDisplacement Agent"],
+      "sourceIds": [
+        "cro-vp-sales:CompetitorDisplacement Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -1749,7 +1914,9 @@
       "code": "competitor-financial-scraper",
       "name": "CompetitorFinancialScraper",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CompetitorFinancialScraper Agent"],
+      "sourceIds": [
+        "coo-revops:CompetitorFinancialScraper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -1769,7 +1936,9 @@
       "code": "competitor-intel-broadcaster",
       "name": "CompetitorIntelBroadcaster",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CompetitorIntelBroadcaster Agent"],
+      "sourceIds": [
+        "coo-revops:CompetitorIntelBroadcaster Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -1793,16 +1962,18 @@
         "cmo-growth:Competitor X Ray Premium Agent",
         "cmo-growth:CompetitorX-Ray Agent"
       ],
-      "aliasNames": ["Competitor X Ray Premium Agent"],
+      "aliasNames": [
+        "Competitor X Ray Premium Agent"
+      ],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
       "risk": "LOW",
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Faz um raio-x da estratégia pública de um concorrente (posicionamento, preço, canais, mensagens) a partir de fontes públicas.",
+      "systemPrompt": "Você é o Competitor X Ray, especialista em analisar a estratégia pública de um concorrente. Sua missão é consolidar posicionamento, preço, canais e mensagens a partir de fontes públicas e verificáveis, nunca informação obtida de forma antiética ou não pública.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -1814,7 +1985,9 @@
       "code": "compliance-checklist-enforcer",
       "name": "ComplianceChecklistEnforcer",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:ComplianceChecklistEnforcer Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:ComplianceChecklistEnforcer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -1836,7 +2009,9 @@
       "code": "compliance-enforcer",
       "name": "ComplianceEnforcer",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:ComplianceEnforcer Agent"],
+      "sourceIds": [
+        "gc-compliance:ComplianceEnforcer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1856,7 +2031,9 @@
       "code": "content-repurposer",
       "name": "ContentRepurposer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ContentRepurposer Agent"],
+      "sourceIds": [
+        "cmo-growth:ContentRepurposer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1864,9 +2041,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Adapta um conteúdo já existente para um novo formato ou canal, preservando a mensagem central.",
+      "systemPrompt": "Você é o ContentRepurposer, especialista em adaptar conteúdo existente para novos formatos e canais. Sua missão é preservar a mensagem central do conteúdo original, adaptando só o formato à linguagem de cada canal.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -1876,7 +2053,9 @@
       "code": "content-to-lead",
       "name": "ContentToLead",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ContentToLead Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ContentToLead Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -1896,7 +2075,9 @@
       "code": "context-memory",
       "name": "Context Memory",
       "domain": "Operações",
-      "sourceIds": ["coo-platform-ops:Context Memory Bot"],
+      "sourceIds": [
+        "coo-platform-ops:Context Memory Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -1918,7 +2099,9 @@
       "code": "contract-drafter",
       "name": "ContractDrafter",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ContractDrafter Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ContractDrafter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [
@@ -1943,7 +2126,9 @@
       "code": "contract-redliner",
       "name": "ContractRedliner",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:ContractRedliner Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:ContractRedliner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CONTRATOS_ASSINATURA",
       "secondaryJobRoles": [],
@@ -1966,7 +2151,9 @@
       "code": "conversion-forecaster",
       "name": "ConversionForecaster",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ConversionForecaster Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ConversionForecaster Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [
@@ -1991,7 +2178,9 @@
       "code": "coo",
       "name": "COO Agent",
       "domain": "Operações",
-      "sourceIds": ["coo:COO Agent Pack"],
+      "sourceIds": [
+        "coo:COO Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -2011,7 +2200,9 @@
       "code": "creative-asset-tester",
       "name": "CreativeAssetTester",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:CreativeAssetTester Agent"],
+      "sourceIds": [
+        "cmo-growth:CreativeAssetTester Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2019,9 +2210,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Organiza o teste comparativo entre diferentes criativos (imagem, vídeo, copy) antes de escalar investimento.",
+      "systemPrompt": "Você é o CreativeAssetTester, especialista em organizar testes comparativos de criativos. Sua missão é definir um critério justo de comparação antes de recomendar qual criativo merece mais investimento.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -2031,7 +2222,9 @@
       "code": "credit-hold-releaser",
       "name": "CreditHoldReleaser",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CreditHoldReleaser Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CreditHoldReleaser Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -2053,7 +2246,9 @@
       "code": "credit-limit-recommender",
       "name": "CreditLimitRecommender",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CreditLimitRecommender Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CreditLimitRecommender Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -2075,7 +2270,9 @@
       "code": "credit-score-fetcher",
       "name": "CreditScoreFetcher",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:CreditScoreFetcher Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:CreditScoreFetcher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -2097,7 +2294,9 @@
       "code": "crisis-comms-drafter",
       "name": "CrisisCommsDrafter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:CrisisCommsDrafter Agent"],
+      "sourceIds": [
+        "cmo-growth:CrisisCommsDrafter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2105,9 +2304,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Rascunha uma comunicação inicial de resposta a uma crise de reputação, para revisão humana antes da publicação.",
+      "systemPrompt": "Você é o CrisisCommsDrafter, especialista em rascunhar comunicações de resposta a crises de reputação. Sua missão é produzir um primeiro rascunho claro, responsável e sem especulação — toda comunicação de crise passa por revisão humana (jurídico e liderança) antes de qualquer publicação, nunca é enviada automaticamente.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -2121,7 +2320,9 @@
         "ceo-chief-of-staff:Crisis Navigator Premium Agent",
         "ceo-chief-of-staff:CrisisNavigator Agent"
       ],
-      "aliasNames": ["Crisis Navigator Premium Agent"],
+      "aliasNames": [
+        "Crisis Navigator Premium Agent"
+      ],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -2142,7 +2343,9 @@
       "code": "crm-cleanser",
       "name": "CRMCleanser",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CRMCleanser Agent"],
+      "sourceIds": [
+        "coo-revops:CRMCleanser Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2165,7 +2368,9 @@
       "code": "crm-sync",
       "name": "CRM Sync",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CRM Sync Bot"],
+      "sourceIds": [
+        "coo-revops:CRM Sync Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2188,7 +2393,9 @@
       "code": "cro",
       "name": "CRO Agent",
       "domain": "Vendas",
-      "sourceIds": ["cro:CRO Agent Pack"],
+      "sourceIds": [
+        "cro:CRO Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -2208,7 +2415,9 @@
       "code": "cross-sell-mapper",
       "name": "CrossSellMapper",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:CrossSellMapper Agent"],
+      "sourceIds": [
+        "vp-customer-success:CrossSellMapper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -2228,7 +2437,9 @@
       "code": "crypto-tracing-bot",
       "name": "CryptoTracingBot",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:CryptoTracingBot Agent"],
+      "sourceIds": [
+        "gc-compliance:CryptoTracingBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2248,7 +2459,9 @@
       "code": "csatnps-aggregator",
       "name": "CSATNPSAggregator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:CSATNPSAggregator Agent"],
+      "sourceIds": [
+        "vp-customer-success:CSATNPSAggregator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -2268,7 +2481,9 @@
       "code": "cto",
       "name": "CTO Agent",
       "domain": "Tecnologia",
-      "sourceIds": ["cto:CTO Agent Pack"],
+      "sourceIds": [
+        "cto:CTO Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2288,8 +2503,13 @@
       "code": "culture-pulse",
       "name": "CulturePulse",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:Culture Pulse Premium Agent", "coo-revops:CulturePulse Agent"],
-      "aliasNames": ["Culture Pulse Premium Agent"],
+      "sourceIds": [
+        "coo-revops:Culture Pulse Premium Agent",
+        "coo-revops:CulturePulse Agent"
+      ],
+      "aliasNames": [
+        "Culture Pulse Premium Agent"
+      ],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -2310,7 +2530,9 @@
       "code": "custom-crmui-builder",
       "name": "CustomCRMUIBuilder",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:CustomCRMUIBuilder Agent"],
+      "sourceIds": [
+        "coo-revops:CustomCRMUIBuilder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2330,7 +2552,9 @@
       "code": "custom-script-generator",
       "name": "CustomScriptGenerator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:CustomScriptGenerator Agent"],
+      "sourceIds": [
+        "vp-customer-success:CustomScriptGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -2350,7 +2574,9 @@
       "code": "customer-health",
       "name": "Customer Health",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:Customer Health Bot"],
+      "sourceIds": [
+        "vp-customer-success:Customer Health Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -2373,7 +2599,9 @@
       "code": "customer-success",
       "name": "Customer Success Agent",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:Customer Success Agent Pack"],
+      "sourceIds": [
+        "vp-customer-success:Customer Success Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -2396,7 +2624,9 @@
       "code": "dashboard-auto-freshener",
       "name": "DashboardAutoFreshener",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:DashboardAutoFreshener Agent"],
+      "sourceIds": [
+        "coo-revops:DashboardAutoFreshener Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2416,7 +2646,9 @@
       "code": "dashboard-automator",
       "name": "DashboardAutomator",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:DashboardAutomator Agent"],
+      "sourceIds": [
+        "cmo-growth:DashboardAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2424,9 +2656,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Estrutura a composição de um dashboard de marketing com as métricas certas para a audiência que vai consumi-lo.",
+      "systemPrompt": "Você é o DashboardAutomator, especialista em estruturar dashboards de marketing. Sua missão é escolher as métricas certas para quem vai olhar aquele dashboard, evitando poluir com números que não geram decisão.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -2436,7 +2668,9 @@
       "code": "data-cleaner",
       "name": "DataCleaner",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DataCleaner Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DataCleaner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2459,7 +2693,9 @@
       "code": "data-cleaning-bot",
       "name": "DataCleaningBot",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:DataCleaningBot Agent"],
+      "sourceIds": [
+        "coo-revops:DataCleaningBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2482,7 +2718,9 @@
       "code": "data-enrichment-automator",
       "name": "DataEnrichmentAutomator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:DataEnrichmentAutomator Agent"],
+      "sourceIds": [
+        "coo-revops:DataEnrichmentAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [
@@ -2507,7 +2745,9 @@
       "code": "data-hygiene-monitor",
       "name": "DataHygieneMonitor",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:DataHygieneMonitor Agent"],
+      "sourceIds": [
+        "cmo-growth:DataHygieneMonitor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2515,9 +2755,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Monitora a qualidade dos dados de marketing (duplicidade, campos incompletos, formatação inconsistente) na base de contatos.",
+      "systemPrompt": "Você é o DataHygieneMonitor, especialista em monitorar a qualidade dos dados de marketing na base de contatos. Sua missão é sinalizar duplicidade, campos incompletos e inconsistência de formatação antes que corrompam a segmentação e as campanhas.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -2527,7 +2767,9 @@
       "code": "data-migration-validator",
       "name": "DataMigrationValidator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:DataMigrationValidator Agent"],
+      "sourceIds": [
+        "vp-customer-success:DataMigrationValidator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -2547,7 +2789,9 @@
       "code": "data-silo-bridger",
       "name": "DataSiloBridger",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:DataSiloBridger Agent"],
+      "sourceIds": [
+        "coo-revops:DataSiloBridger Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2567,7 +2811,9 @@
       "code": "deadline-tracker",
       "name": "DeadlineTracker",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:DeadlineTracker Agent"],
+      "sourceIds": [
+        "gc-compliance:DeadlineTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2587,7 +2833,9 @@
       "code": "deal-at-risk-alerter",
       "name": "DealAtRiskAlerter",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DealAtRiskAlerter Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DealAtRiskAlerter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -2607,7 +2855,9 @@
       "code": "deal-desk-autopilot",
       "name": "DealDeskAutopilot",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DealDeskAutopilot Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DealDeskAutopilot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -2627,7 +2877,9 @@
       "code": "deal-risk",
       "name": "Deal Risk",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Deal Risk Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Deal Risk Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -2647,7 +2899,9 @@
       "code": "deck-customizer",
       "name": "DeckCustomizer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DeckCustomizer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DeckCustomizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -2667,7 +2921,9 @@
       "code": "default-probability-modeler",
       "name": "DefaultProbabilityModeler",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:DefaultProbabilityModeler Agent"],
+      "sourceIds": [
+        "gc-compliance:DefaultProbabilityModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2687,7 +2943,9 @@
       "code": "delay-escalator",
       "name": "DelayEscalator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:DelayEscalator Agent"],
+      "sourceIds": [
+        "vp-customer-success:DelayEscalator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -2707,7 +2965,9 @@
       "code": "demo-sandboxer",
       "name": "DemoSandboxer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DemoSandboxer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DemoSandboxer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -2727,7 +2987,9 @@
       "code": "demo-scripter",
       "name": "DemoScripter",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DemoScripter Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DemoScripter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -2747,7 +3009,9 @@
       "code": "device-fingerprint-matcher",
       "name": "DeviceFingerprintMatcher",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:DeviceFingerprintMatcher Agent"],
+      "sourceIds": [
+        "gc-compliance:DeviceFingerprintMatcher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2767,7 +3031,9 @@
       "code": "discount-approver",
       "name": "DiscountApprover",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DiscountApprover Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DiscountApprover Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -2787,7 +3053,9 @@
       "code": "discount-leak-guard",
       "name": "DiscountLeakGuard",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DiscountLeakGuard Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DiscountLeakGuard Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -2807,7 +3075,9 @@
       "code": "discount-waterfall-modeler",
       "name": "DiscountWaterfallModeler",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:DiscountWaterfallModeler Agent"],
+      "sourceIds": [
+        "cro-vp-sales:DiscountWaterfallModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -2827,7 +3097,9 @@
       "code": "disputed-charge-aggregator",
       "name": "DisputedChargeAggregator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:DisputedChargeAggregator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:DisputedChargeAggregator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -2849,7 +3121,9 @@
       "code": "distribution-automator",
       "name": "DistributionAutomator",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:DistributionAutomator Agent"],
+      "sourceIds": [
+        "cmo-growth:DistributionAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -2857,9 +3131,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Recomenda o plano de distribuição de um conteúdo entre canais próprios, pagos e de parceiros.",
+      "systemPrompt": "Você é o DistributionAutomator, especialista em recomendar planos de distribuição de conteúdo. Sua missão é indicar a combinação de canais próprios, pagos e de parceiros que maximiza o alcance real daquele conteúdo específico.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -2869,7 +3143,9 @@
       "code": "drip-campaign-trigger",
       "name": "DripCampaignTrigger",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:DripCampaignTrigger Agent"],
+      "sourceIds": [
+        "cmo-growth:DripCampaignTrigger Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -2877,9 +3153,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Define os gatilhos e o momento certo para disparar cada etapa de uma campanha de nutrição (drip campaign).",
+      "systemPrompt": "Você é o DripCampaignTrigger, especialista em definir gatilhos de campanhas de nutrição. Sua missão é disparar cada etapa no momento em que o lead realmente está pronto para recebê-la, não em um intervalo fixo de calendário desconectado do comportamento dele.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -2889,7 +3165,9 @@
       "code": "dunning-automator",
       "name": "DunningAutomator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:DunningAutomator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:DunningAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -2911,7 +3189,9 @@
       "code": "duplicate-merger",
       "name": "DuplicateMerger",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:DuplicateMerger Agent"],
+      "sourceIds": [
+        "coo-revops:DuplicateMerger Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -2934,7 +3214,9 @@
       "code": "early-adopter-nurturer",
       "name": "EarlyAdopterNurturer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:EarlyAdopterNurturer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:EarlyAdopterNurturer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -2954,7 +3236,9 @@
       "code": "enablement-coach",
       "name": "Enablement Coach",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Enablement Coach Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Enablement Coach Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [],
@@ -2974,7 +3258,9 @@
       "code": "enrichment-bot",
       "name": "EnrichmentBot",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:EnrichmentBot Agent"],
+      "sourceIds": [
+        "cro-vp-sales:EnrichmentBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -2994,7 +3280,9 @@
       "code": "escalation-predictor",
       "name": "EscalationPredictor",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:EscalationPredictor Agent"],
+      "sourceIds": [
+        "vp-customer-success:EscalationPredictor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -3014,7 +3302,9 @@
       "code": "event-qualifier",
       "name": "EventQualifier",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:EventQualifier Agent"],
+      "sourceIds": [
+        "cro-vp-sales:EventQualifier Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [
@@ -3039,7 +3329,9 @@
       "code": "exec-summary-generator",
       "name": "ExecSummaryGenerator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ExecSummaryGenerator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ExecSummaryGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -3059,7 +3351,9 @@
       "code": "executive-demo-curator",
       "name": "ExecutiveDemoCurator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ExecutiveDemoCurator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ExecutiveDemoCurator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -3079,7 +3373,9 @@
       "code": "executive-sponsor-tracker",
       "name": "ExecutiveSponsorTracker",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:ExecutiveSponsorTracker Agent"],
+      "sourceIds": [
+        "vp-customer-success:ExecutiveSponsorTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -3099,7 +3395,9 @@
       "code": "executive-summary-bot",
       "name": "ExecutiveSummaryBot",
       "domain": "Executivo",
-      "sourceIds": ["ceo-chief-of-staff:ExecutiveSummaryBot Agent"],
+      "sourceIds": [
+        "ceo-chief-of-staff:ExecutiveSummaryBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -3123,7 +3421,9 @@
         "vp-customer-success:Expansion Mapper Premium Agent",
         "vp-customer-success:ExpansionMapper Agent"
       ],
-      "aliasNames": ["Expansion Mapper Premium Agent"],
+      "aliasNames": [
+        "Expansion Mapper Premium Agent"
+      ],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -3146,7 +3446,9 @@
       "code": "failed-payment-retrier",
       "name": "FailedPaymentRetrier",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:FailedPaymentRetrier Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:FailedPaymentRetrier Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -3168,7 +3470,9 @@
       "code": "false-positive-reducer",
       "name": "FalsePositiveReducer",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:FalsePositiveReducer Agent"],
+      "sourceIds": [
+        "gc-compliance:FalsePositiveReducer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3188,7 +3492,9 @@
       "code": "faq-auto-responder",
       "name": "FAQAutoResponder",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:FAQAutoResponder Agent"],
+      "sourceIds": [
+        "vp-customer-success:FAQAutoResponder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -3208,7 +3514,9 @@
       "code": "fast-quoter",
       "name": "FastQuoter",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:FastQuoter Agent"],
+      "sourceIds": [
+        "cro-vp-sales:FastQuoter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -3228,7 +3536,9 @@
       "code": "feature-heatmapper",
       "name": "FeatureHeatmapper",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:FeatureHeatmapper Agent"],
+      "sourceIds": [
+        "coo-revops:FeatureHeatmapper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -3248,7 +3558,9 @@
       "code": "finance",
       "name": "Finance Agent",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:Finance Agent Pack"],
+      "sourceIds": [
+        "cfo-finance-ops:Finance Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -3268,7 +3580,9 @@
       "code": "financial-ratio-calculator",
       "name": "FinancialRatioCalculator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:FinancialRatioCalculator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:FinancialRatioCalculator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -3290,7 +3604,9 @@
       "code": "follow-up",
       "name": "Follow-up",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Follow-up Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Follow-up Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -3310,7 +3626,9 @@
       "code": "follow-up-ghost",
       "name": "FollowUpGhost",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:FollowUpGhost Agent"],
+      "sourceIds": [
+        "cro-vp-sales:FollowUpGhost Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [
@@ -3335,7 +3653,9 @@
       "code": "forecast-intelligence",
       "name": "Forecast Intelligence",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Forecast Intelligence Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Forecast Intelligence Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -3358,7 +3678,9 @@
       "code": "forecast-rollup",
       "name": "ForecastRollup",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ForecastRollup Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ForecastRollup Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [
@@ -3383,7 +3705,9 @@
       "code": "forecasting-modeler",
       "name": "ForecastingModeler",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ForecastingModeler Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ForecastingModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [
@@ -3408,7 +3732,9 @@
       "code": "funnel-leak-detector",
       "name": "FunnelLeakDetector",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:FunnelLeakDetector Agent"],
+      "sourceIds": [
+        "coo-revops:FunnelLeakDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -3428,7 +3754,9 @@
       "code": "fx-risk-manager",
       "name": "FXRiskManager",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:FXRiskManager Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:FXRiskManager Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -3450,7 +3778,9 @@
       "code": "gamification-master",
       "name": "GamificationMaster",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:GamificationMaster Agent"],
+      "sourceIds": [
+        "cro-vp-sales:GamificationMaster Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -3470,7 +3800,9 @@
       "code": "gatekeeper-bypass",
       "name": "GatekeeperBypass",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:GatekeeperBypass Agent"],
+      "sourceIds": [
+        "cro-vp-sales:GatekeeperBypass Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -3490,7 +3822,9 @@
       "code": "geospatial-expansion-mapper",
       "name": "GeospatialExpansionMapper",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:GeospatialExpansionMapper Agent"],
+      "sourceIds": [
+        "coo-revops:GeospatialExpansionMapper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [
@@ -3515,7 +3849,9 @@
       "code": "ghosting-preventer",
       "name": "GhostingPreventer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:GhostingPreventer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:GhostingPreventer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -3535,7 +3871,9 @@
       "code": "gl-anomaly-detector",
       "name": "GLAnomalyDetector",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:GLAnomalyDetector Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:GLAnomalyDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [
@@ -3562,7 +3900,9 @@
       "code": "global-brand-localizer",
       "name": "GlobalBrandLocalizer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:GlobalBrandLocalizer Agent"],
+      "sourceIds": [
+        "cmo-growth:GlobalBrandLocalizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3570,9 +3910,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Adapta uma campanha ou peça de marca para um novo mercado ou idioma, preservando a identidade central da marca.",
+      "systemPrompt": "Você é o GlobalBrandLocalizer, especialista em localizar campanhas e peças de marca para novos mercados. Sua missão é adaptar linguagem e referências culturais sem perder a identidade central da marca, nem introduzir algo que soa ofensivo ou deslocado naquele mercado.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -3582,7 +3922,9 @@
       "code": "gtm-alignment-scorer",
       "name": "GTMAlignmentScorer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:GTMAlignmentScorer Agent"],
+      "sourceIds": [
+        "coo-revops:GTMAlignmentScorer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -3624,7 +3966,9 @@
       "code": "health-score-architect",
       "name": "HealthScoreArchitect",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:HealthScoreArchitect Agent"],
+      "sourceIds": [
+        "vp-customer-success:HealthScoreArchitect Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [
@@ -3649,7 +3993,9 @@
       "code": "health-score-trigger",
       "name": "HealthScoreTrigger",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:HealthScoreTrigger Agent"],
+      "sourceIds": [
+        "vp-customer-success:HealthScoreTrigger Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [
@@ -3674,7 +4020,9 @@
       "code": "high-risk-jurisdiction-pinger",
       "name": "HighRiskJurisdictionPinger",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:HighRiskJurisdictionPinger Agent"],
+      "sourceIds": [
+        "gc-compliance:HighRiskJurisdictionPinger Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3694,7 +4042,9 @@
       "code": "icp-refiner",
       "name": "ICPRefiner",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ICPRefiner Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ICPRefiner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -3717,7 +4067,9 @@
       "code": "id-verification-matcher",
       "name": "IDVerificationMatcher",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:IDVerificationMatcher Agent"],
+      "sourceIds": [
+        "gc-compliance:IDVerificationMatcher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3737,7 +4089,9 @@
       "code": "implementer",
       "name": "Implementer",
       "domain": "Operações",
-      "sourceIds": ["coo-platform-ops:Implementer Agent"],
+      "sourceIds": [
+        "coo-platform-ops:Implementer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3759,7 +4113,9 @@
       "code": "inbound-scorer",
       "name": "InboundScorer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:InboundScorer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:InboundScorer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -3782,7 +4138,9 @@
       "code": "incident-post-mortem-drafter",
       "name": "IncidentPostMortemDrafter",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:IncidentPostMortemDrafter Agent"],
+      "sourceIds": [
+        "gc-compliance:IncidentPostMortemDrafter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3802,7 +4160,9 @@
       "code": "influencer-vettor",
       "name": "InfluencerVettor",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:InfluencerVettor Agent"],
+      "sourceIds": [
+        "cmo-growth:InfluencerVettor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3810,9 +4170,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Avalia um influenciador ou criador de conteúdo quanto a fit de audiência, autenticidade e histórico antes de uma parceria.",
+      "systemPrompt": "Você é o InfluencerVettor, especialista em avaliar influenciadores antes de uma parceria de marca. Sua missão é checar fit de audiência, sinais de autenticidade e histórico de conteúdo, apontando riscos reputacionais antes da parceria ser fechada.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -3822,7 +4182,9 @@
       "code": "instance-right-sizer",
       "name": "InstanceRightSizer",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:InstanceRightSizer Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:InstanceRightSizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -3844,7 +4206,9 @@
       "code": "intent-decoder",
       "name": "IntentDecoder",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:IntentDecoder Agent"],
+      "sourceIds": [
+        "cro-vp-sales:IntentDecoder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -3864,7 +4228,9 @@
       "code": "invoice-generator",
       "name": "InvoiceGenerator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:InvoiceGenerator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:InvoiceGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -3886,7 +4252,9 @@
       "code": "ip-infringement-scraper",
       "name": "IPInfringementScraper",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:IPInfringementScraper Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:IPInfringementScraper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -3908,7 +4276,9 @@
       "code": "journey-architect",
       "name": "JourneyArchitect",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:JourneyArchitect Agent"],
+      "sourceIds": [
+        "vp-customer-success:JourneyArchitect Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -3928,7 +4298,9 @@
       "code": "journey-drop-off-locator",
       "name": "JourneyDropOffLocator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:JourneyDropOffLocator Agent"],
+      "sourceIds": [
+        "coo-revops:JourneyDropOffLocator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -3948,7 +4320,9 @@
       "code": "kb-gap-identifier",
       "name": "KBGapIdentifier",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:KBGapIdentifier Agent"],
+      "sourceIds": [
+        "vp-customer-success:KBGapIdentifier Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -3968,7 +4342,9 @@
       "code": "keyword-opportunity-spotter",
       "name": "KeywordOpportunitySpotter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:KeywordOpportunitySpotter Agent"],
+      "sourceIds": [
+        "cmo-growth:KeywordOpportunitySpotter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -3976,9 +4352,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Identifica palavras-chave com boa relação entre volume de busca e viabilidade de ranqueamento para SEO.",
+      "systemPrompt": "Você é o KeywordOpportunitySpotter, especialista em identificar oportunidades de palavra-chave para SEO. Sua missão é priorizar termos com volume real e viabilidade de ranqueamento, não só os termos mais óbvios e mais disputados do nicho.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -3988,7 +4364,9 @@
       "code": "knowledge",
       "name": "Knowledge",
       "domain": "Operações",
-      "sourceIds": ["coo-platform-ops:Knowledge Bot"],
+      "sourceIds": [
+        "coo-platform-ops:Knowledge Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -4008,7 +4386,9 @@
       "code": "kpi-analyst",
       "name": "KPI Analyst",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:KPI Analyst Bot"],
+      "sourceIds": [
+        "coo-revops:KPI Analyst Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -4031,7 +4411,9 @@
       "code": "l1-auto-resolver",
       "name": "L1AutoResolver",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:L1AutoResolver Agent"],
+      "sourceIds": [
+        "vp-customer-success:L1AutoResolver Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -4051,7 +4433,9 @@
       "code": "l3-bug-replicator",
       "name": "L3BugReplicator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:L3BugReplicator Agent"],
+      "sourceIds": [
+        "vp-customer-success:L3BugReplicator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -4071,7 +4455,9 @@
       "code": "landing-page-morpher",
       "name": "LandingPageMorpher",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:LandingPageMorpher Agent"],
+      "sourceIds": [
+        "cmo-growth:LandingPageMorpher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4079,9 +4465,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Sugere variações de estrutura e mensagem de uma landing page para diferentes públicos ou campanhas.",
+      "systemPrompt": "Você é o LandingPageMorpher, especialista em adaptar landing pages para diferentes públicos e campanhas. Sua missão é ajustar mensagem e estrutura para quem está chegando ali especificamente, sem perder a proposta de valor central da página original.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -4091,7 +4477,9 @@
       "code": "launch-planner",
       "name": "LaunchPlanner",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:LaunchPlanner Agent"],
+      "sourceIds": [
+        "cmo-growth:LaunchPlanner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4113,7 +4501,9 @@
       "code": "lead-enrichment",
       "name": "Lead Enrichment",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Lead Enrichment Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Lead Enrichment Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -4136,7 +4526,9 @@
       "code": "lead-hunter",
       "name": "Lead Hunter",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Lead Hunter Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Lead Hunter Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -4159,7 +4551,9 @@
       "code": "lead-magnet-creator",
       "name": "LeadMagnetCreator",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:LeadMagnetCreator Agent"],
+      "sourceIds": [
+        "cmo-growth:LeadMagnetCreator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -4179,7 +4573,9 @@
       "code": "lead-routing-troubleshooter",
       "name": "LeadRoutingTroubleshooter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:LeadRoutingTroubleshooter Agent"],
+      "sourceIds": [
+        "cmo-growth:LeadRoutingTroubleshooter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4199,7 +4595,9 @@
       "code": "lead-scoring-modeler",
       "name": "LeadScoringModeler",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:LeadScoringModeler Agent"],
+      "sourceIds": [
+        "cro-vp-sales:LeadScoringModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -4222,7 +4620,9 @@
       "code": "leaderboard-broadcaster",
       "name": "LeaderboardBroadcaster",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:LeaderboardBroadcaster Agent"],
+      "sourceIds": [
+        "cro-vp-sales:LeaderboardBroadcaster Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -4242,7 +4642,9 @@
       "code": "legal",
       "name": "Legal Agent",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["general-counsel:Legal Agent Pack"],
+      "sourceIds": [
+        "general-counsel:Legal Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4262,7 +4664,9 @@
       "code": "legal-clause-matcher",
       "name": "LegalClauseMatcher",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:LegalClauseMatcher Agent"],
+      "sourceIds": [
+        "gc-compliance:LegalClauseMatcher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CONTRATOS_ASSINATURA",
       "secondaryJobRoles": [],
@@ -4285,7 +4689,9 @@
       "code": "limit-decrease-recommender",
       "name": "LimitDecreaseRecommender",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:LimitDecreaseRecommender Agent"],
+      "sourceIds": [
+        "gc-compliance:LimitDecreaseRecommender Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4305,7 +4711,9 @@
       "code": "liquidity-ratio-monitor",
       "name": "LiquidityRatioMonitor",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:LiquidityRatioMonitor Agent"],
+      "sourceIds": [
+        "gc-compliance:LiquidityRatioMonitor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4325,7 +4733,9 @@
       "code": "liveness-check-analyzer",
       "name": "LivenessCheckAnalyzer",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:LivenessCheckAnalyzer Agent"],
+      "sourceIds": [
+        "gc-compliance:LivenessCheckAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4345,7 +4755,9 @@
       "code": "lt-vby-channel-calculator",
       "name": "LTVbyChannelCalculator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:LTVbyChannelCalculator Agent"],
+      "sourceIds": [
+        "coo-revops:LTVbyChannelCalculator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -4365,7 +4777,9 @@
       "code": "macro-factor-tracker",
       "name": "MacroFactorTracker",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:MacroFactorTracker Agent"],
+      "sourceIds": [
+        "coo-revops:MacroFactorTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -4385,7 +4799,9 @@
       "code": "maestro-orchestrator",
       "name": "Maestro Orchestrator",
       "domain": "Operações",
-      "sourceIds": ["coo-platform-ops:Maestro Orchestrator"],
+      "sourceIds": [
+        "coo-platform-ops:Maestro Orchestrator"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4407,7 +4823,9 @@
       "code": "mapeia",
       "name": "Mapeia",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:Mapeia Agent"],
+      "sourceIds": [
+        "coo-revops:Mapeia Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -4427,7 +4845,9 @@
       "code": "mar-tech-sync",
       "name": "MarTechSync",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:MarTechSync Agent"],
+      "sourceIds": [
+        "cmo-growth:MarTechSync Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4447,7 +4867,9 @@
       "code": "margin-calculator",
       "name": "MarginCalculator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:MarginCalculator Agent"],
+      "sourceIds": [
+        "coo-revops:MarginCalculator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -4467,7 +4889,9 @@
       "code": "market-expansion-modeler",
       "name": "MarketExpansionModeler",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:MarketExpansionModeler Agent"],
+      "sourceIds": [
+        "cro-vp-sales:MarketExpansionModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -4491,7 +4915,9 @@
         "ceo-chief-of-staff:Market Sentinel Premium Agent",
         "ceo-chief-of-staff:MarketSentinel Agent"
       ],
-      "aliasNames": ["Market Sentinel Premium Agent"],
+      "aliasNames": [
+        "Market Sentinel Premium Agent"
+      ],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -4512,7 +4938,9 @@
       "code": "market-share-estimator",
       "name": "MarketShareEstimator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:MarketShareEstimator Agent"],
+      "sourceIds": [
+        "coo-revops:MarketShareEstimator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [
@@ -4537,7 +4965,9 @@
       "code": "marketing-tech-architect",
       "name": "MarketingTechArchitect",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:MarketingTechArchitect Agent"],
+      "sourceIds": [
+        "cmo-growth:MarketingTechArchitect Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4557,7 +4987,9 @@
       "code": "media-mix-optimizer",
       "name": "MediaMixOptimizer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:MediaMixOptimizer Agent"],
+      "sourceIds": [
+        "coo-revops:MediaMixOptimizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -4577,7 +5009,9 @@
       "code": "meeting-booker",
       "name": "Meeting Booker",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Meeting Booker Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Meeting Booker Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -4597,7 +5031,9 @@
       "code": "mesh-orchestrator",
       "name": "Agent Mesh Orchestrator",
       "domain": "Operações",
-      "sourceIds": ["coo-platform-ops:Agent Mesh Orchestrator"],
+      "sourceIds": [
+        "coo-platform-ops:Agent Mesh Orchestrator"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4619,7 +5055,9 @@
       "code": "micro-learning-creator",
       "name": "MicroLearningCreator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:MicroLearningCreator Agent"],
+      "sourceIds": [
+        "coo-revops:MicroLearningCreator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -4639,7 +5077,9 @@
       "code": "milestone-chaser",
       "name": "MilestoneChaser",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:MilestoneChaser Agent"],
+      "sourceIds": [
+        "vp-customer-success:MilestoneChaser Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -4659,7 +5099,9 @@
       "code": "money-mule-detector",
       "name": "MoneyMuleDetector",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:MoneyMuleDetector Agent"],
+      "sourceIds": [
+        "gc-compliance:MoneyMuleDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4679,7 +5121,9 @@
       "code": "month-end-close-automator",
       "name": "MonthEndCloseAutomator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:MonthEndCloseAutomator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:MonthEndCloseAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -4701,7 +5145,9 @@
       "code": "multi-cloud-cost-modeler",
       "name": "MultiCloudCostModeler",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:MultiCloudCostModeler Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:MultiCloudCostModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -4723,7 +5169,9 @@
       "code": "multi-threader",
       "name": "MultiThreader",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:MultiThreader Agent"],
+      "sourceIds": [
+        "cro-vp-sales:MultiThreader Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -4743,7 +5191,9 @@
       "code": "multi-year-deal-modeller",
       "name": "MultiYearDealModeller",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:MultiYearDealModeller Agent"],
+      "sourceIds": [
+        "cro-vp-sales:MultiYearDealModeller Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -4763,7 +5213,9 @@
       "code": "mutual-action-tracker",
       "name": "MutualActionTracker",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:MutualActionTracker Agent"],
+      "sourceIds": [
+        "cro-vp-sales:MutualActionTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -4787,7 +5239,9 @@
         "ceo-chief-of-staff:Narrative Weaver Premium Agent",
         "ceo-chief-of-staff:NarrativeWeaver Agent"
       ],
-      "aliasNames": ["Narrative Weaver Premium Agent"],
+      "aliasNames": [
+        "Narrative Weaver Premium Agent"
+      ],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -4808,7 +5262,9 @@
       "code": "nda-auto-signer",
       "name": "NDAAutoSigner",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:NDAAutoSigner Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:NDAAutoSigner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CONTRATOS_ASSINATURA",
       "secondaryJobRoles": [],
@@ -4831,7 +5287,9 @@
       "code": "net-retention-modeler",
       "name": "NetRetentionModeler",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:NetRetentionModeler Agent"],
+      "sourceIds": [
+        "coo-revops:NetRetentionModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -4851,7 +5309,9 @@
       "code": "newsletter-curator",
       "name": "NewsletterCurator",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:NewsletterCurator Agent"],
+      "sourceIds": [
+        "cmo-growth:NewsletterCurator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4871,7 +5331,9 @@
       "code": "niche-explorer",
       "name": "NicheExplorer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:NicheExplorer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:NicheExplorer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -4891,7 +5353,9 @@
       "code": "non-standard-flag",
       "name": "NonStandardFlag",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:NonStandardFlag Agent"],
+      "sourceIds": [
+        "coo-revops:NonStandardFlag Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -4911,7 +5375,9 @@
       "code": "objection-crusher",
       "name": "ObjectionCrusher",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ObjectionCrusher Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ObjectionCrusher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -4931,7 +5397,9 @@
       "code": "objection-flashcard",
       "name": "ObjectionFlashcard",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ObjectionFlashcard Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ObjectionFlashcard Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -4951,7 +5419,9 @@
       "code": "objection-handling",
       "name": "Objection Handling",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Objection Handling Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Objection Handling Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -4971,7 +5441,9 @@
       "code": "on-page-optimizer",
       "name": "OnPageOptimizer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:OnPageOptimizer Agent"],
+      "sourceIds": [
+        "cmo-growth:OnPageOptimizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -4991,7 +5463,9 @@
       "code": "onboarding-ramp-tracker",
       "name": "OnboardingRampTracker",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:OnboardingRampTracker Agent"],
+      "sourceIds": [
+        "coo-revops:OnboardingRampTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [
@@ -5016,7 +5490,9 @@
       "code": "onboarding-sales",
       "name": "Onboarding Sales",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Onboarding Sales Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Onboarding Sales Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -5036,7 +5512,9 @@
       "code": "one-on-one-prep",
       "name": "OneOnOnePrep",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:OneOnOnePrep Agent"],
+      "sourceIds": [
+        "cro-vp-sales:OneOnOnePrep Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -5056,7 +5534,9 @@
       "code": "ops",
       "name": "Ops Agent",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:Ops Agent Pack"],
+      "sourceIds": [
+        "coo-revops:Ops Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -5076,7 +5556,9 @@
       "code": "org-nav",
       "name": "OrgNav",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:OrgNav Agent"],
+      "sourceIds": [
+        "cro-vp-sales:OrgNav Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -5096,7 +5578,9 @@
       "code": "outage-communicator",
       "name": "OutageCommunicator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:OutageCommunicator Agent"],
+      "sourceIds": [
+        "vp-customer-success:OutageCommunicator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -5116,7 +5600,9 @@
       "code": "partner-ecosystem-scout",
       "name": "PartnerEcosystemScout",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PartnerEcosystemScout Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PartnerEcosystemScout Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -5136,7 +5622,9 @@
       "code": "patch-update-alerter",
       "name": "PatchUpdateAlerter",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:PatchUpdateAlerter Agent"],
+      "sourceIds": [
+        "vp-customer-success:PatchUpdateAlerter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -5156,7 +5644,9 @@
       "code": "payment-link-sender",
       "name": "PaymentLinkSender",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:PaymentLinkSender Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:PaymentLinkSender Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -5178,7 +5668,9 @@
       "code": "payment-plan-negotiator",
       "name": "PaymentPlanNegotiator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:PaymentPlanNegotiator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:PaymentPlanNegotiator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [
@@ -5205,7 +5697,9 @@
       "code": "pep-screener",
       "name": "PEPScreener",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:PEPScreener Agent"],
+      "sourceIds": [
+        "gc-compliance:PEPScreener Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5225,7 +5719,9 @@
       "code": "persona-sync",
       "name": "PersonaSync",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:PersonaSync Agent"],
+      "sourceIds": [
+        "cmo-growth:PersonaSync Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5245,7 +5741,9 @@
       "code": "personalization-engine",
       "name": "PersonalizationEngine",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PersonalizationEngine Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PersonalizationEngine Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -5265,7 +5763,9 @@
       "code": "pipeline-auditor",
       "name": "Pipeline Auditor",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Pipeline Auditor Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Pipeline Auditor Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [
@@ -5290,7 +5790,9 @@
       "code": "pipeline-inspector",
       "name": "PipelineInspector",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PipelineInspector Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PipelineInspector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [
@@ -5319,7 +5821,9 @@
         "cro-vp-sales:Pipeline Oracle Premium Agent",
         "cro-vp-sales:PipelineOracle Agent"
       ],
-      "aliasNames": ["Pipeline Oracle Premium Agent"],
+      "aliasNames": [
+        "Pipeline Oracle Premium Agent"
+      ],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -5342,7 +5846,9 @@
       "code": "pipeline-velocity-tracker",
       "name": "PipelineVelocityTracker",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:PipelineVelocityTracker Agent"],
+      "sourceIds": [
+        "coo-revops:PipelineVelocityTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [
@@ -5367,7 +5873,9 @@
       "code": "plagiarism-tone-checker",
       "name": "PlagiarismToneChecker",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:PlagiarismToneChecker Agent"],
+      "sourceIds": [
+        "cmo-growth:PlagiarismToneChecker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5387,7 +5895,9 @@
       "code": "planner",
       "name": "Planner",
       "domain": "Operações",
-      "sourceIds": ["coo-platform-ops:Planner Agent"],
+      "sourceIds": [
+        "coo-platform-ops:Planner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5409,7 +5919,9 @@
       "code": "playbook-creator",
       "name": "PlaybookCreator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PlaybookCreator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PlaybookCreator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [],
@@ -5429,7 +5941,9 @@
       "code": "playbook-generator",
       "name": "PlaybookGenerator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PlaybookGenerator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PlaybookGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [],
@@ -5449,7 +5963,9 @@
       "code": "playbook-updater",
       "name": "PlaybookUpdater",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:PlaybookUpdater Agent"],
+      "sourceIds": [
+        "coo-revops:PlaybookUpdater Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [],
@@ -5469,7 +5985,9 @@
       "code": "po-c-tracker",
       "name": "PoCTracker",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PoCTracker Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PoCTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -5489,7 +6007,9 @@
       "code": "policy-approval-guard",
       "name": "Policy & Approval Guard",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["compliance-officer:Policy & Approval Guard"],
+      "sourceIds": [
+        "compliance-officer:Policy & Approval Guard"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5509,7 +6029,9 @@
       "code": "policy-mapping-bot",
       "name": "PolicyMappingBot",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:PolicyMappingBot Agent"],
+      "sourceIds": [
+        "gc-compliance:PolicyMappingBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5529,7 +6051,9 @@
       "code": "positioning-tester",
       "name": "PositioningTester",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:PositioningTester Agent"],
+      "sourceIds": [
+        "cmo-growth:PositioningTester Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5549,7 +6073,9 @@
       "code": "pr-scraper",
       "name": "PRScraper",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:PRScraper Agent"],
+      "sourceIds": [
+        "cmo-growth:PRScraper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5569,7 +6095,9 @@
       "code": "price-discount-impact",
       "name": "PriceDiscountImpact",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PriceDiscountImpact Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PriceDiscountImpact Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -5589,7 +6117,9 @@
       "code": "pricing-elasticity-tester",
       "name": "PricingElasticityTester",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:PricingElasticityTester Agent"],
+      "sourceIds": [
+        "coo-revops:PricingElasticityTester Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -5613,7 +6143,9 @@
         "cro-vp-sales:Pricing Optimizer Premium Agent",
         "cro-vp-sales:PricingOptimizer Agent"
       ],
-      "aliasNames": ["Pricing Optimizer Premium Agent"],
+      "aliasNames": [
+        "Pricing Optimizer Premium Agent"
+      ],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
       "risk": "HIGH",
@@ -5634,7 +6166,9 @@
       "code": "pricing-tester",
       "name": "PricingTester",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:PricingTester Agent"],
+      "sourceIds": [
+        "cro-vp-sales:PricingTester Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -5654,7 +6188,9 @@
       "code": "pricing-tier-recommender",
       "name": "PricingTierRecommender",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:PricingTierRecommender Agent"],
+      "sourceIds": [
+        "vp-customer-success:PricingTierRecommender Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -5674,7 +6210,9 @@
       "code": "process-bottleneck-alerter",
       "name": "ProcessBottleneckAlerter",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ProcessBottleneckAlerter Agent"],
+      "sourceIds": [
+        "coo-revops:ProcessBottleneckAlerter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -5694,7 +6232,9 @@
       "code": "process-flow-mapper",
       "name": "ProcessFlowMapper",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ProcessFlowMapper Agent"],
+      "sourceIds": [
+        "coo-revops:ProcessFlowMapper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -5714,7 +6254,9 @@
       "code": "process-walkthrough-automator",
       "name": "ProcessWalkthroughAutomator",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:ProcessWalkthroughAutomator Agent"],
+      "sourceIds": [
+        "gc-compliance:ProcessWalkthroughAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5734,7 +6276,9 @@
       "code": "procurement-hacker",
       "name": "ProcurementHacker",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ProcurementHacker Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ProcurementHacker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -5754,7 +6298,9 @@
       "code": "procurement-policy-bot",
       "name": "ProcurementPolicyBot",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:ProcurementPolicyBot Agent"],
+      "sourceIds": [
+        "gc-compliance:ProcurementPolicyBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5774,7 +6320,9 @@
       "code": "product-feedback-looper",
       "name": "ProductFeedbackLooper",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ProductFeedbackLooper Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ProductFeedbackLooper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -5794,7 +6342,9 @@
       "code": "productivity",
       "name": "Productivity",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:Productivity Bot"],
+      "sourceIds": [
+        "coo-revops:Productivity Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -5814,7 +6364,9 @@
       "code": "project-plan-tracker",
       "name": "ProjectPlanTracker",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:ProjectPlanTracker Agent"],
+      "sourceIds": [
+        "vp-customer-success:ProjectPlanTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -5834,7 +6386,9 @@
       "code": "promise-to-pay-tracker",
       "name": "PromiseToPayTracker",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:PromiseToPayTracker Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:PromiseToPayTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -5856,7 +6410,9 @@
       "code": "proposal",
       "name": "Proposal",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Proposal Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Proposal Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -5876,7 +6432,9 @@
       "code": "proration-calculator",
       "name": "ProrationCalculator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:ProrationCalculator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:ProrationCalculator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -5898,7 +6456,9 @@
       "code": "qbr-deck-builder",
       "name": "QBRDeckBuilder",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:QBRDeckBuilder Agent"],
+      "sourceIds": [
+        "vp-customer-success:QBRDeckBuilder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -5918,7 +6478,9 @@
       "code": "qualification",
       "name": "Qualification",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Qualification Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Qualification Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -5942,7 +6504,9 @@
         "cro-vp-sales:Quota Architect Premium Agent",
         "cro-vp-sales:QuotaArchitect Agent"
       ],
-      "aliasNames": ["Quota Architect Premium Agent"],
+      "aliasNames": [
+        "Quota Architect Premium Agent"
+      ],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -5963,7 +6527,9 @@
       "code": "quota-attainment-tracker",
       "name": "QuotaAttainmentTracker",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:QuotaAttainmentTracker Agent"],
+      "sourceIds": [
+        "cro-vp-sales:QuotaAttainmentTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [
@@ -5992,7 +6558,9 @@
       "code": "quota-setter",
       "name": "QuotaSetter",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:QuotaSetter Agent"],
+      "sourceIds": [
+        "cro-vp-sales:QuotaSetter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [
@@ -6017,7 +6585,9 @@
       "code": "ramp-up-assistant",
       "name": "RampUpAssistant",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:RampUpAssistant Agent"],
+      "sourceIds": [
+        "cro-vp-sales:RampUpAssistant Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -6037,7 +6607,9 @@
       "code": "refund-processor",
       "name": "RefundProcessor",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:RefundProcessor Agent"],
+      "sourceIds": [
+        "vp-customer-success:RefundProcessor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -6057,7 +6629,9 @@
       "code": "regulatory-change-alerter",
       "name": "RegulatoryChangeAlerter",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:RegulatoryChangeAlerter Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:RegulatoryChangeAlerter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -6079,7 +6653,9 @@
       "code": "regulatory-training-tracker",
       "name": "RegulatoryTrainingTracker",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:RegulatoryTrainingTracker Agent"],
+      "sourceIds": [
+        "gc-compliance:RegulatoryTrainingTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6099,7 +6675,9 @@
       "code": "relationship-matrix-builder",
       "name": "RelationshipMatrixBuilder",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:RelationshipMatrixBuilder Agent"],
+      "sourceIds": [
+        "vp-customer-success:RelationshipMatrixBuilder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -6119,7 +6697,9 @@
       "code": "release-note-writer",
       "name": "ReleaseNoteWriter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ReleaseNoteWriter Agent"],
+      "sourceIds": [
+        "cmo-growth:ReleaseNoteWriter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6139,7 +6719,9 @@
       "code": "remediation-plan-tracker",
       "name": "RemediationPlanTracker",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:RemediationPlanTracker Agent"],
+      "sourceIds": [
+        "gc-compliance:RemediationPlanTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6159,7 +6741,9 @@
       "code": "remittance-extractor",
       "name": "RemittanceExtractor",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:RemittanceExtractor Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:RemittanceExtractor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -6181,7 +6765,9 @@
       "code": "renewal-contract-generator",
       "name": "RenewalContractGenerator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:RenewalContractGenerator Agent"],
+      "sourceIds": [
+        "vp-customer-success:RenewalContractGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CONTRATOS_ASSINATURA",
       "secondaryJobRoles": [
@@ -6209,7 +6795,9 @@
       "code": "renewal-forecast-engine",
       "name": "RenewalForecastEngine",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:RenewalForecastEngine Agent"],
+      "sourceIds": [
+        "vp-customer-success:RenewalForecastEngine Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [
@@ -6234,7 +6822,9 @@
       "code": "rep-coach",
       "name": "RepCoach AI",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:RepCoach AI Agent"],
+      "sourceIds": [
+        "cro-vp-sales:RepCoach AI Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -6254,7 +6844,9 @@
       "code": "requirements-gatherer",
       "name": "RequirementsGatherer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:RequirementsGatherer Agent"],
+      "sourceIds": [
+        "coo-revops:RequirementsGatherer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6274,7 +6866,9 @@
       "code": "resource-balancer",
       "name": "ResourceBalancer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ResourceBalancer Agent"],
+      "sourceIds": [
+        "coo-revops:ResourceBalancer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6294,7 +6888,9 @@
       "code": "rev-ops-intelligence",
       "name": "RevOps Intelligence",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:RevOps Intelligence Bot"],
+      "sourceIds": [
+        "coo-revops:RevOps Intelligence Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -6317,7 +6913,9 @@
       "code": "reviewer",
       "name": "Reviewer",
       "domain": "Operações",
-      "sourceIds": ["coo-platform-ops:Reviewer Agent"],
+      "sourceIds": [
+        "coo-platform-ops:Reviewer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6339,7 +6937,9 @@
       "code": "rfp-auto-responder",
       "name": "RFPAutoResponder",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:RFPAutoResponder Agent"],
+      "sourceIds": [
+        "cro-vp-sales:RFPAutoResponder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -6359,7 +6959,9 @@
       "code": "rh",
       "name": "RH Agent",
       "domain": "RH",
-      "sourceIds": ["head-of-people:RH Agent Pack"],
+      "sourceIds": [
+        "head-of-people:RH Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6379,7 +6981,9 @@
       "code": "risk-exposure-quantifier",
       "name": "RiskExposureQuantifier",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:RiskExposureQuantifier Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:RiskExposureQuantifier Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -6401,7 +7005,9 @@
       "code": "roas-maximizer",
       "name": "ROASMaximizer",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ROASMaximizer Agent"],
+      "sourceIds": [
+        "cmo-growth:ROASMaximizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6421,7 +7027,9 @@
       "code": "roi-calculator-builder",
       "name": "ROICalculatorBuilder",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ROICalculatorBuilder Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ROICalculatorBuilder Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -6441,7 +7049,9 @@
       "code": "roi-scenario-modeler",
       "name": "ROIScenarioModeler",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ROIScenarioModeler Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ROIScenarioModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [
@@ -6466,7 +7076,9 @@
       "code": "roleplay-trainer",
       "name": "Roleplay Trainer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Roleplay Trainer Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Roleplay Trainer Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -6486,7 +7098,9 @@
       "code": "routing-traffic-cop",
       "name": "RoutingTrafficCop",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:RoutingTrafficCop Agent"],
+      "sourceIds": [
+        "cro-vp-sales:RoutingTrafficCop Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6506,7 +7120,9 @@
       "code": "saa-s-license-auditor",
       "name": "SaaSLicenseAuditor",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:SaaSLicenseAuditor Agent"],
+      "sourceIds": [
+        "gc-compliance:SaaSLicenseAuditor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6526,7 +7142,9 @@
       "code": "sales",
       "name": "Sales Agent",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Sales Agent Pack"],
+      "sourceIds": [
+        "cro-vp-sales:Sales Agent Pack"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6546,7 +7164,9 @@
       "code": "sales-manager",
       "name": "Sales Manager",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:Sales Manager Bot"],
+      "sourceIds": [
+        "cro-vp-sales:Sales Manager Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6566,7 +7186,9 @@
       "code": "sanctions-screener",
       "name": "SanctionsScreener",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:SanctionsScreener Agent"],
+      "sourceIds": [
+        "gc-compliance:SanctionsScreener Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6586,7 +7208,9 @@
       "code": "sar-drafter",
       "name": "SARDrafter",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:SARDrafter Agent"],
+      "sourceIds": [
+        "gc-compliance:SARDrafter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6606,7 +7230,9 @@
       "code": "scalability-predictor",
       "name": "ScalabilityPredictor",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:ScalabilityPredictor Agent"],
+      "sourceIds": [
+        "vp-customer-success:ScalabilityPredictor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -6626,7 +7252,9 @@
       "code": "scenario-modeler",
       "name": "ScenarioModeler",
       "domain": "Executivo",
-      "sourceIds": ["ceo-chief-of-staff:ScenarioModeler Agent"],
+      "sourceIds": [
+        "ceo-chief-of-staff:ScenarioModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6646,7 +7274,9 @@
       "code": "schema-markup-generator",
       "name": "SchemaMarkupGenerator",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:SchemaMarkupGenerator Agent"],
+      "sourceIds": [
+        "cmo-growth:SchemaMarkupGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6666,7 +7296,9 @@
       "code": "scope-creep-detector",
       "name": "ScopeCreepDetector",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ScopeCreepDetector Agent"],
+      "sourceIds": [
+        "coo-revops:ScopeCreepDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6686,7 +7318,9 @@
       "code": "sdr-outreach",
       "name": "SDR Outreach",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:SDR Outreach Bot"],
+      "sourceIds": [
+        "cro-vp-sales:SDR Outreach Bot"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -6709,7 +7343,9 @@
       "code": "security-questionnaire-filler",
       "name": "SecurityQuestionnaireFiller",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:SecurityQuestionnaireFiller Agent"],
+      "sourceIds": [
+        "cro-vp-sales:SecurityQuestionnaireFiller Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -6729,7 +7365,9 @@
       "code": "semantic-search-kb",
       "name": "SemanticSearchKB",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:SemanticSearchKB Agent"],
+      "sourceIds": [
+        "vp-customer-success:SemanticSearchKB Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -6749,7 +7387,9 @@
       "code": "sentiment-aggregator",
       "name": "SentimentAggregator",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:SentimentAggregator Agent"],
+      "sourceIds": [
+        "vp-customer-success:SentimentAggregator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -6769,7 +7409,9 @@
       "code": "sentiment-shift-alerter",
       "name": "SentimentShiftAlerter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:SentimentShiftAlerter Agent"],
+      "sourceIds": [
+        "cmo-growth:SentimentShiftAlerter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -6789,7 +7431,9 @@
       "code": "seo-draft-writer",
       "name": "SEODraftWriter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:SEODraftWriter Agent"],
+      "sourceIds": [
+        "cmo-growth:SEODraftWriter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6809,7 +7453,9 @@
       "code": "serp-volatility-tracker",
       "name": "SERPVolatilityTracker",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:SERPVolatilityTracker Agent"],
+      "sourceIds": [
+        "cmo-growth:SERPVolatilityTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6829,7 +7475,9 @@
       "code": "session-replay-summarizer",
       "name": "SessionReplaySummarizer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:SessionReplaySummarizer Agent"],
+      "sourceIds": [
+        "coo-revops:SessionReplaySummarizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -6849,7 +7497,9 @@
       "code": "shift-scheduler",
       "name": "ShiftScheduler",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:ShiftScheduler Agent"],
+      "sourceIds": [
+        "vp-customer-success:ShiftScheduler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6869,7 +7519,9 @@
       "code": "sla-escalator",
       "name": "SLAEscalator",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:SLAEscalator Agent"],
+      "sourceIds": [
+        "gc-compliance:SLAEscalator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -6889,7 +7541,9 @@
       "code": "sla-monitor",
       "name": "SLAMonitor",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:SLAMonitor Agent"],
+      "sourceIds": [
+        "vp-customer-success:SLAMonitor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -6909,7 +7563,9 @@
       "code": "spend-controller",
       "name": "SpendController",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:SpendController Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:SpendController Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -6931,7 +7587,9 @@
       "code": "sql-query-generator",
       "name": "SQLQueryGenerator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:SQLQueryGenerator Agent"],
+      "sourceIds": [
+        "coo-revops:SQLQueryGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -6951,7 +7609,9 @@
       "code": "stakeholder-persona-generator",
       "name": "StakeholderPersonaGenerator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:StakeholderPersonaGenerator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:StakeholderPersonaGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -6971,7 +7631,9 @@
       "code": "stakeholder-update-automator",
       "name": "StakeholderUpdateAutomator",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:StakeholderUpdateAutomator Agent"],
+      "sourceIds": [
+        "coo-revops:StakeholderUpdateAutomator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "COORDENADOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -6991,7 +7653,9 @@
       "code": "stat-significance-tester",
       "name": "StatSignificanceTester",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:StatSignificanceTester Agent"],
+      "sourceIds": [
+        "coo-revops:StatSignificanceTester Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -7011,7 +7675,9 @@
       "code": "stickiness-tracker",
       "name": "StickinessTracker",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:StickinessTracker Agent"],
+      "sourceIds": [
+        "coo-revops:StickinessTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -7031,7 +7697,9 @@
       "code": "strategic-alliance-scout",
       "name": "StrategicAllianceScout",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:StrategicAllianceScout Agent"],
+      "sourceIds": [
+        "cro-vp-sales:StrategicAllianceScout Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -7051,7 +7719,9 @@
       "code": "strategic-kpi-aggregator",
       "name": "StrategicKPIAggregator",
       "domain": "Executivo",
-      "sourceIds": ["ceo-chief-of-staff:StrategicKPIAggregator Agent"],
+      "sourceIds": [
+        "ceo-chief-of-staff:StrategicKPIAggregator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
@@ -7071,7 +7741,9 @@
       "code": "strategic-partner-scout",
       "name": "StrategicPartnerScout",
       "domain": "Executivo",
-      "sourceIds": ["ceo-chief-of-staff:StrategicPartnerScout Agent"],
+      "sourceIds": [
+        "ceo-chief-of-staff:StrategicPartnerScout Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [
@@ -7096,7 +7768,9 @@
       "code": "stress-test-modeler",
       "name": "StressTestModeler",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:StressTestModeler Agent"],
+      "sourceIds": [
+        "gc-compliance:StressTestModeler Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7116,7 +7790,9 @@
       "code": "subject-line-tester",
       "name": "SubjectLineTester",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:SubjectLineTester Agent"],
+      "sourceIds": [
+        "cmo-growth:SubjectLineTester Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7136,7 +7812,9 @@
       "code": "supply-chain-sync",
       "name": "SupplyChainSync",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:SupplyChainSync Agent"],
+      "sourceIds": [
+        "coo-revops:SupplyChainSync Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -7156,7 +7834,9 @@
       "code": "synthetic-identity-detector",
       "name": "SyntheticIdentityDetector",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:SyntheticIdentityDetector Agent"],
+      "sourceIds": [
+        "gc-compliance:SyntheticIdentityDetector Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7176,7 +7856,9 @@
       "code": "target-scraper",
       "name": "TargetScraper",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:TargetScraper Agent"],
+      "sourceIds": [
+        "cro-vp-sales:TargetScraper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -7196,7 +7878,9 @@
       "code": "tax-exemption-verifier",
       "name": "TaxExemptionVerifier",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:TaxExemptionVerifier Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:TaxExemptionVerifier Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -7218,7 +7902,9 @@
       "code": "tax-optimizer",
       "name": "TaxOptimizer",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:TaxOptimizer Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:TaxOptimizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -7240,7 +7926,9 @@
       "code": "tech-objection-resolver",
       "name": "TechObjectionResolver",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:TechObjectionResolver Agent"],
+      "sourceIds": [
+        "cro-vp-sales:TechObjectionResolver Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -7260,7 +7948,9 @@
       "code": "tech-stack-auditor",
       "name": "TechStackAuditor",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:TechStackAuditor Agent"],
+      "sourceIds": [
+        "gc-compliance:TechStackAuditor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7280,7 +7970,9 @@
       "code": "territory-balancer",
       "name": "TerritoryBalancer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:TerritoryBalancer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:TerritoryBalancer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -7300,7 +7992,9 @@
       "code": "territory-mapper",
       "name": "TerritoryMapper",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:TerritoryMapper Agent"],
+      "sourceIds": [
+        "cro-vp-sales:TerritoryMapper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -7320,7 +8014,9 @@
       "code": "ticket-backlog-analyzer",
       "name": "TicketBacklogAnalyzer",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:TicketBacklogAnalyzer Agent"],
+      "sourceIds": [
+        "vp-customer-success:TicketBacklogAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -7340,7 +8036,9 @@
       "code": "ticket-classifier",
       "name": "TicketClassifier",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:TicketClassifier Agent"],
+      "sourceIds": [
+        "vp-customer-success:TicketClassifier Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -7360,7 +8058,9 @@
       "code": "tiering-optimizer",
       "name": "TieringOptimizer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:TieringOptimizer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:TieringOptimizer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "GERENTE_COMERCIAL",
       "secondaryJobRoles": [],
@@ -7380,7 +8080,9 @@
       "code": "tool-roi-analyzer",
       "name": "ToolROIAnalyzer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ToolROIAnalyzer Agent"],
+      "sourceIds": [
+        "coo-revops:ToolROIAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "REVENUE_INTELLIGENCE",
       "secondaryJobRoles": [],
@@ -7400,7 +8102,9 @@
       "code": "topic-cluster-planner",
       "name": "TopicClusterPlanner",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:TopicClusterPlanner Agent"],
+      "sourceIds": [
+        "cmo-growth:TopicClusterPlanner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7422,7 +8126,9 @@
       "code": "trade-reference-checker",
       "name": "TradeReferenceChecker",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:TradeReferenceChecker Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:TradeReferenceChecker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [],
@@ -7444,7 +8150,9 @@
       "code": "training-video-recommender",
       "name": "TrainingVideoRecommender",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:TrainingVideoRecommender Agent"],
+      "sourceIds": [
+        "vp-customer-success:TrainingVideoRecommender Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -7464,7 +8172,9 @@
       "code": "transaction-hold-reviewer",
       "name": "TransactionHoldReviewer",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:TransactionHoldReviewer Agent"],
+      "sourceIds": [
+        "gc-compliance:TransactionHoldReviewer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7486,7 +8196,9 @@
       "code": "transaction-link-analyzer",
       "name": "TransactionLinkAnalyzer",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:TransactionLinkAnalyzer Agent"],
+      "sourceIds": [
+        "gc-compliance:TransactionLinkAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7506,7 +8218,9 @@
       "code": "transcript-coach",
       "name": "TranscriptCoach",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:TranscriptCoach Agent"],
+      "sourceIds": [
+        "cro-vp-sales:TranscriptCoach Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "SDR",
       "secondaryJobRoles": [],
@@ -7530,7 +8244,9 @@
         "ceo-chief-of-staff:Trend Catcher Premium Agent",
         "ceo-chief-of-staff:TrendCatcher Agent"
       ],
-      "aliasNames": ["Trend Catcher Premium Agent"],
+      "aliasNames": [
+        "Trend Catcher Premium Agent"
+      ],
       "primaryJobRole": "DIRETOR_COMERCIAL",
       "secondaryJobRoles": [],
       "risk": "LOW",
@@ -7551,7 +8267,9 @@
       "code": "trigger-event-watcher",
       "name": "TriggerEventWatcher",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:TriggerEventWatcher Agent"],
+      "sourceIds": [
+        "cro-vp-sales:TriggerEventWatcher Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -7571,7 +8289,9 @@
       "code": "ubo-mapper",
       "name": "UBOMapper",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:UBOMapper Agent"],
+      "sourceIds": [
+        "gc-compliance:UBOMapper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7591,7 +8311,9 @@
       "code": "unsubscribe-predictor",
       "name": "UnsubscribePredictor",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:UnsubscribePredictor Agent"],
+      "sourceIds": [
+        "cmo-growth:UnsubscribePredictor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7611,7 +8333,9 @@
       "code": "upsell-prompt",
       "name": "UpsellPrompt",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:UpsellPrompt Agent"],
+      "sourceIds": [
+        "vp-customer-success:UpsellPrompt Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -7631,7 +8355,9 @@
       "code": "use-case-generator",
       "name": "UseCaseGenerator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:UseCaseGenerator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:UseCaseGenerator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -7651,7 +8377,9 @@
       "code": "user-story-writer",
       "name": "UserStoryWriter",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:UserStoryWriter Agent"],
+      "sourceIds": [
+        "coo-revops:UserStoryWriter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -7671,7 +8399,9 @@
       "code": "utm-builder-bot",
       "name": "UTMBuilderBot",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:UTMBuilderBot Agent"],
+      "sourceIds": [
+        "cmo-growth:UTMBuilderBot Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7691,7 +8421,9 @@
       "code": "validation-rule-enforcer",
       "name": "ValidationRuleEnforcer",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:ValidationRuleEnforcer Agent"],
+      "sourceIds": [
+        "coo-revops:ValidationRuleEnforcer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -7711,7 +8443,9 @@
       "code": "value-aligner",
       "name": "ValueAligner",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:ValueAligner Agent"],
+      "sourceIds": [
+        "cro-vp-sales:ValueAligner Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
@@ -7731,7 +8465,9 @@
       "code": "velocity-rule-engine",
       "name": "VelocityRuleEngine",
       "domain": "Compliance/Jurídico",
-      "sourceIds": ["gc-compliance:VelocityRuleEngine Agent"],
+      "sourceIds": [
+        "gc-compliance:VelocityRuleEngine Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7751,7 +8487,9 @@
       "code": "vendor-negotiator",
       "name": "VendorNegotiator",
       "domain": "Financeiro",
-      "sourceIds": ["cfo-finance-ops:VendorNegotiator Agent"],
+      "sourceIds": [
+        "cfo-finance-ops:VendorNegotiator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "RECEITA_FATURAMENTO",
       "secondaryJobRoles": [
@@ -7778,7 +8516,9 @@
       "code": "vertical-translator",
       "name": "VerticalTranslator",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:VerticalTranslator Agent"],
+      "sourceIds": [
+        "cro-vp-sales:VerticalTranslator Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "LDR",
       "secondaryJobRoles": [],
@@ -7798,7 +8538,9 @@
       "code": "vip-concierge",
       "name": "VIPConcierge",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:VIPConcierge Agent"],
+      "sourceIds": [
+        "vp-customer-success:VIPConcierge Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -7818,7 +8560,9 @@
       "code": "viral-loop-tracker",
       "name": "ViralLoopTracker",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:ViralLoopTracker Agent"],
+      "sourceIds": [
+        "cmo-growth:ViralLoopTracker Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7838,7 +8582,9 @@
       "code": "voice-pitch-grader",
       "name": "VoicePitchGrader",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:VoicePitchGrader Agent"],
+      "sourceIds": [
+        "coo-revops:VoicePitchGrader Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -7858,7 +8604,9 @@
       "code": "voicemail-dropper",
       "name": "VoicemailDropper",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:VoicemailDropper Agent"],
+      "sourceIds": [
+        "cro-vp-sales:VoicemailDropper Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -7878,7 +8626,9 @@
       "code": "webhook-monitor",
       "name": "WebhookMonitor",
       "domain": "Operações",
-      "sourceIds": ["coo-revops:WebhookMonitor Agent"],
+      "sourceIds": [
+        "coo-revops:WebhookMonitor Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BITRIX_GUARDIAN",
       "secondaryJobRoles": [],
@@ -7901,7 +8651,9 @@
       "code": "webinar-nurturer",
       "name": "WebinarNurturer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:WebinarNurturer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:WebinarNurturer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "BDR",
       "secondaryJobRoles": [],
@@ -7921,7 +8673,9 @@
       "code": "webinar-promoter",
       "name": "WebinarPromoter",
       "domain": "Marketing",
-      "sourceIds": ["cmo-growth:WebinarPromoter Agent"],
+      "sourceIds": [
+        "cmo-growth:WebinarPromoter Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": null,
       "secondaryJobRoles": [],
@@ -7941,7 +8695,9 @@
       "code": "welcome-sequencer",
       "name": "WelcomeSequencer",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:WelcomeSequencer Agent"],
+      "sourceIds": [
+        "vp-customer-success:WelcomeSequencer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -7961,7 +8717,9 @@
       "code": "white-space-analyzer",
       "name": "WhiteSpaceAnalyzer",
       "domain": "Customer Success",
-      "sourceIds": ["vp-customer-success:WhiteSpaceAnalyzer Agent"],
+      "sourceIds": [
+        "vp-customer-success:WhiteSpaceAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CHURN_RETENCAO",
       "secondaryJobRoles": [],
@@ -7981,7 +8739,9 @@
       "code": "win-loss-analyzer",
       "name": "WinLossAnalyzer",
       "domain": "Vendas",
-      "sourceIds": ["cro-vp-sales:WinLossAnalyzer Agent"],
+      "sourceIds": [
+        "cro-vp-sales:WinLossAnalyzer Agent"
+      ],
       "aliasNames": [],
       "primaryJobRole": "CLOSER",
       "secondaryJobRoles": [],
