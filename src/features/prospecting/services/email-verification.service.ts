@@ -12,7 +12,26 @@ import { withTimeout } from '../../../lib/http.js';
 const MX_LOOKUP_TIMEOUT_MS = 5_000;
 const TXT_LOOKUP_TIMEOUT_MS = 3_000;
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// CodeQL (achado real, PR #454): "polynomial regular expression used on uncontrolled data"
+// (ReDoS) — mesmo problema e mesma correção de src/config/access-policy.ts (ver o comentário
+// completo lá): o `[^\s@]+` do meio aceita `.`, então uma entrada maliciosa sem `@`/sem `.` final
+// válido força o motor de regex a testar todas as formas de dividir o trecho entre o segmento do
+// meio e o `\.[^\s@]+$` final — custo exponencial, e esta função roda sobre e-mail vindo direto
+// do usuário (fluxo de enriquecimento de contato). isValidEmailFormat abaixo faz a mesma checagem
+// sem regex ambíguo.
+const NO_WHITESPACE_OR_AT = /^[^\s@]+$/;
+
+function isValidEmailFormat(value: string): boolean {
+  const atIndex = value.indexOf('@');
+  if (atIndex <= 0 || value.indexOf('@', atIndex + 1) !== -1) return false;
+
+  const local = value.slice(0, atIndex);
+  const domain = value.slice(atIndex + 1);
+  if (!NO_WHITESPACE_OR_AT.test(local) || !NO_WHITESPACE_OR_AT.test(domain)) return false;
+
+  const dotIndex = domain.lastIndexOf('.');
+  return dotIndex > 0 && dotIndex < domain.length - 1;
+}
 const DISPOSABLE_DOMAIN_SET = new Set(disposableDomains);
 
 export type EmailDeliverabilityStatus = 'verified' | 'invalid' | 'unknown';
@@ -33,7 +52,7 @@ export interface EmailDeliverabilityResult {
  */
 export async function checkEmailDeliverability(email: string): Promise<EmailDeliverabilityResult> {
   const trimmed = (email || '').trim().toLowerCase();
-  if (!EMAIL_REGEX.test(trimmed)) {
+  if (!isValidEmailFormat(trimmed)) {
     return { email: trimmed, status: 'invalid', reason: 'invalid_format' };
   }
 

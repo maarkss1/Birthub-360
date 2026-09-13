@@ -18,8 +18,9 @@ export type { BrandInfo };
  *
  * O eixo que o seletor de marca de fato controlava no conteúdo (playbook,
  * personas, matriz de objeções, portal Bitrix) não era identidade visual e sim
- * dado comercial: continua existindo, na área comercial, parametrizável por
- * empresa.
+ * dado comercial: continua existindo (`src/config/playbooks.ts`), mas não é
+ * mais nomeado por empresa (`atlasgr`/`totaltrac` removidos por pedido
+ * explícito do usuário) — hoje é um único playbook geral.
  */
 export function useBrand(): { brandInfo: BrandInfo } {
   return { brandInfo: BRAND };

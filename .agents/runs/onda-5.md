@@ -18,7 +18,6 @@ fechamento foi um erro meu**), histórico de automação, wrapper de WhatsApp da
 achados duplicados do Agente 10 (tsc/lint) já corrigidos na Onda 4.
 
 Ficaram deliberadamente fora do escopo desta rodada:
-
 - Refatoração de Clean Architecture para `billing`/`crm360`/`intelligence agents` (débito
   arquitetural grande, prioridade normal — não cabe numa rodada pontual).
 - Schema `BitrixExtractionRun` (módulo Extrações Bitrix) — depende de decisão de retenção de dado
@@ -31,12 +30,12 @@ Ficaram deliberadamente fora do escopo desta rodada:
 Quatro especialistas, respeitando o limite de 3 simultâneos (01/06/07 em paralelo; 08 entrou assim
 que 06 terminou), cada um em worktree isolado a partir de `integracao/onda-5`:
 
-| Agente                  | Branch                             | Item(ns) resolvido(s)                                                                                                                                                                                                 |
-| ----------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 01 — Plataforma/Dados   | `worktree-agent-ad652b9145e66fc10` | Persistência real de conexões 3CX (schema+migração+troca de `Map`→Prisma); confirmação de que `BitrixSyncRule.lastError` já existia; métricas HTTP via OTel (parcial — ver riscos)                                    |
-| 06 — Integrações/Bitrix | `worktree-agent-a21f807a5af2d9bae` | Counter Prometheus `bitrix_sync_failures_total`                                                                                                                                                                       |
-| 07 — IA/Automações      | `worktree-agent-ad261e8e833c3f930` | Métricas Prometheus de fila BullMQ (`bullmq_queue_*`) e custo/orçamento de IA (`ai_usage_cost_usd_total`, `ai_usage_budget_usd_total`)                                                                                |
-| 08 — QA/Release         | `worktree-agent-a6d009098fcbf11e8` | GitHub Actions pinadas por SHA completo (incl. `production.yaml`, fora da lista original); CLI do prisma restaurada na imagem de produção (build Docker real validado); handoff antigo de Dockerfile confirmado stale |
+| Agente | Branch | Item(ns) resolvido(s) |
+|---|---|---|
+| 01 — Plataforma/Dados | `worktree-agent-ad652b9145e66fc10` | Persistência real de conexões 3CX (schema+migração+troca de `Map`→Prisma); confirmação de que `BitrixSyncRule.lastError` já existia; métricas HTTP via OTel (parcial — ver riscos) |
+| 06 — Integrações/Bitrix | `worktree-agent-a21f807a5af2d9bae` | Counter Prometheus `bitrix_sync_failures_total` |
+| 07 — IA/Automações | `worktree-agent-ad261e8e833c3f930` | Métricas Prometheus de fila BullMQ (`bullmq_queue_*`) e custo/orçamento de IA (`ai_usage_cost_usd_total`, `ai_usage_budget_usd_total`) |
+| 08 — QA/Release | `worktree-agent-a6d009098fcbf11e8` | GitHub Actions pinadas por SHA completo (incl. `production.yaml`, fora da lista original); CLI do prisma restaurada na imagem de produção (build Docker real validado); handoff antigo de Dockerfile confirmado stale |
 
 Todas as branches revisadas (`git diff main...<branch> --stat`) antes do merge: nenhum arquivo fora
 da propriedade de cada agente foi tocado, exceto as 2 exceções mecânicas pré-autorizadas do Agente
@@ -64,21 +63,20 @@ real para a próxima.
 
 ## Testes (rodados na branch de integração, após merge dos quatro agentes)
 
-| Gate                               | Resultado                                                                                                                                                                                                           |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npx prisma validate` / `generate` | ✅ PASSOU                                                                                                                                                                                                           |
-| `npx tsc --noEmit`                 | ✅ PASSOU — 0 erros                                                                                                                                                                                                 |
-| `npm run lint`                     | ✅ PASSOU — 0 erros, 101 warnings (mesmo débito pré-existente, nenhum novo)                                                                                                                                         |
-| `npm run build`                    | ✅ PASSOU                                                                                                                                                                                                           |
-| `npm run test:unit`                | ✅ PASSOU — 109 arquivos, 706 testes, 0 falhas                                                                                                                                                                      |
-| `npm run test:integration`         | ⚠️ 12/13 arquivos, 46/48 testes — falha isolada em `ailog-rls.test.ts` (2 testes), confirmada pré-existente em `main`, não regressão                                                                                |
-| `npm run verify:integrations`      | ⚠️ 1 falha (`googlePlaces` — "nenhum resultado; confira ativação, faturamento e restrições da chave"), ambiental/credencial externa, não código; 7 integrações opcionais não configuradas (esperado neste ambiente) |
-| `npm run verify:ai`                | Não aplicável — nenhum provider de IA configurado neste ambiente local                                                                                                                                              |
+| Gate | Resultado |
+|---|---|
+| `npx prisma validate` / `generate` | ✅ PASSOU |
+| `npx tsc --noEmit` | ✅ PASSOU — 0 erros |
+| `npm run lint` | ✅ PASSOU — 0 erros, 101 warnings (mesmo débito pré-existente, nenhum novo) |
+| `npm run build` | ✅ PASSOU |
+| `npm run test:unit` | ✅ PASSOU — 109 arquivos, 706 testes, 0 falhas |
+| `npm run test:integration` | ⚠️ 12/13 arquivos, 46/48 testes — falha isolada em `ailog-rls.test.ts` (2 testes), confirmada pré-existente em `main`, não regressão |
+| `npm run verify:integrations` | ⚠️ 1 falha (`googlePlaces` — "nenhum resultado; confira ativação, faturamento e restrições da chave"), ambiental/credencial externa, não código; 7 integrações opcionais não configuradas (esperado neste ambiente) |
+| `npm run verify:ai` | Não aplicável — nenhum provider de IA configurado neste ambiente local |
 
 Varredura manual de segredo sobre o diff acumulado — nenhum achado.
 
 ## Handoffs (abertos e resolvidos nesta rodada)
-
 - Resolvidos: `06-para-01-persistencia-3cx.md`, `06-para-01-schema-extracoes-bitrix.md`,
   `10-para-01-metricas-http-otel.md` (01); `10-para-06-metricas-sync-bitrix.md`,
   `01-para-06-role-gates-integracoes.md` (06); `10-para-07-metricas-fila-orcamento-ia.md` (07);
@@ -95,7 +93,6 @@ Varredura manual de segredo sobre o diff acumulado — nenhum achado.
 - Nenhum handoff `Prioridade: bloqueador` permanece `Status: aberto`.
 
 ## Riscos restantes
-
 - **AILog RLS ainda quebrado** (ver seção acima) — custo/uso de IA continua não sendo registrado de
   forma confiável em cenários sem tenant ativo/entre conexões pooled. Recomendo priorizar numa
   próxima rodada.
@@ -108,7 +105,6 @@ Varredura manual de segredo sobre o diff acumulado — nenhum achado.
   normal de geração de migração.
 
 ## Decisão da Onda 5
-
 **APROVADA na branch de integração**, com ressalvas documentadas (AILog RLS pré-existente,
 `googlePlaces` ambiental). Todos os gates obrigatórios que fazem sentido neste ambiente passaram.
 Nenhum handoff bloqueador aberto. Nenhum segredo exposto.

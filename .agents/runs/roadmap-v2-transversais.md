@@ -16,11 +16,11 @@ feature nova.
 
 ## 2. Especialistas e matriz de propriedade
 
-| Agente                                        | Missão                                                                                                                                                                                                                        | Pastas/arquivos de propriedade                                  |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| 14 — Ambiente de Execução e Test Harness      | Auditar a infraestrutura de teste (não os testes de feature em si) quanto a mascaramento de falha de ambiente como sucesso, configuração de paralelismo/timeout, e setup determinístico.                                      | `scripts/test/**`, `vitest.*.config.ts`, `playwright.config.ts` |
-| 15 — Segurança Aplicada e Rotação de Segredos | Auditar os scripts de segurança aplicada (não a lógica de negócio de cada domínio, já coberta pelos outros agentes) quanto a gate fail-open disfarçado de fail-closed, e política de rotação de segredo documentada vs. real. | `scripts/security/**`, `src/lib/security/`                      |
-| 17 — Cadência Multicanal e Ciclo de Receita   | Auditar sequências de cadência (e-mail/WhatsApp/ligação) quanto a opt-out não respeitado e envio duplicado/fora de janela.                                                                                                    | `src/features/cadence/`                                         |
+| Agente | Missão | Pastas/arquivos de propriedade |
+|---|---|---|
+| 14 — Ambiente de Execução e Test Harness | Auditar a infraestrutura de teste (não os testes de feature em si) quanto a mascaramento de falha de ambiente como sucesso, configuração de paralelismo/timeout, e setup determinístico. | `scripts/test/**`, `vitest.*.config.ts`, `playwright.config.ts` |
+| 15 — Segurança Aplicada e Rotação de Segredos | Auditar os scripts de segurança aplicada (não a lógica de negócio de cada domínio, já coberta pelos outros agentes) quanto a gate fail-open disfarçado de fail-closed, e política de rotação de segredo documentada vs. real. | `scripts/security/**`, `src/lib/security/` |
+| 17 — Cadência Multicanal e Ciclo de Receita | Auditar sequências de cadência (e-mail/WhatsApp/ligação) quanto a opt-out não respeitado e envio duplicado/fora de janela. | `src/features/cadence/` |
 
 Nenhuma sobreposição com as Ondas 1-4 em execução. Nota: `src/lib/queue/` (filas/workers, incluindo
 o worker de cadência se houver) é propriedade do Agente 07 (já concluído nesta onda) — 17 não edita

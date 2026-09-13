@@ -342,6 +342,45 @@ if (_env.success && _env.data.NODE_ENV === 'production' && _env.data.ALLOW_DEV_A
   }
 }
 
+// SEC-001: BETTER_AUTH_SECRET é o segredo que o Better Auth (src/lib/auth.ts) usa para assinar/
+// derivar sessões, tokens de verificação de e-mail e reset de senha (ver `secret:
+// process.env.BETTER_AUTH_SECRET || undefined` em src/lib/auth.ts). Diferente de
+// CREDENTIALS_ENCRYPTION_KEY/PII_BLIND_INDEX_KEY (fail-closed em runtime, na primeira leitura —
+// ver src/lib/crypto/secretFields.ts e src/lib/crypto/piiIndex.ts), este segredo não tinha
+// NENHUMA trava: se ausente, o better-auth resolve `secret: undefined` e cai no próprio default
+// interno da lib (documentadamente "não seguro para produção" — pensado só para dev local), o que
+// compromete silenciosamente a integridade de toda sessão/token emitido pela plataforma. Mesmo
+// padrão de boot-time fail-closed já usado acima para ALLOW_DEV_AUTH_BYPASS: process.exit(1) só em
+// NODE_ENV=production (nunca em dev/test, onde um valor ausente/fraco é tolerado de propósito).
+// "Fraco" cobre dois casos reais e prováveis de erro operacional: (1) copiar `.env.example`
+// verbatim sem substituir o placeholder documentado ali; (2) gerar/colar um segredo curto demais
+// para servir como chave de assinatura — 32 caracteres é o mesmo piso já usado para
+// CREDENTIALS_ENCRYPTION_KEY/PII_BLIND_INDEX_KEY (32 bytes) nesta base de código.
+const BETTER_AUTH_SECRET_PLACEHOLDER_VALUES = new Set([
+  'replace-with-a-long-random-secret', // valor literal de exemplo em .env.example
+]);
+const MIN_BETTER_AUTH_SECRET_LENGTH = 32;
+
+if (_env.success && _env.data.NODE_ENV === 'production') {
+  const secret = _env.data.BETTER_AUTH_SECRET;
+  const isMissing = !secret || secret.trim().length === 0;
+  const isWeak =
+    !isMissing &&
+    (secret.length < MIN_BETTER_AUTH_SECRET_LENGTH ||
+      BETTER_AUTH_SECRET_PLACEHOLDER_VALUES.has(secret));
+
+  if (isMissing || isWeak) {
+    logger.error(
+      isMissing
+        ? '❌ BETTER_AUTH_SECRET ausente em produção — obrigatória para assinar sessões/tokens do Better Auth. Gere uma com `openssl rand -base64 32`. Abortando inicialização.'
+        : `❌ BETTER_AUTH_SECRET fraca em produção (mínimo ${MIN_BETTER_AUTH_SECRET_LENGTH} caracteres; o valor de exemplo do .env.example não é permitido). Gere uma com \`openssl rand -base64 32\`. Abortando inicialização.`,
+    );
+    if (process.env.NODE_ENV !== 'test') {
+      process.exit(1);
+    }
+  }
+}
+
 // Tipado como o schema (não `NodeJS.ProcessEnv`): no caminho de sucesso (o único que importa em
 // produção — o de falha sempre encerra o processo antes de chegar aqui, exceto em NODE_ENV=test)
 // os valores já vêm com default/coerce/transform aplicados pelo Zod. Sem este cast, `env` virava

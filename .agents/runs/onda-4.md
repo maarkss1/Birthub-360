@@ -17,10 +17,10 @@ haviam sido executados — 11 não tinha nenhum branch/commit prévio.
 Dois especialistas em paralelo (dentro do limite de concorrência), cada um em worktree isolado a
 partir de `integracao/onda-4`:
 
-| Agente                                     | Branch                                                           | Resultado                        |
-| ------------------------------------------ | ---------------------------------------------------------------- | -------------------------------- |
-| 10 — Infraestrutura, Observabilidade e SRE | `agente/10-infraestrutura-sre`                                   | 4 commits, mesclado sem conflito |
-| 11 — Marca e Ativos Institucionais         | `worktree-agent-a6ce208a664e182f9` (branch nomeada pelo harness) | 3 commits, mesclado sem conflito |
+| Agente | Branch | Resultado |
+|---|---|---|
+| 10 — Infraestrutura, Observabilidade e SRE | `agente/10-infraestrutura-sre` | 4 commits, mesclado sem conflito |
+| 11 — Marca e Ativos Institucionais | `worktree-agent-a6ce208a664e182f9` (branch nomeada pelo harness) | 3 commits, mesclado sem conflito |
 
 Ambas as branches foram revisadas (`git diff main...<branch> --stat`) antes do merge: nenhum arquivo
 fora da propriedade exclusiva de cada agente foi tocado.
@@ -28,7 +28,6 @@ fora da propriedade exclusiva de cada agente foi tocado.
 ## Achados e correções por agente
 
 ### Agente 10 — Infraestrutura, Observabilidade e SRE
-
 - Corrigido bug real: `charts/prospector-atlas/templates/hpa.yaml` apontava para `kind: Deployment`
   mesmo com `blueGreen.enabled: true` (que cria um `Rollout`) — o HPA nunca escalava nada.
 - Adicionado `migration-job.yaml` (Helm hook `pre-install,pre-upgrade`) em `charts/` e `k8s/`, não
@@ -46,7 +45,6 @@ fora da propriedade exclusiva de cada agente foi tocado.
 - Nenhum segredo encontrado versionado em `k8s/**`/`argocd/**`/`charts/**`/`infrastructure/**`.
 
 ### Agente 11 — Marca e Ativos Institucionais
-
 - Confirmado: cores documentadas em `identidade-visual/**` batem exatamente com os tokens usados em
   código (`globals.css`, `BrandContext.tsx`) — nenhuma divergência, nenhum handoff de cor necessário.
 - Removido `public/totaltrack-logo.png` (logo TotalTrac legado, confirmado sem nenhuma referência no
@@ -66,7 +64,6 @@ fora da propriedade exclusiva de cada agente foi tocado.
 
 Ambos os agentes, de forma independente, encontraram o gate de `main` quebrado antes mesmo de
 começar seu próprio trabalho:
-
 1. `npx tsc --noEmit` falhava: `TAB_ROUTE_SET` em `src/lib/navigationBus.ts` não incluía a chave
    `crm360` (tab introduzida pelo commit `3f6e336e feat(02)`, já em `main`).
 2. `npm run lint` quebrava antes de analisar qualquer arquivo: `eslint.config.mjs` referenciava 4
@@ -86,11 +83,11 @@ pontos do código (`Sidebar.tsx`, `tabMeta.ts`, `CrmOverview.tsx` já esperavam 
 
 ## Testes (rodados na branch de integração, após merge das duas branches)
 
-| Gate               | Resultado                                                                                                                             |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `npx tsc --noEmit` | ✅ PASSOU — 0 erros                                                                                                                   |
-| `npm run lint`     | ✅ PASSOU — 0 erros, 101 warnings (mesmo débito pré-existente `jsx-a11y/*`/`@typescript-eslint/no-explicit-any`, nenhum warning novo) |
-| `npm run build`    | ✅ PASSOU                                                                                                                             |
+| Gate | Resultado |
+|---|---|
+| `npx tsc --noEmit` | ✅ PASSOU — 0 erros |
+| `npm run lint` | ✅ PASSOU — 0 erros, 101 warnings (mesmo débito pré-existente `jsx-a11y/*`/`@typescript-eslint/no-explicit-any`, nenhum warning novo) |
+| `npm run build` | ✅ PASSOU |
 
 `npm run test:unit`/`test:integration`/`test:e2e` não fazem parte do gate oficial da Onda 4
 (`EXECUCAO-ONDAS.md` define apenas tsc/lint/build para esta onda, mais validação de infraestrutura
@@ -103,7 +100,6 @@ Varredura manual de segredo sobre o diff acumulado (`git diff main...integracao/
 achado.
 
 ## Handoffs (abertos e resolvidos nesta onda)
-
 - Resolvido nesta onda: `onda-3/07-para-11-lgpd-service-fix.md` (stale, endereçado errado).
 - Resolvido nesta onda: `onda-4/11-para-02-crm360-rota-ausente.md` (bloqueador, corrigido
   diretamente pelo Coordenador — ver seção acima).
@@ -117,7 +113,6 @@ achado.
 - Nenhum handoff `Prioridade: bloqueador` permanece `Status: aberto`.
 
 ## Riscos restantes
-
 - `k8s/`/`argocd/`/`charts/` continuam sendo caminho de deploy não-ativo (Render+Vercel é o real);
   o trabalho desta onda os deixa consistentes e documentados, não os torna o caminho de produção.
 - Nenhuma validação real de cluster (`helm lint`/`kubeval`/rollback simulado) foi possível neste
@@ -131,7 +126,6 @@ achado.
 - Dois vídeos institucionais idênticos com roteiros diferentes — decisão de negócio pendente.
 
 ## Decisão da Onda 4
-
 **APROVADA na branch de integração.** Todos os gates obrigatórios da onda passaram. Nenhum handoff
 bloqueador ficou aberto. Nenhum segredo exposto, nenhum dado fictício, nenhuma alteração fora de
 propriedade.

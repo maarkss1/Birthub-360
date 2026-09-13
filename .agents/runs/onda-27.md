@@ -72,7 +72,7 @@ rodada, documentado no audit doc.
   warning novo introduzido por este item)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **182/182 arquivos, 1420/1420 testes**
 - integration (Postgres+Redis reais): `npx dotenv-cli -e .env.test -- npx vitest run -c
-vitest.integration.config.ts` — **40/40 arquivos, 188/188 testes**, incluindo os 8 casos novos de
+  vitest.integration.config.ts` — **40/40 arquivos, 188/188 testes**, incluindo os 8 casos novos de
   `tests/integration/cadence-schedule-meeting.routes.test.ts` (confirmação válida cria Note +
   CadenceCalendarEvent reais; lead sem e-mail de contato não bloqueia; vincula CadenceRun ativo
   quando existe; 422 sem persistir nada quando o horário é inválido; 400 de payload malformado;

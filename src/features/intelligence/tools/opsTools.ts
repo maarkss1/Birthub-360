@@ -1,3 +1,11 @@
+/**
+ * AVISO DE GOVERNANÇA (ACH-13-01):
+ * Módulo legado de execução direta de ferramentas do OpsAgent.
+ * Em produção, o OpsAgent utiliza `src/features/intelligence/agents/opsPendingActions.tool.ts`
+ * para propor ações via `AIPendingAction` em vez de executar diretamente no banco.
+ * Mantido apenas para compatibilidade histórica; não é mais fonte de verdade para verificações de segurança.
+ */
+
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { prisma } from '../../../lib/prisma.js';
@@ -9,6 +17,20 @@ import {
   type NotificationKind,
 } from '../../notifications/notification.service.js';
 
+// ATENÇÃO — módulo MORTO em produção, mantido no repo de propósito (histórico/referência), NÃO é
+// mais a fonte de verdade para nada que precise refletir o comportamento real do OpsAgent.
+//
+// `ops.agent.ts` não importa mais nada daqui — ele usa `opsPendingActions.tool.ts`
+// (`create_follow_up_task`/`notify_team` com o MESMO nome/schema, mas que registram uma
+// `AIPendingAction` em vez de executar direto via `activityService`/`notificationService`; a
+// execução real só acontece após aprovação humana em `POST /agent/pending/:id/approve`). Ver o
+// comentário no topo de `opsPendingActions.tool.ts` para o raciocínio completo (GOV-13).
+//
+// Qualquer teste, validador de golden dataset, ou outra verificação de segurança do enxame que
+// precise refletir o que o OpsAgent realmente pode fazer DEVE importar de
+// `../agents/opsPendingActions.tool.js`, nunca daqui — importar deste arquivo testa um caminho que
+// não existe mais em produção e não detecta deriva real entre os dois módulos (ver ACH-13-01).
+//
 /**
  * Ferramenta para o agente agendar uma tarefa/atividade de follow-up vinculada a um Lead real,
  * para um vendedor humano executar depois — a IA não conduz a ação externa (ligação, e-mail),

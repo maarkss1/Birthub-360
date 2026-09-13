@@ -6,6 +6,17 @@ import type {
 } from '../../shared/contracts/dailyPlan.contract';
 import { brazilMonthKey } from '../../shared/time/brazilCalendar';
 
+/**
+ * DUPLICAÇÃO INTENCIONAL, NÃO DÍVIDA ESQUECIDA: várias interfaces abaixo (formas de resposta dos
+ * endpoints de `/api/commercial-intelligence`) redeclaram, campo a campo e sem import
+ * compartilhado, as mesmas interfaces de `./domain/CommercialIntelligence.ts` (backend). Uma
+ * unificação via `src/shared/contracts/commercialIntelligence.contract.ts` foi tentada na Sprint 00
+ * e revertida por quebrar o contrato de tipos consumido por este arquivo — decisão do dono do
+ * repositório, registrada em
+ * `.agents/handoffs/onda-8/18-para-04-duplicacao-commercial-intelligence-contract.md` (handoff
+ * `18-para-04`, status "resolvido/rejeitado") e formalizada em `docs/ADR/ADR-003-Decisoes-
+ * Estruturais-Onda-6-8.md` (seção D). Não tente unificar de novo sem reabrir essa decisão.
+ */
 export type ForecastTier = 'Commit' | 'BestCase' | 'Pipeline' | 'Upside';
 
 export interface CommercialGoalDTO {
@@ -418,7 +429,9 @@ export interface HealthScoreResult {
 }
 
 export type ForecastAccuracyUnavailableReason =
-  'periodo_nao_fechou' | 'sem_snapshot' | 'sem_realizado';
+  | 'periodo_nao_fechou'
+  | 'sem_snapshot'
+  | 'sem_realizado';
 export interface ForecastAccuracyResult {
   available: boolean;
   period: string;

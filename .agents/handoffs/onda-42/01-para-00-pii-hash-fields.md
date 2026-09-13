@@ -36,7 +36,6 @@ sobre a coluna cifrada — confirmado contra Postgres real na onda 39, ver
 
 Implementado nesta rodada (sem tocar `prisma/schema.prisma`/migrations — arquivos de dono único
 deste repositório):
-
 - `src/lib/security/piiSearchIndex.ts` — HMAC-SHA256(valor normalizado, `PII_SEARCH_HMAC_SECRET`).
   Reusa `normalizeEmailForDedupe`/`normalizePhoneForDedupe` de
   `src/features/prospecting/utils/contactDedupe.ts` (mesma definição de "mesmo e-mail/telefone" já
@@ -74,7 +73,6 @@ model Contact {
 ```
 
 Notas sobre os campos:
-
 - `String?` simples é suficiente — Postgres `text` não paga custo extra por não fixar o tamanho, e
   HMAC-SHA256 hex sempre tem 64 chars, então `@db.VarChar(64)`/`@db.Char(64)` é uma otimização
   opcional, não necessária.
@@ -82,13 +80,13 @@ Notas sobre os campos:
   mesmo telefone/e-mail hoje (é literalmente o que o job de dedup existe para detectar); um
   `@@unique` quebraria isso.
 - A migration gerada (`ALTER TABLE "Contact" ADD COLUMN "phoneHash" TEXT, ADD COLUMN
-"whatsappHash" TEXT, ADD COLUMN "emailHash" TEXT;` + os 3 `CREATE INDEX`) é uma mudança aditiva,
+  "whatsappHash" TEXT, ADD COLUMN "emailHash" TEXT;` + os 3 `CREATE INDEX`) é uma mudança aditiva,
   sem default, metadata-only no Postgres moderno (≥11) — segura para rodar sem lock longo mesmo com
   a tabela `Contact` grande.
 - Depois de aplicar, rodar `prisma generate` (normalmente já parte do pipeline de
   build/`postinstall`) para o Prisma Client passar a conhecer os 3 campos novos — só depois disso
   o código desta rodada (que hoje faz cast explícito para `Record<string, unknown>`/`as unknown as
-Prisma.XxxInput` nesses pontos, exatamente por causa disso) passa a rodar de verdade contra
+  Prisma.XxxInput` nesses pontos, exatamente por causa disso) passa a rodar de verdade contra
   Postgres real. Ver comentário no topo de
   `tests/integration/piiSearchIndex-contactHash.test.ts` — esse arquivo já existe, com
   `describe.skip`, pronto para provar isso: só remover o skip depois da migration.
@@ -132,7 +130,6 @@ silenciosamente não encontra nada — o pior tipo de bug para isto (ex.: `findO
 deixaria de bloquear duplicidade de dono para todo contato importado antes do backfill).
 
 Ordem de rollout recomendada:
-
 1. Aplicar a migration (colunas `*Hash` nullable, sem quebrar nada — ninguém ainda as lê).
 2. Rodar o script de backfill até completar 100% dos contatos existentes.
 3. Confirmar (`SELECT count(*) FROM "Contact" WHERE phone IS NOT NULL AND "phoneHash" IS NULL`
@@ -183,9 +180,9 @@ aceitar formalmente a perda dessa busca específica):
    na tela de Contatos.
 2. **Casamento de telefone por sufixo/padrão** (últimos 8-9 dígitos, `contains` ou `LIKE`), usado
    para achar o Lead de uma chamada recebida quando só se conhece o número, não o contato: `src/
-features/integrations/threecx/threecx.service.ts` (linha ~556), `src/features/integrations/
-birth-voice/voiceResult.webhook.ts` (linha ~146), e — o caso mais delicado — `src/features/
-integrations/whatsapp/whatsappMessage.service.ts` → `findContactByPhone`, que roda **SQL bruto**
+   features/integrations/threecx/threecx.service.ts` (linha ~556), `src/features/integrations/
+   birth-voice/voiceResult.webhook.ts` (linha ~146), e — o caso mais delicado — `src/features/
+   integrations/whatsapp/whatsappMessage.service.ts` → `findContactByPhone`, que roda **SQL bruto**
    (`$queryRaw` com `regexp_replace(...) LIKE`) direto na coluna `Contact.phone`/`whatsapp`,
    bypassando tanto este hash quanto a decifra automática da extensão do Prisma (`$queryRaw` não
    passa por `$allOperations` — o próprio comentário do arquivo já documenta isso para RLS; vale
@@ -200,7 +197,7 @@ integrations/whatsapp/whatsappMessage.service.ts` → `findContactByPhone`, que 
    foi especificamente `WHERE`/dedup por igualdade, não uma varredura completa de todo `include`
    que toca `Contact`).
 5. **Sentinela de nome no sweep de anonimização LGPD** (`contact: { name: { not:
-'[titular anonimizado — LGPD]' } }`, em `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts`)
+   '[titular anonimizado — LGPD]' } }`, em `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts`)
    — não afetado hoje porque `name` não está sendo hasheado (avaliei explicitamente: busca por
    nome neste produto é sempre fuzzy/`contains`, nunca igualdade exata, então não se beneficia de
    um índice HMAC). Se `Contact.name` for cifrado no futuro, este `not equals` contra uma string
@@ -212,21 +209,21 @@ integrations/whatsapp/whatsappMessage.service.ts` → `findContactByPhone`, que 
 
 Levantada ANTES de qualquer mudança de código, nesta ordem de arquivo:
 
-| Arquivo                                                                                              | Tipo de busca                                                                                    | Ação nesta rodada                                                                                    |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `src/features/integrations/email/emailReply.webhook.ts` (`findOpenLeadByEmail`)                      | Igualdade exata, case-insensitive, via `contact: { email }`                                      | ✅ migrado para `emailHash`                                                                          |
-| `src/features/integrations/bitrix/service/ownershipGuard.ts` (`findOwnershipConflict`)               | Igualdade exata (`phone`) + case-insensitive (`email`), via `contact: { OR: [...] }`             | ✅ migrado para `phoneHash`/`emailHash`                                                              |
-| `src/features/crm/jobs/deduplication.worker.ts`                                                      | `groupBy` por `email`/`phone` (detecção de duplicados)                                           | ✅ migrado para `groupBy` por `emailHash`/`phoneHash`                                                |
-| `src/features/contacts/infra/PrismaContactRepository.ts` (`findAllWithFilters`)                      | `contains`, fuzzy, multi-campo (nome/e-mail/telefone/whatsapp/cargo/depto/empresa)               | ⛔ fora de escopo (não é igualdade) — ver lacuna 1                                                   |
-| `src/features/contacts/services/contact.service.ts` (`findAll`)                                      | Idem acima — módulo sem uso real hoje (nenhum import fora dele mesmo)                            | ⛔ idem — mantido por paridade                                                                       |
-| `src/features/integrations/threecx/threecx.service.ts` (~linha 556)                                  | `contains` por sufixo de dígitos (últimos 8)                                                     | ⛔ fora de escopo — ver lacuna 2                                                                     |
-| `src/features/integrations/birth-voice/voiceResult.webhook.ts` (~linha 146)                          | Idem acima                                                                                       | ⛔ idem                                                                                              |
-| `src/features/integrations/whatsapp/whatsappMessage.service.ts` (`findContactByPhone`)               | `$queryRaw` com `LIKE` por sufixo de dígitos — bypassa a extensão do Prisma inteira              | ⛔ idem — risco adicional documentado na lacuna 2                                                    |
-| `src/features/cadence/infra/PrismaCadenceRateLimitPort.ts` (`countDistinctEmailRecipientsForDomain`) | `endsWith` por domínio de e-mail                                                                 | ⛔ fora de escopo — ver lacuna 3                                                                     |
-| `src/features/cadence/infra/PrismaLeadSubjectResolver.ts`                                            | Leitura (não `WHERE`) de `contact.email/whatsapp/phone` via `select` aninhado a partir de `Lead` | ⛔ fora de escopo — problema de decifra aninhada, não de busca — ver lacuna 4                        |
-| `src/shared/services/dataSubjectErasure.service.ts` (`eraseDataSubject`)                             | `update` que zera `phone`/`whatsapp`/`email` (LGPD)                                              | ✅ automático — o passo "1c" em `prisma.ts` já zera o hash correspondente sem mudança de código aqui |
-| `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts`                                          | `contact: { name: { not: <sentinela> } }`                                                        | ⛔ fora de escopo (campo `name`, não hasheado por decisão) — ver lacuna 5                            |
-| `src/lib/prisma.ts` (soft delete cascade, `Contact.deletedAt`)                                       | Não filtra por PII, só `id`/`companyId`                                                          | N/A — não usa phone/email/whatsapp                                                                   |
+| Arquivo | Tipo de busca | Ação nesta rodada |
+|---|---|---|
+| `src/features/integrations/email/emailReply.webhook.ts` (`findOpenLeadByEmail`) | Igualdade exata, case-insensitive, via `contact: { email }` | ✅ migrado para `emailHash` |
+| `src/features/integrations/bitrix/service/ownershipGuard.ts` (`findOwnershipConflict`) | Igualdade exata (`phone`) + case-insensitive (`email`), via `contact: { OR: [...] }` | ✅ migrado para `phoneHash`/`emailHash` |
+| `src/features/crm/jobs/deduplication.worker.ts` | `groupBy` por `email`/`phone` (detecção de duplicados) | ✅ migrado para `groupBy` por `emailHash`/`phoneHash` |
+| `src/features/contacts/infra/PrismaContactRepository.ts` (`findAllWithFilters`) | `contains`, fuzzy, multi-campo (nome/e-mail/telefone/whatsapp/cargo/depto/empresa) | ⛔ fora de escopo (não é igualdade) — ver lacuna 1 |
+| `src/features/contacts/services/contact.service.ts` (`findAll`) | Idem acima — módulo sem uso real hoje (nenhum import fora dele mesmo) | ⛔ idem — mantido por paridade |
+| `src/features/integrations/threecx/threecx.service.ts` (~linha 556) | `contains` por sufixo de dígitos (últimos 8) | ⛔ fora de escopo — ver lacuna 2 |
+| `src/features/integrations/birth-voice/voiceResult.webhook.ts` (~linha 146) | Idem acima | ⛔ idem |
+| `src/features/integrations/whatsapp/whatsappMessage.service.ts` (`findContactByPhone`) | `$queryRaw` com `LIKE` por sufixo de dígitos — bypassa a extensão do Prisma inteira | ⛔ idem — risco adicional documentado na lacuna 2 |
+| `src/features/cadence/infra/PrismaCadenceRateLimitPort.ts` (`countDistinctEmailRecipientsForDomain`) | `endsWith` por domínio de e-mail | ⛔ fora de escopo — ver lacuna 3 |
+| `src/features/cadence/infra/PrismaLeadSubjectResolver.ts` | Leitura (não `WHERE`) de `contact.email/whatsapp/phone` via `select` aninhado a partir de `Lead` | ⛔ fora de escopo — problema de decifra aninhada, não de busca — ver lacuna 4 |
+| `src/shared/services/dataSubjectErasure.service.ts` (`eraseDataSubject`) | `update` que zera `phone`/`whatsapp`/`email` (LGPD) | ✅ automático — o passo "1c" em `prisma.ts` já zera o hash correspondente sem mudança de código aqui |
+| `src/features/crm/jobs/autoAnonymizeDisqualified.worker.ts` | `contact: { name: { not: <sentinela> } }` | ⛔ fora de escopo (campo `name`, não hasheado por decisão) — ver lacuna 5 |
+| `src/lib/prisma.ts` (soft delete cascade, `Contact.deletedAt`) | Não filtra por PII, só `id`/`companyId` | N/A — não usa phone/email/whatsapp |
 
 ## Testes
 

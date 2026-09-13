@@ -7,8 +7,7 @@
 “Esta apresentação demonstra os principais recursos disponíveis na plataforma, sua organização, seus módulos e os fluxos oferecidos aos usuários.”
 
 ## Visão geral
-
-A aplicação apresenta uma identidade visual moderna (alternando entre temas claro e escuro, ou configurações de marca como AtlasGR).
+A aplicação apresenta uma identidade visual moderna, com marca única (Birth Hub 360º, Antique Gold) e suporte a temas claro e escuro.
 O menu principal é organizado por meio de uma barra lateral (Sidebar) dividida em Core Modules e Módulos de Inteligência.
 O Dashboard principal centraliza indicadores de "Leads Qualificados", "Taxa de Conversão", "Atividades Pendentes" e "Fechados no Mês", além de uma visualização rápida da Agenda do dia e módulos interativos.
 

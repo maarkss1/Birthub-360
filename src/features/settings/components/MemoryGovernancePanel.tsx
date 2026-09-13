@@ -43,7 +43,12 @@ type MemoryCategory =
   | 'CAPABILITY'
   | 'OPERATIONAL';
 type MemoryStatus =
-  'PROPOSED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'SUPERSEDED' | 'ROLLED_BACK';
+  | 'PROPOSED'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'SUPERSEDED'
+  | 'ROLLED_BACK';
 
 // Mesma matriz de `memory-policy.ts` (backend) — duplicada aqui só para feedback visual
 // imediato (desabilitar o botão antes do clique); quem decide de verdade é sempre o backend,

@@ -58,7 +58,6 @@ um bug, mas porque o ambiente de teste compartilhado não isola execuções conc
 
 `tests/helpers/integration-setup.ts` não é meu domínio (é infraestrutura de teste compartilhada,
 mais perto de 08/00). Possíveis direções, para avaliação de quem for dono:
-
 1. Cada worktree/agente usar um banco de teste com nome próprio (ex.:
    `prospectordb_test_agente12`), configurado via `.env.test` por worktree — mais trabalho de setup,
    mas isolamento real.
@@ -95,7 +94,6 @@ estava rodando (`ps aux | grep vitest` vazio, `fileParallelism: false` + `single
 intermitência de timing entre processos.
 
 Padrão observado, dentro do próprio arquivo:
-
 - Teste 1 (escreve com `asOrg(ORG_A, connect3CX)`, lê com `asOrg(ORG_A, get3CXConnectionsForOrg)`,
   dois `requestContext.run()` de nível superior separados) → **passa**.
 - Teste 2 (escreve com `asOrg`, lê com `withRlsBypass` + `$queryRaw` direto) → **falha**: 0 linhas
@@ -144,7 +142,7 @@ Reabilitar os 2 testes junto com a correção de `executeWithRls`.
 Causa raiz real **não** era a forma array de `executeWithRls` (a suspeita levantada acima e nos
 handoffs 07/13) — essa hipótese foi testada isoladamente contra Postgres real, migrando
 `executeWithRls` para transação interativa, e o sintoma persistiu idêntico. A causa raiz verdadeira
-é uma interação entre `AsyncLocalStorage.run()` e a natureza _lazy_ de `PrismaPromise`: um callback
+é uma interação entre `AsyncLocalStorage.run()` e a natureza *lazy* de `PrismaPromise`: um callback
 de `run()` que devolve a promise sem `await` interno (o padrão usado por `asOrg`/`withRlsBypass` em
 todo o código) perde a store correta antes da query executar de fato. Corrigida de forma
 centralizada em `src/lib/async-context.ts` (`TenantAwareAsyncLocalStorage`), verificada com 5

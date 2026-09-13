@@ -1,7 +1,6 @@
 # 17 — Cadência Multicanal e Ciclo de Receita
 
 ## Papel
-
 Você é responsável por fechar o ciclo comercial que a plataforma hoje só começa.
 
 O piloto automático 24/7 já qualifica, prioriza, redige e — no modo `full`, com 7 travas — envia o
@@ -14,7 +13,6 @@ depende de acordo prévio com outros donos: rota e navegação são do 02, schem
 tem seu próprio dono.
 
 ## Leia primeiro
-
 1. `/AGENTS.md` — "Dados reais x demonstração", "LGPD e dados pessoais" e a regra de preservação de funcionalidade;
 2. `AUTONOMIA_COMERCIAL_24X7.md` — **em especial** "Próximas integrações para autonomia de ciclo completo" e "Critério honesto de Closer autônomo";
 3. `.agents/completion/02-mapa-plataforma.md` → §6.2, os seis fluxos de tráfego ponta a ponta;
@@ -25,9 +23,7 @@ tem seu próprio dono.
 8. `src/features/integrations/birth-voice/callSuppression.service.ts` — o único mecanismo de supressão que já existe, e que hoje vale só para voz.
 
 ## Escopo
-
 Propriedade exclusiva:
-
 - `src/features/cadence/**` (novo — você cria)
 - `src/features/crm/services/` no que for específico de proposta e fechamento, **acordado com o 04 antes**
 
@@ -38,7 +34,6 @@ abre, não o último. `prisma/schema.prisma` é do **01/01A**: você é o único
 enriquecimento no **05**, WhatsApp no **06**, voz no **12**, Google Workspace no **06**.
 
 ## Antes de começar
-
 1. confirme que está no seu worktree/branch (`agente/17-cadencia-ciclo-receita`), a partir de `integracao/onda-7`;
 2. leia `.agents/handoffs/onda-7/*-para-17-*.md`;
 3. **abra os handoffs de contrato antes de escrever código**: rota/menu para o 02, schema para o 01,
@@ -50,13 +45,11 @@ Cinco entregas, na ordem de dependência. Se a onda não couber inteira, entregu
 completas em vez de cinco pela metade — meia cadência é pior que nenhuma.
 
 ### 1. Opt-out unificado — primeiro, porque protege todo o resto
-
 Hoje existe `CallSuppression`, que vale **só para voz**. E-mail e WhatsApp não compartilham esse
 registro. Ou seja: um contato que pediu para não ser incomodado pode continuar recebendo mensagem por
 outro canal.
 
 Construa o registro único de opt-out, com:
-
 - granularidade por canal **e** global ("não me contate por nada");
 - origem registrada (quem pediu, quando, por qual canal, com qual evidência);
 - consulta obrigatória **antes** de qualquer disparo, em todos os canais;
@@ -67,12 +60,10 @@ para cada par de canais. Coordene a migração de `CallSuppression` com o **12**
 não pode ser desligado antes de o novo cobri-lo.
 
 ### 2. Cadência multicanal
-
 Sequência configurável de toques (e-mail → WhatsApp → voz → e-mail…), com intervalo, condição de
 parada e regra de saída.
 
 Requisitos duros:
-
 - **resposta do lead encerra a cadência**, em qualquer canal;
 - opt-out encerra imediatamente (entrega 1);
 - janela comercial vale para todo contato externo, como já vale para voz;
@@ -80,7 +71,6 @@ Requisitos duros:
 - pausa e retomada manual disponíveis para o vendedor.
 
 ### 3. Reply tracking de e-mail no classificador de intenção
-
 O classificador de intenção já existe para WhatsApp
 (`conversation-intelligence.service.ts` → `ConversationSignal`), e alimenta os gatilhos do enxame.
 E-mail não entra nele — a resposta de um lead por e-mail hoje não vira sinal.
@@ -89,7 +79,6 @@ Ligue o canal de e-mail ao mesmo classificador, reaproveitando o modelo de sinal
 criar um paralelo. Resposta detectada precisa encerrar a cadência (entrega 2) e alimentar o gatilho.
 
 ### 4. Agendamento no Google Calendar após disponibilidade confirmada
-
 A integração Google Workspace já existe, com OAuth e Calendar. O que falta é o passo comercial: quando
 o lead confirma disponibilidade, o evento é criado — com convite ao lead, ao vendedor dono e ao
 registro no CRM.
@@ -99,7 +88,6 @@ um modelo sobre o texto de uma mensagem. Um agente achando que o lead concordou 
 agenda de ninguém.
 
 ### 5. Proposta versionada, assinatura e fechamento determinístico
-
 `CrmCommercialDocument`, `CrmProduct` e `CrmDealItem` já existem no schema — comece por eles, não por
 um modelo novo.
 
@@ -114,7 +102,6 @@ Esta última é a que fecha o "Critério honesto de Closer autônomo": hoje a tr
 **Agente 13**, por escrito, qual evento exatamente conta como fechamento — antes de implementar.
 
 ## Mentira mais provável do seu domínio
-
 **Cadência que continua disparando depois de um opt-out feito em outro canal.** É o risco central da
 sua onda e a razão de a entrega 1 vir primeiro: dano real a pessoa real, e exposição direta de LGPD.
 
@@ -123,9 +110,7 @@ cold-email já corrigido neste repositório. Terceira: reunião agendada a parti
 modelo sobre "acho que ele topou".
 
 ## LGPD e tenancy no seu domínio
-
 Você é o agente que mais gera contato externo, então carrega a fatia mais pesada:
-
 - **base legal antes do primeiro toque**, não depois;
 - opt-out unificado, definitivo e auditável (entrega 1);
 - minimização: cadência não é motivo para guardar mais dado do que a finalidade comercial exige;
@@ -135,7 +120,6 @@ Você é o agente que mais gera contato externo, então carrega a fatia mais pes
   Agente 13.
 
 ## Coordenação
-
 - rota, menu, navegação → **02** (`.agents/handoffs/onda-7/17-para-02-<slug>.md`) — **primeiro handoff**;
 - schema (opt-out, cadência, versão de proposta) → **01/01A**;
 - evento de fechamento e travas do enxame → **13**;
@@ -147,9 +131,7 @@ Você é o agente que mais gera contato externo, então carrega a fatia mais pes
 - provedor de assinatura eletrônica → **decisão do usuário**, via Agente 00.
 
 ## Testes
-
 Cobrir:
-
 - opt-out em cada canal bloqueando os outros dois (todos os pares);
 - opt-out global bloqueando tudo;
 - resposta do lead encerrando a cadência em cada canal;
@@ -162,7 +144,6 @@ Cobrir:
 - isolamento de tenant em cadência, opt-out e proposta.
 
 ## Gate
-
 ```bash
 npx tsc --noEmit
 npm run lint
@@ -176,9 +157,7 @@ npm run build
 Se algum script não existir, siga `/AGENTS.md` → "Scripts ausentes".
 
 ## Entrega
-
 Forneça:
-
 - os handoffs de contrato abertos **antes** do código (02, 01, 05/06/12, 13);
 - o registro de opt-out unificado e a matriz de bloqueio canal × canal, testada;
 - a máquina de estados da cadência, com o comportamento de cada saída;
