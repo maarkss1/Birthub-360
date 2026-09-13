@@ -16,8 +16,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const lookupMock = vi.fn();
 vi.mock('node:dns/promises', () => ({
-    default: { lookup: (...args: unknown[]) => lookupMock(...args) },
-    lookup: (...args: unknown[]) => lookupMock(...args),
+  default: { lookup: (...args: unknown[]) => lookupMock(...args) },
+  lookup: (...args: unknown[]) => lookupMock(...args),
 }));
 
 // `urlGuard.ts` chama o `fetch` importado do pacote `undici` (não o `fetch` global — ver o
@@ -27,111 +27,117 @@ vi.mock('node:dns/promises', () => ({
 // guard para fixar a conexão nos endereços já validados).
 const fetchMock = vi.fn();
 vi.mock('undici', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('undici')>();
-    return { ...actual, fetch: (...args: Parameters<typeof actual.fetch>) => fetchMock(...args) };
+  const actual = await importOriginal<typeof import('undici')>();
+  return { ...actual, fetch: (...args: Parameters<typeof actual.fetch>) => fetchMock(...args) };
 });
 
 beforeEach(() => {
-    vi.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe('assertSafeExternalUrl — rejeita IP privado/loopback/metadata', () => {
-    it('rejeita loopback IPv4 (127.0.0.1)', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://127.0.0.1/')).rejects.toThrow(/não permitido/i);
-    });
+  it('rejeita loopback IPv4 (127.0.0.1)', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://127.0.0.1/')).rejects.toThrow(/não permitido/i);
+  });
 
-    it('rejeita o endpoint de metadados de nuvem (169.254.169.254)', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://169.254.169.254/latest/meta-data/')).rejects.toThrow(
-            /não permitido/i,
-        );
-    });
+  it('rejeita o endpoint de metadados de nuvem (169.254.169.254)', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(
+      assertSafeExternalUrl('https://169.254.169.254/latest/meta-data/'),
+    ).rejects.toThrow(/não permitido/i);
+  });
 
-    it('rejeita bloco privado 10.0.0.0/8', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://10.0.0.1/')).rejects.toThrow(/não permitido/i);
-    });
+  it('rejeita bloco privado 10.0.0.0/8', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://10.0.0.1/')).rejects.toThrow(/não permitido/i);
+  });
 
-    it('rejeita bloco privado 172.16.0.0/12', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://172.16.5.5/')).rejects.toThrow(/não permitido/i);
-    });
+  it('rejeita bloco privado 172.16.0.0/12', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://172.16.5.5/')).rejects.toThrow(/não permitido/i);
+  });
 
-    it('rejeita bloco privado 192.168.0.0/16', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://192.168.1.1/')).rejects.toThrow(/não permitido/i);
-    });
+  it('rejeita bloco privado 192.168.0.0/16', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://192.168.1.1/')).rejects.toThrow(/não permitido/i);
+  });
 
-    // Nota: `net.isIP('[::1]')` (hostname de URL IPv6 vem com colchetes) devolve 0 — o mesmo
-    // comportamento pré-existente herdado de `Bitrix24Adapter.ts` (não alterado nesta promoção).
-    // Um IPv6 literal na URL cai no caminho de DNS lookup em vez do de IP literal e acaba
-    // rejeitado por "não foi possível resolver o host" (ENOTFOUND) em vez de "IP privado" — ainda
-    // bloqueia o fetch, só que pelo motivo errado. Testado abaixo pelo caminho real que o produto
-    // usa para IPv6 (endereço resolvido via DNS, não literal na URL): um hostname comum cujo DNS
-    // aponta para loopback/link-local IPv6 precisa ser rejeitado do mesmo jeito que um IPv4
-    // privado — é isso que `isPrivateOrReservedIp` cobre para os registros devolvidos pelo lookup.
-    it('rejeita hostname cujo DNS resolve para loopback IPv6 (::1)', async () => {
-        lookupMock.mockResolvedValue([{ address: '::1', family: 6 }]);
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://webhook.exemplo.com/')).rejects.toThrow(/não permitido/i);
-    });
+  // Nota: `net.isIP('[::1]')` (hostname de URL IPv6 vem com colchetes) devolve 0 — o mesmo
+  // comportamento pré-existente herdado de `Bitrix24Adapter.ts` (não alterado nesta promoção).
+  // Um IPv6 literal na URL cai no caminho de DNS lookup em vez do de IP literal e acaba
+  // rejeitado por "não foi possível resolver o host" (ENOTFOUND) em vez de "IP privado" — ainda
+  // bloqueia o fetch, só que pelo motivo errado. Testado abaixo pelo caminho real que o produto
+  // usa para IPv6 (endereço resolvido via DNS, não literal na URL): um hostname comum cujo DNS
+  // aponta para loopback/link-local IPv6 precisa ser rejeitado do mesmo jeito que um IPv4
+  // privado — é isso que `isPrivateOrReservedIp` cobre para os registros devolvidos pelo lookup.
+  it('rejeita hostname cujo DNS resolve para loopback IPv6 (::1)', async () => {
+    lookupMock.mockResolvedValue([{ address: '::1', family: 6 }]);
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://webhook.exemplo.com/')).rejects.toThrow(
+      /não permitido/i,
+    );
+  });
 
-    it('rejeita hostname cujo DNS resolve para link-local IPv6 (fe80::)', async () => {
-        lookupMock.mockResolvedValue([{ address: 'fe80::1', family: 6 }]);
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://webhook.exemplo.com/')).rejects.toThrow(/não permitido/i);
-    });
+  it('rejeita hostname cujo DNS resolve para link-local IPv6 (fe80::)', async () => {
+    lookupMock.mockResolvedValue([{ address: 'fe80::1', family: 6 }]);
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://webhook.exemplo.com/')).rejects.toThrow(
+      /não permitido/i,
+    );
+  });
 
-    it('rejeita "localhost" mesmo sem ser um IP literal', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://localhost/')).rejects.toThrow(/não permitido/i);
-    });
+  it('rejeita "localhost" mesmo sem ser um IP literal', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://localhost/')).rejects.toThrow(/não permitido/i);
+  });
 
-    it('rejeita esquema não-HTTPS mesmo com host público', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('http://8.8.8.8/')).rejects.toThrow(/https/i);
-    });
+  it('rejeita esquema não-HTTPS mesmo com host público', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('http://8.8.8.8/')).rejects.toThrow(/https/i);
+  });
 
-    it('rejeita URL malformada', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('não-é-uma-url')).rejects.toThrow(/inválid/i);
-    });
+  it('rejeita URL malformada', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('não-é-uma-url')).rejects.toThrow(/inválid/i);
+  });
 
-    // Mitigação de DNS rebinding: mesmo um hostname "normal" é rejeitado se algum dos endereços
-    // resolvidos for privado/reservado — não basta o primeiro registro ser público.
-    it('rejeita hostname cujo DNS resolve para IP privado (DNS rebinding)', async () => {
-        lookupMock.mockResolvedValue([
-            { address: '203.0.113.10', family: 4 },
-            { address: '10.0.0.5', family: 4 },
-        ]);
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://webhook.exemplo.com/')).rejects.toThrow(
-            /não permitido.*privado/i,
-        );
-    });
+  // Mitigação de DNS rebinding: mesmo um hostname "normal" é rejeitado se algum dos endereços
+  // resolvidos for privado/reservado — não basta o primeiro registro ser público.
+  it('rejeita hostname cujo DNS resolve para IP privado (DNS rebinding)', async () => {
+    lookupMock.mockResolvedValue([
+      { address: '203.0.113.10', family: 4 },
+      { address: '10.0.0.5', family: 4 },
+    ]);
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://webhook.exemplo.com/')).rejects.toThrow(
+      /não permitido.*privado/i,
+    );
+  });
 
-    it('rejeita hostname que não resolve (DNS falha/vazio)', async () => {
-        lookupMock.mockResolvedValue([]);
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://host-inexistente.exemplo.com/')).rejects.toThrow(
-            /resolver/i,
-        );
-    });
+  it('rejeita hostname que não resolve (DNS falha/vazio)', async () => {
+    lookupMock.mockResolvedValue([]);
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://host-inexistente.exemplo.com/')).rejects.toThrow(
+      /resolver/i,
+    );
+  });
 });
 
 describe('assertSafeExternalUrl — aceita URL pública normal', () => {
-    it('aceita IP público literal sobre HTTPS (8.8.8.8)', async () => {
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://8.8.8.8/')).resolves.toBeUndefined();
-    });
+  it('aceita IP público literal sobre HTTPS (8.8.8.8)', async () => {
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(assertSafeExternalUrl('https://8.8.8.8/')).resolves.toBeUndefined();
+  });
 
-    it('aceita hostname cujo DNS resolve só para IPs públicos', async () => {
-        lookupMock.mockResolvedValue([{ address: '203.0.113.10', family: 4 }]);
-        const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
-        await expect(assertSafeExternalUrl('https://webhook.exemplo.com/rest/1/token/')).resolves.toBeUndefined();
-        expect(lookupMock).toHaveBeenCalledWith('webhook.exemplo.com', { all: true });
-    });
+  it('aceita hostname cujo DNS resolve só para IPs públicos', async () => {
+    lookupMock.mockResolvedValue([{ address: '203.0.113.10', family: 4 }]);
+    const { assertSafeExternalUrl } = await import('@/shared/security/urlGuard');
+    await expect(
+      assertSafeExternalUrl('https://webhook.exemplo.com/rest/1/token/'),
+    ).resolves.toBeUndefined();
+    expect(lookupMock).toHaveBeenCalledWith('webhook.exemplo.com', { all: true });
+  });
 });
 
 /**
@@ -144,35 +150,35 @@ describe('assertSafeExternalUrl — aceita URL pública normal', () => {
  * corpo) quando a URL é aprovada.
  */
 describe('safeFetch — mesmo guard de SSRF, conexão real fixada nos endereços já validados', () => {
-    it('rejeita IP privado sem nunca chamar fetch', async () => {
-        const { safeFetch } = await import('@/shared/security/urlGuard');
+  it('rejeita IP privado sem nunca chamar fetch', async () => {
+    const { safeFetch } = await import('@/shared/security/urlGuard');
 
-        await expect(safeFetch('https://10.0.0.1/')).rejects.toThrow(/não permitido/i);
-        expect(fetchMock).not.toHaveBeenCalled();
-    });
+    await expect(safeFetch('https://10.0.0.1/')).rejects.toThrow(/não permitido/i);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 
-    it('rejeita hostname com DNS rebinding (resolve para IP privado) sem nunca chamar fetch', async () => {
-        lookupMock.mockResolvedValue([{ address: '10.0.0.5', family: 4 }]);
-        const { safeFetch } = await import('@/shared/security/urlGuard');
+  it('rejeita hostname com DNS rebinding (resolve para IP privado) sem nunca chamar fetch', async () => {
+    lookupMock.mockResolvedValue([{ address: '10.0.0.5', family: 4 }]);
+    const { safeFetch } = await import('@/shared/security/urlGuard');
 
-        await expect(safeFetch('https://webhook.exemplo.com/')).rejects.toThrow(/não permitido/i);
-        expect(fetchMock).not.toHaveBeenCalled();
-    });
+    await expect(safeFetch('https://webhook.exemplo.com/')).rejects.toThrow(/não permitido/i);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 
-    it('busca a URL de verdade e devolve uma Response utilizável quando o guard aprova', async () => {
-        lookupMock.mockResolvedValue([{ address: '203.0.113.10', family: 4 }]);
-        fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
-        const { safeFetch } = await import('@/shared/security/urlGuard');
+  it('busca a URL de verdade e devolve uma Response utilizável quando o guard aprova', async () => {
+    lookupMock.mockResolvedValue([{ address: '203.0.113.10', family: 4 }]);
+    fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    const { safeFetch } = await import('@/shared/security/urlGuard');
 
-        const res = await safeFetch('https://webhook.exemplo.com/profile.json');
+    const res = await safeFetch('https://webhook.exemplo.com/profile.json');
 
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.mock.calls[0][0]).toBe('https://webhook.exemplo.com/profile.json');
-        expect(res.status).toBe(200);
-        expect(res.ok).toBe(true);
-        await expect(res.json()).resolves.toEqual({ ok: true });
-        // A validação (que já fez o `dns.lookup`) e a conexão real fixada não disparam uma
-        // segunda resolução de DNS — só a checagem inicial.
-        expect(lookupMock).toHaveBeenCalledTimes(1);
-    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe('https://webhook.exemplo.com/profile.json');
+    expect(res.status).toBe(200);
+    expect(res.ok).toBe(true);
+    await expect(res.json()).resolves.toEqual({ ok: true });
+    // A validação (que já fez o `dns.lookup`) e a conexão real fixada não disparam uma
+    // segunda resolução de DNS — só a checagem inicial.
+    expect(lookupMock).toHaveBeenCalledTimes(1);
+  });
 });

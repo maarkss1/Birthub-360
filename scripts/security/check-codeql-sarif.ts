@@ -33,80 +33,80 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 type SarifResult = {
-    level?: string;
-    ruleId?: string;
-    message?: { text?: string };
-    locations?: Array<{
-        physicalLocation?: {
-            artifactLocation?: { uri?: string };
-            region?: { startLine?: number };
-        };
-    }>;
+  level?: string;
+  ruleId?: string;
+  message?: { text?: string };
+  locations?: Array<{
+    physicalLocation?: {
+      artifactLocation?: { uri?: string };
+      region?: { startLine?: number };
+    };
+  }>;
 };
 
 type SarifRun = { results?: SarifResult[] };
 type SarifLog = { runs?: SarifRun[] };
 
 export function findBlockingResults(sarif: SarifLog): SarifResult[] {
-    const runs = sarif.runs ?? [];
-    return runs.flatMap((run) => (run.results ?? []).filter((result) => result.level === 'error'));
+  const runs = sarif.runs ?? [];
+  return runs.flatMap((run) => (run.results ?? []).filter((result) => result.level === 'error'));
 }
 
 export function describeResult(result: SarifResult): string {
-    const loc = result.locations?.[0]?.physicalLocation;
-    const uri = loc?.artifactLocation?.uri ?? '(local desconhecido)';
-    const line = loc?.region?.startLine;
-    const where = line ? `${uri}:${line}` : uri;
-    const message = result.message?.text ?? '';
-    return `   - [${result.ruleId ?? 'regra desconhecida'}] ${where} — ${message}`.trimEnd();
+  const loc = result.locations?.[0]?.physicalLocation;
+  const uri = loc?.artifactLocation?.uri ?? '(local desconhecido)';
+  const line = loc?.region?.startLine;
+  const where = line ? `${uri}:${line}` : uri;
+  const message = result.message?.text ?? '';
+  return `   - [${result.ruleId ?? 'regra desconhecida'}] ${where} — ${message}`.trimEnd();
 }
 
 function listSarifFiles(dir: string): string[] {
-    if (!existsSync(dir)) return [];
-    return readdirSync(dir).filter((f) => f.endsWith('.sarif'));
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).filter((f) => f.endsWith('.sarif'));
 }
 
 function main(): void {
-    const dir = process.argv[2] ?? path.resolve(process.cwd(), 'results');
-    const sarifFiles = listSarifFiles(dir);
+  const dir = process.argv[2] ?? path.resolve(process.cwd(), 'results');
+  const sarifFiles = listSarifFiles(dir);
 
-    if (sarifFiles.length === 0) {
-        console.log(
-            `ℹ️  Nenhum arquivo .sarif encontrado em "${dir}" — nada a checar (a análise desta ` +
-            `linguagem pode não ter rodado, ou o diretório de output foi outro).`
-        );
-        return;
-    }
-
-    const blocking: Array<{ file: string; result: SarifResult }> = [];
-    for (const file of sarifFiles) {
-        const full = path.join(dir, file);
-        const parsed = JSON.parse(readFileSync(full, 'utf-8')) as SarifLog;
-        for (const result of findBlockingResults(parsed)) {
-            blocking.push({ file, result });
-        }
-    }
-
-    if (blocking.length === 0) {
-        console.log(
-            `✅ CodeQL: nenhum achado "error"-level em ${sarifFiles.length} arquivo(s) SARIF (${dir}). Gate OK.`
-        );
-        return;
-    }
-
-    console.error(`❌ CodeQL encontrou ${blocking.length} achado(s) "error"-level:`);
-    for (const { file, result } of blocking) {
-        console.error(`   SARIF: ${file}`);
-        console.error(describeResult(result));
-    }
-    console.error(
-        'Corrija o achado, ou registre uma exclusão de regra específica (com dono/data/motivo) em ' +
-        '.github/codeql/codeql-config.yml (query-filters) — nunca desative a query inteira ou este ' +
-        'gate para contornar.'
+  if (sarifFiles.length === 0) {
+    console.log(
+      `ℹ️  Nenhum arquivo .sarif encontrado em "${dir}" — nada a checar (a análise desta ` +
+        `linguagem pode não ter rodado, ou o diretório de output foi outro).`,
     );
-    process.exit(1);
+    return;
+  }
+
+  const blocking: Array<{ file: string; result: SarifResult }> = [];
+  for (const file of sarifFiles) {
+    const full = path.join(dir, file);
+    const parsed = JSON.parse(readFileSync(full, 'utf-8')) as SarifLog;
+    for (const result of findBlockingResults(parsed)) {
+      blocking.push({ file, result });
+    }
+  }
+
+  if (blocking.length === 0) {
+    console.log(
+      `✅ CodeQL: nenhum achado "error"-level em ${sarifFiles.length} arquivo(s) SARIF (${dir}). Gate OK.`,
+    );
+    return;
+  }
+
+  console.error(`❌ CodeQL encontrou ${blocking.length} achado(s) "error"-level:`);
+  for (const { file, result } of blocking) {
+    console.error(`   SARIF: ${file}`);
+    console.error(describeResult(result));
+  }
+  console.error(
+    'Corrija o achado, ou registre uma exclusão de regra específica (com dono/data/motivo) em ' +
+      '.github/codeql/codeql-config.yml (query-filters) — nunca desative a query inteira ou este ' +
+      'gate para contornar.',
+  );
+  process.exit(1);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-    main();
+  main();
 }

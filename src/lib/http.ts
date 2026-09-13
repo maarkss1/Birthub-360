@@ -16,11 +16,6 @@ export class DisallowedHostError extends Error {
   }
 }
 
-function resolveRequestHost(input: string | URL | Request): string {
-  const raw = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-  return new URL(raw).hostname.toLowerCase();
-}
-
 /**
  * `fetchWithTimeout` é o cliente HTTP genérico para provedores externos de destino FIXO/hardcoded
  * no próprio código (Apollo, Hunter, GitHub, Google, YouTube, BrasilAPI, Nominatim, GDELT etc.) —
@@ -29,25 +24,34 @@ function resolveRequestHost(input: string | URL | Request): string {
  * privado/reservado e faz pinning de DNS, algo que quebraria os provedores auto-hospedáveis
  * legítimos abaixo (Meilisearch/SearXNG/Voicebox rodam em endereço privado/loopback de propósito).
  *
- * `allowedHosts`, quando informado, é o único host (ou lista) para o qual esta chamada pode
- * resolver — a query string de vários desses provedores carrega texto de busca vindo de um
- * request do usuário (nome de empresa, domínio etc.), e sem essa checagem o CodeQL
- * (`js/request-forgery`) não tem como provar que esse texto nunca poderia mover o destino real da
- * chamada, mesmo quando o host de fato é sempre a constante hardcoded no arquivo de origem. Opcional
- * (e ausente por padrão) só para não quebrar chamadas internas/de teste que não têm um host fixo
- * conhecido de antemão.
+ * `allowedHosts` é o único host (ou lista) para o qual esta chamada pode resolver — a query
+ * string de vários desses provedores carrega texto de busca vindo de um request do usuário (nome
+ * de empresa, domínio etc.), e sem essa checagem o CodeQL (`js/request-forgery`) não tem como
+ * provar que esse texto nunca poderia mover o destino real da chamada, mesmo quando o host de
+ * fato é sempre a constante hardcoded no arquivo de origem. Obrigatório (não opcional): a
+ * proteção só vale alguma coisa se for impossível esquecer de passá-la num call site novo. Para
+ * um provedor com host dinâmico controlado pelo operador (env var), não pelo usuário — ex.:
+ * SearXNG, Meilisearch, Voicebox — passe uma lista derivada da própria env var (ex.:
+ * `[new URL(searxngUrl).hostname]`), não uma constante fixa. Todo valor de `allowedHosts` neste
+ * repositório já é minúsculo (literal ou vindo de `URL#hostname`, que o WHATWG URL Standard
+ * sempre normaliza pra minúsculo) — por isso a comparação abaixo não precisa (e não deve, pro
+ * CodeQL reconhecer o barrier) fazer `.toLowerCase()` nos dois lados dentro de um `.some()`.
+ *
+ * Nunca aceita `Request` como entrada (nenhum call site real precisa disso hoje — todos passam
+ * uma URL simples): o sink de `fetch()` sempre recebe o mesmo objeto `URL` já parseado e conferido
+ * contra `allowedHosts` (`url` abaixo), nunca o `input` original — sem ramo condicional que
+ * reintroduza o valor não validado na chamada real, senão o CodeQL não consegue provar que o valor
+ * que chega no sink é o mesmo que passou pela checagem.
  */
 export async function fetchWithTimeout(
-  input: string | URL | Request,
+  input: string | URL,
   init: RequestInit = {},
   timeoutMs = 10_000,
-  allowedHosts?: readonly string[],
+  allowedHosts: readonly string[],
 ): Promise<Response> {
-  if (allowedHosts) {
-    const host = resolveRequestHost(input);
-    if (!allowedHosts.some((allowed) => allowed.toLowerCase() === host)) {
-      throw new DisallowedHostError(host);
-    }
+  const url = new URL(input);
+  if (!allowedHosts.includes(url.hostname)) {
+    throw new DisallowedHostError(url.hostname);
   }
 
   const controller = new AbortController();
@@ -57,7 +61,7 @@ export async function fetchWithTimeout(
     : controller.signal;
 
   try {
-    return await fetch(input, { ...init, signal });
+    return await fetch(url, { ...init, signal });
   } catch (error) {
     if (controller.signal.aborted) throw new HttpTimeoutError(timeoutMs);
     throw error;

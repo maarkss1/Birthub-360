@@ -1,6 +1,6 @@
-import React from 'react';
-import { Users, Crown, Briefcase, UserCheck, Phone, Mail } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { Briefcase, Crown, Mail, Phone, UserCheck, Users } from 'lucide-react';
+import React from 'react';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
 
 export interface DecisionMakerItem {
@@ -38,7 +38,7 @@ const HIERARCHY_LEVELS: LevelConfig[] = [
     id: 'clevel',
     title: 'C-Level, Sócios & Presidência',
     icon: Crown,
-    colorBadge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+    colorBadge: 'bg-amber-500/10 text-warning-active dark:text-warning border-amber-500/20',
     borderAccent: 'border-amber-500/30',
     bgAccent: 'bg-amber-50/40 dark:bg-amber-950/10',
   },

@@ -6,7 +6,7 @@ import { AlertTriangle } from 'lucide-react';
  */
 export function NotConfiguredBanner({ envVar }: { envVar: string }) {
   return (
-    <div className="flex items-start gap-3 p-4 rounded-xl border border-warn/30 bg-warn/10 text-amber-600 dark:text-amber-400 text-xs">
+    <div className="flex items-start gap-3 p-4 rounded-xl border border-warn/30 bg-warn/10 text-warning-active dark:text-warning text-xs">
       <AlertTriangle size={16} className="shrink-0 mt-0.5" />
       <p>
         Esta integração não está configurada neste ambiente. Defina{' '}

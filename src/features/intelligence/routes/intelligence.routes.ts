@@ -1,72 +1,72 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (aiToolkitFunctions, COD-004) */
-import { Router, type Request, type Response, type NextFunction } from 'express';
-import type { Prisma } from '@prisma/client';
-import { z } from 'zod';
-import {
-  summarizeLead,
-  generateEmailDraft,
-  predictConversionScore,
-  generateMeetingAgenda,
-  draftFollowUp,
-  scoreLeadQuality,
-  suggestNextAction,
-  generateObjectionHandling,
-  analyzeCompetitors,
-  generateElevatorPitch,
-  identifyPainPoints,
-  createColdCallScript,
-  summarizeMeetingNotes,
-  generateLinkedInMessage,
-  evaluateDealRisk,
-  analyzeSentiment,
-  extractKeywords,
-  categorizeLead,
-  translateText,
-  extractActionItems,
-  type PiiValue,
-} from '../../../lib/ai/features.js';
 
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-
-import { aiService } from '../services/ai.service.js';
-import { leadsQueue } from '../../../lib/queue/index.js';
+import type { Prisma } from '@prisma/client';
+import { type NextFunction, type Request, type Response, Router } from 'express';
+import { z } from 'zod';
+import {
+  analyzeCompetitors,
+  analyzeSentiment,
+  categorizeLead,
+  createColdCallScript,
+  draftFollowUp,
+  evaluateDealRisk,
+  extractActionItems,
+  extractKeywords,
+  generateElevatorPitch,
+  generateEmailDraft,
+  generateLinkedInMessage,
+  generateMeetingAgenda,
+  generateObjectionHandling,
+  identifyPainPoints,
+  type PiiValue,
+  predictConversionScore,
+  scoreLeadQuality,
+  suggestNextAction,
+  summarizeLead,
+  summarizeMeetingNotes,
+  translateText,
+} from '../../../lib/ai/features.js';
+import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
+import { leadsQueue } from '../../../lib/queue/index.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requirePlatformOperator } from '../../../shared/middlewares/requirePlatformOperator.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { aiService } from '../services/ai.service.js';
+import { listAiSettings, saveAiSettings } from '../services/ai-settings.service.js';
 import {
-  listPendingActions,
+  appendAssistantTurn,
+  listAssistantHistory,
+} from '../services/assistant-history.service.js';
+import {
+  assertPiiExternalConsent,
+  PiiConsentRequiredError,
+  redactAndTrackPiiLeak,
+} from '../services/guardrails.service.js';
+import {
   approvePendingAction,
   discardPendingAction,
   listActionsAwaitingOutcome,
+  listPendingActions,
   recordActionOutcome,
 } from '../services/pending-actions.service.js';
-import { listAiSettings, saveAiSettings } from '../services/ai-settings.service.js';
-import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
-import {
-  studioGenerationSchema,
-  assistantRequestSchema,
-  studioService,
-  type StudioGenerationRequest,
-} from '../services/studio.service.js';
-import { SYSTEM_RULES, streamText } from '../services/studio/shared.js';
-import { generateAssistantStream } from '../services/studio/generators/assistant.js';
-import {
-  redactAndTrackPiiLeak,
-  assertPiiExternalConsent,
-  PiiConsentRequiredError,
-} from '../services/guardrails.service.js';
-import {
-  listAssistantHistory,
-  appendAssistantTurn,
-} from '../services/assistant-history.service.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { aiSuiteRouter } from './ai-suite.routes.js';
 import {
   finishRoleplaySession,
   listRoleplaySessions,
 } from '../services/roleplay-session.service.js';
+import { generateAssistantStream } from '../services/studio/generators/assistant.js';
+import { SYSTEM_RULES, streamText } from '../services/studio/shared.js';
+import {
+  assistantRequestSchema,
+  type StudioGenerationRequest,
+  studioGenerationSchema,
+  studioService,
+} from '../services/studio.service.js';
+import { aiSuiteRouter } from './ai-suite.routes.js';
 
 const router = Router();
 
@@ -94,8 +94,8 @@ router.get(
     try {
       const { organizationId, id: userId } = (req as AuthRequest).user;
       const brand = String(req.query.brand || '');
-      if (brand !== 'atlasgr' && brand !== 'totaltrac') {
-        res.status(400).json({ success: false, error: 'brand deve ser "atlasgr" ou "totaltrac".' });
+      if (brand !== 'geral') {
+        res.status(400).json({ success: false, error: 'brand deve ser "geral".' });
         return;
       }
       const messages = await listAssistantHistory(organizationId, userId, brand);
@@ -158,7 +158,7 @@ router.post(
 // (antes só existia em memória no componente, perdido ao recarregar — Piloto 008 em
 // .claude/PILOTS.md).
 const roleplayFinishSchema = z.object({
-  brand: z.enum(['atlasgr', 'totaltrac']),
+  brand: z.literal('geral'),
   brandName: z.string().trim().min(1).max(80),
   brandDescription: z.string().trim().min(1).max(500),
   personaId: z.string().trim().min(1).max(80),
@@ -215,8 +215,8 @@ router.get(
     try {
       const { organizationId, id: userId } = (req as AuthRequest).user;
       const brand = String(req.query.brand || '');
-      if (brand !== 'atlasgr' && brand !== 'totaltrac') {
-        res.status(400).json({ success: false, error: 'brand deve ser "atlasgr" ou "totaltrac".' });
+      if (brand !== 'geral') {
+        res.status(400).json({ success: false, error: 'brand deve ser "geral".' });
         return;
       }
       const sessions = await listRoleplaySessions(organizationId, userId, brand);
@@ -235,7 +235,7 @@ const contentGenerationSchema = z.object({
   tone: z.string().trim().max(80).optional(),
   objective: z.string().trim().max(100).optional(),
   personaFallback: z.string().trim().max(200).optional(),
-  brandId: z.enum(['atlasgr', 'totaltrac']).default('atlasgr'),
+  brandId: z.literal('geral').default('geral'),
 });
 
 router.post(
@@ -321,8 +321,8 @@ router.post('/qualify', async (req: Request, res: Response, next: NextFunction):
   }
 });
 
-import { SDRQualificationAgent } from '../agents/sdrQualification.agent.js';
 import { loadAgentMemory } from '../agents/agentMemory.store.js';
+import { SDRQualificationAgent } from '../agents/sdrQualification.agent.js';
 
 router.post(
   '/agents/sdr/qualify',
@@ -579,10 +579,17 @@ const putAiSettingsSchema = z.object({
   ),
 });
 
-// Config global de IA (sem organizationId — afeta todos os tenants), então só ADMIN grava.
+// Config global de IA (sem organizationId — afeta todos os tenants). ADMIN é um papel POR
+// ORGANIZAÇÃO — qualquer ADMIN de qualquer tenant tinha esse papel, então `requireRole(['ADMIN'])`
+// sozinho permitia que o admin de UM cliente mudasse o comportamento de IA de TODOS os outros
+// tenants da plataforma (TENANT-002, auditoria de débito técnico). Mesma dupla trava usada em
+// `/admin/queues` (ver bootstrap/bullBoard.ts) e `/metrics`: precisa das DUAS coisas — sessão
+// ADMIN de tenant (`requireRole`) E o token de operador de infraestrutura, separado do RBAC de
+// negócio (`requirePlatformOperator`, SEC-001/SEC-002).
 router.put(
   '/ai-settings',
   requireRole(['ADMIN']),
+  requirePlatformOperator,
   validateRequest(putAiSettingsSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -604,13 +611,14 @@ router.put(
 // (mesmo /api/analytics/overview usado no LiveStatsWidget) e devolve uma leitura executiva em Markdown.
 const reportSchema = z.object({
   metrics: z.record(z.string(), z.unknown()),
-  brandId: z.enum(['atlasgr', 'totaltrac']).default('atlasgr'),
+  brandId: z.literal('geral').default('geral'),
 });
 
-function reportBrandContext(brandId: 'atlasgr' | 'totaltrac'): string {
-  return brandId === 'totaltrac'
-    ? 'Birth Hub 360 (tecnologia para telemetria, videotelemetria, jornada e proteção de frotas)'
-    : 'Birth Hub 360 (inteligência comercial e gestão de risco logístico)';
+// Antes do playbook geral único, este texto variava por playbook (logística vs. frota) — ver
+// git blame para o conteúdo antigo. Removido junto com atlasgr/totaltrac (pedido explícito do
+// usuário); mantém-se genérico até o desenho de um playbook configurável por organização.
+function reportBrandContext(_brandId: 'geral'): string {
+  return 'Birth Hub 360 (inteligência comercial B2B)';
 }
 
 function reportPrompt(brandContext: string): string {

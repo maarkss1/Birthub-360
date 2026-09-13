@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Building2, Mail, MapPin, Newspaper } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
+import { useEffect, useState } from 'react';
+import { Card, CardDescription, CardTitle } from '../../../../components/ui/Card';
 import { GithubIcon as Github } from '../../../../components/ui/icons/GithubIcon';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
 import { YoutubeIcon as Youtube } from '../../../../components/ui/icons/YoutubeIcon';
-import { api } from '../../../../lib/api';
-import { Card, CardTitle, CardDescription } from '../../../../components/ui/Card';
 import { useBrandAccent } from '../../../../hooks/useBrandAccent';
-import { fadeInUp, staggerContainer, staggerItem, SPRING_SOFT } from '../../../../lib/motion';
-import { GooglePlacesTool } from './tools/GooglePlacesTool';
+import { api } from '../../../../lib/api';
+import { fadeInUp, SPRING_SOFT, staggerContainer, staggerItem } from '../../../../lib/motion';
 import { ApolloTool } from './tools/ApolloTool';
+import { GitHubTool } from './tools/GitHubTool';
+import { GooglePlacesTool } from './tools/GooglePlacesTool';
 import { HunterTool } from './tools/HunterTool';
 import { LinkedInTool } from './tools/LinkedInTool';
-import { GitHubTool } from './tools/GitHubTool';
 import { NewsTool } from './tools/NewsTool';
-import { YoutubeTool } from './tools/YoutubeTool';
 import type { ToolsStatus } from './tools/shared';
+import { YoutubeTool } from './tools/YoutubeTool';
 
 type ToolId = 'google-places' | 'apollo' | 'hunter' | 'linkedin' | 'github' | 'news' | 'youtube';
 
@@ -147,7 +147,7 @@ export function ProspectingToolsHub() {
                       <Icon size={16} />
                     </div>
                     {status && configured === false && (
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-warn/15 text-amber-600 dark:text-amber-400 border border-warn/30">
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-warn/15 text-warning-active dark:text-warning border border-warn/30">
                         Não configurado
                       </span>
                     )}

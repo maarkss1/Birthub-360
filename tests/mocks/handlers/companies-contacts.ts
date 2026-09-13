@@ -11,16 +11,20 @@ import type { PaginatedResponse, Company, Contact } from '@/types';
 // "ReferenceError: window is not defined" que derrubava o job de Code Quality mesmo com os 643
 // testes passando. Responder na hora resolve a causa raiz (nada mais fica pendente).
 const emptyCompanies: PaginatedResponse<Company> = {
-    data: [],
-    meta: { total: 0, page: 1, limit: 20, totalPages: 0 },
+  data: [],
+  meta: { total: 0, page: 1, limit: 20, totalPages: 0 },
 };
 
 const emptyContacts: PaginatedResponse<Contact> = {
-    data: [],
-    meta: { total: 0, page: 1, limit: 20, totalPages: 0 },
+  data: [],
+  meta: { total: 0, page: 1, limit: 20, totalPages: 0 },
 };
 
 export const companiesContactsHandlers = [
-    http.get('/api/companies', () => HttpResponse.json({ success: true, data: emptyCompanies.data, meta: emptyCompanies.meta })),
-    http.get('/api/contacts', () => HttpResponse.json({ success: true, data: emptyContacts.data, meta: emptyContacts.meta })),
+  http.get('/api/companies', () =>
+    HttpResponse.json({ success: true, data: emptyCompanies.data, meta: emptyCompanies.meta }),
+  ),
+  http.get('/api/contacts', () =>
+    HttpResponse.json({ success: true, data: emptyContacts.data, meta: emptyContacts.meta }),
+  ),
 ];

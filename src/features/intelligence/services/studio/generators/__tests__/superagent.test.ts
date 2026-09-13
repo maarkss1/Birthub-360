@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const invokeStructuredMock = vi.fn();
 vi.mock('../../shared.js', () => ({
@@ -15,8 +15,8 @@ vi.mock('../../shared.js', () => ({
   },
 }));
 
-import { generateSuperagent } from '../superagent.js';
 import { superagentAiResultSchema } from '../../schema.js';
+import { generateSuperagent } from '../superagent.js';
 
 function buildRequest(name: string) {
   return {

@@ -7,7 +7,7 @@ describe('Organization RLS bypass no setup de integração', () => {
     await expect(
       prisma.organization.create({
         data: { id: 'org-no-bypass', name: 'Org No Bypass' },
-      })
+      }),
     ).rejects.toThrow(/row-level security policy/i);
   });
 

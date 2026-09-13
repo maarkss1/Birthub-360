@@ -7,7 +7,9 @@ import { signUp, uniqueTestEmail, setUserRole } from './helpers';
 // de uma tela quebrada ou (pior) o conteúdo restrito. Ver RequireRole (src/components/layout/
 // RequireRole.tsx) e Sidebar.tsx.
 test.describe('Comercial Inteligente — RBAC na UI', () => {
-  test('ADMIN (primeiro usuário da organização) vê o item de menu e acessa o módulo', async ({ page }) => {
+  test('ADMIN (primeiro usuário da organização) vê o item de menu e acessa o módulo', async ({
+    page,
+  }) => {
     await signUp(page, { email: uniqueTestEmail('ci-admin') });
 
     await expect(page.getByRole('button', { name: 'Comercial Inteligente' })).toBeVisible();
@@ -17,7 +19,9 @@ test.describe('Comercial Inteligente — RBAC na UI', () => {
     await expect(page.getByRole('button', { name: 'Visão Executiva' })).toBeVisible();
   });
 
-  test('SDR não vê o item de menu e acesso direto por URL mostra "Acesso restrito"', async ({ page }) => {
+  test('SDR não vê o item de menu e acesso direto por URL mostra "Acesso restrito"', async ({
+    page,
+  }) => {
     const email = uniqueTestEmail('ci-vendedor');
     await signUp(page, { email });
     await setUserRole(email, 'SDR');
@@ -35,7 +39,9 @@ test.describe('Comercial Inteligente — RBAC na UI', () => {
     await expect(page.getByRole('button', { name: 'Visão Executiva' })).toHaveCount(0);
   });
 
-  test('VISUALIZADOR não vê o item de menu e acesso direto por URL mostra "Acesso restrito"', async ({ page }) => {
+  test('VISUALIZADOR não vê o item de menu e acesso direto por URL mostra "Acesso restrito"', async ({
+    page,
+  }) => {
     const email = uniqueTestEmail('ci-viewer');
     await signUp(page, { email });
     await setUserRole(email, 'VISUALIZADOR');

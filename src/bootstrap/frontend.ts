@@ -1,7 +1,7 @@
+import path from 'node:path';
 import type { Express } from 'express';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import path from 'node:path';
 import { createServer as createViteServer } from 'vite';
 import { env } from '../config/env.js';
 

@@ -19,10 +19,5 @@
     "sans": "Inter",
     "emblem": "Playfair Display (italic 800, vetorizada nos SVGs)"
   },
-  "values": [
-    "Innovation",
-    "Data Intelligence",
-    "Efficiency",
-    "Scalability"
-  ]
+  "values": ["Innovation", "Data Intelligence", "Efficiency", "Scalability"]
 }

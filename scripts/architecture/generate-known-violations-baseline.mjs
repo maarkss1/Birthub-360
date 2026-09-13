@@ -25,45 +25,50 @@ const OUTPUT_PATH = path.join(ROOT, '.dependency-cruiser-known-violations.json')
 // com ENOENT, e `execFileSync(..., { shell: true })` dispara o aviso de depreciação DEP0190 do
 // Node por misturar `args` com `shell: true`. `execSync` com uma string já monta o comando dessa
 // forma sem gerar o aviso.
-const DEPCRUISE_CMD = 'npx depcruise --config .dependency-cruiser.cjs --output-type json src server.ts worker.ts';
+const DEPCRUISE_CMD =
+  'npx depcruise --config .dependency-cruiser.cjs --output-type json src server.ts worker.ts';
 
 function runDepcruise() {
-    const stdout = execSync(DEPCRUISE_CMD, { cwd: ROOT, encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024 });
-    return JSON.parse(stdout);
+  const stdout = execSync(DEPCRUISE_CMD, {
+    cwd: ROOT,
+    encoding: 'utf-8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  return JSON.parse(stdout);
 }
 
 export function buildBaseline(report) {
-    const violations = report?.summary?.violations ?? [];
+  const violations = report?.summary?.violations ?? [];
 
-    const trimmed = violations.map((violation) => {
-        const entry = {
-            type: violation.type,
-            from: violation.from,
-            rule: { name: violation.rule.name, severity: violation.rule.severity },
-        };
-        if (violation.to) entry.to = violation.to;
-        if (violation.cycle) entry.cycle = violation.cycle;
-        return entry;
-    });
+  const trimmed = violations.map((violation) => {
+    const entry = {
+      type: violation.type,
+      from: violation.from,
+      rule: { name: violation.rule.name, severity: violation.rule.severity },
+    };
+    if (violation.to) entry.to = violation.to;
+    if (violation.cycle) entry.cycle = violation.cycle;
+    return entry;
+  });
 
-    trimmed.sort((a, b) => {
-        const keyA = `${a.from}|${a.to ?? ''}|${a.rule.name}`;
-        const keyB = `${b.from}|${b.to ?? ''}|${b.rule.name}`;
-        return keyA.localeCompare(keyB);
-    });
+  trimmed.sort((a, b) => {
+    const keyA = `${a.from}|${a.to ?? ''}|${a.rule.name}`;
+    const keyB = `${b.from}|${b.to ?? ''}|${b.rule.name}`;
+    return keyA.localeCompare(keyB);
+  });
 
-    return trimmed;
+  return trimmed;
 }
 
 function main() {
-    const report = runDepcruise();
-    const baseline = buildBaseline(report);
-    writeFileSync(OUTPUT_PATH, `${JSON.stringify(baseline, null, 2)}\n`, 'utf-8');
-    // eslint-disable-next-line no-console
-    console.log(
-        `Baseline regenerada: ${baseline.length} violação(ões) em ${path.relative(ROOT, OUTPUT_PATH)}.\n` +
-            'Revise o diff manualmente antes de commitar — ver docs/architecture/KNOWN_VIOLATIONS.md.',
-    );
+  const report = runDepcruise();
+  const baseline = buildBaseline(report);
+  writeFileSync(OUTPUT_PATH, `${JSON.stringify(baseline, null, 2)}\n`, 'utf-8');
+  // eslint-disable-next-line no-console
+  console.log(
+    `Baseline regenerada: ${baseline.length} violação(ões) em ${path.relative(ROOT, OUTPUT_PATH)}.\n` +
+      'Revise o diff manualmente antes de commitar — ver docs/architecture/KNOWN_VIOLATIONS.md.',
+  );
 }
 
 // `file://${process.argv[1]}` quebra no Windows: `import.meta.url` normaliza pra
@@ -72,5 +77,5 @@ function main() {
 // silenciosamente (exit 0, main() nunca chamado) sem regenerar nada nem avisar. pathToFileURL
 // normaliza os dois lados da mesma forma em qualquer plataforma.
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-    main();
+  main();
 }

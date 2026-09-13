@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
 import {
   BrainCircuit,
   Check,
@@ -9,20 +8,21 @@ import {
   ShieldAlert,
   X,
 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Badge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Badge } from '../../../components/ui/Badge';
 import { Textarea } from '../../../components/ui/Textarea';
-import { api } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
 import { useAuth } from '../../../contexts/AuthContext';
+import { api } from '../../../lib/api';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { clientLogger } from '../../../lib/clientLogger';
 
 // Consome só `/api/memory/**` (feature job-roles, dono do PROMPT 9) via HTTP — nunca importa
 // nenhum módulo de `src/features/job-roles/**` diretamente (proibido por

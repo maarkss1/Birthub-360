@@ -13,24 +13,24 @@ A missão C0 do Agente 02 pede a definição de: `WorkspaceDefinition`, `Workspa
 Regra do programa: **"não criar uma arquitetura paralela"**. Por isso, cada contrato abaixo é
 definido como **mapeamento sobre o que já existe**, não como tipo novo a implementar do zero.
 
-| Contrato pedido pela missão | Equivalente real hoje | Arquivo | Gap identificado |
-|---|---|---|---|
-| `WorkspaceDefinition` | `RoleWorkspaceDefinition` (política fixa, comentário em schema) + o objeto `Workspace` retornado por `/api/workspace/me` | `prisma/schema.prisma` (comentário), `workspace.api.ts` | Hoje é 1 definição por `JobRole`, não por "workspace nomeado" (Commercial/Executive/Enablement/Operations do North Star). São dois eixos de agrupamento diferentes — ver §2. |
-| `WorkspaceCapability` | `WorkspaceKpi` (`capabilityCode`, `label`, `description`, `domain`, `status: WorkspaceCapabilityStatus`) | `workspace.api.ts` | Já tem um campo `domain: string \| null` — candidato natural a carregar o nome do domínio `CORE` (`Intelligence`, `Agents` etc.) definido em `BIRTHUB_PRODUCT_MODEL.md` §3, mas hoje `domain` vem de `catalogEntry?.domain`, uma origem que não foi auditada nesta rodada (achado C0-WM-1, ver §4). |
-| `WorkspaceAction` | Não existe um tipo equivalente isolado — ações hoje são implícitas nas telas de cada módulo comercial | — | Gap real. Não inventar agora; primeiro confirmar com o Agente 00 se `WorkspaceAction` é necessário como contrato de dados ou se é só um padrão de UI (`WorkspaceReadySection`) sem persistência própria. |
-| `WorkspaceModule` | Aproximação: os 27+ módulos de `src/features/**` listados em `BRAIN_TRUTH_MAP.md` §2 | `src/features/**` | Módulo de pasta ≠ módulo de workspace hoje — não há agrupamento de várias pastas sob um "WorkspaceModule" nomeado. |
-| `WorkspaceWidget` | `WorkspaceReadySection` (compartilhado entre `WorkspaceHome.tsx` dedicado e `AdaptiveDashboard.tsx`) | `src/components/workspace/WorkspaceReadySection.tsx` | Existe um único widget guarda-chuva hoje, não uma coleção componível de widgets por workspace. |
-| `NavigationGroup` | Os grupos de `Sidebar.tsx` (`Captar`, `Qualificar`, `Relacionar`, `Fechar`, `Analisar`, `IA & Capacitação`, `Administração`) + `GROUP_ORDER_BY_ROLE` | `src/components/layout/Sidebar.tsx` | Já é exatamente esse conceito, só nomeado como "grupo de jornada", não "NavigationGroup" formal. Ver `NAVIGATION_TARGET.md`. |
-| `PermissionRule` | `CapabilityDefinition` + `AccessRequest`/`ApprovalDecision`/`TemporaryCapabilityGrant` (Cross-Role Authorization, PROMPT 7) | `prisma/schema.prisma`, `src/features/job-roles/config/access-request-policy.ts` | Já existe, é mais sofisticado que um `PermissionRule` simples (tem aprovação, escopo temporário, matriz categoria→papel mínimo). Não simplificar ao integrar — risco de regressão de segurança. |
+| Contrato pedido pela missão | Equivalente real hoje                                                                                                                                | Arquivo                                                                          | Gap identificado                                                                                                                                                                                                                                                                                    |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WorkspaceDefinition`       | `RoleWorkspaceDefinition` (política fixa, comentário em schema) + o objeto `Workspace` retornado por `/api/workspace/me`                             | `prisma/schema.prisma` (comentário), `workspace.api.ts`                          | Hoje é 1 definição por `JobRole`, não por "workspace nomeado" (Commercial/Executive/Enablement/Operations do North Star). São dois eixos de agrupamento diferentes — ver §2.                                                                                                                        |
+| `WorkspaceCapability`       | `WorkspaceKpi` (`capabilityCode`, `label`, `description`, `domain`, `status: WorkspaceCapabilityStatus`)                                             | `workspace.api.ts`                                                               | Já tem um campo `domain: string \| null` — candidato natural a carregar o nome do domínio `CORE` (`Intelligence`, `Agents` etc.) definido em `BIRTHUB_PRODUCT_MODEL.md` §3, mas hoje `domain` vem de `catalogEntry?.domain`, uma origem que não foi auditada nesta rodada (achado C0-WM-1, ver §4). |
+| `WorkspaceAction`           | Não existe um tipo equivalente isolado — ações hoje são implícitas nas telas de cada módulo comercial                                                | —                                                                                | Gap real. Não inventar agora; primeiro confirmar com o Agente 00 se `WorkspaceAction` é necessário como contrato de dados ou se é só um padrão de UI (`WorkspaceReadySection`) sem persistência própria.                                                                                            |
+| `WorkspaceModule`           | Aproximação: os 27+ módulos de `src/features/**` listados em `BRAIN_TRUTH_MAP.md` §2                                                                 | `src/features/**`                                                                | Módulo de pasta ≠ módulo de workspace hoje — não há agrupamento de várias pastas sob um "WorkspaceModule" nomeado.                                                                                                                                                                                  |
+| `WorkspaceWidget`           | `WorkspaceReadySection` (compartilhado entre `WorkspaceHome.tsx` dedicado e `AdaptiveDashboard.tsx`)                                                 | `src/components/workspace/WorkspaceReadySection.tsx`                             | Existe um único widget guarda-chuva hoje, não uma coleção componível de widgets por workspace.                                                                                                                                                                                                      |
+| `NavigationGroup`           | Os grupos de `Sidebar.tsx` (`Captar`, `Qualificar`, `Relacionar`, `Fechar`, `Analisar`, `IA & Capacitação`, `Administração`) + `GROUP_ORDER_BY_ROLE` | `src/components/layout/Sidebar.tsx`                                              | Já é exatamente esse conceito, só nomeado como "grupo de jornada", não "NavigationGroup" formal. Ver `NAVIGATION_TARGET.md`.                                                                                                                                                                        |
+| `PermissionRule`            | `CapabilityDefinition` + `AccessRequest`/`ApprovalDecision`/`TemporaryCapabilityGrant` (Cross-Role Authorization, PROMPT 7)                          | `prisma/schema.prisma`, `src/features/job-roles/config/access-request-policy.ts` | Já existe, é mais sofisticado que um `PermissionRule` simples (tem aprovação, escopo temporário, matriz categoria→papel mínimo). Não simplificar ao integrar — risco de regressão de segurança.                                                                                                     |
 
 ## 2. O gap real: dois eixos de agrupamento coexistindo sem contrato único
 
 Hoje o produto tem **dois sistemas de agrupamento independentes**, nenhum ciente do outro:
 
-1. **Por papel** (`JobRole` → `RoleWorkspaceDefinition` → `/api/workspace/me`) — decide *quais
-   capacidades* um usuário vê em "Meu Workspace" e na home adaptativa.
-2. **Por jornada comercial** (`Sidebar.tsx` → 7 grupos → `GROUP_ORDER_BY_ROLE`) — decide *como a
-   navegação lateral inteira* é organizada e ordenada.
+1. **Por papel** (`JobRole` → `RoleWorkspaceDefinition` → `/api/workspace/me`) — decide _quais
+   capacidades_ um usuário vê em "Meu Workspace" e na home adaptativa.
+2. **Por jornada comercial** (`Sidebar.tsx` → 7 grupos → `GROUP_ORDER_BY_ROLE`) — decide _como a
+   navegação lateral inteira_ é organizada e ordenada.
 
 O North Star do programa (`Workspaces` no mínimo: Commercial/Revenue, Executive/Management,
 Enablement, Operations) propõe um **terceiro eixo**: agrupamento por área de negócio, não por
@@ -44,12 +44,12 @@ explicitamente antes da Onda C2, não descoberto durante a implementação.
 
 ## 3. Workspaces mínimos do North Star — mapeamento inicial (não decisão final)
 
-| Workspace-alvo | Conteúdo candidato (de `BRAIN_TRUTH_MAP.md`) |
-|---|---|
-| **Commercial / Revenue** | Todo o §2.1-2.3 do Truth Map: CRM, prospecção, cadência, propostas, playbooks, roleplay, chatbook, comercial inteligente, analytics/win-loss |
-| **Executive / Management** | BT-017 (Comercial Inteligente — já bloqueado por papel), BT-018/028 (Analytics/Reports), consumo de IA (BT-040) |
-| **Enablement** | BT-022/023/024/025/026 — roleplay, editor, playbooks, chatbook, academy — hoje meio comercial, meio treinamento; fronteira não é nítida (achado C0-WM-2, §4) |
-| **Operations** | BT-034 a BT-046 — governança, capabilities, automações, conectores, workspace admin |
+| Workspace-alvo             | Conteúdo candidato (de `BRAIN_TRUTH_MAP.md`)                                                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Commercial / Revenue**   | Todo o §2.1-2.3 do Truth Map: CRM, prospecção, cadência, propostas, playbooks, roleplay, chatbook, comercial inteligente, analytics/win-loss                 |
+| **Executive / Management** | BT-017 (Comercial Inteligente — já bloqueado por papel), BT-018/028 (Analytics/Reports), consumo de IA (BT-040)                                              |
+| **Enablement**             | BT-022/023/024/025/026 — roleplay, editor, playbooks, chatbook, academy — hoje meio comercial, meio treinamento; fronteira não é nítida (achado C0-WM-2, §4) |
+| **Operations**             | BT-034 a BT-046 — governança, capabilities, automações, conectores, workspace admin                                                                          |
 
 Este mapeamento é um **ponto de partida para a Onda C2**, não uma atribuição final — o próprio
 Agente 02 da Onda C2 deve revalidar contra o achado do §2 antes de mover qualquer rota.

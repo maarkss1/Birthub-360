@@ -6,8 +6,8 @@ services:
     command: sleep infinity
     environment:
       NODE_ENV: development
-      PORT: "3005"
-      HOST: "0.0.0.0"
+      PORT: '3005'
+      HOST: '0.0.0.0'
       # Dentro da rede do Compose os outros serviços são alcançados pelo nome do serviço, não
       # por localhost — só isso muda em relação ao .env local (copiado de .env.example no
       # postCreateCommand). Os flags ENABLE_SEARCH/ENABLE_QUEUES continuam como o .env.example

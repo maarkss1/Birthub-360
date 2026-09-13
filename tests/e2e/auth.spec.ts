@@ -19,7 +19,9 @@ import { signUp, uniqueTestEmail, E2E_PASSWORD } from './helpers';
 // formato do próprio `isAuthorizedLoginEmail` — a checagem client-side já é coberta a fundo pelo
 // teste unitário de access-policy.ts.
 test.describe('Autenticação', () => {
-  test('cadastro com e-mail corporativo autorizado cria a conta e entra no Hub', async ({ page }) => {
+  test('cadastro com e-mail corporativo autorizado cria a conta e entra no Hub', async ({
+    page,
+  }) => {
     // landOn: 'hub' pede pro helper NÃO normalizar pra /app — este teste é justamente sobre o
     // destino real pós-login (ver Pilot 031/032 em .claude/PILOTS.md: /hub substituiu /app como
     // destino padrão), então a asserção precisa ver o redirecionamento de verdade, não a
@@ -28,7 +30,10 @@ test.describe('Autenticação', () => {
     await expect(page).toHaveURL(/\/hub/);
   });
 
-  test('login com senha correta autentica de verdade contra o servidor', async ({ page, context }) => {
+  test('login com senha correta autentica de verdade contra o servidor', async ({
+    page,
+    context,
+  }) => {
     const email = uniqueTestEmail('login-ok');
     await signUp(page, { email });
 
@@ -41,7 +46,10 @@ test.describe('Autenticação', () => {
     await expect(page).toHaveURL(/\/hub/, { timeout: 15_000 });
   });
 
-  test('login com senha incorreta é rejeitado pelo servidor e não navega pro app', async ({ page, context }) => {
+  test('login com senha incorreta é rejeitado pelo servidor e não navega pro app', async ({
+    page,
+    context,
+  }) => {
     const email = uniqueTestEmail('login-fail');
     await signUp(page, { email });
 
@@ -58,7 +66,10 @@ test.describe('Autenticação', () => {
     await expect(page.getByRole('button', { name: /^Entrar$/ })).toBeVisible();
   });
 
-  test('acessar /app sem sessão válida redireciona para /login (ProtectedRoute)', async ({ page, context }) => {
+  test('acessar /app sem sessão válida redireciona para /login (ProtectedRoute)', async ({
+    page,
+    context,
+  }) => {
     await context.clearCookies();
     await page.goto('/app');
     await expect(page).toHaveURL(/\/login/);

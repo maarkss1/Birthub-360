@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  Building2,
-  User,
-  Calendar,
-  Sparkles,
-  Loader2,
-  ArrowRightCircle,
-  CheckSquare,
-  Square,
-} from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import {
+  ArrowRightCircle,
+  Building2,
+  Calendar,
+  CheckSquare,
+  Loader2,
+  Sparkles,
+  Square,
+  User,
+} from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TechToolLogo } from '../../../components/ui/TechToolLogo';
 import type { Lead } from '../../../types';
 
@@ -197,7 +197,7 @@ export const KanbanCard = React.memo(function KanbanCard({
                 lead.score >= 70
                   ? 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'
                   : lead.score >= 40
-                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
+                    ? 'bg-amber-500/10 border-amber-500/30 text-warning-active dark:text-warning'
                     : 'bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400'
               }`}
             >

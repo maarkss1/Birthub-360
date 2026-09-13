@@ -32,10 +32,10 @@ essa ferramenta para clicar em "Esquecer webhook" (ou usar o DevTools para limpa
 `atlas-extrator-bitrix-webhook` do `localStorage`) e colar a URL nova; não há como forçar essa
 limpeza remotamente.
 
-| Marca | Env var | URL exposta (padrão) |
-|---|---|---|
-| Birth Hub 360 | `BITRIX24_WEBHOOK_URL` (ou legado `BITRIX_WEBHOOK_URL`) | `.../rest/450/…` |
-| Total Trac | `TOTALTRAC_BITRIX24_WEBHOOK_URL` (ou legado `TOTALTRAC_BITRIX_WEBHOOK_URL`) | `.../rest/2486/…` |
+| Marca         | Env var                                                                     | URL exposta (padrão) |
+| ------------- | --------------------------------------------------------------------------- | -------------------- |
+| Birth Hub 360 | `BITRIX24_WEBHOOK_URL` (ou legado `BITRIX_WEBHOOK_URL`)                     | `.../rest/450/…`     |
+| Total Trac    | `TOTALTRAC_BITRIX24_WEBHOOK_URL` (ou legado `TOTALTRAC_BITRIX_WEBHOOK_URL`) | `.../rest/2486/…`    |
 
 Essas URLs dão acesso à base de CRM do Bitrix com dado pessoal real de prospecção (nome, telefone,
 e-mail, empresa) — trate como incidente de dado pessoal, não só como higiene de credencial (ver
@@ -85,6 +85,7 @@ Repita para o segundo portal.
 ## Passo 3 — Atualizar cada runtime e cada conexão persistida
 
 ### Env vars (Render)
+
 1. Render → serviço do backend → **Environment**.
 2. Atualize `BITRIX24_WEBHOOK_URL` com a nova URL do portal Birth Hub 360.
 3. Atualize `TOTALTRAC_BITRIX24_WEBHOOK_URL` com a nova URL do portal Total Trac.
@@ -94,14 +95,17 @@ Repita para o segundo portal.
 5. Salvar dispara redeploy — confirme `Live` antes de seguir.
 
 ### Env vars (Vercel), se aplicável
+
 Confirme se o frontend/edge consome essas env vars diretamente (hoje o uso conhecido é só
 server-side via `connections.ts`, dentro de `server.ts`/Render). Se não houver consumidor no lado
 Vercel, registre e pule.
 
 ### `.env` local
+
 Cada agente/dev com ambiente local atualiza as duas variáveis a partir do cofre.
 
 ### Conexões persistidas em `BitrixConnection`
+
 Para cada linha levantada no Passo 1 que **não** for a conexão default (ou seja, tem
 `webhookUrl` próprio salvo no banco): atualize via a tela de Integrações do produto (fluxo normal
 de edição de conexão), nunca via `UPDATE` direto no banco — o fluxo de edição já roda

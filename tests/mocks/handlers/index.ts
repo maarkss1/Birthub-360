@@ -10,13 +10,13 @@ import { companiesContactsHandlers } from './companies-contacts';
 
 /** Handlers MSW padrão, registrados no server global (ver `tests/mocks/server.ts`). */
 export const handlers = [
-    ...apiClientHandlers,
-    ...analyticsHandlers,
-    ...calendarHandlers,
-    ...notificationsHandlers,
-    ...knowledgeHandlers,
-    ...automationsHandlers,
-    ...nominatimHandlers,
-    ...gdeltHandlers,
-    ...companiesContactsHandlers,
+  ...apiClientHandlers,
+  ...analyticsHandlers,
+  ...calendarHandlers,
+  ...notificationsHandlers,
+  ...knowledgeHandlers,
+  ...automationsHandlers,
+  ...nominatimHandlers,
+  ...gdeltHandlers,
+  ...companiesContactsHandlers,
 ];

@@ -5,11 +5,11 @@ import fs from 'fs';
 import path from 'path';
 
 async function ingestPlaybook() {
-    console.log("Iniciando ingestão do Playbook...");
+  console.log('Iniciando ingestão do Playbook...');
 
-    // Simulando a leitura de um arquivo Markdown ou PDF com os playbooks.
-    // Em um cenário real, você apontaria para o arquivo real em "./playbook.md".
-    const playbookContent = `
+  // Simulando a leitura de um arquivo Markdown ou PDF com os playbooks.
+  // Em um cenário real, você apontaria para o arquivo real em "./playbook.md".
+  const playbookContent = `
 # Playbook Comercial - Birth Hub 360
 
 ## 1. ICP (Ideal Customer Profile)
@@ -30,42 +30,42 @@ Clientes em fase de expansão operacional (abrindo novas filiais) ou sob pressã
 - **Contorno**: "Qual foi o impacto financeiro do seu último sinistro? A Atlas geralmente se paga evitando 1 único roubo no trimestre."
 `;
 
-    try {
-        // 1. Criar um documento pai
-        const document = await prisma.document.create({
-            data: {
-                title: "Playbook Comercial Birth Hub 360 - Base de Conhecimento",
-                content: playbookContent,
-                metadata: { version: "1.0", author: "Comercial" }
-            }
-        });
-        
-        console.log(`Documento criado com ID: ${document.id}`);
+  try {
+    // 1. Criar um documento pai
+    const document = await prisma.document.create({
+      data: {
+        title: 'Playbook Comercial Birth Hub 360 - Base de Conhecimento',
+        content: playbookContent,
+        metadata: { version: '1.0', author: 'Comercial' },
+      },
+    });
 
-        // 2. Quebrar o conteúdo em chunks menores (simulação de chunking)
-        // Em um sistema real, usaríamos o RecursiveCharacterTextSplitter do LangChain
-        const chunks = playbookContent.split('\n## ').filter(c => c.trim().length > 0);
+    console.log(`Documento criado com ID: ${document.id}`);
 
-        console.log(`Dividido em ${chunks.length} partes. Gerando embeddings...`);
+    // 2. Quebrar o conteúdo em chunks menores (simulação de chunking)
+    // Em um sistema real, usaríamos o RecursiveCharacterTextSplitter do LangChain
+    const chunks = playbookContent.split('\n## ').filter((c) => c.trim().length > 0);
 
-        // 3. Salvar cada chunk no banco e gerar o vetor no pgvector
-        for (let i = 0; i < chunks.length; i++) {
-            let chunkText = chunks[i];
-            // Recolocar o "## " que foi retirado no split (exceto no primeiro se não tinha)
-            if (!chunkText.startsWith('# ')) {
-                chunkText = '## ' + chunkText;
-            }
+    console.log(`Dividido em ${chunks.length} partes. Gerando embeddings...`);
 
-            console.log(`Ingerindo chunk ${i + 1}/${chunks.length}...`);
-            await vectorStore.addDocumentChunk(document.id, chunkText);
-        }
+    // 3. Salvar cada chunk no banco e gerar o vetor no pgvector
+    for (let i = 0; i < chunks.length; i++) {
+      let chunkText = chunks[i];
+      // Recolocar o "## " que foi retirado no split (exceto no primeiro se não tinha)
+      if (!chunkText.startsWith('# ')) {
+        chunkText = '## ' + chunkText;
+      }
 
-        console.log("✅ Ingestão finalizada com sucesso!");
-    } catch (error) {
-        console.error("❌ Erro durante a ingestão:", error);
-    } finally {
-        await prisma.$disconnect();
+      console.log(`Ingerindo chunk ${i + 1}/${chunks.length}...`);
+      await vectorStore.addDocumentChunk(document.id, chunkText);
     }
+
+    console.log('✅ Ingestão finalizada com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro durante a ingestão:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 ingestPlaybook();

@@ -1,7 +1,86 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Birthub 360 · Command Language</title><meta name="description" content="Design Lab Birthub 360: linguagem operacional, componentes e motion explicável."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700&family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="/design-lab/assets/style.css"><link rel="stylesheet" href="/design-lab/assets/lab.css"></head><body>
-<a class="skip" href="#main">Pular para o conteúdo</a>
-<aside class="sidebar"><a class="brand" href="/design-lab/command-language"><span class="brandmark">b<span>↗</span></span><strong>BIRTHUB <small>360</small></strong></a><div class="labflag">DESIGN LAB <span>V.02</span></div><div class="nav-label">LINGUAGEM DO PRODUTO</div><nav id="side-nav"><a href="/design-lab/command-language" data-route="command"><span>⌘</span>Command Language</a><a href="/design-lab/components-v2" data-route="components"><span>⊞</span>Components V2</a><button data-page="motion"><span>∿</span>Motion Playground</button><button data-page="audit"><span>≡</span>Auditoria & migração</button><button data-page="patterns"><span>⌑</span>Biblioteca de padrões</button></nav><div class="side-note"><span class="nav-label">PRINCÍPIO 01</span><p>Informação recebe<br>uma função.<br><strong>Não uma caixa.</strong></p><div class="miniline"></div><small>Arquitetura → interação<br>→ decisão → resultado</small></div><div class="sidebar-foot"><div class="avatar">BH</div><div>Birthub Studio<small>Ambiente experimental</small></div><button id="collapse" aria-label="Recolher navegação" title="Recolher navegação">«</button></div></aside>
-<div class="app"><header class="topbar"><div>Design Lab <span>/</span> <b id="crumb">Command Language</b></div><div class="topright"><span class="prototype">PROTÓTIPO · DADOS DEMONSTRATIVOS</span><button id="motion-toggle" title="Reduzir movimento" aria-pressed="false">∿ Motion on</button><span class="avatar">MS</span></div></header><main id="main" tabindex="-1"></main><footer class="dock"><button id="open-command"><span class="dock-symbol">⌘</span><span>Pergunte, procure ou execute...</span><kbd>Ctrl K</kbd></button><button id="voice" aria-label="Usar voz" title="Usar voz"><svg width="19" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button><button id="dock-ai" class="gold" aria-label="Abrir Intelligence Lens">✦</button></footer></div><div id="toasts" aria-live="polite"></div><dialog id="overlay"></dialog><script src="/design-lab/assets/audit-data.js"></script><script src="/design-lab/assets/app.js"></script><script src="/design-lab/assets/lab.js"></script><script src="/design-lab/assets/micro.js"></script></body></html>
-
-
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Birthub 360 · Command Language</title>
+    <meta
+      name="description"
+      content="Design Lab Birthub 360: linguagem operacional, componentes e motion explicável."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700&family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/design-lab/assets/style.css" />
+    <link rel="stylesheet" href="/design-lab/assets/lab.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Pular para o conteúdo</a>
+    <aside class="sidebar">
+      <a class="brand" href="/design-lab/command-language"
+        ><span class="brandmark">b<span>↗</span></span
+        ><strong>BIRTHUB <small>360</small></strong></a
+      >
+      <div class="labflag">DESIGN LAB <span>V.02</span></div>
+      <div class="nav-label">LINGUAGEM DO PRODUTO</div>
+      <nav id="side-nav">
+        <a href="/design-lab/command-language" data-route="command"
+          ><span>⌘</span>Command Language</a
+        ><a href="/design-lab/components-v2" data-route="components"><span>⊞</span>Components V2</a
+        ><button data-page="motion"><span>∿</span>Motion Playground</button
+        ><button data-page="audit"><span>≡</span>Auditoria & migração</button
+        ><button data-page="patterns"><span>⌑</span>Biblioteca de padrões</button>
+      </nav>
+      <div class="side-note">
+        <span class="nav-label">PRINCÍPIO 01</span>
+        <p>Informação recebe<br />uma função.<br /><strong>Não uma caixa.</strong></p>
+        <div class="miniline"></div>
+        <small>Arquitetura → interação<br />→ decisão → resultado</small>
+      </div>
+      <div class="sidebar-foot">
+        <div class="avatar">BH</div>
+        <div>Birthub Studio<small>Ambiente experimental</small></div>
+        <button id="collapse" aria-label="Recolher navegação" title="Recolher navegação">«</button>
+      </div>
+    </aside>
+    <div class="app">
+      <header class="topbar">
+        <div>Design Lab <span>/</span> <b id="crumb">Command Language</b></div>
+        <div class="topright">
+          <span class="prototype">PROTÓTIPO · DADOS DEMONSTRATIVOS</span
+          ><button id="motion-toggle" title="Reduzir movimento" aria-pressed="false">
+            ∿ Motion on</button
+          ><span class="avatar">MS</span>
+        </div>
+      </header>
+      <main id="main" tabindex="-1"></main>
+      <footer class="dock">
+        <button id="open-command">
+          <span class="dock-symbol">⌘</span><span>Pergunte, procure ou execute...</span
+          ><kbd>Ctrl K</kbd></button
+        ><button id="voice" aria-label="Usar voz" title="Usar voz">
+          <svg
+            width="19"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <rect x="9" y="2" width="6" height="12" rx="3" />
+            <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8" />
+          </svg></button
+        ><button id="dock-ai" class="gold" aria-label="Abrir Intelligence Lens">✦</button>
+      </footer>
+    </div>
+    <div id="toasts" aria-live="polite"></div>
+    <dialog id="overlay"></dialog>
+    <script src="/design-lab/assets/audit-data.js"></script>
+    <script src="/design-lab/assets/app.js"></script>
+    <script src="/design-lab/assets/lab.js"></script>
+    <script src="/design-lab/assets/micro.js"></script>
+  </body>
+</html>

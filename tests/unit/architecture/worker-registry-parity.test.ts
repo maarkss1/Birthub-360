@@ -25,13 +25,15 @@ const CREATE_WORKER_EXPORT_RE =
   /^export\s+(?:function|const)\s+(create\w*Worker)\b/gm;
 
 /**
- * Worker morto conhecido (ACH-16-04): `stalledLeadQueue`/`createStalledLeadWorker`
- * (src/lib/queue/stalledLead.worker.ts) não é importado por nenhum entrypoint — a stagnation
- * scanner (`src/features/automations/application/stagnation-scanner.service.ts`) assumiu esse
- * papel e só resta um comentário mencionando o arquivo antigo. Allowlist explícita em vez de
- * remoção: decisão de manter ou apagar o arquivo é fora do escopo deste gate de paridade.
+ * Vazio de propósito: `createStalledLeadWorker` (src/lib/queue/stalledLead.worker.ts) era o único
+ * worker morto conhecido, allowlisted em vez de removido enquanto a decisão de mantê-lo ou não
+ * estava pendente. ACH-16-04 (mesma auditoria) resolveu essa pendência removendo o arquivo por
+ * completo — a stagnation scanner (`stagnation-scanner.service.ts`) já tinha assumido seu papel.
+ * Este teste força a allowlist a ficar vazia (não a apodrecer com uma entrada morta): se um novo
+ * worker intencionalmente sem uso em produção precisar ser allowlisted, adicione-o aqui com
+ * justificativa própria.
  */
-const KNOWN_DEAD_WORKERS = new Set<string>(['createStalledLeadWorker']);
+const KNOWN_DEAD_WORKERS = new Set<string>([]);
 
 interface WorkerExport {
   factoryName: string;

@@ -25,7 +25,11 @@ async function createCompanyAndLead(page: Page, opts: { tradeName: string; statu
 /** Arrasto manual por mouse — dnd-kit (PointerSensor, activationConstraint distance:8) precisa de
  * vários eventos mousemove intermediários pra reconhecer o gesto como drag; um único `dragTo` do
  * Playwright às vezes não gera passos suficientes. */
-async function dragCardToColumn(page: Page, cardLocator: ReturnType<Page['getByRole']>, columnHeading: ReturnType<Page['getByRole']>) {
+async function dragCardToColumn(
+  page: Page,
+  cardLocator: ReturnType<Page['getByRole']>,
+  columnHeading: ReturnType<Page['getByRole']>,
+) {
   // O board rola horizontalmente (overflow-x-auto) e nem toda coluna cabe no viewport padrão —
   // sem isto, arrastar para uma coluna fora da área visível calcula coordenadas de um ponto que
   // nunca esteve realmente na tela (mouse.move usa coordenadas de viewport, não faz auto-scroll
@@ -55,32 +59,52 @@ test.describe('Kanban do CRM — drag e drop', () => {
     await signUp(page, { email: uniqueTestEmail('kanban') });
   });
 
-  test('drag por mouse: move card para coluna adjacente e persiste após reload', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Acme Kanban ${Date.now()}`, status: 'Lead Recebido' });
+  test('drag por mouse: move card para coluna adjacente e persiste após reload', async ({
+    page,
+  }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Acme Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) });
     await expect(card).toBeVisible();
     const targetColumn = page.getByRole('heading', { name: 'Cadência Iniciada' });
 
-    const putResponse = page.waitForResponse((res) => res.url().includes('/api/leads/') && res.request().method() === 'PUT');
+    const putResponse = page.waitForResponse(
+      (res) => res.url().includes('/api/leads/') && res.request().method() === 'PUT',
+    );
     await dragCardToColumn(page, card, targetColumn);
     const res = await putResponse;
     expect(res.status()).toBe(200);
 
     // A coluna "Cadência Iniciada" deve conter o card agora.
-    const columnBody = page.locator('h3', { hasText: 'Cadência Iniciada' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible();
+    const columnBody = page
+      .locator('h3', { hasText: 'Cadência Iniciada' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      columnBody.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible();
 
     // Persistência real: reload e o card continua na nova coluna (não é só estado otimista local).
     await page.reload();
     await expect(page.getByText('Leads e pré-vendas')).toBeVisible({ timeout: 15_000 });
-    const columnBodyAfterReload = page.locator('h3', { hasText: 'Cadência Iniciada' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(columnBodyAfterReload.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible();
+    const columnBodyAfterReload = page
+      .locator('h3', { hasText: 'Cadência Iniciada' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      columnBodyAfterReload.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible();
   });
 
-  test('drag por mouse: rollback visual e toast de erro quando o PUT falha (500)', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Rollback Kanban ${Date.now()}`, status: 'Lead Recebido' });
+  test('drag por mouse: rollback visual e toast de erro quando o PUT falha (500)', async ({
+    page,
+  }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Rollback Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) });
@@ -88,7 +112,11 @@ test.describe('Kanban do CRM — drag e drop', () => {
 
     await page.route('**/api/leads/*', async (route) => {
       if (route.request().method() === 'PUT') {
-        await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ success: false, error: 'Erro simulado pelo teste' }) });
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({ success: false, error: 'Erro simulado pelo teste' }),
+        });
       } else {
         await route.continue();
       }
@@ -101,12 +129,21 @@ test.describe('Kanban do CRM — drag e drop', () => {
     await expect(page.getByText(/a alteração foi desfeita/)).toBeVisible({ timeout: 10_000 });
 
     // Rollback: o card volta a aparecer na coluna original ("Lead Recebido") depois do refetch.
-    const originalColumn = page.locator('h3', { hasText: 'Lead Recebido' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(originalColumn.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible({ timeout: 10_000 });
+    const originalColumn = page
+      .locator('h3', { hasText: 'Lead Recebido' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      originalColumn.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
-  test('drag por teclado: pickup (Espaço), ArrowRight, drop (Espaço) move o card e anuncia a movimentação', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Teclado Kanban ${Date.now()}`, status: 'Lead Recebido' });
+  test('drag por teclado: pickup (Espaço), ArrowRight, drop (Espaço) move o card e anuncia a movimentação', async ({
+    page,
+  }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Teclado Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) }).first();
@@ -131,21 +168,34 @@ test.describe('Kanban do CRM — drag e drop', () => {
     // existe, então uma tentativa sem anúncio em 500ms é perda real, não lentidão.
     await expect(async () => {
       await page.keyboard.press('ArrowRight'); // Lead Recebido -> Cadência Iniciada
-      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({ timeout: 500 });
+      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({
+        timeout: 500,
+      });
     }).toPass({ timeout: 10_000 });
 
-    const putResponse = page.waitForResponse((res) => res.url().includes('/api/leads/') && res.request().method() === 'PUT');
+    const putResponse = page.waitForResponse(
+      (res) => res.url().includes('/api/leads/') && res.request().method() === 'PUT',
+    );
     await page.keyboard.press('Space'); // drop
     const res = await putResponse;
     expect(res.status()).toBe(200);
 
     await expect(page.getByText(/movido para Cadência Iniciada/)).toBeVisible({ timeout: 10_000 });
-    const columnBody = page.locator('h3', { hasText: 'Cadência Iniciada' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible();
+    const columnBody = page
+      .locator('h3', { hasText: 'Cadência Iniciada' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      columnBody.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible();
   });
 
-  test('drag por teclado: Escape cancela e o card permanece na coluna original', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Cancelar Kanban ${Date.now()}`, status: 'Lead Recebido' });
+  test('drag por teclado: Escape cancela e o card permanece na coluna original', async ({
+    page,
+  }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Cancelar Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) }).first();
@@ -176,17 +226,30 @@ test.describe('Kanban do CRM — drag e drop', () => {
     // casos em que o ArrowRight também já tinha falhado).
     await expect(async () => {
       await page.keyboard.press('ArrowRight');
-      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({ timeout: 500 });
+      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({
+        timeout: 500,
+      });
     }).toPass({ timeout: 10_000 });
     await page.keyboard.press('Escape'); // cancela
 
-    await expect(page.getByText(/[Mm]ovimentação de .* cancelada/)).toBeVisible({ timeout: 10_000 });
-    const originalColumn = page.locator('h3', { hasText: 'Lead Recebido' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(originalColumn.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible();
+    await expect(page.getByText(/[Mm]ovimentação de .* cancelada/)).toBeVisible({
+      timeout: 10_000,
+    });
+    const originalColumn = page
+      .locator('h3', { hasText: 'Lead Recebido' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      originalColumn.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible();
   });
 
-  test('drag por teclado: múltiplas colunas (ArrowRight duas vezes) e ArrowLeft de volta', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Multi Coluna Kanban ${Date.now()}`, status: 'Lead Recebido' });
+  test('drag por teclado: múltiplas colunas (ArrowRight duas vezes) e ArrowLeft de volta', async ({
+    page,
+  }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Multi Coluna Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) }).first();
@@ -201,7 +264,9 @@ test.describe('Kanban do CRM — drag e drop', () => {
     // lentidão.
     await expect(async () => {
       await page.keyboard.press('ArrowRight'); // Cadência Iniciada
-      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({ timeout: 500 });
+      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({
+        timeout: 500,
+      });
     }).toPass({ timeout: 10_000 });
     // Achado real (CI): o segundo ArrowRight também é perdido às vezes, contrariando a suposição
     // acima ("listener já anexado continua ativo pro resto do gesto") — o KeyboardSensor do
@@ -213,16 +278,24 @@ test.describe('Kanban do CRM — drag e drop', () => {
     // Mesmo padrão de retry-and-resend do ArrowRight acima, agora também nos moves seguintes.
     await expect(async () => {
       await page.keyboard.press('ArrowRight'); // Qualificação (SDR)
-      await expect(page.getByText(/sobre a coluna Qualificação \(SDR\)/)).toBeVisible({ timeout: 500 });
+      await expect(page.getByText(/sobre a coluna Qualificação \(SDR\)/)).toBeVisible({
+        timeout: 500,
+      });
     }).toPass({ timeout: 10_000 });
     await expect(async () => {
       await page.keyboard.press('ArrowLeft'); // volta pra Cadência Iniciada
-      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({ timeout: 500 });
+      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({
+        timeout: 500,
+      });
     }).toPass({ timeout: 10_000 });
     await page.keyboard.press('Space'); // drop em Cadência Iniciada
 
-    const columnBody = page.locator('h3', { hasText: 'Cadência Iniciada' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible();
+    const columnBody = page
+      .locator('h3', { hasText: 'Cadência Iniciada' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      columnBody.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible();
   });
 });
 
@@ -234,7 +307,9 @@ test.describe('Kanban do CRM — coluna vazia', () => {
   test('coluna sem leads mostra o estado vazio "Solte cards aqui"', async ({ page }) => {
     await page.goto('/app/crm');
     // Conta recém-criada não tem nenhum lead — todas as colunas do funil Lead começam vazias.
-    const column = page.locator('h3', { hasText: 'Qualificação (SDR)' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    const column = page
+      .locator('h3', { hasText: 'Qualificação (SDR)' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
     await expect(column.getByText('📥 Solte cards aqui')).toBeVisible();
     await expect(column.getByText('0', { exact: true })).toBeVisible();
   });
@@ -242,15 +317,22 @@ test.describe('Kanban do CRM — coluna vazia', () => {
   test('drag por mouse: solta em coluna vazia move o card corretamente', async ({ page }) => {
     // Coluna próxima (índice 2, "Qualificação (SDR)") de propósito — dentro do viewport padrão do
     // Playwright sem precisar de scroll horizontal (ver comentário em dragCardToColumn).
-    const { company } = await createCompanyAndLead(page, { tradeName: `Vazia Kanban ${Date.now()}`, status: 'Lead Recebido' });
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Vazia Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) });
     const targetColumn = page.getByRole('heading', { name: 'Qualificação (SDR)' });
     await dragCardToColumn(page, card, targetColumn);
 
-    const columnBody = page.locator('h3', { hasText: 'Qualificação (SDR)' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible({ timeout: 10_000 });
+    const columnBody = page
+      .locator('h3', { hasText: 'Qualificação (SDR)' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      columnBody.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 });
 
@@ -259,8 +341,13 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
     await signUp(page, { email: uniqueTestEmail('kanban-drawer') });
   });
 
-  test('clique no card abre o drawer com foco inicial e Escape fecha devolvendo o foco', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Drawer Kanban ${Date.now()}`, status: 'Lead Recebido' });
+  test('clique no card abre o drawer com foco inicial e Escape fecha devolvendo o foco', async ({
+    page,
+  }) => {
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Drawer Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) });
@@ -279,7 +366,10 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
   });
 
   test('botão de fechar (X) fecha o drawer', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Fechar X Kanban ${Date.now()}`, status: 'Lead Recebido' });
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Fechar X Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
@@ -291,27 +381,38 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
   });
 
   test('alterar o estágio pelo select do drawer move o card no board', async ({ page }) => {
-    const { company } = await createCompanyAndLead(page, { tradeName: `Select Kanban ${Date.now()}`, status: 'Lead Recebido' });
+    const { company } = await createCompanyAndLead(page, {
+      tradeName: `Select Kanban ${Date.now()}`,
+      status: 'Lead Recebido',
+    });
     await page.goto('/app/crm');
 
     await page.getByRole('button', { name: new RegExp(company.tradeName) }).click();
     const drawer = page.getByRole('dialog');
     await expect(drawer).toBeVisible();
 
-    const putResponse = page.waitForResponse((res) => res.url().includes('/api/leads/') && res.request().method() === 'PUT');
+    const putResponse = page.waitForResponse(
+      (res) => res.url().includes('/api/leads/') && res.request().method() === 'PUT',
+    );
     await drawer.getByLabel('Status do Funil').selectOption('Qualificação (SDR)');
     const res = await putResponse;
     expect(res.status()).toBe(200);
 
     await page.keyboard.press('Escape');
-    const columnBody = page.locator('h3', { hasText: 'Qualificação (SDR)' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible({ timeout: 10_000 });
+    const columnBody = page
+      .locator('h3', { hasText: 'Qualificação (SDR)' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      columnBody.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   // Onda A (Agente 00, Commercial AI OS) — o lead selecionado passou a viver no parâmetro `lead`
   // da URL (ver CrmBoard.tsx) em vez de state local, para que o registro aberto seja
   // compartilhável por link e sobreviva a reload.
-  test('abrir o card grava o lead na URL; reload com ?lead= reabre o mesmo drawer', async ({ page }) => {
+  test('abrir o card grava o lead na URL; reload com ?lead= reabre o mesmo drawer', async ({
+    page,
+  }) => {
     const { company, lead } = await createCompanyAndLead(page, {
       tradeName: `Deep Link Kanban ${Date.now()}`,
       status: 'Lead Recebido',
@@ -383,7 +484,9 @@ test.describe('Kanban do CRM — LeadDetailDrawer', () => {
     const drawer = page.getByRole('dialog');
     await expect(drawer).toBeVisible();
 
-    const timelineSection = drawer.getByText('Linha do Tempo').locator('xpath=ancestor::section[1]');
+    const timelineSection = drawer
+      .getByText('Linha do Tempo')
+      .locator('xpath=ancestor::section[1]');
     await expect(timelineSection).toContainText('Lead criado');
   });
 });

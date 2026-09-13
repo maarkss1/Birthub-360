@@ -11,7 +11,9 @@ describe('ContactService Integration', () => {
 
   describe('create', () => {
     it('should create a new contact with a company successfully', async () => {
-      const company = await prisma.company.create({ data: CompanyFactory.build({ organizationId: 'test-org-id' }) });
+      const company = await prisma.company.create({
+        data: CompanyFactory.build({ organizationId: 'test-org-id' }),
+      });
       const data = ContactFactory.build({ companyId: company.id, organizationId: 'test-org-id' });
       delete (data as any).company;
       delete (data as any).organizationId;

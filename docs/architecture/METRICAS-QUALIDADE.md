@@ -18,17 +18,17 @@ npx vitest run -c vitest.unit.config.ts --coverage --coverage.reportOnFailure
 
 ## Medição — 2026-08-21
 
-| Verificação | Comando | Resultado |
-|---|---|---|
-| Typecheck | `tsc --noEmit` | **0 erros** |
-| Lint | `eslint src` | **0 erros, 99 warnings** (todos pré-existentes — nenhum introduzido nesta rodada; ver lista completa rodando o comando) |
-| Testes unitários | `vitest run -c vitest.unit.config.ts` | 1558-1559/1561 passam. 2 falhas pré-existentes, confirmadas na branch `main` sem nenhuma mudança desta rodada (ver "Falhas conhecidas" abaixo) |
-| Cobertura (unit only) | `vitest run -c vitest.unit.config.ts --coverage` | Statements 63.08% (7193/11402) · Branches 54.79% (4181/7630) · Functions 62.66% (1450/2314) · Lines 64.28% (6505/10119) |
+| Verificação           | Comando                                          | Resultado                                                                                                                                      |
+| --------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck             | `tsc --noEmit`                                   | **0 erros**                                                                                                                                    |
+| Lint                  | `eslint src`                                     | **0 erros, 99 warnings** (todos pré-existentes — nenhum introduzido nesta rodada; ver lista completa rodando o comando)                        |
+| Testes unitários      | `vitest run -c vitest.unit.config.ts`            | 1558-1559/1561 passam. 2 falhas pré-existentes, confirmadas na branch `main` sem nenhuma mudança desta rodada (ver "Falhas conhecidas" abaixo) |
+| Cobertura (unit only) | `vitest run -c vitest.unit.config.ts --coverage` | Statements 63.08% (7193/11402) · Branches 54.79% (4181/7630) · Functions 62.66% (1450/2314) · Lines 64.28% (6505/10119)                        |
 
 ### Falhas conhecidas (pré-existentes, não corrigidas nesta rodada — fora do escopo de arquitetura)
 
 - `tests/unit/features/automation-sdr-voz.test.ts` — 2 testes falhando (`liga para o lead
-  recém-criado...`, `isola a falha da ligação...`). Confirmado que falha igual na `main` antes
+recém-criado...`, `isola a falha da ligação...`). Confirmado que falha igual na `main` antes
   desta rodada (`git stash` + rerun). Não investigado a fundo aqui — é bug de comportamento da
   automação "Ligar via SDR de Voz", não de arquitetura/DI.
 - `tests/unit/features/prospecting/services/prospecting.service.dedupe.test.ts` — timeout

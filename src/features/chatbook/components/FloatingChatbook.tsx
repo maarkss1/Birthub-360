@@ -1,35 +1,35 @@
-import { useRef, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bot,
-  X,
-  Globe,
-  Send,
-  RefreshCw,
-  User,
-  Target,
   AlertTriangle,
-  Play,
-  StopCircle,
-  Award,
-  Database,
-  Flame,
-  Copy,
-  Check,
-  Filter,
-  Mic,
   ArrowUpRight,
+  Award,
+  Bot,
+  Check,
+  Copy,
+  Database,
+  Filter,
+  Flame,
+  Globe,
   Link2,
+  Mic,
+  Play,
+  RefreshCw,
+  Send,
+  StopCircle,
+  Target,
+  User,
+  X,
 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../../components/ui/Button';
 import { BRAND } from '../../../config/brand';
 import { PLAYBOOKS } from '../../../config/playbooks';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { Button } from '../../../components/ui/Button';
 import { useAssistantChat } from '../../../hooks/useAssistantChat';
-import { useRoleplaySimulator } from '../../../hooks/useRoleplaySimulator';
-import { usePlaybookMatrixFilters } from '../../../hooks/usePlaybookMatrixFilters';
 import { usePlaybookMatrixData } from '../../../hooks/usePlaybookMatrixData';
+import { usePlaybookMatrixFilters } from '../../../hooks/usePlaybookMatrixFilters';
+import { useRoleplaySimulator } from '../../../hooks/useRoleplaySimulator';
 
 interface FloatingChatbookProps {
   isOpen: boolean;
@@ -554,21 +554,14 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         className="w-full px-2.5 py-1.5 rounded-xl bg-surface text-ink border border-line focus:outline-none focus:ring-1 focus:ring-brand"
                       >
                         <option value="todos">Todos os Segmentos</option>
-                        {playbook === 'atlasgr' ? (
-                          <>
-                            <option value="SaaS">SaaS & Tecnologia</option>
-                            <option value="Indústria">Indústria & Manufatura</option>
-                            <option value="Consultorias">Consultorias & Serviços</option>
-                            <option value="Logística">Logística & Transportes</option>
-                          </>
-                        ) : (
-                          <>
-                            <option value="Transportadoras">Transportadoras & Logística</option>
-                            <option value="Frotas">Frotas Corporativas</option>
-                            <option value="Frigorificado">Transporte Frigorificado</option>
-                            <option value="Agronegócio">Agronegócio & Máquinas</option>
-                          </>
-                        )}
+                        <option value="SaaS">SaaS & Tecnologia</option>
+                        <option value="Indústria">Indústria & Manufatura</option>
+                        <option value="Consultorias">Consultorias & Serviços</option>
+                        <option value="Logística">Logística & Transportes</option>
+                        <option value="Transportadoras">Transportadoras & Logística</option>
+                        <option value="Frotas">Frotas Corporativas</option>
+                        <option value="Frigorificado">Transporte Frigorificado</option>
+                        <option value="Agronegócio">Agronegócio & Máquinas</option>
                       </select>
                     </div>
 
@@ -587,20 +580,12 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                         className="w-full px-2.5 py-1.5 rounded-xl bg-surface text-ink border border-line focus:outline-none focus:ring-1 focus:ring-brand"
                       >
                         <option value="todos">Todas as Personas</option>
-                        {playbook === 'atlasgr' ? (
-                          <>
-                            <option value="VP de Vendas">VP / Diretor Comercial</option>
-                            <option value="CFO">CFO / Financeiro</option>
-                            <option value="Sales Ops">Head de Sales Ops</option>
-                          </>
-                        ) : (
-                          <>
-                            <option value="Diretor de Logística">Diretor de Logística</option>
-                            <option value="Gerente de Frota">Gerente de Frota</option>
-                            <option value="Gerente de Risco">Gerente de Risco (GR)</option>
-                            <option value="CFO">CFO / Financeiro</option>
-                          </>
-                        )}
+                        <option value="VP de Vendas">VP / Diretor Comercial</option>
+                        <option value="CFO">CFO / Financeiro</option>
+                        <option value="Sales Ops">Head de Sales Ops</option>
+                        <option value="Diretor de Logística">Diretor de Logística</option>
+                        <option value="Gerente de Frota">Gerente de Frota</option>
+                        <option value="Gerente de Risco">Gerente de Risco (GR)</option>
                       </select>
                     </div>
                   </div>

@@ -42,12 +42,12 @@ impacto da migração é **um componente, uma função**.
 
 ## Comparação de API (o que muda)
 
-| Operação | `xlsx` (atual) | `exceljs` (alvo) |
-|---|---|---|
-| Criar workbook | `XLSX.utils.book_new()` | `new ExcelJS.Workbook()` |
-| Criar planilha a partir de array de objetos | `XLSX.utils.json_to_sheet(data)` | `worksheet.columns = [...]` + `worksheet.addRows(data)` |
-| Anexar planilha ao workbook | `XLSX.utils.book_append_sheet(wb, ws, nome)` | `workbook.addWorksheet(nome)` (a planilha já nasce anexada) |
-| Gerar e baixar arquivo no navegador | `XLSX.writeFile(wb, nome)` (detecta browser sozinho e dispara o download) | `await workbook.xlsx.writeBuffer()` → `new Blob([...])` → `URL.createObjectURL` + `<a download>` (exceljs não tem equivalente a `writeFile` no navegador; precisa desses ~6 linhas de glue) |
+| Operação                                    | `xlsx` (atual)                                                            | `exceljs` (alvo)                                                                                                                                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Criar workbook                              | `XLSX.utils.book_new()`                                                   | `new ExcelJS.Workbook()`                                                                                                                                                                    |
+| Criar planilha a partir de array de objetos | `XLSX.utils.json_to_sheet(data)`                                          | `worksheet.columns = [...]` + `worksheet.addRows(data)`                                                                                                                                     |
+| Anexar planilha ao workbook                 | `XLSX.utils.book_append_sheet(wb, ws, nome)`                              | `workbook.addWorksheet(nome)` (a planilha já nasce anexada)                                                                                                                                 |
+| Gerar e baixar arquivo no navegador         | `XLSX.writeFile(wb, nome)` (detecta browser sozinho e dispara o download) | `await workbook.xlsx.writeBuffer()` → `new Blob([...])` → `URL.createObjectURL` + `<a download>` (exceljs não tem equivalente a `writeFile` no navegador; precisa desses ~6 linhas de glue) |
 
 ## Passos
 

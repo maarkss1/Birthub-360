@@ -4,27 +4,27 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
 describe('validateRequest Middleware', () => {
-    const schema = z.object({
-        name: z.string().min(1)
-    });
-    const middleware = validateRequest(schema);
+  const schema = z.object({
+    name: z.string().min(1),
+  });
+  const middleware = validateRequest(schema);
 
-    it('should call next if validation passes', async () => {
-        const req = { body: { name: 'Test' } } as Request;
-        const res = {} as Response;
-        const next = vi.fn() as NextFunction;
+  it('should call next if validation passes', async () => {
+    const req = { body: { name: 'Test' } } as Request;
+    const res = {} as Response;
+    const next = vi.fn() as NextFunction;
 
-        await middleware(req, res, next);
-        expect(next).toHaveBeenCalled();
-        expect(next).not.toHaveBeenCalledWith(expect.any(Error));
-    });
+    await middleware(req, res, next);
+    expect(next).toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalledWith(expect.any(Error));
+  });
 
-    it('should call next with error if validation fails', async () => {
-        const req = { body: { name: '' } } as Request;
-        const res = {} as Response;
-        const next = vi.fn() as NextFunction;
+  it('should call next with error if validation fails', async () => {
+    const req = { body: { name: '' } } as Request;
+    const res = {} as Response;
+    const next = vi.fn() as NextFunction;
 
-        await middleware(req, res, next);
-        expect(next).toHaveBeenCalledWith(expect.any(z.ZodError));
-    });
+    await middleware(req, res, next);
+    expect(next).toHaveBeenCalledWith(expect.any(z.ZodError));
+  });
 });

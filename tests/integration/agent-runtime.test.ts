@@ -6,7 +6,10 @@ import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
 import { runAgentCatalogImport } from '../../scripts/import-agent-catalog';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { runAgentExecution } from '../../src/features/job-roles/services/agentRuntime.service';
-import { getJobRoleByCode, assignJobRole } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  getJobRoleByCode,
+  assignJobRole,
+} from '../../src/features/job-roles/services/jobRole.service';
 import { CAPABILITY_CODES } from '../../src/config/capability-catalog';
 import normalizedBirthHubCatalog from '../../src/features/job-roles/catalog/agents.normalized.json';
 
@@ -74,8 +77,12 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
       where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
     });
     await prisma.capabilityDefinition.deleteMany({ where: { code: { in: CAPABILITY_CODES } } });
-    await prisma.roleAgentGrant.deleteMany({ where: { agentDefinition: { code: { in: sourceAgentCodes } } } });
-    await prisma.agentVersion.deleteMany({ where: { agentDefinition: { code: { in: sourceAgentCodes } } } });
+    await prisma.roleAgentGrant.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
+    await prisma.agentVersion.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
     await prisma.agentDefinition.deleteMany({ where: { code: { in: sourceAgentCodes } } });
   });
 
@@ -176,18 +183,29 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
         resource: {},
       });
       expect(result.status).toBe('DENIED');
-      expect(['CAPABILITY_NOT_GRANTED_TO_AGENT', 'CAPABILITY_NOT_GRANTED_TO_ROLE', 'FUTURE_TOOL']).toContain(
-        result.policyDecision.reason,
-      );
+      expect([
+        'CAPABILITY_NOT_GRANTED_TO_AGENT',
+        'CAPABILITY_NOT_GRANTED_TO_ROLE',
+        'FUTURE_TOOL',
+      ]).toContain(result.policyDecision.reason);
     });
 
     it('DISCOVER (nível do agente): DENIED com reason DISCOVER_ONLY, nunca chama o executor real', async () => {
       const { user } = await makeUserWithJobRole('SDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('SDR');
       const grant = await prisma.roleAgentGrant.upsert({
-        where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id } },
-        create: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id, accessLevel: 'DISCOVER', isActive: true },
+        where: {
+          jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          agentDefinitionId: agent.id,
+          accessLevel: 'DISCOVER',
+          isActive: true,
+        },
         update: { accessLevel: 'DISCOVER', isActive: true },
       });
       try {
@@ -210,17 +228,37 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
     it('READ (nível do agente) nunca autoriza uma capability WRITE: DENIED com reason READ_ONLY_ACCESS, sem gravar nada', async () => {
       const { user } = await makeUserWithJobRole('SDR', 'SDR');
       const lead = await makeLead();
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('SDR');
       const grant = await prisma.roleAgentGrant.upsert({
-        where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id } },
-        create: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id, accessLevel: 'READ', isActive: true },
+        where: {
+          jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          agentDefinitionId: agent.id,
+          accessLevel: 'READ',
+          isActive: true,
+        },
         update: { accessLevel: 'READ', isActive: true },
       });
-      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({ where: { code: 'lead.update' } });
+      const capability = await prisma.capabilityDefinition.findUniqueOrThrow({
+        where: { code: 'lead.update' },
+      });
       await prisma.agentCapabilityGrant.upsert({
-        where: { agentDefinitionId_capabilityDefinitionId: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id } },
-        create: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id, isActive: true },
+        where: {
+          agentDefinitionId_capabilityDefinitionId: {
+            agentDefinitionId: agent.id,
+            capabilityDefinitionId: capability.id,
+          },
+        },
+        create: {
+          agentDefinitionId: agent.id,
+          capabilityDefinitionId: capability.id,
+          isActive: true,
+        },
         update: { isActive: true },
       });
       try {
@@ -244,11 +282,20 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
 
     it('REQUEST (nível do agente): DENIED com reason CROSS_ROLE_REQUEST_REQUIRED e requiresApproval=true', async () => {
       const { user } = await makeUserWithJobRole('SDR', 'SDR');
-      const agent = await prisma.agentDefinition.findUniqueOrThrow({ where: { code: 'ldr-intelligence' } });
+      const agent = await prisma.agentDefinition.findUniqueOrThrow({
+        where: { code: 'ldr-intelligence' },
+      });
       const jobRole = await getJobRoleByCode('SDR');
       const grant = await prisma.roleAgentGrant.upsert({
-        where: { jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id } },
-        create: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id, accessLevel: 'REQUEST', isActive: true },
+        where: {
+          jobRoleId_agentDefinitionId: { jobRoleId: jobRole!.id, agentDefinitionId: agent.id },
+        },
+        create: {
+          jobRoleId: jobRole!.id,
+          agentDefinitionId: agent.id,
+          accessLevel: 'REQUEST',
+          isActive: true,
+        },
         update: { accessLevel: 'REQUEST', isActive: true },
       });
       try {
@@ -268,7 +315,16 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
       }
     });
 
-    it('FUTURE_TOOL: agent.execute permanece bloqueado até o PROMPT 4 implementar runtime real (mesmo estando esta onda em execução)', async () => {
+    // Correção do achado da auditoria de dívida técnica (AIAGENT-001/002): `agent.execute` deixou
+    // de ser FUTURE_TOOL (tool-bindings.ts) e ganhou um executor real
+    // (toolExecutors.ts:agentExecute). `ldr-intelligence` é um dos 3 agentes "comuns" pré-existentes
+    // do PROMPT 1 (EXISTING_COMMON_CODES em scripts/import-agent-catalog.ts) — nunca passou pelo
+    // loop de `agent.hasPrompt`/`upsertAgentVersion` do importador do catálogo Birth Hub, então não
+    // tem nenhuma AgentVersion. A autorização agora PERMITE a chamada (binding VERIFIED/AVAILABLE),
+    // mas o executor falha fechado por falta de prompt real — nunca fabrica uma resposta. Cobertura
+    // completa do caminho SUCCEEDED (agente PROMPT_READY de verdade, com IA mockada) vive em
+    // tests/integration/agent-execute.test.ts.
+    it('agent.execute agora é PERMITTED pela autorização, mas falha fechado (FAILED) para um agente sem AgentVersion/systemPrompt', async () => {
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
       const result = await runAgentExecution({
         actorId: user.id,
@@ -278,8 +334,11 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
         requestedCapability: 'agent.execute',
         resource: {},
       });
-      expect(result.status).toBe('DENIED');
-      expect(result.policyDecision.reason).toBe('FUTURE_TOOL');
+      expect(result.policyDecision.allowed).toBe(true);
+      expect(result.policyDecision.reason).toBe('PERMITTED');
+      expect(result.status).toBe('FAILED');
+      const row = await prisma.agentExecution.findUnique({ where: { id: result.executionId } });
+      expect(row?.errorMessage).toContain('não tem conteúdo executável configurado');
     });
 
     it('SOURCE_REQUIRED: billing.read permanece bloqueado (sem fonte real de faturamento)', async () => {
@@ -321,7 +380,7 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
     it('leadId malicioso no resource nunca corresponde a um lead real (nega/reporta ausência, nunca quebra)', async () => {
       const { user } = await makeUserWithJobRole('LDR', 'SDR');
       const maliciousIds = [
-        "'; DROP TABLE \"Lead\"; --",
+        '\'; DROP TABLE "Lead"; --',
         '{{__proto__.polluted}}',
         '../../../etc/passwd',
       ];
@@ -338,7 +397,9 @@ describe('Agent Runtime Genérico (PROMPT 4)', () => {
         expect(result.missingData).toContain('lead');
       }
       // A tabela real continua intacta.
-      const stillThere = await prisma.capabilityDefinition.findUnique({ where: { code: 'lead.read' } });
+      const stillThere = await prisma.capabilityDefinition.findUnique({
+        where: { code: 'lead.read' },
+      });
       expect(stillThere).not.toBeNull();
     });
 

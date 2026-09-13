@@ -50,7 +50,15 @@ export const LeadFactory = {
 
 export const ActivityFactory = {
   build: <T extends Record<string, unknown>>(overrides?: T) => ({
-    type: faker.helpers.arrayElement(['Ligacao', 'WhatsApp', 'Email', 'Reuniao', 'Follow_up', 'Visita', 'Tarefa']),
+    type: faker.helpers.arrayElement([
+      'Ligacao',
+      'WhatsApp',
+      'Email',
+      'Reuniao',
+      'Follow_up',
+      'Visita',
+      'Tarefa',
+    ]),
     owner: faker.person.fullName(),
     date: faker.date.recent().toISOString(),
     status: 'Concluida',

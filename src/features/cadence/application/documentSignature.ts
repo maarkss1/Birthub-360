@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+import { type DealClosureEvent, evaluateDealClosure } from '../../../shared/domain/dealClosure.js';
 import {
   buildSignatureRequestDraft,
   isValidSignatureTransition,
@@ -13,10 +15,26 @@ export interface SignatureProviderPort {
 export interface SignatureRequestRepositoryPort {
   create(input: SignatureRequestDraft): Promise<{ id: string }>;
   markSent(id: string, providerRequestId: string): Promise<void>;
+  findById(
+    id: string,
+    organizationId: string,
+  ): Promise<{
+    id: string;
+    organizationId: string;
+    documentId: string;
+    status: SignatureStatus;
+    providerRequestId?: string | null;
+  } | null>;
   findByProviderRequestId(
     provider: string,
     providerRequestId: string,
-  ): Promise<{ id: string; organizationId: string; status: SignatureStatus } | null>;
+  ): Promise<{
+    id: string;
+    organizationId: string;
+    status: SignatureStatus;
+    /** Lead associado ao documento assinado (via `CrmCommercialDocument.leadId`), ou `null` quando o documento não está ligado a nenhum lead — nesse caso não há negócio para fechar. */
+    leadId: string | null;
+  } | null>;
   /** `organizationId` vem do registro já resolvido por `findByProviderRequestId` — nunca de um valor solto no payload do webhook (RLS escopado pelo tenant real). */
   updateStatus(input: {
     id: string;
@@ -25,6 +43,31 @@ export interface SignatureRequestRepositoryPort {
     evidenceRef: string | null;
     rawWebhookPayload: unknown;
   }): Promise<void>;
+  /**
+   * ACH-17-02 (onda-43, handoff 13→17): leitura por documento, escopada normalmente pelo tenant
+   * (RLS normal, sem bypass — chamador já autenticado, diferente de `findByProviderRequestId`, que
+   * roda antes de qualquer tenant ser conhecido). Um documento pode ter mais de uma solicitação ao
+   * longo do tempo (reenvio); devolve a mais recente por `requestedAt`. `null` quando o documento
+   * nunca teve uma solicitação de assinatura — nunca um erro.
+   */
+  findByDocumentId(
+    organizationId: string,
+    documentId: string,
+  ): Promise<{
+    id: string;
+    status: SignatureStatus;
+    provider: string;
+    signerEmail: string;
+    requestedAt: Date;
+    respondedAt: Date | null;
+  } | null>;
+  /**
+   * ACH-17-01: persiste um `DealClosureEvent` já aceito por `evaluateDealClosure` e move
+   * `Lead.status` para "Negócios Ganhos" — o mesmo efeito de `ensureManualDealClosureAllowed`
+   * (confirmação manual no Kanban), só que disparado por este webhook. Só é chamado depois que o
+   * evento já passou pelo portão do domínio (`isDeterministicCloseEvent`), nunca antes.
+   */
+  recordSignatureDealClosure(event: DealClosureEvent): Promise<void>;
 }
 
 export interface RequestDocumentSignatureInput {
@@ -85,5 +128,30 @@ export async function applySignatureStatusUpdate(
     evidenceRef: input.evidenceRef,
     rawWebhookPayload: input.rawWebhookPayload,
   });
+
+  // ACH-17-01: até aqui, `signature_completed` nunca fechava negócio nenhum — só
+  // `manual_crm_confirmation` (arrastar card no Kanban) chamava `evaluateDealClosure`. Documento
+  // sem lead associado (`leadId` nulo) é tratado como "nada a fechar", nunca como erro: um
+  // documento comercial pode existir sem lead vinculado, e isso não deveria derrubar o
+  // processamento do webhook.
+  if (input.nextStatus === 'signed' && existing.leadId) {
+    const result = evaluateDealClosure(
+      {
+        organizationId: existing.organizationId,
+        leadId: existing.leadId,
+        type: 'signature_completed',
+        // Id da própria CrmDocumentSignatureRequest — nunca um resumo/texto gerado.
+        evidenceRef: existing.id,
+        triggeredBy: `webhook:${input.provider}`,
+      },
+      () => randomUUID(),
+      new Date(),
+    );
+
+    if (result.accepted && result.event) {
+      await ports.repository.recordSignatureDealClosure(result.event);
+    }
+  }
+
   return { applied: true };
 }

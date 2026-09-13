@@ -1,6 +1,7 @@
+import type { PlaybookKey } from '../../../../config/playbooks';
 import type { Repository } from '../../../../shared/domain/Repository';
 
-export type ObjectionBrand = 'atlasgr' | 'totaltrac';
+export type ObjectionBrand = PlaybookKey;
 
 export interface ObjectionMatrixItem {
   id: string;

@@ -12,48 +12,48 @@ const whatsAppFindFirst = vi.fn();
 const emailFindFirst = vi.fn();
 
 vi.mock('../../../../../src/lib/prisma.js', () => ({
-    prisma: {
-        whatsAppMessage: { findFirst: (...args: unknown[]) => whatsAppFindFirst(...args) },
-        emailMessage: { findFirst: (...args: unknown[]) => emailFindFirst(...args) },
-    },
+  prisma: {
+    whatsAppMessage: { findFirst: (...args: unknown[]) => whatsAppFindFirst(...args) },
+    emailMessage: { findFirst: (...args: unknown[]) => emailFindFirst(...args) },
+  },
 }));
 
 const { hasLeadReplied } = await import('../../../../../src/features/cadence/infra/hasLeadReplied');
 
 beforeEach(() => {
-    whatsAppFindFirst.mockResolvedValue(null);
-    emailFindFirst.mockResolvedValue(null);
+  whatsAppFindFirst.mockResolvedValue(null);
+  emailFindFirst.mockResolvedValue(null);
 });
 
 afterEach(() => {
-    vi.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe('hasLeadReplied', () => {
-    it('false quando nenhum canal tem réplica inbound', async () => {
-        await expect(hasLeadReplied('org-1', 'lead-1')).resolves.toBe(false);
-    });
+  it('false quando nenhum canal tem réplica inbound', async () => {
+    await expect(hasLeadReplied('org-1', 'lead-1')).resolves.toBe(false);
+  });
 
-    it('true quando há réplica inbound de WhatsApp', async () => {
-        whatsAppFindFirst.mockResolvedValue({ id: 'wa-1' });
-        await expect(hasLeadReplied('org-1', 'lead-1')).resolves.toBe(true);
-    });
+  it('true quando há réplica inbound de WhatsApp', async () => {
+    whatsAppFindFirst.mockResolvedValue({ id: 'wa-1' });
+    await expect(hasLeadReplied('org-1', 'lead-1')).resolves.toBe(true);
+  });
 
-    it('true quando há réplica inbound de e-mail, mesmo sem WhatsApp', async () => {
-        emailFindFirst.mockResolvedValue({ id: 'email-1' });
-        await expect(hasLeadReplied('org-1', 'lead-1')).resolves.toBe(true);
-    });
+  it('true quando há réplica inbound de e-mail, mesmo sem WhatsApp', async () => {
+    emailFindFirst.mockResolvedValue({ id: 'email-1' });
+    await expect(hasLeadReplied('org-1', 'lead-1')).resolves.toBe(true);
+  });
 
-    it('filtra por organizationId/leadId/direction=inbound nas duas tabelas', async () => {
-        await hasLeadReplied('org-1', 'lead-1');
+  it('filtra por organizationId/leadId/direction=inbound nas duas tabelas', async () => {
+    await hasLeadReplied('org-1', 'lead-1');
 
-        expect(whatsAppFindFirst).toHaveBeenCalledWith({
-            where: { organizationId: 'org-1', leadId: 'lead-1', direction: 'inbound' },
-            select: { id: true },
-        });
-        expect(emailFindFirst).toHaveBeenCalledWith({
-            where: { organizationId: 'org-1', leadId: 'lead-1', direction: 'inbound' },
-            select: { id: true },
-        });
+    expect(whatsAppFindFirst).toHaveBeenCalledWith({
+      where: { organizationId: 'org-1', leadId: 'lead-1', direction: 'inbound' },
+      select: { id: true },
     });
+    expect(emailFindFirst).toHaveBeenCalledWith({
+      where: { organizationId: 'org-1', leadId: 'lead-1', direction: 'inbound' },
+      select: { id: true },
+    });
+  });
 });

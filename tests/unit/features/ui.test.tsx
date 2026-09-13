@@ -20,7 +20,11 @@ describe('UI Components', () => {
   it('should render CompanyList without crashing', async () => {
     // Apenas renderiza pra forçar parsing e coverage das linhas iniciais
     // CompanyList lê/escreve query params via useLocation/useNavigate — precisa de um Router.
-    const { unmount } = render(<MemoryRouter><CompanyList /></MemoryRouter>);
+    const { unmount } = render(
+      <MemoryRouter>
+        <CompanyList />
+      </MemoryRouter>,
+    );
     await waitFor(() => {
       expect(screen.queryByText(/Carregando carteira de empresas/i)).toBeNull();
     });

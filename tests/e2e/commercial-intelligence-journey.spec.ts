@@ -48,20 +48,26 @@ async function seedDealWithSlip(email: string): Promise<{ leadId: string; title:
 }
 
 test.describe('Comercial Inteligente — Jornada, CLOSEDATE e Health Score com dado real', () => {
-  test('KPIs refletem o dado semeado, drill-down abre o negócio certo e o fator de adiamento é explicado', async ({ page }) => {
+  test('KPIs refletem o dado semeado, drill-down abre o negócio certo e o fator de adiamento é explicado', async ({
+    page,
+  }) => {
     const email = uniqueTestEmail('ci-journey');
     await signUp(page, { email });
     const { title } = await seedDealWithSlip(email);
 
     // Jornada: o negócio sem interação aparece em "Clientes parados" e o KPI abre o drill-down.
     await page.goto('/app/commercial_intelligence?tab=journey');
-    await expect(page.getByRole('heading', { name: 'Clientes parados (sem interação)' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Clientes parados (sem interação)' }),
+    ).toBeVisible();
     await expect(page.getByRole('button', { name: /^Parados: 1\./ })).toBeVisible();
     await page.getByRole('button', { name: /^Parados: 1\./ }).click();
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText(title)).toBeVisible();
-    await expect(dialog.getByText('Data prevista de fechamento já foi adiada uma vez')).toBeVisible();
+    await expect(
+      dialog.getByText('Data prevista de fechamento já foi adiada uma vez'),
+    ).toBeVisible();
     await page.keyboard.press('Escape');
 
     // Pipeline & Forecast: CLOSEDATE Intelligence mostra o adiamento e o carryover do mês.
@@ -69,13 +75,19 @@ test.describe('Comercial Inteligente — Jornada, CLOSEDATE e Health Score com d
     await expect(page.getByRole('heading', { name: 'CLOSEDATE Intelligence' })).toBeVisible();
     await expect(page.getByRole('button', { name: /^Negócios adiados: 1\./ })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Pipeline Carryover' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Forecast Accuracy (erro histórico)' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Forecast Accuracy (erro histórico)' }),
+    ).toBeVisible();
     // Sem snapshot semanal ainda: honestidade sobre ausência de histórico, nunca um número.
     await expect(page.getByText('Histórico insuficiente')).toBeVisible();
 
     // Visão Executiva: Health Score composto renderiza os 6 pilares.
     await page.goto('/app/commercial_intelligence?tab=overview');
-    await expect(page.getByRole('heading', { name: 'Health Score da operação comercial' })).toBeVisible();
-    await expect(page.getByRole('list', { name: 'Pilares do Health Score' }).getByRole('listitem')).toHaveCount(6);
+    await expect(
+      page.getByRole('heading', { name: 'Health Score da operação comercial' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('list', { name: 'Pilares do Health Score' }).getByRole('listitem'),
+    ).toHaveCount(6);
   });
 });

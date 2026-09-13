@@ -35,6 +35,7 @@ Prisma (infra/Prisma*Repository.ts, ou acesso direto a prisma.* em domínios nã
   ↓
 PostgreSQL
 ```
+
 ...e de volta, na resposta.
 
 ## Antes de editar

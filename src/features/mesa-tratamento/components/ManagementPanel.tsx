@@ -1,9 +1,9 @@
+import { CheckCheck, Loader2, MessageSquarePlus, ShieldCheck, UserCog } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Loader2, ShieldCheck, UserCog, MessageSquarePlus, CheckCheck } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { toast } from '../../../lib/toast';
-import { bitrixApi, type BitrixUserOption } from '../../integrations/bitrix/bitrix.api';
+import { type BitrixUserOption, bitrixApi } from '../../integrations/bitrix/bitrix.api';
 import { mesaTratamentoManagementApi } from '../mesaTratamento.api';
 
 interface ManagementPanelProps {

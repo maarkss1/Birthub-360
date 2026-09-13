@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { toPrismaLeadStatus, fromPrismaLeadStatus, isLeadClosingStatus, LEAD_CLOSING_STATUSES } from '@/lib/enumMap';
+import {
+  toPrismaLeadStatus,
+  fromPrismaLeadStatus,
+  isLeadClosingStatus,
+  LEAD_CLOSING_STATUSES,
+} from '@/lib/enumMap';
 import { LEAD_STATUS } from '@/lib/zod';
 
 describe('enumMap — LeadStatus', () => {
@@ -42,7 +47,12 @@ describe('enumMap — isLeadClosingStatus / LEAD_CLOSING_STATUSES', () => {
 
   it('LEAD_CLOSING_STATUSES tem exatamente os 4 valores esperados', () => {
     expect([...LEAD_CLOSING_STATUSES].sort()).toEqual(
-      ['Negócios Ganhos', 'Negócios Perdidos', 'Piloto Atlas Profile - Cancelado', 'Piloto Logístico - Cancelado'].sort(),
+      [
+        'Negócios Ganhos',
+        'Negócios Perdidos',
+        'Piloto Atlas Profile - Cancelado',
+        'Piloto Logístico - Cancelado',
+      ].sort(),
     );
   });
 });

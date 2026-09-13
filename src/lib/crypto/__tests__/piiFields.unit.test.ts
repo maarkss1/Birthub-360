@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockEnv = vi.hoisted(() => ({
   NODE_ENV: 'test' as string,
@@ -8,10 +8,10 @@ const mockEnv = vi.hoisted(() => ({
 vi.mock('@/config/env', () => ({ env: mockEnv }));
 
 import {
-  ENCRYPTED_MODEL_FIELDS,
-  encryptSensitiveFields,
   decryptSensitiveRecord,
   decryptSensitiveResult,
+  ENCRYPTED_MODEL_FIELDS,
+  encryptSensitiveFields,
 } from '@/lib/crypto/piiFields';
 import { _resetKeyCacheForTests } from '@/lib/crypto/secretFields';
 
@@ -29,7 +29,7 @@ describe('piiFields — cifra em repouso de credenciais de integração', () => 
     ]);
     expect(ENCRYPTED_MODEL_FIELDS.BitrixConnection).toEqual(['webhookUrl', 'webhookSecret']);
     expect(ENCRYPTED_MODEL_FIELDS.ThreeCXConnection).toEqual(['apiKey', 'apiSecret']);
-    expect(ENCRYPTED_MODEL_FIELDS.VoiceHubConnection).toEqual(['apiKey']);
+    expect(ENCRYPTED_MODEL_FIELDS.VoiceHubConnection).toEqual(['apiKey', 'webhookSecret']);
     expect(ENCRYPTED_MODEL_FIELDS.Account).toEqual(['accessToken', 'refreshToken', 'idToken']);
   });
 

@@ -1,23 +1,23 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Search,
-  Loader2,
-  Cpu,
-  Database,
-  SlidersHorizontal,
   ChevronDown,
   ChevronUp,
+  Cpu,
+  Database,
+  Loader2,
   Plus,
+  Search,
+  SlidersHorizontal,
   X,
 } from 'lucide-react';
-import type { ProspectCriteria } from '../../services/prospecting.service';
-import {
-  PORTE_OPTIONS,
-  TECNOLOGIA_OPTIONS,
-  ESTADO_OPTIONS,
-  QUANTIDADE_LEADS_OPTIONS,
-} from '../../../../shared/constants/icp-options';
 import { fadeIn } from '../../../../lib/motion';
+import {
+  ESTADO_OPTIONS,
+  PORTE_OPTIONS,
+  QUANTIDADE_LEADS_OPTIONS,
+  TECNOLOGIA_OPTIONS,
+} from '../../../../shared/constants/icp-options';
+import type { ProspectCriteria } from '../../services/prospecting.service';
 
 type PersonaOption = {
   label: string;
@@ -605,7 +605,7 @@ export function DiscoveryFilterPanel({
                           tecnologiasExcluir: next.length ? next.join(',') : undefined,
                         });
                       }}
-                      className={`px-2 py-1 rounded-md text-[11px] font-medium border transition-colors ${selected ? 'bg-danger-active border-danger-active text-white' : 'bg-surface-2 border-line text-ink-2 hover:border-danger/50'}`}
+                      className={`px-2 py-1 rounded-md text-[11px] font-medium border transition-colors ${selected ? 'bg-btn-danger border-btn-danger text-white' : 'bg-surface-2 border-line text-ink-2 hover:border-danger/50'}`}
                     >
                       {opt.label}
                     </button>

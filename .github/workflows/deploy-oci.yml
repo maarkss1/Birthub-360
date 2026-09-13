@@ -48,6 +48,7 @@ concurrency:
 jobs:
   deploy:
     name: Deploy via SSH (docker compose up -d --build)
+    environment: production
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20

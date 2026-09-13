@@ -18,80 +18,90 @@ const asTenant = (org: string) => requestContext.enterWith({ tenantId: org });
 const asBypass = () => requestContext.enterWith({ bypassRls: true });
 
 function makeAutomation(overrides: Partial<Automation> = {}): Automation {
-    return {
-        id: AUTOMATION_ID,
-        name: 'Avisar em Proposta Enviada',
-        enabled: true,
-        trigger: 'Lead mudou de status',
-        conditions: { status: 'Proposta Enviada' },
-        action: 'Notificar equipe',
-        actionConfig: { title: 'Nova proposta!' },
-        lastRunAt: null,
-        runCount: 0,
-        organizationId: ORG_A,
-        createdAt: new Date('2026-01-01T00:00:00Z'),
-        updatedAt: new Date('2026-01-02T00:00:00Z'),
-        ...overrides,
-    };
+  return {
+    id: AUTOMATION_ID,
+    name: 'Avisar em Proposta Enviada',
+    enabled: true,
+    trigger: 'Lead mudou de status',
+    conditions: { status: 'Proposta Enviada' },
+    action: 'Notificar equipe',
+    actionConfig: { title: 'Nova proposta!' },
+    lastRunAt: null,
+    runCount: 0,
+    organizationId: ORG_A,
+    createdAt: new Date('2026-01-01T00:00:00Z'),
+    updatedAt: new Date('2026-01-02T00:00:00Z'),
+    ...overrides,
+  };
 }
 
 async function cleanup() {
-    for (const org of [ORG_A, ORG_B]) {
-        asTenant(org);
-        await prisma.automationVersion.deleteMany({ where: { organizationId: org } });
-        await prisma.automation.deleteMany({ where: { organizationId: org } });
-    }
-    asBypass();
-    await prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } });
+  for (const org of [ORG_A, ORG_B]) {
+    asTenant(org);
+    await prisma.automationVersion.deleteMany({ where: { organizationId: org } });
+    await prisma.automation.deleteMany({ where: { organizationId: org } });
+  }
+  asBypass();
+  await prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } });
 }
 
 describe('AutomationVersion — histórico de versões de regra (Postgres real, RLS incluída)', () => {
-    beforeAll(async () => {
-        await cleanup();
-        asBypass();
-        await prisma.organization.create({ data: { id: ORG_A, name: 'Test Org Automation Version A' } });
-        await prisma.organization.create({ data: { id: ORG_B, name: 'Test Org Automation Version B' } });
-
-        asTenant(ORG_A);
-        await prisma.automation.create({
-            data: {
-                id: AUTOMATION_ID,
-                organizationId: ORG_A,
-                name: 'Avisar em Proposta Enviada',
-                enabled: true,
-                trigger: 'Lead_Mudou_Status',
-                conditions: { status: 'Proposta Enviada' },
-                action: 'Notificar_Equipe',
-                actionConfig: { title: 'Nova proposta!' },
-            },
-        });
+  beforeAll(async () => {
+    await cleanup();
+    asBypass();
+    await prisma.organization.create({
+      data: { id: ORG_A, name: 'Test Org Automation Version A' },
+    });
+    await prisma.organization.create({
+      data: { id: ORG_B, name: 'Test Org Automation Version B' },
     });
 
-    afterAll(cleanup);
-
-    it('recordPriorState grava um snapshot real, e buildTimeline lê de volta com o diff correto', async () => {
-        asTenant(ORG_A);
-        const prior = makeAutomation({ enabled: false });
-
-        await automationVersioningService.recordPriorState(
-            ORG_A,
-            AUTOMATION_ID,
-            prior,
-            { userId: 'user-1', email: 'sdr@atlasgr.com.br' },
-            'update',
-        );
-
-        const timeline = await automationVersioningService.buildTimeline(ORG_A, makeAutomation({ enabled: true }));
-        expect(timeline.history).toHaveLength(1);
-        expect(timeline.history[0].changeReason).toBe('update');
-        expect(timeline.history[0].editedByEmail).toBe('sdr@atlasgr.com.br');
-        expect(timeline.history[0].snapshot.enabled).toBe(false);
-        expect(timeline.history[0].diffToNext.some((line) => line.field === 'Status')).toBe(true);
+    asTenant(ORG_A);
+    await prisma.automation.create({
+      data: {
+        id: AUTOMATION_ID,
+        organizationId: ORG_A,
+        name: 'Avisar em Proposta Enviada',
+        enabled: true,
+        trigger: 'Lead_Mudou_Status',
+        conditions: { status: 'Proposta Enviada' },
+        action: 'Notificar_Equipe',
+        actionConfig: { title: 'Nova proposta!' },
+      },
     });
+  });
 
-    it('RLS real: histórico gravado pelo tenant A nunca aparece numa leitura escopada ao tenant B', async () => {
-        asTenant(ORG_B);
-        const timelineForB = await automationVersioningService.buildTimeline(ORG_B, makeAutomation({ id: AUTOMATION_ID, organizationId: ORG_B }));
-        expect(timelineForB.history).toHaveLength(0);
-    });
+  afterAll(cleanup);
+
+  it('recordPriorState grava um snapshot real, e buildTimeline lê de volta com o diff correto', async () => {
+    asTenant(ORG_A);
+    const prior = makeAutomation({ enabled: false });
+
+    await automationVersioningService.recordPriorState(
+      ORG_A,
+      AUTOMATION_ID,
+      prior,
+      { userId: 'user-1', email: 'sdr@atlasgr.com.br' },
+      'update',
+    );
+
+    const timeline = await automationVersioningService.buildTimeline(
+      ORG_A,
+      makeAutomation({ enabled: true }),
+    );
+    expect(timeline.history).toHaveLength(1);
+    expect(timeline.history[0].changeReason).toBe('update');
+    expect(timeline.history[0].editedByEmail).toBe('sdr@atlasgr.com.br');
+    expect(timeline.history[0].snapshot.enabled).toBe(false);
+    expect(timeline.history[0].diffToNext.some((line) => line.field === 'Status')).toBe(true);
+  });
+
+  it('RLS real: histórico gravado pelo tenant A nunca aparece numa leitura escopada ao tenant B', async () => {
+    asTenant(ORG_B);
+    const timelineForB = await automationVersioningService.buildTimeline(
+      ORG_B,
+      makeAutomation({ id: AUTOMATION_ID, organizationId: ORG_B }),
+    );
+    expect(timelineForB.history).toHaveLength(0);
+  });
 });

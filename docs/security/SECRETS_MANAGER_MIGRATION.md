@@ -14,7 +14,7 @@ segredo em runtime, ou (b) a integração nativa Infisical → Render, que sincr
 Infisical como env vars normais do serviço Render — exatamente o que `src/config/env.ts` (Zod) já
 lê hoje via `process.env`. Escolhida a opção (b): **zero mudança de código nesta aplicação**,
 menor superfície de risco, e mantém `env.ts` como única fonte de validação (fail-fast) que já
-existe. Reavaliar a opção (a) só se um caso concreto exigir rotação de segredo *sem redeploy* —
+existe. Reavaliar a opção (a) só se um caso concreto exigir rotação de segredo _sem redeploy_ —
 não é um requisito hoje.
 
 ## O que só você pode fazer (fora do alcance deste agente)

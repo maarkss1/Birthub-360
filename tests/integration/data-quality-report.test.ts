@@ -3,8 +3,8 @@ import { prisma, withRlsContext } from '../../src/lib/prisma';
 import { requestContext } from '../../src/lib/async-context';
 import { getTenantPrisma } from '../../src/lib/tenant-prisma';
 import {
-    computeDataQualityReport,
-    fetchDataQualityReportInputs,
+  computeDataQualityReport,
+  fetchDataQualityReportInputs,
 } from '../../src/features/market-intelligence/server/dataQualityReport.service';
 
 /**
@@ -44,170 +44,197 @@ const asBypass = () => requestContext.enterWith({ bypassRls: true });
 // tests/integration/prospecting-rls.test.ts (`hardDeleteOrgData`): SQL cru via `withRlsContext`
 // para as tabelas auditáveis, que ignora a interceptação de soft-delete do client normal.
 async function cleanup() {
-    for (const org of [ORG, ORG_EMPTY]) {
-        asTenant(org);
-        await prisma.decisionMaker.deleteMany({ where: { organizationId: org } });
-        await prisma.accountSignal.deleteMany({ where: { organizationId: org } });
-        await prisma.intelligenceEvidence.deleteMany({ where: { organizationId: org } });
-        await prisma.economicRelationship.deleteMany({ where: { organizationId: org } });
-        await prisma.accountIntelligenceSnapshot.deleteMany({ where: { organizationId: org } });
-        await withRlsContext(async (tx) => {
-            await tx.$executeRaw`DELETE FROM "Contact" WHERE "organizationId" = ${org}`;
-            await tx.$executeRaw`DELETE FROM "Company" WHERE "organizationId" = ${org}`;
-        });
-    }
-    asBypass();
-    await prisma.organization.deleteMany({ where: { id: { in: [ORG, ORG_EMPTY] } } });
+  for (const org of [ORG, ORG_EMPTY]) {
+    asTenant(org);
+    await prisma.decisionMaker.deleteMany({ where: { organizationId: org } });
+    await prisma.accountSignal.deleteMany({ where: { organizationId: org } });
+    await prisma.intelligenceEvidence.deleteMany({ where: { organizationId: org } });
+    await prisma.economicRelationship.deleteMany({ where: { organizationId: org } });
+    await prisma.accountIntelligenceSnapshot.deleteMany({ where: { organizationId: org } });
+    await withRlsContext(async (tx) => {
+      await tx.$executeRaw`DELETE FROM "Contact" WHERE "organizationId" = ${org}`;
+      await tx.$executeRaw`DELETE FROM "Company" WHERE "organizationId" = ${org}`;
+    });
+  }
+  asBypass();
+  await prisma.organization.deleteMany({ where: { id: { in: [ORG, ORG_EMPTY] } } });
 }
 
 describe('Data Quality Report — fetchDataQualityReportInputs (Postgres real, RLS incluída)', () => {
-    beforeAll(async () => {
-        await cleanup();
+  beforeAll(async () => {
+    await cleanup();
 
-        asBypass();
-        await prisma.organization.create({ data: { id: ORG, name: 'Test Org DQR' } });
-        await prisma.organization.create({ data: { id: ORG_EMPTY, name: 'Test Org DQR (vazia)' } });
+    asBypass();
+    await prisma.organization.create({ data: { id: ORG, name: 'Test Org DQR' } });
+    await prisma.organization.create({ data: { id: ORG_EMPTY, name: 'Test Org DQR (vazia)' } });
 
-        asTenant(ORG);
-        await prisma.company.create({
-            data: { id: COMPANY_A, organizationId: ORG, legalName: 'DQR Fixture A LTDA', tradeName: 'DQR A' },
-        });
-        await prisma.company.create({
-            data: { id: COMPANY_B, organizationId: ORG, legalName: 'DQR Fixture B LTDA', tradeName: 'DQR B' },
-        });
-        await prisma.contact.create({
-            data: { id: CONTACT_ID, name: 'Decisor DQR', companyId: COMPANY_A, organizationId: ORG },
-        });
-        await prisma.accountIntelligenceSnapshot.create({
-            data: {
-                id: SNAPSHOT_ID,
-                organizationId: ORG,
-                companyId: COMPANY_A,
-                version: 1,
-                summary: 'Snapshot de teste do relatório de qualidade de dados.',
-                structuredFacts: {},
-                sourceStatus: { crm: { status: 'available' }, enrichment: { status: 'failed' } },
-                status: 'Complete',
-            },
-        });
-        await prisma.intelligenceEvidence.create({
-            data: {
-                id: 'test-dqr-evidence',
-                organizationId: ORG,
-                companyId: COMPANY_A,
-                snapshotId: SNAPSHOT_ID,
-                subjectType: 'company',
-                factKey: 'segmento',
-                value: { segmento: 'Logística' },
-                source: 'crm',
-                evidenceType: 'FACT',
-                dedupeKey: 'test-dqr-evidence-dedupe',
-            },
-        });
-        await prisma.accountSignal.create({
-            data: {
-                id: 'test-dqr-signal',
-                organizationId: ORG,
-                companyId: COMPANY_A,
-                snapshotId: SNAPSHOT_ID,
-                type: 'intent',
-                taxonomyVersion: 'v1',
-                title: 'Sinal de teste',
-                description: 'Sinal de teste para o relatório de qualidade de dados.',
-                source: 'crm',
-                confidence: 0.8,
-                evidenceType: 'FACT',
-                status: 'Active',
-                dedupeKey: 'test-dqr-signal-dedupe',
-            },
-        });
-        await prisma.decisionMaker.create({
-            data: {
-                id: 'test-dqr-decision-maker',
-                organizationId: ORG,
-                companyId: COMPANY_A,
-                contactId: CONTACT_ID,
-                snapshotId: SNAPSHOT_ID,
-                buyingRole: 'economic_buyer',
-                roleEvidenceType: 'FACT',
-                source: 'crm',
-                confidence: 0.9,
-                status: 'Active',
-                verifiedAt: new Date(),
-            },
-        });
-        await prisma.economicRelationship.create({
-            data: {
-                id: 'test-dqr-relationship',
-                organizationId: ORG,
-                sourceCompanyId: COMPANY_A,
-                targetCompanyId: COMPANY_B,
-                relationType: 'parent',
-                status: 'Verified',
-                verifiedAt: new Date(),
-                source: 'crm',
-                confidence: 0.7,
-                dedupeKey: 'test-dqr-relationship-dedupe',
-            },
-        });
+    asTenant(ORG);
+    await prisma.company.create({
+      data: {
+        id: COMPANY_A,
+        organizationId: ORG,
+        legalName: 'DQR Fixture A LTDA',
+        tradeName: 'DQR A',
+      },
     });
-
-    afterAll(cleanup);
-
-    it('agrega os 7 sinais reais quando o tenant tem dado em todas as tabelas', async () => {
-        asTenant(ORG);
-        const db = getTenantPrisma(ORG);
-        const input = await fetchDataQualityReportInputs(db, ORG, new Date());
-        const report = computeDataQualityReport(input);
-
-        expect(report.accountCoverage).toMatchObject({
-            available: true,
-            totalAccounts: 2,
-            accountsWithSnapshot: 1,
-            accountsWithoutSnapshot: 1,
-        });
-        expect(report.sourceStatus.available).toBe(true);
-        expect(report.sourceStatus.crm).toMatchObject({ available: 1, total: 1 });
-        expect(report.sourceStatus.enrichment).toMatchObject({ failed: 1, total: 1 });
-        expect(report.snapshotFreshness).toMatchObject({ available: true, accountsConsidered: 1 });
-        expect(report.evidenceCoverage).toMatchObject({ available: true, totalEvidence: 1, accountsWithEvidence: 1 });
-        expect(report.signalCoverage).toMatchObject({ available: true, totalSignals: 1, accountsWithSignals: 1 });
-        expect(report.decisionMakerVerification).toMatchObject({
-            available: true,
-            total: 1,
-            verifiedCount: 1,
-            unverifiedCount: 0,
-            verifiedRatePct: 100,
-        });
-        expect(report.relationshipVerification).toMatchObject({
-            available: true,
-            total: 1,
-            verifiedCount: 1,
-            nonVerifiedCount: 0,
-            verifiedRatePct: 100,
-        });
+    await prisma.company.create({
+      data: {
+        id: COMPANY_B,
+        organizationId: ORG,
+        legalName: 'DQR Fixture B LTDA',
+        tradeName: 'DQR B',
+      },
     });
-
-    it('nunca fabrica número: tenant sem nenhuma conta devolve available:false com motivo em toda seção', async () => {
-        asTenant(ORG_EMPTY);
-        const db = getTenantPrisma(ORG_EMPTY);
-        const input = await fetchDataQualityReportInputs(db, ORG_EMPTY, new Date());
-        const report = computeDataQualityReport(input);
-
-        expect(report.accountCoverage).toMatchObject({ available: false, reason: 'sem_contas_cadastradas_no_tenant' });
-        expect(report.sourceStatus).toMatchObject({ available: false, reason: 'nenhuma_conta_possui_snapshot_ainda' });
-        expect(report.evidenceCoverage).toMatchObject({
-            available: false,
-            reason: 'nenhuma_evidencia_registrada_no_tenant',
-        });
-        expect(report.signalCoverage).toMatchObject({ available: false, reason: 'nenhum_sinal_registrado_no_tenant' });
-        expect(report.decisionMakerVerification).toMatchObject({
-            available: false,
-            reason: 'nenhum_decisor_registrado_no_tenant',
-        });
-        expect(report.relationshipVerification).toMatchObject({
-            available: false,
-            reason: 'nenhuma_relacao_economica_registrada_no_tenant',
-        });
+    await prisma.contact.create({
+      data: { id: CONTACT_ID, name: 'Decisor DQR', companyId: COMPANY_A, organizationId: ORG },
     });
+    await prisma.accountIntelligenceSnapshot.create({
+      data: {
+        id: SNAPSHOT_ID,
+        organizationId: ORG,
+        companyId: COMPANY_A,
+        version: 1,
+        summary: 'Snapshot de teste do relatório de qualidade de dados.',
+        structuredFacts: {},
+        sourceStatus: { crm: { status: 'available' }, enrichment: { status: 'failed' } },
+        status: 'Complete',
+      },
+    });
+    await prisma.intelligenceEvidence.create({
+      data: {
+        id: 'test-dqr-evidence',
+        organizationId: ORG,
+        companyId: COMPANY_A,
+        snapshotId: SNAPSHOT_ID,
+        subjectType: 'company',
+        factKey: 'segmento',
+        value: { segmento: 'Logística' },
+        source: 'crm',
+        evidenceType: 'FACT',
+        dedupeKey: 'test-dqr-evidence-dedupe',
+      },
+    });
+    await prisma.accountSignal.create({
+      data: {
+        id: 'test-dqr-signal',
+        organizationId: ORG,
+        companyId: COMPANY_A,
+        snapshotId: SNAPSHOT_ID,
+        type: 'intent',
+        taxonomyVersion: 'v1',
+        title: 'Sinal de teste',
+        description: 'Sinal de teste para o relatório de qualidade de dados.',
+        source: 'crm',
+        confidence: 0.8,
+        evidenceType: 'FACT',
+        status: 'Active',
+        dedupeKey: 'test-dqr-signal-dedupe',
+      },
+    });
+    await prisma.decisionMaker.create({
+      data: {
+        id: 'test-dqr-decision-maker',
+        organizationId: ORG,
+        companyId: COMPANY_A,
+        contactId: CONTACT_ID,
+        snapshotId: SNAPSHOT_ID,
+        buyingRole: 'economic_buyer',
+        roleEvidenceType: 'FACT',
+        source: 'crm',
+        confidence: 0.9,
+        status: 'Active',
+        verifiedAt: new Date(),
+      },
+    });
+    await prisma.economicRelationship.create({
+      data: {
+        id: 'test-dqr-relationship',
+        organizationId: ORG,
+        sourceCompanyId: COMPANY_A,
+        targetCompanyId: COMPANY_B,
+        relationType: 'parent',
+        status: 'Verified',
+        verifiedAt: new Date(),
+        source: 'crm',
+        confidence: 0.7,
+        dedupeKey: 'test-dqr-relationship-dedupe',
+      },
+    });
+  });
+
+  afterAll(cleanup);
+
+  it('agrega os 7 sinais reais quando o tenant tem dado em todas as tabelas', async () => {
+    asTenant(ORG);
+    const db = getTenantPrisma(ORG);
+    const input = await fetchDataQualityReportInputs(db, ORG, new Date());
+    const report = computeDataQualityReport(input);
+
+    expect(report.accountCoverage).toMatchObject({
+      available: true,
+      totalAccounts: 2,
+      accountsWithSnapshot: 1,
+      accountsWithoutSnapshot: 1,
+    });
+    expect(report.sourceStatus.available).toBe(true);
+    expect(report.sourceStatus.crm).toMatchObject({ available: 1, total: 1 });
+    expect(report.sourceStatus.enrichment).toMatchObject({ failed: 1, total: 1 });
+    expect(report.snapshotFreshness).toMatchObject({ available: true, accountsConsidered: 1 });
+    expect(report.evidenceCoverage).toMatchObject({
+      available: true,
+      totalEvidence: 1,
+      accountsWithEvidence: 1,
+    });
+    expect(report.signalCoverage).toMatchObject({
+      available: true,
+      totalSignals: 1,
+      accountsWithSignals: 1,
+    });
+    expect(report.decisionMakerVerification).toMatchObject({
+      available: true,
+      total: 1,
+      verifiedCount: 1,
+      unverifiedCount: 0,
+      verifiedRatePct: 100,
+    });
+    expect(report.relationshipVerification).toMatchObject({
+      available: true,
+      total: 1,
+      verifiedCount: 1,
+      nonVerifiedCount: 0,
+      verifiedRatePct: 100,
+    });
+  });
+
+  it('nunca fabrica número: tenant sem nenhuma conta devolve available:false com motivo em toda seção', async () => {
+    asTenant(ORG_EMPTY);
+    const db = getTenantPrisma(ORG_EMPTY);
+    const input = await fetchDataQualityReportInputs(db, ORG_EMPTY, new Date());
+    const report = computeDataQualityReport(input);
+
+    expect(report.accountCoverage).toMatchObject({
+      available: false,
+      reason: 'sem_contas_cadastradas_no_tenant',
+    });
+    expect(report.sourceStatus).toMatchObject({
+      available: false,
+      reason: 'nenhuma_conta_possui_snapshot_ainda',
+    });
+    expect(report.evidenceCoverage).toMatchObject({
+      available: false,
+      reason: 'nenhuma_evidencia_registrada_no_tenant',
+    });
+    expect(report.signalCoverage).toMatchObject({
+      available: false,
+      reason: 'nenhum_sinal_registrado_no_tenant',
+    });
+    expect(report.decisionMakerVerification).toMatchObject({
+      available: false,
+      reason: 'nenhum_decisor_registrado_no_tenant',
+    });
+    expect(report.relationshipVerification).toMatchObject({
+      available: false,
+      reason: 'nenhuma_relacao_economica_registrada_no_tenant',
+    });
+  });
 });

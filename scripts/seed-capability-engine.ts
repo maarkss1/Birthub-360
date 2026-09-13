@@ -81,7 +81,10 @@ export async function runCapabilityEngineSeed(): Promise<CapabilityEngineSeedSum
         missingCapabilityRefs.push(`${entry.agentCode} -> ${capabilityCode}`);
         continue;
       }
-      await grantCapabilityToAgent({ agentDefinitionId: agent.id, capabilityDefinitionId: capabilityId });
+      await grantCapabilityToAgent({
+        agentDefinitionId: agent.id,
+        capabilityDefinitionId: capabilityId,
+      });
       agentGrantsApplied++;
     }
   }

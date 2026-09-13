@@ -14,7 +14,9 @@ test.describe('Cadência — UI de escrita (criar sequência, iniciar/pausar/ret
     await signUp(page, { email: uniqueTestEmail('cadence') });
   });
 
-  test('cria sequência, inicia cadência para um lead e pausa/retoma/para pela UI', async ({ page }) => {
+  test('cria sequência, inicia cadência para um lead e pausa/retoma/para pela UI', async ({
+    page,
+  }) => {
     // Lead real via API autenticada (mesmo padrão de leads-crud.spec.ts) — a tela de cadência não
     // tem seletor de lead, só um campo de texto pro id, então precisamos de um lead de verdade.
     const leadRes = await page.request.post('/api/leads', {

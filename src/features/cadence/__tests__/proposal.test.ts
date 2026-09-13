@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   computeLineItemTotal,
   computeSnapshotTotals,
-  nextVersionNumber,
-  draftNextProposalVersion,
   diffProposalVersions,
+  draftNextProposalVersion,
+  nextVersionNumber,
   type ProposalLineItem,
-  type ProposalVersion,
   type ProposalSnapshot,
+  type ProposalVersion,
 } from '../../../shared/domain/proposal';
 
 const ITEM: ProposalLineItem = {

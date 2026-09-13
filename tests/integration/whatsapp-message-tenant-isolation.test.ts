@@ -13,8 +13,10 @@ import { requestContext } from '../../src/lib/async-context';
 //
 // IMPORTANTE (mesma pegadinha documentada nos outros specs deste diretório): o callback passado a
 // `requestContext.run()` precisa ser uma função `async`, mesmo sem `await` explícito no corpo.
-const withBypass = <T>(fn: () => Promise<T>): Promise<T> => requestContext.run({ bypassRls: true }, fn);
-const withTenant = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> => requestContext.run({ tenantId }, fn);
+const withBypass = <T>(fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ bypassRls: true }, fn);
+const withTenant = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ tenantId }, fn);
 
 const suffix = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
 const ORG_A = `test-wa-tenant-org-a-${suffix}`;
@@ -32,7 +34,9 @@ describe('WhatsAppMessage — isolamento de tenant (integração real, RLS real)
         await prisma.company.deleteMany({ where: { organizationId: org } });
       });
     }
-    await withBypass(() => prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }));
+    await withBypass(() =>
+      prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }),
+    );
   });
 
   it('1. isolamento básico: mensagem criada em A não aparece em listagem/busca no contexto de B', async () => {
@@ -45,20 +49,38 @@ describe('WhatsAppMessage — isolamento de tenant (integração real, RLS real)
       prisma.company.create({ data: { legalName: 'Empresa A LTDA', tradeName: 'Empresa A' } }),
     );
     const contactA = await withTenant(ORG_A, async () =>
-      prisma.contact.create({ data: { name: 'Contato A', phone: '+5511999880001', companyId: companyA.id } }),
+      prisma.contact.create({
+        data: { name: 'Contato A', phone: '+5511999880001', companyId: companyA.id },
+      }),
     );
     const leadA = await withTenant(ORG_A, async () =>
-      prisma.lead.create({ data: { organizationId: ORG_A, contactId: contactA.id, companyId: companyA.id, title: 'Negócio A' } }),
+      prisma.lead.create({
+        data: {
+          organizationId: ORG_A,
+          contactId: contactA.id,
+          companyId: companyA.id,
+          title: 'Negócio A',
+        },
+      }),
     );
 
     const companyB = await withTenant(ORG_B, async () =>
       prisma.company.create({ data: { legalName: 'Empresa B LTDA', tradeName: 'Empresa B' } }),
     );
     const contactB = await withTenant(ORG_B, async () =>
-      prisma.contact.create({ data: { name: 'Contato B', phone: '+5511999880002', companyId: companyB.id } }),
+      prisma.contact.create({
+        data: { name: 'Contato B', phone: '+5511999880002', companyId: companyB.id },
+      }),
     );
     const leadB = await withTenant(ORG_B, async () =>
-      prisma.lead.create({ data: { organizationId: ORG_B, contactId: contactB.id, companyId: companyB.id, title: 'Negócio B' } }),
+      prisma.lead.create({
+        data: {
+          organizationId: ORG_B,
+          contactId: contactB.id,
+          companyId: companyB.id,
+          title: 'Negócio B',
+        },
+      }),
     );
 
     const messageA = await withTenant(ORG_A, async () =>
@@ -114,10 +136,19 @@ describe('WhatsAppMessage — isolamento de tenant (integração real, RLS real)
       prisma.company.create({ data: { legalName: 'Empresa A2 LTDA', tradeName: 'Empresa A2' } }),
     );
     const contactA = await withTenant(ORG_A, async () =>
-      prisma.contact.create({ data: { name: 'Contato A2', phone: '+5511999880003', companyId: companyA.id } }),
+      prisma.contact.create({
+        data: { name: 'Contato A2', phone: '+5511999880003', companyId: companyA.id },
+      }),
     );
     const leadA = await withTenant(ORG_A, async () =>
-      prisma.lead.create({ data: { organizationId: ORG_A, contactId: contactA.id, companyId: companyA.id, title: 'Negócio A2' } }),
+      prisma.lead.create({
+        data: {
+          organizationId: ORG_A,
+          contactId: contactA.id,
+          companyId: companyA.id,
+          title: 'Negócio A2',
+        },
+      }),
     );
     const messageA = await withTenant(ORG_A, async () =>
       prisma.whatsAppMessage.create({

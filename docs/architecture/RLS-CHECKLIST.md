@@ -74,7 +74,7 @@ WITH CHECK (true);
 
 Pontos que não são estéticos:
 
-- **`FORCE ROW LEVEL SECURITY`, sempre junto do `ENABLE`** — sem isso, o *owner* da tabela (a role
+- **`FORCE ROW LEVEL SECURITY`, sempre junto do `ENABLE`** — sem isso, o _owner_ da tabela (a role
   usada pela própria aplicação) ignora a policy. `ENABLE` sozinho não protege nada em produção.
 - **`DROP POLICY IF EXISTS` antes do `CREATE POLICY`** — torna a migration idempotente/reexecutável
   e é o padrão real usado sempre que uma policy existente precisa ser recriada (ver

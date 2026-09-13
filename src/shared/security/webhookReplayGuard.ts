@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { cacheConnection, redisConfigured } from '../../lib/queue/redis.js';
 import { logger } from '../../lib/logger.js';
+import { cacheConnection, redisConfigured } from '../../lib/queue/redis.js';
 
 /**
  * Dedupe de entrega de webhook (THREAT_MODEL.md, seção 3 — Replay Attack, gap "não mitigado").

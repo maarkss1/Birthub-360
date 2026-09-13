@@ -1,4 +1,4 @@
-import { Eye, PenLine, FlaskConical, AlertTriangle, Lock } from 'lucide-react';
+import { AlertTriangle, Eye, FlaskConical, Lock, PenLine } from 'lucide-react';
 import { Badge } from '../../../components/ui/Badge';
 
 /**

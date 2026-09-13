@@ -10,7 +10,12 @@ import { errorHandler } from '../../src/shared/middlewares/errorHandler';
 import { applyRateLimiters } from '../../src/bootstrap/rateLimiters';
 import { setupDI } from '../../src/shared/di/setup';
 import { LeadFactory } from '../helpers/factories';
-import { withRlsBypass, withTenant, signUpRealUser, type RealSessionUser } from '../helpers/rbac-e2e-helpers';
+import {
+  withRlsBypass,
+  withTenant,
+  signUpRealUser,
+  type RealSessionUser,
+} from '../helpers/rbac-e2e-helpers';
 
 // Resolve o handoff roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md:
 // auditAccessMiddleware existia (com teste unitário próprio da própria lógica de gravação), mas
@@ -33,7 +38,10 @@ import { withRlsBypass, withTenant, signUpRealUser, type RealSessionUser } from 
 // do WITH CHECK — bypassRls não tem mais nenhum efeito de leitura nessa tabela (achado real, via
 // CI: a escrita confirmadamente aconteceu com o tenantId correto, mas a query sob bypass sempre
 // devolvia 0 linhas, sem nenhum erro — RLS filtra silenciosamente no SELECT).
-async function waitForAuditLog(tenantId: string, where: Parameters<typeof prisma.auditLog.findMany>[0]['where']) {
+async function waitForAuditLog(
+  tenantId: string,
+  where: Parameters<typeof prisma.auditLog.findMany>[0]['where'],
+) {
   for (let attempt = 0; attempt < 20; attempt++) {
     const logs = await withTenant(tenantId, () => prisma.auditLog.findMany({ where }));
     if (logs.length > 0) return logs;
@@ -75,7 +83,9 @@ describe('GET /api/leads/export/csv — trilha de auditoria (Etapa handoff 15)',
       createdOrgIds.push(u.organizationId);
     }
 
-    await withTenant(adminA.organizationId, () => prisma.lead.create({ data: LeadFactory.build() }));
+    await withTenant(adminA.organizationId, () =>
+      prisma.lead.create({ data: LeadFactory.build() }),
+    );
   }, 30_000);
 
   afterAll(async () => {
@@ -92,13 +102,15 @@ describe('GET /api/leads/export/csv — trilha de auditoria (Etapa handoff 15)',
   });
 
   it('ADMIN: 200 e grava AuditLog com action EXPORT, entity Lead e tenant/ator corretos', async () => {
-    const res = await request(app)
-      .get('/api/leads/export/csv')
-      .set('Cookie', adminA.cookie);
+    const res = await request(app).get('/api/leads/export/csv').set('Cookie', adminA.cookie);
 
     expect(res.status).toBe(200);
 
-    const logs = await waitForAuditLog(adminA.organizationId, { tenantId: adminA.organizationId, entity: 'Lead', action: 'EXPORT' });
+    const logs = await waitForAuditLog(adminA.organizationId, {
+      tenantId: adminA.organizationId,
+      entity: 'Lead',
+      action: 'EXPORT',
+    });
     expect(logs.length).toBeGreaterThanOrEqual(1);
     expect(logs[0].actorId).toBe(adminA.userId);
     expect(logs[0].tenantId).toBe(adminA.organizationId);
@@ -106,17 +118,19 @@ describe('GET /api/leads/export/csv — trilha de auditoria (Etapa handoff 15)',
 
   it('SDR (fora de managementRoles): 403 do requireRole real, sem AuditLog gravado', async () => {
     const before = await withTenant(vendedorA.organizationId, () =>
-      prisma.auditLog.count({ where: { tenantId: vendedorA.organizationId, entity: 'Lead', action: 'EXPORT' } })
+      prisma.auditLog.count({
+        where: { tenantId: vendedorA.organizationId, entity: 'Lead', action: 'EXPORT' },
+      }),
     );
 
-    const res = await request(app)
-      .get('/api/leads/export/csv')
-      .set('Cookie', vendedorA.cookie);
+    const res = await request(app).get('/api/leads/export/csv').set('Cookie', vendedorA.cookie);
 
     expect(res.status).toBe(403);
 
     const after = await withTenant(vendedorA.organizationId, () =>
-      prisma.auditLog.count({ where: { tenantId: vendedorA.organizationId, entity: 'Lead', action: 'EXPORT' } })
+      prisma.auditLog.count({
+        where: { tenantId: vendedorA.organizationId, entity: 'Lead', action: 'EXPORT' },
+      }),
     );
     // auditAccessMiddleware só está depois de managementRoles na cadeia — um 403 do requireRole
     // nem chega a rodar o middleware de auditoria (res.on('finish') só grava se statusCode < 400

@@ -64,9 +64,10 @@ import { createColdCallWorker, scheduleColdCallCampaigns } from '../lib/queue/co
 import { createEnrichmentWorker } from '../lib/queue/enrichment.queue.js';
 import { createEnrichmentCascadeWorker } from '../lib/queue/enrichmentCascade.worker.js';
 import { createLeadsWorker } from '../lib/queue/index.js';
-// ACH-16-05: as fábricas abaixo já eram criadas em worker.ts (processo dedicado) mas ficavam de
-// fora do modo embutido — tests/unit/architecture/worker-registry-parity.test.ts pegou a
-// divergência. Sem elas aqui, um dev local rodando só `npm run dev` com
+// ACH-16-05: as 4 fábricas abaixo (agent-memory-cleanup acima, news-monitor e whatsapp-command
+// abaixo, account-intelligence-insights acima) já eram criadas em worker.ts (processo dedicado)
+// mas ficavam de fora do modo embutido — tests/unit/architecture/worker-registry-parity.test.ts
+// pegou a divergência. Sem elas aqui, um dev local rodando só `npm run dev` com
 // ENABLE_EMBEDDED_WORKERS=true (sem o processo `worker.ts` separado) nunca via essas filas
 // processadas, de forma silenciosa.
 import {
@@ -102,6 +103,7 @@ export interface EmbeddedWorkersHandle {
   leadsWorker: CloseableWorker;
   agentWorker: CloseableWorker;
   enrichmentWorker: CloseableWorker;
+  enrichmentCascadeWorker: CloseableWorker;
   whatsappSignalWorker: CloseableWorker;
   whatsappCommandWorker: CloseableWorker;
   bitrixSyncWorker: CloseableWorker;
@@ -120,7 +122,6 @@ export interface EmbeddedWorkersHandle {
   copilotoTranscriptionWorker: CloseableWorker;
   /** ACH-16-05: já registrados em worker.ts, faltavam aqui — ver comentário nos imports acima. */
   newsMonitorWorker: CloseableWorker;
-  enrichmentCascadeWorker: CloseableWorker;
   cadenceRunWorker: CloseableWorker;
   agentMemoryCleanupWorker: CloseableWorker;
   accountIntelligenceInsightsWorker: CloseableWorker;
@@ -148,6 +149,7 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     leadsWorker: embeddedWorkersEnabled ? createLeadsWorker() : null,
     agentWorker: embeddedWorkersEnabled ? createAgentWorker() : null,
     enrichmentWorker: embeddedWorkersEnabled ? createEnrichmentWorker() : null,
+    enrichmentCascadeWorker: embeddedWorkersEnabled ? createEnrichmentCascadeWorker() : null,
     whatsappSignalWorker: embeddedWorkersEnabled ? createWhatsAppSignalWorker() : null,
     whatsappCommandWorker: embeddedWorkersEnabled ? createWhatsAppCommandWorker() : null,
     bitrixSyncWorker: embeddedWorkersEnabled ? createBitrixSyncWorker() : null,
@@ -167,7 +169,6 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
       ? createCopilotoTranscriptionWorker({ meetingSynthesisPort: new MeetingSynthesisService() })
       : null,
     newsMonitorWorker: embeddedWorkersEnabled ? createNewsMonitorWorker() : null,
-    enrichmentCascadeWorker: embeddedWorkersEnabled ? createEnrichmentCascadeWorker() : null,
     cadenceRunWorker: embeddedWorkersEnabled ? createCadenceRunWorker() : null,
     agentMemoryCleanupWorker: embeddedWorkersEnabled ? createAgentMemoryCleanupWorker() : null,
     accountIntelligenceInsightsWorker: embeddedWorkersEnabled

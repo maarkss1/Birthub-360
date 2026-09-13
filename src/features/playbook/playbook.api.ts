@@ -1,10 +1,11 @@
+import type { PlaybookKey } from '../../config/playbooks';
 import { api } from '../../lib/api';
-import type { QualificationMatrixItemInput, ObjectionMatrixItemInput } from './playbook.schema';
+import type { ObjectionMatrixItemInput, QualificationMatrixItemInput } from './playbook.schema';
 
 export interface QualificationMatrixItem {
   id: string;
   organizationId: string;
-  brand: 'atlasgr' | 'totaltrac';
+  brand: PlaybookKey;
   segment: string;
   persona: string;
   framework: 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER';
@@ -18,7 +19,7 @@ export interface QualificationMatrixItem {
 export interface ObjectionMatrixItem {
   id: string;
   organizationId: string;
-  brand: 'atlasgr' | 'totaltrac';
+  brand: PlaybookKey;
   segment: string;
   persona: string;
   objectionTitle: string;

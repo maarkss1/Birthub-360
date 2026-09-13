@@ -26,17 +26,17 @@ rodada (não catalogada em nenhuma auditoria anterior lida):
   implementam um conceito real de "workspace por cargo": um usuário tem um `JobRole`, o `JobRole`
   resolve para um conjunto de KPIs/agentes/ferramentas com status individual
   (`WorkspaceCapabilityStatus`: `AVAILABLE | APPROVAL_REQUIRED | REQUEST | DISCOVER_ONLY |
-  SOURCE_REQUIRED | FUTURE_TOOL | TOOL_UNAVAILABLE | NOT_GRANTED`), servido por
+SOURCE_REQUIRED | FUTURE_TOOL | TOOL_UNAVAILABLE | NOT_GRANTED`), servido por
   `src/features/job-roles/services/workspace.service.ts`.
 - A Sidebar já organiza a navegação por **jornada comercial** (`Captar → Qualificar → Relacionar →
-  Fechar → Analisar → IA & Capacitação → Administração`) com ordem de grupo **reordenável por
+Fechar → Analisar → IA & Capacitação → Administração`) com ordem de grupo **reordenável por
   papel** (`GROUP_ORDER_BY_ROLE` em `Sidebar.tsx`, 4 papéis: `CLOSER`, `GESTOR`, `ADMIN`,
   `VISUALIZADOR`) — ou seja, já existe navegação adaptativa por perfil, só que hoje ela reordena
   grupos dentro de um único produto, não troca de workspace.
 - `prisma/schema.prisma` documenta explicitamente, em comentário, que `RoleWorkspaceDefinition` (e
   os padrões irmãos `ToolBinding`/`RoleSupervisorProfile`/`ApprovalPolicy`) são **política fixa em
-  código**, não tabela — decisão de arquitetura já tomada: *"política fixa de governança do
-  produto, sem necessidade real de customização por organização em runtime"*.
+  código**, não tabela — decisão de arquitetura já tomada: _"política fixa de governança do
+  produto, sem necessidade real de customização por organização em runtime"_.
 
 **Implicação para o programa:** o North Star de `AGENTS.md` fala em "workspaces **configuráveis**".
 A decisão de arquitetura já registrada no schema é o oposto — workspace fixo por papel, definido em
@@ -49,21 +49,21 @@ contradizer) uma arquitetura que já existe e já está em produção. Handoff a
 
 Cruzando o modelo-alvo do programa com `BRAIN_TRUTH_MAP.md` §2 e §4.1:
 
-| Domínio-alvo (`AGENTS.md`) | Já existe como código real hoje | Onde |
-|---|---|---|
-| `Identity/Tenant` | sim — auth, `Team`, `Settings`, RLS por `organizationId` | `src/features/auth`, `src/lib/auth.ts` |
-| `Capabilities` | sim, literalmente com esse nome | `CapabilityDefinition`, `/api/capabilities`, `src/features/job-roles/` |
-| `Intelligence` | sim, mas fragmentado em 4 interfaces (achado já registrado, `INVENTARIO_FUNCIONAL_COMPLETO.md` #10) | Hub de IA, Copiloto, AI Studio, Central AI Suite |
-| `Decisions` | sim, parcial | `AIPendingAction` + Central de Decisões (aba do Hub de IA) |
-| `Automation` | sim, mas estreito (3×3) | `automation.engine.ts` |
-| `Agents` | sim — é o Enxame (Supervisor/SDR/BDR/Closer/CRM/Ops/Learning) | `src/features/intelligence/agents/` |
-| `Knowledge` | sim — RAG completo | `src/features/knowledge/` |
-| `Connections` | sim — 6 conectores diretos + Chatwoot não catalogado (ver `BRAIN_API_CONTRACT_MAP.md` C0-API-1) | `src/features/integrations/*` |
-| `Signals` | parcial — notificações/SSE existem; "sinal de negócio" como conceito horizontal (ex. WhatsApp de alta intenção) só existe dentro do Enxame | `notification.service.ts`, `ConversationSignal` |
-| `Analytics` | sim | `analytics.service.ts`, `commercial-intelligence` |
-| `Governance` | sim — LGPD, module-access, access-requests, feature-flags | `src/features/job-roles/`, `src/features/lgpd/` |
-| `Observability` | sim, motor real (OTel/Prometheus/Langfuse/Loki) mas sem tela de produto (é operacional, não voltado ao usuário final) | `02-mapa-plataforma.md` §3.5 |
-| `Workspaces` (não é domínio core, é o outro eixo) | sim — ver §2 acima | `src/features/workspace/` |
+| Domínio-alvo (`AGENTS.md`)                        | Já existe como código real hoje                                                                                                            | Onde                                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `Identity/Tenant`                                 | sim — auth, `Team`, `Settings`, RLS por `organizationId`                                                                                   | `src/features/auth`, `src/lib/auth.ts`                                 |
+| `Capabilities`                                    | sim, literalmente com esse nome                                                                                                            | `CapabilityDefinition`, `/api/capabilities`, `src/features/job-roles/` |
+| `Intelligence`                                    | sim, mas fragmentado em 4 interfaces (achado já registrado, `INVENTARIO_FUNCIONAL_COMPLETO.md` #10)                                        | Hub de IA, Copiloto, AI Studio, Central AI Suite                       |
+| `Decisions`                                       | sim, parcial                                                                                                                               | `AIPendingAction` + Central de Decisões (aba do Hub de IA)             |
+| `Automation`                                      | sim, mas estreito (3×3)                                                                                                                    | `automation.engine.ts`                                                 |
+| `Agents`                                          | sim — é o Enxame (Supervisor/SDR/BDR/Closer/CRM/Ops/Learning)                                                                              | `src/features/intelligence/agents/`                                    |
+| `Knowledge`                                       | sim — RAG completo                                                                                                                         | `src/features/knowledge/`                                              |
+| `Connections`                                     | sim — 6 conectores diretos + Chatwoot não catalogado (ver `BRAIN_API_CONTRACT_MAP.md` C0-API-1)                                            | `src/features/integrations/*`                                          |
+| `Signals`                                         | parcial — notificações/SSE existem; "sinal de negócio" como conceito horizontal (ex. WhatsApp de alta intenção) só existe dentro do Enxame | `notification.service.ts`, `ConversationSignal`                        |
+| `Analytics`                                       | sim                                                                                                                                        | `analytics.service.ts`, `commercial-intelligence`                      |
+| `Governance`                                      | sim — LGPD, module-access, access-requests, feature-flags                                                                                  | `src/features/job-roles/`, `src/features/lgpd/`                        |
+| `Observability`                                   | sim, motor real (OTel/Prometheus/Langfuse/Loki) mas sem tela de produto (é operacional, não voltado ao usuário final)                      | `02-mapa-plataforma.md` §3.5                                           |
+| `Workspaces` (não é domínio core, é o outro eixo) | sim — ver §2 acima                                                                                                                         | `src/features/workspace/`                                              |
 
 **Nenhum destes 13 domínios precisa ser criado do zero na Onda C1.** O trabalho de C1 é
 **extração e nomeação** de código que já existe e já funciona, espalhado dentro de

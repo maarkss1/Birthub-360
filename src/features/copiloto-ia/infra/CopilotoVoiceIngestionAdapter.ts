@@ -18,22 +18,22 @@
  * conversa `SCHEDULED` sem processar nada — nunca fabrica consentimento por omissão.
  */
 import { logger } from '../../../lib/logger.js';
-import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
-import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases.js';
-import { PrismaCopilotoIaRepository } from './PrismaCopilotoIaRepository.js';
-import { extractConversationIntelligence } from './conversationIntelligence.service.js';
-import {
-  computeDealHealthScore,
-  computeChurnRiskScore,
-  type SentimentScore,
-} from '../application/dealHealthScoring.js';
-import { computeAiProbabilityAdjustment } from '../application/forecastAdjustment.js';
-import type { AddTranscriptSegmentInput } from '../domain/CopilotoIa.js';
 import type {
   CopilotoVoiceIngestionPort,
   VoiceCallIngestionInput,
 } from '../../../shared/contracts/copilotoVoiceIngestion.contract.js';
 import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract.js';
+import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
+import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases.js';
+import {
+  computeChurnRiskScore,
+  computeDealHealthScore,
+  type SentimentScore,
+} from '../application/dealHealthScoring.js';
+import { computeAiProbabilityAdjustment } from '../application/forecastAdjustment.js';
+import type { AddTranscriptSegmentInput } from '../domain/CopilotoIa.js';
+import { extractConversationIntelligence } from './conversationIntelligence.service.js';
+import { PrismaCopilotoIaRepository } from './PrismaCopilotoIaRepository.js';
 
 const repository = new PrismaCopilotoIaRepository();
 const useCases = new CopilotoIaUseCases(repository);

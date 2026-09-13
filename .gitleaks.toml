@@ -44,11 +44,24 @@ useDefault = true
 # regra `generic-api-key` casa com qualquer string hex longa por entropia — mesmo padrão do
 # falso-positivo #3 acima. Path-based pelo mesmo motivo: o conteúdo (paths Windows + hashes) não é
 # capturável por um regex único sem enumerar cada hash.
+#
+# Falso-positivo conhecido #5: testes unitários dos conectores Slack/Stripe/Omie
+# (tests/unit/features/integrations/{stripe,omie}/*.test.ts) usam valores de fixture óbvios como
+# `secretKey`/`appKey`/`appSecret` ('sk_test_valid123', 'valid-key-1234', 'valid-secret', etc.) para
+# exercitar os caminhos de validação/rejeição de connectStripe/connectOmie. Nenhuma chamada de rede
+# real acontece nesses arquivos — `fetchWithTimeoutMock`/`createStripeMock` mockam toda a stack HTTP
+# (mesmo padrão de tests/unit/features/integrations/threecx/threecx.service.test.ts) — então não há
+# segredo real possível de vazar aqui. A regra `generic-api-key` casa por entropia do valor após o
+# nome do campo, mesmo padrão dos falsos-positivos #3/#4 acima. Path-based porque os valores de
+# fixture mudam conforme os testes evoluem (novos casos de sucesso/falha) — o caminho do arquivo é
+# o identificador estável, e o padrão já cobre qualquer teste futuro nesses dois diretórios.
 [allowlist]
 description = "Fixtures sintéticas de teste e falsos-positivos confirmados (não são segredos reais)"
 paths = [
   '''public/tools/treinamento-atlasgr/.*/__next\._tree\.txt$''',
   '''(^|/)phase-12-manifest\.json$''',
+  '''tests/unit/features/integrations/stripe/.*\.test\.ts$''',
+  '''tests/unit/features/integrations/omie/.*\.test\.ts$''',
 ]
 regexes = [
   '''eyJhbGciOiJIUzI1NiJ9\.eyJzdWIiOiIxMjM0NTY3ODkwIn0\.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U''',

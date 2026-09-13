@@ -16,7 +16,9 @@ import path from 'node:path';
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 
-function runWorkerProcess(env: NodeJS.ProcessEnv): Promise<{ code: number | null; stderr: string; stdout: string }> {
+function runWorkerProcess(
+  env: NodeJS.ProcessEnv,
+): Promise<{ code: number | null; stderr: string; stdout: string }> {
   return new Promise((resolve, reject) => {
     const child = spawn('npx', ['tsx', 'worker.ts'], {
       cwd: REPO_ROOT,
@@ -26,12 +28,20 @@ function runWorkerProcess(env: NodeJS.ProcessEnv): Promise<{ code: number | null
 
     let stdout = '';
     let stderr = '';
-    child.stdout.on('data', (chunk) => { stdout += chunk.toString(); });
-    child.stderr.on('data', (chunk) => { stderr += chunk.toString(); });
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk.toString();
+    });
 
     const timeout = setTimeout(() => {
       child.kill('SIGKILL');
-      reject(new Error(`worker.ts não saiu sozinho dentro do timeout — stdout:\n${stdout}\n\nstderr:\n${stderr}`));
+      reject(
+        new Error(
+          `worker.ts não saiu sozinho dentro do timeout — stdout:\n${stdout}\n\nstderr:\n${stderr}`,
+        ),
+      );
     }, 50_000);
 
     child.on('exit', (code) => {

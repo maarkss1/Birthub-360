@@ -9,7 +9,10 @@ const NOW = new Date('2026-08-28T12:00:00.000Z');
 
 describe('computeAccountScore — nunca fabrica dimensão sem dado real', () => {
   it('devolve tudo zerado, explicado, quando não há nenhum dado real', () => {
-    const result = computeAccountScore({ lookalikeScore: null, activeSignals: [], decisionMakers: [] }, NOW);
+    const result = computeAccountScore(
+      { lookalikeScore: null, activeSignals: [], decisionMakers: [] },
+      NOW,
+    );
 
     expect(result).toMatchObject({ fit: 0, timing: 0, intent: 0, relationship: 0, total: 0 });
     expect(result.calculation.scoreVersion).toBe(ACCOUNT_SCORE_VERSION);
@@ -23,7 +26,10 @@ describe('computeAccountScore — nunca fabrica dimensão sem dado real', () => 
   });
 
   it('usa o lookalikeScore real como fit, sem reinterpretar o número', () => {
-    const result = computeAccountScore({ lookalikeScore: 72, activeSignals: [], decisionMakers: [] }, NOW);
+    const result = computeAccountScore(
+      { lookalikeScore: 72, activeSignals: [], decisionMakers: [] },
+      NOW,
+    );
 
     expect(result.fit).toBe(72);
     expect(result.calculation.fit.reason).toContain('72');
@@ -32,11 +38,19 @@ describe('computeAccountScore — nunca fabrica dimensão sem dado real', () => 
 
   it('escala timing pela recência real do sinal ativo mais recente', () => {
     const fresh = computeAccountScore(
-      { lookalikeScore: null, activeSignals: [{ type: 'news_mention', detectedAt: new Date('2026-08-25T12:00:00.000Z') }], decisionMakers: [] },
+      {
+        lookalikeScore: null,
+        activeSignals: [{ type: 'news_mention', detectedAt: new Date('2026-08-25T12:00:00.000Z') }],
+        decisionMakers: [],
+      },
       NOW,
     );
     const stale = computeAccountScore(
-      { lookalikeScore: null, activeSignals: [{ type: 'news_mention', detectedAt: new Date('2026-05-01T12:00:00.000Z') }], decisionMakers: [] },
+      {
+        lookalikeScore: null,
+        activeSignals: [{ type: 'news_mention', detectedAt: new Date('2026-05-01T12:00:00.000Z') }],
+        decisionMakers: [],
+      },
       NOW,
     );
 
@@ -91,15 +105,27 @@ describe('computeAccountScore — nunca fabrica dimensão sem dado real', () => 
 
   it('pondera relationship por confiança média e quantidade real de decisores ativos, ignora inativos', () => {
     const oneWeak = computeAccountScore(
-      { lookalikeScore: null, activeSignals: [], decisionMakers: [{ status: 'Active', confidence: 0.4 }] },
+      {
+        lookalikeScore: null,
+        activeSignals: [],
+        decisionMakers: [{ status: 'Active', confidence: 0.4 }],
+      },
       NOW,
     );
     const oneStrong = computeAccountScore(
-      { lookalikeScore: null, activeSignals: [], decisionMakers: [{ status: 'Active', confidence: 0.9 }] },
+      {
+        lookalikeScore: null,
+        activeSignals: [],
+        decisionMakers: [{ status: 'Active', confidence: 0.9 }],
+      },
       NOW,
     );
     const ignoresInactive = computeAccountScore(
-      { lookalikeScore: null, activeSignals: [], decisionMakers: [{ status: 'Inactive', confidence: 0.9 }] },
+      {
+        lookalikeScore: null,
+        activeSignals: [],
+        decisionMakers: [{ status: 'Inactive', confidence: 0.9 }],
+      },
       NOW,
     );
 

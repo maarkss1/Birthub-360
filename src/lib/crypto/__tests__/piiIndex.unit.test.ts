@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockEnv = vi.hoisted(() => ({
   NODE_ENV: 'test' as string,
@@ -8,20 +8,20 @@ const mockEnv = vi.hoisted(() => ({
 vi.mock('@/config/env', () => ({ env: mockEnv }));
 
 import {
-  contactEmailIndex,
+  _resetIndexKeyCacheForTests,
+  computeContactPiiIndexes,
   contactEmailDomainIndex,
-  emailDomainIndexOf,
+  contactEmailIndex,
   contactPhoneIndex,
-  contactWhatsappIndex,
   contactPhoneLast8Index,
-  contactWhatsappLast8Index,
   contactPhoneLast9Index,
+  contactSearchIndexClauses,
+  contactWhatsappIndex,
+  contactWhatsappLast8Index,
   contactWhatsappLast9Index,
+  emailDomainIndexOf,
   last8DigitsIndex,
   last9DigitsIndex,
-  contactSearchIndexClauses,
-  computeContactPiiIndexes,
-  _resetIndexKeyCacheForTests,
 } from '@/lib/crypto/piiIndex';
 
 beforeEach(() => {

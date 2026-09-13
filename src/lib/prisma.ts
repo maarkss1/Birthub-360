@@ -1,21 +1,21 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import client from 'prom-client';
-import { AuditService, type AuditAction } from './audit/audit.service.js';
-
-import { PrismaPg } from '@prisma/adapter-pg';
-import { searchQueue } from './queue/search.queue.js';
-import { queuesEnabled } from './queue/redis.js';
-import { logger } from './logger.js';
-import { requestContext } from './async-context.js';
 import { env } from '../config/env.js';
+import { requestContext } from './async-context.js';
+import { type AuditAction, AuditService } from './audit/audit.service.js';
 import {
+  decryptSensitiveResult,
   ENCRYPTED_MODEL_FIELDS as ENCRYPTED_FIELDS,
   encryptSensitiveFields,
-  decryptSensitiveResult,
 } from './crypto/piiFields.js';
 import { computeContactPiiIndexes } from './crypto/piiIndex.js';
 import { tryDecryptField } from './crypto/secretFields.js';
+import { logger } from './logger.js';
+import { queuesEnabled } from './queue/redis.js';
+import { searchQueue } from './queue/search.queue.js';
+
 const connectionString = env.DATABASE_URL || process.env.DATABASE_URL || '';
 
 // Campos de credencial de integração cifrados em repouso (AES-256-GCM, ver
@@ -228,6 +228,16 @@ export const prisma = basePrisma.$extends({
         // por `slug`; o restante do fluxo (criação de Company/Contact/Lead/Activity a partir do
         // agendamento) já roda escopado por tenant real (`requestContext.run({ tenantId:
         // link.organizationId })`), igual ao lookup de CrmCommercialDocument/BitrixConnection.
+        // VoiceHubConnection entrou nesta allowlist pelo MESMO motivo/modelo de confiança já
+        // documentado acima para BitrixConnection (ACH-06-01): o webhook de resultado de ligação
+        // do Birth Voices Hub (`birthVoice.webhook.ts::handleWebhook`) é uma rota única
+        // compartilhada por todas as organizações, sem JWT nem `connectionId` na URL — o
+        // `organizationId` do payload não é confiável até a assinatura HMAC bater contra o
+        // segredo de UMA conexão específica. O bypass aqui cobre só o `findMany` por
+        // `organizationId` (candidato, ainda não confiável) usado para escolher quais segredos
+        // tentar; toda escrita seguinte (`recordCallResult`) já roda dentro de
+        // `requestContext.run({ tenantId: organizationId })` com RLS normal, só depois de a
+        // assinatura ter validado esse organizationId.
         const BYPASS_RLS_ALLOWED_MODELS = [
           'User',
           'Organization',
@@ -243,6 +253,7 @@ export const prisma = basePrisma.$extends({
           'CrmDocumentSignatureRequest',
           'AILog',
           'PublicBookingLink',
+          'VoiceHubConnection',
         ];
         const bypassRls =
           rawBypassRls &&

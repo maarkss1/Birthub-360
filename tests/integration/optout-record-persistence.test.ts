@@ -21,83 +21,115 @@ const RUN_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const ORG_A = `test-optout-org-a-${RUN_ID}`;
 const ORG_B = `test-optout-org-b-${RUN_ID}`;
 
-const withRlsBypass = <T>(fn: () => Promise<T>): Promise<T> => requestContext.run({ bypassRls: true }, fn);
+const withRlsBypass = <T>(fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ bypassRls: true }, fn);
 const asOrg = <T>(organizationId: string, fn: () => Promise<T>): Promise<T> =>
-    requestContext.run({ tenantId: organizationId }, fn);
+  requestContext.run({ tenantId: organizationId }, fn);
 
-beforeAll(async () => withRlsBypass(async () => {
+beforeAll(async () =>
+  withRlsBypass(async () => {
     await prisma.organization.createMany({
-        data: [
-            { id: ORG_A, name: 'Test Org A (opt-out)' },
-            { id: ORG_B, name: 'Test Org B (opt-out)' },
-        ],
-        skipDuplicates: true,
+      data: [
+        { id: ORG_A, name: 'Test Org A (opt-out)' },
+        { id: ORG_B, name: 'Test Org B (opt-out)' },
+      ],
+      skipDuplicates: true,
     });
-}));
+  }),
+);
 
-afterEach(async () => withRlsBypass(async () => {
+afterEach(async () =>
+  withRlsBypass(async () => {
     await prisma.optOutRecord.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
-}));
+  }),
+);
 
-afterAll(async () => withRlsBypass(async () => {
+afterAll(async () =>
+  withRlsBypass(async () => {
     await prisma.optOutRecord.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
     await prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } });
-}));
+  }),
+);
 
 describe('PrismaOptOutRepository contra Postgres real', () => {
-    it('registra e recupera um opt-out global bloqueando os 3 canais, tudo dentro do mesmo contexto de tenant', async () => {
-        const result = await asOrg(ORG_A, async () => {
-            await recordOptOut(prismaOptOutRepository, {
-                organizationId: ORG_A,
-                scope: 'global',
-                subject: { email: 'lead@example.com' },
-                originChannel: 'email',
-                reason: 'Pediu para não ser mais contatado',
-                evidence: '"Por favor, não me mande mais nada"',
-            });
+  it('registra e recupera um opt-out global bloqueando os 3 canais, tudo dentro do mesmo contexto de tenant', async () => {
+    const result = await asOrg(ORG_A, async () => {
+      await recordOptOut(prismaOptOutRepository, {
+        organizationId: ORG_A,
+        scope: 'global',
+        subject: { email: 'lead@example.com' },
+        originChannel: 'email',
+        reason: 'Pediu para não ser mais contatado',
+        evidence: '"Por favor, não me mande mais nada"',
+      });
 
-            return {
-                email: await isOptedOut(prismaOptOutRepository, ORG_A, { email: 'lead@example.com' }, 'email'),
-                whatsapp: await isOptedOut(prismaOptOutRepository, ORG_A, { email: 'lead@example.com' }, 'whatsapp'),
-                voice: await isOptedOut(prismaOptOutRepository, ORG_A, { email: 'lead@example.com' }, 'voice'),
-            };
-        });
-
-        expect(result).toEqual({ email: true, whatsapp: true, voice: true });
+      return {
+        email: await isOptedOut(
+          prismaOptOutRepository,
+          ORG_A,
+          { email: 'lead@example.com' },
+          'email',
+        ),
+        whatsapp: await isOptedOut(
+          prismaOptOutRepository,
+          ORG_A,
+          { email: 'lead@example.com' },
+          'whatsapp',
+        ),
+        voice: await isOptedOut(
+          prismaOptOutRepository,
+          ORG_A,
+          { email: 'lead@example.com' },
+          'voice',
+        ),
+      };
     });
 
-    it('opt-out restrito a um canal não bloqueia os outros dois', async () => {
-        const result = await asOrg(ORG_A, async () => {
-            await recordOptOut(prismaOptOutRepository, {
-                organizationId: ORG_A,
-                scope: 'voice',
-                subject: { phoneE164: '+5511999998888' },
-                originChannel: 'voice',
-                reason: 'Não quer mais ligação, mas aceita e-mail',
-            });
+    expect(result).toEqual({ email: true, whatsapp: true, voice: true });
+  });
 
-            return {
-                voice: await isOptedOut(prismaOptOutRepository, ORG_A, { phoneE164: '+5511999998888' }, 'voice'),
-                email: await isOptedOut(prismaOptOutRepository, ORG_A, { phoneE164: '+5511999998888' }, 'email'),
-            };
-        });
+  it('opt-out restrito a um canal não bloqueia os outros dois', async () => {
+    const result = await asOrg(ORG_A, async () => {
+      await recordOptOut(prismaOptOutRepository, {
+        organizationId: ORG_A,
+        scope: 'voice',
+        subject: { phoneE164: '+5511999998888' },
+        originChannel: 'voice',
+        reason: 'Não quer mais ligação, mas aceita e-mail',
+      });
 
-        expect(result).toEqual({ voice: true, email: false });
+      return {
+        voice: await isOptedOut(
+          prismaOptOutRepository,
+          ORG_A,
+          { phoneE164: '+5511999998888' },
+          'voice',
+        ),
+        email: await isOptedOut(
+          prismaOptOutRepository,
+          ORG_A,
+          { phoneE164: '+5511999998888' },
+          'email',
+        ),
+      };
     });
 
-    it('RLS: opt-out da organização A é invisível para consulta na organização B com o mesmo identificador', async () => {
-        await asOrg(ORG_A, () =>
-            recordOptOut(prismaOptOutRepository, {
-                organizationId: ORG_A,
-                scope: 'global',
-                subject: { email: 'compartilhado@example.com' },
-                originChannel: 'manual',
-            }),
-        );
+    expect(result).toEqual({ voice: true, email: false });
+  });
 
-        const blockedInB = await asOrg(ORG_B, () =>
-            isOptedOut(prismaOptOutRepository, ORG_B, { email: 'compartilhado@example.com' }, 'email'),
-        );
-        expect(blockedInB).toBe(false);
-    });
+  it('RLS: opt-out da organização A é invisível para consulta na organização B com o mesmo identificador', async () => {
+    await asOrg(ORG_A, () =>
+      recordOptOut(prismaOptOutRepository, {
+        organizationId: ORG_A,
+        scope: 'global',
+        subject: { email: 'compartilhado@example.com' },
+        originChannel: 'manual',
+      }),
+    );
+
+    const blockedInB = await asOrg(ORG_B, () =>
+      isOptedOut(prismaOptOutRepository, ORG_B, { email: 'compartilhado@example.com' }, 'email'),
+    );
+    expect(blockedInB).toBe(false);
+  });
 });

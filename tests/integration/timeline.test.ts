@@ -14,9 +14,13 @@ describe('TimelineEvent Operations Integration', () => {
     delete companyData.id;
     const company = await prisma.company.create({ data: companyData as any });
 
-    const leadData = LeadFactory.build({ companyId: company.id, organizationId: 'test-org-id', status: 'Lead_Recebido' });
+    const leadData = LeadFactory.build({
+      companyId: company.id,
+      organizationId: 'test-org-id',
+      status: 'Lead_Recebido',
+    });
     const lead = await prisma.lead.create({ data: leadData as never });
-    
+
     const eventData1 = TimelineEventFactory.build({ leadId: lead.id, type: 'creation' });
     delete (eventData1 as any).lead;
     delete (eventData1 as any).organizationId;
@@ -26,7 +30,7 @@ describe('TimelineEvent Operations Integration', () => {
 
     const events = await prisma.timelineEvent.findMany({
       where: { leadId: lead.id },
-      orderBy: { createdAt: 'asc' }
+      orderBy: { createdAt: 'asc' },
     });
 
     expect(events.length).toBeGreaterThan(0);

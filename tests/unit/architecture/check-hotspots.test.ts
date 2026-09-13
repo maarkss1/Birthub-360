@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { evaluateFile, parseExceptions, HARD_LIMIT_LINES, WARN_LIMIT_LINES } from '../../../scripts/architecture/check-hotspots';
+import {
+  evaluateFile,
+  parseExceptions,
+  HARD_LIMIT_LINES,
+  WARN_LIMIT_LINES,
+} from '../../../scripts/architecture/check-hotspots';
 
 describe('architecture hotspot gate', () => {
   describe('parseExceptions', () => {

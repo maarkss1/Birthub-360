@@ -53,7 +53,7 @@ Um projeto Neon de produção já foi provisionado nesta sessão via MCP:
   - `prospector_runtime` — criada via `CREATE ROLE` (SQL puro, não a API do Neon) especificamente
     para **não** cair no grupo `neon_superuser`— confirmado sem BYPASSRLS. Tem apenas
     SELECT/INSERT/UPDATE/DELETE nas tabelas (via `GRANT` + `ALTER DEFAULT PRIVILEGES FOR ROLE
-    prospector_app`, para que tabelas novas de migrations futuras também concedam acesso
+prospector_app`, para que tabelas novas de migrations futuras também concedam acesso
     automaticamente). Esta é a role do tráfego real (`DATABASE_URL`) — testado e confirmado que
     RLS bloqueia sem contexto de tenant (`app.current_tenant_id`) e libera com o tenant certo.
 
@@ -64,7 +64,7 @@ Um projeto Neon de produção já foi provisionado nesta sessão via MCP:
    - `prospector_runtime` → vira `DATABASE_URL` no Render.
    - `prospector_app` → vira `DIRECT_URL` no Render (**obrigatória aqui**, diferente do Supabase
      onde era opcional — `prospector_runtime` sozinha não tem privilégio pra `prisma migrate
-     deploy`; sem `DIRECT_URL`, `prisma.config.ts` cairia para `DATABASE_URL` e a migration
+deploy`; sem `DIRECT_URL`, `prisma.config.ts` cairia para `DATABASE_URL` e a migration
      falharia por falta de DDL).
    - Ambas usam o mesmo host pooler: `ep-flat-thunder-auro8d82-pooler.c-10.us-east-1.aws.neon.tech`,
      banco `prospector`, parâmetros `?channel_binding=require&sslmode=require`.
@@ -75,6 +75,7 @@ Um projeto Neon de produção já foi provisionado nesta sessão via MCP:
 ### 1.2 Migração de dados (Supabase → Neon)
 
 Já executada e validada nesta sessão:
+
 - `pg_dump --data-only` do Supabase (via Session Pooler — a Direct Connection do Supabase só tem
   endereço IPv6, sem rota de saída no Docker do Windows usado nesta migração) → `pg_restore` no
   Neon.
@@ -135,19 +136,19 @@ serviço a partir dele.
    2.2). Não cria mais um Postgres do Render — o banco é o Neon externo (seção 1).
 3. Em **Environment**, preencha todas as variáveis marcadas `sync: false` no `render.yaml`:
 
-   | Variável | Valor |
-   | --- | --- |
-   | `DATABASE_URL` | Connection string do Neon com a role `prospector_runtime` (seção 1.1) |
-   | `DIRECT_URL` | **Obrigatória** — connection string do Neon com a role `prospector_app` (seção 1.1) |
-   | `ALLOWED_ORIGINS` | `https://app.atlasgr.com.br` (mais qualquer outro domínio real que sirva o frontend) |
-   | `BETTER_AUTH_URL` | `https://app.atlasgr.com.br` |
-   | `PUBLIC_BASE_URL` | `https://app.atlasgr.com.br` |
-   | `GOOGLE_MAPS_API_KEY`, `APOLLO_API_KEY`, `HUNTER_API_KEY`, `GROQ_API_KEY`, `GEMINI_API_KEY` | Chaves reais de cada provedor |
-   | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Credenciais OAuth do "Entrar com Google" (Better Auth) — sem elas o botão fica inerte |
-   | `PLATFORM_OPERATOR_TOKEN` | Necessária para `/admin/queues` e `/metrics` deixarem de ser fail-closed |
-   | `BITRIX24_WEBHOOK_URL`, `BIRTH_VOICES_WEBHOOK_SECRET` | Se as integrações estiverem em uso |
-   | `STORAGE_*` | Seção 1.2 |
-   | `REDIS_URL` | Opcional — ver seção 2.4 |
+   | Variável                                                                                    | Valor                                                                                 |
+   | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+   | `DATABASE_URL`                                                                              | Connection string do Neon com a role `prospector_runtime` (seção 1.1)                 |
+   | `DIRECT_URL`                                                                                | **Obrigatória** — connection string do Neon com a role `prospector_app` (seção 1.1)   |
+   | `ALLOWED_ORIGINS`                                                                           | `https://app.atlasgr.com.br` (mais qualquer outro domínio real que sirva o frontend)  |
+   | `BETTER_AUTH_URL`                                                                           | `https://app.atlasgr.com.br`                                                          |
+   | `PUBLIC_BASE_URL`                                                                           | `https://app.atlasgr.com.br`                                                          |
+   | `GOOGLE_MAPS_API_KEY`, `APOLLO_API_KEY`, `HUNTER_API_KEY`, `GROQ_API_KEY`, `GEMINI_API_KEY` | Chaves reais de cada provedor                                                         |
+   | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`                                                  | Credenciais OAuth do "Entrar com Google" (Better Auth) — sem elas o botão fica inerte |
+   | `PLATFORM_OPERATOR_TOKEN`                                                                   | Necessária para `/admin/queues` e `/metrics` deixarem de ser fail-closed              |
+   | `BITRIX24_WEBHOOK_URL`, `BIRTH_VOICES_WEBHOOK_SECRET`                                       | Se as integrações estiverem em uso                                                    |
+   | `STORAGE_*`                                                                                 | Seção 1.2                                                                             |
+   | `REDIS_URL`                                                                                 | Opcional — ver seção 2.4                                                              |
 
    `BETTER_AUTH_SECRET` já é gerado automaticamente pelo blueprint (`generateValue: true`).
 
@@ -231,25 +232,25 @@ expõe R2/D1/KV/Workers, não gestão de zona DNS) — este passo é manual:
 
 Nada precisou mudar nos workflows existentes — já cobrem o necessário:
 
-| Workflow | Função |
-| --- | --- |
-| `ci.yml` | Lint, typecheck, testes (unit/integration/E2E), build — todo push/PR em `main`/`develop` |
-| `production.yaml` | Mesmo gate de testes + build de imagem Docker (`ghcr.io`) com aprovação manual — caminho K8s/Helm/ArgoCD, não usado pelo Render |
-| `cd-homolog.yml` | Deploy de homologação (branch `develop`) via imagem Docker + Helm |
-| `sonarqube.yml` | Análise estática de qualidade/cobertura |
-| `deploy-pages.yml` | Publica build estático (sem backend) no GitHub Pages — gatilho manual (`workflow_dispatch`), não roda mais em todo push em `main`; não é a URL de produção nem um ambiente funcional (API não existe nesse build) |
-| `android-build.yml` | Gera APK do app mobile via Capacitor |
+| Workflow            | Função                                                                                                                                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`            | Lint, typecheck, testes (unit/integration/E2E), build — todo push/PR em `main`/`develop`                                                                                                                          |
+| `production.yaml`   | Mesmo gate de testes + build de imagem Docker (`ghcr.io`) com aprovação manual — caminho K8s/Helm/ArgoCD, não usado pelo Render                                                                                   |
+| `cd-homolog.yml`    | Deploy de homologação (branch `develop`) via imagem Docker + Helm                                                                                                                                                 |
+| `sonarqube.yml`     | Análise estática de qualidade/cobertura                                                                                                                                                                           |
+| `deploy-pages.yml`  | Publica build estático (sem backend) no GitHub Pages — gatilho manual (`workflow_dispatch`), não roda mais em todo push em `main`; não é a URL de produção nem um ambiente funcional (API não existe nesse build) |
+| `android-build.yml` | Gera APK do app mobile via Capacitor                                                                                                                                                                              |
 
 O único ajuste recomendado (manual, seção 2.3) é a branch protection rule em `main` exigindo o
 check de `ci.yml`.
 
 ## 5. Ambientes
 
-| Ambiente | Branch | Banco | Deploy |
-| --- | --- | --- | --- |
-| Development | local | Docker Compose (`docker-compose.yml`, Postgres+pgvector local) | `npm run dev` |
+| Ambiente    | Branch    | Banco                                                                                 | Deploy                                  |
+| ----------- | --------- | ------------------------------------------------------------------------------------- | --------------------------------------- |
+| Development | local     | Docker Compose (`docker-compose.yml`, Postgres+pgvector local)                        | `npm run dev`                           |
 | Homologação | `develop` | A definir (recomenda-se um segundo projeto Neon, free tier, mesma região da produção) | `cd-homolog.yml` → imagem Docker + Helm |
-| Produção | `main` | Neon `prospector-atlas` (ref `lingering-silence-85871098`) (seção 1) | Auto-deploy Render (seção 2.2) |
+| Produção    | `main`    | Neon `prospector-atlas` (ref `lingering-silence-85871098`) (seção 1)                  | Auto-deploy Render (seção 2.2)          |
 
 Para criar o ambiente de homologação com o mesmo nível de isolamento, repita a seção 1 criando um
 segundo projeto Neon (ex.: `prospector-atlas-staging`) e aponte as variáveis do serviço Render de
@@ -276,15 +277,15 @@ GitHub Actions Secret, nunca hardcoded em `render.yaml`/workflow YAML.
 
 ## 8. URLs finais
 
-| Serviço | URL |
-| --- | --- |
-| Aplicação (frontend + API) | `https://app.atlasgr.com.br` (após seção 3) — até lá, `https://prospector-atlas.onrender.com` |
-| Health (liveness) | `/health/live` |
-| Health (readiness, checa banco) | `/health/ready` |
-| Documentação da API (Swagger) | `/api-docs` (só quando `EXPOSE_API_DOCS=true`) |
-| Painel de filas (BullMQ) | `/admin/queues` (autenticado) |
-| Métricas Prometheus | `/metrics` (só quando `EXPOSE_METRICS=true`) |
-| Neon — projeto | `https://console.neon.tech` → projeto `prospector-atlas` |
+| Serviço                         | URL                                                                                           |
+| ------------------------------- | --------------------------------------------------------------------------------------------- |
+| Aplicação (frontend + API)      | `https://app.atlasgr.com.br` (após seção 3) — até lá, `https://prospector-atlas.onrender.com` |
+| Health (liveness)               | `/health/live`                                                                                |
+| Health (readiness, checa banco) | `/health/ready`                                                                               |
+| Documentação da API (Swagger)   | `/api-docs` (só quando `EXPOSE_API_DOCS=true`)                                                |
+| Painel de filas (BullMQ)        | `/admin/queues` (autenticado)                                                                 |
+| Métricas Prometheus             | `/metrics` (só quando `EXPOSE_METRICS=true`)                                                  |
+| Neon — projeto                  | `https://console.neon.tech` → projeto `prospector-atlas`                                      |
 
 ## 9. Roadmap sugerido (não implementado nesta sessão)
 
@@ -292,18 +293,18 @@ GitHub Actions Secret, nunca hardcoded em `render.yaml`/workflow YAML.
    pronto (seção 1.3) mas nenhum endpoint HTTP o usa ainda.
 2. **Homologação isolada de verdade**: segundo projeto Neon + segundo serviço Render (ou
    Preview Environments do Render) para `develop`, hoje só coberto pelo caminho Docker/K8s.
-2. **Redis gerenciado** para habilitar `ENABLE_QUEUES=true` em produção (filas persistentes,
+3. **Redis gerenciado** para habilitar `ENABLE_QUEUES=true` em produção (filas persistentes,
    rate-limit distribuído de verdade entre múltiplas instâncias).
-3. **Branch protection + required reviewers** no ambiente `production` do GitHub — confirme que
+4. **Branch protection + required reviewers** no ambiente `production` do GitHub — confirme que
    está configurado (o código já assume isso, ver comentário `DEVOPS-001` em `production.yaml`).
-4. **Corrigir a política RLS de `AILog`** (seção 1.4) para não esconder custo de IA não atribuído
+5. **Corrigir a política RLS de `AILog`** (seção 1.4) para não esconder custo de IA não atribuído
    de tenants legítimos.
-5. **Autoscaling no Render** — plano pago (`starter`) já adotado (2026-09-02), mas ele sozinho não
+6. **Autoscaling no Render** — plano pago (`starter`) já adotado (2026-09-02), mas ele sozinho não
    escala horizontalmente; revisar upgrade para um plano com autoscaling antes de picos de
    tráfego previstos.
-6. **Habilitar R2 na conta Cloudflare** (painel, opt-in de conta) e criar o bucket
+7. **Habilitar R2 na conta Cloudflare** (painel, opt-in de conta) e criar o bucket
    `prospector-assets` — passo pendente antes do Storage funcionar no Neon (seção 1.3), já que o
    Neon não tem storage de objetos próprio.
-7. **Ativar o add-on de PITR no Neon** se o time decidir que backup diário (incluso, seção 1) não
+8. **Ativar o add-on de PITR no Neon** se o time decidir que backup diário (incluso, seção 1) não
    é suficiente — US$100-400/mês adicionais dependendo da retenção, ver seção de custos discutida
    com o dono do repositório.

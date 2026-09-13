@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   Calendar,
@@ -13,17 +12,18 @@ import {
   Trash2,
   WifiOff,
 } from 'lucide-react';
-import { PLAYBOOKS } from '../../../config/playbooks';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { useEffect, useMemo, useState } from 'react';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { Pagination } from '../../../components/ui/Pagination';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { playbookApi, type ObjectionMatrixItem, type PlaybookListMeta } from '../playbook.api';
-import { ObjectionItemForm } from './ObjectionItemForm';
+import { PLAYBOOKS } from '../../../config/playbooks';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
+import { type ObjectionMatrixItem, type PlaybookListMeta, playbookApi } from '../playbook.api';
+import { ObjectionItemForm } from './ObjectionItemForm';
 
 // Mesmo tamanho de página usado em CompanyList/ContactList (via Pagination compartilhado).
 const PAGE_SIZE = 20;

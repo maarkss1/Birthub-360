@@ -42,12 +42,24 @@ describe('KpiCard', () => {
 
   it('reflete o estado `active` via aria-pressed', () => {
     const { rerender } = render(
-      <KpiCard icon={CheckCircle} label="Convertidos" value={11} onSelect={vi.fn()} active={false} />,
+      <KpiCard
+        icon={CheckCircle}
+        label="Convertidos"
+        value={11}
+        onSelect={vi.fn()}
+        active={false}
+      />,
     );
     expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'false');
 
     rerender(
-      <KpiCard icon={CheckCircle} label="Convertidos" value={11} onSelect={vi.fn()} active={true} />,
+      <KpiCard
+        icon={CheckCircle}
+        label="Convertidos"
+        value={11}
+        onSelect={vi.fn()}
+        active={true}
+      />,
     );
     expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
   });

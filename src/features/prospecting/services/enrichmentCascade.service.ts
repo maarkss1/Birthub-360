@@ -1,17 +1,17 @@
-import { prisma } from '../../../lib/prisma.js';
 import type { Prisma } from '@prisma/client';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import { enrichOrganizationWithContacts, enrichOrganizationByDomain } from './apollo.service.js';
-import { findEmailViaHunter, findPeopleViaDomainSearch } from './hunter.service.js';
-import { searchGooglePlaceDetailed } from './places.service.js';
+import { filterNewContacts } from '../utils/contactDedupe.js';
+import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service.js';
 import { fetchCnpjData } from './enrichment/cnpjLookup.js';
 import {
   extractDomainFromWebsite,
   guessDomainAndEmails,
   resolveEmailStatus,
 } from './enrichment/domainGuess.js';
-import { filterNewContacts } from '../utils/contactDedupe.js';
+import { findEmailViaHunter, findPeopleViaDomainSearch } from './hunter.service.js';
+import { searchGooglePlaceDetailed } from './places.service.js';
 
 export interface CascadeEnrichmentOptions {
   cnpj?: string;
@@ -357,6 +357,7 @@ export async function runEnrichmentCascade(
       // contact record, Google Places record) — nunca quando os três passos falharam ou não
       // encontraram nada (ver AGENTS.md → LGPD → "05: rotulagem de dado inferido vs. confirmado").
       dataOrigin: anyEnriched ? 'confirmado' : null,
+      appliedToCompany: anyEnriched,
       rawData: {
         apolloEnriched,
         hunterEnriched,

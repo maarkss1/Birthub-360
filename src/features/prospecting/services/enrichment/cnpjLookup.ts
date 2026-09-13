@@ -1,7 +1,7 @@
-import { isValidCnpj, sanitizeCnpj, formatCnpj } from '../cnpj.util';
 import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
 import { HttpTimeoutError } from '../../../../lib/http.js';
 import type { RntrcUfRisk } from '../../../../shared/services/rntrcTerritorialRisk.service.js';
+import { formatCnpj, isValidCnpj, sanitizeCnpj } from '../cnpj.util';
 
 const BRASIL_API_BASE = 'https://brasilapi.com.br/api';
 
@@ -120,10 +120,21 @@ function formatPhone(ddd_telefone: string): string | null {
     : `(${ddd}) ${rest.slice(0, 4)}-${rest.slice(4)}`;
 }
 
+// CodeQL (achado real, PR #454): "server-side request forgery" — `cnpj` chega aqui a partir de 3
+// pontos de entrada com texto livre do usuário (CompanyController.enrichCompany `req.body.cnpj`,
+// POST /enrich-cnpj `req.body.cnpj`, POST /companies/:id/enrich-cascade `req.body.cnpj` via
+// CascadeEnrichmentOptions) e é interpolado direto no path da URL da BrasilAPI. `isValidCnpj`
+// (lib/cnpj.ts) já faz a validação de negócio real (dígito verificador) antes de qualquer uso,
+// mas por rodar num helper externo o CodeQL não consegue provar, só a partir da chamada, que o
+// valor usado depois está restrito a dígitos — por isso a checagem abaixo repete o mesmo requisito
+// (14 dígitos, exatamente o que `isValidCnpj` já exige) como um regex inline, direto na condição
+// que guarda o uso de `cnpj` na URL.
+const CNPJ_DIGITS_ONLY = /^\d{14}$/;
+
 /** Consulta dados cadastrais reais de um CNPJ na Receita Federal via BrasilAPI (fonte oficial, gratuita, sem chave). */
 export async function fetchCnpjData(cnpjRaw: string): Promise<CnpjLookupResult> {
   const cnpj = sanitizeCnpj(cnpjRaw);
-  if (!isValidCnpj(cnpj)) {
+  if (!CNPJ_DIGITS_ONLY.test(cnpj) || !isValidCnpj(cnpj)) {
     return { found: false, cnpj: cnpjRaw, source: 'BrasilAPI-CNPJ', error: 'invalid_format' };
   }
 

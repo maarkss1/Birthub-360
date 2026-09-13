@@ -7,7 +7,10 @@ import { setupDI } from '../../src/shared/di/setup';
 import { runAgentCatalogImport } from '../../scripts/import-agent-catalog';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
-import { assignJobRole, getJobRoleByCode } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  assignJobRole,
+  getJobRoleByCode,
+} from '../../src/features/job-roles/services/jobRole.service';
 import {
   AccessRequestServiceError,
   cancelAccessRequest,
@@ -23,7 +26,11 @@ const ORG_ID = 'test-org-id';
 const OTHER_ORG_ID = 'test-org-id-2';
 
 let userCounter = 0;
-async function makeUserWithJobRole(jobRoleCode: string, userRole = 'ADMIN', organizationId = ORG_ID) {
+async function makeUserWithJobRole(
+  jobRoleCode: string,
+  userRole = 'ADMIN',
+  organizationId = ORG_ID,
+) {
   userCounter++;
   const user = await prisma.user.create({
     data: {
@@ -134,7 +141,10 @@ describe('Cross-Role Authorization + Aprovações (PROMPT 7)', () => {
         },
         select: { agentDefinition: { select: { code: true } } },
       });
-      expect(agentGrant, 'nenhum agente do SDR tem contract.read para testar authorizeCapability').not.toBeNull();
+      expect(
+        agentGrant,
+        'nenhum agente do SDR tem contract.read para testar authorizeCapability',
+      ).not.toBeNull();
 
       const decision = await authorizeCapability({
         actor: { userId: user.id, organizationId: ORG_ID, userRole: 'SDR' },
@@ -200,11 +210,7 @@ describe('Cross-Role Authorization + Aprovações (PROMPT 7)', () => {
       expect(accessRequest.category).toBe('CONTRATO');
       expect(accessRequest.status).toBe('PENDING');
 
-      const pendingForGerente = await listPendingApprovalsForApprover(
-        ORG_ID,
-        gerente.id,
-        'GESTOR',
-      );
+      const pendingForGerente = await listPendingApprovalsForApprover(ORG_ID, gerente.id, 'GESTOR');
       expect(pendingForGerente.map((r) => r.id)).toContain(accessRequest.id);
 
       const decided = await decideAccessRequest({
@@ -491,7 +497,9 @@ describe('Cross-Role Authorization + Aprovações (PROMPT 7)', () => {
         where: {
           jobRole: { code: 'RECEITA_FATURAMENTO' },
           agentDefinition: {
-            capabilityGrants: { some: { capabilityDefinition: { code: 'billing.read' }, isActive: true } },
+            capabilityGrants: {
+              some: { capabilityDefinition: { code: 'billing.read' }, isActive: true },
+            },
           },
           isActive: true,
         },

@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- backdrop fecha também por Escape */
+
+import { Filter, Info, X } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useRef } from 'react';
-import { X, Filter, Info } from 'lucide-react';
 import type { TechToolInfo } from './TechToolLogo';
 
 interface ToolTechPopoverProps {

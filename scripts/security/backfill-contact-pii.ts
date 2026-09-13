@@ -72,7 +72,9 @@ async function main() {
     // Só para listar Organization (está na allowlist de bypass — ver comentário acima); Contact,
     // logo abaixo, precisa de `app.current_tenant_id` real por organização.
     await client.query(`SELECT set_config('app.bypass_rls', 'on', false)`);
-    const { rows: orgs } = await client.query<{ id: string }>(`SELECT id FROM "Organization" ORDER BY id ASC`);
+    const { rows: orgs } = await client.query<{ id: string }>(
+      `SELECT id FROM "Organization" ORDER BY id ASC`,
+    );
 
     let processed = 0;
     let migrated = 0;
@@ -152,7 +154,9 @@ async function main() {
 
         lastId = rows[rows.length - 1].id;
       }
-      console.log(`[backfill-contact-pii] organização ${org.id} concluída — total até agora: processados=${processed} migrados=${migrated}`);
+      console.log(
+        `[backfill-contact-pii] organização ${org.id} concluída — total até agora: processados=${processed} migrados=${migrated}`,
+      );
     }
 
     console.log(

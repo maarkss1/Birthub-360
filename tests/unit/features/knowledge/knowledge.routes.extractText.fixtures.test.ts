@@ -33,16 +33,21 @@ import path from 'node:path';
 // módulo carregar; nenhum deles é chamado neste teste.
 import { vi } from 'vitest';
 vi.mock('../../../../src/features/knowledge/ingestion.service.js', () => ({
-    ingestionService: {
-        ingestText: vi.fn(), updateDocument: vi.fn(), list: vi.fn(), get: vi.fn(), delete: vi.fn(), reembedDocument: vi.fn(),
-    },
+  ingestionService: {
+    ingestText: vi.fn(),
+    updateDocument: vi.fn(),
+    list: vi.fn(),
+    get: vi.fn(),
+    delete: vi.fn(),
+    reembedDocument: vi.fn(),
+  },
 }));
 vi.mock('../../../../src/features/knowledge/search.service.js', () => ({
-    searchService: { hybridSearch: vi.fn() },
+  searchService: { hybridSearch: vi.fn() },
 }));
 vi.mock('../../../../src/lib/ai/gateway.js', () => ({ getAiModel: vi.fn() }));
 vi.mock('../../../../src/lib/logger.js', () => ({
-    logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
 const { extractText } = await import('../../../../src/features/knowledge/knowledge.routes.js');
@@ -50,18 +55,18 @@ const { extractText } = await import('../../../../src/features/knowledge/knowled
 const FIXTURES_DIR = path.resolve(__dirname, '../../../fixtures/knowledge');
 
 function fixtureBase64(fileName: string): string {
-    return readFileSync(path.join(FIXTURES_DIR, fileName)).toString('base64');
+  return readFileSync(path.join(FIXTURES_DIR, fileName)).toString('base64');
 }
 
 describe('extractText — fixtures reais (sem mock de parser)', () => {
-    it('extrai texto real de tests/fixtures/knowledge/sample.pdf via pdf-parse de verdade', async () => {
-        const result = await extractText('sample.pdf', fixtureBase64('sample.pdf'));
-        expect(result).toContain('Hello AtlasGR fixture PDF test');
-    });
+  it('extrai texto real de tests/fixtures/knowledge/sample.pdf via pdf-parse de verdade', async () => {
+    const result = await extractText('sample.pdf', fixtureBase64('sample.pdf'));
+    expect(result).toContain('Hello AtlasGR fixture PDF test');
+  });
 
-    it('extrai texto real de tests/fixtures/knowledge/sample.docx via mammoth de verdade', async () => {
-        const result = await extractText('sample.docx', fixtureBase64('sample.docx'));
-        expect(result).toContain('Fixture de teste - Base de Conhecimento ATLASGR.');
-        expect(result).toContain('CPI DEC-10 opcao A');
-    });
+  it('extrai texto real de tests/fixtures/knowledge/sample.docx via mammoth de verdade', async () => {
+    const result = await extractText('sample.docx', fixtureBase64('sample.docx'));
+    expect(result).toContain('Fixture de teste - Base de Conhecimento ATLASGR.');
+    expect(result).toContain('CPI DEC-10 opcao A');
+  });
 });

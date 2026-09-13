@@ -16,7 +16,10 @@ marca única — continuam recuperáveis pelo histórico do git.
 
 ## Outros arquivos aqui
 
-- `MANUAL_UI_UX_PLATAFORMA.md` / `.html` — manual de UI/UX da plataforma.
+- `MANUAL_UI_UX_PLATAFORMA.md` / `.html` — manual de UI/UX do antigo sistema de duas marcas
+  (AtlasGR & TotalTrac), substituído pela marca única Birth Hub 360º em 09/2026. Documento
+  histórico — mantido como referência, não como especificação vigente (paleta, logos e
+  combinações de cor ali não valem mais). Ambos os arquivos têm o aviso no topo.
 - `prototipo-hub-portal-atlas.html` — protótipo histórico da órbita do Hub, origem do
   `hub-orbit.css` e do `HubBurstCanvas`. Mantido como referência do cálculo original.
 - `mockup_dashboard.jpg` — mockup de referência.

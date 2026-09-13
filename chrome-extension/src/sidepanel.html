@@ -1,118 +1,118 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Copiloto Atlas GR</title>
-  <link rel="stylesheet" href="sidepanel.css" />
-</head>
-<body>
-  <main>
-    <header>
-      <div class="brand">
-        <svg class="logo" viewBox="0 0 251.48 171.76" aria-hidden="true">
-          <polygon
-            fill="#ff5618"
-            points="153.4 87.56 167.65 62.87 167.68 62.85 178.13 44.72 178.11 44.68 178.15 44.68 203.95 0 182.97 0 152.31 0 110.4 0 99.17 0 73.37 44.68 73.35 44.72 62.87 62.87 48.62 87.56 48.41 87.94 0 171.76 83.81 171.76 104.78 171.76 125.74 135.49 125.76 135.44 153.19 87.94 153.4 87.56"
-          />
-          <polygon
-            fill="#ff5618"
-            points="203.07 87.94 175.75 87.94 153.9 125.79 153.9 125.83 137.02 155.01 146.7 171.76 209.57 171.76 251.48 171.76 203.07 87.94"
-          />
-        </svg>
-        <div>
-          <small>ATLAS GR</small>
-          <h1>Copiloto IA</h1>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Copiloto Atlas GR</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="brand">
+          <svg class="logo" viewBox="0 0 251.48 171.76" aria-hidden="true">
+            <polygon
+              fill="#ff5618"
+              points="153.4 87.56 167.65 62.87 167.68 62.85 178.13 44.72 178.11 44.68 178.15 44.68 203.95 0 182.97 0 152.31 0 110.4 0 99.17 0 73.37 44.68 73.35 44.72 62.87 62.87 48.62 87.56 48.41 87.94 0 171.76 83.81 171.76 104.78 171.76 125.74 135.49 125.76 135.44 153.19 87.94 153.4 87.56"
+            />
+            <polygon
+              fill="#ff5618"
+              points="203.07 87.94 175.75 87.94 153.9 125.79 153.9 125.83 137.02 155.01 146.7 171.76 209.57 171.76 251.48 171.76 203.07 87.94"
+            />
+          </svg>
+          <div>
+            <small>ATLAS GR</small>
+            <h1>Copiloto IA</h1>
+          </div>
         </div>
-      </div>
-      <div class="header-actions">
-        <button
-          id="themeToggle"
-          type="button"
-          class="theme-toggle"
-          aria-label="Alternar para tema claro"
-          title="Alternar tema claro/escuro"
-        >
-          🌙
-        </button>
-        <span id="status" class="pill">Aguardando</span>
-      </div>
-    </header>
+        <div class="header-actions">
+          <button
+            id="themeToggle"
+            type="button"
+            class="theme-toggle"
+            aria-label="Alternar para tema claro"
+            title="Alternar tema claro/escuro"
+          >
+            🌙
+          </button>
+          <span id="status" class="pill">Aguardando</span>
+        </div>
+      </header>
 
-    <div id="errorBanner" class="error-banner" hidden></div>
+      <div id="errorBanner" class="error-banner" hidden></div>
 
-    <section class="card">
-      <h2>Google Meet</h2>
-      <p id="meetTitle">Nenhuma reunião detectada. Abra uma chamada em meet.google.com.</p>
-      <small id="meetUrl"></small>
-    </section>
+      <section class="card">
+        <h2>Google Meet</h2>
+        <p id="meetTitle">Nenhuma reunião detectada. Abra uma chamada em meet.google.com.</p>
+        <small id="meetUrl"></small>
+      </section>
 
-    <section class="card" id="calendarSuggestionCard" hidden>
-      <h2>Sugestão via Google Calendar</h2>
-      <p class="hint">
-        Este Meet corresponde a um evento da agenda conectada da organização. Encontramos um
-        possível Lead pelo e-mail do convidado — confira antes de vincular.
-      </p>
-      <p id="calendarSuggestionText" class="calendar-suggestion-text"></p>
-      <button id="useCalendarSuggestion" class="secondary">Usar este Lead sugerido</button>
-    </section>
+      <section class="card" id="calendarSuggestionCard" hidden>
+        <h2>Sugestão via Google Calendar</h2>
+        <p class="hint">
+          Este Meet corresponde a um evento da agenda conectada da organização. Encontramos um
+          possível Lead pelo e-mail do convidado — confira antes de vincular.
+        </p>
+        <p id="calendarSuggestionText" class="calendar-suggestion-text"></p>
+        <button id="useCalendarSuggestion" class="secondary">Usar este Lead sugerido</button>
+      </section>
 
-    <section class="card">
-      <h2>CRM (Bitrix24 via backend)</h2>
-      <label for="leadId">Lead: nome, e-mail do contato, link do Bitrix24 ou id</label>
-      <input
-        id="leadId"
-        type="text"
-        autocomplete="off"
-        placeholder="ex.: nome da empresa/contato, contato@empresa.com, link do Bitrix ou id"
-      />
-      <ul id="leadSearchResults" class="lead-search-results" hidden></ul>
-      <p class="hint">
-        A extensão nunca fala com o Bitrix24 diretamente — só com o backend da Central, que já tem
-        o lead sincronizado.
-      </p>
-      <button id="linkLead">Vincular reunião a este Lead</button>
-      <button id="skipLead" class="secondary">Capturar sem vincular a um Lead</button>
-    </section>
+      <section class="card">
+        <h2>CRM (Bitrix24 via backend)</h2>
+        <label for="leadId">Lead: nome, e-mail do contato, link do Bitrix24 ou id</label>
+        <input
+          id="leadId"
+          type="text"
+          autocomplete="off"
+          placeholder="ex.: nome da empresa/contato, contato@empresa.com, link do Bitrix ou id"
+        />
+        <ul id="leadSearchResults" class="lead-search-results" hidden></ul>
+        <p class="hint">
+          A extensão nunca fala com o Bitrix24 diretamente — só com o backend da Central, que já tem
+          o lead sincronizado.
+        </p>
+        <button id="linkLead">Vincular reunião a este Lead</button>
+        <button id="skipLead" class="secondary">Capturar sem vincular a um Lead</button>
+      </section>
 
-    <section class="card" id="consentCard" hidden>
-      <h2>Consentimento (LGPD)</h2>
-      <label class="consent">
-        <input id="consent" type="checkbox" />
-        Informei os participantes e obtive consentimento para esta captura, conforme a política da
-        Atlas GR.
-      </label>
-      <button id="registerConsent">Registrar consentimento</button>
-    </section>
+      <section class="card" id="consentCard" hidden>
+        <h2>Consentimento (LGPD)</h2>
+        <label class="consent">
+          <input id="consent" type="checkbox" />
+          Informei os participantes e obtive consentimento para esta captura, conforme a política da
+          Atlas GR.
+        </label>
+        <button id="registerConsent">Registrar consentimento</button>
+      </section>
 
-    <section class="card" id="captureCard" hidden>
-      <h2>Captura</h2>
-      <p class="hint">
-        Grava o áudio desta aba do Meet (só com o seu clique explícito) e envia pro backend da
-        Central assim que você parar — a transcrição roda em segundo plano depois disso.
-      </p>
-      <button id="toggleCapture" disabled>Iniciar sessão de captura</button>
-    </section>
+      <section class="card" id="captureCard" hidden>
+        <h2>Captura</h2>
+        <p class="hint">
+          Grava o áudio desta aba do Meet (só com o seu clique explícito) e envia pro backend da
+          Central assim que você parar — a transcrição roda em segundo plano depois disso.
+        </p>
+        <button id="toggleCapture" disabled>Iniciar sessão de captura</button>
+      </section>
 
-    <section class="card" id="aiCard" hidden>
-      <h2>Resumo e sugestões da IA</h2>
-      <p id="aiStatusText" class="hint"></p>
-      <div id="aiSummary" class="ai-summary" hidden>
-        <p id="aiSummaryText"></p>
-        <p id="aiSentiment" class="pill"></p>
-      </div>
-      <ul id="aiSuggestions" class="ai-suggestions"></ul>
-      <button id="refreshAi" class="secondary">Atualizar sugestões</button>
-    </section>
+      <section class="card" id="aiCard" hidden>
+        <h2>Resumo e sugestões da IA</h2>
+        <p id="aiStatusText" class="hint"></p>
+        <div id="aiSummary" class="ai-summary" hidden>
+          <p id="aiSummaryText"></p>
+          <p id="aiSentiment" class="pill"></p>
+        </div>
+        <ul id="aiSuggestions" class="ai-suggestions"></ul>
+        <button id="refreshAi" class="secondary">Atualizar sugestões</button>
+      </section>
 
-    <details class="settings">
-      <summary>Configurações</summary>
-      <label for="apiBaseUrl">URL do backend da Central Atlas GR</label>
-      <input id="apiBaseUrl" type="text" placeholder="http://163.176.150.147" />
-      <button id="saveApiBaseUrl">Salvar</button>
-      <p class="hint" id="apiBaseUrlHint"></p>
-    </details>
-  </main>
-  <script type="module" src="sidepanel.js"></script>
-</body>
+      <details class="settings">
+        <summary>Configurações</summary>
+        <label for="apiBaseUrl">URL do backend da Central Atlas GR</label>
+        <input id="apiBaseUrl" type="text" placeholder="http://168.138.147.145" />
+        <button id="saveApiBaseUrl">Salvar</button>
+        <p class="hint" id="apiBaseUrlHint"></p>
+      </details>
+    </main>
+    <script type="module" src="sidepanel.js"></script>
+  </body>
 </html>

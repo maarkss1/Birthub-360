@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Dialog } from '../../../components/ui/Dialog';
 import { Button } from '../../../components/ui/Button';
-import { commercialIntelligenceApi, type CommercialGoalDTO } from '../commercialIntelligence.api';
+import { Dialog } from '../../../components/ui/Dialog';
+import { type CommercialGoalDTO, commercialIntelligenceApi } from '../commercialIntelligence.api';
 
 interface GoalEditorDialogProps {
   isOpen: boolean;

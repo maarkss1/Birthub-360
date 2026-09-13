@@ -39,7 +39,7 @@ Todos são `<div role="...">` que o Biome sugere trocar por um elemento HTML nat
 **Política já estabelecida nesta limpeza (seguir a mesma para os 32 restantes):**
 
 - **`role="button"` e `role="checkbox"`** → converter de verdade para `<button>`/`<input
-  type="checkbox">`. Aqui há ganho real de acessibilidade/teclado (foco nativo, `Enter`/`Space`,
+type="checkbox">`. Aqui há ganho real de acessibilidade/teclado (foco nativo, `Enter`/`Space`,
   leitores de tela), não é só estilo.
 - **`role="region"` e `role="group"`** → **manter `<div role="...">` e documentar com
   `biome-ignore`**, em vez de trocar a tag. Motivo: um `<section aria-label>` ou `<fieldset>`

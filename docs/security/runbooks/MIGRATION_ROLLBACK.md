@@ -31,11 +31,11 @@ retenção 30 dias) e `scripts/backup.sh`/`scripts/restore.sh`.
 
 Abra o `migration.sql` da migration em questão e classifique cada statement:
 
-| Classe | Exemplos reais já existentes neste repo | Reversível sem backup? |
-|---|---|---|
-| **Aditiva** | `CREATE TABLE`, `ALTER TABLE ... ADD COLUMN` (com `DEFAULT` ou nullable), `CREATE INDEX`, `ALTER TYPE ... ADD VALUE` (ex.: `20260826140000_expand_intelligence_evidence_type`, `20260802140000_automation_action_ligar_sdr_voz`) | **Sim** — reversão manual simples (Passo 1). |
+| Classe         | Exemplos reais já existentes neste repo                                                                                                                                                                                                                                                                                       | Reversível sem backup?                                                                |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Aditiva**    | `CREATE TABLE`, `ALTER TABLE ... ADD COLUMN` (com `DEFAULT` ou nullable), `CREATE INDEX`, `ALTER TYPE ... ADD VALUE` (ex.: `20260826140000_expand_intelligence_evidence_type`, `20260802140000_automation_action_ligar_sdr_voz`)                                                                                              | **Sim** — reversão manual simples (Passo 1).                                          |
 | **Destrutiva** | `DROP COLUMN`, `DROP TABLE`, `RENAME COLUMN`/`RENAME TO`, `ALTER COLUMN ... TYPE` com conversão que perde precisão, qualquer `DELETE`/`UPDATE` em massa embutido na migration (ex.: `20260810130000_remove_knowledge_document`, `20260805220000_two_funnels_and_bitrix_fields`, `20260717183411_sprint3_5_enums_and_cleanup`) | **Não** — dado já foi perdido no momento em que a migration rodou. Vá para o Passo 2. |
-| **Ambígua** | `ADD COLUMN ... NOT NULL` sem `DEFAULT` (só roda se a tabela estava vazia ou se o Prisma gerou um backfill antes — leia o SQL completo, não só o nome do arquivo); constraint nova que pode rejeitar linhas existentes | Trate como destrutiva até confirmar o contrário lendo o SQL inteiro. |
+| **Ambígua**    | `ADD COLUMN ... NOT NULL` sem `DEFAULT` (só roda se a tabela estava vazia ou se o Prisma gerou um backfill antes — leia o SQL completo, não só o nome do arquivo); constraint nova que pode rejeitar linhas existentes                                                                                                        | Trate como destrutiva até confirmar o contrário lendo o SQL inteiro.                  |
 
 Regra de decisão: **se qualquer statement do arquivo remove, renomeia ou converte dado existente,
 a migration inteira é destrutiva** — mesmo que 9 de 10 statements sejam aditivos. Reversão parcial
@@ -56,7 +56,7 @@ aquela primeiro, uma de cada vez, da mais nova para a mais antiga).
    - `ADD COLUMN "x" TYPE` → `ALTER TABLE "Tabela" DROP COLUMN "x";`
    - `CREATE INDEX "idx_x"` → `DROP INDEX "idx_x";`
    - `ALTER TYPE "Enum" ADD VALUE 'X'` → **não tem inverso direto** (Postgres não suporta `DROP
-     VALUE` de enum). Se o valor precisa mesmo sair, o caminho é criar um enum novo sem o valor,
+VALUE` de enum). Se o valor precisa mesmo sair, o caminho é criar um enum novo sem o valor,
      migrar a coluna para o tipo novo, e dropar o antigo — trate isso como migration destrutiva
      nova (Passo 4), não como rollback do Passo 1. Na prática, um valor de enum a mais e não usado
      por nenhuma linha é inofensivo o suficiente para não valer esse custo — considere deixar como
@@ -69,7 +69,7 @@ aquela primeiro, uma de cada vez, da mais nova para a mais antiga).
    Isso só atualiza a tabela `_prisma_migrations` (marca `rolled_back_at`) — **não** desfaz o SQL
    sozinho. O down manual do passo 1 é sempre executado antes, separadamente.
 3. Rode `npx prisma migrate status` e confirme que o schema esperado bate com o real (`npx prisma
-   validate` valida só a sintaxe do `.prisma`, não o banco — para comparar contra o banco real use
+validate` valida só a sintaxe do `.prisma`, não o banco — para comparar contra o banco real use
    `migrate status` e, se disponível, `migrate diff` contra o banco).
 4. Se a migration revertida tinha alterado `schema.prisma` (é o caso normal), **reverta também o
    `schema.prisma`** no mesmo commit do down manual, e rode `npx prisma generate` — schema e banco
@@ -117,7 +117,7 @@ sem uma cópia anterior do dado. As únicas opções reais são, em ordem de pre
 ## Passo 3 — Depois de qualquer rollback (aditivo ou destrutivo)
 
 1. Rode o gate mínimo do domínio (`prisma/AGENTS.md`): `npx prisma validate`, `npx prisma
-   generate`, `npx tsc --noEmit`, `npm run lint`, testes relevantes, `npm run build`.
+generate`, `npx tsc --noEmit`, `npm run lint`, testes relevantes, `npm run build`.
 2. Registre o rollback como um handoff em `.agents/handoffs/onda-<n>/` (ver `AGENTS.md` raiz,
    "Protocolo de handoff") se outro agente/onda depende do estado revertido.
 3. Nunca edite o arquivo `migration.sql` original da migration revertida — ele é histórico

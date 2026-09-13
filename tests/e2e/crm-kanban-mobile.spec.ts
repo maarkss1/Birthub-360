@@ -19,9 +19,13 @@ import { signUp, uniqueTestEmail } from './helpers';
 test.use({ ...devices['Pixel 5'] });
 
 async function createCompanyAndLead(page: any, tradeName: string) {
-  const companyRes = await page.request.post('/api/companies', { data: { legalName: `${tradeName} LTDA`, tradeName } });
+  const companyRes = await page.request.post('/api/companies', {
+    data: { legalName: `${tradeName} LTDA`, tradeName },
+  });
   const company = (await companyRes.json()).data;
-  await page.request.post('/api/leads', { data: { status: 'Lead Recebido', companyId: company.id, source: 'mobile-test' } });
+  await page.request.post('/api/leads', {
+    data: { status: 'Lead Recebido', companyId: company.id, source: 'mobile-test' },
+  });
   return company;
 }
 
@@ -45,19 +49,25 @@ test.describe('Mobile Android (Pixel 5 emulado, touch real via Chromium)', () =>
     const scrollBefore = await scrollRegion.evaluate((el) => el.scrollLeft);
     await page.mouse.move(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2);
     await page.mouse.down();
-    await page.mouse.move(startBox.x + startBox.width / 2 - 200, startBox.y + startBox.height / 2, { steps: 10 });
+    await page.mouse.move(startBox.x + startBox.width / 2 - 200, startBox.y + startBox.height / 2, {
+      steps: 10,
+    });
     await page.mouse.up();
     const scrollAfter = await scrollRegion.evaluate((el) => el.scrollLeft);
 
     // O scroll do container deve ter avançado — não deve ter entrado em modo "dragging" em nenhum
     // CARD (o toggle de funil também usa aria-pressed, então o seletor precisa ser específico ao
     // item sortable do dnd-kit, não a qualquer aria-pressed=true da página).
-    const anyCardPressed = await page.locator('[aria-pressed="true"][aria-roledescription="sortable"]').count();
+    const anyCardPressed = await page
+      .locator('[aria-pressed="true"][aria-roledescription="sortable"]')
+      .count();
     expect(anyCardPressed).toBe(0);
     expect(scrollAfter).toBeGreaterThanOrEqual(scrollBefore);
   });
 
-  test('hit targets — ações do toolbar e do card têm pelo menos ~40px em viewport mobile', async ({ page }) => {
+  test('hit targets — ações do toolbar e do card têm pelo menos ~40px em viewport mobile', async ({
+    page,
+  }) => {
     await createCompanyAndLead(page, `HitTarget Mobile ${Date.now()}`);
     await page.goto('/app/crm');
     await page.waitForSelector('text=Leads e pré-vendas');
@@ -80,7 +90,10 @@ test.describe('Mobile Android (Pixel 5 emulado, touch real via Chromium)', () =>
   test('drawer abre em viewport mobile, campos ficam alcançáveis e X fecha', async ({ page }) => {
     const company = await createCompanyAndLead(page, `Drawer Mobile ${Date.now()}`);
     await page.goto('/app/crm');
-    await page.getByRole('button', { name: new RegExp(company.tradeName) }).first().click();
+    await page
+      .getByRole('button', { name: new RegExp(company.tradeName) })
+      .first()
+      .click();
 
     const drawer = page.getByRole('dialog');
     await expect(drawer).toBeVisible();
@@ -102,11 +115,15 @@ test.describe('Mobile Android (Pixel 5 emulado, touch real via Chromium)', () =>
     await expect(drawer).not.toBeVisible();
   });
 
-  test('sem overflow horizontal indesejado na tela inteira em 393px (Pixel 5)', async ({ page }) => {
+  test('sem overflow horizontal indesejado na tela inteira em 393px (Pixel 5)', async ({
+    page,
+  }) => {
     await createCompanyAndLead(page, `Overflow Mobile ${Date.now()}`);
     await page.goto('/app/crm');
     await page.waitForSelector('text=Leads e pré-vendas');
-    const hasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    const hasOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    );
     // O board TEM scroll horizontal interno de propósito (região com role de scroll); o que não
     // pode existir é a PÁGINA inteira (documentElement) ganhando overflow horizontal.
     expect(hasOverflow).toBe(false);
@@ -184,13 +201,18 @@ test.describe('Mobile Android (Pixel 5 emulado, touch real via Chromium)', () =>
 
     // Rola o container um card + gap (320px + 24px, ver min-w-[320px] em KanbanColumn.tsx e gap-6
     // no board) para trazer "Cadência Iniciada" para a tela sem soltar o ponteiro.
-    await scrollRegion.evaluate((el) => el.scrollBy({ left: 344, behavior: 'instant' as ScrollBehavior }));
+    await scrollRegion.evaluate((el) =>
+      el.scrollBy({ left: 344, behavior: 'instant' as ScrollBehavior }),
+    );
     // Espera o scrollLeft de fato assentar em vez de um timeout fixo — mais robusto a qualquer
     // atraso de reflow/scroll assíncrono sob CI carregado.
-    await scrollRegion.evaluate((el) => new Promise<void>((resolve) => {
-      const check = () => (el.scrollLeft >= 340 ? resolve() : requestAnimationFrame(check));
-      check();
-    }));
+    await scrollRegion.evaluate(
+      (el) =>
+        new Promise<void>((resolve) => {
+          const check = () => (el.scrollLeft >= 340 ? resolve() : requestAnimationFrame(check));
+          check();
+        }),
+    );
 
     const targetColumn = page.getByRole('heading', { name: 'Cadência Iniciada' });
     const columnBox = await targetColumn.boundingBox();
@@ -204,14 +226,26 @@ test.describe('Mobile Android (Pixel 5 emulado, touch real via Chromium)', () =>
     // Confirma visualmente que o dnd-kit reconheceu "Cadência Iniciada" como alvo de drop (mesmo
     // destaque usado pelo teste de mouse desktop) ANTES de soltar — se isso falhar, o erro aponta
     // direto para a detecção de colisão pós-scroll, não para um sintoma tardio no toast/anúncio.
-    const targetColumnBody = targetColumn.locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    const targetColumnBody = targetColumn.locator(
+      'xpath=ancestor::div[contains(@class,"rounded-2xl")][1]',
+    );
     await expect(targetColumnBody).toHaveClass(/border-brand/, { timeout: 5_000 });
     await page.mouse.up();
 
-    await expect(page.getByText(new RegExp(`${company.tradeName} movido para Cadência Iniciada`))).toBeVisible({ timeout: 10_000 });
-    const columnBody = page.locator('h3', { hasText: 'Cadência Iniciada' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(columnBody.getByRole('button', { name: new RegExp(company.tradeName) })).toBeVisible();
-    const originalColumn = page.locator('h3', { hasText: 'Lead Recebido' }).locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
-    await expect(originalColumn.getByRole('button', { name: new RegExp(company.tradeName) })).toHaveCount(0);
+    await expect(
+      page.getByText(new RegExp(`${company.tradeName} movido para Cadência Iniciada`)),
+    ).toBeVisible({ timeout: 10_000 });
+    const columnBody = page
+      .locator('h3', { hasText: 'Cadência Iniciada' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      columnBody.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toBeVisible();
+    const originalColumn = page
+      .locator('h3', { hasText: 'Lead Recebido' })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-2xl")][1]');
+    await expect(
+      originalColumn.getByRole('button', { name: new RegExp(company.tradeName) }),
+    ).toHaveCount(0);
   });
 });

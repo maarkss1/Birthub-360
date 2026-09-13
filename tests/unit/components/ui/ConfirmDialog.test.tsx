@@ -94,7 +94,10 @@ describe('useConfirmDialog', () => {
       const { confirm, dialog } = useConfirmDialog();
       return (
         <div>
-          <button type="button" onClick={() => confirm({ title: 'Confirmar ação', description: 'Tem certeza?' })}>
+          <button
+            type="button"
+            onClick={() => confirm({ title: 'Confirmar ação', description: 'Tem certeza?' })}
+          >
             Disparar
           </button>
           {dialog}

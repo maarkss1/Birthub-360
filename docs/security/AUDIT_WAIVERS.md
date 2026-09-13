@@ -33,19 +33,6 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
 
 ## Waivers ativos
 
-### `GHSA-3f6p-5ww8-9rcr` / `GHSA-rgwj-5xj2-c3m3` — `mysql2` via `prisma` CLI / `@prisma/engines`
-
-- **Advisories:**
-  - https://github.com/advisories/GHSA-3f6p-5ww8-9rcr — `mysql2 <3.16.0` possui vulnerabilidade em parsing transitivo em ferramentas CLI (Auth Plugin Downgrade, leak de credencial em texto puro).
-  - https://github.com/advisories/GHSA-rgwj-5xj2-c3m3 — `mysql2 <=3.23.0` tem DoS por decompressão ilimitada (zlib inflate) no handler de protocolo MySQL comprimido. Achado em 2026-09-02 (mesmo `node_modules/prisma/node_modules/mysql2`, base de advisories atualizada — o mesmo `package-lock.json` não reportava isso horas antes).
-- **Severidade reportada pelo `npm audit`:** high (propaga para `@prisma/engines`, `prisma` e `mysql2`; `GHSA-rgwj-5xj2-c3m3` em si é moderate, mas o pacote `mysql2` agrega como high pela outra entrada).
-- **Cadeia:** `prisma@7.10.0` → `@prisma/engines@7.10.0` → `mysql2` — transitivo de desenvolvimento/CLI do Prisma.
-- **Por que é aceito temporariamente:** O banco de dados de produção da plataforma é PostgreSQL (`pg` / `@prisma/adapter-pg`). O driver `mysql2` é incluído transitivamente no pacote de CLI do Prisma para suporte multi-driver de desenvolvimento e não é instanciado no runtime de produção Express/Node.js da aplicação — nem o downgrade de auth plugin nem o DoS por decompressão têm superfície de exploração real fora de uma conexão MySQL de verdade, que este processo nunca abre.
-- **Dono:** Agente 15 / Agente 01 — reavaliar quando o Prisma atualizar a dependência interna de `mysql2` no pacote CLI.
-- **Data de registro:** 2026-09-01 (`GHSA-3f6p-5ww8-9rcr`), estendido em 2026-09-02 (`GHSA-rgwj-5xj2-c3m3`). **Reavaliar em:** próximo bump de minor do Prisma ou em 30 dias
-  (`expired_at: 2026-10-01` em `.trivyignore.yaml`).
-- **Escopo do waiver:** apenas os dois advisories `GHSA-3f6p-5ww8-9rcr` e `GHSA-rgwj-5xj2-c3m3`, só via esta cadeia de dependência (`prisma` CLI).
-
 ### `GHSA-ggr8-5vv4-36mx` / `CVE-2026-40345` — `deepmerge-ts` (stack exhaustion) via `@prisma/config`/`prisma`
 
 - **Advisory:** https://github.com/advisories/GHSA-ggr8-5vv4-36mx — `deepmerge-ts <8.0.0` tem
@@ -140,8 +127,40 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
 
 ## Histórico
 
+- 2026-09-11 — Fechamento de 5 waivers/entradas obsoletas, todos confirmados resolvidos antes de
+  fechar (não só expirados por prazo): rodado `npm audit --audit-level=high --json` no HEAD atual
+  e cada pacote checado contra a versão resolvida em `package-lock.json`.
+  1. **`GHSA-3f6p-5ww8-9rcr` / `GHSA-rgwj-5xj2-c3m3` (`mysql2` via `prisma` CLI)** — não aparece
+     mais no `npm audit`. Causa: `package.json` tem `overrides.mysql2: "^3.22.0"` (adicionado desde
+     o registro original do waiver), que resolveu `mysql2` para `3.24.3` em todo o
+     `package-lock.json` — acima do limite vulnerável de ambos advisories (`<3.16.0` e `<=3.23.0`).
+  2. **`GHSA-RGJ7-G3M4-5G8C` (`@xenova/transformers`/`sharp`)** — não aparece mais. `sharp`
+     resolvido em `0.35.4` via `overrides["@xenova/transformers"].sharp: "^0.35.3"`.
+  3. **`GHSA-2883-XCG3-V3HH` (`js-yaml`)** — não aparece mais. Resolvido em `4.3.2` via
+     `overrides["js-yaml"]: "^4.1.0"`.
+  4. **`multer` (`GHSA-WC9G-MQFW-JRWM`/`GHSA-QFVM-CV95-JQJF`/`GHSA-QVFW-J98X-7Q72`/`GHSA-535W-7CP7-47Q4`)**
+     — não aparece mais. Resolvido em `multer@2.3.0` (dependência direta).
+  5. **`nodemailer` (`GHSA-8M3C-C648-2XJJ`/`GHSA-WMMP-3585-3RMP`/`GHSA-2X7J-588G-CCC2`/`GHSA-CC9R-2J5M-2M83`)**
+     — não aparece mais. Resolvido em `nodemailer@9.1.1` (dependência direta).
+
+  Estas 4 últimas entradas (itens 2-5) nunca tinham override/dependência documentado quando foram
+  registradas em 2026-09-08 (texto genérico, sem detalhe de cadeia/exposição no padrão das outras
+  entradas deste arquivo) — provavelmente já estavam resolvidas ou perto disso no momento do
+  registro. `npm audit --audit-level=high --json` pós-edição confirma a mesma leitura de antes:
+  só 3 achados `high` (cadeia `prisma`/`@prisma/config`/`deepmerge-ts`, waiver
+  `GHSA-ggr8-5vv4-36mx` ainda válido, expira 2026-10-11) e 5 achados `moderate`
+  (`@opentelemetry/core`, já documentado em "## Débito conhecido", não afetado por esta mudança).
+  Nenhuma dependência foi alterada — só documentação. Removidas as entradas correspondentes de
+  `.trivyignore.yaml` (5 IDs: `GHSA-3f6p-5ww8-9rcr`, `GHSA-rgwj-5xj2-c3m3`, `GHSA-RGJ7-G3M4-5G8C`,
+  `GHSA-2883-XCG3-V3HH`, `GHSA-WC9G-MQFW-JRWM`, `GHSA-QFVM-CV95-JQJF`, `GHSA-QVFW-J98X-7Q72`,
+  `GHSA-535W-7CP7-47Q4`, `GHSA-8M3C-C648-2XJJ`, `GHSA-WMMP-3585-3RMP`, `GHSA-2X7J-588G-CCC2`,
+  `GHSA-CC9R-2J5M-2M83` — 12 IDs no total, contando os 4 GHSAs cada de `multer`/`nodemailer`) e de
+  `allow-ghsas` em `.github/workflows/dependency-review.yml`, na mesma alteração. O waiver
+  `GHSA-ggr8-5vv4-36mx`/`CVE-2026-40345` (`deepmerge-ts`) e o débito `@opentelemetry/core`
+  permanecem intocados — fora do escopo deste fechamento.
+
 - 2026-09-11 — Auditoria de rotina (Agente 15) encontrou 5 achados `moderate` novos em `npm audit
-  --json`, todos a mesma cadeia raiz `@opentelemetry/core` (`GHSA-8988-4f7v-96qf`/`CVE-2026-54285`,
+--json`, todos a mesma cadeia raiz `@opentelemetry/core` (`GHSA-8988-4f7v-96qf`/`CVE-2026-54285`,
   "Unbounded memory allocation in W3C Baggage propagation"), não registrados em nenhum dos 3 arquivos
   de waiver. Confirmado o advisory real (severidade moderate/CVSS 5.3, patch em `core@2.8.0`,
   `fixAvailable: false`) e o raio de exposição: a cadeia vulnerável vem só de
@@ -191,7 +210,7 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   em ambos os jobs era ignorado silenciosamente, e o `exit-code: 1` avaliava achados de qualquer
   severidade (inclusive MEDIUM/LOW/UNKNOWN), contradizendo o nome e os comentários dos dois jobs.
   Confirmado rodando `trivy fs .` v0.70.0 localmente contra o repositório: com `--severity
-  HIGH,CRITICAL` (comportamento pretendido) o achado não aparece; sem essa flag (comportamento
+HIGH,CRITICAL` (comportamento pretendido) o achado não aparece; sem essa flag (comportamento
   real dos jobs antes desta correção), aparece. Corrigido adicionando
   `limit-severities-for-sarif: true` em `security-trivy.yml` (job `trivy-fs-pr-gate`) e em
   `production.yaml` (scan de imagem) — nenhum waiver novo foi necessário, o achado está
@@ -219,7 +238,7 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   na entrada abaixo) falhou na primeira execução real em CI — `trivy fs` reportou HIGH em
   `package-lock.json` mesmo com o waiver `GHSA-ggr8-5vv4-36mx` já em `.trivyignore.yaml`.
   Investigado rodando `trivy fs --severity HIGH,CRITICAL --ignorefile .trivyignore.yaml --format
-  table` localmente (via `docker run --network host` com a CA/proxy do ambiente de agente — o
+table` localmente (via `docker run --network host` com a CA/proxy do ambiente de agente — o
   mesmo achado, não um achado novo): o Trivy indexa esta vulnerabilidade por `CVE-2026-40345`, não
   pelo GHSA ID que `npm audit` usa. Adicionado `CVE-2026-40345` como segunda entrada em
   `.trivyignore.yaml`, mesmo `expired_at`, e a entrada do waiver acima atualizada para citar os
@@ -231,7 +250,7 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   javascript-typescript + python, com gate real de `level: error` em
   `scripts/security/check-codeql-sarif.ts` — `codeql-action/analyze` sozinho não falha o
   workflow), Dependency Review (`.github/workflows/dependency-review.yml`, `fail-on-severity:
-  high` no diff de manifests do PR) e Trivy passando a rodar também em PR de forma bloqueante
+high` no diff de manifests do PR) e Trivy passando a rodar também em PR de forma bloqueante
   (`.github/workflows/security-trivy.yml`, job `trivy-fs-pr-gate` — o scan semanal existente
   continua não-bloqueante, agora só nos eventos `schedule`/`workflow_dispatch`). O scan de imagem
   Docker (`production.yaml`, job `publish`) também passou a rodar Trivy antes do `docker push`,
@@ -279,46 +298,3 @@ Se um achado `HIGH`/`CRITICAL` precisar ser aceito temporariamente (ex.: sem fix
   este arquivo (`AUDIT_WAIVERS.md`) continua sendo a única fonte de verdade para waiver de
   vulnerabilidade conhecida (CVE/GHSA); `DEPENDENCY_POLICY.md` não duplica isso, só referencia.
 
-### `GHSA-RGJ7-G3M4-5G8C` — `@xenova/transformers` / `sharp`
-
-- **Advisory:** https://github.com/advisories/GHSA-RGJ7-G3M4-5G8C
-- **Severidade:** high
-- **Cadeia:** `@xenova/transformers` / `sharp`
-- **Por que é aceito temporariamente:** Dependência transitiva de modelos/suporte local sem fix que não quebre compatibilidade imediata.
-- **Dono:** Agente 15 / Agente 00.
-- **Data de registro:** 2026-09-08.
-
-### `GHSA-2883-XCG3-V3HH` — `js-yaml`
-
-- **Advisory:** https://github.com/advisories/GHSA-2883-XCG3-V3HH
-- **Severidade:** high
-- **Cadeia:** `js-yaml`
-- **Por que é aceito temporariamente:** Utilizado em ferramentas de CI/Build para ler arquivos YAML de configuração.
-- **Dono:** Agente 18 / Agente 00.
-- **Data de registro:** 2026-09-08.
-
-### `GHSA-WC9G-MQFW-JRWM` / `GHSA-QFVM-CV95-JQJF` / `GHSA-QVFW-J98X-7Q72` / `GHSA-535W-7CP7-47Q4` — `multer`
-
-- **Advisories:**
-  - https://github.com/advisories/GHSA-WC9G-MQFW-JRWM
-  - https://github.com/advisories/GHSA-QFVM-CV95-JQJF
-  - https://github.com/advisories/GHSA-QVFW-J98X-7Q72
-  - https://github.com/advisories/GHSA-535W-7CP7-47Q4
-- **Severidade:** high
-- **Cadeia:** `multer`
-- **Por que é aceito temporariamente:** Middleware de upload de arquivos com validações e limites aplicados no nível da aplicação.
-- **Dono:** Agente 15 / Agente 00.
-- **Data de registro:** 2026-09-08.
-
-### `GHSA-8M3C-C648-2XJJ` / `GHSA-WMMP-3585-3RMP` / `GHSA-2X7J-588G-CCC2` / `GHSA-CC9R-2J5M-2M83` — `nodemailer`
-
-- **Advisories:**
-  - https://github.com/advisories/GHSA-8M3C-C648-2XJJ
-  - https://github.com/advisories/GHSA-WMMP-3585-3RMP
-  - https://github.com/advisories/GHSA-2X7J-588G-CCC2
-  - https://github.com/advisories/GHSA-CC9R-2J5M-2M83
-- **Severidade:** high
-- **Cadeia:** `nodemailer`
-- **Por que é aceito temporariamente:** Transporte de email com sanitização de campos e headers de mensagens.
-- **Dono:** Agente 17 / Agente 00.
-- **Data de registro:** 2026-09-08.

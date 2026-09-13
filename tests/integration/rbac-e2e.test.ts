@@ -9,7 +9,12 @@ import { leadRoutes } from '../../src/features/crm/routes/lead.routes';
 import { errorHandler } from '../../src/shared/middlewares/errorHandler';
 import { setupDI } from '../../src/shared/di/setup';
 import { LeadFactory } from '../helpers/factories';
-import { withRlsBypass, withTenant, signUpRealUser, type RealSessionUser } from '../helpers/rbac-e2e-helpers';
+import {
+  withRlsBypass,
+  withTenant,
+  signUpRealUser,
+  type RealSessionUser,
+} from '../helpers/rbac-e2e-helpers';
 
 // TEST-006 (dívida técnica): RBAC ponta-a-ponta numa rota REAL.
 //
@@ -39,8 +44,9 @@ function buildLeadsApp(): Express {
 }
 
 async function createLead(organizationId: string): Promise<{ id: string }> {
-  return withTenant(organizationId, () =>
-    prisma.lead.create({ data: LeadFactory.build() }) as unknown as Promise<{ id: string }>
+  return withTenant(
+    organizationId,
+    () => prisma.lead.create({ data: LeadFactory.build() }) as unknown as Promise<{ id: string }>,
   );
 }
 
@@ -86,18 +92,20 @@ describe('RBAC ponta-a-ponta em DELETE /api/leads/:id (TEST-006)', () => {
   it('(b) autenticado mas sem role suficiente: VISUALIZADOR tentando deletar recebe 403 do requireRole real', async () => {
     const lead = await createLead(viewerA.organizationId);
 
-    const res = await request(app)
-      .delete(`/api/leads/${lead.id}`)
-      .set('Cookie', viewerA.cookie);
+    const res = await request(app).delete(`/api/leads/${lead.id}`).set('Cookie', viewerA.cookie);
 
     expect(res.status).toBe(403);
     expect(res.body.success).toBe(false);
     // Mensagem vem literalmente de requireRole.ts — prova que quem decidiu foi o middleware real,
     // não um stub.
-    expect(res.body.error).toBe('Insufficient permissions. Required: ADMIN or GESTOR. Your role: VISUALIZADOR.');
+    expect(res.body.error).toBe(
+      'Insufficient permissions. Required: ADMIN or GESTOR. Your role: VISUALIZADOR.',
+    );
 
     // E o lead continua vivo — o 403 barrou antes de qualquer escrita no banco.
-    const stillThere = await withTenant(viewerA.organizationId, () => prisma.lead.findUnique({ where: { id: lead.id } }));
+    const stillThere = await withTenant(viewerA.organizationId, () =>
+      prisma.lead.findUnique({ where: { id: lead.id } }),
+    );
     expect(stillThere?.deletedAt).toBeNull();
   });
 
@@ -119,7 +127,9 @@ describe('RBAC ponta-a-ponta em DELETE /api/leads/:id (TEST-006)', () => {
     // fora de sincronia com as migrations aplicadas — "column Company.newsMentions does not
     // exist" —, um drift de schema pré-existente e sem relação com RBAC/TEST-006. A verificação
     // direta no banco acima já comprova a exclusão de verdade.)
-    const afterDelete = await withTenant(adminA.organizationId, () => prisma.lead.findUnique({ where: { id: lead.id } }));
+    const afterDelete = await withTenant(adminA.organizationId, () =>
+      prisma.lead.findUnique({ where: { id: lead.id } }),
+    );
     expect(afterDelete).toBeNull();
   });
 
@@ -139,7 +149,9 @@ describe('RBAC ponta-a-ponta em DELETE /api/leads/:id (TEST-006)', () => {
     expect(res.status).not.toBe(204);
     expect(res.body.success).toBe(false);
 
-    const untouched = await withTenant(adminA.organizationId, () => prisma.lead.findUnique({ where: { id: leadFromOrgA.id } }));
+    const untouched = await withTenant(adminA.organizationId, () =>
+      prisma.lead.findUnique({ where: { id: leadFromOrgA.id } }),
+    );
     expect(untouched).not.toBeNull();
     expect(untouched?.deletedAt).toBeNull();
     expect(untouched?.organizationId).toBe(adminA.organizationId);
@@ -152,9 +164,7 @@ describe('RBAC ponta-a-ponta em DELETE /api/leads/:id (TEST-006)', () => {
 
     const lead = await createLead(gestor.organizationId);
 
-    const res = await request(app)
-      .delete(`/api/leads/${lead.id}`)
-      .set('Cookie', gestor.cookie);
+    const res = await request(app).delete(`/api/leads/${lead.id}`).set('Cookie', gestor.cookie);
 
     expect(res.status).toBe(204);
   });

@@ -7,7 +7,10 @@ import { setupDI } from '../../src/shared/di/setup';
 import { runAgentCatalogImport } from '../../scripts/import-agent-catalog';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
-import { assignJobRole, getJobRoleByCode } from '../../src/features/job-roles/services/jobRole.service';
+import {
+  assignJobRole,
+  getJobRoleByCode,
+} from '../../src/features/job-roles/services/jobRole.service';
 import { createAccessRequest } from '../../src/features/job-roles/services/accessRequest.service';
 import {
   AgentBusServiceError,
@@ -100,7 +103,7 @@ describe('Agent Bus + Handoffs (PROMPT 8)', () => {
     // (sem bypass_rls — ver migration 20260909040000_agent_bus_handoffs e o mesmo padrão já
     // documentado em access-request.test.ts). Escopo do wrap deliberadamente limitado só a estes 4
     // modelos (nunca o afterAll inteiro) — o resto roda fora, mesmo espírito de
-        // role-supervisor.test.ts/access-request.test.ts (evita a contenção de lock real medida em CI
+    // role-supervisor.test.ts/access-request.test.ts (evita a contenção de lock real medida em CI
     // quando um afterAll inteiro é envolvido).
     await requestContext.run({ tenantId: ORG_ID }, async () => {
       await prisma.agentHandoffMessage.deleteMany({ where: { organizationId: ORG_ID } });

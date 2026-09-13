@@ -66,7 +66,7 @@ services:
       - key: PUBLIC_BASE_URL
         sync: false
       - key: TRUST_PROXY
-        value: "true"
+        value: 'true'
       - key: PROSPECTING_PROVIDER_MODE
         value: hybrid
       - key: GOOGLE_MAPS_API_KEY
@@ -93,9 +93,9 @@ services:
       - key: PLATFORM_OPERATOR_TOKEN
         sync: false
       - key: ENABLE_SEARCH
-        value: "false"
+        value: 'false'
       - key: ENABLE_QUEUES
-        value: "false"
+        value: 'false'
       # Redis é opcional (liga filas BullMQ/rate-limit distribuído — ver src/lib/queue/redis.ts).
       # Defina REDIS_URL (ex.: Render Key Value ou Upstash) e ENABLE_QUEUES=true para habilitar.
       - key: REDIS_URL
@@ -172,24 +172,24 @@ services:
       # para processar fila — sem Redis ativo ele sobe e fica "degraded" (ver /health/ready em
       # worker.ts), então isso precisa ser true de verdade quando o serviço for ativado.
       - key: ENABLE_QUEUES
-        value: "true"
+        value: 'true'
       - key: REDIS_URL
         sync: false
       - key: ENABLE_SEARCH
-        value: "false"
+        value: 'false'
       - key: SDR_COLD_CALL_ENABLED
-        value: "false"
+        value: 'false'
       - key: SDR_COLD_CALL_ORGANIZATIONS
         sync: false
       - key: SWARM_SCHEDULER_ENABLED
-        value: "false"
+        value: 'false'
       - key: SWARM_SCHEDULER_ORGANIZATIONS
         sync: false
       # Porta interna do health server minimalista de worker.ts (GET /health/live, /health/ready).
       # Sem porta pública exigida pelo Render para `type: worker`, mas configure o probe de
       # readiness do orquestrador (quando disponível) para bater aqui.
       - key: WORKER_HEALTH_PORT
-        value: "3006"
+        value: '3006'
       # NOTA (documentado, não incluído automaticamente nesta rodada — ver handoff 16 para
       # inventário completo): antes de ativar este serviço para processar filas de verdade, os
       # jobs também dependem de credenciais de provedor específicas por fila — Bitrix

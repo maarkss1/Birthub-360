@@ -13,7 +13,7 @@ import { requestContext } from '../../src/lib/async-context';
 // `ingestionService`/`searchService` chamam `generateEmbedding` no caminho exercitado aqui. O que
 // importa é isolamento de tenant, não qualidade de ranking semântico, então um vetor fixo serve.
 vi.mock('../../src/lib/ai/gateway', () => ({
-    generateEmbedding: vi.fn(async () => new Array(768).fill(0).map((_, i) => Math.sin(i + 1))),
+  generateEmbedding: vi.fn(async () => new Array(768).fill(0).map((_, i) => Math.sin(i + 1))),
 }));
 
 import { ingestionService } from '../../src/features/knowledge/ingestion.service';
@@ -25,84 +25,104 @@ const ORG_A = 'test-org-id'; // pré-seedado por tests/helpers/integration-setup
 const ORG_B = 'test-org-id-rag-b';
 
 describe('RAG (Base de Conhecimento): isolamento de tenant na busca híbrida', () => {
-    let docAId = '';
-    let docBId = '';
+  let docAId = '';
+  let docBId = '';
 
-    beforeEach(async () => {
-        await requestContext.run({ bypassRls: true }, async () => {
-            const exists = await prisma.organization.findUnique({ where: { id: ORG_B } });
-            if (!exists) await prisma.organization.create({ data: { id: ORG_B, name: 'Test Org RAG B' } });
-        });
-
-        const docA = await requestContext.run({ tenantId: ORG_A }, () =>
-            ingestionService.ingestText({
-                organizationId: ORG_A,
-                title: 'Playbook exclusivo do tenant A',
-                content: 'Estratégia confidencial de precificação para o segmento de logística pesada, uso interno do tenant A.',
-            }));
-        docAId = docA.id;
-
-        const docB = await requestContext.run({ tenantId: ORG_B }, () =>
-            ingestionService.ingestText({
-                organizationId: ORG_B,
-                title: 'Playbook exclusivo do tenant B',
-                content: 'Estratégia confidencial de precificação para o segmento de logística pesada, uso interno do tenant B.',
-            }));
-        docBId = docB.id;
+  beforeEach(async () => {
+    await requestContext.run({ bypassRls: true }, async () => {
+      const exists = await prisma.organization.findUnique({ where: { id: ORG_B } });
+      if (!exists)
+        await prisma.organization.create({ data: { id: ORG_B, name: 'Test Org RAG B' } });
     });
 
-    afterEach(async () => {
-        // Document não está no allowlist de bypass (BYPASS_RLS_ALLOWED_MODELS, src/lib/prisma.ts)
-        // — ITEM-02 fechou a RLS dessa tabela pra bypass. Um `deleteMany` sob bypass aqui agora
-        // afeta 0 linhas silenciosamente, deixando documentos/chunks de execuções anteriores
-        // acumularem entre testes (causa real de resultados de busca "vazando" doc antigo do mesmo
-        // tenant, não do outro tenant). Limpa dentro do contexto de cada tenant.
-        await requestContext.run({ tenantId: ORG_A }, () =>
-            prisma.document.deleteMany({ where: { organizationId: ORG_A } }));
-        await requestContext.run({ tenantId: ORG_B }, () =>
-            prisma.document.deleteMany({ where: { organizationId: ORG_B } }));
-        await requestContext.run({ bypassRls: true }, () =>
-            prisma.organization.deleteMany({ where: { id: ORG_B } }));
-    });
+    const docA = await requestContext.run({ tenantId: ORG_A }, () =>
+      ingestionService.ingestText({
+        organizationId: ORG_A,
+        title: 'Playbook exclusivo do tenant A',
+        content:
+          'Estratégia confidencial de precificação para o segmento de logística pesada, uso interno do tenant A.',
+      }),
+    );
+    docAId = docA.id;
 
-    it('busca do tenant A nunca retorna trecho do documento do tenant B, mesmo com termos quase idênticos', async () => {
-        const result = await requestContext.run({ tenantId: ORG_A }, () =>
-            searchService.hybridSearch(ORG_A, 'estratégia confidencial de precificação logística pesada'));
+    const docB = await requestContext.run({ tenantId: ORG_B }, () =>
+      ingestionService.ingestText({
+        organizationId: ORG_B,
+        title: 'Playbook exclusivo do tenant B',
+        content:
+          'Estratégia confidencial de precificação para o segmento de logística pesada, uso interno do tenant B.',
+      }),
+    );
+    docBId = docB.id;
+  });
 
-        expect(result.hits.length).toBeGreaterThan(0);
-        expect(result.hits.every((hit) => hit.documentId === docAId)).toBe(true);
-        expect(result.hits.some((hit) => hit.documentId === docBId)).toBe(false);
-    });
+  afterEach(async () => {
+    // Document não está no allowlist de bypass (BYPASS_RLS_ALLOWED_MODELS, src/lib/prisma.ts)
+    // — ITEM-02 fechou a RLS dessa tabela pra bypass. Um `deleteMany` sob bypass aqui agora
+    // afeta 0 linhas silenciosamente, deixando documentos/chunks de execuções anteriores
+    // acumularem entre testes (causa real de resultados de busca "vazando" doc antigo do mesmo
+    // tenant, não do outro tenant). Limpa dentro do contexto de cada tenant.
+    await requestContext.run({ tenantId: ORG_A }, () =>
+      prisma.document.deleteMany({ where: { organizationId: ORG_A } }),
+    );
+    await requestContext.run({ tenantId: ORG_B }, () =>
+      prisma.document.deleteMany({ where: { organizationId: ORG_B } }),
+    );
+    await requestContext.run({ bypassRls: true }, () =>
+      prisma.organization.deleteMany({ where: { id: ORG_B } }),
+    );
+  });
 
-    it('busca do tenant B nunca retorna trecho do documento do tenant A', async () => {
-        const result = await requestContext.run({ tenantId: ORG_B }, () =>
-            searchService.hybridSearch(ORG_B, 'estratégia confidencial de precificação logística pesada'));
+  it('busca do tenant A nunca retorna trecho do documento do tenant B, mesmo com termos quase idênticos', async () => {
+    const result = await requestContext.run({ tenantId: ORG_A }, () =>
+      searchService.hybridSearch(ORG_A, 'estratégia confidencial de precificação logística pesada'),
+    );
 
-        expect(result.hits.length).toBeGreaterThan(0);
-        expect(result.hits.every((hit) => hit.documentId === docBId)).toBe(true);
-        expect(result.hits.some((hit) => hit.documentId === docAId)).toBe(false);
-    });
+    expect(result.hits.length).toBeGreaterThan(0);
+    expect(result.hits.every((hit) => hit.documentId === docAId)).toBe(true);
+    expect(result.hits.some((hit) => hit.documentId === docBId)).toBe(false);
+  });
 
-    it('RAG-001: VectorSearchService (usado pelo agente de SDR outbound) delega ao pipeline real com tenant isolado', async () => {
-        const results = await requestContext.run({ tenantId: ORG_A }, () =>
-            VectorSearchService.searchChunks('estratégia confidencial de precificação logística pesada', ORG_A, 5));
+  it('busca do tenant B nunca retorna trecho do documento do tenant A', async () => {
+    const result = await requestContext.run({ tenantId: ORG_B }, () =>
+      searchService.hybridSearch(ORG_B, 'estratégia confidencial de precificação logística pesada'),
+    );
 
-        expect(results.length).toBeGreaterThan(0);
-        expect(results.every((hit) => (hit.metadata as { documentId?: string } | null)?.documentId === docAId)).toBe(true);
-    });
+    expect(result.hits.length).toBeGreaterThan(0);
+    expect(result.hits.every((hit) => hit.documentId === docBId)).toBe(true);
+    expect(result.hits.some((hit) => hit.documentId === docAId)).toBe(false);
+  });
 
-    // RAG-001 (Onda 7): vectorStore.similaritySearch (playbookTool.ts, ferramenta search_playbook do
-    // enxame de IA) também delega ao mesmo pipeline real, com o mesmo isolamento de tenant — e agora
-    // devolve `documentTitle`, exigido para toda resposta de RAG citar a fonte real (nunca afirmar
-    // ter encontrado algo que não existe).
-    it('vectorStore.similaritySearch (playbook do enxame de IA) isola por tenant e cita a fonte real', async () => {
-        const results = await requestContext.run({ tenantId: ORG_A }, () =>
-            vectorStore.similaritySearch('estratégia confidencial de precificação logística pesada', 5));
+  it('RAG-001: VectorSearchService (usado pelo agente de SDR outbound) delega ao pipeline real com tenant isolado', async () => {
+    const results = await requestContext.run({ tenantId: ORG_A }, () =>
+      VectorSearchService.searchChunks(
+        'estratégia confidencial de precificação logística pesada',
+        ORG_A,
+        5,
+      ),
+    );
 
-        expect(results.length).toBeGreaterThan(0);
-        expect(results.every((hit) => hit.documentId === docAId)).toBe(true);
-        expect(results.some((hit) => hit.documentId === docBId)).toBe(false);
-        expect(results[0].documentTitle).toBe('Playbook exclusivo do tenant A');
-        expect(results[0].chunkIndex).toBeGreaterThanOrEqual(0);
-    });
+    expect(results.length).toBeGreaterThan(0);
+    expect(
+      results.every(
+        (hit) => (hit.metadata as { documentId?: string } | null)?.documentId === docAId,
+      ),
+    ).toBe(true);
+  });
+
+  // RAG-001 (Onda 7): vectorStore.similaritySearch (playbookTool.ts, ferramenta search_playbook do
+  // enxame de IA) também delega ao mesmo pipeline real, com o mesmo isolamento de tenant — e agora
+  // devolve `documentTitle`, exigido para toda resposta de RAG citar a fonte real (nunca afirmar
+  // ter encontrado algo que não existe).
+  it('vectorStore.similaritySearch (playbook do enxame de IA) isola por tenant e cita a fonte real', async () => {
+    const results = await requestContext.run({ tenantId: ORG_A }, () =>
+      vectorStore.similaritySearch('estratégia confidencial de precificação logística pesada', 5),
+    );
+
+    expect(results.length).toBeGreaterThan(0);
+    expect(results.every((hit) => hit.documentId === docAId)).toBe(true);
+    expect(results.some((hit) => hit.documentId === docBId)).toBe(false);
+    expect(results[0].documentTitle).toBe('Playbook exclusivo do tenant A');
+    expect(results[0].chunkIndex).toBeGreaterThanOrEqual(0);
+  });
 });

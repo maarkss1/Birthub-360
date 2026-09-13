@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { runEnrichmentCascade } from '@/features/prospecting/services/enrichmentCascade.service';
-import { AppError } from '@/shared/middlewares/errorHandler';
-import { prisma } from '@/lib/prisma';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   enrichOrganizationByDomain,
   enrichOrganizationWithContacts,
 } from '@/features/prospecting/services/apollo.service';
+import { runEnrichmentCascade } from '@/features/prospecting/services/enrichmentCascade.service';
 import {
   findEmailViaHunter,
   findPeopleViaDomainSearch,
 } from '@/features/prospecting/services/hunter.service';
 import { searchGooglePlaceDetailed } from '@/features/prospecting/services/places.service';
+import { prisma } from '@/lib/prisma';
+import { AppError } from '@/shared/middlewares/errorHandler';
 
 // Onda 2 (05) — critério "provider com erro silencioso": este arquivo era um placeholder que
 // nunca chamava `runEnrichmentCascade` de verdade (só afirmava fatos triviais sobre um objeto
@@ -151,7 +151,11 @@ describe('runEnrichmentCascade', () => {
       const logCall = vi.mocked(prisma.enrichmentLog.create).mock.calls[0][0] as {
         data: Record<string, unknown>;
       };
-      expect(logCall.data).toMatchObject({ status: 'success', dataOrigin: 'confirmado' });
+      expect(logCall.data).toMatchObject({
+        status: 'success',
+        dataOrigin: 'confirmado',
+        appliedToCompany: true,
+      });
 
       const companyUpdateCalls = vi.mocked(prisma.company.update).mock.calls;
       const finalUpdate = companyUpdateCalls[companyUpdateCalls.length - 1][0] as {
@@ -260,7 +264,11 @@ describe('runEnrichmentCascade', () => {
       const logCall = vi.mocked(prisma.enrichmentLog.create).mock.calls[0][0] as {
         data: Record<string, unknown>;
       };
-      expect(logCall.data).toMatchObject({ status: 'failed', dataOrigin: null });
+      expect(logCall.data).toMatchObject({
+        status: 'failed',
+        dataOrigin: null,
+        appliedToCompany: false,
+      });
       const rawData = logCall.data.rawData as { errors: Record<string, string> };
       expect(rawData.errors.apollo).toBeDefined();
       expect(rawData.errors.googlePlaces).toBeDefined();
@@ -287,7 +295,11 @@ describe('runEnrichmentCascade', () => {
       const logCall = vi.mocked(prisma.enrichmentLog.create).mock.calls[0][0] as {
         data: Record<string, unknown>;
       };
-      expect(logCall.data).toMatchObject({ status: 'not_found', dataOrigin: null });
+      expect(logCall.data).toMatchObject({
+        status: 'not_found',
+        dataOrigin: null,
+        appliedToCompany: false,
+      });
 
       const companyUpdateCalls = vi.mocked(prisma.company.update).mock.calls;
       const finalUpdate = companyUpdateCalls[companyUpdateCalls.length - 1][0] as {

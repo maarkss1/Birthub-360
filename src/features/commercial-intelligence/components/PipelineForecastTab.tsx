@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
 import { EmptyState } from '../../../components/ui/EmptyState';
-import { KpiTile } from './KpiTile';
-import { MetricInfo } from './MetricInfo';
-import { CloseDateIntelligenceCard } from './CloseDateIntelligenceCard';
-import { ForecastAccuracyCard } from './ForecastAccuracyCard';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import {
+  type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
   formatMultiple,
   formatPercent,
-  type CommercialFilter,
   type PipelineCreation,
 } from '../commercialIntelligence.api';
+import { CloseDateIntelligenceCard } from './CloseDateIntelligenceCard';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
+import { ForecastAccuracyCard } from './ForecastAccuracyCard';
+import { KpiTile } from './KpiTile';
+import { MetricInfo } from './MetricInfo';
 
 function BreakdownTable({
   title,

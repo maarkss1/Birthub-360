@@ -125,7 +125,7 @@ function renderMarkdown(
   prereleaseRows: InventoryRow[],
   deprecatedRows: DeprecatedRow[],
   hadLog: boolean,
-  totalResolved: number
+  totalResolved: number,
 ): string {
   const today = new Date().toISOString().slice(0, 10);
   const lines: string[] = [];
@@ -134,13 +134,13 @@ function renderMarkdown(
   lines.push(
     `Gerado automaticamente por \`npm run security:dependency-inventory\` ` +
       `(\`scripts/security/dependency-inventory.ts\`). **Não edite manualmente** — rode o script ` +
-      `de novo para atualizar. Última geração: ${today}.`
+      `de novo para atualizar. Última geração: ${today}.`,
   );
   lines.push('');
   lines.push(
     'Este arquivo cobre visibilidade (o que existe e por quê). Para vulnerabilidade conhecida ' +
       '(CVE/GHSA) e o waiver formal correspondente, a fonte de verdade continua sendo ' +
-      '`docs/security/AUDIT_WAIVERS.md` — não duplique um waiver de vulnerabilidade aqui.'
+      '`docs/security/AUDIT_WAIVERS.md` — não duplique um waiver de vulnerabilidade aqui.',
   );
   lines.push('');
   lines.push(`Total de pacotes resolvidos em \`package-lock.json\`: **${totalResolved}**.`);
@@ -154,7 +154,7 @@ function renderMarkdown(
     lines.push('|---|---|---|---|');
     for (const row of prereleaseRows) {
       lines.push(
-        `| \`${row.name}\` | \`${row.version}\` | ${row.direct ? 'Direta' : 'Transitiva'} | ${row.prerelease} |`
+        `| \`${row.name}\` | \`${row.version}\` | ${row.direct ? 'Direta' : 'Transitiva'} | ${row.prerelease} |`,
       );
     }
   }
@@ -165,7 +165,7 @@ function renderMarkdown(
     lines.push(
       '_Nenhum log de instalação foi informado a este script (`--npm-log`/`$NPM_INSTALL_LOG`) — ' +
         'esta seção não foi avaliada nesta execução, não é evidência de "zero pacotes deprecated".' +
-        ' Rode com o log de um `npm ci` recente para preencher._'
+        ' Rode com o log de um `npm ci` recente para preencher._',
     );
   } else if (deprecatedRows.length === 0) {
     lines.push('Nenhum aviso `npm warn deprecated` encontrado no log informado.');
@@ -173,13 +173,15 @@ function renderMarkdown(
     lines.push('| Pacote | Versão | Aviso do npm |');
     lines.push('|---|---|---|');
     for (const row of deprecatedRows) {
-      lines.push(`| \`${row.name}\` | \`${row.version}\` | ${escapeMarkdownTableCell(row.message)} |`);
+      lines.push(
+        `| \`${row.name}\` | \`${row.version}\` | ${escapeMarkdownTableCell(row.message)} |`,
+      );
     }
   }
   lines.push('');
   lines.push(
     'Ver `docs/security/DEPENDENCY_POLICY.md` para a política de atualização/estabilização e a ' +
-      'justificativa de cada dependência RC/beta **direta** aceita.'
+      'justificativa de cada dependência RC/beta **direta** aceita.',
   );
   lines.push('');
   return lines.join('\n');
@@ -203,7 +205,9 @@ function parseArgs(argv: string[]): { npmLogPath: string | null; outPath: string
 function main(): void {
   const { npmLogPath, outPath } = parseArgs(process.argv.slice(2));
 
-  const lock = JSON.parse(readFileSync(path.resolve(process.cwd(), 'package-lock.json'), 'utf-8')) as PackageLock;
+  const lock = JSON.parse(
+    readFileSync(path.resolve(process.cwd(), 'package-lock.json'), 'utf-8'),
+  ) as PackageLock;
   const pkg = JSON.parse(readFileSync(path.resolve(process.cwd(), 'package.json'), 'utf-8')) as {
     dependencies?: Record<string, string>;
     devDependencies?: Record<string, string>;
@@ -220,7 +224,9 @@ function main(): void {
     deprecatedRows = parseDeprecatedFromLog(log);
     hadLog = true;
   } else if (npmLogPath) {
-    console.warn(`⚠️  --npm-log apontou para "${npmLogPath}", mas o arquivo não existe. Ignorando.`);
+    console.warn(
+      `⚠️  --npm-log apontou para "${npmLogPath}", mas o arquivo não existe. Ignorando.`,
+    );
   }
 
   const markdown = renderMarkdown(prereleaseRows, deprecatedRows, hadLog, inventory.length);
@@ -228,7 +234,7 @@ function main(): void {
 
   console.log(
     `✅ Inventário gerado em ${outPath}: ${prereleaseRows.length} pacote(s) pré-release, ` +
-      `${deprecatedRows.length} pacote(s) deprecated (log ${hadLog ? 'informado' : 'ausente'}).`
+      `${deprecatedRows.length} pacote(s) deprecated (log ${hadLog ? 'informado' : 'ausente'}).`,
   );
 }
 

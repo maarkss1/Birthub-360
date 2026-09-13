@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { resolveLossReasonLabel, LOSS_REASONS } from '@/features/mesa-tratamento/constants/lossReasons';
+import {
+  resolveLossReasonLabel,
+  LOSS_REASONS,
+} from '@/features/mesa-tratamento/constants/lossReasons';
 
 /**
  * Regressão de um bug real: a Mesa de Tratamento gravava o ID numérico bruto do Bitrix

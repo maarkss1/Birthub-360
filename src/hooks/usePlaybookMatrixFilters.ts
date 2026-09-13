@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { PlaybookKey } from '../config/playbooks';
 import type {
   ObjectionMatrixItem,
   QualificationMatrixItem,
@@ -12,7 +13,7 @@ import type {
  * `brandMatrices.ts` — agora vêm do banco, já filtrados por marca pelo backend).
  */
 export function usePlaybookMatrixFilters(
-  selectedBrand: 'atlasgr' | 'totaltrac',
+  selectedBrand: PlaybookKey,
   objections: ObjectionMatrixItem[],
   qualifications: QualificationMatrixItem[],
 ) {

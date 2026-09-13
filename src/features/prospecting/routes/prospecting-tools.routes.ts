@@ -1,25 +1,25 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-
-import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema.js';
-import { discoverViaGooglePlaces, fetchKnownExclusions } from '../services/prospecting.service.js';
-import type { ProspectCriteria } from '../services/prospecting.service.js';
-import { fetchApolloCandidates } from '../services/apollo.service.js';
-import { findPeopleViaDomainSearch, findEmailViaHunter } from '../services/hunter.service.js';
-import {
-  searchGithubOrganizations,
-  getGithubOrganizationProfile,
-} from '../services/github.service.js';
-import { searchCompanyNews } from '../services/news.service.js';
-import { getYoutubeVideoInfo } from '../services/youtube.service.js';
-import { normalizeCompanyDomain } from '../utils/domain.js';
-import type { ExclusionSet } from '../utils/exclusionSet.js';
 import {
   getPaidProspectingKey,
   getProspectingProviderMode,
 } from '../../../config/prospecting-integrations.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema.js';
+import { fetchApolloCandidates } from '../services/apollo.service.js';
+import {
+  getGithubOrganizationProfile,
+  searchGithubOrganizations,
+} from '../services/github.service.js';
+import { findEmailViaHunter, findPeopleViaDomainSearch } from '../services/hunter.service.js';
+import { searchCompanyNews } from '../services/news.service.js';
+import type { ProspectCriteria } from '../services/prospecting.service.js';
+import { discoverViaGooglePlaces, fetchKnownExclusions } from '../services/prospecting.service.js';
+import { getYoutubeVideoInfo } from '../services/youtube.service.js';
+import { normalizeCompanyDomain } from '../utils/domain.js';
+import type { ExclusionSet } from '../utils/exclusionSet.js';
 
 const router = Router();
 
@@ -92,8 +92,11 @@ router.get('/status', (_req: Request, res: Response) => {
 
 // Ferramenta standalone: só Google Places (New) Text Search — sem Apollo/Nominatim como fallback,
 // diferente do /discover multi-provider.
+// ACH-05-01 (auditoria de segurança): chamada real e faturável — VISUALIZADOR (papel
+// somente-leitura, padrão de novo usuário) não pode acioná-la.
 router.post(
   '/google-places',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(discoverCriteriaSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -113,8 +116,10 @@ router.post(
 
 // Ferramenta standalone: só Apollo.io Organization Search — mesma função usada pelo /discover, mas
 // chamada isolada (já é 100% Apollo, não precisa de nenhuma adaptação pra "isolar" a fonte).
+// ACH-05-01: chamada real e faturável — mesma restrição de /google-places.
 router.post(
   '/apollo',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(discoverCriteriaSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -130,8 +135,10 @@ router.post(
 
 // Ferramenta standalone: só Hunter.io Domain Search — descobre pessoas reais a partir de e-mails
 // publicados num domínio, sem passar pelo People Search da Apollo.
+// ACH-05-01: chamada real e faturável — mesma restrição de /google-places.
 router.post(
   '/hunter',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(hunterDomainSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -154,8 +161,10 @@ router.post(
 
 // Ação secundária da ferramenta Hunter: verifica/encontra o e-mail de UMA pessoa já identificada
 // (nome + domínio), via Hunter.io Email Finder.
+// ACH-05-01: chamada real e faturável — mesma restrição de /google-places.
 router.post(
   '/hunter/verify-email',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(hunterVerifyEmailSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

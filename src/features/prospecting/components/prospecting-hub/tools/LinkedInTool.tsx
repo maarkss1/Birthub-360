@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Building2,
   CheckCircle2,
@@ -10,22 +9,22 @@ import {
   Users,
   Wand2,
 } from 'lucide-react';
+import { useState } from 'react';
 import { LinkedinIcon as Linkedin } from '../../../../../components/ui/icons/LinkedinIcon';
-import { api } from '../../../../../lib/api';
 import { BRAND } from '../../../../../config/brand';
-import { useActivePlaybook } from '../../../../../hooks/useActivePlaybook';
+import { api } from '../../../../../lib/api';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
   TOTALTRAC_SEGMENTO_OPTIONS,
 } from '../../../../../shared/constants/icp-options';
-import { normalizeCompanyDomain } from '../../../utils/domain';
-import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
 import type {
   DecisionMaker,
   ProspectCandidate,
   ProspectCriteria,
 } from '../../../services/prospecting.service';
+import { normalizeCompanyDomain } from '../../../utils/domain';
+import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
 import { CandidateCard } from '../CandidateCard';
 import { NotConfiguredBanner } from './NotConfiguredBanner';
 import { getErrorMessage, type PromoteResult } from './shared';
@@ -33,8 +32,9 @@ import { getErrorMessage, type PromoteResult } from './shared';
 type SubTab = 'empresas' | 'decisores';
 
 export function LinkedInTool({ configured }: { configured: boolean }) {
-  const { playbook } = useActivePlaybook();
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção.
+  const activeSegments = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
   const [subTab, setSubTab] = useState<SubTab>('empresas');
 
   // --- Empresas (Apollo Organization Search filtrado por linkedinUrl) ---

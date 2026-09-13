@@ -1,35 +1,35 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
+  Activity,
+  AlertTriangle,
   ArrowLeft,
   Building2,
-  MapPin,
-  Users,
-  FileText,
-  Activity,
-  Star,
-  Sparkles,
-  Loader2,
-  Wrench,
-  Tag,
-  Globe,
-  Phone,
-  ShieldCheck,
-  AlertTriangle,
-  Radar,
   Clock,
   DollarSign,
+  FileText,
+  Globe,
+  Loader2,
+  MapPin,
+  Phone,
+  Radar,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Tag,
+  Users,
+  Wrench,
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
-import type { Company } from '../../../types';
-import { api } from '../../../lib/api';
-import { formatCnpj } from '../../../lib/cnpj';
-import { TechToolLogo, type TechToolInfo } from '../../../components/ui/TechToolLogo';
-import { ToolTechPopover } from '../../../components/ui/ToolTechPopover';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ContextualTip } from '../../../components/ui/ContextualTip';
-import { clientLogger } from '../../../lib/clientLogger';
+import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
+import { type TechToolInfo, TechToolLogo } from '../../../components/ui/TechToolLogo';
+import { ToolTechPopover } from '../../../components/ui/ToolTechPopover';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { api } from '../../../lib/api';
+import { clientLogger } from '../../../lib/clientLogger';
+import { formatCnpj } from '../../../lib/cnpj';
 import { toast } from '../../../lib/toast';
+import type { Company } from '../../../types';
 
 interface CompanyDetailProps {
   companyId: string;

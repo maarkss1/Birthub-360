@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import type { PlaybookKey } from '../../../config/playbooks';
 import { authClient } from '../../../lib/auth-client';
 import { clientLogger } from '../../../lib/clientLogger';
+
 interface GoogleLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   /** Carteira comercial escolhida antes do login social, persistida para a sessão. Chave de
-   *  dado comercial (não de marca da plataforma) — ver src/config/brand.ts. */
-  selectedBrand: 'atlasgr' | 'totaltrac' | null;
+   *  dado comercial (não de marca da plataforma) — ver src/config/playbooks.ts. */
+  selectedBrand: PlaybookKey | null;
 }
 
 export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLoginModalProps) {

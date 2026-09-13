@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const generateAuthUrlMock = vi.fn(
   (_opts: { state: string }) => 'https://accounts.google.com/o/oauth2/v2/auth?mock=1',

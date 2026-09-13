@@ -1,6 +1,6 @@
-import type { ActivityRepository, ActivityListFilters } from '../domain/Activity';
 import type { z } from 'zod';
 import { activitySchema } from '../../../lib/zod';
+import type { ActivityListFilters, ActivityRepository } from '../domain/Activity';
 import { assertRealOwner } from '../domain/ownerGuard';
 
 export class ActivityUseCases {

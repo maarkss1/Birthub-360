@@ -1,7 +1,7 @@
 import { api } from '../../lib/api';
-import type { ActivityType, ActivityStatus } from '../../lib/zod';
+import type { ActivityStatus, ActivityType } from '../../lib/zod';
 
-export type { ActivityType, ActivityStatus };
+export type { ActivityStatus, ActivityType };
 
 export interface CalendarActivity {
   id: string;

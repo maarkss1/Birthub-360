@@ -43,7 +43,9 @@ describe('matchEconomicGroupByCnpjRoot — só relação matematicamente derivá
       { id: 'company-b', cnpj: '12.345.678/0002-71' },
       { id: 'company-a', cnpj: '12.345.678/0001-90' },
     ]);
-    expect(forward).toEqual([{ sourceCompanyId: 'company-a', targetCompanyId: 'company-b', cnpjRoot: '12345678' }]);
+    expect(forward).toEqual([
+      { sourceCompanyId: 'company-a', targetCompanyId: 'company-b', cnpjRoot: '12345678' },
+    ]);
     expect(reversed).toEqual(forward);
   });
 

@@ -1,7 +1,10 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { prisma } from '../../src/lib/prisma';
 import { listJobRoles } from '../../src/features/job-roles/services/jobRole.service';
-import { listAgentsForJobRole, getAgentDefinitionById } from '../../src/features/job-roles/services/agentCatalog.service';
+import {
+  listAgentsForJobRole,
+  getAgentDefinitionById,
+} from '../../src/features/job-roles/services/agentCatalog.service';
 import { COMMERCIAL_AGENT_REGISTRY } from '../../src/features/intelligence/agents/commercialAgentRegistry';
 import {
   runMultiCargoSeed,
@@ -21,7 +24,9 @@ describe('scripts/seed-multi-cargo.ts', () => {
   afterEach(async () => {
     await prisma.roleAgentGrant.deleteMany();
     await prisma.agentVersion.deleteMany();
-    await prisma.agentDefinition.deleteMany({ where: { code: { in: COMMERCIAL_AGENT_REGISTRY.map((a) => a.id) } } });
+    await prisma.agentDefinition.deleteMany({
+      where: { code: { in: COMMERCIAL_AGENT_REGISTRY.map((a) => a.id) } },
+    });
     await prisma.userJobRole.deleteMany();
   });
 
@@ -38,7 +43,10 @@ describe('scripts/seed-multi-cargo.ts', () => {
 
       const grantedAgents = await listAgentsForJobRole(jobRole!.id);
       const grant = grantedAgents.find((g) => g.agent.code === agent.id);
-      expect(grant, `agente ${agent.id} deveria estar concedido ao cargo ${jobRoleCode}`).toBeDefined();
+      expect(
+        grant,
+        `agente ${agent.id} deveria estar concedido ao cargo ${jobRoleCode}`,
+      ).toBeDefined();
       expect(grant?.agent.status).toBe(COMMERCIAL_STATUS_TO_AGENT_DEFINITION_STATUS[agent.status]);
     }
   });
@@ -56,7 +64,9 @@ describe('scripts/seed-multi-cargo.ts', () => {
     expect(agentDefinitions).toHaveLength(COMMERCIAL_AGENT_REGISTRY.length);
 
     for (const agent of agentDefinitions) {
-      const grants = await prisma.roleAgentGrant.findMany({ where: { agentDefinitionId: agent.id } });
+      const grants = await prisma.roleAgentGrant.findMany({
+        where: { agentDefinitionId: agent.id },
+      });
       expect(grants.length).toBeLessThanOrEqual(1);
     }
   });

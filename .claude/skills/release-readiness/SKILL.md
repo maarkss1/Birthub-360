@@ -61,7 +61,7 @@ Percorra estas frentes, citando arquivo real por achado:
   foi adicionado a essa lista fica **sem autenticação**, silenciosamente. Ao auditar segurança,
   sempre confira `server.ts` contra a lista real de `src/features/*/routes/*.routes.ts` — não
   assuma que todo router está protegido só porque routers "irmãos" estão. Rotas de webhook
-  (`birth-voice`, `3cx`, `bitrix` webhook) são montadas *antes* de `authenticateToken` de propósito
+  (`birth-voice`, `3cx`, `bitrix` webhook) são montadas _antes_ de `authenticateToken` de propósito
   — não as marque como bug, mas confirme que cada uma valida a origem/assinatura do provedor por
   outro meio.
 - **Integrações**: delegue a `integration-audit`.

@@ -19,8 +19,8 @@ experiência da **Birth Hub 360º**.
 - **Posicionamento:** ecossistema inteligente e unificado que atua como central de
   comando 360º para negócios — conectando dados, IA, automações e processos, e
   transformando o que está disperso em direção clara.
-- **Tagline:** *"Sua central de comando inteligente: integrando dados,
-  potencializando decisões e acelerando a execução."*
+- **Tagline:** _"Sua central de comando inteligente: integrando dados,
+  potencializando decisões e acelerando a execução."_
 - **Ideia central:** Dados → Decisões → Execução (conectar · potencializar · acelerar).
 - **Valores:** Innovation · Data Intelligence · Efficiency · Scalability.
 - **ICP:** qualquer empresa com área comercial que queira automatizar ponta a ponta.
@@ -30,15 +30,15 @@ experiência da **Birth Hub 360º**.
 
 ## 2. Paleta Oficial de Cores
 
-| Nome da Cor | Hex | Papel no sistema |
-|---|---|---|
-| **Antique Gold** | `#D4AF37` | **Primária.** Valor, foco e assinatura: ação principal, KPI, realce. |
-| **Deep Iris** | `#5B21B6` | Inteligência em movimento: halos, indicadores, órbita. |
-| **Orbit Blue** | `#0065D2` | Terceira cor da órbita 360º. |
-| **Obsidian Black** | `#0B132B` | Profundidade. Superfície escura e **texto sobre marca**. |
-| **Snow White** | `#F8FAFC` | Respiro. Texto sobre superfície escura. |
-| **Midnight** | `#08090F` | Fundo de página do tema escuro. |
-| **Parchment** | `#E9E4D9` | Superfície clara institucional. |
+| Nome da Cor        | Hex       | Papel no sistema                                                     |
+| ------------------ | --------- | -------------------------------------------------------------------- |
+| **Antique Gold**   | `#D4AF37` | **Primária.** Valor, foco e assinatura: ação principal, KPI, realce. |
+| **Deep Iris**      | `#5B21B6` | Inteligência em movimento: halos, indicadores, órbita.               |
+| **Orbit Blue**     | `#0065D2` | Terceira cor da órbita 360º.                                         |
+| **Obsidian Black** | `#0B132B` | Profundidade. Superfície escura e **texto sobre marca**.             |
+| **Snow White**     | `#F8FAFC` | Respiro. Texto sobre superfície escura.                              |
+| **Midnight**       | `#08090F` | Fundo de página do tema escuro.                                      |
+| **Parchment**      | `#E9E4D9` | Superfície clara institucional.                                      |
 
 **A regra de contraste que mais importa:** ouro é uma cor **clara**. Texto branco
 sobre `#D4AF37` mede 2.10:1 e nunca é aceitável. O par correto é Obsidian sobre
@@ -59,9 +59,9 @@ O gradiente é movimento, não decoração.
 
 ## 3. Tipografia
 
-- **Display (H1–H3):** *Bodoni Moda* — headlines, títulos, chamadas institucionais.
-- **Interface (H4–H6, corpo, tabelas):** *Inter* — menus, textos, dashboards, relatórios.
-- **Números tabulares:** *IBM Plex Mono*.
+- **Display (H1–H3):** _Bodoni Moda_ — headlines, títulos, chamadas institucionais.
+- **Interface (H4–H6, corpo, tabelas):** _Inter_ — menus, textos, dashboards, relatórios.
+- **Números tabulares:** _IBM Plex Mono_.
 
 Escala do brand book: Display 44–72 · Título 28–36 · Subtítulo 16–20 · Corpo 10–14
 · Label 8–10.
@@ -80,12 +80,12 @@ e latin-ext) — nenhuma requisição a CDN de fonte.
 O emblema concentra a tese da marca em um traço: um **B** de leitura geométrica
 como núcleo, cercado por um **anel dourado** e por uma **órbita cromática 360º**.
 
-| Elemento | Significado |
-|---|---|
-| B geométrico | Núcleo proprietário e memorável. |
-| Anel dourado | Precisão, valor e confiança. |
-| Órbita 360º | Conexão, movimento e continuidade. |
-| Azul + roxo | Tecnologia, inteligência e profundidade. |
+| Elemento     | Significado                              |
+| ------------ | ---------------------------------------- |
+| B geométrico | Núcleo proprietário e memorável.         |
+| Anel dourado | Precisão, valor e confiança.             |
+| Órbita 360º  | Conexão, movimento e continuidade.       |
+| Azul + roxo  | Tecnologia, inteligência e profundidade. |
 
 Arquivos-mestre em `identidade-visual/birthhub360/logos/` (símbolo, ícone reduzido
 e assinatura horizontal). Área de proteção: `X` = 1/4 do raio externo, livre em

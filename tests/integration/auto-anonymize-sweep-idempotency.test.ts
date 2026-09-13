@@ -14,8 +14,10 @@ import { ANONYMIZED_CONTACT_NAME } from '../../src/shared/services/dataSubjectEr
 //
 // IMPORTANTE (mesma pegadinha documentada nos outros specs deste diretório): o callback passado a
 // `requestContext.run()` precisa ser uma função `async`, mesmo sem `await` explícito no corpo.
-const withBypass = <T>(fn: () => Promise<T>): Promise<T> => requestContext.run({ bypassRls: true }, fn);
-const withTenant = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> => requestContext.run({ tenantId }, fn);
+const withBypass = <T>(fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ bypassRls: true }, fn);
+const withTenant = <T>(tenantId: string, fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ tenantId }, fn);
 
 // BUG REAL encontrado escrevendo este teste, CORRIGIDO na mesma sprint (SEC-007): até este ponto,
 // `runAutoAnonymizeSweep` fazia `prisma.lead.findMany(...)` sem nenhum `requestContext.run(...)`
@@ -54,7 +56,9 @@ describe('runAutoAnonymizeSweep — idempotência real (Postgres real)', () => {
     });
 
     const company = await withTenant(ORG, async () =>
-      prisma.company.create({ data: { legalName: 'Empresa Perdida LTDA', tradeName: 'Empresa Perdida' } }),
+      prisma.company.create({
+        data: { legalName: 'Empresa Perdida LTDA', tradeName: 'Empresa Perdida' },
+      }),
     );
     const contact = await withTenant(ORG, async () =>
       prisma.contact.create({
@@ -93,8 +97,9 @@ describe('runAutoAnonymizeSweep — idempotência real (Postgres real)', () => {
     // explicitamente antes de rodar a query, o mesmo padrão de
     // tests/integration/threecx-persistence.test.ts e tests/integration/prospecting-rls.test.ts.
     await withTenant(ORG, async () => {
-      await withRlsContext((tx) =>
-        tx.$executeRaw`UPDATE "Lead" SET "updatedAt" = NOW() - INTERVAL '100 days' WHERE id = ${lead.id}`,
+      await withRlsContext(
+        (tx) =>
+          tx.$executeRaw`UPDATE "Lead" SET "updatedAt" = NOW() - INTERVAL '100 days' WHERE id = ${lead.id}`,
       );
     });
 

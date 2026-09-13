@@ -1,42 +1,42 @@
-import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import {
-  Target,
-  AlertCircle,
-  RefreshCw,
-  Copy,
-  CheckCircle2,
-  Mail,
-  UserCheck,
-  ShieldAlert,
-  Phone,
-  MessageCircle,
-  PhoneMissed,
-  Calculator,
-  Search,
-  X,
-  Building2,
-  User,
-  Swords,
-  Sparkles,
-  Zap,
-  ChevronDown,
-  Check,
-  Bot,
   Activity,
+  AlertCircle,
+  Bot,
   BrainCircuit,
+  Building2,
+  Calculator,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Copy,
   Fingerprint,
+  Mail,
+  MessageCircle,
+  Phone,
+  PhoneMissed,
+  RefreshCw,
+  Search,
+  ShieldAlert,
+  Sparkles,
+  Swords,
+  Target,
+  User,
+  UserCheck,
   Workflow,
+  X,
+  Zap,
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from './ui/icons/LinkedinIcon';
-import { api } from '../lib/api';
-import type { Lead } from '../types';
-import { PIC_OPTIONS } from '../shared/constants/icp-options';
-import { AIPendingActions } from '../features/intelligence/components/AIPendingActions';
-import { useBrandAccent } from '../hooks/useBrandAccent';
-import { useActivePlaybook } from '../hooks/useActivePlaybook';
+import { useEffect, useRef, useState } from 'react';
 import { BRAND } from '../config/brand';
+import { AIPendingActions } from '../features/intelligence/components/AIPendingActions';
+import { useActivePlaybook } from '../hooks/useActivePlaybook';
+import { useBrandAccent } from '../hooks/useBrandAccent';
+import { api } from '../lib/api';
 import { clientLogger } from '../lib/clientLogger';
+import { PIC_OPTIONS } from '../shared/constants/icp-options';
+import type { Lead } from '../types';
+import { LinkedinIcon as Linkedin } from './ui/icons/LinkedinIcon';
 
 type ToolType =
   | 'script_call'
@@ -135,7 +135,9 @@ const TOOLS = [
   },
 ] as const;
 
-const ATLAS_COMPETITORS = [
+// Antes dividida entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificada num
+// único playbook geral (pedido explícito do usuário), sem descartar nenhuma das duas listas.
+const SUGGESTED_COMPETITORS = [
   'RasterGR',
   'Buonny',
   'BRK Tecnologia',
@@ -145,14 +147,10 @@ const ATLAS_COMPETITORS = [
 ];
 const TONES = ['Consultivo', 'Provocativo', 'Relacional', 'Técnico'];
 const OBJECTIVES = ['Descoberta', 'Follow-up', 'Fechamento'];
-const ATLAS_PERSONAS = [
+const PERSONAS = [
   'Dono / CEO',
   'Diretor de Logística / Supply',
   'Head / Gerente de GR (Risco)',
-  'TI / Compras',
-];
-const TOTALTRAC_PERSONAS = [
-  'Dono / CEO',
   'Gestor de Frota',
   'Diretor de Operações / Logística',
   'Segurança / SSMA',
@@ -162,8 +160,8 @@ const TOTALTRAC_PERSONAS = [
 export function Intelligence() {
   const accent = useBrandAccent();
   const { playbook, info: playbookMeta } = useActivePlaybook();
-  const suggestedCompetitors = playbook === 'atlasgr' ? ATLAS_COMPETITORS : [];
-  const personas = playbook === 'atlasgr' ? ATLAS_PERSONAS : TOTALTRAC_PERSONAS;
+  const suggestedCompetitors = SUGGESTED_COMPETITORS;
+  const personas = PERSONAS;
   const [activeTool, setActiveTool] = useState<ToolType>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string | null>(null);

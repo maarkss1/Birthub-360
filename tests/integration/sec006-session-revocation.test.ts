@@ -15,16 +15,19 @@ const TEST_PASSWORD = 'ChangePasswordTest123!';
 const NEW_PASSWORD = 'ChangePasswordTestNEW456!';
 
 function cookieFromHeaders(headers: Headers): string {
-  const raw: string[] = typeof headers.getSetCookie === 'function'
-    ? headers.getSetCookie()
-    : (headers.get('set-cookie') ? [headers.get('set-cookie') as string] : []);
+  const raw: string[] =
+    typeof headers.getSetCookie === 'function'
+      ? headers.getSetCookie()
+      : headers.get('set-cookie')
+        ? [headers.get('set-cookie') as string]
+        : [];
   if (raw.length === 0) throw new Error('Nenhum Set-Cookie retornado.');
   return raw.map((c) => c.split(';')[0]).join('; ');
 }
 
 async function getSessionUserId(cookie: string): Promise<string | null> {
   const session = await requestContext.run({ bypassRls: true }, () =>
-    auth.api.getSession({ headers: new Headers({ cookie }) })
+    auth.api.getSession({ headers: new Headers({ cookie }) }),
   );
   return (session?.user as { id?: string } | undefined)?.id ?? null;
 }
@@ -53,11 +56,11 @@ describe('SEC-006 — revogação de sessão ao trocar senha autenticado', () =>
     // sozinho mais (acha real do piloto de threat-modeling do Mantis: antes, qualquer
     // "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão na hora) — sem
     // mailbox real em teste, confirma o e-mail direto no banco antes do primeiro login.
-    const signUpResponse = await withRlsBypass(() =>
+    const signUpResponse = (await withRlsBypass(() =>
       auth.api.signUpEmail({
         body: { email, password: TEST_PASSWORD, name: 'SEC-006 Test User' },
-      })
-    ) as { user: { id: string; organizationId: string } };
+      }),
+    )) as { user: { id: string; organizationId: string } };
 
     createdUserIds.push(signUpResponse.user.id);
     createdOrgIds.push(signUpResponse.user.organizationId);
@@ -66,21 +69,21 @@ describe('SEC-006 — revogação de sessão ao trocar senha autenticado', () =>
     );
 
     // Sessão 1: primeiro login real do usuário, já com o e-mail confirmado.
-    const { headers: signIn1Headers } = await withRlsBypass(() =>
+    const { headers: signIn1Headers } = (await withRlsBypass(() =>
       auth.api.signInEmail({
         body: { email, password: TEST_PASSWORD },
         returnHeaders: true,
-      })
-    ) as unknown as { headers: Headers };
+      }),
+    )) as unknown as { headers: Headers };
     const session1Cookie = cookieFromHeaders(signIn1Headers);
 
     // Sessão 2: login real num "outro dispositivo" (mesma conta, cookie diferente).
-    const { headers: signInHeaders } = await withRlsBypass(() =>
+    const { headers: signInHeaders } = (await withRlsBypass(() =>
       auth.api.signInEmail({
         body: { email, password: TEST_PASSWORD },
         returnHeaders: true,
-      })
-    ) as unknown as { headers: Headers };
+      }),
+    )) as unknown as { headers: Headers };
     const session2Cookie = cookieFromHeaders(signInHeaders);
 
     // Confirma que as duas sessões funcionam ANTES da troca de senha.
@@ -88,13 +91,17 @@ describe('SEC-006 — revogação de sessão ao trocar senha autenticado', () =>
     expect(await getSessionUserId(session2Cookie)).toBe(signUpResponse.user.id);
 
     // Troca a senha USANDO a sessão 1, pedindo para revogar as demais.
-    const { headers: changePasswordHeaders } = await withRlsBypass(() =>
+    const { headers: changePasswordHeaders } = (await withRlsBypass(() =>
       auth.api.changePassword({
         headers: new Headers({ cookie: session1Cookie }),
-        body: { currentPassword: TEST_PASSWORD, newPassword: NEW_PASSWORD, revokeOtherSessions: true },
+        body: {
+          currentPassword: TEST_PASSWORD,
+          newPassword: NEW_PASSWORD,
+          revokeOtherSessions: true,
+        },
         returnHeaders: true,
-      })
-    ) as unknown as { headers: Headers };
+      }),
+    )) as unknown as { headers: Headers };
     const newSessionCookie = cookieFromHeaders(changePasswordHeaders);
 
     // Sessão 2 (outro dispositivo) precisa estar morta agora.

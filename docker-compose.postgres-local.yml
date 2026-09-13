@@ -35,7 +35,7 @@ services:
       # não seja a sua máquina local.
       APP_DB_PASSWORD: ${APP_DB_PASSWORD:-prospector_app_pass}
     ports:
-      - "5434:5432"
+      - '5434:5432'
     # Padrão do Docker (64MB) é insuficiente para VACUUM/hash join paralelos em tabelas
     # grandes (MarketIntelligenceCompany, dezenas de GB) — "No space left on device" ao
     # redimensionar segmento de memória compartilhada não é falta de espaço em disco.
@@ -52,7 +52,8 @@ services:
       - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prospector} -d ${POSTGRES_DB:-prospectordb}"]
+      test:
+        ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-prospector} -d ${POSTGRES_DB:-prospectordb}']
       interval: 10s
       timeout: 5s
       retries: 5

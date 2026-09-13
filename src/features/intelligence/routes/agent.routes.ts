@@ -1,11 +1,11 @@
-import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
 
 import { logger } from '../../../lib/logger.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { synthesizeSpeech } from '../services/voicebox.service.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { synthesizeSpeech } from '../services/voicebox.service.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);
@@ -30,18 +30,18 @@ router.post(
   },
 );
 
+import {
+  approveLearningProfileVersion,
+  getLearningProfileHistory,
+  LearningAgent,
+  rejectLearningProfileVersion,
+  rollbackLearningProfile,
+} from '../agents/learning.agent.js';
 // --- SWARM & CONTINUOUS LEARNING ENDPOINTS ---
 import { SwarmOrchestrator } from '../agents/supervisor.agent.js';
-import {
-  LearningAgent,
-  getLearningProfileHistory,
-  rollbackLearningProfile,
-  approveLearningProfileVersion,
-  rejectLearningProfileVersion,
-} from '../agents/learning.agent.js';
-import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
-import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service.js';
 import { getDatasetSummary, validateToolUseCases } from '../evaluation/goldenDataset.service.js';
+import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service.js';
+import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
 
 const swarmMissionSchema = z.object({
   mission: z.string().trim().min(1, 'A missão é obrigatória.').max(4_000),
@@ -201,11 +201,12 @@ router.get('/swarm/learn/history', async (req: Request, res: Response, next: Nex
   }
 });
 
+import { container } from '../../../shared/di/container.js';
+import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
 // --- CÉLULA COMERCIAL DE AGENTES (onda 43, Agente 13) ---
 import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry.js';
+import { ContractSignatureAgent } from '../agents/contractSignature.agent.js';
 import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
-import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
-import { container } from '../../../shared/di/container.js';
 
 // AI-005/golden-dataset acima já estabelece o precedente: catálogo estático (não dado de tenant)
 // só reaproveita a autenticação de '/api/agent'. `COMMERCIAL_AGENT_REGISTRY` é o mesmo caso —
@@ -353,6 +354,87 @@ router.post(
       ];
 
       const agent = new ChurnRetentionAgent();
+      const result = await agent.run(contextLines.join('\n'));
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ACH-17-02 (onda-43, handoff 13→17): fecha o handoff aberto — o Agente Contratos & Assinatura
+// narrava prontidão/status sem poder verificar dado real. `SignatureRequestRepositoryPort` agora
+// expõe `findByDocumentId` (RLS normal, resolvido via `organizationId` da sessão autenticada, nunca
+// do body). Signatários esperados e dados de prontidão continuam vindo do chamador (mesmo padrão de
+// `churn-retention` acima) — não existe hoje um serviço real de checklist de contrato para grounding
+// desses campos, só do status real de assinatura.
+interface SignatureStatusSourceContract {
+  findByDocumentId(
+    organizationId: string,
+    documentId: string,
+  ): Promise<{
+    id: string;
+    status: string;
+    provider: string;
+    signerEmail: string;
+    requestedAt: Date;
+    respondedAt: Date | null;
+  } | null>;
+}
+
+const contractSignatureRunSchema = z.object({
+  documentId: z.string().trim().min(1),
+  contractTitle: z.string().trim().optional(),
+  requiredSignatories: z
+    .array(
+      z.object({
+        name: z.string().trim().optional(),
+        email: z.string().trim().email(),
+      }),
+    )
+    .optional(),
+  missingData: z.array(z.string().trim().min(1)).optional(),
+});
+
+router.post(
+  '/commercial-cell/contract-signature/run',
+  writeRoles,
+  validateRequest(contractSignatureRunSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const { documentId, contractTitle, requiredSignatories, missingData } = req.body as z.infer<
+        typeof contractSignatureRunSchema
+      >;
+
+      const signatureRepository = container.resolve<SignatureStatusSourceContract>(
+        'SignatureRequestRepositoryPort',
+      );
+      const signatureRequest = await signatureRepository.findByDocumentId(
+        organizationId,
+        documentId,
+      );
+
+      const contextLines = [
+        `- Documento: ${contractTitle ?? documentId} (id ${documentId})`,
+        signatureRequest
+          ? `- Status real de assinatura (já verificado, não presumido): ${signatureRequest.status}, provedor ${signatureRequest.provider}, signatário ${signatureRequest.signerEmail}, solicitado em ${signatureRequest.requestedAt.toISOString()}${
+              signatureRequest.respondedAt
+                ? `, respondido em ${signatureRequest.respondedAt.toISOString()}`
+                : ', ainda sem resposta'
+            }.`
+          : '- Nenhuma solicitação de assinatura encontrada para este documento — ainda não foi enviado para assinatura.',
+        requiredSignatories && requiredSignatories.length > 0
+          ? `- Signatários esperados informados pelo chamador: ${requiredSignatories
+              .map((s) => `${s.name ?? 'sem nome'} <${s.email}>`)
+              .join('; ')}`
+          : '- Nenhum signatário adicional informado pelo chamador.',
+        missingData && missingData.length > 0
+          ? `- Dados obrigatórios ausentes reportados pelo chamador: ${missingData.join('; ')}`
+          : '- Nenhum dado obrigatório reportado como ausente pelo chamador.',
+      ];
+
+      const agent = new ContractSignatureAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
     } catch (err) {

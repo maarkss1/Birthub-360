@@ -46,56 +46,62 @@
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 import { parse as parseYaml } from 'yaml';
-import { computeOpenApiDrift, collectCompositionRootSource } from '../src/shared/contracts/openapiRouteInventory.js';
+import {
+  computeOpenApiDrift,
+  collectCompositionRootSource,
+} from '../src/shared/contracts/openapiRouteInventory.js';
 
 interface SubRouteDriftFinding {
-    method: string;
-    /** Path completo já no estilo do documento (sem `/api`, `:param` convertido para `{param}`). */
-    docStylePath: string;
-    /** Path completo como aparece no código-fonte (com `/api`, `:param` no estilo Express). */
-    sourcePath: string;
-    kind: 'undocumented-path' | 'undocumented-method';
+  method: string;
+  /** Path completo já no estilo do documento (sem `/api`, `:param` convertido para `{param}`). */
+  docStylePath: string;
+  /** Path completo como aparece no código-fonte (com `/api`, `:param` no estilo Express). */
+  sourcePath: string;
+  kind: 'undocumented-path' | 'undocumented-method';
 }
 
 const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const;
 
 function toDocStyleSegment(segment: string): string {
-    return segment.startsWith(':') ? `{${segment.slice(1)}}` : segment;
+  return segment.startsWith(':') ? `{${segment.slice(1)}}` : segment;
 }
 
 function toDocStylePath(sourcePath: string): string {
-    // remove o segmento inicial 'api' e converte ':param' -> '{param}', mesma convenção do path do YAML
-    const segments = sourcePath.split('/').filter(Boolean);
-    const withoutApi = segments[0] === 'api' ? segments.slice(1) : segments;
-    return '/' + withoutApi.map(toDocStyleSegment).join('/');
+  // remove o segmento inicial 'api' e converte ':param' -> '{param}', mesma convenção do path do YAML
+  const segments = sourcePath.split('/').filter(Boolean);
+  const withoutApi = segments[0] === 'api' ? segments.slice(1) : segments;
+  return '/' + withoutApi.map(toDocStyleSegment).join('/');
 }
 
 /** Mapa `nomeDoIdentificador -> caminho relativo de import`, a partir de `import { a, b } from '../x.js';` simples. */
 function buildImportMap(source: string): Map<string, string> {
-    const map = new Map<string, string>();
-    const importRegex = /import\s*\{([^}]+)\}\s*from\s*['"](\.\.?\/[^'"]+)['"]/g;
-    let match: RegExpExecArray | null;
-    while ((match = importRegex.exec(source)) !== null) {
-        const names = match[1].split(',').map((n) => n.trim()).filter(Boolean);
-        const importPath = match[2];
-        for (const rawName of names) {
-            // suporta 'foo as bar' pegando o nome local (depois do 'as', se houver)
-            const localName = rawName.includes(' as ') ? rawName.split(' as ')[1].trim() : rawName;
-            map.set(localName, importPath);
-        }
+  const map = new Map<string, string>();
+  const importRegex = /import\s*\{([^}]+)\}\s*from\s*['"](\.\.?\/[^'"]+)['"]/g;
+  let match: RegExpExecArray | null;
+  while ((match = importRegex.exec(source)) !== null) {
+    const names = match[1]
+      .split(',')
+      .map((n) => n.trim())
+      .filter(Boolean);
+    const importPath = match[2];
+    for (const rawName of names) {
+      // suporta 'foo as bar' pegando o nome local (depois do 'as', se houver)
+      const localName = rawName.includes(' as ') ? rawName.split(' as ')[1].trim() : rawName;
+      map.set(localName, importPath);
     }
-    return map;
+  }
+  return map;
 }
 
 interface TopLevelMount {
-    prefix: string;
-    routerVarName: string;
+  prefix: string;
+  routerVarName: string;
 }
 
 interface UseMount {
-    /** Path literal do primeiro argumento do `.use(...)`, ex.: '/api/analytics' ou '/suite'. */
-    path: string;
-    routerVarName: string;
+  /** Path literal do primeiro argumento do `.use(...)`, ex.: '/api/analytics' ou '/suite'. */
+  path: string;
+  routerVarName: string;
 }
 
 /**
@@ -106,32 +112,39 @@ interface UseMount {
  * duplicar esta regra de extração.
  */
 function extractUseMounts(source: string, callerVarName: string): UseMount[] {
-    const mounts: UseMount[] = [];
-    const safeName = escapeForRegex(callerVarName);
-    const useRegex = new RegExp(`${safeName}\\.use\\(\\s*['"](\\/[^'"]*)['"]\\s*,([^;]*?)\\)\\s*;`, 'g');
-    let match: RegExpExecArray | null;
-    while ((match = useRegex.exec(source)) !== null) {
-        const usePath = match[1];
-        const args = match[2].trim();
-        // último token da lista de argumentos precisa ser um identificador simples (nome de router
-        // importado) — se terminar em '}', ')' etc. é um handler inline ou expressão, não um router
-        // resolvível estaticamente, então pulamos esse mount (best-effort, sem falso positivo).
-        const lastArg = args.split(',').map((a) => a.trim()).filter(Boolean).pop();
-        if (!lastArg || !/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(lastArg)) continue;
-        mounts.push({ path: usePath, routerVarName: lastArg });
-    }
-    return mounts;
+  const mounts: UseMount[] = [];
+  const safeName = escapeForRegex(callerVarName);
+  const useRegex = new RegExp(
+    `${safeName}\\.use\\(\\s*['"](\\/[^'"]*)['"]\\s*,([^;]*?)\\)\\s*;`,
+    'g',
+  );
+  let match: RegExpExecArray | null;
+  while ((match = useRegex.exec(source)) !== null) {
+    const usePath = match[1];
+    const args = match[2].trim();
+    // último token da lista de argumentos precisa ser um identificador simples (nome de router
+    // importado) — se terminar em '}', ')' etc. é um handler inline ou expressão, não um router
+    // resolvível estaticamente, então pulamos esse mount (best-effort, sem falso positivo).
+    const lastArg = args
+      .split(',')
+      .map((a) => a.trim())
+      .filter(Boolean)
+      .pop();
+    if (!lastArg || !/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(lastArg)) continue;
+    mounts.push({ path: usePath, routerVarName: lastArg });
+  }
+  return mounts;
 }
 
 /** Extrai `app.use('/api/prefixo', ...middlewares, identificadorSimples)` no composition root. */
 function extractTopLevelRouterMounts(source: string): TopLevelMount[] {
-    return extractUseMounts(source, 'app')
-        .filter((mount) => mount.path.startsWith('/api/'))
-        .map((mount) => ({ prefix: mount.path, routerVarName: mount.routerVarName }));
+  return extractUseMounts(source, 'app')
+    .filter((mount) => mount.path.startsWith('/api/'))
+    .map((mount) => ({ prefix: mount.path, routerVarName: mount.routerVarName }));
 }
 
 function escapeForRegex(identifier: string): string {
-    return identifier.replace(/[$]/g, '\\$');
+  return identifier.replace(/[$]/g, '\\$');
 }
 
 /**
@@ -145,28 +158,36 @@ function escapeForRegex(identifier: string): string {
  * dois padrões reconhecíveis, devolve `null` e o mount é pulado (sem falso positivo).
  */
 function resolveRouterLocalVarName(source: string, exportedName: string): string | null {
-    const safeName = escapeForRegex(exportedName);
-    const aliasMatch = new RegExp(`export const ${safeName}\\s*=\\s*([A-Za-z_$][\\w$]*)\\s*;`).exec(source);
-    if (aliasMatch) return aliasMatch[1];
-    if (new RegExp(`export const ${safeName}\\s*=\\s*Router\\(`).test(source)) return exportedName;
-    return null;
+  const safeName = escapeForRegex(exportedName);
+  const aliasMatch = new RegExp(`export const ${safeName}\\s*=\\s*([A-Za-z_$][\\w$]*)\\s*;`).exec(
+    source,
+  );
+  if (aliasMatch) return aliasMatch[1];
+  if (new RegExp(`export const ${safeName}\\s*=\\s*Router\\(`).test(source)) return exportedName;
+  return null;
 }
 
 /** Extrai `<localVarName>.<method>('/subpath', ...)` literais de um arquivo de router de feature. */
-function extractRouterMethodPaths(source: string, localVarName: string): Array<{ method: string; subpath: string }> {
-    const found: Array<{ method: string; subpath: string }> = [];
-    const safeName = escapeForRegex(localVarName);
-    const routeRegex = new RegExp(`${safeName}\\.(${HTTP_METHODS.join('|')})\\(\\s*['"](\\/[^'"]*)['"]`, 'g');
-    let match: RegExpExecArray | null;
-    while ((match = routeRegex.exec(source)) !== null) {
-        found.push({ method: match[1], subpath: match[2] });
-    }
-    return found;
+function extractRouterMethodPaths(
+  source: string,
+  localVarName: string,
+): Array<{ method: string; subpath: string }> {
+  const found: Array<{ method: string; subpath: string }> = [];
+  const safeName = escapeForRegex(localVarName);
+  const routeRegex = new RegExp(
+    `${safeName}\\.(${HTTP_METHODS.join('|')})\\(\\s*['"](\\/[^'"]*)['"]`,
+    'g',
+  );
+  let match: RegExpExecArray | null;
+  while ((match = routeRegex.exec(source)) !== null) {
+    found.push({ method: match[1], subpath: match[2] });
+  }
+  return found;
 }
 
 function joinPrefixAndSubpath(prefix: string, subpath: string): string {
-    if (subpath === '/' || subpath === '') return prefix;
-    return `${prefix.replace(/\/$/, '')}${subpath.startsWith('/') ? subpath : `/${subpath}`}`;
+  if (subpath === '/' || subpath === '') return prefix;
+  return `${prefix.replace(/\/$/, '')}${subpath.startsWith('/') ? subpath : `/${subpath}`}`;
 }
 
 /**
@@ -186,68 +207,80 @@ function joinPrefixAndSubpath(prefix: string, subpath: string): string {
  * simplesmente abandonado em vez de arriscar reportar drift errado.
  */
 function resolveAndWalkRouter(
-    repoRoot: string,
-    absoluteFilePath: string,
-    localVarName: string,
-    prefix: string,
-    openapiPaths: Record<string, unknown>,
-    findings: SubRouteDriftFinding[],
-    visited: Set<string>,
+  repoRoot: string,
+  absoluteFilePath: string,
+  localVarName: string,
+  prefix: string,
+  openapiPaths: Record<string, unknown>,
+  findings: SubRouteDriftFinding[],
+  visited: Set<string>,
 ): boolean {
-    const visitKey = `${absoluteFilePath}::${localVarName}`;
-    if (visited.has(visitKey)) return false; // já resolvido por este caminho — evita ciclo/duplicata
-    visited.add(visitKey);
+  const visitKey = `${absoluteFilePath}::${localVarName}`;
+  if (visited.has(visitKey)) return false; // já resolvido por este caminho — evita ciclo/duplicata
+  visited.add(visitKey);
 
-    if (!existsSync(absoluteFilePath)) return false; // não resolveu o arquivo — pula, sem falso positivo
+  if (!existsSync(absoluteFilePath)) return false; // não resolveu o arquivo — pula, sem falso positivo
 
-    let source: string;
+  let source: string;
+  try {
+    source = readFileSync(absoluteFilePath, 'utf-8');
+  } catch {
+    return false;
+  }
+
+  const methodPaths = extractRouterMethodPaths(source, localVarName);
+  for (const { method, subpath } of methodPaths) {
+    const sourcePath = joinPrefixAndSubpath(prefix, subpath);
+    const docStylePath = toDocStylePath(sourcePath);
+    const pathItem = openapiPaths[docStylePath] as Record<string, unknown> | undefined;
+    if (!pathItem) {
+      findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-path' });
+    } else if (!(method in pathItem)) {
+      findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-method' });
+    }
+  }
+
+  // Passe 2 recursivo: segue `<localVarName>.use('/subprefixo', outroRouterImportado)` aninhado
+  // dentro deste mesmo arquivo, resolvendo o import relativo a ESTE arquivo (não ao
+  // bootstrapDir/composition root) antes de recursar com o prefixo composto.
+  const importMap = buildImportMap(source);
+  const nestedMounts = extractUseMounts(source, localVarName);
+  for (const nested of nestedMounts) {
+    const importPath = importMap.get(nested.routerVarName);
+    if (!importPath) continue; // sub-router não importado por nome simples resolvível — pula
+
+    const relativeToTs = importPath.endsWith('.js')
+      ? importPath.slice(0, -3) + '.ts'
+      : `${importPath}.ts`;
+    const nestedAbsolutePath = path.normalize(
+      path.join(path.dirname(absoluteFilePath), relativeToTs),
+    );
+    if (!nestedAbsolutePath.startsWith(path.join(repoRoot, 'src') + path.sep)) continue; // fora do repo, não segue
+
+    if (!existsSync(nestedAbsolutePath)) continue;
+    let nestedSource: string;
     try {
-        source = readFileSync(absoluteFilePath, 'utf-8');
+      nestedSource = readFileSync(nestedAbsolutePath, 'utf-8');
     } catch {
-        return false;
+      continue;
     }
 
-    const methodPaths = extractRouterMethodPaths(source, localVarName);
-    for (const { method, subpath } of methodPaths) {
-        const sourcePath = joinPrefixAndSubpath(prefix, subpath);
-        const docStylePath = toDocStylePath(sourcePath);
-        const pathItem = openapiPaths[docStylePath] as Record<string, unknown> | undefined;
-        if (!pathItem) {
-            findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-path' });
-        } else if (!(method in pathItem)) {
-            findings.push({ method, docStylePath, sourcePath, kind: 'undocumented-method' });
-        }
-    }
+    const nestedLocalVarName = resolveRouterLocalVarName(nestedSource, nested.routerVarName);
+    if (!nestedLocalVarName) continue; // export não reconhecido com confiança — pula, sem falso positivo
 
-    // Passe 2 recursivo: segue `<localVarName>.use('/subprefixo', outroRouterImportado)` aninhado
-    // dentro deste mesmo arquivo, resolvendo o import relativo a ESTE arquivo (não ao
-    // bootstrapDir/composition root) antes de recursar com o prefixo composto.
-    const importMap = buildImportMap(source);
-    const nestedMounts = extractUseMounts(source, localVarName);
-    for (const nested of nestedMounts) {
-        const importPath = importMap.get(nested.routerVarName);
-        if (!importPath) continue; // sub-router não importado por nome simples resolvível — pula
+    const nestedPrefix = joinPrefixAndSubpath(prefix, nested.path);
+    resolveAndWalkRouter(
+      repoRoot,
+      nestedAbsolutePath,
+      nestedLocalVarName,
+      nestedPrefix,
+      openapiPaths,
+      findings,
+      visited,
+    );
+  }
 
-        const relativeToTs = importPath.endsWith('.js') ? importPath.slice(0, -3) + '.ts' : `${importPath}.ts`;
-        const nestedAbsolutePath = path.normalize(path.join(path.dirname(absoluteFilePath), relativeToTs));
-        if (!nestedAbsolutePath.startsWith(path.join(repoRoot, 'src') + path.sep)) continue; // fora do repo, não segue
-
-        if (!existsSync(nestedAbsolutePath)) continue;
-        let nestedSource: string;
-        try {
-            nestedSource = readFileSync(nestedAbsolutePath, 'utf-8');
-        } catch {
-            continue;
-        }
-
-        const nestedLocalVarName = resolveRouterLocalVarName(nestedSource, nested.routerVarName);
-        if (!nestedLocalVarName) continue; // export não reconhecido com confiança — pula, sem falso positivo
-
-        const nestedPrefix = joinPrefixAndSubpath(prefix, nested.path);
-        resolveAndWalkRouter(repoRoot, nestedAbsolutePath, nestedLocalVarName, nestedPrefix, openapiPaths, findings, visited);
-    }
-
-    return true;
+  return true;
 }
 
 /**
@@ -257,124 +290,145 @@ function resolveAndWalkRouter(
  * router — de qualquer nível de aninhamento — puderam ser lidos e verificados de fato).
  */
 function computeSubRouteDrift(
-    repoRoot: string,
-    compositionRootSource: string,
-    bootstrapDir: string,
-    openapiPaths: Record<string, unknown>
+  repoRoot: string,
+  compositionRootSource: string,
+  bootstrapDir: string,
+  openapiPaths: Record<string, unknown>,
 ): { findings: SubRouteDriftFinding[]; resolvedFileCount: number } {
-    const importMap = buildImportMap(compositionRootSource);
-    const mounts = extractTopLevelRouterMounts(compositionRootSource);
-    const findings: SubRouteDriftFinding[] = [];
-    const visited = new Set<string>();
-    let resolvedFileCount = 0;
+  const importMap = buildImportMap(compositionRootSource);
+  const mounts = extractTopLevelRouterMounts(compositionRootSource);
+  const findings: SubRouteDriftFinding[] = [];
+  const visited = new Set<string>();
+  let resolvedFileCount = 0;
 
-    for (const mount of mounts) {
-        const importPath = importMap.get(mount.routerVarName);
-        if (!importPath) continue; // router não importado por nome simples resolvível — pula
+  for (const mount of mounts) {
+    const importPath = importMap.get(mount.routerVarName);
+    if (!importPath) continue; // router não importado por nome simples resolvível — pula
 
-        const relativeToTs = importPath.endsWith('.js') ? importPath.slice(0, -3) + '.ts' : `${importPath}.ts`;
-        const absoluteFilePath = path.normalize(path.join(bootstrapDir, relativeToTs));
-        if (!absoluteFilePath.startsWith(path.join(repoRoot, 'src') + path.sep)) continue; // fora do repo, não segue
-        if (!existsSync(absoluteFilePath)) continue; // não resolveu o arquivo — pula, sem falso positivo
+    const relativeToTs = importPath.endsWith('.js')
+      ? importPath.slice(0, -3) + '.ts'
+      : `${importPath}.ts`;
+    const absoluteFilePath = path.normalize(path.join(bootstrapDir, relativeToTs));
+    if (!absoluteFilePath.startsWith(path.join(repoRoot, 'src') + path.sep)) continue; // fora do repo, não segue
+    if (!existsSync(absoluteFilePath)) continue; // não resolveu o arquivo — pula, sem falso positivo
 
-        let routerFileSource: string;
-        try {
-            routerFileSource = readFileSync(absoluteFilePath, 'utf-8');
-        } catch {
-            continue;
-        }
-
-        const localVarName = resolveRouterLocalVarName(routerFileSource, mount.routerVarName);
-        if (!localVarName) continue; // export não reconhecido com confiança — pula, sem falso positivo
-
-        const resolved = resolveAndWalkRouter(
-            repoRoot,
-            absoluteFilePath,
-            localVarName,
-            mount.prefix,
-            openapiPaths,
-            findings,
-            visited,
-        );
-        if (resolved) resolvedFileCount += 1;
+    let routerFileSource: string;
+    try {
+      routerFileSource = readFileSync(absoluteFilePath, 'utf-8');
+    } catch {
+      continue;
     }
 
-    return { findings, resolvedFileCount };
+    const localVarName = resolveRouterLocalVarName(routerFileSource, mount.routerVarName);
+    if (!localVarName) continue; // export não reconhecido com confiança — pula, sem falso positivo
+
+    const resolved = resolveAndWalkRouter(
+      repoRoot,
+      absoluteFilePath,
+      localVarName,
+      mount.prefix,
+      openapiPaths,
+      findings,
+      visited,
+    );
+    if (resolved) resolvedFileCount += 1;
+  }
+
+  return { findings, resolvedFileCount };
 }
 
 function main(): void {
-    const repoRoot = process.cwd();
-    const openapiYamlPath = path.join(repoRoot, 'docs', 'openapi.yaml');
-    const bootstrapDir = path.join(repoRoot, 'src', 'bootstrap');
+  const repoRoot = process.cwd();
+  const openapiYamlPath = path.join(repoRoot, 'docs', 'openapi.yaml');
+  const bootstrapDir = path.join(repoRoot, 'src', 'bootstrap');
 
-    const compositionRootSource = collectCompositionRootSource(repoRoot);
-    const openapiDocument = parseYaml(readFileSync(openapiYamlPath, 'utf-8'));
-    const openapiPaths: Record<string, unknown> = openapiDocument.paths ?? {};
+  const compositionRootSource = collectCompositionRootSource(repoRoot);
+  const openapiDocument = parseYaml(readFileSync(openapiYamlPath, 'utf-8'));
+  const openapiPaths: Record<string, unknown> = openapiDocument.paths ?? {};
 
-    const result = computeOpenApiDrift(compositionRootSource, openapiPaths);
+  const result = computeOpenApiDrift(compositionRootSource, openapiPaths);
 
-    console.log(`Prefixos de rota montados no composition root: ${result.allMountedPrefixes.length}`);
-    console.log(`Paths documentados em docs/openapi.yaml: ${result.allDocumentedPaths.length}`);
-    console.log('');
+  console.log(`Prefixos de rota montados no composition root: ${result.allMountedPrefixes.length}`);
+  console.log(`Paths documentados em docs/openapi.yaml: ${result.allDocumentedPaths.length}`);
+  console.log('');
 
-    let hasDrift = false;
+  let hasDrift = false;
 
-    if (result.undocumentedPrefixes.length > 0) {
-        hasDrift = true;
-        console.error('❌ Prefixos de rota montados SEM documentação em docs/openapi.yaml:');
-        for (const prefix of result.undocumentedPrefixes) {
-            console.error(`   - /api/${prefix}`);
-        }
-        console.error('');
+  if (result.undocumentedPrefixes.length > 0) {
+    hasDrift = true;
+    console.error('❌ Prefixos de rota montados SEM documentação em docs/openapi.yaml:');
+    for (const prefix of result.undocumentedPrefixes) {
+      console.error(`   - /api/${prefix}`);
     }
+    console.error('');
+  }
 
-    if (result.phantomDocumentedPaths.length > 0) {
-        hasDrift = true;
-        console.error('❌ Paths documentados em docs/openapi.yaml SEM rota real montada no composition root:');
-        for (const docPath of result.phantomDocumentedPaths) {
-            console.error(`   - ${docPath}`);
-        }
-        console.error('');
+  if (result.phantomDocumentedPaths.length > 0) {
+    hasDrift = true;
+    console.error(
+      '❌ Paths documentados em docs/openapi.yaml SEM rota real montada no composition root:',
+    );
+    for (const docPath of result.phantomDocumentedPaths) {
+      console.error(`   - ${docPath}`);
     }
+    console.error('');
+  }
 
-    const subRouteDrift = computeSubRouteDrift(repoRoot, compositionRootSource, bootstrapDir, openapiPaths);
-    console.log(`Passe 2 — arquivos de router de feature resolvidos e verificados: ${subRouteDrift.resolvedFileCount}`);
-    console.log('');
+  const subRouteDrift = computeSubRouteDrift(
+    repoRoot,
+    compositionRootSource,
+    bootstrapDir,
+    openapiPaths,
+  );
+  console.log(
+    `Passe 2 — arquivos de router de feature resolvidos e verificados: ${subRouteDrift.resolvedFileCount}`,
+  );
+  console.log('');
 
-    const undocumentedPathFindings = subRouteDrift.findings.filter((f) => f.kind === 'undocumented-path');
-    const undocumentedMethodFindings = subRouteDrift.findings.filter((f) => f.kind === 'undocumented-method');
+  const undocumentedPathFindings = subRouteDrift.findings.filter(
+    (f) => f.kind === 'undocumented-path',
+  );
+  const undocumentedMethodFindings = subRouteDrift.findings.filter(
+    (f) => f.kind === 'undocumented-method',
+  );
 
-    if (undocumentedPathFindings.length > 0) {
-        hasDrift = true;
-        console.error('❌ Endpoints reais (path + método) montados dentro de um router de feature SEM path documentado em docs/openapi.yaml:');
-        for (const f of undocumentedPathFindings) {
-            console.error(`   - ${f.method.toUpperCase()} ${f.docStylePath}  (código: ${f.sourcePath})`);
-        }
-        console.error('');
+  if (undocumentedPathFindings.length > 0) {
+    hasDrift = true;
+    console.error(
+      '❌ Endpoints reais (path + método) montados dentro de um router de feature SEM path documentado em docs/openapi.yaml:',
+    );
+    for (const f of undocumentedPathFindings) {
+      console.error(`   - ${f.method.toUpperCase()} ${f.docStylePath}  (código: ${f.sourcePath})`);
     }
+    console.error('');
+  }
 
-    if (undocumentedMethodFindings.length > 0) {
-        hasDrift = true;
-        console.error('❌ Path documentado em docs/openapi.yaml, mas SEM o método HTTP real montado no código:');
-        for (const f of undocumentedMethodFindings) {
-            console.error(`   - ${f.method.toUpperCase()} ${f.docStylePath}  (código: ${f.sourcePath})`);
-        }
-        console.error('');
+  if (undocumentedMethodFindings.length > 0) {
+    hasDrift = true;
+    console.error(
+      '❌ Path documentado em docs/openapi.yaml, mas SEM o método HTTP real montado no código:',
+    );
+    for (const f of undocumentedMethodFindings) {
+      console.error(`   - ${f.method.toUpperCase()} ${f.docStylePath}  (código: ${f.sourcePath})`);
     }
+    console.error('');
+  }
 
-    if (hasDrift) {
-        console.error(
-            'Deriva de OpenAPI detectada. Documente a(s) rota(s) nova(s) em docs/openapi.yaml, ou ' +
-            'remova/ajuste o path documentado se a rota não existir mais. Ver ' +
-            'src/shared/contracts/openapiRouteInventory.ts (Passe 1, prefixo de recurso) e o ' +
-            'comentário de topo deste arquivo (Passe 2, path+método dentro do router de feature) ' +
-            'para o critério exato de cada verificação.'
-        );
-        process.exitCode = 1;
-        return;
-    }
+  if (hasDrift) {
+    console.error(
+      'Deriva de OpenAPI detectada. Documente a(s) rota(s) nova(s) em docs/openapi.yaml, ou ' +
+        'remova/ajuste o path documentado se a rota não existir mais. Ver ' +
+        'src/shared/contracts/openapiRouteInventory.ts (Passe 1, prefixo de recurso) e o ' +
+        'comentário de topo deste arquivo (Passe 2, path+método dentro do router de feature) ' +
+        'para o critério exato de cada verificação.',
+    );
+    process.exitCode = 1;
+    return;
+  }
 
-    console.log('✅ Nenhuma deriva estrutural encontrada entre docs/openapi.yaml e o composition root.');
+  console.log(
+    '✅ Nenhuma deriva estrutural encontrada entre docs/openapi.yaml e o composition root.',
+  );
 }
 
 main();

@@ -1,19 +1,19 @@
-import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, PhoneCall, Sparkles } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { EmptyState } from '../../../components/ui/EmptyState';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
 import { SoundFX } from '../../../lib/soundEffects';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { EmptyState } from '../../../components/ui/EmptyState';
+import { toast } from '../../../lib/toast';
 import {
-  QUALIFICATION_CRITERIA,
   OBJECTIONS_DATA,
+  QUALIFICATION_CRITERIA,
 } from '../../chatbook/components/chatbook-hub/playbookData';
-import { CallSetup } from './roleplay-hub/CallSetup';
 import { ActiveCallView } from './roleplay-hub/ActiveCallView';
 import { CallAnalysisReport } from './roleplay-hub/CallAnalysisReport';
+import { CallSetup } from './roleplay-hub/CallSetup';
 import { RoleplayHistoryPanel } from './roleplay-hub/RoleplayHistoryPanel';
 import type { CallAnalysisResult, CallMessage } from './roleplay-hub/types';
 
@@ -88,7 +88,9 @@ export function RoleplayHub() {
     },
   ];
 
-  const currentPersonas = playbook === 'totaltrac' ? personasTotaltrack : personasAtlas;
+  // Antes dividida entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificada
+  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma persona.
+  const currentPersonas = [...personasAtlas, ...personasTotaltrack];
 
   // Mesma classificação de persona usada para o motor de IA do turno (generateRoleplay) — extraída
   // pra função pura porque finishCall também precisa dela para o parecer técnico de sessão
@@ -212,10 +214,10 @@ export function RoleplayHub() {
       toast.error('Não foi possível iniciar a gravação. Verifique as permissões do microfone.');
     }
 
+    // Provisório: o playbook único ainda usa a saudação do playbook de logística/risco;
+    // o texto de frota (playbookData.ts) fica para a rodada de consolidação de conteúdo.
     const initialGreeting =
-      playbook === 'totaltrac'
-        ? 'Alô? Aqui é da frota. Recebi seu contato sobre soluções de rastreamento e telemetria. O que exatamente vocês oferecem que é diferente do mercado?'
-        : 'Alô? Recebi seu contato sobre a sua plataforma. Nossa operação já trabalha com Gerenciamento de Risco. Por que deveríamos conversar?';
+      'Alô? Recebi seu contato sobre a sua plataforma. Nossa operação já trabalha com Gerenciamento de Risco. Por que deveríamos conversar?';
 
     setMessages([
       {
@@ -250,15 +252,17 @@ export function RoleplayHub() {
     const playbookContext = JSON.stringify({
       difficulty,
       persona: currentPersonas.find((item) => item.id === selectedPersona),
+      // Provisório: mesmo raciocínio do initialGreeting acima — usa sempre o lado
+      // atlas/logística de playbookData.ts até a consolidação de conteúdo do playbook único.
       qualificationCriteria: QUALIFICATION_CRITERIA.map((item) => ({
         category: item.category,
-        criteria: playbook === 'totaltrac' ? item.totaltrac : item.atlas,
-        question: playbook === 'totaltrac' ? item.spinQuestionTotaltrac : item.spinQuestionAtlas,
+        criteria: item.atlas,
+        question: item.spinQuestionAtlas,
       })),
       objections: OBJECTIONS_DATA.map((item) => ({
         title: item.title,
         technique: item.technique,
-        guidance: playbook === 'totaltrac' ? item.bestResponseTotaltrac : item.bestResponseAtlas,
+        guidance: item.bestResponseAtlas,
       })),
     });
 

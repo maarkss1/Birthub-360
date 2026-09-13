@@ -48,7 +48,9 @@ test.describe('Onda 4 mobile sweep', () => {
     hasTouch: true,
   });
 
-  test('todos os módulos navegáveis ficam utilizáveis sem overflow horizontal ou tela branca', async ({ page }) => {
+  test('todos os módulos navegáveis ficam utilizáveis sem overflow horizontal ou tela branca', async ({
+    page,
+  }) => {
     test.setTimeout(180_000);
 
     await signUp(page, {
@@ -87,9 +89,15 @@ test.describe('Onda 4 mobile sweep', () => {
             });
           }
 
-          const bodyText = await page.locator('body').innerText().catch(() => '');
+          const bodyText = await page
+            .locator('body')
+            .innerText()
+            .catch(() => '');
           if (bodyText.trim().length < 20) {
-            failures.push({ module, reason: 'conteúdo visível insuficiente; possível tela branca' });
+            failures.push({
+              module,
+              reason: 'conteúdo visível insuficiente; possível tela branca',
+            });
           }
         } catch (error) {
           failures.push({

@@ -3,12 +3,14 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
-const SYNTHETIC_MARKERS = /\b(mock|fake|fabricad[oa]?|fict[ií]ci[oa]?|dummy|placeholder|randomNews)\b|Math\.random/i;
+const SYNTHETIC_MARKERS =
+  /\b(mock|fake|fabricad[oa]?|fict[ií]ci[oa]?|dummy|placeholder|randomNews)\b|Math\.random/i;
 const FACT_PATTERN = /evidenceType\s*:\s*['"]FACT['"]/i;
 const HARDCODED_RESPONSIBLE_PATTERN = /RESPONSIBLE_ID\s*:\s*['"]?\d+['"]?/i;
 const DIRECT_EXECUTED_PATTERN = /status\s*:\s*['"]executed['"]/i;
 const ACCOUNT_SCORE_WRITE_PATTERN = /accountScore\.(create|upsert|update)\s*\(/gi;
-const HARDCODED_SCORE_DIMENSION_PATTERN = /\b(total|fit|timing|intent|relationship)\s*:\s*\d{1,3}\b/i;
+const HARDCODED_SCORE_DIMENSION_PATTERN =
+  /\b(total|fit|timing|intent|relationship)\s*:\s*\d{1,3}\b/i;
 
 function parseRoot(argv) {
   const index = argv.indexOf('--root');
@@ -31,8 +33,10 @@ function walkFiles(root) {
 
 function isLdrRelevant(relativePath) {
   const normalized = relativePath.split(path.sep).join('/');
-  return normalized.startsWith('src/features/market-intelligence/')
-    || /account[-_.]?intelligence|\bldr\b|newsMonitor/i.test(normalized);
+  return (
+    normalized.startsWith('src/features/market-intelligence/') ||
+    /account[-_.]?intelligence|\bldr\b|newsMonitor/i.test(normalized)
+  );
 }
 
 function addViolation(violations, code, relativePath, detail) {

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { scoreOpportunity, FORECAST_RULES } from '../application/forecastEngine';
+import { describe, expect, it } from 'vitest';
+import { FORECAST_RULES, scoreOpportunity } from '../application/forecastEngine';
 
 const NOW = new Date('2026-08-10T12:00:00Z');
 

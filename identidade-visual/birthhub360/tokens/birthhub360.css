@@ -57,6 +57,6 @@
      Inter: UI, menus, textos, tabelas, dashboards, relatórios.
      Playfair Display italic: exclusivamente o "B" do emblema — já vetorizado
      nos SVGs de logo, não precisa ser carregada em runtime. */
-  --bh-font-display: "Bodoni Moda", Georgia, "Times New Roman", serif;
-  --bh-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --bh-font-display: 'Bodoni Moda', Georgia, 'Times New Roman', serif;
+  --bh-font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }

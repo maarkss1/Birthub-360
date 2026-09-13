@@ -1,20 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Database,
-  Loader2,
-  Download,
-  X,
-  CheckCircle2,
   AlertTriangle,
-  Clock,
   Ban,
-  Trash2,
-  FileSpreadsheet,
-  FileJson,
-  FileText,
-  Lock,
   CalendarRange,
+  CheckCircle2,
+  Clock,
+  Database,
+  Download,
+  FileJson,
+  FileSpreadsheet,
+  FileText,
+  Loader2,
+  Lock,
+  Trash2,
+  X,
 } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../../../lib/api';
 import { toast } from '../../../lib/toast';
 
@@ -524,7 +524,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
                 )}
 
                 {run.status === 'cancelled' && (
-                  <p className="text-xs text-amber-600 dark:text-amber-400">
+                  <p className="text-xs text-warning-active dark:text-warning">
                     Cancelada — nenhum arquivo foi gerado.{' '}
                     {run.totalCount > 0
                       ? `${run.totalCount} registro(s) já haviam sido lidos antes do cancelamento.`

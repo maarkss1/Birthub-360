@@ -23,11 +23,7 @@
     "vitest.integration.config.ts",
     "playwright.config.ts"
   ],
-  "project": [
-    "src/**/*.{ts,tsx}",
-    "server/**/*.{ts,tsx}",
-    "scripts/**/*.{ts,mjs,js}"
-  ],
+  "project": ["src/**/*.{ts,tsx}", "server/**/*.{ts,tsx}", "scripts/**/*.{ts,mjs,js}"],
   "ignore": [
     "src/**/*.stories.tsx",
     "src/**/__tests__/**",

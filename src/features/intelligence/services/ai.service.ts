@@ -1,16 +1,16 @@
-import { getAiModel, logAiUsage, withRetry } from '../../../lib/ai/gateway.js';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { compileLeadGraph } from '../graphs/leadQualification.js';
-import { prisma } from '../../../lib/prisma.js';
-import {
-  redactAndTrackPiiLeak,
-  minimizePii,
-  rehydratePii,
-  hasPiiExternalConsent,
-  type PiiToken,
-} from './guardrails.service.js';
+import { getAiModel, logAiUsage, withRetry } from '../../../lib/ai/gateway.js';
 import { getTenantId } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { compileLeadGraph } from '../graphs/leadQualification.js';
+import {
+  hasPiiExternalConsent,
+  minimizePii,
+  type PiiToken,
+  redactAndTrackPiiLeak,
+  rehydratePii,
+} from './guardrails.service.js';
 
 export type ContentTool =
   | 'script_call'
@@ -189,8 +189,14 @@ export interface GenerateContentOptions {
   objective?: string;
   personaFallback?: string;
   /** Chave do playbook comercial ativo (valor gravado em banco — ver
-   *  src/config/playbooks.ts). Seleciona o preâmbulo e os overrides de prompt. */
-  brandId?: 'atlasgr' | 'totaltrac';
+   *  src/config/playbooks.ts). Seleciona o preâmbulo e os overrides de prompt.
+   *  Tipado como `string` (não `PlaybookKey`) de propósito: os prompts
+   *  FLEET_SYSTEM_PREAMBLE/FLEET_TOOL_OVERRIDES abaixo ainda não foram
+   *  revisados na remoção dos playbooks atlasgr/totaltrac — nenhum caminho novo
+   *  envia mais 'totaltrac' aqui, mas o conteúdo do prompt em si fica para uma
+   *  rodada dedicada de revisão de conteúdo, não para não perder texto de IA
+   *  já escrito sem revisão de negócio. */
+  brandId?: string;
   organizationId?: string;
 }
 

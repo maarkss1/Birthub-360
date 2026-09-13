@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // RUN-011 (Onda 41/Agente 16): prova de que o WASocket (objeto em memória por processo) nunca é
 // aberto duas vezes para a mesma organização entre réplicas — a trava distribuída em

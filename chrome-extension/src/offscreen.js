@@ -86,7 +86,10 @@ async function stopRecordingAndUpload() {
     throw new Error('Gravação vazia — nenhum áudio foi capturado.');
   }
 
-  const { signedUrl, objectKey } = await copilotoApi.requestAudioUploadUrl(conversationId, mimeType);
+  const { signedUrl, objectKey } = await copilotoApi.requestAudioUploadUrl(
+    conversationId,
+    mimeType,
+  );
 
   const uploadRes = await fetch(signedUrl, {
     method: 'PUT',

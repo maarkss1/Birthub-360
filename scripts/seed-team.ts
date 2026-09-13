@@ -90,7 +90,9 @@ async function main() {
     });
   }
 
-  console.log(`OK  ${user.role.padEnd(10)} ${user.email} (usuário principal configurado com sucesso)`);
+  console.log(
+    `OK  ${user.role.padEnd(10)} ${user.email} (usuário principal configurado com sucesso)`,
+  );
 
   // 2. Deleta todos os demais usuários.
   const otherUsers = await prisma.user.findMany({
@@ -113,7 +115,9 @@ async function main() {
       where: { id: { in: otherUserIds } },
     });
 
-    console.log(`Removidos ${deleted.count} outros usuários: ${otherUsers.map((candidate) => candidate.email).join(', ')}`);
+    console.log(
+      `Removidos ${deleted.count} outros usuários: ${otherUsers.map((candidate) => candidate.email).join(', ')}`,
+    );
   } else {
     console.log('Nenhum outro usuário encontrado para deleção.');
   }

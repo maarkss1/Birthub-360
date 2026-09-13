@@ -1,18 +1,18 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
-import { AppTopbar } from './AppTopbar';
-import { OfflineBanner } from './OfflineBanner';
-import type { TabType } from './tabMeta';
-import { Toaster } from '../ui/Toaster';
-import { CopilotTrigger } from '../ui/CopilotTrigger';
-import { BugReportButton } from '../ui/BugReportButton';
-import { VoiceCommandWidget } from '../ui/VoiceCommandWidget';
-import { CommandPalette } from '../ui/CommandPalette';
-import { BottomSheet } from '../ui/BottomSheet';
-import { FloatingDock } from './FloatingDock';
-import { PageTransition } from './PageTransition';
 import { useNavigationBusBridge } from '../../hooks/useNavigationBusBridge';
+import { BottomSheet } from '../ui/BottomSheet';
+import { BugReportButton } from '../ui/BugReportButton';
+import { CommandPalette } from '../ui/CommandPalette';
+import { CopilotTrigger } from '../ui/CopilotTrigger';
+import { Toaster } from '../ui/Toaster';
+import { VoiceCommandWidget } from '../ui/VoiceCommandWidget';
+import { AppTopbar } from './AppTopbar';
+import { FloatingDock } from './FloatingDock';
+import { OfflineBanner } from './OfflineBanner';
+import { PageTransition } from './PageTransition';
+import { Sidebar } from './Sidebar';
+import type { TabType } from './tabMeta';
 
 interface MainLayoutProps {
   children: ReactNode;

@@ -1,12 +1,14 @@
 # AGENTS.md — Copiloto Comercial IA (fundação)
 
 ## Dono
+
 Quem implementa cada onda seguinte do pacote `atlasgr_copiloto_ai_pack` (ver
 `.claude/PILOTS.md` para o registro do piloto que criou esta fundação e
 `C:\Users\Marks\Desktop\ATLASGR_COPILOTO_IA_AGENTES_PROMPTS_EXTENSAO_CHROME` para o pacote de
 especificação original — agentes, prompts e roadmap por onda).
 
 ## O que é
+
 Módulo do Copiloto Comercial IA (pacote `atlasgr_copiloto_ai_pack`), já cobrindo as Ondas 1-6 do
 roadmap: fundação de dados/RBAC (Onda 1), captura real de áudio via extensão Chrome (Onda 2),
 transcrição via Whisper + resumo executivo (Onda 3), mapeamento configurável de campo + writeback
@@ -62,10 +64,12 @@ porta já classificado (`GRANTED`/`DECLINED`/`PENDING`) — este módulo só hon
 processar conteúdo, `PENDING` não fabrica consentimento e não processa nada).
 
 ## Pode alterar
+
 - domínio/regras/persistência deste módulo (`domain/`, `application/`, `infra/`, `presentation/`,
   `routes/`) e seus testes.
 
 ## Não pode
+
 - Não criar/editar migration diretamente sem que `prisma/schema.prisma` já reflita a mudança
   proposta — qualquer novo campo/model deste módulo segue o mesmo processo usado para os 6 models
   atuais (`CopilotoConversation`, `CopilotoTranscriptSegment`, `CopilotoInsight`,
@@ -86,6 +90,7 @@ processar conteúdo, `PENDING` não fabrica consentimento e não processa nada).
 - Não afrouxar `COPILOTO_IA_ROLES` (`src/lib/auth/authorization.ts`) sem decisão humana explícita.
 
 ## Coordenação
+
 - Siga `/AGENTS.md` para conflitos e handoffs.
 - RBAC: `COPILOTO_IA_ROLES`/`canAccessCopilotoIa` vivem em `src/lib/auth/authorization.ts` (fonte
   única de RBAC do repositório — não duplicar a hierarquia aqui).
@@ -99,6 +104,7 @@ processar conteúdo, `PENDING` não fabrica consentimento e não processa nada).
   writeback) deve seguir o mesmo padrão.
 
 ## Definição de pronto local
+
 - `npx tsc --noEmit`, `npm run lint` sem erro novo neste módulo.
 - testes de `application/__tests__/` (regras de negócio puras: máquina de estados, gate de
   consentimento, validação de evidência) e RBAC ponta-a-ponta
@@ -107,6 +113,7 @@ processar conteúdo, `PENDING` não fabrica consentimento e não processa nada).
   isolamento cross-tenant).
 
 ## Gate mínimo
+
 - `npx tsc --noEmit`
 - `npm run lint`
 - `npm run test:architecture` (dependency-cruiser — pega import cross-feature que o lint não pega)

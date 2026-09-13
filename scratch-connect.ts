@@ -3,13 +3,24 @@ import { connectBitrix } from './src/features/integrations/bitrix/service/connec
 
 async function main() {
   const orgs = await prisma.organization.findMany();
-  console.log('Orgs encontradas:', orgs.map(o => o.name));
+  console.log(
+    'Orgs encontradas:',
+    orgs.map((o) => o.name),
+  );
 
   for (const org of orgs) {
-    if (org.name.toLowerCase().includes('atlas') || org.name.toLowerCase().includes('oracle') || org.name.toLowerCase().includes('totaltrac')) {
+    if (
+      org.name.toLowerCase().includes('atlas') ||
+      org.name.toLowerCase().includes('oracle') ||
+      org.name.toLowerCase().includes('totaltrac')
+    ) {
       console.log(`Conectando org: ${org.name}`);
       try {
-        const result = await connectBitrix(org.id, 'https://atlasgr.bitrix24.com.br/rest/450/gr94fas79p1nizci/', org.name + ' Bitrix24');
+        const result = await connectBitrix(
+          org.id,
+          'https://atlasgr.bitrix24.com.br/rest/450/gr94fas79p1nizci/',
+          org.name + ' Bitrix24',
+        );
         console.log(`Sucesso na org ${org.name}:`, result);
       } catch (err) {
         console.error(`Falha na org ${org.name}:`, err.message);
@@ -18,4 +29,6 @@ async function main() {
   }
 }
 
-main().catch(console.error).finally(() => process.exit(0));
+main()
+  .catch(console.error)
+  .finally(() => process.exit(0));

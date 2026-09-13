@@ -91,18 +91,14 @@ async function main() {
 
         if (duplicates.length > 0) {
           const duplicateIds = duplicates.map((account) => account.id);
-          const deleted = await client.query(
-            `DELETE FROM "account" WHERE "id" = ANY($1::text[])`,
-            [duplicateIds],
-          );
+          const deleted = await client.query(`DELETE FROM "account" WHERE "id" = ANY($1::text[])`, [
+            duplicateIds,
+          ]);
           removedDuplicateCredentials += deleted.rowCount ?? 0;
         }
       }
 
-      const sessions = await client.query(
-        `DELETE FROM "session" WHERE "userId" = $1`,
-        [user.id],
-      );
+      const sessions = await client.query(`DELETE FROM "session" WHERE "userId" = $1`, [user.id]);
       revokedSessions += sessions.rowCount ?? 0;
 
       await client.query(

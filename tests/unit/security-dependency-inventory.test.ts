@@ -126,13 +126,13 @@ describe('dependency inventory — escape de célula Markdown', () => {
     // Uma mensagem que já contém `\|` (ex.: caminho Windows seguido de pipe) não pode virar um
     // pipe "escapado por acaso" — a barra original precisa ficar visivelmente escapada também.
     expect(escapeMarkdownTableCell('C:\\path\\to\\pkg | see docs')).toBe(
-      'C:\\\\path\\\\to\\\\pkg \\| see docs'
+      'C:\\\\path\\\\to\\\\pkg \\| see docs',
     );
   });
 
   it('mantém texto sem caracteres especiais inalterado', () => {
     expect(escapeMarkdownTableCell('This package is no longer supported.')).toBe(
-      'This package is no longer supported.'
+      'This package is no longer supported.',
     );
   });
 });

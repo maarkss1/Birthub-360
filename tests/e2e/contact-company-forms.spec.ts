@@ -8,12 +8,17 @@ import { signUp, uniqueTestEmail, waitForAppReady } from './helpers';
 // `form="..."`), o campo UF continua forçando maiúsculas, validação de campo obrigatório continua
 // aparecendo, e o toast de sucesso/erro (novo nesta migração) aparece nos dois fluxos.
 test.describe('Formulários de Empresas e Contatos (migrados pra ui/Dialog)', () => {
-  test('cria uma empresa — UF em maiúsculas, submit funciona, toast de sucesso aparece', async ({ page }) => {
+  test('cria uma empresa — UF em maiúsculas, submit funciona, toast de sucesso aparece', async ({
+    page,
+  }) => {
     await signUp(page, { email: uniqueTestEmail('company-form') });
     await page.getByRole('button', { name: 'Empresas' }).click();
     await waitForAppReady(page);
 
-    await page.getByRole('button', { name: /Nova Empresa|Adicionar/ }).first().click();
+    await page
+      .getByRole('button', { name: /Nova Empresa|Adicionar/ })
+      .first()
+      .click();
     await expect(page.getByRole('heading', { name: 'Nova Empresa', exact: true })).toBeVisible();
 
     const suffix = Date.now();
@@ -34,25 +39,38 @@ test.describe('Formulários de Empresas e Contatos (migrados pra ui/Dialog)', ()
     await page.getByRole('button', { name: 'Empresas' }).click();
     await waitForAppReady(page);
 
-    await page.getByRole('button', { name: /Nova Empresa|Adicionar/ }).first().click();
+    await page
+      .getByRole('button', { name: /Nova Empresa|Adicionar/ })
+      .first()
+      .click();
     await page.getByRole('button', { name: 'Criar Empresa' }).click();
 
     // Onda 42 (DEC-17, auditoria de contraste WCAG AA): a classe de erro do formulário passou a
     // ser `text-danger-active dark:text-danger` (contraste insuficiente de `text-danger` sozinho no
     // tema claro) — `[class*="text-danger"]` casa com as duas variantes por substring, em vez do
     // seletor de classe exata `.text-danger`, que só bateria no tema escuro.
-    await expect(page.getByText('String must contain at least 1 character(s)').or(page.locator('[class*="text-danger"]')).first()).toBeVisible();
+    await expect(
+      page
+        .getByText('String must contain at least 1 character(s)')
+        .or(page.locator('[class*="text-danger"]'))
+        .first(),
+    ).toBeVisible();
     // Dialog continua aberto — erro de validação não fecha o form.
     await expect(page.getByRole('heading', { name: 'Nova Empresa', exact: true })).toBeVisible();
   });
 
-  test('cria um contato vinculado a uma empresa — submit fora do <form> funciona, toast aparece', async ({ page }) => {
+  test('cria um contato vinculado a uma empresa — submit fora do <form> funciona, toast aparece', async ({
+    page,
+  }) => {
     await signUp(page, { email: uniqueTestEmail('contact-form') });
 
     // Contato exige uma empresa existente no <select> — cria uma primeiro.
     await page.getByRole('button', { name: 'Empresas' }).click();
     await waitForAppReady(page);
-    await page.getByRole('button', { name: /Nova Empresa|Adicionar/ }).first().click();
+    await page
+      .getByRole('button', { name: /Nova Empresa|Adicionar/ })
+      .first()
+      .click();
     const companySuffix = Date.now();
     await page.getByLabel('Razão Social *').fill(`Empresa Para Contato ${companySuffix} LTDA`);
     await page.getByLabel('Nome Fantasia *').fill(`ParaContato ${companySuffix}`);
@@ -61,7 +79,10 @@ test.describe('Formulários de Empresas e Contatos (migrados pra ui/Dialog)', ()
 
     await page.getByRole('button', { name: 'Decisores' }).click();
     await waitForAppReady(page);
-    await page.getByRole('button', { name: /Novo Contato|Adicionar Primeiro Contato/ }).first().click();
+    await page
+      .getByRole('button', { name: /Novo Contato|Adicionar Primeiro Contato/ })
+      .first()
+      .click();
     await expect(page.getByRole('heading', { name: 'Novo Contato', exact: true })).toBeVisible();
 
     await page.getByLabel('Nome *').fill(`Contato Teste ${companySuffix}`);

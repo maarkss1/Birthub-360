@@ -17,7 +17,10 @@ import {
   COMMERCIAL_AGENT_REGISTRY,
   type CommercialAgentDefinition,
 } from '../src/features/intelligence/agents/commercialAgentRegistry.js';
-import type { CommercialAgentId, CommercialAgentStatus } from '../src/features/intelligence/agents/commercialAgentTypes.js';
+import type {
+  CommercialAgentId,
+  CommercialAgentStatus,
+} from '../src/features/intelligence/agents/commercialAgentTypes.js';
 import type { AgentDefinitionStatus } from '@prisma/client';
 
 // Mapeamento por `id` (não por `role` — o texto livre de `role` em commercialAgentRegistry.ts,
@@ -87,7 +90,9 @@ export async function seedAgentCatalog(idByCode: Map<JobRoleCode, string>): Prom
       });
     }
   }
-  console.log(`Catálogo de agentes ok: ${COMMERCIAL_AGENT_REGISTRY.length} agentes (a partir de commercialAgentRegistry.ts).`);
+  console.log(
+    `Catálogo de agentes ok: ${COMMERCIAL_AGENT_REGISTRY.length} agentes (a partir de commercialAgentRegistry.ts).`,
+  );
 }
 
 /** Exportado (além de acionado por `main()` abaixo) para ser chamado direto por um teste de

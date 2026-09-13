@@ -10,10 +10,10 @@ import { signUp, uniqueTestEmail, waitForAppReady } from './helpers';
 const TAB_ROUTES: Record<string, string> = {
   'Meu Workspace': 'workspace',
   'Pipeline CRM': 'crm',
-  'Empresas': 'companies',
-  'Decisores': 'contacts',
-  'Agenda': 'activities',
-  'Analytics': 'analytics',
+  Empresas: 'companies',
+  Decisores: 'contacts',
+  Agenda: 'activities',
+  Analytics: 'analytics',
 };
 
 test.describe('Navegação principal', () => {
@@ -44,7 +44,10 @@ test.describe('Navegação principal', () => {
       await expect(page.getByRole('button', { name: tab, exact: true })).toBeVisible();
       await waitForAppReady(page);
 
-      expect(consoleErrors, `erros de console ao abrir "${tab}": ${consoleErrors.join('; ')}`).toEqual([]);
+      expect(
+        consoleErrors,
+        `erros de console ao abrir "${tab}": ${consoleErrors.join('; ')}`,
+      ).toEqual([]);
     });
   }
 
@@ -64,7 +67,9 @@ test.describe('Navegação principal', () => {
     // (5s): diferente da navegação por clique (SPA, já carregada), um reload é um cold start duplo
     // — refaz o fetch da sessão (ProtectedRoute) E o carregamento do chunk lazy do CrmBoard — que
     // em runner de CI compartilhado pode passar de 5s sem que nada esteja realmente quebrado.
-    await expect(page.getByText(/Leads e pré-vendas|Negócios e fechamento/)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/Leads e pré-vendas|Negócios e fechamento/)).toBeVisible({
+      timeout: 15_000,
+    });
   });
 
   test('botão Voltar do navegador retorna do CRM pro dashboard', async ({ page }) => {

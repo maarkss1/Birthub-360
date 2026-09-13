@@ -1,20 +1,20 @@
-import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Workflow,
-  Link,
-  Zap,
-  GitCommit,
-  ChevronDown,
+  AlertCircle,
+  Bot,
   Check,
+  ChevronDown,
   Copy,
   Download,
+  GitCommit,
   Layers,
-  Bot,
-  AlertCircle,
+  Link,
+  Workflow,
+  Zap,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
+import { useState } from 'react';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
+import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
 
 const TRIGGERS = [

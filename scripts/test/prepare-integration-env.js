@@ -67,8 +67,8 @@ if (!isCI) {
   if (running.error?.code === 'ENOENT') {
     console.error(
       'Docker CLI não encontrado no PATH. Os testes de integração/E2E exigem Postgres, Redis e ' +
-      'Meilisearch reais; instale/provisione Docker ou execute no job de CI com service containers. ' +
-      'O gate foi interrompido (não é PASS nem skip).'
+        'Meilisearch reais; instale/provisione Docker ou execute no job de CI com service containers. ' +
+        'O gate foi interrompido (não é PASS nem skip).',
     );
     process.exit(1);
   }
@@ -76,13 +76,18 @@ if (!isCI) {
     console.error(running.stderr || 'Falha ao consultar containers pelo Docker CLI.');
     process.exit(running.status || 1);
   }
-  const runningNames = new Set((running.stdout || '').split('\n').map((s) => s.trim()).filter(Boolean));
+  const runningNames = new Set(
+    (running.stdout || '')
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
   const allRunning = REQUIRED_CONTAINERS.every((name) => runningNames.has(name));
 
   if (allRunning) {
     console.log(
       `Containers ${REQUIRED_CONTAINERS.join(', ')} já em execução (compartilhados entre ` +
-      'worktrees) — pulando `docker compose up` para evitar conflito de container_name fixo.'
+        'worktrees) — pulando `docker compose up` para evitar conflito de container_name fixo.',
     );
   } else {
     // Sobe só o que falta — não os três incondicionalmente. Bug real reproduzido nesta auditoria
@@ -102,18 +107,22 @@ if (!isCI) {
     const missingServices = missingContainers.map((name) => SERVICE_BY_CONTAINER[name]);
     console.log(
       `Containers ausentes: ${missingContainers.join(', ')} — subindo só ${missingServices.join(', ')} ` +
-      '(os demais já em execução são reaproveitados, não recriados).'
+        '(os demais já em execução são reaproveitados, não recriados).',
     );
-    const result = spawnSync('docker', ['compose', ...COMPOSE_FILES, 'up', '-d', ...missingServices], {
-      stdio: 'inherit',
-    });
+    const result = spawnSync(
+      'docker',
+      ['compose', ...COMPOSE_FILES, 'up', '-d', ...missingServices],
+      {
+        stdio: 'inherit',
+      },
+    );
     if (result.status !== 0) {
       console.error(
         `Falha ao subir docker-compose (${missingServices.join(', ')}). Se o erro for "container name ` +
-        'already in use", outro worktree já subiu esse container sob um projeto compose diferente — ' +
-        'defina COMPOSE_PROJECT_NAME igual ao worktree que os criou primeiro, ou pare-os ' +
-        '(`docker stop birthhub_postgres birthhub_redis birthhub_meilisearch`) antes de tentar de novo. Veja a ' +
-        'saída acima para o erro exato.'
+          'already in use", outro worktree já subiu esse container sob um projeto compose diferente — ' +
+          'defina COMPOSE_PROJECT_NAME igual ao worktree que os criou primeiro, ou pare-os ' +
+          '(`docker stop birthhub_postgres birthhub_redis birthhub_meilisearch`) antes de tentar de novo. Veja a ' +
+          'saída acima para o erro exato.',
       );
       process.exit(result.status || 1);
     }
@@ -127,7 +136,7 @@ if (!existsSync(envTestPath)) {
   } else {
     console.error(
       '.env.test não encontrado e .env.test.example ausente. ' +
-      'No CI isso deveria ter sido criado por um step do workflow antes deste script rodar.'
+        'No CI isso deveria ter sido criado por um step do workflow antes deste script rodar.',
     );
     process.exit(1);
   }
@@ -141,9 +150,11 @@ if (!isCI) {
   // falhava com "connection to server on socket ... failed" em toda primeira execução.
   const readyDeadline = Date.now() + 60000;
   for (;;) {
-    const ready = spawnSync('docker', [
-      'exec', POSTGRES_CONTAINER, 'pg_isready', '-U', BOOTSTRAP_SUPERUSER, '-d', BOOTSTRAP_DB,
-    ], { encoding: 'utf-8' });
+    const ready = spawnSync(
+      'docker',
+      ['exec', POSTGRES_CONTAINER, 'pg_isready', '-U', BOOTSTRAP_SUPERUSER, '-d', BOOTSTRAP_DB],
+      { encoding: 'utf-8' },
+    );
     if (ready.status === 0) break;
     if (Date.now() > readyDeadline) {
       console.error('Timeout esperando o Postgres do container ficar pronto (pg_isready).');
@@ -153,21 +164,47 @@ if (!isCI) {
     spawnSync(process.execPath, ['-e', 'setTimeout(() => {}, 2000)'], { stdio: 'ignore' });
   }
 
-  const exists = spawnSync('docker', [
-    'exec', POSTGRES_CONTAINER, 'psql', '-U', BOOTSTRAP_SUPERUSER, '-d', BOOTSTRAP_DB, '-tAc',
-    `SELECT 1 FROM pg_database WHERE datname='${TEST_DB_NAME}'`,
-  ], { encoding: 'utf-8' });
+  const exists = spawnSync(
+    'docker',
+    [
+      'exec',
+      POSTGRES_CONTAINER,
+      'psql',
+      '-U',
+      BOOTSTRAP_SUPERUSER,
+      '-d',
+      BOOTSTRAP_DB,
+      '-tAc',
+      `SELECT 1 FROM pg_database WHERE datname='${TEST_DB_NAME}'`,
+    ],
+    { encoding: 'utf-8' },
+  );
   if (exists.status !== 0) {
     console.error(exists.stderr || 'Falha ao verificar se o banco de teste isolado já existe.');
     process.exit(exists.status || 1);
   }
 
   if (exists.stdout.trim() !== '1') {
-    console.log(`Banco "${TEST_DB_NAME}" não existe — criando (isolado de "${BOOTSTRAP_DB}", nunca usado pelo dev).`);
-    const create = spawnSync('docker', [
-      'exec', POSTGRES_CONTAINER, 'psql', '-v', 'ON_ERROR_STOP=1', '-U', BOOTSTRAP_SUPERUSER, '-d', BOOTSTRAP_DB,
-      '-c', `CREATE DATABASE ${TEST_DB_NAME} OWNER ${BOOTSTRAP_SUPERUSER};`,
-    ], { stdio: 'inherit' });
+    console.log(
+      `Banco "${TEST_DB_NAME}" não existe — criando (isolado de "${BOOTSTRAP_DB}", nunca usado pelo dev).`,
+    );
+    const create = spawnSync(
+      'docker',
+      [
+        'exec',
+        POSTGRES_CONTAINER,
+        'psql',
+        '-v',
+        'ON_ERROR_STOP=1',
+        '-U',
+        BOOTSTRAP_SUPERUSER,
+        '-d',
+        BOOTSTRAP_DB,
+        '-c',
+        `CREATE DATABASE ${TEST_DB_NAME} OWNER ${BOOTSTRAP_SUPERUSER};`,
+      ],
+      { stdio: 'inherit' },
+    );
     if (create.status !== 0) {
       console.error(`Falha ao criar o banco "${TEST_DB_NAME}".`);
       process.exit(create.status || 1);
@@ -177,11 +214,25 @@ if (!isCI) {
   // Idempotente (ver create-app-role.sql): garante a extensão vector e o papel/ownership de
   // prospector_app — sem isso, FORCE ROW LEVEL SECURITY não vale nada, porque o dono dos objetos
   // ainda seria o superusuário de bootstrap, que RLS nunca restringe.
-  const bootstrap = spawnSync('docker', [
-    'exec', POSTGRES_CONTAINER, 'psql', '-v', 'ON_ERROR_STOP=1', '-U', BOOTSTRAP_SUPERUSER, '-d', TEST_DB_NAME,
-    '-v', `app_password=${APP_ROLE_PASSWORD}`,
-    '-f', '/docker-entrypoint-initdb.d/create-app-role.sql.tpl',
-  ], { stdio: 'inherit' });
+  const bootstrap = spawnSync(
+    'docker',
+    [
+      'exec',
+      POSTGRES_CONTAINER,
+      'psql',
+      '-v',
+      'ON_ERROR_STOP=1',
+      '-U',
+      BOOTSTRAP_SUPERUSER,
+      '-d',
+      TEST_DB_NAME,
+      '-v',
+      `app_password=${APP_ROLE_PASSWORD}`,
+      '-f',
+      '/docker-entrypoint-initdb.d/create-app-role.sql.tpl',
+    ],
+    { stdio: 'inherit' },
+  );
   if (bootstrap.status !== 0) {
     console.error(`Falha ao preparar papel/extensão em "${TEST_DB_NAME}".`);
     process.exit(bootstrap.status || 1);

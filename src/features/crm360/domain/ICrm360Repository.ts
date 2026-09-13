@@ -1,19 +1,19 @@
 import type {
-  CrmOverviewData,
-  CrmPipeline,
-  CrmProduct,
-  CrmDealItem,
-  CrmCommercialDocument,
-  CrmCommercialDocumentVersionDTO,
-  CrmPublicDocumentView,
-} from '../crm360.types.js';
-import type {
   CrmDealItemInput,
   CrmDocumentInput,
   CrmDocumentSignatureRequestInput,
   CrmDocumentUpdateInput,
   CrmProductInput,
 } from '../crm360.schema.js';
+import type {
+  CrmCommercialDocument,
+  CrmCommercialDocumentVersionDTO,
+  CrmDealItem,
+  CrmOverviewData,
+  CrmPipeline,
+  CrmProduct,
+  CrmPublicDocumentView,
+} from '../crm360.types.js';
 
 export interface ICrm360Repository {
   getOverviewData(organizationId: string): Promise<CrmOverviewData>;
@@ -62,11 +62,17 @@ export interface ICrm360Repository {
     organizationId: string,
     documentId: string,
   ): Promise<CrmCommercialDocumentVersionDTO[]>;
-  /** Grava `sentAt` na primeira transição para `Enviado`, além de aplicar o novo status. */
+  /**
+   * Grava `sentAt` na primeira transição para `Enviado`, além de aplicar o novo status.
+   * `actorUserId` obrigatório quando o destino é `Pago` E o documento tem um `leadId` associado
+   * (ACH-17-08 — mesmo gate de fechamento determinístico de `updateLeadStage`, ver
+   * `dealClosureGate.ts`); sem lead associado não há negócio a fechar, então o ator não é exigido.
+   */
   updateDocumentStatus(
     organizationId: string,
     documentId: string,
     status: string,
+    actorUserId?: string,
   ): Promise<CrmCommercialDocument>;
   /** Rota pública (sem tenant conhecido a priori) — resolve o documento pelo `publicToken` opaco e registra a visualização. `null` quando o token não existe ou o documento foi excluído. */
   recordDocumentView(publicToken: string): Promise<CrmPublicDocumentView | null>;
