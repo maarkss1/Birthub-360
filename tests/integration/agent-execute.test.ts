@@ -160,6 +160,13 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'ceo', jobRole: 'DIRETOR_COMERCIAL' },
       { code: 'account-manager', jobRole: 'CHURN_RETENCAO' },
       { code: 'closer-copilot', jobRole: 'CLOSER' },
+      // Onda 9 — lote 8 (Operações/LLM_PROMPT, último lote do domínio), amostra de 3 dos 32 novos
+      // systemPrompt curados em scripts/agent-import/source-prompts.ts — inclui o único HIGH-risk
+      // de Operações (pricing-elasticity-tester), confirmando que o prompt consultivo-only
+      // também executa normalmente via agent.execute.
+      { code: 'pricing-elasticity-tester', jobRole: 'BITRIX_GUARDIAN' },
+      { code: 'net-retention-modeler', jobRole: 'CHURN_RETENCAO' },
+      { code: 'pipeline-velocity-tracker', jobRole: 'GERENTE_COMERCIAL' },
     ])(
       '$code (systemPrompt real) executa via agent.execute e retorna SUCCEEDED com output do modelo',
       async ({ code, jobRole }) => {
