@@ -3,6 +3,8 @@
  * atualizar preços/modelos aqui nunca deve exigir tocar em roteamento, retry ou telemetria.
  */
 import type { AiTokenUsage } from './types.js';
+import { logger } from '../../logger.js';
+import { recordAiPricingFallback } from '../metrics.js';
 
 // Preço aproximado por 1M de tokens (USD) — usado só para estimar custo no AILog e na métrica
 // ai_usage_cost_usd_total (metrics.ts), não é cobrança real.
@@ -15,11 +17,23 @@ const PRICING_PER_MILLION_TOKENS: Record<string, { input: number; output: number
   'deepseek-coder': { input: 0.14, output: 0.28 },
 };
 
+// BILLING-009 (Onda 2): antes, um modelo desconhecido caía silenciosamente no preço de
+// local-llama3-fast, distorcendo o custo reportado (AILog, ai_usage_cost_usd_total, orçamento por
+// organização) sem nenhum sinal de que a tabela de preços ficou desatualizada. Agora loga e
+// incrementa uma métrica dedicada no fallback, para que um modelo novo sem entrada na tabela seja
+// detectável em vez de silenciosamente sub/superestimar gasto contra o teto de orçamento.
 export function estimateCostUsd(model: string, usage: AiTokenUsage): number {
-  const pricing =
-    PRICING_PER_MILLION_TOKENS[model] ?? PRICING_PER_MILLION_TOKENS['local-llama3-fast'];
+  const pricing = PRICING_PER_MILLION_TOKENS[model];
+  if (!pricing) {
+    logger.warn(
+      { model },
+      'estimateCostUsd: modelo sem preço cadastrado — usando fallback de local-llama3-fast para estimar custo.',
+    );
+    recordAiPricingFallback(model);
+  }
+  const resolved = pricing ?? PRICING_PER_MILLION_TOKENS['local-llama3-fast'];
   return (
-    (usage.promptTokens / 1_000_000) * pricing.input +
-    (usage.completionTokens / 1_000_000) * pricing.output
+    (usage.promptTokens / 1_000_000) * resolved.input +
+    (usage.completionTokens / 1_000_000) * resolved.output
   );
 }
