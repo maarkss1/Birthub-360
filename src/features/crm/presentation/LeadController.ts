@@ -27,7 +27,7 @@ export class LeadController {
     try {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const page = parseInt(req.query.page as string, 10) || 1;
-      const limit = parseInt(req.query.limit as string, 10) || 50;
+      const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 200);
       const requestedFunnel = req.query.funnel;
       const funnel: LeadFunnel | undefined =
         requestedFunnel === 'Lead' || requestedFunnel === 'Negocio' ? requestedFunnel : undefined;
