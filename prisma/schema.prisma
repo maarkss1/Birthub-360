@@ -1269,8 +1269,21 @@ model AccountRecommendation {
   updatedAt             DateTime                    @updatedAt
 
   @@unique([organizationId, companyId, actionType, inputHash])
-  // Unicidade quando preenchida e garantida por indice parcial na migration; indice parcial nao
-  // e representavel na DSL do Prisma e por isso nao aparece como @@unique aqui.
+  // Unicidade quando idempotencyKey esta preenchida e garantida por indice unico parcial na
+  // migration (WHERE "idempotencyKey" IS NOT NULL); indice parcial nao e representavel na DSL do
+  // Prisma e por isso nao aparece como @@unique aqui.
+  //
+  // O nome escrito na migration, `AccountRecommendation_organizationId_companyId_idempotencyKey_unique`
+  // (68 bytes), excede o NAMEDATALEN padrao do Postgres (63 bytes) e e truncado silenciosamente na
+  // criacao, sem erro ou aviso visivel fora do log do servidor. O nome real em disco em toda
+  // instancia (dev/staging/prod) e:
+  //   AccountRecommendation_organizationId_companyId_idempotencyKey_u
+  // Confirmado reproduzindo o CREATE UNIQUE INDEX exato da migration num Postgres 16 isolado —
+  // truncamento de identificador e comportamento deterministico do parser, independente de dados,
+  // entao vale para qualquer ambiente que rodou esta mesma migration.sql. Decisao (09/2026): manter
+  // truncado — funcionalmente correto, so o nome de exibicao e confuso; renomear exigiria DROP +
+  // CREATE INDEX CONCURRENTLY numa migration nova, coordenado com deploy, sem ganho que justifique
+  // o risco numa constraint de producao ja em uso.
   @@index([organizationId, companyId, status, generatedAt(sort: Desc)])
   @@index([organizationId, status, priority])
   @@index([snapshotId])
