@@ -62,6 +62,29 @@ export const prismaSignatureRequestRepository: SignatureRequestRepositoryPort = 
     });
   },
 
+  async findById(id, organizationId) {
+    const request = await requestContext.run({ tenantId: organizationId }, () =>
+      prisma.crmDocumentSignatureRequest.findFirst({
+        where: { id, organizationId },
+        select: {
+          id: true,
+          organizationId: true,
+          documentId: true,
+          status: true,
+          providerRequestId: true,
+        },
+      }),
+    );
+    if (!request) return null;
+    return {
+      id: request.id,
+      organizationId: request.organizationId,
+      documentId: request.documentId,
+      status: STATUS_FROM_DB[request.status],
+      providerRequestId: request.providerRequestId,
+    };
+  },
+
   async findByProviderRequestId(provider, providerRequestId) {
     const request = await requestContext.run({ bypassRls: true }, () =>
       prisma.crmDocumentSignatureRequest.findFirst({

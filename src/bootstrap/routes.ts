@@ -24,6 +24,9 @@ import { birthVoiceRoutes } from '../features/integrations/birth-voice/birthVoic
 import { bitrixRoutes } from '../features/integrations/bitrix/bitrix.routes.js';
 import { hubTasksRoutes } from '../features/integrations/bitrix/hubTasks.routes.js';
 import { googleRoutes } from '../features/integrations/google/google.routes.js';
+import { omieRoutes } from '../features/integrations/omie/omie.routes.js';
+import { slackRoutes } from '../features/integrations/slack/slack.routes.js';
+import { stripeRoutes } from '../features/integrations/stripe/stripe.routes.js';
 import { threecxRoutes } from '../features/integrations/threecx/threecx.routes.js';
 import { whatsappRoutes } from '../features/integrations/whatsapp/whatsapp.routes.js';
 import { agentRoutes } from '../features/intelligence/routes/agent.routes.js';
@@ -152,6 +155,9 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/whatsapp', authenticateToken, requireTenant, whatsappRoutes);
   app.use('/api/integrations/birth-voice', authenticateToken, requireTenant, birthVoiceRoutes);
   app.use('/api/integrations/3cx', authenticateToken, requireTenant, threecxRoutes);
+  app.use('/api/integrations/slack', authenticateToken, requireTenant, slackRoutes);
+  app.use('/api/integrations/stripe', authenticateToken, requireTenant, stripeRoutes);
+  app.use('/api/integrations/omie', authenticateToken, requireTenant, omieRoutes);
   app.use('/api/google', authenticateToken, requireTenant, googleRoutes);
   app.use('/api/bitrix', authenticateToken, requireTenant, bitrixRoutes);
   app.use('/api/bitrix', authenticateToken, requireTenant, hubTasksRoutes);

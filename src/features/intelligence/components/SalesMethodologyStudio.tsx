@@ -85,24 +85,16 @@ type MethodologyResult =
     };
 
 export function SalesMethodologyStudio() {
-  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { info: playbookMeta } = useActivePlaybook();
   const [activeTab, setActiveTab] = useState<FrameworkType>('spin');
   const [form, setForm] = useState<MethodologyFormState>({
-    targetPersona:
-      playbook === 'totaltrac'
-        ? 'Diretor de Operações / Gestor de Frota'
-        : 'Diretor de Logística / Head de GR',
-    companySegment:
-      playbook === 'totaltrac'
-        ? 'Transportadoras / Frotas corporativas'
-        : 'Logística / Transporte de cargas',
+    targetPersona: 'Diretor de Logística / Head de GR',
+    companySegment: 'Logística / Transporte de cargas',
     icpSize: 'Mid-Market (50 a 500 colaboradores)',
     techStack: 'A confirmar durante a descoberta',
     solutionName: playbookMeta.label,
     mainPainPoint:
-      playbook === 'totaltrac'
-        ? 'Baixa visibilidade sobre consumo, jornada e eventos da frota'
-        : 'Dificuldade de comprovar e auditar o cumprimento das regras de gerenciamento de risco',
+      'Dificuldade de comprovar e auditar o cumprimento das regras de gerenciamento de risco',
     mainBenefit:
       'Hipótese: reduzir trabalho manual e aumentar a previsibilidade operacional, sujeito a diagnóstico',
   });

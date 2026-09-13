@@ -13,7 +13,7 @@ export const assistantRequestSchema = z.object({
   // usada para persistir o histórico da conversa (AssistantMessage) escopado por marca. Opcional
   // para não quebrar contrato de quem já chama /studio com kind:"assistant" sem esse campo —
   // só /studio/stream exige em runtime, porque só ele persiste histórico.
-  brandKey: z.enum(['atlasgr', 'totaltrac']).optional(),
+  brandKey: z.literal('geral').optional(),
   inputs: z.object({
     question: z.string().trim().min(2).max(2_000),
     mode: z.enum(['internal', 'general']),

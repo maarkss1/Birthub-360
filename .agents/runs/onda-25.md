@@ -1,7 +1,6 @@
 # Onda 25 — Item 4/15: CYC-005, versionamento de proposta + tracking de visualização
 
 ## Identificação
-
 - Origem: `docs/CADENCE-CYCLE-AUDIT.md`, seção CYC-005 — `CrmCommercialDocumentVersion` era tabela
   morta confirmada (schema existia, zero linha escrita em código); `publicToken` (pensado para
   link público de visualização) nunca era lido em lugar nenhum, sem rastreamento real de
@@ -13,7 +12,6 @@
 ## O que foi construído
 
 ### Versionamento (nunca sobrescreve o histórico)
-
 - `createDocument` (`PrismaCrm360Repository.ts`) grava a versão 1 via `draftNextProposalVersion`
   (domínio puro já existente, `src/features/cadence/domain/proposal.ts` — sem alterações, só
   ganhou um chamador real) na própria criação do documento.
@@ -25,7 +23,6 @@
   (imutáveis por esta rota).
 
 ### Rastreamento real de visualização (`publicToken`)
-
 - `GET /api/public/proposals/:token/view` (rota nova, pública) — resolve o documento pelo
   `publicToken` (uuid, não adivinhável — a credencial da rota) e registra `viewCount`/
   `firstViewedAt`/`lastViewedAt` reais. Avança `Enviado → Visualizado` só na primeira
@@ -44,7 +41,6 @@
   sem conta no sistema.
 
 ## Correções durante a implementação
-
 - **Bug pré-existente descoberto (não corrigido, fora de escopo)**: o extension de soft-delete em
   `src/lib/prisma.ts` (`if (result && result.deletedAt !== null)`) trata `deletedAt: undefined`
   (quando uma query usa `select` estreito que omite a coluna) como "registro deletado" e lança
@@ -65,7 +61,6 @@
   `rbac-e2e-crm-operations.test.ts`.
 
 ## Fora de escopo desta rodada (documentado, não corrigido)
-
 - **UI de edição/versões**: não existe hoje nenhuma tela de frontend consumindo
   `listDocuments`/`createDocument`/`updateDocumentStatus` (confirmado por busca antes de começar)
   — este item ficou backend + tipos (`CrmCommercialDocumentVersionDTO`/`CrmPublicDocumentView` em
@@ -77,7 +72,6 @@
   conectá-los (ou substituí-los) é decisão de produto/frontend maior, fora do escopo desta rodada.
 
 ## Gate final
-
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 80 warnings (mesmo nível pré-existente do branch base)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **171/171 arquivos, 1330/1330 testes**
@@ -92,7 +86,6 @@
 - e2e: não executado (sem UI nova — ver "Fora de escopo")
 
 ## Skips e flakes
-
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Decisão

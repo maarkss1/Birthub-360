@@ -34,7 +34,7 @@ Nenhuma pergunta de produto em aberto — a auditoria original já descrevia exa
   (`{question, userRole?}`) e passou a chamar `searchService.hybridSearch(organizationId, question)`
   no servidor — `organizationId` sempre de `req.user`, nunca do body.
 - **`src/features/knowledge/services/knowledge-copilot.service.ts`**: `CopilotQueryInput.hits:
-SearchHit[]` substitui `retrievedDocumentSnippets`; prompt numera os trechos; LLM só pode citar
+  SearchHit[]` substitui `retrievedDocumentSnippets`; prompt numera os trechos; LLM só pode citar
   por índice (`citedSnippetIndexes`); `resolveCitations` resolve/filtra os índices contra os hits
   reais; `CopilotAnswerOutput.sourceReferences` agora é `CopilotCitation[]`
   (documentId/chunkId/documentTitle/chunkIndex/score), não mais `string[]`.
@@ -58,7 +58,7 @@ SearchHit[]` substitui `retrievedDocumentSnippets`; prompt numera os trechos; LL
   novos em `knowledge-copilot.service.test.ts`, 3 casos novos em
   `ai-suite.knowledge-copilot.routes.test.ts`, `CentralAISuiteService.test.ts` atualizado)
 - integration (Postgres+Redis reais): `npx dotenv-cli -e .env.test -- npx vitest run -c
-vitest.integration.config.ts` — **45/45 arquivos, 223/223 testes**, incluindo
+  vitest.integration.config.ts` — **45/45 arquivos, 223/223 testes**, incluindo
   `knowledge-copilot-citation.test.ts` (novo, 2 casos) — prova ponta a ponta contra Postgres/pgvector
   reais: citação resolvida aponta para o `documentId`/`chunkId` de um documento realmente ingerido
   (um índice extra alucinado pelo LLM-stub é descartado); isolamento de tenant também na citação

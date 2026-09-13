@@ -43,6 +43,11 @@ export const ENCRYPTED_MODEL_FIELDS: Record<string, readonly string[]> = {
   // tratamento — o comentário do campo no schema já dizia "cifrado em repouso" antes de o
   // campo existir de fato nesta lista.
   VoiceHubConnection: ['apiKey', 'webhookSecret'],
+  // Credenciais de conectores externos (Slack, Stripe, Omie) — mesmo tratamento das demais
+  // credenciais de integração acima.
+  SlackConnection: ['webhookUrl', 'botToken'],
+  StripeConnection: ['secretKey'],
+  OmieConnection: ['appKey', 'appSecret'],
   // Tokens OAuth de login social (Google/Microsoft via Better Auth, gravados por
   // prismaAdapter em src/lib/auth.ts) — mesma classe de credencial de terceiro das linhas
   // acima. Ver .agents/handoffs/roadmap-v2-onda-1/01-para-00-account-oauth-tokens-sem-cifra.md.

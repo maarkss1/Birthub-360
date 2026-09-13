@@ -27,7 +27,6 @@ inacessível na prática.
 
 Adicionar duas rotas (papel mínimo sugerido: `ADMIN`/`GESTOR`, mesmo padrão de aprovação de ação de
 IA já usado em `intelligence.routes.ts`):
-
 - `GET /agent/swarm/learn/history` → `getLearningProfileHistory(tenantId)`
 - `POST /agent/swarm/learn/rollback` (`{ targetVersion }`) → `rollbackLearningProfile(tenantId, actorId, targetVersion)`
 

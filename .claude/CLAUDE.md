@@ -29,8 +29,12 @@ aprendizado incorporado aqui e um registro curto em `.claude/PILOTS.md`. Ver Pil
     a cor vive só em CSS. O eixo que aquele seletor de fato controlava no CONTEÚDO (playbook,
     personas, matriz de objeções, portal Bitrix) sobreviveu como **playbook comercial**
     (`src/config/playbooks.ts` + `src/hooks/useActivePlaybook.ts`) — dado comercial, não
-    identidade. As chaves `atlasgr`/`totaltrac` continuam gravadas em banco e não devem ser
-    renomeadas sem migração.
+    identidade. **Atualização (09/2026, pedido explícito do usuário):** as chaves nomeadas por
+    empresa (`atlasgr`/`totaltrac`) foram removidas como playbooks selecionáveis — hoje existe uma
+    única chave genérica (`'geral'`), já que o ICP deixou de ser essas duas operações específicas.
+    Linhas antigas gravadas com `atlasgr`/`totaltrac` continuam legíveis (compatibilidade), só não
+    são mais graváveis por escrita nova. Um playbook de fato configurável por organização fica para
+    uma rodada futura — o que existe hoje só evita amarrar o produto a nomes de empresa no código.
   - **ICP:** qualquer empresa com área comercial que queira automatizar ponta a ponta.
     **Persona:** papéis da área comercial (SDR, closer, gestão). Nenhum texto novo deve amarrar o
     produto a um vertical específico.
@@ -289,9 +293,11 @@ componentes, ou "modernizar" telas que não foram pedidas. Ela existe para que, 
 visual for pedida, o resultado pareça parte deste produto — não um componente genérico colado por
 cima dele.
 
-Também não autoriza mexer no que sobrou das marcas anteriores por conta própria. Continuam de pé,
-de propósito, e cada um por um motivo diferente: a allowlist de domínios de login
-(`src/config/access-policy.ts`) é regra de segurança; as chaves `atlasgr`/`totaltrac` são valores
-gravados em banco; os atalhos de `EXTERNAL_LINKS` apontam para sistemas de terceiros da operação;
-e `public/tools/` são aplicações legadas embutidas por iframe. Trocar qualquer um deles exige
-migração de dados ou coordenação com infraestrutura — peça antes.
+Também não autoriza mexer no que sobrou das marcas anteriores por conta própria. O que ainda
+continua de pé, de propósito, cada um por um motivo diferente: os atalhos de `EXTERNAL_LINKS`
+apontam para sistemas de terceiros da operação; `public/tools/` são aplicações legadas embutidas
+por iframe; e as linhas antigas gravadas com `atlasgr`/`totaltrac` no playbook comercial (ver
+seção 1) continuam legíveis por compatibilidade, sem migração de dado. Trocar qualquer um deles
+exige coordenação com infraestrutura — peça antes. (A allowlist de domínios de login em
+`src/config/access-policy.ts` **já foi removida**, por pedido explícito do usuário — não é mais
+regra viva; não a reintroduza.)

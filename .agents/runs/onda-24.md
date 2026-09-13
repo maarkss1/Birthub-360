@@ -1,7 +1,6 @@
 # Onda 24 — Item 3/15: CYC-007, conectar dealClosure.ts ao fechamento manual
 
 ## Identificação
-
 - Origem: `docs/CADENCE-CYCLE-AUDIT.md`, seção CYC-007 — `dealClosure.ts`
   (`isDeterministicCloseEvent`) existia bem desenhado e testado, mas nunca era chamado por
   `LeadUseCases.updateLeadStatus` — qualquer humano com papel de escrita movia um lead para
@@ -57,7 +56,6 @@ correção ser real e não deixar duas portas abertas:
   existente quebra; o gate só é obrigatório quando o destino é literalmente "Negócios Ganhos".
 
 ## Gate final
-
 - typecheck: `npx tsc --noEmit` — limpo, 0 erros
 - lint: `npm run lint` — 0 erros, 80 warnings (mesmo nível pré-existente do branch base)
 - unit: `npx vitest run -c vitest.unit.config.ts` — **170/170 arquivos, 1326/1326 testes** (novo
@@ -76,7 +74,6 @@ correção ser real e não deixar duas portas abertas:
   funcionando exatamente como antes do ponto de vista do usuário)
 
 ## Skips e flakes
-
 0 — nenhum teste pulado ou instável observado nesta rodada.
 
 ## Decisão

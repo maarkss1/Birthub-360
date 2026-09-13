@@ -160,6 +160,7 @@ router.post(
 // futuras deste tenant (ver `fetchKnownExclusions` em prospecting.service.ts).
 router.post(
   '/reject',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   validateRequest(rejectCandidateSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

@@ -28,6 +28,13 @@ import { SavedSearchesModal } from './SavedSearchesModal';
 
 export { DecisionMakerSearch } from './prospecting-hub/DecisionMakerSearch';
 
+// Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+// num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção. Hoisted
+// para fora do componente para não recriar a referência do array a cada render (useEffect abaixo
+// depende dela).
+const ACTIVE_SEGMENTS = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
+const ACTIVE_PERSONA_OPTIONS = [...ATLAS_PERSONA_OPTIONS, ...TOTALTRAC_PERSONA_OPTIONS];
+
 type HubTab = 'cnpj' | 'discovery' | 'ocr' | 'tools';
 
 const ufMap: Record<string, string> = {
@@ -92,14 +99,13 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function ProspectingHub() {
-  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { info: playbookMeta } = useActivePlaybook();
   const accent = useBrandAccent();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
 
-  const activeSegments = playbook === 'totaltrac' ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
-  const activePersonaOptions =
-    playbook === 'totaltrac' ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
+  const activeSegments = ACTIVE_SEGMENTS;
+  const activePersonaOptions = ACTIVE_PERSONA_OPTIONS;
 
   // --- CNPJ real lookup ---
   const [cnpjInput, setCnpjInput] = useState('');
@@ -108,19 +114,14 @@ export function ProspectingHub() {
   const [cnpjError, setCnpjError] = useState<string | null>(null);
 
   // --- discovery via open data, with optional Apollo enrichment ---
+  // `segmento` inicia no primeiro item de ACTIVE_SEGMENTS diretamente — antes precisava de um
+  // useEffect porque a lista mudava com o playbook ativo; hoje é uma constante de módulo estável.
   const [criteria, setCriteria] = useState<ProspectCriteria>({
-    segmento: '',
+    segmento: activeSegments[0],
     localizacao: '',
     estado: '',
     quantidade: 20,
   });
-
-  useEffect(() => {
-    setCriteria((prev) => ({
-      ...prev,
-      segmento: activeSegments[0],
-    }));
-  }, [activeSegments]);
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSearching, setIsSearching] = useState(false);

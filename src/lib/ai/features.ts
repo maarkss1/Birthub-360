@@ -298,14 +298,23 @@ export const categorizeLead = async (
     'local-llama3-fast',
     piiValues,
   );
+// CodeQL (achado real, PR #454): "system prompt injection" — `targetLanguage` (arg de texto
+// livre vindo direto do body de POST /toolkit/execute, ver intelligence.routes.ts, só validado
+// como "string não vazia", nunca contra uma allowlist de idiomas) era interpolado dentro do
+// SYSTEM prompt. Um chamador podia escrever, no lugar do nome do idioma, texto que o modelo trata
+// com mais autoridade que uma mensagem de usuário comum (ex.: "Ignore as instruções anteriores...").
+// Corrigido movendo `targetLanguage` pro USER prompt junto do texto a traduzir — o mesmo papel
+// (dado a ser processado, não instrução) que já vale pra `text`; o system prompt volta a ser uma
+// string fixa, sem nenhum valor do chamador interpolado.
 export const translateText = async (
   text: string,
   targetLanguage: string,
   piiValues: PiiValue[] = [],
 ): Promise<TranslationResult> =>
   callModelJson<TranslationResult>(
-    `Você é um tradutor API preciso. Output no formato JSON: { "translatedText": "string" }. Traduza para ${targetLanguage}.`,
-    `Texto original: "${text}"`,
+    'Você é um tradutor API preciso. Output no formato JSON: { "translatedText": "string" }.',
+    `Traduza o texto a seguir para o idioma "${targetLanguage}".
+Texto original: "${text}"`,
     TranslationSchema,
     'local-llama3-fast',
     piiValues,

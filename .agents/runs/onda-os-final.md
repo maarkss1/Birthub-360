@@ -14,4 +14,4 @@
 7. **Agente 08 (QA/Release):** `package.json` -> Inserir scripts do Biome e Changesets (necessita permissão Agente 00).
 8. **Agente 13 (Enxame de IA):** `src/lib/ai/gateway/` -> Configurar endpoints apontando para o Flowise/OpenWebUI locais.
 
-_Coordenador (00) - Gate e integração autorizados._
+*Coordenador (00) - Gate e integração autorizados.*

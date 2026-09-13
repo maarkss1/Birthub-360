@@ -2,6 +2,7 @@ import type { Prisma } from '@prisma/client';
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
 import { generateRoleplayEvaluation } from './studio/generators/roleplay.js';
+import type { PlaybookKey } from '../../../config/playbooks.js';
 
 export interface RoleplayFinishTranscriptMessage {
   sender: 'bot' | 'user';
@@ -18,7 +19,7 @@ export interface RoleplayFinishTurnEvaluation {
 export interface RoleplayFinishInput {
   organizationId: string;
   userId: string;
-  brand: 'atlasgr' | 'totaltrac';
+  brand: PlaybookKey;
   brandName: string;
   brandDescription: string;
   personaId: string;
@@ -139,7 +140,7 @@ export async function finishRoleplaySession(
 export async function listRoleplaySessions(
   organizationId: string,
   userId: string,
-  brand: 'atlasgr' | 'totaltrac',
+  brand: PlaybookKey,
 ): Promise<RoleplaySessionHistoryItem[]> {
   const rows = await prisma.roleplaySession.findMany({
     where: { organizationId, userId, brand },

@@ -8054,6 +8054,287 @@ paths:
         '503':
           description: THREECX_WEBHOOK_SECRET não configurado (fail-closed)
 
+  /integrations/slack/connections:
+    get:
+      tags: [Slack]
+      summary: Lista as conexões Slack configuradas para o tenant
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+  /integrations/slack/connect:
+    post:
+      tags: [Slack]
+      summary: Cria uma nova conexão Slack — Incoming Webhook ou Bot Token (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          {
+            description: Criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/slack/disconnect/{connectionId}:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Slack]
+      summary: Desconecta a conexão Slack (somente ADMIN/GESTOR)
+      responses:
+        '200':
+          {
+            description: Desconectada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/slack/connections/{connectionId}/test:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Slack]
+      summary: Testa a conexão Slack (somente ADMIN/GESTOR)
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/slack/connections/{connectionId}/message:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Slack]
+      summary: Envia uma mensagem via a conexão Slack (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text: { type: string }
+                channel: { type: string }
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /integrations/stripe/connections:
+    get:
+      tags: [Stripe]
+      summary: Lista as conexões Stripe configuradas para o tenant
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+  /integrations/stripe/connect:
+    post:
+      tags: [Stripe]
+      summary: Cria uma nova conexão com a API do Stripe (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          {
+            description: Criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/stripe/disconnect/{connectionId}:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Stripe]
+      summary: Desconecta a conexão Stripe (somente ADMIN/GESTOR)
+      responses:
+        '200':
+          {
+            description: Desconectada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/stripe/connections/{connectionId}/test:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Stripe]
+      summary: Testa a conexão Stripe (somente ADMIN/GESTOR)
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/stripe/connections/{connectionId}/charges:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Stripe]
+      summary: Cria uma cobrança (payment_intent) via a conexão Stripe (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '201':
+          {
+            description: Criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/stripe/connections/{connectionId}/charges/{paymentId}:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+      - name: paymentId
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Stripe]
+      summary: Consulta uma cobrança (payment_intent) existente via a conexão Stripe
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { description: Cobrança não encontrada }
+
+  /integrations/omie/connections:
+    get:
+      tags: [Omie]
+      summary: Lista as conexões Omie configuradas para o tenant
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+  /integrations/omie/connect:
+    post:
+      tags: [Omie]
+      summary: Cria uma nova conexão com a API do Omie (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          {
+            description: Criada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/omie/disconnect/{connectionId}:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Omie]
+      summary: Desconecta a conexão Omie (somente ADMIN/GESTOR)
+      responses:
+        '200':
+          {
+            description: Desconectada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/omie/connections/{connectionId}/test:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Omie]
+      summary: Testa a conexão Omie (somente ADMIN/GESTOR)
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/omie/connections/{connectionId}/customers:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Omie]
+      summary: Cria/atualiza (upsert) um cliente no Omie via a conexão configurada (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '201':
+          {
+            description: Criado/atualizado,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
   /webhooks/voice-result:
     post:
       tags: [Webhooks]

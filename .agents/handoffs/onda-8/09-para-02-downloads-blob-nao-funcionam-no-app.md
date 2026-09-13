@@ -75,48 +75,4 @@ Android/Xcode disponíveis) — risco de "parecer que funciona" sem funcionar de
 do Agente 09 proíbe explicitamente.
 
 ## Resolução
-
 (Coordenador): O comportamento está documentado e avaliado. Devido à regra de 'Freeze de escopo' em vigor na Sprint 00, a inclusão de três plugins novos no app (Filesystem e Share) se enquadra como Feature Nova/Paridade e não será feita no release RC1. Fica marcado como resolvido (postponed para Sprint pós-13).
-
-## Atualização — auditoria ACH-09-04 (2026-09-11)
-
-Ainda em freeze de escopo, não corrigido agora. Nota apenas para que a estimativa de esforço
-pós-Sprint 13 (`@capacitor/filesystem` + `@capacitor/share`) considere o escopo real hoje, não o
-de 5 ondas atrás.
-
-Levantamento de todo uso de `URL.createObjectURL`/`window.URL.createObjectURL` em `src/**` nesta
-data mostra que o padrão `Blob` + `<a download>` (o mecanismo que não funciona dentro do WebView
-do app empacotado, conforme diagnóstico original acima) se espalhou para além dos 5 arquivos
-originais da Onda 8. Arquivos que passaram a acionar esse mesmo padrão desde então:
-
-- `src/lib/api.ts` — novo helper compartilhado `downloadFile()` (fetch bruto + Blob +
-  `<a download>` temporário), consumido por:
-  - `src/features/activities/components/ActivityList.tsx` (exportar agenda `.ics`)
-  - `src/features/calendar/components/Calendar.tsx` (exportar agenda `.ics`)
-- `src/features/commercial-intelligence/commercialIntelligence.api.ts` —
-  `downloadExecutiveExport()`, mesmo padrão fetch bruto + Blob + `<a download>`.
-- `src/features/analytics/components/CohortAnalysis.tsx` — exportação de relatório de cohort em
-  CSV, mesmo padrão.
-
-`src/features/commercial-intelligence/presentation/CommercialIntelligenceController.ts` é o
-endpoint Express correspondente ao export acima (`getExport`) — não é, ele mesmo, um gatilho de
-download no cliente, mas é o par server-side do novo fluxo e por isso relevante para dimensionar o
-trabalho de migração (o endpoint em si não muda; só o mecanismo de entrega no cliente).
-
-`src/features/roleplay/components/RoleplayHub.tsx` e
-`src/features/prospecting/components/prospecting-hub/OcrCapturePanel.tsx` também usam
-`createObjectURL`, mas não para download: são preview de áudio gravado (`<audio src={...}>`) e
-preview de imagem capturada, respectivamente — nenhum dos dois tem `<a download>`. Não estão no
-escopo deste problema (não sofrem do mesmo bug, já que não tentam entregar um arquivo ao usuário).
-
-Escopo real atualizado para a estimativa pós-Sprint 13: **8 arquivos** usam o padrão
-Blob + `<a download>` que não funciona no WebView do app empacotado — os 5 originais da Onda 8
-(`src/components/CrmBoard.tsx`,
-`src/features/intelligence/components/AutomationGuide.tsx`,
-`src/features/intelligence/components/RobustScriptGenerator.tsx`,
-`src/features/intelligence/components/SuperagentCreator.tsx`,
-`src/features/prospecting/components/ProspectingHub.tsx`) mais os 3 novos listados acima
-(`src/lib/api.ts`, `commercialIntelligence.api.ts`, `CohortAnalysis.tsx`) — mais os 2 consumidores
-do helper novo (`ActivityList.tsx`, `Calendar.tsx`), que herdam o problema automaticamente ao
-chamar `downloadFile()` e por isso não precisam de correção separada própria, só a migração do
-helper compartilhado em `src/lib/api.ts`.

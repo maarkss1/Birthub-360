@@ -34,7 +34,6 @@ sucesso, mas a navegação real não vai para o destino pedido.
 ## Alteração necessária
 
 Uma das duas, a critério do Agente 02:
-
 1. Adicionar `<Route path="enrich">` e `<Route path="prompts">` em `src/App.tsx` apontando para os
    componentes reais (se essas telas existirem sob outro nome/rota); ou
 2. Remover `enrich`/`prompts` de `TAB_ROUTE_SET`/`TabType` se não forem destinos válidos hoje

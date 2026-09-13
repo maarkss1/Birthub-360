@@ -168,14 +168,7 @@ Execute the reflection stage as follows:
    ### Reflection Schema Format (`workspace/learnings.jsonl`)
 
    ```json
-   {
-     "type": "trajectory_insight",
-     "action": "add | update | remove",
-     "target_entity": "[e.g., auth_module.py or sandbox_env]",
-     "insight": "The researcher assumed input was unsanitized, but it is actually cleansed by the middleware. Do not attempt XSS on this parameter.",
-     "source_stage": "mantis-researcher",
-     "snapshot": "<active_snapshot.snapshot_id from state; omit field entirely if unavailable>"
-   }
+   {"type": "trajectory_insight", "action": "add | update | remove", "target_entity": "[e.g., auth_module.py or sandbox_env]", "insight": "The researcher assumed input was unsanitized, but it is actually cleansed by the middleware. Do not attempt XSS on this parameter.", "source_stage": "mantis-researcher", "snapshot": "<active_snapshot.snapshot_id from state; omit field entirely if unavailable>"}
    ```
 
    **Snapshot provenance stamp (never live VCS):** Before writing, read

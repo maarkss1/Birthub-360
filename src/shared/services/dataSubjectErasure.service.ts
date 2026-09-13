@@ -41,8 +41,9 @@ export const ANONYMIZED_CONTACT_NAME = '[titular anonimizado — LGPD]';
  * Idempotente: rodar de novo sobre um contato já anonimizado não falha nem duplica efeito.
  *
  * Cobertura de tabelas derivadas (Onda 6, Agente 01A — ver
- * .agents/prompts/01A-dados-rls-retencao.md, item 4):
+ * .agents/prompts/01A-dados-rls-retencao.md, item 4; atualizado ACH-01-02):
  * - `WhatsAppMessage` (já cobria antes desta onda) — `contactId` direto.
+ * - `VoiceCallLog` — alcançado via `Lead.contactId`, redige `transcript`, `summary` e `recordingUrl`.
  * - `ConversationSignal`/`TimelineEvent` — sem `contactId` próprio, alcançados via `Lead.contactId`
  *   (um titular pode ter mais de um Lead ao longo do tempo). Campos de texto livre que podem citar
  *   o titular (`summary`, `nextStep`, `objections`, `rawModelOutput` em ConversationSignal;

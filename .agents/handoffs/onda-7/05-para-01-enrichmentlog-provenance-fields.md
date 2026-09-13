@@ -6,7 +6,6 @@
 - Prioridade: normal
 
 ## Resolução
-
 Campos opcionais `dataOrigin` (String) e `appliedToCompany` (Boolean) adicionados no model `EnrichmentLog` (migration criada e aplicada). O schema já está pronto para o Agente 05 preencher esses campos nos call sites em `enrichment.service.ts`.
 
 ## Problema
@@ -94,7 +93,6 @@ nem travar os valores possíveis antes de terem uso real em produção — mesmo
 Depois de o 01 aplicar a migração, o 05 preenche os dois campos nas 8 chamadas de
 `prisma.enrichmentLog.create` já existentes em `enrichment.service.ts` e adiciona/atualiza testes
 unitários verificando que:
-
 - logs de fonte direta (BrasilAPI-CNPJ found, Google-Places, Apollo-Organization, Apollo-People/
   Hunter-DomainSearch) gravam `dataOrigin: 'confirmado'`;
 - logs de heurística/estimativa (Domain-Heuristic, Lookalike-PgVector, GDELT-News) gravam
