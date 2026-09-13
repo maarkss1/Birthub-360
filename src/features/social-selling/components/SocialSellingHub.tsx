@@ -23,29 +23,30 @@ export function SocialSellingHub() {
 
   // Nota (09/2026, pedido explícito do usuário): os 3 arquivos HTML abaixo (public/tools/social-selling/)
   // são acervo legado (ver CLAUDE.md §13, "public/tools/ são aplicações legadas embutidas por
-  // iframe") com conteúdo interno real ainda amarrado à Atlas GR — não só o nome do arquivo: o
-  // "Motor" tem uma seção inteira de diagnóstico de perfil LinkedIn escrita para o vertical de
-  // logística/gestão de risco (GR), e o "Pipeline"/"LinkedIn Kit" carregam a logomarca Atlas GR
-  // embutida (SVG) e copy de campanha específica de "GR/logística". Renomear só o arquivo sem
-  // reescrever esse conteúdo interno seria cosmético, não uma debrandização real — por isso os
-  // caminhos abaixo continuam apontando pros arquivos como estão. Rótulos visíveis nesta tela
-  // (abas, cabeçalhos) já não mencionam Atlas GR; o conteúdo interno dos 3 HTMLs em si é um
-  // trabalho de conteúdo maior, fora do escopo desta rerotulagem — ver nota no relatório da tarefa.
+  // iframe"). Foram reescritos e renomeados para a marca Birth Hub 360 — nome do arquivo, título,
+  // logomarca (SVG próprio da Antique Gold/Deep Iris/Orbit Blue, ver identidade-visual/birthhub360/),
+  // copy de campanha e o roteiro de diagnóstico de perfil LinkedIn (antes escrito para o vertical de
+  // logística/gestão de risco da Atlas GR) generalizados pro ICP real do produto ("qualquer empresa
+  // com área comercial"). Ressalva: dentro do "Kit Campanha LinkedIn" existem 4 screenshots
+  // (imagens PNG embutidas em base64 numa das simulações internas) com UI de "gerenciador de
+  // campanhas" ainda mostrando texto vertical-specific da Atlas GR — são raster, não texto, e por
+  // isso não puderam ser editados por substituição de texto; regenerá-los é tarefa de design fora
+  // do escopo desta rerotulagem — ver nota no relatório da tarefa.
   const subTabs = [
     {
       id: 'motor',
       label: 'Motor de Social Selling',
-      path: '/tools/social-selling/Motor de Social Selling Atlas GR.html',
+      path: '/tools/social-selling/Motor de Social Selling.html',
     },
     {
       id: 'pipeline',
       label: 'Pipeline Tracker',
-      path: '/tools/social-selling/Atlas GR Pipeline.html',
+      path: '/tools/social-selling/Pipeline Tracker.html',
     },
     {
       id: 'linkedin',
       label: 'LinkedIn Campaign Kit',
-      path: '/tools/social-selling/AtlasGR Kit Campanha LinkedIn Completo.html',
+      path: '/tools/social-selling/Kit Campanha LinkedIn.html',
     },
     { id: 'posts', label: 'Posts Semanais (1-5)' },
   ] as const;
@@ -190,7 +191,7 @@ export function SocialSellingHub() {
         {activeSubTab === 'motor' && (
           <iframe
             key={`motor-${iframeKey}`}
-            src="/tools/social-selling/Motor de Social Selling Atlas GR.html"
+            src="/tools/social-selling/Motor de Social Selling.html"
             className="w-full h-full min-h-[520px] border-none"
             title="Motor de Social Selling"
           />
@@ -199,7 +200,7 @@ export function SocialSellingHub() {
         {activeSubTab === 'pipeline' && (
           <iframe
             key={`pipeline-${iframeKey}`}
-            src="/tools/social-selling/Atlas GR Pipeline.html"
+            src="/tools/social-selling/Pipeline Tracker.html"
             className="w-full h-full min-h-[650px] border-none"
             title="Pipeline Tracker"
           />
@@ -208,9 +209,9 @@ export function SocialSellingHub() {
         {activeSubTab === 'linkedin' && (
           <iframe
             key={`linkedin-${iframeKey}`}
-            src="/tools/social-selling/AtlasGR Kit Campanha LinkedIn Completo.html"
+            src="/tools/social-selling/Kit Campanha LinkedIn.html"
             className="w-full h-full min-h-[650px] border-none"
-            title="Birth Hub 360 Kit Campanha LinkedIn Completo"
+            title="Birth Hub 360 Kit Campanha LinkedIn"
           />
         )}
 
