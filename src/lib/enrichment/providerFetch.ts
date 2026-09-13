@@ -94,7 +94,7 @@ function parseRetryAfterMs(header: string | null): number | null {
  * de falha definitiva (4xx que não seja 429 — key inválida, payload inválido, não encontrado etc.).
  */
 export async function fetchWithProviderRetry(
-  input: string | URL | Request,
+  input: string | URL,
   init: RequestInit = {},
   options: ProviderRetryOptions,
 ): Promise<Response> {

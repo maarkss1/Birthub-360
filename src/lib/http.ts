@@ -32,24 +32,26 @@ export class DisallowedHostError extends Error {
  * proteção só vale alguma coisa se for impossível esquecer de passá-la num call site novo. Para
  * um provedor com host dinâmico controlado pelo operador (env var), não pelo usuário — ex.:
  * SearXNG, Meilisearch, Voicebox — passe uma lista derivada da própria env var (ex.:
- * `[new URL(searxngUrl).hostname]`), não uma constante fixa.
+ * `[new URL(searxngUrl).hostname]`), não uma constante fixa. Todo valor de `allowedHosts` neste
+ * repositório já é minúsculo (literal ou vindo de `URL#hostname`, que o WHATWG URL Standard
+ * sempre normaliza pra minúsculo) — por isso a comparação abaixo não precisa (e não deve, pro
+ * CodeQL reconhecer o barrier) fazer `.toLowerCase()` nos dois lados dentro de um `.some()`.
  *
- * Importante para o CodeQL reconhecer a validação: quando `input` não é um `Request` já pronto,
- * o `fetch` de verdade é feito com o objeto `URL` já parseado e conferido contra `allowedHosts`
- * (`validatedUrl` abaixo) — nunca com o `input` original ainda não validado — para que o valor
- * que chega ao sink seja provadamente o mesmo que passou pela checagem, não uma cópia dele.
+ * Nunca aceita `Request` como entrada (nenhum call site real precisa disso hoje — todos passam
+ * uma URL simples): o sink de `fetch()` sempre recebe o mesmo objeto `URL` já parseado e conferido
+ * contra `allowedHosts` (`url` abaixo), nunca o `input` original — sem ramo condicional que
+ * reintroduza o valor não validado na chamada real, senão o CodeQL não consegue provar que o valor
+ * que chega no sink é o mesmo que passou pela checagem.
  */
 export async function fetchWithTimeout(
-  input: string | URL | Request,
+  input: string | URL,
   init: RequestInit = {},
   timeoutMs = 10_000,
   allowedHosts: readonly string[],
 ): Promise<Response> {
-  const isRequestInput = input instanceof Request;
-  const validatedUrl = new URL(isRequestInput ? input.url : input);
-  const host = validatedUrl.hostname.toLowerCase();
-  if (!allowedHosts.some((allowed) => allowed.toLowerCase() === host)) {
-    throw new DisallowedHostError(host);
+  const url = new URL(input);
+  if (!allowedHosts.includes(url.hostname)) {
+    throw new DisallowedHostError(url.hostname);
   }
 
   const controller = new AbortController();
@@ -59,7 +61,7 @@ export async function fetchWithTimeout(
     : controller.signal;
 
   try {
-    return await fetch(isRequestInput ? input : validatedUrl, { ...init, signal });
+    return await fetch(url, { ...init, signal });
   } catch (error) {
     if (controller.signal.aborted) throw new HttpTimeoutError(timeoutMs);
     throw error;
