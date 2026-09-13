@@ -160,6 +160,12 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'ceo', jobRole: 'DIRETOR_COMERCIAL' },
       { code: 'account-manager', jobRole: 'CHURN_RETENCAO' },
       { code: 'closer-copilot', jobRole: 'CLOSER' },
+      // Onda 9 — lote 10 (Customer Success/LLM_PROMPT, primeiro lote do domínio), amostra de 3
+      // dos 25 novos systemPrompt curados em scripts/agent-import/source-prompts.ts — inclui o
+      // HIGH-risk pricing-tier-recommender (consultivo-only).
+      { code: 'pricing-tier-recommender', jobRole: 'CHURN_RETENCAO' },
+      { code: 'health-score-trigger', jobRole: 'REVENUE_INTELLIGENCE' },
+      { code: 'l1-auto-resolver', jobRole: 'CHURN_RETENCAO' },
     ])(
       '$code (systemPrompt real) executa via agent.execute e retorna SUCCEEDED com output do modelo',
       async ({ code, jobRole }) => {
