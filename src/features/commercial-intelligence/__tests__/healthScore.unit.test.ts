@@ -104,6 +104,13 @@ function basePerformance(overrides: Partial<PerformanceMetrics> = {}): Performan
     },
     averageTicket: { created: null, open: null, won: null, lost: null },
     salesCycle: { meanDays: null, medianDays: null, sampleSize: 0 },
+    pipelineVelocity: {
+      value: null,
+      openOpportunities: 0,
+      winRatePct: null,
+      averageOpenDealValue: null,
+      salesCycleMedianDays: null,
+    },
     funnel: [],
     funnelHistoricalTrackingSince: null,
     firstContactSla: {

@@ -156,6 +156,16 @@ export function PerformanceTab({ filter }: { filter: CommercialFilter }) {
           metricKey="sales_cycle"
         />
         <KpiTile
+          label="Pipeline Velocity"
+          value={
+            data.pipelineVelocity.value != null
+              ? `${formatCurrency(data.pipelineVelocity.value)}/dia`
+              : 'Não disponível'
+          }
+          hint={`${data.pipelineVelocity.openOpportunities} oportunidade(s) aberta(s)`}
+          metricKey="pipeline_velocity"
+        />
+        <KpiTile
           label="Oportunidades abertas"
           value={String(data.opportunities.open)}
           hint={`${data.opportunities.eligible} elegível(is)`}
