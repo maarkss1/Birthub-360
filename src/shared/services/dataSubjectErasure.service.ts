@@ -19,11 +19,19 @@ export interface ErasureResult {
   conversationSignalsRedacted: number;
   timelineEventsRedacted: number;
   voiceCallLogsRedacted: number;
+  copilotoTranscriptSegmentsRedacted: number;
+  copilotoInsightsRedacted: number;
   alreadyAnonymized: boolean;
 }
 
 /** Marca o registro como anonimizado — não é PII, então é seguro deixar visível/pesquisável. */
 export const ANONYMIZED_CONTACT_NAME = '[titular anonimizado — LGPD]';
+
+/**
+ * Substitui `CopilotoTranscriptSegment.text` (não-nulável no schema — mesmo motivo de
+ * `TimelineEvent.description` usar um placeholder em vez de `null`).
+ */
+export const ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT = '[segmento de transcrição anonimizado — LGPD]';
 
 /**
  * Anonimiza irreversivelmente os dados pessoais de um Contact (titular), a pedido do exercício do
@@ -56,6 +64,19 @@ export const ANONYMIZED_CONTACT_NAME = '[titular anonimizado — LGPD]';
  *   (aponta para o áudio da ligação, PII por si só) são redigidos; `outcome`/`durationSeconds`/
  *   `createdAt` são preservados — mesmo raciocínio: fica "houve uma ligação com este resultado",
  *   não "o que foi dito nela".
+ * - `CopilotoTranscriptSegment`/`CopilotoInsight` (Copiloto Comercial IA — ACH-VOICE-003) — a
+ *   mesma classe de dado de `VoiceCallLog` (transcrição/insight derivado de uma ligação/reunião de
+ *   voz), mas alcançável por um caminho MAIS direto: `CopilotoConversation` tem `contactId` próprio
+ *   (além de `leadId`), então a busca de conversas do titular usa OS DOIS — `contactId` direto OU
+ *   `leadId` em qualquer Lead já resolvido acima — para não depender só da indireção por Lead como
+ *   VoiceCallLog precisa. `CopilotoTranscriptSegment.text` (não-nulável) recebe um placeholder
+ *   (`ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT`, mesmo padrão de `TimelineEvent.description`) em vez de
+ *   `null`; `CopilotoInsight.valueJson` (Json, também não-nulável, pode carregar objeções/
+ *   sentimento/menção a concorrente atribuídos ao titular) é zerado para `{}`, mesmo tratamento de
+ *   `ConversationSignal.rawModelOutput`. `evidenceSegmentIds` (ids internos, não é PII por si só) e
+ *   `type`/`confidence`/`startMs`/`endMs`/`speakerLabel` são preservados — mesmo raciocínio: fica
+ *   "houve uma conversa com este tipo de insight", não o conteúdo dela. Sem isto, uma exclusão de
+ *   titular deixava a MESMA ligação legível aqui mesmo depois de redigida em `VoiceCallLog`.
  * - `AgentMemory` — **não alcançável por este mecanismo**: o schema (`prisma/schema.prisma`) não
  *   tem `contactId`/`leadId`, só `sessionId`/`agentType`/`organizationId`; `messages` é um blob JSON
  *   de conversa que PODE conter PII do titular em texto livre, mas não há chave estruturada para
@@ -120,6 +141,47 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
       let timelineEventsRedacted = 0;
       let voiceCallLogsRedacted = 0;
 
+      // Conversas do Copiloto Comercial IA ligadas a este titular — por `contactId` DIRETO
+      // (CopilotoConversation tem o campo próprio, ao contrário de ConversationSignal/
+      // TimelineEvent/VoiceCallLog) OU por qualquer Lead deste titular já resolvido acima. `OR`
+      // com os dois braços cobre uma conversa que só tenha um dos dois preenchidos (ex.: capturada
+      // antes de o Lead existir, ou vinculada a um Lead sem contactId ainda setado no momento da
+      // captura).
+      const copilotoConversations = await prisma.copilotoConversation.findMany({
+        where: {
+          organizationId: target.organizationId,
+          OR: [
+            { contactId: target.contactId },
+            ...(leadIds.length > 0 ? [{ leadId: { in: leadIds } }] : []),
+          ],
+        },
+        select: { id: true },
+      });
+      const copilotoConversationIds = copilotoConversations.map((c) => c.id);
+
+      let copilotoTranscriptSegmentsRedacted = 0;
+      let copilotoInsightsRedacted = 0;
+
+      if (copilotoConversationIds.length > 0) {
+        const { count: segmentsCount } = await prisma.copilotoTranscriptSegment.updateMany({
+          where: {
+            conversationId: { in: copilotoConversationIds },
+            organizationId: target.organizationId,
+          },
+          data: { text: ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT },
+        });
+        copilotoTranscriptSegmentsRedacted = segmentsCount;
+
+        const { count: insightsCount } = await prisma.copilotoInsight.updateMany({
+          where: {
+            conversationId: { in: copilotoConversationIds },
+            organizationId: target.organizationId,
+          },
+          data: { valueJson: {} },
+        });
+        copilotoInsightsRedacted = insightsCount;
+      }
+
       if (leadIds.length > 0) {
         const { count: signalsCount } = await prisma.conversationSignal.updateMany({
           where: { leadId: { in: leadIds }, organizationId: target.organizationId },
@@ -157,6 +219,8 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
           conversationSignalsRedacted,
           timelineEventsRedacted,
           voiceCallLogsRedacted,
+          copilotoTranscriptSegmentsRedacted,
+          copilotoInsightsRedacted,
           alreadyAnonymized,
         },
         '[lgpd] Titular anonimizado a pedido de exercício de direito (LGPD art. 18).',
@@ -168,6 +232,8 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
         conversationSignalsRedacted,
         timelineEventsRedacted,
         voiceCallLogsRedacted,
+        copilotoTranscriptSegmentsRedacted,
+        copilotoInsightsRedacted,
         alreadyAnonymized,
       };
     },
