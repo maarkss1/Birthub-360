@@ -13,28 +13,28 @@ Tailwind 4, **CSS-first** — não existe `tailwind.config.*`. Todo token é def
 
 Antes de adicionar um token novo, procure primeiro se ele já existe:
 
-| Categoria  | Tokens existentes                                                                                                                                                                                                               |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Superfície | `--bg`, `--surface`, `--surface-2`                                                                                                                                                                                              |
-| Texto      | `--ink`, `--ink-2`                                                                                                                                                                                                              |
-| Borda      | `--line`                                                                                                                                                                                                                        |
-| Marca      | `--brand` (Antique Gold), `--brand-2` (Gold Soft), `--on-brand` (Obsidian, texto sobre marca), `--color-brand-active` (hover da superfície), `--color-brand-ink` (marca como texto sobre fundo claro), `--iris`, `--orbit-blue` |
-| Semântico  | `--warn`, `--ok`, `--color-success/warning/danger/info`                                                                                                                                                                         |
-| Radius     | `--radius-card` (1.25rem), `--radius-card-lg` (1.75rem)                                                                                                                                                                         |
-| Sombra     | `--shadow-card` (elevação neutra, reage a tema); `--shadow-brand-sm`/`--shadow-glow-brand`/`--shadow-glow-brand-strong` (glow reativo à marca via `color-mix(var(--brand))` — usar em vez de `rgba(255,86,24,...)` cru)         |
-| Fonte      | `--font-brand-sans` (Inter, interface) e `--font-brand-display` (Bodoni Moda, H1-H3) — self-hosted em `public/fonts/`                                                                                                           |
-| Tipografia | `--text-h1`..`--text-h6` (escala responsiva `clamp()`, gera utilitários `text-h1`..`text-h6`; já aplicada por padrão em `<h1>`-`<h6>` via `@layer base`)                                                                        |
+| Categoria | Tokens existentes |
+|---|---|
+| Superfície | `--bg`, `--surface`, `--surface-2` |
+| Texto | `--ink`, `--ink-2` |
+| Borda | `--line` |
+| Marca | `--brand` (Antique Gold), `--brand-2` (Gold Soft), `--on-brand` (Obsidian, texto sobre marca), `--color-brand-active` (hover da superfície), `--color-brand-ink` (marca como texto sobre fundo claro), `--iris`, `--orbit-blue` |
+| Semântico | `--warn`, `--ok`, `--color-success/warning/danger/info` |
+| Radius | `--radius-card` (1.25rem), `--radius-card-lg` (1.75rem) |
+| Sombra | `--shadow-card` (elevação neutra, reage a tema); `--shadow-brand-sm`/`--shadow-glow-brand`/`--shadow-glow-brand-strong` (glow reativo à marca via `color-mix(var(--brand))` — usar em vez de `rgba(255,86,24,...)` cru) |
+| Fonte | `--font-brand-sans` (Inter, interface) e `--font-brand-display` (Bodoni Moda, H1-H3) — self-hosted em `public/fonts/` |
+| Tipografia | `--text-h1`..`--text-h6` (escala responsiva `clamp()`, gera utilitários `text-h1`..`text-h6`; já aplicada por padrão em `<h1>`-`<h6>` via `@layer base`) |
 
 ## Os três tokens de marca não são intercambiáveis
 
 Com o Antique Gold, cor de marca e cor de texto deixaram de poder ser a mesma coisa. São três
 papéis distintos, e trocar um pelo outro produz falha de contraste silenciosa:
 
-| Token                  | Papel                                               | Par obrigatório                    |
-| ---------------------- | --------------------------------------------------- | ---------------------------------- |
-| `--color-brand`        | superfície de marca (botão, chip ativo)             | `text-on-brand` (Obsidian, 8.74:1) |
-| `--color-brand-active` | **hover/pressed** dessa superfície                  | `text-on-brand` (6.37:1)           |
-| `--color-brand-ink`    | cor de marca usada como **texto** sobre fundo claro | superfície clara (4.6:1+)          |
+| Token | Papel | Par obrigatório |
+|---|---|---|
+| `--color-brand` | superfície de marca (botão, chip ativo) | `text-on-brand` (Obsidian, 8.74:1) |
+| `--color-brand-active` | **hover/pressed** dessa superfície | `text-on-brand` (6.37:1) |
+| `--color-brand-ink` | cor de marca usada como **texto** sobre fundo claro | superfície clara (4.6:1+) |
 
 `text-white` sobre `bg-brand` mede **2.10:1** e nunca é aceitável — é o erro mais provável ao
 portar um componente antigo, porque com a marca anterior (laranja escuro) esse era o par correto.

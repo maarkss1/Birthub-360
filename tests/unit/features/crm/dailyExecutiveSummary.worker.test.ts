@@ -100,7 +100,7 @@ describe('runDailyExecutiveSummaryJob', () => {
     expect(reportCreate).toHaveBeenCalledWith({
       data: {
         organizationId: 'org-a',
-        brandId: 'atlasgr',
+        brandId: 'geral',
         source: 'DAILY_AUTO',
         content: 'Ótimo dia: 1 conversão, 1 lead novo.',
         metrics: { totalLeadsAtualizados: 3, ganhos: 1, perdidos: 1, novos: 1 },

@@ -3,9 +3,7 @@
 - Onda: roadmap-v2-onda-3
 - Status: resolvido
 - Prioridade: normal
-
 ## Problema
-
 Auditando o bloqueador prioritário #5 de `/AGENTS.md` ("Deploy capaz de iniciar sem aplicar
 migrações") encontrei um gap real no caminho self-hosted OCI (`docker-compose.oci.yml` +
 `scripts/deploy-oci.sh`, caminho #3 documentado em `docs/deploy/README.md`):
@@ -32,48 +30,35 @@ migrações") encontrei um gap real no caminho self-hosted OCI (`docker-compose.
    bloqueador #5. `render.yaml` já trata esse caso corretamente para o serviço worker equivalente:
    `startCommand: npx prisma migrate deploy && npm run start:worker` — o mesmo padrão deveria valer
    aqui.
-
 ## Arquivo(s) envolvido(s)
-
 - `docker-compose.oci.yml` (raiz, mas não é o `docker-compose.yml` — este último é minha
   propriedade exclusiva conforme `/AGENTS.md`; o `.oci.yml` não tem dono explícito no roster atual,
   por isso este handoff em vez de eu editar diretamente).
 - Comparar com `render.yaml` (padrão já correto, linha do `startCommand` do serviço worker) e com
   `Dockerfile` (correção já aplicada nesta rodada, ver commit desta onda).
-
 ## Alteração necessária
-
 Em `docker-compose.oci.yml`, trocar a linha do serviço `worker`:
-
 ```yaml
-command: ['npm', 'run', 'start:worker']
+command: ["npm", "run", "start:worker"]
 ```
-
 por:
-
 ```yaml
-command: ['sh', '-c', 'npx prisma migrate deploy && exec npm run start:worker']
+command: ["sh", "-c", "npx prisma migrate deploy && exec npm run start:worker"]
 ```
-
 Idempotente e seguro sob execução concorrente com o `app` (Prisma serializa via advisory lock),
 então não há problema em ambos os serviços rodarem `migrate deploy` no boot.
-
 ## Teste esperado
-
 Com um volume novo (`docker compose -f docker-compose.oci.yml down -v` seguido de
 `up -d --build`), confirmar via `docker logs atlasgr_worker` que a migração aparece nos logs do
 worker antes de `npm run start:worker` iniciar, e que o worker não lança erro de "relation does
 not exist" nos primeiros segundos de vida.
-
 ## Contexto adicional
-
 Não é bloqueador desta onda: o achado de maior severidade (serviço `app`, tráfego de usuário) já
 foi corrigido dentro do meu escopo de arquivo. Este handoff cobre só o residual do `worker`, que
 depende de editar um arquivo sem dono claro no roster — peço ao Coordenador decidir se atribui a
 mim (08) numa rodada com escopo de arquivo ampliado, ou a outro agente.
 
 ## Resolução (Coordenador, 00)
-
 Aplicada a alteração exatamente como proposta — `docker-compose.oci.yml`, serviço `worker`, `command`
 trocado para `["sh", "-c", "npx prisma migrate deploy && exec npm run start:worker"]`. YAML validado
 (`python3 -c "import yaml; yaml.safe_load(...)"`). Não foi possível rodar o teste esperado

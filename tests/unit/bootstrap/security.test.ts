@@ -104,7 +104,7 @@ describe('bootstrap/security', () => {
       );
     });
 
-    it('permite origens de extensões do Chrome (chrome-extension://) em produção', async () => {
+    it('permite a origem da extensão Chrome do PRÓPRIO produto em produção quando ela está explicitamente em ALLOWED_ORIGINS', async () => {
       vi.doMock('../../../src/config/env.js', () => ({
         env: {
           NODE_ENV: 'production',
@@ -125,6 +125,54 @@ describe('bootstrap/security', () => {
       expect(res.headers['access-control-allow-origin']).toBe(
         'chrome-extension://abcdefghijklmnop',
       );
+      expect(res.headers['access-control-allow-credentials']).toBe('true');
+    });
+
+    // BACKEND-001/SEC-002: antes desta correção, `origin.startsWith('chrome-extension://')`
+    // liberava CORS com credentials:true para QUALQUER extensão instalada no Chrome do usuário —
+    // não só a extensão própria deste produto (chrome-extension/, "Copiloto Comercial IA — Atlas
+    // GR"). Este teste prova o oposto do de cima: uma extensão de terceiros, com um id diferente
+    // do que está em ALLOWED_ORIGINS, é rejeitada — o middleware `cors` responde sem os cabeçalhos
+    // `Access-Control-Allow-*` (o navegador real bloquearia a leitura da resposta pelo JS da
+    // página) em vez de ecoar a origem como permitida.
+    it('rejeita a origem de uma extensão Chrome de TERCEIROS (id diferente do configurado) em produção', async () => {
+      vi.doMock('../../../src/config/env.js', () => ({
+        env: {
+          NODE_ENV: 'production',
+          ALLOWED_ORIGINS: 'https://app.example.com,chrome-extension://abcdefghijklmnop',
+          TRUST_PROXY: true,
+        },
+      }));
+      const { applySecurityMiddleware } = await import('../../../src/bootstrap/security.js');
+      const app = express();
+      applySecurityMiddleware(app);
+      app.get('/ping', (_req, res) => res.status(200).json({ ok: true }));
+
+      const res = await request(app)
+        .get('/ping')
+        .set('Origin', 'chrome-extension://zzzzzzzzzzzzzzzzoutraextensao00');
+
+      expect(res.headers['access-control-allow-origin']).toBeUndefined();
+      expect(res.headers['access-control-allow-credentials']).toBeUndefined();
+    });
+
+    it('continua permitindo `http://localhost:*`/ALLOWED_ORIGINS configurada normalmente em produção', async () => {
+      vi.doMock('../../../src/config/env.js', () => ({
+        env: {
+          NODE_ENV: 'production',
+          ALLOWED_ORIGINS: 'https://app.example.com,chrome-extension://abcdefghijklmnop',
+          TRUST_PROXY: true,
+        },
+      }));
+      const { applySecurityMiddleware } = await import('../../../src/bootstrap/security.js');
+      const app = express();
+      applySecurityMiddleware(app);
+      app.get('/ping', (_req, res) => res.status(200).json({ ok: true }));
+
+      const res = await request(app).get('/ping').set('Origin', 'https://app.example.com');
+
+      expect(res.status).toBe(200);
+      expect(res.headers['access-control-allow-origin']).toBe('https://app.example.com');
       expect(res.headers['access-control-allow-credentials']).toBe('true');
     });
 

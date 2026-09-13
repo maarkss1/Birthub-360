@@ -67,7 +67,7 @@ um número, nunca omitidas silenciosamente.
   novos em `guardrails.service.test.ts`, 6 casos novos em `evaluationMetrics.service.test.ts`, 4
   casos novos em `agent.routes.evaluation-metrics.test.ts`, `agent.routes.slo.test.ts` ajustado)
 - integration (Postgres+Redis reais): `npx dotenv-cli -e .env.test -- npx vitest run -c
-vitest.integration.config.ts` — **46/46 arquivos, 226/226 testes**, incluindo
+  vitest.integration.config.ts` — **46/46 arquivos, 226/226 testes**, incluindo
   `evaluation-metrics.test.ts` (novo, 3 casos) — `redactAndTrackPiiLeak` grava evento real; RLS
   real isola entre tenants (`FORCE ROW LEVEL SECURITY`, não um WHERE de aplicação);
   `getEvaluationMetricsSnapshot` end-to-end contra `AILog`/`AIGuardrailEvent` reais

@@ -52,25 +52,23 @@ não por query real. **A migration real precisa rodar a query de verificação a
 aplicar o `@@unique`, em vez de confiar só nesta análise.**
 
 ### 1. O valor de `cnpj` não é normalizado hoje — o mesmo CNPJ pode estar gravado em formatos
-
-diferentes, o que faz um `@@unique` ingênuo (sobre a string crua) NÃO pegar duplicatas reais
+   diferentes, o que faz um `@@unique` ingênuo (sobre a string crua) NÃO pegar duplicatas reais
 
 Encontrei **três pontos de escrita em `Company.cnpj` com normalização diferente entre si**, dois
 deles fora do escopo desta onda (`src/features/prospecting/services/`) então não alterados aqui —
 só documentados:
 
-| Caminho de criação                                                                                                      | Arquivo                                                              | Formato gravado                                                                                                                                                            | Dedupe hoje                                                                                                                                                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Promoção prospect → CRM                                                                                                 | `prospecting.service.ts::promoteToCrm` (esta onda)                   | **dígitos só** (`toDeterministicCnpj`, 14 dígitos)                                                                                                                         | Sim — `resolveCompanyIdentity`, normaliza com `regexp_replace` antes de comparar                                                                                                                                                                                                                               |
-| Aprovação 1-clique do catálogo de Market Intelligence                                                                   | `marketIntelligence.service.ts::approveToPipeline` (linhas ~309-345) | **com pontuação** (`formatCnpj(normalized)`, ex. `11.222.333/0001-81`) — usa um `formatCnpj` próprio importado de `marketIntelligence.schemas.js`, não o de `cnpj.util.ts` | Parcial — compara `cnpj: formatCnpj(normalized)` por igualdade EXATA contra o valor gravado, sem normalizar o lado do banco. **Não encontra uma Company cujo CNPJ foi gravado só em dígitos** (ex. pela promoção de prospect) — o mesmo CNPJ real cairia como "não encontrado" e criaria uma segunda `Company` |
-| Cadastro manual no CRM (`CompanyForm.tsx` → `CompanyController` → `CompanyUseCases` → `PrismaCompanyRepository.create`) | `PrismaCompanyRepository.ts::create`                                 | **o que o usuário digitou, sem normalização nem validação nenhuma** — nem checa dígito verificador, nem remove máscara                                                     | Nenhum — `create()` grava direto, sem checar CNPJ existente                                                                                                                                                                                                                                                    |
+| Caminho de criação | Arquivo | Formato gravado | Dedupe hoje |
+|---|---|---|---|
+| Promoção prospect → CRM | `prospecting.service.ts::promoteToCrm` (esta onda) | **dígitos só** (`toDeterministicCnpj`, 14 dígitos) | Sim — `resolveCompanyIdentity`, normaliza com `regexp_replace` antes de comparar |
+| Aprovação 1-clique do catálogo de Market Intelligence | `marketIntelligence.service.ts::approveToPipeline` (linhas ~309-345) | **com pontuação** (`formatCnpj(normalized)`, ex. `11.222.333/0001-81`) — usa um `formatCnpj` próprio importado de `marketIntelligence.schemas.js`, não o de `cnpj.util.ts` | Parcial — compara `cnpj: formatCnpj(normalized)` por igualdade EXATA contra o valor gravado, sem normalizar o lado do banco. **Não encontra uma Company cujo CNPJ foi gravado só em dígitos** (ex. pela promoção de prospect) — o mesmo CNPJ real cairia como "não encontrado" e criaria uma segunda `Company` |
+| Cadastro manual no CRM (`CompanyForm.tsx` → `CompanyController` → `CompanyUseCases` → `PrismaCompanyRepository.create`) | `PrismaCompanyRepository.ts::create` | **o que o usuário digitou, sem normalização nem validação nenhuma** — nem checa dígito verificador, nem remove máscara | Nenhum — `create()` grava direto, sem checar CNPJ existente |
 
 Ou seja: hoje já é possível (e, por este desenho, bastante provável ao longo do tempo) ter a MESMA
 empresa real representada por duas ou três linhas de `Company` na mesma organização, cada uma com
 o CNPJ gravado num formato diferente — porque cada caminho de escrita resolve dedupe (quando
 resolve) contra o próprio formato, não contra um formato canônico único. Um `@@unique([organizationId, cnpj])`
 aplicado direto sobre a coluna como está hoje:
-
 - não teria detectado essas duplicatas na hora de criar (formatos diferentes = strings diferentes
   = sem conflito para o Postgres);
 - ao ser adicionado agora, **falharia a migration** se alguma dessas duplicatas já existir com o
@@ -110,8 +108,7 @@ aplicado direto sobre a coluna como está hoje:
 4. **Só depois de 1-3 confirmarem zero grupos duplicados**, aplicar `@@unique([organizationId, cnpj])`.
 
 ### 2. Unificar os pontos de escrita para o mesmo formato canônico (fora do escopo desta onda, mas
-
-pré-requisito real para o `@@unique` não ser recontornado no futuro)
+   pré-requisito real para o `@@unique` não ser recontornado no futuro)
 
 Mesmo depois do backfill + unique, se `approveToPipeline` (Market Intelligence) continuar gravando
 `formatCnpj(normalized)` (com pontuação) enquanto `promoteToCrm` (Prospecção) continua gravando só
@@ -138,7 +135,7 @@ existente; recomendo também garantir que nenhum caminho de escrita grave `''` d
 ## Teste esperado depois da migration
 
 - `tests/integration/prospecting-rls.test.ts` (já existente, describe `findExistingCompany dedupe
-por CNPJ`) continua passando sem alteração — o `@@unique` reforça em nível de banco o que o
+  por CNPJ`) continua passando sem alteração — o `@@unique` reforça em nível de banco o que o
   código já garante hoje por busca prévia; não deveria mudar nenhum resultado desses testes.
 - Um teste de integração novo (sugestão, não escrito por mim — fora do meu arquivo de propriedade):
   tentar `prisma.company.create` duas vezes com o mesmo `(organizationId, cnpj)` fora do caminho de

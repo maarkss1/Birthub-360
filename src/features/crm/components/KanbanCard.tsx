@@ -197,7 +197,7 @@ export const KanbanCard = React.memo(function KanbanCard({
                 lead.score >= 70
                   ? 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'
                   : lead.score >= 40
-                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
+                    ? 'bg-amber-500/10 border-amber-500/30 text-warning-active dark:text-warning'
                     : 'bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400'
               }`}
             >

@@ -5,7 +5,6 @@
 - Prioridade: normal
 
 ## Problema
-
 Varredura completa do repositório por duplicação de tipo/contrato (mesmo padrão de
 `OverviewMetrics`: um tipo declarado de forma independente em mais de um lugar, descrevendo a
 mesma forma de resposta de API/dado de domínio, sem import compartilhado). Além dos dois casos já
@@ -15,7 +14,6 @@ instâncias menores. Nenhuma é bug ativo hoje — todas têm campos batendo no 
 domínios de agentes diferentes e nenhuma foi pedida explicitamente pela minha missão desta onda.
 
 ## Arquivo(s) envolvido(s) e alteração sugerida por caso
-
 1. **`ActivityListFilters`** — `src/features/activities/domain/Activity.ts:19-23` vs
    `src/features/activities/services/activity.service.ts:41-45`. Mesmo padrão "domain vs serviço
    legado" de `OverviewMetrics`/`analytics.service.ts` — vale checar se `activity.service.ts` ainda
@@ -42,27 +40,24 @@ domínios de agentes diferentes e nenhuma foi pedida explicitamente pela minha m
    `AGENTS.md`) precisa confirmar qual é o formato correto antes de unificar.
 6. **Entidades núcleo do CRM (`Company`/`Contact`/`Lead`/`Activity`/`Note`)** —
    `src/types/index.ts` (frontend, datas como `string`) vs `src/features/{companies,contacts,crm,
-activities,notes}/domain/*.ts` (backend, datas como `Date`). Mesmo padrão aplicado em escala
+   activities,notes}/domain/*.ts` (backend, datas como `Date`). Mesmo padrão aplicado em escala
    muito maior que qualquer um dos casos acima — mas com a divergência Date→string esperada/
    sistemática de qualquer API JSON, não cópia acidental. Não recomendo tratar isso na Onda 8: é
    uma decisão de arquitetura maior (provavelmente um pacote de tipos gerados a partir do schema
    Zod/Prisma) que caberia como uma missão própria de uma onda futura, não como correção pontual.
 
 ## Teste esperado
-
 Nenhum teste automatizado novo deste handoff em si — é um índice de descobertas para priorização.
 Cada item, se e quando corrigido, deve seguir o mesmo padrão de teste dos handoffs 18-para-04 desta
 onda: `npx tsc --noEmit` limpo após a extração para `src/shared/contracts/**`.
 
 ## Contexto adicional
-
 Ver `.agents/handoffs/onda-8/18-para-04-unificar-overviewmetrics.md`,
 `18-para-02-unificar-overviewmetrics-frontend.md` e
 `18-para-04-duplicacao-commercial-intelligence-contract.md` para os dois casos já com dono e ação
 proposta nesta mesma onda.
 
 ## Resolução parcial (Fase Final 0, Agente 00)
-
 Nenhum dos 6 itens é bug ativo hoje (o próprio relatório já confirma isso) e nenhum é achado de
 segurança/governança — não pertencem ao escopo desta fase. Decisão de priorização: mantenho aberto
 como `em-andamento`, não bloqueador, e direciono a distribuição real aos donos (04, 02, 07, 13
@@ -76,7 +71,6 @@ do que os fatos sustentam.
 Itens 1-4 confirmados idênticos campo a campo (mesma origem `ActivityType`/`ActivityStatus` via
 `src/lib/zod.ts` nos dois lados de cada par) e unificados por import, sem mudança de comportamento
 (`npx tsc --noEmit` limpo):
-
 - **Item 4** (`ActivityType`/`ActivityStatus` em `calendar.api.ts`): trocado por
   `import type { ActivityType, ActivityStatus } from '../../lib/zod'`.
 - **Item 3** (`NotificationKind`): extraído para

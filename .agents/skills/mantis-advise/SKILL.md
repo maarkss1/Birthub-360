@@ -55,7 +55,7 @@ Coding agents with standard bash access should run
    python3 reference/scripts/advise.py --file src/auth.py
    ```
 
-   _Prints_: Actionable security advisory markdown with active threat model,
+   *Prints*: Actionable security advisory markdown with active threat model,
    historical vulnerabilities, verified patch diffs, triaged false positives,
    and invariants.
 
@@ -154,17 +154,14 @@ The Advisor outputs clean, actionable recommendations:
 # Security Advisory: <target_file>
 
 ### 1. Threat Model & Trust Boundaries
-
 - **Entry Points**: <untrusted network / RPC / CLI>
 - **Sensitive Assets**: <credentials, filesystem, tenant data>
 
 ### 2. Known Pitfalls & Historical Lineages
-
 - **[CWE-XX] <Title>** (Lineage: `<uuid>`): <How it occurred and how it was resolved>
 - **Verified Safe Pattern**:
   ```python
   # Safe implementation idiom
-  ```
 ````
 
 ### 3. False Positive Context (Intentional Behavior)
@@ -179,5 +176,4 @@ The Advisor outputs clean, actionable recommendations:
 - [ ] Respects trust boundary isolation.
 
 ```
-
 ```

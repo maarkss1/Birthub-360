@@ -120,6 +120,12 @@ PATTERNS=(
     '(BLAND_API_KEY|API_KEY|SECRET|TOKEN|PASSWORD)\s*[:=]\s*["'"'"']?[A-Za-z0-9_\-\/\.]{16,}["'"'"']?'
 )
 
+# Exclusão de placeholder óbvio — mesma usada no loop de PATTERNS acima, compartilhada aqui para
+# que "user:senha embutida em URL" não dispare contra convenções de placeholder já documentadas
+# (<PLACEHOLDER>, __PLACEHOLDER__, .example=, xxxxxxxx, process.env.*) só porque o host da URL não
+# está na allowlist de serviços de dev/CI conhecidos.
+PLACEHOLDER_EXCLUDE='\.example[:=]|__PLACEHOLDER__|xxxxxxxx|<.*>|process\.env\.'
+
 # Padrão à parte para "user:senha embutido em URL" — exclui hosts de dev/CI conhecidos deste
 # projeto (localhost, serviços do docker-compose local, valores placeholder de exemplo) para não
 # afogar o sinal real em ruído de `.env.example`/docker-compose/CI já documentados como não-segredo.
@@ -135,7 +141,7 @@ for f in "${FILES[@]}"; do
         *.dump|*.png|*.jpg|*.jpeg|*.gif|*.pdf|*.woff*|*.ttf|node_modules/*|dist/*|.git/*) continue ;;
     esac
     for pat in "${PATTERNS[@]}"; do
-        if grep -EnI "$pat" -- "$f" 2>/dev/null | grep -vE '\.example[:=]|__PLACEHOLDER__|xxxxxxxx|<.*>|process\.env\.' >/tmp/scan-secrets-hit.$$ ; then
+        if grep -EnI "$pat" -- "$f" 2>/dev/null | grep -vE "$PLACEHOLDER_EXCLUDE" >/tmp/scan-secrets-hit.$$ ; then
             if [[ -s /tmp/scan-secrets-hit.$$ ]]; then
                 echo "POTENCIAL SEGREDO em $f:"
                 sed 's/^/    /' /tmp/scan-secrets-hit.$$
@@ -146,8 +152,9 @@ for f in "${FILES[@]}"; do
     done
 
     # user:senha embutido em URL — só sinaliza quando o host NÃO é um serviço local/dev/CI já
-    # documentado como não-segredo neste repositório.
-    if grep -EnI "$URL_CRED_PATTERN" -- "$f" 2>/dev/null | grep -vEi "$URL_CRED_ALLOWLIST" >/tmp/scan-secrets-hit.$$ ; then
+    # documentado como não-segredo neste repositório, E a senha não é um placeholder óbvio
+    # (mesma exclusão do loop de PATTERNS acima — ver PLACEHOLDER_EXCLUDE).
+    if grep -EnI "$URL_CRED_PATTERN" -- "$f" 2>/dev/null | grep -vEi "$URL_CRED_ALLOWLIST" | grep -vE "$PLACEHOLDER_EXCLUDE" >/tmp/scan-secrets-hit.$$ ; then
         if [[ -s /tmp/scan-secrets-hit.$$ ]]; then
             echo "POTENCIAL SEGREDO em $f:"
             sed 's/^/    /' /tmp/scan-secrets-hit.$$

@@ -135,8 +135,20 @@ export function applySecurityMiddleware(app: Express): void {
         // de sessão) pra QUALQUER subdomínio railway.app, não só o desta aplicação — qualquer
         // outro app hospedado no Railway podia fazer requisições autenticadas contra esta API.
         // O domínio real de produção (ex: seu-app.up.railway.app) deve estar listado explicitamente
-        // Permitir extensões Chrome (ex.: o copiloto de IA em reuniões do Google Meet)
-        if (origin.startsWith('chrome-extension://')) return callback(null, true);
+        // BACKEND-001/SEC-002: `origin.startsWith('chrome-extension://')` tinha o MESMO defeito —
+        // liberava CORS com credentials:true para QUALQUER extensão instalada no Chrome de
+        // QUALQUER usuário, não só a extensão própria deste produto (chrome-extension/, "Copiloto
+        // Comercial IA — Atlas GR"). Como o id de uma extensão Manifest V3 é só um hash derivado
+        // da chave pública dela, qualquer extensão de terceiros — maliciosa ou não — também tem
+        // origem `chrome-extension://<id>` e passava por este `startsWith`, podendo fazer
+        // requisições autenticadas usando o cookie de sessão do Better Auth do usuário. A extensão
+        // deste produto já documenta (chrome-extension/README.md "Deploy em produção", também
+        // docs/deploy/oracle-cloud.md) que sua origem real deve ser adicionada EXPLICITAMENTE a
+        // ALLOWED_ORIGINS (`CHROME_EXTENSION_ID` em scripts/deploy-oci.sh) — nunca por wildcard de
+        // esquema. Sem publicação com chave fixa/política empresarial o id não é estável entre
+        // instalações, então não há um id único para hardcodear aqui; o mecanismo correto já
+        // existe (ALLOWED_ORIGINS aceita `chrome-extension://<id>` como qualquer outra origem —
+        // ver o `includes` abaixo), só faltava remover este bypass amplo.
         if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
         callback(new Error(`CORS policy: origin ${origin} not allowed`));
       },

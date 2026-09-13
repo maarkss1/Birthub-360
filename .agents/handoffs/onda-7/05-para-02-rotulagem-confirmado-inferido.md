@@ -18,7 +18,6 @@ handoff documenta o contrato de dado já disponível hoje e o que fica disponív
 ## Arquivo(s) envolvido(s)
 
 Prováveis pontos de consumo (não alterados por mim):
-
 - `src/features/prospecting/components/prospecting-hub/CandidateCard.tsx` (já lê
   `enrichment.apolloContacts`)
 - `src/features/crm/components/LeadDetailDrawer.tsx` / tela de detalhe de empresa/contato, onde
@@ -44,7 +43,6 @@ Prováveis pontos de consumo (não alterados por mim):
 Ver `.agents/handoffs/onda-7/05-para-01-enrichmentlog-provenance-fields.md`: proponho
 `EnrichmentLog.dataOrigin` ("confirmado"/"inferido") e `EnrichmentLog.appliedToCompany` (bool).
 Depois de existirem, ainda falta:
-
 - uma rota que exponha `EnrichmentLog` por `companyId` (hoje não existe nenhuma rota pública —
   `EnrichmentLog` só é escrito, nunca lido de volta pelo backend);
 - decisão de produto/UX sobre onde esse badge aparece (por campo individual? só um resumo "X

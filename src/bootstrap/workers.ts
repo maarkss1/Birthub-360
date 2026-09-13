@@ -6,6 +6,7 @@ import { queuesEnabled } from '../lib/queue/redis.js';
 import { createLeadsWorker } from '../lib/queue/index.js';
 import { createAgentWorker } from '../lib/queue/agent.worker.js';
 import { createEnrichmentWorker } from '../lib/queue/enrichment.queue.js';
+import { createEnrichmentCascadeWorker } from '../lib/queue/enrichmentCascade.worker.js';
 import { createSearchWorker } from '../lib/queue/search.queue.js';
 import { initMeiliIndexes } from '../lib/search/index.js';
 import { createColdCallWorker, scheduleColdCallCampaigns } from '../lib/queue/coldCall.worker.js';
@@ -54,11 +55,34 @@ import {
   scheduleStagnationScannerJob,
 } from '../features/automations/application/stagnation-scanner.service.js';
 import {
+  createCadenceRunWorker,
+  scheduleCadenceRunJob,
+} from '../features/cadence/jobs/cadenceRun.worker.js';
+import { MeetingSynthesisService } from '../features/chatbook/services/meeting-synthesis.service.js';
+import {
   createForecastSnapshotWorker,
   scheduleForecastSnapshotJob,
 } from '../features/commercial-intelligence/jobs/forecastSnapshotWeekly.worker.js';
 import { createCopilotoTranscriptionWorker } from '../features/copiloto-ia/jobs/transcribeConversation.worker.js';
-import { MeetingSynthesisService } from '../features/chatbook/services/meeting-synthesis.service.js';
+import {
+  createAgentMemoryCleanupWorker,
+  scheduleAgentMemoryCleanupJob,
+} from '../features/intelligence/jobs/agentMemoryCleanup.worker.js';
+import {
+  createAccountIntelligenceInsightsWorker,
+  scheduleAccountIntelligenceInsightsJob,
+} from '../features/market-intelligence/jobs/accountIntelligenceInsights.worker.js';
+// ACH-16-05: as 4 fábricas abaixo (agent-memory-cleanup acima, news-monitor e whatsapp-command
+// abaixo, account-intelligence-insights acima) já eram criadas em worker.ts (processo dedicado)
+// mas ficavam de fora do modo embutido — tests/unit/architecture/worker-registry-parity.test.ts
+// pegou a divergência. Sem elas aqui, um dev local rodando só `npm run dev` com
+// ENABLE_EMBEDDED_WORKERS=true (sem o processo `worker.ts` separado) nunca via essas filas
+// processadas, de forma silenciosa.
+import {
+  createNewsMonitorWorker,
+  scheduleGlobalNewsScan,
+} from '../lib/queue/newsMonitor.worker.js';
+import { createWhatsAppCommandWorker } from '../lib/queue/whatsappCommand.worker.js';
 
 // `unknown` não serve aqui: os workers reais guardados neste handle têm DataType/ResultType todos
 // diferentes entre si (AgentJobData, EnrichmentJobData, WhatsAppSignalJobData, void, objetos de
@@ -79,7 +103,9 @@ export interface EmbeddedWorkersHandle {
   leadsWorker: CloseableWorker;
   agentWorker: CloseableWorker;
   enrichmentWorker: CloseableWorker;
+  enrichmentCascadeWorker: CloseableWorker;
   whatsappSignalWorker: CloseableWorker;
+  whatsappCommandWorker: CloseableWorker;
   bitrixSyncWorker: CloseableWorker;
   followUpWorker: CloseableWorker;
   execSummaryWorker: CloseableWorker;
@@ -94,6 +120,11 @@ export interface EmbeddedWorkersHandle {
   forecastSnapshotWorker: CloseableWorker;
   /** Transcrição de conversa do Copiloto IA (Onda 3) — mesmo raciocínio do forecastSnapshotWorker acima. */
   copilotoTranscriptionWorker: CloseableWorker;
+  /** ACH-16-05: já registrados em worker.ts, faltavam aqui — ver comentário nos imports acima. */
+  newsMonitorWorker: CloseableWorker;
+  cadenceRunWorker: CloseableWorker;
+  agentMemoryCleanupWorker: CloseableWorker;
+  accountIntelligenceInsightsWorker: CloseableWorker;
   searchWorker: CloseableWorker;
   coldCallWorker: CloseableWorker;
   swarmSchedulerWorker: CloseableWorker;
@@ -118,7 +149,9 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     leadsWorker: embeddedWorkersEnabled ? createLeadsWorker() : null,
     agentWorker: embeddedWorkersEnabled ? createAgentWorker() : null,
     enrichmentWorker: embeddedWorkersEnabled ? createEnrichmentWorker() : null,
+    enrichmentCascadeWorker: embeddedWorkersEnabled ? createEnrichmentCascadeWorker() : null,
     whatsappSignalWorker: embeddedWorkersEnabled ? createWhatsAppSignalWorker() : null,
+    whatsappCommandWorker: embeddedWorkersEnabled ? createWhatsAppCommandWorker() : null,
     bitrixSyncWorker: embeddedWorkersEnabled ? createBitrixSyncWorker() : null,
     followUpWorker: embeddedWorkersEnabled ? createFollowUpWorker() : null,
     execSummaryWorker: embeddedWorkersEnabled ? createExecutiveSummaryWorker() : null,
@@ -134,6 +167,12 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     forecastSnapshotWorker: embeddedWorkersEnabled ? createForecastSnapshotWorker() : null,
     copilotoTranscriptionWorker: embeddedWorkersEnabled
       ? createCopilotoTranscriptionWorker({ meetingSynthesisPort: new MeetingSynthesisService() })
+      : null,
+    newsMonitorWorker: embeddedWorkersEnabled ? createNewsMonitorWorker() : null,
+    cadenceRunWorker: embeddedWorkersEnabled ? createCadenceRunWorker() : null,
+    agentMemoryCleanupWorker: embeddedWorkersEnabled ? createAgentMemoryCleanupWorker() : null,
+    accountIntelligenceInsightsWorker: embeddedWorkersEnabled
+      ? createAccountIntelligenceInsightsWorker()
       : null,
     searchWorker: null,
     coldCallWorker: null,
@@ -181,6 +220,18 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     );
     scheduleForecastSnapshotJob().catch((err) =>
       logger.error({ err }, 'Falha ao agendar o snapshot semanal de forecast'),
+    );
+    scheduleCadenceRunJob().catch((err) =>
+      logger.error({ err }, 'Falha ao agendar job de execução de cadência'),
+    );
+    scheduleAgentMemoryCleanupJob().catch((err) =>
+      logger.error({ err }, 'Falha ao agendar job de limpeza de memória do agente'),
+    );
+    scheduleAccountIntelligenceInsightsJob().catch((err) =>
+      logger.error({ err }, 'Falha ao agendar job de insights de account intelligence'),
+    );
+    scheduleGlobalNewsScan().catch((err) =>
+      logger.error({ err }, 'Falha ao agendar o job de monitoramento de notícias'),
     );
   }
 

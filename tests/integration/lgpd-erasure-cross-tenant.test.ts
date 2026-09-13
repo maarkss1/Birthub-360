@@ -4,6 +4,7 @@ import { requestContext } from '../../src/lib/async-context';
 import {
   eraseDataSubject,
   ANONYMIZED_CONTACT_NAME,
+  ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT,
 } from '../../src/shared/services/dataSubjectErasure.service';
 
 // Handoff: .agents/handoffs/onda-6/01A-para-14-lgpd-erasure-cross-tenant-test.md
@@ -51,6 +52,12 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       await withTenant(org, async () => {
         await prisma.whatsAppMessage.deleteMany({ where: { organizationId: org } });
         await prisma.conversationSignal.deleteMany({ where: { organizationId: org } });
+        await prisma.voiceCallLog.deleteMany({ where: { organizationId: org } });
+        // Filhas antes do pai (mesma ordem da FK `onDelete: Cascade` — apagadas explicitamente,
+        // não por cascade, mesmo cuidado das três linhas acima).
+        await prisma.copilotoTranscriptSegment.deleteMany({ where: { organizationId: org } });
+        await prisma.copilotoInsight.deleteMany({ where: { organizationId: org } });
+        await prisma.copilotoConversation.deleteMany({ where: { organizationId: org } });
       });
     }
     // TimelineEvent não tem organizationId próprio (filtra via Lead pai — ver schema.prisma) — o
@@ -190,6 +197,104 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       }),
     );
 
+    await withTenant(ORG_A, async () =>
+      prisma.voiceCallLog.create({
+        data: {
+          organizationId: ORG_A,
+          leadId: leadA.id,
+          providerCallId: `call-a-${suffix}`,
+          outcome: 'connected_positive',
+          durationSeconds: 120,
+          summary: 'Resumo da ligação com o titular A',
+          transcript: 'Transcrição completa da ligação com o titular A',
+          recordingUrl: 'https://cdn.example.com/recordings/call-a.mp3',
+        },
+      }),
+    );
+    await withTenant(ORG_B, async () =>
+      prisma.voiceCallLog.create({
+        data: {
+          organizationId: ORG_B,
+          leadId: leadB.id,
+          providerCallId: `call-b-${suffix}`,
+          outcome: 'connected_positive',
+          durationSeconds: 90,
+          summary: 'Resumo da ligação com o titular B',
+          transcript: 'Transcrição completa da ligação com o titular B',
+          recordingUrl: 'https://cdn.example.com/recordings/call-b.mp3',
+        },
+      }),
+    );
+
+    // --- CopilotoConversation (Copiloto Comercial IA — ACH-VOICE-003) com `contactId` DIRETO,
+    // mais um segmento de transcrição e um insight derivado, para os dois titulares. ---
+    const conversationA = await withTenant(ORG_A, async () =>
+      prisma.copilotoConversation.create({
+        data: {
+          organizationId: ORG_A,
+          source: 'CALL',
+          contactId: contactA.id,
+          leadId: leadA.id,
+        },
+      }),
+    );
+    const conversationB = await withTenant(ORG_B, async () =>
+      prisma.copilotoConversation.create({
+        data: {
+          organizationId: ORG_B,
+          source: 'CALL',
+          contactId: contactB.id,
+          leadId: leadB.id,
+        },
+      }),
+    );
+
+    const segmentA = await withTenant(ORG_A, async () =>
+      prisma.copilotoTranscriptSegment.create({
+        data: {
+          organizationId: ORG_A,
+          conversationId: conversationA.id,
+          startMs: 0,
+          endMs: 5000,
+          text: 'Transcrição citando o titular A por nome',
+        },
+      }),
+    );
+    const segmentB = await withTenant(ORG_B, async () =>
+      prisma.copilotoTranscriptSegment.create({
+        data: {
+          organizationId: ORG_B,
+          conversationId: conversationB.id,
+          startMs: 0,
+          endMs: 5000,
+          text: 'Transcrição citando o titular B por nome',
+        },
+      }),
+    );
+
+    await withTenant(ORG_A, async () =>
+      prisma.copilotoInsight.create({
+        data: {
+          organizationId: ORG_A,
+          conversationId: conversationA.id,
+          type: 'objecao',
+          valueJson: { detalhe: 'Objeção de preço levantada pelo titular A' },
+          evidenceSegmentIds: [segmentA.id],
+        },
+      }),
+    );
+    await withTenant(ORG_B, async () =>
+      prisma.copilotoInsight.create({
+        data: {
+          organizationId: ORG_B,
+          conversationId: conversationB.id,
+          type: 'objecao',
+          valueJson: { detalhe: 'Objeção de prazo levantada pelo titular B' },
+          evidenceSegmentIds: [segmentB.id],
+        },
+      }),
+    );
+
     // --- Ação sob teste: apaga o titular de ORG_A (RLS real — eraseDataSubject roda sob o
     // tenant da própria organização passada, não sob bypass). ---
     const result = await eraseDataSubject({ organizationId: ORG_A, contactId: contactA.id });
@@ -199,6 +304,9 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       whatsAppMessagesMasked: 1,
       conversationSignalsRedacted: 1,
       timelineEventsRedacted: 1,
+      voiceCallLogsRedacted: 1,
+      copilotoTranscriptSegmentsRedacted: 1,
+      copilotoInsightsRedacted: 1,
       alreadyAnonymized: false,
     });
 
@@ -235,12 +343,14 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
         where: { leadId: leadA.id },
       }),
       timelineEvent: await prisma.timelineEvent.findFirst({ where: { leadId: leadA.id } }),
+      voiceCallLog: await prisma.voiceCallLog.findFirst({ where: { leadId: leadA.id } }),
       leadList: await prisma.lead.findMany({ where: { organizationId: ORG_A } }),
     }));
     expect(crossTenantReadFromB.contact).toBeNull();
     expect(crossTenantReadFromB.whatsAppMessage).toBeNull();
     expect(crossTenantReadFromB.conversationSignal).toBeNull();
     expect(crossTenantReadFromB.timelineEvent).toBeNull();
+    expect(crossTenantReadFromB.voiceCallLog).toBeNull();
     expect(crossTenantReadFromB.leadList).toEqual([]);
 
     // --- 4/5. ConversationSignal de ORG_A redigido, ORG_B intacto. Nenhuma dessas tabelas está no
@@ -281,6 +391,63 @@ describe('eraseDataSubject — exclusão de titular sem vazamento cross-tenant (
       prisma.whatsAppMessage.findFirstOrThrow({ where: { contactId: contactB.id } }),
     );
     expect(waBAfter.body).toBe('Mensagem de PII do titular B');
+
+    // --- 10/11. VoiceCallLog de ORG_A redigido (transcript/summary/recordingUrl removidos,
+    // outcome/durationSeconds/createdAt preservados — ACH-01-02), ORG_B intacto. ---
+    const voiceCallLogAAfter = await withTenant(ORG_A, async () =>
+      prisma.voiceCallLog.findFirstOrThrow({ where: { leadId: leadA.id } }),
+    );
+    expect(voiceCallLogAAfter.transcript).toBeNull();
+    expect(voiceCallLogAAfter.summary).toBeNull();
+    expect(voiceCallLogAAfter.recordingUrl).toBeNull();
+    expect(voiceCallLogAAfter.outcome).toBe('connected_positive');
+    expect(voiceCallLogAAfter.durationSeconds).toBe(120);
+    expect(voiceCallLogAAfter.createdAt).toBeInstanceOf(Date);
+
+    const voiceCallLogBAfter = await withTenant(ORG_B, async () =>
+      prisma.voiceCallLog.findFirstOrThrow({ where: { leadId: leadB.id } }),
+    );
+    expect(voiceCallLogBAfter.transcript).toBe('Transcrição completa da ligação com o titular B');
+    expect(voiceCallLogBAfter.summary).toBe('Resumo da ligação com o titular B');
+    expect(voiceCallLogBAfter.recordingUrl).toBe('https://cdn.example.com/recordings/call-b.mp3');
+    expect(voiceCallLogBAfter.outcome).toBe('connected_positive');
+    expect(voiceCallLogBAfter.durationSeconds).toBe(90);
+
+    // --- 12/13. CopilotoTranscriptSegment/CopilotoInsight de ORG_A redigidos (ACH-VOICE-003 —
+    // gap que este fix fecha: antes, a MESMA ligação continuava legível aqui mesmo depois de
+    // VoiceCallLog já ter sido redigido acima), ORG_B intacto. ---
+    const segmentAAfter = await withTenant(ORG_A, async () =>
+      prisma.copilotoTranscriptSegment.findFirstOrThrow({ where: { conversationId: conversationA.id } }),
+    );
+    expect(segmentAAfter.text).toBe(ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT);
+
+    const insightAAfter = await withTenant(ORG_A, async () =>
+      prisma.copilotoInsight.findFirstOrThrow({ where: { conversationId: conversationA.id } }),
+    );
+    expect(insightAAfter.valueJson).toEqual({});
+    // Campos não-PII preservados — mesmo raciocínio de VoiceCallLog.outcome/durationSeconds acima.
+    expect(insightAAfter.type).toBe('objecao');
+    expect(insightAAfter.evidenceSegmentIds).toEqual([segmentA.id]);
+
+    const segmentBAfter = await withTenant(ORG_B, async () =>
+      prisma.copilotoTranscriptSegment.findFirstOrThrow({ where: { conversationId: conversationB.id } }),
+    );
+    expect(segmentBAfter.text).toBe('Transcrição citando o titular B por nome');
+
+    const insightBAfter = await withTenant(ORG_B, async () =>
+      prisma.copilotoInsight.findFirstOrThrow({ where: { conversationId: conversationB.id } }),
+    );
+    expect(insightBAfter.valueJson).toEqual({ detalhe: 'Objeção de prazo levantada pelo titular B' });
+
+    // --- RLS real: ORG_B não enxerga a conversa/segmento/insight de ORG_A. ---
+    const crossTenantCopilotoFromB = await withTenant(ORG_B, async () => ({
+      conversation: await prisma.copilotoConversation.findUnique({ where: { id: conversationA.id } }),
+      segment: await prisma.copilotoTranscriptSegment.findFirst({
+        where: { conversationId: conversationA.id },
+      }),
+    }));
+    expect(crossTenantCopilotoFromB.conversation).toBeNull();
+    expect(crossTenantCopilotoFromB.segment).toBeNull();
 
     // --- Idempotência (garantia documentada no docstring de eraseDataSubject): rodar de novo
     // sobre um titular já anonimizado não falha, não duplica efeito, e sinaliza alreadyAnonymized.

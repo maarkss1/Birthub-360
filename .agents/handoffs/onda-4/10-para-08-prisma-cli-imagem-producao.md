@@ -3,9 +3,7 @@
 - Onda: 4
 - Status: resolvido
 - Prioridade: alto
-
 ## Problema
-
 Implementei, no chart Helm (`charts/prospector-atlas/templates/migration-job.yaml`, hook
 `pre-install,pre-upgrade`) e nos manifests avulsos (`k8s/migration-job.yaml`), um Job que roda
 `npx prisma migrate deploy` antes de qualquer Deployment/Rollout novo ser aplicado — implementa a
@@ -26,43 +24,33 @@ build`, um caminho de build totalmente diferente que nunca passa pelo `Dockerfil
 disponível). Mas deixa o caminho k8s/Helm/ArgoCD com um Job de migração que existe no manifest
 mas não funciona de fato, caso esse caminho seja ativado no futuro (ver `charts/README.md`/
 `argocd/README.md` — hoje nenhum cluster real está registrado).
-
 ## Arquivo(s) envolvido(s)
-
 - `Dockerfile` (raiz, propriedade exclusiva do Agente 08) — linha 20 (`npm prune --omit=dev`)
   remove a CLI `prisma` do estágio final.
 - Consumidores do gap (meu lado, já corrigidos/documentados): `charts/prospector-atlas/
-templates/migration-job.yaml`, `k8s/migration-job.yaml`, `charts/README.md`, `k8s/README.md`.
-
+  templates/migration-job.yaml`, `k8s/migration-job.yaml`, `charts/README.md`, `k8s/README.md`.
 ## Alteração necessária
-
 Uma das seguintes (decisão de quem é dono do Dockerfile):
-
 1. Mover `prisma` de `devDependencies` para `dependencies` em `package.json` (fora do meu escopo
    — `package.json` exige aprovação do Agente 00) e deixar o `npm prune --omit=dev` como está.
 2. Ajustar o `Dockerfile` para preservar especificamente o pacote `prisma` mesmo depois do prune
    (ex.: reinstalar só a CLI no estágio final: `RUN npm install --no-save prisma@$(node -p
-"require('./package.json').devDependencies.prisma")` antes do `USER nodejs`), mantendo a
+   "require('./package.json').devDependencies.prisma")` antes do `USER nodejs`), mantendo a
    imagem final o mais enxuta possível fora isso.
 3. Construir uma imagem "migrator" separada (segundo estágio de build que não faz `npm prune`) e
    apontar `charts/prospector-atlas/values.yaml` → `migrations.image.repository`/`.tag` para ela
    (já deixei esses campos prontos no `values.yaml`, vazios por padrão, para essa opção).
-
 ## Teste esperado
-
 `docker run <imagem-final> npx prisma migrate deploy --help` (ou equivalente) não falha com
 "command not found"/tentativa de download de rede. No cluster (quando ativado), `kubectl logs
 job/<nome>-migrate-<revisão>` mostra a migração rodando de fato, não uma falha de CLI ausente.
-
 ## Contexto adicional
-
 Onda 4 (Extensões) — Agente 10, missão "Migração e rollback no cluster". Não bloqueia o release
 atual (Render não usa o Dockerfile), mas bloqueia a ativação futura do caminho k8s/Helm/ArgoCD
 descrita como "aspiracional" em `charts/README.md`/`argocd/README.md`. Prioridade "alto" e não
 "bloqueador" porque nenhum cluster real depende disso hoje.
 
 ## Resolução
-
 Aplicada a Opção 2 sugerida no handoff: no estágio `builder` do `Dockerfile`, imediatamente após
 `RUN npm prune --omit=dev` (linha 20), adicionada:
 

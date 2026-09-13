@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ==============================================================================
 # Restore/drill do PostgreSQL do stack self-hosted Oracle Cloud (docker-compose.oci.yml)
-# Central de Inteligência Comercial AtlasGR
+# Central de Inteligência Comercial Birth Hub 360º
 # ==============================================================================
 #
 # Por padrão, este script SEMPRE restaura para um banco de DRILL separado
@@ -20,7 +20,11 @@ set -euo pipefail
 # está vazio, ele recusa continuar (a menos que --force seja passado), para nunca misturar dados de
 # um restore em cima de um banco já populado silenciosamente.
 
-CONTAINER="atlasgr_postgres"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/oci-containers.sh
+source "${SCRIPT_DIR}/lib/oci-containers.sh"
+
+CONTAINER="$OCI_POSTGRES_CONTAINER"
 POSTGRES_USER="prospector"
 BACKUP_FILE="${1:-}"
 TARGET_DB=""

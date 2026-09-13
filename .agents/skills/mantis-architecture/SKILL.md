@@ -251,7 +251,7 @@ VCS):**
        LOW_CRITICALITY if applicable). Incorporate trajectory insights here.
      - `workspace/kb/vulnerabilities/[CWE-ID_or_BugClass].md`: Descriptions of
        bug classes (e.g., `CWE-79.md` or `Memory-Corruption.md`) that have been
-       historically relevant to this codebase, including examples of what _not_
+       historically relevant to this codebase, including examples of what *not*
        to do.
      - `workspace/kb/index.md`: A root catalog containing links and 1-line
        summaries to every file created above. This is the map the Planner will

@@ -20,7 +20,6 @@ hora via `POST /api/automations/stagnation-scan`, que já criei como válvula de
 manual do `/api/intelligence/win-loss-analysis`).
 
 ## Arquivo(s) envolvido(s)
-
 - `server.ts` (linha ~481, logo depois de `ColdLeadsScannerService.start();`)
 
 ## Alteração necessária
@@ -43,20 +42,17 @@ Sem nenhuma outra dependência nova, variável de ambiente ou coordenação com 
 para ser reaproveitada aqui).
 
 ## Teste esperado
-
 - `npm run build`/`tsc --noEmit` continuam verdes com o import adicionado (já validado localmente
   usando o arquivo fora de `server.ts`, só falta a integração real).
 - Em produção/staging: `StagnationScannerService scheduled.` aparece no log de boot, e a varredura
   roda às 03:17 (horário escolhido só para não competir com o cold-leads-scanner às 02:00).
 
 ## Contexto adicional
-
 Testes cobrindo o scanner em si (idempotência, escopo de tenant, seleção de leads, lock distribuído):
 `tests/unit/features/automations/application/stagnation-scanner.service.test.ts` (8 casos, todos
 verdes). Não é necessário testar a chamada de boot em si — o próprio `ColdLeadsScannerService.start()`
 já não tem teste dedicado no `server.ts`, mesmo padrão.
 
 ## Resolução (Sprint 00/Onda 12 — GOV-006, 2026-08-18)
-
 Confirmado: `scheduleStagnationScannerJob()`/`createStagnationScannerWorker` já estão ligados no
 boot de `server.ts`. Status corrigido de `aberto` para `resolvido`.

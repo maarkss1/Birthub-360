@@ -5,7 +5,6 @@
 - Prioridade: normal
 
 ## Resolução
-
 Campo `aiProcessingConsent` adicionado ao model `Contact` via schema e migration. Quando houver o controle via tela/frontend, a base de dados já suportará a granularidade por titular.
 
 ## Problema

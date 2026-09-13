@@ -6,6 +6,19 @@
  * `CrmPipeline`/`CrmPipelineStage`, `Activity`, `CommercialGoal`, `LeadStageHistory`). Todo número
  * aqui precisa ser reproduzível a partir de dado real — ver `metricsDictionary.ts` para a fórmula
  * e as regras de inclusão/exclusão de cada indicador (seção 39 do prompt de produto).
+ *
+ * DUPLICAÇÃO INTENCIONAL, NÃO DÍVIDA ESQUECIDA: as interfaces de "forma de resposta" deste arquivo
+ * (Metas, Cockpit executivo, Pipeline criado, Eficiência, Aging, Perdas, Leading Indicators,
+ * Alertas, Forecast explicável, Qualidade do CRM, Drill-down, Previsor/Momentum, Health Score,
+ * Forecast Accuracy, Mentor) são redeclaradas de forma independente, campo a campo, em
+ * `../commercialIntelligence.api.ts` (frontend), sem import compartilhado entre os dois lados. Uma
+ * unificação via `src/shared/contracts/commercialIntelligence.contract.ts` foi tentada na Sprint 00
+ * e revertida por quebrar o contrato de tipos consumido pelo frontend — decisão do dono do
+ * repositório, registrada em
+ * `.agents/handoffs/onda-8/18-para-04-duplicacao-commercial-intelligence-contract.md` (handoff
+ * `18-para-04`, status "resolvido/rejeitado") e formalizada em `docs/ADR/ADR-003-Decisoes-
+ * Estruturais-Onda-6-8.md` (seção D). Não tente unificar de novo sem reabrir essa decisão — ver o
+ * handoff e o ADR para o raciocínio completo antes de repetir a tentativa.
  */
 
 /** Formato "YYYY-MM" usado em toda a granularidade mensal do módulo (metas, período do cockpit). */
@@ -601,7 +614,9 @@ export interface ForecastSnapshotStore {
 
 /** Por que `ForecastAccuracyResult.available` é `false` — nunca um número fabricado nesses casos. */
 export type ForecastAccuracyUnavailableReason =
-  'periodo_nao_fechou' | 'sem_snapshot' | 'sem_realizado';
+  | 'periodo_nao_fechou'
+  | 'sem_snapshot'
+  | 'sem_realizado';
 
 /**
  * Comparação previsto-vs-realizado de UM período — "erro histórico do forecast" (seção da

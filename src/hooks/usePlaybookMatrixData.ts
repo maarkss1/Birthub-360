@@ -4,6 +4,7 @@ import {
   type ObjectionMatrixItem,
   type QualificationMatrixItem,
 } from '../features/playbook/playbook.api';
+import type { PlaybookKey } from '../config/playbooks';
 import { clientLogger } from '../lib/clientLogger';
 
 /**
@@ -12,7 +13,7 @@ import { clientLogger } from '../lib/clientLogger';
  * BRAND_QUALIFICATIONS de um arquivo estático em 3 hooks distintos) e pelo Chatbook principal
  * (ChatbookHub.tsx). Sem isso, cada um dos 3 hooks buscaria a mesma coisa separadamente.
  */
-export function usePlaybookMatrixData(brand: 'atlasgr' | 'totaltrac') {
+export function usePlaybookMatrixData(brand: PlaybookKey) {
   const [objections, setObjections] = useState<ObjectionMatrixItem[]>([]);
   const [qualifications, setQualifications] = useState<QualificationMatrixItem[]>([]);
   const [loading, setLoading] = useState(true);

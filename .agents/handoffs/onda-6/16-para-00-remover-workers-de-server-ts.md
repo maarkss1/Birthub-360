@@ -6,7 +6,6 @@
   esta onda, ver "Contexto adicional")
 
 ## Problema
-
 `server.ts` continua criando os mesmos 14 workers BullMQ (nomeados "13" no prompt original, ver
 inventário completo no relatório desta onda) e chamando `ColdLeadsScannerService.start()` no mesmo
 processo que agora também roda `worker.ts` (novo entrypoint desta onda). Rodar os dois processos
@@ -22,11 +21,9 @@ exclusiva de arquivos"), por isso não editei o arquivo. `worker.ts` já existe,
 (ver relatório da onda) — falta só o corte em `server.ts`.
 
 ## Arquivo(s) envolvido(s)
-
 `/home/user/wt-agente-16/server.ts` (linhas 56, 424-503 na versão atual desta onda)
 
 ## Alteração necessária
-
 Diff exato proposto (aplicável literalmente):
 
 ```diff
@@ -153,7 +150,6 @@ Diff exato proposto (aplicável literalmente):
 ```
 
 Notas sobre o diff:
-
 - `leadsQueue`, `searchQueue`, `agentQueue` continuam importados (usados pelo BullBoard em
   `/admin/queues` e por rotas que enfileiram) — não removi essas 3 linhas.
 - O `shutdown()` de `server.ts` ainda fica incompleto mesmo depois deste corte (não fecha o
@@ -165,7 +161,6 @@ Notas sobre o diff:
   prévia seguida.
 
 ## Teste esperado
-
 1. Aplicar o diff em `server.ts`.
 2. Subir `server.ts` com `ENABLE_QUEUES=true` — nenhum `Worker` é criado, só `Queue` (confirmar via
    log: nenhuma linha "Worker error"/"Connected to Redis" duplicada vinda de dois processos
@@ -176,7 +171,6 @@ Notas sobre o diff:
    que ele é processado pelo `worker.ts` (log do worker), não pelo `server.ts`.
 
 ## Contexto adicional
-
 Não marquei esta onda como bloqueada por isto: o prompt desta missão instrui explicitamente **não
 editar `server.ts` sem aprovação** e criar o novo entrypoint "em paralelo" primeiro — o que foi
 feito. A duplicação de processamento só se materializa se alguém rodar `worker.ts` E `server.ts`
@@ -203,7 +197,6 @@ confirmar processamento → só então aplicar este diff e derrubar os workers d
 corte.
 
 ## Resolução (Sprint 00/Onda 12 — GOV-006, 2026-08-18)
-
 O risco de duplicação de processamento que motivava este handoff foi eliminado por um caminho
 diferente do diff original: `server.ts` e `src/config/env.ts` hoje gatam a criação de todos os
 workers embutidos por `ENABLE_EMBEDDED_WORKERS` (default `false`, confirmado em `server.ts:472-475`
