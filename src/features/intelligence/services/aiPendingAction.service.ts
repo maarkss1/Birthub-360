@@ -70,7 +70,7 @@ export async function executeAction(action: ExecutableAction): Promise<Execution
       }
       await container
         .resolve<NoteUseCases>('NoteUseCases')
-        .createNote(action.organizationId, payload.leadId, {
+        .createNote(action.organizationId, 'lead', payload.leadId, {
           author: 'Enxame de IA da Birth Hub 360',
           content: [
             'Recomendação autônoma aprovada',

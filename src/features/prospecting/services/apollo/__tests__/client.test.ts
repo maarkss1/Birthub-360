@@ -14,9 +14,9 @@ vi.mock('@/config/prospecting-integrations.js', () => ({
 }));
 
 import {
+  APOLLO_PLAN_RESTRICTED_CODE,
   checkApolloConnection,
   parsePlanRestriction,
-  APOLLO_PLAN_RESTRICTED_CODE,
 } from '@/features/prospecting/services/apollo/client';
 
 beforeEach(() => {

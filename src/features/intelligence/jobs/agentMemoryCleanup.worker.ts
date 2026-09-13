@@ -4,6 +4,7 @@ import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
 
 export const AGENT_MEMORY_CLEANUP_QUEUE_NAME = 'agent-memory-cleanup-queue';
@@ -130,6 +131,7 @@ export async function scheduleAgentMemoryCleanupJob() {
   const queue = new Queue(AGENT_MEMORY_CLEANUP_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(AGENT_MEMORY_CLEANUP_QUEUE_NAME, queue);
   // Roda todo dia às 4h da manhã (fora do horário de auto-anonimização de leads, 3h, e do
   // follow-up diário, 9h — ver autoAnonymizeDisqualified.worker.ts/followUp.worker.ts).
   // BullMQ v6 removeu `repeat` de `Queue.add` (viraria um job avulso, nunca mais se repete) —

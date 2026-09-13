@@ -17,20 +17,17 @@ export interface SemanticSearchResult {
  * fallback "Sem contexto adicional no playbook", mesmo com documentos reais indexados pelos usuários
  * na Base de Conhecimento. Dois pipelines de RAG conflitantes (proibido pela missão de IA da Onda 2)
  * — este agora delega para o pipeline real em vez de manter uma segunda fonte de verdade morta.
+ *
+ * AIAGENT-009 (onda 6): o método `ingestDocument` foi REMOVIDO nesta onda. Ele já estava
+ * `@deprecated` e lançava exceção incondicional desde RAG-001, e um novo `grep` sobre `src/` e
+ * `tests/` reconfirmou zero chamadores — mantê-lo só preservava um caminho de erro que ninguém
+ * podia atingir. A ingestão real continua sendo `ingestionService.ingestText`
+ * (`src/features/knowledge/ingestion.service.ts`), que grava em "Document"/"DocumentChunk" com RLS.
+ * A CLASSE continua existindo de propósito: `searchSimilar` tem chamador real
+ * (`sdrOutboundDraft.agent.ts`, que redige e-mails de SDR em produção), então apagar o arquivo
+ * inteiro — como a auditoria sugeriu — quebraria funcionalidade viva.
  */
 export class VectorService {
-  /**
-   * @deprecated Sem chamador no código (RAG-001). Ingestão real é `ingestionService.ingestText`
-   * (`src/features/knowledge/ingestion.service.ts`), que grava em "Document"/"DocumentChunk" com
-   * RLS e alimenta a busca real. Mantido só para não quebrar import externo eventual; não usar.
-   */
-  async ingestDocument(): Promise<void> {
-    throw new Error(
-      'VectorService.ingestDocument está desativado (RAG-001): use ingestionService.ingestText ' +
-        '(src/features/knowledge/ingestion.service.ts) para indexar na Base de Conhecimento real.',
-    );
-  }
-
   /**
    * Busca híbrida (RAG-001): delega para o mesmo `searchService.hybridSearch` que alimenta a
    * Base de Conhecimento (Document/DocumentChunk, com RLS + filtro explícito de tenant), em vez da

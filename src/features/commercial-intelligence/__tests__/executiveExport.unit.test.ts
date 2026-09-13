@@ -124,6 +124,13 @@ const PERFORMANCE: PerformanceMetrics = {
   },
   averageTicket: { created: 25_000, open: 40_000, won: 80_000, lost: 5_000 },
   salesCycle: { meanDays: 26, medianDays: 26, sampleSize: 2 },
+  pipelineVelocity: {
+    value: 6153.85,
+    openOpportunities: 8,
+    winRatePct: 50,
+    averageOpenDealValue: 40_000,
+    salesCycleMedianDays: 26,
+  },
   funnel: [],
   funnelHistoricalTrackingSince: '2026-01-01T00:00:00Z',
   firstContactSla: {

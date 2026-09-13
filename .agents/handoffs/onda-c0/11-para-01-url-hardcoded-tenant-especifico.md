@@ -12,17 +12,13 @@ URLs hardcoded para sistemas internos da operação AtlasGR original: `connect.a
 área comercial", qualquer tenant novo da Birth Hub 360 vê atalhos para sistemas internos de uma
 empresa terceira.
 
-Correlato: `getTenantFromEmail()` em `src/config/access-policy.ts` infere um rótulo
-`'atlasgr'|'totaltrac'` por substring de domínio de e-mail para exibição de segmento — mesma classe
-de problema (heurística hardcoded em vez de configuração por organização).
-
 ## Arquivo(s) envolvido(s)
-`src/config/module-catalog.ts`, `src/config/access-policy.ts`.
+`src/config/module-catalog.ts`.
 
 ## Alteração necessária
-Mover essas URLs/heurística para configuração por organização (tenant), não código-fonte
-compartilhado. Requer decisão de modelagem (schema/tabela de config por tenant vs. env var) — dono
-técnico é o Agente 01.
+Mover essas URLs para configuração por organização (tenant), não código-fonte compartilhado.
+Requer decisão de modelagem (schema/tabela de config por tenant vs. env var) — dono técnico é o
+Agente 01.
 
 ## Teste esperado
 Um novo tenant criado depois da correção não deve ver nenhum atalho/link apontando para sistemas de
@@ -31,3 +27,11 @@ outra empresa por padrão.
 ## Contexto adicional
 Detalhado em `docs/architecture/LEGACY_BRAND_CONTENT_MAP.md` §2.3. Classe D (mover para
 tenant/config), não bloqueador.
+
+Nota (09/2026): este handoff bundlava originalmente um segundo achado sobre `getTenantFromEmail()`
+em `src/config/access-policy.ts`. Essa função não existe mais — o arquivo hoje só contém
+`normalizeLoginEmail()`/`isAuthorizedLoginEmail()` (validação de formato de e-mail, sem inferência
+de tenant por domínio), depois que a allowlist de domínios corporativos foi removida por pedido
+explícito do usuário (ver `src/config/access-policy.ts` e `.claude/CLAUDE.md` §13). O parágrafo foi
+removido daqui para não mandar quem ler este handoff investigar um símbolo inexistente; o achado
+ainda real é só o de `module-catalog.ts` acima.

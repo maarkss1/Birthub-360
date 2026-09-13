@@ -63,6 +63,12 @@ tags:
     description: Agenda e atividades vinculadas a leads
   - name: Notes
     description: Anotações vinculadas a um lead
+  - name: Attachments
+    description: Anexos/arquivos vinculados a um lead (CRM-005)
+  - name: Lead Dedup
+    description: >-
+      Detecção e mesclagem de leads duplicados (mesmo contato) — preview somente leitura e merge
+      destrutivo (soft-delete + reatribuição de relações), sempre em dois passos (CRM-002/003)
   - name: Prospecting
     description: Descoberta de candidatos (Apollo/IA), enriquecimento de CNPJ e promoção para o CRM
   - name: Intelligence
@@ -1030,6 +1036,126 @@ paths:
       responses:
         '204':
           description: Removida
+
+  /leads/dedup/preview:
+    get:
+      tags: [Lead Dedup]
+      summary: Lista os grupos de leads duplicados (mesmo contato) do tenant, somente leitura
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadDedupPreviewResponse'
+
+  /leads/dedup/merge:
+    post:
+      tags: [Lead Dedup]
+      summary: >-
+        Mescla todos os grupos de leads duplicados por contato: mantém o lead de maior valor
+        comercial, reatribui notas/atividades/anexos/histórico dos demais e os remove (soft-delete)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadDedupMergeResponse'
+
+  /leads/{leadId}/attachments:
+    parameters:
+      - name: leadId
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Attachments]
+      summary: Lista os anexos de um lead
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentListResponse'
+    post:
+      tags: [Attachments]
+      summary: Registra o anexo após o upload direto ao storage ter sido concluído
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachmentCompleteInput'
+      responses:
+        '201':
+          description: Criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentResponse'
+
+  /leads/{leadId}/attachments/upload-url:
+    parameters:
+      - name: leadId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Attachments]
+      summary: Gera uma URL assinada para upload direto do arquivo ao storage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachmentUploadUrlInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentUploadUrlResponse'
+
+  /leads/{leadId}/attachments/{attachmentId}/download-url:
+    parameters:
+      - name: leadId
+        in: path
+        required: true
+        schema: { type: string }
+      - name: attachmentId
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Attachments]
+      summary: Gera uma URL assinada para download do arquivo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentDownloadUrlResponse'
+
+  /leads/{leadId}/attachments/{attachmentId}:
+    parameters:
+      - name: leadId
+        in: path
+        required: true
+        schema: { type: string }
+      - name: attachmentId
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      tags: [Attachments]
+      summary: Remove um anexo
+      responses:
+        '204':
+          description: Removido
 
   # ───────────────────────────── Activities ─────────────────────────────
   /activities:
@@ -8206,6 +8332,36 @@ paths:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }
         '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/stripe/connections/{connectionId}/webhook-secret:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Stripe]
+      summary: >-
+        Define/atualiza o segredo de assinatura (webhook signing secret) desta conexão (somente
+        ADMIN/GESTOR) — BILLING-007. O segredo vem DA Stripe (colado por quem cria o endpoint no
+        Dashboard dela, não gerado por nós) e é cifrado em repouso; usado para validar a assinatura
+        HMAC de `/integrations/stripe/webhook/{connectionId}`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [webhookSecret]
+              properties:
+                webhookSecret: { type: string }
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/stripe/connections/{connectionId}/charges:
     parameters:
       - name: connectionId
@@ -8482,6 +8638,43 @@ paths:
           description: Assinatura HMAC inválida
         '503':
           description: CHATWOOT_WEBHOOK_SECRET não configurado
+
+  /integrations/stripe/webhook/{connectionId}:
+    parameters:
+      - name: connectionId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Webhooks]
+      summary: >-
+        Webhook de entrada da Stripe (BILLING-007) — eventos assíncronos de pagamento (confirmação,
+        estorno, falha) que `createStripeCharge`/`getStripeCharge` (caminho síncrono) não cobrem.
+        Autenticidade por segredo de assinatura por conexão (`StripeConnection.webhookSecret`, ver
+        `/integrations/stripe/connections/{connectionId}/webhook-secret`), verificação HMAC pura da
+        assinatura `Stripe-Signature` (janela de 5min, suporte a múltiplos `v1` para rotação de
+        segredo) — mesmo raciocínio de `BitrixConnection.webhookSecret`, só que este segredo vem DA
+        Stripe. Replay guard por id de evento. Só processa (loga)
+        `payment_intent.succeeded`/`payment_intent.payment_failed`/`charge.refunded`; qualquer
+        outro tipo é aceito e ignorado (200), para o Dashboard da Stripe não marcar o endpoint como
+        "falhando" por eventos que ainda não tratamos. Reconciliação com Fatura/
+        `CrmCommercialDocument` é BILLING-003 (fora do escopo desta rota).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: Processado, ou aceito e ignorado (evento fora do vocabulário tratado, ou reentrega duplicada)
+        '400':
+          description: Corpo não é JSON válido
+        '401':
+          description: Assinatura Stripe-Signature inválida ou timestamp fora da janela de tolerância
+        '404':
+          description: Conexão não encontrada ou sem webhookSecret configurado
+        '500':
+          description: Rota montada incorretamente (corpo já consumido pelo express.json() global)
 
   # ─────────────── Endpoints avulsos ausentes em routers já documentados ───────────────
   /leads/import/bitrix24:
@@ -9189,6 +9382,104 @@ components:
       properties:
         success: { type: boolean }
         data: { type: array, items: { $ref: '#/components/schemas/Note' } }
+
+    # ── Attachment (CRM-005) ──
+    AttachmentUploadUrlInput:
+      type: object
+      required: [fileName, mimeType, sizeBytes]
+      properties:
+        fileName: { type: string, minLength: 1, maxLength: 255 }
+        mimeType: { type: string, minLength: 1, maxLength: 255 }
+        sizeBytes: { type: integer, minimum: 1, description: 'Limite de 25MB por anexo' }
+    AttachmentUploadUrlResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            signedUrl: { type: string }
+            objectKey: { type: string }
+            fileName: { type: string }
+            mimeType: { type: string }
+    AttachmentCompleteInput:
+      type: object
+      required: [objectKey, fileName, mimeType, sizeBytes]
+      properties:
+        objectKey: { type: string, minLength: 1 }
+        fileName: { type: string, minLength: 1, maxLength: 255 }
+        mimeType: { type: string, minLength: 1, maxLength: 255 }
+        sizeBytes: { type: integer, minimum: 1 }
+    Attachment:
+      type: object
+      properties:
+        id: { type: string }
+        leadId: { type: string, nullable: true }
+        companyId: { type: string, nullable: true }
+        contactId: { type: string, nullable: true }
+        fileName: { type: string }
+        mimeType: { type: string }
+        sizeBytes: { type: integer }
+        objectKey: { type: string }
+        uploadedBy: { type: string, nullable: true }
+        organizationId: { type: string }
+        createdAt: { type: string, format: date-time }
+    AttachmentResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { $ref: '#/components/schemas/Attachment' }
+    AttachmentListResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { type: array, items: { $ref: '#/components/schemas/Attachment' } }
+    AttachmentDownloadUrlResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            signedUrl: { type: string }
+            fileName: { type: string }
+            mimeType: { type: string }
+
+    # ── Lead Dedup (CRM-002/003) ──
+    LeadDedupPreviewResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            groups:
+              type: array
+              items:
+                type: object
+                properties:
+                  contactId: { type: string }
+                  survivorId: { type: string }
+                  duplicateIds: { type: array, items: { type: string } }
+                  leads:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        title: { type: string, nullable: true }
+                        amount: { type: number, nullable: true }
+                        currency: { type: string }
+                        status: { type: string }
+                        createdAt: { type: string, format: date-time }
+    LeadDedupMergeResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            merged: { type: integer, description: 'Quantidade de leads duplicados removidos (soft-delete)' }
 
     # ── Automation ──
     AutomationInput:

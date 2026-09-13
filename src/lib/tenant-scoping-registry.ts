@@ -54,4 +54,7 @@ export const TENANT_INJECTED_MODELS = [
   'CommercialGoal',
   'LeadStageHistory',
   'LeadFieldChange',
+  // CRM-005: Attachment tem organizationId direto (não herda de Lead/Company/Contact como
+  // Note) — mesmo tratamento de tenant injetado a partir do contexto da request.
+  'Attachment',
 ];

@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments';
 import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
 import { Button } from '../../../components/ui/Button';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
@@ -789,6 +790,8 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
                   ))}
                 </div>
               </section>
+
+              <EntityAttachments entityType="lead" entityId={lead.id} />
 
               {playbookMeta && (
                 <section className="space-y-4">

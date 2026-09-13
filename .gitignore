@@ -11,6 +11,10 @@ __pycache__/
 !.env.test.example
 
 /src/generated/prisma
+# DEVOPS-003 (Onda 2): config real do Prometheus da OCI, gerada por scripts/deploy-oci.sh a partir
+# de infrastructure/observability/prometheus.oci.yml.tpl — carrega PLATFORM_OPERATOR_TOKEN, nunca
+# versionar.
+infrastructure/observability/prometheus.oci.generated.yml
 playwright-report/
 test-results/
 .venv-opensource/

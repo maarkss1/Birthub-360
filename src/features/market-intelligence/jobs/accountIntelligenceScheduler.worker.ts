@@ -2,6 +2,7 @@ import { type Job, Queue, Worker } from 'bullmq';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma, withRlsContext } from '../../../lib/prisma.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
 import {
   AccountIntelligenceService,
@@ -19,6 +20,7 @@ export const accountIntelligenceSchedulerQueue = new Queue(accountIntelligenceSc
     removeOnFail: 500,
   },
 });
+registerQueueForMetrics(accountIntelligenceSchedulerQueueName, accountIntelligenceSchedulerQueue);
 
 interface SchedulerJobData {
   batchSize?: number;

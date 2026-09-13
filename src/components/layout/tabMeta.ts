@@ -56,6 +56,12 @@ import {
  * top-level em App.tsx (fora de `/app/*`, sem MainLayout/Sidebar), guardadas por
  * `RequireModuleAccess` em vez de `RequireUserAllowed` — ver ModuleAccessGrant em
  * prisma/schema.prisma e src/features/module-access/.
+ *
+ * Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+ * existir"): de `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing` acima,
+ * só resta a menção histórica neste comentário — os módulos em si (catálogo, rotas top-level,
+ * componentes, conteúdo estático) foram removidos por completo, não só do CRM. `social-selling`
+ * continua existindo como rota top-level (ver App.tsx), rerotulado para a marca Birth Hub 360.
  */
 export type TabType =
   | 'dashboard'

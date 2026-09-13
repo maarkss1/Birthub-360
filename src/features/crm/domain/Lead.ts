@@ -11,6 +11,7 @@ export interface Lead {
   probability: number | null;
   expectedCloseAt: Date | null;
   customFields: Record<string, unknown> | null;
+  tags: string[];
   pipelineId: string | null;
   pipelineStageId: string | null;
   /** Qual dos dois Kanbans (Leads ou Negócios) este registro pertence agora. */

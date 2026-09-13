@@ -10,7 +10,7 @@ export class ContactController {
     try {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const page = parseInt(req.query.page as string, 10) || 1;
-      const limit = parseInt(req.query.limit as string, 10) || 50;
+      const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 200);
       // `req.query.q` pode chegar como array (`?q=a&q=b`) ou objeto (`?q[x]=y`), não só
       // string — `as string | undefined` só engana o TypeScript, não o runtime. Sem checar o
       // tipo de verdade, `query` seguia direto para `contactSearchIndexClauses`

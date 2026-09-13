@@ -48,7 +48,13 @@ export const initMeiliIndexes = async () => {
       .updateFilterableAttributes(['organizationId', 'status', 'temperature', 'owner']);
     await meili
       .index('leads')
-      .updateSearchableAttributes(['company.tradeName', 'contact.name', 'contact.email']);
+      .updateSearchableAttributes([
+        'title',
+        'company.tradeName',
+        'contact.name',
+        'contact.email',
+        'tags',
+      ]);
 
     logger.info('Meilisearch indexes initialized');
   } catch (err) {

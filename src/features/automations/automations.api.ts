@@ -5,7 +5,6 @@ export type AutomationTrigger =
   | 'Lead criado'
   | 'Lead mudou de status'
   | 'Atividade concluída'
-  | 'Lead sem interação'
   | 'Lead estagnado';
 export type AutomationAction = 'Notificar equipe' | 'Criar atividade' | 'Ligar via SDR de Voz';
 

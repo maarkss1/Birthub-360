@@ -10,6 +10,7 @@ import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
 import {
   CommercialIntelligenceUseCases,
@@ -120,6 +121,7 @@ export async function scheduleForecastSnapshotJob() {
   const queue = new Queue(FORECAST_SNAPSHOT_QUEUE_NAME, {
     connection: connection as ConnectionOptions,
   });
+  registerQueueForMetrics(FORECAST_SNAPSHOT_QUEUE_NAME, queue);
 
   // Roda toda segunda-feira 06:00 (0 6 * * 1) — antes do expediente comercial começar, com dado
   // do fim da semana anterior já consolidado.

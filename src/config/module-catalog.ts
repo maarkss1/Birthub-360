@@ -5,11 +5,19 @@
 // de `moduleKey` válido: consumido pelo backend (validação em módulo-access.service.ts) e pelo
 // frontend (matriz de administração + RequireModuleAccess/useModuleAccess). Adicionar um módulo
 // novo aqui NÃO cria a tela nem a rota sozinho — só o habilita para ser concedido no painel.
-export type ModuleKey =
-  | 'social-selling'
-  | 'treinamento-atlasgr'
-  | 'proposta-comercial'
-  | 'hub-inteligencia-marketing';
+//
+// Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+// existir"): `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing` foram
+// APOSENTADOS — eram conteúdo comercial proprietário da Atlas GR (treinamento interno, pesquisa
+// competitiva de GR, proposta nomeada a um cliente terceiro), grantável por qualquer tenant ao
+// próprio usuário apesar de não fazer sentido fora daquela operação (achado
+// docs/audits/repository-debt-audit, PRODUCT-004/DOCBRAND-002/DOCBRAND-012/FRONTEND-002/003).
+// Rotas, gate, componentes e conteúdo estático correspondentes foram removidos junto. `social-selling`
+// continua existindo — foi rerotulado para a marca Birth Hub 360 em vez de mantido como exclusivo
+// da Atlas GR. Grants antigos gravados no banco com as chaves aposentadas continuam legíveis
+// (mesma filosofia de compatibilidade de `playbooks.ts` para `atlasgr`/`totaltrac`), só não são
+// mais válidos para concessão nova — `isModuleKey()` abaixo já rejeita essas strings.
+export type ModuleKey = 'social-selling';
 
 export interface ModuleCatalogEntry {
   key: ModuleKey;
@@ -23,21 +31,6 @@ export const MODULE_CATALOG: ModuleCatalogEntry[] = [
     label: 'Social Selling',
     description: 'Playbook e acervo de social selling para prospecção em redes sociais.',
   },
-  {
-    key: 'treinamento-atlasgr',
-    label: 'Treinamento Comercial',
-    description: 'Trilha de treinamento institucional da operação comercial.',
-  },
-  {
-    key: 'proposta-comercial',
-    label: 'Proposta Comercial',
-    description: 'Modelos e acervo de propostas comerciais executivas.',
-  },
-  {
-    key: 'hub-inteligencia-marketing',
-    label: 'Hub Inteligência & Mkt',
-    description: 'Painel de inteligência de mercado e marketing.',
-  },
 ];
 
 export const MODULE_KEYS: ModuleKey[] = MODULE_CATALOG.map((m) => m.key);
@@ -50,7 +43,7 @@ export function moduleLabel(key: string): string {
   return MODULE_CATALOG.find((m) => m.key === key)?.label ?? key;
 }
 
-// Atalhos para sistemas EXTERNOS da operação do cliente (portal legado, Bitrix24, webmail...).
+// Atalhos para sistemas EXTERNOS de uso genérico da equipe comercial (Gmail, Google Workspace).
 // Não são telas desta plataforma: cada card abre a URL de um sistema de terceiro em nova aba, e
 // por isso os rótulos descrevem o sistema de destino, não a marca do produto.
 // Deliberadamente FORA do sistema de concessão por usuário acima (ModuleAccessGrant): são
@@ -59,57 +52,22 @@ export function moduleLabel(key: string): string {
 // guarda credencial). `iconKey` é só um identificador — o mapeamento pro componente de ícone
 // (lucide-react) fica no Hub (frontend), nunca aqui, porque este arquivo também é importado pelo
 // backend (ver módulo-access.service.ts) e não deve carregar dependência de UI.
+//
+// Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+// existir"): removidas as 5 entradas que apontavam pra sistemas internos da operação Atlas GR
+// (portal Connect/New Connect, Perfil Securitário, Bitrix24 e webmail da própria Atlas GR —
+// domínios `*.atlasgr.com.br`/`atlasgr.bitrix24.com.br`) — eram atalhos institucionais de uma
+// empresa terceira específica, sem sentido pra qualquer outro tenant da Birth Hub 360. Restam só
+// as duas entradas genéricas (Gmail, Google Workspace), que servem qualquer operação comercial.
 export interface ExternalLinkEntry {
   key: string;
   label: string;
   description: string;
   url: string;
-  iconKey:
-    | 'connect'
-    | 'newConnect'
-    | 'securitario'
-    | 'bitrix24'
-    | 'webmail'
-    | 'gmail'
-    | 'workspace';
+  iconKey: 'gmail' | 'workspace';
 }
 
 export const EXTERNAL_LINKS: ExternalLinkEntry[] = [
-  {
-    key: 'connect',
-    label: 'Connect',
-    description: 'Portal — página principal',
-    url: 'https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php',
-    iconKey: 'connect',
-  },
-  {
-    key: 'new-connect',
-    label: 'New Connect',
-    description: 'Novo portal — dashboard',
-    url: 'https://newconnect.atlasgr.com.br/dashboard',
-    iconKey: 'newConnect',
-  },
-  {
-    key: 'perfil-securitario',
-    label: 'Perfil Securitário',
-    description: 'Registros recentes de perfil securitário',
-    url: 'https://perfil-securitario.atlasgr.com.br/report/recentRecords',
-    iconKey: 'securitario',
-  },
-  {
-    key: 'bitrix24',
-    label: 'Bitrix24',
-    description: 'CRM Bitrix24 da operação',
-    url: 'https://atlasgr.bitrix24.com.br/',
-    iconKey: 'bitrix24',
-  },
-  {
-    key: 'webmail',
-    label: 'Webmail',
-    description: 'E-mail corporativo da operação',
-    url: 'https://webmail.atlasgr.com.br/?_task=mail&_mbox=INBOX',
-    iconKey: 'webmail',
-  },
   {
     key: 'gmail',
     label: 'Gmail',

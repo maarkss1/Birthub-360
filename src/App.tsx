@@ -30,23 +30,6 @@ const SocialSellingHub = lazy(() =>
     default: m.SocialSellingHub,
   })),
 );
-const TreinamentoHub = lazy(() =>
-  import('./features/treinamento/components/TreinamentoHub').then((m) => ({
-    default: m.TreinamentoHub,
-  })),
-);
-const PropostaComercialHub = lazy(() =>
-  import('./features/propostas/components/PropostaComercialHub').then((m) => ({
-    default: m.PropostaComercialHub,
-  })),
-);
-const HubInteligenciaMarketingHub = lazy(() =>
-  import('./features/hub-inteligencia-marketing/components/HubInteligenciaMarketingHub').then(
-    (m) => ({
-      default: m.HubInteligenciaMarketingHub,
-    }),
-  ),
-);
 const AdaptiveDashboard = lazy(() =>
   import('./features/dashboard/components/AdaptiveDashboard').then((m) => ({
     default: m.AdaptiveDashboard,
@@ -457,43 +440,19 @@ export default function App() {
                         CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas
                         ainda exigem login (ProtectedRoute) e a concessão real do módulo
                         (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
-                        autorização real vem de ModuleAccessGrant no banco). */}
+                        autorização real vem de ModuleAccessGrant no banco).
+                        Atualização (09/2026): existiam mais 3 rotas aqui (`/treinamento-atlasgr`,
+                        `/proposta-comercial`, `/hub-inteligencia-marketing`) — aposentadas junto
+                        com seus módulos no catálogo (ver module-catalog.ts) por serem conteúdo
+                        proprietário da Atlas GR, pedido explícito do usuário ("Atlas GR não é
+                        ninguém, não é nem mais pra existir"). `social-selling` continua, rerotulado
+                        para a marca Birth Hub 360. */}
                       <Route
                         path="/social-selling"
                         element={
                           <ProtectedRoute>
                             <RequireModuleAccess moduleKey="social-selling">
                               <SocialSellingHub />
-                            </RequireModuleAccess>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/treinamento-atlasgr"
-                        element={
-                          <ProtectedRoute>
-                            <RequireModuleAccess moduleKey="treinamento-atlasgr">
-                              <TreinamentoHub />
-                            </RequireModuleAccess>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/proposta-comercial"
-                        element={
-                          <ProtectedRoute>
-                            <RequireModuleAccess moduleKey="proposta-comercial">
-                              <PropostaComercialHub />
-                            </RequireModuleAccess>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/hub-inteligencia-marketing"
-                        element={
-                          <ProtectedRoute>
-                            <RequireModuleAccess moduleKey="hub-inteligencia-marketing">
-                              <HubInteligenciaMarketingHub />
                             </RequireModuleAccess>
                           </ProtectedRoute>
                         }

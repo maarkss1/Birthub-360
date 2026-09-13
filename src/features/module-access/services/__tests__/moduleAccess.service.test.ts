@@ -125,9 +125,12 @@ describe('ModuleAccessService', () => {
 
   it('revokeModuleAccess remove só o par usuário+módulo pedido', async () => {
     const { repo, service } = buildService();
+    // 'outro-modulo-qualquer' é só um segundo moduleKey arbitrário pra provar que o revoke não
+    // mexe em nada além do par pedido — revokeModuleAccess não valida contra o catálogo (só
+    // grantModuleAccess valida), então não precisa ser um ModuleKey real.
     repo.grants = [
       { userId: 'u1', moduleKey: 'social-selling' },
-      { userId: 'u1', moduleKey: 'proposta-comercial' },
+      { userId: 'u1', moduleKey: 'outro-modulo-qualquer' },
     ];
 
     await service.revokeModuleAccess({
@@ -136,6 +139,26 @@ describe('ModuleAccessService', () => {
       moduleKey: 'social-selling',
     });
 
-    expect(repo.grants).toEqual([{ userId: 'u1', moduleKey: 'proposta-comercial' }]);
+    expect(repo.grants).toEqual([{ userId: 'u1', moduleKey: 'outro-modulo-qualquer' }]);
+  });
+
+  it('grantModuleAccess rejeita os moduleKeys aposentados em 09/2026 (conteúdo proprietário Atlas GR: treinamento-atlasgr, proposta-comercial, hub-inteligencia-marketing)', async () => {
+    const { repo, service } = buildService();
+
+    for (const retiredKey of [
+      'treinamento-atlasgr',
+      'proposta-comercial',
+      'hub-inteligencia-marketing',
+    ]) {
+      await expect(
+        service.grantModuleAccess({
+          organizationId: ORG,
+          userId: 'u1',
+          moduleKey: retiredKey,
+          grantedByUserId: 'admin-1',
+        }),
+      ).rejects.toBeInstanceOf(ModuleAccessServiceError);
+    }
+    expect(repo.grants).toEqual([]);
   });
 });
