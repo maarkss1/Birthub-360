@@ -88,15 +88,15 @@ Não recrie o que já existe. Nesta ordem:
 
 ## 3. Como usar as skills em `.claude/skills/`
 
-| Skill | Quando carregar |
-|---|---|
-| `frontend-design` | Sempre que for desenhar ou revisar qualquer tela, componente ou fluxo novo. |
-| `ui-ux` | Decisões de composição, hierarquia, estados, fluxo, densidade de informação. |
-| `design-system` | Antes de criar um token, variante de componente ou padrão visual novo — para não duplicar o que já existe (ver débito de tokens duplicados no DESIGN QA). |
-| `motion-design` | Qualquer animação, transição, scroll reveal ou microinteração. |
-| `accessibility` | Todo componente interativo, formulário, modal, navegação. Não opcional. |
-| `performance` | Ao adicionar dependência, animação contínua, 3D, mídia externa, listas grandes, imagens. |
-| `visual-qa` | Depois de qualquer mudança visual, antes de reportar como concluído. |
+| Skill             | Quando carregar                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `frontend-design` | Sempre que for desenhar ou revisar qualquer tela, componente ou fluxo novo.                                                                               |
+| `ui-ux`           | Decisões de composição, hierarquia, estados, fluxo, densidade de informação.                                                                              |
+| `design-system`   | Antes de criar um token, variante de componente ou padrão visual novo — para não duplicar o que já existe (ver débito de tokens duplicados no DESIGN QA). |
+| `motion-design`   | Qualquer animação, transição, scroll reveal ou microinteração.                                                                                            |
+| `accessibility`   | Todo componente interativo, formulário, modal, navegação. Não opcional.                                                                                   |
+| `performance`     | Ao adicionar dependência, animação contínua, 3D, mídia externa, listas grandes, imagens.                                                                  |
+| `visual-qa`       | Depois de qualquer mudança visual, antes de reportar como concluído.                                                                                      |
 
 Essas skills são específicas deste repositório — elas apontam para arquivos reais, tokens reais e
 débitos técnicos reais já mapeados, não para teoria genérica de design. `CLAUDE.md` define os

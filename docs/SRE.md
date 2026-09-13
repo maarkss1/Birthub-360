@@ -7,16 +7,19 @@ Este documento centraliza as definições de SLOs (Service Level Objectives), SL
 Definimos os seguintes compromissos de nível de serviço para a API:
 
 ### 1.1 Disponibilidade Global
+
 - **SLI**: Proporção de requisições HTTP recebendo status `2xx`, `3xx` ou `4xx` em relação ao total (excluindo infraestrutura de roteamento 502/503 e `500` da aplicação).
 - **SLO**: 99.9% de sucesso em janelas de 30 dias (Rolling Window).
 - **Alerta (Burn Rate)**: Disparar notificação P1 se a taxa de falha (5xx) exceder 2% nos últimos 10 minutos (consumo muito rápido do error budget).
 
 ### 1.2 Latência de API (Transacional)
+
 - **SLI**: Percentil 95 (P95) e Percentil 99 (P99) do tempo de resposta (excluindo rotas de `/api/intelligence`).
 - **SLO**: 95% das requisições transacionais (ex: leitura de CRM, listagem de contatos) completadas em menos de `500ms`.
 - **Alerta**: Aviso (Warning) se P95 for maior que `800ms` por mais de 15 minutos.
 
 ### 1.3 Latência de IA e Processamento Assíncrono
+
 - **SLI**: Profundidade da fila (`Queue Depth`) do BullMQ e tempo de espera no pool (`Wait Time`).
 - **SLO**: 99% das execuções enfileiradas do Enxame de IA e Integrações (Bitrix) devem iniciar o processamento em menos de `3 minutos`.
 - **Alerta**: Disparar P2 se a profundidade da fila `agentWorker` ou `sdr-cold-call` ultrapassar `100 jobs pendentes` por mais de `10 minutos`.

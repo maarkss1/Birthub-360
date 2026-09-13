@@ -46,8 +46,9 @@ export function DecisionMakerSearch({
 }: DecisionMakerSearchProps) {
   const { info: playbookMeta } = useActivePlaybook();
   const light = appearance === 'light';
-  const personaOptions =
-    false ? TOTALTRAC_PERSONA_OPTIONS : ATLAS_PERSONA_OPTIONS;
+  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção.
+  const personaOptions = [...ATLAS_PERSONA_OPTIONS, ...TOTALTRAC_PERSONA_OPTIONS];
   const [open, setOpen] = useState(false);
   const [criteria, setCriteria] = useState<DecisionMakerCriteria>({
     apenasEmailVerificado: true,

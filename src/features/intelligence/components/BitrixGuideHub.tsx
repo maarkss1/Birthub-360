@@ -30,84 +30,59 @@ const FIELD_TYPE_LABEL: Record<string, string> = {
 };
 
 export function BitrixGuideHub() {
-  const { playbook, info: playbookMeta } = useActivePlaybook();
+  const { info: playbookMeta } = useActivePlaybook();
   const accent = useBrandAccent();
   const [activeTab, setActiveTab] = useState<
     'practices' | 'pipeline' | 'field_mapping' | 'tutorials'
   >('practices');
-  const isAtlas = playbook === 'birthub360';
 
-  const practices = isAtlas
-    ? [
-        {
-          title: 'Preenchimento Obrigatório do CNPJ e Inscrição Estadual',
-          detail:
-            'Evite duplicidade na base do Bitrix24 exigindo que todo Lead criado contenha o CNPJ validado no Birth Hub 360.',
-        },
-        {
-          title: 'Vincular Persona do Decisor na Negociação',
-          detail:
-            'No campo de Contato do Bitrix24, selecione a tag da persona (ex: CFO, Gerente de GR, Diretor de Logística) para disparar cadências customizadas.',
-        },
-        {
-          title: 'Mover Negociação com Score de Qualificação',
-          detail:
-            'Somente passe negociações para o estágio "Proposta Apresentada" se o score BANT/MEDDPICC for superior a 70 pontos.',
-        },
-      ]
-    : [
-        {
-          title: 'Preenchimento Obrigatório de Placa e Chip M2M',
-          detail:
-            'Evite duplicidade na base do Bitrix24 exigindo que todo Lead criado contenha placa do veículo e operadora do chip validados.',
-        },
-        {
-          title: 'Vincular Persona do Decisor na Negociação',
-          detail:
-            'No campo de Contato do Bitrix24, selecione a tag da persona (ex: Diretor de Operações, Gerente de Frota) para disparar cadências customizadas.',
-        },
-        {
-          title: 'Mover Negociação com Score de Qualificação',
-          detail:
-            'Somente passe negociações para o estágio "Proposta Apresentada" se o score de fit de frota for superior a 70 pontos.',
-        },
-      ];
+  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma das duas listas.
+  const practices = [
+    {
+      title: 'Preenchimento Obrigatório do CNPJ e Inscrição Estadual',
+      detail:
+        'Evite duplicidade na base do Bitrix24 exigindo que todo Lead criado contenha o CNPJ validado no Birth Hub 360.',
+    },
+    {
+      title: 'Preenchimento Obrigatório de Placa e Chip M2M',
+      detail:
+        'Evite duplicidade na base do Bitrix24 exigindo que todo Lead criado contenha placa do veículo e operadora do chip validados.',
+    },
+    {
+      title: 'Vincular Persona do Decisor na Negociação',
+      detail:
+        'No campo de Contato do Bitrix24, selecione a tag da persona (ex: CFO, Gerente de GR, Diretor de Logística, Diretor de Operações, Gerente de Frota) para disparar cadências customizadas.',
+    },
+    {
+      title: 'Mover Negociação com Score de Qualificação',
+      detail:
+        'Somente passe negociações para o estágio "Proposta Apresentada" se o score BANT/MEDDPICC (ou o score de fit de frota, conforme o segmento) for superior a 70 pontos.',
+    },
+  ];
 
-  const tutorials = isAtlas
-    ? [
-        {
-          title: 'Como Integrar Lead do Birth Hub 360 no Bitrix24 em 1 Clique',
-          duration: '3 min',
-          level: 'Iniciante',
-        },
-        {
-          title: 'Configuração de Automação de E-mail via SMTP no Bitrix24',
-          duration: '5 min',
-          level: 'Intermediário',
-        },
-        {
-          title: 'Sincronizando Apólices e Histórico de Gerenciamento de Risco no CRM',
-          duration: '7 min',
-          level: 'Avançado',
-        },
-      ]
-    : [
-        {
-          title: 'Como Integrar Lead do Radar de Frotas no Bitrix24 em 1 Clique',
-          duration: '3 min',
-          level: 'Iniciante',
-        },
-        {
-          title: 'Configuração de Automação de E-mail via SMTP no Bitrix24',
-          duration: '5 min',
-          level: 'Intermediário',
-        },
-        {
-          title: 'Sincronização de Frotas e Chips M2M da Birth Hub 360 no CRM',
-          duration: '7 min',
-          level: 'Avançado',
-        },
-      ];
+  const tutorials = [
+    {
+      title: 'Como Integrar Lead do Birth Hub 360 no Bitrix24 em 1 Clique',
+      duration: '3 min',
+      level: 'Iniciante',
+    },
+    {
+      title: 'Configuração de Automação de E-mail via SMTP no Bitrix24',
+      duration: '5 min',
+      level: 'Intermediário',
+    },
+    {
+      title: 'Sincronizando Apólices e Histórico de Gerenciamento de Risco no CRM',
+      duration: '7 min',
+      level: 'Avançado',
+    },
+    {
+      title: 'Sincronização de Frotas e Chips M2M da Birth Hub 360 no CRM',
+      duration: '7 min',
+      level: 'Avançado',
+    },
+  ];
 
   return (
     <div className="bg-surface/95 backdrop-blur-3xl p-8 rounded-[3rem] border border-line/90 shadow-2xl space-y-6 text-ink">

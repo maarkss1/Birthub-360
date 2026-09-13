@@ -135,24 +135,15 @@ const TOOLS = [
   },
 ] as const;
 
-const ATLAS_COMPETITORS = [
-  'RasterGR',
-  'Buonny',
-  'BRK Tecnologia',
-  'OpentechGR',
-  'Apisul',
-  'Servis',
-];
+// Antes dividida entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificada num
+// único playbook geral (pedido explícito do usuário), sem descartar nenhuma das duas listas.
+const SUGGESTED_COMPETITORS = ['RasterGR', 'Buonny', 'BRK Tecnologia', 'OpentechGR', 'Apisul', 'Servis'];
 const TONES = ['Consultivo', 'Provocativo', 'Relacional', 'Técnico'];
 const OBJECTIVES = ['Descoberta', 'Follow-up', 'Fechamento'];
-const ATLAS_PERSONAS = [
+const PERSONAS = [
   'Dono / CEO',
   'Diretor de Logística / Supply',
   'Head / Gerente de GR (Risco)',
-  'TI / Compras',
-];
-const BIRTHUB360_TELEMETRIA_PERSONAS = [
-  'Dono / CEO',
   'Gestor de Frota',
   'Diretor de Operações / Logística',
   'Segurança / SSMA',
@@ -162,8 +153,8 @@ const BIRTHUB360_TELEMETRIA_PERSONAS = [
 export function Intelligence() {
   const accent = useBrandAccent();
   const { playbook, info: playbookMeta } = useActivePlaybook();
-  const suggestedCompetitors = playbook === 'birthub360' ? ATLAS_COMPETITORS : [];
-  const personas = playbook === 'birthub360' ? ATLAS_PERSONAS : BIRTHUB360_TELEMETRIA_PERSONAS;
+  const suggestedCompetitors = SUGGESTED_COMPETITORS;
+  const personas = PERSONAS;
   const [activeTool, setActiveTool] = useState<ToolType>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string | null>(null);

@@ -11,10 +11,10 @@ import { objectionMatrixItemSchema, type ObjectionMatrixItemInput } from '../pla
 import { playbookApi, type ObjectionMatrixItem } from '../playbook.api';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
-import { PLAYBOOKS } from '../../../config/playbooks';
+import { PLAYBOOKS, type PlaybookKey } from '../../../config/playbooks';
 
 const emptyDefaults: ObjectionMatrixItemInput = {
-  brand: 'birthub360',
+  brand: 'geral',
   segment: '',
   persona: '',
   objectionTitle: '',
@@ -25,7 +25,7 @@ const emptyDefaults: ObjectionMatrixItemInput = {
 
 interface ObjectionItemFormProps {
   item?: ObjectionMatrixItem | null;
-  defaultBrand: 'birthub360';
+  defaultBrand: PlaybookKey;
   onClose: () => void;
   onSave: () => void;
 }

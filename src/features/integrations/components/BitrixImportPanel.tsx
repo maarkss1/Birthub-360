@@ -784,7 +784,8 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       )}
       {!error && restrictedWarning && (
         <p className="text-xs text-warning-active dark:text-warning flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 p-3.5 rounded-2xl border border-amber-200 font-medium">
-          <ShieldCheck className="w-4 h-4 shrink-0 text-warning-active" /> {restrictedWarning}
+          <ShieldCheck className="w-4 h-4 shrink-0 text-warning-active dark:text-warning" />{' '}
+          {restrictedWarning}
         </p>
       )}
 

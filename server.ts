@@ -18,10 +18,17 @@ import { connection, rateLimiterConnection, cacheConnection } from './src/lib/qu
 import { sseService } from './src/features/notifications/sse.service.js';
 import { errorHandler } from './src/shared/middlewares/errorHandler.js';
 
-import { assertAllowedOriginsConfigured, applySecurityMiddleware } from './src/bootstrap/security.js';
+import {
+  assertAllowedOriginsConfigured,
+  applySecurityMiddleware,
+} from './src/bootstrap/security.js';
 import { applyRateLimiters } from './src/bootstrap/rateLimiters.js';
 import { mountPreJsonWebhooks } from './src/bootstrap/webhooks.js';
-import { applyHttpMetricsMiddleware, mountMetricsEndpoint, applyRequestObservability } from './src/bootstrap/observability.js';
+import {
+  applyHttpMetricsMiddleware,
+  mountMetricsEndpoint,
+  applyRequestObservability,
+} from './src/bootstrap/observability.js';
 import { mountApiDocs } from './src/bootstrap/apiDocs.js';
 import { mountHealthChecks } from './src/bootstrap/healthchecks.js';
 import { mountAuthHandler } from './src/bootstrap/auth.js';
@@ -37,70 +44,70 @@ import { bootstrapApplicationServices } from './src/bootstrap/appServices.js';
 assertAllowedOriginsConfigured();
 
 async function startServer() {
-    const app = express();
-    const PORT = parseInt(env.PORT, 10);
+  const app = express();
+  const PORT = parseInt(env.PORT, 10);
 
-    // ── Segurança de borda (trust proxy, Helmet, CORS, compressão) ─────────
-    applySecurityMiddleware(app);
+  // ── Segurança de borda (trust proxy, Helmet, CORS, compressão) ─────────
+  applySecurityMiddleware(app);
 
-    // ── Métrica de duração HTTP (opt-in via EXPOSE_METRICS) ─────────────────
-    applyHttpMetricsMiddleware(app);
+  // ── Métrica de duração HTTP (opt-in via EXPOSE_METRICS) ─────────────────
+  applyHttpMetricsMiddleware(app);
 
-    // ── Rate limiting por rota ───────────────────────────────────────────────
-    applyRateLimiters(app);
+  // ── Rate limiting por rota ───────────────────────────────────────────────
+  applyRateLimiters(app);
 
-    // ── Webhooks montados antes do parser JSON global ───────────────────────
-    mountPreJsonWebhooks(app);
+  // ── Webhooks montados antes do parser JSON global ───────────────────────
+  mountPreJsonWebhooks(app);
 
-    app.use(express.json({ limit: env.JSON_BODY_LIMIT }));
-    // CORREÇÃO: JSON_BODY_LIMIT definida em env.ts (default '2mb') mas um valor hardcoded '10mb'
-    // sobrescrevia a configuração da env completamente — corrigido usando env.JSON_BODY_LIMIT.
+  app.use(express.json({ limit: env.JSON_BODY_LIMIT }));
+  // CORREÇÃO: JSON_BODY_LIMIT definida em env.ts (default '2mb') mas um valor hardcoded '10mb'
+  // sobrescrevia a configuração da env completamente — corrigido usando env.JSON_BODY_LIMIT.
 
-    // ── Métricas Prometheus, documentação da API e health checks ────────────
-    mountMetricsEndpoint(app);
-    mountApiDocs(app);
-    mountHealthChecks(app);
+  // ── Métricas Prometheus, documentação da API e health checks ────────────
+  mountMetricsEndpoint(app);
+  mountApiDocs(app);
+  mountHealthChecks(app);
 
-    // ── Auth (Better Auth) e UI de monitoramento de filas ────────────────────
-    mountAuthHandler(app);
-    mountBullBoard(app);
+  // ── Auth (Better Auth) e UI de monitoramento de filas ────────────────────
+  mountAuthHandler(app);
+  mountBullBoard(app);
 
-    // ── Rotas protegidas de todos os módulos de feature ──────────────────────
-    applyRequestObservability(app);
-    mountFeatureRoutes(app);
+  // ── Rotas protegidas de todos os módulos de feature ──────────────────────
+  applyRequestObservability(app);
+  mountFeatureRoutes(app);
 
-    // ── Frontend (Vite em dev, estáticos buildados em produção) ─────────────
-    await mountFrontend(app);
+  // ── Frontend (Vite em dev, estáticos buildados em produção) ─────────────
+  await mountFrontend(app);
 
-    // ── Error Handler (deve ser o último middleware) ─────────────────────────
-    app.use(errorHandler);
+  // ── Error Handler (deve ser o último middleware) ─────────────────────────
+  app.use(errorHandler);
 
-    // ── Serviços de aplicação (DI, sincronização de feature flags) ──────────
-    bootstrapApplicationServices();
+  // ── Serviços de aplicação (DI, sincronização de feature flags) ──────────
+  bootstrapApplicationServices();
 
-    const server = app.listen(PORT, '0.0.0.0', () => {
-        logger.info({ port: PORT, env: env.NODE_ENV }, `Server running on http://localhost:${PORT}`);
-    });
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    logger.info({ port: PORT, env: env.NODE_ENV }, `Server running on http://localhost:${PORT}`);
+  });
 
-    // ── Workers embutidos (gated por ENABLE_EMBEDDED_WORKERS) ────────────────
-    const workers = startEmbeddedWorkers();
+  // ── Workers embutidos (gated por ENABLE_EMBEDDED_WORKERS) ────────────────
+  const workers = startEmbeddedWorkers();
 
-    // ── Graceful shutdown ─────────────────────────────────────────────────────
-    const shutdown = createGracefulShutdown({
-        httpServer: server,
-        workers,
-        sseService,
-        prisma,
-        shutdownLangfuse,
-        connection,
-        rateLimiterConnection,
-        cacheConnection,
-        logger,
-    });
-    registerShutdownSignals(shutdown);
+  // ── Graceful shutdown ─────────────────────────────────────────────────────
+  const shutdown = createGracefulShutdown({
+    httpServer: server,
+    workers,
+    sseService,
+    prisma,
+    shutdownLangfuse,
+    connection,
+    rateLimiterConnection,
+    cacheConnection,
+    logger,
+  });
+  registerShutdownSignals(shutdown);
 }
 
 startServer().catch((err) => {
-    logger.fatal({ err }, 'server.ts: falha fatal no bootstrap — encerrando o processo');
-    process.exit(1);
+  logger.fatal({ err }, 'server.ts: falha fatal no bootstrap — encerrando o processo');
+  process.exit(1);
 });

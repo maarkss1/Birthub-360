@@ -80,7 +80,13 @@ describe('runDailyExecutiveSummaryJob', () => {
   it('organização com leads: persiste o resumo como Report com source DAILY_AUTO e as métricas reais do dia', async () => {
     organizationFindMany.mockResolvedValue([{ id: 'org-a' }]);
     leadFindMany.mockResolvedValue([
-      { id: 'l1', status: 'Convertido_em_Oportunidade', title: 'A', score: 90, temperature: 'quente' },
+      {
+        id: 'l1',
+        status: 'Convertido_em_Oportunidade',
+        title: 'A',
+        score: 90,
+        temperature: 'quente',
+      },
       { id: 'l2', status: 'Lead_Desqualificado', title: 'B', score: 10, temperature: 'frio' },
       { id: 'l3', status: 'Lead_Recebido', title: 'C', score: 50, temperature: 'morno' },
     ]);
@@ -88,11 +94,13 @@ describe('runDailyExecutiveSummaryJob', () => {
 
     const results = await runDailyExecutiveSummaryJob();
 
-    expect(results).toEqual([{ organizationId: 'org-a', summary: 'Ótimo dia: 1 conversão, 1 lead novo.' }]);
+    expect(results).toEqual([
+      { organizationId: 'org-a', summary: 'Ótimo dia: 1 conversão, 1 lead novo.' },
+    ]);
     expect(reportCreate).toHaveBeenCalledWith({
       data: {
         organizationId: 'org-a',
-        brandId: 'atlasgr',
+        brandId: 'geral',
         source: 'DAILY_AUTO',
         content: 'Ótimo dia: 1 conversão, 1 lead novo.',
         metrics: { totalLeadsAtualizados: 3, ganhos: 1, perdidos: 1, novos: 1 },
@@ -111,7 +119,9 @@ describe('runDailyExecutiveSummaryJob', () => {
 
     expect(reportCreate).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ content: JSON.stringify([{ type: 'text', text: 'bloco' }]) }),
+        data: expect.objectContaining({
+          content: JSON.stringify([{ type: 'text', text: 'bloco' }]),
+        }),
       }),
     );
   });

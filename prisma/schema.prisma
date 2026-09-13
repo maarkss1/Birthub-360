@@ -2673,6 +2673,15 @@ model VoiceHubConnection {
   /// baseUrl aponta pra Bland AI, que identifica o agente por outro caminho).
   agentId String?
 
+  // ACH-01-01 (09/2026) encontrou este campo sem migration real por trás (drift puro) e cogitou
+  // removê-lo (chegou a ser removido brevemente, PR #436). ACH-06-01 (mesma auditoria, item de
+  // segurança) mostrou que ele é necessário de verdade: sem segredo por-organização, o webhook do
+  // Birth Voices Hub validava só contra um segredo global compartilhado + organizationId
+  // auto-declarado no payload — qualquer org podia forjar o webhook de outra. Resolução final:
+  // campo mantido, migration real adicionada (20260911180000_voice_hub_connection_webhook_secret),
+  // e cifrado em repouso do mesmo jeito que apiKey (ver ENCRYPTED_MODEL_FIELDS em
+  // src/lib/crypto/piiFields.ts).
+  webhookSecret String? @db.Text
 
   /// Liga/desliga esta conexão sem apagá-la — `birthVoice.service.ts` só considera conexões com
   /// enabled=true ao escolher qual usar.

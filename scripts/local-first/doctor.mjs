@@ -64,7 +64,9 @@ if (!databaseUrl) {
 } else {
   const host = parseHost(databaseUrl);
   if (!host || !localHosts.has(host)) {
-    console.error(`[FAIL] DATABASE_URL precisa apontar para o PostgreSQL local. Host atual: ${host ?? 'inválido'}.`);
+    console.error(
+      `[FAIL] DATABASE_URL precisa apontar para o PostgreSQL local. Host atual: ${host ?? 'inválido'}.`,
+    );
     failed = true;
   } else {
     console.log(`[OK] PostgreSQL configurado em ${host}.`);
@@ -75,7 +77,9 @@ const directUrl = process.env.DIRECT_URL?.trim();
 if (directUrl) {
   const host = parseHost(directUrl);
   if (!host || !localHosts.has(host)) {
-    console.error(`[FAIL] DIRECT_URL precisa ser local ou ficar vazia. Host atual: ${host ?? 'inválido'}.`);
+    console.error(
+      `[FAIL] DIRECT_URL precisa ser local ou ficar vazia. Host atual: ${host ?? 'inválido'}.`,
+    );
     failed = true;
   } else {
     console.log(`[OK] DIRECT_URL local em ${host}.`);
@@ -96,11 +100,15 @@ for (const key of ['BETTER_AUTH_URL', 'PUBLIC_BASE_URL']) {
 
 const storageEndpoint = process.env.STORAGE_ENDPOINT?.trim();
 if (!storageEndpoint) {
-  console.warn('[WARN] STORAGE_ENDPOINT não definido. Uploads ficam inertes até configurar o MinIO local.');
+  console.warn(
+    '[WARN] STORAGE_ENDPOINT não definido. Uploads ficam inertes até configurar o MinIO local.',
+  );
 } else {
   const host = parseHost(storageEndpoint);
   if (!host || !localHosts.has(host)) {
-    console.error(`[FAIL] STORAGE_ENDPOINT precisa apontar para o MinIO local. Host atual: ${host ?? 'inválido'}.`);
+    console.error(
+      `[FAIL] STORAGE_ENDPOINT precisa apontar para o MinIO local. Host atual: ${host ?? 'inválido'}.`,
+    );
     failed = true;
   } else {
     console.log(`[OK] Storage local em ${host}.`);
@@ -113,7 +121,9 @@ if (!failed && databaseUrl) {
     const result = await pool.query('select current_database() as database_name');
     console.log(`[OK] Conexão PostgreSQL: ${result.rows[0]?.database_name ?? 'conectado'}.`);
   } catch (error) {
-    console.error(`[FAIL] PostgreSQL local não respondeu: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(
+      `[FAIL] PostgreSQL local não respondeu: ${error instanceof Error ? error.message : String(error)}`,
+    );
     failed = true;
   } finally {
     await pool.end().catch(() => undefined);
@@ -121,7 +131,9 @@ if (!failed && databaseUrl) {
 }
 
 if (failed) {
-  console.error('\nLocal-first doctor encontrou bloqueios. Nenhum ambiente cloud deve ser usado como runtime da Central nesta fase.');
+  console.error(
+    '\nLocal-first doctor encontrou bloqueios. Nenhum ambiente cloud deve ser usado como runtime da Central nesta fase.',
+  );
   process.exit(1);
 }
 

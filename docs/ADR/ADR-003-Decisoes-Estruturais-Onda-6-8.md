@@ -1,6 +1,7 @@
 # ADR 003: Decisões Estruturais das Ondas 6–8
 
 ## Status
+
 Aceito
 
 - Data de registro: 2026-08-15
@@ -19,6 +20,10 @@ ou modelo de dados que outros agentes/decisões futuras precisam conhecer:
    quais condições.
 3. Como a plataforma vai impedir contato comercial repetido com quem já pediu para não ser mais
    contatado, através de canais diferentes (e-mail/WhatsApp/voz).
+4. Manter, de propósito, a duplicação de contrato das interfaces de resposta do módulo "Comercial
+   Inteligente" entre backend e frontend, em vez de unificá-las num pacote de tipos compartilhado
+   (adicionado em 2026-09-11, Agente responsável pelo item ACH-18-02 da auditoria — esta decisão já
+   existia desde a Onda 8, só não tinha ADR próprio; ver seção D).
 
 ## Decisão
 
@@ -90,17 +95,57 @@ plataforma daqui em diante — nenhum canal novo deve criar seu próprio campo d
 persistência e integração dos três canais existentes fica registrada como trabalho pendente, não
 como decisão em aberto.
 
+### D. Duplicação intencional de contrato em "Comercial Inteligente" (Onda 8)
+
+Durante a varredura de duplicação de contrato da Onda 8 (missão "OverviewMetrics: uma fonte, não
+duas"), o Agente 18 encontrou a maior instância desse padrão no repositório: **18 interfaces**
+quase idênticas campo a campo, declaradas de forma independente em
+`src/features/commercial-intelligence/domain/CommercialIntelligence.ts` (backend) e
+`src/features/commercial-intelligence/commercialIntelligence.api.ts` (frontend), sem nenhum import
+compartilhado — `CommercialGoalDTO`, `CoverageSnapshot`, `ExecutiveOverview`,
+`PipelineCreationBreakdown`, `PipelineCreation`, `FunnelStageConversion`, `PerformanceMetrics`,
+`AgingBucket`, `StageAging`, `AgingReport`, `LossReasonBreakdown`, `LossAnalysis`,
+`LeadingIndicatorPoint`, `LeadingIndicatorsReport`, `AlertSeverity`, `ExecutiveAlert`,
+`CrmQualityField`, `BitrixSyncFailure`, `BitrixSyncHealth`, `CrmQualityIndex`, `DealDrillDownRow`,
+`DealDrillDownResult`, `MetricDefinition`.
+
+O handoff propôs a extração para `src/shared/contracts/commercialIntelligence.contract.ts` (mesmo
+padrão já usado para `analytics.contract.ts` e, depois, `notification.contract.ts`/
+`ingestion.contract.ts`). O Coordenador rejeitou o handoff porque essa mesma unificação já havia
+sido tentada por ele na Sprint 00 e **quebrou o contrato de tipos consumido pelo frontend** por
+acoplamento forte entre as duas camadas — o revert foi feito em prol da estabilidade do Go-Live.
+Registro completo em
+`.agents/handoffs/onda-8/18-para-04-duplicacao-commercial-intelligence-contract.md` (status
+"resolvido"/rejeitado).
+
+O problema real não era a duplicação em si (os campos batiam, e ainda batem, no momento desta
+decisão), era que essa decisão — tentar de novo é conhecido e já custou uma quebra de produção —
+só existia dentro de um handoff fechado, invisível para quem não lesse `.agents/handoffs/onda-8`
+inteiro. Um agente futuro poderia repetir a mesma tentativa sem saber que já foi tentada e revertida.
+
+**Decisão**: manter as duas declarações separadas propositalmente — não são um pacote de tipos
+compartilhado — até que uma unificação seja desenhada com o desacoplamento que faltou na tentativa
+da Sprint 00 (ex.: tipos gerados a partir de um schema único, ou um adapter explícito na borda da
+API em vez de reuso direto do tipo backend no frontend). Cada bloco duplicado nos dois arquivos
+carrega uma nota curta apontando para este ADR e para o handoff `18-para-04`, para que a decisão
+fique visível no próprio código, não só no histórico de handoffs.
+
 ## Consequências
 
 ### Positivas
+
 - **A.** Caminho para escalar filas/cron horizontalmente sem duplicar cron e sessões Baileys a cada
   réplica HTTP — hoje o maior fator limitante de escala documentado (`02-mapa-plataforma.md` §1).
 - **B.** Ondas maiores executam mais rápido sem custo de qualidade comprovado, desde que as 6
   condições de isolamento/gate sejam mantidas.
 - **C.** Um titular que pede para não ser mais contatado por um canal deixa de correr o risco de
   continuar recebendo contato por outro — fecha uma lacuna real de conformidade comercial.
+- **D.** Elimina o risco de um agente futuro repetir, sem saber, uma unificação já tentada e
+  revertida — a decisão agora está no próprio código (nota nos dois arquivos) e num documento
+  versionado, não só num handoff fechado.
 
 ### Negativas
+
 - **A.** Até o corte ser aplicado, a plataforma carrega dois caminhos de execução de worker
   (documentado, não código morto: `worker.ts` só passa a valer depois do provisionamento real).
 - **B.** Um teto mais alto aumenta o custo de um bisect de gate vermelho na integração se as
@@ -109,6 +154,9 @@ como decisão em aberto.
 - **C.** Enquanto a integração dos 3 canais não estiver completa, o risco de contato indevido que
   esta decisão existe para fechar **continua existindo na prática** — a decisão está tomada, a
   proteção ainda não está em vigor.
+- **D.** As 18 interfaces continuam podendo divergir silenciosamente entre backend e frontend
+  (nenhum erro de compilação avisa) — risco aceito, não bug ativo hoje; mitigação real seria uma
+  unificação desenhada com o desacoplamento certo, ainda não feita.
 
 ## Alternativas Consideradas
 
@@ -124,3 +172,8 @@ real.
 **C.** Manter opt-out por canal (como já existia para voz e WhatsApp antes desta decisão):
 rejeitado porque não escala para novos canais e já produziu o cenário real descrito acima (bloqueio
 em um canal não protege o titular nos demais).
+
+**D.** Unificar as 18 interfaces num `src/shared/contracts/commercialIntelligence.contract.ts`
+agora: rejeitado — é a mesma extração que já quebrou o contrato de tipos do frontend na Sprint 00;
+repetir sem resolver o acoplamento que causou a quebra teria o mesmo risco. Documentar a
+duplicação como intencional (nota no código + este ADR) foi preferido a tentar de novo às cegas.

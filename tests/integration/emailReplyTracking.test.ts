@@ -21,17 +21,17 @@ import { CompanyFactory, ContactFactory, LeadFactory } from '../helpers/factorie
  */
 
 const classify = vi.fn().mockResolvedValue({
-    intent: 'alta_intencao_compra',
-    urgency: 'alta',
-    objections: [],
-    budgetMentioned: false,
-    nextStep: 'Enviar contrato',
-    summary: 'Cliente confirmou fechamento por e-mail.',
-    confidence: 0.9,
-    raw: {},
+  intent: 'alta_intencao_compra',
+  urgency: 'alta',
+  objections: [],
+  budgetMentioned: false,
+  nextStep: 'Enviar contrato',
+  summary: 'Cliente confirmou fechamento por e-mail.',
+  confidence: 0.9,
+  raw: {},
 });
 vi.mock('../../src/features/cadence/infra/emailIntentClassifier.js', () => ({
-    emailIntentClassifier: { classify: (...args: unknown[]) => classify(...args) },
+  emailIntentClassifier: { classify: (...args: unknown[]) => classify(...args) },
 }));
 
 // `env` (src/config/env.ts) parseia process.env uma única vez, no import — setar
@@ -41,11 +41,15 @@ vi.mock('../../src/features/cadence/infra/emailIntentClassifier.js', () => ({
 // referenciado por `const`) porque a factory do vi.mock é hoisted para o topo do arquivo — uma
 // variável declarada abaixo dela ainda não existiria nesse ponto.
 vi.mock('../../src/config/env.js', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('../../src/config/env.js')>();
-    return { ...actual, env: { ...actual.env, EMAIL_INBOUND_WEBHOOK_SECRET: 'segredo-email-teste-integracao' } };
+  const actual = await importOriginal<typeof import('../../src/config/env.js')>();
+  return {
+    ...actual,
+    env: { ...actual.env, EMAIL_INBOUND_WEBHOOK_SECRET: 'segredo-email-teste-integracao' },
+  };
 });
 
-const { emailReplyWebhookRoutes } = await import('../../src/features/integrations/email/emailReply.webhook');
+const { emailReplyWebhookRoutes } =
+  await import('../../src/features/integrations/email/emailReply.webhook');
 const { hasLeadReplied } = await import('../../src/features/cadence/infra/hasLeadReplied');
 
 const SECRET = 'segredo-email-teste-integracao';
@@ -54,204 +58,239 @@ const RUN_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const ORG = `test-email-reply-${RUN_ID}`;
 const ORG_B = `${ORG}-b`;
 
-const withRlsBypass = <T>(fn: () => Promise<T>): Promise<T> => requestContext.run({ bypassRls: true }, fn);
-const asOrg = <T>(organizationId: string, fn: () => Promise<T>): Promise<T> => requestContext.run({ tenantId: organizationId }, fn);
+const withRlsBypass = <T>(fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ bypassRls: true }, fn);
+const asOrg = <T>(organizationId: string, fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ tenantId: organizationId }, fn);
 
 function buildApp(): Express {
-    const app = express();
-    app.use('/api/webhooks/email', emailReplyWebhookRoutes);
-    app.use(errorHandler);
-    return app;
+  const app = express();
+  app.use('/api/webhooks/email', emailReplyWebhookRoutes);
+  app.use(errorHandler);
+  return app;
 }
 
 function sign(body: string): string {
-    return createHmac('sha256', SECRET).update(body).digest('hex');
+  return createHmac('sha256', SECRET).update(body).digest('hex');
 }
 
 async function postSigned(payload: Record<string, unknown>) {
-    const body = JSON.stringify(payload);
-    return request(buildApp())
-        .post('/api/webhooks/email/webhook')
-        .set('x-email-inbound-signature', sign(body))
-        .set('Content-Type', 'application/json')
-        .send(body);
+  const body = JSON.stringify(payload);
+  return request(buildApp())
+    .post('/api/webhooks/email/webhook')
+    .set('x-email-inbound-signature', sign(body))
+    .set('Content-Type', 'application/json')
+    .send(body);
 }
 
 async function createLeadWithContact(organizationId: string, email: string) {
-    return asOrg(organizationId, async () => {
-        const company = await prisma.company.create({ data: CompanyFactory.build({ organizationId }) as never });
-        const contactData = ContactFactory.build({ organizationId, email, companyId: company.id }) as Record<string, unknown>;
-        delete contactData.company;
-        const contact = await prisma.contact.create({ data: contactData as never });
-        return prisma.lead.create({
-            data: LeadFactory.build({ organizationId, status: 'Cadencia_Iniciada', contactId: contact.id }) as never,
-        });
+  return asOrg(organizationId, async () => {
+    const company = await prisma.company.create({
+      data: CompanyFactory.build({ organizationId }) as never,
     });
+    const contactData = ContactFactory.build({
+      organizationId,
+      email,
+      companyId: company.id,
+    }) as Record<string, unknown>;
+    delete contactData.company;
+    const contact = await prisma.contact.create({ data: contactData as never });
+    return prisma.lead.create({
+      data: LeadFactory.build({
+        organizationId,
+        status: 'Cadencia_Iniciada',
+        contactId: contact.id,
+      }) as never,
+    });
+  });
 }
 
 beforeAll(async () => {
-    await withRlsBypass(async () => {
-        await prisma.organization.create({ data: { id: ORG, name: 'Test Org (email reply)' } });
-        await prisma.organization.create({ data: { id: ORG_B, name: 'Test Org B (email reply)' } });
-    });
+  await withRlsBypass(async () => {
+    await prisma.organization.create({ data: { id: ORG, name: 'Test Org (email reply)' } });
+    await prisma.organization.create({ data: { id: ORG_B, name: 'Test Org B (email reply)' } });
+  });
 });
 
 afterEach(async () => {
-    vi.clearAllMocks();
-    classify.mockResolvedValue({
-        intent: 'alta_intencao_compra',
-        urgency: 'alta',
-        objections: [],
-        budgetMentioned: false,
-        nextStep: 'Enviar contrato',
-        summary: 'Cliente confirmou fechamento por e-mail.',
-        confidence: 0.9,
-        raw: {},
+  vi.clearAllMocks();
+  classify.mockResolvedValue({
+    intent: 'alta_intencao_compra',
+    urgency: 'alta',
+    objections: [],
+    budgetMentioned: false,
+    nextStep: 'Enviar contrato',
+    summary: 'Cliente confirmou fechamento por e-mail.',
+    confidence: 0.9,
+    raw: {},
+  });
+  // ConversationSignal/TimelineEvent/EmailMessage/Contact/Company não estão no allowlist de
+  // bypass (BYPASS_RLS_ALLOWED_MODELS, src/lib/prisma.ts) — ITEM-02 fechou a RLS dessas tabelas
+  // pra bypass (leitura E escrita). Um `deleteMany` sob bypass nelas agora afeta 0 linhas
+  // silenciosamente (RLS nega, sem lançar erro), deixando lixo entre testes — por isso cada
+  // tabela é limpa dentro do contexto do próprio tenant. `Lead` continua no allowlist, mas roda
+  // no mesmo padrão por tenant para não depender de dois caminhos diferentes.
+  for (const org of [ORG, ORG_B]) {
+    await asOrg(org, async () => {
+      await prisma.conversationSignal.deleteMany({ where: { organizationId: org } });
+      await prisma.timelineEvent.deleteMany({ where: { lead: { organizationId: org } } });
+      await prisma.emailMessage.deleteMany({ where: { organizationId: org } });
+      await prisma.lead.deleteMany({ where: { organizationId: org } });
+      await prisma.contact.deleteMany({ where: { organizationId: org } });
+      await prisma.company.deleteMany({ where: { organizationId: org } });
     });
-    // ConversationSignal/TimelineEvent/EmailMessage/Contact/Company não estão no allowlist de
-    // bypass (BYPASS_RLS_ALLOWED_MODELS, src/lib/prisma.ts) — ITEM-02 fechou a RLS dessas tabelas
-    // pra bypass (leitura E escrita). Um `deleteMany` sob bypass nelas agora afeta 0 linhas
-    // silenciosamente (RLS nega, sem lançar erro), deixando lixo entre testes — por isso cada
-    // tabela é limpa dentro do contexto do próprio tenant. `Lead` continua no allowlist, mas roda
-    // no mesmo padrão por tenant para não depender de dois caminhos diferentes.
-    for (const org of [ORG, ORG_B]) {
-        await asOrg(org, async () => {
-            await prisma.conversationSignal.deleteMany({ where: { organizationId: org } });
-            await prisma.timelineEvent.deleteMany({ where: { lead: { organizationId: org } } });
-            await prisma.emailMessage.deleteMany({ where: { organizationId: org } });
-            await prisma.lead.deleteMany({ where: { organizationId: org } });
-            await prisma.contact.deleteMany({ where: { organizationId: org } });
-            await prisma.company.deleteMany({ where: { organizationId: org } });
-        });
-    }
+  }
 });
 
 afterAll(async () => {
-    await withRlsBypass(() => prisma.organization.deleteMany({ where: { id: { in: [ORG, ORG_B] } } }));
+  await withRlsBypass(() =>
+    prisma.organization.deleteMany({ where: { id: { in: [ORG, ORG_B] } } }),
+  );
 });
 
 describe('CYC-003 — webhook de e-mail de entrada (stub de transporte) contra Postgres real', () => {
-    it('réplica genuína: persiste EmailMessage, grava ConversationSignal (channel email) e o lead passa a "ter respondido"', async () => {
-        const lead = await createLeadWithContact(ORG, 'lead-reply@empresa.com');
-        await expect(asOrg(ORG, () => hasLeadReplied(ORG, lead.id))).resolves.toBe(false);
+  it('réplica genuína: persiste EmailMessage, grava ConversationSignal (channel email) e o lead passa a "ter respondido"', async () => {
+    const lead = await createLeadWithContact(ORG, 'lead-reply@empresa.com');
+    await expect(asOrg(ORG, () => hasLeadReplied(ORG, lead.id))).resolves.toBe(false);
 
-        const res = await postSigned({
-            organizationId: ORG,
-            providerMessageId: `<msg-${RUN_ID}-1@lead.com>`,
-            fromEmail: 'lead-reply@empresa.com',
-            toEmail: 'vendas@atlasgr.com.br',
-            subject: 'Re: Proposta',
-            body: 'Fechado, pode enviar o contrato.',
-            receivedAt: new Date().toISOString(),
-        });
-
-        expect(res.status).toBe(200);
-        expect(res.body).toMatchObject({ success: true, outcome: 'recorded' });
-
-        const persisted = await asOrg(ORG, () => prisma.emailMessage.findMany({ where: { organizationId: ORG, leadId: lead.id } }));
-        expect(persisted).toHaveLength(1);
-        expect(persisted[0]).toMatchObject({ direction: 'inbound', fromEmail: 'lead-reply@empresa.com' });
-
-        const signals = await asOrg(ORG, () => prisma.conversationSignal.findMany({ where: { organizationId: ORG, leadId: lead.id } }));
-        expect(signals).toHaveLength(1);
-        expect(signals[0]).toMatchObject({ channel: 'email', intent: 'alta_intencao_compra' });
-
-        // Dois eventos de timeline, mesmo padrão do canal WhatsApp: um pela chegada da réplica
-        // (recordInboundEmail) e outro pelo sinal extraído pela IA (prismaConversationSignalPort).
-        const timeline = await asOrg(ORG, () => prisma.timelineEvent.findMany({ where: { leadId: lead.id, type: 'email' } }));
-        expect(timeline.map((t) => t.description).sort()).toEqual([
-            'Resposta recebida por e-mail: "Re: Proposta"',
-            'Sinal de conversa (IA, e-mail): Cliente confirmou fechamento por e-mail.',
-        ]);
-
-        await expect(asOrg(ORG, () => hasLeadReplied(ORG, lead.id))).resolves.toBe(true);
+    const res = await postSigned({
+      organizationId: ORG,
+      providerMessageId: `<msg-${RUN_ID}-1@lead.com>`,
+      fromEmail: 'lead-reply@empresa.com',
+      toEmail: 'vendas@atlasgr.com.br',
+      subject: 'Re: Proposta',
+      body: 'Fechado, pode enviar o contrato.',
+      receivedAt: new Date().toISOString(),
     });
 
-    it('auto-resposta/bounce nunca vira EmailMessage nem ConversationSignal — hasLeadReplied continua false', async () => {
-        const lead = await createLeadWithContact(ORG, 'lead-oof@empresa.com');
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ success: true, outcome: 'recorded' });
 
-        const res = await postSigned({
-            organizationId: ORG,
-            providerMessageId: `<msg-${RUN_ID}-2@lead.com>`,
-            fromEmail: 'lead-oof@empresa.com',
-            subject: 'Out of Office',
-            body: 'Estou de férias até dia 30.',
-            receivedAt: new Date().toISOString(),
-        });
-
-        expect(res.status).toBe(200);
-        expect(res.body).toMatchObject({ success: true, outcome: 'ignored-auto-reply' });
-
-        const persisted = await asOrg(ORG, () => prisma.emailMessage.findMany({ where: { organizationId: ORG, leadId: lead.id } }));
-        expect(persisted).toHaveLength(0);
-        expect(classify).not.toHaveBeenCalled();
-        await expect(asOrg(ORG, () => hasLeadReplied(ORG, lead.id))).resolves.toBe(false);
+    const persisted = await asOrg(ORG, () =>
+      prisma.emailMessage.findMany({ where: { organizationId: ORG, leadId: lead.id } }),
+    );
+    expect(persisted).toHaveLength(1);
+    expect(persisted[0]).toMatchObject({
+      direction: 'inbound',
+      fromEmail: 'lead-reply@empresa.com',
     });
 
-    it('é idempotente: reentrega do mesmo providerMessageId não duplica a mensagem nem reclassifica', async () => {
-        const lead = await createLeadWithContact(ORG, 'lead-dup@empresa.com');
-        const payload = {
-            organizationId: ORG,
-            providerMessageId: `<msg-${RUN_ID}-3@lead.com>`,
-            fromEmail: 'lead-dup@empresa.com',
-            subject: 'Re: Proposta',
-            body: 'Confirmado.',
-            receivedAt: new Date().toISOString(),
-        };
+    const signals = await asOrg(ORG, () =>
+      prisma.conversationSignal.findMany({ where: { organizationId: ORG, leadId: lead.id } }),
+    );
+    expect(signals).toHaveLength(1);
+    expect(signals[0]).toMatchObject({ channel: 'email', intent: 'alta_intencao_compra' });
 
-        const first = await postSigned(payload);
-        expect(first.body.outcome).toBe('recorded');
+    // Dois eventos de timeline, mesmo padrão do canal WhatsApp: um pela chegada da réplica
+    // (recordInboundEmail) e outro pelo sinal extraído pela IA (prismaConversationSignalPort).
+    const timeline = await asOrg(ORG, () =>
+      prisma.timelineEvent.findMany({ where: { leadId: lead.id, type: 'email' } }),
+    );
+    expect(timeline.map((t) => t.description).sort()).toEqual([
+      'Resposta recebida por e-mail: "Re: Proposta"',
+      'Sinal de conversa (IA, e-mail): Cliente confirmou fechamento por e-mail.',
+    ]);
 
-        const second = await postSigned(payload);
-        expect(second.status).toBe(200);
-        expect(second.body).toMatchObject({ success: true, outcome: 'duplicate' });
+    await expect(asOrg(ORG, () => hasLeadReplied(ORG, lead.id))).resolves.toBe(true);
+  });
 
-        const persisted = await asOrg(ORG, () => prisma.emailMessage.findMany({ where: { organizationId: ORG, leadId: lead.id } }));
-        expect(persisted).toHaveLength(1);
-        expect(classify).toHaveBeenCalledTimes(1);
+  it('auto-resposta/bounce nunca vira EmailMessage nem ConversationSignal — hasLeadReplied continua false', async () => {
+    const lead = await createLeadWithContact(ORG, 'lead-oof@empresa.com');
+
+    const res = await postSigned({
+      organizationId: ORG,
+      providerMessageId: `<msg-${RUN_ID}-2@lead.com>`,
+      fromEmail: 'lead-oof@empresa.com',
+      subject: 'Out of Office',
+      body: 'Estou de férias até dia 30.',
+      receivedAt: new Date().toISOString(),
     });
 
-    it('RLS: resolve o lead pelo e-mail do contato só dentro da própria organização, mesmo com o mesmo e-mail cadastrado em duas organizações', async () => {
-        const sharedEmail = `lead-cross-tenant-${RUN_ID}@empresa.com`;
-        const leadOrgA = await createLeadWithContact(ORG, sharedEmail);
-        const leadOrgB = await createLeadWithContact(ORG_B, sharedEmail);
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ success: true, outcome: 'ignored-auto-reply' });
 
-        const res = await postSigned({
-            organizationId: ORG,
-            providerMessageId: `<msg-${RUN_ID}-4@lead.com>`,
-            fromEmail: sharedEmail,
-            subject: 'Re: Proposta',
-            body: 'Confirmado, pode seguir.',
-            receivedAt: new Date().toISOString(),
-        });
+    const persisted = await asOrg(ORG, () =>
+      prisma.emailMessage.findMany({ where: { organizationId: ORG, leadId: lead.id } }),
+    );
+    expect(persisted).toHaveLength(0);
+    expect(classify).not.toHaveBeenCalled();
+    await expect(asOrg(ORG, () => hasLeadReplied(ORG, lead.id))).resolves.toBe(false);
+  });
 
-        expect(res.body).toMatchObject({ success: true, outcome: 'recorded' });
+  it('é idempotente: reentrega do mesmo providerMessageId não duplica a mensagem nem reclassifica', async () => {
+    const lead = await createLeadWithContact(ORG, 'lead-dup@empresa.com');
+    const payload = {
+      organizationId: ORG,
+      providerMessageId: `<msg-${RUN_ID}-3@lead.com>`,
+      fromEmail: 'lead-dup@empresa.com',
+      subject: 'Re: Proposta',
+      body: 'Confirmado.',
+      receivedAt: new Date().toISOString(),
+    };
 
-        const persistedA = await asOrg(ORG, () => prisma.emailMessage.findMany({ where: { organizationId: ORG } }));
-        expect(persistedA).toHaveLength(1);
-        expect(persistedA[0].leadId).toBe(leadOrgA.id);
+    const first = await postSigned(payload);
+    expect(first.body.outcome).toBe('recorded');
 
-        const persistedB = await asOrg(ORG_B, () => prisma.emailMessage.findMany({ where: { organizationId: ORG_B } }));
-        expect(persistedB).toHaveLength(0);
-        await expect(asOrg(ORG_B, () => hasLeadReplied(ORG_B, leadOrgB.id))).resolves.toBe(false);
+    const second = await postSigned(payload);
+    expect(second.status).toBe(200);
+    expect(second.body).toMatchObject({ success: true, outcome: 'duplicate' });
+
+    const persisted = await asOrg(ORG, () =>
+      prisma.emailMessage.findMany({ where: { organizationId: ORG, leadId: lead.id } }),
+    );
+    expect(persisted).toHaveLength(1);
+    expect(classify).toHaveBeenCalledTimes(1);
+  });
+
+  it('RLS: resolve o lead pelo e-mail do contato só dentro da própria organização, mesmo com o mesmo e-mail cadastrado em duas organizações', async () => {
+    const sharedEmail = `lead-cross-tenant-${RUN_ID}@empresa.com`;
+    const leadOrgA = await createLeadWithContact(ORG, sharedEmail);
+    const leadOrgB = await createLeadWithContact(ORG_B, sharedEmail);
+
+    const res = await postSigned({
+      organizationId: ORG,
+      providerMessageId: `<msg-${RUN_ID}-4@lead.com>`,
+      fromEmail: sharedEmail,
+      subject: 'Re: Proposta',
+      body: 'Confirmado, pode seguir.',
+      receivedAt: new Date().toISOString(),
     });
 
-    it('sem lead correspondente: persiste a mensagem para auditoria (leadId nulo), sem classificar nem gravar sinal', async () => {
-        const res = await postSigned({
-            organizationId: ORG,
-            providerMessageId: `<msg-${RUN_ID}-5@lead.com>`,
-            fromEmail: 'ninguem-cadastrado@empresa.com',
-            subject: 'Re: Proposta',
-            body: 'Confirmado.',
-            receivedAt: new Date().toISOString(),
-        });
+    expect(res.body).toMatchObject({ success: true, outcome: 'recorded' });
 
-        expect(res.body).toMatchObject({ success: true, outcome: 'lead-not-found' });
-        expect(classify).not.toHaveBeenCalled();
+    const persistedA = await asOrg(ORG, () =>
+      prisma.emailMessage.findMany({ where: { organizationId: ORG } }),
+    );
+    expect(persistedA).toHaveLength(1);
+    expect(persistedA[0].leadId).toBe(leadOrgA.id);
 
-        // EmailMessage não está no allowlist de bypass (ITEM-02) — lê no contexto do próprio tenant.
-        const persisted = await asOrg(ORG, () => prisma.emailMessage.findFirst({ where: { organizationId: ORG, fromEmail: 'ninguem-cadastrado@empresa.com' } }));
-        expect(persisted).not.toBeNull();
-        expect(persisted?.leadId).toBeNull();
+    const persistedB = await asOrg(ORG_B, () =>
+      prisma.emailMessage.findMany({ where: { organizationId: ORG_B } }),
+    );
+    expect(persistedB).toHaveLength(0);
+    await expect(asOrg(ORG_B, () => hasLeadReplied(ORG_B, leadOrgB.id))).resolves.toBe(false);
+  });
+
+  it('sem lead correspondente: persiste a mensagem para auditoria (leadId nulo), sem classificar nem gravar sinal', async () => {
+    const res = await postSigned({
+      organizationId: ORG,
+      providerMessageId: `<msg-${RUN_ID}-5@lead.com>`,
+      fromEmail: 'ninguem-cadastrado@empresa.com',
+      subject: 'Re: Proposta',
+      body: 'Confirmado.',
+      receivedAt: new Date().toISOString(),
     });
+
+    expect(res.body).toMatchObject({ success: true, outcome: 'lead-not-found' });
+    expect(classify).not.toHaveBeenCalled();
+
+    // EmailMessage não está no allowlist de bypass (ITEM-02) — lê no contexto do próprio tenant.
+    const persisted = await asOrg(ORG, () =>
+      prisma.emailMessage.findFirst({
+        where: { organizationId: ORG, fromEmail: 'ninguem-cadastrado@empresa.com' },
+      }),
+    );
+    expect(persisted).not.toBeNull();
+    expect(persisted?.leadId).toBeNull();
+  });
 });

@@ -7,16 +7,17 @@
 
 ## P0 — Segredos e PII versionados (TODOS remediados no working tree)
 
-| # | Achado | Ação | Status |
-|---|---|---|---|
-| 1 | Chave real da Bland AI em `scripts/call_bland_juliana.py` (fallback de env) | Script removido | ✅ commit `40a99c31` |
-| 2 | Telefone pessoal real (titular "Juliana"/"Rodrigo") em 7 scripts | 6 scripts one-off removidos; mock sanitizado | ✅ commit `40a99c31` |
-| 3 | Tokens reais de webhook Bitrix24 (AtlasGR + TotalTrac) em `connections.ts`, `useBitrixIntegration.ts`, `public/tools/extrator-bitrix.html` (servido publicamente!) e `extrator_bitrix (1).html` | Fallbacks removidos (env-only), input vazio, HTML sanitizado, cópia solta apagada | ✅ commit `40a99c31` |
-| 4 | Org nova herdava credencial Bitrix da AtlasGR (cross-tenant) | Autoconnect exige env + nome de marca conhecida | ✅ commit `40a99c31` |
-| 5 | `reset-passwords.ts` sem argumento resetava TODAS as senhas p/ `00000000` | Alvo explícito obrigatório (`email` ou `--all`) | ✅ commit `40a99c31` |
-| 6 | Segredo default hardcoded no webhook voice-result (`server.ts`) | Fail-closed (503 sem env), tempo constante | ✅ commit `55bde4c` |
+| #   | Achado                                                                                                                                                                                          | Ação                                                                              | Status               |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------- |
+| 1   | Chave real da Bland AI em `scripts/call_bland_juliana.py` (fallback de env)                                                                                                                     | Script removido                                                                   | ✅ commit `40a99c31` |
+| 2   | Telefone pessoal real (titular "Juliana"/"Rodrigo") em 7 scripts                                                                                                                                | 6 scripts one-off removidos; mock sanitizado                                      | ✅ commit `40a99c31` |
+| 3   | Tokens reais de webhook Bitrix24 (AtlasGR + TotalTrac) em `connections.ts`, `useBitrixIntegration.ts`, `public/tools/extrator-bitrix.html` (servido publicamente!) e `extrator_bitrix (1).html` | Fallbacks removidos (env-only), input vazio, HTML sanitizado, cópia solta apagada | ✅ commit `40a99c31` |
+| 4   | Org nova herdava credencial Bitrix da AtlasGR (cross-tenant)                                                                                                                                    | Autoconnect exige env + nome de marca conhecida                                   | ✅ commit `40a99c31` |
+| 5   | `reset-passwords.ts` sem argumento resetava TODAS as senhas p/ `00000000`                                                                                                                       | Alvo explícito obrigatório (`email` ou `--all`)                                   | ✅ commit `40a99c31` |
+| 6   | Segredo default hardcoded no webhook voice-result (`server.ts`)                                                                                                                                 | Fail-closed (503 sem env), tempo constante                                        | ✅ commit `55bde4c`  |
 
 **⚠️ AÇÃO EXTERNA (fora do alcance do código):**
+
 1. **Chave Bland AI** (dispara ligações pagas) — estava versionada com remote no GitHub.
    Reprovado na Fase Final 0 (2026-08-16) por rotação não confirmada; `final-fase-3.md` (17/08)
    registrou uma confirmação informal do dono do produto, mas a reabertura formal do gate nunca
@@ -40,23 +41,37 @@
    registrada: o dump ainda existe, com PII real, recuperável por quem tiver acesso ao histórico.
    Remoção definitiva exige `git filter-repo`/BFG — reescreve hashes, decisão humana (ver
    AGENTS.md → Segurança e higiene).
-   **Decisão revista (2026-09-05) e executada (Caminho B):** o dono do repositório escolheu o Caminho B (reescrever histórico e force-push em main) para remover definitivamente este dump e as chaves do Gemini. A reescrita foi executada, conforme detalhado em `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`. **Pendência residual resolvida (ACH-15-01):** a tag `v0.0.1` que expunha o histórico antigo foi deletada do remote em 12/09/2026.
+   **Decisão revista (2026-09-05) e executada (Caminho B):** o dono do repositório escolheu o
+   Caminho B (reescrever histórico e force-push em main) para remover definitivamente este dump e
+   as chaves do Gemini. A reescrita foi executada, conforme detalhado em
+   `docs/security/runbooks/DECIDE_GIT_HISTORY_REWRITE.md`. `main` hoje não alcança mais o dump nem
+   `test-gemini*.ts`.
+   **Pendência residual da tag `v0.0.1` (commit `8fd8fa22…`) resolvida (ACH-15-01):** deletada do
+   remote em 12/09/2026, confirmado via `git ls-remote --tags`.
+   **Nova lacuna encontrada nesta reconciliação (12/09/2026): a tag `v1.0.0-rc.1` (commit
+   `e8fb1c1c…`) CONTINUA publicada no remote** (`git ls-remote --tags origin`, reconfirmado ao
+   resolver este merge) e ainda alcança os mesmos blobs sensíveis (dump de 166075 bytes +
+   `test-gemini.ts`/`test-gemini-quota.ts`) — `git fetch --tags && git checkout v1.0.0-rc.1` hoje
+   recupera o dado que o rewrite de `main` removeu. Nenhuma dependência de deploy/CI nessa tag foi
+   encontrada (`render.yaml` e workflows fazem deploy por branch, não por tag). Mesma decisão
+   pendente do dono do repositório que já valeu para `v0.0.1`: `git push origin --delete tag
+   v1.0.0-rc.1` — nenhuma ação destrutiva foi executada por nenhum agente até este ponto.
 
 ## P0 — Plataforma quebrada no main (remediados)
 
-| # | Achado | Status |
-|---|---|---|
-| 7 | `npm install` falhava (eslint 10 × jsx-a11y) — instalação limpa e CI quebrados | ✅ `c906e17` |
-| 8 | Typecheck quebrado: JSX inválido em OcrCapturePanel (patch #99) | ✅ `c6d3e1b` |
-| 9 | BullMQ 6 sem migração: 8 agendadores recorrentes não compilavam (nenhum job recorrente agendaria) | ✅ `7cd3854` |
-| 10 | bull-board api/express dessincronizados (TS2322) | ✅ `c906e17` |
-| 11 | Módulo Market Intelligence mergeado sem PageHeader/registro de aba | ✅ `7f32a77` |
-| 12 | Tools de IA gravando campos inexistentes no schema (copywriter/summarize) | ✅ `e0cf226` |
-| 13 | Webhook voice-result: body nunca parseado + lookup cross-tenant sem RLS + sem idempotência | ✅ `55bde4c` (7 testes novos) |
-| 14 | `/admin/queues` sem autorização por papel (jobs de todos os tenants) | ✅ `55bde4c` (ADMIN) — risco residual: ADMIN de uma org vê jobs de outra (documentado) |
-| 15 | react-hooks v7 sem migração: 60 erros de lint | ✅ `dabb7fb` (revert p/ v5) |
-| 16 | test:integration não subia a stack (stub no prepare script) + corrida com initdb | ✅ `f089dee` + `26444355` — 43/43 verdes |
-| 17 | npm audit high (sharp/libvips CVEs via cópia aninhada + nanoid) | ✅ `d6d30ce0` — 0 high |
+| #   | Achado                                                                                            | Status                                                                                 |
+| --- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 7   | `npm install` falhava (eslint 10 × jsx-a11y) — instalação limpa e CI quebrados                    | ✅ `c906e17`                                                                           |
+| 8   | Typecheck quebrado: JSX inválido em OcrCapturePanel (patch #99)                                   | ✅ `c6d3e1b`                                                                           |
+| 9   | BullMQ 6 sem migração: 8 agendadores recorrentes não compilavam (nenhum job recorrente agendaria) | ✅ `7cd3854`                                                                           |
+| 10  | bull-board api/express dessincronizados (TS2322)                                                  | ✅ `c906e17`                                                                           |
+| 11  | Módulo Market Intelligence mergeado sem PageHeader/registro de aba                                | ✅ `7f32a77`                                                                           |
+| 12  | Tools de IA gravando campos inexistentes no schema (copywriter/summarize)                         | ✅ `e0cf226`                                                                           |
+| 13  | Webhook voice-result: body nunca parseado + lookup cross-tenant sem RLS + sem idempotência        | ✅ `55bde4c` (7 testes novos)                                                          |
+| 14  | `/admin/queues` sem autorização por papel (jobs de todos os tenants)                              | ✅ `55bde4c` (ADMIN) — risco residual: ADMIN de uma org vê jobs de outra (documentado) |
+| 15  | react-hooks v7 sem migração: 60 erros de lint                                                     | ✅ `dabb7fb` (revert p/ v5)                                                            |
+| 16  | test:integration não subia a stack (stub no prepare script) + corrida com initdb                  | ✅ `f089dee` + `26444355` — 43/43 verdes                                               |
+| 17  | npm audit high (sharp/libvips CVEs via cópia aninhada + nanoid)                                   | ✅ `d6d30ce0` — 0 high                                                                 |
 
 ## Altos — Onda 1 concluída e integrada (16 commits cherry-picked)
 
@@ -68,25 +83,25 @@ alheios), cada um dos 16 commits foi cherry-picked individualmente após confirm
 por commit. Gate pós-integração: TSC ✅ / Lint ✅ (0 erros) / Unit 672/672 ✅ / Integration 43/43 ✅ /
 Build ✅._
 
-| # | Achado | Dono | Commit |
-|---|---|---|---|
-| 18 | render.yaml sem migrations no deploy — corrigido via startCommand (free tier sem preDeployCommand) | 08 | `99abf23d` |
-| 19 | qualidade-ci.yml + playwright-ci.yml quebrados/redundantes — removidos (confirmado: `npm install --legacy-peer-deps` e DB/porta incompatíveis com docker-compose.yml) | 08 | `9aa934c9` |
-| 20 | GitOps (charts/argocd) apontando p/ repositório antigo — corrigido + README declarando status (deploy ativo é Render+Vercel) | 08 | `9c3c3fe8` |
-| 21 | Sem secret scan no CI — gitleaks adicionado | 08 | `65e90487` |
-| 22 | Pages publica versão pública não-funcional a cada push — gatilho manual | 08 | `0f000c3e` |
-| 23 | vectorStore RAG com SQL cru sem RLS — `withRlsContext` + filtro organizationId defesa em profundidade | 01 | `695e2a7a` |
-| 24 | whatsappMessage vínculo com SQL cru sem RLS — `withRlsContext` | 01 | `74dcb448` |
-| 25 | Enfileiramento de enriquecimento reporta sucesso sem Redis — retorna `{enqueued:0, enfileirado:false, motivo}` | 01 | `9f216006` |
-| 26 | cold-leads-scanner query fora de contexto RLS — `requestContext.run` por organização | 01 | `9723e261` |
-| 27 | LGPD: tenant via header do cliente + exclusão sem RBAC — header removido, `requireRole(['ADMIN','GESTOR'])` na exclusão | 01 | `18eeac1b` |
-| 28 | cold-email fake-success + PII em log — envia de verdade via mailer real, loga só domínio | 01 | `2e42a557` |
-| 29 | Sino de notificações cenográfico — navega + contagem real | 02 | `099507ee` |
-| 30 | Tutoriais Bitrix com botões falsos — estado honesto "em breve" | 02 | `566aa08a` |
-| 31 | useActivities não refaz fetch em mudança de intervalo — deps corrigidas | 02 | `e8115ee5` |
-| 32 | LoginScreen signup gate — **não_aplicável**: servidor já bloqueia via `isAuthorizedLoginEmail` em 3 hooks do Better Auth (`src/lib/auth.ts`) | 02 | — |
-| 33 | Settings sem entrada p/ não-admins vs rota aberta — aberto a todos (conteúdo é só preferências pessoais) | 02 | `e99313b1` |
-| 34 | crm360 com backend completo e tela órfã — rota + menu ligados ("Cockpit CRM"); 2 de 4 quick-actions viraram cards informativos (sem UI de destino construída) | 02 | `3f6e336e` |
+| #   | Achado                                                                                                                                                                | Dono | Commit     |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| 18  | render.yaml sem migrations no deploy — corrigido via startCommand (free tier sem preDeployCommand)                                                                    | 08   | `99abf23d` |
+| 19  | qualidade-ci.yml + playwright-ci.yml quebrados/redundantes — removidos (confirmado: `npm install --legacy-peer-deps` e DB/porta incompatíveis com docker-compose.yml) | 08   | `9aa934c9` |
+| 20  | GitOps (charts/argocd) apontando p/ repositório antigo — corrigido + README declarando status (deploy ativo é Render+Vercel)                                          | 08   | `9c3c3fe8` |
+| 21  | Sem secret scan no CI — gitleaks adicionado                                                                                                                           | 08   | `65e90487` |
+| 22  | Pages publica versão pública não-funcional a cada push — gatilho manual                                                                                               | 08   | `0f000c3e` |
+| 23  | vectorStore RAG com SQL cru sem RLS — `withRlsContext` + filtro organizationId defesa em profundidade                                                                 | 01   | `695e2a7a` |
+| 24  | whatsappMessage vínculo com SQL cru sem RLS — `withRlsContext`                                                                                                        | 01   | `74dcb448` |
+| 25  | Enfileiramento de enriquecimento reporta sucesso sem Redis — retorna `{enqueued:0, enfileirado:false, motivo}`                                                        | 01   | `9f216006` |
+| 26  | cold-leads-scanner query fora de contexto RLS — `requestContext.run` por organização                                                                                  | 01   | `9723e261` |
+| 27  | LGPD: tenant via header do cliente + exclusão sem RBAC — header removido, `requireRole(['ADMIN','GESTOR'])` na exclusão                                               | 01   | `18eeac1b` |
+| 28  | cold-email fake-success + PII em log — envia de verdade via mailer real, loga só domínio                                                                              | 01   | `2e42a557` |
+| 29  | Sino de notificações cenográfico — navega + contagem real                                                                                                             | 02   | `099507ee` |
+| 30  | Tutoriais Bitrix com botões falsos — estado honesto "em breve"                                                                                                        | 02   | `566aa08a` |
+| 31  | useActivities não refaz fetch em mudança de intervalo — deps corrigidas                                                                                               | 02   | `e8115ee5` |
+| 32  | LoginScreen signup gate — **não_aplicável**: servidor já bloqueia via `isAuthorizedLoginEmail` em 3 hooks do Better Auth (`src/lib/auth.ts`)                          | 02   | —          |
+| 33  | Settings sem entrada p/ não-admins vs rota aberta — aberto a todos (conteúdo é só preferências pessoais)                                                              | 02   | `e99313b1` |
+| 34  | crm360 com backend completo e tela órfã — rota + menu ligados ("Cockpit CRM"); 2 de 4 quick-actions viraram cards informativos (sem UI de destino construída)         | 02   | `3f6e336e` |
 
 ### Gate E2E (Playwright) — investigado e corrigido após a integração
 
@@ -95,20 +110,21 @@ Baseline pré-onda: 20/45 passando (44%) — 25 falhas, quase todas por `AUTH_RA
 `AUTH_RATE_LIMIT_MAX=500` que só o CI define. Corrigido e investigado até a causa raiz de cada
 falha real restante:
 
-| Achado | Causa raiz | Correção | Commit |
-|---|---|---|---|
-| 23 specs falhando em `signUp()` | `.env.test.example` sem `AUTH_RATE_LIMIT_MAX` (herda 20/15min de prod) | Adicionado `AUTH_RATE_LIMIT_MAX=500`, igual ao CI | `489d6ab6` |
-| `crm-board.spec.ts` sempre falha | Harness temporário de pilotos de design, nunca autentica (`assume auth bypass` no comentário), confirmado substituído por `crm-kanban.spec.ts` | Removido (teste morto) | `489d6ab6` |
-| Botão X do drawer não encontrado | Ícone puro sem `aria-label` — sem nome acessível para leitor de tela | `aria-label="Fechar detalhes do lead"` | `489d6ab6` |
-| `aria-pressed` nunca aparecia no card | `useSortable().isDragging` nunca era exposto via ARIA | Adicionado `aria-pressed={isDragging}` | `489d6ab6` |
-| **Drag por teclado 100% inoperável** (3 specs) | **Bug real**: `onKeyDown` customizado do `KanbanCard` sobrescrevia por completo o `onKeyDown` de `{...listeners}` do dnd-kit (mesma prop, spread antes — última declaração vence). O `KeyboardSensor` nunca recebia o Espaço de pickup — nenhum atributo ARIA (mesmo corretos) ajudava, porque a ativação em si nunca disparava. Usuário de teclado/leitor de tela não conseguia mover nenhum card. | `CrmBoard.tsx`: `KeyboardSensor` restrito a Space (Enter livre p/ abrir drawer, sem colisão). `KanbanCard.tsx`: `onKeyDown` agora encaminha pro dnd-kit primeiro | `92aec6cd` |
-| Select "Estágio do lead" nunca encontrado | Rótulo real do componente é "Status do Funil" — teste nunca bateu com a UI real | Teste corrigido para o rótulo real | `92aec6cd` |
-| `color-contrast` intermitente em "Pipeline CRM" | Flake de timing: `transition-all` do botão da Sidebar capturado mid-transição pelo axe-core (sem relação com nenhuma mudança da Onda 1) | Confirmado flaky: 3/3 passou em repetição isolada — não é regressão, registrado como débito de teste (usar `waitForLoadState` de transição, não investigado a fundo) | — |
+| Achado                                          | Causa raiz                                                                                                                                                                                                                                                                                                                                                                                          | Correção                                                                                                                                                             | Commit     |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| 23 specs falhando em `signUp()`                 | `.env.test.example` sem `AUTH_RATE_LIMIT_MAX` (herda 20/15min de prod)                                                                                                                                                                                                                                                                                                                              | Adicionado `AUTH_RATE_LIMIT_MAX=500`, igual ao CI                                                                                                                    | `489d6ab6` |
+| `crm-board.spec.ts` sempre falha                | Harness temporário de pilotos de design, nunca autentica (`assume auth bypass` no comentário), confirmado substituído por `crm-kanban.spec.ts`                                                                                                                                                                                                                                                      | Removido (teste morto)                                                                                                                                               | `489d6ab6` |
+| Botão X do drawer não encontrado                | Ícone puro sem `aria-label` — sem nome acessível para leitor de tela                                                                                                                                                                                                                                                                                                                                | `aria-label="Fechar detalhes do lead"`                                                                                                                               | `489d6ab6` |
+| `aria-pressed` nunca aparecia no card           | `useSortable().isDragging` nunca era exposto via ARIA                                                                                                                                                                                                                                                                                                                                               | Adicionado `aria-pressed={isDragging}`                                                                                                                               | `489d6ab6` |
+| **Drag por teclado 100% inoperável** (3 specs)  | **Bug real**: `onKeyDown` customizado do `KanbanCard` sobrescrevia por completo o `onKeyDown` de `{...listeners}` do dnd-kit (mesma prop, spread antes — última declaração vence). O `KeyboardSensor` nunca recebia o Espaço de pickup — nenhum atributo ARIA (mesmo corretos) ajudava, porque a ativação em si nunca disparava. Usuário de teclado/leitor de tela não conseguia mover nenhum card. | `CrmBoard.tsx`: `KeyboardSensor` restrito a Space (Enter livre p/ abrir drawer, sem colisão). `KanbanCard.tsx`: `onKeyDown` agora encaminha pro dnd-kit primeiro     | `92aec6cd` |
+| Select "Estágio do lead" nunca encontrado       | Rótulo real do componente é "Status do Funil" — teste nunca bateu com a UI real                                                                                                                                                                                                                                                                                                                     | Teste corrigido para o rótulo real                                                                                                                                   | `92aec6cd` |
+| `color-contrast` intermitente em "Pipeline CRM" | Flake de timing: `transition-all` do botão da Sidebar capturado mid-transição pelo axe-core (sem relação com nenhuma mudança da Onda 1)                                                                                                                                                                                                                                                             | Confirmado flaky: 3/3 passou em repetição isolada — não é regressão, registrado como débito de teste (usar `waitForLoadState` de transição, não investigado a fundo) | —          |
 
 **Resultado final: 42/43 passando (97,7%)** — o único "failed" restante em runs completos é o flake de
 color-contrast acima, não reprodutível isoladamente.
 
 ### Achado adicional durante a integração (fora do escopo original, corrigido direto em `main`)
+
 Regressão de segurança ativa encontrada em `main` (linha de trabalho paralela nunca recebeu a
 remediação P0 acima): tokens reais dos webhooks Bitrix24 (AtlasGR + TotalTrac) e telefone pessoal
 real seguiam versionados em `connections.ts`, `useBitrixIntegration.ts`,
@@ -125,8 +141,10 @@ Corrigido e enviado diretamente a `main` (commit `0c6a6dfd`), aprovado explicita
 - `/metrics` sem auth quando EXPOSE_METRICS=true (mitigação: manter flag off ou proteger por rede).
 - piiSanitizer é código morto (✅ removido, Onda 43); consentimento LGPD antes de enviar PII a
   provedores de IA — ✅ `conversation-intelligence.service.ts` (WhatsApp) corrigido na Onda 43
-  (`assertPiiExternalConsent`, mesmo gate fail-closed do resto do enxame); `birth-voice` ainda não
-  reverificado.
+  (`assertPiiExternalConsent`, mesmo gate fail-closed do resto do enxame); ✅ `birth-voice` também
+  já aplica o gate (`birthVoice.service.ts` chama `assertPiiExternalConsent` antes de enviar
+  nome/telefone/empresa ao provedor externo), com teste cobrindo a recusa sem base legal LGPD
+  registrada em `birthVoice.service.test.ts`.
 - 4 vulnerabilidades moderate: `uuid` via `exceljs` — ✅ resolvido na Onda 43 (`exceljs` 3.10.0 →
   4.4.0, ver `docs/security/AUDIT_WAIVERS.md`); `dockerode`/`testcontainers` (dev-only) — ainda não
   reverificado.

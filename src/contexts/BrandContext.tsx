@@ -9,7 +9,7 @@ export type { BrandInfo };
  * Identidade da plataforma exposta a componentes.
  *
  * Este módulo era um contexto de troca de marca em runtime: mantinha
- * `activeBrand` ('birthub360'), reescrevia `--brand`/`--brand-2` via
+ * `activeBrand` ('atlasgr' | 'totaltrac'), reescrevia `--brand`/`--brand-2` via
  * `documentElement.style.setProperty` e marcava `data-brand` no `<html>` para o
  * CSS reagir. A plataforma passou a ter uma marca só (Birth Hub 360), então não
  * há mais estado: `useBrand()` devolve uma constante e as cores vivem
@@ -18,8 +18,9 @@ export type { BrandInfo };
  *
  * O eixo que o seletor de marca de fato controlava no conteúdo (playbook,
  * personas, matriz de objeções, portal Bitrix) não era identidade visual e sim
- * dado comercial: continua existindo, na área comercial, parametrizável por
- * empresa.
+ * dado comercial: continua existindo (`src/config/playbooks.ts`), mas não é
+ * mais nomeado por empresa (`atlasgr`/`totaltrac` removidos por pedido
+ * explícito do usuário) — hoje é um único playbook geral.
  */
 export function useBrand(): { brandInfo: BrandInfo } {
   return { brandInfo: BRAND };

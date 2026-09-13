@@ -25,9 +25,10 @@ import { CAPABILITY_CODES } from '../../src/config/capability-catalog';
 describe('Tool Bindings — evidência real de cada binding VERIFIED (PROMPT 3B item 2)', () => {
   it('todo capabilityCode referenciado em TOOL_BINDINGS existe no catálogo canônico', () => {
     for (const binding of TOOL_BINDINGS) {
-      expect(CAPABILITY_CODES, `capability "${binding.capabilityCode}" não está no catálogo`).toContain(
-        binding.capabilityCode,
-      );
+      expect(
+        CAPABILITY_CODES,
+        `capability "${binding.capabilityCode}" não está no catálogo`,
+      ).toContain(binding.capabilityCode);
     }
   });
 
@@ -41,13 +42,28 @@ describe('Tool Bindings — evidência real de cada binding VERIFIED (PROMPT 3B 
   it('binding VERIFIED sempre tem evidencePath + exportName preenchidos; UNVERIFIED sempre null', () => {
     for (const binding of TOOL_BINDINGS) {
       if (binding.verification === 'VERIFIED') {
-        expect(binding.evidencePath, `${binding.capabilityCode} VERIFIED sem evidencePath`).not.toBeNull();
-        expect(binding.exportName, `${binding.capabilityCode} VERIFIED sem exportName`).not.toBeNull();
+        expect(
+          binding.evidencePath,
+          `${binding.capabilityCode} VERIFIED sem evidencePath`,
+        ).not.toBeNull();
+        expect(
+          binding.exportName,
+          `${binding.capabilityCode} VERIFIED sem exportName`,
+        ).not.toBeNull();
         expect(binding.available).toBe(true);
       } else {
-        expect(binding.evidencePath, `${binding.capabilityCode} UNVERIFIED com evidencePath`).toBeNull();
-        expect(binding.exportName, `${binding.capabilityCode} UNVERIFIED com exportName`).toBeNull();
-        expect(binding.methodName, `${binding.capabilityCode} UNVERIFIED com methodName`).toBeNull();
+        expect(
+          binding.evidencePath,
+          `${binding.capabilityCode} UNVERIFIED com evidencePath`,
+        ).toBeNull();
+        expect(
+          binding.exportName,
+          `${binding.capabilityCode} UNVERIFIED com exportName`,
+        ).toBeNull();
+        expect(
+          binding.methodName,
+          `${binding.capabilityCode} UNVERIFIED com methodName`,
+        ).toBeNull();
         expect(binding.available).toBe(false);
         expect(['SOURCE_REQUIRED', 'FUTURE_TOOL', 'TOOL_UNAVAILABLE']).toContain(binding.reason);
       }
@@ -75,9 +91,10 @@ describe('Tool Bindings — evidência real de cada binding VERIFIED (PROMPT 3B 
         content.includes(`function ${exportName}`) ||
         content.includes(`const ${exportName} `) ||
         content.includes(`const ${exportName}=`);
-      expect(declaredExport, `export "${exportName}" não encontrado no texto de ${binding.evidencePath}`).toBe(
-        true,
-      );
+      expect(
+        declaredExport,
+        `export "${exportName}" não encontrado no texto de ${binding.evidencePath}`,
+      ).toBe(true);
       if (binding.methodName) {
         const declaredMethod = new RegExp(`\\b${binding.methodName}\\s*\\(`).test(content);
         expect(
@@ -94,7 +111,10 @@ describe('Tool Bindings — evidência real de cada binding VERIFIED (PROMPT 3B 
       const modulePath = `../../${binding.evidencePath!.replace(/\.ts$/, '.js')}`;
       const mod: Record<string, unknown> = await import(modulePath);
       const exported = mod[binding.exportName!];
-      expect(exported, `"${binding.exportName}" não é exportado por ${binding.evidencePath}`).toBeDefined();
+      expect(
+        exported,
+        `"${binding.exportName}" não é exportado por ${binding.evidencePath}`,
+      ).toBeDefined();
 
       if (binding.methodName) {
         // exportName é uma classe — o trabalho real é um método de instância no protótipo.

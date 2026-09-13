@@ -1,5 +1,6 @@
 import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
+import type { PlaybookKey } from '../../../config/playbooks.js';
 
 export interface AssistantHistoryMessage {
   id: string;
@@ -14,7 +15,7 @@ const HISTORY_LIMIT = 20;
 export async function listAssistantHistory(
   organizationId: string,
   userId: string,
-  brand: 'birthub360',
+  brand: PlaybookKey,
 ): Promise<AssistantHistoryMessage[]> {
   const rows = await prisma.assistantMessage.findMany({
     where: { organizationId, userId, brand },
@@ -37,7 +38,7 @@ export async function listAssistantHistory(
 export async function appendAssistantTurn(
   organizationId: string,
   userId: string,
-  brand: 'birthub360',
+  brand: PlaybookKey,
   userText: string,
   assistantText: string,
 ): Promise<void> {

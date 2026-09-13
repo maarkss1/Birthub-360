@@ -5,16 +5,21 @@ name: Central Birth Hub 360 Release
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [main, master, develop]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: central-birthub360-release-${{ github.event.pull_request.number || github.sha }}
+  # PRs: cancela o run anterior da mesma PR ao receber um novo push (feedback rápido).
+  # push em main/master/develop: fila por SHA sem cancelamento — merges próximos no tempo não
+  # podem cancelar a verificação de integração um do outro, ou o estado combinado de main fica
+  # sem gate verde confirmado (mesmo modo de falha do incidente da Onda 5, RLS do AILog só
+  # visível no gate de integração).
+  group: ${{ github.event_name == 'pull_request' && format('central-atlasgr-release-pr-{0}', github.event.pull_request.number) || format('central-atlasgr-release-push-{0}', github.sha) }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -210,7 +215,7 @@ jobs:
 
   # Geração manual de baselines Linux. Não participa do required check `build`.
   visual-baselines:
-    name: "Gerar baselines visuais Linux (manual)"
+    name: 'Gerar baselines visuais Linux (manual)'
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 

@@ -7,8 +7,14 @@ import { setupDI } from '../../src/shared/di/setup';
 import { runAgentCatalogImport } from '../../scripts/import-agent-catalog';
 import { runCapabilityEngineSeed } from '../../scripts/seed-capability-engine';
 import { runMultiCargoSeed } from '../../scripts/seed-multi-cargo';
-import { getJobRoleByCode, assignJobRole } from '../../src/features/job-roles/services/jobRole.service';
-import { planSupervisorSteps, runRoleSupervisor } from '../../src/features/job-roles/services/roleSupervisor.service';
+import {
+  getJobRoleByCode,
+  assignJobRole,
+} from '../../src/features/job-roles/services/jobRole.service';
+import {
+  planSupervisorSteps,
+  runRoleSupervisor,
+} from '../../src/features/job-roles/services/roleSupervisor.service';
 import { ROLE_SUPERVISOR_PROFILES } from '../../src/features/job-roles/config/role-supervisor-profiles';
 
 const ORG_ID = 'test-org-id';
@@ -71,8 +77,12 @@ describe('Supervisores de Cargo (PROMPT 5)', () => {
       where: { capabilityDefinition: { code: { in: CAPABILITY_CODES } } },
     });
     await prisma.capabilityDefinition.deleteMany({ where: { code: { in: CAPABILITY_CODES } } });
-    await prisma.roleAgentGrant.deleteMany({ where: { agentDefinition: { code: { in: sourceAgentCodes } } } });
-    await prisma.agentVersion.deleteMany({ where: { agentDefinition: { code: { in: sourceAgentCodes } } } });
+    await prisma.roleAgentGrant.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
+    await prisma.agentVersion.deleteMany({
+      where: { agentDefinition: { code: { in: sourceAgentCodes } } },
+    });
     await prisma.agentDefinition.deleteMany({ where: { code: { in: sourceAgentCodes } } });
   });
 
@@ -202,7 +212,10 @@ describe('Supervisores de Cargo (PROMPT 5)', () => {
       const grant = await prisma.agentCapabilityGrant.findFirstOrThrow({
         where: { agentDefinitionId: agent.id, capabilityDefinitionId: capability.id },
       });
-      await prisma.agentCapabilityGrant.update({ where: { id: grant.id }, data: { isActive: false } });
+      await prisma.agentCapabilityGrant.update({
+        where: { id: grant.id },
+        data: { isActive: false },
+      });
       try {
         const result = await runRoleSupervisor({
           actorId: user.id,
@@ -212,7 +225,10 @@ describe('Supervisores de Cargo (PROMPT 5)', () => {
         });
         expect(result.steps[0]?.outcome).toBe('NO_ELIGIBLE_AGENT');
       } finally {
-        await prisma.agentCapabilityGrant.update({ where: { id: grant.id }, data: { isActive: true } });
+        await prisma.agentCapabilityGrant.update({
+          where: { id: grant.id },
+          data: { isActive: true },
+        });
       }
     });
   });
@@ -251,7 +267,10 @@ describe('Supervisores de Cargo (PROMPT 5)', () => {
         actorRole: 'GESTOR',
       });
 
-      expect(result.steps.map((s) => s.capabilityCode)).toEqual(['billing.read', 'billing.reconcile']);
+      expect(result.steps.map((s) => s.capabilityCode)).toEqual([
+        'billing.read',
+        'billing.reconcile',
+      ]);
       for (const step of result.steps) {
         expect(step.outcome).toBe('DENIED');
         expect(step.execution?.policyDecision.reason).toBe('SOURCE_REQUIRED');

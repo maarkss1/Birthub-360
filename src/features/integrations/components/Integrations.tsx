@@ -394,10 +394,13 @@ export function Integrations() {
                       onClick={handleConnect}
                       disabled={loading || !canManage}
                       title={canManage ? undefined : 'Requer permissão de Gestor ou Administrador'}
-                      // bg-ok-active (não bg-green-600) — texto branco direto sobre verde-600 só
-                      // atinge ~3.2:1 (WCAG AA exige 4.5:1 pra texto normal); mesmo padrão já
-                      // usado em bg-brand-active (Button.tsx) pra texto branco sobre cor sólida.
-                      className="w-full py-2 bg-ok-active hover:brightness-110 text-white font-medium rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      // bg-ok-solid (não bg-ok-active) — --ok-active virou --color-ok cru no
+                      // escuro (badge soft, ver globals.css), quebrando este uso de botão sólido:
+                      // #0f9d64 cru + texto branco mede só 3.48:1 (achado real do axe-core,
+                      // tests/e2e/accessibility.spec.ts). --color-ok-solid é fixo nos dois temas
+                      // (mesma fórmula que --ok-active usa no claro), mesmo idioma de
+                      // bg-brand-active (Button.tsx) pra texto branco sobre cor sólida.
+                      className="w-full py-2 bg-ok-solid hover:brightness-110 text-white font-medium rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {loading ? 'Iniciando...' : 'Conectar WhatsApp'}
                     </button>

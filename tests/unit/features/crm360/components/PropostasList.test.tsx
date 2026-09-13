@@ -58,7 +58,9 @@ describe('PropostasList — RBAC de escrita', () => {
     rtlRender(<PropostasList />);
     await waitFor(() =>
       expect(
-        screen.getByText('Orçamentos, propostas, faturas e contratos — com versionamento e assinatura eletrônica.'),
+        screen.getByText(
+          'Orçamentos, propostas, faturas e contratos — com versionamento e assinatura eletrônica.',
+        ),
       ).toBeInTheDocument(),
     );
     expect(screen.queryAllByRole('button', { name: /Novo Documento/i })).toHaveLength(0);
@@ -69,7 +71,9 @@ describe('PropostasList — RBAC de escrita', () => {
     rtlRender(<PropostasList />);
     await waitFor(() =>
       expect(
-        screen.getByText('Orçamentos, propostas, faturas e contratos — com versionamento e assinatura eletrônica.'),
+        screen.getByText(
+          'Orçamentos, propostas, faturas e contratos — com versionamento e assinatura eletrônica.',
+        ),
       ).toBeInTheDocument(),
     );
     expect(screen.queryAllByRole('button', { name: /Novo Documento/i })).toHaveLength(0);

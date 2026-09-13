@@ -7,20 +7,25 @@
 testes e achados da investigação de breaking changes.
 
 ## Description
+
 The `better-auth` library (up to `1.6.23`) contains known critical vulnerabilities (e.g., OAuth refresh-token replay, XSS in auth-server origin via javascript redirect).
 The available fix requires upgrading to a Release Candidate (`1.7.0-rc.x`), which introduces peer dependency conflicts (`@types/react`).
 
 ## Impact
+
 Critical. If exploited, could lead to account takeover, token replay, or XSS depending on the enabled plugins (OAuth, SCIM).
 
 ## Likelihood
+
 Medium to High (depending on specific plugins actively used).
 
 ## Mitigation / Strategy (histórico)
+
 **Accept Risk (Temporarily)**
 As per ADR-001, we accept this risk to maintain production stability. We will not use `--legacy-peer-deps` or RC versions.
 
 ## Action Plan (histórico)
+
 - Monitor for the official, stable `1.7.0` release of `better-auth`.
 - Update immediately upon stable release.
 - Ensure strict usage of `requireTenant` and `requirePermission` to minimize horizontal escalation in the meantime.
@@ -28,6 +33,7 @@ As per ADR-001, we accept this risk to maintain production stability. We will no
 ## Resolução (11/09/2026)
 
 ### O que foi feito
+
 - `better-auth` `^1.6.23` → `^1.7.4` em `package.json` (e lockfile atualizado via `npm install`).
   `1.7.4` é a versão estável mais recente no npm nesta data (linha `1.7.x`: 1.7.0 → 1.7.4,
   publicada em 2026-08-18 → 2026-09-10 — sem RC/beta envolvida, o problema original de conflito
@@ -37,9 +43,11 @@ As per ADR-001, we accept this risk to maintain production stability. We will no
   configuração foi revertido antes da versão que instalamos).
 
 ### Achado importante: a vulnerabilidade original já não batia com `1.6.23`
+
 Investigando os GitHub Security Advisories reais do repositório `better-auth/better-auth`, as duas
 CVEs que mais batem com a descrição textual deste risco ("OAuth refresh-token replay" e "XSS in
 auth-server origin via javascript redirect") são:
+
 - `GHSA-pw9m-5jxm-xr6h` (OAuth refresh-token replay) — afeta apenas quem usa o plugin
   `oidcProvider()` ou `mcp()`, corrigida em `better-auth@1.6.11`.
 - `GHSA-86j7-9j95-vpqj` (stored XSS via `javascript:` redirect_uri) — mesma condição (só
@@ -55,6 +63,7 @@ para `1.7.4` era a ação certa: mantém o pacote na versão estável mais recen
 mudança de código exigida) e sem esperar por uma condição que já não existia.
 
 ### Breaking changes investigados (1.6.23 → 1.7.4)
+
 Release notes oficiais (`better-auth/better-auth` v1.7.0 até v1.7.4) revisadas linha a linha
 contra o uso real deste projeto (`emailAndPassword` + social login Google/Microsoft via
 `socialProviders`, adapter Prisma/PostgreSQL, `plugins: []`, sem `experimental.joins`, sem
@@ -67,7 +76,7 @@ captcha):
   requisito foi revertido em `1.7.3`** — confirmado lendo o código-fonte instalado
   (`node_modules/better-auth/dist/oauth2/account-key.mjs` resolve a chave da conta hoje só como
   `{ providerId, accountId }`, sem `issuer`; `node_modules/@better-auth/core/dist/db/schema-diff.mjs`
-  só menciona `issuer` no caminho de aviso para quem *já* tinha adicionado essa coluna manualmente
+  só menciona `issuer` no caminho de aviso para quem _já_ tinha adicionado essa coluna manualmente
   durante a janela 1.7.0–1.7.2). Como fomos direto de `1.6.23` para `1.7.4` (nunca passamos pelas
   versões 1.7.0–1.7.2), esse requisito nunca chegou a se aplicar ao nosso schema — nenhuma
   migration de Prisma foi necessária.
@@ -95,6 +104,7 @@ captcha):
   nenhum desses pacotes/plugins está instalado ou usado neste projeto. N/A.
 
 ### Evidência de testes
+
 - `npx tsc --noEmit` → limpo, sem erros, com `better-auth@1.7.4` instalado.
 - `npx vitest run -c vitest.unit.config.ts src/lib/auth/__tests__/authorization.unit.test.ts src/shared/middlewares/__tests__/authorization.unit.test.ts`
   → **13/13 testes passaram** (únicos testes unitários diretamente relacionados a autenticação/
@@ -104,7 +114,7 @@ captcha):
   `tests/integration/rbac-e2e.test.ts`) e `tests/e2e/auth.spec.ts` (Playwright) não puderam ser
   executados nesta sessão: exigem PostgreSQL real (via `docker compose ... up`), o daemon do
   Docker Desktop não estava acessível neste ambiente (`failed to connect to the docker API at
-  npipe:////./pipe/dockerDesktopLinuxEngine`), não havia um Postgres alcançável em `localhost:5432`,
+npipe:////./pipe/dockerDesktopLinuxEngine`), não havia um Postgres alcançável em `localhost:5432`,
   e não existe `.env.test` no worktree. Isso não foi contornado nem declarado como "passou" —
   fica registrado como pendência: **antes de mergear/dar deploy desta mudança, rodar
   `npm run test:integration` e `npm run test:e2e` (suite de auth) num ambiente com Docker/Postgres
@@ -114,6 +124,7 @@ captcha):
   ajuste, mas não substitui a execução real.
 
 ### Se algo quebrar depois do merge
+
 Reverter é um bump de versão só em `package.json`/`package-lock.json`
 (`better-auth: "^1.6.23"`) seguido de `npm install` — nenhuma migration de banco foi aplicada por
 esta mudança, então o rollback é seguro e imediato.

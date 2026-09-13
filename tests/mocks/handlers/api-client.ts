@@ -6,6 +6,6 @@ import { http, HttpResponse } from 'msw';
  * sobrescreve via `server.use(...)`; isto aqui é só uma resposta neutra de fallback.
  */
 export const apiClientHandlers = [
-    http.get('/api/test', () => HttpResponse.json({})),
-    http.post('/api/test', () => HttpResponse.json({})),
+  http.get('/api/test', () => HttpResponse.json({})),
+  http.post('/api/test', () => HttpResponse.json({})),
 ];

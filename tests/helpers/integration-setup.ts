@@ -17,8 +17,8 @@ const databaseUrl = process.env.DATABASE_URL ?? '';
 if (!/\/[\w-]*test[\w-]*(\?|$)/i.test(databaseUrl)) {
   throw new Error(
     `Testes de integração recusaram rodar: DATABASE_URL não aponta para um banco de teste isolado ` +
-    `(esperado um nome de banco contendo "test", ex: "prospectordb_test"; recebido "${databaseUrl || '(vazio)'}"). ` +
-    `Rode via "npm run test:integration" (que prepara .env.test automaticamente) em vez de invocar o vitest direto.`,
+      `(esperado um nome de banco contendo "test", ex: "prospectordb_test"; recebido "${databaseUrl || '(vazio)'}"). ` +
+      `Rode via "npm run test:integration" (que prepara .env.test automaticamente) em vez de invocar o vitest direto.`,
   );
 }
 
@@ -31,8 +31,8 @@ vi.mock('../../src/lib/search/index.js', () => ({
       addDocuments: vi.fn().mockResolvedValue({}),
       updateDocuments: vi.fn().mockResolvedValue({}),
       deleteDocuments: vi.fn().mockResolvedValue({}),
-    })
-  }
+    }),
+  },
 }));
 
 import { prisma } from '../../src/lib/prisma';
@@ -70,7 +70,8 @@ const cleanDatabase = async () => {
   }
 };
 
-const seedDatabase = async () => withRlsBypass(async () => {
+const seedDatabase = async () =>
+  withRlsBypass(async () => {
     // Add default test organization to resolve foreign key constraints
     const exists = await prisma.organization.findUnique({ where: { id: 'test-org-id' } });
     if (!exists) {
@@ -78,7 +79,7 @@ const seedDatabase = async () => withRlsBypass(async () => {
         data: { id: 'test-org-id', name: 'Test Org' },
       });
     }
-});
+  });
 
 beforeAll(async () => {
   await seedDatabase();

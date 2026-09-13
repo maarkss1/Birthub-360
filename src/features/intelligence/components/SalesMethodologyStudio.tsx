@@ -88,21 +88,13 @@ export function SalesMethodologyStudio() {
   const { info: playbookMeta } = useActivePlaybook();
   const [activeTab, setActiveTab] = useState<FrameworkType>('spin');
   const [form, setForm] = useState<MethodologyFormState>({
-    targetPersona:
-      false
-        ? 'Diretor de Operações / Gestor de Frota'
-        : 'Diretor de Logística / Head de GR',
-    companySegment:
-      false
-        ? 'Transportadoras / Frotas corporativas'
-        : 'Logística / Transporte de cargas',
+    targetPersona: 'Diretor de Logística / Head de GR',
+    companySegment: 'Logística / Transporte de cargas',
     icpSize: 'Mid-Market (50 a 500 colaboradores)',
     techStack: 'A confirmar durante a descoberta',
     solutionName: playbookMeta.label,
     mainPainPoint:
-      false
-        ? 'Baixa visibilidade sobre consumo, jornada e eventos da frota'
-        : 'Dificuldade de comprovar e auditar o cumprimento das regras de gerenciamento de risco',
+      'Dificuldade de comprovar e auditar o cumprimento das regras de gerenciamento de risco',
     mainBenefit:
       'Hipótese: reduzir trabalho manual e aumentar a previsibilidade operacional, sujeito a diagnóstico',
   });

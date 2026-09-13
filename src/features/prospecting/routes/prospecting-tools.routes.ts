@@ -93,6 +93,8 @@ router.get('/status', (_req: Request, res: Response) => {
 
 // Ferramenta standalone: só Google Places (New) Text Search — sem Apollo/Nominatim como fallback,
 // diferente do /discover multi-provider.
+// ACH-05-01 (auditoria de segurança): chamada real e faturável — VISUALIZADOR (papel
+// somente-leitura, padrão de novo usuário) não pode acioná-la.
 router.post(
   '/google-places',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -115,6 +117,7 @@ router.post(
 
 // Ferramenta standalone: só Apollo.io Organization Search — mesma função usada pelo /discover, mas
 // chamada isolada (já é 100% Apollo, não precisa de nenhuma adaptação pra "isolar" a fonte).
+// ACH-05-01: chamada real e faturável — mesma restrição de /google-places.
 router.post(
   '/apollo',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -133,6 +136,7 @@ router.post(
 
 // Ferramenta standalone: só Hunter.io Domain Search — descobre pessoas reais a partir de e-mails
 // publicados num domínio, sem passar pelo People Search da Apollo.
+// ACH-05-01: chamada real e faturável — mesma restrição de /google-places.
 router.post(
   '/hunter',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -158,6 +162,7 @@ router.post(
 
 // Ação secundária da ferramenta Hunter: verifica/encontra o e-mail de UMA pessoa já identificada
 // (nome + domínio), via Hunter.io Email Finder.
+// ACH-05-01: chamada real e faturável — mesma restrição de /google-places.
 router.post(
   '/hunter/verify-email',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),

@@ -94,8 +94,8 @@ router.get(
     try {
       const { organizationId, id: userId } = (req as AuthRequest).user;
       const brand = String(req.query.brand || '');
-      if (brand !== 'birthub360') {
-        res.status(400).json({ success: false, error: 'brand deve ser "birthub360".' });
+      if (brand !== 'geral') {
+        res.status(400).json({ success: false, error: 'brand deve ser "geral".' });
         return;
       }
       const messages = await listAssistantHistory(organizationId, userId, brand);
@@ -133,7 +133,7 @@ router.post(
       await appendAssistantTurn(
         organizationId,
         userId,
-        'birthub360',
+        request.brandKey,
         request.inputs.question,
         result.answer,
       );
@@ -158,7 +158,7 @@ router.post(
 // (antes só existia em memória no componente, perdido ao recarregar — Piloto 008 em
 // .claude/PILOTS.md).
 const roleplayFinishSchema = z.object({
-  brand: z.enum(['birthub360']),
+  brand: z.literal('geral'),
   brandName: z.string().trim().min(1).max(80),
   brandDescription: z.string().trim().min(1).max(500),
   personaId: z.string().trim().min(1).max(80),
@@ -215,8 +215,8 @@ router.get(
     try {
       const { organizationId, id: userId } = (req as AuthRequest).user;
       const brand = String(req.query.brand || '');
-      if (brand !== 'birthub360') {
-        res.status(400).json({ success: false, error: 'brand deve ser "birthub360".' });
+      if (brand !== 'geral') {
+        res.status(400).json({ success: false, error: 'brand deve ser "geral".' });
         return;
       }
       const sessions = await listRoleplaySessions(organizationId, userId, brand);
@@ -235,7 +235,7 @@ const contentGenerationSchema = z.object({
   tone: z.string().trim().max(80).optional(),
   objective: z.string().trim().max(100).optional(),
   personaFallback: z.string().trim().max(200).optional(),
-  brandId: z.enum(['birthub360']).default('birthub360'),
+  brandId: z.literal('geral').default('geral'),
 });
 
 router.post(
@@ -604,11 +604,14 @@ router.put(
 // (mesmo /api/analytics/overview usado no LiveStatsWidget) e devolve uma leitura executiva em Markdown.
 const reportSchema = z.object({
   metrics: z.record(z.string(), z.unknown()),
-  brandId: z.enum(['birthub360']).default('birthub360'),
+  brandId: z.literal('geral').default('geral'),
 });
 
-function reportBrandContext(_brandId: 'birthub360'): string {
-  return 'Birth Hub 360';
+// Antes do playbook geral único, este texto variava por playbook (logística vs. frota) — ver
+// git blame para o conteúdo antigo. Removido junto com atlasgr/totaltrac (pedido explícito do
+// usuário); mantém-se genérico até o desenho de um playbook configurável por organização.
+function reportBrandContext(_brandId: 'geral'): string {
+  return 'Birth Hub 360 (inteligência comercial B2B)';
 }
 
 function reportPrompt(brandContext: string): string {

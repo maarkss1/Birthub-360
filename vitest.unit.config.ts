@@ -24,7 +24,11 @@ export default defineConfig({
     // VITEST_MAX_WORKERS (ver definição de `maxWorkers` acima) — default 2 preservado.
     pool: 'threads',
     maxWorkers,
-    include: ['tests/unit/**/*.test.ts', 'src/**/__tests__/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
+    include: [
+      'tests/unit/**/*.test.ts',
+      'src/**/__tests__/**/*.test.ts',
+      'tests/unit/**/*.test.tsx',
+    ],
     coverage: {
       provider: 'v8',
       // 'lcov' adicionado (Onda 3, agente 08): sonar-project.properties aponta

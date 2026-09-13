@@ -1,8 +1,10 @@
-import { type Prisma, SignatureRequestStatus } from '@prisma/client';
+import { LeadStatus, type Prisma, SignatureRequestStatus } from '@prisma/client';
 import { prisma } from '../../../lib/prisma.js';
 import { requestContext } from '../../../lib/async-context.js';
+import { broadcastEvent } from '../../../lib/eventsBus.js';
 import type { SignatureRequestRepositoryPort } from '../application/documentSignature.js';
 import type { SignatureStatus } from '../../../shared/domain/signature.js';
+import type { DealClosureEvent } from '../../../shared/domain/dealClosure.js';
 
 /** CYC-006 (onda 28) — implementação real de `SignatureRequestRepositoryPort`. Mesmo padrão de
  * `PrismaCalendarSchedulerPort`: enum Postgres (PascalCase) mapeado aqui, nunca propagado cru para
@@ -77,28 +79,16 @@ export const prismaSignatureRequestRepository: SignatureRequestRepositoryPort = 
     };
   },
 
-  async findByDocumentId(documentId, organizationId) {
-    const requests = await requestContext.run({ tenantId: organizationId }, () =>
-      prisma.crmDocumentSignatureRequest.findMany({
-        where: { documentId, organizationId },
-        select: { id: true, organizationId: true, documentId: true, status: true, providerRequestId: true },
-        orderBy: { createdAt: 'desc' },
-      }),
-    );
-    return requests.map((req) => ({
-      id: req.id,
-      organizationId: req.organizationId,
-      documentId: req.documentId,
-      status: STATUS_FROM_DB[req.status],
-      providerRequestId: req.providerRequestId,
-    }));
-  },
-
   async findByProviderRequestId(provider, providerRequestId) {
     const request = await requestContext.run({ bypassRls: true }, () =>
       prisma.crmDocumentSignatureRequest.findFirst({
         where: { provider, providerRequestId },
-        select: { id: true, organizationId: true, status: true },
+        select: {
+          id: true,
+          organizationId: true,
+          status: true,
+          document: { select: { leadId: true } },
+        },
       }),
     );
     if (!request) return null;
@@ -106,6 +96,7 @@ export const prismaSignatureRequestRepository: SignatureRequestRepositoryPort = 
       id: request.id,
       organizationId: request.organizationId,
       status: STATUS_FROM_DB[request.status],
+      leadId: request.document.leadId,
     };
   },
 
@@ -121,5 +112,76 @@ export const prismaSignatureRequestRepository: SignatureRequestRepositoryPort = 
         },
       }),
     );
+  },
+
+  async findByDocumentId(organizationId, documentId) {
+    // RLS normal — sem bypass. Diferente de `findByProviderRequestId` (chamado pelo webhook, sem
+    // tenant conhecido a priori), este método é sempre chamado dentro de uma request autenticada
+    // (`organizationId` já resolvido pelo middleware de tenant), mesmo padrão de
+    // `PrismaCadenceRunRepository.findById`/`PrismaCadenceSequenceRepository.findById`: o filtro
+    // por `organizationId` no `where` é defesa em profundidade, não o único portão.
+    const request = await prisma.crmDocumentSignatureRequest.findFirst({
+      where: { documentId, organizationId },
+      orderBy: { requestedAt: 'desc' },
+      select: {
+        id: true,
+        status: true,
+        provider: true,
+        signerEmail: true,
+        requestedAt: true,
+        respondedAt: true,
+      },
+    });
+    if (!request) return null;
+    return {
+      id: request.id,
+      status: STATUS_FROM_DB[request.status],
+      provider: request.provider,
+      signerEmail: request.signerEmail,
+      requestedAt: request.requestedAt,
+      respondedAt: request.respondedAt,
+    };
+  },
+
+  // ACH-17-01: grava o DealClosureEvent (`type: SignatureCompleted` no Postgres — enum PascalCase,
+  // mesmo padrão de STATUS_TO_DB acima) e move `Lead.status` para "Negócios Ganhos", pelo mesmo
+  // efeito de `PrismaDealClosureGate.saveDealClosureEvent` + a escrita direta de
+  // `PrismaCrm360Repository.updateLeadStage` — sem importar o módulo `crm` daqui (limite de
+  // dependência entre features: `signatureStatus.webhook.ts`/`documentSignature.ts` só podem
+  // importar `cadence` e `shared`), então a escrita do Lead é feita diretamente pelo Prisma aqui,
+  // dentro da mesma feature que já é dona deste webhook de assinatura.
+  async recordSignatureDealClosure(event: DealClosureEvent) {
+    await requestContext.run({ tenantId: event.organizationId }, async () => {
+      await prisma.dealClosureEvent.create({
+        data: {
+          id: event.id,
+          organizationId: event.organizationId,
+          leadId: event.leadId,
+          type: 'SignatureCompleted',
+          evidenceRef: event.evidenceRef,
+          triggeredBy: event.triggeredBy,
+          occurredAt: event.occurredAt,
+        },
+      });
+
+      const previousLead = await prisma.lead.findUnique({
+        where: { id: event.leadId },
+        select: { closedAt: true },
+      });
+
+      await prisma.lead.update({
+        where: { id: event.leadId },
+        data: {
+          status: LeadStatus.Negocios_Ganhos,
+          ...(previousLead?.closedAt ? {} : { closedAt: event.occurredAt }),
+        },
+      });
+    });
+
+    broadcastEvent({
+      type: 'DEAL_WON',
+      organizationId: event.organizationId,
+      payload: { leadId: event.leadId },
+    });
   },
 };

@@ -44,6 +44,7 @@ não para empurrar uma recomendação disfarçada de fato consumado.
 (assumindo `backups/` no `.gitignore` — verificar no Passo 0 abaixo).
 
 **Custo/risco de escolher este caminho:**
+
 - O dump com PII real continua permanentemente recuperável por qualquer clone existente ou futuro
   do repositório, incluindo forks já feitos antes da remoção — mesmo que o remote principal seja
   tornado privado depois, cópias já clonadas mantêm o histórico completo.
@@ -65,6 +66,7 @@ branch paralelas), o merge `5467e2a8` (que as une) e todo commit descendente del
 **hashes novos**.
 
 **Custo/risco de escolher este caminho:**
+
 - Qualquer branch local, fork ou PR aberto baseado no histórico antigo fica divergente — precisa
   ser re-clonado ou re-baseado manualmente por cada pessoa/agente com uma cópia. Neste repositório
   isso inclui, no mínimo, todos os worktrees de agente ativos no momento da reescrita
@@ -177,11 +179,11 @@ rotaciona como uma chave".
 ver nota de escopo):
 
 1. Clone `--mirror` isolado, `git filter-repo --path test-gemini.ts --path test-gemini-quota.ts
-   --path backups/ --invert-paths --force`.
+--path backups/ --invert-paths --force`.
 2. Verificado antes do push: `git rev-list --objects --all | grep -iE '\.dump$|test-gemini'` vazio
    no mirror reescrito.
 3. Concorrência real detectada e tratada: 2 commits novos chegaram em `main` (`41082d2c`, `3903d943
-   "Update launch.json"`) enquanto o mirror estava sendo preparado — o mirror foi re-clonado do
+"Update launch.json"`) enquanto o mirror estava sendo preparado — o mirror foi re-clonado do
    zero e a filtragem refeita antes do push, em vez de arriscar perder esses commits. O mesmo se
    repetiu depois do merge do PR #350 (mais uma re-clonagem + refiltragem) — nenhum commit legítimo
    foi perdido.
@@ -189,7 +191,7 @@ ver nota de escopo):
    duas vezes por proteção de branch do GitHub (`GH006`) até o dono desabilitar temporariamente
    "Allow force pushes" nas configurações da branch; reabilitada logo em seguida.
 5. **Nota de escopo (diferença do Passo 1 original abaixo):** por ter sido feito via `clone
-   --mirror` (necessário para capturar o dump, que só existia em commits antigos fora do alcance
+--mirror` (necessário para capturar o dump, que só existia em commits antigos fora do alcance
    de um clone raso), o `filter-repo` reescreveu tecnicamente as 82 branches remotas do
    repositório, não só `main`. **Só `main` foi de fato force-pushada** — as outras 81 branches
    remotas continuaram apontando pros commits originais (não tocadas), por escolha explícita do
@@ -204,10 +206,12 @@ branch foram feitos pelo próprio dono do repositório, seguindo a regra deste r
 humano executa o force-push final").
 
 **Verificação pós-reescrita, contra o remote real:**
+
 ```
 git ls-remote https://github.com/maarkss1/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-BIRTHUB360 refs/heads/main
 # b5d47d1f94f500652873fdac21f5f13086723efc — hash novo, confirmado
 ```
+
 `git rev-list --objects main` (sem `--all`) no worktree sincronizado com o `main` pós-reescrita não
 retorna mais nenhum blob de `.dump`/`test-gemini*`.
 
@@ -233,3 +237,108 @@ janela que a plataforma mantém, ou (b) em qualquer clone local que alguém tenh
 desta limpeza e que ainda preserve essas refs remotas localmente (`git branch -r`/`git reflog`
 locais não afetados pelo `--prune`). Depois de expirada a janela de restauração do GitHub e sem
 nenhum clone local remanescente, esse conteúdo deixa de ser recuperável por qualquer meio.
+
+## Lacuna encontrada pós-reescrita — tags publicadas não foram tocadas (ACH-15-01, 2026-09-11)
+
+**Achado, só investigação — nenhuma ação destrutiva foi executada.** O Caminho B de 2026-09-05
+(seção acima) fez `git push --force` só de `refs/heads/main`. Tags são refs independentes de
+branch — `filter-repo` reescreveu os objetos localmente no mirror, mas **nenhuma tag publicada em
+`github.com/maarkss1/Birthub-360` foi deletada nem republicada**, então qualquer tag antiga que
+apontava para um commit anterior ao rewrite continua no remote, apontando para o commit antigo (o
+`filter-repo` não sobrescreve uma tag remota que nunca foi push --force'd).
+
+**Verificado nesta sessão, contra o remote real (`git ls-remote --tags origin`):**
+
+```
+fb396278940d2526b55a2e1d8624f7c42d138800  refs/tags/v0.0.1
+8fd8fa22bfcd98a4666ffe0bc49bd1585fbe529e  refs/tags/v0.0.1^{}
+69bc5d09c8c3ecff2aeefd3325cedfd8be7d6a2b  refs/tags/v1.0.0-rc.1
+e8fb1c1c8270accc7fae51821ea759a0e2e0933b  refs/tags/v1.0.0-rc.1^{}
+349d0ff005803eb8d677de30b764cce3589b053c  refs/tags/v2.0.0-recovery
+0863b6698f88e92dc65399326387ecf2dbfe2a43  refs/tags/v2.0.0-recovery^{}
+```
+
+`v0.0.1` (tag anotada, dereferencia para o commit `8fd8fa22…`, "chore(release): go-live phase 5",
+2026-08-17) e `v1.0.0-rc.1` (dereferencia para `e8fb1c1c…`) **são anteriores ao rewrite de
+2026-09-05** e continuam publicados. Confirmado por `git rev-list --objects` num worktree local
+não-raso (`git rev-parse --is-shallow-repository` → `false`) que ambos alcançam os mesmos objetos
+sensíveis que o rewrite removeu de `main`:
+
+```
+$ git rev-list --objects v0.0.1 | grep -iE 'dump$|test-gemini'
+fbe6d831123c74f3a563b43fd51b46ae9e2526a1 backups/prospector-20260806-152827.dump
+9ce6cbfffc4774ef1a70026458bec4513ab9817c test-gemini-quota.ts
+6f65c8105c7f9eea4afe827f96503c1f95d7d2ea test-gemini.ts
+ef320949fd07dcbfd9dc64e58c35075458625d02 test-gemini.ts
+
+$ git cat-file -s fbe6d831123c74f3a563b43fd51b46ae9e2526a1
+166075   # bate exatamente com o tamanho já registrado no topo deste runbook
+```
+
+`v1.0.0-rc.1` alcança o mesmo conjunto de blobs (mesma verificação, resultado idêntico).
+`v2.0.0-recovery` **não** alcança nenhum dos dois — está limpa. `HEAD` de `main` pós-rewrite
+também não alcança nenhum dos dois (`git rev-list --objects HEAD | grep -iE 'dump$|test-gemini'`
+vazio), confirmando que o rewrite de `main` em si continua efetivo — o problema é exclusivamente
+as tags publicadas separadamente.
+
+**Implicação prática, já descrita no runbook antes deste achado (Caminho B, "Tags e releases que
+referenciam os commits antigos... quebram"):** qualquer pessoa com acesso de leitura ao repositório
+pode rodar `git fetch --tags && git checkout v0.0.1` (ou `v1.0.0-rc.1`) e obter de volta o dump
+com PII real de prospecção e a chave antiga do Gemini — exatamente o dado que o rewrite de
+2026-09-05 existiu para remover. Isso não é uma regressão do rewrite; é um passo que o
+procedimento original (Passo 1 desta página) nunca cobriu para tags.
+
+**Dependência de infraestrutura/CI/deploy nesta tag especificamente — verificado, nenhuma
+encontrada:**
+
+- `render.yaml`: os dois serviços (`prospector-atlas` web e `prospector-atlas-worker`) fazem
+  deploy por branch (`autoDeployTrigger: commit` no push a `main`), não por tag — nenhuma menção a
+  `v0.0.1`/`v1.0.0-rc.1`/`v2.0.0-recovery` no arquivo.
+- Todos os workflows em `.github/workflows/*.yml` usam `actions/checkout@<sha fixo> # v4` — isso
+  fixa a **versão da action** `actions/checkout`, não um checkout deste repositório por tag; o
+  checkout do próprio repo segue o ref que disparou o workflow (branch/PR), nunca uma dessas tags.
+- `docs/deploy/producao.md`, `docs/deploy/oracle-cloud.md` e `docs/deploy/README.md`: buscas por
+  `tag`/`release`/`v0.0.1`/`v1.0.0`/`v2.0.0` não retornaram nenhuma referência de processo de
+  deploy ancorada nestas tags.
+- Busca de texto (`v0\.0\.1`) em todo o repositório (fora `.github/workflows`, já coberto acima):
+  nenhum resultado.
+
+Conclusão: nada no pipeline de deploy/CI depende desta tag por nome — a única exposição real é
+"qualquer leitor do repositório pode buscá-la manualmente", não uma dependência automatizada.
+
+**Comando exato para quando o dono do repositório decidir agir** (não executado por este agente —
+proibido por regra própria deste runbook e do `AGENTS.md`, "só o dono humano executa o force-push
+final"/ação destrutiva de ref publicada):
+
+```bash
+# 1. Remove a tag do remote público (GitHub) — afeta v0.0.1; repita trocando o nome para
+#    v1.0.0-rc.1, que tem o mesmo problema.
+git push origin --delete tag v0.0.1
+
+# 2. Remove a tag local (worktree/clone do próprio dono) — só depois do push acima.
+git tag -d v0.0.1
+```
+
+**Verificação pós-ação, num clone novo (não reaproveitar um worktree que já tinha a tag em cache
+local — `git fetch --tags` sozinho não remove uma tag local que já existia antes da deleção
+remota):**
+
+```bash
+git clone https://github.com/maarkss1/Birthub-360 verify-tag-removal
+cd verify-tag-removal
+git fetch --prune --tags
+git ls-remote --tags origin
+# v0.0.1 (e v1.0.0-rc.1, se também removida) não devem mais aparecer na lista acima.
+git rev-list --objects --all | grep -iE 'dump$|test-gemini'
+# Deve retornar vazio — confirma que nenhuma ref alcançável no clone novo ainda expõe os blobs.
+```
+
+**Nota de escopo importante:** deletar a tag do GitHub não invalida cópias já clonadas antes da
+remoção (mesma ressalva já registrada acima para os forks pré-rewrite) — é mitigação de acesso
+daqui pra frente pelo remote oficial, não uma garantia retroativa. E `v1.0.0-rc.1` tem exatamente o
+mesmo problema que `v0.0.1` e deveria receber a mesma decisão na mesma janela de ação, para não
+deixar uma segunda porta aberta para o mesmo dado.
+
+**Status: pendente de decisão e execução manual do dono do repositório.** Este agente (ACH-15-01)
+só investigou e documentou — nenhum `git push origin --delete tag`, nenhum `git tag -d` foi
+executado nesta sessão.

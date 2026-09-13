@@ -35,7 +35,7 @@ export async function mountFrontend(app: Express): Promise<void> {
     // Treinamento Comercial (Next.js export) precisa de /_next na raiz
     app.use(
       '/_next',
-      express.static(path.join(process.cwd(), 'public', 'tools', 'treinamento-birthub360', '_next')),
+      express.static(path.join(process.cwd(), 'public', 'tools', 'treinamento-atlasgr', '_next')),
     );
 
     const vite = await createViteServer({
@@ -70,7 +70,7 @@ export async function mountFrontend(app: Express): Promise<void> {
     app.use(express.static(distPath));
 
     // Treinamento Comercial (Next.js export) precisa de /_next na raiz (em produção fica em dist/tools/...)
-    app.use('/_next', express.static(path.join(distPath, 'tools', 'treinamento-birthub360', '_next')));
+    app.use('/_next', express.static(path.join(distPath, 'tools', 'treinamento-atlasgr', '_next')));
 
     // Express 5 (path-to-regexp v8) não aceita mais o wildcard nu `'*'` — o processo morria no
     // boot com `PathError: Missing parameter name at index 1: *` (Render, deploys de 03/09/2026,

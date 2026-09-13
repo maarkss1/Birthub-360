@@ -30,14 +30,14 @@ a decisão continua sendo humana.
 Arco de três territórios, mapeado a módulos reais confirmados no `PRODUCT_VISUAL_TRUTH_MAP.md`:
 
 1. **DESCOBRIR** — `/app/prospect` (Prospecção: CNPJ, descoberta por critério, OCR),
-   `/app/market-intelligence` (concorrência real, score, território). Mensagem: *Encontre onde
-   existe movimento.*
+   `/app/market-intelligence` (concorrência real, score, território). Mensagem: _Encontre onde
+   existe movimento._
 2. **EXECUTAR** — `/app/crm` (Pipeline Kanban), `/app/crm360` (Cockpit), `/app/mesa-tratamento`
-   (fila priorizada), `/app/cadence` (cadência de contato). Mensagem: *Transforme contexto em
-   ação.*
+   (fila priorizada), `/app/cadence` (cadência de contato). Mensagem: _Transforme contexto em
+   ação._
 3. **APRENDER E DECIDIR** — `/app/analytics`, `/app/winloss`, `/app/roleplay`,
-   `/app/commercial_intelligence` (Revenue Command Center executivo). Mensagem: *Aprenda com a
-   operação e decida melhor.*
+   `/app/commercial_intelligence` (Revenue Command Center executivo). Mensagem: _Aprenda com a
+   operação e decida melhor._
 
 Toda peça de produto deve responder: **que tela prova qual estágio da narrativa?** — usando
 apenas a tabela D do Truth Map.
@@ -118,8 +118,8 @@ exatamente sua receita"). Preferir "ajuda a priorizar", "organiza sinais", "orie
 
 ## H. CTA System
 
-Padrão: *Conheça o Birth Hub 360º* · *Veja o próximo movimento* · *Explore o Hub* ·
-*Transforme sinais em ação*. Nunca urgência artificial ("compre agora", "não perca").
+Padrão: _Conheça o Birth Hub 360º_ · _Veja o próximo movimento_ · _Explore o Hub_ ·
+_Transforme sinais em ação_. Nunca urgência artificial ("compre agora", "não perca").
 
 ## I. Film Architecture
 

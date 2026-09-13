@@ -19,7 +19,11 @@ describe('LeadUseCases Integration', () => {
       delete companyData.id;
       const company = await prisma.company.create({ data: companyData as any });
 
-      const data = LeadFactory.build({ companyId: company.id, organizationId: 'test-org-id', status: 'Lead Recebido' });
+      const data = LeadFactory.build({
+        companyId: company.id,
+        organizationId: 'test-org-id',
+        status: 'Lead Recebido',
+      });
       delete (data as any).organizationId;
 
       const result = await leadUseCases.createLead('test-org-id', data as never);

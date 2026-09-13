@@ -93,16 +93,16 @@ Primeiro uso operacional: **Signal Core 3D** no dashboard, alimentado por conver
 
 ## Matriz de revisão de toda a plataforma
 
-| Grupo | Módulos | Direção UX | 3D |
-|---|---|---|---|
-| Visão geral | Dashboard | cockpit, pulso comercial, KPIs instrumentais, feed/agenda em camadas | Signal Core real |
-| Captar | Prospecção, LDR/Market Intelligence | busca em camadas, resultados com confiança, ações rápidas, mapa/território explorável | somente mapa/território se codificar geografia real |
-| Qualificar | Empresas, Decisores, Mesa, Matriz de Qualificação | densidade alta, score/estado visual, painel lateral, microfeedback de decisão | não por padrão |
-| Relacionar | Agenda, Calendário, Cadência | timeline, ritmo temporal, drag/hover com profundidade, feedback de execução | não |
-| Fechar | Pipeline CRM, Cockpit CRM, Propostas | kanban espacial, forecast lateral, cards com risco/valor, transições de estágio | apenas visualização agregada, nunca no card individual |
-| Analisar | Comercial Inteligente, Analytics, Win/Loss, Relatórios IA | gráficos exploráveis, drill-down, comparação, brush/zoom quando útil | possível em forecast agregado com fallback 2D |
-| IA & Capacitação | Hub IA, Chatbook, Roleplay, Matrizes, Academy, Knowledge, Editor | foco em diálogo/conteúdo, estados claros de processamento, feedback sonoro pontual | apenas agente/orbe com função real, não decoração |
-| Administração | Notificações, Bitrix, Integrações, Automações, Consumo, Equipe, Configurações | utilitário, denso, previsível; profundidade menor que cockpits | não |
+| Grupo            | Módulos                                                                       | Direção UX                                                                            | 3D                                                     |
+| ---------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Visão geral      | Dashboard                                                                     | cockpit, pulso comercial, KPIs instrumentais, feed/agenda em camadas                  | Signal Core real                                       |
+| Captar           | Prospecção, LDR/Market Intelligence                                           | busca em camadas, resultados com confiança, ações rápidas, mapa/território explorável | somente mapa/território se codificar geografia real    |
+| Qualificar       | Empresas, Decisores, Mesa, Matriz de Qualificação                             | densidade alta, score/estado visual, painel lateral, microfeedback de decisão         | não por padrão                                         |
+| Relacionar       | Agenda, Calendário, Cadência                                                  | timeline, ritmo temporal, drag/hover com profundidade, feedback de execução           | não                                                    |
+| Fechar           | Pipeline CRM, Cockpit CRM, Propostas                                          | kanban espacial, forecast lateral, cards com risco/valor, transições de estágio       | apenas visualização agregada, nunca no card individual |
+| Analisar         | Comercial Inteligente, Analytics, Win/Loss, Relatórios IA                     | gráficos exploráveis, drill-down, comparação, brush/zoom quando útil                  | possível em forecast agregado com fallback 2D          |
+| IA & Capacitação | Hub IA, Chatbook, Roleplay, Matrizes, Academy, Knowledge, Editor              | foco em diálogo/conteúdo, estados claros de processamento, feedback sonoro pontual    | apenas agente/orbe com função real, não decoração      |
+| Administração    | Notificações, Bitrix, Integrações, Automações, Consumo, Equipe, Configurações | utilitário, denso, previsível; profundidade menor que cockpits                        | não                                                    |
 
 ## Regras por componente
 

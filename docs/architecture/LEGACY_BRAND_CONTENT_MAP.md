@@ -26,22 +26,22 @@ poucos, específicos, e acionáveis.
 
 ### 2.1 Risco operacional — infraestrutura pode estar apontando para nome antigo (categoria C, risco alto)
 
-| Local | Achado | Risco |
-|---|---|---|
-| `charts/prospector-atlas/values.yaml` | `repository: ghcr.io/maarksn/central-de-inteligencia-comecial-atlasgr` | **Alto** — se o registro de containers (GHCR) já foi renomeado para acompanhar o rebranding, `pull` da imagem falha. Se não foi renomeado, é dependência real viva. **Não confirmado nesta rodada — requer verificação antes de qualquer decisão.** |
-| `argocd/application-production.yaml`, `argocd/application-homolog.yaml` | `repoURL: https://github.com/MaarksN/CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.git` | **Alto** — mesmo risco: o diretório local já se chama `Birthub-360`; se o remoto real também mudou de nome, o GitOps de produção/homologação pode estar rodando contra uma URL que só funciona por redirecionamento temporário do GitHub. |
+| Local                                                                   | Achado                                                                             | Risco                                                                                                                                                                                                                                               |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `charts/prospector-atlas/values.yaml`                                   | `repository: ghcr.io/maarksn/central-de-inteligencia-comecial-atlasgr`             | **Alto** — se o registro de containers (GHCR) já foi renomeado para acompanhar o rebranding, `pull` da imagem falha. Se não foi renomeado, é dependência real viva. **Não confirmado nesta rodada — requer verificação antes de qualquer decisão.** |
+| `argocd/application-production.yaml`, `argocd/application-homolog.yaml` | `repoURL: https://github.com/MaarksN/CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.git` | **Alto** — mesmo risco: o diretório local já se chama `Birthub-360`; se o remoto real também mudou de nome, o GitOps de produção/homologação pode estar rodando contra uma URL que só funciona por redirecionamento temporário do GitHub.           |
 
 Estes dois **não são resíduo cosmético** — são possível causa-raiz de falha silenciosa de deploy.
 Handoff aberto para 10 (Infraestrutura/SRE), prioridade alto (§4).
 
 ### 2.2 Cor da marca antiga em produto renderizado para o cliente final (categoria D, risco médio-alto)
 
-| Local | Achado |
-|---|---|
-| `src/lib/email/meetingInvite.ts:127` | Botão inline no HTML do e-mail transacional real de convite de reunião ("Acessar Google Meet") usa `background:#FF5618` (laranja AtlasGR) em vez do token `--brand`/Antique Gold atual. **E-mail real enviado a clientes hoje.** |
-| `src/features/commercial-intelligence/application/executiveExport.ts:206` | CSS inline de exportação executiva usa `border-bottom:2px solid #ff5618`. |
+| Local                                                                     | Achado                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/email/meetingInvite.ts:127`                                      | Botão inline no HTML do e-mail transacional real de convite de reunião ("Acessar Google Meet") usa `background:#FF5618` (laranja AtlasGR) em vez do token `--brand`/Antique Gold atual. **E-mail real enviado a clientes hoje.** |
+| `src/features/commercial-intelligence/application/executiveExport.ts:206` | CSS inline de exportação executiva usa `border-bottom:2px solid #ff5618`.                                                                                                                                                        |
 
-Diferente do comentário em `globals.css:493` (que só *documenta* o contraste da cor antiga como
+Diferente do comentário em `globals.css:493` (que só _documenta_ o contraste da cor antiga como
 contexto histórico — categoria B, sem risco), estes dois **efetivamente renderizam** a cor errada
 em artefatos reais entregues ao usuário. Handoff para 03/11 (§4).
 
@@ -82,7 +82,7 @@ Confirmado **ativos** (roteados em `App.tsx`, consumidos via iframe):
   concentração de arquivos do repositório (>200), majoritariamente metadado de build repetitivo.
 - `public/tools/propostas/`, `public/tools/social-selling/`, `public/tools/hub-inteligencia-marketing/`
   — mesma situação em menor escala (`Atlas GR Pipeline.html`, `AtlasGR Kit Campanha LinkedIn
-  Completo.html`, `atlas-logo-positive.png`, scripts `etl_*_atlas.py`).
+Completo.html`, `atlas-logo-positive.png`, scripts `etl_*_atlas.py`).
 
 **Não são código morto** — são conteúdo de negócio real, ainda em rota ativa, com a marca errada
 visível para quem usa a função hoje. Handoff para 11 (§4), não bloqueador (é inconsistência
@@ -105,7 +105,8 @@ agente edita o próprio prompt... mudança de prompt é decisão humana"), mas f
 quem tiver essa autoridade.
 
 ## 3. Categorias sem ação necessária (referência, não exaustivo — ver relatório completo do
-   levantamento na íntegra em `.agents/handoffs/onda-c0/` se precisar do detalhe arquivo-a-arquivo)
+
+levantamento na íntegra em `.agents/handoffs/onda-c0/` se precisar do detalhe arquivo-a-arquivo)
 
 - **F confirmada** (~30 arquivos): `src/config/playbooks.ts` e toda a cadeia real de consumo
   (`src/features/playbook/**`, `src/features/intelligence/**`, `chatbook`, `icp-options.ts`,
@@ -134,13 +135,13 @@ quem tiver essa autoridade.
 
 ## 5. Contagem final por classificação
 
-| Classe | Significado | Itens/grupos |
-|---|---:|---|
-| A | Remover agora | 4 |
-| B | Manter por histórico | ~25 grupos |
-| C | Manter por compatibilidade | ~15 |
-| D | Mover para tenant/config | 7 |
-| E | Mover para demo data | 6 grupos |
-| F | Mover para playbook (já correto) | ~30 arquivos |
-| G | Exige migration | 5 |
-| H | Segredo (já mitigado) | 1 |
+| Classe |                      Significado | Itens/grupos |
+| ------ | -------------------------------: | ------------ |
+| A      |                    Remover agora | 4            |
+| B      |             Manter por histórico | ~25 grupos   |
+| C      |       Manter por compatibilidade | ~15          |
+| D      |         Mover para tenant/config | 7            |
+| E      |             Mover para demo data | 6 grupos     |
+| F      | Mover para playbook (já correto) | ~30 arquivos |
+| G      |                  Exige migration | 5            |
+| H      |            Segredo (já mitigado) | 1            |

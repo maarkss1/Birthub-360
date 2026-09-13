@@ -26,7 +26,7 @@ describe('Zod Schemas', () => {
     it('should validate valid contact', () => {
       const validContact = {
         name: 'John Doe',
-        companyId: '123'
+        companyId: '123',
       };
       const result = contactSchema.safeParse(validContact);
       expect(result.success).toBe(true);
@@ -36,7 +36,7 @@ describe('Zod Schemas', () => {
       const invalid = {
         name: 'John Doe',
         companyId: '123',
-        email: 'invalid-email'
+        email: 'invalid-email',
       };
       const result = contactSchema.safeParse(invalid);
       expect(result.success).toBe(false);

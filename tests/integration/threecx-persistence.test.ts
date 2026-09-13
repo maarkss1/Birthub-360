@@ -2,10 +2,10 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { prisma, withRlsContext } from '../../src/lib/prisma';
 import { requestContext } from '../../src/lib/async-context';
 import {
-    connect3CX,
-    get3CXConnectionsForOrg,
-    list3CXConnections,
-    disconnect3CX,
+  connect3CX,
+  get3CXConnectionsForOrg,
+  list3CXConnections,
+  disconnect3CX,
 } from '../../src/features/integrations/threecx/threecx.service';
 
 /**
@@ -29,139 +29,158 @@ const RUN_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const ORG_A = `test-3cx-org-a-${RUN_ID}`;
 const ORG_B = `test-3cx-org-b-${RUN_ID}`;
 
-const withRlsBypass = <T>(fn: () => Promise<T>): Promise<T> => requestContext.run({ bypassRls: true }, fn);
+const withRlsBypass = <T>(fn: () => Promise<T>): Promise<T> =>
+  requestContext.run({ bypassRls: true }, fn);
 const asOrg = <T>(organizationId: string, fn: () => Promise<T>): Promise<T> =>
-    requestContext.run({ tenantId: organizationId }, fn);
+  requestContext.run({ tenantId: organizationId }, fn);
 
-beforeAll(async () => withRlsBypass(async () => {
+beforeAll(async () =>
+  withRlsBypass(async () => {
     await prisma.organization.createMany({
-        data: [
-            { id: ORG_A, name: 'Test Org A (3CX)' },
-            { id: ORG_B, name: 'Test Org B (3CX)' },
-        ],
-        skipDuplicates: true,
+      data: [
+        { id: ORG_A, name: 'Test Org A (3CX)' },
+        { id: ORG_B, name: 'Test Org B (3CX)' },
+      ],
+      skipDuplicates: true,
     });
-}));
+  }),
+);
 
 // ThreeCXConnection não está no allowlist de bypass (ITEM-02) — limpa por tenant.
 afterEach(async () => {
-    await asOrg(ORG_A, () => prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_A } }));
-    await asOrg(ORG_B, () => prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_B } }));
+  await asOrg(ORG_A, () =>
+    prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_A } }),
+  );
+  await asOrg(ORG_B, () =>
+    prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_B } }),
+  );
 });
 
 afterAll(async () => {
-    await asOrg(ORG_A, () => prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_A } }));
-    await asOrg(ORG_B, () => prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_B } }));
-    await withRlsBypass(() => prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }));
+  await asOrg(ORG_A, () =>
+    prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_A } }),
+  );
+  await asOrg(ORG_B, () =>
+    prisma.threeCXConnection.deleteMany({ where: { organizationId: ORG_B } }),
+  );
+  await withRlsBypass(() =>
+    prisma.organization.deleteMany({ where: { id: { in: [ORG_A, ORG_B] } } }),
+  );
 });
 
 describe('Persistência de ThreeCXConnection contra Postgres real', () => {
-    it('sobrevive a uma leitura nova (não é mais um Map em memória perdido a cada instância)', async () => {
-        const created = await asOrg(ORG_A, () =>
-            connect3CX(ORG_A, { pbxUrl: 'https://example.com', extension: '101' }),
-        );
+  it('sobrevive a uma leitura nova (não é mais um Map em memória perdido a cada instância)', async () => {
+    const created = await asOrg(ORG_A, () =>
+      connect3CX(ORG_A, { pbxUrl: 'https://example.com', extension: '101' }),
+    );
 
-        // Nova leitura, sem nenhum estado compartilhado com a chamada de escrita — só o Postgres.
-        const reread = await asOrg(ORG_A, () => get3CXConnectionsForOrg(ORG_A));
-        expect(reread.map((c) => c.id)).toContain(created.id);
-        expect(reread.find((c) => c.id === created.id)?.pbxUrl).toBe('https://example.com');
-    });
+    // Nova leitura, sem nenhum estado compartilhado com a chamada de escrita — só o Postgres.
+    const reread = await asOrg(ORG_A, () => get3CXConnectionsForOrg(ORG_A));
+    expect(reread.map((c) => c.id)).toContain(created.id);
+    expect(reread.find((c) => c.id === created.id)?.pbxUrl).toBe('https://example.com');
+  });
 
-    // Reabilitado na Onda 9 — bug de visibilidade entre requestContext.run() corrigido em
-    // src/lib/async-context.ts (TenantAwareAsyncLocalStorage.run), ver .agents/runs/onda-9.md.
-    // Causa raiz real: PrismaPromise é lazy (só começa a executar quando `.then()`/`await` é
-    // chamado por quem consome o valor); `asOrg`/`withRlsBypass` fazem `requestContext.run(store,
-    // fn)` devolvendo `fn()` sem `await` interno, então quando o `await` externo dispara a query,
-    // a store de `run()` já não está mais ativa — não era um bug em `executeWithRls`
-    // (`src/lib/prisma.ts`, já testado com array-form e com transação interativa, sintoma
-    // idêntico nos dois). Handoffs originais (contexto histórico):
-    // .agents/handoffs/onda-7/12-para-00-test-db-contencao-cross-agente.md,
-    // 07-para-01-flaky-org-creation-mid-integration-test.md,
-    // 13-para-01-anomalia-visibilidade-entre-requestcontext-run.md.
-    it('cifra apiKey/apiSecret em repouso — a linha crua no banco não contém o segredo em texto puro', async () => {
-        const created = await asOrg(ORG_A, () =>
-            connect3CX(ORG_A, {
-                pbxUrl: 'https://example.com',
-                extension: '101',
-                apiKey: 'chave-em-texto-puro',
-                apiSecret: 'segredo-em-texto-puro',
-            }),
-        );
+  // Reabilitado na Onda 9 — bug de visibilidade entre requestContext.run() corrigido em
+  // src/lib/async-context.ts (TenantAwareAsyncLocalStorage.run), ver .agents/runs/onda-9.md.
+  // Causa raiz real: PrismaPromise é lazy (só começa a executar quando `.then()`/`await` é
+  // chamado por quem consome o valor); `asOrg`/`withRlsBypass` fazem `requestContext.run(store,
+  // fn)` devolvendo `fn()` sem `await` interno, então quando o `await` externo dispara a query,
+  // a store de `run()` já não está mais ativa — não era um bug em `executeWithRls`
+  // (`src/lib/prisma.ts`, já testado com array-form e com transação interativa, sintoma
+  // idêntico nos dois). Handoffs originais (contexto histórico):
+  // .agents/handoffs/onda-7/12-para-00-test-db-contencao-cross-agente.md,
+  // 07-para-01-flaky-org-creation-mid-integration-test.md,
+  // 13-para-01-anomalia-visibilidade-entre-requestcontext-run.md.
+  it('cifra apiKey/apiSecret em repouso — a linha crua no banco não contém o segredo em texto puro', async () => {
+    const created = await asOrg(ORG_A, () =>
+      connect3CX(ORG_A, {
+        pbxUrl: 'https://example.com',
+        extension: '101',
+        apiKey: 'chave-em-texto-puro',
+        apiSecret: 'segredo-em-texto-puro',
+      }),
+    );
 
-        // $queryRaw ignora a extensão de decrypt do client Prisma — é a única forma de ver o que
-        // está fisicamente gravado na coluna. IMPORTANTE: `$queryRaw`/`$executeRaw` não passam pela
-        // extensão `$allOperations` (só intercepta operações de model, ver comentário em
-        // `withRlsContext`, src/lib/prisma.ts), então `requestContext.run({tenantId}, () =>
-        // prisma.$queryRaw(...))` sozinho NUNCA aplica o contexto de tenant à query crua — ela roda
-        // sem app.current_tenant_id setado e FORCE ROW LEVEL SECURITY bloqueia por padrão
-        // (retornaria sempre vazio, não porque a linha não existe, mas porque a policy nega
-        // acesso). `withRlsContext` é o helper correto para SQL cru: abre a transação interativa e
-        // faz o `SET LOCAL` explicitamente antes de rodar a query passada. ThreeCXConnection não
-        // está no allowlist de bypass (BYPASS_RLS_ALLOWED_MODELS, src/lib/prisma.ts) — ITEM-02
-        // fechou a RLS dessa tabela pra bypass — por isso roda no contexto do próprio tenant A, não
-        // sob bypass.
-        const raw = await asOrg(ORG_A, () =>
-            withRlsContext((tx) =>
-                tx.$queryRaw<Array<{ apiKey: string | null; apiSecret: string | null }>>`
+    // $queryRaw ignora a extensão de decrypt do client Prisma — é a única forma de ver o que
+    // está fisicamente gravado na coluna. IMPORTANTE: `$queryRaw`/`$executeRaw` não passam pela
+    // extensão `$allOperations` (só intercepta operações de model, ver comentário em
+    // `withRlsContext`, src/lib/prisma.ts), então `requestContext.run({tenantId}, () =>
+    // prisma.$queryRaw(...))` sozinho NUNCA aplica o contexto de tenant à query crua — ela roda
+    // sem app.current_tenant_id setado e FORCE ROW LEVEL SECURITY bloqueia por padrão
+    // (retornaria sempre vazio, não porque a linha não existe, mas porque a policy nega
+    // acesso). `withRlsContext` é o helper correto para SQL cru: abre a transação interativa e
+    // faz o `SET LOCAL` explicitamente antes de rodar a query passada. ThreeCXConnection não
+    // está no allowlist de bypass (BYPASS_RLS_ALLOWED_MODELS, src/lib/prisma.ts) — ITEM-02
+    // fechou a RLS dessa tabela pra bypass — por isso roda no contexto do próprio tenant A, não
+    // sob bypass.
+    const raw = await asOrg(ORG_A, () =>
+      withRlsContext(
+        (tx) =>
+          tx.$queryRaw<Array<{ apiKey: string | null; apiSecret: string | null }>>`
                     SELECT "apiKey", "apiSecret" FROM "ThreeCXConnection" WHERE id = ${created.id}
                 `,
-            ),
-        );
-        expect(raw).toHaveLength(1);
-        expect(raw[0].apiKey).not.toBe('chave-em-texto-puro');
-        expect(raw[0].apiSecret).not.toBe('segredo-em-texto-puro');
-        expect(raw[0].apiKey).not.toBeNull();
+      ),
+    );
+    expect(raw).toHaveLength(1);
+    expect(raw[0].apiKey).not.toBe('chave-em-texto-puro');
+    expect(raw[0].apiSecret).not.toBe('segredo-em-texto-puro');
+    expect(raw[0].apiKey).not.toBeNull();
 
-        // Mas a leitura via Prisma (que passa pela extensão de decrypt) devolve o valor original —
-        // list3CXConnections nunca expõe isso na UI, então lê a tabela completa para provar o
-        // round-trip de criptografia em si, não o contrato da API pública.
-        const decrypted = await asOrg(ORG_A, () => get3CXConnectionsForOrg(ORG_A));
-        const match = decrypted.find((c) => c.id === created.id);
-        expect(match?.apiKey).toBe('chave-em-texto-puro');
-        expect(match?.apiSecret).toBe('segredo-em-texto-puro');
-    });
+    // Mas a leitura via Prisma (que passa pela extensão de decrypt) devolve o valor original —
+    // list3CXConnections nunca expõe isso na UI, então lê a tabela completa para provar o
+    // round-trip de criptografia em si, não o contrato da API pública.
+    const decrypted = await asOrg(ORG_A, () => get3CXConnectionsForOrg(ORG_A));
+    const match = decrypted.find((c) => c.id === created.id);
+    expect(match?.apiKey).toBe('chave-em-texto-puro');
+    expect(match?.apiSecret).toBe('segredo-em-texto-puro');
+  });
 
-    it('list3CXConnections nunca expõe apiKey/apiSecret, mesmo contra o banco real', async () => {
-        await asOrg(ORG_A, () =>
-            connect3CX(ORG_A, { pbxUrl: 'https://example.com', extension: '101', apiKey: 'k', apiSecret: 's' }),
-        );
+  it('list3CXConnections nunca expõe apiKey/apiSecret, mesmo contra o banco real', async () => {
+    await asOrg(ORG_A, () =>
+      connect3CX(ORG_A, {
+        pbxUrl: 'https://example.com',
+        extension: '101',
+        apiKey: 'k',
+        apiSecret: 's',
+      }),
+    );
 
-        const summaries = await asOrg(ORG_A, () => list3CXConnections(ORG_A));
-        for (const summary of summaries) {
-            expect(summary).not.toHaveProperty('apiKey');
-            expect(summary).not.toHaveProperty('apiSecret');
-        }
-    });
+    const summaries = await asOrg(ORG_A, () => list3CXConnections(ORG_A));
+    for (const summary of summaries) {
+      expect(summary).not.toHaveProperty('apiKey');
+      expect(summary).not.toHaveProperty('apiSecret');
+    }
+  });
 
-    // Reabilitado na Onda 9 — ver comentário acima sobre a causa raiz real (async-context.ts),
-    // corrigida no fix desta onda.
-    it('RLS: uma conexão da organização A é invisível no contexto de tenant da organização B, mesmo pedindo o organizationId de A explicitamente', async () => {
-        const created = await asOrg(ORG_A, () =>
-            connect3CX(ORG_A, { pbxUrl: 'https://example.com', extension: '101' }),
-        );
+  // Reabilitado na Onda 9 — ver comentário acima sobre a causa raiz real (async-context.ts),
+  // corrigida no fix desta onda.
+  it('RLS: uma conexão da organização A é invisível no contexto de tenant da organização B, mesmo pedindo o organizationId de A explicitamente', async () => {
+    const created = await asOrg(ORG_A, () =>
+      connect3CX(ORG_A, { pbxUrl: 'https://example.com', extension: '101' }),
+    );
 
-        // Mesmo filtro explícito organizationId=ORG_A no WHERE — o que muda é só o tenant do
-        // contexto (app.current_tenant_id), que é o que a policy de RLS realmente compara.
-        const seenFromOrgB = await asOrg(ORG_B, () =>
-            prisma.threeCXConnection.findMany({ where: { organizationId: ORG_A } }),
-        );
-        expect(seenFromOrgB.find((c) => c.id === created.id)).toBeUndefined();
+    // Mesmo filtro explícito organizationId=ORG_A no WHERE — o que muda é só o tenant do
+    // contexto (app.current_tenant_id), que é o que a policy de RLS realmente compara.
+    const seenFromOrgB = await asOrg(ORG_B, () =>
+      prisma.threeCXConnection.findMany({ where: { organizationId: ORG_A } }),
+    );
+    expect(seenFromOrgB.find((c) => c.id === created.id)).toBeUndefined();
 
-        const seenFromOrgA = await asOrg(ORG_A, () =>
-            prisma.threeCXConnection.findMany({ where: { organizationId: ORG_A } }),
-        );
-        expect(seenFromOrgA.find((c) => c.id === created.id)).toBeDefined();
-    });
+    const seenFromOrgA = await asOrg(ORG_A, () =>
+      prisma.threeCXConnection.findMany({ where: { organizationId: ORG_A } }),
+    );
+    expect(seenFromOrgA.find((c) => c.id === created.id)).toBeDefined();
+  });
 
-    it('disconnect3CX nunca apaga conexão de outra organização, mesmo sabendo o id exato', async () => {
-        const created = await asOrg(ORG_A, () =>
-            connect3CX(ORG_A, { pbxUrl: 'https://example.com', extension: '101' }),
-        );
+  it('disconnect3CX nunca apaga conexão de outra organização, mesmo sabendo o id exato', async () => {
+    const created = await asOrg(ORG_A, () =>
+      connect3CX(ORG_A, { pbxUrl: 'https://example.com', extension: '101' }),
+    );
 
-        // Tenta desconectar do lado de B, usando o id real de A.
-        await asOrg(ORG_B, () => disconnect3CX(ORG_B, created.id));
+    // Tenta desconectar do lado de B, usando o id real de A.
+    await asOrg(ORG_B, () => disconnect3CX(ORG_B, created.id));
 
-        const stillThere = await asOrg(ORG_A, () => get3CXConnectionsForOrg(ORG_A));
-        expect(stillThere.map((c) => c.id)).toContain(created.id);
-    });
+    const stillThere = await asOrg(ORG_A, () => get3CXConnectionsForOrg(ORG_A));
+    expect(stillThere.map((c) => c.id)).toContain(created.id);
+  });
 });

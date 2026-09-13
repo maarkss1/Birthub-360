@@ -1,64 +1,1069 @@
-const patterns=[
-['MetricRibbon','Faixa comparativa; valores compartilham linha de base, unidades e período.','items, period, selectedMetric → selectMetric. Sem superfície própria por métrica.','Receita, forecast, gap e cobertura.'],
-['OperationalPulse','Instrumentação de estado, tendência, velocidade, meta, desvio, risco e mudança.','series, target, pace, deviation, risk → selectPeriod. Faixa + trajetória + leitura causal.','Pulso da central de receita.'],
-['SignalStream','Fluxo contínuo ordenado por relevância, depois recência; não uma grade.','signals, ordering, unread → expandEvidence, investigate. Preservar âncora ao atualizar.','Sinais na lateral e no workspace Intelligence.'],
-['SignalItem','Evento com marcador semântico, origem, timestamp, impacto e evidências expansíveis.','id, type, severity, origin, event, delta, impact, confidence, timestamp, entityIds, evidenceIds, nextAction.','Forecast de R$ 184K em risco.'],
-['IntelligenceLens','Rail contextual persistente; explica ocorrido, mudança, causa, risco e oportunidade.','selection, explanation, confidence, evidence, nextAction. Nunca inventar evidência para completar layout.','Selecione uma métrica ou negócio.'],
-['ExecutionQueue','Linhas de trabalho com prioridade, dono, prazo, motivo, dependência, status e automação.','actions → stage, execute, cancel, retry. Produção: autorização no servidor + chave de idempotência.','Fila e registro de resultado simulado.'],
-['DecisionPanel','Painel de decisão com alternativas, implicações e confirmação de destino.','signalId, options, selectedOption, constraints → enqueue. Separar preparar de executar.','Preparar decisão na Lens.'],
-['EvidencePopover','Camada ancorada ao dado; evidencia fonte, recência, trecho e limitações.','anchor, evidence, source, observedAt → openSource. Foco retorna à origem ao fechar.','Evidências em sinais e no Overlay Lab.'],
-['EntitySurface','Workspace para empresa, contato, negócio, pessoa, processo ou documento.','EntityHeader + EntityContext + EntitySignals + EntityMetrics + EntityTimeline + EntityRelations + EntityActions + EntityIntelligence.','Clique no nome de uma empresa.'],
-['EntityHeader','Identidade, estágio, valor e estado em uma faixa; secundários por divulgação progressiva.','entity, primaryMetric, stage, state, risk. Uma entidade é uma fronteira válida.','Drawer da oportunidade.'],
-['EntityRail','Lista mestre de entidades, seleção única e contexto preservado no detalhe.','entities, selectedId → selectEntity. Indicador lateral; foco e hover revelam ações.','Opportunity Ledger junto da Lens.'],
-['ContextRail','Região subordinada e persistente; consolida contexto, evidências e ações.','context, pinned, sections. Em telas pequenas passa abaixo ou abre sheet.','Coluna direita da central.'],
-['CommandDock','Entrada única: busca, navegação, IA, criação, ferramentas, execução e voz.','query, scope, capabilities, recentActions → command. Um comando anuncia seu efeito antes de executar.','Ctrl/⌘ K; busca fuzzy e resultados de teclado.'],
-['WorkspaceSwitcher','Subnavegação compacta com indicador compartilhado; sem cards de navegação.','items, activeId → changeWorkspace. Manter contexto de entidade e período.','Overview / Intelligence / Pipeline / Automation / Analytics.'],
-['OpportunityLedger','Registro comparativo com seleção lateral, ordenação e detalhes inline.','deals, sort, filter, density, selection. Ações no hover, foco ou seleção; sempre disponíveis no toque.','Modo Table.'],
-['RiskMatrix','Matriz bidimensional com escalas explícitas e rótulos; cor não é o único sinal.','entities, riskThresholds, impactThresholds → selectCell / entity. Não confundir risco e score de fit.','Modos Matrix e Risk.'],
-['FlowMap','Sequência espacial de dependências, transições e pontos de bloqueio.','nodes, edges, statuses → inspectNode. A linha representa fluxo real.','Automation: sinal → decisão → ação → resultado.'],
-['ActivityStream','Registro temporal de eventos e resultados; origem e status auditáveis.','events, actor, timestamp, source → inspectEvent. Não anunciar resultado comercial sem medição.','Registro após executar uma ação.'],
-['NextBestAction','Uma recomendação dominante, vinculada à evidência e ao impacto potencial.','reason, expectedImpact, assignee, dueAt, origin, automation → prepare.','Próxima melhor ação na Lens.'],
-['ForecastTrajectory','Série temporal distinguindo realizado, projeção, meta e incerteza.','actual, forecast, interval, target → selectPeriod. Tooltip com unidade e data.','Gráfico interativo do pulso.'],
-['AttentionMap','Distribuição do que merece atenção por impacto, urgência e responsabilidade.','signals, impact, urgency, owners → focus. Evitar contagem de alertas sem contexto.','Mapa abaixo: atenção → decisão.']
+const patterns = [
+  [
+    'MetricRibbon',
+    'Faixa comparativa; valores compartilham linha de base, unidades e período.',
+    'items, period, selectedMetric → selectMetric. Sem superfície própria por métrica.',
+    'Receita, forecast, gap e cobertura.',
+  ],
+  [
+    'OperationalPulse',
+    'Instrumentação de estado, tendência, velocidade, meta, desvio, risco e mudança.',
+    'series, target, pace, deviation, risk → selectPeriod. Faixa + trajetória + leitura causal.',
+    'Pulso da central de receita.',
+  ],
+  [
+    'SignalStream',
+    'Fluxo contínuo ordenado por relevância, depois recência; não uma grade.',
+    'signals, ordering, unread → expandEvidence, investigate. Preservar âncora ao atualizar.',
+    'Sinais na lateral e no workspace Intelligence.',
+  ],
+  [
+    'SignalItem',
+    'Evento com marcador semântico, origem, timestamp, impacto e evidências expansíveis.',
+    'id, type, severity, origin, event, delta, impact, confidence, timestamp, entityIds, evidenceIds, nextAction.',
+    'Forecast de R$ 184K em risco.',
+  ],
+  [
+    'IntelligenceLens',
+    'Rail contextual persistente; explica ocorrido, mudança, causa, risco e oportunidade.',
+    'selection, explanation, confidence, evidence, nextAction. Nunca inventar evidência para completar layout.',
+    'Selecione uma métrica ou negócio.',
+  ],
+  [
+    'ExecutionQueue',
+    'Linhas de trabalho com prioridade, dono, prazo, motivo, dependência, status e automação.',
+    'actions → stage, execute, cancel, retry. Produção: autorização no servidor + chave de idempotência.',
+    'Fila e registro de resultado simulado.',
+  ],
+  [
+    'DecisionPanel',
+    'Painel de decisão com alternativas, implicações e confirmação de destino.',
+    'signalId, options, selectedOption, constraints → enqueue. Separar preparar de executar.',
+    'Preparar decisão na Lens.',
+  ],
+  [
+    'EvidencePopover',
+    'Camada ancorada ao dado; evidencia fonte, recência, trecho e limitações.',
+    'anchor, evidence, source, observedAt → openSource. Foco retorna à origem ao fechar.',
+    'Evidências em sinais e no Overlay Lab.',
+  ],
+  [
+    'EntitySurface',
+    'Workspace para empresa, contato, negócio, pessoa, processo ou documento.',
+    'EntityHeader + EntityContext + EntitySignals + EntityMetrics + EntityTimeline + EntityRelations + EntityActions + EntityIntelligence.',
+    'Clique no nome de uma empresa.',
+  ],
+  [
+    'EntityHeader',
+    'Identidade, estágio, valor e estado em uma faixa; secundários por divulgação progressiva.',
+    'entity, primaryMetric, stage, state, risk. Uma entidade é uma fronteira válida.',
+    'Drawer da oportunidade.',
+  ],
+  [
+    'EntityRail',
+    'Lista mestre de entidades, seleção única e contexto preservado no detalhe.',
+    'entities, selectedId → selectEntity. Indicador lateral; foco e hover revelam ações.',
+    'Opportunity Ledger junto da Lens.',
+  ],
+  [
+    'ContextRail',
+    'Região subordinada e persistente; consolida contexto, evidências e ações.',
+    'context, pinned, sections. Em telas pequenas passa abaixo ou abre sheet.',
+    'Coluna direita da central.',
+  ],
+  [
+    'CommandDock',
+    'Entrada única: busca, navegação, IA, criação, ferramentas, execução e voz.',
+    'query, scope, capabilities, recentActions → command. Um comando anuncia seu efeito antes de executar.',
+    'Ctrl/⌘ K; busca fuzzy e resultados de teclado.',
+  ],
+  [
+    'WorkspaceSwitcher',
+    'Subnavegação compacta com indicador compartilhado; sem cards de navegação.',
+    'items, activeId → changeWorkspace. Manter contexto de entidade e período.',
+    'Overview / Intelligence / Pipeline / Automation / Analytics.',
+  ],
+  [
+    'OpportunityLedger',
+    'Registro comparativo com seleção lateral, ordenação e detalhes inline.',
+    'deals, sort, filter, density, selection. Ações no hover, foco ou seleção; sempre disponíveis no toque.',
+    'Modo Table.',
+  ],
+  [
+    'RiskMatrix',
+    'Matriz bidimensional com escalas explícitas e rótulos; cor não é o único sinal.',
+    'entities, riskThresholds, impactThresholds → selectCell / entity. Não confundir risco e score de fit.',
+    'Modos Matrix e Risk.',
+  ],
+  [
+    'FlowMap',
+    'Sequência espacial de dependências, transições e pontos de bloqueio.',
+    'nodes, edges, statuses → inspectNode. A linha representa fluxo real.',
+    'Automation: sinal → decisão → ação → resultado.',
+  ],
+  [
+    'ActivityStream',
+    'Registro temporal de eventos e resultados; origem e status auditáveis.',
+    'events, actor, timestamp, source → inspectEvent. Não anunciar resultado comercial sem medição.',
+    'Registro após executar uma ação.',
+  ],
+  [
+    'NextBestAction',
+    'Uma recomendação dominante, vinculada à evidência e ao impacto potencial.',
+    'reason, expectedImpact, assignee, dueAt, origin, automation → prepare.',
+    'Próxima melhor ação na Lens.',
+  ],
+  [
+    'ForecastTrajectory',
+    'Série temporal distinguindo realizado, projeção, meta e incerteza.',
+    'actual, forecast, interval, target → selectPeriod. Tooltip com unidade e data.',
+    'Gráfico interativo do pulso.',
+  ],
+  [
+    'AttentionMap',
+    'Distribuição do que merece atenção por impacto, urgência e responsabilidade.',
+    'signals, impact, urgency, owners → focus. Evitar contagem de alertas sem contexto.',
+    'Mapa abaixo: atenção → decisão.',
+  ],
 ];
-const classification={
-KEEP:{names:['Label','Pagination','CopyButton','AtlasLogo','BrandOrb','Carousel'],reason:'Preservar contrato e semântica. Marca e utilidades não precisam de nova fronteira; BrandOrb apenas em contextos próprios de IA.'},
-REMOVE:{names:['ClickSpark','ClockCalendarWidget','GamificationWidget','TiltCard'],reason:'Retirar das superfícies operacionais principais. Relógio/gamificação podem existir em contextos específicos, mediante necessidade comprovada.'},
-MERGE:{names:['CopilotTrigger','VoiceCommandWidget','CommandPalette','AIContextPopover','LiveStatsWidget','FindingsList','Checklist'],reason:'Consolidar entrada global no CommandDock ou informação contextual em Lens, Stream e Queue. Preservar capacidades e eventos.'},
-REPLACE:{names:['KpiCard','TabNavCards','ContextualTip','ActionPlanSteps','DealsGrid'],reason:'Trocar a composição: MetricRibbon, WorkspaceSwitcher, SignalItem, ExecutionQueue e OpportunityLedger, respectivamente.'}
+const classification = {
+  KEEP: {
+    names: ['Label', 'Pagination', 'CopyButton', 'AtlasLogo', 'BrandOrb', 'Carousel'],
+    reason:
+      'Preservar contrato e semântica. Marca e utilidades não precisam de nova fronteira; BrandOrb apenas em contextos próprios de IA.',
+  },
+  REMOVE: {
+    names: ['ClickSpark', 'ClockCalendarWidget', 'GamificationWidget', 'TiltCard'],
+    reason:
+      'Retirar das superfícies operacionais principais. Relógio/gamificação podem existir em contextos específicos, mediante necessidade comprovada.',
+  },
+  MERGE: {
+    names: [
+      'CopilotTrigger',
+      'VoiceCommandWidget',
+      'CommandPalette',
+      'AIContextPopover',
+      'LiveStatsWidget',
+      'FindingsList',
+      'Checklist',
+    ],
+    reason:
+      'Consolidar entrada global no CommandDock ou informação contextual em Lens, Stream e Queue. Preservar capacidades e eventos.',
+  },
+  REPLACE: {
+    names: ['KpiCard', 'TabNavCards', 'ContextualTip', 'ActionPlanSteps', 'DealsGrid'],
+    reason:
+      'Trocar a composição: MetricRibbon, WorkspaceSwitcher, SignalItem, ExecutionQueue e OpportunityLedger, respectivamente.',
+  },
 };
-function disposition(name){return Object.entries(classification).find(([,v])=>v.names.includes(name))?.[0]||'REFINE'}
-function auditEntries(){return sourceAudit.components.filter(f=>!f.includes('.stories.')&&!f.includes('.demo.')).map(file=>{const name=file.split('/').pop().replace('.tsx','');const status=disposition(name);const count=sourceAudit.totals[name];return{name,file,status,count,reason:classification[status]?.reason||'Refinar anatomia, foco, estados, densidade e motion no laboratório. Reutilizar o primitive existente na migração; manter API e acessibilidade.'}})}
-auditPage=function(){const rows=auditEntries().filter(r=>state.audit==='ALL'||r.status===state.audit);return head('Auditoria & migração','Código real + catálogo visual. Decisões antes da substituição.')+`<div class="notice">Varredura de <strong>${sourceAudit.scannedFiles} arquivos TSX</strong> em 10/09/2026. ${sourceAudit.method} Não houve navegação autenticada por todas as telas. Rotas e fluxos precisam de validação visual antes da migração.</div><div class="ribbon">${[['Card','126'],['KpiCard','22'],['Arquivos TSX','257'],['Padrões propostos','21']].map(([n,v])=>`<div class="metric"><span class="label">${n.toUpperCase()}</span><strong>${v}</strong><small>${n==='Arquivos TSX'?'escopo da leitura':n==='Padrões propostos'?'arquitetura documentada':'ocorrências JSX diretas'}</small></div>`).join('')}</div><section class="lab-section"><h2>Onde começar</h2><p>Ranking de ocorrências diretas em arquivos do produto. Conhecimento e Billing exigem triagem: documento, plano e processo podem justificar fronteira.</p><div class="table-scroll"><table class="audit-table"><thead><tr><th>SUPERFÍCIE / ARQUIVO</th><th>OCORRÊNCIAS</th><th>ENCAMINHAMENTO</th></tr></thead><tbody>${sourceAudit.hotspots.filter(x=>!x.file.includes('.stories.')).slice(0,12).map((r,i)=>`<tr><td>${r.file.split('/').pop()}<small style="display:block">${r.file}</small></td><td class="mono gold">${r.total}</td><td>${i===0?'MetricRibbon + WorkspaceSwitcher + IntelligenceLens':r.file.includes('Analytics')||r.file.includes('WinLoss')?'OperationalPulse + regiões comparativas':r.file.includes('Base.tsx')?'Documentos como entidades; retirar caixas de estados':r.file.includes('Overview')||r.file.includes('Sdr')?'MetricRibbon + ExecutionQueue':'Triagem semântica por região'}</td></tr>`).join('')}</tbody></table></div><div class="notice">No diagnóstico SDR, também há caixas escritas diretamente com classes, fora de Card. Exemplos: JoaoReisDiagnosticHub.tsx:867, 910, 943 e 1327. Os totais são um piso de ocorrências, não uma medida completa da cardificação.</div></section><section class="lab-section"><h2>Decisão por componente</h2><p>TabNavCards, FindingsList e ActionPlanSteps existem, mas registraram zero usos JSX diretos. Confirmar imports dinâmicos, aliases e consumidores antes de remover exports.</p><div class="filters">${['ALL','KEEP','REFINE','MERGE','REPLACE','REMOVE'].map(x=>`<button data-audit="${x}" class="${state.audit===x?'active':''}">${x==='ALL'?'Todos':x}</button>`).join('')}</div><div class="table-scroll"><table class="audit-table"><thead><tr><th>COMPONENTE</th><th>DECISÃO</th><th>MOTIVO / DESTINO</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r.name}</strong><small style="display:block">${r.file}</small>${r.count!==undefined?`<small>${r.count} usos JSX diretos</small>`:''}</td><td class="status-label ${r.status==='REMOVE'?'risk':r.status==='KEEP'?'positive':'gold'}">${r.status}</td><td>${r.reason}</td></tr>`).join('')}</tbody></table></div></section><section class="lab-section"><h2>Referências e decisões de compatibilidade</h2><div class="pattern-entry"><h3>Catálogo original</h3><p>KpiCard: caixa, chip de ícone, barra, número e caption. Card.tsx centraliza bordas, sombras e hover em todas as variantes. Button.tsx já possui Magnetic e SoundFX.</p><p>Preservar os contratos e o aprendizado de acessibilidade. A proposta muda função e composição antes de decoração.</p></div><div class="pattern-entry"><h3>code.html</h3><p>Referência de marca: central de comando, Obsidian e presença dourada. A proposta anexa usa Cinzel, halos prismáticos e órbitas contínuas.</p><p>Adotamos Sora + Inter conforme o brief. Halos ficam restritos ao processamento de inteligência. Não importamos scripts remotos nem a restrição de zoom do HTML.</p></div><div class="pattern-entry"><h3>Dois briefs, uma regra</h3><p>SignalCard → SignalItem. InsightCard → IntelligenceLens. ActionCard → ExecutionQueue. MetricSurface → MetricRibbon.</p><p>EntityCard / OpportunityCard somente quando a entidade requer fronteira própria. O componente não começa por uma caixa genérica.</p></div></section><section class="lab-section"><h2>Migração progressiva</h2>${[['00 · Validar o laboratório','Comparar Before/After, teclado, toque, zoom de 200%, redução de movimento e legibilidade. Aprovação visual do usuário antes de alterar consumidores.'],['01 · Fundamentos isolados','Tokens semânticos + motion + Sora em namespace experimental. Inter preservada no corpo. Testar pesos, carregamento, fallback e métricas tipográficas.'],['02 · Piloto comercial','Diagnóstico SDR e CRM Overview: MetricRibbon, WorkspaceSwitcher e SignalStream. Feature flag por workspace e rollback imediato.'],['03 · Decisão e execução','IntelligenceLens, DecisionPanel e ExecutionQueue. Evidências reais, permissões existentes, idempotência, falha recuperável e rastreio do resultado.'],['04 · Entidades e escala','OpportunityLedger e EntitySurface no CRM. Expandir para empresas, contatos e processos apenas após validar o piloto.'],['05 · Retirada controlada','Remover exports legados somente sem consumidores. Acompanhar tempo até decisão, ações concluídas, erros, regressões de acessibilidade e desempenho.']].map(([t,p])=>`<div class="state-demo"><h3>${t}</h3><p>${p}</p></div>`).join('')}<div class="notice">Gate de migração: aprovação visual + testes do produto + nenhum dado demonstrativo misturado ao CRM. Este laboratório não constitui aprovação de release da plataforma.</div></section>`};
-patternsPage=function(){return head('Biblioteca de padrões','21 composições. Uma arquitetura operacional compartilhada.')+`<div class="flow"><div class="step">SINAL<small>O que aconteceu</small></div><span>→</span><div class="step">DECISÃO<small>Por que importa</small></div><span>→</span><div class="step">AÇÃO<small>O que executar</small></div><span>→</span><div class="step">RESULTADO<small>O que mudou</small></div></div><div class="notice">Contrato comum: identidade estável, origem, período, contexto, estado, permissões e evidências. Seleção é compartilhada entre Ribbon, Ledger, Stream e Lens. Composição visual não autoriza acesso a dados.</div><div class="pattern-list">${patterns.map(([name,anatomy,contract,example],i)=>`<div class="pattern-entry"><div><small class="mono">${String(i+1).padStart(2,'0')}</small><h3 style="margin-top:8px">${name}</h3></div><p>${anatomy}<br><span class="gold">${example}</span></p><p>${contract}</p></div>`).join('')}</div><section class="lab-section"><h2>AttentionMap</h2><p>Impacto financeiro × urgência de decisão. Seleção abre a entidade que originou a atenção.</p><div class="matrix"><div>IMPACTO ↑</div><div>Esta semana</div><div>Amanhã</div><div>Hoje</div><div>Alto</div><div><button data-entity="3">Aurora · R$ 126K</button></div><div><button data-entity="1">Nexus · R$ 68K</button></div><div class="high"><button data-entity="0">Porto Real · R$ 84K</button></div><div>Moderado</div><div><button data-entity="2">Vértice · R$ 32K</button></div><div></div><div></div></div></section><section class="lab-section"><h2>Estados que fazem parte do contrato</h2><p>loading: preservar anatomia e contexto; empty: explicar ausência; error: informar impacto e recuperação; stale: exibir recência; partial: declarar lacunas; processing: impedir duplicação; completed: registrar execução; outcome-pending: aguardar medição comercial.</p><h3>Escolha da fronteira</h3><p>Row para comparação. Ribbon para métricas. Stream para eventos. Rail para contexto. Sheet para entidade. Canvas para relações. Card somente se identidade, seleção ou agrupamento independente justificar a fronteira.</p></section>`};
-function currentSample(label,proposed,oldLabel=label){return `<div class="comparison"><div><div class="compare-label">CURRENT · ${oldLabel}</div><div class="old"><div class="old-card">${oldLabel}</div></div></div><div><div class="compare-label after">PROPOSED · ${label}</div>${proposed}</div></div>`}
-componentsPage=function(){return head('Components V2','Componentes com função própria. Movimento com consequência.',`<button class="btn outline" data-page="motion">∿ Motion Playground</button>`)+`<div class="notice">Comparações Current são reconstruções do catálogo. Todas as ações abaixo são locais e demonstrativas. Experimente hover, foco por teclado, pressionamento e mudança de estado.</div><nav class="workspace-switcher"><a class="link" href="#buttons">Botões</a><a class="link" href="#overlays">Overlays</a><a class="link" href="#inputs">Formulários</a><a class="link" href="#states">Estados</a><a class="link" href="#tokens">Tokens</a></nav><section class="lab-section" id="buttons"><h2><span class="section-index">01</span>Button System 2.0</h2><p>Command ativa. Intelligence investiga. Execute transforma estado. Cada família tem anatomia e resposta próprias.</p><div class="compare-label">CURRENT · VARIANTES DO CATÁLOGO</div><div class="old sample-row">${['default','secondary','outline','ghost','destructive','link'].map((t,i)=>`<span style="padding:10px 16px;border-radius:8px;border:1px solid #ccc;background:${i===0?'#d4af37':i===4?'#ef4444':i===3?'transparent':'#fff'};color:${i===4?'white':'#0b132b'};font-size:12px">${t}</span>`).join('')}</div><div class="compare-label after" style="margin-top:24px">PROPOSED · FAMÍLIAS POR INTENÇÃO</div><div class="sample-row">${[['Primary','primary','Nova oportunidade →','create'],['Secondary','','Salvar rascunho','save'],['Ghost','ghost','Ver detalhes ↗','detail'],['Outline','outline','Exportar seleção','export'],['Intelligence','intelligence','✦ Explicar variação','intelligence'],['Generate','generate','✦ Gerar análise','generate'],['Execute','execute','Executar →','demo-execute'],['Destructive','destructive','Excluir registro','destructive'],['Morph','outline','Conectar','connect']].map(([title,cls,label,action])=>`<div class="sample"><small>${title.toUpperCase()}</small><button class="btn ${cls}" data-demo="${action}">${label}</button></div>`).join('')}<div class="sample"><small>SPLIT</small><div class="split"><button class="btn primary" data-demo="create">Criar oportunidade</button><button class="btn primary" data-popup="split" aria-label="Outras opções de criação" aria-haspopup="menu">⌄</button></div></div><div class="sample"><small>ICON / INTELLIGENCE</small><button class="btn intelligence icon-btn" data-demo="intelligence" aria-label="Abrir análise">✦</button></div><div class="sample"><small>LOADING</small><button class="btn execute processing" disabled aria-busy="true">Processando</button></div><div class="sample"><small>SUCCESS</small><button class="btn success" disabled>✓ Concluído</button></div><div class="sample"><small>DISABLED</small><button class="btn primary" disabled>Indisponível</button></div></div><div class="compare-label after">ESTADOS SIMULTÂNEOS · MESMA DIMENSÃO E CONTEXTO</div><div class="sample-row">${[['Idle',''],['Hover','is-hover'],['Focus','is-focus'],['Pressed','is-pressed'],['Loading','processing'],['Success','success']].map(([n,c])=>`<div class="sample"><small>${n}</small><button class="btn execute ${c}" data-demo="demo-execute">${n==='Loading'?'Executando':n==='Success'?'✓ Concluído':'Executar →'}</button></div>`).join('')}</div><div class="sample-row"><span class="muted">Ícones por função</span>${[['←','navigation','Voltar ao Command'],['⌕','utility','Buscar'],['⌘','command','Abrir comandos'],['✦','ai','Investigar'],['×','danger','Excluir'],['↗','floating','Abrir entidade'],['≡','toolbar','Menu da seleção']].map(([icon,kind,label])=>`<span class="tooltip-wrap"><button class="icon-${kind} btn icon-btn" aria-label="${label}" data-icon="${kind}">${icon}</button><span class="tooltip" role="tooltip">${label}</span></span>`).join('')}</div></section><section class="lab-section" id="overlays"><h2><span class="section-index">02</span>Overlay Lab</h2><p>Dialog constrói uma decisão. Drawer mantém a entidade ligada à origem. Popover nasce do acionador. Command emerge como uma entrada global.</p>${currentSample('Overlays interativos',`<div class="sample-row">${['Dialog','IntelligenceDialog','Drawer','BottomSheet','Popover','Dropdown','Tooltip','CommandPalette'].map(x=>x==='Tooltip'?'<span class="tooltip-wrap"><button class="btn ghost">Passe o cursor ou foque</button><span role="tooltip" class="tooltip">Evidência disponível · 140ms</span></span>':`<button class="btn ${x.includes('Intelligence')?'intelligence':'outline'}" data-overlay="${x}" ${['Popover','Dropdown'].includes(x)?'aria-haspopup="true"':''}>${x} ↗</button>`).join('')}</div>`,'Dialog / Drawer / Sheet: superfície + borda + conteúdo')}<div class="state-demo" id="context-zone" tabindex="0" aria-label="Região com menu contextual: pressione Shift F10"><h3>Grupo Porto Real <span class="meta">· contexto da seleção</span></h3><p>Use o botão, clique direito ou Shift + F10 para abrir ações na origem.</p><button class="link" data-popup="context">Ações desta entidade →</button></div></section><section class="lab-section" id="inputs"><h2><span class="section-index">03</span>Input System 2.0</h2><p>Foco responde ao contexto. Labels permanecem legíveis. Comandos inteligentes recebem assinatura Iris.</p>${currentSample('Campos com anatomias próprias',`<div class="form-grid"><label class="field">Default<input placeholder="Nome da empresa"></label><label class="field">Filled<input value="Grupo Porto Real" class="filled"></label><label class="field search-field">Search<input id="component-search" placeholder="Buscar empresas..."></label><label class="field">Command<input placeholder="Criar oportunidade..." data-command-input></label><label class="field ai-field">AI<textarea rows="2" placeholder="Explique a mudança do forecast"></textarea><button class="link iris" data-demo="generate">✦ Analisar contexto</button></label><label class="field">Currency<input inputmode="decimal" value="84.000,00" data-currency><small>BRL · valor da oportunidade</small></label><label class="field">Number<input type="number" value="65" min="0" max="100"></label><label class="field">Date<input type="date" value="2026-09-11"></label><label class="field">Inline edit<input class="inline-edit" value="Contrato anual" data-inline></label><div class="field floating"><input id="floating-email" type="email" placeholder=" "><label for="floating-email">E-mail corporativo</label></div><label class="field">Erro de validação<input value="contato@" type="email" aria-invalid="true" aria-describedby="email-error"><small id="email-error" class="risk">Informe um e-mail completo.</small></label><label class="field">Disabled<input value="ID definido pelo sistema" disabled></label></div>`,'Label + Input / Textarea / Select nativo')}<div class="sample-row"><div class="sample"><small>SELECT ACESSÍVEL</small><button class="btn outline" data-popup="select" aria-haspopup="listbox">Negociação ⌄</button></div><div class="sample"><small>SEARCHABLE SELECT</small><button class="btn outline" data-popup="search-select" aria-haspopup="listbox">Selecionar responsável ⌄</button></div><div class="sample"><small>FLOATING LABEL</small><p class="meta">Use o campo de e-mail acima</p></div></div><div class="sample-row">${['Normal','AI','Automation','Privacy','Danger'].map((x,i)=>`<label class="row"><input class="toggle ${x.toLowerCase()}" type="checkbox" ${i===1?'checked':''} aria-label="${x}"><span>${x}</span></label>`).join('')}</div><div class="sample-row"><label class="row"><input type="checkbox" class="draw-check" checked>Incluir evidências</label><label class="row"><input type="checkbox" class="draw-check">Executar após revisão</label><label class="row"><input type="radio" name="execution-mode" checked>Assistido</label><label class="row"><input type="radio" name="execution-mode">Automático</label></div></section><section class="lab-section"><h2><span class="section-index">04</span>Navegação & estados semânticos</h2>${currentSample('Tabs e indicador compartilhado',`${switcher(['Overview','Intelligence','Pipeline','Automation'],state.workspace)}<div class="sample-row"><div class="segmented">${['Dia','Semana','Mês'].map((x,i)=>`<button data-local-tab class="${i===1?'active':''}">${x}</button>`).join('')}</div><div class="context-tabs"><button class="active" data-local-tab>Entidade</button><button data-local-tab>Relações</button><button data-local-tab>Histórico</button></div></div>`,'TabNavCards: cartões de navegação')}<div class="meta" id="tab-context">Contexto ativo: ${state.workspace}</div>${currentSample('Badges semânticos',`<div class="sample-row"><span class="badge-status">Em andamento</span><span class="badge-priority">P1 · Prioridade</span><span class="badge-risk">RISCO ALTO</span><span class="confidence"><i></i>87% confiança</span><span class="badge-ai">✦ Inferência</span><span class="badge-live">● Ao vivo</span><span class="positive mono">↑ 14,2%</span></div>`,'default / success / warning / neon / gradient')}<h3>Table 2.0</h3><p class="meta">Ordene por valor, filtre, selecione e expanda. A coluna Empresa permite redimensionamento no controle abaixo.</p><label class="field" style="max-width:230px;margin-top:14px">Largura da coluna Empresa <input id="column-width" type="range" min="190" max="440" value="270"></label>${ledger()}</section><section class="lab-section" id="states"><h2><span class="section-index">05</span>Feedback, loading e recuperação</h2>${currentSample('Toast contextual',`<div class="sample-row"><button class="btn outline" data-toast="success">Success + Undo</button><button class="btn outline" data-toast="error">Error + Retry</button><button class="btn execute" data-toast="loading">Loading → completo</button></div>`,'Toast com ícone e mensagem')}<div class="sample-row"><div class="sample"><small>TABLE SKELETON</small><div style="width:220px"><div class="skeleton" style="width:80%"></div><div class="skeleton"></div><div class="skeleton" style="width:90%"></div></div></div><div class="sample"><small>INLINE PROGRESS</small><div class="inline-progress"><i></i></div></div><div class="sample"><small>INTELLIGENCE PROCESSING</small><div class="orbit-loader" aria-label="Analisando evidências" role="status"><span>✦</span></div></div><div class="sample"><small>AI THINKING</small><span class="thinking" role="status">Conectando evidências<span>•••</span></span></div><div class="sample"><small>PIPELINE PROCESSING</small><div class="pipeline-processing"><i></i><i></i><i></i></div></div></div><p class="meta">A exibição simultânea serve apenas à comparação no laboratório. No produto, escolher uma experiência de loading por contexto; nunca usar todas juntas.</p><div class="sample-row"><button class="btn outline" data-loading-anatomy="metric">Métrica</button><button class="btn outline" data-loading-anatomy="profile">Perfil</button><button class="btn outline" data-loading-anatomy="chart">Gráfico</button></div><div id="loading-anatomy"></div><div class="sample-row"><span class="strategic" id="live-value" style="font-size:28px">1.280</span><button class="link" id="update-live">Simular atualização +4 →</button><small>CountUp apenas quando o valor muda.</small></div>${[['FirstUseState','Sua primeira automação começa com um sinal.','Escolha uma origem e mantenha a execução assistida.','create'],['NoResultsState','Nenhuma empresa corresponde à busca.','Revise o termo; os registros existentes continuam disponíveis.','clear'],['FilteredEmptyState','Este recorte não contém oportunidades.','Remova os filtros para ampliar o contexto.','clear'],['DisconnectedState','CRM desconectado.','Os dados desta superfície não podem ser atualizados.','connect'],['ErrorState','Não foi possível atualizar a projeção.','Última leitura preservada; nenhuma alteração foi enviada.','retry'],['CompletedState','Fila demonstrativa concluída.','Tarefas registradas. Aguardar evidência do resultado comercial.','activity']].map(([n,t,p,a])=>`<div class="state-demo"><small>${n}</small><h3 style="margin-top:8px">${t}</h3><p>${p}</p><button class="link" data-state="${a}">${a==='retry'?'Tentar novamente':a==='clear'?'Limpar contexto':a==='connect'?'Reconectar':a==='activity'?'Ver registro':'Criar primeira automação'} →</button></div>`).join('')}</section><section class="lab-section" id="tokens"><h2><span class="section-index">06</span>Assinatura visual & motion tokens</h2><p>Sora em headings e valores estratégicos; Inter nas tarefas densas; IBM Plex Mono em identificadores e medidas técnicas.</p><div class="token-table">${[['Antique Gold','#d4af37','Foco, prioridade, trajetória e ativação.'],['Obsidian','#0b132b','Base e contraste das ações.'],['Deep Iris','#5b21b6','Inferência e modelagem; texto com tom claro acessível.'],['Orbit Blue','#0065d2','Dados, conexões e fluxo.']].map(([n,c,d])=>`<div><div class="swatch" style="background:${c}"></div>${n}<small>${c} · ${d}</small></div>`).join('')}</div><div class="token-table">${[['motion-fast','140ms'],['motion-base','240ms'],['motion-slow','420ms'],['hoverLift','−2px'],['pressScale','0.97'],['magneticStrength','3px / só comando'],['glowIntensity','0.12 / IA'],['highlightSpeed','650ms / hover']].map(([k,v])=>`<div>${k}<small class="mono">${v}</small></div>`).join('')}</div><div class="depth-levels">${['0 · Canvas','1 · Surface','2 · Interactive','3 · Popover','4 · Dialog','5 · Critical'].map((x,i)=>`<div style="transform:translateY(${-i*4}px);box-shadow:0 ${i*3}px ${i*8}px #0004">${x}</div>`).join('')}</div><div class="sample-row"><span>Bordas:</span>${['neutral','active','focus','intelligence','risk','selected'].map(x=>`<span class="border-demo border-${x}">${x}</span>`).join('')}</div><label class="row"><input type="checkbox" class="toggle" id="sound-toggle" ${state.sound?'checked':''}>Sound Effects · ${state.sound?'ON':'OFF'}</label><p class="meta" style="margin-top:14px">O produto já possui SoundFX. Aqui, som é opcional e desligado por padrão; reservado a conclusão de automação, alerta crítico e ativação de voz. Não toca em navegação ou foco.</p></section>`};
-const microRules=[['Magnetic','Só ação principal; máximo 3px, desligado no toque e movimento reduzido.'],['Shimmer','Loading de dados; interromper ao resolver ou falhar.'],['BorderTrace','Somente hover/focus de outline, sem loop contínuo.'],['Pulse','Atualização ou estado ao vivo; nunca decorar um valor estático.'],['Glow','IA ativa; opacidade baixa, sem neon.'],['Reveal','Metadados secundários em hover, foco ou seleção.'],['Collapse','Detalhes inline preservando a posição da entidade.'],['Morph','Transição de estado sem trocar o controle ou perder foco.'],['Spring','Sheet e toggle, curta e amortecida.'],['SharedIndicator','Um indicador viaja entre contextos; não criar outro por item.'],['CountUp','Somente alteração real do dado; valor final anunciado ao leitor.'],['StrokeDraw','Check de confirmação, execução única.'],['ProgressFill','Progresso conhecido; nunca inventar percentuais do servidor.'],['SuccessMorph','Confirmar no próprio acionador.'],['ErrorShake','Uma vez, deslocamento de 3px, com texto de recuperação.'],['OrbitMotion','Processamento de inteligência; parar imediatamente no fim.'],['Spotlight','Foco contextual em momentos específicos; nunca seguir cursor globalmente.'],['HoverReveal','Ações também disponíveis por teclado e toque.']];
-motionPage=function(){return head('Motion Playground','Ajuste a resposta. Observe a relação entre origem e destino.')+`<div class="motion-layout"><div class="motion-controls">${[['duration','Duração',100,1000,10,'ms'],['stiffness','Spring stiffness',50,400,10,''],['damping','Spring damping',5,50,1,''],['glow','Glow',0,30,1,'%'],['magnetic','Magnetic strength',0,8,1,'px']].map(([k,l,min,max,step,u])=>`<label>${l}<output id="out-${k}">${state.motion[k]}${u}</output><input type="range" data-motion="${k}" min="${min}" max="${max}" step="${step}" value="${state.motion[k]}" aria-label="${l}"></label>`).join('')}<label>Easing<select id="motion-easing">${['standard','enter','exit','spring','emphasized'].map(x=>`<option ${state.motion.easing===x?'selected':''}>${x}</option>`).join('')}</select></label><div class="row"><button class="btn primary" id="play-motion">Reproduzir →</button><button class="link" id="reset-motion">Restaurar</button></div></div><div><div class="motion-stage"><div class="motion-object" id="motion-object">✦</div></div><p class="meta" style="margin-top:16px" id="motion-readout">Duração controla a transição; stiffness e damping controlam a mola. Passe o cursor no comando para sentir o magnetismo.</p><button class="btn primary" id="magnetic-demo" style="margin-top:16px">Ativar comando ↗</button></div></div><section class="lab-section"><h2>Biblioteca de microinterações</h2><p>Efeitos disponíveis dentro de um vocabulário limitado. O uso depende da função, não do desejo de animar.</p><div class="pattern-list">${microRules.map(([n,r])=>`<div class="pattern-entry"><h3>${n}</h3><p>${r}</p><button class="link" data-micro="${n}">Experimentar →</button></div>`).join('')}</div></section><section class="lab-section"><h2>Regras de causalidade</h2><p>Signal → entidade: preservar nome e origem. Métrica → filtro: manter seleção visível. Ação → resultado: controle mantém dimensão, estado e foco. Redução de movimento substitui deslocamento por alteração imediata de estado.</p><div class="notice">Este laboratório usa CSS e Web Animations. Na migração React, reutilizar Framer Motion já presente para shared layout, AnimatePresence, drag e spring quando justificarem a dependência. O alvo de 60fps precisa ser medido no hardware de referência; não é uma certificação deste protótipo.</div></section>`};
-const reduced=()=>document.body.classList.contains('reduce')||matchMedia('(prefers-reduced-motion: reduce)').matches;
+function disposition(name) {
+  return Object.entries(classification).find(([, v]) => v.names.includes(name))?.[0] || 'REFINE';
+}
+function auditEntries() {
+  return sourceAudit.components
+    .filter((f) => !f.includes('.stories.') && !f.includes('.demo.'))
+    .map((file) => {
+      const name = file.split('/').pop().replace('.tsx', '');
+      const status = disposition(name);
+      const count = sourceAudit.totals[name];
+      return {
+        name,
+        file,
+        status,
+        count,
+        reason:
+          classification[status]?.reason ||
+          'Refinar anatomia, foco, estados, densidade e motion no laboratório. Reutilizar o primitive existente na migração; manter API e acessibilidade.',
+      };
+    });
+}
+auditPage = function () {
+  const rows = auditEntries().filter((r) => state.audit === 'ALL' || r.status === state.audit);
+  return (
+    head('Auditoria & migração', 'Código real + catálogo visual. Decisões antes da substituição.') +
+    `<div class="notice">Varredura de <strong>${sourceAudit.scannedFiles} arquivos TSX</strong> em 10/09/2026. ${sourceAudit.method} Não houve navegação autenticada por todas as telas. Rotas e fluxos precisam de validação visual antes da migração.</div><div class="ribbon">${[
+      ['Card', '126'],
+      ['KpiCard', '22'],
+      ['Arquivos TSX', '257'],
+      ['Padrões propostos', '21'],
+    ]
+      .map(
+        ([n, v]) =>
+          `<div class="metric"><span class="label">${n.toUpperCase()}</span><strong>${v}</strong><small>${n === 'Arquivos TSX' ? 'escopo da leitura' : n === 'Padrões propostos' ? 'arquitetura documentada' : 'ocorrências JSX diretas'}</small></div>`,
+      )
+      .join(
+        '',
+      )}</div><section class="lab-section"><h2>Onde começar</h2><p>Ranking de ocorrências diretas em arquivos do produto. Conhecimento e Billing exigem triagem: documento, plano e processo podem justificar fronteira.</p><div class="table-scroll"><table class="audit-table"><thead><tr><th>SUPERFÍCIE / ARQUIVO</th><th>OCORRÊNCIAS</th><th>ENCAMINHAMENTO</th></tr></thead><tbody>${sourceAudit.hotspots
+      .filter((x) => !x.file.includes('.stories.'))
+      .slice(0, 12)
+      .map(
+        (r, i) =>
+          `<tr><td>${r.file.split('/').pop()}<small style="display:block">${r.file}</small></td><td class="mono gold">${r.total}</td><td>${i === 0 ? 'MetricRibbon + WorkspaceSwitcher + IntelligenceLens' : r.file.includes('Analytics') || r.file.includes('WinLoss') ? 'OperationalPulse + regiões comparativas' : r.file.includes('Base.tsx') ? 'Documentos como entidades; retirar caixas de estados' : r.file.includes('Overview') || r.file.includes('Sdr') ? 'MetricRibbon + ExecutionQueue' : 'Triagem semântica por região'}</td></tr>`,
+      )
+      .join(
+        '',
+      )}</tbody></table></div><div class="notice">No diagnóstico SDR, também há caixas escritas diretamente com classes, fora de Card. Exemplos: JoaoReisDiagnosticHub.tsx:867, 910, 943 e 1327. Os totais são um piso de ocorrências, não uma medida completa da cardificação.</div></section><section class="lab-section"><h2>Decisão por componente</h2><p>TabNavCards, FindingsList e ActionPlanSteps existem, mas registraram zero usos JSX diretos. Confirmar imports dinâmicos, aliases e consumidores antes de remover exports.</p><div class="filters">${['ALL', 'KEEP', 'REFINE', 'MERGE', 'REPLACE', 'REMOVE'].map((x) => `<button data-audit="${x}" class="${state.audit === x ? 'active' : ''}">${x === 'ALL' ? 'Todos' : x}</button>`).join('')}</div><div class="table-scroll"><table class="audit-table"><thead><tr><th>COMPONENTE</th><th>DECISÃO</th><th>MOTIVO / DESTINO</th></tr></thead><tbody>${rows.map((r) => `<tr><td><strong>${r.name}</strong><small style="display:block">${r.file}</small>${r.count !== undefined ? `<small>${r.count} usos JSX diretos</small>` : ''}</td><td class="status-label ${r.status === 'REMOVE' ? 'risk' : r.status === 'KEEP' ? 'positive' : 'gold'}">${r.status}</td><td>${r.reason}</td></tr>`).join('')}</tbody></table></div></section><section class="lab-section"><h2>Referências e decisões de compatibilidade</h2><div class="pattern-entry"><h3>Catálogo original</h3><p>KpiCard: caixa, chip de ícone, barra, número e caption. Card.tsx centraliza bordas, sombras e hover em todas as variantes. Button.tsx já possui Magnetic e SoundFX.</p><p>Preservar os contratos e o aprendizado de acessibilidade. A proposta muda função e composição antes de decoração.</p></div><div class="pattern-entry"><h3>code.html</h3><p>Referência de marca: central de comando, Obsidian e presença dourada. A proposta anexa usa Cinzel, halos prismáticos e órbitas contínuas.</p><p>Adotamos Sora + Inter conforme o brief. Halos ficam restritos ao processamento de inteligência. Não importamos scripts remotos nem a restrição de zoom do HTML.</p></div><div class="pattern-entry"><h3>Dois briefs, uma regra</h3><p>SignalCard → SignalItem. InsightCard → IntelligenceLens. ActionCard → ExecutionQueue. MetricSurface → MetricRibbon.</p><p>EntityCard / OpportunityCard somente quando a entidade requer fronteira própria. O componente não começa por uma caixa genérica.</p></div></section><section class="lab-section"><h2>Migração progressiva</h2>${[
+      [
+        '00 · Validar o laboratório',
+        'Comparar Before/After, teclado, toque, zoom de 200%, redução de movimento e legibilidade. Aprovação visual do usuário antes de alterar consumidores.',
+      ],
+      [
+        '01 · Fundamentos isolados',
+        'Tokens semânticos + motion + Sora em namespace experimental. Inter preservada no corpo. Testar pesos, carregamento, fallback e métricas tipográficas.',
+      ],
+      [
+        '02 · Piloto comercial',
+        'Diagnóstico SDR e CRM Overview: MetricRibbon, WorkspaceSwitcher e SignalStream. Feature flag por workspace e rollback imediato.',
+      ],
+      [
+        '03 · Decisão e execução',
+        'IntelligenceLens, DecisionPanel e ExecutionQueue. Evidências reais, permissões existentes, idempotência, falha recuperável e rastreio do resultado.',
+      ],
+      [
+        '04 · Entidades e escala',
+        'OpportunityLedger e EntitySurface no CRM. Expandir para empresas, contatos e processos apenas após validar o piloto.',
+      ],
+      [
+        '05 · Retirada controlada',
+        'Remover exports legados somente sem consumidores. Acompanhar tempo até decisão, ações concluídas, erros, regressões de acessibilidade e desempenho.',
+      ],
+    ]
+      .map(([t, p]) => `<div class="state-demo"><h3>${t}</h3><p>${p}</p></div>`)
+      .join(
+        '',
+      )}<div class="notice">Gate de migração: aprovação visual + testes do produto + nenhum dado demonstrativo misturado ao CRM. Este laboratório não constitui aprovação de release da plataforma.</div></section>`
+  );
+};
+patternsPage = function () {
+  return (
+    head('Biblioteca de padrões', '21 composições. Uma arquitetura operacional compartilhada.') +
+    `<div class="flow"><div class="step">SINAL<small>O que aconteceu</small></div><span>→</span><div class="step">DECISÃO<small>Por que importa</small></div><span>→</span><div class="step">AÇÃO<small>O que executar</small></div><span>→</span><div class="step">RESULTADO<small>O que mudou</small></div></div><div class="notice">Contrato comum: identidade estável, origem, período, contexto, estado, permissões e evidências. Seleção é compartilhada entre Ribbon, Ledger, Stream e Lens. Composição visual não autoriza acesso a dados.</div><div class="pattern-list">${patterns.map(([name, anatomy, contract, example], i) => `<div class="pattern-entry"><div><small class="mono">${String(i + 1).padStart(2, '0')}</small><h3 style="margin-top:8px">${name}</h3></div><p>${anatomy}<br><span class="gold">${example}</span></p><p>${contract}</p></div>`).join('')}</div><section class="lab-section"><h2>AttentionMap</h2><p>Impacto financeiro × urgência de decisão. Seleção abre a entidade que originou a atenção.</p><div class="matrix"><div>IMPACTO ↑</div><div>Esta semana</div><div>Amanhã</div><div>Hoje</div><div>Alto</div><div><button data-entity="3">Aurora · R$ 126K</button></div><div><button data-entity="1">Nexus · R$ 68K</button></div><div class="high"><button data-entity="0">Porto Real · R$ 84K</button></div><div>Moderado</div><div><button data-entity="2">Vértice · R$ 32K</button></div><div></div><div></div></div></section><section class="lab-section"><h2>Estados que fazem parte do contrato</h2><p>loading: preservar anatomia e contexto; empty: explicar ausência; error: informar impacto e recuperação; stale: exibir recência; partial: declarar lacunas; processing: impedir duplicação; completed: registrar execução; outcome-pending: aguardar medição comercial.</p><h3>Escolha da fronteira</h3><p>Row para comparação. Ribbon para métricas. Stream para eventos. Rail para contexto. Sheet para entidade. Canvas para relações. Card somente se identidade, seleção ou agrupamento independente justificar a fronteira.</p></section>`
+  );
+};
+function currentSample(label, proposed, oldLabel = label) {
+  return `<div class="comparison"><div><div class="compare-label">CURRENT · ${oldLabel}</div><div class="old"><div class="old-card">${oldLabel}</div></div></div><div><div class="compare-label after">PROPOSED · ${label}</div>${proposed}</div></div>`;
+}
+componentsPage = function () {
+  return (
+    head(
+      'Components V2',
+      'Componentes com função própria. Movimento com consequência.',
+      `<button class="btn outline" data-page="motion">∿ Motion Playground</button>`,
+    ) +
+    `<div class="notice">Comparações Current são reconstruções do catálogo. Todas as ações abaixo são locais e demonstrativas. Experimente hover, foco por teclado, pressionamento e mudança de estado.</div><nav class="workspace-switcher"><a class="link" href="#buttons">Botões</a><a class="link" href="#overlays">Overlays</a><a class="link" href="#inputs">Formulários</a><a class="link" href="#states">Estados</a><a class="link" href="#tokens">Tokens</a></nav><section class="lab-section" id="buttons"><h2><span class="section-index">01</span>Button System 2.0</h2><p>Command ativa. Intelligence investiga. Execute transforma estado. Cada família tem anatomia e resposta próprias.</p><div class="compare-label">CURRENT · VARIANTES DO CATÁLOGO</div><div class="old sample-row">${['default', 'secondary', 'outline', 'ghost', 'destructive', 'link'].map((t, i) => `<span style="padding:10px 16px;border-radius:8px;border:1px solid #ccc;background:${i === 0 ? '#d4af37' : i === 4 ? '#ef4444' : i === 3 ? 'transparent' : '#fff'};color:${i === 4 ? 'white' : '#0b132b'};font-size:12px">${t}</span>`).join('')}</div><div class="compare-label after" style="margin-top:24px">PROPOSED · FAMÍLIAS POR INTENÇÃO</div><div class="sample-row">${[
+      ['Primary', 'primary', 'Nova oportunidade →', 'create'],
+      ['Secondary', '', 'Salvar rascunho', 'save'],
+      ['Ghost', 'ghost', 'Ver detalhes ↗', 'detail'],
+      ['Outline', 'outline', 'Exportar seleção', 'export'],
+      ['Intelligence', 'intelligence', '✦ Explicar variação', 'intelligence'],
+      ['Generate', 'generate', '✦ Gerar análise', 'generate'],
+      ['Execute', 'execute', 'Executar →', 'demo-execute'],
+      ['Destructive', 'destructive', 'Excluir registro', 'destructive'],
+      ['Morph', 'outline', 'Conectar', 'connect'],
+    ]
+      .map(
+        ([title, cls, label, action]) =>
+          `<div class="sample"><small>${title.toUpperCase()}</small><button class="btn ${cls}" data-demo="${action}">${label}</button></div>`,
+      )
+      .join(
+        '',
+      )}<div class="sample"><small>SPLIT</small><div class="split"><button class="btn primary" data-demo="create">Criar oportunidade</button><button class="btn primary" data-popup="split" aria-label="Outras opções de criação" aria-haspopup="menu">⌄</button></div></div><div class="sample"><small>ICON / INTELLIGENCE</small><button class="btn intelligence icon-btn" data-demo="intelligence" aria-label="Abrir análise">✦</button></div><div class="sample"><small>LOADING</small><button class="btn execute processing" disabled aria-busy="true">Processando</button></div><div class="sample"><small>SUCCESS</small><button class="btn success" disabled>✓ Concluído</button></div><div class="sample"><small>DISABLED</small><button class="btn primary" disabled>Indisponível</button></div></div><div class="compare-label after">ESTADOS SIMULTÂNEOS · MESMA DIMENSÃO E CONTEXTO</div><div class="sample-row">${[
+      ['Idle', ''],
+      ['Hover', 'is-hover'],
+      ['Focus', 'is-focus'],
+      ['Pressed', 'is-pressed'],
+      ['Loading', 'processing'],
+      ['Success', 'success'],
+    ]
+      .map(
+        ([n, c]) =>
+          `<div class="sample"><small>${n}</small><button class="btn execute ${c}" data-demo="demo-execute">${n === 'Loading' ? 'Executando' : n === 'Success' ? '✓ Concluído' : 'Executar →'}</button></div>`,
+      )
+      .join('')}</div><div class="sample-row"><span class="muted">Ícones por função</span>${[
+      ['←', 'navigation', 'Voltar ao Command'],
+      ['⌕', 'utility', 'Buscar'],
+      ['⌘', 'command', 'Abrir comandos'],
+      ['✦', 'ai', 'Investigar'],
+      ['×', 'danger', 'Excluir'],
+      ['↗', 'floating', 'Abrir entidade'],
+      ['≡', 'toolbar', 'Menu da seleção'],
+    ]
+      .map(
+        ([icon, kind, label]) =>
+          `<span class="tooltip-wrap"><button class="icon-${kind} btn icon-btn" aria-label="${label}" data-icon="${kind}">${icon}</button><span class="tooltip" role="tooltip">${label}</span></span>`,
+      )
+      .join(
+        '',
+      )}</div></section><section class="lab-section" id="overlays"><h2><span class="section-index">02</span>Overlay Lab</h2><p>Dialog constrói uma decisão. Drawer mantém a entidade ligada à origem. Popover nasce do acionador. Command emerge como uma entrada global.</p>${currentSample('Overlays interativos', `<div class="sample-row">${['Dialog', 'IntelligenceDialog', 'Drawer', 'BottomSheet', 'Popover', 'Dropdown', 'Tooltip', 'CommandPalette'].map((x) => (x === 'Tooltip' ? '<span class="tooltip-wrap"><button class="btn ghost">Passe o cursor ou foque</button><span role="tooltip" class="tooltip">Evidência disponível · 140ms</span></span>' : `<button class="btn ${x.includes('Intelligence') ? 'intelligence' : 'outline'}" data-overlay="${x}" ${['Popover', 'Dropdown'].includes(x) ? 'aria-haspopup="true"' : ''}>${x} ↗</button>`)).join('')}</div>`, 'Dialog / Drawer / Sheet: superfície + borda + conteúdo')}<div class="state-demo" id="context-zone" tabindex="0" aria-label="Região com menu contextual: pressione Shift F10"><h3>Grupo Porto Real <span class="meta">· contexto da seleção</span></h3><p>Use o botão, clique direito ou Shift + F10 para abrir ações na origem.</p><button class="link" data-popup="context">Ações desta entidade →</button></div></section><section class="lab-section" id="inputs"><h2><span class="section-index">03</span>Input System 2.0</h2><p>Foco responde ao contexto. Labels permanecem legíveis. Comandos inteligentes recebem assinatura Iris.</p>${currentSample('Campos com anatomias próprias', `<div class="form-grid"><label class="field">Default<input placeholder="Nome da empresa"></label><label class="field">Filled<input value="Grupo Porto Real" class="filled"></label><label class="field search-field">Search<input id="component-search" placeholder="Buscar empresas..."></label><label class="field">Command<input placeholder="Criar oportunidade..." data-command-input></label><label class="field ai-field">AI<textarea rows="2" placeholder="Explique a mudança do forecast"></textarea><button class="link iris" data-demo="generate">✦ Analisar contexto</button></label><label class="field">Currency<input inputmode="decimal" value="84.000,00" data-currency><small>BRL · valor da oportunidade</small></label><label class="field">Number<input type="number" value="65" min="0" max="100"></label><label class="field">Date<input type="date" value="2026-09-11"></label><label class="field">Inline edit<input class="inline-edit" value="Contrato anual" data-inline></label><div class="field floating"><input id="floating-email" type="email" placeholder=" "><label for="floating-email">E-mail corporativo</label></div><label class="field">Erro de validação<input value="contato@" type="email" aria-invalid="true" aria-describedby="email-error"><small id="email-error" class="risk">Informe um e-mail completo.</small></label><label class="field">Disabled<input value="ID definido pelo sistema" disabled></label></div>`, 'Label + Input / Textarea / Select nativo')}<div class="sample-row"><div class="sample"><small>SELECT ACESSÍVEL</small><button class="btn outline" data-popup="select" aria-haspopup="listbox">Negociação ⌄</button></div><div class="sample"><small>SEARCHABLE SELECT</small><button class="btn outline" data-popup="search-select" aria-haspopup="listbox">Selecionar responsável ⌄</button></div><div class="sample"><small>FLOATING LABEL</small><p class="meta">Use o campo de e-mail acima</p></div></div><div class="sample-row">${['Normal', 'AI', 'Automation', 'Privacy', 'Danger'].map((x, i) => `<label class="row"><input class="toggle ${x.toLowerCase()}" type="checkbox" ${i === 1 ? 'checked' : ''} aria-label="${x}"><span>${x}</span></label>`).join('')}</div><div class="sample-row"><label class="row"><input type="checkbox" class="draw-check" checked>Incluir evidências</label><label class="row"><input type="checkbox" class="draw-check">Executar após revisão</label><label class="row"><input type="radio" name="execution-mode" checked>Assistido</label><label class="row"><input type="radio" name="execution-mode">Automático</label></div></section><section class="lab-section"><h2><span class="section-index">04</span>Navegação & estados semânticos</h2>${currentSample('Tabs e indicador compartilhado', `${switcher(['Overview', 'Intelligence', 'Pipeline', 'Automation'], state.workspace)}<div class="sample-row"><div class="segmented">${['Dia', 'Semana', 'Mês'].map((x, i) => `<button data-local-tab class="${i === 1 ? 'active' : ''}">${x}</button>`).join('')}</div><div class="context-tabs"><button class="active" data-local-tab>Entidade</button><button data-local-tab>Relações</button><button data-local-tab>Histórico</button></div></div>`, 'TabNavCards: cartões de navegação')}<div class="meta" id="tab-context">Contexto ativo: ${state.workspace}</div>${currentSample('Badges semânticos', `<div class="sample-row"><span class="badge-status">Em andamento</span><span class="badge-priority">P1 · Prioridade</span><span class="badge-risk">RISCO ALTO</span><span class="confidence"><i></i>87% confiança</span><span class="badge-ai">✦ Inferência</span><span class="badge-live">● Ao vivo</span><span class="positive mono">↑ 14,2%</span></div>`, 'default / success / warning / neon / gradient')}<h3>Table 2.0</h3><p class="meta">Ordene por valor, filtre, selecione e expanda. A coluna Empresa permite redimensionamento no controle abaixo.</p><label class="field" style="max-width:230px;margin-top:14px">Largura da coluna Empresa <input id="column-width" type="range" min="190" max="440" value="270"></label>${ledger()}</section><section class="lab-section" id="states"><h2><span class="section-index">05</span>Feedback, loading e recuperação</h2>${currentSample('Toast contextual', `<div class="sample-row"><button class="btn outline" data-toast="success">Success + Undo</button><button class="btn outline" data-toast="error">Error + Retry</button><button class="btn execute" data-toast="loading">Loading → completo</button></div>`, 'Toast com ícone e mensagem')}<div class="sample-row"><div class="sample"><small>TABLE SKELETON</small><div style="width:220px"><div class="skeleton" style="width:80%"></div><div class="skeleton"></div><div class="skeleton" style="width:90%"></div></div></div><div class="sample"><small>INLINE PROGRESS</small><div class="inline-progress"><i></i></div></div><div class="sample"><small>INTELLIGENCE PROCESSING</small><div class="orbit-loader" aria-label="Analisando evidências" role="status"><span>✦</span></div></div><div class="sample"><small>AI THINKING</small><span class="thinking" role="status">Conectando evidências<span>•••</span></span></div><div class="sample"><small>PIPELINE PROCESSING</small><div class="pipeline-processing"><i></i><i></i><i></i></div></div></div><p class="meta">A exibição simultânea serve apenas à comparação no laboratório. No produto, escolher uma experiência de loading por contexto; nunca usar todas juntas.</p><div class="sample-row"><button class="btn outline" data-loading-anatomy="metric">Métrica</button><button class="btn outline" data-loading-anatomy="profile">Perfil</button><button class="btn outline" data-loading-anatomy="chart">Gráfico</button></div><div id="loading-anatomy"></div><div class="sample-row"><span class="strategic" id="live-value" style="font-size:28px">1.280</span><button class="link" id="update-live">Simular atualização +4 →</button><small>CountUp apenas quando o valor muda.</small></div>${[
+      [
+        'FirstUseState',
+        'Sua primeira automação começa com um sinal.',
+        'Escolha uma origem e mantenha a execução assistida.',
+        'create',
+      ],
+      [
+        'NoResultsState',
+        'Nenhuma empresa corresponde à busca.',
+        'Revise o termo; os registros existentes continuam disponíveis.',
+        'clear',
+      ],
+      [
+        'FilteredEmptyState',
+        'Este recorte não contém oportunidades.',
+        'Remova os filtros para ampliar o contexto.',
+        'clear',
+      ],
+      [
+        'DisconnectedState',
+        'CRM desconectado.',
+        'Os dados desta superfície não podem ser atualizados.',
+        'connect',
+      ],
+      [
+        'ErrorState',
+        'Não foi possível atualizar a projeção.',
+        'Última leitura preservada; nenhuma alteração foi enviada.',
+        'retry',
+      ],
+      [
+        'CompletedState',
+        'Fila demonstrativa concluída.',
+        'Tarefas registradas. Aguardar evidência do resultado comercial.',
+        'activity',
+      ],
+    ]
+      .map(
+        ([n, t, p, a]) =>
+          `<div class="state-demo"><small>${n}</small><h3 style="margin-top:8px">${t}</h3><p>${p}</p><button class="link" data-state="${a}">${a === 'retry' ? 'Tentar novamente' : a === 'clear' ? 'Limpar contexto' : a === 'connect' ? 'Reconectar' : a === 'activity' ? 'Ver registro' : 'Criar primeira automação'} →</button></div>`,
+      )
+      .join(
+        '',
+      )}</section><section class="lab-section" id="tokens"><h2><span class="section-index">06</span>Assinatura visual & motion tokens</h2><p>Sora em headings e valores estratégicos; Inter nas tarefas densas; IBM Plex Mono em identificadores e medidas técnicas.</p><div class="token-table">${[
+      ['Antique Gold', '#d4af37', 'Foco, prioridade, trajetória e ativação.'],
+      ['Obsidian', '#0b132b', 'Base e contraste das ações.'],
+      ['Deep Iris', '#5b21b6', 'Inferência e modelagem; texto com tom claro acessível.'],
+      ['Orbit Blue', '#0065d2', 'Dados, conexões e fluxo.'],
+    ]
+      .map(
+        ([n, c, d]) =>
+          `<div><div class="swatch" style="background:${c}"></div>${n}<small>${c} · ${d}</small></div>`,
+      )
+      .join('')}</div><div class="token-table">${[
+      ['motion-fast', '140ms'],
+      ['motion-base', '240ms'],
+      ['motion-slow', '420ms'],
+      ['hoverLift', '−2px'],
+      ['pressScale', '0.97'],
+      ['magneticStrength', '3px / só comando'],
+      ['glowIntensity', '0.12 / IA'],
+      ['highlightSpeed', '650ms / hover'],
+    ]
+      .map(([k, v]) => `<div>${k}<small class="mono">${v}</small></div>`)
+      .join(
+        '',
+      )}</div><div class="depth-levels">${['0 · Canvas', '1 · Surface', '2 · Interactive', '3 · Popover', '4 · Dialog', '5 · Critical'].map((x, i) => `<div style="transform:translateY(${-i * 4}px);box-shadow:0 ${i * 3}px ${i * 8}px #0004">${x}</div>`).join('')}</div><div class="sample-row"><span>Bordas:</span>${['neutral', 'active', 'focus', 'intelligence', 'risk', 'selected'].map((x) => `<span class="border-demo border-${x}">${x}</span>`).join('')}</div><label class="row"><input type="checkbox" class="toggle" id="sound-toggle" ${state.sound ? 'checked' : ''}>Sound Effects · ${state.sound ? 'ON' : 'OFF'}</label><p class="meta" style="margin-top:14px">O produto já possui SoundFX. Aqui, som é opcional e desligado por padrão; reservado a conclusão de automação, alerta crítico e ativação de voz. Não toca em navegação ou foco.</p></section>`
+  );
+};
+const microRules = [
+  ['Magnetic', 'Só ação principal; máximo 3px, desligado no toque e movimento reduzido.'],
+  ['Shimmer', 'Loading de dados; interromper ao resolver ou falhar.'],
+  ['BorderTrace', 'Somente hover/focus de outline, sem loop contínuo.'],
+  ['Pulse', 'Atualização ou estado ao vivo; nunca decorar um valor estático.'],
+  ['Glow', 'IA ativa; opacidade baixa, sem neon.'],
+  ['Reveal', 'Metadados secundários em hover, foco ou seleção.'],
+  ['Collapse', 'Detalhes inline preservando a posição da entidade.'],
+  ['Morph', 'Transição de estado sem trocar o controle ou perder foco.'],
+  ['Spring', 'Sheet e toggle, curta e amortecida.'],
+  ['SharedIndicator', 'Um indicador viaja entre contextos; não criar outro por item.'],
+  ['CountUp', 'Somente alteração real do dado; valor final anunciado ao leitor.'],
+  ['StrokeDraw', 'Check de confirmação, execução única.'],
+  ['ProgressFill', 'Progresso conhecido; nunca inventar percentuais do servidor.'],
+  ['SuccessMorph', 'Confirmar no próprio acionador.'],
+  ['ErrorShake', 'Uma vez, deslocamento de 3px, com texto de recuperação.'],
+  ['OrbitMotion', 'Processamento de inteligência; parar imediatamente no fim.'],
+  ['Spotlight', 'Foco contextual em momentos específicos; nunca seguir cursor globalmente.'],
+  ['HoverReveal', 'Ações também disponíveis por teclado e toque.'],
+];
+motionPage = function () {
+  return (
+    head('Motion Playground', 'Ajuste a resposta. Observe a relação entre origem e destino.') +
+    `<div class="motion-layout"><div class="motion-controls">${[
+      ['duration', 'Duração', 100, 1000, 10, 'ms'],
+      ['stiffness', 'Spring stiffness', 50, 400, 10, ''],
+      ['damping', 'Spring damping', 5, 50, 1, ''],
+      ['glow', 'Glow', 0, 30, 1, '%'],
+      ['magnetic', 'Magnetic strength', 0, 8, 1, 'px'],
+    ]
+      .map(
+        ([k, l, min, max, step, u]) =>
+          `<label>${l}<output id="out-${k}">${state.motion[k]}${u}</output><input type="range" data-motion="${k}" min="${min}" max="${max}" step="${step}" value="${state.motion[k]}" aria-label="${l}"></label>`,
+      )
+      .join(
+        '',
+      )}<label>Easing<select id="motion-easing">${['standard', 'enter', 'exit', 'spring', 'emphasized'].map((x) => `<option ${state.motion.easing === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label><div class="row"><button class="btn primary" id="play-motion">Reproduzir →</button><button class="link" id="reset-motion">Restaurar</button></div></div><div><div class="motion-stage"><div class="motion-object" id="motion-object">✦</div></div><p class="meta" style="margin-top:16px" id="motion-readout">Duração controla a transição; stiffness e damping controlam a mola. Passe o cursor no comando para sentir o magnetismo.</p><button class="btn primary" id="magnetic-demo" style="margin-top:16px">Ativar comando ↗</button></div></div><section class="lab-section"><h2>Biblioteca de microinterações</h2><p>Efeitos disponíveis dentro de um vocabulário limitado. O uso depende da função, não do desejo de animar.</p><div class="pattern-list">${microRules.map(([n, r]) => `<div class="pattern-entry"><h3>${n}</h3><p>${r}</p><button class="link" data-micro="${n}">Experimentar →</button></div>`).join('')}</div></section><section class="lab-section"><h2>Regras de causalidade</h2><p>Signal → entidade: preservar nome e origem. Métrica → filtro: manter seleção visível. Ação → resultado: controle mantém dimensão, estado e foco. Redução de movimento substitui deslocamento por alteração imediata de estado.</p><div class="notice">Este laboratório usa CSS e Web Animations. Na migração React, reutilizar Framer Motion já presente para shared layout, AnimatePresence, drag e spring quando justificarem a dependência. O alvo de 60fps precisa ser medido no hardware de referência; não é uma certificação deste protótipo.</div></section>`
+  );
+};
+const reduced = () =>
+  document.body.classList.contains('reduce') ||
+  matchMedia('(prefers-reduced-motion: reduce)').matches;
 let lastAnimation;
-function animateMotion(){const el=$('#motion-object');if(!el)return;lastAnimation?.cancel();const m=state.motion;let frames;if(m.easing==='spring'){let x=0,v=0;frames=[];for(let i=0;i<=60;i++){const force=m.stiffness*(1-x)-m.damping*v;v+=force/120;x+=v/120;frames.push({transform:`translateX(${(x-.5)*160}px) scale(${.96+.04*x})`,offset:i/60})}}else frames=[{transform:'translateX(-80px) scale(.96)',opacity:.5},{transform:'translateX(80px) scale(1)',opacity:1}];el.style.boxShadow=`0 0 30px rgba(91,33,182,${m.glow/100})`;lastAnimation=el.animate(reduced()?[{opacity:1},{opacity:1}]:frames,{duration:reduced()?1:m.duration,easing:m.easing==='spring'?'linear':getComputedStyle(document.documentElement).getPropertyValue('--ease-'+m.easing).trim(),fill:'forwards'});$('#motion-readout').textContent=`${m.duration}ms · ease-${m.easing} · stiffness ${m.stiffness} · damping ${m.damping} · glow ${m.glow}% · magnetic ${m.magnetic}px${reduced()?' · movimento reduzido':''}`}
-setupMotion=function(){$$('[data-motion]').forEach(input=>input.oninput=()=>{const k=input.dataset.motion;state.motion[k]=+input.value;$('#out-'+k).textContent=input.value+(k==='duration'?'ms':k==='glow'?'%':k==='magnetic'?'px':'');animateMotion()});$('#motion-easing').onchange=e=>{state.motion.easing=e.target.value;animateMotion()};$('#play-motion').onclick=animateMotion;$('#reset-motion').onclick=()=>{state.motion={duration:420,easing:'standard',stiffness:180,damping:20,glow:12,magnetic:3};render()};const b=$('#magnetic-demo');b.onpointermove=e=>{if(reduced()||e.pointerType!=='mouse')return;const r=b.getBoundingClientRect();b.style.transform=`translate(${((e.clientX-r.left)/r.width-.5)*state.motion.magnetic*2}px,${((e.clientY-r.top)/r.height-.5)*state.motion.magnetic*2}px)`};b.onpointerleave=()=>b.style.transform='';b.onclick=animateMotion;animateMotion()};
-let popup=null;
-function closePopup(){if(popup){const origin=popup._origin;popup.remove();popup=null;origin?.setAttribute('aria-expanded','false');origin?.focus()}}
-function showPopup(origin,type,point){closePopup();const p=document.createElement('div');p.className='popup';p._origin=origin;origin.setAttribute('aria-expanded','true');p.setAttribute('role',['select','search-select'].includes(type)?'listbox':type==='evidence'?'dialog':'menu');p.setAttribute('aria-label',type==='evidence'?'Evidências':'Opções');let items=type==='select'?['Qualificação','Proposta','Negociação','Ganho']:type==='search-select'?['Ana Martins','Lucas Silva','Marina Costa']:type==='split'?['Criar empresa','Criar contato','Criar automação']:['Investigar evidências','Preparar próxima ação','Abrir entidade'];if(type==='evidence'){p.innerHTML='<small class="iris">FONTE · CRM DEMONSTRATIVO</small><p style="font-size:13px;margin:10px 0">Porto Real está há 8 dias sem reunião. Registro de atividade, 02 set.</p><small>Confiança 87% · intenção não confirmada.</small><button>Fechar evidências</button>';$('button',p).onclick=closePopup}else{p.innerHTML=(type==='search-select'?'<input placeholder="Buscar responsável..." aria-label="Buscar responsável">':'')+items.map(x=>`<button role="${['select','search-select'].includes(type)?'option':'menuitem'}">${x}</button>`).join('');$$('button',p).forEach(b=>b.onclick=()=>{const value=b.textContent;closePopup();if(['select','search-select'].includes(type)){origin.textContent=value+' ✓';toast('Seleção: '+value)}else if(type==='split')createRecord(value);else if(value.includes('próxima'))decision(0);else if(value.includes('entidade'))openEntity(0);else showPopup(origin,'evidence')});if($('input',p))$('input',p).oninput=e=>$$('button',p).forEach(b=>b.hidden=!b.textContent.toLowerCase().includes(e.target.value.toLowerCase()))}document.body.append(p);popup=p;const rect=origin.getBoundingClientRect(),x=point?.x??rect.left,y=point?.y??rect.bottom+8;p.style.left=Math.max(12,Math.min(x,innerWidth-p.offsetWidth-12))+'px';p.style.top=Math.max(12,Math.min(y,innerHeight-p.offsetHeight-12))+'px';if(y+p.offsetHeight>innerHeight)p.style.transformOrigin='bottom left';($('input',p)||$('button',p))?.focus();p.onkeydown=e=>{const options=$$('button:not([hidden])',p);let i=options.indexOf(document.activeElement);if(e.key==='Escape'){e.preventDefault();closePopup()}if(['ArrowDown','ArrowUp','Home','End'].includes(e.key)){e.preventDefault();i=e.key==='Home'?0:e.key==='End'?options.length-1:(i+(e.key==='ArrowDown'?1:-1)+options.length)%options.length;options[i]?.focus()}}}
-document.addEventListener('pointerdown',e=>{if(popup&&!popup.contains(e.target)&&!popup._origin.contains(e.target))closePopup()});window.addEventListener('resize',()=>{closePopup();setupIndicators()});
-function createRecord(title='Criar oportunidade'){openModal(title,`<form id="record-form"><label class="field">Nome<input name="name" required placeholder="Nome do registro"></label><label class="field" style="margin-top:18px">Valor estimado<input name="value" type="number" min="0" value="0"></label><p style="margin-top:16px">Registro demonstrativo; não será enviado ao produto.</p><button class="btn primary" type="submit">Criar registro →</button></form>`);$('#record-form').onsubmit=e=>{e.preventDefault();const name=new FormData(e.target).get('name');state.recent.unshift('Criado: '+name);$('#overlay').close();toast('Registro demonstrativo criado: '+name);openModal('Registro criado',`<div class="entity-header"><small>ENTIDADE DEMONSTRATIVA</small><h2>${esc(name)}</h2><p>Registrado nesta sessão do laboratório.</p></div>`)}}
-function demoOverlay(type,origin){if(type==='CommandPalette')return openCommand();if(type==='Drawer')return openEntity(0);if(type==='Popover')return showPopup(origin,'evidence');if(type==='Dropdown')return showPopup(origin,'context');if(type==='IntelligenceDialog')return openModal('Análise de forecast',lens(),'intelligence-dialog');if(type==='BottomSheet'){const d=openModal('Contexto da oportunidade','<p>Grupo Porto Real · R$ 84.000</p><p>Arraste a alça ou use as posições abaixo. Um gesto rápido para baixo fecha o contexto.</p><div class="row"><button class="btn outline" data-snap="peek">Peek</button><button class="btn outline" data-snap="half">Half</button><button class="btn outline" data-snap="full">Full</button></div>','sheet');const handle=document.createElement('button');handle.className='drag-handle';handle.setAttribute('aria-label','Alternar altura do painel');d.prepend(handle);d.style.height='50vh';let start=0,time=0,moved=false;handle.onpointerdown=e=>{start=e.clientY;time=performance.now();moved=false;handle.setPointerCapture(e.pointerId)};handle.onpointermove=e=>{if(!handle.hasPointerCapture(e.pointerId))return;const delta=e.clientY-start;moved=Math.abs(delta)>6;d.style.transform=`translateY(${Math.max(-30,delta)}px)`};handle.onpointerup=e=>{const delta=e.clientY-start,velocity=delta/(performance.now()-time);d.style.transform='';if(delta>120||velocity>.7)d.close();else d.style.height=delta<-40?'90vh':delta>40?'28vh':'50vh'};handle.onclick=()=>{if(!moved)d.style.height=d.style.height==='90vh'?'28vh':d.style.height==='28vh'?'50vh':'90vh'};return}openModal('Revisar oportunidade','<label class="field">Empresa<input value="Grupo Porto Real"></label><label class="field" style="margin-top:18px">Próxima ação<input value="Alinhar com o decisor"></label>','','<button class="btn ghost" data-dismiss>Cancelar</button><button class="btn primary" data-save-modal>Salvar alteração →</button>')}
-async function morphButton(b,loading,done,callback){if(b.disabled)return;b.disabled=true;b.style.minWidth=b.offsetWidth+'px';b.setAttribute('aria-busy','true');b.classList.add('processing');b.textContent=loading;await new Promise(r=>setTimeout(r,1200));if(!b.isConnected)return;b.classList.remove('processing');b.classList.add('success');b.textContent=done;b.setAttribute('aria-busy','false');b.disabled=false;callback?.();if(state.sound)playSound()}
-function destructive(){const d=openModal('Excluir registro demonstrativo','<p>Apenas o registro de exemplo será removido nesta sessão. Nenhum dado do CRM é alterado.</p><p>Mantenha pressionado por 1 segundo ou use a confirmação acessível.</p>','','<button class="btn ghost" data-dismiss>Cancelar</button><button class="btn destructive" id="hold-delete">Mantenha para excluir</button><button class="btn outline" id="confirm-delete">Confirmar exclusão</button>');const b=$('#hold-delete');let timer;const complete=()=>{clearTimeout(timer);d.close();toast('Registro demonstrativo excluído',()=>toast('Registro demonstrativo restaurado'))};b.onpointerdown=()=>{b.classList.add('processing');timer=setTimeout(complete,1000)};const cancel=()=>{clearTimeout(timer);b.classList.remove('processing')};b.onpointerup=cancel;b.onpointerleave=cancel;b.onpointercancel=cancel;$('#confirm-delete').onclick=complete}
-const commands=[{label:'Abrir Central de receita',group:'NAVEGAR',action:()=>{state.workspace='Overview';state.view='after';navigate('command')}},{label:'Abrir Components V2',group:'NAVEGAR',action:()=>navigate('components')},{label:'Abrir Motion Playground',group:'FERRAMENTA',action:()=>navigate('motion')},{label:'Investigar risco do forecast',group:'IA · RECOMENDADO',action:()=>decision(0)},{label:'Grupo Porto Real',group:'EMPRESA',action:()=>openEntity(0)},{label:'Nexus Tecnologia',group:'EMPRESA',action:()=>openEntity(1)},{label:'Criar oportunidade',group:'CRIAR',action:()=>createRecord()},{label:'Criar contato',group:'CRIAR',action:()=>createRecord('Criar contato')},{label:'Executar automação de acompanhamento',group:'PREPARAR AÇÃO',action:()=>decision(0)},{label:'Gerar análise de receita',group:'IA',action:()=>openModal('Análise demonstrativa',lens(),'intelligence-dialog')},{label:'Abrir auditoria dos componentes',group:'FERRAMENTA',action:()=>navigate('audit')}];
-function fuzzy(q,s){q=q.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase();s=s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase();let i=0;for(const c of s)if(c===q[i])i++;return i===q.length}
-openCommand=function(initial=''){const d=$('#overlay');if(d.open)d.close();d.className='command';d.setAttribute('aria-label','Command Dock');d.style.height='';d.innerHTML=`<div class="row" style="padding:0 20px;border-bottom:1px solid var(--line)"><span class="gold">⌘</span><input id="command-query" aria-label="Buscar, navegar ou executar" placeholder="Pergunte, procure ou execute..." autocomplete="off" role="combobox" aria-expanded="true" aria-controls="command-results"><button id="command-close" aria-label="Fechar comandos">Esc</button></div><div class="command-results" id="command-results" role="listbox"></div><div class="command-footer">↑ ↓ navegar　 ↵ selecionar　 Esc fechar · ações apenas no laboratório</div>`;d.showModal();$('#command-close').onclick=()=>d.close();const input=$('#command-query');input.value=initial;input.focus();let matches=[],selected=0;const draw=()=>{matches=commands.filter(c=>fuzzy(input.value,c.label));selected=0;$('#command-results').innerHTML=(!input.value&&state.recent.length?`<div class="meta" style="padding:10px 15px">RECENTES · ${esc(state.recent.slice(0,2).join(' / '))}</div>`:'')+(matches.length?matches.map((c,i)=>`<button id="command-result-${i}" class="${i===0?'active':''}" role="option" aria-selected="${i===0}" data-command-index="${i}"><span>${c.group.includes('IA')?'✦':'↗'}</span>${c.label}<small>${c.group}</small></button>`).join(''):'<p style="padding:20px">Nenhum comando encontrado. Experimente “forecast”, “criar” ou “motion”.</p>');input.setAttribute('aria-activedescendant',matches.length?'command-result-0':'');$$('[data-command-index]').forEach(b=>b.onclick=()=>run(+b.dataset.commandIndex))};const run=i=>{const c=matches[i];if(!c)return;state.recent.unshift(c.label);d.close();c.action()};input.oninput=draw;input.onkeydown=e=>{if(['ArrowDown','ArrowUp'].includes(e.key)&&matches.length){e.preventDefault();selected=(selected+(e.key==='ArrowDown'?1:-1)+matches.length)%matches.length;$$('[data-command-index]').forEach((b,i)=>{b.classList.toggle('active',i===selected);b.setAttribute('aria-selected',i===selected)});input.setAttribute('aria-activedescendant','command-result-'+selected);$('#command-result-'+selected).scrollIntoView({block:'nearest'})}if(e.key==='Enter'){e.preventDefault();run(selected)}};draw()};
-document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()}if(e.shiftKey&&e.key==='F10'&&e.target.id==='context-zone'){e.preventDefault();showPopup(e.target,'context')}});
+function animateMotion() {
+  const el = $('#motion-object');
+  if (!el) return;
+  lastAnimation?.cancel();
+  const m = state.motion;
+  let frames;
+  if (m.easing === 'spring') {
+    let x = 0,
+      v = 0;
+    frames = [];
+    for (let i = 0; i <= 60; i++) {
+      const force = m.stiffness * (1 - x) - m.damping * v;
+      v += force / 120;
+      x += v / 120;
+      frames.push({
+        transform: `translateX(${(x - 0.5) * 160}px) scale(${0.96 + 0.04 * x})`,
+        offset: i / 60,
+      });
+    }
+  } else
+    frames = [
+      { transform: 'translateX(-80px) scale(.96)', opacity: 0.5 },
+      { transform: 'translateX(80px) scale(1)', opacity: 1 },
+    ];
+  el.style.boxShadow = `0 0 30px rgba(91,33,182,${m.glow / 100})`;
+  lastAnimation = el.animate(reduced() ? [{ opacity: 1 }, { opacity: 1 }] : frames, {
+    duration: reduced() ? 1 : m.duration,
+    easing:
+      m.easing === 'spring'
+        ? 'linear'
+        : getComputedStyle(document.documentElement)
+            .getPropertyValue('--ease-' + m.easing)
+            .trim(),
+    fill: 'forwards',
+  });
+  $('#motion-readout').textContent =
+    `${m.duration}ms · ease-${m.easing} · stiffness ${m.stiffness} · damping ${m.damping} · glow ${m.glow}% · magnetic ${m.magnetic}px${reduced() ? ' · movimento reduzido' : ''}`;
+}
+setupMotion = function () {
+  $$('[data-motion]').forEach(
+    (input) =>
+      (input.oninput = () => {
+        const k = input.dataset.motion;
+        state.motion[k] = +input.value;
+        $('#out-' + k).textContent =
+          input.value +
+          (k === 'duration' ? 'ms' : k === 'glow' ? '%' : k === 'magnetic' ? 'px' : '');
+        animateMotion();
+      }),
+  );
+  $('#motion-easing').onchange = (e) => {
+    state.motion.easing = e.target.value;
+    animateMotion();
+  };
+  $('#play-motion').onclick = animateMotion;
+  $('#reset-motion').onclick = () => {
+    state.motion = {
+      duration: 420,
+      easing: 'standard',
+      stiffness: 180,
+      damping: 20,
+      glow: 12,
+      magnetic: 3,
+    };
+    render();
+  };
+  const b = $('#magnetic-demo');
+  b.onpointermove = (e) => {
+    if (reduced() || e.pointerType !== 'mouse') return;
+    const r = b.getBoundingClientRect();
+    b.style.transform = `translate(${((e.clientX - r.left) / r.width - 0.5) * state.motion.magnetic * 2}px,${((e.clientY - r.top) / r.height - 0.5) * state.motion.magnetic * 2}px)`;
+  };
+  b.onpointerleave = () => (b.style.transform = '');
+  b.onclick = animateMotion;
+  animateMotion();
+};
+let popup = null;
+function closePopup() {
+  if (popup) {
+    const origin = popup._origin;
+    popup.remove();
+    popup = null;
+    origin?.setAttribute('aria-expanded', 'false');
+    origin?.focus();
+  }
+}
+function showPopup(origin, type, point) {
+  closePopup();
+  const p = document.createElement('div');
+  p.className = 'popup';
+  p._origin = origin;
+  origin.setAttribute('aria-expanded', 'true');
+  p.setAttribute(
+    'role',
+    ['select', 'search-select'].includes(type)
+      ? 'listbox'
+      : type === 'evidence'
+        ? 'dialog'
+        : 'menu',
+  );
+  p.setAttribute('aria-label', type === 'evidence' ? 'Evidências' : 'Opções');
+  let items =
+    type === 'select'
+      ? ['Qualificação', 'Proposta', 'Negociação', 'Ganho']
+      : type === 'search-select'
+        ? ['Ana Martins', 'Lucas Silva', 'Marina Costa']
+        : type === 'split'
+          ? ['Criar empresa', 'Criar contato', 'Criar automação']
+          : ['Investigar evidências', 'Preparar próxima ação', 'Abrir entidade'];
+  if (type === 'evidence') {
+    p.innerHTML =
+      '<small class="iris">FONTE · CRM DEMONSTRATIVO</small><p style="font-size:13px;margin:10px 0">Porto Real está há 8 dias sem reunião. Registro de atividade, 02 set.</p><small>Confiança 87% · intenção não confirmada.</small><button>Fechar evidências</button>';
+    $('button', p).onclick = closePopup;
+  } else {
+    p.innerHTML =
+      (type === 'search-select'
+        ? '<input placeholder="Buscar responsável..." aria-label="Buscar responsável">'
+        : '') +
+      items
+        .map(
+          (x) =>
+            `<button role="${['select', 'search-select'].includes(type) ? 'option' : 'menuitem'}">${x}</button>`,
+        )
+        .join('');
+    $$('button', p).forEach(
+      (b) =>
+        (b.onclick = () => {
+          const value = b.textContent;
+          closePopup();
+          if (['select', 'search-select'].includes(type)) {
+            origin.textContent = value + ' ✓';
+            toast('Seleção: ' + value);
+          } else if (type === 'split') createRecord(value);
+          else if (value.includes('próxima')) decision(0);
+          else if (value.includes('entidade')) openEntity(0);
+          else showPopup(origin, 'evidence');
+        }),
+    );
+    if ($('input', p))
+      $('input', p).oninput = (e) =>
+        $$('button', p).forEach(
+          (b) => (b.hidden = !b.textContent.toLowerCase().includes(e.target.value.toLowerCase())),
+        );
+  }
+  document.body.append(p);
+  popup = p;
+  const rect = origin.getBoundingClientRect(),
+    x = point?.x ?? rect.left,
+    y = point?.y ?? rect.bottom + 8;
+  p.style.left = Math.max(12, Math.min(x, innerWidth - p.offsetWidth - 12)) + 'px';
+  p.style.top = Math.max(12, Math.min(y, innerHeight - p.offsetHeight - 12)) + 'px';
+  if (y + p.offsetHeight > innerHeight) p.style.transformOrigin = 'bottom left';
+  ($('input', p) || $('button', p))?.focus();
+  p.onkeydown = (e) => {
+    const options = $$('button:not([hidden])', p);
+    let i = options.indexOf(document.activeElement);
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closePopup();
+    }
+    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      i =
+        e.key === 'Home'
+          ? 0
+          : e.key === 'End'
+            ? options.length - 1
+            : (i + (e.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length;
+      options[i]?.focus();
+    }
+  };
+}
+document.addEventListener('pointerdown', (e) => {
+  if (popup && !popup.contains(e.target) && !popup._origin.contains(e.target)) closePopup();
+});
+window.addEventListener('resize', () => {
+  closePopup();
+  setupIndicators();
+});
+function createRecord(title = 'Criar oportunidade') {
+  openModal(
+    title,
+    `<form id="record-form"><label class="field">Nome<input name="name" required placeholder="Nome do registro"></label><label class="field" style="margin-top:18px">Valor estimado<input name="value" type="number" min="0" value="0"></label><p style="margin-top:16px">Registro demonstrativo; não será enviado ao produto.</p><button class="btn primary" type="submit">Criar registro →</button></form>`,
+  );
+  $('#record-form').onsubmit = (e) => {
+    e.preventDefault();
+    const name = new FormData(e.target).get('name');
+    state.recent.unshift('Criado: ' + name);
+    $('#overlay').close();
+    toast('Registro demonstrativo criado: ' + name);
+    openModal(
+      'Registro criado',
+      `<div class="entity-header"><small>ENTIDADE DEMONSTRATIVA</small><h2>${esc(name)}</h2><p>Registrado nesta sessão do laboratório.</p></div>`,
+    );
+  };
+}
+function demoOverlay(type, origin) {
+  if (type === 'CommandPalette') return openCommand();
+  if (type === 'Drawer') return openEntity(0);
+  if (type === 'Popover') return showPopup(origin, 'evidence');
+  if (type === 'Dropdown') return showPopup(origin, 'context');
+  if (type === 'IntelligenceDialog')
+    return openModal('Análise de forecast', lens(), 'intelligence-dialog');
+  if (type === 'BottomSheet') {
+    const d = openModal(
+      'Contexto da oportunidade',
+      '<p>Grupo Porto Real · R$ 84.000</p><p>Arraste a alça ou use as posições abaixo. Um gesto rápido para baixo fecha o contexto.</p><div class="row"><button class="btn outline" data-snap="peek">Peek</button><button class="btn outline" data-snap="half">Half</button><button class="btn outline" data-snap="full">Full</button></div>',
+      'sheet',
+    );
+    const handle = document.createElement('button');
+    handle.className = 'drag-handle';
+    handle.setAttribute('aria-label', 'Alternar altura do painel');
+    d.prepend(handle);
+    d.style.height = '50vh';
+    let start = 0,
+      time = 0,
+      moved = false;
+    handle.onpointerdown = (e) => {
+      start = e.clientY;
+      time = performance.now();
+      moved = false;
+      handle.setPointerCapture(e.pointerId);
+    };
+    handle.onpointermove = (e) => {
+      if (!handle.hasPointerCapture(e.pointerId)) return;
+      const delta = e.clientY - start;
+      moved = Math.abs(delta) > 6;
+      d.style.transform = `translateY(${Math.max(-30, delta)}px)`;
+    };
+    handle.onpointerup = (e) => {
+      const delta = e.clientY - start,
+        velocity = delta / (performance.now() - time);
+      d.style.transform = '';
+      if (delta > 120 || velocity > 0.7) d.close();
+      else d.style.height = delta < -40 ? '90vh' : delta > 40 ? '28vh' : '50vh';
+    };
+    handle.onclick = () => {
+      if (!moved)
+        d.style.height =
+          d.style.height === '90vh' ? '28vh' : d.style.height === '28vh' ? '50vh' : '90vh';
+    };
+    return;
+  }
+  openModal(
+    'Revisar oportunidade',
+    '<label class="field">Empresa<input value="Grupo Porto Real"></label><label class="field" style="margin-top:18px">Próxima ação<input value="Alinhar com o decisor"></label>',
+    '',
+    '<button class="btn ghost" data-dismiss>Cancelar</button><button class="btn primary" data-save-modal>Salvar alteração →</button>',
+  );
+}
+async function morphButton(b, loading, done, callback) {
+  if (b.disabled) return;
+  b.disabled = true;
+  b.style.minWidth = b.offsetWidth + 'px';
+  b.setAttribute('aria-busy', 'true');
+  b.classList.add('processing');
+  b.textContent = loading;
+  await new Promise((r) => setTimeout(r, 1200));
+  if (!b.isConnected) return;
+  b.classList.remove('processing');
+  b.classList.add('success');
+  b.textContent = done;
+  b.setAttribute('aria-busy', 'false');
+  b.disabled = false;
+  callback?.();
+  if (state.sound) playSound();
+}
+function destructive() {
+  const d = openModal(
+    'Excluir registro demonstrativo',
+    '<p>Apenas o registro de exemplo será removido nesta sessão. Nenhum dado do CRM é alterado.</p><p>Mantenha pressionado por 1 segundo ou use a confirmação acessível.</p>',
+    '',
+    '<button class="btn ghost" data-dismiss>Cancelar</button><button class="btn destructive" id="hold-delete">Mantenha para excluir</button><button class="btn outline" id="confirm-delete">Confirmar exclusão</button>',
+  );
+  const b = $('#hold-delete');
+  let timer;
+  const complete = () => {
+    clearTimeout(timer);
+    d.close();
+    toast('Registro demonstrativo excluído', () => toast('Registro demonstrativo restaurado'));
+  };
+  b.onpointerdown = () => {
+    b.classList.add('processing');
+    timer = setTimeout(complete, 1000);
+  };
+  const cancel = () => {
+    clearTimeout(timer);
+    b.classList.remove('processing');
+  };
+  b.onpointerup = cancel;
+  b.onpointerleave = cancel;
+  b.onpointercancel = cancel;
+  $('#confirm-delete').onclick = complete;
+}
+const commands = [
+  {
+    label: 'Abrir Central de receita',
+    group: 'NAVEGAR',
+    action: () => {
+      state.workspace = 'Overview';
+      state.view = 'after';
+      navigate('command');
+    },
+  },
+  { label: 'Abrir Components V2', group: 'NAVEGAR', action: () => navigate('components') },
+  { label: 'Abrir Motion Playground', group: 'FERRAMENTA', action: () => navigate('motion') },
+  { label: 'Investigar risco do forecast', group: 'IA · RECOMENDADO', action: () => decision(0) },
+  { label: 'Grupo Porto Real', group: 'EMPRESA', action: () => openEntity(0) },
+  { label: 'Nexus Tecnologia', group: 'EMPRESA', action: () => openEntity(1) },
+  { label: 'Criar oportunidade', group: 'CRIAR', action: () => createRecord() },
+  { label: 'Criar contato', group: 'CRIAR', action: () => createRecord('Criar contato') },
+  {
+    label: 'Executar automação de acompanhamento',
+    group: 'PREPARAR AÇÃO',
+    action: () => decision(0),
+  },
+  {
+    label: 'Gerar análise de receita',
+    group: 'IA',
+    action: () => openModal('Análise demonstrativa', lens(), 'intelligence-dialog'),
+  },
+  {
+    label: 'Abrir auditoria dos componentes',
+    group: 'FERRAMENTA',
+    action: () => navigate('audit'),
+  },
+];
+function fuzzy(q, s) {
+  q = q
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase();
+  s = s
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase();
+  let i = 0;
+  for (const c of s) if (c === q[i]) i++;
+  return i === q.length;
+}
+openCommand = function (initial = '') {
+  const d = $('#overlay');
+  if (d.open) d.close();
+  d.className = 'command';
+  d.setAttribute('aria-label', 'Command Dock');
+  d.style.height = '';
+  d.innerHTML = `<div class="row" style="padding:0 20px;border-bottom:1px solid var(--line)"><span class="gold">⌘</span><input id="command-query" aria-label="Buscar, navegar ou executar" placeholder="Pergunte, procure ou execute..." autocomplete="off" role="combobox" aria-expanded="true" aria-controls="command-results"><button id="command-close" aria-label="Fechar comandos">Esc</button></div><div class="command-results" id="command-results" role="listbox"></div><div class="command-footer">↑ ↓ navegar　 ↵ selecionar　 Esc fechar · ações apenas no laboratório</div>`;
+  d.showModal();
+  $('#command-close').onclick = () => d.close();
+  const input = $('#command-query');
+  input.value = initial;
+  input.focus();
+  let matches = [],
+    selected = 0;
+  const draw = () => {
+    matches = commands.filter((c) => fuzzy(input.value, c.label));
+    selected = 0;
+    $('#command-results').innerHTML =
+      (!input.value && state.recent.length
+        ? `<div class="meta" style="padding:10px 15px">RECENTES · ${esc(state.recent.slice(0, 2).join(' / '))}</div>`
+        : '') +
+      (matches.length
+        ? matches
+            .map(
+              (c, i) =>
+                `<button id="command-result-${i}" class="${i === 0 ? 'active' : ''}" role="option" aria-selected="${i === 0}" data-command-index="${i}"><span>${c.group.includes('IA') ? '✦' : '↗'}</span>${c.label}<small>${c.group}</small></button>`,
+            )
+            .join('')
+        : '<p style="padding:20px">Nenhum comando encontrado. Experimente “forecast”, “criar” ou “motion”.</p>');
+    input.setAttribute('aria-activedescendant', matches.length ? 'command-result-0' : '');
+    $$('[data-command-index]').forEach((b) => (b.onclick = () => run(+b.dataset.commandIndex)));
+  };
+  const run = (i) => {
+    const c = matches[i];
+    if (!c) return;
+    state.recent.unshift(c.label);
+    d.close();
+    c.action();
+  };
+  input.oninput = draw;
+  input.onkeydown = (e) => {
+    if (['ArrowDown', 'ArrowUp'].includes(e.key) && matches.length) {
+      e.preventDefault();
+      selected = (selected + (e.key === 'ArrowDown' ? 1 : -1) + matches.length) % matches.length;
+      $$('[data-command-index]').forEach((b, i) => {
+        b.classList.toggle('active', i === selected);
+        b.setAttribute('aria-selected', i === selected);
+      });
+      input.setAttribute('aria-activedescendant', 'command-result-' + selected);
+      $('#command-result-' + selected).scrollIntoView({ block: 'nearest' });
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      run(selected);
+    }
+  };
+  draw();
+};
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    openCommand();
+  }
+  if (e.shiftKey && e.key === 'F10' && e.target.id === 'context-zone') {
+    e.preventDefault();
+    showPopup(e.target, 'context');
+  }
+});
 let recognition;
-$('#voice').onclick=()=>{const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){openCommand();toast('Voz indisponível neste navegador. Digite seu comando.',null,true);return}openModal('Comando por voz','<p>O navegador poderá processar o áudio usando seu serviço de reconhecimento. O laboratório usa apenas a transcrição para buscar comandos.</p>','','<button class="btn primary" id="start-voice">Ativar microfone</button>');$('#start-voice').onclick=()=>{recognition=new Speech();recognition.lang='pt-BR';recognition.interimResults=false;recognition.onresult=e=>openCommand(e.results[0][0].transcript);recognition.onerror=e=>{openCommand();toast('Não foi possível usar voz: '+e.error+'. Digite o comando.',null,true)};recognition.onend=()=>recognition=null;$('#overlay').close();recognition.start();toast('Escutando um comando. A navegação ocorrerá após a seleção.');if(state.sound)playSound()}};
-function playSound(){if(!state.sound)return;try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(520,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(780,ctx.currentTime+.14);g.gain.setValueAtTime(.025,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.19);o.onended=()=>ctx.close()}catch{toast('Som indisponível neste navegador',null,true)}}
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.audit){state.audit=b.dataset.audit;render()}if(b.dataset.demo){const a=b.dataset.demo;if(a==='create')createRecord();else if(a==='destructive')destructive();else if(a==='intelligence')demoOverlay('IntelligenceDialog',b);else if(a==='detail')openEntity(0);else if(a==='generate')morphButton(b,'Conectando evidências','✓ Análise pronta',()=>openModal('Análise gerada',lens(),'intelligence-dialog'));else if(a==='export'){const blob=new Blob(['empresa,valor,etapa\nGrupo Porto Real,84000,Negociação\nNexus Tecnologia,68000,Proposta'],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='oportunidades-demonstrativas.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Seleção demonstrativa exportada')}else morphButton(b,a==='connect'?'Conectando':'Executando',a==='connect'?'● Conectado (demo)':a==='save'?'✓ Salvo':'✓ Concluído')}if(b.dataset.overlay)demoOverlay(b.dataset.overlay,b);if(b.dataset.popup)showPopup(b,b.dataset.popup);if(b.hasAttribute('data-dismiss'))$('#overlay').close();if(b.hasAttribute('data-save-modal'))morphButton(b,'Salvando','✓ Salvo',()=>{toast('Alteração salva na demonstração');$('#overlay').close()});if(b.dataset.snap)$('#overlay').style.height={peek:'28vh',half:'50vh',full:'90vh'}[b.dataset.snap];if(b.hasAttribute('data-local-tab')){$$('button',b.parentElement).forEach(x=>x.classList.toggle('active',x===b));$('#tab-context').textContent='Contexto ativo: '+b.textContent}if(b.dataset.icon){const t=b.dataset.icon;if(t==='navigation')navigate('command');else if(t==='danger')destructive();else if(t==='ai')demoOverlay('IntelligenceDialog',b);else if(t==='floating')openEntity(0);else if(t==='toolbar')showPopup(b,'context');else openCommand()}if(b.dataset.toast){if(b.dataset.toast==='error')toast('Falha ao atualizar. Última leitura preservada.',()=>toast('Nova tentativa concluída (demo)'),true,'Tentar novamente');else if(b.dataset.toast==='loading')morphButton(b,'Atualizando','✓ Atualizado',()=>toast('Atualização demonstrativa concluída'));else toast('Tarefa adicionada à fila demonstrativa',()=>toast('Inclusão desfeita'))}if(b.dataset.state){const a=b.dataset.state;if(a==='clear'){state.filter='';toast('Filtros removidos')}else if(a==='retry')morphButton(b,'Tentando novamente','✓ Dados recuperados');else if(a==='connect')morphButton(b,'Conectando','● Conectado (demo)');else if(a==='activity')openModal('Registro de atividades','<p>Estado de exemplo: execução concluída; resultado comercial pendente de medição.</p>');else createRecord('Criar automação')}if(b.dataset.loadingAnatomy){const type=b.dataset.loadingAnatomy;$('#loading-anatomy').innerHTML=type==='metric'?'<div class="ribbon">'+[1,2,3].map(()=>'<div class="metric"><div class="skeleton" style="width:60px"></div><div class="skeleton" style="width:100px;height:32px"></div></div>').join('')+'</div>':type==='profile'?'<div class="row"><div class="skeleton" style="width:45px;height:45px;border-radius:50%"></div><div><div class="skeleton" style="width:160px"></div><div class="skeleton" style="width:100px"></div></div></div>':'<div style="height:160px;border-left:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:end;gap:24px;padding:20px">'+[30,45,70,90,110].map(h=>`<div class="skeleton" style="width:32px;height:${h}px"></div>`).join('')+'</div>'}if(b.id==='update-live'){const el=$('#live-value'),from=+(el.textContent.replace('.','')),to=from+4;let start=performance.now();function tick(t){const p=Math.min(1,(t-start)/500);el.textContent=Math.round(from+(to-from)*p).toLocaleString('pt-BR');if(p<1&&!reduced())requestAnimationFrame(tick);else el.textContent=to.toLocaleString('pt-BR')}requestAnimationFrame(tick);el.classList.add('data-updated');setTimeout(()=>el.classList.remove('data-updated'),700);toast('Valor atualizado: '+to.toLocaleString('pt-BR'))}});
-document.addEventListener('change',e=>{if(e.target.id==='sound-toggle'){state.sound=e.target.checked;toast('Efeitos sonoros '+(state.sound?'ativados':'desativados'));if(state.sound)playSound()}if(e.target.hasAttribute('data-currency')){const number=Number(e.target.value.replaceAll('.','').replace(',','.'));if(Number.isFinite(number))e.target.value=number.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}if(e.target.hasAttribute('data-inline'))toast('Edição local salva: '+e.target.value)});
-document.addEventListener('input',e=>{if(e.target.id==='column-width'){$$('.ledger th:first-child,.ledger td:first-child').forEach(el=>el.style.minWidth=e.target.value+'px')}if(e.target.id==='component-search'){const found=deals.filter(d=>d.name.toLowerCase().includes(e.target.value.toLowerCase()));let info=$('#search-feedback');if(!info){info=document.createElement('small');info.id='search-feedback';info.setAttribute('role','status');e.target.parentElement.append(info)}info.textContent=found.length?found.map(x=>x.name).join(' · '):'Nenhuma empresa encontrada'}});
-document.addEventListener('contextmenu',e=>{if(e.target.closest('#context-zone')){e.preventDefault();showPopup($('#context-zone'),'context',{x:e.clientX,y:e.clientY})}});
+$('#voice').onclick = () => {
+  const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Speech) {
+    openCommand();
+    toast('Voz indisponível neste navegador. Digite seu comando.', null, true);
+    return;
+  }
+  openModal(
+    'Comando por voz',
+    '<p>O navegador poderá processar o áudio usando seu serviço de reconhecimento. O laboratório usa apenas a transcrição para buscar comandos.</p>',
+    '',
+    '<button class="btn primary" id="start-voice">Ativar microfone</button>',
+  );
+  $('#start-voice').onclick = () => {
+    recognition = new Speech();
+    recognition.lang = 'pt-BR';
+    recognition.interimResults = false;
+    recognition.onresult = (e) => openCommand(e.results[0][0].transcript);
+    recognition.onerror = (e) => {
+      openCommand();
+      toast('Não foi possível usar voz: ' + e.error + '. Digite o comando.', null, true);
+    };
+    recognition.onend = () => (recognition = null);
+    $('#overlay').close();
+    recognition.start();
+    toast('Escutando um comando. A navegação ocorrerá após a seleção.');
+    if (state.sound) playSound();
+  };
+};
+function playSound() {
+  if (!state.sound) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(),
+      g = ctx.createGain();
+    o.frequency.setValueAtTime(520, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.14);
+    g.gain.setValueAtTime(0.025, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.19);
+    o.onended = () => ctx.close();
+  } catch {
+    toast('Som indisponível neste navegador', null, true);
+  }
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.audit) {
+    state.audit = b.dataset.audit;
+    render();
+  }
+  if (b.dataset.demo) {
+    const a = b.dataset.demo;
+    if (a === 'create') createRecord();
+    else if (a === 'destructive') destructive();
+    else if (a === 'intelligence') demoOverlay('IntelligenceDialog', b);
+    else if (a === 'detail') openEntity(0);
+    else if (a === 'generate')
+      morphButton(b, 'Conectando evidências', '✓ Análise pronta', () =>
+        openModal('Análise gerada', lens(), 'intelligence-dialog'),
+      );
+    else if (a === 'export') {
+      const blob = new Blob(
+        ['empresa,valor,etapa\nGrupo Porto Real,84000,Negociação\nNexus Tecnologia,68000,Proposta'],
+        { type: 'text/csv;charset=utf-8' },
+      );
+      const url = URL.createObjectURL(blob),
+        a = document.createElement('a');
+      a.href = url;
+      a.download = 'oportunidades-demonstrativas.csv';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast('Seleção demonstrativa exportada');
+    } else
+      morphButton(
+        b,
+        a === 'connect' ? 'Conectando' : 'Executando',
+        a === 'connect' ? '● Conectado (demo)' : a === 'save' ? '✓ Salvo' : '✓ Concluído',
+      );
+  }
+  if (b.dataset.overlay) demoOverlay(b.dataset.overlay, b);
+  if (b.dataset.popup) showPopup(b, b.dataset.popup);
+  if (b.hasAttribute('data-dismiss')) $('#overlay').close();
+  if (b.hasAttribute('data-save-modal'))
+    morphButton(b, 'Salvando', '✓ Salvo', () => {
+      toast('Alteração salva na demonstração');
+      $('#overlay').close();
+    });
+  if (b.dataset.snap)
+    $('#overlay').style.height = { peek: '28vh', half: '50vh', full: '90vh' }[b.dataset.snap];
+  if (b.hasAttribute('data-local-tab')) {
+    $$('button', b.parentElement).forEach((x) => x.classList.toggle('active', x === b));
+    $('#tab-context').textContent = 'Contexto ativo: ' + b.textContent;
+  }
+  if (b.dataset.icon) {
+    const t = b.dataset.icon;
+    if (t === 'navigation') navigate('command');
+    else if (t === 'danger') destructive();
+    else if (t === 'ai') demoOverlay('IntelligenceDialog', b);
+    else if (t === 'floating') openEntity(0);
+    else if (t === 'toolbar') showPopup(b, 'context');
+    else openCommand();
+  }
+  if (b.dataset.toast) {
+    if (b.dataset.toast === 'error')
+      toast(
+        'Falha ao atualizar. Última leitura preservada.',
+        () => toast('Nova tentativa concluída (demo)'),
+        true,
+        'Tentar novamente',
+      );
+    else if (b.dataset.toast === 'loading')
+      morphButton(b, 'Atualizando', '✓ Atualizado', () =>
+        toast('Atualização demonstrativa concluída'),
+      );
+    else toast('Tarefa adicionada à fila demonstrativa', () => toast('Inclusão desfeita'));
+  }
+  if (b.dataset.state) {
+    const a = b.dataset.state;
+    if (a === 'clear') {
+      state.filter = '';
+      toast('Filtros removidos');
+    } else if (a === 'retry') morphButton(b, 'Tentando novamente', '✓ Dados recuperados');
+    else if (a === 'connect') morphButton(b, 'Conectando', '● Conectado (demo)');
+    else if (a === 'activity')
+      openModal(
+        'Registro de atividades',
+        '<p>Estado de exemplo: execução concluída; resultado comercial pendente de medição.</p>',
+      );
+    else createRecord('Criar automação');
+  }
+  if (b.dataset.loadingAnatomy) {
+    const type = b.dataset.loadingAnatomy;
+    $('#loading-anatomy').innerHTML =
+      type === 'metric'
+        ? '<div class="ribbon">' +
+          [1, 2, 3]
+            .map(
+              () =>
+                '<div class="metric"><div class="skeleton" style="width:60px"></div><div class="skeleton" style="width:100px;height:32px"></div></div>',
+            )
+            .join('') +
+          '</div>'
+        : type === 'profile'
+          ? '<div class="row"><div class="skeleton" style="width:45px;height:45px;border-radius:50%"></div><div><div class="skeleton" style="width:160px"></div><div class="skeleton" style="width:100px"></div></div></div>'
+          : '<div style="height:160px;border-left:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;align-items:end;gap:24px;padding:20px">' +
+            [30, 45, 70, 90, 110]
+              .map((h) => `<div class="skeleton" style="width:32px;height:${h}px"></div>`)
+              .join('') +
+            '</div>';
+  }
+  if (b.id === 'update-live') {
+    const el = $('#live-value'),
+      from = +el.textContent.replace('.', ''),
+      to = from + 4;
+    let start = performance.now();
+    function tick(t) {
+      const p = Math.min(1, (t - start) / 500);
+      el.textContent = Math.round(from + (to - from) * p).toLocaleString('pt-BR');
+      if (p < 1 && !reduced()) requestAnimationFrame(tick);
+      else el.textContent = to.toLocaleString('pt-BR');
+    }
+    requestAnimationFrame(tick);
+    el.classList.add('data-updated');
+    setTimeout(() => el.classList.remove('data-updated'), 700);
+    toast('Valor atualizado: ' + to.toLocaleString('pt-BR'));
+  }
+});
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'sound-toggle') {
+    state.sound = e.target.checked;
+    toast('Efeitos sonoros ' + (state.sound ? 'ativados' : 'desativados'));
+    if (state.sound) playSound();
+  }
+  if (e.target.hasAttribute('data-currency')) {
+    const number = Number(e.target.value.replaceAll('.', '').replace(',', '.'));
+    if (Number.isFinite(number))
+      e.target.value = number.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+  }
+  if (e.target.hasAttribute('data-inline')) toast('Edição local salva: ' + e.target.value);
+});
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'column-width') {
+    $$('.ledger th:first-child,.ledger td:first-child').forEach(
+      (el) => (el.style.minWidth = e.target.value + 'px'),
+    );
+  }
+  if (e.target.id === 'component-search') {
+    const found = deals.filter((d) => d.name.toLowerCase().includes(e.target.value.toLowerCase()));
+    let info = $('#search-feedback');
+    if (!info) {
+      info = document.createElement('small');
+      info.id = 'search-feedback';
+      info.setAttribute('role', 'status');
+      e.target.parentElement.append(info);
+    }
+    info.textContent = found.length
+      ? found.map((x) => x.name).join(' · ')
+      : 'Nenhuma empresa encontrada';
+  }
+});
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('#context-zone')) {
+    e.preventDefault();
+    showPopup($('#context-zone'), 'context', { x: e.clientX, y: e.clientY });
+  }
+});
 // Page-scoped WebMCP: same navigation and selection as the visible controls.
-const modelContext=document.modelContext;
-if(modelContext?.registerTool){const life=new AbortController();try{Promise.resolve(modelContext.registerTool({name:'navigate_birthub_lab',title:'Abrir área do Design Lab',description:'Navega entre as áreas experimentais do laboratório; não altera o produto.',inputSchema:{type:'object',properties:{page:{type:'string',enum:['command','components','motion','audit','patterns']}},required:['page'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:({page})=>{if(!['command','components','motion','audit','patterns'].includes(page))throw new Error('Área inválida');navigate(page);return{page:state.page}}},{signal:life.signal})).catch(()=>{});window.addEventListener('pagehide',()=>life.abort(),{once:true})}catch{}}
+const modelContext = document.modelContext;
+if (modelContext?.registerTool) {
+  const life = new AbortController();
+  try {
+    Promise.resolve(
+      modelContext.registerTool(
+        {
+          name: 'navigate_birthub_lab',
+          title: 'Abrir área do Design Lab',
+          description: 'Navega entre as áreas experimentais do laboratório; não altera o produto.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              page: {
+                type: 'string',
+                enum: ['command', 'components', 'motion', 'audit', 'patterns'],
+              },
+            },
+            required: ['page'],
+            additionalProperties: false,
+          },
+          annotations: { readOnlyHint: false, untrustedContentHint: false },
+          execute: ({ page }) => {
+            if (!['command', 'components', 'motion', 'audit', 'patterns'].includes(page))
+              throw new Error('Área inválida');
+            navigate(page);
+            return { page: state.page };
+          },
+        },
+        { signal: life.signal },
+      ),
+    ).catch(() => {});
+    window.addEventListener('pagehide', () => life.abort(), { once: true });
+  } catch {}
+}
 render();

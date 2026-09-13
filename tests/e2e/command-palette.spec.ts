@@ -7,7 +7,9 @@ import { signUp, uniqueTestEmail } from './helpers';
 // Fase D do backlog Tier 2). O ponto que este teste verifica especificamente é que o state some da
 // entrada de histórico depois de consumido — sem isso, um F5 na tela reabriria o formulário sozinho.
 test.describe('Command Palette — intenção de navegação (open-create)', () => {
-  test('"Criar nova atividade" navega pra Agenda e abre o formulário; F5 não reabre sozinho', async ({ page }) => {
+  test('"Criar nova atividade" navega pra Agenda e abre o formulário; F5 não reabre sozinho', async ({
+    page,
+  }) => {
     await signUp(page, { email: uniqueTestEmail('palette-intent') });
 
     // Clique na busca do topbar em vez do atalho de teclado Ctrl+K — o Chromium real intercepta

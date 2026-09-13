@@ -14,7 +14,9 @@ import { NotConfiguredBanner } from './NotConfiguredBanner';
 import { getErrorMessage, type PromoteResult } from './shared';
 
 export function ApolloTool({ configured }: { configured: boolean }) {
-  const activeSegments = false ? TOTALTRAC_SEGMENTO_OPTIONS : SEGMENTO_OPTIONS;
+  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção.
+  const activeSegments = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
 
   const [criteria, setCriteria] = useState<ProspectCriteria>({
     segmento: activeSegments[0],

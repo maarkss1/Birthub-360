@@ -1,6 +1,7 @@
 import type { Repository } from '../../../../shared/domain/Repository';
+import type { PlaybookKey } from '../../../../config/playbooks';
 
-export type ObjectionBrand = 'birthub360';
+export type ObjectionBrand = PlaybookKey;
 
 export interface ObjectionMatrixItem {
   id: string;

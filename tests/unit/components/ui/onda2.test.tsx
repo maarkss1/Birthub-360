@@ -26,8 +26,10 @@ describe('Onda 2 — Microinteractions and System Components', () => {
 
   it('renders Toggle and toggles state on click and keyboard', () => {
     const onChange = vi.fn();
-    const { rerender } = render(<Toggle checked={false} onChange={onChange} label="Ativar Alertas" />);
-    
+    const { rerender } = render(
+      <Toggle checked={false} onChange={onChange} label="Ativar Alertas" />,
+    );
+
     const toggle = screen.getByRole('switch', { name: /ativar alertas/i });
     expect(toggle).toBeInTheDocument();
     expect(toggle).toHaveAttribute('aria-checked', 'false');
@@ -50,7 +52,7 @@ describe('Onda 2 — Microinteractions and System Components', () => {
     render(
       <TiltCard className="test-card">
         <div>Conteudo do Card</div>
-      </TiltCard>
+      </TiltCard>,
     );
     expect(screen.getByText('Conteudo do Card')).toBeInTheDocument();
   });
@@ -67,7 +69,7 @@ describe('Onda 2 — Microinteractions and System Components', () => {
     render(
       <Dialog isOpen={true} onClose={onClose} title="Modal de Teste">
         <div>Corpo do modal</div>
-      </Dialog>
+      </Dialog>,
     );
 
     expect(screen.getByText('Modal de Teste')).toBeInTheDocument();

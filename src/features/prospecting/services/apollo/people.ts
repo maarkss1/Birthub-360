@@ -76,7 +76,10 @@ async function enrichPersonByNameUncached(
           last_name: lastName || undefined,
           domain: domain || undefined,
           organization_name: organizationName || undefined,
-          reveal_personal_emails: true,
+          // ACH-05-03: nunca pedir e-mail pessoal do decisor — prospecção B2B só precisa do
+          // e-mail corporativo. `reveal_personal_emails` fica de fora do body de propósito (o
+          // default da Apollo já é false; omitir é mais seguro que enviar `false` explícito,
+          // que ainda documentaria a chave como algo que já cogitamos ativar).
         }),
       },
       {

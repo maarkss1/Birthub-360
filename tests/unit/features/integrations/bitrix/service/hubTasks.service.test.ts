@@ -90,8 +90,20 @@ describe('listHubTasks', () => {
     const result = await listHubTasks(ORG_ID, USER);
 
     expect(result).toEqual([
-      { id: '101', text: 'Ligar para cliente X', assigneeId: '20', assigneeName: 'Bruno Reis', done: false },
-      { id: '102', text: 'Enviar proposta', assigneeId: '10', assigneeName: 'Ana Souza', done: true },
+      {
+        id: '101',
+        text: 'Ligar para cliente X',
+        assigneeId: '20',
+        assigneeName: 'Bruno Reis',
+        done: false,
+      },
+      {
+        id: '102',
+        text: 'Enviar proposta',
+        assigneeId: '10',
+        assigneeName: 'Ana Souza',
+        done: true,
+      },
     ]);
     expect(callBitrix).toHaveBeenCalledWith(
       'https://portal.bitrix24.com.br/rest/1/token/',
@@ -108,7 +120,13 @@ describe('listHubTasks', () => {
     const result = await listHubTasks(ORG_ID, USER);
 
     expect(result).toEqual([
-      { id: '5', text: 'Tarefa sem título', assigneeId: '999', assigneeName: 'Responsável', done: false },
+      {
+        id: '5',
+        text: 'Tarefa sem título',
+        assigneeId: '999',
+        assigneeName: 'Responsável',
+        done: false,
+      },
     ]);
   });
 
@@ -185,9 +203,9 @@ describe('createHubTask', () => {
   });
 
   it('rejeita quando nenhum responsável foi selecionado', async () => {
-    await expect(createHubTask(ORG_ID, USER, { text: 'Tarefa válida', assigneeId: '' })).rejects.toThrow(
-      'Selecione quem vai receber a tarefa.',
-    );
+    await expect(
+      createHubTask(ORG_ID, USER, { text: 'Tarefa válida', assigneeId: '' }),
+    ).rejects.toThrow('Selecione quem vai receber a tarefa.');
     expect(callBitrix).not.toHaveBeenCalled();
   });
 });
@@ -198,12 +216,9 @@ describe('toggleHubTask', () => {
 
     await toggleHubTask(ORG_ID, USER, '101', true);
 
-    expect(callBitrix).toHaveBeenNthCalledWith(
-      1,
-      expect.any(String),
-      'tasks.task.complete',
-      { taskId: '101' },
-    );
+    expect(callBitrix).toHaveBeenNthCalledWith(1, expect.any(String), 'tasks.task.complete', {
+      taskId: '101',
+    });
   });
 
   it('chama tasks.task.renew quando done=false e relista', async () => {
@@ -211,23 +226,28 @@ describe('toggleHubTask', () => {
 
     await toggleHubTask(ORG_ID, USER, '101', false);
 
-    expect(callBitrix).toHaveBeenNthCalledWith(
-      1,
-      expect.any(String),
-      'tasks.task.renew',
-      { taskId: '101' },
-    );
+    expect(callBitrix).toHaveBeenNthCalledWith(1, expect.any(String), 'tasks.task.renew', {
+      taskId: '101',
+    });
   });
 
   it('devolve a lista atualizada vinda da relistagem, não um objeto local', async () => {
     callBitrix.mockResolvedValueOnce({}).mockResolvedValueOnce({
-      result: { tasks: [{ ID: 101, TITLE: 'Ligar para cliente X', RESPONSIBLE_ID: 10, STATUS: '5' }] },
+      result: {
+        tasks: [{ ID: 101, TITLE: 'Ligar para cliente X', RESPONSIBLE_ID: 10, STATUS: '5' }],
+      },
     });
 
     const result = await toggleHubTask(ORG_ID, USER, '101', true);
 
     expect(result).toEqual([
-      { id: '101', text: 'Ligar para cliente X', assigneeId: '10', assigneeName: 'Ana Souza', done: true },
+      {
+        id: '101',
+        text: 'Ligar para cliente X',
+        assigneeId: '10',
+        assigneeName: 'Ana Souza',
+        done: true,
+      },
     ]);
   });
 });

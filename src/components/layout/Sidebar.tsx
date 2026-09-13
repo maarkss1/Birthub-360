@@ -12,7 +12,7 @@ import { TAB_META, type TabType } from './tabMeta';
  *  marca antiga; a leitura do valor legado existe só para não zerar a
  *  preferência de quem já usava o produto — pode sair numa limpeza futura. */
 const SIDEBAR_COLLAPSED_KEY = '@birthhub:sidebar-collapsed';
-const LEGACY_SIDEBAR_COLLAPSED_KEY = '@birthub360:sidebar-collapsed';
+const LEGACY_SIDEBAR_COLLAPSED_KEY = '@atlasgr:sidebar-collapsed';
 
 interface SidebarProps {
   activeTab: TabType;

@@ -56,6 +56,8 @@ router.post(
 );
 
 // Descoberta de candidatos via IA a partir de um ICP (Perfil de Cliente Ideal).
+// ACH-05-01 (auditoria de segurança): chamada real e faturável (Apollo/IA) — VISUALIZADOR
+// (papel somente-leitura, padrão de novo usuário) não pode acioná-la.
 router.post(
   '/discover',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -75,6 +77,7 @@ router.post(
 // Lê uma foto (cartão de visita, fachada, lista impressa) via OCR local + IA e devolve um
 // candidato no mesmo formato da Descoberta — o cadastro real no CRM usa o /promote já existente,
 // depois que o usuário confere os dados extraídos (OCR erra; não promovemos sozinho).
+// ACH-05-01: chamada real e faturável (OCR + IA) — mesma restrição de /discover.
 router.post(
   '/ocr',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -109,9 +112,10 @@ router.post(
 );
 
 // Consulta em tempo real (sem persistir) de um CNPJ na Receita Federal via BrasilAPI.
+// ACH-05-01 (avaliado): BrasilAPI é gratuita e sem chave — não é uma chamada faturável como
+// Apollo/Hunter/IA, então fica fora do requireRole aplicado às rotas acima.
 router.post(
   '/enrich-cnpj',
-  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { cnpj } = req.body as { cnpj?: string };
@@ -170,6 +174,7 @@ router.post(
 );
 
 // Busca de decisores para uma empresa específica
+// ACH-05-01: chamada real e faturável (Apollo/Hunter) — mesma restrição de /discover.
 router.post(
   '/decision-makers',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -195,6 +200,7 @@ router.post(
 // Gera um quebra-gelo comercial sob demanda a partir de recortes públicos reais da empresa.
 // ARCH-006 (auditoria de dívida técnica): substitui o placeholder de UI que só mostrava um
 // alert() sem chamar IA nenhuma.
+// ACH-05-01: chamada real e faturável (IA) — mesma restrição de /discover.
 router.post(
   '/icebreaker',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -246,8 +252,34 @@ router.post(
 // ───────────────────── Enriquecimento em Cascata (Apollo ➔ Hunter ➔ Google Places) ─────────────────────
 import { runEnrichmentCascade } from '../services/enrichmentCascade.service.js';
 import { enrichmentCascadeQueue } from '../../../lib/queue/enrichmentCascade.worker.js';
+import { pingRedis, connection as bullmqRedisConnection } from '../../../lib/queue/redis.js';
 import { prisma } from '../../../lib/prisma.js';
+import { logger } from '../../../lib/logger.js';
 
+// queuesEnabled (redis.ts) só confere se REDIS_URL está presente, não se o Redis está de fato
+// acessível em runtime. Se a env aponta pra um Redis inatingível, enrichmentCascadeQueue.add()
+// pode ficar pendurado indefinidamente (enableOfflineQueue mantém o comando em fila esperando uma
+// conexão que nunca chega), travando a requisição até o proxy estourar o timeout. Por isso,
+// confirmamos que a conexão responde (pingRedis) dentro de uma janela curta antes de tentar
+// enfileirar; se o ping não voltar a tempo, caímos para o caminho síncrono já existente.
+const ENRICH_CASCADE_QUEUE_PING_TIMEOUT_MS = 3_000;
+
+async function isEnrichCascadeQueueReachable(): Promise<boolean> {
+  let timeoutHandle: NodeJS.Timeout;
+  const timeout = new Promise<false>((resolve) => {
+    timeoutHandle = setTimeout(() => resolve(false), ENRICH_CASCADE_QUEUE_PING_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([pingRedis(bullmqRedisConnection).then(() => true), timeout]);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeoutHandle!);
+  }
+}
+
+// ACH-05-01: chamada real e faturável (Apollo/Hunter/Google Places em cascata) — mesma
+// restrição de /discover.
 router.post(
   '/companies/:id/enrich-cascade',
   requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
@@ -258,15 +290,23 @@ router.post(
       const { async: isAsync, ...options } = req.body || {};
 
       if (isAsync && enrichmentCascadeQueue) {
-        const job = await enrichmentCascadeQueue.add('enrich-cascade-job', {
-          companyId,
-          organizationId,
-          options,
-        });
-        res
-          .status(202)
-          .json({ success: true, message: 'Enriquecimento em cascata enfileirado', jobId: job.id });
-        return;
+        if (await isEnrichCascadeQueueReachable()) {
+          const job = await enrichmentCascadeQueue.add('enrich-cascade-job', {
+            companyId,
+            organizationId,
+            options,
+          });
+          res.status(202).json({
+            success: true,
+            message: 'Enriquecimento em cascata enfileirado',
+            jobId: job.id,
+          });
+          return;
+        }
+        logger.warn(
+          { companyId, organizationId },
+          'enrich-cascade: Redis configurado mas inacessível dentro do timeout; caindo para execução síncrona',
+        );
       }
 
       const result = await runEnrichmentCascade(organizationId, companyId, options);
@@ -348,8 +388,12 @@ router.delete(
   },
 );
 
+// ACH-05-01 (avaliado): /run dispara discoverCandidates — mesma chamada real e faturável de
+// /discover, então recebe a mesma restrição. GET/POST/DELETE de /saved-searches acima só leem ou
+// gravam o registro de agendamento (sem custo por chamada), por isso ficam fora do requireRole.
 router.post(
   '/saved-searches/:id/run',
+  requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { organizationId } = (req as AuthRequest).user;

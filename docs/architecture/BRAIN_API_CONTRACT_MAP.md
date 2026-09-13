@@ -33,16 +33,16 @@ helmet → cors → compression → rate limit (/api geral)
 direta do arquivo nesta rodada encontra **7** mounts, incluindo um conector não citado em nenhuma
 auditoria lida para este documento:
 
-| Rota | Router | Já documentado em auditoria anterior? |
-|---|---|---|
-| `/api/integrations/birth-voice` | `birthVoiceWebhookRoutes` | sim |
-| `/api/integrations/3cx/webhook` | `threecxWebhookRouter` | sim |
-| `/api/webhooks/voice-result` | `voiceResultWebhookRoutes` | sim |
-| `/api/webhooks/email` | `emailReplyWebhookRoutes` | sim (`product-truth-wave-1.md`) |
-| `/api/webhooks/signature` | `signatureStatusWebhookRoutes` | sim (`product-truth-wave-1.md`) |
-| `/api/integrations/bitrix` | `bitrixWebhookRoutes` | sim |
-| `/api/integrations/chatwoot` | `chatwootWebhookRoutes` | **não** — não aparece em `02-mapa-plataforma.md`, `INVENTARIO_FUNCIONAL_COMPLETO.md` nem `product-truth-wave-1.md` |
-| `/api/public/proposals` | `crm360PublicRoutes` | sim |
+| Rota                            | Router                         | Já documentado em auditoria anterior?                                                                              |
+| ------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `/api/integrations/birth-voice` | `birthVoiceWebhookRoutes`      | sim                                                                                                                |
+| `/api/integrations/3cx/webhook` | `threecxWebhookRouter`         | sim                                                                                                                |
+| `/api/webhooks/voice-result`    | `voiceResultWebhookRoutes`     | sim                                                                                                                |
+| `/api/webhooks/email`           | `emailReplyWebhookRoutes`      | sim (`product-truth-wave-1.md`)                                                                                    |
+| `/api/webhooks/signature`       | `signatureStatusWebhookRoutes` | sim (`product-truth-wave-1.md`)                                                                                    |
+| `/api/integrations/bitrix`      | `bitrixWebhookRoutes`          | sim                                                                                                                |
+| `/api/integrations/chatwoot`    | `chatwootWebhookRoutes`        | **não** — não aparece em `02-mapa-plataforma.md`, `INVENTARIO_FUNCIONAL_COMPLETO.md` nem `product-truth-wave-1.md` |
+| `/api/public/proposals`         | `crm360PublicRoutes`           | sim                                                                                                                |
 
 **Achado C0-API-1 (novo, não bloqueador):** conector **Chatwoot** existe no código
 (`chatwootWebhookRoutes`, montado antes do `express.json` — logo trata corpo cru/HMAC como os

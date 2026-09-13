@@ -1,5 +1,5 @@
 {
-    email {$ACME_EMAIL:admin@birthub360.com.br}
+    email {$ACME_EMAIL:admin@atlasgr.com.br}
 }
 
 {$DOMAIN::80} {
@@ -13,7 +13,7 @@
         Referrer-Policy strict-origin-when-cross-origin
     }
 
-    # Proxy para a aplicação Birthub360 Monolith
+    # Proxy para a aplicação AtlasGR Monolith
     reverse_proxy app:3000 {
         header_up Host {host}
         header_up X-Real-IP {remote_host}

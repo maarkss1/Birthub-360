@@ -25,9 +25,8 @@ vi.mock('../../../../../src/lib/logger.js', () => ({
 }));
 
 const { requestContext } = await import('../../../../../src/lib/async-context.js');
-const { runWinLossAnalysis } = await import(
-  '../../../../../src/features/intelligence/services/winLossAnalysis.worker.js'
-);
+const { runWinLossAnalysis } =
+  await import('../../../../../src/features/intelligence/services/winLossAnalysis.worker.js');
 
 function lead(id: string) {
   return { id, status: 'Negocios_Ganhos', whatsAppMessages: [], timeline: [] };

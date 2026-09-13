@@ -4,13 +4,13 @@
 
 A plataforma passa a operar com cinco papéis coordenados:
 
-| Papel | Responsabilidade autônoma | Limite operacional |
-|---|---|---|
-| SDR | Qualificação, pesquisa no playbook/RAG e primeiro e-mail personalizado | Contato externo respeita opt-in, score e janela comercial |
-| BDR | Fit outbound, hipótese de dor e estratégia de primeira abordagem | Não inventa dados e não marca reunião sem resposta real |
-| Closer | Objeções, prova de valor, proteção de margem e próximo compromisso | Não marca negócio como ganho sem evidência do comprador |
-| CRM | Risco de estagnação, higiene do funil e próxima ação | Recomendações ficam vinculadas ao lead |
-| Ops | Atividades e notificações internas | Ferramentas mutáveis não são usadas pelo scanner analítico |
+| Papel  | Responsabilidade autônoma                                              | Limite operacional                                         |
+| ------ | ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| SDR    | Qualificação, pesquisa no playbook/RAG e primeiro e-mail personalizado | Contato externo respeita opt-in, score e janela comercial  |
+| BDR    | Fit outbound, hipótese de dor e estratégia de primeira abordagem       | Não inventa dados e não marca reunião sem resposta real    |
+| Closer | Objeções, prova de valor, proteção de margem e próximo compromisso     | Não marca negócio como ganho sem evidência do comprador    |
+| CRM    | Risco de estagnação, higiene do funil e próxima ação                   | Recomendações ficam vinculadas ao lead                     |
+| Ops    | Atividades e notificações internas                                     | Ferramentas mutáveis não são usadas pelo scanner analítico |
 
 O scheduler continua acordado 24 horas por dia. Comunicação externa automática só é liberada na
 janela comercial; análise, priorização e preparação continuam fora dela.
@@ -121,3 +121,39 @@ protege forecast, comissão e sincronização do Kanban/Bitrix.
 - incorporar reply tracking de e-mail ao classificador de intenção;
 - usar eventos de aceite/pagamento para fechar o negócio de forma determinística;
 - painel de SLO por agente: cobertura, conversão, custo, latência, erro e override humano.
+
+## Limitações conhecidas
+
+- **Canal de voz na cadência multicanal (`CadenceDispatchers.ts`) nunca despacha de verdade.**
+  `productionCadenceDispatcher` já trata e-mail e WhatsApp com envio real (`sendEmail`,
+  `sendWhatsAppMessage`); para `touch.channel === 'voice'` ele sempre devolve `failed` com o erro
+  "Canal de voz ainda não tem dispatcher real de cadência (CYC-004 pendente)" — comportamento
+  correto (nunca finge sucesso), mas qualquer `CadenceSequence` com um toque de voz esgota as
+  tentativas e é sempre marcada como falha. Não é um bug de código: é a ausência deliberada de um
+  dispatcher real, registrada como pendência de auditoria em ACH-17-03
+  (`.agents/handoffs/audit-ach/17-para-06-12-voz-cadencia-dispatcher-pendente.md`). Implementar o
+  dispatcher real exige duas decisões que o Agente 17 (dono de `src/features/cadence/**`) não pode
+  tomar sozinho: (1) qual caminho de voz já real usar por trás de uma porta — a ligação autônoma de
+  IA (`birthVoice.service.ts::callLead`, Agente 12) ou o click-to-call assistido por humano
+  (`threecx.service.ts::make3CXCall`, Agente 06), que têm semântica muito diferente para um
+  disparo automático e desacompanhado; e (2) como conectar essa porta sem editar
+  `src/features/integrations/**` diretamente, propriedade exclusiva de outro agente por
+  `AGENTS.md`. Até essa decisão ser tomada, o comportamento honesto atual (falhar, nunca fingir
+  envio) é o correto a manter.
+- **Agendamento automático por confirmação do lead ainda só tem um caminho real (manual).**
+  `src/features/cadence/domain/scheduling.ts` aceita três tipos de evidência verificável para
+  criar uma reunião real (`lead-calendar-reply`, `lead-scheduling-link-click`,
+  `manual-verified`), mas hoje só `manual-verified` tem um caller de produção
+  (`application/scheduleMeeting.ts::scheduleVerifiedMeeting`, acionado depois de contato ao vivo
+  do vendedor). Não é um bug de código: `isVerifiableConfirmation` já recusa qualquer confirmação
+  que não referencie um registro real e comparável — nunca "acho que o lead topou" do modelo — e
+  os dois transportes automáticos que faltam esbarram em barreiras de propriedade/schema, não em
+  lógica ausente. Detalhe completo e decisões pendentes (uma para o Agente 01/01A, outra para o
+  Agente 04) em ACH-17-04
+  (`.agents/handoffs/audit-ach/17-para-01-04-agendamento-transporte-pendente.md`). Em resumo:
+  réplica de e-mail/WhatsApp confirmando um horário (`lead-calendar-reply`) precisa de um registro
+  determinístico do horário que foi oferecido ao lead para comparar — essa âncora não existe hoje
+  no schema; e o clique num link de auto-agendamento (`lead-scheduling-link-click`) já tem uma
+  página pública 100% funcional (`src/features/calendar/routes/booking.routes.ts`), mas ela
+  pertence ao Agente 04 e roda hoje totalmente desconectada do domínio de cadência do Agente 17
+  (cria `Lead`/`Activity` própria, nunca uma `AvailabilityConfirmation`/`CadenceCalendarEvent`).

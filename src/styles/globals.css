@@ -35,7 +35,8 @@
   font-display: swap;
   src: url("/fonts/inter-latin.woff2") format("woff2");
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
@@ -45,7 +46,9 @@
   font-display: swap;
   src: url("/fonts/inter-latin-ext.woff2") format("woff2");
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
 }
 /* latin */
 @font-face {
@@ -55,7 +58,8 @@
   font-display: swap;
   src: url("/fonts/bodoni-moda-latin.woff2") format("woff2");
   unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 /* latin-ext */
 @font-face {
@@ -65,7 +69,9 @@
   font-display: swap;
   src: url("/fonts/bodoni-moda-latin-ext.woff2") format("woff2");
   unicode-range:
-    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
 }
 
 :root {
@@ -114,6 +120,13 @@
   --orbit-blue: #0065d2;
   --warn: #ffc500;
   --ok: #0f9d64;
+  /* Indireção pro --color-info do @theme poder ser sobrescrito por tema (mesmo padrão de
+     --warn/--ok acima e --critical mais abaixo) — sem isso, `.dark { --color-info: ... }` perderia
+     pra `--color-info: #3b82f6` gerado pelo bloco `@theme` (que vem depois no arquivo e empata em
+     especificidade com `.dark`, então venceria por ordem de declaração). No claro é o hex cru
+     (--info-active já escurece pra badge "soft", ver comentário abaixo); no escuro é sobrescrito
+     com uma versão clareada — ver o comentário em `.dark` abaixo pro porquê. */
+  --info: #3b82f6;
   --soft: rgba(212, 175, 55, 0.12);
   /* --- Acentos de interação (proposta "Neon Tokyo × Cosmic Gold", catálogo visual) ---
      --accent-violet/--accent-cyan são NOVOS tokens dedicados a acentos de botão/interação — não
@@ -155,9 +168,14 @@
      text-info — Team.tsx, QualificationMatrixPage.tsx, ColdCallStatusCard.tsx etc.): o texto
      saturado direto sobre --surface/--surface-2 claras cai abaixo de 4.5:1 (achado real do
      axe-core, tests/e2e/accessibility.spec.ts — ex.: "Administrador" com --color-info cru dava
-     3.06:1). --color-ok/--color-info crus já passam 4.5:1 contra as superfícies escuras (~5-7:1
+     3.06:1 no claro). --color-ok cru já passa 4.5:1 contra as superfícies escuras (~5-7:1
      medido), então só o tema claro precisa da versão mais escura — color-mix escala os 3 canais
-     igualmente, sem precisar hardcodear um hex novo por cor. */
+     igualmente, sem precisar hardcodear um hex novo por cor. --color-info cru NÃO passa contra o
+     composto bg-info/15 no escuro (só 4.25:1 — achado posterior do mesmo teste, telas
+     "Prospecção", "Integrações" e "Equipe" falhando; a suposição acima, de que --color-info cru já
+     passava no escuro, valia só contra --surface/--surface-2 sólidas, não contra o composto
+     translúcido do badge): ver a correção de --info no bloco `.dark` abaixo, que --info-active (2
+     linhas abaixo) herda automaticamente por já referenciar `var(--color-info)`. */
   --ok-active: color-mix(in srgb, var(--color-ok) 70%, black);
   /* --warn (#FFC500) cru contra --surface clara mede 1.59:1 (fórmula de luminância relativa do
      WCAG, calculado — não estimado) — pior ainda que o --ok original (3.48:1), bem abaixo do
@@ -212,12 +230,27 @@
      (bg-critical/15 sobre --surface-2 escura) mede só 3.93:1. 20% de --critical + 80% de branco
      mede 4.93:1 contra --surface-2 e 5.29:1 contra --surface, com folga sobre o mínimo AA. */
   --critical-active: color-mix(in srgb, var(--critical) 20%, white);
-  /* --color-ok/--color-info crus já passam 4.5:1 contra a superfície escura — ver comentário
-     de --ok-active/--info-active no :root acima. */
+  /* --color-ok cru já passa 4.5:1 contra a superfície escura — ver comentário de --ok-active
+     no :root acima. */
   --ok-active: var(--color-ok);
   /* --warn cru já passa 11.70:1 contra a superfície escura — ver comentário de --warn-active no
      :root acima. */
   --warn-active: var(--warn);
+  /* --color-info cru (#3B82F6) mede só 4.25:1 contra o composto real do badge "soft" bg-info/15
+     no escuro (achado do axe-core, tests/e2e/accessibility.spec.ts — "Prospecção", "Integrações" e
+     "Equipe": fgColor #3b82f6 sobre bgColor #122245, abaixo do mínimo AA 4.5:1). Pior caso é
+     bg-info/15 sobre --surface-2 escura (#131c3a): compositar 15% de #3b82f6 sobre esse fundo dá
+     ≈#192b56 (luminância relativa WCAG calculada = 0.0263) — pra fechar 4.5:1 contra esse composto
+     o texto precisa de luminância ≥ 0.2924. color-mix(80% info + 20% branco) mede 0.3283 de
+     luminância → 4.96:1 contra esse pior caso e 5.65:1 contra bg-info/15 sobre --surface (composto
+     mais escuro), com folga real sobre o mínimo — mesma margem das outras "-active" já calibradas
+     neste arquivo (ex.: --critical-active no escuro, 4.93:1). Clarear com branco (não escurecer com
+     preto) porque no escuro a superfície de fundo já é escura — sentido oposto ao --critical-active
+     dois blocos acima, mesmo raciocínio de "a mistura vai na direção contrária à do fundo". */
+  --info: color-mix(in srgb, #3b82f6 80%, white);
+  /* --info-active herda a correção acima de graça: já referencia var(--color-info), que por sua
+     vez agora aponta pra --info (indireção adicionada no :root) — nenhuma mudança adicional
+     necessária aqui. */
   --info-active: var(--color-info);
   --success-active: var(--color-success);
   --warning-active: var(--color-warning);
@@ -268,7 +301,12 @@
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
-  --color-info: #3b82f6;
+  /* var(--info), não hex cru — indireção que permite o `.dark` acima sobrescrever com a versão
+     clareada (ver comentário de --info no :root/.dark). Se fosse hex direto aqui, `.dark` nunca
+     conseguiria vencer: este bloco `@theme` gera seu `:root` mais abaixo no arquivo que o `.dark`
+     explícito, e como as duas seleções empatam em especificidade, ganharia por ordem de
+     declaração. */
+  --color-info: var(--info);
 
   /* Neutros do produto — ver :root/.dark acima (âncora Obsidian / Snow White) */
   --color-bg: var(--bg);
@@ -329,6 +367,14 @@
   /* Reativos a tema — ver --ok-active/--warn-active/--info-active em :root/.dark acima. */
   --color-warn-active: var(--warn-active);
   --color-ok-active: var(--ok-active);
+  /* Fixa (não reage a tema) — mesmo idioma de --color-brand-active acima, para botão SÓLIDO com
+     texto branco (`bg-ok-solid text-white`), distinto do padrão "badge soft" (`bg-ok/15
+     text-ok-active dark:text-ok`) que motivou --ok-active virar --color-ok cru no escuro (ver
+     comentário em .dark acima). --ok-active sozinho não serve mais o caso botão sólido no
+     escuro: #0f9d64 cru + texto branco mede só 3.48:1 (achado real do axe-core,
+     tests/e2e/accessibility.spec.ts, botão "Conectar WhatsApp" de Integrações). Mesma fórmula
+     que --ok-active já usa no claro (70% preto), só que fixa nos dois temas. */
+  --color-ok-solid: color-mix(in srgb, var(--color-ok) 70%, black);
   --color-info-active: var(--info-active);
   --color-success-active: var(--success-active);
   --color-warning-active: var(--warning-active);
