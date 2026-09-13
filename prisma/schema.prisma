@@ -1814,6 +1814,19 @@ model AIGuardrailEvent {
 enum ReportSource {
   ON_DEMAND
   DAILY_AUTO
+  /// REVOPS-004 (onda 5): resultado da varredura semanal de Win/Loss Analysis
+  /// (`winLossAnalysis.worker.ts`) — antes desta correção era computado por IA de verdade e só ia
+  /// pro log, nunca persistido nem exposto em tela nenhuma. Valor PRÓPRIO (não reusa `DAILY_AUTO`)
+  /// porque `/report/latest` já filtra estritamente `ON_DEMAND` para o relatório executivo — um
+  /// valor compartilhado misturaria dois tipos de conteúdo diferentes na mesma consulta.
+  WEEKLY_WIN_LOSS_AUTO
+  /// Mesmo relatório de Win/Loss, mas disparado manualmente pela pessoa (POST
+  /// /api/intelligence/win-loss-analysis) — valor PRÓPRIO em vez de reusar `ON_DEMAND` pelo mesmo
+  /// motivo acima: `ON_DEMAND` já é o discriminador do relatório executivo do ReportsHub
+  /// (conteúdo/formato diferente); misturar os dois faria `GET /report/latest` (que já filtra só
+  /// `ON_DEMAND`) continuar correto, mas tornaria impossível existir uma consulta análoga só para
+  /// Win/Loss sem também trazer relatórios executivos.
+  WIN_LOSS_ON_DEMAND
 }
 
 /// Relatório executivo gerado por IA em ReportsHub (POST /api/intelligence/report) a partir das
