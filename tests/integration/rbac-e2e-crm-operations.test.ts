@@ -56,7 +56,12 @@ async function firstDealStageId(organizationId: string): Promise<string> {
   return withTenant(organizationId, async () => {
     const { PrismaCrm360Repository } =
       await import('../../src/features/crm360/infra/PrismaCrm360Repository');
-    const pipelines = await new PrismaCrm360Repository().getPipelines(organizationId);
+    const { StripeChargeAdapter } = await import(
+      '../../src/features/integrations/stripe/infra/StripeChargeAdapter'
+    );
+    const pipelines = await new PrismaCrm360Repository(new StripeChargeAdapter()).getPipelines(
+      organizationId,
+    );
     const dealPipeline = pipelines.find((p) => p.entity === 'Negocio');
     const stage = dealPipeline?.stages[0];
     if (!stage)

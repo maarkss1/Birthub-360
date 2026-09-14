@@ -3589,3 +3589,114 @@ alternativa: cálculo manual de contraste (luminância relativa, fórmula WCAG) 
 com a mesma fórmula conferida contra o 3.48:1 já documentado em `globals.css` para o caso
 WhatsApp — não é substituto do axe-core rodando de verdade, registrado aqui como o que foi
 possível fazer nesta rodada.
+
+## Piloto — Paleta "Strategic Command Center" (LoginScreen.tsx + HubScreen.tsx), 5 cores substituem Obsidian/Snow White
+
+- **Gatilho**: pedido explícito do usuário ("refaça essa tela, não gostei" no Hub, depois "essa
+  aqui também não" no Login), seguido de uma referência visual concreta compartilhada pelo usuário
+  (`BIRTH_HUB_360_STRATEGIC_COMMAND_CENTER.html`, no Desktop dele — um rascunho anterior do
+  playbook de marca, não uma tela do produto) e da instrução direta: "as cores são azul, dourado,
+  roxo, vermelho e rosa. não quero nada preto ou branco". Perguntado e confirmado via
+  `AskUserQuestion`: (1) a paleta nova vale para a **marca inteira**, não só as duas telas; (2) a
+  referência vale por **cor + composição** (fundo azul-marinho escuro, cards de vidro, fonte Sora),
+  não só pela cor.
+- **O que mudou (âmbito: tokens globais, não redesenho tela-a-tela)**: `src/styles/globals.css` —
+  `:root`/`.dark` trocaram as âncoras Obsidian/Midnight/Snow White por Deep Navy `#061A3A`
+  (escuro) e Blossom White `#FFF4F9` (claro); `--iris`/`--orbit-blue` upgradaram para tons mais
+  vívidos (`#7C3AED`/`#1677FF`); dois tokens novos, `--red`/`--pink`, reativos a tema
+  (`#E11D48`/`#DB2777` no claro, `#FF3158`/`#FF4FA3` no escuro, mais vívidos). Fonte Sora
+  self-hosted (mesmo padrão de Inter/Bodoni Moda: 2 subsets `.woff2`, variável, sem CDN) substitui
+  Bodoni Moda em `--font-brand-display`. Novo utilitário `.bg-gradient-orbit5` (linear-gradient
+  5 stops) substitui a órbita de 3 cores como único gradiente multicolorido autorizado (regra #3).
+  `src/config/brand.ts` ganhou `colors.red`/`colors.pink`, e `obsidian`/`midnight`/`snow` agora
+  apontam pros novos valores (mantidos como aliases pra não quebrar consumidores existentes —
+  `BrandOrb.tsx`, `RevenueSignalOrb.tsx`, `BrandContext.tsx` `theme-color`).
+- **Contraste recalculado (WCAG, luminância relativa, calculado não estimado) antes de trocar
+  qualquer hex**: `--ink`/`--ink-2` novos medem 7.85:1/6.62:1 (claro) e 12.09:1/7.92:1 (escuro)
+  contra `--bg`; `--on-brand` (Deep Navy) sobre `--brand` mede 8.21:1 (era 8.74:1 com Obsidian —
+  diferença desprezível). Todos com folga real sobre o mínimo AA (4.5:1). As cores de estado
+  (`--critical`/`--ok`/`--warn`/`--info`) e seus compostos "soft" (`bg-*/15`) **não foram
+  recalculados manualmente** — luminância de `--surface-2` no escuro subiu de ~0.0128 pra ~0.0234
+  (superfície ficou perceptívelmente mais clara), o que pode ter estreitado a margem mais apertada
+  já documentada ali (`--info` no escuro, 4.96:1 medido contra o composto antigo). Pendente:
+  rodar `tests/e2e/accessibility.spec.ts` (axe-core) num ambiente com Postgres/Redis pra confirmar
+  — não incluído nesta sessão por indisponibilidade do preview (ver Verificação abaixo).
+- **Craft-floor aplicado de verdade, não só citado**: o detector (`impeccable hooks`) pegou 3
+  ocorrências reais de gradiente-em-texto herdadas do código anterior — `.hub-greeting h1 .accent`
+  e `.hc-title` (`hub-orbit.css`, este último um shimmer `background-position` animado
+  **infinito**, violação dupla: gradiente-texto + animação sem propósito informacional, regra #6)
+  — corrigidas para cor sólida + peso. Um quarto achado (`.text-gradient-brand` em
+  `globals.css`, usado por `ReportsHub.tsx`/`AIConfigCenter.tsx`, fora do escopo desta tarefa) foi
+  suprimido via `impeccable hooks ignore-value` com motivo registrado, não corrigido — decisão de
+  escopo, não de gosto. Também corrigidos, à parte do detector: `text-white` sobre `bg-brand`
+  sólido em 4 lugares (avatar do Hub, botão "Entrar"/"Enviar Link de Redefinição" do Login, dia
+  atual do calendário) — a mesma classe de bug já catalogada como DQA-19, reintroduzida pelo
+  código anterior a esta paleta. E um token morto (`var(--line-strong)`, nunca definido em
+  `globals.css`) em `.task-row .task-check`, trocado por `var(--line)`.
+- **Órbita de 5 cores como o lugar certo pro gradiente autorizado**: em vez de um gradiente só
+  dourado repetido em todo nó do Hub, cada destino não-central cicla pelas 5 cores da marca
+  (`ORBIT_PALETTE` em `HubScreen.tsx`) — halo, aro de hover e linha/partícula que liga ao centro
+  usam a cor própria do nó via custom property `--orbit-accent`. O centro (Central Comercial)
+  continua sólido dourado, o "sol" da órbita. É o único lugar desta tela com múltiplas cores no
+  mesmo elemento visual — em qualquer outro ponto (Login, cards de feature) cada elemento usa UMA
+  cor da paleta, nunca um gradiente multicor novo (regra #3: no máximo um gradiente dominante por
+  composição).
+- **`identidade-visual/birthhub360/` deliberadamente NÃO tocado nesta sessão**: os arquivos de
+  tokens (`.css`/`.ts`/`.json`) e o `README.md` documentam a identidade anterior (Obsidian/Snow
+  White, 3 cores, atribuída a páginas específicas de um "brand book" externo) — reescrevê-los
+  exigiria inventar proveniência falsa (números de página de um documento que não existe mais)
+  ou um novo brand book de verdade, que é entrega própria, não pedida aqui. `CLAUDE.md` (seção 2)
+  já registra que essa pasta está desatualizada em relação à paleta viva — próxima sessão que
+  mexer em brand/identidade deve resolver isso antes de citar `identidade-visual/` como fonte de
+  cor.
+- **Verificação**: `npx tsc --noEmit` (0 erros), `npx biome lint` nos 3 arquivos tocados
+  (`HubScreen.tsx`, `LoginScreen.tsx`, `brand.ts` — limpo). **Preview no navegador não pôde ser
+  concluído nesta sessão**: o servidor dev (`prospector-dev-uxcheck`, porta 3009) ficou preso no
+  banner do `tsx watch` por mais de 4 minutos sem abrir a porta, mesmo após reiniciar do zero —
+  Postgres/Redis (containers Docker) confirmados saudáveis e alcançáveis nesse intervalo; a causa
+  mais provável é contenção real de CPU/IO de dezenas de processos `node` de outras sessões
+  simultâneas neste mesmo host (`Get-Process node` listou 40+), não um erro introduzido por esta
+  mudança. Verificação visual real (claro/escuro, desktop/mobile, `axe-core`) fica pendente da
+  próxima sessão com o preview disponível — registrado aqui como limitação de ambiente, não como
+  sucesso assumido (mesmo protocolo já usado nos pilotos anteriores para `test:e2e`/
+  `test:integration`).
+
+## Fix — `/impeccable audit` no Login/Hub encontrou `.hub-widget` inexistente + token de texto errado
+
+`/impeccable audit` rodado nas duas telas do piloto acima achou, além do detector automatizado
+(bounce-easing pré-existente, fora de escopo), dois bugs reais e verificáveis que já existiam
+**antes** da mudança de paleta — só ficaram mais fáceis de flagrar com o recálculo de contraste:
+
+- **`hub-orbit.css` nunca definia `.hub-widget` (singular)** — só `.widget`/`.hub-widgets`
+  (nomes diferentes). Os 3 painéis que usam essa classe (`HubScreen.tsx` relógio/calendário,
+  `HubTaskWidget.tsx`) renderizavam sem borda/blur/sombra, visível na própria screenshot original
+  do usuário. Fix: adicionada a regra `.hub-widget` (mesma declaração de `.widget`, duplicada em
+  vez de renomear, por segurança). `.hub-beacon` (usado uma vez, também sem regra) ganhou a mesma
+  animação `beacon` que `.op-dot` já tinha.
+- **`--color-brand-active` usado como cor de texto/ícone em `.hc-icon-wrap`/`.hc-title`
+  (hub-orbit.css) e `text-brand-active` em 5 pontos de `HubScreen.tsx`** — esse token é o hover da
+  superfície de marca, não uma cor de texto; media 2.69:1 contra o fundo claro novo (abaixo até do
+  piso de texto grande, 3:1). `LoginScreen.tsx` já usava o token certo (`text-brand-ink`, via
+  `useBrandAccent()`) — só o Hub não. Trocado para `--color-brand-ink`/`text-brand-ink` em todos os
+  pontos (`HubScreen.tsx`, `hub-orbit.css`, `HubIcons.tsx`). Os mesmos 5 pontos de `hub-orbit.css`
+  que citam esse token dentro de seletores **mortos** (`.hub-greeting`, `.clock-widget`,
+  `.cal-widget`, `.task-row .task-assignee`, `.label-logo` — nenhum desses nomes de classe aparece
+  em nenhum `.tsx` do Hub) foram deixados como estavam: corrigir cor dentro de CSS que nunca casa
+  com nenhum elemento não tem efeito nenhum, só criaria a falsa impressão de handled.
+- **Outros achados do audit corrigidos junto**: `<main>` adicionado em `HubScreen.tsx` (landmark
+  ausente); botões de header (som/tema/logout) de 36px para 44px (alvo de toque, relevante pro
+  Android via Capacitor); `role="alert"`/`role="status"` nas mensagens de erro/confirmação do
+  Login (nenhuma tinha anúncio pra leitor de tela); `border-line-strong` (token inexistente,
+  mesma classe de bug do `.hub-widget`) e `text-white` no checkbox do `HubTaskWidget.tsx`; o loop
+  de `requestAnimationFrame` do `HubBurstCanvas.tsx` agora para quando o array de partículas
+  esvazia, em vez de rodar pra sempre enquanto a tela estiver montada.
+- **Não corrigido, fora do escopo do audit**: `HubIcons.tsx` (ícone "social-selling") tem vários
+  hex crus não relacionados ao achado reportado (`#0A66C2`, `#FFFFFF` ×2, `#E4A97C`, `#E2E2E2`) —
+  não estavam no relatório do audit, então não mexi; registrado aqui pra não precisar redescobrir.
+- **Verificação**: `npx tsc --noEmit` sem erros novos nos arquivos tocados (o projeto tem erros
+  pré-existentes em `PrismaCompanyRepository.ts`/`abTesting.service.ts`/`PrismaNoteRepository.ts`,
+  nenhum relacionado, provavelmente de outra sessão do swarm mexendo no repo em paralelo);
+  `npx biome lint` limpo nos 5 arquivos; `impeccable detect` sem achado novo (só os mesmos
+  pré-existentes de antes). **Preview no navegador continuou indisponível** nesta sessão — a
+  correção do `.hub-widget` (que teria efeito visual imediato e óbvio) fica pendente de
+  confirmação visual assim que o servidor dev subir.
