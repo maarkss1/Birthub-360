@@ -29,6 +29,10 @@ vi.mock('@/lib/prisma', () => ({
     // Sem conexão cadastrada por padrão — requireConfig() cai pro fallback de env var acima,
     // preservando o comportamento que todo teste pré-existente deste arquivo já assume.
     voiceHubConnection: { findFirst: vi.fn().mockResolvedValue(null) },
+    // VOICE-001: requireConfig() agora também resolve o nome da organização para interpolar no
+    // roteiro genérico (voiceScript.ts) — nome fixo aqui, testes deste arquivo não olham pro texto
+    // do roteiro em si.
+    organization: { findUnique: vi.fn().mockResolvedValue({ name: 'Org de Teste' }) },
   },
 }));
 
@@ -72,6 +76,9 @@ const leadMock = prisma.lead as unknown as { findFirst: ReturnType<typeof vi.fn>
 const voiceHubConnectionMock = prisma.voiceHubConnection as unknown as {
   findFirst: ReturnType<typeof vi.fn>;
 };
+const organizationMock = prisma.organization as unknown as {
+  findUnique: ReturnType<typeof vi.fn>;
+};
 const mockIsSuppressed = vi.mocked(isSuppressed);
 
 const ORG = 'org-1';
@@ -87,6 +94,7 @@ function leadComTelefone(phone: string | null = '(11) 99999-8888', email: string
 beforeEach(() => {
   vi.clearAllMocks();
   voiceHubConnectionMock.findFirst.mockResolvedValue(null);
+  organizationMock.findUnique.mockResolvedValue({ name: 'Org de Teste' });
   mockIsSuppressed.mockResolvedValue(false);
   assertSafeExternalUrlMock.mockResolvedValue(undefined);
   vi.stubGlobal(
