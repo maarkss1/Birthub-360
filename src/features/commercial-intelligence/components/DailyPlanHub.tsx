@@ -26,6 +26,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
 import { useAuth } from '../../../contexts/AuthContext';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { SoundFX } from '../../../lib/soundEffects';
 import type {
   DailyPlanItem,
@@ -33,7 +34,8 @@ import type {
   DailyPlanPriorityLevel,
   UserDailyPlanSummary,
 } from '../../../shared/contracts/dailyPlan.contract';
-import { commercialIntelligenceApi } from '../commercialIntelligence.api';
+import { commercialIntelligenceApi, type DailyPlanTeamMember } from '../commercialIntelligence.api';
+import { DailyPlanTeamOverview } from './DailyPlanTeamOverview';
 import { type DailyTask, DEFAULT_DAILY_PLAN, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
 import { NewActivityModal } from './NewActivityModal';
 
@@ -45,6 +47,7 @@ function formatPlanDate(isoDate: string): string {
 
 export function DailyPlanHub() {
   const { currentUser } = useAuth();
+  const canManageTeam = !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
   const [activeTab, setActiveTab] = useState<'daily' | 'roteiro' | 'iacoach' | 'pauta1to1'>(
     'daily',
   );
@@ -54,6 +57,9 @@ export function DailyPlanHub() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+  // Visão gerencial (ADMIN/GESTOR): quando um membro da equipe é selecionado, o plano exibido
+  // troca para o dele — `undefined` (não selecionado) sempre significa "meu próprio plano".
+  const [selectedMember, setSelectedMember] = useState<DailyPlanTeamMember | null>(null);
 
   // Estados de Interação nos Itens
   const [activeNoteItemId, setActiveNoteItemId] = useState<string | null>(null);
@@ -71,20 +77,23 @@ export function DailyPlanHub() {
     useState<keyof typeof PITCHES_BY_SEGMENT>('transportadora');
   const [copiedPauta, setCopiedPauta] = useState(false);
 
-  // Carregar Plano do Usuário
-  const loadDailyPlan = useCallback(async (options?: { silent?: boolean }) => {
-    try {
-      if (!options?.silent) setIsLoading(true);
-      const res = await commercialIntelligenceApi.getDailyPlan();
-      if (res) {
-        setPlanData(res);
+  // Carregar Plano do Usuário (ou, para ADMIN/GESTOR, do membro da equipe selecionado)
+  const loadDailyPlan = useCallback(
+    async (options?: { silent?: boolean }) => {
+      try {
+        if (!options?.silent) setIsLoading(true);
+        const res = await commercialIntelligenceApi.getDailyPlan(selectedMember?.id);
+        if (res) {
+          setPlanData(res);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar plano diário:', err);
+      } finally {
+        if (!options?.silent) setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Erro ao carregar plano diário:', err);
-    } finally {
-      if (!options?.silent) setIsLoading(false);
-    }
-  }, []);
+    },
+    [selectedMember],
+  );
 
   useEffect(() => {
     loadDailyPlan();
@@ -114,7 +123,7 @@ export function DailyPlanHub() {
       setIsSyncing(true);
       setSyncFeedback(null);
       SoundFX.play('focus');
-      const res = await commercialIntelligenceApi.syncDailyPlan();
+      const res = await commercialIntelligenceApi.syncDailyPlan(selectedMember?.id);
       if (res) {
         setPlanData(res);
       }
@@ -666,6 +675,25 @@ export function DailyPlanHub() {
         {/* Conteúdo da Aba Ativa */}
         {activeTab === 'daily' && (
           <div className="space-y-6">
+            {canManageTeam && (
+              <DailyPlanTeamOverview
+                selectedMemberId={selectedMember?.id ?? ''}
+                activePlan={planData}
+                onMemberSelect={setSelectedMember}
+              />
+            )}
+            {selectedMember && (
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-brand/30 bg-brand/5 px-4 py-2.5 text-xs font-bold text-brand-active dark:text-brand-2">
+                <span>Vendo o plano diário de {selectedMember.name}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedMember(null)}
+                  className="cursor-pointer rounded-lg border border-brand/30 bg-bg px-2.5 py-1 text-[11px] font-bold text-ink hover:bg-surface-2"
+                >
+                  Voltar ao meu plano
+                </button>
+              </div>
+            )}
             {isLoading ? (
               <div className="p-12 text-center text-ink-2 space-y-3">
                 <RefreshCw className="w-8 h-8 mx-auto animate-spin text-brand" />
