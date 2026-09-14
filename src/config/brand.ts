@@ -37,20 +37,27 @@ export const BRAND = {
   /** Valores (brand book, p. 10). Em inglês no original. */
   values: ['Innovation', 'Data Intelligence', 'Efficiency', 'Scalability'] as const,
   colors: {
-    /** Antique Gold — cor primária: valor, foco e assinatura. */
+    /** Antique Gold — cor primária: valor, foco e assinatura. Inalterada na rodada 09/2026. */
     brand: '#D4AF37',
-    /** Gold Soft — segundo ponto da rampa metálica do logotipo. */
-    brandAccent: '#EBD689',
-    /** Obsidian — texto/ícone sobre superfície de marca, e superfície escura. */
-    obsidian: '#0B132B',
-    /** Midnight — fundo de página do tema escuro. */
-    midnight: '#08090F',
-    /** Deep Iris — inteligência em movimento (halos, indicadores, órbita). */
-    iris: '#5B21B6',
-    /** Orbit Blue — terceira cor da órbita 360º. */
-    orbitBlue: '#0065D2',
-    /** Snow White — respiro, texto sobre escuro. */
-    snow: '#F8FAFC',
+    /** Gold Soft — segundo ponto da rampa metálica do logotipo; também o --ink do tema escuro. */
+    brandAccent: '#F0D77B',
+    /** Deep Navy — âncora do tema escuro (substitui Obsidian/Midnight; nunca preto puro, 09/2026). */
+    obsidian: '#061A3A',
+    /** Alias de `obsidian` para código legado que ainda lê `midnight` — mesmo valor. */
+    midnight: '#061A3A',
+    /** Deep Iris — "roxo" da paleta. Upgrade 09/2026, mais vívido. */
+    iris: '#7C3AED',
+    /** Orbit Blue — "azul" da paleta. Upgrade 09/2026, mais vívido. */
+    orbitBlue: '#1677FF',
+    /** "Vermelho" da paleta — novo em 09/2026. */
+    red: '#FF3158',
+    /** "Rosa" da paleta — novo em 09/2026, quinta cor. */
+    pink: '#FF4FA3',
+    /** Alias de `blossom` para código legado que ainda lê `snow` — âncora do tema claro agora é
+     *  rosada, nunca branco puro (ver `blossom` abaixo). */
+    snow: '#FFF4F9',
+    /** Blossom White — âncora do tema claro (substitui Snow White, 09/2026). */
+    blossom: '#FFF4F9',
   },
   /**
    * Canais de atendimento exibidos na tela de entrada (`WelcomeScreen`).

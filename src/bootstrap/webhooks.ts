@@ -6,6 +6,7 @@ import { bitrixWebhookRoutes } from '../features/integrations/bitrix/bitrix.webh
 import { chatwootWebhookRoutes } from '../features/integrations/chatwoot/chatwoot.webhook.js';
 import { emailReplyWebhookRoutes } from '../features/integrations/email/emailReply.webhook.js';
 import { signatureStatusWebhookRoutes } from '../features/integrations/signature/signatureStatus.webhook.js';
+import { stripeWebhookRoutes } from '../features/integrations/stripe/stripe.webhook.js';
 import { threecxWebhookRouter } from '../features/integrations/threecx/threecx.routes.js';
 
 /**
@@ -40,6 +41,13 @@ export function mountPreJsonWebhooks(app: Express): void {
   // só que sobre "{timestamp}.{corpo cru}" (ver chatwoot.helpers.ts). Hoje só loga o evento
   // autenticado; sincronização com o CRM é decisão de produto ainda não tomada.
   app.use('/api/integrations/chatwoot', chatwootWebhookRoutes);
+  // Webhook de ENTRADA da Stripe (BILLING-007, onda 5) — segredo de assinatura POR CONEXÃO
+  // (StripeConnection.webhookSecret), não um segredo global: cada organização tem sua própria
+  // conta Stripe. Convive no mesmo prefixo `/api/integrations/stripe` que as rotas JSON
+  // autenticadas de stripe.routes.ts (montadas depois do express.json() em routes.ts) — mesmo
+  // padrão de coexistência já usado pelo Bitrix acima. Hoje só prova autenticidade e loga; virar
+  // uma atualização real de Fatura é a reconciliação de BILLING-003, ainda não construída.
+  app.use('/api/integrations/stripe', stripeWebhookRoutes);
 
   // CYC-005 (onda 25): visualização pública de proposta comercial. Quem abre o link é o
   // cliente/lead, sem conta no sistema — não passa por authenticateToken. O publicToken (uuid,

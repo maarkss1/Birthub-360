@@ -66,6 +66,7 @@ import { testBitrixConnection } from '../../features/integrations/bitrix/service
 // e resolvido via `container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService')` com
 // o tipo estrutural local já usado por `agent.routes.ts`.
 import { createCalendarEvent } from '../../features/integrations/google/google.service.js';
+import { StripeChargeAdapter } from '../../features/integrations/stripe/infra/StripeChargeAdapter';
 import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
 import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
 // Agent Runtime Genérico (PROMPT 4) — mesmo motivo do comentário da Onda 43 acima:
@@ -112,7 +113,12 @@ export function setupDI() {
   const automationRepository = new PrismaAutomationRepository();
   const analyticsRepository = new PrismaAnalyticsRepository();
   const commercialIntelligenceRepository = new PrismaCommercialIntelligenceRepository();
-  const crm360Repository = new PrismaCrm360Repository();
+  // Porta de composição entre features (crm360 -> integrations/stripe), ver
+  // src/shared/contracts/stripeCharge.contract.ts — BILLING-003 (reconciliação Fatura x Stripe)
+  // precisa confirmar uma cobrança real antes de marcar Pago, sem importar internals de
+  // integrations/stripe diretamente.
+  const stripeChargeAdapter = new StripeChargeAdapter();
+  const crm360Repository = new PrismaCrm360Repository(stripeChargeAdapter);
   const qualificationMatrixRepository = new PrismaQualificationMatrixRepository();
   const objectionMatrixRepository = new PrismaObjectionMatrixRepository();
   const bugReportRepository = new PrismaBugReportRepository();

@@ -8,10 +8,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const organizationFindMany = vi.fn();
 const leadFindMany = vi.fn();
+const reportCreate = vi.fn();
 vi.mock('../../../../../src/lib/prisma.js', () => ({
   prisma: {
     organization: { findMany: (...args: unknown[]) => organizationFindMany(...args) },
     lead: { findMany: (...args: unknown[]) => leadFindMany(...args) },
+    report: { create: (...args: unknown[]) => reportCreate(...args) },
   },
 }));
 
@@ -37,6 +39,7 @@ beforeEach(() => {
   organizationFindMany.mockResolvedValue([{ id: 'org-a' }, { id: 'org-b' }]);
   leadFindMany.mockResolvedValue([]);
   invoke.mockResolvedValue({ content: 'análise' });
+  reportCreate.mockResolvedValue({ id: 'report-1' });
 });
 
 describe('runWinLossAnalysis', () => {
@@ -55,6 +58,47 @@ describe('runWinLossAnalysis', () => {
       { organizationId: 'org-a', analysis: 'análise', leadsAnalyzed: 2 },
       { organizationId: 'org-b', analysis: 'análise', leadsAnalyzed: 1 },
     ]);
+  });
+
+  // REVOPS-004 (onda 5): antes desta correção o resultado era só devolvido — nenhuma escrita no
+  // banco acontecia, o trabalho de IA (caro, real) era jogado fora a cada execução do cron.
+  it('REVOPS-004: persiste um Report por organização com análise real (source: WEEKLY_WIN_LOSS_AUTO)', async () => {
+    leadFindMany.mockImplementation(({ where }: { where: { organizationId: string } }) => {
+      return Promise.resolve(
+        where.organizationId === 'org-a' ? [lead('lead-a1'), lead('lead-a2')] : [lead('lead-b1')],
+      );
+    });
+
+    await runWinLossAnalysis();
+
+    expect(reportCreate).toHaveBeenCalledTimes(2);
+    expect(reportCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          organizationId: 'org-a',
+          source: 'WEEKLY_WIN_LOSS_AUTO',
+          content: 'análise',
+          metrics: { leadsAnalyzed: 2 },
+        }),
+      }),
+    );
+    expect(reportCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          organizationId: 'org-b',
+          source: 'WEEKLY_WIN_LOSS_AUTO',
+          metrics: { leadsAnalyzed: 1 },
+        }),
+      }),
+    );
+  });
+
+  it('REVOPS-004: organização sem leads no período não persiste Report nenhum', async () => {
+    leadFindMany.mockResolvedValue([]);
+
+    await runWinLossAnalysis();
+
+    expect(reportCreate).not.toHaveBeenCalled();
   });
 
   it('toda chamada de leitura de leads inclui organizationId no filtro (nunca uma query global)', async () => {

@@ -1,4 +1,13 @@
-import { AlertTriangle, ArrowLeft, Copy, ExternalLink, Loader2, Pencil, Send } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  BadgeCheck,
+  Copy,
+  ExternalLink,
+  Loader2,
+  Pencil,
+  Send,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
@@ -6,6 +15,7 @@ import { Label } from '../../../components/ui/Label';
 import { Select } from '../../../components/ui/Select';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { useStripeIntegration } from '../../../hooks/useStripeIntegration';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
@@ -62,6 +72,13 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
   const [signerEmail, setSignerEmail] = useState(document.contact?.email ?? '');
   const [signerName, setSignerName] = useState(document.contact?.name ?? '');
   const [requestingSignature, setRequestingSignature] = useState(false);
+  // BILLING-003 (onda 5): "Pago" numa Fatura deixou de ser uma opção livre no dropdown de status —
+  // o backend recusa essa transição direta agora (ver PrismaCrm360Repository.updateDocumentStatus).
+  // A única forma real é reconciliar com uma cobrança Stripe confirmada ao vivo, abaixo.
+  const { stripeConnections } = useStripeIntegration();
+  const [reconcileConnectionId, setReconcileConnectionId] = useState('');
+  const [reconcilePaymentIntentId, setReconcilePaymentIntentId] = useState('');
+  const [reconciling, setReconciling] = useState(false);
 
   useEffect(() => {
     setLoadingVersions(true);
@@ -88,7 +105,13 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
     style: 'currency',
     currency: document.currency || 'BRL',
   });
-  const availableNextStatuses = STATUS_FLOW[document.status] ?? [];
+  // BILLING-003: Fatura nunca oferece "Pago" como opção livre do dropdown — só a reconciliação
+  // com Stripe (card dedicado abaixo) pode chegar lá. Outros tipos de documento continuam com o
+  // fluxo original.
+  const availableNextStatuses =
+    document.type === 'Fatura'
+      ? (STATUS_FLOW[document.status] ?? []).filter((s) => s !== 'Pago')
+      : (STATUS_FLOW[document.status] ?? []);
   const publicUrl = `${window.location.origin}/api/public/proposals/${document.publicToken}/view`;
 
   const handleStatusChange = async () => {
@@ -130,6 +153,29 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
     }
   };
 
+  const handleReconcilePayment = async () => {
+    if (!reconcileConnectionId || !reconcilePaymentIntentId.trim()) {
+      toast.error('Selecione a conexão Stripe e informe o id do pagamento (pi_...).');
+      return;
+    }
+    setReconciling(true);
+    try {
+      await crm360Api.reconcileFaturaStripePayment(
+        document.id,
+        reconcileConnectionId,
+        reconcilePaymentIntentId.trim(),
+      );
+      toast.success('Pagamento confirmado na Stripe — Fatura marcada como Pago.');
+      setReconcilePaymentIntentId('');
+      onChanged();
+    } catch (error) {
+      clientLogger.error({ err: error }, 'Falha ao reconciliar pagamento da Fatura');
+      toast.error(error instanceof Error ? error.message : 'Falha ao reconciliar pagamento.');
+    } finally {
+      setReconciling(false);
+    }
+  };
+
   const copyPublicLink = async () => {
     try {
       await navigator.clipboard.writeText(publicUrl);
@@ -156,11 +202,19 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
           </p>
           <h2 className="text-xl font-black text-ink truncate">{document.title}</h2>
         </div>
-        <span
-          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shrink-0 ${STATUS_STYLES[document.status]}`}
-        >
-          {document.status}
-        </span>
+        <div className="flex flex-col items-end gap-1 shrink-0">
+          <span
+            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${STATUS_STYLES[document.status]}`}
+          >
+            {document.status}
+          </span>
+          {document.type === 'Fatura' && document.paymentReconciledAt && (
+            <span className="inline-flex items-center gap-1 text-[11px] text-success-active dark:text-success">
+              <BadgeCheck className="w-3 h-3" /> Confirmado na Stripe em{' '}
+              {new Date(document.paymentReconciledAt).toLocaleDateString('pt-BR')}
+            </span>
+          )}
+        </div>
         {canWrite && (
           <Button type="button" variant="ghost" onClick={onEdit} className="text-xs h-9 shrink-0">
             <Pencil className="w-3.5 h-3.5 mr-1.5" /> Editar
@@ -329,6 +383,68 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
                 {updatingStatus && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                 Confirmar
               </Button>
+            </div>
+          )}
+
+          {canWrite && document.type === 'Fatura' && document.status !== 'Pago' && (
+            <div className="rounded-card border border-line bg-surface p-4 space-y-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-ink-2">
+                Reconciliar pagamento (Stripe)
+              </p>
+              <p className="text-[11px] text-ink-2">
+                BILLING-003: esta Fatura só é marcada como Pago depois de confirmarmos, ao vivo na
+                Stripe, uma cobrança "succeeded" cujo valor bate com o total acima — nunca por
+                autoatestação manual.
+              </p>
+              {stripeConnections.length === 0 ? (
+                <p className="text-[11px] text-warning-active dark:text-warning">
+                  Nenhuma conexão Stripe cadastrada — conecte uma em Integrações antes de
+                  reconciliar.
+                </p>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="reconcile-connection" className="text-xs">
+                      Conexão Stripe
+                    </Label>
+                    <Select
+                      id="reconcile-connection"
+                      value={reconcileConnectionId}
+                      onChange={(e) => setReconcileConnectionId(e.target.value)}
+                    >
+                      <option value="">Selecione…</option>
+                      {stripeConnections.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.label} (····{c.secretKeyLast4})
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="reconcile-payment-intent" className="text-xs">
+                      Id do pagamento (PaymentIntent)
+                    </Label>
+                    <Input
+                      id="reconcile-payment-intent"
+                      type="text"
+                      placeholder="pi_..."
+                      value={reconcilePaymentIntentId}
+                      onChange={(e) => setReconcilePaymentIntentId(e.target.value)}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={handleReconcilePayment}
+                    disabled={
+                      reconciling || !reconcileConnectionId || !reconcilePaymentIntentId.trim()
+                    }
+                    className="w-full"
+                  >
+                    {reconciling && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                    Confirmar pagamento
+                  </Button>
+                </>
+              )}
             </div>
           )}
 

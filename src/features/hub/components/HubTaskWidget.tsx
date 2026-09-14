@@ -145,7 +145,7 @@ export function HubTaskWidget() {
                   onClick={() => void toggle(task)}
                   disabled={togglingId === task.id}
                   className={`grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full border transition-colors disabled:opacity-50 ${
-                    task.done ? 'border-ok bg-ok text-white' : 'border-line-strong bg-transparent'
+                    task.done ? 'border-ok bg-ok text-on-brand' : 'border-line bg-transparent'
                   }`}
                 >
                   {task.done && <Check className="h-2.5 w-2.5" strokeWidth={3} />}

@@ -6,26 +6,48 @@
    subsetting que o endpoint já resolve. */
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
 
-/* Birth Hub 360 — famílias tipográficas do brand book (p. 06 "Typography"),
-   self-hosted a partir dos .woff2 originais em `public/fonts/`:
+/* Birth Hub 360 — famílias tipográficas, self-hosted a partir dos .woff2
+   originais em `public/fonts/`:
 
-   - Bodoni Moda → display. "Headlines, títulos, chamadas institucionais."
-   - Inter       → UI. "Menus, textos, tabelas, dashboards, relatórios."
+   - Sora  → display. Títulos, chamadas institucionais, hero. Substitui Bodoni
+     Moda (09/2026, pedido explícito do usuário — nova direção "Strategic
+     Command Center": geométrica/contemporânea no lugar do Didone editorial).
+   - Inter → UI. Menus, textos, tabelas, dashboards, relatórios. Inalterado.
 
-   Antes deste arquivo carregava Montserrat de fonts.gstatic.com em 4 pesos ×
-   5 subsets (20 blocos @font-face). Os dois arquivos abaixo são fontes
-   VARIÁVEIS — um arquivo por subset cobre toda a faixa de peso — e são
-   servidos pela própria origem: menos requisições, sem CDN de terceiros, sem
-   dependência de rede para a marca renderizar (importa no app Android via
-   Capacitor, onde a primeira abertura pode ser offline).
+   Sora também é fonte VARIÁVEL, mesmo padrão de Inter: um arquivo por subset
+   (latin/latin-ext) cobre toda a faixa de peso, servido pela própria origem —
+   sem CDN de terceiros, sem dependência de rede (o app roda em Android via
+   Capacitor, onde a primeira abertura pode ser offline). Bodoni Moda continua
+   self-hosted abaixo (não removida do disco) porque nada além do
+   --font-brand-display a referenciava; se algum componente specific precisar
+   do Didone de volta, os arquivos já estão aqui.
 
-   Só latin e latin-ext: a aplicação é pt-BR e os subsets cirílico/grego/
-   vietnamita que o Montserrat trazia nunca foram exercitados. Adicione um
-   subset novo só quando existir texto real que precise dele.
+   O "B" do emblema é vetorizado dentro dos SVGs de `identidade-visual/
+   birthhub360/logos/` — não é uma família tipográfica carregada em runtime. */
 
-   O "B" do emblema é Playfair Display italic no brand book — já vetorizado
-   dentro dos SVGs de `public/brand/`, então essa terceira família NÃO é
-   carregada em runtime (38 kB para um único glifo não se justificaria). */
+/* latin-ext */
+@font-face {
+  font-family: "Sora";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/sora-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Sora";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/sora-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 /* latin */
 @font-face {
@@ -75,49 +97,48 @@
 }
 
 :root {
-  /* Neutros ancorados na paleta Birth Hub 360 (brand book, p. 07/08). A regra
-     "ANCHOR — base sempre Obsidian ou Snow White" define os dois extremos: o
-     tema claro parte do Snow White com a superfície Parchment (#E9E4D9) do
-     próprio brand book como segundo plano; o escuro parte do Midnight/Obsidian.
-     Substitui a família "warm neutral" (#fbf9f7/#1a1513 …) da marca anterior.
+  /* Paleta "Strategic Command Center" (09/2026, redesenho pedido explicitamente
+     pelo usuário — substitui a âncora Obsidian/Snow White). Regra nova:
+     NENHUM neutro é preto ou branco puro — todo fundo/texto neutro carrega um
+     matiz das cinco cores da marca (dourado, roxo, azul, vermelho, rosa). Tema
+     claro parte de um branco rosado (Blossom White); o escuro parte de um azul
+     marinho profundo (Deep Navy) — ver bloco `.dark` abaixo.
 
-     Contraste recalculado e verificado pela fórmula de luminância relativa do
-     WCAG (calculado, não estimado), tema claro:
-       --ink   (#0B132B) 18.38:1 contra --surface, 16.4:1 contra --surface-2
-       --ink-2 (#5A6274)  6.12:1 contra --surface,  5.09:1 contra --surface-2
-     Ambos com folga sobre o mínimo AA (4.5:1) e melhores que os valores
-     anteriores (17.2:1 / 4.77:1). */
-  --bg: #f6f3ec;
-  --surface: #ffffff;
-  --surface-2: #edeae2;
-  --ink: #0b132b;
-  --ink-2: #5a6274;
-  --line: rgba(11, 19, 43, 0.1);
-  /* Antique Gold — "valor, foco e assinatura" (brand book, p. 07). É a cor de
-     ação primária: a própria aplicação de exemplo do brand book (p. 11) usa
-     `background:#D4AF37; color:#0B132B` no CTA. Diferente da marca anterior
-     (laranja escuro), ouro é uma cor CLARA: texto branco em cima mede 2.10:1 e
-     é proibido — use `text-on-brand` (ver --on-brand abaixo), que mede 8.74:1. */
+     Contraste verificado pela fórmula de luminância relativa do WCAG
+     (calculado, não estimado), tema claro:
+       --ink   (#174A9C) 7.85:1 contra --bg/--surface
+       --ink-2 (#6D28D9) 6.62:1 contra --bg/--surface
+     Ambos com folga sobre o mínimo AA (4.5:1). */
+  --bg: #fff4f9;
+  --surface: #fff1f7;
+  --surface-2: #eef4ff;
+  --ink: #174a9c;
+  --ink-2: #6d28d9;
+  --line: rgba(124, 58, 237, 0.18);
+  /* Antique Gold — cor de ação primária, inalterada nesta rodada. Ouro é uma
+     cor CLARA: texto branco em cima mede 2.10:1 e é proibido — use
+     `text-on-brand` (ver --on-brand abaixo), que mede 8.21:1. */
   --brand: #d4af37;
-  /* Gold Soft — segundo ponto da rampa metálica do logotipo
-     (linear-gradient(180deg,#F7E9B8,#D4AF37,#8C6D1F,#EBD689)). Escolhido de
-     propósito dentro da família do ouro, e não o Deep Iris: `from-brand
-     to-brand-2` é usado como FUNDO de botão/estado ativo com um único texto em
-     cima — um gradiente que atravessasse ouro→roxo não teria cor de texto que
-     passasse nas duas pontas. O gradiente 360º completo (ouro→íris→azul) existe
-     como --orbit e é reservado a halo/borda/hero, como manda o brand book. */
-  --brand-2: #ebd689;
+  /* Gold Soft — também usado como --ink do tema escuro (ver `.dark` abaixo):
+     no escuro, o texto primário É o ouro suave, não um neutro claro. */
+  --brand-2: #f0d77b;
   /* Cor de texto/ícone sobre qualquer superfície de marca sólida (bg-brand,
-     bg-brand-2, from-brand…). Obsidian sobre ouro mede 8.74:1 — o par correto
-     segundo o próprio brand book. NÃO usar text-white sobre marca. */
-  --on-brand: #0b132b;
-  /* Deep Iris — "inteligência em movimento". Não é fundo de botão: vive em
-     halos, indicadores, órbitas e realces de dado (brand book, p. 08, regra
-     "01 USE"). */
-  --iris: #5b21b6;
-  /* Terceira cor da órbita. No brand book é `oklch(52% 0.19 255)`; aqui em sRGB
-     porque assets de marca (SVG, e-mail, impresso) precisam de hex. */
-  --orbit-blue: #0065d2;
+     bg-brand-2, from-brand…). Deep Navy sobre ouro mede 8.21:1. NÃO usar
+     text-white sobre marca. */
+  --on-brand: #061a3a;
+  /* Deep Iris — "roxo" da nova paleta. Halos, indicadores, órbitas, realces de
+     dado — não é fundo de botão sólido com texto em cima. Upgrade de #5B21B6
+     para um violeta mais vívido, alinhado à nova direção. */
+  --iris: #7c3aed;
+  /* "Azul" da nova paleta — upgrade de #0065D2 para um azul mais vívido. */
+  --orbit-blue: #1677ff;
+  /* "Vermelho" da nova paleta — urgência/estado ao vivo. Substitui o antigo
+     --pulse claro (#C2255C) como o vermelho oficial da marca. */
+  --red: #e11d48;
+  /* "Rosa" da nova paleta — quinta cor, nova nesta rodada. Usada em halos,
+     bordas e no gradiente de assinatura (dourado→vermelho→rosa→íris→azul),
+     nunca como fundo de superfície com texto em cima. */
+  --pink: #db2777;
   --warn: #ffc500;
   --ok: #0f9d64;
   /* Indireção pro --color-info do @theme poder ser sobrescrito por tema (mesmo padrão de
@@ -153,7 +174,12 @@
      `.claude/PILOTS.md`, adendo "Centro de Decisão". Valor do escuro reaproveita o mesmo
      `--color-danger` (#ef4444) já definido no bloco `@theme` (4.93:1 contra a superfície escura),
      em vez de inventar uma cor nova.*/
-  --critical: #d03b3b;
+  /* Recalibrado 09/2026 (achado real do axe-core na paleta "Strategic Command Center": PR #481,
+     `.text-critical` do Sidebar contra o novo `--surface` claro #FFF1F7 caía pra 4.38:1, abaixo do
+     mínimo AA). 10% preto (mesma fórmula color-mix já usada no resto do arquivo) recupera margem:
+     5.21:1 contra a nova superfície clara — sem precisar reabrir os 2 casos originais que já
+     passavam (8.7:1 cru contra --surface antiga, agora ~7.9:1, ainda com folga). */
+  --critical: color-mix(in srgb, #d03b3b 90%, black);
   /* --critical acima já foi calibrado pra passar 4.5:1 cru contra --surface sólida (comentário
      acima) — mas isso não cobre o padrão de badge "soft" (bg-critical/15 text-critical, usado em
      DealsGrid.tsx/CompareBar.tsx pro estágio "Perdido"/Δ negativo): a mistura de 15% de --critical
@@ -205,26 +231,35 @@
      de fato distintas: serif editorial para título, sans para interface. Como
      Bodoni Moda é serifada e de contraste alto, ela é para DISPLAY — não use
      `font-display` em corpo de texto, tabela ou rótulo pequeno. */
-  --font-brand-display: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  --font-brand-display: "Sora", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {
-  /* Âncora Obsidian (brand book, p. 08). Midnight (#08090F) é o fundo de página
-     do próprio brand book; Obsidian (#0B132B) é a superfície institucional.
-     Contraste verificado: --ink 17.77:1 e --ink-2 7.13:1 contra --surface,
-     6.48:1 contra --surface-2. */
-  --bg: #08090f;
-  --surface: #0b132b;
-  --surface-2: #131c3a;
-  --ink: #f8fafc;
-  --ink-2: #97a1bc;
-  --line: rgba(248, 250, 252, 0.12);
+  /* Deep Navy — âncora do tema escuro na paleta "Strategic Command Center"
+     (ver comentário no :root). Nada de preto puro: o fundo mais profundo do
+     produto é um azul-marinho saturado, não #000.
+     Contraste verificado (WCAG, calculado):
+       --ink   (#F0D77B, = --brand-2) 12.09:1 contra --bg, 11.5:1 contra --surface
+       --ink-2 (#79B2FF)               7.92:1 contra --bg,  6.57:1 contra --surface-2 */
+  --bg: #061a3a;
+  --surface: #111b49;
+  --surface-2: #18265b;
+  --ink: var(--brand-2);
+  --ink-2: #79b2ff;
+  --line: rgba(240, 215, 123, 0.16);
   --soft: rgba(212, 175, 55, 0.16);
+  /* Versões vívidas do vermelho/rosa para glow sobre superfície escura — mesmo padrão de
+     --accent-violet/--accent-cyan/--pulse abaixo. */
+  --red: #ff3158;
+  --pink: #ff4fa3;
   --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.6), 0 14px 34px -18px rgba(0, 0, 0, 0.9);
   --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.7), 0 20px 46px -20px rgba(0, 0, 0, 0.95);
   --shadow-nav-value: 12px 0 38px -24px rgba(0, 0, 0, 0.85);
   --shadow-nav-active-value: 0 12px 30px -15px color-mix(in srgb, var(--brand) 58%, black);
-  --critical: #ef4444;
+  /* Recalibrado 09/2026 (mesmo achado do :root acima, lado escuro: axe-core mediu 4.37:1 contra o
+     novo --surface #111B49 — antes passava 4.89:1 contra o Obsidian mais escuro que saiu). 15%
+     branco recupera margem: 5.15:1 contra a nova superfície escura. */
+  --critical: color-mix(in srgb, #ef4444 85%, white);
   /* --critical claro escurece pro badge soft (ver comentário no :root); no escuro precisa do
      sentido oposto — clarear em direção ao branco — porque #ef4444 puro sobre a mistura escura
      (bg-critical/15 sobre --surface-2 escura) mede só 3.93:1. 20% de --critical + 80% de branco
@@ -293,9 +328,17 @@
      botão: ver o comentário de --iris em :root. */
   --color-iris: var(--iris);
   --color-orbit-blue: var(--orbit-blue);
-  /* Íris sobre superfície clara mede 3.9:1 como texto; a versão escurecida
-     passa 4.5:1. Mesmo idioma dos demais pares `-active` deste arquivo. */
+  /* Íris (#7C3AED, upgrade 09/2026) sobre superfície clara mede 7.57:1 como texto — já passa AA
+     cru, mas a versão escurecida abaixo segue disponível para hierarquia (texto secundário sobre
+     texto primário íris). */
   --color-iris-active: color-mix(in srgb, var(--iris) 78%, black);
+  /* "Vermelho" e "rosa" da paleta nova — halos, badges, indicador de urgência/ao vivo, ponta do
+     gradiente de assinatura. --red/--pink reagem a tema (ver :root/.dark); os "-active" existem
+     para o mesmo caso do --color-iris-active acima, texto sobre superfície clara. */
+  --color-red: var(--red);
+  --color-pink: var(--pink);
+  --color-red-active: color-mix(in srgb, var(--red) 80%, black);
+  --color-pink-active: color-mix(in srgb, var(--pink) 80%, black);
   --color-ring: var(--brand);
 
   --color-success: #10b981;
@@ -571,17 +614,12 @@
     color: var(--ink);
   }
 
-  /* Divisão de famílias conforme a escala do brand book (p. 06): Display 44-72 e
-     Título 28-36 são território da Bodoni Moda; Subtítulo 16-20 e Corpo 10-14
-     são da Inter. H1-H3 caem na primeira faixa, H4-H6 na segunda — e é por isso
-     que os títulos pequenos NÃO usam a serifada: Bodoni é um Didone de contraste
-     alto, cujas hastes finas somem abaixo de ~20px, e este é um CRM denso, onde
-     h4/h5/h6 rotulam bloco de tabela e card ("a prioridade é legibilidade", diz
-     o próprio brand book sobre interface).
-
-     letter-spacing: -0.03em era calibrado para uma grotesca (Montserrat). Num
-     Didone esse aperto encosta as serifas; -0.01em preserva a densidade sem
-     colar os caracteres. */
+  /* Display 44-72 e Título 28-36 usam Sora (h1-h3); Subtítulo 16-20 e Corpo
+     10-14 usam Inter (h4-h6) — h4-h6 continuam na grotesca porque este é um
+     CRM denso, onde eles rotulam bloco de tabela e card, e Sora perde peso
+     visual abaixo de ~20px. -0.01em preserva a densidade sem colar os
+     caracteres (Sora, como Inter, é uma geométrica — não precisa do respiro
+     extra que uma serifada de contraste alto pediria). */
   h1,
   h2,
   h3 {
@@ -785,6 +823,20 @@
 }
 
 @layer utilities {
+  /* Órbita 360º de assinatura (dourado → vermelho → rosa → íris → azul) — atualização 09/2026 da
+     órbita de 3 cores (dourado → íris → azul) para as 5 cores da nova direção. Reservada a
+     halo/borda/hero por regra da marca (CLAUDE.md, seção 4, regra #3): nunca fundo de superfície
+     com texto em cima, no máximo uma por composição. */
+  .bg-gradient-orbit5 {
+    background-image: linear-gradient(
+      100deg,
+      var(--brand) 0%,
+      var(--red) 26%,
+      var(--pink) 48%,
+      var(--iris) 70%,
+      var(--orbit-blue) 100%
+    );
+  }
   .text-gradient-brand {
     background-image: linear-gradient(135deg, var(--brand), var(--brand-2));
     background-clip: text;
