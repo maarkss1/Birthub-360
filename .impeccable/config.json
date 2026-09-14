@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-09-13T15:03:18.857Z",
+        "reason": "User's original brief (section 29) explicitly mandates Sora for headings/numbers/KPIs and Inter for body/tables/interface as the two-font system for this specific strategy document — not an accidental AI-generic choice."
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/styles/globals.css"
+        ],
+        "createdAt": "2026-09-13T21:05:16.582Z",
+        "reason": "pre-existing .text-gradient-brand utility used by ReportsHub.tsx/AIConfigCenter.tsx, unrelated to this task's Login/Hub rebuild — out of scope to touch here"
+      }
+    ]
+  }
+}
