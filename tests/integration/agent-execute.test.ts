@@ -180,6 +180,11 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'win-loss-analyzer', jobRole: 'CLOSER' },
       { code: 'transcript-coach', jobRole: 'SDR' },
       { code: 'territory-mapper', jobRole: 'LDR' },
+      // Onda 9 — lote 5 (Marketing/LLM_PROMPT, primeiro lote fora do domínio Vendas), amostra de
+      // 3 dos 25 novos systemPrompt curados em scripts/agent-import/source-prompts.ts.
+      { code: 'churn-win-back-sequencer', jobRole: 'CHURN_RETENCAO' },
+      { code: 'competitor-x-ray', jobRole: 'LDR' },
+      { code: 'data-hygiene-monitor', jobRole: 'BITRIX_GUARDIAN' },
     ])(
       '$code (systemPrompt real) executa via agent.execute e retorna SUCCEEDED com output do modelo',
       async ({ code, jobRole }) => {
