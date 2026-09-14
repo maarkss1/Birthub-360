@@ -160,6 +160,21 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'ceo', jobRole: 'DIRETOR_COMERCIAL' },
       { code: 'account-manager', jobRole: 'CHURN_RETENCAO' },
       { code: 'closer-copilot', jobRole: 'CLOSER' },
+      // Onda 9 — lote 1 (Vendas/LLM_PROMPT), amostra de 3 dos 25 novos systemPrompt curados em
+      // scripts/agent-import/source-prompts.ts.
+      { code: 'account-mapper', jobRole: 'LDR' },
+      { code: 'call-review', jobRole: 'SDR' },
+      { code: 'deal-at-risk-alerter', jobRole: 'CLOSER' },
+      // Onda 9 — lote 2 (Vendas/LLM_PROMPT), amostra de 3 dos 25 novos systemPrompt curados em
+      // scripts/agent-import/source-prompts.ts.
+      { code: 'objection-crusher', jobRole: 'SDR' },
+      { code: 'meeting-booker', jobRole: 'BDR' },
+      { code: 'forecasting-modeler', jobRole: 'GERENTE_COMERCIAL' },
+      // Onda 9 — lote 3 (Vendas/LLM_PROMPT), amostra de 3 dos 25 novos systemPrompt curados em
+      // scripts/agent-import/source-prompts.ts.
+      { code: 'pipeline-auditor', jobRole: 'GERENTE_COMERCIAL' },
+      { code: 'rep-coach', jobRole: 'SDR' },
+      { code: 'proposal', jobRole: 'CLOSER' },
       // Onda 9 — lote 4 (Vendas/LLM_PROMPT, último lote do domínio), amostra de 3 dos 17 novos
       // systemPrompt curados em scripts/agent-import/source-prompts.ts.
       { code: 'win-loss-analyzer', jobRole: 'CLOSER' },

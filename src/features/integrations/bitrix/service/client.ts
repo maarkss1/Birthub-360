@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
+import {
+  computeBackoffDelayMs,
+  parseRetryAfterMs,
+  sleep,
+} from '../../../../shared/http/retryWithBackoff.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { assertSafeExternalUrl, safeFetch } from '../../../../shared/security/urlGuard.js';
 
@@ -34,23 +39,14 @@ export class BitrixDefinitiveError extends AppError {
   }
 }
 
+// backoffDelayMs/sleep/retryAfterMs foram extraídos para src/shared/http/retryWithBackoff.ts
+// (INTEGRATION-002) para reuso por Stripe/Omie/Slack — importados acima como
+// computeBackoffDelayMs/sleep/parseRetryAfterMs. Mesma fórmula e constantes de sempre
+// (BASE_BACKOFF_MS/MAX_BACKOFF_MS abaixo continuam passadas explicitamente, comportamento
+// idêntico ao anterior); o loop de retry/circuit-breaker deste arquivo continua específico do
+// Bitrix (classificação de erro, correlationId, breaker) e não foi tocado.
 function backoffDelayMs(attempt: number): number {
-  const exp = Math.min(BASE_BACKOFF_MS * 2 ** (attempt - 1), MAX_BACKOFF_MS);
-  // Jitter de até 25% — evita que múltiplas regras/organizações reintentem exatamente no mesmo
-  // instante e gerem um pico coordenado de chamadas contra o mesmo portal.
-  return exp + Math.random() * exp * 0.25;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/** Extrai o Retry-After (segundos) de uma resposta 429, quando o Bitrix o envia. */
-function retryAfterMs(response: Response): number | null {
-  const header = response.headers.get('retry-after');
-  if (!header) return null;
-  const seconds = Number(header);
-  return Number.isFinite(seconds) && seconds >= 0 ? seconds * 1000 : null;
+  return computeBackoffDelayMs(attempt, BASE_BACKOFF_MS, MAX_BACKOFF_MS);
 }
 
 /**
@@ -198,7 +194,7 @@ async function attemptBitrixCall<T>(
       'Bitrix24 aplicou limite de chamadas (HTTP 429).',
       429,
       undefined,
-      retryAfterMs(response) ?? undefined,
+      parseRetryAfterMs(response) ?? undefined,
     );
   }
   if (response.status >= 500) {

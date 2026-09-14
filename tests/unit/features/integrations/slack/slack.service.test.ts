@@ -40,9 +40,21 @@ vi.mock('@/shared/security/urlGuard', () => ({
   safeFetch: (...args: [string, RequestInit?]) => safeFetchMock(...args),
 }));
 
+// Caminho Bot Token (chat.postMessage) usa fetchWithTimeout, não safeFetch/globalThis.fetch —
+// mockado à parte, mesmo padrão de stripe.service.test.ts/omie.service.test.ts.
+const fetchWithTimeoutMock = vi.fn();
+vi.mock('@/lib/http', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/lib/http')>()),
+  fetchWithTimeout: (...args: unknown[]) => fetchWithTimeoutMock(...args),
+}));
+
 import { connectSlack, sendSlackMessage } from '@/features/integrations/slack/slack.service';
 
 const ORG_ID = 'org-slack-test';
+
+function jsonResponse(status: number, body: Record<string, unknown>) {
+  return { ok: status >= 200 && status < 300, status, json: () => Promise.resolve(body) };
+}
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -84,18 +96,29 @@ describe('sendSlackMessage — honestidade sobre envio real (nunca finge sucesso
     );
   });
 
-  it('quando o Incoming Webhook responde erro, NÃO reporta sucesso', async () => {
-    const conn = await connectSlack(ORG_ID, {
-      webhookUrl: 'https://hooks.slack.com/services/T00/B00/X00',
-    });
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: false, status: 500, text: () => Promise.resolve('boom') }),
-    );
+  it('quando o Incoming Webhook responde erro, NÃO reporta sucesso (esgota as tentativas de retry de um 5xx sustentado)', async () => {
+    vi.useFakeTimers();
+    try {
+      const conn = await connectSlack(ORG_ID, {
+        webhookUrl: 'https://hooks.slack.com/services/T00/B00/X00',
+      });
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValue({ ok: false, status: 500, text: () => Promise.resolve('boom') });
+      vi.stubGlobal('fetch', fetchMock);
 
-    await expect(sendSlackMessage(ORG_ID, conn.id, 'Olá time!')).rejects.toThrow(
-      /Slack respondeu com erro/,
-    );
+      const promise = sendSlackMessage(ORG_ID, conn.id, 'Olá time!');
+      // Handler vazio só pra evitar o unhandledRejection do Node entre o runAllTimersAsync
+      // resolver a rejeição e o expect().rejects abaixo de fato anexar seu handler.
+      promise.catch(() => {});
+      await vi.runAllTimersAsync();
+
+      await expect(promise).rejects.toThrow(/Slack respondeu com erro/);
+      // SLACK_MAX_ATTEMPTS = 4 (INTEGRATION-002) — 5xx é transiente, reintentado até esgotar.
+      expect(fetchMock).toHaveBeenCalledTimes(4);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('recusa mensagem vazia antes de qualquer chamada de rede', async () => {
@@ -123,5 +146,108 @@ describe('sendSlackMessage — honestidade sobre envio real (nunca finge sucesso
       /IP privado\/reservado/,
     );
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('sendSlackMessage — INTEGRATION-002: retry/backoff em falha transiente (Incoming Webhook)', () => {
+  it('reintenta em falha de rede e eventualmente sucede', async () => {
+    vi.useFakeTimers();
+    try {
+      const conn = await connectSlack(ORG_ID, {
+        webhookUrl: 'https://hooks.slack.com/services/T00/B00/X00',
+      });
+      // connectSlack já chamou assertSafeExternalUrl uma vez ao cadastrar a conexão — limpa antes
+      // de medir só as chamadas feitas pelas tentativas de retry abaixo.
+      assertSafeExternalUrlMock.mockClear();
+      const fetchMock = vi
+        .fn()
+        .mockRejectedValueOnce(new Error('fetch failed (ECONNRESET)'))
+        .mockResolvedValueOnce({ ok: true, status: 200 });
+      vi.stubGlobal('fetch', fetchMock);
+
+      const promise = sendSlackMessage(ORG_ID, conn.id, 'Olá time!');
+      await vi.runAllTimersAsync();
+      const result = await promise;
+
+      expect(result.success).toBe(true);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      // Revalida SSRF a cada tentativa (não só a primeira) — mesmo raciocínio de callBitrix.
+      expect(assertSafeExternalUrlMock).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('NÃO reintenta quando a rejeição do guard de SSRF acontece numa tentativa posterior', async () => {
+    vi.useFakeTimers();
+    try {
+      const conn = await connectSlack(ORG_ID, {
+        webhookUrl: 'https://hooks.slack.com/services/T00/B00/X00',
+      });
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+      vi.stubGlobal('fetch', fetchMock);
+      assertSafeExternalUrlMock.mockRejectedValueOnce(
+        new Error('Falha de rede transitória'),
+      );
+
+      const promise = sendSlackMessage(ORG_ID, conn.id, 'Olá time!');
+      promise.catch(() => {});
+      await vi.runAllTimersAsync();
+
+      await expect(promise).rejects.toThrow(/Falha de rede transit/);
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('sendSlackMessage — INTEGRATION-002: retry/backoff em falha transiente (Bot Token)', () => {
+  async function connectWithBotToken() {
+    return connectSlack(ORG_ID, { botToken: 'xoxb-test-token', defaultChannel: '#vendas' });
+  }
+
+  it('reintenta em falha de rede e eventualmente sucede', async () => {
+    vi.useFakeTimers();
+    try {
+      const conn = await connectWithBotToken();
+      fetchWithTimeoutMock
+        .mockRejectedValueOnce(new Error('fetch failed (ECONNRESET)'))
+        .mockResolvedValueOnce(jsonResponse(200, { ok: true, ts: '1700000000.000100' }));
+
+      const promise = sendSlackMessage(ORG_ID, conn.id, 'Olá time!');
+      await vi.runAllTimersAsync();
+      const result = await promise;
+
+      expect(result.success).toBe(true);
+      expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('reintenta em HTTP 5xx e esgota as tentativas quando a falha persiste', async () => {
+    vi.useFakeTimers();
+    try {
+      const conn = await connectWithBotToken();
+      fetchWithTimeoutMock.mockResolvedValue(jsonResponse(503, {}));
+
+      const promise = sendSlackMessage(ORG_ID, conn.id, 'Olá time!');
+      promise.catch(() => {});
+      await vi.runAllTimersAsync();
+
+      await expect(promise).rejects.toThrow();
+      expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(4);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('NÃO reintenta quando o Slack recusa a chamada com erro de negócio (HTTP 200, ok:false)', async () => {
+    const conn = await connectWithBotToken();
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { ok: false, error: 'channel_not_found' }));
+
+    await expect(sendSlackMessage(ORG_ID, conn.id, 'Olá time!')).rejects.toThrow(/channel_not_found/);
+    expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(1);
   });
 });

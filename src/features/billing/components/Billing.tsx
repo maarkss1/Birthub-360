@@ -192,38 +192,12 @@ export function Billing() {
               <StatTile label="Latência média" value={`${data.avgLatencyMs} ms`} />
             </div>
 
-            {/* Card de Cota de Tokens */}
-            <Card padding="sm" className="border-line bg-surface">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <h3 className="text-sm font-bold text-ink">Cota Mensal de Tokens (IA & SDR)</h3>
-                  <p className="text-xs text-ink-2">
-                    Limite contratual estimado de 5.000.000 tokens/mês
-                  </p>
-                </div>
-                <span
-                  className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
-                    data.totalTokens / 5000000 >= 0.8
-                      ? 'bg-warning/10 text-warning-active dark:text-warning border-warning/20'
-                      : 'bg-success/10 text-success-active dark:text-success border-success/20'
-                  }`}
-                >
-                  {((data.totalTokens / 5000000) * 100).toFixed(1)}% utilizado
-                </span>
-              </div>
-              <div className="w-full bg-surface-2 h-2.5 rounded-full overflow-hidden border border-line mt-3">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    data.totalTokens / 5000000 >= 0.8 ? 'bg-warning' : 'bg-brand'
-                  }`}
-                  style={{ width: `${Math.min(100, (data.totalTokens / 5000000) * 100)}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-[11px] text-ink-2 mt-2">
-                <span>Consumido: {compact(data.totalTokens)} tokens</span>
-                <span>Disponível: {compact(Math.max(0, 5000000 - data.totalTokens))} tokens</span>
-              </div>
-            </Card>
+            {/* BILLING-004 (onda 5, auditoria de débito técnico): existia aqui um card "Cota
+                Mensal de Tokens" com um limite hardcoded de 5.000.000 tokens/mês rotulado como
+                "contratual" — não vinha de nenhum plano/contrato real (o próprio banner logo
+                acima já afirma "Não há plano nem assinatura configurados no sistema"). Removido
+                em vez de mantido com um número inventado; volta quando existir uma fonte real de
+                limite de plano para ligar aqui. */}
 
             {data.unattributedCalls > 0 && (
               <p className="text-[11px] text-ink-2">

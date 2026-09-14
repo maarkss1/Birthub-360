@@ -102,6 +102,23 @@ export class Crm360UseCases {
     );
   }
 
+  /** BILLING-003 (onda 5) — ver ICrm360Repository.reconcileFaturaStripePayment. */
+  async reconcileFaturaStripePayment(
+    organizationId: string,
+    documentId: string,
+    connectionId: string,
+    paymentIntentId: string,
+    actorUserId?: string,
+  ) {
+    return this.crm360Repository.reconcileFaturaStripePayment(
+      organizationId,
+      documentId,
+      connectionId,
+      paymentIntentId,
+      actorUserId,
+    );
+  }
+
   /** Rota pública — sem organizationId conhecido a priori, ver `PrismaCrm360Repository.recordDocumentView`. */
   async recordDocumentView(publicToken: string) {
     return this.crm360Repository.recordDocumentView(publicToken);
