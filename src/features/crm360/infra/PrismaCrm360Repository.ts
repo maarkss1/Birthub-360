@@ -16,6 +16,7 @@ import {
   toPrismaLeadStatus,
 } from '../../../lib/enumMap.js';
 import { prisma } from '../../../lib/prisma.js';
+import type { StripeChargePort } from '../../../shared/contracts/stripeCharge.contract.js';
 import {
   draftNextProposalVersion,
   type ProposalSnapshot,
@@ -32,7 +33,6 @@ import {
   ensureManualDealClosureAllowed,
 } from '../../crm/application/dealClosureGate.js';
 import { prismaDealClosureGate } from '../../crm/infra/PrismaDealClosureGate.js';
-import { getStripeCharge } from '../../integrations/stripe/stripe.service.js';
 import type {
   CrmDealItemInput,
   CrmDocumentInput,
@@ -369,6 +369,8 @@ export async function ensureDefaultPipelines(organizationId: string) {
 }
 
 export class PrismaCrm360Repository implements ICrm360Repository {
+  constructor(private stripeChargePort: StripeChargePort) {}
+
   async getOverviewData(organizationId: string): Promise<CrmOverviewData> {
     await ensureDefaultPipelines(organizationId);
     const now = new Date();
@@ -1016,7 +1018,11 @@ export class PrismaCrm360Repository implements ICrm360Repository {
       return serializeDocument(doc);
     }
 
-    const charge = await getStripeCharge(organizationId, connectionId, paymentIntentId);
+    const charge = await this.stripeChargePort.getStripeCharge(
+      organizationId,
+      connectionId,
+      paymentIntentId,
+    );
     if (!charge) {
       throw new AppError('Cobrança não encontrada no Stripe para esta conexão.', 404);
     }

@@ -23,10 +23,10 @@ vi.mock('@/lib/prisma', () => ({
   },
 }));
 
+// BILLING-003 usa `StripeChargePort` (src/shared/contracts/stripeCharge.contract.ts) via
+// injeção de dependência, não um import direto de integrations/stripe (no-cross-feature-imports)
+// — então o mock é um stub passado no construtor, não um vi.mock() de módulo.
 const getStripeChargeMock = vi.fn();
-vi.mock('@/features/integrations/stripe/stripe.service', () => ({
-  getStripeCharge: (...args: unknown[]) => getStripeChargeMock(...args),
-}));
 
 const ensureDealClosureAllowedMock = vi.fn().mockResolvedValue({});
 vi.mock('@/features/crm/application/dealClosureGate', () => ({
@@ -44,7 +44,7 @@ const { PrismaCrm360Repository } = await import(
   '@/features/crm360/infra/PrismaCrm360Repository'
 );
 
-const repo = new PrismaCrm360Repository();
+const repo = new PrismaCrm360Repository({ getStripeCharge: getStripeChargeMock });
 const ORG = 'org-billing-003';
 const DOC_ID = 'doc-1';
 

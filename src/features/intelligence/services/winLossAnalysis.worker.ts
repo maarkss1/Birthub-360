@@ -1,6 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { type ConnectionOptions, Queue, Worker } from 'bullmq';
 import { type Prisma, ReportSource } from '@prisma/client';
+import { type ConnectionOptions, Queue, Worker } from 'bullmq';
+import { DEFAULT_PLAYBOOK } from '../../../config/playbooks.js';
 import { getAiModel } from '../../../lib/ai/gateway.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
@@ -8,7 +9,6 @@ import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
-import { DEFAULT_PLAYBOOK } from '../../../config/playbooks.js';
 
 export const WIN_LOSS_QUEUE_NAME = 'win-loss-analysis-queue';
 

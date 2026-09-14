@@ -4,6 +4,7 @@ import request from 'supertest';
 import { prisma } from '../../src/lib/prisma';
 import { requestContext } from '../../src/lib/async-context';
 import { PrismaCrm360Repository } from '../../src/features/crm360/infra/PrismaCrm360Repository';
+import { StripeChargeAdapter } from '../../src/features/integrations/stripe/infra/StripeChargeAdapter';
 import { crm360PublicRoutes } from '../../src/features/crm360/routes/crm360Public.routes';
 import { errorHandler } from '../../src/shared/middlewares/errorHandler';
 import { setupDI } from '../../src/shared/di/setup';
@@ -23,7 +24,7 @@ const withRlsBypass = <T>(fn: () => Promise<T>): Promise<T> =>
 const asOrg = <T>(organizationId: string, fn: () => Promise<T>): Promise<T> =>
   requestContext.run({ tenantId: organizationId }, fn);
 
-const repo = new PrismaCrm360Repository();
+const repo = new PrismaCrm360Repository(new StripeChargeAdapter());
 const LINE_ITEM = {
   name: 'Consultoria',
   quantity: 1,

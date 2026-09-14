@@ -54,7 +54,6 @@ import {
   listPendingActions,
   recordActionOutcome,
 } from '../services/pending-actions.service.js';
-import { analyzeOrgWinLoss, persistWinLossReport } from '../services/winLossAnalysis.worker.js';
 import {
   finishRoleplaySession,
   listRoleplaySessions,
@@ -67,6 +66,7 @@ import {
   studioGenerationSchema,
   studioService,
 } from '../services/studio.service.js';
+import { analyzeOrgWinLoss, persistWinLossReport } from '../services/winLossAnalysis.worker.js';
 import { aiSuiteRouter } from './ai-suite.routes.js';
 
 const router = Router();
