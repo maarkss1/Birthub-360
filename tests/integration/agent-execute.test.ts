@@ -160,6 +160,62 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'ceo', jobRole: 'DIRETOR_COMERCIAL' },
       { code: 'account-manager', jobRole: 'CHURN_RETENCAO' },
       { code: 'closer-copilot', jobRole: 'CLOSER' },
+      // Onda 9 — lote 1 (Vendas/LLM_PROMPT), amostra de 3 dos 25 novos systemPrompt curados em
+      // scripts/agent-import/source-prompts.ts.
+      { code: 'account-mapper', jobRole: 'LDR' },
+      { code: 'call-review', jobRole: 'SDR' },
+      { code: 'deal-at-risk-alerter', jobRole: 'CLOSER' },
+      // Onda 9 — lote 2 (Vendas/LLM_PROMPT), amostra de 3 dos 25 novos systemPrompt curados em
+      // scripts/agent-import/source-prompts.ts.
+      { code: 'objection-crusher', jobRole: 'SDR' },
+      { code: 'meeting-booker', jobRole: 'BDR' },
+      { code: 'forecasting-modeler', jobRole: 'GERENTE_COMERCIAL' },
+      // Onda 9 — lote 3 (Vendas/LLM_PROMPT), amostra de 3 dos 25 novos systemPrompt curados em
+      // scripts/agent-import/source-prompts.ts.
+      { code: 'pipeline-auditor', jobRole: 'GERENTE_COMERCIAL' },
+      { code: 'rep-coach', jobRole: 'SDR' },
+      { code: 'proposal', jobRole: 'CLOSER' },
+      // Onda 9 — lote 4 (Vendas/LLM_PROMPT, último lote do domínio), amostra de 3 dos 17 novos
+      // systemPrompt curados em scripts/agent-import/source-prompts.ts.
+      { code: 'win-loss-analyzer', jobRole: 'CLOSER' },
+      { code: 'transcript-coach', jobRole: 'SDR' },
+      { code: 'territory-mapper', jobRole: 'LDR' },
+      // Onda 9 — lote 5 (Marketing/LLM_PROMPT, primeiro lote fora do domínio Vendas), amostra de
+      // 3 dos 25 novos systemPrompt curados em scripts/agent-import/source-prompts.ts.
+      { code: 'churn-win-back-sequencer', jobRole: 'CHURN_RETENCAO' },
+      { code: 'competitor-x-ray', jobRole: 'LDR' },
+      { code: 'data-hygiene-monitor', jobRole: 'BITRIX_GUARDIAN' },
+      // Onda 9 — lote 6 (Marketing/LLM_PROMPT, último lote do domínio), amostra de 2 dos 20 novos
+      // systemPrompt curados em scripts/agent-import/source-prompts.ts. Só 2 (não 3, como nos
+      // lotes anteriores): a maioria dos agentes deste lote não tem primaryJobRole (agentes
+      // cross-funcionais de martech/conteúdo sem dono único de cargo comercial), então não ganham
+      // RoleAgentGrant automático no import e não servem de amostra para este teste.
+      { code: 'lead-magnet-creator', jobRole: 'BDR' },
+      { code: 'sentiment-shift-alerter', jobRole: 'CHURN_RETENCAO' },
+      // Onda 9 — lote 7 (Operações/LLM_PROMPT, primeiro lote fora de Vendas/Marketing), amostra
+      // de 3 dos 25 novos systemPrompt curados em scripts/agent-import/source-prompts.ts.
+      { code: 'anomaly-detector', jobRole: 'BITRIX_GUARDIAN' },
+      { code: 'funnel-leak-detector', jobRole: 'REVENUE_INTELLIGENCE' },
+      { code: 'churn-cohort-isolator', jobRole: 'CHURN_RETENCAO' },
+      // Onda 9 — lote 8 (Operações/LLM_PROMPT, último lote do domínio), amostra de 3 dos 32 novos
+      // systemPrompt curados em scripts/agent-import/source-prompts.ts — inclui o único HIGH-risk
+      // de Operações (pricing-elasticity-tester), confirmando que o prompt consultivo-only
+      // também executa normalmente via agent.execute.
+      { code: 'pricing-elasticity-tester', jobRole: 'BITRIX_GUARDIAN' },
+      { code: 'net-retention-modeler', jobRole: 'CHURN_RETENCAO' },
+      { code: 'pipeline-velocity-tracker', jobRole: 'GERENTE_COMERCIAL' },
+      // Onda 9 — lote 10 (Customer Success/LLM_PROMPT, primeiro lote do domínio), amostra de 3
+      // dos 25 novos systemPrompt curados em scripts/agent-import/source-prompts.ts — inclui o
+      // HIGH-risk pricing-tier-recommender (consultivo-only).
+      { code: 'pricing-tier-recommender', jobRole: 'CHURN_RETENCAO' },
+      { code: 'health-score-trigger', jobRole: 'REVENUE_INTELLIGENCE' },
+      { code: 'l1-auto-resolver', jobRole: 'CHURN_RETENCAO' },
+      // Onda 9 — lote 11 (Customer Success/LLM_PROMPT, último lote do domínio), amostra de 3 dos
+      // 16 novos systemPrompt curados em scripts/agent-import/source-prompts.ts — inclui o
+      // segundo (e último) HIGH-risk do domínio, refund-processor (consultivo-only).
+      { code: 'refund-processor', jobRole: 'CHURN_RETENCAO' },
+      { code: 'ticket-classifier', jobRole: 'CHURN_RETENCAO' },
+      { code: 'shift-scheduler', jobRole: 'COORDENADOR_COMERCIAL' },
       // Onda 9 — lote 12 (Executivo/LLM_PROMPT, último domínio da trilha), amostra de 3 dos 9
       // novos systemPrompt curados em scripts/agent-import/source-prompts.ts.
       { code: 'scenario-modeler', jobRole: 'DIRETOR_COMERCIAL' },

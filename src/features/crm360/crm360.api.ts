@@ -47,6 +47,13 @@ export const crm360Api = {
     api.put<CrmCommercialDocument>(`/api/crm/documents/${id}`, input),
   updateDocumentStatus: (id: string, status: CrmCommercialDocument['status']) =>
     api.put<CrmCommercialDocument>(`/api/crm/documents/${id}/status`, { status }),
+  /** BILLING-003 (onda 5) — único caminho que marca uma Fatura como Pago; o backend confirma a
+   * cobrança ao vivo contra a Stripe antes de gravar. */
+  reconcileFaturaStripePayment: (id: string, connectionId: string, paymentIntentId: string) =>
+    api.post<CrmCommercialDocument>(`/api/crm/documents/${id}/reconcile-stripe-payment`, {
+      connectionId,
+      paymentIntentId,
+    }),
   listDocumentVersions: (id: string) =>
     api.get<CrmCommercialDocumentVersionDTO[]>(`/api/crm/documents/${id}/versions`),
   requestSignature: (id: string, input: { signerEmail?: string; signerName?: string }) =>
