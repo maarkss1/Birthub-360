@@ -225,9 +225,13 @@ describe('Agent Builder / Fábrica de Agentes (PROMPT 10)', () => {
   describe('revisão humana — só ADMIN/GESTOR decide, e só sobre proposta com spec real', () => {
     it('SDR não pode aprovar; GESTOR aprova; decidir de novo é rejeitado (já terminal)', async () => {
       const { user } = await makeUserWithJobRole('SDR');
+      // Need deliberadamente exótico/sem relação com nenhum domínio comercial real (o teste cobre
+      // autorização de decisão, não a semântica de gap analysis) — um texto genérico corre o risco
+      // de colidir por palavra-chave com a descrição de algum agente do catálogo em expansão
+      // (Onda 9), fazendo isRealGap virar false e o status sair GAP_NOT_CONFIRMED em vez de DRAFT.
       const proposal = await proposeAgentBuild({
         actor: { userId: user.id, organizationId: ORG_ID, userRole: 'SDR' },
-        need: 'Preciso de algo que decore piadas de matematica para motivar o time antes de reunioes internas.',
+        need: 'Preciso de um agente que traduza receitas de bolo de cenoura para libras durante lives de culinaria.',
       });
       expect(proposal.status).toBe('DRAFT');
 
@@ -286,7 +290,9 @@ describe('Agent Builder / Fábrica de Agentes (PROMPT 10)', () => {
       const { user: gestor } = await makeUserWithJobRole('GERENTE_COMERCIAL', 'GESTOR');
       const proposal = await proposeAgentBuild({
         actor: { userId: user.id, organizationId: ORG_ID, userRole: 'SDR' },
-        need: 'Necessidade inédita e específica só para o teste de no-self-modification deste pipeline.',
+        // Mesmo cuidado do teste de autorização acima: need exótico, sem relação com domínio
+        // comercial real, pra não colidir por palavra-chave com o catálogo em expansão (Onda 9).
+        need: 'Preciso de um agente que catalogue receitas de origami para libélulas de papel.',
       });
       expect(proposal.status).toBe('DRAFT');
       await decideAgentBuildProposal({
