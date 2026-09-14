@@ -74,6 +74,17 @@ export interface ICrm360Repository {
     status: string,
     actorUserId?: string,
   ): Promise<CrmCommercialDocument>;
+  /**
+   * BILLING-003 (onda 5) — único caminho que marca uma Fatura como Pago; confirma AO VIVO contra
+   * a API do Stripe antes de gravar. Ver `PrismaCrm360Repository.reconcileFaturaStripePayment`.
+   */
+  reconcileFaturaStripePayment(
+    organizationId: string,
+    documentId: string,
+    connectionId: string,
+    paymentIntentId: string,
+    actorUserId?: string,
+  ): Promise<CrmCommercialDocument>;
   /** Rota pública (sem tenant conhecido a priori) — resolve o documento pelo `publicToken` opaco e registra a visualização. `null` quando o token não existe ou o documento foi excluído. */
   recordDocumentView(publicToken: string): Promise<CrmPublicDocumentView | null>;
 

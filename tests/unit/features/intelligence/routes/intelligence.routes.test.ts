@@ -34,6 +34,20 @@ vi.mock('@/features/intelligence/services/pending-actions.service', () => ({
   discardPendingAction: (...args: unknown[]) => discardPendingActionMock(...args),
 }));
 
+// REVOPS-004: a rota manual de Win/Loss agora reusa analyzeOrgWinLoss/persistWinLossReport em vez
+// de reimplementar a lógica inline — mockados aqui pelas mesmas razões dos serviços acima.
+const analyzeOrgWinLossMock = vi.fn();
+const persistWinLossReportMock = vi.fn();
+vi.mock('@/features/intelligence/services/winLossAnalysis.worker', () => ({
+  analyzeOrgWinLoss: (...args: unknown[]) => analyzeOrgWinLossMock(...args),
+  persistWinLossReport: (...args: unknown[]) => persistWinLossReportMock(...args),
+}));
+
+const reportFindFirstMock = vi.fn();
+vi.mock('@/lib/prisma', () => ({
+  prisma: { report: { findFirst: (...args: unknown[]) => reportFindFirstMock(...args) } },
+}));
+
 // AI-007 (parte 3): mesmo gate LGPD já testado em base.agent.consent.test.ts/
 // guardrails.service.test.ts, agora também para /toolkit/execute — fail-closed por padrão
 // (undefined), cada teste do bloco liga a allowlist explicitamente quando precisa simular
@@ -107,6 +121,9 @@ beforeEach(() => {
   });
   discardPendingActionMock.mockResolvedValue(true);
   summarizeLeadMock.mockResolvedValue('Resumo gerado.');
+  analyzeOrgWinLossMock.mockResolvedValue(null);
+  persistWinLossReportMock.mockResolvedValue(undefined);
+  reportFindFirstMock.mockResolvedValue(null);
 });
 
 afterEach(() => {
@@ -326,5 +343,73 @@ describe('POST /api/intelligence/toolkit/execute — trava de consentimento LGPD
     expect(res.status).toBe(403);
     expect(res.body.success).toBe(false);
     expect(summarizeLeadMock).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * REVOPS-004 (onda 5): esta rota reimplementava a mesma lógica do worker inline; agora reusa
+ * analyzeOrgWinLoss/persistWinLossReport (única implementação) e persiste o resultado, exposto por
+ * GET /win-loss-analysis/latest logo abaixo.
+ */
+describe('POST /api/intelligence/win-loss-analysis — reusa análise única e persiste', () => {
+  it('sem leads no período: devolve mensagem honesta e NÃO persiste nada', async () => {
+    analyzeOrgWinLossMock.mockResolvedValue(null);
+
+    const res = await request(buildApp('SDR')).post('/api/intelligence/win-loss-analysis');
+
+    expect(res.status).toBe(200);
+    expect(res.body.analysis).toMatch(/Nenhum lead fechado/);
+    expect(persistWinLossReportMock).not.toHaveBeenCalled();
+  });
+
+  it('com leads no período: chama analyzeOrgWinLoss com a org do usuário e persiste como WIN_LOSS_ON_DEMAND', async () => {
+    analyzeOrgWinLossMock.mockResolvedValue({
+      organizationId: 'test-org-id',
+      analysis: '1. Ganhos...\n2. Objeções...\n3. Recomendação...',
+      leadsAnalyzed: 5,
+    });
+
+    const res = await request(buildApp('SDR')).post('/api/intelligence/win-loss-analysis');
+
+    expect(res.status).toBe(200);
+    expect(res.body.leadsAnalyzed).toBe(5);
+    expect(analyzeOrgWinLossMock).toHaveBeenCalledWith('test-org-id');
+    expect(persistWinLossReportMock).toHaveBeenCalledWith(
+      expect.objectContaining({ organizationId: 'test-org-id', leadsAnalyzed: 5 }),
+      'WIN_LOSS_ON_DEMAND',
+    );
+  });
+});
+
+describe('GET /api/intelligence/win-loss-analysis/latest — expõe o resultado persistido', () => {
+  it('devolve o último Report de Win/Loss (automático ou manual) desta organização', async () => {
+    reportFindFirstMock.mockResolvedValue({
+      id: 'report-1',
+      content: 'análise persistida',
+      source: 'WEEKLY_WIN_LOSS_AUTO',
+      createdAt: new Date('2026-09-12T19:00:00Z'),
+    });
+
+    const res = await request(buildApp('SDR')).get('/api/intelligence/win-loss-analysis/latest');
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.content).toBe('análise persistida');
+    expect(reportFindFirstMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          organizationId: 'test-org-id',
+          source: { in: ['WEEKLY_WIN_LOSS_AUTO', 'WIN_LOSS_ON_DEMAND'] },
+        },
+      }),
+    );
+  });
+
+  it('devolve null (não erro) quando nenhuma análise foi persistida ainda para esta organização', async () => {
+    reportFindFirstMock.mockResolvedValue(null);
+
+    const res = await request(buildApp('SDR')).get('/api/intelligence/win-loss-analysis/latest');
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toBeNull();
   });
 });

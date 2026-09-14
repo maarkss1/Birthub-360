@@ -104,6 +104,14 @@ export const moveCrmRecordSchema = z.object({
   stageId: z.string().min(1),
 });
 
+/** BILLING-003 (onda 5) — corpo de POST /documents/:id/reconcile-stripe-payment. O formato exato
+ * de `paymentIntentId` (`pi_...`) já é validado de novo dentro do serviço Stripe
+ * (STRIPE_PAYMENT_INTENT_ID); aqui só garante que os dois campos vieram preenchidos. */
+export const crmReconcileFaturaStripePaymentSchema = z.object({
+  connectionId: z.string().min(1),
+  paymentIntentId: z.string().min(1),
+});
+
 export const crmDealSchema = z.object({
   title: z.string().trim().min(1).max(180),
   companyId: z.string().optional().nullable(),
