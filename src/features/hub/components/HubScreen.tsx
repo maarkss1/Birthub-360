@@ -230,7 +230,10 @@ export function HubScreen() {
         colorRgb: brandRgb,
         onOpen: () => goTo('/app'),
       },
-      ...outer.map((item) => ({ ...item, colorRgb: orbitRgb[item.colorVar as keyof typeof orbitRgb] })),
+      ...outer.map((item) => ({
+        ...item,
+        colorRgb: orbitRgb[item.colorVar as keyof typeof orbitRgb],
+      })),
     ];
   }, [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence, brandRgb, orbitRgb]);
 
@@ -306,7 +309,12 @@ export function HubScreen() {
             </linearGradient>
             <path id={pathId} d={`M ${cx} ${cy} L ${x} ${y}`} stroke={`url(#${gradId})`} />
             {!reduceMotion && (
-              <circle className="pulse" r="3.4" fill={accent} style={{ filter: `drop-shadow(0 0 6px ${accent})` }}>
+              <circle
+                className="pulse"
+                r="3.4"
+                fill={accent}
+                style={{ filter: `drop-shadow(0 0 6px ${accent})` }}
+              >
                 <animateMotion
                   dur={`${2.4 + i * 0.35}s`}
                   repeatCount="indefinite"
@@ -424,131 +432,134 @@ export function HubScreen() {
         </header>
 
         <main className="flex flex-1 flex-col">
-        {/* Hero Section — a fita de assinatura (5 cores) aparece uma única vez nesta tela, na
+          {/* Hero Section — a fita de assinatura (5 cores) aparece uma única vez nesta tela, na
             órbita abaixo; aqui o nome ganha destaque por peso/tamanho, não por gradiente de
             texto (regra de craft: emphasis comes from weight or size, não decoração). */}
-        <div className="flex flex-wrap items-end justify-between gap-6 px-8 pt-4 pb-2">
-          <div>
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-ink dark:text-brand-2">
-              Birth Hub 360°
-            </div>
-            <h1 className="mt-1 font-display text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
-              {clock.greeting}, <span className="text-brand-ink dark:text-brand-2">{firstName}</span>
-            </h1>
-            <p className="mt-1 text-sm font-bold text-brand-ink dark:text-brand-2">
-              {brandInfo.slogan}
-            </p>
-          </div>
-
-          {/* Widgets da Topbar */}
-          <div className="hidden items-stretch gap-3 md:flex">
-            <div className="hub-widget flex min-w-[128px] flex-col items-center justify-center px-4 py-3">
-              <span className="font-mono text-2xl font-bold tabular-nums text-brand-ink dark:text-brand-2">
-                {clock.time}
-              </span>
-              <span className="mt-0.5 text-[10px] font-extrabold capitalize text-ink-2">
-                {clock.dateLabel}
-              </span>
-            </div>
-
-            <div className="hub-widget w-[178px] px-3 py-2.5">
-              <p className="mb-1.5 text-center text-[10px] font-black uppercase tracking-wider text-brand-ink dark:text-brand-2">
-                {clock.monthLabel}
-              </p>
-              <div className="grid grid-cols-7 gap-0.5">
-                {WEEKDAYS_SHORT.map((d, i) => (
-                  <span
-                    key={`wd-${i}`}
-                    className="text-center text-[8.5px] font-extrabold text-ink-2 opacity-80"
-                  >
-                    {d}
-                  </span>
-                ))}
-                {calendarCells.map((cell, i) =>
-                  cell ? (
-                    <span
-                      key={cell.day}
-                      className={
-                        cell.isToday
-                          ? 'grid place-items-center rounded-md bg-brand py-0.5 text-[10px] font-black text-on-brand shadow-glow-brand-strong'
-                          : 'grid place-items-center rounded-md py-0.5 text-[10px] font-semibold text-ink-2'
-                      }
-                    >
-                      {cell.day}
-                    </span>
-                  ) : (
-                    <span key={`empty-${i}`} />
-                  ),
-                )}
+          <div className="flex flex-wrap items-end justify-between gap-6 px-8 pt-4 pb-2">
+            <div>
+              <div className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-ink dark:text-brand-2">
+                Birth Hub 360°
               </div>
+              <h1 className="mt-1 font-display text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
+                {clock.greeting},{' '}
+                <span className="text-brand-ink dark:text-brand-2">{firstName}</span>
+              </h1>
+              <p className="mt-1 text-sm font-bold text-brand-ink dark:text-brand-2">
+                {brandInfo.slogan}
+              </p>
             </div>
 
-            <HubTaskWidget />
-          </div>
-        </div>
+            {/* Widgets da Topbar */}
+            <div className="hidden items-stretch gap-3 md:flex">
+              <div className="hub-widget flex min-w-[128px] flex-col items-center justify-center px-4 py-3">
+                <span className="font-mono text-2xl font-bold tabular-nums text-brand-ink dark:text-brand-2">
+                  {clock.time}
+                </span>
+                <span className="mt-0.5 text-[10px] font-extrabold capitalize text-ink-2">
+                  {clock.dateLabel}
+                </span>
+              </div>
 
-        {/* Rótulo da Seção */}
-        <div className="mx-auto flex w-full max-w-[1250px] items-center gap-2.5 px-8 pt-6 pb-2">
-          <span className="text-[11px] font-black uppercase tracking-[0.14em] text-ink-2">
-            Da prospecção ao contrato — Ecossistema de Inteligência Comercial{' '}
-            <span className="inline-flex items-center gap-1.5 font-black text-ink">
-              <BirthHubLogo variant="symbol" className="h-4 w-auto text-brand" />
-              BIRTH HUB 360°
+              <div className="hub-widget w-[178px] px-3 py-2.5">
+                <p className="mb-1.5 text-center text-[10px] font-black uppercase tracking-wider text-brand-ink dark:text-brand-2">
+                  {clock.monthLabel}
+                </p>
+                <div className="grid grid-cols-7 gap-0.5">
+                  {WEEKDAYS_SHORT.map((d, i) => (
+                    <span
+                      key={`wd-${i}`}
+                      className="text-center text-[8.5px] font-extrabold text-ink-2 opacity-80"
+                    >
+                      {d}
+                    </span>
+                  ))}
+                  {calendarCells.map((cell, i) =>
+                    cell ? (
+                      <span
+                        key={cell.day}
+                        className={
+                          cell.isToday
+                            ? 'grid place-items-center rounded-md bg-brand py-0.5 text-[10px] font-black text-on-brand shadow-glow-brand-strong'
+                            : 'grid place-items-center rounded-md py-0.5 text-[10px] font-semibold text-ink-2'
+                        }
+                      >
+                        {cell.day}
+                      </span>
+                    ) : (
+                      <span key={`empty-${i}`} />
+                    ),
+                  )}
+                </div>
+              </div>
+
+              <HubTaskWidget />
+            </div>
+          </div>
+
+          {/* Rótulo da Seção */}
+          <div className="mx-auto flex w-full max-w-[1250px] items-center gap-2.5 px-8 pt-6 pb-2">
+            <span className="text-[11px] font-black uppercase tracking-[0.14em] text-ink-2">
+              Da prospecção ao contrato — Ecossistema de Inteligência Comercial{' '}
+              <span className="inline-flex items-center gap-1.5 font-black text-ink">
+                <BirthHubLogo variant="symbol" className="h-4 w-auto text-brand" />
+                BIRTH HUB 360°
+              </span>
             </span>
-          </span>
-          <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent" />
-        </div>
-
-        {!isLoading && grantedCatalog.length === 0 && (
-          <p className="mx-auto max-w-[1250px] px-8 text-xs text-ink-2">
-            Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central
-            Comercial e ferramentas da equipe.
-          </p>
-        )}
-        {isLoading && (
-          <div className="mx-auto flex max-w-[1250px] items-center gap-2 px-8 text-xs text-ink-2">
-            <Loader2 className="h-4 w-4 animate-spin" /> Carregando módulos...
+            <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent" />
           </div>
-        )}
 
-        {/* Órbita Concêntrica Dupla */}
-        {isDesktopOrbit ? (
-          // Grupo de botões de navegação (não campos de formulário) — <fieldset> não traria ganho
-          // real de acessibilidade aqui, só estilo.
-          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
-          <div
-            ref={orbitContainerRef}
-            className="hub-orbit"
-            role="group"
-            aria-label="Órbita do Birth Hub 360°"
-          >
-            {orbitLines}
-            {items.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={(e) => handleCardClick(e, item)}
-                  className={`hub-card ${item.primary ? 'primary' : ''}`}
-                  title={item.description}
-                  data-orbit-accent={item.colorVar}
-                  style={{ '--orbit-accent': `var(--${item.colorVar})` } as React.CSSProperties}
-                >
-                  <div className="hc-orb">
-                    <div className="hc-icon-wrap">
-                      <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
+          {!isLoading && grantedCatalog.length === 0 && (
+            <p className="mx-auto max-w-[1250px] px-8 text-xs text-ink-2">
+              Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central
+              Comercial e ferramentas da equipe.
+            </p>
+          )}
+          {isLoading && (
+            <div className="mx-auto flex max-w-[1250px] items-center gap-2 px-8 text-xs text-ink-2">
+              <Loader2 className="h-4 w-4 animate-spin" /> Carregando módulos...
+            </div>
+          )}
+
+          {/* Órbita Concêntrica Dupla */}
+          {isDesktopOrbit ? (
+            // Grupo de botões de navegação (não campos de formulário) — <fieldset> não traria ganho
+            // real de acessibilidade aqui, só estilo.
+            // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
+            <div
+              ref={orbitContainerRef}
+              className="hub-orbit"
+              role="group"
+              aria-label="Órbita do Birth Hub 360°"
+            >
+              {orbitLines}
+              {items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={(e) => handleCardClick(e, item)}
+                    className={`hub-card ${item.primary ? 'primary' : ''}`}
+                    title={item.description}
+                    data-orbit-accent={item.colorVar}
+                    style={{ '--orbit-accent': `var(--${item.colorVar})` } as React.CSSProperties}
+                  >
+                    <div className="hc-orb">
+                      <div className="hc-icon-wrap">
+                        <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
+                      </div>
+                      <div className="hc-title">{item.label}</div>
+                      {item.primary && (
+                        <div className="hc-tag hc-tag-inside">{item.description}</div>
+                      )}
                     </div>
-                    <div className="hc-title">{item.label}</div>
-                    {item.primary && <div className="hc-tag hc-tag-inside">{item.description}</div>}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        ) : (
-          <MobileDestinationList items={items} />
-        )}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <MobileDestinationList items={items} />
+          )}
         </main>
       </div>
     </div>
