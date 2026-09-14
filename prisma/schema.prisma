@@ -2829,6 +2829,24 @@ model VoiceHubConnection {
   // src/lib/crypto/piiFields.ts).
   webhookSecret String? @db.Text
 
+  /// VOICE-001 (auditoria multiagente, 09/2026): o script da IA de voz era hardcoded para a
+  /// identidade/produtos de uma única organização (Atlas GR) — qualquer outra organização que
+  /// configurasse uma conexão própria recebia a IA se apresentando com o nome/produtos de outro
+  /// tenant. Estes 4 campos passam a alimentar `voiceScript.ts::buildVoicePromptForLead`; nulos
+  /// (organização ainda não configurou o script próprio na tela de Integrações) caem num roteiro
+  /// genérico que nunca inventa nome, produto ou histórico de outra empresa.
+  /// Nome que a IA usa para se apresentar (ex.: "Ana"). Sem valor: "uma assistente de IA".
+  scriptPersonaName String?
+
+  /// O que a empresa faz/vende, em texto livre escrito pela própria organização.
+  scriptCompanyDescription String? @db.Text
+
+  /// Oferta/gatilho opcional mencionado na ligação (ex.: um teste grátis).
+  scriptOfferText String? @db.Text
+
+  /// Frase de encerramento customizada.
+  scriptClosingLine String? @db.Text
+
   /// Liga/desliga esta conexão sem apagá-la — `birthVoice.service.ts` só considera conexões com
   /// enabled=true ao escolher qual usar.
   enabled Boolean @default(true)

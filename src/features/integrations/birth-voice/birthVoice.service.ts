@@ -3,9 +3,9 @@ import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
 import { assertPiiExternalConsent } from '../../intelligence/services/guardrails.service.js';
-import { buildVoicePromptForLead } from './atlasProductPlaybook.js';
 import { pickCallablePhone } from './birthVoice.helpers.js';
 import { isSuppressed } from './callSuppression.service.js';
+import { buildVoicePromptForLead, type VoiceScriptConfig } from './voiceScript.js';
 
 /** Caminho do webhook que o Birth Voices Hub chama com o resultado da ligação. */
 export const CALL_RESULT_WEBHOOK_PATH = '/api/integrations/birth-voice/webhook';
@@ -33,10 +33,13 @@ export interface OutboundCallResult {
  * comentário do model em `prisma/schema.prisma`).
  */
 async function requireConfig(organizationId: string) {
-  const connection = await prisma.voiceHubConnection.findFirst({
-    where: { organizationId, enabled: true },
-    orderBy: { createdAt: 'asc' },
-  });
+  const [connection, organization] = await Promise.all([
+    prisma.voiceHubConnection.findFirst({
+      where: { organizationId, enabled: true },
+      orderBy: { createdAt: 'asc' },
+    }),
+    prisma.organization.findUnique({ where: { id: organizationId }, select: { name: true } }),
+  ]);
 
   const baseUrl = (connection?.baseUrl ?? env.BIRTH_VOICES_URL)?.replace(/\/$/, '');
   const apiKey = connection?.apiKey ?? env.BIRTH_VOICES_API_KEY;
@@ -59,11 +62,23 @@ async function requireConfig(organizationId: string) {
     throw new BirthVoiceNotConfiguredError('SDR de voz não configurado.');
   }
 
+  // VOICE-001 (auditoria multiagente, 09/2026): o script da IA de voz era hardcoded para a
+  // identidade/produtos de uma única organização (ver voiceScript.ts) — agora vem da própria
+  // conexão da organização, com fallback genérico (nunca a identidade de outro tenant).
+  const script: VoiceScriptConfig = {
+    personaName: connection?.scriptPersonaName ?? null,
+    companyDescription: connection?.scriptCompanyDescription ?? null,
+    offerText: connection?.scriptOfferText ?? null,
+    closingLine: connection?.scriptClosingLine ?? null,
+  };
+
   return {
     baseUrl,
     apiKey,
     agentId,
     callbackUrl: `${publicBaseUrl}${CALL_RESULT_WEBHOOK_PATH}`,
+    script,
+    organizationName: organization?.name ?? 'nossa empresa',
   };
 }
 
@@ -170,7 +185,12 @@ export async function callLead(
   const requestBody = isBland
     ? {
         phone_number: targetNumber,
-        task: buildVoicePromptForLead(companyName, contactName),
+        task: buildVoicePromptForLead(
+          config.script,
+          config.organizationName,
+          companyName,
+          contactName,
+        ),
         language: 'pt-BR',
         voice: 'nat',
         wait_for_greeting: true,
@@ -181,7 +201,7 @@ export async function callLead(
           organizationId,
           contact_name: contactName,
           company: companyName,
-          agent_name: 'Gessica',
+          agent_name: config.script.personaName ?? 'Assistente Virtual',
         },
       }
     : {
@@ -192,7 +212,12 @@ export async function callLead(
         interruption_threshold: 100,
         reduce_latency: true,
         voice: 'nat',
-        task: buildVoicePromptForLead(companyName, contactName),
+        task: buildVoicePromptForLead(
+          config.script,
+          config.organizationName,
+          companyName,
+          contactName,
+        ),
         context: {
           leadId: lead.id,
           organizationId,
