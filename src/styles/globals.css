@@ -174,7 +174,12 @@
      `.claude/PILOTS.md`, adendo "Centro de Decisão". Valor do escuro reaproveita o mesmo
      `--color-danger` (#ef4444) já definido no bloco `@theme` (4.93:1 contra a superfície escura),
      em vez de inventar uma cor nova.*/
-  --critical: #d03b3b;
+  /* Recalibrado 09/2026 (achado real do axe-core na paleta "Strategic Command Center": PR #481,
+     `.text-critical` do Sidebar contra o novo `--surface` claro #FFF1F7 caía pra 4.38:1, abaixo do
+     mínimo AA). 10% preto (mesma fórmula color-mix já usada no resto do arquivo) recupera margem:
+     5.21:1 contra a nova superfície clara — sem precisar reabrir os 2 casos originais que já
+     passavam (8.7:1 cru contra --surface antiga, agora ~7.9:1, ainda com folga). */
+  --critical: color-mix(in srgb, #d03b3b 90%, black);
   /* --critical acima já foi calibrado pra passar 4.5:1 cru contra --surface sólida (comentário
      acima) — mas isso não cobre o padrão de badge "soft" (bg-critical/15 text-critical, usado em
      DealsGrid.tsx/CompareBar.tsx pro estágio "Perdido"/Δ negativo): a mistura de 15% de --critical
@@ -251,7 +256,10 @@
   --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.7), 0 20px 46px -20px rgba(0, 0, 0, 0.95);
   --shadow-nav-value: 12px 0 38px -24px rgba(0, 0, 0, 0.85);
   --shadow-nav-active-value: 0 12px 30px -15px color-mix(in srgb, var(--brand) 58%, black);
-  --critical: #ef4444;
+  /* Recalibrado 09/2026 (mesmo achado do :root acima, lado escuro: axe-core mediu 4.37:1 contra o
+     novo --surface #111B49 — antes passava 4.89:1 contra o Obsidian mais escuro que saiu). 15%
+     branco recupera margem: 5.15:1 contra a nova superfície escura. */
+  --critical: color-mix(in srgb, #ef4444 85%, white);
   /* --critical claro escurece pro badge soft (ver comentário no :root); no escuro precisa do
      sentido oposto — clarear em direção ao branco — porque #ef4444 puro sobre a mistura escura
      (bg-critical/15 sobre --surface-2 escura) mede só 3.93:1. 20% de --critical + 80% de branco
