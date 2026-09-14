@@ -29,19 +29,38 @@ import { authClient } from '../../../lib/auth-client';
 import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic } from '../../../lib/motion';
 import { SoundFX } from '../../../lib/soundEffects';
 
+// Cor de cada pilar (brand.ts `pillars`: Inteligência, Conexão, Execução) — os três feixes da
+// órbita de 5 cores usados neste fluxo (dourado/azul/íris; vermelho e rosa ficam para o halo
+// ambiente e o botão primário, ver mais abaixo). Não é decoração: cada feature carrega a cor do
+// pilar que ela representa, mesma ordem em ConnectingCircles logo abaixo.
 const FEATURES = [
   {
     icon: Building2,
+    accent: 'brand' as const,
     text: 'Inteligência Comercial: prospecção com CNPJ oficial e decisores mapeados',
   },
-  { icon: ListChecks, text: 'Conexão & Pipeline: automações, propostas e integrações' },
-  { icon: Sparkles, text: 'Execução em Vendas: Dojo de IA e aceleração de receita' },
+  {
+    icon: ListChecks,
+    accent: 'orbit-blue' as const,
+    text: 'Conexão & Pipeline: automações, propostas e integrações',
+  },
+  {
+    icon: Sparkles,
+    accent: 'iris' as const,
+    text: 'Execução em Vendas: Dojo de IA e aceleração de receita',
+  },
 ] as const;
 
-// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam FEATURES acima; o 4º
-// (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar (src/components/layout/
-// Sidebar.tsx), literalmente o destino pra onde os três primeiros "círculos" se conectam.
-const CONNECT_ICONS: readonly LucideIcon[] = [Building2, ListChecks, Sparkles, LayoutGrid];
+// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam FEATURES acima (mesma
+// cor de pilar); o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar
+// (src/components/layout/Sidebar.tsx), literalmente o destino pra onde os três primeiros
+// "círculos" se conectam.
+const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'orbit-blue' | 'iris' }[] = [
+  { icon: Building2, accent: 'brand' },
+  { icon: ListChecks, accent: 'orbit-blue' },
+  { icon: Sparkles, accent: 'iris' },
+  { icon: LayoutGrid, accent: 'brand' },
+];
 
 interface ConnectingCirclesProps {
   reduceMotion: boolean;
@@ -70,23 +89,23 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
       className="mx-auto h-auto w-full max-w-sm"
       aria-hidden="true"
     >
-      {CONNECT_ICONS.slice(0, -1).map((_, index) => (
+      {CONNECT_ICONS.slice(0, -1).map((node, index) => (
         <motion.line
           key={`line-${cx(index)}-${cx(index + 1)}`}
           x1={cx(index)}
           y1={cy}
           x2={cx(index + 1)}
           y2={cy}
-          style={{ stroke: 'var(--brand)' }}
+          style={{ stroke: `var(--${node.accent})` }}
           strokeWidth={2}
           strokeLinecap="round"
-          strokeOpacity={0.35}
+          strokeOpacity={0.4}
           initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.35 }}
+          animate={{ pathLength: 1, opacity: 0.4 }}
           transition={{ duration: 0.5, ease: EASE_PREMIUM, delay: 0.25 + index * 0.28 }}
         />
       ))}
-      {CONNECT_ICONS.map((Icon, index) => {
+      {CONNECT_ICONS.map(({ icon: Icon, accent }, index) => {
         const isHub = index === nodeCount - 1;
         return (
           <motion.g
@@ -101,17 +120,16 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
               cy={cy}
               r={radius}
               style={{
-                fill: isHub ? 'var(--brand)' : 'var(--surface)',
-                stroke: isHub ? 'var(--brand)' : 'var(--line)',
+                fill: isHub ? `var(--${accent})` : 'var(--surface)',
+                stroke: `var(--${accent})`,
               }}
               strokeWidth={1.5}
             />
             <foreignObject x={cx(index) - 9} y={cy - 9} width={18} height={18}>
               <div className="flex h-full w-full items-center justify-center">
                 <Icon
-                  className={
-                    isHub ? 'h-[18px] w-[18px] text-white' : 'h-[18px] w-[18px] text-brand'
-                  }
+                  className="h-[18px] w-[18px]"
+                  style={{ color: isHub ? 'var(--on-brand)' : `var(--${accent})` }}
                 />
               </div>
             </foreignObject>
@@ -268,11 +286,19 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="relative min-h-screen overflow-hidden bg-bg">
+      {/* Atmosfera — halos suaves nas 5 cores da marca, nunca como fundo sólido com texto em
+          cima (regra #3 da constituição): só glow difuso atrás do conteúdo. */}
+      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div className="absolute -top-32 -right-24 h-[420px] w-[420px] rounded-full bg-brand/12 blur-[120px]" />
+        <div className="absolute top-1/3 -left-32 h-[380px] w-[380px] rounded-full bg-iris/10 blur-[120px]" />
+        <div className="absolute -bottom-40 right-1/4 h-[360px] w-[360px] rounded-full bg-pink/8 blur-[120px]" />
+      </div>
+
       {/* Cabeçalho — mesmo padrão do Hub Executivo (HubScreen.tsx): logo da marca ativa +
           alternador de tema, para que a primeira tela do produto já seja visualmente contínua com
           a tela que vem logo depois do login. */}
-      <header className="border-b border-line bg-surface/60 backdrop-blur-sm">
+      <header className="border-b border-line bg-surface/60 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <BirthHubLogo variant="horizontal" />
           <button
@@ -290,12 +316,7 @@ export function LoginScreen() {
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-6xl overflow-hidden px-6 py-4 md:py-6">
-        <div
-          className="pointer-events-none absolute -right-16 -top-20 hidden h-72 w-72 rounded-full bg-brand/10 blur-[90px] sm:block"
-          aria-hidden="true"
-        />
-
+      <main className="relative mx-auto max-w-6xl px-6 py-4 md:py-6">
         <div className="relative z-10 mx-auto flex max-w-md flex-col items-center text-center">
           <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
 
@@ -320,19 +341,23 @@ export function LoginScreen() {
               </span>
             </div>
 
-            <h1 className="text-3xl font-black text-center text-gold-gradient font-display">
-              Bem-vindo
-            </h1>
-            <p className="mt-1.5 text-sm text-ink-2 font-heading">
+            <h1 className="font-display text-3xl font-bold text-center text-ink">Bem-vindo</h1>
+            <p className="mt-1.5 text-sm text-ink-2">
               Central de Comando Inteligente — Ecossistema de Alta Performance.
             </p>
 
-            <div
-              className={`mt-5 w-full p-6 sm:p-7 rounded-card-lg border border-brand/25 bg-surface text-left shadow-card transition-shadow duration-300 ${brandAccent.glow}`}
-            >
+            <div className="relative mt-5 w-full overflow-hidden rounded-card-lg glass-panel text-left">
+              {/* Fita de assinatura — única aparição da órbita de 5 cores completa nesta tela,
+                  reservada ao topo do card principal (regra #3: halo/borda, nunca fundo com
+                  texto em cima). */}
+              <div className="h-[3px] w-full bg-gradient-orbit5" aria-hidden="true" />
+              <div className="p-6 sm:p-7">
               {verificationPending ? (
                 <div className="space-y-5 text-center">
-                  <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
+                  <div
+                    className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left"
+                    role="status"
+                  >
                     <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
                     <p>
                       Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele
@@ -350,7 +375,10 @@ export function LoginScreen() {
               ) : isForgotPassword ? (
                 forgotPasswordSent ? (
                   <div className="space-y-5 text-center">
-                    <div className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left">
+                    <div
+                      className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left"
+                      role="status"
+                    >
                       <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
                       <p>
                         Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail
@@ -372,6 +400,7 @@ export function LoginScreen() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
+                        role="alert"
                       >
                         <AlertCircle size={16} className="shrink-0 mt-0.5" />
                         <p>{error}</p>
@@ -415,7 +444,7 @@ export function LoginScreen() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       style={submitMagnetic.style}
-                      className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <Loader2 className="animate-spin" size={18} />
@@ -444,6 +473,7 @@ export function LoginScreen() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
+                      role="alert"
                     >
                       <AlertCircle size={16} className="shrink-0 mt-0.5" />
                       <p>{error}</p>
@@ -528,7 +558,7 @@ export function LoginScreen() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     style={submitMagnetic.style}
-                    className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-white py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <Loader2 className="animate-spin" size={18} />
@@ -540,6 +570,7 @@ export function LoginScreen() {
                   </motion.button>
                 </form>
               )}
+              </div>
             </div>
           </motion.div>
         </div>
@@ -563,12 +594,15 @@ export function LoginScreen() {
             />
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {FEATURES.map(({ icon: Icon, text }) => (
+            {FEATURES.map(({ icon: Icon, accent, text }) => (
               <div
                 key={text}
                 className="flex flex-col items-start gap-3 rounded-card border border-line bg-surface p-5"
               >
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line bg-surface-2 text-brand">
+                <span
+                  className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line bg-surface-2"
+                  style={{ color: `var(--${accent})` }}
+                >
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <span className="text-sm leading-relaxed text-ink-2">{text}</span>
