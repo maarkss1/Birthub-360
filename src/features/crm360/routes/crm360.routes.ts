@@ -7,6 +7,7 @@ import {
   crmDocumentSignatureRequestSchema,
   crmDocumentUpdateSchema,
   crmProductSchema,
+  crmReconcileFaturaStripePaymentSchema,
   moveCrmRecordSchema,
 } from '../crm360.schema.js';
 import type { Crm360Controller } from '../presentation/Crm360Controller.js';
@@ -70,6 +71,16 @@ router.post('/documents', writeRoles, (req, res, next) => {
 router.put('/documents/:id/status', writeRoles, (req, res, next) =>
   container.resolve<Crm360Controller>('Crm360Controller').updateDocumentStatus(req, res, next),
 );
+
+// BILLING-003 (onda 5): único caminho que marca uma Fatura como Pago — confirma ao vivo contra a
+// Stripe antes de gravar (ver PrismaCrm360Repository.reconcileFaturaStripePayment). Mesmos
+// writeRoles do endpoint de status genérico acima (SDR/CLOSER também fecham negócios no dia a dia).
+router.post('/documents/:id/reconcile-stripe-payment', writeRoles, (req, res, next) => {
+  crmReconcileFaturaStripePaymentSchema.parse(req.body);
+  return container
+    .resolve<Crm360Controller>('Crm360Controller')
+    .reconcileFaturaStripePayment(req, res, next);
+});
 
 // CYC-005 (onda 25): edição de conteúdo cria uma nova versão — nunca sobrescreve o histórico.
 router.put('/documents/:id', writeRoles, (req, res, next) => {

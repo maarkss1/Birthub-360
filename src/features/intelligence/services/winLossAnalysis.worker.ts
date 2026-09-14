@@ -1,5 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { type Prisma, ReportSource } from '@prisma/client';
 import { type ConnectionOptions, Queue, Worker } from 'bullmq';
+import { DEFAULT_PLAYBOOK } from '../../../config/playbooks.js';
 import { getAiModel } from '../../../lib/ai/gateway.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
@@ -30,16 +32,106 @@ export interface WinLossOrgAnalysis {
 }
 
 /**
+ * REVOPS-004 (onda 5): núcleo da análise de UMA organização — extraído para ser a ÚNICA
+ * implementação, reusada pela varredura semanal (`runWinLossAnalysis`, abaixo) E pelo disparo
+ * manual (`POST /api/intelligence/win-loss-analysis`, `intelligence.routes.ts`). Antes desta
+ * correção a rota manual reimplementava esta lógica inline, com um `take` de mensagens diferente
+ * (15 vs 20 aqui) e um prompt de sistema diferente — as duas execuções podiam enxergar contextos
+ * sutilmente diferentes para o MESMO lead. O prompt estruturado (3 tópicos numerados) vem da versão
+ * que a UI (`WinLossAnalysis.tsx`) já espera — `parseAnalysisSections` reconhece cabeçalhos
+ * `\d+\.`/`##`/`**negrito**`, então um prompt sem essa estrutura degradava pra uma seção única.
+ *
+ * Assume que o chamador já rodou dentro do `requestContext` de tenant correto (RLS normal) — esta
+ * função não abre contexto nenhum sozinha.
+ */
+export async function analyzeOrgWinLoss(
+  organizationId: string,
+): Promise<WinLossOrgAnalysis | null> {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const leads = await prisma.lead.findMany({
+    where: {
+      organizationId,
+      status: { in: [...WIN_LOSS_STATUSES] },
+      updatedAt: { gte: sevenDaysAgo },
+    },
+    include: {
+      whatsAppMessages: {
+        select: { body: true, direction: true },
+        take: 20,
+      },
+      timeline: {
+        select: { description: true },
+        take: 10,
+      },
+    },
+    take: 30,
+  });
+
+  if (leads.length === 0) return null;
+
+  const dataStr = leads
+    .map((l) => {
+      const msgs = l.whatsAppMessages
+        .map((m) => `${m.direction}: ${m.body || '(sem texto)'}`)
+        .join(' | ');
+      const tl = l.timeline.map((t) => t.description).join(' | ');
+      return `Lead ID: ${l.id} | Status: ${l.status}\nInterações: ${msgs || 'Sem mensagens'}\nTimeline: ${tl || 'Sem timeline'}\n---`;
+    })
+    .join('\n');
+
+  const model = getAiModel('local-llama3-fast', 0.3, 'win-loss-analysis');
+  const response = await model.invoke([
+    new SystemMessage(`Você é um analista comercial sênior especialista em RevOps e vendas B2B.
+Leia as transcrições e timelines dos leads Fechados (Ganhos e Perdidos) desta semana.
+Responda com EXATAMENTE 3 tópicos numerados:
+
+1. **O que os leads ganhos têm em comum**: padrões de comportamento, objeções superadas, sinais de compra
+2. **Principais objeções/motivos de perda**: o que fez os leads não comprarem
+3. **Recomendação prática para o time**: 1 ação concreta para melhorar a taxa de conversão
+
+Seja específico, use dados dos leads. Evite generalizações vagas.`),
+    new HumanMessage(`Dados da semana:\n\n${dataStr}`),
+  ]);
+
+  const analysisText =
+    typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
+
+  return { organizationId, analysis: analysisText, leadsAnalyzed: leads.length };
+}
+
+/** Persiste um resultado de Win/Loss como `Report` (mesma forma do relatório sob demanda de
+ * ReportsHub — markdown + snapshot de métricas). `brandId` é um dado comercial sem sentido aqui
+ * (mesma observação de dailyExecutiveSummary.worker.ts) — grava o valor padrão só para satisfazer
+ * a coluna obrigatória. */
+export async function persistWinLossReport(
+  result: WinLossOrgAnalysis,
+  source: typeof ReportSource.WEEKLY_WIN_LOSS_AUTO | typeof ReportSource.WIN_LOSS_ON_DEMAND,
+): Promise<void> {
+  await prisma.report.create({
+    data: {
+      organizationId: result.organizationId,
+      brandId: DEFAULT_PLAYBOOK,
+      source,
+      content: result.analysis,
+      metrics: { leadsAnalyzed: result.leadsAnalyzed } as Prisma.InputJsonValue,
+    },
+  });
+}
+
+/**
  * Uma execução completa da varredura — uma análise de IA SEPARADA por organização (nunca leads de
  * organizações diferentes no mesmo prompt). Extraído do processor do `Worker` (mesmo padrão de
  * `runStagnationScan` em `stagnation-scanner.service.ts`) pra ser testável sem precisar instanciar
  * um `Worker`/Redis reais.
+ *
+ * REVOPS-004: antes desta correção o resultado (`analyses`) só era devolvido — sem NENHUMA escrita
+ * no banco, o job "concluía com sucesso" e o trabalho de IA (caro, real) era jogado fora. Agora
+ * cada análise por organização é persistida como `Report` (source: `WEEKLY_WIN_LOSS_AUTO`) antes de
+ * entrar no array de retorno.
  */
 export async function runWinLossAnalysis(): Promise<WinLossOrgAnalysis[]> {
   logger.info('Iniciando job de Win/Loss Analysis (IA)');
-
-  // Pega leads fechados nos últimos 7 dias
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   // Bug real corrigido aqui (achado do Piloto de Win/Loss Analysis): a versão anterior fazia
   // uma única query sem `organizationId`, misturando leads de TODAS as organizações no mesmo
@@ -66,55 +158,16 @@ export async function runWinLossAnalysis(): Promise<WinLossOrgAnalysis[]> {
 
   for (const { id: organizationId } of organizations) {
     await requestContext.run({ tenantId: organizationId }, async () => {
-      const leads = await prisma.lead.findMany({
-        where: {
-          organizationId,
-          status: { in: [...WIN_LOSS_STATUSES] },
-          updatedAt: { gte: sevenDaysAgo },
-        },
-        include: {
-          whatsAppMessages: {
-            select: { body: true, direction: true },
-            take: 20,
-          },
-          timeline: {
-            select: { description: true },
-            take: 10,
-          },
-        },
-        take: 30,
-      });
-
-      if (leads.length === 0) return;
-
-      const dataStr = leads
-        .map((l) => {
-          const msgs = l.whatsAppMessages
-            .map((m) => `${m.direction}: ${m.body || '(sem texto)'}`)
-            .join(' | ');
-          const tl = l.timeline.map((t) => t.description).join(' | ');
-          return `Lead ID: ${l.id} | Status: ${l.status}\nInterações: ${msgs || 'Sem mensagens'}\nTimeline: ${tl || 'Sem timeline'}\n---`;
-        })
-        .join('\n');
-
       try {
-        const model = getAiModel('local-llama3-fast', 0.3, 'win-loss-analysis');
-        const response = await model.invoke([
-          new SystemMessage(
-            'Você é um analista comercial de alto nível. Leia as transcrições e timelines dos leads Fechados (Ganhos vs Perdidos) desta semana. Extraia padrões: o que os leads que compraram têm em comum? Quais foram as objeções principais dos que não compraram? Resuma em 3 tópicos práticos.',
-          ),
-          new HumanMessage(`Dados da Semana:\n\n${dataStr}`),
-        ]);
+        const result = await analyzeOrgWinLoss(organizationId);
+        if (!result) return;
 
-        const analysisText =
-          typeof response.content === 'string'
-            ? response.content
-            : JSON.stringify(response.content);
+        await persistWinLossReport(result, ReportSource.WEEKLY_WIN_LOSS_AUTO);
         logger.info(
-          { organizationId, leadsAnalyzed: leads.length },
-          'Win/Loss Analysis concluída para a organização',
+          { organizationId, leadsAnalyzed: result.leadsAnalyzed },
+          'Win/Loss Analysis concluída e persistida para a organização',
         );
-        analyses.push({ organizationId, analysis: analysisText, leadsAnalyzed: leads.length });
+        analyses.push(result);
       } catch (err) {
         logger.error({ err, organizationId }, 'Falha na análise Win/Loss com IA');
       }

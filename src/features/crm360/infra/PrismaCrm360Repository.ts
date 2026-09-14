@@ -1,11 +1,13 @@
 import {
   CrmDocumentStatus,
+  CrmDocumentType,
   CrmPipelineEntity,
   LeadFunnel,
   LeadStatus,
   Prisma,
 } from '@prisma/client';
 import { requestContext } from '../../../lib/async-context.js';
+import { AuditService } from '../../../lib/audit/audit.service.js';
 import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
@@ -14,6 +16,7 @@ import {
   toPrismaLeadStatus,
 } from '../../../lib/enumMap.js';
 import { prisma } from '../../../lib/prisma.js';
+import type { StripeChargePort } from '../../../shared/contracts/stripeCharge.contract.js';
 import {
   draftNextProposalVersion,
   type ProposalSnapshot,
@@ -242,6 +245,7 @@ function serializeDocument(doc: Record<string, unknown>): CrmCommercialDocument 
     sentAt: Date | null;
     firstViewedAt: Date | null;
     lastViewedAt: Date | null;
+    paymentReconciledAt: Date | null | undefined;
     createdAt: Date;
     updatedAt: Date;
   };
@@ -254,6 +258,7 @@ function serializeDocument(doc: Record<string, unknown>): CrmCommercialDocument 
     sentAt: d.sentAt?.toISOString() ?? null,
     firstViewedAt: d.firstViewedAt?.toISOString() ?? null,
     lastViewedAt: d.lastViewedAt?.toISOString() ?? null,
+    paymentReconciledAt: d.paymentReconciledAt?.toISOString() ?? null,
     createdAt: d.createdAt.toISOString(),
     updatedAt: d.updatedAt.toISOString(),
   } as unknown as CrmCommercialDocument;
@@ -364,6 +369,8 @@ export async function ensureDefaultPipelines(organizationId: string) {
 }
 
 export class PrismaCrm360Repository implements ICrm360Repository {
+  constructor(private stripeChargePort: StripeChargePort) {}
+
   async getOverviewData(organizationId: string): Promise<CrmOverviewData> {
     await ensureDefaultPipelines(organizationId);
     const now = new Date();
@@ -897,8 +904,27 @@ export class PrismaCrm360Repository implements ICrm360Repository {
     const nextStatus = status as CrmDocumentStatus;
     const current = await prisma.crmCommercialDocument.findFirst({
       where: { id: documentId, organizationId },
-      select: { sentAt: true, status: true, leadId: true },
+      select: { sentAt: true, status: true, leadId: true, type: true },
     });
+
+    // BILLING-003 (onda 5, auditoria de débito técnico — risco financeiro real): "Pago" numa
+    // Fatura era uma transição manual livre, sem NENHUM vínculo com Stripe/Omie/qualquer fonte
+    // financeira real — um status voltado ao cliente que não podia ser confiado para decisão
+    // financeira nenhuma. Esta rota genérica de status NUNCA mais aceita marcar uma Fatura como
+    // Pago diretamente; só `reconcileFaturaStripePayment` pode, e só depois de confirmar AO VIVO
+    // contra a API do Stripe que existe uma cobrança `succeeded` com valor/moeda batendo. Outros
+    // tipos de documento (Orçamento/Proposta/Contrato) não são o alvo financeiro desta correção —
+    // seu "Pago" (se algum dia usado) continua passando por aqui, sem mudança de comportamento.
+    if (
+      nextStatus === CrmDocumentStatus.Pago &&
+      current?.type === CrmDocumentType.Fatura &&
+      current.status !== CrmDocumentStatus.Pago
+    ) {
+      throw new AppError(
+        'Fatura só pode ser marcada como Pago através da reconciliação com uma cobrança Stripe real — use POST /api/crm/documents/:id/reconcile-stripe-payment.',
+        400,
+      );
+    }
 
     // ACH-17-08: marcar uma proposta como "Pago" era a mesma falha já corrigida em ACH-17-01 para
     // assinatura — nenhum DealClosureEvent era criado, nenhum ator era exigido, e nada impedia um
@@ -942,6 +968,130 @@ export class PrismaCrm360Repository implements ICrm360Repository {
       },
       include: { lead: true, company: true, contact: true },
     });
+    return serializeDocument(doc);
+  }
+
+  /**
+   * BILLING-003 (onda 5) — único caminho que pode marcar uma Fatura como Pago: confirma AO VIVO
+   * contra a API do Stripe (`getStripeCharge`, nunca confiando num status/valor só informado pelo
+   * chamador) que o PaymentIntent existe, está `succeeded` e bate em valor/moeda com o total do
+   * documento, antes de gravar qualquer coisa. Idempotente para a MESMA cobrança já reconciliada
+   * (segundo clique/reenvio não falha); rejeita reconciliar com uma cobrança diferente da já
+   * gravada, e rejeita reusar uma cobrança que já reconciliou outro documento (unique constraint
+   * em (organizationId, stripePaymentIntentId), ver schema.prisma).
+   */
+  async reconcileFaturaStripePayment(
+    organizationId: string,
+    documentId: string,
+    connectionId: string,
+    paymentIntentId: string,
+    actorUserId?: string,
+  ): Promise<CrmCommercialDocument> {
+    const current = await prisma.crmCommercialDocument.findFirst({
+      where: { id: documentId, organizationId },
+      select: {
+        type: true,
+        status: true,
+        leadId: true,
+        total: true,
+        currency: true,
+        stripePaymentIntentId: true,
+      },
+    });
+    if (!current) throw new AppError('Documento não encontrado.', 404);
+    if (current.type !== CrmDocumentType.Fatura) {
+      throw new AppError(
+        'Só documentos do tipo Fatura podem ser reconciliados com um pagamento.',
+        400,
+      );
+    }
+
+    // Mesma cobrança já reconciliada com ESTE documento — no-op honesto (não é um erro real).
+    if (
+      current.status === CrmDocumentStatus.Pago &&
+      current.stripePaymentIntentId === paymentIntentId
+    ) {
+      const doc = await prisma.crmCommercialDocument.findFirstOrThrow({
+        where: { id: documentId, organizationId },
+        include: { lead: true, company: true, contact: true },
+      });
+      return serializeDocument(doc);
+    }
+
+    const charge = await this.stripeChargePort.getStripeCharge(
+      organizationId,
+      connectionId,
+      paymentIntentId,
+    );
+    if (!charge) {
+      throw new AppError('Cobrança não encontrada no Stripe para esta conexão.', 404);
+    }
+    if (charge.status !== 'succeeded') {
+      throw new AppError(
+        `Pagamento ainda não confirmado pela Stripe (status atual: "${charge.status}") — a Fatura só é marcada como Pago depois de um PaymentIntent "succeeded".`,
+        409,
+      );
+    }
+
+    const expectedAmountCents = Math.round(current.total * 100);
+    // Tolerância de 1 centavo para arredondamento de ponto flutuante entre Float (schema) e
+    // inteiro de centavos (Stripe) — qualquer diferença maior é um mismatch real, nunca ignorado.
+    if (Math.abs(charge.amountCents - expectedAmountCents) > 1) {
+      throw new AppError(
+        `Valor da cobrança Stripe (${charge.amountCents} centavos) não bate com o total da Fatura (${expectedAmountCents} centavos) — reconciliação recusada.`,
+        409,
+      );
+    }
+    if (charge.currency.toUpperCase() !== current.currency.toUpperCase()) {
+      throw new AppError(
+        `Moeda da cobrança Stripe (${charge.currency}) não bate com a moeda da Fatura (${current.currency}) — reconciliação recusada.`,
+        409,
+      );
+    }
+
+    if (current.leadId) {
+      if (!actorUserId) {
+        throw new AppError(
+          'Confirmar pagamento de uma Fatura vinculada a um negócio exige um usuário autenticado identificado.',
+          401,
+        );
+      }
+      await ensureDealClosureAllowed(prismaDealClosureGate, {
+        organizationId,
+        leadId: current.leadId,
+        type: 'payment_confirmed',
+        evidenceRef: documentId,
+        triggeredBy: actorUserId,
+      });
+    }
+
+    let doc: Record<string, unknown>;
+    try {
+      doc = await prisma.crmCommercialDocument.update({
+        where: { id: documentId, organizationId },
+        data: {
+          status: CrmDocumentStatus.Pago,
+          stripeConnectionId: connectionId,
+          stripePaymentIntentId: paymentIntentId,
+          paymentReconciledAt: new Date(),
+        },
+        include: { lead: true, company: true, contact: true },
+      });
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+        throw new AppError('Esta cobrança Stripe já foi usada para reconciliar outra Fatura.', 409);
+      }
+      throw err;
+    }
+
+    await AuditService.log({
+      action: 'UPDATE',
+      entity: 'CrmCommercialDocument',
+      entityId: documentId,
+      tenantId: organizationId,
+      afterState: { paymentReconciled: true, stripePaymentIntentId: paymentIntentId },
+    });
+
     return serializeDocument(doc);
   }
 

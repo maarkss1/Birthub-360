@@ -4805,6 +4805,35 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
+  /crm/documents/{id}/reconcile-stripe-payment:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    post:
+      tags: [CRM 360]
+      summary: >-
+        BILLING-003: único caminho que marca uma Fatura como Pago — confirma AO VIVO contra a API
+        da Stripe (PaymentIntent existe, está `succeeded` e bate em valor/moeda com este documento)
+        antes de gravar, nunca a partir de um valor só informado pelo chamador. Mesmos writeRoles
+        do endpoint de status genérico (SDR/CLOSER também fecham negócios no dia a dia).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [connectionId, paymentIntentId]
+              properties:
+                connectionId: { type: string }
+                paymentIntentId: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   /crm/documents/{id}:
     parameters:
       - $ref: '#/components/parameters/IdParam'
@@ -8827,6 +8856,21 @@ paths:
         '202':
           {
             description: Análise enfileirada,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+
+  /intelligence/win-loss-analysis/latest:
+    get:
+      tags: [Intelligence]
+      summary: >-
+        REVOPS-004: expõe o último resultado persistido de Win/Loss Analysis (automático de sexta
+        OU manual via POST acima, o que for mais recente) — antes desta correção a varredura
+        automática nunca aparecia em lugar nenhum da UI. Mesmo padrão de /intelligence/report/latest.
+      responses:
+        '200':
+          {
+            description: OK,
             content:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }

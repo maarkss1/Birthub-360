@@ -32,8 +32,15 @@ interface OrbitItem {
   primary?: boolean;
   ring: 'inner' | 'outer';
   colorRgb: string;
+  /** Token CSS (sem "--") usado pelo halo/aro/linha deste nó — ver ORBIT_PALETTE abaixo. */
+  colorVar: string;
   onOpen: () => void;
 }
+
+// As 5 cores da marca, cicladas pelos destinos não-primários da órbita — cada nó carrega uma cor
+// própria (halo, aro ao passar o mouse, linha/partícula que o liga ao centro) em vez de repetir o
+// ouro em todo lugar. O centro (Central Comercial) continua sólido dourado — é o "sol" da órbita.
+const ORBIT_PALETTE = ['orbit-blue', 'iris', 'pink', 'red', 'brand-2'] as const;
 
 function useIsDesktopOrbit(): boolean {
   const [isDesktop, setIsDesktop] = useState(
@@ -110,9 +117,17 @@ export function HubScreen() {
   const firstName = currentUser?.name?.trim().split(/\s+/)[0] ?? 'Usuário';
   const calendarCells = buildCalendarCells(clock.year, clock.month, clock.today, true);
   const brandRgb = useMemo(() => hexToRgbString(brandInfo.colors.brand), [brandInfo.colors.brand]);
-  const brandAccentRgb = useMemo(
-    () => hexToRgbString(brandInfo.colors.brandAccent),
-    [brandInfo.colors.brandAccent],
+  // RGB de cada cor da órbita de 5 cores, pro burst de partículas do canvas (que não entende
+  // var(--token)) poder reproduzir a mesma cor atribuída ao card clicado (ver ORBIT_PALETTE).
+  const orbitRgb = useMemo(
+    () => ({
+      'orbit-blue': hexToRgbString(brandInfo.colors.orbitBlue),
+      iris: hexToRgbString(brandInfo.colors.iris),
+      pink: hexToRgbString(brandInfo.colors.pink),
+      red: hexToRgbString(brandInfo.colors.red),
+      'brand-2': hexToRgbString(brandInfo.colors.brandAccent),
+    }),
+    [brandInfo.colors],
   );
 
   // Quem decide quais módulos executivos cada pessoa vê é o painel 'module-access' (ADMIN), para
@@ -136,25 +151,22 @@ export function HubScreen() {
     window.open(url, '_blank', 'noopener,noreferrer');
   }, []);
 
-  const items = useMemo<OrbitItem[]>(
-    () => [
-      {
-        key: 'central',
-        label: 'Central Comercial',
-        description: 'CRM · Prospecção · IA',
-        icon: HubIcons.central,
-        primary: true,
-        ring: 'inner',
-        colorRgb: brandRgb,
-        onOpen: () => goTo('/app'),
-      },
+  const items = useMemo<OrbitItem[]>(() => {
+    // Índice de ciclo pela paleta — incrementado a cada nó não-primário, na ordem em que
+    // aparecem, pra cada destino real (não só os fixos) ganhar uma cor própria e consistente
+    // entre renders (mesma ordem de entrada = mesma cor).
+    let paletteIndex = 0;
+    const nextColorVar = () => ORBIT_PALETTE[paletteIndex++ % ORBIT_PALETTE.length];
+
+    const outer: OrbitItem[] = [
       {
         key: 'sdr',
         label: 'Acompanhamento SDR',
         description: 'Mesa de Tratamento · Dashboard SDR',
         icon: HubIcons.sdr,
         ring: 'inner',
-        colorRgb: brandAccentRgb,
+        colorVar: nextColorVar(),
+        colorRgb: '',
         onOpen: () => goTo('/app/mesa-tratamento'),
       },
       {
@@ -163,7 +175,8 @@ export function HubScreen() {
         description: 'Cadência · Agendamento · Google Meet',
         icon: HubIcons['meeting-hub'],
         ring: 'inner',
-        colorRgb: brandAccentRgb,
+        colorVar: nextColorVar(),
+        colorRgb: '',
         onOpen: () => goTo('/app/cadence'),
       },
       // Mesmo gate de papel do backend (RequireRole em App.tsx, COMMERCIAL_INTELLIGENCE_ROLES em
@@ -176,7 +189,8 @@ export function HubScreen() {
               description: 'Comercial Inteligente · Métricas de receita',
               icon: HubIcons['revenue-intel'],
               ring: 'inner' as const,
-              colorRgb: brandAccentRgb,
+              colorVar: nextColorVar(),
+              colorRgb: '',
               onOpen: () => goTo('/app/commercial_intelligence'),
             },
           ]
@@ -187,7 +201,8 @@ export function HubScreen() {
         description: mod.description,
         icon: HubIcons[mod.key] || HubIcons.central,
         ring: 'inner' as const,
-        colorRgb: brandAccentRgb,
+        colorVar: nextColorVar(),
+        colorRgb: '',
         onOpen: () => goTo(`/${mod.key}`),
       })),
       ...EXTERNAL_LINKS.map((link) => ({
@@ -197,12 +212,30 @@ export function HubScreen() {
         icon: HubIcons[link.iconKey] || HubIcons.central,
         external: true,
         ring: 'outer' as const,
-        colorRgb: brandAccentRgb,
+        colorVar: nextColorVar(),
+        colorRgb: '',
         onOpen: () => openExternal(link.url),
       })),
-    ],
-    [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence, brandRgb, brandAccentRgb],
-  );
+    ];
+
+    return [
+      {
+        key: 'central',
+        label: 'Central Comercial',
+        description: 'CRM · Prospecção · IA',
+        icon: HubIcons.central,
+        primary: true,
+        ring: 'inner',
+        colorVar: 'brand',
+        colorRgb: brandRgb,
+        onOpen: () => goTo('/app'),
+      },
+      ...outer.map((item) => ({
+        ...item,
+        colorRgb: orbitRgb[item.colorVar as keyof typeof orbitRgb],
+      })),
+    ];
+  }, [grantedCatalog, goTo, openExternal, canAccessCommercialIntelligence, brandRgb, orbitRgb]);
 
   const orbitContainerRef = useRef<HTMLDivElement>(null);
 
@@ -257,6 +290,9 @@ export function HubScreen() {
 
         const pathId = `orbitPath${i}`;
         const gradId = `orbitBeam${i}`;
+        // Cor própria do nó (ver ORBIT_PALETTE/colorVar) — cada feixe da órbita carrega a cor do
+        // destino que liga ao centro, não mais ouro repetido em toda linha.
+        const accent = `var(--${card.dataset.orbitAccent || 'brand'})`;
 
         lines.push(
           <g key={i}>
@@ -268,12 +304,17 @@ export function HubScreen() {
               x2={x}
               y2={y}
             >
-              <stop offset="0%" stopColor="var(--color-brand)" stopOpacity=".65" />
-              <stop offset="100%" stopColor="var(--color-brand)" stopOpacity=".12" />
+              <stop offset="0%" stopColor={accent} stopOpacity=".65" />
+              <stop offset="100%" stopColor={accent} stopOpacity=".12" />
             </linearGradient>
             <path id={pathId} d={`M ${cx} ${cy} L ${x} ${y}`} stroke={`url(#${gradId})`} />
             {!reduceMotion && (
-              <circle className="pulse" r="3.4" fill="var(--color-brand)">
+              <circle
+                className="pulse"
+                r="3.4"
+                fill={accent}
+                style={{ filter: `drop-shadow(0 0 6px ${accent})` }}
+              >
                 <animateMotion
                   dur={`${2.4 + i * 0.35}s`}
                   repeatCount="indefinite"
@@ -348,7 +389,7 @@ export function HubScreen() {
               setSoundOn(next);
               if (next) SoundFX.play('focus');
             }}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
             aria-label={soundOn ? 'Desativar som de interação' : 'Ativar som de interação'}
             title={soundOn ? 'Desativar som de interação' : 'Ativar som de interação'}
           >
@@ -361,7 +402,7 @@ export function HubScreen() {
               SoundFX.play('focus');
               toggleTheme();
             }}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur-md transition-colors hover:text-ink"
             aria-label="Alternar tema"
             title={`Mudar para modo ${theme === 'dark' ? 'claro' : 'escuro'}`}
           >
@@ -370,7 +411,7 @@ export function HubScreen() {
 
           {currentUser && (
             <div className="flex items-center gap-2.5 rounded-full border border-line bg-surface/70 py-1 pl-1 pr-3.5 backdrop-blur-md">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-white">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-on-brand">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <span className="hidden text-xs font-bold text-ink sm:inline">
@@ -382,7 +423,7 @@ export function HubScreen() {
           <button
             type="button"
             onClick={logout}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-critical backdrop-blur-md transition-colors hover:bg-critical/10"
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-line bg-surface/70 text-critical backdrop-blur-md transition-colors hover:bg-critical/10"
             aria-label="Encerrar sessão"
             title="Encerrar sessão e sair da conta"
           >
@@ -390,130 +431,136 @@ export function HubScreen() {
           </button>
         </header>
 
-        {/* Hero Section */}
-        <div className="flex flex-wrap items-end justify-between gap-6 px-8 pt-4 pb-2">
-          <div>
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-active dark:text-brand-2">
-              Birth Hub 360°
-            </div>
-            <h1 className="mt-1 text-3xl font-black leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
-              {clock.greeting},{' '}
-              <span className="bg-gradient-to-r from-brand to-brand-2 bg-clip-text text-transparent">
-                {firstName}
-              </span>
-            </h1>
-            <p className="mt-1 text-sm font-bold text-brand-active dark:text-brand-2">
-              {brandInfo.slogan}
-            </p>
-          </div>
-
-          {/* Widgets da Topbar */}
-          <div className="hidden items-stretch gap-3 md:flex">
-            <div className="hub-widget flex min-w-[128px] flex-col items-center justify-center px-4 py-3">
-              <span className="font-mono text-2xl font-bold tabular-nums text-brand-active dark:text-brand-2">
-                {clock.time}
-              </span>
-              <span className="mt-0.5 text-[10px] font-extrabold capitalize text-ink-2">
-                {clock.dateLabel}
-              </span>
-            </div>
-
-            <div className="hub-widget w-[178px] px-3 py-2.5">
-              <p className="mb-1.5 text-center text-[10px] font-black uppercase tracking-wider text-brand-active dark:text-brand-2">
-                {clock.monthLabel}
-              </p>
-              <div className="grid grid-cols-7 gap-0.5">
-                {WEEKDAYS_SHORT.map((d, i) => (
-                  <span
-                    key={`wd-${i}`}
-                    className="text-center text-[8.5px] font-extrabold text-ink-2 opacity-80"
-                  >
-                    {d}
-                  </span>
-                ))}
-                {calendarCells.map((cell, i) =>
-                  cell ? (
-                    <span
-                      key={cell.day}
-                      className={
-                        cell.isToday
-                          ? 'grid place-items-center rounded-md bg-brand py-0.5 text-[10px] font-black text-white shadow-glow-brand-strong'
-                          : 'grid place-items-center rounded-md py-0.5 text-[10px] font-semibold text-ink-2'
-                      }
-                    >
-                      {cell.day}
-                    </span>
-                  ) : (
-                    <span key={`empty-${i}`} />
-                  ),
-                )}
+        <main className="flex flex-1 flex-col">
+          {/* Hero Section — a fita de assinatura (5 cores) aparece uma única vez nesta tela, na
+            órbita abaixo; aqui o nome ganha destaque por peso/tamanho, não por gradiente de
+            texto (regra de craft: emphasis comes from weight or size, não decoração). */}
+          <div className="flex flex-wrap items-end justify-between gap-6 px-8 pt-4 pb-2">
+            <div>
+              <div className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-ink dark:text-brand-2">
+                Birth Hub 360°
               </div>
+              <h1 className="mt-1 font-display text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl md:text-5xl">
+                {clock.greeting},{' '}
+                <span className="text-brand-ink dark:text-brand-2">{firstName}</span>
+              </h1>
+              <p className="mt-1 text-sm font-bold text-brand-ink dark:text-brand-2">
+                {brandInfo.slogan}
+              </p>
             </div>
 
-            <HubTaskWidget />
-          </div>
-        </div>
+            {/* Widgets da Topbar */}
+            <div className="hidden items-stretch gap-3 md:flex">
+              <div className="hub-widget flex min-w-[128px] flex-col items-center justify-center px-4 py-3">
+                <span className="font-mono text-2xl font-bold tabular-nums text-brand-ink dark:text-brand-2">
+                  {clock.time}
+                </span>
+                <span className="mt-0.5 text-[10px] font-extrabold capitalize text-ink-2">
+                  {clock.dateLabel}
+                </span>
+              </div>
 
-        {/* Rótulo da Seção */}
-        <div className="mx-auto flex w-full max-w-[1250px] items-center gap-2.5 px-8 pt-6 pb-2">
-          <span className="text-[11px] font-black uppercase tracking-[0.14em] text-ink-2">
-            Da prospecção ao contrato — Ecossistema de Inteligência Comercial{' '}
-            <span className="inline-flex items-center gap-1.5 font-black text-ink">
-              <BirthHubLogo variant="symbol" className="h-4 w-auto text-brand" />
-              BIRTH HUB 360°
+              <div className="hub-widget w-[178px] px-3 py-2.5">
+                <p className="mb-1.5 text-center text-[10px] font-black uppercase tracking-wider text-brand-ink dark:text-brand-2">
+                  {clock.monthLabel}
+                </p>
+                <div className="grid grid-cols-7 gap-0.5">
+                  {WEEKDAYS_SHORT.map((d, i) => (
+                    <span
+                      key={`wd-${i}`}
+                      className="text-center text-[8.5px] font-extrabold text-ink-2 opacity-80"
+                    >
+                      {d}
+                    </span>
+                  ))}
+                  {calendarCells.map((cell, i) =>
+                    cell ? (
+                      <span
+                        key={cell.day}
+                        className={
+                          cell.isToday
+                            ? 'grid place-items-center rounded-md bg-brand py-0.5 text-[10px] font-black text-on-brand shadow-glow-brand-strong'
+                            : 'grid place-items-center rounded-md py-0.5 text-[10px] font-semibold text-ink-2'
+                        }
+                      >
+                        {cell.day}
+                      </span>
+                    ) : (
+                      <span key={`empty-${i}`} />
+                    ),
+                  )}
+                </div>
+              </div>
+
+              <HubTaskWidget />
+            </div>
+          </div>
+
+          {/* Rótulo da Seção */}
+          <div className="mx-auto flex w-full max-w-[1250px] items-center gap-2.5 px-8 pt-6 pb-2">
+            <span className="text-[11px] font-black uppercase tracking-[0.14em] text-ink-2">
+              Da prospecção ao contrato — Ecossistema de Inteligência Comercial{' '}
+              <span className="inline-flex items-center gap-1.5 font-black text-ink">
+                <BirthHubLogo variant="symbol" className="h-4 w-auto text-brand" />
+                BIRTH HUB 360°
+              </span>
             </span>
-          </span>
-          <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent" />
-        </div>
-
-        {!isLoading && grantedCatalog.length === 0 && (
-          <p className="mx-auto max-w-[1250px] px-8 text-xs text-ink-2">
-            Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central
-            Comercial e ferramentas da equipe.
-          </p>
-        )}
-        {isLoading && (
-          <div className="mx-auto flex max-w-[1250px] items-center gap-2 px-8 text-xs text-ink-2">
-            <Loader2 className="h-4 w-4 animate-spin" /> Carregando módulos...
+            <span className="h-px flex-1 bg-gradient-to-r from-line to-transparent" />
           </div>
-        )}
 
-        {/* Órbita Concêntrica Dupla */}
-        {isDesktopOrbit ? (
-          // Grupo de botões de navegação (não campos de formulário) — <fieldset> não traria ganho
-          // real de acessibilidade aqui, só estilo.
-          // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
-          <div
-            ref={orbitContainerRef}
-            className="hub-orbit"
-            role="group"
-            aria-label="Órbita do Birth Hub 360°"
-          >
-            {orbitLines}
-            {items.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={(e) => handleCardClick(e, item)}
-                  className={`hub-card ${item.primary ? 'primary' : ''}`}
-                  title={item.description}
-                >
-                  <div className="hc-orb">
-                    <div className="hc-icon-wrap">
-                      <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
+          {!isLoading && grantedCatalog.length === 0 && (
+            <p className="mx-auto max-w-[1250px] px-8 text-xs text-ink-2">
+              Nenhum módulo executivo liberado para a sua conta ainda — a órbita exibe a Central
+              Comercial e ferramentas da equipe.
+            </p>
+          )}
+          {isLoading && (
+            <div className="mx-auto flex max-w-[1250px] items-center gap-2 px-8 text-xs text-ink-2">
+              <Loader2 className="h-4 w-4 animate-spin" /> Carregando módulos...
+            </div>
+          )}
+
+          {/* Órbita Concêntrica Dupla */}
+          {isDesktopOrbit ? (
+            // Grupo de botões de navegação (não campos de formulário) — <fieldset> não traria ganho
+            // real de acessibilidade aqui, só estilo.
+            // biome-ignore lint/a11y/useSemanticElements: ver comentário acima
+            <div
+              ref={orbitContainerRef}
+              className="hub-orbit"
+              role="group"
+              aria-label="Órbita do Birth Hub 360°"
+            >
+              {orbitLines}
+              {items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={(e) => handleCardClick(e, item)}
+                    className={`hub-card ${item.primary ? 'primary' : ''}`}
+                    title={item.description}
+                    data-orbit-accent={item.colorVar}
+                    style={{ '--orbit-accent': `var(--${item.colorVar})` } as React.CSSProperties}
+                  >
+                    <div className="hc-orb">
+                      <div className="hc-icon-wrap">
+                        <Icon className={item.primary ? 'h-12 w-12' : 'h-8 w-8'} />
+                      </div>
+                      <div className="hc-title">{item.label}</div>
+                      {item.primary && (
+                        <div className="hc-tag hc-tag-inside">{item.description}</div>
+                      )}
                     </div>
-                    <div className="hc-title">{item.label}</div>
-                    {item.primary && <div className="hc-tag hc-tag-inside">{item.description}</div>}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        ) : (
-          <MobileDestinationList items={items} />
-        )}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <MobileDestinationList items={items} />
+          )}
+        </main>
       </div>
     </div>
   );
@@ -547,7 +594,10 @@ function MobileDestinationList({ items }: { items: OrbitItem[] }) {
             onClick={item.onOpen}
             className="group flex flex-col items-start gap-2 rounded-card border border-line bg-surface p-4 text-left shadow-card transition-transform duration-200 active:scale-[0.98]"
           >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-surface-2 text-brand-active dark:text-brand-2">
+            <span
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-surface-2"
+              style={{ color: `var(--${item.colorVar})` }}
+            >
               <item.icon className="h-4 w-4" aria-hidden="true" />
             </span>
             <span className="flex items-center gap-1 font-display text-xs font-bold text-ink">
