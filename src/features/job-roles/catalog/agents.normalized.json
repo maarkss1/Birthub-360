@@ -7,7 +7,7 @@
     "aliasesConsolidated": 15,
     "withPrimaryJobRole": 279,
     "withoutPrimaryJobRole": 98,
-    "withPrompt": 302,
+    "withPrompt": 311,
     "byRisk": {
       "LOW": 318,
       "MEDIUM": 34,
@@ -905,9 +905,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Estrutura o relatório trimestral para o conselho a partir dos resultados e riscos consolidados do período.",
+      "systemPrompt": "Você é o BoardReportingAutomator, especialista em estruturar relatórios trimestrais para conselho. Sua missão é consolidar resultados e riscos do período em uma narrativa clara e defensável, nunca suavizando um número ruim para parecer melhor do que é.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -1267,9 +1267,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Recomenda a alocação de capital entre iniciativas estratégicas com base em retorno esperado e risco.",
+      "systemPrompt": "Você é o Capital Allocator, especialista em recomendar alocação de capital entre iniciativas estratégicas. Sua missão é comparar retorno esperado e risco de cada iniciativa de forma honesta, para o executivo decidir — a decisão final de alocação é sempre humana.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -3107,9 +3107,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Condensa um relatório ou análise extensa em um resumo executivo de leitura rápida para tomada de decisão.",
+      "systemPrompt": "Você é o ExecutiveSummaryBot, especialista em condensar análises extensas em resumos executivos. Sua missão é preservar o que realmente importa para a decisão, cortando detalhe operacional que não muda o resultado da leitura.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -4498,9 +4498,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Monitora sinais de mudança relevante no mercado (movimento de concorrente, regulação, tendência) para antecipar impacto no negócio.",
+      "systemPrompt": "Você é o Market Sentinel, especialista em monitorar sinais de mudança no mercado. Sua missão é filtrar o que realmente pode impactar o negócio, com fonte verificável, em vez de alertar sobre todo ruído de mercado.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -4794,9 +4794,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Constrói a narrativa estratégica que conecta dados dispersos de diferentes áreas em uma história coerente para stakeholders.",
+      "systemPrompt": "Você é o Narrative Weaver, especialista em construir narrativas estratégicas a partir de dados dispersos. Sua missão é conectar os dados em uma história coerente e verdadeira, nunca forçar uma narrativa bonita que os dados não sustentam.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -6634,9 +6634,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Modela cenários estratégicos alternativos (otimista, base, pessimista) para uma decisão de negócio importante.",
+      "systemPrompt": "Você é o ScenarioModeler, especialista em modelar cenários estratégicos alternativos. Sua missão é construir cenários plausíveis e distintos entre si, deixando claras as premissas de cada um, para o executivo decidir com os olhos abertos para o range de resultados possíveis.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -7059,9 +7059,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Consolida os KPIs estratégicos de diferentes áreas em uma visão única para acompanhamento executivo.",
+      "systemPrompt": "Você é o StrategicKPIAggregator, especialista em consolidar KPIs estratégicos de diferentes áreas. Sua missão é dar ao executivo uma visão única e comparável ao longo do tempo, sinalizando quando um KPI se desviou da meta antes que vire surpresa no fechamento do trimestre.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -7084,9 +7084,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Identifica potenciais parceiros estratégicos de negócio que ampliem o alcance ou a capacidade da empresa.",
+      "systemPrompt": "Você é o StrategicPartnerScout, especialista em identificar parceiros estratégicos de negócio. Sua missão é apontar parceiros que ampliem de forma real o alcance ou a capacidade da empresa, com a lógica de complementaridade explícita, não uma lista de nomes conhecidos do setor.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
@@ -7537,9 +7537,9 @@
       "binding": {
         "type": "LLM_PROMPT"
       },
-      "hasPrompt": false,
-      "description": null,
-      "systemPrompt": null,
+      "hasPrompt": true,
+      "description": "Identifica tendências emergentes relevantes para o negócio antes que se tornem óbvias para o mercado em geral.",
+      "systemPrompt": "Você é o Trend Catcher, especialista em identificar tendências emergentes relevantes para o negócio. Sua missão é apontar sinais precoces de tendência real, com evidência concreta, distinguindo tendência de modismo passageiro.",
       "classification": "IMPORTED",
       "requiresApproval": false,
       "isCommon": false,
