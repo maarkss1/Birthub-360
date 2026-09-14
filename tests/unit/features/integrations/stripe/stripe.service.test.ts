@@ -17,6 +17,14 @@ const findFirstStripeMock = vi.fn((args: { where: { id: string; organizationId: 
       null,
   );
 });
+const updateStripeMock = vi.fn(
+  (args: { where: { id: string }; data: Record<string, unknown> }) => {
+    const idx = stripeStore.findIndex((c) => c.id === args.where.id);
+    if (idx === -1) return Promise.resolve(null);
+    stripeStore[idx] = { ...stripeStore[idx], ...args.data };
+    return Promise.resolve(stripeStore[idx]);
+  },
+);
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -25,19 +33,28 @@ vi.mock('@/lib/prisma', () => ({
       findFirst: (...args: [{ where: { id: string; organizationId: string } }]) =>
         findFirstStripeMock(...args),
       findMany: () => Promise.resolve(stripeStore),
+      update: (...args: [{ where: { id: string }; data: Record<string, unknown> }]) =>
+        updateStripeMock(...args),
       deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
     },
   },
 }));
 
+const auditLogMock = vi.fn();
+vi.mock('@/lib/audit/audit.service', () => ({
+  AuditService: { log: (...args: unknown[]) => auditLogMock(...args) },
+}));
+
 const fetchWithTimeoutMock = vi.fn();
-vi.mock('@/lib/http', () => ({
+vi.mock('@/lib/http', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/lib/http')>()),
   fetchWithTimeout: (...args: unknown[]) => fetchWithTimeoutMock(...args),
 }));
 
 import {
   connectStripe,
   createStripeCharge,
+  setStripeWebhookSecret,
   testStripeConnection,
 } from '@/features/integrations/stripe/stripe.service';
 
@@ -70,11 +87,46 @@ describe('connectStripe', () => {
     const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
 
     expect(conn.secretKeyLast4).toBe('d123');
+    // BILLING-007: toda conexão nova já expõe onde cadastrar o webhook no Dashboard da Stripe,
+    // e honestamente reporta que nenhum segredo de assinatura foi configurado ainda.
+    expect(conn.webhookReceiverUrl).toContain(`/api/integrations/stripe/webhook/${conn.id}`);
+    expect(conn.hasWebhookSecret).toBe(false);
     expect(fetchWithTimeoutMock).toHaveBeenCalledWith(
       'https://api.stripe.com/v1/balance',
       expect.objectContaining({ method: 'GET' }),
       expect.any(Number),
       ['api.stripe.com'],
+    );
+  });
+});
+
+describe('setStripeWebhookSecret — BILLING-007: segredo de assinatura do webhook de entrada', () => {
+  it('recusa um valor que não tem o formato "whsec_..." da Stripe', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+
+    await expect(setStripeWebhookSecret(ORG_ID, conn.id, 'segredo-qualquer')).rejects.toThrow(
+      /whsec_/,
+    );
+    expect(updateStripeMock).not.toHaveBeenCalled();
+  });
+
+  it('recusa quando a conexão não existe para esta organização', async () => {
+    await expect(
+      setStripeWebhookSecret(ORG_ID, 'conn-inexistente', 'whsec_abc123'),
+    ).rejects.toThrow(/não encontrada/);
+  });
+
+  it('persiste o segredo e passa a reportar hasWebhookSecret: true', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+    const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+    expect(conn.hasWebhookSecret).toBe(false);
+
+    const updated = await setStripeWebhookSecret(ORG_ID, conn.id, 'whsec_test_abc123');
+
+    expect(updated.hasWebhookSecret).toBe(true);
+    expect(auditLogMock).toHaveBeenCalledWith(
+      expect.objectContaining({ entity: 'StripeConnection', entityId: conn.id, tenantId: ORG_ID }),
     );
   });
 });
@@ -288,13 +340,108 @@ describe('createStripeCharge — INTEGRATION-001: chave de idempotência (evita 
 });
 
 describe('testStripeConnection', () => {
-  it('reporta falha honesta quando a Stripe responde erro', async () => {
+  it('reporta falha honesta quando a Stripe responde erro (esgota as tentativas de retry de um 5xx sustentado)', async () => {
+    vi.useFakeTimers();
+    try {
+      fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+      const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+
+      // Persistente (não "Once"): HTTP 500 é transiente (INTEGRATION-002) — sem isso as tentativas
+      // de retry além da primeira ficariam sem mock configurado.
+      fetchWithTimeoutMock.mockResolvedValue(jsonResponse(500, {}));
+      const promise = testStripeConnection(ORG_ID, conn.id);
+      await vi.runAllTimersAsync();
+      const result = await promise;
+
+      expect(result.success).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('stripeRequest — INTEGRATION-002: retry/backoff em falha transiente', () => {
+  it('reintenta em falha de rede e eventualmente sucede', async () => {
+    vi.useFakeTimers();
+    try {
+      fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+      const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+      fetchWithTimeoutMock.mockClear();
+
+      fetchWithTimeoutMock
+        .mockRejectedValueOnce(new Error('fetch failed (ECONNRESET)'))
+        .mockResolvedValueOnce(
+          jsonResponse(200, {
+            id: 'pi_after_retry',
+            amount: 1000,
+            currency: 'brl',
+            status: 'requires_payment_method',
+            created: 1700000000,
+          }),
+        );
+
+      const promise = createStripeCharge(ORG_ID, conn.id, {
+        amountCents: 1000,
+        currency: 'BRL',
+        customerEmail: 'a@b.com',
+        idempotencyKey: 'retry-network',
+      });
+      await vi.runAllTimersAsync();
+      const charge = await promise;
+
+      expect(charge.paymentId).toBe('pi_after_retry');
+      expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('reintenta em HTTP 429/5xx e esgota as tentativas quando a falha persiste', async () => {
+    vi.useFakeTimers();
+    try {
+      fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
+      const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+      fetchWithTimeoutMock.mockClear();
+
+      fetchWithTimeoutMock.mockResolvedValue(jsonResponse(503, {}));
+
+      const promise = createStripeCharge(ORG_ID, conn.id, {
+        amountCents: 1000,
+        currency: 'BRL',
+        customerEmail: 'a@b.com',
+        idempotencyKey: 'retry-exhausted',
+      });
+      // Handler vazio só pra evitar o unhandledRejection do Node entre o runAllTimersAsync
+      // resolver a rejeição e o expect().rejects abaixo de fato anexar seu handler — a asserção
+      // real continua sendo o expect().rejects.toThrow() logo depois.
+      promise.catch(() => {});
+      await vi.runAllTimersAsync();
+
+      await expect(promise).rejects.toThrow();
+      // STRIPE_MAX_ATTEMPTS = 4 — nenhuma tentativa a mais, nenhuma a menos.
+      expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(4);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('NÃO reintenta em erro definitivo (401) — só uma chamada de rede', async () => {
     fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { object: 'balance' }));
     const conn = await connectStripe(ORG_ID, { secretKey: 'sk_test_valid123' });
+    fetchWithTimeoutMock.mockClear();
 
-    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(500, {}));
-    const result = await testStripeConnection(ORG_ID, conn.id);
+    fetchWithTimeoutMock.mockResolvedValueOnce(
+      jsonResponse(401, { error: { message: 'Invalid API Key provided' } }),
+    );
 
-    expect(result.success).toBe(false);
+    await expect(
+      createStripeCharge(ORG_ID, conn.id, {
+        amountCents: 1000,
+        currency: 'BRL',
+        customerEmail: 'a@b.com',
+        idempotencyKey: 'no-retry-definitive',
+      }),
+    ).rejects.toThrow();
+    expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(1);
   });
 });

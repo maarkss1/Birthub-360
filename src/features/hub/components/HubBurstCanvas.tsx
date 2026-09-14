@@ -27,6 +27,9 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const rafRef = useRef<number | null>(null);
+  // Guarda a função draw do efeito abaixo pra trigger() poder reagendar o loop quando ele já
+  // parou (array vazio) sem precisar duplicar a lógica de desenho aqui.
+  const drawRef = useRef<(() => void) | null>(null);
   const prefersReduced = useReducedMotion();
 
   // Expõe trigger para o pai sem causar re-render
@@ -39,6 +42,7 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
         if (!canvas) return;
         const dpr = devicePixelRatio || 1;
         const count = 26;
+        const wasEmpty = particlesRef.current.length === 0;
         for (let i = 0; i < count; i++) {
           const angle = (Math.PI * 2 * i) / count + Math.random() * 0.3;
           const speed = 2.5 + Math.random() * 3.5;
@@ -51,6 +55,11 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
             life: 1,
             color: colorRgb,
           });
+        }
+        // O loop de desenho para sozinho quando o array esvazia (ver draw() abaixo) — se ele já
+        // tinha parado, este clique precisa reacordá-lo.
+        if (wasEmpty && rafRef.current === null && drawRef.current) {
+          rafRef.current = requestAnimationFrame(drawRef.current);
         }
       },
     }),
@@ -74,6 +83,11 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
     resize();
     window.addEventListener('resize', resize);
 
+    // O loop só roda enquanto houver partícula viva (achado do audit: antes rodava pra sempre,
+    // mesmo com o array vazio — clearRect + filter a cada frame indefinidamente pela vida inteira
+    // da tela, violando a regra de performance da constituição de não animar/renderizar
+    // continuamente sem necessidade). `trigger()` (via useImperativeHandle acima) reagenda o loop
+    // quando chega a primeira partícula de um novo clique.
     function draw() {
       if (!ctx || !canvas) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -90,9 +104,13 @@ export const HubBurstCanvas = forwardRef<BurstHandle>((_, ref) => {
       });
       particlesRef.current = particlesRef.current.filter((p) => p.life > 0);
       ctx.globalAlpha = 1;
-      rafRef.current = requestAnimationFrame(draw);
+      if (particlesRef.current.length > 0) {
+        rafRef.current = requestAnimationFrame(draw);
+      } else {
+        rafRef.current = null;
+      }
     }
-    rafRef.current = requestAnimationFrame(draw);
+    drawRef.current = draw;
 
     return () => {
       window.removeEventListener('resize', resize);

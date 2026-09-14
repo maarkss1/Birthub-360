@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (aiToolkitFunctions, COD-004) */
 
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import type { Prisma } from '@prisma/client';
+import { type Prisma, ReportSource } from '@prisma/client';
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
 import {
@@ -66,6 +66,7 @@ import {
   studioGenerationSchema,
   studioService,
 } from '../services/studio.service.js';
+import { analyzeOrgWinLoss, persistWinLossReport } from '../services/winLossAnalysis.worker.js';
 import { aiSuiteRouter } from './ai-suite.routes.js';
 
 const router = Router();
@@ -903,40 +904,24 @@ router.post(
 // ── Win/Loss Analysis ────────────────────────────────────────────────────────
 // Roda a análise imediatamente (em vez de aguardar o cron de sexta) e devolve
 // o resultado. Útil para o usuário disparar manualmente pela UI.
+//
+// REVOPS-004 (onda 5): esta rota reimplementava a mesma lógica de
+// `winLossAnalysis.worker.ts` inline (com um `take` de mensagens diferente e um prompt
+// diferente do cron — as duas execuções podiam enxergar contextos sutilmente diferentes
+// para o mesmo lead). Agora reusa `analyzeOrgWinLoss` (única implementação) e persiste o
+// resultado como `Report` (source: WIN_LOSS_ON_DEMAND), exposto por `GET .../latest` abaixo.
 router.post(
   '/win-loss-analysis',
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const organizationId = (req as AuthRequest).user?.organizationId;
-      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      if (!organizationId) {
+        res.status(401).json({ success: false, error: 'Organização não identificada.' });
+        return;
+      }
 
-      const leads = await prisma.lead.findMany({
-        where: {
-          ...(organizationId ? { organizationId } : {}),
-          status: {
-            in: [
-              'Convertido_em_Oportunidade',
-              'Lead_Desqualificado',
-              'Negocios_Perdidos',
-              'Negocios_Ganhos',
-            ],
-          },
-          updatedAt: { gte: sevenDaysAgo },
-        },
-        include: {
-          whatsAppMessages: {
-            select: { body: true, direction: true },
-            take: 15,
-          },
-          timeline: {
-            select: { description: true },
-            take: 10,
-          },
-        },
-        take: 30,
-      });
-
-      if (leads.length === 0) {
+      const result = await analyzeOrgWinLoss(organizationId);
+      if (!result) {
         res.json({
           analysis:
             'Nenhum lead fechado nos últimos 7 dias para analisar. Aguarde o acúmulo de dados ou expanda o período de busca.',
@@ -944,40 +929,37 @@ router.post(
         return;
       }
 
-      const dataStr = leads
-        .map((l) => {
-          const msgs = l.whatsAppMessages
-            .map((m) => `${m.direction}: ${m.body || '(sem texto)'}`)
-            .join(' | ');
-          const tl = l.timeline.map((t) => t.description).join(' | ');
-          return `Lead ID: ${l.id} | Status: ${l.status}\nInterações: ${msgs || 'Sem mensagens'}\nTimeline: ${tl || 'Sem timeline'}\n---`;
-        })
-        .join('\n');
-
-      const model = getAiModel('local-llama3-fast', 0.3, 'win-loss-analysis');
-      const response = await model.invoke([
-        new SystemMessage(`Você é um analista comercial sênior especialista em RevOps e vendas B2B.
-Leia as transcrições e timelines dos leads Fechados (Ganhos e Perdidos) desta semana.
-Responda com EXATAMENTE 3 tópicos numerados:
-
-1. **O que os leads ganhos têm em comum**: padrões de comportamento, objeções superadas, sinais de compra
-2. **Principais objeções/motivos de perda**: o que fez os leads não comprarem
-3. **Recomendação prática para o time**: 1 ação concreta para melhorar a taxa de conversão
-
-Seja específico, use dados dos leads. Evite generalizações vagas.`),
-        new HumanMessage(`Dados da semana:\n\n${dataStr}`),
-      ]);
-
-      const analysis =
-        typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
+      await persistWinLossReport(result, ReportSource.WIN_LOSS_ON_DEMAND);
       logger.info(
-        { organizationId, leadsAnalyzed: leads.length, tool: 'win-loss-analysis' },
-        '[WinLoss] Análise manual disparada com sucesso',
+        { organizationId, leadsAnalyzed: result.leadsAnalyzed, tool: 'win-loss-analysis' },
+        '[WinLoss] Análise manual disparada e persistida com sucesso',
       );
 
-      res.json({ analysis, leadsAnalyzed: leads.length });
+      res.json({ analysis: result.analysis, leadsAnalyzed: result.leadsAnalyzed });
     } catch (error) {
       logger.error({ err: error }, 'Falha no Win/Loss Analysis manual');
+      next(error);
+    }
+  },
+);
+
+// REVOPS-004: expõe o último resultado persistido (automático de sexta OU manual, o que for mais
+// recente) — antes desta correção a varredura automática nunca aparecia em lugar nenhum da UI
+// (ver comentário removido de WinLossAnalysis.tsx). Mesmo padrão de GET /report/latest acima.
+router.get(
+  '/win-loss-analysis/latest',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const organizationId = (req as AuthRequest).user.organizationId;
+      const latest = await prisma.report.findFirst({
+        where: {
+          organizationId,
+          source: { in: [ReportSource.WEEKLY_WIN_LOSS_AUTO, ReportSource.WIN_LOSS_ON_DEMAND] },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      res.json({ success: true, data: latest });
+    } catch (error) {
       next(error);
     }
   },

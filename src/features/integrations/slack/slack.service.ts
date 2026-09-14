@@ -1,8 +1,18 @@
-import { fetchWithTimeout } from '../../../lib/http.js';
+import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
+import {
+  parseRetryAfterMs,
+  retryWithBackoff,
+  TransientHttpError,
+} from '../../../shared/http/retryWithBackoff.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
+
+// INTEGRATION-002: mesma estratégia de retry/backoff do Bitrix/Stripe/Omie (src/shared/http/
+// retryWithBackoff.ts) — rede/timeout/429/5xx é recuperável; qualquer outra resposta HTTP é
+// definitiva. Aplicado nos dois caminhos de envio (Incoming Webhook e Bot Token).
+const SLACK_MAX_ATTEMPTS = 4;
 
 export interface SlackConnectionInput {
   label?: string;
@@ -128,12 +138,51 @@ export async function sendSlackMessage(
   const timestamp = new Date().toISOString();
 
   if (connection.webhookUrl) {
-    await assertSafeExternalUrl(connection.webhookUrl);
-    const res = await safeFetch(connection.webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-    });
+    const webhookUrl = connection.webhookUrl;
+    const res = await retryWithBackoff(
+      async () => {
+        // Revalida a URL contra o guard de SSRF a CADA attempt (não só uma vez antes do loop) —
+        // mesmo raciocínio de attemptBitrixCall: fecha a janela de DNS rebinding entre a primeira
+        // validação e uma tentativa posterior de retry. Chamado FORA do try/catch de classificação
+        // abaixo, de propósito: uma rejeição do guard (qualquer tipo de erro que ele lance) nunca
+        // é transiente — config/URL inválida não se resolve numa próxima tentativa — então propaga
+        // crua, sem virar TransientHttpError.
+        await assertSafeExternalUrl(webhookUrl);
+        let response: Response;
+        try {
+          response = await safeFetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }),
+          });
+        } catch (err) {
+          // AppError aqui vem da revalidação interna do próprio safeFetch — mesma lógica: nunca
+          // transiente. Qualquer outro erro é falha de rede de verdade (recuperável).
+          if (err instanceof AppError) throw err;
+          throw new TransientHttpError(
+            'Falha de rede ao comunicar com o Slack.',
+            undefined,
+            undefined,
+            err,
+          );
+        }
+        if (response.status === 429) {
+          throw new TransientHttpError(
+            'Slack aplicou limite de chamadas (HTTP 429).',
+            429,
+            parseRetryAfterMs(response) ?? undefined,
+          );
+        }
+        if (response.status >= 500) {
+          throw new TransientHttpError(
+            `Slack respondeu com erro de servidor (HTTP ${response.status}).`,
+            response.status,
+          );
+        }
+        return response;
+      },
+      { label: 'slack', maxAttempts: SLACK_MAX_ATTEMPTS },
+    );
     if (!res.ok) {
       const body = await res.text().catch(() => '');
       logger.warn(
@@ -160,18 +209,56 @@ export async function sendSlackMessage(
       throw new AppError('Informe um canal — esta conexão não tem canal padrão configurado.', 400);
     }
 
-    const res = await fetchWithTimeout(
-      'https://slack.com/api/chat.postMessage',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${connection.botToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ channel: targetChannel, text }),
+    const res = await retryWithBackoff(
+      async () => {
+        let response: Response;
+        try {
+          response = await fetchWithTimeout(
+            'https://slack.com/api/chat.postMessage',
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${connection.botToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ channel: targetChannel, text }),
+            },
+            10_000,
+            ['slack.com'],
+          );
+        } catch (err) {
+          if (err instanceof DisallowedHostError) throw err;
+          if (err instanceof HttpTimeoutError) {
+            throw new TransientHttpError(
+              'Tempo limite esgotado ao comunicar com o Slack (timeout 10s).',
+              undefined,
+              undefined,
+              err,
+            );
+          }
+          throw new TransientHttpError(
+            'Falha de rede ao comunicar com o Slack.',
+            undefined,
+            undefined,
+            err,
+          );
+        }
+        if (response.status === 429) {
+          throw new TransientHttpError(
+            'Slack aplicou limite de chamadas (HTTP 429).',
+            429,
+            parseRetryAfterMs(response) ?? undefined,
+          );
+        }
+        if (response.status >= 500) {
+          throw new TransientHttpError(
+            `Slack respondeu com erro de servidor (HTTP ${response.status}).`,
+            response.status,
+          );
+        }
+        return response;
       },
-      10_000,
-      ['slack.com'],
+      { label: 'slack', maxAttempts: SLACK_MAX_ATTEMPTS },
     );
 
     const data = (await res.json()) as { ok: boolean; ts?: string; error?: string };
