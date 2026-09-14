@@ -216,6 +216,11 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'refund-processor', jobRole: 'CHURN_RETENCAO' },
       { code: 'ticket-classifier', jobRole: 'CHURN_RETENCAO' },
       { code: 'shift-scheduler', jobRole: 'COORDENADOR_COMERCIAL' },
+      // Onda 9 — lote 12 (Executivo/LLM_PROMPT, último domínio da trilha), amostra de 3 dos 9
+      // novos systemPrompt curados em scripts/agent-import/source-prompts.ts.
+      { code: 'scenario-modeler', jobRole: 'DIRETOR_COMERCIAL' },
+      { code: 'market-sentinel', jobRole: 'LDR' },
+      { code: 'strategic-partner-scout', jobRole: 'BDR' },
     ])(
       '$code (systemPrompt real) executa via agent.execute e retorna SUCCEEDED com output do modelo',
       async ({ code, jobRole }) => {
