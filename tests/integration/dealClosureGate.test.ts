@@ -7,6 +7,7 @@ import {
   PrismaCrm360Repository,
   ensureDefaultPipelines,
 } from '../../src/features/crm360/infra/PrismaCrm360Repository';
+import { StripeChargeAdapter } from '../../src/features/integrations/stripe/infra/StripeChargeAdapter';
 
 /**
  * Prova, contra Postgres real, que os 3 caminhos de escrita que podem mover um Lead para
@@ -45,7 +46,7 @@ async function seedLead(status = 'Lead_Recebido') {
 }
 
 const leadUseCases = new LeadUseCases(new PrismaLeadRepository());
-const crm360Repository = new PrismaCrm360Repository();
+const crm360Repository = new PrismaCrm360Repository(new StripeChargeAdapter());
 const USER_ID = `user-${RUN_ID}`;
 
 beforeAll(async () => {

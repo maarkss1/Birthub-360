@@ -105,4 +105,12 @@ describe('Billing', () => {
     render(<Billing />);
     expect(screen.getByText('Carregando consumo…')).toBeInTheDocument();
   });
+
+  it('BILLING-004: não mostra mais o limite de cota de 5.000.000 tokens/mês inventado', async () => {
+    render(<Billing />);
+    await waitFor(() => expect(getMock).toHaveBeenCalled());
+    expect(screen.queryByText(/Cota Mensal de Tokens/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/5\.000\.000/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/utilizado/i)).not.toBeInTheDocument();
+  });
 });

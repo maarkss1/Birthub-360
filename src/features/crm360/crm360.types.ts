@@ -127,6 +127,12 @@ export interface CrmCommercialDocument {
   company?: Company | null;
   contactId?: string | null;
   contact?: Contact | null;
+  /** BILLING-003 (onda 5) — vínculo com uma cobrança Stripe confirmada AO VIVO; ver
+   * PrismaCrm360Repository.reconcileFaturaStripePayment. `Pago` numa Fatura sem
+   * `paymentReconciledAt` não deveria mais existir a partir desta correção. */
+  stripeConnectionId?: string | null;
+  stripePaymentIntentId?: string | null;
+  paymentReconciledAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }

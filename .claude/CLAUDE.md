@@ -18,12 +18,19 @@ aprendizado incorporado aqui e um registro curto em `.claude/PILOTS.md`. Ver Pil
 - **Produto:** **Birth Hub 360º** — "sua central de comando inteligente: integrando dados,
   potencializando decisões e acelerando a execução". Um CRM B2B com IA (prospecção, pipeline,
   roleplay de vendas, automações, analytics).
-  - **Marca única.** Cor primária: Antique Gold `#D4AF37`; apoio: Deep Iris `#5B21B6` e Orbit Blue
-    `#0065D2`; âncoras: Obsidian `#0B132B` e Snow White `#F8FAFC`. Fonte da verdade:
-    `identidade-visual/birthhub360/` e `src/config/brand.ts`.
+  - **Marca única, paleta "Strategic Command Center" (atualizada 09/2026, pedido explícito do
+    usuário).** Cinco cores: Antique Gold `#D4AF37` (ação primária, inalterada), Deep Iris
+    `#7C3AED`, Orbit Blue `#1677FF`, vermelho `#E11D48`/`#FF3158` e rosa `#DB2777`/`#FF4FA3`
+    (claro/escuro — ver `src/styles/globals.css`). **Nenhuma âncora é preto ou branco puro**: o
+    tema claro parte de um branco rosado (Blossom White `#FFF4F9`), o escuro de um azul-marinho
+    profundo (Deep Navy `#061A3A`) — substituem Snow White/Obsidian. Fonte da verdade:
+    `src/styles/globals.css` (tokens reais) e `src/config/brand.ts`; `identidade-visual/
+    birthhub360/` documenta a identidade ANTERIOR (Obsidian/Snow White, 3 cores) e ainda não foi
+    sincronizada com esta paleta — não usar como referência de cor até essa sincronização
+    acontecer.
   - **Ouro é uma cor CLARA.** Texto branco sobre `--brand` mede 2.10:1 e é proibido — o par
-    correto é `text-on-brand` (Obsidian), 8.74:1. É a inversão mais importante em relação à
-    identidade anterior (laranja escuro, que pedia texto branco).
+    correto é `text-on-brand` (Deep Navy `#061A3A`, 8.21:1). Essa regra não mudou com a nova
+    paleta; só o valor exato de `--on-brand` (antes Obsidian) mudou.
   - Até 09/2026 a plataforma trocava de marca em runtime entre **AtlasGR** e **Total Trac**
     (`BrandContext`, `data-brand` no `<html>`, `--brand` reescrito por JS). Isso não existe mais:
     a cor vive só em CSS. O eixo que aquele seletor de fato controlava no CONTEÚDO (playbook,
@@ -42,8 +49,10 @@ aprendizado incorporado aqui e um registro curto em `.claude/PILOTS.md`. Ver Pil
   Tailwind CSS 4 **CSS-first** (sem `tailwind.config.*`, tudo via `@theme` em
   `src/styles/globals.css`). Framer Motion para animação. `@dnd-kit` para drag-and-drop (Kanban do
   CRM). `recharts` para gráficos. `lucide-react` para ícones. Tipografia self-hosted em
-  `public/fonts/`: **Bodoni Moda** (display, H1-H3) e **Inter** (interface, H4-H6 e corpo) —
-  nenhuma requisição a CDN de fonte.
+  `public/fonts/`: **Sora** (display, H1-H3 — substituiu Bodoni Moda em 09/2026, pedido explícito
+  do usuário) e **Inter** (interface, H4-H6 e corpo, inalterada) — nenhuma requisição a CDN de
+  fonte. Os arquivos `.woff2` de Bodoni Moda continuam em `public/fonts/` (não removidos), mas
+  nenhum token os referencia mais por padrão.
   `@react-three/fiber` + `drei` + `three` já são dependências reais, usadas hoje em
   `src/components/ui/BrandOrb.tsx` e em `src/features/dashboard/components/RevenueSignalOrb.tsx`
   (Onda 8, FRONTEND-005: a menção anterior a `SpaceGame.tsx`/`GameWidget.tsx`/`AtlasOrb.tsx` citava
@@ -119,9 +128,13 @@ lugares — se uma explicação detalhada já existe numa skill, referencie-a em
    não o padrão a copiar em telas novas. Ver `.claude/PILOTS.md`, Pilotos 001 e o piloto de
    rebranding, para o raciocínio completo.)
 3. **Sem gradiente genérico de "IA".** Este produto tem paleta própria, definida em tokens. O
-   único gradiente multicolorido autorizado é a **órbita 360º** (ouro → íris → azul), e o brand
-   book a reserva a "halos, bordas, indicadores e hero sections" — nunca como fundo de superfície
-   com texto em cima, e no máximo um gradiente dominante por composição.
+   único gradiente multicolorido autorizado é a **órbita 360º** — dourado → vermelho → rosa →
+   íris → azul (5 cores desde 09/2026; antes eram 3: ouro → íris → azul), utilitário
+   `.bg-gradient-orbit5` em `globals.css` — reservado a "halos, bordas, indicadores e hero
+   sections": nunca como fundo de superfície com texto em cima, e no máximo um gradiente
+   dominante por composição. **Gradiente em texto (`background-clip: text`) continua proibido em
+   qualquer contexto** — inclusive antes da atualização de paleta isso já valia; ênfase vem de
+   peso/tamanho, nunca de gradiente na própria tipografia.
 4. **Sem três cards iguais só para preencher espaço.** Se o conteúdo não sustenta 3 itens
    simetricamente iguais, não force a grade. Densidade de informação real > simetria decorativa.
 5. **Sombra, blur ou glassmorphism só com propósito.** `.glass-panel`/`.glass-card` já existem em
