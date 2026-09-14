@@ -6,7 +6,7 @@ Status possíveis: `NÃO INICIADA` · `EM DISCOVERY` · `EM EXECUÇÃO` · `PART
 
 | Onda | Título | Prio | Status | Confiança | Commit/PR | Evidência | Risco aberto | Próxima ação |
 |---|---|---|---|---|---|---|---|---|
-| AC | SUPPLY CHAIN SECURITY & RELEASE ENGINEERING | P1 | NÃO INICIADA | | | | | |
+| AC | SUPPLY CHAIN SECURITY & RELEASE ENGINEERING | P1 | COMPLETE | ALTA | `fix/onda-ac-supply-chain-release-eng` | `ONDA_AC_REPORT.md` | SBOM quebrado (backlog); rollback nunca executado (BLOCKED_EXTERNAL, sem SSH) | Iniciar Onda J |
 | J | SECURITY ZERO TRUST & COMPLIANCE | P1 | NÃO INICIADA | | | | | |
 | H | DATA GOVERNANCE & MASTER DATA | P1 | NÃO INICIADA | | | | | |
 | AF | DATA LIFECYCLE, PORTABILIDADE E OFFBOARDING | P1 | NÃO INICIADA | | | | | |
