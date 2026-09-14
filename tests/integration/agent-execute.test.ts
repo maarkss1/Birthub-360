@@ -170,6 +170,11 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'objection-crusher', jobRole: 'SDR' },
       { code: 'meeting-booker', jobRole: 'BDR' },
       { code: 'forecasting-modeler', jobRole: 'GERENTE_COMERCIAL' },
+      // Onda 9 — lote 3 (Vendas/LLM_PROMPT), amostra de 3 dos 25 novos systemPrompt curados em
+      // scripts/agent-import/source-prompts.ts.
+      { code: 'pipeline-auditor', jobRole: 'GERENTE_COMERCIAL' },
+      { code: 'rep-coach', jobRole: 'SDR' },
+      { code: 'proposal', jobRole: 'CLOSER' },
     ])(
       '$code (systemPrompt real) executa via agent.execute e retorna SUCCEEDED com output do modelo',
       async ({ code, jobRole }) => {
