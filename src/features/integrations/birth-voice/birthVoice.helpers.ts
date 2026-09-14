@@ -264,7 +264,7 @@ export function detectOptOut(data: CallEndedData): OptOutDetection {
 
 /**
  * Onda 7, item 2 — consentimento de gravação para a ponte ligações -> Copiloto Comercial IA (ver
- * `src/shared/contracts/copilotoVoiceIngestion.contract.ts`). O roteiro (`atlasProductPlaybook.ts`)
+ * `src/shared/contracts/copilotoVoiceIngestion.contract.ts`). O roteiro (`voiceScript.ts`)
  * agora exige que a IA diga, nas duas primeiras frases de toda ligação, que é uma IA e que a
  * ligação pode ser gravada — estas listas de frases detectam isso (e uma eventual recusa do lead)
  * na transcrição, no mesmo espírito de `OPT_OUT_PHRASES`/`detectOptOut` acima: nunca inventa
