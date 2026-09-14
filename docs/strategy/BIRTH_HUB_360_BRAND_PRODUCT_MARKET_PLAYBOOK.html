@@ -3013,10 +3013,11 @@ const JOURNEY_STAGE_PT = {
   ACTIVATION:'Ativação', ADOPTION:'Adoção', VALUE_REALIZATION:'Realização de valor', EXPANSION:'Expansão', ADVOCACY:'Advocacia'
 };
 
-function badge(status){ if(!status) return ''; const s=String(status).toUpperCase(); return '<span class="badge '+s+'">'+(STATUS_LABEL[s]||s)+'</span>'; }
+function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function badge(status){ if(!status) return ''; const s=String(status).toUpperCase(); return '<span class="badge '+esc(s)+'">'+esc(STATUS_LABEL[s]||s)+'</span>'; }
 function el(tag,cls,html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
-function list(items){ return (items||[]).map(i=>'<li>'+i+'</li>').join(''); }
-function chip(label){ return '<span class="chip" style="cursor:default">'+label+'</span>'; }
+function list(items){ return (items||[]).map(i=>'<li>'+esc(i)+'</li>').join(''); }
+function chip(label){ return '<span class="chip" style="cursor:default">'+esc(label)+'</span>'; }
 function switchTab(tabsEl,panelsEl,id){
   tabsEl.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
   panelsEl.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('active', p.id===id));
@@ -3044,10 +3045,10 @@ PAGES.push({ id:'capa', part:null, kind:'cover', build(root){
       '</span>' +
       '<h1><span class="grad">Birth Hub 360</span></h1>' +
       '<div class="kicker-word">o livro da marca, do produto e do mercado</div>' +
-      '<p class="tagline">'+b.tagline+'</p>' +
+      '<p class="tagline">'+esc(b.tagline)+'</p>' +
       '<button class="open-cta" id="cta-open" type="button">Abrir o livro <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>' +
     '</div>' +
-    '<div class="credit">'+b.credit.text+'</div>';
+    '<div class="credit">'+esc(b.credit.text)+'</div>';
 }});
 
 /* ---------- CAPÍTULO 1 — O PROBLEMA ---------- */
@@ -3095,7 +3096,7 @@ PAGES.push({ id:'cap-3', part:'historia', label:'Capítulo 3', title:'Conheça o
       '<div class="chapter-tag">Capítulo 3</div>' +
       '<h2 class="chapter-title">Uma central de comando, não mais uma ferramenta</h2>' +
       '<div class="prose" style="margin-top:26px">' +
-        '<p class="lead">'+pr.whatItIs.text+'</p>' +
+        '<p class="lead">'+esc(pr.whatItIs.text)+'</p>' +
       '</div>' +
       '<div class="grid grid-2" style="margin-top:10px">' +
         '<div class="card"><h3>Prospecção que já nasce no pipeline</h3><p>Empresa, contato e primeiro contexto chegam prontos — sem a etapa manual de pesquisar antes de abordar.</p></div>' +
@@ -3148,8 +3149,8 @@ PAGES.push({ id:'cap-5', part:'historia', label:'Capítulo 5', title:'Para quem 
     '<div class="page-content">' +
       '<div class="chapter-tag">Capítulo 5</div>' +
       '<h2 class="chapter-title">Você se reconhece aqui?</h2>' +
-      '<div class="prose" style="margin-top:22px"><p class="lead">'+DATA.segments.icpStatement.text+'</p></div>' +
-      vign.map(v=>'<div class="recognize"><div class="role">'+v.role+'</div><p style="margin:0;color:var(--ink-dim);font-size:14.5px">'+v.text+'</p></div>').join('') +
+      '<div class="prose" style="margin-top:22px"><p class="lead">'+esc(DATA.segments.icpStatement.text)+'</p></div>' +
+      vign.map(v=>'<div class="recognize"><div class="role">'+esc(v.role)+'</div><p style="margin:0;color:var(--ink-dim);font-size:14.5px">'+esc(v.text)+'</p></div>').join('') +
       '<p class="footnote">Perfil completo de cliente ideal e de cada persona — no Apêndice D e E deste livro.</p>' +
     '</div>';
 }});
@@ -3164,7 +3165,7 @@ PAGES.push({ id:'cap-6', part:'historia', label:'Capítulo 6', title:'Por que co
         '<p class="lead">Toda ferramenta de IA promete transformar sua operação. Poucas mostram como controlam o que a própria IA faz.</p>' +
       '</div>' +
       '<div class="grid grid-2" style="margin-top:10px">' +
-        (DATA.messaging.proofPoints.slice(0,4).map(pp=>'<div class="card"><p style="margin:0;font-size:14px">'+pp+'</p></div>').join('')) +
+        (DATA.messaging.proofPoints.slice(0,4).map(pp=>'<div class="card"><p style="margin:0;font-size:14px">'+esc(pp)+'</p></div>').join('')) +
       '</div>' +
       '<div class="prose" style="margin-top:26px">' +
         '<p>O dado da sua organização fica isolado do de qualquer outra empresa no mesmo ambiente — arquitetura multi-tenant com isolamento a nível de banco de dados. E o playbook comercial (objeções, qualificação) é seu, específico do seu negócio: não é um template genérico de mercado que a IA repete para todo cliente.</p>' +
@@ -3179,11 +3180,11 @@ PAGES.push({ id:'cap-7', part:'historia', label:'Capítulo 7', title:'Nossa vis�
       '<div class="chapter-tag">Capítulo 7</div>' +
       '<h2 class="chapter-title">Onde queremos chegar</h2>' +
       '<div class="prose" style="margin-top:26px">' +
-        '<p class="lead">'+b.purpose.text+'</p>' +
-        '<p>'+b.manifestoShort.text+'</p>' +
+        '<p class="lead">'+esc(b.purpose.text)+'</p>' +
+        '<p>'+esc(b.manifestoShort.text)+'</p>' +
       '</div>' +
       '<div class="grid grid-3" style="margin-top:26px">' +
-        b.values.map(v=>'<div class="card"><h3 style="font-size:14px">'+v.ptbr+'</h3><p style="font-size:12.8px">'+v.description+'</p></div>').join('') +
+        b.values.map(v=>'<div class="card"><h3 style="font-size:14px">'+esc(v.ptbr)+'</h3><p style="font-size:12.8px">'+esc(v.description)+'</p></div>').join('') +
       '</div>' +
     '</div>';
 }});
@@ -3211,8 +3212,8 @@ PAGES.push({ id:'apx-0', part:'apendice', label:'Apêndice 0', title:'Sobre este
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice</div>' +
       '<h2 class="chapter-title">O detalhe completo, com o grau de confiança de cada afirmação</h2>' +
-      '<div class="prose" style="margin-top:22px"><p>'+DATA.meta.antiHallucinationNote+'</p></div>' +
-      '<div class="legend">' + Object.keys(legend).map(k=>'<span title="'+legend[k]+'">'+badge(k)+'</span>').join('') + '</div>' +
+      '<div class="prose" style="margin-top:22px"><p>'+esc(DATA.meta.antiHallucinationNote)+'</p></div>' +
+      '<div class="legend">' + Object.keys(legend).map(k=>'<span title="'+esc(legend[k])+'">'+badge(k)+'</span>').join('') + '</div>' +
       '<p class="footnote">Fonte estruturada completa: <code>docs/strategy/birth-hub-360-strategy.json</code>.</p>' +
     '</div>';
 }});
@@ -3223,17 +3224,17 @@ PAGES.push({ id:'apx-a', part:'apendice', label:'Apêndice A', title:'Fundamento
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice A</div><h2 class="chapter-title">Fundamentos de marca</h2>' +
       '<div class="grid grid-2" style="margin-top:22px">' +
-        '<div class="card"><h3>Propósito</h3><p>'+b.purpose.text+'</p></div>' +
-        '<div class="card"><h4>Missão</h4><p>'+b.mission.text+'</p></div>' +
+        '<div class="card"><h3>Propósito</h3><p>'+esc(b.purpose.text)+'</p></div>' +
+        '<div class="card"><h4>Missão</h4><p>'+esc(b.mission.text)+'</p></div>' +
       '</div>' +
       '<div class="grid grid-2" style="margin-top:14px">' +
-        '<div class="card"><h4>Visão</h4><p>'+b.vision.text+'</p></div>' +
-        '<div class="card"><h4>Ambição</h4><p>'+b.ambition.text+'</p></div>' +
+        '<div class="card"><h4>Visão</h4><p>'+esc(b.vision.text)+'</p></div>' +
+        '<div class="card"><h4>Ambição</h4><p>'+esc(b.ambition.text)+'</p></div>' +
       '</div>' +
       '<h4 style="margin:26px 0 10px;font-size:15px">Arquétipo e tom de voz</h4>' +
       '<div class="grid grid-2">' +
-        '<div class="card"><p style="margin:0"><b style="color:var(--ink)">'+b.personality.archetypePrimary.name+'</b> — '+b.personality.archetypePrimary.rationale+' '+badge(b.personality.archetypePrimary.status)+'</p></div>' +
-        '<div class="card"><p style="margin:0">'+b.personality.toneOfVoice.description+' '+badge(b.personality.toneOfVoice.status)+'</p></div>' +
+        '<div class="card"><p style="margin:0"><b style="color:var(--ink)">'+esc(b.personality.archetypePrimary.name)+'</b> — '+esc(b.personality.archetypePrimary.rationale)+' '+badge(b.personality.archetypePrimary.status)+'</p></div>' +
+        '<div class="card"><p style="margin:0">'+esc(b.personality.toneOfVoice.description)+' '+badge(b.personality.toneOfVoice.status)+'</p></div>' +
       '</div>' +
       '<div class="grid grid-2" style="margin-top:14px">' +
         '<div><h4 style="font-size:13px;color:var(--st-confirmed)">Vocabulário preferencial</h4><div>'+b.personality.vocabularyPreferred.map(chip).join(' ')+'</div></div>' +
@@ -3246,7 +3247,7 @@ PAGES.push({ id:'apx-a', part:'apendice', label:'Apêndice A', title:'Fundamento
   const names = {brand:'Antique Gold',iris:'Deep Iris',orbitBlue:'Orbit Blue',obsidian:'Obsidian',snow:'Snow White'};
   Object.keys(names).forEach(k=>{
     const hex=b.colors[k]; const c=el('div','card',null); c.style.padding='0';
-    c.innerHTML='<div style="height:50px;background:'+hex+';border-radius:16px 16px 0 0"></div><div style="padding:10px 14px"><b style="font-family:var(--font-display);font-style:italic;font-size:13px">'+names[k]+'</b><br><span style="font-size:11px;color:var(--ink-faint)">'+hex+'</span></div>';
+    c.innerHTML='<div style="height:50px;background:'+esc(hex)+';border-radius:16px 16px 0 0"></div><div style="padding:10px 14px"><b style="font-family:var(--font-display);font-style:italic;font-size:13px">'+esc(names[k])+'</b><br><span style="font-size:11px;color:var(--ink-faint)">'+esc(hex)+'</span></div>';
     colorsEl.appendChild(c);
   });
 }});
@@ -3257,11 +3258,11 @@ PAGES.push({ id:'apx-b', part:'apendice', label:'Apêndice B', title:'Posicionam
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice B</div><h2 class="chapter-title">Posicionamento</h2>' +
       '<div class="grid grid-2" style="margin-top:22px">' +
-        '<div class="card"><h3>Categoria atual '+badge(pos.categoryCurrent.status)+'</h3><p>'+pos.categoryCurrent.text+'</p></div>' +
-        '<div class="card"><h4>Categoria potencial '+badge(pos.categoryPotential.status)+'</h4><p>'+pos.categoryPotential.text+'</p><div class="footnote">'+pos.categoryPotential.rationale+'</div></div>' +
+        '<div class="card"><h3>Categoria atual '+badge(pos.categoryCurrent.status)+'</h3><p>'+esc(pos.categoryCurrent.text)+'</p></div>' +
+        '<div class="card"><h4>Categoria potencial '+badge(pos.categoryPotential.status)+'</h4><p>'+esc(pos.categoryPotential.text)+'</p><div class="footnote">'+esc(pos.categoryPotential.rationale)+'</div></div>' +
       '</div>' +
       '<h4 style="margin:24px 0 10px;font-size:15px">Fórmula de posicionamento</h4>' +
-      '<div class="callout">'+pos.formula.filled+' '+badge(pos.formula.status)+'</div>' +
+      '<div class="callout">'+esc(pos.formula.filled)+' '+badge(pos.formula.status)+'</div>' +
       '<div class="tabbar" id="apx-b-tabs"></div><div id="apx-b-panels"></div>' +
     '</div>';
   const tabs=root.querySelector('#apx-b-tabs'), panels=root.querySelector('#apx-b-panels');
@@ -3269,7 +3270,7 @@ PAGES.push({ id:'apx-b', part:'apendice', label:'Apêndice B', title:'Posicionam
   Object.keys(pos.variants).forEach((k,i)=>{
     const btn=el('button','tabbtn'+(i===0?' active':''),labels[k]||k); btn.type='button'; btn.dataset.tab='apxb-'+k;
     btn.addEventListener('click',()=>switchTab(tabs,panels,'apxb-'+k)); tabs.appendChild(btn);
-    const p=el('div','tabpanel card'+(i===0?' active':''),'<p style="margin:0">'+pos.variants[k].text+'</p>'+badge(pos.variants[k].status)); p.id='apxb-'+k; panels.appendChild(p);
+    const p=el('div','tabpanel card'+(i===0?' active':''),'<p style="margin:0">'+esc(pos.variants[k].text)+'</p>'+badge(pos.variants[k].status)); p.id='apxb-'+k; panels.appendChild(p);
   });
 }});
 
@@ -3281,12 +3282,12 @@ PAGES.push({ id:'apx-c', part:'apendice', label:'Apêndice C', title:'Definiçã
       '<p class="footnote" style="margin-bottom:16px">Fonte: código do repositório '+badge('CONFIRMED')+'</p>' +
       '<div class="chiprow" id="apx-c-filters"></div>' +
       '<div class="grid grid-2" id="apx-c-grid"></div>' +
-      '<div class="note-anti">'+pr.notYetConfirmed.text+'</div>' +
+      '<div class="note-anti">'+esc(pr.notYetConfirmed.text)+'</div>' +
     '</div>';
   const grid=root.querySelector('#apx-c-grid'), filters=root.querySelector('#apx-c-filters');
   const caps=new Set(); pr.modules.forEach(m=>m.capabilities.forEach(c=>caps.add(c)));
   const allBtn=el('button','chip active','Todos'); allBtn.dataset.cap='__all__'; filters.appendChild(allBtn);
-  Array.from(caps).sort().forEach(c=>{ const btn=el('button','chip',c); btn.dataset.cap=c; filters.appendChild(btn); });
+  Array.from(caps).sort().forEach(c=>{ const btn=el('button','chip',esc(c)); btn.dataset.cap=c; filters.appendChild(btn); });
   filters.addEventListener('click',e=>{
     if(e.target.tagName!=='BUTTON') return;
     filters.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); e.target.classList.add('active');
@@ -3295,7 +3296,7 @@ PAGES.push({ id:'apx-c', part:'apendice', label:'Apêndice C', title:'Definiçã
   });
   pr.modules.forEach(m=>{
     const c=el('div','card'); c.dataset.caps=m.capabilities.join('|');
-    c.innerHTML='<h3 style="font-size:14.5px">'+m.name+'</h3><p>'+m.description+'</p><div style="margin:8px 0">'+m.capabilities.map(chip).join(' ')+'</div>'+badge(m.status)+(m.note?'<div class="footnote">'+m.note+'</div>':'');
+    c.innerHTML='<h3 style="font-size:14.5px">'+esc(m.name)+'</h3><p>'+esc(m.description)+'</p><div style="margin:8px 0">'+m.capabilities.map(chip).join(' ')+'</div>'+badge(m.status)+(m.note?'<div class="footnote">'+esc(m.note)+'</div>':'');
     grid.appendChild(c);
   });
 }});
@@ -3315,25 +3316,25 @@ PAGES.push({ id:'apx-d', part:'apendice', label:'Apêndice D', title:'Perfil de 
   const tabs=root.querySelector('#apx-d-tabs'), panels=root.querySelector('#apx-d-panels');
   const tiers=[['tier1',icp.tier1],['tier2',icp.tier2],['tier3',icp.tier3],['antiIcp',icp.antiIcp]];
   tiers.forEach(([key,t],i)=>{
-    const btn=el('button','tabbtn'+(i===0?' active':''), t.label.replace('ICP ','')); btn.type='button'; btn.dataset.tab='apxd-'+key;
+    const btn=el('button','tabbtn'+(i===0?' active':''), esc(t.label.replace('ICP ',''))); btn.type='button'; btn.dataset.tab='apxd-'+key;
     btn.addEventListener('click',()=>switchTab(tabs,panels,'apxd-'+key)); tabs.appendChild(btn);
     const p=el('div','tabpanel'+(i===0?' active':'')); p.id='apxd-'+key;
-    let html = t.score ? '<div class="callout"><b>Score: '+t.score+'</b></div>' : '';
+    let html = t.score ? '<div class="callout"><b>Score: '+esc(t.score)+'</b></div>' : '';
     html += Array.isArray(t.profile) ? '<ul style="padding-left:18px">'+list(t.profile)+'</ul>'
-      : '<div class="tablewrap"><table><tbody>'+Object.entries(t.profile).map(([k,v])=>'<tr><th style="width:200px">'+(ICP_FIELD_PT[k]||k)+'</th><td>'+v+'</td></tr>').join('')+'</tbody></table></div>';
+      : '<div class="tablewrap"><table><tbody>'+Object.entries(t.profile).map(([k,v])=>'<tr><th style="width:200px">'+esc(ICP_FIELD_PT[k]||k)+'</th><td>'+esc(v)+'</td></tr>').join('')+'</tbody></table></div>';
     html += badge(t.status);
     p.innerHTML = html; panels.appendChild(p);
   });
   const max=Math.max(...s.weights.map(w=>w.peso));
   const bc=root.querySelector('#apx-d-bars');
   s.weights.slice().sort((a,b2)=>b2.peso-a.peso).forEach(w=>{
-    const row=el('div','row'); row.innerHTML='<div class="lbl">'+w.criterio+'</div><div class="track"><div class="fillbar" style="width:'+(w.peso/max*100)+'%"></div></div><div class="num">'+w.peso+'</div>';
+    const row=el('div','row'); row.innerHTML='<div class="lbl">'+esc(w.criterio)+'</div><div class="track"><div class="fillbar" style="width:'+(w.peso/max*100)+'%"></div></div><div class="num">'+esc(w.peso)+'</div>';
     bc.appendChild(row);
   });
   const bandColors={'ICP A':'var(--st-confirmed)','ICP B':'var(--st-confirmed)','ICP C':'var(--st-recommendation)','NURTURE':'var(--st-validate)','DISQUALIFIED':'var(--st-open)'};
   const bandbar=root.querySelector('#apx-d-band');
   s.bands.forEach(bd=>{ const [lo,hi]=bd.range.split('–').map(x=>parseInt(x)); const seg=el('div','seg'); seg.style.width=(hi-lo+1)+'%'; seg.style.background=bandColors[bd.band]; seg.textContent=ICP_BAND_PT[bd.band]||bd.band; bandbar.appendChild(seg); });
-  root.querySelector('#apx-d-legend').innerHTML = s.bands.map(bd=>'<span class="k"><span class="sw" style="background:'+bandColors[bd.band]+'"></span>'+(ICP_BAND_PT[bd.band]||bd.band)+' ('+bd.range+') — '+bd.action+'</span>').join('');
+  root.querySelector('#apx-d-legend').innerHTML = s.bands.map(bd=>'<span class="k"><span class="sw" style="background:'+bandColors[bd.band]+'"></span>'+esc(ICP_BAND_PT[bd.band]||bd.band)+' ('+esc(bd.range)+') — '+esc(bd.action)+'</span>').join('');
 }});
 
 /* ---------- APÊNDICE E — PERSONAS ---------- */
@@ -3347,7 +3348,7 @@ PAGES.push({ id:'apx-e', part:'apendice', label:'Apêndice E', title:'Personas c
   const grid=root.querySelector('#apx-e-grid'), filters=root.querySelector('#apx-e-filters');
   const roles=Array.from(new Set(DATA.personas.map(p=>p.buyingRole)));
   const allBtn=el('button','chip active','Todos'); allBtn.dataset.role='__all__'; filters.appendChild(allBtn);
-  roles.forEach(r=>{ const btn=el('button','chip',BUYING_ROLE_PT[r]||r); btn.dataset.role=r; filters.appendChild(btn); });
+  roles.forEach(r=>{ const btn=el('button','chip',esc(BUYING_ROLE_PT[r]||r)); btn.dataset.role=r; filters.appendChild(btn); });
   filters.addEventListener('click',e=>{
     if(e.target.tagName!=='BUTTON') return;
     filters.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); e.target.classList.add('active');
@@ -3357,16 +3358,16 @@ PAGES.push({ id:'apx-e', part:'apendice', label:'Apêndice E', title:'Personas c
   DATA.personas.forEach(p=>{
     const c=el('div','card'); c.dataset.role=p.buyingRole;
     c.innerHTML =
-      '<h3>'+p.role+' <span style="font-family:var(--font-body);font-weight:400;font-size:11.5px;color:var(--ink-faint)">— '+(BUYING_ROLE_PT[p.buyingRole]||p.buyingRole)+'</span></h3>'+badge(p.status)+
+      '<h3>'+esc(p.role)+' <span style="font-family:var(--font-body);font-weight:400;font-size:11.5px;color:var(--ink-faint)">— '+esc(BUYING_ROLE_PT[p.buyingRole]||p.buyingRole)+'</span></h3>'+badge(p.status)+
       '<details class="acc" style="margin-top:12px;background:none;border:none"><summary style="padding:8px 0;font-size:13.5px">Ver perfil completo</summary><div class="body">'+
-      '<dl><dt>KPIs</dt><dd>'+p.kpis.join(', ')+'</dd>'+
-      '<dt>Objetivos</dt><dd>'+p.goals.join('; ')+'</dd>'+
-      '<dt>Dores</dt><dd>'+p.pains.join('; ')+'</dd>'+
-      '<dt>Gatilhos</dt><dd>'+p.triggers.join('; ')+'</dd>'+
-      '<dt>Objeções</dt><dd>'+p.objections.join('; ')+'</dd>'+
-      '<dt>Como vender</dt><dd>'+p.howToSell+'</dd>'+
-      '<dt>Como não vender</dt><dd>'+p.howNotToSell+'</dd>'+
-      (p.note?'<dt>Nota</dt><dd>'+p.note+'</dd>':'')+
+      '<dl><dt>KPIs</dt><dd>'+p.kpis.map(esc).join(', ')+'</dd>'+
+      '<dt>Objetivos</dt><dd>'+p.goals.map(esc).join('; ')+'</dd>'+
+      '<dt>Dores</dt><dd>'+p.pains.map(esc).join('; ')+'</dd>'+
+      '<dt>Gatilhos</dt><dd>'+p.triggers.map(esc).join('; ')+'</dd>'+
+      '<dt>Objeções</dt><dd>'+p.objections.map(esc).join('; ')+'</dd>'+
+      '<dt>Como vender</dt><dd>'+esc(p.howToSell)+'</dd>'+
+      '<dt>Como não vender</dt><dd>'+esc(p.howNotToSell)+'</dd>'+
+      (p.note?'<dt>Nota</dt><dd>'+esc(p.note)+'</dd>':'')+
       '</dl></div></details>';
     grid.appendChild(c);
   });
@@ -3379,7 +3380,7 @@ PAGES.push({ id:'apx-f', part:'apendice', label:'Apêndice F', title:'Trabalhos 
       '<div class="chapter-tag">Apêndice F</div><h2 class="chapter-title">Trabalhos a serem feitos &amp; biblioteca de dores</h2>' +
       '<h3 style="margin:20px 0 8px;font-size:15px">Jobs to be done</h3>' +
       '<div class="tablewrap"><table><thead><tr><th>Papel</th><th>Quando / Quero / Para que</th><th>Tipo</th></tr></thead><tbody>' +
-      DATA.jobsToBeDone.map(j=>'<tr><td><b>'+j.role+'</b> '+badge(j.status)+'</td><td>Quando <i>'+j.when+'</i>, quero <i>'+j.want+'</i>, '+j.soThat+'.</td><td>'+(JTBD_CLASS_PT[j.classification]||j.classification)+'</td></tr>').join('') +
+      DATA.jobsToBeDone.map(j=>'<tr><td><b>'+esc(j.role)+'</b> '+badge(j.status)+'</td><td>Quando <i>'+esc(j.when)+'</i>, quero <i>'+esc(j.want)+'</i>, '+esc(j.soThat)+'.</td><td>'+esc(JTBD_CLASS_PT[j.classification]||j.classification)+'</td></tr>').join('') +
       '</tbody></table></div>' +
       '<h4 style="margin:26px 0 8px;font-size:15px">Biblioteca de dores</h4>' +
       '<div id="apx-f-pains"></div>' +
@@ -3388,16 +3389,16 @@ PAGES.push({ id:'apx-f', part:'apendice', label:'Apêndice F', title:'Trabalhos 
     '</div>';
   const listEl=root.querySelector('#apx-f-pains');
   DATA.pains.forEach(p=>{
-    const d=el('details','acc'); d.innerHTML='<summary><span>['+p.category+'] '+p.symptom+'</span>'+badge(p.status)+'</summary>'+
-      '<div class="body"><dl><dt>Causa</dt><dd>'+p.cause+'</dd><dt>Impacto</dt><dd>'+p.impact+'</dd>'+
-      '<dt>Pergunta</dt><dd><i>"'+p.discoveryQuestion+'"</i></dd>'+(p.note?'<dt>Nota</dt><dd>'+p.note+'</dd>':'')+'</dl></div>';
+    const d=el('details','acc'); d.innerHTML='<summary><span>['+esc(p.category)+'] '+esc(p.symptom)+'</span>'+badge(p.status)+'</summary>'+
+      '<div class="body"><dl><dt>Causa</dt><dd>'+esc(p.cause)+'</dd><dt>Impacto</dt><dd>'+esc(p.impact)+'</dd>'+
+      '<dt>Pergunta</dt><dd><i>"'+esc(p.discoveryQuestion)+'"</i></dd>'+(p.note?'<dt>Nota</dt><dd>'+esc(p.note)+'</dd>':'')+'</dl></div>';
     listEl.appendChild(d);
   });
   const personaIds=DATA.personas.map(p=>p.id), cats=Array.from(new Set(DATA.pains.map(p=>p.category)));
-  let html='<table><thead><tr><th>Persona</th>'+cats.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
+  let html='<table><thead><tr><th>Persona</th>'+cats.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>';
   personaIds.forEach(pid=>{
     const label=DATA.personas.find(p=>p.id===pid).role;
-    html+='<tr><td><b>'+label+'</b></td>'+cats.map(cat=>{
+    html+='<tr><td><b>'+esc(label)+'</b></td>'+cats.map(cat=>{
       const hit=DATA.pains.some(p=>p.personaAffected===pid && p.category===cat);
       return '<td class="cell">'+(hit?'<span class="fill"></span>':'<span class="empty"></span>')+'</td>';
     }).join('')+'</tr>';
@@ -3412,12 +3413,12 @@ PAGES.push({ id:'apx-g', part:'apendice', label:'Apêndice G', title:'Gatilhos d
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice G</div><h2 class="chapter-title">Gatilhos de compra &amp; proposta de valor</h2>' +
       '<div class="tablewrap"><table><thead><tr><th>Evento</th><th>Persona</th><th>Mensagem</th></tr></thead><tbody>' +
-      DATA.buyingTriggers.map(t=>{ const pl=(DATA.personas.find(p=>p.id===t.persona)||{role:t.persona}).role; return '<tr><td><b>'+t.event+'</b> '+badge(t.status)+'</td><td>'+pl+'</td><td><i>"'+t.message+'"</i></td></tr>'; }).join('') +
+      DATA.buyingTriggers.map(t=>{ const pl=(DATA.personas.find(p=>p.id===t.persona)||{role:t.persona}).role; return '<tr><td><b>'+esc(t.event)+'</b> '+badge(t.status)+'</td><td>'+esc(pl)+'</td><td><i>"'+esc(t.message)+'"</i></td></tr>'; }).join('') +
       '</tbody></table></div>' +
       '<h3 style="margin:24px 0 8px;font-size:15px">Core Value Proposition</h3>' +
-      '<div class="card"><p style="margin:0;font-size:15px">'+vp.core.text+'</p>'+badge(vp.core.status)+'</div>' +
+      '<div class="card"><p style="margin:0;font-size:15px">'+esc(vp.core.text)+'</p>'+badge(vp.core.status)+'</div>' +
       '<h4 style="margin:22px 0 8px;font-size:15px">Por persona</h4>' +
-      '<div class="grid grid-2">' + vp.byPersona.map(x=>'<div class="card"><b>'+x.persona+'</b><p style="margin:4px 0 0">'+x.value+'</p>'+badge(x.status)+'</div>').join('') + '</div>' +
+      '<div class="grid grid-2">' + vp.byPersona.map(x=>'<div class="card"><b>'+esc(x.persona)+'</b><p style="margin:4px 0 0">'+esc(x.value)+'</p>'+badge(x.status)+'</div>').join('') + '</div>' +
     '</div>';
 }});
 
@@ -3432,19 +3433,19 @@ PAGES.push({ id:'apx-h', part:'apendice', label:'Apêndice H', title:'Jornada do
     '</div>';
   const track=root.querySelector('#apx-h-track'), detail=root.querySelector('#apx-h-detail');
   function show(j){
-    detail.innerHTML='<h3>'+(JOURNEY_STAGE_PT[j.stage]||j.stage)+' '+badge(j.status)+'</h3>'+
+    detail.innerHTML='<h3>'+esc(JOURNEY_STAGE_PT[j.stage]||j.stage)+' '+badge(j.status)+'</h3>'+
       '<div class="grid grid-2" style="margin-top:10px">'+
       '<dl style="display:grid;grid-template-columns:100px minmax(0,1fr);gap:6px 10px;font-size:13px">'+
-      '<dt style="color:var(--ink-faint)">Estado mental</dt><dd>'+j.mentalState+'</dd>'+
-      '<dt style="color:var(--ink-faint)">Pergunta</dt><dd><i>"'+j.question+'"</i></dd>'+
+      '<dt style="color:var(--ink-faint)">Estado mental</dt><dd>'+esc(j.mentalState)+'</dd>'+
+      '<dt style="color:var(--ink-faint)">Pergunta</dt><dd><i>"'+esc(j.question)+'"</i></dd>'+
       '</dl><dl style="display:grid;grid-template-columns:100px minmax(0,1fr);gap:6px 10px;font-size:13px">'+
-      '<dt style="color:var(--ink-faint)">Mensagem</dt><dd>'+j.message+'</dd>'+
-      '<dt style="color:var(--ink-faint)">CTA</dt><dd>'+j.cta+'</dd>'+
+      '<dt style="color:var(--ink-faint)">Mensagem</dt><dd>'+esc(j.message)+'</dd>'+
+      '<dt style="color:var(--ink-faint)">CTA</dt><dd>'+esc(j.cta)+'</dd>'+
       '</dl></div>';
   }
   DATA.journey.forEach((j,i)=>{
     const node=el('div','journey-node');
-    node.innerHTML='<div class="dot"></div><div class="bar"></div><button type="button"><div class="label">'+(i+1)+'. '+(JOURNEY_STAGE_PT[j.stage]||j.stage)+'</div><div class="msg">'+j.mentalState.slice(0,50)+'…</div></button>';
+    node.innerHTML='<div class="dot"></div><div class="bar"></div><button type="button"><div class="label">'+(i+1)+'. '+esc(JOURNEY_STAGE_PT[j.stage]||j.stage)+'</div><div class="msg">'+esc(j.mentalState.slice(0,50))+'…</div></button>';
     node.querySelector('button').addEventListener('click',()=>show(j));
     track.appendChild(node);
   });
@@ -3457,7 +3458,7 @@ PAGES.push({ id:'apx-i', part:'apendice', label:'Apêndice I', title:'Mensagens-
   root.innerHTML =
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice I</div><h2 class="chapter-title">Mensagens-chave &amp; narrativa de vendas</h2>' +
-      '<div class="grid grid-2" style="margin-top:20px">' + m.pillars.map(p=>'<div class="card"><h3 style="font-size:14px">'+p.pillar+'</h3><p>'+p.text+'</p>'+badge(p.status)+'</div>').join('') + '</div>' +
+      '<div class="grid grid-2" style="margin-top:20px">' + m.pillars.map(p=>'<div class="card"><h3 style="font-size:14px">'+esc(p.pillar)+'</h3><p>'+esc(p.text)+'</p>'+badge(p.status)+'</div>').join('') + '</div>' +
       '<h4 style="margin:24px 0 8px;font-size:15px">Pitch pronto</h4>' +
       '<div class="tabbar" id="apx-i-tabs"></div><div id="apx-i-panels"></div>' +
     '</div>';
@@ -3467,7 +3468,7 @@ PAGES.push({ id:'apx-i', part:'apendice', label:'Apêndice I', title:'Mensagens-
     const btn=el('button','tabbtn'+(i===0?' active':''),label); btn.type='button'; btn.dataset.tab='apxi-'+key;
     btn.addEventListener('click',()=>switchTab(tabs,panels,'apxi-'+key)); tabs.appendChild(btn);
     const p=el('div','tabpanel'+(i===0?' active':'')); p.id='apxi-'+key;
-    const block=el('div','card copyblock'); block.innerHTML='<button class="copybtn" type="button">Copiar</button><p style="margin:0;font-size:14.5px">'+sn.pitches[key]+'</p>';
+    const block=el('div','card copyblock'); block.innerHTML='<button class="copybtn" type="button">Copiar</button><p style="margin:0;font-size:14.5px">'+esc(sn.pitches[key])+'</p>';
     block.querySelector('.copybtn').addEventListener('click',function(){
       navigator.clipboard && navigator.clipboard.writeText(sn.pitches[key]).then(()=>{ this.textContent='Copiado!'; this.classList.add('copied'); setTimeout(()=>{this.textContent='Copiar';this.classList.remove('copied');},1500); }).catch(()=>{});
     });
@@ -3480,11 +3481,11 @@ PAGES.push({ id:'apx-j', part:'apendice', label:'Apêndice J', title:'Biblioteca
   root.innerHTML = '<div class="page-content"><div class="chapter-tag">Apêndice J</div><h2 class="chapter-title">Biblioteca de objeções</h2><div id="apx-j-list" style="margin-top:20px"></div></div>';
   const listEl=root.querySelector('#apx-j-list');
   DATA.objections.forEach(o=>{
-    const d=el('details','acc'); d.innerHTML='<summary><span>"'+o.objection+'"</span>'+badge(o.status)+'</summary>'+
-      '<div class="body"><dl><dt>Significado</dt><dd>'+o.likelyMeaning+'</dd>'+
-      '<dt>Pergunta</dt><dd><i>"'+o.discoveryQuestion+'"</i></dd>'+
-      '<dt>Resposta</dt><dd>'+o.response+'</dd>'+
-      '<dt>Evitar</dt><dd>'+o.mistakeToAvoid+'</dd></dl></div>';
+    const d=el('details','acc'); d.innerHTML='<summary><span>"'+esc(o.objection)+'"</span>'+badge(o.status)+'</summary>'+
+      '<div class="body"><dl><dt>Significado</dt><dd>'+esc(o.likelyMeaning)+'</dd>'+
+      '<dt>Pergunta</dt><dd><i>"'+esc(o.discoveryQuestion)+'"</i></dd>'+
+      '<dt>Resposta</dt><dd>'+esc(o.response)+'</dd>'+
+      '<dt>Evitar</dt><dd>'+esc(o.mistakeToAvoid)+'</dd></dl></div>';
     listEl.appendChild(d);
   });
 }});
@@ -3495,14 +3496,14 @@ PAGES.push({ id:'apx-k', part:'apendice', label:'Apêndice K', title:'Inteligên
   root.innerHTML =
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice K</div><h2 class="chapter-title">Inteligência competitiva &amp; mercado</h2>' +
-      '<div class="note-anti">'+c.note+'</div>' +
+      '<div class="note-anti">'+esc(c.note)+'</div>' +
       '<div class="tablewrap" style="margin-top:14px"><table><thead><tr><th>Categoria</th><th>Filosofia</th><th>Execução</th></tr></thead><tbody>' +
-      c.categories.map(cat=>'<tr><td><b>'+cat.name+'</b></td><td>'+cat.philosophy+'</td><td>'+cat.execution+' '+badge(cat.status)+'</td></tr>').join('') +
+      c.categories.map(cat=>'<tr><td><b>'+esc(cat.name)+'</b></td><td>'+esc(cat.philosophy)+'</td><td>'+esc(cat.execution)+' '+badge(cat.status)+'</td></tr>').join('') +
       '</tbody></table></div>' +
       '<h3 style="margin:22px 0 8px;font-size:15px">Onde ganhamos</h3>' +
       '<ul style="padding-left:18px;color:var(--ink-dim);font-size:13.8px">'+list(c.battlecard.birthHub360Wins)+'</ul>' +
       '<h4 style="margin:22px 0 8px;font-size:15px">Canais de mercado</h4>' +
-      '<div class="grid grid-2">' + DATA.gtm.slice(0,4).map(g=>'<div class="card"><h4 style="font-size:13.5px">'+g.channel+'</h4><p style="font-size:12.5px">'+g.offer+'</p>'+badge(g.status)+'</div>').join('') + '</div>' +
+      '<div class="grid grid-2">' + DATA.gtm.slice(0,4).map(g=>'<div class="card"><h4 style="font-size:13.5px">'+esc(g.channel)+'</h4><p style="font-size:12.5px">'+esc(g.offer)+'</p>'+badge(g.status)+'</div>').join('') + '</div>' +
     '</div>';
 }});
 
@@ -3517,7 +3518,7 @@ PAGES.push({ id:'apx-l', part:'apendice', label:'Apêndice L', title:'Conteúdo,
         '<div class="card"><h4 style="color:var(--st-open);font-size:14px">Deve evitar</h4><ul style="margin:0;padding-left:18px;font-size:13px">'+list(bv.shouldAvoid)+'</ul></div>' +
       '</div>' +
       '<h4 style="margin:22px 0 8px;font-size:15px">Sensação visual-alvo</h4>' +
-      '<div class="card"><p style="margin:0">'+vs.feeling+'</p></div>' +
+      '<div class="card"><p style="margin:0">'+esc(vs.feeling)+'</p></div>' +
     '</div>';
 }});
 
@@ -3527,11 +3528,11 @@ PAGES.push({ id:'apx-m', part:'apendice', label:'Apêndice M', title:'Dicionári
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice M</div><h2 class="chapter-title">Dicionário de métricas &amp; vocabulário do produto</h2>' +
       '<div class="tablewrap" style="margin-top:16px"><table><thead><tr><th>Termo</th><th>Definição</th></tr></thead><tbody>' +
-      DATA.productLanguage.map(t=>'<tr><td><b>'+t.term+'</b> '+badge(t.status)+'</td><td>'+t.definition+'</td></tr>').join('') +
+      DATA.productLanguage.map(t=>'<tr><td><b>'+esc(t.term)+'</b> '+badge(t.status)+'</td><td>'+esc(t.definition)+'</td></tr>').join('') +
       '</tbody></table></div>' +
       '<h3 style="margin:22px 0 8px;font-size:15px">Métricas</h3>' +
       '<div class="tablewrap"><table><thead><tr><th>Métrica</th><th>Definição</th></tr></thead><tbody>' +
-      DATA.metrics.slice(0,14).map(m=>'<tr><td><b>'+m.term+'</b> '+badge(m.status)+'</td><td>'+m.definition+'</td></tr>').join('') +
+      DATA.metrics.slice(0,14).map(m=>'<tr><td><b>'+esc(m.term)+'</b> '+badge(m.status)+'</td><td>'+esc(m.definition)+'</td></tr>').join('') +
       '</tbody></table></div>' +
     '</div>';
 }});
@@ -3542,10 +3543,10 @@ PAGES.push({ id:'apx-n', part:'apendice', label:'Apêndice N', title:'Estrela-gu
   root.innerHTML =
     '<div class="page-content">' +
       '<div class="chapter-tag">Apêndice N</div><h2 class="chapter-title">Estrela-guia, arquitetura &amp; vantagem defensável</h2>' +
-      '<div class="card" style="margin-top:20px"><h3>Métrica norte '+badge(ns.metric.status)+'</h3><p style="margin:0">'+ns.metric.text+'</p></div>' +
-      '<div class="card" style="margin-top:14px"><p style="margin:0">'+ba.principle+'</p>'+badge(ba.status)+'</div>' +
+      '<div class="card" style="margin-top:20px"><h3>Métrica norte '+badge(ns.metric.status)+'</h3><p style="margin:0">'+esc(ns.metric.text)+'</p></div>' +
+      '<div class="card" style="margin-top:14px"><p style="margin:0">'+esc(ba.principle)+'</p>'+badge(ba.status)+'</div>' +
       '<h4 style="margin:22px 0 8px;font-size:15px">Vantagem defensável hoje</h4>' +
-      '<div class="grid grid-2">' + mo.current.map(x=>'<div class="card"><p style="margin:0;font-size:13.5px">'+x.text+'</p>'+badge(x.status)+'</div>').join('') + '</div>' +
+      '<div class="grid grid-2">' + mo.current.map(x=>'<div class="card"><p style="margin:0;font-size:13.5px">'+esc(x.text)+'</p>'+badge(x.status)+'</div>').join('') + '</div>' +
     '</div>';
 }});
 
@@ -3557,13 +3558,13 @@ PAGES.push({ id:'apx-o', part:'apendice', label:'Apêndice O', title:'Central de
       '<div id="apx-o-list" style="margin-top:18px"></div>' +
       '<h3 style="margin:24px 0 8px;font-size:15px">Perguntas em aberto</h3>' +
       '<div class="tablewrap"><table><thead><tr><th>Pergunta</th><th>Por quê</th></tr></thead><tbody>' +
-      DATA.openQuestions.map(q=>'<tr><td><b>'+q.question+'</b></td><td>'+q.why+'</td></tr>').join('') +
+      DATA.openQuestions.map(q=>'<tr><td><b>'+esc(q.question)+'</b></td><td>'+esc(q.why)+'</td></tr>').join('') +
       '</tbody></table></div>' +
     '</div>';
   const listEl=root.querySelector('#apx-o-list');
   DATA.strategicDecisions.forEach(d=>{
-    const acc=el('details','acc'); acc.innerHTML='<summary><span>'+d.decision+'</span>'+badge(d.status)+'</summary>'+
-      '<div class="body"><dl><dt>Contexto</dt><dd>'+d.context+'</dd><dt>Recomendação</dt><dd>'+d.recommendation+'</dd><dt>Responsável</dt><dd>'+d.owner+'</dd></dl></div>';
+    const acc=el('details','acc'); acc.innerHTML='<summary><span>'+esc(d.decision)+'</span>'+badge(d.status)+'</summary>'+
+      '<div class="body"><dl><dt>Contexto</dt><dd>'+esc(d.context)+'</dd><dt>Recomendação</dt><dd>'+esc(d.recommendation)+'</dd><dt>Responsável</dt><dd>'+esc(d.owner)+'</dd></dl></div>';
     listEl.appendChild(acc);
   });
 }});
@@ -3574,12 +3575,12 @@ PAGES.push({ id:'contracapa', part:null, kind:'backcover', build(root){
   root.innerHTML =
     '<span class="emblem"><span class="ring ring-outer"></span><span class="core"><span class="beam"></span><span class="mono">B</span></span></span>' +
     '<h2>Fim — ou o começo da sua operação com Birth Hub 360</h2>' +
-    '<p>'+b.credit.text+'</p>' +
+    '<p>'+esc(b.credit.text)+'</p>' +
     '<div class="contacts">' +
-      '<a href="'+b.support.whatsapp.href+'">'+b.support.whatsapp.label+'</a>' +
-      '<a href="'+b.support.phone.href+'">'+b.support.phone.label+'</a>' +
+      '<a href="'+esc(b.support.whatsapp.href)+'">'+esc(b.support.whatsapp.label)+'</a>' +
+      '<a href="'+esc(b.support.phone.href)+'">'+esc(b.support.phone.label)+'</a>' +
     '</div>' +
-    '<p class="footnote" style="margin-top:24px">docs/strategy/birth-hub-360-strategy.json · v'+DATA.meta.version+' · '+DATA.meta.generatedAt+'</p>';
+    '<p class="footnote" style="margin-top:24px">docs/strategy/birth-hub-360-strategy.json · v'+esc(DATA.meta.version)+' · '+esc(DATA.meta.generatedAt)+'</p>';
 }});
 
 /* ============================================================================ PAGINATION ENGINE ============================================================================ */
