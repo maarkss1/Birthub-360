@@ -46,7 +46,7 @@ export const ENCRYPTED_MODEL_FIELDS: Record<string, readonly string[]> = {
   // Credenciais de conectores externos (Slack, Stripe, Omie) — mesmo tratamento das demais
   // credenciais de integração acima.
   SlackConnection: ['webhookUrl', 'botToken'],
-  StripeConnection: ['secretKey'],
+  StripeConnection: ['secretKey', 'webhookSecret'],
   OmieConnection: ['appKey', 'appSecret'],
   // Tokens OAuth de login social (Google/Microsoft via Better Auth, gravados por
   // prismaAdapter em src/lib/auth.ts) — mesma classe de credencial de terceiro das linhas
