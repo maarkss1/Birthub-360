@@ -191,6 +191,24 @@ export class Crm360Controller {
     }
   };
 
+  /** BILLING-003 (onda 5) — ver Crm360UseCases.reconcileFaturaStripePayment. */
+  reconcileFaturaStripePayment = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId: orgId, id: actorUserId } = (req as AuthRequest).user;
+      const { connectionId, paymentIntentId } = req.body;
+      const data = await this.crm360UseCases.reconcileFaturaStripePayment(
+        orgId,
+        routeParam(req.params.id, 'id'),
+        connectionId,
+        paymentIntentId,
+        actorUserId,
+      );
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   /** Rota pública (sem `authenticateToken`) — ver `crm360Public.routes.ts`. */
   viewPublicDocument = async (req: Request, res: Response, next: NextFunction) => {
     try {
