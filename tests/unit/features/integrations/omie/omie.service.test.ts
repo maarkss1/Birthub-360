@@ -32,7 +32,8 @@ vi.mock('@/lib/prisma', () => ({
 }));
 
 const fetchWithTimeoutMock = vi.fn();
-vi.mock('@/lib/http', () => ({
+vi.mock('@/lib/http', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/lib/http')>()),
   fetchWithTimeout: (...args: unknown[]) => fetchWithTimeoutMock(...args),
 }));
 
@@ -122,5 +123,70 @@ describe('upsertOmieCustomer — honestidade sobre cadastro real (nunca finge su
       upsertOmieCustomer(ORG_ID, conn.id, { name: '', cnpjOrCpf: '' }),
     ).rejects.toThrow(/obrigatórios/);
     expect(fetchWithTimeoutMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('callOmieRpc — INTEGRATION-002: retry/backoff em falha transiente', () => {
+  it('reintenta em falha de rede e eventualmente sucede', async () => {
+    vi.useFakeTimers();
+    try {
+      fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { clientes_encontrados: [] }));
+      const conn = await connectOmie(ORG_ID, { appKey: 'valid-key', appSecret: 'valid-secret' });
+      fetchWithTimeoutMock.mockClear();
+
+      fetchWithTimeoutMock
+        .mockRejectedValueOnce(new Error('fetch failed (ECONNRESET)'))
+        .mockResolvedValueOnce(jsonResponse(200, { codigo_cliente_omie: 111, status: 'OK' }));
+
+      const promise = upsertOmieCustomer(ORG_ID, conn.id, {
+        name: 'Industria Beta LTDA',
+        cnpjOrCpf: '98765432000111',
+      });
+      await vi.runAllTimersAsync();
+      const customer = await promise;
+
+      expect(customer.id).toBe('111');
+      expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('reintenta em HTTP 5xx e esgota as tentativas quando a falha persiste', async () => {
+    vi.useFakeTimers();
+    try {
+      fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { clientes_encontrados: [] }));
+      const conn = await connectOmie(ORG_ID, { appKey: 'valid-key', appSecret: 'valid-secret' });
+      fetchWithTimeoutMock.mockClear();
+
+      fetchWithTimeoutMock.mockResolvedValue(jsonResponse(502, {}));
+
+      const promise = upsertOmieCustomer(ORG_ID, conn.id, {
+        name: 'Industria Gama LTDA',
+        cnpjOrCpf: '11222333000144',
+      });
+      // Handler vazio só pra evitar o unhandledRejection do Node entre o runAllTimersAsync
+      // resolver a rejeição e o expect().rejects abaixo de fato anexar seu handler.
+      promise.catch(() => {});
+      await vi.runAllTimersAsync();
+
+      await expect(promise).rejects.toThrow();
+      expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(4);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('NÃO reintenta em erro definitivo (HTTP 400) — só uma chamada de rede', async () => {
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(200, { clientes_encontrados: [] }));
+    const conn = await connectOmie(ORG_ID, { appKey: 'valid-key', appSecret: 'valid-secret' });
+    fetchWithTimeoutMock.mockClear();
+
+    fetchWithTimeoutMock.mockResolvedValueOnce(jsonResponse(400, {}));
+
+    await expect(
+      upsertOmieCustomer(ORG_ID, conn.id, { name: 'Industria Delta LTDA', cnpjOrCpf: '55666777000188' }),
+    ).rejects.toThrow();
+    expect(fetchWithTimeoutMock).toHaveBeenCalledTimes(1);
   });
 });

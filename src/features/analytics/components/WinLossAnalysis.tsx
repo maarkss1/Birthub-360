@@ -44,10 +44,18 @@ function parseAnalysisSections(text: string): { title: string; content: string; 
     : [{ title: 'Análise Completa', content: text, icon: '📊' }];
 }
 
+interface LatestWinLossReport {
+  id: string;
+  content: string;
+  source: 'WEEKLY_WIN_LOSS_AUTO' | 'WIN_LOSS_ON_DEMAND';
+  createdAt: string;
+}
+
 export function WinLossAnalysis() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<WinLossResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [resultSource, setResultSource] = useState<LatestWinLossReport['source'] | null>(null);
 
   // Contexto numérico real (mesma API já usada por Analytics.tsx, janela mínima aceita pelo
   // backend) — dá números reais visíveis mesmo antes/sem nunca rodar a análise de IA, que é cara
@@ -61,6 +69,24 @@ export function WinLossAnalysis() {
   }, []);
   const topLossReason = snapshot?.lostReasons?.[0];
 
+  // REVOPS-004 (onda 5): a varredura automática de sexta às 19h agora é persistida — carrega o
+  // último resultado (automático OU manual, o que for mais recente) ao montar a tela, em vez de só
+  // mostrar algo depois que a pessoa clica no botão.
+  useEffect(() => {
+    api
+      .get<{ success: boolean; data: LatestWinLossReport | null }>(
+        '/api/intelligence/win-loss-analysis/latest',
+      )
+      .then((res) => {
+        if (!res.data) return;
+        setResult({ analysis: res.data.content, generatedAt: res.data.createdAt });
+        setResultSource(res.data.source);
+      })
+      .catch(() => {
+        /* sem resultado prévio ainda — tela segue mostrando o card de introdução normalmente */
+      });
+  }, []);
+
   const runAnalysis = async () => {
     setLoading(true);
     setError(null);
@@ -70,6 +96,7 @@ export function WinLossAnalysis() {
       // Disparamos o job de análise via API e aguardamos o resultado
       const data = await api.post<WinLossResult>('/api/intelligence/win-loss-analysis', {});
       setResult({ ...data, generatedAt: new Date().toISOString() });
+      setResultSource('WIN_LOSS_ON_DEMAND');
     } catch (err) {
       setError((err as Error).message || 'Falha ao gerar análise Win/Loss');
     } finally {
@@ -242,9 +269,9 @@ export function WinLossAnalysis() {
 
             <Card padding="sm" className="border-dashed text-center">
               <p className="text-xs text-ink-2">
-                💡 Uma varredura automática roda toda sexta às 19h nos bastidores, mas o resultado
-                dela ainda não aparece nesta tela — o que você está vendo é sempre da última vez que
-                alguém rodou manualmente pelo botão acima.
+                {resultSource === 'WEEKLY_WIN_LOSS_AUTO'
+                  ? '💡 Este é o resultado da varredura automática de sexta às 19h — clique em "Rodar Análise" para gerar um novo agora com os dados mais recentes.'
+                  : '💡 Resultado da última análise disparada manualmente. Uma varredura automática também roda toda sexta às 19h.'}
               </p>
             </Card>
           </div>
