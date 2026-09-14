@@ -204,6 +204,12 @@ describe('agent.execute — ToolExecutor genérico do AgentRuntime (fix AIAGENT-
       { code: 'pricing-elasticity-tester', jobRole: 'BITRIX_GUARDIAN' },
       { code: 'net-retention-modeler', jobRole: 'CHURN_RETENCAO' },
       { code: 'pipeline-velocity-tracker', jobRole: 'GERENTE_COMERCIAL' },
+      // Onda 9 — lote 10 (Customer Success/LLM_PROMPT, primeiro lote do domínio), amostra de 3
+      // dos 25 novos systemPrompt curados em scripts/agent-import/source-prompts.ts — inclui o
+      // HIGH-risk pricing-tier-recommender (consultivo-only).
+      { code: 'pricing-tier-recommender', jobRole: 'CHURN_RETENCAO' },
+      { code: 'health-score-trigger', jobRole: 'REVENUE_INTELLIGENCE' },
+      { code: 'l1-auto-resolver', jobRole: 'CHURN_RETENCAO' },
     ])(
       '$code (systemPrompt real) executa via agent.execute e retorna SUCCEEDED com output do modelo',
       async ({ code, jobRole }) => {
