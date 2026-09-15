@@ -4,6 +4,7 @@ import {
   CalendarClock,
   Check,
   Mail,
+  MessageCircle,
   ShieldCheck,
   Sparkles,
   ThumbsDown,
@@ -53,6 +54,14 @@ function presentationFor(action: PendingAction): ActionPresentation {
       approveLabel: 'Aprovar e enviar',
       approveTitle: 'Envia via SMTP; sem SMTP, abre o rascunho no cliente de e-mail.',
       icon: <Mail className="w-4 h-4 mr-2" />,
+    };
+  }
+  if (action.action === 'send_whatsapp_reply') {
+    return {
+      title: 'Negociador de IA · réplica sugerida',
+      approveLabel: 'Aprovar e enviar',
+      approveTitle: 'Envia a réplica pelo WhatsApp conectado da organização.',
+      icon: <MessageCircle className="w-4 h-4 mr-2" />,
     };
   }
   if (action.action === 'create_follow_up') {
@@ -281,6 +290,7 @@ export function AIPendingActions() {
           {actions.map((action) => {
             const presentation = presentationFor(action);
             const isEmail = action.action === 'send_email';
+            const isWhatsAppReply = action.action === 'send_whatsapp_reply';
             const busy = processingId === action.id;
             return (
               <article
@@ -328,6 +338,29 @@ export function AIPendingActions() {
                         <p className="text-xs text-ink-2 font-medium mb-1">
                           Mensagem gerada com playbook
                         </p>
+                        <div className="bg-surface-2 rounded-md p-3 text-sm text-ink-2 h-36 overflow-y-auto whitespace-pre-wrap">
+                          {action.payload.body}
+                        </div>
+                      </div>
+                    </>
+                  ) : isWhatsAppReply ? (
+                    <>
+                      <div>
+                        <p className="text-xs text-ink-2 font-medium">Para (WhatsApp)</p>
+                        <p className="text-sm text-ink font-medium truncate">
+                          {action.payload.to || 'Número não identificado'}
+                        </p>
+                      </div>
+                      {action.payload.triggerDetail && (
+                        <div>
+                          <p className="text-xs text-ink-2 font-medium mb-1">
+                            Evidência que ativou o agente
+                          </p>
+                          <p className="text-sm text-ink">{action.payload.triggerDetail}</p>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-xs text-ink-2 font-medium mb-1">Réplica sugerida</p>
                         <div className="bg-surface-2 rounded-md p-3 text-sm text-ink-2 h-36 overflow-y-auto whitespace-pre-wrap">
                           {action.payload.body}
                         </div>

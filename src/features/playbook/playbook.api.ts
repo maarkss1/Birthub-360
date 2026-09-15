@@ -30,6 +30,20 @@ export interface ObjectionMatrixItem {
   updatedAt: string;
 }
 
+/** Sugestão gerada pela IA a partir de negócios REALMENTE perdidos (item 7 de "IA Agêntica de
+ * Vendas") — não é um `ObjectionMatrixItem` ainda: precisa de revisão humana e de um POST
+ * separado (`createObjection`) para virar um item real da matriz. */
+export interface ObjectionSuggestion {
+  segment: string;
+  persona: string;
+  objectionTitle: string;
+  objectionText: string;
+  responseScript: string;
+  keyDifferentiator: string;
+  evidenceCount: number;
+  sourceLossReasons: string[];
+}
+
 export interface PlaybookListMeta {
   total: number;
   page: number;
@@ -94,4 +108,8 @@ export const playbookApi = {
   updateObjection: (id: string, input: Partial<ObjectionMatrixItemInput>) =>
     api.put<ObjectionMatrixItem>(`/api/playbook/objection-matrix/${id}`, input),
   deleteObjection: (id: string) => api.delete<void>(`/api/playbook/objection-matrix/${id}`),
+  generateObjectionSuggestions: () =>
+    api.post<{ data: ObjectionSuggestion[]; meta: { emptyReason?: string } }>(
+      '/api/playbook/objection-matrix/generate-suggestions',
+    ),
 };

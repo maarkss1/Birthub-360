@@ -75,9 +75,11 @@ export async function searchCompanyNews(companyName: string): Promise<NewsMentio
   const name = (companyName || '').trim();
   if (name.length < 5) return [];
 
-  // Tenta primeiro a instância de metabusca SearXNG (se configurada / disponível)
+  // Tenta primeiro a instância de metabusca SearXNG (se configurada / disponível). Sem termo de
+  // vertical fixo: o ICP deixou de ser específico de transporte/logística (ver CLAUDE.md §1,
+  // atualização 09/2026) — o produto hoje serve qualquer empresa com área comercial.
   if (process.env.SEARXNG_URL) {
-    const searxResults = await searchSearXNG(`"${name}" notícias transporte logística`, 5);
+    const searxResults = await searchSearXNG(`"${name}" notícias`, 5);
     if (searxResults.length > 0) return searxResults;
   }
 
