@@ -16,8 +16,8 @@ import {
   Users,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
 import { Button } from '../../../components/ui/Button';
+import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
 import { Card } from '../../../components/ui/Card';
 import { ClockCalendarWidget } from '../../../components/ui/ClockCalendarWidget';
 import { LiveStatsWidget } from '../../../components/ui/LiveStatsWidget';
