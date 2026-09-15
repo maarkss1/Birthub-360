@@ -5044,6 +5044,42 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
+  /playbook/objection-matrix/generate-suggestions:
+    post:
+      tags: [Playbook]
+      summary: Gera sugestões de objeção a partir de negócios realmente perdidos (nunca persiste sozinho)
+      description: >-
+        Agrupa negócios com status Negócios_Perdidos e motivo de perda preenchido por
+        (segmento, persona); descarta grupos com menos de 2 casos reais. Cada sugestão retornada
+        precisa de um POST /playbook/objection-matrix separado, com aprovação humana explícita,
+        para virar um item real da matriz.
+      responses:
+        '200':
+          description: OK — sugestões geradas (pode vir vazio, com `meta.emptyReason` explicando o motivo)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        segment: { type: string }
+                        persona: { type: string }
+                        objectionTitle: { type: string }
+                        objectionText: { type: string }
+                        responseScript: { type: string }
+                        keyDifferentiator: { type: string }
+                        evidenceCount: { type: integer }
+                        sourceLossReasons: { type: array, items: { type: string } }
+                  meta:
+                    type: object
+                    properties:
+                      emptyReason: { type: string }
+
   /playbook/objection-matrix/{id}:
     parameters:
       - $ref: '#/components/parameters/IdParam'
