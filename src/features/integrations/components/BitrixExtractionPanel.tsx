@@ -149,7 +149,7 @@ function triggerDownload(url: string) {
 }
 
 const selectClass =
-  'h-9 text-sm rounded-xl border border-line bg-surface text-ink px-3 disabled:opacity-40 focus:bg-surface focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer';
+  'h-9 text-sm rounded-xl border border-line bg-surface text-ink px-3 disabled:opacity-40 focus:bg-surface focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors outline-none cursor-pointer';
 
 interface BitrixExtractionPanelProps {
   connectionId: string;
@@ -382,7 +382,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Ex.: Transportadora"
-              className="h-9 text-sm rounded-xl border border-line bg-surface text-ink px-3 placeholder:text-ink-2 focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none"
+              className="h-9 text-sm rounded-xl border border-line bg-surface text-ink px-3 placeholder:text-ink-2 focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors outline-none"
             />
           </div>
           <button

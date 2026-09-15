@@ -102,7 +102,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
             id="ap-segmento"
             type="text"
             list="ap-segmento-suggestions"
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={criteria.segmento}
             onChange={(e) => setCriteria({ ...criteria, segmento: e.target.value })}
           />
@@ -125,7 +125,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
               id="ap-estado"
               type="text"
               list="ap-estado-suggestions"
-              className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+              className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               value={criteria.estado || ''}
               onChange={(e) => {
                 const estado = e.target.value;
@@ -152,7 +152,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
             <input
               id="ap-cidade"
               type="text"
-              className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+              className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               value={criteria.cidade || ''}
               onChange={(e) => {
                 const cidade = e.target.value;
@@ -181,7 +181,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
             type="number"
             min={1}
             max={100}
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={criteria.quantidade}
             onChange={(e) => setCriteria({ ...criteria, quantidade: Number(e.target.value) || 10 })}
           />
@@ -209,7 +209,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
               </label>
               <select
                 id="ap-porte"
-                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 value={criteria.porte || ''}
                 onChange={(e) => setCriteria({ ...criteria, porte: e.target.value || undefined })}
               >
@@ -234,7 +234,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
                 onChange={(e) =>
                   setCriteria({ ...criteria, palavrasChave: e.target.value || undefined })
                 }
-                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               />
             </div>
           </div>
@@ -244,7 +244,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
           type="button"
           onClick={handleSearch}
           disabled={isSearching}
-          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>

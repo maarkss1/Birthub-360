@@ -129,7 +129,7 @@ export const ToolTechPopover: React.FC<ToolTechPopoverProps> = ({
                 onFilterByTool(info.name);
                 onClose();
               }}
-              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md hover:shadow-blue-500/25 active:scale-95"
+              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors shadow-md hover:shadow-blue-500/25 active:scale-95"
             >
               <Filter className="w-4 h-4" />
               Filtrar empresas com esta ferramenta

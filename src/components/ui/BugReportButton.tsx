@@ -79,7 +79,7 @@ export function BugReportButton() {
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label="Reportar um problema"
-          className="group relative flex items-center justify-center w-9 h-9 rounded-xl bg-surface text-ink-2 hover:text-ink hover:scale-105 active:scale-95 transition-all duration-300 border border-line shadow-card cursor-pointer"
+          className="group relative flex items-center justify-center w-9 h-9 rounded-xl bg-surface text-ink-2 hover:text-ink hover:scale-105 active:scale-95 transition-colors duration-300 border border-line shadow-card cursor-pointer"
         >
           <Bug className="w-4 h-4" />
           <div className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-surface text-ink text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-line">

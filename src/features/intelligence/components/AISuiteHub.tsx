@@ -526,7 +526,7 @@ export function AISuiteHub() {
                 key={cap.id}
                 onClick={() => handleSelectCapability(cap)}
                 aria-pressed={isSelected}
-                className={`w-full text-left group p-3.5 rounded-xl border cursor-pointer transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                className={`w-full text-left group p-3.5 rounded-xl border cursor-pointer transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                   isSelected
                     ? `bg-surface shadow-md ${accent.border} ring-2 ring-primary/20`
                     : `bg-surface/50 hover:bg-surface border-border/50 ${accent.hoverBorder}`

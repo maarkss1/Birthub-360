@@ -60,7 +60,7 @@ export function ChatbookHub() {
                 Groq IA
               </span>
             </div>
-            <p className="text-sm text-ink-2 flex items-center gap-1.5">
+            <p className="text-sm text-slate-200 flex items-center gap-1.5">
               <Sparkles size={12} className="text-brand" /> Assistente comercial com base interna da
               marca; sem navegação web em tempo real.
             </p>
@@ -88,7 +88,7 @@ export function ChatbookHub() {
                   setSearchMode('general');
                 }}
                 aria-pressed={searchMode === 'general'}
-                className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5 ${
                   searchMode === 'general'
                     ? 'bg-brand-active text-on-brand shadow-sm'
                     : 'text-ink-2 hover:text-ink'
@@ -103,7 +103,7 @@ export function ChatbookHub() {
                   setSearchMode('internal');
                 }}
                 aria-pressed={searchMode === 'internal'}
-                className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5 ${
                   searchMode === 'internal'
                     ? 'bg-brand-active text-on-brand shadow-sm'
                     : 'text-ink-2 hover:text-ink'

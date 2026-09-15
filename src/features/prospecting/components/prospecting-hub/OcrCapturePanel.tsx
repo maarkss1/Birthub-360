@@ -332,7 +332,7 @@ export function OcrCapturePanel() {
             <button
               type="button"
               onClick={capturePhoto}
-              className="flex items-center gap-2 bg-brand-active text-on-brand px-6 py-2.5 rounded-full font-bold text-sm shadow-lg hover:brightness-110 transition-all cursor-pointer"
+              className="flex items-center gap-2 bg-brand-active text-on-brand px-6 py-2.5 rounded-full font-bold text-sm shadow-lg hover:brightness-110 transition-colors cursor-pointer"
             >
               <Aperture className="w-4 h-4" /> Capturar Foto
             </button>
@@ -368,7 +368,7 @@ export function OcrCapturePanel() {
             if (file) handleFile(file);
           }}
           onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-line rounded-3xl p-12 text-center cursor-pointer hover:border-brand hover:bg-brand/5 transition-all bg-surface focus:outline-none focus:ring-2 focus:ring-brand shadow-sm"
+          className="border-2 border-dashed border-line rounded-3xl p-12 text-center cursor-pointer hover:border-brand hover:bg-brand/5 transition-colors bg-surface focus:outline-none focus:ring-2 focus:ring-brand shadow-sm"
         >
           <input
             ref={fileInputRef}
@@ -395,7 +395,7 @@ export function OcrCapturePanel() {
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 pt-2">
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-brand-active text-on-brand px-4 py-2 rounded-xl shadow-sm hover:brightness-110 transition-all">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-brand-active text-on-brand px-4 py-2 rounded-xl shadow-sm hover:brightness-110 transition-colors">
                 <UploadCloud className="w-4 h-4" /> Selecionar Arquivo
               </span>
               <button
@@ -728,7 +728,7 @@ export function OcrCapturePanel() {
                 type="button"
                 onClick={promote}
                 disabled={promoting || !formData.tradeName.trim()}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand to-orange-500 text-on-brand py-3 rounded-2xl font-bold text-sm shadow-md hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand to-orange-500 text-on-brand py-3 rounded-2xl font-bold text-sm shadow-md hover:brightness-110 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {promoting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -758,7 +758,7 @@ export function OcrCapturePanel() {
             <button
               type="button"
               onClick={reset}
-              className="inline-flex items-center gap-2 bg-brand-active text-on-brand px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:brightness-110 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 bg-brand-active text-on-brand px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:brightness-110 transition-colors cursor-pointer"
             >
               <Camera className="w-3.5 h-3.5" /> Ler Novo Cartão / Foto
             </button>

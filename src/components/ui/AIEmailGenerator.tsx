@@ -204,7 +204,7 @@ export function AIEmailGenerator({
               type="button"
               aria-pressed={tone === value}
               onClick={() => setTone(value)}
-              className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
                 tone === value
                   ? 'bg-brand-active text-on-brand font-bold shadow-sm'
                   : 'text-ink-2 hover:text-ink'
@@ -230,7 +230,7 @@ export function AIEmailGenerator({
                 setError('');
                 setCopied(false);
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                 channel === c
                   ? 'bg-brand-active text-on-brand shadow-sm'
                   : 'text-ink-2 hover:text-ink'

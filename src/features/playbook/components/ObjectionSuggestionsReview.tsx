@@ -117,7 +117,7 @@ export function ObjectionSuggestionsReview({
                       type="button"
                       onClick={() => handleAdd(suggestion)}
                       disabled={isAdding || isAdded}
-                      className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-brand-active hover:brightness-110 disabled:opacity-60 text-on-brand transition-all cursor-pointer shrink-0"
+                      className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-brand-active hover:brightness-110 disabled:opacity-60 text-on-brand transition-colors cursor-pointer shrink-0"
                     >
                       {isAdding ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />

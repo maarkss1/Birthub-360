@@ -150,7 +150,7 @@ export function B2BGenerator() {
             type="button"
             onClick={handleGenerate}
             disabled={generating || !icp || !solution}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-lg cursor-pointer`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:opacity-95 transition-colors disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-lg cursor-pointer`}
           >
             {generating && (
               <motion.div

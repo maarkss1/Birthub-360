@@ -205,14 +205,14 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         <button
           type="button"
           onClick={() => setSubTab('empresas')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'empresas' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-colors ${subTab === 'empresas' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
         >
           <Building2 size={14} /> Empresas
         </button>
         <button
           type="button"
           onClick={() => setSubTab('decisores')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${subTab === 'decisores' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-colors ${subTab === 'decisores' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
         >
           <Users size={14} /> Decisores
         </button>
@@ -235,7 +235,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                 id="li-segmento"
                 type="text"
                 list="li-segmento-suggestions"
-                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 value={companyCriteria.segmento}
                 onChange={(e) =>
                   setCompanyCriteria({ ...companyCriteria, segmento: e.target.value })
@@ -258,7 +258,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                 id="li-estado"
                 type="text"
                 list="li-estado-suggestions"
-                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 value={companyCriteria.estado || ''}
                 onChange={(e) =>
                   setCompanyCriteria({
@@ -278,7 +278,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
               type="button"
               onClick={searchCompanies}
               disabled={isSearchingCompanies}
-              className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+              className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
             >
               {isSearchingCompanies ? (
                 <>
@@ -343,7 +343,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                 id="li-domain"
                 type="text"
                 placeholder="empresa.com.br"
-                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 value={domainInput}
                 onChange={(e) => setDomainInput(e.target.value)}
               />
@@ -359,7 +359,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                 id="li-cargos"
                 type="text"
                 placeholder="Ex: Diretor de Logística, CEO"
-                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 value={cargosInput}
                 onChange={(e) => setCargosInput(e.target.value)}
               />
@@ -368,7 +368,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
               type="button"
               onClick={searchPeople}
               disabled={isSearchingPeople}
-              className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+              className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
             >
               {isSearchingPeople ? (
                 <>
@@ -430,7 +430,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
                         type="button"
                         onClick={() => promotePerson(dm, idx)}
                         disabled={promotingKey === key}
-                        className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
+                        className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-colors flex items-center gap-2 disabled:opacity-60"
                       >
                         {promotingKey === key ? (
                           <Loader2 className="animate-spin" size={13} />

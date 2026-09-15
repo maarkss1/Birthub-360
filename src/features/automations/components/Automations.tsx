@@ -665,7 +665,7 @@ export function Automations() {
                   }`}
                 >
                   <span
-                    className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
+                    className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-colors ${
                       item.enabled ? 'left-[22px]' : 'left-0.5'
                     }`}
                   />

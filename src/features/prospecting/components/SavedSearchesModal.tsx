@@ -165,7 +165,7 @@ export function SavedSearchesModal({
             <button
               type="button"
               onClick={() => setShowCreateForm(true)}
-              className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-ink dark:text-brand flex items-center justify-center gap-2 hover:bg-brand/5 transition-all"
+              className="w-full py-3 px-4 rounded-2xl border-2 border-dashed border-line hover:border-brand/40 text-sm font-bold text-brand-ink dark:text-brand flex items-center justify-center gap-2 hover:bg-brand/5 transition-colors"
             >
               <Plus size={18} /> Salvar Filtro Atual como Nova Lista
             </button>
@@ -251,7 +251,7 @@ export function SavedSearchesModal({
             searches.map((s) => (
               <div
                 key={s.id}
-                className="p-4 rounded-2xl bg-surface border border-line hover:border-brand/30 transition-all flex items-center justify-between gap-4"
+                className="p-4 rounded-2xl bg-surface border border-line hover:border-brand/30 transition-colors flex items-center justify-between gap-4"
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">

@@ -240,7 +240,7 @@ export function LdrAccountIntelligence() {
             <input
               value={draftCnpj}
               onChange={(event) => setDraftCnpj(event.target.value)}
-              className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none"
+              className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-brand"
               placeholder="Digite um CNPJ presente no snapshot 2026-08"
             />
             <button

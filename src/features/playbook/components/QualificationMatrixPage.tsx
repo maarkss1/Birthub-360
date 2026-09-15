@@ -149,7 +149,7 @@ export function QualificationMatrixPage() {
               setEditingItem(null);
               setIsFormOpen(true);
             }}
-            className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer shrink-0"
+            className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-colors shadow-lg shadow-brand/20 active:scale-95 cursor-pointer shrink-0"
           >
             <Plus className="w-5 h-5" /> Nova Pergunta
           </button>

@@ -34,16 +34,16 @@ export function PipelineByStageCard({ funnel, currency }: PipelineByStageCardPro
               >
                 {stage.label}
               </div>
-              <div className="flex-1 h-6 rounded-md bg-surface-2 overflow-hidden">
+              <div className="flex-1 h-5 rounded-md bg-surface-2 border border-line/40 overflow-hidden">
                 <div
-                  className="h-full bg-brand/70 rounded-md"
+                  className="h-full bg-gradient-to-r from-brand to-brand-2 rounded-md transition-colors duration-500"
                   style={{ width: `${Math.max(4, (stage.amount / maxAmount) * 100)}%` }}
                 />
               </div>
-              <div className="w-24 shrink-0 text-right text-xs [font-variant-numeric:tabular-nums] text-ink">
+              <div className="w-24 shrink-0 text-right text-xs [font-variant-numeric:tabular-nums] font-bold text-ink">
                 {formatCurrency(stage.amount, currency)}
               </div>
-              <div className="w-16 shrink-0 text-right text-[11px] text-ink-2">
+              <div className="w-20 shrink-0 text-right text-[11px] text-ink-2 [font-variant-numeric:tabular-nums]">
                 {stage.count} negócio(s)
               </div>
             </div>

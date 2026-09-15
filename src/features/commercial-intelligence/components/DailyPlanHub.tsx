@@ -306,7 +306,7 @@ export function DailyPlanHub() {
     return (
       <div
         key={item.id}
-        className={`p-4 rounded-2xl border transition-all duration-200 bg-surface shadow-card hover:shadow-card-hover ${
+        className={`p-4 rounded-2xl border transition-colors duration-200 bg-surface shadow-card hover:shadow-card-hover ${
           item.completed ? 'opacity-60 border-line' : 'border-line hover:border-brand/30'
         }`}
       >
@@ -577,7 +577,7 @@ export function DailyPlanHub() {
               type="button"
               onClick={handleSyncBitrix}
               disabled={isSyncing}
-              className="px-4 py-2.5 rounded-2xl bg-surface border border-line hover:border-brand/40 text-xs font-black text-ink shadow-sm flex items-center gap-2 transition-all cursor-pointer hover:shadow"
+              className="px-4 py-2.5 rounded-2xl bg-surface border border-line hover:border-brand/40 text-xs font-black text-ink shadow-sm flex items-center gap-2 transition-colors cursor-pointer hover:shadow"
             >
               <RefreshCw className={`w-4 h-4 text-brand ${isSyncing ? 'animate-spin' : ''}`} />
               {isSyncing ? 'Sincronizando...' : 'Sincronizar com Bitrix'}
@@ -586,7 +586,7 @@ export function DailyPlanHub() {
             <button
               type="button"
               onClick={() => setShowNewActivityModal(true)}
-              className="px-4 py-2.5 rounded-2xl bg-brand text-on-brand hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-2xl bg-brand text-on-brand hover:bg-brand-active text-xs font-black shadow-md flex items-center gap-2 transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Nova Atividade
@@ -657,7 +657,7 @@ export function DailyPlanHub() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                className={`p-3.5 rounded-2xl border text-left transition-colors cursor-pointer ${
                   active
                     ? 'border-brand bg-surface shadow-card-hover'
                     : 'border-line bg-surface hover:border-brand/20'
@@ -788,7 +788,7 @@ export function DailyPlanHub() {
                   type="button"
                   key={task.id}
                   onClick={() => toggleTask(task.id)}
-                  className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer bg-surface ${
+                  className={`w-full text-left p-4 rounded-2xl border transition-colors cursor-pointer bg-surface ${
                     task.completed
                       ? 'border-emerald-500/40 bg-emerald-500/5'
                       : 'border-line hover:border-brand/30'
@@ -840,7 +840,7 @@ export function DailyPlanHub() {
                       key={seg}
                       type="button"
                       onClick={() => setSelectedSegment(seg)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                         selectedSegment === seg
                           ? 'bg-brand text-on-brand shadow-sm'
                           : 'bg-bg border border-line text-ink hover:border-brand/30'

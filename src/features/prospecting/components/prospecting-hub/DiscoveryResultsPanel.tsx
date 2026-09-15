@@ -113,7 +113,7 @@ export function DiscoveryResultsPanel({
             placeholder="⚡ Filtrar resultados instantaneamente por nome, segmento, cidade..."
             value={resultFilter}
             onChange={(e) => setResultFilter(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-surface border border-line rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none"
+            className="w-full pl-9 pr-4 py-2.5 bg-surface border border-line rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors outline-none"
           />
         </div>
       )}
@@ -174,7 +174,7 @@ export function DiscoveryResultsPanel({
               type="button"
               onClick={onBulkSave}
               disabled={selectedCandidates.size === 0 || isSavingBatch}
-              className="text-[10px] font-bold bg-surface-2 hover:bg-line text-ink px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+              className="text-[10px] font-bold bg-surface-2 hover:bg-line text-ink px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
             >
               Salvar em Massa
             </button>
@@ -182,7 +182,7 @@ export function DiscoveryResultsPanel({
               type="button"
               onClick={onBulkEnrich}
               disabled={selectedCandidates.size === 0 || isSavingBatch}
-              className="text-[10px] font-bold bg-brand-active hover:bg-orange-600 text-on-brand px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+              className="text-[10px] font-bold bg-brand-active hover:bg-orange-600 text-on-brand px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
             >
               Enriquecer em Massa
             </button>
@@ -222,7 +222,7 @@ export function DiscoveryResultsPanel({
             type="button"
             onClick={onDiscoverMore}
             disabled={isSearching}
-            className="w-full py-3 rounded-xl border border-dashed border-line text-xs font-bold text-ink-2 hover:text-brand hover:border-brand/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 rounded-xl border border-dashed border-line text-xs font-bold text-ink-2 hover:text-brand hover:border-brand/40 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isSearching ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
             Buscar mais resultados (próxima página)

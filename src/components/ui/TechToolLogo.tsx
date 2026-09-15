@@ -462,7 +462,7 @@ export const TechToolLogo: React.FC<TechToolLogoProps> = ({
       type="button"
       onClick={() => onClick?.(info)}
       title={`${info.name} (${info.category}) — ${info.description}`}
-      className={`inline-flex items-center rounded-xl border font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5 shadow-xs hover:shadow-md cursor-pointer group select-none ${sizeClasses}`}
+      className={`inline-flex items-center rounded-xl border font-semibold transition-colors duration-300 transform hover:scale-105 hover:-translate-y-0.5 shadow-xs hover:shadow-md cursor-pointer group select-none ${sizeClasses}`}
       style={{
         backgroundColor: info.bgColor,
         borderColor: info.borderColor,

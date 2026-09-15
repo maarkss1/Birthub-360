@@ -152,7 +152,7 @@ export function CandidateCard({
   };
 
   return (
-    <div className="bg-surface p-6 rounded-2xl border border-line hover:border-brand/40 transition-all shadow-sm group">
+    <div className="bg-surface p-6 rounded-2xl border border-line hover:border-brand/40 transition-colors shadow-sm group">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="mt-1 mr-3">
           <input
@@ -330,7 +330,7 @@ export function CandidateCard({
                 type="button"
                 onClick={handleFetchIcebreaker}
                 disabled={isLoadingIcebreaker}
-                className="text-[11px] font-semibold text-brand-ink dark:text-brand hover:underline flex items-center gap-1 bg-brand/5 border border-brand/20 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                className="text-[11px] font-semibold text-brand-ink dark:text-brand hover:underline flex items-center gap-1 bg-brand/5 border border-brand/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
               >
                 {isLoadingIcebreaker ? (
                   <Loader2 className="animate-spin" size={12} />
@@ -513,7 +513,7 @@ export function CandidateCard({
                 onClick={onReject}
                 disabled={isPromoting || isRejecting}
                 title="Descarta este candidato e o exclui de buscas futuras"
-                className="bg-surface-2 border border-line text-ink-2 px-4 py-2.5 rounded-xl font-bold text-xs hover:border-danger/50 hover:text-danger-active dark:hover:text-danger transition-all flex items-center gap-2 w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
+                className="bg-surface-2 border border-line text-ink-2 px-4 py-2.5 rounded-xl font-bold text-xs hover:border-danger/50 hover:text-danger-active dark:hover:text-danger transition-colors flex items-center gap-2 w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
               >
                 {isRejecting ? (
                   <Loader2 className="animate-spin" size={15} />
@@ -527,7 +527,7 @@ export function CandidateCard({
               type="button"
               onClick={onPromote}
               disabled={isPromoting || isRejecting}
-              className="bg-brand-active text-on-brand px-5 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 shadow-md hover:scale-[1.02] w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
+              className="bg-brand-active text-on-brand px-5 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition-colors flex items-center gap-2 shadow-md hover:scale-[1.02] w-full sm:w-auto justify-center disabled:opacity-60 cursor-pointer"
             >
               {isPromoting ? (
                 <Loader2 className="animate-spin" size={15} />

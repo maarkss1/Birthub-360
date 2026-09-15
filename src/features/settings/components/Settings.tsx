@@ -230,7 +230,7 @@ export function Settings() {
                           setThemeMode('dark');
                         }}
                         aria-pressed={theme === 'dark'}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-all ${
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
                           theme === 'dark'
                             ? 'border-brand bg-brand/10 text-ink'
                             : 'border-line bg-surface-2 text-ink-2 hover:text-ink'
@@ -245,7 +245,7 @@ export function Settings() {
                           setThemeMode('light');
                         }}
                         aria-pressed={theme === 'light'}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-all ${
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
                           theme === 'light'
                             ? 'border-brand bg-brand/10 text-ink'
                             : 'border-line bg-surface-2 text-ink-2 hover:text-ink'

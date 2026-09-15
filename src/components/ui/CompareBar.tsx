@@ -50,7 +50,7 @@ function CompareBarRow({
       >
         <div
           className={cn(
-            'flex h-full items-center justify-end rounded-full px-2 transition-all duration-700',
+            'flex h-full items-center justify-end rounded-full px-2 transition-colors duration-700',
             fillClassName,
           )}
           style={{ width: `${widthPct}%` }}

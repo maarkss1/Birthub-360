@@ -216,7 +216,7 @@ export function ObjectionsMatrixPage() {
               onClick={handleGenerateSuggestions}
               disabled={generatingSuggestions}
               title="Gera sugestões de objeção a partir de padrões reais de negócios perdidos registrados no CRM"
-              className="flex items-center gap-2 bg-surface-2 hover:bg-line border border-line disabled:opacity-60 text-ink px-4 py-2.5 rounded-2xl font-bold transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-surface-2 hover:bg-line border border-line disabled:opacity-60 text-ink px-4 py-2.5 rounded-2xl font-bold transition-colors active:scale-95 cursor-pointer"
             >
               {generatingSuggestions ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -231,7 +231,7 @@ export function ObjectionsMatrixPage() {
                 setEditingItem(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-colors shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
             >
               <Plus className="w-5 h-5" /> Nova Objeção
             </button>

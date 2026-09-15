@@ -874,7 +874,7 @@ Data: 01/09/2026 | BDR ID: 392
                 key={id}
                 type="button"
                 onClick={() => setActiveTab(id)}
-                className={`relative overflow-hidden flex items-center gap-3 rounded-card border p-3.5 text-left transition-all duration-200 cursor-pointer ${
+                className={`relative overflow-hidden flex items-center gap-3 rounded-card border p-3.5 text-left transition-colors duration-200 cursor-pointer ${
                   active
                     ? 'border-brand/40 bg-surface shadow-card-hover -translate-y-0.5'
                     : 'border-line bg-surface shadow-card hover:-translate-y-0.5 hover:shadow-card-hover hover:border-brand/20'
@@ -923,7 +923,7 @@ Data: 01/09/2026 | BDR ID: 392
                 </div>
                 <div className="w-full bg-surface-2 h-4 rounded-full overflow-hidden border border-line">
                   <div
-                    className="bg-gradient-to-r from-brand to-brand-2 h-full transition-all duration-500 rounded-full"
+                    className="bg-gradient-to-r from-brand to-brand-2 h-full transition-colors duration-500 rounded-full"
                     style={{ width: `${currentPacePercent}%` }}
                   />
                 </div>
@@ -934,7 +934,7 @@ Data: 01/09/2026 | BDR ID: 392
                   <button
                     type="button"
                     onClick={() => setTodayActivitiesCount((prev) => prev + 1)}
-                    className="px-3 py-1 rounded-xl bg-brand/10 text-brand font-bold text-[11px] hover:bg-brand/20 transition-all cursor-pointer"
+                    className="px-3 py-1 rounded-xl bg-brand/10 text-brand font-bold text-[11px] hover:bg-brand/20 transition-colors cursor-pointer"
                   >
                     + Registrar toque rápido (+1)
                   </button>
@@ -954,7 +954,7 @@ Data: 01/09/2026 | BDR ID: 392
                 <button
                   type="button"
                   onClick={() => setActiveTab('emcadencia')}
-                  className="w-full py-1.5 rounded-xl bg-critical text-white font-bold text-xs shadow-sm hover:brightness-110 transition-all cursor-pointer"
+                  className="w-full py-1.5 rounded-xl bg-critical text-white font-bold text-xs shadow-sm hover:brightness-110 transition-colors cursor-pointer"
                 >
                   Atacar Leads sem SLA agora
                 </button>
@@ -980,7 +980,7 @@ Data: 01/09/2026 | BDR ID: 392
                       type="button"
                       key={tag}
                       onClick={() => setChannelTag(tag)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                         channelTag === tag
                           ? 'bg-brand-active text-on-brand shadow-sm'
                           : 'text-ink-2 hover:text-ink'
@@ -1017,7 +1017,7 @@ Data: 01/09/2026 | BDR ID: 392
                         (prev) => (prev + 1) % DIAGNOSTIC_DATA.emCadencia.topLeads.length,
                       );
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-colors cursor-pointer flex items-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     Salvar toque como {channelTag}
@@ -1029,7 +1029,7 @@ Data: 01/09/2026 | BDR ID: 392
                         (prev) => (prev + 1) % DIAGNOSTIC_DATA.emCadencia.topLeads.length,
                       )
                     }
-                    className="px-3 py-2.5 rounded-xl border border-line bg-surface text-ink-2 font-bold text-xs hover:bg-surface-2 transition-all cursor-pointer"
+                    className="px-3 py-2.5 rounded-xl border border-line bg-surface text-ink-2 font-bold text-xs hover:bg-surface-2 transition-colors cursor-pointer"
                   >
                     Pular Lead
                   </button>
@@ -1047,7 +1047,7 @@ Data: 01/09/2026 | BDR ID: 392
                 <button
                   type="button"
                   onClick={resetDailyTasks}
-                  className="p-1.5 rounded-lg border border-line bg-surface-2 text-ink-2 hover:text-ink transition-all cursor-pointer text-xs flex items-center gap-1 font-bold"
+                  className="p-1.5 rounded-lg border border-line bg-surface-2 text-ink-2 hover:text-ink transition-colors cursor-pointer text-xs flex items-center gap-1 font-bold"
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Resetar
                 </button>
@@ -1059,7 +1059,7 @@ Data: 01/09/2026 | BDR ID: 392
                     type="button"
                     key={task.id}
                     onClick={() => toggleTask(task.id)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-4 ${
+                    className={`w-full text-left p-4 rounded-2xl border transition-colors cursor-pointer flex items-start gap-4 ${
                       task.completed
                         ? 'bg-ok/5 border-ok/30 text-ink opacity-85'
                         : 'bg-surface-2/60 border-line hover:border-brand/40'
@@ -1136,7 +1136,7 @@ Data: 01/09/2026 | BDR ID: 392
                         type="button"
                         key={seg}
                         onClick={() => setSelectedSegment(seg)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-colors cursor-pointer ${
                           selectedSegment === seg
                             ? 'bg-brand-active text-on-brand shadow-sm'
                             : 'text-ink-2 hover:text-ink'
@@ -1193,7 +1193,7 @@ Data: 01/09/2026 | BDR ID: 392
                 <button
                   type="button"
                   onClick={analyzeTranscript}
-                  className="px-5 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-colors cursor-pointer flex items-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   Analisar Qualidade da Call com IA
@@ -1302,7 +1302,7 @@ Data: 01/09/2026 | BDR ID: 392
                   <button
                     type="button"
                     onClick={copyPautaToClipboard}
-                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl bg-brand-active text-on-brand font-bold text-xs shadow-md hover:brightness-105 transition-colors cursor-pointer flex items-center gap-2"
                   >
                     {copiedPauta ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     {copiedPauta ? 'Copiado!' : 'Copiar Pauta (Markdown)'}
@@ -1310,7 +1310,7 @@ Data: 01/09/2026 | BDR ID: 392
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="px-3 py-2.5 rounded-xl border border-line bg-surface-2 text-ink-2 font-bold text-xs hover:text-ink transition-all cursor-pointer flex items-center gap-1.5"
+                    className="px-3 py-2.5 rounded-xl border border-line bg-surface-2 text-ink-2 font-bold text-xs hover:text-ink transition-colors cursor-pointer flex items-center gap-1.5"
                   >
                     <Printer className="w-4 h-4" /> Imprimir
                   </button>

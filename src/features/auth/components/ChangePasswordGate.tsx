@@ -103,7 +103,7 @@ export function ChangePasswordGate() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-colors"
                 placeholder="A senha que você recebeu"
                 required
               />
@@ -121,7 +121,7 @@ export function ChangePasswordGate() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-colors"
                 placeholder="Mínimo 8 caracteres"
                 required
               />
@@ -139,7 +139,7 @@ export function ChangePasswordGate() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-colors"
                 placeholder="Repita a nova senha"
                 required
               />
@@ -148,7 +148,7 @@ export function ChangePasswordGate() {
             <button
               type="submit"
               disabled={isSubmitting || !currentPassword || !newPassword || !confirmPassword}
-              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 <Loader2 className="animate-spin" size={18} />

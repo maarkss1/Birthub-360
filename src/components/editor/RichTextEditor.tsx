@@ -230,7 +230,7 @@ export function RichTextEditor({
       {/* Área de edição */}
       <EditorContent
         editor={editor}
-        className="prose prose-sm prose-invert max-w-none flex-1 px-4 py-3 text-ink focus:outline-none
+        className="prose prose-sm prose-invert max-w-none flex-1 px-4 py-3 text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand
           [&_.ProseMirror]:min-h-[120px]
           [&_.ProseMirror]:outline-none
           [&_.ProseMirror_p.is-editor-empty:first-child::before]:text-ink-2

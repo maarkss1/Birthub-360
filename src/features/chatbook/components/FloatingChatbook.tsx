@@ -164,7 +164,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 type="button"
                 onClick={() => setActiveTab('assistant')}
                 aria-pressed={activeTab === 'assistant'}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'assistant'
                     ? 'bg-brand-active text-on-brand shadow-md font-extrabold'
                     : 'text-ink-2 hover:text-ink'
@@ -176,7 +176,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 type="button"
                 onClick={() => setActiveTab('roleplay')}
                 aria-pressed={activeTab === 'roleplay'}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'roleplay'
                     ? 'bg-brand-active text-on-brand shadow-md font-extrabold'
                     : 'text-ink-2 hover:text-ink'
@@ -188,7 +188,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                 type="button"
                 onClick={() => setActiveTab('playbook')}
                 aria-pressed={activeTab === 'playbook'}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'playbook'
                     ? 'bg-brand-active text-on-brand shadow-md font-extrabold'
                     : 'text-ink-2 hover:text-ink'
@@ -218,7 +218,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       type="button"
                       onClick={() => setSearchMode('general')}
                       aria-pressed={searchMode === 'general'}
-                      className={`px-3 py-1 rounded-lg font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg font-bold transition-colors flex items-center gap-1 cursor-pointer ${
                         searchMode === 'general'
                           ? 'bg-brand-active text-on-brand shadow-sm'
                           : 'text-ink-2 hover:text-ink'
@@ -230,7 +230,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       type="button"
                       onClick={() => setSearchMode('internal')}
                       aria-pressed={searchMode === 'internal'}
-                      className={`px-3 py-1 rounded-lg font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg font-bold transition-colors flex items-center gap-1 cursor-pointer ${
                         searchMode === 'internal'
                           ? 'bg-brand-active text-on-brand shadow-sm'
                           : 'text-ink-2 hover:text-ink'
@@ -347,7 +347,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     <button
                       type="button"
                       onClick={() => setRoleplayPersona('skeptical_cfo')}
-                      className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                      className={`p-2.5 rounded-xl border text-center transition-colors cursor-pointer ${
                         roleplayPersona === 'skeptical_cfo'
                           ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 font-bold'
                           : 'bg-surface border-line text-ink-2 hover:text-ink'
@@ -358,7 +358,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     <button
                       type="button"
                       onClick={() => setRoleplayPersona('strict_buyer')}
-                      className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                      className={`p-2.5 rounded-xl border text-center transition-colors cursor-pointer ${
                         roleplayPersona === 'strict_buyer'
                           ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 font-bold'
                           : 'bg-surface border-line text-ink-2 hover:text-ink'
@@ -369,7 +369,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                     <button
                       type="button"
                       onClick={() => setRoleplayPersona('tech_director')}
-                      className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                      className={`p-2.5 rounded-xl border text-center transition-colors cursor-pointer ${
                         roleplayPersona === 'tech_director'
                           ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 font-bold'
                           : 'bg-surface border-line text-ink-2 hover:text-ink'
@@ -494,7 +494,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       <button
                         type="button"
                         onClick={() => setPlaybookView('objections')}
-                        className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                        className={`px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
                           playbookView === 'objections'
                             ? 'bg-brand-active text-on-brand'
                             : 'text-ink-2 hover:text-ink'
@@ -505,7 +505,7 @@ export function FloatingChatbook({ isOpen, onClose }: FloatingChatbookProps) {
                       <button
                         type="button"
                         onClick={() => setPlaybookView('qualifications')}
-                        className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                        className={`px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
                           playbookView === 'qualifications'
                             ? 'bg-brand-active text-on-brand'
                             : 'text-ink-2 hover:text-ink'

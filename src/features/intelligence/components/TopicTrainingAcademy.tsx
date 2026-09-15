@@ -91,7 +91,7 @@ export function TopicTrainingAcademy() {
           <button
             type="submit"
             disabled={isGenerating || !topic}
-            className="bg-brand-active hover:bg-brand-2 text-on-brand font-extrabold px-6 py-3 rounded-2xl text-xs shadow-lg shadow-brand-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="bg-brand-active hover:bg-brand-2 text-on-brand font-extrabold px-6 py-3 rounded-2xl text-xs shadow-lg shadow-brand-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 animate-spin" />

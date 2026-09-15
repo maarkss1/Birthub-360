@@ -214,7 +214,7 @@ export function AIPendingActions() {
                     setOutcomeNotes((prev) => ({ ...prev, [action.id]: e.target.value }))
                   }
                   placeholder="O que aconteceu depois? (opcional)"
-                  className="w-full min-h-[50px] text-xs rounded-lg border border-line bg-surface-2 px-2.5 py-1.5 text-ink placeholder:text-ink-2 outline-none"
+                  className="w-full min-h-[50px] text-xs rounded-lg border border-line bg-surface-2 px-2.5 py-1.5 text-ink placeholder:text-ink-2 outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 />
                 <div className="flex gap-1.5">
                   <button
