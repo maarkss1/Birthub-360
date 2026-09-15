@@ -47,9 +47,11 @@ import { CopilotoIaUseCases } from '../../features/copiloto-ia/application/Copil
 import { CopilotoVoiceIngestionAdapter } from '../../features/copiloto-ia/infra/CopilotoVoiceIngestionAdapter';
 import { PrismaCopilotoIaRepository } from '../../features/copiloto-ia/infra/PrismaCopilotoIaRepository';
 import { CopilotoIaController } from '../../features/copiloto-ia/presentation/CopilotoIaController';
+import { CompanyDeduplicationService } from '../../features/crm/application/CompanyDeduplicationService';
 import { LeadDeduplicationService } from '../../features/crm/application/LeadDeduplicationService';
 import { LeadUseCases } from '../../features/crm/application/LeadUseCases';
 import { PrismaLeadRepository } from '../../features/crm/infra/PrismaLeadRepository';
+import { CompanyDedupController } from '../../features/crm/presentation/CompanyDedupController';
 import { LeadController } from '../../features/crm/presentation/LeadController';
 import { LeadDedupController } from '../../features/crm/presentation/LeadDedupController';
 import { Crm360UseCases } from '../../features/crm360/application/Crm360UseCases';
@@ -242,6 +244,10 @@ export function setupDI() {
   container.register(
     'LeadDedupController',
     new LeadDedupController(new LeadDeduplicationService()),
+  );
+  container.register(
+    'CompanyDedupController',
+    new CompanyDedupController(new CompanyDeduplicationService()),
   );
   container.register('AutomationController', new AutomationController(automationUseCases));
   container.register('AnalyticsController', new AnalyticsController(analyticsUseCases));
