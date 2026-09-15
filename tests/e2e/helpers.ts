@@ -66,9 +66,9 @@ export async function signUp(
   // caminho real que um usuário (ou o próprio LoginScreen em modo de teste) percorre.
   await page.goto('/login?signup=1');
   await page.getByPlaceholder('Ex: Marcelo Nascimento').fill(resolvedName);
-  await page.getByLabel('E-mail:').fill(email);
+  await page.getByLabel('Credencial Institucional').fill(email);
   await page.getByPlaceholder('••••••••').fill(password);
-  await page.getByRole('button', { name: /Criar Nova Conta/ }).click();
+  await page.getByRole('button', { name: /Criar nova conta/ }).click();
 
   // 15s bastava numa suíte E2E curta, mas com dezenas de specs rodando em série (workers: 1) contra
   // o mesmo servidor/Postgres de teste, o signup (POST /api/auth/sign-up/email + refetch de sessão,

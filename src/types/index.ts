@@ -157,6 +157,9 @@ export interface Lead {
   amount?: number | null;
   currency?: string;
   probability?: number | null;
+  /** Probabilidade ajustada pelo Copiloto IA a partir da conversa mais recente processada —
+   * `null` quando não há snapshot ainda (nunca fabricado). Ver PrismaLeadRepository. */
+  forecastProbabilityAi?: number | null;
   expectedCloseAt?: string | null;
   customFields?: Record<string, unknown> | null;
   pipelineId?: string | null;

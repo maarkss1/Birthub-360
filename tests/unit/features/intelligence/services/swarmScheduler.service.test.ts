@@ -114,6 +114,7 @@ describe('runSwarmScheduler', () => {
       outboundDraftsQueued: 0,
       autoExecutionEligible: 0,
       skippedAlreadyPending: 0,
+      negotiatorDraftsProposed: 0,
       errors: 0,
     });
     expect(runAutonomyRole).not.toHaveBeenCalled();

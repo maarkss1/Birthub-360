@@ -2,6 +2,7 @@ import { LeadStatus, type Prisma } from '@prisma/client';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
 import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
+import { enrichmentQueue } from '../../../../lib/queue/enrichment.queue.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { BITRIX_FIELD_MAP } from '../bitrixFieldMap.js';
 import { callBitrix, getConnectionWebhookUrl, getStatusLabels } from './client.js';
@@ -322,6 +323,13 @@ export async function importSelectedBitrixLeads(
             organizationId,
             tags: ['Bitrix24'],
           },
+        });
+        // Bitrix não manda CNPJ — mesmo enfileiramento que POST /companies usa, para que a
+        // empresa importada ganhe o mesmo enriquecimento (Receita/Apollo/heurísticas) de uma
+        // criada direto no Atlas, em vez de ficar permanentemente sem dado enriquecido.
+        await enrichmentQueue?.add('enrich-company', {
+          companyId: company.id,
+          organizationId,
         });
 
         const contact = contactName

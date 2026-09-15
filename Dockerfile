@@ -57,6 +57,15 @@ COPY --from=builder /app/prisma ./prisma
 # no deploy do Railway; a imagem buildava com SUCCESS mas nunca ficava saudável em runtime).
 COPY --from=builder /app/prisma.config.ts ./
 COPY --from=builder /app/scripts ./scripts
+# Achado real (Onda AC — deploy OCI): scripts/*.ts (seed-team.ts e ~20 outros ops scripts) importam
+# de "../src/lib/..." com tsx em runtime. Sem esta cópia, qualquer script rodado dentro do
+# container final falha com ERR_MODULE_NOT_FOUND — reproduzido rodando
+# `docker exec ... npx tsx scripts/seed-team.ts` no primeiro deploy real na instância OCI: o
+# usuário administrador nunca era criado (deploy-oci.sh engole o erro com `|| true`, então o
+# deploy "tinha sucesso" com a tabela de usuários vazia). `dist/` é o bundle da aplicação em si
+# (server.cjs) e não inclui esses scripts — eles continuam rodando via tsx direto do TypeScript
+# fonte, não via o bundle.
+COPY --from=builder /app/src ./src
 
 # Create a non-root user
 RUN groupadd -g 1001 nodejs && useradd -u 1001 -g nodejs nodejs
