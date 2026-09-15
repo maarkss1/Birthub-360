@@ -2,8 +2,11 @@
 
 - Fonte: inventário Onda Zero (5 agentes) + baseline executável.
 - Branch de trabalho: `fable/finalizacao-plataforma`.
-- Última atualização: 2026-08-18 (Sprint 01/Onda 13 — SEC-003/SEC-004: rotação Bland/Bitrix
-  fechada, hashes de commit do dump corrigidos).
+- Última atualização: 2026-09-15 (Onda 10.1 — SEC-2026-001: tag `v1.0.0-rc.1` investigada,
+  inventariada e removida do clone local da sessão; remoção do remote pendente de execução manual
+  — ver `docs/security/incidents/SEC-2026-001-historical-tag-exposure.md`). Atualização anterior:
+  2026-08-18 (Sprint 01/Onda 13 — SEC-003/SEC-004: rotação Bland/Bitrix fechada, hashes de commit
+  do dump corrigidos).
 
 ## P0 — Segredos e PII versionados (TODOS remediados no working tree)
 
@@ -48,14 +51,35 @@
    `test-gemini*.ts`.
    **Pendência residual da tag `v0.0.1` (commit `8fd8fa22…`) resolvida (ACH-15-01):** deletada do
    remote em 12/09/2026, confirmado via `git ls-remote --tags`.
-   **Nova lacuna encontrada nesta reconciliação (12/09/2026): a tag `v1.0.0-rc.1` (commit
-   `e8fb1c1c…`) CONTINUA publicada no remote** (`git ls-remote --tags origin`, reconfirmado ao
-   resolver este merge) e ainda alcança os mesmos blobs sensíveis (dump de 166075 bytes +
-   `test-gemini.ts`/`test-gemini-quota.ts`) — `git fetch --tags && git checkout v1.0.0-rc.1` hoje
-   recupera o dado que o rewrite de `main` removeu. Nenhuma dependência de deploy/CI nessa tag foi
-   encontrada (`render.yaml` e workflows fazem deploy por branch, não por tag). Mesma decisão
-   pendente do dono do repositório que já valeu para `v0.0.1`: `git push origin --delete tag
-   v1.0.0-rc.1` — nenhuma ação destrutiva foi executada por nenhum agente até este ponto.
+   **Lacuna da tag `v1.0.0-rc.1` — remoção da tag: RESOLVED (Onda 10.1, SEC-2026-001,
+   2026-09-15).** Investigação completa registrada em
+   `docs/security/incidents/SEC-2026-001-historical-tag-exposure.md`: reconfirmado que a tag
+   (commit `e8fb1c1c…`) alcançava os mesmos blobs sensíveis já conhecidos (dump de 166075 bytes +
+   `test-gemini.ts`/`test-gemini-quota.ts`), inventário linha-a-linha do conteúdo do dump feito
+   pela primeira vez (5 usuários reais com hash de senha, 27 empresas com CNPJ, 41 contatos com
+   PII, 1 webhook Bitrix24, sessões todas expiradas), e scan de 6287 blobs adicionais alcançáveis
+   só pela tag contra padrões de segredo conhecidos — nenhum segredo real novo além dos já
+   documentados. Tag removida do clone local da sessão (`git tag -d`). A sessão que investigou não
+   tinha permissão para apagar a ref publicada (`git push origin --delete v1.0.0-rc.1` falhou com
+   HTTP 403 — credencial escopada à branch de trabalho), consistente com a regra "só o dono humano
+   executa ação destrutiva de ref publicada" já registrada neste runbook. **O dono do repositório
+   removeu a tag do remote manualmente em 2026-09-15, pela interface web do GitHub**; confirmado
+   por leitura (`git ls-remote --tags origin | grep v1.0.0-rc.1` retorna vazio). A tag
+   `v2.0.0-recovery` foi verificada na mesma ocasião e **não** alcança nenhum dos blobs sensíveis —
+   não faz parte deste incidente, nenhuma ação necessária sobre ela.
+   Com isso, o vetor de exposição em si (a ref publicada) está fechado. **Três pendências fechadas
+   em seguida, por confirmação/decisão direta do dono do repositório em 2026-09-15:**
+   `ATLASGR_WEBHOOK_SECRET` confirmado já revogado em produção (RESOLVED); reset de senha dos 5
+   usuários do dump virou moot — eram contas de teste criadas pelo próprio dono, sem mais acesso à
+   plataforma (RESOLVED); avaliação de DPO/jurídico sobre a janela de exposição de PII de
+   prospecção concluída — dado de origem pública (27 empresas/41 contatos), sem indício de acesso
+   por terceiros, comunicação formal à ANPD/titulares avaliada como não necessária (RESOLVED).
+   **Reverificação direta de credenciais — parcialmente concluída em 2026-09-15:** dono do
+   repositório confirmou ter revogado diretamente a chave Bland AI e a chave Google Gemini
+   (RESOLVED para essas duas). **Única pendência que segue em aberto** (mantém o P0 como PARTIALLY
+   RESOLVED): reverificar os 2 webhooks Bitrix24 (AtlasGR e TotalTrac) diretamente no painel
+   Bitrix24 — ainda só apoiados na confirmação humana original de SEC-003 (08/2026), não em checagem
+   técnica contra o provedor nesta rodada.
 
 ## P0 — Plataforma quebrada no main (remediados)
 

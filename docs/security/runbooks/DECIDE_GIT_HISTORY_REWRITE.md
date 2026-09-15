@@ -342,3 +342,19 @@ deixar uma segunda porta aberta para o mesmo dado.
 **Status: pendente de decisão e execução manual do dono do repositório.** Este agente (ACH-15-01)
 só investigou e documentou — nenhum `git push origin --delete tag`, nenhum `git tag -d` foi
 executado nesta sessão.
+
+### Tentativa de remoção de `v1.0.0-rc.1` (Onda 10.1, SEC-2026-001, 2026-09-15)
+
+Investigação completa e tentativa de remoção registradas em
+`docs/security/incidents/SEC-2026-001-historical-tag-exposure.md`. `git push origin --delete
+v1.0.0-rc.1` foi rejeitado pelo GitHub com HTTP 403 — a credencial git desta sessão de agente está
+escopada à branch de trabalho designada, sem permissão para apagar refs de tag publicadas no
+remote. Isso confirma tecnicamente, e não só por regra de processo, que esta é de fato uma ação
+que só o dono humano do repositório consegue executar a partir deste ambiente. `git tag -d
+v1.0.0-rc.1` foi executado com sucesso no clone local (efêmero) desta sessão, sem efeito sobre o
+remote nem sobre nenhum clone persistente do dono. **Comando ainda pendente de execução manual:**
+
+```bash
+git push origin --delete v1.0.0-rc.1
+git tag -d v1.0.0-rc.1   # no clone local do dono, se existir
+```

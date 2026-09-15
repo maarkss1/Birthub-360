@@ -20,6 +20,7 @@ import {
   pingRedis,
 } from './src/lib/queue/redis.js';
 import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from './src/lib/queue/metrics.js';
+import { warnUnconfiguredSecondaryIntegrations } from './src/bootstrap/integrationsHealthCheck.js';
 
 import { createLeadsWorker } from './src/lib/queue/index.js';
 import {
@@ -131,6 +132,11 @@ async function startWorkerProcess() {
   if (!queuesEnabled) {
     throw new Error('Worker dedicado requer ENABLE_QUEUES=true e REDIS_URL configurada.');
   }
+
+  // Visibilidade (não bloqueante) de integrações secundárias sem credencial configurada — é aqui,
+  // não em server.ts, que os agentes de IA (GROQ/OPENAI) e o executor de e-mail/storage realmente
+  // rodam. Ver src/bootstrap/integrationsHealthCheck.ts.
+  warnUnconfiguredSecondaryIntegrations();
 
   await withTimeout(pingRedis(connection), STARTUP_REDIS_TIMEOUT_MS);
   await prisma.$queryRaw`SELECT 1`;
