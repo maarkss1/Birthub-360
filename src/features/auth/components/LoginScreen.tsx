@@ -263,7 +263,7 @@ export function LoginScreen() {
           </div>
 
           {/* Relógio e calendário ao vivo */}
-          <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-bold text-slate-500 lg:justify-start">
+          <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-bold text-slate-600 lg:justify-start">
             <span className="inline-flex items-center gap-1.5">
               <CalendarDays size={14} strokeWidth={2.5} aria-hidden="true" />
               {dateLabel}
@@ -311,8 +311,7 @@ export function LoginScreen() {
                 <button
                   type="button"
                   onClick={backToSignIn}
-                  className="cursor-pointer text-sm font-bold transition-colors hover:underline"
-                  style={{ color: BRAND.colors.brand }}
+                  className="cursor-pointer text-sm font-bold text-brand-ink transition-colors hover:underline"
                 >
                   Voltar para o login
                 </button>
@@ -341,8 +340,7 @@ export function LoginScreen() {
                   <button
                     type="button"
                     onClick={backToSignIn}
-                    className="cursor-pointer text-sm font-bold transition-colors hover:underline"
-                    style={{ color: BRAND.colors.brand }}
+                    className="cursor-pointer text-sm font-bold text-brand-ink transition-colors hover:underline"
                   >
                     Voltar para o login
                   </button>
@@ -369,7 +367,7 @@ export function LoginScreen() {
                   <div>
                     <label
                       htmlFor="login-forgot-email"
-                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                     >
                       Credencial Institucional
                     </label>
@@ -419,8 +417,7 @@ export function LoginScreen() {
                     <button
                       type="button"
                       onClick={backToSignIn}
-                      className="cursor-pointer text-sm font-bold transition-colors hover:underline"
-                      style={{ color: BRAND.colors.brand }}
+                      className="cursor-pointer text-sm font-bold text-brand-ink transition-colors hover:underline"
                     >
                       Voltar para o login
                     </button>
@@ -445,7 +442,7 @@ export function LoginScreen() {
                   <div>
                     <label
                       htmlFor="login-name"
-                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                     >
                       Seu Nome Completo
                     </label>
@@ -464,7 +461,7 @@ export function LoginScreen() {
                 <div>
                   <label
                     htmlFor="login-email"
-                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
                     Credencial Institucional
                   </label>
@@ -487,7 +484,7 @@ export function LoginScreen() {
                 <div>
                   <label
                     htmlFor="login-password"
-                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
                     Chave de Segurança
                   </label>
@@ -529,8 +526,7 @@ export function LoginScreen() {
                         setIsForgotPassword(true);
                         setError('');
                       }}
-                      className="cursor-pointer text-xs font-bold transition-colors hover:underline"
-                      style={{ color: BRAND.colors.brand }}
+                      className="cursor-pointer text-xs font-bold text-brand-ink transition-colors hover:underline"
                     >
                       Protocolo de recuperação?
                     </button>
@@ -563,7 +559,7 @@ export function LoginScreen() {
             )}
           </motion.div>
 
-          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-600">
             <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
             Protegido por Criptografia Quântica
           </div>
@@ -575,7 +571,7 @@ export function LoginScreen() {
             <div className="mb-4 flex items-center gap-2">
               <h2
                 id="login-features-heading"
-                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-500"
+                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-600"
               >
                 O que você vai encontrar
               </h2>
