@@ -24,6 +24,11 @@ import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useActiveRecord } from '../../../hooks/useActiveRecord';
+// Central unificada de conversas (item #18) — mescla lead.timeline com WhatsApp/e-mail/ligações.
+import {
+  type RawTimelineEvent,
+  useUnifiedLeadConversation,
+} from '../hooks/useUnifiedLeadConversation';
 import { api } from '../../../lib/api';
 import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap';
 import { toast } from '../../../lib/toast';
@@ -356,13 +361,18 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
   // GET /api/leads/:id já inclui `timeline` (TimelineEvent[], PrismaLeadRepository.ts:99) desde
   // sempre — a UI nunca chegou a renderizar esse dado, só as notas manuais abaixo. Nenhuma rota,
   // migration ou campo novo foi necessário para esta seção.
-  const timelineItems: TimelineItem[] = (lead?.timeline ?? []).map((event) => ({
+  const nativeTimelineEvents: RawTimelineEvent[] = (lead?.timeline ?? []).map((event) => ({
     id: event.id,
     title: TIMELINE_TYPE_LABELS[event.type] ?? event.type,
     description: event.description,
-    timestamp: new Date(event.createdAt).toLocaleString('pt-BR'),
+    createdAt: event.createdAt,
     type: TIMELINE_ITEM_TYPE[event.type],
   }));
+  // Central unificada de conversas (item #18) — mescla os eventos nativos acima com WhatsApp,
+  // e-mail e ligações de voz do mesmo lead num único feed cronológico. Ver
+  // `useUnifiedLeadConversation.ts` — três buscas independentes, nunca bloqueiam a timeline
+  // nativa se uma integração falhar.
+  const { items: timelineItems } = useUnifiedLeadConversation(lead?.id ?? '', nativeTimelineEvents);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -741,6 +751,9 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
               <section className="space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-ink-2 flex items-center gap-2">
                   <Clock className="w-4 h-4 text-brand" /> Linha do Tempo
+                  <span className="text-[10px] font-normal normal-case text-ink-2">
+                    · CRM, WhatsApp, e-mail e ligações num só feed
+                  </span>
                 </h3>
                 <Timeline
                   items={timelineItems}

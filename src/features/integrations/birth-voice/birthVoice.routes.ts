@@ -225,9 +225,10 @@ router.get('/calls', async (req: Request, res: Response, next: NextFunction) => 
     const { organizationId } = (req as AuthRequest).user;
     const take = Math.min(Math.max(Number(req.query.limit) || 25, 1), 100);
     const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+    const leadId = typeof req.query.leadId === 'string' ? req.query.leadId : undefined;
 
     const calls = await prisma.voiceCallLog.findMany({
-      where: { organizationId },
+      where: { organizationId, ...(leadId ? { leadId } : {}) },
       orderBy: { createdAt: 'desc' },
       take: take + 1,
       ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),

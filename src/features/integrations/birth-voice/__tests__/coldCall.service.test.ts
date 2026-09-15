@@ -26,6 +26,12 @@ vi.mock('../../../../lib/prisma.js', () => ({
     activity: { groupBy: vi.fn() },
     coldCallRun: { create: vi.fn() },
     organization: { findMany: vi.fn() },
+    // Item #16 (discador preditivo) — coldCall.service.ts busca histórico de VoiceCallLog (da
+    // organização e por lead) pra pontuar a ordem de discagem. Default vazio no beforeEach abaixo:
+    // sem histórico nenhum, o score cai pra 0 em todas as horas e a ordem original (mais antigo
+    // primeiro) é preservada — os testes de comportamento de discagem continuam válidos sem
+    // precisar simular histórico de ligação em cada um.
+    voiceCallLog: { findMany: vi.fn() },
   },
 }));
 
@@ -55,6 +61,7 @@ const leadMock = prisma.lead as unknown as {
 };
 const activityMock = prisma.activity as unknown as { groupBy: ReturnType<typeof vi.fn> };
 const coldCallRunMock = prisma.coldCallRun as unknown as { create: ReturnType<typeof vi.fn> };
+const voiceCallLogMock = prisma.voiceCallLog as unknown as { findMany: ReturnType<typeof vi.fn> };
 const mockCallLead = vi.mocked(callLead);
 
 // Segunda-feira, 09:00 em São Paulo — dentro da janela padrão.
@@ -71,6 +78,7 @@ beforeEach(() => {
   leadMock.update.mockResolvedValue({});
   activityMock.groupBy.mockResolvedValue([]);
   coldCallRunMock.create.mockResolvedValue({});
+  voiceCallLogMock.findMany.mockResolvedValue([]);
   mockCallLead.mockResolvedValue({ sessionId: 's', callSid: 'CA', status: 'queued' });
 });
 
