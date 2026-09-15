@@ -369,7 +369,7 @@ export function LoginScreen() {
                   <div>
                     <label
                       htmlFor="login-forgot-email"
-                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                     >
                       Credencial Institucional
                     </label>
@@ -445,7 +445,7 @@ export function LoginScreen() {
                   <div>
                     <label
                       htmlFor="login-name"
-                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                     >
                       Seu Nome Completo
                     </label>
@@ -464,7 +464,7 @@ export function LoginScreen() {
                 <div>
                   <label
                     htmlFor="login-email"
-                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
                     Credencial Institucional
                   </label>
@@ -487,7 +487,7 @@ export function LoginScreen() {
                 <div>
                   <label
                     htmlFor="login-password"
-                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
                     Chave de Segurança
                   </label>
@@ -575,7 +575,7 @@ export function LoginScreen() {
             <div className="mb-4 flex items-center gap-2">
               <h2
                 id="login-features-heading"
-                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-500"
+                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-600"
               >
                 O que você vai encontrar
               </h2>
