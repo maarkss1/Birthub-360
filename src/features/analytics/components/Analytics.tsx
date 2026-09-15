@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BarChart, LineChart } from '../../../components/charts';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
+import { PageHeader } from '../../../components/ui/PageHeader';
 import {
   type AnalyticsDashboard,
   analyticsApi,
@@ -151,65 +152,60 @@ export function Analytics() {
   }));
 
   return (
-    <div className="flex-1 overflow-y-auto bg-transparent p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="flex-1 overflow-y-auto bg-transparent">
+      <div className="bh-page bh-page-stack max-w-7xl">
         {/* Cabeçalho + filtro único acima de tudo que ele afeta */}
-        <div className="flex items-center justify-between gap-4 border-b border-line pb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand/15 text-brand">
-              <BarChart3 className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-ink">Analytics</h1>
-              <p className="text-sm text-ink-2">Desempenho comercial da operação</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => window.print()}
-              title="Exportar para PDF"
-              className="hidden md:flex gap-2"
-            >
-              <Download className="w-4 h-4" />
-              <span>Exportar PDF</span>
-            </Button>
-            {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
+        <PageHeader
+          title="Analytics"
+          subtitle="Situação, tendência e risco da operação comercial"
+          icon={<BarChart3 className="h-5 w-5" />}
+          actions={
+            <>
+              <Button
+                variant="outline"
+                onClick={() => window.print()}
+                title="Exportar para PDF"
+                className="hidden md:flex gap-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Exportar PDF</span>
+              </Button>
+              {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não traria ganho
                 real de acessibilidade aqui, só estilo. */}
-            {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
-            <div
-              className="flex items-center rounded-xl border border-line overflow-hidden"
-              role="group"
-              aria-label="Período"
-            >
-              {PERIOD_OPTIONS.map((option) => (
-                <button
-                  type="button"
-                  key={option}
-                  onClick={() => setMonths(option)}
-                  aria-pressed={months === option}
-                  className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
-                    months === option
-                      ? 'bg-brand-active text-on-brand'
-                      : 'text-ink-2 hover:text-ink hover:bg-surface-2'
-                  }`}
-                >
-                  {option}m
-                </button>
-              ))}
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => void load(months)}
-              disabled={loading}
-              aria-label="Atualizar métricas"
-              title="Atualizar métricas"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </Button>
-          </div>
-        </div>
+              {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
+              <div
+                className="flex items-center rounded-xl border border-line overflow-hidden"
+                role="group"
+                aria-label="Período"
+              >
+                {PERIOD_OPTIONS.map((option) => (
+                  <button
+                    type="button"
+                    key={option}
+                    onClick={() => setMonths(option)}
+                    aria-pressed={months === option}
+                    className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      months === option
+                        ? 'bg-brand-active text-on-brand'
+                        : 'text-ink-2 hover:text-ink hover:bg-surface-2'
+                    }`}
+                  >
+                    {option}m
+                  </button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => void load(months)}
+                disabled={loading}
+                aria-label="Atualizar métricas"
+                title="Atualizar métricas"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              </Button>
+            </>
+          }
+        />
 
         {error && (
           <Card padding="lg" className="text-center">
