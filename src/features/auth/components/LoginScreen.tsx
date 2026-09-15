@@ -263,7 +263,7 @@ export function LoginScreen() {
           </div>
 
           {/* Relógio e calendário ao vivo */}
-          <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-bold text-slate-500 lg:justify-start">
+          <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-bold text-slate-600 lg:justify-start">
             <span className="inline-flex items-center gap-1.5">
               <CalendarDays size={14} strokeWidth={2.5} aria-hidden="true" />
               {dateLabel}
@@ -563,7 +563,7 @@ export function LoginScreen() {
             )}
           </motion.div>
 
-          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-600">
             <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
             Protegido por Criptografia Quântica
           </div>

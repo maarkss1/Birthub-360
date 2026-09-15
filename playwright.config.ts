@@ -37,7 +37,7 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
+  webServer: process.env.IGNORE_WEBSERVER ? undefined : {
     // `npm run preview` (vite preview) servia só o SPA estático, sem `/api` — nenhum teste que
     // dependesse de login real podia funcionar. `start:e2e` sobe o servidor Express de verdade
     // (auth, Prisma/RLS, todas as rotas), igual ao que roda em produção.
