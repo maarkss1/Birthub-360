@@ -1,0 +1,14 @@
+-- Fecha o drift documentado (mas nunca corrigido) em duas migrations anteriores
+-- (20260908020000_multi_cargo_agent_governance_foundation, 20260909131444_saved_view): o schema
+-- Prisma já declarava `AutomationTrigger.Lead_Estagnado` (@map("Lead estagnado")), mas o tipo
+-- ENUM real no Postgres (criado em 20260731200000_notifications_automations_ai_cost) só tinha os
+-- 3 valores originais — o valor nunca foi adicionado ao banco.
+--
+-- Write path real e ativo que quebra hoje sem esta migration: stagnation-scanner.service.ts lê e
+-- grava `trigger: 'Lead estagnado'` — falha com "invalid input value for enum AutomationTrigger"
+-- sempre que esse gatilho de automação roda.
+--
+-- ALTER TYPE ... ADD VALUE é permitido dentro de transação a partir do PostgreSQL 12 (aqui roda
+-- pg16/pg17), desde que o valor novo não seja *usado* na mesma transação — esta migração só o
+-- adiciona. IF NOT EXISTS torna a migração reexecutável sem quebrar em bancos que já a receberam.
+ALTER TYPE "AutomationTrigger" ADD VALUE IF NOT EXISTS 'Lead estagnado';
