@@ -72,10 +72,14 @@ function KpiCard({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-2">{label}</p>
-          <p className="mt-2 text-2xl font-black tracking-tight text-ink [font-variant-numeric:tabular-nums]">{value}</p>
+          <p className="mt-2 text-2xl font-black tracking-tight text-ink [font-variant-numeric:tabular-nums]">
+            {value}
+          </p>
           <p className="mt-1 text-xs text-ink-2">{detail}</p>
         </div>
-        <span className={`rounded-xl border p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${styles[intent]}`}>
+        <span
+          className={`rounded-xl border p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${styles[intent]}`}
+        >
           <Icon className="h-5 w-5" />
         </span>
       </div>

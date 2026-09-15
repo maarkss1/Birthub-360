@@ -8,9 +8,11 @@ import {
   Building2,
   CalendarDays,
   Clock,
+  LayoutGrid,
   ListChecks,
   Loader2,
   Lock,
+  type LucideIcon,
   Mail,
   ShieldCheck,
   Sparkles,
@@ -22,11 +24,12 @@ import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
-import { fadeInUp, useMagnetic, useTilt } from '../../../lib/motion';
+import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../../../lib/motion';
 
 // Cor de cada pilar (brand.ts `pillars`: Inteligência, Conexão, Execução) — os três feixes da
-// órbita de 5 cores usados neste fluxo. Não é decoração: cada feature carrega a cor do pilar que
-// ela representa. Fonte única de verdade para o bloco "O que você vai encontrar" abaixo do form.
+// órbita de 5 cores usados neste fluxo (dourado/azul/íris; vermelho e rosa ficam para o halo
+// ambiente e o botão primário, ver mais abaixo). Não é decoração: cada feature carrega a cor do
+// pilar que ela representa, mesma ordem em ConnectingCircles logo abaixo.
 const FEATURES = [
   {
     icon: Building2,
@@ -44,6 +47,95 @@ const FEATURES = [
     text: 'Execução em Vendas: Dojo de IA e aceleração de receita',
   },
 ] as const;
+
+// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam FEATURES acima (mesma
+// cor de pilar); o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar
+// (src/components/layout/Sidebar.tsx), literalmente o destino pra onde os três primeiros
+// "círculos" se conectam.
+const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'orbit-blue' | 'iris' }[] = [
+  { icon: Building2, accent: 'brand' },
+  { icon: ListChecks, accent: 'orbit-blue' },
+  { icon: Sparkles, accent: 'iris' },
+  { icon: LayoutGrid, accent: 'brand' },
+];
+
+interface ConnectingCirclesProps {
+  reduceMotion: boolean;
+}
+
+// Abertura da tela de entrada do produto: os mesmos "círculos" do Hub Executivo (badges
+// circulares, ver DestinationCard em src/features/hub/components/HubScreen.tsx) se conectando —
+// pedido explícito do usuário. Não é decoração gratuita (regra #6 da constituição): comunica
+// literalmente que este login é a porta de entrada para os destinos do Hub, terminando no mesmo
+// ícone (LayoutGrid) usado no atalho real do Hub na Sidebar. Toca uma vez na montagem (sem
+// repeat), e com prefers-reduced-motion a versão final já nasce montada, sem desenhar as linhas.
+function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
+  const nodeCount = CONNECT_ICONS.length;
+  const spacing = 96;
+  const radius = 22;
+  const width = spacing * (nodeCount - 1) + radius * 2 + 8;
+  const height = radius * 2 + 8;
+  const cy = height / 2;
+  const cx = (index: number) => radius + 4 + index * spacing;
+
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      width={width}
+      height={height}
+      className="mx-auto h-auto w-full max-w-sm"
+      aria-hidden="true"
+    >
+      {CONNECT_ICONS.slice(0, -1).map((node, index) => (
+        <motion.line
+          key={`line-${cx(index)}-${cx(index + 1)}`}
+          x1={cx(index)}
+          y1={cy}
+          x2={cx(index + 1)}
+          y2={cy}
+          style={{ stroke: `var(--${node.accent})` }}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeOpacity={0.4}
+          initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 0.4 }}
+          transition={{ duration: 0.5, ease: EASE_PREMIUM, delay: 0.25 + index * 0.28 }}
+        />
+      ))}
+      {CONNECT_ICONS.map(({ icon: Icon, accent }, index) => {
+        const isHub = index === nodeCount - 1;
+        return (
+          <motion.g
+            key={`node-${cx(index)}`}
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.4 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...SPRING_SOFT, delay: index * 0.28 }}
+            style={{ transformOrigin: `${cx(index)}px ${cy}px` }}
+          >
+            <circle
+              cx={cx(index)}
+              cy={cy}
+              r={radius}
+              style={{
+                fill: isHub ? `var(--${accent})` : 'var(--surface)',
+                stroke: `var(--${accent})`,
+              }}
+              strokeWidth={1.5}
+            />
+            <foreignObject x={cx(index) - 9} y={cy - 9} width={18} height={18}>
+              <div className="flex h-full w-full items-center justify-center">
+                <Icon
+                  className="h-[18px] w-[18px]"
+                  style={{ color: isHub ? 'var(--on-brand)' : `var(--${accent})` }}
+                />
+              </div>
+            </foreignObject>
+          </motion.g>
+        );
+      })}
+    </svg>
+  );
+}
 
 export function LoginScreen() {
   // Esta tela agora é a porta de entrada do produto (rota "/", além de "/login" — ver App.tsx):
@@ -242,12 +334,7 @@ export function LoginScreen() {
           <BrandEmblemBadge className="h-52 w-52" title="Birth Hub 360°" />
           {/* Não é <h1>: o título de página real é "Acesso Executivo", no painel do formulário —
               dois <h1> na mesma tela quebraria a hierarquia de heading (a11y, seção 10). */}
-          <p
-            className="mt-8 font-display text-4xl font-extrabold tracking-tight"
-            
-          >
-            Birth Hub 360°
-          </p>
+          <p className="mt-8 font-display text-4xl font-extrabold tracking-tight">Birth Hub 360°</p>
         </motion.div>
       </aside>
 
@@ -275,6 +362,10 @@ export function LoginScreen() {
             </span>
           </div>
 
+          <div className="mb-6">
+            <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
+          </div>
+
           <h1 className="text-center font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl lg:text-left">
             Acesso Executivo
           </h1>
@@ -298,11 +389,7 @@ export function LoginScreen() {
                   }}
                   role="status"
                 >
-                  <Mail
-                    size={16}
-                    className="mt-0.5 shrink-0"
-                    
-                  />
+                  <Mail size={16} className="mt-0.5 shrink-0" />
                   <p>
                     Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele para
                     confirmar que este e-mail é seu e ativar sua conta.
@@ -312,7 +399,6 @@ export function LoginScreen() {
                   type="button"
                   onClick={backToSignIn}
                   className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                  
                 >
                   Voltar para o login
                 </button>
@@ -328,11 +414,7 @@ export function LoginScreen() {
                     }}
                     role="status"
                   >
-                    <Mail
-                      size={16}
-                      className="mt-0.5 shrink-0"
-                      
-                    />
+                    <Mail size={16} className="mt-0.5 shrink-0" />
                     <p>
                       Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail com
                       um link para redefinir a senha. O link expira em 1 hora.
@@ -342,7 +424,6 @@ export function LoginScreen() {
                     type="button"
                     onClick={backToSignIn}
                     className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                    
                   >
                     Voltar para o login
                   </button>
@@ -420,7 +501,6 @@ export function LoginScreen() {
                       type="button"
                       onClick={backToSignIn}
                       className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                      
                     >
                       Voltar para o login
                     </button>
@@ -530,7 +610,6 @@ export function LoginScreen() {
                         setError('');
                       }}
                       className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                      
                     >
                       Protocolo de recuperação?
                     </button>
@@ -590,10 +669,7 @@ export function LoginScreen() {
                   key={text}
                   className="flex flex-col items-start gap-3 rounded-card border border-slate-200 bg-white p-5"
                 >
-                  <span
-                    className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50"
-                    
-                  >
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="text-sm leading-relaxed text-slate-600">{text}</span>

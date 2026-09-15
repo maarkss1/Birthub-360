@@ -112,6 +112,10 @@
   --bg: #fff4f9;
   --surface: #fff1f7;
   --surface-2: #eef4ff;
+  --surface-subtle: #f8f5fb;
+  --surface-elevated: #ffffff;
+  --surface-interactive: #f2f5ff;
+  --overlay: rgba(6, 26, 58, 0.52);
   --ink: #174a9c;
   --ink-2: #6d28d9;
   --line: rgba(124, 58, 237, 0.18);
@@ -178,7 +182,10 @@
      `.text-critical` do Sidebar contra o novo `--surface` claro #FFF1F7 caía pra 4.38:1, abaixo do
      mínimo AA). 10% preto (mesma fórmula color-mix já usada no resto do arquivo) recupera margem:
      5.21:1 contra a nova superfície clara — sem precisar reabrir os 2 casos originais que já
-     passavam (8.7:1 cru contra --surface antiga, agora ~7.9:1, ainda com folga). */
+     passavam (8.7:1 cru contra --surface antiga, agora ~7.9:1, ainda com folga). Conferido de novo
+     09/2026 (PR #512, mesmo achado do lado escuro abaixo) contra o novo `--surface-elevated` claro
+     #FFFFFF: 5.71:1 calculado — mais claro que `--surface`, então contraste só melhora; nenhum
+     ajuste necessário no claro, só no `.dark` abaixo. */
   --critical: color-mix(in srgb, #d03b3b 90%, black);
   /* --critical acima já foi calibrado pra passar 4.5:1 cru contra --surface sólida (comentário
      acima) — mas isso não cobre o padrão de badge "soft" (bg-critical/15 text-critical, usado em
@@ -244,6 +251,10 @@
   --bg: #061a3a;
   --surface: #111b49;
   --surface-2: #18265b;
+  --surface-subtle: #0c1740;
+  --surface-elevated: #1b2b64;
+  --surface-interactive: #20316b;
+  --overlay: rgba(2, 8, 23, 0.76);
   --ink: var(--brand-2);
   --ink-2: #79b2ff;
   --line: rgba(240, 215, 123, 0.16);
@@ -258,25 +269,42 @@
   --shadow-nav-active-value: 0 12px 30px -15px color-mix(in srgb, var(--brand) 58%, black);
   /* Recalibrado 09/2026 (mesmo achado do :root acima, lado escuro: axe-core mediu 4.37:1 contra o
      novo --surface #111B49 — antes passava 4.89:1 contra o Obsidian mais escuro que saiu). 15%
-     branco recupera margem: 5.15:1 contra a nova superfície escura. */
-  --critical: color-mix(in srgb, #ef4444 85%, white);
+     branco recupera margem: 5.17:1 contra a nova superfície escura (calculado, luminância relativa
+     WCAG: #f16060 sobre #111B49). */
+  /* Recalibrado de novo 09/2026 (PR #512, achado real do axe-core: `.text-critical` do Sidebar/
+     "Sair" caía pra ~4.19:1 calculado contra o novo `--surface-elevated` #1B2B64 introduzido nesta
+     mesma PR para Card/Table/Sidebar/AppTopbar/Button-outline — abaixo do mínimo AA, porque a
+     calibração de 15% branco acima só tinha sido verificada contra `--surface`/`--surface-2`, não
+     contra o novo `--surface-elevated`, mais claro que os dois). `--surface-elevated` escura
+     (#1B2B64, luminância ~0.029) é a superfície mais clara das três que `.text-critical` pode
+     herdar como fundo no escuro — logo o pior caso — então a calibração usa ela como alvo. 25%
+     branco (em vez de 15%) recupera margem: 4.76:1 contra `--surface-elevated` escura, 5.87:1
+     contra `--surface` escura, 5.11:1 contra `--surface-2` escura (todos calculados via luminância
+     relativa WCAG) — sem regressão nos dois casos que já passavam, e sem escurecer (que pioraria
+     contra fundo escuro, sentido errado). Confirmado também num harness de navegador real
+     reproduzindo a composição exata do Sidebar (`bg-surface-elevated/96` + `backdrop-blur-xl`
+     sobre `--bg` escuro): 4.236:1 antes do fix (reprovava), 4.814:1 depois — ambos medidos via
+     `getComputedStyle` + fórmula de luminância relativa do WCAG, não estimados. */
+  --critical: color-mix(in srgb, #ef4444 75%, white);
   /* --critical claro escurece pro badge soft (ver comentário no :root); no escuro precisa do
      sentido oposto — clarear em direção ao branco — porque #ef4444 puro sobre a mistura escura
      (bg-critical/15 sobre --surface-2 escura) mede só 3.93:1. 20% de --critical + 80% de branco
-     mede 4.93:1 contra --surface-2 e 5.29:1 contra --surface, com folga sobre o mínimo AA. Achado
-     posterior (harness de navegador real, Canvas2D + color-mix computado + luminância relativa
-     WCAG, não estimado): DealsGrid.tsx/CompareBar.tsx tinham um `dark:text-critical` redundante e
-     ERRADO no badge "Perdido"/Δ negativo (`bg-critical/15 text-critical-active dark:text-critical`)
-     — plain `--critical` no escuro mede só 3.85:1 contra o composto real (bg-critical/15 sobre
-     --surface-2 escura), abaixo de AA. O padrão certo pra esse composto já era este token: plain
-     `text-critical-active` (sem override de tema) mede 9.80:1 no escuro e 8.65:1 no claro contra o
-     mesmo composto — mesmo padrão já usado sem override por BentoMetric.tsx/BentoInsight.tsx.
-     `dark:text-critical` presumia (por analogia com --ok-active/--warn-active, onde a versão
-     "-active" no escuro é literalmente igual à crua) que --critical-active no escuro também seria
-     igual a --critical cru — não é: são cores diferentes de propósito, porque --critical sozinho
-     nunca foi calibrado pra este composto translúcido, só pra texto sólido contra --surface/
-     --surface-2 (ver comentário de --critical no :root/`.dark` acima). Removido o override; ver
-     `.claude/PILOTS.md`. */
+     mede 4.93:1 contra --surface-2 e 5.29:1 contra --surface, com folga sobre o mínimo AA. Depois
+     do recalibre de --critical acima (75/25), --critical-active herda automaticamente (deriva de
+     var(--critical)) e sobe pra ~10.95:1 contra --surface-elevated / ~11.76:1 contra --surface-2 /
+     ~13.52:1 contra --surface — só ganha margem. Achado posterior (harness de navegador real,
+     Canvas2D + color-mix computado + luminância relativa WCAG, não estimado): DealsGrid.tsx/
+     CompareBar.tsx tinham um `dark:text-critical` redundante e ERRADO no badge "Perdido"/Δ
+     negativo (`bg-critical/15 text-critical-active dark:text-critical`) — plain `--critical` no
+     escuro mede só 3.85:1 contra o composto real (bg-critical/15 sobre --surface-2 escura), abaixo
+     de AA. O padrão certo pra esse composto já era este token: plain `text-critical-active` (sem
+     override de tema) mede 9.80:1 no escuro e 8.65:1 no claro contra o mesmo composto — mesmo
+     padrão já usado sem override por BentoMetric.tsx/BentoInsight.tsx. `dark:text-critical`
+     presumia (por analogia com --ok-active/--warn-active, onde a versão "-active" no escuro é
+     literalmente igual à crua) que --critical-active no escuro também seria igual a --critical
+     cru — não é: são cores diferentes de propósito, porque --critical sozinho nunca foi calibrado
+     pra este composto translúcido, só pra texto sólido contra --surface/--surface-2. Removido o
+     override; ver `.claude/PILOTS.md`. */
   --critical-active: color-mix(in srgb, var(--critical) 20%, white);
   /* --color-ok cru já passa 4.5:1 contra a superfície escura — ver comentário de --ok-active
      no :root acima. */
@@ -368,6 +396,10 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-interactive: var(--surface-interactive);
+  --color-overlay: var(--overlay);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-line: var(--line);
@@ -478,6 +510,7 @@
   --radius-card: 12px;
   --radius-card-lg: 16px;
   --radius-nav-item: var(--radius-nav-item-value);
+  --radius-control: 10px;
 
   /* Escala de tipografia responsiva (H1-H6), única fonte de verdade — antes só H1-H3 existiam,
      hardcoded direto no seletor de elemento em @layer base (débito documentado, à época, em
@@ -681,13 +714,8 @@
   button,
   a,
   [role="button"] {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  button:active,
-  a:active,
-  [role="button"]:active {
-    transform: scale(0.97);
+    transition-duration: 180ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* Baseline de foco visível — rede de segurança para elementos interativos que não definem seu
@@ -696,6 +724,11 @@
   :focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--brand) 32%, transparent);
+    color: var(--ink);
   }
 
   /* Clean Premium Glassmorphism & Elevation utilities.
@@ -832,6 +865,45 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--brand);
+  }
+}
+
+@layer components {
+  .bh-page {
+    width: 100%;
+    max-width: 92rem;
+    margin-inline: auto;
+    padding: clamp(1rem, 2vw, 2rem);
+  }
+
+  .bh-page-stack {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 1.5vw, 1.5rem);
+  }
+
+  .bh-section {
+    border-top: 1px solid var(--line);
+    padding-top: 1rem;
+  }
+
+  .bh-surface-elevated {
+    background: var(--surface-elevated);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+
+  .bh-metric {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.025em;
+  }
+
+  .bh-label {
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    font-weight: 650;
+    letter-spacing: 0.055em;
   }
 }
 

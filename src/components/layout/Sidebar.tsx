@@ -226,7 +226,7 @@ export function Sidebar({
           isActive
             ? 'border-brand/20 bg-brand-active text-on-brand shadow-[0_10px_20px_-15px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.16)]'
             : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
-        } ${isCollapsed ? 'md:px-0 md:justify-center' : ''}`}
+        } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         {isActive && (
           <span
@@ -235,7 +235,7 @@ export function Sidebar({
           />
         )}
         <span
-          className={`relative z-10 flex items-center ${isCollapsed ? 'md:justify-center' : 'gap-2'}`}
+          className={`relative z-10 flex items-center ${isCollapsed ? 'lg:justify-center' : 'gap-2'}`}
         >
           <span
             className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border transition-[transform,background-color,border-color] duration-200 group-hover:scale-105 ${
@@ -246,7 +246,7 @@ export function Sidebar({
           >
             <Icon size={15} aria-hidden="true" />
           </span>
-          <span className={`truncate ${isCollapsed ? 'md:hidden' : ''}`}>{meta.label}</span>
+          <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''}`}>{meta.label}</span>
         </span>
       </button>
     );
@@ -254,8 +254,8 @@ export function Sidebar({
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex h-full w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-line bg-surface/96 shadow-[18px_0_48px_-36px_rgba(0,0,0,0.9),inset_-1px_0_0_rgba(255,255,255,0.025)] backdrop-blur-xl transition-[width,transform] duration-200 md:static md:translate-x-0 ${
-        isCollapsed ? 'md:w-16' : 'md:w-[248px]'
+      className={`fixed inset-y-0 left-0 z-40 flex h-full w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-line bg-surface-elevated/96 shadow-nav backdrop-blur-xl transition-[width,transform] duration-200 lg:static lg:translate-x-0 ${
+        isCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-[16.5rem]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       aria-label="Navegação principal por jornada comercial"
     >
@@ -275,7 +275,7 @@ export function Sidebar({
               <button
                 type="button"
                 onClick={toggleCollapse}
-                className="hidden md:grid h-6 w-6 place-items-center rounded-lg border border-line text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+                className="hidden h-7 w-7 place-items-center rounded-control border border-line text-ink-2 transition-colors hover:bg-surface-interactive hover:text-ink lg:grid"
                 title="Recolher menu lateral"
                 aria-label="Recolher menu lateral"
               >
@@ -286,7 +286,7 @@ export function Sidebar({
         </div>
 
         {isCollapsed && (
-          <div className="hidden md:flex justify-center mb-2">
+          <div className="mb-2 hidden justify-center lg:flex">
             <button
               type="button"
               onClick={toggleCollapse}
@@ -307,7 +307,7 @@ export function Sidebar({
             onCloseMobile?.();
           }}
           className={`group relative mt-2 flex w-full cursor-pointer items-center gap-2.5 rounded-[var(--radius-nav-item)] border border-line bg-surface-2/60 px-3 py-2 text-left transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/25 hover:bg-brand/8 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
-            isCollapsed ? 'md:justify-center md:px-1.5' : ''
+            isCollapsed ? 'lg:justify-center lg:px-1.5' : ''
           }`}
           title="Ir para o Hub Executivo"
           aria-label="Ir para o Hub Executivo"
@@ -316,7 +316,7 @@ export function Sidebar({
             <LayoutGrid size={13} aria-hidden="true" />
           </span>
           <span
-            className={`text-xs font-bold text-ink-2 group-hover:text-ink ${isCollapsed ? 'md:hidden' : ''}`}
+            className={`text-xs font-bold text-ink-2 group-hover:text-ink ${isCollapsed ? 'lg:hidden' : ''}`}
           >
             Hub Executivo
           </span>
@@ -329,7 +329,7 @@ export function Sidebar({
       >
         {navGroups.map((group) => (
           <section key={group.title} className="space-y-1" aria-label={group.title}>
-            <div className={`mb-2 flex items-center gap-2 px-3 ${isCollapsed ? 'md:hidden' : ''}`}>
+            <div className={`mb-2 flex items-center gap-2 px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
               <p className="text-[9px] font-black uppercase tracking-[0.18em] text-ink-2">
                 {group.title}
               </p>
@@ -339,7 +339,7 @@ export function Sidebar({
               />
             </div>
             {isCollapsed && (
-              <div className="hidden md:block my-2 mx-auto w-6 h-px bg-line" aria-hidden="true" />
+              <div className="hidden lg:block my-2 mx-auto w-6 h-px bg-line" aria-hidden="true" />
             )}
             {group.items.map(renderNavItem)}
           </section>
@@ -350,7 +350,7 @@ export function Sidebar({
         {currentUser && (
           <div
             className={`rounded-xl border border-line bg-surface-2/70 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
-              isCollapsed ? 'md:px-1.5 md:py-2 md:flex md:justify-center' : ''
+              isCollapsed ? 'lg:px-1.5 lg:py-2 lg:flex lg:justify-center' : ''
             }`}
             title={
               isCollapsed
@@ -362,7 +362,7 @@ export function Sidebar({
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-on-brand shadow-card ring-1 ring-white/10">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <div className={`min-w-0 flex-1 ${isCollapsed ? 'md:hidden' : ''}`}>
+              <div className={`min-w-0 flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>
                 <p className="truncate text-xs font-bold leading-tight text-ink">
                   {currentUser.name}
                 </p>
@@ -378,13 +378,13 @@ export function Sidebar({
           type="button"
           onClick={logout}
           className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left text-sm font-bold text-critical transition-[transform,background-color,border-color] duration-200 hover:-translate-y-0.5 hover:border-critical/15 hover:bg-critical/10 active:translate-y-0 ${
-            isCollapsed ? 'md:justify-center md:px-0' : ''
+            isCollapsed ? 'lg:justify-center lg:px-0' : ''
           }`}
           title="Encerrar sessão e sair da conta"
           aria-label="Encerrar sessão e sair da conta"
         >
           <LogOut size={20} className="shrink-0 opacity-80" />
-          <span className={isCollapsed ? 'md:hidden' : ''}>Sair da Conta</span>
+          <span className={isCollapsed ? 'lg:hidden' : ''}>Sair da Conta</span>
         </button>
       </div>
     </aside>
