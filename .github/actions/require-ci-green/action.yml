@@ -1,0 +1,103 @@
+name: 'Require CI green for SHA'
+description: >-
+  Bloqueia o job chamador (DEPLOY BLOCKED) a menos que o commit SHA informado tenha uma execução
+  bem-sucedida do check obrigatório do CI canônico ("Central Birth Hub 360 Release" → job `build`,
+  ver .github/workflows/ci.yml). Não presume HEAD de branch: o SHA é sempre explícito, passado pelo
+  workflow chamador. Existe para fechar o mesmo risco em todo workflow que promove código para
+  homologação/produção (Onda 10.2, PROMPT 10.2 — CI/CD PRODUCTION GATE): "NO CI PASS = NO DEPLOY",
+  sem exceção para workflow_dispatch.
+
+inputs:
+  sha:
+    description: >-
+      Commit SHA completo (40 chars) a promover. Nunca aceite um branch/tag/"HEAD" aqui no
+      workflow chamador — resolva para um SHA explícito antes de chamar esta action.
+    required: true
+  check-name:
+    description: 'Nome exato do check obrigatório a validar (o mesmo nome usado pela branch protection).'
+    required: false
+    default: 'build'
+  github-token:
+    description: 'Token com permissão `checks: read` no repositório.'
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validar formato do SHA
+      shell: bash
+      run: |
+        set -euo pipefail
+        sha="${{ inputs.sha }}"
+        if ! [[ "$sha" =~ ^[0-9a-f]{40}$ ]]; then
+          echo "::error::DEPLOY BLOCKED — SHA inválido: '$sha'. Informe o commit SHA completo (40 caracteres hex), nunca um branch/tag/apelido (main, latest, HEAD)."
+          exit 1
+        fi
+
+    - name: Consultar CI status para o SHA (checks:read)
+      id: ci-status
+      uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+      env:
+        TARGET_SHA: ${{ inputs.sha }}
+        CHECK_NAME: ${{ inputs.check-name }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const sha = process.env.TARGET_SHA;
+          const checkName = process.env.CHECK_NAME;
+
+          const { data } = await github.rest.checks.listForRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: sha,
+            check_name: checkName,
+            per_page: 100,
+          });
+
+          if (data.check_runs.length === 0) {
+            core.setFailed(
+              `DEPLOY BLOCKED — nenhuma execução do check "${checkName}" encontrada para o SHA ${sha}. ` +
+              `CI STATUS FOR SHA = NOT FOUND. Esse commit nunca passou pelo pipeline oficial ` +
+              `(.github/workflows/ci.yml) neste repositório, ou o SHA está errado.`
+            );
+            return;
+          }
+
+          // Pode haver mais de uma execução para o mesmo SHA (re-run manual, push duplicado
+          // entre branches). A mais recente por started_at é a que conta — não a primeira.
+          const latest = data.check_runs.sort(
+            (a, b) => new Date(b.started_at) - new Date(a.started_at)
+          )[0];
+
+          core.info(`Check "${checkName}" para ${sha}: status=${latest.status} conclusion=${latest.conclusion} (run ${latest.html_url})`);
+          core.setOutput('conclusion', latest.conclusion || '');
+          core.setOutput('status', latest.status || '');
+          core.setOutput('run-url', latest.html_url || '');
+
+          if (latest.status !== 'completed') {
+            core.setFailed(
+              `DEPLOY BLOCKED — o check "${checkName}" para ${sha} ainda não terminou (status=${latest.status}). ` +
+              `CI STATUS FOR SHA = ${latest.status}. Aguarde o CI concluir antes de promover este commit.`
+            );
+            return;
+          }
+
+          if (latest.conclusion !== 'success') {
+            core.setFailed(
+              `DEPLOY BLOCKED — o check "${checkName}" para ${sha} não passou (conclusion=${latest.conclusion}). ` +
+              `CI STATUS FOR SHA = ${latest.conclusion}. Corrija o CI antes de promover este commit — ` +
+              `nenhuma execução manual pode contornar este gate.`
+            );
+            return;
+          }
+
+          core.info(`CI STATUS FOR SHA = SUCCESS — ${sha} aprovado, promoção liberada.`);
+
+outputs:
+  conclusion:
+    description: 'Conclusão do check consultado (success, failure, etc.) quando encontrado.'
+    value: ${{ steps.ci-status.outputs.conclusion }}
+  run-url:
+    description: 'URL da execução do CI usada na validação.'
+    value: ${{ steps.ci-status.outputs.run-url }}
