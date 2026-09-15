@@ -74,6 +74,12 @@ __pycache__/
 # (isolation: "worktree") — estado de trabalho local, nunca conteúdo do repositório.
 .claude/worktrees/
 
+# Mesma razão do .claude/worktrees/ acima: worktrees isoladas criadas por sessões/agentes fora do
+# harness (ex.: `git worktree add .worktrees/<nome>`) nunca devem virar conteúdo do repositório —
+# um `git add -A` num diretório assim gera um gitlink (mode 160000) sem entrada em .gitmodules,
+# o que quebra `git submodule foreach` no checkout do CI (achado real: PR #531, application gate).
+.worktrees/
+
 *storybook.log
 storybook-static
 
