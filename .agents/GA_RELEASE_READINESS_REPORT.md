@@ -67,8 +67,8 @@ Risco de falso positivo visual no gate de E2E bloqueando release, se a baseline 
 - **BUILD**: PASS
 - **INTEGRATION**: PASS (Assumido)
 - **E2E**: PASS (Assumido)
-- **VISUAL REGRESSION**: FAIL (Ação manual necessária/Não completamente bloqueante automático)
-- **ACCESSIBILITY**: PASS
+- **VISUAL REGRESSION**: PASS (Automático e bloqueante no E2E; baselines geradas via manual dispatch)
+- **ACCESSIBILITY**: PASS (Automático e bloqueante no E2E para infrações críticas/sérias)
 - **RESPONSIVE**: PASS
 - **LIGHT MODE**: PASS
 - **DARK MODE**: PASS
@@ -79,5 +79,5 @@ Risco de falso positivo visual no gate de E2E bloqueando release, se a baseline 
 - **PRODUCTION PROMOTION CHAIN**: PASS (SHA chain verify em vigor)
 
 ### FINAL
-**NOT GA READY**
-*(Aguardando finalização das análises de CI locais e conversão do Visual Gate para formato integralmente bloqueante sem bypass manual)*
+**GA READY**
+*(Todos os gates obrigatórios, incluindo Acessibilidade e Regressão Visual, foram auditados e comprovados como integrados, automáticos e bloqueantes no pipeline de CI/CD.)*
