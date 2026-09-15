@@ -26,10 +26,11 @@ const SERVICE_VERSION = process.env.npm_package_version ?? '0.0.1';
 // Não inicializa em ambiente de teste (Vitest / Jest) para evitar interferência
 // com timers/async e não poluir saída dos testes com logs de exportação.
 const isTestEnv = process.env.NODE_ENV === 'test' || !!process.env.VITEST;
+const isSdkDisabled = process.env.OTEL_SDK_DISABLED === 'true';
 
 let sdk: NodeSDK | null = null;
 
-if (!isTestEnv) {
+if (!isTestEnv && !isSdkDisabled) {
   sdk = new NodeSDK({
     resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: SERVICE_NAME,
