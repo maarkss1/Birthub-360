@@ -3,21 +3,59 @@ name: Publish private container image
 # Gate: publicar a imagem só depois que o workflow canônico de release (ci.yml, "Central Birth Hub 360
 # Release") tiver passado no mesmo commit de main — antes disso, push:main disparava a publicação
 # incondicionalmente, sem nenhum teste/scan rodar primeiro (achado HIGH da auditoria de
-# release-readiness). workflow_dispatch continua disponível para publicação manual.
+# release-readiness). workflow_dispatch continua disponível para publicação manual, mas agora exige
+# um SHA explícito e reprova o mesmo gate do caminho automático (Onda 10.2, PROMPT 10.2: "NO CI
+# PASS = NO DEPLOY", sem exceção para disparo manual — antes desta mudança, workflow_dispatch
+# publicava a imagem sem checar CI nenhum).
 on:
   workflow_run:
     workflows: ['Central Birth Hub 360 Release']
     types: [completed]
     branches: [main]
   workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a publicar.'
+        required: true
+        type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: maarkss1/central-de-inteligencia-comecial-atlasgr
 
+concurrency:
+  # Só um publish por vez (Onda 10.2, secao 18) — evita duas execuções empurrando tags
+  # conflitantes para o mesmo registry ao mesmo tempo.
+  group: docker-publish
+  cancel-in-progress: false
+
 jobs:
-  publish:
+  resolve-sha:
+    name: Resolver SHA e validar CI (NO CI PASS = NO DEPLOY)
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: read
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - id: resolve
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "sha=${{ inputs.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: ./.github/actions/require-ci-green
+        with:
+          sha: ${{ steps.resolve.outputs.sha }}
+          check-name: build
+
+  publish:
+    needs: resolve-sha
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,7 +64,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+          ref: ${{ needs.resolve-sha.outputs.sha }}
 
       - name: Log in to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
@@ -52,3 +90,19 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Resumo
+        if: always()
+        run: |
+          {
+            echo "### Deployment — Birth Hub 360º"
+            echo '```'
+            echo "ENVIRONMENT............. ghcr.io (image publish)"
+            echo "COMMIT SHA............... ${{ needs.resolve-sha.outputs.sha }}"
+            echo "CI QUALITY GATE........... PASS (validado no job resolve-sha antes de qualquer build)"
+            echo "ARTIFACT.................. ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+            echo "ACTOR...................... ${{ github.actor }}"
+            echo "TIMESTAMP.................. $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "DEPLOYMENT.................. ${{ job.status }}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
