@@ -85,10 +85,10 @@ export function CompanyDedupPanel() {
           </CardTitle>
           <CardDescription>
             Empresas com o mesmo CNPJ (dado legado) ou o mesmo nome fantasia sem CNPJ cadastrado
-            (comum em importação do Bitrix24). A empresa com enriquecimento mais completo é
-            mantida; contatos, negócios, notas, anexos, documentos comerciais e histórico de
-            enriquecimento das demais são reatribuídos a ela antes de serem removidas
-            (soft-delete, recuperável via auditoria).
+            (comum em importação do Bitrix24). A empresa com enriquecimento mais completo é mantida;
+            contatos, negócios, notas, anexos, documentos comerciais e histórico de enriquecimento
+            das demais são reatribuídos a ela antes de serem removidas (soft-delete, recuperável via
+            auditoria).
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -158,7 +158,9 @@ export function CompanyDedupPanel() {
                           </p>
                         </div>
                         <Badge
-                          variant={company.enrichmentStatus === 'Enriquecido' ? 'success' : 'default'}
+                          variant={
+                            company.enrichmentStatus === 'Enriquecido' ? 'success' : 'default'
+                          }
                           className="shrink-0"
                         >
                           {company.enrichmentStatus}

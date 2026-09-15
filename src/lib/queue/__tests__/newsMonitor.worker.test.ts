@@ -116,7 +116,10 @@ describe('scanCompanyNews', () => {
 
     expect(accountSignalCreate).toHaveBeenCalledTimes(1);
     expect(accountSignalCreate).toHaveBeenCalledWith({
-      data: expect.objectContaining({ type: 'mass_hiring', dedupeKey: 'news:company-1:https://a/2' }),
+      data: expect.objectContaining({
+        type: 'mass_hiring',
+        dedupeKey: 'news:company-1:https://a/2',
+      }),
     });
   });
 
