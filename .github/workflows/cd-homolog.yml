@@ -2,8 +2,19 @@ name: CD Homologation
 
 # LOCAL-FIRST: nenhum push em develop pode publicar imagem automaticamente.
 # Homologação fica disponível apenas sob ação humana explícita.
+#
+# Onda 10.2 (PROMPT 10.2 — CI/CD PRODUCTION GATE): mesmo achado e mesma correção de production.yaml
+# — este workflow rodava sua própria suíte de testes, mais estreita que ci.yml (sem Prettier, testes
+# arquiteturais, deriva de OpenAPI, golden dataset). Substituído por uma exigência explícita de CI
+# verde para o SHA informado (job `resolve-sha`, `.github/actions/require-ci-green`) — "NO CI PASS =
+# NO DEPLOY" vale para homologação exatamente como para produção.
 on:
   workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a promover para homologação.'
+        required: true
+        type: string
 
 # Fica no workflow só o piso comum (nenhum). `contents: write`/`packages: write` só é concedido
 # no job `build-and-push` (abaixo), que é o único que de fato empurra imagem/commita Helm — sem
@@ -12,149 +23,41 @@ on:
 # explicitamente só o que precisa (least privilege real, não nominal).
 permissions: {}
 
+concurrency:
+  # Só uma promoção de homologação por vez (Onda 10.2, secao 18) — evita duas execuções
+  # concorrentes commitando em `develop`/`charts/prospector-atlas/values.yaml` ao mesmo tempo.
+  group: cd-homolog
+  cancel-in-progress: false
+
 jobs:
-  secret-scan:
+  resolve-sha:
+    name: Validar CI (NO CI PASS = NO DEPLOY)
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      checks: read
+    outputs:
+      sha: ${{ inputs.sha }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./.github/actions/require-ci-green
         with:
-          fetch-depth: 0
-
-      - name: Gitleaks (varredura de segredo versionado)
-        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  gate:
-    name: Quality Gate (pré-homologação)
-    runs-on: ubuntu-latest
-    needs: secret-scan
-    permissions:
-      contents: read
-
-    services:
-      postgres:
-        image: pgvector/pgvector:pg17
-        env:
-          POSTGRES_USER: prospector
-          POSTGRES_PASSWORD: prospector_test_pass
-          POSTGRES_DB: prospectordb_test
-        ports:
-          - 5434:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      NODE_ENV: test
-      DATABASE_URL: postgresql://prospector_app:ci_app_test_pass@localhost:5434/prospectordb_test?schema=public
-      REDIS_URL: redis://localhost:6379
-      JWT_SECRET: ci-test-jwt-secret-not-for-production
-      MEILI_HOST: http://localhost:7700
-      MEILI_MASTER_KEY: ci-test-meili-key
-      PORT: 3000
-      BETTER_AUTH_SECRET: ci-e2e-test-only-secret-not-for-production
-      ALLOW_DEV_AUTH_BYPASS: true
-      ALLOWED_ORIGINS: http://localhost:3000
-      AUTH_RATE_LIMIT_MAX: 500
-      PLATFORM_OPERATOR_TOKEN: ci-test-operator-token-not-for-production
-
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      - name: Use Node.js 22
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Bootstrap papel NOSUPERUSER da aplicação
-        env:
-          PGPASSWORD: prospector_test_pass
-          APP_DB_PASSWORD: ci_app_test_pass
-        run: bash scripts/db/bootstrap-app-role.sh localhost 5434 prospector prospectordb_test
-
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Audit for vulnerabilities (waiver-aware)
-        run: npm run security:audit-waivers
-
-      - name: Run Lint
-        run: npm run lint:ci
-
-      - name: Run Type Check
-        run: npx tsc --noEmit
-
-      - name: Run Unit Tests
-        run: npm run test:unit
-
-      - name: Run Migrations (para testes de integração)
-        run: npx prisma migrate deploy
-
-      - name: Criar .env.test para os testes de integração e E2E
-        run: |
-          cat > .env.test <<EOF
-          NODE_ENV=$NODE_ENV
-          PORT=$PORT
-          DATABASE_URL=$DATABASE_URL
-          REDIS_URL=$REDIS_URL
-          MEILI_HOST=$MEILI_HOST
-          MEILI_MASTER_KEY=$MEILI_MASTER_KEY
-          BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
-          ALLOWED_ORIGINS=$ALLOWED_ORIGINS
-          AUTH_RATE_LIMIT_MAX=$AUTH_RATE_LIMIT_MAX
-          PLATFORM_OPERATOR_TOKEN=$PLATFORM_OPERATOR_TOKEN
-          EOF
-
-      - name: Run Integration Tests
-        run: npm run test:integration
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Run E2E Tests
-        run: npm run test:e2e
-
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: cd-homolog-playwright-report
-          path: playwright-report/
-        if: failure()
-
-      - name: Run Build
-        run: npm run build
+          sha: ${{ inputs.sha }}
+          check-name: build
 
   build-and-push:
     runs-on: ubuntu-latest
-    needs: gate
+    needs: resolve-sha
     permissions:
       contents: write
       packages: write
       # ITEM-10 (Onda 2): upload do SARIF do scan de imagem (Trivy, abaixo) para a aba Security.
       security-events: write
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (SHA já validado pelo CI)
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          ref: ${{ needs.resolve-sha.outputs.sha }}
           fetch-depth: 0
 
       # ITEM-11 (Onda 3 — SBOM e governança de dependências): todo release real produz um SBOM
@@ -174,7 +77,7 @@ jobs:
       - name: Upload do SBOM como artefato do release
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: sbom-${{ github.sha }}
+          name: sbom-${{ needs.resolve-sha.outputs.sha }}
           path: sbom.cdx.json
           retention-days: 90
 
@@ -203,7 +106,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository }}:${{ needs.resolve-sha.outputs.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -212,7 +115,7 @@ jobs:
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: image
-          image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          image-ref: ghcr.io/${{ github.repository }}:${{ needs.resolve-sha.outputs.sha }}
           severity: HIGH,CRITICAL
           exit-code: '1'
           ignore-unfixed: true
@@ -237,15 +140,42 @@ jobs:
           if-no-files-found: warn
 
       - name: Push Docker image (imagem já escaneada)
-        run: docker push "ghcr.io/${{ github.repository }}:${{ github.sha }}"
+        run: docker push "ghcr.io/${{ github.repository }}:${{ needs.resolve-sha.outputs.sha }}"
 
       - name: Update Helm values.yaml with new image tag
+        # O workspace está com checkout detached no SHA promovido (validado pelo CI), que pode não
+        # ser o tip atual de `develop` — commitar direto em cima dele e tentar `git push origin
+        # develop` arriscaria non-fast-forward (ou, pior, sobrescrever histórico se algum dia
+        # alguém trocar isto por push --force). Troca explícita para `develop` antes do commit:
+        # o bump de tag na Helm chart é um registro de "qual imagem promover", não uma mudança que
+        # precisa estar no mesmo commit/branch do código promovido.
         run: |
+          set -euo pipefail
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod a+x /usr/local/bin/yq
-          yq e '.image.tag = "${{ github.sha }}"' -i charts/prospector-atlas/values.yaml
+          git fetch origin develop
+          git checkout develop
+          git reset --hard origin/develop
+          yq e '.image.tag = "${{ needs.resolve-sha.outputs.sha }}"' -i charts/prospector-atlas/values.yaml
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add charts/prospector-atlas/values.yaml
-          git commit -m "chore: update image tag to ${{ github.sha }} [skip ci]" || echo "No changes to commit"
+          git commit -m "chore: update image tag to ${{ needs.resolve-sha.outputs.sha }} [skip ci]" || echo "No changes to commit"
           git push origin develop
+
+      - name: Resumo
+        if: always()
+        run: |
+          {
+            echo "### Deployment — Birth Hub 360º"
+            echo '```'
+            echo "ENVIRONMENT............. HOMOLOGATION"
+            echo "COMMIT SHA............... ${{ needs.resolve-sha.outputs.sha }}"
+            echo "CI QUALITY GATE........... PASS (validado no job resolve-sha antes de qualquer build)"
+            echo "ARTIFACT.................. ghcr.io/${{ github.repository }}:${{ needs.resolve-sha.outputs.sha }}"
+            echo "ACTOR...................... ${{ github.actor }}"
+            echo "TIMESTAMP.................. $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "HELM VALUES.YAML........... atualizado em develop"
+            echo "DEPLOYMENT.................. ${{ job.status }}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

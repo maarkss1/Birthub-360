@@ -206,6 +206,9 @@ ensure_base64_secret "PII_BLIND_INDEX_KEY" 32
 ensure_hex_secret "BOOTSTRAP_DB_PASSWORD" 24
 ensure_hex_secret "APP_DB_PASSWORD" 24
 ensure_hex_secret "INITIAL_ADMIN_PASSWORD" 24
+# resolveMeiliApiKey() (src/lib/search/index.ts) recusa subir em produção sem isso — o serviço
+# meilisearch em docker-compose.oci.yml lê a mesma variável.
+ensure_hex_secret "MEILI_MASTER_KEY" 32
 
 # Garante que a aplicação de produção use o modo correto.
 set_env_value "NODE_ENV" "production"
