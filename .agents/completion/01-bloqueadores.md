@@ -67,11 +67,14 @@
    por leitura (`git ls-remote --tags origin | grep v1.0.0-rc.1` retorna vazio). A tag
    `v2.0.0-recovery` foi verificada na mesma ocasião e **não** alcança nenhum dos blobs sensíveis —
    não faz parte deste incidente, nenhuma ação necessária sobre ela.
-   Com isso, o vetor de exposição em si (a ref publicada) está fechado. **Pendências separadas que
-   NÃO fecham só com a remoção da tag** (mantêm o P0 como PARTIALLY RESOLVED até serem endereçadas):
-   confirmar rotação de credenciais diretamente nos provedores (não só a confirmação humana já
-   registrada), confirmar `ATLASGR_WEBHOOK_SECRET` real em produção, decidir sobre reset de senha
-   dos 5 usuários do dump, avaliação de DPO/jurídico sobre a janela de exposição de PII.
+   Com isso, o vetor de exposição em si (a ref publicada) está fechado. **Duas pendências fechadas
+   em seguida, por confirmação direta do dono do repositório em 2026-09-15:** `ATLASGR_WEBHOOK_SECRET`
+   confirmado já revogado em produção (RESOLVED); reset de senha dos 5 usuários do dump virou moot
+   — as contas não existem mais no sistema (RESOLVED). **Pendências que seguem em aberto** (mantêm
+   o P0 como PARTIALLY RESOLVED): confirmar rotação de credenciais de terceiro (Bland AI, Bitrix24,
+   Google AI Studio) diretamente nos provedores (não só a confirmação humana já registrada);
+   avaliação de DPO/jurídico sobre a janela de exposição de PII de prospecção (27 empresas, 41
+   contatos).
 
 ## P0 — Plataforma quebrada no main (remediados)
 
