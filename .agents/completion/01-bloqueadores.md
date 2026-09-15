@@ -74,10 +74,12 @@
    plataforma (RESOLVED); avaliação de DPO/jurídico sobre a janela de exposição de PII de
    prospecção concluída — dado de origem pública (27 empresas/41 contatos), sem indício de acesso
    por terceiros, comunicação formal à ANPD/titulares avaliada como não necessária (RESOLVED).
-   **Única pendência que segue em aberto** (mantém o P0 como PARTIALLY RESOLVED): reverificar a
-   rotação de credenciais de terceiro (Bland AI, Bitrix24, Google AI Studio) diretamente nos
-   provedores — as classificações `ROTATED` hoje se apoiam em confirmação humana já registrada, não
-   em checagem técnica contra o provedor (sem acesso de rede a partir de uma sessão de agente).
+   **Reverificação direta de credenciais — parcialmente concluída em 2026-09-15:** dono do
+   repositório confirmou ter revogado diretamente a chave Bland AI e a chave Google Gemini
+   (RESOLVED para essas duas). **Única pendência que segue em aberto** (mantém o P0 como PARTIALLY
+   RESOLVED): reverificar os 2 webhooks Bitrix24 (AtlasGR e TotalTrac) diretamente no painel
+   Bitrix24 — ainda só apoiados na confirmação humana original de SEC-003 (08/2026), não em checagem
+   técnica contra o provedor nesta rodada.
 
 ## P0 — Plataforma quebrada no main (remediados)
 
