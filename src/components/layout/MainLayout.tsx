@@ -45,18 +45,11 @@ export function MainLayout({ children }: MainLayoutProps) {
   }, [mobileNavOpen]);
 
   return (
-    <div className="h-screen w-full flex flex-col bg-bg text-ink font-sans overflow-hidden relative transition-colors duration-500">
-      {/* BACKGROUND: superfície neutra, com um halo sutil da marca (ouro + íris) */}
+    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-bg font-sans text-ink transition-colors duration-300">
+      {/* Ambientação de marca contida: clara no light, profunda sem neon no dark. */}
       <div className="absolute inset-0 flex z-0 overflow-hidden pointer-events-none bg-bg">
-        {/* bg-brand/bg-brand-2 (não bg-brand/bg-iris estáticos) — reagem a
-                    document.documentElement.style.setProperty em BrandContext.tsx sem precisar
-                    tocar este componente se a paleta de alguma marca mudar. */}
-        <div
-          className={`absolute -top-32 -right-32 w-[560px] h-[560px] rounded-full blur-[120px] opacity-40 bg-brand/20`}
-        />
-        <div
-          className={`absolute bottom-0 left-0 w-[420px] h-[420px] rounded-full blur-[110px] opacity-30 bg-iris/10`}
-        />
+        <div className="absolute -right-48 -top-56 h-[32rem] w-[32rem] rounded-full bg-brand/8 blur-[140px] dark:bg-brand/6" />
+        <div className="absolute -bottom-64 -left-48 h-[30rem] w-[30rem] rounded-full bg-iris/5 blur-[150px] dark:bg-orbit-blue/5" />
       </div>
 
       <OfflineBanner />
@@ -71,7 +64,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         {/* Backdrop da navegação mobile — some em telas md+, onde a Sidebar é estática */}
         {mobileNavOpen && (
           <div
-            className="fixed inset-0 z-30 bg-ink/50 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-30 bg-overlay backdrop-blur-sm lg:hidden"
             onClick={() => setMobileNavOpen(false)}
             aria-hidden="true"
           />

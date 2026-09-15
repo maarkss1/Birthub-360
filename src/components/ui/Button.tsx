@@ -14,7 +14,7 @@ const buttonVariants = cva(
   // ease-[EASE_PREMIUM] (src/lib/motion.ts) em vez do ease padrão do Tailwind — mesma curva de
   // desaceleração usada no resto do motion system, pra hover não ficar "solto" da linguagem de
   // movimento do produto. active:scale continua rápido/linear (feedback de press é instantâneo).
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 active:scale-[0.97] active:duration-100 active:ease-out cursor-pointer disabled:pointer-events-none disabled:bg-gray-200 disabled:text-gray-600 disabled:opacity-100',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control border border-transparent text-sm font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg active:translate-y-px active:duration-100 active:ease-out cursor-pointer disabled:pointer-events-none disabled:border-line disabled:bg-surface-subtle disabled:text-ink-2 disabled:opacity-60',
   {
     variants: {
       variant: {
@@ -28,13 +28,12 @@ const buttonVariants = cva(
         // dinamicamente na troca de marca (BrandContext.tsx) e já geram `bg-brand-2` de verdade.
         // hover:shadow-glow-brand (era shadow-brand-sm, mais discreto) — glow difuso de verdade,
         // acende só no hover/focus, nunca em repouso (regra do brief "Neon Tokyo × Cosmic Gold").
-        default:
-          'bg-brand-active text-on-brand hover:bg-brand-2 hover:scale-[1.02] hover:shadow-glow-brand',
+        default: 'bg-brand-active text-on-brand shadow-brand-sm hover:bg-brand hover:shadow-card',
         // bg-btn-danger (color-mix com --danger, globals.css) — bg-red-500 cru com texto branco
         // media ~3.76:1, abaixo do mínimo AA 4.5:1 (mesma classe de achado do DQA-19 que motivou
         // bg-brand-active acima). btn-danger-hover escurece mais, mesma lógica de bg-brand-2.
         destructive:
-          'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:scale-[1.02]',
+          'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:shadow-card',
         // border-gray-300/hover:bg-gray-100/200 (Tailwind cru, não token) nunca reagiam ao tema —
         // no dark mode (padrão do produto, CREATIVE_SYSTEM_01.md seção C) produziam borda
         // praticamente invisível e um hover claro incoerente sobre superfície escura. Trocados
@@ -42,9 +41,11 @@ const buttonVariants = cva(
         // mesmo padrão de hover já usado pelos itens de navegação da Sidebar. hover:scale-[1.02]
         // novo — outline/ghost eram os únicos sem nenhum feedback de hover (achado real, catálogo
         // visual "Neon Tokyo × Cosmic Gold", 10/09/2026).
-        outline: 'border border-line bg-transparent text-ink hover:bg-surface-2 hover:scale-[1.02]',
-        secondary: 'bg-surface-2 text-ink hover:bg-line hover:scale-[1.02]',
-        ghost: 'hover:bg-surface-2 hover:text-ink hover:scale-[1.02]',
+        outline:
+          'border-line bg-transparent text-ink hover:border-ink-2/30 hover:bg-surface-subtle',
+        secondary:
+          'border-line bg-surface-elevated text-ink shadow-sm hover:bg-surface-interactive',
+        ghost: 'text-ink-2 hover:bg-surface-interactive hover:text-ink',
         // text-brand-ink dark:text-brand (não text-brand cru) — mesmo achado do axe-core que
         // motivou bg-brand-active acima: texto de marca direto sobre bg-bg/bg-surface só atinge
         // ~3.0:1, abaixo do mínimo AA de 4.5:1. Sem hover:scale de propósito — é texto inline, não
@@ -54,10 +55,9 @@ const buttonVariants = cva(
         // Nunca preenchimento sólido — só borda + glow de texto/sombra no hover/focus, e o glow só
         // acende no escuro (--accent-violet/--accent-cyan/--pulse divergem de --iris/--orbit-blue
         // só em .dark; --iris/--orbit-blue em si continuam intocados em todo o resto do produto).
-        iris: 'border border-accent-violet/45 bg-transparent text-accent-violet hover:scale-[1.02] hover:border-accent-violet/70 hover:shadow-glow-accent-violet dark:hover:[text-shadow:0_0_10px_currentColor]',
-        cyan: 'border border-accent-cyan/45 bg-transparent text-accent-cyan hover:scale-[1.02] hover:border-accent-cyan/70 hover:shadow-glow-accent-cyan dark:hover:[text-shadow:0_0_10px_currentColor]',
-        pulse:
-          'border border-pulse/45 bg-transparent text-pulse hover:scale-[1.02] hover:border-pulse/70 hover:shadow-glow-pulse dark:hover:[text-shadow:0_0_10px_currentColor]',
+        iris: 'border-accent-violet/45 bg-transparent text-accent-violet hover:border-accent-violet/70 hover:bg-accent-violet/8',
+        cyan: 'border-accent-cyan/45 bg-transparent text-accent-cyan hover:border-accent-cyan/70 hover:bg-accent-cyan/8',
+        pulse: 'border-pulse/45 bg-transparent text-pulse hover:border-pulse/70 hover:bg-pulse/8',
       },
       size: {
         default: 'h-9 px-4 py-2',
