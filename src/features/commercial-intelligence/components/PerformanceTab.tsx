@@ -10,6 +10,7 @@ import {
   type HistoricalTrendsReport,
   type PerformanceMetrics,
 } from '../commercialIntelligence.api';
+import { ChannelAttributionCard } from './ChannelAttributionCard';
 import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
 import { FunnelBottleneckCard } from './FunnelBottleneckCard';
 import { FunnelConversionCard } from './FunnelConversionCard';
@@ -271,6 +272,8 @@ export function PerformanceTab({ filter }: { filter: CommercialFilter }) {
           </div>
         </Card>
       )}
+
+      <ChannelAttributionCard filter={filter} />
 
       {trends && <TrendsCard data={trends} />}
 

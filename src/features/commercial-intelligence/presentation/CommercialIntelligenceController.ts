@@ -289,6 +289,16 @@ export class CommercialIntelligenceController {
     }
   };
 
+  getChannelAttribution = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.channelAttribution(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getHiringScenario = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { organizationId } = (req as AuthRequest).user;

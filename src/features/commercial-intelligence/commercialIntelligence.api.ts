@@ -566,6 +566,24 @@ export interface SellerBenchmarkReport {
   topPerformerOwner: string | null;
 }
 
+// ─── Atribuição de receita por canal/origem — TOQUE ÚNICO (item 25, versão reduzida) ─────────
+
+export interface ChannelAttributionBreakdown {
+  label: string;
+  wonCount: number;
+  wonAmount: number;
+  pctOfWonAmount: number | null;
+  averageTicket: number | null;
+}
+export interface ChannelAttributionReport {
+  period: string;
+  model: 'toque_unico';
+  totalWonAmount: number;
+  totalWonCount: number;
+  byChannel: ChannelAttributionBreakdown[];
+  bySource: ChannelAttributionBreakdown[];
+}
+
 // ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────
 
 export type HiringScenarioUnavailableReason =
@@ -799,6 +817,8 @@ export const commercialIntelligenceApi = {
     api.get<HiringScenarioResult>(
       `${BASE}/hiring-scenario?${qs(filter, { additionalReps })}`,
     ),
+  channelAttribution: (filter: CommercialFilter) =>
+    api.get<ChannelAttributionReport>(`${BASE}/channel-attribution?${qs(filter)}`),
   closeDateIntelligence: (filter: CommercialFilter) =>
     api.get<CloseDateIntelligenceReport>(`${BASE}/close-date-intelligence?${qs(filter)}`),
   journey: (filter: CommercialFilter) => api.get<JourneyReport>(`${BASE}/journey?${qs(filter)}`),

@@ -473,6 +473,21 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
       'Abaixo da amostra mínima, o vendedor aparece nos dados brutos mas sem "top performer"/sugestão — nunca uma comparação fabricada de amostra insuficiente.',
   },
   {
+    key: 'atribuicao_canal',
+    name: 'Atribuição de Receita por Canal/Origem (toque único)',
+    description:
+      'Quanto da receita ganha no período veio de cada canal (Lead.channel) e de cada origem (Lead.source). Versão de TOQUE ÚNICO — o pedido original de atribuição multi-touque (linear/first/last-touch entre vários pontos de contato) exige um modelo de campanha/touchpoint que não existe no schema hoje; ver handoff .agents/handoffs/analytics-suite/25-para-01-schema-atribuicao-multicanal.md.',
+    formula:
+      'Para cada canal/origem: SOMA(Lead.amount) dos negócios ganhos no período com aquele Lead.channel/Lead.source. % = valor do canal / total ganho no período.',
+    source:
+      'application/queries/channelAttributionReport.ts (GET /commercial-intelligence/channel-attribution)',
+    period: 'Mensal',
+    inclusionRules:
+      'Só negócios ganhos (isWon) com closedAt dentro do período. Lead.channel/Lead.source vazio vira o bucket "Não informado", nunca omitido nem 0 fabricado.',
+    exclusionRules:
+      'Não é atribuição multi-touque — um negócio conta inteiro para o canal/origem que tinha no momento do fechamento, nunca dividido entre múltiplos toques (esse dado não existe).',
+  },
+  {
     key: 'simulacao_contratacao',
     name: 'Simulação de Contratação (SDR/Vendedor)',
     description:

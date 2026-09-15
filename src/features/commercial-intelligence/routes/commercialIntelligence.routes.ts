@@ -72,6 +72,11 @@ router.get('/funnel-bottlenecks', (req, res, next) =>
 );
 router.get('/seller-benchmark', (req, res, next) => resolve().getSellerBenchmark(req, res, next));
 router.get('/hiring-scenario', (req, res, next) => resolve().getHiringScenario(req, res, next));
+// Atribuição de receita por canal/origem — TOQUE ÚNICO (item 25, versão reduzida — ver
+// domain/CommercialIntelligence.ts::ChannelAttributionReport e o handoff bloqueado de multi-touch).
+router.get('/channel-attribution', (req, res, next) =>
+  resolve().getChannelAttribution(req, res, next),
+);
 router.get('/close-date-intelligence', (req, res, next) =>
   resolve().getCloseDateIntelligence(req, res, next),
 );

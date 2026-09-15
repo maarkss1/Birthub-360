@@ -22,6 +22,7 @@
  */
 import type {
   AgingReport,
+  ChannelAttributionReport,
   CommercialGoalDTO,
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
@@ -56,6 +57,7 @@ import { computeHealthScore } from './healthScore';
 import { buildAging } from './queries/agingReport';
 import { buildAlerts } from './queries/alertsReport';
 import { buildFunnelBottlenecks } from './queries/bottleneckReport';
+import { buildChannelAttribution } from './queries/channelAttributionReport';
 import { buildCloseDateIntelligence } from './queries/closeDateIntelligenceReport';
 import { buildCrmQuality } from './queries/crmQualityReport';
 import { buildDealsDrillDown, buildForecastExplain } from './queries/drillDownReport';
@@ -342,6 +344,15 @@ export class CommercialIntelligenceUseCases {
       overview.goal?.amount ?? null,
       overview.goal?.currency ?? 'BRL',
     );
+  }
+
+  // ─── Atribuição de receita por canal/origem — toque único (item 25, versão reduzida) ────
+  async channelAttribution(
+    organizationId: string,
+    filter: CommercialIntelligenceFilter,
+    now = new Date(),
+  ): Promise<ChannelAttributionReport> {
+    return buildChannelAttribution(this.repository, organizationId, filter, now);
   }
 
   // ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────────────────

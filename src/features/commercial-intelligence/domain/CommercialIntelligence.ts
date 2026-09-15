@@ -914,6 +914,37 @@ export interface SellerBenchmarkReport {
   topPerformerOwner: string | null;
 }
 
+// ─── Atribuição de receita por canal/origem — TOQUE ÚNICO (item 25, versão reduzida) ────────
+//
+// O item 25 pede atribuição MULTI-TOQUE ("de qual canal/campanha realmente veio o fechamento, não
+// só o primeiro toque"). Isso exige um modelo de touchpoint/campanha que NÃO existe hoje em
+// `prisma/schema.prisma` (só `Lead.source`/`Lead.channel`, strings de toque ÚNICO, sem histórico de
+// touchpoints) — ver handoff `.agents/handoffs/analytics-suite/25-para-01-schema-atribuicao-
+// multicanal.md`, registrado como bloqueado por falta de dono de schema para revisar a migration.
+// Este bloco é a versão HONESTA e possível com o dado real que já existe: atribuição de toque
+// único por canal e por origem — nunca apresentada como multi-touque. `mismatchTouchpointsCount`
+// deliberadamente NÃO existe aqui (não fabricamos um dado de multi-touch que não temos).
+
+export interface ChannelAttributionBreakdown {
+  /** Valor de `Lead.channel` ou `Lead.source`, conforme a dimensão do relatório. `'Não informado'` quando o campo está vazio — nunca omitido nem virando 0 silencioso. */
+  label: string;
+  wonCount: number;
+  wonAmount: number;
+  /** % da receita total ganha do período atribuída a este canal/origem. `null` sem receita ganha no período. */
+  pctOfWonAmount: number | null;
+  averageTicket: number | null;
+}
+
+export interface ChannelAttributionReport {
+  period: PeriodMonth;
+  /** Sempre `'toque_unico'` — rótulo explícito para a UI nunca apresentar isto como multi-touch. */
+  model: 'toque_unico';
+  totalWonAmount: number;
+  totalWonCount: number;
+  byChannel: ChannelAttributionBreakdown[];
+  bySource: ChannelAttributionBreakdown[];
+}
+
 // ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────
 //
 // "Se eu contratar +N vendedores, qual o impacto em receita em 90 dias?" — baseado em dados REAIS
@@ -992,6 +1023,8 @@ export interface DealRow {
   amount: number;
   owner: string | null;
   source: string | null;
+  /** `Lead.channel` — canal de toque único (ex.: WhatsApp, Site, Indicação). Distinto de `source` (origem/campanha mais específica). Usado pela Atribuição de Receita (item 25, toque único — ver `channelAttributionReport.ts`). */
+  channel: string | null;
   companyId: string | null;
   companyName: string | null;
   companyCnpj: string | null;

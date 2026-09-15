@@ -25,6 +25,7 @@ function deal(overrides: Partial<DealRow> & { id: string }): DealRow {
     amount: 10_000,
     owner: 'ana',
     source: null,
+    channel: null,
     companyId: null,
     companyName: null,
     companyCnpj: null,
