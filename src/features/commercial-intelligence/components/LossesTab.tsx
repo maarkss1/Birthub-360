@@ -10,6 +10,7 @@ import {
   type LossAnalysis,
 } from '../commercialIntelligence.api';
 import { KpiTile } from './KpiTile';
+import { LossReasonAiCheck } from './LossReasonAiCheck';
 
 export function LossesTab({ filter }: { filter: CommercialFilter }) {
   const [data, setData] = useState<LossAnalysis | null>(null);
@@ -106,6 +107,7 @@ export function LossesTab({ filter }: { filter: CommercialFilter }) {
                   <span className="text-ink-2 font-normal">— {obs.reason}</span>
                 </p>
                 <p className="text-ink-2">{obs.observation || 'Sem observação registrada'}</p>
+                <LossReasonAiCheck leadId={obs.leadId} />
               </li>
             ))}
           </ul>

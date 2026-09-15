@@ -399,6 +399,23 @@ export interface BitrixNoteDraftResult {
   draft: string;
 }
 
+// ─── Motivo real de perda via IA sobre transcrição real ──────────────────────
+
+export type LossReasonAiUnavailableReason = 'sem_transcricao' | 'negocio_nao_encontrado';
+export interface LossReasonAiAnalysisResult {
+  leadId: string;
+  available: boolean;
+  reason: LossReasonAiUnavailableReason | null;
+  declaredReasonRaw: string | null;
+  declaredBucket: string;
+  inferredBucket: string | null;
+  evidenceQuote: string | null;
+  mismatch: boolean;
+  confidence: 'alta' | 'media' | 'baixa' | null;
+  source: 'ai' | 'fallback' | null;
+  generatedAt: string;
+}
+
 // ─── Previsor — Faixa de Cenário (derivada client-side de ExecutiveOverview já carregado) ────────
 
 export interface ForecastScenario {
@@ -868,6 +885,8 @@ export const commercialIntelligenceApi = {
     api.post<BitrixNoteDraftResult>(`${BASE}/ai/bitrix-note`, { leadId }),
   aiMentorPlaybook: (filter: CommercialFilter) =>
     api.post<MentorPlaybookResult>(`${BASE}/ai/mentor-playbook`, filter),
+  aiLossReasonAnalysis: (leadId: string) =>
+    api.post<LossReasonAiAnalysisResult>(`${BASE}/ai/loss-reason-analysis`, { leadId }),
 };
 
 /**

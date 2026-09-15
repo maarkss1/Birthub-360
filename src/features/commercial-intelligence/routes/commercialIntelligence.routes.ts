@@ -91,6 +91,11 @@ router.post('/ai/executive-summary', aiLimiter, (req, res, next) =>
 router.post('/ai/bitrix-note', aiLimiter, (req, res, next) =>
   resolve().postAiBitrixNote(req, res, next),
 );
+// Motivo real de perda a partir de transcrição real (item 21) — mesmo desenho de custo/efeito dos
+// demais endpoints de IA acima: aiLimiter dedicado, só roda com clique explícito por negócio.
+router.post('/ai/loss-reason-analysis', aiLimiter, (req, res, next) =>
+  resolve().postAiLossReasonAnalysis(req, res, next),
+);
 // Mentor Comercial — playbook de recomendações priorizadas (mesmo desenho de custo/efeito
 // colateral dos 2 endpoints de IA acima: `aiLimiter` dedicado, nunca disparado sem clique explícito).
 router.post('/ai/mentor-playbook', aiLimiter, (req, res, next) =>

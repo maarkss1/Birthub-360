@@ -5,11 +5,13 @@ import { prisma } from '../../../lib/prisma.js';
 import { redactAndTrackPiiLeak } from '../../intelligence/services/guardrails.service.js';
 import { notificationService } from '../../notifications/notification.service.js';
 import type { CommercialIntelligenceUseCases } from '../application/CommercialIntelligenceUseCases.js';
+import { classifyLossReason, LOSS_REASON_TAXONOMY } from '../application/lossTaxonomy.js';
 import { buildForecastRange, computeTrendMomentum } from '../application/predictiveForecast.js';
 import type {
   CommercialIntelligenceFilter,
   DealDrillDownRow,
   ExecutiveAlert,
+  LossReasonAiAnalysisResult,
   MentorPlaybookResult,
   MentorRecommendation,
 } from '../domain/CommercialIntelligence.js';
@@ -36,6 +38,10 @@ const DEFAULT_NOTE_TEMPERATURE = 0.5;
 const DEFAULT_MENTOR_MODEL = 'local-llama3';
 const DEFAULT_MENTOR_TEMPERATURE = 0.2;
 
+const LOSS_REASON_TOOL_KEY = 'ci_loss_reason_analysis';
+const DEFAULT_LOSS_REASON_MODEL = 'local-llama3-fast';
+const DEFAULT_LOSS_REASON_TEMPERATURE = 0.1;
+
 const MENTOR_SYSTEM_PROMPT = `Você é um mentor/analista de receita B2B sênior do "Comercial Inteligente" (Birth Hub 360), gerando um playbook de ações priorizadas para um ADMIN ou GESTOR comercial.
 REGRAS CRÍTICAS:
 1. Use SOMENTE os dados do contexto abaixo — nunca invente valor, prazo, nome ou negócio. Dado ausente não vira suposição.
@@ -61,6 +67,16 @@ REGRAS CRÍTICAS:
 3. Explique o risco e sugira uma ação concreta e específica para ESTE negócio (não um conselho genérico).
 4. Sem saudação, sem assinatura — é uma nota de sistema, não um e-mail.
 5. Responda apenas com o texto da nota, sem aspas, sem introdução.`;
+
+const LOSS_REASON_SYSTEM_PROMPT = `Você é um analista de causa-raiz de perdas comerciais B2B do "Comercial Inteligente" (Birth Hub 360).
+Leia a transcrição real de chamada(s) com o cliente/lead de um negócio PERDIDO e identifique o motivo REAL da perda evidenciado na conversa — que pode confirmar ou divergir do motivo declarado manualmente no CRM.
+REGRAS CRÍTICAS:
+1. Escolha "inferredBucket" APENAS entre esta lista fixa (nunca invente uma categoria nova): ${LOSS_REASON_TAXONOMY.join(', ')}.
+2. "evidenceQuote" precisa ser um trecho LITERAL da transcrição (copiado, nunca parafraseado ou inventado) que embasa sua escolha.
+3. Se a transcrição não permitir identificar um motivo claro, use "Outro" e explique a incerteza em "evidenceQuote".
+4. "confidence": "alta" só quando a transcrição é explícita sobre o motivo; "media" quando é uma inferência razoável; "baixa" quando é indireta.
+5. Responda APENAS com um JSON válido, sem markdown, sem texto antes ou depois, no formato:
+{"inferredBucket":"Preço","evidenceQuote":"trecho literal da transcrição","confidence":"alta"}`;
 
 function money(value: number | null, currency = 'BRL'): string {
   if (value == null) return 'não disponível';
@@ -314,6 +330,107 @@ export class CommercialIntelligenceAiService {
     } catch {
       return {
         recommendations: buildFallbackRecommendations(alerts, priorityDeals.rows),
+        source: 'fallback',
+        generatedAt,
+      };
+    }
+  }
+
+  /**
+   * Motivo real de perda a partir da transcrição real da chamada (`VoiceCallLog.transcript`), não
+   * do campo manual `Lead.lossReason` (item 21 — "motivo real extraído de transcrição/observação,
+   * não campo de motivo de perda preenchido às pressas"). Sob demanda por negócio (custo de IA),
+   * nunca rodado automaticamente para todo negócio perdido de um período.
+   */
+  async analyzeLossReason(
+    organizationId: string,
+    leadId: string,
+  ): Promise<LossReasonAiAnalysisResult | null> {
+    const lead = await prisma.lead.findFirst({
+      where: { id: leadId, organizationId },
+      select: { id: true, lossReason: true },
+    });
+    if (!lead) return null;
+
+    const declaredBucket = classifyLossReason(lead.lossReason);
+    const generatedAt = new Date().toISOString();
+
+    const calls = await prisma.voiceCallLog.findMany({
+      where: { organizationId, leadId, transcript: { not: null } },
+      select: { transcript: true },
+      orderBy: { createdAt: 'asc' },
+    });
+    const transcriptText = calls
+      .map((c) => c.transcript)
+      .filter((t): t is string => !!t?.trim())
+      .join('\n---\n');
+
+    if (!transcriptText.trim()) {
+      return {
+        leadId,
+        available: false,
+        reason: 'sem_transcricao',
+        declaredReasonRaw: lead.lossReason,
+        declaredBucket,
+        inferredBucket: null,
+        evidenceQuote: null,
+        mismatch: false,
+        confidence: null,
+        source: null,
+        generatedAt,
+      };
+    }
+
+    const userPrompt = `## Motivo declarado manualmente no CRM: ${lead.lossReason ?? '(vazio)'}\n\n## Transcrição real da(s) chamada(s) com este lead:\n${transcriptText}`;
+
+    try {
+      const raw = await this.invoke(
+        LOSS_REASON_TOOL_KEY,
+        DEFAULT_LOSS_REASON_MODEL,
+        DEFAULT_LOSS_REASON_TEMPERATURE,
+        LOSS_REASON_SYSTEM_PROMPT,
+        userPrompt,
+        'Não foi possível analisar a transcrição agora.',
+      );
+      const parsed = cleanAndParseJson<{
+        inferredBucket: string;
+        evidenceQuote: string;
+        confidence: 'alta' | 'media' | 'baixa';
+      }>(raw);
+      const inferredBucket = LOSS_REASON_TAXONOMY.includes(
+        parsed.inferredBucket as (typeof LOSS_REASON_TAXONOMY)[number],
+      )
+        ? parsed.inferredBucket
+        : 'Outro';
+      return {
+        leadId,
+        available: true,
+        reason: null,
+        declaredReasonRaw: lead.lossReason,
+        declaredBucket,
+        inferredBucket,
+        evidenceQuote: parsed.evidenceQuote ?? null,
+        mismatch: inferredBucket !== declaredBucket,
+        confidence: parsed.confidence ?? null,
+        source: 'ai',
+        generatedAt,
+      };
+    } catch (error) {
+      logger.error(
+        { err: error, leadId },
+        'CommercialIntelligenceAiService: falha ao analisar transcrição de motivo de perda, aplicando fallback determinístico',
+      );
+      const inferredBucket = classifyLossReason(transcriptText);
+      return {
+        leadId,
+        available: true,
+        reason: null,
+        declaredReasonRaw: lead.lossReason,
+        declaredBucket,
+        inferredBucket,
+        evidenceQuote: null,
+        mismatch: inferredBucket !== declaredBucket,
+        confidence: null,
         source: 'fallback',
         generatedAt,
       };

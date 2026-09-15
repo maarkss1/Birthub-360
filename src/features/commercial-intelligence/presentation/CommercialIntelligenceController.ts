@@ -351,6 +351,25 @@ export class CommercialIntelligenceController {
     }
   };
 
+  postAiLossReasonAnalysis = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const leadId = typeof req.body?.leadId === 'string' ? req.body.leadId : '';
+      if (!leadId) {
+        res.status(400).json({ success: false, error: 'leadId é obrigatório.' });
+        return;
+      }
+      const data = await this.aiService.analyzeLossReason(organizationId, leadId);
+      if (!data) {
+        res.status(404).json({ success: false, error: 'Negócio não encontrado' });
+        return;
+      }
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   postAiMentorPlaybook = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { organizationId } = (req as AuthRequest).user;

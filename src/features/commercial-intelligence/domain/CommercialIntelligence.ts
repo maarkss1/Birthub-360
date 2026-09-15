@@ -705,6 +705,37 @@ export interface HealthScoreResult {
   generatedAt: string;
 }
 
+// ─── Motivo real de perda via IA sobre transcrição real (item 21 — não o campo manual) ──────
+//
+// `LossAnalysis`/`lossTaxonomy.ts` (acima) classificam o campo MANUAL `Lead.lossReason` — texto
+// preenchido às pressas no CRM, não necessariamente o motivo real. Este bloco vai à fonte primária
+// (transcrição real de chamada, `VoiceCallLog.transcript`) e usa IA para inferir o motivo REAL,
+// citando um trecho literal como evidência — nunca aceita a inferência do modelo sem mostrar de
+// onde veio. Só roda sob demanda (POST, custo de IA), nunca automaticamente para todo negócio
+// perdido.
+
+export type LossReasonAiUnavailableReason = 'sem_transcricao' | 'negocio_nao_encontrado';
+
+export interface LossReasonAiAnalysisResult {
+  leadId: string;
+  available: boolean;
+  reason: LossReasonAiUnavailableReason | null;
+  /** Texto bruto do campo manual `Lead.lossReason`, tal como preenchido no CRM. */
+  declaredReasonRaw: string | null;
+  /** Bucket da taxonomia fixa (`LOSS_REASON_TAXONOMY`) obtido do campo manual via `classifyLossReason` — mesmo cálculo determinístico já usado em `LossAnalysis`. */
+  declaredBucket: string;
+  /** Bucket da mesma taxonomia fixa, inferido da transcrição real. `null` sem transcrição disponível. */
+  inferredBucket: string | null;
+  /** Trecho LITERAL da transcrição que embasa o motivo inferido — nunca a IA "decidindo sem mostrar o porquê". `null` no fallback determinístico (sem citação, só o bucket). */
+  evidenceQuote: string | null;
+  /** `true` quando o motivo inferido da transcrição diverge do declarado manualmente — o sinal que este recurso existe para detectar. */
+  mismatch: boolean;
+  confidence: 'alta' | 'media' | 'baixa' | null;
+  /** `'ai'` quando o modelo classificou a partir da transcrição; `'fallback'` quando a IA falhou e a mesma heurística determinística de palavra-chave de `lossTaxonomy.ts` foi aplicada ao texto da transcrição — a UI precisa rotular a origem, nunca apresentar fallback como se fosse leitura da IA. */
+  source: 'ai' | 'fallback' | null;
+  generatedAt: string;
+}
+
 // ─── Mentor Comercial por IA (playbook de recomendações) ────────────────────
 
 export type MentorRecommendationPriority = 'alta' | 'media' | 'baixa';
