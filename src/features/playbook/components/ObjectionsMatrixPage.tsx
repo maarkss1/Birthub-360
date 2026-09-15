@@ -11,6 +11,7 @@ import {
   Shield,
   Sparkles,
   Trash2,
+  Trophy,
   WifiOff,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -28,7 +29,9 @@ import {
   type ObjectionSuggestion,
   type PlaybookListMeta,
   playbookApi,
+  type WinningPatternSuggestion,
 } from '../playbook.api';
+import { LivingPlaybookReview } from './LivingPlaybookReview';
 import { ObjectionItemForm } from './ObjectionItemForm';
 import { ObjectionSuggestionsReview } from './ObjectionSuggestionsReview';
 
@@ -79,6 +82,31 @@ export function ObjectionsMatrixPage() {
       toast.error(err instanceof Error ? err.message : 'Falha ao gerar sugestões.');
     } finally {
       setGeneratingSuggestions(false);
+    }
+  };
+
+  // Item 42 (Playbook Vivo): quando um vendedor descobre uma abordagem que converte melhor, o
+  // sistema sugere pro time inteiro. Gate de gestão (backend já restringe a ADMIN/GESTOR) —
+  // escondido pra quem não tem o papel, mesmo padrão de `canDelete` acima.
+  const canRunLivingPlaybook =
+    !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
+  const [generatingPatterns, setGeneratingPatterns] = useState(false);
+  const [isPatternsReviewOpen, setIsPatternsReviewOpen] = useState(false);
+  const [winningPatterns, setWinningPatterns] = useState<WinningPatternSuggestion[]>([]);
+  const [patternsEmptyReason, setPatternsEmptyReason] = useState<string | undefined>();
+
+  const handleGenerateWinningPatterns = async () => {
+    setGeneratingPatterns(true);
+    try {
+      const res = await playbookApi.generateWinningPatterns();
+      setWinningPatterns(res.data);
+      setPatternsEmptyReason(res.meta?.emptyReason);
+      setIsPatternsReviewOpen(true);
+    } catch (err) {
+      clientLogger.error({ err }, 'Falha ao gerar padrões vencedores do Playbook Vivo');
+      toast.error(err instanceof Error ? err.message : 'Falha ao gerar padrões vencedores.');
+    } finally {
+      setGeneratingPatterns(false);
     }
   };
 
@@ -167,6 +195,22 @@ export function ObjectionsMatrixPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
+            {canRunLivingPlaybook && (
+              <button
+                type="button"
+                onClick={handleGenerateWinningPatterns}
+                disabled={generatingPatterns}
+                title="Playbook Vivo: encontra abordagens que converteram melhor a partir de outcomes positivos reais e sugere pro time"
+                className="flex items-center gap-2 bg-surface-2 hover:bg-line border border-line disabled:opacity-60 text-ink px-4 py-2.5 rounded-2xl font-bold transition-all active:scale-95 cursor-pointer"
+              >
+                {generatingPatterns ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Trophy className="w-5 h-5 text-iris" />
+                )}
+                {generatingPatterns ? 'Buscando...' : 'Playbook Vivo'}
+              </button>
+            )}
             <button
               type="button"
               onClick={handleGenerateSuggestions}
@@ -400,6 +444,15 @@ export function ObjectionsMatrixPage() {
         defaultBrand={playbook}
         onAdded={load}
       />
+
+      {canRunLivingPlaybook && (
+        <LivingPlaybookReview
+          isOpen={isPatternsReviewOpen}
+          onClose={() => setIsPatternsReviewOpen(false)}
+          suggestions={winningPatterns}
+          emptyReason={patternsEmptyReason}
+        />
+      )}
 
       {dialog}
     </div>
