@@ -203,7 +203,7 @@ export function LoginScreen() {
   // (a mesma fonte de verdade de cor do resto do app, nunca hex digitado à mão), em vez dos
   // tokens de tema.
   const inputClass =
-    'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
+    'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
 
   return (
     <div
@@ -244,7 +244,7 @@ export function LoginScreen() {
               dois <h1> na mesma tela quebraria a hierarquia de heading (a11y, seção 10). */}
           <p
             className="mt-8 font-display text-4xl font-extrabold tracking-tight"
-            style={{ color: BRAND.colors.brand }}
+            
           >
             Birth Hub 360°
           </p>
@@ -301,7 +301,7 @@ export function LoginScreen() {
                   <Mail
                     size={16}
                     className="mt-0.5 shrink-0"
-                    style={{ color: BRAND.colors.brand }}
+                    
                   />
                   <p>
                     Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele para
@@ -311,8 +311,8 @@ export function LoginScreen() {
                 <button
                   type="button"
                   onClick={backToSignIn}
-                  className="cursor-pointer text-sm font-bold transition-colors hover:underline"
-                  style={{ color: BRAND.colors.brand }}
+                  className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                  
                 >
                   Voltar para o login
                 </button>
@@ -331,7 +331,7 @@ export function LoginScreen() {
                     <Mail
                       size={16}
                       className="mt-0.5 shrink-0"
-                      style={{ color: BRAND.colors.brand }}
+                      
                     />
                     <p>
                       Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail com
@@ -341,8 +341,8 @@ export function LoginScreen() {
                   <button
                     type="button"
                     onClick={backToSignIn}
-                    className="cursor-pointer text-sm font-bold transition-colors hover:underline"
-                    style={{ color: BRAND.colors.brand }}
+                    className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                    
                   >
                     Voltar para o login
                   </button>
@@ -375,7 +375,7 @@ export function LoginScreen() {
                     </label>
                     <div className="relative">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                        <Mail className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                        <Mail className="h-4 w-4 text-slate-600" aria-hidden="true" />
                       </div>
                       <input
                         id="login-forgot-email"
@@ -419,8 +419,8 @@ export function LoginScreen() {
                     <button
                       type="button"
                       onClick={backToSignIn}
-                      className="cursor-pointer text-sm font-bold transition-colors hover:underline"
-                      style={{ color: BRAND.colors.brand }}
+                      className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                      
                     >
                       Voltar para o login
                     </button>
@@ -454,7 +454,7 @@ export function LoginScreen() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="block w-full rounded-t-lg border-0 border-b-2 border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0"
+                      className="block w-full rounded-t-lg border-0 border-b-2 border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0"
                       placeholder="Ex: Marcelo Nascimento"
                       required={isSignUp}
                     />
@@ -470,7 +470,7 @@ export function LoginScreen() {
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                      <Mail className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                      <Mail className="h-4 w-4 text-slate-600" aria-hidden="true" />
                     </div>
                     <input
                       id="login-email"
@@ -493,7 +493,7 @@ export function LoginScreen() {
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                      <Lock className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                      <Lock className="h-4 w-4 text-slate-600" aria-hidden="true" />
                     </div>
                     <input
                       id="login-password"
@@ -529,8 +529,8 @@ export function LoginScreen() {
                         setIsForgotPassword(true);
                         setError('');
                       }}
-                      className="cursor-pointer text-xs font-bold transition-colors hover:underline"
-                      style={{ color: BRAND.colors.brand }}
+                      className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                      
                     >
                       Protocolo de recuperação?
                     </button>
@@ -592,7 +592,7 @@ export function LoginScreen() {
                 >
                   <span
                     className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50"
-                    style={{ color: BRAND.colors.brand }}
+                    
                   >
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
