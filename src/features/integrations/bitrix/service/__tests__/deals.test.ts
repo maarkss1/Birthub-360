@@ -15,6 +15,11 @@ const prismaMock = {
 };
 vi.mock('@/lib/prisma', () => ({ prisma: prismaMock }));
 
+// Mesmo padrão de CompanyUseCases.test.ts — deals.ts agora enfileira enriquecimento após criar a
+// Company importada (ver comentário em deals.ts), então precisa do mesmo mock pra não puxar o
+// Queue/Redis real no import do módulo.
+vi.mock('@/lib/queue/enrichment.queue', () => ({ enrichmentQueue: { add: vi.fn() } }));
+
 const clientMock = {
   callBitrix: vi.fn(),
   getStatusLabels: vi.fn(),
