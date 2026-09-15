@@ -17,8 +17,8 @@ export function WorkspaceHome() {
   const { workspace, isLoading, error, reload } = useWorkspace();
 
   return (
-    <div className="relative flex min-h-screen flex-1 flex-col items-center overflow-y-auto bg-transparent p-4 font-sans md:p-8">
-      <div className="relative z-[1] flex w-full max-w-[92rem] flex-1 flex-col items-center justify-center">
+    <div className="relative flex min-h-full flex-1 flex-col items-center overflow-y-auto bg-transparent font-sans">
+      <div className="bh-page relative z-[1] flex flex-1 flex-col items-center justify-center">
         {isLoading && (
           <div aria-live="polite" aria-busy="true" className="flex items-center gap-2 text-ink-2">
             <Loader2 className="h-5 w-5 animate-spin" />

@@ -4,44 +4,41 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
 
-const cardVariants = cva(
-  'relative overflow-hidden rounded-card text-ink transform-gpu [transform-style:preserve-3d]',
-  {
-    variants: {
-      variant: {
-        default:
-          'bg-surface border border-line shadow-card transition-[box-shadow,border-color] duration-300 hover:border-brand/15 hover:shadow-card-hover',
-        stat: 'bg-gradient-to-br from-surface to-surface-2 border border-line shadow-card transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-brand/20 hover:shadow-card-hover',
-        outline: 'border border-line bg-transparent',
-        accent:
-          'bg-surface border border-brand/30 shadow-glow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
-        elevated:
-          'bg-surface/96 border border-line shadow-[0_28px_65px_-42px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-brand/20 hover:shadow-[0_34px_72px_-40px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.08)]',
-        interactive:
-          'group bg-surface border border-line shadow-card cursor-pointer transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-brand/25 hover:bg-surface-2/75 hover:shadow-card-hover active:translate-y-0 active:scale-[0.995]',
-        // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
-        // Mesmo idioma do "accent" acima (borda + shadow-glow em repouso, pra marcar destaque
-        // persistente — não é o glow transitório de hover do Button). shadow-glow-accent-*/pulse
-        // já são discretos no claro (20%) e vívidos no escuro (duas camadas) — o mesmo token
-        // resolve os dois temas sem precisar de dark: aqui.
-        iris: 'bg-surface border border-accent-violet/30 shadow-glow-accent-violet transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
-        cyan: 'bg-surface border border-accent-cyan/30 shadow-glow-accent-cyan transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
-        pulse:
-          'bg-surface border border-pulse/30 shadow-glow-pulse transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
-      },
-      padding: {
-        default: 'p-6',
-        sm: 'p-4',
-        lg: 'p-8',
-        none: 'p-0',
-      },
+const cardVariants = cva('relative overflow-hidden rounded-card text-ink', {
+  variants: {
+    variant: {
+      default:
+        'bg-surface-elevated border border-line shadow-card transition-[box-shadow,border-color] duration-200 hover:border-ink-2/20 hover:shadow-card-hover',
+      stat: 'bg-surface-elevated border border-line shadow-card transition-[box-shadow,border-color] duration-200 hover:border-brand/25 hover:shadow-card-hover',
+      outline: 'border border-line bg-transparent',
+      accent:
+        'bg-surface-elevated border border-brand/35 shadow-card transition-[box-shadow,border-color] duration-200 hover:border-brand/55 hover:shadow-card-hover',
+      elevated:
+        'bg-surface-elevated border border-line shadow-card-hover transition-[box-shadow,border-color] duration-200 hover:border-brand/25',
+      interactive:
+        'group bg-surface-elevated border border-line shadow-card cursor-pointer transition-[box-shadow,border-color,background-color] duration-200 hover:border-brand/30 hover:bg-surface-interactive hover:shadow-card-hover',
+      // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
+      // Mesmo idioma do "accent" acima (borda + shadow-glow em repouso, pra marcar destaque
+      // persistente — não é o glow transitório de hover do Button). shadow-glow-accent-*/pulse
+      // já são discretos no claro (20%) e vívidos no escuro (duas camadas) — o mesmo token
+      // resolve os dois temas sem precisar de dark: aqui.
+      iris: 'bg-surface border border-accent-violet/30 shadow-glow-accent-violet transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+      cyan: 'bg-surface border border-accent-cyan/30 shadow-glow-accent-cyan transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+      pulse:
+        'bg-surface border border-pulse/30 shadow-glow-pulse transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
     },
-    defaultVariants: {
-      variant: 'default',
-      padding: 'default',
+    padding: {
+      default: 'p-6',
+      sm: 'p-4',
+      lg: 'p-8',
+      none: 'p-0',
     },
   },
-);
+  defaultVariants: {
+    variant: 'default',
+    padding: 'default',
+  },
+});
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,

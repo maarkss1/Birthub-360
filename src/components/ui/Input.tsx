@@ -13,7 +13,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           // real já corrigida em outline/ghost do Button). Foco troca o shadow fixo (30% em
           // qualquer tema) por shadow-glow-brand — mesmo token do Button/Card, discreto no claro e
           // vívido no escuro, em vez de uma intensidade só que não reagia a tema.
-          'flex h-10 w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-2 transition-[border-color,box-shadow] duration-200 hover:border-ink-2/40 focus-visible:outline-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/35 focus-visible:shadow-glow-brand disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-line',
+          'flex h-10 w-full rounded-control border border-line bg-surface-elevated px-3 py-2 text-sm text-ink placeholder:text-ink-2/75 transition-[border-color,box-shadow,background-color] duration-200 hover:border-ink-2/35 focus-visible:outline-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/25 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:opacity-60 disabled:hover:border-line',
           className,
         )}
         ref={ref}

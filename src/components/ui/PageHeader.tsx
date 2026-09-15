@@ -15,19 +15,25 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, subtitle, icon, actions }: PageHeaderProps) {
   return (
-    <header className="flex items-center justify-between gap-4 p-6 pb-4">
+    <header className="flex flex-col items-start justify-between gap-4 border-b border-line pb-5 sm:flex-row sm:items-center">
       <div className="flex items-center gap-3 min-w-0">
         {icon && (
-          <div className="w-11 h-11 rounded-2xl bg-surface-2 border border-line flex items-center justify-center shrink-0">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control border border-brand/25 bg-brand/10 text-brand-ink dark:text-brand">
             {icon}
           </div>
         )}
         <div className="min-w-0">
-          <h1 className="text-2xl font-black text-ink tracking-tight truncate">{title}</h1>
-          {subtitle && <p className="text-xs text-ink-2 mt-0.5 font-medium">{subtitle}</p>}
+          <h1 className="truncate font-display text-h2 font-bold text-ink">{title}</h1>
+          {subtitle && (
+            <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-2">{subtitle}</p>
+          )}
         </div>
       </div>
-      {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
+      {actions && (
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:shrink-0 sm:justify-end">
+          {actions}
+        </div>
+      )}
     </header>
   );
 }

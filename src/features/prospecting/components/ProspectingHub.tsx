@@ -1,10 +1,9 @@
 import { motion } from 'framer-motion';
-import { Bookmark, Camera, Database, Landmark, Sparkles, Wrench } from 'lucide-react';
+import { Bookmark, Camera, Database, Landmark, Wrench } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GamificationWidget } from '../../../components/ui/GamificationWidget';
 import { BRAND } from '../../../config/brand';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
 import { SoundFX } from '../../../lib/soundEffects';
 import {
@@ -100,7 +99,6 @@ function getErrorMessage(error: unknown, fallback: string): string {
 
 export function ProspectingHub() {
   const { info: playbookMeta } = useActivePlaybook();
-  const accent = useBrandAccent();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
 
@@ -493,21 +491,18 @@ export function ProspectingHub() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-bg p-6 sm:p-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="flex-1 overflow-y-auto bg-transparent font-sans">
+      <div className="bh-page bh-page-stack">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-4 space-y-4"
         >
-          <h1 className="text-4xl font-black tracking-tight text-ink">
-            {playbookMeta.label}{' '}
-            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
-              Prospect
-            </span>{' '}
-            <Sparkles className={`inline-block ${accent.text} -mt-1 ml-1`} size={28} />
+          <div className="bh-label text-brand-ink dark:text-brand">CAPTAÇÃO E QUALIFICAÇÃO</div>
+          <h1 className="font-display text-h1 font-bold tracking-tight text-ink">
+            {playbookMeta.label} Prospect
           </h1>
-          <p className="text-ink-2 text-sm font-medium">
+          <p className="max-w-3xl text-sm leading-relaxed text-ink-2">
             Motor de enriquecimento autônomo com IA para capturar leads corporativos de altíssimo
             nível.
           </p>
@@ -515,14 +510,20 @@ export function ProspectingHub() {
         </motion.div>
 
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex gap-3 bg-surface/75 backdrop-blur-xl p-2 rounded-2xl border border-line shadow-card w-fit relative z-10">
+          <div
+            className="relative z-10 flex max-w-full gap-1 overflow-x-auto rounded-card border border-line bg-surface-subtle p-1 shadow-sm"
+            role="tablist"
+            aria-label="Métodos de prospecção"
+          >
             <button
               type="button"
               onClick={() => {
                 SoundFX.play('navigate');
                 setTab('cnpj');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[2rem] font-bold text-sm transition-all duration-300 ${tab === 'cnpj' ? 'bg-obsidian text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              role="tab"
+              aria-selected={tab === 'cnpj'}
+              className={`flex items-center gap-2 whitespace-nowrap rounded-control px-4 py-2 text-sm font-semibold transition-colors ${tab === 'cnpj' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'}`}
             >
               <Landmark size={18} /> Busca Direta (CNPJ/Nome)
             </button>
@@ -532,7 +533,9 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('discovery');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'discovery' ? 'bg-brand-active text-on-brand shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              role="tab"
+              aria-selected={tab === 'discovery'}
+              className={`flex items-center gap-2 whitespace-nowrap rounded-control px-4 py-2 text-sm font-semibold transition-colors ${tab === 'discovery' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'}`}
             >
               <Database size={18} /> Radar Discovery (Fontes abertas)
             </button>
@@ -542,7 +545,9 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('ocr');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'ocr' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              role="tab"
+              aria-selected={tab === 'ocr'}
+              className={`flex items-center gap-2 whitespace-nowrap rounded-control px-4 py-2 text-sm font-semibold transition-colors ${tab === 'ocr' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'}`}
             >
               <Camera size={18} /> Cadastrar por Foto (OCR)
             </button>
@@ -552,7 +557,9 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('tools');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'tools' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              role="tab"
+              aria-selected={tab === 'tools'}
+              className={`flex items-center gap-2 whitespace-nowrap rounded-control px-4 py-2 text-sm font-semibold transition-colors ${tab === 'tools' ? 'bg-brand-active text-on-brand shadow-sm' : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'}`}
             >
               <Wrench size={18} /> Ferramentas
             </button>
@@ -564,7 +571,7 @@ export function ProspectingHub() {
               SoundFX.play('focus');
               setIsSavedSearchesOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-surface border border-line hover:border-brand/40 rounded-2xl text-xs font-bold text-ink hover:text-brand transition-all shadow-sm active:scale-95"
+            className="flex items-center gap-2 rounded-control border border-line bg-surface-elevated px-4 py-2.5 text-xs font-semibold text-ink shadow-sm transition-colors hover:border-brand/35 hover:bg-surface-interactive"
           >
             <Bookmark size={16} className="text-brand" /> Listas Salvas & Agendamentos
           </button>
