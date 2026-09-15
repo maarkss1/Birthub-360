@@ -30,7 +30,8 @@ vi.mock('@/lib/logger', () => ({
 vi.mock('@/shared/di/container', () => ({
   container: {
     resolve: (name: string) => {
-      if (name === 'NoteUseCases') return { createNote: (...args: unknown[]) => noteCreateMock(...args) };
+      if (name === 'NoteUseCases')
+        return { createNote: (...args: unknown[]) => noteCreateMock(...args) };
       if (name === 'WhatsAppSenderPort')
         return { sendWhatsAppMessage: (...args: unknown[]) => sendWhatsAppMessageMock(...args) };
       return undefined;

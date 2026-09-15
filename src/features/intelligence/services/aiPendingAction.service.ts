@@ -148,9 +148,15 @@ export async function executeAction(action: ExecutableAction): Promise<Execution
         return { sent: false, reason: 'unsupported_action' };
       }
       const whatsapp = container.resolve<WhatsAppSenderPort>('WhatsAppSenderPort');
-      await whatsapp.sendWhatsAppMessage(action.organizationId, payload.to, payload.body, undefined, {
-        leadId: payload.leadId ?? null,
-      });
+      await whatsapp.sendWhatsAppMessage(
+        action.organizationId,
+        payload.to,
+        payload.body,
+        undefined,
+        {
+          leadId: payload.leadId ?? null,
+        },
+      );
       return { sent: true };
     }
 

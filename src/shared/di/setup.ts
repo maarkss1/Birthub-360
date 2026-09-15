@@ -66,6 +66,7 @@ import { testBitrixConnection } from '../../features/integrations/bitrix/service
 // e resolvido via `container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService')` com
 // o tipo estrutural local já usado por `agent.routes.ts`.
 import { createCalendarEvent } from '../../features/integrations/google/google.service.js';
+import { StripeChargeAdapter } from '../../features/integrations/stripe/infra/StripeChargeAdapter';
 // Negociador de IA em segundo plano (item 3 da IA Agêntica de Vendas, onda de 2026-09-15) — mesmo
 // motivo do comentário da Onda 43 acima: `intelligence/services/aiPendingAction.service.ts` não
 // pode importar `integrations/whatsapp/whatsapp.service.ts` diretamente
@@ -73,7 +74,6 @@ import { createCalendarEvent } from '../../features/integrations/google/google.s
 // `container.resolve<WhatsAppSenderPort>('WhatsAppSenderPort')`, mesmo padrão de
 // `GoogleCalendarService` logo acima.
 import { sendWhatsAppMessage } from '../../features/integrations/whatsapp/whatsapp.service.js';
-import { StripeChargeAdapter } from '../../features/integrations/stripe/infra/StripeChargeAdapter';
 import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
 import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
 // Agent Runtime Genérico (PROMPT 4) — mesmo motivo do comentário da Onda 43 acima:
