@@ -13,6 +13,7 @@ vi.mock('@/lib/email/mailer', () => ({
   MailerNotConfiguredError: FakeMailerNotConfiguredError,
 }));
 
+const sendWhatsAppMessageMock = vi.fn();
 const leadFindFirstMock = vi.fn();
 
 vi.mock('@/lib/prisma', () => ({
@@ -28,10 +29,13 @@ vi.mock('@/lib/logger', () => ({
 
 vi.mock('@/shared/di/container', () => ({
   container: {
-    resolve: (name: string) =>
-      name === 'NoteUseCases'
-        ? { createNote: (...args: unknown[]) => noteCreateMock(...args) }
-        : undefined,
+    resolve: (name: string) => {
+      if (name === 'NoteUseCases')
+        return { createNote: (...args: unknown[]) => noteCreateMock(...args) };
+      if (name === 'WhatsAppSenderPort')
+        return { sendWhatsAppMessage: (...args: unknown[]) => sendWhatsAppMessageMock(...args) };
+      return undefined;
+    },
   },
 }));
 
@@ -54,6 +58,7 @@ beforeEach(() => {
   updateMock.update.mockResolvedValue({});
   leadFindFirstMock.mockResolvedValue(null);
   notificationCreateMock.mockReset();
+  sendWhatsAppMessageMock.mockReset();
 });
 
 const emailAction = {
@@ -320,6 +325,59 @@ describe('executeAndRecord', () => {
       action: 'notify_team',
       organizationId: 'org-1',
       payload: { title: 'Alerta' },
+    });
+
+    expect(result).toEqual({ sent: false, reason: 'send_failed' });
+  });
+
+  // Negociador de IA em segundo plano (item 3): envia a réplica real via WhatsApp, sempre a
+  // partir de uma ação já aprovada por um humano (a aprovação, não este teste, é o gate — ver
+  // maybeProposeNegotiatorReply em swarmScheduler.service.ts, que sempre cria riskLevel: 'high').
+  it('envia a réplica do Negociador de IA via WhatsApp quando aprovada', async () => {
+    sendWhatsAppMessageMock.mockResolvedValue(true);
+
+    const result = await executeAction({
+      id: 'act-12',
+      action: 'send_whatsapp_reply',
+      organizationId: 'org-1',
+      payload: {
+        leadId: 'lead-1',
+        to: '+5511999998888',
+        body: 'Oi! Recebi sua mensagem, já te confirmo o prazo.',
+        conversationSignalId: 'signal-1',
+      },
+    });
+
+    expect(result).toEqual({ sent: true });
+    expect(sendWhatsAppMessageMock).toHaveBeenCalledWith(
+      'org-1',
+      '+5511999998888',
+      'Oi! Recebi sua mensagem, já te confirmo o prazo.',
+      undefined,
+      { leadId: 'lead-1' },
+    );
+  });
+
+  it('rejeita send_whatsapp_reply sem número de destino ou sem corpo da mensagem', async () => {
+    const result = await executeAction({
+      id: 'act-13',
+      action: 'send_whatsapp_reply',
+      organizationId: 'org-1',
+      payload: { leadId: 'lead-1', body: 'sem destinatário' },
+    });
+
+    expect(result).toEqual({ sent: false, reason: 'unsupported_action' });
+    expect(sendWhatsAppMessageMock).not.toHaveBeenCalled();
+  });
+
+  it('reporta send_failed quando o WhatsApp não está conectado', async () => {
+    sendWhatsAppMessageMock.mockRejectedValue(new Error('WhatsApp não está conectado.'));
+
+    const result = await executeAction({
+      id: 'act-14',
+      action: 'send_whatsapp_reply',
+      organizationId: 'org-1',
+      payload: { leadId: 'lead-1', to: '+5511999998888', body: 'Oi!' },
     });
 
     expect(result).toEqual({ sent: false, reason: 'send_failed' });
