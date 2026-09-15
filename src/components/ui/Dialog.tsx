@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 import type React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { cn } from '../../lib/utils';
 
 type DialogProps = {
@@ -31,6 +31,11 @@ export function Dialog({
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  const titleId = useId();
+  const onCloseRef = useRef(onClose);
+  const preventCloseRef = useRef(preventClose);
+  onCloseRef.current = onClose;
+  preventCloseRef.current = preventClose;
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -61,15 +66,15 @@ export function Dialog({
 
     const handleCancel = (e: Event) => {
       e.preventDefault();
-      if (preventClose) return;
-      onClose();
+      if (preventCloseRef.current) return;
+      onCloseRef.current();
     };
 
     dialog.addEventListener('cancel', handleCancel);
     return () => {
       dialog.removeEventListener('cancel', handleCancel);
     };
-  }, [onClose, preventClose]);
+  }, []);
 
   // Bug real de acessibilidade/teclado corrigido (Onda 3, Agente 03): este componente tinha um
   // onKeyDown('Enter') no <dialog> que chamava onClose() a cada Enter, sem checar o alvo do
@@ -105,15 +110,16 @@ export function Dialog({
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <dialog
       ref={dialogRef}
+      aria-labelledby={titleId}
       onClick={handleBackdropClick}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
       className={cn(
-        'backdrop:bg-ink/60 backdrop:backdrop-blur-md bg-surface border border-line rounded-card-lg shadow-2xl w-full p-0 outline-none overflow-hidden max-h-[90vh] open:flex open:flex-col transition-colors duration-200 ease-out',
+        'backdrop:bg-ink/60 backdrop:backdrop-blur-md bg-surface border border-line rounded-card-lg shadow-2xl w-full p-0 outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 overflow-hidden max-h-[90vh] open:flex open:flex-col transition-colors duration-200 ease-out',
         maxWidth,
       )}
     >
       <div className="flex items-center justify-between p-4 border-b border-line shrink-0">
-        <h2 className="text-lg font-semibold text-ink">{title}</h2>
+        <h2 id={titleId} className="text-lg font-semibold text-ink">{title}</h2>
         <button
           type="button"
           onClick={onClose}
@@ -123,7 +129,7 @@ export function Dialog({
           <X size={20} />
         </button>
       </div>
-      <div className="p-4 overflow-y-auto">{children}</div>
+      <div className="p-4 overflow-y-auto overscroll-contain">{children}</div>
       {footer && (
         <div className="p-4 border-t border-line shrink-0 flex justify-end gap-3">{footer}</div>
       )}
