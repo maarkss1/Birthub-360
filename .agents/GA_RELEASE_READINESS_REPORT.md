@@ -1,83 +1,60 @@
 # BIRTH HUB 360° — GA RELEASE READINESS REPORT
 
-## 1. Workflows Identificados
-- **`ci.yml`**: Fluxo canônico de CI (Push/PR). Contém gates de lint, typecheck, testes de arquitetura, testes unitários, testes de integração, regressões de OpenAPI, Playwright e build. Inclui step `visual-baselines` com dispatch manual.
-- **`cd-homolog.yml`**: CD para ambiente de homologação. Promove SHAs que tenham passado obrigatoriamente pelo `ci.yml`.
-- **`production.yaml`**: CD para ambiente de produção. Escaneia imagens (Trivy), gera SBOM e promove SHAs estritamente verificados pelo CI.
-- **`playwright-ci.yml` / `qualidade-ci.yml`**: Workflows secundários para disparos sob demanda de verificações isoladas (E2E e Lint).
+## Escopo da verificação — 2026-09-15
 
-## 2. Required Checks (Branch Protection)
-Para deploy em Produção e Homologação, os workflows exigem a comprovação de sucesso (via action `.github/actions/require-ci-green`) no check `build` fornecido pelo workflow principal `ci.yml`.
+- Código revisado: `17e0e36b` (`main`), confirmado em `origin/main` após `git fetch origin`.
+- Merge pendente: `a4fda184` (`fix/design-guidelines-and-a11y`). O resultado do merge preserva o código atual; a única diferença de conteúdo em relação a `HEAD` era este relatório em conflito.
+- As mudanças de interface, acessibilidade e animação de login já estão na `main`. Esta resolução consolida o histórico e corrige as afirmações de aprovação sem evidência.
+- Os resultados abaixo pertencem a esta execução. A presença de um teste ou workflow não equivale a um teste aprovado.
 
-## 3. SHA Chain
-A verificação de rastreabilidade (Source-to-Production) garante:
-`SOURCE SHA` → CI valida este SHA → Build usa este SHA → CD Deploy checa este SHA.
-Se houver divergência, o deploy é bloqueado. (Verificado nos workflows `cd-homolog.yml` e `production.yaml`).
+## CI, cadeia de promoção e artefatos
 
-## 4. Artifacts
-Artefatos (Imagens Docker) gerados com a tag curta do SHA do commit. O SBOM é publicado nas execuções e mantido por 90 dias. As imagens são promovidas entre registry/ambientes após passagem pelo scanner.
+- `.github/workflows/ci.yml` é o workflow canônico. O agregador `build` depende de `secret-scan` e `build-and-test` e exige sucesso dos dois.
+- `build-and-test` configura lint, formatação, typecheck, arquitetura, OpenAPI, testes unitários, integração, E2E e build.
+- `.github/actions/require-ci-green/action.yml` consulta o check `build` do SHA informado e rejeita resultados ausentes, incompletos ou sem sucesso. Os workflows de homologação e produção usam essa ação.
+- A configuração de proteção de branch, revisores de ambiente, alertas externos e uma promoção real não foram validadas nesta execução. A existência dos YAMLs não comprova essas configurações nem o sucesso de um deploy.
+- O CI do código revisado concluiu com sucesso: secret scan, application gate e agregador build (consulta via GitHub CLI ao SHA completo): https://github.com/maarkss1/Birthub-360/actions/runs/35016642613.
+- Os workflows Frontend Bundle Budget, Security - CodeQL e SonarQube Analysis do mesmo SHA estavam concluídos com sucesso. Esses resultados não substituem o gate canônico completo.
+- Imagens, SBOM, retenção de artefatos, rollback e observabilidade pós-deploy exigem validação operacional antes de uma aprovação GA.
 
-## 5. Visual Gate
-*Status: A Implementar Automação Completa (Manual atualmente)*
-- O gate `visual-baselines` em `ci.yml` existe mas não está como verificação bloqueante padrão no pipeline E2E de PRs automaticamente, apenas sob dispatch. (PRECISA DE PASS).
+## Regressão visual e acessibilidade
 
-## 6. Accessibility
-Acessibilidade está incluída no pipeline, mas as asserções cruciais de bloqueio explícito (P0/P1) em tempo de PR precisam ser formalizadas nas rotas críticas do Playwright para falharem sem bypass automático.
+- `tests/e2e/visual.spec.ts` contém comparações bloqueantes com `toHaveScreenshot`, executadas pela suíte E2E padrão. Cobre dashboard e pipeline em light/dark e formulário de contato em light.
+- `tests/e2e/accessibility.spec.ts` falha para violações axe de impacto `critical` ou `serious`; os demais impactos são registrados para triagem. Isso não equivale a conformidade integral de acessibilidade.
+- A suíte adicional `visual-regression/`, configurada em `playwright.visual.config.ts`, é executada por `.github/workflows/visual-regression.yml`, cujo passo de teste usa `continue-on-error: true`. Portanto, essa suíte adicional não comprova um gate visual bloqueante de release.
+- O job `visual-baselines` do CI gera referências por disparo manual e não participa do agregador `build`. Gerar referências é diferente de comparar telas contra referências aprovadas.
+- Responsividade, temas e desempenho só podem receber PASS com resultados da execução correspondente; não são presumidos a partir da configuração.
 
-## 7. Responsive
-Responsividade integrada ao E2E mas exige conferência de visual diff se houver overflow severo. 
+## Validação local
 
-## 8. Themes
-Suporte a validação Visual em Light e Dark incluída nos testes Playwright (`tests/e2e/visual.spec.ts`).
+Ambiente: Windows, Node `v24.19.0`, npm `11.17.0`. O CI configura Node 22.
+Todos os scripts obrigatórios foram conferidos em `package.json` antes da execução.
 
-## 9. Performance
-Orçamentos definidos e medidos via scripts como `check-bundle-budget.mjs` e `check-public-budget.mjs` chamados externamente / localmente ou no repositório.
+| Comando | Resultado observado |
+| --- | --- |
+| `npx tsc --noEmit` | PASS, exit 0. |
+| `npm run lint` | PASS, exit 0; dois avisos existentes: non-null assertion em `prospecting.routes.ts` e `any` em `src/lib/api.ts`. |
+| `npm run test:architecture` | INCOMPLETO: exit 0 fora do sandbox, mas dependency-cruiser declara incompatibilidade com TypeScript 7 e percorre somente 61 módulos. Hotspots: 955 arquivos, nenhuma violação bloqueante, 31 avisos. Não é evidência de arquitetura integralmente aprovada. |
+| `npm run test:unit` | FALHA OBSERVADA / execução interrompida: timeout de 15 s em `base.agent.budget.test.ts`. Sem resumo final da suíte local. |
+| `npm run test:integration` | FALHAS OBSERVADAS / execução interrompida: capability-engine (1/37), import-agent-catalog (1/12), backfill-contact-pii (1/1) e backfill-voice-transcript-pii (1/1). Sem resumo final. |
+| `npm run test:e2e` | FALHAS OBSERVADAS / execução interrompida: signup não chegou ao hub nem à confirmação de email em Uso/Faturamento e Equipe. Suíte de 103 testes, sem resultado integral. |
+| `npm run build` | Exit 0; bundles gerados. Avisos de chunks grandes, ordem de CSS import e erro de glob do PWA: `brace_expansion_1.expand is not a function`; precache reportado com 1 entrada (0 KiB). Build não comprova funcionamento offline. |
+| Migrações via pretests | PASS: 116 migrações encontradas e nenhuma pendente em `localhost:5434/prospectordb_test`. Não valida migrações de produção. |
+| `verify:integrations` / `verify:ai` | Não executados: o conteúdo enviado é documental e não altera integrações ou IA; esses diagnósticos acessam provedores externos. |
 
-## 10. E2E
-Playwright E2E gate existe no `ci.yml` (`Run E2E Tests`), rodando contra o Postgres de testes local.
+As primeiras tentativas de algumas ferramentas falharam por restrições do sandbox. Os resultados registrados acima consideram as reexecuções permitidas fora dele; a limitação real do dependency-cruiser permaneceu.
 
-## 11. Homolog
-Pipeline garantido via `cd-homolog.yml`. SHA é promovido apenas após validação (NO CI PASS = NO DEPLOY). 
+## Limitações e encaminhamento
 
-## 12. Approval
-Workflow de Produção (`production.yaml`) opera mediante trigger `workflow_dispatch` (aprovação humana) num ambiente que exige review.
+- Unit, integração e E2E locais foram interrompidos após falhas observadas; não receberam PASS. Integração e E2E chegaram a executar simultaneamente, portanto os resultados locais não isolam regressão de código de interferência do ambiente compartilhado.
+- O Playwright local permite reaproveitar servidor existente. Havia `server.ts` escutando na porta 3000 desde antes desta revisão; a configuração efetiva desse processo não foi comprovada. O resultado E2E local não é evidência de ambiente isolado.
+- A evidência de suíte completa é a execução remota do SHA revisado no CI, não as execuções locais interrompidas. O commit documental que resolve este conflito receberá sua própria execução de CI após o push.
+- Encaminhamento rastreável: `.agents/handoffs/onda-49/00-para-14-validacao-local-pre-push.md`. A correção de harness e dependências deve ocorrer com o dono correspondente, sem atribuir estes achados à alteração documental.
+- Arquivos que surgiram durante a revisão (`.agents/skills/impeccable/` e `scratch.cjs`) ficaram fora deste commit; não existiam no inventário inicial e sua edição pertence a outra atividade.
+- Varredura manual do diff documental: sem credenciais, tokens, dados pessoais, dumps ou arquivos de ambiente adicionados. `git diff --check` sem erros após normalização de fim de linha.
 
-## 13. Rollback
-Deploy por SHA tag (`ghcr.io/repo:sha`). O Rollback é direto bastando chamar o CD novamente com um SHA antigo aprovado.
+## Veredito
 
-## 14. Post-deploy
-Etapa necessita que ferramentas como Sentry (ou equivalente) atuem; alertas configurados fora do GitHub actions não foram totalmente aferidos nesta etapa estática.
+**NOT GA READY — validação ainda incompleta e achados de harness/build em aberto.**
 
-## 15. Bypass Policy
-O uso do action `.github/actions/require-ci-green` nos workflows de CD impossibilita bypass de CI via GitHub UI Actions para deployments. Bypass só se for revogado o action ou via emergency break glass.
-
-## 16. Risks
-Risco de falso positivo visual no gate de E2E bloqueando release, se a baseline golden não for mantida adequadamente pela equipe.
-
-## 17. Known Issues
-- `visual-baselines` rodando de forma isolada/manual invés de ser o gate padrão estrito nos PRs de feature.
-- Dependência de aprovação manual não sistêmica para "Visual Diffs".
-
-## 18. Final Status da Execução (Snapshot)
-
-- **LINT**: PASS
-- **TYPECHECK**: PASS
-- **ARCHITECTURE**: PASS
-- **UNIT**: PASS (Assumido, não rodado na shell local isoladamente)
-- **BUILD**: PASS
-- **INTEGRATION**: PASS (Assumido)
-- **E2E**: PASS (Assumido)
-- **VISUAL REGRESSION**: FAIL (Ação manual necessária/Não completamente bloqueante automático)
-- **ACCESSIBILITY**: PASS
-- **RESPONSIVE**: PASS
-- **LIGHT MODE**: PASS
-- **DARK MODE**: PASS
-- **PERFORMANCE**: PASS
-- **SECURITY**: PASS (Trivy scan bloqueante integrado)
-- **MIGRATIONS**: PASS (Verificado nos testes de integração no CI)
-- **HOMOLOGATION**: PASS (Fluxo em vigor)
-- **PRODUCTION PROMOTION CHAIN**: PASS (SHA chain verify em vigor)
-
-### FINAL
-**NOT GA READY**
-*(Aguardando finalização das análises de CI locais e conversão do Visual Gate para formato integralmente bloqueante sem bypass manual)*
+Publicar esta resolução documental no Git não é aprovação de release ou autorização para promover produção. Nenhum PASS foi herdado por suposição.
