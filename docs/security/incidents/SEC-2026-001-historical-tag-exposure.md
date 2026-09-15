@@ -27,15 +27,21 @@ desta sessão.
 
 ## Data de remediação
 
-- Remoção da tag do remote: **pendente** — ver "Ações manuais pendentes" abaixo. O ambiente de
-  execução desta sessão (Claude Code on the web) só tem credencial git com permissão de push
-  restrita à branch de trabalho designada; a tentativa de `git push origin --delete v1.0.0-rc.1`
-  foi rejeitada pelo GitHub com HTTP 403 (registrado nas evidências abaixo). Esta é a mesma
-  fronteira de autorização que o runbook já documentava ("só o dono humano executa... ação
-  destrutiva de ref publicada") — apenas confirmada aqui por um mecanismo técnico independente, não
-  só por regra de processo.
+- Tentativa de remoção da tag do remote por sessão de agente: rejeitada pelo GitHub com HTTP 403
+  (2026-09-15) — o ambiente de execução (Claude Code on the web) só tinha credencial git com
+  permissão de push restrita à branch de trabalho designada (registrado nas evidências abaixo).
+  Esta é a mesma fronteira de autorização que o runbook já documentava ("só o dono humano
+  executa... ação destrutiva de ref publicada") — apenas confirmada aqui por um mecanismo técnico
+  independente, não só por regra de processo.
 - Remoção da tag do clone local desta sessão (ambiente efêmero, sem efeito sobre nenhum clone real
   do dono do repositório): 2026-09-15.
+- **Remoção da tag do remote: CONCLUÍDA.** O dono do repositório (`maarkss1`) removeu
+  `v1.0.0-rc.1` manualmente em 2026-09-15, pela interface web do GitHub (Tags →
+  `v1.0.0-rc.1` → Delete tag). Confirmado por leitura: `git ls-remote --tags origin | grep
+  v1.0.0-rc.1` não retorna nenhum resultado. O vetor de exposição descrito neste incidente (ref
+  publicada alcançável por qualquer leitor do repositório) está fechado. Na mesma verificação,
+  confirmou-se que a tag `v2.0.0-recovery` (também publicada no remote) não alcança nenhum dos
+  blobs sensíveis listados neste documento — não faz parte deste incidente.
 
 ## Vetor de exposição
 
@@ -68,7 +74,7 @@ o dump):
 | Arquivo                                                                             | Tipo                            | Categoria         | Severidade | Situação atual                                    | Ação necessária                                                    |
 | ------------------------------------------------------------------------------------ | -------------------------------- | ------------------ | ---------- | -------------------------------------------------- | -------------------------------------------------------------------- |
 | `backups/prospector-20260806-152827.dump` (166075 bytes, pg_dump custom format)      | PII + SECRET + BUSINESS_DATA    | Dump completo de banco | CRITICAL   | Removido de `main` (rewrite 05/09); ainda alcançável via `v1.0.0-rc.1` | Remover a tag (ver abaixo); ver seção LGPD                        |
-| ↳ tabela `user` (5 registros: nome, e-mail, hash de senha)                          | PII + SECRET                    | Credencial de usuário | CRITICAL   | Ver "Credenciais identificadas"                    | Confirmar reset de senha (ver Manuais Pendentes)                   |
+| ↳ tabela `user` (5 registros: nome, e-mail, hash de senha)                          | PII + SECRET                    | Credencial de usuário | CRITICAL   | Contas confirmadas pelo dono do repositório em 2026-09-15 como não existentes mais no sistema | Nenhuma — reset de senha ficou moot (contas não existem mais)      |
 | ↳ tabela `account` (5 registros: hash de senha do provedor "credential", tokens OAuth nulos) | SECRET                          | Credencial de usuário | HIGH       | Colunas `accessToken`/`refreshToken`/`idToken` = NULL em todos os registros; só `password` (hash) preenchido | Mesma ação da tabela `user`                                          |
 | ↳ tabela `session` (7 registros: token de sessão, IP, user-agent)                   | SECRET (mitigado)               | Sessão ativa       | LOW (hoje) | **Todas expiradas em 2026-08-12** — verificável diretamente pela coluna `expiresAt`, hoje é 2026-09-15 (>1 mês vencidas) | Nenhuma — sessões vencidas não são reutilizáveis pelo protocolo de auth |
 | ↳ tabela `Company` (27 registros: CNPJ, telefones, e-mails, endereço, dados de enriquecimento) | BUSINESS_DATA + PII (pessoa jurídica) | Dado de prospecção  | HIGH       | Dado real de empresas prospectadas                 | Ver seção LGPD                                                       |
@@ -94,19 +100,23 @@ nenhum ponto do histórico alcançável pela tag.
 
 | Credencial                                    | Onde apareceu no histórico                                | Classificação                | Evidência                                                                                   |
 | ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Chave Bland AI (`org_...`)                    | `scripts/call_bland_juliana.py` (fallback hardcoded)          | **ROTATED**                   | `.agents/completion/01-bloqueadores.md` (SEC-003, 2026-08-18) — confirmado diretamente pelo dono do repositório; runbook `ROTATE_BLAND_AI_KEY.md` |
-| Webhook Bitrix24 AtlasGR (`.../rest/450/...`) | `connections.ts`, `useBitrixIntegration.ts`, `extrator-bitrix.html`, dump (`BitrixConnection`) | **ROTATED**                   | Idem acima (SEC-003); runbook `ROTATE_BITRIX24_WEBHOOKS.md`                                    |
-| Webhook Bitrix24 TotalTrac (`.../rest/2486/...`) | `connections.ts` (uma versão histórica)                      | **ROTATED**                   | Idem acima (SEC-003)                                                                            |
-| Chave Google Gemini (formato `AQ.*`, Google AI Studio) | `test-gemini.ts`, `test-gemini-quota.ts`                       | **ROTATED**                   | Confirmado pelo dono do repositório em 2026-09-05; `ROTATE_GEMINI_API_KEY.md`, fingerprints suprimidos em `.gitleaksignore` |
-| `ATLASGR_WEBHOOK_SECRET` (valor antigo hardcoded `segredo_compartilhado_atlasgr_123`) | Código-fonte histórico de `LeadDetailDrawer.tsx` (commit `9236028b`) | **ROTATION NOT VERIFIED**     | Código atual já é fail-closed (não aceita mais o literal como fallback) — mas **não há confirmação de que o valor real configurado em produção (Render) não seja ainda o literal antigo**. Já registrado como pendência em `GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`, item 2 — não fechado nesta sessão por falta de acesso ao dashboard do Render. |
-| Hashes de senha de 5 usuários reais (`user.passwordHash`, `account.password`, formato scrypt `hash:salt` do Better Auth) | Dump `backups/prospector-20260806-152827.dump`                 | **MANUAL ACTION REQUIRED**    | Hash, não texto puro — mas coincide na janela de tempo (05-06/08/2026) com o bug já documentado em `.agents/completion/01-bloqueadores.md` item 5 (`reset-passwords.ts` sem alvo resetava TODAS as senhas para `00000000`). Não é possível confirmar ou descartar, sem acesso à base de produção atual, se essas 5 contas ainda usam a senha que estava vigente nesse dump. Ver ação recomendada abaixo. |
+| Chave Bland AI (`org_...`)                    | `scripts/call_bland_juliana.py` (fallback hardcoded)          | **ROTATED (reverificado)**    | `.agents/completion/01-bloqueadores.md` (SEC-003, 2026-08-18) — confirmado inicialmente pelo dono do repositório. **Reverificado diretamente pelo dono em 2026-09-15: chave revogada no painel Bland AI.** |
+| Webhook Bitrix24 AtlasGR (`.../rest/450/...`) | `connections.ts`, `useBitrixIntegration.ts`, `extrator-bitrix.html`, dump (`BitrixConnection`) | **ROTATED**                   | Idem acima (SEC-003); runbook `ROTATE_BITRIX24_WEBHOOKS.md`. Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
+| Webhook Bitrix24 TotalTrac (`.../rest/2486/...`) | `connections.ts` (uma versão histórica)                      | **ROTATED**                   | Idem acima (SEC-003). Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
+| Chave Google Gemini (formato `AQ.*`, Google AI Studio) | `test-gemini.ts`, `test-gemini-quota.ts`                       | **ROTATED (reverificado)**    | Confirmado inicialmente pelo dono do repositório em 2026-09-05; `ROTATE_GEMINI_API_KEY.md`, fingerprints suprimidos em `.gitleaksignore`. **Reverificado diretamente pelo dono em 2026-09-15: chave revogada no Google AI Studio.** |
+| `ATLASGR_WEBHOOK_SECRET` (valor antigo hardcoded `segredo_compartilhado_atlasgr_123`) | Código-fonte histórico de `LeadDetailDrawer.tsx` (commit `9236028b`) | **ROTATED**     | Código atual já é fail-closed (não aceita mais o literal como fallback). **Revogação em produção (Render) confirmada diretamente pelo dono do repositório em 2026-09-15** — fecha a pendência registrada em `GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`, item 2. |
+| Hashes de senha de 5 usuários reais (`user.passwordHash`, `account.password`, formato scrypt `hash:salt` do Better Auth) | Dump `backups/prospector-20260806-152827.dump`                 | **NO LONGER APPLICABLE**    | Hash, não texto puro — coincidia na janela de tempo (05-06/08/2026) com o bug já documentado em `.agents/completion/01-bloqueadores.md` item 5 (`reset-passwords.ts` sem alvo resetava TODAS as senhas para `00000000`). **Confirmado pelo dono do repositório em 2026-09-15 que essas 5 contas não existem mais no sistema** — não há mais credencial ativa para resetar. |
 | Tokens de sessão (`session.token`, 7 registros)| Dump `backups/prospector-20260806-152827.dump`                 | **NO LONGER VALID**           | `expiresAt` de todos os 7 registros = 2026-08-12, mais de um mês antes da data desta investigação (2026-09-15) — verificável diretamente no dado, sem depender do provedor. |
 | Tokens OAuth (`account.accessToken`/`refreshToken`/`idToken`) | Dump `backups/prospector-20260806-152827.dump`                 | **N/A**                       | Todos os 5 registros têm essas 3 colunas `NULL` — nenhum token OAuth real estava presente no dump (só o provedor `credential`, isto é, senha local). |
 
-**Nenhuma credencial nesta lista teve sua rotação verificada diretamente contra o provedor nesta
-sessão** (sem acesso de rede a Bland AI/Bitrix24/Google/Render a partir deste ambiente) — as
-classificações "ROTATED" acima se apoiam em confirmações humanas já registradas e datadas em
-sessões anteriores (ver coluna Evidência), não em uma nova verificação. Isso é consistente com a
+Nenhuma credencial desta lista teve sua rotação verificada diretamente contra o provedor **por esta
+sessão de agente** (sem acesso de rede a Bland AI/Bitrix24/Google/Render a partir deste ambiente).
+Bland AI e Google Gemini, porém, foram **reverificados diretamente pelo dono do repositório em
+2026-09-15** (checagem manual no painel de cada provedor, não só a confirmação humana já registrada
+de 08/2026 e 09/05) — essas duas ficam com o nível mais alto de confiança disponível.
+`ATLASGR_WEBHOOK_SECRET` teve a mesma reverificação direta na mesma data (ver linha acima). Os dois
+webhooks Bitrix24 seguem apoiados só na confirmação humana original de SEC-003 (08/2026) — ver
+"Ações manuais pendentes". Isso é consistente com a
 instrução deste incidente ("não assuma que trocar o `.env` significa rotação") — a evidência citada
 é confirmação humana explícita registrada em runbook, não uma suposição.
 
@@ -118,9 +128,9 @@ instrução deste incidente ("não assuma que trocar o `.env` significa rotaçã
   — tabela `Contact` (41 registros reais).
 - **Contato Direto** (Legítimo Interesse, Art. 7º IX): telefone, WhatsApp — tabela `Contact` e
   campo `phones`/`emails` de `Company`.
-- **Dados do Usuário do Sistema** (Execução de Contrato/Obrigação Legal): nome, e-mail corporativo,
-  hash de senha — tabela `user` (5 registros reais, incluindo um provável titular da própria conta
-  usada nesta sessão — "Comercial"/organização "Comercial's Organization").
+- **Dados do Usuário do Sistema**: nome, e-mail corporativo, hash de senha — tabela `user` (5
+  registros). **Confirmado pelo dono do repositório em 2026-09-15: contas de teste criadas por ele
+  mesmo, sem mais acesso à plataforma** — não são credenciais de cliente/funcionário real.
 - **Dado de pessoa jurídica identificável**: CNPJ, razão social, QSA (quadro societário, incluindo
   nome de sócio-administrador em texto claro) — tabela `Company` (27 registros).
 - **Telefone pessoal fora do CRM**: "Juliana" e "Rodrigo" — hardcoded em scripts ad-hoc
@@ -154,14 +164,28 @@ sessão; preparação da remoção do remote (bloqueada por permissão da creden
 
 **Itens que necessitam avaliação humana/jurídica:**
 
-- Requer avaliação do responsável por privacidade/DPO: se a exposição de ~25 dias de PII real de
+- ~~Requer avaliação do responsável por privacidade/DPO: se a exposição de ~25 dias de PII real de
   prospecção (nome, telefone, e-mail de 41 contatos e QSA de 27 empresas) via uma tag pública
   configura hipótese de comunicação obrigatória à ANPD e/ou aos titulares sob o Art. 48 da LGPD, e
   se algum titular já exerceu direito de exclusão (Art. 18) que precisaria ser re-verificado contra
-  esta cópia específica do dado.
-- Requer avaliação do responsável por privacidade/DPO: tratamento a dar aos 5 usuários internos do
-  sistema cujos hash de senha e e-mail corporativo constavam no dump (força de reset de senha,
-  comunicação interna do incidente).
+  esta cópia específica do dado.~~ **RESOLVED em 2026-09-15 — decisão do dono do repositório**, com
+  base em três fatores que ele confirmou diretamente:
+  1. Os 27 registros de `Company` e 41 de `Contact` foram todos coletados de **dados públicos**
+     (prospecção B2B a partir de fonte pública, não de vazamento de terceiro) — reduz a base legal
+     de exposição sob a LGPD (Art. 7º, §4º trata dado manifestamente público de forma mais
+     permissiva; segue sendo dado pessoal, mas a origem não é uma violação de confidencialidade).
+  2. Os 5 registros de `user` eram **contas de teste criadas pelo próprio dono do repositório**, não
+     credenciais de cliente/funcionário real, e já não têm mais acesso à plataforma.
+  3. O dono do repositório tem **confiança de que ninguém explorou essa janela** — a plataforma
+     esteve instável durante boa parte do período, o que reduz a probabilidade de acesso de
+     terceiros não autorizados via a tag.
+  Decisão registrada: **não é necessária comunicação formal à ANPD ou aos titulares** para este
+  achado. Esta é uma decisão de negócio/jurídica do dono do repositório, não uma conclusão técnica
+  desta sessão — registrada aqui para rastreabilidade do incidente.
+- ~~Requer avaliação do responsável por privacidade/DPO: tratamento a dar aos 5 usuários internos
+  do sistema cujos hash de senha e e-mail corporativo constavam no dump (força de reset de senha,
+  comunicação interna do incidente).~~ **RESOLVED em 2026-09-15** — dono do repositório confirmou
+  que essas 5 contas eram de teste, criadas por ele, e não existem/têm acesso à plataforma.
 
 ## Timeline
 
@@ -188,12 +212,13 @@ sessão; preparação da remoção do remote (bloqueada por permissão da creden
 
 ## Rotação de credenciais
 
-Ver tabela "Credenciais identificadas" acima. Resumo: 4 credenciais de terceiro classificadas como
-`ROTATED` (evidência de confirmação humana já registrada em sessões anteriores, não reverificada
-contra o provedor nesta sessão por falta de acesso de rede); 1 `ROTATION NOT VERIFIED`
-(`ATLASGR_WEBHOOK_SECRET` em produção); 1 `MANUAL ACTION REQUIRED` novo (hashes de senha de 5
-usuários reais do dump); tokens de sessão do dump são `NO LONGER VALID` (expirados, verificável
-diretamente).
+Ver tabela "Credenciais identificadas" acima. Resumo: 5 credenciais de terceiro/aplicação
+classificadas como `ROTATED` (4 com evidência de confirmação humana registrada em sessões
+anteriores; `ATLASGR_WEBHOOK_SECRET` confirmado revogado em produção pelo dono do repositório em
+2026-09-15 — nenhuma reverificada diretamente contra o provedor nesta sessão por falta de acesso de
+rede); hashes de senha dos 5 usuários reais do dump agora `NO LONGER APPLICABLE` (contas não
+existem mais, confirmado pelo dono do repositório em 2026-09-15); tokens de sessão do dump são
+`NO LONGER VALID` (expirados, verificável diretamente).
 
 ## Evidências
 
@@ -225,46 +250,49 @@ diretamente).
 
 ## Ações manuais pendentes
 
-1. **Remover a tag do remote** (bloqueador do fechamento deste incidente — não pôde ser executado
-   por esta sessão):
-   ```bash
-   git push origin --delete v1.0.0-rc.1
-   git tag -d v1.0.0-rc.1   # no clone local do dono do repositório, se existir
-   ```
-   Verificação pós-remoção, num clone novo:
-   ```bash
-   git clone https://github.com/maarkss1/Birthub-360 verify-tag-removal
-   cd verify-tag-removal && git fetch --prune --tags
-   git ls-remote --tags origin   # v1.0.0-rc.1 não deve mais aparecer
-   ```
-2. **Confirmar a revogação de cada credencial `ROTATED`** diretamente no provedor (Bland AI,
-   Bitrix24 ×2, Google AI Studio) — as classificações desta sessão se apoiam em confirmação humana
-   já registrada, não em nova verificação técnica contra o provedor (sem acesso de rede a partir
-   deste ambiente).
-3. **Confirmar o valor real de `ATLASGR_WEBHOOK_SECRET` em produção (Render)** — garantir que não é
-   ainda o literal antigo `segredo_compartilhado_atlasgr_123` (pendência já registrada em
-   2026-09-05, não fechada).
-4. **Decidir e executar, para os 5 usuários reais do dump** (`user`/`account`), se é necessário
-   forçar reset de senha — especialmente à luz do bug já documentado
-   (`.agents/completion/01-bloqueadores.md`, item 5) de que uma janela de tempo próxima teve TODAS
-   as senhas resetadas para um valor default conhecido.
-5. **Avaliação de DPO/jurídico** sobre a exposição de ~25 dias de PII real de prospecção (ver seção
-   PII acima) — inclusive se comunicação à ANPD/titulares é aplicável.
+1. ~~**Remover a tag do remote**~~ — **CONCLUÍDA em 2026-09-15** pelo dono do repositório, via
+   interface web do GitHub (Tags → Delete tag). Verificado: `git ls-remote --tags origin | grep
+   v1.0.0-rc.1` não retorna nada.
+2. **Confirmar a revogação de cada credencial `ROTATED`** diretamente no provedor. **Parcialmente
+   concluído em 2026-09-15**: Bland AI e Google Gemini — dono do repositório confirmou diretamente
+   que revogou as duas chaves. `ATLASGR_WEBHOOK_SECRET` também confirmado (item 3). **Ainda
+   pendente:** os 2 webhooks Bitrix24 (AtlasGR e TotalTrac) — sem reverificação direta no painel
+   Bitrix24 nesta rodada, só a confirmação humana original de SEC-003 (08/2026).
+3. ~~**Confirmar o valor real de `ATLASGR_WEBHOOK_SECRET` em produção (Render)**~~ — **CONCLUÍDA em
+   2026-09-15**: dono do repositório confirmou diretamente que o webhook já foi revogado, fechando
+   a pendência registrada em 2026-09-05.
+4. ~~**Decidir e executar, para os 5 usuários reais do dump, se é necessário forçar reset de
+   senha**~~ — **MOOT em 2026-09-15**: dono do repositório confirmou que essas 5 contas não existem
+   mais no sistema, então não há mais credencial ativa para resetar.
+5. ~~**Avaliação de DPO/jurídico** sobre a exposição de ~25 dias de PII real de prospecção (ver
+   seção PII acima) — inclusive se comunicação à ANPD/titulares é aplicável.~~ **RESOLVED em
+   2026-09-15** — decisão do dono do repositório: dado de prospecção de fonte pública, contas de
+   teste sem terceiros reais envolvidos, e confiança de que a janela não foi explorada (plataforma
+   instável no período); comunicação formal à ANPD/titulares não necessária. Ver detalhes na seção
+   "PII identificada" acima.
 6. Repetir a verificação de tags publicadas periodicamente — não há, hoje, um gate automatizado que
-   impeça a criação de uma nova tag apontando para um commit antigo/sensível no futuro.
+   impeça a criação de uma nova tag apontando para um commit antigo/sensível no futuro. (Melhoria de
+   processo recomendada, não bloqueia o fechamento deste incidente.)
 
 ## Risco residual
 
 - **Cópias já clonadas do repositório antes desta remediação** (incluindo qualquer fork feito
   enquanto a tag esteve publicada) continuam contendo o dado — remoção do remote é mitigação de
   acesso daqui pra frente, não uma garantia retroativa (mesma ressalva já registrada em
-  `DECIDE_GIT_HISTORY_REWRITE.md` para o Caminho B de `main`).
-- Enquanto o item 1 acima não for executado, a tag continua publicamente alcançável.
-- Enquanto os itens 2-4 não forem confirmados, existe risco residual de credencial ou senha
-  historicamente exposta ainda estar ativa.
+  `DECIDE_GIT_HISTORY_REWRITE.md` para o Caminho B de `main`). O dono do repositório avaliou esse
+  risco como baixo (ver item 5 acima) e decidiu não exigir comunicação formal.
+- Enquanto os 2 webhooks Bitrix24 (único item restante dentro do item 2) não forem reverificados
+  diretamente no painel Bitrix24, existe risco residual — puramente teórico, não indicado por
+  nenhuma evidência encontrada — de essas duas credenciais ainda estarem ativas. Bland AI e Google
+  Gemini já saíram dessa categoria (reverificados diretamente em 2026-09-15).
 
 ## Status final
 
-**PARTIALLY RESOLVED** — investigação, inventário e documentação completos; remoção do remote e
-confirmação de rotação/reset de credencial pendentes de ação humana fora do alcance desta sessão
-(ver "Ações manuais pendentes").
+**PARTIALLY RESOLVED** — vetor de exposição fechado (tag removida do remote e verificada
+2026-09-15); webhook `ATLASGR_WEBHOOK_SECRET`, chave Bland AI e chave Google Gemini confirmados
+revogados diretamente pelo dono do repositório; a pendência dos 5 usuários ficou moot (contas de
+teste, sem mais acesso); e a avaliação de DPO/jurídico foi concluída (sem necessidade de
+comunicação formal) — todos confirmados/decididos por ele em 2026-09-15; investigação, inventário e
+documentação completos. Segue pendente apenas: reverificação direta dos 2 webhooks Bitrix24
+(AtlasGR e TotalTrac) contra o painel Bitrix24 — fora do alcance de uma sessão de agente sem acesso
+de rede a esse serviço.
