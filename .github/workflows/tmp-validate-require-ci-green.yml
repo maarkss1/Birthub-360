@@ -1,0 +1,33 @@
+name: TEMP - Validate require-ci-green
+
+# Workflow temporário, só para validar o comportamento da action
+# .github/actions/require-ci-green em cenários reais (Onda 10.2, PROMPT 10.2, secao 22) antes de
+# finalizar a Onda. Remover depois de coletar a evidência — não é parte do CI/CD permanente.
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'SHA a testar'
+        required: true
+        type: string
+      expect:
+        description: 'Resultado esperado: pass ou blocked'
+        required: true
+        type: choice
+        options: [pass, blocked]
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./.github/actions/require-ci-green
+        with:
+          sha: ${{ inputs.sha }}
+          check-name: build
+      - run: echo "RESULTADO=pass (chegou até aqui sem ser bloqueado)" >> "$GITHUB_STEP_SUMMARY"
