@@ -104,9 +104,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         <div className="grid h-8 w-8 place-items-center rounded-control border border-brand/20 bg-brand/10">
           <Icon className="h-4 w-4 shrink-0 text-brand-ink dark:text-brand" />
         </div>
-        <h1 className="truncate font-display text-sm font-semibold text-ink">
-          {meta.label}
-        </h1>
+        <h1 className="truncate font-display text-sm font-semibold text-ink">{meta.label}</h1>
       </div>
 
       <button

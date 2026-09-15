@@ -24,10 +24,16 @@ export function PageHeader({ title, subtitle, icon, actions }: PageHeaderProps) 
         )}
         <div className="min-w-0">
           <h1 className="truncate font-display text-h2 font-bold text-ink">{title}</h1>
-          {subtitle && <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-2">{subtitle}</p>}
+          {subtitle && (
+            <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-2">{subtitle}</p>
+          )}
         </div>
       </div>
-      {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:shrink-0 sm:justify-end">{actions}</div>}
+      {actions && (
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:shrink-0 sm:justify-end">
+          {actions}
+        </div>
+      )}
     </header>
   );
 }
