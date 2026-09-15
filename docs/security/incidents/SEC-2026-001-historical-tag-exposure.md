@@ -124,9 +124,9 @@ instrução deste incidente ("não assuma que trocar o `.env` significa rotaçã
   — tabela `Contact` (41 registros reais).
 - **Contato Direto** (Legítimo Interesse, Art. 7º IX): telefone, WhatsApp — tabela `Contact` e
   campo `phones`/`emails` de `Company`.
-- **Dados do Usuário do Sistema** (Execução de Contrato/Obrigação Legal): nome, e-mail corporativo,
-  hash de senha — tabela `user` (5 registros reais, incluindo um provável titular da própria conta
-  usada nesta sessão — "Comercial"/organização "Comercial's Organization").
+- **Dados do Usuário do Sistema**: nome, e-mail corporativo, hash de senha — tabela `user` (5
+  registros). **Confirmado pelo dono do repositório em 2026-09-15: contas de teste criadas por ele
+  mesmo, sem mais acesso à plataforma** — não são credenciais de cliente/funcionário real.
 - **Dado de pessoa jurídica identificável**: CNPJ, razão social, QSA (quadro societário, incluindo
   nome de sócio-administrador em texto claro) — tabela `Company` (27 registros).
 - **Telefone pessoal fora do CRM**: "Juliana" e "Rodrigo" — hardcoded em scripts ad-hoc
@@ -160,15 +160,28 @@ sessão; preparação da remoção do remote (bloqueada por permissão da creden
 
 **Itens que necessitam avaliação humana/jurídica:**
 
-- Requer avaliação do responsável por privacidade/DPO: se a exposição de ~25 dias de PII real de
+- ~~Requer avaliação do responsável por privacidade/DPO: se a exposição de ~25 dias de PII real de
   prospecção (nome, telefone, e-mail de 41 contatos e QSA de 27 empresas) via uma tag pública
   configura hipótese de comunicação obrigatória à ANPD e/ou aos titulares sob o Art. 48 da LGPD, e
   se algum titular já exerceu direito de exclusão (Art. 18) que precisaria ser re-verificado contra
-  esta cópia específica do dado.
+  esta cópia específica do dado.~~ **RESOLVED em 2026-09-15 — decisão do dono do repositório**, com
+  base em três fatores que ele confirmou diretamente:
+  1. Os 27 registros de `Company` e 41 de `Contact` foram todos coletados de **dados públicos**
+     (prospecção B2B a partir de fonte pública, não de vazamento de terceiro) — reduz a base legal
+     de exposição sob a LGPD (Art. 7º, §4º trata dado manifestamente público de forma mais
+     permissiva; segue sendo dado pessoal, mas a origem não é uma violação de confidencialidade).
+  2. Os 5 registros de `user` eram **contas de teste criadas pelo próprio dono do repositório**, não
+     credenciais de cliente/funcionário real, e já não têm mais acesso à plataforma.
+  3. O dono do repositório tem **confiança de que ninguém explorou essa janela** — a plataforma
+     esteve instável durante boa parte do período, o que reduz a probabilidade de acesso de
+     terceiros não autorizados via a tag.
+  Decisão registrada: **não é necessária comunicação formal à ANPD ou aos titulares** para este
+  achado. Esta é uma decisão de negócio/jurídica do dono do repositório, não uma conclusão técnica
+  desta sessão — registrada aqui para rastreabilidade do incidente.
 - ~~Requer avaliação do responsável por privacidade/DPO: tratamento a dar aos 5 usuários internos
   do sistema cujos hash de senha e e-mail corporativo constavam no dump (força de reset de senha,
-  comunicação interna do incidente).~~ **Moot em 2026-09-15** — dono do repositório confirmou que
-  essas 5 contas não existem mais no sistema.
+  comunicação interna do incidente).~~ **RESOLVED em 2026-09-15** — dono do repositório confirmou
+  que essas 5 contas eram de teste, criadas por ele, e não existem/têm acesso à plataforma.
 
 ## Timeline
 
@@ -246,30 +259,34 @@ existem mais, confirmado pelo dono do repositório em 2026-09-15); tokens de ses
 4. ~~**Decidir e executar, para os 5 usuários reais do dump, se é necessário forçar reset de
    senha**~~ — **MOOT em 2026-09-15**: dono do repositório confirmou que essas 5 contas não existem
    mais no sistema, então não há mais credencial ativa para resetar.
-5. **Avaliação de DPO/jurídico** sobre a exposição de ~25 dias de PII real de prospecção (ver seção
-   PII acima) — inclusive se comunicação à ANPD/titulares é aplicável.
+5. ~~**Avaliação de DPO/jurídico** sobre a exposição de ~25 dias de PII real de prospecção (ver
+   seção PII acima) — inclusive se comunicação à ANPD/titulares é aplicável.~~ **RESOLVED em
+   2026-09-15** — decisão do dono do repositório: dado de prospecção de fonte pública, contas de
+   teste sem terceiros reais envolvidos, e confiança de que a janela não foi explorada (plataforma
+   instável no período); comunicação formal à ANPD/titulares não necessária. Ver detalhes na seção
+   "PII identificada" acima.
 6. Repetir a verificação de tags publicadas periodicamente — não há, hoje, um gate automatizado que
-   impeça a criação de uma nova tag apontando para um commit antigo/sensível no futuro.
+   impeça a criação de uma nova tag apontando para um commit antigo/sensível no futuro. (Melhoria de
+   processo recomendada, não bloqueia o fechamento deste incidente.)
 
 ## Risco residual
 
 - **Cópias já clonadas do repositório antes desta remediação** (incluindo qualquer fork feito
   enquanto a tag esteve publicada) continuam contendo o dado — remoção do remote é mitigação de
   acesso daqui pra frente, não uma garantia retroativa (mesma ressalva já registrada em
-  `DECIDE_GIT_HISTORY_REWRITE.md` para o Caminho B de `main`).
+  `DECIDE_GIT_HISTORY_REWRITE.md` para o Caminho B de `main`). O dono do repositório avaliou esse
+  risco como baixo (ver item 5 acima) e decidiu não exigir comunicação formal.
 - Enquanto o item 2 não for confirmado, existe risco residual — puramente teórico, não indicado por
   nenhuma evidência encontrada — de credencial de terceiro historicamente exposta ainda estar
   ativa: essa reverificação depende de acesso direto aos provedores (Bland AI, Bitrix24, Google AI
   Studio), fora do alcance de uma sessão de agente.
-- Enquanto o item 5 (avaliação de DPO/jurídico sobre a janela de exposição de PII de prospecção —
-  27 empresas, 41 contatos) não for concluído, a decisão sobre comunicação à ANPD/titulares segue
-  em aberto.
 
 ## Status final
 
 **PARTIALLY RESOLVED** — vetor de exposição fechado (tag removida do remote e verificada
-2026-09-15); webhook `ATLASGR_WEBHOOK_SECRET` confirmado revogado e a pendência dos 5 usuários
-ficou moot (contas não existem mais), ambos confirmados pelo dono do repositório em 2026-09-15;
-investigação, inventário e documentação completos. Seguem pendentes: reverificação direta de
-rotação de credencial de terceiro contra os provedores (item 2) e avaliação de DPO/jurídico sobre a
-janela de exposição de PII de prospecção (item 5) — ambas fora do alcance de uma sessão de agente.
+2026-09-15); webhook `ATLASGR_WEBHOOK_SECRET` confirmado revogado, a pendência dos 5 usuários ficou
+moot (contas de teste, sem mais acesso) e a avaliação de DPO/jurídico foi concluída pelo dono do
+repositório (sem necessidade de comunicação formal) — todos confirmados/decididos por ele em
+2026-09-15; investigação, inventário e documentação completos. Segue pendente apenas: reverificação
+direta de rotação de credencial de terceiro contra os provedores (item 2) — fora do alcance de uma
+sessão de agente, sem acesso de rede a Bland AI/Bitrix24/Google a partir deste ambiente.

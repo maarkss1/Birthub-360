@@ -67,14 +67,17 @@
    por leitura (`git ls-remote --tags origin | grep v1.0.0-rc.1` retorna vazio). A tag
    `v2.0.0-recovery` foi verificada na mesma ocasião e **não** alcança nenhum dos blobs sensíveis —
    não faz parte deste incidente, nenhuma ação necessária sobre ela.
-   Com isso, o vetor de exposição em si (a ref publicada) está fechado. **Duas pendências fechadas
-   em seguida, por confirmação direta do dono do repositório em 2026-09-15:** `ATLASGR_WEBHOOK_SECRET`
-   confirmado já revogado em produção (RESOLVED); reset de senha dos 5 usuários do dump virou moot
-   — as contas não existem mais no sistema (RESOLVED). **Pendências que seguem em aberto** (mantêm
-   o P0 como PARTIALLY RESOLVED): confirmar rotação de credenciais de terceiro (Bland AI, Bitrix24,
-   Google AI Studio) diretamente nos provedores (não só a confirmação humana já registrada);
-   avaliação de DPO/jurídico sobre a janela de exposição de PII de prospecção (27 empresas, 41
-   contatos).
+   Com isso, o vetor de exposição em si (a ref publicada) está fechado. **Três pendências fechadas
+   em seguida, por confirmação/decisão direta do dono do repositório em 2026-09-15:**
+   `ATLASGR_WEBHOOK_SECRET` confirmado já revogado em produção (RESOLVED); reset de senha dos 5
+   usuários do dump virou moot — eram contas de teste criadas pelo próprio dono, sem mais acesso à
+   plataforma (RESOLVED); avaliação de DPO/jurídico sobre a janela de exposição de PII de
+   prospecção concluída — dado de origem pública (27 empresas/41 contatos), sem indício de acesso
+   por terceiros, comunicação formal à ANPD/titulares avaliada como não necessária (RESOLVED).
+   **Única pendência que segue em aberto** (mantém o P0 como PARTIALLY RESOLVED): reverificar a
+   rotação de credenciais de terceiro (Bland AI, Bitrix24, Google AI Studio) diretamente nos
+   provedores — as classificações `ROTATED` hoje se apoiam em confirmação humana já registrada, não
+   em checagem técnica contra o provedor (sem acesso de rede a partir de uma sessão de agente).
 
 ## P0 — Plataforma quebrada no main (remediados)
 
