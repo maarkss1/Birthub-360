@@ -27,15 +27,21 @@ desta sessão.
 
 ## Data de remediação
 
-- Remoção da tag do remote: **pendente** — ver "Ações manuais pendentes" abaixo. O ambiente de
-  execução desta sessão (Claude Code on the web) só tem credencial git com permissão de push
-  restrita à branch de trabalho designada; a tentativa de `git push origin --delete v1.0.0-rc.1`
-  foi rejeitada pelo GitHub com HTTP 403 (registrado nas evidências abaixo). Esta é a mesma
-  fronteira de autorização que o runbook já documentava ("só o dono humano executa... ação
-  destrutiva de ref publicada") — apenas confirmada aqui por um mecanismo técnico independente, não
-  só por regra de processo.
+- Tentativa de remoção da tag do remote por sessão de agente: rejeitada pelo GitHub com HTTP 403
+  (2026-09-15) — o ambiente de execução (Claude Code on the web) só tinha credencial git com
+  permissão de push restrita à branch de trabalho designada (registrado nas evidências abaixo).
+  Esta é a mesma fronteira de autorização que o runbook já documentava ("só o dono humano
+  executa... ação destrutiva de ref publicada") — apenas confirmada aqui por um mecanismo técnico
+  independente, não só por regra de processo.
 - Remoção da tag do clone local desta sessão (ambiente efêmero, sem efeito sobre nenhum clone real
   do dono do repositório): 2026-09-15.
+- **Remoção da tag do remote: CONCLUÍDA.** O dono do repositório (`maarkss1`) removeu
+  `v1.0.0-rc.1` manualmente em 2026-09-15, pela interface web do GitHub (Tags →
+  `v1.0.0-rc.1` → Delete tag). Confirmado por leitura: `git ls-remote --tags origin | grep
+  v1.0.0-rc.1` não retorna nenhum resultado. O vetor de exposição descrito neste incidente (ref
+  publicada alcançável por qualquer leitor do repositório) está fechado. Na mesma verificação,
+  confirmou-se que a tag `v2.0.0-recovery` (também publicada no remote) não alcança nenhum dos
+  blobs sensíveis listados neste documento — não faz parte deste incidente.
 
 ## Vetor de exposição
 
@@ -225,18 +231,9 @@ diretamente).
 
 ## Ações manuais pendentes
 
-1. **Remover a tag do remote** (bloqueador do fechamento deste incidente — não pôde ser executado
-   por esta sessão):
-   ```bash
-   git push origin --delete v1.0.0-rc.1
-   git tag -d v1.0.0-rc.1   # no clone local do dono do repositório, se existir
-   ```
-   Verificação pós-remoção, num clone novo:
-   ```bash
-   git clone https://github.com/maarkss1/Birthub-360 verify-tag-removal
-   cd verify-tag-removal && git fetch --prune --tags
-   git ls-remote --tags origin   # v1.0.0-rc.1 não deve mais aparecer
-   ```
+1. ~~**Remover a tag do remote**~~ — **CONCLUÍDA em 2026-09-15** pelo dono do repositório, via
+   interface web do GitHub (Tags → Delete tag). Verificado: `git ls-remote --tags origin | grep
+   v1.0.0-rc.1` não retorna nada.
 2. **Confirmar a revogação de cada credencial `ROTATED`** diretamente no provedor (Bland AI,
    Bitrix24 ×2, Google AI Studio) — as classificações desta sessão se apoiam em confirmação humana
    já registrada, não em nova verificação técnica contra o provedor (sem acesso de rede a partir
@@ -259,12 +256,12 @@ diretamente).
   enquanto a tag esteve publicada) continuam contendo o dado — remoção do remote é mitigação de
   acesso daqui pra frente, não uma garantia retroativa (mesma ressalva já registrada em
   `DECIDE_GIT_HISTORY_REWRITE.md` para o Caminho B de `main`).
-- Enquanto o item 1 acima não for executado, a tag continua publicamente alcançável.
-- Enquanto os itens 2-4 não forem confirmados, existe risco residual de credencial ou senha
+- Enquanto os itens 2-5 não forem confirmados, existe risco residual de credencial ou senha
   historicamente exposta ainda estar ativa.
 
 ## Status final
 
-**PARTIALLY RESOLVED** — investigação, inventário e documentação completos; remoção do remote e
-confirmação de rotação/reset de credencial pendentes de ação humana fora do alcance desta sessão
-(ver "Ações manuais pendentes").
+**PARTIALLY RESOLVED** — vetor de exposição fechado (tag removida do remote e verificada
+2026-09-15); investigação, inventário e documentação completos. Confirmação de rotação/reset de
+credencial e avaliação de DPO/jurídico seguem pendentes de ação humana fora do alcance de uma
+sessão de agente (ver "Ações manuais pendentes", itens 2-5).
