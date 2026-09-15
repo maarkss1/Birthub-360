@@ -473,6 +473,21 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
       'Abaixo da amostra mínima, o vendedor aparece nos dados brutos mas sem "top performer"/sugestão — nunca uma comparação fabricada de amostra insuficiente.',
   },
   {
+    key: 'simulacao_contratacao',
+    name: 'Simulação de Contratação (SDR/Vendedor)',
+    description:
+      'Impacto projetado em pipeline e receita em 90 dias ao contratar N vendedores adicionais, extrapolando o throughput e a conversão que o time JÁ demonstra — não um benchmark de mercado genérico.',
+    formula:
+      'Pipeline médio por vendedor/mês = Pipeline Criado do período / nº de vendedores com pipeline criado no período. Pipeline Adicional = N × esse valor × (dias produtivos da janela de 90 dias, descontado o onboarding, / 30). Receita Estimada = Pipeline Adicional × Win Rate do período.',
+    source:
+      'application/hiringScenarioSimulator.ts, a partir de PipelineCreation.byOwner e PerformanceMetrics (GET /commercial-intelligence/hiring-scenario)',
+    period: 'Mensal (taxa de referência), projetado para uma janela fixa de 90 dias',
+    inclusionRules:
+      'Exige ao menos 1 vendedor com pipeline criado no período de referência para ter uma taxa real a extrapolar.',
+    exclusionRules:
+      'Sem nenhum vendedor com pipeline criado no período, ou número de vendedores adicionais inválido (≤ 0), retorna "sem dados" — nunca uma taxa de mercado inventada. Quando o Ciclo de Venda mediano é maior que os dias produtivos da janela, a Receita Estimada é sinalizada como improvável de materializar DENTRO dos 90 dias.',
+  },
+  {
     key: 'health_score',
     name: 'Health Score composto',
     description:

@@ -71,6 +71,7 @@ router.get('/funnel-bottlenecks', (req, res, next) =>
   resolve().getFunnelBottlenecks(req, res, next),
 );
 router.get('/seller-benchmark', (req, res, next) => resolve().getSellerBenchmark(req, res, next));
+router.get('/hiring-scenario', (req, res, next) => resolve().getHiringScenario(req, res, next));
 router.get('/close-date-intelligence', (req, res, next) =>
   resolve().getCloseDateIntelligence(req, res, next),
 );

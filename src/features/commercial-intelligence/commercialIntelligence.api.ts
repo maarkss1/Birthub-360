@@ -549,6 +549,27 @@ export interface SellerBenchmarkReport {
   topPerformerOwner: string | null;
 }
 
+// ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────
+
+export type HiringScenarioUnavailableReason =
+  | 'numero_de_reps_invalido'
+  | 'sem_dados_de_pipeline_por_vendedor';
+export interface HiringScenarioResult {
+  available: boolean;
+  reason: HiringScenarioUnavailableReason | null;
+  additionalReps: number;
+  windowDays: number;
+  rampUpDays: number;
+  avgPipelineAmountPerRepPerMonth: number | null;
+  activeRepsInPeriod: number;
+  incrementalPipelineAmount: number | null;
+  winRatePct: number | null;
+  salesCycleMedianDays: number | null;
+  cycleExceedsWindow: boolean;
+  estimatedIncrementalRevenue: number | null;
+  currency: string;
+}
+
 // ─── CLOSEDATE Intelligence ─────────────────────────────────────────────────
 
 export interface CloseDateDealRow {
@@ -757,6 +778,10 @@ export const commercialIntelligenceApi = {
     api.get<FunnelBottleneckReport>(`${BASE}/funnel-bottlenecks?${qs(filter)}`),
   sellerBenchmark: (filter: CommercialFilter) =>
     api.get<SellerBenchmarkReport>(`${BASE}/seller-benchmark?${qs(filter)}`),
+  hiringScenario: (filter: CommercialFilter, additionalReps: number) =>
+    api.get<HiringScenarioResult>(
+      `${BASE}/hiring-scenario?${qs(filter, { additionalReps })}`,
+    ),
   closeDateIntelligence: (filter: CommercialFilter) =>
     api.get<CloseDateIntelligenceReport>(`${BASE}/close-date-intelligence?${qs(filter)}`),
   journey: (filter: CommercialFilter) => api.get<JourneyReport>(`${BASE}/journey?${qs(filter)}`),

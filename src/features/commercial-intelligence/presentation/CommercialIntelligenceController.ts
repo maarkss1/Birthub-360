@@ -289,6 +289,17 @@ export class CommercialIntelligenceController {
     }
   };
 
+  getHiringScenario = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const additionalReps = Number(req.query.additionalReps);
+      const data = await this.useCases.hiringScenario(organizationId, parseFilter(req), additionalReps);
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getCloseDateIntelligence = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { organizationId } = (req as AuthRequest).user;

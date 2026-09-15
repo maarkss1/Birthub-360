@@ -883,6 +883,40 @@ export interface SellerBenchmarkReport {
   topPerformerOwner: string | null;
 }
 
+// ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────
+//
+// "Se eu contratar +N vendedores, qual o impacto em receita em 90 dias?" — baseado em dados REAIS
+// de throughput (Pipeline Criado por vendedor, `PipelineCreation.byOwner`) e conversão (Win
+// Rate/Sales Cycle de `PerformanceMetrics`), nunca um número de mercado genérico. Mesma disciplina
+// do resto do módulo: sem amostra de throughput por vendedor, `available: false` — nunca um
+// impacto fabricado.
+
+export type HiringScenarioUnavailableReason =
+  | 'numero_de_reps_invalido'
+  | 'sem_dados_de_pipeline_por_vendedor';
+
+export interface HiringScenarioResult {
+  available: boolean;
+  reason: HiringScenarioUnavailableReason | null;
+  additionalReps: number;
+  /** Janela fixa pedida pelo produto — impacto em receita "em 90 dias". */
+  windowDays: number;
+  /** Dias de onboarding em que um vendedor novo não gera pipeline ainda — política documentada, não medição. */
+  rampUpDays: number;
+  /** Pipeline Criado total do período / nº de vendedores que criaram pipeline no período — a taxa real usada na projeção. `null` sem nenhum vendedor com pipeline criado no período de referência. */
+  avgPipelineAmountPerRepPerMonth: number | null;
+  activeRepsInPeriod: number;
+  /** Pipeline adicional projetado nos `windowDays`, já descontados os `rampUpDays` de onboarding. */
+  incrementalPipelineAmount: number | null;
+  winRatePct: number | null;
+  salesCycleMedianDays: number | null;
+  /** `true` quando o Ciclo de Venda mediano é maior que os dias produtivos restantes na janela — a receita adicional provavelmente só materializa DEPOIS dos 90 dias, não dentro deles. */
+  cycleExceedsWindow: boolean;
+  /** Pipeline adicional × Win Rate — expectativa estatística, não uma certeza (mesmo espírito do cenário "Provável" do Previsor). `null` sem Win Rate calculável. */
+  estimatedIncrementalRevenue: number | null;
+  currency: string;
+}
+
 // ─── Tendências históricas (seção 23) ────────────────────────────────────────
 
 export interface HistoricalTrendPoint {

@@ -39,6 +39,7 @@ import type {
   FunnelBottleneckReport,
   GoalMetric,
   HealthScoreResult,
+  HiringScenarioResult,
   HistoricalTrendsReport,
   LeadingIndicatorsReport,
   LossAnalysis,
@@ -49,6 +50,7 @@ import type {
 import type { CloseDateIntelligenceReport, JourneyReport } from '../domain/JourneyIntelligence';
 import { computeForecastCalibration } from './forecastCalibration';
 import { buildExecutiveExport, type ExecutiveExportPayload } from './executiveExport';
+import { simulateHiringScenario } from './hiringScenarioSimulator';
 import { getGoal as getGoalCommand, setGoal as setGoalCommand } from './goalCommands';
 import { computeHealthScore } from './healthScore';
 import { buildAging } from './queries/agingReport';
@@ -339,6 +341,33 @@ export class CommercialIntelligenceUseCases {
       overview.forecastAmount,
       overview.goal?.amount ?? null,
       overview.goal?.currency ?? 'BRL',
+    );
+  }
+
+  // ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────────────────
+  //
+  // Reaproveita `pipelineCreation()` (throughput real por vendedor, `byOwner`) e `performance()`
+  // (Win Rate/Sales Cycle reais) do mesmo período do filtro — nenhum dado novo buscado aqui.
+  async hiringScenario(
+    organizationId: string,
+    filter: CommercialIntelligenceFilter,
+    additionalReps: number,
+    now = new Date(),
+  ): Promise<HiringScenarioResult> {
+    const [creation, performance] = await Promise.all([
+      this.pipelineCreation(organizationId, filter, now),
+      this.performance(organizationId, filter, now),
+    ]);
+    const activeRepsInPeriod = creation.byOwner.length;
+    const avgPipelineAmountPerRepPerMonth =
+      activeRepsInPeriod > 0 ? creation.amount / activeRepsInPeriod : null;
+    return simulateHiringScenario(
+      additionalReps,
+      avgPipelineAmountPerRepPerMonth,
+      activeRepsInPeriod,
+      performance.winRate,
+      performance.salesCycle.medianDays,
+      'BRL',
     );
   }
 }
