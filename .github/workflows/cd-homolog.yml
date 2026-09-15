@@ -13,8 +13,36 @@ on:
 permissions: {}
 
 jobs:
+  # Disparo manual (workflow_dispatch) não passa pelo required check `build` de ci.yml por
+  # construção do GitHub Actions — sem este gate, uma homologação manual publicaria um commit que
+  # nunca rodou (ou rodou e falhou) o gate mais rigoroso (Prettier, testes de arquitetura,
+  # verificação de drift do OpenAPI, avaliação do golden dataset) que só existe em ci.yml. Este job
+  # confirma, via API do GitHub, que o check `build` já passou para o commit exato sendo implantado
+  # antes de liberar qualquer outro job.
+  verify-ci-gate:
+    name: Confirmar gate do ci.yml para este commit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: read
+    steps:
+      - name: Checar check-run "build" (ci.yml) para ${{ github.sha }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          conclusion=$(gh api "repos/${{ github.repository }}/commits/${SHA}/check-runs" \
+            --jq '[.check_runs[] | select(.name == "build")] | sort_by(.started_at) | last | .conclusion // "missing"')
+          echo "Conclusão do check 'build' (ci.yml) para $SHA: $conclusion"
+          if [ "$conclusion" != "success" ]; then
+            echo "::error::O check obrigatório 'build' do workflow ci.yml não passou (ou nunca rodou) para o commit $SHA. Homologação manual bloqueada — garanta que ci.yml esteja verde nesse commit antes de disparar este workflow."
+            exit 1
+          fi
+
   secret-scan:
     runs-on: ubuntu-latest
+    needs: verify-ci-gate
     permissions:
       contents: read
     steps:
