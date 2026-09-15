@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { Label } from '../../../components/ui/Label';
 import { Select } from '../../../components/ui/Select';
 import { api } from '../../../lib/api';
@@ -72,112 +73,121 @@ export function SellerCoachingCard() {
   };
 
   return (
-    <motion.div
-      variants={fadeInUp}
-      initial="hidden"
-      animate="show"
-      className="p-5 rounded-card-lg border border-line bg-surface shadow-card"
-    >
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-brand" />
-          <h3 className="text-sm font-black text-ink">Coaching Semanal por IA</h3>
-        </div>
-        {period && <p className="text-[11px] text-ink-2 font-medium">Semana de {period}</p>}
-      </div>
-
-      {!report && (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
-          <div className="flex-1">
-            <Label htmlFor="seller-role">Como você atua nesta semana? (opcional)</Label>
-            <Select
-              id="seller-role"
-              value={role}
-              onChange={(e) => setRole(e.target.value as SellerRole | '')}
-            >
-              <option value="">Não informar</option>
-              {ROLE_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
+    <motion.div variants={fadeInUp} initial="hidden" animate="show" className="rounded-card-lg">
+      <Card padding="lg">
+        <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-line pb-4">
+          <div className="flex items-center gap-2">
+            <span className="rounded-lg border border-brand/20 bg-soft p-2 text-brand-ink dark:text-brand">
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand-ink dark:text-brand">
+                Desenvolvimento comercial
+              </p>
+              <h3 className="mt-0.5 text-base font-bold text-ink">Coaching semanal por IA</h3>
+            </div>
           </div>
-          <Button type="button" onClick={generate} disabled={loading} className="shrink-0">
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-2" /> Gerando...
-              </>
-            ) : (
-              'Gerar meu coaching semanal'
-            )}
-          </Button>
+          {period && <p className="text-[11px] text-ink-2 font-medium">Semana de {period}</p>}
         </div>
-      )}
 
-      {error && (
-        <div className="mt-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 text-sm text-red-300">
-            <AlertTriangle className="w-4 h-4 shrink-0" />
-            {error}
+        {!report && (
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+            <div className="flex-1">
+              <Label htmlFor="seller-role">Como você atua nesta semana? (opcional)</Label>
+              <Select
+                id="seller-role"
+                value={role}
+                onChange={(e) => setRole(e.target.value as SellerRole | '')}
+              >
+                <option value="">Não informar</option>
+                {ROLE_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <Button type="button" onClick={generate} disabled={loading} className="shrink-0">
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" /> Gerando...
+                </>
+              ) : (
+                'Gerar meu coaching semanal'
+              )}
+            </Button>
           </div>
-          <button
-            type="button"
-            onClick={generate}
-            className="text-xs font-bold text-red-300 hover:underline cursor-pointer shrink-0"
+        )}
+
+        {error && (
+          <div
+            className="mt-4 flex items-center justify-between gap-3 rounded-card border border-critical/20 bg-critical/10 p-3"
+            role="alert"
           >
-            Tentar novamente
-          </button>
-        </div>
-      )}
-
-      {report && (
-        <div className="space-y-4">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-sm font-bold text-ink">{report.motivationalHeadline}</p>
-            <Badge variant={GRADE_VARIANT[report.overallGrade]}>{report.overallGrade}</Badge>
-          </div>
-
-          <div className="p-3 rounded-card bg-surface-2 border border-line flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-ok-active dark:text-ok shrink-0 mt-0.5" />
-            <p className="text-xs text-ink-2">{report.celebrationPoint}</p>
-          </div>
-
-          {report.criticalGaps.length > 0 && (
-            <div>
-              <p className="text-[11px] font-black text-ink-2 uppercase tracking-wide mb-1.5">
-                Gargalos
-              </p>
-              <ul className="space-y-1.5">
-                {report.criticalGaps.map((gap, i) => (
-                  <li key={i} className="text-xs text-ink-2 flex gap-2">
-                    <span className="text-brand">·</span> {gap}
-                  </li>
-                ))}
-              </ul>
+            <div className="flex items-center gap-2.5 text-sm text-critical">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              {error}
             </div>
-          )}
+            <Button
+              type="button"
+              onClick={generate}
+              variant="link"
+              size="sm"
+              className="h-auto shrink-0 px-0 text-critical"
+            >
+              Tentar novamente
+            </Button>
+          </div>
+        )}
 
-          {report.actionableMicroHabits.length > 0 && (
-            <div>
-              <p className="text-[11px] font-black text-ink-2 uppercase tracking-wide mb-1.5">
-                Micro-hábitos desta semana
-              </p>
-              <ul className="space-y-1.5">
-                {report.actionableMicroHabits.map((habit, i) => (
-                  <li key={i} className="text-xs text-ink-2 flex gap-2">
-                    <span className="text-brand">·</span> {habit}
-                  </li>
-                ))}
-              </ul>
+        {report && (
+          <div className="space-y-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-sm font-bold text-ink">{report.motivationalHeadline}</p>
+              <Badge variant={GRADE_VARIANT[report.overallGrade]}>{report.overallGrade}</Badge>
             </div>
-          )}
 
-          <p className="text-[11px] text-ink-2 italic">
-            Gerado por IA a partir dos seus números reais desta semana.
-          </p>
-        </div>
-      )}
+            <div className="p-3 rounded-card bg-surface-2 border border-line flex items-start gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-ok-active dark:text-ok shrink-0 mt-0.5" />
+              <p className="text-xs text-ink-2">{report.celebrationPoint}</p>
+            </div>
+
+            {report.criticalGaps.length > 0 && (
+              <div>
+                <p className="text-[11px] font-black text-ink-2 uppercase tracking-wide mb-1.5">
+                  Gargalos
+                </p>
+                <ul className="space-y-1.5">
+                  {report.criticalGaps.map((gap, i) => (
+                    <li key={i} className="text-xs text-ink-2 flex gap-2">
+                      <span className="text-brand">·</span> {gap}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {report.actionableMicroHabits.length > 0 && (
+              <div>
+                <p className="text-[11px] font-black text-ink-2 uppercase tracking-wide mb-1.5">
+                  Micro-hábitos desta semana
+                </p>
+                <ul className="space-y-1.5">
+                  {report.actionableMicroHabits.map((habit, i) => (
+                    <li key={i} className="text-xs text-ink-2 flex gap-2">
+                      <span className="text-brand">·</span> {habit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <p className="text-[11px] text-ink-2 italic">
+              Gerado por IA a partir dos seus números reais desta semana.
+            </p>
+          </div>
+        )}
+      </Card>
     </motion.div>
   );
 }
