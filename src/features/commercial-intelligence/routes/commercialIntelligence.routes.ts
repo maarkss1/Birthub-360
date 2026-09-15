@@ -86,5 +86,10 @@ router.post('/ai/bitrix-note', aiLimiter, (req, res, next) =>
 router.post('/ai/mentor-playbook', aiLimiter, (req, res, next) =>
   resolve().postAiMentorPlaybook(req, res, next),
 );
+// Item 5 de "IA Agêntica de Vendas": detecção de deal em risco (silêncio/tom negativo/concorrente
+// mencionado) — chama IA para a análise de tom/concorrente, mesmo aiLimiter dos demais endpoints.
+router.post('/ai/deal-risk-scan', aiLimiter, (req, res, next) =>
+  resolve().scanDealRisks(req, res, next),
+);
 
 export const commercialIntelligenceRoutes = router;

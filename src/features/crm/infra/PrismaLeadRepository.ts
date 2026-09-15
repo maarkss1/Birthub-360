@@ -19,10 +19,11 @@ function serializeLead<
     company?: { status: string } | null;
     activities?: Array<{ type: string; status: string }>;
   },
->(lead: T): unknown {
+>(lead: T, forecastProbabilityAi: number | null = null): unknown {
   return {
     ...lead,
     status: fromPrismaLeadStatus(lead.status),
+    forecastProbabilityAi,
     ...(lead.company
       ? { company: { ...lead.company, status: fromPrismaCompanyStatus(lead.company.status) } }
       : {}),
@@ -36,6 +37,23 @@ function serializeLead<
         }
       : {}),
   };
+}
+
+/** Junta o `forecastProbabilityAi` mais recente (CopilotoDealHealthSnapshot, append-only) para um
+ * lote de leads numa única query — nunca N+1, e nunca fabrica valor para quem não tem snapshot
+ * (fica `null`, tratado como "Não disponível" pela UI, nunca 0). */
+async function loadLatestForecastProbabilityAi(
+  organizationId: string,
+  leadIds: string[],
+): Promise<Map<string, number | null>> {
+  if (leadIds.length === 0) return new Map();
+  const snapshots = await prisma.copilotoDealHealthSnapshot.findMany({
+    where: { organizationId, leadId: { in: leadIds } },
+    orderBy: { createdAt: 'desc' },
+    distinct: ['leadId'],
+    select: { leadId: true, forecastProbabilityAi: true },
+  });
+  return new Map(snapshots.map((snapshot) => [snapshot.leadId, snapshot.forecastProbabilityAi]));
 }
 
 export class PrismaLeadRepository implements LeadRepository {
@@ -74,17 +92,34 @@ export class PrismaLeadRepository implements LeadRepository {
 
     const skip = (page - 1) * limit;
 
+    // Priorização por probabilidade de fechamento (item 4 de "IA Agêntica de Vendas"), não por
+    // última atividade: `probability` é a probabilidade OFICIAL do CRM (atualizada a cada troca
+    // de estágio via LeadStageHistory), leads sem probabilidade ainda calculada vão para o fim
+    // (nulls: 'last'), não para o topo — o default do Postgres em DESC é nulls FIRST, que
+    // colocaria leads não qualificados acima de oportunidades reais. `lastInteraction` e
+    // `createdAt` continuam como desempate, não como critério principal.
     const leads = await prisma.lead.findMany({
       where,
       skip,
       take: limit,
       include: { company: true, contact: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { probability: { sort: 'desc', nulls: 'last' } },
+        { lastInteraction: { sort: 'desc', nulls: 'last' } },
+        { createdAt: 'desc' },
+      ],
     });
     const total = await prisma.lead.count({ where });
 
+    const forecastByLeadId = await loadLatestForecastProbabilityAi(
+      organizationId,
+      leads.map((lead) => lead.id),
+    );
+
     return {
-      data: leads.map(serializeLead) as unknown as Lead[],
+      data: leads.map((lead) =>
+        serializeLead(lead, forecastByLeadId.get(lead.id) ?? null),
+      ) as unknown as Lead[],
       meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
     };
   }

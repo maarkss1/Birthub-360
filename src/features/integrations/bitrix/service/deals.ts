@@ -2,6 +2,7 @@ import { LeadFunnel, LeadStatus, type Prisma } from '@prisma/client';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
 import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
+import { enrichmentQueue } from '../../../../lib/queue/enrichment.queue.js';
 import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import { BITRIX_FIELD_MAP } from '../bitrixFieldMap.js';
 import { callBitrix, getConnectionWebhookUrl } from './client.js';
@@ -447,6 +448,12 @@ export async function importSelectedBitrixDeals(
             // Company.bitrixCompanyId no schema.
             bitrixCompanyId: deal.COMPANY_ID || null,
           },
+        });
+        // Mesmo motivo do leads.ts: importação de Negócio também não traz CNPJ do Bitrix,
+        // então usa o mesmo enfileiramento de POST /companies para enriquecer depois.
+        await enrichmentQueue?.add('enrich-company', {
+          companyId: company.id,
+          organizationId,
         });
 
         const contact = contactName
