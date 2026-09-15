@@ -117,17 +117,44 @@ export async function downloadFile(url: string, fallbackFilename: string): Promi
   window.URL.revokeObjectURL(objectUrl);
 }
 
+const inFlightRequests = new Map<string, Promise<any>>();
+
+// Uma mutação (POST/PUT/PATCH/DELETE) invalida qualquer GET in-flight: sem isso, um GET
+// disparado logo após a mutação podia reaproveitar uma Promise antiga já em voo (resposta
+// pré-mutação) em vez de buscar o estado atualizado — ver useCrmBoardController.handleConvert
+// (post seguido de fetchLeads na mesma URL).
+function invalidateInFlightGetCache(): void {
+  inFlightRequests.clear();
+}
+
 export const api = {
-  get: <T>(url: string, options?: ApiRequestOptions) =>
-    apiFetch<T>(url, { ...options, method: 'GET' }),
-  post: <T>(url: string, body?: unknown, options?: ApiRequestOptions) =>
-    apiFetch<T>(url, { ...options, method: 'POST', body: JSON.stringify(body) }),
-  put: <T>(url: string, body?: unknown, options?: ApiRequestOptions) =>
-    apiFetch<T>(url, { ...options, method: 'PUT', body: JSON.stringify(body) }),
-  patch: <T>(url: string, body?: unknown, options?: ApiRequestOptions) =>
-    apiFetch<T>(url, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
-  delete: <T>(url: string, options?: ApiRequestOptions) =>
-    apiFetch<T>(url, { ...options, method: 'DELETE' }),
+  get: <T>(url: string, options?: ApiRequestOptions) => {
+    const cacheKey = url + (options ? JSON.stringify(options) : '');
+    if (inFlightRequests.has(cacheKey)) {
+      return inFlightRequests.get(cacheKey) as Promise<T>;
+    }
+    const promise = apiFetch<T>(url, { ...options, method: 'GET' }).finally(() => {
+      inFlightRequests.delete(cacheKey);
+    });
+    inFlightRequests.set(cacheKey, promise);
+    return promise;
+  },
+  post: <T>(url: string, body?: unknown, options?: ApiRequestOptions) => {
+    invalidateInFlightGetCache();
+    return apiFetch<T>(url, { ...options, method: 'POST', body: JSON.stringify(body) });
+  },
+  put: <T>(url: string, body?: unknown, options?: ApiRequestOptions) => {
+    invalidateInFlightGetCache();
+    return apiFetch<T>(url, { ...options, method: 'PUT', body: JSON.stringify(body) });
+  },
+  patch: <T>(url: string, body?: unknown, options?: ApiRequestOptions) => {
+    invalidateInFlightGetCache();
+    return apiFetch<T>(url, { ...options, method: 'PATCH', body: JSON.stringify(body) });
+  },
+  delete: <T>(url: string, options?: ApiRequestOptions) => {
+    invalidateInFlightGetCache();
+    return apiFetch<T>(url, { ...options, method: 'DELETE' });
+  },
   /** Upload de arquivo (multipart/form-data) — ex.: OCR de imagem. Não usa JSON.stringify. */
   postForm: <T>(url: string, form: FormData, options?: ApiRequestOptions) =>
     apiFetch<T>(url, { ...options, method: 'POST', body: form }),
