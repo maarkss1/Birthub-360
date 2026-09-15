@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption -- trilha instrumental sem fala */
 
 import { motion } from 'framer-motion';
-import { ArrowRight, MessageCircle, Phone, Volume2, VolumeX } from 'lucide-react';
+import { ArrowRight, Bug, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { BirthHubLogo, BirthHubWordmark } from '../../../components/brand/BirthHubLogo';
@@ -305,37 +305,19 @@ export function WelcomeScreen() {
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
         </motion.div>
-
-        <motion.p
-          variants={staggerItem}
-          className="mt-14 text-xs font-medium tracking-wide text-ink-2"
-        >
-          {BRAND.credit}
-        </motion.p>
       </motion.div>
 
       <div className="absolute bottom-6 z-10 flex w-full flex-col items-center gap-4 px-8 text-sm text-ink-2 sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          {BRAND.support.whatsapp.href && (
-            <a
-              href={BRAND.support.whatsapp.href}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 transition-colors hover:text-ink"
-            >
-              <MessageCircle size={16} aria-hidden="true" />
-              <span>{BRAND.support.whatsapp.label}</span>
-            </a>
-          )}
-          {BRAND.support.phone.href && (
-            <a
-              href={BRAND.support.phone.href}
-              className="flex items-center gap-2 transition-colors hover:text-ink"
-            >
-              <Phone size={16} aria-hidden="true" />
-              <span>{BRAND.support.phone.label}</span>
-            </a>
-          )}
+          <a
+            href={`${BRAND.support.whatsapp.href}?text=${encodeURIComponent('Olá, quero reportar um problema no Birth Hub 360: ')}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 text-xs font-medium transition-colors hover:text-ink"
+          >
+            <Bug size={16} aria-hidden="true" />
+            <span>Reportar bug</span>
+          </a>
         </div>
         {BRAND.social.length > 0 && (
           <ul className="flex gap-4">
