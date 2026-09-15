@@ -232,7 +232,9 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
       lastInteraction: true,
       nextAction: true,
       company: { select: { tradeName: true, segment: true, size: true } },
-      contact: { select: { email: true, emailStatus: true, role: true, whatsapp: true, phone: true } },
+      contact: {
+        select: { email: true, emailStatus: true, role: true, whatsapp: true, phone: true },
+      },
     },
   });
 

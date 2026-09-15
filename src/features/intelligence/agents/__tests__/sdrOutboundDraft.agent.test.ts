@@ -364,7 +364,11 @@ describe('SDROutboundDraftAgent.draftWhatsAppForLead', () => {
     await agent.draftWhatsAppForLead('lead-1', 'org-1');
 
     expect(pendingActionCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.objectContaining({ payload: expect.objectContaining({ to: '+5511988887777' }) }) }),
+      expect.objectContaining({
+        data: expect.objectContaining({
+          payload: expect.objectContaining({ to: '+5511988887777' }),
+        }),
+      }),
     );
   });
 

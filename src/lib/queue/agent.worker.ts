@@ -70,7 +70,10 @@ export function createAgentWorker() {
             // e-mail com o de WhatsApp (ver comentário de draftWhatsAppForLead). Falha isolada:
             // um erro aqui não derruba o job nem desfaz o rascunho de e-mail já criado acima.
             try {
-              const whatsAppAgent = new SDROutboundDraftAgent(`session_${leadId}_whatsapp`, tenantId);
+              const whatsAppAgent = new SDROutboundDraftAgent(
+                `session_${leadId}_whatsapp`,
+                tenantId,
+              );
               const whatsAppResult = await whatsAppAgent.draftWhatsAppForLead(leadId, tenantId);
               logger.info(
                 { jobId: job.id, leadId, ...whatsAppResult },
