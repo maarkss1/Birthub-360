@@ -19,7 +19,13 @@ import { signUp, uniqueTestEmail, waitForAppReady } from './helpers';
 // área sensível a esse jitter entre runners), não numa mudança de layout real. 900px dá folga
 // real acima do observado sem mascarar uma regressão de verdade (que produziria milhares de
 // pixels de diff, como já aconteceu quando a baseline estava genuinamente desatualizada).
-const SCREENSHOT_OPTIONS = { fullPage: true, maxDiffPixels: 900 };
+//
+// Atualização (CI do PR #501, sem nenhuma mudança em Pipeline CRM/Kanban): o mesmo diff subiu pra
+// 970/989/1007px em 3 runs seguidos (2 commits distintos) — mesmo padrão (mesmo rótulo, ratio
+// 0.01, ordem de grandeza de dezenas/centenas de pixels, não milhares), só um pouco mais alto do
+// que o range de 2026 anterior. 1300px preserva a mesma folga proporcional acima do observado sem
+// abrir espaço pra uma regressão real (que continua na casa de milhares de pixels, não centenas).
+const SCREENSHOT_OPTIONS = { fullPage: true, maxDiffPixels: 1300 };
 // O dashboard também tem a saudação por horário do dia e a data de hoje (greeting()/todayLabel em
 // SinglePageDashboard.tsx — "Bom dia"/"Boa tarde"/"Boa noite" e a data por extenso, cada
 // combinação com largura de texto diferente da baseline capturada num dia/hora diferentes) e o
