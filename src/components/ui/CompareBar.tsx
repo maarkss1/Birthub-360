@@ -116,7 +116,7 @@ export function DeltaPill({ value, suffix = '%', note }: DeltaPillProps) {
         positive
           ? 'bg-ok/15 text-ok-active dark:text-ok'
           : negative
-            ? 'bg-critical/15 text-critical-active dark:text-critical'
+            ? 'bg-critical/15 text-critical-active'
             : 'bg-surface-2 text-ink-2',
       )}
     >

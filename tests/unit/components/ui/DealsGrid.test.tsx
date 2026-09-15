@@ -2,7 +2,10 @@
  * Cobertura de testes real (code-review, sessão "JoaoReisDiagnosticHub" / Pilot 028) — ver
  * KpiCard.test.tsx pro mesmo contexto. O teste de badge "Perdido" cobre o achado de contraste
  * desta revisão: text-critical cru sobre bg-critical/15 falhava AA — corrigido pra
- * text-critical-active dark:text-critical, mesmo padrão de won/text-ok-active.
+ * text-critical-active. O `dark:text-critical` que este arquivo chegou a exigir foi removido numa
+ * rodada posterior (achado real, medido em navegador: 3.85:1 no escuro contra o composto real,
+ * abaixo de AA — --critical-active já é o token calibrado pra exatamente este cenário "badge soft",
+ * mesmo padrão sem override usado por BentoMetric.tsx/BentoInsight.tsx; ver `.claude/PILOTS.md`).
  */
 import { describe, it, expect, afterEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
@@ -53,7 +56,7 @@ describe('DealsGrid', () => {
     render(<DealsGrid deals={deals} />);
     const badge = screen.getByText('Perdido');
     expect(badge.className).toContain('text-critical-active');
-    expect(badge.className).toContain('dark:text-critical');
+    expect(badge.className).not.toContain('dark:text-critical');
   });
 
   it('usa a cor de contraste segura (text-ok-active) no badge "Ganho"', () => {
