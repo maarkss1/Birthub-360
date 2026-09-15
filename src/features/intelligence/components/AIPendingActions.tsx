@@ -57,10 +57,13 @@ function presentationFor(action: PendingAction): ActionPresentation {
     };
   }
   if (action.action === 'send_whatsapp_reply') {
+    const isFirstContact = action.payload.trigger === 'first_contact';
     return {
-      title: 'Negociador de IA · réplica sugerida',
+      title: isFirstContact
+        ? 'Primeiro contato do SDR (WhatsApp)'
+        : 'Negociador de IA · réplica sugerida',
       approveLabel: 'Aprovar e enviar',
-      approveTitle: 'Envia a réplica pelo WhatsApp conectado da organização.',
+      approveTitle: 'Envia a mensagem pelo WhatsApp conectado da organização.',
       icon: <MessageCircle className="w-4 h-4 mr-2" />,
     };
   }
@@ -360,7 +363,11 @@ export function AIPendingActions() {
                         </div>
                       )}
                       <div>
-                        <p className="text-xs text-ink-2 font-medium mb-1">Réplica sugerida</p>
+                        <p className="text-xs text-ink-2 font-medium mb-1">
+                          {action.payload.trigger === 'first_contact'
+                            ? 'Mensagem de primeiro contato'
+                            : 'Réplica sugerida'}
+                        </p>
                         <div className="bg-surface-2 rounded-md p-3 text-sm text-ink-2 h-36 overflow-y-auto whitespace-pre-wrap">
                           {action.payload.body}
                         </div>

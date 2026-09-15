@@ -21,6 +21,10 @@ const emailDraftSchema = z.object({
   body: z.string().trim().min(1).max(8_000),
 });
 
+const whatsAppDraftSchema = z.object({
+  body: z.string().trim().min(1).max(700),
+});
+
 export interface SdrDraftResult {
   status: 'created' | 'existing' | 'executed' | 'skipped';
   actionId?: string;
@@ -205,6 +209,131 @@ Escreva um primeiro e-mail curto, específico e consultivo. Valide uma hipótese
       }
     }
 
+    return { status: 'created', actionId: action.id };
+  }
+
+  /**
+   * Item 2 de "IA Agêntica de Vendas": primeiro contato do SDR também sai por WhatsApp, não só
+   * e-mail — texto puro gerado a partir do mesmo contexto de playbook/RAG do e-mail, mas curto e
+   * sem assunto (formato de mensagem, não de e-mail). Chama `callLLM` diretamente (em vez de
+   * `processMessage`/`getSystemPrompt()`, usados pelo fluxo de e-mail) porque este é um prompt de
+   * sistema diferente e um rascunho STATELESS — não precisa (e não deveria) herdar o histórico de
+   * memória de conversas anteriores desta sessão.
+   *
+   * Mesma decisão de segurança do Negociador de IA (negotiatorDraft.agent.ts): `autoExecute`
+   * NUNCA se aplica aqui — mesmo com SWARM_AUTONOMY_MODE=full, o primeiro WhatsApp sempre fica
+   * pendente de aprovação humana. WhatsApp é mais imediato/pessoal que o primeiro e-mail; merece
+   * sua própria decisão de autonomia total, não herdar a trava do e-mail por acidente.
+   */
+  public async draftWhatsAppForLead(leadId: string, tenantId: string): Promise<SdrDraftResult> {
+    const lead = await prisma.lead.findFirst({
+      where: { id: leadId, organizationId: tenantId },
+      include: { company: true, contact: true },
+    });
+
+    if (!lead?.contact || !lead.company) {
+      return { status: 'skipped', reason: 'Lead sem empresa ou contato vinculados.' };
+    }
+    const whatsAppNumber = lead.contact.whatsapp || lead.contact.phone;
+    if (!whatsAppNumber) {
+      return { status: 'skipped', reason: 'Contato sem WhatsApp/telefone.' };
+    }
+
+    const idempotencyKey = `sdr:first-whatsapp:${leadId}`;
+    const existing = await prisma.aIPendingAction.findUnique({
+      where: { organizationId_idempotencyKey: { organizationId: tenantId, idempotencyKey } },
+    });
+    if (existing) {
+      return { status: 'existing', actionId: existing.id };
+    }
+
+    if (!hasPiiExternalConsent(tenantId)) {
+      logger.warn(
+        { leadId, tenantId },
+        'SDR outbound (WhatsApp) bloqueado: sem base legal LGPD registrada para enviar dado pessoal a provedor de IA externo.',
+      );
+      return {
+        status: 'skipped',
+        reason:
+          'Consentimento/base legal LGPD não registrado para esta organização enviar dado pessoal a provedor de IA externo.',
+      };
+    }
+
+    const searchQuery = `Estratégia de prospecção e dores para segmento ${lead.company.segment || 'geral'}`;
+    const similarKnowledge = await vectorService.searchSimilar(searchQuery, tenantId, 3, 0.5);
+    const ragContext =
+      similarKnowledge.length > 0
+        ? similarKnowledge.map((item) => `- ${wrapUntrustedContent(item.content)}`).join('\n')
+        : 'Sem contexto adicional no playbook.';
+
+    const promptContext = `
+Dados do prospect:
+- Nome: ${lead.contact.name}
+- Cargo: ${lead.contact.role || 'Desconhecido'}
+- Empresa: ${lead.company.legalName}
+- Segmento: ${lead.company.segment || 'Desconhecido'}
+- Porte: ${lead.company.size || 'Desconhecido'}
+- Score de fit: ${lead.score ?? 'ainda não calculado'}
+
+Contexto da base de conhecimento da Birth Hub 360:
+${ragContext}
+
+Escreva a primeira mensagem de WhatsApp: curta, específica, consultiva. Valide uma hipótese de dor com uma pergunta simples; não peça reunião no primeiro contato.
+`;
+
+    const minimized = minimizePii(promptContext, [
+      { token: '[NOME_DO_CONTATO]', value: lead.contact.name },
+    ]);
+    const piiTokens: PiiToken[] = minimized.applied;
+
+    const systemPrompt = `Você é um SDR B2B responsável por redigir a PRIMEIRA MENSAGEM de WhatsApp para um prospect.
+Seja consultivo, colaborativo e humano. NUNCA seja agressivo, pedante ou insistente (pushy).
+Use somente os dados do prospect e os trechos de playbook fornecidos na mensagem do usuário.
+${UNTRUSTED_CONTENT_GUARD_INSTRUCTION}
+Não invente notícias, números, dores confirmadas, clientes, resultados ou funcionalidades.
+REGRAS DE FORMATO: responda SOMENTE com o texto da mensagem — nunca markdown, nunca assunto, no máximo 4 frases curtas (é WhatsApp, não e-mail). Retorne SOMENTE JSON válido neste formato exato: {"body":"texto curto da mensagem"}.`;
+
+    const rawDraft = await this.callLLM([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: minimized.text },
+    ]);
+    const rehydrated = piiTokens.length > 0 ? rehydratePii(rawDraft, piiTokens) : rawDraft;
+
+    let draft: z.infer<typeof whatsAppDraftSchema>;
+    let isStructuredOutputValid: boolean;
+    try {
+      draft = whatsAppDraftSchema.parse(cleanAndParseJson<unknown>(rehydrated));
+      isStructuredOutputValid = true;
+    } catch (error) {
+      logger.warn(
+        { err: error, leadId },
+        'SDR outbound (WhatsApp) retornou formato não estruturado; usando fallback textual (revisão humana obrigatória).',
+      );
+      draft = { body: rehydrated.slice(0, 700) };
+      isStructuredOutputValid = false;
+    }
+
+    const action = await prisma.aIPendingAction.create({
+      data: {
+        entity: 'Lead',
+        action: 'send_whatsapp_reply',
+        agentRole: 'SDR',
+        riskLevel: 'high',
+        confidence: lead.score == null ? null : Math.max(0, Math.min(1, lead.score / 100)),
+        idempotencyKey,
+        organizationId: tenantId,
+        payload: {
+          leadId,
+          to: whatsAppNumber,
+          body: draft.body,
+          generatedFrom: 'playbook_rag',
+          structuredOutputValid: isStructuredOutputValid,
+          trigger: 'first_contact',
+        },
+      },
+    });
+
+    // Nunca autoExecute aqui — ver comentário do método acima.
     return { status: 'created', actionId: action.id };
   }
 }
