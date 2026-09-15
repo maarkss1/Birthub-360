@@ -14,6 +14,7 @@ import {
 import { CloseDateIntelligenceCard } from './CloseDateIntelligenceCard';
 import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
 import { ForecastAccuracyCard } from './ForecastAccuracyCard';
+import { ForecastCalibrationCard } from './ForecastCalibrationCard';
 import { KpiTile } from './KpiTile';
 import { MetricInfo } from './MetricInfo';
 
@@ -143,6 +144,7 @@ export function PipelineForecastTab({ filter }: { filter: CommercialFilter }) {
         {carryoverBlock}
         <CloseDateIntelligenceCard filter={filter} onOpenDrillDown={setDrillDown} />
         <ForecastAccuracyCard />
+        <ForecastCalibrationCard filter={filter} />
         <DealDrillDownDrawer filter={filter} query={drillDown} onClose={() => setDrillDown(null)} />
       </div>
     );
@@ -215,6 +217,7 @@ export function PipelineForecastTab({ filter }: { filter: CommercialFilter }) {
       {carryoverBlock}
       <CloseDateIntelligenceCard filter={filter} onOpenDrillDown={setDrillDown} />
       <ForecastAccuracyCard />
+      <ForecastCalibrationCard filter={filter} />
       <DealDrillDownDrawer filter={filter} query={drillDown} onClose={() => setDrillDown(null)} />
     </div>
   );

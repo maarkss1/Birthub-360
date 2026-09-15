@@ -62,6 +62,15 @@ router.get('/trends', (req, res, next) => resolve().getHistoricalTrends(req, res
 // Jornada — leitura pura de banco como as demais rotas GET acima (sem limitador de IA).
 router.get('/health-score', (req, res, next) => resolve().getHealthScore(req, res, next));
 router.get('/forecast-accuracy', (req, res, next) => resolve().getForecastAccuracy(req, res, next));
+// Forecast auto-calibrado (fecha o loop do erro histórico acima), gargalo de funil e benchmark de
+// vendedor — mesma leitura pura de banco das rotas GET acima (sem limitador de IA).
+router.get('/forecast-calibration', (req, res, next) =>
+  resolve().getForecastCalibration(req, res, next),
+);
+router.get('/funnel-bottlenecks', (req, res, next) =>
+  resolve().getFunnelBottlenecks(req, res, next),
+);
+router.get('/seller-benchmark', (req, res, next) => resolve().getSellerBenchmark(req, res, next));
 router.get('/close-date-intelligence', (req, res, next) =>
   resolve().getCloseDateIntelligence(req, res, next),
 );

@@ -470,6 +470,85 @@ export interface ForecastAccuracySummary {
   samples: ForecastAccuracyResult[];
 }
 
+// ─── Forecast auto-calibrado ──────────────────────────────────────────────────
+
+export type ForecastCalibrationUnavailableReason = 'sem_historico_suficiente';
+export type ForecastBiasDirection = 'superestimando' | 'subestimando' | 'neutro';
+export interface ForecastCalibrationResult {
+  available: boolean;
+  reason: ForecastCalibrationUnavailableReason | null;
+  sampleSize: number;
+  minSampleSize: number;
+  calibrationFactor: number | null;
+  minFactor: number;
+  maxFactor: number;
+  biasDirection: ForecastBiasDirection | null;
+  rawForecastAmount: number;
+  calibratedForecastAmount: number | null;
+  goalAmount: number | null;
+  currency: string;
+  calibratedGapToGoal: number | null;
+}
+
+// ─── Detecção automática de gargalo de funil ─────────────────────────────────
+
+export type BottleneckSeverity = 'critico' | 'atencao' | 'normal' | 'sem_dados';
+export interface FunnelBottleneckStage {
+  stageId: string;
+  stageName: string;
+  sortOrder: number;
+  averageDaysInStage: number | null;
+  sampleSize: number;
+  normalBaselineDays: number | null;
+  multiplier: number | null;
+  severity: BottleneckSeverity;
+  openCount: number;
+  openAmount: number;
+}
+export interface FunnelBottleneckReport {
+  stages: FunnelBottleneckStage[];
+  criticalMultiplier: number;
+  warningMultiplier: number;
+  minSampleSizeForBaseline: number;
+  trackingSince: string | null;
+}
+
+// ─── Benchmark de vendedor ────────────────────────────────────────────────────
+
+export type SellerBenchmarkMetric = 'winRate' | 'salesCycleMedianDays' | 'averageTicketWon';
+export interface SellerBenchmarkSuggestion {
+  metric: SellerBenchmarkMetric;
+  label: string;
+  sellerValue: number;
+  teamAverage: number;
+  topPerformerValue: number;
+  text: string;
+}
+export interface SellerBenchmarkRow {
+  owner: string;
+  winRate: number | null;
+  wonCount: number;
+  lostCount: number;
+  averageTicketWon: number | null;
+  salesCycleMedianDays: number | null;
+  openCount: number;
+  openAmount: number;
+  isTopPerformer: boolean;
+  suggestion: SellerBenchmarkSuggestion | null;
+}
+export interface SellerBenchmarkTeamAverages {
+  winRate: number | null;
+  salesCycleMedianDays: number | null;
+  averageTicketWon: number | null;
+}
+export interface SellerBenchmarkReport {
+  period: string;
+  minDealsForRanking: number;
+  sellers: SellerBenchmarkRow[];
+  teamAverages: SellerBenchmarkTeamAverages;
+  topPerformerOwner: string | null;
+}
+
 // ─── CLOSEDATE Intelligence ─────────────────────────────────────────────────
 
 export interface CloseDateDealRow {
@@ -672,6 +751,12 @@ export const commercialIntelligenceApi = {
   healthScore: (filter: CommercialFilter) =>
     api.get<HealthScoreResult>(`${BASE}/health-score?${qs(filter)}`),
   forecastAccuracy: () => api.get<ForecastAccuracySummary>(`${BASE}/forecast-accuracy`),
+  forecastCalibration: (filter: CommercialFilter) =>
+    api.get<ForecastCalibrationResult>(`${BASE}/forecast-calibration?${qs(filter)}`),
+  funnelBottlenecks: (filter: CommercialFilter) =>
+    api.get<FunnelBottleneckReport>(`${BASE}/funnel-bottlenecks?${qs(filter)}`),
+  sellerBenchmark: (filter: CommercialFilter) =>
+    api.get<SellerBenchmarkReport>(`${BASE}/seller-benchmark?${qs(filter)}`),
   closeDateIntelligence: (filter: CommercialFilter) =>
     api.get<CloseDateIntelligenceReport>(`${BASE}/close-date-intelligence?${qs(filter)}`),
   journey: (filter: CommercialFilter) => api.get<JourneyReport>(`${BASE}/journey?${qs(filter)}`),

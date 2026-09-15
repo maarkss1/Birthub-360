@@ -760,6 +760,129 @@ export interface FilterOptions {
   companies: string[];
 }
 
+// ─── Forecast auto-calibrado (previsto vs. realizado retroalimenta o próximo forecast) ─────
+//
+// `ForecastAccuracySummary` (acima) já mede o erro histórico; este bloco fecha o loop: usa esse
+// erro para corrigir o Forecast Ponderado Explicável ATUAL, em vez de só reportar o erro passado
+// passivamente. Nunca um segundo modelo estatístico — só um fator de correção (realizado/previsto
+// médio dos meses encerrados) aplicado ao forecast já calculado por `forecastEngine.ts`.
+
+export type ForecastCalibrationUnavailableReason = 'sem_historico_suficiente';
+
+export type ForecastBiasDirection = 'superestimando' | 'subestimando' | 'neutro';
+
+/**
+ * Forecast bruto (`ExecutiveOverview.forecastAmount`) corrigido por um fator de calibração
+ * derivado do erro histórico real (`ForecastAccuracySummary.samples`). `available: false` sem
+ * amostra mínima de meses encerrados — o forecast bruto nunca é escondido, só não é "corrigido"
+ * sem base estatística. Ver `application/forecastCalibration.ts` para a fórmula e o motivo do
+ * clamp do fator.
+ */
+export interface ForecastCalibrationResult {
+  available: boolean;
+  reason: ForecastCalibrationUnavailableReason | null;
+  sampleSize: number;
+  minSampleSize: number;
+  /** Média de (realizado / previsto) dos meses encerrados com snapshot, limitada a [minFactor, maxFactor] — 1.0 = sem viés detectado. `null` sem amostra mínima. */
+  calibrationFactor: number | null;
+  minFactor: number;
+  maxFactor: number;
+  biasDirection: ForecastBiasDirection | null;
+  rawForecastAmount: number;
+  /** `rawForecastAmount * calibrationFactor`. `null` sem `calibrationFactor` disponível. */
+  calibratedForecastAmount: number | null;
+  goalAmount: number | null;
+  currency: string;
+  /** Meta − calibrado, nunca negativo. `null` sem meta cadastrada ou sem calibração disponível. */
+  calibratedGapToGoal: number | null;
+}
+
+// ─── Detecção automática de gargalo de funil (comparação relativa entre etapas) ────────────
+//
+// Distinto de `StageAging`/`AgingReport` (que mede quanto do pipeline está acima de um limiar FIXO
+// de dias): aqui cada etapa é comparada contra a duração "normal" das DEMAIS etapas do mesmo
+// pipeline — o sistema aponta ativamente qual etapa está anormalmente lenta, não só lista aging.
+// Mesma fonte de duração (`buildStageDurationStats`, `LeadStageHistory`), nenhum cálculo de duração
+// novo introduzido aqui.
+
+export type BottleneckSeverity = 'critico' | 'atencao' | 'normal' | 'sem_dados';
+
+export interface FunnelBottleneckStage {
+  stageId: string;
+  stageName: string;
+  sortOrder: number;
+  /** Duração média (dias) de passagens JÁ CONCLUÍDAS por esta etapa. `null` sem nenhuma amostra. */
+  averageDaysInStage: number | null;
+  /** Quantas passagens concluídas alimentam `averageDaysInStage`. */
+  sampleSize: number;
+  /** Mediana da duração média das OUTRAS etapas com amostra suficiente — a régua de "normal" desta etapa. `null` sem ao menos 2 outras etapas comparáveis. */
+  normalBaselineDays: number | null;
+  /** `averageDaysInStage / normalBaselineDays`. `null` sem os dois lados calculáveis ou sem amostra própria suficiente. */
+  multiplier: number | null;
+  severity: BottleneckSeverity;
+  /** Negócios ABERTOS agora, parados nesta etapa. */
+  openCount: number;
+  openAmount: number;
+}
+
+export interface FunnelBottleneckReport {
+  stages: FunnelBottleneckStage[];
+  criticalMultiplier: number;
+  warningMultiplier: number;
+  minSampleSizeForBaseline: number;
+  trackingSince: string | null;
+}
+
+// ─── Benchmark de vendedor (performance individual vs. time e vs. top performer) ───────────
+//
+// `PerformanceMetrics` (Fase 4) já calcula Win Rate/Ciclo/Ticket para UM recorte (filtro
+// `owner` opcional). Este relatório calcula os mesmos 3 indicadores para TODOS os vendedores de
+// uma vez (ignora `filter.owner` de propósito — comparação entre vendedores não faz sentido já
+// pré-filtrada a um único vendedor) e adiciona a comparação time/top performer + uma sugestão
+// específica, não um texto de incentivo genérico.
+
+export type SellerBenchmarkMetric = 'winRate' | 'salesCycleMedianDays' | 'averageTicketWon';
+
+export interface SellerBenchmarkSuggestion {
+  metric: SellerBenchmarkMetric;
+  label: string;
+  sellerValue: number;
+  teamAverage: number;
+  topPerformerValue: number;
+  /** Texto pronto para exibição, gerado deterministicamente dos 3 valores acima — nunca por IA. */
+  text: string;
+}
+
+export interface SellerBenchmarkRow {
+  owner: string;
+  /** Ganhos / (Ganhos + Perdidos) no período, em %. `null` sem negócios fechados. */
+  winRate: number | null;
+  wonCount: number;
+  lostCount: number;
+  averageTicketWon: number | null;
+  salesCycleMedianDays: number | null;
+  openCount: number;
+  openAmount: number;
+  /** `true` só quando `wonCount + lostCount >= minDealsForRanking` E este vendedor tem o maior Win Rate do time no período. */
+  isTopPerformer: boolean;
+  /** `null` quando a amostra do vendedor (`wonCount + lostCount`) é menor que `minDealsForRanking` — sem comparação confiável ainda. */
+  suggestion: SellerBenchmarkSuggestion | null;
+}
+
+export interface SellerBenchmarkTeamAverages {
+  winRate: number | null;
+  salesCycleMedianDays: number | null;
+  averageTicketWon: number | null;
+}
+
+export interface SellerBenchmarkReport {
+  period: PeriodMonth;
+  minDealsForRanking: number;
+  sellers: SellerBenchmarkRow[];
+  teamAverages: SellerBenchmarkTeamAverages;
+  topPerformerOwner: string | null;
+}
+
 // ─── Tendências históricas (seção 23) ────────────────────────────────────────
 
 export interface HistoricalTrendPoint {

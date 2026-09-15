@@ -259,6 +259,36 @@ export class CommercialIntelligenceController {
     }
   };
 
+  getForecastCalibration = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.forecastCalibration(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getFunnelBottlenecks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.funnelBottlenecks(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getSellerBenchmark = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.sellerBenchmark(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getCloseDateIntelligence = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { organizationId } = (req as AuthRequest).user;

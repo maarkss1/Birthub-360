@@ -430,6 +430,49 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
       'Faltando qualquer uma das 3 condições, retorna explicitamente "sem histórico suficiente" — nunca um erro fabricado. Logo após esta implementação, é o resultado esperado até existir snapshot antigo o bastante para ter fechado.',
   },
   {
+    key: 'forecast_calibrado',
+    name: 'Forecast Auto-calibrado',
+    description:
+      'Forecast Ponderado Explicável atual, corrigido por um fator derivado do erro histórico real (previsto vs. realizado dos meses já encerrados) — fecha o loop que o Erro Histórico do Forecast só media.',
+    formula:
+      'Fator = média de (Fechado realizado / Forecast previsto) dos meses encerrados com snapshot e previsto > 0, limitado a [0.6, 1.4]. Forecast Calibrado = Forecast atual × Fator.',
+    source: 'application/forecastCalibration.ts (GET /commercial-intelligence/forecast-calibration)',
+    period: 'Mês corrente, usando o histórico de meses já encerrados como base do fator',
+    inclusionRules:
+      'Exige ao menos 3 meses encerrados com erro histórico calculável (mesmas 3 condições do Erro Histórico do Forecast) antes de aplicar qualquer correção.',
+    exclusionRules:
+      'Com menos de 3 meses de amostra, retorna "sem histórico suficiente" e nenhuma correção é aplicada — o Forecast bruto nunca é escondido nem corrigido sem base estatística.',
+  },
+  {
+    key: 'gargalo_funil',
+    name: 'Detecção de Gargalo de Funil',
+    description:
+      'Aponta ativamente qual etapa do funil está anormalmente lenta comparada às demais — não um dashboard passivo de aging por faixa fixa.',
+    formula:
+      'Multiplicador da etapa = Duração média da etapa / Mediana da duração média das OUTRAS etapas com amostra suficiente (baseline "normal"). Crítico ≥ 2,5x; Atenção ≥ 1,5x.',
+    source: 'application/queries/bottleneckReport.ts (GET /commercial-intelligence/funnel-bottlenecks)',
+    period: 'Snapshot atual do funil, duração calculada sobre todo o histórico disponível',
+    inclusionRules:
+      'Uma etapa só classifica (crítico/atenção/normal) com ao menos 3 passagens concluídas próprias E ao menos 2 outras etapas comparáveis para formar a baseline.',
+    exclusionRules:
+      'Sem amostra própria suficiente ou sem baseline comparável, a etapa aparece como "sem dados" — nunca um multiplicador fabricado de amostra insuficiente.',
+  },
+  {
+    key: 'benchmark_vendedor',
+    name: 'Benchmark de Vendedor',
+    description:
+      'Win Rate, Ciclo de Venda e Ticket Médio de cada vendedor comparados contra a média do time e o top performer, com uma sugestão específica de onde a lacuna é maior.',
+    formula:
+      'Mesmas fórmulas de Win Rate/Sales Cycle/Ticket Médio da aba Performance, calculadas por vendedor. Sugestão = a métrica com maior lacuna relativa frente ao top performer, entre as métricas onde o vendedor está abaixo da média do time.',
+    source:
+      'application/queries/sellerBenchmarkReport.ts (GET /commercial-intelligence/seller-benchmark)',
+    period: 'Mensal (ignora o filtro de vendedor — comparação é sempre entre todos)',
+    inclusionRules:
+      'Um vendedor só entra no ranking de Win Rate/top performer e recebe sugestão com ao menos 3 negócios fechados (ganhos + perdidos) no período.',
+    exclusionRules:
+      'Abaixo da amostra mínima, o vendedor aparece nos dados brutos mas sem "top performer"/sugestão — nunca uma comparação fabricada de amostra insuficiente.',
+  },
+  {
     key: 'health_score',
     name: 'Health Score composto',
     description:
