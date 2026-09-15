@@ -64,6 +64,24 @@ export function createAgentWorker() {
             const agent = new SDROutboundDraftAgent(`session_${leadId}`, tenantId);
             const result = await agent.draftEmailForLead(leadId, tenantId, autoExecute);
             logger.info({ jobId: job.id, leadId, ...result }, 'SDR outbound job completed');
+
+            // Item 2 de "IA Agêntica de Vendas": primeiro toque também por WhatsApp, não só
+            // e-mail. Instância própria — evita misturar o histórico de memória do rascunho de
+            // e-mail com o de WhatsApp (ver comentário de draftWhatsAppForLead). Falha isolada:
+            // um erro aqui não derruba o job nem desfaz o rascunho de e-mail já criado acima.
+            try {
+              const whatsAppAgent = new SDROutboundDraftAgent(`session_${leadId}_whatsapp`, tenantId);
+              const whatsAppResult = await whatsAppAgent.draftWhatsAppForLead(leadId, tenantId);
+              logger.info(
+                { jobId: job.id, leadId, ...whatsAppResult },
+                'SDR outbound (WhatsApp) job completed',
+              );
+            } catch (whatsAppError) {
+              logger.error(
+                { err: whatsAppError, jobId: job.id, leadId },
+                'SDR outbound (WhatsApp) falhou — rascunho de e-mail (se gerado) permanece válido.',
+              );
+            }
           });
         }
       } catch (error) {

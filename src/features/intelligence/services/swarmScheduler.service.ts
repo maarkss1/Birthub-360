@@ -58,6 +58,9 @@ interface Candidate {
   status: LeadStatus;
   score: number | null;
   hasEmail: boolean;
+  /** Item 2 de "IA Agêntica de Vendas": primeiro contato agora também sai por WhatsApp — não só
+   * e-mail. `Contact.whatsapp` tem prioridade; `Contact.phone` é o fallback. */
+  hasWhatsApp: boolean;
   confidence: number | null;
   priority: number;
   /** Só preenchido para `reason === 'conversation_signal'` — usado pelo Negociador de IA
@@ -123,7 +126,7 @@ async function findDueFollowUps(organizationId: string, now: Date): Promise<Cand
       status: true,
       score: true,
       nextAction: true,
-      contact: { select: { email: true } },
+      contact: { select: { email: true, whatsapp: true, phone: true } },
     },
   });
   return leads.map((lead) => ({
@@ -133,6 +136,7 @@ async function findDueFollowUps(organizationId: string, now: Date): Promise<Cand
     status: lead.status,
     score: lead.score,
     hasEmail: Boolean(lead.contact?.email),
+    hasWhatsApp: Boolean(lead.contact?.whatsapp || lead.contact?.phone),
     confidence: normalizedConfidence(lead.score),
     priority: 80,
     detail: `Follow-up vencido em ${lead.nextAction?.toLocaleString('pt-BR')}; status atual ${lead.status}; score ${lead.score ?? 'não calculado'}.`,
@@ -162,7 +166,7 @@ async function findSignaledLeads(organizationId: string, now: Date): Promise<Can
         select: {
           status: true,
           score: true,
-          contact: { select: { email: true } },
+          contact: { select: { email: true, whatsapp: true, phone: true } },
         },
       },
     },
@@ -174,6 +178,7 @@ async function findSignaledLeads(organizationId: string, now: Date): Promise<Can
     status: signal.lead.status,
     score: signal.lead.score,
     hasEmail: Boolean(signal.lead.contact?.email),
+    hasWhatsApp: Boolean(signal.lead.contact?.whatsapp || signal.lead.contact?.phone),
     confidence: signal.confidence ?? normalizedConfidence(signal.lead.score, 0.75),
     priority: 100,
     detail:
@@ -227,12 +232,13 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
       lastInteraction: true,
       nextAction: true,
       company: { select: { tradeName: true, segment: true, size: true } },
-      contact: { select: { email: true, emailStatus: true, role: true } },
+      contact: { select: { email: true, emailStatus: true, role: true, whatsapp: true, phone: true } },
     },
   });
 
   return leads.map((lead): Candidate => {
     const common = `Empresa ${lead.company?.tradeName ?? 'não identificada'}; segmento ${lead.company?.segment ?? 'não informado'}; porte ${lead.company?.size ?? 'não informado'}; decisor ${lead.contact?.role ?? 'não identificado'}; status ${lead.status}; score ${lead.score ?? 'não calculado'}.`;
+    const hasWhatsApp = Boolean(lead.contact?.whatsapp || lead.contact?.phone);
     if (lead.status === 'Proposta_Enviada') {
       return {
         leadId: lead.id,
@@ -241,6 +247,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
         status: lead.status,
         score: lead.score,
         hasEmail: Boolean(lead.contact?.email),
+        hasWhatsApp,
         confidence: normalizedConfidence(lead.score, 0.75),
         priority: 90,
         detail: `Proposta sem avanço desde ${lead.updatedAt.toLocaleString('pt-BR')}. ${common}`,
@@ -258,6 +265,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
         status: lead.status,
         score: lead.score,
         hasEmail: Boolean(lead.contact?.email),
+        hasWhatsApp,
         confidence: normalizedConfidence(lead.score),
         priority: 70,
         detail: `Lead de alto fit sem próxima ação programada. ${common}`,
@@ -271,6 +279,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
         status: lead.status,
         score: lead.score,
         hasEmail: Boolean(lead.contact?.email),
+        hasWhatsApp,
         confidence: normalizedConfidence(lead.score, 0.6),
         priority: 50,
         detail: `Novo lead sem primeira interação desde ${lead.createdAt.toLocaleString('pt-BR')}. ${common}`,
@@ -283,6 +292,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
       status: lead.status,
       score: lead.score,
       hasEmail: Boolean(lead.contact?.email),
+      hasWhatsApp,
       confidence: normalizedConfidence(lead.score, 0.7),
       priority: 60,
       detail: `Oportunidade estagnada; última interação ${lead.lastInteraction?.toLocaleString('pt-BR') ?? 'não registrada'}. ${common}`,
@@ -302,7 +312,7 @@ function buildMission(candidate: Candidate): string {
 
 function shouldDraftFirstContact(candidate: Candidate): boolean {
   return (
-    candidate.hasEmail &&
+    (candidate.hasEmail || candidate.hasWhatsApp) &&
     (candidate.reason === 'new_lead_untouched' || candidate.reason === 'high_score_unworked')
   );
 }
