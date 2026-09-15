@@ -117,9 +117,20 @@ export async function downloadFile(url: string, fallbackFilename: string): Promi
   window.URL.revokeObjectURL(objectUrl);
 }
 
+const inFlightRequests = new Map<string, Promise<any>>();
+
 export const api = {
-  get: <T>(url: string, options?: ApiRequestOptions) =>
-    apiFetch<T>(url, { ...options, method: 'GET' }),
+  get: <T>(url: string, options?: ApiRequestOptions) => {
+    const cacheKey = url + (options ? JSON.stringify(options) : '');
+    if (inFlightRequests.has(cacheKey)) {
+      return inFlightRequests.get(cacheKey) as Promise<T>;
+    }
+    const promise = apiFetch<T>(url, { ...options, method: 'GET' }).finally(() => {
+      inFlightRequests.delete(cacheKey);
+    });
+    inFlightRequests.set(cacheKey, promise);
+    return promise;
+  },
   post: <T>(url: string, body?: unknown, options?: ApiRequestOptions) =>
     apiFetch<T>(url, { ...options, method: 'POST', body: JSON.stringify(body) }),
   put: <T>(url: string, body?: unknown, options?: ApiRequestOptions) =>
@@ -128,7 +139,7 @@ export const api = {
     apiFetch<T>(url, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
   delete: <T>(url: string, options?: ApiRequestOptions) =>
     apiFetch<T>(url, { ...options, method: 'DELETE' }),
-  /** Upload de arquivo (multipart/form-data) — ex.: OCR de imagem. Não usa JSON.stringify. */
+  /** Upload de arquivo (multipart/form-data) - ex.: OCR de imagem. No usa JSON.stringify. */
   postForm: <T>(url: string, form: FormData, options?: ApiRequestOptions) =>
     apiFetch<T>(url, { ...options, method: 'POST', body: form }),
 };
