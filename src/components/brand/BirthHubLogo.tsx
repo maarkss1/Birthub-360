@@ -22,6 +22,15 @@ import { BRAND } from '../../config/brand';
  *   autoriza uso.
  * - `horizontal` — emblema + logotipo. Assinatura institucional.
  *
+ * Anel (`bh-o0`..`bh-o5`): órbita de 5 cores dourado → vermelho → rosa → íris →
+ * azul (mesma sequência de `.bg-gradient-orbit5`, globals.css), fechando o
+ * círculo de volta ao dourado com um tom de transição (`#9C5A7E`, sem token —
+ * é só a mistura visual entre `--orbit-blue` e `--brand` no último arco, não
+ * uma sexta cor da marca). Atualizado nesta rodada: o anel ainda carregava a
+ * órbita antiga de 3 cores (dourado→íris→azul, valores pré-upgrade `#5B21B6`/
+ * `#0065D2`) de antes da paleta "Strategic Command Center" — achado ao revisar
+ * o emblema a pedido do usuário.
+ *
  * Acessibilidade: por padrão a marca é decorativa (`aria-hidden`), porque quase
  * sempre aparece ao lado do nome da plataforma em texto. Passe `title` quando
  * ela for a única identificação visível — vira `role="img"` com nome acessível.
@@ -59,7 +68,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             y2="87.75"
           >
             <stop offset="0" stopColor="#D4AF37" />
-            <stop offset="1" stopColor="#986876" />
+            <stop offset="1" stopColor="#FF3158" />
           </linearGradient>
           <linearGradient
             id={`bh-o1-${uid}`}
@@ -69,8 +78,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="198.58"
             y2="169.74"
           >
-            <stop offset="0" stopColor="#986876" />
-            <stop offset="1" stopColor="#5B21B6" />
+            <stop offset="0" stopColor="#FF3158" />
+            <stop offset="1" stopColor="#FF4FA3" />
           </linearGradient>
           <linearGradient
             id={`bh-o2-${uid}`}
@@ -80,8 +89,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="127.14"
             y2="210.00"
           >
-            <stop offset="0" stopColor="#5B21B6" />
-            <stop offset="1" stopColor="#2E43C4" />
+            <stop offset="0" stopColor="#FF4FA3" />
+            <stop offset="1" stopColor="#7C3AED" />
           </linearGradient>
           <linearGradient
             id={`bh-o3-${uid}`}
@@ -91,8 +100,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="56.56"
             y2="168.25"
           >
-            <stop offset="0" stopColor="#2E43C4" />
-            <stop offset="1" stopColor="#0065D2" />
+            <stop offset="0" stopColor="#7C3AED" />
+            <stop offset="1" stopColor="#1677FF" />
           </linearGradient>
           <linearGradient
             id={`bh-o4-${uid}`}
@@ -102,8 +111,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="57.42"
             y2="86.26"
           >
-            <stop offset="0" stopColor="#0065D2" />
-            <stop offset="1" stopColor="#6A8A84" />
+            <stop offset="0" stopColor="#1677FF" />
+            <stop offset="1" stopColor="#9C5A7E" />
           </linearGradient>
           <linearGradient
             id={`bh-o5-${uid}`}
@@ -113,7 +122,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="128.86"
             y2="46.00"
           >
-            <stop offset="0" stopColor="#6A8A84" />
+            <stop offset="0" stopColor="#9C5A7E" />
             <stop offset="1" stopColor="#D4AF37" />
           </linearGradient>
           <linearGradient id={`bh-bar-${uid}`} x1="0" y1="0" x2="1" y2="0">
@@ -159,12 +168,12 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             <path stroke={`url(#bh-o5-${uid})`} d="M56.56 87.75 A82.0 82.0 0 0 1 128.86 46.00" />
           </g>
           <circle cx="128.0" cy="128.0" r="90" fill={`url(#bh-sheen-${uid})`} />
-          <circle cx="128.0" cy="128.0" r="74.0" fill="#0B132B" />
+          <circle cx="128.0" cy="128.0" r="74.0" fill="#061A3A" />
           <circle cx="128.0" cy="128.0" r="74.0" fill={`url(#bh-core-shade-${uid})`} />
           <circle cx="128.0" cy="128.0" r="61.5" fill="none" stroke="#D4AF37" strokeWidth="5.0" />
           <rect x="64.0" y="126.5" width="128.0" height="3.0" fill={`url(#bh-bar-${uid})`} />
           <path
-            fill="#F8FAFC"
+            fill="#FFF4F9"
             transform="matrix(0.0740 0 0 -0.0740 104.45 154.20)"
             d="M450.4 707Q574.2 707 627.9 670.8Q681.6 634.6 681.6 573.4Q681.6 520.8 646.8 476.7Q612 432.6 547 404.5Q482 376.4 391 370.8Q511 369.4 573.8 326.1Q636.6 282.8 636.6 218.2Q636.6 165.8 612.2 125.1Q587.8 84.4 543.2 56.4Q498.6 28.4 436 14.2Q373.4 0 297 0Q267.8 0 227.6 1.5Q187.4 3 121 3Q94.8 3 63.8 2.5Q32.8 2 3.7 1.5Q-25.4 1 -45 0L-41 20Q-7 22 12 28Q31 34 42 52Q53 70 62 106L194 602Q201.8 632.8 202.4 651.3Q203 669.8 188.5 678.5Q174 687.2 135 688L140 708Q159.6 707 188.2 706.5Q216.8 706 247.7 705.5Q278.6 705 303 705Q353.2 705 385.7 706Q418.2 707 450.4 707ZM266 359 270 376H339.2Q393.8 376 430.6 407.9Q467.4 439.8 486.2 490.8Q505 541.8 505 596.8Q505 636.6 491.5 662.3Q478 688 438.6 688Q413 688 401 674.1Q389 660.2 378 617L243 106Q238.2 86.4 235.7 67.1Q233.2 47.8 242.2 35.4Q251.2 23 278.8 23Q331.6 23 368.9 53.4Q406.2 83.8 426.6 132.9Q447 182 447 237.2Q447 270.4 437.2 297.9Q427.4 325.4 404.3 342.2Q381.2 359 341.6 359Z"
           />
@@ -244,7 +253,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             y2="87.75"
           >
             <stop offset="0" stopColor="#D4AF37" />
-            <stop offset="1" stopColor="#986876" />
+            <stop offset="1" stopColor="#FF3158" />
           </linearGradient>
           <linearGradient
             id={`bh-o1-${uid}`}
@@ -254,8 +263,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="198.58"
             y2="169.74"
           >
-            <stop offset="0" stopColor="#986876" />
-            <stop offset="1" stopColor="#5B21B6" />
+            <stop offset="0" stopColor="#FF3158" />
+            <stop offset="1" stopColor="#FF4FA3" />
           </linearGradient>
           <linearGradient
             id={`bh-o2-${uid}`}
@@ -265,8 +274,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="127.14"
             y2="210.00"
           >
-            <stop offset="0" stopColor="#5B21B6" />
-            <stop offset="1" stopColor="#2E43C4" />
+            <stop offset="0" stopColor="#FF4FA3" />
+            <stop offset="1" stopColor="#7C3AED" />
           </linearGradient>
           <linearGradient
             id={`bh-o3-${uid}`}
@@ -276,8 +285,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="56.56"
             y2="168.25"
           >
-            <stop offset="0" stopColor="#2E43C4" />
-            <stop offset="1" stopColor="#0065D2" />
+            <stop offset="0" stopColor="#7C3AED" />
+            <stop offset="1" stopColor="#1677FF" />
           </linearGradient>
           <linearGradient
             id={`bh-o4-${uid}`}
@@ -287,8 +296,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="57.42"
             y2="86.26"
           >
-            <stop offset="0" stopColor="#0065D2" />
-            <stop offset="1" stopColor="#6A8A84" />
+            <stop offset="0" stopColor="#1677FF" />
+            <stop offset="1" stopColor="#9C5A7E" />
           </linearGradient>
           <linearGradient
             id={`bh-o5-${uid}`}
@@ -298,7 +307,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             x2="128.86"
             y2="46.00"
           >
-            <stop offset="0" stopColor="#6A8A84" />
+            <stop offset="0" stopColor="#9C5A7E" />
             <stop offset="1" stopColor="#D4AF37" />
           </linearGradient>
           <linearGradient id={`bh-bar-${uid}`} x1="0" y1="0" x2="1" y2="0">
@@ -337,12 +346,12 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             <path stroke={`url(#bh-o5-${uid})`} d="M56.56 87.75 A82.0 82.0 0 0 1 128.86 46.00" />
           </g>
           <circle cx="128.0" cy="128.0" r="90" fill={`url(#bh-sheen-${uid})`} />
-          <circle cx="128.0" cy="128.0" r="74.0" fill="#0B132B" />
+          <circle cx="128.0" cy="128.0" r="74.0" fill="#061A3A" />
           <circle cx="128.0" cy="128.0" r="74.0" fill={`url(#bh-core-shade-${uid})`} />
           <circle cx="128.0" cy="128.0" r="61.5" fill="none" stroke="#D4AF37" strokeWidth="5.0" />
           <rect x="64.0" y="126.5" width="128.0" height="3.0" fill={`url(#bh-bar-${uid})`} />
           <path
-            fill="#F8FAFC"
+            fill="#FFF4F9"
             transform="matrix(0.0740 0 0 -0.0740 104.45 154.20)"
             d="M450.4 707Q574.2 707 627.9 670.8Q681.6 634.6 681.6 573.4Q681.6 520.8 646.8 476.7Q612 432.6 547 404.5Q482 376.4 391 370.8Q511 369.4 573.8 326.1Q636.6 282.8 636.6 218.2Q636.6 165.8 612.2 125.1Q587.8 84.4 543.2 56.4Q498.6 28.4 436 14.2Q373.4 0 297 0Q267.8 0 227.6 1.5Q187.4 3 121 3Q94.8 3 63.8 2.5Q32.8 2 3.7 1.5Q-25.4 1 -45 0L-41 20Q-7 22 12 28Q31 34 42 52Q53 70 62 106L194 602Q201.8 632.8 202.4 651.3Q203 669.8 188.5 678.5Q174 687.2 135 688L140 708Q159.6 707 188.2 706.5Q216.8 706 247.7 705.5Q278.6 705 303 705Q353.2 705 385.7 706Q418.2 707 450.4 707ZM266 359 270 376H339.2Q393.8 376 430.6 407.9Q467.4 439.8 486.2 490.8Q505 541.8 505 596.8Q505 636.6 491.5 662.3Q478 688 438.6 688Q413 688 401 674.1Q389 660.2 378 617L243 106Q238.2 86.4 235.7 67.1Q233.2 47.8 242.2 35.4Q251.2 23 278.8 23Q331.6 23 368.9 53.4Q406.2 83.8 426.6 132.9Q447 182 447 237.2Q447 270.4 437.2 297.9Q427.4 325.4 404.3 342.2Q381.2 359 341.6 359Z"
           />
@@ -368,7 +377,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
           y2="87.75"
         >
           <stop offset="0" stopColor="#D4AF37" />
-          <stop offset="1" stopColor="#986876" />
+          <stop offset="1" stopColor="#FF3158" />
         </linearGradient>
         <linearGradient
           id={`bh-o1-${uid}`}
@@ -378,8 +387,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
           x2="198.58"
           y2="169.74"
         >
-          <stop offset="0" stopColor="#986876" />
-          <stop offset="1" stopColor="#5B21B6" />
+          <stop offset="0" stopColor="#FF3158" />
+          <stop offset="1" stopColor="#FF4FA3" />
         </linearGradient>
         <linearGradient
           id={`bh-o2-${uid}`}
@@ -389,8 +398,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
           x2="127.14"
           y2="210.00"
         >
-          <stop offset="0" stopColor="#5B21B6" />
-          <stop offset="1" stopColor="#2E43C4" />
+          <stop offset="0" stopColor="#FF4FA3" />
+          <stop offset="1" stopColor="#7C3AED" />
         </linearGradient>
         <linearGradient
           id={`bh-o3-${uid}`}
@@ -400,8 +409,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
           x2="56.56"
           y2="168.25"
         >
-          <stop offset="0" stopColor="#2E43C4" />
-          <stop offset="1" stopColor="#0065D2" />
+          <stop offset="0" stopColor="#7C3AED" />
+          <stop offset="1" stopColor="#1677FF" />
         </linearGradient>
         <linearGradient
           id={`bh-o4-${uid}`}
@@ -411,8 +420,8 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
           x2="57.42"
           y2="86.26"
         >
-          <stop offset="0" stopColor="#0065D2" />
-          <stop offset="1" stopColor="#6A8A84" />
+          <stop offset="0" stopColor="#1677FF" />
+          <stop offset="1" stopColor="#9C5A7E" />
         </linearGradient>
         <linearGradient
           id={`bh-o5-${uid}`}
@@ -422,7 +431,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
           x2="128.86"
           y2="46.00"
         >
-          <stop offset="0" stopColor="#6A8A84" />
+          <stop offset="0" stopColor="#9C5A7E" />
           <stop offset="1" stopColor="#D4AF37" />
         </linearGradient>
         <linearGradient id={`bh-bar-${uid}`} x1="0" y1="0" x2="1" y2="0">
@@ -450,12 +459,12 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
         <path stroke={`url(#bh-o5-${uid})`} d="M58.30 88.73 A80.0 80.0 0 0 1 128.84 48.00" />
       </g>
       <circle cx="128.0" cy="128.0" r="90" fill={`url(#bh-sheen-${uid})`} />
-      <circle cx="128.0" cy="128.0" r="70" fill="#0B132B" />
+      <circle cx="128.0" cy="128.0" r="70" fill="#061A3A" />
       <circle cx="128.0" cy="128.0" r="70" fill={`url(#bh-core-shade-${uid})`} />
       <circle cx="128.0" cy="128.0" r="59" fill="none" stroke="#D4AF37" strokeWidth="6" />
       <rect x="66.0" y="126.3" width="124" height="3.4" fill={`url(#bh-bar-${uid})`} />
       <path
-        fill="#F8FAFC"
+        fill="#FFF4F9"
         transform="matrix(0.0858 0 0 -0.0858 100.68 158.39)"
         d="M450.4 707Q574.2 707 627.9 670.8Q681.6 634.6 681.6 573.4Q681.6 520.8 646.8 476.7Q612 432.6 547 404.5Q482 376.4 391 370.8Q511 369.4 573.8 326.1Q636.6 282.8 636.6 218.2Q636.6 165.8 612.2 125.1Q587.8 84.4 543.2 56.4Q498.6 28.4 436 14.2Q373.4 0 297 0Q267.8 0 227.6 1.5Q187.4 3 121 3Q94.8 3 63.8 2.5Q32.8 2 3.7 1.5Q-25.4 1 -45 0L-41 20Q-7 22 12 28Q31 34 42 52Q53 70 62 106L194 602Q201.8 632.8 202.4 651.3Q203 669.8 188.5 678.5Q174 687.2 135 688L140 708Q159.6 707 188.2 706.5Q216.8 706 247.7 705.5Q278.6 705 303 705Q353.2 705 385.7 706Q418.2 707 450.4 707ZM266 359 270 376H339.2Q393.8 376 430.6 407.9Q467.4 439.8 486.2 490.8Q505 541.8 505 596.8Q505 636.6 491.5 662.3Q478 688 438.6 688Q413 688 401 674.1Q389 660.2 378 617L243 106Q238.2 86.4 235.7 67.1Q233.2 47.8 242.2 35.4Q251.2 23 278.8 23Q331.6 23 368.9 53.4Q406.2 83.8 426.6 132.9Q447 182 447 237.2Q447 270.4 437.2 297.9Q427.4 325.4 404.3 342.2Q381.2 359 341.6 359Z"
       />
@@ -489,19 +498,17 @@ export function BirthHubSignature({ className }: { className?: string }) {
  * precisa ser texto REAL onde é conteúdo: título de página, cabeçalho de login,
  * resultado de busca, leitor de tela.
  *
- * A rampa metálica do brand book
- * (`linear-gradient(180deg,#F7E9B8,#D4AF37,#8C6D1F,#EBD689)` recortada no texto)
- * só entra no tema ESCURO. No claro ela é ilegível: o topo das letras é
- * #F7E9B8, que mede ~1.1:1 contra a superfície clara — muito abaixo do mínimo
- * de 3:1 para texto grande. O tema claro usa Obsidian sólido, que é o que o
- * próprio brand book manda ("ANCHOR — base sempre Obsidian ou Snow White") e
- * mede 18:1.
+ * Cor sólida em ambos os temas — nunca gradiente recortado em texto (regra #3
+ * da constituição, proibida em qualquer contexto; achado e corrigido ao
+ * revisar o emblema). `text-ink` já resolve para o valor certo em cada tema:
+ * `--brand-2` (Gold Soft) no escuro — o próprio brand book trata o texto
+ * primário do tema escuro como ouro suave, não um neutro — e o token de tinta
+ * padrão no claro, com contraste verificado (ver globals.css, comentário do
+ * `:root`).
  */
 export function BirthHubWordmark({ className }: { className?: string }) {
   return (
-    <span
-      className={`font-display font-bold tracking-[0.18em] text-ink dark:bg-[linear-gradient(180deg,#F7E9B8_0%,#D4AF37_42%,#8C6D1F_68%,#EBD689_100%)] dark:bg-clip-text dark:text-transparent ${className ?? ''}`}
-    >
+    <span className={`font-display font-bold tracking-[0.18em] text-ink ${className ?? ''}`}>
       {BRAND.name}
     </span>
   );

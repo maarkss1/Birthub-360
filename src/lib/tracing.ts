@@ -3,6 +3,10 @@ import { logger } from './logger.js';
 let sdkInstance: { start: () => void; shutdown: () => Promise<void> } | null = null;
 
 export function initTracing() {
+  if (process.env.OTEL_SDK_DISABLED === 'true') {
+    logger.warn('OpenTelemetry desabilitado via OTEL_SDK_DISABLED=true.');
+    return;
+  }
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { NodeSDK } = require('@opentelemetry/sdk-node');

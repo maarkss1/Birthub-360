@@ -9,6 +9,10 @@ export interface Lead {
   amount: number | null;
   currency: string;
   probability: number | null;
+  /** Não é coluna própria de Lead — join com o snapshot mais recente de
+   * `CopilotoDealHealthSnapshot` (ver PrismaLeadRepository.findAllWithFilters). `null` quando o
+   * lead nunca teve uma conversa/ligação processada pelo Copiloto IA — nunca fabricado. */
+  forecastProbabilityAi: number | null;
   expectedCloseAt: Date | null;
   customFields: Record<string, unknown> | null;
   tags: string[];
