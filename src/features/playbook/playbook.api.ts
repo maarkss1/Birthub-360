@@ -44,6 +44,20 @@ export interface ObjectionSuggestion {
   sourceLossReasons: string[];
 }
 
+/** Sugestão gerada pela IA a partir de mensagens REAIS com outcome positivo confirmado (item 42,
+ * "Playbook Vivo") — não persiste nada sozinha; precisa de revisão humana para virar anúncio pro
+ * time (`broadcastWinningPattern`) e/ou item real da Matriz de Objeções. */
+export interface WinningPatternSuggestion {
+  sellerId: string;
+  sellerName: string;
+  segment: string;
+  evidenceCount: number;
+  patternTitle: string;
+  patternDescription: string;
+  suggestedScript: string;
+  sourceExcerpts: string[];
+}
+
 export interface PlaybookListMeta {
   total: number;
   page: number;
@@ -112,4 +126,15 @@ export const playbookApi = {
     api.post<{ data: ObjectionSuggestion[]; meta: { emptyReason?: string } }>(
       '/api/playbook/objection-matrix/generate-suggestions',
     ),
+
+  generateWinningPatterns: () =>
+    api.post<{ data: WinningPatternSuggestion[]; meta: { emptyReason?: string } }>(
+      '/api/playbook/living-playbook/generate-suggestions',
+    ),
+  broadcastWinningPattern: (
+    input: Pick<
+      WinningPatternSuggestion,
+      'sellerName' | 'segment' | 'patternTitle' | 'suggestedScript'
+    >,
+  ) => api.post<{ id: string }>('/api/playbook/living-playbook/broadcast', input),
 };

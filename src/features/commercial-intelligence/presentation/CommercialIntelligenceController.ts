@@ -5,6 +5,7 @@ import {
   type CommercialIntelligenceUseCases,
   currentPeriod,
 } from '../application/CommercialIntelligenceUseCases';
+import { detectDealRisks } from '../application/dealRiskDetection.service';
 import { METRICS_DICTIONARY } from '../application/metricsDictionary';
 import type {
   CommercialIntelligenceFilter,
@@ -64,6 +65,20 @@ export class CommercialIntelligenceController {
     private useCases: CommercialIntelligenceUseCases,
     private aiService: CommercialIntelligenceAiService,
   ) {}
+
+  /** Item 5 de "IA Agêntica de Vendas": dispara uma rodada de detecção de deal em risco
+   * (silêncio/tom negativo/concorrente mencionado) e alerta os gestores reais da organização.
+   * Disparo manual nesta primeira versão — agendamento 24/7 automático é um follow-up que
+   * precisa de coordenação com o dono de `src/lib/queue/**` (Agente 07), fora deste escopo. */
+  scanDealRisks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const result = await detectDealRisks(organizationId);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   getOverview = async (req: Request, res: Response, next: NextFunction) => {
     try {
