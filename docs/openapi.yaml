@@ -5470,6 +5470,32 @@ paths:
           }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
+  /commercial-intelligence/ai/deal-risk-scan:
+    post:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Detecta negócios em risco (silêncio do lead, mudança de tom, concorrente mencionado) e
+        alerta os gestores reais da organização — item 5 de "IA Agêntica de Vendas". Disparo
+        manual nesta versão; cooldown de 48h por (lead, motivo) evita alerta duplicado. Mesmo
+        limitador de IA dedicado dos demais endpoints `ai/*` deste módulo.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      scanned: { type: integer }
+                      alertsCreated: { type: integer }
+                      skippedCooldown: { type: integer }
+                      errors: { type: integer }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
   /commercial-intelligence/ai/executive-summary:
     post:
       tags: [Comercial Inteligente]
