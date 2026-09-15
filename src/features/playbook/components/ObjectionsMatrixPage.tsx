@@ -9,6 +9,7 @@ import {
   Plus,
   Search,
   Shield,
+  Sparkles,
   Trash2,
   WifiOff,
 } from 'lucide-react';
@@ -22,8 +23,14 @@ import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
 import { clientLogger } from '../../../lib/clientLogger';
 import { toast } from '../../../lib/toast';
-import { type ObjectionMatrixItem, type PlaybookListMeta, playbookApi } from '../playbook.api';
+import {
+  type ObjectionMatrixItem,
+  type ObjectionSuggestion,
+  type PlaybookListMeta,
+  playbookApi,
+} from '../playbook.api';
 import { ObjectionItemForm } from './ObjectionItemForm';
+import { ObjectionSuggestionsReview } from './ObjectionSuggestionsReview';
 
 // Mesmo tamanho de página usado em CompanyList/ContactList (via Pagination compartilhado).
 const PAGE_SIZE = 20;
@@ -52,6 +59,28 @@ export function ObjectionsMatrixPage() {
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ObjectionMatrixItem | null>(null);
+
+  // Item 7 de "IA Agêntica de Vendas": sugestões geradas de negócios REALMENTE perdidos — não
+  // persistidas até revisão humana explícita (ver ObjectionSuggestionsReview.tsx).
+  const [generatingSuggestions, setGeneratingSuggestions] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<ObjectionSuggestion[]>([]);
+  const [suggestionsEmptyReason, setSuggestionsEmptyReason] = useState<string | undefined>();
+
+  const handleGenerateSuggestions = async () => {
+    setGeneratingSuggestions(true);
+    try {
+      const res = await playbookApi.generateObjectionSuggestions();
+      setSuggestions(res.data);
+      setSuggestionsEmptyReason(res.meta?.emptyReason);
+      setIsReviewOpen(true);
+    } catch (err) {
+      clientLogger.error({ err }, 'Falha ao gerar sugestões de objeções via IA');
+      toast.error(err instanceof Error ? err.message : 'Falha ao gerar sugestões.');
+    } finally {
+      setGeneratingSuggestions(false);
+    }
+  };
 
   const load = () => {
     setLoading(true);
@@ -137,16 +166,32 @@ export function ObjectionsMatrixPage() {
               script de contorno recomendado e diferencial-chave.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              setEditingItem(null);
-              setIsFormOpen(true);
-            }}
-            className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer shrink-0"
-          >
-            <Plus className="w-5 h-5" /> Nova Objeção
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleGenerateSuggestions}
+              disabled={generatingSuggestions}
+              title="Gera sugestões de objeção a partir de padrões reais de negócios perdidos registrados no CRM"
+              className="flex items-center gap-2 bg-surface-2 hover:bg-line border border-line disabled:opacity-60 text-ink px-4 py-2.5 rounded-2xl font-bold transition-all active:scale-95 cursor-pointer"
+            >
+              {generatingSuggestions ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Sparkles className="w-5 h-5 text-iris" />
+              )}
+              {generatingSuggestions ? 'Gerando...' : 'Gerar sugestões de IA'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEditingItem(null);
+                setIsFormOpen(true);
+              }}
+              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
+            >
+              <Plus className="w-5 h-5" /> Nova Objeção
+            </button>
+          </div>
         </div>
 
         <div className="bg-surface/80 p-4 rounded-2xl border border-line flex flex-wrap items-center gap-3">
@@ -346,6 +391,15 @@ export function ObjectionsMatrixPage() {
           }}
         />
       )}
+
+      <ObjectionSuggestionsReview
+        isOpen={isReviewOpen}
+        onClose={() => setIsReviewOpen(false)}
+        suggestions={suggestions}
+        emptyReason={suggestionsEmptyReason}
+        defaultBrand={playbook}
+        onAdded={load}
+      />
 
       {dialog}
     </div>
