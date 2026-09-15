@@ -66,7 +66,12 @@ describe('detectDealRisks', () => {
     expect(result.alertsCreated).toBe(1);
     expect(notificationCreateMock).toHaveBeenCalledTimes(2);
     expect(notificationCreateMock).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 'gestor-1', kind: 'Alerta', entity: 'Lead', entityId: 'lead-1' }),
+      expect.objectContaining({
+        userId: 'gestor-1',
+        kind: 'Alerta',
+        entity: 'Lead',
+        entityId: 'lead-1',
+      }),
     );
     expect(notificationCreateMock).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'gestor-2' }),
@@ -75,7 +80,12 @@ describe('detectDealRisks', () => {
 
   it('sem nenhum ADMIN/GESTOR cadastrado, faz broadcast pra organização em vez de perder o alerta', async () => {
     leadFindManyMock.mockResolvedValue([
-      { id: 'lead-1', lastInteraction: new Date('2026-09-01T00:00:00Z'), createdAt: new Date('2026-08-01T00:00:00Z'), company: null },
+      {
+        id: 'lead-1',
+        lastInteraction: new Date('2026-09-01T00:00:00Z'),
+        createdAt: new Date('2026-08-01T00:00:00Z'),
+        company: null,
+      },
     ]);
     userFindManyMock.mockResolvedValue([]);
 
@@ -89,7 +99,12 @@ describe('detectDealRisks', () => {
 
   it('não repete o mesmo alerta dentro do cooldown', async () => {
     leadFindManyMock.mockResolvedValue([
-      { id: 'lead-1', lastInteraction: new Date('2026-09-01T00:00:00Z'), createdAt: new Date('2026-08-01T00:00:00Z'), company: null },
+      {
+        id: 'lead-1',
+        lastInteraction: new Date('2026-09-01T00:00:00Z'),
+        createdAt: new Date('2026-08-01T00:00:00Z'),
+        company: null,
+      },
     ]);
     notificationFindFirstMock.mockResolvedValue({ id: 'existing-notif' });
 
@@ -116,7 +131,10 @@ describe('detectDealRisks', () => {
       .mockResolvedValueOnce([
         { direction: 'inbound', body: 'Vocês estão cobrando muito mais que a Empresa Rival.' },
       ]); // loadRecentConversation
-    invokeMock.mockResolvedValue({ content: 'x', response_metadata: { model: 'm', tokenUsage: {} } });
+    invokeMock.mockResolvedValue({
+      content: 'x',
+      response_metadata: { model: 'm', tokenUsage: {} },
+    });
     cleanAndParseJsonMock.mockReturnValue([
       { toneNegative: true, competitorMentioned: 'Empresa Rival' },
     ]);
@@ -126,7 +144,10 @@ describe('detectDealRisks', () => {
 
     expect(result.alertsCreated).toBe(2); // tom_negativo + concorrente_mencionado
     expect(notificationCreateMock).toHaveBeenCalledWith(
-      expect.objectContaining({ title: expect.stringContaining('mudança de tom'), entityId: 'lead-2' }),
+      expect.objectContaining({
+        title: expect.stringContaining('mudança de tom'),
+        entityId: 'lead-2',
+      }),
     );
     expect(notificationCreateMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -141,7 +162,10 @@ describe('detectDealRisks', () => {
     whatsAppFindManyMock
       .mockResolvedValueOnce([{ leadId: 'lead-2' }])
       .mockResolvedValueOnce([{ direction: 'inbound', body: 'Oi' }]);
-    invokeMock.mockResolvedValue({ content: 'x', response_metadata: { model: 'm', tokenUsage: {} } });
+    invokeMock.mockResolvedValue({
+      content: 'x',
+      response_metadata: { model: 'm', tokenUsage: {} },
+    });
     cleanAndParseJsonMock.mockReturnValue([]); // 0 resultados para 1 conversa enviada
 
     const result = await detectDealRisks('org-1');

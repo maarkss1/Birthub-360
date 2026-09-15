@@ -1,5 +1,5 @@
-import type { LeadStatus } from '@prisma/client';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+import type { LeadStatus } from '@prisma/client';
 import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
@@ -95,7 +95,12 @@ async function findSilentLeads(organizationId: string, now: Date): Promise<RiskC
 async function findLeadsWithRecentInbound(organizationId: string, now: Date): Promise<string[]> {
   const since = new Date(now.getTime() - RECENT_MESSAGE_WINDOW_HOURS * 60 * 60 * 1000);
   const rows = await prisma.whatsAppMessage.findMany({
-    where: { organizationId, direction: 'inbound', receivedAt: { gte: since }, leadId: { not: null } },
+    where: {
+      organizationId,
+      direction: 'inbound',
+      receivedAt: { gte: since },
+      leadId: { not: null },
+    },
     orderBy: { receivedAt: 'desc' },
     distinct: ['leadId'],
     take: MAX_LEADS_SCANNED_FOR_CONVERSATION,
@@ -113,7 +118,10 @@ async function loadRecentConversation(organizationId: string, leadId: string): P
   });
   return messages
     .reverse()
-    .map((message) => `${message.direction === 'inbound' ? 'Lead' : 'Vendedor'}: ${message.body?.trim() || '(mídia/anexo)'}`)
+    .map(
+      (message) =>
+        `${message.direction === 'inbound' ? 'Lead' : 'Vendedor'}: ${message.body?.trim() || '(mídia/anexo)'}`,
+    )
     .join('\n');
 }
 
@@ -122,7 +130,10 @@ async function findConversationRisks(organizationId: string, now: Date): Promise
   if (leadIds.length === 0) return [];
 
   const conversations = await Promise.all(
-    leadIds.map(async (leadId) => ({ leadId, text: await loadRecentConversation(organizationId, leadId) })),
+    leadIds.map(async (leadId) => ({
+      leadId,
+      text: await loadRecentConversation(organizationId, leadId),
+    })),
   );
 
   const system = `Você analisa conversas de WhatsApp entre um vendedor e um lead comercial B2B. Para CADA conversa numerada abaixo, avalie SOMENTE o que está escrito — nunca invente.
@@ -182,13 +193,21 @@ Responda com um array JSON, na MESMA ORDEM das conversas recebidas, um item por 
     });
     return candidates;
   } catch (error) {
-    logger.error({ err: error, organizationId }, 'Falha ao analisar tom/concorrente das conversas recentes.');
+    logger.error(
+      { err: error, organizationId },
+      'Falha ao analisar tom/concorrente das conversas recentes.',
+    );
     return [];
   }
 }
 
 /** Não repete o mesmo alerta pro mesmo lead+motivo dentro da janela de cooldown. */
-async function isWithinCooldown(organizationId: string, leadId: string, reason: DealRiskReason, now: Date): Promise<boolean> {
+async function isWithinCooldown(
+  organizationId: string,
+  leadId: string,
+  reason: DealRiskReason,
+  now: Date,
+): Promise<boolean> {
   const cutoff = new Date(now.getTime() - ALERT_COOLDOWN_HOURS * 60 * 60 * 1000);
   const existing = await prisma.notification.findFirst({
     where: {
@@ -248,7 +267,12 @@ export async function detectDealRisks(
   organizationId: string,
   now: Date = new Date(),
 ): Promise<DetectDealRisksResult> {
-  const result: DetectDealRisksResult = { scanned: 0, alertsCreated: 0, skippedCooldown: 0, errors: 0 };
+  const result: DetectDealRisksResult = {
+    scanned: 0,
+    alertsCreated: 0,
+    skippedCooldown: 0,
+    errors: 0,
+  };
 
   const [silentLeads, conversationRisks] = await Promise.all([
     findSilentLeads(organizationId, now),
