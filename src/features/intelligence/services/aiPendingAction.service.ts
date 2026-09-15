@@ -23,6 +23,27 @@ interface SendEmailPayload {
   body?: string;
 }
 
+interface SendWhatsAppReplyPayload {
+  leadId?: string;
+  to?: string;
+  body?: string;
+  conversationSignalId?: string;
+}
+
+/** Porta resolvida via DI (src/shared/di/setup.ts) — `intelligence/**` não pode importar
+ * `integrations/whatsapp/whatsapp.service.ts` diretamente (no-cross-feature-imports,
+ * dependency-cruiser), mesmo padrão já usado por `GoogleCalendarService`/`ChurnPredictionService`
+ * neste arquivo de composição. Tipo estrutural local, não o tipo real do outro domínio. */
+interface WhatsAppSenderPort {
+  sendWhatsAppMessage(
+    organizationId: string,
+    number: string,
+    text: string,
+    buttons?: string[],
+    context?: { leadId?: string | null },
+  ): Promise<unknown>;
+}
+
 interface SwarmRecommendationPayload {
   leadId?: string;
   synthesis?: string;
@@ -114,6 +135,28 @@ export async function executeAction(action: ExecutableAction): Promise<Execution
         owner: resolvedOwner,
         observations: payload.observations ?? null,
       });
+      return { sent: true };
+    }
+
+    if (action.action === 'send_whatsapp_reply') {
+      // Negociador de IA em segundo plano (item 3): réplica real ao lead, sempre a partir de uma
+      // ação já aprovada por um humano nesta versão — ver o comentário de riskLevel em
+      // swarmScheduler.service.ts::maybeProposeNegotiatorReply sobre por que não há caminho de
+      // autoexecução para este canal ainda.
+      const payload = action.payload as SendWhatsAppReplyPayload;
+      if (!action.organizationId || !payload.to || !payload.body) {
+        return { sent: false, reason: 'unsupported_action' };
+      }
+      const whatsapp = container.resolve<WhatsAppSenderPort>('WhatsAppSenderPort');
+      await whatsapp.sendWhatsAppMessage(
+        action.organizationId,
+        payload.to,
+        payload.body,
+        undefined,
+        {
+          leadId: payload.leadId ?? null,
+        },
+      );
       return { sent: true };
     }
 

@@ -17,6 +17,7 @@ import { Integrations } from '../../integrations/components/Integrations';
 import { AuditLogs } from '../../lgpd/components/AuditLogs';
 import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
 import { Team } from '../../team/components/Team';
+import { CompanyDedupPanel } from './CompanyDedupPanel';
 import { LeadDedupPanel } from './LeadDedupPanel';
 import { LearningProfilePanel } from './LearningProfilePanel';
 import { MemoryGovernancePanel } from './MemoryGovernancePanel';
@@ -301,8 +302,9 @@ export function Settings() {
 
         {activeTab === 'dedup' && canViewAudit && (
           <div className="p-6 sm:p-8">
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-5xl mx-auto space-y-6">
               <LeadDedupPanel />
+              <CompanyDedupPanel />
             </div>
           </div>
         )}
