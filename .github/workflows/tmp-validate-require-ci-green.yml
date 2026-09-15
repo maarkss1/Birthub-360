@@ -3,31 +3,77 @@ name: TEMP - Validate require-ci-green
 # Workflow temporário, só para validar o comportamento da action
 # .github/actions/require-ci-green em cenários reais (Onda 10.2, PROMPT 10.2, secao 22) antes de
 # finalizar a Onda. Remover depois de coletar a evidência — não é parte do CI/CD permanente.
+#
+# `push` (não workflow_dispatch) porque um workflow novo só fica disparável via workflow_dispatch
+# depois de existir na branch default — push funciona imediato na própria branch de feature.
 
 on:
-  workflow_dispatch:
-    inputs:
-      sha:
-        description: 'SHA a testar'
-        required: true
-        type: string
-      expect:
-        description: 'Resultado esperado: pass ou blocked'
-        required: true
-        type: choice
-        options: [pass, blocked]
+  push:
+    branches: [claude/onda-10-2-cicd-gate-70189]
+    paths:
+      - '.github/workflows/tmp-validate-require-ci-green.yml'
 
 permissions:
   contents: read
   checks: read
 
 jobs:
-  test:
+  cenario-a-ci-verde:
+    name: 'Cenário A — SHA com CI verde (espera: PASS)'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/require-ci-green
         with:
-          sha: ${{ inputs.sha }}
+          # push em main que passou (run 34930670005, conclusion: success)
+          sha: 847fcb179b33ba7322be6101a7b00c5088bfe67b
           check-name: build
-      - run: echo "RESULTADO=pass (chegou até aqui sem ser bloqueado)" >> "$GITHUB_STEP_SUMMARY"
+
+  cenario-b-ci-falho:
+    name: 'Cenário B — SHA com CI falho (espera: BLOCKED)'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./.github/actions/require-ci-green
+        with:
+          # PR #501, run 34933345072, conclusion: failure
+          sha: a52d1db040665468470fcfbb69713f41e207d385
+          check-name: build
+
+  cenario-c-sem-ci:
+    name: 'Cenário C — SHA sem execução CI (espera: BLOCKED)'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./.github/actions/require-ci-green
+        with:
+          # HEAD desta mesma branch antes deste commit — nunca rodou push/pull_request em ci.yml
+          # (branch de feature sem PR aberto no momento deste commit).
+          sha: 76a768c8f5b29fd3e44646287719e21959655471
+          check-name: build
+
+  verificar-resultados:
+    name: Verificar resultados dos 3 cenários
+    needs: [cenario-a-ci-verde, cenario-b-ci-falho, cenario-c-sem-ci]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conferir cada cenário contra o esperado
+        run: |
+          set -euo pipefail
+          echo "Cenário A (CI verde, espera success): ${{ needs.cenario-a-ci-verde.result }}"
+          echo "Cenário B (CI falho, espera failure): ${{ needs.cenario-b-ci-falho.result }}"
+          echo "Cenário C (sem CI, espera failure): ${{ needs.cenario-c-sem-ci.result }}"
+
+          fail=0
+          [ "${{ needs.cenario-a-ci-verde.result }}" = "success" ] || { echo "::error::Cenário A deveria ter passado (PASS) mas resultado foi ${{ needs.cenario-a-ci-verde.result }}"; fail=1; }
+          [ "${{ needs.cenario-b-ci-falho.result }}" = "failure" ] || { echo "::error::Cenário B deveria ter sido bloqueado (BLOCKED) mas resultado foi ${{ needs.cenario-b-ci-falho.result }}"; fail=1; }
+          [ "${{ needs.cenario-c-sem-ci.result }}" = "failure" ] || { echo "::error::Cenário C deveria ter sido bloqueado (BLOCKED) mas resultado foi ${{ needs.cenario-c-sem-ci.result }}"; fail=1; }
+
+          if [ "$fail" -eq 1 ]; then
+            echo "::error::VALIDACAO FALHOU — ver detalhes acima."
+            exit 1
+          fi
+          echo "VALIDACAO OK — os 3 cenários se comportaram exatamente como esperado."
