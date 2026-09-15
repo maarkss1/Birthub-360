@@ -32,6 +32,21 @@ export interface CadenceTouch {
   delayHoursFromPrevious: number;
   /** Quantas tentativas este toque aceita antes de desistir dele e avançar (falha de provedor não pode travar a cadência para sempre). Default 1 = sem retry. */
   maxAttempts?: number;
+  /**
+   * Cadência multicanal adaptativa (item 26 do roadmap comercial): quando este toque esgota
+   * `maxAttempts` por FALHA REAL de entrega (número inválido, bounce, canal inexistente para o
+   * lead — nunca por "sem resposta", que não é uma falha de canal), a sequência avança para este
+   * `order` em vez do próximo da lista (`order + 1`). Existe para não insistir num canal
+   * estruturalmente quebrado para aquele lead nem pular cegamente para o próximo passo do
+   * template se ele depender do MESMO dado de contato que já falhou (ex.: WhatsApp e ligação
+   * dependem do mesmo telefone — se o telefone é inválido, os dois vão falhar; pular direto para
+   * o e-mail é a escolha adaptativa certa). `undefined`/`null` preserva o comportamento linear
+   * original (`order + 1`) — sequências existentes continuam idênticas sem precisar declarar
+   * isto. Nunca se aplica a um toque que teve sucesso (`sent`): sucesso sempre segue a ordem
+   * normal do template, só falha estrutural de canal é que muda a rota. Validado por
+   * `validateSequence` (precisa apontar para um `order` existente, diferente do próprio).
+   */
+  fallbackTouchOrder?: number | null;
   /** Referência ao conteúdo (id de template/roteiro) — resolvido pelo canal, não por este domínio. */
   templateRef?: string | null;
 }
@@ -127,7 +142,7 @@ export type CadenceDecision =
     }
   | { type: 'dispatch'; touch: CadenceTouch };
 
-/** Sequência válida: `touches` não vazio, ordenado 1..N sem lacunas nem repetição. */
+/** Sequência válida: `touches` não vazio, ordenado 1..N sem lacunas nem repetição, e todo `fallbackTouchOrder` aponta para um toque real e diferente de si mesmo. */
 export function validateSequence(sequence: CadenceSequenceDefinition): string[] {
   const errors: string[] = [];
   if (sequence.touches.length === 0) errors.push('Sequência sem nenhum toque.');
@@ -138,6 +153,21 @@ export function validateSequence(sequence: CadenceSequenceDefinition): string[] 
         `Ordem de toques com lacuna/duplicidade perto da posição ${index + 1} (encontrado ${order}).`,
       );
   });
+
+  const validOrders = new Set(sequence.touches.map((t) => t.order));
+  for (const touch of sequence.touches) {
+    if (touch.fallbackTouchOrder == null) continue;
+    if (touch.fallbackTouchOrder === touch.order) {
+      errors.push(
+        `Toque ${touch.order}: fallbackTouchOrder não pode apontar para o próprio toque (criaria um laço sem progresso).`,
+      );
+    } else if (!validOrders.has(touch.fallbackTouchOrder)) {
+      errors.push(
+        `Toque ${touch.order}: fallbackTouchOrder ${touch.fallbackTouchOrder} não corresponde a nenhum toque desta sequência.`,
+      );
+    }
+  }
+
   return errors;
 }
 
@@ -344,7 +374,11 @@ export function recordTouchAttempt(
     return { ...run, attempts, lastTouchAt: now };
   }
 
-  const nextOrder = touch.order + 1;
+  // Cadência multicanal adaptativa (item 26): um toque ENVIADO com sucesso sempre segue a ordem
+  // normal do template (order + 1) — sucesso nunca é motivo para desviar de rota. Só um toque
+  // ESGOTADO por falha real de canal consulta `fallbackTouchOrder`, quando declarado; sem ele,
+  // o comportamento é idêntico ao anterior (linear).
+  const nextOrder = exhausted && touch.fallbackTouchOrder != null ? touch.fallbackTouchOrder : touch.order + 1;
   const hasNext = touchesForOrder(sequence, nextOrder) !== undefined;
   return {
     ...run,
