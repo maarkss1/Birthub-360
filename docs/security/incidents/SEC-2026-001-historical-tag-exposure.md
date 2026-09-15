@@ -101,8 +101,8 @@ nenhum ponto do histórico alcançável pela tag.
 | Credencial                                    | Onde apareceu no histórico                                | Classificação                | Evidência                                                                                   |
 | ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------- |
 | Chave Bland AI (`org_...`)                    | `scripts/call_bland_juliana.py` (fallback hardcoded)          | **ROTATED (reverificado)**    | `.agents/completion/01-bloqueadores.md` (SEC-003, 2026-08-18) — confirmado inicialmente pelo dono do repositório. **Reverificado diretamente pelo dono em 2026-09-15: chave revogada no painel Bland AI.** |
-| Webhook Bitrix24 AtlasGR (`.../rest/450/...`) | `connections.ts`, `useBitrixIntegration.ts`, `extrator-bitrix.html`, dump (`BitrixConnection`) | **ROTATED**                   | Idem acima (SEC-003); runbook `ROTATE_BITRIX24_WEBHOOKS.md`. Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
-| Webhook Bitrix24 TotalTrac (`.../rest/2486/...`) | `connections.ts` (uma versão histórica)                      | **ROTATED**                   | Idem acima (SEC-003). Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
+| Webhook Bitrix24 AtlasGR (`.../rest/450/...`) | `connections.ts`, `useBitrixIntegration.ts`, `extrator-bitrix.html`, dump (`BitrixConnection`) | **ROTATED (reverificado)**   | Idem acima (SEC-003); runbook `ROTATE_BITRIX24_WEBHOOKS.md`. **Reverificado diretamente pelo dono do repositório em 2026-09-15.** |
+| Webhook Bitrix24 TotalTrac (`.../rest/2486/...`) | `connections.ts` (uma versão histórica)                      | **ROTATED (reverificado)**   | Idem acima (SEC-003). **Reverificado diretamente pelo dono do repositório em 2026-09-15.** |
 | Chave Google Gemini (formato `AQ.*`, Google AI Studio) | `test-gemini.ts`, `test-gemini-quota.ts`                       | **ROTATED (reverificado)**    | Confirmado inicialmente pelo dono do repositório em 2026-09-05; `ROTATE_GEMINI_API_KEY.md`, fingerprints suprimidos em `.gitleaksignore`. **Reverificado diretamente pelo dono em 2026-09-15: chave revogada no Google AI Studio.** |
 | `ATLASGR_WEBHOOK_SECRET` (valor antigo hardcoded `segredo_compartilhado_atlasgr_123`) | Código-fonte histórico de `LeadDetailDrawer.tsx` (commit `9236028b`) | **ROTATED**     | Código atual já é fail-closed (não aceita mais o literal como fallback). **Revogação em produção (Render) confirmada diretamente pelo dono do repositório em 2026-09-15** — fecha a pendência registrada em `GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`, item 2. |
 | Hashes de senha de 5 usuários reais (`user.passwordHash`, `account.password`, formato scrypt `hash:salt` do Better Auth) | Dump `backups/prospector-20260806-152827.dump`                 | **NO LONGER APPLICABLE**    | Hash, não texto puro — coincidia na janela de tempo (05-06/08/2026) com o bug já documentado em `.agents/completion/01-bloqueadores.md` item 5 (`reset-passwords.ts` sem alvo resetava TODAS as senhas para `00000000`). **Confirmado pelo dono do repositório em 2026-09-15 que essas 5 contas não existem mais no sistema** — não há mais credencial ativa para resetar. |
@@ -111,12 +111,10 @@ nenhum ponto do histórico alcançável pela tag.
 
 Nenhuma credencial desta lista teve sua rotação verificada diretamente contra o provedor **por esta
 sessão de agente** (sem acesso de rede a Bland AI/Bitrix24/Google/Render a partir deste ambiente).
-Bland AI e Google Gemini, porém, foram **reverificados diretamente pelo dono do repositório em
-2026-09-15** (checagem manual no painel de cada provedor, não só a confirmação humana já registrada
-de 08/2026 e 09/05) — essas duas ficam com o nível mais alto de confiança disponível.
-`ATLASGR_WEBHOOK_SECRET` teve a mesma reverificação direta na mesma data (ver linha acima). Os dois
-webhooks Bitrix24 seguem apoiados só na confirmação humana original de SEC-003 (08/2026) — ver
-"Ações manuais pendentes". Isso é consistente com a
+Porém, **todas as credenciais de terceiro/aplicação desta lista foram reverificadas diretamente
+pelo dono do repositório em 2026-09-15** (Bland AI, os 2 webhooks Bitrix24, Google Gemini e
+`ATLASGR_WEBHOOK_SECRET` — checagem manual no painel de cada provedor, não só a confirmação humana
+original de 08/2026 e 09/05). Isso é consistente com a
 instrução deste incidente ("não assuma que trocar o `.env` significa rotação") — a evidência citada
 é confirmação humana explícita registrada em runbook, não uma suposição.
 
@@ -253,11 +251,11 @@ existem mais, confirmado pelo dono do repositório em 2026-09-15); tokens de ses
 1. ~~**Remover a tag do remote**~~ — **CONCLUÍDA em 2026-09-15** pelo dono do repositório, via
    interface web do GitHub (Tags → Delete tag). Verificado: `git ls-remote --tags origin | grep
    v1.0.0-rc.1` não retorna nada.
-2. **Confirmar a revogação de cada credencial `ROTATED`** diretamente no provedor. **Parcialmente
-   concluído em 2026-09-15**: Bland AI e Google Gemini — dono do repositório confirmou diretamente
-   que revogou as duas chaves. `ATLASGR_WEBHOOK_SECRET` também confirmado (item 3). **Ainda
-   pendente:** os 2 webhooks Bitrix24 (AtlasGR e TotalTrac) — sem reverificação direta no painel
-   Bitrix24 nesta rodada, só a confirmação humana original de SEC-003 (08/2026).
+2. ~~**Confirmar a revogação de cada credencial `ROTATED`** diretamente no provedor.~~ —
+   **CONCLUÍDA em 2026-09-15**: dono do repositório confirmou diretamente ter revogado Bland AI,
+   Google Gemini e os 2 webhooks Bitrix24 (AtlasGR e TotalTrac), completando a reverificação de
+   todas as credenciais de terceiro/aplicação deste incidente (`ATLASGR_WEBHOOK_SECRET` já coberto
+   pelo item 3).
 3. ~~**Confirmar o valor real de `ATLASGR_WEBHOOK_SECRET` em produção (Render)**~~ — **CONCLUÍDA em
    2026-09-15**: dono do repositório confirmou diretamente que o webhook já foi revogado, fechando
    a pendência registrada em 2026-09-05.
@@ -281,18 +279,23 @@ existem mais, confirmado pelo dono do repositório em 2026-09-15); tokens de ses
   acesso daqui pra frente, não uma garantia retroativa (mesma ressalva já registrada em
   `DECIDE_GIT_HISTORY_REWRITE.md` para o Caminho B de `main`). O dono do repositório avaliou esse
   risco como baixo (ver item 5 acima) e decidiu não exigir comunicação formal.
-- Enquanto os 2 webhooks Bitrix24 (único item restante dentro do item 2) não forem reverificados
-  diretamente no painel Bitrix24, existe risco residual — puramente teórico, não indicado por
-  nenhuma evidência encontrada — de essas duas credenciais ainda estarem ativas. Bland AI e Google
-  Gemini já saíram dessa categoria (reverificados diretamente em 2026-09-15).
+- Nenhum item de risco residual segue em aberto neste incidente — todas as credenciais de
+  terceiro/aplicação reverificadas diretamente, e a exposição residual de cópias já clonadas antes
+  da remediação (item estrutural, não específico deste incidente) foi avaliada e aceita pelo dono
+  do repositório (ver "Avaliação de DPO/jurídico" acima).
 
 ## Status final
 
-**PARTIALLY RESOLVED** — vetor de exposição fechado (tag removida do remote e verificada
-2026-09-15); webhook `ATLASGR_WEBHOOK_SECRET`, chave Bland AI e chave Google Gemini confirmados
-revogados diretamente pelo dono do repositório; a pendência dos 5 usuários ficou moot (contas de
-teste, sem mais acesso); e a avaliação de DPO/jurídico foi concluída (sem necessidade de
-comunicação formal) — todos confirmados/decididos por ele em 2026-09-15; investigação, inventário e
-documentação completos. Segue pendente apenas: reverificação direta dos 2 webhooks Bitrix24
-(AtlasGR e TotalTrac) contra o painel Bitrix24 — fora do alcance de uma sessão de agente sem acesso
-de rede a esse serviço.
+**RESOLVED (2026-09-15).** Todos os itens deste incidente estão fechados:
+- Vetor de exposição (tag `v1.0.0-rc.1` publicada) removido do remote e verificado.
+- `ATLASGR_WEBHOOK_SECRET`, chave Bland AI, chave Google Gemini e os 2 webhooks Bitrix24 (AtlasGR e
+  TotalTrac) confirmados revogados diretamente pelo dono do repositório.
+- Pendência dos 5 usuários do dump ficou moot (contas de teste criadas pelo próprio dono, sem mais
+  acesso à plataforma).
+- Avaliação de DPO/jurídico concluída pelo dono do repositório: dado de prospecção de origem
+  pública, sem indício de exploração da janela de exposição — comunicação formal à ANPD/titulares
+  avaliada como não necessária.
+
+Investigação, inventário, remediação e documentação completos. Item 6 (gate automatizado para
+impedir tags futuras apontando a commits sensíveis) segue como melhoria de processo recomendada,
+não como bloqueador — pode ser tratado em uma rodada futura, fora do escopo deste incidente.

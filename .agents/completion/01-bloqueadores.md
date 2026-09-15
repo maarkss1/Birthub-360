@@ -51,8 +51,8 @@
    `test-gemini*.ts`.
    **Pendência residual da tag `v0.0.1` (commit `8fd8fa22…`) resolvida (ACH-15-01):** deletada do
    remote em 12/09/2026, confirmado via `git ls-remote --tags`.
-   **Lacuna da tag `v1.0.0-rc.1` — remoção da tag: RESOLVED (Onda 10.1, SEC-2026-001,
-   2026-09-15).** Investigação completa registrada em
+   **Lacuna da tag `v1.0.0-rc.1` — SEC-2026-001: RESOLVED por completo (Onda 10.1, 2026-09-15).**
+   Investigação completa registrada em
    `docs/security/incidents/SEC-2026-001-historical-tag-exposure.md`: reconfirmado que a tag
    (commit `e8fb1c1c…`) alcançava os mesmos blobs sensíveis já conhecidos (dump de 166075 bytes +
    `test-gemini.ts`/`test-gemini-quota.ts`), inventário linha-a-linha do conteúdo do dump feito
@@ -74,12 +74,12 @@
    plataforma (RESOLVED); avaliação de DPO/jurídico sobre a janela de exposição de PII de
    prospecção concluída — dado de origem pública (27 empresas/41 contatos), sem indício de acesso
    por terceiros, comunicação formal à ANPD/titulares avaliada como não necessária (RESOLVED).
-   **Reverificação direta de credenciais — parcialmente concluída em 2026-09-15:** dono do
-   repositório confirmou ter revogado diretamente a chave Bland AI e a chave Google Gemini
-   (RESOLVED para essas duas). **Única pendência que segue em aberto** (mantém o P0 como PARTIALLY
-   RESOLVED): reverificar os 2 webhooks Bitrix24 (AtlasGR e TotalTrac) diretamente no painel
-   Bitrix24 — ainda só apoiados na confirmação humana original de SEC-003 (08/2026), não em checagem
-   técnica contra o provedor nesta rodada.
+   **Reverificação direta de credenciais — CONCLUÍDA em 2026-09-15:** dono do repositório confirmou
+   ter revogado diretamente a chave Bland AI, a chave Google Gemini e os 2 webhooks Bitrix24
+   (AtlasGR e TotalTrac) (RESOLVED). Com isso, **todos os itens do SEC-2026-001 estão fechados —
+   incidente RESOLVED**, não mais PARTIALLY RESOLVED. Item 6 do incidente (gate automatizado contra
+   futuras tags sensíveis) fica como melhoria de processo recomendada para uma rodada futura, fora
+   do escopo deste fechamento.
 
 ## P0 — Plataforma quebrada no main (remediados)
 
