@@ -98,6 +98,7 @@ import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
 import { PrismaNoteRepository } from '../../features/notes/infra/PrismaNoteRepository';
 // Controllers
 import { NoteController } from '../../features/notes/presentation/NoteController';
+import { LivingPlaybookController } from '../../features/playbook/living-playbook/presentation/LivingPlaybookController';
 import { ObjectionMatrixUseCases } from '../../features/playbook/objection-matrix/application/ObjectionMatrixUseCases';
 import { PrismaObjectionMatrixRepository } from '../../features/playbook/objection-matrix/infra/PrismaObjectionMatrixRepository';
 import { ObjectionMatrixController } from '../../features/playbook/objection-matrix/presentation/ObjectionMatrixController';
@@ -275,6 +276,7 @@ export function setupDI() {
     'ObjectionMatrixController',
     new ObjectionMatrixController(objectionMatrixUseCases),
   );
+  container.register('LivingPlaybookController', new LivingPlaybookController());
   container.register('BugReportController', new BugReportController(bugReportUseCases));
   container.register('UsageController', new UsageController(usageUseCases));
   container.register('FeatureFlagsController', new FeatureFlagsController(featureFlagsUseCases));

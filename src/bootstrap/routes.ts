@@ -53,6 +53,7 @@ import { moduleAccessRoutes } from '../features/module-access/routes/moduleAcces
 import { noteRoutes } from '../features/notes/routes/note.routes.js';
 import { notificationRoutes } from '../features/notifications/notification.routes.js';
 import { sseService } from '../features/notifications/sse.service.js';
+import { livingPlaybookRoutes } from '../features/playbook/living-playbook/routes/living-playbook.routes.js';
 import { objectionMatrixRoutes } from '../features/playbook/objection-matrix/routes/objection-matrix.routes.js';
 import { qualificationMatrixRoutes } from '../features/playbook/qualification-matrix/routes/qualification-matrix.routes.js';
 import { prospectingRoutes } from '../features/prospecting/routes/prospecting.routes.js';
@@ -101,6 +102,7 @@ export function mountFeatureRoutes(app: Express): void {
     requireTenant,
     objectionMatrixRoutes,
   );
+  app.use('/api/playbook/living-playbook', authenticateToken, requireTenant, livingPlaybookRoutes);
   app.use('/api/leads/:leadId/notes', authenticateToken, requireTenant, noteRoutes);
   // CRM-004: Note deixou de ser exclusiva de Lead — mesmo router, montado também nos prefixos de
   // Company/Contact (NoteController resolve a entidade pelo param que realmente chegou).
