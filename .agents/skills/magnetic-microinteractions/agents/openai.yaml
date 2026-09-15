@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mestre em Microinterações Magnéticas"
+  short_description: "Interações táteis para botões, cards e links"
+  default_prompt: "Use $magnetic-microinteractions para tornar botões, cards e links vivos, responsivos e acessíveis."
