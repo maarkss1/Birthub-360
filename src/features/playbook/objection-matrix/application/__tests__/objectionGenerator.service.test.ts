@@ -86,7 +86,9 @@ describe('generateObjectionSuggestions', () => {
         'Achou caro comparado ao concorrente',
       ],
     });
-    expect(logAiUsageMock).toHaveBeenCalledWith(expect.objectContaining({ promptId: 'objection-generator' }));
+    expect(logAiUsageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ promptId: 'objection-generator' }),
+    );
   });
 
   it('descarta a rodada inteira quando a IA devolve um array de tamanho diferente do enviado — nunca casa dados errados entre grupos', async () => {

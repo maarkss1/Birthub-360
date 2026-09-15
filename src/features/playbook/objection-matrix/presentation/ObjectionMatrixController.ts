@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
 import { routeParam } from '../../../../shared/http/routeParams';
 import type { AuthRequest } from '../../../../shared/middlewares/authenticateToken';
-import { generateObjectionSuggestions } from '../application/objectionGenerator.service';
 import type { ObjectionMatrixUseCases } from '../application/ObjectionMatrixUseCases';
+import { generateObjectionSuggestions } from '../application/objectionGenerator.service';
 
 export class ObjectionMatrixController {
   constructor(private useCases: ObjectionMatrixUseCases) {}
@@ -31,7 +31,11 @@ export class ObjectionMatrixController {
       // `meta` (não um campo solto) porque apiFetch (src/lib/api.ts) só preserva o envelope
       // {data, meta} inteiro quando a chave 'meta' está presente na resposta — qualquer outra
       // chave irmã de `data` seria descartada no unwrap padrão {success, data}.
-      res.json({ success: true, data: result.suggestions, meta: { emptyReason: result.emptyReason } });
+      res.json({
+        success: true,
+        data: result.suggestions,
+        meta: { emptyReason: result.emptyReason },
+      });
     } catch (error) {
       next(error);
     }
