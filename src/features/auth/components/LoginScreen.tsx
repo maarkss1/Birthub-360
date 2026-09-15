@@ -242,12 +242,7 @@ export function LoginScreen() {
           <BrandEmblemBadge className="h-52 w-52" title="Birth Hub 360°" />
           {/* Não é <h1>: o título de página real é "Acesso Executivo", no painel do formulário —
               dois <h1> na mesma tela quebraria a hierarquia de heading (a11y, seção 10). */}
-          <p
-            className="mt-8 font-display text-4xl font-extrabold tracking-tight"
-            
-          >
-            Birth Hub 360°
-          </p>
+          <p className="mt-8 font-display text-4xl font-extrabold tracking-tight">Birth Hub 360°</p>
         </motion.div>
       </aside>
 
@@ -298,11 +293,7 @@ export function LoginScreen() {
                   }}
                   role="status"
                 >
-                  <Mail
-                    size={16}
-                    className="mt-0.5 shrink-0"
-                    
-                  />
+                  <Mail size={16} className="mt-0.5 shrink-0" />
                   <p>
                     Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele para
                     confirmar que este e-mail é seu e ativar sua conta.
@@ -312,7 +303,6 @@ export function LoginScreen() {
                   type="button"
                   onClick={backToSignIn}
                   className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                  
                 >
                   Voltar para o login
                 </button>
@@ -328,11 +318,7 @@ export function LoginScreen() {
                     }}
                     role="status"
                   >
-                    <Mail
-                      size={16}
-                      className="mt-0.5 shrink-0"
-                      
-                    />
+                    <Mail size={16} className="mt-0.5 shrink-0" />
                     <p>
                       Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail com
                       um link para redefinir a senha. O link expira em 1 hora.
@@ -342,7 +328,6 @@ export function LoginScreen() {
                     type="button"
                     onClick={backToSignIn}
                     className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                    
                   >
                     Voltar para o login
                   </button>
@@ -420,7 +405,6 @@ export function LoginScreen() {
                       type="button"
                       onClick={backToSignIn}
                       className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                      
                     >
                       Voltar para o login
                     </button>
@@ -530,7 +514,6 @@ export function LoginScreen() {
                         setError('');
                       }}
                       className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
-                      
                     >
                       Protocolo de recuperação?
                     </button>
@@ -590,10 +573,7 @@ export function LoginScreen() {
                   key={text}
                   className="flex flex-col items-start gap-3 rounded-card border border-slate-200 bg-white p-5"
                 >
-                  <span
-                    className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50"
-                    
-                  >
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="text-sm leading-relaxed text-slate-600">{text}</span>
