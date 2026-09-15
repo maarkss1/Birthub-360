@@ -33,7 +33,7 @@ interface BitrixSyncRule {
 }
 
 const selectClass =
-  'h-9 text-sm rounded-xl border border-line bg-surface text-ink px-3 disabled:opacity-40 focus:bg-surface focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer';
+  'h-9 text-sm rounded-xl border border-line bg-surface text-ink px-3 disabled:opacity-40 focus:bg-surface focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors outline-none cursor-pointer';
 
 /**
  * Regras de sincronização automática Bitrix → Atlas: diferente do BitrixImportPanel (sempre
@@ -201,7 +201,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
               {rules.map((rule) => (
                 <div
                   key={rule.id}
-                  className="flex items-center gap-4 p-4 text-sm rounded-2xl border border-line bg-surface shadow-sm transition-all"
+                  className="flex items-center gap-4 p-4 text-sm rounded-2xl border border-line bg-surface shadow-sm transition-colors"
                 >
                   <label
                     className={`relative inline-flex items-center shrink-0 ${canPickAnyVendor ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
@@ -274,14 +274,14 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
               <button
                 type="button"
                 onClick={() => setNewSource('lead')}
-                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'lead' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${newSource === 'lead' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
                 Lead
               </button>
               <button
                 type="button"
                 onClick={() => setNewSource('deal')}
-                className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${newSource === 'deal' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${newSource === 'deal' ? 'bg-surface text-brand-ink dark:text-brand shadow-sm' : 'text-ink-2 hover:text-ink'}`}
               >
                 Negócio
               </button>

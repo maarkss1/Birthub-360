@@ -125,9 +125,9 @@ export async function getCachedProviderResult<T>(key: string): Promise<T | undef
       // miss (mesma postura de outros usos de cacheConnection neste repo).
       logger.warn(
         { err: error, key },
-        'providerCache: falha ao ler do Redis — tratando como cache miss',
+        'providerCache: falha ao ler do Redis — usando fallback em memória só para esta entrada',
       );
-      return undefined;
+      return memoryCacheGet<T>(key, Date.now());
     }
   }
   return memoryCacheGet<T>(key, Date.now());

@@ -58,25 +58,24 @@ function KpiCard({
   intent?: 'brand' | 'success' | 'warning' | 'violet';
 }) {
   const styles = {
-    brand: 'bg-info/10 text-info-active dark:text-info border-info/20',
+    brand: 'bg-brand/10 text-brand-ink dark:text-brand border-brand/20',
     success: 'bg-success/10 text-success-active dark:text-success border-success/20',
     warning: 'bg-warning/10 text-warning-active dark:text-warning border-warning/20',
-    violet:
-      'bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 border-violet-500/20',
+    violet: 'bg-iris/10 text-accent-violet border-iris/20',
   };
   return (
     <motion.article
       variants={fadeInUp}
       whileHover={{ y: -2, transition: { duration: 0.15 } }}
-      className="rounded-2xl border border-line bg-surface p-4 shadow-sm hover:border-brand/30 hover:shadow-md transition-all duration-200"
+      className="rounded-2xl border border-line bg-surface p-4 shadow-card hover:border-brand/35 hover:shadow-card-hover transition-colors duration-200"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-2">{label}</p>
-          <p className="mt-2 text-2xl font-black tracking-tight text-ink">{value}</p>
+          <p className="mt-2 text-2xl font-black tracking-tight text-ink [font-variant-numeric:tabular-nums]">{value}</p>
           <p className="mt-1 text-xs text-ink-2">{detail}</p>
         </div>
-        <span className={`rounded-xl border p-2.5 ${styles[intent]}`}>
+        <span className={`rounded-xl border p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${styles[intent]}`}>
           <Icon className="h-5 w-5" />
         </span>
       </div>
@@ -371,7 +370,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
             SoundFX.play('navigate');
             onNavigate('propostas');
           }}
-          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40 hover:shadow-sm transition-all"
+          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40 hover:shadow-sm transition-colors"
         >
           <span>
             <strong className="block text-ink">Documentos comerciais</strong>
@@ -385,7 +384,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
             SoundFX.play('navigate');
             onNavigate('activities');
           }}
-          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40 hover:shadow-sm transition-all"
+          className="flex items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left hover:border-brand/40 hover:shadow-sm transition-colors"
         >
           <span>
             <strong className="block text-ink">Agenda inteligente</strong>

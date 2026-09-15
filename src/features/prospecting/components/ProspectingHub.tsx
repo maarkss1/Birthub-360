@@ -522,7 +522,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('cnpj');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[2rem] font-bold text-sm transition-all duration-300 ${tab === 'cnpj' ? 'bg-obsidian text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-[2rem] font-bold text-sm transition-colors duration-300 ${tab === 'cnpj' ? 'bg-obsidian text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Landmark size={18} /> Busca Direta (CNPJ/Nome)
             </button>
@@ -532,7 +532,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('discovery');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'discovery' ? 'bg-brand-active text-on-brand shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-colors duration-300 ${tab === 'discovery' ? 'bg-brand-active text-on-brand shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Database size={18} /> Radar Discovery (Fontes abertas)
             </button>
@@ -542,7 +542,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('ocr');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'ocr' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-colors duration-300 ${tab === 'ocr' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Camera size={18} /> Cadastrar por Foto (OCR)
             </button>
@@ -552,7 +552,7 @@ export function ProspectingHub() {
                 SoundFX.play('navigate');
                 setTab('tools');
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${tab === 'tools' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-colors duration-300 ${tab === 'tools' ? 'bg-info-solid text-white shadow-sm scale-100' : 'text-ink-2 hover:bg-surface-2/50 scale-95 hover:scale-100'}`}
             >
               <Wrench size={18} /> Ferramentas
             </button>
@@ -564,7 +564,7 @@ export function ProspectingHub() {
               SoundFX.play('focus');
               setIsSavedSearchesOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-surface border border-line hover:border-brand/40 rounded-2xl text-xs font-bold text-ink hover:text-brand transition-all shadow-sm active:scale-95"
+            className="flex items-center gap-2 px-4 py-2.5 bg-surface border border-line hover:border-brand/40 rounded-2xl text-xs font-bold text-ink hover:text-brand transition-colors shadow-sm active:scale-95"
           >
             <Bookmark size={16} className="text-brand" /> Listas Salvas & Agendamentos
           </button>

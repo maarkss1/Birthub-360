@@ -130,7 +130,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
             id="hu-domain"
             type="text"
             placeholder="empresa.com.br"
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={domainInput}
             onChange={(e) => setDomainInput(e.target.value)}
           />
@@ -146,7 +146,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
             id="hu-empresa"
             type="text"
             placeholder="Opcional — usa o domínio se vazio"
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
           />
@@ -156,7 +156,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
           type="button"
           onClick={handleSearch}
           disabled={isSearching}
-          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>
@@ -176,7 +176,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
           <input
             type="text"
             placeholder="Nome completo da pessoa"
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={verifyName}
             onChange={(e) => setVerifyName(e.target.value)}
           />
@@ -184,7 +184,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
             type="button"
             onClick={handleVerifyEmail}
             disabled={isVerifying}
-            className="w-full bg-surface-2 border border-line text-ink py-2.5 rounded-xl font-bold text-xs hover:border-brand/40 disabled:opacity-70 transition-all flex items-center justify-center gap-2"
+            className="w-full bg-surface-2 border border-line text-ink py-2.5 rounded-xl font-bold text-xs hover:border-brand/40 disabled:opacity-70 transition-colors flex items-center justify-center gap-2"
           >
             {isVerifying ? (
               <>
@@ -292,7 +292,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
                     type="button"
                     onClick={() => promoteContact(contact, idx)}
                     disabled={promotingKey === key}
-                    className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
+                    className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-colors flex items-center gap-2 disabled:opacity-60"
                   >
                     {promotingKey === key ? (
                       <Loader2 className="animate-spin" size={13} />

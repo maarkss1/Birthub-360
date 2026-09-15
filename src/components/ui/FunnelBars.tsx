@@ -28,7 +28,7 @@ export function FunnelBars({ items }: { items: FunnelBarItem[] }) {
             >
               <div
                 className={cn(
-                  'h-full rounded-full transition-all duration-700',
+                  'h-full rounded-full transition-colors duration-700',
                   TONE_BAR[item.tone ?? 'brand'],
                 )}
                 style={{ width: `${widthPct}%` }}

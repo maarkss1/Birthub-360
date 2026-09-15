@@ -58,7 +58,7 @@ export function FloatingDock({ activeTab, onOpenFullMenu }: FloatingDockProps) {
               aria-label={item.label}
               aria-current={isActive ? 'page' : undefined}
               className={cn(
-                'relative flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer',
+                'relative flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2 rounded-xl text-xs font-semibold transition-colors duration-200 cursor-pointer',
                 isActive
                   ? 'text-on-brand bg-brand shadow-sm'
                   : 'text-ink-2 hover:text-ink hover:bg-surface-2',

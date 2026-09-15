@@ -132,7 +132,7 @@ export function CompanyBranchesView({
                     type="button"
                     onClick={() => handleApprove(matriz.cnpj)}
                     disabled={approvingCnpj === matriz.cnpj}
-                    className="px-3 py-1.5 rounded-xl bg-brand-active text-on-brand text-xs font-bold hover:brightness-110 flex items-center gap-1 shadow-sm transition-all disabled:opacity-50"
+                    className="px-3 py-1.5 rounded-xl bg-brand-active text-on-brand text-xs font-bold hover:brightness-110 flex items-center gap-1 shadow-sm transition-colors disabled:opacity-50"
                   >
                     {approvingCnpj === matriz.cnpj ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -179,7 +179,7 @@ export function CompanyBranchesView({
                 {filiais.map((f) => (
                   <div
                     key={f.cnpj}
-                    className="p-4 rounded-2xl border border-line bg-surface hover:border-brand/30 hover:shadow-xs transition-all space-y-2.5"
+                    className="p-4 rounded-2xl border border-line bg-surface hover:border-brand/30 hover:shadow-xs transition-colors space-y-2.5"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
@@ -216,7 +216,7 @@ export function CompanyBranchesView({
                           type="button"
                           onClick={() => handleApprove(f.cnpj)}
                           disabled={approvingCnpj === f.cnpj}
-                          className="px-2.5 py-1 rounded-lg bg-brand/10 hover:bg-brand-active text-brand-ink dark:text-brand hover:text-on-brand text-[11px] font-bold transition-all"
+                          className="px-2.5 py-1 rounded-lg bg-brand/10 hover:bg-brand-active text-brand-ink dark:text-brand hover:text-on-brand text-[11px] font-bold transition-colors"
                         >
                           {approvingCnpj === f.cnpj ? 'Aprovando...' : 'Aprovar'}
                         </button>

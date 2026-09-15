@@ -75,7 +75,7 @@ export function YoutubeTool(_props: { configured: boolean }) {
             id="yt-url"
             type="text"
             placeholder="https://www.youtube.com/watch?v=..."
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
@@ -86,7 +86,7 @@ export function YoutubeTool(_props: { configured: boolean }) {
           type="button"
           onClick={handleLookup}
           disabled={isSearching}
-          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>

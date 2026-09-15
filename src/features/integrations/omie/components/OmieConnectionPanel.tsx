@@ -133,7 +133,7 @@ export function OmieConnectionPanel() {
                 value={omieLabelInput}
                 onChange={(e) => setOmieLabelInput(e.target.value)}
                 placeholder="Nome de exibição (ex.: Omie Financeiro)"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
               />
             </div>
             <div>
@@ -146,7 +146,7 @@ export function OmieConnectionPanel() {
                 value={omieAppKeyInput}
                 onChange={(e) => setOmieAppKeyInput(e.target.value)}
                 placeholder="App Key do Omie"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
               />
             </div>
             <div>
@@ -163,7 +163,7 @@ export function OmieConnectionPanel() {
                 onChange={(e) => setOmieAppSecretInput(e.target.value)}
                 placeholder="App Secret do Omie"
                 autoComplete="off"
-                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
               />
             </div>
           </div>

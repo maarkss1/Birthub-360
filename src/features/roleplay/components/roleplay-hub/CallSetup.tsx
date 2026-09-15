@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, Phone, PhoneCall } from 'lucide-react';
+import { Button } from '../../../../components/ui/Button';
 import type { Persona } from './types';
 
 export function CallSetup({
@@ -38,7 +39,7 @@ export function CallSetup({
             key={p.id}
             onClick={() => setSelectedPersona(p.id)}
             aria-pressed={selectedPersona === p.id}
-            className={`w-full text-left p-6 md:p-8 rounded-[2rem] border-2 cursor-pointer transition-all duration-300 relative overflow-hidden flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
+            className={`w-full text-left p-6 md:p-8 rounded-[2rem] border-2 cursor-pointer transition-colors duration-300 relative overflow-hidden flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${
               selectedPersona === p.id
                 ? 'border-brand bg-brand/10 shadow-brand-sm'
                 : 'border-line hover:border-ink-2/30 bg-surface shadow-sm'
@@ -64,7 +65,7 @@ export function CallSetup({
                 type="button"
                 key={level}
                 onClick={() => setDifficulty(level)}
-                className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs font-black capitalize transition-all ${
+                className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs font-black capitalize transition-colors ${
                   difficulty === level
                     ? 'bg-surface text-ink shadow-sm'
                     : 'text-ink-2 hover:text-ink'
@@ -76,13 +77,14 @@ export function CallSetup({
           </div>
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={onStart}
-          className="w-full lg:w-auto px-10 py-4 rounded-[1.75rem] font-black text-on-brand text-sm uppercase tracking-wider shadow-xl shadow-brand-sm flex items-center justify-center gap-3 transition-transform hover:scale-105 bg-brand-active hover:bg-brand-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+          size="lg"
+          className="w-full lg:w-auto px-10 py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider gap-3"
         >
           <Phone className="w-5 h-5" /> Ligar Agora
-        </button>
+        </Button>
       </div>
     </div>
   );

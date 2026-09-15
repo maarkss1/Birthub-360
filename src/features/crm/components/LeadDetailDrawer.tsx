@@ -645,7 +645,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
 
                       <div className="w-full bg-surface-2 h-2.5 rounded-full overflow-hidden border border-line/50">
                         <div
-                          className={`h-full rounded-full transition-all duration-500 ${
+                          className={`h-full rounded-full transition-colors duration-500 ${
                             liveScore.score >= 70
                               ? 'bg-gradient-to-r from-amber-500 to-rose-500'
                               : liveScore.score >= 40

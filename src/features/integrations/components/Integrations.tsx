@@ -627,7 +627,7 @@ export function Integrations() {
                     {bitrixConnections.map((conn) => (
                       <div
                         key={conn.id}
-                        className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${selectedBitrixConnectionId === conn.id ? 'border-brand bg-brand/10 shadow-sm' : 'border-line hover:bg-surface-2'}`}
+                        className={`flex items-center gap-4 p-4 rounded-xl border transition-colors ${selectedBitrixConnectionId === conn.id ? 'border-brand bg-brand/10 shadow-sm' : 'border-line hover:bg-surface-2'}`}
                       >
                         {/* Botão real (não <div onClick>) para a seleção — o "desconectar" abaixo
                             é irmão, não filho, pra evitar botão-dentro-de-botão (achado do
@@ -685,14 +685,14 @@ export function Integrations() {
                       value={bitrixLabelInput}
                       onChange={(e) => setBitrixLabelInput(e.target.value)}
                       placeholder="Nome pra identificar (ex.: Birth Hub 360, Birth Hub 360)"
-                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-line shadow-sm bg-surface text-ink placeholder:text-ink-2 outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-line shadow-sm bg-surface text-ink placeholder:text-ink-2 outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors"
                     />
                     <input
                       type="url"
                       value={bitrixWebhookInput}
                       onChange={(e) => setBitrixWebhookInput(e.target.value)}
                       placeholder="https://seudominio.bitrix24.com.br/rest/1/xxxxxxxx/"
-                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-line shadow-sm bg-surface text-ink placeholder:text-ink-2 outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-line shadow-sm bg-surface text-ink placeholder:text-ink-2 outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors"
                     />
                   </div>
                   <p className="text-xs text-ink-2">
@@ -943,21 +943,21 @@ export function Integrations() {
                       value={threecxLabelInput}
                       onChange={(e) => setThreecxLabelInput(e.target.value)}
                       placeholder="Nome de exibição (ex.: 3CX Comercial, Ramal 101)"
-                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors"
                     />
                     <input
                       type="url"
                       value={threecxPbxUrlInput}
                       onChange={(e) => setThreecxPbxUrlInput(e.target.value)}
                       placeholder="https://seu-pabx.3cx.us"
-                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors"
                     />
                     <input
                       type="text"
                       value={threecxExtensionInput}
                       onChange={(e) => setThreecxExtensionInput(e.target.value)}
                       placeholder="Ramal (ex.: 101)"
-                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-white/10 shadow-sm bg-white dark:bg-white/5 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-colors"
                     />
                   </div>
                   <button

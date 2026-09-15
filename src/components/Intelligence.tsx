@@ -373,7 +373,7 @@ export function Intelligence() {
                           type="button"
                           title={pic.desc}
                           onClick={() => handleSetPic(pic.value)}
-                          className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-md border transition-all ${selectedLead.pic === pic.value ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-surface border-line text-ink-2 hover:border-indigo-300 hover:text-indigo-500'}`}
+                          className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-md border transition-colors ${selectedLead.pic === pic.value ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'bg-surface border-line text-ink-2 hover:border-indigo-300 hover:text-indigo-500'}`}
                         >
                           {pic.label}
                         </button>
@@ -394,7 +394,7 @@ export function Intelligence() {
               <button
                 type="button"
                 onClick={() => setPickerOpen(true)}
-                className="w-full p-5 rounded-2xl border-2 border-dashed border-line hover:border-brand/60 hover:bg-orange-50/50 text-ink-2 hover:text-brand transition-all flex flex-col items-center justify-center gap-3 group"
+                className="w-full p-5 rounded-2xl border-2 border-dashed border-line hover:border-brand/60 hover:bg-orange-50/50 text-ink-2 hover:text-brand transition-colors flex flex-col items-center justify-center gap-3 group"
               >
                 <div className="w-10 h-10 rounded-full bg-surface-2 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
                   <Search size={18} className="text-ink-2 group-hover:text-brand" />
@@ -441,7 +441,7 @@ export function Intelligence() {
                     placeholder="Pesquisar por empresa ou contato..."
                     value={leadQuery}
                     onChange={(e) => setLeadQuery(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 bg-surface-2 border border-line/80 rounded-xl text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/10 transition-all"
+                    className="w-full pl-9 pr-4 py-2.5 bg-surface-2 border border-line/80 rounded-xl text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/10 transition-colors"
                   />
                 </div>
                 <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin scrollbar-thumb-gray-200">
@@ -503,7 +503,7 @@ export function Intelligence() {
                   type="button"
                   id="dropdown-tone"
                   onClick={() => setActiveDropdown(activeDropdown === 'tone' ? null : 'tone')}
-                  className="w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl text-xs font-bold text-ink-2 flex items-center justify-between hover:border-line focus:outline-none"
+                  className="w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl text-xs font-bold text-ink-2 flex items-center justify-between hover:border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   {tone} <ChevronDown size={14} className="text-ink-2" />
                 </button>
@@ -547,7 +547,7 @@ export function Intelligence() {
                   onClick={() =>
                     setActiveDropdown(activeDropdown === 'objective' ? null : 'objective')
                   }
-                  className="w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl text-xs font-bold text-ink-2 flex items-center justify-between hover:border-line focus:outline-none"
+                  className="w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl text-xs font-bold text-ink-2 flex items-center justify-between hover:border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   {objective} <ChevronDown size={14} className="text-ink-2" />
                 </button>
@@ -592,7 +592,7 @@ export function Intelligence() {
                     onClick={() =>
                       setActiveDropdown(activeDropdown === 'persona' ? null : 'persona')
                     }
-                    className="w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl text-xs font-bold text-ink-2 flex items-center justify-between hover:border-line focus:outline-none"
+                    className="w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl text-xs font-bold text-ink-2 flex items-center justify-between hover:border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                   >
                     {personaFallback} <ChevronDown size={14} className="text-ink-2" />
                   </button>
@@ -663,7 +663,7 @@ export function Intelligence() {
                         setCompetitor(c);
                         handleGenerate('competitor_battlecard', c);
                       }}
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold border border-line bg-surface text-ink-2 hover:border-brand hover:bg-brand-active hover:text-on-brand transition-all shadow-sm"
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold border border-line bg-surface text-ink-2 hover:border-brand hover:bg-brand-active hover:text-on-brand transition-colors shadow-sm"
                     >
                       {c}
                     </button>
@@ -675,7 +675,7 @@ export function Intelligence() {
                     placeholder="Ou digite o nome de outro concorrente..."
                     value={customCompetitor}
                     onChange={(e) => setCustomCompetitor(e.target.value)}
-                    className="flex-1 p-2.5 bg-surface-2 border border-line rounded-xl text-xs font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/10 transition-all"
+                    className="flex-1 p-2.5 bg-surface-2 border border-line rounded-xl text-xs font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/10 transition-colors"
                   />
                   <button
                     type="button"
@@ -710,7 +710,7 @@ export function Intelligence() {
                   whileTap={{ scale: 0.98 }}
                   key={tool.id}
                   onClick={() => handleGenerate(tool.id as ToolType)}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all duration-300 group flex flex-col justify-between h-[140px] relative overflow-hidden
+                  className={`p-4 rounded-2xl border cursor-pointer transition-colors duration-300 group flex flex-col justify-between h-[140px] relative overflow-hidden
                                         ${
                                           activeTool === tool.id
                                             ? 'border-brand bg-gradient-to-br from-orange-50 to-surface shadow-lg shadow-brand/20 ring-1 ring-brand/50'
@@ -868,7 +868,7 @@ export function Intelligence() {
                     <button
                       type="button"
                       onClick={handleCopy}
-                      className={`flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer ${
+                      className={`flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl transition-colors cursor-pointer ${
                         copied
                           ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
                           : 'bg-surface-2 text-ink hover:bg-surface border border-line'

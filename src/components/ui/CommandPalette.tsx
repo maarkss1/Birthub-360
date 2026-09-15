@@ -375,7 +375,7 @@ export function CommandPalette() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleInputKeydown}
             placeholder="Buscar empresa, decisor ou comando…"
-            className="flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink-2"
+            className="flex-1 bg-transparent text-sm text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand placeholder:text-ink-2"
           />
           {entityLoading && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-ink-2" />}
           <kbd className="hidden shrink-0 rounded-md border border-line bg-surface-2 px-1.5 py-0.5 text-[10px] font-semibold text-ink-2 sm:block">

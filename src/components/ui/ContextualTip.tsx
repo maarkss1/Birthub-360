@@ -28,7 +28,7 @@ export const ContextualTip: React.FC<ContextualTipProps> = ({
 
   return (
     <div
-      className={`relative bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-blue-500/10 border border-amber-500/20 rounded-2xl p-4 backdrop-blur-md shadow-xs transition-all duration-300 animate-in fade-in slide-in-from-top-2 ${className}`}
+      className={`relative bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-blue-500/10 border border-amber-500/20 rounded-2xl p-4 backdrop-blur-md shadow-xs transition-colors duration-300 animate-in fade-in slide-in-from-top-2 ${className}`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 flex-1">

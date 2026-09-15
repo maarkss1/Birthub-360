@@ -102,7 +102,7 @@ export function ActiveCallView({
           onClick={toggleListening}
           aria-label={isListening ? 'Desativar microfone' : 'Ativar microfone'}
           title={isListening ? 'Desativar microfone' : 'Ativar microfone'}
-          className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
+          className={`w-20 h-20 rounded-full flex items-center justify-center transition-colors ${
             isListening
               ? 'bg-white text-gray-900 shadow-[0_0_30px_rgba(255,255,255,0.3)]'
               : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-gray-700'
@@ -133,7 +133,7 @@ export function ActiveCallView({
           onClick={onEndCall}
           aria-label="Encerrar ligação"
           title="Encerrar ligação"
-          className="w-20 h-20 rounded-full flex items-center justify-center bg-rose-600 text-white hover:bg-rose-500 transition-all shadow-[0_0_30px_rgba(225,29,72,0.4)]"
+          className="w-20 h-20 rounded-full flex items-center justify-center bg-rose-600 text-white hover:bg-rose-500 transition-colors shadow-[0_0_30px_rgba(225,29,72,0.4)]"
         >
           <PhoneOff className="w-8 h-8" />
         </button>

@@ -70,7 +70,7 @@ export function NewsTool(_props: { configured: boolean }) {
             id="news-empresa"
             type="text"
             placeholder="Nome completo da empresa"
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -81,7 +81,7 @@ export function NewsTool(_props: { configured: boolean }) {
           type="button"
           onClick={handleSearch}
           disabled={isSearching}
-          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>
@@ -115,7 +115,7 @@ export function NewsTool(_props: { configured: boolean }) {
             href={mention.url}
             target="_blank"
             rel="noreferrer"
-            className="block bg-surface p-5 rounded-2xl border border-line shadow-sm hover:border-brand/40 transition-all"
+            className="block bg-surface p-5 rounded-2xl border border-line shadow-sm hover:border-brand/40 transition-colors"
           >
             <div className="flex items-start justify-between gap-3">
               <p className="font-bold text-sm text-ink leading-snug">{mention.title}</p>

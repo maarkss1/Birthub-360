@@ -140,7 +140,7 @@ export const KanbanCard = React.memo(function KanbanCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-surface rounded-2xl border transition-all group relative ${
+      className={`bg-surface rounded-2xl border transition-colors group relative ${
         isSelected
           ? 'border-brand ring-2 ring-brand shadow-lg bg-surface-2/70'
           : 'border-line shadow-md hover:border-brand/50 dark:hover:border-brand-2/50 hover:shadow-xl'

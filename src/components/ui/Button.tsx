@@ -14,7 +14,7 @@ const buttonVariants = cva(
   // ease-[EASE_PREMIUM] (src/lib/motion.ts) em vez do ease padrão do Tailwind — mesma curva de
   // desaceleração usada no resto do motion system, pra hover não ficar "solto" da linguagem de
   // movimento do produto. active:scale continua rápido/linear (feedback de press é instantâneo).
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 active:scale-[0.97] active:duration-100 active:ease-out cursor-pointer disabled:pointer-events-none disabled:bg-gray-200 disabled:text-gray-600 disabled:opacity-100',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 active:scale-[0.97] active:duration-100 active:ease-out cursor-pointer disabled:pointer-events-none disabled:bg-gray-200 disabled:text-gray-600 disabled:opacity-100',
   {
     variants: {
       variant: {

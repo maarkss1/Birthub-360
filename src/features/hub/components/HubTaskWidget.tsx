@@ -188,7 +188,7 @@ export function HubTaskWidget() {
               onChange={(e) => setAssigneeId(e.target.value)}
               aria-label="Designar para"
               disabled={submitting || assignees.length === 0}
-              className="max-w-[72px] rounded-md border border-line bg-surface-2 text-[9px] text-ink outline-none disabled:opacity-50"
+              className="max-w-[72px] rounded-md border border-line bg-surface-2 text-[9px] text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
             >
               {assignees.map((a) => (
                 <option key={a.id} value={a.id}>

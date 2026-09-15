@@ -99,7 +99,7 @@ export function Carousel({
             onClick={scrollPrev}
             disabled={!canPrev && !loop}
             aria-label="Slide anterior"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface/80 shadow-card backdrop-blur-sm transition-all
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface/80 shadow-card backdrop-blur-sm transition-colors
               disabled:opacity-0 disabled:pointer-events-none hover:border-brand/40 hover:text-brand"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -109,7 +109,7 @@ export function Carousel({
             onClick={scrollNext}
             disabled={!canNext && !loop}
             aria-label="Próximo slide"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface/80 shadow-card backdrop-blur-sm transition-all
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface/80 shadow-card backdrop-blur-sm transition-colors
               disabled:opacity-0 disabled:pointer-events-none hover:border-brand/40 hover:text-brand"
           >
             <ChevronRight className="h-5 w-5" />
@@ -132,7 +132,7 @@ export function Carousel({
               aria-selected={idx === selectedIndex}
               aria-label={`Ir para slide ${idx + 1}`}
               onClick={() => scrollTo(idx)}
-              className={`h-2 rounded-full transition-all duration-300
+              className={`h-2 rounded-full transition-colors duration-300
                 ${idx === selectedIndex ? 'w-6 bg-brand' : 'w-2 bg-line hover:bg-ink-2'}`}
             />
           ))}

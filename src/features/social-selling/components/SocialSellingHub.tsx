@@ -152,7 +152,7 @@ export function SocialSellingHub() {
               type="button"
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as typeof activeSubTab)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border whitespace-nowrap transition-colors ${
                 activeSubTab === tab.id
                   ? 'bg-brand/10 border-brand/40 text-brand shadow-sm'
                   : 'bg-soft/50 border-line text-ink-2 hover:bg-soft hover:text-ink'
@@ -236,7 +236,7 @@ export function SocialSellingHub() {
               {filteredPosts.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-5 bg-soft/30 rounded-2xl border border-line space-y-3 flex flex-col justify-between hover:border-brand/30 transition-all"
+                  className="p-5 bg-soft/30 rounded-2xl border border-line space-y-3 flex flex-col justify-between hover:border-brand/30 transition-colors"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">

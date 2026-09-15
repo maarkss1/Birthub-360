@@ -16,9 +16,11 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '../../../components/ui/Button';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
+import { Input } from '../../../components/ui/Input';
 import { Pagination } from '../../../components/ui/Pagination';
 import { useContacts } from '../../../hooks/useDatabase';
 import { clientLogger } from '../../../lib/clientLogger';
@@ -188,31 +190,32 @@ export function ContactList() {
 
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Search className="w-4 h-4 text-ink-2 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
+              <Search className="w-4 h-4 text-ink-2 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Input
                 type="text"
                 aria-label="Buscar contatos"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Buscar por nome, cargo, e-mail..."
-                className="bg-surface/90 backdrop-blur-xl border border-line rounded-2xl pl-10 pr-4 py-2.5 text-xs text-ink font-semibold focus:ring-2 focus:ring-brand focus:outline-none shadow-md w-56"
+                className="pl-10 text-xs font-semibold w-56 sm:w-64"
               />
             </div>
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setSelectedContact(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand font-black text-xs px-5 py-2.5 rounded-2xl shadow-lg shadow-brand/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              size="default"
+              className="gap-2"
             >
               <Plus className="w-4 h-4" /> Novo Contato
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Table */}
-        <div className="bg-surface/95 backdrop-blur-2xl rounded-[2rem] border border-line shadow-xl overflow-hidden">
+        <div className="bg-surface/95 backdrop-blur-2xl rounded-2xl border border-line shadow-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
@@ -346,11 +349,11 @@ export function ContactList() {
                         )}
                       </td>
                       <td className="p-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
+                        <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                           <button
                             type="button"
                             onClick={() => setDetailContactId(contact.id)}
-                            className="p-2 rounded-xl bg-surface-2 text-ink-2 border border-line hover:bg-line transition-all cursor-pointer"
+                            className="p-2 rounded-xl bg-surface-2 text-ink-2 border border-line hover:bg-line transition-colors cursor-pointer"
                             title="Ver detalhes"
                             aria-label={`Ver detalhes de ${contact.name}`}
                           >
@@ -360,7 +363,7 @@ export function ContactList() {
                             type="button"
                             onClick={() => handleEnrich(contact.id)}
                             disabled={!!enrichingId}
-                            className="p-2 rounded-xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20 hover:bg-brand/20 transition-all cursor-pointer disabled:opacity-40"
+                            className="p-2 rounded-xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20 hover:bg-brand/20 transition-colors cursor-pointer disabled:opacity-40"
                             title="Validar e enriquecer contato"
                             aria-label={`Validar e enriquecer ${contact.name}`}
                           >
@@ -376,7 +379,7 @@ export function ContactList() {
                               setSelectedContact(contact);
                               setIsFormOpen(true);
                             }}
-                            className="p-2 rounded-xl bg-info/10 text-info-active dark:text-info border border-info/20 hover:bg-info/20 transition-all cursor-pointer"
+                            className="p-2 rounded-xl bg-info/10 text-info-active dark:text-info border border-info/20 hover:bg-info/20 transition-colors cursor-pointer"
                             title="Editar contato"
                             aria-label={`Editar ${contact.name}`}
                           >
@@ -385,7 +388,7 @@ export function ContactList() {
                           <button
                             type="button"
                             onClick={() => handleDelete(contact.id)}
-                            className="p-2 rounded-xl bg-danger/10 text-danger-active dark:text-danger border border-danger/20 hover:bg-danger/20 transition-all cursor-pointer"
+                            className="p-2 rounded-xl bg-danger/10 text-danger-active dark:text-danger border border-danger/20 hover:bg-danger/20 transition-colors cursor-pointer"
                             title="Excluir contato"
                             aria-label={`Excluir ${contact.name}`}
                           >

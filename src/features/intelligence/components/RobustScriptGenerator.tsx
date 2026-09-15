@@ -429,7 +429,7 @@ export function RobustScriptGenerator() {
             type="button"
             onClick={handleGenerate}
             disabled={generating}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-colors disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
           >
             {generating && (
               <motion.div
@@ -480,7 +480,7 @@ export function RobustScriptGenerator() {
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors ${
                     copied
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
                       : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'
@@ -499,7 +499,7 @@ export function RobustScriptGenerator() {
                 <button
                   type="button"
                   onClick={handleDownload}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-colors`}
                 >
                   <Download size={14} /> Baixar Script
                 </button>

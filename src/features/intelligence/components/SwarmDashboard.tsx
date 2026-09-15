@@ -504,7 +504,7 @@ export function SwarmDashboard() {
               {pipelineAgents.map((p) => (
                 <div
                   key={p.key}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-colors ${
                     engagedAgents.has(p.key)
                       ? getAgentBg(p.key, 'done')
                       : 'bg-surface-2 border-line text-ink-2'
@@ -690,7 +690,7 @@ export function SwarmDashboard() {
               value={leadId}
               onChange={(e) => setLeadId(e.target.value)}
               placeholder="Lead ID (opcional) — necessário para o Agente SDR qualificar um lead real do CRM"
-              className="w-full bg-surface-2 border border-line rounded-xl px-4 py-2.5 text-ink text-[13px] font-medium focus:outline-none focus:ring-1 focus:bg-surface transition-all placeholder:text-ink-2 pointer-events-auto"
+              className="w-full bg-surface-2 border border-line rounded-xl px-4 py-2.5 text-ink text-[13px] font-medium focus:outline-none focus:ring-1 focus:bg-surface transition-colors placeholder:text-ink-2 pointer-events-auto"
               disabled={isExecuting}
             />
           </div>
@@ -703,7 +703,7 @@ export function SwarmDashboard() {
                 if (e.key === 'Enter' && !isExecuting && mission.trim()) runSimulation();
               }}
               placeholder="O que você deseja que o Swarm faça? (Clique aqui para digitar)"
-              className={`w-full bg-surface-2 border border-line rounded-2xl pl-6 pr-20 py-5 text-ink text-[16px] font-medium focus:outline-none focus:ring-1 focus:bg-surface transition-all placeholder:text-ink-2 shadow-inner relative z-50 pointer-events-auto focus:border-brand focus:ring-brand/50`}
+              className={`w-full bg-surface-2 border border-line rounded-2xl pl-6 pr-20 py-5 text-ink text-[16px] font-medium focus:outline-none focus:ring-1 focus:bg-surface transition-colors placeholder:text-ink-2 shadow-inner relative z-50 pointer-events-auto focus:border-brand focus:ring-brand/50`}
               disabled={isExecuting}
             />
             {isExecuting ? (
@@ -711,7 +711,7 @@ export function SwarmDashboard() {
                 type="button"
                 onClick={stopMission}
                 aria-label="Cancelar missão"
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-danger-active hover:brightness-110 hover:scale-105 rounded-xl flex items-center justify-center text-white transition-all shadow-lg z-50 pointer-events-auto cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-danger-active hover:brightness-110 hover:scale-105 rounded-xl flex items-center justify-center text-white transition-colors shadow-lg z-50 pointer-events-auto cursor-pointer"
                 title="Cancelar missão"
               >
                 <Square size={16} fill="currentColor" />
@@ -722,7 +722,7 @@ export function SwarmDashboard() {
                 onClick={() => runSimulation()}
                 disabled={!mission.trim()}
                 aria-label="Executar missão"
-                className={`absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-r ${accent.gradient} hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center text-on-brand transition-all shadow-lg z-50 pointer-events-auto cursor-pointer`}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-r ${accent.gradient} hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed rounded-xl flex items-center justify-center text-on-brand transition-colors shadow-lg z-50 pointer-events-auto cursor-pointer`}
               >
                 <Send size={20} className="ml-1" />
               </button>

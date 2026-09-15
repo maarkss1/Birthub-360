@@ -430,7 +430,7 @@ export function CompanyList() {
               <button
                 type="button"
                 onClick={() => setLayoutMode('grid')}
-                className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'grid' ? 'bg-brand-active text-on-brand shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
+                className={`p-2 rounded-xl transition-colors flex items-center gap-1 text-xs font-semibold ${layoutMode === 'grid' ? 'bg-brand-active text-on-brand shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
                 title="Visão em Cards com Logos de Ferramentas"
                 aria-label="Visão em Cards com Logos de Ferramentas"
               >
@@ -440,7 +440,7 @@ export function CompanyList() {
               <button
                 type="button"
                 onClick={() => setLayoutMode('table')}
-                className={`p-2 rounded-xl transition-all flex items-center gap-1 text-xs font-semibold ${layoutMode === 'table' ? 'bg-brand-active text-on-brand shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
+                className={`p-2 rounded-xl transition-colors flex items-center gap-1 text-xs font-semibold ${layoutMode === 'table' ? 'bg-brand-active text-on-brand shadow-md' : 'text-ink/70 dark:text-ink-2 hover:text-ink'}`}
                 title="Visão em Tabela Compacta"
                 aria-label="Visão em Tabela Compacta"
               >
@@ -455,7 +455,7 @@ export function CompanyList() {
                 setSelectedCompany(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-colors shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               Nova Empresa
@@ -472,7 +472,7 @@ export function CompanyList() {
               placeholder="🔎 Buscar por nome, CNPJ, ferramenta (ex: AWS, React, SAP), cidade..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-surface-2 border border-line text-ink placeholder-ink-2 rounded-xl focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all outline-none text-sm"
+              className="w-full pl-11 pr-4 py-2.5 bg-surface-2 border border-line text-ink placeholder-ink-2 rounded-xl focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors outline-none text-sm"
             />
           </div>
           {inputValue && (
@@ -543,7 +543,7 @@ export function CompanyList() {
               return (
                 <div
                   key={company.id}
-                  className={`bg-surface hover:bg-surface-2 border border-line hover:border-brand/40 rounded-3xl p-6 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden ${selectedIds.has(company.id) ? 'ring-2 ring-brand bg-soft' : ''}`}
+                  className={`bg-surface hover:bg-surface-2 border border-line hover:border-brand/40 rounded-3xl p-6 transition-colors duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-2xl flex flex-col justify-between group relative overflow-hidden ${selectedIds.has(company.id) ? 'ring-2 ring-brand bg-soft' : ''}`}
                 >
                   {/* Top card info */}
                   <div className="space-y-4">
@@ -771,7 +771,7 @@ export function CompanyList() {
               type="button"
               onClick={handleBulkEnrich}
               disabled={isBulkProcessing}
-              className="flex items-center gap-2 px-4 py-2 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-400 rounded-full text-xs font-bold transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-400 rounded-full text-xs font-bold transition-colors"
             >
               {isBulkProcessing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

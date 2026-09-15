@@ -97,7 +97,7 @@ export function GitHubTool(_props: { configured: boolean }) {
             id="gh-query"
             type="text"
             placeholder="Ex: nubank, atlasgr..."
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -108,7 +108,7 @@ export function GitHubTool(_props: { configured: boolean }) {
           type="button"
           onClick={handleSearch}
           disabled={isSearching}
-          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-3.5 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>
@@ -169,7 +169,7 @@ export function GitHubTool(_props: { configured: boolean }) {
                     type="button"
                     onClick={() => promoteOrg(org)}
                     disabled={promotingKey === org.login}
-                    className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-60"
+                    className="bg-brand-active text-on-brand px-4 py-2 rounded-xl font-bold text-xs hover:brightness-110 transition-colors flex items-center gap-2 disabled:opacity-60"
                   >
                     {promotingKey === org.login ? (
                       <Loader2 className="animate-spin" size={13} />
