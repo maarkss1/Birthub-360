@@ -22,6 +22,7 @@ import {
   assertAllowedOriginsConfigured,
   applySecurityMiddleware,
 } from './src/bootstrap/security.js';
+import { warnUnconfiguredSecondaryIntegrations } from './src/bootstrap/integrationsHealthCheck.js';
 import { applyRateLimiters } from './src/bootstrap/rateLimiters.js';
 import { mountPreJsonWebhooks } from './src/bootstrap/webhooks.js';
 import {
@@ -42,6 +43,10 @@ import { bootstrapApplicationServices } from './src/bootstrap/appServices.js';
 // Falha rápido no boot, antes de qualquer outra etapa, se a aplicação subiria "saudável" em
 // produção mas rejeitando todo tráfego real por CORS — ver src/bootstrap/security.ts.
 assertAllowedOriginsConfigured();
+
+// Visibilidade (não bloqueante) de integrações secundárias sem credencial configurada — ver
+// src/bootstrap/integrationsHealthCheck.ts.
+warnUnconfiguredSecondaryIntegrations();
 
 async function startServer() {
   const app = express();
