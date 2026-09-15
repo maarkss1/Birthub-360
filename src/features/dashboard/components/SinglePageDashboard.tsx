@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import {
   Activity as ActivityIcon,
   AlertTriangle,
@@ -18,6 +17,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
+import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
 import { ClockCalendarWidget } from '../../../components/ui/ClockCalendarWidget';
 import { LiveStatsWidget } from '../../../components/ui/LiveStatsWidget';
 import { MetricSkeleton } from '../../../components/ui/Skeleton';
@@ -127,7 +128,10 @@ export function SinglePageDashboard() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-1 flex-col items-center overflow-y-auto bg-transparent p-4 font-sans md:p-8">
+    <main
+      className="relative flex min-h-screen flex-1 flex-col items-center overflow-y-auto bg-transparent px-4 py-6 font-sans sm:px-6 md:px-8 md:py-10"
+      aria-labelledby="dashboard-title"
+    >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-72 overflow-hidden"
         aria-hidden="true"
@@ -137,59 +141,70 @@ export function SinglePageDashboard() {
         />
       </div>
 
-      <div className="relative z-[1] w-full max-w-[92rem] space-y-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <div className="relative z-[1] w-full max-w-[92rem] space-y-6 lg:space-y-8">
+        <header className="flex flex-col gap-5 border-b border-line pb-6 md:flex-row md:items-end md:justify-between">
           <div data-testid="dashboard-greeting">
             <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-brand-ink dark:text-brand">
               {todayLabel}
             </p>
-            <h1 className="text-xl font-black tracking-tight text-ink md:text-2xl">
+            <h1 id="dashboard-title" className="text-h2 font-bold tracking-tight text-ink">
               {greeting()}, {currentUser?.name?.split(' ')[0] || 'Usuário'}
             </h1>
-            <p className="mt-0.5 text-xs text-ink-2">
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-2">
               Resumo comercial de hoje · playbook ativo: {playbookMeta.label}.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <button
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button
               type="button"
               onClick={cycleMode}
               title={`Modo Atual: ${mode}. Clique para alternar.`}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-line bg-surface text-xs font-semibold text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+              variant="outline"
+              size="sm"
+              aria-label={`Modo de experiência atual: ${mode}. Alternar modo.`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-brand" />
+              <Sparkles className="h-3.5 w-3.5 text-brand-ink dark:text-brand" aria-hidden="true" />
               <span>
                 Modo: <strong className="text-ink">{mode}</strong>
               </span>
-            </button>
-            <motion.button
+            </Button>
+            <Button
               type="button"
               onClick={() => goTo('/app/prospect')}
-              whileHover={{ y: -1 }}
-              whileTap={{ y: 0, scale: 0.985 }}
-              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-brand/25 bg-brand-active px-3 py-1.5 text-xs font-bold text-on-brand shadow-[0_10px_24px_-15px_color-mix(in_srgb,var(--brand)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.18)]"
+              size="sm"
+              className="group gap-1.5"
             >
-              <Radar className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110" />
+              <Radar
+                className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110"
+                aria-hidden="true"
+              />
               Nova varredura
-            </motion.button>
-            <motion.button
+            </Button>
+            <Button
               type="button"
               onClick={() => goTo('/app/crm')}
-              whileHover={{ y: -1 }}
-              whileTap={{ y: 0, scale: 0.985 }}
-              className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-bold text-ink shadow-card transition-colors hover:border-brand/30 hover:bg-surface-2"
+              variant="outline"
+              size="sm"
+              className="group gap-1.5 bg-surface shadow-card"
             >
-              <KanbanSquare className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110" />
+              <KanbanSquare
+                className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110"
+                aria-hidden="true"
+              />
               Abrir pipeline
-            </motion.button>
+            </Button>
           </div>
-        </div>
+        </header>
 
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(20rem,0.8fr)] xl:items-stretch">
           <GlowChart data={dashboard?.monthly ?? []} error={dashboardError} />
 
           {statsError ? (
-            <div className="flex min-h-[16rem] flex-col justify-between rounded-[1.6rem] border border-critical/25 bg-critical/10 p-5 shadow-card">
+            <Card
+              className="flex min-h-[16rem] flex-col justify-between border-critical/25 bg-critical/10"
+              padding="lg"
+              role="alert"
+            >
               <div className="flex items-start gap-3 text-sm text-critical">
                 <div className="rounded-xl border border-critical/20 bg-critical/10 p-2.5">
                   <AlertTriangle className="h-5 w-5" />
@@ -201,16 +216,22 @@ export function SinglePageDashboard() {
                   </p>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => refetchStats()}
-                className="self-start text-xs font-bold text-critical hover:underline"
+                variant="outline"
+                size="sm"
+                className="self-start border-critical/30 text-critical"
               >
                 Tentar novamente
-              </button>
-            </div>
+              </Button>
+            </Card>
           ) : statsLoading || !stats ? (
-            <div className="min-h-[16rem] animate-pulse rounded-[1.6rem] border border-line bg-surface-2/60 shadow-card" />
+            <div
+              className="min-h-[16rem] animate-pulse rounded-card-lg border border-line bg-surface-2/60 shadow-card"
+              aria-label="Carregando indicadores"
+              role="status"
+            />
           ) : (
             <DeferredRevenueSignalOrb
               conversionRate={stats.conversionRate}
@@ -242,7 +263,7 @@ export function SinglePageDashboard() {
         <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
           <RealtimeFeed />
 
-          <div className="rounded-[1.5rem] border border-line bg-surface p-5 shadow-[0_24px_55px_-40px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.055)]">
+          <Card padding="lg" className="h-full">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-ink dark:text-brand">
@@ -250,30 +271,36 @@ export function SinglePageDashboard() {
                 </p>
                 <h3 className="mt-1 text-sm font-black text-ink">Agenda de hoje</h3>
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => goTo('/app/activities')}
-                className="text-xs font-bold text-brand-ink hover:underline dark:text-brand"
+                variant="link"
+                size="sm"
+                className="h-auto px-0"
               >
                 Ver agenda completa
-              </button>
+              </Button>
             </div>
 
             {agendaLoading ? (
-              <p className="text-sm text-ink-2">Carregando compromissos...</p>
+              <p className="text-sm text-ink-2" role="status" aria-live="polite">
+                Carregando compromissos...
+              </p>
             ) : agendaError ? (
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 text-sm text-critical">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
                   Não foi possível carregar a agenda de hoje.
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={() => refetchAgenda()}
-                  className="shrink-0 text-xs font-bold text-critical hover:underline"
+                  variant="link"
+                  size="sm"
+                  className="h-auto shrink-0 px-0 text-critical"
                 >
                   Tentar novamente
-                </button>
+                </Button>
               </div>
             ) : sortedAgenda.length === 0 ? (
               <p className="text-sm text-ink-2">Nenhum compromisso agendado para hoje.</p>
@@ -282,7 +309,7 @@ export function SinglePageDashboard() {
                 {sortedAgenda.map((a) => (
                   <div
                     key={a.id}
-                    className="group flex items-start gap-3 rounded-xl border border-line bg-surface-2/75 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/25 hover:shadow-card"
+                    className="group flex items-start gap-3 rounded-card border border-line bg-surface-2/75 p-4 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/25 hover:shadow-card"
                   >
                     <div className="shrink-0 rounded-lg border border-line bg-surface p-2 text-brand shadow-sm transition-transform duration-200 group-hover:scale-105">
                       {TYPE_ICONS[a.type?.toLowerCase()] ?? <ActivityIcon className="h-4 w-4" />}
@@ -303,7 +330,7 @@ export function SinglePageDashboard() {
                 ))}
               </div>
             )}
-          </div>
+          </Card>
         </div>
 
         <TeamRankingWidget
@@ -322,6 +349,6 @@ export function SinglePageDashboard() {
 
         <LiveStatsWidget />
       </div>
-    </div>
+    </main>
   );
 }
