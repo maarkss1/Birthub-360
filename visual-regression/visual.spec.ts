@@ -37,7 +37,7 @@ test.describe('Visual Regression', () => {
       test('Login', async ({ page }) => {
         await setupDeterministicState(page, theme);
         await page.goto('/login');
-        await expect(page.getByRole('heading', { name: /entrar/i })).toBeVisible();
+        await waitForAppReady(page);
         await expect(page).toHaveScreenshot(`login-${theme}.png`, SCREENSHOT_OPTIONS);
       });
 
