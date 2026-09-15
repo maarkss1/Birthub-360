@@ -1,5 +1,5 @@
-import { prisma } from '../../../lib/prisma.js';
 import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import { NegotiatorDraftAgent } from '../agents/negotiatorDraft.agent.js';
 import { searchPlaybookTool } from '../tools/playbookTool.js';
 
@@ -24,10 +24,7 @@ export interface NegotiatorDraft {
 /** Última mensagem INBOUND (o lado remoto escreveu por último) é quem define o número de
  * destino da réplica — evita responder a um número errado quando o lead trocou de contato
  * recentemente. Retorna `null` quando não há canal de WhatsApp ativo para este lead. */
-async function findReplyToNumber(
-  organizationId: string,
-  leadId: string,
-): Promise<string | null> {
+async function findReplyToNumber(organizationId: string, leadId: string): Promise<string | null> {
   const lastInbound = await prisma.whatsAppMessage.findFirst({
     where: { organizationId, leadId, direction: 'inbound' },
     orderBy: { receivedAt: 'desc' },
@@ -58,7 +55,10 @@ async function loadPlaybookGuidance(query: string): Promise<string> {
     const result = await searchPlaybookTool.invoke({ query });
     return typeof result === 'string' ? result : String(result);
   } catch (error) {
-    logger.warn({ err: error }, 'Negociador de IA: falha ao consultar o playbook, seguindo sem ele.');
+    logger.warn(
+      { err: error },
+      'Negociador de IA: falha ao consultar o playbook, seguindo sem ele.',
+    );
     return 'Playbook indisponível nesta rodada — responda só com o que está no histórico da conversa.';
   }
 }
@@ -80,7 +80,10 @@ export async function draftNegotiatorReply(
     return null;
   }
 
-  const playbookQuery = [context.intent, ...context.objections].filter(Boolean).join(' ') || context.summary || 'objeção comercial';
+  const playbookQuery =
+    [context.intent, ...context.objections].filter(Boolean).join(' ') ||
+    context.summary ||
+    'objeção comercial';
   const [conversation, playbookGuidance] = await Promise.all([
     loadRecentConversation(context.organizationId, context.leadId),
     loadPlaybookGuidance(playbookQuery),
@@ -89,7 +92,9 @@ export async function draftNegotiatorReply(
   const mission = [
     context.leadFacts,
     `Intenção detectada: ${context.intent ?? 'não classificada'}; urgência: ${context.urgency ?? 'não classificada'}.`,
-    context.objections.length > 0 ? `Objeções levantadas pelo lead: ${context.objections.join(', ')}.` : null,
+    context.objections.length > 0
+      ? `Objeções levantadas pelo lead: ${context.objections.join(', ')}.`
+      : null,
     context.summary ? `Resumo da conversa: ${context.summary}` : null,
     '--- Histórico recente da conversa (mais antiga primeiro) ---',
     conversation,

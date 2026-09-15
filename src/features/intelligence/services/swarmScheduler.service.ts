@@ -507,7 +507,10 @@ export async function runSwarmScheduler(
         });
         result.proposed++;
 
-        if (candidate.signal?.channel === 'whatsapp' && !CLOSED_STATUSES.includes(candidate.status)) {
+        if (
+          candidate.signal?.channel === 'whatsapp' &&
+          !CLOSED_STATUSES.includes(candidate.status)
+        ) {
           const negotiatorProposed = await maybeProposeNegotiatorReply(candidate, organizationId);
           if (negotiatorProposed) result.negotiatorDraftsProposed++;
         }
