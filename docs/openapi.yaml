@@ -1037,6 +1037,70 @@ paths:
         '204':
           description: Removida
 
+  /companies/dedup/preview:
+    get:
+      tags: [Company Dedup]
+      summary: Lista os grupos de empresas duplicadas (mesmo CNPJ ou nome fantasia) do tenant, somente leitura
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      groups:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key: { type: string }
+                            matchedBy: { type: string, enum: [cnpj, tradeName] }
+                            survivorId: { type: string }
+                            duplicateIds: { type: array, items: { type: string } }
+                            companies:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id: { type: string }
+                                  legalName: { type: string }
+                                  tradeName: { type: string }
+                                  cnpj: { type: string, nullable: true }
+                                  enrichmentStatus: { type: string }
+                                  createdAt: { type: string, format: date-time }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /companies/dedup/merge:
+    post:
+      tags: [Company Dedup]
+      summary: >-
+        Mescla todos os grupos de empresas duplicadas por CNPJ/nome fantasia: mantém a empresa
+        sobrevivente (priorizando enriquecida e mais antiga), reatribui Contact/Lead/Note/
+        Attachment/EnrichmentLog/CrmCommercialDocument/CopilotoConversation e remove as demais
+        (soft-delete)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      merged: { type: integer }
+                      groups: { type: integer }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   /leads/dedup/preview:
     get:
       tags: [Lead Dedup]

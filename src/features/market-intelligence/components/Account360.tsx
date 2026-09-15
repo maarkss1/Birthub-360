@@ -19,6 +19,7 @@ import { Skeleton } from '../../../components/ui/Skeleton.js';
 import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
 import { api } from '../../../lib/api.js';
 import { toast } from '../../../lib/toast.js';
+import { accountSignalTypeLabel } from '../domain/accountSignalTaxonomy.js';
 import { CompanyBranchesView } from './CompanyBranchesView.js';
 import { VisualOrgChart } from './VisualOrgChart.js';
 
@@ -528,7 +529,11 @@ function AccountRecordCard({
 function pickTitle(tab: TabId, item: Record<string, unknown>): string {
   switch (tab) {
     case 'signals':
-      return (item.title as string) || (item.type as string) || 'Sinal';
+      return (
+        (item.title as string) ||
+        (typeof item.type === 'string' ? accountSignalTypeLabel(item.type) : null) ||
+        'Sinal'
+      );
     case 'decision-makers': {
       const contact = item.contact as Record<string, unknown> | null | undefined;
       return (contact?.name as string) || (item.buyingRole as string) || 'Decisor';
