@@ -21,11 +21,15 @@ const ORG = `test-backfill-pii-org-${Date.now()}`;
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 1 });
 
 function runBackfill(extraArgs: string[] = []): string {
-  return execFileSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['tsx', 'scripts/security/backfill-contact-pii.ts', ...extraArgs], {
-    cwd: process.cwd(),
-    env: process.env,
-    encoding: 'utf8',
-  });
+  return execFileSync(
+    process.execPath,
+    ['--import', 'tsx', 'scripts/security/backfill-contact-pii.ts', ...extraArgs],
+    {
+      cwd: process.cwd(),
+      env: process.env,
+      encoding: 'utf8',
+    },
+  );
 }
 
 beforeAll(async () => {
