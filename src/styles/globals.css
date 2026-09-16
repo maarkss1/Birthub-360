@@ -97,168 +97,71 @@
 }
 
 :root {
-  /* Paleta "Strategic Command Center" (09/2026, redesenho pedido explicitamente
-     pelo usuário — substitui a âncora Obsidian/Snow White). Regra nova:
-     NENHUM neutro é preto ou branco puro — todo fundo/texto neutro carrega um
-     matiz das cinco cores da marca (dourado, roxo, azul, vermelho, rosa). Tema
-     claro parte de um branco rosado (Blossom White); o escuro parte de um azul
-     marinho profundo (Deep Navy) — ver bloco `.dark` abaixo.
-
-     Contraste verificado pela fórmula de luminância relativa do WCAG
-     (calculado, não estimado), tema claro:
-       --ink   (#174A9C) 7.85:1 contra --bg/--surface
-       --ink-2 (#6D28D9) 6.62:1 contra --bg/--surface
-     Ambos com folga sobre o mínimo AA (4.5:1). */
-  --bg: #fff4f9;
-  --surface: #fff1f7;
-  --surface-2: #eef4ff;
-  --surface-subtle: #f8f5fb;
+  /* Paleta "Minimalista Monochrome & Âmbar" (Preto puro / Titânio / Âmbar Ouro) */
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-subtle: #f8fafc;
   --surface-elevated: #ffffff;
-  --surface-interactive: #f2f5ff;
-  --overlay: rgba(6, 26, 58, 0.52);
-  --ink: #174a9c;
-  --ink-2: #6d28d9;
-  --line: rgba(124, 58, 237, 0.18);
-  /* Antique Gold — cor de ação primária, inalterada nesta rodada. Ouro é uma
-     cor CLARA: texto branco em cima mede 2.10:1 e é proibido — use
-     `text-on-brand` (ver --on-brand abaixo), que mede 8.21:1. */
-  --brand: #d4af37;
-  /* Gold Soft — também usado como --ink do tema escuro (ver `.dark` abaixo):
-     no escuro, o texto primário É o ouro suave, não um neutro claro. */
-  --brand-2: #f0d77b;
-  /* Cor de texto/ícone sobre qualquer superfície de marca sólida (bg-brand,
-     bg-brand-2, from-brand…). Deep Navy sobre ouro mede 8.21:1. NÃO usar
-     text-white sobre marca. */
-  --on-brand: #061a3a;
-  /* Deep Iris — "roxo" da nova paleta. Halos, indicadores, órbitas, realces de
-     dado — não é fundo de botão sólido com texto em cima. Upgrade de #5B21B6
-     para um violeta mais vívido, alinhado à nova direção. */
-  --iris: #7c3aed;
-  /* "Azul" da nova paleta — upgrade de #0065D2 para um azul mais vívido. */
-  --orbit-blue: #1677ff;
-  /* "Vermelho" da nova paleta — urgência/estado ao vivo. Substitui o antigo
-     --pulse claro (#C2255C) como o vermelho oficial da marca. */
-  --red: #e11d48;
-  /* "Rosa" da nova paleta — quinta cor, nova nesta rodada. Usada em halos,
-     bordas e no gradiente de assinatura (dourado→vermelho→rosa→íris→azul),
-     nunca como fundo de superfície com texto em cima. */
-  --pink: #db2777;
-  --warn: #ffc500;
-  --ok: #0f9d64;
-  /* Indireção pro --color-info do @theme poder ser sobrescrito por tema (mesmo padrão de
-     --warn/--ok acima e --critical mais abaixo) — sem isso, `.dark { --color-info: ... }` perderia
-     pra `--color-info: #3b82f6` gerado pelo bloco `@theme` (que vem depois no arquivo e empata em
-     especificidade com `.dark`, então venceria por ordem de declaração). No claro é o hex cru
-     (--info-active já escurece pra badge "soft", ver comentário abaixo); no escuro é sobrescrito
-     com uma versão clareada — ver o comentário em `.dark` abaixo pro porquê. */
+  --surface-interactive: #e2e8f0;
+  --overlay: rgba(15, 23, 42, 0.6);
+  --ink: #0f172a;
+  --ink-2: #475569;
+  --line: rgba(148, 163, 184, 0.25);
+  --brand: #d97706;
+  --brand-2: #f59e0b;
+  --on-brand: #090a0f;
+  --iris: #d97706;
+  --orbit-blue: #3b82f6;
+  --red: #ef4444;
+  --pink: #f59e0b;
+  --warn: #f59e0b;
+  --ok: #10b981;
   --info: #3b82f6;
-  --soft: rgba(212, 175, 55, 0.12);
-  /* --- Acentos de interação (proposta "Neon Tokyo × Cosmic Gold", catálogo visual) ---
-     --accent-violet/--accent-cyan são NOVOS tokens dedicados a acentos de botão/interação — não
-     são um alias de --iris/--orbit-blue. No claro valem literalmente o mesmo hex (reaproveita o
-     par já auditado, sem inventar cor nova); no escuro (.dark abaixo) divergem para uma versão mais
-     vívida, pensada pra glow. --iris/--orbit-blue continuam INTOCADOS em todo o resto do produto
-     (RevenueSignalOrb, LiveStatsWidget, BrandOrb, HubScreen, WelcomeScreen, ResetPasswordScreen,
-     MainLayout) — mudar o valor deles quebraria esses halos sem revisão visual. --pulse é o 5º
-     acento, novo em ambos os temas: indicadores "ao vivo"/urgência, nunca substituto do ouro. */
-  --accent-violet: var(--iris);
+  --soft: rgba(217, 119, 6, 0.1);
+  --accent-violet: var(--brand);
   --accent-cyan: var(--orbit-blue);
-  --pulse: #c2255c;
-  /* Glow discreto no claro — "neon só no escuro" (regra do brief). Mesma fórmula de
-     --shadow-glow-brand acima (20%, blur 15px), só trocando a cor de base. */
-  --shadow-glow-accent-violet-value: 0 0 15px -3px
-    color-mix(in srgb, var(--accent-violet) 20%, transparent);
-  --shadow-glow-accent-cyan-value: 0 0 15px -3px
-    color-mix(in srgb, var(--accent-cyan) 20%, transparent);
+  --pulse: #d97706;
+  --shadow-glow-accent-violet-value: 0 0 15px -3px color-mix(in srgb, var(--accent-violet) 20%, transparent);
+  --shadow-glow-accent-cyan-value: 0 0 15px -3px color-mix(in srgb, var(--accent-cyan) 20%, transparent);
   --shadow-glow-pulse-value: 0 0 15px -3px color-mix(in srgb, var(--pulse) 20%, transparent);
-  /* Vermelho de estado crítico/risco (Comercial Inteligente: Centro de Decisão, Alertas, drill-down
-     de negócios) — precisa ser redefinido por tema porque nenhum hex único passa 4.5:1 (WCAG AA)
-     contra --surface nos dois temas ao mesmo tempo. Achado real via QA em navegador (contraste
-     medido, não estimado): #d03b3b passa no claro (4.80:1) mas falha no escuro (3.86:1) — ver
-     `.claude/PILOTS.md`, adendo "Centro de Decisão". Valor do escuro reaproveita o mesmo
-     `--color-danger` (#ef4444) já definido no bloco `@theme` (4.93:1 contra a superfície escura),
-     em vez de inventar uma cor nova.*/
-  /* Recalibrado 09/2026 (achado real do axe-core na paleta "Strategic Command Center": PR #481,
-     `.text-critical` do Sidebar contra o novo `--surface` claro #FFF1F7 caía pra 4.38:1, abaixo do
-     mínimo AA). 10% preto (mesma fórmula color-mix já usada no resto do arquivo) recupera margem:
-     5.21:1 contra a nova superfície clara — sem precisar reabrir os 2 casos originais que já
-     passavam (8.7:1 cru contra --surface antiga, agora ~7.9:1, ainda com folga). Conferido de novo
-     09/2026 (PR #512, mesmo achado do lado escuro abaixo) contra o novo `--surface-elevated` claro
-     #FFFFFF: 5.71:1 calculado — mais claro que `--surface`, então contraste só melhora; nenhum
-     ajuste necessário no claro, só no `.dark` abaixo. */
-  --critical: color-mix(in srgb, #d03b3b 90%, black);
-  /* --critical acima já foi calibrado pra passar 4.5:1 cru contra --surface sólida (comentário
-     acima) — mas isso não cobre o padrão de badge "soft" (bg-critical/15 text-critical, usado em
-     DealsGrid.tsx/CompareBar.tsx pro estágio "Perdido"/Δ negativo): a mistura de 15% de --critical
-     sobre --surface-2 mede só 3.48:1 no claro e 3.93:1 no escuro (calculado, mesma fórmula de
-     luminância relativa do WCAG) — abaixo do mínimo, porque --critical não tinha o par "-active"
-     que --ok/--warn já ganharam para exatamente este cenário. Mistura de sentido oposto por tema
-     (escurece no claro, clareia no escuro) porque a superfície de fundo muda de direção entre os
-     temas — mesmo raciocínio de --ok-active/--warn-active, só que --critical já era redefinido por
-     tema (ao contrário de --ok/--warn), então --critical-active também precisa ser. */
+  --critical: color-mix(in srgb, #ef4444 90%, black);
   --critical-active: color-mix(in srgb, var(--critical) 55%, black);
-  /* Mesmo problema do --critical acima, pros badges "soft" (bg-ok/15 text-ok, bg-info/15
-     text-info — Team.tsx, QualificationMatrixPage.tsx, ColdCallStatusCard.tsx etc.): o texto
-     saturado direto sobre --surface/--surface-2 claras cai abaixo de 4.5:1 (achado real do
-     axe-core, tests/e2e/accessibility.spec.ts — ex.: "Administrador" com --color-info cru dava
-     3.06:1 no claro). --color-ok cru já passa 4.5:1 contra as superfícies escuras (~5-7:1
-     medido), então só o tema claro precisa da versão mais escura — color-mix escala os 3 canais
-     igualmente, sem precisar hardcodear um hex novo por cor. --color-info cru NÃO passa contra o
-     composto bg-info/15 no escuro (só 4.25:1 — achado posterior do mesmo teste, telas
-     "Prospecção", "Integrações" e "Equipe" falhando; a suposição acima, de que --color-info cru já
-     passava no escuro, valia só contra --surface/--surface-2 sólidas, não contra o composto
-     translúcido do badge): ver a correção de --info no bloco `.dark` abaixo, que --info-active (2
-     linhas abaixo) herda automaticamente por já referenciar `var(--color-info)`. */
   --ok-active: color-mix(in srgb, var(--color-ok) 70%, black);
-  /* --warn (#FFC500) cru contra --surface clara mede 1.59:1 (fórmula de luminância relativa do
-     WCAG, calculado — não estimado) — pior ainda que o --ok original (3.48:1), bem abaixo do
-     mínimo AA (4.5:1). PILOTS.md (Piloto 003, adendo Centro de Decisão) já tinha achado isso e
-     registrado como "requer decisão e sessão própria". Mesmo mix de 55% já usado por
-     --warning-active (cor irmã no sistema "Sinal", --color-warning) → 4.91:1, dentro da margem.
-     --warn cru já passa contra a superfície escura (11.70:1) — só o tema claro precisa da
-     versão escurecida, mesmo raciocínio do --ok-active acima. */
   --warn-active: color-mix(in srgb, var(--warn) 55%, black);
   --info-active: color-mix(in srgb, var(--color-info) 65%, black);
   --success-active: color-mix(in srgb, var(--color-success) 55%, black);
   --warning-active: color-mix(in srgb, var(--color-warning) 55%, black);
   --danger-active: color-mix(in srgb, var(--color-danger) 65%, black);
-  --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 28px -16px rgba(0, 0, 0, 0.22);
-  /* Elevação de hover do Card — mesma curva de profundidade de --shadow-card-value, um degrau mais
-     forte. Existe pra Card.tsx parar de escurecer o hover com um rgba solto (só calibrado pro tema
-     claro, invisível/errado no escuro) e passar a reagir a tema como o resto do design system. */
-  --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.28);
-  --shadow-nav-value: 12px 0 34px -28px rgba(26, 21, 19, 0.45);
+  --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 28px -16px rgba(0, 0, 0, 0.12);
+  --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.18);
+  --shadow-nav-value: 12px 0 34px -28px rgba(0, 0, 0, 0.25);
   --shadow-nav-active-value: 0 10px 26px -14px color-mix(in srgb, var(--brand) 52%, black);
   --radius-nav-item-value: 10px;
   --font-brand-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  /* Bodoni Moda é a família de display do brand book (p. 06) — um Didone de alto
-     contraste, papel bem diferente do Montserrat que ocupava este token antes
-     (uma grotesca, praticamente idêntica ao --font-brand-sans, de modo que
-     `font-display` e `font-sans` renderizavam igual). Agora as duas famílias são
-     de fato distintas: serif editorial para título, sans para interface. Como
-     Bodoni Moda é serifada e de contraste alto, ela é para DISPLAY — não use
-     `font-display` em corpo de texto, tabela ou rótulo pequeno. */
   --font-brand-display: "Sora", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {
-  /* Deep Navy — âncora do tema escuro na paleta "Strategic Command Center"
-     (ver comentário no :root). Nada de preto puro: o fundo mais profundo do
-     produto é um azul-marinho saturado, não #000.
-     Contraste verificado (WCAG, calculado):
-       --ink   (#F0D77B, = --brand-2) 12.09:1 contra --bg, 11.5:1 contra --surface
-       --ink-2 (#79B2FF)               7.92:1 contra --bg,  6.57:1 contra --surface-2 */
-  --bg: #061a3a;
-  --surface: #111b49;
-  --surface-2: #18265b;
-  --surface-subtle: #0c1740;
-  --surface-elevated: #1b2b64;
-  --surface-interactive: #20316b;
-  --overlay: rgba(2, 8, 23, 0.76);
-  --ink: var(--brand-2);
-  --ink-2: #79b2ff;
-  --line: rgba(240, 215, 123, 0.16);
-  --soft: rgba(212, 175, 55, 0.16);
+  /* Paleta "Minimalista Monochrome & Âmbar" - Escuro */
+  --bg: #090a0f;
+  --surface: #111318;
+  --surface-2: #171920;
+  --surface-subtle: #0d0f14;
+  --surface-elevated: #1c1f28;
+  --surface-interactive: #232733;
+  --overlay: rgba(0, 0, 0, 0.82);
+  --ink: #f8fafc;
+  --ink-2: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --brand: #f59e0b;
+  --brand-2: #fbbf24;
+  --on-brand: #090a0f;
+  --iris: #f59e0b;
+  --orbit-blue: #60a5fa;
+  --red: #ef4444;
+  --pink: #f59e0b;
+  --soft: rgba(245, 158, 11, 0.14);
   /* Versões vívidas do vermelho/rosa para glow sobre superfície escura — mesmo padrão de
      --accent-violet/--accent-cyan/--pulse abaixo. */
   --red: #ff3158;

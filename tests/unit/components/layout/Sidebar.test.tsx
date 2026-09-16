@@ -39,25 +39,25 @@ function renderSidebar(role: string) {
 describe('Sidebar — visibilidade de Automações/Integrações por papel', () => {
   it('GESTOR vê Automações e Integrações (permissão real de gerenciar, per backend), mas não Equipe/Consumo de IA', () => {
     renderSidebar('GESTOR');
-    expect(screen.getByRole('button', { name: /Automações/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Integrações/ })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^Equipe$/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Consumo de IA/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Regras & Automações/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Conexões & APIs/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Usuários & Permissões/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Custos & Créditos de IA/ })).not.toBeInTheDocument();
   });
 
   it('ADMIN vê os quatro itens administrativos', () => {
     renderSidebar('ADMIN');
-    expect(screen.getByRole('button', { name: /Automações/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Integrações/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Equipe/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Consumo de IA/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Regras & Automações/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Conexões & APIs/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Usuários & Permissões/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Custos & Créditos de IA/ })).toBeInTheDocument();
   });
 
   it('CLOSER não vê nenhum dos quatro itens administrativos', () => {
     renderSidebar('CLOSER');
-    expect(screen.queryByRole('button', { name: /Automações/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Integrações/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Equipe/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Consumo de IA/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Regras & Automações/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Conexões & APIs/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Usuários & Permissões/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Custos & Créditos de IA/ })).not.toBeInTheDocument();
   });
 });

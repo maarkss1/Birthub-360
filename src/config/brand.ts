@@ -37,27 +37,26 @@ export const BRAND = {
   /** Valores (brand book, p. 10). Em inglês no original. */
   values: ['Innovation', 'Data Intelligence', 'Efficiency', 'Scalability'] as const,
   colors: {
-    /** Antique Gold — cor primária: valor, foco e assinatura. Inalterada na rodada 09/2026. */
-    brand: '#D4AF37',
-    /** Gold Soft — segundo ponto da rampa metálica do logotipo; também o --ink do tema escuro. */
-    brandAccent: '#F0D77B',
-    /** Deep Navy — âncora do tema escuro (substitui Obsidian/Midnight; nunca preto puro, 09/2026). */
-    obsidian: '#061A3A',
-    /** Alias de `obsidian` para código legado que ainda lê `midnight` — mesmo valor. */
-    midnight: '#061A3A',
-    /** Deep Iris — "roxo" da paleta. Upgrade 09/2026, mais vívido. */
-    iris: '#7C3AED',
-    /** Orbit Blue — "azul" da paleta. Upgrade 09/2026, mais vívido. */
-    orbitBlue: '#1677FF',
-    /** "Vermelho" da paleta — novo em 09/2026. */
-    red: '#FF3158',
-    /** "Rosa" da paleta — novo em 09/2026, quinta cor. */
-    pink: '#FF4FA3',
-    /** Alias de `blossom` para código legado que ainda lê `snow` — âncora do tema claro agora é
-     *  rosada, nunca branco puro (ver `blossom` abaixo). */
-    snow: '#FFF4F9',
-    /** Blossom White — âncora do tema claro (substitui Snow White, 09/2026). */
-    blossom: '#FFF4F9',
+    /** Warm Amber Gold — cor primária de destaque. */
+    brand: '#F59E0B',
+    /** Amber Soft — segundo ponto da rampa metálica do logotipo. */
+    brandAccent: '#FBBF24',
+    /** Deep Carbon / Titanium — âncora do tema escuro. */
+    obsidian: '#090A0F',
+    /** Alias de `obsidian`. */
+    midnight: '#090A0F',
+    /** Amber Highlight. */
+    iris: '#F59E0B',
+    /** Orbit Blue. */
+    orbitBlue: '#3B82F6',
+    /** Coral Red. */
+    red: '#EF4444',
+    /** Amber Pink. */
+    pink: '#F59E0B',
+    /** Snow White. */
+    snow: '#F8FAFC',
+    /** Pure / Slate Light Anchor. */
+    blossom: '#F8FAFC',
   },
   /**
    * Canais de atendimento exibidos na tela de entrada (`WelcomeScreen`).
