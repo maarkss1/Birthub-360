@@ -26,6 +26,12 @@ npm run lint:architecture:baseline # regenera .dependency-cruiser-known-violatio
 `lint:architecture` roda `depcruise` com `--ignore-known .dependency-cruiser-known-violations.json`
 — ver "Mecanismo de ratchet" abaixo.
 
+O projeto fixa TypeScript 6.0.3 para preservar a Compiler API exigida pelo
+dependency-cruiser 18.2.0. Com TypeScript 7.0.2, o comando retornava sucesso após analisar
+somente 61 módulos, ignorando fontes TypeScript. A configuração agora interrompe a execução
+se essa API estiver ausente; atualizar o compilador exige confirmar novamente a análise TS/TSX.
+Essa escolha afeta a ferramenta de desenvolvimento, sem mudar as dependências de produção.
+
 ## As 5 regras
 
 ### 1. `no-circular` — proibido qualquer ciclo de import
@@ -47,6 +53,11 @@ vez, na ordem que `server.ts` define — não é uma API de propósito geral. Co
 (branch com ITEM-07 mergeado): hoje só `server.ts` e o próprio `src/bootstrap/routes.ts` (que chama
 outros `bootstrap/*`) importam daqui. **0 violações no baseline** — a regra nasce green e qualquer
 import futuro de fora quebra o CI imediatamente.
+
+O diagnóstico compartilhado de integrações secundárias vive em
+`src/lib/integrationsHealthCheck.ts`: o worker importa essa biblioteca diretamente e o
+bootstrap mantém um reexport para o servidor. Isso corrige o import do worker que a análise
+incompleta com TypeScript 7 havia deixado passar, sem criar exceção à regra ou à baseline.
 
 ### 3. `not-to-ai-gateway-internals-from-outside` — `src/lib/ai/gateway/**` só é importado de dentro de `src/lib/ai/`
 

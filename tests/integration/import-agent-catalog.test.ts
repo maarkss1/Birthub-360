@@ -193,9 +193,13 @@ describe('scripts/import-agent-catalog.ts — PROMPT 2 (Birth Hub 360)', () => {
         role: 'ADMIN',
       },
     });
-    await runAgentCatalogImport();
-    const reloaded = await prisma.user.findUnique({ where: { id: admin.id } });
-    expect(reloaded?.role).toBe('ADMIN');
-    await prisma.user.delete({ where: { id: admin.id } });
-  });
+    try {
+      await runAgentCatalogImport();
+      const reloaded = await prisma.user.findUnique({ where: { id: admin.id } });
+      expect(reloaded?.role).toBe('ADMIN');
+    } finally {
+      await prisma.user.delete({ where: { id: admin.id } });
+    }
+    // One full catalog import performs hundreds of sequential upserts, as above.
+  }, 15_000);
 });

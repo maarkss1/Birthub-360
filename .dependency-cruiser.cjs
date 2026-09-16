@@ -16,6 +16,18 @@
 // --output-type dot src server.ts worker.ts | dot -T svg > /tmp/deps.svg` (requer graphviz local,
 // não faz parte do gate de CI).
 
+// dependency-cruiser 18 requires the legacy Compiler API. TypeScript 7 can make
+// the CLI silently scan only JavaScript and still exit successfully.
+const typescript = require('typescript');
+if (
+  typeof typescript.transpileModule !== 'function' ||
+  typeof typescript.preProcessFile !== 'function'
+) {
+  throw new Error(
+    'Architecture gate requires the TypeScript Compiler API. Install the pinned dependencies before running it.',
+  );
+}
+
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   forbidden: [

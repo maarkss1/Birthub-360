@@ -264,7 +264,7 @@ import { runEnrichmentCascade } from '../services/enrichmentCascade.service.js';
 const ENRICH_CASCADE_QUEUE_PING_TIMEOUT_MS = 3_000;
 
 async function isEnrichCascadeQueueReachable(): Promise<boolean> {
-  let timeoutHandle: NodeJS.Timeout;
+  let timeoutHandle: NodeJS.Timeout | undefined;
   const timeout = new Promise<false>((resolve) => {
     timeoutHandle = setTimeout(() => resolve(false), ENRICH_CASCADE_QUEUE_PING_TIMEOUT_MS);
   });
@@ -273,7 +273,9 @@ async function isEnrichCascadeQueueReachable(): Promise<boolean> {
   } catch {
     return false;
   } finally {
-    clearTimeout(timeoutHandle!);
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
   }
 }
 

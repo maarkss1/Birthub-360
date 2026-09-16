@@ -19,6 +19,7 @@ playwright-report/
 test-results/
 .venv-opensource/
 reports/
+/.automation-reports/
 
 # Modelos de embeddings baixados em runtime (~400 MB)
 .cache/
