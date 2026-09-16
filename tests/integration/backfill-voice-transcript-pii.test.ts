@@ -23,7 +23,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 1 });
 
 function runBackfill(extraArgs: string[] = []): string {
   return execFileSync(
-    'npx',
+    process.platform === 'win32' ? 'npx.cmd' : 'npx',
     ['tsx', 'scripts/security/backfill-voice-transcript-pii.ts', ...extraArgs],
     { cwd: process.cwd(), env: process.env, encoding: 'utf8' },
   );

@@ -117,7 +117,7 @@ export async function downloadFile(url: string, fallbackFilename: string): Promi
   window.URL.revokeObjectURL(objectUrl);
 }
 
-const inFlightRequests = new Map<string, Promise<any>>();
+const inFlightRequests = new Map<string, Promise<unknown>>();
 
 // Uma mutação (POST/PUT/PATCH/DELETE) invalida qualquer GET in-flight: sem isso, um GET
 // disparado logo após a mutação podia reaproveitar uma Promise antiga já em voo (resposta
