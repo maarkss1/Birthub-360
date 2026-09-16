@@ -90,9 +90,15 @@ Analytics passou a consumir `PageHeader`. Os controles locais de CRM foram alinh
 - **Hub de IA:** inteligência comunicada pelo conteúdo; cards deixam de girar/subir e a ação fica sempre visível.
 - **Analytics:** header compartilhado e narrativa explícita de situação, tendência e risco.
 
-### Supporting
+### Supporting (Fase E Implementada)
 
-Integrações, Calendário, Automações, Administração e Configurações não receberam reescritas locais. Elas herdam o novo Button/Card/Input/Select/Textarea/Table, shell e tokens. Essa foi uma decisão de controle de risco: qualquer alteração específica nessas telas exige inspeção de fluxo, estados e permissões próprios, não uma substituição massiva cega.
+As telas de suporte (Integrações, Calendário, Automações, Administração e Configurações) receberam o layout completo com os wrappers `.bh-page`, `.bh-page-stack` e o componente `PageHeader`, bem como os `Card`s ajustados com propriedades padronizadas (`.bh-surface-elevated`), mantendo a funcionalidade interna exata de cada componente sem reescrever fluxo de estado ou hooks.
+
+- Integrações (`Integrations.tsx`): Removido `bg-surface border border-line` local para confiar no default do `Card` e Layout base atualizado.
+- Calendário (`Calendar.tsx`): Wrapper externo refeito para `bh-page`, mantendo o `DndContext` interno intacto.
+- Automações (`Automations.tsx`): Wrapper externo padronizado e injetado o `PageHeader`.
+- Administração / Equipe (`Team.tsx`): Atualizado para `PageHeader` e layout.
+- Configurações (`Settings.tsx`): Adicionado `PageHeader` e refatorado as abas para não sobrepor restrições de largura duplicadas.
 
 ## 8. Light mode
 

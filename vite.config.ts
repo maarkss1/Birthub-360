@@ -47,7 +47,7 @@ export default defineConfig(() => {
         },
         workbox: {
           // Cache de assets estáticos: CacheFirst (imutáveis via hash de build)
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          globPatterns: ['**/*.js', '**/*.css', '**/*.html', '**/*.ico', '**/*.png', '**/*.svg', '**/*.woff2'],
           runtimeCaching: [
             {
               // API do CRM: StaleWhileRevalidate — mostra dado cacheado, busca novo em BG

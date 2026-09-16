@@ -14,8 +14,10 @@ import {
   Lock,
   type LucideIcon,
   Mail,
+  Share2,
   ShieldCheck,
   Sparkles,
+  X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -26,32 +28,8 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
 import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../../../lib/motion';
 
-// Cor de cada pilar (brand.ts `pillars`: Inteligência, Conexão, Execução) — os três feixes da
-// órbita de 5 cores usados neste fluxo (dourado/azul/íris; vermelho e rosa ficam para o halo
-// ambiente e o botão primário, ver mais abaixo). Não é decoração: cada feature carrega a cor do
-// pilar que ela representa, mesma ordem em ConnectingCircles logo abaixo.
-const FEATURES = [
-  {
-    icon: Building2,
-    accent: 'brand' as const,
-    text: 'Inteligência Comercial: prospecção com CNPJ oficial e decisores mapeados',
-  },
-  {
-    icon: ListChecks,
-    accent: 'orbit-blue' as const,
-    text: 'Conexão & Pipeline: automações, propostas e integrações',
-  },
-  {
-    icon: Sparkles,
-    accent: 'iris' as const,
-    text: 'Execução em Vendas: Dojo de IA e aceleração de receita',
-  },
-] as const;
-
-// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam FEATURES acima (mesma
-// cor de pilar); o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar
-// (src/components/layout/Sidebar.tsx), literalmente o destino pra onde os três primeiros
-// "círculos" se conectam.
+// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
+// o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
 const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'orbit-blue' | 'iris' }[] = [
   { icon: Building2, accent: 'brand' },
   { icon: ListChecks, accent: 'orbit-blue' },
@@ -302,25 +280,47 @@ export function LoginScreen() {
       className="relative flex min-h-screen overflow-hidden"
       style={{ ['--login-accent' as string]: BRAND.colors.brand }}
     >
-      {/* Painel esquerdo — cosmos escuro fixo, com o símbolo real da marca (BirthHubLogo, gerado
-          a partir do brand book) no centro, substituindo o logo de outra empresa que estava
-          nesta posição no mockup de referência. Hero split-screen é exceção justificada à
-          regra #2 (seção 5 da constituição): pedido explícito do usuário — ver .claude/PILOTS.md. */}
+      {/* Painel esquerdo — cosmos escuro fixo com emblema 3D e cabeçalho interativo */}
       <aside
-        className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center"
+        className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:flex-col lg:items-center lg:justify-between lg:p-10"
         style={{ backgroundColor: BRAND.colors.obsidian }}
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div
             className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full blur-[120px]"
-            style={{ backgroundColor: BRAND.colors.brand, opacity: 0.14 }}
+            style={{ backgroundColor: BRAND.colors.brand, opacity: 0.18 }}
           />
           <div
             className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full blur-[120px]"
-            style={{ backgroundColor: BRAND.colors.iris, opacity: 0.14 }}
+            style={{ backgroundColor: BRAND.colors.iris, opacity: 0.18 }}
           />
         </div>
 
+        {/* Barra Superior do Painel da Marca */}
+        <div className="relative z-10 flex w-full items-center justify-between">
+          <button
+            type="button"
+            className="grid h-10 w-10 place-items-center rounded-full border border-slate-700/60 bg-slate-900/50 text-slate-300 backdrop-blur-md transition-colors hover:border-amber-400/50 hover:text-white"
+            aria-label="Fechar"
+          >
+            <X size={18} />
+          </button>
+
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/50 bg-amber-950/30 px-4 py-1.5 text-xs font-black tracking-[0.18em] text-amber-300 shadow-[0_0_15px_rgba(229,184,66,0.25)] backdrop-blur-md">
+            <span className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]" />
+            HUB 360 ATIVO
+          </div>
+
+          <button
+            type="button"
+            className="grid h-10 w-10 place-items-center rounded-full border border-slate-700/60 bg-slate-900/50 text-slate-300 backdrop-blur-md transition-colors hover:border-amber-400/50 hover:text-white"
+            aria-label="Compartilhar"
+          >
+            <Share2 size={18} />
+          </button>
+        </div>
+
+        {/* Emblema Central e Tipografia da Marca */}
         <motion.div
           ref={brandTilt.ref as React.RefObject<HTMLDivElement>}
           style={brandTilt.style}
@@ -329,13 +329,25 @@ export function LoginScreen() {
           initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative flex flex-col items-center px-10 text-center"
+          className="relative my-auto flex flex-col items-center px-6 text-center"
         >
-          <BrandEmblemBadge className="h-52 w-52" title="Birth Hub 360°" />
-          {/* Não é <h1>: o título de página real é "Acesso Executivo", no painel do formulário —
-              dois <h1> na mesma tela quebraria a hierarquia de heading (a11y, seção 10). */}
-          <p className="mt-8 font-display text-4xl font-extrabold tracking-tight">Birth Hub 360°</p>
+          <BrandEmblemBadge className="h-56 w-56 md:h-64 md:w-64" title="Birth Hub 360°" />
+          <p className="mt-8 font-serif text-3xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#F7DF94] via-[#E5B842] to-[#B38728] drop-shadow-md sm:text-4xl">
+            BIRTH HUB 360°
+          </p>
+          <p className="mt-2 text-xs font-black uppercase tracking-[0.25em] text-[#E5B842]">
+            ECOSSISTEMA DE ALTA PERFORMANCE
+          </p>
+          <p className="mt-6 max-w-md text-center text-sm leading-relaxed text-slate-300">
+            Sua central de comando inteligente:{' '}
+            <strong className="font-bold text-white">integrando dados</strong>, potencializando
+            decisões e{' '}
+            <strong className="font-bold text-[#E5B842]">acelerando a sua execução</strong>.
+          </p>
         </motion.div>
+
+        {/* Espaçador inferior para equilíbrio visual */}
+        <div className="h-6 w-full" aria-hidden="true" />
       </aside>
 
       {/* Painel direito — formulário claro fixo (mesma justificativa de cor acima). */}
@@ -367,10 +379,10 @@ export function LoginScreen() {
           </div>
 
           <h1 className="text-center font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl lg:text-left">
-            Acesso Executivo
+            Entrar na Plataforma
           </h1>
           <p className="mt-2 text-center text-sm text-slate-600 lg:text-left">
-            Conecte-se à rede neural de vendas e liderança.
+            Acesse sua conta para gerenciar inteligência, vendas e operações.
           </p>
 
           <motion.div
@@ -443,8 +455,8 @@ export function LoginScreen() {
                   )}
 
                   <p className="text-sm text-slate-600">
-                    Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um link
-                    para redefinir a senha.
+                    Informe seu e-mail corporativo para receber as instruções de recuperação de
+                    senha.
                   </p>
 
                   <div>
@@ -452,7 +464,7 @@ export function LoginScreen() {
                       htmlFor="login-forgot-email"
                       className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                     >
-                      Credencial Institucional
+                      E-mail Corporativo
                     </label>
                     <div className="relative">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -465,7 +477,7 @@ export function LoginScreen() {
                         onChange={(e) => handleEmailChange(e.target.value)}
                         className={inputClass}
                         required
-                        /* campo revelado por ação do usuário ("Protocolo de recuperação"), não
+                        /* campo revelado por ação do usuário ("Esqueceu a senha?"), não
                          focus automático de carregamento de página; foca o único campo do
                          sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
                          WAI-ARIA Authoring Practices. */
@@ -492,7 +504,7 @@ export function LoginScreen() {
                     {isSubmitting ? (
                       <Loader2 className="animate-spin" size={18} />
                     ) : (
-                      'Enviar link de redefinição'
+                      'Enviar Link de Recuperação'
                     )}
                   </motion.button>
 
@@ -546,7 +558,7 @@ export function LoginScreen() {
                     htmlFor="login-email"
                     className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
-                    Credencial Institucional
+                    E-mail Corporativo
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -558,7 +570,7 @@ export function LoginScreen() {
                       value={email}
                       onChange={(e) => handleEmailChange(e.target.value)}
                       className={`${inputClass} rounded-t-lg`}
-                      placeholder="executivo@birthhub360.com.br"
+                      placeholder="seu.email@empresa.com.br"
                       required
                     />
                   </div>
@@ -569,7 +581,7 @@ export function LoginScreen() {
                     htmlFor="login-password"
                     className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
-                    Chave de Segurança
+                    Senha de Acesso
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -601,7 +613,7 @@ export function LoginScreen() {
                         className="h-4 w-4 cursor-pointer rounded border-slate-300"
                         style={{ accentColor: BRAND.colors.brand }}
                       />
-                      Manter conexão ativa
+                      Lembrar de mim
                     </label>
                     <button
                       type="button"
@@ -611,7 +623,7 @@ export function LoginScreen() {
                       }}
                       className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
                     >
-                      Protocolo de recuperação?
+                      Esqueceu a senha?
                     </button>
                   </div>
                 )}
@@ -635,7 +647,7 @@ export function LoginScreen() {
                   ) : isSignUp ? (
                     'Criar nova conta'
                   ) : (
-                    'Iniciar link neural'
+                    'Acessar Plataforma'
                   )}
                 </motion.button>
               </form>
@@ -644,39 +656,8 @@ export function LoginScreen() {
 
           <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-600">
             <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
-            Protegido por Criptografia Quântica
+            Ambiente Seguro • Criptografia 256-bit
           </div>
-
-          {/* Prova de valor — os mesmos 3 pilares do painel esquerdo (mesma FEATURES), agora
-              sempre visível aqui: o painel esquerdo em desktop é só emblema + nome, então este é
-              o único lugar em qualquer breakpoint onde os pilares aparecem como texto lido. */}
-          <section className="relative z-10 mt-10" aria-labelledby="login-features-heading">
-            <div className="mb-4 flex items-center gap-2">
-              <h2
-                id="login-features-heading"
-                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-600"
-              >
-                O que você vai encontrar
-              </h2>
-              <span
-                className="h-px flex-1 bg-gradient-to-r from-slate-300 to-transparent"
-                aria-hidden="true"
-              />
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {FEATURES.map(({ icon: Icon, text }) => (
-                <div
-                  key={text}
-                  className="flex flex-col items-start gap-3 rounded-card border border-slate-200 bg-white p-5"
-                >
-                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <span className="text-sm leading-relaxed text-slate-600">{text}</span>
-                </div>
-              ))}
-            </div>
-          </section>
         </div>
       </div>
     </div>
