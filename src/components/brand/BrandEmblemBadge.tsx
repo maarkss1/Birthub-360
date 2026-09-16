@@ -138,7 +138,7 @@ export function BrandEmblemBadge({ className, title }: { className?: string; tit
             >
               <svg
                 viewBox="0 0 256 256"
-                className="h-[58%] w-[58%]"
+                className="h-[90%] w-[90%]"
                 xmlns="http://www.w3.org/2000/svg"
                 {...labelling}
               >
@@ -146,19 +146,21 @@ export function BrandEmblemBadge({ className, title }: { className?: string; tit
                     dá o relevo "metal gravado" sem recorrer a gradiente em texto. */}
                 <path
                   fill="#000000"
-                  opacity="0.45"
-                  transform="matrix(0.0740 0 0 -0.0740 107.45 157.20)"
+                  opacity="0.55"
+                  transform="matrix(0.2850 0 0 -0.2850 39.37 231.89)"
                   d={B_GLYPH_PATH}
                 />
                 <path
                   fill={`url(#beb-gold-${uid})`}
-                  transform="matrix(0.0740 0 0 -0.0740 104.45 154.20)"
+                  transform="matrix(0.2850 0 0 -0.2850 36.37 228.89)"
                   d={B_GLYPH_PATH}
                 />
                 <defs>
                   <linearGradient id={`beb-gold-${uid}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stopColor={BRAND.colors.brandAccent} />
-                    <stop offset="1" stopColor={BRAND.colors.brand} />
+                    <stop offset="0%" stopColor="#FFF2B2" />
+                    <stop offset="30%" stopColor={BRAND.colors.brandAccent} />
+                    <stop offset="70%" stopColor={BRAND.colors.brand} />
+                    <stop offset="100%" stopColor="#996515" />
                   </linearGradient>
                 </defs>
               </svg>
