@@ -22,6 +22,8 @@ import { LeadDedupPanel } from './LeadDedupPanel';
 import { LearningProfilePanel } from './LearningProfilePanel';
 import { MemoryGovernancePanel } from './MemoryGovernancePanel';
 
+import { PageHeader } from '../../../components/ui/PageHeader';
+
 export function Settings() {
   const { theme, setThemeMode } = useTheme();
   const { currentUser, isAdmin } = useAuth();
@@ -36,23 +38,16 @@ export function Settings() {
   >('profile');
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-transparent overflow-hidden">
-      {/* Header com Abas */}
-      <div className="bg-surface border-b border-line px-6 sm:px-8 pt-8 shrink-0">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-surface-2 border border-line rounded-xl flex items-center justify-center shadow-sm text-brand">
-              <IconSliders className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black text-ink">Configurações</h1>
-              <p className="text-ink-2 text-sm">
-                Gerencie sua conta, equipe, integrações e sistema.
-              </p>
-            </div>
-          </div>
+    <div className="flex-1 overflow-y-auto bg-transparent font-sans">
+      <div className="bh-page bh-page-stack">
+        <div className="max-w-4xl mx-auto w-full">
+          <PageHeader
+            title="Configurações"
+            subtitle="Gerencie sua conta, equipe, integrações e sistema."
+            icon={<IconSliders className="w-5 h-5" />}
+          />
 
-          <div className="flex gap-6 overflow-x-auto no-scrollbar">
+          <div className="flex gap-6 overflow-x-auto no-scrollbar border-b border-line mt-6 mb-8">
             <button
               type="button"
               onClick={() => {
@@ -162,152 +157,146 @@ export function Settings() {
               </button>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Conteúdo da Aba */}
-      <div className="flex-1 overflow-y-auto">
-        {activeTab === 'profile' && (
-          <div className="p-6 sm:p-8">
-            <div className="max-w-4xl mx-auto space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Perfil</CardTitle>
-                  <CardDescription>Dados da conta autenticada — somente leitura.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    {currentUser?.image ? (
-                      <img
-                        src={currentUser.image}
-                        alt=""
-                        className="w-14 h-14 rounded-full border border-line object-cover shrink-0"
-                      />
-                    ) : (
-                      <div className="w-14 h-14 rounded-full bg-surface-2 border border-line flex items-center justify-center text-ink font-bold text-lg">
-                        {currentUser?.name?.slice(0, 2).toUpperCase() || 'US'}
+          {/* Conteúdo da Aba */}
+          <div className="space-y-6">
+            {activeTab === 'profile' && (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Perfil</CardTitle>
+                    <CardDescription>Dados da conta autenticada — somente leitura.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      {currentUser?.image ? (
+                        <img
+                          src={currentUser.image}
+                          alt=""
+                          className="w-14 h-14 rounded-full border border-line object-cover shrink-0"
+                        />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-surface-2 border border-line flex items-center justify-center text-ink font-bold text-lg">
+                          {currentUser?.name?.slice(0, 2).toUpperCase() || 'US'}
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-bold text-ink text-base">
+                          {currentUser?.name || 'Usuário'}
+                        </p>
+                        <p className="text-xs text-ink-2">
+                          {currentUser?.email || 'email@exemplo.com'}
+                        </p>
+                        <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand-ink dark:text-brand">
+                          {currentUser?.role || 'USUÁRIO'}
+                        </span>
                       </div>
-                    )}
-                    <div>
-                      <p className="font-bold text-ink text-base">
-                        {currentUser?.name || 'Usuário'}
-                      </p>
-                      <p className="text-xs text-ink-2">
-                        {currentUser?.email || 'email@exemplo.com'}
-                      </p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand-ink dark:text-brand">
-                        {currentUser?.role || 'USUÁRIO'}
-                      </span>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Aparência e Tema</CardTitle>
-                  <CardDescription>Escolha o tema visual e a marca da interface.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    {/* Não é <label htmlFor>: rotula um grupo de botões de escolha (Escuro/Claro),
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Aparência e Tema</CardTitle>
+                    <CardDescription>Escolha o tema visual e a marca da interface.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div>
+                      {/* Não é <label htmlFor>: rotula um grupo de botões de escolha (Escuro/Claro),
                         não um único controle — role="group" + aria-labelledby é a associação
                         correta aqui. */}
-                    <span
-                      id="settings-theme-label"
-                      className="text-xs font-bold text-ink-2 uppercase tracking-wider block mb-3"
-                    >
-                      Tema
-                    </span>
-                    {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não
+                      <span
+                        id="settings-theme-label"
+                        className="text-xs font-bold text-ink-2 uppercase tracking-wider block mb-3"
+                      >
+                        Tema
+                      </span>
+                      {/* Toolbar de botões toggle (não campos de formulário) — <fieldset> não
                         traria ganho real de acessibilidade aqui, só estilo. */}
-                    {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
-                    <div role="group" aria-labelledby="settings-theme-label" className="flex gap-4">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          SoundFX.play('confirm');
-                          setThemeMode('dark');
-                        }}
-                        aria-pressed={theme === 'dark'}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
-                          theme === 'dark'
-                            ? 'border-brand bg-brand/10 text-ink'
-                            : 'border-line bg-surface-2 text-ink-2 hover:text-ink'
-                        }`}
+                      {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
+                      <div
+                        role="group"
+                        aria-labelledby="settings-theme-label"
+                        className="flex gap-4"
                       >
-                        <Moon size={18} /> Modo Escuro
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          SoundFX.play('confirm');
-                          setThemeMode('light');
-                        }}
-                        aria-pressed={theme === 'light'}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
-                          theme === 'light'
-                            ? 'border-brand bg-brand/10 text-ink'
-                            : 'border-line bg-surface-2 text-ink-2 hover:text-ink'
-                        }`}
-                      >
-                        <Sun size={18} /> Modo Claro
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            SoundFX.play('confirm');
+                            setThemeMode('dark');
+                          }}
+                          aria-pressed={theme === 'dark'}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
+                            theme === 'dark'
+                              ? 'border-brand bg-brand/10 text-ink'
+                              : 'border-line bg-surface-2 text-ink-2 hover:text-ink'
+                          }`}
+                        >
+                          <Moon size={18} /> Modo Escuro
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            SoundFX.play('confirm');
+                            setThemeMode('light');
+                          }}
+                          aria-pressed={theme === 'light'}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
+                            theme === 'light'
+                              ? 'border-brand bg-brand/10 text-ink'
+                              : 'border-line bg-surface-2 text-ink-2 hover:text-ink'
+                          }`}
+                        >
+                          <Sun size={18} /> Modo Claro
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <LearningProfilePanel />
-            </div>
-          </div>
-        )}
+                <LearningProfilePanel />
+              </div>
+            )}
 
-        {activeTab === 'users' && isAdmin && (
-          <div className="relative h-full flex flex-col">
-            <Team />
-          </div>
-        )}
+            {activeTab === 'users' && isAdmin && (
+              <div className="space-y-6">
+                <Team />
+              </div>
+            )}
 
-        {activeTab === 'integrations' && (
-          <div className="relative h-full flex flex-col">
-            <Integrations />
-          </div>
-        )}
+            {activeTab === 'integrations' && (
+              <div className="space-y-6">
+                <Integrations />
+              </div>
+            )}
 
-        {activeTab === 'featureFlags' && isAdmin && (
-          <div className="p-6 sm:p-8">
-            <div className="max-w-4xl mx-auto">
-              <FeatureFlagsPanel />
-            </div>
-          </div>
-        )}
+            {activeTab === 'featureFlags' && isAdmin && (
+              <div className="space-y-6">
+                <FeatureFlagsPanel />
+              </div>
+            )}
 
-        {activeTab === 'audit' && canViewAudit && (
-          <div className="p-6 sm:p-8">
-            <div className="max-w-5xl mx-auto space-y-6">
-              <DataSubjectRights />
-              <AuditLogs />
-            </div>
-          </div>
-        )}
+            {activeTab === 'audit' && canViewAudit && (
+              <div className="space-y-6">
+                <DataSubjectRights />
+                <AuditLogs />
+              </div>
+            )}
 
-        {activeTab === 'memory' && canViewAudit && (
-          <div className="p-6 sm:p-8">
-            <div className="max-w-5xl mx-auto">
-              <MemoryGovernancePanel />
-            </div>
-          </div>
-        )}
+            {activeTab === 'memory' && canViewAudit && (
+              <div className="space-y-6">
+                <MemoryGovernancePanel />
+              </div>
+            )}
 
-        {activeTab === 'dedup' && canViewAudit && (
-          <div className="p-6 sm:p-8">
-            <div className="max-w-5xl mx-auto space-y-6">
-              <LeadDedupPanel />
-              <CompanyDedupPanel />
-            </div>
+            {activeTab === 'dedup' && canViewAudit && (
+              <div className="space-y-6">
+                <LeadDedupPanel />
+                <CompanyDedupPanel />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

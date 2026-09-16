@@ -300,7 +300,7 @@ export function Integrations() {
           )}
 
           {activeTab === 'whatsapp' && (
-            <Card className="p-4 md:p-8 bg-surface border border-line shadow-sm rounded-2xl">
+            <Card className="p-4 md:p-8 rounded-2xl">
               {/* Cabeçalho compacto quando conectado — a lista de conversas + chat precisa do máximo
                             de altura disponível, especialmente em mobile, onde a descrição não cabia sem
                             empurrar o painel pra abaixo da dobra. */}
@@ -435,7 +435,7 @@ export function Integrations() {
           )}
 
           {activeTab === 'google' && (
-            <Card className="p-8 bg-surface border border-line shadow-sm rounded-2xl">
+            <Card className="p-8 rounded-2xl">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-xl font-bold text-ink">Google Workspace</h2>
@@ -569,7 +569,7 @@ export function Integrations() {
           )}
 
           {activeTab === 'bitrix' && (
-            <Card className="p-8 bg-surface border border-line shadow-sm rounded-2xl">
+            <Card className="p-8 rounded-2xl">
               <div className="flex items-start justify-between mb-8">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -834,7 +834,7 @@ export function Integrations() {
 
           {/* 3CX PABX Telephony Card */}
           {activeTab === '3cx' && (
-            <Card className="glass-card p-8 border border-gray-100 shadow-sm rounded-2xl">
+            <Card className="p-8 rounded-2xl">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <div className="p-4 bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-xl border border-sky-100 dark:border-sky-500/20">

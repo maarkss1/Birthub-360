@@ -45,6 +45,7 @@ import {
   monthGridRange,
   moveToDay,
 } from '../calendar.util';
+import { PageHeader } from '../../../components/ui/PageHeader';
 import { BookingLinksModal } from './BookingLinksModal';
 
 const WEEKDAYS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
@@ -191,7 +192,6 @@ function DayCell({
 }
 
 export function Calendar() {
-  const accent = useBrandAccent();
   const { currentUser } = useAuth();
   // PUT /api/activities/:id (arrastar pra remarcar, Cancelar/Concluir) exige ADMIN/GESTOR/CLOSER/
   // SDR no backend — VISUALIZADOR não estava nessa lista, mas a UI nunca escondia essas ações
@@ -295,243 +295,241 @@ export function Calendar() {
   const monthLabel = reference.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
   return (
-    <div className="flex-1 overflow-y-auto bg-transparent p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-6">
-          <div className="flex items-center gap-4">
-            <div
-              className={`w-12 h-12 rounded-xl flex items-center justify-center ${accent.bgSoft} ${accent.text}`}
-            >
-              <CalendarDays className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-ink capitalize">{monthLabel}</h1>
-              <p className="text-sm text-ink-2">
-                {loading
-                  ? 'Carregando…'
-                  : `${activities.length} atividade${activities.length === 1 ? '' : 's'} no período · arraste para remarcar`}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Botão Links de Agendamento (Calendly) — sem requireRole no backend, qualquer papel
-                autenticado gerencia os próprios links; nenhum gate de papel necessário aqui. */}
-            <Button
-              type="button"
-              variant="outline"
-              sound="focus"
-              onClick={() => setIsBookingModalOpen(true)}
-              className="text-xs"
-              title="Gerenciar links públicos de agendamento estilo Calendly"
-            >
-              <Link2 className="w-4 h-4 mr-1.5 text-brand" /> Links de Agendamento
-            </Button>
-
-            {/* Botão Baixar Agenda (.ics) — /api/activities/feed.ics exige sessão autenticada
-                (cookie), então um app externo (Google/Apple Calendar) fazendo *subscribe* por URL
-                nunca consegue buscar essa rota: o cookie nunca vai junto na requisição que o
-                provedor do calendário faz do lado dele. O botão antes copiava essa URL e prometia
-                "sincronizar" — funcionava só no instante em que a pessoa colava e o navegador
-                dela (autenticado) buscava uma vez; a assinatura periódica real sempre falhava
-                depois. Correção: baixa o .ics agora, para importar manualmente — mesmo padrão já
-                usado em downloadExecutiveExport/handleExportCsv. */}
-            <Button
-              type="button"
-              variant="secondary"
-              sound="confirm"
-              onClick={() => {
-                void downloadFile(
-                  `${window.location.origin}/api/activities/feed.ics`,
-                  'agenda.ics',
-                ).catch((err) => {
-                  toast.error(err instanceof Error ? err.message : 'Falha ao baixar a agenda.');
-                });
-              }}
-              className="text-xs"
-              title="Baixar agenda em .ics para importar no Google Agenda / Apple Calendar"
-            >
-              <Download className="w-4 h-4 mr-1.5" /> Baixar Agenda (.ics)
-            </Button>
-
-            <div className="flex items-center gap-1 pl-2 border-l border-line">
-              <Button
-                type="button"
-                variant="outline"
-                sound="navigate"
-                onClick={() => setReference((r) => addMonths(r, -1))}
-                aria-label="Mês anterior"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                sound="navigate"
-                onClick={() => setReference(new Date())}
-              >
-                Hoje
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                sound="navigate"
-                onClick={() => setReference((r) => addMonths(r, 1))}
-                aria-label="Próximo mês"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {error && (
-          <Card padding="lg" className="text-center">
-            <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-danger-active dark:text-danger" />
-            <p className="text-sm text-ink-2 mb-4">{error}</p>
-            <Button type="button" variant="outline" onClick={() => void load(reference)}>
-              Tentar novamente
-            </Button>
-          </Card>
-        )}
-
-        {!error && (
-          <Card
-            padding="none"
-            className={`overflow-hidden transition-opacity ${loading ? 'opacity-60' : ''}`}
-          >
-            <div className="grid grid-cols-7 border-b border-line">
-              {WEEKDAYS.map((d) => (
-                <div
-                  key={d}
-                  className="py-2 text-center text-[11px] font-bold uppercase tracking-wide text-ink-2"
-                >
-                  {d}
-                </div>
-              ))}
-            </div>
-
-            <DndContext
-              sensors={sensors}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onDragCancel={() => setDragged(null)}
-            >
-              <div className="grid grid-cols-7">
-                {grid.map((date) => (
-                  <DayCell
-                    key={dayKey(date)}
-                    date={date}
-                    inMonth={date.getMonth() === reference.getMonth()}
-                    isToday={isSameDay(date, today)}
-                    activities={byDay.get(dayKey(date)) ?? []}
-                    onOpen={setSelected}
-                    canDrag={canWrite}
-                  />
-                ))}
-              </div>
-
-              {/* Fantasma que segue o cursor durante o arrasto. */}
-              <DragOverlay>
-                {dragged && (
-                  <div className="w-40">
-                    <ActivityCard activity={dragged} dragging />
-                  </div>
-                )}
-              </DragOverlay>
-            </DndContext>
-          </Card>
-        )}
-
-        {!loading && !error && activities.length === 0 && (
-          <Card padding="lg" className="text-center border-dashed">
-            <CalendarDays className="w-12 h-12 mx-auto mb-4 text-ink-2" />
-            <h3 className="text-lg font-semibold text-ink mb-1">Nenhuma atividade neste mês</h3>
-            <p className="text-sm text-ink-2">
-              As atividades criadas na Agenda e no CRM aparecem aqui automaticamente.
-            </p>
-          </Card>
-        )}
-      </div>
-
-      {/* Detalhe do dia/atividade */}
-      <Dialog
-        isOpen={!!selected}
-        onClose={() => setSelected(null)}
-        title={
-          selected ? (
-            <div>
-              <span className="block text-lg font-bold text-ink">{selected.type}</span>
-              <span className="block text-sm font-normal text-ink-2">
-                {activitySubject(selected)}
-              </span>
-            </div>
-          ) : (
-            ''
-          )
-        }
-        maxWidth="max-w-md"
-        footer={
-          selected && canWrite ? (
-            <>
-              {selected.status !== 'Cancelada' && (
+    <div className="flex-1 overflow-y-auto bg-transparent">
+      <div className="bh-page">
+        <div className="bh-page-stack">
+          <PageHeader
+            title={monthLabel}
+            subtitle={
+              loading
+                ? 'Carregando...'
+                : `${activities.length} atividade${activities.length === 1 ? '' : 's'} no período — arraste para remarcar`
+            }
+            icon={<CalendarDays className="w-5 h-5" />}
+            actions={
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Botão Links de Agendamento (Calendly) - sem requireRole no backend, qualquer papel
+                    autenticado gerencia os próprios links; nenhum gate de papel necessário aqui. */}
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => void changeStatus(selected, 'Cancelada')}
+                  sound="focus"
+                  onClick={() => setIsBookingModalOpen(true)}
+                  className="text-xs"
+                  title="Gerenciar links públicos de agendamento estilo Calendly"
                 >
-                  <X className="w-4 h-4 mr-2" /> Cancelar
+                  <Link2 className="w-4 h-4 mr-1.5 text-brand" /> Links de Agendamento
                 </Button>
-              )}
-              {selected.status !== 'Concluída' && (
-                <Button type="button" onClick={() => void changeStatus(selected, 'Concluída')}>
-                  <Check className="w-4 h-4 mr-2" /> Concluir
+
+                {/* Botão Baixar Agenda (.ics) - /api/activities/feed.ics exige sessão autenticada
+                    (cookie), então um app externo (Google/Apple Calendar) fazendo *subscribe* por URL
+                    nunca consegue buscar essa rota: o cookie nunca vai junto na requisição que o
+                    provedor do calendário faz do lado dele. O botão antes copiava essa URL e prometia
+                    "sincronizar" - funcionava só no instante em que a pessoa colava e o navegador
+                    dela (autenticado) buscava uma vez; a assinatura periódica real sempre falhava
+                    depois. Correção: baixa o .ics agora, para importar manualmente - mesmo padrão já
+                    usado em downloadExecutiveExport/handleExportCsv. */}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  sound="confirm"
+                  onClick={() => {
+                    void downloadFile(
+                      `${window.location.origin}/api/activities/feed.ics`,
+                      'agenda.ics',
+                    ).catch((err) => {
+                      toast.error(err instanceof Error ? err.message : 'Falha ao baixar a agenda.');
+                    });
+                  }}
+                  className="text-xs"
+                  title="Baixar agenda em .ics para importar no Google Agenda / Apple Calendar"
+                >
+                  <Download className="w-4 h-4 mr-1.5" /> Baixar Agenda (.ics)
                 </Button>
+
+                <div className="flex items-center gap-1 pl-2 border-l border-line">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    sound="navigate"
+                    onClick={() => setReference((r) => addMonths(r, -1))}
+                    aria-label="Mês anterior"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    sound="navigate"
+                    onClick={() => setReference(new Date())}
+                  >
+                    Hoje
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    sound="navigate"
+                    onClick={() => setReference((r) => addMonths(r, 1))}
+                    aria-label="Próximo mês"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            }
+          />
+
+          {error && (
+            <Card padding="lg" className="text-center">
+              <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-danger-active dark:text-danger" />
+              <p className="text-sm text-ink-2 mb-4">{error}</p>
+              <Button type="button" variant="outline" onClick={() => void load(reference)}>
+                Tentar novamente
+              </Button>
+            </Card>
+          )}
+
+          {!error && (
+            <Card
+              padding="none"
+              className={`overflow-hidden transition-opacity ${loading ? 'opacity-60' : ''}`}
+            >
+              <div className="grid grid-cols-7 border-b border-line">
+                {WEEKDAYS.map((d) => (
+                  <div
+                    key={d}
+                    className="py-2 text-center text-[11px] font-bold uppercase tracking-wide text-ink-2"
+                  >
+                    {d}
+                  </div>
+                ))}
+              </div>
+
+              <DndContext
+                sensors={sensors}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragCancel={() => setDragged(null)}
+              >
+                <div className="grid grid-cols-7">
+                  {grid.map((date) => (
+                    <DayCell
+                      key={dayKey(date)}
+                      date={date}
+                      inMonth={date.getMonth() === reference.getMonth()}
+                      isToday={isSameDay(date, today)}
+                      activities={byDay.get(dayKey(date)) ?? []}
+                      onOpen={setSelected}
+                      canDrag={canWrite}
+                    />
+                  ))}
+                </div>
+
+                {/* Fantasma que segue o cursor durante o arrasto. */}
+                <DragOverlay>
+                  {dragged && (
+                    <div className="w-40">
+                      <ActivityCard activity={dragged} dragging />
+                    </div>
+                  )}
+                </DragOverlay>
+              </DndContext>
+            </Card>
+          )}
+
+          {!loading && !error && activities.length === 0 && (
+            <Card padding="lg" className="text-center border-dashed">
+              <CalendarDays className="w-12 h-12 mx-auto mb-4 text-ink-2" />
+              <h3 className="text-lg font-semibold text-ink mb-1">Nenhuma atividade neste mês</h3>
+              <p className="text-sm text-ink-2">
+                As atividades criadas na Agenda e no CRM aparecem aqui automaticamente.
+              </p>
+            </Card>
+          )}
+        </div>
+
+        {/* Detalhe do dia/atividade */}
+        <Dialog
+          isOpen={!!selected}
+          onClose={() => setSelected(null)}
+          title={
+            selected ? (
+              <div>
+                <span className="block text-lg font-bold text-ink">{selected.type}</span>
+                <span className="block text-sm font-normal text-ink-2">
+                  {activitySubject(selected)}
+                </span>
+              </div>
+            ) : (
+              ''
+            )
+          }
+          maxWidth="max-w-md"
+          footer={
+            selected && canWrite ? (
+              <>
+                {selected.status !== 'Cancelada' && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => void changeStatus(selected, 'Cancelada')}
+                  >
+                    <X className="w-4 h-4 mr-2" /> Cancelar
+                  </Button>
+                )}
+                {selected.status !== 'Concluída' && (
+                  <Button type="button" onClick={() => void changeStatus(selected, 'Concluída')}>
+                    <Check className="w-4 h-4 mr-2" /> Concluir
+                  </Button>
+                )}
+              </>
+            ) : undefined
+          }
+        >
+          {selected && (
+            <>
+              <dl className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <dt className="text-ink-2">Data</dt>
+                  <dd className="text-ink">
+                    {new Date(selected.date).toLocaleDateString('pt-BR', { dateStyle: 'full' })}
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-ink-2">Horário</dt>
+                  <dd className="text-ink">{timeLabel(selected)}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-ink-2">Responsável</dt>
+                  <dd className="text-ink">{selected.owner}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-ink-2">Status</dt>
+                  <dd className="text-ink">{selected.status}</dd>
+                </div>
+              </dl>
+
+              {selected.observations && (
+                <p className="mt-3 text-sm text-ink-2 bg-surface-2 rounded-xl p-3 whitespace-pre-wrap">
+                  {selected.observations}
+                </p>
               )}
             </>
-          ) : undefined
-        }
-      >
-        {selected && (
-          <>
-            <dl className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-ink-2">Data</dt>
-                <dd className="text-ink">
-                  {new Date(selected.date).toLocaleDateString('pt-BR', { dateStyle: 'full' })}
-                </dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-ink-2">Horário</dt>
-                <dd className="text-ink">{timeLabel(selected)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-ink-2">Responsável</dt>
-                <dd className="text-ink">{selected.owner}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-ink-2">Status</dt>
-                <dd className="text-ink">{selected.status}</dd>
-              </div>
-            </dl>
+          )}
+        </Dialog>
 
-            {selected.observations && (
-              <p className="mt-3 text-sm text-ink-2 bg-surface-2 rounded-xl p-3 whitespace-pre-wrap">
-                {selected.observations}
-              </p>
-            )}
-          </>
+        {/* Modal de Gestão de Links de Agendamento */}
+        <BookingLinksModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+        />
+
+        {loading && activities.length === 0 && !error && (
+          <div className="fixed bottom-8 right-8 flex items-center gap-2 text-sm text-ink-2 bg-surface border border-line rounded-xl px-4 py-2">
+            <Loader2 className="w-4 h-4 animate-spin" /> Carregando atividades…
+          </div>
         )}
-      </Dialog>
-
-      {/* Modal de Gestão de Links de Agendamento */}
-      <BookingLinksModal isOpen={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} />
-
-      {loading && activities.length === 0 && !error && (
-        <div className="fixed bottom-8 right-8 flex items-center gap-2 text-sm text-ink-2 bg-surface border border-line rounded-xl px-4 py-2">
-          <Loader2 className="w-4 h-4 animate-spin" /> Carregando atividades…
-        </div>
-      )}
+      </div>
     </div>
   );
 }
