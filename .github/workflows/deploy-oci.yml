@@ -20,6 +20,11 @@ name: Deploy Oracle Cloud (produção)
 # atual (não validado), não o SHA que de fato passou no CI. Corrigido: a instância agora faz
 # checkout do SHA explícito resolvido pelo job `resolve-sha`, nunca de `origin/main`.
 #
+# Robustez operacional: OCI_DEPLOY_PATH pode apontar para um diretório de deploy legado que contém
+# os arquivos da aplicação, mas perdeu/nunca recebeu o diretório `.git`. Nesse caso, o workflow
+# inicializa o Git in-place, restaura `origin` para este repositório e faz reset exatamente para o
+# SHA aprovado pelo CI. `.env.production` é preservado explicitamente antes do bootstrap/reset.
+#
 # ATIVAÇÃO: este workflow FALHA DE PROPÓSITO (passo "Validar secrets obrigatórios") enquanto os
 # secrets abaixo não existirem em Settings → Secrets and variables → Actions do repositório —
 # mesmo padrão de "pronto mas com ativação pendente" já usado em backup-production.yml. Isso é
@@ -33,8 +38,9 @@ name: Deploy Oracle Cloud (produção)
 #   OCI_SSH_PRIVATE_KEY   chave privada SSH (PEM) com acesso à instância — recomenda-se uma chave
 #                         DEDICADA a este workflow (não a chave pessoal do operador), com escopo
 #                         mínimo necessário na instância.
-#   OCI_DEPLOY_PATH       caminho absoluto do clone do repositório na instância (ex.:
-#                         /home/ubuntu/CENTRAL-DE-INTELIG-NCIA-COMERCIAL-ATLASGR)
+#   OCI_DEPLOY_PATH       caminho absoluto do diretório de deploy na instância. Pode ser um clone
+#                         Git existente ou um diretório legado sem `.git`; o workflow faz bootstrap
+#                         seguro in-place neste segundo caso.
 # Secret opcional:
 #   OCI_SSH_KNOWN_HOSTS   saída de `ssh-keyscan -H <host>` capturada manualmente e colada aqui,
 #                         para fixar a chave do host em vez de confiar em TOFU (trust-on-first-use)
@@ -143,25 +149,75 @@ jobs:
           OCI_DEPLOY_PATH: ${{ secrets.OCI_DEPLOY_PATH }}
         run: |
           set -euo pipefail
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
           ssh -i ~/.ssh/oci_deploy_key -o IdentitiesOnly=yes -p "$OCI_SSH_PORT" \
-            "$OCI_SSH_USER@$OCI_SSH_HOST" bash -s -- "$OCI_DEPLOY_PATH" "$TARGET_SHA" <<'REMOTE_SCRIPT' | tee /tmp/remote-deploy.log
+            "$OCI_SSH_USER@$OCI_SSH_HOST" bash -s -- "$OCI_DEPLOY_PATH" "$TARGET_SHA" "$REPO_URL" <<'REMOTE_SCRIPT' | tee /tmp/remote-deploy.log
           set -euo pipefail
           DEPLOY_PATH="$1"
           TARGET_SHA="$2"
+          REPO_URL="$3"
+
+          mkdir -p "$DEPLOY_PATH"
           cd "$DEPLOY_PATH"
+
+          # Preserva segredos/runtime local antes de qualquer bootstrap/reset do Git.
+          ENV_BACKUP=""
+          if [ -f .env.production ]; then
+            ENV_BACKUP="$(mktemp)"
+            cp .env.production "$ENV_BACKUP"
+            chmod 600 "$ENV_BACKUP" 2>/dev/null || true
+          fi
+
+          PREVIOUS_SHA=""
+          if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+            PREVIOUS_SHA="$(git rev-parse HEAD 2>/dev/null || true)"
+            echo "== Repositório Git existente detectado =="
+          else
+            echo "== OCI_DEPLOY_PATH sem .git: inicializando repositório in-place =="
+            git init
+          fi
+
           echo "== PREVIOUS_SHA (antes deste deploy) =="
-          PREVIOUS_SHA="$(git rev-parse HEAD)"
-          echo "PREVIOUS_SHA=${PREVIOUS_SHA}"
-          echo "== git fetch + checkout do SHA validado (nunca origin/main HEAD) =="
-          git fetch origin "$TARGET_SHA"
-          # Confirma que o objeto existe antes de tentar o checkout — mensagem de erro clara em vez
-          # de um `checkout` falhando de forma ambígua se o SHA informado nunca chegou ao remote.
+          if printf '%s' "$PREVIOUS_SHA" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "PREVIOUS_SHA=${PREVIOUS_SHA}"
+          else
+            echo "PREVIOUS_SHA=UNKNOWN"
+          fi
+
+          # Garante que origin nunca aponte para um repositório antigo/incorreto.
+          if git remote get-url origin >/dev/null 2>&1; then
+            git remote set-url origin "$REPO_URL"
+          else
+            git remote add origin "$REPO_URL"
+          fi
+
+          echo "== git fetch + materialização do SHA validado (nunca origin/main HEAD) =="
+          git fetch --no-tags origin "$TARGET_SHA"
           git cat-file -e "${TARGET_SHA}^{commit}" || {
             echo "::error::SHA ${TARGET_SHA} não encontrado no remote após fetch — DEPLOY BLOCKED."
             exit 1
           }
+
+          # Em diretório recém-inicializado, reset --hard materializa a árvore mesmo quando já
+          # existem arquivos legados. Em clone existente, elimina drift local de arquivos tracked.
+          git reset --hard "$TARGET_SHA"
           git checkout --detach "$TARGET_SHA"
-          echo "CURRENT_SHA=${TARGET_SHA}"
+
+          # .env.production nunca deve ser substituído por checkout/reset. O backup também cobre
+          # instalações legadas em que o arquivo existia antes de o diretório virar um clone Git.
+          if [ -n "$ENV_BACKUP" ] && [ -f "$ENV_BACKUP" ]; then
+            cp "$ENV_BACKUP" .env.production
+            chmod 600 .env.production 2>/dev/null || true
+            rm -f "$ENV_BACKUP"
+          fi
+
+          CURRENT_SHA="$(git rev-parse HEAD)"
+          if [ "$CURRENT_SHA" != "$TARGET_SHA" ]; then
+            echo "::error::Checkout terminou em ${CURRENT_SHA}, esperado ${TARGET_SHA} — DEPLOY BLOCKED."
+            exit 1
+          fi
+          echo "CURRENT_SHA=${CURRENT_SHA}"
+
           echo "== rodando scripts/deploy-oci.sh (rebuild + restart + migrations + seed) =="
           chmod +x scripts/deploy-oci.sh
           ./scripts/deploy-oci.sh
