@@ -41,10 +41,16 @@ const processMessageMock = vi
   .mockResolvedValue(
     JSON.stringify({ subject: 'Uma ideia para sua operação', body: 'Olá, tudo bem?' }),
   );
+// draftWhatsAppForLead chama callLLM diretamente (não processMessage — precisa de um system
+// prompt diferente e stateless, ver comentário do método) — mock separado.
+const callLLMMock = vi.fn().mockResolvedValue(JSON.stringify({ body: 'Oi! Tudo bem?' }));
 vi.mock('../../services/agent.service.js', () => ({
   AgentService: class {
     async processMessage(...args: unknown[]) {
       return processMessageMock(...args);
+    }
+    async callLLM(...args: unknown[]) {
+      return callLLMMock(...args);
     }
   },
 }));
@@ -67,6 +73,7 @@ const baseLead = {
 afterEach(() => {
   vi.clearAllMocks();
   mockEnv.AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS = undefined;
+  callLLMMock.mockResolvedValue(JSON.stringify({ body: 'Oi! Tudo bem?' }));
 });
 
 describe('SDROutboundDraftAgent.draftEmailForLead — trava de consentimento LGPD', () => {
@@ -281,5 +288,119 @@ describe('SDROutboundDraftAgent.draftEmailForLead — pré-condições existente
     expect(result.status).toBe('skipped');
     expect(result.reason).toContain('e-mail');
     expect(pendingActionFindUnique).not.toHaveBeenCalled();
+  });
+});
+
+// Item 2 de "IA Agêntica de Vendas": primeiro contato do SDR também por WhatsApp.
+describe('SDROutboundDraftAgent.draftWhatsAppForLead', () => {
+  const leadWithWhatsApp = {
+    ...baseLead,
+    contact: { ...baseLead.contact, whatsapp: '+5511999998888', phone: null },
+  };
+
+  it('não gera rascunho para contato sem WhatsApp nem telefone', async () => {
+    mockEnv.AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS = '*';
+    leadFindFirst.mockResolvedValue({
+      ...baseLead,
+      contact: { ...baseLead.contact, whatsapp: null, phone: null },
+    });
+
+    const agent = new SDROutboundDraftAgent('session-1', 'org-1');
+    const result = await agent.draftWhatsAppForLead('lead-1', 'org-1');
+
+    expect(result.status).toBe('skipped');
+    expect(result.reason).toContain('WhatsApp');
+    expect(pendingActionFindUnique).not.toHaveBeenCalled();
+  });
+
+  it('bloqueia sem base legal LGPD registrada, mesmo padrão do e-mail', async () => {
+    leadFindFirst.mockResolvedValue(leadWithWhatsApp);
+
+    const agent = new SDROutboundDraftAgent('session-1', 'org-sem-consentimento');
+    const result = await agent.draftWhatsAppForLead('lead-1', 'org-sem-consentimento');
+
+    expect(result.status).toBe('skipped');
+    expect(result.reason).toContain('LGPD');
+    expect(pendingActionCreate).not.toHaveBeenCalled();
+  });
+
+  it('cria a ação pendente send_whatsapp_reply com trigger first_contact, nunca autoExecuta', async () => {
+    mockEnv.AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS = 'org-1';
+    leadFindFirst.mockResolvedValue(leadWithWhatsApp);
+    pendingActionFindUnique.mockResolvedValue(null);
+    pendingActionCreate.mockResolvedValue({ id: 'action-wa-1' });
+
+    const agent = new SDROutboundDraftAgent('session-1', 'org-1');
+    const result = await agent.draftWhatsAppForLead('lead-1', 'org-1');
+
+    expect(result.status).toBe('created');
+    expect(pendingActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'send_whatsapp_reply',
+          agentRole: 'SDR',
+          payload: expect.objectContaining({
+            to: '+5511999998888',
+            trigger: 'first_contact',
+            structuredOutputValid: true,
+          }),
+        }),
+      }),
+    );
+    // Nunca autoExecuta o primeiro WhatsApp, mesmo que o e-mail suporte autoExecute=true.
+    expect(executeAndRecord).not.toHaveBeenCalled();
+  });
+
+  it('usa Contact.phone como fallback quando não há Contact.whatsapp', async () => {
+    mockEnv.AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS = 'org-1';
+    leadFindFirst.mockResolvedValue({
+      ...baseLead,
+      contact: { ...baseLead.contact, whatsapp: null, phone: '+5511988887777' },
+    });
+    pendingActionFindUnique.mockResolvedValue(null);
+    pendingActionCreate.mockResolvedValue({ id: 'action-wa-2' });
+
+    const agent = new SDROutboundDraftAgent('session-1', 'org-1');
+    await agent.draftWhatsAppForLead('lead-1', 'org-1');
+
+    expect(pendingActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          payload: expect.objectContaining({ to: '+5511988887777' }),
+        }),
+      }),
+    );
+  });
+
+  it('não duplica quando já existe uma ação pendente para o mesmo lead (idempotência)', async () => {
+    mockEnv.AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS = 'org-1';
+    leadFindFirst.mockResolvedValue(leadWithWhatsApp);
+    pendingActionFindUnique.mockResolvedValue({ id: 'action-existing-wa' });
+
+    const agent = new SDROutboundDraftAgent('session-1', 'org-1');
+    const result = await agent.draftWhatsAppForLead('lead-1', 'org-1');
+
+    expect(result.status).toBe('existing');
+    expect(pendingActionCreate).not.toHaveBeenCalled();
+  });
+
+  it('LLM devolve texto fora do schema: cria a ação para revisão humana com structuredOutputValid:false', async () => {
+    mockEnv.AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS = 'org-1';
+    leadFindFirst.mockResolvedValue(leadWithWhatsApp);
+    pendingActionFindUnique.mockResolvedValue(null);
+    pendingActionCreate.mockResolvedValue({ id: 'action-wa-fallback' });
+    callLLMMock.mockResolvedValueOnce('Isto não é JSON.');
+
+    const agent = new SDROutboundDraftAgent('session-1', 'org-1');
+    const result = await agent.draftWhatsAppForLead('lead-1', 'org-1');
+
+    expect(result.status).toBe('created');
+    expect(pendingActionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          payload: expect.objectContaining({ structuredOutputValid: false }),
+        }),
+      }),
+    );
   });
 });

@@ -140,7 +140,7 @@ export const KanbanCard = React.memo(function KanbanCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-surface rounded-2xl border transition-all group relative ${
+      className={`bg-surface rounded-2xl border transition-colors group relative ${
         isSelected
           ? 'border-brand ring-2 ring-brand shadow-lg bg-surface-2/70'
           : 'border-line shadow-md hover:border-brand/50 dark:hover:border-brand-2/50 hover:shadow-xl'
@@ -213,7 +213,9 @@ export const KanbanCard = React.memo(function KanbanCard({
           ) : null}
         </div>
 
-        {/* Badges Informativas: Estagnação, Bitrix e Voz */}
+        {/* Badges Informativas: Estagnação, Probabilidade IA, Bitrix e Voz.
+            (Bloco existia duplicado byte-a-byte neste componente — corrigido ao adicionar o
+            indicador de probabilidade IA, que precisava entrar nesta mesma linha.) */}
         <div className="flex flex-wrap items-center gap-1.5 mb-2">
           {/* Indicador Visual de Estagnação (Verde < 3d, Amarelo 3-7d, Vermelho > 7d) */}
           <span
@@ -224,32 +226,15 @@ export const KanbanCard = React.memo(function KanbanCard({
             {stagnation.label}
           </span>
 
-          {isBitrixSynced && (
+          {lead.forecastProbabilityAi != null && (
             <span
-              title={`Sincronizado no Bitrix24 (ID #${lead.bitrixLeadId || lead.bitrixDealId})`}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-sky-500/15 border border-sky-500/30 text-sky-700 dark:text-sky-300"
+              title="Probabilidade ajustada pelo Copiloto IA a partir da conversa mais recente — complementar à probabilidade oficial do CRM, nunca a substitui."
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-iris/15 border border-iris/30 text-iris"
             >
-              🌐 Bitrix #{lead.bitrixLeadId || lead.bitrixDealId}
+              <Sparkles className="w-2.5 h-2.5" />
+              {lead.forecastProbabilityAi}% IA
             </span>
           )}
-
-          {Boolean(lead.customFields?.voiceQualified) && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-              🎤 Voz Qualificada
-            </span>
-          )}
-        </div>
-
-        {/* Badges Informativas: Estagnação, Bitrix e Voz */}
-        <div className="flex flex-wrap items-center gap-1.5 mb-2">
-          {/* Indicador Visual de Estagnação (Verde < 3d, Amarelo 3-7d, Vermelho > 7d) */}
-          <span
-            title={`Última atividade: ${new Date(lastActivityDate || '').toLocaleDateString('pt-BR')}`}
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] border ${stagnation.className}`}
-          >
-            <span className={`w-1.5 h-1.5 rounded-full ${stagnation.dot}`} />
-            {stagnation.label}
-          </span>
 
           {isBitrixSynced && (
             <span

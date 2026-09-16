@@ -88,7 +88,7 @@ export function GamificationWidget({
         <button
           type="button"
           onClick={() => setShowMissions(!showMissions)}
-          className="flex items-center gap-2 text-xs font-semibold px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-line text-ink-2 border border-line transition-all active:scale-95 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          className="flex items-center gap-2 text-xs font-semibold px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-line text-ink-2 border border-line transition-colors active:scale-95 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand"
           aria-label="Ver Missões Diárias"
         >
           <Zap className="w-4 h-4 text-brand" />
@@ -133,7 +133,7 @@ export function GamificationWidget({
                 type="button"
                 aria-pressed={mission.done}
                 onClick={() => toggleMission(mission.id)}
-                className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs text-left cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                   mission.done
                     ? 'bg-success/10 border-success/30 text-ink-2'
                     : 'bg-surface-2 border-line hover:border-line text-ink'

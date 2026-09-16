@@ -6,6 +6,7 @@ import { prisma } from '../../../lib/prisma.js';
 import { enqueueSdrOutboundDraft } from '../../../lib/queue/agent.worker.js';
 import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy.js';
 import { type AutonomyRole, runAutonomyRole } from './autonomyRoleRunner.service.js';
+import { draftNegotiatorReply } from './negotiatorReply.service.js';
 
 const CLOSED_STATUSES: LeadStatus[] = [
   'Negocios_Ganhos',
@@ -44,6 +45,9 @@ export interface SwarmSchedulerRunResult {
   autoExecutionEligible: number;
   skippedAlreadyPending: number;
   errors: number;
+  /** Réplicas de WhatsApp sugeridas pelo Negociador de IA (send_whatsapp_reply) — sempre
+   * pendentes de aprovação humana nesta versão, nunca auto-executadas. */
+  negotiatorDraftsProposed: number;
 }
 
 interface Candidate {
@@ -54,8 +58,21 @@ interface Candidate {
   status: LeadStatus;
   score: number | null;
   hasEmail: boolean;
+  /** Item 2 de "IA Agêntica de Vendas": primeiro contato agora também sai por WhatsApp — não só
+   * e-mail. `Contact.whatsapp` tem prioridade; `Contact.phone` é o fallback. */
+  hasWhatsApp: boolean;
   confidence: number | null;
   priority: number;
+  /** Só preenchido para `reason === 'conversation_signal'` — usado pelo Negociador de IA
+   * (draftNegotiatorReply) para redigir a réplica real, sem reconsultar o `ConversationSignal`. */
+  signal?: {
+    id: string;
+    channel: string;
+    intent: string | null;
+    urgency: string | null;
+    objections: string[];
+    summary: string | null;
+  };
 }
 
 function hoursBefore(now: Date, hours: number): Date {
@@ -109,7 +126,7 @@ async function findDueFollowUps(organizationId: string, now: Date): Promise<Cand
       status: true,
       score: true,
       nextAction: true,
-      contact: { select: { email: true } },
+      contact: { select: { email: true, whatsapp: true, phone: true } },
     },
   });
   return leads.map((lead) => ({
@@ -119,6 +136,7 @@ async function findDueFollowUps(organizationId: string, now: Date): Promise<Cand
     status: lead.status,
     score: lead.score,
     hasEmail: Boolean(lead.contact?.email),
+    hasWhatsApp: Boolean(lead.contact?.whatsapp || lead.contact?.phone),
     confidence: normalizedConfidence(lead.score),
     priority: 80,
     detail: `Follow-up vencido em ${lead.nextAction?.toLocaleString('pt-BR')}; status atual ${lead.status}; score ${lead.score ?? 'não calculado'}.`,
@@ -136,16 +154,19 @@ async function findSignaledLeads(organizationId: string, now: Date): Promise<Can
     distinct: ['leadId'],
     take: SCAN_LIMIT,
     select: {
+      id: true,
       leadId: true,
+      channel: true,
       intent: true,
       urgency: true,
+      objections: true,
       summary: true,
       confidence: true,
       lead: {
         select: {
           status: true,
           score: true,
-          contact: { select: { email: true } },
+          contact: { select: { email: true, whatsapp: true, phone: true } },
         },
       },
     },
@@ -157,10 +178,19 @@ async function findSignaledLeads(organizationId: string, now: Date): Promise<Can
     status: signal.lead.status,
     score: signal.lead.score,
     hasEmail: Boolean(signal.lead.contact?.email),
+    hasWhatsApp: Boolean(signal.lead.contact?.whatsapp || signal.lead.contact?.phone),
     confidence: signal.confidence ?? normalizedConfidence(signal.lead.score, 0.75),
     priority: 100,
     detail:
       `WhatsApp sinalizou intenção "${signal.intent ?? 'não classificada'}", urgência "${signal.urgency ?? 'não classificada'}". ${signal.summary ?? ''}`.trim(),
+    signal: {
+      id: signal.id,
+      channel: signal.channel,
+      intent: signal.intent,
+      urgency: signal.urgency,
+      objections: signal.objections,
+      summary: signal.summary,
+    },
   }));
 }
 
@@ -202,12 +232,15 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
       lastInteraction: true,
       nextAction: true,
       company: { select: { tradeName: true, segment: true, size: true } },
-      contact: { select: { email: true, emailStatus: true, role: true } },
+      contact: {
+        select: { email: true, emailStatus: true, role: true, whatsapp: true, phone: true },
+      },
     },
   });
 
   return leads.map((lead): Candidate => {
     const common = `Empresa ${lead.company?.tradeName ?? 'não identificada'}; segmento ${lead.company?.segment ?? 'não informado'}; porte ${lead.company?.size ?? 'não informado'}; decisor ${lead.contact?.role ?? 'não identificado'}; status ${lead.status}; score ${lead.score ?? 'não calculado'}.`;
+    const hasWhatsApp = Boolean(lead.contact?.whatsapp || lead.contact?.phone);
     if (lead.status === 'Proposta_Enviada') {
       return {
         leadId: lead.id,
@@ -216,6 +249,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
         status: lead.status,
         score: lead.score,
         hasEmail: Boolean(lead.contact?.email),
+        hasWhatsApp,
         confidence: normalizedConfidence(lead.score, 0.75),
         priority: 90,
         detail: `Proposta sem avanço desde ${lead.updatedAt.toLocaleString('pt-BR')}. ${common}`,
@@ -233,6 +267,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
         status: lead.status,
         score: lead.score,
         hasEmail: Boolean(lead.contact?.email),
+        hasWhatsApp,
         confidence: normalizedConfidence(lead.score),
         priority: 70,
         detail: `Lead de alto fit sem próxima ação programada. ${common}`,
@@ -246,6 +281,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
         status: lead.status,
         score: lead.score,
         hasEmail: Boolean(lead.contact?.email),
+        hasWhatsApp,
         confidence: normalizedConfidence(lead.score, 0.6),
         priority: 50,
         detail: `Novo lead sem primeira interação desde ${lead.createdAt.toLocaleString('pt-BR')}. ${common}`,
@@ -258,6 +294,7 @@ async function findPipelineCandidates(organizationId: string, now: Date): Promis
       status: lead.status,
       score: lead.score,
       hasEmail: Boolean(lead.contact?.email),
+      hasWhatsApp,
       confidence: normalizedConfidence(lead.score, 0.7),
       priority: 60,
       detail: `Oportunidade estagnada; última interação ${lead.lastInteraction?.toLocaleString('pt-BR') ?? 'não registrada'}. ${common}`,
@@ -277,7 +314,7 @@ function buildMission(candidate: Candidate): string {
 
 function shouldDraftFirstContact(candidate: Candidate): boolean {
   return (
-    candidate.hasEmail &&
+    (candidate.hasEmail || candidate.hasWhatsApp) &&
     (candidate.reason === 'new_lead_untouched' || candidate.reason === 'high_score_unworked')
   );
 }
@@ -309,6 +346,72 @@ async function queueOutboundIfEligible(
   return { queued: true, autoExecute };
 }
 
+const NEGOTIATOR_ACTION_TYPE = 'send_whatsapp_reply';
+
+/**
+ * Negociador de IA em segundo plano (item 3 da IA Agêntica de Vendas): a partir do mesmo sinal de
+ * WhatsApp que já gera a `swarm_recommendation` (análise para o vendedor), tenta redigir a
+ * PRÓPRIA RÉPLICA a enviar ao lead e registrá-la como uma segunda `AIPendingAction`, sempre
+ * pendente de aprovação humana — nenhuma trava de modo `full` cobre este canal ainda (decisão
+ * deliberada: WhatsApp é mais imediato/pessoal que o primeiro e-mail do SDR, então autonomia total
+ * aqui merece sua própria rodada de decisão, não herdar a trava do e-mail por acidente).
+ * Idempotente por `conversationSignalId`: reprocessar o mesmo sinal nunca duplica o rascunho.
+ */
+async function maybeProposeNegotiatorReply(
+  candidate: Candidate,
+  organizationId: string,
+): Promise<boolean> {
+  const signal = candidate.signal;
+  if (!signal) return false;
+
+  const alreadyDrafted = await prisma.aIPendingAction.findFirst({
+    where: {
+      organizationId,
+      action: NEGOTIATOR_ACTION_TYPE,
+      payload: { path: ['conversationSignalId'], equals: signal.id },
+    },
+    select: { id: true },
+  });
+  if (alreadyDrafted) return false;
+
+  const draft = await draftNegotiatorReply({
+    leadId: candidate.leadId,
+    organizationId,
+    conversationSignalId: signal.id,
+    intent: signal.intent,
+    urgency: signal.urgency,
+    objections: signal.objections,
+    summary: signal.summary,
+    leadFacts: `Lead ${candidate.leadId}; status ${candidate.status}; score ${candidate.score ?? 'não calculado'}.`,
+  });
+  if (!draft) return false;
+
+  await prisma.aIPendingAction.create({
+    data: {
+      entity: 'Lead',
+      action: NEGOTIATOR_ACTION_TYPE,
+      agentRole: candidate.role,
+      // Sempre 'high': é comunicação externa real com o cliente, gerada a partir de um sinal
+      // detectado automaticamente — nunca reduzir a risco médio/baixo sem revisão humana desta
+      // decisão em si.
+      riskLevel: 'high',
+      confidence: candidate.confidence,
+      idempotencyKey: `negotiator-reply:${signal.id}`,
+      organizationId,
+      payload: {
+        leadId: candidate.leadId,
+        conversationSignalId: signal.id,
+        to: draft.to,
+        body: draft.body,
+        trigger: candidate.reason,
+        triggerDetail: candidate.detail,
+        role: candidate.role,
+      },
+    },
+  });
+  return true;
+}
+
 /**
  * Uma rodada do piloto automático comercial. A análise por papel é read-only; o SDR outbound gera
  * uma ação tipada no ledger e só envia em modo full após todas as travas. Falhas são isoladas por
@@ -326,6 +429,7 @@ export async function runSwarmScheduler(
     autoExecutionEligible: 0,
     skippedAlreadyPending: 0,
     errors: 0,
+    negotiatorDraftsProposed: 0,
   };
 
   return requestContext.run({ tenantId: organizationId }, async () => {
@@ -404,6 +508,14 @@ export async function runSwarmScheduler(
           },
         });
         result.proposed++;
+
+        if (
+          candidate.signal?.channel === 'whatsapp' &&
+          !CLOSED_STATUSES.includes(candidate.status)
+        ) {
+          const negotiatorProposed = await maybeProposeNegotiatorReply(candidate, organizationId);
+          if (negotiatorProposed) result.negotiatorDraftsProposed++;
+        }
       } catch (error) {
         result.errors++;
         logger.error(

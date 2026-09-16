@@ -200,7 +200,7 @@ export function VisualOrgChart({ contacts, companyName, onSelectContact }: Visua
                           onSelectContact?.(contact);
                         }
                       }}
-                      className={`p-4 rounded-2xl border ${lvl.borderAccent} ${lvl.bgAccent} hover:shadow-md transition-all space-y-2.5 cursor-pointer`}
+                      className={`p-4 rounded-2xl border ${lvl.borderAccent} ${lvl.bgAccent} hover:shadow-md transition-colors space-y-2.5 cursor-pointer`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>

@@ -297,22 +297,19 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Remover describe.skip temporariamente
-        run: sed -i "s/test\.describe\.skip('Regressão visual'/test.describe('Regressão visual'/" tests/e2e/visual.spec.ts
-
       - name: Gerar baselines *-chromium-linux.png
-        run: npm run test:e2e -- tests/e2e/visual.spec.ts --update-snapshots
+        run: npm run test:visual:update
 
       - name: Upload baselines geradas
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: visual-snapshots-linux
-          path: tests/e2e/visual.spec.ts-snapshots/*-chromium-linux.png
+          path: visual-regression/baselines/**/*-chromium-linux.png
           if-no-files-found: error
 
       - name: Upload Playwright report (se falhar)
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: visual-baselines-playwright-report
-          path: playwright-report/
+          path: visual-regression-report/
         if: failure()

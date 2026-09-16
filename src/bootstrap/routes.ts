@@ -16,6 +16,7 @@ import { commercialIntelligenceRoutes } from '../features/commercial-intelligenc
 import { companyRoutes } from '../features/companies/routes/company.routes.js';
 import { contactRoutes } from '../features/contacts/routes/contact.routes.js';
 import { copilotoIaRoutes } from '../features/copiloto-ia/routes/copilotoIa.routes.js';
+import { companyDedupRoutes } from '../features/crm/routes/companyDedup.routes.js';
 import { leadRoutes } from '../features/crm/routes/lead.routes.js';
 import { leadDedupRoutes } from '../features/crm/routes/leadDedup.routes.js';
 import { savedViewRoutes } from '../features/crm/routes/savedView.routes.js';
@@ -53,6 +54,7 @@ import { moduleAccessRoutes } from '../features/module-access/routes/moduleAcces
 import { noteRoutes } from '../features/notes/routes/note.routes.js';
 import { notificationRoutes } from '../features/notifications/notification.routes.js';
 import { sseService } from '../features/notifications/sse.service.js';
+import { livingPlaybookRoutes } from '../features/playbook/living-playbook/routes/living-playbook.routes.js';
 import { objectionMatrixRoutes } from '../features/playbook/objection-matrix/routes/objection-matrix.routes.js';
 import { qualificationMatrixRoutes } from '../features/playbook/qualification-matrix/routes/qualification-matrix.routes.js';
 import { prospectingRoutes } from '../features/prospecting/routes/prospecting.routes.js';
@@ -79,6 +81,8 @@ export function mountFeatureRoutes(app: Express): void {
     requireTenant,
     marketIntelligenceCompanyRoutes,
   );
+  // Montado ANTES de /api/companies pelo mesmo motivo do /api/leads/dedup acima.
+  app.use('/api/companies/dedup', authenticateToken, requireTenant, companyDedupRoutes);
   app.use('/api/companies', authenticateToken, requireTenant, companyRoutes);
   app.use('/api/contacts', authenticateToken, requireTenant, contactRoutes);
   // Montado ANTES de /api/leads de propósito: rota mais específica primeiro (mesmo que hoje não
@@ -99,6 +103,7 @@ export function mountFeatureRoutes(app: Express): void {
     requireTenant,
     objectionMatrixRoutes,
   );
+  app.use('/api/playbook/living-playbook', authenticateToken, requireTenant, livingPlaybookRoutes);
   app.use('/api/leads/:leadId/notes', authenticateToken, requireTenant, noteRoutes);
   // CRM-004: Note deixou de ser exclusiva de Lead — mesmo router, montado também nos prefixos de
   // Company/Contact (NoteController resolve a entidade pelo param que realmente chegou).

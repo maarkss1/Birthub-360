@@ -128,7 +128,7 @@ export function ClockCalendarWidget() {
                 onClick={() => setSelectedDate(day)}
                 aria-label={`Ver compromissos do dia ${day}`}
                 aria-pressed={isSelected}
-                className={`py-2 rounded-xl transition-all relative flex flex-col items-center justify-center cursor-pointer ${
+                className={`py-2 rounded-xl transition-colors relative flex flex-col items-center justify-center cursor-pointer ${
                   isToday
                     ? 'bg-gradient-to-br from-brand-active to-brand-2-active text-on-brand font-black shadow-lg'
                     : isSelected

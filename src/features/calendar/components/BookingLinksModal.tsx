@@ -345,7 +345,7 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
                       <button
                         type="button"
                         onClick={() => handleCopy(link.slug)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 border ${
                           copiedSlug === link.slug
                             ? 'bg-success text-white border-success-active'
                             : 'bg-surface-2 hover:bg-surface-3 border-line text-ink'

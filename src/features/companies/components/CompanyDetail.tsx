@@ -115,7 +115,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 bg-surface-2 border border-line rounded-2xl hover:bg-surface transition-all text-ink font-bold flex items-center gap-2"
+          className="px-5 py-2.5 bg-surface-2 border border-line rounded-2xl hover:bg-surface transition-colors text-ink font-bold flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar para Empresas
@@ -174,7 +174,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
                 <button
                   type="button"
                   onClick={() => navigate(`/app/market-intelligence/accounts/${company.id}`)}
-                  className="flex items-center gap-2 bg-surface-2 border border-line text-ink px-5 py-2.5 rounded-2xl font-black text-sm hover:bg-surface transition-all cursor-pointer"
+                  className="flex items-center gap-2 bg-surface-2 border border-line text-ink px-5 py-2.5 rounded-2xl font-black text-sm hover:bg-surface transition-colors cursor-pointer"
                 >
                   <Radar className="w-4 h-4 text-ink-2" />
                   Account 360
@@ -186,7 +186,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
                   type="button"
                   onClick={handleEnrich}
                   disabled={enriching}
-                  className="flex items-center gap-2 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-400 px-5 py-2.5 rounded-2xl font-black text-sm transition-all disabled:opacity-60 cursor-pointer"
+                  className="flex items-center gap-2 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-700 dark:text-amber-400 px-5 py-2.5 rounded-2xl font-black text-sm transition-colors disabled:opacity-60 cursor-pointer"
                 >
                   {enriching ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

@@ -40,9 +40,9 @@ test.describe('Autenticação', () => {
     // Sessão nova, sem os cookies do signup, pra forçar um login real do zero.
     await context.clearCookies();
     await page.goto('/login');
-    await page.getByLabel('E-mail:').fill(email);
+    await page.getByLabel('Credencial Institucional').fill(email);
     await page.getByPlaceholder('••••••••').fill(E2E_PASSWORD);
-    await page.getByRole('button', { name: /^Entrar$/ }).click();
+    await page.getByRole('button', { name: /^Iniciar link neural$/ }).click();
     await expect(page).toHaveURL(/\/hub/, { timeout: 15_000 });
   });
 
@@ -55,15 +55,15 @@ test.describe('Autenticação', () => {
 
     await context.clearCookies();
     await page.goto('/login');
-    await page.getByLabel('E-mail:').fill(email);
+    await page.getByLabel('Credencial Institucional').fill(email);
     await page.getByPlaceholder('••••••••').fill('SenhaErradaDeProposito!');
-    await page.getByRole('button', { name: /^Entrar$/ }).click();
+    await page.getByRole('button', { name: /^Iniciar link neural$/ }).click();
 
     // LoginScreen só renderiza um único <p> dentro do <form>: a mensagem de erro devolvida pelo
     // servidor (result.error.message do better-auth) quando a autenticação falha.
     await expect(page.locator('form p')).toBeVisible({ timeout: 10_000 });
     await expect(page).toHaveURL(/\/login/);
-    await expect(page.getByRole('button', { name: /^Entrar$/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Iniciar link neural$/ })).toBeVisible();
   });
 
   test('acessar /app sem sessão válida redireciona para /login (ProtectedRoute)', async ({

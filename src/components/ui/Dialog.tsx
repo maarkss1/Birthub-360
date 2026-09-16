@@ -108,7 +108,7 @@ export function Dialog({
       onClick={handleBackdropClick}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
       className={cn(
-        'backdrop:bg-ink/60 backdrop:backdrop-blur-md bg-surface border border-line rounded-card-lg shadow-2xl w-full p-0 outline-none overflow-hidden max-h-[90vh] open:flex open:flex-col transition-all duration-200 ease-out',
+        'backdrop:bg-ink/60 backdrop:backdrop-blur-md bg-surface border border-line rounded-card-lg shadow-2xl w-full p-0 outline-none overflow-hidden max-h-[90vh] open:flex open:flex-col transition-colors duration-200 ease-out',
         maxWidth,
       )}
     >

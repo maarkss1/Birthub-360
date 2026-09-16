@@ -17,6 +17,7 @@ import { Integrations } from '../../integrations/components/Integrations';
 import { AuditLogs } from '../../lgpd/components/AuditLogs';
 import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
 import { Team } from '../../team/components/Team';
+import { CompanyDedupPanel } from './CompanyDedupPanel';
 import { LeadDedupPanel } from './LeadDedupPanel';
 import { LearningProfilePanel } from './LearningProfilePanel';
 import { MemoryGovernancePanel } from './MemoryGovernancePanel';
@@ -229,7 +230,7 @@ export function Settings() {
                           setThemeMode('dark');
                         }}
                         aria-pressed={theme === 'dark'}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-all ${
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
                           theme === 'dark'
                             ? 'border-brand bg-brand/10 text-ink'
                             : 'border-line bg-surface-2 text-ink-2 hover:text-ink'
@@ -244,7 +245,7 @@ export function Settings() {
                           setThemeMode('light');
                         }}
                         aria-pressed={theme === 'light'}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-all ${
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border font-bold text-sm transition-colors ${
                           theme === 'light'
                             ? 'border-brand bg-brand/10 text-ink'
                             : 'border-line bg-surface-2 text-ink-2 hover:text-ink'
@@ -301,8 +302,9 @@ export function Settings() {
 
         {activeTab === 'dedup' && canViewAudit && (
           <div className="p-6 sm:p-8">
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-5xl mx-auto space-y-6">
               <LeadDedupPanel />
+              <CompanyDedupPanel />
             </div>
           </div>
         )}

@@ -64,7 +64,7 @@ export function Timeline({
           <div className="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-surface-2 border border-line flex items-center justify-center shadow-md">
             {getIcon(item.type)}
           </div>
-          <div className="glass-card p-3 rounded-xl border border-line text-xs space-y-1 hover:border-line transition-all">
+          <div className="glass-card p-3 rounded-xl border border-line text-xs space-y-1 hover:border-line transition-colors">
             <div className="flex items-center justify-between gap-2">
               <span className="font-bold text-ink">{item.title}</span>
               <span className="text-[10px] text-ink-2">{item.timestamp}</span>

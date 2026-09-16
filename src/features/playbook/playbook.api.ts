@@ -30,6 +30,34 @@ export interface ObjectionMatrixItem {
   updatedAt: string;
 }
 
+/** Sugestão gerada pela IA a partir de negócios REALMENTE perdidos (item 7 de "IA Agêntica de
+ * Vendas") — não é um `ObjectionMatrixItem` ainda: precisa de revisão humana e de um POST
+ * separado (`createObjection`) para virar um item real da matriz. */
+export interface ObjectionSuggestion {
+  segment: string;
+  persona: string;
+  objectionTitle: string;
+  objectionText: string;
+  responseScript: string;
+  keyDifferentiator: string;
+  evidenceCount: number;
+  sourceLossReasons: string[];
+}
+
+/** Sugestão gerada pela IA a partir de mensagens REAIS com outcome positivo confirmado (item 42,
+ * "Playbook Vivo") — não persiste nada sozinha; precisa de revisão humana para virar anúncio pro
+ * time (`broadcastWinningPattern`) e/ou item real da Matriz de Objeções. */
+export interface WinningPatternSuggestion {
+  sellerId: string;
+  sellerName: string;
+  segment: string;
+  evidenceCount: number;
+  patternTitle: string;
+  patternDescription: string;
+  suggestedScript: string;
+  sourceExcerpts: string[];
+}
+
 export interface PlaybookListMeta {
   total: number;
   page: number;
@@ -94,4 +122,19 @@ export const playbookApi = {
   updateObjection: (id: string, input: Partial<ObjectionMatrixItemInput>) =>
     api.put<ObjectionMatrixItem>(`/api/playbook/objection-matrix/${id}`, input),
   deleteObjection: (id: string) => api.delete<void>(`/api/playbook/objection-matrix/${id}`),
+  generateObjectionSuggestions: () =>
+    api.post<{ data: ObjectionSuggestion[]; meta: { emptyReason?: string } }>(
+      '/api/playbook/objection-matrix/generate-suggestions',
+    ),
+
+  generateWinningPatterns: () =>
+    api.post<{ data: WinningPatternSuggestion[]; meta: { emptyReason?: string } }>(
+      '/api/playbook/living-playbook/generate-suggestions',
+    ),
+  broadcastWinningPattern: (
+    input: Pick<
+      WinningPatternSuggestion,
+      'sellerName' | 'segment' | 'patternTitle' | 'suggestedScript'
+    >,
+  ) => api.post<{ id: string }>('/api/playbook/living-playbook/broadcast', input),
 };

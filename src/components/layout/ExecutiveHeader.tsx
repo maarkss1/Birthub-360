@@ -75,7 +75,7 @@ export function ExecutiveHeader({
                 type="button"
                 key={hub.id}
                 onClick={() => navigate(hub.path)}
-                className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border flex items-center gap-1.5 whitespace-nowrap transition-colors ${
                   isActive
                     ? 'bg-brand-active text-on-brand border-brand shadow-sm'
                     : 'bg-surface text-ink-2 hover:bg-soft hover:text-ink border-line'

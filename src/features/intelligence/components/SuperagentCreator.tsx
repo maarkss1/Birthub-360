@@ -495,7 +495,7 @@ $status | ConvertTo-Json -Depth 3
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'provider' ? null : 'provider')}
-              className="w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-sky-400/50 transition-colors"
+              className="w-full bg-transparent text-ink text-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand border-b border-line pb-2 flex items-center justify-between text-left hover:border-sky-400/50 transition-colors"
             >
               <span className="truncate">{currentProviderObj.name}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -578,7 +578,7 @@ $status | ConvertTo-Json -Depth 3
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'temp' ? null : 'temp')}
-              className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-amber-400/50 transition-colors"
+              className="w-full bg-transparent text-ink text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand border-b border-line pb-2 flex items-center justify-between text-left hover:border-amber-400/50 transition-colors"
             >
               <span className="truncate">
                 {TEMPERATURES.find((t) => t.value === temperature)?.label}
@@ -620,7 +620,7 @@ $status | ConvertTo-Json -Depth 3
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'memory' ? null : 'memory')}
-              className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-emerald-400/50 transition-colors"
+              className="w-full bg-transparent text-ink text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand border-b border-line pb-2 flex items-center justify-between text-left hover:border-emerald-400/50 transition-colors"
             >
               <span className="truncate">{MEMORIES.find((m) => m.id === memory)?.title}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -671,7 +671,7 @@ $status | ConvertTo-Json -Depth 3
                   key={t.id}
                   type="button"
                   onClick={() => toggleTool(t.id)}
-                  className={`px-4 py-3 rounded-xl border text-xs font-bold text-left transition-all flex items-center justify-between ${
+                  className={`px-4 py-3 rounded-xl border text-xs font-bold text-left transition-colors flex items-center justify-between ${
                     isSelected
                       ? `${accent.selectedBg} text-on-brand`
                       : 'bg-surface-2 border-line text-ink-2 hover:border-line hover:text-ink'
@@ -691,7 +691,7 @@ $status | ConvertTo-Json -Depth 3
             type="button"
             onClick={handleCreate}
             disabled={generating}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradientVia} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradientVia} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-colors disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
           >
             {generating && (
               <motion.div
@@ -760,7 +760,7 @@ $status | ConvertTo-Json -Depth 3
                 <button
                   type="button"
                   onClick={handleCopyCurrent}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors ${
                     copied
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
                       : 'bg-white/10 text-gray-300 hover:bg-white/20 border border-white/10'
@@ -779,7 +779,7 @@ $status | ConvertTo-Json -Depth 3
                 <button
                   type="button"
                   onClick={handleDownloadCurrent}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-colors`}
                 >
                   <Download size={14} /> Baixar Artefato
                 </button>
@@ -791,7 +791,7 @@ $status | ConvertTo-Json -Depth 3
               <button
                 type="button"
                 onClick={() => setActiveTabOutput('prompt')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 ${
                   activeTabOutput === 'prompt'
                     ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
@@ -802,7 +802,7 @@ $status | ConvertTo-Json -Depth 3
               <button
                 type="button"
                 onClick={() => setActiveTabOutput('json')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 ${
                   activeTabOutput === 'json'
                     ? 'bg-slate-600 text-white shadow-lg'
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
@@ -813,7 +813,7 @@ $status | ConvertTo-Json -Depth 3
               <button
                 type="button"
                 onClick={() => setActiveTabOutput('python')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 ${
                   activeTabOutput === 'python'
                     ? 'bg-sky-600 text-white shadow-lg'
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
@@ -824,7 +824,7 @@ $status | ConvertTo-Json -Depth 3
               <button
                 type="button"
                 onClick={() => setActiveTabOutput('powershell')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 ${
                   activeTabOutput === 'powershell'
                     ? 'bg-blue-600 text-white shadow-lg'
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'

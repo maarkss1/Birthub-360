@@ -305,24 +305,28 @@ export function LoginScreen() {
         <div className="absolute -bottom-40 right-1/4 h-[360px] w-[360px] rounded-full bg-pink/8 blur-[120px]" />
       </div>
 
-      {/* Cabeçalho — mesmo padrão do Hub Executivo (HubScreen.tsx): logo da marca ativa +
-          alternador de tema, para que a primeira tela do produto já seja visualmente contínua com
-          a tela que vem logo depois do login. */}
-      <header className="border-b border-line bg-surface/60 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <BirthHubLogo variant="horizontal" />
-          <button
-            type="button"
-            onClick={() => {
-              SoundFX.play('focus');
-              toggleTheme();
-            }}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-line hover:bg-surface-2 hover:text-ink active:translate-y-0"
-            aria-label="Alternar tema"
-            title={`Mudar para modo ${theme === 'dark' ? 'claro' : 'escuro'}`}
-          >
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </button>
+  return (
+    <div
+      className="relative flex min-h-screen overflow-hidden"
+      style={{ ['--login-accent' as string]: BRAND.colors.brand }}
+    >
+      {/* Painel esquerdo — cosmos escuro fixo, com o símbolo real da marca (BirthHubLogo, gerado
+          a partir do brand book) no centro, substituindo o logo de outra empresa que estava
+          nesta posição no mockup de referência. Hero split-screen é exceção justificada à
+          regra #2 (seção 5 da constituição): pedido explícito do usuário — ver .claude/PILOTS.md. */}
+      <aside
+        className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center"
+        style={{ backgroundColor: BRAND.colors.obsidian }}
+      >
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div
+            className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full blur-[120px]"
+            style={{ backgroundColor: BRAND.colors.brand, opacity: 0.14 }}
+          />
+          <div
+            className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full blur-[120px]"
+            style={{ backgroundColor: BRAND.colors.iris, opacity: 0.14 }}
+          />
         </div>
         </div>
 
@@ -336,276 +340,306 @@ export function LoginScreen() {
             variants={fadeInUp}
             className="mt-8"
           >
-            {/* Relógio e calendário ao vivo */}
-            <div
-              className={`mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-bold ${brandAccent.text}`}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <CalendarDays size={15} strokeWidth={2.5} aria-hidden="true" />
-                {dateLabel}
-              </span>
-              <span className="h-1 w-1 rounded-full bg-current opacity-40" aria-hidden="true" />
-              <span className="inline-flex items-center gap-1.5 tabular-nums" aria-live="off">
-                <Clock size={15} strokeWidth={2.5} aria-hidden="true" />
-                {timeLabel}
-              </span>
-            </div>
-
-            <h1 className="font-display text-3xl font-bold text-center text-ink">Bem-vindo</h1>
-            <p className="mt-1.5 text-sm text-ink-2">
-              Central de Comando Inteligente — Ecossistema de Alta Performance.
-            </p>
-
-            <div className="relative mt-5 w-full overflow-hidden rounded-card-lg glass-panel text-left">
-              {/* Fita de assinatura — única aparição da órbita de 5 cores completa nesta tela,
-                  reservada ao topo do card principal (regra #3: halo/borda, nunca fundo com
-                  texto em cima). */}
-              <div className="h-[3px] w-full bg-gradient-orbit5" aria-hidden="true" />
-              <div className="p-6 sm:p-7">
-                {verificationPending ? (
-                  <div className="space-y-5 text-center">
-                    <div
-                      className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left"
-                      role="status"
+            {verificationPending ? (
+              <div className="space-y-5 text-center">
+                <div
+                  className="flex items-start gap-2.5 rounded-2xl border p-3.5 text-left text-sm text-slate-700"
+                  style={{
+                    backgroundColor: `${BRAND.colors.brand}14`,
+                    borderColor: `${BRAND.colors.brand}4D`,
+                  }}
+                  role="status"
+                >
+                  <Mail size={16} className="mt-0.5 shrink-0" />
+                  <p>
+                    Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele para
+                    confirmar que este e-mail é seu e ativar sua conta.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={backToSignIn}
+                  className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                >
+                  Voltar para o login
+                </button>
+              </div>
+            ) : isForgotPassword ? (
+              forgotPasswordSent ? (
+                <div className="space-y-5 text-center">
+                  <div
+                    className="flex items-start gap-2.5 rounded-2xl border p-3.5 text-left text-sm text-slate-700"
+                    style={{
+                      backgroundColor: `${BRAND.colors.brand}14`,
+                      borderColor: `${BRAND.colors.brand}4D`,
+                    }}
+                    role="status"
+                  >
+                    <Mail size={16} className="mt-0.5 shrink-0" />
+                    <p>
+                      Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail com
+                      um link para redefinir a senha. O link expira em 1 hora.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={backToSignIn}
+                    className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                  >
+                    Voltar para o login
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleForgotPassword} className="space-y-5">
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="flex items-start gap-2.5 rounded-2xl border border-red-300 bg-red-50 p-3.5 text-xs text-red-700"
+                      role="alert"
                     >
-                      <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
-                      <p>
-                        Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele
-                        para confirmar que este e-mail é seu e ativar sua conta.
-                      </p>
+                      <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                      <p>{error}</p>
+                    </motion.div>
+                  )}
+
+                  <p className="text-sm text-slate-600">
+                    Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um link
+                    para redefinir a senha.
+                  </p>
+
+                  <div>
+                    <label
+                      htmlFor="login-forgot-email"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                    >
+                      Credencial Institucional
+                    </label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                        <Mail className="h-4 w-4 text-slate-600" aria-hidden="true" />
+                      </div>
+                      <input
+                        id="login-forgot-email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => handleEmailChange(e.target.value)}
+                        className={inputClass}
+                        required
+                        /* campo revelado por ação do usuário ("Protocolo de recuperação"), não
+                         focus automático de carregamento de página; foca o único campo do
+                         sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
+                         WAI-ARIA Authoring Practices. */
+                        // biome-ignore lint/a11y/noAutofocus: ver comentário acima
+                        autoFocus
+                      />
                     </div>
+                  </div>
+
+                  <motion.button
+                    ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
+                    type="submit"
+                    disabled={isSubmitting || !email}
+                    onPointerMove={submitMagnetic.onPointerMove}
+                    onPointerLeave={submitMagnetic.onPointerLeave}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{
+                      ...submitMagnetic.style,
+                      backgroundImage: `linear-gradient(to right, ${BRAND.colors.brand}, ${BRAND.colors.brandAccent})`,
+                    }}
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 shadow-md transition-shadow hover:shadow-lg disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="animate-spin" size={18} />
+                    ) : (
+                      'Enviar link de redefinição'
+                    )}
+                  </motion.button>
+
+                  <div className="text-center">
                     <button
                       type="button"
                       onClick={backToSignIn}
-                      className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
+                      className="cursor-pointer text-sm font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
                     >
                       Voltar para o login
                     </button>
                   </div>
-                ) : isForgotPassword ? (
-                  forgotPasswordSent ? (
-                    <div className="space-y-5 text-center">
-                      <div
-                        className="bg-brand/10 border border-brand/30 text-ink p-3.5 rounded-2xl text-sm flex items-start gap-2.5 text-left"
-                        role="status"
-                      >
-                        <Mail size={16} className="shrink-0 mt-0.5 text-brand" />
-                        <p>
-                          Se <strong>{email}</strong> tiver uma conta cadastrada, enviamos um e-mail
-                          com um link para redefinir a senha. O link expira em 1 hora.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={backToSignIn}
-                        className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                      >
-                        Voltar para o login
-                      </button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleForgotPassword} className="space-y-4">
-                      {error && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
-                          role="alert"
-                        >
-                          <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                          <p>{error}</p>
-                        </motion.div>
-                      )}
-
-                      <p className="text-ink-2 text-sm">
-                        Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um
-                        link para redefinir a senha.
-                      </p>
-
-                      <div>
-                        <label
-                          htmlFor="login-forgot-email"
-                          className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
-                        >
-                          E-mail:
-                        </label>
-                        <input
-                          id="login-forgot-email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => handleEmailChange(e.target.value)}
-                          className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                          required
-                          /* campo revelado por ação do usuário ("Esqueci minha senha"), não focus
-                           automático de carregamento de página; foca o único campo do
-                           sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
-                           WAI-ARIA Authoring Practices. */
-                          // biome-ignore lint/a11y/noAutofocus: ver comentário acima
-                          autoFocus
-                        />
-                      </div>
-
-                      <motion.button
-                        ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
-                        type="submit"
-                        disabled={isSubmitting || !email}
-                        onPointerMove={submitMagnetic.onPointerMove}
-                        onPointerLeave={submitMagnetic.onPointerLeave}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        style={submitMagnetic.style}
-                        className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                      >
-                        {isSubmitting ? (
-                          <Loader2 className="animate-spin" size={18} />
-                        ) : (
-                          <>
-                            Enviar Link de Redefinição <ArrowRight size={16} />
-                          </>
-                        )}
-                      </motion.button>
-
-                      <div className="text-center">
-                        <button
-                          type="button"
-                          onClick={backToSignIn}
-                          className={`text-sm font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                        >
-                          Voltar para o login
-                        </button>
-                      </div>
-                    </form>
-                  )
-                ) : (
-                  <form onSubmit={handleAuth} className="space-y-4">
-                    {error && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="bg-danger/10 border border-danger/30 text-danger-active dark:text-danger p-3.5 rounded-2xl text-xs flex items-start gap-2.5"
-                        role="alert"
-                      >
-                        <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                        <p>{error}</p>
-                      </motion.div>
-                    )}
-
-                    {isSignUp && (
-                      <div>
-                        <label
-                          htmlFor="login-name"
-                          className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
-                        >
-                          Seu Nome Completo
-                        </label>
-                        <input
-                          id="login-name"
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                          placeholder="Ex: Marcelo Nascimento"
-                          required={isSignUp}
-                        />
-                      </div>
-                    )}
-
-                    <div>
-                      <label
-                        htmlFor="login-email"
-                        className={`block text-xs font-extrabold uppercase tracking-wider mb-2 ml-1 ${brandAccent.text}`}
-                      >
-                        E-mail:
-                      </label>
-                      <input
-                        id="login-email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => handleEmailChange(e.target.value)}
-                        className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between mb-2 ml-1 mr-1">
-                        <label
-                          htmlFor="login-password"
-                          className={`block text-xs font-extrabold uppercase tracking-wider ${brandAccent.text}`}
-                        >
-                          Senha:
-                        </label>
-                        {!isSignUp && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsForgotPassword(true);
-                              setError('');
-                            }}
-                            className={`text-xs font-bold hover:underline transition-colors cursor-pointer ${brandAccent.text}`}
-                          >
-                            Esqueci minha senha
-                          </button>
-                        )}
-                      </div>
-                      <input
-                        id="login-password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-sm text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
-                        placeholder="••••••••"
-                        required
-                      />
-                    </div>
-
-                    <motion.button
-                      ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
-                      type="submit"
-                      disabled={isSubmitting || !email || !password}
-                      onPointerMove={submitMagnetic.onPointerMove}
-                      onPointerLeave={submitMagnetic.onPointerLeave}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      style={submitMagnetic.style}
-                      className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-sm shadow-lg shadow-brand/30 transition-shadow hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <Loader2 className="animate-spin" size={18} />
-                      ) : (
-                        <>
-                          {isSignUp ? 'Criar Nova Conta' : 'Entrar'} <ArrowRight size={16} />
-                        </>
-                      )}
-                    </motion.button>
-                  </form>
+                </form>
+              )
+            ) : (
+              <form onSubmit={handleAuth} className="space-y-5">
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="flex items-start gap-2.5 rounded-2xl border border-red-300 bg-red-50 p-3.5 text-xs text-red-700"
+                    role="alert"
+                  >
+                    <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                    <p>{error}</p>
+                  </motion.div>
                 )}
-              </div>
-            </div>
+
+                {isSignUp && (
+                  <div>
+                    <label
+                      htmlFor="login-name"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                    >
+                      Seu Nome Completo
+                    </label>
+                    <input
+                      id="login-name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="block w-full rounded-t-lg border-0 border-b-2 border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0"
+                      placeholder="Ex: Marcelo Nascimento"
+                      required={isSignUp}
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label
+                    htmlFor="login-email"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                  >
+                    Credencial Institucional
+                  </label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <Mail className="h-4 w-4 text-slate-600" aria-hidden="true" />
+                    </div>
+                    <input
+                      id="login-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => handleEmailChange(e.target.value)}
+                      className={`${inputClass} rounded-t-lg`}
+                      placeholder="executivo@birthhub360.com.br"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="login-password"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                  >
+                    Chave de Segurança
+                  </label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                      <Lock className="h-4 w-4 text-slate-600" aria-hidden="true" />
+                    </div>
+                    <input
+                      id="login-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`${inputClass} rounded-t-lg`}
+                      placeholder="••••••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {!isSignUp && (
+                  <div className="flex items-center justify-between pt-1">
+                    <label
+                      htmlFor="login-remember"
+                      className="flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-600"
+                    >
+                      <input
+                        id="login-remember"
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="h-4 w-4 cursor-pointer rounded border-slate-300"
+                        style={{ accentColor: BRAND.colors.brand }}
+                      />
+                      Manter conexão ativa
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPassword(true);
+                        setError('');
+                      }}
+                      className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                    >
+                      Protocolo de recuperação?
+                    </button>
+                  </div>
+                )}
+
+                <motion.button
+                  ref={submitMagnetic.ref as React.RefObject<HTMLButtonElement>}
+                  type="submit"
+                  disabled={isSubmitting || !email || !password}
+                  onPointerMove={submitMagnetic.onPointerMove}
+                  onPointerLeave={submitMagnetic.onPointerLeave}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    ...submitMagnetic.style,
+                    backgroundImage: `linear-gradient(to right, ${BRAND.colors.brand}, ${BRAND.colors.brandAccent})`,
+                  }}
+                  className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 shadow-md transition-shadow hover:shadow-lg disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="animate-spin" size={18} />
+                  ) : isSignUp ? (
+                    'Criar nova conta'
+                  ) : (
+                    'Iniciar link neural'
+                  )}
+                </motion.button>
+              </form>
+            )}
           </motion.div>
 
           <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
             <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
             Protegido por Criptografia Quântica
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {FEATURES.map(({ icon: Icon, accent, text }) => (
-              <div
-                key={text}
-                className="flex flex-col items-start gap-3 rounded-card border border-line bg-surface p-5"
+
+          {/* Prova de valor — os mesmos 3 pilares do painel esquerdo (mesma FEATURES), agora
+              sempre visível aqui: o painel esquerdo em desktop é só emblema + nome, então este é
+              o único lugar em qualquer breakpoint onde os pilares aparecem como texto lido. */}
+          <section className="relative z-10 mt-10" aria-labelledby="login-features-heading">
+            <div className="mb-4 flex items-center gap-2">
+              <h2
+                id="login-features-heading"
+                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-600"
               >
-                <span
-                  className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line bg-surface-2"
-                  style={{ color: `var(--${accent})` }}
+                O que você vai encontrar
+              </h2>
+              <span
+                className="h-px flex-1 bg-gradient-to-r from-slate-300 to-transparent"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              {FEATURES.map(({ icon: Icon, text }) => (
+                <div
+                  key={text}
+                  className="flex flex-col items-start gap-3 rounded-card border border-slate-200 bg-white p-5"
                 >
-                  <Icon className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <span className="text-sm leading-relaxed text-ink-2">{text}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span className="text-sm leading-relaxed text-slate-600">{text}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   );
 }

@@ -101,7 +101,7 @@ export function AuditLogs() {
               id="audit-filter-action"
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="bg-surface-2 border border-line rounded-lg px-2.5 py-1 text-xs text-ink outline-none"
+              className="bg-surface-2 border border-line rounded-lg px-2.5 py-1 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand"
             >
               <option value="ALL">Todas as ações ({logs.length})</option>
               {uniqueActions.map((act) => (

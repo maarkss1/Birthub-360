@@ -45,7 +45,7 @@ export function CnpjSearchPanel({
         </label>
         <input
           id="cnpj-search-input"
-          className="w-full p-3 bg-surface-2 rounded-[2rem] border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink mb-4"
+          className="w-full p-3 bg-surface-2 rounded-[2rem] border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink mb-4"
           value={cnpjInput}
           placeholder="Ex: 19.131.243/0001-97 ou Nubank"
           onChange={(e) => setCnpjInput(e.target.value)}
@@ -56,7 +56,7 @@ export function CnpjSearchPanel({
             type="button"
             onClick={onLookup}
             disabled={cnpjLoading || !cnpjInput}
-            className="w-full bg-brand-active text-on-brand py-3.5 rounded-[2rem] font-bold hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+            className="w-full bg-brand-active text-on-brand py-3.5 rounded-[2rem] font-bold hover:brightness-110 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
           >
             {cnpjLoading ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />}
             {cnpjLoading ? '⏳ Consultando...' : '🔎 Consultar CNPJ'}
@@ -66,7 +66,7 @@ export function CnpjSearchPanel({
             <button
               type="button"
               onClick={() => onSearchWebInstead(cnpjInput)}
-              className="w-full bg-surface-2 text-ink py-3.5 rounded-[2rem] font-bold hover:bg-obsidian hover:text-white disabled:opacity-50 transition-all flex items-center justify-center gap-2 mt-2"
+              className="w-full bg-surface-2 text-ink py-3.5 rounded-[2rem] font-bold hover:bg-obsidian hover:text-white disabled:opacity-50 transition-colors flex items-center justify-center gap-2 mt-2"
             >
               ✨ Buscar &quot;{cnpjInput}&quot; na web (Radar)
             </button>

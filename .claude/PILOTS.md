@@ -3700,3 +3700,99 @@ possível fazer nesta rodada.
   pré-existentes de antes). **Preview no navegador continuou indisponível** nesta sessão — a
   correção do `.hub-widget` (que teria efeito visual imediato e óbvio) fica pendente de
   confirmação visual assim que o servidor dev subir.
+
+## Adendo — PR #512, regressão de contraste do `--critical` contra `--surface-elevated` (dark)
+
+- **Contexto**: PR #512 (redesenho de tokens, `codex/preparar-ambiente-para-revisao-de-design-gexsdd`)
+  introduziu `--surface-elevated` e passou o `<aside>` da `Sidebar.tsx` (e o `<header>` da
+  `AppTopbar.tsx`) de `bg-surface` para `bg-surface-elevated/96` + `backdrop-blur-xl`. CI (axe-core)
+  reprovou `[serious] color-contrast` em `.text-critical > span` (botão "Sair da Conta" da Sidebar)
+  em 32 telas — todas herdam a Sidebar do layout, então é 1 achado real, não 32.
+- **Causa raiz confirmada** (não só aceita de relato de terceiro): `--critical` já tinha sido
+  recalibrado nesta mesma rodada de paleta contra `--surface` (claro `#FFF1F7`/escuro `#111B49`),
+  não contra o novo `--surface-elevated` (claro `#FFFFFF`/escuro `#1B2B64`) — mais claro que
+  `--surface` nos dois temas, o que **reduz** o contraste de um texto vermelho claro em cima.
+  Claro passa sem ajuste (mais claro ainda ajuda: 5.71:1 calculado). Escuro reprovava: 4.19:1
+  calculado (luminância WCAG) contra o token sólido, 4.236:1 medido num harness de navegador real
+  reproduzindo a composição exata (`color-mix` + alpha 96% + `backdrop-blur-xl` sobre `--bg`
+  escuro) — abaixo do mínimo AA (4.5:1) nos dois casos.
+- **Fix**: só o `.dark { --critical }` mudou, de `color-mix(in srgb, #ef4444 85%, white)` para
+  `color-mix(in srgb, #ef4444 75%, white)` — mais branco, na mesma direção já usada pela
+  recalibração anterior (clarear no escuro). Resultado: 4.814:1 medido no harness (composição real
+  da Sidebar), 4.76:1 calculado contra o token sólido; contra `--surface`/`--surface-2` escuras só
+  melhora (5.87:1/5.11:1, ambos já passavam antes). `--critical-active` deriva de `var(--critical)`
+  e sobe de ~10.65:1 para ~10.95:1 contra `--surface-elevated` escura — sem risco de regressão (já
+  tinha folga enorme, usado hoje em dark mode só por `BentoMetric.tsx`/`BentoInsight.tsx`). Claro
+  não mudou (já passava, 5.71:1 contra `--surface-elevated` claro).
+- **Descoberta correlata, não corrigida (fora do escopo desta correção — reportar, não decidir
+  sozinho)**: medindo o composto real do badge "soft" (`bg-critical/15 text-critical` em dark mode
+  — `DealsGrid.tsx`/`CompareBar.tsx` usam `dark:text-critical`, não `dark:text-critical-active`,
+  pro estágio "Perdido"/Δ negativo) contra `--surface-2` escura, o contraste medido é 3.82:1 **antes**
+  desta correção e 4.20:1 **depois** — melhora, mas continua abaixo do mínimo AA nos dois casos.
+  Esse achado é **pré-existente** (falha contra `--surface-2`, um token que já existia antes do
+  PR #512, não contra `--surface-elevated`) e não é o que o CI reportou como bloqueador — não
+  corrigido aqui porque exigiria decidir entre trocar pra `dark:text-critical-active` (headroom
+  enorme, ~10:1+, mas pode ficar "rosa demais"/perder a leitura de "crítico" pro caso do badge) ou
+  recalibrar `--critical` de novo com outro alvo — decisão de design, não mecânica.
+- **Verificação**: `npx tsc --noEmit` limpo; `npx biome lint src` limpo nos arquivos tocados
+  (1 warning pré-existente e não relacionado em `prospecting.routes.ts`, já existia antes desta
+  mudança). Sem Postgres/Redis disponível nesta sessão para subir o servidor Express real e rodar
+  `tests/e2e/accessibility.spec.ts` via Playwright — validação alternativa: harness estático servido
+  localmente (`vite`/backend não necessários, é CSS puro) replicando as classes exatas da Sidebar
+  (`bg-surface-elevated/96 backdrop-blur-xl`) e medindo `getComputedStyle` + fórmula de luminância
+  relativa do WCAG no navegador real, luz e escuro, antes/depois do fix — não é o mesmo teste que o
+  axe-core oficial, mas mede o contraste real renderizado pelo browser, não uma estimativa.
+
+## Fix — badge "Perdido"/Δ negativo (DealsGrid.tsx/CompareBar.tsx) sem contraste AA no escuro
+
+- **Gatilho**: a descoberta correlata registrada no piloto acima (recalibração de `--critical`
+  contra `--surface-elevated`, PR #512, já mesclado) apontou, como achado colateral fora do escopo
+  daquela correção, que o badge "Perdido"/Δ negativo em `DealsGrid.tsx`/`CompareBar.tsx`
+  (`bg-critical/15 text-critical-active dark:text-critical`) seguia abaixo de AA no escuro mesmo
+  depois daquele fix — porque falha contra `--surface-2`, um token anterior à PR #512, não
+  relacionado a ela. Esta sessão tratou esse achado como tarefa própria.
+- **Medido do zero neste código** (`--critical` já no valor pós-#512, 75%/25% branco), via harness
+  de navegador real (build de produção real do Vite/Tailwind 4, servido por HTTP local,
+  `getComputedStyle` + compositing real via Canvas2D — que resolve `color-mix(in oklab, …)`
+  exatamente como o browser renderiza, em vez de assumir mistura ingênua em sRGB — mais fórmula de
+  luminância relativa WCAG): **3.85:1** no escuro contra o composto real (`bg-critical/15` sobre
+  `--surface-2` escura), abaixo do mínimo AA (4.5:1). Claro não tinha problema (8.65:1, folga real).
+- **Causa raiz**: `dark:text-critical` presumia, por analogia com `--ok-active`/`--warn-active`
+  (onde a versão "-active" no escuro já é literalmente igual à cor crua — ver `globals.css`), que
+  `--critical-active` no escuro também coincidiria com `--critical` cru. Não coincide: são cores
+  com propósitos diferentes (`--critical` calibrado pra texto sólido contra `--surface`/
+  `--surface-2`; `--critical-active` calibrado especificamente pro composto translúcido do badge
+  "soft" — o próprio comentário em `globals.css` já registra que `--critical-active` existe
+  "pra exatamente este cenário"). `BentoMetric.tsx`/`BentoInsight.tsx` já usam o mesmíssimo padrão
+  (`bg-critical/15 text-critical-active`, sem `dark:` override) com folga grande — o bug era só
+  nos 2 componentes que adicionaram um override redundante e incorreto.
+- **3 opções avaliadas** (pedido explícito: decisão de design, não troca mecânica): (1) remover o
+  `dark:text-critical` e deixar `text-critical-active` reagir sozinho por tema — mesmo token/mesma
+  fórmula já usada por `BentoMetric`/`BentoInsight`, zero mudança de token; (2) recalibrar
+  `--critical`/token novo dedicado a este composto específico; (3) outro tratamento (fundo/borda
+  diferente). Medido antes de decidir: `text-critical-active` puro no escuro dá **9.80:1** contra o
+  composto real — grande margem, mas visualmente bem mais claro/rosado que o vermelho atual
+  (confirmado por screenshot real do harness, não só pela leitura do hex) — risco citado no pedido
+  ("pode parecer 'rosa demais'"). Como o app já usa exatamente essa aparência em produção
+  (`BentoMetric.tsx`/`BentoInsight.tsx`, mesmo composto, sem reclamação/achado prévio registrado),
+  optou-se pela opção 1: não é uma preferência estética isolada, é alinhar 2 componentes ao padrão
+  que o resto do design system já usa com sucesso pra este exato composto — critério de
+  "arquitetura já existente na vizinhança" da seção 5 da constituição. Opção 2 foi descartada
+  porque recalibrar `--critical`/`--critical-active` mexeria em todo consumidor existente desses
+  tokens (inclusive `BentoMetric`/`BentoInsight`, que já passam com folga) por um problema que já
+  tinha o token certo disponível, só não usado.
+- **Mudança**: `DealsGrid.tsx`/`CompareBar.tsx`, badge "Perdido"/`DeltaPill` negativo — removido
+  `dark:text-critical` do template de classes, mantendo só `bg-critical/15 text-critical-active`
+  (idêntico ao padrão de `BentoMetric.tsx`/`BentoInsight.tsx`). Nenhum token em `globals.css` foi
+  alterado — só documentado (ver comentário junto a `--critical-active` no bloco `.dark`).
+  `tests/unit/components/ui/DealsGrid.test.tsx` tinha uma asserção que **exigia** `dark:text-
+  critical` (escrita por uma sessão anterior que introduziu o próprio bug pensando estar
+  corrigindo contraste) — invertida para `.not.toContain`, com o comentário do arquivo atualizado
+  pra não repetir a suposição errada numa sessão futura.
+- **Verificação**: `npx tsc --noEmit` e `npx biome lint src` limpos nos arquivos tocados;
+  `npm run vitest run tests/unit/components/ui/DealsGrid.test.tsx tests/unit/components/ui/
+CompareBar.test.tsx` verde. Contraste pós-fix confirmado no mesmo harness (não só hex/cálculo
+  manual): claro 8.65:1 (inalterado), escuro 3.85:1 → **9.80:1**. `--critical-active` continua sem
+  nenhuma mudança de valor — `BentoMetric.tsx`/`BentoInsight.tsx` não são afetados (mesma margem de
+  antes). Suite `tests/e2e/accessibility.spec.ts` não rodou nesta sessão (sem Postgres/Redis no
+  ambiente) — mesma limitação já registrada nos pilotos anteriores.

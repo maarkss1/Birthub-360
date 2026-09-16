@@ -1037,6 +1037,70 @@ paths:
         '204':
           description: Removida
 
+  /companies/dedup/preview:
+    get:
+      tags: [Company Dedup]
+      summary: Lista os grupos de empresas duplicadas (mesmo CNPJ ou nome fantasia) do tenant, somente leitura
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      groups:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key: { type: string }
+                            matchedBy: { type: string, enum: [cnpj, tradeName] }
+                            survivorId: { type: string }
+                            duplicateIds: { type: array, items: { type: string } }
+                            companies:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id: { type: string }
+                                  legalName: { type: string }
+                                  tradeName: { type: string }
+                                  cnpj: { type: string, nullable: true }
+                                  enrichmentStatus: { type: string }
+                                  createdAt: { type: string, format: date-time }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /companies/dedup/merge:
+    post:
+      tags: [Company Dedup]
+      summary: >-
+        Mescla todos os grupos de empresas duplicadas por CNPJ/nome fantasia: mantém a empresa
+        sobrevivente (priorizando enriquecida e mais antiga), reatribui Contact/Lead/Note/
+        Attachment/EnrichmentLog/CrmCommercialDocument/CopilotoConversation e remove as demais
+        (soft-delete)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      merged: { type: integer }
+                      groups: { type: integer }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   /leads/dedup/preview:
     get:
       tags: [Lead Dedup]
@@ -5068,6 +5132,110 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
+  /playbook/objection-matrix/generate-suggestions:
+    post:
+      tags: [Playbook]
+      summary: Gera sugestões de objeção a partir de negócios realmente perdidos (nunca persiste sozinho)
+      description: >-
+        Agrupa negócios com status Negócios_Perdidos e motivo de perda preenchido por
+        (segmento, persona); descarta grupos com menos de 2 casos reais. Cada sugestão retornada
+        precisa de um POST /playbook/objection-matrix separado, com aprovação humana explícita,
+        para virar um item real da matriz.
+      responses:
+        '200':
+          description: OK — sugestões geradas (pode vir vazio, com `meta.emptyReason` explicando o motivo)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        segment: { type: string }
+                        persona: { type: string }
+                        objectionTitle: { type: string }
+                        objectionText: { type: string }
+                        responseScript: { type: string }
+                        keyDifferentiator: { type: string }
+                        evidenceCount: { type: integer }
+                        sourceLossReasons: { type: array, items: { type: string } }
+                  meta:
+                    type: object
+                    properties:
+                      emptyReason: { type: string }
+
+  /playbook/living-playbook/generate-suggestions:
+    post:
+      tags: [Playbook]
+      summary: >-
+        Playbook Vivo (somente ADMIN/GESTOR) — detecta abordagens que converteram melhor a partir
+        de outcomes POSITIVOS reais e confirmados, agrupados por vendedor+segmento (nunca persiste
+        sozinho)
+      description: >-
+        Agrupa AIPendingAction executadas com outcomeStatus POSITIVO por (Lead.owner, segmento);
+        descarta grupos com menos de 2 casos reais e leads sem owner definido (nunca fabrica
+        autoria). Cada sugestão retornada precisa de POST /playbook/living-playbook/broadcast (ou
+        adição manual à Matriz de Objeções) para virar comunicado real ao time.
+      responses:
+        '200':
+          description: OK — sugestões geradas (pode vir vazio, com `meta.emptyReason` explicando o motivo)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sellerId: { type: string }
+                        sellerName: { type: string }
+                        segment: { type: string }
+                        evidenceCount: { type: integer }
+                        patternTitle: { type: string }
+                        patternDescription: { type: string }
+                        suggestedScript: { type: string }
+                        sourceExcerpts: { type: array, items: { type: string } }
+                  meta:
+                    type: object
+                    properties:
+                      emptyReason: { type: string }
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /playbook/living-playbook/broadcast:
+    post:
+      tags: [Playbook]
+      summary: Anuncia um padrão vencedor do Playbook Vivo pro time inteiro, via notificação in-app (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sellerName, segment, patternTitle, suggestedScript]
+              properties:
+                sellerName: { type: string }
+                segment: { type: string }
+                patternTitle: { type: string }
+                suggestedScript: { type: string }
+      responses:
+        '200':
+          description: OK — notificação criada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataEnvelope' }
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   /playbook/objection-matrix/{id}:
     parameters:
       - $ref: '#/components/parameters/IdParam'
@@ -5392,6 +5560,32 @@ paths:
             content:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+  /commercial-intelligence/ai/deal-risk-scan:
+    post:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Detecta negócios em risco (silêncio do lead, mudança de tom, concorrente mencionado) e
+        alerta os gestores reais da organização — item 5 de "IA Agêntica de Vendas". Disparo
+        manual nesta versão; cooldown de 48h por (lead, motivo) evita alerta duplicado. Mesmo
+        limitador de IA dedicado dos demais endpoints `ai/*` deste módulo.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      scanned: { type: integer }
+                      alertsCreated: { type: integer }
+                      skippedCooldown: { type: integer }
+                      errors: { type: integer }
         '403': { $ref: '#/components/responses/Forbidden' }
         '429': { $ref: '#/components/responses/TooManyRequests' }
   /commercial-intelligence/ai/executive-summary:

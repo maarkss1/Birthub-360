@@ -138,7 +138,7 @@ export function ProspectingToolsHub() {
                 <Card
                   variant="default"
                   padding="sm"
-                  className={`h-full transition-all duration-300 ${accent.hoverBorder} group-hover:bg-surface-2 group-focus-visible:bg-surface-2 group-hover:shadow-lg group-focus-visible:shadow-lg`}
+                  className={`h-full transition-colors duration-300 ${accent.hoverBorder} group-hover:bg-surface-2 group-focus-visible:bg-surface-2 group-hover:shadow-lg group-focus-visible:shadow-lg`}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div
@@ -157,7 +157,7 @@ export function ProspectingToolsHub() {
                     {tool.description}
                   </CardDescription>
                   <span
-                    className={`mt-3 inline-flex items-center gap-1 text-xs font-bold ${accent.text} opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-300 group-hover:translate-x-0.5`}
+                    className={`mt-3 inline-flex items-center gap-1 text-xs font-bold ${accent.text} opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-colors duration-300 group-hover:translate-x-0.5`}
                   >
                     Abrir <ArrowRight className="w-3.5 h-3.5" />
                   </span>

@@ -343,7 +343,7 @@ export function MemoryGovernancePanel() {
                   setNewCandidate((prev) => ({ ...prev, sourceExecutionId: e.target.value }))
                 }
                 placeholder="Id da AgentExecution de origem"
-                className="w-full bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none placeholder:text-ink-2"
+                className="w-full bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand placeholder:text-ink-2"
               />
               <div className="flex flex-wrap gap-2">
                 <select
@@ -354,7 +354,7 @@ export function MemoryGovernancePanel() {
                       targetScope: e.target.value as MemoryScope,
                     }))
                   }
-                  className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none"
+                  className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   <option value="AGENT">Escopo: Agente</option>
                   <option value="ROLE">Escopo: Cargo</option>
@@ -368,7 +368,7 @@ export function MemoryGovernancePanel() {
                       category: e.target.value as MemoryCategory,
                     }))
                   }
-                  className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none"
+                  className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   {(
                     [
@@ -393,7 +393,7 @@ export function MemoryGovernancePanel() {
                   value={newCandidate.topic}
                   onChange={(e) => setNewCandidate((prev) => ({ ...prev, topic: e.target.value }))}
                   placeholder="Tópico (ex: sdr.follow_up.melhor_horario)"
-                  className="flex-1 min-w-[200px] bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none placeholder:text-ink-2"
+                  className="flex-1 min-w-[200px] bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand placeholder:text-ink-2"
                 />
               </div>
               <Textarea
@@ -567,7 +567,7 @@ export function MemoryGovernancePanel() {
             <select
               value={scope}
               onChange={(e) => setScope(e.target.value as MemoryScope)}
-              className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none"
+              className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand"
               aria-label="Escopo da memória"
             >
               <option value="ORGANIZATION">Organização</option>
@@ -580,7 +580,7 @@ export function MemoryGovernancePanel() {
                 value={codeInput}
                 onChange={(e) => setCodeInput(e.target.value)}
                 placeholder={scope === 'AGENT' ? 'Código do agente (ex: sdr)' : 'Código do cargo'}
-                className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none placeholder:text-ink-2"
+                className="bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand placeholder:text-ink-2"
               />
             )}
             <Button
@@ -634,7 +634,7 @@ export function MemoryGovernancePanel() {
                           }))
                         }
                         placeholder="Motivo do rollback"
-                        className="flex-1 bg-surface-2 border border-line rounded-lg px-2.5 py-1 text-xs text-ink outline-none placeholder:text-ink-2"
+                        className="flex-1 bg-surface-2 border border-line rounded-lg px-2.5 py-1 text-xs text-ink outline-none focus-visible:ring-2 focus-visible:ring-brand placeholder:text-ink-2"
                       />
                       <Button
                         size="sm"

@@ -1,5 +1,10 @@
 import type { Prisma } from '@prisma/client';
 import { type Job, Queue, Worker } from 'bullmq';
+import {
+  ACCOUNT_SIGNAL_TAXONOMY_VERSION,
+  accountSignalTypeLabel,
+  classifySignalType,
+} from '../../features/market-intelligence/domain/accountSignalTaxonomy.js';
 import { searchCompanyNews } from '../../features/prospecting/services/news.service.js';
 import { requestContext } from '../async-context.js';
 import { logger } from '../logger.js';
@@ -39,7 +44,9 @@ interface ScanCompanyNewsJobData {
   organizationId: string;
 }
 
-async function scanCompanyNews({
+// Exportado (não só usado internamente pelo Worker) para ser testável isoladamente — ver
+// `__tests__/newsMonitor.worker.test.ts`.
+export async function scanCompanyNews({
   companyId,
   organizationId,
 }: ScanCompanyNewsJobData): Promise<void> {
@@ -75,22 +82,29 @@ async function scanCompanyNews({
       },
     });
 
-    // Cria um sinal de intenção a partir da menção real mais recente.
-    const latest = newMentions[0];
-    await prisma.accountSignal.create({
-      data: {
-        organizationId,
-        companyId: company.id,
-        type: 'news_mention',
-        taxonomyVersion: 'v1',
-        title: 'Menção em notícia recente',
-        description: latest.title,
-        source: latest.domain,
-        confidence: 0.85,
-        evidenceType: 'FACT',
-        dedupeKey: `news:${company.id}:${latest.url}`,
-      },
-    });
+    // Itens 9/12: cada menção real nova é classificada por palavra-chave (`accountSignalTaxonomy.ts`)
+    // em vez de gravar sempre o mesmo `type: 'news_mention'` genérico — permite diferenciar rodada
+    // de investimento, troca de executivo, contratação em massa, expansão geográfica e M&A. GDELT
+    // devolve no máximo 5 artigos por busca (ver `news.service.ts`), então isso nunca gera mais que
+    // 5 signals por empresa por scan.
+    for (const mention of newMentions) {
+      const type = classifySignalType(mention.title);
+      await prisma.accountSignal.create({
+        data: {
+          organizationId,
+          companyId: company.id,
+          type,
+          taxonomyVersion: ACCOUNT_SIGNAL_TAXONOMY_VERSION,
+          title: accountSignalTypeLabel(type),
+          description: mention.title,
+          source: mention.domain,
+          sourceUrl: mention.url,
+          confidence: 0.85,
+          evidenceType: 'FACT',
+          dedupeKey: `news:${company.id}:${mention.url}`,
+        },
+      });
+    }
 
     logger.info(
       `News scan finished for company ${companyId} — ${newMentions.length} menção(ões) real(is) encontrada(s)`,

@@ -49,7 +49,7 @@ export function BottomSheet({
 
         {/* Painel deslizável */}
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2xl border-t border-line bg-surface focus:outline-none"
+          className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2xl border-t border-line bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           aria-describedby={description ? 'bottom-sheet-description' : undefined}
         >
           {/* Handle de arraste */}

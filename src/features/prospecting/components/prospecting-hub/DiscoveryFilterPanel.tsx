@@ -102,7 +102,7 @@ export function DiscoveryFilterPanel({
             </label>
             <select
               id="discovery-segmento"
-              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               value={criteria.segmento || ''}
               onChange={(e) => setCriteria({ ...criteria, segmento: e.target.value })}
             >
@@ -124,7 +124,7 @@ export function DiscoveryFilterPanel({
               </label>
               <select
                 id="discovery-porte"
-                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 value={criteria.porte || ''}
                 onChange={(e) => setCriteria({ ...criteria, porte: e.target.value || undefined })}
               >
@@ -146,7 +146,7 @@ export function DiscoveryFilterPanel({
                 id="discovery-volume"
                 type="text"
                 placeholder="Ex: 50 cargas/mês"
-                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink placeholder-ink-2"
+                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink placeholder-ink-2"
                 value={criteria.volume || ''}
                 onChange={(e) => setCriteria({ ...criteria, volume: e.target.value || undefined })}
               />
@@ -163,7 +163,7 @@ export function DiscoveryFilterPanel({
               </label>
               <select
                 id="discovery-estado"
-                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 value={criteria.estado || ''}
                 onChange={(e) => {
                   const estado = e.target.value;
@@ -194,7 +194,7 @@ export function DiscoveryFilterPanel({
               {cities.length > 0 ? (
                 <select
                   id="discovery-cidade"
-                  className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                  className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                   value={criteria.cidade || ''}
                   onChange={(e) => {
                     const cidade = e.target.value;
@@ -221,7 +221,7 @@ export function DiscoveryFilterPanel({
                   id="discovery-cidade"
                   type="text"
                   placeholder="Selecione um estado..."
-                  className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink placeholder-ink-2"
+                  className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink placeholder-ink-2"
                   value={criteria.cidade || ''}
                   onChange={(e) => {
                     const cidade = e.target.value;
@@ -255,7 +255,7 @@ export function DiscoveryFilterPanel({
               onChange={(e) =>
                 setCriteria({ ...criteria, palavrasChave: e.target.value || undefined })
               }
-              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             />
             <p className="text-[10px] text-ink-2 mt-1">
               Separadas por vírgula — somam ao segmento na busca da Apollo.
@@ -281,7 +281,7 @@ export function DiscoveryFilterPanel({
                     faturamentoMin: e.target.value ? Number(e.target.value) : undefined,
                   })
                 }
-                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               />
               <input
                 type="number"
@@ -293,7 +293,7 @@ export function DiscoveryFilterPanel({
                     faturamentoMax: e.target.value ? Number(e.target.value) : undefined,
                   })
                 }
-                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               />
             </div>
           </div>
@@ -317,7 +317,7 @@ export function DiscoveryFilterPanel({
                     faturamentoMensalMin: e.target.value ? Number(e.target.value) : undefined,
                   })
                 }
-                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               />
               <input
                 type="number"
@@ -329,7 +329,7 @@ export function DiscoveryFilterPanel({
                     faturamentoMensalMax: e.target.value ? Number(e.target.value) : undefined,
                   })
                 }
-                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               />
             </div>
             <p className="text-[10px] text-ink-2 mt-1">
@@ -347,7 +347,7 @@ export function DiscoveryFilterPanel({
             <textarea
               id="discovery-icp-detalhe"
               placeholder="Ex: sofrem com roubo de carga, frota própria..."
-              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink placeholder-ink-2 resize-none"
+              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink placeholder-ink-2 resize-none"
               rows={2}
               value={criteria.icp || ''}
               onChange={(e) => setCriteria({ ...criteria, icp: e.target.value })}
@@ -393,7 +393,7 @@ export function DiscoveryFilterPanel({
                     placeholder="Ex: Diretor de Logística"
                     value={cargo}
                     onChange={(e) => updateCargoRow(index, e.target.value)}
-                    className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink placeholder-ink-2"
+                    className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink placeholder-ink-2"
                   />
                   <button
                     type="button"
@@ -438,7 +438,7 @@ export function DiscoveryFilterPanel({
                 setCriteria({ ...criteria, nomeEmpresa: e.target.value || undefined })
               }
               onKeyDown={(e) => e.key === 'Enter' && onDiscover()}
-              className="w-full py-3 pl-9 pr-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+              className="w-full py-3 pl-9 pr-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             />
           </div>
           <p className="text-[10px] text-ink-2 mt-1">
@@ -455,7 +455,7 @@ export function DiscoveryFilterPanel({
           </label>
           <select
             id="discovery-quantidade"
-            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+            className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={criteria.quantidade ?? 20}
             onChange={(e) => setCriteria({ ...criteria, quantidade: Number(e.target.value) })}
           >
@@ -503,7 +503,7 @@ export function DiscoveryFilterPanel({
                       anoFundacaoMin: e.target.value ? Number(e.target.value) : undefined,
                     })
                   }
-                  className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                  className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 />
                 <input
                   type="number"
@@ -515,7 +515,7 @@ export function DiscoveryFilterPanel({
                       anoFundacaoMax: e.target.value ? Number(e.target.value) : undefined,
                     })
                   }
-                  className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                  className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
                 />
               </div>
               <p className="text-[10px] text-ink-2 mt-1">
@@ -631,7 +631,7 @@ export function DiscoveryFilterPanel({
                 onChange={(e) =>
                   setCriteria({ ...criteria, localizacaoExcluir: e.target.value || undefined })
                 }
-                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-sm font-medium text-ink"
+                className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
               />
               <p className="text-[10px] text-ink-2 mt-1">
                 Cidades/estados a descartar, separados por vírgula.
@@ -658,7 +658,7 @@ export function DiscoveryFilterPanel({
           id="btn-discover"
           onClick={onDiscover}
           disabled={isSearching}
-          className="w-full bg-brand-active text-on-brand py-4 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
+          className="w-full bg-brand-active text-on-brand py-4 rounded-xl font-bold hover:brightness-110 disabled:opacity-80 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand/20"
         >
           {isSearching ? (
             <>

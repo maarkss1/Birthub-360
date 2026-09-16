@@ -42,7 +42,7 @@ export function LoginPage() {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="w-10 h-10 bg-black/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/30 transition-all"
+            className="w-10 h-10 bg-black/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/30 transition-colors"
             aria-label="Voltar"
           >
             <ArrowLeft className="w-5 h-5 text-white" />

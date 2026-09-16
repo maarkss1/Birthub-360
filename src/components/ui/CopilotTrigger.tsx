@@ -30,7 +30,7 @@ export function CopilotTrigger() {
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label={`Abrir copiloto comercial ${BRAND.shortName}`}
-          className={`group relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br ${accent.gradient} text-on-brand ${accent.glow} hover:scale-105 active:scale-95 transition-all duration-300 border border-line cursor-pointer`}
+          className={`group relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br ${accent.gradient} text-on-brand ${accent.glow} hover:scale-105 active:scale-95 transition-colors duration-300 border border-line cursor-pointer`}
         >
           <Bot className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
 

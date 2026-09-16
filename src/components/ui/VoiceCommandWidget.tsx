@@ -149,7 +149,7 @@ export function VoiceCommandWidget() {
           type="button"
           onClick={toggleListening}
           aria-label="Comando de Voz por Microfone"
-          className={`flex items-center justify-center w-10 h-10 rounded-xl text-white shadow-xl transition-all duration-300 border border-line cursor-pointer ${
+          className={`flex items-center justify-center w-10 h-10 rounded-xl text-white shadow-xl transition-colors duration-300 border border-line cursor-pointer ${
             isListening
               ? 'bg-red-600 animate-pulse ring-4 ring-red-500/40'
               : 'bg-gradient-to-br from-brand via-orange-400 to-white hover:scale-105 active:scale-95 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_6px_20px_rgba(255,86,24,0.4)]'

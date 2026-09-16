@@ -417,7 +417,7 @@ export function ActivityList() {
                 SoundFX.play('focus');
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-1.5 bg-brand-active text-on-brand font-black text-xs px-4 py-2 rounded-xl shadow-md hover:brightness-110 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 bg-brand-active text-on-brand font-black text-xs px-4 py-2 rounded-xl shadow-md hover:brightness-110 transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Nova Atividade
             </button>
@@ -496,7 +496,7 @@ export function ActivityList() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.03 }}
-                  className={`bg-surface backdrop-blur-2xl rounded-[1.75rem] border border-line shadow-sm hover:shadow-md transition-all duration-300 p-5 flex flex-col justify-between space-y-3 ${isDone ? 'opacity-60' : ''}`}
+                  className={`bg-surface backdrop-blur-2xl rounded-[1.75rem] border border-line shadow-sm hover:shadow-md transition-colors duration-300 p-5 flex flex-col justify-between space-y-3 ${isDone ? 'opacity-60' : ''}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span
@@ -570,7 +570,7 @@ export function ActivityList() {
                       <button
                         type="button"
                         onClick={() => handleToggleStatus(a)}
-                        className={`flex-1 flex items-center justify-center gap-1.5 text-[11px] font-extrabold py-2 rounded-xl border transition-all cursor-pointer ${
+                        className={`flex-1 flex items-center justify-center gap-1.5 text-[11px] font-extrabold py-2 rounded-xl border transition-colors cursor-pointer ${
                           isDone
                             ? 'bg-surface-2 text-ink-2 border-line hover:bg-warning/10 hover:text-warning-active dark:hover:text-warning hover:border-warning/20'
                             : 'bg-success/10 text-emerald-700 border-success/20 hover:bg-success/20 dark:text-success'
@@ -583,7 +583,7 @@ export function ActivityList() {
                         type="button"
                         onClick={() => handleDelete(a.id)}
                         aria-label="Excluir atividade"
-                        className="p-2 rounded-xl bg-danger/10 text-danger-active dark:text-danger border border-danger/20 hover:bg-danger/20 transition-all cursor-pointer"
+                        className="p-2 rounded-xl bg-danger/10 text-danger-active dark:text-danger border border-danger/20 hover:bg-danger/20 transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -634,7 +634,7 @@ export function ActivityList() {
                     key={tpl.id}
                     type="button"
                     onClick={() => handleApplyTemplate(tpl)}
-                    className="w-full text-left p-3.5 rounded-2xl bg-surface-2/50 hover:bg-brand/10 border border-line hover:border-brand transition-all cursor-pointer space-y-1"
+                    className="w-full text-left p-3.5 rounded-2xl bg-surface-2/50 hover:bg-brand/10 border border-line hover:border-brand transition-colors cursor-pointer space-y-1"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-extrabold text-xs text-ink">{tpl.title}</span>
@@ -670,7 +670,7 @@ export function ActivityList() {
                   setForm((f) => ({ ...f, leadId: '' }));
                 }}
                 aria-label="Fechar"
-                className="p-2 rounded-xl bg-surface-2 hover:bg-line cursor-pointer transition-all"
+                className="p-2 rounded-xl bg-surface-2 hover:bg-line cursor-pointer transition-colors"
               >
                 <X className="w-4 h-4 text-ink-2" />
               </button>

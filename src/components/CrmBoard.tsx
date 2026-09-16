@@ -21,6 +21,7 @@ import {
   Search,
   Send,
   Sparkles,
+  Target,
   WifiOff,
   X,
 } from 'lucide-react';
@@ -615,10 +616,12 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       className={`flex-1 flex flex-col bg-bg text-ink animate-in fade-in duration-500 overflow-hidden relative ${embedded ? 'min-h-[680px] h-full' : 'h-full'}`}
     >
       {/* Header com estilo moderno */}
-      <div className="p-6 border-b border-line flex flex-col sm:flex-row items-start sm:items-center justify-between bg-surface/75 backdrop-blur-xl shrink-0 gap-4">
+      <div className="flex shrink-0 flex-col items-start justify-between gap-4 border-b border-line bg-surface-elevated/92 p-4 backdrop-blur-xl sm:flex-row sm:items-center lg:px-6 lg:py-5">
         <div>
-          <h2 className="font-extrabold text-2xl text-ink tracking-tight flex items-center gap-2">
-            🎯 {funnel === 'Lead' ? 'Leads e pré-vendas' : 'Negócios e fechamento'}
+          <div className="bh-label mb-1 text-brand-ink dark:text-brand">PIPELINE COMERCIAL</div>
+          <h2 className="flex items-center gap-2 font-display text-h2 font-bold text-ink">
+            <Target className="h-5 w-5 text-brand-ink dark:text-brand" aria-hidden="true" />
+            {funnel === 'Lead' ? 'Leads e pré-vendas' : 'Negócios e fechamento'}
           </h2>
           <p className="text-ink-2 text-xs mt-1">
             {funnel === 'Lead'
@@ -689,7 +692,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
             title="Abrir painel para buscar e receber leads do Bitrix24"
           >
             <Download className="w-4 h-4 rotate-180 shrink-0 text-sky-500" />
-            <span>📥 Receber do Bitrix</span>
+            <span>Receber do Bitrix</span>
           </Button>
 
           {/* Botão Enviar para Bitrix (Manual) */}
@@ -700,7 +703,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
             title="Enviar leads para o portal Bitrix24"
           >
             <Send className="w-4 h-4 shrink-0 text-sky-500" />
-            <span>📤 Enviar para Bitrix</span>
+            <span>Enviar para Bitrix</span>
           </Button>
 
           <Button
@@ -711,7 +714,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
             title="Enriquecer leads não enriquecidos em lote"
           >
             <Sparkles className="w-4 h-4 shrink-0 text-yellow-500" />
-            <span className="hidden sm:inline">✨ Enriquecer Lote</span>
+            <span className="hidden sm:inline">Enriquecer lote</span>
           </Button>
 
           <Button
@@ -721,13 +724,13 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
             title="Exportar todos os leads para uma planilha CSV"
           >
             <Download className="w-4 h-4 shrink-0" />
-            <span className="hidden sm:inline">💾 CSV</span>
+            <span className="hidden sm:inline">Exportar CSV</span>
           </Button>
         </div>
       </div>
 
       {/* Barra de filtros do pipeline (Onda B2a) — busca por texto + dono, persistidos na URL. */}
-      <div className="px-6 py-3 border-b border-line bg-surface/60 flex flex-wrap items-center gap-3 shrink-0">
+      <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-line bg-surface-subtle px-4 py-3 lg:px-6">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <label htmlFor="crm-board-search" className="sr-only">
             Buscar por empresa ou contato
@@ -739,7 +742,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
             value={searchQuery}
             onChange={(e) => handleSearchQueryChange(e.target.value)}
             placeholder="Buscar por empresa ou contato..."
-            className="w-full pl-9 pr-3 py-2 bg-surface-2 border border-line rounded-xl text-xs text-ink placeholder:text-ink-2 focus:outline-none focus:border-brand"
+            className="w-full rounded-control border border-line bg-surface-elevated py-2 pl-9 pr-3 text-xs text-ink placeholder:text-ink-2 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
           />
         </div>
         <div className="flex items-center gap-1.5">
@@ -750,7 +753,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
             id="crm-board-owner-filter"
             value={ownerFilter}
             onChange={(e) => handleOwnerFilterChange(e.target.value)}
-            className="px-2.5 py-2 bg-surface-2 border border-line rounded-xl text-xs font-medium text-ink focus:outline-none focus:border-brand"
+            className="rounded-control border border-line bg-surface-elevated px-2.5 py-2 text-xs font-medium text-ink focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/25"
           >
             <option value="">Todos os donos</option>
             {users.map((u) => (
@@ -794,7 +797,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           ganho real — não vale o risco de desalinhar abertura/fechamento num componente grande. */}
       {/* biome-ignore lint/a11y/useSemanticElements: ver comentário acima */}
       <div
-        className="flex-1 min-h-[320px] overflow-x-auto overflow-y-hidden p-6 custom-scrollbar bg-bg pb-24"
+        className="custom-scrollbar flex-1 min-h-[320px] overflow-x-auto overflow-y-hidden bg-bg p-4 pb-24 lg:p-6 lg:pb-24"
         role="region"
         // Div não-interativa com scroll — tabIndex é intencional (torna a região focável/rolável
         // via teclado), não um erro de a11y. Mesmo padrão de VirtualTable.tsx.

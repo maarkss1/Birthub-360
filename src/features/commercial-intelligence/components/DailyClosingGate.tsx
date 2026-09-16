@@ -157,7 +157,7 @@ export function DailyClosingGate({ pending, onClosed }: DailyClosingGateProps) {
                 value={userComment}
                 onChange={(e) => setUserComment(e.target.value)}
                 placeholder="O que funcionou, o que travou, o que precisa de apoio do gestor..."
-                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all resize-none"
+                className="w-full bg-surface-2 border border-line rounded-2xl px-4 py-3.5 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-colors resize-none"
                 required
               />
             </div>
@@ -189,7 +189,7 @@ export function DailyClosingGate({ pending, onClosed }: DailyClosingGateProps) {
                       value={goal}
                       onChange={(e) => updateGoal(index, e.target.value)}
                       placeholder={`Meta ${index + 1}`}
-                      className="flex-1 bg-surface-2 border border-line rounded-2xl px-4 py-3 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-all"
+                      className="flex-1 bg-surface-2 border border-line rounded-2xl px-4 py-3 text-xs text-ink placeholder-ink-2 focus:outline-none focus:ring-2 focus:ring-brand transition-colors"
                     />
                     {goals.length > 1 && (
                       <button
@@ -210,7 +210,7 @@ export function DailyClosingGate({ pending, onClosed }: DailyClosingGateProps) {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
+              className="w-full mt-2 bg-gradient-to-r from-brand to-brand-2 text-on-brand py-3.5 rounded-2xl font-extrabold text-xs shadow-lg shadow-brand/30 hover:scale-[1.02] active:scale-[0.98] transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <Loader2 className="animate-spin" size={18} />

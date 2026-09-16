@@ -59,7 +59,7 @@ export function HeatmapWidget({ data }: { data: AnalyticsDashboard['callHeatmap'
                 <div
                   key={hour}
                   title={count > 0 ? `${DAY_NAMES[day]} ${hour}h — ${count} ligação(ões)` : ''}
-                  className="flex-1 h-5 rounded-sm transition-all cursor-default"
+                  className="flex-1 h-5 rounded-sm transition-colors cursor-default"
                   style={{ backgroundColor: bg }}
                 />
               );
@@ -113,7 +113,7 @@ export function AgentPerformanceWidget({
             <div className="flex items-center gap-2">
               <div className="flex-1 h-1.5 bg-surface rounded-full overflow-hidden">
                 <div
-                  className="h-full rounded-full transition-all"
+                  className="h-full rounded-full transition-colors"
                   style={{
                     width: `${Math.min(agent.conversionRate, 100)}%`,
                     backgroundColor: agent.isAi ? SERIES.created : SERIES.won,

@@ -119,7 +119,7 @@ export function BitrixGuideHub() {
         <button
           type="button"
           onClick={() => setActiveTab('practices')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-colors cursor-pointer ${
             activeTab === 'practices'
               ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'
@@ -130,7 +130,7 @@ export function BitrixGuideHub() {
         <button
           type="button"
           onClick={() => setActiveTab('pipeline')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-colors cursor-pointer ${
             activeTab === 'pipeline'
               ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'
@@ -141,7 +141,7 @@ export function BitrixGuideHub() {
         <button
           type="button"
           onClick={() => setActiveTab('field_mapping')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-colors cursor-pointer ${
             activeTab === 'field_mapping'
               ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'
@@ -152,7 +152,7 @@ export function BitrixGuideHub() {
         <button
           type="button"
           onClick={() => setActiveTab('tutorials')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-colors cursor-pointer ${
             activeTab === 'tutorials'
               ? `${accent.solidBg} text-on-brand shadow-md`
               : 'bg-surface-2 text-ink-2 hover:bg-surface-2'

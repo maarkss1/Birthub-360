@@ -180,7 +180,7 @@ export function SalesMethodologyStudio() {
                 setActiveTab('spin');
                 setResult(null);
               }}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer ${
                 activeTab === 'spin'
                   ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
@@ -194,7 +194,7 @@ export function SalesMethodologyStudio() {
                 setActiveTab('snap');
                 setResult(null);
               }}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer ${
                 activeTab === 'snap'
                   ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
@@ -208,7 +208,7 @@ export function SalesMethodologyStudio() {
                 setActiveTab('aida');
                 setResult(null);
               }}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer ${
                 activeTab === 'aida'
                   ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
@@ -222,7 +222,7 @@ export function SalesMethodologyStudio() {
                 setActiveTab('meddpicc');
                 setResult(null);
               }}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer ${
                 activeTab === 'meddpicc'
                   ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'
@@ -236,7 +236,7 @@ export function SalesMethodologyStudio() {
                 setActiveTab('challenger');
                 setResult(null);
               }}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+              className={`flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer ${
                 activeTab === 'challenger'
                   ? 'bg-brand-active text-on-brand shadow-lg shadow-brand/20'
                   : 'text-ink-2 hover:text-ink'

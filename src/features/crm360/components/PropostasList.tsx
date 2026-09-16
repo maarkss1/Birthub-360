@@ -142,7 +142,7 @@ export function PropostasList() {
                 setEditingDocument(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-all shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 bg-brand-active hover:brightness-110 text-on-brand px-5 py-2.5 rounded-2xl font-bold transition-colors shadow-lg shadow-brand/20 active:scale-95 cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               Novo Documento
@@ -158,7 +158,7 @@ export function PropostasList() {
               placeholder="Buscar por número ou título..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-surface-2 border border-line text-ink placeholder-ink-2 rounded-xl focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all outline-none text-sm"
+              className="w-full pl-11 pr-4 py-2.5 bg-surface-2 border border-line text-ink placeholder-ink-2 rounded-xl focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors outline-none text-sm"
             />
           </div>
           <select

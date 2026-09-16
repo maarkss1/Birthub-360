@@ -519,7 +519,7 @@ if __name__ == "__main__":
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'tool' ? null : 'tool')}
-              className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-yellow-400/50 transition-colors"
+              className="w-full bg-transparent text-ink text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand border-b border-line pb-2 flex items-center justify-between text-left hover:border-yellow-400/50 transition-colors"
             >
               <span className="truncate">{selectedToolObj.title}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -568,7 +568,7 @@ if __name__ == "__main__":
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'ai' ? null : 'ai')}
-              className="w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left hover:border-rose-400/50 transition-colors"
+              className="w-full bg-transparent text-ink text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand border-b border-line pb-2 flex items-center justify-between text-left hover:border-rose-400/50 transition-colors"
             >
               <span className="truncate">{selectedAiObj.title}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -629,7 +629,7 @@ if __name__ == "__main__":
             type="button"
             onClick={handleGenerate}
             disabled={generating}
-            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
+            className={`group relative flex items-center justify-center gap-3 bg-gradient-to-r ${accent.gradient} text-on-brand px-12 py-4 rounded-full font-black text-sm uppercase tracking-widest transition-colors disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden ${accent.glow}`}
           >
             {generating && (
               <motion.div
@@ -692,7 +692,7 @@ if __name__ == "__main__":
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors ${
                     copied
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                       : 'bg-surface-2 text-ink-2 hover:bg-line border border-line'
@@ -711,7 +711,7 @@ if __name__ == "__main__":
                 <button
                   type="button"
                   onClick={handleDownload}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-all`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider ${accent.bgSoft} ${accent.textSoft} ${accent.hoverBg} border ${accent.borderSoft} transition-colors`}
                 >
                   <Download size={14} /> Baixar Blueprint
                 </button>
@@ -723,7 +723,7 @@ if __name__ == "__main__":
               <button
                 type="button"
                 onClick={() => setActiveTabOutput('blueprint')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
                   activeTabOutput === 'blueprint'
                     ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-surface-2 text-ink-2 hover:bg-line'
@@ -734,7 +734,7 @@ if __name__ == "__main__":
               <button
                 type="button"
                 onClick={() => setActiveTabOutput('json')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
                   activeTabOutput === 'json'
                     ? `${accent.solidBg} text-on-brand shadow-lg`
                     : 'bg-surface-2 text-ink-2 hover:bg-line'
@@ -745,7 +745,7 @@ if __name__ == "__main__":
               <button
                 type="button"
                 onClick={() => setActiveTabOutput('code')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
                   activeTabOutput === 'code'
                     ? 'bg-sky-600 text-white shadow-lg'
                     : 'bg-surface-2 text-ink-2 hover:bg-line'

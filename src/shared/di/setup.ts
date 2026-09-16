@@ -47,9 +47,11 @@ import { CopilotoIaUseCases } from '../../features/copiloto-ia/application/Copil
 import { CopilotoVoiceIngestionAdapter } from '../../features/copiloto-ia/infra/CopilotoVoiceIngestionAdapter';
 import { PrismaCopilotoIaRepository } from '../../features/copiloto-ia/infra/PrismaCopilotoIaRepository';
 import { CopilotoIaController } from '../../features/copiloto-ia/presentation/CopilotoIaController';
+import { CompanyDeduplicationService } from '../../features/crm/application/CompanyDeduplicationService';
 import { LeadDeduplicationService } from '../../features/crm/application/LeadDeduplicationService';
 import { LeadUseCases } from '../../features/crm/application/LeadUseCases';
 import { PrismaLeadRepository } from '../../features/crm/infra/PrismaLeadRepository';
+import { CompanyDedupController } from '../../features/crm/presentation/CompanyDedupController';
 import { LeadController } from '../../features/crm/presentation/LeadController';
 import { LeadDedupController } from '../../features/crm/presentation/LeadDedupController';
 import { Crm360UseCases } from '../../features/crm360/application/Crm360UseCases';
@@ -67,6 +69,13 @@ import { testBitrixConnection } from '../../features/integrations/bitrix/service
 // o tipo estrutural local já usado por `agent.routes.ts`.
 import { createCalendarEvent } from '../../features/integrations/google/google.service.js';
 import { StripeChargeAdapter } from '../../features/integrations/stripe/infra/StripeChargeAdapter';
+// Negociador de IA em segundo plano (item 3 da IA Agêntica de Vendas, onda de 2026-09-15) — mesmo
+// motivo do comentário da Onda 43 acima: `intelligence/services/aiPendingAction.service.ts` não
+// pode importar `integrations/whatsapp/whatsapp.service.ts` diretamente
+// (no-cross-feature-imports). Registrado aqui e resolvido via
+// `container.resolve<WhatsAppSenderPort>('WhatsAppSenderPort')`, mesmo padrão de
+// `GoogleCalendarService` logo acima.
+import { sendWhatsAppMessage } from '../../features/integrations/whatsapp/whatsapp.service.js';
 import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
 import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
 // Agent Runtime Genérico (PROMPT 4) — mesmo motivo do comentário da Onda 43 acima:
@@ -89,6 +98,7 @@ import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
 import { PrismaNoteRepository } from '../../features/notes/infra/PrismaNoteRepository';
 // Controllers
 import { NoteController } from '../../features/notes/presentation/NoteController';
+import { LivingPlaybookController } from '../../features/playbook/living-playbook/presentation/LivingPlaybookController';
 import { ObjectionMatrixUseCases } from '../../features/playbook/objection-matrix/application/ObjectionMatrixUseCases';
 import { PrismaObjectionMatrixRepository } from '../../features/playbook/objection-matrix/infra/PrismaObjectionMatrixRepository';
 import { ObjectionMatrixController } from '../../features/playbook/objection-matrix/presentation/ObjectionMatrixController';
@@ -211,6 +221,7 @@ export function setupDI() {
   });
   container.register('SignatureRequestRepositoryPort', prismaSignatureRequestRepository);
   container.register('GoogleCalendarService', { createCalendarEvent });
+  container.register('WhatsAppSenderPort', { sendWhatsAppMessage });
   // Agent Runtime Genérico (PROMPT 4) — executores reais por trás de `toolExecutors.ts`
   // (job-roles). `MeetingSynthesisService`/`SDRQualificationAgent`/`CloserAgent` não têm
   // dependência própria (mesmo padrão de instanciação already usado em supervisor.agent.ts —
@@ -243,6 +254,10 @@ export function setupDI() {
     'LeadDedupController',
     new LeadDedupController(new LeadDeduplicationService()),
   );
+  container.register(
+    'CompanyDedupController',
+    new CompanyDedupController(new CompanyDeduplicationService()),
+  );
   container.register('AutomationController', new AutomationController(automationUseCases));
   container.register('AnalyticsController', new AnalyticsController(analyticsUseCases));
   container.register(
@@ -261,6 +276,7 @@ export function setupDI() {
     'ObjectionMatrixController',
     new ObjectionMatrixController(objectionMatrixUseCases),
   );
+  container.register('LivingPlaybookController', new LivingPlaybookController());
   container.register('BugReportController', new BugReportController(bugReportUseCases));
   container.register('UsageController', new UsageController(usageUseCases));
   container.register('FeatureFlagsController', new FeatureFlagsController(featureFlagsUseCases));

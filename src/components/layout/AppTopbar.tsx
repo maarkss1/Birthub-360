@@ -78,11 +78,11 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2.5 border-b border-line bg-surface/90 backdrop-blur-xl px-3 sm:px-4 shadow-[0_10px_35px_-30px_rgba(0,0,0,0.75)]">
+    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2.5 border-b border-line bg-surface-elevated/92 px-3 shadow-card backdrop-blur-xl sm:px-5">
       <button
         type="button"
         onClick={onOpenMobileNav}
-        className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-ink-2 transition-[transform,background-color,color] duration-200 hover:-translate-y-0.5 hover:bg-surface-2 active:translate-y-0 md:hidden"
+        className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-control text-ink-2 transition-colors hover:bg-surface-interactive hover:text-ink lg:hidden"
         aria-label="Abrir menu de navegação"
       >
         <Menu className="h-4 w-4" />
@@ -92,7 +92,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         <button
           type="button"
           onClick={handleBack}
-          className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-ink-2 transition-[transform,background-color,color] duration-200 hover:-translate-y-0.5 hover:bg-surface-2 active:translate-y-0"
+          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-control text-ink-2 transition-colors hover:bg-surface-interactive hover:text-ink"
           aria-label="Voltar"
           title="Voltar"
         >
@@ -101,12 +101,10 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
       )}
 
       <div className="flex min-w-0 items-center gap-2">
-        <div className="grid h-7 w-7 place-items-center rounded-lg border border-brand/20 bg-brand/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-          <Icon className="h-4 w-4 shrink-0 text-brand" />
+        <div className="grid h-8 w-8 place-items-center rounded-control border border-brand/20 bg-brand/10">
+          <Icon className="h-4 w-4 shrink-0 text-brand-ink dark:text-brand" />
         </div>
-        <h1 className="truncate text-xs font-bold uppercase tracking-wide text-ink">
-          {meta.label}
-        </h1>
+        <h1 className="truncate font-display text-sm font-semibold text-ink">{meta.label}</h1>
       </div>
 
       <button
@@ -115,7 +113,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
           SoundFX.play('focus');
           window.dispatchEvent(new Event(OPEN_COMMAND_PALETTE_EVENT));
         }}
-        className="group ml-2 hidden max-w-sm flex-1 items-center gap-2 rounded-xl border border-line bg-surface-2/80 px-2.5 py-1.5 text-ink-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-[transform,border-color,box-shadow,color] duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:text-ink hover:shadow-card md:flex"
+        className="group ml-3 hidden max-w-md flex-1 items-center gap-2 rounded-control border border-line bg-surface-subtle px-3 py-2 text-ink-2 transition-[border-color,box-shadow,color] hover:border-brand/35 hover:text-ink hover:shadow-sm lg:flex"
       >
         <Search className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-110" />
         <span className="text-xs">Buscar empresa, decisor ou comando…</span>

@@ -64,7 +64,7 @@ export function BentoCard({
   return (
     <div
       className={cn(
-        'relative rounded-xl p-6 transition-all duration-200 overflow-hidden flex flex-col justify-between',
+        'relative rounded-xl p-6 transition-colors duration-200 overflow-hidden flex flex-col justify-between',
         colSpanClasses,
         rowSpanClasses,
         variantClasses,

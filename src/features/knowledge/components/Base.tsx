@@ -430,7 +430,7 @@ export function Base() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Pergunte em linguagem natural: como reduzir sinistro de carga?"
-              className="w-full bg-surface border border-line rounded-2xl pl-12 pr-32 py-4 text-sm text-ink placeholder-ink-2 outline-none transition-all focus:border-brand"
+              className="w-full bg-surface border border-line rounded-2xl pl-12 pr-32 py-4 text-sm text-ink placeholder-ink-2 outline-none transition-colors focus:border-brand"
             />
             <Button
               type="submit"
