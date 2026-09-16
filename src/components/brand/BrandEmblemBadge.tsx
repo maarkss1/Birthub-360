@@ -33,7 +33,78 @@ export function BrandEmblemBadge({ className, title }: { className?: string; tit
     : { 'aria-hidden': true, focusable: false as const };
 
   return (
-    <div className={`relative isolate ${className ?? ''}`}>
+    <div className={`relative isolate flex items-center justify-center ${className ?? ''}`}>
+      {/* Trilhas orbitais externas e nós cósmicos de dados */}
+      <svg
+        className="pointer-events-none absolute -inset-6 h-[calc(100%+3rem)] w-[calc(100%+3rem)] select-none"
+        viewBox="0 0 300 300"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <defs>
+          <radialGradient id={`node-cyan-${uid}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#22d3ee" stopOpacity="1" />
+            <stop offset="60%" stopColor="#06b6d4" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#0891b2" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`node-purple-${uid}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#c084fc" stopOpacity="1" />
+            <stop offset="60%" stopColor="#a855f7" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#7e22ce" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`node-gold-${uid}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#fde047" stopOpacity="1" />
+            <stop offset="60%" stopColor="#f59e0b" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
+          </radialGradient>
+          <filter id={`glow-${uid}`} x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        {/* Órbita 1 - Elíptica inclinada */}
+        <ellipse
+          cx="150"
+          cy="150"
+          rx="125"
+          ry="105"
+          transform="rotate(-18 150 150)"
+          stroke="rgba(34, 211, 238, 0.22)"
+          strokeWidth="1.2"
+          strokeDasharray="4 6"
+        />
+
+        {/* Órbita 2 - Quase circular externa */}
+        <ellipse
+          cx="150"
+          cy="150"
+          rx="136"
+          ry="120"
+          transform="rotate(28 150 150)"
+          stroke="rgba(217, 119, 6, 0.25)"
+          strokeWidth="1.2"
+        />
+
+        {/* Nós planetários / satélites orbitais */}
+        {/* Nó Ciano Top-Right */}
+        <circle cx="236" cy="92" r="5" fill="#22d3ee" filter={`url(#glow-${uid})`} />
+        <circle cx="236" cy="92" r="2.5" fill="#ffffff" />
+
+        {/* Nó Ciano Top-Left */}
+        <circle cx="68" cy="104" r="4" fill="#38bdf8" filter={`url(#glow-${uid})`} />
+        <circle cx="68" cy="104" r="2" fill="#ffffff" />
+
+        {/* Nó Roxo / Iris Bottom-Left */}
+        <circle cx="95" cy="226" r="5.5" fill="#c084fc" filter={`url(#glow-${uid})`} />
+        <circle cx="95" cy="226" r="2.5" fill="#ffffff" />
+
+        {/* Nó Dourado Middle-Right */}
+        <circle cx="258" cy="174" r="4.5" fill="#f59e0b" filter={`url(#glow-${uid})`} />
+        <circle cx="258" cy="174" r="2" fill="#ffffff" />
+      </svg>
+
       {/* Anel externo — órbita de 5 cores, mesma sequência de .bg-gradient-orbit5. Espessura em
           % (não px) para escalar corretamente entre o selo grande (desktop) e o pequeno
           (mobile-only), onde um anel de largura fixa ficaria imperceptível ou desproporcional. */}
@@ -41,7 +112,7 @@ export function BrandEmblemBadge({ className, title }: { className?: string; tit
         className="h-full w-full rounded-full p-[6%]"
         style={{
           backgroundImage: `conic-gradient(from 0deg, ${BRAND.colors.brand}, ${BRAND.colors.red}, ${BRAND.colors.pink}, ${BRAND.colors.iris}, ${BRAND.colors.orbitBlue}, ${BRAND.colors.brand})`,
-          boxShadow: `0 0 28px -4px ${BRAND.colors.brand}B3`,
+          boxShadow: `0 0 36px -4px ${BRAND.colors.brand}B3, 0 0 60px -10px ${BRAND.colors.iris}66`,
         }}
       >
         {/* Aro claro — separa o anel externo do interno, efeito de borda metálica. */}
