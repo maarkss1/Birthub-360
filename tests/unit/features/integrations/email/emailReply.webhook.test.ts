@@ -57,6 +57,12 @@ vi.mock('../../../../../src/lib/logger.js', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
+vi.mock('../../../../../src/shared/security/webhookReplayGuard.js', () => ({
+  claimWebhookDelivery: vi.fn().mockResolvedValue('fresh'),
+  webhookDeliveryFingerprint: vi.fn(() => 'fingerprint-de-teste'),
+  validateWebhookTimestamp: vi.fn().mockReturnValue({ valid: true }),
+}));
+
 const mockEnv: Record<string, string | undefined> = {
   EMAIL_INBOUND_WEBHOOK_SECRET: 'segredo-email-teste',
 };
