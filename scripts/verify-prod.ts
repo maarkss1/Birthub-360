@@ -141,7 +141,14 @@ async function verifyProd() {
     console.error('❌ A CERTIFICAÇÃO DE PRODUÇÃO FALHOU. Corrija os itens marcados com [FAIL].');
     process.exit(1);
   } else {
-    console.log('🎉 CERTIFICAÇÃO CONCLUÍDA COM SUCESSO! O sistema está pronto para produção.');
+    console.log('🎉 PRODUCTION DOMAIN/AUTH CONFIGURATION = PASS');
+    console.log('ℹ️  Nota: A certificação operacional final depende de validação real na OCI de:');
+    console.log('    - DNS público;');
+    console.log('    - HTTPS;');
+    console.log('    - Login e logout;');
+    console.log('    - Persistência de sessão;');
+    console.log('    - Cookie Secure;');
+    console.log('    - CORS no browser.');
     process.exit(0);
   }
 }
