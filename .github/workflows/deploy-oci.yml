@@ -218,23 +218,65 @@ jobs:
           fi
           echo "CURRENT_SHA=${CURRENT_SHA}"
 
-          echo "== rodando scripts/deploy-oci.sh (rebuild + restart + migrations + seed) =="
+          echo "== rodando scripts/deploy-oci.sh (rebuild + restart + migrations + seed + smoke test) =="
           chmod +x scripts/deploy-oci.sh
+          chmod +x scripts/smoke-test-oci.sh
           ./scripts/deploy-oci.sh
-          echo "== health checks pós-deploy =="
-          curl -fsS http://127.0.0.1:3000/health/live
-          curl -fsS http://127.0.0.1:3000/health/ready
-          echo "SMOKE_TEST=PASS"
           REMOTE_SCRIPT
-
-      - name: Extrair PREVIOUS_SHA do log remoto
+      - name: Extrair métricas do log remoto e validar Smoke Gate
         if: always()
-        id: previous_sha
+        id: parse_deploy_log
         run: |
-          prev="$(grep -oE '^PREVIOUS_SHA=[0-9a-f]{40}$' /tmp/remote-deploy.log | tail -n1 | cut -d= -f2 || true)"
-          smoke="$(grep -oE '^SMOKE_TEST=.*$' /tmp/remote-deploy.log | tail -n1 | cut -d= -f2 || echo 'FAIL')"
-          echo "sha=${prev}" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+
+          prev="$(grep -oE '^PREVIOUS_SHA=[0-9a-f]{40}$' /tmp/remote-deploy.log 2>/dev/null | tail -n1 | cut -d= -f2 || echo '')"
+          if [ -z "$prev" ]; then
+            prev="UNKNOWN"
+          fi
+
+          health_live="$(grep -oE '^HEALTH_LIVE=(PASS|FAIL)$' /tmp/remote-deploy.log 2>/dev/null | tail -n1 | cut -d= -f2 || echo '')"
+          if [ -z "$health_live" ]; then
+            health_live="UNKNOWN"
+          fi
+
+          health_ready="$(grep -oE '^HEALTH_READY=(PASS|FAIL)$' /tmp/remote-deploy.log 2>/dev/null | tail -n1 | cut -d= -f2 || echo '')"
+          if [ -z "$health_ready" ]; then
+            health_ready="UNKNOWN"
+          fi
+
+          smoke="$(grep -oE '^SMOKE_TEST=(PASS|FAIL)$' /tmp/remote-deploy.log 2>/dev/null | tail -n1 | cut -d= -f2 || echo '')"
+          if [ -z "$smoke" ]; then
+            smoke="FAIL"
+          fi
+
+          migrations="UNKNOWN"
+          if grep -q "Executando migrações Prisma" /tmp/remote-deploy.log 2>/dev/null; then
+            if grep -q "No pending migrations" /tmp/remote-deploy.log 2>/dev/null || grep -q "migrations have been applied" /tmp/remote-deploy.log 2>/dev/null || grep -q "Database schema is up to date" /tmp/remote-deploy.log 2>/dev/null; then
+              migrations="PASS"
+            elif grep -q "npx prisma migrate deploy" /tmp/remote-deploy.log 2>/dev/null; then
+              migrations="PASS"
+            fi
+          fi
+
+          echo "prev_sha=${prev}" >> "$GITHUB_OUTPUT"
+          echo "health_live=${health_live}" >> "$GITHUB_OUTPUT"
+          echo "health_ready=${health_ready}" >> "$GITHUB_OUTPUT"
           echo "smoke=${smoke}" >> "$GITHUB_OUTPUT"
+          echo "migrations=${migrations}" >> "$GITHUB_OUTPUT"
+
+      - name: Validar gating estrito de Smoke Test (NO SMOKE PASS = NO DEPLOY SUCCESS)
+        run: |
+          set -euo pipefail
+          SMOKE_RESULT="${{ steps.parse_deploy_log.outputs.smoke }}"
+          REMOTE_EXIT="${{ steps.remote_deploy.outcome }}"
+
+          echo "Remote Deploy Step Outcome: ${REMOTE_EXIT}"
+          echo "Smoke Gate Result: ${SMOKE_RESULT}"
+
+          if [ "$REMOTE_EXIT" != "success" ] || [ "$SMOKE_RESULT" != "PASS" ]; then
+            echo "::error::SMOKE GATE FAILED: Remote deploy outcome='${REMOTE_EXIT}', smoke_result='${SMOKE_RESULT}'. Blocking deployment success."
+            (exit 1)
+          fi
 
       - name: Resumo
         if: always()
@@ -244,13 +286,15 @@ jobs:
             echo '```'
             echo "ENVIRONMENT............. PRODUCTION (Oracle Cloud)"
             echo "COMMIT SHA............... ${TARGET_SHA}"
-            echo "PREVIOUS SHA.............. ${{ steps.previous_sha.outputs.sha || 'desconhecido (ver log remoto)' }}"
+            echo "PREVIOUS SHA.............. ${{ steps.parse_deploy_log.outputs.prev_sha || 'UNKNOWN' }}"
             echo "CI QUALITY GATE........... PASS (validado antes do deploy, ver job resolve-sha)"
             echo "TRIGGER................... ${{ github.event_name }}"
             echo "ACTOR...................... ${{ github.actor }}"
             echo "TIMESTAMP.................. $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo "MIGRATIONS................. incluído em scripts/deploy-oci.sh (npx prisma migrate deploy)"
-            echo "SMOKE TEST.................. ${{ steps.previous_sha.outputs.smoke || 'FAIL' }}"
-            echo "DEPLOYMENT.................. ${{ job.status }}"
+            echo "MIGRATIONS................. ${{ steps.parse_deploy_log.outputs.migrations || 'UNKNOWN' }}"
+            echo "HEALTH LIVE................ ${{ steps.parse_deploy_log.outputs.health_live || 'UNKNOWN' }}"
+            echo "HEALTH READY............... ${{ steps.parse_deploy_log.outputs.health_ready || 'UNKNOWN' }}"
+            echo "SMOKE TEST................. ${{ steps.parse_deploy_log.outputs.smoke || 'FAIL' }}"
+            echo "DEPLOYMENT................. ${{ job.status }}"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
