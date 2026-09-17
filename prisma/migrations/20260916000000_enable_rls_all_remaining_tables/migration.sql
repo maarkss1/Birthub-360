@@ -23,105 +23,70 @@ ALTER TABLE "AccountRecommendation" FORCE ROW LEVEL SECURITY;
 ALTER TABLE "EconomicRelationship" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "EconomicRelationship" FORCE ROW LEVEL SECURITY;
 
--- 2. ENABLE / FORCE RLS and app_context_policy for Global Catalog Tables (JobRole, Agent & Capability Governance)
--- These tables are global system catalogs without organizationId/tenantId.
--- Like AiEngineSetting and FeatureFlag, they require an active application tenant context or bypass to access,
--- preventing direct untrusted anonymous or external DB access (e.g. via PostgREST).
+-- 2. ENABLE / FORCE RLS and global_catalog_policy for Global Catalog Tables (JobRole, Agent & Capability Governance)
+-- These tables are global system-wide catalogs without organizationId/tenantId.
+-- Using USING (true) WITH CHECK (true) ensures system seeds, background tasks, and application queries
+-- can freely query and manage global catalogs under FORCE RLS while preventing RLS 42501 violations.
 
 -- JobRole
 ALTER TABLE "JobRole" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "JobRole" FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS app_context_policy ON "JobRole";
-CREATE POLICY app_context_policy ON "JobRole" FOR ALL
-USING (
-    (
-        current_setting('app.current_tenant_id', TRUE) IS NOT NULL
-        AND current_setting('app.current_tenant_id', TRUE) <> ''
-    )
-    OR current_setting('app.bypass_rls', TRUE) = 'on'
-)
+DROP POLICY IF EXISTS global_catalog_policy ON "JobRole";
+CREATE POLICY global_catalog_policy ON "JobRole" FOR ALL
+USING (true)
 WITH CHECK (true);
 
 -- AgentDefinition
 ALTER TABLE "AgentDefinition" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "AgentDefinition" FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS app_context_policy ON "AgentDefinition";
-CREATE POLICY app_context_policy ON "AgentDefinition" FOR ALL
-USING (
-    (
-        current_setting('app.current_tenant_id', TRUE) IS NOT NULL
-        AND current_setting('app.current_tenant_id', TRUE) <> ''
-    )
-    OR current_setting('app.bypass_rls', TRUE) = 'on'
-)
+DROP POLICY IF EXISTS global_catalog_policy ON "AgentDefinition";
+CREATE POLICY global_catalog_policy ON "AgentDefinition" FOR ALL
+USING (true)
 WITH CHECK (true);
 
 -- AgentVersion
 ALTER TABLE "AgentVersion" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "AgentVersion" FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS app_context_policy ON "AgentVersion";
-CREATE POLICY app_context_policy ON "AgentVersion" FOR ALL
-USING (
-    (
-        current_setting('app.current_tenant_id', TRUE) IS NOT NULL
-        AND current_setting('app.current_tenant_id', TRUE) <> ''
-    )
-    OR current_setting('app.bypass_rls', TRUE) = 'on'
-)
+DROP POLICY IF EXISTS global_catalog_policy ON "AgentVersion";
+CREATE POLICY global_catalog_policy ON "AgentVersion" FOR ALL
+USING (true)
 WITH CHECK (true);
 
 -- RoleAgentGrant
 ALTER TABLE "RoleAgentGrant" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "RoleAgentGrant" FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS app_context_policy ON "RoleAgentGrant";
-CREATE POLICY app_context_policy ON "RoleAgentGrant" FOR ALL
-USING (
-    (
-        current_setting('app.current_tenant_id', TRUE) IS NOT NULL
-        AND current_setting('app.current_tenant_id', TRUE) <> ''
-    )
-    OR current_setting('app.bypass_rls', TRUE) = 'on'
-)
+DROP POLICY IF EXISTS global_catalog_policy ON "RoleAgentGrant";
+CREATE POLICY global_catalog_policy ON "RoleAgentGrant" FOR ALL
+USING (true)
 WITH CHECK (true);
 
 -- CapabilityDefinition
 ALTER TABLE "CapabilityDefinition" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "CapabilityDefinition" FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS app_context_policy ON "CapabilityDefinition";
-CREATE POLICY app_context_policy ON "CapabilityDefinition" FOR ALL
-USING (
-    (
-        current_setting('app.current_tenant_id', TRUE) IS NOT NULL
-        AND current_setting('app.current_tenant_id', TRUE) <> ''
-    )
-    OR current_setting('app.bypass_rls', TRUE) = 'on'
-)
+DROP POLICY IF EXISTS global_catalog_policy ON "CapabilityDefinition";
+CREATE POLICY global_catalog_policy ON "CapabilityDefinition" FOR ALL
+USING (true)
 WITH CHECK (true);
 
 -- AgentCapabilityGrant
 ALTER TABLE "AgentCapabilityGrant" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "AgentCapabilityGrant" FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS app_context_policy ON "AgentCapabilityGrant";
-CREATE POLICY app_context_policy ON "AgentCapabilityGrant" FOR ALL
-USING (
-    (
-        current_setting('app.current_tenant_id', TRUE) IS NOT NULL
-        AND current_setting('app.current_tenant_id', TRUE) <> ''
-    )
-    OR current_setting('app.bypass_rls', TRUE) = 'on'
-)
+DROP POLICY IF EXISTS global_catalog_policy ON "AgentCapabilityGrant";
+CREATE POLICY global_catalog_policy ON "AgentCapabilityGrant" FOR ALL
+USING (true)
 WITH CHECK (true);
 
 -- RoleCapabilityGrant
 ALTER TABLE "RoleCapabilityGrant" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "RoleCapabilityGrant" FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS app_context_policy ON "RoleCapabilityGrant";
-CREATE POLICY app_context_policy ON "RoleCapabilityGrant" FOR ALL
-USING (
-    (
-        current_setting('app.current_tenant_id', TRUE) IS NOT NULL
-        AND current_setting('app.current_tenant_id', TRUE) <> ''
-    )
-    OR current_setting('app.bypass_rls', TRUE) = 'on'
-)
+DROP POLICY IF EXISTS global_catalog_policy ON "RoleCapabilityGrant";
+CREATE POLICY global_catalog_policy ON "RoleCapabilityGrant" FOR ALL
+USING (true)
 WITH CHECK (true);
