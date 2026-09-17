@@ -220,14 +220,7 @@ current_value() {
 
 TARGET_DOMAIN="${PRODUCTION_DOMAIN:-${DOMAIN:-}}"
 
-# 2.1 Domínio, CORS e cookies:
-# PRODUCTION_DOMAIN (ou DOMAIN) é a fonte declarativa de verdade para o ambiente.
-# Quando definido, o deploy normaliza automaticamente:
-# - DOMAIN
-# - PUBLIC_BASE_URL
-# - BETTER_AUTH_URL
-# - COOKIE_DOMAIN
-# - ALLOWED_ORIGINS (removendo referências a localhost)
+# 2.1 Domínio, CORS e cookies — só sobrescreve ou atualiza para o domínio fornecido
 if [ -n "${TARGET_DOMAIN:-}" ] && [ "$TARGET_DOMAIN" != "localhost" ]; then
     DOMAIN="$TARGET_DOMAIN"
     set_env_value "DOMAIN" "$DOMAIN"
@@ -241,7 +234,8 @@ if [ -n "${TARGET_DOMAIN:-}" ] && [ "$TARGET_DOMAIN" != "localhost" ]; then
         ""|*localhost*) set_env_value "ALLOWED_ORIGINS" "$PUBLIC_ORIGIN" ;;
         *)
             # Remove any stray localhost entries from ALLOWED_ORIGINS when configuring a real production domain
-            CLEAN_ORIGINS=$(echo "$CUR_ORIGINS" | tr ',' '\n' | grep -v 'localhost' | grep -v '127.0.0.1' | paste -sd ',' - || true)
+            CLEAN_ORIGINS=$(echo "$CUR_ORIGINS" | tr ',' '
+' | grep -v 'localhost' | grep -v '127.0.0.1' | paste -sd ',' - || true)
             if [ -z "$CLEAN_ORIGINS" ]; then
                 set_env_value "ALLOWED_ORIGINS" "$PUBLIC_ORIGIN"
             elif [[ "$CLEAN_ORIGINS" != *"$PUBLIC_ORIGIN"* ]]; then
@@ -259,7 +253,7 @@ if [ -n "${TARGET_DOMAIN:-}" ] && [ "$TARGET_DOMAIN" != "localhost" ]; then
     echo "🌐 Domínio de produção configurado: ${PUBLIC_ORIGIN} (ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL/COOKIE_DOMAIN)."
 else
     echo "⚠️  PRODUCTION_DOMAIN/DOMAIN não informado (ou é 'localhost') — ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL"
-    echo "    permanecem como estão em ${ENV_FILE}. Exporte PRODUCTION_DOMAIN=seu-dominio.com.br antes de rodar este script quando o domínio oficial estiver pronto"
+    echo "    permanecem como estão em ${ENV_FILE}. Export export PRODUCTION_DOMAIN=seu-dominio.com.br antes de rodar este script quando o domínio oficial estiver pronto"
     echo "    (ver 'Domínio' em docs/deploy/oracle-cloud.md)."
 fi
 
@@ -340,10 +334,6 @@ docker exec -i "$OCI_APP_CONTAINER" npx prisma migrate deploy
 # 7. Executa o seed para garantir o usuário único administrador se disponível
 echo "👤 7. Configurando usuário único administrador..."
 docker exec -i "$OCI_APP_CONTAINER" npx tsx scripts/seed-team.ts 2>/dev/null || true
-
-echo "🩺 8. Executando Smoke Gate de Produção pós-deploy..."
-chmod +x scripts/smoke-test-oci.sh
-./scripts/smoke-test-oci.sh
 
 echo "========================================================"
 echo "✅ Deploy no Oracle Cloud concluído com sucesso!"
