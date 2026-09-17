@@ -66,21 +66,6 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
           },
         });
       }
-
-      // Cria automação para AutomationVersion
-      const autoA = await prisma.automation.findUnique({ where: { id: 'auto-a-rls-id' } });
-      if (!autoA) {
-        await prisma.automation.create({
-          data: {
-            id: 'auto-a-rls-id',
-            name: 'Automation A',
-            organizationId: ORG_A,
-            trigger: 'Lead_Criado',
-            action: 'Notificar_Equipe',
-            actionConfig: {},
-          },
-        });
-      }
     });
   });
 
@@ -90,7 +75,6 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
       await prisma.forecastSnapshot.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
       await prisma.savedView.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
       await prisma.automationVersion.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
-      await prisma.automation.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
       await prisma.copilotoConversation.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
       await prisma.cadenceSequence.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
       await prisma.crmCommercialDocument.deleteMany({ where: { organizationId: { in: [ORG_A, ORG_B] } } });
