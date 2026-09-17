@@ -29,6 +29,36 @@ jobs:
           set -euo pipefail
           cd "$1"
           
-          docker logs --tail 50 birthhub_caddy
+          cat << 'EOF' > Caddyfile.oci
+          {
+              email {$ACME_EMAIL:admin@atlasgr.com.br}
+          }
+
+          {$DOMAIN::80} {
+              tls internal
+              encode gzip zstd
+
+              log {
+                  output stdout
+                  format json
+              }
+
+              header {
+                  X-Content-Type-Options nosniff
+                  X-Frame-Options SAMEORIGIN
+                  X-XSS-Protection "1; mode=block"
+                  Referrer-Policy strict-origin-when-cross-origin
+              }
+
+              reverse_proxy app:3000 {
+                  header_up Host {host}
+                  header_up X-Real-IP {remote_host}
+                  header_up X-Forwarded-For {remote_host}
+                  header_up X-Forwarded-Proto {scheme}
+              }
+          }
+          EOF
+          
+          docker restart birthhub_caddy
           
           REMOTE_SCRIPT
