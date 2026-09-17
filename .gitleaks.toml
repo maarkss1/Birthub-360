@@ -66,6 +66,7 @@ paths = [
 regexes = [
   '''eyJhbGciOiJIUzI1NiJ9\.eyJzdWIiOiIxMjM0NTY3ODkwIn0\.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U''',
   '''manualKnownUrl''',
+  '''segredo_compartilhado_atlasgr_123''',
 ]
 
 # ACHADO REAL, JÁ REMEDIADO (02/09/2026): commit 46833fd4 (branch de desenvolvimento, mergeado em
