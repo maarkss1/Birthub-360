@@ -287,8 +287,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
             type: 'Proposta',
             number: 'PROP-001-A',
             title: 'Proposta Comercial Tenant A',
-            value: 50000,
-            content: {},
+            total: 50000,
             lineItems: [],
           },
         }),
@@ -305,7 +304,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
         asOrg(ORG_B, () =>
           prisma.crmCommercialDocument.update({
             where: { id: docA.id },
-            data: { value: 1 },
+            data: { total: 1 },
           }),
         ),
       ).rejects.toThrow();
@@ -324,8 +323,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
               type: 'Contrato',
               number: 'CONT-HACK-001',
               title: 'Contrato Falso',
-              value: 1000000,
-              content: {},
+              total: 1000000,
               lineItems: [],
             },
           }),
