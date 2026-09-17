@@ -151,6 +151,7 @@ jobs:
           set -euo pipefail
           REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
           ssh -i ~/.ssh/oci_deploy_key -o IdentitiesOnly=yes -p "$OCI_SSH_PORT" \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=20 \
             "$OCI_SSH_USER@$OCI_SSH_HOST" bash -s -- "$OCI_DEPLOY_PATH" "$TARGET_SHA" "$REPO_URL" <<'REMOTE_SCRIPT' | tee /tmp/remote-deploy.log
           set -euo pipefail
           DEPLOY_PATH="$1"
