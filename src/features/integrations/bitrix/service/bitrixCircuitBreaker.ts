@@ -18,10 +18,7 @@ export class BitrixCircuitBreaker {
   }
 
   getState(): CircuitState {
-    if (
-      this.state === 'OPEN' &&
-      Date.now() - this.lastStateChange > this.resetTimeoutMs
-    ) {
+    if (this.state === 'OPEN' && Date.now() - this.lastStateChange > this.resetTimeoutMs) {
       this.state = 'HALF_OPEN';
     }
     return this.state;
@@ -32,7 +29,7 @@ export class BitrixCircuitBreaker {
 
     if (currentState === 'OPEN') {
       throw new Error(
-        'Circuit breaker da API Bitrix24 está ABERTO devido a falhas frequentes ou rate-limiting. Tente novamente em breve.'
+        'Circuit breaker da API Bitrix24 está ABERTO devido a falhas frequentes ou rate-limiting. Tente novamente em breve.',
       );
     }
 

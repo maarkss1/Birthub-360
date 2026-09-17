@@ -30,7 +30,7 @@ export class BlacklistOptOutService {
   async isOptedOut(
     organizationId: string,
     contactValue: string,
-    channel: 'Email' | 'WhatsApp' | 'Voice'
+    channel: 'Email' | 'WhatsApp' | 'Voice',
   ): Promise<boolean> {
     const normalizedValue = contactValue.trim().toLowerCase();
     const isEmail = normalizedValue.includes('@');

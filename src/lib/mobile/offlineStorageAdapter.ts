@@ -8,7 +8,10 @@ export interface OfflineQueueItem {
 export class OfflineStorageAdapter {
   private inMemoryQueue: OfflineQueueItem[] = [];
 
-  async enqueueOfflineAction(action: string, payload: Record<string, unknown>): Promise<OfflineQueueItem> {
+  async enqueueOfflineAction(
+    action: string,
+    payload: Record<string, unknown>,
+  ): Promise<OfflineQueueItem> {
     const item: OfflineQueueItem = {
       id: `offline-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       action,

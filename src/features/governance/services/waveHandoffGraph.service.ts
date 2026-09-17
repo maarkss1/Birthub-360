@@ -42,9 +42,12 @@ export class WaveHandoffGraphService {
   /**
    * Verifica se a onda possui handoffs bloqueadores pendentes.
    */
-  hasBlockingHandoffs(handoffs: HandoffNode[], waveNumber: number): { blocked: boolean; blockingHandoffs: HandoffNode[] } {
+  hasBlockingHandoffs(
+    handoffs: HandoffNode[],
+    waveNumber: number,
+  ): { blocked: boolean; blockingHandoffs: HandoffNode[] } {
     const blocking = handoffs.filter(
-      (h) => h.wave === waveNumber && h.priority === 'bloqueador' && h.status !== 'resolvido'
+      (h) => h.wave === waveNumber && h.priority === 'bloqueador' && h.status !== 'resolvido',
     );
 
     return {

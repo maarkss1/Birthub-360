@@ -32,10 +32,7 @@ export class StaleDealsAlertService {
     return Math.max(0, Math.min(100, health));
   }
 
-  async findStaleDeals(
-    organizationId: string,
-    staleDaysThreshold = 5
-  ): Promise<StaleDealAlert[]> {
+  async findStaleDeals(organizationId: string, staleDaysThreshold = 5): Promise<StaleDealAlert[]> {
     const thresholdDate = new Date();
     thresholdDate.setDate(thresholdDate.getDate() - staleDaysThreshold);
 
@@ -59,12 +56,12 @@ export class StaleDealsAlertService {
     const now = Date.now();
     return leads.map((lead) => {
       const daysInactive = Math.floor(
-        (now - new Date(lead.updatedAt).getTime()) / (1000 * 60 * 60 * 24)
+        (now - new Date(lead.updatedAt).getTime()) / (1000 * 60 * 60 * 24),
       );
       const healthScore = this.calculateHealthScore(
         daysInactive,
         Boolean(lead.owner),
-        lead.score ?? 50
+        lead.score ?? 50,
       );
 
       return {

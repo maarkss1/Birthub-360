@@ -25,7 +25,7 @@ export class OpenTelemetryPinoLogger {
     level: StructuredLogPayload['level'],
     message: string,
     context: LogTraceContext = {},
-    extra?: Record<string, unknown>
+    extra?: Record<string, unknown>,
   ): StructuredLogPayload {
     return {
       level,

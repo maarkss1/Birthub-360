@@ -11,7 +11,7 @@ export class AccessibleMotionAdapter {
    */
   getAccessibleVariant(
     standardVariant: MotionVariantConfig,
-    prefersReducedMotion: boolean
+    prefersReducedMotion: boolean,
   ): MotionVariantConfig {
     if (!prefersReducedMotion) {
       return standardVariant;

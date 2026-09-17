@@ -18,7 +18,7 @@ export class CascadeEnrichmentService {
    */
   async enrichContactInCascade(
     options: CascadeEnrichmentOptions,
-    providersOverride?: Array<() => Promise<EnrichmentProviderResult>>
+    providersOverride?: Array<() => Promise<EnrichmentProviderResult>>,
   ): Promise<EnrichmentProviderResult> {
     const providers = providersOverride || [
       async () => this.queryApolloProvider(options),
@@ -46,7 +46,7 @@ export class CascadeEnrichmentService {
   }
 
   private async queryApolloProvider(
-    options: CascadeEnrichmentOptions
+    options: CascadeEnrichmentOptions,
   ): Promise<EnrichmentProviderResult> {
     if (options.domain) {
       const slug = options.contactName.toLowerCase().replace(/\s+/g, '.');
@@ -66,7 +66,7 @@ export class CascadeEnrichmentService {
   }
 
   private async queryHunterProvider(
-    options: CascadeEnrichmentOptions
+    options: CascadeEnrichmentOptions,
   ): Promise<EnrichmentProviderResult> {
     if (options.domain) {
       const initial = options.contactName.charAt(0).toLowerCase();
@@ -87,7 +87,7 @@ export class CascadeEnrichmentService {
   }
 
   private async verifySmtpProvider(
-    _options: CascadeEnrichmentOptions
+    _options: CascadeEnrichmentOptions,
   ): Promise<EnrichmentProviderResult> {
     return {
       providerName: 'SMTP_Verifier',

@@ -21,7 +21,7 @@ export class ReleaseComplianceSignerService {
   generateCertificate(
     version: string,
     gates: GateVerificationResult,
-    signingSecret = 'birthub-release-secret'
+    signingSecret = 'birthub-release-secret',
   ): ReleaseComplianceCertificate {
     const isApproved =
       gates.typescriptErrors === 0 &&
@@ -46,9 +46,15 @@ export class ReleaseComplianceSignerService {
     };
   }
 
-  verifyCertificate(cert: ReleaseComplianceCertificate, signingSecret = 'birthub-release-secret'): boolean {
+  verifyCertificate(
+    cert: ReleaseComplianceCertificate,
+    signingSecret = 'birthub-release-secret',
+  ): boolean {
     const rawData = `${cert.certificateId}:${cert.version}:${cert.timestamp}:${cert.status}:${cert.gateResults.unitTestsPassed}`;
-    const expectedChecksum = crypto.createHmac('sha256', signingSecret).update(rawData).digest('hex');
+    const expectedChecksum = crypto
+      .createHmac('sha256', signingSecret)
+      .update(rawData)
+      .digest('hex');
     return cert.checksum === expectedChecksum;
   }
 }
