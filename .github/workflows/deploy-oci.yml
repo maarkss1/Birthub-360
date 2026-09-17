@@ -39,6 +39,8 @@ jobs:
           fi
           
           echo "=== RESTARTING DOCKER ==="
+          # Need to source env for docker compose
+          set -a; source .env.production; set +a
           docker compose -f docker-compose.oci.yml down || true
           docker compose -f docker-compose.oci.yml up -d
           
