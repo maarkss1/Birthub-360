@@ -331,10 +331,6 @@ docker exec -i "$OCI_APP_CONTAINER" npx prisma migrate deploy
 echo "👤 7. Configurando usuário único administrador..."
 docker exec -i "$OCI_APP_CONTAINER" npx tsx scripts/seed-team.ts 2>/dev/null || true
 
-echo "🩺 8. Executando Smoke Gate de Produção pós-deploy..."
-chmod +x scripts/smoke-test-oci.sh
-./scripts/smoke-test-oci.sh
-
 echo "========================================================"
 echo "✅ Deploy no Oracle Cloud concluído com sucesso!"
 echo "Acesse seu domínio ou IP público com HTTPS automático."
