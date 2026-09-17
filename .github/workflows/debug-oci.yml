@@ -1,0 +1,36 @@
+name: Debug Oracle Cloud (produção)
+on: workflow_dispatch
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Debug
+        env:
+          OCI_SSH_HOST: ${{ secrets.OCI_SSH_HOST }}
+          OCI_SSH_USER: ${{ secrets.OCI_SSH_USER }}
+          OCI_SSH_PORT: ${{ secrets.OCI_SSH_PORT || '22' }}
+          OCI_SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          OCI_SSH_KNOWN_HOSTS: ${{ secrets.OCI_SSH_KNOWN_HOSTS }}
+          OCI_DEPLOY_PATH: ${{ secrets.OCI_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$OCI_SSH_PRIVATE_KEY" > ~/.ssh/oci_deploy_key
+          chmod 600 ~/.ssh/oci_deploy_key
+          if [ -n "$OCI_SSH_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$OCI_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "$OCI_SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          fi
+          chmod 600 ~/.ssh/known_hosts
+          
+          ssh -i ~/.ssh/oci_deploy_key -o IdentitiesOnly=yes -p "$OCI_SSH_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=20 \
+            "$OCI_SSH_USER@$OCI_SSH_HOST" bash -s -- "$OCI_DEPLOY_PATH" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          DEPLOY_PATH="$1"
+          cd "$DEPLOY_PATH"
+          echo "=== DOCKER PS ==="
+          docker ps -a
+          echo "=== DOCKER LOGS ==="
+          docker logs --tail 200 birthhub_app || true
+          REMOTE_SCRIPT
