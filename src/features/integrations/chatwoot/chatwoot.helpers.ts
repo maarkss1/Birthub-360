@@ -58,9 +58,31 @@ export function isValidChatwootSignature({
   return received.length === expected.length && timingSafeEqual(received, expected);
 }
 
-/** Subconjunto do payload de evento do Chatwoot que este webhook de fato usa hoje (só log). */
 export interface ChatwootWebhookEvent {
   event?: string;
-  conversation?: { id?: number; inbox_id?: number } | null;
+  id?: number | string;
+  content?: string | null;
+  message_type?: string | null;
+  created_at?: number | string;
+  conversation?: {
+    id?: number;
+    inbox_id?: number;
+    status?: string;
+    meta?: {
+      sender?: {
+        id?: number;
+        name?: string;
+        phone_number?: string | null;
+        email?: string | null;
+      };
+    };
+  } | null;
+  sender?: {
+    id?: number;
+    name?: string;
+    phone_number?: string | null;
+    email?: string | null;
+    type?: string;
+  } | null;
   account?: { id?: number } | null;
 }

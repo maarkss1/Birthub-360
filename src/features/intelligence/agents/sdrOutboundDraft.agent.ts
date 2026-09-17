@@ -126,6 +126,23 @@ Retorne SOMENTE JSON válido neste formato exato: {"subject":"assunto curto e ch
         ? similarKnowledge.map((item) => `- ${wrapUntrustedContent(item.content)}`).join('\n')
         : 'Sem contexto adicional no playbook.';
 
+    const customFields = lead.company.customFields as Record<string, unknown> | null;
+    const siteIntel = customFields?.siteIntelligence as
+      | {
+          valueProposition?: string | null;
+          productsAndServices?: string[];
+          technologies?: string[];
+        }
+      | undefined;
+    const siteContext = siteIntel?.valueProposition
+      ? `\nInteligência do site da empresa (crawling/scraping):
+- Proposta de valor: ${wrapUntrustedContent(siteIntel.valueProposition)}
+${siteIntel.technologies?.length ? `- Tecnologias identificadas no site: ${siteIntel.technologies.join(', ')}` : ''}
+${siteIntel.productsAndServices?.length ? `- Produtos/serviços em destaque: ${siteIntel.productsAndServices.slice(0, 3).join(', ')}` : ''}`
+      : lead.company.website
+        ? `\nWebsite da empresa: ${lead.company.website}`
+        : '';
+
     const promptContext = `
 Dados do prospect:
 - Nome: ${lead.contact.name}
@@ -134,7 +151,7 @@ Dados do prospect:
 - Segmento: ${lead.company.segment || 'Desconhecido'}
 - Porte: ${lead.company.size || 'Desconhecido'}
 - Score de fit: ${lead.score ?? 'ainda não calculado'}
-- Resumo de qualificação: ${JSON.stringify(lead.qualification)}
+- Resumo de qualificação: ${JSON.stringify(lead.qualification)}${siteContext}
 
 Contexto da base de conhecimento da Birth Hub 360:
 ${ragContext}
@@ -266,6 +283,22 @@ Escreva um primeiro e-mail curto, específico e consultivo. Valide uma hipótese
         ? similarKnowledge.map((item) => `- ${wrapUntrustedContent(item.content)}`).join('\n')
         : 'Sem contexto adicional no playbook.';
 
+    const customFields = lead.company.customFields as Record<string, unknown> | null;
+    const siteIntel = customFields?.siteIntelligence as
+      | {
+          valueProposition?: string | null;
+          productsAndServices?: string[];
+          technologies?: string[];
+        }
+      | undefined;
+    const siteContext = siteIntel?.valueProposition
+      ? `\nInteligência do site da empresa (crawling/scraping):
+- Proposta de valor: ${wrapUntrustedContent(siteIntel.valueProposition)}
+${siteIntel.technologies?.length ? `- Tecnologias identificadas no site: ${siteIntel.technologies.join(', ')}` : ''}`
+      : lead.company.website
+        ? `\nWebsite da empresa: ${lead.company.website}`
+        : '';
+
     const promptContext = `
 Dados do prospect:
 - Nome: ${lead.contact.name}
@@ -273,7 +306,7 @@ Dados do prospect:
 - Empresa: ${lead.company.legalName}
 - Segmento: ${lead.company.segment || 'Desconhecido'}
 - Porte: ${lead.company.size || 'Desconhecido'}
-- Score de fit: ${lead.score ?? 'ainda não calculado'}
+- Score de fit: ${lead.score ?? 'ainda não calculado'}${siteContext}
 
 Contexto da base de conhecimento da Birth Hub 360:
 ${ragContext}

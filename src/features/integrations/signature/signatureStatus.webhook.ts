@@ -112,7 +112,10 @@ async function handleSignatureStatus(req: Request, res: Response): Promise<void>
   );
   const replayResult = await claimWebhookDelivery('signature', fp);
   if (replayResult === 'replay') {
-    logger.warn({ provider, providerRequestId }, 'Webhook de status de assinatura duplicado — descartado.');
+    logger.warn(
+      { provider, providerRequestId },
+      'Webhook de status de assinatura duplicado — descartado.',
+    );
     res.status(200).json({ success: true, outcome: 'duplicate' });
     return;
   }

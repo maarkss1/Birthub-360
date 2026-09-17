@@ -1,9 +1,6 @@
 import type { SiteIntelligence } from '../domain/prospectTypes.js';
 import { normalizeCompanyDomain } from '../utils/domain.js';
-import {
-  buildProviderCacheKey,
-  withProviderCache,
-} from './providerCache.js';
+import { buildProviderCacheKey, withProviderCache } from './providerCache.js';
 
 const SITE_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 dias
 
@@ -37,10 +34,35 @@ function extractInsightsFromMarkdown(
   // Identificação de palavras-chave de produtos/serviços
   const productsAndServices: string[] = [];
   const techKeywords = [
-    'React', 'Vue', 'Next.js', 'Angular', 'Node.js', 'Python', 'Django', 'FastAPI',
-    'PostgreSQL', 'MySQL', 'MongoDB', 'Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP',
-    'Shopify', 'VTEX', 'WordPress', 'WooCommerce', 'Magento', 'HubSpot', 'Salesforce',
-    'Bitrix24', 'Zendesk', 'Stripe', 'Pagar.me', 'Mercado Pago', 'RD Station',
+    'React',
+    'Vue',
+    'Next.js',
+    'Angular',
+    'Node.js',
+    'Python',
+    'Django',
+    'FastAPI',
+    'PostgreSQL',
+    'MySQL',
+    'MongoDB',
+    'Docker',
+    'Kubernetes',
+    'AWS',
+    'Azure',
+    'GCP',
+    'Shopify',
+    'VTEX',
+    'WordPress',
+    'WooCommerce',
+    'Magento',
+    'HubSpot',
+    'Salesforce',
+    'Bitrix24',
+    'Zendesk',
+    'Stripe',
+    'Pagar.me',
+    'Mercado Pago',
+    'RD Station',
   ];
 
   const detectedTechs: string[] = [];
@@ -206,14 +228,27 @@ async function scrapeWithHtmlFallback(
     const title = titleMatch?.[1]?.trim() || undefined;
     const description = descMatch?.[1]?.trim() || undefined;
 
-    // Extrai texto simples retirando tags
+    // Extrai texto estruturado convertendo tags semânticas em markdown
     const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    const textContent = (bodyMatch ? bodyMatch[1] : html)
+    const contentToFormat = bodyMatch ? bodyMatch[1] : html;
+
+    const formatted = contentToFormat
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
       .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+      .replace(/<li[^>]*>/gi, '\n- ')
+      .replace(/<\/li>/gi, '')
+      .replace(/<h[1-6][^>]*>/gi, '\n# ')
+      .replace(/<\/h[1-6]>/gi, '\n')
+      .replace(/<p[^>]*>/gi, '\n')
+      .replace(/<\/p>/gi, '\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, ' ');
+
+    const textContent = formatted
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .join('\n');
 
     return {
       title,

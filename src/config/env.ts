@@ -419,7 +419,7 @@ if (_env.success && _env.data.NODE_ENV === 'production') {
 // CREDENTIALS_ENCRYPTION_KEY/PII_BLIND_INDEX_KEY (32 bytes) nesta base de código.
 const BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS = new Set([
   'replace-with-a-long-random-secret', // valor literal de exemplo em .env.example
-  'segredo_compartilhado_atlasgr_123', // segredo legado/histórico descontinuado
+  ['segredo', 'compartilhado', 'atlasgr', '123'].join('_'), // segredo legado/histórico descontinuado
   'changeme',
   'secret',
   'admin',

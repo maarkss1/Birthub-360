@@ -17,11 +17,11 @@ import {
   ZapIcon,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { PageHeader } from '../../../components/ui/PageHeader';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Dialog } from '../../../components/ui/Dialog';
+import { PageHeader } from '../../../components/ui/PageHeader';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { hasRequiredRole } from '../../../lib/auth/authorization';

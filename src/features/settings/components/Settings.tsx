@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../../../components/ui/Card';
+import { PageHeader } from '../../../components/ui/PageHeader';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
@@ -21,8 +22,6 @@ import { CompanyDedupPanel } from './CompanyDedupPanel';
 import { LeadDedupPanel } from './LeadDedupPanel';
 import { LearningProfilePanel } from './LearningProfilePanel';
 import { MemoryGovernancePanel } from './MemoryGovernancePanel';
-
-import { PageHeader } from '../../../components/ui/PageHeader';
 
 export function Settings() {
   const { theme, setThemeMode } = useTheme();

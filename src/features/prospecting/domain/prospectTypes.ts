@@ -142,6 +142,22 @@ export interface ProspectCandidate {
   /** Quebra-gelo / fato relevante / notícia recente da empresa obtida via busca na internet para abordagem inicial */
   icebreakerHook?: string | null;
   webInsights?: Array<{ title: string; url: string; domain: string }>;
+  /** Inteligência extraída do site institucional do prospect via crawling/scraping (Firecrawl / Crawl4AI) */
+  siteIntelligence?: SiteIntelligence | null;
+}
+
+export interface SiteIntelligence {
+  url: string;
+  domain: string;
+  title?: string | null;
+  description?: string | null;
+  valueProposition?: string | null;
+  productsAndServices?: string[];
+  technologies?: string[];
+  targetAudience?: string | null;
+  rawSummary?: string | null;
+  scrapedAt: string;
+  source: 'firecrawl' | 'crawl4ai' | 'scraper';
 }
 
 export interface DiscoverResult {

@@ -8,6 +8,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 const pendingActionFindManyMock = vi.fn();
 const leadFindManyMock = vi.fn();
 const userFindManyMock = vi.fn();
+const playbookInsightCreateMock = vi.fn();
+const playbookInsightFindManyMock = vi.fn();
+const playbookInsightUpdateManyMock = vi.fn();
 const notificationCreateMock = vi.fn();
 const invokeMock = vi.fn();
 const getAiModelMock = vi.fn((..._args: unknown[]) => ({ invoke: invokeMock }));
@@ -18,6 +21,11 @@ vi.mock('../../../../../lib/prisma.js', () => ({
     aIPendingAction: { findMany: (...args: unknown[]) => pendingActionFindManyMock(...args) },
     lead: { findMany: (...args: unknown[]) => leadFindManyMock(...args) },
     user: { findMany: (...args: unknown[]) => userFindManyMock(...args) },
+    playbookInsight: {
+      create: (...args: unknown[]) => playbookInsightCreateMock(...args),
+      findMany: (...args: unknown[]) => playbookInsightFindManyMock(...args),
+      updateMany: (...args: unknown[]) => playbookInsightUpdateManyMock(...args),
+    },
   },
 }));
 
@@ -35,15 +43,22 @@ vi.mock('../../../../notifications/notification.service.js', () => ({
   notificationService: { create: (...args: unknown[]) => notificationCreateMock(...args) },
 }));
 
-const { generateWinningPatterns, broadcastWinningPattern } = await import(
-  '../livingPlaybook.service'
-);
+const {
+  generateWinningPatterns,
+  broadcastWinningPattern,
+  createPlaybookInsight,
+  listPlaybookInsights,
+  updatePlaybookInsightStatus,
+} = await import('../livingPlaybook.service');
 
 afterEach(() => {
   vi.clearAllMocks();
   pendingActionFindManyMock.mockResolvedValue([]);
   leadFindManyMock.mockResolvedValue([]);
   userFindManyMock.mockResolvedValue([]);
+  playbookInsightCreateMock.mockResolvedValue({ id: 'insight-1' });
+  playbookInsightFindManyMock.mockResolvedValue([]);
+  playbookInsightUpdateManyMock.mockResolvedValue({ count: 1 });
   notificationCreateMock.mockResolvedValue({ id: 'notif-1' });
 });
 
@@ -185,5 +200,66 @@ describe('broadcastWinningPattern', () => {
         body: expect.stringContaining('Maria Souza'),
       }),
     );
+  });
+});
+
+describe('PlaybookInsight Persistence & Queries', () => {
+  it('persiste um novo insight chamando prisma.playbookInsight.create com os campos corretos', async () => {
+    playbookInsightCreateMock.mockResolvedValue({ id: 'insight-1', patternTitle: 'Abordagem X' });
+
+    const result = await createPlaybookInsight('org-1', {
+      sellerId: 'user-1',
+      segment: 'Saúde',
+      patternTitle: 'Abordagem X',
+      patternDescription: 'Foca no benefício imediato',
+      suggestedScript: 'Olá, podemos otimizar seu processo?',
+      evidenceCount: 3,
+      sourceActionIds: ['act-1', 'act-2'],
+      conversionRate: 42.5,
+    });
+
+    expect(result).toEqual({ id: 'insight-1', patternTitle: 'Abordagem X' });
+    expect(playbookInsightCreateMock).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        organizationId: 'org-1',
+        sellerId: 'user-1',
+        segment: 'Saúde',
+        patternTitle: 'Abordagem X',
+        evidenceCount: 3,
+        sourceActionIds: ['act-1', 'act-2'],
+        conversionRate: 42.5,
+        status: 'SUGGESTED',
+      }),
+    });
+  });
+
+  it('lista insights persistidos filtrando por organização e status', async () => {
+    playbookInsightFindManyMock.mockResolvedValue([{ id: 'insight-1', status: 'SUGGESTED' }]);
+
+    const result = await listPlaybookInsights('org-1', { status: 'SUGGESTED' });
+
+    expect(result).toHaveLength(1);
+    expect(playbookInsightFindManyMock).toHaveBeenCalledWith({
+      where: { organizationId: 'org-1', status: 'SUGGESTED' },
+      orderBy: { createdAt: 'desc' },
+    });
+  });
+
+  it('atualiza o status de um insight para BROADCAST preenchendo metadados de broadcast', async () => {
+    playbookInsightUpdateManyMock.mockResolvedValue({ count: 1 });
+
+    const result = await updatePlaybookInsightStatus('org-1', 'insight-1', 'BROADCAST', {
+      broadcastBy: 'gestor-1',
+    });
+
+    expect(result).toEqual({ count: 1 });
+    expect(playbookInsightUpdateManyMock).toHaveBeenCalledWith({
+      where: { id: 'insight-1', organizationId: 'org-1' },
+      data: expect.objectContaining({
+        status: 'BROADCAST',
+        broadcastBy: 'gestor-1',
+        broadcastAt: expect.any(Date),
+      }),
+    });
   });
 });

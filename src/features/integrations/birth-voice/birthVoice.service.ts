@@ -5,6 +5,7 @@ import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGu
 import { assertPiiExternalConsent } from '../../intelligence/services/guardrails.service.js';
 import { pickCallablePhone } from './birthVoice.helpers.js';
 import { isSuppressed } from './callSuppression.service.js';
+import { dispatchLiveKitCall } from './livekitVoice.service.js';
 import { buildVoicePromptForLead, type VoiceScriptConfig } from './voiceScript.js';
 
 /** Caminho do webhook que o Birth Voices Hub chama com o resultado da ligação. */
@@ -173,7 +174,26 @@ export async function callLead(
   // verdade, só que pelo provedor errado, com o agente/voz/prompt errados e sem o
   // `callbackUrl`/contexto que o Birth Voices Hub esperaria. A escolha de provedor agora depende
   // só do que foi configurado explicitamente em BIRTH_VOICES_URL, como o contrato documentado
-  // sempre descreveu.
+  // Suporte ao LiveKit Agents (WebRTC / Voice em tempo real)
+  const isLiveKit = config.baseUrl.includes('livekit') || process.env.VOICE_PROVIDER === 'livekit';
+  if (isLiveKit) {
+    const prompt = buildVoicePromptForLead(
+      config.script,
+      config.organizationName,
+      companyName,
+      contactName,
+    );
+    return dispatchLiveKitCall({
+      organizationId,
+      leadId: lead.id,
+      phone: targetNumber,
+      prompt,
+      script: config.script,
+      organizationName: config.organizationName,
+      callbackUrl: config.callbackUrl,
+    });
+  }
+
   const isBland = config.baseUrl.includes('bland.ai');
   const endpoint = isBland
     ? 'https://api.bland.ai/v1/calls'

@@ -45,6 +45,8 @@ export interface WinningPatternSuggestion {
   /** Trechos reais das mensagens que embasaram a sugestão — proveniência para revisão humana,
    * nunca resumido/reescrito pela IA nesta lista (isso é o dado bruto, não a síntese). */
   sourceExcerpts: string[];
+  /** Taxa de conversão histórica do vendedor no segmento/geral (0 a 100) */
+  conversionRate?: number;
 }
 
 export interface GenerateWinningPatternsResult {
@@ -138,6 +140,48 @@ async function loadSellerNames(sellerIds: string[]): Promise<Map<string, string>
   return new Map(users.map((user) => [user.id, user.name]));
 }
 
+/**
+ * Calcula a taxa histórica de conversão real para os vendedores com base nos leads finalizados.
+ */
+export async function calculateSellerConversionRates(
+  organizationId: string,
+  sellerIds: string[],
+): Promise<Map<string, number>> {
+  const conversionMap = new Map<string, number>();
+  if (sellerIds.length === 0) return conversionMap;
+
+  const leads = await prisma.lead.findMany({
+    where: {
+      organizationId,
+      owner: { in: sellerIds },
+    },
+    select: { owner: true, status: true },
+  });
+
+  const countsBySeller = new Map<string, { total: number; converted: number }>();
+  for (const lead of leads) {
+    if (!lead.owner) continue;
+    const current = countsBySeller.get(lead.owner) || { total: 0, converted: 0 };
+    current.total += 1;
+    if (
+      lead.status === 'Convertido_em_Oportunidade' ||
+      lead.status === 'Nova_Oportunidade' ||
+      lead.status === 'Proposta_Enviada' ||
+      lead.status === 'Negocios_Ganhos'
+    ) {
+      current.converted += 1;
+    }
+    countsBySeller.set(lead.owner, current);
+  }
+
+  for (const [sellerId, stats] of countsBySeller.entries()) {
+    const rate = stats.total > 0 ? Math.round((stats.converted / stats.total) * 1000) / 10 : 0;
+    conversionMap.set(sellerId, rate);
+  }
+
+  return conversionMap;
+}
+
 function buildPrompt(groups: OutcomeGroup[]): { system: string; human: string } {
   const system = `Você é um especialista em capacitação comercial B2B. Para CADA grupo abaixo (mensagens REAIS que um vendedor enviou a leads do mesmo segmento e que tiveram resultado POSITIVO confirmado), identifique o padrão comum e sintetize UMA abordagem reutilizável.
 
@@ -170,9 +214,7 @@ Retorne SEMPRE e APENAS um array JSON, na MESMA ORDEM dos grupos recebidos, um i
 
 /**
  * Detecta padrões de abordagem com resultado positivo confirmado, por vendedor e segmento, e
- * sintetiza uma sugestão reutilizável pro time inteiro. Retorna sugestões para revisão humana;
- * NÃO persiste nada — quem aprovar decide se anuncia pro time (`broadcastWinningPattern`) e/ou
- * adiciona como item real da Matriz de Objeções (fluxo já existente).
+ * sintetiza uma sugestão reutilizável pro time inteiro.
  */
 export async function generateWinningPatterns(
   organizationId: string,
@@ -186,7 +228,12 @@ export async function generateWinningPatterns(
     };
   }
 
-  const sellerNames = await loadSellerNames(groups.map((group) => group.sellerId));
+  const sellerIds = groups.map((group) => group.sellerId);
+  const [sellerNames, conversionRates] = await Promise.all([
+    loadSellerNames(sellerIds),
+    calculateSellerConversionRates(organizationId, sellerIds),
+  ]);
+
   const { system, human } = buildPrompt(groups);
   const model = getAiModel('local-llama3-fast', 0.3, 'living-playbook');
   const startTime = Date.now();
@@ -222,6 +269,7 @@ export async function generateWinningPatterns(
         patternDescription: candidates[index].patternDescription,
         suggestedScript: candidates[index].suggestedScript,
         sourceExcerpts: group.excerpts,
+        conversionRate: conversionRates.get(group.sellerId) ?? 0,
       })),
     };
   } catch (error) {
@@ -237,10 +285,83 @@ export async function generateWinningPatterns(
 }
 
 /**
+ * Persiste um insight gerado no banco de dados.
+ */
+export async function createPlaybookInsight(
+  organizationId: string,
+  data: {
+    sellerId: string;
+    segment: string;
+    patternTitle: string;
+    patternDescription: string;
+    suggestedScript: string;
+    evidenceCount: number;
+    sourceActionIds?: string[];
+    conversionRate?: number;
+  },
+) {
+  return prisma.playbookInsight.create({
+    data: {
+      organizationId,
+      sellerId: data.sellerId,
+      segment: data.segment,
+      patternTitle: data.patternTitle,
+      patternDescription: data.patternDescription,
+      suggestedScript: data.suggestedScript,
+      evidenceCount: data.evidenceCount,
+      sourceActionIds: data.sourceActionIds || [],
+      conversionRate: data.conversionRate,
+      status: 'SUGGESTED',
+    },
+  });
+}
+
+/**
+ * Lista insights persistidos do Playbook Vivo para a organização.
+ */
+export async function listPlaybookInsights(
+  organizationId: string,
+  options?: {
+    status?: 'SUGGESTED' | 'APPROVED' | 'BROADCAST' | 'DISMISSED' | 'ARCHIVED';
+    sellerId?: string;
+  },
+) {
+  return prisma.playbookInsight.findMany({
+    where: {
+      organizationId,
+      ...(options?.status ? { status: options.status } : {}),
+      ...(options?.sellerId ? { sellerId: options.sellerId } : {}),
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+/**
+ * Atualiza o status de um insight (ex.: após broadcast ou aprovação).
+ */
+export async function updatePlaybookInsightStatus(
+  organizationId: string,
+  insightId: string,
+  status: 'SUGGESTED' | 'APPROVED' | 'BROADCAST' | 'DISMISSED' | 'ARCHIVED',
+  meta?: { broadcastBy?: string; promotedToObjectionMatrixItemId?: string },
+) {
+  return prisma.playbookInsight.updateMany({
+    where: { id: insightId, organizationId },
+    data: {
+      status,
+      ...(status === 'BROADCAST'
+        ? { broadcastAt: new Date(), broadcastBy: meta?.broadcastBy }
+        : {}),
+      ...(meta?.promotedToObjectionMatrixItemId
+        ? { promotedToObjectionMatrixItemId: meta.promotedToObjectionMatrixItemId }
+        : {}),
+    },
+  });
+}
+
+/**
  * Anuncia um padrão vencedor pro time inteiro (in-app, via `notificationService`) — credita o
- * vendedor de origem. Broadcast simples (organização inteira) nesta versão: não há ainda uma
- * tabela de "quem já viu"/"quem aceitou aplicar" — isso também está na proposta de schema
- * documentada (ver comentário de topo do arquivo).
+ * vendedor de origem.
  */
 export async function broadcastWinningPattern(
   organizationId: string,

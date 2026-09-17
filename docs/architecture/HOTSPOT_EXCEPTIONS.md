@@ -66,34 +66,6 @@ propósito por estar fora de "## Exceções ativas"):
 - **Atualizado em:** 2026-09-13 (Onda 5, BILLING-003)
 - **Reavaliar até:** 2026-11-30 (mesmo checkpoint dos demais itens desta lista)
 
-### `src/features/cadence/components/CadenceHub.tsx`
-
-- **Limite excepcional:** 1700 linhas
-- **Dono:** Agente 17 — Cadência Multicanal e Ciclo de Receita
-- **Motivo:** já listado abaixo como débito conhecido em 868 linhas (2026-08-25, dentro do limite
-  de aviso); cresceu para 1610 linhas em commits de suporte ao Enxame Autônomo e formulários de cadência. Modularizar fica para um item de dívida técnica dedicado.
-- **Registrado em:** 2026-08-29
-- **Reavaliar até:** 2026-11-30 (mesmo checkpoint do `KNOWN_VIOLATIONS.md`)
-
-### `src/features/commercial-intelligence/components/JoaoReisDiagnosticHub.tsx`
-
-- **Limite excepcional:** 1800 linhas
-- **Dono:** Agente 04 — CRM e BI / Agente 02 — Produto e UX
-- **Motivo:** painel analítico complexo de diagnóstico comercial executivo, combinando visualizações ECharts, formulários de auditoria e cálculo de scores. Limite elevado de 1300 para 1700 em 2026-09-02 (PR #329) sem nenhuma linha de código nova: o arquivo estava fora do padrão do `biome format` (gate `format:check` do CI) e a formatação obrigatória o levou de 1154 para 1661 linhas — crescimento de formatação, não de lógica. Elevado de novo, de 1700 para 1800, em 2026-09-03: outro PR concorrente ("feat(design-system): promove vocabulario de KPI/achados a primitivos compartilhados + piloto no portal") levou o arquivo a 1743 linhas ao extrair 6 componentes locais (KpiStat, FunnelBars, ChannelDonut, CompareBar, DeltaPill, DealsGrid) para primitivos compartilhados em `src/components/ui/` — conteúdo novo real (não formatação desta vez), na direção certa (menos duplicação, vocabulário reutilizável para outras telas) — ver `.claude/PILOTS.md`, Pilot 028. Não fazia parte do escopo de nenhum dos PRs concorrentes que bateram nesse limite (#335, #336) mexer nesse trabalho de outra sessão em andamento; ambos só recalibraram o limite para não bloquear `test:architecture`/`check:hotspots` por um arquivo que não tocaram. A modularização (dividir o próprio hub em sub-componentes de tela) continua devida; headroom dado para não bloquear o gate enquanto isso não acontece.
-- **Registrado em:** 2026-09-01
-- **Reavaliar até:** 2026-11-30
-
-### `src/features/integrations/components/BitrixImportPanel.tsx`
-
-- **Limite excepcional:** 1300 linhas
-- **Dono:** Agente 06 — Integrações e Bitrix
-- **Motivo:** mesma situação do `CadenceHub.tsx` acima — já listado como débito conhecido em 960
-  linhas (2026-08-25), cresceu para 1193 linhas sem que o gate rodasse de verdade em CI pelo mesmo
-  motivo (mascarado por `no-cross-feature-imports` na etapa anterior). Não é regressão de nenhum
-  PR específico. Modularizar fica para um item de dívida técnica dedicado.
-- **Registrado em:** 2026-08-29
-- **Reavaliar até:** 2026-11-30 (mesmo checkpoint do `KNOWN_VIOLATIONS.md`)
-
 ## Débito conhecido, abaixo do limite de falha (sem exceção necessária)
 
 Arquivos na faixa de aviso (701–1000 linhas) no momento em que este gate foi criado — não

@@ -1,4 +1,5 @@
 import { api } from '../../lib/api';
+import { saveAndDownloadFile } from '../../lib/mobile/nativeFileDownloader';
 import type {
   DailyPlanClosingInput,
   PendingDailyClosing,
@@ -785,14 +786,7 @@ export async function downloadExecutiveExport(
   const disposition = response.headers.get('Content-Disposition') || '';
   const match = /filename="([^"]+)"/.exec(disposition);
   const filename = match?.[1] || `comercial-inteligente-${filter.month}.${format}`;
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', filename);
-  document.body.appendChild(link);
-  link.click();
-  link.parentNode?.removeChild(link);
-  window.URL.revokeObjectURL(url);
+  await saveAndDownloadFile({ filename, blob });
 }
 
 export function formatCurrency(value: number | null | undefined, currency = 'BRL'): string {

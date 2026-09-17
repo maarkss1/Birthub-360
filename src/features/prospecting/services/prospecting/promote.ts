@@ -72,6 +72,10 @@ export async function promoteToCrm(input: PromoteInput) {
         phones: input.phone ? [input.phone] : [],
         status: 'Ativo',
         tags: ['Prospecção'],
+        technologies: input.siteIntelligence?.technologies || [],
+        customFields: input.siteIntelligence
+          ? ({ siteIntelligence: input.siteIntelligence } as unknown as Prisma.InputJsonValue)
+          : undefined,
         organizationId: input.organizationId,
       },
     }));

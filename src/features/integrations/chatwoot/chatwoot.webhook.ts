@@ -1,10 +1,13 @@
 import express, { type Request, type Response, Router } from 'express';
 import { env } from '../../../config/env.js';
 import { logger } from '../../../lib/logger.js';
+import { toE164BR } from '../../../lib/phone.js';
+import { prisma } from '../../../lib/prisma.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
 } from '../../../shared/security/webhookReplayGuard.js';
+import { persistWhatsAppMessage } from '../whatsapp/whatsappMessage.service.js';
 import { type ChatwootWebhookEvent, isValidChatwootSignature } from './chatwoot.helpers.js';
 
 /**
@@ -68,10 +71,49 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
       inboxId: event.conversation?.inbox_id ?? null,
       accountId: event.account?.id ?? null,
     },
-    'Webhook do Chatwoot recebido e autenticado (sem sincronização com o CRM ainda).',
+    'Webhook do Chatwoot recebido e autenticado.',
   );
 
-  res.status(200).json({ success: true, outcome: 'logged' });
+  // Sincronização bidirecional: mensagens recebidas viram WhatsAppMessage e alimentam o Negociador de IA
+  let outcome = 'logged';
+  if (
+    event.event === 'message_created' &&
+    (event.message_type === 'incoming' || event.sender?.type === 'contact')
+  ) {
+    const rawPhone = event.sender?.phone_number || event.conversation?.meta?.sender?.phone_number;
+
+    if (rawPhone) {
+      const phoneE164 = toE164BR(rawPhone.replace(/\D/g, ''));
+      if (phoneE164) {
+        try {
+          const org = await prisma.organization.findFirst({
+            select: { id: true },
+            orderBy: { createdAt: 'asc' },
+          });
+
+          if (org) {
+            const waMessageId = `cw_${event.id || Date.now()}`;
+            await persistWhatsAppMessage({
+              organizationId: org.id,
+              waMessageId,
+              direction: 'inbound',
+              remoteJid: `${phoneE164.replace(/\D/g, '')}@s.whatsapp.net`,
+              body: event.content || '',
+            });
+            outcome = 'persisted_to_crm';
+            logger.info(
+              { conversationId: event.conversation?.id, phoneE164, waMessageId },
+              'Mensagem do Chatwoot sincronizada com o CRM e encaminhada para IA',
+            );
+          }
+        } catch (err) {
+          logger.error({ err }, 'Falha ao sincronizar mensagem do Chatwoot no CRM');
+        }
+      }
+    }
+  }
+
+  res.status(200).json({ success: true, outcome });
 }
 
 const router = Router();

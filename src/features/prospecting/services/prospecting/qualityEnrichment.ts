@@ -5,6 +5,7 @@ import { enrichOrganizationWithContacts } from '../apollo.service';
 import { discoverCnpjByName } from '../cnpj.util';
 import { searchCompanyNews } from '../news.service.js';
 import type { SearchExecutionTracker } from '../searchExecution.service.js';
+import { fetchSiteIntelligence } from '../siteIntelligence.service.js';
 import type { ProspectCandidate } from './types.js';
 
 /**
@@ -111,6 +112,35 @@ export async function enrichCandidatesWithQualityData(
               status: 'error',
               errorMessage: err instanceof Error ? err.message : 'Falha ao buscar notícias',
             });
+          }
+        })(),
+        (async () => {
+          if (candidate.siteIntelligence) return;
+          const domain = findCompanyDomain(candidate.website, candidate.rationale);
+          if (!domain) return;
+          try {
+            const intel = await fetchSiteIntelligence(domain);
+            if (intel) {
+              candidate.siteIntelligence = intel;
+              if (intel.technologies && intel.technologies.length > 0) {
+                candidate.technologies = Array.from(
+                  new Set([...(candidate.technologies || []), ...intel.technologies]),
+                );
+              }
+              if (!candidate.icebreakerHook && intel.valueProposition) {
+                candidate.icebreakerHook = `🌐 Proposta de Valor no Site: "${intel.valueProposition.slice(0, 140)}..."`;
+              }
+            }
+            tracker?.recordProviderCall({
+              provider: intel?.source ?? 'site_intelligence',
+              resultCount: intel ? 1 : 0,
+              status: 'ok',
+            });
+          } catch (err) {
+            logger.warn(
+              { err, searchId: tracker?.searchId, companyName: candidate.tradeName, domain },
+              'Falha ao extrair inteligência do site do candidato',
+            );
           }
         })(),
       ]);

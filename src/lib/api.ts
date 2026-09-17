@@ -87,11 +87,11 @@ export async function apiFetch<T>(endpoint: string, options?: ApiRequestOptions)
   return data as T;
 }
 
+import { saveAndDownloadFile } from './mobile/nativeFileDownloader.js';
+
 /**
- * Baixa um arquivo de uma rota autenticada que devolve o conteúdo cru (não o envelope
- * `{success,data}` que `apiFetch` espera) — mesmo padrão de `downloadExecutiveExport`
- * (commercialIntelligence.api.ts) e `handleExportCsv` (CrmBoard.tsx): fetch bruto com
- * `credentials: 'include'` + Blob + link `<a download>` temporário.
+ * Baixa um arquivo de uma rota autenticada utilizando o adapter nativo (Capacitor)
+ * ou o fallback web padrão (Blob).
  */
 export async function downloadFile(url: string, fallbackFilename: string): Promise<void> {
   const token = localStorage.getItem('token');
@@ -107,14 +107,7 @@ export async function downloadFile(url: string, fallbackFilename: string): Promi
   const disposition = response.headers.get('Content-Disposition') || '';
   const match = /filename="([^"]+)"/.exec(disposition);
   const filename = match?.[1] || fallbackFilename;
-  const objectUrl = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = objectUrl;
-  link.setAttribute('download', filename);
-  document.body.appendChild(link);
-  link.click();
-  link.parentNode?.removeChild(link);
-  window.URL.revokeObjectURL(objectUrl);
+  await saveAndDownloadFile({ filename, blob });
 }
 
 const inFlightRequests = new Map<string, Promise<unknown>>();

@@ -43,4 +43,6 @@ export type {
   RequirementEvaluation,
   RequirementStatus,
   RequirementType,
+  SiteIntelligence,
 } from './prospecting/types.js';
+export { fetchSiteIntelligence } from './siteIntelligence.service.js';

@@ -4,7 +4,7 @@
 // `DiscoverResult` vivem em `domain/prospectTypes.ts` (não aqui) — ver o comentário lá para o
 // porquê (quebrar o import circular real com `services/apollo/*`).
 
-import type { DecisionMaker } from '../../domain/prospectTypes.js';
+import type { DecisionMaker, SiteIntelligence } from '../../domain/prospectTypes.js';
 
 export type {
   DecisionMaker,
@@ -14,6 +14,7 @@ export type {
   RequirementEvaluation,
   RequirementStatus,
   RequirementType,
+  SiteIntelligence,
 } from '../../domain/prospectTypes.js';
 export { buildLocationLabel } from '../../domain/prospectTypes.js';
 export type { DecisionMakerCriteria } from '../apollo.service.js';
@@ -49,4 +50,6 @@ export interface PromoteInput {
   website?: string | null;
   /** Decisores já buscados na tela de descoberta — evita gastar créditos Apollo/Hunter de novo no promote. */
   decisionMakers?: DecisionMaker[];
+  /** Inteligência de site extraída na descoberta/crawling para ser preservada na Company */
+  siteIntelligence?: SiteIntelligence | null;
 }
