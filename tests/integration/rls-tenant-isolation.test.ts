@@ -93,15 +93,11 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
         prisma.forecastSnapshot.create({
           data: {
             organizationId: ORG_A,
-            period: '2026-Q3',
-            weightedPipeline: 100000,
-            unweightedPipeline: 250000,
-            commitCategoryTotal: 80000,
-            bestCaseCategoryTotal: 150000,
-            pipelineCategoryTotal: 250000,
-            closedWonTotal: 50000,
-            coverageRatio: 3.5,
+            period: '2026-09',
             rulesVersion: '1.0',
+            commitAmount: 80000,
+            bestCaseAmount: 150000,
+            forecastAmount: 100000,
           },
         }),
       );
@@ -111,15 +107,11 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
         prisma.forecastSnapshot.create({
           data: {
             organizationId: ORG_B,
-            period: '2026-Q3',
-            weightedPipeline: 200000,
-            unweightedPipeline: 400000,
-            commitCategoryTotal: 160000,
-            bestCaseCategoryTotal: 300000,
-            pipelineCategoryTotal: 400000,
-            closedWonTotal: 100000,
-            coverageRatio: 4.0,
+            period: '2026-09',
             rulesVersion: '1.0',
+            commitAmount: 160000,
+            bestCaseAmount: 300000,
+            forecastAmount: 200000,
           },
         }),
       );
@@ -141,7 +133,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
         asOrg(ORG_B, () =>
           prisma.forecastSnapshot.update({
             where: { id: snapA.id },
-            data: { weightedPipeline: 999999 },
+            data: { forecastAmount: 999999 },
           }),
         ),
       ).rejects.toThrow();
@@ -150,7 +142,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
       const verifyUnchanged = await asOrg(ORG_A, () =>
         prisma.forecastSnapshot.findUnique({ where: { id: snapA.id } }),
       );
-      expect(verifyUnchanged?.weightedPipeline).toBe(100000);
+      expect(Number(verifyUnchanged?.forecastAmount)).toBe(100000);
 
       // 5. DELETE cross-tenant: Tenant B tenta deletar registro do Tenant A
       await expect(
@@ -163,15 +155,11 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
           prisma.forecastSnapshot.create({
             data: {
               organizationId: ORG_A, // Atribuição forçada cross-tenant
-              period: '2026-Q4',
-              weightedPipeline: 50000,
-              unweightedPipeline: 100000,
-              commitCategoryTotal: 40000,
-              bestCaseCategoryTotal: 80000,
-              pipelineCategoryTotal: 100000,
-              closedWonTotal: 20000,
-              coverageRatio: 2.0,
+              period: '2026-10',
               rulesVersion: '1.0',
+              commitAmount: 40000,
+              bestCaseAmount: 80000,
+              forecastAmount: 50000,
             },
           }),
         ),
@@ -245,7 +233,6 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
           data: {
             name: 'Sequência SDR Tenant A',
             organizationId: ORG_A,
-            steps: [{ stepNumber: 1, type: 'email', delayDays: 1 }],
             touches: [],
           },
         }),
@@ -279,7 +266,6 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
             data: {
               name: 'Sequência Injetada em A',
               organizationId: ORG_A,
-              steps: [],
               touches: [],
             },
           }),
@@ -298,7 +284,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
         prisma.crmCommercialDocument.create({
           data: {
             organizationId: ORG_A,
-            type: 'PROPOSTA',
+            type: 'Proposta',
             number: 'PROP-001-A',
             title: 'Proposta Comercial Tenant A',
             value: 50000,
@@ -335,7 +321,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
           prisma.crmCommercialDocument.create({
             data: {
               organizationId: ORG_A,
-              type: 'CONTRATO',
+              type: 'Contrato',
               number: 'CONT-HACK-001',
               title: 'Contrato Falso',
               value: 1000000,
