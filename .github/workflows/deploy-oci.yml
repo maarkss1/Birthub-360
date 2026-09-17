@@ -29,11 +29,10 @@ jobs:
           set -euo pipefail
           cd "$1"
           
-          # Fix Caddyfile to explicitly use tls internal so that IP addresses get a self-signed cert instead of failing
           cat << 'EOF' > Caddyfile.oci
-          email {\@atlasgr.com.br}
+          email {$ACME_EMAIL:admin@atlasgr.com.br}
 
-          {\::80} {
+          {$DOMAIN::80} {
               tls internal
               encode gzip zstd
 
