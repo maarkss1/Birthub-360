@@ -349,7 +349,6 @@ if (_env.success && _env.data.NODE_ENV === 'production' && _env.data.ALLOW_DEV_A
   }
 }
 
-
 // ONDA 17: Validação de domínio público x localhost em produção
 if (_env.success && _env.data.NODE_ENV === 'production') {
   const prodDomain = _env.data.PRODUCTION_DOMAIN || _env.data.DOMAIN;
@@ -360,14 +359,10 @@ if (_env.success && _env.data.NODE_ENV === 'production') {
   const hasPublicDomainConfigured =
     Boolean(prodDomain && prodDomain !== 'localhost') ||
     Boolean(
-      publicBaseUrl &&
-        !publicBaseUrl.includes('localhost') &&
-        !publicBaseUrl.includes('127.0.0.1'),
+      publicBaseUrl && !publicBaseUrl.includes('localhost') && !publicBaseUrl.includes('127.0.0.1'),
     ) ||
     Boolean(
-      betterAuthUrl &&
-        !betterAuthUrl.includes('localhost') &&
-        !betterAuthUrl.includes('127.0.0.1'),
+      betterAuthUrl && !betterAuthUrl.includes('localhost') && !betterAuthUrl.includes('127.0.0.1'),
     );
 
   if (hasPublicDomainConfigured) {
@@ -394,7 +389,7 @@ if (_env.success && _env.data.NODE_ENV === 'production') {
 
     if (invalidVars.length > 0) {
       logger.error(
-        ,
+        `❌ Configuração inválida em produção: as seguintes variáveis contêm 'localhost' ou '127.0.0.1' enquanto o ambiente está configurado para domínio público: ${invalidVars.join(', ')}. Abortando inicialização.`,
       );
       if (process.env.NODE_ENV !== 'test') {
         process.exit(1);
