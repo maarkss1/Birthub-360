@@ -1,5 +1,5 @@
 -- Migration: Fix Row Level Security (RLS) Tenant Write Isolation
--- Replaces insecure WITH CHECK (true) on tenant-scoped tables with strict tenant matching policies.
+-- Replaces insecure WITH CHECK (true) on tenant-scoped tables with strict symmetrical tenant matching policies.
 -- Also establishes static ENABLE/FORCE RLS and global catalog policies for all remaining models.
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -95,8 +95,8 @@ USING (true)
 WITH CHECK (true);
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- 3. Hardened Tenant Policies for Allowlisted Bootstrap Tables
--- Symmetrical USING and WITH CHECK: allows bypass for authorized bootstrap workers,
+-- 3. Hardened Tenant Policies for All 16 Blocking Tenant-Scoped Tables + Auth
+-- Symmetrical USING and WITH CHECK: allows bypass for authorized bootstrap/backfill workers,
 -- but enforces strict organizationId matching for all standard tenant requests.
 -- ─────────────────────────────────────────────────────────────────────────────
 
@@ -196,11 +196,6 @@ WITH CHECK (
     OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
--- ─────────────────────────────────────────────────────────────────────────────
--- 4. Hardened Strict Tenant Policies (No Bypass, No WITH CHECK (true))
--- Restricts both read and write operations strictly to the matching organizationId.
--- ─────────────────────────────────────────────────────────────────────────────
-
 -- ForecastSnapshot
 ALTER TABLE "ForecastSnapshot" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "ForecastSnapshot" FORCE ROW LEVEL SECURITY;
@@ -208,9 +203,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "ForecastSnapshot";
 CREATE POLICY tenant_isolation_policy ON "ForecastSnapshot" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- ProspectingSearchExecution
@@ -220,9 +217,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "ProspectingSearchExecution";
 CREATE POLICY tenant_isolation_policy ON "ProspectingSearchExecution" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- AutomationVersion
@@ -232,9 +231,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "AutomationVersion";
 CREATE POLICY tenant_isolation_policy ON "AutomationVersion" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoConversation
@@ -244,9 +245,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoConversation";
 CREATE POLICY tenant_isolation_policy ON "CopilotoConversation" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoTranscriptSegment
@@ -256,9 +259,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoTranscriptSegment";
 CREATE POLICY tenant_isolation_policy ON "CopilotoTranscriptSegment" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoInsight
@@ -268,9 +273,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoInsight";
 CREATE POLICY tenant_isolation_policy ON "CopilotoInsight" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoCrmFieldSuggestion
@@ -280,9 +287,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoCrmFieldSuggestion";
 CREATE POLICY tenant_isolation_policy ON "CopilotoCrmFieldSuggestion" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoDealHealthSnapshot
@@ -292,9 +301,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoDealHealthSnapshot";
 CREATE POLICY tenant_isolation_policy ON "CopilotoDealHealthSnapshot" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoConsentRecord
@@ -304,9 +315,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoConsentRecord";
 CREATE POLICY tenant_isolation_policy ON "CopilotoConsentRecord" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoBitrixFieldMapping
@@ -316,9 +329,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoBitrixFieldMapping";
 CREATE POLICY tenant_isolation_policy ON "CopilotoBitrixFieldMapping" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- CopilotoCoachingEvaluation
@@ -328,9 +343,11 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "CopilotoCoachingEvaluation";
 CREATE POLICY tenant_isolation_policy ON "CopilotoCoachingEvaluation" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );
 
 -- SavedView
@@ -340,7 +357,9 @@ DROP POLICY IF EXISTS tenant_isolation_policy ON "SavedView";
 CREATE POLICY tenant_isolation_policy ON "SavedView" FOR ALL
 USING (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 )
 WITH CHECK (
     current_setting('app.current_tenant_id', TRUE) = "organizationId"
+    OR current_setting('app.bypass_rls', TRUE) = 'on'
 );

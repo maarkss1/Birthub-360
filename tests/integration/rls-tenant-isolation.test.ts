@@ -75,8 +75,8 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
             id: 'auto-a-rls-id',
             name: 'Automation A',
             organizationId: ORG_A,
-            trigger: 'LEAD_CREATED',
-            action: 'ENRICH_COMPANY',
+            trigger: 'Lead_Criado',
+            action: 'Notificar_Equipe',
             actionConfig: {},
           },
         });
