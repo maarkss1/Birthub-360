@@ -1,7 +1,22 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import http from 'node:http';
-import { execFile } from 'node:child_process';
+import { execFile, execSync } from 'node:child_process';
 import path from 'node:path';
+
+function hasBash(): boolean {
+  if (process.platform !== 'win32') {
+    return true;
+  }
+  try {
+    execSync('bash --version', { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const isBashAvailable = hasBash();
+const runShellTest = isBashAvailable ? it : it.skip;
 
 describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
   let server: http.Server | null = null;
@@ -34,7 +49,19 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
     await stopMockServer();
   });
 
-  it('passa no smoke test quando /health/live e /health/ready respondem HTTP 200 com status ok', async () => {
+  function runSmokeScript(env: Record<string, string>): Promise<{ code: number; stdout: string; stderr: string }> {
+    return new Promise((resolve) => {
+      execFile('bash', [SCRIPT_PATH], { env }, (error, stdout, stderr) => {
+        resolve({
+          code: error ? (error.code as number) ?? 1 : 0,
+          stdout,
+          stderr,
+        });
+      });
+    });
+  }
+
+  runShellTest('passa no smoke test quando /health/live e /health/ready respondem HTTP 200 com status ok', async () => {
     await startMockServer((req, res) => {
       if (req.url === '/health/live' || req.url === '/health/ready') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -52,15 +79,7 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
       RETRY_INTERVAL: '1',
     };
 
-    const result = await new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
-      execFile(SCRIPT_PATH, [], { env }, (error, stdout, stderr) => {
-        resolve({
-          code: error ? (error.code as number) ?? 1 : 0,
-          stdout,
-          stderr,
-        });
-      });
-    });
+    const result = await runSmokeScript(env);
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('HEALTH_LIVE=PASS');
@@ -68,7 +87,7 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
     expect(result.stdout).toContain('SMOKE_TEST=PASS');
   });
 
-  it('falha no smoke test se /health/ready retornar HTTP 503 (banco indisponível)', async () => {
+  runShellTest('falha no smoke test se /health/ready retornar HTTP 503 (banco indisponível)', async () => {
     await startMockServer((req, res) => {
       if (req.url === '/health/live') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -89,15 +108,7 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
       RETRY_INTERVAL: '1',
     };
 
-    const result = await new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
-      execFile(SCRIPT_PATH, [], { env }, (error, stdout, stderr) => {
-        resolve({
-          code: error ? (error.code as number) ?? 1 : 0,
-          stdout,
-          stderr,
-        });
-      });
-    });
+    const result = await runSmokeScript(env);
 
     expect(result.code).toBe(1);
     expect(result.stdout).toContain('HEALTH_LIVE=PASS');
@@ -105,7 +116,7 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
     expect(result.stdout).toContain('SMOKE_TEST=FAIL');
   });
 
-  it('recupera-se e passa se a aplicação estiver inicializando e só responder nas retries', async () => {
+  runShellTest('recupera-se e passa se a aplicação estiver inicializando e só responder nas retries', async () => {
     let attempts = 0;
     await startMockServer((req, res) => {
       attempts++;
@@ -126,15 +137,7 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
       RETRY_INTERVAL: '1',
     };
 
-    const result = await new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
-      execFile(SCRIPT_PATH, [], { env }, (error, stdout, stderr) => {
-        resolve({
-          code: error ? (error.code as number) ?? 1 : 0,
-          stdout,
-          stderr,
-        });
-      });
-    });
+    const result = await runSmokeScript(env);
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('HEALTH_LIVE=PASS');
@@ -142,7 +145,7 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
     expect(result.stdout).toContain('SMOKE_TEST=PASS');
   });
 
-  it('falha por timeout / recusou conexão quando o servidor está completamente offline', async () => {
+  runShellTest('falha por timeout / recusou conexão quando o servidor está completamente offline', async () => {
     // Nenhum servidor iniciado na porta
     const env = {
       ...process.env,
@@ -151,15 +154,7 @@ describe('Production Smoke Gate (scripts/smoke-test-oci.sh)', () => {
       RETRY_INTERVAL: '1',
     };
 
-    const result = await new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
-      execFile(SCRIPT_PATH, [], { env }, (error, stdout, stderr) => {
-        resolve({
-          code: error ? (error.code as number) ?? 1 : 0,
-          stdout,
-          stderr,
-        });
-      });
-    });
+    const result = await runSmokeScript(env);
 
     expect(result.code).toBe(1);
     expect(result.stdout).toContain('HEALTH_LIVE=FAIL');
