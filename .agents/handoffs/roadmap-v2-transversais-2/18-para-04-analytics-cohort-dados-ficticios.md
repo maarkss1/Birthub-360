@@ -1,7 +1,7 @@
 - De: 18
 - Para: 04
 - Onda: roadmap-v2-transversais-2
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
@@ -57,3 +57,6 @@ nem abre num leitor de PDF).
 Achado durante a auditoria de contratos/OpenAPI da onda `roadmap-v2-transversais-2` (Agente 18).
 Ver `docs/openapi.yaml` → `/analytics/cohort` e `/analytics/export/pdf` para o contrato atual
 documentado (com a ressalva de dado fictício escrita no próprio YAML).
+
+## Resolução
+As rotas de fato já foram corrigidas na onda 2 (Agente 04), onde a resposta falsa ("Fake data just for the prototype") foi substituída pela real através do `AnalyticsUseCases.cohortAnalysis`, bem como a rota de exportação passou a responder CSV de verdade. O `openapi.yaml` também reflete isso. Este handoff estava apenas pendente de fechamento.
