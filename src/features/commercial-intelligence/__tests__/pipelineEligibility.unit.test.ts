@@ -14,7 +14,7 @@ function baseDeal(overrides: Partial<DealRow> = {}): DealRow {
     id: 'deal-1',
     title: 'Negócio teste',
     amount: 10_000,
-    owner: 'vendedor@atlasgr.com.br',
+    owner: 'vendedor@empresa.com.br',
     source: 'Indicação',
     companyId: 'company-1',
     companyName: 'Empresa Teste',

@@ -13,7 +13,7 @@ export const opaMiddleware = async (req: Request, res: Response, next: NextFunct
       organizationId: organizationId || null,
     };
 
-    const response = await fetch('http://localhost:8181/v1/data/atlasgr/rbac/allow', {
+    const response = await fetch('http://localhost:8181/v1/data/birthhub360/rbac/allow', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ input }),

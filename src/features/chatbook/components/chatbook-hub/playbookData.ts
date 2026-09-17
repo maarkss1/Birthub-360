@@ -1,64 +1,88 @@
 export interface QualificationCriteria {
   category: string;
-  atlas: string;
-  totaltrac: string;
-  spinQuestionAtlas: string;
-  spinQuestionTotaltrac: string;
+  geral: string;
+  secundario: string;
+  spinQuestionGeral: string;
+  spinQuestionSecundario: string;
+  // Aliases de compatibilidade
+  atlas?: string;
+  totaltrac?: string;
+  spinQuestionAtlas?: string;
+  spinQuestionTotaltrac?: string;
 }
 
 export interface ObjectionItem {
   id: string;
   title: string;
   description: string;
-  bestResponseAtlas: string;
-  bestResponseTotaltrac: string;
+  bestResponseGeral: string;
+  bestResponseSecundario: string;
   technique: string;
+  // Aliases de compatibilidade
+  bestResponseAtlas?: string;
+  bestResponseTotaltrac?: string;
 }
 
 export const QUALIFICATION_CRITERIA: QualificationCriteria[] = [
   {
     category: 'Need (Necessidade)',
-    atlas:
+    geral:
       'Alta sinistralidade, perda de cobertura de seguro de carga, falhas recorrentes no monitoramento de rotas de alto risco.',
-    totaltrac:
+    secundario:
       'Excesso de gastos com combustível, falta de telemetria real (leitura CAN), descontrole de jornada de motoristas e vulnerabilidade a jammers.',
-    spinQuestionAtlas:
+    spinQuestionGeral:
       'Qual a sua taxa média de sinistros e como você audita se as regras da GR estão sendo cumpridas em tempo real?',
-    spinQuestionTotaltrac:
+    spinQuestionSecundario:
       'Sua telemetria atual lê os dados reais da central CAN do veículo ou trabalha apenas com estimativas de GPS?',
+    get atlas() { return this.geral; },
+    get totaltrac() { return this.secundario; },
+    get spinQuestionAtlas() { return this.spinQuestionGeral; },
+    get spinQuestionTotaltrac() { return this.spinQuestionSecundario; },
   },
   {
     category: 'Authority (Autoridade)',
-    atlas:
+    geral:
       'Diretor de Logística, Head de Gerenciamento de Risco (GR), Gerente de Compliance / Seguros, CEO/Dono.',
-    totaltrac:
+    secundario:
       'Gestor de Frotas, Diretor de Operações, Gerente de Risco, RH / Departamento Pessoal (para Jornada).',
-    spinQuestionAtlas:
+    spinQuestionGeral:
       'Quem além de você aprova novos fornecedores de tecnologia em gerenciamento de risco e apólices de transporte?',
-    spinQuestionTotaltrac:
+    spinQuestionSecundario:
       'Além da gestão de frota, quem na diretoria acompanha os custos com combustível e passivos trabalhistas de motoristas?',
+    get atlas() { return this.geral; },
+    get totaltrac() { return this.secundario; },
+    get spinQuestionAtlas() { return this.spinQuestionGeral; },
+    get spinQuestionTotaltrac() { return this.spinQuestionSecundario; },
   },
   {
     category: 'Budget (Orçamento)',
-    atlas:
+    geral:
       'Orçamento dedicado de GR, tecnologia da informação, seguro de carga e prevenção de perdas.',
-    totaltrac:
+    secundario:
       'Orçamento de frota, manutenção preventiva, combustível e sistemas de rastreamento/telemetria.',
-    spinQuestionAtlas:
+    spinQuestionGeral:
       'Quanto sua operação perdeu no último ano com sinistros ou retenção de sinistros por falta de auditoria?',
-    spinQuestionTotaltrac:
+    spinQuestionSecundario:
       'Se conseguirmos reduzir 10% do consumo de combustível com telemetria CAN, qual o impacto no seu orçamento anual?',
+    get atlas() { return this.geral; },
+    get totaltrac() { return this.secundario; },
+    get spinQuestionAtlas() { return this.spinQuestionGeral; },
+    get spinQuestionTotaltrac() { return this.spinQuestionSecundario; },
   },
   {
     category: 'Timeline (Prazo)',
-    atlas:
+    geral:
       'Renovação iminente de apólice de seguro de carga ou ocorrência recente de sinistro em rota estratégica.',
-    totaltrac:
+    secundario:
       'Renovação de contrato de rastreamento antigo, expansão de frota ou fiscalização/passivo trabalhista recente.',
-    spinQuestionAtlas:
+    spinQuestionGeral:
       'Para quando está prevista a renovação da sua apólice de seguro ou revisão de regras de GR?',
-    spinQuestionTotaltrac:
+    spinQuestionSecundario:
       'Qual a urgência para implementar o controle automático de jornada e videotelemetria nos novos veículos?',
+    get atlas() { return this.geral; },
+    get totaltrac() { return this.secundario; },
+    get spinQuestionAtlas() { return this.spinQuestionGeral; },
+    get spinQuestionTotaltrac() { return this.spinQuestionSecundario; },
   },
 ];
 
@@ -67,40 +91,48 @@ export const OBJECTIONS_DATA: ObjectionItem[] = [
     id: '1',
     title: 'Já tenho fornecedor de rastreamento / GR',
     description: 'O cliente alega satisfação com a solução contratada atualmente.',
-    bestResponseAtlas:
+    bestResponseGeral:
       'Excelente! A Birth Hub 360 não visa substituir sua GR atual, mas atuar como uma camada de Inteligência Artificial Autônoma que audita em tempo real o cumprimento das regras e reduz falhas humanas.',
-    bestResponseTotaltrac:
-      'Entendo perfeitamente! Grande parte dos nossos clientes também usava rastreadores comuns. O diferencial do Total Telemetria CAN é que lemos direto os dados reais da central do veículo, e nossas Iscas RF continuam funcionando mesmo quando ladrões usam jammer.',
+    bestResponseSecundario:
+      'Entendo perfeitamente! Grande parte dos nossos clientes também usava rastreadores comuns. O diferencial da Telemetria CAN é que lemos direto os dados reais da central do veículo, e nossas Iscas RF continuam funcionando mesmo quando ladrões usam jammer.',
     technique: 'Acknowledge & Elevate (Validar e Elevar o Nível)',
+    get bestResponseAtlas() { return this.bestResponseGeral; },
+    get bestResponseTotaltrac() { return this.bestResponseSecundario; },
   },
   {
     id: '2',
     title: 'Acho o valor muito alto / Fora do Orçamento',
     description: 'Resistência ao preço inicial do investimento.',
-    bestResponseAtlas:
+    bestResponseGeral:
       'Entendo a preocupação com custos. No entanto, o custo de um único sinistro sem cobertura por descumprimento de regra de GR supera em anos o investimento na plataforma Birth Hub 360.',
-    bestResponseTotaltrac:
-      'Compreendo. Porém, com o Total Jornada e o Total Telemetria CAN, a economia direta em combustível e a eliminação de horas extras indevidas cobrem integralmente a mensalidade no primeiro trimestre.',
+    bestResponseSecundario:
+      'Compreendo. Porém, com o módulo de Jornada e a Telemetria CAN, a economia direta em combustível e a eliminação de horas extras indevidas cobrem integralmente a mensalidade no primeiro trimestre.',
     technique: 'ROI vs Cost Framing (Enquadramento por Retorno)',
+    get bestResponseAtlas() { return this.bestResponseGeral; },
+    get bestResponseTotaltrac() { return this.bestResponseSecundario; },
   },
   {
     id: '3',
     title: 'Resistência de motoristas (Videotelemetria / Jornada)',
     description: 'Receio da equipe sobre monitoramento contínuo e controle de horas.',
-    bestResponseAtlas:
+    bestResponseGeral:
       'Nossa inteligência foca na automação de processos de risco, garantindo transparência e segurança para todos os envolvidos na cadeia.',
-    bestResponseTotaltrac:
-      'Essa é uma dúvida comum! O Total Safe com Videotelemetria IA protege o próprio motorista contra acusações injustas e previne acidentes por fadiga. É uma ferramenta de proteção da vida.',
+    bestResponseSecundario:
+      'Essa é uma dúvida comum! A Videotelemetria IA protege o próprio motorista contra acusações injustas e previne acidentes por fadiga. É uma ferramenta de proteção da vida.',
     technique: 'Safety First (Proteção & Parceria)',
+    get bestResponseAtlas() { return this.bestResponseGeral; },
+    get bestResponseTotaltrac() { return this.bestResponseSecundario; },
   },
   {
     id: '4',
     title: 'Minha seguradora não exige esses adicionais',
     description: 'Visão de conformidade mínima apenas para cumprir apólice.',
-    bestResponseAtlas:
+    bestResponseGeral:
       'Cumprir a apólice é a obrigação mínima. A Birth Hub 360 garante que, no momento crítico do sinistro, você tenha 100% de conformidade comprovável para receber a indenização sem contestação.',
-    bestResponseTotaltrac:
-      'A exigência da seguradora é o básico. Nossos equipamentos invisíveis (Total Imobilizador e Isca RF) garantem a recuperação real do veículo e da carga, evitando o prejuízo da franquia e o aumento da apólice no ano seguinte.',
+    bestResponseSecundario:
+      'A exigência da seguradora é o básico. Nossos equipamentos invisíveis (Imobilizador e Isca RF) garantem a recuperação real do veículo e da carga, evitando o prejuízo da franquia e o aumento da apólice no ano seguinte.',
     technique: 'Total Asset Protection (Proteção Ativa do Patrimônio)',
+    get bestResponseAtlas() { return this.bestResponseGeral; },
+    get bestResponseTotaltrac() { return this.bestResponseSecundario; },
   },
 ];

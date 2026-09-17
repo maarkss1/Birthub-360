@@ -33,10 +33,12 @@ function buildWebhookReceiverUrl(connectionId: string): string {
 // fallback hardcoded aqui: as duas URLs reais que existiam neste arquivo ficaram expostas no git e
 // devem ser consideradas comprometidas/rotacionadas. Sem a env correspondente, o autoconnect
 // simplesmente não acontece (a organização conecta manualmente pela tela de Integrações).
-export const ATLAS_BITRIX_WEBHOOK_URL =
+export const GERAL_BITRIX_WEBHOOK_URL =
   process.env.BITRIX24_WEBHOOK_URL || process.env.BITRIX_WEBHOOK_URL || null;
-export const TOTALTRAC_BITRIX_WEBHOOK_URL =
+export const ATLAS_BITRIX_WEBHOOK_URL = GERAL_BITRIX_WEBHOOK_URL;
+export const SECUNDARIO_BITRIX_WEBHOOK_URL =
   process.env.TOTALTRAC_BITRIX24_WEBHOOK_URL || process.env.TOTALTRAC_BITRIX_WEBHOOK_URL || null;
+export const TOTALTRAC_BITRIX_WEBHOOK_URL = SECUNDARIO_BITRIX_WEBHOOK_URL;
 
 /** Lista todos os portais Bitrix conectados desta organização — se não houver nenhum e a env do
  * webhook da marca estiver configurada, autoconecta o portal correspondente (Birth Hub 360 x Birth Hub 360). */

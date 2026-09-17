@@ -8,7 +8,7 @@ const baseInput = {
   start: new Date('2026-09-10T14:00:00Z'),
   end: new Date('2026-09-10T15:00:00Z'),
   timeZone: 'America/Sao_Paulo',
-  organizerEmail: 'sdr@atlasgr.com.br',
+  organizerEmail: 'sdr@empresa.com.br',
   attendeeEmails: ['lead@empresa.com'],
   meetUrl: 'https://meet.google.com/abc-defg-hij',
 };
@@ -22,7 +22,7 @@ describe('buildMeetingInviteEmail', () => {
     expect(invite.icalEvent.content).toContain('BEGIN:VCALENDAR');
     expect(invite.icalEvent.content).toContain('METHOD:REQUEST');
     expect(invite.icalEvent.content).toContain('UID:evt-1@google.com');
-    expect(invite.icalEvent.content).toContain('ORGANIZER:mailto:sdr@atlasgr.com.br');
+    expect(invite.icalEvent.content).toContain('ORGANIZER:mailto:sdr@empresa.com.br');
     expect(invite.icalEvent.content).toContain(
       'ATTENDEE;RSVP=TRUE;ROLE=REQ-PARTICIPANT:mailto:lead@empresa.com',
     );

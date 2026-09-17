@@ -31,30 +31,30 @@ describe('CommercialIntelligenceController — parsing de input de query string'
 
   describe('parseOwner', () => {
     it('preserva um owner não vazio', () => {
-      expect(parseOwner('ana@atlasgr.com.br')).toBe('ana@atlasgr.com.br');
+      expect(parseOwner('ana@empresa.com.br')).toBe('ana@empresa.com.br');
     });
 
     it('faz trim de espaços nas bordas', () => {
-      expect(parseOwner('  ana@atlasgr.com.br  ')).toBe('ana@atlasgr.com.br');
+      expect(parseOwner('  ana@empresa.com.br  ')).toBe('ana@empresa.com.br');
     });
 
     it('retorna undefined para string vazia, só espaços, ou valor não-string — nunca filtra por owner="" (que quebraria applyScope)', () => {
       expect(parseOwner('')).toBeUndefined();
       expect(parseOwner('   ')).toBeUndefined();
       expect(parseOwner(undefined)).toBeUndefined();
-      expect(parseOwner(['ana@atlasgr.com.br'])).toBeUndefined();
+      expect(parseOwner(['ana@empresa.com.br'])).toBeUndefined();
     });
   });
 
   describe('parseFilter', () => {
     it('lê o filtro de req.query em rotas GET', () => {
       const req = {
-        query: { month: '2026-07', owner: 'ana@atlasgr.com.br' },
+        query: { month: '2026-07', owner: 'ana@empresa.com.br' },
         body: undefined,
       } as unknown as Request;
       expect(parseFilter(req)).toEqual({
         month: '2026-07',
-        owner: 'ana@atlasgr.com.br',
+        owner: 'ana@empresa.com.br',
         product: undefined,
         source: undefined,
         icp: undefined,
@@ -64,11 +64,11 @@ describe('CommercialIntelligenceController — parsing de input de query string'
     it('cai para req.body quando req.query está vazio — POSTs de IA mandam o filtro como JSON body, nunca como query string (bug real corrigido aqui: antes o mês/vendedor selecionado na tela era ignorado)', () => {
       const req = {
         query: {},
-        body: { month: '2026-03', owner: 'bruno@atlasgr.com.br', product: 'Rastreamento' },
+        body: { month: '2026-03', owner: 'bruno@empresa.com.br', product: 'Rastreamento' },
       } as unknown as Request;
       expect(parseFilter(req)).toEqual({
         month: '2026-03',
-        owner: 'bruno@atlasgr.com.br',
+        owner: 'bruno@empresa.com.br',
         product: 'Rastreamento',
         source: undefined,
         icp: undefined,

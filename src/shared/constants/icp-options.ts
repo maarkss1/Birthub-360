@@ -1,6 +1,5 @@
 // Opções de ICP (Perfil de Cliente Ideal) para os dropdowns do Prospector.
-// Extraídas do "Playbook de Pré-Vendas Atlas" e do "Playbook Comercial - Birth Hub 360"
-// fornecidos pelo time comercial.
+// Extraídas do Playbook Comercial - Birth Hub 360 fornecido pelo time comercial.
 
 export const SEGMENTO_OPTIONS = [
   'Transportadora / Frotista',
@@ -14,7 +13,7 @@ export const SEGMENTO_OPTIONS = [
   'Seguradora',
 ];
 
-export const TOTALTRAC_SEGMENTO_OPTIONS = [
+export const LOGISTICA_SEGMENTO_OPTIONS = [
   'Transportadora',
   'Empresas de Logística',
   'Frotas Corporativas',
@@ -22,6 +21,7 @@ export const TOTALTRAC_SEGMENTO_OPTIONS = [
   'Locação de Máquinas Pesadas',
   'Embarcador com Frota Própria',
 ];
+export const TOTALTRAC_SEGMENTO_OPTIONS = LOGISTICA_SEGMENTO_OPTIONS;
 
 // RJ e Grande SP aparecem no playbook como regiões de maior índice de roubo — prioridade de risco.
 export const LOCALIZACAO_OPTIONS = [
@@ -90,7 +90,7 @@ export const PORTE_OPTIONS = [
 // gatekeepers que raramente decidem, mas travam o processo). Usado como atalho na busca de
 // decisores em vez de digitar cargo "no chute" — cada opção já vem com as variações de título em
 // português mais comuns para esse papel e a senioridade Apollo correspondente.
-export const ATLAS_PERSONA_OPTIONS = [
+export const GERAL_PERSONA_OPTIONS = [
   {
     label: 'Dono / CEO',
     nivel: 'Decisor final',
@@ -160,8 +160,9 @@ export const ATLAS_PERSONA_OPTIONS = [
     seniorities: ['director', 'manager'],
   },
 ] as const;
+export const ATLAS_PERSONA_OPTIONS = GERAL_PERSONA_OPTIONS;
 
-export const TOTALTRAC_PERSONA_OPTIONS = [
+export const LOGISTICA_PERSONA_OPTIONS = [
   {
     label: 'Dono / CEO',
     nivel: 'Decisor final',
@@ -199,8 +200,9 @@ export const TOTALTRAC_PERSONA_OPTIONS = [
     seniorities: ['manager'],
   },
 ] as const;
+export const TOTALTRAC_PERSONA_OPTIONS = LOGISTICA_PERSONA_OPTIONS;
 
-// Os 3 PICs (Perfil de Cliente Ideal) do Playbook de Pré-Vendas Atlas — cada um com gatilho,
+// Os 3 PICs (Perfil de Cliente Ideal) do Playbook de Pré-Vendas — cada um com gatilho,
 // decisor e discurso diferentes. Setado manualmente pelo SDR/AM após identificar o gatilho real
 // numa conversa (nunca inferido automaticamente — não há sinal confiável disponível hoje para
 // "processo judicial recente" ou "troca de liderança" sem uma fonte de dados dedicada).

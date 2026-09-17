@@ -68,7 +68,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
     ],
   },
   {
-    id: 'inbound-speed-lead-totaltrac',
+    id: 'inbound-speed-lead-secundario',
     name: 'Inbound Speed Lead (Contato Rápido Antifurto & Rastreamento - Birth Hub 360)',
     targetBrand: 'Birth Hub 360',
     category: 'Inbound',

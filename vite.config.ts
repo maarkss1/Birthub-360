@@ -13,8 +13,8 @@ export default defineConfig(() => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icons/*.png'],
         manifest: {
-          name: 'AtlasGR — Central de Inteligência Comercial',
-          short_name: 'AtlasGR',
+          name: 'Birth Hub 360 — Central de Inteligência Comercial',
+          short_name: 'BirthHub360',
           description: 'CRM com IA para equipes comerciais de alta performance',
           theme_color: '#F97316',
           background_color: '#111827',
@@ -54,7 +54,7 @@ export default defineConfig(() => {
               urlPattern: /^https?:\/\/.*\/api\/(companies|contacts|deals|activities)/,
               handler: 'StaleWhileRevalidate',
               options: {
-                cacheName: 'atlas-crm-data',
+                cacheName: 'birthhub-crm-data',
                 expiration: { maxAgeSeconds: 300, maxEntries: 200 },
                 cacheableResponse: { statuses: [0, 200] },
               },
@@ -64,7 +64,7 @@ export default defineConfig(() => {
               urlPattern: /\.(woff2?|ttf|otf|eot)$/,
               handler: 'CacheFirst',
               options: {
-                cacheName: 'atlas-fonts',
+                cacheName: 'birthhub-fonts',
                 expiration: { maxAgeSeconds: 60 * 60 * 24 * 365 },
               },
             },

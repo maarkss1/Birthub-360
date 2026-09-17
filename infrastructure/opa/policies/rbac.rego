@@ -1,8 +1,8 @@
-# RBAC Policy — AtlasGR
+# RBAC Policy — Birth Hub 360
 # Define quais roles podem acessar quais recursos.
-# Consultado pelo middleware authorization.ts via HTTP POST http://opa:8181/v1/data/atlasgr/rbac/allow
+# Consultado pelo middleware authorization.ts via HTTP POST http://opa:8181/v1/data/birthhub360/rbac/allow
 
-package atlasgr.rbac
+package birthhub360.rbac
 
 import rego.v1
 

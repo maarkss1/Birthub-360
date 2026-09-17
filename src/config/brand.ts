@@ -77,10 +77,7 @@ export const BRAND = {
   /**
    * Perfis sociais da plataforma.
    *
-   * Vazio de propósito: os perfis que existiam aqui eram os da marca anterior
-   * (`/atlasgroficial` em Facebook, Instagram, LinkedIn e YouTube) — canais de
-   * outra empresa, que não podem seguir assinando esta plataforma. A lista
-   * renderiza sozinha assim que os perfis da Birth Hub 360 forem preenchidos.
+   * Vazio de propósito: a lista renderiza sozinha assim que os perfis da Birth Hub 360 forem preenchidos.
    */
   social: [] as ReadonlyArray<{
     href: string;

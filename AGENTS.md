@@ -2,7 +2,7 @@
 
 ## Projeto
 
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR
+CENTRAL-DE-INTELIGENCIA-COMERCIAL-BIRTHUB360
 
 Este arquivo é a regra global para qualquer agente que trabalhe neste repositório. Regras locais em `AGENTS.md` dentro de subpastas refinam o escopo, mas nunca anulam as regras de segurança, qualidade e coordenação deste arquivo. Em caso de conflito entre um `AGENTS.md` local e este arquivo, este arquivo vence.
 

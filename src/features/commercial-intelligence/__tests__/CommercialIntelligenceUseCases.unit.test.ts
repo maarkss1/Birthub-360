@@ -63,7 +63,7 @@ function deal(overrides: Partial<DealRow> & { id: string }): DealRow {
   return {
     title: overrides.id,
     amount: 0,
-    owner: 'ana@atlasgr.com.br',
+    owner: 'ana@empresa.com.br',
     source: 'Indicação',
     companyId: 'company-1',
     companyName: 'Empresa Teste',
@@ -574,31 +574,31 @@ describe('CommercialIntelligenceUseCases', () => {
     const ana = deal({
       id: 'ana-1',
       amount: 1000,
-      owner: 'ana@atlasgr.com.br',
+      owner: 'ana@empresa.com.br',
       createdAt: new Date('2026-04-01T00:00:00Z'),
     }); // >90 dias
     const bruno = deal({
       id: 'bruno-1',
       amount: 2000,
-      owner: 'bruno@atlasgr.com.br',
+      owner: 'bruno@empresa.com.br',
       createdAt: new Date('2026-04-01T00:00:00Z'),
     }); // >90 dias
     const repo = new FakeRepository([ana, bruno]);
     const useCases = new CommercialIntelligenceUseCases(repo);
-    const aging = await useCases.aging(ORG, { month: PERIOD, owner: 'ana@atlasgr.com.br' }, NOW);
+    const aging = await useCases.aging(ORG, { month: PERIOD, owner: 'ana@empresa.com.br' }, NOW);
     const bucket90plus = aging.buckets.find((b) => b.label === '90+ dias');
     expect(bucket90plus?.count).toBe(1);
     expect(bucket90plus?.amount).toBe(1000);
   });
 
   it('Qualidade do CRM: respeita o filtro de owner (não mistura negócios de outro vendedor)', async () => {
-    const ana = deal({ id: 'ana-1', amount: 1000, owner: 'ana@atlasgr.com.br' });
-    const bruno = deal({ id: 'bruno-1', amount: 2000, owner: 'bruno@atlasgr.com.br' });
+    const ana = deal({ id: 'ana-1', amount: 1000, owner: 'ana@empresa.com.br' });
+    const bruno = deal({ id: 'bruno-1', amount: 2000, owner: 'bruno@empresa.com.br' });
     const repo = new FakeRepository([ana, bruno]);
     const useCases = new CommercialIntelligenceUseCases(repo);
     const quality = await useCases.crmQuality(
       ORG,
-      { month: PERIOD, owner: 'ana@atlasgr.com.br' },
+      { month: PERIOD, owner: 'ana@empresa.com.br' },
       NOW,
     );
     expect(quality.evaluatedCount).toBe(1);
@@ -625,14 +625,14 @@ describe('CommercialIntelligenceUseCases', () => {
     const dealsA = deal({
       id: 'a',
       amount: 10_000,
-      owner: 'ana@atlasgr.com.br',
+      owner: 'ana@empresa.com.br',
       stageIsWon: true,
       closedAt: new Date('2026-08-05'),
     });
     const dealsB = deal({
       id: 'b',
       amount: 20_000,
-      owner: 'bruno@atlasgr.com.br',
+      owner: 'bruno@empresa.com.br',
       stageIsWon: true,
       closedAt: new Date('2026-08-05'),
     });
@@ -640,7 +640,7 @@ describe('CommercialIntelligenceUseCases', () => {
     const useCases = new CommercialIntelligenceUseCases(repo);
     const overview = await useCases.executiveOverview(
       ORG,
-      { month: PERIOD, owner: 'ana@atlasgr.com.br' },
+      { month: PERIOD, owner: 'ana@empresa.com.br' },
       NOW,
     );
     expect(overview.closedAmount).toBe(10_000);
@@ -1408,11 +1408,11 @@ describe('CommercialIntelligenceUseCases', () => {
   it('filterOptions: delega ao repositório os valores reais já usados por negócios do funil Negócio', async () => {
     const repo = new FakeRepository([]);
     repo.filterOptionsResult = {
-      owners: ['ana@atlasgr.com.br'],
+      owners: ['ana@empresa.com.br'],
       products: ['SKU-1'],
       sources: ['Indicação'],
       icps: ['Enterprise'],
-      companies: ['Atlas Transportes'],
+      companies: ['Empresa Transportes'],
     };
     const useCases = new CommercialIntelligenceUseCases(repo);
     const result = await useCases.filterOptions(ORG);

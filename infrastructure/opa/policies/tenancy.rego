@@ -1,9 +1,9 @@
-# Tenancy Policy — AtlasGR / TotalTrac
+# Tenancy Policy — Birth Hub 360
 # Garante isolamento de dados entre tenants (organizações).
 # Separação visual não é prova de isolamento — este arquivo é a prova técnica.
-# Referência: AGENTS.md → "Tenancy AtlasGR / TotalTrac"
+# Referência: AGENTS.md → "Tenancy Birth Hub 360"
 
-package atlasgr.tenancy
+package birthhub360.tenancy
 
 import rego.v1
 

@@ -52,7 +52,7 @@ export function RoleplayHub() {
 
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
-  const personasAtlas = [
+  const personasLogistica = [
     {
       id: 'diretor_logistica',
       label: 'Diretor de Logística & Supply',
@@ -70,7 +70,7 @@ export function RoleplayHub() {
     },
   ];
 
-  const personasTotaltrack = [
+  const personasOperacionais = [
     {
       id: 'gestor_frota',
       label: 'Gestor de Frotas (Transportadora)',
@@ -84,13 +84,12 @@ export function RoleplayHub() {
     {
       id: 'gerente_rh',
       label: 'Gerente de RH / Passivo Trabalhista',
-      desc: 'Interessado no Total Jornada para cumprir legislação e evitar horas extras.',
+      desc: 'Interessado na Jornada para cumprir legislação e evitar horas extras.',
     },
   ];
 
-  // Antes dividida entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificada
-  // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma persona.
-  const currentPersonas = [...personasAtlas, ...personasTotaltrack];
+  // Unificada num único playbook geral, sem descartar nenhuma persona.
+  const currentPersonas = [...personasLogistica, ...personasOperacionais];
 
   // Mesma classificação de persona usada para o motor de IA do turno (generateRoleplay) — extraída
   // pra função pura porque finishCall também precisa dela para o parecer técnico de sessão

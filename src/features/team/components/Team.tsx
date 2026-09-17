@@ -279,7 +279,7 @@ export function Team() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-surface-2 border border-line rounded-xl px-3 py-2.5 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-brand"
-                  placeholder="nome@atlasgr.com.br"
+                  placeholder="nome@empresa.com.br"
                   required
                 />
               </div>
