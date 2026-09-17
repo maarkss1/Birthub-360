@@ -29,22 +29,30 @@ jobs:
           set -euo pipefail
           DEPLOY_PATH="$1"
           cd "$DEPLOY_PATH"
-          echo "=== DOCKER PS ==="
-          docker ps -a
-          echo "=== DOCKER LOGS ==="
-          docker logs --tail 200 birthhub_app || true
           
-          echo "=== FIXING DB ==="
+          echo "=== FIXING ENV ==="
+          if [ -f .env.production ]; then
+            sed -i 's/http:\/\/localhost:3000//g' .env.production
+            sed -i 's/http:\/\/127.0.0.1:3000//g' .env.production
+            sed -i 's/ALLOWED_ORIGINS=.*$/ALLOWED_ORIGINS=http:\/\/163.176.150.154,https:\/\/163.176.150.154/' .env.production
+            cat .env.production | grep ALLOWED_ORIGINS
+          fi
+          
+          echo "=== RESTARTING DOCKER ==="
+          docker compose -f docker-compose.oci.yml down || true
+          docker compose -f docker-compose.oci.yml up -d
+          
+          echo "=== WAITING FOR CONTAINER TO START ==="
+          sleep 10
+          docker logs --tail 50 birthhub_app
+          
+          echo "=== RUNNING DB SCRIPT ==="
           docker exec -i birthhub_app node --import tsx -e "
           import { hashPassword } from 'better-auth/crypto';
           import pg from 'pg';
           import crypto from 'node:crypto';
-
           const targetEmail = 'marcelinmark@gmail.com';
-          const targetName = 'Marcelo Nascimento';
-          const targetPassword = '00000000';
           const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-
           async function run() {
             const client = await pool.connect();
             try {
@@ -54,17 +62,17 @@ jobs:
               let orgId = orgRes.rows[0]?.id;
               if (!orgId) {
                 orgId = crypto.randomUUID();
-                await client.query('INSERT INTO \\\"Organization\\\" (id, name, \\\"createdAt\\\", \\\"updatedAt\\\") VALUES (\\\, \\\, NOW(), NOW())', [orgId, 'Birth Hub 360']);
+                await client.query('INSERT INTO \\\"Organization\\\" (id, name, \\\"createdAt\\\", \\\"updatedAt\\\") VALUES (\\\, \\\'Birth Hub 360\\\', NOW(), NOW())', [orgId]);
               }
-              const passwordHash = await hashPassword(targetPassword);
-              let userRes = await client.query('SELECT id FROM \\\"user\\\" WHERE LOWER(email) = \\\', [targetEmail.toLowerCase()]);
+              const passwordHash = await hashPassword('00000000');
+              let userRes = await client.query('SELECT id FROM \\\"user\\\" WHERE LOWER(email) = \\\', [targetEmail]);
               let targetUserId = userRes.rows[0]?.id;
               if (!targetUserId) {
                 targetUserId = crypto.randomUUID();
-                await client.query('INSERT INTO \\\"user\\\" (id, name, email, role, \\\"emailVerified\\\", \\\"mustChangePassword\\\", \\\"organizationId\\\", \\\"createdAt\\\", \\\"updatedAt\\\") VALUES (\\\, \\\, \\\, \\\'ADMIN\\\', TRUE, TRUE, \\\, NOW(), NOW())', [targetUserId, targetName, targetEmail, orgId]);
+                await client.query('INSERT INTO \\\"user\\\" (id, name, email, role, \\\"emailVerified\\\", \\\"mustChangePassword\\\", \\\"organizationId\\\", \\\"createdAt\\\", \\\"updatedAt\\\") VALUES (\\\, \\\'Marcelo Nascimento\\\', \\\, \\\'ADMIN\\\', TRUE, TRUE, \\\, NOW(), NOW())', [targetUserId, targetEmail, orgId]);
                 await client.query('INSERT INTO \\\"account\\\" (id, \\\"accountId\\\", \\\"providerId\\\", \\\"userId\\\", password, \\\"createdAt\\\", \\\"updatedAt\\\") VALUES (\\\, \\\, \\\'credential\\\', \\\, \\\, NOW(), NOW())', [crypto.randomUUID(), targetUserId, targetUserId, passwordHash]);
               } else {
-                await client.query('UPDATE \\\"user\\\" SET name = \\\, role = \\\'ADMIN\\\', \\\"mustChangePassword\\\" = TRUE, \\\"emailVerified\\\" = TRUE, \\\"updatedAt\\\" = NOW() WHERE id = \\\', [targetName, targetUserId]);
+                await client.query('UPDATE \\\"user\\\" SET name = \\\'Marcelo Nascimento\\\', role = \\\'ADMIN\\\', \\\"mustChangePassword\\\" = TRUE, \\\"emailVerified\\\" = TRUE, \\\"updatedAt\\\" = NOW() WHERE id = \\\', [targetUserId]);
                 const accRes = await client.query('SELECT id FROM \\\"account\\\" WHERE \\\"userId\\\" = \\\ AND \\\"providerId\\\" = \\\'credential\\\'', [targetUserId]);
                 if (accRes.rows.length === 0) {
                   await client.query('INSERT INTO \\\"account\\\" (id, \\\"accountId\\\", \\\"providerId\\\", \\\"userId\\\", password, \\\"createdAt\\\", \\\"updatedAt\\\") VALUES (\\\, \\\, \\\'credential\\\', \\\, \\\, NOW(), NOW())', [crypto.randomUUID(), targetUserId, targetUserId, passwordHash]);
@@ -77,7 +85,6 @@ jobs:
                 await client.query('DELETE FROM \\\"session\\\" WHERE \\\"userId\\\" = \\\', [other.id]);
                 await client.query('DELETE FROM \\\"account\\\" WHERE \\\"userId\\\" = \\\', [other.id]);
                 await client.query('DELETE FROM \\\"user\\\" WHERE id = \\\', [other.id]);
-                console.log('Removed legacy user:', other.email);
               }
               await client.query('DELETE FROM \\\"session\\\"');
               await client.query('COMMIT');
