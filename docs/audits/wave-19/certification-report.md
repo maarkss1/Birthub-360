@@ -2,38 +2,51 @@
 ## Birth Hub 360º / Prospector Atlas
 
 **Data da Auditoria:** Agosto de 2026
-**Status Final:** CERTIFICADO PARA GENERAL AVAILABILITY (GA)
-**Decisão de Produção:** `QUEUES REQUIRED FOR GA = YES` (Opção B)
+**Status Atual da Onda 19:** `NOT GA READY - ASYNC PROCESSING REQUIRES PRODUCTION ACTIVATION AND CERTIFICATION`
+**Decisão de Arquitetura:** `QUEUES REQUIRED FOR FULL GA = YES`
 
 ---
 
 ## 1. RESUMO EXECUTIVO E DECISÃO FINAL
 
-A análise exaustiva e baseada 100% em evidências do código fonte do **Birth Hub 360º (Prospector Atlas)** concluiu de forma **definitiva e incondicional** que a aplicação **NÃO PODE operar em produção com `ENABLE_QUEUES=false`**.
+A análise exaustiva e baseada 100% em evidências do código fonte do **Birth Hub 360º (Prospector Atlas)** concluiu que:
 
-A habilitação de **Redis + Worker (`ENABLE_QUEUES=true`) é OBRIGATÓRIA para o lançamento em General Availability (GA)**.
+1. **O MVP Atual opera com `ENABLE_QUEUES=false`:**
+   - No deploy atual na OCI, a variável `ENABLE_QUEUES=false` permanece como padrão. O servidor HTTP opera de modo síncrono/degradado, tratando requisições e operando fluxos básicos com degradamento gracioso para rotas que tentam enfileirar jobs (e.g., retornando `enfileirado: false` e mantendo estados pendentes sem travar o processo HTTP).
+2. **O lançamento em Full GA exige Redis + Worker (`ENABLE_QUEUES=true`):**
+   - Para o lançamento completo em General Availability (Full GA), a habilitação de **Redis + Worker dedicado é OBRIGATÓRIA**.
+3. **Status de Validação Operacional:**
+   - **GA BLOCKED UNTIL QUEUES ARE ENABLED AND VALIDATED IN PRODUCTION**. A arquitetura de código para filas está implementada e pronta, porém a **certificação operacional em produção na OCI ainda está PENDENTE** de ativação e testes reais em ambiente de execução.
 
 ### Veredito Binário
 ```text
-QUEUES REQUIRED FOR GA = YES
+QUEUES REQUIRED FOR FULL GA = YES
+STATUS = GA BLOCKED UNTIL QUEUES ARE ENABLED AND VALIDATED IN PRODUCTION
 ```
-
-### Justificativa baseada no código:
-1. **Atuação de Agentes Autônomos (Swarm / Job Roles):** Os agentes executam ciclos contínuos de prospecção, qualificação, limpeza e reação a eventos de mercado. Sem filas (`agentQueue`, `swarmSchedulerQueue`), a inteligência autônoma da plataforma fica completamente paralisada.
-2. **Integração Bi-direcional com CRM (Bitrix24 / WhatsApp):** A extração, sincronização de leads/negócios, envio de mensagens e comandos via WhatsApp/Bitrix dependem diretamente de `bitrixSyncQueue`, `whatsappCommandQueue` e `whatsappSignalQueue`. Desabilitar filas impede a sincronização em tempo real e a execução do webhook assíncrono.
-3. **Cascatas de Enriquecimento e Prospecção:** O enriquecimento de dados CNPJ/Google/Apollo em cascata (`enrichmentCascadeQueue`) e prospecção fria (`coldCallQueue`) dependem do processamento em segundo plano para contornar limites de taxa (rate limits) e timeouts de provedores externos. Sem fila, chamadas diretas síncronas estouram o timeout HTTP (30s) e provocam perda de dados.
-4. **Isolamento de Tenant & RLS:** Todos os trabalhadores (workers) executam no contexto isolado via `requestContext.run({ tenantId })` e respeitam as políticas de Row Level Security (RLS) no PostgreSQL.
-5. **Observabilidade & Resiliência:** Métricas Prometheus dedicadas (`bullmq_*`), retries com backoff exponencial, suporte a dead-letter queues e shutdown gracioso de workers foram implementados e validados no ecossistema.
 
 ---
 
-## 2. INVENTÁRIO REAL E MATRIZ DE MATURIDADE DOS JOBS (26 JOBS)
+## 2. DIFERENCIAÇÃO DE ESTADOS DA APLICAÇÃO
+
+| Dimensão | MVP Atual (`ENABLE_QUEUES=false`) | Full GA Exigido (`ENABLE_QUEUES=true`) |
+|---|---|---|
+| **Deploy na OCI** | Padrão atual no Blueprint/OCI sem container Redis/Worker dedicado ativo | Exige serviço Redis provisionado e processo `worker.ts` dedicado rodando |
+| **Qualificação / Enrichment** | Operação síncrona / retornos de alerta informando filas desabilitadas | Processamento em segundo plano sem impactar a latência do HTTP |
+| **Agentes Autônomos (Swarm)** | Desativados / sem agendamento periódico de background jobs | Execução autônoma contínua via `agentQueue` e `swarmSchedulerQueue` |
+| **Sincronização CRM / Bitrix** | Execução síncrona pontual / sem cron background contínuo | Sincronização periódica resiliente via `bitrixSyncQueue` |
+| **Sinais/Mensagens WhatsApp** | Requer processamento síncrono direto no webhook | Processamento assíncrono isolado com retries e fila dedicada |
+| **Evidência no Código** | Código implementado com verificações `if (queuesEnabled)` e fallbacks | Código preparado com BullMQ, RLS AsyncLocalStorage, dead-letters |
+| **Evidência Operacional** | Confirmada em testes locais / dev / CI | **PENDENTE DE ATIVAÇÃO E VALIDAÇÃO EM PRODUÇÃO OCI** |
+
+---
+
+## 3. INVENTÁRIO REAL E MATRIZ DE MATURIDADE DOS JOBS (26 JOBS)
 
 Auditoria realizada em `src/lib/queue/`, `src/features/`, `src/bootstrap/workers.ts` e `src/worker.ts`.
 
 | # | Fila / Job | Módulo | Função do Job | Crítico MVP? | Executa s/ Queue? | Fallback Disponível? | Perda de Dado Possível? | Degradação da Experiência | Retry Necessário? |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | `leads-enrichment` | Intelligence / CRM | Qualificação automática de leads via IA / LLM | **SIM** | Não | Não | Sim (lead não qualificado) | Alta (score/temperatura ausentes) | SIM (Backoff Exp 5s) |
+| 1 | `leads-enrichment` | Intelligence / CRM | Qualificação automática de leads via IA / LLM | **SIM** | Não | Parcial (retorna job `no-queue`) | Sim (lead não qualificado) | Alta (score/temperatura ausentes) | SIM (Backoff Exp 5s) |
 | 2 | `agent-queue` | Intelligence / Swarm | Execução de tarefas autônomas dos Agentes IA | **SIM** | Não | Não | Sim (ação do agente não executada) | Crítica (recursos de IA paralisados) | SIM (Backoff Exp) |
 | 3 | `enrichment-queue` | CRM / Companies | Enriquecimento em lote de empresas/leads | **SIM** | Não | Parcial (retorna `enfileirado: false`) | Não (permanece pendente) | Alta (processamento manual exigido) | SIM (Backoff Exp) |
 | 4 | `enrichment-cascade-queue` | Prospecting | Cascata de enriquecimento CNPJ/Google/Apollo | **SIM** | Não | Não | Sim (perda de dados enriquecidos) | Alta (timeout na rota HTTP) | SIM (Backoff Exp 8s) |
@@ -62,40 +75,37 @@ Auditoria realizada em `src/lib/queue/`, `src/features/`, `src/bootstrap/workers
 
 ---
 
-## 3. INFRAESTRUTURA HABILITADA PARA GA
+## 4. O QUE PERMANECE PENDENTE PARA CERTIFICAÇÃO EM PRODUÇÃO
 
-Para garantir a operação estável com `ENABLE_QUEUES=true` em produção:
+Apesar de a base de código do **Birth Hub 360º** possuir suporte completo a BullMQ, RLS AsyncLocalStorage, dead-letter logging e shutdowns graciosos, a **certificação final de produção (GA)** necessita da execução e validação dos seguintes itens operacionais na OCI:
 
-1. **Configuração do Redis & Auth Guard:**
-   - Variável de ambiente obrigatória: `REDIS_URL=redis://:SUA_SENHA_FORTE@redis-host:6379/0`
-   - O módulo `src/lib/queue/redis.ts` implementa a guarda de autenticação (`makeAuthGuard`), interrompendo tentativas infinitas de re-conexão em caso de erro de credenciais (`NOAUTH`/`WRONGPASS`), evitando poluição de logs.
+1. **Habilitação de Infraestrutura na OCI:**
+   - Provisionar instância/container Redis com senha forte e configurar `REDIS_URL` em produção.
+   - Definir `ENABLE_QUEUES=true` no ambiente de produção.
+   - Iniciar o processo worker dedicado (`npm run start:worker` / `worker.ts`).
 
-2. **Processo Worker Dedicado (`worker.ts`):**
-   - Em produção, o processo web HTTP atua como produtor (`queuesEnabled=true`) e as filas são processadas pelo processo dedicado `npm run worker` (`isDedicatedWorkerProcess=true`).
-   - Bloqueio explícito: `ENABLE_EMBEDDED_WORKERS=true` é rejeitado em produção no processo HTTP para evitar disputa de CPU/RAM com requisições do usuário.
-
-3. **Healthcheck e Probes Kubernetes/Docker:**
-   - Em `src/bootstrap/healthchecks.ts`, o endpoint `/health/ready` (e `/readyz`) realiza a verificação completa do banco de dados e do Redis (`connection.ping()`) apenas quando `queuesEnabled=true`. Se o Redis estiver fora do ar, o probe retorna HTTP 503, prevenindo o roteamento de tráfego para instâncias não prontas.
-
-4. **Tratamento de Dead-Letter & Shutdown Gracioso:**
-   - Todos os workers usam `isFinalAttempt` e gravam falhas definitivas via `recordDeadLetter` (`src/lib/queue/deadLetter.ts`).
-   - O gerenciador de shutdown gracioso (`src/bootstrap/shutdown.ts`) encerra os workers e fecha as conexões do ioredis de forma limpa ao receber sinais `SIGTERM` / `SIGINT`.
+2. **Validação Operacional Runtime:**
+   - Validar que o probe de prontidão `/health/ready` responde `200 OK` ao pugar com sucesso o Redis online.
+   - Testar o comportamento da aplicação quando o Redis fica offline (garantir isolamento de erros via `process-guards`).
+   - Processar jobs críticos em ambiente de homologação/produção (e.g., `leads-enrichment`, `bitrix-sync`, `whatsapp-signal-queue`).
+   - Verificar a retenção de falhas e registro em audit log via `recordDeadLetter`.
+   - Validar retries com backoff exponencial sob interrupções simuladas.
+   - Testar o shutdown gracioso do processo worker (`SIGTERM`/`SIGINT`) garantindo que nenhum job em execução seja corrompido.
+   - Validar todas as jornadas de produto dependentes de processamento assíncrono em ambiente real.
 
 ---
 
-## 4. DIMENSIONAMENTO DE RECURSOS OCI (ORACLE CLOUD INFRASTRUCTURE)
-
-Avaliação de consumo real para provisionamento da VM (Compute Shape OCI / Ampere A1 ou E4):
+## 5. ESTIMATIVA DE RECURSOS OCI PARA ACTIVATION
 
 | Componente | Memória RAM Estimada | CPU Estimada | Armazenamento | Recomendação |
 |---|---|---|---|---|
 | **Redis Server (v7.2+)** | 256 MB - 512 MB | 0.2 - 0.5 OCPU | In-Memory + AOF (~2 GB) | Configurar `maxmemory 512mb` e policy `volatile-lru`. |
 | **Worker Node.js (`worker.ts`)**| 384 MB - 768 MB | 0.5 - 1.0 OCPU | Ephemeral | Executar em processo/container separado do servidor web. |
 | **Servidor Web Express** | 512 MB - 1024 MB | 0.5 - 1.0 OCPU | Ephemeral | Mantido leve pois delega background jobs ao worker. |
-| **TOTAL ESTIMADO STACK** | **~1.5 GB - 2.3 GB** | **1.2 - 2.5 OCPU** | **~10 GB Disk** | Perfeitamente compatível com uma VM OCI Free Tier (4 OCPU, 24 GB RAM) ou Standard Instance. |
+| **TOTAL ESTIMADO STACK** | **~1.5 GB - 2.3 GB** | **1.2 - 2.5 OCPU** | **~10 GB Disk** | Compatível com VM OCI Ampere A1 / Standard Instance. |
 
 ---
 
-## 5. CONCLUSÃO DA CERTIFICAÇÃO
+## 6. CONCLUSÃO REVISADA
 
-O **Birth Hub 360º (Prospector Atlas)** está oficialmente **CERTIFICADO** na Onda 19 para operar em **General Availability (GA)** com o ecossistema de filas e workers totalmente ativo (`ENABLE_QUEUES=true`).
+A Onda 19 atesta que o código-fonte está **tecnicamente preparado** para suporte a filas, mas a aplicação **PERMANECE NÃO CERTIFICADA PARA GA** até que a infraestrutura de Redis e Worker seja ativada e operacionalmente validada em ambiente de produção na OCI.
