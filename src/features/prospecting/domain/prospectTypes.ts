@@ -162,3 +162,17 @@ export function buildLocationLabel(criteria: ProspectCriteria): string {
   if (criteria.estado) return criteria.estado;
   return criteria.localizacao;
 }
+
+export interface SiteIntelligence {
+  url: string;
+  domain: string;
+  title: string | null;
+  description: string | null;
+  valueProposition: string | null;
+  productsAndServices: string[];
+  technologies: string[];
+  targetAudience: string | null;
+  rawSummary: string | null;
+  scrapedAt: string;
+  source: 'crawl4ai' | 'firecrawl' | 'scraper';
+}
