@@ -15,8 +15,12 @@ vi.mock('../../../../src/lib/logger.js', () => ({
   logger: { warn: vi.fn(), error: vi.fn() },
 }));
 
-const { claimWebhookDelivery, webhookDeliveryFingerprint, WEBHOOK_REPLAY_TTL_SECONDS } =
-  await import('../../../../src/shared/security/webhookReplayGuard.js');
+const {
+  claimWebhookDelivery,
+  webhookDeliveryFingerprint,
+  validateWebhookTimestamp,
+  WEBHOOK_REPLAY_TTL_SECONDS,
+} = await import('../../../../src/shared/security/webhookReplayGuard.js');
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -80,5 +84,41 @@ describe('claimWebhookDelivery', () => {
     cacheSet.mockRejectedValue(new Error('ECONNREFUSED'));
     const result = await claimWebhookDelivery('bitrix', 'fp-1');
     expect(result).toBe('unavailable');
+  });
+});
+
+describe('validateWebhookTimestamp', () => {
+  it('retorna invalid quando o header está ausente/nulo/vazio', () => {
+    expect(validateWebhookTimestamp(undefined).valid).toBe(false);
+    expect(validateWebhookTimestamp(null as unknown as string).valid).toBe(false);
+    expect(validateWebhookTimestamp('').valid).toBe(false);
+  });
+
+  it('retorna invalid quando o valor não é nem número nem ISO-8601', () => {
+    expect(validateWebhookTimestamp('not-a-timestamp').valid).toBe(false);
+  });
+
+  it('aceita epoch em segundos dentro da janela de 5 min', () => {
+    const nowSec = Math.floor(Date.now() / 1000);
+    expect(validateWebhookTimestamp(String(nowSec)).valid).toBe(true);
+  });
+
+  it('aceita epoch em milissegundos dentro da janela de 5 min', () => {
+    const nowMs = Date.now();
+    expect(validateWebhookTimestamp(String(nowMs)).valid).toBe(true);
+  });
+
+  it('aceita ISO-8601 dentro da janela de 5 min', () => {
+    expect(validateWebhookTimestamp(new Date().toISOString()).valid).toBe(true);
+  });
+
+  it('rejeita timestamp mais antigo que a janela (>5 min atrás)', () => {
+    const oldSec = Math.floor(Date.now() / 1000) - 400;
+    expect(validateWebhookTimestamp(String(oldSec)).valid).toBe(false);
+  });
+
+  it('rejeita timestamp muito à frente no futuro (>5 min)', () => {
+    const futureSec = Math.floor(Date.now() / 1000) + 360;
+    expect(validateWebhookTimestamp(String(futureSec)).valid).toBe(false);
   });
 });
