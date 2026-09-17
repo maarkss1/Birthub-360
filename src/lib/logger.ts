@@ -32,6 +32,28 @@ const getTransport = () => {
 
 export const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
+  redact: {
+    paths: [
+      'req.headers.authorization',
+      'req.headers.cookie',
+      'req.headers["x-api-key"]',
+      'password',
+      'token',
+      'accessToken',
+      'refreshToken',
+      'secret',
+      'authorization',
+      'cookie',
+      '*.password',
+      '*.token',
+      '*.secret',
+      '*.authorization',
+      '*.cookie',
+      '*.apiKey',
+      '*.api_key',
+    ],
+    censor: '[REDACTED]',
+  },
   transport: getTransport(),
   base: {
     env: process.env.NODE_ENV,

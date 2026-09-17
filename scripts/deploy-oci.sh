@@ -213,43 +213,56 @@ ensure_hex_secret "MEILI_MASTER_KEY" 32
 # Garante que a aplicação de produção use o modo correto.
 set_env_value "NODE_ENV" "production"
 
+# Correlação de Release/Deploy em Produção (Onda 18)
+COMMIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+BUILD_VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "1.0.0")
+DEPLOY_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+set_env_value "COMMIT_SHA" "$COMMIT_SHA"
+set_env_value "BUILD_VERSION" "$BUILD_VERSION"
+set_env_value "DEPLOY_TIMESTAMP" "$DEPLOY_TIMESTAMP"
+
 current_value() {
     local key="$1"
     grep -E "^${key}=" "$ENV_FILE" | tail -n 1 | cut -d= -f2- || true
 }
 
-# 2.1 Domínio, CORS e cookies — só sobrescreve quando o valor atual ainda é o placeholder de
-# desenvolvimento copiado do .env.example (contém "localhost") e um DOMAIN real foi passado no
-# ambiente do shell (ex.: `DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh`). Preserva qualquer
-# valor customizado que o operador já tenha definido manualmente no .env.production.
-if [ -n "${DOMAIN:-}" ] && [ "$DOMAIN" != "localhost" ]; then
+TARGET_DOMAIN="${PRODUCTION_DOMAIN:-${DOMAIN:-}}"
+
+# 2.1 Domínio, CORS e cookies — só sobrescreve ou atualiza para o domínio fornecido
+if [ -n "${TARGET_DOMAIN:-}" ] && [ "$TARGET_DOMAIN" != "localhost" ]; then
+    DOMAIN="$TARGET_DOMAIN"
+    set_env_value "DOMAIN" "$DOMAIN"
+    set_env_value "PRODUCTION_DOMAIN" "$DOMAIN"
     PUBLIC_ORIGIN="https://${DOMAIN}"
     for key in BETTER_AUTH_URL PUBLIC_BASE_URL; do
-        case "$(current_value "$key")" in
-            ""|*localhost*) set_env_value "$key" "$PUBLIC_ORIGIN" ;;
-        esac
+        set_env_value "$key" "$PUBLIC_ORIGIN"
     done
     CUR_ORIGINS="$(current_value "ALLOWED_ORIGINS")"
     case "$CUR_ORIGINS" in
         ""|*localhost*) set_env_value "ALLOWED_ORIGINS" "$PUBLIC_ORIGIN" ;;
         *)
-            if [[ "$CUR_ORIGINS" != *"$PUBLIC_ORIGIN"* ]]; then
-                set_env_value "ALLOWED_ORIGINS" "${PUBLIC_ORIGIN},${CUR_ORIGINS}"
+            # Remove any stray localhost entries from ALLOWED_ORIGINS when configuring a real production domain
+            CLEAN_ORIGINS=$(echo "$CUR_ORIGINS" | tr ',' '
+' | grep -v 'localhost' | grep -v '127.0.0.1' | paste -sd ',' - || true)
+            if [ -z "$CLEAN_ORIGINS" ]; then
+                set_env_value "ALLOWED_ORIGINS" "$PUBLIC_ORIGIN"
+            elif [[ "$CLEAN_ORIGINS" != *"$PUBLIC_ORIGIN"* ]]; then
+                set_env_value "ALLOWED_ORIGINS" "${PUBLIC_ORIGIN},${CLEAN_ORIGINS}"
+            else
+                set_env_value "ALLOWED_ORIGINS" "$CLEAN_ORIGINS"
             fi
             ;;
     esac
-    case "$(current_value "COOKIE_DOMAIN")" in
-        "") set_env_value "COOKIE_DOMAIN" "$DOMAIN" ;;
-    esac
+    set_env_value "COOKIE_DOMAIN" "$DOMAIN"
     # Caddy sempre fica na frente da aplicação neste stack — cookie `secure` e confiança no
     # X-Forwarded-* do proxy são obrigatórios com domínio/HTTPS real.
     set_env_value "SECURE_COOKIES" "true"
     set_env_value "TRUST_PROXY" "true"
     echo "🌐 Domínio de produção configurado: ${PUBLIC_ORIGIN} (ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL/COOKIE_DOMAIN)."
 else
-    echo "⚠️  DOMAIN não informado (ou é 'localhost') — ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL"
-    echo "    permanecem como estão em ${ENV_FILE}. Isso não é apropriado para produção real: exporte"
-    echo "    DOMAIN=seu-dominio.com.br antes de rodar este script quando o domínio oficial estiver pronto"
+    echo "⚠️  PRODUCTION_DOMAIN/DOMAIN não informado (ou é 'localhost') — ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL"
+    echo "    permanecem como estão em ${ENV_FILE}. Export export PRODUCTION_DOMAIN=seu-dominio.com.br antes de rodar este script quando o domínio oficial estiver pronto"
     echo "    (ver 'Domínio' em docs/deploy/oracle-cloud.md)."
 fi
 

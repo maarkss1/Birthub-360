@@ -17,6 +17,7 @@ import {
   ZapIcon,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { PageHeader } from '../../../components/ui/PageHeader';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
@@ -519,175 +520,171 @@ export function Automations() {
   }, [load, confirm]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-bg p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between gap-4 border-b border-line pb-6">
-          <div className="flex items-center gap-4">
-            <div
-              className={`w-12 h-12 rounded-xl flex items-center justify-center ${accent.bgSoft} ${accent.text}`}
-            >
-              <Cpu className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-ink">Automações</h1>
-              <p className="text-sm text-ink-2">
-                {loading
-                  ? 'Carregando…'
-                  : `${items.length} regra${items.length === 1 ? '' : 's'} · ${items.filter((a) => a.enabled).length} ativa(s)`}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {isAdmin && (
-              <Button
-                type="button"
-                variant="outline"
-                sound="confirm"
-                onClick={() => void runStagnationScanNow()}
-                disabled={scanningStagnation}
-                title='Reavalia agora as automações de "Lead estagnado" para todas as organizações, sem esperar o cron diário'
-              >
-                {scanningStagnation ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                )}
-                Rodar varredura de estagnação agora
-              </Button>
-            )}
-            {canManage && (
-              <Button type="button" sound="focus" onClick={() => setCreating(true)}>
-                <Plus className="w-4 h-4 mr-2" /> Nova automação
-              </Button>
-            )}
-          </div>
-        </div>
-
-        <ColdCallStatusCard />
-
-        {loading && (
-          <Card padding="lg" className="text-center text-ink-2 text-sm">
-            <Loader2 className="w-6 h-6 mx-auto mb-2 animate-spin" /> Carregando…
-          </Card>
-        )}
-
-        {error && !loading && (
-          <Card padding="lg" className="text-center">
-            <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-warning-active dark:text-warning" />
-            <p className="text-sm text-ink-2 mb-4">{error}</p>
-            <Button type="button" variant="outline" onClick={() => void load()}>
-              Tentar novamente
-            </Button>
-          </Card>
-        )}
-
-        {!loading && !error && items.length === 0 && (
-          <Card padding="lg" className="text-center border-dashed">
-            <Zap className="w-12 h-12 mx-auto mb-4 text-ink-2" />
-            <h3 className="text-lg font-semibold text-ink mb-1">Nenhuma automação ainda</h3>
-            <p className="text-sm text-ink-2 max-w-md mx-auto mb-5">
-              Regras disparam sozinhas quando um lead é criado, muda de etapa ou uma atividade é
-              concluída — avisando a equipe ou agendando o follow-up.
-            </p>
-            {canManage && (
-              <Button type="button" onClick={() => setCreating(true)}>
-                <Plus className="w-4 h-4 mr-2" /> Criar a primeira
-              </Button>
-            )}
-          </Card>
-        )}
-
-        <div className="space-y-2">
-          {items.map((item) => (
-            <Card key={item.id} padding="sm" className="flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-ink truncate">{item.name}</p>
-                  <span
-                    className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
-                      item.enabled
-                        ? 'bg-ok/15 text-ok-active dark:text-ok'
-                        : 'bg-surface-2 text-ink-2'
-                    }`}
+    <div className="flex-1 overflow-y-auto bg-transparent">
+      <div className="bh-page">
+        <div className="bh-page-stack">
+          <PageHeader
+            title="Automações"
+            subtitle={
+              loading
+                ? 'Carregando...'
+                : `${items.length} regra${items.length === 1 ? '' : 's'} · ${items.filter((a) => a.enabled).length} ativa(s)`
+            }
+            icon={<Cpu className="w-5 h-5" />}
+            actions={
+              <div className="flex items-center gap-3">
+                {isAdmin && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    sound="confirm"
+                    onClick={() => void runStagnationScanNow()}
+                    disabled={scanningStagnation}
+                    title='Reavalia agora as automações de "Lead estagnado" para todas as organizações, sem esperar o cron diário'
                   >
-                    {item.enabled ? 'ativa' : 'pausada'}
-                  </span>
-                </div>
-                <p className="text-xs text-ink-2 mt-0.5">{describeAutomation(item)}</p>
-                <p className="text-[11px] text-ink-2 mt-0.5">
-                  {item.runCount === 0
-                    ? 'ainda não disparou'
-                    : `${item.runCount} execução(ões)${item.lastRunAt ? ` · última em ${new Date(item.lastRunAt).toLocaleDateString('pt-BR')}` : ''}`}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1 shrink-0">
-                {canManage && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setDryRunTarget(item)}
-                      title="Simular esta regra antes de confiar nela"
-                      aria-label={`Simular automação ${item.name}`}
-                      className="p-2 rounded-lg text-ink-2 hover:text-ink hover:bg-line/50 transition-colors"
-                    >
-                      <FlaskConical className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setVersionsTarget(item)}
-                      title="Ver histórico de versões desta regra"
-                      aria-label={`Ver histórico de versões de ${item.name}`}
-                      className="p-2 rounded-lg text-ink-2 hover:text-ink hover:bg-line/50 transition-colors"
-                    >
-                      <History className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditingItem(item)}
-                      title="Editar automação"
-                      aria-label={`Editar automação ${item.name}`}
-                      className="p-2 rounded-lg text-ink-2 hover:text-ink hover:bg-line/50 transition-colors"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                  </>
+                    {scanningStagnation ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                    )}
+                    Rodar varredura de estagnação agora
+                  </Button>
                 )}
-                <button
-                  type="button"
-                  onClick={() => void toggle(item)}
-                  disabled={!canManage}
-                  role="switch"
-                  aria-checked={item.enabled}
-                  aria-label={`${item.enabled ? 'Pausar' : 'Ativar'} ${item.name}`}
-                  className={`w-10 h-5 rounded-full transition-colors relative disabled:opacity-40 disabled:cursor-not-allowed ${
-                    item.enabled ? accent.bg : 'bg-surface-2 border border-line'
-                  }`}
-                >
-                  <span
-                    className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-colors ${
-                      item.enabled ? 'left-[22px]' : 'left-0.5'
-                    }`}
-                  />
-                </button>
                 {canManage && (
+                  <Button type="button" sound="focus" onClick={() => setCreating(true)}>
+                    <Plus className="w-4 h-4 mr-2" /> Nova automação
+                  </Button>
+                )}
+              </div>
+            }
+          />
+
+          <ColdCallStatusCard />
+
+          {loading && (
+            <Card padding="lg" className="text-center text-ink-2 text-sm">
+              <Loader2 className="w-6 h-6 mx-auto mb-2 animate-spin" /> Carregando…
+            </Card>
+          )}
+
+          {error && !loading && (
+            <Card padding="lg" className="text-center">
+              <AlertTriangle className="w-8 h-8 mx-auto mb-3 text-warning-active dark:text-warning" />
+              <p className="text-sm text-ink-2 mb-4">{error}</p>
+              <Button type="button" variant="outline" onClick={() => void load()}>
+                Tentar novamente
+              </Button>
+            </Card>
+          )}
+
+          {!loading && !error && items.length === 0 && (
+            <Card padding="lg" className="text-center border-dashed">
+              <Zap className="w-12 h-12 mx-auto mb-4 text-ink-2" />
+              <h3 className="text-lg font-semibold text-ink mb-1">Nenhuma automação ainda</h3>
+              <p className="text-sm text-ink-2 max-w-md mx-auto mb-5">
+                Regras disparam sozinhas quando um lead é criado, muda de etapa ou uma atividade é
+                concluída — avisando a equipe ou agendando o follow-up.
+              </p>
+              {canManage && (
+                <Button type="button" onClick={() => setCreating(true)}>
+                  <Plus className="w-4 h-4 mr-2" /> Criar a primeira
+                </Button>
+              )}
+            </Card>
+          )}
+
+          <div className="space-y-2">
+            {items.map((item) => (
+              <Card key={item.id} padding="sm" className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-ink truncate">{item.name}</p>
+                    <span
+                      className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
+                        item.enabled
+                          ? 'bg-ok/15 text-ok-active dark:text-ok'
+                          : 'bg-surface-2 text-ink-2'
+                      }`}
+                    >
+                      {item.enabled ? 'ativa' : 'pausada'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-ink-2 mt-0.5">{describeAutomation(item)}</p>
+                  <p className="text-[11px] text-ink-2 mt-0.5">
+                    {item.runCount === 0
+                      ? 'ainda não disparou'
+                      : `${item.runCount} execução(ões)${item.lastRunAt ? ` · última em ${new Date(item.lastRunAt).toLocaleDateString('pt-BR')}` : ''}`}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1 shrink-0">
+                  {canManage && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setDryRunTarget(item)}
+                        title="Simular esta regra antes de confiar nela"
+                        aria-label={`Simular automação ${item.name}`}
+                        className="p-2 rounded-lg text-ink-2 hover:text-ink hover:bg-line/50 transition-colors"
+                      >
+                        <FlaskConical className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setVersionsTarget(item)}
+                        title="Ver histórico de versões desta regra"
+                        aria-label={`Ver histórico de versões de ${item.name}`}
+                        className="p-2 rounded-lg text-ink-2 hover:text-ink hover:bg-line/50 transition-colors"
+                      >
+                        <History className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingItem(item)}
+                        title="Editar automação"
+                        aria-label={`Editar automação ${item.name}`}
+                        className="p-2 rounded-lg text-ink-2 hover:text-ink hover:bg-line/50 transition-colors"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
                   <button
                     type="button"
-                    onClick={() => void remove(item)}
-                    disabled={busyId === item.id}
-                    title="Remover automação"
-                    className="p-2 rounded-lg text-ink-2 hover:text-danger-active dark:hover:text-danger hover:bg-danger/10 transition-colors disabled:opacity-40"
+                    onClick={() => void toggle(item)}
+                    disabled={!canManage}
+                    role="switch"
+                    aria-checked={item.enabled}
+                    aria-label={`${item.enabled ? 'Pausar' : 'Ativar'} ${item.name}`}
+                    className={`w-10 h-5 rounded-full transition-colors relative disabled:opacity-40 disabled:cursor-not-allowed ${
+                      item.enabled ? accent.bg : 'bg-surface-2 border border-line'
+                    }`}
                   >
-                    {busyId === item.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-4 h-4" />
-                    )}
+                    <span
+                      className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-colors ${
+                        item.enabled ? 'left-[22px]' : 'left-0.5'
+                      }`}
+                    />
                   </button>
-                )}
-              </div>
-            </Card>
-          ))}
+                  {canManage && (
+                    <button
+                      type="button"
+                      onClick={() => void remove(item)}
+                      disabled={busyId === item.id}
+                      title="Remover automação"
+                      className="p-2 rounded-lg text-ink-2 hover:text-danger-active dark:hover:text-danger hover:bg-danger/10 transition-colors disabled:opacity-40"
+                    >
+                      {busyId === item.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </button>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
 

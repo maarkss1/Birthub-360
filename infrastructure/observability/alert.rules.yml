@@ -89,6 +89,37 @@ groups:
             `resources.limits.memory` do Deployment/Rollout (charts/prospector-atlas/values.yaml)
             — se o pod está sendo OOMKilled, ver runbook → "Pod reiniciando (OOMKilled)".
 
+      - alert: ProcessRestarted
+        expr: process_uptime_seconds{job="central-comercial"} < 300
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Processo/Container do Prospector-Atlas reiniciou recentemente (<5min)'
+          description: >-
+            Processo do Node emitiu uptime menor que 300 segundos. Investigar crash, restart de container ou OOMKilled.
+
+      - alert: HighProcessMemoryUsage
+        expr: process_resident_memory_bytes{job="central-comercial"} > 1.5e9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Uso de memória RSS do processo acima de 1.5GB por 10min+'
+          description: >-
+            Candidato a memory leak ou carga real acima do dimensionado. Cruzar com
+            os limites da instância.
+
+      - alert: HighProcessCpuUsage
+        expr: rate(process_cpu_seconds_total{job="central-comercial"}[5m]) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Uso de CPU do processo Node.js acima de 85% por 5min+'
+          description: >-
+            Processo consumindo muita CPU. Verificar se há loops ou tarefas síncronas pesadas.
+
   - name: prospector-atlas.migracao.pendente-instrumentacao
     rules:
       # Requer kube-state-metrics rodando num cluster Kubernetes real — não existe hoje (nenhum
@@ -186,6 +217,31 @@ groups:
           severity: critical
         annotations:
           summary: 'Taxa de erro 5xx acima de 5% nos últimos 5min'
+          contract_metric_source: 'src/shared/middlewares/httpMetrics.ts (real desde 2026-08-21)'
+
+      - alert: HighHttpLatency
+        expr: >-
+          histogram_quantile(0.95, sum(rate(http_server_duration_milliseconds_bucket[5m])) by (le)) > 2000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Latência p95 de requisições HTTP acima de 2000ms nos últimos 5min'
+          description: >-
+            A aplicação está ficando lenta para responder requisições de clientes.
+          contract_metric_source: 'src/shared/middlewares/httpMetrics.ts (real desde 2026-08-21)'
+
+      - alert: HighErrorRate4xx
+        expr: >-
+          sum(rate(http_server_duration_milliseconds_count{http_status_code=~"4.."}[5m]))
+          / sum(rate(http_server_duration_milliseconds_count[5m])) > 0.20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Taxa de erro HTTP 4xx acima de 20% nos últimos 5min'
+          description: >-
+            Volume anormal de respostas 4xx (pode indicar falhas de autenticação, erros de cliente ou ataques).
           contract_metric_source: 'src/shared/middlewares/httpMetrics.ts (real desde 2026-08-21)'
 
   - name: prospector-atlas.orcamento-ia.ativos-hoje
