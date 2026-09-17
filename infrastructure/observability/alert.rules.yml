@@ -105,10 +105,10 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: 'Uso de memória RSS do processo Node.js/worker da aplicação acima de 1.5GB por 10min+'
+          summary: 'Uso de memória RSS do processo acima de 1.5GB por 10min+'
           description: >-
-            Monitora o processo Node.js principal / worker da aplicação (não se aplica ao container Prometheus, cujo limite próprio é 256MB).
-            Candidato a memory leak ou carga real acima do dimensionado. Cruzar com os limites da instância OCI.
+            Candidato a memory leak ou carga real acima do dimensionado. Cruzar com
+            os limites da instância.
 
       - alert: HighProcessCpuUsage
         expr: rate(process_cpu_seconds_total{job="central-comercial"}[5m]) > 0.85

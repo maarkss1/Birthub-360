@@ -132,11 +132,6 @@ Este guia cobre os procedimentos objetivos de operação, diagnósticos, observa
      `histogram_quantile(0.95, sum(rate(http_server_duration_milliseconds_bucket[5m])) by (le))`
    - **Uptime do Processo (s)**:
      `process_uptime_seconds{job="central-comercial"}`
-   - **Memória RSS do Processo Node (Bytes)**:
-     `process_resident_memory_bytes{job="central-comercial"}` (Mede o processo Node.js / worker da aplicação, não o container Prometheus que possui teto próprio de 256MB).
-
-4. **Status de Validação**:
-   > **VALIDAÇÃO DE CAPACIDADE PENDENTE**: O dimensionamento fino de thresholds de CPU/Memória permanece com status pendente até a observação de tráfego e carga real contínua em produção na OCI. A stack não deve ser declarada com certificação final de observabilidade até que `ENABLE_OBSERVABILITY=true` seja ativado e validado em runtime real.
 
 ---
 
@@ -209,7 +204,7 @@ Este guia cobre os procedimentos objetivos de operação, diagnósticos, observa
    - Nesses casos, contatar o DBA / Agente 01 para criar e aplicar uma migration de compensação ANTES de reverter o código!
 4. **Executar o re-deploy**:
    ```bash
-   PRODUCTION_DOMAIN=seu-dominio.com.br ./scripts/deploy-oci.sh
+   DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
    ```
 5. **Validar a Saúde e Versão Pós-Rollback**:
    ```bash
