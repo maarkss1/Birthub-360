@@ -101,6 +101,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
             pipelineCategoryTotal: 250000,
             closedWonTotal: 50000,
             coverageRatio: 3.5,
+            rulesVersion: '1.0',
           },
         }),
       );
@@ -118,6 +119,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
             pipelineCategoryTotal: 400000,
             closedWonTotal: 100000,
             coverageRatio: 4.0,
+            rulesVersion: '1.0',
           },
         }),
       );
@@ -169,6 +171,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
               pipelineCategoryTotal: 100000,
               closedWonTotal: 20000,
               coverageRatio: 2.0,
+              rulesVersion: '1.0',
             },
           }),
         ),
@@ -243,6 +246,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
             name: 'Sequência SDR Tenant A',
             organizationId: ORG_A,
             steps: [{ stepNumber: 1, type: 'email', delayDays: 1 }],
+            touches: [],
           },
         }),
       );
@@ -276,6 +280,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
               name: 'Sequência Injetada em A',
               organizationId: ORG_A,
               steps: [],
+              touches: [],
             },
           }),
         ),
@@ -298,6 +303,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
             title: 'Proposta Comercial Tenant A',
             value: 50000,
             content: {},
+            lineItems: [],
           },
         }),
       );
@@ -334,6 +340,7 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
               title: 'Contrato Falso',
               value: 1000000,
               content: {},
+              lineItems: [],
             },
           }),
         ),
