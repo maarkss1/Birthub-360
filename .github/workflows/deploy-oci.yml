@@ -27,9 +27,37 @@ jobs:
           ssh -i ~/.ssh/oci_deploy_key -o IdentitiesOnly=yes -p "$OCI_SSH_PORT" -o ServerAliveInterval=30 -o ServerAliveCountMax=20 \
             "$OCI_SSH_USER@$OCI_SSH_HOST" bash -s -- "$OCI_DEPLOY_PATH" <<'REMOTE_SCRIPT'
           set -euo pipefail
-          DEPLOY_PATH="$1"
-          cd "$DEPLOY_PATH"
+          cd "$1"
           
-          docker logs --tail 20 birthhub_caddy
+          # Fix Caddyfile to explicitly use tls internal so that IP addresses get a self-signed cert instead of failing
+          cat << 'EOF' > Caddyfile.oci
+          email {\@atlasgr.com.br}
+
+          {\::80} {
+              tls internal
+              encode gzip zstd
+
+              log {
+                  output stdout
+                  format json
+              }
+
+              header {
+                  X-Content-Type-Options nosniff
+                  X-Frame-Options SAMEORIGIN
+                  X-XSS-Protection "1; mode=block"
+                  Referrer-Policy strict-origin-when-cross-origin
+              }
+
+              reverse_proxy app:3000 {
+                  header_up Host {host}
+                  header_up X-Real-IP {remote_host}
+                  header_up X-Forwarded-For {remote_host}
+                  header_up X-Forwarded-Proto {scheme}
+              }
+          }
+          EOF
+          
+          docker restart birthhub_caddy
           
           REMOTE_SCRIPT
