@@ -94,6 +94,7 @@ const KNOWN_RLS_ONLY_MODELS = [
   'OptOutRecord',
   'OrganizationFeatureFlag',
   'OrganizationMemoryRecord',
+  'PlaybookInsight', // Onda 49 — modelo derivado de insights de playbook; RLS do Postgres é suficiente para isolamento
   'PomodoroSession',
   'Prompt',
   'Prospect',

@@ -1003,6 +1003,8 @@ model Organization {
   organizationMemoryRecords     OrganizationMemoryRecord[]
   // Agent Builder / Fábrica de Agentes (PROMPT 10) — ver seção no fim deste arquivo.
   agentBuildProposals           AgentBuildProposal[]
+  // Playbook Vivo (Item 42 / Onda 49) — insights e padrões comerciais vencedores persistidos.
+  playbookInsights              PlaybookInsight[]
 
   /// DEC-09 (dossiê CPI, Onda 42): teto mensal de gasto com IA (USD) desta organização. Nullable =
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
@@ -4778,3 +4780,45 @@ model AgentBuildProposal {
   @@index([organizationId, status])
   @@index([organizationId, createdAt])
 }
+
+// ─── Playbook Vivo (Item 42 / Onda 49) ──────────────────────────────────────────
+
+enum PlaybookInsightStatus {
+  SUGGESTED
+  APPROVED
+  BROADCAST
+  DISMISSED
+  ARCHIVED
+}
+
+model PlaybookInsight {
+  id                               String                @id @default(cuid())
+  organizationId                   String
+  organization                     Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Vendedor de origem — User.id (rastreabilidade real)
+  sellerId                         String
+  segment                          String
+
+  patternTitle                     String
+  patternDescription              String                @db.Text
+  suggestedScript                  String                @db.Text
+
+  /// Quantos AIPendingAction.outcomeStatus=POSITIVE embasaram esta sugestão no momento da geração
+  evidenceCount                    Int
+  sourceActionIds                  String[]
+  conversionRate                   Float?
+
+  status                           PlaybookInsightStatus @default(SUGGESTED)
+  broadcastAt                      DateTime?
+  broadcastBy                      String?
+  promotedToObjectionMatrixItemId  String?
+
+  createdAt                        DateTime              @default(now())
+  updatedAt                        DateTime              @updatedAt
+
+  @@index([organizationId, sellerId])
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+}
+

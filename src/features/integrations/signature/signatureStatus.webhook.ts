@@ -3,6 +3,10 @@ import express, { type Request, type Response, Router } from 'express';
 import { env } from '../../../config/env.js';
 import { logger } from '../../../lib/logger.js';
 import type { SignatureStatus } from '../../../shared/domain/signature.js';
+import {
+  claimWebhookDelivery,
+  webhookDeliveryFingerprint,
+} from '../../../shared/security/webhookReplayGuard.js';
 import { applySignatureStatusUpdate } from '../../cadence/application/documentSignature.js';
 import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
 
@@ -97,6 +101,19 @@ async function handleSignatureStatus(req: Request, res: Response): Promise<void>
       success: false,
       error: 'provider, providerRequestId e status (válido) são obrigatórios.',
     });
+    return;
+  }
+
+  const fp = webhookDeliveryFingerprint(
+    provider,
+    providerRequestId,
+    statusRaw,
+    asString(payload.evidenceRef),
+  );
+  const replayResult = await claimWebhookDelivery('signature', fp);
+  if (replayResult === 'replay') {
+    logger.warn({ provider, providerRequestId }, 'Webhook de status de assinatura duplicado — descartado.');
+    res.status(200).json({ success: true, outcome: 'duplicate' });
     return;
   }
 

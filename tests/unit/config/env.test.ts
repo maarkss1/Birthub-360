@@ -105,6 +105,54 @@ describe('config/env — BETTER_AUTH_SECRET fail-closed em produção (SEC-001)'
   });
 });
 
+describe('config/env — Validação de entropia de PLATFORM_OPERATOR_TOKEN e secrets de webhook em produção', () => {
+  let exitSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+  });
+
+  afterEach(() => {
+    exitSpy.mockRestore();
+    process.env = { ...ORIGINAL_ENV };
+    vi.resetModules();
+  });
+
+  it('encerra o processo quando PLATFORM_OPERATOR_TOKEN tem menos de 32 caracteres', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'short-token',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('encerra o processo quando PLATFORM_OPERATOR_TOKEN é um placeholder bloqueado', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'changeme',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('encerra o processo quando ATLASGR_WEBHOOK_SECRET é o segredo legado bloqueado', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'a'.repeat(40),
+      ATLASGR_WEBHOOK_SECRET: 'segredo_compartilhado_atlasgr_123',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('NÃO encerra o processo quando PLATFORM_OPERATOR_TOKEN e ATLASGR_WEBHOOK_SECRET são fortes', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'a'.repeat(40),
+      ATLASGR_WEBHOOK_SECRET: 'b'.repeat(32),
+    });
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+});
+
 describe('config/env — Rejeição de localhost em produção quando domínio público configurado (ONDA 17)', () => {
   let exitSpy: ReturnType<typeof vi.spyOn>;
 
