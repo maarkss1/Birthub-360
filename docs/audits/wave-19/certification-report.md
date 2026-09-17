@@ -85,7 +85,7 @@ Apesar de a base de código do **Birth Hub 360º** possuir suporte completo a Bu
    - Iniciar o processo worker dedicado (`npm run start:worker` / `worker.ts`).
 
 2. **Validação Operacional Runtime:**
-   - Validar que o probe de prontidão `/health/ready` responde `200 OK` ao pugar com sucesso o Redis online.
+   - Validar que o probe de prontidão `/health/ready` responde `200 OK` ao pingar com sucesso o Redis online.
    - Testar o comportamento da aplicação quando o Redis fica offline (garantir isolamento de erros via `process-guards`).
    - Processar jobs críticos em ambiente de homologação/produção (e.g., `leads-enrichment`, `bitrix-sync`, `whatsapp-signal-queue`).
    - Verificar a retenção de falhas e registro em audit log via `recordDeadLetter`.
