@@ -50,7 +50,7 @@
                  08/10). Até lá, este intent-filter ainda funciona como link comum (usuário escolhe
                  "abrir com o app" na primeira vez), só não pula o seletor. Mantém o mesmo domínio
                  fallback usado em capacitor.config.ts hoje — trocar junto quando o domínio final
-                 (app.atlasgr.com.br) entrar no ar. -->
+                 (seu-dominio.com.br ou app.birthhub360.com.br) entrar no ar. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

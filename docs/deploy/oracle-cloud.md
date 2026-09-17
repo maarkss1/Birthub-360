@@ -61,7 +61,7 @@ camada primária, mas não é a única — `scripts/deploy-oci.sh` também restr
 `POSTGRES_ALLOWED_CIDRS` (lista separada por vírgula de IPs/CIDRs) antes de rodar o script:
 
 ```bash
-POSTGRES_ALLOWED_CIDRS="203.0.113.10/32,198.51.100.0/24" DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
+POSTGRES_ALLOWED_CIDRS="203.0.113.10/32,198.51.100.0/24" PRODUCTION_DOMAIN=seu-dominio.com.br ./scripts/deploy-oci.sh
 ```
 
 Sem essa variável, a porta 5432 **não** é liberada no firewall do host — o acesso direto de
@@ -99,7 +99,7 @@ O repositório inclui um script que prepara o ambiente, cria os segredos locais 
 
 ```bash
 chmod +x scripts/deploy-oci.sh
-DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh   # ver seção 7 para o efeito de DOMAIN
+PRODUCTION_DOMAIN=seu-dominio.com.br ./scripts/deploy-oci.sh   # ver seção 7 para o efeito de PRODUCTION_DOMAIN
 ```
 
 Na primeira execução, o script cria `.env.production`, restringe suas permissões e gera valores
@@ -338,10 +338,10 @@ Por padrão, `.env.production` herda os valores de desenvolvimento do `.env.exam
 `SECURE_COOKIES=false`, `TRUST_PROXY=false`) — isso não é apropriado para produção real com domínio
 e HTTPS via Caddy.
 
-Para configurar o domínio oficial e/ou liberar CORS para a Extensão Chrome automaticamente, exporte `DOMAIN` e/ou `CHROME_EXTENSION_ID` ao rodar o deploy:
+Para configurar o domínio oficial e/ou liberar CORS para a Extensão Chrome automaticamente, exporte `PRODUCTION_DOMAIN` e/ou `CHROME_EXTENSION_ID` ao rodar o deploy:
 
 ```bash
-DOMAIN=app.atlasgr.com.br CHROME_EXTENSION_ID=abcdefghijklmnopqrstuvwxyz ACME_EMAIL=ti@atlasgr.com.br ./scripts/deploy-oci.sh
+PRODUCTION_DOMAIN=seu-dominio.com.br CHROME_EXTENSION_ID=abcdefghijklmnopqrstuvwxyz ACME_EMAIL=admin@seu-dominio.com.br ./scripts/deploy-oci.sh
 ```
 
 O script então ajusta em `.env.production` (preservando valores já customizados manualmente):
@@ -492,7 +492,7 @@ Para ativar o stack de observabilidade na instância Oracle Cloud:
 
 ```bash
 echo "ENABLE_OBSERVABILITY=true" >> .env.production
-DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
+PRODUCTION_DOMAIN=seu-dominio.com.br ./scripts/deploy-oci.sh
 ```
 
 Isso faz o script:

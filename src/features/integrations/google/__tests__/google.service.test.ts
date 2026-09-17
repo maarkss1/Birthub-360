@@ -42,7 +42,7 @@ vi.mock('@/lib/logger', () => ({
 const CONFIGURED_ENV = {
   GOOGLE_CLIENT_ID: 'client-id',
   GOOGLE_CLIENT_SECRET: 'client-secret',
-  PUBLIC_BASE_URL: 'https://app.atlasgr.com.br',
+  PUBLIC_BASE_URL: 'https://seu-dominio.com.br',
   BETTER_AUTH_SECRET: 'segredo-de-teste',
 };
 
@@ -55,7 +55,7 @@ beforeEach(() => {
 
 describe('getGoogleAuthUrl / verifyState', () => {
   it('lança GoogleNotConfiguredError sem GOOGLE_CLIENT_ID/SECRET', async () => {
-    mockedEnv = { PUBLIC_BASE_URL: 'https://app.atlasgr.com.br', BETTER_AUTH_SECRET: 'x' };
+    mockedEnv = { PUBLIC_BASE_URL: 'https://seu-dominio.com.br', BETTER_AUTH_SECRET: 'x' };
     const { getGoogleAuthUrl, GoogleNotConfiguredError } = await import('../google.service.js');
 
     expect(() => getGoogleAuthUrl(ORG)).toThrow(GoogleNotConfiguredError);

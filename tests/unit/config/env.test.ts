@@ -169,7 +169,7 @@ describe('config/env — Rejeição de localhost em produção quando domínio p
   it('encerra o processo se PRODUCTION_DOMAIN estiver configurado mas BETTER_AUTH_URL contiver localhost', async () => {
     await loadEnvModule({
       BETTER_AUTH_SECRET: 'a'.repeat(40),
-      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
+      PRODUCTION_DOMAIN: 'seu-dominio.com.br',
       BETTER_AUTH_URL: 'http://localhost:3000',
     });
     expect(exitSpy).toHaveBeenCalledWith(1);
@@ -178,9 +178,9 @@ describe('config/env — Rejeição de localhost em produção quando domínio p
   it('encerra o processo se PRODUCTION_DOMAIN estiver configurado mas ALLOWED_ORIGINS contiver localhost', async () => {
     await loadEnvModule({
       BETTER_AUTH_SECRET: 'a'.repeat(40),
-      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
-      BETTER_AUTH_URL: 'https://app.atlasgr.com.br',
-      ALLOWED_ORIGINS: 'https://app.atlasgr.com.br,http://localhost:3000',
+      PRODUCTION_DOMAIN: 'seu-dominio.com.br',
+      BETTER_AUTH_URL: 'https://seu-dominio.com.br',
+      ALLOWED_ORIGINS: 'https://seu-dominio.com.br,http://localhost:3000',
     });
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
@@ -188,10 +188,10 @@ describe('config/env — Rejeição de localhost em produção quando domínio p
   it('NÃO encerra o processo se todas as URLs forem de domínio público válido', async () => {
     await loadEnvModule({
       BETTER_AUTH_SECRET: 'a'.repeat(40),
-      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
-      PUBLIC_BASE_URL: 'https://app.atlasgr.com.br',
-      BETTER_AUTH_URL: 'https://app.atlasgr.com.br',
-      ALLOWED_ORIGINS: 'https://app.atlasgr.com.br',
+      PRODUCTION_DOMAIN: 'seu-dominio.com.br',
+      PUBLIC_BASE_URL: 'https://seu-dominio.com.br',
+      BETTER_AUTH_URL: 'https://seu-dominio.com.br',
+      ALLOWED_ORIGINS: 'https://seu-dominio.com.br',
     });
     expect(exitSpy).not.toHaveBeenCalled();
   });

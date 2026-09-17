@@ -140,9 +140,9 @@ serviço a partir dele.
    | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
    | `DATABASE_URL`                                                                              | Connection string do Neon com a role `prospector_runtime` (seção 1.1)                 |
    | `DIRECT_URL`                                                                                | **Obrigatória** — connection string do Neon com a role `prospector_app` (seção 1.1)   |
-   | `ALLOWED_ORIGINS`                                                                           | `https://app.atlasgr.com.br` (mais qualquer outro domínio real que sirva o frontend)  |
-   | `BETTER_AUTH_URL`                                                                           | `https://app.atlasgr.com.br`                                                          |
-   | `PUBLIC_BASE_URL`                                                                           | `https://app.atlasgr.com.br`                                                          |
+   | `ALLOWED_ORIGINS`                                                                           | `https://seu-dominio.com.br` (mais qualquer outro domínio real que sirva o frontend)   |
+   | `BETTER_AUTH_URL`                                                                           | `https://seu-dominio.com.br`                                                           |
+   | `PUBLIC_BASE_URL`                                                                           | `https://seu-dominio.com.br`                                                           |
    | `GOOGLE_MAPS_API_KEY`, `APOLLO_API_KEY`, `HUNTER_API_KEY`, `GROQ_API_KEY`, `GEMINI_API_KEY` | Chaves reais de cada provedor                                                         |
    | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`                                                  | Credenciais OAuth do "Entrar com Google" (Better Auth) — sem elas o botão fica inerte |
    | `PLATFORM_OPERATOR_TOKEN`                                                                   | Necessária para `/admin/queues` e `/metrics` deixarem de ser fail-closed              |
@@ -209,24 +209,21 @@ reinícios do processo e o rate-limit vira "por instância" em vez de global.
 Sem tooling de DNS automatizado disponível nesta sessão (o conector Cloudflare conectado só
 expõe R2/D1/KV/Workers, não gestão de zona DNS) — este passo é manual:
 
-1. [Dashboard Cloudflare](https://dash.cloudflare.com) → **Add a site** → `atlasgr.com.br` (se
+1. [Dashboard Cloudflare](https://dash.cloudflare.com) → **Add a site** → `seu-dominio.com.br` (se
    ainda não estiver na Cloudflare) → siga o fluxo de troca de nameservers no seu registrador.
 2. **DNS → Add record**:
    - Tipo `CNAME`, nome `app`, destino `prospector-atlas.onrender.com` (ou o hostname `.onrender.com`
      real do seu serviço, visível em Render → serviço → topo da página), proxy **ligado** (nuvem
      laranja) para ganhar CDN/WAF/DDoS protection na frente do Render.
-3. No Render, **Settings → Custom Domains** → adicione `app.atlasgr.com.br` e siga a verificação
+3. No Render, **Settings → Custom Domains** → adicione `app.seu-dominio.com.br` (ou `app.birthhub360.com.br`) e siga a verificação
    (Render emite certificado TLS automaticamente via Let's Encrypt).
 4. Cloudflare → **SSL/TLS** → modo **Full (strict)** — com o certificado do Render válido, isso
    evita o modo "Flexible" (que deixaria o tráfego Cloudflare↔Render sem TLS).
 5. Atualize `ALLOWED_ORIGINS`, `BETTER_AUTH_URL` e `PUBLIC_BASE_URL` no Render para
-   `https://app.atlasgr.com.br` e faça um novo deploy (ou "Clear build cache & deploy") para a
+   `https://seu-dominio.com.br` e faça um novo deploy (ou "Clear build cache & deploy") para a
    mudança de env var surtir efeito.
 
-> Por que não `app.birthhub.ai`: o prompt original citava esse domínio, mas o código deste
-> repositório já referencia `atlasgr.com.br`/`totaltrac.com.br` como domínios corporativos reais
-> (ver `.env.example`, `android-build.yml`). Trocar de domínio é decisão de negócio, não técnica —
-> se `birthhub.ai` for o domínio correto, repita os passos acima substituindo o hostname.
+> **Domínio de produção**: Exemplos legados foram substituídos por placeholders neutros (`seu-dominio.com.br`) e pelo padrão oficial do Birth Hub 360 (`app.birthhub360.com.br`). Caso seu ambiente utilize outro domínio, configure as variáveis correspondentes.
 
 ## 4. CI/CD — GitHub Actions
 
@@ -265,21 +262,21 @@ GitHub Actions Secret, nunca hardcoded em `render.yaml`/workflow YAML.
 
 ## 7. Checklist de validação pós-deploy
 
-- [ ] `GET https://app.atlasgr.com.br/health/live` → `200 { status: "ok" }`
-- [ ] `GET https://app.atlasgr.com.br/health/ready` → `200` (confirma conexão real com o Neon)
-- [ ] `GET https://app.atlasgr.com.br/` → carrega o SPA (index.html do build do Vite)
+- [ ] `GET https://seu-dominio.com.br/health/live` → `200 { status: "ok" }`
+- [ ] `GET https://seu-dominio.com.br/health/ready` → `200` (confirma conexão real com o Neon)
+- [ ] `GET https://seu-dominio.com.br/` → carrega o SPA (index.html do build do Vite)
 - [ ] Login (e-mail/senha e "Entrar com Google") funcionando via Better Auth
-- [ ] `GET https://app.atlasgr.com.br/api/companies` (autenticado) retorna `200`, não `404`/`503`
+- [ ] `GET https://seu-dominio.com.br/api/companies` (autenticado) retorna `200`, não `404`/`503`
 - [ ] Criar um lead de teste e confirmar que só aparece para o tenant que o criou (RLS)
 - [ ] IA: uma chamada a `/api/intelligence/*` completa sem erro de timeout/chave ausente
-- [ ] Certificado TLS válido (cadeado no navegador) em `app.atlasgr.com.br`
+- [ ] Certificado TLS válido (cadeado no navegador) em `seu-dominio.com.br`
 - [ ] `ci.yml` verde no commit implantado (branch protection, seção 2.3)
 
 ## 8. URLs finais
 
 | Serviço                         | URL                                                                                           |
 | ------------------------------- | --------------------------------------------------------------------------------------------- |
-| Aplicação (frontend + API)      | `https://app.atlasgr.com.br` (após seção 3) — até lá, `https://prospector-atlas.onrender.com` |
+| Aplicação (frontend + API)      | `https://seu-dominio.com.br` (após seção 3) — até lá, `https://prospector-atlas.onrender.com` |
 | Health (liveness)               | `/health/live`                                                                                |
 | Health (readiness, checa banco) | `/health/ready`                                                                               |
 | Documentação da API (Swagger)   | `/api-docs` (só quando `EXPOSE_API_DOCS=true`)                                                |

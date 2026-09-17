@@ -37,11 +37,11 @@ describe('bootstrap/security', () => {
 
     it('faz parse da lista CSV configurada, removendo espaços e entradas vazias', async () => {
       const mod = await loadSecurityModule({
-        ALLOWED_ORIGINS: 'https://app.atlasgr.com.br, https://app.totaltrac.com.br,',
+        ALLOWED_ORIGINS: 'https://app.birthhub360.com.br, https://seu-dominio.com.br,',
       });
       expect(mod.ALLOWED_ORIGINS).toEqual([
-        'https://app.atlasgr.com.br',
-        'https://app.totaltrac.com.br',
+        'https://app.birthhub360.com.br',
+        'https://seu-dominio.com.br',
       ]);
     });
   });
@@ -63,7 +63,7 @@ describe('bootstrap/security', () => {
 
       const mod = await loadSecurityModule({
         NODE_ENV: 'production',
-        ALLOWED_ORIGINS: 'https://app.atlasgr.com.br',
+        ALLOWED_ORIGINS: 'https://app.birthhub360.com.br',
       });
       mod.assertAllowedOriginsConfigured();
 

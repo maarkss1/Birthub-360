@@ -204,7 +204,7 @@ Este guia cobre os procedimentos objetivos de operação, diagnósticos, observa
    - Nesses casos, contatar o DBA / Agente 01 para criar e aplicar uma migration de compensação ANTES de reverter o código!
 4. **Executar o re-deploy**:
    ```bash
-   DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
+   PRODUCTION_DOMAIN=seu-dominio.com.br ./scripts/deploy-oci.sh
    ```
 5. **Validar a Saúde e Versão Pós-Rollback**:
    ```bash

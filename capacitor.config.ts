@@ -21,12 +21,12 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // anterior de propósito. Trocá-los invalida instalações já publicadas, links salvos e a
 // configuração de DNS/Render — é uma migração coordenada, não parte de um rebranding de UI.
 //
-// `app.atlasgr.com.br` (domínio final, usado em render.yaml/docs/deploy/producao.md como
-// ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL) ainda não resolve DNS — verificado nesta onda
-// (`curl https://app.atlasgr.com.br` não conecta). O fallback documentado em
+// `app.birthhub360.com.br` / `seu-dominio.com.br` (domínio final de produção configurável via
+// PRODUCTION_DOMAIN e usado em render.yaml/docs/deploy/producao.md como
+// ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL). O fallback documentado em
 // docs/deploy/producao.md §8 ("até lá") é o hostname direto do Render, que respondeu 200 em
-// /health/live nesta onda: usado como default abaixo. Troque para `https://app.atlasgr.com.br`
-// (e rode `npx cap sync android`/`npx cap sync ios` de novo) assim que o domínio Cloudflare
+// /health/live nesta onda: usado como default abaixo. Troque para `https://seu-dominio.com.br` (ou `https://app.birthhub360.com.br`)
+// (e rode `npx cap sync android`/`npx cap sync ios` de novo) assim que o domínio de produção
 // estiver ativo — ver docs/deploy/producao.md §3. Handoff aberto para 08/10 confirmando isso.
 //
 // Para apontar para um backend de desenvolvimento local (mesma rede Wi-Fi/LAN) durante testes no
