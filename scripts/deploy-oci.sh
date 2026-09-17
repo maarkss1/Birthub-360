@@ -213,6 +213,15 @@ ensure_hex_secret "MEILI_MASTER_KEY" 32
 # Garante que a aplicação de produção use o modo correto.
 set_env_value "NODE_ENV" "production"
 
+# Correlação de Release/Deploy em Produção (Onda 18)
+COMMIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+BUILD_VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "1.0.0")
+DEPLOY_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+set_env_value "COMMIT_SHA" "$COMMIT_SHA"
+set_env_value "BUILD_VERSION" "$BUILD_VERSION"
+set_env_value "DEPLOY_TIMESTAMP" "$DEPLOY_TIMESTAMP"
+
 current_value() {
     local key="$1"
     grep -E "^${key}=" "$ENV_FILE" | tail -n 1 | cut -d= -f2- || true

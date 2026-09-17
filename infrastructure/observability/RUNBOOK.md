@@ -35,6 +35,184 @@ aspiracional); identifique qual se aplica antes de agir — comandos `docker com
 compose.oci.yml ...` não têm efeito nenhum se o incidente é no Render, e vice-versa, e comandos
 `kubectl`/`helm`/`argocd` não têm efeito nenhum enquanto não existir cluster real.
 
+
+## 0-OCI. Guia Operacional de SRE & Observabilidade — Oracle Cloud Infrastructure (OCI)
+
+Este guia cobre os procedimentos objetivos de operação, diagnósticos, observabilidade e resposta a incidentes na instância de produção OCI (`docker-compose.oci.yml`).
+
+### 0-OCI.1 Verificação de Saúde e Release Metadata
+
+1. **Sonda de Liveness (`/health/live` e `/healthz`)**:
+   ```bash
+   curl -s http://127.0.0.1:3000/health/live | jq .
+   # Resposta esperada (200 OK):
+   # { "status": "ok", "version": "0.0.1", "commit": "a1b2c3d...", "timestamp": "..." }
+   ```
+2. **Sonda de Readiness (`/health/ready` e `/readyz`)**:
+   ```bash
+   curl -s http://127.0.0.1:3000/health/ready | jq .
+   # Resposta esperada (200 OK quando Postgres e Redis [se ativo] respondem):
+   # { "status": "ok", "version": "0.0.1", "commit": "a1b2c3d...", "timestamp": "..." }
+   # Se o banco/Redis falhar (503 Service Unavailable):
+   # { "status": "error", "message": "Database or Redis unavailable", ... }
+   ```
+3. **Versão e Correlação de Release (`/health/version` e `/version`)**:
+   ```bash
+   curl -s http://127.0.0.1:3000/health/version | jq .
+   # Resposta esperada (200 OK):
+   # { "status": "ok", "version": "0.0.1", "commit": "a1b2c3d...", "deployedAt": "2026-09-17T00:00:00Z", "environment": "production", "timestamp": "..." }
+   ```
+4. **Identificar o SHA do Commit em Produção**:
+   - Via HTTP público/interno: `curl -s https://<DOMAIN>/health/version | jq .commit`
+   - Via container: `docker exec birthhub_app printenv COMMIT_SHA BUILD_VERSION DEPLOY_TIMESTAMP`
+
+---
+
+### 0-OCI.2 Verificação de Containers, Processos e Recursos
+
+1. **Status dos Containers**:
+   ```bash
+   docker compose -f docker-compose.oci.yml ps
+   ```
+2. **Contagem de Reinícios dos Containers**:
+   ```bash
+   docker inspect --format='{{.Name}}: restarts={{.RestartCount}} status={{.State.Status}}' birthhub_app birthhub_postgres birthhub_caddy birthhub_meilisearch birthhub_prometheus birthhub_redis birthhub_worker
+   ```
+3. **Uso de Memória e CPU por Container**:
+   ```bash
+   docker stats --no-stream
+   ```
+4. **Uso de Memória e CPU do Host**:
+   ```bash
+   free -h
+   top -b -n 1 | head -n 20
+   ```
+5. **Espaço em Disco no Host**:
+   ```bash
+   df -h / /var/lib/docker
+   ```
+
+---
+
+### 0-OCI.3 Diagnóstico de Banco de Dados (Postgres) e Redis
+
+1. **Disponibilidade do Postgres**:
+   ```bash
+   docker exec birthhub_postgres pg_isready -U prospector -d prospectordb
+   ```
+2. **Conexões do Banco e Saturação de Pool**:
+   - Consultar `/metrics` do Prometheus para as séries:
+     - `pg_pool_total_connections` (máximo configurado = 20)
+     - `pg_pool_idle_connections`
+     - `pg_pool_waiting_requests` (deve ser 0; > 0 por 2min dispara o alerta `DbPoolSaturated`)
+3. **Disponibilidade do Redis (quando profile `queues` ativo)**:
+   ```bash
+   docker exec birthhub_redis redis-cli -a "$REDIS_PASSWORD" ping
+   # Resposta esperada: PONG
+   ```
+
+---
+
+### 0-OCI.4 Prometheus e Consulta de Métricas
+
+1. **Habilitar Observabilidade**:
+   Garantir `ENABLE_OBSERVABILITY=true` em `.env.production` e rodar `./scripts/deploy-oci.sh`.
+2. **Acesso Seguro à UI do Prometheus (Porta 9090)**:
+   Usar um túnel SSH a partir da sua máquina local:
+   ```bash
+   ssh -L 9090:127.0.0.1:9090 user@<OCI_INSTANCE_IP>
+   ```
+   Acessar no navegador: `http://127.0.0.1:9090` e `http://127.0.0.1:9090/alerts`.
+3. **Consultas PromQL Essenciais**:
+   - **Taxa Total de Requisições HTTP (req/s)**:
+     `sum(rate(http_server_duration_milliseconds_count[5m]))`
+   - **Taxa de Erros 5xx (%)**:
+     `sum(rate(http_server_duration_milliseconds_count{http_status_code=~"5.."}[5m])) / sum(rate(http_server_duration_milliseconds_count[5m]))`
+   - **Latência p95 (ms)**:
+     `histogram_quantile(0.95, sum(rate(http_server_duration_milliseconds_bucket[5m])) by (le))`
+   - **Uptime do Processo (s)**:
+     `process_uptime_seconds{job="central-comercial"}`
+
+---
+
+### 0-OCI.5 Investigação de Incidentes
+
+1. **Investigar HTTP 5xx Elevado (`HighErrorRate5xx`)**:
+   - Logs de erro da aplicação:
+     ```bash
+     docker logs --tail 200 -f birthhub_app | grep '"status":5'
+     ```
+   - Logs do proxy Caddy:
+     ```bash
+     docker logs --tail 200 -f birthhub_caddy | grep '"status":5'
+     ```
+   - Verificar se há exceções não tratadas no `errorHandler` global.
+2. **Investigar HTTP 4xx Anormais (`HighErrorRate4xx`)**:
+   - `docker logs --tail 200 birthhub_app | grep '"status":4'`
+   - Verificar se a origem é força bruta em rotas de auth (`AUTH_RATE_LIMITED`) ou falha de validação Zod.
+3. **Investigar Latência Elevada (`HighHttpLatency` / `HighEventLoopLag`)**:
+   - Verificar se o Event Loop está bloqueado: `nodejs_eventloop_lag_seconds`
+   - Verificar se o pool do banco está saturado: `pg_pool_waiting_requests`
+   - Verificar se a CPU do host/container atingiu 100%: `docker stats birthhub_app`
+4. **Investigar Restart Loop ou OOMKilled**:
+   - Verificar se o kernel matou o container por falta de memória:
+     ```bash
+     dmesg -T | grep -i oom
+     docker inspect birthhub_app | grep -i oomKilled
+     ```
+   - Ver logs de boot: `docker logs --tail 100 birthhub_app`
+5. **Investigar Aplicação Unhealthy (`InstanceDown` / Readiness 503)**:
+   - Testar o endpoint diretamente no container:
+     ```bash
+     docker exec birthhub_app node -e "require('http').get('http://127.0.0.1:3000/health/ready', res => console.log(res.statusCode))"
+     ```
+   - Se 503, verificar se o Postgres parou de responder queries.
+
+---
+
+### 0-OCI.6 Logs Estruturados e Auditoria de Redaction
+
+1. **Consultar Logs do Proxy Caddy (Formato JSON)**:
+   ```bash
+   docker logs --tail 100 -f birthhub_caddy
+   ```
+2. **Consultar Logs da Aplicação Express/Pino (Formato JSON)**:
+   ```bash
+   docker logs --tail 100 -f birthhub_app
+   ```
+3. **Garantia de Não Exposição de Segredos (Redaction)**:
+   O logger Pino está configurado com `redact` estrito. Os seguintes campos e headers NUNCA são expostos em texto puro e aparecem como `[REDACTED]`:
+   - `authorization`, `cookie`, `set-cookie`, `x-api-key`
+   - `password`, `token`, `accessToken`, `refreshToken`, `secret` (e variações aninhadas)
+   - Parâmetros sensíveis na URL (`code`, `token`, `state`, `secret`, `password`) são redigidos pelo `observabilityMiddleware`.
+
+---
+
+### 0-OCI.7 Procedimento Executável de Rollback
+
+1. **Obter a versão atual rodando em produção**:
+   ```bash
+   curl -s http://127.0.0.1:3000/health/version | jq .
+   ```
+2. **Mudar para o commit estável anterior no repositório local do servidor**:
+   ```bash
+   git checkout <STABLE_COMMIT_SHA>
+   ```
+3. **AVISO CRÍTICO SOBRE SCHEMA DE BANCO DE DADOS**:
+   - Reverter o código/imagem Docker NÃO desfaz migrações aplicadas pelo Prisma no banco PostgreSQL.
+   - Se o release revertido aplicou uma migração com destruição ou alteração de colunas (`prisma migrate deploy`), reverter o código fará a versão antiga falhar.
+   - Nesses casos, contatar o DBA / Agente 01 para criar e aplicar uma migration de compensação ANTES de reverter o código!
+4. **Executar o re-deploy**:
+   ```bash
+   DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
+   ```
+5. **Validar a Saúde e Versão Pós-Rollback**:
+   ```bash
+   curl -s http://127.0.0.1:3000/health/ready
+   curl -s http://127.0.0.1:3000/health/version | jq .
+   ```
+
+
 ## 0. Go-live — passo a passo executável (Render)
 
 Verificado nesta rodada contra o serviço Render real via MCP (workspace "Marcelo's workspace",
