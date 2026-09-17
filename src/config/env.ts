@@ -8,6 +8,11 @@ const envSchema = z
     // em vez de silenciosamente assumir 'development' (e, com isso, habilitar bypasses
     // de autenticação e CORS permissivo destinados apenas a ambiente local).
     NODE_ENV: z.enum(['development', 'production', 'test']),
+
+    // ── Correlação de Release em Produção (Onda 18) ──────────────────────────
+    COMMIT_SHA: z.string().default('unknown'),
+    BUILD_VERSION: z.string().default('1.0.0'),
+    DEPLOY_TIMESTAMP: z.string().default('unknown'),
     PORT: z.string().default('3005'),
     HOST: z.string().default('0.0.0.0'),
     DATABASE_URL: z.string().min(1, 'DATABASE_URL é obrigatória'),

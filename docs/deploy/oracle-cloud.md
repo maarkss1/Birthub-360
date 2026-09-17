@@ -470,7 +470,93 @@ valor:
 
 ---
 
-## 11. Observabilidade (Prometheus) — opt-in desde a Onda 2 (DEVOPS-003)
+## 11. Observabilidade e Correlação de Release (Prometheus & Health Checks)
+
+**Contexto**: ADR-004 (2026-09-05) moveu a produção definitiva para esta stack (`docker-compose.oci.yml`).
+
+### 11.1 Diferença entre `ENABLE_OBSERVABILITY=false` vs `ENABLE_OBSERVABILITY=true`
+
+| Recurso / Comportamento | `ENABLE_OBSERVABILITY=false` (Padrão MVP) | `ENABLE_OBSERVABILITY=true` (Habilitado) |
+|---|---|---|
+| **Serviço Prometheus** | Inativo (`docker-compose.oci.yml` profile `observability` inativo) | **Ativo** (container `birthhub_prometheus` subido) |
+| **Endpoint `/metrics`** | Desabilitado (`EXPOSE_METRICS=false` no Express) | **Habilitado** (`EXPOSE_METRICS=true` no Express) |
+| **Geração de Segredo Operador** | Nenhum segredo gerado para operador de plataforma | `PLATFORM_OPERATOR_TOKEN` (32 bytes hex) gerado automaticamente em `.env.production` |
+| **Endpoints Health & Version** | `/health/live`, `/health/ready`, `/health/version` ativos | `/health/live`, `/health/ready`, `/health/version` ativos |
+| **Consumo de Memória Extra** | 0 MB adicionais | ~100MB-256MB RAM (limite de container configurado em 256MB) |
+
+---
+
+### 11.2 Como Habilitar e Configuração de Recursos
+
+Para ativar o stack de observabilidade na instância Oracle Cloud:
+
+```bash
+echo "ENABLE_OBSERVABILITY=true" >> .env.production
+DOMAIN=app.atlasgr.com.br ./scripts/deploy-oci.sh
+```
+
+Isso faz o script:
+1. Gerar `PLATFORM_OPERATOR_TOKEN` em `.env.production` se ainda não existir.
+2. Definir `EXPOSE_METRICS=true` no `.env.production`.
+3. Extrair metadata de release (`COMMIT_SHA`, `BUILD_VERSION`, `DEPLOY_TIMESTAMP`) e injetar em `.env.production`.
+4. Renderizar `infrastructure/observability/prometheus.oci.generated.yml` com o token de operador em query parameter (`?operator_token=...`).
+5. Subir o container `birthhub_prometheus` com os seguintes limites e retenções:
+   - **Limite de Memória Docker**: `256M` (`deploy.resources.limits.memory: 256M`)
+   - **Retenção de Tempo TSDB**: `15d` (`--storage.tsdb.retention.time=15d`)
+   - **Retenção de Tamanho TSDB**: `1GB` (`--storage.tsdb.retention.size=1GB`)
+
+> **Nota de Capacidade**: **VALIDAÇÃO DE CAPACIDADE PENDENTE** sob carga real de produção na Oracle Cloud. O limite de 256MB é dimensionado para o volume de métricas do monólito Express + Postgres, mas deve ser monitorado via `docker stats birthhub_prometheus`.
+
+---
+
+### 11.3 Acesso Seguro ao Prometheus e Regras de Alerta
+
+- **Porta**: `127.0.0.1:9090` (bind exclusivo em loopback local por segurança).
+- **Acesso**: Via túnel SSH criptografado:
+  ```bash
+  ssh -L 9090:127.0.0.1:9090 user@<OCI_INSTANCE_IP>
+  ```
+- **Alertas Mínimos Ativos (`alert.rules.yml`)**:
+  - `InstanceDown`: Instância fora do ar (`up == 0` por 2min)
+  - `ProcessRestarted`: Processo Node reiniciou (`uptime < 300s` por 1min)
+  - `HighErrorRate5xx`: Taxa de erro 5xx > 5% por 5min
+  - `HighErrorRate4xx`: Taxa de erro 4xx > 20% por 5min
+  - `HighHttpLatency`: Latência p95 > 2000ms por 5min
+  - `HighEventLoopLag`: Lag do event loop > 500ms por 5min
+  - `HighProcessMemoryUsage`: RSS > 1.5GB por 10min
+  - `HighProcessCpuUsage`: CPU > 85% por 5min
+  - `DbPoolSaturated`: Requisições aguardando cliente do pool Postgres por 2min
+  - `RedisConnectionDown`: Conexão Redis fora do estado 'ready' por 2min
+  - `AIBudgetOverrun`: Consumo mensal de IA excedeu o orçamento configurado
+
+---
+
+### 11.4 Correlação de Release e Versão (`/health/version`)
+
+Toda instância em produção injeta e expõe metadata de versão:
+- `COMMIT_SHA`: SHA do Git commit (`git rev-parse HEAD`)
+- `BUILD_VERSION`: Versão do pacote (`package.json`)
+- `DEPLOY_TIMESTAMP`: Carimbo UTC ISO do momento do deploy
+
+Exposto publicamente e internamente via:
+```bash
+curl -s https://<DOMAIN>/health/version
+```
+Retorno em JSON estruturado:
+```json
+{
+  "status": "ok",
+  "version": "0.0.1",
+  "commit": "a1b2c3d4e5f67890",
+  "deployedAt": "2026-09-17T00:00:00Z",
+  "environment": "production",
+  "timestamp": "2026-09-17T02:00:00Z"
+}
+```
+
+---
+
+## 12. O que esta sessão não pôde validar
 
 **Contexto**: ADR-004 (2026-09-05) moveu a produção definitiva para esta stack, já recebendo
 tráfego real (ver `docs/deploy/README.md` §1). `infrastructure/observability/` já tem um stack
