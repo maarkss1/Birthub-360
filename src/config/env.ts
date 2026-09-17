@@ -12,6 +12,13 @@ const envSchema = z
     HOST: z.string().default('0.0.0.0'),
     DATABASE_URL: z.string().min(1, 'DATABASE_URL é obrigatória'),
     REDIS_URL: z.string().optional(),
+    PRODUCTION_DOMAIN: z.string().optional(),
+    DOMAIN: z.string().optional(),
+    COOKIE_DOMAIN: z.string().optional(),
+    SECURE_COOKIES: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((value) => value === 'true'),
     ALLOWED_ORIGINS: z.string().optional(),
     BETTER_AUTH_URL: z.string().optional(),
     BETTER_AUTH_SECRET: z.string().optional(),
@@ -339,6 +346,55 @@ if (_env.success && _env.data.NODE_ENV === 'production' && _env.data.ALLOW_DEV_A
   );
   if (process.env.NODE_ENV !== 'test') {
     process.exit(1);
+  }
+}
+
+// ONDA 17: Validação de domínio público x localhost em produção
+if (_env.success && _env.data.NODE_ENV === 'production') {
+  const prodDomain = _env.data.PRODUCTION_DOMAIN || _env.data.DOMAIN;
+  const publicBaseUrl = _env.data.PUBLIC_BASE_URL;
+  const betterAuthUrl = _env.data.BETTER_AUTH_URL;
+  const allowedOrigins = _env.data.ALLOWED_ORIGINS;
+
+  const hasPublicDomainConfigured =
+    Boolean(prodDomain && prodDomain !== 'localhost') ||
+    Boolean(
+      publicBaseUrl && !publicBaseUrl.includes('localhost') && !publicBaseUrl.includes('127.0.0.1'),
+    ) ||
+    Boolean(
+      betterAuthUrl && !betterAuthUrl.includes('localhost') && !betterAuthUrl.includes('127.0.0.1'),
+    );
+
+  if (hasPublicDomainConfigured) {
+    const invalidVars: string[] = [];
+
+    if (
+      publicBaseUrl &&
+      (publicBaseUrl.includes('localhost') || publicBaseUrl.includes('127.0.0.1'))
+    ) {
+      invalidVars.push('PUBLIC_BASE_URL');
+    }
+    if (
+      betterAuthUrl &&
+      (betterAuthUrl.includes('localhost') || betterAuthUrl.includes('127.0.0.1'))
+    ) {
+      invalidVars.push('BETTER_AUTH_URL');
+    }
+    if (allowedOrigins) {
+      const origins = allowedOrigins.split(',').map((s) => s.trim());
+      if (origins.some((o) => o.includes('localhost') || o.includes('127.0.0.1'))) {
+        invalidVars.push('ALLOWED_ORIGINS');
+      }
+    }
+
+    if (invalidVars.length > 0) {
+      logger.error(
+        `❌ Configuração inválida em produção: as seguintes variáveis contêm 'localhost' ou '127.0.0.1' enquanto o ambiente está configurado para domínio público: ${invalidVars.join(', ')}. Abortando inicialização.`,
+      );
+      if (process.env.NODE_ENV !== 'test') {
+        process.exit(1);
+      }
+    }
   }
 }
 

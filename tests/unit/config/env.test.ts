@@ -104,3 +104,47 @@ describe('config/env — BETTER_AUTH_SECRET fail-closed em produção (SEC-001)'
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 });
+
+describe('config/env — Rejeição de localhost em produção quando domínio público configurado (ONDA 17)', () => {
+  let exitSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+  });
+
+  afterEach(() => {
+    exitSpy.mockRestore();
+    process.env = { ...ORIGINAL_ENV };
+    vi.resetModules();
+  });
+
+  it('encerra o processo se PRODUCTION_DOMAIN estiver configurado mas BETTER_AUTH_URL contiver localhost', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
+      BETTER_AUTH_URL: 'http://localhost:3000',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('encerra o processo se PRODUCTION_DOMAIN estiver configurado mas ALLOWED_ORIGINS contiver localhost', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
+      BETTER_AUTH_URL: 'https://app.atlasgr.com.br',
+      ALLOWED_ORIGINS: 'https://app.atlasgr.com.br,http://localhost:3000',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('NÃO encerra o processo se todas as URLs forem de domínio público válido', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
+      PUBLIC_BASE_URL: 'https://app.atlasgr.com.br',
+      BETTER_AUTH_URL: 'https://app.atlasgr.com.br',
+      ALLOWED_ORIGINS: 'https://app.atlasgr.com.br',
+    });
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+});
