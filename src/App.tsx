@@ -200,28 +200,44 @@ const PropostasList = lazy(() =>
   import('./features/crm360/components/PropostasList').then((m) => ({ default: m.PropostasList })),
 );
 const EliteCommercialAgentWorkspace = lazy(() =>
-  import('./features/intelligence/components/EliteCommercialAgentWorkspace').then((m) => ({ default: m.EliteCommercialAgentWorkspace })),
+  import('./features/intelligence/components/EliteCommercialAgentWorkspace').then((m) => ({
+    default: m.EliteCommercialAgentWorkspace,
+  })),
 );
 const AgentQualityPanel = lazy(() =>
-  import('./features/intelligence/components/AgentQualityPanel').then((m) => ({ default: m.AgentQualityPanel })),
+  import('./features/intelligence/components/AgentQualityPanel').then((m) => ({
+    default: m.AgentQualityPanel,
+  })),
 );
 const AIPendingActions = lazy(() =>
-  import('./features/intelligence/components/AIPendingActions').then((m) => ({ default: m.AIPendingActions })),
+  import('./features/intelligence/components/AIPendingActions').then((m) => ({
+    default: m.AIPendingActions,
+  })),
 );
 const AutomationGuide = lazy(() =>
-  import('./features/intelligence/components/AutomationGuide').then((m) => ({ default: m.AutomationGuide })),
+  import('./features/intelligence/components/AutomationGuide').then((m) => ({
+    default: m.AutomationGuide,
+  })),
 );
 const B2BGenerator = lazy(() =>
-  import('./features/intelligence/components/B2BGenerator').then((m) => ({ default: m.B2BGenerator })),
+  import('./features/intelligence/components/B2BGenerator').then((m) => ({
+    default: m.B2BGenerator,
+  })),
 );
 const RobustScriptGenerator = lazy(() =>
-  import('./features/intelligence/components/RobustScriptGenerator').then((m) => ({ default: m.RobustScriptGenerator })),
+  import('./features/intelligence/components/RobustScriptGenerator').then((m) => ({
+    default: m.RobustScriptGenerator,
+  })),
 );
 const SalesMethodologyStudio = lazy(() =>
-  import('./features/intelligence/components/SalesMethodologyStudio').then((m) => ({ default: m.SalesMethodologyStudio })),
+  import('./features/intelligence/components/SalesMethodologyStudio').then((m) => ({
+    default: m.SalesMethodologyStudio,
+  })),
 );
 const SuperagentCreator = lazy(() =>
-  import('./features/intelligence/components/SuperagentCreator').then((m) => ({ default: m.SuperagentCreator })),
+  import('./features/intelligence/components/SuperagentCreator').then((m) => ({
+    default: m.SuperagentCreator,
+  })),
 );
 const PublicBookingPage = lazy(() =>
   import('./features/calendar/components/PublicBookingPage').then((m) => ({

@@ -72,7 +72,13 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
             key={`node-${cx(index)}`}
             initial={reduceMotion ? false : { opacity: 0, scale: 0.4 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.9, delay: index * 0.28 }}
+            transition={{
+              type: 'spring',
+              stiffness: 260,
+              damping: 24,
+              mass: 0.9,
+              delay: index * 0.28,
+            }}
             style={{ transformOrigin: `${cx(index)}px ${cy}px` }}
           >
             <circle
@@ -293,7 +299,8 @@ export function LoginScreen() {
                   )}
 
                   <p className="text-sm text-slate-600">
-                    Informe seu e-mail corporativo para receber as instruções de recuperação de senha.
+                    Informe seu e-mail corporativo para receber as instruções de recuperação de
+                    senha.
                   </p>
 
                   <div>
@@ -333,7 +340,11 @@ export function LoginScreen() {
                     }}
                     className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 shadow-md transition-all"
                   >
-                    {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : 'Enviar Link de Recuperação'}
+                    {isSubmitting ? (
+                      <Loader2 className="animate-spin" size={18} />
+                    ) : (
+                      'Enviar Link de Recuperação'
+                    )}
                   </motion.button>
 
                   <div className="text-center">

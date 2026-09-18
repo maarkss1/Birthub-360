@@ -125,7 +125,5 @@ export function prioritizeDialCandidates<T extends { id: string }>(
   candidates: T[],
   scoresById: Map<string, number>,
 ): T[] {
-  return [...candidates].sort(
-    (a, b) => (scoresById.get(b.id) ?? 0) - (scoresById.get(a.id) ?? 0),
-  );
+  return [...candidates].sort((a, b) => (scoresById.get(b.id) ?? 0) - (scoresById.get(a.id) ?? 0));
 }
