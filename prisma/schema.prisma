@@ -1013,11 +1013,6 @@ model Organization {
   /// organização. Nullable = SEM TETO, mesmo raciocínio do campo acima. Comparado contra o
   /// acumulado do mês corrente (Redis, ver providerBudget.ts) por assertProspectingBudgetNotExceeded.
   monthlyProspectingBudgetUsd   Float?
-  commercialMissions            CommercialMission[]
-  nextBestActionRecommendations NextBestActionRecommendation[]
-  commercialMissionEvents       CommercialMissionEvent[]
-  missionScores                 MissionScore[]
-  missionAgentTraces            MissionAgentTrace[]
 }
 
 // ─── Comercial Inteligente (Revenue Command Center) ────────────────────────
@@ -4786,108 +4781,12 @@ model AgentBuildProposal {
 
 // --- ELITE COMMERCIAL AGENT ---
 
-model CommercialMission {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String?
 
-  accountName      String
-  cnpj             String?
-  segment          String?
-  fleetSize        Int?
-  estimatedRevenue Float?
 
-  status           String  @default("ACTIVE")
-  currentCadenceId String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  recommendations NextBestActionRecommendation[]
-  events          CommercialMissionEvent[]
-  score           MissionScore?
-  trace           MissionAgentTrace?
 
-  @@index([organizationId, status])
-}
 
-model NextBestActionRecommendation {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  missionId String
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
 
-  actionType         String
-  priority           String
-  channel            String?
-  objective          String  @db.Text
-  rationale          String  @db.Text
-  recommendedMessage String? @db.Text
 
-  evidence   Json?
-  confidence Float
-
-  requiresApproval Boolean @default(false)
-  status           String  @default("PENDING") // PENDING, EXECUTED, REJECTED, SUPERSEDED
-
-  scheduledFor DateTime?
-  executedAt   DateTime?
-
-  actorId        String?
-  feedbackReason String? @db.Text
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([missionId, status])
-  @@index([organizationId, status])
-}
-
-model CommercialMissionEvent {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  missionId String
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
-
-  eventType String
-  payload   Json?
-
-  createdAt DateTime @default(now())
-
-  @@index([missionId, createdAt])
-  @@index([organizationId, eventType])
-}
-
-model MissionScore {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  missionId String            @unique
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
-
-  icpScore         Float
-  fitScore         Float
-  intentScore      Float
-  opportunityScore Float
-  evidence         Json?
-
-  @@index([organizationId])
-}
-
-model MissionAgentTrace {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  missionId String            @unique
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
-  trace     Json
-
-  @@index([organizationId])
-}
