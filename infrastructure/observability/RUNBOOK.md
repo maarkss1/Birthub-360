@@ -21,7 +21,6 @@ Runbook de resposta a incidentes e de go-live para os cenários já mapeados com
 
 | Caminho | Status (ver `docs/deploy/README.md` §1 para o estado sempre atualizado) | Onde |
 | --- | --- | --- |
-| **Oracle Cloud Infrastructure, self-hosted** (`app`+`postgres`+`caddy`; Redis/worker opt-in via profile `queues`) | **Alvo definitivo de produção (ADR-004)** — instância real provisionada, recebendo tráfego; deploy automático via `deploy-oci.yml` pendente de ativação dos secrets SSH (ver `docs/deploy/oracle-cloud.md` §3.3), deploy manual via SSH funciona hoje | `docker-compose.oci.yml`, `docs/deploy/oracle-cloud.md` |
 | Render (monólito Express: API + estático do Vite) + Supabase (Postgres/Storage) + Cloudflare (DNS/CDN) | **Ativo, fallback durante a transição** — continua recebendo tráfego real hoje; não desligar antes do cutover Oracle validado | `render.yaml`, `docs/deploy/producao.md` |
 | Kubernetes/Helm/ArgoCD (`k8s/`, `charts/`, `argocd/`) | Aspiracional/legado, nenhum cluster real registrado | `charts/README.md`, `argocd/README.md`, `k8s/README.md` |
 

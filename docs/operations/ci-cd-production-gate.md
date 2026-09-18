@@ -20,7 +20,7 @@ repositório que publica uma imagem ou executa um deploy:
 ### O que já existia de correto
 
 - `ci.yml` ("Central Birth Hub 360 Release") é o Quality Gate canônico e único — ver seção 3.
-- `docker-publish.yml` e `deploy-oci.yml` já tinham `workflow_run: workflows: ['Central Birth Hub
+- `docker-publish.yml` e `produção` já tinham `workflow_run: workflows: ['Central Birth Hub
   360 Release'], types: [completed]` para o caminho automático — a proteção existia, mas só nesse
   caminho.
 
@@ -31,13 +31,13 @@ repositório que publica uma imagem ou executa um deploy:
 | `production.yaml` | `workflow_dispatch` sem checar CI nenhum; rodava sua própria suíte de testes, mais estreita que `ci.yml` (faltava Prettier, testes arquiteturais, deriva de OpenAPI, golden dataset) | Um disparo manual publicava em `ghcr.io` um commit que nunca passou (ou passou e falhou) pelo Quality Gate completo |
 | `cd-homolog.yml` | Mesmo padrão de `production.yaml` | Mesmo risco, para homologação |
 | `docker-publish.yml` | `workflow_dispatch` publicava sem checar CI (só o caminho automático `workflow_run` era protegido) | Publish manual driblava o gate |
-| `deploy-oci.yml` (**produção real, self-hosted Oracle Cloud**) | Mesmo gap de `workflow_dispatch`, **e um bug real no próprio caminho automático**: o passo de deploy fazia `git fetch origin main && git reset --hard origin/main` na instância — mesmo quando disparado por `workflow_run` já carregando o SHA exato validado (`head_sha`). Se um commit novo chegasse em `main` entre o CI terminar e o deploy rodar, a instância recebia HEAD atual (não validado), não o SHA que passou no CI | Race condition real: o commit efetivamente implantado em produção podia divergir do commit que o CI aprovou — exatamente o cenário da secao 12 do PROMPT 10.2 |
+| `produção` (**produção real, self-hosted produção**) | Mesmo gap de `workflow_dispatch`, **e um bug real no próprio caminho automático**: o passo de deploy fazia `git fetch origin main && git reset --hard origin/main` na instância — mesmo quando disparado por `workflow_run` já carregando o SHA exato validado (`head_sha`). Se um commit novo chegasse em `main` entre o CI terminar e o deploy rodar, a instância recebia HEAD atual (não validado), não o SHA que passou no CI | Race condition real: o commit efetivamente implantado em produção podia divergir do commit que o CI aprovou — exatamente o cenário da secao 12 do PROMPT 10.2 |
 | `render.yaml` (Render, **produção real, fallback ativo durante a transição para Oracle**) | `autoDeployTrigger: commit` — Render observa push em `main` diretamente pela plataforma, sem nenhuma relação com GitHub Actions/CI | **Não corrigido nesta onda** — ver seção 8 |
 
 ### O que foi corrigido
 
 Novo padrão, aplicado a `production.yaml`, `cd-homolog.yml`, `docker-publish.yml` e
-`deploy-oci.yml`:
+`produção`:
 
 ```
 workflow_dispatch (inputs.sha obrigatório)          workflow_run (ci.yml, head_sha)
@@ -84,7 +84,7 @@ promoção usa para consultar esse resultado — consulta `checks.listForRef` pa
 ## 4. SHA como identidade da release
 
 Todo workflow de promoção (`production.yaml`, `cd-homolog.yml`, `docker-publish.yml`,
-`deploy-oci.yml`) resolve um SHA explícito antes de qualquer outra coisa:
+`produção`) resolve um SHA explícito antes de qualquer outra coisa:
 
 - Caminho automático (`workflow_run`): `github.event.workflow_run.head_sha` — o SHA exato que
   disparou e concluiu `ci.yml`.
@@ -98,7 +98,7 @@ Esse SHA (nunca `main`/`develop`/`latest`/HEAD implícito) é o que:
 - é usado no `checkout@.../with: ref:` de cada job de build/publish;
 - vira a tag da imagem Docker (`ghcr.io/.../<sha>`, além de `latest` como alias administrativo —
   nunca a única tag);
-- é o que `deploy-oci.yml` faz `git checkout --detach` na instância, em vez de
+- é o que `produção` faz `git checkout --detach` na instância, em vez de
   `git reset --hard origin/main`.
 
 ## 5. Estratégia de artifact
@@ -110,8 +110,8 @@ promoções reaproveitam a mesma imagem). Isso é uma limitação conhecida, nã
 por ser uma mudança de arquitetura maior (mover o build de imagem para dentro de `ci.yml` e fazer
 os três workflows de promoção apenas fazer pull/retag) — ver seção 9 (riscos residuais).
 
-`deploy-oci.yml` (a produção real hoje) **não usa nenhuma dessas imagens ghcr.io** — a instância
-Oracle Cloud faz `docker compose ... up -d --build`, ou seja, builda localmente na própria
+`produção` (a produção real hoje) **não usa nenhuma dessas imagens ghcr.io** — a instância
+produção faz `docker compose ... up -d --build`, ou seja, builda localmente na própria
 instância a partir do código-fonte no SHA validado. Isso é consistente ("mesmo SHA, mesmo
 conteúdo"), mas não é "promote", é "rebuild local a partir de um SHA aprovado" — funcionalmente
 seguro (o conteúdo é idêntico ao que passou no CI), mas não elimina o tempo de build redundante que
@@ -129,7 +129,7 @@ prático de homologação sem CI verde era teórico até esta correção, não u
 
 Dois caminhos com tráfego real hoje, tratados de forma muito diferente por esta correção:
 
-### 7.1. Oracle Cloud (`deploy-oci.yml`) — alvo definitivo (ADR-004), corrigido nesta onda
+### 7.1. produção (`produção`) — alvo definitivo (), corrigido nesta onda
 
 - Automático: `workflow_run` em `ci.yml` (branch `main`) → `resolve-sha` valida o `head_sha` →
   `deploy` faz SSH na instância, `git fetch`/`checkout --detach` do SHA exato, roda
@@ -184,7 +184,7 @@ o push sozinho já é suficiente.
 autoDeployTrigger: off  # mesmo padrão já usado no worker (linha 156)
 ```
 
-mais um novo workflow `.github/workflows/deploy-render.yml`, no mesmo padrão de `deploy-oci.yml`
+mais um novo workflow `.github/workflows/deploy-render.yml`, no mesmo padrão de `produção`
 (`workflow_run` em `ci.yml` + `workflow_dispatch` com SHA obrigatório, ambos passando por
 `require-ci-green`), cujo passo final chama o Deploy Hook do Render
 (`secrets.RENDER_DEPLOY_HOOK_URL`, a cadastrar).
@@ -221,8 +221,8 @@ mais um novo workflow `.github/workflows/deploy-render.yml`, no mesmo padrão de
   (`fix(ci): impedir que deploy manual pule o gate do ci.yml`, branch
   `claude/platform-maturity-assessment-xu2zm0`) cobrindo só `production.yaml`/`cd-homolog.yml` com
   uma abordagem equivalente mas mais estreita (mantém a suíte de testes duplicada, não toca
-  `deploy-oci.yml`/`docker-publish.yml`, sem a action reutilizável). O dono do repositório precisa
-  decidir qual PR mergear (recomendação: esta onda, por cobrir o bug real de `deploy-oci.yml` e
+  `produção`/`docker-publish.yml`, sem a action reutilizável). O dono do repositório precisa
+  decidir qual PR mergear (recomendação: esta onda, por cobrir o bug real de `produção` e
   eliminar a duplicação de suíte de testes) — nenhum dos dois foi mergeado nem fechado
   unilateralmente por esta sessão.
 
@@ -238,7 +238,7 @@ CI/CD STATUS: NOT HARDENED
 PRODUCTION PROMOTION GATE: NO-GO
 ```
 
-Isso não desfaz o que foi corrigido — GitHub Actions (Oracle Cloud, ghcr.io, homologação) está
+Isso não desfaz o que foi corrigido — GitHub Actions (produção, ghcr.io, homologação) está
 hardened. É uma classificação honesta do estado combinado dos dois caminhos de produção reais.
 
 ## 11. Branch protection e GitHub Environment protection — MANUAL VERIFICATION REQUIRED
@@ -268,14 +268,14 @@ write` ficam restritos aos jobs que de fato publicam imagem/SARIF.
 | Credencial | Uso | Classificação |
 | --- | --- | --- |
 | `secrets.GITHUB_TOKEN` (login em `ghcr.io`) | Publish de imagem | **CURRENTLY SAFE** — token de vida curta, escopado automaticamente por job |
-| `secrets.OCI_SSH_PRIVATE_KEY` | SSH para a instância Oracle Cloud | **HARDENING RECOMMENDED** — chave estática de longa duração. OIDC não se aplica diretamente a SSH tradicional; alternativa real seria trocar o modelo de deploy (ex.: um agente rodando na instância que faz *pull* via API autenticada por OIDC em vez de a Action fazer *push* via SSH) — mudança de arquitetura maior, fora do escopo desta onda. Mitigação já em vigor: a documentação já recomenda uma chave dedicada a este workflow, não a chave pessoal do operador. |
+| `secrets.OCI_SSH_PRIVATE_KEY` | SSH para a instância produção | **HARDENING RECOMMENDED** — chave estática de longa duração. OIDC não se aplica diretamente a SSH tradicional; alternativa real seria trocar o modelo de deploy (ex.: um agente rodando na instância que faz *pull* via API autenticada por OIDC em vez de a Action fazer *push* via SSH) — mudança de arquitetura maior, fora do escopo desta onda. Mitigação já em vigor: a documentação já recomenda uma chave dedicada a este workflow, não a chave pessoal do operador. |
 
 ## 14. Rollback
 
-`deploy-oci.yml` agora captura `PREVIOUS_SHA` (o `git rev-parse HEAD` da instância *antes* do
+`produção` agora captura `PREVIOUS_SHA` (o `git rev-parse HEAD` da instância *antes* do
 checkout do novo SHA) e publica no `GITHUB_STEP_SUMMARY` de cada execução. Não existe hoje um
 comando de rollback de um clique — o procedimento manual (`infrastructure/observability/
-RUNBOOK.md` §6 "Rollback via Oracle Cloud") é: disparar `deploy-oci.yml` via `workflow_dispatch`
+RUNBOOK.md` §6 "Rollback via produção") é: disparar `produção` via `workflow_dispatch`
 com `sha` = o `PREVIOUS_SHA` registrado no summary do deploy anterior. Como esse SHA precisa ter um
 `build` verde para o gate aceitar — e via de regra já teve, por já ter sido implantado antes —
 isso funciona sem exceção especial no gate.
@@ -294,7 +294,7 @@ quebrado por causa própria não relacionada ao código a implantar):
    contornar — isso é indistinguível de reintroduzir o bug que esta onda fechou.
 2. O procedimento correto é **humano, explícito e registrado**: o dono do repositório (ou quem
    tiver a mesma permissão) executa o deploy manualmente fora do GitHub Actions (SSH direto na
-   instância Oracle Cloud, seguindo `scripts/deploy-oci.sh` manualmente — mesmo caminho descrito em
+   instância produção, seguindo `scripts/deploy-oci.sh` manualmente — mesmo caminho descrito em
    `docs/deploy/oracle-cloud.md` seção 3.2 "deploy manual"), com:
    - justificativa por escrito (o que está quebrado, por que não pode esperar o CI);
    - responsável identificado;
@@ -321,4 +321,4 @@ permanente):
 | B — CI falho | `a52d1db0…` (PR #501, run 34933345072, conclusion `failure`) | DEPLOY BLOCKED | ✅ `"DEPLOY BLOCKED — o check \"build\" para a52d1db0… não passou (conclusion=failure). CI STATUS FOR SHA = failure."` ([run](https://github.com/maarkss1/Birthub-360/actions/runs/34962095688/job/104357828532)) |
 | C — sem execução de CI | `76a768c8…` (commit só nesta branch de feature, nunca disparou `push`/`pull_request` em `ci.yml`) | DEPLOY BLOCKED | ✅ `"DEPLOY BLOCKED — nenhuma execução do check \"build\" encontrada... CI STATUS FOR SHA = NOT FOUND."` ([run](https://github.com/maarkss1/Birthub-360/actions/runs/34962095688/job/104357828744)) |
 | D — SHA aprovado ≠ HEAD atual | Estrutural | Deploy usa o SHA aprovado, nunca HEAD | ✅ Garantido pela arquitetura: todo checkout de build/deploy usa `needs.resolve-sha.outputs.sha` explicitamente — nenhum workflow lê `github.sha`/`HEAD` para decidir o que implantar |
-| E — artifact inexistente/divergente | N/A | Deploy bloqueado | Coberto indiretamente: o build da imagem/checkout do SHA falha naturalmente antes de qualquer push se o SHA não existir no remote (`git cat-file -e` explícito em `deploy-oci.yml`) |
+| E — artifact inexistente/divergente | N/A | Deploy bloqueado | Coberto indiretamente: o build da imagem/checkout do SHA falha naturalmente antes de qualquer push se o SHA não existir no remote (`git cat-file -e` explícito em `produção`) |

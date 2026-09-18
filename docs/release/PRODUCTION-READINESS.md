@@ -14,7 +14,7 @@
 
 | Data | O que mudou | Autor/origem |
 |---|---|---|
-| **2026-09-11** | **Consolidação (ACH-08-06).** Os 3 documentos de prontidão de release que existiam fragmentados e nenhum refletindo o estado atual (`docs/release/PRODUCTION-READINESS.md` de 2026-08-15 só sobre o caminho LGPD, `docs/release/FINALIZATION_REPORT_2026-09-04.md` de 2026-09-04, e o placeholder de 2 linhas `docs/reports/RELATORIO_PRODUCTION_READINESS.md`, de uma onda ainda mais antiga) foram unificados neste único arquivo, com matriz de gates rodada de novo contra o HEAD atual. Os dois documentos anteriores **não foram apagados** — outros arquivos do repositório os referenciam por caminho direto (`docs/deploy/oracle-cloud.md`, `docs/ADR/ADR-004-Producao-Oracle-Cloud.md`, `docs/security/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`) — mas agora estão marcados explicitamente como histórico, não como fonte de verdade corrente. Ver seção "Histórico e consolidação". | Sessão Claude Code (item ACH-08-06 do relatório de auditoria multiagente) |
+| **2026-09-11** | **Consolidação (ACH-08-06).** Os 3 documentos de prontidão de release que existiam fragmentados e nenhum refletindo o estado atual (`docs/release/PRODUCTION-READINESS.md` de 2026-08-15 só sobre o caminho LGPD, `docs/release/FINALIZATION_REPORT_2026-09-04.md` de 2026-09-04, e o placeholder de 2 linhas `docs/reports/RELATORIO_PRODUCTION_READINESS.md`, de uma onda ainda mais antiga) foram unificados neste único arquivo, com matriz de gates rodada de novo contra o HEAD atual. Os dois documentos anteriores **não foram apagados** — outros arquivos do repositório os referenciam por caminho direto (`docs/deploy/oracle-cloud.md`, `docs/ADR/-Producao-Oracle-Cloud.md`, `docs/security/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`) — mas agora estão marcados explicitamente como histórico, não como fonte de verdade corrente. Ver seção "Histórico e consolidação". | Sessão Claude Code (item ACH-08-06 do relatório de auditoria multiagente) |
 | 2026-09-04 | Relatório de finalização completo (triagem de PRs #339-342, 16 bugs corrigidos, gates completos rodados contra Docker real, veredito **RELEASE APPROVED** no commit `2d0a25a`/`ef5f1f0`, PR #344). Ficou congelado como registro de sessão, nunca atualizado depois. | `docs/release/FINALIZATION_REPORT_2026-09-04.md` (preservado como histórico) |
 | 2026-08-15 | Primeira versão deste arquivo — escopo único: caminho operacional de solicitação de titular (LGPD), não a checklist de release completa. | Agente 08 (Onda 8) |
 
@@ -144,8 +144,8 @@ Não re-derivado nesta rodada — pontos de verdade já existentes e válidos:
 
 - **Rollback de migração Prisma/Postgres:** `docs/security/runbooks/MIGRATION_ROLLBACK.md`
   (runbook real, referenciado por `prisma/AGENTS.md`).
-- **Deploy/infra de produção (Oracle Cloud):** `docs/deploy/oracle-cloud.md`,
-  `docs/ADR/ADR-004-Producao-Oracle-Cloud.md`.
+- **Deploy/infra de produção (produção):** `docs/deploy/oracle-cloud.md`,
+  `docs/ADR/-Producao-Oracle-Cloud.md`.
 - **Deploy Render (histórico, migração Neon):** `docs/deploy/render.md`.
 
 ## 8. Decisão de release
@@ -165,7 +165,7 @@ fossem este documento:
 - **`docs/release/FINALIZATION_REPORT_2026-09-04.md`** — relatório completo de finalização de
   release de 2026-09-04 (triagem de PRs, 16 bugs corrigidos com causa raiz, gates completos contra
   Docker real, veredito RELEASE APPROVED). Referenciado por `docs/deploy/oracle-cloud.md`,
-  `docs/ADR/ADR-004-Producao-Oracle-Cloud.md` e `docs/security/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`.
+  `docs/ADR/-Producao-Oracle-Cloud.md` e `docs/security/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`.
 - **`docs/reports/RELATORIO_PRODUCTION_READINESS.md`** — placeholder de 2 linhas de uma onda
   anterior a 08-15, já documentado como desatualizado pelo índice `docs/reports/README.md` (nota
   DOC-003: "vários já estão desatualizados... não devem ser tratados como fonte de verdade").

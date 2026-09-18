@@ -50,8 +50,7 @@ Node/Express + Vite (localhost:3005)
 O `docker-compose.yml` é a base da infraestrutura local de apoio (Redis, Meilisearch, MinIO, LiteLLM, Ollama). O storage MinIO cria automaticamente o bucket `prospector-assets`.
 
 **Banco de dados (desde 2026-09-08):** a aplicação NÃO usa mais Postgres local nem em Docker. Toda
-máquina de desenvolvimento aponta `DATABASE_URL` diretamente para o Postgres da instância Oracle
-Cloud (ADR-004), com TLS — ver `docs/deploy/oracle-cloud.md` seção 4.2 para a URL, a senha e a
+máquina de desenvolvimento aponta `DATABASE_URL` diretamente para o Postgres remoto - ver .env.example.
 liberação do IP na Security List. O container antigo (porta 5434) ficou opt-in em
 `docker-compose.postgres-local.yml`, usado só pelos testes de integração/E2E locais e pelos
 overlays opcionais (`langfuse`, `n8n`, `superset`...).

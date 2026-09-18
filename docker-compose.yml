@@ -1,8 +1,8 @@
 # Stack local de apoio (Redis, Meilisearch, MinIO, LiteLLM, Ollama).
 #
-# NÃO há mais Postgres aqui, de propósito (decisão do dono do produto, 2026-09-08): a aplicação
-# aponta DATABASE_URL DIRETAMENTE para o Postgres da instância Oracle Cloud (ADR-004) — ver
-# .env.example e docs/deploy/oracle-cloud.md seção 4.2. O serviço antigo (porta 5434) vive em
+# NÃO há mais Postgres aqui, de propósito: a aplicação
+# aponta DATABASE_URL DIRETAMENTE para o Postgres remoto — ver
+# .env.example. O serviço antigo (porta 5434) vive em
 # docker-compose.postgres-local.yml, opt-in, só para testes de integração locais e para os overlays
 # opcionais que guardam metadata próprio nele (langfuse, n8n, superset...).
 services:
