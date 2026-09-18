@@ -1,27 +1,57 @@
-import { LayoutGrid, type LucideIcon } from 'lucide-react';
 /* eslint-disable jsx-a11y/no-autofocus -- campo revelado por ação do usuário, ver comentário no local de uso */
 
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   AlertCircle,
   Building2,
+  CalendarDays,
+  Clock,
+  LayoutGrid,
   ListChecks,
   Loader2,
   Lock,
+  type LucideIcon,
   Mail,
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { BrandEmblemBadge } from '../../../components/brand/BrandEmblemBadge';
 import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
-import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic } from '../../../lib/motion';
+import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../../../lib/motion';
 
-// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
-// o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
+// Cor de cada pilar (brand.ts `pillars`: Inteligência, Conexão, Execução) — os três feixes da
+// órbita de 5 cores usados neste fluxo (dourado/azul/íris; vermelho e rosa ficam para o halo
+// ambiente e o botão primário, ver mais abaixo). Não é decoração: cada feature carrega a cor do
+// pilar que ela representa, mesma ordem em ConnectingCircles logo abaixo.
+const FEATURES = [
+  {
+    icon: Building2,
+    accent: 'brand' as const,
+    text: 'Inteligência Comercial: prospecção com CNPJ oficial e decisores mapeados',
+  },
+  {
+    icon: ListChecks,
+    accent: 'orbit-blue' as const,
+    text: 'Conexão & Pipeline: automações, propostas e integrações',
+  },
+  {
+    icon: Sparkles,
+    accent: 'iris' as const,
+    text: 'Execução em Vendas: Dojo de IA e aceleração de receita',
+  },
+] as const;
+
+// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam FEATURES acima (mesma
+// cor de pilar); o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar
+// (src/components/layout/Sidebar.tsx), literalmente o destino pra onde os três primeiros
+// "círculos" se conectam.
 const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'orbit-blue' | 'iris' }[] = [
   { icon: Building2, accent: 'brand' },
   { icon: ListChecks, accent: 'orbit-blue' },
@@ -144,9 +174,18 @@ export function LoginScreen() {
 
   // Leve inclinação 3D no emblema da marca (painel esquerdo, desktop) ao mover o mouse — mesmo
   // hook premium de src/lib/motion.ts, já com guarda de prefers-reduced-motion embutida.
-  
+  const brandTilt = useTilt(6);
+
   // Relógio e calendário ao vivo do painel do formulário: reforçam a sensação de central
   // operando agora.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const weekday = format(now, 'EEEE', { locale: ptBR });
+  const dateLabel = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}, ${format(now, "dd 'de' MMMM", { locale: ptBR })}`;
+  const timeLabel = format(now, 'HH:mm:ss');
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -256,21 +295,83 @@ export function LoginScreen() {
   // (a mesma fonte de verdade de cor do resto do app, nunca hex digitado à mão), em vez dos
   // tokens de tema.
   const inputClass =
-    'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
+    'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
 
   return (
-<div className="relative min-h-screen overflow-hidden bg-bg">
-      {/* Atmosfera — halos suaves nas 5 cores da marca, nunca como fundo sólido com texto em
-          cima (regra #3 da constituição): só glow difuso atrás do conteúdo. */}
-      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-        <div className="absolute -top-32 -right-24 h-[420px] w-[420px] rounded-full bg-brand/12 blur-[120px]" />
-        <div className="absolute top-1/3 -left-32 h-[380px] w-[380px] rounded-full bg-iris/10 blur-[120px]" />
-        <div className="absolute -bottom-40 right-1/4 h-[360px] w-[360px] rounded-full bg-pink/8 blur-[120px]" />
-      </div>
+    <div
+      className="relative flex min-h-screen overflow-hidden"
+      style={{ ['--login-accent' as string]: BRAND.colors.brand }}
+    >
+      {/* Painel esquerdo — cosmos escuro fixo, com o símbolo real da marca (BirthHubLogo, gerado
+          a partir do brand book) no centro, substituindo o logo de outra empresa que estava
+          nesta posição no mockup de referência. Hero split-screen é exceção justificada à
+          regra #2 (seção 5 da constituição): pedido explícito do usuário — ver .claude/PILOTS.md. */}
+      <aside
+        className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center"
+        style={{ backgroundColor: BRAND.colors.obsidian }}
+      >
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div
+            className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full blur-[120px]"
+            style={{ backgroundColor: BRAND.colors.brand, opacity: 0.14 }}
+          />
+          <div
+            className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full blur-[120px]"
+            style={{ backgroundColor: BRAND.colors.iris, opacity: 0.14 }}
+          />
+        </div>
 
-<main className="relative mx-auto max-w-6xl px-6 py-4 md:py-6">
-        <div className="relative z-10 mx-auto flex max-w-md flex-col items-center text-center">
-          <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
+        <motion.div
+          ref={brandTilt.ref as React.RefObject<HTMLDivElement>}
+          style={brandTilt.style}
+          onPointerMove={brandTilt.onPointerMove}
+          onPointerLeave={brandTilt.onPointerLeave}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative flex flex-col items-center px-10 text-center"
+        >
+          <BrandEmblemBadge className="h-52 w-52" title="Birth Hub 360°" />
+          {/* Não é <h1>: o título de página real é "Acesso Executivo", no painel do formulário —
+              dois <h1> na mesma tela quebraria a hierarquia de heading (a11y, seção 10). */}
+          <p className="mt-8 font-display text-4xl font-extrabold tracking-tight">Birth Hub 360°</p>
+        </motion.div>
+      </aside>
+
+      {/* Painel direito — formulário claro fixo (mesma justificativa de cor acima). */}
+      <div
+        className="relative flex flex-1 flex-col items-center justify-center px-6 py-10"
+        style={{ backgroundColor: BRAND.colors.blossom }}
+      >
+        <div className="w-full max-w-md">
+          {/* Emblema mobile-only — desktop já mostra o emblema grande no painel esquerdo. */}
+          <div className="mb-6 flex justify-center lg:hidden">
+            <BrandEmblemBadge className="h-16 w-16" title="Birth Hub 360°" />
+          </div>
+
+          {/* Relógio e calendário ao vivo */}
+          <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-bold text-slate-600 lg:justify-start">
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarDays size={14} strokeWidth={2.5} aria-hidden="true" />
+              {dateLabel}
+            </span>
+            <span className="h-1 w-1 rounded-full bg-current opacity-40" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 tabular-nums" aria-live="off">
+              <Clock size={14} strokeWidth={2.5} aria-hidden="true" />
+              {timeLabel}
+            </span>
+          </div>
+
+          <div className="mb-6">
+            <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
+          </div>
+
+          <h1 className="text-center font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl lg:text-left">
+            Acesso Executivo
+          </h1>
+          <p className="mt-2 text-center text-sm text-slate-600 lg:text-left">
+            Conecte-se à rede neural de vendas e liderança.
+          </p>
 
           <motion.div
             initial={shouldReduceMotion ? false : 'hidden'}
@@ -342,8 +443,8 @@ export function LoginScreen() {
                   )}
 
                   <p className="text-sm text-slate-600">
-                    Informe seu e-mail corporativo para receber as instruções de recuperação de
-                    senha.
+                    Informe o e-mail corporativo da sua conta. Se ele existir, enviaremos um link
+                    para redefinir a senha.
                   </p>
 
                   <div>
@@ -351,7 +452,7 @@ export function LoginScreen() {
                       htmlFor="login-forgot-email"
                       className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                     >
-                      E-mail Corporativo
+                      Credencial Institucional
                     </label>
                     <div className="relative">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -364,7 +465,7 @@ export function LoginScreen() {
                         onChange={(e) => handleEmailChange(e.target.value)}
                         className={inputClass}
                         required
-                        /* campo revelado por ação do usuário ("Esqueceu a senha?"), não
+                        /* campo revelado por ação do usuário ("Protocolo de recuperação"), não
                          focus automático de carregamento de página; foca o único campo do
                          sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
                          WAI-ARIA Authoring Practices. */
@@ -391,7 +492,7 @@ export function LoginScreen() {
                     {isSubmitting ? (
                       <Loader2 className="animate-spin" size={18} />
                     ) : (
-                      'Enviar Link de Recuperação'
+                      'Enviar link de redefinição'
                     )}
                   </motion.button>
 
@@ -445,7 +546,7 @@ export function LoginScreen() {
                     htmlFor="login-email"
                     className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
-                    E-mail Corporativo
+                    Credencial Institucional
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -457,7 +558,7 @@ export function LoginScreen() {
                       value={email}
                       onChange={(e) => handleEmailChange(e.target.value)}
                       className={`${inputClass} rounded-t-lg`}
-                      placeholder="seu.email@empresa.com.br"
+                      placeholder="executivo@birthhub360.com.br"
                       required
                     />
                   </div>
@@ -468,7 +569,7 @@ export function LoginScreen() {
                     htmlFor="login-password"
                     className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
                   >
-                    Senha de Acesso
+                    Chave de Segurança
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
@@ -500,7 +601,7 @@ export function LoginScreen() {
                         className="h-4 w-4 cursor-pointer rounded border-slate-300"
                         style={{ accentColor: BRAND.colors.brand }}
                       />
-                      Lembrar de mim
+                      Manter conexão ativa
                     </label>
                     <button
                       type="button"
@@ -510,7 +611,7 @@ export function LoginScreen() {
                       }}
                       className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
                     >
-                      Esqueceu a senha?
+                      Protocolo de recuperação?
                     </button>
                   </div>
                 )}
@@ -534,19 +635,50 @@ export function LoginScreen() {
                   ) : isSignUp ? (
                     'Criar nova conta'
                   ) : (
-                    'Acessar Plataforma'
+                    'Iniciar link neural'
                   )}
                 </motion.button>
               </form>
             )}
           </motion.div>
 
-          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-600">
             <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
-            Ambiente Seguro • Criptografia 256-bit
+            Protegido por Criptografia Quântica
           </div>
+
+          {/* Prova de valor — os mesmos 3 pilares do painel esquerdo (mesma FEATURES), agora
+              sempre visível aqui: o painel esquerdo em desktop é só emblema + nome, então este é
+              o único lugar em qualquer breakpoint onde os pilares aparecem como texto lido. */}
+          <section className="relative z-10 mt-10" aria-labelledby="login-features-heading">
+            <div className="mb-4 flex items-center gap-2">
+              <h2
+                id="login-features-heading"
+                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-600"
+              >
+                O que você vai encontrar
+              </h2>
+              <span
+                className="h-px flex-1 bg-gradient-to-r from-slate-300 to-transparent"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              {FEATURES.map(({ icon: Icon, text }) => (
+                <div
+                  key={text}
+                  className="flex flex-col items-start gap-3 rounded-card border border-slate-200 bg-white p-5"
+                >
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span className="text-sm leading-relaxed text-slate-600">{text}</span>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

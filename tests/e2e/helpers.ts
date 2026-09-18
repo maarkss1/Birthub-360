@@ -66,7 +66,7 @@ export async function signUp(
   // caminho real que um usuário (ou o próprio LoginScreen em modo de teste) percorre.
   await page.goto('/login?signup=1');
   await page.getByPlaceholder('Ex: Marcelo Nascimento').fill(resolvedName);
-  await page.getByLabel(/E-mail Corporativo|Credencial Institucional/i).fill(email);
+  await page.getByLabel('Credencial Institucional').fill(email);
   await page.getByPlaceholder('••••••••').fill(password);
   await page.getByRole('button', { name: /Criar nova conta/ }).click();
 
