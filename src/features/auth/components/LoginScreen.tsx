@@ -26,32 +26,8 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
 import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../../../lib/motion';
 
-// Cor de cada pilar (brand.ts `pillars`: Inteligência, Conexão, Execução) — os três feixes da
-// órbita de 5 cores usados neste fluxo (dourado/azul/íris; vermelho e rosa ficam para o halo
-// ambiente e o botão primário, ver mais abaixo). Não é decoração: cada feature carrega a cor do
-// pilar que ela representa, mesma ordem em ConnectingCircles logo abaixo.
-const FEATURES = [
-  {
-    icon: Building2,
-    accent: 'brand' as const,
-    text: 'Inteligência Comercial: prospecção com CNPJ oficial e decisores mapeados',
-  },
-  {
-    icon: ListChecks,
-    accent: 'orbit-blue' as const,
-    text: 'Conexão & Pipeline: automações, propostas e integrações',
-  },
-  {
-    icon: Sparkles,
-    accent: 'iris' as const,
-    text: 'Execução em Vendas: Dojo de IA e aceleração de receita',
-  },
-] as const;
-
-// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam FEATURES acima (mesma
-// cor de pilar); o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar
-// (src/components/layout/Sidebar.tsx), literalmente o destino pra onde os três primeiros
-// "círculos" se conectam.
+// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
+// o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
 const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'orbit-blue' | 'iris' }[] = [
   { icon: Building2, accent: 'brand' },
   { icon: ListChecks, accent: 'orbit-blue' },
@@ -646,37 +622,6 @@ export function LoginScreen() {
             <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
             Protegido por Criptografia Quântica
           </div>
-
-          {/* Prova de valor — os mesmos 3 pilares do painel esquerdo (mesma FEATURES), agora
-              sempre visível aqui: o painel esquerdo em desktop é só emblema + nome, então este é
-              o único lugar em qualquer breakpoint onde os pilares aparecem como texto lido. */}
-          <section className="relative z-10 mt-10" aria-labelledby="login-features-heading">
-            <div className="mb-4 flex items-center gap-2">
-              <h2
-                id="login-features-heading"
-                className="font-display text-sm font-black uppercase tracking-[0.14em] text-slate-600"
-              >
-                O que você vai encontrar
-              </h2>
-              <span
-                className="h-px flex-1 bg-gradient-to-r from-slate-300 to-transparent"
-                aria-hidden="true"
-              />
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {FEATURES.map(({ icon: Icon, text }) => (
-                <div
-                  key={text}
-                  className="flex flex-col items-start gap-3 rounded-card border border-slate-200 bg-white p-5"
-                >
-                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-slate-200 bg-slate-50">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <span className="text-sm leading-relaxed text-slate-600">{text}</span>
-                </div>
-              ))}
-            </div>
-          </section>
         </div>
       </div>
     </div>
