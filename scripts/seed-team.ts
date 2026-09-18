@@ -9,7 +9,7 @@ const ORG_NAME = 'Birth Hub 360';
 // muda por deploy — o hardcode anterior ("marcelo.nascimento@atlasgr.com.br") era um resquício da
 // marca antiga (Atlas GR) e não correspondia ao usuário real desta instância. Mantém o mesmo
 // default por compatibilidade com deploys já existentes que não definem essas variáveis.
-const DEFAULT_ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim() || 'marcelo.nascimento@atlasgr.com.br';
+const DEFAULT_ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim() || 'marcelinmark@gmail.com';
 const DEFAULT_ADMIN_NAME = process.env.ADMIN_NAME?.trim() || 'Marcelo Nascimento';
 const DEFAULT_ADMIN_ROLE: UserRole = 'ADMIN';
 const MIN_ADMIN_PASSWORD_LENGTH = 16;
