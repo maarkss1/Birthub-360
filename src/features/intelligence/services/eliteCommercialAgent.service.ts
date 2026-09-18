@@ -215,8 +215,9 @@ export class EliteCommercialAgentService {
       }
     } else if (channel === 'WHATSAPP') {
       try {
-        const { sendWhatsAppMessage } =
-          await import('../../integrations/whatsapp/whatsapp.service.js');
+        const { sendWhatsAppMessage } = await import(
+          '../../integrations/whatsapp/whatsapp.service.js'
+        );
         const targetPhone = payload?.phone ?? '+5511999999999';
         const messageContent = payload?.notes ?? 'Olá, gostaria de apresentar a Birth Hub 360.';
 

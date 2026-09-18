@@ -161,4 +161,64 @@ router.post('/prospect', commercialRoles, async (req: Request, res: Response) =>
   }
 });
 
+/**
+ * POST /api/commercial-agent/nba/:recommendationId/execute
+ * Executa a Próxima Melhor Ação
+ */
+router.post(
+  '/nba/:recommendationId/execute',
+  commercialRoles,
+  async (req: Request, res: Response) => {
+    try {
+      const recommendationId = String(req.params.recommendationId);
+      const authReq = req as AuthRequest;
+      const userId = authReq.user?.id ?? 'default-user';
+
+      const { AdaptiveCadenceService } = await import('../cadence/adaptiveCadence.service.js');
+      const cadenceService = new AdaptiveCadenceService();
+
+      // Simulate event triggering execution
+      await cadenceService.handleInteractionEvent(req.body.missionId, 'ACTION_EXECUTED_MANUALLY', {
+        recommendationId,
+        actorId: userId,
+      });
+
+      return res.json({ success: true, message: 'Executado via Adaptive Cadence' });
+    } catch (error) {
+      return res.status(500).json({ success: false, error: 'Erro ao executar NBA' });
+    }
+  },
+);
+
+/**
+ * POST /api/commercial-agent/nba/:recommendationId/feedback
+ * Registra recusa/adiamento e reavalia a cadência
+ */
+router.post(
+  '/nba/:recommendationId/feedback',
+  commercialRoles,
+  async (req: Request, res: Response) => {
+    try {
+      const recommendationId = String(req.params.recommendationId);
+      const { decision, reason, missionId } = req.body;
+
+      const { prisma } = await import('../../../lib/prisma.js');
+      await prisma.nextBestActionRecommendation.update({
+        where: { id: recommendationId },
+        data: { status: decision, feedbackReason: reason },
+      });
+
+      const { AdaptiveCadenceService } = await import('../cadence/adaptiveCadence.service.js');
+      const cadenceService = new AdaptiveCadenceService();
+
+      // Aciona loop de feedback para gerar nova recomendação
+      await cadenceService.handleInteractionEvent(missionId, `ACTION_${decision}`, { reason });
+
+      return res.json({ success: true, message: 'Feedback registrado e cadência adaptada.' });
+    } catch (error) {
+      return res.status(500).json({ success: false, error: 'Erro ao processar feedback' });
+    }
+  },
+);
+
 export const eliteCommercialAgentRoutes = router;
