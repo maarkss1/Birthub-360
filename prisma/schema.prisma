@@ -290,7 +290,10 @@ model Company {
   // importado cria uma Company nova (sem dedupe entre Negócios do mesmo cliente — problema
   // pré-existente, não resolvido aqui), então duas linhas locais LEGITIMAMENTE podem apontar para
   // o mesmo `bitrixCompanyId` — uma constraint única quebraria essa importação.
-  bitrixCompanyId String?
+  bitrixCompanyId    String?
+  companyRegistryId  String?
+  companyRegistry    CompanyRegistry?    @relation(fields: [companyRegistryId], references: [id], onDelete: SetNull)
+  commercialMissions CommercialMission[]
 
   // Permite FKs compostas nas tabelas de Account Intelligence: uma linha tenant-scoped nunca
   // pode apontar para uma Company de outra organizacao, mesmo sob bypass administrativo.
@@ -310,6 +313,7 @@ model Company {
   @@index([legalName])
   @@index([tradeName])
   @@index([bitrixCompanyId])
+  @@index([companyRegistryId])
 }
 
 /// Snapshot rastreável e global. Só o importador com bypass de RLS pode gravar/publicar.
@@ -701,11 +705,12 @@ model Lead {
   organizationId              String?
   organization                Organization?                @relation(fields: [organizationId], references: [id])
 
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
-  deletedBy    String?
-  deleteReason String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime?
+  deletedBy          String?
+  deleteReason       String?
+  commercialMissions CommercialMission[]
 
   // Fecha a janela de corrida de duplicidade descrita no comentário de bitrixLeadId/bitrixDealId
   // acima: dois imports/exports concorrentes do MESMO registro Bitrix não conseguem mais criar
@@ -714,6 +719,7 @@ model Lead {
   // Postgres — leads sem vínculo Bitrix continuam livres para existir aos milhares sem restrição.
   @@unique([organizationId, bitrixLeadId])
   @@unique([organizationId, bitrixDealId])
+  @@unique([id, organizationId])
   @@index([organizationId])
   @@index([organizationId, status])
   @@index([organizationId, funnel])
@@ -892,7 +898,9 @@ model User {
   // Onda B2b (Agente 00 — Commercial AI OS): views salvas do pipeline CRM são pessoais — só o
   // próprio dono lê/edita/exclui (ver SavedView abaixo).
   savedViews               SavedView[]
+  commercialMissions       CommercialMission[]
 
+  @@unique([id, organizationId])
   @@index([organizationId])
   @@map("user")
 }
@@ -1008,16 +1016,15 @@ model Organization {
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
   /// organização nova silenciosamente. Comparado contra a soma de AILog.cost do mês corrente desta
   /// organização por assertOrgAiBudgetNotExceeded (src/lib/ai/budget.ts).
-  monthlyAiBudgetUsd            Float?
+  monthlyAiBudgetUsd          Float?
   /// DEC-09: teto mensal de gasto com providers de prospecção pagos (Apollo/Hunter, USD) desta
   /// organização. Nullable = SEM TETO, mesmo raciocínio do campo acima. Comparado contra o
   /// acumulado do mês corrente (Redis, ver providerBudget.ts) por assertProspectingBudgetNotExceeded.
-  monthlyProspectingBudgetUsd   Float?
-  commercialMissions            CommercialMission[]
-  nextBestActionRecommendations NextBestActionRecommendation[]
-  commercialMissionEvents       CommercialMissionEvent[]
-  missionScores                 MissionScore[]
-  missionAgentTraces            MissionAgentTrace[]
+  monthlyProspectingBudgetUsd Float?
+  commercialMissions          CommercialMission[]
+  commercialMissionEvents     CommercialMissionEvent[]
+  missionAgentTraces          MissionAgentTrace[]
+  missionAgentTraceEvidences  MissionAgentTraceEvidence[]
 }
 
 // ─── Comercial Inteligente (Revenue Command Center) ────────────────────────
@@ -1196,12 +1203,13 @@ model AccountIntelligenceSnapshot {
   status          IntelligenceSnapshotStatus @default(Partial)
   createdAt       DateTime                   @default(now())
 
-  signals         AccountSignal[]
-  decisionMakers  DecisionMaker[]
-  evidence        IntelligenceEvidence[]
-  scores          AccountScore[]
-  recommendations AccountRecommendation[]
-  relationships   EconomicRelationship[]
+  signals            AccountSignal[]
+  decisionMakers     DecisionMaker[]
+  evidence           IntelligenceEvidence[]
+  scores             AccountScore[]
+  recommendations    AccountRecommendation[]
+  relationships      EconomicRelationship[]
+  commercialMissions CommercialMission[]
 
   @@unique([organizationId, companyId, version])
   @@unique([id, organizationId, companyId])
@@ -1290,21 +1298,23 @@ model IntelligenceEvidence {
   snapshotId     String?
   snapshot       AccountIntelligenceSnapshot? @relation(fields: [snapshotId, organizationId, companyId], references: [id, organizationId, companyId], onDelete: Restrict)
 
-  subjectType  String
-  subjectId    String?
-  factKey      String
-  value        Json?
-  valueHash    String?
-  reference    String?
-  source       String
-  sourceUrl    String?
-  collectedAt  DateTime                 @default(now())
-  confidence   Float?
-  evidenceType IntelligenceEvidenceType
-  dedupeKey    String
-  createdAt    DateTime                 @default(now())
+  subjectType                String
+  subjectId                  String?
+  factKey                    String
+  value                      Json?
+  valueHash                  String?
+  reference                  String?
+  source                     String
+  sourceUrl                  String?
+  collectedAt                DateTime                    @default(now())
+  confidence                 Float?
+  evidenceType               IntelligenceEvidenceType
+  dedupeKey                  String
+  createdAt                  DateTime                    @default(now())
+  missionAgentTraceEvidences MissionAgentTraceEvidence[]
 
   @@unique([organizationId, companyId, dedupeKey])
+  @@unique([id, organizationId])
   @@index([organizationId, companyId, collectedAt(sort: Desc)])
   @@index([organizationId, companyId, evidenceType])
   @@index([organizationId, subjectType, subjectId])
@@ -1375,8 +1385,20 @@ model AccountRecommendation {
   statusReason          String?                     @db.Text
   createdAt             DateTime                    @default(now())
   updatedAt             DateTime                    @updatedAt
+  missionId             String?
+  mission               CommercialMission?          @relation(fields: [missionId, organizationId], references: [id, organizationId], onDelete: SetNull)
 
-  @@unique([organizationId, companyId, actionType, inputHash])
+  channel         RecommendationChannel?
+  confidence      Float?
+  decisionVersion String?
+
+  supersededAt                 DateTime?
+  supersededByRecommendationId String?
+  supersededBy                 AccountRecommendation?  @relation("Supersession", fields: [supersededByRecommendationId], references: [id])
+  supersedes                   AccountRecommendation[] @relation("Supersession")
+  supersededReason             String?                 @db.Text
+
+  @@unique([organizationId, companyId, actionType, decisionVersion, inputHash])
   // PARTIAL unique index — quando idempotencyKey esta preenchida, a unicidade e garantida por um
   // indice parcial (WHERE "idempotencyKey" IS NOT NULL) criado em
   // prisma/migrations/20260818100000_ldr_account_intelligence_foundation/migration.sql, que
@@ -3474,9 +3496,11 @@ model CadenceRun {
   createdBy   String?
   updatedAt   DateTime  @updatedAt
 
-  touchAttempts  CadenceTouchAttempt[]
-  calendarEvents CadenceCalendarEvent[]
+  touchAttempts      CadenceTouchAttempt[]
+  calendarEvents     CadenceCalendarEvent[]
+  commercialMissions CommercialMission[]
 
+  @@unique([id, organizationId])
   @@index([organizationId, status])
   /// PARTIAL unique index — a condição `WHERE "status" = 'Active'` vive só na migration SQL
   /// (`prisma/migrations/20260816120000_cadence_scheduling_signature/migration.sql`); a sintaxe
@@ -4784,66 +4808,163 @@ model AgentBuildProposal {
   @@index([organizationId, createdAt])
 }
 
-// --- ELITE COMMERCIAL AGENT ---
+// --- ELITE COMMERCIAL AGENT (FASE A0) ---
+
+enum CompanyRegistryEstablishmentType {
+  HEADQUARTERS
+  BRANCH
+}
+
+enum CompanyRegistryTaxRegime {
+  SIMPLES_MEI
+  SIMPLES_ME_EPP
+  NORMAL
+  UNKNOWN
+}
+
+model CompanyRegistry {
+  id String @id @default(cuid())
+
+  cnpj              String
+  cnpjRoot          String
+  establishmentType CompanyRegistryEstablishmentType
+
+  legalName String
+  tradeName String?
+
+  registrationStatus     String
+  registrationStatusDate DateTime?
+  legalNature            String?
+  size                   String?
+  shareCapital           Float?
+
+  primaryCnae    String?
+  secondaryCnaes String[]
+
+  city     String?
+  state    String?
+  ibgeCode String?
+
+  taxRegime      CompanyRegistryTaxRegime @default(UNKNOWN)
+  simplesOptant  Boolean?
+  simplesOptedAt DateTime?
+  meiOptant      Boolean?
+
+  sourceName     String
+  sourceVersion  String?
+  sourceSnapshot Json
+  retrievedAt    DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companies Company[]
+
+  @@unique([cnpj])
+  @@index([cnpjRoot])
+  @@index([legalName])
+  @@index([registrationStatus])
+}
+
+enum CommercialMissionStatus {
+  PLANNED
+  ACTIVE
+  WAITING_EVENT
+  ENGAGED
+  MEETING_BOOKED
+  QUALIFIED
+  NURTURING
+  EXHAUSTED
+  STOPPED
+  CONVERTED
+}
+
+enum CommercialMissionEventType {
+  EMAIL_SENT
+  EMAIL_OPENED
+  EMAIL_REPLIED
+  WHATSAPP_SENT
+  WHATSAPP_READ
+  WHATSAPP_REPLIED
+  CALL_ATTEMPTED
+  CALL_COMPLETED
+  MEETING_BOOKED
+  MEETING_COMPLETED
+  MANUAL_INTERACTION
+  OPPORTUNITY_CREATED
+  DEAL_WON
+  DEAL_LOST
+  MISSION_STATUS_CHANGED
+}
+
+enum CommercialMissionEventSourceType {
+  WHATSAPP_MESSAGE
+  VOICE_CALL_LOG
+  ACTIVITY
+  MANUAL
+  WEBHOOK
+  SYSTEM
+}
+
+enum MissionAgentName {
+  HUNTER
+  ENRICHER
+  GISELLE
+  PATRICIA
+  GUARDIAO
+  TAGARELA
+  NBA_ENGINE
+  ADAPTIVE_CADENCE
+}
+
+enum MissionDecisionKind {
+  RULE
+  LLM
+  FALLBACK
+  HUMAN_OVERRIDE
+}
+
+enum RecommendationChannel {
+  EMAIL
+  WHATSAPP
+  PHONE_VOICE
+  LINKEDIN
+  PROPOSAL_REVIEW
+}
 
 model CommercialMission {
   id             String       @id @default(cuid())
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String?
 
-  accountName      String
-  cnpj             String?
-  segment          String?
-  fleetSize        Int?
-  estimatedRevenue Float?
+  companyId String
+  company   Company @relation(fields: [companyId, organizationId], references: [id, organizationId], onDelete: Cascade)
 
-  status           String  @default("ACTIVE")
-  currentCadenceId String?
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId, organizationId], references: [id, organizationId], onDelete: SetNull)
+
+  ownerId String?
+  owner   User?   @relation(fields: [ownerId, organizationId], references: [id, organizationId], onDelete: SetNull)
+
+  status    CommercialMissionStatus @default(PLANNED)
+  objective String?                 @db.Text
+
+  strategySnapshotId String?
+  strategySnapshot   AccountIntelligenceSnapshot? @relation(fields: [strategySnapshotId, organizationId, companyId], references: [id, organizationId, companyId], onDelete: SetNull)
+
+  currentCadenceRunId String?     @unique
+  currentCadenceRun   CadenceRun? @relation(fields: [currentCadenceRunId, organizationId], references: [id, organizationId], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  recommendations NextBestActionRecommendation[]
   events          CommercialMissionEvent[]
-  score           MissionScore?
-  trace           MissionAgentTrace?
+  recommendations AccountRecommendation[]
+  agentTraces     MissionAgentTrace[]
 
+  @@unique([id, organizationId])
   @@index([organizationId, status])
-}
-
-model NextBestActionRecommendation {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  missionId String
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
-
-  actionType         String
-  priority           String
-  channel            String?
-  objective          String  @db.Text
-  rationale          String  @db.Text
-  recommendedMessage String? @db.Text
-
-  evidence   Json?
-  confidence Float
-
-  requiresApproval Boolean @default(false)
-  status           String  @default("PENDING") // PENDING, EXECUTED, REJECTED, SUPERSEDED
-
-  scheduledFor DateTime?
-  executedAt   DateTime?
-
-  actorId        String?
-  feedbackReason String? @db.Text
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([missionId, status])
-  @@index([organizationId, status])
+  @@index([organizationId, companyId])
 }
 
 model CommercialMissionEvent {
@@ -4852,32 +4973,23 @@ model CommercialMissionEvent {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   missionId String
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  mission   CommercialMission @relation(fields: [missionId, organizationId], references: [id, organizationId], onDelete: Cascade)
 
-  eventType String
-  payload   Json?
+  eventType       CommercialMissionEventType
+  sourceType      CommercialMissionEventSourceType?
+  sourceId        String?
+  providerEventId String?
+  correlationId   String?
+  payload         Json?
+
+  previousStatus CommercialMissionStatus?
+  newStatus      CommercialMissionStatus?
 
   createdAt DateTime @default(now())
 
-  @@index([missionId, createdAt])
-  @@index([organizationId, eventType])
-}
-
-model MissionScore {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  missionId String            @unique
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
-
-  icpScore         Float
-  fitScore         Float
-  intentScore      Float
-  opportunityScore Float
-  evidence         Json?
-
-  @@index([organizationId])
+  @@index([organizationId, missionId, createdAt])
+  // Documentação do índice único PARCIAL real, criado via SQL bruto na migration.
+  @@index([organizationId, providerEventId], map: "CommercialMissionEvent_org_providerEventId_partial_doc")
 }
 
 model MissionAgentTrace {
@@ -4885,9 +4997,38 @@ model MissionAgentTrace {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  missionId String            @unique
-  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
-  trace     Json
+  missionId String
+  mission   CommercialMission @relation(fields: [missionId, organizationId], references: [id, organizationId], onDelete: Cascade)
 
-  @@index([organizationId])
+  agentName    MissionAgentName
+  decisionKind MissionDecisionKind
+  ruleId       String?
+  model        String?
+  inputHash    String?
+  confidence   Float?
+  aiLogId      String?
+
+  createdAt DateTime @default(now())
+
+  evidenceLinks MissionAgentTraceEvidence[]
+
+  @@unique([id, organizationId])
+  @@index([organizationId, missionId, createdAt])
+}
+
+model MissionAgentTraceEvidence {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  traceId String
+  trace   MissionAgentTrace @relation(fields: [traceId, organizationId], references: [id, organizationId], onDelete: Cascade)
+
+  evidenceId String
+  evidence   IntelligenceEvidence @relation(fields: [evidenceId, organizationId], references: [id, organizationId], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+
+  @@unique([traceId, evidenceId])
+  @@index([organizationId, evidenceId])
 }
