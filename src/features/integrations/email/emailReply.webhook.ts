@@ -271,31 +271,6 @@ async function handleInboundEmail(req: Request, res: Response): Promise<void> {
       asString(payload.leadId),
     );
 
-    // --- INTEGRAÇÃO COM NEXT BEST ACTION E ADAPTIVE CADENCE ---
-    try {
-      if (email.leadId) {
-        const { AdaptiveCadenceService } = await import('../../intelligence/cadence/adaptiveCadence.service.js');
-        const cadence = new AdaptiveCadenceService();
-        
-        const activeMission = await prisma.commercialMission.findFirst({
-          where: {
-            organizationId,
-            status: 'ACTIVE'
-          }
-        }); // Em um caso real faríamos junção pelo Lead->Company, mantendo simples pro MVP
-
-        if (activeMission) {
-           await cadence.handleInteractionEvent(activeMission.id, 'EMAIL_REPLIED', {
-              leadId: email.leadId,
-              messageId: providerMessageId,
-              subject: email.subject
-           });
-        }
-      }
-    } catch (cadenceErr) {
-      logger.error({ cadenceErr }, 'Falha silenciosa ao acionar Adaptive Cadence');
-    }
-
     res.status(200).json({ success: true, outcome: outcome.status });
   } catch (error) {
     // 5xx de propósito: um provedor real reentrega com backoff, e a idempotência por

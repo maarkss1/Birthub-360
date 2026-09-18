@@ -198,7 +198,7 @@ export function WelcomeScreen() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--iris) 20%, transparent) 0%, color-mix(in srgb, var(--orbit-blue) 14%, transparent) 32%, transparent 68%), radial-gradient(circle at 85% 68%, color-mix(in srgb, var(--brand) 12%, transparent) 0%, transparent 50%)',
+            'radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--iris) 20%, transparent) 0%, color-mix(in srgb, var(--orbit-blue) 14%, transparent) 32%, transparent 68%), radial-gradient(circle at 70% 72%, color-mix(in srgb, var(--brand) 12%, transparent) 0%, transparent 48%)',
         }}
       />
       <motion.div
@@ -299,13 +299,12 @@ export function WelcomeScreen() {
               if (audioRef.current) audioRef.current.play().catch(() => {});
               navigate('/login');
             }}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-brand-2 via-brand to-brand-2 px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand shadow-[0_0_30px_-6px_color-mix(in_srgb,var(--brand)_55%,transparent)] transition-[transform,box-shadow] hover:scale-[1.03] hover:shadow-[0_0_40px_-4px_color-mix(in_srgb,var(--brand)_70%,transparent)] active:scale-95"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-brand-2 via-brand to-brand-2 px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand shadow-[0_20px_50px_rgba(18,74,66,0.28)] transition-transform hover:-translate-y-0.5"
           >
             Explorar Hub
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
         </motion.div>
-
       </motion.div>
 
       <div className="absolute bottom-6 z-10 flex w-full flex-col items-center gap-4 px-8 text-sm text-ink-2 sm:flex-row sm:justify-between">

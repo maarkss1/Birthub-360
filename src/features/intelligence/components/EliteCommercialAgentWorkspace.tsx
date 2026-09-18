@@ -15,7 +15,7 @@ import {
   HelpCircle,
   Layers,
   Award,
-  Clock
+  Clock,
 } from 'lucide-react';
 import type { AgentCenterTrace, SellerWorkspaceOverview } from '../agents/triad/triad.types';
 import { CORE_AND_SPECIALIST_TAXONOMY } from '../agents/triad/agentGraphTaxonomy';
@@ -92,13 +92,13 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-           missionId: 'm-acme',
-           decision,
-           reason: decision === 'POSTPONED' ? 'Adiamento manual' : 'Substituição manual'
+          missionId: 'm-acme',
+          decision,
+          reason: decision === 'POSTPONED' ? 'Adiamento manual' : 'Substituição manual',
         }),
       });
       setActionSuccessMessage(
-        decision === 'POSTPONED' ? 'Cadência pausada e recalculada.' : 'Ação rejeitada. Nova estratégia solicitada à Giselle.'
+        decision === 'POSTPONED' ? 'Cadência pausada e recalculada.' : 'Ação rejeitada. Nova estratégia solicitada à Giselle.',
       );
       setTimeout(() => setActionSuccessMessage(null), 5000);
     } catch {}
@@ -380,12 +380,10 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
                     type="button"
                     disabled={executingAction}
                     onClick={handleExecuteAction}
-                    className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-emerald-500 hover:bg-emerald-400 text-neutral-950 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
+                    className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-emerald-500 hover:bg-emerald-400 text-neutral-950 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all"
                   >
                     <Zap className="w-4 h-4 fill-current" />
-                    <span>
-                      {executingAction ? 'Executando...' : '[ EXECUTAR AÇÃO ]'}
-                    </span>
+                    <span>{executingAction ? 'Executando...' : '[ EXECUTAR AÇÃO ]'}</span>
                   </button>
 
                   <button
@@ -400,7 +398,7 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleFeedbackAction('REJECTED')}
-                    className="w-full py-2.5 px-4 rounded-xl font-medium text-xs text-rose-400 hover:text-rose-300 hover:bg-neutral-800/50 flex items-center justify-center gap-2 transition-all border border-transparent hover:border-rose-900"
+                    className="w-full py-2.5 px-4 rounded-xl font-medium text-xs text-rose-400 hover:text-rose-300 hover:bg-neutral-800/50 flex items-center justify-center gap-2 transition-all border border-transparent hover:border-rose-500/30"
                   >
                     <SkipForward className="w-3.5 h-3.5" />
                     <span>[ TROCAR ESTRATÉGIA ]</span>
