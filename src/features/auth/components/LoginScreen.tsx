@@ -1,30 +1,24 @@
+import { LayoutGrid, type LucideIcon } from 'lucide-react';
 /* eslint-disable jsx-a11y/no-autofocus -- campo revelado por ação do usuário, ver comentário no local de uso */
 
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   AlertCircle,
   Building2,
-  CalendarDays,
-  Clock,
   ListChecks,
   Loader2,
   Lock,
   Mail,
-  Share2,
   ShieldCheck,
   Sparkles,
-  X,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { BrandEmblemBadge } from '../../../components/brand/BrandEmblemBadge';
 import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
-import { fadeInUp, useMagnetic, useTilt } from '../../../lib/motion';
+import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic } from '../../../lib/motion';
 
 // Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
 // o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
@@ -150,18 +144,9 @@ export function LoginScreen() {
 
   // Leve inclinação 3D no emblema da marca (painel esquerdo, desktop) ao mover o mouse — mesmo
   // hook premium de src/lib/motion.ts, já com guarda de prefers-reduced-motion embutida.
-  const brandTilt = useTilt(6);
-
+  
   // Relógio e calendário ao vivo do painel do formulário: reforçam a sensação de central
   // operando agora.
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-  const weekday = format(now, 'EEEE', { locale: ptBR });
-  const dateLabel = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}, ${format(now, "dd 'de' MMMM", { locale: ptBR })}`;
-  const timeLabel = format(now, 'HH:mm:ss');
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -282,28 +267,6 @@ export function LoginScreen() {
         <div className="absolute top-1/3 -left-32 h-[380px] w-[380px] rounded-full bg-iris/10 blur-[120px]" />
         <div className="absolute -bottom-40 right-1/4 h-[360px] w-[360px] rounded-full bg-pink/8 blur-[120px]" />
       </div>
-
-  return (
-    <div
-      className="relative flex min-h-screen overflow-hidden"
-      style={{ ['--login-accent' as string]: BRAND.colors.brand }}
-    >
-      {/* Painel esquerdo — cosmos escuro fixo com emblema 3D e cabeçalho interativo */}
-      <aside
-        className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:flex-col lg:items-center lg:justify-between lg:p-10"
-        style={{ backgroundColor: BRAND.colors.obsidian }}
-      >
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div
-            className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full blur-[120px]"
-            style={{ backgroundColor: BRAND.colors.brand, opacity: 0.18 }}
-          />
-          <div
-            className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full blur-[120px]"
-            style={{ backgroundColor: BRAND.colors.iris, opacity: 0.18 }}
-          />
-        </div>
-        </div>
 
 <main className="relative mx-auto max-w-6xl px-6 py-4 md:py-6">
         <div className="relative z-10 mx-auto flex max-w-md flex-col items-center text-center">
@@ -583,7 +546,7 @@ export function LoginScreen() {
             Ambiente Seguro • Criptografia 256-bit
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
