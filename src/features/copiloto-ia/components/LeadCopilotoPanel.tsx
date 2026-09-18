@@ -41,7 +41,11 @@ function weakestCoachingDimension(
   const [key, dimension] = entries.reduce((worst, entry) =>
     entry[1].score < worst[1].score ? entry : worst,
   );
-  return { label: COACHING_DIMENSION_LABELS[key], score: dimension.score, evidence: dimension.evidence };
+  return {
+    label: COACHING_DIMENSION_LABELS[key],
+    score: dimension.score,
+    evidence: dimension.evidence,
+  };
 }
 
 /**
@@ -61,7 +65,9 @@ export function LeadCopilotoPanel({ leadId }: { leadId: string }) {
   const [conversationCount, setConversationCount] = useState<number | null>(null);
   const [latestScore, setLatestScore] = useState<number | null>(null);
   const [pendingWhatsApp, setPendingWhatsApp] = useState(false);
-  const [latestConversation, setLatestConversation] = useState<CopilotoConversationDTO | null>(null);
+  const [latestConversation, setLatestConversation] = useState<CopilotoConversationDTO | null>(
+    null,
+  );
   const [handoff, setHandoff] = useState<HandoffSummaryDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -134,12 +140,18 @@ export function LeadCopilotoPanel({ leadId }: { leadId: string }) {
               <div className="pt-3 border-t border-line space-y-2">
                 <div className="flex items-center gap-2 text-xs text-ink-2">
                   <Sparkles className="w-3.5 h-3.5 text-brand shrink-0" aria-hidden="true" />
-                  <span>Resumo da última {SOURCE_LABEL[latestConversation?.source ?? 'OTHER']}</span>
+                  <span>
+                    Resumo da última {SOURCE_LABEL[latestConversation?.source ?? 'OTHER']}
+                  </span>
                   {sentiment && (
-                    <Badge variant={SENTIMENT_BADGE_VARIANT[sentiment] ?? 'default'}>{sentiment}</Badge>
+                    <Badge variant={SENTIMENT_BADGE_VARIANT[sentiment] ?? 'default'}>
+                      {sentiment}
+                    </Badge>
                   )}
                 </div>
-                <p className="text-sm text-ink leading-relaxed">{handoff.summary.executiveSummary}</p>
+                <p className="text-sm text-ink leading-relaxed">
+                  {handoff.summary.executiveSummary}
+                </p>
                 {handoff.summary.unresolvedObjections.length > 0 && (
                   <p className="text-xs text-ink-2">
                     <span className="font-semibold text-warning-active dark:text-warning">

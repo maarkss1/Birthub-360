@@ -64,11 +64,14 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
     if (!overview?.nextBestAction) return;
     setExecutingAction(true);
     try {
-      const res = await fetch(`/api/commercial-agent/nba/${overview.nextBestAction.actionId}/execute`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ missionId: 'm-acme' }), // Em prod pegaria de nextBestAction.missionId
-      });
+      const res = await fetch(
+        `/api/commercial-agent/nba/${overview.nextBestAction.actionId}/execute`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ missionId: 'm-acme' }), // Em prod pegaria de nextBestAction.missionId
+        },
+      );
       const json = await res.json();
       setActionSuccessMessage(
         json.success
@@ -98,7 +101,9 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
         }),
       });
       setActionSuccessMessage(
-        decision === 'POSTPONED' ? 'Cadência pausada e recalculada.' : 'Ação rejeitada. Nova estratégia solicitada à Giselle.',
+        decision === 'POSTPONED'
+          ? 'Cadência pausada e recalculada.'
+          : 'Ação rejeitada. Nova estratégia solicitada à Giselle.',
       );
       setTimeout(() => setActionSuccessMessage(null), 5000);
     } catch {}

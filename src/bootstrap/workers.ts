@@ -9,10 +9,7 @@ import { createEnrichmentWorker } from '../lib/queue/enrichment.queue.js';
 import { createEnrichmentCascadeWorker } from '../lib/queue/enrichmentCascade.worker.js';
 import { createSearchWorker } from '../lib/queue/search.queue.js';
 import { initMeiliIndexes } from '../lib/search/index.js';
-import {
-  createColdCallWorker,
-  scheduleColdCallCampaigns,
-} from '../lib/queue/coldCall.worker.js';
+import { createColdCallWorker, scheduleColdCallCampaigns } from '../lib/queue/coldCall.worker.js';
 import { createWhatsAppSignalWorker } from '../lib/queue/whatsappSignal.worker.js';
 import { enabledOrganizations } from '../features/integrations/birth-voice/coldCall.service.js';
 import {
@@ -20,10 +17,7 @@ import {
   scheduleSwarmScheduler,
 } from '../lib/queue/swarmScheduler.worker.js';
 import { enabledOrganizations as swarmSchedulerEnabledOrganizations } from '../features/intelligence/services/swarmScheduler.service.js';
-import {
-  createBitrixSyncWorker,
-  scheduleBitrixSync,
-} from '../lib/queue/bitrixSync.worker.js';
+import { createBitrixSyncWorker, scheduleBitrixSync } from '../lib/queue/bitrixSync.worker.js';
 import {
   createFollowUpWorker,
   scheduleFollowUpJobs,
