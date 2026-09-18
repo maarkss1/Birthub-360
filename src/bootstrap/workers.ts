@@ -1,6 +1,51 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (CloseableWorker) */
 import type { Worker } from 'bullmq';
 import { env } from '../config/env.js';
+import { logger } from '../lib/logger.js';
+import { queuesEnabled } from '../lib/queue/redis.js';
+import { createLeadsWorker } from '../lib/queue/index.js';
+import { createAgentWorker } from '../lib/queue/agent.worker.js';
+import { createEnrichmentWorker } from '../lib/queue/enrichment.queue.js';
+import { createEnrichmentCascadeWorker } from '../lib/queue/enrichmentCascade.worker.js';
+import { createSearchWorker } from '../lib/queue/search.queue.js';
+import { initMeiliIndexes } from '../lib/search/index.js';
+import { createColdCallWorker, scheduleColdCallCampaigns } from '../lib/queue/coldCall.worker.js';
+import { createWhatsAppSignalWorker } from '../lib/queue/whatsappSignal.worker.js';
+import { enabledOrganizations } from '../features/integrations/birth-voice/coldCall.service.js';
+import {
+  createSwarmSchedulerWorker,
+  scheduleSwarmScheduler,
+} from '../lib/queue/swarmScheduler.worker.js';
+import { enabledOrganizations as swarmSchedulerEnabledOrganizations } from '../features/intelligence/services/swarmScheduler.service.js';
+import { createBitrixSyncWorker, scheduleBitrixSync } from '../lib/queue/bitrixSync.worker.js';
+import {
+  createFollowUpWorker,
+  scheduleFollowUpJobs,
+} from '../features/crm/jobs/followUp.worker.js';
+import {
+  createExecutiveSummaryWorker,
+  scheduleExecutiveSummaryJob,
+} from '../features/crm/jobs/dailyExecutiveSummary.worker.js';
+import {
+  createDeduplicationWorker,
+  scheduleDeduplicationJob,
+} from '../features/crm/jobs/deduplication.worker.js';
+import {
+  createAccountIntelligenceSchedulerWorker,
+  accountIntelligenceSchedulerQueue,
+} from '../features/market-intelligence/jobs/accountIntelligenceScheduler.worker.js';
+import {
+  createWinLossAnalysisWorker,
+  scheduleWinLossAnalysisJob,
+} from '../features/intelligence/services/winLossAnalysis.worker.js';
+import {
+  createWeeklyPdfReportWorker,
+  scheduleWeeklyPdfReportJob,
+} from '../features/crm/jobs/weeklyPdfReport.worker.js';
+import {
+  createAutoAnonymizeWorker,
+  scheduleAutoAnonymizeJob,
+} from '../features/crm/jobs/autoAnonymizeDisqualified.worker.js';
 import {
   createColdLeadsScannerWorker,
   scheduleColdLeadsScannerJob,

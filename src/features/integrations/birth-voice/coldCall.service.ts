@@ -2,12 +2,18 @@ import { env } from '../../../config/env.js';
 import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
+import type { CallOutcomeState } from './birthVoice.helpers.js';
 import {
   BirthVoiceNotConfiguredError,
   callLead,
   NoPhoneNumberError,
   SuppressedNumberError,
 } from './birthVoice.service.js';
+import {
+  computeHourlyAnswerRates,
+  prioritizeDialCandidates,
+  scoreDialCandidate,
+} from './coldCall.scoring.js';
 import {
   type CallWindow,
   type DialPolicy,
@@ -188,7 +194,46 @@ export async function runColdCallCampaign(
     });
     const attemptsByLead = new Map(attemptRows.map((row) => [row.leadId, row._count._all]));
 
-    for (const candidate of candidates) {
+    // Item #16 — discador preditivo: reordena (nunca reseleciona) o lote já resgatado por chance
+    // de atender agora, ver coldCall.scoring.ts. Histórico da organização (taxa por hora) limitado
+    // a uma amostra recente e limitada — não precisa do histórico inteiro pra um score honesto, e
+    // uma tabela sem limite cresceria pra sempre a cada execução.
+    const callWindow = callWindowFromEnv();
+    const [orgCallHistory, ownCallHistory] = await Promise.all([
+      prisma.voiceCallLog.findMany({
+        where: { organizationId },
+        orderBy: { createdAt: 'desc' },
+        take: 2000,
+        select: { createdAt: true, outcome: true },
+      }),
+      prisma.voiceCallLog.findMany({
+        where: { organizationId, leadId: { in: candidates.map((l) => l.id) } },
+        orderBy: { createdAt: 'desc' },
+        select: { leadId: true, outcome: true },
+      }),
+    ]);
+    const hourlyAnswerRates = computeHourlyAnswerRates(orgCallHistory, callWindow.timeZone);
+    const ownOutcomesByLead = new Map<string, CallOutcomeState[]>();
+    for (const row of ownCallHistory) {
+      const outcomes = ownOutcomesByLead.get(row.leadId) ?? [];
+      // `ownCallHistory` já vem `orderBy createdAt desc` — empurrar mantém "mais recente primeiro".
+      outcomes.push(row.outcome as CallOutcomeState);
+      ownOutcomesByLead.set(row.leadId, outcomes);
+    }
+    const scoresById = new Map(
+      candidates.map((candidate) => [
+        candidate.id,
+        scoreDialCandidate(
+          { id: candidate.id, ownRecentOutcomes: ownOutcomesByLead.get(candidate.id) ?? [] },
+          now,
+          callWindow.timeZone,
+          hourlyAnswerRates,
+        ),
+      ]),
+    );
+    const prioritizedCandidates = prioritizeDialCandidates(candidates, scoresById);
+
+    for (const candidate of prioritizedCandidates) {
       if (result.called >= maxCalls) break;
 
       const verdict = evaluateLead(

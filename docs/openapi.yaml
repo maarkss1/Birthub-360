@@ -4584,6 +4584,10 @@ paths:
           in: query
           required: false
           schema: { type: string }
+        - name: leadId
+          in: query
+          required: false
+          schema: { type: string }
       responses:
         '200':
           {
@@ -4608,6 +4612,26 @@ paths:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }
         '404': { description: Chamada não encontrada }
+
+  /integrations/email/messages:
+    get:
+      tags: [Email]
+      summary: >-
+        Histórico de e-mails persistidos (EmailMessage, reply tracking do Agente 17) de um lead —
+        base para a central unificada de conversas do card do lead.
+      parameters:
+        - name: leadId
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '400': { description: leadId ausente }
 
   # ═══════════════════════════════════════════════════════════════════════════════════
   # Endpoints adicionados em 2026-08-15 (Onda 8, Agente 18) para fechar a deriva medida

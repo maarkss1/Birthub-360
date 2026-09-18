@@ -8,11 +8,9 @@ import {
   Building2,
   CalendarDays,
   Clock,
-  LayoutGrid,
   ListChecks,
   Loader2,
   Lock,
-  type LucideIcon,
   Mail,
   Share2,
   ShieldCheck,
@@ -26,7 +24,7 @@ import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
-import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../../../lib/motion';
+import { fadeInUp, useMagnetic, useTilt } from '../../../lib/motion';
 
 // Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
 // o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
@@ -273,7 +271,17 @@ export function LoginScreen() {
   // (a mesma fonte de verdade de cor do resto do app, nunca hex digitado à mão), em vez dos
   // tokens de tema.
   const inputClass =
-    'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
+    'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
+
+  return (
+<div className="relative min-h-screen overflow-hidden bg-bg">
+      {/* Atmosfera — halos suaves nas 5 cores da marca, nunca como fundo sólido com texto em
+          cima (regra #3 da constituição): só glow difuso atrás do conteúdo. */}
+      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div className="absolute -top-32 -right-24 h-[420px] w-[420px] rounded-full bg-brand/12 blur-[120px]" />
+        <div className="absolute top-1/3 -left-32 h-[380px] w-[380px] rounded-full bg-iris/10 blur-[120px]" />
+        <div className="absolute -bottom-40 right-1/4 h-[360px] w-[360px] rounded-full bg-pink/8 blur-[120px]" />
+      </div>
 
   return (
     <div
@@ -295,95 +303,11 @@ export function LoginScreen() {
             style={{ backgroundColor: BRAND.colors.iris, opacity: 0.18 }}
           />
         </div>
-
-        {/* Barra Superior do Painel da Marca */}
-        <div className="relative z-10 flex w-full items-center justify-between">
-          <button
-            type="button"
-            className="grid h-10 w-10 place-items-center rounded-full border border-slate-700/60 bg-slate-900/50 text-slate-300 backdrop-blur-md transition-colors hover:border-amber-400/50 hover:text-white"
-            aria-label="Fechar"
-          >
-            <X size={18} />
-          </button>
-
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/50 bg-amber-950/30 px-4 py-1.5 text-xs font-black tracking-[0.18em] text-amber-300 shadow-[0_0_15px_rgba(229,184,66,0.25)] backdrop-blur-md">
-            <span className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]" />
-            HUB 360 ATIVO
-          </div>
-
-          <button
-            type="button"
-            className="grid h-10 w-10 place-items-center rounded-full border border-slate-700/60 bg-slate-900/50 text-slate-300 backdrop-blur-md transition-colors hover:border-amber-400/50 hover:text-white"
-            aria-label="Compartilhar"
-          >
-            <Share2 size={18} />
-          </button>
         </div>
 
-        {/* Emblema Central e Tipografia da Marca */}
-        <motion.div
-          ref={brandTilt.ref as React.RefObject<HTMLDivElement>}
-          style={brandTilt.style}
-          onPointerMove={brandTilt.onPointerMove}
-          onPointerLeave={brandTilt.onPointerLeave}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative my-auto flex flex-col items-center px-6 text-center"
-        >
-          <BrandEmblemBadge className="h-56 w-56 md:h-64 md:w-64" title="Birth Hub 360°" />
-          <p className="mt-8 font-serif text-3xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#F7DF94] via-[#E5B842] to-[#B38728] drop-shadow-md sm:text-4xl">
-            BIRTH HUB 360°
-          </p>
-          <p className="mt-2 text-xs font-black uppercase tracking-[0.25em] text-[#E5B842]">
-            ECOSSISTEMA DE ALTA PERFORMANCE
-          </p>
-          <p className="mt-6 max-w-md text-center text-sm leading-relaxed text-slate-300">
-            Sua central de comando inteligente:{' '}
-            <strong className="font-bold text-white">integrando dados</strong>, potencializando
-            decisões e{' '}
-            <strong className="font-bold text-[#E5B842]">acelerando a sua execução</strong>.
-          </p>
-        </motion.div>
-
-        {/* Espaçador inferior para equilíbrio visual */}
-        <div className="h-6 w-full" aria-hidden="true" />
-      </aside>
-
-      {/* Painel direito — formulário claro fixo (mesma justificativa de cor acima). */}
-      <div
-        className="relative flex flex-1 flex-col items-center justify-center px-6 py-10"
-        style={{ backgroundColor: BRAND.colors.blossom }}
-      >
-        <div className="w-full max-w-md">
-          {/* Emblema mobile-only — desktop já mostra o emblema grande no painel esquerdo. */}
-          <div className="mb-6 flex justify-center lg:hidden">
-            <BrandEmblemBadge className="h-16 w-16" title="Birth Hub 360°" />
-          </div>
-
-          {/* Relógio e calendário ao vivo */}
-          <div className="mb-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-bold text-slate-600 lg:justify-start">
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays size={14} strokeWidth={2.5} aria-hidden="true" />
-              {dateLabel}
-            </span>
-            <span className="h-1 w-1 rounded-full bg-current opacity-40" aria-hidden="true" />
-            <span className="inline-flex items-center gap-1.5 tabular-nums" aria-live="off">
-              <Clock size={14} strokeWidth={2.5} aria-hidden="true" />
-              {timeLabel}
-            </span>
-          </div>
-
-          <div className="mb-6">
-            <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
-          </div>
-
-          <h1 className="text-center font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl lg:text-left">
-            Entrar na Plataforma
-          </h1>
-          <p className="mt-2 text-center text-sm text-slate-600 lg:text-left">
-            Acesse sua conta para gerenciar inteligência, vendas e operações.
-          </p>
+<main className="relative mx-auto max-w-6xl px-6 py-4 md:py-6">
+        <div className="relative z-10 mx-auto flex max-w-md flex-col items-center text-center">
+          <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
 
           <motion.div
             initial={shouldReduceMotion ? false : 'hidden'}
@@ -654,7 +578,7 @@ export function LoginScreen() {
             )}
           </motion.div>
 
-          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-600">
+          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
             <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
             Ambiente Seguro • Criptografia 256-bit
           </div>

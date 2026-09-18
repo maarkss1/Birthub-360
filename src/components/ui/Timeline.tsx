@@ -1,4 +1,13 @@
-import { AlertCircle, CheckCircle2, Clock, MessageSquare, User } from 'lucide-react';
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Mail,
+  MessageCircle,
+  MessageSquare,
+  Phone,
+  User,
+} from 'lucide-react';
 
 export interface TimelineItem {
   id: string;
@@ -6,6 +15,9 @@ export interface TimelineItem {
   description?: string;
   timestamp: string;
   author?: string;
+  /** `whatsapp`/`email`/`call` identificam a origem quando este item vem da central unificada de
+   * conversas (LeadDetailDrawer) em vez de um evento nativo do CRM — cada um com ícone próprio
+   * pra dar pra distinguir o canal num relance, o ponto central de uma central "unificada". */
   type?: 'activity' | 'note' | 'status_change' | 'alert' | 'whatsapp' | 'email' | 'call';
 }
 
@@ -34,6 +46,12 @@ export function Timeline({
         return <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />;
       case 'alert':
         return <AlertCircle className="w-3.5 h-3.5 text-amber-400" />;
+      case 'whatsapp':
+        return <MessageCircle className="w-3.5 h-3.5 text-success-active dark:text-success" />;
+      case 'email':
+        return <Mail className="w-3.5 h-3.5 text-info-active dark:text-info" />;
+      case 'call':
+        return <Phone className="w-3.5 h-3.5 text-iris-active dark:text-accent-violet" />;
       default:
         return <Clock className="w-3.5 h-3.5 text-brand" />;
     }
