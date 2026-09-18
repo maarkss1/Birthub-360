@@ -37,6 +37,56 @@ export const WEBHOOK_REPLAY_TTL_SECONDS = 30 * 60;
 
 export type WebhookReplayCheck = 'fresh' | 'replay' | 'unavailable';
 
+export interface WebhookTimestampValidation {
+  valid: boolean;
+  reason?: 'missing' | 'malformed' | 'expired' | 'future';
+  skewSeconds?: number;
+}
+
+/**
+ * Valida a janela temporal de um timestamp assinado/fornecido em header de webhook.
+ * Tolerância padrão: 5 minutos (300s).
+ */
+export function validateWebhookTimestamp(
+  timestampHeader: string | number | undefined | null,
+  maxSkewSeconds: number = 5 * 60,
+  nowMs: number = Date.now(),
+): WebhookTimestampValidation {
+  if (timestampHeader === undefined || timestampHeader === null || timestampHeader === '') {
+    return { valid: false, reason: 'missing' };
+  }
+
+  let epochSeconds: number;
+  if (typeof timestampHeader === 'number') {
+    epochSeconds = timestampHeader > 1e11 ? timestampHeader / 1000 : timestampHeader;
+  } else {
+    const asNum = Number(timestampHeader);
+    if (Number.isFinite(asNum)) {
+      epochSeconds = asNum > 1e11 ? asNum / 1000 : asNum;
+    } else {
+      const parsedDate = new Date(timestampHeader).getTime();
+      if (Number.isNaN(parsedDate)) {
+        return { valid: false, reason: 'malformed' };
+      }
+      epochSeconds = parsedDate / 1000;
+    }
+  }
+
+  const nowSeconds = nowMs / 1000;
+  const skew = nowSeconds - epochSeconds;
+  const absSkew = Math.abs(skew);
+
+  if (absSkew > maxSkewSeconds) {
+    return {
+      valid: false,
+      reason: skew > 0 ? 'expired' : 'future',
+      skewSeconds: Math.round(absSkew),
+    };
+  }
+
+  return { valid: true, skewSeconds: Math.round(absSkew) };
+}
+
 /** Fingerprint determinístico — ver justificativa acima sobre por que isto faz o papel do nonce. */
 export function webhookDeliveryFingerprint(...parts: Array<string | null | undefined>): string {
   return createHash('sha256')

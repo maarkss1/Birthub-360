@@ -148,3 +148,57 @@ describe('config/env — Rejeição de localhost em produção quando domínio p
     expect(exitSpy).not.toHaveBeenCalled();
   });
 });
+
+describe('config/env — Hardening de PLATFORM_OPERATOR_TOKEN e Webhook Secrets em produção', () => {
+  let exitSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+  });
+
+  afterEach(() => {
+    exitSpy.mockRestore();
+    process.env = { ...ORIGINAL_ENV };
+    vi.resetModules();
+  });
+
+  it('encerra o processo se PLATFORM_OPERATOR_TOKEN for curto (< 32 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'token-curto',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('encerra o processo se PLATFORM_OPERATOR_TOKEN for um placeholder bloqueado', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'changeme',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('NÃO encerra se PLATFORM_OPERATOR_TOKEN for robusto (>= 32 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'b'.repeat(36),
+    });
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+
+  it('encerra o processo se algum webhook secret for curto (< 16 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      BIRTH_VOICES_WEBHOOK_SECRET: 'curto',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('NÃO encerra se webhook secret for robusto (>= 16 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      BIRTH_VOICES_WEBHOOK_SECRET: 'c'.repeat(24),
+    });
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+});

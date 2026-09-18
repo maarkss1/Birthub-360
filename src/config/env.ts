@@ -417,10 +417,21 @@ if (_env.success && _env.data.NODE_ENV === 'production') {
 // verbatim sem substituir o placeholder documentado ali; (2) gerar/colar um segredo curto demais
 // para servir como chave de assinatura — 32 caracteres é o mesmo piso já usado para
 // CREDENTIALS_ENCRYPTION_KEY/PII_BLIND_INDEX_KEY (32 bytes) nesta base de código.
-const BETTER_AUTH_SECRET_PLACEHOLDER_VALUES = new Set([
+const BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS = new Set([
   'replace-with-a-long-random-secret', // valor literal de exemplo em .env.example
+  'changeme',
+  'secret',
+  'admin',
+  'password',
+  '12345678',
+  '123456',
+  'test',
+  'default',
 ]);
+
 const MIN_BETTER_AUTH_SECRET_LENGTH = 32;
+const MIN_PLATFORM_OPERATOR_TOKEN_LENGTH = 32;
+const MIN_WEBHOOK_SECRET_LENGTH = 16;
 
 if (_env.success && _env.data.NODE_ENV === 'production') {
   const secret = _env.data.BETTER_AUTH_SECRET;
@@ -428,16 +439,59 @@ if (_env.success && _env.data.NODE_ENV === 'production') {
   const isWeak =
     !isMissing &&
     (secret.length < MIN_BETTER_AUTH_SECRET_LENGTH ||
-      BETTER_AUTH_SECRET_PLACEHOLDER_VALUES.has(secret));
+      BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS.has(secret.toLowerCase()));
 
   if (isMissing || isWeak) {
     logger.error(
       isMissing
         ? '❌ BETTER_AUTH_SECRET ausente em produção — obrigatória para assinar sessões/tokens do Better Auth. Gere uma com `openssl rand -base64 32`. Abortando inicialização.'
-        : `❌ BETTER_AUTH_SECRET fraca em produção (mínimo ${MIN_BETTER_AUTH_SECRET_LENGTH} caracteres; o valor de exemplo do .env.example não é permitido). Gere uma com \`openssl rand -base64 32\`. Abortando inicialização.`,
+        : `❌ BETTER_AUTH_SECRET fraca em produção (mínimo ${MIN_BETTER_AUTH_SECRET_LENGTH} caracteres; valores de exemplo/placeholders não são permitidos). Gere uma com \`openssl rand -base64 32\`. Abortando inicialização.`,
     );
     if (process.env.NODE_ENV !== 'test') {
       process.exit(1);
+    }
+  }
+
+  // PLATFORM_OPERATOR_TOKEN: quando configurado em produção, exige alta entropia (mínimo 32 caracteres)
+  // e bloqueia valores inseguros/placeholders.
+  const operatorToken = _env.data.PLATFORM_OPERATOR_TOKEN;
+  if (operatorToken) {
+    if (
+      operatorToken.length < MIN_PLATFORM_OPERATOR_TOKEN_LENGTH ||
+      BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS.has(operatorToken.toLowerCase())
+    ) {
+      logger.error(
+        `❌ PLATFORM_OPERATOR_TOKEN fraco em produção (mínimo ${MIN_PLATFORM_OPERATOR_TOKEN_LENGTH} caracteres com alta entropia; valores triviais não são permitidos). Abortando inicialização.`,
+      );
+      if (process.env.NODE_ENV !== 'test') {
+        process.exit(1);
+      }
+    }
+  }
+
+  // Validação de segredos de webhook configurados em produção
+  const webhookSecretsToCheck: Array<{ name: string; value: string | undefined }> = [
+    { name: 'ATLASGR_WEBHOOK_SECRET', value: _env.data.ATLASGR_WEBHOOK_SECRET },
+    { name: 'BIRTH_VOICES_WEBHOOK_SECRET', value: _env.data.BIRTH_VOICES_WEBHOOK_SECRET },
+    { name: 'THREECX_WEBHOOK_SECRET', value: _env.data.THREECX_WEBHOOK_SECRET },
+    { name: 'CHATWOOT_WEBHOOK_SECRET', value: _env.data.CHATWOOT_WEBHOOK_SECRET },
+    { name: 'EMAIL_INBOUND_WEBHOOK_SECRET', value: _env.data.EMAIL_INBOUND_WEBHOOK_SECRET },
+    { name: 'SIGNATURE_INBOUND_WEBHOOK_SECRET', value: _env.data.SIGNATURE_INBOUND_WEBHOOK_SECRET },
+  ];
+
+  for (const { name, value } of webhookSecretsToCheck) {
+    if (value) {
+      if (
+        value.length < MIN_WEBHOOK_SECRET_LENGTH ||
+        BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS.has(value.toLowerCase())
+      ) {
+        logger.error(
+          `❌ ${name} fraco em produção (mínimo ${MIN_WEBHOOK_SECRET_LENGTH} caracteres; segredos legados/placeholders não são permitidos). Abortando inicialização.`,
+        );
+        if (process.env.NODE_ENV !== 'test') {
+          process.exit(1);
+        }
+      }
     }
   }
 }
