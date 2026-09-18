@@ -26,6 +26,7 @@ import { gamificationRoutes } from '../features/gamification/routes/gamification
 import { birthVoiceRoutes } from '../features/integrations/birth-voice/birthVoice.routes.js';
 import { bitrixRoutes } from '../features/integrations/bitrix/bitrix.routes.js';
 import { hubTasksRoutes } from '../features/integrations/bitrix/hubTasks.routes.js';
+import { emailRoutes } from '../features/integrations/email/email.routes.js';
 import { googleRoutes } from '../features/integrations/google/google.routes.js';
 import { omieRoutes } from '../features/integrations/omie/omie.routes.js';
 import { slackRoutes } from '../features/integrations/slack/slack.routes.js';
@@ -184,6 +185,7 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/whatsapp', authenticateToken, requireTenant, whatsappRoutes);
   app.use('/api/integrations/birth-voice', authenticateToken, requireTenant, birthVoiceRoutes);
   app.use('/api/integrations/3cx', authenticateToken, requireTenant, threecxRoutes);
+  app.use('/api/integrations/email', authenticateToken, requireTenant, emailRoutes);
   app.use('/api/integrations/slack', authenticateToken, requireTenant, slackRoutes);
   app.use('/api/integrations/stripe', authenticateToken, requireTenant, stripeRoutes);
   app.use('/api/integrations/omie', authenticateToken, requireTenant, omieRoutes);
