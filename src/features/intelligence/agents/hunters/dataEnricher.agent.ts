@@ -19,8 +19,12 @@ export class DataEnricherAgent {
   public async enrich(companyName: string, domain: string): Promise<EnrichmentResult> {
     console.log(`[Enricher] Enriquecendo dados para ${companyName} (${domain})`);
 
-    const ai = getAiModel('groq-llama3-70b', 0.2, 'Você é o Agente de Enriquecimento de Dados (Data Enricher).');
-    
+    const ai = getAiModel(
+      'groq-llama3-70b',
+      0.2,
+      'Você é o Agente de Enriquecimento de Dados (Data Enricher).',
+    );
+
     const prompt = new SystemMessage(
       `Sua missão é deduzir/enriquecer dados firmográficos de uma empresa.
 Retorne APENAS JSON VÁLIDO no formato exato:
@@ -32,7 +36,7 @@ Retorne APENAS JSON VÁLIDO no formato exato:
   "knownDecisionMakers": [
     { "name": "Nome", "role": "Cargo", "seniority": "Director", "linkedinUrl": "https...", "email": "email", "phone": "phone" }
   ]
-}`
+}`,
     );
 
     const userMsg = new HumanMessage(`Empresa alvo: ${companyName}, Domínio: ${domain}`);
@@ -40,9 +44,12 @@ Retorne APENAS JSON VÁLIDO no formato exato:
     try {
       const result = await ai.invoke([prompt, userMsg]);
       const content = result.content || '{}';
-      const cleanContent = content.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const cleanContent = content
+        .replace(/```json/gi, '')
+        .replace(/```/g, '')
+        .trim();
       const parsed = JSON.parse(cleanContent);
-      
+
       return {
         companyName,
         cnpj: parsed.cnpj || '12.345.678/0001-90',
@@ -67,7 +74,7 @@ Retorne APENAS JSON VÁLIDO no formato exato:
             linkedinUrl: `https://linkedin.com/in/carlos-mendes-${domain}`,
             email: `carlos.mendes@${domain}`,
             phone: '+55 11 98765-4321',
-          }
+          },
         ],
       };
     }

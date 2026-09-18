@@ -77,7 +77,7 @@ router.post(
       const message = error instanceof Error ? error.message : 'Erro ao executar ação comercial';
       return res.status(500).json({ success: false, error: message });
     }
-  }
+  },
 );
 
 /**
@@ -93,7 +93,8 @@ router.post(
       const authReq = req as AuthRequest;
       const organizationId = authReq.user?.organizationId ?? 'default-org';
       const userId = authReq.user?.id ?? 'default-user';
-      const userRole = (authReq.user?.role as 'SDR' | 'CLOSER' | 'GERENTE' | 'DIRETOR' | 'ADMIN') ?? 'CLOSER';
+      const userRole =
+        (authReq.user?.role as 'SDR' | 'CLOSER' | 'GERENTE' | 'DIRETOR' | 'ADMIN') ?? 'CLOSER';
 
       const missionResponse = await service.orchestrateMission(
         {
@@ -101,7 +102,7 @@ router.post(
           userRole,
         },
         organizationId,
-        userId
+        userId,
       );
 
       return res.json({ success: true, data: missionResponse });
@@ -109,7 +110,7 @@ router.post(
       const message = error instanceof Error ? error.message : 'Erro na orquestração da missão';
       return res.status(500).json({ success: false, error: message });
     }
-  }
+  },
 );
 
 /**
@@ -124,11 +125,14 @@ router.get('/mission/:id/trace', commercialRoles, async (req: Request, res: Resp
 
     const trace = await service.getMissionTrace(missionId, organizationId);
     if (!trace) {
-      return res.status(404).json({ success: false, error: 'Rastreamento de missão não encontrado' });
+      return res
+        .status(404)
+        .json({ success: false, error: 'Rastreamento de missão não encontrado' });
     }
     return res.json({ success: true, data: trace });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Erro ao recuperar rastreamento da missão';
+    const message =
+      error instanceof Error ? error.message : 'Erro ao recuperar rastreamento da missão';
     return res.status(500).json({ success: false, error: message });
   }
 });
@@ -143,7 +147,7 @@ router.post('/prospect', commercialRoles, async (req: Request, res: Response) =>
     const authReq = req as AuthRequest;
     const organizationId = authReq.user?.organizationId ?? 'default-org';
     const userId = authReq.user?.id ?? 'default-user';
-    
+
     const { query } = req.body;
     if (!query || typeof query !== 'string') {
       return res.status(400).json({ success: false, error: 'O parâmetro query é obrigatório' });

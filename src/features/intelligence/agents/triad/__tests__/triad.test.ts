@@ -14,10 +14,10 @@ vi.mock('../../../lib/ai/gateway/chat-model.js', () => ({
         fitScore: 82,
         intentScore: 75,
         opportunityScore: 88,
-        reasoning: "Score calculado com sucesso"
-      })
-    })
-  })
+        reasoning: 'Score calculado com sucesso',
+      }),
+    }),
+  }),
 }));
 
 describe('Tríade de Comando do Agente Comercial de Elite', () => {
@@ -34,7 +34,12 @@ describe('Tríade de Comando do Agente Comercial de Elite', () => {
       expect(plan.account.companyName).toBe('ACME Logística S/A');
 
       // Verifica contrato de score transparente
-      const scores = [plan.scores.icp, plan.scores.fit, plan.scores.intent, plan.scores.opportunity];
+      const scores = [
+        plan.scores.icp,
+        plan.scores.fit,
+        plan.scores.intent,
+        plan.scores.opportunity,
+      ];
       for (const score of scores) {
         expect(score.score).toBeGreaterThanOrEqual(0);
         expect(score.score).toBeLessThanOrEqual(100);

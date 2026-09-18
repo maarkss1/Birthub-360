@@ -106,7 +106,12 @@ export const CORE_AND_SPECIALIST_TAXONOMY: Record<string, ClassifiedAgentMeta> =
     director: 'PATRICIA',
     domain: 'Vendas',
     description: 'Orquestra disparos personalizados multicanal (Email, LinkedIn, WhatsApp).',
-    replacesOrConsolidates: ['cold-email-agent', 'email-personalizer', 'sdr-outreach', 'follow-up-agent'],
+    replacesOrConsolidates: [
+      'cold-email-agent',
+      'email-personalizer',
+      'sdr-outreach',
+      'follow-up-agent',
+    ],
   },
   'next-best-action-agent': {
     code: 'next-best-action-agent',
@@ -114,7 +119,8 @@ export const CORE_AND_SPECIALIST_TAXONOMY: Record<string, ClassifiedAgentMeta> =
     layer: 'SPECIALIST',
     director: 'PATRICIA',
     domain: 'Vendas',
-    description: 'Calcula em tempo real a ação comercial mais rentável com base em sinais recentes.',
+    description:
+      'Calcula em tempo real a ação comercial mais rentável com base em sinais recentes.',
   },
   'meeting-booker': {
     code: 'meeting-booker',
@@ -131,7 +137,8 @@ export const CORE_AND_SPECIALIST_TAXONOMY: Record<string, ClassifiedAgentMeta> =
     layer: 'SPECIALIST',
     director: 'PATRICIA',
     domain: 'Vendas',
-    description: 'Suporte em tempo real durante chamadas de voz com batalha de objeções e perguntas.',
+    description:
+      'Suporte em tempo real durante chamadas de voz com batalha de objeções e perguntas.',
     replacesOrConsolidates: ['objection-handling', 'discovery-coach', 'call-sentiment-analyzer'],
   },
 
@@ -209,7 +216,11 @@ export function classifyAgentFromCatalog(code: string, rawDomain?: string): Clas
   }
 
   // Regra de dedução para os demais agentes da malha
-  if (normalized.includes('writer') || normalized.includes('generator') || normalized.includes('summariz')) {
+  if (
+    normalized.includes('writer') ||
+    normalized.includes('generator') ||
+    normalized.includes('summariz')
+  ) {
     return {
       code: normalized,
       name: code,
@@ -220,7 +231,12 @@ export function classifyAgentFromCatalog(code: string, rawDomain?: string): Clas
     };
   }
 
-  if (normalized.includes('sync') || normalized.includes('extractor') || normalized.includes('scraper') || normalized.includes('tool')) {
+  if (
+    normalized.includes('sync') ||
+    normalized.includes('extractor') ||
+    normalized.includes('scraper') ||
+    normalized.includes('tool')
+  ) {
     return {
       code: normalized,
       name: code,

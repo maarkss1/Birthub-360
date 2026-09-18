@@ -18,10 +18,7 @@ import {
   Layers,
   Award,
 } from 'lucide-react';
-import type {
-  AgentCenterTrace,
-  SellerWorkspaceOverview,
-} from '../agents/triad/triad.types';
+import type { AgentCenterTrace, SellerWorkspaceOverview } from '../agents/triad/triad.types';
 import { CORE_AND_SPECIALIST_TAXONOMY } from '../agents/triad/agentGraphTaxonomy';
 
 export const EliteCommercialAgentWorkspace: React.FC = () => {
@@ -80,11 +77,11 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
       setActionSuccessMessage(
         json.success
           ? `Disparo efetuado com sucesso via Birthub Voices. Discando para ${overview.nextBestAction.contactName}...`
-          : 'Ação registrada no fluxo comercial.'
+          : 'Ação registrada no fluxo comercial.',
       );
     } catch {
       setActionSuccessMessage(
-        `Disparo efetuado com sucesso via Birthub Voices. Discando para ${overview.nextBestAction.contactName}...`
+        `Disparo efetuado com sucesso via Birthub Voices. Discando para ${overview.nextBestAction.contactName}...`,
       );
     } finally {
       setExecutingAction(false);
@@ -97,7 +94,9 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-neutral-400 font-medium">Carregando Agente Comercial de Elite...</p>
+          <p className="text-sm text-neutral-400 font-medium">
+            Carregando Agente Comercial de Elite...
+          </p>
         </div>
       </div>
     );
@@ -114,7 +113,9 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
             <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               <Sparkles className="w-5 h-5" />
             </span>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Agente Comercial de Elite</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+              Agente Comercial de Elite
+            </h1>
             <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               Malha Ativa (392 Agentes)
             </span>
@@ -222,7 +223,9 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
           </div>
           <div className="mt-2 text-xs text-neutral-400 flex items-center justify-between">
             <span>Commit: R$ {(metrics.commitForecast / 1000).toFixed(0)}K</span>
-            <span className="text-neutral-500">AI: R$ {(metrics.aiForecast / 1000).toFixed(0)}K</span>
+            <span className="text-neutral-500">
+              AI: R$ {(metrics.aiForecast / 1000).toFixed(0)}K
+            </span>
           </div>
         </div>
       </div>
@@ -262,8 +265,8 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
                 </h2>
                 <p className="text-sm text-neutral-400 mt-0.5">
                   Contato:{' '}
-                  <span className="text-neutral-200 font-medium">{nextBestAction.contactName}</span> (
-                  {nextBestAction.contactRole})
+                  <span className="text-neutral-200 font-medium">{nextBestAction.contactName}</span>{' '}
+                  ({nextBestAction.contactRole})
                 </p>
               </div>
 
@@ -352,7 +355,8 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
                 <div>
                   <h4 className="text-sm font-semibold text-neutral-200">Execução Direta</h4>
                   <p className="text-xs text-neutral-400 mt-1">
-                    Acione o canal recomendado sem precisar trocar de aba ou preencher formulários manuais.
+                    Acione o canal recomendado sem precisar trocar de aba ou preencher formulários
+                    manuais.
                   </p>
                 </div>
 
@@ -369,12 +373,18 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
                     </span>
                   </button>
 
-                  <button type="button" className="w-full py-2.5 px-4 rounded-xl font-medium text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 flex items-center justify-center gap-2 transition-all">
+                  <button
+                    type="button"
+                    className="w-full py-2.5 px-4 rounded-xl font-medium text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 flex items-center justify-center gap-2 transition-all"
+                  >
                     <FileText className="w-3.5 h-3.5" />
                     <span>Ver Proposta Comercial</span>
                   </button>
 
-                  <button type="button" className="w-full py-2.5 px-4 rounded-xl font-medium text-xs text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50 flex items-center justify-center gap-2 transition-all">
+                  <button
+                    type="button"
+                    className="w-full py-2.5 px-4 rounded-xl font-medium text-xs text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50 flex items-center justify-center gap-2 transition-all"
+                  >
                     <SkipForward className="w-3.5 h-3.5" />
                     <span>Pular com Justificativa</span>
                   </button>
@@ -398,10 +408,12 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
                   <div className="p-4 rounded-2xl bg-neutral-950 border border-emerald-500/30">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                        Composição Causal do Opportunity Score ({nextBestAction.opportunityScore.score}/100)
+                        Composição Causal do Opportunity Score (
+                        {nextBestAction.opportunityScore.score}/100)
                       </span>
                       <span className="text-xs text-neutral-500">
-                        Confiança Algorítmica: {Math.round(nextBestAction.opportunityScore.confidence * 100)}%
+                        Confiança Algorítmica:{' '}
+                        {Math.round(nextBestAction.opportunityScore.confidence * 100)}%
                       </span>
                     </div>
                     <p className="text-xs text-neutral-300 font-medium">
@@ -442,9 +454,12 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
                       {mission.opportunityScore}
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-neutral-200">{mission.accountName}</h4>
+                      <h4 className="text-sm font-semibold text-neutral-200">
+                        {mission.accountName}
+                      </h4>
                       <p className="text-xs text-neutral-500">
-                        Última atualização: {new Date(mission.lastUpdated).toLocaleDateString('pt-BR')}
+                        Última atualização:{' '}
+                        {new Date(mission.lastUpdated).toLocaleDateString('pt-BR')}
                       </p>
                     </div>
                   </div>
@@ -487,7 +502,8 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
               <div>
                 <div className="text-sm font-bold text-white">{trace.root}</div>
                 <div className="text-xs text-neutral-400">
-                  Supervisor central: recebeu a missão, orquestrou a Tríade e sintetizou o plano de ação.
+                  Supervisor central: recebeu a missão, orquestrou a Tríade e sintetizou o plano de
+                  ação.
                 </div>
               </div>
             </div>
@@ -591,8 +607,8 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
               Catálogo de 392 Agentes ➔ 4 Camadas Funcionais
             </h2>
             <p className="text-sm text-neutral-400 mt-1">
-              Em vez de 392 botões soltos, a malha é dividida em Core (~40), Especialistas (~80), Skills
-              (~100) e Tools (~100).
+              Em vez de 392 botões soltos, a malha é dividida em Core (~40), Especialistas (~80),
+              Skills (~100) e Tools (~100).
             </p>
           </div>
 
@@ -777,7 +793,8 @@ function getMockTrace(): AgentCenterTrace {
             roleLabel: 'Analista de Perfil Ideal',
             director: 'GISELLE',
             status: 'COMPLETED',
-            resultSummary: 'ICP Score 96/100 com alta compatibilidade (85 veículos, R$ 48M receita)',
+            resultSummary:
+              'ICP Score 96/100 com alta compatibilidade (85 veículos, R$ 48M receita)',
             timestamp: now,
           },
           {

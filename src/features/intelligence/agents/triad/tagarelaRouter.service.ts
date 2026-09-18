@@ -36,8 +36,11 @@ export class TagarelaRouterService {
   private patricia = new PatriciaExecutionAgent();
   private guardiao = new GuardiaoGovernanceAgent();
 
-  public async runCommercialMission(req: CommercialMissionRequest): Promise<CommercialMissionResponse> {
-    const missionId = req.missionId ?? `mission-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  public async runCommercialMission(
+    req: CommercialMissionRequest,
+  ): Promise<CommercialMissionResponse> {
+    const missionId =
+      req.missionId ?? `mission-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     const now = new Date().toISOString();
 
     // 1. Etapa de Governança e Higiene Inicial (Guardião)
@@ -163,7 +166,9 @@ export class TagarelaRouterService {
           ],
         },
         guardiao: {
-          status: governanceVerdicts.some((v) => v.verdict === 'REQUIRES_APPROVAL') ? 'RUNNING' : 'COMPLETED',
+          status: governanceVerdicts.some((v) => v.verdict === 'REQUIRES_APPROVAL')
+            ? 'RUNNING'
+            : 'COMPLETED',
           specialists: [
             {
               id: `node-crm-${Date.now()}`,

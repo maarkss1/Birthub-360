@@ -11,7 +11,11 @@ import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 export class PatriciaExecutionAgent {
   public async planExecution(strategy: GiselleStrategyPlan): Promise<PatriciaExecutionPlan> {
     try {
-      const ai = getAiModel('groq-llama3-70b', 0.2, 'Você é a Patrícia, Especialista em Execução e Outbound.');
+      const ai = getAiModel(
+        'groq-llama3-70b',
+        0.2,
+        'Você é a Patrícia, Especialista em Execução e Outbound.',
+      );
       const prompt = new SystemMessage(
         `Gere um plano de execução de próxima melhor ação (Next Best Action) e battlecards para a conta ${strategy.account.companyName}, baseado no plano da Giselle.
 Formato esperado:
@@ -25,16 +29,19 @@ Formato esperado:
     "suggestedQuestions": ["Pergunta 1", "Pergunta 2"]
   }
 }
-RETORNE APENAS JSON VÁLIDO.`
+RETORNE APENAS JSON VÁLIDO.`,
       );
-      
+
       const userMsg = new HumanMessage(JSON.stringify(strategy));
       const result = await ai.invoke([prompt, userMsg]);
       const content = result.content || '{}';
-      
-      const cleanContent = content.replace(/```json/gi, '').replace(/```/g, '').trim();
+
+      const cleanContent = content
+        .replace(/```json/gi, '')
+        .replace(/```/g, '')
+        .trim();
       const parsed = JSON.parse(cleanContent);
-      
+
       if (parsed.nextBestAction) {
         const contact = strategy.targetPersona;
         const nba: NextBestAction = {
@@ -47,12 +54,13 @@ RETORNE APENAS JSON VÁLIDO.`
           contactRole: contact.role,
           contactPhone: contact.phone ?? '+55 11 98765-4321',
           contactEmail: contact.email ?? 'carlos.mendes@empresa.com.br',
-          windowRecommendation: parsed.nextBestAction.windowRecommendation || strategy.recommendedTiming,
+          windowRecommendation:
+            parsed.nextBestAction.windowRecommendation || strategy.recommendedTiming,
           reasons: parsed.nextBestAction.reasons || [`Score ICP: ${strategy.scores.icp.score}`],
           battlecardHints: parsed.nextBestAction.battlecardHints || [],
           suggestedQuestions: parsed.nextBestAction.suggestedQuestions || [],
         };
-        
+
         return {
           executionId: `exec-ai-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
           strategyId: strategy.strategyId,
@@ -62,7 +70,10 @@ RETORNE APENAS JSON VÁLIDO.`
         };
       }
     } catch (err) {
-      console.warn('[Patricia] Falha na inferência via AI Gateway, utilizando plano determinístico (fallback).', err);
+      console.warn(
+        '[Patricia] Falha na inferência via AI Gateway, utilizando plano determinístico (fallback).',
+        err,
+      );
     }
 
     const cadence = this.buildCadence(strategy);
@@ -99,7 +110,8 @@ RETORNE APENAS JSON VÁLIDO.`
       {
         day: 2,
         channel: 'PHONE_VOICE',
-        actionDescription: 'Ligação estratégica de descoberta (janela de ouro de retorno pós-email).',
+        actionDescription:
+          'Ligação estratégica de descoberta (janela de ouro de retorno pós-email).',
         contentTemplate: `Abertura: "Olá ${contactFirst}, enviei uma mensagem sobre o novo CD em Campinas e a consolidação de dados da frota. Peguei você em um momento oportuno?"`,
         status: 'PENDING',
       },
@@ -128,12 +140,12 @@ RETORNE APENAS JSON VÁLIDO.`
     const battlecardHints: string[] = [];
     if (competitors.some((c) => c.toLowerCase().includes('senior'))) {
       battlecardHints.push(
-        'Senior Sistemas: Diferencial é nossa torre unificada mobile em tempo real sem necessidade de múltiplos módulos contratuais.'
+        'Senior Sistemas: Diferencial é nossa torre unificada mobile em tempo real sem necessidade de múltiplos módulos contratuais.',
       );
     }
     if (competitors.some((c) => c.toLowerCase().includes('totvs'))) {
       battlecardHints.push(
-        'Totvs: Não cobramos customizações pesadas de ERP; plugamos na API e entregamos inteligência preditiva imediata.'
+        'Totvs: Não cobramos customizações pesadas de ERP; plugamos na API e entregamos inteligência preditiva imediata.',
       );
     }
 

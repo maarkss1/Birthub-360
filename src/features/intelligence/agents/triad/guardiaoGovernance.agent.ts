@@ -125,10 +125,12 @@ export class GuardiaoGovernanceAgent {
         verdict: 'REQUIRES_APPROVAL',
         ruleId: 'LGPD_PII_CONSENT_MISSING',
         category: 'LGPD_PII',
-        details: 'Dados pessoais sensíveis detectados sem registro de consentimento explícito prévio.',
+        details:
+          'Dados pessoais sensíveis detectados sem registro de consentimento explícito prévio.',
         requiredRoleForApproval: 'ADMIN',
         piiSanitized: false,
-        auditLog: '[LGPD-ALERT] Envio retido por ausência de consentimento prévio para processamento de PII.',
+        auditLog:
+          '[LGPD-ALERT] Envio retido por ausência de consentimento prévio para processamento de PII.',
       };
     }
 

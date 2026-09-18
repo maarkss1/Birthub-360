@@ -1,4 +1,5 @@
 # Birth Hub 360 — Agente Comercial de Elite
+
 ## Arquitetura Ponta a Ponta com Orquestração dos 392 Agentes
 
 - **Status:** Oficial / Especificação Arquitetural de Referência
@@ -56,13 +57,13 @@ O desenho definitivo da **Birth Hub 360** unifica essa malha sob um único **Age
 
 ### O Paradigma: De Chat Reativo para Commercial Autonomous OS
 
-| Dimensão | Modelo Antigo (Reativo) | Birth Hub 360 (Commercial Autonomous OS) |
-| :--- | :--- | :--- |
-| **Gatilho** | Usuário digita uma pergunta em um chat | **Evento de negócio** (lead novo, email aberto, deal parado, call finalizada) |
-| **Comportamento** | LLM cospe texto genérico | **Percepção → Contexto → Agente → Especialistas → Decisão → Policy → Ação** |
-| **Interface** | Caixa de chat com 392 botões/prompts | **Workspace "O Que Fazer Agora"** com 1 clique para executar e evidência audível |
-| **Consistência** | Alucinações, prompts conflitantes | **Grafo determinístico com alçadas, RBAC e contratos estritos** |
-| **Feedback Loop**| Nulo (pergunta e resposta esquecidas) | **Learning Layer que calibra persona, canal, timing e argumento por vitória/perda** |
+| Dimensão          | Modelo Antigo (Reativo)                | Birth Hub 360 (Commercial Autonomous OS)                                            |
+| :---------------- | :------------------------------------- | :---------------------------------------------------------------------------------- |
+| **Gatilho**       | Usuário digita uma pergunta em um chat | **Evento de negócio** (lead novo, email aberto, deal parado, call finalizada)       |
+| **Comportamento** | LLM cospe texto genérico               | **Percepção → Contexto → Agente → Especialistas → Decisão → Policy → Ação**         |
+| **Interface**     | Caixa de chat com 392 botões/prompts   | **Workspace "O Que Fazer Agora"** com 1 clique para executar e evidência audível    |
+| **Consistência**  | Alucinações, prompts conflitantes      | **Grafo determinístico com alçadas, RBAC e contratos estritos**                     |
+| **Feedback Loop** | Nulo (pergunta e resposta esquecidas)  | **Learning Layer que calibra persona, canal, timing e argumento por vitória/perda** |
 
 ---
 
@@ -174,31 +175,31 @@ flowchart TD
 
 ### Detalhamento das 23 Fases
 
-| # | Fase | Agentes / Especialistas Envolvidos | Entradas (Inputs) | Saídas (Outputs) & Formato | Guardrail & Policy |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **01** | **Radar de Mercado** | Lead Hunter, Market Intel, ICP Analyst, Territory Intel, Intent Detector | CNAE, região, frota, tecnologia, notícias, vagas | 30-50 contas quentes com evidências de disparo | Minimização LGPD; rejeitar listas compradas sem base legal |
-| **02** | **Inteligência de Conta** | Account Intelligence, Contact Mapper, Buying Committee Mapper, Competitor Intel | CNPJ, domínio, LinkedIn, site, histórico CRM | **Account Intelligence Pack** (Decisores, Techs, Dores Prováveis) | Sanitização PII, sem scrapers ilegais |
-| **03** | **Qualificação Estratégica** | Qualification Agent, ICP Scorer, Fit Analyzer, Opportunity Scorer | Account Pack + critérios do ICP da organização | Scores explicáveis com `reason`, `evidence` e `confidence` | **Score nunca inexplicável**; transparência algorítmica |
-| **04** | **Estratégia de Abordagem** | Giselle, Persona Strategist, Messaging Strategist, Value Proposition | Persona + Dores detectadas + Sinais de mercado | **Plano Estratégico:** Objetivo, Dor, Ângulo, Proposta, Canal, CTA | Proibido mensagens genéricas de IA ("espero que este email o encontre bem") |
-| **05** | **Outbound Tático** | Patrícia, SDR Outreach, Email Personalizer, LinkedIn Agent, Meeting Booker | Plano aprovado de Giselle | Cadência Multicanal (D1, D2, D4) + Copys personalizadas | Rate limits por domínio/caixa, SPF/DKIM check |
-| **06** | **Cadência Adaptativa** | Next Best Action Agent, Cadence Optimizer | Eventos em tempo real (email aberto 4x, call não atendida) | Gatilho dinâmico imediato: *"Ligar hoje 10h-11h30"* | Não inundar o lead; respeitar horários comerciais |
-| **07** | **Workspace do Vendedor** | Agente Comercial Elite (Front Orchestrator) | Dados agregados do CRM + Recomendações NBA | **Card de Ação:** ACME Logística, Ação sugerida, Motivos, Botão Executar | Ação com 1 clique; nunca obrigar preenchimento redundante |
-| **08** | **Conversa Comercial** | Voice/STT, Conversation Intelligence, Objection Handling, Discovery Coach | Stream de áudio da chamada telefônica / WebRTC | Batalhas de objeção em tempo real + perguntas recomendadas na tela | Consentimento de gravação em conformidade com a lei |
-| **09** | **Meeting Intelligence** | Meeting Summarizer, Action Extractor, Risk Detector, CRM Sync | Transcrição completa da reunião de vídeo/call | Resumo executivo, dores, prazos, riscos e payload para CRM | Vendedor valida antes de consolidar (`[Confirmar no CRM]`) |
-| **10** | **Qualificação Profunda** | MEDDICC Agent, BANT Agent, SPICED Agent | Fatos da reunião + interações históricas | Grid simplificado: Dor, Impacto, Decisor, Champion, Budget, Timing | O vendedor vê status direto, nunca termos técnicos acadêmicos |
-| **11** | **Criação de Oportunidade**| Opportunity Builder, Deal Intelligence, Deal Risk | Lead qualificado com evidência de compra | Oportunidade criada com MRR, produto, forecast, riscos e stakeholders | Não criar deal fantasma; exige decisor ou reunião realizada |
-| **12** | **Pipeline Intelligence** | Pipeline Auditor, Bottleneck Detector, KPI Analyst | Snapshot do CRM, tempo de estágio, histórico de atividade | Classificação de saúde: `HEALTHY`, `ATTENTION`, `RISK`, `STALLED` | Identificar gargalos operacionais e perda de velocidade |
-| **13** | **Pipeline Oracle** | Pipeline Oracle, Cohort Analyzer, Pipeline Cleanse | Volume de deals, aging, recência de contatos | Forecast discriminado: Total vs. Elegível vs. Commit vs. Fake inflado | Expor inflações artificiais de meta para o gestor |
-| **14** | **Proposal Intelligence** | Proposal Agent, Product Matcher, Commercial Terms | Diagnóstico de dor + catálogo de produtos/serviços | Proposta comercial hiper-personalizada com escopo e valores | Paridade de preços do catálogo oficial |
-| **15** | **Pricing Optimizer** | Pricing Optimizer, Margin Guard | Ticket, margem, porte, volume, concorrência | Recomendação de tabela de preços e faixa segura de desconto | Alçada de desconto vinculada estritamente ao cargo |
-| **16** | **Policy Engine** | Guardian, RBAC Engine, Approval Policy Engine | Ação pretendida (ex: desconto de 18%) | Veredito: Aprovado automaticamente ou Rota de Alçada exigida | **Fail-Closed**: sem permissão comprovada, a ação trava |
-| **17** | **Negociação** | Negotiation Agent, Battlecard Agent, Legal Risk | Minuta, contraproposta do cliente, termos contratuais | Pontos de concessão, defesas de valor e riscos de cláusula | Conformidade jurídica e preservação de margem |
-| **18** | **Forecast Real** | Forecast Intelligence, Bayesian Deal Predictor | Sinais comportamentais + recência + sentimento | Previsão ponderada probabilística real de fechamento | Nunca se apoiar em probabilidades fixas de etapa |
-| **19** | **Fechamento** | Contract Agent, Billing Agent, Implementation Agent | Evento `deal.won` comprovado | Minuta gerada, link D4Sign/DocuSign enviado, ordem faturamento | Proibido marcar como ganho sem evidência contratual |
-| **20** | **Handoff para CS** | Customer Brief Generator, Onboarding Orchestrator | Histórico completo de vendas, promessas, dores, escopo | **Customer Brief** completo entregue para o time de CS | O cliente nunca precisa repetir para CS o que disse em vendas |
-| **21** | **Expansion Mapper** | Expansion Mapper, Cross-sell Engine | Métricas de uso do produto, novas filiais, novas dores | Oportunidades identificadas de Upsell e Cross-sell | Timing correto baseado em valor já entregue |
-| **22** | **Churn Deflector** | Churn Deflector, Health Score Sentinel | Queda de engajamento, tickets de suporte, NPS baixo | Alerta de risco e playbook de resgate imediato acionado | Devolve o contato ao Comercial quando há risco comercial |
-| **23** | **Aprendizado Contínuo** | Learning Agent, Event Bus Analytics | Resultados reais de vitória/perda, taxas de conversão | Perfil de estilo e parâmetros de abordagem refinados | **Gate de Aprovação Humana**: IA não altera regras operacionais sozinha |
+| #      | Fase                         | Agentes / Especialistas Envolvidos                                              | Entradas (Inputs)                                          | Saídas (Outputs) & Formato                                               | Guardrail & Policy                                                          |
+| :----- | :--------------------------- | :------------------------------------------------------------------------------ | :--------------------------------------------------------- | :----------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| **01** | **Radar de Mercado**         | Lead Hunter, Market Intel, ICP Analyst, Territory Intel, Intent Detector        | CNAE, região, frota, tecnologia, notícias, vagas           | 30-50 contas quentes com evidências de disparo                           | Minimização LGPD; rejeitar listas compradas sem base legal                  |
+| **02** | **Inteligência de Conta**    | Account Intelligence, Contact Mapper, Buying Committee Mapper, Competitor Intel | CNPJ, domínio, LinkedIn, site, histórico CRM               | **Account Intelligence Pack** (Decisores, Techs, Dores Prováveis)        | Sanitização PII, sem scrapers ilegais                                       |
+| **03** | **Qualificação Estratégica** | Qualification Agent, ICP Scorer, Fit Analyzer, Opportunity Scorer               | Account Pack + critérios do ICP da organização             | Scores explicáveis com `reason`, `evidence` e `confidence`               | **Score nunca inexplicável**; transparência algorítmica                     |
+| **04** | **Estratégia de Abordagem**  | Giselle, Persona Strategist, Messaging Strategist, Value Proposition            | Persona + Dores detectadas + Sinais de mercado             | **Plano Estratégico:** Objetivo, Dor, Ângulo, Proposta, Canal, CTA       | Proibido mensagens genéricas de IA ("espero que este email o encontre bem") |
+| **05** | **Outbound Tático**          | Patrícia, SDR Outreach, Email Personalizer, LinkedIn Agent, Meeting Booker      | Plano aprovado de Giselle                                  | Cadência Multicanal (D1, D2, D4) + Copys personalizadas                  | Rate limits por domínio/caixa, SPF/DKIM check                               |
+| **06** | **Cadência Adaptativa**      | Next Best Action Agent, Cadence Optimizer                                       | Eventos em tempo real (email aberto 4x, call não atendida) | Gatilho dinâmico imediato: _"Ligar hoje 10h-11h30"_                      | Não inundar o lead; respeitar horários comerciais                           |
+| **07** | **Workspace do Vendedor**    | Agente Comercial Elite (Front Orchestrator)                                     | Dados agregados do CRM + Recomendações NBA                 | **Card de Ação:** ACME Logística, Ação sugerida, Motivos, Botão Executar | Ação com 1 clique; nunca obrigar preenchimento redundante                   |
+| **08** | **Conversa Comercial**       | Voice/STT, Conversation Intelligence, Objection Handling, Discovery Coach       | Stream de áudio da chamada telefônica / WebRTC             | Batalhas de objeção em tempo real + perguntas recomendadas na tela       | Consentimento de gravação em conformidade com a lei                         |
+| **09** | **Meeting Intelligence**     | Meeting Summarizer, Action Extractor, Risk Detector, CRM Sync                   | Transcrição completa da reunião de vídeo/call              | Resumo executivo, dores, prazos, riscos e payload para CRM               | Vendedor valida antes de consolidar (`[Confirmar no CRM]`)                  |
+| **10** | **Qualificação Profunda**    | MEDDICC Agent, BANT Agent, SPICED Agent                                         | Fatos da reunião + interações históricas                   | Grid simplificado: Dor, Impacto, Decisor, Champion, Budget, Timing       | O vendedor vê status direto, nunca termos técnicos acadêmicos               |
+| **11** | **Criação de Oportunidade**  | Opportunity Builder, Deal Intelligence, Deal Risk                               | Lead qualificado com evidência de compra                   | Oportunidade criada com MRR, produto, forecast, riscos e stakeholders    | Não criar deal fantasma; exige decisor ou reunião realizada                 |
+| **12** | **Pipeline Intelligence**    | Pipeline Auditor, Bottleneck Detector, KPI Analyst                              | Snapshot do CRM, tempo de estágio, histórico de atividade  | Classificação de saúde: `HEALTHY`, `ATTENTION`, `RISK`, `STALLED`        | Identificar gargalos operacionais e perda de velocidade                     |
+| **13** | **Pipeline Oracle**          | Pipeline Oracle, Cohort Analyzer, Pipeline Cleanse                              | Volume de deals, aging, recência de contatos               | Forecast discriminado: Total vs. Elegível vs. Commit vs. Fake inflado    | Expor inflações artificiais de meta para o gestor                           |
+| **14** | **Proposal Intelligence**    | Proposal Agent, Product Matcher, Commercial Terms                               | Diagnóstico de dor + catálogo de produtos/serviços         | Proposta comercial hiper-personalizada com escopo e valores              | Paridade de preços do catálogo oficial                                      |
+| **15** | **Pricing Optimizer**        | Pricing Optimizer, Margin Guard                                                 | Ticket, margem, porte, volume, concorrência                | Recomendação de tabela de preços e faixa segura de desconto              | Alçada de desconto vinculada estritamente ao cargo                          |
+| **16** | **Policy Engine**            | Guardian, RBAC Engine, Approval Policy Engine                                   | Ação pretendida (ex: desconto de 18%)                      | Veredito: Aprovado automaticamente ou Rota de Alçada exigida             | **Fail-Closed**: sem permissão comprovada, a ação trava                     |
+| **17** | **Negociação**               | Negotiation Agent, Battlecard Agent, Legal Risk                                 | Minuta, contraproposta do cliente, termos contratuais      | Pontos de concessão, defesas de valor e riscos de cláusula               | Conformidade jurídica e preservação de margem                               |
+| **18** | **Forecast Real**            | Forecast Intelligence, Bayesian Deal Predictor                                  | Sinais comportamentais + recência + sentimento             | Previsão ponderada probabilística real de fechamento                     | Nunca se apoiar em probabilidades fixas de etapa                            |
+| **19** | **Fechamento**               | Contract Agent, Billing Agent, Implementation Agent                             | Evento `deal.won` comprovado                               | Minuta gerada, link D4Sign/DocuSign enviado, ordem faturamento           | Proibido marcar como ganho sem evidência contratual                         |
+| **20** | **Handoff para CS**          | Customer Brief Generator, Onboarding Orchestrator                               | Histórico completo de vendas, promessas, dores, escopo     | **Customer Brief** completo entregue para o time de CS                   | O cliente nunca precisa repetir para CS o que disse em vendas               |
+| **21** | **Expansion Mapper**         | Expansion Mapper, Cross-sell Engine                                             | Métricas de uso do produto, novas filiais, novas dores     | Oportunidades identificadas de Upsell e Cross-sell                       | Timing correto baseado em valor já entregue                                 |
+| **22** | **Churn Deflector**          | Churn Deflector, Health Score Sentinel                                          | Queda de engajamento, tickets de suporte, NPS baixo        | Alerta de risco e playbook de resgate imediato acionado                  | Devolve o contato ao Comercial quando há risco comercial                    |
+| **23** | **Aprendizado Contínuo**     | Learning Agent, Event Bus Analytics                                             | Resultados reais de vitória/perda, taxas de conversão      | Perfil de estilo e parâmetros de abordagem refinados                     | **Gate de Aprovação Humana**: IA não altera regras operacionais sozinha     |
 
 ---
 
@@ -259,13 +260,13 @@ O front-end do **Agente Comercial de Elite** substitui a complexidade de dashboa
 
 A arquitetura se conecta diretamente às estruturas já consolidadas no repositório:
 
-| Componente da Arquitetura | Módulo no Repositório | Status Técnico |
-| :--- | :--- | :--- |
-| **Supervisor Tagarela** | `src/features/intelligence/agents/supervisor.agent.ts` | Expandir o LangGraph `StateGraph` de 5 nós para os nós mestres da Tríade (`giselle`, `patricia`, `guardiao`). |
-| **Contrato de Saída & Handoff**| `src/features/intelligence/agents/commercialAgentTypes.ts` | Padronizado com `AgentExecutionResult` e `AgentHandoff`. |
-| **Barramento de Agentes** | `src/features/job-roles/services/agentBus.service.ts` | Roteamento de mensagens inter-agentes com proteção contra loop. |
-| **Motor de Autorização & Capabilities** | `src/features/job-roles/services/capabilityAuthorization.service.ts` | Validação determinística de alçadas e permissões. |
-| **Executores de Ferramentas (Tool Layer)**| `src/features/job-roles/services/toolExecutors.ts` | Chamadas reais aos serviços de CRM, Bitrix, Email, WhatsApp e Voz. |
-| **Catálogo de 392 Agentes** | `src/features/job-roles/catalog/agents.normalized.json` | Base canônica importada para vincular como Core, Specialist ou Skill. |
-| **Ações Pendentes de Decisão**| `AIPendingAction` / `src/features/intelligence/agents/opsPendingActions.tool.ts` | Esteira de aprovação humana para ações de alto risco. |
-| **Memória Persistente** | `AgentMemory` no Prisma / `src/features/intelligence/agents/agentMemory.store.ts` | Histórico e aprendizado por agente, tenant e lead. |
+| Componente da Arquitetura                  | Módulo no Repositório                                                             | Status Técnico                                                                                                |
+| :----------------------------------------- | :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| **Supervisor Tagarela**                    | `src/features/intelligence/agents/supervisor.agent.ts`                            | Expandir o LangGraph `StateGraph` de 5 nós para os nós mestres da Tríade (`giselle`, `patricia`, `guardiao`). |
+| **Contrato de Saída & Handoff**            | `src/features/intelligence/agents/commercialAgentTypes.ts`                        | Padronizado com `AgentExecutionResult` e `AgentHandoff`.                                                      |
+| **Barramento de Agentes**                  | `src/features/job-roles/services/agentBus.service.ts`                             | Roteamento de mensagens inter-agentes com proteção contra loop.                                               |
+| **Motor de Autorização & Capabilities**    | `src/features/job-roles/services/capabilityAuthorization.service.ts`              | Validação determinística de alçadas e permissões.                                                             |
+| **Executores de Ferramentas (Tool Layer)** | `src/features/job-roles/services/toolExecutors.ts`                                | Chamadas reais aos serviços de CRM, Bitrix, Email, WhatsApp e Voz.                                            |
+| **Catálogo de 392 Agentes**                | `src/features/job-roles/catalog/agents.normalized.json`                           | Base canônica importada para vincular como Core, Specialist ou Skill.                                         |
+| **Ações Pendentes de Decisão**             | `AIPendingAction` / `src/features/intelligence/agents/opsPendingActions.tool.ts`  | Esteira de aprovação humana para ações de alto risco.                                                         |
+| **Memória Persistente**                    | `AgentMemory` no Prisma / `src/features/intelligence/agents/agentMemory.store.ts` | Histórico e aprendizado por agente, tenant e lead.                                                            |

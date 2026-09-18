@@ -23,7 +23,11 @@ export class GiselleStrategyAgent {
     const account = this.buildAccountIntelligence(input);
 
     try {
-      const ai = getAiModel('groq-llama3-70b', 0.2, 'Você é a Giselle, Head de Inteligência Comercial.');
+      const ai = getAiModel(
+        'groq-llama3-70b',
+        0.2,
+        'Você é a Giselle, Head de Inteligência Comercial.',
+      );
       const prompt = new SystemMessage(
         `Avalie a conta ${account.companyName} e retorne um plano estratégico em JSON estrito.
 Formato esperado:
@@ -42,17 +46,20 @@ Formato esperado:
   "recommendedTiming": "Quando abordar",
   "suggestedCta": "Chamada para ação"
 }
-RETORNE APENAS JSON VÁLIDO.`
+RETORNE APENAS JSON VÁLIDO.`,
       );
-      
+
       const userMsg = new HumanMessage(JSON.stringify(account));
       const result = await ai.invoke([prompt, userMsg]);
       const content = result.content || '{}';
-      
+
       // Limpeza de markdown de code block caso a LLM insira
-      const cleanContent = content.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const cleanContent = content
+        .replace(/```json/gi, '')
+        .replace(/```/g, '')
+        .trim();
       const parsed = JSON.parse(cleanContent);
-      
+
       if (parsed.scores && parsed.targetPersona) {
         return {
           strategyId: `strat-ai-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
@@ -60,16 +67,26 @@ RETORNE APENAS JSON VÁLIDO.`
           scores: parsed.scores,
           targetPersona: parsed.targetPersona,
           primaryPain: parsed.primaryPain || this.formulatePainHypothesis(account),
-          valueProposition: parsed.valueProposition || this.craftValueProposition(account, this.formulatePainHypothesis(account)),
-          recommendedAngle: parsed.recommendedAngle || this.determineApproachAngle(account, this.formulatePainHypothesis(account)),
-          recommendedChannel: parsed.recommendedChannel || this.chooseOptimalChannel(parsed.targetPersona, parsed.scores.intent.score),
+          valueProposition:
+            parsed.valueProposition ||
+            this.craftValueProposition(account, this.formulatePainHypothesis(account)),
+          recommendedAngle:
+            parsed.recommendedAngle ||
+            this.determineApproachAngle(account, this.formulatePainHypothesis(account)),
+          recommendedChannel:
+            parsed.recommendedChannel ||
+            this.chooseOptimalChannel(parsed.targetPersona, parsed.scores.intent.score),
           recommendedTiming: parsed.recommendedTiming || this.determineOptimalTiming(),
-          suggestedCta: parsed.suggestedCta || this.createSuggestedCta(parsed.targetPersona, 'PHONE_VOICE'),
+          suggestedCta:
+            parsed.suggestedCta || this.createSuggestedCta(parsed.targetPersona, 'PHONE_VOICE'),
           generatedAt: new Date().toISOString(),
         };
       }
     } catch (err) {
-      console.warn('[Giselle] Falha na inferência via AI Gateway, utilizando plano determinístico (fallback).', err);
+      console.warn(
+        '[Giselle] Falha na inferência via AI Gateway, utilizando plano determinístico (fallback).',
+        err,
+      );
     }
 
     const scores = this.calculateScores(account);
@@ -97,22 +114,24 @@ RETORNE APENAS JSON VÁLIDO.`
   }
 
   private buildAccountIntelligence(input: GiselleStrategyInput): AccountIntelligencePack {
-    const decisionMakers: DecisionMakerInfo[] = input.knownDecisionMakers && input.knownDecisionMakers.length > 0
-      ? input.knownDecisionMakers
-      : [
-          {
-            name: 'Carlos Mendes',
-            role: 'Diretor de Operações e Logística',
-            seniority: 'Director',
-            linkedinUrl: 'https://linkedin.com/in/carlos-mendes-log',
-            email: 'carlos.mendes@empresa.com.br',
-            phone: '+55 11 98765-4321',
-          },
-        ];
+    const decisionMakers: DecisionMakerInfo[] =
+      input.knownDecisionMakers && input.knownDecisionMakers.length > 0
+        ? input.knownDecisionMakers
+        : [
+            {
+              name: 'Carlos Mendes',
+              role: 'Diretor de Operações e Logística',
+              seniority: 'Director',
+              linkedinUrl: 'https://linkedin.com/in/carlos-mendes-log',
+              email: 'carlos.mendes@empresa.com.br',
+              phone: '+55 11 98765-4321',
+            },
+          ];
 
-    const competitors = input.competitorsMentioned && input.competitorsMentioned.length > 0
-      ? input.competitorsMentioned
-      : ['Senior Sistemas', 'Totvs Logística'];
+    const competitors =
+      input.competitorsMentioned && input.competitorsMentioned.length > 0
+        ? input.competitorsMentioned
+        : ['Senior Sistemas', 'Totvs Logística'];
 
     return {
       companyName: input.companyName,
@@ -155,7 +174,8 @@ RETORNE APENAS JSON VÁLIDO.`
 
     const fitScore: TransparentScore = {
       score: 89,
-      reason: 'Stack tecnológica atual (ERP legado + planilhas) tem alta aderência para substituição/integração pela Birth Hub 360.',
+      reason:
+        'Stack tecnológica atual (ERP legado + planilhas) tem alta aderência para substituição/integração pela Birth Hub 360.',
       evidence: [
         `Tecnologias mapeadas: ${account.technologies.join(', ')}`,
         'Ausência de torre de controle operacional unificada',
@@ -171,7 +191,7 @@ RETORNE APENAS JSON VÁLIDO.`
     };
 
     const opportunityScoreValue = Math.round(
-      icpScore.score * 0.4 + fitScore.score * 0.35 + intentScore.score * 0.25
+      icpScore.score * 0.4 + fitScore.score * 0.35 + intentScore.score * 0.25,
     );
 
     const opportunityScore: TransparentScore = {
@@ -195,7 +215,7 @@ RETORNE APENAS JSON VÁLIDO.`
 
   private selectTargetPersona(account: AccountIntelligencePack): DecisionMakerInfo {
     const preferred = account.decisionMakers.find(
-      (dm) => dm.role.toLowerCase().includes('opera') || dm.role.toLowerCase().includes('log')
+      (dm) => dm.role.toLowerCase().includes('opera') || dm.role.toLowerCase().includes('log'),
     );
     return preferred ?? account.decisionMakers[0];
   }
@@ -212,7 +232,10 @@ RETORNE APENAS JSON VÁLIDO.`
     return `Abordar pelo recente crescimento da frota e abertura de CD, questionando como estão sustentando a governança operacional sem sobrecarregar a equipe com ferramentas desconexas.`;
   }
 
-  private chooseOptimalChannel(persona: DecisionMakerInfo, intentScore: number): GiselleStrategyPlan['recommendedChannel'] {
+  private chooseOptimalChannel(
+    persona: DecisionMakerInfo,
+    intentScore: number,
+  ): GiselleStrategyPlan['recommendedChannel'] {
     if (intentScore >= 70 && persona.phone) {
       return 'PHONE_VOICE';
     }
@@ -223,7 +246,10 @@ RETORNE APENAS JSON VÁLIDO.`
     return 'Hoje entre 10h00 e 11h30 (janela de maior assertividade para Diretores Operacionais)';
   }
 
-  private createSuggestedCta(persona: DecisionMakerInfo, channel: GiselleStrategyPlan['recommendedChannel']): string {
+  private createSuggestedCta(
+    persona: DecisionMakerInfo,
+    channel: GiselleStrategyPlan['recommendedChannel'],
+  ): string {
     if (channel === 'PHONE_VOICE') {
       return `Olá ${persona.name.split(' ')[0]}, notei a recente expansão das operações da empresa e gostaria de entender como vocês estão lidando com a consolidação dos dados de telemetria e sinistros na nova estrutura.`;
     }

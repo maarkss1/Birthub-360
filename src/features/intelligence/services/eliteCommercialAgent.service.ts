@@ -1,7 +1,4 @@
-import type {
-  AgentCenterTrace,
-  SellerWorkspaceOverview,
-} from '../agents/triad/triad.types.js';
+import type { AgentCenterTrace, SellerWorkspaceOverview } from '../agents/triad/triad.types.js';
 import {
   TagarelaRouterService,
   type CommercialMissionRequest,
@@ -18,7 +15,7 @@ export class EliteCommercialAgentService {
   private async saveMissionToDb(
     result: CommercialMissionResponse,
     userId: string,
-    organizationId: string
+    organizationId: string,
   ) {
     // Upsert the mission
     await prisma.commercialMission.upsert({
@@ -54,7 +51,7 @@ export class EliteCommercialAgentService {
    */
   public async getWorkspaceOverview(
     _userId: string,
-    organizationId: string
+    organizationId: string,
   ): Promise<SellerWorkspaceOverview> {
     const defaultMissionId = `mission-acme-${organizationId}`;
 
@@ -78,7 +75,7 @@ export class EliteCommercialAgentService {
         hasPiiConsent: true,
       });
       await this.saveMissionToDb(defaultMission, _userId, organizationId);
-      
+
       // We still need the trace for the frontend, so we temporarily cache it in memory
       // as the DB trace mapping would be too extensive for this initial step.
       activeMissionsStore.set(defaultMissionId, defaultMission);
@@ -86,13 +83,13 @@ export class EliteCommercialAgentService {
       // Rehydrate from DB and Memory
       defaultMission = activeMissionsStore.get(defaultMissionId) as CommercialMissionResponse;
       if (!defaultMission) {
-          // If memory was cleared but DB exists, we run it again to get the full trace object
-          defaultMission = await this.router.runCommercialMission({
-            missionId: defaultMissionId,
-            accountName: missionRecord.accountName,
-            cnpj: missionRecord.cnpj ?? undefined,
-          });
-          activeMissionsStore.set(defaultMissionId, defaultMission);
+        // If memory was cleared but DB exists, we run it again to get the full trace object
+        defaultMission = await this.router.runCommercialMission({
+          missionId: defaultMissionId,
+          accountName: missionRecord.accountName,
+          cnpj: missionRecord.cnpj ?? undefined,
+        });
+        activeMissionsStore.set(defaultMissionId, defaultMission);
       }
     }
 
@@ -149,7 +146,7 @@ export class EliteCommercialAgentService {
   public async prospectNewAccounts(
     query: string,
     organizationId: string,
-    userId: string
+    userId: string,
   ): Promise<string[]> {
     const { HunterProspectingAgent } = await import('../agents/hunters/hunterProspecting.agent.js');
     const { DataEnricherAgent } = await import('../agents/hunters/dataEnricher.agent.js');
@@ -179,9 +176,9 @@ export class EliteCommercialAgentService {
           estimatedRevenue: enrichedData.estimatedRevenue,
         },
         organizationId,
-        userId
+        userId,
       );
-      
+
       missionIds.push(missionResult.missionId);
     }
 
@@ -194,7 +191,7 @@ export class EliteCommercialAgentService {
   public async executeAction(
     actionId: string,
     organizationId: string,
-    payload?: { notes?: string; channel?: string; phone?: string; leadId?: string }
+    payload?: { notes?: string; channel?: string; phone?: string; leadId?: string },
   ): Promise<{
     success: boolean;
     actionId: string;
@@ -211,17 +208,24 @@ export class EliteCommercialAgentService {
         // Dispara no mundo real
         await callLead(organizationId, payload?.leadId ?? 'lead-000', 'sdr');
       } catch (err) {
-        console.warn('[EliteAgent] Falha ao acionar Birthub Voices, prosseguindo com trigger fictício', err);
+        console.warn(
+          '[EliteAgent] Falha ao acionar Birthub Voices, prosseguindo com trigger fictício',
+          err,
+        );
       }
     } else if (channel === 'WHATSAPP') {
       try {
-        const { sendWhatsAppMessage } = await import('../../integrations/whatsapp/whatsapp.service.js');
+        const { sendWhatsAppMessage } =
+          await import('../../integrations/whatsapp/whatsapp.service.js');
         const targetPhone = payload?.phone ?? '+5511999999999';
         const messageContent = payload?.notes ?? 'Olá, gostaria de apresentar a Birth Hub 360.';
-        
+
         await sendWhatsAppMessage(organizationId, targetPhone, messageContent);
       } catch (err) {
-        console.warn('[EliteAgent] Falha ao enviar WhatsApp, prosseguindo com trigger fictício', err);
+        console.warn(
+          '[EliteAgent] Falha ao enviar WhatsApp, prosseguindo com trigger fictício',
+          err,
+        );
       }
     }
 
@@ -241,17 +245,17 @@ export class EliteCommercialAgentService {
   public async orchestrateMission(
     req: CommercialMissionRequest,
     organizationId: string,
-    userId: string
+    userId: string,
   ): Promise<CommercialMissionResponse> {
     const result = await this.router.runCommercialMission(req);
-    
+
     // Salva na memória volátil para o trace
     activeMissionsStore.set(result.missionId, result);
     activeMissionsStore.set(`default-${organizationId}`, result);
-    
+
     // Salva de forma permanente no Prisma
     await this.saveMissionToDb(result, userId, organizationId);
-    
+
     return result;
   }
 
@@ -260,7 +264,7 @@ export class EliteCommercialAgentService {
    */
   public async getMissionTrace(
     missionId: string,
-    organizationId: string
+    organizationId: string,
   ): Promise<AgentCenterTrace | null> {
     const found = activeMissionsStore.get(missionId);
     if (found) {

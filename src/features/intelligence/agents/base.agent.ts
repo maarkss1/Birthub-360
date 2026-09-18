@@ -117,12 +117,10 @@ export abstract class BaseAgent {
       // `{error}` honesto igual a uma falha do grafo, não uma exceção não tratada.
       await this.updateMemory(
         sid,
-        messages.map(
-          (m: BaseMessage): SerializedMessage => ({
-            role: m.type,
-            content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
-          }),
-        ),
+        messages.map((m: BaseMessage): SerializedMessage => ({
+          role: m.type,
+          content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
+        })),
       );
 
       return {
@@ -206,12 +204,10 @@ export abstract class BaseAgent {
 
       await this.updateMemory(
         sid,
-        messages.map(
-          (m): SerializedMessage => ({
-            role: m._getType(),
-            content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
-          }),
-        ),
+        messages.map((m): SerializedMessage => ({
+          role: m._getType(),
+          content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
+        })),
       );
 
       return { output: lastMessage.content as string, sessionId: sid };
