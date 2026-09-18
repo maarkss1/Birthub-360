@@ -933,10 +933,10 @@ model Organization {
   threeCXConnections            ThreeCXConnection[]
   voiceHubConnections           VoiceHubConnection[]
   voiceCallLogs                 VoiceCallLog[]
-  slackConnections               SlackConnection[]
-  stripeConnections              StripeConnection[]
-  omieConnections                OmieConnection[]
-  attachments                    Attachment[]
+  slackConnections              SlackConnection[]
+  stripeConnections             StripeConnection[]
+  omieConnections               OmieConnection[]
+  attachments                   Attachment[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
   crmProducts                   CrmProduct[]
@@ -1008,11 +1008,16 @@ model Organization {
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
   /// organização nova silenciosamente. Comparado contra a soma de AILog.cost do mês corrente desta
   /// organização por assertOrgAiBudgetNotExceeded (src/lib/ai/budget.ts).
-  monthlyAiBudgetUsd          Float?
+  monthlyAiBudgetUsd            Float?
   /// DEC-09: teto mensal de gasto com providers de prospecção pagos (Apollo/Hunter, USD) desta
   /// organização. Nullable = SEM TETO, mesmo raciocínio do campo acima. Comparado contra o
   /// acumulado do mês corrente (Redis, ver providerBudget.ts) por assertProspectingBudgetNotExceeded.
-  monthlyProspectingBudgetUsd Float?
+  monthlyProspectingBudgetUsd   Float?
+  commercialMissions            CommercialMission[]
+  nextBestActionRecommendations NextBestActionRecommendation[]
+  commercialMissionEvents       CommercialMissionEvent[]
+  missionScores                 MissionScore[]
+  missionAgentTraces            MissionAgentTrace[]
 }
 
 // ─── Comercial Inteligente (Revenue Command Center) ────────────────────────
@@ -1606,12 +1611,12 @@ model CrmCommercialDocument {
   paymentReconciledAt   DateTime?
 
   @@unique([organizationId, number])
-  @@index([organizationId, type, status])
-  @@index([leadId])
   // Impede que a MESMA cobrança Stripe reconcilie duas Faturas diferentes (reuso indevido/erro de
   // digitação de paymentIntentId) — múltiplos NULLs continuam permitidos (documentos sem
   // reconciliação nunca colidem entre si), comportamento padrão de unique constraint no Postgres.
   @@unique([organizationId, stripePaymentIntentId])
+  @@index([organizationId, type, status])
+  @@index([leadId])
 }
 
 model Session {
@@ -4777,4 +4782,112 @@ model AgentBuildProposal {
 
   @@index([organizationId, status])
   @@index([organizationId, createdAt])
+}
+
+// --- ELITE COMMERCIAL AGENT ---
+
+model CommercialMission {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+
+  accountName      String
+  cnpj             String?
+  segment          String?
+  fleetSize        Int?
+  estimatedRevenue Float?
+
+  status           String  @default("ACTIVE")
+  currentCadenceId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recommendations NextBestActionRecommendation[]
+  events          CommercialMissionEvent[]
+  score           MissionScore?
+  trace           MissionAgentTrace?
+
+  @@index([organizationId, status])
+}
+
+model NextBestActionRecommendation {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  missionId String
+  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  actionType         String
+  priority           String
+  channel            String?
+  objective          String  @db.Text
+  rationale          String  @db.Text
+  recommendedMessage String? @db.Text
+
+  evidence   Json?
+  confidence Float
+
+  requiresApproval Boolean @default(false)
+  status           String  @default("PENDING") // PENDING, EXECUTED, REJECTED, SUPERSEDED
+
+  scheduledFor DateTime?
+  executedAt   DateTime?
+
+  actorId        String?
+  feedbackReason String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([missionId, status])
+  @@index([organizationId, status])
+}
+
+model CommercialMissionEvent {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  missionId String
+  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  eventType String
+  payload   Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([missionId, createdAt])
+  @@index([organizationId, eventType])
+}
+
+model MissionScore {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  missionId String            @unique
+  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  icpScore         Float
+  fitScore         Float
+  intentScore      Float
+  opportunityScore Float
+  evidence         Json?
+
+  @@index([organizationId])
+}
+
+model MissionAgentTrace {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  missionId String            @unique
+  mission   CommercialMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  trace     Json
+
+  @@index([organizationId])
 }

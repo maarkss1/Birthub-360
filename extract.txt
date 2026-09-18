@@ -1,0 +1,103 @@
+
+> temp_all.sql:2344:CREATE TABLE "CommercialMission" (
+  temp_all.sql:2345:    "id" TEXT NOT NULL,
+  temp_all.sql:2346:    "organizationId" TEXT NOT NULL,
+  temp_all.sql:2347:    "userId" TEXT,
+  temp_all.sql:2348:    "accountName" TEXT NOT NULL,
+  temp_all.sql:2349:    "cnpj" TEXT,
+  temp_all.sql:2350:    "segment" TEXT,
+  temp_all.sql:2351:    "fleetSize" INTEGER,
+  temp_all.sql:2352:    "estimatedRevenue" DOUBLE PRECISION,
+  temp_all.sql:2353:    "status" TEXT NOT NULL DEFAULT 'ACTIVE',
+  temp_all.sql:2354:    "currentCadenceId" TEXT,
+  temp_all.sql:2355:    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  temp_all.sql:2356:    "updatedAt" TIMESTAMP(3) NOT NULL,
+  temp_all.sql:2357:
+  temp_all.sql:2358:    CONSTRAINT "CommercialMission_pkey" PRIMARY KEY ("id")
+  temp_all.sql:2359:);
+  temp_all.sql:2360:
+  temp_all.sql:2361:-- CreateTable
+  temp_all.sql:2362:CREATE TABLE "NextBestActionRecommendation" (
+  temp_all.sql:2363:    "id" TEXT NOT NULL,
+  temp_all.sql:2364:    "organizationId" TEXT NOT NULL,
+  temp_all.sql:2365:    "missionId" TEXT NOT NULL,
+  temp_all.sql:2366:    "actionType" TEXT NOT NULL,
+  temp_all.sql:2367:    "priority" TEXT NOT NULL,
+  temp_all.sql:2368:    "channel" TEXT,
+  temp_all.sql:2369:    "objective" TEXT NOT NULL,
+  temp_all.sql:2370:    "rationale" TEXT NOT NULL,
+  temp_all.sql:2371:    "recommendedMessage" TEXT,
+  temp_all.sql:2372:    "evidence" JSONB,
+  temp_all.sql:2373:    "confidence" DOUBLE PRECISION NOT NULL,
+  temp_all.sql:2374:    "requiresApproval" BOOLEAN NOT NULL DEFAULT false,
+  temp_all.sql:2375:    "status" TEXT NOT NULL DEFAULT 'PENDING',
+  temp_all.sql:2376:    "scheduledFor" TIMESTAMP(3),
+  temp_all.sql:2377:    "executedAt" TIMESTAMP(3),
+  temp_all.sql:2378:    "actorId" TEXT,
+  temp_all.sql:2379:    "feedbackReason" TEXT,
+  temp_all.sql:2380:    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  temp_all.sql:2381:    "updatedAt" TIMESTAMP(3) NOT NULL,
+  temp_all.sql:2382:
+  temp_all.sql:2383:    CONSTRAINT "NextBestActionRecommendation_pkey" PRIMARY KEY ("id")
+  temp_all.sql:2384:);
+  temp_all.sql:2385:
+  temp_all.sql:2386:-- CreateTable
+  temp_all.sql:2387:CREATE TABLE "CommercialMissionEvent" (
+  temp_all.sql:2388:    "id" TEXT NOT NULL,
+  temp_all.sql:2389:    "organizationId" TEXT NOT NULL,
+  temp_all.sql:2390:    "missionId" TEXT NOT NULL,
+  temp_all.sql:2391:    "eventType" TEXT NOT NULL,
+  temp_all.sql:2392:    "payload" JSONB,
+  temp_all.sql:2393:    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  temp_all.sql:2394:
+  temp_all.sql:2395:    CONSTRAINT "CommercialMissionEvent_pkey" PRIMARY KEY ("id")
+  temp_all.sql:2396:);
+  temp_all.sql:2397:
+  temp_all.sql:2398:-- CreateTable
+  temp_all.sql:2399:CREATE TABLE "MissionScore" (
+  temp_all.sql:2400:    "id" TEXT NOT NULL,
+  temp_all.sql:2401:    "organizationId" TEXT NOT NULL,
+  temp_all.sql:2402:    "missionId" TEXT NOT NULL,
+  temp_all.sql:2403:    "icpScore" DOUBLE PRECISION NOT NULL,
+  temp_all.sql:2404:    "fitScore" DOUBLE PRECISION NOT NULL,
+  temp_all.sql:2405:    "intentScore" DOUBLE PRECISION NOT NULL,
+  temp_all.sql:2406:    "opportunityScore" DOUBLE PRECISION NOT NULL,
+  temp_all.sql:2407:    "evidence" JSONB,
+  temp_all.sql:2408:
+  temp_all.sql:2409:    CONSTRAINT "MissionScore_pkey" PRIMARY KEY ("id")
+  temp_all.sql:2410:);
+  temp_all.sql:2411:
+  temp_all.sql:2412:-- CreateTable
+  temp_all.sql:2413:CREATE TABLE "MissionAgentTrace" (
+  temp_all.sql:2414:    "id" TEXT NOT NULL,
+  temp_all.sql:2415:    "organizationId" TEXT NOT NULL,
+  temp_all.sql:2416:    "missionId" TEXT NOT NULL,
+  temp_all.sql:2417:    "trace" JSONB NOT NULL,
+  temp_all.sql:2418:
+  temp_all.sql:2419:    CONSTRAINT "MissionAgentTrace_pkey" PRIMARY KEY ("id")
+  temp_all.sql:2420:);
+  temp_all.sql:2421:
+  temp_all.sql:2422:-- CreateIndex
+  temp_all.sql:2423:CREATE INDEX "Company_organizationId_idx" ON "Company"("organizationId");
+  temp_all.sql:2424:
+  temp_all.sql:2425:-- CreateIndex
+  temp_all.sql:2426:CREATE INDEX "Company_cnpj_idx" ON "Company"("cnpj");
+  temp_all.sql:2427:
+  temp_all.sql:2428:-- CreateIndex
+  temp_all.sql:2429:CREATE INDEX "Company_legalName_idx" ON "Company"("legalName");
+  temp_all.sql:2430:
+  temp_all.sql:2431:-- CreateIndex
+  temp_all.sql:2432:CREATE INDEX "Company_tradeName_idx" ON "Company"("tradeName");
+  temp_all.sql:2433:
+  temp_all.sql:2434:-- CreateIndex
+  temp_all.sql:2435:CREATE INDEX "Company_bitrixCompanyId_idx" ON "Company"("bitrixCompanyId");
+  temp_all.sql:2436:
+  temp_all.sql:2437:-- CreateIndex
+  temp_all.sql:2438:CREATE UNIQUE INDEX "Company_id_organizationId_key" ON "Company"("id", "organizationId");
+  temp_all.sql:2439:
+  temp_all.sql:2440:-- CreateIndex
+  temp_all.sql:2441:CREATE UNIQUE INDEX "Company_organizationId_cnpj_key" ON "Company"("organizationId", "cnpj");
+  temp_all.sql:2442:
+  temp_all.sql:2443:-- CreateIndex
+  temp_all.sql:2444:CREATE UNIQUE INDEX "MarketIntelligenceDataset_publicationSlot_key" ON "MarketIntelligenceDataset"("publicationSlot");
+

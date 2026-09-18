@@ -1,0 +1,127 @@
+
+  );
+  
+  -- CreateTable
+> CREATE TABLE "MissionAgentTrace" (
+      "id" TEXT NOT NULL,
+      "organizationId" TEXT NOT NULL,
+      "missionId" TEXT NOT NULL,
+      "trace" JSONB NOT NULL,
+  
+>     CONSTRAINT "MissionAgentTrace_pkey" PRIMARY KEY ("id")
+  );
+  
+  -- CreateIndex
+  CREATE INDEX "Company_organizationId_idx" ON "Company"("organizationId");
+  
+  -- CreateIndex
+  CREATE INDEX "Company_cnpj_idx" ON "Company"("cnpj");
+  
+  -- CreateIndex
+  CREATE INDEX "Company_legalName_idx" ON "Company"("legalName");
+  
+  -- CreateIndex
+  CREATE INDEX "Company_tradeName_idx" ON "Company"("tradeName");
+  
+  -- CreateIndex
+  CREATE INDEX "Company_bitrixCompanyId_idx" ON "Company"("bitrixCompanyId");
+  
+  -- CreateIndex
+  CREATE UNIQUE INDEX "Company_id_organizationId_key" ON "Company"("id", "organizationId");
+  
+  -- CreateIndex
+  CREATE UNIQUE INDEX "Company_organizationId_cnpj_key" ON "Company"("organizationId", "cnpj");
+  
+  -- CreateIndex
+  CREATE UNIQUE INDEX "MarketIntelligenceDataset_publicationSlot_key" ON "MarketIntelligenceDataset"("publicationSlot");
+  
+  -- CreateIndex
+  CREATE INDEX "MarketIntelligenceDataset_dataset_status_competencia_idx" ON "MarketIntelligenceDataset"("dataset", "status", "competencia");
+  
+  -- CreateIndex
+  CREATE INDEX "MarketIntelligenceDataset_competencia_idx" ON "MarketIntelligenceDataset"("competencia");
+  
+  -- CreateIndex
+  CREATE UNIQUE INDEX "MarketIntelligenceDataset_dataset_competencia_hash_key" ON "MarketIntelligenceDataset"("dataset", "competencia", "hash");
+  
+  -- CreateIndex
+  CREATE INDEX "MarketIntelligenceCompany_datasetId_cnpjBasico_idx" ON "MarketIntelligenceCompany"("datasetId", "cnpjBasico");
+  
+  -- CreateIndex
+  CREATE INDEX "MarketIntelligenceCompany_datasetId_cnaePrincipal_uf_idx" ON "MarketIntelligenceCompany"("datasetId", "cnaePrincipal", "uf");
+  
+  -- CreateIndex
+  CREATE INDEX "MarketIntelligenceCompany_datasetId_uf_municipioIbge_idx" ON "MarketIntelligenceCompany"("datasetId", "uf", "municipioIbge");
+  
+  -- CreateIndex
+  CREATE INDEX "MarketIntelligenceCompany_datasetId_uf_situacaoCadastral_idx" ON "MarketIntelligenceCompany"("datasetId", "uf", "situacaoCadastral");
+  
+  -- CreateIndex
+  CREATE INDEX "MarketIntelligenceCompany_datasetId_municipioIbge_situacaoC_idx" ON "MarketIntelligenceCompany"("datasetId", "municipioIbge", "situacaoCadastral");
+  
+  CREATE INDEX "MissionScore_organizationId_idx" ON "MissionScore"("organizationId");
+  
+  -- CreateIndex
+> CREATE UNIQUE INDEX "MissionAgentTrace_missionId_key" ON "MissionAgentTrace"("missionId");
+  
+  -- CreateIndex
+> CREATE INDEX "MissionAgentTrace_organizationId_idx" ON "MissionAgentTrace"("organizationId");
+  
+  -- AddForeignKey
+  ALTER TABLE "Company" ADD CONSTRAINT "Company_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "MarketIntelligenceCompany" ADD CONSTRAINT "MarketIntelligenceCompany_datasetId_fkey" FOREIGN KEY ("datasetId") REFERENCES "MarketIntelligenceDataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "EnrichmentLog" ADD CONSTRAINT "EnrichmentLog_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Contact" ADD CONSTRAINT "Contact_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Contact" ADD CONSTRAINT "Contact_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Lead" ADD CONSTRAINT "Lead_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Lead" ADD CONSTRAINT "Lead_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES "Contact"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Lead" ADD CONSTRAINT "Lead_savedSearchId_fkey" FOREIGN KEY ("savedSearchId") REFERENCES "SavedSearch"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Lead" ADD CONSTRAINT "Lead_pipelineId_fkey" FOREIGN KEY ("pipelineId") REFERENCES "CrmPipeline"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Lead" ADD CONSTRAINT "Lead_pipelineStageId_fkey" FOREIGN KEY ("pipelineStageId") REFERENCES "CrmPipelineStage"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Lead" ADD CONSTRAINT "Lead_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Activity" ADD CONSTRAINT "Activity_leadId_fkey" FOREIGN KEY ("leadId") REFERENCES "Lead"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Activity" ADD CONSTRAINT "Activity_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "TimelineEvent" ADD CONSTRAINT "TimelineEvent_leadId_fkey" FOREIGN KEY ("leadId") REFERENCES "Lead"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Note" ADD CONSTRAINT "Note_leadId_fkey" FOREIGN KEY ("leadId") REFERENCES "Lead"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "Note" ADD CONSTRAINT "Note_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+  ALTER TABLE "MissionScore" ADD CONSTRAINT "MissionScore_missionId_fkey" FOREIGN KEY ("missionId") REFERENCES "CommercialMission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+> ALTER TABLE "MissionAgentTrace" ADD CONSTRAINT "MissionAgentTrace_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+  -- AddForeignKey
+> ALTER TABLE "MissionAgentTrace" ADD CONSTRAINT "MissionAgentTrace_missionId_fkey" FOREIGN KEY ("missionId") REFERENCES "CommercialMission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  
+

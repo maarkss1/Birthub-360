@@ -332,6 +332,33 @@ ${transcript || 'Nenhuma transcrição gravada.'}`;
 
       sseService.notifyVoiceQualified(organizationId, lead.id, sseMessage);
 
+      // --- INTEGRAÇÃO COM NEXT BEST ACTION E ADAPTIVE CADENCE ---
+      try {
+        const { AdaptiveCadenceService } = await import('../../intelligence/cadence/adaptiveCadence.service.js');
+        const cadence = new AdaptiveCadenceService();
+        
+        // Buscar missão ativa para esse lead/empresa. 
+        const activeMission = await prisma.commercialMission.findFirst({
+          where: {
+            organizationId,
+            // Em produção buscaria pela Company vinculada ao lead
+            status: 'ACTIVE'
+          }
+        });
+
+        if (activeMission) {
+           const eventName = classifiedOutcome === 'completed' ? 'CALL_COMPLETED' : 'CALL_FAILED';
+           await cadence.handleInteractionEvent(activeMission.id, eventName, {
+              leadId: lead.id,
+              callId: req.body.call_id,
+              transcript,
+              intentScore: classifiedOutcome === 'completed' ? 60 : 30
+           });
+        }
+      } catch (cadenceErr) {
+        logger.error({ cadenceErr }, 'Falha silenciosa ao acionar Adaptive Cadence');
+      }
+
       // Onda 7, item 2 — ponte para o Copiloto Comercial IA (src/shared/contracts/
       // copilotoVoiceIngestion.contract.ts). Só quando houve conversa real (nunca para
       // voicemail/não-atendida/etc — evitaria encher o módulo de conversas vazias) e há
