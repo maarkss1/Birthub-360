@@ -1,27 +1,26 @@
-import { LayoutGrid, type LucideIcon } from 'lucide-react';
 /* eslint-disable jsx-a11y/no-autofocus -- campo revelado por ação do usuário, ver comentário no local de uso */
 
-import { motion, useReducedMotion } from 'framer-motion';
 import {
   AlertCircle,
   Building2,
+  LayoutGrid,
   ListChecks,
   Loader2,
   Lock,
   Mail,
   ShieldCheck,
   Sparkles,
+  type LucideIcon,
 } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
-import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic } from '../../../lib/motion';
+import { fadeInUp, useMagnetic } from '../../../lib/motion';
 
-// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
-// o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
 const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'orbit-blue' | 'iris' }[] = [
   { icon: Building2, accent: 'brand' },
   { icon: ListChecks, accent: 'orbit-blue' },
@@ -33,12 +32,6 @@ interface ConnectingCirclesProps {
   reduceMotion: boolean;
 }
 
-// Abertura da tela de entrada do produto: os mesmos "círculos" do Hub Executivo (badges
-// circulares, ver DestinationCard em src/features/hub/components/HubScreen.tsx) se conectando —
-// pedido explícito do usuário. Não é decoração gratuita (regra #6 da constituição): comunica
-// literalmente que este login é a porta de entrada para os destinos do Hub, terminando no mesmo
-// ícone (LayoutGrid) usado no atalho real do Hub na Sidebar. Toca uma vez na montagem (sem
-// repeat), e com prefers-reduced-motion a versão final já nasce montada, sem desenhar as linhas.
 function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
   const nodeCount = CONNECT_ICONS.length;
   const spacing = 96;
@@ -69,7 +62,7 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
           strokeOpacity={0.4}
           initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
           animate={{ pathLength: 1, opacity: 0.4 }}
-          transition={{ duration: 0.5, ease: EASE_PREMIUM, delay: 0.25 + index * 0.28 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.25 + index * 0.28 }}
         />
       ))}
       {CONNECT_ICONS.map(({ icon: Icon, accent }, index) => {
@@ -79,7 +72,7 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
             key={`node-${cx(index)}`}
             initial={reduceMotion ? false : { opacity: 0, scale: 0.4 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ ...SPRING_SOFT, delay: index * 0.28 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.9, delay: index * 0.28 }}
             style={{ transformOrigin: `${cx(index)}px ${cy}px` }}
           >
             <circle
@@ -108,45 +101,22 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
 }
 
 export function LoginScreen() {
-  // Esta tela agora é a porta de entrada do produto (rota "/", além de "/login" — ver App.tsx):
-  // um usuário já autenticado que cai aqui (aba antiga, link direto) vai direto pro destino real,
-  // em vez de ver o formulário de novo.
   const { currentUser, isPending } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  // Sem CTA visível de auto-registro na tela (contas são provisionadas pelo admin) — mas o
-  // formulário de cadastro em si continua existindo e funcional (autorização real de domínio é
-  // sempre server-side, ver isAuthorizedLoginEmail/databaseHooks.user.create.before em
-  // src/lib/auth.ts), acessível via ?signup=1 para os testes e2e (tests/e2e/helpers.ts::signUp)
-  // exercitarem o fluxo real de criação de conta sem depender de um link que não deve mais
-  // aparecer para usuários reais.
   const [isSignUp] = useState(
     () => new URLSearchParams(window.location.search).get('signup') === '1',
   );
   const [name, setName] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
-  // Cadastro (?signup=1) agora exige confirmação de posse do e-mail antes de abrir sessão (ver
-  // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
-  // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
-  // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
-  // vez de tentar navegar para /app sem sessão nenhuma.
   const [verificationPending, setVerificationPending] = useState(false);
 
   const shouldReduceMotion = useReducedMotion();
-
-  // Puxão magnético do botão principal — mesmo hook premium já usado em outras peças "hero" da
-  // plataforma (src/lib/motion.ts), desligado automaticamente por prefers-reduced-motion.
   const submitMagnetic = useMagnetic(0.25);
-
-  // Leve inclinação 3D no emblema da marca (painel esquerdo, desktop) ao mover o mouse — mesmo
-  // hook premium de src/lib/motion.ts, já com guarda de prefers-reduced-motion embutida.
-  
-  // Relógio e calendário ao vivo do painel do formulário: reforçam a sensação de central
-  // operando agora.
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,8 +131,6 @@ export function LoginScreen() {
       return;
     }
 
-    // A validação de credenciais é feita inteiramente pelo servidor (better-auth);
-    // o cliente nunca decide, por conta própria, se um login é válido.
     const result = isSignUp
       ? await authClient.signUp.email({
           email,
@@ -178,9 +146,6 @@ export function LoginScreen() {
       return;
     }
 
-    // Cadastro sem sessão de volta = e-mail ainda não confirmado (requireEmailVerification em
-    // src/lib/auth.ts) — não há pra onde navegar ainda, então mostra o aviso em vez de tentar ir
-    // pro Hub sem sessão (o que só voltaria pro login de qualquer forma).
     if (isSignUp && !result.data?.token) {
       setVerificationPending(true);
       setIsSubmitting(false);
@@ -217,8 +182,6 @@ export function LoginScreen() {
       return;
     }
 
-    // O servidor sempre responde com sucesso, exista ou não o e-mail (evita que alguém descubra
-    // quais e-mails têm conta só tentando redefinir a senha deles) — a mensagem abaixo reflete isso.
     setForgotPasswordSent(true);
   };
 
@@ -229,7 +192,6 @@ export function LoginScreen() {
     setError('');
   };
 
-  // O e-mail não decide mais a marca ativa visualmente, apenas guarda no state.
   const handleEmailChange = (value: string) => {
     setEmail(value);
   };
@@ -246,29 +208,18 @@ export function LoginScreen() {
     return <Navigate to="/hub" replace />;
   }
 
-  // Classes de texto/borda do painel direito: literais (slate), não os tokens semânticos
-  // (text-ink, border-line...). Motivo real, não estético: este painel fica sempre claro,
-  // independente do tema global do app — e WelcomeScreen.tsx já documentou que um wrapper
-  // .dark/.light local não resolve corretamente os aliases --color-* do @theme (resolvidos uma
-  // vez, relativos a :root). Um layout de dois tons simultâneos (painel sempre escuro ao lado de
-  // painel sempre claro) não é possível com tokens que trocam junto com o tema global — por isso
-  // as cores fixas dos dois painéis vêm de literais (texto) e de BRAND.colors via style inline
-  // (a mesma fonte de verdade de cor do resto do app, nunca hex digitado à mão), em vez dos
-  // tokens de tema.
   const inputClass =
     'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
 
   return (
-<div className="relative min-h-screen overflow-hidden bg-bg">
-      {/* Atmosfera — halos suaves nas 5 cores da marca, nunca como fundo sólido com texto em
-          cima (regra #3 da constituição): só glow difuso atrás do conteúdo. */}
+    <div className="relative min-h-screen overflow-hidden bg-bg">
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div className="absolute -top-32 -right-24 h-[420px] w-[420px] rounded-full bg-brand/12 blur-[120px]" />
         <div className="absolute top-1/3 -left-32 h-[380px] w-[380px] rounded-full bg-iris/10 blur-[120px]" />
         <div className="absolute -bottom-40 right-1/4 h-[360px] w-[360px] rounded-full bg-pink/8 blur-[120px]" />
       </div>
 
-<main className="relative mx-auto max-w-6xl px-6 py-4 md:py-6">
+      <main className="relative mx-auto max-w-6xl px-6 py-4 md:py-6">
         <div className="relative z-10 mx-auto flex max-w-md flex-col items-center text-center">
           <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
 
@@ -342,8 +293,7 @@ export function LoginScreen() {
                   )}
 
                   <p className="text-sm text-slate-600">
-                    Informe seu e-mail corporativo para receber as instruções de recuperação de
-                    senha.
+                    Informe seu e-mail corporativo para receber as instruções de recuperação de senha.
                   </p>
 
                   <div>
@@ -364,11 +314,6 @@ export function LoginScreen() {
                         onChange={(e) => handleEmailChange(e.target.value)}
                         className={inputClass}
                         required
-                        /* campo revelado por ação do usuário ("Esqueceu a senha?"), não
-                         focus automático de carregamento de página; foca o único campo do
-                         sub-formulário que acabou de aparecer, mesmo padrão de diálogo do
-                         WAI-ARIA Authoring Practices. */
-                        // biome-ignore lint/a11y/noAutofocus: ver comentário acima
                         autoFocus
                       />
                     </div>
@@ -388,11 +333,7 @@ export function LoginScreen() {
                     }}
                     className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 shadow-md transition-shadow hover:shadow-lg disabled:opacity-50"
                   >
-                    {isSubmitting ? (
-                      <Loader2 className="animate-spin" size={18} />
-                    ) : (
-                      'Enviar Link de Recuperação'
-                    )}
+                    {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : 'Enviar Link de Recuperação'}
                   </motion.button>
 
                   <div className="text-center">
