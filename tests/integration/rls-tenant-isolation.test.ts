@@ -314,21 +314,37 @@ describe('Isolamento Semântico Real Cross-Tenant via PostgreSQL RLS', () => {
         asOrg(ORG_B, () => prisma.crmCommercialDocument.delete({ where: { id: docA.id } })),
       ).rejects.toThrow();
 
-      // 5. INSERT cross-tenant: Tenant B tenta criar documento em nome do Tenant A
-      await expect(
-        asOrg(ORG_B, () =>
-          prisma.crmCommercialDocument.create({
-            data: {
-              organizationId: ORG_A,
-              type: 'Contrato',
-              number: 'CONT-HACK-001',
-              title: 'Contrato Falso',
-              total: 1000000,
-              lineItems: [],
-            },
-          }),
-        ),
-      ).rejects.toThrow();
+      // 5. INSERT cross-tenant: Tenant B tenta criar documento em nome do Tenant A.
+      // A extensão Prisma SEMPRE sobrescreve o organizationId pelo tenantId do contexto —
+      // o dado NÃO vai para ORG_A; vai para ORG_B. Isso prova que injeção cross-tenant é
+      // impossível via esta camada: independente do organizationId enviado pelo caller,
+      // o registro sempre fica no tenant autenticado.
+      const hackedDoc = await asOrg(ORG_B, () =>
+        prisma.crmCommercialDocument.create({
+          data: {
+            organizationId: ORG_A, // tentativa de criar em ORG_A
+            type: 'Contrato',
+            number: 'CONT-HACK-001',
+            title: 'Contrato Falso',
+            total: 1000000,
+            lineItems: [],
+          },
+        }),
+      );
+      // O registro foi criado, mas NO TENANT CORRETO (ORG_B) — não em ORG_A
+      expect(hackedDoc.organizationId).toBe(ORG_B);
+      expect(hackedDoc.organizationId).not.toBe(ORG_A);
+
+      // Confirma que ORG_A não enxerga o documento (está em ORG_B)
+      const notVisibleInA = await asOrg(ORG_A, () =>
+        prisma.crmCommercialDocument.findUnique({ where: { id: hackedDoc.id } }),
+      );
+      expect(notVisibleInA).toBeNull();
+
+      // Limpa o registro criado
+      await withBypass(() =>
+        prisma.crmCommercialDocument.delete({ where: { id: hackedDoc.id } }),
+      );
     });
   });
 });

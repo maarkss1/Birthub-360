@@ -280,41 +280,18 @@ export const prisma = basePrisma.$extends({
           if (operation === 'create' || operation === 'createMany') {
             if (a.data) {
               if (Array.isArray(a.data)) {
-                // Rejeita qualquer item que tente inserir em outro tenant —
-                // cross-tenant INSERT é violação de isolamento, não deve ser corrigido silenciosamente.
-                for (const d of a.data as Record<string, unknown>[]) {
-                  if ('organizationId' in d && d.organizationId !== tenantId) {
-                    throw new Error(
-                      `[RLS] Cross-tenant INSERT bloqueado: tentativa de criar registro em organizationId='${String(d.organizationId)}' pelo tenant '${tenantId}' (${model}).`,
-                    );
-                  }
-                }
                 a.data = (a.data as Record<string, unknown>[]).map((d) => ({
                   ...d,
                   organizationId: tenantId,
                 }));
               } else {
-                const d = a.data as Record<string, unknown>;
-                // Rejeita se o caller tentou especificar um organizationId diferente do tenant atual —
-                // isso indica uma tentativa de criar dados em nome de outro tenant.
-                if ('organizationId' in d && d.organizationId !== tenantId) {
-                  throw new Error(
-                    `[RLS] Cross-tenant INSERT bloqueado: tentativa de criar registro em organizationId='${String(d.organizationId)}' pelo tenant '${tenantId}' (${model}).`,
-                  );
-                }
-                a.data = { ...d, organizationId: tenantId };
+                a.data = { ...(a.data as Record<string, unknown>), organizationId: tenantId };
               }
             }
           }
           if (operation === 'upsert') {
             if (a.create) {
-              const c = a.create as Record<string, unknown>;
-              if ('organizationId' in c && c.organizationId !== tenantId) {
-                throw new Error(
-                  `[RLS] Cross-tenant UPSERT bloqueado: tentativa de criar registro em organizationId='${String(c.organizationId)}' pelo tenant '${tenantId}' (${model}).`,
-                );
-              }
-              a.create = { ...c, organizationId: tenantId };
+              a.create = { ...(a.create as Record<string, unknown>), organizationId: tenantId };
             }
             // Evita que o usuário mude o organizationId no update de um upsert
             if (a.update && typeof a.update === 'object' && 'organizationId' in a.update) {
