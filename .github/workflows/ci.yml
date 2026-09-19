@@ -190,6 +190,14 @@ jobs:
           path: coverage/
         if: always()
 
+      - name: Publicar diagnóstico da aplicação
+        if: failure()
+        run: |
+          {
+            echo "## Application gate failed"
+            echo "A falha ocorreu em um dos passos acima (testes, lint, build). Verifique os logs."
+          } >> $GITHUB_STEP_SUMMARY
+
       - name: Run Build
         run: npm run build
 
