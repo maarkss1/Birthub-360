@@ -20,7 +20,7 @@ function runWorkerProcess(
   env: NodeJS.ProcessEnv,
 ): Promise<{ code: number | null; stderr: string; stdout: string }> {
   return new Promise((resolve, reject) => {
-    const child = spawn('npx', ['tsx', 'worker.ts'], {
+    const child = spawn('node', ['--import', 'tsx', 'worker.ts'], {
       cwd: REPO_ROOT,
       env,
       shell: process.platform === 'win32',
