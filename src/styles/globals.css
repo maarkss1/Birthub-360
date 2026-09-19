@@ -1,10 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
 @import "tailwindcss";
 /* IBM Plex Mono — números tabulares (KPIs, valores em R$, métricas de indicador). Carregado via
    Google Fonts CSS2 (não self-hosted como Inter/Bodoni Moda abaixo) porque cobre só dígitos/
-   pontuação/moeda em contextos pontuais, não texto corrido — não vale reproduzir na mão o
-   unicode-range
-   subsetting que o endpoint já resolve. */
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
+   pontuação/moeda em contexts pontuais, não texto corrido — não vale reproduzir na mão o
+   unicode-range subsetting que o endpoint já resolve. */
+
 
 /* Birth Hub 360 — famílias tipográficas, self-hosted a partir dos .woff2
    originais em `public/fonts/`:

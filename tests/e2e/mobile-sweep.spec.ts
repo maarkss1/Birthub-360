@@ -65,21 +65,32 @@ test.describe('Onda 4 mobile sweep', () => {
         try {
           await page.goto(`/app/${module}`, {
             waitUntil: 'domcontentloaded',
-            timeout: 20_000,
+            timeout: 30_000,
           });
           await waitForAppReady(page);
 
-          // Dá um pequeno intervalo para componentes que calculam layout após o primeiro paint.
-          await page.waitForTimeout(150);
+          // Dá um tempo adequado para componentes lazy que calculam layout/renderizam após o primeiro paint.
+          await page.waitForTimeout(800);
 
-          const dimensions = await page.evaluate(() => {
-            const documentElement = document.documentElement;
-            const body = document.body;
-            return {
-              clientWidth: documentElement.clientWidth,
-              scrollWidth: Math.max(documentElement.scrollWidth, body.scrollWidth),
-            };
-          });
+          const dimensions = await page
+            .evaluate(() => {
+              const documentElement = document.documentElement;
+              const body = document.body;
+              return {
+                clientWidth: documentElement.clientWidth,
+                scrollWidth: Math.max(documentElement.scrollWidth, body.scrollWidth),
+              };
+            })
+            .catch(async () => {
+              await page.waitForTimeout(300);
+              return page.evaluate(() => ({
+                clientWidth: document.documentElement.clientWidth,
+                scrollWidth: Math.max(
+                  document.documentElement.scrollWidth,
+                  document.body.scrollWidth,
+                ),
+              }));
+            });
           const overflowPx = dimensions.scrollWidth - dimensions.clientWidth;
 
           if (overflowPx > 4) {

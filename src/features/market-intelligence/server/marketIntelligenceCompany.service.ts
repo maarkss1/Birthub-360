@@ -337,24 +337,40 @@ export async function approveToPipeline(
   });
 
   if (!company) {
-    company = await prisma.company.create({
-      data: {
-        organizationId,
-        legalName: catalogCompany.razaoSocial || 'Empresa sem Razão Social',
-        tradeName: catalogCompany.nomeFantasia || catalogCompany.razaoSocial || 'Empresa',
-        cnpj: normalizedCnpj,
-        segment: catalogCompany.cnaePrincipalDescricao || undefined,
-        cnae: catalogCompany.cnaePrincipal || undefined,
-        city: catalogCompany.municipioNome || undefined,
-        state: catalogCompany.uf || undefined,
-        zipCode: catalogCompany.cep || undefined,
-        capitalSocial: moneyValue(catalogCompany.capitalSocial),
-        status: 'Ativo',
-        enrichmentStatus: 'Enriquecido',
-        enrichmentSource: 'MarketIntelligenceCatalog',
-      },
-      include: { leads: true },
-    });
+    try {
+      company = await prisma.company.create({
+        data: {
+          organizationId,
+          legalName: catalogCompany.razaoSocial || 'Empresa sem Razão Social',
+          tradeName: catalogCompany.nomeFantasia || catalogCompany.razaoSocial || 'Empresa',
+          cnpj: normalizedCnpj,
+          segment: catalogCompany.cnaePrincipalDescricao || undefined,
+          cnae: catalogCompany.cnaePrincipal || undefined,
+          city: catalogCompany.municipioNome || undefined,
+          state: catalogCompany.uf || undefined,
+          zipCode: catalogCompany.cep || undefined,
+          capitalSocial: moneyValue(catalogCompany.capitalSocial),
+          status: 'Ativo',
+          enrichmentStatus: 'Enriquecido',
+          enrichmentSource: 'MarketIntelligenceCatalog',
+        },
+        include: { leads: true },
+      });
+    } catch (error: any) {
+      if (error.code === 'P2002' && error.meta?.target?.includes('cnpj')) {
+        // Race condition: another request created the company between our findFirst and create
+        const existingCompany = await prisma.company.findFirst({
+          where: { cnpj: normalizedCnpj, organizationId, deletedAt: null },
+          include: { leads: true },
+        });
+        if (!existingCompany) {
+          throw new AppError('Empresa com este CNPJ já existe, mas não pôde ser recuperada.', 409);
+        }
+        company = existingCompany;
+      } else {
+        throw error;
+      }
+    }
   }
 
   let lead = company.leads[0];

@@ -1,4 +1,5 @@
 import type { Prisma } from '@prisma/client';
+import { toDeterministicCnpj } from '../../../lib/cnpj';
 import { env } from '../../../config/env';
 import { fromPrismaCompanyStatus, toPrismaCompanyStatus } from '../../../lib/enumMap';
 import { prisma } from '../../../lib/prisma';
@@ -90,19 +91,32 @@ export class PrismaCompanyRepository implements CompanyRepository {
   }
 
   async create(organizationId: string, data: Partial<Company>): Promise<Company> {
-    const created = await prisma.company.create({
-      data: {
-        ...data,
-        organizationId,
-        ...(data.status ? { status: toPrismaCompanyStatus(data.status) } : {}),
-      } as Prisma.CompanyCreateInput,
-    });
-    return serializeCompanyStatus(created) as Company;
+    const normalizedCnpj = data.cnpj ? toDeterministicCnpj(data.cnpj) : null;
+    const finalData = { ...data, cnpj: normalizedCnpj };
+
+    try {
+      const created = await prisma.company.create({
+        data: {
+          ...finalData,
+          organizationId,
+          ...(finalData.status ? { status: toPrismaCompanyStatus(finalData.status) } : {}),
+        } as Prisma.CompanyCreateInput,
+      });
+      return serializeCompanyStatus(created) as Company;
+    } catch (error: any) {
+      if (error.code === 'P2002' && error.meta?.target?.includes('cnpj')) {
+        throw new Error('Já existe uma empresa com este CNPJ nesta organização.');
+      }
+      throw error;
+    }
   }
 
   async update(organizationId: string, id: string, data: Partial<Company>): Promise<Company> {
     const existing = await prisma.company.findFirst({ where: { id, organizationId } });
     if (!existing) throw new Error('Company not found');
+
+    const normalizedCnpj = data.cnpj !== undefined ? (data.cnpj ? toDeterministicCnpj(data.cnpj) : null) : undefined;
+    const finalData = { ...data, ...(normalizedCnpj !== undefined ? { cnpj: normalizedCnpj } : {}) };
 
     // organizationId também no `where` do update em si (mesmo padrão de PrismaLeadRepository)
     // — não corrige uma falha explorável hoje (o pré-check acima + RLS real já bloqueiam um
