@@ -1,10 +1,14 @@
-@import "tailwindcss";
 /* IBM Plex Mono — números tabulares (KPIs, valores em R$, métricas de indicador). Carregado via
    Google Fonts CSS2 (não self-hosted como Inter/Bodoni Moda abaixo) porque cobre só dígitos/
    pontuação/moeda em contextos pontuais, não texto corrido — não vale reproduzir na mão o
    unicode-range
-   subsetting que o endpoint já resolve. */
+   subsetting que o endpoint já resolve.
+   Precisa vir antes de `@import "tailwindcss"` abaixo: uma vez expandido pelo plugin do Vite, o
+   import do Tailwind vira um bloco grande de regras não-@import — um @import posterior a ele no
+   CSS final deixa de ser o "primeiro statement" exigido pela spec (aviso do PostCSS: "@import
+   must precede all other statements"), mesmo os dois aparecendo em ordem válida aqui na fonte. */
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
+@import "tailwindcss";
 
 /* Birth Hub 360 — famílias tipográficas, self-hosted a partir dos .woff2
    originais em `public/fonts/`:
