@@ -1,7 +1,7 @@
 - De: 00 — Coordenador
 - Para: 14 — Ambiente de Execução e Test Harness
 - Onda: 49
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
