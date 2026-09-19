@@ -285,7 +285,7 @@ describe('POST /api/webhooks/signature/webhook (Postgres real, fluxo completo)',
   it('providerRequestId desconhecido: outcome ignored (not-found), nunca 500', async () => {
     const res = await postWebhook({
       provider: 'govbr',
-      providerRequestId: 'id-que-nunca-existiu',
+      providerRequestId: `id-que-nunca-existiu-${Date.now()}`,
       status: 'signed',
     });
     expect(res.status).toBe(200);

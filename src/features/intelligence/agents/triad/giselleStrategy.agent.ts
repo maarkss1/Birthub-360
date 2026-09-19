@@ -4,7 +4,7 @@ import type {
   GiselleStrategyPlan,
   TransparentScore,
 } from './triad.types.js';
-import { getAiModel } from '../../../../lib/ai/gateway/chat-model.js';
+import { getAiModel } from '../../../../lib/ai/gateway.js';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 
 export interface GiselleStrategyInput {

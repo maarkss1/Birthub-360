@@ -41,7 +41,7 @@ module.exports = {
         'bootstrap/ (composição interna, ex.: routes.ts chamando outros bootstrap/*) podem importar ' +
         'daqui.',
       from: {
-        pathNot: ['^src/bootstrap/', '^server\\.ts$'],
+        pathNot: ['^src/bootstrap/', '^server\\.ts$', '^worker\\.ts$'],
       },
       to: {
         path: '^src/bootstrap/',
