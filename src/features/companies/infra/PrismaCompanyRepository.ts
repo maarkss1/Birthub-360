@@ -125,8 +125,8 @@ export class PrismaCompanyRepository implements CompanyRepository {
     const updated = await prisma.company.update({
       where: { id, organizationId },
       data: {
-        ...data,
-        ...(data.status ? { status: toPrismaCompanyStatus(data.status) } : {}),
+        ...finalData,
+        ...(finalData.status ? { status: toPrismaCompanyStatus(finalData.status) } : {}),
       } as Prisma.CompanyUpdateInput,
     });
     return serializeCompanyStatus(updated) as Company;
