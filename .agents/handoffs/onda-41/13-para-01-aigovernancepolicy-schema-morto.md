@@ -1,7 +1,7 @@
 - De: 13
 - Para: 01
 - Onda: 41
-- Status: aberto
+- Status: resolvido
 - Prioridade: baixa
 
 ## Problema
