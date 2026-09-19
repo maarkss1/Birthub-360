@@ -84,7 +84,7 @@ function ownHistoryAdjustment(recentOutcomesNewestFirst: CallOutcomeState[]): nu
   const [mostRecent] = recentOutcomesNewestFirst;
   if (mostRecent === 'completed') return 0.2;
 
-  const consecutiveMisses = recentOutcomesNewestFirst.findIndex((o) => o === 'completed');
+  const consecutiveMisses = recentOutcomesNewestFirst.indexOf('completed');
   const missStreak =
     consecutiveMisses === -1 ? recentOutcomesNewestFirst.length : consecutiveMisses;
   // Até -0.15, nunca mais: uma sequência ruim reduz prioridade, não zera a chance.

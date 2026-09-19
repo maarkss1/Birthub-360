@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- ver justificativa no local de uso (CloseableWorker) */
-import { Worker } from 'bullmq';
+import type { Worker } from 'bullmq';
 import { env } from '../config/env.js';
 import { logger } from '../lib/logger.js';
 import { queuesEnabled } from '../lib/queue/redis.js';
