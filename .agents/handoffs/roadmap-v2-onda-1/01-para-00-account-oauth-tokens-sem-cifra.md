@@ -4,7 +4,7 @@
   `prisma/migrations/**`, `src/lib/auth/`, `src/shared/` — porque os arquivos a alterar são
   `src/lib/prisma.ts` e `src/lib/crypto/secretFields.ts`, fora dessas quatro pastas)
 - Onda: roadmap-v2-onda-1
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
