@@ -1,7 +1,7 @@
 - De: 08 (auditoria ACH-08-04)
 - Para: 00
 - Onda: audit-ach
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
