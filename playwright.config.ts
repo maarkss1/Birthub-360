@@ -12,6 +12,7 @@ const chromiumExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?.trim(
 
 export default defineConfig({
   testDir: './tests/e2e',
+  globalSetup: './tests/e2e/global-setup.ts',
   // Os specs de auth/leads criam usuários/organizações reais no banco de testes de integração —
   // rodar em série evita duas rotinas de signup/CRUD pisando uma na outra na mesma tabela.
   fullyParallel: false,
