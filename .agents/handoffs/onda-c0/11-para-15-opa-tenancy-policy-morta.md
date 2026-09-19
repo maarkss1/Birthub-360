@@ -1,7 +1,7 @@
 - De: 11
 - Para: 15
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema

@@ -1,7 +1,7 @@
 - De: 10 (auditoria ACH-10-03)
 - Para: 00 (e usuário — decisão de produto/infra pendente)
 - Onda: audit-ach
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal (P2)
 
 ## Problema
