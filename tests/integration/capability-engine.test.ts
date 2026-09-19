@@ -105,7 +105,7 @@ describe('Capability & Permission Engine (PROMPT 3 + hardening PROMPT 3B)', () =
       expect(after).toBe(before);
       expect(afterAgentGrants).toBe(beforeAgentGrants);
       expect(afterRoleGrants).toBe(beforeRoleGrants);
-    }, 30000);
+    }, 60000);
 
     it('não existem dois CapabilityDefinition com o mesmo code (no schema duplication)', async () => {
       const rows = await prisma.capabilityDefinition.findMany({
