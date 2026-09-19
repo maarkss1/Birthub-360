@@ -1,7 +1,7 @@
 - De: 04
 - Para: 16
 - Onda: 39
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema

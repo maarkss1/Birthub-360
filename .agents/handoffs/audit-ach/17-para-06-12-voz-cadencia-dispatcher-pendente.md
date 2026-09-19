@@ -1,24 +1,22 @@
 - De: 17 (auditoria ACH-17-03)
-- Para: 06/12 (e usuário — decisão de arquitetura/produto pendente)
-- Onda: audit-ach
-- Status: aberto
+- Para: 12 e 17
+- Onda: Pos-Sprint 13
+- Status: aprovado-aguardando-sprint
 - Prioridade: normal (P2)
 
 ## Problema
 
 O item ACH-17-03 do relatório de auditoria (`report-atualizado.html`) afirma: "Canal de voz na
-cadência multicanal nunca despacha de verdade — `productionCadenceDispatcher` para
-`touch.channel==='voice'` sempre devolve `failed` ("CYC-004 pendente") — comportamento correto
+cadência multicanal nunca despacha de verdade - `productionCadenceDispatcher` para
+`touch.channel==='voice'` sempre devolve `failed` ("CYC-004 pendente") - comportamento correto
 (nunca finge sucesso), mas toda cadência com toque de voz gera falha garantida até esgotar
 tentativas."
 
 O `prompt` do item pede, em ordem de preferência:
 1. Implementar um dispatcher real de voz reaproveitando o caminho já real de discagem do Agente 12
-   (`birthVoice.service.ts::callLead`) ou do 3CX (`threecx.service.ts::make3CXCall`) por trás de
-   uma porta, sem importar diretamente esses módulos (propriedade 06/12).
-2. Se decidido que não é prioridade agora: registrar isso explicitamente em
-   `AUTONOMIA_COMERCIAL_24X7.md` como limitação conhecida, e considerar não permitir
-   `channel:'voice'` na validação de sequência até o dispatcher existir.
+   (`birthVoice.service.ts::callLead`).
+
+**Decisão de Produto (19/09/2026):** O usuário autorizou a Opção A (Ligação autônoma de IA via `callLead` do Agente 12). A implementação será feita na janela pós-Sprint 13 para respeitar o Freeze de Escopo. O dispatcher de voz deverá suportar webhook assíncrono para confirmar sucesso/falha do toque.
 
 ## Investigação (HEAD atual de `origin/main`, confirmado nesta worktree)
 
