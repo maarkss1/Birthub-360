@@ -43,7 +43,7 @@ export const AuditService = {
           entity: params.entity,
           entityId: params.entityId,
           actorId: params.actorId,
-          tenantId: params.tenantId,
+          tenantId: params.tenantId || '',
           ipAddress: params.ipAddress,
           details: details,
         },
