@@ -1,7 +1,7 @@
 - De: Agente 06 — Integrações e Bitrix
 - Para: Agente 01 — Plataforma, Segurança e Dados
 - Onda: roadmap-v2-onda-1
-- Status: aberto
+- Status: resolvido (enum BitrixExtractionStatus.completed_partial adicionado ao schema e integrado em extraction.ts e testes)
 - Prioridade: normal
 
 ## Problema

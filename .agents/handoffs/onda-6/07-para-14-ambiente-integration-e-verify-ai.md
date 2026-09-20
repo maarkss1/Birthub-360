@@ -1,8 +1,12 @@
 - De: 07
 - Para: 14 (Harness)
 - Onda: 6
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
+
+## Resolução
+Resolvido pelo Agente 14 na Onda 6 (commit `6254a32`). O conflito de nome de container e isolamento de ambiente entre worktrees foi corrigido em `scripts/test/prepare-integration-env.js`, permitindo que o gate de integração rodasse e fosse aprovado (48/48 testes na Onda 6). Para `verify:ai`, as diretrizes de execução registram a necessidade de chaves de API para live execution ou skips controlados quando segredos reais não estão configurados.
+
 
 ## Problema
 

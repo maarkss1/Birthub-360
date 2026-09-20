@@ -1,8 +1,5 @@
 import { createHash } from 'node:crypto';
-import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { Prisma } from '@prisma/client';
-import { getAiModel } from '../../../lib/ai/gateway.js';
-import { withRlsContext } from '../../../lib/prisma.js';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import type {
@@ -860,73 +857,4 @@ export async function getAccountIntelligence(cnpjInput: string) {
   };
 }
 
-export const accountIntelligenceService = {
-  async getIntelligence(companyId: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      return service.getIntelligence(companyId);
-    });
-  },
-  async refreshIntelligence(companyId: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      return service.refresh(companyId);
-    });
-  },
-  async getSignals(companyId: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      return service.listSignals(companyId, { page: 1, limit: 50 });
-    });
-  },
-  async getDecisionMakers(companyId: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      return service.listDecisionMakers(companyId, { page: 1, limit: 50 });
-    });
-  },
-  async getRelationships(companyId: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      return service.listRelationships(companyId, { page: 1, limit: 50 });
-    });
-  },
-  async getRecommendations(companyId: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      return service.listRecommendations(companyId, { page: 1, limit: 50 });
-    });
-  },
-  async getEvidence(companyId: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      return service.listEvidence(companyId, { page: 1, limit: 50 });
-    });
-  },
-  async chatWithAccount(companyId: string, message: string) {
-    return withRlsContext(async (tx) => {
-      const service = new AccountIntelligenceService(tx as unknown as TenantDb, '');
-      const intelligence = await service.getIntelligence(companyId);
-      const signals = await service.listSignals(companyId, { page: 1, limit: 10 });
-      const systemPrompt = `Você é o Analista de Inteligência Comercial (LDR) do Birth Hub 360.
-Contexto da Empresa:
-- Nome/Razão Social: ${intelligence.account.legalName || intelligence.account.tradeName || 'Desconhecido'}
-- ICP Fit: ${intelligence.account.segment || 'N/A'}
-- Sinais Recentes: ${signals.items.map((signal) => signal.title).join('; ') || 'Nenhum'}
 
-Seu objetivo é ajudar o vendedor a abordar essa conta de forma cirúrgica. Responda à pergunta do usuário de forma curta, direta e em português do Brasil.`;
-
-      const ai = await getAiModel();
-      const response = await ai.invoke([
-        new SystemMessage(systemPrompt),
-        new HumanMessage(message),
-      ]);
-      return {
-        reply:
-          typeof response.content === 'string'
-            ? response.content
-            : JSON.stringify(response.content),
-      };
-    });
-  },
-};

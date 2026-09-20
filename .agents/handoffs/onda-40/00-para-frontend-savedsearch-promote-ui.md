@@ -1,8 +1,15 @@
 - De: 00 (auditoria CPI, onda 40)
 - Para: dono de `src/features/prospecting/components/**` (Agente de Prospecção/UI)
 - Onda: 40
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Resolvido em `src/features/prospecting/components/SavedSearchesModal.tsx` e `src/features/prospecting/components/ProspectingHub.tsx`:
+1. `SavedSearchesModal.tsx` agora passa o `search.id` (`savedSearchId`) no callback `onApplyCriteria`.
+2. `ProspectingHub.tsx` rastreia `activeSavedSearchId`, setado na execução da busca salva e resetado quando nova descoberta manual é iniciada.
+3. Ao promover candidatos (tanto individualmente via `promoteCandidate` quanto em lote via `bulkSave` e `bulkEnrichSave`), o `savedSearchId` ativo é enviado na payload de `/api/prospecting/promote`, garantindo persistência em `Lead.savedSearchId`.
+
 
 ## Problema
 

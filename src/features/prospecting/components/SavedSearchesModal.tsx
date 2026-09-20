@@ -29,7 +29,11 @@ interface SavedSearchesModalProps {
    * conseguir o mesmo resultado que a API já tinha devolvido de graça, pagando de novo o custo de
    * Apollo/Places por nada).
    */
-  onApplyCriteria?: (criteria: ProspectCriteria, candidates: ProspectCandidate[]) => void;
+  onApplyCriteria?: (
+    criteria: ProspectCriteria,
+    candidates: ProspectCandidate[],
+    savedSearchId?: string,
+  ) => void;
 }
 
 export function SavedSearchesModal({
@@ -118,7 +122,7 @@ export function SavedSearchesModal({
       }>(`/api/prospecting/saved-searches/${search.id}/run`);
       toast.success(`Busca executada! ${res.count} novo(s) candidato(s) encontrado(s).`);
       if (onApplyCriteria && search.criteria) {
-        onApplyCriteria(search.criteria, res.candidates || []);
+        onApplyCriteria(search.criteria, res.candidates || [], search.id);
       }
       loadSearches();
     } catch {

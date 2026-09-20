@@ -1,7 +1,7 @@
 - De: 10
 - Para: 00
 - Onda: 13
-- Status: aberto
+- Status: resolvido
 - Prioridade: bloqueador
 ## Problema
 Integração de telemetria necessita ser iniciada no primeiro momento de execução do servidor.

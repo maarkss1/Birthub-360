@@ -1,8 +1,12 @@
 - De: 11
 - Para: 00
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Resolvido em 09/2026: conforme decisão expressa do usuário e arquitetura registrada em `src/bootstrap/frontend.ts`, `src/App.tsx` e `src/config/module-catalog.ts`, os módulos e diretórios estáticos proprietários da antiga operação Atlas GR (`public/tools/treinamento-atlasgr/`, `public/tools/propostas/`, `public/tools/portal-comercial/` e `public/tools/hub-inteligencia-marketing/`) foram inteiramente aposentados e removidos. Apenas ferramentas genéricas alinhadas à nova identidade permanecem.
+
 
 ## Problema
 Quatro portais estáticos em `public/tools/` estão **ativos** (roteados em `App.tsx`, servidos via

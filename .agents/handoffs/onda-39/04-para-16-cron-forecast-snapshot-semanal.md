@@ -1,7 +1,7 @@
 - De: 04
 - Para: 16
 - Onda: 39
-- Status: aberto
+- Status: resolvido (implementado via forecastSnapshotWeekly.worker.ts e registrado em worker.ts e bootstrap/workers.ts)
 - Prioridade: normal
 
 ## Problema

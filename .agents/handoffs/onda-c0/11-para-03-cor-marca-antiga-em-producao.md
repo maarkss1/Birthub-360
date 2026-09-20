@@ -1,8 +1,15 @@
 - De: 11
 - Para: 03
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Resolvido: verificado que ambos os arquivos já utilizam `${BRAND.colors.brand}` (`#d4af37`, Antique Gold):
+- `src/lib/email/meetingInvite.ts`: linha 127/129 utiliza `${BRAND.colors.brand}` e `${BRAND.colors.obsidian}` para styling do e-mail transacional.
+- `src/features/commercial-intelligence/application/executiveExport.ts`: linha 207 utiliza `${BRAND.colors.brand}` no CSS do cabeçalho do relatório executivo.
+Nenhum hex legado `#FF5618` permanece nesses arquivos.
+
 
 ## Problema
 Dois artefatos reais entregues ao usuário final ainda usam a cor laranja da marca anterior

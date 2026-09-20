@@ -1,7 +1,7 @@
 - De: 18
 - Para: 04
 - Onda: roadmap-v2-transversais-2
-- Status: aberto
+- Status: resolvido (AnalyticsUseCases.cohortAnalysis implementado com dados reais e exportCsv substitui buffer fake)
 - Prioridade: alto
 
 ## Problema

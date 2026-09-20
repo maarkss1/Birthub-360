@@ -101,6 +101,7 @@ export function ProspectingHub() {
   const { info: playbookMeta } = useActivePlaybook();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
+  const [activeSavedSearchId, setActiveSavedSearchId] = useState<string | null>(null);
 
   const activeSegments = ACTIVE_SEGMENTS;
   const activePersonaOptions = ACTIVE_PERSONA_OPTIONS;
@@ -169,6 +170,7 @@ export function ProspectingHub() {
             phone: candidate.phone,
             website: candidate.website,
             decisionMakers: candidate.decisionMakers,
+            savedSearchId: activeSavedSearchId || undefined,
           });
           setPromoted((prev) => ({ ...prev, [key]: result }));
         }
@@ -207,6 +209,7 @@ export function ProspectingHub() {
               phone: candidate.phone,
               website: candidate.website,
               decisionMakers: candidate.decisionMakers,
+              savedSearchId: activeSavedSearchId || undefined,
             },
             { timeoutMs: 60_000 },
           );
@@ -390,6 +393,7 @@ export function ProspectingHub() {
     if (!append) {
       setCandidates([]);
       setRejectedKeys(new Set());
+      setActiveSavedSearchId(null);
     }
     setLoadingStepIdx(0);
     const interval = setInterval(() => {
@@ -483,6 +487,7 @@ export function ProspectingHub() {
         linkedin: candidate.linkedinUrl,
         phone: candidate.phone,
         website: candidate.website,
+        savedSearchId: activeSavedSearchId || undefined,
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
     } catch (error) {
@@ -643,13 +648,14 @@ export function ProspectingHub() {
           isOpen={isSavedSearchesOpen}
           onClose={() => setIsSavedSearchesOpen(false)}
           currentCriteria={criteria}
-          onApplyCriteria={(savedCrit, savedCandidates) => {
+          onApplyCriteria={(savedCrit, savedCandidates, savedSearchId) => {
             // Onda 43: /saved-searches/:id/run já roda a descoberta e devolve os candidatos —
             // antes disto era descartado, e um clique programático no botão de busca disparava
             // uma segunda chamada a /discover (Apollo/Places de novo) só para conseguir o mesmo
             // resultado que a API já tinha na resposta.
             setCriteria(savedCrit);
             setCandidates(savedCandidates);
+            setActiveSavedSearchId(savedSearchId || null);
             setDiscoveryPage(1);
             setApolloError(null);
             setTab('discovery');

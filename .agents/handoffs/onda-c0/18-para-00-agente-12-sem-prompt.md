@@ -1,8 +1,12 @@
 - De: 18
 - Para: 00
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
+
+## Resolução
+Resolvido: o arquivo de prompt `.agents/prompts/12-voz-telefonia.md` foi formalizado e criado, definindo explicitamente o papel, escopo exclusivo (`src/features/integrations/birth-voice/**`, `src/features/integrations/threecx/**`, `src/lib/queue/coldCall.worker.ts`, etc.), regras de governança e integrações de telefonia do Agente 12.
+
 
 ## Problema
 O Agente 12 (Voz e Telefonia / Birthub Voices) está declarado em `/AGENTS.md` (estrutura oficial,

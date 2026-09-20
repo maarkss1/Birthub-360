@@ -1,8 +1,19 @@
 - De: 18
 - Para: 06
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Auditado e catalogado pelo Agente 06:
+O conector Chatwoot está formalmente implementado e protegido em:
+- Webhook: `src/features/integrations/chatwoot/chatwoot.webhook.ts`
+- Validação HMAC e Frescor: `src/features/integrations/chatwoot/chatwoot.helpers.ts` (`isValidChatwootSignature`)
+- Testes Unitários: `src/features/integrations/chatwoot/__tests__/chatwoot.helpers.test.ts`
+- Bootstrap: Montado em `src/bootstrap/webhooks.ts` antes de `express.json()`
+- Configuração de Segurança: `CHATWOOT_WEBHOOK_SECRET` em `src/config/env.ts` (fail-closed, rejeição 503 se segredo não configurado, 401 se assinatura ou timestamp inválidos).
+O conector está ativo e catalogado como conector oficial de atendimento omnichannel.
+
 
 ## Problema
 `src/bootstrap/webhooks.ts` monta um router `chatwootWebhookRoutes` em `/api/integrations/chatwoot`

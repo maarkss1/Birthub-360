@@ -2,7 +2,7 @@
 - Para: 00 (roteamento) / Agente 01 (dono real de `prisma/schema.prisma` e migrações, por
   `AGENTS.md` linhas 251-252)
 - Onda: 42
-- Status: aberto
+- Status: resolvido (@@unique([organizationId, cnpj]) implementado no schema e P2002 tratado)
 - Prioridade: média-alta (bloqueia a garantia real de identidade única de empresa; não bloqueia o
   que esta onda entregou — a resolução determinística já funciona sem o `@@unique`, só não é
   garantida em nível de banco)
