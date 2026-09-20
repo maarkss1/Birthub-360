@@ -3,6 +3,18 @@ import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js'
 import { requestContext } from '../async-context.js';
 import { AuditService } from '../audit/audit.service.js';
 
+/**
+ * Middleware Express para trilha de auditoria genérica por rota (AuditLog).
+ *
+ * ⚠️ NOTA DE AUDITORIA (Onda roadmap-v2-transversais / Agente 15):
+ * Este middleware possui implementação correta e testes unitários dedicados, mas
+ * atualmente NÃO está montado no pipeline de rotas da aplicação (serviços específicos
+ * hoje chamam `AuditService.log` diretamente).
+ * Candidatas naturais para montagem futura: rotas de mutação crítica e exportação
+ * (ex.: export de contatos/empresas, remoções em lote). A montagem efetiva cabe aos
+ * respectivos proprietários de features ou conforme diretrizes de governança.
+ * Ver `.agents/handoffs/roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md`.
+ */
 export function auditAccessMiddleware(entity: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     const actorId = (req as AuthRequest).user?.id || 'anonymous';

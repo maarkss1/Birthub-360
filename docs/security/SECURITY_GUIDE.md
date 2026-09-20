@@ -29,6 +29,13 @@ Valide todo corpo de requisição com schemas Zod, aplicados via `validateReques
 Use `AuditService.log` (`src/lib/audit/audit.service.ts`) para mudanças de estado críticas,
 acesso a dados e tentativas de autenticação.
 
+> **Nota de Governança (Agente 15, Onda Freeze Sprint13):** O utilitário `auditAccessMiddleware`
+> (`src/lib/security/auditLog.middleware.ts`) fornece uma factory Express padronizada para registro
+> automático de `EXPORT`, `DELETE` e `UPDATE` via `AuditService.log`. O middleware está validado
+> com testes unitários, mas sua montagem nas rotas é opt-in por domínio de feature (ver handoff
+> `roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md`).
+
+
 ## Superfície exposta — estado registrado (Onda 6, Agente 15)
 
 Revisão pontual de `server.ts` (propriedade do Agente 00 — leitura apenas, correções passam por

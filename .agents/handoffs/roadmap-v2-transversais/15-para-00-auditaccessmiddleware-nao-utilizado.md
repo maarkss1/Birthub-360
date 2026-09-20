@@ -1,7 +1,7 @@
 - De: Agente 15 — Segurança Aplicada e Rotação de Segredos
 - Para: Agente 00 — Coordenador
 - Onda: roadmap-v2-transversais
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema
@@ -67,3 +67,11 @@ Achado durante auditoria de `src/lib/security/` desta onda (roadmap-v2-transvers
 bloqueador da lista "Bloqueadores prioritários" do `/AGENTS.md` (não é RBAC ausente nem rota sem
 autorização — é lacuna de trilha de auditoria, não de controle de acesso), por isso classifiquei
 como prioridade normal, não bloqueador.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item deliberado e resolvido pela governança:
+- O arquivo `src/lib/security/auditLog.middleware.ts` foi preservado com documentação explícita de seu propósito e escopo de montagem no topo do arquivo.
+- O guia oficial `docs/security/SECURITY_GUIDE.md` (seção `## Auditing`) foi atualizado referenciando a existência do utilitário e esclarecendo que serviços sensíveis continuam utilizando chamadas diretas a `AuditService.log` quando necessário.
+- A decisão de manter o middleware documentado garante que futuras rotas de exportação/mutação possam reutilizá-lo sem ambiguidade arquitetural.
+
