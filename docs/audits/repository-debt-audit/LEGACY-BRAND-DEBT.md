@@ -39,12 +39,18 @@ grantable module or component without being rewritten, tenant-gated, or retired 
 the product's stated ICP became vertical-agnostic ("any company with a commercial area").
 
 - **DOCBRAND-002** — Atlas GR–specific business content embedded in a nominally generic
-  feature.
-- **DOCBRAND-005** — a second instance of the same pattern in adjacent content.
+  feature. **RESOLVED 2026-09-20** — the feature (`PropostaComercialHub.tsx`) was retired
+  wholesale, not generalized in place; see DOCBRAND.md for evidence.
+- **DOCBRAND-005** — a second instance of the same pattern in adjacent content. **RESOLVED
+  2026-09-20** — `EXTERNAL_LINKS` in `module-catalog.ts` no longer hardcodes any `atlasgr.com.br`
+  URL.
 - **DOCBRAND-012** — the Proposta Comercial feature: still ships one company's actual
   vertical-specific business content to every tenant. This is the most product-visible
   instance — a live, tenant-facing document generation feature that leaks one customer's
-  business specifics to unrelated tenants using it today.
+  business specifics to unrelated tenants using it today. **RESOLVED 2026-09-20** — the module,
+  its routes, its module-catalog entry, and its static assets under `public/tools/` were removed
+  entirely (`b06ba649`, `edcf6b0d`), per an explicit user decision that this content had no
+  ongoing multi-tenant value worth preserving/generalizing.
 - **VOICE-001** (cross-listed, CRITICAL) — the AI voice cold-call script hardcoded to one
   tenant's brand identity; the clearest example of this pattern breaking a core capability
   rather than just carrying stale copy.
@@ -56,8 +62,10 @@ the product's stated ICP became vertical-agnostic ("any company with a commercia
   when a different tenant opens them (both confirmed broken independent of brand: missing
   files, wrong counts).
 
-**Status:** unresolved. Highest business risk in this file — Proposta Comercial (DOCBRAND-012)
-is live and customer-facing, not a dormant admin tool.
+**Status:** DOCBRAND-002/005/012 resolved 2026-09-20 (feature and hardcoded links removed —
+verified against the working tree, not inferred). VOICE-001, PRODUCT-004, FRONTEND-002/003 remain
+unresolved as of this update; re-verify them independently before assuming they were covered by
+the same pass.
 
 ## Category C — Documentation and inline comments drift from the current brand model (RC-12)
 
