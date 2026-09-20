@@ -87,6 +87,7 @@ export abstract class BaseAgent {
           model: response.response_metadata.model,
           usage: response.response_metadata.tokenUsage,
           latencyMs: Date.now() - startTime,
+          agentRole: this.agentType,
         });
 
         // O gateway.ts devolve um objeto simples ({content, response_metadata}), não

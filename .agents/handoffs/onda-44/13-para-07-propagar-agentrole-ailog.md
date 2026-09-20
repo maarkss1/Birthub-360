@@ -1,7 +1,7 @@
 - De: Agente 13 (Enxame Autônomo e Governança de Agentes)
 - Para: Agente 07 (IA e Automações)
 - Onda: 44
-- Status: aberto (bloqueado até o Agente 01/01A criar a coluna — ver handoff irmão)
+- Status: resolvido
 - Prioridade: média (ACH-13-03, sev P2, auditoria report-atualizado.html)
 
 ## Problema
@@ -99,3 +99,13 @@ Item de auditoria ACH-13-03 (`report-atualizado.html`, sev P2). Depende de
 `.agents/handoffs/onda-44/13-para-01-ailog-coluna-agentrole.md` (Agente 01/01A) ser resolvido
 primeiro — a coluna precisa existir antes de qualquer código aqui poder gravar nela. Nenhum arquivo
 de código foi alterado nesta investigação, só este handoff.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item formalmente resolvido:
+- Adicionado campo `agentRole?: string` a `AiUsageLogInput` (`src/lib/ai/gateway/types.ts`).
+- `logAiUsage` (`src/lib/ai/usage-log.ts`) atualizado para persistir `agentRole` tanto no caminho tenant (`prisma.aILog.create`) quanto em telemetria sem tenant (`prisma.$executeRaw`).
+- `BaseAgent.run` (`src/features/intelligence/agents/base.agent.ts`) agora propaga `this.agentType` em `logAiUsage`.
+- `getSwarmSloSnapshot` (`src/features/intelligence/services/swarmScheduler.service.ts`) integra `groupBy` por `agentRole` e popula métricas de custo e latência de IA por papel em `AgentSloMetrics`.
+- Suíte unitária `tests/unit/features/intelligence/services/swarmScheduler.sloSnapshot.test.ts` estendida e 100% aprovada (6/6 testes passando).
+

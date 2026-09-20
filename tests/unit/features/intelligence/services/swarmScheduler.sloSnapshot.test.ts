@@ -5,10 +5,14 @@ vi.mock('../../../../../src/config/env.js', () => ({ env: mockEnv }));
 
 const pendingActionFindMany = vi.fn();
 const aiLogAggregate = vi.fn();
+const aiLogGroupBy = vi.fn();
 vi.mock('../../../../../src/lib/prisma.js', () => ({
   prisma: {
     aIPendingAction: { findMany: (...args: unknown[]) => pendingActionFindMany(...args) },
-    aILog: { aggregate: (...args: unknown[]) => aiLogAggregate(...args) },
+    aILog: {
+      aggregate: (...args: unknown[]) => aiLogAggregate(...args),
+      groupBy: (...args: unknown[]) => aiLogGroupBy(...args),
+    },
   },
 }));
 
@@ -192,4 +196,47 @@ describe('getSwarmSloSnapshot — painel de SLO por agente', () => {
       }),
     );
   });
+
+  it('fatía custo e latência de IA por agentRole quando AILog registra o papel (ACH-13-03)', async () => {
+    pendingActionFindMany.mockResolvedValue([]);
+    aiLogAggregate.mockResolvedValue({
+      _sum: { cost: 3.5, tokens: 12000 },
+      _avg: { latencyMs: 450 },
+      _count: { _all: 15 },
+    });
+    aiLogGroupBy.mockResolvedValue([
+      {
+        agentRole: 'SDR',
+        _sum: { cost: 2.0, tokens: 7000 },
+        _avg: { latencyMs: 400 },
+        _count: { _all: 10 },
+      },
+      {
+        agentRole: 'CLOSER',
+        _sum: { cost: 1.5, tokens: 5000 },
+        _avg: { latencyMs: 500 },
+        _count: { _all: 5 },
+      },
+    ]);
+
+    const snapshot = await getSwarmSloSnapshot('org-1', 30, NOW);
+
+    const sdr = snapshot.agents.find((agent) => agent.role === 'SDR')!;
+    expect(sdr.costUsd).toBe(2.0);
+    expect(sdr.tokens).toBe(7000);
+    expect(sdr.avgModelLatencyMs).toBe(400);
+
+    const closer = snapshot.agents.find((agent) => agent.role === 'CLOSER')!;
+    expect(closer.costUsd).toBe(1.5);
+    expect(closer.tokens).toBe(5000);
+    expect(closer.avgModelLatencyMs).toBe(500);
+
+    const bdr = snapshot.agents.find((agent) => agent.role === 'BDR')!;
+    expect(bdr.costUsd).toBeNull();
+    expect(bdr.tokens).toBeNull();
+    expect(bdr.avgModelLatencyMs).toBeNull();
+
+    expect(snapshot.cost.note).toContain('Custo e latência fatiados por agente');
+  });
 });
+
