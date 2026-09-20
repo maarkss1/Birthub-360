@@ -75,4 +75,4 @@ Todos os gates técnicos obrigatórios de `AGENTS.md` foram executados na branch
 
 - **Handoffs Abertos:** 0 em todo o repositório (`.agents/handoffs/` 100% resolvidos ou governados).
 - **Working Tree:** 100% limpo em `main` e `integracao/onda-freeze-sprint13`.
-- **Branches Sincronizadas:** `main` está à frente de `origin/main` por commits limpos e testados, pronta para `git push` quando autorizado pelo operador humano.
+- **Branches Sincronizadas:** `main` está perfeitamente sincronizada com `origin/main` (`git push origin main` executado com sucesso até o commit `6dfed9f7`).
