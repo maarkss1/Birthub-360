@@ -82,7 +82,7 @@ export async function recordDeadLetter(input: DeadLetterInput): Promise<void> {
         action: 'QUEUE_DEAD_LETTER',
         entity: 'Queue',
         entityId: input.jobId ?? null,
-        tenantId: input.organizationId ?? null,
+        tenantId: input.organizationId ?? '',
         details: JSON.stringify({
           queue: input.queue,
           jobName: input.jobName,
