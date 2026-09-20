@@ -152,6 +152,15 @@ jobs:
       - name: Run Migrations (para testes de integração)
         run: npx prisma migrate deploy
 
+      - name: Verificar deriva de schema/migration (DATA-007)
+        # Compara o banco recém-migrado (todas as migrations de prisma/migrations aplicadas, passo
+        # acima) contra o datamodel de prisma/schema.prisma. Um diff não-vazio (--exit-code sai com
+        # 2) significa que schema.prisma foi alterado sem uma migration correspondente sendo
+        # gerada — exatamente a classe de drift que produziu DATA-007 (commit bf9489fe, 2026-09-19:
+        # organizationId/tenantId virou NOT NULL em seis models sem nenhuma migration). Ver
+        # docs/audits/repository-debt-audit/DELTA-2026-09-20.md seção 3.
+        run: npm run verify:migration-drift
+
       - name: Criar .env.test para os testes de integração e E2E
         run: |
           cat > .env.test <<EOF
