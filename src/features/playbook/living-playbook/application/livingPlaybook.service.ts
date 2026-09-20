@@ -16,15 +16,17 @@ import { notificationService } from '../../../notifications/notification.service
  * Atribuição ao vendedor: via `payload.leadId -> Lead.owner` (User.id). Uma mensagem sem leadId
  * resolvível, ou de um lead sem owner definido, nunca entra na análise — nunca fabricamos autoria.
  *
- * Escopo desta versão (documentado, não escondido): não existe ainda uma tabela própria para
- * persistir "padrões vencedores" com proveniência (quem descobriu, quantas evidências, quando foi
- * anunciado) — isso exigiria um model novo em `prisma/schema.prisma`, propriedade exclusiva do
- * Agente 01. A proposta de schema está documentada em
- * `.agents/handoffs/onda-49/00-para-01-playbook-insight-schema-proposal.md`, não aplicada. Esta
- * versão computa as sugestões sob demanda (nunca persiste um "padrão" como fato adquirido) e
- * distribui via `notificationService` (exceção estrutural documentada no dependency-cruiser,
- * serviço transversal) — quem quiser tornar a sugestão permanente na Matriz de Objeções usa o
- * fluxo de criação já existente (`POST /api/playbook/objection-matrix`).
+ * Persistência (Onda 49, resolvendo o handoff
+ * `.agents/handoffs/onda-49/00-para-01-playbook-insight-schema-proposal.md`): cada geração ainda
+ * recalcula do zero a partir dos outcomes reais (nunca confia num "padrão" já persistido como fato
+ * adquirido — a base de evidências pode mudar), mas o resultado agora é gravado em
+ * `PlaybookInsight` para dar histórico (quem descobriu, quantas evidências, quando foi anunciado).
+ * Uma rodada nova nunca duplica um insight idêntico ainda ativo (mesmo `sellerId`+`segment`+
+ * `patternTitle`, dentro da janela `INSIGHT_DEDUPE_WINDOW_MS`) — atualiza o registro existente em
+ * vez de criar outro. Distribuição continua via `notificationService` (exceção estrutural
+ * documentada no dependency-cruiser, serviço transversal) — quem quiser tornar a sugestão
+ * permanente na Matriz de Objeções usa o fluxo de criação já existente
+ * (`POST /api/playbook/objection-matrix`).
  */
 
 /** Abaixo disso, um "padrão" é uma vitória isolada de um vendedor, não algo repetível — mesmo
@@ -33,6 +35,12 @@ const MIN_POSITIVE_OUTCOMES_PER_GROUP = 2;
 const MAX_GROUPS_PER_RUN = 6;
 const MAX_ACTIONS_SCANNED = 200;
 const ELIGIBLE_ACTION_TYPES = ['send_email', 'send_whatsapp_reply'];
+
+/** Janela de deduplicação: uma rodada nova não cria um `PlaybookInsight` duplicado para o mesmo
+ * (sellerId, segment, patternTitle) enquanto um registro ainda ativo (SUGGESTED/BROADCAST) dentro
+ * desta janela existir — atualiza esse registro em vez de recriar. Mesmo espírito do
+ * `idempotencyKey` de `AIPendingAction`. */
+const INSIGHT_DEDUPE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
 export interface WinningPatternSuggestion {
   sellerId: string;
@@ -45,6 +53,12 @@ export interface WinningPatternSuggestion {
   /** Trechos reais das mensagens que embasaram a sugestão — proveniência para revisão humana,
    * nunca resumido/reescrito pela IA nesta lista (isso é o dado bruto, não a síntese). */
   sourceExcerpts: string[];
+  /** AIPendingAction.id das evidências reais — persistido em PlaybookInsight.sourceActionIds. */
+  sourceActionIds: string[];
+  /** id do `PlaybookInsight` já persistido para esta sugestão — usado por `broadcastWinningPattern`
+   * para atualizar o registro em vez de só disparar a notificação. `null` quando a persistência
+   * falhou (a geração/notificação em si nunca é bloqueada por isso — ver `persistInsights`). */
+  insightId: string | null;
 }
 
 export interface GenerateWinningPatternsResult {
@@ -56,6 +70,7 @@ interface OutcomeGroup {
   sellerId: string;
   segment: string;
   excerpts: string[];
+  actionIds: string[];
 }
 
 interface GeneratedPattern {
@@ -86,7 +101,7 @@ async function loadOutcomeGroups(organizationId: string): Promise<OutcomeGroup[]
     },
     orderBy: { outcomeMeasuredAt: 'desc' },
     take: MAX_ACTIONS_SCANNED,
-    select: { payload: true },
+    select: { id: true, payload: true },
   });
 
   const leadIds = Array.from(
@@ -118,8 +133,9 @@ async function loadOutcomeGroups(organizationId: string): Promise<OutcomeGroup[]
     const group = groups.get(key);
     if (group) {
       group.excerpts.push(excerpt);
+      group.actionIds.push(action.id);
     } else {
-      groups.set(key, { sellerId: lead.owner, segment, excerpts: [excerpt] });
+      groups.set(key, { sellerId: lead.owner, segment, excerpts: [excerpt], actionIds: [action.id] });
     }
   }
 
@@ -169,10 +185,83 @@ Retorne SEMPRE e APENAS um array JSON, na MESMA ORDEM dos grupos recebidos, um i
 }
 
 /**
+ * Persiste (cria ou atualiza, deduplicando por `INSIGHT_DEDUPE_WINDOW_MS`) o `PlaybookInsight`
+ * correspondente a uma sugestão gerada. Nunca lança para quem chamou: falha de persistência é
+ * logada e devolve `null` — a sugestão ainda é retornada para revisão humana e a notificação de
+ * broadcast continua funcionando sem histórico, em vez de quebrar a feature inteira por uma falha
+ * de escrita no histórico.
+ */
+async function persistInsight(
+  organizationId: string,
+  suggestion: Pick<
+    WinningPatternSuggestion,
+    | 'sellerId'
+    | 'segment'
+    | 'patternTitle'
+    | 'patternDescription'
+    | 'suggestedScript'
+    | 'evidenceCount'
+    | 'sourceActionIds'
+  >,
+): Promise<string | null> {
+  try {
+    const dedupeSince = new Date(Date.now() - INSIGHT_DEDUPE_WINDOW_MS);
+    const existing = await prisma.playbookInsight.findFirst({
+      where: {
+        organizationId,
+        sellerId: suggestion.sellerId,
+        segment: suggestion.segment,
+        patternTitle: suggestion.patternTitle,
+        status: { in: ['SUGGESTED', 'BROADCAST'] },
+        createdAt: { gte: dedupeSince },
+      },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true },
+    });
+
+    if (existing) {
+      const updated = await prisma.playbookInsight.update({
+        where: { id: existing.id },
+        data: {
+          patternDescription: suggestion.patternDescription,
+          suggestedScript: suggestion.suggestedScript,
+          evidenceCount: suggestion.evidenceCount,
+          sourceActionIds: suggestion.sourceActionIds,
+        },
+        select: { id: true },
+      });
+      return updated.id;
+    }
+
+    const created = await prisma.playbookInsight.create({
+      data: {
+        organizationId,
+        sellerId: suggestion.sellerId,
+        segment: suggestion.segment,
+        patternTitle: suggestion.patternTitle,
+        patternDescription: suggestion.patternDescription,
+        suggestedScript: suggestion.suggestedScript,
+        evidenceCount: suggestion.evidenceCount,
+        sourceActionIds: suggestion.sourceActionIds,
+      },
+      select: { id: true },
+    });
+    return created.id;
+  } catch (error) {
+    logger.error(
+      { err: error, organizationId, sellerId: suggestion.sellerId, segment: suggestion.segment },
+      'Falha ao persistir PlaybookInsight — a sugestão segue disponível para revisão nesta rodada, mas sem histórico.',
+    );
+    return null;
+  }
+}
+
+/**
  * Detecta padrões de abordagem com resultado positivo confirmado, por vendedor e segmento, e
- * sintetiza uma sugestão reutilizável pro time inteiro. Retorna sugestões para revisão humana;
- * NÃO persiste nada — quem aprovar decide se anuncia pro time (`broadcastWinningPattern`) e/ou
- * adiciona como item real da Matriz de Objeções (fluxo já existente).
+ * sintetiza uma sugestão reutilizável pro time inteiro. Retorna sugestões para revisão humana e
+ * persiste cada uma como `PlaybookInsight` (deduplicando contra uma sugestão idêntica ainda ativa)
+ * — quem aprovar decide se anuncia pro time (`broadcastWinningPattern`) e/ou adiciona como item
+ * real da Matriz de Objeções (fluxo já existente).
  */
 export async function generateWinningPatterns(
   organizationId: string,
@@ -212,16 +301,26 @@ export async function generateWinningPatterns(
       };
     }
 
+    const suggestionsWithoutInsightId = groups.map((group, index) => ({
+      sellerId: group.sellerId,
+      sellerName: sellerNames.get(group.sellerId) ?? 'Vendedor não identificado',
+      segment: group.segment,
+      evidenceCount: group.excerpts.length,
+      patternTitle: candidates[index].patternTitle,
+      patternDescription: candidates[index].patternDescription,
+      suggestedScript: candidates[index].suggestedScript,
+      sourceExcerpts: group.excerpts,
+      sourceActionIds: group.actionIds,
+    }));
+
+    const insightIds = await Promise.all(
+      suggestionsWithoutInsightId.map((suggestion) => persistInsight(organizationId, suggestion)),
+    );
+
     return {
-      suggestions: groups.map((group, index) => ({
-        sellerId: group.sellerId,
-        sellerName: sellerNames.get(group.sellerId) ?? 'Vendedor não identificado',
-        segment: group.segment,
-        evidenceCount: group.excerpts.length,
-        patternTitle: candidates[index].patternTitle,
-        patternDescription: candidates[index].patternDescription,
-        suggestedScript: candidates[index].suggestedScript,
-        sourceExcerpts: group.excerpts,
+      suggestions: suggestionsWithoutInsightId.map((suggestion, index) => ({
+        ...suggestion,
+        insightId: insightIds[index],
       })),
     };
   } catch (error) {
@@ -238,18 +337,24 @@ export async function generateWinningPatterns(
 
 /**
  * Anuncia um padrão vencedor pro time inteiro (in-app, via `notificationService`) — credita o
- * vendedor de origem. Broadcast simples (organização inteira) nesta versão: não há ainda uma
- * tabela de "quem já viu"/"quem aceitou aplicar" — isso também está na proposta de schema
- * documentada (ver comentário de topo do arquivo).
+ * vendedor de origem. Broadcast simples (organização inteira) nesta versão: ainda não há uma
+ * tabela de "quem já viu"/"quem aceitou aplicar" a notificação em si (só o status agregado do
+ * insight) — isso segue documentado como lacuna futura, não escondido.
+ *
+ * Quando `insightId` é informado (sugestão veio de uma chamada recente a `generateWinningPatterns`
+ * e foi persistida), marca o `PlaybookInsight` como `BROADCAST` — histórico de quando e quem
+ * anunciou. Uma falha nessa atualização é logada mas nunca desfaz a notificação já criada: o
+ * comportamento observável (o time recebe o aviso) é preservado mesmo se o histórico falhar.
  */
 export async function broadcastWinningPattern(
   organizationId: string,
   suggestion: Pick<
     WinningPatternSuggestion,
     'sellerName' | 'segment' | 'patternTitle' | 'suggestedScript'
-  >,
+  > & { insightId?: string | null },
+  broadcastBy?: string,
 ): Promise<{ id: string } | null> {
-  return notificationService.create({
+  const notification = await notificationService.create({
     organizationId,
     title: `Playbook Vivo: "${suggestion.patternTitle}"`,
     body: `${suggestion.sellerName} descobriu uma abordagem que converte melhor no segmento "${suggestion.segment}":\n\n${suggestion.suggestedScript}`,
@@ -257,4 +362,20 @@ export async function broadcastWinningPattern(
     entity: null,
     entityId: null,
   });
+
+  if (suggestion.insightId) {
+    try {
+      await prisma.playbookInsight.update({
+        where: { id: suggestion.insightId },
+        data: { status: 'BROADCAST', broadcastAt: new Date(), broadcastBy: broadcastBy ?? null },
+      });
+    } catch (error) {
+      logger.error(
+        { err: error, organizationId, insightId: suggestion.insightId },
+        'Falha ao marcar PlaybookInsight como BROADCAST — a notificação ao time já foi criada normalmente.',
+      );
+    }
+  }
+
+  return notification;
 }
