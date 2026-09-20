@@ -39,7 +39,6 @@ import {
   type CadenceTouchResult,
   cadenceApi,
   type OptOutOriginChannel,
-  type OptOutRecordDTO,
   type OptOutScope,
 } from '../cadence.api';
 import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates';
@@ -723,13 +722,13 @@ function CadenceRunsSection() {
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
         </div>
-      ) : errorMessage ? (
+      ) : error ? (
         <div
           className="flex items-center justify-between gap-3 text-sm text-danger-active dark:text-danger py-4"
           role="alert"
         >
           <span className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" /> {errorMessage}
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
           </span>
           <button
             type="button"
@@ -879,13 +878,13 @@ function SequencesSection({ canManage }: { canManage: boolean }) {
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
         </div>
-      ) : errorMessage ? (
+      ) : error ? (
         <div
           className="flex items-center justify-between gap-3 text-sm text-danger-active dark:text-danger py-4"
           role="alert"
         >
           <span className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" /> {errorMessage}
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
           </span>
           <button
             type="button"

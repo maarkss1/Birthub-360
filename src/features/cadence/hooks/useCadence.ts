@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cadenceApi, CadenceRunStatus } from '../cadence.api';
+import { useQuery } from '@tanstack/react-query';
+import { cadenceApi, type CadenceRunStatus } from '../cadence.api';
 
 export function useOptOuts() {
   return useQuery({
