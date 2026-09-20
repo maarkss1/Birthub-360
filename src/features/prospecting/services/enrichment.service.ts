@@ -28,6 +28,8 @@ import type { PlaybookKey } from '../../../config/playbooks.js';
 import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
+import { defaultEnrichmentRepository, type IEnrichmentRepository } from '../infra/PrismaEnrichmentRepository.js';
+export { defaultEnrichmentRepository, type IEnrichmentRepository };
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { IcebreakerService } from '../../intelligence/services/IcebreakerService';
 import { filterNewContacts } from '../utils/contactDedupe.js';
@@ -174,8 +176,9 @@ export async function enrichCompany(
   organizationId: string,
   companyId: string,
   options: EnrichCompanyOptions = {},
+  repo: IEnrichmentRepository = defaultEnrichmentRepository,
 ) {
-  const company = await prisma.company.findFirst({ where: { id: companyId, organizationId } });
+  const company = await repo.findCompanyById(companyId, organizationId);
   if (!company) throw new AppError('Company not found', 404);
 
   if (!options.force && isEnrichmentFresh(company)) {
@@ -186,16 +189,14 @@ export async function enrichCompany(
     return buildCachedEnrichmentResult(company, options);
   }
 
-  await prisma.company.update({
-    where: { id: companyId },
-    data: { enrichmentStatus: 'Enriquecendo' },
+  await repo.updateCompany(companyId, {
+    enrichmentStatus: 'Enriquecendo',
   });
 
   try {
     return await runEnrichment(company, options);
   } catch (error) {
-    await prisma.company
-      .update({ where: { id: companyId }, data: { enrichmentStatus: 'Falhou' } })
+    await repo.updateCompany(companyId, { enrichmentStatus: 'Falhou' })
       .catch(() => {});
     throw error;
   }
