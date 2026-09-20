@@ -1,7 +1,8 @@
-# Tenancy Policy — AtlasGR / TotalTrac
-# Garante isolamento de dados entre tenants (organizações).
-# Separação visual não é prova de isolamento — este arquivo é a prova técnica.
-# Referência: AGENTS.md → "Tenancy AtlasGR / TotalTrac"
+# Tenancy Policy — [DEPRECATED / ARCHIVAL - DEVOPS-005]
+# Este arquivo é mantido apenas como registro histórico de política declarativa OPA.
+# O isolamento real de tenant é garantido no banco de dados via PostgreSQL Row Level Security (RLS)
+# e no backend via `authenticateToken` e `getTenantPrisma` (ver /AGENTS.md e prisma/schema.prisma).
+# Nenhuma rota HTTP ativa depende desta policy.
 
 package atlasgr.tenancy
 
