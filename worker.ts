@@ -4,29 +4,12 @@ initTracing();
 import { registerProcessGuards } from './src/lib/process-guards.js';
 registerProcessGuards();
 
-import http from 'http';
-import type { Worker as BullWorker } from 'bullmq';
-import { env } from './src/config/env.js';
+import { startWorkerServer } from './src/lib/worker-server.js';
 import { logger } from './src/lib/logger.js';
-import { prisma } from './src/lib/prisma.js';
-import { shutdownLangfuse } from './src/lib/langfuse.js';
-import { withTimeout } from './src/lib/http.js';
-import client from 'prom-client';
-import {
-  connection,
-  rateLimiterConnection,
-  cacheConnection,
-  queuesEnabled,
-  pingRedis,
-} from './src/lib/queue/redis.js';
-import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from './src/lib/queue/metrics.js';
-import { warnUnconfiguredSecondaryIntegrations } from './src/bootstrap/integrationsHealthCheck.js';
+import { setWorkerProcessUp } from './src/lib/queue/metrics.js';
+import { env } from './src/config/env.js';
 
 import { createLeadsWorker } from './src/lib/queue/index.js';
-import {
-  isPlatformOperatorTokenConfigured,
-  isValidPlatformOperatorToken,
-} from './src/shared/middlewares/requirePlatformOperator.js';
 import { createAgentWorker } from './src/lib/queue/agent.worker.js';
 import { createEnrichmentWorker } from './src/lib/queue/enrichment.queue.js';
 import { createEnrichmentCascadeWorker } from './src/lib/queue/enrichmentCascade.worker.js';
@@ -38,7 +21,6 @@ import {
 } from './src/lib/queue/coldCall.worker.js';
 import { createWhatsAppSignalWorker } from './src/lib/queue/whatsappSignal.worker.js';
 import { createWhatsAppCommandWorker } from './src/lib/queue/whatsappCommand.worker.js';
-import { shutdownWhatsAppSessions } from './src/features/integrations/whatsapp/whatsapp.service.js';
 import { enabledOrganizations } from './src/features/integrations/birth-voice/coldCall.service.js';
 import {
   createSwarmSchedulerWorker,
@@ -108,39 +90,8 @@ import {
 } from './src/features/commercial-intelligence/jobs/forecastSnapshotWeekly.worker.js';
 import { createCopilotoTranscriptionWorker } from './src/features/copiloto-ia/jobs/transcribeConversation.worker.js';
 import { MeetingSynthesisService } from './src/features/chatbook/services/meeting-synthesis.service.js';
-// ACH-16-01/16-05: createEnrichmentCascadeWorker e createAccountIntelligenceSchedulerWorker (LDR
-// Fase 5) existiam sem estar registrados em nenhum entrypoint — o teste de paridade
-// (tests/unit/architecture/worker-registry-parity.test.ts) pegou isso. `createEnrichmentCascadeWorker`
-// processa `enrichmentCascadeQueue`, que já recebia jobs via POST em
-// src/features/prospecting/routes/prospecting.routes.ts sem nenhum worker para consumi-los.
-// `createAccountIntelligenceSchedulerWorker` só rodava em modo embutido
-// (ENABLE_EMBEDDED_WORKERS=true) — proibido em produção por src/lib/queue/redis.ts, o que
-// significava que o scheduler autônomo do LDR nunca rodava em produção.
 
-const WORKER_PORT = parseInt(process.env.WORKER_HEALTH_PORT || '3006', 10);
-const SHUTDOWN_TIMEOUT_MS = 25_000;
-// RUN-002e (Sprint 02/Onda 14): o retryStrategy do ioredis (src/lib/queue/redis.ts) reconecta
-// indefinidamente enquanto queuesEnabled=true — correto para resiliência a blips durante o
-// runtime, mas isso também significa que `pingRedis` nunca rejeita sozinho. Sem um teto aqui, um
-// Redis indisponível no boot deixava o processo pendurado para sempre (nem crash visível, nem
-// "pronto") em vez de falhar do jeito que o orquestrador (Render/k8s) espera de um healthcheck de
-// inicialização.
-const STARTUP_REDIS_TIMEOUT_MS = 10_000;
-type CloseableWorker = BullWorker<any, any, string> | null;
-
-async function startWorkerProcess() {
-  if (!queuesEnabled) {
-    throw new Error('Worker dedicado requer ENABLE_QUEUES=true e REDIS_URL configurada.');
-  }
-
-  // Visibilidade (não bloqueante) de integrações secundárias sem credencial configurada — é aqui,
-  // não em server.ts, que os agentes de IA (GROQ/OPENAI) e o executor de e-mail/storage realmente
-  // rodam. Ver src/bootstrap/integrationsHealthCheck.ts.
-  warnUnconfiguredSecondaryIntegrations();
-
-  await withTimeout(pingRedis(connection), STARTUP_REDIS_TIMEOUT_MS);
-  await prisma.$queryRaw`SELECT 1`;
-
+async function start() {
   const leadsWorker = createLeadsWorker();
   const agentWorker = createAgentWorker();
   const enrichmentWorker = createEnrichmentWorker();
@@ -167,53 +118,24 @@ async function startWorkerProcess() {
     meetingSynthesisPort: new MeetingSynthesisService(),
   });
 
-  await Promise.all([
-    scheduleBitrixSync(),
-    scheduleFollowUpJobs(),
-    scheduleExecutiveSummaryJob(),
-    scheduleDeduplicationJob(),
-    scheduleWinLossAnalysisJob(),
-    scheduleWeeklyPdfReportJob(),
-    scheduleAutoAnonymizeJob(),
-    scheduleColdLeadsScannerJob(),
-    scheduleStagnationScannerJob(),
-    scheduleCadenceRunJob(),
-    scheduleAgentMemoryCleanupJob(),
-    scheduleBitrixExtractionPurgeJob(),
-    scheduleGlobalNewsScan(),
-    scheduleAccountIntelligenceInsightsJob(),
-    scheduleForecastSnapshotJob(),
-    // Mesmo agendamento ('daily-ldr-scheduler', cron diário às 02h) já usado no modo embutido
-    // (src/bootstrap/workers.ts) — upsertJobScheduler é idempotente por id, então registrar o
-    // mesmo agendamento nos dois entrypoints segue o padrão já usado pelos demais jobs acima.
-    accountIntelligenceSchedulerQueue.upsertJobScheduler(
-      'daily-ldr-scheduler',
-      { pattern: '0 2 * * *' },
-      { name: 'accountIntelligenceScheduler', data: {} },
-    ),
-  ]);
-
   const searchWorker = env.ENABLE_SEARCH ? createSearchWorker() : null;
   if (env.ENABLE_SEARCH) {
     initMeiliIndexes().catch((err) => logger.warn({ err }, 'Meilisearch offline'));
   }
 
-  let coldCallWorker: CloseableWorker = null;
-  let swarmSchedulerWorker: CloseableWorker = null;
-
+  let coldCallWorker = null;
   const coldCallOrgs = await enabledOrganizations();
   if (coldCallOrgs.length > 0) {
     coldCallWorker = createColdCallWorker();
-    await scheduleColdCallCampaigns();
   }
 
+  let swarmSchedulerWorker = null;
   const swarmOrgs = await swarmSchedulerEnabledOrganizations();
   if (swarmOrgs.length > 0) {
     swarmSchedulerWorker = createSwarmSchedulerWorker();
-    await scheduleSwarmScheduler();
   }
 
-  const registeredWorkers: Array<{ name: string; worker: CloseableWorker }> = [
+  const workers = [
     { name: 'leads-enrichment', worker: leadsWorker },
     { name: 'intelligence-agents', worker: agentWorker },
     { name: 'enrichment-queue', worker: enrichmentWorker },
@@ -242,143 +164,37 @@ async function startWorkerProcess() {
     { name: 'copiloto-ia-transcription-queue', worker: copilotoTranscriptionWorker },
   ];
 
-  for (const { name, worker } of registeredWorkers) {
-    registerWorkerForRuntimeMetrics(name, worker);
-  }
-
-  const activeCount = registeredWorkers.filter((entry) => entry.worker !== null).length;
-  setWorkerProcessUp(true);
-  logger.info(
-    {
-      activeWorkers: activeCount,
-      totalRegistered: registeredWorkers.length,
-      registered: registeredWorkers.map((entry) => entry.name),
+  await startWorkerServer(
+    workers,
+    async () => {
+      await scheduleBitrixSync();
+      await scheduleFollowUpJobs();
+      await scheduleExecutiveSummaryJob();
+      await scheduleDeduplicationJob();
+      await scheduleWinLossAnalysisJob();
+      await scheduleWeeklyPdfReportJob();
+      await scheduleAutoAnonymizeJob();
+      await scheduleColdLeadsScannerJob();
+      await scheduleStagnationScannerJob();
+      await scheduleCadenceRunJob();
+      await scheduleAgentMemoryCleanupJob();
+      await scheduleBitrixExtractionPurgeJob();
+      await scheduleGlobalNewsScan();
+      await scheduleAccountIntelligenceInsightsJob();
+      await scheduleForecastSnapshotJob();
+      await accountIntelligenceSchedulerQueue.upsertJobScheduler(
+        'daily-ldr-scheduler',
+        { pattern: '0 2 * * *' },
+        { name: 'accountIntelligenceScheduler', data: {} }
+      );
+      if (coldCallWorker) await scheduleColdCallCampaigns();
+      if (swarmSchedulerWorker) await scheduleSwarmScheduler();
     },
-    'worker.ts: processors registrados',
+    'all'
   );
-
-  if (env.EXPOSE_METRICS) client.collectDefaultMetrics();
-
-    const healthServer = http.createServer(async (req, res) => {
-        if (req.url === '/health/live' || req.url === '/healthz') {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }));
-            return;
-        }
-
-        if (req.url === '/health/ready' || req.url === '/readyz') {
-            try {
-                // Mesmo motivo do boot acima: sem timeout, um Redis fora do ar faz este endpoint
-                // travar em vez de responder 503 — o orquestrador precisa de uma resposta rápida
-                // para decidir remover a réplica de rotação.
-                await withTimeout(pingRedis(connection), 3_000);
-                await prisma.$queryRaw`SELECT 1`;
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({
-                    status: 'ok',
-                    queuesEnabled: true,
-                    activeWorkers: activeCount,
-                    totalRegistered: registeredWorkers.length,
-                    timestamp: new Date().toISOString(),
-                }));
-            } catch (err) {
-                logger.error({ err }, 'worker.ts readiness failed');
-                res.writeHead(503, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ status: 'error', message: 'Redis or database unavailable' }));
-            }
-            return;
-        }
-
-        // SEC-002 (Sprint 01/Onda 13) exigia o token de operador de plataforma em `/metrics` só no
-        // processo HTTP principal (`src/bootstrap/observability.ts`) — este `/metrics` do worker é
-        // um servidor `http` cru à parte (não monta o app Express), então a mesma trava nunca foi
-        // aplicada aqui e reabria a mesma classe de exposição sem auth num segundo processo.
-        const requestPath = (req.url ?? '/').split('?', 1)[0];
-        if (requestPath === '/metrics' && env.EXPOSE_METRICS) {
-            if (!isPlatformOperatorTokenConfigured()) {
-                res.writeHead(503, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({
-                    success: false,
-                    error: 'Recurso de operador de plataforma não habilitado — configure PLATFORM_OPERATOR_TOKEN.',
-                }));
-                return;
-            }
-
-            const requestUrl = new URL(req.url ?? '/metrics', 'http://internal');
-            const headerToken = req.headers['x-platform-operator-token'];
-            const queryToken = requestUrl.searchParams.get('operator_token');
-            const candidate =
-                (typeof headerToken === 'string' && headerToken) ||
-                (typeof queryToken === 'string' && queryToken) ||
-                null;
-
-            if (!isValidPlatformOperatorToken(candidate)) {
-                res.writeHead(403, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: false, error: 'Acesso negado.' }));
-                return;
-            }
-
-            try {
-                res.writeHead(200, { 'Content-Type': client.register.contentType });
-                res.end(await client.register.metrics());
-            } catch (err) {
-                logger.error({ err }, 'worker.ts: failed to collect metrics');
-                res.writeHead(500);
-                res.end('Falha ao coletar métricas.');
-            }
-            return;
-        }
-
-        res.writeHead(404);
-        res.end();
-    });
-
-    healthServer.listen(WORKER_PORT, '0.0.0.0', () => {
-        logger.info({ port: WORKER_PORT }, 'worker.ts health server listening');
-    });
-
-    let shuttingDown = false;
-    const shutdown = async (signal: string) => {
-        if (shuttingDown) return;
-        shuttingDown = true;
-        setWorkerProcessUp(false);
-        logger.info({ signal }, 'worker.ts: graceful shutdown started');
-
-        const timeout = new Promise<void>((resolve) => {
-            setTimeout(() => {
-                logger.error({ signal, timeoutMs: SHUTDOWN_TIMEOUT_MS }, 'worker.ts: shutdown timeout reached');
-                resolve();
-            }, SHUTDOWN_TIMEOUT_MS);
-        });
-
-        const drain = (async () => {
-            await new Promise<void>((resolve) => healthServer.close(() => resolve()));
-            await Promise.allSettled(
-                registeredWorkers
-                    .filter((entry): entry is { name: string; worker: NonNullable<CloseableWorker> } => entry.worker !== null)
-                    .map(({ worker }) => worker.close()),
-            );
-            await shutdownWhatsAppSessions();
-            await shutdownLangfuse().catch((err) => logger.error({ err }, 'Erro ao encerrar Langfuse'));
-            await prisma.$disconnect().catch((err) => logger.error({ err }, 'Erro ao desconectar Prisma'));
-            await Promise.allSettled([
-                connection.quit().catch(() => connection.disconnect()),
-                rateLimiterConnection.quit().catch(() => rateLimiterConnection.disconnect()),
-                cacheConnection.quit().catch(() => cacheConnection.disconnect()),
-            ]);
-        })();
-
-        await Promise.race([drain, timeout]);
-        logger.info({ signal }, 'worker.ts: graceful shutdown completed');
-        process.exit(0);
-    };
-
-    process.on('SIGTERM', () => void shutdown('SIGTERM'));
-    process.on('SIGINT', () => void shutdown('SIGINT'));
-
 }
 
-startWorkerProcess().catch((err) => {
+start().catch((err) => {
   setWorkerProcessUp(false);
   logger.fatal({ err }, 'worker.ts: fatal bootstrap failure');
   process.exit(1);
