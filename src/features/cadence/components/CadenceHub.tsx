@@ -254,14 +254,28 @@ function ScheduleMeetingDialog({
 
 // ── Opt-outs ─────────────────────────────────────────────────────────────
 
-import { useOptOuts } from '../hooks/useCadence';
-
 function OptOutsSection() {
-  const { data, isLoading: loading, error, refetch } = useOptOuts();
+  const [data, setData] = useState<OptOutRecordDTO[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const load = () => refetch();
+  const load = useCallback(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    cadenceApi
+      .optOuts()
+      .then((result) => !cancelled && setData(result))
+      .catch((err) => !cancelled && setError((err as Error).message))
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const errorMessage = error instanceof Error ? error.message : null;
+  useEffect(() => load(), [load]);
+
+  const errorMessage = error;
 
   return (
     <Card padding="sm">

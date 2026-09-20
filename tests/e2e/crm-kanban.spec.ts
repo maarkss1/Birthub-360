@@ -253,6 +253,7 @@ test.describe('Kanban do CRM — drag e drop', () => {
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) }).first();
+    await expect(card).toBeVisible({ timeout: 15_000 });
     await card.focus();
     await page.keyboard.press('Space');
     await expect(card).toHaveAttribute('aria-pressed', 'true');
