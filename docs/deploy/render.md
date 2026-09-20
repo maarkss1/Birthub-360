@@ -8,6 +8,10 @@
 >
 > Guia completo (Supabase + Render + Cloudflare + CI/CD + checklist): ver
 > [`docs/deploy/producao.md`](producao.md). Este arquivo cobre só a parte específica do Render.
+>
+> Ativação do worker dedicado (`prospector-atlas-worker`, `type: worker` em `render.yaml`, hoje
+> congelado e não criado no Render de verdade): ver
+> [`docs/deploy/worker-service-render.md`](worker-service-render.md).
 
 Este projeto usa variáveis de ambiente para ativar integrações pagas e webhooks externos. O arquivo `render.yaml` mantém somente a lista de chaves necessárias para o Render; os valores sensíveis devem ser cadastrados no dashboard do Render como secrets, nunca versionados no Git.
 
