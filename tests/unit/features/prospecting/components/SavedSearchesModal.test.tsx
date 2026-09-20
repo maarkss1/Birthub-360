@@ -76,7 +76,7 @@ describe('SavedSearchesModal — Executar', () => {
     await user.click(screen.getByTitle('Executar busca agora'));
 
     await waitFor(() => expect(onApplyCriteria).toHaveBeenCalledTimes(1));
-    expect(onApplyCriteria).toHaveBeenCalledWith(SAVED_SEARCH.criteria, CANDIDATES);
+    expect(onApplyCriteria).toHaveBeenCalledWith(SAVED_SEARCH.criteria, CANDIDATES, 'search-1');
     expect(postMock).toHaveBeenCalledWith('/api/prospecting/saved-searches/search-1/run');
   });
 
@@ -95,7 +95,9 @@ describe('SavedSearchesModal — Executar', () => {
     await screen.findByText('Frotas SP');
     await user.click(screen.getByTitle('Executar busca agora'));
 
-    await waitFor(() => expect(onApplyCriteria).toHaveBeenCalledWith(SAVED_SEARCH.criteria, []));
+    await waitFor(() =>
+      expect(onApplyCriteria).toHaveBeenCalledWith(SAVED_SEARCH.criteria, [], 'search-1'),
+    );
   });
 });
 
