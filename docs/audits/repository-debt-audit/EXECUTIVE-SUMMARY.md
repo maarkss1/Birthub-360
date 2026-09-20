@@ -1,5 +1,13 @@
 # Executive Summary — Birth Hub 360º Repository Debt Audit
 
+> **Update 2026-09-20:** see `DELTA-2026-09-20.md` in this folder for a delta pass against the
+> 264 commits landed since this audit. Headline: the platform's one CRITICAL finding
+> (TENANT-001) and several P0/P1 blockers (SEC-001, TENANT-002, INTEGRATION-001,
+> CRM-002/003, DOCBRAND-011) are now fixed; DEVOPS-001/002 was resolved by deleting the
+> Oracle Cloud path entirely, which left 3 docs pointing at now-deleted infrastructure; and a
+> new HIGH-severity schema/migration-drift risk (`organizationId` made NOT NULL with no
+> generated migration) shipped in the newest commit on `main`.
+
 **Scope:** full-repository debt audit. 1 discovery phase (30 agents/modules discovered) + 17
 domain-specialist audits + 2 consolidation/cross-review stages = 20 agent sessions.
 Approximately **635 files inspected**. This document, and the seven companion files in this
