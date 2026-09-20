@@ -224,18 +224,18 @@ export function Sidebar({
         aria-current={isActive ? 'page' : undefined}
         className={`group relative flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
           isActive
-            ? 'bg-brand/10 text-brand shadow-sm shadow-brand/5'
+            ? 'bg-gradient-to-r from-brand/10 to-transparent text-brand shadow-sm shadow-brand/5 ring-1 ring-brand/10'
             : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'
         } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         {isActive && (
           <span
             aria-hidden="true"
-            className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-brand shadow-[0_0_8px_var(--color-brand)]"
+            className="absolute inset-y-1.5 left-0 w-[3px] rounded-r-full bg-brand shadow-[0_0_12px_var(--color-brand)]"
           />
         )}
-        <Icon size={16} aria-hidden="true" className={`shrink-0 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
-        <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-bold' : ''}`}>{meta.label}</span>
+        <Icon size={16} aria-hidden="true" className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:text-brand/70'}`} />
+        <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-bold tracking-tight' : ''}`}>{meta.label}</span>
       </button>
     );
   };
@@ -328,10 +328,10 @@ export function Sidebar({
         ))}
       </nav>
 
-      <div className="space-y-2 border-t border-line p-3">
+      <div className="p-4 pt-2">
         {currentUser && (
           <div
-            className={`rounded-xl border border-line bg-surface-2/70 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
+            className={`group relative overflow-hidden rounded-2xl bg-surface-subtle/50 px-3 py-3 transition-colors hover:bg-surface-subtle ${
               isCollapsed ? 'lg:px-1.5 lg:py-2 lg:flex lg:justify-center' : ''
             }`}
             title={
@@ -340,15 +340,15 @@ export function Sidebar({
                 : undefined
             }
           >
-            <div className="flex min-w-0 items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-on-brand shadow-card ring-1 ring-white/10">
+            <div className="flex min-w-0 items-center gap-3 relative z-10">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand/80 to-brand-2/90 text-sm font-bold text-on-brand shadow-sm ring-2 ring-surface transition-transform duration-300 group-hover:scale-105">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className={`min-w-0 flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>
-                <p className="truncate text-xs font-bold leading-tight text-ink">
+                <p className="truncate text-[13px] font-bold leading-tight text-ink transition-colors group-hover:text-brand">
                   {currentUser.name}
                 </p>
-                <p className="truncate text-[10px] font-medium leading-tight text-ink-2">
+                <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-ink-2/70">
                   {currentUser.roleTitle || currentUser.role}
                 </p>
               </div>
