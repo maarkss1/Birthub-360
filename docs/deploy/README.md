@@ -15,6 +15,12 @@ em cada caminho — cada um continua descrito no lugar de sempre, agora com o st
 > de self-hosted Oracle Cloud Infrastructure foi descontinuada e seus artefatos removidos.
 > O caminho canônico de produção ativo é **Render (monólito Express) + Neon/Postgres gerenciado**,
 > automatizado via `render.yaml` (`autoDeployTrigger: commit`).
+> **Atualização (2026-09-20, DEVOPS-010): Oracle Cloud foi retirado do repositório.** A decisão de
+> tornar Oracle Cloud Infrastructure o "alvo definitivo de produção" foi revertida pelo commit `783f8582`,
+> que deletou todo o caminho OCI: `docker-compose.oci.yml`, `docs/deploy/oracle-cloud.md`,
+> `docs/ADR/ADR-004-Producao-Oracle-Cloud.md`, `scripts/{deploy,backup,restore}-oci.sh`,
+> `.github/workflows/deploy-oci.yml` e `docs/security/runbooks/DEPLOY_ROLLBACK_OCI.md` — todos ausentes do disco hoje.
+> **Render (`render.yaml`, `autoDeployTrigger: commit`) é hoje o único caminho de deploy que de fato funciona e é o canônico de produção.**
 
 ## 1. Caminho canônico por ambiente (estado real, 2026-09-20)
 
@@ -23,6 +29,7 @@ em cada caminho — cada um continua descrito no lugar de sempre, agora com o st
 | **Desenvolvimento local**                                | `docker-compose.yml` (Postgres+pgvector, Redis, Meilisearch, MinIO, LiteLLM, Ollama) + `npm run dev`                                                               | [`docs/development/LOCAL_FIRST.md`](../development/LOCAL_FIRST.md)                                                                       | **Ativo**                                                                                                                                                                                                                                            |
 | **Homologação**                                          | Nenhum ambiente cloud ativo. `cd-homolog.yml` existe (build de imagem Docker + Helm `values.yaml`) mas não há cluster real consumindo o resultado                  | [`k8s/README.md`](../../k8s/README.md), [`charts/README.md`](../../charts/README.md)                                                     | Pipeline existe, alvo (cluster) não existe                                                                                                                                                                                                           |
 | **Produção (canônico)**                                  | **Render (`prospector-atlas`, `plan: starter`) + Postgres Neon / Cloudflare** — monólito Express em `render.yaml`                                                  | [`docs/deploy/producao.md`](producao.md), [`render.yaml`](../../render.yaml)                                                              | **Ativo e Canônico** — deploy contínuo em `main`, migrations automáticas via preDeployCommand                                                                                                                                                          |
+| ~~**Produção OCI (alvo descontinuado)**~~                | ~~Oracle Cloud Infrastructure self-hosted~~                                                                                                                        | Deletado em 2026-09-18                                                                                                                   | **Retirado (DEVOPS-010)** — nunca chegou a receber tráfego real; todo o caminho OCI foi retirado antes do cutover. Render é o único caminho de produção                                                                                             |
 
 O critério de produção a partir do modo local-first foi consolidado com sucesso em Render.
 
