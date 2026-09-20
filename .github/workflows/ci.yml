@@ -210,6 +210,28 @@ jobs:
       - name: Run Build
         run: npm run build
 
+      - name: Smoke test do build de produção (/health/live, /health/ready, /health/version)
+        env:
+          PORT: 3024
+          NODE_ENV: test
+          ALLOW_DEV_AUTH_BYPASS: true
+        run: |
+          node dist/server.js &
+          SERVER_PID=$!
+          echo "Aguardando boot do servidor de produção (PID $SERVER_PID)..."
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3024/health/live >/dev/null 2>&1; then
+              echo "Servidor online após ${i}s."
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://localhost:3024/health/live || { echo "Falha em /health/live"; kill -9 $SERVER_PID 2>/dev/null || true; exit 1; }
+          curl -fsS http://localhost:3024/health/ready || { echo "Falha em /health/ready"; kill -9 $SERVER_PID 2>/dev/null || true; exit 1; }
+          curl -fsS http://localhost:3024/health/version || { echo "Falha em /health/version"; kill -9 $SERVER_PID 2>/dev/null || true; exit 1; }
+          echo "Smoke test de produção aprovado!"
+          kill -15 $SERVER_PID 2>/dev/null || true
+
   # Este é o único job que deve publicar o contexto `build` exigido pela branch protection.
   # O if: always() transforma falha/cancelamento das dependências em FAIL explícito em vez de
   # deixar o required check ausente.
