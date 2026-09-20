@@ -1,7 +1,7 @@
 - De: sessão de swarm (item 42 do roadmap — "Playbook Vivo")
 - Para: Agente 01 (Plataforma, Segurança e Dados)
 - Onda: 49
-- Status: aberto
+- Status: postergado-pos-sprint13 (congelado durante o Freeze de Escopo Sprint 00 → Sprint 13 por GOV-003; v1 já funciona sem novo model)
 - Prioridade: média
 
 ## Problema

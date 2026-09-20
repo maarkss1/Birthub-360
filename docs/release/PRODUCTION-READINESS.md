@@ -144,8 +144,8 @@ Não re-derivado nesta rodada — pontos de verdade já existentes e válidos:
 
 - **Rollback de migração Prisma/Postgres:** `docs/security/runbooks/MIGRATION_ROLLBACK.md`
   (runbook real, referenciado por `prisma/AGENTS.md`).
-- **Deploy/infra de produção (produção):** `docs/deploy/oracle-cloud.md`,
-  `docs/ADR/-Producao-Oracle-Cloud.md`.
+- **Deploy/infra de produção (produção):** `docs/deploy/README.md`,
+  `docs/deploy/producao.md`, `render.yaml`.
 - **Deploy Render (histórico, migração Neon):** `docs/deploy/render.md`.
 
 ## 8. Decisão de release

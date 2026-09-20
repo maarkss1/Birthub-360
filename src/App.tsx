@@ -455,11 +455,19 @@ export default function App() {
                         pós-login; continua existindo e acessível a partir dos círculos do Hub. */}
                       <Route
                         path="/design-lab/command-language"
-                        element={<DesignLabPage section="command-language" />}
+                        element={
+                          <ProtectedRoute>
+                            <DesignLabPage section="command-language" />
+                          </ProtectedRoute>
+                        }
                       />
                       <Route
                         path="/design-lab/components-v2"
-                        element={<DesignLabPage section="components-v2" />}
+                        element={
+                          <ProtectedRoute>
+                            <DesignLabPage section="components-v2" />
+                          </ProtectedRoute>
+                        }
                       />
                       <Route path="/" element={<WelcomeScreen />} />
                       <Route path="/welcome" element={<WelcomeScreen />} />

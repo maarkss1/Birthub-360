@@ -1,15 +1,10 @@
 # Central Birth Hub 360 — modo local-first
 
-> **Atualização de destino de produção (2026-09-05):** a arquitetura de produção definitiva
-> descrita no parágrafo abaixo (Render + Neon + Cloudflare R2) foi **substituída por decisão
-> explícita do dono do produto** — o novo destino é **Oracle Cloud Infrastructure (self-hosted,
-> região `sa-saopaulo-1`)**, com Docker Compose + Caddy + PostgreSQL na própria instância. Ver
-> `docs/ADR/ADR-004-Producao-Oracle-Cloud.md` (decisão e justificativa) e
-> `docs/deploy/oracle-cloud.md` (procedimento operacional, agora o caminho canônico de produção).
-> O parágrafo original abaixo permanece como registro histórico de por que Render/Neon foram
-> escolhidos naquele momento — não reflete mais o destino ativo. Render (com Supabase como banco
-> real ainda em produção até o cutover Oracle ser validado) segue como fallback/rollback durante a
-> transição, não recebe novo esforço de infraestrutura — ver `docs/deploy/README.md`.
+> **Atualização de destino de produção (DEVOPS-010):** A arquitetura de produção
+> canônica e definitiva é **Render (`prospector-atlas`) + Postgres Neon + Cloudflare**,
+> com deploys automáticos via `render.yaml` e migrações pré-deploy.
+> Tentativas anteriores de self-hosted OCI foram descontinuadas e removidas da base de código ativa.
+> Ver `docs/deploy/README.md` e `docs/deploy/producao.md`.
 
 > **Fase ENCERRADA em 2026-09-02.** O critério de saída definido na seção "Critério para voltar à
 > produção" (fim deste arquivo) foi cumprido e confirmado pelo dono do repositório: frontend,

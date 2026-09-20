@@ -3,10 +3,15 @@
   boundary de arquivos autorizado para esta execução — a instrução explícita foi "NÃO edite
   prisma/schema.prisma... escreva handoff")
 - Onda: onda-42
-- Status: aberto
-- Prioridade: alto (bloqueia o teto por organização de virar realmente fail-closed em produção —
-  até a migration rodar, o código novo desta rodada fica fail-open por construção, ver seção
-  "Estado atual sem a migration" abaixo)
+- Status: resolvido
+- Prioridade: alto
+
+## Resolução
+Resolvido em `prisma/schema.prisma` (linhas 1011-1015) e migração `20260827210000_onda42_decisoes_schema`:
+1. Adicionados os campos `monthlyAiBudgetUsd Float?` e `monthlyProspectingBudgetUsd Float?` ao `model Organization`.
+2. Em `src/lib/ai/budget.ts`, `getOrgAiBudgetUsd` seleciona diretamente `monthlyAiBudgetUsd` e bloqueia via `AiOrgBudgetExceededError` (429) quando o teto configurado é atingido.
+3. Em `src/features/prospecting/services/providerBudget.ts`, `getOrgProspectingBudgetUsd` seleciona `monthlyProspectingBudgetUsd` e bloqueia via `ProspectingBudgetExceededError` (429) quando o teto de gastos em Apollo/Hunter é atingido.
+4. Ambos operam fail-open (sem bloqueio) caso não haja teto configurado (nulo) e fail-closed quando o teto configurado é atingido.
 
 ## Contexto
 
