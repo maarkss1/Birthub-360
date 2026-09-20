@@ -57,8 +57,8 @@
 
 | Leva | Gate `integracao/` | Veredito |
 |------|--------------------|----------|
-| 1 | `tsc`, `lint`, `test:architecture` verdes | PASS |
-| 2 | pendente | — |
+| 1 | `tsc`, `lint`, `test:architecture`, unit tests | PASS |
+| 2 | `tsc`, `lint`, `test:architecture`, unit tests | PASS |
 
 ---
 
@@ -67,8 +67,14 @@
 - [x] `roadmap-v2-onda-1/01-para-00-account-oauth-tokens-sem-cifra.md` (44cb5e0b)
 - [x] `onda-41/13-para-01-aigovernancepolicy-schema-morto.md` (40ec3ce4)
 - [x] `onda-44/13-para-01-ailog-coluna-agentrole.md` (40ec3ce4)
+- [x] `onda-44/13-para-07-propagar-agentrole-ailog.md` (fbfe8165)
 - [x] `roadmap-v2-transversais/14-para-00-passwithnotests.md` (9a8e8103)
 - [x] `audit-ach/08-para-00-ship-script-bypass.md` (9a8e8103)
 - [x] `roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md` (78aba484)
-- [ ] `roadmap-v2-onda-1/02-para-01-rbac-ausente-usage-routes.md`
-- [ ] `onda-40/06-para-16-bitrix-extraction-purge-worker-ausente.md`
+- [x] `roadmap-v2-onda-1/02-para-01-rbac-ausente-usage-routes.md` (b96e3e61)
+- [x] `onda-40/06-para-16-bitrix-extraction-purge-worker-ausente.md` (095ce0bb)
+- [x] `audit-ach/09-para-08-mobile-sweep-6-rotas.md` (277bb640)
+- [x] `audit-ach/17-para-01-04-agendamento-transporte-pendente.md` (277bb640)
+- [x] `audit-ach/17-para-06-12-voz-cadencia-dispatcher-pendente.md` (277bb640)
+- [x] `audit-ach/17-para-12-callsuppression-optoutrecord-cobertura.md` (277bb640)
+

@@ -19,6 +19,10 @@ import {
 import { enabledOrganizations as swarmSchedulerEnabledOrganizations } from '../features/intelligence/services/swarmScheduler.service.js';
 import { createBitrixSyncWorker, scheduleBitrixSync } from '../lib/queue/bitrixSync.worker.js';
 import {
+  createBitrixExtractionPurgeWorker,
+  scheduleBitrixExtractionPurgeJob,
+} from '../features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.js';
+import {
   createFollowUpWorker,
   scheduleFollowUpJobs,
 } from '../features/crm/jobs/followUp.worker.js';
@@ -107,6 +111,7 @@ export interface EmbeddedWorkersHandle {
   whatsappSignalWorker: CloseableWorker;
   whatsappCommandWorker: CloseableWorker;
   bitrixSyncWorker: CloseableWorker;
+  bitrixExtractionPurgeWorker: CloseableWorker;
   followUpWorker: CloseableWorker;
   execSummaryWorker: CloseableWorker;
   deduplicationWorker: CloseableWorker;
@@ -153,6 +158,7 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     whatsappSignalWorker: embeddedWorkersEnabled ? createWhatsAppSignalWorker() : null,
     whatsappCommandWorker: embeddedWorkersEnabled ? createWhatsAppCommandWorker() : null,
     bitrixSyncWorker: embeddedWorkersEnabled ? createBitrixSyncWorker() : null,
+    bitrixExtractionPurgeWorker: embeddedWorkersEnabled ? createBitrixExtractionPurgeWorker() : null,
     followUpWorker: embeddedWorkersEnabled ? createFollowUpWorker() : null,
     execSummaryWorker: embeddedWorkersEnabled ? createExecutiveSummaryWorker() : null,
     deduplicationWorker: embeddedWorkersEnabled ? createDeduplicationWorker() : null,
@@ -186,6 +192,9 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
   if (embeddedWorkersEnabled) {
     scheduleBitrixSync().catch((err) =>
       logger.error({ err }, 'Falha ao agendar a sincronização automática do Bitrix'),
+    );
+    scheduleBitrixExtractionPurgeJob().catch((err) =>
+      logger.error({ err }, 'Falha ao agendar job de expurgo de extrações Bitrix'),
     );
     scheduleFollowUpJobs().catch((err) =>
       logger.error({ err }, 'Falha ao agendar jobs de follow-up'),

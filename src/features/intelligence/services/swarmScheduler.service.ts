@@ -651,7 +651,7 @@ export async function getSwarmSloSnapshot(
     }),
     (async () => {
       try {
-        if (typeof (prisma.aILog as Record<string, unknown>).groupBy === 'function') {
+        if (typeof (prisma.aILog as unknown as Record<string, unknown>).groupBy === 'function') {
           const res = await (
             prisma.aILog.groupBy as unknown as (args: unknown) => Promise<
               Array<{
