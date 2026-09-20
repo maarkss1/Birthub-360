@@ -22,10 +22,11 @@ poucos, migration por migration, em vez de uma reescrita retroativa de risco des
 
 Confirme o ambiente antes do primeiro comando. Nunca rode os comandos deste runbook contra
 produção usando a `DATABASE_URL` de outro `.env` copiada às pressas — confirme com
-`echo $DATABASE_URL | sed -E 's/:[^:@]+@/:***@/'` (mascara a senha) qual host aparece. Produção é
-Supabase (Session Pooler); desenvolvimento/CI é o Postgres local (`docker-compose`) ou o banco de
-`.env.test`. Ver `docs/SRE.md` §4 para o pipeline de backup real (Cloudflare R2, `pg_dump` diário,
-retenção 30 dias) e `scripts/backup.sh`/`scripts/restore.sh`.
+`echo $DATABASE_URL | sed -E 's/:[^:@]+@/:***@/'` (mascara a senha) qual host aparece. O ambiente canônico
+é o PostgreSQL Local-First (`localhost:5432`, container `birthhub_postgres`) conforme definido em
+`docs/development/LOCAL_FIRST.md`. Ver os scripts canônicos de backup e restore:
+`scripts/local-first/backup-local.ps1` e `scripts/local-first/restore-local.ps1` (ou `scripts/backup.sh`/`scripts/restore.sh`),
+e a validação automatizada de integridade via `npm run backup:drill`.
 
 ## Passo 0 — Classifique a migration antes de decidir qualquer coisa
 

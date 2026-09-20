@@ -43,8 +43,8 @@ O `docker-compose.yml` é a base da infraestrutura local de apoio (Redis, Meilis
 STORAGE_ENDPOINT=http://localhost:9000
 STORAGE_REGION=us-east-1
 STORAGE_BUCKET=prospector-assets
-STORAGE_ACCESS_KEY_ID=atlasgr
-STORAGE_SECRET_ACCESS_KEY=atlasgr_minio_dev_only
+STORAGE_ACCESS_KEY_ID=birthhub
+STORAGE_SECRET_ACCESS_KEY=birthhub_minio_dev_only
 ```
 
 4. Para Redis local, quando as filas forem necessárias:
@@ -58,7 +58,7 @@ ENABLE_QUEUES=true
 
 ```env
 MEILI_HOST=http://localhost:7700
-MEILI_MASTER_KEY=atlasgr_meili_master_key
+MEILI_MASTER_KEY=birthhub_meili_master_key
 ENABLE_SEARCH=true
 ```
 
@@ -114,53 +114,24 @@ O Supabase só pode ser pausado depois de todos estes itens estarem comprovados 
 - nenhuma rota da aplicação usando URL do Supabase;
 - backup íntegro mantido fora do Git.
 
-## Situação dos provedores legados
-
-### Vercel
-
-`vercel.json` contém `git.deploymentEnabled=false`. Isso desliga novos deployments automáticos por Git quando a configuração estiver incorporada à branch usada pelo projeto.
+## Situação dos Provedores Legados (100% Desativados)
 
 ### Render
+Desativado formalmente. Não há deploys automáticos, serviços ativos ou dependências de webhooks do Render.
 
-**Reativado em 2026-09-02** (ver banner no topo deste arquivo). `render.yaml` voltou a ter
-`autoDeployTrigger: commit` no serviço web (`prospector-atlas`, `plan: starter`) — deixou de ser
-apenas rollback temporário e passou a ser o ambiente de produção real. O bloco `worker`
-(`prospector-atlas-worker`) continua congelado (`autoDeployTrigger: off`, `plan: free`) — fora do
-escopo desta reativação, ver `docs/deploy/producao.md`.
+### Supabase e Neon
+Desativados formalmente. O banco de dados canônico é o PostgreSQL 16 local (`birthhub_postgres`, porta 5434), gerenciado pelo Docker Compose e respaldado pela suíte de backup/restore drill (`npm run backup:drill`).
 
-### Supabase
+### Cloudflare R2
+Desativado formalmente. O armazenamento de arquivos e áudios é 100% gerenciado pelo MinIO local (`birthhub_minio`, porta 9000).
 
-**Reativado brevemente em 2026-09-02, depois substituído por Neon na mesma sessão.** Projeto de
-produção real (Supabase `CENTRAL DE INTELIGENCIA COMERCIAL`, ref `wezvrhkvetkzawmxsfjx` — não o
-ref `hzttamzvokacmcnrfkrm` originalmente documentado em `docs/deploy/producao.md`, que não existe
-mais na conta) chegou a ser cotado para o plano Pro, mas a decisão final do dono do repositório foi
-migrar para Neon (ver `docs/deploy/producao.md`) — o Supabase segue como o banco real em produção
-até o `DATABASE_URL` do Render ser trocado para Neon; os dados já foram copiados e validados lá.
-Não pausar nem excluir este projeto Supabase até o corte estar confirmado.
+### Vercel e Railway
+Desativados. Não há dependências funcionais de runtime.
 
-### Neon
+## Diretrizes de Governança Local-First
 
-Novo destino escolhido em 2026-09-02, no lugar do Supabase — ver `docs/deploy/producao.md` seção 1
-para a justificativa (PITR incluso no plano pago, pay-as-you-go) e o estado da migração de dados.
+- Não adicionar provedores de banco de dados em nuvem.
+- Manter `.env` apontado para a infraestrutura local em Docker Compose.
+- Não reintroduzir pipelines automáticos de deploy em nuvem externa sem decisão deliberada do dono do produto.
+- Garantir que todos os backups e restores sejam validados localmente sem depender de serviços externos.
 
-### Neon
-
-Não faz parte do runtime local-first. O projeto legado deve ser eliminado somente no encerramento da migração, depois da conferência de que não guarda dados necessários.
-
-### Railway
-
-Não há dependência funcional encontrada no código da Central. Referências restantes são comentários históricos e não compõem o runtime.
-
-## O que NÃO fazer durante esta fase
-
-- não adicionar novo banco cloud;
-- não apontar `.env` local para banco remoto;
-- não adicionar deploy automático;
-- não usar Vercel/Render como ambiente de validação visual;
-- não excluir Supabase antes do restore local validado;
-- não colocar dumps, senhas ou connection strings no GitHub;
-- não escolher a infraestrutura de produção definitiva antes da plataforma estar funcionalmente pronta.
-
-## Critério para voltar à produção
-
-A escolha de hospedagem será reaberta apenas quando a Central estiver com frontend, backend, autenticação, permissões, banco, integrações, Market Intelligence, CRM, testes e build final validados. Nesse momento será escolhida uma arquitetura de produção mínima, preferencialmente com um único provedor de compute e um único PostgreSQL, e os recursos legados serão removidos definitivamente.
