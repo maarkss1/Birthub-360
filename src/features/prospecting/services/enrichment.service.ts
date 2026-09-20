@@ -313,10 +313,12 @@ async function saveDecisionMakersAsContacts(
       source: sourceLabel,
       emailStatus: await resolveEmailStatus(c.email),
       companyId,
-      organizationId,
+      organizationId: organizationId || '',
     })),
   );
-  await prisma.contact.createMany({ data: contactsData });
+  await prisma.contact.createMany({
+    data: contactsData as unknown as Prisma.ContactCreateManyInput[],
+  });
   return contactsData.length;
 }
 
