@@ -28,7 +28,10 @@ import type { PlaybookKey } from '../../../config/playbooks.js';
 import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
-import { defaultEnrichmentRepository, type IEnrichmentRepository } from '../infra/PrismaEnrichmentRepository.js';
+import {
+  defaultEnrichmentRepository,
+  type IEnrichmentRepository,
+} from '../infra/PrismaEnrichmentRepository.js';
 export { defaultEnrichmentRepository, type IEnrichmentRepository };
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { IcebreakerService } from '../../intelligence/services/IcebreakerService';
@@ -196,8 +199,7 @@ export async function enrichCompany(
   try {
     return await runEnrichment(company, options);
   } catch (error) {
-    await repo.updateCompany(companyId, { enrichmentStatus: 'Falhou' })
-      .catch(() => {});
+    await repo.updateCompany(companyId, { enrichmentStatus: 'Falhou' }).catch(() => {});
     throw error;
   }
 }

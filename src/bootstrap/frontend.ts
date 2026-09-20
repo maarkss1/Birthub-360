@@ -33,7 +33,11 @@ export async function mountFrontend(app: Express): Promise<void> {
   if (env.NODE_ENV !== 'production') {
     // FRONTEND-001: Serve estáticos do /tools protegido por autenticação para evitar
     // acesso desprotegido a ferramentas e materiais de capacitação comercial
-    app.use('/tools', authenticateToken, express.static(path.join(process.cwd(), 'public', 'tools')));
+    app.use(
+      '/tools',
+      authenticateToken,
+      express.static(path.join(process.cwd(), 'public', 'tools')),
+    );
 
     const vite = await createViteServer({
       server: { middlewareMode: true, host: true, allowedHosts: true },
