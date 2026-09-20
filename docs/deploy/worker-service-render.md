@@ -1,19 +1,11 @@
 # Ativação do worker dedicado (`prospector-atlas-worker`) no Render
 
-> **Status real (2026-09-20): config pronta, serviço NÃO criado no Render de verdade.**
-> `render.yaml` já declara o bloco `type: worker` (`prospector-atlas-worker`), mas ele está
-> comentado como `LEGACY/FROZEN` e com `autoDeployTrigger: off` de propósito — **não é para ser
-> ativado sem passar pelos pré-requisitos abaixo**. Ver também
-> [`docs/deploy/README.md`](README.md): o destino de produção definitivo passou a ser Oracle Cloud
-> (ADR-004); Render hoje é o caminho de fallback/rollback, congelado para novo investimento. Este
-> arquivo documenta o passo a passo para quando uma pessoa com acesso ao Render (e decisão de
-> negócio de reativar esse caminho, ou usá-lo como contingência) precisar ativar o worker de
-> verdade — não é um deploy que acontece automaticamente hoje.
->
-> Handoffs de origem: `.agents/handoffs/onda-6/16-para-08-deploy-worker-service.md` (config do
-> serviço) e `.agents/handoffs/onda-6/16-para-10-observabilidade-worker.md` (monitoramento). Ambos
-> seguem com `status: em-andamento` — não `resolvido` — porque o item final (serviço rodando de
-> verdade em produção) depende só de ações humanas listadas abaixo.
+> [!WARNING]
+> **DOCUMENTO ARQUIVADO / WORKER RENDER DESATIVADO (2026-09-20):**
+> Por decisão de produto, o Render e demais provedores cloud foram desativados por enquanto.
+> O processamento de workers e background jobs no modo **100% Local-First** opera localmente via `npm run dev:worker` / `npm run start:worker`.
+> Este arquivo permanece arquivado como referência histórica.
+
 
 ## O que já está pronto (não precisa refazer)
 

@@ -1,24 +1,11 @@
 # Central Birth Hub 360 — modo local-first
 
-> **Atualização de destino de produção (DEVOPS-010):** A arquitetura de produção
-> canônica e definitiva é **Render (`prospector-atlas`) + Postgres Neon + Cloudflare**,
-> com deploys automáticos via `render.yaml` e migrações pré-deploy.
-> Tentativas anteriores de self-hosted OCI foram descontinuadas e removidas da base de código ativa.
-> Ver `docs/deploy/README.md` e `docs/deploy/producao.md`.
+> **Estado Operacional Atual (2026-09-20): 100% LOCAL-FIRST ATIVO E CANÔNICO.**
+> Todos os caminhos de produção em nuvem (Render, Neon, Cloudflare, Kubernetes/ArgoCD, OCI) estão
+> **desativados por enquanto**. O repositório e os serviços locais (`docker-compose.yml`) são a
+> única fonte de execução ativa da plataforma, sem qualquer dependência ou deploy para provedores cloud.
+> Ver `docs/deploy/README.md`.
 
-> **Fase ENCERRADA em 2026-09-02.** O critério de saída definido na seção "Critério para voltar à
-> produção" (fim deste arquivo) foi cumprido e confirmado pelo dono do repositório: frontend,
-> backend, autenticação, permissões, banco, integrações, Market Intelligence, CRM, testes e build
-> final validados. A arquitetura de produção definitiva foi escolhida — monólito único no Render
-> (`plan: starter`) + Postgres no Neon + Storage no Cloudflare R2, conforme
-> `docs/deploy/producao.md`. **Nota**: a escolha inicial do dia foi Supabase (Pro); horas depois,
-> ainda na mesma sessão, foi trocada para Neon (motivo documentado em `docs/deploy/producao.md`) —
-> o corte de produção do Render ainda aponta para o Supabase até esse `DATABASE_URL` ser trocado,
-> ver status real em `docs/deploy/producao.md`. O deploy automático voltou a estar ativo
-> (`render.yaml`, `autoDeployTrigger: commit`). Este documento continua existindo como registro
-> histórico da fase
-> local-first (procedimento de subida local, migração e regra de corte usados na transição) — para
-> o estado atual de produção, use `docs/deploy/producao.md`.
 
 ## Estado desta fase
 
