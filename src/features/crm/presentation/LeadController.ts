@@ -1,6 +1,7 @@
 import type { LeadFunnel } from '@prisma/client';
 import type { NextFunction, Request, Response } from 'express';
 import { logger } from '../../../lib/logger';
+import { clampQueryLimit } from '../../../shared/http/queryLimit';
 import { routeParam } from '../../../shared/http/routeParams';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 import { automationEngine } from '../../automations/automation.engine';
@@ -27,7 +28,7 @@ export class LeadController {
     try {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const page = parseInt(req.query.page as string, 10) || 1;
-      const limit = Math.min(parseInt(req.query.limit as string, 10) || 50, 200);
+      const limit = clampQueryLimit(req.query.limit);
       const requestedFunnel = req.query.funnel;
       const funnel: LeadFunnel | undefined =
         requestedFunnel === 'Lead' || requestedFunnel === 'Negocio' ? requestedFunnel : undefined;

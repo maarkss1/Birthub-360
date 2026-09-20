@@ -10,6 +10,25 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
 @import "tailwindcss";
 
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* Birth Hub 360 — famílias tipográficas, self-hosted a partir dos .woff2
    originais em `public/fonts/`:
 
@@ -113,40 +132,31 @@
        --ink   (#174A9C) 7.85:1 contra --bg/--surface
        --ink-2 (#6D28D9) 6.62:1 contra --bg/--surface
      Ambos com folga sobre o mínimo AA (4.5:1). */
-  --bg: #fff4f9;
-  --surface: #fff1f7;
-  --surface-2: #eef4ff;
-  --surface-subtle: #f8f5fb;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-subtle: #f1f5f9;
   --surface-elevated: #ffffff;
-  --surface-interactive: #f2f5ff;
-  --overlay: rgba(6, 26, 58, 0.52);
-  --ink: #174a9c;
-  --ink-2: #6d28d9;
-  --line: rgba(124, 58, 237, 0.18);
-  /* Antique Gold — cor de ação primária, inalterada nesta rodada. Ouro é uma
-     cor CLARA: texto branco em cima mede 2.10:1 e é proibido — use
-     `text-on-brand` (ver --on-brand abaixo), que mede 8.21:1. */
+  --surface-interactive: #f8fafc;
+  --overlay: rgba(11, 19, 43, 0.52);
+  --ink: #0b132b;
+  --ink-2: #475569;
+  --line: rgba(11, 19, 43, 0.12);
+  /* Paleta Oficial (Midnight Blue, Sunset Orange, Red-Violet, Gold, White) */
+  --midnight: #0b132b;
+  --sunset: #ff5841;
+  --red-violet: #c53678;
+  --gold: #d4af37;
+  --white: #ffffff;
+
+  /* Antique Gold — cor de ação primária / Strategic Accent */
   --brand: #d4af37;
-  /* Gold Soft — também usado como --ink do tema escuro (ver `.dark` abaixo):
-     no escuro, o texto primário É o ouro suave, não um neutro claro. */
   --brand-2: #f0d77b;
-  /* Cor de texto/ícone sobre qualquer superfície de marca sólida (bg-brand,
-     bg-brand-2, from-brand…). Deep Navy sobre ouro mede 8.21:1. NÃO usar
-     text-white sobre marca. */
-  --on-brand: #061a3a;
-  /* Deep Iris — "roxo" da nova paleta. Halos, indicadores, órbitas, realces de
-     dado — não é fundo de botão sólido com texto em cima. Upgrade de #5B21B6
-     para um violeta mais vívido, alinhado à nova direção. */
-  --iris: #7c3aed;
-  /* "Azul" da nova paleta — upgrade de #0065D2 para um azul mais vívido. */
+  --on-brand: #0b132b;
+  --iris: #c53678;
   --orbit-blue: #1677ff;
-  /* "Vermelho" da nova paleta — urgência/estado ao vivo. Substitui o antigo
-     --pulse claro (#C2255C) como o vermelho oficial da marca. */
-  --red: #e11d48;
-  /* "Rosa" da nova paleta — quinta cor, nova nesta rodada. Usada em halos,
-     bordas e no gradiente de assinatura (dourado→vermelho→rosa→íris→azul),
-     nunca como fundo de superfície com texto em cima. */
-  --pink: #db2777;
+  --red: #ff5841;
+  --pink: #c53678;
   --warn: #ffc500;
   --ok: #0f9d64;
   /* Indireção pro --color-info do @theme poder ser sobrescrito por tema (mesmo padrão de
@@ -233,40 +243,27 @@
   --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.28);
   --shadow-nav-value: 12px 0 34px -28px rgba(26, 21, 19, 0.45);
   --shadow-nav-active-value: 0 10px 26px -14px color-mix(in srgb, var(--brand) 52%, black);
-  --radius-nav-item-value: 10px;
-  --font-brand-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  /* Bodoni Moda é a família de display do brand book (p. 06) — um Didone de alto
-     contraste, papel bem diferente do Montserrat que ocupava este token antes
-     (uma grotesca, praticamente idêntica ao --font-brand-sans, de modo que
-     `font-display` e `font-sans` renderizavam igual). Agora as duas famílias são
-     de fato distintas: serif editorial para título, sans para interface. Como
-     Bodoni Moda é serifada e de contraste alto, ela é para DISPLAY — não use
-     `font-display` em corpo de texto, tabela ou rótulo pequeno. */
-  --font-brand-display: "Sora", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --radius-nav-item-value: 12px;
+  --font-brand-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-brand-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {
-  /* Deep Navy — âncora do tema escuro na paleta "Strategic Command Center"
-     (ver comentário no :root). Nada de preto puro: o fundo mais profundo do
-     produto é um azul-marinho saturado, não #000.
-     Contraste verificado (WCAG, calculado):
-       --ink   (#F0D77B, = --brand-2) 12.09:1 contra --bg, 11.5:1 contra --surface
-       --ink-2 (#79B2FF)               7.92:1 contra --bg,  6.57:1 contra --surface-2 */
-  --bg: #061a3a;
-  --surface: #111b49;
-  --surface-2: #18265b;
-  --surface-subtle: #0c1740;
-  --surface-elevated: #1b2b64;
-  --surface-interactive: #20316b;
-  --overlay: rgba(2, 8, 23, 0.76);
+  /* Midnight Blue — Âncora oficial do tema escuro (#0B132B) */
+  --bg: #0b132b;
+  --surface: #111d3f;
+  --surface-2: #16244c;
+  --surface-subtle: #0e1836;
+  --surface-elevated: #1b2d5d;
+  --surface-interactive: #203366;
+  --overlay: rgba(11, 19, 43, 0.78);
   --ink: var(--brand-2);
-  --ink-2: #79b2ff;
-  --line: rgba(240, 215, 123, 0.16);
+  --ink-2: #94a3b8;
+  --line: rgba(212, 175, 55, 0.18);
   --soft: rgba(212, 175, 55, 0.16);
-  /* Versões vívidas do vermelho/rosa para glow sobre superfície escura — mesmo padrão de
-     --accent-violet/--accent-cyan/--pulse abaixo. */
-  --red: #ff3158;
-  --pink: #ff4fa3;
+  /* Sunset Orange e Red-Violet oficiais */
+  --red: #ff5841;
+  --pink: #c53678;
   --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.6), 0 14px 34px -18px rgba(0, 0, 0, 0.9);
   --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.7), 0 20px 46px -20px rgba(0, 0, 0, 0.95);
   --shadow-nav-value: 12px 0 38px -24px rgba(0, 0, 0, 0.85);
@@ -366,8 +363,12 @@
      coisa: use --color-brand/--color-brand-2 para ação e os quatro tokens
      abaixo quando precisar nomear a cor da paleta em si. */
   --color-obsidian: #0b132b;
-  --color-midnight: #08090f;
-  --color-snow: #f8fafc;
+  --color-midnight: #0b132b;
+  --color-sunset: #ff5841;
+  --color-red-violet: #c53678;
+  --color-gold: #d4af37;
+  --color-white: #ffffff;
+  --color-snow: #ffffff;
   --color-parchment: #e9e4d9;
   /* "Inteligência em movimento" — halos, indicadores, órbita. Não é fundo de
      botão: ver o comentário de --iris em :root. */
@@ -1058,3 +1059,4 @@
     scroll-behavior: auto !important;
   }
 }
+

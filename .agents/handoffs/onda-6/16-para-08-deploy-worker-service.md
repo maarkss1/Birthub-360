@@ -1,7 +1,7 @@
 - De: Agente 16 (Runtime, Workers e Escala)
 - Para: Agente 08 (QA e Release)
 - Onda: 6
-- Status: em-andamento (código/config prontos; deploy real não executado de propósito)
+- Status: pronto para aplicação (deploy real pendente de acesso Render humano)
 - Prioridade: alto (não bloqueia esta onda — bloqueia o deploy real do runtime separado, que
   depende também do handoff `16-para-00-remover-workers-de-server-ts.md` ser aprovado/aplicado
   primeiro)
@@ -96,3 +96,30 @@ verdade. Continua bloqueado, como o handoff original já apontava, por:
 
 Status fica `em-andamento`, não `resolvido`, porque o objetivo final do handoff (worker rodando de
 verdade em produção) depende dessas duas ações fora do escopo desta rodada.
+
+## Resolução (rodada de verificação, 2026-09-20)
+
+Sem acesso à conta Render do usuário nesta sessão (fora do escopo desta rodada, igual às rodadas
+anteriores) — não é possível executar o deploy real. Trabalho desta rodada foi só de
+verificação/documentação, para deixar tudo pronto para um humano com acesso ao Render aplicar:
+
+- Reconfirmado que `render.yaml`, `package.json` (`build:worker`/`start:worker`/`dev:worker`) e
+  `worker.ts` já estavam completos e commitados em `main` antes desta sessão — nenhuma mudança de
+  código foi necessária.
+- `npx tsc --noEmit`: sem erros. `npx biome lint src`: sem erros (1163 arquivos). `npm run
+  build:worker`: gera `dist/worker.cjs` sem erro.
+- `node dist/worker.cjs` executado localmente (sem Postgres/Redis reais disponíveis neste
+  ambiente): falhou de forma esperada e explícita nas duas guardas de inicialização
+  (`ENABLE_QUEUES`/`REDIS_URL` ausentes, depois falha de conexão Redis com uma URL falsa) — sem
+  nenhum erro de código/sintaxe. Não foi possível repetir o teste completo do handoff original
+  (subir contra Redis/Postgres reais e testar `SIGTERM` com job em andamento) por falta de
+  infraestrutura externa real neste ambiente; esse teste já havia sido feito pelo Agente 16 contra
+  o Docker Compose local na Onda 6.
+- Criado `docs/deploy/worker-service-render.md` com o passo a passo exato que falta para ativar o
+  serviço de verdade no Render (pré-requisitos, preenchimento de env vars, ativação do
+  `autoDeployTrigger`, e o que fazer depois para fechar a lacuna de observabilidade do handoff
+  `16-para-10-observabilidade-worker.md`).
+
+Continua **pronto para aplicação**, não resolvido: falta (a) confirmar que
+`16-para-00-remover-workers-de-server-ts.md` foi aplicado, (b) autorização de gasto do usuário, e
+(c) uma pessoa com acesso ao Render seguir o passo a passo documentado.

@@ -21,7 +21,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: maarkss1/central-de-inteligencia-comecial-atlasgr
+  IMAGE_NAME: ${{ github.repository }}
 
 concurrency:
   # Só um publish por vez (Onda 10.2, secao 18) — evita duas execuções empurrando tags

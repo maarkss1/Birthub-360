@@ -168,7 +168,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             <path stroke={`url(#bh-o5-${uid})`} d="M56.56 87.75 A82.0 82.0 0 0 1 128.86 46.00" />
           </g>
           <circle cx="128.0" cy="128.0" r="90" fill={`url(#bh-sheen-${uid})`} />
-          <circle cx="128.0" cy="128.0" r="74.0" fill="#061A3A" />
+          <circle cx="128.0" cy="128.0" r="74.0" fill="#0B132B" />
           <circle cx="128.0" cy="128.0" r="74.0" fill={`url(#bh-core-shade-${uid})`} />
           <circle cx="128.0" cy="128.0" r="61.5" fill="none" stroke="#D4AF37" strokeWidth="5.0" />
           <rect x="64.0" y="126.5" width="128.0" height="3.0" fill={`url(#bh-bar-${uid})`} />
@@ -346,7 +346,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
             <path stroke={`url(#bh-o5-${uid})`} d="M56.56 87.75 A82.0 82.0 0 0 1 128.86 46.00" />
           </g>
           <circle cx="128.0" cy="128.0" r="90" fill={`url(#bh-sheen-${uid})`} />
-          <circle cx="128.0" cy="128.0" r="74.0" fill="#061A3A" />
+          <circle cx="128.0" cy="128.0" r="74.0" fill="#0B132B" />
           <circle cx="128.0" cy="128.0" r="74.0" fill={`url(#bh-core-shade-${uid})`} />
           <circle cx="128.0" cy="128.0" r="61.5" fill="none" stroke="#D4AF37" strokeWidth="5.0" />
           <rect x="64.0" y="126.5" width="128.0" height="3.0" fill={`url(#bh-bar-${uid})`} />
@@ -459,7 +459,7 @@ export function BirthHubLogo({ variant = 'icon', className, title }: BirthHubLog
         <path stroke={`url(#bh-o5-${uid})`} d="M58.30 88.73 A80.0 80.0 0 0 1 128.84 48.00" />
       </g>
       <circle cx="128.0" cy="128.0" r="90" fill={`url(#bh-sheen-${uid})`} />
-      <circle cx="128.0" cy="128.0" r="70" fill="#061A3A" />
+      <circle cx="128.0" cy="128.0" r="70" fill="#0B132B" />
       <circle cx="128.0" cy="128.0" r="70" fill={`url(#bh-core-shade-${uid})`} />
       <circle cx="128.0" cy="128.0" r="59" fill="none" stroke="#D4AF37" strokeWidth="6" />
       <rect x="66.0" y="126.3" width="124" height="3.4" fill={`url(#bh-bar-${uid})`} />

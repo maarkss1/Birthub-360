@@ -8,13 +8,16 @@ name: CD Homologation
 # arquiteturais, deriva de OpenAPI, golden dataset). Substituído por uma exigência explícita de CI
 # verde para o SHA informado (job `resolve-sha`, `.github/actions/require-ci-green`) — "NO CI PASS =
 # NO DEPLOY" vale para homologação exatamente como para produção.
+# DESATIVADO POR ENQUANTO: Plataforma operando estritamente em modo 100% LOCAL-FIRST.
+# Homologacao externa/cloud desativada conforme decisao de produto.
 on:
-  workflow_dispatch:
-    inputs:
-      sha:
-        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a promover para homologação.'
-        required: true
-        type: string
+#  workflow_dispatch:
+#    inputs:
+#      sha:
+#        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a promover para homologação.'
+#        required: true
+#        type: string
+
 
 # Fica no workflow só o piso comum (nenhum). `contents: write`/`packages: write` só é concedido
 # no job `build-and-push` (abaixo), que é o único que de fato empurra imagem/commita Helm — sem

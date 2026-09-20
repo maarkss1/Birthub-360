@@ -1,0 +1,119 @@
+# ==============================================================================
+# ARQUIVO ARQUIVADO / DESATIVADO: render.yaml.disabled
+# MOTIVO: Plataforma operando estritamente em modo 100% LOCAL-FIRST.
+# Render, Neon, Cloudflare e demais provedores cloud desativados por enquanto.
+# Ver docs/development/LOCAL_FIRST.md e docs/deploy/README.md.
+# ==============================================================================
+
+services:
+  - type: web
+    name: prospector-atlas
+    runtime: node
+    plan: starter
+    autoDeployTrigger: off
+    buildCommand: npm ci --include=dev && npm run build
+    preDeployCommand: npx prisma migrate deploy
+    startCommand: npm run start
+    healthCheckPath: /health/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: CREDENTIALS_ENCRYPTION_KEY
+        sync: false
+      - key: PII_BLIND_INDEX_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: BETTER_AUTH_URL
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: TRUST_PROXY
+        value: 'true'
+      - key: PROSPECTING_PROVIDER_MODE
+        value: hybrid
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: APOLLO_API_KEY
+        sync: false
+      - key: HUNTER_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: BITRIX24_WEBHOOK_URL
+        sync: false
+      - key: BIRTH_VOICES_WEBHOOK_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: PLATFORM_OPERATOR_TOKEN
+        sync: false
+      - key: ENABLE_SEARCH
+        value: 'false'
+      - key: ENABLE_QUEUES
+        value: 'false'
+      - key: REDIS_URL
+        sync: false
+      - key: STORAGE_ENDPOINT
+        sync: false
+      - key: STORAGE_REGION
+        sync: false
+      - key: STORAGE_BUCKET
+        sync: false
+      - key: STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: STORAGE_SECRET_ACCESS_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+
+  - type: worker
+    name: prospector-atlas-worker
+    runtime: node
+    autoDeployTrigger: off
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build:worker
+    startCommand: npx prisma migrate deploy && npm run start:worker
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: ENABLE_QUEUES
+        value: 'true'
+      - key: REDIS_URL
+        sync: false
+      - key: ENABLE_SEARCH
+        value: 'false'
+      - key: SDR_COLD_CALL_ENABLED
+        value: 'false'
+      - key: SDR_COLD_CALL_ORGANIZATIONS
+        sync: false
+      - key: SWARM_SCHEDULER_ENABLED
+        value: 'false'
+      - key: SWARM_SCHEDULER_ORGANIZATIONS
+        sync: false
+      - key: WORKER_HEALTH_PORT
+        value: '3006'

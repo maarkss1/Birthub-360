@@ -1,24 +1,11 @@
 # Central Birth Hub 360 — modo local-first
 
-> **Atualização de destino de produção (DEVOPS-010):** A arquitetura de produção
-> canônica e definitiva é **Render (`prospector-atlas`) + Postgres Neon + Cloudflare**,
-> com deploys automáticos via `render.yaml` e migrações pré-deploy.
-> Tentativas anteriores de self-hosted OCI foram descontinuadas e removidas da base de código ativa.
-> Ver `docs/deploy/README.md` e `docs/deploy/producao.md`.
+> **Estado Operacional Atual (2026-09-20): 100% LOCAL-FIRST ATIVO E CANÔNICO.**
+> Todos os caminhos de produção em nuvem (Render, Neon, Cloudflare, Kubernetes/ArgoCD, OCI) estão
+> **desativados por enquanto**. O repositório e os serviços locais (`docker-compose.yml`) são a
+> única fonte de execução ativa da plataforma, sem qualquer dependência ou deploy para provedores cloud.
+> Ver `docs/deploy/README.md`.
 
-> **Fase ENCERRADA em 2026-09-02.** O critério de saída definido na seção "Critério para voltar à
-> produção" (fim deste arquivo) foi cumprido e confirmado pelo dono do repositório: frontend,
-> backend, autenticação, permissões, banco, integrações, Market Intelligence, CRM, testes e build
-> final validados. A arquitetura de produção definitiva foi escolhida — monólito único no Render
-> (`plan: starter`) + Postgres no Neon + Storage no Cloudflare R2, conforme
-> `docs/deploy/producao.md`. **Nota**: a escolha inicial do dia foi Supabase (Pro); horas depois,
-> ainda na mesma sessão, foi trocada para Neon (motivo documentado em `docs/deploy/producao.md`) —
-> o corte de produção do Render ainda aponta para o Supabase até esse `DATABASE_URL` ser trocado,
-> ver status real em `docs/deploy/producao.md`. O deploy automático voltou a estar ativo
-> (`render.yaml`, `autoDeployTrigger: commit`). Este documento continua existindo como registro
-> histórico da fase
-> local-first (procedimento de subida local, migração e regra de corte usados na transição) — para
-> o estado atual de produção, use `docs/deploy/producao.md`.
 
 ## Estado desta fase
 
@@ -34,7 +21,7 @@ Navegador
    v
 Node/Express + Vite (localhost:3005)
    |
-   +--> PostgreSQL da instância Oracle Cloud (168.138.147.145:5432, TLS) — sem Postgres local
+   +--> PostgreSQL local (localhost:5434 via docker-compose.postgres-local.yml)
    +--> Redis local (localhost:6379)
    +--> Meilisearch local (localhost:7700)
    +--> MinIO local / S3 (localhost:9000)
@@ -44,17 +31,12 @@ Node/Express + Vite (localhost:3005)
 
 O `docker-compose.yml` é a base da infraestrutura local de apoio (Redis, Meilisearch, MinIO, LiteLLM, Ollama). O storage MinIO cria automaticamente o bucket `prospector-assets`.
 
-**Banco de dados (desde 2026-09-08):** a aplicação NÃO usa mais Postgres local nem em Docker. Toda
-máquina de desenvolvimento aponta `DATABASE_URL` diretamente para o Postgres remoto - ver .env.example.
-liberação do IP na Security List. O container antigo (porta 5434) ficou opt-in em
-`docker-compose.postgres-local.yml`, usado só pelos testes de integração/E2E locais e pelos
-overlays opcionais (`langfuse`, `n8n`, `superset`...).
+**Banco de dados Local-First:** a aplicação utiliza PostgreSQL local com extensão pgvector (porta 5434, serviço `postgres` em `docker-compose.postgres-local.yml`), garantindo ambiente 100% autônomo sem dependência externa.
 
 ## Subida local
 
 1. Copie `.env.example` para `.env`.
-2. Preencha `DATABASE_URL` com a senha `APP_DB_PASSWORD` da instância Oracle (nunca commite) e
-   mantenha `?sslmode=require&uselibpqcompat=true` no fim da URL.
+2. Configure `DATABASE_URL=postgresql://prospector:prospector_pass@localhost:5434/prospectordb`.
 3. Para storage local, configure:
 
 ```env

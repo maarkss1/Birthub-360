@@ -1,6 +1,7 @@
 import { requestContext } from '../../lib/async-context.js';
 import { logger } from '../../lib/logger.js';
 import { prisma } from '../../lib/prisma.js';
+import { deleteObject } from '../../lib/storage/index.js';
 
 export interface ErasureTarget {
   organizationId: string;
@@ -21,8 +22,10 @@ export interface ErasureResult {
   voiceCallLogsRedacted: number;
   copilotoTranscriptSegmentsRedacted: number;
   copilotoInsightsRedacted: number;
+  copilotoAudiosDeleted: number;
   alreadyAnonymized: boolean;
 }
+
 
 /** Marca o registro como anonimizado — não é PII, então é seguro deixar visível/pesquisável. */
 export const ANONYMIZED_CONTACT_NAME = '[titular anonimizado — LGPD]';
@@ -155,20 +158,48 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
             ...(leadIds.length > 0 ? [{ leadId: { in: leadIds } }] : []),
           ],
         },
-        select: { id: true },
+        select: { id: true, audioObjectKey: true },
       });
       const copilotoConversationIds = copilotoConversations.map((c) => c.id);
 
       let copilotoTranscriptSegmentsRedacted = 0;
       let copilotoInsightsRedacted = 0;
+      let copilotoAudiosDeleted = 0;
+
+      // VOICE-003: Exclui fisicamente do Object Storage (MinIO/S3) os arquivos de áudio gravados
+      for (const conv of copilotoConversations) {
+        if (conv.audioObjectKey) {
+          if (conv.audioObjectKey.startsWith(`copiloto-ia/${target.organizationId}/`)) {
+            await deleteObject(conv.audioObjectKey);
+            copilotoAudiosDeleted++;
+          }
+        }
+      }
 
       if (copilotoConversationIds.length > 0) {
+        await prisma.copilotoConversation.updateMany({
+          where: {
+            id: { in: copilotoConversationIds },
+            organizationId: target.organizationId,
+          },
+          data: {
+            audioObjectKey: null,
+            audioDurationMs: null,
+            audioSizeBytes: null,
+            deletedAt: new Date(),
+            deleteReason: 'LGPD Art. 18 - Titular Anonimizado',
+          },
+        });
+
         const { count: segmentsCount } = await prisma.copilotoTranscriptSegment.updateMany({
           where: {
             conversationId: { in: copilotoConversationIds },
             organizationId: target.organizationId,
           },
-          data: { text: ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT },
+          data: {
+            text: ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT,
+            speakerLabel: null,
+          },
         });
         copilotoTranscriptSegmentsRedacted = segmentsCount;
 
@@ -180,6 +211,28 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
           data: { valueJson: {} },
         });
         copilotoInsightsRedacted = insightsCount;
+
+        await prisma.copilotoCrmFieldSuggestion.updateMany({
+          where: {
+            conversationId: { in: copilotoConversationIds },
+            organizationId: target.organizationId,
+          },
+          data: {
+            previousValue: null,
+            suggestedValue: '[valor anonimizado — LGPD]',
+          },
+        });
+
+        await prisma.copilotoCoachingEvaluation.updateMany({
+          where: {
+            conversationId: { in: copilotoConversationIds },
+            organizationId: target.organizationId,
+          },
+          data: {
+            rubricJson: {},
+            overallScore: 0,
+          },
+        });
       }
 
       if (leadIds.length > 0) {
@@ -221,6 +274,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
           voiceCallLogsRedacted,
           copilotoTranscriptSegmentsRedacted,
           copilotoInsightsRedacted,
+          copilotoAudiosDeleted,
           alreadyAnonymized,
         },
         '[lgpd] Titular anonimizado a pedido de exercício de direito (LGPD art. 18).',
@@ -234,6 +288,7 @@ export async function eraseDataSubject(target: ErasureTarget): Promise<ErasureRe
         voiceCallLogsRedacted,
         copilotoTranscriptSegmentsRedacted,
         copilotoInsightsRedacted,
+        copilotoAudiosDeleted,
         alreadyAnonymized,
       };
     },

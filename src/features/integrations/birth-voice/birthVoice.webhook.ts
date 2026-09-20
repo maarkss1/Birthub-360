@@ -85,6 +85,7 @@ async function recordCallResult(
 
     await prisma.activity.create({
       data: {
+        organizationId: lead.organizationId,
         leadId,
         type: 'Ligacao' as never,
         status: (hadConversation ? 'Concluida' : 'Cancelada') as never,

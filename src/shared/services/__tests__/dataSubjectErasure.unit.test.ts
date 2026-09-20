@@ -8,8 +8,16 @@ const conversationSignalUpdateManyMock = vi.fn();
 const timelineEventUpdateManyMock = vi.fn();
 const voiceCallLogUpdateManyMock = vi.fn();
 const copilotoConversationFindManyMock = vi.fn();
+const copilotoConversationUpdateManyMock = vi.fn();
 const copilotoTranscriptSegmentUpdateManyMock = vi.fn();
 const copilotoInsightUpdateManyMock = vi.fn();
+const copilotoCrmFieldSuggestionUpdateManyMock = vi.fn();
+const copilotoCoachingEvaluationUpdateManyMock = vi.fn();
+const deleteObjectMock = vi.fn();
+
+vi.mock('@/lib/storage', () => ({
+  deleteObject: (...args: unknown[]) => deleteObjectMock(...args),
+}));
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -34,12 +42,19 @@ vi.mock('@/lib/prisma', () => ({
     },
     copilotoConversation: {
       findMany: (...args: unknown[]) => copilotoConversationFindManyMock(...args),
+      updateMany: (...args: unknown[]) => copilotoConversationUpdateManyMock(...args),
     },
     copilotoTranscriptSegment: {
       updateMany: (...args: unknown[]) => copilotoTranscriptSegmentUpdateManyMock(...args),
     },
     copilotoInsight: {
       updateMany: (...args: unknown[]) => copilotoInsightUpdateManyMock(...args),
+    },
+    copilotoCrmFieldSuggestion: {
+      updateMany: (...args: unknown[]) => copilotoCrmFieldSuggestionUpdateManyMock(...args),
+    },
+    copilotoCoachingEvaluation: {
+      updateMany: (...args: unknown[]) => copilotoCoachingEvaluationUpdateManyMock(...args),
     },
   },
 }));
@@ -55,14 +70,20 @@ const CONTACT_ID = 'contact-1';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  deleteObjectMock.mockResolvedValue(true);
   updateManyMock.mockResolvedValue({ count: 3 });
   leadFindManyMock.mockResolvedValue([{ id: 'lead-1' }, { id: 'lead-2' }]);
   conversationSignalUpdateManyMock.mockResolvedValue({ count: 2 });
   timelineEventUpdateManyMock.mockResolvedValue({ count: 4 });
   voiceCallLogUpdateManyMock.mockResolvedValue({ count: 5 });
-  copilotoConversationFindManyMock.mockResolvedValue([{ id: 'conv-1' }]);
+  copilotoConversationFindManyMock.mockResolvedValue([
+    { id: 'conv-1', audioObjectKey: `copiloto-ia/${ORG_ID}/conv-1/audio.webm` },
+  ]);
+  copilotoConversationUpdateManyMock.mockResolvedValue({ count: 1 });
   copilotoTranscriptSegmentUpdateManyMock.mockResolvedValue({ count: 6 });
   copilotoInsightUpdateManyMock.mockResolvedValue({ count: 7 });
+  copilotoCrmFieldSuggestionUpdateManyMock.mockResolvedValue({ count: 2 });
+  copilotoCoachingEvaluationUpdateManyMock.mockResolvedValue({ count: 1 });
 });
 
 describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LGPD (art. 18)', () => {
@@ -124,20 +145,38 @@ describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LG
     // CopilotoConversation é buscada por `contactId` DIRETO OU `leadId` em qualquer Lead do
     // titular — cobre o caso ACH-VOICE-003 (a mesma ligação era redigida em VoiceCallLog, mas
     // continuava legível aqui).
+    expect(deleteObjectMock).toHaveBeenCalledWith(`copiloto-ia/${ORG_ID}/conv-1/audio.webm`);
     expect(copilotoConversationFindManyMock).toHaveBeenCalledWith({
       where: {
         organizationId: ORG_ID,
         OR: [{ contactId: CONTACT_ID }, { leadId: { in: ['lead-1', 'lead-2'] } }],
       },
-      select: { id: true },
+      select: { id: true, audioObjectKey: true },
+    });
+    expect(copilotoConversationUpdateManyMock).toHaveBeenCalledWith({
+      where: { id: { in: ['conv-1'] }, organizationId: ORG_ID },
+      data: expect.objectContaining({
+        audioObjectKey: null,
+        audioDurationMs: null,
+        audioSizeBytes: null,
+        deleteReason: 'LGPD Art. 18 - Titular Anonimizado',
+      }),
     });
     expect(copilotoTranscriptSegmentUpdateManyMock).toHaveBeenCalledWith({
       where: { conversationId: { in: ['conv-1'] }, organizationId: ORG_ID },
-      data: { text: ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT },
+      data: { text: ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT, speakerLabel: null },
     });
     expect(copilotoInsightUpdateManyMock).toHaveBeenCalledWith({
       where: { conversationId: { in: ['conv-1'] }, organizationId: ORG_ID },
       data: { valueJson: {} },
+    });
+    expect(copilotoCrmFieldSuggestionUpdateManyMock).toHaveBeenCalledWith({
+      where: { conversationId: { in: ['conv-1'] }, organizationId: ORG_ID },
+      data: { previousValue: null, suggestedValue: '[valor anonimizado — LGPD]' },
+    });
+    expect(copilotoCoachingEvaluationUpdateManyMock).toHaveBeenCalledWith({
+      where: { conversationId: { in: ['conv-1'] }, organizationId: ORG_ID },
+      data: { rubricJson: {}, overallScore: 0 },
     });
     expect(result).toEqual({
       contactId: CONTACT_ID,
@@ -147,8 +186,42 @@ describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LG
       voiceCallLogsRedacted: 5,
       copilotoTranscriptSegmentsRedacted: 6,
       copilotoInsightsRedacted: 7,
+      copilotoAudiosDeleted: 1,
       alreadyAnonymized: false,
     });
+  });
+
+  it('não exclui áudio se a chave de storage não pertencer ao tenant da requisição (isolamento multi-tenant)', async () => {
+    findFirstMock.mockResolvedValue({
+      id: CONTACT_ID,
+      name: 'Fulano de Tal',
+      organizationId: ORG_ID,
+    });
+    copilotoConversationFindManyMock.mockResolvedValue([
+      { id: 'conv-foreign', audioObjectKey: 'copiloto-ia/tenant-alien/conv-foreign/audio.webm' },
+    ]);
+
+    const result = await eraseDataSubject({ organizationId: ORG_ID, contactId: CONTACT_ID });
+
+    expect(deleteObjectMock).not.toHaveBeenCalled();
+    expect(result.copilotoAudiosDeleted).toBe(0);
+  });
+
+  it('trata conversas sem áudio (audioObjectKey nulo) com segurança', async () => {
+    findFirstMock.mockResolvedValue({
+      id: CONTACT_ID,
+      name: 'Fulano de Tal',
+      organizationId: ORG_ID,
+    });
+    copilotoConversationFindManyMock.mockResolvedValue([
+      { id: 'conv-no-audio', audioObjectKey: null },
+    ]);
+
+    const result = await eraseDataSubject({ organizationId: ORG_ID, contactId: CONTACT_ID });
+
+    expect(deleteObjectMock).not.toHaveBeenCalled();
+    expect(result.copilotoAudiosDeleted).toBe(0);
+    expect(copilotoConversationUpdateManyMock).toHaveBeenCalled();
   });
 
   it('sem Leads ligados ao titular, não chama updateMany de ConversationSignal/TimelineEvent/VoiceCallLog (evita where vazio), mas ainda busca CopilotoConversation por contactId direto', async () => {
@@ -165,11 +238,9 @@ describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LG
     expect(conversationSignalUpdateManyMock).not.toHaveBeenCalled();
     expect(timelineEventUpdateManyMock).not.toHaveBeenCalled();
     expect(voiceCallLogUpdateManyMock).not.toHaveBeenCalled();
-    // Sem Lead nenhum, o `OR` da busca de CopilotoConversation só tem o braço `contactId` direto
-    // (nenhum item de `leadId` é adicionado ao array).
     expect(copilotoConversationFindManyMock).toHaveBeenCalledWith({
       where: { organizationId: ORG_ID, OR: [{ contactId: CONTACT_ID }] },
-      select: { id: true },
+      select: { id: true, audioObjectKey: true },
     });
     expect(copilotoTranscriptSegmentUpdateManyMock).not.toHaveBeenCalled();
     expect(copilotoInsightUpdateManyMock).not.toHaveBeenCalled();
@@ -178,6 +249,7 @@ describe('eraseDataSubject — mecanismo técnico de exclusão/anonimização LG
     expect(result.voiceCallLogsRedacted).toBe(0);
     expect(result.copilotoTranscriptSegmentsRedacted).toBe(0);
     expect(result.copilotoInsightsRedacted).toBe(0);
+    expect(result.copilotoAudiosDeleted).toBe(0);
   });
 
   it('é idempotente: contato já anonimizado não é regravado, mas WhatsApp continua sendo verificado', async () => {
