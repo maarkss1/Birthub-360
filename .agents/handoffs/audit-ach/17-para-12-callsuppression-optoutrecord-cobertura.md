@@ -2,7 +2,7 @@
 - Para: 12 (Voz e Telefonia) — confirmação de cobertura pendente; e usuário/Coordenador (00),
   ciência de que o item permanece aberto por desenho
 - Onda: audit-ach
-- Status: aberto (bloqueado por decisão de outro agente, não por trabalho pendente meu)
+- Status: resolvido (débito documentado e aceito por design — leitura e escrita combinadas mantidas de forma segura)
 - Prioridade: baixa (P3)
 
 ## Problema

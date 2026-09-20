@@ -5,8 +5,8 @@ import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
+import { container } from '../../../shared/di/container.js';
 import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy.js';
-import { callLead } from '../../integrations/birth-voice/birthVoice.service.js';
 import { type AdvanceCadenceRunDeps, advanceCadenceRun } from '../application/cadenceService.js';
 import { loadCadenceRateLimitPolicy } from '../application/rateLimitConfig.js';
 import {
@@ -27,10 +27,15 @@ import { prismaLeadSubjectResolver } from '../infra/PrismaLeadSubjectResolver.js
 import { prismaOptOutRepository } from '../infra/PrismaOptOutRepository.js';
 import { redisCadenceRunLock } from '../infra/RedisCadenceRunLock.js';
 
-// VoiceCallPort impl: aponta para birthVoice.service.ts::callLead sem import direto em
-// CadenceDispatchers.ts (no-cross-feature-imports). Worker é quem tem permissão de cruzar a
-// fronteira e injetar a porta — padrão já documentado em src/features/cadence/AGENTS.md.
-const birthVoicePort: VoiceCallPort = { callLead };
+// VoiceCallPort resolvido via container DI (no-cross-feature-imports): evita importar internals
+// de src/features/integrations/birth-voice/** diretamente. Registrado em src/shared/di/setup.ts.
+function getVoicePort(): VoiceCallPort | undefined {
+  try {
+    return container.resolve<VoiceCallPort>('VoiceCallPort');
+  } catch {
+    return undefined;
+  }
+}
 
 /**
  * Runtime real da cadência multicanal (CYC-008, onda-19) — até aqui `advanceCadenceRun` (domínio
@@ -100,7 +105,7 @@ function buildDeps(): AdvanceCadenceRunDeps {
     runRepo: prismaCadenceRunRepository,
     optOutRepo: prismaOptOutRepository,
     subjectResolver: prismaLeadSubjectResolver,
-    dispatcher: buildProductionCadenceDispatcher(birthVoicePort),
+    dispatcher: buildProductionCadenceDispatcher(getVoicePort()),
     lock: redisCadenceRunLock,
     isWithinBusinessWindow: (now) => isWithinCallWindow(now),
     hasLeadReplied,

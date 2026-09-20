@@ -1,7 +1,7 @@
 - De: 17 (auditoria ACH-17-03)
 - Para: 06/12 (e usuário — decisão de arquitetura/produto pendente)
 - Onda: audit-ach
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal (P2)
 
 ## Problema

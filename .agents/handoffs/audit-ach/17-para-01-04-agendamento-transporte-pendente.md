@@ -2,7 +2,7 @@
 - Para: 01/01A (schema) e 04 (agenda/booking público) — e usuário/Coordenador (00), decisão de
   priorização e arquitetura
 - Onda: audit-ach
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal (P2)
 
 ## Problema
