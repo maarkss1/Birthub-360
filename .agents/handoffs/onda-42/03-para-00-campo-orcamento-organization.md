@@ -6,12 +6,6 @@
 - Status: resolvido
 - Prioridade: alto
 
-## Resolução
-Resolvido em `prisma/schema.prisma` (linhas 1011-1015) e migração `20260827210000_onda42_decisoes_schema`:
-1. Adicionados os campos `monthlyAiBudgetUsd Float?` e `monthlyProspectingBudgetUsd Float?` ao `model Organization`.
-2. Em `src/lib/ai/budget.ts`, `getOrgAiBudgetUsd` seleciona diretamente `monthlyAiBudgetUsd` e bloqueia via `AiOrgBudgetExceededError` (429) quando o teto configurado é atingido.
-3. Em `src/features/prospecting/services/providerBudget.ts`, `getOrgProspectingBudgetUsd` seleciona `monthlyProspectingBudgetUsd` e bloqueia via `ProspectingBudgetExceededError` (429) quando o teto de gastos em Apollo/Hunter é atingido.
-4. Ambos operam fail-open (sem bloqueio) caso não haja teto configurado (nulo) e fail-closed quando o teto configurado é atingido.
 
 ## Contexto
 
@@ -167,3 +161,44 @@ de forma material e merece decisão explícita antes de eu ajustar.
 - Teste de integração (banco real) confirmando que `prisma.organization.findUnique({ select: {
   monthlyAiBudgetUsd: true } })` funciona sem cast e sem erro, e que o valor default de uma
   organização recém-criada é `null` (sem teto) — não `0`.
+
+## Resolução
+
+A migration já estava aplicada e commitada antes desta sessão começar: o Coordenador (00) já havia
+consolidado este handoff junto com os outros três pendentes da Onda 42 em
+`prisma/migrations/20260827210000_onda42_decisoes_schema/migration.sql` (commit `363879f9`, "feat(00):
+aplica as 4 migrations pendentes da Onda 42 e conecta as stores reais") — `Organization.monthlyAiBudgetUsd`
+e `Organization.monthlyProspectingBudgetUsd`, ambos `Float?`/`DOUBLE PRECISION` nullable, sem
+`@default`, exatamente como pedido acima. O mesmo commit já havia removido os casts temporários
+(`as unknown as`) e os `try/catch` de "coluna ainda não existe" em `src/lib/ai/budget.ts` e
+`src/features/prospecting/services/providerBudget.ts`, deixando as duas leituras (`getOrgAiBudgetUsd`,
+`getOrgProspectingBudgetUsd`) com `select` normal, tipado pelo client Prisma real. Esta sessão só
+precisou:
+
+1. **Auditar e confirmar** que não sobrou nenhum resquício fail-open "por construção" (migration
+   ausente): `npx prisma validate` passa; `getOrgAiBudgetUsd`/`getOrgProspectingBudgetUsd` hoje só
+   ficam fail-open nos dois casos intencionais documentados acima (sem teto configurado, ou
+   Postgres/Redis genuinamente indisponível) — nunca mais por "coluna inexistente".
+2. **Escrever o teste de integração que este handoff pedia e ainda não existia**:
+   `tests/integration/ai-org-budget.test.ts` (Postgres real, `prospectordb_test`) — prova as 3
+   afirmações da seção "Teste esperado depois da migration": (a) `findUnique({ select: {
+   monthlyAiBudgetUsd: true } })` funciona sem cast/erro; (b) organização recém-criada tem
+   `monthlyAiBudgetUsd` `null` (nunca `0`) e por isso nunca é bloqueada; (c) uma organização COM
+   teto configurado e custo do mês ≥ teto é de fato bloqueada com `AiOrgBudgetExceededError`
+   (fail-CLOSED real, não só um teste de contrato com Prisma mockado). O equivalente para
+   prospecção (`assertProspectingBudgetNotExceeded`) já tinha essa cobertura via mock em
+   `providerBudget.test.ts` e não depende de Postgres (o acumulado vive em Redis), então não
+   precisou de um teste de integração novo.
+3. **Validar**: `npx prisma validate` (schema válido), `npx tsc --noEmit` (limpo — os 3 erros de
+   `CadenceHub.tsx` que aparecem são pré-existentes em `main`, do commit mais recente sobre
+   `useOptOuts`, não relacionados a este handoff), `npx dotenv-cli -e .env.test -- npx prisma
+   migrate deploy` (as 122 migrations, incluindo a desta decisão, aplicam limpas contra
+   `prospectordb_test`), suíte unitária (`budget.test.ts` + `providerBudget.test.ts`, 20/20) e a
+   suíte de integração nova + a já existente (`ai-org-budget.test.ts` + `ai-budget.test.ts`,
+   10/10, rodadas duas vezes para confirmar que não há flakiness de cache).
+
+Nenhuma mudança de schema ou de comportamento de produção foi necessária nesta sessão — só a
+lacuna de teste que o handoff original já havia sinalizado como pendência. Nada em aberto
+remanescente desta decisão (DEC-09); a lacuna de tabela Postgres para custo de provider de
+prospecção descrita na seção "Achado adicional" continua uma decisão em aberto para uma rodada
+futura, não um bloqueador desta.
