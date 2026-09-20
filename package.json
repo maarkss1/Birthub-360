@@ -80,6 +80,7 @@
     "verify:integrations": "tsx scripts/verify-integrations.ts",
     "verify:ai": "tsx scripts/verify-ai-studio.ts",
     "verify:openapi-drift": "tsx scripts/verify-openapi-drift.ts",
+    "verify:migration-drift": "prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code",
     "eval:golden": "tsx scripts/evaluate-golden-dataset-live.ts",
     "verify:prod": "tsx scripts/verify-prod.ts",
     "reset:passwords": "tsx scripts/reset-passwords.ts",
