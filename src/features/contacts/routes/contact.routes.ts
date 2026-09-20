@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware.js';
 import { contactSchema } from '../../../lib/zod.js';
 import { container } from '../../../shared/di/container.js';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
@@ -24,8 +25,10 @@ router.put('/:id', writeRoles, validateRequest(contactSchema.partial()), (req, r
   container.resolve<ContactController>('ContactController').updateContact(req, res, next),
 );
 
-// Apenas ADMIN e GESTOR podem deletar contatos
-router.delete('/:id', requireRole(['ADMIN', 'GESTOR']), (req, res, next) =>
+// Apenas ADMIN e GESTOR podem deletar contatos. Trilha de auditoria (handoff
+// roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md) — mesmo padrão já
+// usado no merge de duplicadas (leadDedup.routes.ts) e no delete de Lead/Company acima.
+router.delete('/:id', requireRole(['ADMIN', 'GESTOR']), auditAccessMiddleware('Contact'), (req, res, next) =>
   container.resolve<ContactController>('ContactController').deleteContact(req, res, next),
 );
 

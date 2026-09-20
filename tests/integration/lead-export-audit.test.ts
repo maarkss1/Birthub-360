@@ -6,10 +6,12 @@ import { prisma } from '../../src/lib/prisma';
 import { authenticateToken } from '../../src/shared/middlewares/authenticateToken';
 import { requireTenant } from '../../src/shared/middlewares/authorization';
 import { leadRoutes } from '../../src/features/crm/routes/lead.routes';
+import { companyRoutes } from '../../src/features/companies/routes/company.routes';
+import { contactRoutes } from '../../src/features/contacts/routes/contact.routes';
 import { errorHandler } from '../../src/shared/middlewares/errorHandler';
 import { applyRateLimiters } from '../../src/bootstrap/rateLimiters';
 import { setupDI } from '../../src/shared/di/setup';
-import { LeadFactory } from '../helpers/factories';
+import { LeadFactory, CompanyFactory, ContactFactory } from '../helpers/factories';
 import {
   withRlsBypass,
   withTenant,
@@ -59,6 +61,24 @@ function buildLeadApp(): Express {
   // como sem rate limiting.
   applyRateLimiters(app);
   app.use('/api/leads', authenticateToken, requireTenant, leadRoutes);
+  app.use(errorHandler);
+  return app;
+}
+
+function buildCompanyApp(): Express {
+  const app = express();
+  app.use(express.json());
+  applyRateLimiters(app);
+  app.use('/api/companies', authenticateToken, requireTenant, companyRoutes);
+  app.use(errorHandler);
+  return app;
+}
+
+function buildContactApp(): Express {
+  const app = express();
+  app.use(express.json());
+  applyRateLimiters(app);
+  app.use('/api/contacts', authenticateToken, requireTenant, contactRoutes);
   app.use(errorHandler);
   return app;
 }
@@ -136,5 +156,98 @@ describe('GET /api/leads/export/csv — trilha de auditoria (Etapa handoff 15)',
     // nem chega a rodar o middleware de auditoria (res.on('finish') só grava se statusCode < 400
     // de qualquer forma, mas o próprio next() do middleware de auditoria nunca é alcançado aqui).
     expect(after).toBe(before);
+  });
+});
+
+// Mesma resolução do handoff 15, estendida às três rotas de DELETE mais sensíveis do CRM (mutação
+// irreversível) — adicionadas ao mesmo padrão já provado acima para export/csv de Lead.
+describe('DELETE /api/leads/:id, /api/companies/:id, /api/contacts/:id — trilha de auditoria (Etapa handoff 15)', () => {
+  let leadApp: Express;
+  let companyApp: Express;
+  let contactApp: Express;
+  let adminB: RealSessionUser;
+
+  const createdUserIds: string[] = [];
+  const createdOrgIds: string[] = [];
+
+  beforeAll(async () => {
+    setupDI();
+    leadApp = buildLeadApp();
+    companyApp = buildCompanyApp();
+    contactApp = buildContactApp();
+
+    adminB = await signUpRealUser('crm-delete-audit-admin-b', 'ADMIN');
+    createdUserIds.push(adminB.userId);
+    createdOrgIds.push(adminB.organizationId);
+  }, 30_000);
+
+  afterAll(async () => {
+    for (const orgId of createdOrgIds) {
+      await withTenant(orgId, () => prisma.auditLog.deleteMany({ where: { tenantId: orgId } }));
+    }
+    await withRlsBypass(async () => {
+      await prisma.lead.deleteMany({ where: { organizationId: { in: createdOrgIds } } });
+      await prisma.contact.deleteMany({ where: { organizationId: { in: createdOrgIds } } });
+      await prisma.company.deleteMany({ where: { organizationId: { in: createdOrgIds } } });
+      await prisma.user.deleteMany({ where: { id: { in: createdUserIds } } });
+      await prisma.organization.deleteMany({ where: { id: { in: createdOrgIds } } });
+    });
+  });
+
+  it('DELETE lead: 200 e grava AuditLog action DELETE, entity Lead', async () => {
+    const lead = await withTenant(adminB.organizationId, () =>
+      prisma.lead.create({ data: LeadFactory.build() }),
+    );
+
+    const res = await request(leadApp)
+      .delete(`/api/leads/${lead.id}`)
+      .set('Cookie', adminB.cookie);
+
+    expect(res.status).toBe(200);
+
+    const logs = await waitForAuditLog(adminB.organizationId, {
+      tenantId: adminB.organizationId,
+      entity: 'Lead',
+      action: 'DELETE',
+    });
+    expect(logs.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('DELETE company: 200 e grava AuditLog action DELETE, entity Company', async () => {
+    const company = await withTenant(adminB.organizationId, () =>
+      prisma.company.create({ data: CompanyFactory.build() }),
+    );
+
+    const res = await request(companyApp)
+      .delete(`/api/companies/${company.id}`)
+      .set('Cookie', adminB.cookie);
+
+    expect(res.status).toBe(200);
+
+    const logs = await waitForAuditLog(adminB.organizationId, {
+      tenantId: adminB.organizationId,
+      entity: 'Company',
+      action: 'DELETE',
+    });
+    expect(logs.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('DELETE contact: 200 e grava AuditLog action DELETE, entity Contact', async () => {
+    const contact = await withTenant(adminB.organizationId, () =>
+      prisma.contact.create({ data: ContactFactory.build() }),
+    );
+
+    const res = await request(contactApp)
+      .delete(`/api/contacts/${contact.id}`)
+      .set('Cookie', adminB.cookie);
+
+    expect(res.status).toBe(200);
+
+    const logs = await waitForAuditLog(adminB.organizationId, {
+      tenantId: adminB.organizationId,
+      entity: 'Contact',
+      action: 'DELETE',
+    });
+    expect(logs.length).toBeGreaterThanOrEqual(1);
   });
 });

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware.js';
 import { companySchema } from '../../../lib/zod.js';
 import { container } from '../../../shared/di/container';
 import { requireRole } from '../../../shared/middlewares/requireRole.js';
@@ -22,8 +23,10 @@ router.put('/:id', writeRoles, validateRequest(companySchema.partial()), (req, r
   container.resolve<CompanyController>('CompanyController').updateCompany(req, res, next),
 );
 
-// Apenas ADMIN e GESTOR podem deletar empresas
-router.delete('/:id', requireRole(['ADMIN', 'GESTOR']), (req, res, next) =>
+// Apenas ADMIN e GESTOR podem deletar empresas. Trilha de auditoria (handoff
+// roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md) — mesmo padrão já
+// usado no merge de duplicadas (companyDedup.routes.ts).
+router.delete('/:id', requireRole(['ADMIN', 'GESTOR']), auditAccessMiddleware('Company'), (req, res, next) =>
   container.resolve<CompanyController>('CompanyController').deleteCompany(req, res, next),
 );
 

@@ -24,7 +24,9 @@ router.get('/', (req, res, next) =>
 router.get('/export/csv', managementRoles, auditAccessMiddleware('Lead'), (req, res, next) =>
   container.resolve<LeadController>('LeadController').exportCsv(req, res, next),
 );
-router.post('/export/bitrix24', managementRoles, (req, res, next) =>
+// Mesmo dump sensível (LGPD) de /export/csv acima, só que direto para o Bitrix24 — mesma trilha
+// de auditoria (handoff roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md).
+router.post('/export/bitrix24', managementRoles, auditAccessMiddleware('Lead'), (req, res, next) =>
   container.resolve<LeadController>('LeadController').exportToBitrix24(req, res, next),
 );
 router.post('/import/bitrix24', managementRoles, (req, res, next) =>
@@ -52,8 +54,10 @@ router.put(
 );
 
 // Apenas ADMIN e GESTOR podem deletar leads (restrição pré-existente, não afetada pela posse do
-// lead — excluir é mais sensível do que editar, mantido restrito à gestão).
-router.delete('/:id', managementRoles, (req, res, next) =>
+// lead — excluir é mais sensível do que editar, mantido restrito à gestão). Trilha de auditoria
+// (handoff roadmap-v2-transversais/15-para-00-auditaccessmiddleware-nao-utilizado.md) — exclusão
+// é a mutação mais irreversível deste router, mesmo padrão já usado no merge (leadDedup.routes.ts).
+router.delete('/:id', managementRoles, auditAccessMiddleware('Lead'), (req, res, next) =>
   container.resolve<LeadController>('LeadController').deleteLead(req, res, next),
 );
 
