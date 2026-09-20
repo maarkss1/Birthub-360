@@ -277,8 +277,8 @@ model Company {
   // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
   // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
   // verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId              String?
-  organization                Organization?                 @relation(fields: [organizationId], references: [id])
+  organizationId              String
+  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   deletedAt                   DateTime?
   deletedBy                   String?
   deleteReason                String?
@@ -528,8 +528,8 @@ model Contact {
   // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
   // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
   // verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId        String?
-  organization          Organization?          @relation(fields: [organizationId], references: [id])
+  organizationId              String
+  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   decisionMakerProfiles DecisionMaker[]
 
   createdAt    DateTime  @default(now())
@@ -698,8 +698,8 @@ model Lead {
   // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
   // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
   // verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId              String?
-  organization                Organization?                @relation(fields: [organizationId], references: [id])
+  organizationId              String
+  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -742,8 +742,8 @@ model Activity {
   // requestContext.run({tenantId})). Nenhuma linha órfã é esperada; migrar para NOT NULL +
   // ON DELETE CASCADE (alinhado aos ~90 outros models filhos de Organization) é a correção
   // pendente, condicionada a verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId              String
+  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -842,7 +842,7 @@ model AuditLog {
   entity    String
   entityId  String?
   actorId   String?
-  tenantId  String?
+  tenantId  String
   ipAddress String?
   details   String?  @db.Text
   timestamp DateTime @default(now())
@@ -3181,8 +3181,8 @@ model Prospect {
   // runtime ("column does not exist"), ver comentário da migration para o histórico do drift. Se
   // um write path de create for adicionado, inclua Prospect em tenantModels ou passe
   // organizationId explicitamente em todo create.
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId              String
+  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4786,6 +4786,8 @@ model AgentBuildProposal {
 }
 
 // --- ELITE COMMERCIAL AGENT ---
+
+
 
 
 
