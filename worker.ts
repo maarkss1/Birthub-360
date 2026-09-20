@@ -4,7 +4,7 @@ initTracing();
 import { registerProcessGuards } from './src/lib/process-guards.js';
 registerProcessGuards();
 
-import { startWorkerServer } from './src/lib/worker-server.js';
+import { startWorkerServer } from './src/bootstrap/workerServer.js';
 import { logger } from './src/lib/logger.js';
 import { setWorkerProcessUp } from './src/lib/queue/metrics.js';
 import { env } from './src/config/env.js';

@@ -1,10 +1,10 @@
 import http from 'node:http';
 import type { Worker as BullWorker } from 'bullmq';
 import { env } from '../config/env.js';
-import { logger } from './logger.js';
-import { prisma } from './prisma.js';
-import { shutdownLangfuse } from './langfuse.js';
-import { withTimeout } from './http.js';
+import { logger } from '../lib/logger.js';
+import { prisma } from '../lib/prisma.js';
+import { shutdownLangfuse } from '../lib/langfuse.js';
+import { withTimeout } from '../lib/http.js';
 import client from 'prom-client';
 import {
   connection,
@@ -12,8 +12,9 @@ import {
   cacheConnection,
   queuesEnabled,
   pingRedis,
-} from './queue/redis.js';
-import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from './queue/metrics.js';
+} from '../lib/queue/redis.js';
+import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from '../lib/queue/metrics.js';
+import { warnUnconfiguredSecondaryIntegrations } from './integrationsHealthCheck.js';
 import { isPlatformOperatorTokenConfigured, isValidPlatformOperatorToken } from '../shared/middlewares/requirePlatformOperator.js';
 import { shutdownWhatsAppSessions } from '../features/integrations/whatsapp/whatsapp.service.js';
 
@@ -53,7 +54,7 @@ export async function startWorkerServer(
       totalRegistered: registeredWorkers.length,
       registered: registeredWorkers.map((entry) => entry.name),
     },
-    'worker-server.ts: processors registrados',
+    'workerServer.ts: processors registrados',
   );
 
   if (env.EXPOSE_METRICS) client.collectDefaultMetrics();
@@ -127,7 +128,7 @@ export async function startWorkerServer(
   });
 
   healthServer.listen(WORKER_PORT, '0.0.0.0', () => {
-    logger.info({ port: WORKER_PORT, domain: domainName }, 'worker-server.ts health server listening');
+    logger.info({ port: WORKER_PORT, domain: domainName }, 'workerServer.ts health server listening');
   });
 
   let shuttingDown = false;
@@ -135,11 +136,11 @@ export async function startWorkerServer(
     if (shuttingDown) return;
     shuttingDown = true;
     setWorkerProcessUp(false);
-    logger.info({ signal, domain: domainName }, 'worker-server.ts: graceful shutdown started');
+    logger.info({ signal, domain: domainName }, 'workerServer.ts: graceful shutdown started');
 
     const timeout = new Promise<void>((resolve) => {
       setTimeout(() => {
-        logger.error({ signal, timeoutMs: SHUTDOWN_TIMEOUT_MS, domain: domainName }, 'worker-server.ts: shutdown timeout reached');
+        logger.error({ signal, timeoutMs: SHUTDOWN_TIMEOUT_MS, domain: domainName }, 'workerServer.ts: shutdown timeout reached');
         resolve();
       }, SHUTDOWN_TIMEOUT_MS);
     });
@@ -165,7 +166,7 @@ export async function startWorkerServer(
     })();
 
     await Promise.race([drain, timeout]);
-    logger.info({ signal, domain: domainName }, 'worker-server.ts: graceful shutdown completed');
+    logger.info({ signal, domain: domainName }, 'workerServer.ts: graceful shutdown completed');
     process.exit(0);
   };
 
