@@ -21,7 +21,7 @@ Navegador
    v
 Node/Express + Vite (localhost:3005)
    |
-   +--> PostgreSQL da instância Oracle Cloud (168.138.147.145:5432, TLS) — sem Postgres local
+   +--> PostgreSQL local (localhost:5434 via docker-compose.postgres-local.yml)
    +--> Redis local (localhost:6379)
    +--> Meilisearch local (localhost:7700)
    +--> MinIO local / S3 (localhost:9000)
@@ -31,17 +31,12 @@ Node/Express + Vite (localhost:3005)
 
 O `docker-compose.yml` é a base da infraestrutura local de apoio (Redis, Meilisearch, MinIO, LiteLLM, Ollama). O storage MinIO cria automaticamente o bucket `prospector-assets`.
 
-**Banco de dados (desde 2026-09-08):** a aplicação NÃO usa mais Postgres local nem em Docker. Toda
-máquina de desenvolvimento aponta `DATABASE_URL` diretamente para o Postgres remoto - ver .env.example.
-liberação do IP na Security List. O container antigo (porta 5434) ficou opt-in em
-`docker-compose.postgres-local.yml`, usado só pelos testes de integração/E2E locais e pelos
-overlays opcionais (`langfuse`, `n8n`, `superset`...).
+**Banco de dados Local-First:** a aplicação utiliza PostgreSQL local com extensão pgvector (porta 5434, serviço `postgres` em `docker-compose.postgres-local.yml`), garantindo ambiente 100% autônomo sem dependência externa.
 
 ## Subida local
 
 1. Copie `.env.example` para `.env`.
-2. Preencha `DATABASE_URL` com a senha `APP_DB_PASSWORD` da instância Oracle (nunca commite) e
-   mantenha `?sslmode=require&uselibpqcompat=true` no fim da URL.
+2. Configure `DATABASE_URL=postgresql://prospector:prospector_pass@localhost:5434/prospectordb`.
 3. Para storage local, configure:
 
 ```env

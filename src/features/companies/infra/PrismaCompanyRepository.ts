@@ -95,7 +95,7 @@ export class PrismaCompanyRepository implements CompanyRepository {
         ...data,
         organizationId,
         ...(data.status ? { status: toPrismaCompanyStatus(data.status) } : {}),
-      } as Prisma.CompanyCreateInput,
+      } as Prisma.CompanyUncheckedCreateInput,
     });
     return serializeCompanyStatus(created) as Company;
   }

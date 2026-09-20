@@ -194,7 +194,7 @@ export class PrismaLeadRepository implements LeadRepository {
             description: 'Lead criado no sistema',
           },
         },
-      } as Prisma.LeadCreateInput,
+      } as Prisma.LeadUncheckedCreateInput,
       include: { company: true, contact: true },
     });
     return serializeLead(lead) as unknown as Lead;
