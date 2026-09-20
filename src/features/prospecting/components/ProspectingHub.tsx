@@ -112,10 +112,12 @@ export function ProspectingHub() {
   const [cnpjError, setCnpjError] = useState<string | null>(null);
 
   // --- discovery via open data, with optional Apollo enrichment ---
-  // `segmento` inicia no primeiro item de ACTIVE_SEGMENTS diretamente — antes precisava de um
-  // useEffect porque a lista mudava com o playbook ativo; hoje é uma constante de módulo estável.
+  // `segmento` inicia vazio ("Todos os segmentos") — o ICP deixou de ser vertical-específico
+  // (ver CLAUDE.md seção 1), então a busca não deve começar pré-filtrada por um segmento
+  // logístico específico. `discovery.ts`/`organizationSearch.ts` já tratam segmento vazio como
+  // ausência de filtro.
   const [criteria, setCriteria] = useState<ProspectCriteria>({
-    segmento: activeSegments[0],
+    segmento: '',
     localizacao: '',
     estado: '',
     quantidade: 20,

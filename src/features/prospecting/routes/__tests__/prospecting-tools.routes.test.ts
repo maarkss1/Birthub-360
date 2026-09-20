@@ -253,13 +253,19 @@ describe('POST /api/prospecting/tools/google-places — RBAC (ACH-05-01)', () =>
 });
 
 describe('POST /api/prospecting/tools/google-places', () => {
-  it('rejeita quando segmento está ausente (contrato do schema compartilhado)', async () => {
+  it('aceita segmento ausente como "todos os segmentos" (sem filtro de vertical)', async () => {
+    fetchKnownExclusionsMock.mockResolvedValue({ size: 0 });
+    discoverViaGooglePlacesMock.mockResolvedValue([]);
     const app = buildApp();
 
     const res = await request(app).post('/api/prospecting/tools/google-places').send({});
 
-    expect(res.status).toBe(400);
-    expect(discoverViaGooglePlacesMock).not.toHaveBeenCalled();
+    expect(res.status).toBe(200);
+    expect(discoverViaGooglePlacesMock).toHaveBeenCalledWith(
+      expect.objectContaining({ segmento: '' }),
+      expect.any(Number),
+      { size: 0 },
+    );
   });
 
   it('busca só via Google Places, aplicando as exclusões do tenant', async () => {

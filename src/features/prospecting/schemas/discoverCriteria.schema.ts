@@ -15,7 +15,10 @@ import { MAX_LEADS_PER_SEARCH } from '../domain/searchIntent.js';
 export const discoverCriteriaSchema = z.object({
   icp: z.string().trim().max(1000).optional(),
   decisorCargos: z.array(z.string().trim().max(200)).max(20).optional(),
-  segmento: z.string().trim().min(1, 'Informe um segmento (pode ser qualquer texto)').max(200),
+  // Vazio = "todos os segmentos" (sem filtro) — ver `discovery.ts`/`organizationSearch.ts`, que já
+  // tratam `segmento` vazio como ausência de filtro. Antes exigia min(1), forçando a UI a sempre
+  // pré-selecionar um segmento logístico específico mesmo quando o ICP já não é mais vertical-específico.
+  segmento: z.string().trim().max(200).default(''),
   localizacao: z.string().trim().max(200).default(''),
   // Teto de 20 — prioriza qualidade (CNPJ, decisores, notícias enriquecidos em todos os leads da
   // busca) em vez de volume. Mesma constante que `SearchIntent` usa para normalizar

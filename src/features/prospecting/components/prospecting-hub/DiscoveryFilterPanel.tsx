@@ -100,18 +100,20 @@ export function DiscoveryFilterPanel({
             >
               Segmento
             </label>
-            <select
+            <input
               id="discovery-segmento"
-              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
+              type="text"
+              list="discovery-segmento-suggestions"
+              placeholder="Ex: mercado, academia, matadouro... (em branco = todos)"
+              className="w-full p-3 bg-surface rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink placeholder-ink-2"
               value={criteria.segmento || ''}
               onChange={(e) => setCriteria({ ...criteria, segmento: e.target.value })}
-            >
+            />
+            <datalist id="discovery-segmento-suggestions">
               {activeSegments.map((seg) => (
-                <option key={seg} value={seg}>
-                  {seg}
-                </option>
+                <option key={seg} value={seg} />
               ))}
-            </select>
+            </datalist>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
