@@ -1775,9 +1775,18 @@ model AILog {
   // Consumo precisa. Opcional porque os registros anteriores a ela não têm como ser atribuídos.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  /// Onda 44 (ACH-13-03): papel do enxame (SDR/BDR/CLOSER/CRM/OPS) que originou esta chamada de
+  /// IA, quando conhecido. Opcional/nullable pelo mesmo motivo de `organizationId`: registros
+  /// anteriores a esta coluna e chamadas de infraestrutura sem agente identificável (ex.:
+  /// telemetria interna sem tenant, ver usage-log.ts) não têm como ser atribuídos
+  /// retroativamente. Mesmo conjunto de valores de `AIPendingAction.agentRole` — não criar um
+  /// enum aqui: motivo documentado em AIPendingAction.agentRole é o mesmo (novo papel de agente
+  /// não deveria exigir migration de enum do Postgres).
+  agentRole      String?
   createdAt      DateTime      @default(now())
 
   @@index([organizationId, createdAt])
+  @@index([organizationId, agentRole, createdAt])
 }
 
 /// AI-006 (onda 35): sinal real de vazamento de PII detectado/mascarado pelo guardrail de saída
