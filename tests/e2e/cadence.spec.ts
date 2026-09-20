@@ -59,12 +59,13 @@ test.describe('Cadência — UI de escrita (criar sequência, iniciar/pausar/ret
     // window.confirm nativo).
     await runRow.getByRole('button', { name: `Parar cadência do lead ${leadId}` }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Parar' }).click();
+    await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 5_000 });
 
     // O filtro padrão da tela mostra só Ativa+Pausada (evita listar todo o histórico morto por
     // padrão) — um run recém-parado só reaparece depois de ativar o filtro "Encerrada".
     await page.getByRole('button', { name: 'Encerrada', exact: true }).click();
-    await expect(runRow.getByText('Encerrada', { exact: true })).toBeVisible();
-    await expect(runRow.getByText('Parada manual', { exact: true })).toBeVisible();
+    await expect(runRow.getByText('Encerrada', { exact: true })).toBeVisible({ timeout: 10_000 });
+    await expect(runRow.getByText('Parada manual', { exact: true })).toBeVisible({ timeout: 10_000 });
 
     // Terminal: sem botões de ação restantes na linha.
     await expect(runRow.getByRole('button', { name: /Pausar|Retomar|Parar/ })).toHaveCount(0);

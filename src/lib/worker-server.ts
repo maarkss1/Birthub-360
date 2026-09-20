@@ -14,7 +14,6 @@ import {
   pingRedis,
 } from './queue/redis.js';
 import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from './queue/metrics.js';
-import { warnUnconfiguredSecondaryIntegrations } from '../bootstrap/integrationsHealthCheck.js';
 import { isPlatformOperatorTokenConfigured, isValidPlatformOperatorToken } from '../shared/middlewares/requirePlatformOperator.js';
 import { shutdownWhatsAppSessions } from '../features/integrations/whatsapp/whatsapp.service.js';
 
