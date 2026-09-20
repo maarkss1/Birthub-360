@@ -87,6 +87,12 @@ export abstract class BaseAgent {
           model: response.response_metadata.model,
           usage: response.response_metadata.tokenUsage,
           latencyMs: Date.now() - startTime,
+          // Onda 44 (ACH-13-03): identificador real do agente que fez a chamada — mesmo valor de
+          // `agentType` usado por AgentMemory/recordAgentFailure. Taxonomia mais ampla que os 5
+          // papéis de `SLO_SWARM_ROLES` (swarmScheduler.service.ts) — getSwarmSloSnapshot só
+          // consome o subconjunto que coincide (BDR/CLOSER/CRM), os demais (ex: LDR,
+          // NEGOTIATOR_DRAFT) ficam de fora do painel de SLO, não descartados do AILog.
+          agentRole: this.agentType,
         });
 
         // O gateway.ts devolve um objeto simples ({content, response_metadata}), não

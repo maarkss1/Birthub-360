@@ -57,6 +57,10 @@ interface AgentSloMetrics {
   humanOverride: SloRate;
   errorRate: SloRate;
   avgExecutionLatencyMs: number | null;
+  /** Onda 44 (ACH-13-03): cobertura parcial — só os call sites de logAiUsage que já preenchem
+   * AILog.agentRole (ver swarmScheduler.service.ts). null quando não há chamada atribuída. */
+  aiGenerationCostUsd: number | null;
+  avgGenerationLatencyMs: number | null;
   dataSourceNote?: string;
 }
 
@@ -101,6 +105,11 @@ function formatMs(ms: number | null): string {
   if (ms < 1_000) return `${Math.round(ms)} ms`;
   if (ms < 60_000) return `${(ms / 1_000).toFixed(1)} s`;
   return `${(ms / 60_000).toFixed(1)} min`;
+}
+
+function formatUsd(value: number | null): string {
+  if (value === null) return '—';
+  return `$${value.toFixed(2)}`;
 }
 
 const MISSION_SUGGESTIONS = [
@@ -821,6 +830,8 @@ function SwarmSloPanel({ snapshot, loading, error, onRetry }: SwarmSloPanelProps
               <th className="text-right font-bold px-4 py-3">Override humano</th>
               <th className="text-right font-bold px-4 py-3">Taxa de erro</th>
               <th className="text-right font-bold px-4 py-3">Latência operacional</th>
+              <th className="text-right font-bold px-4 py-3">Custo IA (parcial)</th>
+              <th className="text-right font-bold px-4 py-3">Latência de geração</th>
             </tr>
           </thead>
           <tbody>
@@ -865,6 +876,15 @@ function SwarmSloPanel({ snapshot, loading, error, onRetry }: SwarmSloPanelProps
                 </td>
                 <td className="px-4 py-3 text-right text-ink font-mono">
                   {formatMs(agent.avgExecutionLatencyMs)}
+                </td>
+                <td
+                  className="px-4 py-3 text-right text-ink font-mono"
+                  title="Cobertura parcial — só chamadas de IA já atribuídas a este papel (AILog.agentRole)."
+                >
+                  {formatUsd(agent.aiGenerationCostUsd)}
+                </td>
+                <td className="px-4 py-3 text-right text-ink font-mono">
+                  {formatMs(agent.avgGenerationLatencyMs)}
                 </td>
               </tr>
             ))}

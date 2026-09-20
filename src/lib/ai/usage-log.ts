@@ -23,6 +23,7 @@ export const logAiUsage = async (input: AiUsageLogInput): Promise<void> => {
     cost: estimateCostUsd(input.model, input.usage),
     latencyMs: input.latencyMs,
     promptId: input.promptId,
+    agentRole: input.agentRole,
     organizationId,
   };
 
@@ -35,9 +36,9 @@ export const logAiUsage = async (input: AiUsageLogInput): Promise<void> => {
     const id = randomUUID();
     await prisma.$executeRaw`
             INSERT INTO "AILog"
-                ("id", "tokens", "cost", "latencyMs", "model", "promptId", "organizationId", "createdAt")
+                ("id", "tokens", "cost", "latencyMs", "model", "promptId", "agentRole", "organizationId", "createdAt")
             VALUES
-                (${id}, ${data.tokens}, ${data.cost}, ${data.latencyMs}, ${data.model}, ${data.promptId ?? null}, NULL, CURRENT_TIMESTAMP)
+                (${id}, ${data.tokens}, ${data.cost}, ${data.latencyMs}, ${data.model}, ${data.promptId ?? null}, ${data.agentRole ?? null}, NULL, CURRENT_TIMESTAMP)
         `;
   } catch (error) {
     // Telemetria nunca deve derrubar a resposta útil ao usuário.

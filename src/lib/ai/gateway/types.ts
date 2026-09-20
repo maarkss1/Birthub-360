@@ -59,6 +59,12 @@ export interface AiUsageLogInput {
   // ./prompt-registry.ts — ver o comentário desse arquivo para o motivo de não migrar todos os
   // call sites para o tipo estrito `PromptId` nesta correção.
   promptId?: PromptId | (string & {});
+  // Onda 44 (ACH-13-03): papel do enxame que originou a chamada, quando o call site é uma classe
+  // de agente autônomo que já conhece seu próprio papel (base.agent.ts, ops.agent.ts,
+  // sdrQualification.agent.ts, supervisor.agent.ts). Opcional — a maioria dos ~30 call sites de
+  // logAiUsage não é um agente do enxame com papel atribuível e continua sem preenchê-lo (AILog.
+  // agentRole fica NULL, não um valor inventado). Ver AILog.agentRole em schema.prisma.
+  agentRole?: string;
 }
 
 /** Nome lógico de cada adapter de provedor — usado como chave do circuit breaker, rótulo de

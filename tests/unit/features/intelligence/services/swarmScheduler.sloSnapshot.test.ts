@@ -1,14 +1,19 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockEnv: Record<string, unknown> = { SWARM_SCHEDULER_ENABLED: false };
 vi.mock('../../../../../src/config/env.js', () => ({ env: mockEnv }));
 
 const pendingActionFindMany = vi.fn();
 const aiLogAggregate = vi.fn();
+// Onda 44 (ACH-13-03): breakdown por papel via AILog.agentRole.
+const aiLogGroupBy = vi.fn();
 vi.mock('../../../../../src/lib/prisma.js', () => ({
   prisma: {
     aIPendingAction: { findMany: (...args: unknown[]) => pendingActionFindMany(...args) },
-    aILog: { aggregate: (...args: unknown[]) => aiLogAggregate(...args) },
+    aILog: {
+      aggregate: (...args: unknown[]) => aiLogAggregate(...args),
+      groupBy: (...args: unknown[]) => aiLogGroupBy(...args),
+    },
   },
 }));
 
@@ -27,6 +32,12 @@ function emptyAiLogAggregate() {
 
 afterEach(() => {
   vi.clearAllMocks();
+});
+
+beforeEach(() => {
+  // Default: nenhuma linha de AILog atribuída a nenhum papel — testes que querem cobertura
+  // parcial real sobrescrevem explicitamente.
+  aiLogGroupBy.mockResolvedValue([]);
 });
 
 describe('getSwarmSloSnapshot — painel de SLO por agente', () => {
@@ -53,6 +64,10 @@ describe('getSwarmSloSnapshot — painel de SLO por agente', () => {
       expect(agent.errorRate.value).toBeNull();
       expect(agent.errorRate.emptyReason).toBeTruthy();
       expect(agent.avgExecutionLatencyMs).toBeNull();
+      // Onda 44 (ACH-13-03): sem nenhuma linha de AILog atribuída, null explícito — nunca 0
+      // fabricado para custo/latência de geração.
+      expect(agent.aiGenerationCostUsd).toBeNull();
+      expect(agent.avgGenerationLatencyMs).toBeNull();
     }
 
     // Custo/consumo real: soma de zero linhas é 0 de verdade (não fabricado) — mas nunca
@@ -60,7 +75,7 @@ describe('getSwarmSloSnapshot — painel de SLO por agente', () => {
     expect(snapshot.cost.totalCostUsd).toBe(0);
     expect(snapshot.cost.requestCount).toBe(0);
     expect(snapshot.cost.avgLatencyMs).toBeNull();
-    expect(snapshot.cost.note).toContain('não fatiado por agente');
+    expect(snapshot.cost.note).toContain('PARCIAIS');
   });
 
   it('OPS entra no mesmo cálculo genérico das outras linhas (GOV-13) — sem base, vazio explícito; sem nota especial de exclusão', async () => {
@@ -170,6 +185,45 @@ describe('getSwarmSloSnapshot — painel de SLO por agente', () => {
     expect(snapshot.cost.totalCostUsd).toBe(4.5);
     expect(snapshot.cost.requestCount).toBe(20);
     expect(snapshot.cost.avgLatencyMs).toBe(850);
+  });
+
+  it('Onda 44 (ACH-13-03): custo/latência de geração por papel vêm de AILog.groupBy, parcial e nunca fabricado para papel sem linha atribuída', async () => {
+    pendingActionFindMany.mockResolvedValue([]);
+    aiLogAggregate.mockResolvedValue({
+      _sum: { cost: 4.5, tokens: 12_000 },
+      _avg: { latencyMs: 850 },
+      _count: { _all: 20 },
+    });
+    aiLogGroupBy.mockResolvedValue([
+      { agentRole: 'SDR', _sum: { cost: 1.2 }, _avg: { latencyMs: 400 } },
+      { agentRole: 'CRM', _sum: { cost: 0.8 }, _avg: { latencyMs: 600 } },
+    ]);
+
+    const snapshot = await getSwarmSloSnapshot('org-1', 30, NOW);
+
+    const sdr = snapshot.agents.find((agent) => agent.role === 'SDR')!;
+    expect(sdr.aiGenerationCostUsd).toBe(1.2);
+    expect(sdr.avgGenerationLatencyMs).toBe(400);
+
+    const crm = snapshot.agents.find((agent) => agent.role === 'CRM')!;
+    expect(crm.aiGenerationCostUsd).toBe(0.8);
+
+    // BDR/CLOSER/OPS não vieram no groupBy — null explícito, não 0 fabricado. A soma das linhas
+    // por papel (1.2 + 0.8 = 2.0) fica abaixo do total agregado da org (4.5), de propósito: nem
+    // todo call site de logAiUsage preenche agentRole ainda.
+    const bdr = snapshot.agents.find((agent) => agent.role === 'BDR')!;
+    expect(bdr.aiGenerationCostUsd).toBeNull();
+    expect(bdr.avgGenerationLatencyMs).toBeNull();
+
+    expect(aiLogGroupBy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        by: ['agentRole'],
+        where: expect.objectContaining({
+          organizationId: 'org-1',
+          agentRole: { in: ['SDR', 'BDR', 'CLOSER', 'CRM', 'OPS'] },
+        }),
+      }),
+    );
   });
 
   it('isola por organização e por janela de tempo ao consultar o banco', async () => {

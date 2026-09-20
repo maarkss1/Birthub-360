@@ -544,11 +544,14 @@ export async function runSwarmScheduler(
 //  - `AIPendingAction.agentRole` é o ÚNICO campo do schema que atribui uma decisão a um papel do
 //    enxame (SDR/BDR/CLOSER/CRM/OPS) — cobertura, conversão, override humano e taxa de erro vêm
 //    daqui, por papel, dentro da janela pedida.
-//  - `AILog` tem custo/tokens/latência reais, mas NÃO tem coluna que amarre um registro a um
-//    agentRole (só a `model` e a `organizationId`, opcional) — por isso custo e latência de
-//    geração aparecem agregados por ORGANIZAÇÃO, nunca fatiados por agente. Fatiar por agente
-//    exigiria uma migração de schema (fora do meu escopo: `prisma/schema.prisma` é do Agente 01) —
-//    documentado como lacuna explícita no snapshot, não estimado.
+//  - `AILog` tem custo/tokens/latência reais. Onda 44 (ACH-13-03): `AILog.agentRole` (migração do
+//    Agente 01A) agora existe e é preenchido pelos 4 call sites de logAiUsage que já sabem seu
+//    próprio papel (base.agent.ts, ops.agent.ts, sdrQualification.agent.ts — SUPERVISOR também
+//    preenche, mas fora de SLO_SWARM_ROLES). `aiGenerationCostUsd`/`avgGenerationLatencyMs` por
+//    linha vêm de `AILog` filtrado por esse agentRole — cobertura PARCIAL e honesta: os outros
+//    ~30 call sites de logAiUsage (fora dos 4 agentes autônomos citados) ainda não preenchem
+//    agentRole, então o total agregado em `cost` (org inteira) sempre será maior ou igual à soma
+//    das linhas por papel, nunca comparado como se fosse o mesmo universo.
 //  - GOV-13 (Agente 13): "OPS" passou a registrar `AIPendingAction` (`action: 'create_follow_up'`/
 //    `'notify_team'`, `agentRole: 'OPS'`) como os demais papéis — `create_follow_up_task`/
 //    `notify_team` (`agents/opsPendingActions.tool.ts`) não executam mais o efeito real
@@ -583,6 +586,15 @@ export interface AgentSloMetrics {
   errorRate: SloRate;
   /** Latência OPERACIONAL média (proposta → execução), em ms — não é latência de geração do modelo. */
   avgExecutionLatencyMs: number | null;
+  /** Onda 44 (ACH-13-03): custo real de geração de IA (AILog.cost) atribuído a este papel via
+   * AILog.agentRole — null quando nenhuma chamada com este agentRole caiu na janela (nunca 0
+   * fabricado). Cobre só os call sites de logAiUsage que já preenchem agentRole (ver
+   * base.agent.ts/ops.agent.ts/sdrQualification.agent.ts) — não é o custo total do agente se ele
+   * também fizer chamadas por um caminho ainda não instrumentado. */
+  aiGenerationCostUsd: number | null;
+  /** Latência de GERAÇÃO do modelo (AILog.latencyMs), em ms — distinta de avgExecutionLatencyMs
+   * acima (que é operacional, proposta → execução). Mesma ressalva de cobertura parcial. */
+  avgGenerationLatencyMs: number | null;
   /** Motivo explícito quando a linha inteira não tem dado suficiente (ex.: OPS não usa o ledger). */
   dataSourceNote?: string;
 }
@@ -623,7 +635,7 @@ export async function getSwarmSloSnapshot(
 ): Promise<SwarmSloSnapshot> {
   const since = new Date(now.getTime() - windowDays * 24 * 60 * 60 * 1000);
 
-  const [pendingActions, aiLogAggregate] = await Promise.all([
+  const [pendingActions, aiLogAggregate, aiLogByRole] = await Promise.all([
     prisma.aIPendingAction.findMany({
       where: { organizationId, createdAt: { gte: since } },
       select: {
@@ -643,11 +655,23 @@ export async function getSwarmSloSnapshot(
       _avg: { latencyMs: true },
       _count: { _all: true },
     }),
+    // Onda 44 (ACH-13-03): breakdown parcial por papel — só cobre os call sites de logAiUsage que
+    // já preenchem AILog.agentRole (ver comentário acima). `in: SLO_SWARM_ROLES` exclui de
+    // propósito 'SUPERVISOR' (preenchido, mas fora do painel de SLO por papel de linha de frente).
+    prisma.aILog.groupBy({
+      by: ['agentRole'],
+      where: { organizationId, createdAt: { gte: since }, agentRole: { in: [...SLO_SWARM_ROLES] } },
+      _sum: { cost: true },
+      _avg: { latencyMs: true },
+    }),
   ]);
 
   const agents: AgentSloMetrics[] = SLO_SWARM_ROLES.map((role) => {
     const rows = pendingActions.filter((row) => (row.agentRole ?? '').toUpperCase() === role);
     const coverage = rows.length;
+    const roleAiLog = aiLogByRole.find((row) => row.agentRole === role);
+    const aiGenerationCostUsd = roleAiLog?._sum.cost ?? null;
+    const avgGenerationLatencyMs = roleAiLog?._avg.latencyMs ?? null;
 
     const executedRows = rows.filter((row) => row.executed);
     const conversion = emptyRate(
@@ -678,7 +702,16 @@ export async function getSwarmSloSnapshot(
         ? executionLatencies.reduce((sum, ms) => sum + ms, 0) / executionLatencies.length
         : null;
 
-    return { role, coverage, conversion, humanOverride, errorRate, avgExecutionLatencyMs };
+    return {
+      role,
+      coverage,
+      conversion,
+      humanOverride,
+      errorRate,
+      avgExecutionLatencyMs,
+      aiGenerationCostUsd,
+      avgGenerationLatencyMs,
+    };
   });
 
   return {
@@ -692,7 +725,7 @@ export async function getSwarmSloSnapshot(
       totalTokens: aiLogAggregate._sum.tokens ?? 0,
       requestCount: aiLogAggregate._count._all,
       avgLatencyMs: aiLogAggregate._avg.latencyMs ?? null,
-      note: 'Custo/latência agregados da organização inteira (AILog não referencia qual agente originou cada chamada) — não fatiado por agente até que o schema seja estendido.',
+      note: 'Total agregado da organização inteira, incluindo chamadas de IA fora do enxame autônomo. Onda 44 (ACH-13-03): cada linha de `agents` agora traz `aiGenerationCostUsd`/`avgGenerationLatencyMs` PARCIAIS (só os call sites de logAiUsage que já preenchem AILog.agentRole) — a soma das linhas por papel é sempre <= este total, nunca igual.',
     },
   };
 }

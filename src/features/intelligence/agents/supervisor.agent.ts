@@ -328,6 +328,11 @@ ${SWARM_UNTRUSTED_CONTENT_GUARD}`;
           completionTokens: usage.output_tokens,
         },
         latencyMs: Date.now() - startTime,
+        // Mesmo papel usado por AIPendingAction.agentRole para decisão de roteamento do enxame
+        // (SDR/BDR/CLOSER/CRM/OPS ou SUPERVISOR) — fora do conjunto de SLO_SWARM_ROLES (só os 5
+        // papéis "de linha de frente"), então não aparece no painel de SLO por papel, mas fica
+        // atribuído corretamente no AILog em vez de cair em "sem agente".
+        agentRole: 'SUPERVISOR',
       });
     }
 

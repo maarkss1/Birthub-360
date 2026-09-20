@@ -132,6 +132,7 @@ ${SWARM_UNTRUSTED_CONTENT_GUARD}`,
         completionTokens: response.usage_metadata.output_tokens,
       },
       latencyMs: Date.now() - startTime,
+      agentRole: 'SDR',
     });
   }
 
