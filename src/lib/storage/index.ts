@@ -1,4 +1,4 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { logger } from '../logger.js';
 
@@ -64,3 +64,21 @@ export const getDownloadUrl = async (key: string) => {
     throw new Error('Failed to generate download URL', { cause: err });
   }
 };
+
+export const deleteObject = async (key: string): Promise<boolean> => {
+  try {
+    const command = new DeleteObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: key,
+    });
+    await getS3Client().send(command);
+    return true;
+  } catch (err) {
+    logger.warn(
+      { err, key },
+      'Falha ao excluir objeto do storage (pode não existir ou storage não configurado)',
+    );
+    return false;
+  }
+};
+

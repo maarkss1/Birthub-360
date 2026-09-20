@@ -222,46 +222,34 @@ export function Sidebar({
         title={meta.label}
         aria-label={meta.label}
         aria-current={isActive ? 'page' : undefined}
-        className={`group relative w-full overflow-hidden rounded-xl border px-2 py-1.5 text-left text-xs font-semibold transition-[transform,background-color,border-color,color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
+        className={`group relative flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
           isActive
-            ? 'border-brand/20 bg-brand-active text-on-brand shadow-[0_10px_20px_-15px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.16)]'
-            : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
+            ? 'bg-brand/10 text-brand shadow-sm shadow-brand/5'
+            : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'
         } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         {isActive && (
           <span
             aria-hidden="true"
-            className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+            className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-brand shadow-[0_0_8px_var(--color-brand)]"
           />
         )}
-        <span
-          className={`relative z-10 flex items-center ${isCollapsed ? 'lg:justify-center' : 'gap-2'}`}
-        >
-          <span
-            className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border transition-[transform,background-color,border-color] duration-200 group-hover:scale-105 ${
-              isActive
-                ? 'border-white/15 bg-white/10'
-                : 'border-line/80 bg-surface shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
-            }`}
-          >
-            <Icon size={15} aria-hidden="true" />
-          </span>
-          <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''}`}>{meta.label}</span>
-        </span>
+        <Icon size={16} aria-hidden="true" className={`shrink-0 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+        <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-bold' : ''}`}>{meta.label}</span>
       </button>
     );
   };
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex h-full w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-line bg-surface-elevated/96 shadow-nav backdrop-blur-xl transition-[width,transform] duration-200 lg:static lg:translate-x-0 ${
-        isCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-[16.5rem]'
+      className={`fixed inset-y-0 left-0 z-40 flex h-full w-[min(20rem,calc(100vw-2rem))] flex-col bg-surface/70 shadow-2xl shadow-ink/5 ring-1 ring-ink/5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] lg:static lg:translate-x-0 lg:my-3 lg:ml-3 lg:h-[calc(100vh-1.5rem)] lg:rounded-3xl ${
+        isCollapsed ? 'lg:w-[5rem]' : 'lg:w-[17.5rem]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       aria-label="Navegação principal por jornada comercial"
     >
-      <div className="relative border-b border-line p-3">
+      <div className="relative p-4 pb-2">
         <div
-          className="pointer-events-none absolute -left-14 -top-20 h-40 w-40 rounded-full bg-brand/8 blur-[60px]"
+          className="pointer-events-none absolute -left-10 -top-20 h-40 w-40 rounded-full bg-brand/10 blur-[50px]"
           aria-hidden="true"
         />
         <div className="relative z-10 mb-2 flex items-center justify-between gap-2">
@@ -306,19 +294,17 @@ export function Sidebar({
             navigate('/hub');
             onCloseMobile?.();
           }}
-          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-2.5 rounded-[var(--radius-nav-item)] border border-line bg-surface-2/60 px-3 py-2 text-left transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/25 hover:bg-brand/8 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-nav-item)] bg-surface-subtle px-3 py-2.5 text-left transition-all duration-300 hover:bg-surface-2 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
             isCollapsed ? 'lg:justify-center lg:px-1.5' : ''
           }`}
           title="Ir para o Hub Executivo"
           aria-label="Ir para o Hub Executivo"
         >
-          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg border border-line bg-surface text-ink-2 transition-colors duration-200 group-hover:border-brand/30 group-hover:text-brand">
-            <LayoutGrid size={13} aria-hidden="true" />
-          </span>
+          <LayoutGrid size={16} aria-hidden="true" className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink" />
           <span
-            className={`text-xs font-bold text-ink-2 group-hover:text-ink ${isCollapsed ? 'lg:hidden' : ''}`}
+            className={`text-[13px] font-bold text-ink transition-colors duration-300 ${isCollapsed ? 'lg:hidden' : ''}`}
           >
-            Hub Executivo
+            Painel Inicial
           </span>
         </button>
       </div>
@@ -329,17 +315,13 @@ export function Sidebar({
       >
         {navGroups.map((group) => (
           <section key={group.title} className="space-y-1" aria-label={group.title}>
-            <div className={`mb-2 flex items-center gap-2 px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
-              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-ink-2">
+            <div className={`mb-1.5 flex items-center px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-2/70">
                 {group.title}
               </p>
-              <span
-                className="h-px flex-1 bg-gradient-to-r from-line to-transparent"
-                aria-hidden="true"
-              />
             </div>
             {isCollapsed && (
-              <div className="hidden lg:block my-2 mx-auto w-6 h-px bg-line" aria-hidden="true" />
+              <div className="hidden lg:block my-2 mx-auto w-4 h-px bg-line/50" aria-hidden="true" />
             )}
             {group.items.map(renderNavItem)}
           </section>
