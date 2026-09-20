@@ -17,6 +17,7 @@ import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
 import { SoundFX } from '../../../lib/soundEffects';
+import { CommercialAgentCellPanel } from './CommercialAgentCellPanel';
 import { type BurstHandle, HubBurstCanvas } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
@@ -560,6 +561,12 @@ export function HubScreen() {
           ) : (
             <MobileDestinationList items={items} />
           )}
+
+          {/* Equipe IA Comercial — catálogo somente leitura dos 12 agentes da Célula Comercial
+              (onda 43), seção separada abaixo da órbita, ver CommercialAgentCellPanel.tsx */}
+          <div className="mx-auto w-full max-w-[1250px] px-8 pb-10 pt-6">
+            <CommercialAgentCellPanel />
+          </div>
         </main>
       </div>
     </div>
