@@ -1,7 +1,7 @@
 - De: Agente 16 (Runtime, Workers e Escala)
 - Para: Agente 10 (Infraestrutura, Observabilidade e SRE)
 - Onda: 6
-- Status: em-andamento
+- Status: pronto para aplicação (deploy real pendente de acesso Render humano)
 - Prioridade: normal
 
 ## Problema
@@ -64,3 +64,15 @@ observabilidade preparada, ainda não aplicável") para o texto completo. Resumo
   acontecer, adicionar ao grupo `prospector-atlas.filas.ativos-hoje` (ou um grupo novo
   `prospector-atlas.worker-dedicado.ativos-hoje`) uma regra de probe HTTP contra
   `/health/ready` do worker, seguindo o mesmo padrão dos grupos já promovidos nesta rodada.
+
+## Resolução (rodada de verificação, 2026-09-20)
+
+Sem acesso à conta Render do usuário nesta sessão — não é possível ativar o serviço nem confirmar
+métricas reais em produção. Confirmado que nada mudou desde a rodada anterior: `alert.rules.yml`
+continua sem regra apontando para `/health/ready` do worker (de propósito, mesmo motivo já
+documentado — regra `unknown` contra serviço inexistente), e `RUNBOOK.md` seção 7 continua
+descrevendo o contrato ainda não aplicável. Documentado em
+`docs/deploy/worker-service-render.md` (novo, seção "Depois de ativar: fechar a lacuna de
+observabilidade") o passo a passo exato — adicionar a regra em `alert.rules.yml`, atualizar
+`RUNBOOK.md` seção 7 e este handoff — para quando o Agente 08 confirmar que o serviço está
+rodando de verdade. Status permanece **pronto para aplicação**, não resolvido.
