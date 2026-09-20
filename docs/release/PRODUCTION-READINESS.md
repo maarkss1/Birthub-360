@@ -144,8 +144,11 @@ Não re-derivado nesta rodada — pontos de verdade já existentes e válidos:
 
 - **Rollback de migração Prisma/Postgres:** `docs/security/runbooks/MIGRATION_ROLLBACK.md`
   (runbook real, referenciado por `prisma/AGENTS.md`).
-- **Deploy/infra de produção (produção):** `docs/deploy/oracle-cloud.md`,
-  `docs/ADR/-Producao-Oracle-Cloud.md`.
+- **Deploy/infra de produção:** `docs/deploy/README.md` (índice canônico) e
+  `docs/deploy/producao.md` — Render (`render.yaml`) é o único caminho de deploy funcional hoje.
+  `docs/deploy/oracle-cloud.md` e `docs/ADR/ADR-004-Producao-Oracle-Cloud.md`, citados numa versão
+  anterior desta linha, foram deletados pelo commit `783f8582` ("retire oracle cloud deployment
+  resources", 2026-09-18) — não usar mais como fonte de verdade de infra.
 - **Deploy Render (histórico, migração Neon):** `docs/deploy/render.md`.
 
 ## 8. Decisão de release

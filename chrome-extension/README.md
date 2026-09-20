@@ -95,13 +95,17 @@ real do Google Meet — precisa de um passo manual num Chrome de verdade antes d
    chave fixa (`key` no manifest) ou distribuída via política empresarial do Google Workspace — sem
    isso, cada "Carregar sem compactação" gera um id novo e o `ALLOWED_ORIGINS` precisa ser
    reatualizado. Sem esse passo no servidor, a extensão erra com CORS mesmo com a URL certa.
-2. **URL do backend — já configurada como padrão**: `DEFAULT_API_BASE_URL` (`src/api.js`) e
-   `host_permissions` (`manifest.json`) já apontam para a instância Oracle Cloud de produção
-   (`http://168.138.147.145`, ADR-004 — ainda sem domínio/TLS, ver
-   `docs/deploy/oracle-cloud.md` §7). Trocar para `https://<domínio>` assim que o cutover de
-   domínio acontecer. A aba "Configurações" do side panel continua existindo para apontar pra
-   outro ambiente (ex.: `localhost:3005` em desenvolvimento) sem precisar editar código — a
-   extensão pede a permissão de host correspondente (`optional_host_permissions`) na hora, nunca de
+2. **URL do backend — desatualizada, aponta para infraestrutura já retirada**: `DEFAULT_API_BASE_URL`
+   (`src/api.js`) e `host_permissions` (`manifest.json`) ainda apontam para a instância Oracle Cloud
+   (`http://168.138.147.145`) que essas linhas descreviam como produção sob ADR-004. Esse caminho de
+   deploy (`docker-compose.oci.yml`, `docs/deploy/oracle-cloud.md`, ADR-004) foi retirado do
+   repositório pelo commit `783f8582` ("retire oracle cloud deployment resources", 2026-09-18) —
+   Render é hoje o único caminho de produção funcional (ver `docs/deploy/README.md`), mas o código
+   desta extensão não foi atualizado para refletir isso (débito de configuração, fora do escopo
+   desta correção de documentação — só arquivos `.md` foram tocados aqui). A aba "Configurações" do
+   side panel continua existindo para apontar pra outro ambiente (ex.: `localhost:3005` em
+   desenvolvimento, ou a URL real do Render) sem precisar editar código — a extensão pede a
+   permissão de host correspondente (`optional_host_permissions`) na hora, nunca de
    antemão.
 3. **Storage e Whisper configurados** — sem `STORAGE_*`/`OPENAI_API_KEY` reais em produção, o botão
    de captura ainda funciona (grava localmente), mas o upload/transcrição falham com erro explícito.

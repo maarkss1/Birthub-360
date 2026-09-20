@@ -293,9 +293,12 @@ quebrado por causa própria não relacionada ao código a implantar):
 1. **Nunca edite `.github/actions/require-ci-green` nem remova o job `resolve-sha`** para
    contornar — isso é indistinguível de reintroduzir o bug que esta onda fechou.
 2. O procedimento correto é **humano, explícito e registrado**: o dono do repositório (ou quem
-   tiver a mesma permissão) executa o deploy manualmente fora do GitHub Actions (SSH direto na
-   instância produção, seguindo `scripts/deploy-oci.sh` manualmente — mesmo caminho descrito em
-   `docs/deploy/oracle-cloud.md` seção 3.2 "deploy manual"), com:
+   tiver a mesma permissão) executa o deploy manualmente fora do fluxo automático — hoje isso
+   significa o [Dashboard do Render](https://dashboard.render.com) → serviço `prospector-atlas` →
+   "Manual Deploy" apontando para o SHA desejado (ver `docs/deploy/producao.md`). (Nota: uma versão
+   anterior deste passo descrevia SSH direto numa instância Oracle Cloud via `scripts/deploy-oci.sh`
+   — esse caminho inteiro foi deletado do repositório pelo commit `783f8582`, 2026-09-18; Render é
+   hoje o único caminho de deploy real.) Em qualquer caso, o procedimento exige:
    - justificativa por escrito (o que está quebrado, por que não pode esperar o CI);
    - responsável identificado;
    - SHA explícito usado;

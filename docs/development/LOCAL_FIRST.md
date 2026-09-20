@@ -1,15 +1,17 @@
 # Central Birth Hub 360 — modo local-first
 
-> **Atualização de destino de produção (2026-09-05):** a arquitetura de produção definitiva
-> descrita no parágrafo abaixo (Render + Neon + Cloudflare R2) foi **substituída por decisão
-> explícita do dono do produto** — o novo destino é **Oracle Cloud Infrastructure (self-hosted,
-> região `sa-saopaulo-1`)**, com Docker Compose + Caddy + PostgreSQL na própria instância. Ver
-> `docs/ADR/ADR-004-Producao-Oracle-Cloud.md` (decisão e justificativa) e
-> `docs/deploy/oracle-cloud.md` (procedimento operacional, agora o caminho canônico de produção).
-> O parágrafo original abaixo permanece como registro histórico de por que Render/Neon foram
-> escolhidos naquele momento — não reflete mais o destino ativo. Render (com Supabase como banco
-> real ainda em produção até o cutover Oracle ser validado) segue como fallback/rollback durante a
-> transição, não recebe novo esforço de infraestrutura — ver `docs/deploy/README.md`.
+> **Atualização (2026-09-20, DEVOPS-010): Render é o caminho canônico de produção.** Em
+> 2026-09-05, a arquitetura de produção definitiva havia sido trocada de Render + Neon + Cloudflare
+> R2 (parágrafo original abaixo) para Oracle Cloud Infrastructure self-hosted — decisão que foi
+> **revertida** pelo commit `783f8582` ("retire oracle cloud deployment resources", 2026-09-18), que
+> deletou todo o caminho OCI: `docker-compose.oci.yml`, `docs/deploy/oracle-cloud.md`,
+> `docs/ADR/ADR-004-Producao-Oracle-Cloud.md`, `scripts/{deploy,backup,restore}-oci.sh` e
+> `.github/workflows/deploy-oci.yml` — todos confirmados ausentes do disco hoje. Nenhum ADR de
+> substituição foi publicado. **Render (`render.yaml`, `autoDeployTrigger: commit`) é hoje o único
+> caminho de deploy que de fato funciona** — não é mais "fallback/rollback durante a transição", já
+> que a transição para Oracle nunca chegou a acontecer. Ver `docs/deploy/README.md` para o
+> inventário completo e atualizado dos caminhos de infraestrutura. O parágrafo original abaixo
+> permanece como registro histórico de por que Render/Neon foram escolhidos em 2026-09-02.
 
 > **Fase ENCERRADA em 2026-09-02.** O critério de saída definido na seção "Critério para voltar à
 > produção" (fim deste arquivo) foi cumprido e confirmado pelo dono do repositório: frontend,

@@ -33,7 +33,10 @@ do controle de versão em 22/08/2026; ver [`docs/REMOVED-DOCS.md`](REMOVED-DOCS.
 - [ADR-002: Clean Architecture](ADR/ADR-002-Clean-Architecture.md)
 - [ADR-003: Decisões estruturais das Ondas 6-8](ADR/ADR-003-Decisoes-Estruturais-Onda-6-8.md) —
   separação de runtime de workers, regra de concorrência ampliada de agentes, opt-out unificado
-- [ADR-004: Destino de produção definitivo — Oracle Cloud Infrastructure](ADR/ADR-004-Producao-Oracle-Cloud.md)
+- ~~ADR-004: Destino de produção definitivo — Oracle Cloud Infrastructure~~ — arquivo deletado pelo
+  commit `783f8582` ("retire oracle cloud deployment resources", 2026-09-18) junto com todo o
+  caminho de deploy OCI que ele descrevia; decisão revertida sem ADR de substituição. Render
+  (`render.yaml`) é hoje o caminho de produção — ver `docs/deploy/README.md`
 - [ADR-005: Scoring preditivo de fit TREINADO — adiado](ADR/ADR-005-Scoring-Preditivo-Treinado-Adiado.md) —
   sem rótulo real de churn, volume de "Negócios Ganhos" insuficiente, sem infra de ML no repo
 
