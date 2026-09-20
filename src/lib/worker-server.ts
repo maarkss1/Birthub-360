@@ -1,4 +1,4 @@
-import http from 'http';
+import http from 'node:http';
 import type { Worker as BullWorker } from 'bullmq';
 import { env } from '../config/env.js';
 import { logger } from './logger.js';
@@ -21,7 +21,7 @@ import { shutdownWhatsAppSessions } from '../features/integrations/whatsapp/what
 const WORKER_PORT = parseInt(process.env.WORKER_HEALTH_PORT || '3006', 10);
 const SHUTDOWN_TIMEOUT_MS = 25_000;
 const STARTUP_REDIS_TIMEOUT_MS = 10_000;
-type CloseableWorker = BullWorker<any, any, string> | null;
+type CloseableWorker = BullWorker<unknown, unknown, string> | null;
 
 export async function startWorkerServer(
   registeredWorkers: Array<{ name: string; worker: CloseableWorker }>,
