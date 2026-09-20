@@ -255,26 +255,14 @@ function ScheduleMeetingDialog({
 
 // ── Opt-outs ─────────────────────────────────────────────────────────────
 
+import { useOptOuts } from '../hooks/useCadence';
+
 function OptOutsSection() {
-  const [data, setData] = useState<OptOutRecordDTO[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading: loading, error, refetch } = useOptOuts();
 
-  const load = useCallback(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    cadenceApi
-      .optOuts()
-      .then((result) => !cancelled && setData(result))
-      .catch((err) => !cancelled && setError((err as Error).message))
-      .finally(() => !cancelled && setLoading(false));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const load = () => refetch();
 
-  useEffect(() => load(), [load]);
+  const errorMessage = error instanceof Error ? error.message : null;
 
   return (
     <Card padding="sm">
@@ -310,13 +298,13 @@ function OptOutsSection() {
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
         </div>
-      ) : error ? (
+      ) : errorMessage ? (
         <div
           className="flex items-center justify-between gap-3 text-sm text-danger-active dark:text-danger py-4"
           role="alert"
         >
           <span className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {errorMessage}
           </span>
           <button
             type="button"
@@ -735,13 +723,13 @@ function CadenceRunsSection() {
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
         </div>
-      ) : error ? (
+      ) : errorMessage ? (
         <div
           className="flex items-center justify-between gap-3 text-sm text-danger-active dark:text-danger py-4"
           role="alert"
         >
           <span className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {errorMessage}
           </span>
           <button
             type="button"
@@ -891,13 +879,13 @@ function SequencesSection({ canManage }: { canManage: boolean }) {
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
         </div>
-      ) : error ? (
+      ) : errorMessage ? (
         <div
           className="flex items-center justify-between gap-3 text-sm text-danger-active dark:text-danger py-4"
           role="alert"
         >
           <span className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {errorMessage}
           </span>
           <button
             type="button"
