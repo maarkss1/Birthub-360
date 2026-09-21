@@ -458,9 +458,7 @@ export function HubScreen() {
             </div>
             <h1 className="mt-0.5 font-serif text-xl sm:text-2xl md:text-3xl font-medium leading-tight tracking-tight text-slate-900 dark:text-white">
               {clock.greeting},{' '}
-              <span className="text-brand dark:text-brand-2 font-semibold">
-                {firstName}
-              </span>
+              <span className="text-brand dark:text-brand-2 font-semibold">{firstName}</span>
             </h1>
             <p className="mt-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">
               {brandInfo.slogan}

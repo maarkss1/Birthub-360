@@ -38,7 +38,6 @@ export function SinglePageDashboard() {
     <div className="flex-1 overflow-y-auto bg-bg">
       {/* Container principal com respiro generoso (padding 48px / gap 16px) */}
       <div className="max-w-[92rem] mx-auto p-6 sm:p-8 lg:p-12 space-y-6">
-        
         {/* HEADER ÂNCORA EXECUTIVO — Tipografia Serifada, Sem Gradiente em Texto */}
         <header className="space-y-2">
           <div className="flex flex-wrap items-center gap-2.5 mb-1">
@@ -58,7 +57,8 @@ export function SinglePageDashboard() {
                 {greeting()}, {firstName}.
               </h1>
               <p className="text-sm sm:text-base text-ink-2 mt-1.5 max-w-2xl leading-relaxed">
-                Visão executiva consolidada da sua operação comercial. Pipeline em alta e inteligência ativa para fechamento.
+                Visão executiva consolidada da sua operação comercial. Pipeline em alta e
+                inteligência ativa para fechamento.
               </p>
             </div>
 
@@ -86,7 +86,6 @@ export function SinglePageDashboard() {
 
         {/* BENTO GRID (GAP 16px / 1rem) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          
           {/* TILE 1: HERO DO PIPELINE (DESTAQUE / 2 COLUNAS) — Gradiente Diagonal Ink→Íris no Fundo */}
           <section
             aria-label="Pipeline de Vendas em Destaque"
@@ -118,7 +117,8 @@ export function SinglePageDashboard() {
                   }).format(pipelineValue)}
                 </p>
                 <p className="text-xs sm:text-sm text-slate-300 mt-2 font-medium">
-                  Volume total ponderado em negociação ativa nas etapas de qualificação e fechamento.
+                  Volume total ponderado em negociação ativa nas etapas de qualificação e
+                  fechamento.
                 </p>
               </div>
             </div>
@@ -136,7 +136,9 @@ export function SinglePageDashboard() {
               </div>
 
               <div className="pt-2 flex items-center justify-between">
-                <span className="text-xs text-slate-400">18 oportunidades de alto valor com fechamento previsto neste mês.</span>
+                <span className="text-xs text-slate-400">
+                  18 oportunidades de alto valor com fechamento previsto neste mês.
+                </span>
                 <button
                   type="button"
                   onClick={() => navigate('/app/crm')}
@@ -151,7 +153,6 @@ export function SinglePageDashboard() {
 
           {/* COLUNA LATERAL COM 2 TILES EMPILHADOS (GAP 16px) */}
           <div className="flex flex-col gap-4">
-            
             {/* TILE EMPILHADO 1: LEADS QUALIFICADOS */}
             <section
               aria-label="Volume de Leads"
@@ -177,7 +178,9 @@ export function SinglePageDashboard() {
               </div>
 
               <div className="pt-4 mt-4 border-t border-line flex items-center justify-between">
-                <span className="text-[11px] text-ink-2 font-medium">85 prontos para abordagem</span>
+                <span className="text-[11px] text-ink-2 font-medium">
+                  85 prontos para abordagem
+                </span>
                 <button
                   type="button"
                   onClick={() => navigate('/app/prospect')}
@@ -225,7 +228,6 @@ export function SinglePageDashboard() {
                 </button>
               </div>
             </section>
-
           </div>
 
           {/* TILE 4: COPILOTO IA — Gradiente Suave Dourado→Violeta na Superfície */}
@@ -234,7 +236,7 @@ export function SinglePageDashboard() {
             className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-brand/8 via-surface to-red-violet/8 border border-brand/20 dark:border-brand/30 p-7 sm:p-8 shadow-sm relative overflow-hidden"
           >
             <div className="absolute right-0 top-0 w-72 h-72 bg-brand/10 rounded-full blur-3xl pointer-events-none" />
-            
+
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-3 max-w-3xl">
                 <div className="flex items-center gap-2">
@@ -249,9 +251,11 @@ export function SinglePageDashboard() {
                 <h3 className="font-serif text-xl sm:text-2xl font-medium text-ink tracking-tight">
                   Pipeline qualificado cresceu 18% nos últimos 7 dias.
                 </h3>
-                
+
                 <p className="text-xs sm:text-sm text-ink-2 leading-relaxed">
-                  Maior velocidade de fechamento identificada em contas Enterprise. Há <strong className="text-ink font-semibold">3 oportunidades estratégicas</strong> que requerem follow-up hoje para garantir o fechamento no mês.
+                  Maior velocidade de fechamento identificada em contas Enterprise. Há{' '}
+                  <strong className="text-ink font-semibold">3 oportunidades estratégicas</strong>{' '}
+                  que requerem follow-up hoje para garantir o fechamento no mês.
                 </p>
               </div>
 
@@ -275,9 +279,7 @@ export function SinglePageDashboard() {
               </div>
             </div>
           </section>
-
         </div>
-
       </div>
     </div>
   );

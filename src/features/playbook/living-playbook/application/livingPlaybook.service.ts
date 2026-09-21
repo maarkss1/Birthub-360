@@ -135,7 +135,12 @@ async function loadOutcomeGroups(organizationId: string): Promise<OutcomeGroup[]
       group.excerpts.push(excerpt);
       group.actionIds.push(action.id);
     } else {
-      groups.set(key, { sellerId: lead.owner, segment, excerpts: [excerpt], actionIds: [action.id] });
+      groups.set(key, {
+        sellerId: lead.owner,
+        segment,
+        excerpts: [excerpt],
+        actionIds: [action.id],
+      });
     }
   }
 
