@@ -246,8 +246,8 @@
   --shadow-nav-value: 12px 0 34px -28px rgba(26, 21, 19, 0.45);
   --shadow-nav-active-value: 0 10px 26px -14px color-mix(in srgb, var(--brand) 52%, black);
   --radius-nav-item-value: 12px;
-  --font-brand-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-brand-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-brand-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-brand-display: "Sora", ui-sans-serif, system-ui, sans-serif;
 }
 
 .dark {
@@ -513,6 +513,23 @@
      --danger via color-mix corrige sem inventar hex novo. */
   --color-btn-danger: color-mix(in srgb, var(--color-danger) 82%, black);
   --color-btn-danger-hover: color-mix(in srgb, var(--color-danger) 68%, black);
+  --color-sunset-hover: #e64a32;
+  --color-border-strong: #94a3b8;
+  --color-border-danger: #f43f5e;
+
+  /* Escala Canônica de Z-Index (Final Validation Gate 2) */
+  --z-base: 0;
+  --z-card: 1;
+  --z-sticky: 10;
+  --z-header: 50;
+  --z-dropdown: 100;
+  --z-drawer: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-toast: 700;
+  --z-tools: 800;
+  --z-tooltip: 900;
+  --z-system: 1000;
 
   --radius-card: 12px;
   --radius-card-lg: 16px;

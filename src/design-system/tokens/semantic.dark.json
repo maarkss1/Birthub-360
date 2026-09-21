@@ -1,0 +1,53 @@
+{
+  "$schema": "https://tr.designtokens.org/format/",
+  "semantic": {
+    "color": {
+      "bg": {
+        "canvas": { "$value": "{color.navy.950}", "$type": "color" },
+        "surface": { "$value": "{color.navy.900}", "$type": "color" },
+        "card": { "$value": "{color.navy.800}", "$type": "color" },
+        "cardHover": { "$value": "{color.navy.700}", "$type": "color" },
+        "elevated": { "$value": "#1B2D5D", "$type": "color" },
+        "subtle": { "$value": "#0E1836", "$type": "color" }
+      },
+      "text": {
+        "primary": { "$value": "{color.gray.50}", "$type": "color" },
+        "secondary": { "$value": "{color.gray.400}", "$type": "color" },
+        "muted": { "$value": "{color.gray.500}", "$type": "color" },
+        "onBrand": { "$value": "{color.navy.900}", "$type": "color" }
+      },
+      "border": {
+        "default": { "$value": "{color.navy.600}", "$type": "color" },
+        "subtle": { "$value": "rgba(255, 255, 255, 0.08)", "$type": "color" },
+        "strong": { "$value": "{color.gray.700}", "$type": "color" },
+        "focus": { "$value": "{color.orange.500}", "$type": "color" },
+        "danger": { "$value": "{color.rose.500}", "$type": "color" }
+      },
+      "ring": {
+        "focus": { "$value": "rgba(255, 88, 65, 0.35)", "$type": "color" },
+        "danger": { "$value": "rgba(244, 63, 94, 0.35)", "$type": "color" }
+      },
+      "action": {
+        "primary": {
+          "bg": { "$value": "{color.orange.500}", "$type": "color" },
+          "hover": { "$value": "{color.orange.600}", "$type": "color" },
+          "active": { "$value": "{color.orange.700}", "$type": "color" },
+          "text": { "$value": "{color.navy.900}", "$type": "color" }
+        },
+        "intelligence": {
+          "bg": { "$value": "{color.redviolet.500}", "$type": "color" },
+          "hover": { "$value": "{color.redviolet.600}", "$type": "color" },
+          "active": { "$value": "{color.redviolet.700}", "$type": "color" },
+          "text": { "$value": "{color.white}", "$type": "color" }
+        },
+        "destructive": {
+          "bg": { "$value": "{color.rose.500}", "$type": "color" },
+          "hover": { "$value": "{color.rose.600}", "$type": "color" },
+          "active": { "$value": "{color.rose.700}", "$type": "color" },
+          "text": { "$value": "{color.navy.900}", "$type": "color" },
+          "textHover": { "$value": "{color.white}", "$type": "color" }
+        }
+      }
+    }
+  }
+}
