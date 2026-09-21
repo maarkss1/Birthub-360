@@ -1,11 +1,14 @@
 import {
   Activity,
-  AlertTriangle,
+  ArrowRight,
   BrainCircuit,
+  CheckCircle2,
+  ChevronRight,
   Flame,
+  LayoutTemplate,
   LineChart,
-  Plus,
   Radar,
+  Search,
   Sparkles,
   Target,
   TrendingUp,
@@ -13,9 +16,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useAnalyticsDashboard } from '../../../hooks/useDatabase';
-import { IntelligenceSignal } from '../../../components/intelligence/IntelligenceSignal';
 
 function greeting() {
   const hour = new Date().getHours();
@@ -26,222 +27,257 @@ function greeting() {
 
 export function SinglePageDashboard() {
   const navigate = useNavigate();
-  const { info: playbookMeta } = useActivePlaybook();
   const { currentUser } = useAuth();
-
-  // Real hooks data loading
   const { data: stats } = useAnalyticsDashboard(6);
 
-  const projArr = stats?.overview?.pipelineValue || 4850000;
+  const pipelineValue = stats?.overview?.pipelineValue || 4850000;
   const winRate = stats?.overview?.conversionRate || 32.8;
+  const firstName = currentUser?.name?.split(' ')[0] || 'Marcelo';
 
   return (
     <div className="flex-1 overflow-y-auto bg-bg">
-      <div className="max-w-[92rem] mx-auto p-6 space-y-6">
-        {/* COMMAND CENTER HERO - Business Status & Context */}
-        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-midnight via-[#131b38] to-[#1c1d3b] p-6 lg:p-8 text-white shadow-xl">
-          {/* Ambient brand glow */}
-          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-sunset/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute right-1/3 -top-16 w-64 h-64 bg-brand/8 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-1/4 bottom-0 w-48 h-48 bg-red-violet/8 rounded-full blur-3xl pointer-events-none" />
+      {/* Container principal com respiro generoso (padding 48px / gap 16px) */}
+      <div className="max-w-[92rem] mx-auto p-6 sm:p-8 lg:p-12 space-y-6">
+        
+        {/* HEADER ÂNCORA EXECUTIVO — Tipografia Serifada, Sem Gradiente em Texto */}
+        <header className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2.5 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand/10 text-brand-ink border border-brand/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+              Strategic Command Center
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-surface-2 text-ink-2 border border-line">
+              <Activity className="w-3 h-3 text-ok" />
+              Operação em Tempo Real
+            </span>
+          </div>
 
-          <div className="relative z-10">
-            {/* Status Bar */}
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand/10 border border-brand/20">
-                <Activity className="w-3.5 h-3.5 text-brand" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
-                  Sistema Operacional
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sunset/10 border border-sunset/20">
-                <BrainCircuit className="w-3.5 h-3.5 text-sunset" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-sunset">
-                  IA Ativa
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-violet/10 border border-red-violet/20">
-                <Zap className="w-3.5 h-3.5 text-red-violet" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-red-violet">
-                  Inteligência Em Tempo Real
-                </span>
-              </div>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-ink">
+                {greeting()}, {firstName}.
+              </h1>
+              <p className="text-sm sm:text-base text-ink-2 mt-1.5 max-w-2xl leading-relaxed">
+                Visão executiva consolidada da sua operação comercial. Pipeline em alta e inteligência ativa para fechamento.
+              </p>
             </div>
 
-            {/* Greeting & Personalization */}
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-              <div>
-                <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-white">
-                  {greeting()},{' '}
-                  <span className="bg-gradient-to-r from-white via-brand-2 to-sunset bg-clip-text text-transparent">
-                    {currentUser?.name?.split(' ')[0] || 'Líder'}
-                  </span>
-                </h1>
-                <p className="text-sm text-ink-2/80 mt-2 max-w-2xl leading-relaxed">
-                  Sua central de comando está operacional. Pipeline consolidado em alta. Playbook
-                  ativo:{' '}
-                  <span className="font-semibold text-white bg-red-violet/30 px-2 py-0.5 rounded border border-red-violet/40">
-                    {playbookMeta?.label || 'Enterprise Acceleration'}
-                  </span>
-                  .
-                </p>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => navigate('/app/prospect')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sunset hover:bg-[#E84B35] text-white text-xs font-bold transition-all shadow-lg shadow-sunset/20 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Novo Negócio</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/app/commercial_intelligence')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand/10 hover:bg-brand/20 text-brand-ink border border-brand/30 text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-                >
-                  <LineChart className="w-4 h-4" />
-                  <span>Inteligência Estratégica</span>
-                </button>
-              </div>
+            {/* Ações Rápidas de Topo */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => navigate('/app/prospect')}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface-interactive text-ink border border-line text-xs font-semibold transition-all hover:shadow-sm active:scale-[0.98] cursor-pointer"
+              >
+                <Search className="w-4 h-4 text-ink-2" />
+                <span>Prospecção</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/app/crm')}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-2 text-on-brand text-xs font-bold transition-all shadow-sm shadow-brand/15 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Novo Negócio</span>
+              </button>
             </div>
           </div>
-        </section>
+        </header>
 
-        {/* BUSINESS PULSE - Hierarchical KPI Composition */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Primary KPI - Pipeline Value (Large) */}
-          <div className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-surface border border-line p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-brand/8 rounded-bl-full pointer-events-none" />
-            <div className="flex items-start justify-between mb-4">
+        {/* BENTO GRID (GAP 16px / 1rem) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          
+          {/* TILE 1: HERO DO PIPELINE (DESTAQUE / 2 COLUNAS) — Gradiente Diagonal Ink→Íris no Fundo */}
+          <section
+            aria-label="Pipeline de Vendas em Destaque"
+            className="lg:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B132B] via-[#121B38] to-[#2E1065] text-white p-7 sm:p-9 border border-white/10 flex flex-col justify-between shadow-xl min-h-[320px]"
+          >
+            {/* Halos e profundidade de marca em marca d'água */}
+            <div className="absolute -right-16 -bottom-16 w-80 h-80 bg-red-violet/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute right-1/3 -top-12 w-64 h-64 bg-brand/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-sunset/15 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-300 flex items-center gap-2">
+                  <LayoutTemplate className="w-3.5 h-3.5 text-gold" />
+                  Pipeline de Vendas · Total Consolidado
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+                  <Flame className="w-3.5 h-3.5" />
+                  +18.4% vs mês anterior
+                </span>
+              </div>
+
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2/60">
-                    Pipeline Total
-                  </span>
-                  <span className="p-1.5 rounded-lg bg-brand/10 text-brand-ink border border-brand/20">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-                <h2 className="text-4xl lg:text-5xl font-black text-ink tracking-tight">
+                <p className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight [font-variant-numeric:tabular-nums]">
                   {new Intl.NumberFormat('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',
-                    notation: 'compact',
-                  }).format(projArr)}
-                </h2>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center gap-1 text-xs font-bold text-ok">
-                  <Flame className="w-3.5 h-3.5" />
-                  <span>+18.4%</span>
-                </div>
-                <p className="text-[10px] text-ink-2/60 mt-1">vs período anterior</p>
-              </div>
-            </div>
-            <div className="h-2 bg-surface-2 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-brand to-sunset rounded-full"
-                style={{ width: '72%' }}
-              />
-            </div>
-            <p className="text-[10px] text-ink-2/60 mt-2">72% da meta trimestral atingida</p>
-          </div>
-
-          {/* Secondary KPI - Win Rate */}
-          <div className="relative overflow-hidden rounded-2xl bg-surface border border-line p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-red-violet/8 rounded-bl-full pointer-events-none" />
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2/60">
-                Taxa de Conversão
-              </span>
-              <span className="p-1.5 rounded-lg bg-red-violet/10 text-red-violet border border-red-violet/20">
-                <Radar className="w-3.5 h-3.5" />
-              </span>
-            </div>
-            <h2 className="text-3xl font-black text-ink tracking-tight">{winRate}%</h2>
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-ink-2/70">
-              <Target className="w-3.5 h-3.5" />
-              <span>Acima da média do setor</span>
-            </div>
-          </div>
-        </section>
-
-        {/* INTELLIGENCE SIGNALS - AI Layer */}
-        <IntelligenceSignal
-          insight="Pipeline qualificado cresceu 18% nos últimos 7 dias. Velocidade de fechamento aumentou em negociações Enterprise."
-          context="Tendência positiva em conversão de leads qualificados para oportunidades de alto valor."
-          whatChanged="Aumento de 23% em leads qualificados entrando no pipeline."
-          recommendedAction="Focar esforços de follow-up em oportunidades Enterprise em estágio avançado."
-          severity="info"
-          onViewDetails={() => navigate('/app/commercial_intelligence')}
-          onAction={() => navigate('/app/crm')}
-        />
-
-        {/* HIGH IMPACT DEALS - Strategic Focus */}
-        <section className="bg-surface border border-line rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-midnight to-red-violet text-white flex items-center justify-center shadow-sm">
-                <Target className="w-4.5 h-4.5 text-brand" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-ink tracking-tight">Deals de Alto Impacto</h3>
-                <p className="text-xs text-ink-2/60">
-                  Oportunidades estratégicas com fechamento estimado para o período
+                    maximumFractionDigits: 0,
+                  }).format(pipelineValue)}
+                </p>
+                <p className="text-xs sm:text-sm text-slate-300 mt-2 font-medium">
+                  Volume total ponderado em negociação ativa nas etapas de qualificação e fechamento.
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => navigate('/app/crm')}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-2 hover:bg-surface-interactive text-ink text-xs font-semibold transition-colors cursor-pointer"
+
+            <div className="relative z-10 pt-6 mt-6 border-t border-white/10 space-y-3">
+              <div className="flex items-center justify-between text-xs text-slate-300">
+                <span className="font-semibold">Meta Trimestral Atingida</span>
+                <span className="font-bold text-gold">72% da Meta (R$ 6.700.000)</span>
+              </div>
+              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-gold via-sunset to-red-violet rounded-full transition-all duration-500"
+                  style={{ width: '72%' }}
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-xs text-slate-400">18 oportunidades de alto valor com fechamento previsto neste mês.</span>
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/crm')}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-gold transition-colors cursor-pointer group"
+                >
+                  <span>Ver Pipeline Completo</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* COLUNA LATERAL COM 2 TILES EMPILHADOS (GAP 16px) */}
+          <div className="flex flex-col gap-4">
+            
+            {/* TILE EMPILHADO 1: LEADS QUALIFICADOS */}
+            <section
+              aria-label="Volume de Leads"
+              className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
             >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Ver Pipeline Completo</span>
-            </button>
+              <div className="absolute top-0 right-0 w-24 h-24 bg-brand/8 rounded-bl-full pointer-events-none" />
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
+                    Leads Ativos no Funil
+                  </span>
+                  <span className="p-2 rounded-xl bg-brand/10 text-brand-ink border border-brand/20">
+                    <TrendingUp className="w-4 h-4" />
+                  </span>
+                </div>
+                <p className="text-3xl sm:text-4xl font-black text-ink tracking-tight [font-variant-numeric:tabular-nums]">
+                  142
+                </p>
+                <p className="text-xs font-semibold text-ok mt-2 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>+23% novos leads qualificados</span>
+                </p>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-line flex items-center justify-between">
+                <span className="text-[11px] text-ink-2 font-medium">85 prontos para abordagem</span>
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/prospect')}
+                  className="text-xs font-bold text-brand-ink dark:text-brand hover:underline inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Prospecção</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+            </section>
+
+            {/* TILE EMPILHADO 2: TAXA DE CONVERSÃO / WIN RATE */}
+            <section
+              aria-label="Taxa de Conversão"
+              className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-red-violet/8 rounded-bl-full pointer-events-none" />
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
+                    Taxa de Conversão (Win Rate)
+                  </span>
+                  <span className="p-2 rounded-xl bg-red-violet/10 text-red-violet border border-red-violet/20">
+                    <Radar className="w-4 h-4" />
+                  </span>
+                </div>
+                <p className="text-3xl sm:text-4xl font-black text-ink tracking-tight [font-variant-numeric:tabular-nums]">
+                  {winRate}%
+                </p>
+                <p className="text-xs font-semibold text-ink-2 mt-2 flex items-center gap-1">
+                  <Target className="w-3.5 h-3.5 text-brand" />
+                  <span>Meta: 30% · Acima da média do setor</span>
+                </p>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-line flex items-center justify-between">
+                <span className="text-[11px] text-ink-2 font-medium">Ciclo médio de 18 dias</span>
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/analytics')}
+                  className="text-xs font-bold text-red-violet hover:underline inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Analytics</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+            </section>
+
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-surface-2 text-[10px] font-bold text-ink-2/70 uppercase tracking-wider border-b border-line">
-                <tr>
-                  <th className="py-3 px-6">Empresa</th>
-                  <th className="py-3 px-4">Estágio</th>
-                  <th className="py-3 px-4">Valor</th>
-                  <th className="py-3 px-4">Decisor</th>
-                  <th className="py-3 px-6 text-right">Prioridade</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                <tr className="hover:bg-surface-interactive/50 transition-colors">
-                  <td className="py-3.5 px-6">
-                    <div className="font-semibold text-ink flex items-center gap-2">
-                      Banco Corporate Digital
-                      <span className="text-[9px] bg-brand/10 text-brand-ink font-bold px-1.5 py-0.2 rounded border border-brand/20">
-                        VIP
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-sunset/10 text-sunset border border-sunset/20">
-                      Negociação Final
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 font-bold text-ink text-sm">R$ 650.000</td>
-                  <td className="py-3.5 px-4 font-medium text-ink-2/80">Roberto (CIO)</td>
-                  <td className="py-3.5 px-6 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <AlertTriangle className="w-3.5 h-3.5 text-sunset" />
-                      <span className="text-[10px] font-bold text-sunset">ALTA</span>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+
+          {/* TILE 4: COPILOTO IA — Gradiente Suave Dourado→Violeta na Superfície */}
+          <section
+            aria-label="Copiloto de IA e Inteligência Ativa"
+            className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-brand/8 via-surface to-red-violet/8 border border-brand/20 dark:border-brand/30 p-7 sm:p-8 shadow-sm relative overflow-hidden"
+          >
+            <div className="absolute right-0 top-0 w-72 h-72 bg-brand/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-3 max-w-3xl">
+                <div className="flex items-center gap-2">
+                  <span className="p-2 rounded-xl bg-brand/15 text-brand-ink dark:text-brand border border-brand/25">
+                    <BrainCircuit className="w-4 h-4" />
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-brand-ink dark:text-brand">
+                    Copiloto IA · Inteligência Estratégica
+                  </span>
+                </div>
+
+                <h3 className="font-serif text-xl sm:text-2xl font-medium text-ink tracking-tight">
+                  Pipeline qualificado cresceu 18% nos últimos 7 dias.
+                </h3>
+                
+                <p className="text-xs sm:text-sm text-ink-2 leading-relaxed">
+                  Maior velocidade de fechamento identificada em contas Enterprise. Há <strong className="text-ink font-semibold">3 oportunidades estratégicas</strong> que requerem follow-up hoje para garantir o fechamento no mês.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/commercial_intelligence')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-interactive text-ink border border-line text-xs font-semibold transition-all hover:shadow-sm active:scale-[0.98] cursor-pointer"
+                >
+                  <LineChart className="w-4 h-4 text-brand" />
+                  <span>Ver Dossiê Completo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/crm')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-midnight text-white hover:bg-slate-800 text-xs font-bold transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 text-gold" />
+                  <span>Agir nos Deals</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
       </div>
     </div>
   );

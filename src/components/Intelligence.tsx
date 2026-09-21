@@ -313,9 +313,9 @@ export function Intelligence() {
               <Sparkles className="w-4 h-4" />
               <span className="text-xs font-bold uppercase tracking-wider">Premium AI Suite</span>
             </motion.div>
-            <h2 className="font-black text-4xl text-ink tracking-tight mb-2">
+            <h2 className="font-serif text-3xl sm:text-4xl font-medium text-ink tracking-tight mb-2">
               {playbookMeta.label}{' '}
-              <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
+              <span className="text-brand dark:text-brand-2 font-semibold">
                 Outreach Intelligence
               </span>
             </h2>

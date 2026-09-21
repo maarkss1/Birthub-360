@@ -335,7 +335,7 @@ export function Sidebar({
         {navGroups.map((group) => (
           <section key={group.title} className="space-y-1" aria-label={group.title}>
             <div className={`mb-2 flex items-center px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2/50">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
                 {group.title}
               </p>
             </div>
@@ -370,7 +370,7 @@ export function Sidebar({
                 <p className="truncate text-[13px] font-bold leading-tight text-ink transition-colors group-hover:text-brand">
                   {currentUser.name}
                 </p>
-                <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-ink-2/70">
+                <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-ink-2">
                   {currentUser.roleTitle || currentUser.role}
                 </p>
               </div>

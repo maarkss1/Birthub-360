@@ -497,9 +497,7 @@ export type ExtensionResolutionResult =
   | 'not-found'
   | ExtensionResolutionAmbiguous;
 
-async function resolveConnectionByExtension(
-  extension: string,
-): Promise<ExtensionResolutionResult> {
+async function resolveConnectionByExtension(extension: string): Promise<ExtensionResolutionResult> {
   const orgIds: OrgIdRow[] = await requestContext.run({ bypassRls: true }, () =>
     prisma.organization.findMany({ select: { id: true } }),
   );

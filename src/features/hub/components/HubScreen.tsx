@@ -455,9 +455,9 @@ export function HubScreen() {
             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-brand dark:text-brand-2">
               Birth Hub 360° &middot; Central Executiva
             </div>
-            <h1 className="mt-0.5 font-display text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
+            <h1 className="mt-0.5 font-serif text-xl sm:text-2xl md:text-3xl font-medium leading-tight tracking-tight text-slate-900 dark:text-white">
               {clock.greeting},{' '}
-              <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 dark:from-brand-2 dark:to-brand bg-clip-text text-transparent font-black drop-shadow-xs">
+              <span className="text-brand dark:text-brand-2 font-semibold">
                 {firstName}
               </span>
             </h1>

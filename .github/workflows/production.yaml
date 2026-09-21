@@ -17,12 +17,12 @@ name: Production CI/CD
 # Render, Neon, Cloudflare, pipelines cloud externos desativados conforme decisao de produto.
 # Para reativar no futuro, descomente o bloco 'on:' abaixo sob aprovacao explicita.
 on:
-#  workflow_dispatch:
-#    inputs:
-#      sha:
-#        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a publicar.'
-#        required: true
-#        type: string
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a publicar.'
+        required: true
+        type: string
 
 
 permissions:

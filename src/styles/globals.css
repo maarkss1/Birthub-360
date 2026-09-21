@@ -8,6 +8,7 @@
    CSS final deixa de ser o "primeiro statement" exigido pela spec (aviso do PostCSS: "@import
    must precede all other statements"), mesmo os dois aparecendo em ordem válida aqui na fonte. */
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap");
 @import "tailwindcss";
 
 /* latin-ext */
@@ -248,6 +249,7 @@
   --radius-nav-item-value: 12px;
   --font-brand-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-brand-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-brand-serif: "Playfair Display", "Bodoni Moda", Georgia, serif;
 }
 
 .dark {
@@ -356,6 +358,7 @@
 @theme {
   --font-sans: var(--font-brand-sans);
   --font-display: var(--font-brand-display);
+  --font-serif: var(--font-brand-serif);
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
 
   /* Paleta oficial Birth Hub 360 (brand book, p. 07). Substitui os pares de

@@ -11,12 +11,12 @@ name: CD Homologation
 # DESATIVADO POR ENQUANTO: Plataforma operando estritamente em modo 100% LOCAL-FIRST.
 # Homologacao externa/cloud desativada conforme decisao de produto.
 on:
-#  workflow_dispatch:
-#    inputs:
-#      sha:
-#        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a promover para homologação.'
-#        required: true
-#        type: string
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Commit SHA completo (40 chars) já aprovado pelo CI a promover para homologação.'
+        required: true
+        type: string
 
 
 # Fica no workflow só o piso comum (nenhum). `contents: write`/`packages: write` só é concedido

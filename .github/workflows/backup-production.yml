@@ -9,7 +9,7 @@ name: Backup de produção (ativação pendente)
 # DESATIVADO POR ENQUANTO: Plataforma operando estritamente em modo 100% LOCAL-FIRST.
 # Cloudflare R2 e backup remoto cloud suspensos conforme diretriz de produto.
 on:
-#  workflow_dispatch: {}
+  workflow_dispatch: {}
 
 
 permissions: {}
