@@ -18,7 +18,7 @@ vi.mock('../../../../shared/services/leadFieldChangeHistory.service.js', () => (
   recordLeadFieldChanges: vi.fn(),
 }));
 const recordStageTransitionMock = vi.fn();
-vi.mock('../../../../shared/services/stageHistory.service.js', () => ({
+vi.mock('../../../../shared/services/leadStageHistory.service.js', () => ({
   recordStageTransition: recordStageTransitionMock,
 }));
 

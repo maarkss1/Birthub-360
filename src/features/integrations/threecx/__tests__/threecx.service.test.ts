@@ -54,6 +54,22 @@ vi.mock('@/features/integrations/birth-voice/callSuppression.service', () => ({
 const loggerMock = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
 vi.mock('@/lib/logger', () => ({ logger: loggerMock }));
 
+// INTEGRATION-004: o caso de ramal ambíguo passa a gravar um AuditLog (via AuditService.log,
+// mesmo helper usado em outras partes do produto) em vez de só um `logger.error` — estes testes
+// precisam espiar essa chamada sem bater no Prisma real.
+const auditLogMock = vi.fn().mockResolvedValue(undefined);
+vi.mock('../../../../lib/audit/audit.service.js', () => ({
+  AuditService: { log: (...args: unknown[]) => auditLogMock(...args) },
+}));
+
+// INTEGRATION-004: métrica Prometheus de falha de resolução de tenant por ramal — mesmo padrão de
+// `bitrix_sync_failures_total`. Mockada para não depender do Registry real do prom-client entre
+// arquivos de teste.
+const extensionFailuresIncMock = vi.fn();
+vi.mock('../threecx.metrics.js', () => ({
+  threeCXExtensionResolutionFailuresTotal: { inc: (...args: unknown[]) => extensionFailuresIncMock(...args) },
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
   assertSafeExternalUrlMock.mockResolvedValue(undefined);
@@ -488,7 +504,7 @@ describe('process3CXWebhook', () => {
     expect(prismaMock.activity.create).toHaveBeenCalledTimes(1);
   });
 
-  it('nunca adivinha o tenant quando o ramal é ambíguo entre duas organizações — descarta', async () => {
+  it('nunca adivinha o tenant quando o ramal é ambíguo entre duas organizações — descarta, mas agora de forma visível (métrica + AuditLog)', async () => {
     const { process3CXWebhook } = await import('../threecx.service.js');
 
     prismaMock.organization.findMany.mockResolvedValue([{ id: 'org-a' }, { id: 'org-b' }]);
@@ -498,9 +514,30 @@ describe('process3CXWebhook', () => {
 
     const result = await process3CXWebhook(FULL_PAYLOAD);
 
+    // Comportamento de correção preservado: continua nunca adivinhando o tenant, continua
+    // descartando o evento (não persiste rastro nem Activity para nenhum dos dois tenants).
     expect(result).toEqual({ status: 'discarded', reason: 'ramal-ambiguo' });
     expect(prismaMock.threeCXCallEvent.create).not.toHaveBeenCalled();
     expect(prismaMock.activity.create).not.toHaveBeenCalled();
+
+    // CORREÇÃO (INTEGRATION-004): antes, isto só existia como `logger.error` — nenhum sinal
+    // agregado/acionável. Agora incrementa uma métrica Prometheus (mesmo padrão de
+    // `bitrix_sync_failures_total`)...
+    expect(extensionFailuresIncMock).toHaveBeenCalledWith({ reason: 'ambiguous' });
+    // ...e grava um AuditLog consultável com os organizationIds em conflito, nunca o payload cru
+    // nem o telefone — para que o gap deixe de ser invisível do ponto de vista de suporte/operação.
+    expect(auditLogMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'INTEGRATION_EVENT_DISCARDED',
+        entity: 'ThreeCXWebhookEvent',
+        entityId: 'call-1',
+        afterState: expect.objectContaining({
+          reason: 'ramal-ambiguo',
+          extension: '101',
+          organizationIds: expect.arrayContaining(['org-a', 'org-b']),
+        }),
+      }),
+    );
   });
 
   it('descarta (não persiste nada) quando nenhuma organização tem esse ramal cadastrado', async () => {
