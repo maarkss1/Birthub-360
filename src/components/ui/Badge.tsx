@@ -32,9 +32,6 @@ const badgeVariants = cva(
         cyan: 'bg-accent-cyan/15 text-accent-cyan focus:ring-accent-cyan/40',
         // --pulse mede ≥5.1:1 cru nos dois temas (calculado) — mesmo raciocínio.
         pulse: 'bg-pulse/15 text-pulse focus:ring-pulse/40',
-        // Canonical Design System tokens
-        primary: 'bg-sunset/15 text-sunset-hover dark:text-sunset focus:ring-sunset/40',
-        intelligence: 'bg-red-violet/15 text-red-violet dark:text-red-violet focus:ring-red-violet/40',
       },
     },
     defaultVariants: {

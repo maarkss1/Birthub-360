@@ -28,26 +28,41 @@ const buttonVariants = cva(
         // dinamicamente na troca de marca (BrandContext.tsx) e já geram `bg-brand-2` de verdade.
         // hover:shadow-glow-brand (era shadow-brand-sm, mais discreto) — glow difuso de verdade,
         // acende só no hover/focus, nunca em repouso (regra do brief "Neon Tokyo × Cosmic Gold").
-        default: 'bg-brand-active text-on-brand shadow-brand-sm hover:bg-sunset-hover hover:shadow-card active:scale-[0.98]',
-        primary: 'bg-sunset text-midnight font-semibold shadow-brand-sm hover:bg-sunset-hover hover:text-midnight hover:shadow-card active:scale-[0.98]',
+        default: 'bg-brand-active text-on-brand shadow-brand-sm hover:bg-brand hover:shadow-card',
+        // bg-btn-danger (color-mix com --danger, globals.css) — bg-red-500 cru com texto branco
+        // media ~3.76:1, abaixo do mínimo AA 4.5:1 (mesma classe de achado do DQA-19 que motivou
+        // bg-brand-active acima). btn-danger-hover escurece mais, mesma lógica de bg-brand-2.
         destructive:
-          'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:text-white hover:shadow-card active:scale-[0.98]',
-        intelligence:
-          'bg-red-violet text-white font-semibold shadow-sm hover:opacity-90 hover:shadow-card active:scale-[0.98]',
+          'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:shadow-card',
+        // border-gray-300/hover:bg-gray-100/200 (Tailwind cru, não token) nunca reagiam ao tema —
+        // no dark mode (padrão do produto, CREATIVE_SYSTEM_01.md seção C) produziam borda
+        // praticamente invisível e um hover claro incoerente sobre superfície escura. Trocados
+        // pelos tokens já usados em todo o resto do design system (border-line/bg-surface-2),
+        // mesmo padrão de hover já usado pelos itens de navegação da Sidebar. hover:scale-[1.02]
+        // novo — outline/ghost eram os únicos sem nenhum feedback de hover (achado real, catálogo
+        // visual "Neon Tokyo × Cosmic Gold", 10/09/2026).
         outline:
-          'border-line bg-transparent text-ink hover:border-ink-2/30 hover:bg-surface-subtle active:scale-[0.98]',
+          'border-line bg-transparent text-ink hover:border-ink-2/30 hover:bg-surface-subtle',
         secondary:
-          'border-line bg-surface-elevated text-ink shadow-sm hover:bg-surface-interactive active:scale-[0.98]',
-        ghost: 'text-ink-2 hover:bg-surface-interactive hover:text-ink active:scale-[0.98]',
+          'border-line bg-surface-elevated text-ink shadow-sm hover:bg-surface-interactive',
+        ghost: 'text-ink-2 hover:bg-surface-interactive hover:text-ink',
+        // text-brand-ink dark:text-brand (não text-brand cru) — mesmo achado do axe-core que
+        // motivou bg-brand-active acima: texto de marca direto sobre bg-bg/bg-surface só atinge
+        // ~3.0:1, abaixo do mínimo AA de 4.5:1. Sem hover:scale de propósito — é texto inline, não
+        // uma caixa; escalar um link no meio de uma frase lê como bug, não como polish.
         link: 'text-brand-ink dark:text-brand underline-offset-4 hover:underline',
-        iris: 'border-accent-violet/45 bg-transparent text-accent-violet hover:border-accent-violet/70 hover:bg-accent-violet/8 active:scale-[0.98]',
-        cyan: 'border-accent-cyan/45 bg-transparent text-accent-cyan hover:border-accent-cyan/70 hover:bg-accent-cyan/8 active:scale-[0.98]',
-        pulse: 'border-pulse/45 bg-transparent text-pulse hover:border-pulse/70 hover:bg-pulse/8 active:scale-[0.98]',
+        // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
+        // Nunca preenchimento sólido — só borda + glow de texto/sombra no hover/focus, e o glow só
+        // acende no escuro (--accent-violet/--accent-cyan/--pulse divergem de --iris/--orbit-blue
+        // só em .dark; --iris/--orbit-blue em si continuam intocados em todo o resto do produto).
+        iris: 'border-accent-violet/45 bg-transparent text-accent-violet hover:border-accent-violet/70 hover:bg-accent-violet/8',
+        cyan: 'border-accent-cyan/45 bg-transparent text-accent-cyan hover:border-accent-cyan/70 hover:bg-accent-cyan/8',
+        pulse: 'border-pulse/45 bg-transparent text-pulse hover:border-pulse/70 hover:bg-pulse/8',
       },
       size: {
         default: 'h-9 px-4 py-2',
         sm: 'h-8 px-3 text-xs',
-        lg: 'h-11 px-6 text-base',
+        lg: 'h-10 px-8',
         icon: 'h-9 w-9',
       },
     },

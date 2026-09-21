@@ -250,29 +250,29 @@ export function Sidebar({
   return (
     <aside
       className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-bg border-r border-line transition-[width,transform] duration-300 lg:static lg:translate-x-0 ${
-        isCollapsed ? 'lg:w-16' : 'lg:w-[260px]'
+        isCollapsed ? 'lg:w-[5rem]' : 'lg:w-[16rem]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       aria-label="Navegação principal - Intelligent Business Command Center"
     >
       <div className="flex flex-col flex-1 overflow-hidden">
         <div
-          className={`px-4 py-3.5 flex items-center justify-between border-b border-line ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+          className={`px-5 py-4 flex items-center justify-between border-b border-line ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
         >
           {isCollapsed ? (
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-surface-2 to-sunset flex items-center justify-center shadow-xs">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
               <span className="text-gold font-black text-base italic tracking-tighter">B</span>
             </div>
           ) : (
             <>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-surface-2 to-sunset flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
                   <span className="text-gold font-black text-base italic tracking-tighter">B</span>
                 </div>
-                <div className="leading-tight">
-                  <h1 className="text-sm font-bold text-ink tracking-tight flex items-center gap-1 font-display">
+                <div className="leading-none">
+                  <h1 className="text-sm font-bold text-midnight tracking-tight flex items-center gap-1">
                     Birth Hub 360°
                   </h1>
-                  <span className="text-[10px] text-ink-2/80 font-medium tracking-wide block">
+                  <span className="text-[10px] text-slate-400 font-medium tracking-wide">
                     Intelligent Business Command Center
                   </span>
                 </div>
