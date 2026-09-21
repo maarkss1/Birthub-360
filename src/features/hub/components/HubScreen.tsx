@@ -315,7 +315,12 @@ export function HubScreen() {
               <stop offset="0%" stopColor="var(--brand)" stopOpacity=".75" />
               <stop offset="100%" stopColor={accent} stopOpacity=".65" />
             </linearGradient>
-            <path id={pathId} d={`M ${cx} ${cy} L ${x} ${y}`} stroke={`url(#${gradId})`} strokeWidth="2.4" />
+            <path
+              id={pathId}
+              d={`M ${cx} ${cy} L ${x} ${y}`}
+              stroke={`url(#${gradId})`}
+              strokeWidth="2.4"
+            />
             {!reduceMotion && (
               <circle
                 className="pulse"
@@ -555,7 +560,8 @@ export function HubScreen() {
         <main className="flex-1 min-h-0 w-full relative flex items-center justify-center overflow-hidden px-4">
           {!isLoading && grantedCatalog.length === 0 && (
             <p className="absolute top-1 left-6 text-[11px] text-ink-2 z-20 pointer-events-none">
-              Nenhum módulo executivo liberado para a sua conta ainda — a central exibe as ferramentas base.
+              Nenhum módulo executivo liberado para a sua conta ainda — a central exibe as
+              ferramentas base.
             </p>
           )}
           {isLoading && (
@@ -683,7 +689,9 @@ function ExecutiveCockpitView({
                 <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand text-on-brand">
                   Principal
                 </span>
-                <span className="text-[11px] font-semibold text-ink-2">Central Comercial Integrada</span>
+                <span className="text-[11px] font-semibold text-ink-2">
+                  Central Comercial Integrada
+                </span>
               </div>
               <h2 className="font-display text-lg font-black text-ink mt-0.5 group-hover:text-brand transition-colors">
                 {primary.label}

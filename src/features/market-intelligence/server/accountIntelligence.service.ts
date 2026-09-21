@@ -856,5 +856,3 @@ export async function getAccountIntelligence(cnpjInput: string) {
     dataset: result.dataset,
   };
 }
-
-

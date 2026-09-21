@@ -233,8 +233,16 @@ export function Sidebar({
             className="absolute inset-y-1.5 left-0 w-[2px] rounded-r-full bg-brand shadow-[0_0_8px_var(--color-brand)]"
           />
         )}
-        <Icon size={16} aria-hidden="true" className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-brand/60'}`} />
-        <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-semibold tracking-tight' : ''}`}>{meta.label}</span>
+        <Icon
+          size={16}
+          aria-hidden="true"
+          className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-brand/60'}`}
+        />
+        <span
+          className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-semibold tracking-tight' : ''}`}
+        >
+          {meta.label}
+        </span>
       </button>
     );
   };
@@ -247,7 +255,9 @@ export function Sidebar({
       aria-label="Navegação principal - Intelligent Business Command Center"
     >
       <div className="flex flex-col flex-1 overflow-hidden">
-        <div className={`px-5 py-4 flex items-center justify-between border-b border-line ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}>
+        <div
+          className={`px-5 py-4 flex items-center justify-between border-b border-line ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+        >
           {isCollapsed ? (
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
               <span className="text-gold font-black text-base italic tracking-tighter">B</span>
@@ -262,7 +272,9 @@ export function Sidebar({
                   <h1 className="text-sm font-bold text-midnight tracking-tight flex items-center gap-1">
                     Birth Hub 360°
                   </h1>
-                  <span className="text-[10px] text-slate-400 font-medium tracking-wide">Intelligent Business Command Center</span>
+                  <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                    Intelligent Business Command Center
+                  </span>
                 </div>
               </div>
               <button
@@ -303,7 +315,11 @@ export function Sidebar({
           title="Ir para o Hub Executivo"
           aria-label="Ir para o Hub Executivo"
         >
-          <LayoutGrid size={16} aria-hidden="true" className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink" />
+          <LayoutGrid
+            size={16}
+            aria-hidden="true"
+            className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink"
+          />
           <span
             className={`text-[13px] font-semibold text-ink transition-colors duration-300 ${isCollapsed ? 'lg:hidden' : ''}`}
           >
@@ -324,7 +340,10 @@ export function Sidebar({
               </p>
             </div>
             {isCollapsed && (
-              <div className="hidden lg:block my-2 mx-auto w-4 h-px bg-line/50" aria-hidden="true" />
+              <div
+                className="hidden lg:block my-2 mx-auto w-4 h-px bg-line/50"
+                aria-hidden="true"
+              />
             )}
             {group.items.map(renderNavItem)}
           </section>
