@@ -9,7 +9,19 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'],
+      options: [
+        'default',
+        'primary',
+        'intelligence',
+        'destructive',
+        'outline',
+        'secondary',
+        'ghost',
+        'link',
+        'iris',
+        'cyan',
+        'pulse',
+      ],
     },
     size: {
       control: 'select',
@@ -28,6 +40,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const Primary: Story = {
+  args: { variant: 'primary', children: 'Ação Principal' },
+};
+
+export const Intelligence: Story = {
+  args: { variant: 'intelligence', children: 'Gerar com IA' },
+};
 
 export const Destructive: Story = {
   args: { variant: 'destructive', children: 'Excluir' },
@@ -59,6 +79,12 @@ export const AllVariants: Story = {
     <div className="flex flex-wrap items-center gap-3">
       <Button {...args} variant="default">
         Default
+      </Button>
+      <Button {...args} variant="primary">
+        Primary
+      </Button>
+      <Button {...args} variant="intelligence">
+        Intelligence
       </Button>
       <Button {...args} variant="destructive">
         Destructive
