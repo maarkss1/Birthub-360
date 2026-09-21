@@ -1,5 +1,5 @@
 import type { LeadFunnel, LeadStatus as PrismaLeadStatus, Prisma } from '@prisma/client';
-import { recordStageTransition } from '../../commercial-intelligence/infra/stageHistory.js';
+import { recordStageTransition } from '../../../shared/services/stageHistory.service.js';
 import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
