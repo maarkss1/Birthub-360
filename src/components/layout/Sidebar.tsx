@@ -1,11 +1,9 @@
 import { LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BRAND } from '../../config/brand';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
 import { SoundFX } from '../../lib/soundEffects';
-import { BirthHubLogo, BirthHubSignature } from '../brand/BirthHubLogo';
 import { TAB_META, type TabType } from './tabMeta';
 
 /** Preferência de menu recolhido. A chave anterior era prefixada com o nome da
@@ -250,47 +248,55 @@ export function Sidebar({
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex h-full w-[min(20rem,calc(100vw-2rem))] flex-col bg-surface/70 shadow-2xl shadow-ink/5 ring-1 ring-ink/5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] lg:static lg:translate-x-0 lg:my-3 lg:ml-3 lg:h-[calc(100vh-1.5rem)] lg:rounded-3xl ${
-        isCollapsed ? 'lg:w-[5rem]' : 'lg:w-[17.5rem]'
+      className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-white border-r border-slate-200 transition-[width,transform] duration-300 lg:static lg:translate-x-0 ${
+        isCollapsed ? 'lg:w-[5rem]' : 'lg:w-[16rem]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       aria-label="Navegação principal por jornada comercial"
     >
-      <div className="relative p-4 pb-2">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <div
-          className="pointer-events-none absolute -left-10 -top-20 h-40 w-40 rounded-full bg-brand/10 blur-[50px]"
-          aria-hidden="true"
-        />
-        <div className="relative z-10 mb-2 flex items-center justify-between gap-2">
+          className={`px-5 py-4 flex items-center justify-between border-b border-slate-100 ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+        >
           {isCollapsed ? (
-            <div className="mx-auto">
-              <BirthHubLogo variant="icon" className="h-7 w-7" title={BRAND.name} />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
+              <span className="text-gold font-black text-base italic tracking-tighter">B</span>
             </div>
           ) : (
             <>
-              <BirthHubSignature className="h-7 text-ink" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
+                  <span className="text-gold font-black text-base italic tracking-tighter">B</span>
+                </div>
+                <div className="leading-none">
+                  <h1 className="text-sm font-bold text-midnight tracking-tight flex items-center gap-1">
+                    Birth Hub 360°
+                  </h1>
+                  <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                    Comando Comercial Executivo
+                  </span>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={toggleCollapse}
-                className="hidden h-7 w-7 place-items-center rounded-control border border-line text-ink-2 transition-colors hover:bg-surface-interactive hover:text-ink lg:grid"
-                title="Recolher menu lateral"
-                aria-label="Recolher menu lateral"
+                className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-midnight transition-colors hidden lg:block"
+                title="Recolher menu"
               >
-                <PanelLeftClose size={13} />
+                <PanelLeftClose size={16} />
               </button>
             </>
           )}
         </div>
 
         {isCollapsed && (
-          <div className="mb-2 hidden justify-center lg:flex">
+          <div className="mt-2 hidden justify-center lg:flex">
             <button
               type="button"
               onClick={toggleCollapse}
-              className="grid h-7 w-7 place-items-center rounded-lg border border-line text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+              className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-midnight transition-colors"
               title="Expandir menu lateral"
-              aria-label="Expandir menu lateral"
             >
-              <PanelLeftOpen size={15} />
+              <PanelLeftOpen size={16} />
             </button>
           </div>
         )}
