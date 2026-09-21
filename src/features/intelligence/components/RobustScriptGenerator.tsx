@@ -187,9 +187,9 @@ export function RobustScriptGenerator() {
               Developer Studio & Prompt Lab
             </span>
           </div>
-          <h3 className="text-4xl font-black text-ink mb-4 tracking-tight">
+          <h3 className="font-serif text-3xl sm:text-4xl font-medium text-ink mb-4 tracking-tight">
             {playbookMeta.label}{' '}
-            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
+            <span className="text-brand dark:text-brand-2 font-semibold">
               Gerador de Prompts e Scripts Robustos
             </span>
           </h3>

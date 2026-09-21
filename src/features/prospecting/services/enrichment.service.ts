@@ -27,7 +27,7 @@ import type { Prisma } from '@prisma/client';
 import type { PlaybookKey } from '../../../config/playbooks.js';
 import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
 import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
+import type { prisma } from '../../../lib/prisma.js';
 import {
   defaultEnrichmentRepository,
   type IEnrichmentRepository,

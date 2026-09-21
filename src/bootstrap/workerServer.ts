@@ -15,7 +15,10 @@ import {
 } from '../lib/queue/redis.js';
 import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from '../lib/queue/metrics.js';
 import { warnUnconfiguredSecondaryIntegrations } from './integrationsHealthCheck.js';
-import { isPlatformOperatorTokenConfigured, isValidPlatformOperatorToken } from '../shared/middlewares/requirePlatformOperator.js';
+import {
+  isPlatformOperatorTokenConfigured,
+  isValidPlatformOperatorToken,
+} from '../shared/middlewares/requirePlatformOperator.js';
 import { shutdownWhatsAppSessions } from '../features/integrations/whatsapp/whatsapp.service.js';
 
 const WORKER_PORT = parseInt(process.env.WORKER_HEALTH_PORT || '3006', 10);
@@ -26,7 +29,7 @@ type CloseableWorker = BullWorker<unknown, unknown, string> | null;
 export async function startWorkerServer(
   registeredWorkers: Array<{ name: string; worker: CloseableWorker }>,
   scheduleJobs: () => Promise<void>,
-  domainName: string
+  domainName: string,
 ) {
   if (!queuesEnabled) {
     throw new Error('Worker dedicado requer ENABLE_QUEUES=true e REDIS_URL configurada.');
@@ -71,14 +74,16 @@ export async function startWorkerServer(
         await pingRedis(cacheConnection);
         await prisma.$queryRaw`SELECT 1`;
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          status: 'ok',
-          domain: domainName,
-          queuesEnabled: true,
-          activeWorkers: activeCount,
-          totalRegistered: registeredWorkers.length,
-          timestamp: new Date().toISOString(),
-        }));
+        res.end(
+          JSON.stringify({
+            status: 'ok',
+            domain: domainName,
+            queuesEnabled: true,
+            activeWorkers: activeCount,
+            totalRegistered: registeredWorkers.length,
+            timestamp: new Date().toISOString(),
+          }),
+        );
       } catch (err) {
         logger.error({ err }, `${domainName} readiness failed`);
         res.writeHead(503, { 'Content-Type': 'application/json' });
@@ -91,10 +96,13 @@ export async function startWorkerServer(
     if (requestPath === '/metrics' && env.EXPOSE_METRICS) {
       if (!isPlatformOperatorTokenConfigured()) {
         res.writeHead(503, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: false,
-          error: 'Recurso de operador de plataforma não habilitado — configure PLATFORM_OPERATOR_TOKEN.',
-        }));
+        res.end(
+          JSON.stringify({
+            success: false,
+            error:
+              'Recurso de operador de plataforma não habilitado — configure PLATFORM_OPERATOR_TOKEN.',
+          }),
+        );
         return;
       }
 
@@ -128,7 +136,10 @@ export async function startWorkerServer(
   });
 
   healthServer.listen(WORKER_PORT, '0.0.0.0', () => {
-    logger.info({ port: WORKER_PORT, domain: domainName }, 'workerServer.ts health server listening');
+    logger.info(
+      { port: WORKER_PORT, domain: domainName },
+      'workerServer.ts health server listening',
+    );
   });
 
   let shuttingDown = false;
@@ -140,7 +151,10 @@ export async function startWorkerServer(
 
     const timeout = new Promise<void>((resolve) => {
       setTimeout(() => {
-        logger.error({ signal, timeoutMs: SHUTDOWN_TIMEOUT_MS, domain: domainName }, 'workerServer.ts: shutdown timeout reached');
+        logger.error(
+          { signal, timeoutMs: SHUTDOWN_TIMEOUT_MS, domain: domainName },
+          'workerServer.ts: shutdown timeout reached',
+        );
         resolve();
       }, SHUTDOWN_TIMEOUT_MS);
     });
@@ -149,18 +163,25 @@ export async function startWorkerServer(
       await new Promise<void>((resolve) => healthServer.close(() => resolve()));
       await Promise.allSettled(
         registeredWorkers
-          .filter((entry): entry is { name: string; worker: NonNullable<CloseableWorker> } => entry.worker !== null)
+          .filter(
+            (entry): entry is { name: string; worker: NonNullable<CloseableWorker> } =>
+              entry.worker !== null,
+          )
           .map(({ worker }) => worker.close()),
       );
       if (domainName === 'extracoes' || domainName === 'all') {
         await shutdownWhatsAppSessions();
       }
       await shutdownLangfuse().catch((err) => logger.error({ err }, 'Erro ao encerrar Langfuse'));
-      await prisma.$disconnect().catch((err) => logger.error({ err }, 'Erro ao desconectar Prisma'));
-      
+      await prisma
+        .$disconnect()
+        .catch((err) => logger.error({ err }, 'Erro ao desconectar Prisma'));
+
       await Promise.allSettled([
         withTimeout(connection.quit(), 2000).catch(() => connection.disconnect()),
-        withTimeout(rateLimiterConnection.quit(), 2000).catch(() => rateLimiterConnection.disconnect()),
+        withTimeout(rateLimiterConnection.quit(), 2000).catch(() =>
+          rateLimiterConnection.disconnect(),
+        ),
         withTimeout(cacheConnection.quit(), 2000).catch(() => cacheConnection.disconnect()),
       ]);
     })();

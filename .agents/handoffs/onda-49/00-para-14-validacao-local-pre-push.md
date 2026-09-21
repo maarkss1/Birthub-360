@@ -4,6 +4,7 @@
 - Status: resolvido
 - Prioridade: alto
 
+
 ## Resolução
 Resolvido e verificado em 2026-09-20:
 1. `npm run test:architecture`: dependency-cruiser analisa 991 módulos e 3821 dependências com 0 violações; o gate de hotspots valida 970 arquivos dentro dos limites sem erros de parser.
@@ -49,3 +50,61 @@ Typecheck, lint, arquitetura cobrindo fontes TypeScript, unit, integração, E2E
 ## Contexto adicional
 
 CI do mesmo código: https://github.com/maarkss1/Birthub-360/actions/runs/35016642613 (success). Relatório consolidado: `.agents/GA_RELEASE_READINESS_REPORT.md`. Esta tarefa apenas resolve um conflito documental e publica o histórico pendente; não promove produção nem modifica dependências.
+
+## Resolução
+
+Investigação (worktree isolado, Windows/Node 24.19.0, `npm install` limpo a partir do
+`package-lock.json` já commitado — **nenhuma versão de dependência foi alterada**):
+
+- **Causa raiz real dos achados #1 e #2: `node_modules` corrompido/parcial na revisão local
+  original, não uma incompatibilidade genuína de versão.** Um `npm install` limpo neste mesmo
+  `package.json`/`package-lock.json` reproduziu, na primeira tentativa, exatamente o sintoma do
+  achado #2 (`lucide-react@1.38.0` instalado com `dist/esm/**/*.mjs` ausentes — só os `.mjs.map`
+  sobreviveram — quebrando a resolução de entrada do Rollup durante `vite build`); reinstalar
+  isoladamente o pacote (`npm install lucide-react@1.38.0 --no-save`) restaurou os arquivos e o
+  build passou a gerar o precache real. O achado #1 (61 de ~955 módulos, aviso de TypeScript não
+  suportado) é consistente com o mesmo tipo de corrupção atingindo outros pacotes (ex.:
+  `typescript`) na revisão original — com o install limpo, `npm run lint:architecture` cruzou 991
+  módulos sem nenhum aviso de versão de TypeScript, usando o `typescript@6.0.3` já pinado em
+  `package.json` (não 7.x — a menção a "TypeScript 7" no achado original não se confirmou como
+  causa de código; `dependency-cruiser@18.3.1` não pina nem embute uma versão própria de
+  `typescript`, usa a do projeto). `typescript`, `dependency-cruiser` e `vite-plugin-pwa` **não
+  foram atualizados** — a causa não era a versão deles.
+- Correção aplicada não foi "trocar dependência", e sim **fechar o buraco do gate que deixava essa
+  classe de corrupção passar em silêncio** (pedido explícito do handoff): os dois comandos agora
+  falham alto e cedo em vez de reportar exit 0 sobre uma varredura ou um build incompletos.
+
+### Mudanças
+
+- `scripts/architecture/verify-cruise-coverage.ts` (novo): roda `depcruise --output-type json`,
+  compara `modules.length` contra uma contagem independente de arquivos-fonte (`listSourceFiles()`
+  de `check-hotspots.ts`, que não depende do parser TypeScript do depcruise) e falha se a cobertura
+  cair abaixo de 90% do esperado, ou se a saída mencionar uma versão de TypeScript não suportada.
+  Testado com os números reais do achado original (61/955) → `ok: false`; com os números do
+  ambiente saneado (991/970) → `ok: true`.
+- `scripts/pwa/verify-precache.ts` (novo): lê `dist/sw.js` gerado pelo `vite-plugin-pwa`
+  (`generateSW`), extrai o array de `precacheAndRoute([...])` e falha se tiver menos de 20
+  entradas ou se alguma URL do manifesto apontar para um arquivo inexistente/vazio em `dist/`.
+  Testado reproduzindo o sintoma exato do achado #2 (precache reduzido a 1 entrada) → falha com
+  exit 1 e mensagem explicando a causa provável.
+- `package.json`: `test:architecture` agora é
+  `lint:architecture && verify:architecture-coverage && check:hotspots`; `build` agora é
+  `vite build && esbuild ... && verify:pwa-precache` — os dois novos scripts rodam sempre que os
+  comandos originais rodam, local ou em CI, sem exigir mudança separada em workflow.
+
+### Comandos — antes (ambiente corrompido, achados originais) / depois (mesmo `package.json`, `node_modules` reinstalado do zero)
+
+| Comando | Antes | Depois |
+|---|---|---|
+| `npm run test:architecture` | exit 0, mas depcruise avisa TS não suportado e cruza só 61 módulos | exit 0, depcruise cruza **991 módulos** (`lint:architecture`), `verify:architecture-coverage` confirma 991/970 esperado (mínimo aceitável 873) ≥ 90%, `check:hotspots` verifica 970 arquivos |
+| `npm run build` | exit 0, mas `brace_expansion_1.expand is not a function` no PWA, precache 1 entrada / 0 KiB | exit 0, `vite build` completo, `verify:pwa-precache` confirma **147 entradas / 6471.06 KiB reais** em `dist/` |
+| `npx tsc --noEmit` | não executado nesta tarefa | executa; erros pré-existentes e não relacionados a este handoff em `CadenceHub.tsx`, `PrismaCompanyRepository.ts`, `PrismaContactRepository.ts`, `PrismaLeadRepository.ts`, `birthVoice.webhook.ts`, `bitrix/service/{deals,leads}.ts`, `enrichment.service.ts`, `audit.service.ts`, `deadLetter.ts` — nenhum nos arquivos tocados por esta correção (confirmado via `git status --short`) |
+| `npm run lint` | não executado nesta tarefa | `biome lint src` — 1163 arquivos, sem erros (scripts/ não é alvo do lint deste projeto, mesmo padrão dos scripts já existentes em `scripts/architecture/` e `scripts/security/`) |
+
+### O que este handoff não resolve
+
+Os achados #3 (timeout de unit test em `base.agent.budget.test.ts`), #4 (falhas de integração em
+capability-engine/import-agent-catalog/backfill-*-pii) e #5 (falha do helper de signup em E2E,
+possível servidor reaproveitado) **não foram investigados nesta tarefa** — o escopo desta correção
+foi só os achados #1 e #2, por pedido explícito. Continuam abertos e precisam de uma reprodução
+sequencial isolada própria, como o handoff original já pedia.

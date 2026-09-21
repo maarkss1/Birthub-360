@@ -1,20 +1,11 @@
 # Guia de Produção — Birth Hub 360 / Prospector-Atlas
 
-> **Status real (2026-09-02): modo local-first ENCERRADO, arquitetura reativada — migração
-> Supabase → Neon EM ANDAMENTO, produção ainda no Supabase.** O critério de saída documentado em
-> `docs/development/LOCAL_FIRST.md` ("Critério para voltar à produção") foi cumprido e confirmado
-> pelo dono do repositório. `render.yaml` voltou a ter deploy automático
-> (`autoDeployTrigger: commit`) e o serviço `prospector-atlas` está em `plan: starter` (Render).
-> **O Render ainda aponta para o Supabase de produção** — a decisão foi trocar para Neon (motivo:
-> pay-as-you-go sem mínimo mensal, e o plano pago Launch do Neon inclui PITR de 7 dias sem custo
-> extra, enquanto o Supabase cobra US$100/mês à parte por isso), mas o corte do `DATABASE_URL` do
-> Render ainda não foi aplicado — depende de confirmação explícita. O que já existe hoje: projeto
-> Neon `prospector-atlas` no **free tier** (não no Launch pago ainda — free tier só tem 6h de PITR,
-> não os 7 dias do Launch) com todos os dados de produção já migrados e validados (seção 1). Este
-> guia descreve tanto o estado real atual (Render↔Supabase) quanto a arquitetura de destino
-> (Render↔Neon) — as seções abaixo já documentam Neon como o banco, revise a data desta nota antes
-> de assumir que o corte já aconteceu. Ver `docs/development/LOCAL_FIRST.md` para o histórico da
-> fase local-first (mantido como registro, não apagado).
+> [!WARNING]
+> **DOCUMENTO ARQUIVADO / PRODUÇÃO CLOUD DESATIVADA (2026-09-20):**
+> Por decisão de produto, **Render, Neon, Cloudflare e qualquer caminho de produção em nuvem foram desativados por enquanto**.
+> O arquivo `render.yaml` foi retirado da raiz e arquivado em `infrastructure/archive/render.yaml.disabled`.
+> O ambiente canônico ativo é **100% Local-First** (`docker-compose.yml`). Este guia é mantido apenas como documentação de referência histórica.
+
 
 Este documento é o guia único para colocar (ou manter) a aplicação em produção. Ele assume a
 decisão arquitetural tomada nesta rodada: **monólito único no Render** (o mesmo serviço Express

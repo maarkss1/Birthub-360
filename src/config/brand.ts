@@ -41,23 +41,28 @@ export const BRAND = {
     brand: '#D4AF37',
     /** Gold Soft — segundo ponto da rampa metálica do logotipo; também o --ink do tema escuro. */
     brandAccent: '#F0D77B',
-    /** Deep Navy — âncora do tema escuro (substitui Obsidian/Midnight; nunca preto puro, 09/2026). */
-    obsidian: '#061A3A',
-    /** Alias de `obsidian` para código legado que ainda lê `midnight` — mesmo valor. */
-    midnight: '#061A3A',
-    /** Deep Iris — "roxo" da paleta. Upgrade 09/2026, mais vívido. */
-    iris: '#7C3AED',
-    /** Orbit Blue — "azul" da paleta. Upgrade 09/2026, mais vívido. */
+    /** Midnight Blue — Primária: âncora profunda (#0B132B). */
+    obsidian: '#0B132B',
+    /** Midnight Blue (#0B132B). */
+    midnight: '#0B132B',
+    /** Sunset Orange — Primária (#FF5841). */
+    sunsetOrange: '#FF5841',
+    /** Red-Violet — Primária (#C53678). */
+    redViolet: '#C53678',
+    /** White — Neutro (#FFFFFF). */
+    white: '#FFFFFF',
+    /** Deep Iris — "roxo" da paleta. */
+    iris: '#C53678',
+    /** Orbit Blue — "azul" da paleta. */
     orbitBlue: '#1677FF',
-    /** "Vermelho" da paleta — novo em 09/2026. */
-    red: '#FF3158',
-    /** "Rosa" da paleta — novo em 09/2026, quinta cor. */
-    pink: '#FF4FA3',
-    /** Alias de `blossom` para código legado que ainda lê `snow` — âncora do tema claro agora é
-     *  rosada, nunca branco puro (ver `blossom` abaixo). */
-    snow: '#FFF4F9',
-    /** Blossom White — âncora do tema claro (substitui Snow White, 09/2026). */
-    blossom: '#FFF4F9',
+    /** "Vermelho" da paleta / Sunset Orange. */
+    red: '#FF5841',
+    /** "Rosa" da paleta / Red-Violet. */
+    pink: '#C53678',
+    /** Alias de `blossom` para código legado. */
+    snow: '#FFFFFF',
+    /** White neutro da paleta. */
+    blossom: '#FFFFFF',
   },
   /**
    * Canais de atendimento exibidos na tela de entrada (`WelcomeScreen`).

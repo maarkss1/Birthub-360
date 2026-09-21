@@ -196,6 +196,33 @@ describe('AI gateway', () => {
     }
   });
 
+  it('rejeita embedding do provedor gateway com dimensão diferente de 768 (RAG-003)', async () => {
+    // Mesma guarda existente em local-embeddings.ts (EMBEDDING_DIMENSIONS === 768): a coluna é
+    // vector(768), então um provedor gateway que devolva outra dimensão (ex.: 1536 do
+    // text-embedding-3-small da OpenAI) precisa falhar aqui em vez de estourar sem tratamento
+    // no INSERT do pgvector.
+    const anterior = process.env.EMBEDDINGS_PROVIDER;
+    process.env.EMBEDDINGS_PROVIDER = 'gateway';
+    try {
+      const wrongDimensionEmbedding = new Array(1536).fill(0.01);
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          jsonResponse({
+            data: [{ embedding: wrongDimensionEmbedding }],
+          }),
+        ),
+      );
+
+      await expect(generateEmbedding('conteúdo com dimensão errada')).rejects.toThrow(
+        'devolveu 1536 dimensões, mas a coluna espera 768',
+      );
+    } finally {
+      if (anterior === undefined) delete process.env.EMBEDDINGS_PROVIDER;
+      else process.env.EMBEDDINGS_PROVIDER = anterior;
+    }
+  });
+
   it('usa o modelo local por padrão, sem tocar na rede', async () => {
     const anterior = process.env.EMBEDDINGS_PROVIDER;
     delete process.env.EMBEDDINGS_PROVIDER;

@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // aqui precisa resetar o registro de módulos e reimportar src/config/env.ts com `process.env`
 // controlado. Mesmo padrão de teste de "boot" já usado para outro módulo de bootstrap em
 // tests/unit/bootstrap/security.test.ts (`loadSecurityModule`).
+vi.mock('dotenv/config', () => ({}));
 vi.mock('../../../src/lib/logger.js', () => ({
   logger: {
     error: vi.fn(),

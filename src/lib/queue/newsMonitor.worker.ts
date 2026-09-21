@@ -10,6 +10,7 @@ import { requestContext } from '../async-context.js';
 import { logger } from '../logger.js';
 import { prisma } from '../prisma.js';
 import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { registerQueueForMetrics } from './metrics.js';
 import { connection } from './redis.js';
 
 /**
@@ -34,6 +35,7 @@ import { connection } from './redis.js';
 export const NEWS_MONITOR_QUEUE = 'news-monitor';
 export const newsMonitorQueue = new Queue(NEWS_MONITOR_QUEUE, { connection });
 newsMonitorQueue.on('error', (err) => logger.warn({ err }, 'NewsMonitorQueue offline'));
+registerQueueForMetrics(NEWS_MONITOR_QUEUE, newsMonitorQueue);
 
 const SCAN_INTERVAL_CRON = '0 8 * * *';
 const MAX_COMPANIES_PER_SCAN = 500;

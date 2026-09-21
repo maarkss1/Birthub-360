@@ -28,10 +28,10 @@ import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../..
 
 // Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
 // o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
-const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'orbit-blue' | 'iris' }[] = [
+const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'sunset' | 'red-violet' }[] = [
   { icon: Building2, accent: 'brand' },
-  { icon: ListChecks, accent: 'orbit-blue' },
-  { icon: Sparkles, accent: 'iris' },
+  { icon: ListChecks, accent: 'sunset' },
+  { icon: Sparkles, accent: 'red-violet' },
   { icon: LayoutGrid, accent: 'brand' },
 ];
 

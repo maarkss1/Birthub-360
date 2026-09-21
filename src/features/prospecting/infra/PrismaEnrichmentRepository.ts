@@ -12,7 +12,9 @@ export class PrismaEnrichmentRepository implements IEnrichmentRepository {
     return prisma.company.update({ where: { id }, data });
   }
 
-  async findContactsEmailsAndPhones(companyId: string): Promise<Pick<Contact, 'email' | 'phone'>[]> {
+  async findContactsEmailsAndPhones(
+    companyId: string,
+  ): Promise<Pick<Contact, 'email' | 'phone'>[]> {
     return prisma.contact.findMany({ where: { companyId }, select: { email: true, phone: true } });
   }
 
@@ -22,7 +24,9 @@ export class PrismaEnrichmentRepository implements IEnrichmentRepository {
     return res.count;
   }
 
-  async createEnrichmentLog(data: Prisma.EnrichmentLogUncheckedCreateInput): Promise<EnrichmentLog> {
+  async createEnrichmentLog(
+    data: Prisma.EnrichmentLogUncheckedCreateInput,
+  ): Promise<EnrichmentLog> {
     return prisma.enrichmentLog.create({ data });
   }
 }

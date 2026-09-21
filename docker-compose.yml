@@ -52,7 +52,7 @@ services:
   # MINIO_ROOT_USER/MINIO_ROOT_PASSWORD num .env não versionado fora da máquina local. TLS não é
   # configurado aqui de propósito (uso local/dev); não reusar este compose como está para produção.
   minio:
-    image: minio/minio:latest
+    image: quay.io/minio/minio:latest
     container_name: birthhub_minio
     command: server /data --console-address ":9001"
     environment:
@@ -74,7 +74,7 @@ services:
 
   # Cria o bucket esperado pela aplicação de forma idempotente após o MinIO responder.
   minio-init:
-    image: minio/mc:latest
+    image: quay.io/minio/mc:latest
     container_name: birthhub_minio_init
     depends_on:
       minio:

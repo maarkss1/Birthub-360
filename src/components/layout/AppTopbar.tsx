@@ -78,7 +78,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2.5 border-b border-line bg-surface-elevated/92 px-3 shadow-card backdrop-blur-xl sm:px-5">
+    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2.5 border-b border-line bg-surface-elevated/96 px-3 shadow-xs backdrop-blur-xl sm:px-5">
       <button
         type="button"
         onClick={onOpenMobileNav}
@@ -101,7 +101,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
       )}
 
       <div className="flex min-w-0 items-center gap-2">
-        <div className="grid h-8 w-8 place-items-center rounded-control border border-brand/20 bg-brand/10">
+        <div className="grid h-8 w-8 place-items-center rounded-control border border-brand/15 bg-brand/8">
           <Icon className="h-4 w-4 shrink-0 text-brand-ink dark:text-brand" />
         </div>
         <h1 className="truncate font-display text-sm font-semibold text-ink">{meta.label}</h1>
@@ -113,10 +113,10 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
           SoundFX.play('focus');
           window.dispatchEvent(new Event(OPEN_COMMAND_PALETTE_EVENT));
         }}
-        className="group ml-3 hidden max-w-md flex-1 items-center gap-2 rounded-control border border-line bg-surface-subtle px-3 py-2 text-ink-2 transition-[border-color,box-shadow,color] hover:border-brand/35 hover:text-ink hover:shadow-sm lg:flex"
+        className="group ml-3 hidden max-w-md flex-1 items-center gap-2 rounded-control border border-line bg-surface-subtle px-3 py-2 text-ink-2 transition-[border-color,box-shadow,color] hover:border-brand/30 hover:text-ink hover:shadow-sm lg:flex"
       >
         <Search className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-        <span className="text-xs">Buscar empresa, decisor ou comando…</span>
+        <span className="text-xs">Command Search: companies, insights, actions…</span>
         <kbd className="ml-auto rounded-md border border-line bg-surface px-1.5 py-0.5 text-[9px] font-semibold text-ink-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
           ⌘K
         </kbd>
@@ -124,7 +124,9 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
 
       <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
         <div className="hidden text-right leading-tight sm:block">
-          <p className="text-[11px] font-medium capitalize text-ink-2">{dateLabel}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-ink-2/70">
+            {dateLabel}
+          </p>
           <p className="text-sm font-bold text-ink [font-variant-numeric:tabular-nums]">
             {timeLabel}
           </p>
@@ -148,7 +150,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
           onClick={toggleSound}
           className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
             soundEnabled
-              ? 'border-brand/20 bg-brand/10 text-brand-ink dark:text-brand'
+              ? 'border-brand/15 bg-brand/8 text-brand-ink dark:text-brand'
               : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
           }`}
           aria-pressed={soundEnabled}
@@ -181,7 +183,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         </button>
 
         <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-on-brand shadow-card ring-1 ring-white/10"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-on-brand shadow-sm ring-1 ring-white/10"
           title={`${currentUser?.name || 'Usuário'} (${currentUser?.roleTitle || currentUser?.role || ''})`}
         >
           {userInitial}
@@ -190,7 +192,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         <button
           type="button"
           onClick={logout}
-          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-rose-500/20 hover:bg-rose-500/10 hover:text-rose-500 active:translate-y-0"
+          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-critical/20 hover:bg-critical/10 hover:text-critical active:translate-y-0"
           aria-label="Sair da conta"
           title="Sair da conta"
         >
