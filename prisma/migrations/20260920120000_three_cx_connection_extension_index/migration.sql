@@ -1,0 +1,20 @@
+-- INTEGRATION-004 (docs/audits/repository-debt-audit/agents/INTEGRATION.md): índice composto de
+-- apoio à busca por ramal que `resolveConnectionByExtension` (src/features/integrations/threecx/
+-- threecx.service.ts) executa uma vez por organização (dentro do contexto de tenant de cada uma,
+-- via RLS) a cada webhook do 3CX recebido. A query real, sob RLS, é
+-- `WHERE organizationId = $1 AND extension = $2` — antes desta migration só existia o índice em
+-- organizationId sozinho (20260814120000_three_cx_connection), então o planner precisava
+-- descartar linhas de outros ramais na mesma organização em vez de já chegar direto na linha
+-- certa via índice.
+--
+-- Isto NÃO elimina o custo O(n) de organizações do scan cross-tenant em si (uma query por
+-- organização continua acontecendo) — só torna cada uma dessas N queries indexada em vez de
+-- varrer as linhas da organização em memória. Eliminar o N em si exigiria uma de duas coisas fora
+-- do escopo desta migration: (a) reabrir uma cláusula de bypass de RLS na policy desta tabela,
+-- decisão de segurança P0 já fechada deliberadamente em
+-- 20260825120000_scope_rls_bypass_to_bootstrap_allowlist (ThreeCXConnection não está no allowlist
+-- de bypass por design — reabrir aqui reintroduziria a superfície de leitura cross-tenant que
+-- aquela migration fechou), ou (b) migrar o webhook do 3CX para um identificador de conexão no
+-- path da URL (mesmo padrão já usado pelo Bitrix, `bitrix.webhook.ts`), que exige mudança de rota
+-- além de schema. Aditiva e sem risco de dado: só cria um índice novo, não toca em RLS/policy.
+CREATE INDEX "ThreeCXConnection_organizationId_extension_idx" ON "ThreeCXConnection"("organizationId", "extension");

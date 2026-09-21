@@ -14,7 +14,8 @@ export type AuditAction =
   | 'API_KEY_CREATED'
   | 'WORKFLOW_EXECUTED'
   | 'AGENT_EXECUTED'
-  | 'INTEGRATION_CONNECTED';
+  | 'INTEGRATION_CONNECTED'
+  | 'INTEGRATION_EVENT_DISCARDED';
 
 export interface AuditLogParams {
   action: AuditAction;

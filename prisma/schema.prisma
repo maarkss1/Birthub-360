@@ -2793,6 +2793,15 @@ model ThreeCXConnection {
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
+  /// INTEGRATION-004 (docs/audits/repository-debt-audit/agents/INTEGRATION.md): índice composto
+  /// para a busca por ramal que `resolveConnectionByExtension` (threecx.service.ts) faz dentro do
+  /// contexto de tenant de cada organização (RLS já reduz a query real a
+  /// `WHERE organizationId = $1 AND extension = $2`) — sem isto, o planner só tinha o índice de
+  /// organizationId sozinho para apoiar metade do predicado. Não elimina o scan cross-tenant em
+  /// si (isso exigiria reabrir bypass de RLS nesta tabela, decisão de segurança P0 já fechada em
+  /// 20260825120000_scope_rls_bypass_to_bootstrap_allowlist — não revertida aqui), só torna cada
+  /// uma das N queries por organização mais barata.
+  @@index([organizationId, extension])
 }
 
 /// Conexão com o Birth Voices Hub (SDR de voz por IA) por organização — antes desta tabela, a
