@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, BarChart3, Download, Loader2, RefreshCw, Table2 } from 'lucide-react';
+import { AlertTriangle, BarChart3, Download, Flame, Loader2, RefreshCw, Table2, TrendingUp, TrendingDown } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { BarChart, LineChart } from '../../../components/charts';
 import { Button } from '../../../components/ui/Button';
@@ -19,16 +19,20 @@ import {
   TmqTile,
 } from './DashboardExtensions';
 
-function StatTile({
+function DecisionInstrument({
   label,
   value,
+  previousValue,
   hint,
   tone,
+  target,
 }: {
   label: string;
   value: string;
+  previousValue?: string;
   hint?: string;
-  tone?: 'good' | 'critical';
+  tone?: 'good' | 'critical' | 'neutral';
+  target?: string;
 }) {
   const toneClass =
     tone === 'good'
@@ -36,12 +40,37 @@ function StatTile({
       : tone === 'critical'
         ? 'text-critical'
         : 'text-ink';
+  
+  const trend = previousValue && (
+    <div className="flex items-center gap-1 text-[10px] font-semibold">
+      {tone === 'good' ? (
+        <>
+          <TrendingUp className="w-3 h-3" />
+          <span className="text-success-active">Tendência positiva</span>
+        </>
+      ) : tone === 'critical' ? (
+        <>
+          <TrendingDown className="w-3 h-3" />
+          <span className="text-critical">Atenção necessária</span>
+        </>
+      ) : (
+        <span className="text-ink-2/60">Estável</span>
+      )}
+    </div>
+  );
+
   return (
-    <Card variant="stat" padding="sm">
-      <p className="text-[11px] uppercase tracking-wide text-ink-2 font-semibold">{label}</p>
-      {/* Figuras proporcionais (sem tabular-nums) em número de destaque, conforme o guia. */}
-      <p className={`text-2xl font-black mt-1 ${toneClass}`}>{value}</p>
-      {hint && <p className="text-[11px] text-ink-2 mt-0.5">{hint}</p>}
+    <Card variant="stat" padding="sm" className="relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-16 h-16 bg-brand/5 rounded-bl-full pointer-events-none" />
+      <div className="relative z-10">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2/70">{label}</p>
+        <p className={`text-2xl lg:text-3xl font-black mt-1 ${toneClass}`}>{value}</p>
+        {target && (
+          <p className="text-[10px] text-ink-2/60 mt-0.5">Meta: {target}</p>
+        )}
+        {trend && <div className="mt-1">{trend}</div>}
+        {hint && <p className="text-[10px] text-ink-2/60 mt-1">{hint}</p>}
+      </div>
     </Card>
   );
 }
@@ -85,9 +114,10 @@ function TableTwin({
   );
 }
 
-function ChartCard({
+function DecisionInstrumentCard({
   title,
   subtitle,
+  insight,
   children,
   tableHeaders,
   tableRows,
@@ -95,6 +125,7 @@ function ChartCard({
 }: {
   title: string;
   subtitle?: string;
+  insight?: string;
   children: React.ReactNode;
   tableHeaders: string[];
   tableRows: Array<Array<string | number>>;
@@ -104,9 +135,17 @@ function ChartCard({
   return (
     <Card padding="sm" className={className}>
       <div className="flex items-start justify-between gap-3 mb-3">
-        <div>
+        <div className="flex-1">
           <h3 className="text-sm font-bold text-ink">{title}</h3>
-          {subtitle && <p className="text-[11px] text-ink-2">{subtitle}</p>}
+          {subtitle && <p className="text-[11px] text-ink-2/70">{subtitle}</p>}
+          {insight && (
+            <div className="mt-2 p-2 rounded-lg bg-red-violet/5 border border-red-violet/10">
+              <p className="text-[10px] text-red-violet font-medium flex items-center gap-1">
+                <Flame className="w-3 h-3" />
+                {insight}
+              </p>
+            </div>
+          )}
         </div>
         <button
           type="button"
@@ -156,8 +195,8 @@ export function Analytics() {
       <div className="bh-page bh-page-stack max-w-7xl">
         {/* Cabeçalho + filtro único acima de tudo que ele afeta */}
         <PageHeader
-          title="Analytics"
-          subtitle="Situação, tendência e risco da operação comercial"
+          title="Analytics Avançado"
+          subtitle="Instrumentos de decisão para operação comercial"
           icon={<BarChart3 className="h-5 w-5" />}
           actions={
             <>
@@ -244,48 +283,58 @@ export function Analytics() {
             transition={{ duration: 0.4 }}
             className="space-y-6"
           >
-            {/* Indicadores de topo */}
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
-              <StatTile label="Leads em aberto" value={String(data.overview.totalLeads)} />
-              <StatTile
-                label="Conversão"
-                value={`${data.overview.conversionRate.toFixed(1)}%`}
-                hint="ganhos sobre o total já criado"
+            {/* Decision Instruments - Top Level KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+              <DecisionInstrument 
+                label="Leads em aberto" 
+                value={String(data.overview.totalLeads)}
+                hint="Volume atual do pipeline"
               />
-              <StatTile
+              <DecisionInstrument
+                label="Taxa de Conversão"
+                value={`${data.overview.conversionRate.toFixed(1)}%`}
+                hint="Ganhos sobre total criado"
+                tone={data.overview.conversionRate >= 20 ? 'good' : data.overview.conversionRate < 10 ? 'critical' : 'neutral'}
+                target="≥20%"
+              />
+              <DecisionInstrument
                 label="Ganhos no mês"
                 value={String(data.overview.closedThisMonth)}
                 tone="good"
+                hint="Negócios fechados"
               />
-              <StatTile
+              <DecisionInstrument
                 label="Perdidos no mês"
                 value={String(data.overview.lostThisMonth)}
-                tone={data.overview.lostThisMonth > 0 ? 'critical' : undefined}
+                tone={data.overview.lostThisMonth > 0 ? 'critical' : 'neutral'}
+                hint="Oportunidades perdidas"
               />
-              <StatTile
+              <DecisionInstrument
                 label="Atividades atrasadas"
                 value={String(data.overview.overdueActivities)}
                 hint={`${data.overview.pendingActivities} pendentes no total`}
-                tone={data.overview.overdueActivities > 0 ? 'critical' : undefined}
+                tone={data.overview.overdueActivities > 0 ? 'critical' : 'good'}
               />
-              <StatTile
+              <DecisionInstrument
                 label="TMQ (dias)"
                 value={data.tmqMetric != null ? data.tmqMetric.toFixed(1) : '—'}
-                hint="tempo médio para qualificar"
+                hint="Tempo médio para qualificar"
                 tone={
                   data.tmqMetric != null && data.tmqMetric <= 3
                     ? 'good'
                     : data.tmqMetric != null && data.tmqMetric > 7
                       ? 'critical'
-                      : undefined
+                      : 'neutral'
                 }
+                target="≤3 dias"
               />
             </div>
 
-            {/* Funil */}
-            <ChartCard
-              title="Funil comercial"
-              subtitle="Leads que alcançaram cada etapa (acumulado)"
+            {/* Funil Comercial - Decision Instrument */}
+            <DecisionInstrumentCard
+              title="Funil Comercial"
+              subtitle="Análise de conversão por etapa"
+              insight="Identificar gargalos de conversão em cada etapa do processo"
               tableHeaders={['Etapa', 'Leads', 'Conversão da etapa anterior']}
               tableRows={data.funnel.map((s) => [
                 s.label,
@@ -306,12 +355,13 @@ export function Analytics() {
                   ],
                 }}
               />
-            </ChartCard>
+            </DecisionInstrumentCard>
 
-            {/* Evolução mensal — único gráfico multi-série, com legenda */}
-            <ChartCard
-              title="Evolução mensal"
-              subtitle="Leads criados, ganhos e perdidos"
+            {/* Evolução Mensal - Decision Instrument */}
+            <DecisionInstrumentCard
+              title="Evolução Mensal"
+              subtitle="Tendência de criação, fechamento e perda"
+              insight="Monitorar consistência de performance ao longo do tempo"
               tableHeaders={['Mês', 'Criados', 'Ganhos', 'Perdidos']}
               tableRows={monthlyData.map((p) => [p.label, p.created, p.won, p.lost])}
             >
@@ -326,12 +376,13 @@ export function Analytics() {
                   ],
                 }}
               />
-            </ChartCard>
+            </DecisionInstrumentCard>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Uma medida só por gráfico -> uma cor só */}
-              <ChartCard
-                title="Atividades por tipo"
+              {/* Decision Instruments - Activity Analysis */}
+              <DecisionInstrumentCard
+                title="Atividades por Tipo"
+                insight="Identificar tipos de atividades mais produtivos"
                 tableHeaders={['Tipo', 'Quantidade']}
                 tableRows={data.activitiesByType.map((s) => [s.label, s.count])}
               >
@@ -347,12 +398,11 @@ export function Analytics() {
                     ],
                   }}
                 />
-              </ChartCard>
+              </DecisionInstrumentCard>
 
-              {/* Buscado pela API mas nunca exibido antes desta sessão (achado do Piloto 009) —
-                  mesma receita de "Atividades por tipo" acima, uma medida só, uma cor só. */}
-              <ChartCard
-                title="Atividades por status"
+              <DecisionInstrumentCard
+                title="Atividades por Status"
+                insight="Monitorar eficiência de execução de atividades"
                 tableHeaders={['Status', 'Quantidade']}
                 tableRows={data.activitiesByStatus.map((s) => [s.label, s.count])}
               >
@@ -368,11 +418,12 @@ export function Analytics() {
                     ],
                   }}
                 />
-              </ChartCard>
+              </DecisionInstrumentCard>
 
-              <ChartCard
-                title="Ranking por responsável"
+              <DecisionInstrumentCard
+                title="Ranking por Responsável"
                 subtitle="Top 10 por volume de leads"
+                insight="Identificar performers e oportunidades de coaching"
                 tableHeaders={['Responsável', 'Leads', 'Ganhos']}
                 tableRows={data.byOwner.map((o) => [o.label, o.count, o.won])}
               >
@@ -389,10 +440,11 @@ export function Analytics() {
                     ],
                   }}
                 />
-              </ChartCard>
+              </DecisionInstrumentCard>
 
-              <ChartCard
-                title="Temperatura dos leads"
+              <DecisionInstrumentCard
+                title="Temperatura dos Leads"
+                insight="Qualificar leads quentes vs frios para priorização"
                 tableHeaders={['Temperatura', 'Leads']}
                 tableRows={data.byTemperature.map((s) => [s.label, s.count])}
               >
@@ -408,10 +460,11 @@ export function Analytics() {
                     ],
                   }}
                 />
-              </ChartCard>
+              </DecisionInstrumentCard>
 
-              <ChartCard
-                title="Origem dos leads"
+              <DecisionInstrumentCard
+                title="Origem dos Leads"
+                insight="Avaliar qualidade de canais de aquisição"
                 tableHeaders={['Origem', 'Leads']}
                 tableRows={data.bySource.map((s) => [s.label, s.count])}
               >
@@ -428,16 +481,15 @@ export function Analytics() {
                     ],
                   }}
                 />
-              </ChartCard>
+              </DecisionInstrumentCard>
             </div>
 
-            {/* ── Widgets de segunda camada ── */}
+            {/* ── Decision Instruments de Segunda Camada ── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Heatmap de Ligações — ocupa 2 colunas. ChartCard dá a mesma tabela-gêmea dos
-                  outros 6 gráficos: a codificação por cor deixa de ser a única forma de acesso
-                  ao dado (achado real de acessibilidade, Piloto 009). */}
-              <ChartCard
+              {/* Heatmap de Ligações — Decision Instrument */}
+              <DecisionInstrumentCard
                 title="🔥 Mapa de Calor — Melhor Horário para Ligar"
+                insight="Otimizar horários de contato para máxima resposta"
                 className="lg:col-span-2"
                 tableHeaders={['Dia', 'Hora', 'Ligações']}
                 tableRows={data.callHeatmap
@@ -450,12 +502,13 @@ export function Analytics() {
                   ])}
               >
                 <HeatmapWidget data={data.callHeatmap} />
-              </ChartCard>
+              </DecisionInstrumentCard>
 
-              {/* TMQ */}
-              <Card padding="sm">
-                <h3 className="text-sm font-bold text-ink mb-2">⏱ Tempo Médio de Qualificação</h3>
-                <p className="text-[11px] text-ink-2 mb-3">
+              {/* TMQ - Decision Instrument */}
+              <Card padding="sm" className="relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-12 h-12 bg-brand/5 rounded-bl-full pointer-events-none" />
+                <h3 className="text-sm font-bold text-ink mb-1">⏱ Tempo Médio de Qualificação</h3>
+                <p className="text-[10px] text-ink-2/70 mb-3">
                   Do lead recebido até a primeira qualificação
                 </p>
                 <TmqTile value={data.tmqMetric} />
@@ -463,19 +516,21 @@ export function Analytics() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Performance IA vs Humanos */}
-              <Card padding="sm">
+              {/* Performance IA vs Humanos - Decision Instrument */}
+              <Card padding="sm" className="relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-12 h-12 bg-red-violet/5 rounded-bl-full pointer-events-none" />
                 <h3 className="text-sm font-bold text-ink mb-1">🤖 Performance: IA vs Humanos</h3>
-                <p className="text-[11px] text-ink-2 mb-3">
+                <p className="text-[10px] text-ink-2/70 mb-3">
                   Leads qualificados por responsável no período
                 </p>
                 <AgentPerformanceWidget data={data.performanceReport} />
               </Card>
 
-              {/* Motivos de Perda */}
-              <Card padding="sm">
+              {/* Motivos de Perda - Decision Instrument */}
+              <Card padding="sm" className="relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-12 h-12 bg-critical/5 rounded-bl-full pointer-events-none" />
                 <h3 className="text-sm font-bold text-ink mb-1">📉 Principais Motivos de Perda</h3>
-                <p className="text-[11px] text-ink-2 mb-3">
+                <p className="text-[10px] text-ink-2/70 mb-3">
                   Leads desqualificados/perdidos por motivo
                 </p>
                 <LostReasonsWidget data={data.lostReasons} />
