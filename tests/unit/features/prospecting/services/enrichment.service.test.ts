@@ -117,6 +117,11 @@ describe('enrichCompany', () => {
       async ({ data }: never) => ({ ...baseCompany, ...data }) as never,
     );
     vi.mocked(prisma.contact.findMany).mockResolvedValue([] as never);
+    // PrismaEnrichmentRepository.createContacts lê `res.count` do retorno real de
+    // `createMany` (mesma forma que o Prisma real devolve) — sem um valor default aqui, o mock
+    // sem configuração explícita resolve `undefined`, e `.count` explode antes de qualquer
+    // asserção do teste rodar.
+    vi.mocked(prisma.contact.createMany).mockResolvedValue({ count: 0 } as never);
     vi.mocked(prisma.enrichmentLog.create).mockResolvedValue({} as never);
     vi.mocked(enrichOrganizationByDomain).mockResolvedValue({ organization: null } as never);
     vi.mocked(enrichOrganizationWithContacts).mockResolvedValue({
@@ -336,6 +341,7 @@ describe('enrichCompany — cache de reenriquecimento (TTL, evita gastar crédit
       async ({ data }: never) => ({ ...baseCompany, ...data }) as never,
     );
     vi.mocked(prisma.contact.findMany).mockResolvedValue([] as never);
+    vi.mocked(prisma.contact.createMany).mockResolvedValue({ count: 0 } as never);
     vi.mocked(prisma.enrichmentLog.create).mockResolvedValue({} as never);
     vi.mocked(enrichOrganizationByDomain).mockResolvedValue({ organization: null } as never);
     vi.mocked(enrichOrganizationWithContacts).mockResolvedValue({

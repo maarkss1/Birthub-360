@@ -148,8 +148,9 @@ lint` script runs Biome).
 - TD-DOC: DOCBRAND-003, DOCBRAND-004, DOCBRAND-013, DOCBRAND-011.
 - TD-GOV + TD-MIGRATION: DOCBRAND-007.
 - TD-DEAD + TD-SEC + TD-GOV: DOCBRAND-006.
-- TD-BRAND + TD-TENANT + TD-PRODUCT: DOCBRAND-002, DOCBRAND-005.
-- TD-BRAND (cosmetic, no functional break): DOCBRAND-012.
+- TD-BRAND + TD-TENANT + TD-PRODUCT: DOCBRAND-002 (RESOLVED 2026-09-20), DOCBRAND-005 (RESOLVED
+  2026-09-20).
+- TD-BRAND (cosmetic, no functional break): DOCBRAND-012 (RESOLVED 2026-09-20).
 
 ## Implementation debt
 
@@ -161,11 +162,12 @@ automated test asserting `ModuleAccessGrant.moduleKey` values in migrations matc
 
 ## Feature debt
 
-DOCBRAND-002: the "Proposta Comercial" feature, as shipped, is not a generic proposal generator
-for "any company with a sales team" (the declared ICP) — it is AtlasGR's own GR/logistics
-insurance proposal catalog plus a two-brand ("cockpit-atlas" / "cockpit-totaltrac") cockpit
-switcher, wholesale. Any new tenant granted this module today receives a third party's business
-content, not their own.
+DOCBRAND-002 (as originally audited): the "Proposta Comercial" feature, as then shipped, was not
+a generic proposal generator for "any company with a sales team" (the declared ICP) — it was
+AtlasGR's own GR/logistics insurance proposal catalog plus a two-brand ("cockpit-atlas" /
+"cockpit-totaltrac") cockpit switcher, wholesale. Any new tenant granted this module received a
+third party's business content, not their own. **Update 2026-09-20:** the module was retired
+entirely (not generalized in place) — see the RESOLVED status above.
 
 ## Bugs
 
@@ -311,9 +313,24 @@ specific conflict as of this audit's snapshot.
 - **Severity:** HIGH
 - **Priority:** P1
 - **Confidence:** HIGH
-- **Status:** CONFIRMED
+- **Status:** RESOLVED (2026-09-20, verified during fix/docbrand-012) — `PropostaComercialHub.tsx`,
+  its `proposalsList` (GR/logistics/insurance templates and the named `Transpacheco` proposal),
+  the `cockpit-atlas`/`cockpit-totaltrac` tabs and the `'proposta-comercial'` `MODULE_CATALOG`
+  entry/route no longer exist in the working tree. They were retired wholesale (not tenant-gated,
+  not "generic-ified" — fully removed) in `b06ba649` ("aposenta módulos executivos proprietários
+  da Atlas GR") and `edcf6b0d` ("remove conteúdo estático dos módulos executivos aposentados"),
+  per the explicit user decision recorded in `src/config/module-catalog.ts`'s header comment
+  ("Atlas GR não é ninguém, não é nem mais pra existir"). `isModuleKey('proposta-comercial')` now
+  returns `false`, and `src/features/module-access/services/__tests__/moduleAccess.service.test.ts`
+  already asserts `grantModuleAccess` rejects the retired key; `src/config/__tests__/
+  module-catalog.test.ts` (added in the DOCBRAND-012 pass) additionally locks `MODULE_CATALOG`/
+  `EXTERNAL_LINKS` against reintroducing GR/logistics/insurance terminology or `*.atlasgr.com.br`
+  URLs. No proposal-generation feature remains in the product today — CRM 360's own
+  `PropostaForm.tsx`/`PropostaDetail.tsx`/`PropostasList.tsx` (a different, always-generic
+  quote/proposal entity, unrelated to this finding) were checked and contain no vertical-specific
+  copy. Original evidence below, kept for history — file:line citations are stale.
 - **Effort:** M
-- **Evidence:**
+- **Evidence (historical — files removed):**
   - `src/features/propostas/components/PropostaComercialHub.tsx` lines 7-9, 69-76: tab state type
     `'selecao' | 'modelos' | 'cockpit-atlas' | 'cockpit-totaltrac'`; iframe `src` resolves to
     `/tools/portal-comercial/cockpit.html` or `/tools/portal-comercial/totaltrac-cockpit.html`
@@ -415,9 +432,19 @@ specific conflict as of this audit's snapshot.
 - **Severity:** MEDIUM
 - **Priority:** P2
 - **Confidence:** HIGH
-- **Status:** CONFIRMED
+- **Status:** RESOLVED (2026-09-20, verified during fix/docbrand-012) — `EXTERNAL_LINKS` in the
+  current `src/config/module-catalog.ts` contains only `gmail` (`mail.google.com`) and `workspace`
+  (`drive.google.com`); none of the `*.atlasgr.com.br`/`atlasgr.bitrix24.com.br` URLs cited below
+  remain. This appears to have been generalized in the same rebrand pass that retired the
+  `proposta-comercial`/`treinamento-atlasgr` modules (see DOCBRAND-002), though no single commit
+  message calls out `EXTERNAL_LINKS` by name — verified directly against the working tree, not
+  inferred from history. Note: `.claude/CLAUDE.md` §13 still describes "os atalhos de
+  `EXTERNAL_LINKS` apontam para sistemas de terceiros da operação" as a live constraint requiring
+  coordination to change; that sentence is now stale relative to this file and worth a follow-up
+  doc fix, but is out of scope for this pass (code-only, per task scope). `src/config/__tests__/
+  module-catalog.test.ts` now asserts no `atlasgr` domain can be reintroduced into `EXTERNAL_LINKS`.
 - **Effort:** M
-- **Evidence:** `src/config/module-catalog.ts` `EXTERNAL_LINKS`: `url:
+- **Evidence (historical — URLs no longer present):** `url:
   'https://connect.atlasgr.com.br/portalatlas/Atlas_Principal.php'`,
   `'https://newconnect.atlasgr.com.br/dashboard'`,
   `'https://perfil-securitario.atlasgr.com.br/report/recentRecords'`,
@@ -585,15 +612,27 @@ specific conflict as of this audit's snapshot.
 - **Severity:** LOW
 - **Priority:** P3
 - **Confidence:** HIGH
-- **Status:** CONFIRMED
+- **Status:** RESOLVED (2026-09-20, verified during fix/docbrand-012) — `public/tools/` today
+  contains only `social-selling/`; `public/tools/treinamento-atlasgr/` and
+  `public/tools/portal-comercial/` (and `public/tools/propostas/`) no longer exist on disk. Removed
+  in `edcf6b0d` ("remove conteúdo estático dos módulos executivos aposentados"), alongside the
+  route/module retirement described under DOCBRAND-002. Choice made: full removal, not
+  generalization or tenant-gating — per the explicit user decision recorded in
+  `src/config/module-catalog.ts` ("Atlas GR não é ninguém, não é nem mais pra existir"), this was
+  legacy-vendor demo/training content and one named third-party client's proposal, not real
+  multi-tenant configuration data worth preserving behind a toggle; CLAUDE.md §6's preference for
+  refinement over removal is satisfied because the removal is documented (module-catalog.ts header
+  comment, App.tsx route comment, this audit) and was an explicit user request, not a unilateral
+  aesthetic call.
 - **Effort:** L
-- **Evidence:** `public/tools/treinamento-atlasgr/` (Next.js static export, 200+ files, own
-  logo/palette) served via the routed `/treinamento-atlasgr` path (see DOCBRAND-001's App.tsx
-  citation); `public/tools/portal-comercial/{cockpit,totaltrac-cockpit,...}.html` served via
-  `PropostaComercialHub.tsx` (see DOCBRAND-002). Recurrence of
-  `LEGACY_BRAND_CONTENT_MAP.md` §2.5, confirmed unchanged/still open.
-- **Suggested resolution:** per the prior map, not a functional blocker; schedule a content
-  refresh pass owned by Agent 11 (Marca e Ativos Institucionais) per that map's existing handoff.
+- **Evidence (historical — directories removed):** `public/tools/treinamento-atlasgr/` (Next.js
+  static export, 200+ files, own logo/palette) served via the routed `/treinamento-atlasgr` path
+  (see DOCBRAND-001's App.tsx citation); `public/tools/portal-comercial/{cockpit,totaltrac-cockpit,
+  ...}.html` served via `PropostaComercialHub.tsx` (see DOCBRAND-002). Recurrence of
+  `LEGACY_BRAND_CONTENT_MAP.md` §2.5, confirmed unchanged/still open at time of original audit.
+- **Suggested resolution (historical):** per the prior map, not a functional blocker; schedule a
+  content refresh pass owned by Agent 11 (Marca e Ativos Institucionais) per that map's existing
+  handoff. Superseded by outright removal — see Status above.
 
 ### DOCBRAND-013 — prisma/schema.prisma comments stale relative to playbooks.ts's current model
 
@@ -635,7 +674,7 @@ specific conflict as of this audit's snapshot.
 | Brand identity (visual tokens, logo, colors) | COMPLETE | N/A | N/A | COMPLETE | N/A | N/A | FUNCTIONAL |
 | Playbook / brand data model (`playbooks.ts` + DB) | FUNCTIONAL | FUNCTIONAL | PARTIAL (mid-migration, see DOCBRAND-001/007/008) | BROKEN (CLAUDE.md stale, see DOCBRAND-003) | N/A | N/A | PARTIAL |
 | Module access grants (`moduleAccess.*`) | FUNCTIONAL | FUNCTIONAL | BROKEN (moduleKey mismatch, DOCBRAND-001) | PARTIAL | FUNCTIONAL (org-scoped) | FUNCTIONAL | BROKEN |
-| Proposta Comercial module content | FUNCTIONAL (renders) | FUNCTIONAL | N/A | MISSING (no doc flags this as AtlasGR-specific) | BROKEN (cross-tenant leak of vertical content, DOCBRAND-002) | N/A | PARTIAL |
+| Proposta Comercial module content | REMOVED (2026-09-20, DOCBRAND-002) | N/A — module retired | N/A | RESOLVED (this audit updated) | RESOLVED — feature no longer exists, nothing left to leak | N/A | RESOLVED |
 | Legacy static portals (`treinamento-atlasgr`, `portal-comercial`) | FUNCTIONAL (still renders) | N/A | N/A | PARTIAL (documented in prior audit) | FUNCTIONAL | N/A | LEGACY |
 | OPA tenancy policy (`tenancy.rego`) | N/A | MISSING (never called) | N/A | MISSING (self-described as active, isn't) | MOCKED (looks like a control, isn't wired) | BROKEN (misleading) | LEGACY |
 | Repository-level docs (README, CLAUDE.md, BrandConstitution) | N/A | N/A | N/A | PARTIAL (2 stale claims found: DOCBRAND-003, DOCBRAND-004) | N/A | N/A | PARTIAL |

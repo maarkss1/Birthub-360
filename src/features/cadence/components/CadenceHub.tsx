@@ -39,6 +39,7 @@ import {
   type CadenceTouchResult,
   cadenceApi,
   type OptOutOriginChannel,
+  type OptOutRecordDTO,
   type OptOutScope,
 } from '../cadence.api';
 import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates';

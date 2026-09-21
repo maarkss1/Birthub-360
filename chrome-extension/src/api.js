@@ -4,11 +4,13 @@
 // usuário precisa estar logado na Central Atlas GR na mesma janela/perfil do Chrome. Sem isso não
 // existe nenhum outro segredo/token armazenado pela extensão.
 
-// Produção real (Oracle Cloud, ADR-004 — docs/ADR/ADR-004-Producao-Oracle-Cloud.md): IP direto,
-// HTTP na porta 80 (sem domínio/TLS configurado ainda, ver docs/deploy/oracle-cloud.md §7 e o
-// commit "fix(oci): default DOMAIN to :80..."). Trocar para https://<domínio> assim que o cutover
-// de domínio/TLS acontecer (aí some o mixed-content risk de rodar a extensão em http:// puro).
-const DEFAULT_API_BASE_URL = 'http://168.138.147.145';
+// Produção real: Render (docs/deploy/producao.md §2, §8) — o caminho Oracle Cloud do ADR-004 foi
+// retirado no commit 783f8582 ("retire oracle cloud deployment resources") e o IP direto que
+// vivia aqui parou de responder (confirmado por teste de conexão). O domínio final é
+// https://app.atlasgr.com.br (já em `host_permissions`), mas o cutover de DNS/Cloudflare ainda não
+// aconteceu (§3 do guia) — até lá, o hostname real é o do serviço Render abaixo. Trocar para
+// https://app.atlasgr.com.br assim que o cutover acontecer.
+const DEFAULT_API_BASE_URL = 'https://prospector-atlas.onrender.com';
 const STORAGE_KEY = 'atlasApiBaseUrl';
 
 export async function getApiBaseUrl() {

@@ -357,7 +357,7 @@ export async function importSelectedBitrixLeads(
             bitrixStageLabel: (raw.STATUS_ID && labels.get(raw.STATUS_ID)) || raw.STATUS_ID || null,
             qualification: Object.keys(qualification).length > 0 ? qualification : undefined,
             ...leadFields,
-          } as Prisma.LeadCreateInput,
+          } as Prisma.LeadUncheckedCreateInput,
         });
         imported++;
         importedLeadIds.push(lead.id);

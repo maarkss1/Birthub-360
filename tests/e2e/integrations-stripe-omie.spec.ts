@@ -15,13 +15,13 @@ import { signUp, uniqueTestEmail, setUserRole } from './helpers';
  */
 
 async function openStripeTab(page: import('@playwright/test').Page) {
-  await page.getByRole('button', { name: /Integrações/ }).click();
+  await page.getByRole('button', { name: /Integrações/ }).first().click();
   await expect(page).toHaveURL(/\/app\/integrations/);
   await page.getByRole('button', { name: 'Stripe' }).click();
 }
 
 async function openOmieTab(page: import('@playwright/test').Page) {
-  await page.getByRole('button', { name: /Integrações/ }).click();
+  await page.getByRole('button', { name: /Integrações/ }).first().click();
   await expect(page).toHaveURL(/\/app\/integrations/);
   await page.getByRole('button', { name: 'Omie' }).click();
 }

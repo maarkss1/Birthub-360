@@ -9,7 +9,16 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'success', 'warning', 'danger', 'info', 'neon', 'gradient', 'outline'],
+      options: [
+        'default',
+        'success',
+        'warning',
+        'danger',
+        'info',
+        'neon',
+        'gradient',
+        'outline',
+      ],
     },
   },
   args: { children: 'Qualificado', variant: 'default' },

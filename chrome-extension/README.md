@@ -96,13 +96,14 @@ real do Google Meet — precisa de um passo manual num Chrome de verdade antes d
    isso, cada "Carregar sem compactação" gera um id novo e o `ALLOWED_ORIGINS` precisa ser
    reatualizado. Sem esse passo no servidor, a extensão erra com CORS mesmo com a URL certa.
 2. **URL do backend — já configurada como padrão**: `DEFAULT_API_BASE_URL` (`src/api.js`) e
-   `host_permissions` (`manifest.json`) já apontam para a instância Oracle Cloud de produção
-   (`http://168.138.147.145`, ADR-004 — ainda sem domínio/TLS, ver
-   `docs/deploy/oracle-cloud.md` §7). Trocar para `https://<domínio>` assim que o cutover de
-   domínio acontecer. A aba "Configurações" do side panel continua existindo para apontar pra
-   outro ambiente (ex.: `localhost:3005` em desenvolvimento) sem precisar editar código — a
-   extensão pede a permissão de host correspondente (`optional_host_permissions`) na hora, nunca de
-   antemão.
+   `host_permissions` (`manifest.json`) apontam para o serviço Render de produção
+   (`https://prospector-atlas.onrender.com`, ver `docs/deploy/producao.md` §2 e §8 — o caminho
+   Oracle Cloud/ADR-004 citado aqui antes foi retirado no commit 783f8582 e o IP direto parou de
+   responder). Trocar para `https://app.atlasgr.com.br` assim que o cutover de domínio/DNS
+   (`docs/deploy/producao.md` §3) acontecer. A aba "Configurações" do side panel continua existindo
+   para apontar pra outro ambiente (ex.: `localhost:3005` em desenvolvimento) sem precisar editar
+   código — a extensão pede a permissão de host correspondente (`optional_host_permissions`) na
+   hora, nunca de antemão.
 3. **Storage e Whisper configurados** — sem `STORAGE_*`/`OPENAI_API_KEY` reais em produção, o botão
    de captura ainda funciona (grava localmente), mas o upload/transcrição falham com erro explícito.
 4. **Distribuição**: para um time inteiro, prefira publicação privada na Chrome Web Store ou

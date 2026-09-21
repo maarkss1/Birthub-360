@@ -125,7 +125,7 @@ export function WorkspaceReadySection({ workspace }: { workspace: Workspace }) {
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-ink dark:text-brand">
             {workspace.jobRole.department}
           </p>
-          <h1 className="text-xl font-black tracking-tight text-ink md:text-2xl">
+          <h1 className="font-serif text-2xl font-medium tracking-tight text-ink md:text-3xl">
             {workspace.jobRole.name}
           </h1>
           <p className="mt-0.5 max-w-2xl text-sm text-ink-2">{workspace.jobRole.description}</p>

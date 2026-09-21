@@ -91,9 +91,9 @@ export function B2BGenerator() {
           >
             <BrainCircuit size={32} className={accent.text} />
           </motion.div>
-          <h3 className="text-3xl font-black text-ink mb-3 tracking-tight">
+          <h3 className="font-serif text-3xl font-medium text-ink mb-3 tracking-tight">
             {playbookMeta.label}{' '}
-            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
+            <span className="text-brand dark:text-brand-2 font-semibold">
               Simulador Cognitivo B2B
             </span>
           </h3>

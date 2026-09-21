@@ -27,7 +27,7 @@ import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChange
 import { requestDocumentSignature as requestDocumentSignatureUseCase } from '../../cadence/application/documentSignature.js';
 import { govBrSignatureProviderPort } from '../../cadence/infra/GovBrSignatureProviderPort.js';
 import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
-import { recordStageTransition } from '../../commercial-intelligence/infra/stageHistory.js';
+import { recordStageTransition } from '../../../shared/services/leadStageHistory.service.js';
 import {
   ensureDealClosureAllowed,
   ensureManualDealClosureAllowed,

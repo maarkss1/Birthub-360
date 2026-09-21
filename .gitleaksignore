@@ -38,3 +38,14 @@ db20c1f3e5cd53f3c0be462502548bfafa850587:test-gemini-quota.ts:generic-api-key:2
 # reescrita/duplicação de histórico, mesma lógica do bloco acima.
 17361fe70cacfb00ef052d9505c4bcb8e45bf9bf:src/features/crm/components/LeadDetailDrawer.tsx:generic-api-key:99
 9236028bc137b674da860e01cca871aea63b0758:src/features/crm/components/LeadDetailDrawer.tsx:generic-api-key:99
+
+# tests/unit/config/env.test.ts:141 — teste que verifica que o app RECUSA o segredo legado
+# bloqueado 'segredo_compartilhado_atlasgr_123' (mesmo literal do achado histórico já tratado
+# acima, LeadDetailDrawer.tsx:99/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md) quando usado como
+# ATLASGR_WEBHOOK_SECRET — não é um segredo novo, é o teste da própria defesa
+# (BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS em src/config/env.ts) que impede esse valor de
+# funcionar em produção. Adicionado no commit 31bffaf3/9ab9ee28 (fix(security): harden
+# production secrets, 2026-09-17) sem entrada correspondente aqui, bloqueando secret-scan de
+# qualquer PR desde então.
+31bffaf30dd8c838c482fcc2497b24eb8be7f638:tests/unit/config/env.test.ts:generic-api-key:141
+9ab9ee28ebe4855f8c1d3e4bd151c2e12fe987e9:tests/unit/config/env.test.ts:generic-api-key:141

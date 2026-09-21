@@ -5,6 +5,12 @@
 - Status: resolvido
 - Prioridade: alto
 
+## Resolução
+Resolvido em `prisma/schema.prisma` (linhas 2034-2063) e migrações `20260827210000_onda42_decisoes_schema` / `20260917180000_fix_rls_tenant_write_isolation`:
+1. Model `AutomationVersion` criado com relação inversa em `model Automation (versions AutomationVersion[])` e RLS forçado por tenant (`tenant_isolation_policy`).
+2. `PrismaAutomationVersionStore` implementado em `src/features/automations/infra/PrismaAutomationVersionStore.ts` e conectado em `src/features/automations/automation-versioning.service.ts`, persistindo snapshots e diffs históricos no Postgres de forma durável.
+3. Testes unitários de `automation-versioning.service.ts` validados com 11/11 testes passando.
+
 ## Problema
 
 DEC-14 (opção A) pediu duas camadas novas sobre o motor de automação existente (que já tem retry e

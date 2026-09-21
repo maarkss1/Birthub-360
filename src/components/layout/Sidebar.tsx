@@ -1,11 +1,9 @@
 import { LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BRAND } from '../../config/brand';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
 import { SoundFX } from '../../lib/soundEffects';
-import { BirthHubLogo, BirthHubSignature } from '../brand/BirthHubLogo';
 import { TAB_META, type TabType } from './tabMeta';
 
 /** Preferência de menu recolhido. A chave anterior era prefixada com o nome da
@@ -77,13 +75,6 @@ export function Sidebar({
     onCloseMobile?.();
   };
 
-  const analyzeItems: TabType[] = [
-    ...(canAccessCommercialIntelligence ? (['commercial_intelligence'] as TabType[]) : []),
-    'analytics',
-    'winloss',
-    'reports',
-  ];
-
   const administrationItems: TabType[] = [
     'notifications',
     'bitrix',
@@ -92,112 +83,120 @@ export function Sidebar({
     'settings',
   ];
 
-  // Navegação orientada pela jornada comercial, não pela árvore técnica do projeto.
-  // TAB_META é a fonte única de rótulo/ícone e TabType impede destinos fantasma.
+  // Navegação transformada para paradigma Command Center: estruturada por função de comando
+  // (COMMAND CENTER → INTELLIGENCE → BUSINESS → EXECUTION → CAPACITATION → DATA → ADMINISTRATION)
+  // mantendo a lógica de jornada comercial e acesso por papel. TAB_META é a fonte única de
+  // rótulo/ícone e TabType impede destinos fantasma.
   //
   // Os módulos executivos (Social Selling, Treinamento Comercial, Proposta Comercial, Hub
   // Inteligência & Mkt) NÃO aparecem mais aqui — pedido explícito do usuário: "não quero que
   // apareça no CRM, só nos círculos" do Hub Executivo standalone (rotas top-level em App.tsx,
   // fora de /app/*). Quem administra quem vê cada módulo é 'module-access' acima, não a Sidebar.
   //
-  // Perfil SDR focado (role SDR, ver isRestrictedSdrProfile acima): Plano Diário em primeiro e só
-  // as ferramentas que o SDR usa no dia a dia — sem dashboards/analytics/administração de
-  // integrações. A primeira versão deixava um único item ("Plano Diário") e o SDR ficava sem
-  // acesso pelo menu às próprias ferramentas de trabalho. ADMIN/GESTOR/CLOSER continuam vendo o
-  // menu completo do CRM.
+  // Perfil SDR focado (role SDR, ver isRestrictedSdrProfile acima): Command Center simplificado
+  // focado em execução diária — Plano Diário em primeiro, ferramentas de prospecção/qualificação,
+  // cadência e treinamento. Sem dashboards/analytics/administração de integrações.
   const navGroupsByJourney: NavGroupDefinition[] = isRestrictedSdrProfile
     ? [
-        { title: 'Visão Geral', items: ['daily-plan'] },
-        { title: 'Captar', items: ['prospect'] },
+        { title: 'COMMAND CENTER', items: ['daily-plan'] },
+        { title: 'BUSINESS', items: ['prospect'] },
         {
-          title: 'Qualificar',
+          title: 'EXECUTION',
           items: [
             'companies',
             'contacts',
             ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
+            'activities',
+            'calendar',
+            'cadence',
           ],
         },
-        { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
         {
-          title: 'IA & Capacitação',
+          title: 'CAPACITATION',
           items: ['roleplay', 'objections_matrix', 'chatbook', 'topic_training'],
         },
-        { title: 'Administração', items: ['notifications', 'bitrix', 'settings'] },
+        { title: 'ADMINISTRATION', items: ['notifications', 'bitrix', 'settings'] },
       ]
     : [
         {
-          title: 'Visão Geral',
+          title: 'COMMAND CENTER',
           items: ['dashboard', 'workspace', 'daily-plan'],
         },
-        { title: 'Captar', items: ['prospect', 'market-intelligence'] },
         {
-          title: 'Qualificar',
+          title: 'INTELLIGENCE',
           items: [
+            ...(canAccessCommercialIntelligence ? (['commercial_intelligence'] as TabType[]) : []),
+            ...(canAccessCopilotoIa ? (['copiloto_ia'] as TabType[]) : []),
+            'intelligence',
+            'market-intelligence',
+            'analytics',
+            'winloss',
+            'reports',
+          ],
+        },
+        {
+          title: 'BUSINESS',
+          items: [
+            'prospect',
+            'crm',
+            'crm360',
+            'propostas',
             'companies',
             'contacts',
             ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
-            'qualification_matrix',
           ],
         },
-        { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
-        { title: 'Fechar', items: ['crm', 'crm360', 'propostas'] },
-        { title: 'Analisar', items: analyzeItems },
         {
-          title: 'IA & Capacitação',
+          title: 'EXECUTION',
+          items: ['activities', 'calendar', 'cadence'],
+        },
+        {
+          title: 'CAPACITATION',
           items: [
-            ...(canAccessCopilotoIa ? (['copiloto_ia'] as TabType[]) : []),
-            'intelligence',
-            'chatbook',
             'roleplay',
+            'qualification_matrix',
             'objections_matrix',
             'topic_training',
+            'chatbook',
             'knowledge',
             'editor',
           ],
         },
-        { title: 'Administração', items: administrationItems },
+        { title: 'ADMINISTRATION', items: administrationItems },
       ];
 
   const GROUP_ORDER_BY_ROLE: Partial<Record<string, string[]>> = {
     CLOSER: [
-      'Visão Geral',
-      'Relacionar',
-      'Fechar',
-      'Qualificar',
-      'Captar',
-      'Analisar',
-      'IA & Capacitação',
-      'Administração',
+      'COMMAND CENTER',
+      'EXECUTION',
+      'BUSINESS',
+      'INTELLIGENCE',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
     GESTOR: [
-      'Visão Geral',
-      'Analisar',
-      'Fechar',
-      'Relacionar',
-      'Qualificar',
-      'Captar',
-      'Administração',
-      'IA & Capacitação',
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
     ADMIN: [
-      'Visão Geral',
-      'Analisar',
-      'Fechar',
-      'Relacionar',
-      'Qualificar',
-      'Captar',
-      'Administração',
-      'IA & Capacitação',
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
     VISUALIZADOR: [
-      'Visão Geral',
-      'Analisar',
-      'Relacionar',
-      'Fechar',
-      'Qualificar',
-      'Captar',
-      'IA & Capacitação',
-      'Administração',
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
   };
 
@@ -222,31 +221,27 @@ export function Sidebar({
         title={meta.label}
         aria-label={meta.label}
         aria-current={isActive ? 'page' : undefined}
-        className={`group relative w-full overflow-hidden rounded-xl border px-2 py-1.5 text-left text-xs font-semibold transition-[transform,background-color,border-color,color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
+        className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
           isActive
-            ? 'border-brand/20 bg-brand-active text-on-brand shadow-[0_10px_20px_-15px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.16)]'
-            : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
+            ? 'bg-brand/8 text-brand shadow-sm ring-1 ring-brand/12'
+            : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'
         } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         {isActive && (
           <span
             aria-hidden="true"
-            className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+            className="absolute inset-y-1.5 left-0 w-[2px] rounded-r-full bg-brand shadow-[0_0_8px_var(--color-brand)]"
           />
         )}
+        <Icon
+          size={16}
+          aria-hidden="true"
+          className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-brand/60'}`}
+        />
         <span
-          className={`relative z-10 flex items-center ${isCollapsed ? 'lg:justify-center' : 'gap-2'}`}
+          className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-semibold tracking-tight' : ''}`}
         >
-          <span
-            className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border transition-[transform,background-color,border-color] duration-200 group-hover:scale-105 ${
-              isActive
-                ? 'border-white/15 bg-white/10'
-                : 'border-line/80 bg-surface shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
-            }`}
-          >
-            <Icon size={15} aria-hidden="true" />
-          </span>
-          <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''}`}>{meta.label}</span>
+          {meta.label}
         </span>
       </button>
     );
@@ -254,47 +249,55 @@ export function Sidebar({
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex h-full w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-line bg-surface-elevated/96 shadow-nav backdrop-blur-xl transition-[width,transform] duration-200 lg:static lg:translate-x-0 ${
-        isCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-[16.5rem]'
+      className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-bg border-r border-line transition-[width,transform] duration-300 lg:static lg:translate-x-0 ${
+        isCollapsed ? 'lg:w-[5rem]' : 'lg:w-[16rem]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
-      aria-label="Navegação principal por jornada comercial"
+      aria-label="Navegação principal - Intelligent Business Command Center"
     >
-      <div className="relative border-b border-line p-3">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <div
-          className="pointer-events-none absolute -left-14 -top-20 h-40 w-40 rounded-full bg-brand/8 blur-[60px]"
-          aria-hidden="true"
-        />
-        <div className="relative z-10 mb-2 flex items-center justify-between gap-2">
+          className={`px-5 py-4 flex items-center justify-between border-b border-line ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+        >
           {isCollapsed ? (
-            <div className="mx-auto">
-              <BirthHubLogo variant="icon" className="h-7 w-7" title={BRAND.name} />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
+              <span className="text-gold font-black text-base italic tracking-tighter">B</span>
             </div>
           ) : (
             <>
-              <BirthHubSignature className="h-7 text-ink" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
+                  <span className="text-gold font-black text-base italic tracking-tighter">B</span>
+                </div>
+                <div className="leading-none">
+                  <h1 className="text-sm font-bold text-midnight tracking-tight flex items-center gap-1">
+                    Birth Hub 360°
+                  </h1>
+                  <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                    Intelligent Business Command Center
+                  </span>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={toggleCollapse}
-                className="hidden h-7 w-7 place-items-center rounded-control border border-line text-ink-2 transition-colors hover:bg-surface-interactive hover:text-ink lg:grid"
-                title="Recolher menu lateral"
-                aria-label="Recolher menu lateral"
+                className="p-1.5 rounded-md hover:bg-surface-interactive text-ink-2 hover:text-ink transition-colors hidden lg:block"
+                title="Recolher menu"
               >
-                <PanelLeftClose size={13} />
+                <PanelLeftClose size={16} />
               </button>
             </>
           )}
         </div>
 
         {isCollapsed && (
-          <div className="mb-2 hidden justify-center lg:flex">
+          <div className="mt-2 hidden justify-center lg:flex">
             <button
               type="button"
               onClick={toggleCollapse}
-              className="grid h-7 w-7 place-items-center rounded-lg border border-line text-ink-2 hover:text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+              className="p-1.5 rounded-md hover:bg-surface-interactive text-ink-2 hover:text-ink transition-colors"
               title="Expandir menu lateral"
-              aria-label="Expandir menu lateral"
             >
-              <PanelLeftOpen size={15} />
+              <PanelLeftOpen size={16} />
             </button>
           </div>
         )}
@@ -306,17 +309,19 @@ export function Sidebar({
             navigate('/hub');
             onCloseMobile?.();
           }}
-          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-2.5 rounded-[var(--radius-nav-item)] border border-line bg-surface-2/60 px-3 py-2 text-left transition-[transform,border-color,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/25 hover:bg-brand/8 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-3 rounded-xl bg-surface-subtle px-3 py-2.5 text-left transition-all duration-300 hover:bg-surface-2 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
             isCollapsed ? 'lg:justify-center lg:px-1.5' : ''
           }`}
           title="Ir para o Hub Executivo"
           aria-label="Ir para o Hub Executivo"
         >
-          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg border border-line bg-surface text-ink-2 transition-colors duration-200 group-hover:border-brand/30 group-hover:text-brand">
-            <LayoutGrid size={13} aria-hidden="true" />
-          </span>
+          <LayoutGrid
+            size={16}
+            aria-hidden="true"
+            className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink"
+          />
           <span
-            className={`text-xs font-bold text-ink-2 group-hover:text-ink ${isCollapsed ? 'lg:hidden' : ''}`}
+            className={`text-[13px] font-semibold text-ink transition-colors duration-300 ${isCollapsed ? 'lg:hidden' : ''}`}
           >
             Hub Executivo
           </span>
@@ -325,31 +330,30 @@ export function Sidebar({
 
       <nav
         aria-label="Navegação principal"
-        className="custom-scrollbar flex-1 space-y-4 overflow-y-auto px-2.5 py-3"
+        className="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-2.5 py-3"
       >
         {navGroups.map((group) => (
           <section key={group.title} className="space-y-1" aria-label={group.title}>
-            <div className={`mb-2 flex items-center gap-2 px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
-              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-ink-2">
+            <div className={`mb-2 flex items-center px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
                 {group.title}
               </p>
-              <span
-                className="h-px flex-1 bg-gradient-to-r from-line to-transparent"
-                aria-hidden="true"
-              />
             </div>
             {isCollapsed && (
-              <div className="hidden lg:block my-2 mx-auto w-6 h-px bg-line" aria-hidden="true" />
+              <div
+                className="hidden lg:block my-2 mx-auto w-4 h-px bg-line/50"
+                aria-hidden="true"
+              />
             )}
             {group.items.map(renderNavItem)}
           </section>
         ))}
       </nav>
 
-      <div className="space-y-2 border-t border-line p-3">
+      <div className="p-4 pt-2">
         {currentUser && (
           <div
-            className={`rounded-xl border border-line bg-surface-2/70 px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
+            className={`group relative overflow-hidden rounded-2xl bg-surface-subtle/50 px-3 py-3 transition-colors hover:bg-surface-subtle ${
               isCollapsed ? 'lg:px-1.5 lg:py-2 lg:flex lg:justify-center' : ''
             }`}
             title={
@@ -358,15 +362,15 @@ export function Sidebar({
                 : undefined
             }
           >
-            <div className="flex min-w-0 items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-xs font-bold text-on-brand shadow-card ring-1 ring-white/10">
+            <div className="flex min-w-0 items-center gap-3 relative z-10">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand/80 to-brand-2/90 text-sm font-bold text-on-brand shadow-sm ring-2 ring-surface transition-transform duration-300 group-hover:scale-105">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className={`min-w-0 flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>
-                <p className="truncate text-xs font-bold leading-tight text-ink">
+                <p className="truncate text-[13px] font-bold leading-tight text-ink transition-colors group-hover:text-brand">
                   {currentUser.name}
                 </p>
-                <p className="truncate text-[10px] font-medium leading-tight text-ink-2">
+                <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-ink-2">
                   {currentUser.roleTitle || currentUser.role}
                 </p>
               </div>

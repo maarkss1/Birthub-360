@@ -270,15 +270,11 @@ model Company {
   copilotoConversations       CopilotoConversation[]
   notes                       Note[]
   attachments                 Attachment[]
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
-  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
-  // verificar ausência de linhas NULL em produção antes de aplicar.
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
   organizationId              String
-  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization                Organization                  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   deletedAt                   DateTime?
   deletedBy                   String?
   deleteReason                String?
@@ -521,15 +517,11 @@ model Contact {
   copilotoConversations CopilotoConversation[]
   notes                 Note[]
   attachments           Attachment[]
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
-  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
-  // verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId              String
-  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
+  organizationId        String
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   decisionMakerProfiles DecisionMaker[]
 
   createdAt    DateTime  @default(now())
@@ -691,13 +683,9 @@ model Lead {
   dealClosureEvents           DealClosureEvent[]
   copilotoConversations       CopilotoConversation[]
   copilotoDealHealthSnapshots CopilotoDealHealthSnapshot[]
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
-  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
-  // verificar ausência de linhas NULL em produção antes de aplicar.
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
   organizationId              String
   organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
@@ -733,17 +721,12 @@ model Activity {
   observations String?
 
   leadId         String
-  lead           Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje, incluindo o único caso de injeção implícita (birthVoice.webhook.ts, dentro de
-  // requestContext.run({tenantId})). Nenhuma linha órfã é esperada; migrar para NOT NULL +
-  // ON DELETE CASCADE (alinhado aos ~90 outros models filhos de Organization) é a correção
-  // pendente, condicionada a verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId              String
-  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lead           Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -842,6 +825,8 @@ model AuditLog {
   entity    String
   entityId  String?
   actorId   String?
+  // NOT NULL (DATA-007/DATA-003): reaplicado após confirmar que o banco não tem linhas órfãs (ver
+  // migration 20260920010000_data007_organizationid_not_null_guarded).
   tenantId  String
   ipAddress String?
   details   String?  @db.Text
@@ -1009,11 +994,11 @@ model Organization {
   /// SEM TETO (nunca bloqueia) — nunca um default implícito de US$0, que bloquearia toda
   /// organização nova silenciosamente. Comparado contra a soma de AILog.cost do mês corrente desta
   /// organização por assertOrgAiBudgetNotExceeded (src/lib/ai/budget.ts).
-  monthlyAiBudgetUsd            Float?
+  monthlyAiBudgetUsd          Float?
   /// DEC-09: teto mensal de gasto com providers de prospecção pagos (Apollo/Hunter, USD) desta
   /// organização. Nullable = SEM TETO, mesmo raciocínio do campo acima. Comparado contra o
   /// acumulado do mês corrente (Redis, ver providerBudget.ts) por assertProspectingBudgetNotExceeded.
-  monthlyProspectingBudgetUsd   Float?
+  monthlyProspectingBudgetUsd Float?
 }
 
 // ─── Comercial Inteligente (Revenue Command Center) ────────────────────────
@@ -2848,6 +2833,15 @@ model ThreeCXConnection {
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
+  /// INTEGRATION-004 (docs/audits/repository-debt-audit/agents/INTEGRATION.md): índice composto
+  /// para a busca por ramal que `resolveConnectionByExtension` (threecx.service.ts) faz dentro do
+  /// contexto de tenant de cada organização (RLS já reduz a query real a
+  /// `WHERE organizationId = $1 AND extension = $2`) — sem isto, o planner só tinha o índice de
+  /// organizationId sozinho para apoiar metade do predicado. Não elimina o scan cross-tenant em
+  /// si (isso exigiria reabrir bypass de RLS nesta tabela, decisão de segurança P0 já fechada em
+  /// 20260825120000_scope_rls_bypass_to_bootstrap_allowlist — não revertida aqui), só torna cada
+  /// uma das N queries por organização mais barata.
+  @@index([organizationId, extension])
 }
 
 /// Conexão com o Birth Voices Hub (SDR de voz por IA) por organização — antes desta tabela, a
@@ -3223,8 +3217,9 @@ model Prospect {
   lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   // Controle de Tenant
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Company/Contact/Lead/Activity, este model não tem nenhum write path de
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded).
+  // Ressalva herdada do estado anterior, ainda válida: este model não tem write path de
   // create/upsert em src/ ou scripts/ — schema declarado, nunca criado por aplicação — e está
   // fora do allowlist tenantModels de src/lib/prisma.ts, então não recebe injeção automática de
   // organizationId. Existe, porém, um write path real de UPDATE (não create): quando um merge de
@@ -3236,8 +3231,8 @@ model Prospect {
   // runtime ("column does not exist"), ver comentário da migration para o histórico do drift. Se
   // um write path de create for adicionado, inclua Prospect em tenantModels ou passe
   // organizationId explicitamente em todo create.
-  organizationId              String
-  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4841,15 +4836,3 @@ model AgentBuildProposal {
 }
 
 // --- ELITE COMMERCIAL AGENT ---
-
-
-
-
-
-
-
-
-
-
-
-

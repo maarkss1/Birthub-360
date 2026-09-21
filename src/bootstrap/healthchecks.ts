@@ -14,22 +14,51 @@ export function handleLiveness(_req: Request, res: Response): void {
 }
 
 export async function handleReadiness(_req: Request, res: Response): Promise<void> {
+  const dependencies: Record<string, string> = {};
+  let isReady = true;
+
   try {
     await prisma.$queryRaw`SELECT 1`;
-    if (queuesEnabled) {
+    dependencies.database = 'connected';
+  } catch (err) {
+    logger.error({ err }, 'Readiness: Database probe failed');
+    dependencies.database = 'unavailable';
+    isReady = false;
+  }
+
+  if (queuesEnabled) {
+    try {
       await connection.ping();
+      dependencies.redis = 'connected';
+    } catch (err) {
+      logger.error({ err }, 'Readiness: Redis probe failed');
+      dependencies.redis = 'unavailable';
+      isReady = false;
     }
+  } else {
+    dependencies.redis = 'disabled';
+  }
+
+  const storageEndpoint = process.env.STORAGE_ENDPOINT || process.env.MINIO_ENDPOINT;
+  if (storageEndpoint) {
+    dependencies.storage = 'configured';
+  } else {
+    dependencies.storage = 'unconfigured';
+  }
+
+  if (isReady) {
     res.status(200).json({
       status: 'ok',
+      dependencies,
       version: env.BUILD_VERSION,
       commit: env.COMMIT_SHA,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    logger.error({ err: error }, 'Readiness probe failed');
+  } else {
     res.status(503).json({
       status: 'error',
-      message: 'Database or Redis unavailable',
+      message: 'One or more critical dependencies unavailable',
+      dependencies,
       version: env.BUILD_VERSION,
       commit: env.COMMIT_SHA,
       timestamp: new Date().toISOString(),

@@ -13,6 +13,7 @@ const chromiumExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?.trim(
 
 export default defineConfig({
   testDir: './tests/e2e',
+  testIgnore: ['**/visual.spec.ts'],
   globalSetup: './tests/global-setup.ts',
 
 

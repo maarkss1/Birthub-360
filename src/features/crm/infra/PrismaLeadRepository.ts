@@ -1,4 +1,5 @@
-import type { LeadFunnel, Prisma } from '@prisma/client';
+import type { LeadFunnel, LeadStatus as PrismaLeadStatus, Prisma } from '@prisma/client';
+import { recordStageTransition } from '../../../shared/services/leadStageHistory.service.js';
 import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
@@ -12,6 +13,39 @@ import { searchLeadIds } from '../../../lib/search/index.js';
 import type { LeadStatus } from '../../../lib/zod';
 import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
 import type { Lead, LeadRepository } from '../domain/Lead';
+
+/**
+ * CRM-011 (`docs/audits/repository-debt-audit/agents/CRM.md`): `Lead.status` (o enum `LeadStatus`
+ * fixo, mapeado 1:1 pro Kanban legado em `CrmBoard.tsx`) e `Lead.pipelineStageId` (a etapa de um
+ * `CrmPipeline` configurável por organização, usada por CRM360 e pelos relatórios de
+ * `commercial-intelligence`) são DUAS representações independentemente armazenadas do mesmo
+ * conceito de "etapa atual do negócio". `PrismaCrm360Repository.updateLeadStage` já escreve as
+ * duas juntas quando o movimento vem do board de pipeline; esta função fecha o mesmo caminho para
+ * quem muda só `status` (Kanban de Leads legado, agentes de IA via `LeadUseCases.updateLeadStatus`,
+ * edição completa via `PUT /api/leads/:id`) — sem isso, `pipelineStageId` ficava congelado na
+ * etapa antiga enquanto `status` avançava, divergindo do que os relatórios de pipeline leem.
+ * Prioriza uma etapa dentro do pipeline atual do lead (preserva pipelines customizados/reordenados
+ * pela organização); cai para o pipeline padrão da organização quando não encontra uma etapa lá
+ * (ex.: lead legado ainda sem `pipelineId`).
+ */
+async function findMatchingPipelineStage(
+  organizationId: string,
+  status: PrismaLeadStatus | undefined,
+  preferredPipelineId?: string | null,
+) {
+  if (!status) return null;
+
+  if (preferredPipelineId) {
+    const inCurrentPipeline = await prisma.crmPipelineStage.findFirst({
+      where: { leadStatus: status, pipelineId: preferredPipelineId, pipeline: { organizationId } },
+    });
+    if (inCurrentPipeline) return inCurrentPipeline;
+  }
+
+  return prisma.crmPipelineStage.findFirst({
+    where: { leadStatus: status, pipeline: { organizationId, active: true, isDefault: true } },
+  });
+}
 
 function serializeLead<
   T extends {
@@ -160,7 +194,7 @@ export class PrismaLeadRepository implements LeadRepository {
             description: 'Lead criado no sistema',
           },
         },
-      } as Prisma.LeadCreateInput,
+      } as Prisma.LeadUncheckedCreateInput,
       include: { company: true, contact: true },
     });
     return serializeLead(lead) as unknown as Lead;
@@ -169,7 +203,12 @@ export class PrismaLeadRepository implements LeadRepository {
   async update(
     organizationId: string,
     id: string,
-    data: Partial<Lead> & { status?: string },
+    // `status` aqui é o rótulo legível (ex.: "Proposta Enviada", tipo `LeadStatus` de
+    // `lib/zod`), não o enum do Prisma (`Lead['status']`, ex.: "Proposta_Enviada") — por isso o
+    // `Omit`: sem ele, a interseção com `Partial<Lead>` reduziria o tipo de `status` para só os
+    // identificadores do Prisma, o que nunca refletiu o valor real que este método recebe (ver
+    // `toPrismaLeadStatus` logo abaixo, que já assumia o rótulo).
+    data: Omit<Partial<Lead>, 'status'> & { status?: string },
   ): Promise<Lead> {
     // Não fazemos findFirst prévio: se o lead não existir (ou não pertencer ao org),
     // o Prisma lança P2025 que o errorHandler mapeia para 404 — sem N+1 queries.
@@ -181,32 +220,65 @@ export class PrismaLeadRepository implements LeadRepository {
     const expectedCloseAt = data.expectedCloseAt
       ? new Date(data.expectedCloseAt as unknown as string | Date)
       : data.expectedCloseAt;
+    const prismaStatus = data.status
+      ? (toPrismaLeadStatus(
+          data.status as LeadStatus,
+        ) as unknown as Prisma.LeadUpdateInput['status'])
+      : undefined;
+    // CRM-011: só sincroniza pipelineId/pipelineStageId a partir de `status` quando o próprio
+    // payload não está gerenciando o pipeline explicitamente (ver findMatchingPipelineStage acima)
+    // — evita pisar num pipelineStageId que o caller já decidiu de propósito nesta mesma chamada.
+    const syncsPipelineToStatus =
+      data.status !== undefined &&
+      data.pipelineId === undefined &&
+      data.pipelineStageId === undefined;
     // CLOSEDATE Intelligence / Handoffs: só quando o payload toca um campo rastreado, lê o valor
-    // anterior (uma query leve, 2 colunas) para registrar a mudança real em LeadFieldChange.
+    // anterior (uma query leve) para registrar a mudança real em LeadFieldChange. Reaproveitada
+    // também pelo CRM-011 acima, quando precisamos saber o pipelineId/pipelineStageId atuais do
+    // lead antes de decidir a nova etapa correspondente ao novo status.
     // Sem isso, nenhum adiamento de data prevista nem troca de responsável feito por esta rota
     // (PUT /api/leads/:id, único caminho da UI para os dois campos) deixaria histórico.
     const tracksField = data.expectedCloseAt !== undefined || data.owner !== undefined;
-    const previousTracked = tracksField
-      ? await prisma.lead.findFirst({
-          where: { id, organizationId },
-          select: { expectedCloseAt: true, owner: true },
-        })
+    const previousLead =
+      tracksField || syncsPipelineToStatus
+        ? await prisma.lead.findFirst({
+            where: { id, organizationId },
+            select: {
+              expectedCloseAt: true,
+              owner: true,
+              pipelineId: true,
+              pipelineStageId: true,
+            },
+          })
+        : null;
+    const previousTracked = tracksField ? previousLead : null;
+    const matchedStage = syncsPipelineToStatus
+      ? await findMatchingPipelineStage(
+          organizationId,
+          prismaStatus as unknown as PrismaLeadStatus | undefined,
+          previousLead?.pipelineId,
+        )
       : null;
     const lead = await prisma.lead.update({
       where: { id, organizationId },
       data: {
         ...data,
         expectedCloseAt,
-        ...(data.status
-          ? {
-              status: toPrismaLeadStatus(
-                data.status as LeadStatus,
-              ) as unknown as Prisma.LeadUpdateInput['status'],
-            }
-          : {}),
+        ...(data.status ? { status: prismaStatus } : {}),
         // Mesma lógica de closedAt de updateStatus (ver comentário lá) — este método também
         // aceita `status` no payload, então precisa manter a mesma garantia.
         ...(data.status ? { closedAt: isClosingNow ? new Date() : null } : {}),
+        // CRM-011 (docs/audits/repository-debt-audit/agents/CRM.md): mantém pipelineId/
+        // pipelineStageId/probability (a etapa de CrmPipeline) em sincronia com `status` (o
+        // LeadStatus fixo) quando a mudança de etapa chega por esta rota em vez de
+        // `/api/crm/records/:id/stage` — ver findMatchingPipelineStage no topo do arquivo.
+        ...(matchedStage
+          ? {
+              pipelineId: matchedStage.pipelineId,
+              pipelineStageId: matchedStage.id,
+              probability: matchedStage.probability,
+            }
+          : {}),
         organizationId: undefined,
         company: undefined,
         contact: undefined,
@@ -227,6 +299,20 @@ export class PrismaLeadRepository implements LeadRepository {
         previousTracked,
         { expectedCloseAt: expectedCloseAt as Date | null | undefined, owner: data.owner },
         { source: 'crm' },
+      );
+    }
+    if (matchedStage && previousLead && previousLead.pipelineStageId !== matchedStage.id) {
+      await recordStageTransition(
+        organizationId,
+        id,
+        {
+          id: matchedStage.id,
+          name: matchedStage.name,
+          probability: matchedStage.probability,
+          isWon: matchedStage.isWon,
+          isLost: matchedStage.isLost,
+        },
+        matchedStage.pipelineId,
       );
     }
     return serializeLead(lead) as unknown as Lead;
@@ -250,14 +336,37 @@ export class PrismaLeadRepository implements LeadRepository {
     // Lista compartilhada com update() (acima) e PrismaCrm360Repository.updateLeadStage() —
     // ver isLeadClosingStatus em src/lib/enumMap.ts.
     const isClosingNow = isLeadClosingStatus(newStatus);
+    const prismaStatus = toPrismaLeadStatus(
+      newStatus as LeadStatus,
+    ) as unknown as Prisma.LeadUpdateInput['status'];
+    // CRM-011 (docs/audits/repository-debt-audit/agents/CRM.md): este é o caminho que o Kanban de
+    // Leads legado (CrmBoard.tsx, via PUT /api/leads/:id {status}) e os agentes de IA
+    // (LeadUseCases.updateLeadStatus) usam para mover a etapa de um lead. Antes desta correção,
+    // ele só tocava `status`, deixando `pipelineId`/`pipelineStageId` (a etapa "real" do
+    // CrmPipeline, lida por CRM360 e pelos relatórios de commercial-intelligence) congelados na
+    // etapa anterior — as duas representações do "estágio atual" divergiam silenciosamente assim
+    // que alguém usasse este caminho em vez de `/api/crm/records/:id/stage`
+    // (PrismaCrm360Repository.updateLeadStage, que já fazia essa sincronia). Resolve buscando a
+    // CrmPipelineStage cujo `leadStatus` corresponde ao novo status (preferindo o pipeline atual
+    // do lead) e gravando as duas junto, mais o registro em LeadStageHistory.
+    const matchedStage = await findMatchingPipelineStage(
+      organizationId,
+      prismaStatus as unknown as PrismaLeadStatus | undefined,
+      currentLead.pipelineId,
+    );
     // O `where` inclui organizationId para garantir isolamento de tenant no update.
     const lead = await prisma.lead.update({
       where: { id, organizationId },
       data: {
-        status: toPrismaLeadStatus(
-          newStatus as LeadStatus,
-        ) as unknown as Prisma.LeadUpdateInput['status'],
+        status: prismaStatus,
         closedAt: isClosingNow ? new Date() : null,
+        ...(matchedStage
+          ? {
+              pipelineId: matchedStage.pipelineId,
+              pipelineStageId: matchedStage.id,
+              probability: matchedStage.probability,
+            }
+          : {}),
         timeline: {
           create: {
             type: 'movement',
@@ -271,6 +380,20 @@ export class PrismaLeadRepository implements LeadRepository {
         timeline: { orderBy: { createdAt: 'desc' }, take: 1 },
       },
     });
+    if (matchedStage && currentLead.pipelineStageId !== matchedStage.id) {
+      await recordStageTransition(
+        organizationId,
+        id,
+        {
+          id: matchedStage.id,
+          name: matchedStage.name,
+          probability: matchedStage.probability,
+          isWon: matchedStage.isWon,
+          isLost: matchedStage.isLost,
+        },
+        matchedStage.pipelineId,
+      );
+    }
     return serializeLead(lead) as unknown as Lead;
   }
 
