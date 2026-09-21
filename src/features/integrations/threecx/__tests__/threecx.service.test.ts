@@ -67,7 +67,9 @@ vi.mock('../../../../lib/audit/audit.service.js', () => ({
 // arquivos de teste.
 const extensionFailuresIncMock = vi.fn();
 vi.mock('../threecx.metrics.js', () => ({
-  threeCXExtensionResolutionFailuresTotal: { inc: (...args: unknown[]) => extensionFailuresIncMock(...args) },
+  threeCXExtensionResolutionFailuresTotal: {
+    inc: (...args: unknown[]) => extensionFailuresIncMock(...args),
+  },
 }));
 
 beforeEach(() => {
