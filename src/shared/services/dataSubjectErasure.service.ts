@@ -26,7 +26,6 @@ export interface ErasureResult {
   alreadyAnonymized: boolean;
 }
 
-
 /** Marca o registro como anonimizado — não é PII, então é seguro deixar visível/pesquisável. */
 export const ANONYMIZED_CONTACT_NAME = '[titular anonimizado — LGPD]';
 

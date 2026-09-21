@@ -234,8 +234,16 @@ export function Sidebar({
             className="absolute inset-y-1.5 left-0 w-[3px] rounded-r-full bg-brand shadow-[0_0_12px_var(--color-brand)]"
           />
         )}
-        <Icon size={16} aria-hidden="true" className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:text-brand/70'}`} />
-        <span className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-bold tracking-tight' : ''}`}>{meta.label}</span>
+        <Icon
+          size={16}
+          aria-hidden="true"
+          className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:text-brand/70'}`}
+        />
+        <span
+          className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-bold tracking-tight' : ''}`}
+        >
+          {meta.label}
+        </span>
       </button>
     );
   };
@@ -300,7 +308,11 @@ export function Sidebar({
           title="Ir para o Hub Executivo"
           aria-label="Ir para o Hub Executivo"
         >
-          <LayoutGrid size={16} aria-hidden="true" className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink" />
+          <LayoutGrid
+            size={16}
+            aria-hidden="true"
+            className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink"
+          />
           <span
             className={`text-[13px] font-bold text-ink transition-colors duration-300 ${isCollapsed ? 'lg:hidden' : ''}`}
           >
@@ -321,7 +333,10 @@ export function Sidebar({
               </p>
             </div>
             {isCollapsed && (
-              <div className="hidden lg:block my-2 mx-auto w-4 h-px bg-line/50" aria-hidden="true" />
+              <div
+                className="hidden lg:block my-2 mx-auto w-4 h-px bg-line/50"
+                aria-hidden="true"
+              />
             )}
             {group.items.map(renderNavItem)}
           </section>
