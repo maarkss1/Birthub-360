@@ -40,6 +40,14 @@ export function applyRateLimiters(app: Express): void {
   });
   app.use('/api', apiLimiter);
 
+  // Rate Limiting — /tools serve estáticos autenticados (materiais de capacitação comercial,
+  // ver FRONTEND-001 em src/bootstrap/frontend.ts) mas fica fora do prefixo /api, então não
+  // herdava o apiLimiter acima. Uma rota com authenticateToken sem rate limit próprio permite
+  // esgotar tentativas de token/enumerar arquivos sem controle (achado CodeQL "Missing rate
+  // limiting"). Mesmo limite do apiLimiter — perfil de risco equivalente (leitura autenticada,
+  // sem mutação de estado).
+  app.use('/tools', apiLimiter);
+
   // Rate Limiting — SEC-008b: 15 req/15min por TENANT (organizationId) nas rotas de IA, não por
   // IP. Por IP, um escritório inteiro atrás do mesmo NAT compartilha (e esgota) a cota de outras
   // organizações; por tenant, cada organização tem a sua própria cota isolada, e vários tenants
