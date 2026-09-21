@@ -75,13 +75,6 @@ export function Sidebar({
     onCloseMobile?.();
   };
 
-  const analyzeItems: TabType[] = [
-    ...(canAccessCommercialIntelligence ? (['commercial_intelligence'] as TabType[]) : []),
-    'analytics',
-    'winloss',
-    'reports',
-  ];
-
   const administrationItems: TabType[] = [
     'notifications',
     'bitrix',
@@ -90,112 +83,120 @@ export function Sidebar({
     'settings',
   ];
 
-  // Navegação orientada pela jornada comercial, não pela árvore técnica do projeto.
-  // TAB_META é a fonte única de rótulo/ícone e TabType impede destinos fantasma.
+  // Navegação transformada para paradigma Command Center: estruturada por função de comando
+  // (COMMAND CENTER → INTELLIGENCE → BUSINESS → EXECUTION → CAPACITATION → DATA → ADMINISTRATION)
+  // mantendo a lógica de jornada comercial e acesso por papel. TAB_META é a fonte única de
+  // rótulo/ícone e TabType impede destinos fantasma.
   //
   // Os módulos executivos (Social Selling, Treinamento Comercial, Proposta Comercial, Hub
   // Inteligência & Mkt) NÃO aparecem mais aqui — pedido explícito do usuário: "não quero que
   // apareça no CRM, só nos círculos" do Hub Executivo standalone (rotas top-level em App.tsx,
   // fora de /app/*). Quem administra quem vê cada módulo é 'module-access' acima, não a Sidebar.
   //
-  // Perfil SDR focado (role SDR, ver isRestrictedSdrProfile acima): Plano Diário em primeiro e só
-  // as ferramentas que o SDR usa no dia a dia — sem dashboards/analytics/administração de
-  // integrações. A primeira versão deixava um único item ("Plano Diário") e o SDR ficava sem
-  // acesso pelo menu às próprias ferramentas de trabalho. ADMIN/GESTOR/CLOSER continuam vendo o
-  // menu completo do CRM.
+  // Perfil SDR focado (role SDR, ver isRestrictedSdrProfile acima): Command Center simplificado
+  // focado em execução diária — Plano Diário em primeiro, ferramentas de prospecção/qualificação,
+  // cadência e treinamento. Sem dashboards/analytics/administração de integrações.
   const navGroupsByJourney: NavGroupDefinition[] = isRestrictedSdrProfile
     ? [
-        { title: 'Visão Geral', items: ['daily-plan'] },
-        { title: 'Captar', items: ['prospect'] },
+        { title: 'COMMAND CENTER', items: ['daily-plan'] },
+        { title: 'BUSINESS', items: ['prospect'] },
         {
-          title: 'Qualificar',
+          title: 'EXECUTION',
           items: [
             'companies',
             'contacts',
             ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
+            'activities',
+            'calendar',
+            'cadence',
           ],
         },
-        { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
         {
-          title: 'IA & Capacitação',
+          title: 'CAPACITATION',
           items: ['roleplay', 'objections_matrix', 'chatbook', 'topic_training'],
         },
-        { title: 'Administração', items: ['notifications', 'bitrix', 'settings'] },
+        { title: 'ADMINISTRATION', items: ['notifications', 'bitrix', 'settings'] },
       ]
     : [
         {
-          title: 'Visão Geral',
+          title: 'COMMAND CENTER',
           items: ['dashboard', 'workspace', 'daily-plan'],
         },
-        { title: 'Captar', items: ['prospect', 'market-intelligence'] },
         {
-          title: 'Qualificar',
+          title: 'INTELLIGENCE',
           items: [
+            ...(canAccessCommercialIntelligence ? (['commercial_intelligence'] as TabType[]) : []),
+            ...(canAccessCopilotoIa ? (['copiloto_ia'] as TabType[]) : []),
+            'intelligence',
+            'market-intelligence',
+            'analytics',
+            'winloss',
+            'reports',
+          ],
+        },
+        {
+          title: 'BUSINESS',
+          items: [
+            'prospect',
+            'crm',
+            'crm360',
+            'propostas',
             'companies',
             'contacts',
             ...(canAccessMesaTratamento ? (['mesa-tratamento'] as TabType[]) : []),
-            'qualification_matrix',
           ],
         },
-        { title: 'Relacionar', items: ['activities', 'calendar', 'cadence'] },
-        { title: 'Fechar', items: ['crm', 'crm360', 'propostas'] },
-        { title: 'Analisar', items: analyzeItems },
         {
-          title: 'IA & Capacitação',
+          title: 'EXECUTION',
+          items: ['activities', 'calendar', 'cadence'],
+        },
+        {
+          title: 'CAPACITATION',
           items: [
-            ...(canAccessCopilotoIa ? (['copiloto_ia'] as TabType[]) : []),
-            'intelligence',
-            'chatbook',
             'roleplay',
+            'qualification_matrix',
             'objections_matrix',
             'topic_training',
+            'chatbook',
             'knowledge',
             'editor',
           ],
         },
-        { title: 'Administração', items: administrationItems },
+        { title: 'ADMINISTRATION', items: administrationItems },
       ];
 
   const GROUP_ORDER_BY_ROLE: Partial<Record<string, string[]>> = {
     CLOSER: [
-      'Visão Geral',
-      'Relacionar',
-      'Fechar',
-      'Qualificar',
-      'Captar',
-      'Analisar',
-      'IA & Capacitação',
-      'Administração',
+      'COMMAND CENTER',
+      'EXECUTION',
+      'BUSINESS',
+      'INTELLIGENCE',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
     GESTOR: [
-      'Visão Geral',
-      'Analisar',
-      'Fechar',
-      'Relacionar',
-      'Qualificar',
-      'Captar',
-      'Administração',
-      'IA & Capacitação',
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
     ADMIN: [
-      'Visão Geral',
-      'Analisar',
-      'Fechar',
-      'Relacionar',
-      'Qualificar',
-      'Captar',
-      'Administração',
-      'IA & Capacitação',
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
     VISUALIZADOR: [
-      'Visão Geral',
-      'Analisar',
-      'Relacionar',
-      'Fechar',
-      'Qualificar',
-      'Captar',
-      'IA & Capacitação',
-      'Administração',
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
     ],
   };
 
@@ -220,25 +221,25 @@ export function Sidebar({
         title={meta.label}
         aria-label={meta.label}
         aria-current={isActive ? 'page' : undefined}
-        className={`group relative flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
+        className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer ${
           isActive
-            ? 'bg-gradient-to-r from-brand/10 to-transparent text-brand shadow-sm shadow-brand/5 ring-1 ring-brand/10'
+            ? 'bg-brand/8 text-brand shadow-sm ring-1 ring-brand/12'
             : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'
         } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         {isActive && (
           <span
             aria-hidden="true"
-            className="absolute inset-y-1.5 left-0 w-[3px] rounded-r-full bg-brand shadow-[0_0_12px_var(--color-brand)]"
+            className="absolute inset-y-1.5 left-0 w-[2px] rounded-r-full bg-brand shadow-[0_0_8px_var(--color-brand)]"
           />
         )}
         <Icon
           size={16}
           aria-hidden="true"
-          className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:text-brand/70'}`}
+          className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-brand/60'}`}
         />
         <span
-          className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-bold tracking-tight' : ''}`}
+          className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-semibold tracking-tight' : ''}`}
         >
           {meta.label}
         </span>
@@ -248,14 +249,14 @@ export function Sidebar({
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-white border-r border-slate-200 transition-[width,transform] duration-300 lg:static lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-bg border-r border-line transition-[width,transform] duration-300 lg:static lg:translate-x-0 ${
         isCollapsed ? 'lg:w-[5rem]' : 'lg:w-[16rem]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
-      aria-label="Navegação principal por jornada comercial"
+      aria-label="Navegação principal - Intelligent Business Command Center"
     >
       <div className="flex flex-col flex-1 overflow-hidden">
         <div
-          className={`px-5 py-4 flex items-center justify-between border-b border-slate-100 ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+          className={`px-5 py-4 flex items-center justify-between border-b border-line ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
         >
           {isCollapsed ? (
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
@@ -272,14 +273,14 @@ export function Sidebar({
                     Birth Hub 360°
                   </h1>
                   <span className="text-[10px] text-slate-400 font-medium tracking-wide">
-                    Comando Comercial Executivo
+                    Intelligent Business Command Center
                   </span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={toggleCollapse}
-                className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-midnight transition-colors hidden lg:block"
+                className="p-1.5 rounded-md hover:bg-surface-interactive text-ink-2 hover:text-ink transition-colors hidden lg:block"
                 title="Recolher menu"
               >
                 <PanelLeftClose size={16} />
@@ -293,7 +294,7 @@ export function Sidebar({
             <button
               type="button"
               onClick={toggleCollapse}
-              className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-midnight transition-colors"
+              className="p-1.5 rounded-md hover:bg-surface-interactive text-ink-2 hover:text-ink transition-colors"
               title="Expandir menu lateral"
             >
               <PanelLeftOpen size={16} />
@@ -308,7 +309,7 @@ export function Sidebar({
             navigate('/hub');
             onCloseMobile?.();
           }}
-          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-nav-item)] bg-surface-subtle px-3 py-2.5 text-left transition-all duration-300 hover:bg-surface-2 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-3 rounded-xl bg-surface-subtle px-3 py-2.5 text-left transition-all duration-300 hover:bg-surface-2 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
             isCollapsed ? 'lg:justify-center lg:px-1.5' : ''
           }`}
           title="Ir para o Hub Executivo"
@@ -320,21 +321,21 @@ export function Sidebar({
             className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink"
           />
           <span
-            className={`text-[13px] font-bold text-ink transition-colors duration-300 ${isCollapsed ? 'lg:hidden' : ''}`}
+            className={`text-[13px] font-semibold text-ink transition-colors duration-300 ${isCollapsed ? 'lg:hidden' : ''}`}
           >
-            Painel Inicial
+            Hub Executivo
           </span>
         </button>
       </div>
 
       <nav
         aria-label="Navegação principal"
-        className="custom-scrollbar flex-1 space-y-4 overflow-y-auto px-2.5 py-3"
+        className="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-2.5 py-3"
       >
         {navGroups.map((group) => (
           <section key={group.title} className="space-y-1" aria-label={group.title}>
-            <div className={`mb-1.5 flex items-center px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-2/70">
+            <div className={`mb-2 flex items-center px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2/50">
                 {group.title}
               </p>
             </div>
