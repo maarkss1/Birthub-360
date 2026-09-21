@@ -22,6 +22,18 @@ const spaFallbackLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// CodeQL ("Missing rate limiting"): a análise exige que o rate limit esteja visível na mesma
+// rota que faz a autorização — um limiter equivalente montado em outro arquivo
+// (src/bootstrap/rateLimiters.ts, antes de mountFrontend) é correto em runtime mas não satisfaz
+// essa checagem entre arquivos. Mesmo perfil de risco do apiLimiter (leitura autenticada, sem
+// mutação de estado): materiais de capacitação comercial, não dado de tenant.
+const toolsLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: env.API_RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 /**
  * Serve o frontend: em desenvolvimento, monta o middleware do Vite (HMR, SPA fallback) em modo
  * middleware embutido no mesmo processo Express; em produção, serve os estáticos já buildados em
@@ -33,7 +45,12 @@ export async function mountFrontend(app: Express): Promise<void> {
   if (env.NODE_ENV !== 'production') {
     // FRONTEND-001: Serve estáticos do /tools protegido por autenticação para evitar
     // acesso desprotegido a ferramentas e materiais de capacitação comercial
-    app.use('/tools', authenticateToken, express.static(path.join(process.cwd(), 'public', 'tools')));
+    app.use(
+      '/tools',
+      toolsLimiter,
+      authenticateToken,
+      express.static(path.join(process.cwd(), 'public', 'tools')),
+    );
 
     const vite = await createViteServer({
       server: { middlewareMode: true, host: true, allowedHosts: true },
@@ -64,7 +81,12 @@ export async function mountFrontend(app: Express): Promise<void> {
       );
       next();
     });
-    app.use('/tools', authenticateToken, express.static(path.join(distPath, 'tools')));
+    app.use(
+      '/tools',
+      toolsLimiter,
+      authenticateToken,
+      express.static(path.join(distPath, 'tools')),
+    );
 
     app.use(express.static(distPath));
 

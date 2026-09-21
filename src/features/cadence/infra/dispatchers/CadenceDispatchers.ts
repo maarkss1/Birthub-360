@@ -183,4 +183,3 @@ export function buildProductionCadenceDispatcher(voicePort?: VoiceCallPort): Cad
  * Mantido para retrocompatibilidade enquanto `cadenceRun.worker.ts` é migrado para injetar o voicePort.
  */
 export const productionCadenceDispatcher: CadenceDispatcher = buildProductionCadenceDispatcher();
-

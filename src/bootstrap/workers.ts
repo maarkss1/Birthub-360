@@ -158,7 +158,9 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     whatsappSignalWorker: embeddedWorkersEnabled ? createWhatsAppSignalWorker() : null,
     whatsappCommandWorker: embeddedWorkersEnabled ? createWhatsAppCommandWorker() : null,
     bitrixSyncWorker: embeddedWorkersEnabled ? createBitrixSyncWorker() : null,
-    bitrixExtractionPurgeWorker: embeddedWorkersEnabled ? createBitrixExtractionPurgeWorker() : null,
+    bitrixExtractionPurgeWorker: embeddedWorkersEnabled
+      ? createBitrixExtractionPurgeWorker()
+      : null,
     followUpWorker: embeddedWorkersEnabled ? createFollowUpWorker() : null,
     execSummaryWorker: embeddedWorkersEnabled ? createExecutiveSummaryWorker() : null,
     deduplicationWorker: embeddedWorkersEnabled ? createDeduplicationWorker() : null,

@@ -55,7 +55,9 @@ export function IntelligenceSignal({
   };
 
   return (
-    <div className={`rounded-2xl ${severityStyles[severity]} border p-5 transition-all duration-300`}>
+    <div
+      className={`rounded-2xl ${severityStyles[severity]} border p-5 transition-all duration-300`}
+    >
       <div className="flex items-start gap-4">
         {/* AI Icon */}
         <div className={`p-2.5 rounded-xl ${iconStyles[severity]} border shrink-0`}>

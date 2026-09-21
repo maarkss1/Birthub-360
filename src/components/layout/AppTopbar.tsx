@@ -124,7 +124,9 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
 
       <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
         <div className="hidden text-right leading-tight sm:block">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-ink-2/70">{dateLabel}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-ink-2/70">
+            {dateLabel}
+          </p>
           <p className="text-sm font-bold text-ink [font-variant-numeric:tabular-nums]">
             {timeLabel}
           </p>

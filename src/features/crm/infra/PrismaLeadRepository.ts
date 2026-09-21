@@ -221,7 +221,9 @@ export class PrismaLeadRepository implements LeadRepository {
       ? new Date(data.expectedCloseAt as unknown as string | Date)
       : data.expectedCloseAt;
     const prismaStatus = data.status
-      ? (toPrismaLeadStatus(data.status as LeadStatus) as unknown as Prisma.LeadUpdateInput['status'])
+      ? (toPrismaLeadStatus(
+          data.status as LeadStatus,
+        ) as unknown as Prisma.LeadUpdateInput['status'])
       : undefined;
     // CRM-011: só sincroniza pipelineId/pipelineStageId a partir de `status` quando o próprio
     // payload não está gerenciando o pipeline explicitamente (ver findMatchingPipelineStage acima)

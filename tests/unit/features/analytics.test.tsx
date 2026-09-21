@@ -151,7 +151,7 @@ describe('Analytics', () => {
   it('oferece a tabela-gêmea para não depender só do gráfico', async () => {
     const user = userEvent.setup();
     render(<Analytics />);
-    await screen.findByText('Funil comercial');
+    await screen.findByText('Funil Comercial');
 
     // Nenhuma tabela antes de pedir.
     expect(screen.queryByText('Conversão da etapa anterior')).toBeNull();

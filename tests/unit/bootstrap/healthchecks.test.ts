@@ -105,7 +105,7 @@ describe('bootstrap/healthchecks', () => {
 
     expect(res.status).toBe(503);
     expect(res.body.status).toBe('error');
-    expect(res.body.message).toBe('Database or Redis unavailable');
+    expect(res.body.message).toBe('One or more critical dependencies unavailable');
     expect(res.body.version).toBe(env.BUILD_VERSION);
     expect(res.body.commit).toBe(env.COMMIT_SHA);
   });
@@ -121,7 +121,7 @@ describe('bootstrap/healthchecks', () => {
 
     expect(res.status).toBe(503);
     expect(res.body.status).toBe('error');
-    expect(res.body.message).toBe('Database or Redis unavailable');
+    expect(res.body.message).toBe('One or more critical dependencies unavailable');
     expect(res.body.version).toBe(env.BUILD_VERSION);
     expect(res.body.commit).toBe(env.COMMIT_SHA);
   });

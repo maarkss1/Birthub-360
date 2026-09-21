@@ -28,10 +28,10 @@ export function SinglePageDashboard() {
   const navigate = useNavigate();
   const { info: playbookMeta } = useActivePlaybook();
   const { currentUser } = useAuth();
-  
+
   // Real hooks data loading
   const { data: stats } = useAnalyticsDashboard(6);
-  
+
   const projArr = stats?.overview?.pipelineValue || 4850000;
   const winRate = stats?.overview?.conversionRate || 32.8;
 
@@ -44,21 +44,27 @@ export function SinglePageDashboard() {
           <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-sunset/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute right-1/3 -top-16 w-64 h-64 bg-brand/8 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute left-1/4 bottom-0 w-48 h-48 bg-red-violet/8 rounded-full blur-3xl pointer-events-none" />
-          
+
           <div className="relative z-10">
             {/* Status Bar */}
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand/10 border border-brand/20">
                 <Activity className="w-3.5 h-3.5 text-brand" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand">Sistema Operacional</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+                  Sistema Operacional
+                </span>
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sunset/10 border border-sunset/20">
                 <BrainCircuit className="w-3.5 h-3.5 text-sunset" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-sunset">IA Ativa</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-sunset">
+                  IA Ativa
+                </span>
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-violet/10 border border-red-violet/20">
                 <Zap className="w-3.5 h-3.5 text-red-violet" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-red-violet">Inteligência Em Tempo Real</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-red-violet">
+                  Inteligência Em Tempo Real
+                </span>
               </div>
             </div>
 
@@ -66,29 +72,34 @@ export function SinglePageDashboard() {
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
               <div>
                 <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-white">
-                  {greeting()}, <span className="bg-gradient-to-r from-white via-brand-2 to-sunset bg-clip-text text-transparent">{currentUser?.name?.split(' ')[0] || 'Líder'}</span>
+                  {greeting()},{' '}
+                  <span className="bg-gradient-to-r from-white via-brand-2 to-sunset bg-clip-text text-transparent">
+                    {currentUser?.name?.split(' ')[0] || 'Líder'}
+                  </span>
                 </h1>
                 <p className="text-sm text-ink-2/80 mt-2 max-w-2xl leading-relaxed">
-                  Sua central de comando está operacional. Pipeline consolidado em alta. Playbook ativo:{' '}
+                  Sua central de comando está operacional. Pipeline consolidado em alta. Playbook
+                  ativo:{' '}
                   <span className="font-semibold text-white bg-red-violet/30 px-2 py-0.5 rounded border border-red-violet/40">
                     {playbookMeta?.label || 'Enterprise Acceleration'}
-                  </span>.
+                  </span>
+                  .
                 </p>
               </div>
 
               {/* Quick Actions */}
               <div className="flex items-center gap-2.5">
-                <button 
-                  type="button" 
-                  onClick={() => navigate('/app/prospect')} 
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/prospect')}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sunset hover:bg-[#E84B35] text-white text-xs font-bold transition-all shadow-lg shadow-sunset/20 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Novo Negócio</span>
                 </button>
-                <button 
-                  type="button" 
-                  onClick={() => navigate('/app/commercial_intelligence')} 
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/commercial_intelligence')}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand/10 hover:bg-brand/20 text-brand-ink border border-brand/30 text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
                   <LineChart className="w-4 h-4" />
@@ -107,13 +118,19 @@ export function SinglePageDashboard() {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2/60">Pipeline Total</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2/60">
+                    Pipeline Total
+                  </span>
                   <span className="p-1.5 rounded-lg bg-brand/10 text-brand-ink border border-brand/20">
                     <TrendingUp className="w-3.5 h-3.5" />
                   </span>
                 </div>
                 <h2 className="text-4xl lg:text-5xl font-black text-ink tracking-tight">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(projArr)}
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    notation: 'compact',
+                  }).format(projArr)}
                 </h2>
               </div>
               <div className="text-right">
@@ -125,7 +142,10 @@ export function SinglePageDashboard() {
               </div>
             </div>
             <div className="h-2 bg-surface-2 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-brand to-sunset rounded-full" style={{ width: '72%' }} />
+              <div
+                className="h-full bg-gradient-to-r from-brand to-sunset rounded-full"
+                style={{ width: '72%' }}
+              />
             </div>
             <p className="text-[10px] text-ink-2/60 mt-2">72% da meta trimestral atingida</p>
           </div>
@@ -134,7 +154,9 @@ export function SinglePageDashboard() {
           <div className="relative overflow-hidden rounded-2xl bg-surface border border-line p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="absolute top-0 right-0 w-24 h-24 bg-red-violet/8 rounded-bl-full pointer-events-none" />
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2/60">Taxa de Conversão</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2/60">
+                Taxa de Conversão
+              </span>
               <span className="p-1.5 rounded-lg bg-red-violet/10 text-red-violet border border-red-violet/20">
                 <Radar className="w-3.5 h-3.5" />
               </span>
@@ -167,10 +189,12 @@ export function SinglePageDashboard() {
               </div>
               <div>
                 <h3 className="text-sm font-bold text-ink tracking-tight">Deals de Alto Impacto</h3>
-                <p className="text-xs text-ink-2/60">Oportunidades estratégicas com fechamento estimado para o período</p>
+                <p className="text-xs text-ink-2/60">
+                  Oportunidades estratégicas com fechamento estimado para o período
+                </p>
               </div>
             </div>
-            <button 
+            <button
               type="button"
               onClick={() => navigate('/app/crm')}
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-2 hover:bg-surface-interactive text-ink text-xs font-semibold transition-colors cursor-pointer"
@@ -195,7 +219,9 @@ export function SinglePageDashboard() {
                   <td className="py-3.5 px-6">
                     <div className="font-semibold text-ink flex items-center gap-2">
                       Banco Corporate Digital
-                      <span className="text-[9px] bg-brand/10 text-brand-ink font-bold px-1.5 py-0.2 rounded border border-brand/20">VIP</span>
+                      <span className="text-[9px] bg-brand/10 text-brand-ink font-bold px-1.5 py-0.2 rounded border border-brand/20">
+                        VIP
+                      </span>
                     </div>
                   </td>
                   <td className="py-3.5 px-4">
@@ -203,9 +229,7 @@ export function SinglePageDashboard() {
                       Negociação Final
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 font-bold text-ink text-sm">
-                    R$ 650.000
-                  </td>
+                  <td className="py-3.5 px-4 font-bold text-ink text-sm">R$ 650.000</td>
                   <td className="py-3.5 px-4 font-medium text-ink-2/80">Roberto (CIO)</td>
                   <td className="py-3.5 px-6 text-right">
                     <div className="flex items-center justify-end gap-1.5">

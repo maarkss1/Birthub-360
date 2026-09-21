@@ -1,5 +1,15 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, BarChart3, Download, Flame, Loader2, RefreshCw, Table2, TrendingUp, TrendingDown } from 'lucide-react';
+import {
+  AlertTriangle,
+  BarChart3,
+  Download,
+  Flame,
+  Loader2,
+  RefreshCw,
+  Table2,
+  TrendingUp,
+  TrendingDown,
+} from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { BarChart, LineChart } from '../../../components/charts';
 import { Button } from '../../../components/ui/Button';
@@ -40,7 +50,7 @@ function DecisionInstrument({
       : tone === 'critical'
         ? 'text-critical'
         : 'text-ink';
-  
+
   const trend = previousValue && (
     <div className="flex items-center gap-1 text-[10px] font-semibold">
       {tone === 'good' ? (
@@ -65,9 +75,7 @@ function DecisionInstrument({
       <div className="relative z-10">
         <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2/70">{label}</p>
         <p className={`text-2xl lg:text-3xl font-black mt-1 ${toneClass}`}>{value}</p>
-        {target && (
-          <p className="text-[10px] text-ink-2/60 mt-0.5">Meta: {target}</p>
-        )}
+        {target && <p className="text-[10px] text-ink-2/60 mt-0.5">Meta: {target}</p>}
         {trend && <div className="mt-1">{trend}</div>}
         {hint && <p className="text-[10px] text-ink-2/60 mt-1">{hint}</p>}
       </div>
@@ -285,8 +293,8 @@ export function Analytics() {
           >
             {/* Decision Instruments - Top Level KPIs */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-              <DecisionInstrument 
-                label="Leads em aberto" 
+              <DecisionInstrument
+                label="Leads em aberto"
                 value={String(data.overview.totalLeads)}
                 hint="Volume atual do pipeline"
               />
@@ -294,7 +302,13 @@ export function Analytics() {
                 label="Taxa de Conversão"
                 value={`${data.overview.conversionRate.toFixed(1)}%`}
                 hint="Ganhos sobre total criado"
-                tone={data.overview.conversionRate >= 20 ? 'good' : data.overview.conversionRate < 10 ? 'critical' : 'neutral'}
+                tone={
+                  data.overview.conversionRate >= 20
+                    ? 'good'
+                    : data.overview.conversionRate < 10
+                      ? 'critical'
+                      : 'neutral'
+                }
                 target="≥20%"
               />
               <DecisionInstrument

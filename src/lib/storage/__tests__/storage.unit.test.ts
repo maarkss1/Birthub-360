@@ -68,7 +68,9 @@ describe('Storage Module (src/lib/storage/index.ts)', () => {
   });
 
   it('gera URL assinada de upload com TTL de 3600s', async () => {
-    getSignedUrlMock.mockResolvedValue('http://localhost:9000/prospector-assets/test.pdf?X-Amz-Signature=xyz');
+    getSignedUrlMock.mockResolvedValue(
+      'http://localhost:9000/prospector-assets/test.pdf?X-Amz-Signature=xyz',
+    );
     const { getUploadUrl } = await import('../index.js');
 
     const result = await getUploadUrl('tenant-1/test.pdf', 'application/pdf');
@@ -89,7 +91,9 @@ describe('Storage Module (src/lib/storage/index.ts)', () => {
   });
 
   it('gera URL assinada de download com TTL de 3600s', async () => {
-    getSignedUrlMock.mockResolvedValue('http://localhost:9000/prospector-assets/test.pdf?X-Amz-Signature=xyz');
+    getSignedUrlMock.mockResolvedValue(
+      'http://localhost:9000/prospector-assets/test.pdf?X-Amz-Signature=xyz',
+    );
     const { getDownloadUrl } = await import('../index.js');
 
     const result = await getDownloadUrl('tenant-1/test.pdf');
