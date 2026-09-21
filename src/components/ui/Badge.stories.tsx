@@ -11,8 +11,6 @@ const meta = {
       control: 'select',
       options: [
         'default',
-        'primary',
-        'intelligence',
         'success',
         'warning',
         'danger',
@@ -35,8 +33,6 @@ export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-2">
       <Badge variant="default">Default</Badge>
-      <Badge variant="primary">Sunset Brand</Badge>
-      <Badge variant="intelligence">Intelligence</Badge>
       <Badge variant="success">Aprovado</Badge>
       <Badge variant="warning">Pendente</Badge>
       <Badge variant="danger">Bloqueado</Badge>
