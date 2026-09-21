@@ -146,6 +146,8 @@ export function GitHubTool(_props: { configured: boolean }) {
               <img
                 src={org.avatarUrl}
                 alt=""
+                width={36}
+                height={36}
                 className="w-9 h-9 rounded-full shrink-0 border border-line"
               />
               <div className="min-w-0">

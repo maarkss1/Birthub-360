@@ -111,7 +111,13 @@ export function YoutubeTool(_props: { configured: boolean }) {
         {info && (
           <div className="bg-surface rounded-2xl border border-line shadow-sm overflow-hidden max-w-md">
             {info.thumbnailUrl && (
-              <img src={info.thumbnailUrl} alt="" className="w-full aspect-video object-cover" />
+              <img
+                src={info.thumbnailUrl}
+                alt=""
+                width={448}
+                height={252}
+                className="w-full aspect-video object-cover"
+              />
             )}
             <div className="p-5 space-y-2">
               <p className="font-bold text-sm text-ink leading-snug">{info.title}</p>
