@@ -1,10 +1,13 @@
 import { prisma } from '../../lib/prisma.js';
 
 /**
- * Ponto único de escrita de `LeadStageHistory` (ver comentário no schema). Mora em `src/shared/`
- * (seguindo o mesmo desenho de `leadFieldChangeHistory.service.ts`) porque é consumido por
- * múltiplas features (`crm`, `crm360`, `commercial-intelligence`), evitando violações de
- * `no-cross-feature-imports` (docs/architecture/DEPENDENCY_RULES.md).
+ * Ponto único de escrita de `LeadStageHistory` (ver comentário no schema). Chamado pelos pontos
+ * do CRM que movem uma oportunidade de etapa (`PrismaCrm360Repository.ts`: `updateLeadStage`,
+ * `convertLead`; `PrismaLeadRepository.ts`: `update`/`updateStatus`, ver CRM-011). Movido para
+ * `src/shared/` (era `commercial-intelligence/infra/stageHistory.ts`) porque é consumido por
+ * `crm`, `crm360` e `commercial-intelligence` — nenhuma feature é dona exclusiva do escritor,
+ * então composição via import direto entre features violaria `no-cross-feature-imports`
+ * (ver `.dependency-cruiser.cjs`).
  *
  * Fecha a entrada aberta anterior (se houver) e abre uma nova. Não lança em caso de erro de
  * histórico — nunca deve derrubar a operação real de mover o negócio (o histórico é uma camada de
@@ -39,6 +42,10 @@ export async function recordStageTransition(
       });
     }
   } catch (error) {
+    // Logger estruturado em vez de console — mesmo padrão do resto do backend
+    // (ver src/lib/logger.ts). Falha aqui nunca deve propagar para o caller (moveRecord/
+    // createDeal/convertLead) — o negócio já foi movido de verdade, só o registro histórico
+    // (usado por Aging por Etapa/Sales Cycle) que ficaria incompleto.
     const { logger } = await import('../../lib/logger.js');
     logger.error({ err: error, leadId, organizationId }, 'Falha ao registrar LeadStageHistory');
   }
