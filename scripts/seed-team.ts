@@ -6,8 +6,8 @@ import type { UserRole } from '@prisma/client';
 
 const ORG_NAME = 'Birth Hub 360';
 // Configurável por ambiente (ADMIN_EMAIL/ADMIN_NAME) porque o e-mail/nome do administrador único
-// muda por deploy — o hardcode anterior ("marcelo.nascimento@atlasgr.com.br") era um resquício da
-// marca antiga (Atlas GR) e não correspondia ao usuário real desta instância. Mantém o mesmo
+// muda por deploy — o hardcode anterior ("marcelo.nascimento@birthhub360.com.br") era um resquício da
+// marca antiga (Birth Hub 360) e não correspondia ao usuário real desta instância. Mantém o mesmo
 // default por compatibilidade com deploys já existentes que não definem essas variáveis.
 const DEFAULT_ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim() || 'marcelinmark@gmail.com';
 const DEFAULT_ADMIN_NAME = process.env.ADMIN_NAME?.trim() || 'Marcelo Nascimento';

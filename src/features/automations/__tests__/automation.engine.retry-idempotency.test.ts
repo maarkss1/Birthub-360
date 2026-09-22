@@ -103,7 +103,7 @@ describe('AutomationEngine — retry com backoff', () => {
 
   it('ação transitória falha 2 vezes e sucede na 3ª tentativa: histórico registra sucesso com retryCount=2, sem duplicar o efeito colateral já bem-sucedido', async () => {
     mocks.automationFindMany.mockResolvedValue([
-      makeAutomation({ actionConfig: { channel: 'email', to: 'time@atlasgr.com.br' } }),
+      makeAutomation({ actionConfig: { channel: 'email', to: 'time@birthhub360.com.br' } }),
     ]);
     mocks.sendEmail
       .mockRejectedValueOnce(new Error('ECONNRESET'))
@@ -126,7 +126,7 @@ describe('AutomationEngine — retry com backoff', () => {
 
   it('ação transitória falha em todas as tentativas: histórico registra failed com retryCount = tentativas-1, automação não é marcada como executada', async () => {
     mocks.automationFindMany.mockResolvedValue([
-      makeAutomation({ actionConfig: { channel: 'email', to: 'time@atlasgr.com.br' } }),
+      makeAutomation({ actionConfig: { channel: 'email', to: 'time@birthhub360.com.br' } }),
     ]);
     mocks.sendEmail.mockRejectedValue(new Error('SMTP indisponível'));
 

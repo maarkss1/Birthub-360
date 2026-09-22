@@ -6,8 +6,8 @@
 
 ## Problema
 
-Instalação do pacote externo `ATLASGR_COMMERCIAL_AGENT_CELL_v1.1.0`
-(`C:\Users\Marks\Desktop\ATLASGR_COMMERCIAL_AGENT_CELL_v1.1.0`, 12 agentes comerciais) foi pedida
+Instalação do pacote externo `BIRTHHUB360_COMMERCIAL_AGENT_CELL_v1.1.0`
+(`C:\Users\Marks\Desktop\BIRTHHUB360_COMMERCIAL_AGENT_CELL_v1.1.0`, 12 agentes comerciais) foi pedida
 diretamente pelo usuário. `REPO_REALITY_CHECK.md` do próprio pacote já avisava que ele foi montado
 sem leitura de código real deste repositório e que várias de suas premissas precisavam ser
 confirmadas antes de implementar. Confirmei — e boa parte delas estava errada, na direção "existe

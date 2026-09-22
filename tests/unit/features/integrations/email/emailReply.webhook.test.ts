@@ -86,9 +86,9 @@ function inboundPayload(overrides: Record<string, unknown> = {}) {
   return {
     organizationId: 'org-1',
     providerMessageId: '<msg-1@lead.com>',
-    inReplyTo: '<out-1@atlasgr.com.br>',
+    inReplyTo: '<out-1@birthhub360.com.br>',
     fromEmail: 'lead@empresa.com',
-    toEmail: 'vendas@atlasgr.com.br',
+    toEmail: 'vendas@birthhub360.com.br',
     subject: 'Re: Proposta comercial',
     body: 'Fechado, pode enviar o contrato.',
     receivedAt: '2026-08-19T12:00:00.000Z',
@@ -211,7 +211,7 @@ describe('POST /api/webhooks/email/webhook', () => {
       providerMessageId: '<msg-1@lead.com>',
       direction: 'inbound',
       fromEmail: 'lead@empresa.com',
-      toEmail: 'vendas@atlasgr.com.br',
+      toEmail: 'vendas@birthhub360.com.br',
       leadId: 'lead-1',
     });
     expect(classify).toHaveBeenCalledTimes(1);

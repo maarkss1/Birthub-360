@@ -21,7 +21,7 @@ Este arquivo governa esta pasta e todas as subpastas.
 
 ## Definição de pronto local
 
-- AtlasGR/TotalTrac consistentes e WCAG AA nos fluxos críticos.
+- Birth Hub 360 consistentes e WCAG AA nos fluxos críticos.
 
 ## Gate mínimo
 

@@ -14,7 +14,7 @@ export const SEGMENTO_OPTIONS = [
   'Seguradora',
 ];
 
-export const TOTALTRAC_SEGMENTO_OPTIONS = [
+export const BIRTHHUB360_SEGMENTO_OPTIONS = [
   'Transportadora',
   'Empresas de Logística',
   'Frotas Corporativas',
@@ -161,7 +161,7 @@ export const ATLAS_PERSONA_OPTIONS = [
   },
 ] as const;
 
-export const TOTALTRAC_PERSONA_OPTIONS = [
+export const BIRTHHUB360_PERSONA_OPTIONS = [
   {
     label: 'Dono / CEO',
     nivel: 'Decisor final',

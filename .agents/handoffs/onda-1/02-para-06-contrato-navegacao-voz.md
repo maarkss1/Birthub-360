@@ -48,6 +48,6 @@ Já entregue:
   não reconhecido).
 
 ## Contexto adicional
-`setActiveBrand('atlasgr'|'totaltrac')` (troca de marca por voz) não passa por este contrato — é
+`setActiveBrand('birthhub360'|'birthhub360')` (troca de marca por voz) não passa por este contrato — é
 uma ação de contexto local síncrona e genuína (`BrandContext`), não uma navegação de rota, então
 não tinha o mesmo problema.

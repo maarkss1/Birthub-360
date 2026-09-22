@@ -36,7 +36,7 @@ export function BitrixGuideHub() {
     'practices' | 'pipeline' | 'field_mapping' | 'tutorials'
   >('practices');
 
-  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // Antes dividido entre dois playbooks nomeados por empresa (Birth Hub 360) — unificado
   // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma das duas listas.
   const practices = [
     {

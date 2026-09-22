@@ -98,7 +98,7 @@ export function canAccessMesaTratamento(role: string): boolean {
 }
 
 /**
- * Copiloto Comercial IA (fundação — Onda 1 do pacote `atlasgr_copiloto_ai_pack`) — quem captura,
+ * Copiloto Comercial IA (fundação — Onda 1 do pacote `birthhub360_copiloto_ai_pack`) — quem captura,
  * revisa e aprova sinais de conversa comercial (Google Meet, ligação) no dia a dia: mesmo conjunto
  * de papéis de `MESA_TRATAMENTO_ROLES` (ADMIN/GESTOR/CLOSER/SDR). VISUALIZADOR fica de fora porque
  * este módulo cria/altera dado (consentimento, sugestão de campo de CRM), não é só leitura.

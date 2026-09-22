@@ -5,11 +5,11 @@
 - Prioridade: normal
 
 ## Problema
-`infrastructure/opa/policies/tenancy.rego` (package `atlasgr.tenancy`, regras `brand_allowed`/
+`infrastructure/opa/policies/tenancy.rego` (package `birthhub360.tenancy`, regras `brand_allowed`/
 `cross_brand_violation`) é carregado pelo engine OPA em runtime (a pasta inteira
 `infrastructure/opa/policies` é montada no container via `docker-compose.services.yml`), mas
-**nenhum endpoint do código-fonte consulta `atlasgr/tenancy`** — confirmado via grep em todo
-`src/`. Só `atlasgr/rbac` (`rbac.rego`) é efetivamente chamado, por `src/middleware/opa.ts` e
+**nenhum endpoint do código-fonte consulta `birthhub360/tenancy`** — confirmado via grep em todo
+`src/`. Só `birthhub360/rbac` (`rbac.rego`) é efetivamente chamado, por `src/middleware/opa.ts` e
 `src/lib/auth/authorization.ts`.
 
 O comentário do próprio arquivo `tenancy.rego` o descreve como "a prova técnica" de isolamento de
@@ -19,7 +19,7 @@ nenhuma rota HTTP.
 
 ## Arquivo(s) envolvido(s)
 `infrastructure/opa/policies/tenancy.rego`, `infrastructure/opa/policies/rbac.rego` (este último
-**é** consultado — não remover, só o namespace `atlasgr.rbac` carrega a marca antiga como nome
+**é** consultado — não remover, só o namespace `birthhub360.rbac` carrega a marca antiga como nome
 técnico).
 
 ## Alteração necessária

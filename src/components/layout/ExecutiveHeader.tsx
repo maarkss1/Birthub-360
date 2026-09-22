@@ -34,9 +34,9 @@ export function ExecutiveHeader({
   };
 
   // Atualização (09/2026, pedido explícito do usuário): existiam mais 3 entradas aqui
-  // (`treinamento-atlasgr`, `proposta-comercial`, `hub-inteligencia-marketing`) — aposentadas
+  // (`treinamento-birthhub360`, `proposta-comercial`, `hub-inteligencia-marketing`) — aposentadas
   // junto com seus módulos no catálogo (ver src/config/module-catalog.ts), conteúdo proprietário
-  // da Atlas GR. `social-selling` continua, rerotulado para a marca Birth Hub 360.
+  // da Birth Hub 360. `social-selling` continua, rerotulado para a marca Birth Hub 360.
   const hubs = [
     { id: 'social-selling', label: 'Social Selling', path: '/social-selling', icon: Share2 },
     // Só mostra no switcher os módulos que o usuário logado realmente tem concedidos (ver

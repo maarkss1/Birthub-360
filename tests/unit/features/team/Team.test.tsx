@@ -25,7 +25,7 @@ function render(ui: React.ReactElement) {
 const admin = {
   id: 'admin-1',
   name: 'Ana Admin',
-  email: 'ana@atlasgr.com.br',
+  email: 'ana@birthhub360.com.br',
   role: 'ADMIN',
   mustChangePassword: false,
   createdAt: '2026-07-01T00:00:00.000Z',
@@ -36,7 +36,7 @@ const admin = {
 const bloqueado = {
   id: 'sdr-1',
   name: 'Sérgio SDR',
-  email: 'sergio@atlasgr.com.br',
+  email: 'sergio@birthhub360.com.br',
   role: 'SDR',
   mustChangePassword: false,
   createdAt: '2026-07-02T00:00:00.000Z',
@@ -69,7 +69,7 @@ describe('Equipe', () => {
   it('lista os usuários da organização', async () => {
     render(<Team />);
     expect(await screen.findByText('Ana Admin')).toBeTruthy();
-    expect(screen.getByText('ana@atlasgr.com.br')).toBeTruthy();
+    expect(screen.getByText('ana@birthhub360.com.br')).toBeTruthy();
   });
 
   it('o botão de excluir a própria conta fica desabilitado', async () => {
@@ -134,13 +134,13 @@ describe('Equipe', () => {
     await screen.findByText('Ana Admin');
 
     await user.type(screen.getByLabelText('Nome'), 'Novo Usuário');
-    await user.type(screen.getByLabelText('E-mail corporativo'), 'novo@atlasgr.com.br');
+    await user.type(screen.getByLabelText('E-mail corporativo'), 'novo@birthhub360.com.br');
     await user.click(screen.getByRole('button', { name: /Criar usuário/ }));
 
     await waitFor(() =>
       expect(createBody).toEqual({
         name: 'Novo Usuário',
-        email: 'novo@atlasgr.com.br',
+        email: 'novo@birthhub360.com.br',
         role: 'SDR',
       }),
     );

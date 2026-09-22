@@ -5,23 +5,23 @@
 - Prioridade: normal
 
 ## Resolução
-Resolvido em 09/2026: conforme decisão expressa do usuário e arquitetura registrada em `src/bootstrap/frontend.ts`, `src/App.tsx` e `src/config/module-catalog.ts`, os módulos e diretórios estáticos proprietários da antiga operação Atlas GR (`public/tools/treinamento-atlasgr/`, `public/tools/propostas/`, `public/tools/portal-comercial/` e `public/tools/hub-inteligencia-marketing/`) foram inteiramente aposentados e removidos. Apenas ferramentas genéricas alinhadas à nova identidade permanecem.
+Resolvido em 09/2026: conforme decisão expressa do usuário e arquitetura registrada em `src/bootstrap/frontend.ts`, `src/App.tsx` e `src/config/module-catalog.ts`, os módulos e diretórios estáticos proprietários da antiga operação Birth Hub 360 (`public/tools/treinamento-birthhub360/`, `public/tools/propostas/`, `public/tools/portal-comercial/` e `public/tools/hub-inteligencia-marketing/`) foram inteiramente aposentados e removidos. Apenas ferramentas genéricas alinhadas à nova identidade permanecem.
 
 
 ## Problema
 Quatro portais estáticos em `public/tools/` estão **ativos** (roteados em `App.tsx`, servidos via
 iframe) e ainda exibem a marca/conteúdo antigo ao usuário final:
-- `public/tools/treinamento-atlasgr/` (portal de treinamento completo, >200 arquivos, inclui kit de
+- `public/tools/treinamento-birthhub360/` (portal de treinamento completo, >200 arquivos, inclui kit de
   marca antigo `brand/atlas-logo*.svg`)
 - `public/tools/propostas/`, `public/tools/social-selling/`, `public/tools/hub-inteligencia-marketing/`
   (mesma situação em menor escala)
 
-Adicionalmente, `public/tools/portal-comercial/` (arquivos `totaltrac-*.html`) **não teve uso
+Adicionalmente, `public/tools/portal-comercial/` (arquivos `birthhub360-*.html`) **não teve uso
 confirmado nem descartado** nesta rodada — sem referência encontrada em `src/`, mas sem garantia
 de que não há link direto fora do roteador React.
 
 ## Arquivo(s) envolvido(s)
-`public/tools/treinamento-atlasgr/**`, `public/tools/propostas/**`,
+`public/tools/treinamento-birthhub360/**`, `public/tools/propostas/**`,
 `public/tools/social-selling/**`, `public/tools/hub-inteligencia-marketing/**`,
 `public/tools/portal-comercial/**`.
 

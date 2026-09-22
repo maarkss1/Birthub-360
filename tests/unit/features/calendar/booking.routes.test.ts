@@ -52,7 +52,7 @@ vi.mock('../../../../src/lib/prisma.js', () => ({
 }));
 
 vi.mock('../../../../src/config/env.js', () => ({
-  env: { SMTP_FROM: 'sdr@atlasgr.com.br' },
+  env: { SMTP_FROM: 'sdr@birthhub360.com.br' },
 }));
 
 vi.mock('../../../../src/lib/email/mailer.js', () => ({
@@ -81,7 +81,7 @@ const LINK = {
   organizationId: 'org-1',
   active: true,
 };
-const HOST_USER = { name: 'João Vendedor', email: 'joao@atlasgr.com', image: null, role: 'CLOSER' };
+const HOST_USER = { name: 'João Vendedor', email: 'joao@birthhub360.com', image: null, role: 'CLOSER' };
 const HOST_ORG = { name: 'Birth Hub 360' };
 
 beforeEach(() => {
@@ -240,7 +240,7 @@ describe('POST /public-book/:slug — Meet + confirmação por e-mail (Meeting H
       'org-1',
       expect.objectContaining({
         summary: 'Reunião com João',
-        attendees: ['cliente@empresa.com', 'joao@atlasgr.com'],
+        attendees: ['cliente@empresa.com', 'joao@birthhub360.com'],
       }),
     );
     expect(sendEmailMock).toHaveBeenCalledWith(

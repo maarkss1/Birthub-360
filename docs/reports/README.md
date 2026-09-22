@@ -71,7 +71,7 @@ autenticação (JWT/refresh token) que não é mais real desde a migração para
 
 ## Product Adoption & Commercial Intelligence
 
-- [`PRODUCT_ADOPTION_INTELLIGENCE_ATLASGR.md`](PRODUCT_ADOPTION_INTELLIGENCE_ATLASGR.md) —
+- [`PRODUCT_ADOPTION_INTELLIGENCE_birthhub360.md`](PRODUCT_ADOPTION_INTELLIGENCE_birthhub360.md) —
   diagnóstico de maturidade de produto e blueprint de instrumentação de adoção (07/08/2026);
   movido para cá em 25/08/2026 (ITEM-14) — vivia solto na raiz do repositório, sem nenhuma
   referência de outros documentos, com o mesmo perfil (auditoria pontual e não atualizada

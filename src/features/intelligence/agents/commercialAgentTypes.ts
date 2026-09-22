@@ -1,6 +1,6 @@
 /**
  * Contrato compartilhado da Célula Comercial de Agentes (Onda 13 — instalação do pacote
- * ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0). Não é um framework paralelo ao Enxame que já roda em
+ * BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0). Não é um framework paralelo ao Enxame que já roda em
  * produção (Supervisor + SDR/BDR/Closer/CRM/Ops, ver `supervisor.agent.ts`) — é o envelope de
  * saída e o formato de handoff que os agentes NOVOS desta célula usam (`ldrIntelligence.agent.ts`,
  * `coordinatorCommercial.agent.ts`, `managerCommercial.agent.ts`, `executiveDirector.agent.ts`,

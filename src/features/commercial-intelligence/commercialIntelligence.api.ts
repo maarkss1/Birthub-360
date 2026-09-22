@@ -556,7 +556,7 @@ export interface ReentryRow {
 export interface ReentriesSummary {
   trackingSince: string | null;
   countInPeriod: number;
-  totalTracked: number;
+  birthhub360ed: number;
   recoveredCount: number;
   recoveredAmount: number;
   reactivatedOpenCount: number;

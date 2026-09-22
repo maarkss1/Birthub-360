@@ -17,17 +17,20 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // nenhuma tela que depende de dados (dashboard, CRM, prospecção, Hub de IA etc.) funcionava.
 // Restaurado aqui, com o domínio de produção real confirmado nesta onda (ver comentário abaixo).
 //
-// NOTA DE MARCA: appId, esquema de deep link (`atlasgr://`) e domínios continuam com o nome
-// anterior de propósito. Trocá-los invalida instalações já publicadas, links salvos e a
-// configuração de DNS/Render — é uma migração coordenada, não parte de um rebranding de UI.
+// NOTA DE MARCA (atualizado 2026-09-22, pedido explícito do usuário): appId, esquema de deep
+// link e domínio foram renomeados para `br.com.birthhub360.prospector`/`birthhub360://`/
+// `app.birthhub360.com.br` (identificadores da marca anterior removidos por completo) — o app
+// nunca chegou a ser publicado nas lojas sob o nome anterior, então não há instalação real, link
+// salvo ou configuração de DNS/Render em produção que essa troca invalide. `npx cap sync android`/
+// `npx cap sync ios` precisam rodar de novo depois desta mudança para propagar o novo appId/scheme
+// aos projetos nativos.
 //
-// `app.atlasgr.com.br` (domínio final, usado em render.yaml/docs/deploy/producao.md como
-// ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL) ainda não resolve DNS — verificado nesta onda
-// (`curl https://app.atlasgr.com.br` não conecta). O fallback documentado em
-// docs/deploy/producao.md §8 ("até lá") é o hostname direto do Render, que respondeu 200 em
-// /health/live nesta onda: usado como default abaixo. Troque para `https://app.atlasgr.com.br`
-// (e rode `npx cap sync android`/`npx cap sync ios` de novo) assim que o domínio Cloudflare
-// estiver ativo — ver docs/deploy/producao.md §3. Handoff aberto para 08/10 confirmando isso.
+// `app.birthhub360.com.br` (domínio final, usado em render.yaml/docs/deploy/producao.md como
+// ALLOWED_ORIGINS/BETTER_AUTH_URL/PUBLIC_BASE_URL) ainda não resolve DNS. O fallback documentado
+// em docs/deploy/producao.md §8 ("até lá") é o hostname direto do Render, usado como default
+// abaixo — mas note que Render está desativado desde a transição para modo Local-First
+// (docs/deploy/README.md); o caminho de build mobile contra um backend real precisa ser
+// revisitado à luz disso, não é bloqueador desta troca de nome.
 //
 // Para apontar para um backend de desenvolvimento local (mesma rede Wi-Fi/LAN) durante testes no
 // celular, exporte CAPACITOR_SERVER_URL=http://<ip-da-sua-maquina>:3005 antes de `npx cap sync
@@ -39,7 +42,7 @@ const PRODUCTION_URL = process.env.CAPACITOR_SERVER_URL || 'https://prospector-a
 const IS_LOCAL_TEST_URL = PRODUCTION_URL.startsWith('http://');
 
 const config: CapacitorConfig = {
-  appId: 'br.com.atlasgr.prospector',
+  appId: 'br.com.birthhub360.prospector',
   appName: 'Birth Hub 360',
   webDir: 'dist',
   server: {
@@ -49,7 +52,7 @@ const config: CapacitorConfig = {
     // ios/App/App/Info.plist) — precisa estar em allowNavigation só se o link apontar pra um host
     // diferente do PRODUCTION_URL; como o deep link é resolvido nativamente (MainActivity.java /
     // SceneDelegate.swift) e só recarrega o WebView com uma URL do próprio PRODUCTION_URL, não é
-    // necessário adicionar `atlasgr://` aqui.
+    // necessário adicionar `birthhub360://` aqui.
   },
   plugins: {
     SplashScreen: {

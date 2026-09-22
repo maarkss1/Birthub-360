@@ -54,7 +54,7 @@ describe('SEC-006 — revogação de sessão ao trocar senha autenticado', () =>
 
     // Cadastro real. requireEmailVerification (src/lib/auth.ts) faz o signup NÃO abrir sessão
     // sozinho mais (acha real do piloto de threat-modeling do Mantis: antes, qualquer
-    // "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão na hora) — sem
+    // "algo@birthhub360.com.br" digitado, mesmo não sendo dono real, virava sessão na hora) — sem
     // mailbox real em teste, confirma o e-mail direto no banco antes do primeiro login.
     const signUpResponse = (await withRlsBypass(() =>
       auth.api.signUpEmail({

@@ -78,7 +78,7 @@ export interface EnrichCompanyOptions {
   /**
    * Repassado para `computeFitScore`, mas não afeta mais o score (ver `fitScore.ts`). O ACH-05-07
    * bonificava frota/região/carga de risco/stack logístico só quando o playbook ativo era o de
-   * risco de carga/logística ('atlasgr'); a unificação de playbook comercial em 'geral' (decisão
+   * risco de carga/logística ('birthhub360'); a unificação de playbook comercial em 'geral' (decisão
    * do usuário, ver CLAUDE.md seção 1) removeu a única forma de saber se a organização era desse
    * vertical, e o bônus foi removido (não substituído por "vale pra todo mundo"). Campo mantido
    * aqui só para não quebrar os chamadores existentes.

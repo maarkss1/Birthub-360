@@ -86,12 +86,12 @@ que **força a injeção de `organizationId`** em todo `create`/`upsert.create` 
 exatamente a metade "documentação, sem mudança de schema" que a própria auditoria descreve como
 quick win aceitável quando a resposta não for óbvia o suficiente para migrar sozinho.
 
-## 3) DOCBRAND-013 — Comentários desatualizados (`'atlasgr' | 'totaltrac'`)
+## 3) DOCBRAND-013 — Comentários desatualizados (`'birthhub360' | 'birthhub360'`)
 
 Confirmados os 2 comentários stale (linhas ~1750/1785 no schema atual — a auditoria já avisava que
 os números podiam ter mudado): `RoleplaySession.brand` e `QualificationMatrixItem.brand`. Atualizei
 os dois para refletir o modelo atual de `src/config/playbooks.ts` (chave única `'geral'`,
-compatibilidade retroativa com linhas antigas `atlasgr`/`totaltrac`, sem migração de dado). Conferi
+compatibilidade retroativa com linhas antigas `birthhub360`, sem migração de dado). Conferi
 também `AssistantMessage.brand` e `ObjectionMatrixItem.brand` (mesma família de campos) — já
 estavam sem comentário stale, não precisaram de mudança.
 

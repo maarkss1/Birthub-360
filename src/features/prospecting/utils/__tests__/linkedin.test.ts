@@ -32,7 +32,7 @@ describe('decision-maker LinkedIn links', () => {
     const companyPage = getDecisionMakerLinkedInLink({
       name: 'Ana Lima',
       companyName: 'Birth Hub 360',
-      linkedinUrl: 'https://www.linkedin.com/company/atlasgr',
+      linkedinUrl: 'https://www.linkedin.com/company/birthhub360',
     });
     const unsafeUrl = getDecisionMakerLinkedInLink({
       name: 'Ana Lima',

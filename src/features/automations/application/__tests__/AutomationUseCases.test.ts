@@ -149,14 +149,14 @@ describe('AutomationUseCases', () => {
         'org-1',
         'auto-1',
         { enabled: false },
-        { userId: 'user-1', email: 'user@atlasgr.com.br' },
+        { userId: 'user-1', email: 'user@birthhub360.com.br' },
       );
 
       expect(recordPriorStateMock).toHaveBeenCalledWith(
         'org-1',
         'auto-1',
         existing,
-        { userId: 'user-1', email: 'user@atlasgr.com.br' },
+        { userId: 'user-1', email: 'user@birthhub360.com.br' },
         'update',
       );
       expect(repository.update).toHaveBeenCalledWith('org-1', 'auto-1', { enabled: false });

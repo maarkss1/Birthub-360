@@ -22,7 +22,7 @@ interface PomodoroState {
   settings: PomodoroSettings;
 }
 
-const STORAGE_KEY = 'atlasgr:mesa-pomodoro-state';
+const STORAGE_KEY = 'birthhub360:mesa-pomodoro-state';
 
 const DEFAULT_SETTINGS: PomodoroSettings = {
   focusMin: 25,

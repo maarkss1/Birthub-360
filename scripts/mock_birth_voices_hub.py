@@ -29,7 +29,7 @@ class SimpleHubHandler(BaseHTTPRequestHandler):
 
         print("\n" + "=" * 65)
         print(" [BIRTH VOICES HUB] LIGACAO DISPARADA E ACEITA COM SUCESSO!")
-        print(f" Agente de Voz: {voice.upper()} (SDR Atlas GR)")
+        print(f" Agente de Voz: {voice.upper()} (SDR Birth Hub 360)")
         print(f" Destinatario(a): {name} ({target_number})")
         print(f" Status: QUEUED -> IN_PROGRESS")
         print(f" Callback URL: {payload.get('callbackUrl')}")

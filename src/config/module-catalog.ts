@@ -6,16 +6,16 @@
 // frontend (matriz de administração + RequireModuleAccess/useModuleAccess). Adicionar um módulo
 // novo aqui NÃO cria a tela nem a rota sozinho — só o habilita para ser concedido no painel.
 //
-// Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
-// existir"): `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing` foram
-// APOSENTADOS — eram conteúdo comercial proprietário da Atlas GR (treinamento interno, pesquisa
+// Atualização (09/2026, pedido explícito do usuário: "Birth Hub 360 não é ninguém, não é nem mais pra
+// existir"): `treinamento-birthhub360`, `proposta-comercial` e `hub-inteligencia-marketing` foram
+// APOSENTADOS — eram conteúdo comercial proprietário da Birth Hub 360 (treinamento interno, pesquisa
 // competitiva de GR, proposta nomeada a um cliente terceiro), grantável por qualquer tenant ao
 // próprio usuário apesar de não fazer sentido fora daquela operação (achado
 // docs/audits/repository-debt-audit, PRODUCT-004/DOCBRAND-002/DOCBRAND-012/FRONTEND-002/003).
 // Rotas, gate, componentes e conteúdo estático correspondentes foram removidos junto. `social-selling`
 // continua existindo — foi rerotulado para a marca Birth Hub 360 em vez de mantido como exclusivo
-// da Atlas GR. Grants antigos gravados no banco com as chaves aposentadas continuam legíveis
-// (mesma filosofia de compatibilidade de `playbooks.ts` para `atlasgr`/`totaltrac`), só não são
+// da Birth Hub 360. Grants antigos gravados no banco com as chaves aposentadas continuam legíveis
+// (mesma filosofia de compatibilidade de `playbooks.ts` para `birthhub360`), só não são
 // mais válidos para concessão nova — `isModuleKey()` abaixo já rejeita essas strings.
 export type ModuleKey = 'social-selling';
 
@@ -53,10 +53,10 @@ export function moduleLabel(key: string): string {
 // (lucide-react) fica no Hub (frontend), nunca aqui, porque este arquivo também é importado pelo
 // backend (ver módulo-access.service.ts) e não deve carregar dependência de UI.
 //
-// Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
-// existir"): removidas as 5 entradas que apontavam pra sistemas internos da operação Atlas GR
-// (portal Connect/New Connect, Perfil Securitário, Bitrix24 e webmail da própria Atlas GR —
-// domínios `*.atlasgr.com.br`/`atlasgr.bitrix24.com.br`) — eram atalhos institucionais de uma
+// Atualização (09/2026, pedido explícito do usuário: "Birth Hub 360 não é ninguém, não é nem mais pra
+// existir"): removidas as 5 entradas que apontavam pra sistemas internos da operação Birth Hub 360
+// (portal Connect/New Connect, Perfil Securitário, Bitrix24 e webmail da própria Birth Hub 360 —
+// domínios `*.birthhub360.com.br`/`birthhub360.bitrix24.com.br`) — eram atalhos institucionais de uma
 // empresa terceira específica, sem sentido pra qualquer outro tenant da Birth Hub 360. Restam só
 // as duas entradas genéricas (Gmail, Google Workspace), que servem qualquer operação comercial.
 export interface ExternalLinkEntry {

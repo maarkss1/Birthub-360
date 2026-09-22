@@ -48,8 +48,8 @@ describe('searchGithubOrganizations', () => {
       jsonResponse(200, {
         items: [
           {
-            login: 'atlasgr',
-            html_url: 'https://github.com/atlasgr',
+            login: 'birthhub360',
+            html_url: 'https://github.com/birthhub360',
             avatar_url: 'https://x/a.png',
           },
         ],
@@ -57,15 +57,15 @@ describe('searchGithubOrganizations', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const result = await searchGithubOrganizations('atlasgr', 5);
+    const result = await searchGithubOrganizations('birthhub360', 5);
 
     expect(result).toEqual({
       organizations: [
-        { login: 'atlasgr', htmlUrl: 'https://github.com/atlasgr', avatarUrl: 'https://x/a.png' },
+        { login: 'birthhub360', htmlUrl: 'https://github.com/birthhub360', avatarUrl: 'https://x/a.png' },
       ],
     });
     const [, init] = fetchMock.mock.calls[0];
-    expect(init.headers['User-Agent']).toBe('atlasgr-prospector');
+    expect(init.headers['User-Agent']).toBe('birthhub360-prospector');
   });
 
   it('resposta não-ok (ex: 403 rate limit real do GitHub) preenche `.error` em vez de mascarar como lista vazia', async () => {
@@ -108,28 +108,28 @@ describe('getGithubOrganizationProfile', () => {
   it('devolve o perfil completo no caminho feliz', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse(200, {
-        login: 'atlasgr',
+        login: 'birthhub360',
         name: 'Birth Hub 360',
         description: 'Revenue OS de logística',
-        blog: 'https://atlasgr.com.br',
+        blog: 'https://birthhub360.com.br',
         location: 'São Paulo, BR',
         public_repos: 12,
-        html_url: 'https://github.com/atlasgr',
+        html_url: 'https://github.com/birthhub360',
         avatar_url: 'https://x/a.png',
       }),
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const result = await getGithubOrganizationProfile('atlasgr');
+    const result = await getGithubOrganizationProfile('birthhub360');
 
     expect(result.profile).toEqual({
-      login: 'atlasgr',
+      login: 'birthhub360',
       name: 'Birth Hub 360',
       description: 'Revenue OS de logística',
-      blog: 'https://atlasgr.com.br',
+      blog: 'https://birthhub360.com.br',
       location: 'São Paulo, BR',
       publicRepos: 12,
-      htmlUrl: 'https://github.com/atlasgr',
+      htmlUrl: 'https://github.com/birthhub360',
       avatarUrl: 'https://x/a.png',
     });
   });
