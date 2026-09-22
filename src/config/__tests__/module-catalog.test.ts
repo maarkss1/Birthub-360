@@ -35,7 +35,7 @@ describe('module-catalog não reintroduz conteúdo vertical-específico da Birth
   it('EXTERNAL_LINKS não hardcoda domínios *.birthhub360.com.br nem bitrix24 de terceiro nomeado', () => {
     for (const link of EXTERNAL_LINKS) {
       expect(link.url).not.toMatch(/birthhub360\.(com\.br|bitrix24\.com\.br)/i);
-      expect(link.url).not.toMatch(/birthhub360\.bitrix24\.com\.br/i);
+      expect(link.url).not.toMatch(/^https?:\/\/birthhub360\.bitrix24\.com\.br(?:\/|$)/i);
     }
   });
 });
