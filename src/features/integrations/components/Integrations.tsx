@@ -424,6 +424,8 @@ export function Integrations() {
                     <img
                       src={qrCode}
                       alt="WhatsApp QR Code"
+                      width={256}
+                      height={256}
                       className="mx-auto rounded-xl shadow-sm border border-line"
                     />
                   </div>

@@ -210,7 +210,7 @@ export function RobustScriptGenerator() {
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'language' ? null : 'language')}
-              className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{selectedLangObj.label}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -261,7 +261,7 @@ export function RobustScriptGenerator() {
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'purpose' ? null : 'purpose')}
-              className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{selectedPurposeObj.title}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -315,7 +315,7 @@ export function RobustScriptGenerator() {
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'framework' ? null : 'framework')}
-              className={`w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{selectedFrameworkObj.label}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -368,7 +368,7 @@ export function RobustScriptGenerator() {
               onClick={() =>
                 setActiveDropdown(activeDropdown === 'complexity' ? null : 'complexity')
               }
-              className={`w-full bg-transparent text-ink text-sm focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{selectedComplexityObj.label}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -420,7 +420,7 @@ export function RobustScriptGenerator() {
             placeholder="Ex: Utilizar token Bearer no header, salvar logs no diretório C:\Logs, etc..."
             value={customContext}
             onChange={(e) => setCustomContext(e.target.value)}
-            className={`w-full bg-transparent text-ink text-sm placeholder-ink-2 focus:outline-none border-b border-line focus:${accent.border} transition-colors pb-2`}
+            className={`w-full bg-transparent text-ink text-sm placeholder-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line focus:${accent.border} transition-colors pb-2`}
           />
         </div>
 

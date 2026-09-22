@@ -163,7 +163,7 @@ function buildReentries(
   return {
     trackingSince,
     countInPeriod: inPeriod.length,
-    totalTracked: rows.length,
+    birthhub360ed: rows.length,
     recoveredCount: new Set(recovered.map((r) => r.leadId)).size,
     recoveredAmount: uniqueAmount(recovered),
     reactivatedOpenCount: new Set(reactivatedOpen.map((r) => r.leadId)).size,

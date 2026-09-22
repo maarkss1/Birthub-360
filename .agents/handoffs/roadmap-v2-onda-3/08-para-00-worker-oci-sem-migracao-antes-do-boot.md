@@ -49,7 +49,7 @@ Idempotente e seguro sob execução concorrente com o `app` (Prisma serializa vi
 então não há problema em ambos os serviços rodarem `migrate deploy` no boot.
 ## Teste esperado
 Com um volume novo (`docker compose -f docker-compose.oci.yml down -v` seguido de
-`up -d --build`), confirmar via `docker logs atlasgr_worker` que a migração aparece nos logs do
+`up -d --build`), confirmar via `docker logs birthhub360_worker` que a migração aparece nos logs do
 worker antes de `npm run start:worker` iniciar, e que o worker não lança erro de "relation does
 not exist" nos primeiros segundos de vida.
 ## Contexto adicional

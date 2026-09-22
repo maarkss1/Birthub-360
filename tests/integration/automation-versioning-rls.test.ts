@@ -81,7 +81,7 @@ describe('AutomationVersion — histórico de versões de regra (Postgres real, 
       ORG_A,
       AUTOMATION_ID,
       prior,
-      { userId: 'user-1', email: 'sdr@atlasgr.com.br' },
+      { userId: 'user-1', email: 'sdr@birthhub360.com.br' },
       'update',
     );
 
@@ -91,7 +91,7 @@ describe('AutomationVersion — histórico de versões de regra (Postgres real, 
     );
     expect(timeline.history).toHaveLength(1);
     expect(timeline.history[0].changeReason).toBe('update');
-    expect(timeline.history[0].editedByEmail).toBe('sdr@atlasgr.com.br');
+    expect(timeline.history[0].editedByEmail).toBe('sdr@birthhub360.com.br');
     expect(timeline.history[0].snapshot.enabled).toBe(false);
     expect(timeline.history[0].diffToNext.some((line) => line.field === 'Status')).toBe(true);
   });

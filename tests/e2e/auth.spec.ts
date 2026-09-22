@@ -7,7 +7,7 @@ import { signUp, uniqueTestEmail, E2E_PASSWORD } from './helpers';
 // specs batem contra o servidor Express real (auth.ts / better-auth), nunca contra um mock.
 //
 // Removido daqui: "e-mail fora dos domínios autorizados é rejeitado antes de chamar o servidor"
-// (usava alguem@gmail.com). A allowlist de domínio corporativo (@atlasgr.com.br/@totaltrac.com.br)
+// (usava alguem@gmail.com). A allowlist de domínio corporativo (@birthhub360.com.br/@birthhub360.com.br)
 // foi removida de propósito no rebranding para Birth Hub 360º — ver o docstring de
 // `isAuthorizedLoginEmail` em src/config/access-policy.ts e o teste unitário correspondente
 // (tests/unit/config/access-policy.test.ts), que hoje afirma explicitamente que

@@ -96,7 +96,7 @@ export function GitHubTool(_props: { configured: boolean }) {
           <input
             id="gh-query"
             type="text"
-            placeholder="Ex: nubank, atlasgr..."
+            placeholder="Ex: nubank, birthhub360..."
             className="w-full p-3 bg-surface-2 rounded-xl border border-line outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-sm font-medium text-ink"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -146,6 +146,8 @@ export function GitHubTool(_props: { configured: boolean }) {
               <img
                 src={org.avatarUrl}
                 alt=""
+                width={36}
+                height={36}
                 className="w-9 h-9 rounded-full shrink-0 border border-line"
               />
               <div className="min-w-0">

@@ -173,6 +173,8 @@ export function Settings() {
                         <img
                           src={currentUser.image}
                           alt=""
+                          width={56}
+                          height={56}
                           className="w-14 h-14 rounded-full border border-line object-cover shrink-0"
                         />
                       ) : (

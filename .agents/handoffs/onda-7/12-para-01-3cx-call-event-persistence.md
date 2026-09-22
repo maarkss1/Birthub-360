@@ -54,7 +54,7 @@ Criar o model acima (ou equivalente — a forma exata dos campos depende do cont
 que eu não tenho como validar sem um PABX 3CX de verdade ou a documentação oficial do Call Flow).
 Peço que a revisão inclua como resolver `organizationId` com segurança a partir de um payload sem
 JWT nem tenant explícito — hoje `THREECX_WEBHOOK_SECRET` sendo global impede até o cruzamento por
-segredo-por-organização que `ATLASGR_WEBHOOK_SECRET`/`BIRTH_VOICES_WEBHOOK_SECRET` também não têm,
+segredo-por-organização que `BIRTHHUB360_WEBHOOK_SECRET`/`BIRTH_VOICES_WEBHOOK_SECRET` também não têm,
 mas que aqueles resolvem via `request_data`/`context` que O PRÓPRIO PROSPECTOR gera na chamada de
 saída — o 3CX Call Flow é diferente: pode ser evento de chamada ENTRANTE, que o Prospector nunca
 iniciou, então não tem contexto prévio nenhum para ecoar de volta.

@@ -19,7 +19,7 @@ function buildResponse() {
 
 function buildRequest(overrides: Record<string, unknown> = {}): Request {
   return {
-    user: { organizationId: 'org-1', id: 'user-1', email: 'user@atlasgr.com.br' },
+    user: { organizationId: 'org-1', id: 'user-1', email: 'user@birthhub360.com.br' },
     params: {},
     query: {},
     body: {},
@@ -117,7 +117,7 @@ describe('AutomationController', () => {
         'org-1',
         'auto-1',
         { enabled: false },
-        { userId: 'user-1', email: 'user@atlasgr.com.br' },
+        { userId: 'user-1', email: 'user@birthhub360.com.br' },
       );
       expect(res.json).toHaveBeenCalledWith({
         success: true,

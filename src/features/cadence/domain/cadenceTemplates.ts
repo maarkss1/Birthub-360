@@ -10,6 +10,8 @@ export interface CadenceJourneyTemplate {
     channel: 'email' | 'whatsapp' | 'voice';
     delayHoursFromPrevious: number;
     maxAttempts?: number;
+    /** Ver `CadenceTouch.fallbackTouchOrder` em `domain/cadence.ts` — cadência adaptativa (item 26): desvio de rota só quando ESTE toque esgota tentativas por falha real do canal, nunca por falta de resposta. */
+    fallbackTouchOrder?: number;
     templateRef: string;
     stepTitle: string;
   }[];
@@ -68,7 +70,7 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
     ],
   },
   {
-    id: 'inbound-speed-lead-totaltrac',
+    id: 'inbound-speed-lead-birthhub360',
     name: 'Inbound Speed Lead (Contato Rápido Antifurto & Rastreamento - Birth Hub 360)',
     targetBrand: 'Birth Hub 360',
     category: 'Inbound',
@@ -80,6 +82,10 @@ export const CADENCE_JOURNEY_TEMPLATES: CadenceJourneyTemplate[] = [
         order: 1,
         channel: 'whatsapp',
         delayHoursFromPrevious: 0,
+        // Adaptativo (item 26): número de WhatsApp inválido geralmente significa que o telefone
+        // cadastrado está errado — insistir com uma ligação (order 2) para o MESMO número
+        // provavelmente falha de novo. Pula direto para o e-mail (order 3).
+        fallbackTouchOrder: 3,
         stepTitle: 'Boas-vindas Instantâneas WhatsApp',
         templateRef:
           'Olá {{contact_name}}! Recebemos sua solicitação de cotação de rastreamento veicular e antifurto na Birth Hub 360. Para qual tipo de veículo e cidade você precisa de cobertura imediata?',

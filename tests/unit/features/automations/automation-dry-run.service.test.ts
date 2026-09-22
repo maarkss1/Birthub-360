@@ -116,7 +116,7 @@ describe('dryRunAutomation — nunca executa a ação real', () => {
       baseAutomation({
         conditions: { status: 'Proposta Enviada' },
         action: 'Notificar equipe',
-        actionConfig: { channel: 'email', to: 'gestor@atlasgr.com.br' },
+        actionConfig: { channel: 'email', to: 'gestor@birthhub360.com.br' },
       }),
     );
     await dryRunAutomation(
@@ -204,7 +204,7 @@ describe('dryRunAutomation — preview de "Notificar equipe"', () => {
     const result = await dryRunAutomation(
       'org-1',
       baseAutomation({
-        actionConfig: { channel: 'email', to: 'gestor@atlasgr.com.br' },
+        actionConfig: { channel: 'email', to: 'gestor@birthhub360.com.br' },
       }),
     );
 
@@ -219,13 +219,13 @@ describe('dryRunAutomation — preview de "Notificar equipe"', () => {
     const result = await dryRunAutomation(
       'org-1',
       baseAutomation({
-        actionConfig: { channel: 'email', to: 'gestor@atlasgr.com.br' },
+        actionConfig: { channel: 'email', to: 'gestor@birthhub360.com.br' },
       }),
     );
 
     expect(result.records[0].outcome.wouldFire).toBe(true);
     expect(result.records[0].outcome.blockedReason).toBeUndefined();
-    expect(result.records[0].outcome.details.to).toBe('gestor@atlasgr.com.br');
+    expect(result.records[0].outcome.details.to).toBe('gestor@birthhub360.com.br');
   });
 });
 

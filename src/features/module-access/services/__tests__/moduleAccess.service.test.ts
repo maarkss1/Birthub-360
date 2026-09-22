@@ -142,11 +142,11 @@ describe('ModuleAccessService', () => {
     expect(repo.grants).toEqual([{ userId: 'u1', moduleKey: 'outro-modulo-qualquer' }]);
   });
 
-  it('grantModuleAccess rejeita os moduleKeys aposentados em 09/2026 (conteúdo proprietário Atlas GR: treinamento-atlasgr, proposta-comercial, hub-inteligencia-marketing)', async () => {
+  it('grantModuleAccess rejeita os moduleKeys aposentados em 09/2026 (conteúdo proprietário Birth Hub 360: treinamento-birthhub360, proposta-comercial, hub-inteligencia-marketing)', async () => {
     const { repo, service } = buildService();
 
     for (const retiredKey of [
-      'treinamento-atlasgr',
+      'treinamento-birthhub360',
       'proposta-comercial',
       'hub-inteligencia-marketing',
     ]) {

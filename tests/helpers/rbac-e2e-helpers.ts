@@ -30,11 +30,11 @@ export async function withTenant<T>(tenantId: string, fn: () => Promise<T>): Pro
 const TEST_PASSWORD = 'RbacTestPassword123!';
 
 // isAuthorizedLoginEmail (src/config/access-policy.ts) hoje só valida formato — qualquer
-// domínio passaria. Mantido em @atlasgr.com.br aqui só por convenção histórica dos testes
+// domínio passaria. Mantido em @birthhub360.com.br aqui só por convenção histórica dos testes
 // RBAC, sem significado especial.
 export function uniqueEmail(prefix: string): string {
   const unique = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-  return `rbac-${prefix}-${unique}@atlasgr.com.br`;
+  return `rbac-${prefix}-${unique}@birthhub360.com.br`;
 }
 
 export interface RealSessionUser {
@@ -51,7 +51,7 @@ export interface RealSessionUser {
  *
  * Desde que o cadastro passou a exigir confirmação de posse do e-mail
  * (requireEmailVerification em src/lib/auth.ts — corrige um achado real do piloto de
- * threat-modeling do Mantis: antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo
+ * threat-modeling do Mantis: antes, qualquer "algo@birthhub360.com.br" digitado, mesmo não sendo
  * dono real, virava sessão + ADMIN na hora), `signUpEmail` sozinho não devolve mais
  * `Set-Cookie` nenhum (resposta vem com `token: null`). Sem mailbox real pra ler o link de
  * verificação em teste, confirma o e-mail direto no banco (mesmo padrão de bypass já usado

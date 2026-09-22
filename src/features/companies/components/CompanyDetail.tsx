@@ -147,7 +147,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
         {/* Banner de Dica para Qualificação da Empresa */}
         <ContextualTip
           id="tip-company-detail"
-          title="Inteligência de Vendas Atlas"
+          title="Inteligência Comercial Birth Hub 360"
           description={`Empresa analisada: ${company.tradeName || company.legalName}. Utilize o mapa de tecnologias e contatos qualificados para criar abordagens altamente alinhadas às dores operacionais.`}
         />
 
@@ -155,7 +155,13 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
         <div className="bg-surface p-6 md:p-8 rounded-3xl border border-line shadow-xl backdrop-blur-xl flex flex-col md:flex-row items-start gap-6 relative overflow-hidden">
           <div className="w-24 h-24 rounded-3xl bg-soft border border-brand/30 flex items-center justify-center text-brand shrink-0 overflow-hidden shadow-inner">
             {company.logoUrl ? (
-              <img src={company.logoUrl} alt="" className="w-full h-full object-contain p-2" />
+              <img
+                src={company.logoUrl}
+                alt=""
+                width={96}
+                height={96}
+                className="w-full h-full object-contain p-2"
+              />
             ) : (
               <Building2 className="w-12 h-12" />
             )}

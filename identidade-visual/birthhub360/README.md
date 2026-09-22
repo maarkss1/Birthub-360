@@ -1,6 +1,6 @@
 # Birth Hub 360º — Identidade Visual
 
-Fonte de verdade da marca da plataforma. Substitui `atlasgr/` e `totaltrac/`, que
+Fonte de verdade da marca da plataforma. Substitui `birthhub360/` e `birthhub360/`, que
 descreviam as duas marcas do arranjo anterior (ver `../README.md`).
 
 > **Sua central de comando inteligente: integrando dados, potencializando decisões

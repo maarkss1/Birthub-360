@@ -375,7 +375,7 @@ linkLeadEl.addEventListener('click', () =>
     const lead = await copilotoApi.lookupLead(query);
     if (!lead) {
       throw new Error(
-        'Nenhum Lead encontrado para isso na Central Atlas GR. Confira o nome/e-mail/link/id, ou use "Capturar sem vincular a um Lead".',
+        'Nenhum Lead encontrado para isso na Central Birth Hub 360. Confira o nome/e-mail/link/id, ou use "Capturar sem vincular a um Lead".',
       );
     }
     await startConversation({ leadId: lead.id });

@@ -7,7 +7,7 @@ import {
 } from './swarm.constants.js';
 
 /**
- * Agente Contratos & Assinatura (Célula Comercial, pacote ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0,
+ * Agente Contratos & Assinatura (Célula Comercial, pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0,
  * id `contract-signature`).
  *
  * O pacote original classificava este agente como `BLOCKED`/risco `HIGH` ("nenhuma integração de

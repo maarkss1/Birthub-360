@@ -75,7 +75,7 @@ vi.mock('../../../../../src/shared/security/webhookReplayGuard.js', () => ({
   webhookDeliveryFingerprint: vi.fn(() => 'fingerprint-de-teste'),
 }));
 
-const mockEnv: Record<string, string | undefined> = { ATLASGR_WEBHOOK_SECRET: 'segredo-de-teste' };
+const mockEnv: Record<string, string | undefined> = { BIRTHHUB360_WEBHOOK_SECRET: 'segredo-de-teste' };
 vi.mock('../../../../../src/config/env.js', () => ({ env: mockEnv }));
 
 const { voiceResultWebhookRoutes } =
@@ -87,7 +87,7 @@ function buildApp() {
   return app;
 }
 
-const VALID_HEADERS = { 'x-atlasgr-webhook-secret': 'segredo-de-teste' };
+const VALID_HEADERS = { 'x-birthhub360-webhook-secret': 'segredo-de-teste' };
 
 function blandPayload(overrides: Record<string, unknown> = {}) {
   return {
@@ -103,7 +103,7 @@ function blandPayload(overrides: Record<string, unknown> = {}) {
 }
 
 beforeEach(() => {
-  mockEnv.ATLASGR_WEBHOOK_SECRET = 'segredo-de-teste';
+  mockEnv.BIRTHHUB360_WEBHOOK_SECRET = 'segredo-de-teste';
   leadFindFirst.mockResolvedValue({
     id: 'lead-1',
     organizationId: 'org-1',
@@ -119,8 +119,8 @@ afterEach(() => {
 });
 
 describe('POST /api/webhooks/voice-result', () => {
-  it('responde 503 (fail-closed) quando ATLASGR_WEBHOOK_SECRET não está configurado', async () => {
-    mockEnv.ATLASGR_WEBHOOK_SECRET = undefined;
+  it('responde 503 (fail-closed) quando BIRTHHUB360_WEBHOOK_SECRET não está configurado', async () => {
+    mockEnv.BIRTHHUB360_WEBHOOK_SECRET = undefined;
 
     const res = await request(buildApp())
       .post('/api/webhooks/voice-result')
@@ -134,7 +134,7 @@ describe('POST /api/webhooks/voice-result', () => {
   it('responde 401 com segredo errado, sem tocar o banco', async () => {
     const res = await request(buildApp())
       .post('/api/webhooks/voice-result')
-      .set({ 'x-atlasgr-webhook-secret': 'errado' })
+      .set({ 'x-birthhub360-webhook-secret': 'errado' })
       .send(blandPayload());
 
     expect(res.status).toBe(401);

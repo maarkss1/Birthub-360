@@ -1,4 +1,4 @@
-// Onda 3 do pacote atlasgr_copiloto_ai_pack ("Transcrição + Resumo"): worker assíncrono
+// Onda 3 do pacote birthhub360_copiloto_ai_pack ("Transcrição + Resumo"): worker assíncrono
 // disparado por `POST .../audio/complete` (CopilotoIaController) depois que a extensão termina de
 // subir o áudio da reunião pro storage S3-compatível. Baixa o objeto, transcreve via Whisper,
 // grava os segmentos (reaproveita `CopilotoIaUseCases.addTranscriptSegments` — mesma validação de

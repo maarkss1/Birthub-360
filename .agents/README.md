@@ -1,4 +1,4 @@
-# Sistema de Agentes — CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR
+# Sistema de Agentes — CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360
 
 ## Arquivos
 - `prompts/00-coordenador.md`

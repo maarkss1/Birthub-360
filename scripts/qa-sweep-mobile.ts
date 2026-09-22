@@ -2,7 +2,7 @@ import { chromium, devices } from '@playwright/test';
 
 const BASE_URL = 'http://localhost:3000';
 const PASSWORD = 'E2eTestPassword123!';
-const email = `qa-fase4-mobile-${Date.now()}@atlasgr.com.br`;
+const email = `qa-fase4-mobile-${Date.now()}@birthhub360.com.br`;
 
 const MODULES = [
   'crm360',
@@ -49,7 +49,7 @@ async function main() {
   await page.goto(`${BASE_URL}/login`);
   await page.getByText('Não possui conta? Registrar Novo Acesso').click();
   await page.getByPlaceholder('Ex: Marcelo Nascimento').fill('QA Fase 4 Mobile');
-  await page.getByPlaceholder('seu.nome@atlasgr.com.br ou @totaltrac.com.br').fill(email);
+  await page.getByPlaceholder('seu.nome@birthhub360.com.br ou @birthhub360.com.br').fill(email);
   await page.getByPlaceholder('••••••••').fill(PASSWORD);
   await page.getByRole('button', { name: /Criar Nova Conta/ }).click();
   await page.waitForURL('**/app*', { timeout: 30_000 });

@@ -47,7 +47,7 @@ Para cada rota/funcionalidade crítica do web (dashboard, CRM, prospecção, Int
 - coordenar com 01/AGENTS.md → "LGPD e dados pessoais" quando o app mobile capturar dado pessoal adicional (ex.: geolocalização de visita comercial).
 
 ### 3. Deep link e navegação
-- configurar o esquema de deep link (`atlasgr://` ou equivalente já definido) para abrir destinos válidos do `navigationBus`/contrato de navegação definido pelo Agente 02;
+- configurar o esquema de deep link (`birthhub360://` ou equivalente já definido) para abrir destinos válidos do `navigationBus`/contrato de navegação definido pelo Agente 02;
 - deep link para destino inexistente deve falhar de forma visível, nunca abrir tela em branco;
 - não duplicar lógica de roteamento — reaproveitar o contrato já existente.
 

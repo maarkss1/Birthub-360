@@ -15,6 +15,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useAnalyticsDashboard } from '../../../hooks/useDatabase';
 
@@ -28,11 +29,39 @@ function greeting() {
 export function SinglePageDashboard() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { data: stats } = useAnalyticsDashboard(6);
+  const { data: stats, loading } = useAnalyticsDashboard(6);
 
-  const pipelineValue = stats?.overview?.pipelineValue || 4850000;
-  const winRate = stats?.overview?.conversionRate || 32.8;
-  const firstName = currentUser?.name?.split(' ')[0] || 'Marcelo';
+  const overview = stats?.overview;
+  const pipelineValue = overview?.pipelineValue ?? 0;
+  const totalLeads = overview?.totalLeads ?? 0;
+  const winRate =
+    overview?.conversionRate != null ? Number(overview.conversionRate).toFixed(1) : '0.0';
+  const firstName = currentUser?.name?.trim().split(/\s+/)[0] || 'Gestor';
+  const pendingActivities = overview?.pendingActivities ?? 0;
+  const closedThisMonth = overview?.closedThisMonth ?? 0;
+  const totalCompanies = overview?.totalCompanies ?? 0;
+
+  if (loading) {
+    return (
+      <div className="flex-1 overflow-y-auto bg-bg">
+        <div className="max-w-[92rem] mx-auto p-6 sm:p-8 lg:p-12 space-y-6">
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-48 rounded-full" />
+            <Skeleton className="h-10 w-96 rounded-xl" />
+            <Skeleton className="h-4 w-72 rounded-md" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Skeleton className="lg:col-span-2 h-[320px] rounded-3xl" />
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-[152px] rounded-3xl" />
+              <Skeleton className="h-[152px] rounded-3xl" />
+            </div>
+            <Skeleton className="lg:col-span-3 h-48 rounded-3xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 overflow-y-auto bg-bg">
@@ -102,49 +131,54 @@ export function SinglePageDashboard() {
                   <LayoutTemplate className="w-3.5 h-3.5 text-gold" />
                   Pipeline de Vendas · Total Consolidado
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded-full">
-                  <Flame className="w-3.5 h-3.5" />
-                  +18.4% vs mês anterior
-                </span>
+                {totalLeads > 0 && (
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+                    <Flame className="w-3.5 h-3.5" />
+                    Operação Ativa
+                  </span>
+                )}
               </div>
 
               <div>
                 <p className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight [font-variant-numeric:tabular-nums]">
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                    maximumFractionDigits: 0,
-                  }).format(pipelineValue)}
+                  {pipelineValue > 0
+                    ? new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                        maximumFractionDigits: 0,
+                      }).format(pipelineValue)
+                    : 'R$ 0'}
                 </p>
                 <p className="text-xs sm:text-sm text-slate-300 mt-2 font-medium">
-                  Volume total ponderado em negociação ativa nas etapas de qualificação e
-                  fechamento.
+                  {totalLeads > 0
+                    ? `${totalLeads} oportunidades ativas no funil comercial.`
+                    : 'Nenhum negócio ativo registrado no momento.'}
                 </p>
               </div>
             </div>
 
             <div className="relative z-10 pt-6 mt-6 border-t border-white/10 space-y-3">
               <div className="flex items-center justify-between text-xs text-slate-300">
-                <span className="font-semibold">Meta Trimestral Atingida</span>
-                <span className="font-bold text-gold">72% da Meta (R$ 6.700.000)</span>
-              </div>
-              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-gold via-sunset to-red-violet rounded-full transition-all duration-500"
-                  style={{ width: '72%' }}
-                />
+                <span className="font-semibold">Status Operacional</span>
+                <span className="font-bold text-gold">
+                  {totalLeads > 0
+                    ? `${totalLeads} oportunidades sob gestão`
+                    : 'Aguardando novos leads'}
+                </span>
               </div>
 
               <div className="pt-2 flex items-center justify-between">
                 <span className="text-xs text-slate-400">
-                  18 oportunidades de alto valor com fechamento previsto neste mês.
+                  {pendingActivities > 0
+                    ? `${pendingActivities} atividades com follow-up programado.`
+                    : 'Mantenha o funil aquecido para maximizar conversões.'}
                 </span>
                 <button
                   type="button"
-                  onClick={() => navigate('/app/crm')}
+                  onClick={() => navigate(totalLeads > 0 ? '/app/crm' : '/app/prospect')}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-gold transition-colors cursor-pointer group"
                 >
-                  <span>Ver Pipeline Completo</span>
+                  <span>{totalLeads > 0 ? 'Ver Pipeline Completo' : 'Iniciar Prospecção'}</span>
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
@@ -169,17 +203,19 @@ export function SinglePageDashboard() {
                   </span>
                 </div>
                 <p className="text-3xl sm:text-4xl font-black text-ink tracking-tight [font-variant-numeric:tabular-nums]">
-                  142
+                  {totalLeads}
                 </p>
                 <p className="text-xs font-semibold text-ok mt-2 flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>+23% novos leads qualificados</span>
+                  <span>{totalLeads > 0 ? 'Leads monitorados no funil' : 'Sem leads ativos'}</span>
                 </p>
               </div>
 
               <div className="pt-4 mt-4 border-t border-line flex items-center justify-between">
                 <span className="text-[11px] text-ink-2 font-medium">
-                  85 prontos para abordagem
+                  {pendingActivities > 0
+                    ? `${pendingActivities} atividades pendentes`
+                    : 'Sem pendências'}
                 </span>
                 <button
                   type="button"
@@ -212,12 +248,18 @@ export function SinglePageDashboard() {
                 </p>
                 <p className="text-xs font-semibold text-ink-2 mt-2 flex items-center gap-1">
                   <Target className="w-3.5 h-3.5 text-brand" />
-                  <span>Meta: 30% · Acima da média do setor</span>
+                  <span>
+                    {closedThisMonth > 0
+                      ? `${closedThisMonth} fechamento(s) no período`
+                      : 'Métrica calculada'}
+                  </span>
                 </p>
               </div>
 
               <div className="pt-4 mt-4 border-t border-line flex items-center justify-between">
-                <span className="text-[11px] text-ink-2 font-medium">Ciclo médio de 18 dias</span>
+                <span className="text-[11px] text-ink-2 font-medium">
+                  {totalCompanies > 0 ? `${totalCompanies} empresas na base` : 'Base inicial'}
+                </span>
                 <button
                   type="button"
                   onClick={() => navigate('/app/analytics')}
@@ -249,13 +291,19 @@ export function SinglePageDashboard() {
                 </div>
 
                 <h3 className="font-serif text-xl sm:text-2xl font-medium text-ink tracking-tight">
-                  Pipeline qualificado cresceu 18% nos últimos 7 dias.
+                  {totalLeads > 0
+                    ? `Operação ativa com ${totalLeads} oportunidades sob monitoramento.`
+                    : 'Command Center preparado para operar.'}
                 </h3>
 
                 <p className="text-xs sm:text-sm text-ink-2 leading-relaxed">
-                  Maior velocidade de fechamento identificada em contas Enterprise. Há{' '}
-                  <strong className="text-ink font-semibold">3 oportunidades estratégicas</strong>{' '}
-                  que requerem follow-up hoje para garantir o fechamento no mês.
+                  {totalLeads > 0
+                    ? `Inteligência estratégica conectada ao CRM. ${
+                        pendingActivities > 0
+                          ? `Há ${pendingActivities} atividades operacionais que requerem follow-up.`
+                          : 'Mantenha cadências ativas para acelerar o fechamento de propostas.'
+                      }`
+                    : 'Inicie a prospecção de novos clientes ou cadastre negócios no CRM para receber diagnósticos, objeções mapeadas e sugestões de abordagem automáticas.'}
                 </p>
               </div>
 
@@ -270,11 +318,11 @@ export function SinglePageDashboard() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate('/app/crm')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-midnight text-white hover:bg-slate-800 text-xs font-bold transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  onClick={() => navigate(totalLeads > 0 ? '/app/crm' : '/app/prospect')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-2 text-on-brand text-xs font-bold transition-all shadow-sm shadow-brand/15 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
-                  <Zap className="w-4 h-4 text-gold" />
-                  <span>Agir nos Deals</span>
+                  <Zap className="w-4 h-4" />
+                  <span>{totalLeads > 0 ? 'Agir nos Deals' : 'Prospectar Agora'}</span>
                 </button>
               </div>
             </div>

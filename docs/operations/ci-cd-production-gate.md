@@ -293,9 +293,13 @@ quebrado por causa própria não relacionada ao código a implantar):
 1. **Nunca edite `.github/actions/require-ci-green` nem remova o job `resolve-sha`** para
    contornar — isso é indistinguível de reintroduzir o bug que esta onda fechou.
 2. O procedimento correto é **humano, explícito e registrado**: o dono do repositório (ou quem
-   tiver a mesma permissão) executa o deploy manualmente fora do GitHub Actions (SSH direto na
-   instância produção, seguindo `scripts/deploy-oci.sh` manualmente — mesmo caminho descrito em
-   `docs/deploy/oracle-cloud.md` seção 3.2 "deploy manual"), com:
+   tiver a mesma permissão) executa o "deploy" manualmente fora do fluxo automático — hoje isso
+   significa atualizar o ambiente Local-First (`docker-compose.yml`) para o SHA desejado (ver
+   `docs/development/LOCAL_FIRST.md` e `docs/deploy/README.md`, caminho canônico ativo desde
+   2026-09-20). (Nota: versões anteriores deste passo descreviam SSH direto numa instância Oracle
+   Cloud via `scripts/deploy-oci.sh` — deletado pelo commit `783f8582`, 2026-09-18 — e depois o
+   Dashboard do Render; nenhum dos dois é o caminho ativo hoje, Render foi desativado junto com os
+   demais provedores cloud.) Em qualquer caso, o procedimento exige:
    - justificativa por escrito (o que está quebrado, por que não pode esperar o CI);
    - responsável identificado;
    - SHA explícito usado;

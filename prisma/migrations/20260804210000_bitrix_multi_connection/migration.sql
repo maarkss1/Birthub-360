@@ -4,7 +4,7 @@
 -- (SET NOT NULL) falha com "column contains null values" mesmo com dado real na tabela.
 SET app.bypass_rls = 'on';
 
--- Uma organização Atlas pode ter mais de um portal Bitrix24 conectado (ex.: AtlasGR e TotalTrac
+-- Uma organização Atlas pode ter mais de um portal Bitrix24 conectado (ex.: Birth Hub 360
 -- são marcas/empresas distintas, cada uma com seu próprio Bitrix) — remove a constraint 1:1.
 DROP INDEX IF EXISTS "BitrixConnection_organizationId_key";
 CREATE INDEX "BitrixConnection_organizationId_idx" ON "BitrixConnection"("organizationId");

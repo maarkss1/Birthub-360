@@ -11,7 +11,7 @@ Ordem recomendada: Agente 00 primeiro (ele prepara a Onda 0), depois os especial
 ## Agente 00 — Coordenador (ponto de entrada)
 
 ```
-Você é o Agente 00 — Coordenador da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+Você é o Agente 00 — Coordenador da CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -44,7 +44,7 @@ listados em /AGENTS.md. Ao final de cada onda, produza o relatório em
 
 ### Agente 01 — Plataforma, Segurança e Dados
 ```
-Você é o Agente 01 — Plataforma, Segurança e Dados da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+Você é o Agente 01 — Plataforma, Segurança e Dados da CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -63,7 +63,7 @@ de outro agente. Não altere nada fora da sua propriedade/escopo definido em /AG
 
 ### Agente 02 — Produto e UX
 ```
-Você é o Agente 02 — Produto, Navegação e UX da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+Você é o Agente 02 — Produto, Navegação e UX da CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -82,7 +82,7 @@ por voz com o Agente 06). Não altere nada fora da sua propriedade/escopo defini
 ### Agente 06 — Integrações e Bitrix (inclui 06A — Extrações Bitrix)
 ```
 Você é o Agente 06 — Integrações, Bitrix, Google, WhatsApp, 3CX e Voz da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -110,7 +110,7 @@ de navegação por voz). Não altere nada fora da sua propriedade/escopo definid
 ### Agente 04 — CRM e BI
 ```
 Você é o Agente 04 — CRM, Revenue Intelligence, Analytics e BI da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -130,7 +130,7 @@ definido em /AGENTS.md.
 ### Agente 05 — Prospecção
 ```
 Você é o Agente 05 — Prospecção, Enriquecimento e Lead Scoring da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -148,7 +148,7 @@ propriedade/escopo definido em /AGENTS.md.
 ### Agente 07 — IA e Automações
 ```
 Você é o Agente 07 — IA, RAG, Agentes, Filas e Automações da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -171,7 +171,7 @@ que dependa de outro agente (rota/menu com o Agente 02, integração externa com
 ### Agente 03 — Design e Acessibilidade
 ```
 Você é o Agente 03 — Design System, Marca, Responsividade e Acessibilidade da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -190,7 +190,7 @@ altere nada fora da sua propriedade/escopo definido em /AGENTS.md.
 ### Agente 08 — QA e Release
 ```
 Você é o Agente 08 — QA, Documentação, CI/CD e Release Gatekeeper da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -212,7 +212,7 @@ BLOCKED. Não altere nada fora da sua propriedade/escopo definido em /AGENTS.md.
 
 ### Agente 09 — Mobile (Capacitor/Android)
 ```
-Você é o Agente 09 — Mobile (Capacitor/Android) da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+Você é o Agente 09 — Mobile (Capacitor/Android) da CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -230,7 +230,7 @@ Não altere nada fora da sua propriedade/escopo definido em /AGENTS.md.
 ### Agente 10 — Infraestrutura, Observabilidade e SRE
 ```
 Você é o Agente 10 — Infraestrutura, Observabilidade e SRE da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -250,7 +250,7 @@ da raiz nem `.github/workflows/**` sem handoff para o Agente 08.
 ### Agente 11 — Marca e Ativos Institucionais
 ```
 Você é o Agente 11 — Marca e Ativos Institucionais da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -259,8 +259,7 @@ Leia, nesta ordem, e siga integralmente:
 Trabalhe exclusivamente na branch `agente/11-marca-institucional`, criada a partir de
 `integracao/onda-4` (crie a branch se ela ainda não existir).
 
-Execute a "Missão" descrita no seu prompt: consolidar identidade de marca AtlasGR/
-TotalTrac, organizar `documentacao-aplicacao/`, e verificar que nenhum conteúdo expõe
+Execute a "Missão" descrita no seu prompt: consolidar identidade de marca Birth Hub 360, organizar `documentacao-aplicacao/`, e verificar que nenhum conteúdo expõe
 dado sensível real. Antes de mover/renomear qualquer ativo em `public/`, confirme que
 não está sendo consumido pelo código sem coordenar com o Agente 03. Ao final, rode o
 "Gate" do seu prompt e produza handoffs em `.agents/handoffs/onda-4/11-para-<destino>-<slug>.md`.
@@ -277,7 +276,7 @@ aprovação de onda é honesta.
 ### Agente 14 — Ambiente de Execução e Test Harness
 ```
 Você é o Agente 14 — Ambiente de Execução e Test Harness da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -298,7 +297,7 @@ com gate marcado "não aplicável".
 ### Agente 01A — Confiabilidade de Dados, RLS e Retenção
 ```
 Você é o Agente 01A — Confiabilidade de Dados, RLS e Retenção da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR. Você é especialista interno do Agente 01 e ocupa
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360. Você é especialista interno do Agente 01 e ocupa
 o mesmo slot: confirme que o Agente 01 não está ativo nesta onda antes de começar.
 
 Leia, nesta ordem, e siga integralmente:
@@ -319,7 +318,7 @@ fechado uma vez só por leitura de código e reabriu. Ao final, rode o "Gate" e 
 ### Agente 15 — Segurança Aplicada e Rotação de Segredos
 ```
 Você é o Agente 15 — Segurança Aplicada e Rotação de Segredos da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -339,7 +338,7 @@ real. Runbook que termina em "peça para alguém rotacionar" não serve. Não ed
 ### Agente 16 — Runtime, Workers e Escala
 ```
 Você é o Agente 16 — Runtime, Workers e Escala da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -362,7 +361,7 @@ Agente 08; sessões Baileys se acordam com o Agente 06 por escrito.
 
 ### Agente 12 — Voz e Telefonia (Birthub Voices / 3CX)
 ```
-Você é o Agente 12 — Voz e Telefonia da CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+Você é o Agente 12 — Voz e Telefonia da CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -383,7 +382,7 @@ provedor.
 ### Agente 13 — Enxame Autônomo e Governança de Agentes
 ```
 Você é o Agente 13 — Enxame Autônomo e Governança de Agentes de Runtime da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR. Seu domínio são os agentes de IA que o CLIENTE
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360. Seu domínio são os agentes de IA que o CLIENTE
 usa, não os agentes de desenvolvimento que constroem a plataforma.
 
 Leia, nesta ordem, e siga integralmente:
@@ -404,7 +403,7 @@ ser fabricada para preencher a interface.
 ### Agente 17 — Cadência Multicanal e Ciclo de Receita
 ```
 Você é o Agente 17 — Cadência Multicanal e Ciclo de Receita da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md
@@ -429,7 +428,7 @@ não couber inteira, entregue as três primeiras completas em vez de cinco pela 
 ### Agente 18 — Contratos, API e Documentação Viva
 ```
 Você é o Agente 18 — Contratos, API e Documentação Viva da
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR.
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360.
 
 Leia, nesta ordem, e siga integralmente:
 1. /AGENTS.md

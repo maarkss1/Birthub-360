@@ -3,14 +3,13 @@ import { Bookmark, Camera, Database, Landmark, Wrench } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GamificationWidget } from '../../../components/ui/GamificationWidget';
 import { BRAND } from '../../../config/brand';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 import { SoundFX } from '../../../lib/soundEffects';
 import {
   ATLAS_PERSONA_OPTIONS,
   SEGMENTO_OPTIONS,
-  TOTALTRAC_PERSONA_OPTIONS,
-  TOTALTRAC_SEGMENTO_OPTIONS,
+  BIRTHHUB360_PERSONA_OPTIONS,
+  BIRTHHUB360_SEGMENTO_OPTIONS,
 } from '../../../shared/constants/icp-options';
 import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service';
 import type {
@@ -27,12 +26,12 @@ import { SavedSearchesModal } from './SavedSearchesModal';
 
 export { DecisionMakerSearch } from './prospecting-hub/DecisionMakerSearch';
 
-// Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+// Antes dividido entre dois playbooks nomeados por empresa (Birth Hub 360) — unificado
 // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção. Hoisted
 // para fora do componente para não recriar a referência do array a cada render (useEffect abaixo
 // depende dela).
-const ACTIVE_SEGMENTS = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
-const ACTIVE_PERSONA_OPTIONS = [...ATLAS_PERSONA_OPTIONS, ...TOTALTRAC_PERSONA_OPTIONS];
+const ACTIVE_SEGMENTS = [...SEGMENTO_OPTIONS, ...BIRTHHUB360_SEGMENTO_OPTIONS];
+const ACTIVE_PERSONA_OPTIONS = [...ATLAS_PERSONA_OPTIONS, ...BIRTHHUB360_PERSONA_OPTIONS];
 
 type HubTab = 'cnpj' | 'discovery' | 'ocr' | 'tools';
 
@@ -98,7 +97,6 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function ProspectingHub() {
-  const { info: playbookMeta } = useActivePlaybook();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
   const [activeSavedSearchId, setActiveSavedSearchId] = useState<string | null>(null);
@@ -507,7 +505,7 @@ export function ProspectingHub() {
         >
           <div className="bh-label text-brand-ink dark:text-brand">CAPTAÇÃO E QUALIFICAÇÃO</div>
           <h1 className="font-display text-h1 font-bold tracking-tight text-ink">
-            {playbookMeta.label} Prospect
+            Prospecção Comercial & Enriquecimento
           </h1>
           <p className="max-w-3xl text-sm leading-relaxed text-ink-2">
             Motor de enriquecimento autônomo com IA para capturar leads corporativos de altíssimo

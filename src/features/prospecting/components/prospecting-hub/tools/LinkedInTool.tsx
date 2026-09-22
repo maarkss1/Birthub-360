@@ -16,7 +16,7 @@ import { api } from '../../../../../lib/api';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
-  TOTALTRAC_SEGMENTO_OPTIONS,
+  BIRTHHUB360_SEGMENTO_OPTIONS,
 } from '../../../../../shared/constants/icp-options';
 import type {
   DecisionMaker,
@@ -32,9 +32,9 @@ import { getErrorMessage, type PromoteResult } from './shared';
 type SubTab = 'empresas' | 'decisores';
 
 export function LinkedInTool({ configured }: { configured: boolean }) {
-  // Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+  // Antes dividido entre dois playbooks nomeados por empresa (Birth Hub 360) — unificado
   // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção.
-  const activeSegments = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
+  const activeSegments = [...SEGMENTO_OPTIONS, ...BIRTHHUB360_SEGMENTO_OPTIONS];
   const [subTab, setSubTab] = useState<SubTab>('empresas');
 
   // --- Empresas (Apollo Organization Search filtrado por linkedinUrl) ---
