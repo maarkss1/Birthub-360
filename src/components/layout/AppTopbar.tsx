@@ -116,7 +116,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         className="group ml-3 hidden max-w-md flex-1 items-center gap-2 rounded-control border border-line bg-surface-subtle px-3 py-2 text-ink-2 transition-[border-color,box-shadow,color] hover:border-brand/30 hover:text-ink hover:shadow-sm lg:flex"
       >
         <Search className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-        <span className="text-xs">Buscar empresas, contatos, insights, ações…</span>
+        <span className="text-xs">Buscar empresa, decisor ou comando…</span>
         <kbd className="ml-auto rounded-md border border-line bg-surface px-1.5 py-0.5 text-[9px] font-semibold text-ink-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
           ⌘K
         </kbd>
@@ -124,9 +124,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
 
       <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
         <div className="hidden text-right leading-tight sm:block">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-ink-2/70">
-            {dateLabel}
-          </p>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-ink-2">{dateLabel}</p>
           <p className="text-sm font-bold text-ink [font-variant-numeric:tabular-nums]">
             {timeLabel}
           </p>

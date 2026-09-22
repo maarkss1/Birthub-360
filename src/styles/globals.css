@@ -149,6 +149,11 @@
   --midnight: #0b132b;
   --sunset: #ff5841;
   --red-violet: #c53678;
+  /* --red-violet cru como TEXTO (não badge/halo) mede ~5.1:1 contra superfície clara — passa AA
+     cru, sem precisar de versão própria aqui. Existe só para o escuro poder sobrescrever abaixo
+     (mesmo padrão de --critical/--ok-active): achado real do axe-core, CTA "font-bold text-red-
+     violet" em SinglePageDashboard.tsx caía pra 3.28:1 contra --surface escura (#111D3F). */
+  --red-violet-active: var(--red-violet);
   --gold: #d4af37;
   --white: #ffffff;
 
@@ -268,6 +273,11 @@
   /* Sunset Orange e Red-Violet oficiais */
   --red: #ff5841;
   --pink: #c53678;
+  /* Clareado (color-mix em direção ao branco, mesma fórmula de --critical-active acima) para
+     recuperar 4.5:1 como texto sólido contra --surface escura — 30% branco mede 5.35:1 (calculado,
+     luminância relativa WCAG), com folga. Só a versão "-active" muda por tema; --red-violet cru
+     continua intocado (halos/badges bg-red-violet/10, calibrados à parte, não regridem). */
+  --red-violet-active: color-mix(in srgb, var(--red-violet) 70%, white);
   --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.6), 0 14px 34px -18px rgba(0, 0, 0, 0.9);
   --shadow-card-hover-value: 0 1px 3px rgba(0, 0, 0, 0.7), 0 20px 46px -20px rgba(0, 0, 0, 0.95);
   --shadow-nav-value: 12px 0 38px -24px rgba(0, 0, 0, 0.85);
@@ -297,19 +307,21 @@
      mede 4.93:1 contra --surface-2 e 5.29:1 contra --surface, com folga sobre o mínimo AA. Depois
      do recalibre de --critical acima (75/25), --critical-active herda automaticamente (deriva de
      var(--critical)) e sobe pra ~10.95:1 contra --surface-elevated / ~11.76:1 contra --surface-2 /
-     ~13.52:1 contra --surface — só ganha margem. Achado posterior (harness de navegador real,
-     Canvas2D + color-mix computado + luminância relativa WCAG, não estimado): DealsGrid.tsx/
-     CompareBar.tsx tinham um `dark:text-critical` redundante e ERRADO no badge "Perdido"/Δ
-     negativo (`bg-critical/15 text-critical-active dark:text-critical`) — plain `--critical` no
-     escuro mede só 3.85:1 contra o composto real (bg-critical/15 sobre --surface-2 escura), abaixo
-     de AA. O padrão certo pra esse composto já era este token: plain `text-critical-active` (sem
-     override de tema) mede 9.80:1 no escuro e 8.65:1 no claro contra o mesmo composto — mesmo
-     padrão já usado sem override por BentoMetric.tsx/BentoInsight.tsx. `dark:text-critical`
-     presumia (por analogia com --ok-active/--warn-active, onde a versão "-active" no escuro é
-     literalmente igual à crua) que --critical-active no escuro também seria igual a --critical
-     cru — não é: são cores diferentes de propósito, porque --critical sozinho nunca foi calibrado
-     pra este composto translúcido, só pra texto sólido contra --surface/--surface-2. Removido o
-     override; ver `.claude/PILOTS.md`. */
+     ~13.52:1 contra --surface — só ganha margem, usado hoje em dark mode por BentoMetric.tsx/
+     BentoInsight.tsx e, desde o achado abaixo, também por DealsGrid.tsx/CompareBar.tsx.
+     Achado posterior (harness de navegador real, Canvas2D + color-mix computado + luminância
+     relativa WCAG, não estimado): DealsGrid.tsx/CompareBar.tsx tinham um `dark:text-critical`
+     redundante e ERRADO no badge "Perdido"/Δ negativo
+     (`bg-critical/15 text-critical-active dark:text-critical`) — plain `--critical` no escuro
+     mede só 3.85:1 contra o composto real (bg-critical/15 sobre --surface-2 escura), abaixo de AA.
+     O padrão certo pra esse composto já era este token: plain `text-critical-active` (sem override
+     de tema) mede 9.80:1 no escuro e 8.65:1 no claro contra o mesmo composto — mesmo padrão já
+     usado sem override por BentoMetric.tsx/BentoInsight.tsx. `dark:text-critical` presumia (por
+     analogia com --ok-active/--warn-active, onde a versão "-active" no escuro é literalmente igual
+     à crua) que --critical-active no escuro também seria igual a --critical cru — não é: são cores
+     diferentes de propósito, porque --critical sozinho nunca foi calibrado pra este composto
+     translúcido, só pra texto sólido contra --surface/--surface-2. Removido o override; ver
+     `.claude/PILOTS.md`. */
   --critical-active: color-mix(in srgb, var(--critical) 20%, white);
   /* --color-ok cru já passa 4.5:1 contra a superfície escura — ver comentário de --ok-active
      no :root acima. */
@@ -390,6 +402,9 @@
   --color-pink: var(--pink);
   --color-red-active: color-mix(in srgb, var(--red) 80%, black);
   --color-pink-active: color-mix(in srgb, var(--pink) 80%, black);
+  /* text-red-violet-active — variante seguro-como-texto de --color-red-violet (que fica intocado
+     para halos/badges), ver --red-violet-active em :root/.dark. */
+  --color-red-violet-active: var(--red-violet-active);
   --color-ring: var(--brand);
 
   --color-success: #10b981;
