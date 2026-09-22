@@ -118,7 +118,9 @@ async function handleVoiceResult(req: Request, res: Response): Promise<void> {
   if (!expectedSecret) {
     // Fail-closed: sem segredo configurado não há como distinguir a Bland de qualquer um que
     // descubra esta URL. Nunca cair para um valor default versionado no repositório.
-    logger.error('Webhook voice-result recebido, mas BIRTHHUB360_WEBHOOK_SECRET não está configurado.');
+    logger.error(
+      'Webhook voice-result recebido, mas BIRTHHUB360_WEBHOOK_SECRET não está configurado.',
+    );
     res.status(503).json({ success: false, error: 'Webhook não configurado.' });
     return;
   }
