@@ -15,12 +15,12 @@ services:
       DATABASE_URL: postgresql://prospector_app:prospector_app_pass@postgres:5432/prospectordb
       REDIS_URL: redis://:prospector_redis_pass@redis:6379
       MEILI_HOST: http://meilisearch:7700
-      MEILI_MASTER_KEY: atlasgr_meili_master_key
+      MEILI_MASTER_KEY: birthhub360_meili_master_key
       STORAGE_ENDPOINT: http://minio:9000
       STORAGE_REGION: us-east-1
       STORAGE_BUCKET: prospector-assets
-      STORAGE_ACCESS_KEY_ID: atlasgr
-      STORAGE_SECRET_ACCESS_KEY: atlasgr_minio_dev_only
+      STORAGE_ACCESS_KEY_ID: birthhub360
+      STORAGE_SECRET_ACCESS_KEY: birthhub360_minio_dev_only
       OLLAMA_BASE_URL: http://ollama:11434
       LITELLM_URL: http://litellm:4000
     # service_healthy (não só "started"): o postCreateCommand roda `prisma migrate deploy` logo

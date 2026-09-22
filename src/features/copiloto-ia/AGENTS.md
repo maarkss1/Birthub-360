@@ -2,14 +2,14 @@
 
 ## Dono
 
-Quem implementa cada onda seguinte do pacote `atlasgr_copiloto_ai_pack` (ver
+Quem implementa cada onda seguinte do pacote `birthhub360_copiloto_ai_pack` (ver
 `.claude/PILOTS.md` para o registro do piloto que criou esta fundação e
-`C:\Users\Marks\Desktop\ATLASGR_COPILOTO_IA_AGENTES_PROMPTS_EXTENSAO_CHROME` para o pacote de
+`C:\Users\Marks\Desktop\BIRTHHUB360_COPILOTO_IA_AGENTES_PROMPTS_EXTENSAO_CHROME` para o pacote de
 especificação original — agentes, prompts e roadmap por onda).
 
 ## O que é
 
-Módulo do Copiloto Comercial IA (pacote `atlasgr_copiloto_ai_pack`), já cobrindo as Ondas 1-6 do
+Módulo do Copiloto Comercial IA (pacote `birthhub360_copiloto_ai_pack`), já cobrindo as Ondas 1-6 do
 roadmap: fundação de dados/RBAC (Onda 1), captura real de áudio via extensão Chrome (Onda 2),
 transcrição via Whisper + resumo executivo (Onda 3), mapeamento configurável de campo + writeback
 real no Bitrix24 para `entityType: LEAD`/`COMPANY`/`CONTACT` (Onda 4, estendida na Onda 7 —

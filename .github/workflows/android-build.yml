@@ -80,5 +80,5 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
-        name: atlasgr-android-apk
+        name: birthhub360-android-apk
         path: android/app/build/outputs/apk/debug/app-debug.apk

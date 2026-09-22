@@ -1,6 +1,6 @@
 import re
 
-filepath = r"c:\GitHub\PROSPECTOR-ATLASGR\src\features\intelligence\components\AIDockWidget.tsx"
+filepath = r"c:\GitHub\PROSPECTOR-BIRTH HUB 360\src\features\intelligence\components\AIDockWidget.tsx"
 with open(filepath, 'r', encoding='utf-8') as f:
     content = f.read()
 

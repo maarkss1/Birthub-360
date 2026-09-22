@@ -25,7 +25,7 @@ vi.mock('@/lib/prisma', () => ({
   prisma: { bitrixConnection: { findFirst: vi.fn() } },
 }));
 
-const WEBHOOK = 'https://atlasgr.bitrix24.com.br/rest/1/token/';
+const WEBHOOK = 'https://birthhub360.bitrix24.com.br/rest/1/token/';
 
 function jsonResponse(
   body: unknown,
@@ -273,7 +273,7 @@ describe('testWebhook — revalida SSRF a cada chamada, não só no cadastro', (
     // host/protocolo da URL base para fins de SSRF, só o caminho difere.
     expect(assertSafeExternalUrlMock).toHaveBeenCalledWith(`${WEBHOOK}profile.json`);
     expect(fetchMock).toHaveBeenCalledWith(`${WEBHOOK}profile.json`, expect.anything());
-    expect(portalDomain).toBe('atlasgr.bitrix24.com.br');
+    expect(portalDomain).toBe('birthhub360.bitrix24.com.br');
     fetchMock.mockRestore();
   });
 });

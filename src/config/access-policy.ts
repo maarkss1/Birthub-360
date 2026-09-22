@@ -2,8 +2,8 @@
  * Política de acesso ao login/cadastro.
  *
  * Até 09/2026 esta política restringia o cadastro a e-mails dos domínios
- * corporativos das duas marcas então existentes (@atlasgr.com.br,
- * @totaltrac.com.br) — fazia sentido quando a plataforma servia só essas duas
+ * corporativos das duas marcas então existentes (@birthhub360.com.br,
+ * @birthhub360.com.br) — fazia sentido quando a plataforma servia só essas duas
  * empresas. Com o rebranding para Birth Hub 360º (marca única, ICP "qualquer
  * empresa com área comercial que queira automatizar ponta a ponta" — ver
  * docs/BrandConstitution.md e src/config/brand.ts), manter esse allowlist

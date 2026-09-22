@@ -35,7 +35,7 @@ Passos que exigem conta pessoal/pagamento e não podem ser executados por uma se
    - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
    - `MEILI_MASTER_KEY`
    - `BIRTH_VOICES_API_KEY`, `BIRTH_VOICES_WEBHOOK_SECRET`
-   - `ATLASGR_WEBHOOK_SECRET`, `THREECX_WEBHOOK_SECRET`
+   - `BIRTHHUB360_WEBHOOK_SECRET`, `THREECX_WEBHOOK_SECRET`
    - Qualquer outra credencial de integração (SMTP, etc.) com valor real setado hoje no Render —
      conferir a lista real em Render → `prospector-atlas` → Environment antes de migrar, este
      documento pode estar incompleto se uma integração nova foi adicionada depois dele.

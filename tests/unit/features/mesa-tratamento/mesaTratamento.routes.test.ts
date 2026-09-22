@@ -33,7 +33,7 @@ vi.mock('@/features/integrations/bitrix/bitrix.service', () => bitrixServiceMock
 import { mesaTratamentoRoutes } from '@/features/mesa-tratamento/routes/mesaTratamento.routes';
 import { errorHandler } from '@/shared/middlewares/errorHandler';
 
-function buildApp(role: string, userId = 'user-1', email = 'user1@atlasgr.com.br') {
+function buildApp(role: string, userId = 'user-1', email = 'user1@birthhub360.com.br') {
   const app = express();
   app.use(express.json());
   app.use((req, _res, next) => {
@@ -68,7 +68,7 @@ describe('GET /api/mesa-tratamento/queue — escopo de dono (bug owner-vs-nome)'
   it('CLOSER: filtra a fila pelo próprio User.id, não por um nome buscado à parte', async () => {
     prismaMock.bitrixConnection.findFirst.mockResolvedValue({ id: 'conn-1' });
     bitrixServiceMock.getBitrixUsers.mockResolvedValue([
-      { id: 'bx-1', name: 'Ana Closer', email: 'user1@atlasgr.com.br' },
+      { id: 'bx-1', name: 'Ana Closer', email: 'user1@birthhub360.com.br' },
     ]);
     bitrixServiceMock.resolveOwnBitrixUserId.mockReturnValue('bx-1');
     prismaMock.lead.findMany.mockResolvedValue([]);
@@ -196,7 +196,7 @@ describe('POST /api/mesa-tratamento/lead/:id/reassign — painel de gestão', ()
     prismaMock.lead.findFirst.mockResolvedValue({ id: 'lead-1', bitrixLeadId: '999' });
     prismaMock.bitrixConnection.findFirst.mockResolvedValue({ id: 'conn-1' });
     bitrixServiceMock.getBitrixUsers.mockResolvedValue([
-      { id: 'bx-2', name: 'Marcelo Gestor', email: 'marcelo@atlasgr.com.br' },
+      { id: 'bx-2', name: 'Marcelo Gestor', email: 'marcelo@birthhub360.com.br' },
     ]);
     bitrixServiceMock.resolveAtlasUserIdByEmail.mockResolvedValue('user-marcelo-1');
 

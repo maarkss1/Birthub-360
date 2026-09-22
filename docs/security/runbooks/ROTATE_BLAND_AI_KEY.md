@@ -38,7 +38,7 @@ Bland AI, que exige login humano autorizado na conta da organização.
 2. Vá em **Settings → API Keys** (o nome exato da seção pode variar conforme a versão do painel;
    procure por "API Keys" ou "Developers").
 3. Clique em **Create new key** (ou equivalente). Dê um nome identificável, por exemplo
-   `atlasgr-prospector-2026-08` (inclua o mês/ano de emissão — isso facilita auditoria futura de
+   `birthhub360-prospector-2026-08` (inclua o mês/ano de emissão — isso facilita auditoria futura de
    qual chave está em uso onde).
 4. Copie o valor da nova chave para um gerenciador de senhas/cofre — **nunca** para um arquivo do
    repositório, chat, ticket ou log. Ela não deve existir em nenhum lugar fora do cofre de

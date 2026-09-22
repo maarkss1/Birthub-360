@@ -7,7 +7,7 @@ import {
 } from './swarm.constants.js';
 
 /**
- * Agente Gerente Comercial (Célula Comercial, pacote ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0,
+ * Agente Gerente Comercial (Célula Comercial, pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0,
  * id `manager-commercial`).
  *
  * Narra forecast/pipeline/performance já calculados por `commercial-intelligence` (o chamador

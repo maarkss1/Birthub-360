@@ -7,7 +7,7 @@ import {
 } from './swarm.constants.js';
 
 /**
- * Agente Receita & Faturamento (Célula Comercial, pacote ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0,
+ * Agente Receita & Faturamento (Célula Comercial, pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0,
  * id `billing-revenue`).
  *
  * `status: NOVO_FONTE_PARCIAL` no registro (`commercialAgentRegistry.ts`) — confirmado nesta onda

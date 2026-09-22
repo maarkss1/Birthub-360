@@ -8,7 +8,7 @@ import {
 
 /**
  * Agente LDR — Inteligência de Leads (instalação da Célula Comercial, pacote
- * ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0, id `ldr-intelligence`).
+ * BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0, id `ldr-intelligence`).
  *
  * Não recalcula nada: recebe (via `run(inputData)`) o resultado já buscado de
  * `AccountIntelligenceService.getIntelligence()` (`src/features/market-intelligence/server/

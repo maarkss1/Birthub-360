@@ -372,7 +372,7 @@
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
 
   /* Paleta oficial Birth Hub 360 (brand book, p. 07). Substitui os pares de
-     tokens por marca que existiam aqui (--color-atlas-* / --color-totaltrac*),
+     tokens por marca que existiam aqui (--color-atlas-* / --color-birthhub360*),
      de quando a plataforma trocava de identidade em runtime entre duas marcas.
      Agora há uma marca só, então cor de marca e cor de produto são a mesma
      coisa: use --color-brand/--color-brand-2 para ação e os quatro tokens

@@ -7,7 +7,7 @@ import {
 } from './swarm.constants.js';
 
 /**
- * Agente Coordenador Comercial (Célula Comercial, pacote ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0,
+ * Agente Coordenador Comercial (Célula Comercial, pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0,
  * id `coordinator-commercial`).
  *
  * Papel novo (não existia como agente de swarm) classificado como risco MÉDIO de freeze pelo

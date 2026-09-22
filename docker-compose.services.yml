@@ -207,7 +207,7 @@ services:
         superset db upgrade &&
         superset fab create-admin
         --username "${SUPERSET_ADMIN_USERNAME:-admin}"
-        --firstname Admin --lastname AtlasGR
+        --firstname Admin --lastname Birth Hub 360
         --email "${SUPERSET_ADMIN_EMAIL:-admin@birthhub.local}"
         --password "${SUPERSET_ADMIN_PASSWORD:-change-this-superset-admin-password}" || true &&
         superset init

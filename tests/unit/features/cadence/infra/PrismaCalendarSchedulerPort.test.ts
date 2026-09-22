@@ -24,7 +24,7 @@ vi.mock('../../../../../src/features/integrations/google/google.service.js', () 
 }));
 
 vi.mock('../../../../../src/config/env.js', () => ({
-  env: { SMTP_FROM: 'sdr@atlasgr.com.br' },
+  env: { SMTP_FROM: 'sdr@birthhub360.com.br' },
 }));
 
 vi.mock('../../../../../src/lib/email/mailer.js', () => ({
@@ -40,7 +40,7 @@ const draft = {
   leadId: 'lead-1',
   start: new Date('2026-08-20T14:00:00Z'),
   end: new Date('2026-08-20T15:00:00Z'),
-  attendeeEmails: ['contato@exemplo.com', 'vendedor@atlasgr.com.br'],
+  attendeeEmails: ['contato@exemplo.com', 'vendedor@birthhub360.com.br'],
   ownerUserId: 'user-1',
   title: 'Reunião comercial — Empresa Exemplo',
   confirmationEvidenceType: 'manual-verified' as const,
@@ -122,7 +122,7 @@ describe('prismaCalendarSchedulerPort', () => {
       }),
     );
     expect(sendEmailMock).toHaveBeenCalledWith(
-      expect.objectContaining({ to: 'vendedor@atlasgr.com.br' }),
+      expect.objectContaining({ to: 'vendedor@birthhub360.com.br' }),
     );
   });
 

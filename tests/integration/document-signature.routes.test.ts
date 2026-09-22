@@ -61,7 +61,7 @@ function buildApp(role = 'GESTOR', organizationId = ORG): Express {
       }
     ).user = {
       id: 'test-user',
-      email: 'vendedor@atlasgr.com.br',
+      email: 'vendedor@birthhub360.com.br',
       organizationId,
       role,
     };

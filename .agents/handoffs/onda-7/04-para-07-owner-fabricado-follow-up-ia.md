@@ -34,7 +34,7 @@ passar, em vez de silenciosamente inventar um.
 ## Arquivo(s) envolvido(s)
 - `src/features/intelligence/tools/opsTools.ts:31` (`createFollowUpTaskTool`)
 - Padrão semelhante, mesmo domínio, não necessariamente o mesmo model: `owner: payload.owner ||
-  'Enxame de IA AtlasGR'` em `src/features/intelligence/services/aiPendingAction.service.ts:78` —
+  'Enxame de IA Birth Hub 360'` em `src/features/intelligence/services/aiPendingAction.service.ts:78` —
   não investiguei esse a fundo (model fora do meu escopo), mas vale conferir se tem o mesmo
   problema.
 
@@ -94,7 +94,7 @@ sobrevivendo ao guard `assertRealOwner`:
    executar esta ação.") em vez do genérico "Falha ao executar a ação autônoma." — mantém o
    princípio de "ausência de responsável é um estado de dados visível, não mascarado" também na
    trilha de auditoria da ação aprovada, não só na resposta síncrona da tool.
-   Nota: o `swarm_recommendation` no mesmo arquivo (linha 58, `author: 'Enxame de IA AtlasGR'`)
+   Nota: o `swarm_recommendation` no mesmo arquivo (linha 58, `author: 'Enxame de IA Birth Hub 360'`)
    **não** foi alterado — é `Note.author`, não `Activity.owner`; ali o autor da nota é
    legitimamente o enxame de IA que propôs a recomendação (auditoria de decisão autônoma), não um
    responsável humano por uma tarefa, então não é o mesmo padrão fabricado.

@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Copiloto Comercial IA — Atlas GR",
+  "name": "Copiloto Comercial IA — Birth Hub 360",
   "version": "0.2.0",
-  "description": "Copiloto Comercial IA da Central Atlas GR: detecta o Google Meet, captura consentimento e vincula a reunião a um Lead do CRM via backend próprio (nunca fala com o Bitrix24 diretamente).",
+  "description": "Copiloto Comercial IA da Central Birth Hub 360: detecta o Google Meet, captura consentimento e vincula a reunião a um Lead do CRM via backend próprio (nunca fala com o Bitrix24 diretamente).",
   "permissions": ["storage", "activeTab", "scripting", "sidePanel", "tabCapture", "offscreen"],
   "host_permissions": [
     "https://meet.google.com/*",
     "https://prospector-atlas.onrender.com/*",
-    "https://app.atlasgr.com.br/*",
+    "https://app.birthhub360.com.br/*",
     "http://localhost:3005/*",
     "http://127.0.0.1:3005/*"
   ],
@@ -27,6 +27,6 @@
     "default_path": "src/sidepanel.html"
   },
   "action": {
-    "default_title": "Abrir Copiloto Atlas GR"
+    "default_title": "Abrir Copiloto Birth Hub 360"
   }
 }

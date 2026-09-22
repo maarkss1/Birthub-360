@@ -38,7 +38,7 @@ info:
       documentado em `docs/security/SECURITY_GUIDE.md`.
   contact:
     name: Birth Hub 360
-    email: comercial@atlasgr.com.br
+    email: comercial@birthhub360.com.br
 
 servers:
   - url: /api
@@ -2004,7 +2004,7 @@ paths:
         - name: brand
           in: query
           required: true
-          schema: { type: string, enum: [atlasgr, totaltrac] }
+          schema: { type: string, enum: [Birth Hub 360] }
       responses:
         '200':
           description: OK
@@ -2031,7 +2031,7 @@ paths:
               type: object
               required: [brandKey, inputs]
               properties:
-                brandKey: { type: string, enum: [atlasgr, totaltrac] }
+                brandKey: { type: string, enum: [Birth Hub 360] }
                 inputs:
                   type: object
                   properties:
@@ -2099,7 +2099,7 @@ paths:
                   turnEvaluations,
                 ]
               properties:
-                brand: { type: string, enum: [atlasgr, totaltrac] }
+                brand: { type: string, enum: [Birth Hub 360] }
                 brandName: { type: string, maxLength: 80 }
                 brandDescription: { type: string, maxLength: 500 }
                 personaId: { type: string, maxLength: 80 }
@@ -2148,7 +2148,7 @@ paths:
         - name: brand
           in: query
           required: true
-          schema: { type: string, enum: [atlasgr, totaltrac] }
+          schema: { type: string, enum: [Birth Hub 360] }
       responses:
         '200':
           description: OK
@@ -2177,7 +2177,7 @@ paths:
                 tone: { type: string, maxLength: 80 }
                 objective: { type: string, maxLength: 100 }
                 personaFallback: { type: string, maxLength: 200 }
-                brandId: { type: string, enum: [atlasgr, totaltrac], default: atlasgr }
+                brandId: { type: string, enum: [Birth Hub 360], default: birthhub360 }
       responses:
         '200':
           description: 'Conteúdo gerado. Observação: devolve `{ "result": ... }`, não o envelope padrão.'
@@ -2421,7 +2421,7 @@ paths:
               required: [metrics]
               properties:
                 metrics: { type: object }
-                brandId: { type: string, enum: [atlasgr, totaltrac], default: atlasgr }
+                brandId: { type: string, enum: [Birth Hub 360], default: birthhub360 }
       responses:
         '200':
           description: 'Relatório em Markdown (`{ "result": "..." }`, sem envelope padrão)'
@@ -2447,7 +2447,7 @@ paths:
               required: [metrics]
               properties:
                 metrics: { type: object }
-                brandId: { type: string, enum: [atlasgr, totaltrac], default: atlasgr }
+                brandId: { type: string, enum: [Birth Hub 360], default: birthhub360 }
       responses:
         '200':
           description: 'Stream `text/event-stream`, terminando em `event: end`'
@@ -5022,7 +5022,7 @@ paths:
       parameters:
         - name: brand
           in: query
-          schema: { type: string, enum: [atlasgr, totaltrac] }
+          schema: { type: string, enum: [Birth Hub 360] }
       responses:
         '200':
           description: OK
@@ -5041,7 +5041,7 @@ paths:
               required:
                 [brand, segment, persona, framework, questionCategory, questionText, idealAnswer]
               properties:
-                brand: { type: string, enum: [atlasgr, totaltrac] }
+                brand: { type: string, enum: [Birth Hub 360] }
                 segment: { type: string }
                 persona: { type: string }
                 framework: { type: string, enum: [SPIN, BANT, MEDDPICC, SNAP, CHALLENGER] }
@@ -5089,7 +5089,7 @@ paths:
       parameters:
         - name: brand
           in: query
-          schema: { type: string, enum: [atlasgr, totaltrac] }
+          schema: { type: string, enum: [Birth Hub 360] }
       responses:
         '200':
           description: OK
@@ -5116,7 +5116,7 @@ paths:
                   keyDifferentiator,
                 ]
               properties:
-                brand: { type: string, enum: [atlasgr, totaltrac] }
+                brand: { type: string, enum: [Birth Hub 360] }
                 segment: { type: string }
                 persona: { type: string }
                 objectionTitle: { type: string }
@@ -8745,7 +8745,7 @@ paths:
       summary: >-
         Webhook de resultado de ligação de voz (Bland AI). JSON parseado com parser próprio (não
         depende do `express.json()` global, montado antes dele), segredo comparado em tempo
-        constante no header `x-atlasgr-webhook-secret` vs `ATLASGR_WEBHOOK_SECRET`, idempotente.
+        constante no header `x-birthhub360-webhook-secret` vs `BIRTHHUB360_WEBHOOK_SECRET`, idempotente.
       requestBody:
         required: true
         content:
@@ -8757,7 +8757,7 @@ paths:
         '401':
           description: Segredo inválido
         '503':
-          description: ATLASGR_WEBHOOK_SECRET não configurado (fail-closed)
+          description: BIRTHHUB360_WEBHOOK_SECRET não configurado (fail-closed)
 
   /webhooks/email/webhook:
     post:

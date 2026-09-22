@@ -9,8 +9,8 @@ import { SoundFX } from '../../../lib/soundEffects';
 import {
   ATLAS_PERSONA_OPTIONS,
   SEGMENTO_OPTIONS,
-  TOTALTRAC_PERSONA_OPTIONS,
-  TOTALTRAC_SEGMENTO_OPTIONS,
+  BIRTHHUB360_PERSONA_OPTIONS,
+  BIRTHHUB360_SEGMENTO_OPTIONS,
 } from '../../../shared/constants/icp-options';
 import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service';
 import type {
@@ -27,12 +27,12 @@ import { SavedSearchesModal } from './SavedSearchesModal';
 
 export { DecisionMakerSearch } from './prospecting-hub/DecisionMakerSearch';
 
-// Antes dividido entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificado
+// Antes dividido entre dois playbooks nomeados por empresa (Birth Hub 360) — unificado
 // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção. Hoisted
 // para fora do componente para não recriar a referência do array a cada render (useEffect abaixo
 // depende dela).
-const ACTIVE_SEGMENTS = [...SEGMENTO_OPTIONS, ...TOTALTRAC_SEGMENTO_OPTIONS];
-const ACTIVE_PERSONA_OPTIONS = [...ATLAS_PERSONA_OPTIONS, ...TOTALTRAC_PERSONA_OPTIONS];
+const ACTIVE_SEGMENTS = [...SEGMENTO_OPTIONS, ...BIRTHHUB360_SEGMENTO_OPTIONS];
+const ACTIVE_PERSONA_OPTIONS = [...ATLAS_PERSONA_OPTIONS, ...BIRTHHUB360_PERSONA_OPTIONS];
 
 type HubTab = 'cnpj' | 'discovery' | 'ocr' | 'tools';
 

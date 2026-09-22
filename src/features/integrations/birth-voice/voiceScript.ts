@@ -1,8 +1,8 @@
 /**
  * VOICE-001 (auditoria multiagente, 09/2026): este roteiro era hardcoded para uma única marca
- * (Atlas GR — nome "Gessica", histórico "nasceu em 2004... 390 clientes", produtos "Atlas
+ * (Birth Hub 360 — nome "Gessica", histórico "nasceu em 2004... 390 clientes", produtos "Atlas
  * Profile"/"CIA"). Qualquer outra organização que configurasse uma `VoiceHubConnection` própria
- * (tela de Integrações) recebia a IA se apresentando como "Gessica da Atlas GR" e oferecendo
+ * (tela de Integrações) recebia a IA se apresentando como "Gessica da Birth Hub 360" e oferecendo
  * produtos de gestão de risco de frota para os próprios leads dela — uma identidade e um catálogo
  * de produtos que não são dela. Substituído por um roteiro genérico, interpolado a partir de
  * `VoiceHubConnection.scriptPersonaName/scriptCompanyDescription/scriptOfferText/scriptClosingLine`

@@ -299,7 +299,7 @@ export function JourneyTab({ filter }: { filter: CommercialFilter }) {
           <KpiTile
             label="Reentradas no mês"
             value={String(reentries.countInPeriod)}
-            hint={`${reentries.totalTracked} em todo o histórico`}
+            hint={`${reentries.birthhub360ed} em todo o histórico`}
           />
           <KpiTile
             label="Recuperados (ganhos)"
