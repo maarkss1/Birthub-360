@@ -1,7 +1,7 @@
 - De: 13
 - Para: 00
 - Onda: 43
-- Status: em-andamento
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema
@@ -190,3 +190,28 @@ chamam, via testes já existentes). Registrando como pendência real, não como 
 
 Commits desta resolução: instalação original (onda 43), refino de prompts, e wiring+UI (a
 consolidar num commit final antes do push).
+
+## Correção pós-merge (verificação em sessão posterior, 2026-09-20)
+
+A claim da "Pendência 4" acima ("o painel novo foi adicionado como seção separada abaixo da
+órbita") estava **incorreta como mergeada em `main`**: `CommercialAgentCellPanel.tsx` existia no
+repositório, mas `grep -rn "import.*CommercialAgentCellPanel" src/` não retornava nenhum resultado
+— o componente nunca era importado por `HubScreen.tsx` (nem por nenhum outro arquivo). Ou a
+resolução foi escrita antes do commit final consolidar o wiring, ou o wiring se perdeu no merge —
+não investigado a fundo, não é mais relevante agora que está corrigido.
+
+Corrigido nesta sessão: `HubScreen.tsx` agora importa `CommercialAgentCellPanel` e renderiza a
+seção "Equipe IA Comercial" logo abaixo da órbita/lista mobile, dentro de `<main>`, exatamente na
+posição que a resolução original descrevia. Nenhuma outra mudança de código feita.
+
+Verificado depois da correção:
+```
+npx tsc --noEmit → sem erro novo introduzido por esta mudança (3 erros pré-existentes em
+                   CadenceHub.tsx, confirmados presentes antes desta mudança via git stash)
+npx eslint src/features/hub/components/HubScreen.tsx src/features/hub/components/CommercialAgentCellPanel.tsx
+                   → limpo
+npx depcruise --config .dependency-cruiser.cjs src/features/hub/components/HubScreen.tsx
+                   → 0 violações relacionadas a este arquivo (2 erros no-circular pré-existentes
+                     em src/lib, não relacionados)
+```
+Não verificado: renderização real no navegador (mesma limitação já registrada acima).

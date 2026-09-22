@@ -6,7 +6,6 @@
 > O processamento de workers e background jobs no modo **100% Local-First** opera localmente via `npm run dev:worker` / `npm run start:worker`.
 > Este arquivo permanece arquivado como referência histórica.
 
-
 ## O que já está pronto (não precisa refazer)
 
 - **Entrypoint**: `worker.ts` (raiz) — sobe só os workers BullMQ + agendadores + cron

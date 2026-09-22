@@ -901,6 +901,7 @@ model Organization {
   roleplaySessions         RoleplaySession[]
   qualificationMatrixItems QualificationMatrixItem[]
   objectionMatrixItems     ObjectionMatrixItem[]
+  playbookInsights         PlaybookInsight[]
   aiPendingActions         AIPendingAction[]
   dailyPlanClosings        DailyPlanClosing[]
 
@@ -1933,6 +1934,60 @@ model ObjectionMatrixItem {
   updatedAt         DateTime     @updatedAt
 
   @@index([organizationId, brand])
+}
+
+/// Item 42 do roadmap ("Playbook Vivo"): um padrão de abordagem comercial identificado a partir de
+/// `AIPendingAction.outcomeStatus = POSITIVE` reais (nunca inferido), agrupado por vendedor de
+/// origem + segmento, e sintetizado por IA em `livingPlaybook.service.ts`. Antes desta tabela
+/// (Onda 49) cada rodada de "Playbook Vivo" recalculava do zero, sem histórico de quais padrões já
+/// foram identificados/anunciados nem de quem viu ou adotou — ver
+/// `.agents/handoffs/onda-49/00-para-01-playbook-insight-schema-proposal.md` para a proposta
+/// original que motivou este model.
+model PlaybookInsight {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Vendedor de origem — User.id, nunca nome livre (mesmo padrão de Lead.owner). Sem owner real
+  /// resolvido no CRM, nunca se chega a gerar um insight (ver loadOutcomeGroups).
+  sellerId String
+  segment  String
+
+  patternTitle       String
+  patternDescription String @db.Text
+  suggestedScript    String @db.Text
+
+  /// Quantos AIPendingAction.outcomeStatus=POSITIVE embasavam esta sugestão no momento em que foi
+  /// gerada/atualizada — histórico, não recalculado retroativamente quando a base real muda.
+  evidenceCount Int
+  /// AIPendingAction.id das evidências reais que embasaram a sugestão — proveniência para revisão
+  /// humana, nunca uma lista fabricada.
+  sourceActionIds String[]
+
+  status      PlaybookInsightStatus @default(SUGGESTED)
+  broadcastAt DateTime?
+  /// User.id de quem decidiu anunciar pro time (nunca inferido — vem de req.user na rota
+  /// autenticada, mesmo padrão de AIPendingAction.approvedBy).
+  broadcastBy String?
+  /// Preenchido só se alguém decidir promover a sugestão para um item real e permanente da Matriz
+  /// de Objeções (fluxo já existente, POST /api/playbook/objection-matrix) — nunca automático.
+  promotedToObjectionMatrixItemId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, sellerId])
+  @@index([organizationId, status])
+}
+
+/// Estado de distribuição de um `PlaybookInsight`. `SUGGESTED` é o estado inicial de toda geração;
+/// `BROADCAST` significa que a gestão decidiu anunciar pro time (notificação in-app já disparada);
+/// `DISMISSED` fica reservado para quando alguém decide explicitamente descartar a sugestão (não
+/// usado ainda nesta onda — nenhuma rota escreve este valor hoje).
+enum PlaybookInsightStatus {
+  SUGGESTED
+  BROADCAST
+  DISMISSED
 }
 
 /// Severidade da notificação — define o ícone e a cor de status na interface.

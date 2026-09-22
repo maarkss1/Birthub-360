@@ -20,6 +20,7 @@ import { useBrand } from '../../../contexts/BrandContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
 import { SoundFX } from '../../../lib/soundEffects';
+import { CommercialAgentCellPanel } from './CommercialAgentCellPanel';
 import { type BurstHandle, HubBurstCanvas } from './HubBurstCanvas';
 import { HubTaskWidget } from './HubTaskWidget';
 import '../hub-orbit.css';
@@ -457,9 +458,7 @@ export function HubScreen() {
             </div>
             <h1 className="mt-0.5 font-serif text-xl sm:text-2xl md:text-3xl font-medium leading-tight tracking-tight text-slate-900 dark:text-white">
               {clock.greeting},{' '}
-              <span className="text-brand dark:text-brand-2 font-semibold">
-                {firstName}
-              </span>
+              <span className="text-brand dark:text-brand-2 font-semibold">{firstName}</span>
             </h1>
             <p className="mt-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">
               {brandInfo.slogan}
@@ -611,6 +610,12 @@ export function HubScreen() {
               <MobileDestinationList items={items} />
             </div>
           )}
+
+          {/* Equipe IA Comercial — catálogo somente leitura dos 12 agentes da Célula Comercial
+              (onda 43), seção separada abaixo da órbita, ver CommercialAgentCellPanel.tsx */}
+          <div className="mx-auto w-full max-w-[1250px] px-8 pb-10 pt-6">
+            <CommercialAgentCellPanel />
+          </div>
         </main>
       </div>
     </div>

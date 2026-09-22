@@ -56,6 +56,10 @@ export interface WinningPatternSuggestion {
   patternDescription: string;
   suggestedScript: string;
   sourceExcerpts: string[];
+  /** id do PlaybookInsight já persistido para esta sugestão (Onda 49) — repassar para
+   * broadcastWinningPattern marca o histórico como anunciado; `null` se a persistência falhou
+   * nesta rodada (o anúncio em si continua funcionando sem isso). */
+  insightId?: string | null;
 }
 
 export interface PlaybookListMeta {
@@ -134,7 +138,7 @@ export const playbookApi = {
   broadcastWinningPattern: (
     input: Pick<
       WinningPatternSuggestion,
-      'sellerName' | 'segment' | 'patternTitle' | 'suggestedScript'
+      'sellerName' | 'segment' | 'patternTitle' | 'suggestedScript' | 'insightId'
     >,
   ) => api.post<{ id: string }>('/api/playbook/living-playbook/broadcast', input),
 };

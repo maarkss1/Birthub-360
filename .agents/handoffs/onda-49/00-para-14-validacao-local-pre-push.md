@@ -1,7 +1,7 @@
 - De: 00 — Coordenador
 - Para: 14 — Ambiente de Execução e Test Harness
 - Onda: 49
-- Status: resolvido
+- Status: resolvido (achados #1 e #2 — cobertura de arquitetura e precache do PWA)
 - Prioridade: alto
 
 

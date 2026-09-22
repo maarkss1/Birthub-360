@@ -6,7 +6,6 @@
 > O Blueprint `render.yaml` foi retirado da raiz e arquivado em `infrastructure/archive/render.yaml.disabled`.
 > O ambiente canônico ativo é **100% Local-First** (`docker-compose.yml`). Este arquivo permanece como histórico.
 
-
 Este projeto usa variáveis de ambiente para ativar integrações pagas e webhooks externos. O arquivo `render.yaml` mantém somente a lista de chaves necessárias para o Render; os valores sensíveis devem ser cadastrados no dashboard do Render como secrets, nunca versionados no Git.
 
 O banco **não** é mais provisionado pelo Render (sem bloco `databases:` no blueprint) — é um
