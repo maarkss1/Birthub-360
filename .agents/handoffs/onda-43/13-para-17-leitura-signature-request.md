@@ -1,7 +1,7 @@
 - De: 13
 - Para: 17
 - Onda: 43
-- Status: aberto
+- Status: resolvido (findByDocumentId implementado em PrismaSignatureRequestRepository e registrado em setupDI)
 - Prioridade: normal
 
 ## Problema

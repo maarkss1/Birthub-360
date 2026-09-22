@@ -12,9 +12,9 @@ test.describe('Comercial Inteligente — RBAC na UI', () => {
   }) => {
     await signUp(page, { email: uniqueTestEmail('ci-admin') });
 
-    await expect(page.getByRole('button', { name: 'Comercial Inteligente' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Inteligência de Vendas|Comercial Inteligente/ })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Comercial Inteligente' }).click();
+    await page.getByRole('button', { name: /Inteligência de Vendas|Comercial Inteligente/ }).click();
     await expect(page).toHaveURL(/\/app\/commercial_intelligence/);
     await expect(page.getByRole('button', { name: 'Visão Executiva' })).toBeVisible();
   });
@@ -28,7 +28,7 @@ test.describe('Comercial Inteligente — RBAC na UI', () => {
 
     // Recarrega para a sessão refletir o novo papel (o client do better-auth cacheia a sessão).
     await page.reload();
-    await expect(page.getByRole('button', { name: 'Comercial Inteligente' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Inteligência de Vendas|Comercial Inteligente/ })).toHaveCount(0);
 
     await page.goto('/app/commercial_intelligence');
     // "Acesso restrito" é o único conteúdo da área principal — o título "Comercial Inteligente" no
@@ -47,7 +47,7 @@ test.describe('Comercial Inteligente — RBAC na UI', () => {
     await setUserRole(email, 'VISUALIZADOR');
 
     await page.reload();
-    await expect(page.getByRole('button', { name: 'Comercial Inteligente' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Inteligência de Vendas|Comercial Inteligente/ })).toHaveCount(0);
 
     await page.goto('/app/commercial_intelligence');
     await expect(page.getByText('Acesso restrito')).toBeVisible();
@@ -60,7 +60,7 @@ test.describe('Comercial Inteligente — RBAC na UI', () => {
     await setUserRole(email, 'GESTOR');
 
     await page.reload();
-    await expect(page.getByRole('button', { name: 'Comercial Inteligente' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Inteligência de Vendas|Comercial Inteligente/ })).toBeVisible();
 
     await page.goto('/app/commercial_intelligence');
     await expect(page.getByRole('button', { name: 'Visão Executiva' })).toBeVisible();

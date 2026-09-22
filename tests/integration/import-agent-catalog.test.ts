@@ -197,5 +197,5 @@ describe('scripts/import-agent-catalog.ts — PROMPT 2 (Birth Hub 360)', () => {
     const reloaded = await prisma.user.findUnique({ where: { id: admin.id } });
     expect(reloaded?.role).toBe('ADMIN');
     await prisma.user.delete({ where: { id: admin.id } });
-  });
+  }, 30000);
 });

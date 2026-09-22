@@ -1,8 +1,12 @@
 - De: 18
 - Para: 11
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Resolvido: o arquivo órfão `src/components/ui/AtlasLogo.tsx` foi removido do repositório, mantendo exclusivamente o componente canônico oficial `src/components/brand/BirthHubLogo.tsx`.
+
 
 ## Problema
 `src/components/ui/AtlasLogo.tsx` não tem nenhum import em todo `src/` (confirmado por grep

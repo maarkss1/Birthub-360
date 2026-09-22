@@ -143,8 +143,8 @@ export function applySecurityMiddleware(app: Express): void {
         // origem `chrome-extension://<id>` e passava por este `startsWith`, podendo fazer
         // requisições autenticadas usando o cookie de sessão do Better Auth do usuário. A extensão
         // deste produto já documenta (chrome-extension/README.md "Deploy em produção", também
-        // docs/deploy/oracle-cloud.md) que sua origem real deve ser adicionada EXPLICITAMENTE a
-        // ALLOWED_ORIGINS (`CHROME_EXTENSION_ID` em scripts/deploy-oci.sh) — nunca por wildcard de
+        // documentação de deploy) que sua origem real deve ser adicionada EXPLICITAMENTE a
+        // ALLOWED_ORIGINS (`CHROME_EXTENSION_ID` em scripts/deploy.sh) — nunca por wildcard de
         // esquema. Sem publicação com chave fixa/política empresarial o id não é estável entre
         // instalações, então não há um id único para hardcodear aqui; o mecanismo correto já
         // existe (ALLOWED_ORIGINS aceita `chrome-extension://<id>` como qualquer outra origem —

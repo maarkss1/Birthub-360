@@ -1,7 +1,7 @@
 - De: 14 — Ambiente de Execução e Test Harness
 - Para: 00 — Coordenador (edição de `package.json` exige aprovação explícita, ver `/AGENTS.md` → "Propriedade exclusiva de arquivos")
 - Onda: roadmap-v2-transversais
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema
@@ -65,3 +65,10 @@ npx dotenv-cli -e .env.test -- npx vitest run -c vitest.integration.config.ts --
 usam `--passWithNoTests` — só os dois scripts citados acima têm a flag, o que sugere que ela não é
 uma convenção deliberada do projeto, e sim um artefato que sobrou de algum momento em que os globs
 de `include` ainda não existiam/estavam instáveis.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item verificado e formalmente resolvido:
+- A flag `--passWithNoTests` foi removida de `package.json` nos scripts `test:unit` ("vitest run -c vitest.unit.config.ts") e `test:integration` ("vitest run -c vitest.integration.config.ts").
+- Verificado que ambos os scripts agora falham se nenhum teste for casado, eliminando o risco de falsos positivos silenciosos.
+

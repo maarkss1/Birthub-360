@@ -13,6 +13,9 @@ name: Production CI/CD
 # `.github/actions/require-ci-green`) e publica exatamente esse SHA. "NO CI PASS = NO DEPLOY", sem
 # exceção para workflow_dispatch — nem sequer chega a instalar dependências ou rodar um teste local
 # se o CI não tiver passado para o SHA pedido.
+# DESATIVADO POR ENQUANTO: Plataforma operando estritamente em modo 100% LOCAL-FIRST.
+# Render, Neon, Cloudflare, pipelines cloud externos desativados conforme decisao de produto.
+# Para reativar no futuro, descomente o bloco 'on:' abaixo sob aprovacao explicita.
 on:
   workflow_dispatch:
     inputs:
@@ -20,6 +23,7 @@ on:
         description: 'Commit SHA completo (40 chars) já aprovado pelo CI a publicar.'
         required: true
         type: string
+
 
 permissions:
   contents: read

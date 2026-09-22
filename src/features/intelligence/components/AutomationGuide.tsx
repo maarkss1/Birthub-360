@@ -388,9 +388,9 @@ if __name__ == "__main__":
               Automation Engine & Workflow Designer
             </span>
           </div>
-          <h3 className="text-4xl font-black text-ink mb-4 tracking-tight">
+          <h3 className="font-serif text-3xl sm:text-4xl font-medium text-ink mb-4 tracking-tight">
             {playbookMeta.label}{' '}
-            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${accent.gradient}`}>
+            <span className="text-brand dark:text-brand-2 font-semibold">
               Guia e Construtor de Automações
             </span>
           </h3>

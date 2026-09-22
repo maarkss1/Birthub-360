@@ -34,6 +34,12 @@ const MODULES = [
   'activities',
   'analytics',
   'settings',
+  'workspace',
+  'commercial_intelligence',
+  'copiloto_ia',
+  'daily-plan',
+  'sdr-diagnostic-joao',
+  'module-access',
 ] as const;
 
 interface ModuleFailure {

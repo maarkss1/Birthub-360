@@ -47,6 +47,13 @@ vi.mock('../../../src/lib/queue/bitrixSync.worker.js', () => ({
   createBitrixSyncWorker: vi.fn(workerStub),
   scheduleBitrixSync: vi.fn(async () => undefined),
 }));
+vi.mock(
+  '../../../src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.js',
+  () => ({
+    createBitrixExtractionPurgeWorker: vi.fn(workerStub),
+    scheduleBitrixExtractionPurgeJob: vi.fn(async () => undefined),
+  }),
+);
 vi.mock('../../../src/features/crm/jobs/followUp.worker.js', () => ({
   createFollowUpWorker: vi.fn(workerStub),
   scheduleFollowUpJobs: vi.fn(async () => undefined),
@@ -94,6 +101,7 @@ describe('bootstrap/workers', () => {
     expect(handle.leadsWorker).toBeNull();
     expect(handle.agentWorker).toBeNull();
     expect(handle.searchWorker).toBeNull();
+    expect(handle.bitrixExtractionPurgeWorker).toBeNull();
     expect(createLeadsWorker).not.toHaveBeenCalled();
   });
 

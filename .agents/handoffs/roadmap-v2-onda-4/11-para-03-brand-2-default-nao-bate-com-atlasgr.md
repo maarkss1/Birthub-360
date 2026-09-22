@@ -1,8 +1,13 @@
 - De: 11 (Marca e Ativos Institucionais)
 - Para: 03 (Design e Acessibilidade)
 - Onda: roadmap-v2-onda-4
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Resolvido pela unificação de marca em Birth Hub 360 (conforme documentado em `src/contexts/BrandContext.tsx` e `src/styles/globals.css`).
+O mecanismo legado de alternância de marcas em runtime (`atlasgr` / `totaltrac` que reescrevia `--brand`/`--brand-2` para `#FF6B10`/`#FF8008`) foi completamente descontinuado a pedido explícito do produto. As variáveis canônicas da plataforma são definidas globalmente em `src/styles/globals.css` (`--brand: #d4af37` Antique Gold, `--brand-2: #f0d77b` Gold Soft), eliminando qualquer divergência entre fallback inicial e estado hidratado.
+
 
 ## Problema
 `src/styles/globals.css` define, no `:root` padrão (linhas 171-172):

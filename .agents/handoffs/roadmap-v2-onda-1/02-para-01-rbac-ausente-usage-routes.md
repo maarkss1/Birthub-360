@@ -1,7 +1,7 @@
 - De: Agente 02 — Produto e UX
 - Para: Agente 01 — Plataforma, Segurança e Dados
 - Onda: roadmap-v2-onda-1
-- Status: aberto
+- Status: resolvido
 - Prioridade: bloqueador
 
 ## Problema
@@ -57,3 +57,14 @@ Enquanto este handoff está aberto, o Agente 02 manteve `usage` como ADMIN-only 
 ampliou para GESTOR como fez com `automations`/`integrations`), exatamente para não piorar a
 exposição visual de um dado que já vaza por API a qualquer papel — ver comentário em
 `Sidebar.tsx` linha ~30.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item formalmente resolvido e verificado:
+- A rota `/api/usage` está protegida em `src/bootstrap/routes.ts` (linhas 176-182) com:
+  `app.use('/api/usage', authenticateToken, requireTenant, requireRole(['ADMIN', 'GESTOR']), usageRoutes);`
+- Testes de integração ponta a ponta em `tests/integration/rbac-e2e-usage.test.ts` cobrem o comportamento completo:
+  - ADMIN e GESTOR: 200 OK com dados isolados do próprio tenant.
+  - CLOSER, SDR e VISUALIZADOR: 403 Forbidden estrito.
+  - Tentativas de acesso cross-tenant rejeitadas.
+

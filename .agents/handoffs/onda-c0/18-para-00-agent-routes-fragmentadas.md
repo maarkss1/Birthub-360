@@ -1,8 +1,13 @@
 - De: 18
 - Para: 00
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Decisão do Coordenador (00):
+Mantida a separação explícita das rotas em `src/bootstrap/routes.ts` (`/api/agents` para catálogo de cargos, `/api/agent-bus` para barramento de comunicação, `/api/role-supervisor` para governança de supervisão e `/api/agent` para execução de IA runtime). A compatibilidade retroativa e integridade de chamadas já em produção e deep links são prioritárias; nenhuma unificação breaking de endpoints é permitida sem introdução prévia de aliases com deprecation notice.
+
 
 ## Problema
 Quatro prefixos de rota distintos cobrem o domínio de runtime de agentes (o Enxame): `/api/agent`,

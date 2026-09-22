@@ -1,7 +1,7 @@
 - De: 03 — Design e Acessibilidade
 - Para: 04 — CRM e BI
 - Onda: roadmap-v2-onda-3
-- Status: aberto
+- Status: resolvido (substituído por fieldset aria-labelledby="proposta-itens-heading" e span semântico)
 - Prioridade: normal
 
 ## Problema

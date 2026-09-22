@@ -4,6 +4,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { createServer as createViteServer } from 'vite';
 import { env } from '../config/env.js';
+import { authenticateToken } from '../shared/middlewares/authenticateToken.js';
 
 // CodeQL (achado real de finalização, PR #344): `app.get('*', ...)` nunca era reconhecido pelo
 // analisador de rotas do Express 5/path-to-regexp v8 (o mesmo motivo do bug de boot corrigido
@@ -21,6 +22,18 @@ const spaFallbackLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// CodeQL ("Missing rate limiting"): a análise exige que o rate limit esteja visível na mesma
+// rota que faz a autorização — um limiter equivalente montado em outro arquivo
+// (src/bootstrap/rateLimiters.ts, antes de mountFrontend) é correto em runtime mas não satisfaz
+// essa checagem entre arquivos. Mesmo perfil de risco do apiLimiter (leitura autenticada, sem
+// mutação de estado): materiais de capacitação comercial, não dado de tenant.
+const toolsLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: env.API_RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 /**
  * Serve o frontend: em desenvolvimento, monta o middleware do Vite (HMR, SPA fallback) em modo
  * middleware embutido no mesmo processo Express; em produção, serve os estáticos já buildados em
@@ -30,11 +43,14 @@ const spaFallbackLimiter = rateLimit({
  */
 export async function mountFrontend(app: Express): Promise<void> {
   if (env.NODE_ENV !== 'production') {
-    // Serve estáticos do /tools antes do Vite, para evitar que o Vite intercepte .html e retorne o SPA fallback
-    app.use('/tools', express.static(path.join(process.cwd(), 'public', 'tools')));
-    // Nota (09/2026): existia aqui um mount de `/_next` para o export estático Next.js de
-    // `public/tools/treinamento-atlasgr/` (módulo executivo aposentado — conteúdo proprietário da
-    // Atlas GR, pedido explícito do usuário). Removido junto com o diretório estático.
+    // FRONTEND-001: Serve estáticos do /tools protegido por autenticação para evitar
+    // acesso desprotegido a ferramentas e materiais de capacitação comercial
+    app.use(
+      '/tools',
+      toolsLimiter,
+      authenticateToken,
+      express.static(path.join(process.cwd(), 'public', 'tools')),
+    );
 
     const vite = await createViteServer({
       server: { middlewareMode: true, host: true, allowedHosts: true },
@@ -65,7 +81,12 @@ export async function mountFrontend(app: Express): Promise<void> {
       );
       next();
     });
-    app.use('/tools', express.static(path.join(distPath, 'tools')));
+    app.use(
+      '/tools',
+      toolsLimiter,
+      authenticateToken,
+      express.static(path.join(distPath, 'tools')),
+    );
 
     app.use(express.static(distPath));
 

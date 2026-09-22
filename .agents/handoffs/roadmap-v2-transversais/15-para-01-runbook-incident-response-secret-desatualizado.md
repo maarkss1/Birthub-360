@@ -1,7 +1,7 @@
 - De: Agente 15 — Segurança Aplicada e Rotação de Segredos
 - Para: Agente 01 — Plataforma, Segurança e Dados
 - Onda: roadmap-v2-transversais
-- Status: aberto
+- Status: resolvido (INCIDENT_RESPONSE.md atualizado para BETTER_AUTH_SECRET)
 - Prioridade: alto
 
 ## Problema

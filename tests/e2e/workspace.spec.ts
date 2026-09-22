@@ -55,7 +55,7 @@ test.describe('Meu Workspace (PROMPT 6)', () => {
     page,
   }) => {
     await signUp(page, { email: uniqueTestEmail('workspace-empty') });
-    await page.getByRole('button', { name: 'Meu Workspace', exact: true }).click();
+    await page.getByRole('button', { name: /Meu Espaço|Meu Workspace/ }).click();
     await expect(page).toHaveURL(/\/app\/workspace$/);
     await waitForAppReady(page);
 

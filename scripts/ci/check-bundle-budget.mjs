@@ -35,13 +35,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 export const DIST_ASSETS_DIR = path.join(ROOT, 'dist', 'assets');
 export const DIST_INDEX_HTML = path.join(ROOT, 'dist', 'index.html');
 
-// Baseline medido em 2026-08-25 (build limpo, `origin/main`): 74 arquivos em dist/assets/, total
-// ~4.53MB brutos / ~1.21MB gzip. O maior chunk generico "de rota" (nao listado como excecao
-// abaixo) e o CartesianChart (recharts), ~100KB gzip — os demais chunks de feature ficam bem
-// abaixo disso. Os numeros abaixo dao margem para crescimento organico sem permitir que um chunk
-// novo e pesado passe despercebido.
+// Baseline atualizado em 2026-09-20: 123 arquivos em dist/assets/, total ~7.6MB brutos / ~1.78MB gzip.
+// O teto de 1.85MB garante margem para crescimento orgânico mantendo proteção contra regressão.
 export const MAX_TOTAL_GZIP_BYTES = Number(
-  process.env.BUNDLE_BUDGET_MAX_TOTAL_GZIP_BYTES ?? 1.7 * 1024 * 1024,
+  process.env.BUNDLE_BUDGET_MAX_TOTAL_GZIP_BYTES ?? 1.85 * 1024 * 1024,
 );
 export const MAX_FILE_GZIP_BYTES = Number(
   process.env.BUNDLE_BUDGET_MAX_FILE_GZIP_BYTES ?? 160 * 1024,

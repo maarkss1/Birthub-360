@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { ThreeCXConnection } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { requestContext } from '../../../lib/async-context.js';
+import { AuditService } from '../../../lib/audit/audit.service.js';
 import { last8DigitsIndex } from '../../../lib/crypto/piiIndex.js';
 import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
@@ -13,6 +14,7 @@ import {
   classifyCallOutcome,
 } from '../birth-voice/birthVoice.helpers.js';
 import { isSuppressed } from '../birth-voice/callSuppression.service.js';
+import { threeCXExtensionResolutionFailuresTotal } from './threecx.metrics.js';
 
 export interface ThreeCXConnectionInput {
   label?: string;
@@ -418,6 +420,18 @@ interface OrgIdRow {
 const MAX_ORGS_SCAN_FOR_EXTENSION_MATCH = 5_000;
 
 /**
+ * Tamanho do lote de organizações consultadas em paralelo por `resolveConnectionByExtension`.
+ * PERFORMANCE (INTEGRATION-004): antes, o scan cross-tenant rodava uma query por organização em
+ * série (`for...await`) — N round-trips sequenciais ao banco por webhook recebido. Isto não
+ * elimina o N de queries (ver nota abaixo sobre por que o RLS desta tabela não permite reduzir a
+ * um único `WHERE extension = ...`), mas paraleliza em lotes limitados, trocando N round-trips
+ * sequenciais por N/BATCH round-trips concorrentes — a diferença real de latência numa base com
+ * muitos tenants. O limite (não "tudo de uma vez") evita esgotar o pool de conexões Prisma sob
+ * carga de webhook.
+ */
+const EXTENSION_SCAN_BATCH_SIZE = 25;
+
+/**
  * Resolve a organização dona de um evento de webhook do 3CX a partir do ramal (`extension`) do
  * payload.
  *
@@ -447,21 +461,49 @@ const MAX_ORGS_SCAN_FOR_EXTENSION_MATCH = 5_000;
  * errado aqui é exatamente a classe de bug que o AGENTS.md trata como bloqueador de isolamento de
  * dados. Sem match: descarta. Mais de um match: descarta (nunca adivinha).
  *
- * CUSTO CONHECIDO, NÃO RESOLVIDO NESTA TAREFA: isto é uma query por organização a cada webhook
- * recebido — não escala para uma base grande de tenants. A correção arquitetural correta (mesmo
- * padrão já usado pelo webhook de entrada do Bitrix, `bitrix.webhook.ts`: um identificador de
- * conexão opaco no PATH da URL do webhook, uma por organização) exige mudança de rota + schema/
- * migration — fora do escopo desta tarefa (arquivos fora de `threecx/**`), documentado aqui como
- * gap real para o Agente 01/12 endereçarem.
+ * CUSTO CONHECIDO, PARCIALMENTE MITIGADO (INTEGRATION-004,
+ * docs/audits/repository-debt-audit/agents/INTEGRATION.md): isto continua sendo uma query por
+ * organização a cada webhook recebido — mas agora em lotes concorrentes (ver
+ * EXTENSION_SCAN_BATCH_SIZE acima) em vez de sequenciais, e com um índice composto
+ * `(organizationId, extension)` (migration `20260920120000_three_cx_connection_extension_index`)
+ * apoiando cada uma dessas N queries. Deliberadamente NÃO resolvido reabrindo bypass de RLS nesta
+ * tabela: isso reintroduziria a mesma superfície de leitura cross-tenant que
+ * `20260825120000_scope_rls_bypass_to_bootstrap_allowlist` fechou como correção de segurança P0
+ * confirmada contra Postgres real (ver o comentário dessa migration) — trocar uma correção de
+ * segurança já auditada por um ganho de performance não é uma troca aceitável aqui. A correção
+ * arquitetural que elimina o N de fato (mesmo padrão já usado pelo webhook de entrada do Bitrix,
+ * `bitrix.webhook.ts`: um identificador de conexão opaco no PATH da URL do webhook, uma por
+ * organização) exige mudança de rota + contrato externo com os PABX já configurados — fora do
+ * escopo desta correção pontual, documentado aqui como gap real para o Agente 01/12 endereçarem
+ * junto com a UI de configuração do 3CX. O caso de correção que ESTA tarefa resolve por completo é
+ * o descarte silencioso da colisão: ver `ExtensionResolutionAmbiguous`/`threeCXExtensionResolutionFailuresTotal`
+ * e o uso de `AuditService.log` em `process3CXWebhook` abaixo.
  */
-async function resolveConnectionByExtension(
-  extension: string,
-): Promise<{ organizationId: string; connection: ThreeCXConnection } | 'not-found' | 'ambiguous'> {
+export interface ExtensionResolutionAmbiguous {
+  status: 'ambiguous';
+  /** Ids das organizações em conflito — nunca o dado da conexão em si (apiKey/apiSecret cifrados
+   *  nunca saem daqui), só o suficiente para investigação/observabilidade manual do conflito. */
+  organizationIds: string[];
+}
+
+export interface ExtensionResolutionFound {
+  status: 'resolved';
+  organizationId: string;
+  connection: ThreeCXConnection;
+}
+
+export type ExtensionResolutionResult =
+  | ExtensionResolutionFound
+  | 'not-found'
+  | ExtensionResolutionAmbiguous;
+
+async function resolveConnectionByExtension(extension: string): Promise<ExtensionResolutionResult> {
   const orgIds: OrgIdRow[] = await requestContext.run({ bypassRls: true }, () =>
     prisma.organization.findMany({ select: { id: true } }),
   );
 
   if (orgIds.length > MAX_ORGS_SCAN_FOR_EXTENSION_MATCH) {
+    threeCXExtensionResolutionFailuresTotal.inc({ reason: 'scan-limit-exceeded' });
     logger.error(
       { orgCount: orgIds.length },
       '[3cx] Número de organizações excede o limite de segurança do scan por ramal — evento descartado.',
@@ -469,17 +511,32 @@ async function resolveConnectionByExtension(
     return 'not-found';
   }
 
+  // PERFORMANCE (INTEGRATION-004): lotes concorrentes em vez de um `for...await` sequencial — ver
+  // comentário de EXTENSION_SCAN_BATCH_SIZE acima. Cada lote roda em paralelo (Promise.all); os
+  // lotes em si são sequenciais entre si, para não abrir mais conexões simultâneas do que
+  // EXTENSION_SCAN_BATCH_SIZE de uma vez.
   const matches: { organizationId: string; connection: ThreeCXConnection }[] = [];
-  for (const { id: organizationId } of orgIds) {
-    const found = await requestContext.run({ tenantId: organizationId }, () =>
-      prisma.threeCXConnection.findFirst({ where: { extension } }),
+  for (let i = 0; i < orgIds.length; i += EXTENSION_SCAN_BATCH_SIZE) {
+    const batch = orgIds.slice(i, i + EXTENSION_SCAN_BATCH_SIZE);
+    const results = await Promise.all(
+      batch.map(({ id: organizationId }) =>
+        requestContext
+          .run({ tenantId: organizationId }, () =>
+            prisma.threeCXConnection.findFirst({ where: { extension } }),
+          )
+          .then((found) => ({ organizationId, found })),
+      ),
     );
-    if (found) matches.push({ organizationId, connection: found });
+    for (const { organizationId, found } of results) {
+      if (found) matches.push({ organizationId, connection: found });
+    }
   }
 
   if (matches.length === 0) return 'not-found';
-  if (matches.length > 1) return 'ambiguous';
-  return matches[0];
+  if (matches.length > 1) {
+    return { status: 'ambiguous', organizationIds: matches.map((m) => m.organizationId) };
+  }
+  return { status: 'resolved', ...matches[0] };
 }
 
 function asString(value: unknown): string | null {
@@ -567,11 +624,34 @@ export async function process3CXWebhook(
     );
     return { status: 'discarded', reason: 'ramal-desconhecido' };
   }
-  if (resolved === 'ambiguous') {
+  if (typeof resolved === 'object' && resolved.status === 'ambiguous') {
+    // CORREÇÃO (INTEGRATION-004): antes, este caso só gerava um `logger.error` — o evento era
+    // descartado para TODAS as organizações em conflito sem nenhum sinal agregado/acionável (do
+    // ponto de vista de suporte, "a integração só não funciona às vezes", sem rastro). Continua
+    // nunca adivinhando o tenant (a decisão de descartar em vez de escolher um dos dois
+    // continua correta — ver comentário de `resolveConnectionByExtension` acima), mas agora:
+    // (1) incrementa uma métrica Prometheus agregável/alertável, mesmo padrão de
+    // `bitrix_sync_failures_total` (src/features/integrations/bitrix/service/metrics.ts); e
+    // (2) grava um AuditLog consultável (nenhum tenantId único se aplica — `tenantId: ''`,
+    // mesmo fallback não-nulo já usado por `recordDeadLetter`/`AuditService.log` para falhas sem
+    // organização resolvida), com os organizationIds em conflito para investigação manual, nunca
+    // o payload cru nem telefone.
+    threeCXExtensionResolutionFailuresTotal.inc({ reason: 'ambiguous' });
     logger.error(
-      { eventType, callId, extension },
+      { eventType, callId, extension, organizationIds: resolved.organizationIds },
       '[3cx] Ramal ambíguo entre múltiplas organizações — evento descartado (nunca adivinha o tenant).',
     );
+    await AuditService.log({
+      action: 'INTEGRATION_EVENT_DISCARDED',
+      entity: 'ThreeCXWebhookEvent',
+      entityId: callId ?? undefined,
+      afterState: {
+        reason: 'ramal-ambiguo',
+        extension,
+        eventType,
+        organizationIds: resolved.organizationIds,
+      },
+    });
     return { status: 'discarded', reason: 'ramal-ambiguo' };
   }
 

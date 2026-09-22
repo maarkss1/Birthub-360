@@ -1,7 +1,7 @@
 - De: 08 (auditoria ACH-08-04)
 - Para: 00
 - Onda: audit-ach
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
@@ -53,3 +53,12 @@ direta. Duas opções propostas pela auditoria (ACH-08-04), a decidir por 00:
 Item de auditoria ACH-08-04 (P1) do relatório
 `report-atualizado.html`. Levantado numa worktree isolada (`fix/ach-08-04`), sem alteração
 direta em `package.json` conforme a regra de propriedade exclusiva de arquivo.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item verificado e formalmente resolvido:
+- O script `ship` em `package.json` foi completamente reescrito para eliminar o bypass de push direto a `main` e `git add .` indiscriminado.
+- Novo valor do script `ship`:
+  `"ship": "npm run test:architecture && npm run lint && npm run test:unit && npm run build"`
+  Isso converte o comando em um gate local rigoroso de pré-release (arquitetura + lint + testes unitários + build completa), mantendo o push em `main` exclusivamente através de PRs e CI/CD.
+

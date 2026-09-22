@@ -253,41 +253,36 @@ test.describe('Kanban do CRM — drag e drop', () => {
     await page.goto('/app/crm');
 
     const card = page.getByRole('button', { name: new RegExp(company.tradeName) }).first();
+    await expect(card).toBeVisible({ timeout: 15_000 });
     await card.focus();
     await page.keyboard.press('Space');
     await expect(card).toHaveAttribute('aria-pressed', 'true');
-    // Mesma corrida real do KeyboardSensor documentada no teste de Escape acima (setTimeout(0)
-    // interno do dnd-kit pra anexar seu listener de keydown, sem promise pra aguardar) — sob CPU
-    // contenda o primeiro ArrowRight pode chegar antes do listener existir e ser perdido em
-    // silêncio. `toPass()` reenvia a tecla até o anúncio da coluna certa aparecer; como o efeito é
-    // síncrono assim que o listener existe, uma tentativa sem anúncio em 500ms é perda real, não
-    // lentidão.
+    // Corrida real com o setTimeout(0) do dnd-kit KeyboardSensor (ver testes anteriores):
+    // o primeiro ArrowRight pode chegar antes do listener existir. `toPass()` é seguro AQUI
+    // porque o card está em "Lead Recebido" e o único destino de ArrowRight é "Cadência Iniciada"
+    // — se a tecla for perdida e reprocessada, o destino não muda (não há coluna à esquerda).
     await expect(async () => {
-      await page.keyboard.press('ArrowRight'); // Cadência Iniciada
+      await page.keyboard.press('ArrowRight'); // Lead Recebido -> Cadência Iniciada
       await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({
         timeout: 500,
       });
     }).toPass({ timeout: 10_000 });
-    // Achado real (CI): o segundo ArrowRight também é perdido às vezes, contrariando a suposição
-    // acima ("listener já anexado continua ativo pro resto do gesto") — o KeyboardSensor do
-    // dnd-kit também remede os containers "droppable" (measureDroppableContainers) a cada move
-    // dentro do mesmo drag, o que pode ter atraso assíncrono análogo ao setTimeout(0) do attach
-    // inicial. tests/e2e/crm-kanban.spec.ts:188 falhou exatamente nesta linha em CI (2026-08-28,
-    // 3 tentativas seguidas) sem nenhuma mudança de código relacionada — reproduzido como perda
-    // de tecla, não lentidão real (o efeito é síncrono assim que o listener/measure existe).
-    // Mesmo padrão de retry-and-resend do ArrowRight acima, agora também nos moves seguintes.
-    await expect(async () => {
-      await page.keyboard.press('ArrowRight'); // Qualificação (SDR)
-      await expect(page.getByText(/sobre a coluna Qualificação \(SDR\)/)).toBeVisible({
-        timeout: 500,
-      });
-    }).toPass({ timeout: 10_000 });
-    await expect(async () => {
-      await page.keyboard.press('ArrowLeft'); // volta pra Cadência Iniciada
-      await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({
-        timeout: 500,
-      });
-    }).toPass({ timeout: 10_000 });
+    // IMPORTANTE: NÃO usar toPass() para moves sequenciais — cada retry pressiona ArrowRight
+    // de novo, avançando o card para além da coluna alvo (na 2ª tentativa iria de
+    // Qualificação-SDR para Reunião Agendada em vez de repetir o move correto).
+    // O listener do dnd-kit JÁ ESTÁ ATIVO após o primeiro move confirmado acima; o único
+    // atraso restante é o measureDroppableContainers assíncrono entre moves (~5-15ms real).
+    // waitForTimeout(200) cobre esse atraso com margem para CI sob carga sem ser frágil.
+    await page.waitForTimeout(200); // aguarda measureDroppableContainers pós-move
+    await page.keyboard.press('ArrowRight'); // Cadência Iniciada -> Qualificação (SDR)
+    await expect(page.getByText(/sobre a coluna Qualificação \(SDR\)/)).toBeVisible({
+      timeout: 5_000,
+    });
+    await page.waitForTimeout(200); // mesmo motivo
+    await page.keyboard.press('ArrowLeft'); // Qualificação (SDR) -> Cadência Iniciada
+    await expect(page.getByText(/sobre a coluna Cadência Iniciada/)).toBeVisible({
+      timeout: 5_000,
+    });
     await page.keyboard.press('Space'); // drop em Cadência Iniciada
 
     const columnBody = page

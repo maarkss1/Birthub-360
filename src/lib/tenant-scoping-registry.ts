@@ -57,4 +57,7 @@ export const TENANT_INJECTED_MODELS = [
   // CRM-005: Attachment tem organizationId direto (não herda de Lead/Company/Contact como
   // Note) — mesmo tratamento de tenant injetado a partir do contexto da request.
   'Attachment',
+  // Onda 49 (Playbook Vivo): livingPlaybook.service.ts cria/atualiza PlaybookInsight direto pelo
+  // client `prisma` global (não via req.db) — mesmo padrão de rede de segurança dos demais acima.
+  'PlaybookInsight',
 ];

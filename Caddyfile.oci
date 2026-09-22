@@ -2,8 +2,13 @@
     email {$ACME_EMAIL:admin@atlasgr.com.br}
 }
 
-{$DOMAIN::80} {
+http://{$DOMAIN::80} {
     encode gzip zstd
+
+    log {
+        output stdout
+        format json
+    }
 
     # Headers de Segurança
     header {

@@ -276,6 +276,8 @@ function OptOutsSection() {
 
   useEffect(() => load(), [load]);
 
+  const errorMessage = error;
+
   return (
     <Card padding="sm">
       <div className="flex items-center justify-between mb-3">
@@ -310,13 +312,13 @@ function OptOutsSection() {
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />
         </div>
-      ) : error ? (
+      ) : errorMessage ? (
         <div
           className="flex items-center justify-between gap-3 text-sm text-danger-active dark:text-danger py-4"
           role="alert"
         >
           <span className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {errorMessage}
           </span>
           <button
             type="button"

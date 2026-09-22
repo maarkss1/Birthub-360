@@ -23,7 +23,7 @@ export type ExtractionFileFormat = 'csv' | 'xlsx' | 'json';
 
 export const EXTRACTION_FILE_FORMATS: readonly ExtractionFileFormat[] = ['csv', 'xlsx', 'json'];
 
-const STORAGE_ROOT = path.resolve(env.BITRIX_EXTRACTION_STORAGE_DIR);
+const STORAGE_ROOT = path.resolve(env.BITRIX_EXTRACTION_STORAGE_DIR || './data/bitrix-extractions');
 
 export interface ExtractionEntityDataset {
   entity: string;

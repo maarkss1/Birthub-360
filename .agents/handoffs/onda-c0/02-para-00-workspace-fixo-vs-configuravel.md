@@ -1,8 +1,13 @@
 - De: 02
 - Para: 00
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
+
+## Resolução
+Decisão do Coordenador (00):
+Mantida a opção (a) — workspace fixo por papel de governança do produto (`RoleWorkspaceDefinition`), sem customização em runtime por tenant no banco de dados. O alinhamento conceitual do North Star passa a ser "modular, com definição canônica fixa por papel", preservando a integridade das políticas de segurança, isolamento de papéis (`JobRole`) e evitando schemas e migrações desnecessárias durante o freeze.
+
 
 ## Problema
 O North Star do programa BIRTHUB-BRAIN-REORG (`AGENTS.md` do pacote de missões) descreve o

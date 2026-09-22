@@ -63,7 +63,7 @@ export class PrismaContactRepository implements ContactRepository {
         ...data,
         organizationId,
         birthDate: data.birthDate ? new Date(data.birthDate) : null,
-      } as Prisma.ContactCreateInput,
+      } as Prisma.ContactUncheckedCreateInput,
     });
   }
 

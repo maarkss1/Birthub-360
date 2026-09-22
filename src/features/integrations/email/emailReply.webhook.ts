@@ -10,6 +10,10 @@ import {
   type InboundEmailReply,
   isGenuineLeadReply,
 } from '../../../shared/domain/replyTracking.js';
+import {
+  claimWebhookDelivery,
+  webhookDeliveryFingerprint,
+} from '../../../shared/security/webhookReplayGuard.js';
 import { emailIntentClassifier } from '../../cadence/infra/emailIntentClassifier.js';
 import { prismaConversationSignalPort } from '../../cadence/infra/PrismaConversationSignalPort.js';
 
@@ -235,6 +239,14 @@ async function handleInboundEmail(req: Request, res: Response): Promise<void> {
     return;
   }
 
+  const fp = webhookDeliveryFingerprint(organizationId, providerMessageId);
+  const replayResult = await claimWebhookDelivery('email', fp);
+  if (replayResult === 'replay') {
+    logger.warn({ organizationId, providerMessageId }, 'Webhook de e-mail duplicado — descartado.');
+    res.status(200).json({ success: true, outcome: 'duplicate' });
+    return;
+  }
+
   const email: InboundEmailReply = {
     organizationId,
     leadId: asString(payload.leadId) ?? '',
@@ -258,6 +270,7 @@ async function handleInboundEmail(req: Request, res: Response): Promise<void> {
       toEmail,
       asString(payload.leadId),
     );
+
     res.status(200).json({ success: true, outcome: outcome.status });
   } catch (error) {
     // 5xx de propósito: um provedor real reentrega com backoff, e a idempotência por

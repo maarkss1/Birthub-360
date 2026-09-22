@@ -41,6 +41,7 @@ export function LivingPlaybookReview({
         segment: suggestion.segment,
         patternTitle: suggestion.patternTitle,
         suggestedScript: suggestion.suggestedScript,
+        insightId: suggestion.insightId,
       });
       setBroadcastedKeys((prev) => new Set(prev).add(key));
       toast.success('Padrão anunciado para o time.');

@@ -280,32 +280,6 @@ services:
     restart: unless-stopped
 
   # ───────────────────────────────────────────────────────
-  # OS-5: OPA — Policy as Code (sidecar de autorização)
-  # http://localhost:8181
-  # ───────────────────────────────────────────────────────
-  opa:
-    image: openpolicyagent/opa:latest
-    container_name: birthhub_opa
-    command:
-      - run
-      - --server
-      - --log-level=info
-      - --log-format=json
-      - /policies
-    volumes:
-      - ./infrastructure/opa/policies:/policies:ro
-    ports:
-      - '8181:8181'
-    security_opt:
-      - no-new-privileges:true
-    restart: unless-stopped
-    healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:8181/health']
-      interval: 10s
-      timeout: 3s
-      retries: 5
-
-  # ───────────────────────────────────────────────────────
   # OS-5: Qdrant — Vector Database
   # http://localhost:6333
   # ───────────────────────────────────────────────────────

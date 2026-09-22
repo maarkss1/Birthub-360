@@ -1,7 +1,7 @@
 - De: Agente 06 (Integrações e Bitrix)
 - Para: Agente 16 (Runtime, Workers e Escala) — com cópia de contexto para 06A (Extrações Bitrix) e 01A (Confiabilidade de Dados, RLS e Retenção)
 - Onda: 40
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 
 ## Problema
@@ -103,3 +103,12 @@ Nenhuma alteração de código foi feita para este item — meu escopo nesta rod
 (`src/features/integrations/bitrix/**`) não inclui `worker.ts` nem justificaria eu construir um
 worker novo sem a confirmação humana acima, então documentei e registrei este handoff em vez de
 ativar a flag ou implementar o worker sozinho.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item formalmente resolvido e verificado:
+- O worker de expurgo foi implementado em `src/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.ts` adotando a decisão oficial do produto (DEC-04, Opção B: anonimização dos metadados e remoção física dos arquivos em disco).
+- Suporte a `BITRIX_EXTRACTION_PURGE_ENABLED` (com fail-safe desligado por padrão) e `BITRIX_EXTRACTION_RETENTION_DAYS`.
+- Registro e agendamento ativos em `worker.ts` (`createBitrixExtractionPurgeWorker` e `scheduleBitrixExtractionPurgeJob`).
+- Testes unitários cobrindo todos os cenários (fail-safe, retenção, isolamento multi-tenant e idempotência) aprovados em `tests/unit/features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.test.ts` (13/13 testes passando).
+

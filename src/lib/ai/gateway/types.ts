@@ -59,6 +59,8 @@ export interface AiUsageLogInput {
   // ./prompt-registry.ts — ver o comentário desse arquivo para o motivo de não migrar todos os
   // call sites para o tipo estrito `PromptId` nesta correção.
   promptId?: PromptId | (string & {});
+  /** Papel do enxame autônomo (SDR/BDR/CLOSER/CRM/OPS) quando conhecido (Onda 44 / ACH-13-03). */
+  agentRole?: string;
 }
 
 /** Nome lógico de cada adapter de provedor — usado como chave do circuit breaker, rótulo de

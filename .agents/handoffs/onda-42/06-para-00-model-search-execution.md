@@ -1,7 +1,7 @@
 - De: 06
 - Para: 00
 - Onda: 42
-- Status: aguardando aplicação (schema/migration são arquivos de dono único — não editados por mim)
+- Status: resolvido
 - Prioridade: médio
 
 ## Problema
@@ -216,3 +216,57 @@ aplicação (não requer nova migration, só edição de TS):
   aqui para não ser "descoberto" de novo como lacuna nova numa auditoria futura.
 - `costUsd` continua sendo a MESMA estimativa conservadora de `providerCostMetrics.ts` (não um
   valor de fatura real) — herda a ressalva já documentada lá.
+
+## Resolução
+
+Ao investigar este handoff, o model, a migration e a limpeza de aplicação descritos acima já
+estavam aplicados no branch atual — commit `363879f9` ("feat(00): aplica as 4 migrations
+pendentes da Onda 42 e conecta as stores reais") já havia consolidado este handoff (DEC-13) junto
+com DEC-01, DEC-04, DEC-09 e DEC-14. Nenhuma alteração de código foi necessária nesta sessão; o
+trabalho abaixo foi só verificação de que tudo está de fato correto e consistente:
+
+- **Model**: `ProspectingSearchExecution` existe em `prisma/schema.prisma` (linha ~3770),
+  exatamente como proposto — `id` (cuid gerado em aplicação, não `@default(cuid())`),
+  `organizationId`/`organization` (relação com `onDelete: Cascade`), `savedSearchId`/`savedSearch`
+  opcional (`onDelete: SetNull`), `criteria`/`providersCalled` como `Json`, `providerMode`,
+  `totalResults`, `costUsd` (`Decimal(10,4)`), `status`/`errorMessage`, `startedAt`/`finishedAt`/
+  `durationMs`, `createdAt`/`updatedAt`, com `@@index([organizationId, startedAt])` e
+  `@@index([savedSearchId])`. Pontas inversas presentes em `Organization.prospectingSearchExecutions`
+  (linha 991) e `SavedSearch.searchExecutions` (linha 3762).
+- **Migration**: `prisma/migrations/20260827210000_onda42_decisoes_schema/migration.sql` cria a
+  tabela com FKs, os dois índices, e o bloco RLS completo (`ENABLE ROW LEVEL SECURITY`,
+  `FORCE ROW LEVEL SECURITY`, `tenant_isolation_policy` com `WITH CHECK(true)`), no mesmo padrão
+  documentado no handoff. `20260917180000_fix_rls_tenant_write_isolation` também toca a tabela
+  (ajuste geral de RLS de escrita aplicado a várias tabelas depois).
+- **Aplicação**: `POST /saved-searches/:id/run` (`src/features/prospecting/routes/
+  prospecting.routes.ts`) já devolve `searchId` no payload; rota nova `GET /searches/:searchId`
+  já lê via `findSearchExecution` escopado por tenant. `searchExecution.service.ts` já usa
+  `prisma.prospectingSearchExecution` real (o cast temporário
+  `ProspectingSearchExecutionDelegate`/`searchExecutionDelegate()` mencionado no handoff já foi
+  removido — só resta o `as unknown as Prisma.InputJsonValue` legítimo para serializar
+  `providersCalled`).
+- **Teste de integração real** já existe:
+  `tests/integration/prospecting-search-execution-rls.test.ts` (RLS entre dois tenants).
+
+### Verificação rodada nesta sessão
+
+- `npx prisma validate` → `The schema at prisma\schema.prisma is valid`.
+- `npx tsc --noEmit` → sem erros (exit 0).
+- `npx eslint src/features/prospecting/services/searchExecution.service.ts
+  src/features/prospecting/services/prospecting.service.ts
+  src/features/prospecting/routes/prospecting.routes.ts` → sem warnings/erros.
+- `npx vitest run -c vitest.unit.config.ts
+  tests/unit/features/prospecting/services/searchExecution.service.test.ts
+  tests/unit/features/prospecting/services/prospecting.service.searchExecution.test.ts` → 2
+  arquivos, 20 testes, todos passando.
+- `npx vitest run` (sem `-c`) falha por um problema de ambiente não relacionado (plugin
+  `@storybook/addon-vitest` quebrado — `SB_CORE-SERVER_0002`/`SyntaxError` em
+  `storybook/internal/server-errors`); usar sempre `-c vitest.unit.config.ts` /
+  `-c vitest.integration.config.ts` explicitamente, como os scripts `npm run test:unit`/
+  `test:integration` já fazem.
+- `tests/integration/prospecting-search-execution-rls.test.ts` não foi executado nesta sessão
+  (exige Postgres real, não disponível neste worktree) — mas o arquivo existe e segue o padrão de
+  `prospecting-rls.test.ts`.
+
+Nenhum arquivo de código foi alterado por esta sessão. Handoff fechado como resolvido porque o
+estado real do branch já atende integralmente ao que foi pedido.

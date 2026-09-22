@@ -101,6 +101,7 @@ export function ProspectingHub() {
   const { info: playbookMeta } = useActivePlaybook();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
+  const [activeSavedSearchId, setActiveSavedSearchId] = useState<string | null>(null);
 
   const activeSegments = ACTIVE_SEGMENTS;
   const activePersonaOptions = ACTIVE_PERSONA_OPTIONS;
@@ -112,10 +113,12 @@ export function ProspectingHub() {
   const [cnpjError, setCnpjError] = useState<string | null>(null);
 
   // --- discovery via open data, with optional Apollo enrichment ---
-  // `segmento` inicia no primeiro item de ACTIVE_SEGMENTS diretamente — antes precisava de um
-  // useEffect porque a lista mudava com o playbook ativo; hoje é uma constante de módulo estável.
+  // `segmento` inicia vazio ("Todos os segmentos") — o ICP deixou de ser vertical-específico
+  // (ver CLAUDE.md seção 1), então a busca não deve começar pré-filtrada por um segmento
+  // logístico específico. `discovery.ts`/`organizationSearch.ts` já tratam segmento vazio como
+  // ausência de filtro.
   const [criteria, setCriteria] = useState<ProspectCriteria>({
-    segmento: activeSegments[0],
+    segmento: '',
     localizacao: '',
     estado: '',
     quantidade: 20,
@@ -167,6 +170,7 @@ export function ProspectingHub() {
             phone: candidate.phone,
             website: candidate.website,
             decisionMakers: candidate.decisionMakers,
+            savedSearchId: activeSavedSearchId || undefined,
           });
           setPromoted((prev) => ({ ...prev, [key]: result }));
         }
@@ -205,6 +209,7 @@ export function ProspectingHub() {
               phone: candidate.phone,
               website: candidate.website,
               decisionMakers: candidate.decisionMakers,
+              savedSearchId: activeSavedSearchId || undefined,
             },
             { timeoutMs: 60_000 },
           );
@@ -388,6 +393,7 @@ export function ProspectingHub() {
     if (!append) {
       setCandidates([]);
       setRejectedKeys(new Set());
+      setActiveSavedSearchId(null);
     }
     setLoadingStepIdx(0);
     const interval = setInterval(() => {
@@ -481,6 +487,7 @@ export function ProspectingHub() {
         linkedin: candidate.linkedinUrl,
         phone: candidate.phone,
         website: candidate.website,
+        savedSearchId: activeSavedSearchId || undefined,
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
     } catch (error) {
@@ -641,13 +648,14 @@ export function ProspectingHub() {
           isOpen={isSavedSearchesOpen}
           onClose={() => setIsSavedSearchesOpen(false)}
           currentCriteria={criteria}
-          onApplyCriteria={(savedCrit, savedCandidates) => {
+          onApplyCriteria={(savedCrit, savedCandidates, savedSearchId) => {
             // Onda 43: /saved-searches/:id/run já roda a descoberta e devolve os candidatos —
             // antes disto era descartado, e um clique programático no botão de busca disparava
             // uma segunda chamada a /discover (Apollo/Places de novo) só para conseguir o mesmo
             // resultado que a API já tinha na resposta.
             setCriteria(savedCrit);
             setCandidates(savedCandidates);
+            setActiveSavedSearchId(savedSearchId || null);
             setDiscoveryPage(1);
             setApolloError(null);
             setTab('discovery');

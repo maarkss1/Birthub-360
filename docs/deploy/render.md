@@ -1,13 +1,10 @@
 # Deploy no Render
 
-> **Status real (ITEM-12, 2026-08-25): CONGELADO.** `render.yaml` está marcado `LEGACY/FROZEN`
-> (`autoDeployTrigger: off`) desde a migração para modo local-first
-> (`docs/development/LOCAL_FIRST.md`). O passo a passo abaixo descreve a arquitetura candidata
-> preservada para rollback, não um deploy que acontece hoje. Ver
-> [`docs/deploy/README.md`](README.md) para o caminho canônico atual.
->
-> Guia completo (Supabase + Render + Cloudflare + CI/CD + checklist): ver
-> [`docs/deploy/producao.md`](producao.md). Este arquivo cobre só a parte específica do Render.
+> [!WARNING]
+> **DOCUMENTO ARQUIVADO / RENDER DESATIVADO (2026-09-20):**
+> Por decisão de produto, o Render e demais provedores cloud foram desativados por enquanto.
+> O Blueprint `render.yaml` foi retirado da raiz e arquivado em `infrastructure/archive/render.yaml.disabled`.
+> O ambiente canônico ativo é **100% Local-First** (`docker-compose.yml`). Este arquivo permanece como histórico.
 
 Este projeto usa variáveis de ambiente para ativar integrações pagas e webhooks externos. O arquivo `render.yaml` mantém somente a lista de chaves necessárias para o Render; os valores sensíveis devem ser cadastrados no dashboard do Render como secrets, nunca versionados no Git.
 

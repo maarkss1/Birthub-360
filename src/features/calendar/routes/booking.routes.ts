@@ -465,6 +465,8 @@ publicBookingRouter.post(
       const meetingStart = new Date(`${body.date}T${body.time}:00`);
       const meetingEnd = new Date(meetingStart.getTime() + link.durationMin * 60_000);
       let meetUrl: string | null = null;
+      let googleEventId: string | null = null;
+      let iCalUID: string | null = null;
       try {
         const googleCalendar =
           container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService');
@@ -477,6 +479,8 @@ publicBookingRouter.post(
           ),
         });
         meetUrl = event.meetUrl;
+        googleEventId = event.googleEventId;
+        iCalUID = event.iCalUID;
 
         const organizerEmail = env.SMTP_FROM || env.SMTP_USER;
         if (organizerEmail) {
@@ -515,6 +519,62 @@ publicBookingRouter.post(
             'Falha ao criar evento no Google Calendar ou enviar confirmação de agendamento público.',
           );
         }
+      }
+
+      // ACH-17-04 / Entrega 4: vincula auto-agendamento público (LeadSchedulingLinkClick)
+      // ao CadenceRun ativo do lead (se houver), encerrando a cadência para evitar toques redundantes.
+      try {
+        await requestContext.run({ tenantId: link.organizationId }, async () => {
+          const activeRun = await prisma.cadenceRun.findFirst({
+            where: {
+              organizationId: link.organizationId,
+              status: 'Active',
+              OR: [
+                { leadId: lead.id },
+                { lead: { contact: { email: body.email } } },
+                { lead: { contact: { phone: body.phone } } },
+                { lead: { contact: { whatsapp: body.phone } } },
+              ],
+            },
+          });
+
+          if (activeRun) {
+            await prisma.cadenceCalendarEvent.create({
+              data: {
+                organizationId: link.organizationId,
+                leadId: activeRun.leadId,
+                cadenceRunId: activeRun.id,
+                googleEventId: googleEventId ?? `booking-${activity.id}`,
+                meetUrl,
+                iCalUID,
+                confirmationEvidenceType: 'LeadSchedulingLinkClick',
+                confirmationEvidenceRef: link.id,
+                scheduledStart: meetingStart,
+                scheduledEnd: meetingEnd,
+                ownerUserId: link.userId,
+              },
+            });
+
+            await prisma.cadenceRun.update({
+              where: { id: activeRun.id },
+              data: {
+                status: 'Completed',
+                stopReason: 'LeadReply',
+                stoppedAt: new Date(),
+              },
+            });
+
+            logger.info(
+              { runId: activeRun.id, leadId: activeRun.leadId, linkId: link.id },
+              '[ACH-17-04] CadenceRun ativo encerrado por auto-agendamento público (LeadSchedulingLinkClick).',
+            );
+          }
+        });
+      } catch (cadenceErr) {
+        logger.warn(
+          { err: cadenceErr, linkId: link.id, leadId: lead.id },
+          '[ACH-17-04] Falha ao verificar/encerrar CadenceRun ativo no agendamento público.',
+        );
       }
 
       res.status(201).json({

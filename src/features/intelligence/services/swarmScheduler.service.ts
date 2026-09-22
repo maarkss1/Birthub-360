@@ -585,6 +585,12 @@ export interface AgentSloMetrics {
   avgExecutionLatencyMs: number | null;
   /** Motivo explícito quando a linha inteira não tem dado suficiente (ex.: OPS não usa o ledger). */
   dataSourceNote?: string;
+  /** Custo acumulado de IA (USD) deste papel na janela selecionada quando identificado via AILog.agentRole. */
+  costUsd?: number | null;
+  /** Total de tokens consumidos por este papel na janela. */
+  tokens?: number | null;
+  /** Latência média de geração do modelo de IA (ms) deste papel. */
+  avgModelLatencyMs?: number | null;
 }
 
 export interface SwarmCostSnapshot {
@@ -623,7 +629,7 @@ export async function getSwarmSloSnapshot(
 ): Promise<SwarmSloSnapshot> {
   const since = new Date(now.getTime() - windowDays * 24 * 60 * 60 * 1000);
 
-  const [pendingActions, aiLogAggregate] = await Promise.all([
+  const [pendingActions, aiLogAggregate, aiLogByRole] = await Promise.all([
     prisma.aIPendingAction.findMany({
       where: { organizationId, createdAt: { gte: since } },
       select: {
@@ -643,7 +649,37 @@ export async function getSwarmSloSnapshot(
       _avg: { latencyMs: true },
       _count: { _all: true },
     }),
+    (async () => {
+      try {
+        if (typeof (prisma.aILog as unknown as Record<string, unknown>).groupBy === 'function') {
+          const res = await (
+            prisma.aILog.groupBy as unknown as (args: unknown) => Promise<
+              Array<{
+                agentRole: string | null;
+                _sum: { cost: number | null; tokens: number | null };
+                _avg: { latencyMs: number | null };
+                _count: { _all: number };
+              }>
+            >
+          )({
+            by: ['agentRole'],
+            where: { organizationId, createdAt: { gte: since } },
+            _sum: { cost: true, tokens: true },
+            _avg: { latencyMs: true },
+            _count: { _all: true },
+          });
+          return Array.isArray(res) ? res : [];
+        }
+      } catch {
+        // Fallback gracioso se o client Prisma em mock não suportar groupBy
+      }
+      return [];
+    })(),
   ]);
+
+  const hasPerAgentMetrics = aiLogByRole.some(
+    (item) => item.agentRole && (item._sum.cost ?? 0) > 0,
+  );
 
   const agents: AgentSloMetrics[] = SLO_SWARM_ROLES.map((role) => {
     const rows = pendingActions.filter((row) => (row.agentRole ?? '').toUpperCase() === role);
@@ -678,7 +714,22 @@ export async function getSwarmSloSnapshot(
         ? executionLatencies.reduce((sum, ms) => sum + ms, 0) / executionLatencies.length
         : null;
 
-    return { role, coverage, conversion, humanOverride, errorRate, avgExecutionLatencyMs };
+    const roleLog = aiLogByRole.find((item) => (item.agentRole ?? '').toUpperCase() === role);
+    const costUsd = roleLog?._sum.cost ?? null;
+    const tokens = roleLog?._sum.tokens ?? null;
+    const avgModelLatencyMs = roleLog?._avg.latencyMs ?? null;
+
+    return {
+      role,
+      coverage,
+      conversion,
+      humanOverride,
+      errorRate,
+      avgExecutionLatencyMs,
+      costUsd,
+      tokens,
+      avgModelLatencyMs,
+    };
   });
 
   return {
@@ -692,7 +743,9 @@ export async function getSwarmSloSnapshot(
       totalTokens: aiLogAggregate._sum.tokens ?? 0,
       requestCount: aiLogAggregate._count._all,
       avgLatencyMs: aiLogAggregate._avg.latencyMs ?? null,
-      note: 'Custo/latência agregados da organização inteira (AILog não referencia qual agente originou cada chamada) — não fatiado por agente até que o schema seja estendido.',
+      note: hasPerAgentMetrics
+        ? 'Custo e latência fatiados por agente a partir dos logs de execução (AILog.agentRole).'
+        : 'Custo/latência agregados da organização inteira (AILog não referencia qual agente originou cada chamada) — não fatiado por agente até que chamadas com agentRole sejam registradas.',
     },
   };
 }

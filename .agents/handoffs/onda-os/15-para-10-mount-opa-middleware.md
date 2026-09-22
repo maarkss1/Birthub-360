@@ -1,7 +1,7 @@
 - De: 15
 - Para: 10
 - Onda: os
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
 ## Problema
 Middlewares de seguranca precisam ser montados no server.ts, mas o Agente 15 não tem permissão de edição desse arquivo.

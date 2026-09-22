@@ -1,7 +1,7 @@
 - De: 15 (auditoria ACH-15-05)
 - Para: 00 (e usuário — decisão de produto/infra pendente)
 - Onda: audit-ach
-- Status: aberto (duplicado de ACH-10-03 — não repetir escalonamento)
+- Status: resolvido (duplicado de ACH-10-03 — não repetir escalonamento)
 - Prioridade: normal (P2)
 
 ## Problema

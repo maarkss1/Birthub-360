@@ -31,9 +31,17 @@ export function buildModelWithFallback(modelName: string, tools?: BindToolsInput
   const candidates = buildCandidates(modelName);
   const available = candidates.filter((llm) => llm.apiKey !== 'missing-key');
 
-  const bind = (llm: ChatOpenAI) => (tools ? llm.bindTools(tools) : llm);
+  // Fail-fast: sem nenhuma chave configurada, o candidato "cru" chamaria Groq/OpenAI com
+  // apiKey='missing-key' e só falharia várias camadas depois, dentro do LangChain, com um 401
+  // genérico. Mesmo padrão de erro explícito já usado em groq.provider.ts — o chamador (run()/
+  // runWithTools() em base.agent.ts) já converte esta exceção num `{ error: message }` honesto.
+  if (available.length === 0) {
+    throw new Error(
+      'Nenhum provedor de IA configurado (GROQ_API_KEY e OPENAI_API_KEY ausentes) — não é possível executar o agente.',
+    );
+  }
 
-  if (available.length === 0) return bind(candidates[0]);
+  const bind = (llm: ChatOpenAI) => (tools ? llm.bindTools(tools) : llm);
 
   const [primary, ...fallbacks] = available;
   const primaryBound = bind(primary);

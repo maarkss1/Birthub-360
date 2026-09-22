@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import type { Prisma } from '@prisma/client';
 import express, { type Request, type Response, Router } from 'express';
 import { env } from '../../../config/env.js';
 import { requestContext } from '../../../lib/async-context.js';
@@ -85,13 +86,18 @@ async function recordCallResult(
 
     await prisma.activity.create({
       data: {
+        organizationId: lead.organizationId,
         leadId,
         type: 'Ligacao' as never,
         status: (hadConversation ? 'Concluida' : 'Cancelada') as never,
         owner: lead.owner || 'SDR IA',
         date: new Date(),
         observations: buildObservations(data),
-      },
+        // organizationId é injetado pela extensão do Prisma a partir do requestContext (ver
+        // TENANT_INJECTED_MODELS/src/lib/prisma.ts) — este é o único caso de injeção implícita
+        // para Activity, citado no comentário do model em prisma/schema.prisma. TS não modela essa
+        // injeção em runtime, daí o cast.
+      } as unknown as Prisma.ActivityUncheckedCreateInput,
     });
 
     await prisma.timelineEvent.create({

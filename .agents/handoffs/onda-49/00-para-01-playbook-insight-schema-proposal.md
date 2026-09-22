@@ -1,7 +1,7 @@
 - De: sessão de swarm (item 42 do roadmap — "Playbook Vivo")
 - Para: Agente 01 (Plataforma, Segurança e Dados)
 - Onda: 49
-- Status: aberto
+- Status: resolvido
 - Prioridade: média
 
 ## Problema
@@ -96,3 +96,49 @@ uma janela, análogo ao `idempotencyKey` de `AIPendingAction`).
 - V1 real e funcional já está em produção nesta onda sem depender desta migration — este handoff é
   sobre fechar o loop (histórico, medição de adoção), não sobre destravar a feature.
 - Ver `.agents/runs/onda-49.md` para o resumo completo da onda.
+
+## Resolução
+
+Model implementado como `PlaybookInsight` (não a "alternativa mais simples" mencionada acima —
+optei pela tabela própria porque o handoff já apontava a lacuna real de broadcast avulso sem virar
+item permanente da Matriz de Objeções, que a alternativa não cobria).
+
+- **`prisma/schema.prisma`**: novo model `PlaybookInsight` (com `organizationId`, `sellerId`,
+  `segment`, `patternTitle`/`patternDescription`/`suggestedScript`, `evidenceCount`,
+  `sourceActionIds: String[]`, `status: PlaybookInsightStatus`, `broadcastAt`/`broadcastBy`,
+  `promotedToObjectionMatrixItemId`) e enum `PlaybookInsightStatus` (`SUGGESTED`/`BROADCAST`/
+  `DISMISSED` — `DISMISSED` fica reservado, nenhuma rota escreve esse valor ainda). Segue os campos
+  da proposta original quase 1:1; a única mudança foi trocar `sourceActionIds` de proveniência
+  textual solta para IDs reais de `AIPendingAction` (agora coletados em `loadOutcomeGroups`).
+  Relação `Organization.playbookInsights` adicionada.
+- **Migration**: `prisma/migrations/20260920010000_add_playbook_insight/migration.sql` —
+  `CreateTable`, dois índices (`organizationId+sellerId`, `organizationId+status`), FK para
+  `Organization` (`ON DELETE CASCADE`), e RLS com o padrão simétrico USING/WITH CHECK que
+  `20260917180000_fix_rls_tenant_write_isolation` já havia estabelecido como correto para
+  `ObjectionMatrixItem`/`QualificationMatrixItem` (sem bypass de tenant nesta tabela nova).
+  `npx prisma validate` e `npx prisma generate` passam.
+- **`livingPlaybook.service.ts`**: `generateWinningPatterns` continua recalculando do zero a cada
+  chamada (nunca confia num padrão persistido como fato adquirido — a base de evidências pode
+  mudar), mas agora persiste cada sugestão via `persistInsight` — que deduplica contra um insight
+  ainda ativo (`SUGGESTED`/`BROADCAST`) para o mesmo `(sellerId, segment, patternTitle)` dentro de
+  `INSIGHT_DEDUPE_WINDOW_MS` (7 dias, mesmo espírito do `idempotencyKey` de `AIPendingAction`) em
+  vez de duplicar. Falha de persistência é logada e nunca derruba a geração — `insightId` volta
+  `null` nesse caso, a sugestão continua disponível para revisão. `broadcastWinningPattern` ganhou
+  um `insightId`/`broadcastBy` opcionais: quando informados, marca o registro como `BROADCAST` sem
+  jamais desfazer a notificação já criada se essa atualização falhar (comportamento observável
+  preservado — CLAUDE.md seção 6).
+- **Controller/rota/API/UI**: `LivingPlaybookController.broadcast` aceita `insightId` opcional no
+  body e passa `req.user.id` como `broadcastBy`; `playbook.api.ts` e `LivingPlaybookReview.tsx`
+  repassam o `insightId` que `generateSuggestions` já devolve, fechando o loop ponta a ponta sem
+  quebrar um chamador antigo que não envie o campo.
+- **Testes**: `livingPlaybook.service.test.ts` ganhou casos para criação, atualização
+  (deduplicação) e falha tolerada de `persistInsight`, e para `broadcastWinningPattern` marcar
+  `BROADCAST` (com e sem falha de update). 12 → 20 testes no arquivo, todos verdes.
+- **Verificação**: `npx prisma validate` OK; `npx tsc --noEmit` sem novos erros (os erros
+  pré-existentes em `PrismaCompanyRepository.ts`/`PrismaContactRepository.ts`/etc. não foram
+  tocados por esta mudança); `npx eslint src/features/playbook` limpo; `vitest run -c
+  vitest.unit.config.ts src/features/playbook src/features/intelligence` — 43 arquivos, 323 testes,
+  todos passando.
+- Não migrado: `ObjectionMatrixItem`/`QualificationMatrixItem` continuam sem campo de proveniência
+  (`createdBy`/`sourceActionIds`) — fora do escopo desta resolução, só mencionado no problema
+  original como contexto.

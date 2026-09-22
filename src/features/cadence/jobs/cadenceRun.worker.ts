@@ -5,6 +5,7 @@ import { prisma } from '../../../lib/prisma.js';
 import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
 import { connection } from '../../../lib/queue/redis.js';
+import { container } from '../../../shared/di/container.js';
 import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy.js';
 import { type AdvanceCadenceRunDeps, advanceCadenceRun } from '../application/cadenceService.js';
 import { loadCadenceRateLimitPolicy } from '../application/rateLimitConfig.js';
@@ -15,13 +16,26 @@ import {
   type CadenceTouch,
   validateSequence,
 } from '../domain/cadence.js';
-import { productionCadenceDispatcher } from '../infra/dispatchers/CadenceDispatchers.js';
+import {
+  buildProductionCadenceDispatcher,
+  type VoiceCallPort,
+} from '../infra/dispatchers/CadenceDispatchers.js';
 import { hasLeadReplied } from '../infra/hasLeadReplied.js';
 import { prismaCadenceRateLimitPort } from '../infra/PrismaCadenceRateLimitPort.js';
 import { prismaCadenceRunRepository } from '../infra/PrismaCadenceRunRepository.js';
 import { prismaLeadSubjectResolver } from '../infra/PrismaLeadSubjectResolver.js';
 import { prismaOptOutRepository } from '../infra/PrismaOptOutRepository.js';
 import { redisCadenceRunLock } from '../infra/RedisCadenceRunLock.js';
+
+// VoiceCallPort resolvido via container DI (no-cross-feature-imports): evita importar internals
+// de src/features/integrations/birth-voice/** diretamente. Registrado em src/shared/di/setup.ts.
+function getVoicePort(): VoiceCallPort | undefined {
+  try {
+    return container.resolve<VoiceCallPort>('VoiceCallPort');
+  } catch {
+    return undefined;
+  }
+}
 
 /**
  * Runtime real da cadência multicanal (CYC-008, onda-19) — até aqui `advanceCadenceRun` (domínio
@@ -91,7 +105,7 @@ function buildDeps(): AdvanceCadenceRunDeps {
     runRepo: prismaCadenceRunRepository,
     optOutRepo: prismaOptOutRepository,
     subjectResolver: prismaLeadSubjectResolver,
-    dispatcher: productionCadenceDispatcher,
+    dispatcher: buildProductionCadenceDispatcher(getVoicePort()),
     lock: redisCadenceRunLock,
     isWithinBusinessWindow: (now) => isWithinCallWindow(now),
     hasLeadReplied,

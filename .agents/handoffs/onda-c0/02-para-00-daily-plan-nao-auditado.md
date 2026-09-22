@@ -1,8 +1,16 @@
 - De: 02
 - Para: 00
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Auditado e classificado: `/app/daily-plan` é uma funcionalidade 100% REAL e em produção.
+- Frontend: `DailyPlanHub` (`src/features/commercial-intelligence/components/DailyPlanHub.tsx`).
+- Backend: rotas dedicadas em `src/features/integrations/bitrix/dailyPlanRoutes.ts` (`/api/bitrix/daily-plan/*`), serviços de negócio reais `dailyPlan.service.ts`, `dailyPlanNotes.service.ts` e `dailyPlanEnrichment.service.ts`.
+- Persistência e Integração: sincronização bidirecional de tarefas e atividades comerciais com Bitrix24, registro de anotações diárias, fechamento de pendências e fallback fail-open para dados locais quando a integração externa está indisponível.
+- Coberto pela suíte E2E em `tests/e2e/mobile-sweep.spec.ts`.
+
 
 ## Problema
 `/app/daily-plan` existe como rota em `src/App.tsx` mas não foi coberto por nenhuma das três

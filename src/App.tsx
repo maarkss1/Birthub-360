@@ -199,6 +199,46 @@ const LeadApprovalDeck = lazy(() =>
 const PropostasList = lazy(() =>
   import('./features/crm360/components/PropostasList').then((m) => ({ default: m.PropostasList })),
 );
+const EliteCommercialAgentWorkspace = lazy(() =>
+  import('./features/intelligence/components/EliteCommercialAgentWorkspace').then((m) => ({
+    default: m.EliteCommercialAgentWorkspace,
+  })),
+);
+const AgentQualityPanel = lazy(() =>
+  import('./features/intelligence/components/AgentQualityPanel').then((m) => ({
+    default: m.AgentQualityPanel,
+  })),
+);
+const AIPendingActions = lazy(() =>
+  import('./features/intelligence/components/AIPendingActions').then((m) => ({
+    default: m.AIPendingActions,
+  })),
+);
+const AutomationGuide = lazy(() =>
+  import('./features/intelligence/components/AutomationGuide').then((m) => ({
+    default: m.AutomationGuide,
+  })),
+);
+const B2BGenerator = lazy(() =>
+  import('./features/intelligence/components/B2BGenerator').then((m) => ({
+    default: m.B2BGenerator,
+  })),
+);
+const RobustScriptGenerator = lazy(() =>
+  import('./features/intelligence/components/RobustScriptGenerator').then((m) => ({
+    default: m.RobustScriptGenerator,
+  })),
+);
+const SalesMethodologyStudio = lazy(() =>
+  import('./features/intelligence/components/SalesMethodologyStudio').then((m) => ({
+    default: m.SalesMethodologyStudio,
+  })),
+);
+const SuperagentCreator = lazy(() =>
+  import('./features/intelligence/components/SuperagentCreator').then((m) => ({
+    default: m.SuperagentCreator,
+  })),
+);
 const PublicBookingPage = lazy(() =>
   import('./features/calendar/components/PublicBookingPage').then((m) => ({
     default: m.PublicBookingPage,
@@ -287,6 +327,14 @@ function AppLayout() {
             }
           />
           <Route path="intelligence" element={<IntelligenceHub />} />
+          <Route path="intelligence/elite-agent" element={<EliteCommercialAgentWorkspace />} />
+          <Route path="intelligence/quality-panel" element={<AgentQualityPanel />} />
+          <Route path="intelligence/pending-actions" element={<AIPendingActions />} />
+          <Route path="intelligence/automation-guide" element={<AutomationGuide />} />
+          <Route path="intelligence/b2b-generator" element={<B2BGenerator />} />
+          <Route path="intelligence/script-generator" element={<RobustScriptGenerator />} />
+          <Route path="intelligence/sales-methodology" element={<SalesMethodologyStudio />} />
+          <Route path="intelligence/superagent-creator" element={<SuperagentCreator />} />
           <Route path="companies" element={<CompanyList />} />
           <Route path="contacts" element={<ContactList />} />
           <Route path="activities" element={<ActivityList />} />
@@ -407,11 +455,19 @@ export default function App() {
                         pós-login; continua existindo e acessível a partir dos círculos do Hub. */}
                       <Route
                         path="/design-lab/command-language"
-                        element={<DesignLabPage section="command-language" />}
+                        element={
+                          <ProtectedRoute>
+                            <DesignLabPage section="command-language" />
+                          </ProtectedRoute>
+                        }
                       />
                       <Route
                         path="/design-lab/components-v2"
-                        element={<DesignLabPage section="components-v2" />}
+                        element={
+                          <ProtectedRoute>
+                            <DesignLabPage section="components-v2" />
+                          </ProtectedRoute>
+                        }
                       />
                       <Route path="/" element={<WelcomeScreen />} />
                       <Route path="/welcome" element={<WelcomeScreen />} />

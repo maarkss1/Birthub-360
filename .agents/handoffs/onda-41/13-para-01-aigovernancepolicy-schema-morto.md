@@ -1,7 +1,7 @@
 - De: 13
 - Para: 01
 - Onda: 41
-- Status: aberto
+- Status: resolvido
 - Prioridade: baixa
 
 ## Problema
@@ -144,3 +144,9 @@ funcionalidade esquecida e passe a registrar por que ainda não foi conectado.
 Não é meu arquivo — `prisma/schema.prisma` é propriedade exclusiva do Agente 01/01A por
 `/AGENTS.md`. Nenhum outro arquivo de código foi alterado nesta investigação; nada para o Agente 01
 mergear além deste comentário, quando puder.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item formalmente resolvido:
+- Os models mortos `AIGovernancePolicy` e `AIEvaluation` foram removidos do schema `prisma/schema.prisma` pelo commit `60ea831f chore(00): remove models mortos AIGovernancePolicy/AIEvaluation (DEC-08)`, limpando completamente o schema de definições não utilizadas.
+

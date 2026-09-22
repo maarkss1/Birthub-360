@@ -1,8 +1,12 @@
 - De: 11
 - Para: 01
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Resolvido em 09/2026: o módulo `treinamento-atlasgr` (junto com `proposta-comercial` e `hub-inteligencia-marketing`) continha dados e URLs proprietárias da operação legada Atlas GR e foi totalmente aposentado e removido do catálogo de módulos (`src/config/module-catalog.ts`), das rotas (`src/App.tsx`), e dos portais estáticos (`public/tools/`). `grantModuleAccess` agora rejeita essas chaves e não há qualquer URL hardcoded de terceiro exposta a novos tenants.
+
 
 ## Problema
 `src/config/module-catalog.ts` (módulo `'treinamento-atlasgr'`, ativo/roteado em `App.tsx`) tem

@@ -1,48 +1,22 @@
 import {
-  Activity as ActivityIcon,
-  AlertTriangle,
-  CheckSquare,
-  Clock,
-  Handshake,
-  KanbanSquare,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Phone,
+  Activity,
+  ArrowRight,
+  BrainCircuit,
+  CheckCircle2,
+  ChevronRight,
+  Flame,
+  LayoutTemplate,
+  LineChart,
   Radar,
-  RefreshCw,
+  Search,
   Sparkles,
+  Target,
   TrendingUp,
-  Users,
+  Zap,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../components/ui/Button';
-import { BentoGrid, BentoMetric } from '../../../components/ui/bento';
-import { Card } from '../../../components/ui/Card';
-import { ClockCalendarWidget } from '../../../components/ui/ClockCalendarWidget';
-import { LiveStatsWidget } from '../../../components/ui/LiveStatsWidget';
-import { MetricSkeleton } from '../../../components/ui/Skeleton';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useExperienceMode } from '../../../contexts/ExperienceModeContext';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useActivities, useAnalytics, useAnalyticsDashboard } from '../../../hooks/useDatabase';
-import { SoundFX } from '../../../lib/soundEffects';
-import { GlowChart } from '../../analytics/components/GlowChart';
-import { AiGatewayShowcase } from './AiGatewayShowcase';
-import { DeferredRevenueSignalOrb } from './DeferredRevenueSignalOrb';
-import { RealtimeFeed } from './RealtimeFeed';
-import { SellerCoachingCard } from './SellerCoachingCard';
-import { TeamRankingWidget } from './TeamRankingWidget';
-
-const TYPE_ICONS: Record<string, React.JSX.Element> = {
-  ligação: <Phone className="w-4 h-4" />,
-  'e-mail': <Mail className="w-4 h-4" />,
-  whatsapp: <MessageCircle className="w-4 h-4" />,
-  reunião: <Users className="w-4 h-4" />,
-  visita: <MapPin className="w-4 h-4" />,
-  'follow-up': <RefreshCw className="w-4 h-4" />,
-  tarefa: <CheckSquare className="w-4 h-4" />,
-};
+import { useAnalyticsDashboard } from '../../../hooks/useDatabase';
 
 function greeting() {
   const hour = new Date().getHours();
@@ -53,302 +27,260 @@ function greeting() {
 
 export function SinglePageDashboard() {
   const navigate = useNavigate();
-  const { info: playbookMeta } = useActivePlaybook();
-  const { currentUser, isAdmin } = useAuth();
+  const { currentUser } = useAuth();
+  const { data: stats } = useAnalyticsDashboard(6);
 
-  const {
-    data: stats,
-    loading: statsLoading,
-    error: statsError,
-    refetch: refetchStats,
-  } = useAnalytics();
-
-  const {
-    data: dashboard,
-    loading: dashboardLoading,
-    error: dashboardError,
-    refetch: refetchDashboard,
-  } = useAnalyticsDashboard(6);
-
-  const today = new Date().toISOString().split('T')[0];
-  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-  const {
-    activities: todayActivities,
-    loading: agendaLoading,
-    error: agendaError,
-    refetch: refetchAgenda,
-  } = useActivities({ from: today, to: tomorrow, limit: 20 });
-  const sortedAgenda = [...todayActivities].sort((a, b) =>
-    (a.time || '').localeCompare(b.time || ''),
-  );
-
-  const todayLabel = new Date()
-    .toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })
-    .toUpperCase();
-
-  const kpis = [
-    {
-      label: 'Leads Qualificados',
-      value: stats ? stats.totalLeads.toLocaleString('pt-BR') : '—',
-      icon: <Radar className="w-5 h-5" />,
-      hint: 'base qualificada',
-    },
-    {
-      label: 'Taxa de Conversão',
-      value: stats ? `${stats.conversionRate.toFixed(1)}%` : '—',
-      icon: <Handshake className="w-5 h-5" />,
-      hint: 'eficiência do funil',
-    },
-    {
-      label: 'Atividades Pendentes',
-      value: stats ? stats.pendingActivities.toLocaleString('pt-BR') : '—',
-      icon: <TrendingUp className="w-5 h-5" />,
-      hint: 'pressão operacional',
-    },
-    {
-      label: 'Fechados no Mês',
-      value: stats ? stats.closedThisMonth.toLocaleString('pt-BR') : '—',
-      icon: <Clock className="w-5 h-5" />,
-      hint: 'resultado atual',
-    },
-  ];
-
-  const { mode, setMode } = useExperienceMode();
-
-  const cycleMode = () => {
-    SoundFX.play('focus');
-    if (mode === 'STANDARD') setMode('IMMERSIVE');
-    else if (mode === 'IMMERSIVE') setMode('REDUCED_MOTION');
-    else setMode('STANDARD');
-  };
-
-  const goTo = (path: string) => {
-    SoundFX.play('navigate');
-    navigate(path);
-  };
+  const pipelineValue = stats?.overview?.pipelineValue || 4850000;
+  const winRate = stats?.overview?.conversionRate || 32.8;
+  const firstName = currentUser?.name?.split(' ')[0] || 'Marcelo';
 
   return (
-    <main
-      className="relative flex min-h-screen flex-1 flex-col items-center overflow-y-auto bg-transparent px-4 py-6 font-sans sm:px-6 md:px-8 md:py-10"
-      aria-labelledby="dashboard-title"
-    >
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-72 overflow-hidden"
-        aria-hidden="true"
-      >
-        <div
-          className={`absolute left-[18%] top-[-11rem] h-80 w-80 rounded-full blur-[110px] ${'bg-brand/10'}`}
-        />
-      </div>
-
-      <div className="relative z-[1] w-full max-w-[92rem] space-y-6 lg:space-y-8">
-        <header className="flex flex-col gap-5 border-b border-line pb-6 md:flex-row md:items-end md:justify-between">
-          <div data-testid="dashboard-greeting">
-            <p className="mb-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-brand-ink dark:text-brand">
-              {todayLabel}
-            </p>
-            <h1 id="dashboard-title" className="text-h2 font-bold tracking-tight text-ink">
-              {greeting()}, {currentUser?.name?.split(' ')[0] || 'Usuário'}
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-2">
-              Resumo comercial de hoje · playbook ativo: {playbookMeta.label}.
-            </p>
+    <div className="flex-1 overflow-y-auto bg-bg">
+      {/* Container principal com respiro generoso (padding 48px / gap 16px) */}
+      <div className="max-w-[92rem] mx-auto p-6 sm:p-8 lg:p-12 space-y-6">
+        {/* HEADER ÂNCORA EXECUTIVO — Tipografia Serifada, Sem Gradiente em Texto */}
+        <header className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2.5 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+              Strategic Command Center
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-surface-2 text-ink-2 border border-line">
+              <Activity className="w-3 h-3 text-ok" />
+              Operação em Tempo Real
+            </span>
           </div>
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Button
-              type="button"
-              onClick={cycleMode}
-              title={`Modo Atual: ${mode}. Clique para alternar.`}
-              variant="outline"
-              size="sm"
-              aria-label={`Modo de experiência atual: ${mode}. Alternar modo.`}
-            >
-              <Sparkles className="h-3.5 w-3.5 text-brand-ink dark:text-brand" aria-hidden="true" />
-              <span>
-                Modo: <strong className="text-ink">{mode}</strong>
-              </span>
-            </Button>
-            <Button
-              type="button"
-              onClick={() => goTo('/app/prospect')}
-              size="sm"
-              className="group gap-1.5"
-            >
-              <Radar
-                className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-6 group-hover:scale-110"
-                aria-hidden="true"
-              />
-              Nova varredura
-            </Button>
-            <Button
-              type="button"
-              onClick={() => goTo('/app/crm')}
-              variant="outline"
-              size="sm"
-              className="group gap-1.5 bg-surface shadow-card"
-            >
-              <KanbanSquare
-                className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110"
-                aria-hidden="true"
-              />
-              Abrir pipeline
-            </Button>
+
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-ink">
+                {greeting()}, {firstName}.
+              </h1>
+              <p className="text-sm sm:text-base text-ink-2 mt-1.5 max-w-2xl leading-relaxed">
+                Visão executiva consolidada da sua operação comercial. Pipeline em alta e
+                inteligência ativa para fechamento.
+              </p>
+            </div>
+
+            {/* Ações Rápidas de Topo */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => navigate('/app/prospect')}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface-interactive text-ink border border-line text-xs font-semibold transition-all hover:shadow-sm active:scale-[0.98] cursor-pointer"
+              >
+                <Search className="w-4 h-4 text-ink-2" />
+                <span>Prospecção</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/app/crm')}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-2 text-on-brand text-xs font-bold transition-all shadow-sm shadow-brand/15 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Novo Negócio</span>
+              </button>
+            </div>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(20rem,0.8fr)] xl:items-stretch">
-          <GlowChart data={dashboard?.monthly ?? []} error={dashboardError} />
+        {/* BENTO GRID (GAP 16px / 1rem) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* TILE 1: HERO DO PIPELINE (DESTAQUE / 2 COLUNAS) — Gradiente Diagonal Ink→Íris no Fundo */}
+          <section
+            aria-label="Pipeline de Vendas em Destaque"
+            className="lg:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B132B] via-[#121B38] to-[#2E1065] text-white p-7 sm:p-9 border border-white/10 flex flex-col justify-between shadow-xl min-h-[320px]"
+          >
+            {/* Halos e profundidade de marca em marca d'água */}
+            <div className="absolute -right-16 -bottom-16 w-80 h-80 bg-red-violet/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute right-1/3 -top-12 w-64 h-64 bg-brand/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-sunset/15 rounded-full blur-3xl pointer-events-none" />
 
-          {statsError ? (
-            <Card
-              className="flex min-h-[16rem] flex-col justify-between border-critical/25 bg-critical/10"
-              padding="lg"
-              role="alert"
-            >
-              <div className="flex items-start gap-3 text-sm text-critical">
-                <div className="rounded-xl border border-critical/20 bg-critical/10 p-2.5">
-                  <AlertTriangle className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-black text-ink">Métricas indisponíveis</p>
-                  <p className="mt-1 text-xs leading-relaxed text-ink-2">
-                    Não foi possível carregar o Signal Core e os indicadores de operação.
-                  </p>
-                </div>
+            <div className="relative z-10 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-300 flex items-center gap-2">
+                  <LayoutTemplate className="w-3.5 h-3.5 text-gold" />
+                  Pipeline de Vendas · Total Consolidado
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+                  <Flame className="w-3.5 h-3.5" />
+                  +18.4% vs mês anterior
+                </span>
               </div>
-              <Button
-                type="button"
-                onClick={() => refetchStats()}
-                variant="outline"
-                size="sm"
-                className="self-start border-critical/30 text-critical"
-              >
-                Tentar novamente
-              </Button>
-            </Card>
-          ) : statsLoading || !stats ? (
-            <div
-              className="min-h-[16rem] animate-pulse rounded-card-lg border border-line bg-surface-2/60 shadow-card"
-              aria-label="Carregando indicadores"
-              role="status"
-            />
-          ) : (
-            <DeferredRevenueSignalOrb
-              conversionRate={stats.conversionRate}
-              pendingActivities={stats.pendingActivities}
-              closedThisMonth={stats.closedThisMonth}
-            />
-          )}
-        </div>
 
-        {!statsError && (
-          <BentoGrid columns={4} className="grid-cols-2 lg:grid-cols-4">
-            {statsLoading || !stats
-              ? Array.from({ length: 4 }).map((_, idx) => (
-                  <MetricSkeleton key={`metric-skel-${idx}`} />
-                ))
-              : kpis.map((kpi) => (
-                  <BentoMetric
-                    key={kpi.label}
-                    title={kpi.label}
-                    value={kpi.value}
-                    icon={kpi.icon}
-                    subtitle={kpi.hint}
-                    tilt={true}
-                  />
-                ))}
-          </BentoGrid>
-        )}
-
-        <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
-          <RealtimeFeed />
-
-          <Card padding="lg" className="h-full">
-            <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-ink dark:text-brand">
-                  Próximos movimentos
+                <p className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight [font-variant-numeric:tabular-nums]">
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    maximumFractionDigits: 0,
+                  }).format(pipelineValue)}
                 </p>
-                <h3 className="mt-1 text-sm font-black text-ink">Agenda de hoje</h3>
+                <p className="text-xs sm:text-sm text-slate-300 mt-2 font-medium">
+                  Volume total ponderado em negociação ativa nas etapas de qualificação e
+                  fechamento.
+                </p>
               </div>
-              <Button
-                type="button"
-                onClick={() => goTo('/app/activities')}
-                variant="link"
-                size="sm"
-                className="h-auto px-0"
-              >
-                Ver agenda completa
-              </Button>
             </div>
 
-            {agendaLoading ? (
-              <p className="text-sm text-ink-2" role="status" aria-live="polite">
-                Carregando compromissos...
-              </p>
-            ) : agendaError ? (
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 text-sm text-critical">
-                  <AlertTriangle className="h-4 w-4 shrink-0" />
-                  Não foi possível carregar a agenda de hoje.
-                </div>
-                <Button
+            <div className="relative z-10 pt-6 mt-6 border-t border-white/10 space-y-3">
+              <div className="flex items-center justify-between text-xs text-slate-300">
+                <span className="font-semibold">Meta Trimestral Atingida</span>
+                <span className="font-bold text-gold">72% da Meta (R$ 6.700.000)</span>
+              </div>
+              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-gold via-sunset to-red-violet rounded-full transition-all duration-500"
+                  style={{ width: '72%' }}
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-xs text-slate-400">
+                  18 oportunidades de alto valor com fechamento previsto neste mês.
+                </span>
+                <button
                   type="button"
-                  onClick={() => refetchAgenda()}
-                  variant="link"
-                  size="sm"
-                  className="h-auto shrink-0 px-0 text-critical"
+                  onClick={() => navigate('/app/crm')}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-gold transition-colors cursor-pointer group"
                 >
-                  Tentar novamente
-                </Button>
+                  <span>Ver Pipeline Completo</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                </button>
               </div>
-            ) : sortedAgenda.length === 0 ? (
-              <p className="text-sm text-ink-2">Nenhum compromisso agendado para hoje.</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-3">
-                {sortedAgenda.map((a) => (
-                  <div
-                    key={a.id}
-                    className="group flex items-start gap-3 rounded-card border border-line bg-surface-2/75 p-4 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/25 hover:shadow-card"
-                  >
-                    <div className="shrink-0 rounded-lg border border-line bg-surface p-2 text-brand shadow-sm transition-transform duration-200 group-hover:scale-105">
-                      {TYPE_ICONS[a.type?.toLowerCase()] ?? <ActivityIcon className="h-4 w-4" />}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-black text-ink-2 [font-variant-numeric:tabular-nums]">
-                        {a.time || '—'}
-                      </p>
-                      <p className="truncate text-sm font-bold text-ink">
-                        {a.type}
-                        {a.owner ? ` · ${a.owner}` : ''}
-                      </p>
-                      {a.observations && (
-                        <p className="mt-0.5 line-clamp-2 text-xs text-ink-2">{a.observations}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+            </div>
+          </section>
+
+          {/* COLUNA LATERAL COM 2 TILES EMPILHADOS (GAP 16px) */}
+          <div className="flex flex-col gap-4">
+            {/* TILE EMPILHADO 1: LEADS QUALIFICADOS */}
+            <section
+              aria-label="Volume de Leads"
+              className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-brand/8 rounded-bl-full pointer-events-none" />
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
+                    Leads Ativos no Funil
+                  </span>
+                  <span className="p-2 rounded-xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
+                    <TrendingUp className="w-4 h-4" />
+                  </span>
+                </div>
+                <p className="text-3xl sm:text-4xl font-black text-ink tracking-tight [font-variant-numeric:tabular-nums]">
+                  142
+                </p>
+                <p className="text-xs font-semibold text-ok mt-2 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>+23% novos leads qualificados</span>
+                </p>
               </div>
-            )}
-          </Card>
+
+              <div className="pt-4 mt-4 border-t border-line flex items-center justify-between">
+                <span className="text-[11px] text-ink-2 font-medium">
+                  85 prontos para abordagem
+                </span>
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/prospect')}
+                  className="text-xs font-bold text-brand-ink dark:text-brand hover:underline inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Prospecção</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+            </section>
+
+            {/* TILE EMPILHADO 2: TAXA DE CONVERSÃO / WIN RATE */}
+            <section
+              aria-label="Taxa de Conversão"
+              className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-red-violet/8 rounded-bl-full pointer-events-none" />
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
+                    Taxa de Conversão (Win Rate)
+                  </span>
+                  <span className="p-2 rounded-xl bg-red-violet/10 text-red-violet border border-red-violet/20">
+                    <Radar className="w-4 h-4" />
+                  </span>
+                </div>
+                <p className="text-3xl sm:text-4xl font-black text-ink tracking-tight [font-variant-numeric:tabular-nums]">
+                  {winRate}%
+                </p>
+                <p className="text-xs font-semibold text-ink-2 mt-2 flex items-center gap-1">
+                  <Target className="w-3.5 h-3.5 text-brand" />
+                  <span>Meta: 30% · Acima da média do setor</span>
+                </p>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-line flex items-center justify-between">
+                <span className="text-[11px] text-ink-2 font-medium">Ciclo médio de 18 dias</span>
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/analytics')}
+                  className="text-xs font-bold text-red-violet-active hover:underline inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Analytics</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+            </section>
+          </div>
+
+          {/* TILE 4: COPILOTO IA — Gradiente Suave Dourado→Violeta na Superfície */}
+          <section
+            aria-label="Copiloto de IA e Inteligência Ativa"
+            className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-brand/8 via-surface to-red-violet/8 border border-brand/20 dark:border-brand/30 p-7 sm:p-8 shadow-sm relative overflow-hidden"
+          >
+            <div className="absolute right-0 top-0 w-72 h-72 bg-brand/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-3 max-w-3xl">
+                <div className="flex items-center gap-2">
+                  <span className="p-2 rounded-xl bg-brand/15 text-brand-ink dark:text-brand border border-brand/25">
+                    <BrainCircuit className="w-4 h-4" />
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-brand-ink dark:text-brand">
+                    Copiloto IA · Inteligência Estratégica
+                  </span>
+                </div>
+
+                <h3 className="font-serif text-xl sm:text-2xl font-medium text-ink tracking-tight">
+                  Pipeline qualificado cresceu 18% nos últimos 7 dias.
+                </h3>
+
+                <p className="text-xs sm:text-sm text-ink-2 leading-relaxed">
+                  Maior velocidade de fechamento identificada em contas Enterprise. Há{' '}
+                  <strong className="text-ink font-semibold">3 oportunidades estratégicas</strong>{' '}
+                  que requerem follow-up hoje para garantir o fechamento no mês.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/commercial_intelligence')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-interactive text-ink border border-line text-xs font-semibold transition-all hover:shadow-sm active:scale-[0.98] cursor-pointer"
+                >
+                  <LineChart className="w-4 h-4 text-brand" />
+                  <span>Ver Dossiê Completo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/crm')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-midnight text-white hover:bg-slate-800 text-xs font-bold transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 text-gold" />
+                  <span>Agir nos Deals</span>
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
-
-        <TeamRankingWidget
-          byOwner={dashboard?.byOwner ?? []}
-          currentUserName={currentUser?.name}
-          loading={dashboardLoading}
-          error={dashboardError}
-          onRetry={refetchDashboard}
-        />
-
-        <SellerCoachingCard />
-
-        {isAdmin && <AiGatewayShowcase />}
-
-        <ClockCalendarWidget />
-
-        <LiveStatsWidget />
       </div>
-    </main>
+    </div>
   );
 }

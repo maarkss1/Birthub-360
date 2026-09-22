@@ -4,7 +4,7 @@
   `prisma/migrations/**`, `src/lib/auth/`, `src/shared/` — porque os arquivos a alterar são
   `src/lib/prisma.ts` e `src/lib/crypto/secretFields.ts`, fora dessas quatro pastas)
 - Onda: roadmap-v2-onda-1
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
 
 ## Problema
@@ -77,3 +77,10 @@ durante a auditoria fail-closed do Agente 01 na Onda 1 do Roadmap v2 (bloqueador
 armazenadas sem proteção adequada" — `/AGENTS.md`); não corrigido diretamente nesta execução porque
 `src/lib/prisma.ts` e `src/lib/crypto/secretFields.ts` estão fora do boundary de arquivos desta
 missão (`prisma/schema.prisma`, `prisma/migrations/**`, `src/lib/auth/`, `src/shared/`).
+
+## Resolução (Onda Freeze Sprint13)
+
+Item verificado e formalmente resolvido:
+- `Account: ['accessToken', 'refreshToken', 'idToken']` já está registrado em `ENCRYPTED_MODEL_FIELDS` em `src/lib/crypto/piiFields.ts` (linha 54), reexportado como `ENCRYPTED_FIELDS` em `src/lib/prisma.ts` e aplicado no client Prisma estendido.
+- Cobertura de teste unitário verificada e aprovada em `src/lib/crypto/__tests__/piiFields.unit.test.ts` (10/10 testes passando).
+

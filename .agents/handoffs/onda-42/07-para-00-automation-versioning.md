@@ -2,8 +2,14 @@
 - Para: Agente 00 (Coordenador) — para rotear ao Agente 01 (Plataforma, Segurança e Dados), dono
   exclusivo de `prisma/schema.prisma`/`prisma/migrations/**`
 - Onda: 42 (dossiê CPI, DEC-14, opção A — "simular antes de ativar" + versionamento de regras)
-- Status: aberto
+- Status: resolvido
 - Prioridade: alto
+
+## Resolução
+Resolvido em `prisma/schema.prisma` (linhas 2034-2063) e migrações `20260827210000_onda42_decisoes_schema` / `20260917180000_fix_rls_tenant_write_isolation`:
+1. Model `AutomationVersion` criado com relação inversa em `model Automation (versions AutomationVersion[])` e RLS forçado por tenant (`tenant_isolation_policy`).
+2. `PrismaAutomationVersionStore` implementado em `src/features/automations/infra/PrismaAutomationVersionStore.ts` e conectado em `src/features/automations/automation-versioning.service.ts`, persistindo snapshots e diffs históricos no Postgres de forma durável.
+3. Testes unitários de `automation-versioning.service.ts` validados com 11/11 testes passando.
 
 ## Problema
 
@@ -132,3 +138,49 @@ Rota `GET /api/automations/:id/versions` já está implementada e registrada (RB
 mesmo padrão das outras rotas de gestão de automação) — funciona hoje contra o protótipo em
 memória; nenhuma mudança de contrato de API é esperada quando a store real entrar, só a
 persistência por trás dela passa a sobreviver a reinício do processo.
+
+## Resolução
+
+Verificado nesta sessão (worktree separado): o schema/migration e a store real já haviam sido
+aplicados em uma sessão anterior (commit `363879f9`, "feat(00): aplica as 4 migrations pendentes
+da Onda 42 e conecta as stores reais", 27/08/2026), e refinados depois em `d715212b` e `6fbc176d`.
+Este handoff só não tinha sido marcado como resolvido. Conferido ponto a ponto contra o pedido
+original:
+
+- `prisma/schema.prisma` — `model AutomationVersion` existe exatamente como proposto (FK
+  `automationId` → `Automation` com `onDelete: Cascade`, FK `organizationId` → `Organization`,
+  snapshot completo `name`/`enabled`/`trigger`/`conditions`/`action`/`actionConfig`,
+  `editedByUserId`/`editedByEmail` sem FK de propósito, `changeReason` com default `"update"`,
+  índices `[automationId, createdAt]` e `[organizationId]`). `model Automation` tem a relação
+  inversa `versions AutomationVersion[]`.
+- `prisma/migrations/20260827210000_onda42_decisoes_schema/migration.sql` — migration aditiva já
+  existe, cria a tabela, os índices, as FKs e RLS no mesmo padrão pedido (`ENABLE ROW LEVEL
+  SECURITY` + `FORCE ROW LEVEL SECURITY` + `tenant_isolation_policy` filtrando por
+  `current_setting('app.current_tenant_id', TRUE) = "organizationId"`, mesmo formato da migration
+  `20260827020000_forecast_snapshot` citada como referência).
+- `src/features/automations/infra/PrismaAutomationVersionStore.ts` — implementação real de
+  `AutomationVersionStore` (`record`/`listByAutomation`) já existe, com teste próprio em
+  `src/features/automations/infra/__tests__/PrismaAutomationVersionStore.test.ts`.
+- `src/features/automations/automation-versioning.service.ts` — composição já aponta para
+  `PrismaAutomationVersionStore` (não mais `InMemoryAutomationVersionStore`, que continua no
+  repositório só como dependência de teste unitário do próprio serviço, como documentado no
+  arquivo).
+- `src/features/automations/application/AutomationUseCases.ts` — `updateAutomation`/
+  `removeAutomation` continuam chamando `recordPriorState` antes de aplicar a mudança; rota `GET
+  /api/automations/:id/versions` inalterada.
+
+Validação rodada nesta sessão (sem nenhuma alteração de código necessária, já que a implementação
+já estava correta):
+
+- `npx prisma validate` → `The schema at prisma\schema.prisma is valid`.
+- `npx tsc --noEmit` → sem erros.
+- `npx eslint` nos arquivos da feature (`automation-versioning.service.ts`,
+  `PrismaAutomationVersionStore.ts`, `InMemoryAutomationVersionStore.ts`, `AutomationVersion.ts`,
+  `AutomationUseCases.ts`) → sem erros/warnings.
+- `npx vitest run -c vitest.unit.config.ts src/features/automations/__tests__/automation-versioning.service.test.ts src/features/automations/infra/__tests__/PrismaAutomationVersionStore.test.ts`
+  → 2 arquivos, 15 testes, todos passando (os 11 casos originais de
+  `automation-versioning.service.test.ts` citados no handoff + 4 casos de
+  `PrismaAutomationVersionStore.test.ts`).
+
+Nenhum arquivo de código precisou ser alterado nesta sessão — só este handoff, para fechar o
+status.

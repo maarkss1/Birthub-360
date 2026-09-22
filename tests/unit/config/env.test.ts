@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // aqui precisa resetar o registro de módulos e reimportar src/config/env.ts com `process.env`
 // controlado. Mesmo padrão de teste de "boot" já usado para outro módulo de bootstrap em
 // tests/unit/bootstrap/security.test.ts (`loadSecurityModule`).
+vi.mock('dotenv/config', () => ({}));
 vi.mock('../../../src/lib/logger.js', () => ({
   logger: {
     error: vi.fn(),
@@ -102,5 +103,103 @@ describe('config/env — BETTER_AUTH_SECRET fail-closed em produção (SEC-001)'
       ALLOW_DEV_AUTH_BYPASS: 'true',
     });
     expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+});
+
+describe('config/env — Rejeição de localhost em produção quando domínio público configurado (ONDA 17)', () => {
+  let exitSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+  });
+
+  afterEach(() => {
+    exitSpy.mockRestore();
+    process.env = { ...ORIGINAL_ENV };
+    vi.resetModules();
+  });
+
+  it('encerra o processo se PRODUCTION_DOMAIN estiver configurado mas BETTER_AUTH_URL contiver localhost', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
+      BETTER_AUTH_URL: 'http://localhost:3000',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('encerra o processo se PRODUCTION_DOMAIN estiver configurado mas ALLOWED_ORIGINS contiver localhost', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
+      BETTER_AUTH_URL: 'https://app.atlasgr.com.br',
+      ALLOWED_ORIGINS: 'https://app.atlasgr.com.br,http://localhost:3000',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('NÃO encerra o processo se todas as URLs forem de domínio público válido', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PRODUCTION_DOMAIN: 'app.atlasgr.com.br',
+      PUBLIC_BASE_URL: 'https://app.atlasgr.com.br',
+      BETTER_AUTH_URL: 'https://app.atlasgr.com.br',
+      ALLOWED_ORIGINS: 'https://app.atlasgr.com.br',
+    });
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('config/env — Hardening de PLATFORM_OPERATOR_TOKEN e Webhook Secrets em produção', () => {
+  let exitSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+  });
+
+  afterEach(() => {
+    exitSpy.mockRestore();
+    process.env = { ...ORIGINAL_ENV };
+    vi.resetModules();
+  });
+
+  it('encerra o processo se PLATFORM_OPERATOR_TOKEN for curto (< 32 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'token-curto',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('encerra o processo se PLATFORM_OPERATOR_TOKEN for um placeholder bloqueado', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'changeme',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('NÃO encerra se PLATFORM_OPERATOR_TOKEN for robusto (>= 32 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      PLATFORM_OPERATOR_TOKEN: 'b'.repeat(36),
+    });
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+
+  it('encerra o processo se algum webhook secret for curto (< 16 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      BIRTH_VOICES_WEBHOOK_SECRET: 'curto',
+    });
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('NÃO encerra se webhook secret for robusto (>= 16 chars)', async () => {
+    await loadEnvModule({
+      BETTER_AUTH_SECRET: 'a'.repeat(40),
+      BIRTH_VOICES_WEBHOOK_SECRET: 'c'.repeat(24),
+    });
+    expect(exitSpy).not.toHaveBeenCalled();
   });
 });

@@ -1,7 +1,7 @@
 - De: 07
 - Para: 05 (Prospecção)
 - Onda: 6
-- Status: aberto
+- Status: resolvido (singleton morto com 0 chamadores removido de accountIntelligence.service.ts)
 - Prioridade: normal
 
 ## Problema

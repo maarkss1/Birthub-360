@@ -1,7 +1,7 @@
 - De: Agente 13 (Enxame Autônomo e Governança de Agentes)
 - Para: Agente 01/01A (Plataforma, Segurança e Dados)
 - Onda: 44
-- Status: aberto
+- Status: resolvido
 - Prioridade: média (ACH-13-03, sev P2, auditoria report-atualizado.html)
 
 ## Problema
@@ -93,3 +93,12 @@ e o payload consumido por `SwarmDashboard.tsx`.
 Item de auditoria ACH-13-03 (`report-atualizado.html`, sev P2). Não editei `prisma/schema.prisma`
 nem nenhuma migração — só este handoff. Nenhum outro arquivo de código foi alterado nesta
 investigação.
+
+## Resolução (Onda Freeze Sprint13)
+
+Item formalmente resolvido pelo Agente 01A:
+- Coluna `agentRole String?` adicionada ao model `AILog` em `prisma/schema.prisma` com índice composto `@@index([organizationId, agentRole, createdAt])`.
+- Criada migration aditiva `prisma/migrations/20260920000000_add_ailog_agentrole/migration.sql`.
+- Validação `npx prisma validate` executada com sucesso e Prisma Client regenerado com `npx prisma generate`.
+- O Agente 13 pode agora proceder com o agrupamento por `agentRole` em `getSwarmSloSnapshot`.
+

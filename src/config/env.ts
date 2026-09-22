@@ -8,10 +8,22 @@ const envSchema = z
     // em vez de silenciosamente assumir 'development' (e, com isso, habilitar bypasses
     // de autenticação e CORS permissivo destinados apenas a ambiente local).
     NODE_ENV: z.enum(['development', 'production', 'test']),
+
+    // ── Correlação de Release em Produção (Onda 18) ──────────────────────────
+    COMMIT_SHA: z.string().default('unknown'),
+    BUILD_VERSION: z.string().default('1.0.0'),
+    DEPLOY_TIMESTAMP: z.string().default('unknown'),
     PORT: z.string().default('3005'),
     HOST: z.string().default('0.0.0.0'),
     DATABASE_URL: z.string().min(1, 'DATABASE_URL é obrigatória'),
     REDIS_URL: z.string().optional(),
+    PRODUCTION_DOMAIN: z.string().optional(),
+    DOMAIN: z.string().optional(),
+    COOKIE_DOMAIN: z.string().optional(),
+    SECURE_COOKIES: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((value) => value === 'true'),
     ALLOWED_ORIGINS: z.string().optional(),
     BETTER_AUTH_URL: z.string().optional(),
     BETTER_AUTH_SECRET: z.string().optional(),
@@ -342,6 +354,55 @@ if (_env.success && _env.data.NODE_ENV === 'production' && _env.data.ALLOW_DEV_A
   }
 }
 
+// ONDA 17: Validação de domínio público x localhost em produção
+if (_env.success && _env.data.NODE_ENV === 'production') {
+  const prodDomain = _env.data.PRODUCTION_DOMAIN || _env.data.DOMAIN;
+  const publicBaseUrl = _env.data.PUBLIC_BASE_URL;
+  const betterAuthUrl = _env.data.BETTER_AUTH_URL;
+  const allowedOrigins = _env.data.ALLOWED_ORIGINS;
+
+  const hasPublicDomainConfigured =
+    Boolean(prodDomain && prodDomain !== 'localhost') ||
+    Boolean(
+      publicBaseUrl && !publicBaseUrl.includes('localhost') && !publicBaseUrl.includes('127.0.0.1'),
+    ) ||
+    Boolean(
+      betterAuthUrl && !betterAuthUrl.includes('localhost') && !betterAuthUrl.includes('127.0.0.1'),
+    );
+
+  if (hasPublicDomainConfigured) {
+    const invalidVars: string[] = [];
+
+    if (
+      publicBaseUrl &&
+      (publicBaseUrl.includes('localhost') || publicBaseUrl.includes('127.0.0.1'))
+    ) {
+      invalidVars.push('PUBLIC_BASE_URL');
+    }
+    if (
+      betterAuthUrl &&
+      (betterAuthUrl.includes('localhost') || betterAuthUrl.includes('127.0.0.1'))
+    ) {
+      invalidVars.push('BETTER_AUTH_URL');
+    }
+    if (allowedOrigins) {
+      const origins = allowedOrigins.split(',').map((s) => s.trim());
+      if (origins.some((o) => o.includes('localhost') || o.includes('127.0.0.1'))) {
+        invalidVars.push('ALLOWED_ORIGINS');
+      }
+    }
+
+    if (invalidVars.length > 0) {
+      logger.error(
+        `❌ Configuração inválida em produção: as seguintes variáveis contêm 'localhost' ou '127.0.0.1' enquanto o ambiente está configurado para domínio público: ${invalidVars.join(', ')}. Abortando inicialização.`,
+      );
+      if (process.env.NODE_ENV !== 'test') {
+        process.exit(1);
+      }
+    }
+  }
+}
+
 // SEC-001: BETTER_AUTH_SECRET é o segredo que o Better Auth (src/lib/auth.ts) usa para assinar/
 // derivar sessões, tokens de verificação de e-mail e reset de senha (ver `secret:
 // process.env.BETTER_AUTH_SECRET || undefined` em src/lib/auth.ts). Diferente de
@@ -356,10 +417,21 @@ if (_env.success && _env.data.NODE_ENV === 'production' && _env.data.ALLOW_DEV_A
 // verbatim sem substituir o placeholder documentado ali; (2) gerar/colar um segredo curto demais
 // para servir como chave de assinatura — 32 caracteres é o mesmo piso já usado para
 // CREDENTIALS_ENCRYPTION_KEY/PII_BLIND_INDEX_KEY (32 bytes) nesta base de código.
-const BETTER_AUTH_SECRET_PLACEHOLDER_VALUES = new Set([
+const BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS = new Set([
   'replace-with-a-long-random-secret', // valor literal de exemplo em .env.example
+  'changeme',
+  'secret',
+  'admin',
+  'password',
+  '12345678',
+  '123456',
+  'test',
+  'default',
 ]);
+
 const MIN_BETTER_AUTH_SECRET_LENGTH = 32;
+const MIN_PLATFORM_OPERATOR_TOKEN_LENGTH = 32;
+const MIN_WEBHOOK_SECRET_LENGTH = 16;
 
 if (_env.success && _env.data.NODE_ENV === 'production') {
   const secret = _env.data.BETTER_AUTH_SECRET;
@@ -367,16 +439,59 @@ if (_env.success && _env.data.NODE_ENV === 'production') {
   const isWeak =
     !isMissing &&
     (secret.length < MIN_BETTER_AUTH_SECRET_LENGTH ||
-      BETTER_AUTH_SECRET_PLACEHOLDER_VALUES.has(secret));
+      BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS.has(secret.toLowerCase()));
 
   if (isMissing || isWeak) {
     logger.error(
       isMissing
         ? '❌ BETTER_AUTH_SECRET ausente em produção — obrigatória para assinar sessões/tokens do Better Auth. Gere uma com `openssl rand -base64 32`. Abortando inicialização.'
-        : `❌ BETTER_AUTH_SECRET fraca em produção (mínimo ${MIN_BETTER_AUTH_SECRET_LENGTH} caracteres; o valor de exemplo do .env.example não é permitido). Gere uma com \`openssl rand -base64 32\`. Abortando inicialização.`,
+        : `❌ BETTER_AUTH_SECRET fraca em produção (mínimo ${MIN_BETTER_AUTH_SECRET_LENGTH} caracteres; valores de exemplo/placeholders não são permitidos). Gere uma com \`openssl rand -base64 32\`. Abortando inicialização.`,
     );
     if (process.env.NODE_ENV !== 'test') {
       process.exit(1);
+    }
+  }
+
+  // PLATFORM_OPERATOR_TOKEN: quando configurado em produção, exige alta entropia (mínimo 32 caracteres)
+  // e bloqueia valores inseguros/placeholders.
+  const operatorToken = _env.data.PLATFORM_OPERATOR_TOKEN;
+  if (operatorToken) {
+    if (
+      operatorToken.length < MIN_PLATFORM_OPERATOR_TOKEN_LENGTH ||
+      BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS.has(operatorToken.toLowerCase())
+    ) {
+      logger.error(
+        `❌ PLATFORM_OPERATOR_TOKEN fraco em produção (mínimo ${MIN_PLATFORM_OPERATOR_TOKEN_LENGTH} caracteres com alta entropia; valores triviais não são permitidos). Abortando inicialização.`,
+      );
+      if (process.env.NODE_ENV !== 'test') {
+        process.exit(1);
+      }
+    }
+  }
+
+  // Validação de segredos de webhook configurados em produção
+  const webhookSecretsToCheck: Array<{ name: string; value: string | undefined }> = [
+    { name: 'ATLASGR_WEBHOOK_SECRET', value: _env.data.ATLASGR_WEBHOOK_SECRET },
+    { name: 'BIRTH_VOICES_WEBHOOK_SECRET', value: _env.data.BIRTH_VOICES_WEBHOOK_SECRET },
+    { name: 'THREECX_WEBHOOK_SECRET', value: _env.data.THREECX_WEBHOOK_SECRET },
+    { name: 'CHATWOOT_WEBHOOK_SECRET', value: _env.data.CHATWOOT_WEBHOOK_SECRET },
+    { name: 'EMAIL_INBOUND_WEBHOOK_SECRET', value: _env.data.EMAIL_INBOUND_WEBHOOK_SECRET },
+    { name: 'SIGNATURE_INBOUND_WEBHOOK_SECRET', value: _env.data.SIGNATURE_INBOUND_WEBHOOK_SECRET },
+  ];
+
+  for (const { name, value } of webhookSecretsToCheck) {
+    if (value) {
+      if (
+        value.length < MIN_WEBHOOK_SECRET_LENGTH ||
+        BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS.has(value.toLowerCase())
+      ) {
+        logger.error(
+          `❌ ${name} fraco em produção (mínimo ${MIN_WEBHOOK_SECRET_LENGTH} caracteres; segredos legados/placeholders não são permitidos). Abortando inicialização.`,
+        );
+        if (process.env.NODE_ENV !== 'test') {
+          process.exit(1);
+        }
+      }
     }
   }
 }

@@ -270,15 +270,11 @@ model Company {
   copilotoConversations       CopilotoConversation[]
   notes                       Note[]
   attachments                 Attachment[]
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
-  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
-  // verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId              String?
-  organization                Organization?                 @relation(fields: [organizationId], references: [id])
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
+  organizationId              String
+  organization                Organization                  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   deletedAt                   DateTime?
   deletedBy                   String?
   deleteReason                String?
@@ -521,15 +517,11 @@ model Contact {
   copilotoConversations CopilotoConversation[]
   notes                 Note[]
   attachments           Attachment[]
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
-  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
-  // verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId        String?
-  organization          Organization?          @relation(fields: [organizationId], references: [id])
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
+  organizationId        String
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   decisionMakerProfiles DecisionMaker[]
 
   createdAt    DateTime  @default(now())
@@ -691,15 +683,11 @@ model Lead {
   dealClosureEvents           DealClosureEvent[]
   copilotoConversations       CopilotoConversation[]
   copilotoDealHealthSnapshots CopilotoDealHealthSnapshot[]
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje. Nenhuma linha órfã é esperada; migrar para NOT NULL + ON DELETE CASCADE
-  // (alinhado aos ~90 outros models filhos de Organization) é a correção pendente, condicionada a
-  // verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId              String?
-  organization                Organization?                @relation(fields: [organizationId], references: [id])
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
+  organizationId              String
+  organization                Organization                 @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -733,17 +721,12 @@ model Activity {
   observations String?
 
   leadId         String
-  lead           Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Prompt/AgentMemory/AILog, aqui não é o padrão intencional "legado, fail-closed"
-  // — todo write path real (repositórios/serviços + o allowlist tenantModels de
-  // src/lib/prisma.ts, que injeta/trava organizationId em create/update) já garante valor
-  // não-nulo hoje, incluindo o único caso de injeção implícita (birthVoice.webhook.ts, dentro de
-  // requestContext.run({tenantId})). Nenhuma linha órfã é esperada; migrar para NOT NULL +
-  // ON DELETE CASCADE (alinhado aos ~90 outros models filhos de Organization) é a correção
-  // pendente, condicionada a verificar ausência de linhas NULL em produção antes de aplicar.
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  lead           Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
+  // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -842,7 +825,9 @@ model AuditLog {
   entity    String
   entityId  String?
   actorId   String?
-  tenantId  String?
+  // NOT NULL (DATA-007/DATA-003): reaplicado após confirmar que o banco não tem linhas órfãs (ver
+  // migration 20260920010000_data007_organizationid_not_null_guarded).
+  tenantId  String
   ipAddress String?
   details   String?  @db.Text
   timestamp DateTime @default(now())
@@ -916,6 +901,7 @@ model Organization {
   roleplaySessions         RoleplaySession[]
   qualificationMatrixItems QualificationMatrixItem[]
   objectionMatrixItems     ObjectionMatrixItem[]
+  playbookInsights         PlaybookInsight[]
   aiPendingActions         AIPendingAction[]
   dailyPlanClosings        DailyPlanClosing[]
 
@@ -933,10 +919,10 @@ model Organization {
   threeCXConnections            ThreeCXConnection[]
   voiceHubConnections           VoiceHubConnection[]
   voiceCallLogs                 VoiceCallLog[]
-  slackConnections               SlackConnection[]
-  stripeConnections              StripeConnection[]
-  omieConnections                OmieConnection[]
-  attachments                    Attachment[]
+  slackConnections              SlackConnection[]
+  stripeConnections             StripeConnection[]
+  omieConnections               OmieConnection[]
+  attachments                   Attachment[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
   crmProducts                   CrmProduct[]
@@ -1606,12 +1592,12 @@ model CrmCommercialDocument {
   paymentReconciledAt   DateTime?
 
   @@unique([organizationId, number])
-  @@index([organizationId, type, status])
-  @@index([leadId])
   // Impede que a MESMA cobrança Stripe reconcilie duas Faturas diferentes (reuso indevido/erro de
   // digitação de paymentIntentId) — múltiplos NULLs continuam permitidos (documentos sem
   // reconciliação nunca colidem entre si), comportamento padrão de unique constraint no Postgres.
   @@unique([organizationId, stripePaymentIntentId])
+  @@index([organizationId, type, status])
+  @@index([leadId])
 }
 
 model Session {
@@ -1775,9 +1761,15 @@ model AILog {
   // Consumo precisa. Opcional porque os registros anteriores a ela não têm como ser atribuídos.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  /// Onda 44 (ACH-13-03): papel do enxame (SDR/BDR/CLOSER/CRM/OPS) que originou esta chamada de
+  /// IA, quando conhecido. Opcional/nullable pelo mesmo motivo de `organizationId`: registros
+  /// anteriores a esta coluna e chamadas de infraestrutura sem agente identificável não têm como
+  /// ser atribuídos retroativamente. Mesmo conjunto de valores de `AIPendingAction.agentRole`.
+  agentRole      String?
   createdAt      DateTime      @default(now())
 
   @@index([organizationId, createdAt])
+  @@index([organizationId, agentRole, createdAt])
 }
 
 /// AI-006 (onda 35): sinal real de vazamento de PII detectado/mascarado pelo guardrail de saída
@@ -1942,6 +1934,60 @@ model ObjectionMatrixItem {
   updatedAt         DateTime     @updatedAt
 
   @@index([organizationId, brand])
+}
+
+/// Item 42 do roadmap ("Playbook Vivo"): um padrão de abordagem comercial identificado a partir de
+/// `AIPendingAction.outcomeStatus = POSITIVE` reais (nunca inferido), agrupado por vendedor de
+/// origem + segmento, e sintetizado por IA em `livingPlaybook.service.ts`. Antes desta tabela
+/// (Onda 49) cada rodada de "Playbook Vivo" recalculava do zero, sem histórico de quais padrões já
+/// foram identificados/anunciados nem de quem viu ou adotou — ver
+/// `.agents/handoffs/onda-49/00-para-01-playbook-insight-schema-proposal.md` para a proposta
+/// original que motivou este model.
+model PlaybookInsight {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Vendedor de origem — User.id, nunca nome livre (mesmo padrão de Lead.owner). Sem owner real
+  /// resolvido no CRM, nunca se chega a gerar um insight (ver loadOutcomeGroups).
+  sellerId String
+  segment  String
+
+  patternTitle       String
+  patternDescription String @db.Text
+  suggestedScript    String @db.Text
+
+  /// Quantos AIPendingAction.outcomeStatus=POSITIVE embasavam esta sugestão no momento em que foi
+  /// gerada/atualizada — histórico, não recalculado retroativamente quando a base real muda.
+  evidenceCount Int
+  /// AIPendingAction.id das evidências reais que embasaram a sugestão — proveniência para revisão
+  /// humana, nunca uma lista fabricada.
+  sourceActionIds String[]
+
+  status      PlaybookInsightStatus @default(SUGGESTED)
+  broadcastAt DateTime?
+  /// User.id de quem decidiu anunciar pro time (nunca inferido — vem de req.user na rota
+  /// autenticada, mesmo padrão de AIPendingAction.approvedBy).
+  broadcastBy String?
+  /// Preenchido só se alguém decidir promover a sugestão para um item real e permanente da Matriz
+  /// de Objeções (fluxo já existente, POST /api/playbook/objection-matrix) — nunca automático.
+  promotedToObjectionMatrixItemId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, sellerId])
+  @@index([organizationId, status])
+}
+
+/// Estado de distribuição de um `PlaybookInsight`. `SUGGESTED` é o estado inicial de toda geração;
+/// `BROADCAST` significa que a gestão decidiu anunciar pro time (notificação in-app já disparada);
+/// `DISMISSED` fica reservado para quando alguém decide explicitamente descartar a sugestão (não
+/// usado ainda nesta onda — nenhuma rota escreve este valor hoje).
+enum PlaybookInsightStatus {
+  SUGGESTED
+  BROADCAST
+  DISMISSED
 }
 
 /// Severidade da notificação — define o ícone e a cor de status na interface.
@@ -2787,6 +2833,15 @@ model ThreeCXConnection {
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
+  /// INTEGRATION-004 (docs/audits/repository-debt-audit/agents/INTEGRATION.md): índice composto
+  /// para a busca por ramal que `resolveConnectionByExtension` (threecx.service.ts) faz dentro do
+  /// contexto de tenant de cada organização (RLS já reduz a query real a
+  /// `WHERE organizationId = $1 AND extension = $2`) — sem isto, o planner só tinha o índice de
+  /// organizationId sozinho para apoiar metade do predicado. Não elimina o scan cross-tenant em
+  /// si (isso exigiria reabrir bypass de RLS nesta tabela, decisão de segurança P0 já fechada em
+  /// 20260825120000_scope_rls_bypass_to_bootstrap_allowlist — não revertida aqui), só torna cada
+  /// uma das N queries por organização mais barata.
+  @@index([organizationId, extension])
 }
 
 /// Conexão com o Birth Voices Hub (SDR de voz por IA) por organização — antes desta tabela, a
@@ -3162,16 +3217,22 @@ model Prospect {
   lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   // Controle de Tenant
-  // Nullable + ON DELETE SET NULL (DATA-003, docs/audits/repository-debt-audit/agents/DATA.md):
-  // diferente de Company/Contact/Lead/Activity, este model não tem nenhum write path real hoje
-  // (grep não encontra nenhum prospect.create/upsert/update em src/ ou scripts/ — schema
-  // declarado, nunca escrito) e está fora do allowlist tenantModels de src/lib/prisma.ts, então
-  // não recebe injeção automática de organizationId. Inofensivo enquanto permanecer sem uso
-  // (inclusive para o @@unique([organizationId, cnpj]) abaixo, que não colide entre linhas NULL);
-  // se um write path for adicionado, inclua Prospect em tenantModels ou passe organizationId
-  // explicitamente em todo create.
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
+  // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded).
+  // Ressalva herdada do estado anterior, ainda válida: este model não tem write path de
+  // create/upsert em src/ ou scripts/ — schema declarado, nunca criado por aplicação — e está
+  // fora do allowlist tenantModels de src/lib/prisma.ts, então não recebe injeção automática de
+  // organizationId. Existe, porém, um write path real de UPDATE (não create): quando um merge de
+  // leads duplicados repontea um Prospect órfão para o lead sobrevivente
+  // (LeadDeduplicationService.ts, `prisma.prospect.updateMany({ where: { leadId: { in:
+  // duplicateIds }, organizationId }, ... })`) — já segue a regra abaixo (organizationId
+  // explícito no where). companyId/leadId (ver acima) só ganharam coluna real no Postgres em
+  // 20260915120000_fix_prospect_company_lead_columns — antes disso essa mesma chamada falhava em
+  // runtime ("column does not exist"), ver comentário da migration para o histórico do drift. Se
+  // um write path de create for adicionado, inclua Prospect em tenantModels ou passe
+  // organizationId explicitamente em todo create.
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4773,3 +4834,5 @@ model AgentBuildProposal {
   @@index([organizationId, status])
   @@index([organizationId, createdAt])
 }
+
+// --- ELITE COMMERCIAL AGENT ---

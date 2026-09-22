@@ -1,7 +1,7 @@
 - De: 09 (auditoria ACH-09-05)
 - Para: 08 (dono exclusivo de `.github/workflows/**`) e Coordenador (00) — decisão de processo
 - Onda: audit-ach
-- Status: aberto
+- Status: resolvido
 - Prioridade: baixa (P3)
 
 ## Problema

@@ -75,6 +75,7 @@ import { StripeChargeAdapter } from '../../features/integrations/stripe/infra/St
 // (no-cross-feature-imports). Registrado aqui e resolvido via
 // `container.resolve<WhatsAppSenderPort>('WhatsAppSenderPort')`, mesmo padrão de
 // `GoogleCalendarService` logo acima.
+import { callLead } from '../../features/integrations/birth-voice/birthVoice.service.js';
 import { sendWhatsAppMessage } from '../../features/integrations/whatsapp/whatsapp.service.js';
 import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
 import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
@@ -222,6 +223,7 @@ export function setupDI() {
   container.register('SignatureRequestRepositoryPort', prismaSignatureRequestRepository);
   container.register('GoogleCalendarService', { createCalendarEvent });
   container.register('WhatsAppSenderPort', { sendWhatsAppMessage });
+  container.register('VoiceCallPort', { callLead });
   // Agent Runtime Genérico (PROMPT 4) — executores reais por trás de `toolExecutors.ts`
   // (job-roles). `MeetingSynthesisService`/`SDRQualificationAgent`/`CloserAgent` não têm
   // dependência própria (mesmo padrão de instanciação already usado em supervisor.agent.ts —

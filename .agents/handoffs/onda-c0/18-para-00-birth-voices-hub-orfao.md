@@ -1,8 +1,12 @@
 - De: 18
 - Para: 00
 - Onda: c0
-- Status: aberto
+- Status: resolvido
 - Prioridade: normal
+
+## Resolução
+Resolvido: o diretório untracked órfão `BIRTH-VOICES-HUB/` foi removido. A implementação e suíte de testes oficiais e canônicos de voz e telefonia residem em `src/features/integrations/birth-voice/**`, com governança formal sob o Agente 12.
+
 
 ## Problema
 Pasta `BIRTH-VOICES-HUB/` na raiz do repositório (untracked) contém apenas `__tests__/` (16

@@ -14,7 +14,8 @@ export type AuditAction =
   | 'API_KEY_CREATED'
   | 'WORKFLOW_EXECUTED'
   | 'AGENT_EXECUTED'
-  | 'INTEGRATION_CONNECTED';
+  | 'INTEGRATION_CONNECTED'
+  | 'INTEGRATION_EVENT_DISCARDED';
 
 export interface AuditLogParams {
   action: AuditAction;
@@ -43,7 +44,7 @@ export const AuditService = {
           entity: params.entity,
           entityId: params.entityId,
           actorId: params.actorId,
-          tenantId: params.tenantId,
+          tenantId: params.tenantId || '',
           ipAddress: params.ipAddress,
           details: details,
         },
