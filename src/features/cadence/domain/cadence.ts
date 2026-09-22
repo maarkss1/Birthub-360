@@ -378,7 +378,8 @@ export function recordTouchAttempt(
   // normal do template (order + 1) — sucesso nunca é motivo para desviar de rota. Só um toque
   // ESGOTADO por falha real de canal consulta `fallbackTouchOrder`, quando declarado; sem ele,
   // o comportamento é idêntico ao anterior (linear).
-  const nextOrder = exhausted && touch.fallbackTouchOrder != null ? touch.fallbackTouchOrder : touch.order + 1;
+  const nextOrder =
+    exhausted && touch.fallbackTouchOrder != null ? touch.fallbackTouchOrder : touch.order + 1;
   const hasNext = touchesForOrder(sequence, nextOrder) !== undefined;
   return {
     ...run,
