@@ -439,7 +439,7 @@ $status | ConvertTo-Json -Depth 3
               placeholder="Ex: SDR Alpha Outbound, Insight Bot..."
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className={`w-full bg-transparent text-ink text-lg placeholder-ink-2 focus:outline-none border-b border-line focus:${accent.border} transition-colors pb-2`}
+              className={`w-full bg-transparent text-ink text-lg placeholder-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line focus:${accent.border} transition-colors pb-2`}
             />
           </div>
 
@@ -453,7 +453,7 @@ $status | ConvertTo-Json -Depth 3
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'role' ? null : 'role')}
-              className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{role}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -536,7 +536,7 @@ $status | ConvertTo-Json -Depth 3
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'model' ? null : 'model')}
-              className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{model}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />

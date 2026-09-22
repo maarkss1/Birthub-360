@@ -269,10 +269,10 @@ export function Sidebar({
                   <span className="text-gold font-black text-base italic tracking-tighter">B</span>
                 </div>
                 <div className="leading-none">
-                  <h1 className="text-sm font-bold text-midnight tracking-tight flex items-center gap-1">
+                  <h1 className="text-sm font-bold text-ink tracking-tight flex items-center gap-1">
                     Birth Hub 360°
                   </h1>
-                  <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                  <span className="text-[10px] text-ink-2 font-medium tracking-wide">
                     Intelligent Business Command Center
                   </span>
                 </div>

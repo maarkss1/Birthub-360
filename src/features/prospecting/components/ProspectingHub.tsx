@@ -3,7 +3,6 @@ import { Bookmark, Camera, Database, Landmark, Wrench } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GamificationWidget } from '../../../components/ui/GamificationWidget';
 import { BRAND } from '../../../config/brand';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { api } from '../../../lib/api';
 import { SoundFX } from '../../../lib/soundEffects';
 import {
@@ -98,7 +97,6 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function ProspectingHub() {
-  const { info: playbookMeta } = useActivePlaybook();
   const [tab, setTab] = useState<HubTab>('cnpj');
   const [isSavedSearchesOpen, setIsSavedSearchesOpen] = useState(false);
   const [activeSavedSearchId, setActiveSavedSearchId] = useState<string | null>(null);
@@ -507,7 +505,7 @@ export function ProspectingHub() {
         >
           <div className="bh-label text-brand-ink dark:text-brand">CAPTAÇÃO E QUALIFICAÇÃO</div>
           <h1 className="font-display text-h1 font-bold tracking-tight text-ink">
-            {playbookMeta.label} Prospect
+            Prospecção Comercial & Enriquecimento
           </h1>
           <p className="max-w-3xl text-sm leading-relaxed text-ink-2">
             Motor de enriquecimento autônomo com IA para capturar leads corporativos de altíssimo

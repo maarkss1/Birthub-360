@@ -476,6 +476,8 @@ export function OcrCapturePanel() {
                 <img
                   src={previewUrl}
                   alt="Imagem original"
+                  width={600}
+                  height={400}
                   className="w-full max-h-72 object-contain rounded-xl bg-black/5"
                 />
               )}
