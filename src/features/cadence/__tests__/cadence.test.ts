@@ -62,6 +62,37 @@ describe('validateSequence', () => {
     });
     expect(errors.length).toBeGreaterThan(0);
   });
+
+  it('aceita fallbackTouchOrder apontando para um toque real da sequência', () => {
+    const errors = validateSequence({
+      id: 's',
+      name: 'com fallback válido',
+      touches: [
+        { order: 1, channel: 'whatsapp', delayHoursFromPrevious: 0, fallbackTouchOrder: 3 },
+        { order: 2, channel: 'voice', delayHoursFromPrevious: 24 },
+        { order: 3, channel: 'email', delayHoursFromPrevious: 24 },
+      ],
+    });
+    expect(errors).toEqual([]);
+  });
+
+  it('rejeita fallbackTouchOrder apontando para o próprio toque', () => {
+    const errors = validateSequence({
+      id: 's',
+      name: 'com laço',
+      touches: [{ order: 1, channel: 'email', delayHoursFromPrevious: 0, fallbackTouchOrder: 1 }],
+    });
+    expect(errors.length).toBeGreaterThan(0);
+  });
+
+  it('rejeita fallbackTouchOrder para um toque inexistente', () => {
+    const errors = validateSequence({
+      id: 's',
+      name: 'com fallback quebrado',
+      touches: [{ order: 1, channel: 'email', delayHoursFromPrevious: 0, fallbackTouchOrder: 9 }],
+    });
+    expect(errors.length).toBeGreaterThan(0);
+  });
 });
 
 describe('decideCadenceAction — precedência de opt-out e resposta', () => {
@@ -458,6 +489,102 @@ describe('recordTouchAttempt — honestidade de resultado', () => {
     expect(run.status).toBe('completed');
     expect(run.stopReason).toBe('completed');
     expect(run.attempts.every((a) => a.result !== 'sent')).toBe(true);
+  });
+});
+
+describe('recordTouchAttempt — cadência multicanal adaptativa (item 26, fallbackTouchOrder)', () => {
+  const seqComFallback: CadenceSequenceDefinition = {
+    id: 'seq-fallback',
+    name: 'WhatsApp com fallback para e-mail, pulando a ligação',
+    touches: [
+      {
+        order: 1,
+        channel: 'whatsapp',
+        delayHoursFromPrevious: 0,
+        maxAttempts: 1,
+        fallbackTouchOrder: 3,
+      },
+      { order: 2, channel: 'voice', delayHoursFromPrevious: 24 },
+      { order: 3, channel: 'email', delayHoursFromPrevious: 24 },
+    ],
+  };
+
+  it('toque esgotado por falha real de canal desvia para fallbackTouchOrder, não para order + 1', () => {
+    let run = startCadenceRun({
+      id: 'r1',
+      organizationId: 'org',
+      leadId: 'lead',
+      sequenceId: 'seq-fallback',
+      startedAt: NOW,
+    });
+    run = recordTouchAttempt(run, seqComFallback, seqComFallback.touches[0], NOW, {
+      result: 'failed',
+      error: 'Número de WhatsApp inválido',
+    });
+    // maxAttempts: 1 já esgotou na primeira tentativa — desvia direto para order 3 (e-mail),
+    // pulando a ligação (order 2), que dependeria do mesmo telefone já comprovado inválido.
+    expect(run.currentTouchOrder).toBe(3);
+    expect(run.status).toBe('active');
+  });
+
+  it('toque ENVIADO com sucesso ignora fallbackTouchOrder e segue a ordem normal (order + 1)', () => {
+    let run = startCadenceRun({
+      id: 'r1',
+      organizationId: 'org',
+      leadId: 'lead',
+      sequenceId: 'seq-fallback',
+      startedAt: NOW,
+    });
+    run = recordTouchAttempt(run, seqComFallback, seqComFallback.touches[0], NOW, {
+      result: 'sent',
+    });
+    expect(run.currentTouchOrder).toBe(2); // ordem normal, não o fallback (3)
+  });
+
+  it('sem fallbackTouchOrder declarado, esgotar por falha continua indo para order + 1 (compatível com sequências antigas)', () => {
+    let run = startCadenceRun({
+      id: 'r1',
+      organizationId: 'org',
+      leadId: 'lead',
+      sequenceId: 'seq-1',
+      startedAt: NOW,
+    });
+    run = recordTouchAttempt(run, SEQUENCE, SEQUENCE.touches[0], NOW, {
+      result: 'failed',
+      error: 'SMTP indisponível',
+    });
+    expect(run.currentTouchOrder).toBe(2);
+  });
+
+  it('fallbackTouchOrder apontando além do fim da sequência conclui o run normalmente', () => {
+    const seq: CadenceSequenceDefinition = {
+      id: 'seq-fallback-fim',
+      name: 'fallback aponta pro fim',
+      touches: [
+        {
+          order: 1,
+          channel: 'whatsapp',
+          delayHoursFromPrevious: 0,
+          maxAttempts: 1,
+          fallbackTouchOrder: 2,
+        },
+        { order: 2, channel: 'email', delayHoursFromPrevious: 0, maxAttempts: 1 },
+      ],
+    };
+    let run = startCadenceRun({
+      id: 'r1',
+      organizationId: 'org',
+      leadId: 'lead',
+      sequenceId: 'seq-fallback-fim',
+      startedAt: NOW,
+    });
+    run = recordTouchAttempt(run, seq, seq.touches[0], NOW, {
+      result: 'failed',
+      error: 'Número inválido',
+    });
+    expect(run.currentTouchOrder).toBe(2);
+    run = recordTouchAttempt(run, seq, seq.touches[1], NOW, { result: 'sent' });
+    expect(run.status).toBe('completed');
   });
 });
 
