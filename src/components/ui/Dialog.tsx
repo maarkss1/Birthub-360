@@ -112,29 +112,35 @@ export function Dialog({
       ref={dialogRef}
       aria-labelledby={titleId}
       onClick={handleBackdropClick}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
       className={cn(
-        'backdrop:bg-ink/60 backdrop:backdrop-blur-md bg-surface border border-line rounded-card-lg shadow-2xl w-full p-0 outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 overflow-hidden max-h-[90vh] open:flex open:flex-col transition-colors duration-200 ease-out',
+        'backdrop:bg-black/40 open:animate-fade-in fixed m-auto rounded-2xl border border-line bg-surface-elevated/90 p-0 text-ink shadow-dialog outline-none backdrop:backdrop-blur-md sm:w-full transition-all',
         maxWidth,
       )}
     >
-      <div className="flex items-center justify-between p-4 border-b border-line shrink-0">
-        <h2 id={titleId} className="text-lg font-semibold text-ink">
-          {title}
-        </h2>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Fechar"
-          className="p-1 rounded-md text-ink-2 hover:text-ink hover:bg-surface-2 transition focus-visible:ring-2 focus-visible:ring-brand outline-none"
-        >
-          <X size={20} />
-        </button>
+      <div className="flex max-h-[85vh] flex-col backdrop-blur-xl rounded-2xl">
+        {/* Header */}
+        <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-4">
+          {typeof title === 'string' ? (
+            <h2 id={titleId} className="font-display text-lg font-bold tracking-tight">
+              {title}
+            </h2>
+          ) : (
+            title
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full p-1.5 text-ink-2 transition-all duration-200 hover:bg-surface-interactive hover:text-ink hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            aria-label="Fechar modal"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <div className="p-4 overflow-y-auto overscroll-contain">{children}</div>
+        {footer && (
+          <div className="p-4 border-t border-line shrink-0 flex justify-end gap-3">{footer}</div>
+        )}
       </div>
-      <div className="p-4 overflow-y-auto overscroll-contain">{children}</div>
-      {footer && (
-        <div className="p-4 border-t border-line shrink-0 flex justify-end gap-3">{footer}</div>
-      )}
     </dialog>
   );
 }
