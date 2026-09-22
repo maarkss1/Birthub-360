@@ -18,7 +18,7 @@ a connection string.
 | -------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | `DATABASE_URL`       | Session Pooler do Supabase                        | Ver `producao.md` seção 1.1. Não é mais preenchida automaticamente — o Render não provisiona mais o Postgres. |
 | `DIRECT_URL`         | Direct connection do Supabase                     | Opcional — só se `prisma migrate deploy` falhar via pooler.                                                   |
-| `BETTER_AUTH_URL`    | URL pública do serviço Render (ou domínio custom) | Exemplo: `https://prospector-atlas.onrender.com` ou `https://app.atlasgr.com.br`.                             |
+| `BETTER_AUTH_URL`    | URL pública do serviço Render (ou domínio custom) | Exemplo: `https://prospector-atlas.onrender.com` ou `https://app.birthhub360.com.br`.                             |
 | `PUBLIC_BASE_URL`    | URL pública do serviço Render                     | Use o mesmo host público para callbacks/webhooks.                                                             |
 | `ALLOWED_ORIGINS`    | Domínios permitidos                               | Separe múltiplas origens por vírgula.                                                                         |
 | `BETTER_AUTH_SECRET` | Gerado pelo Render                                | O blueprint usa `generateValue: true`.                                                                        |

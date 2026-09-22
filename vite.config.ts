@@ -13,8 +13,8 @@ export default defineConfig(() => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icons/*.png'],
         manifest: {
-          name: 'AtlasGR — Central de Inteligência Comercial',
-          short_name: 'AtlasGR',
+          name: 'Birth Hub 360 — Central de Inteligência Comercial',
+          short_name: 'Birth Hub 360',
           description: 'CRM com IA para equipes comerciais de alta performance',
           theme_color: '#F97316',
           background_color: '#111827',

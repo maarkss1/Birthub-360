@@ -1,4 +1,4 @@
-title = "gitleaks config — Prospector AtlasGR"
+title = "gitleaks config — Prospector Birth Hub 360"
 
 # Mantém todas as regras padrão do gitleaks (mesmo comportamento de detecção que o repositório já
 # tinha antes deste arquivo existir, ver .github/workflows/ci.yml, job "secret-scan") e só
@@ -25,8 +25,8 @@ useDefault = true
 # d42daabe5c94b979e0507e0f574ec551d753bf06 — o "Secret" reportado é literalmente o texto
 # "manualKnownUrl".
 # Falso-positivo conhecido #3: os 31 arquivos `__next._tree.txt` do export estático do Next.js em
-# public/tools/treinamento-atlasgr/**/ são metadado de build gerado automaticamente (route tree
-# RSC — buildId, chunk hashes, slugs de rota como "01-bem-vindo-atlasgr"), não código-fonte nem
+# public/tools/treinamento-birthhub360/**/ são metadado de build gerado automaticamente (route tree
+# RSC — buildId, chunk hashes, slugs de rota como "01-bem-vindo-birthhub360"), não código-fonte nem
 # segredo. A regra genérica `generic-api-key` do gitleaks casa com o trecho
 # `"param":{"type":"d","key":"<slug>",...}` por entropia (baixa, ~3.5-4.0 — bem abaixo do limiar
 # típico de credencial real) e derrubava o gate "secret scan" (job obrigatório do CI) em toda
@@ -58,7 +58,7 @@ useDefault = true
 [allowlist]
 description = "Fixtures sintéticas de teste e falsos-positivos confirmados (não são segredos reais)"
 paths = [
-  '''public/tools/treinamento-atlasgr/.*/__next\._tree\.txt$''',
+  '''public/tools/treinamento-birthhub360/.*/__next\._tree\.txt$''',
   '''(^|/)phase-12-manifest\.json$''',
   '''tests/unit/features/integrations/stripe/.*\.test\.ts$''',
   '''tests/unit/features/integrations/omie/.*\.test\.ts$''',

@@ -202,13 +202,13 @@ describe('Automações', () => {
     await user.click(screen.getByRole('button', { name: 'Criar' }));
     expect(createCalledWith).toBeUndefined(); // bloqueado: sem destinatário ainda
 
-    await user.type(screen.getByLabelText('Enviar para (e-mail)'), 'gestor@atlasgr.com.br');
+    await user.type(screen.getByLabelText('Enviar para (e-mail)'), 'gestor@birthhub360.com.br');
     await user.click(screen.getByRole('button', { name: 'Criar' }));
 
     await waitFor(() => expect(createCalledWith).toBeTruthy());
     const enviado = createCalledWith as { actionConfig: { channel: string; to: string } };
     expect(enviado.actionConfig.channel).toBe('email');
-    expect(enviado.actionConfig.to).toBe('gestor@atlasgr.com.br');
+    expect(enviado.actionConfig.to).toBe('gestor@birthhub360.com.br');
   });
 
   it('esconde o botão de varredura de estagnação para GESTOR — a rota é ADMIN-only no backend', async () => {

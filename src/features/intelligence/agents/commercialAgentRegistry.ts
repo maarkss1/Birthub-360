@@ -5,8 +5,8 @@ import type {
 } from './commercialAgentTypes.js';
 
 /**
- * Catálogo dos 12 agentes do pacote ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0
- * (`C:\Users\Marks\Desktop\ATLASGR_COMMERCIAL_AGENT_CELL_v1.1.0`), instalado nesta onda.
+ * Catálogo dos 12 agentes do pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0
+ * (`C:\Users\Marks\Desktop\BIRTHHUB360_COMMERCIAL_AGENT_CELL_v1.1.0`), instalado nesta onda.
  *
  * DIFERENÇA DELIBERADA em relação a `registry/agents.compact.json` do pacote original: aquele
  * arquivo foi montado sem leitura do código real deste repositório (ver `REPO_REALITY_CHECK.md`

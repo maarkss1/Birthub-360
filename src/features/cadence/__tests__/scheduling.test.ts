@@ -76,7 +76,7 @@ describe('scheduleMeetingIfConfirmed', () => {
   const context = {
     leadTitle: 'Transportadora Exemplo',
     leadEmail: 'lead@empresa.com',
-    ownerEmail: 'sdr@atlasgr.com.br',
+    ownerEmail: 'sdr@birthhub360.com.br',
     ownerUserId: 'user-1',
   };
 

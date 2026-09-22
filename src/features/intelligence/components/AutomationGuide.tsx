@@ -411,7 +411,7 @@ if __name__ == "__main__":
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'trigger' ? null : 'trigger')}
-              className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{selectedTriggerObj.title}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -466,7 +466,7 @@ if __name__ == "__main__":
             <button
               type="button"
               onClick={() => setActiveDropdown(activeDropdown === 'action' ? null : 'action')}
-              className={`w-full bg-transparent text-ink text-lg focus:outline-none border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
+              className={`w-full bg-transparent text-ink text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line pb-2 flex items-center justify-between text-left ${accent.hoverBorder} transition-colors`}
             >
               <span className="truncate">{selectedActionObj.title}</span>{' '}
               <ChevronDown size={16} className="text-ink-2 shrink-0" />
@@ -620,7 +620,7 @@ if __name__ == "__main__":
             placeholder="Ex: Enriquecer lead e criar oportunidade no CRM"
             value={automationGoal}
             onChange={(e) => setAutomationGoal(e.target.value)}
-            className={`w-full bg-transparent text-ink text-sm placeholder-ink-2 focus:outline-none border-b border-line focus:${accent.border} transition-colors pb-2`}
+            className={`w-full bg-transparent text-ink text-sm placeholder-ink-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-sm border-b border-line focus:${accent.border} transition-colors pb-2`}
           />
         </div>
 

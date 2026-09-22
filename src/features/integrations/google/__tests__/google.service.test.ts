@@ -42,7 +42,7 @@ vi.mock('@/lib/logger', () => ({
 const CONFIGURED_ENV = {
   GOOGLE_CLIENT_ID: 'client-id',
   GOOGLE_CLIENT_SECRET: 'client-secret',
-  PUBLIC_BASE_URL: 'https://app.atlasgr.com.br',
+  PUBLIC_BASE_URL: 'https://app.birthhub360.com.br',
   BETTER_AUTH_SECRET: 'segredo-de-teste',
 };
 
@@ -55,7 +55,7 @@ beforeEach(() => {
 
 describe('getGoogleAuthUrl / verifyState', () => {
   it('lança GoogleNotConfiguredError sem GOOGLE_CLIENT_ID/SECRET', async () => {
-    mockedEnv = { PUBLIC_BASE_URL: 'https://app.atlasgr.com.br', BETTER_AUTH_SECRET: 'x' };
+    mockedEnv = { PUBLIC_BASE_URL: 'https://app.birthhub360.com.br', BETTER_AUTH_SECRET: 'x' };
     const { getGoogleAuthUrl, GoogleNotConfiguredError } = await import('../google.service.js');
 
     expect(() => getGoogleAuthUrl(ORG)).toThrow(GoogleNotConfiguredError);
@@ -119,14 +119,14 @@ describe('processGoogleCallback', () => {
     const fetchMock = vi
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(
-        new Response(JSON.stringify({ email: 'comercial@atlasgr.com.br' }), { status: 200 }),
+        new Response(JSON.stringify({ email: 'comercial@birthhub360.com.br' }), { status: 200 }),
       );
     const { prisma } = await import('@/lib/prisma');
     const { processGoogleCallback } = await import('../google.service.js');
 
     const result = await processGoogleCallback(ORG, 'auth-code');
 
-    expect(result).toEqual({ email: 'comercial@atlasgr.com.br' });
+    expect(result).toEqual({ email: 'comercial@birthhub360.com.br' });
     expect(prisma.googleWorkspaceConnection.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { organizationId: ORG },
@@ -159,14 +159,14 @@ describe('getGoogleStatus', () => {
   it('devolve connected=true com o e-mail e hasCalendarWriteScope=true quando o escopo inclui calendar.events', async () => {
     const { prisma } = await import('@/lib/prisma');
     vi.mocked(prisma.googleWorkspaceConnection.findUnique).mockResolvedValue({
-      email: 'comercial@atlasgr.com.br',
+      email: 'comercial@birthhub360.com.br',
       scope: 'https://www.googleapis.com/auth/calendar.events',
     } as never);
     const { getGoogleStatus } = await import('../google.service.js');
 
     expect(await getGoogleStatus(ORG)).toEqual({
       connected: true,
-      email: 'comercial@atlasgr.com.br',
+      email: 'comercial@birthhub360.com.br',
       hasCalendarWriteScope: true,
     });
   });
@@ -174,14 +174,14 @@ describe('getGoogleStatus', () => {
   it('devolve hasCalendarWriteScope=false quando a conexão só tem o escopo antigo (calendar.readonly)', async () => {
     const { prisma } = await import('@/lib/prisma');
     vi.mocked(prisma.googleWorkspaceConnection.findUnique).mockResolvedValue({
-      email: 'comercial@atlasgr.com.br',
+      email: 'comercial@birthhub360.com.br',
       scope: 'https://www.googleapis.com/auth/calendar.readonly',
     } as never);
     const { getGoogleStatus } = await import('../google.service.js');
 
     expect(await getGoogleStatus(ORG)).toEqual({
       connected: true,
-      email: 'comercial@atlasgr.com.br',
+      email: 'comercial@birthhub360.com.br',
       hasCalendarWriteScope: false,
     });
   });
@@ -215,7 +215,7 @@ describe('getUpcomingCalendarEvents', () => {
               start: { dateTime: '2026-08-03T10:00:00Z' },
               hangoutLink: 'https://meet.google.com/abc-defg-hij',
               attendees: [
-                { email: 'comercial@atlasgr.com.br', self: true },
+                { email: 'comercial@birthhub360.com.br', self: true },
                 { email: 'cliente@empresa.com.br' },
               ],
             },

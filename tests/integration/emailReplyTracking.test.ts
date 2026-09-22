@@ -157,7 +157,7 @@ describe('CYC-003 — webhook de e-mail de entrada (stub de transporte) contra P
       organizationId: ORG,
       providerMessageId: `<msg-${RUN_ID}-1@lead.com>`,
       fromEmail: 'lead-reply@empresa.com',
-      toEmail: 'vendas@atlasgr.com.br',
+      toEmail: 'vendas@birthhub360.com.br',
       subject: 'Re: Proposta',
       body: 'Fechado, pode enviar o contrato.',
       receivedAt: new Date().toISOString(),

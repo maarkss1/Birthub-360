@@ -44,7 +44,7 @@ const service = {
 const session = (organizationId: string, role: Role = 'ADMIN') => ({
   user: {
     id: `user-${organizationId}`,
-    email: `${organizationId}@atlasgr.test`,
+    email: `${organizationId}@birthhub360.test`,
     organizationId,
     role,
   },

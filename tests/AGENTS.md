@@ -93,7 +93,7 @@ conflito (ex.: só 1 ou 2 dos três containers de pé), pare os containers parci
   numa comparação pixel-a-pixel. Handoff aberto:
   `.agents/handoffs/onda-6/14-para-08-baselines-visuais-linux.md`.
 - `tests/container/postgres.test.ts` — `describe.skip` a menos que `RUN_INFRA_TESTS=1` esteja
-  setado (usa `testcontainers`, sobe sua própria imagem `atlasgr/postgres-intelligence:16` — mais
+  setado (usa `testcontainers`, sobe sua própria imagem `birthhub360/postgres-intelligence:16` — mais
   pesado que o resto do gate, por isso opt-in). Passa 1/1 com a variável setada.
 
 ### 7. Flake conhecido de `test:e2e` neste tipo de ambiente

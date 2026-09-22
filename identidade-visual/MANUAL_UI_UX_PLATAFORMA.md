@@ -1,26 +1,26 @@
-> **Documento histórico** — descreve o sistema de duas marcas (AtlasGR & TotalTrac), substituído
+> **Documento histórico** — descreve o sistema de duas marcas (Birth Hub 360), substituído
 > pela marca única Birth Hub 360º em 09/2026. Paleta, logos e combinações de cor aqui (incluindo
 > `#FF5618` e texto branco sobre cor de marca) **não são mais válidos**. Fonte de verdade atual:
 > `identidade-visual/birthhub360/` e `src/styles/globals.css`.
 
 # NEXUS OS — Manual Definitivo de Identidade Visual & UI/UX Futurista
 
-## Central de Inteligência Comercial (AtlasGR & TotalTrac)
+## Central de Inteligência Comercial (Birth Hub 360)
 
-Este manual é a especificação técnica e visual definitiva para a plataforma multi-tenant, fundindo o DNA de **Segurança & Gestão de Risco da AtlasGR** com a **Telemetria de Precisão da TotalTrac** sob uma camada cibernética de alta performance.
+Este manual é a especificação técnica e visual definitiva para a plataforma multi-tenant, fundindo o DNA de **Segurança & Gestão de Risco da Birth Hub 360** com a **Telemetria de Precisão da Birth Hub 360** sob uma camada cibernética de alta performance.
 
 ---
 
 ### 1. Pilares Estratégicos & DNA das Marcas
 
-#### AtlasGR
+#### Birth Hub 360
 
 - **Missão:** Gerenciar os riscos nos processos logísticos com ampla gama de serviços e alta segurança.
 - **Propósito:** Conectar pessoas e tecnologia gerando valores com segurança e inovação.
 - **Valores:** Perseverança, Transparência, Simplicidade, Atitude de Dono e Inovação.
 - **Conceitos Visuais:** Formas geométricas com ângulos de 60º, robustez, calor industrial e dinamismo.
 
-#### TotalTrac
+#### Birth Hub 360
 
 - **Missão:** Atender às necessidades na gestão de frotas com recursos tecnológicos avançados.
 - **Slogan:** Conectar para cuidar.
@@ -32,8 +32,8 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
 ### 2. Logos, Grids de Construção & Área de Proteção
 
 1. **Construção Geométrica:**
-   - **AtlasGR:** Construção baseada em paralelogramos inclinados simetricamente a 60 graus, com kerning e tracking ótico balanceados.
-   - **TotalTrac:** Fusão do pin de geolocalização com 3 arcos concêntricos de sinal wi-fi/satélite.
+   - **Birth Hub 360:** Construção baseada em paralelogramos inclinados simetricamente a 60 graus, com kerning e tracking ótico balanceados.
+   - **Birth Hub 360:** Fusão do pin de geolocalização com 3 arcos concêntricos de sinal wi-fi/satélite.
 2. **Área de Proteção ($X$):**
    - O perímetro livre obrigatório ao redor do logo equivale à altura total do símbolo ($X$). Nenhum texto, botão ou elemento gráfico pode invadir este espaço.
 3. **Limites de Redução Digital:**
@@ -48,23 +48,23 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
 
 | Marca         | Papel                      | HEX       | RGB           | CMYK           | Pantone       |
 | :------------ | :------------------------- | :-------- | :------------ | :------------- | :------------ |
-| **AtlasGR**   | Primária (Laranja Atlas)   | `#FF5618` | 255, 86, 24   | 0, 84, 100, 0  | 172 C         |
-| **AtlasGR**   | Secundária (Laranja Apoio) | `#FF6B10` | 255, 107, 16  | 0, 75, 100, 0  | 2018 C        |
-| **AtlasGR**   | Secundária (Laranja Médio) | `#FF8008` | 255, 128, 8   | 0, 6, 100, 0   | 151 C         |
-| **AtlasGR**   | Secundária (Amarelo)       | `#FFC500` | 255, 197, 0   | 0, 26, 100, 0  | 109 C         |
-| **AtlasGR**   | Neutra (Grafite Dark)      | `#333333` | 51, 51, 51    | 73, 67, 65, 80 | 447 C         |
-| **TotalTrac** | Primária (Azul Médio)      | `#008FCE` | 0, 143, 206   | 80, 30, 0, 0   | Medium Blue C |
-| **TotalTrac** | Secundária (Azul Primário) | `#374898` | 55, 72, 152   | 90, 75, 0, 0   | 2747 C        |
-| **TotalTrac** | Secundária (Azul Navy)     | `#2D3B78` | 45, 59, 120   | 95, 85, 20, 5  | 2372 C        |
-| **TotalTrac** | Secundária (Azul Claro)    | `#93DBF2` | 147, 219, 242 | 45, 0, 5, 0    | 2975 C        |
-| **TotalTrac** | Neutra (Azul Noturno)      | `#1E2F37` | 30, 47, 55    | 85, 65, 55, 60 | 433 C         |
+| **Birth Hub 360**   | Primária (Laranja Atlas)   | `#FF5618` | 255, 86, 24   | 0, 84, 100, 0  | 172 C         |
+| **Birth Hub 360**   | Secundária (Laranja Apoio) | `#FF6B10` | 255, 107, 16  | 0, 75, 100, 0  | 2018 C        |
+| **Birth Hub 360**   | Secundária (Laranja Médio) | `#FF8008` | 255, 128, 8   | 0, 6, 100, 0   | 151 C         |
+| **Birth Hub 360**   | Secundária (Amarelo)       | `#FFC500` | 255, 197, 0   | 0, 26, 100, 0  | 109 C         |
+| **Birth Hub 360**   | Neutra (Grafite Dark)      | `#333333` | 51, 51, 51    | 73, 67, 65, 80 | 447 C         |
+| **Birth Hub 360** | Primária (Azul Médio)      | `#008FCE` | 0, 143, 206   | 80, 30, 0, 0   | Medium Blue C |
+| **Birth Hub 360** | Secundária (Azul Primário) | `#374898` | 55, 72, 152   | 90, 75, 0, 0   | 2747 C        |
+| **Birth Hub 360** | Secundária (Azul Navy)     | `#2D3B78` | 45, 59, 120   | 95, 85, 20, 5  | 2372 C        |
+| **Birth Hub 360** | Secundária (Azul Claro)    | `#93DBF2` | 147, 219, 242 | 45, 0, 5, 0    | 2975 C        |
+| **Birth Hub 360** | Neutra (Azul Noturno)      | `#1E2F37` | 30, 47, 55    | 85, 65, 55, 60 | 433 C         |
 
 ---
 
 ### 4. Tipografia & Hierarquia de Textos
 
-- **Contexto AtlasGR:** Família **Mont** (Heavy/Bold para títulos) e **Montserrat** (Regular/Medium para corpo e labels).
-- **Contexto TotalTrac:** Família **Fivo Sans** (Heavy/Medium) e **Inter** como fallback web.
+- **Contexto Birth Hub 360:** Família **Mont** (Heavy/Bold para títulos) e **Montserrat** (Regular/Medium para corpo e labels).
+- **Contexto Birth Hub 360:** Família **Fivo Sans** (Heavy/Medium) e **Inter** como fallback web.
 - **Escala Modular:**
   - _Display (Hero):_ 48px – 64px / Bold 900 / Tracking -0.04em
   - _H1 (Títulos de Página):_ 32px / Bold 800 / Tracking -0.03em
@@ -78,7 +78,7 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
 ### 5. Iconografia & Linguagem Visual
 
 - **Stroke:** Espessura padrão de **2px** constante.
-- **Geometria:** Cantos levemente arredondados ou chanfrados em 60º na AtlasGR; anéis concêntricos e arcos circulares na TotalTrac.
+- **Geometria:** Cantos levemente arredondados ou chanfrados em 60º na Birth Hub 360; anéis concêntricos e arcos circulares na Birth Hub 360.
 - **Efeitos de Estado:** Glow neon ativo (`drop-shadow: 0 0 10px var(--neon-glow)`) nos ícones de navegação e indicadores de alerta.
 - **Tamanhos Padronizados:**
   - `16x16px`: Badges e tabelas compactas.
@@ -89,16 +89,16 @@ Este manual é a especificação técnica e visual definitiva para a plataforma 
 
 ### 6. Tratamento de Fotografia & Imagens
 
-- **AtlasGR (Warm Industrial):** Duotones quentes utilizando sobreposição de Laranja (#FF5618) com pretos profundos (#141110) e gradiente linear em 60º.
-- **TotalTrac (Tech Satellite):** Duotones frios em Cyan/Azul (#008FCE para #070D18) com efeito sutil de scanline e visual satelital.
+- **Birth Hub 360 (Warm Industrial):** Duotones quentes utilizando sobreposição de Laranja (#FF5618) com pretos profundos (#141110) e gradiente linear em 60º.
+- **Birth Hub 360 (Tech Satellite):** Duotones frios em Cyan/Azul (#008FCE para #070D18) com efeito sutil de scanline e visual satelital.
 - **Máscaras:** Cortes chanfrados em cantos superiores ou diagonais de 60 graus.
 
 ---
 
 ### 7. Grafismos, Texturas & Padronagens
 
-- **AtlasGR:** Padrão de linhas diagonais em 60º (`repeating-linear-gradient(60deg, ...)`), remetendo a faixas de pista rodoviária e vetores de velocidade.
-- **TotalTrac:** Padrão de ondas de radar concêntricas (`radial-gradient`), remetendo à cobertura de telemetria e pulsos de satélite.
+- **Birth Hub 360:** Padrão de linhas diagonais em 60º (`repeating-linear-gradient(60deg, ...)`), remetendo a faixas de pista rodoviária e vetores de velocidade.
+- **Birth Hub 360:** Padrão de ondas de radar concêntricas (`radial-gradient`), remetendo à cobertura de telemetria e pulsos de satélite.
 
 ---
 

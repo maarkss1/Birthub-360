@@ -497,10 +497,10 @@ export default function App() {
                         ainda exigem login (ProtectedRoute) e a concessão real do módulo
                         (RequireModuleAccess, que nunca confia em e-mail nem em papel: a
                         autorização real vem de ModuleAccessGrant no banco).
-                        Atualização (09/2026): existiam mais 3 rotas aqui (`/treinamento-atlasgr`,
+                        Atualização (09/2026): existiam mais 3 rotas aqui (`/treinamento-birthhub360`,
                         `/proposta-comercial`, `/hub-inteligencia-marketing`) — aposentadas junto
                         com seus módulos no catálogo (ver module-catalog.ts) por serem conteúdo
-                        proprietário da Atlas GR, pedido explícito do usuário ("Atlas GR não é
+                        proprietário da Birth Hub 360, pedido explícito do usuário ("Birth Hub 360 não é
                         ninguém, não é nem mais pra existir"). `social-selling` continua, rerotulado
                         para a marca Birth Hub 360. */}
                       <Route

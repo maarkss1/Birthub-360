@@ -108,7 +108,7 @@ describe('automationVersioningService.buildTimeline', () => {
       'org-1',
       automationId,
       priorState,
-      { userId: 'user-1', email: 'gestor@atlasgr.com.br' },
+      { userId: 'user-1', email: 'gestor@birthhub360.com.br' },
       'update',
     );
 
@@ -117,7 +117,7 @@ describe('automationVersioningService.buildTimeline', () => {
 
     expect(timeline.history).toHaveLength(1);
     const [entry] = timeline.history;
-    expect(entry.editedByEmail).toBe('gestor@atlasgr.com.br');
+    expect(entry.editedByEmail).toBe('gestor@birthhub360.com.br');
     expect(entry.editedByUserId).toBe('user-1');
     expect(entry.changeReason).toBe('update');
     expect(entry.snapshot.name).toBe('Nome antigo');
@@ -134,7 +134,7 @@ describe('automationVersioningService.buildTimeline', () => {
       'org-1',
       automationId,
       makeAutomation({ id: automationId, name: 'v1' }),
-      { userId: 'user-1', email: 'a@atlasgr.com.br' },
+      { userId: 'user-1', email: 'a@birthhub360.com.br' },
       'update',
     );
     // v2 -> v3/atual (edição 2, mais recente)
@@ -142,7 +142,7 @@ describe('automationVersioningService.buildTimeline', () => {
       'org-1',
       automationId,
       makeAutomation({ id: automationId, name: 'v2' }),
-      { userId: 'user-2', email: 'b@atlasgr.com.br' },
+      { userId: 'user-2', email: 'b@birthhub360.com.br' },
       'update',
     );
 
@@ -162,7 +162,7 @@ describe('automationVersioningService.buildTimeline', () => {
       'org-1',
       automationId,
       makeAutomation({ id: automationId }),
-      { userId: 'user-1', email: 'a@atlasgr.com.br' },
+      { userId: 'user-1', email: 'a@birthhub360.com.br' },
       'delete',
     );
 
@@ -182,7 +182,7 @@ describe('automationVersioningService.buildTimeline', () => {
       'org-A',
       automationId,
       makeAutomation({ id: automationId, name: 'Nome org A' }),
-      { userId: 'user-1', email: 'a@atlasgr.com.br' },
+      { userId: 'user-1', email: 'a@birthhub360.com.br' },
       'update',
     );
 

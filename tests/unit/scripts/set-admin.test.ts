@@ -39,7 +39,7 @@ describe('setAdmin', () => {
     prismaMock.user.findUnique.mockResolvedValue(null);
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    const result = await setAdmin(['naoexiste@atlasgr.com.br']);
+    const result = await setAdmin(['naoexiste@birthhub360.com.br']);
 
     expect(result.usersUpdated).toBe(0);
     expect(prismaMock.user.update).not.toHaveBeenCalled();
@@ -54,7 +54,7 @@ describe('setAdmin', () => {
     process.env.SET_ADMIN_ACTOR = 'gestor-comercial';
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    const result = await setAdmin(['closer@atlasgr.com.br']);
+    const result = await setAdmin(['closer@birthhub360.com.br']);
 
     expect(result.usersUpdated).toBe(1);
     expect(prismaMock.user.update).toHaveBeenCalledWith({

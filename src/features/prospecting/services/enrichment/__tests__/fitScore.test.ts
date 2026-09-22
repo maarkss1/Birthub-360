@@ -123,7 +123,7 @@ describe('computeFitScore', () => {
   });
 
   // ACH-05-07 dava até 40 pontos (frota, região de risco, categoria de carga, stack de ERP/TMS)
-  // só quando o playbook ativo da organização era o de risco de carga/logística ('atlasgr'). A
+  // só quando o playbook ativo da organização era o de risco de carga/logística ('birthhub360'). A
   // unificação de playbook comercial em 'geral' (decisão do usuário, ver CLAUDE.md seção 1)
   // removeu a única forma de saber se uma organização era desse vertical — manter esses critérios
   // numa avaliação universal contrariaria o próprio motivo do ACH-05-07 ("CRM multi-tenant não

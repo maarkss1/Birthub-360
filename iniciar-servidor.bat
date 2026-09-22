@@ -4,7 +4,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ============================================
-echo   AtlasGR - Prospector
+echo   Birth Hub 360 - Prospector
 echo   Iniciando servidor local na rede
 echo ============================================
 echo.

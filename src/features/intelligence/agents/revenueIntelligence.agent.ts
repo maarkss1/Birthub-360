@@ -8,7 +8,7 @@ import {
 
 /**
  * Agente Revenue Intelligence — Forecast & Pipeline (Célula Comercial, pacote
- * ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0, id `revenue-intelligence`).
+ * BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0, id `revenue-intelligence`).
  *
  * Import direto de `src/features/commercial-intelligence/**` foi tentado nesta onda e REJEITADO
  * pelo gate de arquitetura real (`npm run test:architecture` → dependency-cruiser,

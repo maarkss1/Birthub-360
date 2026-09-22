@@ -85,7 +85,7 @@ function useLiveClock() {
 const WEEKDAYS_SHORT = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 // HubBurstCanvas desenha em <canvas>, que não entende var(--brand) — precisa do RGB já resolvido
-// da marca ativa (BrandContext) para o burst de partículas não ficar laranja fixo com Total Trac.
+// da marca ativa (BrandContext) para o burst de partículas não ficar laranja fixo com Birth Hub 360.
 function hexToRgbString(hex: string): string {
   const clean = hex.replace('#', '');
   const value = Number.parseInt(clean, 16);

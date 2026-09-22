@@ -62,10 +62,10 @@ export async function mountFrontend(app: Express): Promise<void> {
 
     // Ferramentas estáticas legadas (public/tools/** — hoje só social-selling; propostas
     // comerciais, portal comercial e treinamento foram aposentados em 09/2026, conteúdo
-    // proprietário da Atlas GR) dependem de <script> inline e onclick="" espalhados pelos
+    // proprietário da Birth Hub 360) dependem de <script> inline e onclick="" espalhados pelos
     // arquivos HTML pré-existentes. A CSP estrita do Helmet (`script-src 'self'`, sem
     // unsafe-inline — ver security.ts) bloqueia TODO esse JS em produção: nenhum botão desses
-    // HTMLs funciona (ex.: os botões de abrir ferramenta em Motor de Social Selling Atlas GR.html),
+    // HTMLs funciona (ex.: os botões de abrir ferramenta em Motor de Social Selling Birth Hub 360.html),
     // sem nenhum erro visível ao usuário, só um "Refused to execute inline script" no console do
     // navegador.
     // Reescrever o JS inline de dezenas de arquivos legados para scripts externos é um retrabalho
@@ -91,8 +91,8 @@ export async function mountFrontend(app: Express): Promise<void> {
     app.use(express.static(distPath));
 
     // Nota (09/2026): existia aqui um mount de `/_next` (produção) para o export estático Next.js
-    // de `dist/tools/treinamento-atlasgr/` — módulo executivo aposentado — conteúdo proprietário
-    // da Atlas GR, pedido explícito do usuário. Removido junto com o diretório estático.
+    // de `dist/tools/treinamento-birthhub360/` — módulo executivo aposentado — conteúdo proprietário
+    // da Birth Hub 360, pedido explícito do usuário. Removido junto com o diretório estático.
 
     // Express 5 (path-to-regexp v8) não aceita mais o wildcard nu `'*'` — o processo morria no
     // boot com `PathError: Missing parameter name at index 1: *` (Render, deploys de 03/09/2026,

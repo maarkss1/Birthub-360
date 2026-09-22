@@ -11,13 +11,13 @@ Assets oficiais e regras de aplicação da marca da plataforma.
 Abra `birthhub360/preview.html` no navegador para conferir logo, paleta e tipografia antes de
 supor qualquer valor.
 
-Os packs `atlasgr/` e `totaltrac/` foram removidos em 09/2026, quando a plataforma passou a ter
+Os packs `birthhub360/` e `birthhub360/` foram removidos em 09/2026, quando a plataforma passou a ter
 marca única — continuam recuperáveis pelo histórico do git.
 
 ## Outros arquivos aqui
 
 - `MANUAL_UI_UX_PLATAFORMA.md` / `.html` — manual de UI/UX do antigo sistema de duas marcas
-  (AtlasGR & TotalTrac), substituído pela marca única Birth Hub 360º em 09/2026. Documento
+  (Birth Hub 360), substituído pela marca única Birth Hub 360º em 09/2026. Documento
   histórico — mantido como referência, não como especificação vigente (paleta, logos e
   combinações de cor ali não valem mais). Ambos os arquivos têm o aviso no topo.
 - `prototipo-hub-portal-atlas.html` — protótipo histórico da órbita do Hub, origem do

@@ -73,7 +73,7 @@ auditoria) em `src/`.
    `bg-success-active`/`bg-warning-active` (preenchimentos decorativos de barra/sparkline, medidos a
    70% de opacidade: 3.36–3.56:1 no claro, acima do mínimo 3:1 pra elemento gráfico não-textual).
 2. **`hover:bg-[#E04B12]`** (7 ocorrências, 6 arquivos de ferramentas de prospecção) — hover de
-   botão `bg-brand-active` hardcoded em laranja fixo, **vazando a cor da AtlasGR pra Total Trac**
+   botão `bg-brand-active` hardcoded em laranja fixo, **vazando a cor da Birth Hub 360 pra Birth Hub 360**
    (mesmo padrão de bug que a Constituição proíbe na seção 7.7). Trocado para `hover:brightness-110`
    — já é o padrão usado nos botões irmãos dos mesmos arquivos (`bg-brand-active
    hover:brightness-110`, ex. `LinkedInTool.tsx:318`), então a correção reaproveita convenção já
@@ -174,7 +174,7 @@ fora porque exigem uma decisão de token nova, ou porque não bateram na busca p
   por marca) ou tokens de marca já existentes (`bg-brand-active`, `text-atlas-orange`,
   `hover:brightness-110` sobre `bg-brand-active`) — nenhuma mudança introduz dependência de marca
   nova; o único caso que tocou marca (`hover:bg-[#E04B12]` → `hover:brightness-110`) foi justamente
-  para **remover** um vazamento de laranja fixo que quebrava a Total Trac.
+  para **remover** um vazamento de laranja fixo que quebrava a Birth Hub 360.
 
 ## Resumo numérico
 

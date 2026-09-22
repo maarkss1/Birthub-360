@@ -6,11 +6,11 @@ import {
 
 describe('access policy', () => {
   it('autoriza qualquer e-mail com formato válido, de qualquer empresa (sem allowlist de domínio)', () => {
-    expect(isAuthorizedLoginEmail(' MARCELO.NASCIMENTO@ATLASGR.COM.BR ')).toBe(true);
-    expect(isAuthorizedLoginEmail('novo.usuario@atlasgr.com.br')).toBe(true);
-    expect(isAuthorizedLoginEmail('operador@totaltrac.com.br')).toBe(true);
+    expect(isAuthorizedLoginEmail(' MARCELO.NASCIMENTO@BIRTHHUB360.COM.BR ')).toBe(true);
+    expect(isAuthorizedLoginEmail('novo.usuario@birthhub360.com.br')).toBe(true);
+    expect(isAuthorizedLoginEmail('operador@birthhub360.com.br')).toBe(true);
     // O ICP da plataforma é "qualquer empresa com área comercial" (ver
-    // docs/BrandConstitution.md) — domínios fora de atlasgr/totaltrac precisam
+    // docs/BrandConstitution.md) — domínios fora de Birth Hub 360 precisam
     // passar, não só os dois domínios legados.
     expect(isAuthorizedLoginEmail('contato@empresaexterna.com')).toBe(true);
     expect(isAuthorizedLoginEmail('usuario@gmail.com')).toBe(true);
@@ -25,6 +25,6 @@ describe('access policy', () => {
   });
 
   it('normalizes whitespace and letter casing', () => {
-    expect(normalizeLoginEmail(' Joao.Reis@AtlasGR.com.br ')).toBe('joao.reis@atlasgr.com.br');
+    expect(normalizeLoginEmail(' Joao.Reis@Birthhub360.com.br ')).toBe('joao.reis@birthhub360.com.br');
   });
 });

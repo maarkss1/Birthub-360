@@ -138,7 +138,7 @@ export function applySecurityMiddleware(app: Express): void {
         // BACKEND-001/SEC-002: `origin.startsWith('chrome-extension://')` tinha o MESMO defeito —
         // liberava CORS com credentials:true para QUALQUER extensão instalada no Chrome de
         // QUALQUER usuário, não só a extensão própria deste produto (chrome-extension/, "Copiloto
-        // Comercial IA — Atlas GR"). Como o id de uma extensão Manifest V3 é só um hash derivado
+        // Comercial IA — Birth Hub 360"). Como o id de uma extensão Manifest V3 é só um hash derivado
         // da chave pública dela, qualquer extensão de terceiros — maliciosa ou não — também tem
         // origem `chrome-extension://<id>` e passava por este `startsWith`, podendo fazer
         // requisições autenticadas usando o cookie de sessão do Better Auth do usuário. A extensão

@@ -80,7 +80,7 @@ describe('Lead Score Calculator (BANT / SPIN)', () => {
   });
 
   // ACH-05-07 fazia fuelCostPain/theftRiskPain bonificarem +5 no needScore só quando o playbook
-  // ativo era o de risco de carga/logística ('atlasgr'). A unificação de playbook comercial em
+  // ativo era o de risco de carga/logística ('birthhub360'). A unificação de playbook comercial em
   // 'geral' (decisão do usuário, ver CLAUDE.md seção 1) removeu a única forma de saber se um lead
   // era desse vertical — manter o bônus pra qualquer organização contrariaria o próprio motivo do
   // ACH-05-07 ("CRM multi-tenant não pode amarrar o produto a um vertical"), então o bônus foi

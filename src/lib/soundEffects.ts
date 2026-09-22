@@ -1,6 +1,6 @@
 export type UiSound = 'navigate' | 'focus' | 'confirm' | 'success' | 'warning' | 'error';
 
-const STORAGE_KEY = 'atlasgr:ui-sound-enabled';
+const STORAGE_KEY = 'birthhub360:ui-sound-enabled';
 
 class SoundEngine {
   private ctx: AudioContext | null = null;

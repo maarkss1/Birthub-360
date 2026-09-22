@@ -122,17 +122,21 @@ describe('POST /api/prospecting/tools/github', () => {
   it('busca organizações e repassa o resultado', async () => {
     searchGithubOrganizationsMock.mockResolvedValue({
       organizations: [
-        { login: 'atlasgr', htmlUrl: 'https://github.com/atlasgr', avatarUrl: 'https://x/a.png' },
+        {
+          login: 'birthhub360',
+          htmlUrl: 'https://github.com/birthhub360',
+          avatarUrl: 'https://x/a.png',
+        },
       ],
     });
     const app = buildApp();
 
     const res = await request(app)
       .post('/api/prospecting/tools/github')
-      .send({ query: 'atlasgr', limit: 5 });
+      .send({ query: 'birthhub360', limit: 5 });
 
     expect(res.status).toBe(200);
-    expect(searchGithubOrganizationsMock).toHaveBeenCalledWith('atlasgr', 5);
+    expect(searchGithubOrganizationsMock).toHaveBeenCalledWith('birthhub360', 5);
     expect(res.body.data.organizations).toHaveLength(1);
   });
 });
@@ -152,13 +156,13 @@ describe('POST /api/prospecting/tools/github/profile', () => {
   it('devolve o perfil encontrado', async () => {
     getGithubOrganizationProfileMock.mockResolvedValue({
       profile: {
-        login: 'atlasgr',
+        login: 'birthhub360',
         name: 'Birth Hub 360',
         description: null,
         blog: null,
         location: null,
         publicRepos: 3,
-        htmlUrl: 'https://github.com/atlasgr',
+        htmlUrl: 'https://github.com/birthhub360',
         avatarUrl: 'https://x/a.png',
       },
     });
@@ -166,11 +170,11 @@ describe('POST /api/prospecting/tools/github/profile', () => {
 
     const res = await request(app)
       .post('/api/prospecting/tools/github/profile')
-      .send({ login: 'atlasgr' });
+      .send({ login: 'birthhub360' });
 
     expect(res.status).toBe(200);
-    expect(getGithubOrganizationProfileMock).toHaveBeenCalledWith('atlasgr');
-    expect(res.body.data.profile.login).toBe('atlasgr');
+    expect(getGithubOrganizationProfileMock).toHaveBeenCalledWith('birthhub360');
+    expect(res.body.data.profile.login).toBe('birthhub360');
   });
 });
 

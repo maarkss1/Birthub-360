@@ -4,7 +4,7 @@
 
 Este documento estabelece o plano operacional de resposta a incidentes de segurança, falhas de integridade ou violação de dados para o ambiente canônico Local-First da **Birth Hub 360°**.
 
-Canal de reporte operacional: **`security@birthhub360.com`** ou mantenedor principal (`marceloatlasgr@gmail.com`).
+Canal de reporte operacional: **`security@birthhub360.com`** ou mantenedor principal (`marcelinmark@gmail.com`).
 
 ---
 

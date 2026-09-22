@@ -578,12 +578,12 @@ model Lead {
   // em mudança de status — um lead fechado em março podia contar como "ganho em agosto" só porque
   // outra coisa tocou nele depois. Volta a null se o lead for reaberto pra uma etapa não-final.
   closedAt        DateTime?
-  // PIC (Perfil de Cliente Ideal) do Playbook de Pré-Vendas Atlas — setado manualmente pelo SDR/AM
+  // PIC (Perfil de Cliente Ideal) do Playbook de Pré-Vendas — setado manualmente pelo SDR/AM
   // após identificar o gatilho real na conversa (não é inferido automaticamente): "PIC1_Expansao"
   // (transportadora em expansão operacional), "PIC2_Risco" (sob pressão de risco/sinistro), ou
   // "PIC3_Transicao" (transição de liderança/reestruturação).
   pic             String?
-  // Checklist de qualificação do SDR (Playbook Comercial AtlasGR, seção 4.2) — contexto
+  // Checklist de qualificação do SDR (Playbook Comercial, seção 4.2) — contexto
   // operacional, estrutura atual, dor mapeada, interesse/autoridade e próximo passo. Estruturado
   // como JSON (ver LeadQualification no frontend) em vez de ~20 colunas separadas.
   qualification   Json?
@@ -1843,7 +1843,7 @@ model Report {
 /// Histórico de conversa do Chatbook (aba "Assistente IA") — antes vivia só em useState no
 /// frontend e sumia ao recarregar; sem persistência, cada pergunta também era respondida sem
 /// nenhuma memória do que já tinha sido dito na mesma conversa. Escopado por usuário (é uma
-/// conversa pessoal, não um documento de equipe como Report) e por marca (AtlasGR/Total Trac têm
+/// conversa pessoal, não um documento de equipe como Report) e por marca (playbooks comerciais tinham
 /// contexto comercial distinto).
 model AssistantMessage {
   id             String       @id @default(cuid())
@@ -1863,14 +1863,14 @@ model AssistantMessage {
 /// parecer técnico gerado por IA ao final da chamada. Antes vivia só em useState no
 /// RoleplayHub.tsx e era perdida ao recarregar a página (débito documentado no Piloto 008 de
 /// .claude/PILOTS.md). Escopada por usuário (é um treinamento pessoal, mesmo raciocínio de
-/// AssistantMessage acima) e por marca (AtlasGR/Total Trac têm personas e playbook distintos).
+/// AssistantMessage acima) e por marca (playbooks comerciais têm personas e playbook distintos).
 model RoleplaySession {
   id              String       @id @default(cuid())
   organizationId  String
   organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   userId          String
   user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  brand           String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
+  brand           String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com valores legados foram migradas (20260922000000_backfill_legacy_brand_playbook_values)
   personaId       String
   personaLabel    String
   difficulty      String // 'facil' | 'medio' | 'dificil'
@@ -1905,7 +1905,7 @@ model QualificationMatrixItem {
   id               String       @id @default(cuid())
   organizationId   String
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand            String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com 'atlasgr'/'totaltrac' continuam legíveis (compatibilidade, sem migração de dado)
+  brand            String // playbook comercial (src/config/playbooks.ts) — hoje só 'geral' é gravável; linhas antigas com valores legados foram migradas (20260922000000_backfill_legacy_brand_playbook_values)
   segment          String
   persona          String
   framework        String // 'SPIN' | 'BANT' | 'MEDDPICC' | 'SNAP' | 'CHALLENGER'
@@ -2204,7 +2204,7 @@ model ConversationSignal {
 }
 
 // ─── Copiloto Comercial IA (fundação — Onda 1) ─────────────────────────────
-// Fundação de dados do pacote `atlasgr_copiloto_ai_pack` (agents/AGENT_03_MODELO_EVENTOS.md,
+// Fundação de dados do pacote `copiloto_ai_pack` (agents/AGENT_03_MODELO_EVENTOS.md,
 // docs/MODELO_DE_DADOS.md): captura e estrutura sinais de conversas comerciais com fonte de
 // mídia/transcrição real (Google Meet, ligação) e consentimento auditável — não confundir com
 // `ConversationSignal` acima, que lê janelas de `WhatsAppMessage`/e-mail já persistidas e não tem
@@ -2428,7 +2428,7 @@ model CopilotoCrmFieldSuggestion {
 // Bitrix de cada organização tem seus próprios códigos UF_CRM_* de campo customizado — assumir um
 // código fixo aqui gravaria no campo errado silenciosamente). Configurado por ADMIN/GESTOR depois
 // de consultar o portal real do cliente (ver AGENTS.md deste módulo e docs/BITRIX_FIELD_MAPPING.md
-// do pacote atlasgr_copiloto_ai_pack).
+// do pacote copiloto_ai_pack).
 model CopilotoBitrixFieldMapping {
   id String @id @default(cuid())
 
@@ -2573,8 +2573,8 @@ model GoogleWorkspaceConnection {
 /// a URL do webhook não era persistida em lugar nenhum: cada exportação exigia colar a URL de
 /// novo no corpo da requisição, e não havia nenhuma tela para configurá-la. Um registro por
 /// organização, igual ao padrão do GoogleWorkspaceConnection acima.
-/// Uma organização Atlas pode falar com MAIS DE UM portal Bitrix24 ao mesmo tempo (ex.: AtlasGR e
-/// TotalTrac são marcas/empresas distintas, cada uma com seu próprio Bitrix) — por isso não é mais
+/// Uma organização pode falar com MAIS DE UM portal Bitrix24 ao mesmo tempo (ex.: matriz e filial,
+/// ou duas unidades de negócio distintas, cada uma com seu próprio Bitrix) — por isso não é mais
 /// 1:1 com Organization (era @unique antes; várias linhas por organizationId agora são o normal).
 /// Cada conexão é independente: sua própria importação seletiva, seus próprios pipelines/etapas,
 /// suas próprias regras de sincronização automática (ver BitrixSyncRule.connectionId).
@@ -2583,7 +2583,7 @@ model BitrixConnection {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  /// Nome de exibição pra distinguir as conexões na tela (ex.: "AtlasGR", "TotalTrac") — livre,
+  /// Nome de exibição pra distinguir as conexões na tela (ex.: "Matriz", "Filial SP") — livre,
   /// não precisa bater com o domínio real do portal.
   label String @default("Bitrix24")
 
@@ -2600,7 +2600,7 @@ model BitrixConnection {
   lastImportedAt DateTime?
 
   /// Segredo do webhook de SAÍDA do Bitrix ("исходящий вебхук") que este portal chama de volta —
-  /// gerado pelo Atlas, colado pela pessoa no cadastro do webhook de saída no admin do Bitrix.
+  /// gerado pela plataforma, colado pela pessoa no cadastro do webhook de saída no admin do Bitrix.
   /// Comparado contra `auth.application_token` de cada evento recebido (ver bitrix.webhook.ts)
   /// antes de aceitar qualquer payload — sem isto, a rota seria um endpoint público aceitando
   /// qualquer POST. Cifrado em repouso do mesmo jeito que webhookUrl (ver ENCRYPTED_FIELDS em
@@ -2622,7 +2622,7 @@ model BitrixConnection {
   @@index([organizationId])
 }
 
-/// Regra de sincronização automática Bitrix → Atlas (ver bitrixSync.worker.ts). Diferente da
+/// Regra de sincronização automática Bitrix → plataforma (ver bitrixSync.worker.ts). Diferente da
 /// importação manual (listBitrixLeads/listBitrixDeals, sempre por escolha explícita na tela),
 /// isto é opt-in por regra: só existe automação para o que o usuário definiu aqui, escopado por
 /// pipeline/etapa/vendedor — nunca "importar tudo que aparecer", que encheria o CRM de lixo (o
@@ -2634,7 +2634,7 @@ model BitrixSyncRule {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   /// Qual conexão/portal Bitrix esta regra observa — uma organização pode ter mais de uma
-  /// conexão (ex.: AtlasGR e TotalTrac), então a regra precisa dizer qual delas, não só o tenant.
+  /// conexão (ex.: matriz e filial), então a regra precisa dizer qual delas, não só o tenant.
   connectionId String
   connection   BitrixConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
 
@@ -2678,7 +2678,7 @@ model BitrixSyncLog {
   connectionId   String?
   connection     BitrixConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
 
-  /// 'inbound' (Bitrix → Atlas: import manual, regra automática, webhook) ou 'outbound' (Atlas → Bitrix).
+  /// 'inbound' (Bitrix → plataforma: import manual, regra automática, webhook) ou 'outbound' (plataforma → Bitrix).
   direction      String
   /// 'lead' ou 'deal' — qual objeto Bitrix esta operação tocou.
   entityType     String
@@ -2802,7 +2802,7 @@ model BitrixExtractionRun {
 /// (`memory3CXStore`), perdido a cada restart/redeploy do processo e inconsistente entre
 /// instâncias quando há mais de um processo do servidor rodando (ver handoff
 /// .agents/handoffs/onda-1/06-para-01-persistencia-3cx.md). Mesmo padrão de BitrixConnection: uma
-/// organização pode ter mais de um PABX 3CX (ex.: AtlasGR e TotalTrac com telefonia separada), por
+/// organização pode ter mais de um PABX 3CX (ex.: matriz e filial com telefonia separada), por
 /// isso não é @unique por organizationId.
 model ThreeCXConnection {
   id             String       @id @default(cuid())
@@ -2885,7 +2885,7 @@ model VoiceHubConnection {
   webhookSecret String? @db.Text
 
   /// VOICE-001 (auditoria multiagente, 09/2026): o script da IA de voz era hardcoded para a
-  /// identidade/produtos de uma única organização (Atlas GR) — qualquer outra organização que
+  /// identidade/produtos de uma única organização (Birth Hub 360) — qualquer outra organização que
   /// configurasse uma conexão própria recebia a IA se apresentando com o nome/produtos de outro
   /// tenant. Estes 4 campos passam a alimentar `voiceScript.ts::buildVoicePromptForLead`; nulos
   /// (organização ainda não configurou o script próprio na tela de Integrações) caem num roteiro
@@ -3192,7 +3192,7 @@ model AiEngineSetting {
 }
 
 // ==========================================
-// AtlasGR Prospect - Motor de Prospecção
+// Birth Hub 360 Prospect - Motor de Prospecção
 // ==========================================
 
 model Prospect {
@@ -3880,7 +3880,7 @@ model ProspectingSearchExecution {
 // de produto (papéis profissionais que a Central reconhece), não um dado de tenant — mesmo
 // tratamento já usado em `FeatureFlag` (catálogo global) vs. `OrganizationFeatureFlag` (override
 // por tenant) acima neste arquivo. Nenhum dado sensível de organização é exposto por um catálogo
-// de cargos compartilhado, então não há risco de vazamento entre AtlasGR/Total Trac ao mantê-lo
+// de cargos compartilhado, então não há risco de vazamento entre playbooks comerciais ao mantê-lo
 // global — e a solução fica mais simples do que replicar 12 linhas por organização. Extensão
 // futura (cargo customizado por organização) pode ser adicionada depois com uma tabela de
 // override espelhando o par FeatureFlag/OrganizationFeatureFlag, sem exigir migração retroativa

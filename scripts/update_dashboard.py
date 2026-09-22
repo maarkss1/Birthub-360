@@ -1,7 +1,7 @@
 import re
 import os
 
-filepath = r"c:\GitHub\PROSPECTOR-ATLASGR\src\features\dashboard\components\SinglePageDashboard.tsx"
+filepath = r"c:\GitHub\PROSPECTOR-BIRTH HUB 360\src\features\dashboard\components\SinglePageDashboard.tsx"
 with open(filepath, 'r', encoding='utf-8') as f:
     content = f.read()
 
@@ -32,12 +32,12 @@ content = re.sub(
 
 # 2. Fix gradients (remove purple and cross-brand colors)
 content = content.replace(
-    'from-atlas-orange/20 via-purple-500/20 to-totaltrack-blue/20',
-    "${activeBrand === 'atlasgr' ? 'from-atlas-orange/20 to-orange-400/20' : 'from-totaltrack-blue/20 to-sky-400/20'}"
+    'from-atlas-orange/20 via-purple-500/20 to-birthhub360-blue/20',
+    "${activeBrand === 'birthhub360' ? 'from-atlas-orange/20 to-orange-400/20' : 'from-birthhub360-blue/20 to-sky-400/20'}"
 )
 content = content.replace(
-    'from-atlas-orange via-purple-500 to-totaltrack-blue',
-    "${activeBrand === 'atlasgr' ? 'from-atlas-orange to-orange-400' : 'from-totaltrack-blue to-sky-400'}"
+    'from-atlas-orange via-purple-500 to-birthhub360-blue',
+    "${activeBrand === 'birthhub360' ? 'from-atlas-orange to-orange-400' : 'from-birthhub360-blue to-sky-400'}"
 )
 
 # 3. Rename ToolCards and Add Tooltips
@@ -47,7 +47,7 @@ apple_card_def = """// Componente Reutilizável de Card de Ferramenta
 function AppleToolCard({ title, desc, icon, badge, onClick, highlight, visible, brand }: { title: string; desc: string; icon: React.ReactNode; badge: string; onClick: () => void; highlight?: boolean; visible: boolean; brand: string }) {
   if (!visible) return null;
 
-  const isAtlas = brand === 'atlasgr';
+  const isAtlas = brand === 'birthhub360';
 
   const gradientBgClass = isAtlas
     ? 'bg-white text-slate-900 shadow-[0_15px_40px_rgba(255,86,24,0.12)] hover:shadow-[0_25px_60px_rgba(255,86,24,0.35)] border-[#FF5618]/15'
@@ -72,9 +72,9 @@ function AppleToolCard({ title, desc, icon, badge, onClick, highlight, visible, 
   return (
     <div className="relative group">
       {/* Tooltip Dinâmico */}
-      <div className={`absolute -top-12 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50 shadow-xl whitespace-nowrap ${isAtlas ? 'bg-atlas-orange' : 'bg-totaltrack-blue'}`}>
+      <div className={`absolute -top-12 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50 shadow-xl whitespace-nowrap ${isAtlas ? 'bg-atlas-orange' : 'bg-birthhub360-blue'}`}>
         🚀 Experimente: {title.split(':')[0]}!
-        <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 ${isAtlas ? 'bg-atlas-orange' : 'bg-totaltrack-blue'}`} />
+        <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 ${isAtlas ? 'bg-atlas-orange' : 'bg-birthhub360-blue'}`} />
       </div>
 
       <motion.div
@@ -85,7 +85,7 @@ function AppleToolCard({ title, desc, icon, badge, onClick, highlight, visible, 
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
-        className={`p-6 md:p-8 rounded-[2rem] transition-all duration-500 cursor-pointer flex flex-col justify-between h-full min-h-[280px] group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-900 ${isAtlas ? 'focus-visible:ring-atlas-orange/30' : 'focus-visible:ring-totaltrack-blue/30'} ${gradientBgClass} ${borderClass}`}
+        className={`p-6 md:p-8 rounded-[2rem] transition-all duration-500 cursor-pointer flex flex-col justify-between h-full min-h-[280px] group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-900 ${isAtlas ? 'focus-visible:ring-atlas-orange/30' : 'focus-visible:ring-birthhub360-blue/30'} ${gradientBgClass} ${borderClass}`}
       >
         <div className="flex items-center justify-between mb-4">
           <div className={`p-3 rounded-2xl shadow-sm shrink-0 [&_svg]:w-7 [&_svg]:h-7 ${iconBgClass}`}>
@@ -120,36 +120,36 @@ content = re.sub(
 # 4. Update the AppleToolCard titles and desc to be creative and ambitious
 replacements = {
     '"Atlas Radar: Prospecção de Transportadoras"': '"Nexus Prospector: Radar de Transportadoras"',
-    '"TotalTrac Radar: Localização de Frotas"': '"Omni Radar: Varredura de Frotas em Massa"',
+    '"Birth Hub 360 Radar: Localização de Frotas"': '"Omni Radar: Varredura de Frotas em Massa"',
     '"Atlas CRM: Funil de Vendas Profile & GR"': '"Pipeline Quantum: Máquina de Vendas Profile"',
-    '"TotalTrac CRM: Funil de Rastreamento & M2M"': '"Kanban Supremo: Domínio de Rastreamento"',
+    '"Birth Hub 360 CRM: Funil de Rastreamento & M2M"': '"Kanban Supremo: Domínio de Rastreamento"',
     '"Atlas Playbook: Abordagem Profile & GR"': '"Matriz Estratégica: Playbook Sniper"',
-    '"TotalTrac Playbook: Abordagem de Frota"': '"Doutrina Tática: Engenharia de Fechamento"',
+    '"Birth Hub 360 Playbook: Abordagem de Frota"': '"Doutrina Tática: Engenharia de Fechamento"',
     '"Atlas Tech Stack: Software Logístico & Rastreamento"': '"Raio-X Corporativo: Mapeamento de Ecossistemas"',
-    '"TotalTrac Tech Stack: Dispositivos & Concorrência"': '"Arsenal Competitivo: Varredura de Mercado"',
+    '"Birth Hub 360 Tech Stack: Dispositivos & Concorrência"': '"Arsenal Competitivo: Varredura de Mercado"',
     '"Atlas Decisores: Diretoria de Gerenciamento de Risco"': '"Cúpula Executiva: Conexão C-Level"',
-    '"TotalTrac Decisores: Gestão de Frota"': '"Conselho de Titãs: Diretório de Alta Gestão"',
+    '"Birth Hub 360 Decisores: Gestão de Frota"': '"Conselho de Titãs: Diretório de Alta Gestão"',
     '"Atlas Torre de Controle: Agenda & Homologações"': '"Comando Central: Orquestração de Negócios"',
-    '"TotalTrac Agenda: Testes & Instalações"': '"Sincronia Mestra: Execução Tática"',
+    '"Birth Hub 360 Agenda: Testes & Instalações"': '"Sincronia Mestra: Execução Tática"',
     '"Atlas Safety: Simulador de Objeções de Risco"': '"Arena Cognitiva: Mestre das Objeções"',
-    '"TotalTrac Simulador: Objeções de Frota"': '"Dojo de Vendas: Quebra-Gelo Invencível"',
+    '"Birth Hub 360 Simulador: Objeções de Frota"': '"Dojo de Vendas: Quebra-Gelo Invencível"',
     '"Atlas Studio: Copilotos de Gerenciamento de Risco"': '"Forja de Inteligência: Criação de Copilotos"',
-    '"TotalTrac Studio: Copilotos de Gestão de Frota"': '"Laboratório IA: Engenharia de Prompts"',
+    '"Birth Hub 360 Studio: Copilotos de Gestão de Frota"': '"Laboratório IA: Engenharia de Prompts"',
     '"Atlas Academia: Formação em Profile & GR"': '"Universo do Conhecimento: Academia Master"',
-    '"TotalTrac Academia: Formação em Telemetria"': '"Trilha da Sabedoria: Imersão em Telemetria"',
+    '"Birth Hub 360 Academia: Formação em Telemetria"': '"Trilha da Sabedoria: Imersão em Telemetria"',
     '"Atlas + Bitrix24: Contratos de Gerenciamento de Risco"': '"Sinergia Bitrix24: Automação Total"',
-    '"TotalTrac + Bitrix24: Chips & Aparelhos"': '"Sincronização Cósmica: Bitrix24 Integrado"',
+    '"Birth Hub 360 + Bitrix24: Chips & Aparelhos"': '"Sincronização Cósmica: Bitrix24 Integrado"',
     '"Atlas Copilotos: Agentes Autônomos de GR & Profile"': '"Legião Autônoma: Exército de Agentes IA"',
-    '"TotalTrac Copilotos: Agentes de Telemetria"': '"Nexus Sintético: Operadores Virtuais"',
+    '"Birth Hub 360 Copilotos: Agentes de Telemetria"': '"Nexus Sintético: Operadores Virtuais"',
     '"Central de Scripts: Integrações de Software Logístico"': '"Manuscritos Digitais: Códigos de Integração"',
     '"Atlas Automação: Fluxos de Ocorrência & GR"': '"Orquestrador Neural: Fluxos de Automação"',
-    '"TotalTrac Automação: Fluxos de Frota & M2M"': '"Motor Lógico: Processos Hiper-Automatizados"',
+    '"Birth Hub 360 Automação: Fluxos de Frota & M2M"': '"Motor Lógico: Processos Hiper-Automatizados"',
     '"Atlas Outreach: Ligações & E-mails de GR"': '"Impacto Outreach: Engenharia de Abordagem"',
-    '"TotalTrac Outreach: Ligações & E-mails de Frota"': '"Máquina de Conexão: Outbound de Precisão"',
+    '"Birth Hub 360 Outreach: Ligações & E-mails de Frota"': '"Máquina de Conexão: Outbound de Precisão"',
     '"Atlas Simulador Cognitivo: Comprador de Risco"': '"Cérebro Biônico: Previsão de Comportamento"',
-    '"TotalTrac Simulador Cognitivo: Comprador de Frota"': '"Matriz Psicológica: Leitura de Mentes B2B"',
+    '"Birth Hub 360 Simulador Cognitivo: Comprador de Frota"': '"Matriz Psicológica: Leitura de Mentes B2B"',
     '"Memória Atlas: Base de Conhecimento (RAG)"': '"Cofre Neural (RAG): Memória Institucional"',
-    '"Memória TotalTrac: Base de Conhecimento (RAG)"': '"Córtex Vetorial: Repositório de Sabedoria"',
+    '"Memória Birth Hub 360: Base de Conhecimento (RAG)"': '"Córtex Vetorial: Repositório de Sabedoria"',
     '"Central de Motores de IA: Groq + Llama"': '"Coração do Sistema: Central de Motores Groq"',
     '"Relatórios: Geração & Interpretação por IA"': '"Olho de Agamotto: Visão Executiva IA"'
 }

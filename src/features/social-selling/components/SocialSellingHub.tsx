@@ -17,10 +17,10 @@ export function SocialSellingHub() {
   // iframe"). Foram reescritos e renomeados para a marca Birth Hub 360 — nome do arquivo, título,
   // logomarca (SVG próprio da Antique Gold/Deep Iris/Orbit Blue, ver identidade-visual/birthhub360/),
   // copy de campanha e o roteiro de diagnóstico de perfil LinkedIn (antes escrito para o vertical de
-  // logística/gestão de risco da Atlas GR) generalizados pro ICP real do produto ("qualquer empresa
+  // logística/gestão de risco da Birth Hub 360) generalizados pro ICP real do produto ("qualquer empresa
   // com área comercial"). O "Kit Campanha LinkedIn" tinha 4 screenshots (imagens PNG em base64, numa
   // das simulações internas) com UI de "gerenciador de campanhas" mostrando texto vertical-specific
-  // da Atlas GR direto nos pixels — raster, não editável por substituição de texto. Pedido explícito
+  // da Birth Hub 360 direto nos pixels — raster, não editável por substituição de texto. Pedido explícito
   // do usuário: removidas (não redesenhadas) — ver o card de origem sem o preenchimento de imagem
   // nesse HTML, ajustado pra não sobrar buraco visual, sem inventar substituto novo.
   const subTabs = [
@@ -43,7 +43,7 @@ export function SocialSellingHub() {
   ] as const;
 
   // Copy regeneralizada (09/2026, pedido explícito do usuário) — os 5 posts abaixo eram escritos
-  // especificamente para o vertical de gestão de risco/seguro de transporte de carga da Atlas GR
+  // especificamente para o vertical de gestão de risco/seguro de transporte de carga da Birth Hub 360
   // (sinistro, transportadora, score de motoristas). O ICP declarado do produto hoje é "qualquer
   // empresa com área comercial" (src/config/brand.ts) — a estrutura de 5 semanas (maturidade
   // operacional → tecnologia → performance → prevenção → processo escalável) foi preservada, só o
