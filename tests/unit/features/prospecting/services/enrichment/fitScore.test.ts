@@ -99,7 +99,7 @@ describe('computeFitScore — sinais de fit com o ICP (aderência de CNAE, playb
   });
 
   // ACH-05-07 bonificava frota/região de risco só quando o playbook ativo era o de logística
-  // ('atlasgr'). A unificação de playbook comercial em 'geral' (decisão do usuário, ver CLAUDE.md
+  // ('birthhub360'). A unificação de playbook comercial em 'geral' (decisão do usuário, ver CLAUDE.md
   // seção 1) removeu a única forma de saber se uma organização era desse vertical — manter o
   // bônus pra qualquer organização contrariaria o próprio motivo do ACH-05-07 ("CRM multi-tenant
   // não pode amarrar o produto a um vertical"), então foi removido (não redirecionado pra "vale

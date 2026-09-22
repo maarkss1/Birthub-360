@@ -25,8 +25,7 @@ Nenhum dos três está presente:
    cliente cancelou". Não há como montar um dataset positivo/negativo real hoje.
 2. **Volume de exemplo provavelmente insuficiente mesmo só para "ganho".** Não há seed/fixture de
    produção neste repo para confirmar por query direta, mas a evidência circunstancial aponta pra
-   N muito baixo: até 09/2026 o produto rodou com exatamente dois clientes nomeados (AtlasGR,
-   TotalTrac) antes do ICP se ampliar (ver `.claude/CLAUDE.md`, seção 1) — provavelmente dígito
+   N muito baixo: até 09/2026 o produto rodou com exatamente dois clientes nomeados (Birth Hub 360) antes do ICP se ampliar (ver `.claude/CLAUDE.md`, seção 1) — provavelmente dígito
    único a dezena baixa de negócios "Negócios Ganhos" reais, e efetivamente zero churns
    rotulados.
 3. **Nenhuma infraestrutura de ML existe no repo.** Sem `requirements.txt`, sem notebook, sem

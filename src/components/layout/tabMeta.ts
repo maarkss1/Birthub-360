@@ -49,7 +49,7 @@ import {
  * componente órfão (`PromptStudio.tsx`) sem rota. Ver
  * `.agents/handoffs/onda-8/09-para-02-navigationbus-rotas-ausentes.md`.
  *
- * `social-selling`, `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing`
+ * `social-selling`, `treinamento-birthhub360`, `proposta-comercial` e `hub-inteligencia-marketing`
  * existiram aqui como TabType/rotas `/app/:tab` até este piloto de acesso — foram REMOVIDOS
  * porque essas telas não vivem mais dentro do CRM (pedido explícito do usuário: "não quero que
  * apareça no CRM, só nos círculos" do Hub Executivo standalone). Suas rotas reais agora são
@@ -57,8 +57,8 @@ import {
  * `RequireModuleAccess` em vez de `RequireUserAllowed` — ver ModuleAccessGrant em
  * prisma/schema.prisma e src/features/module-access/.
  *
- * Atualização (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
- * existir"): de `treinamento-atlasgr`, `proposta-comercial` e `hub-inteligencia-marketing` acima,
+ * Atualização (09/2026, pedido explícito do usuário: "Birth Hub 360 não é ninguém, não é nem mais pra
+ * existir"): de `treinamento-birthhub360`, `proposta-comercial` e `hub-inteligencia-marketing` acima,
  * só resta a menção histórica neste comentário — os módulos em si (catálogo, rotas top-level,
  * componentes, conteúdo estático) foram removidos por completo, não só do CRM. `social-selling`
  * continua existindo como rota top-level (ver App.tsx), rerotulado para a marca Birth Hub 360.

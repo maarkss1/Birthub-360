@@ -1,7 +1,7 @@
 import re
 import os
 
-filepath = r"c:\GitHub\PROSPECTOR-ATLASGR\src\features\prospecting\components\ProspectingHub.tsx"
+filepath = r"c:\GitHub\PROSPECTOR-BIRTH HUB 360\src\features\prospecting\components\ProspectingHub.tsx"
 with open(filepath, 'r', encoding='utf-8') as f:
     content = f.read()
 

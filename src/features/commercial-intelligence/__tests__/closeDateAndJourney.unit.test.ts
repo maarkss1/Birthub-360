@@ -489,7 +489,7 @@ describe('Jornada (journey)', () => {
     expect(report.handoffs.trackingSince).toBeNull();
     expect(report.handoffs.countInPeriod).toBe(0);
     expect(report.reentries.trackingSince).toBeNull();
-    expect(report.reentries.totalTracked).toBe(0);
+    expect(report.reentries.birthhub360ed).toBe(0);
     expect(report.transitions.totalTransitions).toBe(0);
     expect(report.noInteraction.count).toBe(1);
     expect(report.noInteraction.neverInteractedCount).toBe(1);
@@ -590,7 +590,7 @@ describe('Jornada (journey)', () => {
     ];
     const useCases = new CommercialIntelligenceUseCases(new FakeRepository(deals, history));
     const report = await useCases.journey(ORG, { month: PERIOD }, NOW);
-    expect(report.reentries.totalTracked).toBe(2);
+    expect(report.reentries.birthhub360ed).toBe(2);
     expect(report.reentries.countInPeriod).toBe(1);
     expect(report.reentries.recoveredCount).toBe(1);
     expect(report.reentries.recoveredAmount).toBe(15_000);

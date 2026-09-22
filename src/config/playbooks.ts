@@ -4,7 +4,7 @@
  * roleplay e histórico do copiloto.
  *
  * Até 09/2026 este eixo tinha duas chaves fixas, nomeadas por empresas
- * específicas (`atlasgr`, `totaltrac`) — fazia sentido quando a plataforma
+ * específicas (`birthhub360`) — fazia sentido quando a plataforma
  * servia só essas duas operações. Com o ICP virando "qualquer empresa com área
  * comercial que queira automatizar ponta a ponta" (ver docs/BrandConstitution.md
  * e src/config/brand.ts), amarrar o playbook a nomes de empresa deixou de fazer
@@ -18,7 +18,7 @@
  * (`PlaybookObjectionItem.brand`, `PlaybookQualificationItem.brand`,
  * `AssistantMessage.brand`, `RoleplaySession.brand`, além do parâmetro `brand`
  * em `src/features/intelligence/routes/intelligence.routes.ts`). Linhas antigas
- * gravadas com `atlasgr`/`totaltrac` continuam legíveis: `playbookInfo()` cai no
+ * gravadas com `birthhub360` continuam legíveis: `playbookInfo()` cai no
  * padrão para qualquer chave desconhecida, então não precisam de migração de
  * dado para serem exibidas — só não são mais graváveis por escrita nova.
  *

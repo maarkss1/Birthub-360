@@ -30,9 +30,9 @@ db20c1f3e5cd53f3c0be462502548bfafa850587:test-gemini-quota.ts:generic-api-key:2
 # docs/security/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md: ACHADO REAL, JÁ REMEDIADO NO CÓDIGO
 # ATUAL. Esse header não existe mais em LeadDetailDrawer.tsx; a validação migrou para
 # src/features/integrations/birth-voice/voiceResult.webhook.ts, que é fail-closed (responde 503 sem
-# ATLASGR_WEBHOOK_SECRET configurada, e nunca compara contra esse literal antigo como fallback).
+# BIRTHHUB360_WEBHOOK_SECRET configurada, e nunca compara contra esse literal antigo como fallback).
 # Ação humana ainda recomendada por aquele documento (não bloqueadora): confirmar que o valor real
-# de ATLASGR_WEBHOOK_SECRET em produção não é esse literal antigo — fora do alcance desta sessão
+# de BIRTHHUB360_WEBHOOK_SECRET em produção não é esse literal antigo — fora do alcance desta sessão
 # (sem acesso ao dashboard do Render). As duas fingerprints abaixo são o mesmo achado do documento
 # (commit 9236028b) e um segundo commit com o mesmo conteúdo/linha (17361fe7) que apareceu por
 # reescrita/duplicação de histórico, mesma lógica do bloco acima.
@@ -42,7 +42,7 @@ db20c1f3e5cd53f3c0be462502548bfafa850587:test-gemini-quota.ts:generic-api-key:2
 # tests/unit/config/env.test.ts:141 — teste que verifica que o app RECUSA o segredo legado
 # bloqueado 'segredo_compartilhado_atlasgr_123' (mesmo literal do achado histórico já tratado
 # acima, LeadDetailDrawer.tsx:99/GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md) quando usado como
-# ATLASGR_WEBHOOK_SECRET — não é um segredo novo, é o teste da própria defesa
+# BIRTHHUB360_WEBHOOK_SECRET — não é um segredo novo, é o teste da própria defesa
 # (BLOCKED_PRODUCTION_SECRET_PLACEHOLDERS em src/config/env.ts) que impede esse valor de
 # funcionar em produção. Adicionado no commit 31bffaf3/9ab9ee28 (fix(security): harden
 # production secrets, 2026-09-17) sem entrada correspondente aqui, bloqueando secret-scan de

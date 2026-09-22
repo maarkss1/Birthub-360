@@ -1,6 +1,6 @@
 # Registro de pilotos — Birth Hub 360º
 
-> As entradas anteriores ao Piloto 033 citam AtlasGR e Total Trac porque foi sob aquelas marcas que
+> As entradas anteriores ao Piloto 033 citam Birth Hub 360 porque foi sob aquelas marcas que
 > as decisões relatadas aconteceram. São registro histórico: renomeá-las não renomearia nada, só
 > tornaria o relato falso. O Piloto 033 documenta a troca para a marca única.
 
@@ -26,7 +26,7 @@ entrada nova.
   preservar áudio, crédito e todos os links existentes, só reestilizando.
 - **Regras da `.claude/` que influenciaram a implementação**: regra visual #6 (sem animação
   gratuita) → remoção do pulso infinito; nota de `design-system` sobre `atlas-orange`/
-  `totaltrack-blue` estáticos serem intencionais em pré-seleção → não "corrigir" a ausência de
+  `birthhub360-blue` estáticos serem intencionais em pré-seleção → não "corrigir" a ausência de
   reatividade à marca nesta tela; `performance`/`motion-design` (não adicionar dependência nova) →
   ícones sociais viraram SVG inline em vez de uma lib nova.
 - **Problemas encontrados só durante QA** (não a leitura de código): `Logo variant="white"` fixo
@@ -269,7 +269,7 @@ prisma.user.update(...))` falhava com "record not found" mesmo o registro existi
   produzido uma "verificação visual" com aparência de sucesso mas testando código desatualizado/errado.
   Fica registrado como alerta: a porta responder não é prova de que é O código desta sessão — confirmar
   o diretório do processo antes de confiar num preview já em execução.
-  Com o servidor real no ar e dados de teste semeados (`[QA] AtlasGR — ...`, via script `tsx`
+  Com o servidor real no ar e dados de teste semeados (`[QA] Birth Hub 360 — ...`, via script `tsx`
   temporário, removidos ao final — não promovidos a fixture oficial), a verificação real encontrou
   **um bug de correção real** no `buildForecastRange`: o cenário Otimista (fechado + commit + best
   case + upside) ficava **menor que o Provável** (forecast ponderado, que inclui uma fração de TODO
@@ -361,7 +361,7 @@ openapiRouteInventory.test.ts` (Agente 18) falhou até `docs/openapi.yaml` ganha
     gerador manual do LinkedIn), sem nenhum erro no console. Sessão de teste criada via o próprio
     formulário de signup (mesmo caminho que `tests/e2e/helpers.ts::signUp` usa), não atalho de API.
     Verificado também: dark mode ativo (cor de marca `#FF5618` legível sobre fundo escuro) — troca
-    para Total Trac não foi exercitada nesta rodada (a cor vem 100% de `useBrandAccent()`, já
+    para Birth Hub 360 não foi exercitada nesta rodada (a cor vem 100% de `useBrandAccent()`, já
     validado em outras telas, nenhuma lógica de cor nova introduzida aqui).
 - **`computer` (click por coordenada) não disparou eventos de forma confiável nesta sessão** (pane
   sem compositing — `screenshot` falhou o tempo todo com "Browser pane is not displayed") —
@@ -409,7 +409,7 @@ text-[#C43E0E]` — ao virar `bg-surface text-[#C43E0E]` (tema-reativo), `#C43E0
   tema claro original o par já funcionava (laranja sobre branco), e só ficou mensurável ao virar
   reativo. Corrigido trocando para o padrão já estabelecido no restante do app para "aba ativa"
   (`bg-brand-active text-white`, mesmo token usado em `Sidebar.tsx`/`MarketIntelligenceApp.tsx`) —
-  também tokeniza a marca (bônus: reage a Total Trac, que a versão anterior não fazia).
+  também tokeniza a marca (bônus: reage a Birth Hub 360, que a versão anterior não fazia).
   `tests/e2e/accessibility.spec.ts` (specc "Market Intelligence não tem violações críticas/sérias")
   pegou isso automaticamente; sem essa suíte, o bug teria passado despercebido de novo.
 - **`bg-[#F7F7F5]` (fundo de página, 3 ocorrências) → `bg-bg`**: valor hexadecimal a 1 dígito de
@@ -498,7 +498,7 @@ hover`, `--font-brand-display`, hairline do `.glass-panel` compilam com os valor
   ("Groq IA") não relacionado a `Card`/`Button`/`globals.css` — confirmado pré-existente rodando o
   mesmo teste via `git stash` (falha idêntica antes desta mudança), não investigado por estar fora
   do escopo pedido (reportado, não corrigido). QA visual real via Playwright/Chromium (signup real,
-  sem simular sessão): Dashboard e Configurações em light/dark × AtlasGR/Total Trac (4 combinações
+  sem simular sessão): Dashboard e Configurações em light/dark × Birth Hub 360 (4 combinações
   mínimas da `design-system/SKILL.md`) — sombra de `Card` visível e correta nos dois temas, troca
   de marca preserva a nova sombra/borda sem vazamento de cor, hover dos botões `outline`/`secondary`/
   `ghost` renderiza como esperado, nenhum erro de console novo (só o `ERR_CONNECTION_RESET`/SSE já
@@ -532,7 +532,7 @@ hover`, `--font-brand-display`, hairline do `.glass-panel` compilam com os valor
 - **Sombra/glow por marca — bug real encontrado em primitivos do design system**: `Button.tsx`
   (variante `default`, o botão primário usado em toda a aplicação) e `Card.tsx` (variante `accent`)
   tinham `shadow-[...rgba(255,86,24,...)]` hardcoded — a sombra de hover/glow ficava sempre laranja
-  (cor da AtlasGR) mesmo com a Total Trac ativa, apesar do fundo/borda já reagirem corretamente à
+  (cor da Birth Hub 360) mesmo com a Birth Hub 360 ativa, apesar do fundo/borda já reagirem corretamente à
   marca. Confirmado visualmente (navegador real, os dois brands). Corrigido com 3 tokens novos
   reativos à marca (`--shadow-brand-sm`, `--shadow-glow-brand`, `--shadow-glow-brand-strong`,
   `color-mix(in srgb, var(--brand) N%, transparent)` — mesmo idioma já usado no keyframe
@@ -540,9 +540,9 @@ hover`, `--font-brand-display`, hairline do `.glass-panel` compilam com os valor
   `shadow-glow-brand-strong`. `.border-glow-orange` (utilitário morto em `globals.css`, 0 usos no
   código, mas com o mesmo problema) migrado pro mesmo token. **Não tocado de propósito**:
   `useBrandAccent.ts.glow` — parece o mesmo bug (`rgba(255,86,24,...)` vs `rgba(0,143,206,...)`
-  por marca), mas é curadoria intencional: a Total Trac usa ali a cor de acento (`--brand-2`,
+  por marca), mas é curadoria intencional: a Birth Hub 360 usa ali a cor de acento (`--brand-2`,
   #008FCE) em vez da primária (`--brand`, #374898 navy) porque o navy fica escuro demais como
-  glow. Trocar cegamente por `var(--brand)` teria mudado visualmente o glow da Total Trac (regressão
+  glow. Trocar cegamente por `var(--brand)` teria mudado visualmente o glow da Birth Hub 360 (regressão
   real, não fix) — documentado com comentário no próprio hook em vez de "corrigido".
 - **QA mobile das rotas principais — suíte oficial não pôde rodar (sem sessão de usuário via
   fixture), mas infraestrutura real foi provisionada nesta sessão**: diferente do Pilot 001 (sem
@@ -588,8 +588,8 @@ SinglePageDashboard.tsx`) e pela que concentrava o maior gap real entre backend 
   fake do dashboard", foi construir gamificação real nova onde não havia nenhuma. O
   `GamificationWidget` do `ProspectingHub.tsx` permanece intocado, fora de escopo desta sessão.
 - **Achados de auditoria adicionais (antes de codificar)**:
-  - `src/components/ui/LiveStatsWidget.tsx` usava `text-totaltrack-blue` hardcoded e incondicional
-    no "Valor no Pipeline" — mostrava sempre azul Total Trac mesmo com AtlasGR ativa, violando a
+  - `src/components/ui/LiveStatsWidget.tsx` usava `text-birthhub360-blue` hardcoded e incondicional
+    no "Valor no Pipeline" — mostrava sempre azul Birth Hub 360 mesmo com Birth Hub 360 ativa, violando a
     regra visual 3 (classe estática de marca fora de tela pré-seleção). Corrigido para `text-brand-2`
     (token dinâmico, já reescrito em runtime por `BrandContext.tsx`).
   - `src/components/ui/ClockCalendarWidget.tsx` tinha `animate-pulse` no ícone de relógio e
@@ -688,7 +688,7 @@ turn|evaluate`) é órfão, só consumido por um painel interno de demonstraçã
 - **Correção de bugs reais encontrados durante a auditoria/implementação (regra visual 3/7 —
   token de marca estático em vez de dinâmico)**:
   - `RoleplayHub.tsx`, `CallSetup.tsx`, `ActiveCallView.tsx` tinham o ternário `activeBrand ===
-'totaltrac' ? '...sky...' : '...orange/atlas...'` repetido em ~10 lugares — substituído por
+'birthhub360' ? '...sky...' : '...orange/atlas...'` repetido em ~10 lugares — substituído por
     classes de token dinâmico (`text-brand`, `border-brand`, `bg-brand-active`, `bg-brand/10`
     etc.), que já reagem à marca via `--brand`/`--brand-2` reescritos em runtime por
     `BrandContext.tsx`. Blur ambiente de `RoleplayHub.tsx` (antes `orange-400`/`blue-400` fixos,
@@ -696,7 +696,7 @@ turn|evaluate`) é órfão, só consumido por um painel interno de demonstraçã
   - `ActiveCallView.tsx`: dentro do painel sempre-escuro (ver exceção abaixo), usa
     `isAtlas ? 'text-brand' : 'text-brand-2'` para os realces de marca (glow, avatar do bot) —
     mesma técnica já usada em `GlowChart.tsx`/`useBrandAccent.ts` para o mesmo problema real
-    (o navy da Total Trac, `--brand`, fica pouco visível como glow sobre fundo quase preto; o ciano
+    (o navy da Birth Hub 360, `--brand`, fica pouco visível como glow sobre fundo quase preto; o ciano
     de acento, `--brand-2`, resolve).
   - `CallAnalysisReport.tsx`: blocos "O que funcionou"/"Dicas para a próxima ligação" usavam paleta
     clara fixa (`emerald-50`/`rose-50` com texto `emerald-900`/`rose-900`, sem variante `dark:`) —
@@ -852,7 +852,7 @@ aria-pressed={...}>` reais, mantendo hover/tap do Framer Motion.
     arquivos usava `from-indigo-500 via-brand to-amber-500` — índigo+âmbar cercando a única cor de
     marca real no meio.
   - Bug real de reatividade de marca: botão de enviar em `ChatbookHub.tsx` tinha `hover:bg-orange-600`
-    fixo — hover sempre laranja AtlasGR mesmo com Total Trac ativa.
+    fixo — hover sempre laranja Birth Hub 360 mesmo com Birth Hub 360 ativa.
   - Cor estática repetida sem relação com marca: `bg-indigo-600` (toggle de modo), `text-indigo-400`
     (indicador "Consultando o motor Groq..."), blur ambiente `bg-orange-400/10`/`bg-blue-400/10` fixo
     em `ChatbookHub.tsx` (mesmo bug já corrigido em `RoleplayHub.tsx` no Pilot 008), `text-amber-500`
@@ -1655,8 +1655,8 @@ tests/e2e/accessibility.spec.ts -g "Base de Conhecimento"` (1/1 passando).
   do zero, não só religar um já existente; fica sinalizado para task futura, não construído aqui.
 - **Achado de marca, avaliado e documentado como não-corrigível dentro do escopo de UI**:
   `PublicBookingPage.tsx` (página pública, sem `AuthProvider`/tema) usa uma paleta âmbar/laranja
-  fixa em toda a tela, sempre — um lead da Total Trac agendando com um vendedor Total Trac vê a
-  página inteira em laranja/AtlasGR, sem nenhuma pista de qual marca realmente está atendendo.
+  fixa em toda a tela, sempre — um lead da Birth Hub 360 agendando com um vendedor Birth Hub 360 vê a
+  página inteira em laranja/Birth Hub 360, sem nenhuma pista de qual marca realmente está atendendo.
   Investigado a fundo: **não há onde armazenar a marca do vendedor** — `Brand` só existe em
   `localStorage` do navegador de quem está logado (`BrandContext.tsx`), nunca em `User` nem em
   `Organization` no schema Prisma. Corrigir de verdade exigiria uma migração de schema (campo de
@@ -2129,7 +2129,7 @@ vitest.unit.config.ts` em `tests/unit/features/settings/Settings.test.tsx` (5/5,
   `MESA_TRATAMENTO_ROLES`/`canAccessMesaTratamento` exportados de `authorization.ts` (mesmo padrão
   de `COMMERCIAL_INTELLIGENCE_ROLES`), pra frontend e backend nunca divergirem sobre quem acessa.
 - **Vitrine de dado real subaproveitado (décima quarta confirmação da série)**: `Lead.qualification`
-  (checklist de qualificação do SDR, Playbook Comercial AtlasGR §4.2) já era buscado do banco
+  (checklist de qualificação do SDR, Playbook Comercial Birth Hub 360 §4.2) já era buscado do banco
   (`leadSelect`) mas descartado antes de chegar à API — o SDR decidindo o que fazer agora não via o
   que já sabia sobre o lead. `Lead.owner` também nunca era devolvido, então numa fila
   compartilhada (ADMIN/GESTOR veem o time todo sem filtro) não dava pra saber de quem era cada
@@ -2352,7 +2352,7 @@ vitest.unit.config.ts tests/unit/features/mesa-tratamento` (6/6, arquivo novo).
 ## Pilot 027 — Central de Inteligência Comercial (missão "terminar a Central": Health Score, Forecast Accuracy, CLOSEDATE Intelligence, Jornada, Carryover)
 
 - **Objetivo**: executar a missão master do usuário ("terminar a Central de Inteligência Comercial
-  AtlasGR") auditando o módulo `commercial-intelligence` contra o catálogo pedido (Forecast Accuracy
+  Birth Hub 360") auditando o módulo `commercial-intelligence` contra o catálogo pedido (Forecast Accuracy
   com snapshots reais, Health Score explicável, CLOSEDATE Intelligence, Jornada & Cliente —
   handoffs/reentradas/clientes parados/mapa de transições —, Pipeline Carryover) e completando o
   que existia só como código órfão ou não existia.
@@ -2482,7 +2482,7 @@ Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o m
   checkout principal, não de worktree) antes de confiar na sessão do navegador — o mesmo cuidado já
   registrado no adendo do Piloto 003.
 - **QA visual real, ponta a ponta, com sessão própria**: usuário de teste criado pelo formulário de
-  cadastro real (`/login?signup=1`, e-mail `@atlasgr.com.br`, mesmo caminho de
+  cadastro real (`/login?signup=1`, e-mail `@birthhub360.com.br`, mesmo caminho de
   `tests/e2e/helpers.ts::signUp`) — sem atalho de API/seed. Navegado direto para
   `/app/sdr-diagnostic-joao` (rota real do `App.tsx`) e conferidas as 5 abas tocadas (Julho, Agosto,
   Comparativo, Em Cadência, Diagnóstico) em **claro e escuro**: tab-cards com barra de destaque
@@ -2511,7 +2511,7 @@ Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o m
   Inteligência Comercial". `AskUserQuestion` (2 rodadas) esclareceu que não era um recorte pontual:
   o pedido era refazer **todas as telas**, **nos dois sistemas de UI do repo** (app React/Tailwind
   em `src/` e o portal estático sem framework em `public/tools/portal-comercial/`, 6 páginas + 6
-  variantes Total Trac, um único `css/styles.css` compartilhado) usando esse CSS como base visual.
+  variantes Birth Hub 360, um único `css/styles.css` compartilhado) usando esse CSS como base visual.
   Dado o escopo (~30 telas do CRM + 12 páginas do portal), entrei em `EnterPlanMode`, rodei 2
   agentes Explore em paralelo (mapa de telas/primitivos do CRM; mapa do portal) e escrevi um plano
   faseado, aprovado pelo usuário via `ExitPlanMode` — só a Fase 1 (fundação) e um piloto por sistema
@@ -2564,7 +2564,7 @@ Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o m
   stat-card, modal/drill-down, funil, canal-donut, deals-grid, heatmap, compare-table, achados,
   plano/passo, checklist, confete) adicionadas de forma aditiva — nomes de keyframe prefixados
   `v28*` pra não colidir com nada existente. `--soft` já tinha override por marca
-  (`[data-empresa="totaltrac"]`); os tokens novos são semânticos (ok/danger), não de marca, então
+  (`[data-empresa="birthhub360"]`); os tokens novos são semânticos (ok/danger), não de marca, então
   não precisam de override — confirmado por não serem usados em nenhuma regra `[data-empresa=...]`.
 - **Colisão de `.letterhead*` resolvida mantendo o existente, não sobrescrevendo com a spec
   colada** — achado real ao investigar: o cabeçalho atual (borda 3px na cor de marca, logo 126px,
@@ -2576,15 +2576,15 @@ Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o m
   esse CSS. Documentado em comentário no próprio `styles.css`.
 - **`index.html` não é a home** — a exploração inicial (relatada por um agente Explore) descrevia
   `index.html` como tendo hero + ticker + grid de relatórios; na prática `index.html` é a tela de
-  seleção de empresa (AtlasGR/Total Trac, equivalente ao `WelcomeScreen`/`SelectionScreen` do CRM) e
-  `home.html` é a home real da AtlasGR com o ticker/grid. Corrigido antes de aplicar qualquer
+  seleção de empresa (Birth Hub 360, equivalente ao `WelcomeScreen`/`SelectionScreen` do CRM) e
+  `home.html` é a home real da Birth Hub 360 com o ticker/grid. Corrigido antes de aplicar qualquer
   componente novo a uma tela errada — nenhuma edição de conteúdo feita no portal nesta sessão, só a
   fundação em CSS (ver limitação abaixo).
 - **Piloto de conteúdo real no portal — concluído numa continuação da mesma sessão** (usuário pediu
   pra seguir). Em vez de tocar `js/ui.js`/`cardRelatorioRapidoHTML` (grade densa de ~20 cards de
   relatório — achado real ao inspecionar: `.tab-cards` é dimensionado pra um punhado de destinos
   grandes, não pra uma grade densa; aplicar ali teria sido o padrão errado, violaria a regra #4 da
-  Constituição), adicionei em `home.html`/`totaltrac-home.html` uma seção nova "Comece por aqui"
+  Constituição), adicionei em `home.html`/`birthhub360-home.html` uma seção nova "Comece por aqui"
   (`.tab-cards`, 5 links reais pras outras páginas do portal, descrições tiradas do próprio
   `PORTAL.md`, não inventadas) e um resumo de KPIs reais do Cockpit acima da grade de relatórios.
   **Achado que mudou o plano**: `cockpit.html` já tem sua própria linguagem visual de KPI
@@ -2600,14 +2600,14 @@ Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o m
   já lidos por `cockpitTickerItens()`, e o container fica `oculto` até existir
   `cockpitState.ultimoCalculo` (sem webhook configurado, mostra nada — não zeros).
 - **QA real desta parte**: `node --check` em `cockpit.js` (copiado pra fora do repo, mesmo motivo do
-  `"type":"module"` já documentado). Nenhum `id` duplicado em `home.html`/`totaltrac-home.html`
+  `"type":"module"` já documentado). Nenhum `id` duplicado em `home.html`/`birthhub360-home.html`
   (checado via grep). Servidor estático improvisado (`portal-comercial-static`, `http-server`) ficou
   instável entre navegações nesta sessão (páginas em branco/404 intermitentes, reproduzido mesmo sem
   nenhuma mudança de código no meio) — contornado servindo os mesmos arquivos estáticos pelo Vite já
   rodando em `localhost:3005` (Vite expõe `public/*` na raiz, então
   `localhost:3005/tools/portal-comercial/home.html` é o mesmo arquivo, servido por um processo já
-  estável). QA visual real contra essa origem: `home.html` e `totaltrac-home.html` renderizam a nova
-  seção corretamente, reskin azul da Total Trac aplicado a 100% das classes novas sem nenhuma regra
+  estável). QA visual real contra essa origem: `home.html` e `birthhub360-home.html` renderizam a nova
+  seção corretamente, reskin azul da Birth Hub 360 aplicado a 100% das classes novas sem nenhuma regra
   `[data-empresa=...]` adicional (confirma o mecanismo de override já documentado). Simulei
   `cockpitState.ultimoCalculo` via console pra exercitar `cockpitAtualizarResumoHome()` sem depender
   de um webhook Bitrix real — os 4 cards renderizam com valores formatados corretamente
@@ -2663,13 +2663,13 @@ Win32_Process`/`Get-NetTCPConnection` que o processo na porta 3005 era mesmo o m
   - `extracao.html` (maior página, wizard de 8 passos): **sem mudança**. `.card h2 .num` já é o
     sistema de passo numerado do wizard inteiro — equivalente direto do `.passo`/`ActionPlanSteps`
     novo. Forçar o vocabulário novo aqui substituiria a estrutura literal da página sem ganho.
-  - `evolucao.html`/`totaltrac-evolucao.html`: **mudança real** — `pontosAtencaoEvolucaoHtml()`
+  - `evolucao.html`/`birthhub360-evolucao.html`: **mudança real** — `pontosAtencaoEvolucaoHtml()`
     (`js/jornada.js`) renderizava os 2 números de "Pontos de atenção" (negócios com CLOSEDATE
     vencida / sem CLOSEDATE) sempre na mesma cor neutra (`.atencao-mini-card`, laranja de marca),
     sem distinguir "0 = ok" de "15 = precisa agir". Migrado pra `.achados`/`.achado.gap|.win`
     (ícone ⚠️/✅ + cor vermelha/verde reais, tom calculado pela própria contagem — não fabricado).
     `.atencao-mini-grid`/`.atencao-mini-card` removidas do CSS (confirmado sem outro uso via grep
-    antes de remover). `totaltrac-evolucao.html` herda a correção de graça — mesmo `#evolucaoAtencao`
+    antes de remover). `birthhub360-evolucao.html` herda a correção de graça — mesmo `#evolucaoAtencao`
     e mesmo `js/jornada.js` compartilhado, zero linha extra tocada (arquitetura já documentada em
     `PORTAL.md`: "nenhuma lógica JS duplicada").
   - **QA real**: servidor de dev do CRM (`localhost:3005`) caiu no meio da sessão (matando também o
@@ -2735,7 +2735,7 @@ server.ts` direto via Bash `run_in_background` (sem `&`/`disown` — a primeira 
   - `SelectionScreen.tsx` — achado maior: a tela irmã de `WelcomeScreen.tsx` (ambas pré-seleção de
     marca) nunca recebeu o mesmo tratamento do Piloto 001. Raiz em `bg-[#030305] text-white` (hex
     cru, sempre escuro, nunca reage a tema — a Constituição §7.7 é explícita que telas de
-    pré-seleção "reagem a tema"); `<Logo variant="white">`/`<TotalTrackLogo tone="negative">`
+    pré-seleção "reagem a tema"); `<Logo variant="white">`/`<birthhub360Logo tone="negative">`
     fixos (ficariam ilegíveis em tema claro — mesmo bug de `Logo variant="white"` já corrigido no
     Piloto 001, nunca replicado aqui); cards com `bg-slate-900/60` **conflitando** com a classe
     `.glass-panel` já aplicada no mesmo elemento (a superfície translúcida reativa a tema que o
@@ -2745,7 +2745,7 @@ server.ts` direto via Bash `run_in_background` (sem `&`/`disown` — a primeira 
     `WelcomeScreen.tsx` ("crédito pessoal com mais peso visual, boxShadow/scale pulsando pra
     sempre"), nunca replicado aqui. Corrigido espelhando exatamente as soluções já validadas do
     Piloto 001: raiz `bg-bg text-ink`, `Logo variant={theme==='dark'?'white':'default'}`,
-    `TotalTrackLogo` sem `tone` (usa o `auto` já reativo via `dark:hidden`/`dark:block`, achado:
+    `birthhub360Logo` sem `tone` (usa o `auto` já reativo via `dark:hidden`/`dark:block`, achado:
     o componente já resolvia isso sozinho, só não estava sendo usado), `.glass-panel` sem
     override cru, assinatura reduzida a `text-ink-2` simples sem animação (mesmo texto/crédito
     preservado, só a ênfase visual reduzida — Constituição §6).
@@ -2781,13 +2781,13 @@ server.ts` direto via Bash `run_in_background` (sem `&`/`disown` — a primeira 
   - _*`src/features/integrations/components/` (Bitrix*.tsx + Integrations.tsx)_* — achado maior
     desta rodada: `grep -oE "orange-[0-9]+"` conta **147 ocorrências** (104 só em
     `BitrixImportPanel.tsx`) de laranja cru (`orange-500`/`600` etc.) em vez de `var(--brand)`. O
-    módulo inteiro de integrações Bitrix fica sempre laranja AtlasGR, mesmo com Total Trac ativa —
+    módulo inteiro de integrações Bitrix fica sempre laranja Birth Hub 360, mesmo com Birth Hub 360 ativa —
     bug de marca, não de tema (o `dark:` já existe pareado na maioria dos casos, então não quebra
-    no escuro, só nunca muda de cor pra Total Trac).
+    no escuro, só nunca muda de cor pra Birth Hub 360).
   - **`PromptStudio.tsx`** (17 pares `dark:` já existentes, 13 ocorrências cruas) — funciona nos
     dois temas, mas usa `gray-*`/`purple-*`/`sky-*` cru em vez de `--ink`/`--surface`/`--brand`;
     mesmo problema de reatividade à marca do item acima (`purple-600`/`sky-600` nunca reagem a
-    Total Trac).
+    Birth Hub 360).
   - **`OnboardingTour.tsx`** — já funciona nos dois temas (`theme === 'light' ? 'bg-white/70...' :
 'bg-slate-900/80...'` ramificado manualmente), só não usa os tokens que fariam o mesmo sem a
     ramificação manual. Baixo risco, baixa prioridade (não é bug visível).
@@ -2930,7 +2930,7 @@ tests/unit/features/intelligence/components/ReportsHub.test.tsx` (8/8, preservan
   `PropostasList.tsx`/`PropostaDetail.tsx`/`PropostaForm.tsx` (`/app/propostas`, CRUD real de
   `CrmCommercialDocument`, mora na pasta `crm360` apesar do nome da rota) e
   `PropostaComercialHub.tsx` (`/app/proposta-comercial`, iframe viewer de HTML estático + 3 hubs
-  irmãos — `SocialSellingHub`/`TreinamentoAtlasGRHub`/`HubInteligenciaMarketingHub` — todos
+  irmãos — `SocialSellingHub`/`Treinamentobirthhub360Hub`/`HubInteligenciaMarketingHub` — todos
   "acervos executivos" restritos por e-mail único, confirmado intencional por commit real
   `04367361`, não débito de migração).
 - **Achado principal, corrigido — mesmo padrão de RBAC já corrigido 4+ vezes nesta série**:
@@ -2952,7 +2952,7 @@ PropostasList.test.tsx` (4 casos: ADMIN/SDR veem o botão, VISUALIZADOR e sessã
   PUT de edição) não aceita nenhum dos três campos hoje, mudar isso exigiria rota de backend nova,
   fora do escopo desta correção pontual.
 - **Achados de token, corrigidos**: `CrmOverview.tsx` e os 4 hubs executivos (`ExecutiveHeader.tsx`
-  compartilhado + `PropostaComercialHub`/`SocialSellingHub`/`TreinamentoAtlasGRHub`/
+  compartilhado + `PropostaComercialHub`/`SocialSellingHub`/`Treinamentobirthhub360Hub`/
   `HubInteligenciaMarketingHub`) tinham dois problemas: (1) cores cruas (`blue-500`/`emerald-500`/
   `amber-500`/`red-500`) sem token semântico, mapeadas pra `info`/`success`/`warning`/`danger`; (2)
   `bg-card`/`bg-base`/`bg-background`/`hover:bg-soft-hover` — classes que **não existem** em
@@ -2999,7 +2999,7 @@ toBeInTheDocument`) fica enterrado dentro do output de timeout do `waitFor` a me
   a mensagem de erro exata em vez de confiar no snapshot de DOM impresso; vale conferir esse import
   primeiro sempre que `toBeInTheDocument`/matchers do jest-dom "não funcionam" num teste novo.
 
-## Pilot 030 — Auditoria de cor crua fora dos tokens: módulo Bitrix24 preso em laranja AtlasGR
+## Pilot 030 — Auditoria de cor crua fora dos tokens: módulo Bitrix24 preso em laranja Birth Hub 360
 
 - **Objetivo**: dando sequência à auditoria de cores Tailwind cruas fora do sistema de tokens
   (mesma categoria de débito do Piloto 005/006), migrar os 4 componentes do módulo de integração
@@ -3008,8 +3008,8 @@ toBeInTheDocument`) fica enterrado dentro do output de timeout do `waitFor` a me
   projeto (`bg-brand`/`text-brand`/`bg-soft`/`bg-surface`/`bg-surface-2`/`text-ink`/`text-ink-2`/
   `border-line`).
 - **Bug real, não só débito estético**: laranja cru (`orange-500`/`600`, cor de ação/foco/destaque)
-  nunca reage à troca de marca — um usuário Total Trac abrindo qualquer tela de Integrações via
-  botões, badges "ativo" e ícones em laranja da AtlasGR, quebrando a identidade visual da própria
+  nunca reage à troca de marca — um usuário Birth Hub 360 abrindo qualquer tela de Integrações via
+  botões, badges "ativo" e ícones em laranja da Birth Hub 360, quebrando a identidade visual da própria
   marca escolhida. Achado equivalente ao de `Card`/`Button` no Piloto 006, mas nunca corrigido nas
   telas de feature (o Piloto 006 documentou explicitamente que telas de feature individuais não
   foram auditadas naquela rodada).
@@ -3017,7 +3017,7 @@ toBeInTheDocument`) fica enterrado dentro do output de timeout do `waitFor` a me
   cabeçalho da sidebar usava `text-[var(--brand-primary)]` — uma custom property estática
   (`--brand-primary: #ff5618`, definida uma única vez em `:root`, nunca redefinida em `.dark` nem
   reescrita pelo `BrandContext.tsx`) em vez do token dinâmico `--brand`. Mesmo sintoma (ícone preso
-  em laranja da AtlasGR na Total Trac), mecanismo diferente — só apareceu por leitura direta do
+  em laranja da Birth Hub 360 na Birth Hub 360), mecanismo diferente — só apareceu por leitura direta do
   JSX, não por grep de classe Tailwind. Corrigido para `text-brand`.
 - **Contagem migrada** (todas as ocorrências de `orange-*` confirmadas zeradas via grep após a
   mudança, nos 4 arquivos): `BitrixImportPanel.tsx` 104, `BitrixSyncRulesPanel.tsx` 16,
@@ -3284,26 +3284,26 @@ app.current_tenant_id` que a extensão de RLS de `src/lib/prisma.ts` injeta em o
   confirmou visualmente os 3 estados (sem cargo, CLOSER desktop, CLOSER mobile) antes de reportar
   concluído — nenhum bug visual encontrado desta vez, mas o hábito (seção 12.6) é o que importa.
 
-## Piloto 032 — HubScreen (identidade Total Trac)
+## Piloto 032 — HubScreen (identidade Birth Hub 360)
 
-- **Pedido do usuário**: "criar uma tela Hub para a Total Trac, no mesmo modelo do Hub da AtlasGR".
+- **Pedido do usuário**: "criar uma tela Hub para a Birth Hub 360, no mesmo modelo do Hub da Birth Hub 360".
   Auditoria (seção 2/12.1) mostrou que isso já existe por arquitetura — `HubScreen.tsx` é única,
-  montada em `/hub`, e reage a `useBrand()` (troca `Logo`↔`TotalTrackLogo`, textos de
+  montada em `/hub`, e reage a `useBrand()` (troca `Logo`↔`birthhub360Logo`, textos de
   `brandInfo`, tokens `--brand`/`--brand-2` setados pelo `BrandContext`). Não havia "Hub separado
   por marca" para duplicar nem justificativa para criar uma segunda tela física — o trabalho real
-  era fazer a Hub existente refletir de fato a identidade Total Trac quando ativa, que é o que a
+  era fazer a Hub existente refletir de fato a identidade Birth Hub 360 quando ativa, que é o que a
   seção 5 (exceção precisa de justificativa) e o Piloto 001/029 (telas pós-seleção de marca usam
   tokens dinâmicos, não cor estática) já prescrevem.
-- **Achado principal, corrigido — vazamento de laranja AtlasGR em `hub-orbit.css`**: ~15 valores
+- **Achado principal, corrigido — vazamento de laranja Birth Hub 360 em `hub-orbit.css`**: ~15 valores
   hex/rgba fixos (`#ff9d70`, `rgba(255,86,24,...)`, gradiente do `.hc-title`) só existiam porque o
-  CSS puro do Hub nunca foi migrado para os tokens dinâmicos — com Total Trac ativa, logo/textos
+  CSS puro do Hub nunca foi migrado para os tokens dinâmicos — com Birth Hub 360 ativa, logo/textos
   trocavam mas o beacon do header, o glow do card primário, o shimmer do título dos círculos e o
   ícone hover continuavam laranja. Convertidos para `var(--brand)`/`var(--brand-2)`/
   `color-mix(in srgb, var(--brand) X%, white|black|transparent)` — mesmo padrão de
   `--shadow-glow-brand` já usado no resto do projeto (`design-system/SKILL.md`). Fórmula validada
-  numericamente (script Node, não só visual): para AtlasGR o resultado bate quase pixel-a-pixel com
-  o hex original (`#a63810` vs `#a83810`); para Total Trac produz azul-marinho/pastel coerente com
-  `identidade-visual/totaltrac/tokens/totaltrac.css` (`#374898`/`#2D3B78`), sem cair em preto/branco
+  numericamente (script Node, não só visual): para Birth Hub 360 o resultado bate quase pixel-a-pixel com
+  o hex original (`#a63810` vs `#a83810`); para Birth Hub 360 produz azul-marinho/pastel coerente com
+  `identidade-visual/birthhub360/tokens/birthhub360.css` (`#374898`/`#2D3B78`), sem cair em preto/branco
   puro. Os `colorRgb` do burst de partículas em `HubScreen.tsx` (canvas 2D, não entende `var()`)
   também eram laranja fixo — agora calculados via `hexToRgbString(brandInfo.primaryColor|
 accentColor)`, únicos no repo (não havia utilitário equivalente).
@@ -3312,7 +3312,7 @@ active)` em 8 pontos de `hub-orbit.css` e 4 de `HubIcons.tsx` nunca resolvia —
   esse token como `--color-brand-active` dentro do `@theme` (`src/styles/globals.css`), não
   `--brand-active` puro, que não é setado em lugar nenhum do projeto (`grep` confirmou). O efeito
   era silencioso: eyebrow/tagline/relógio/calendário/ícone hover/label caíam para preto (`--ink`
-  herdado) em vez da cor de marca, **nas duas marcas**, não só Total Trac — só ficou visível ao
+  herdado) em vez da cor de marca, **nas duas marcas**, não só Birth Hub 360 — só ficou visível ao
   montar o QA visual alternativo abaixo. Corrigido para `var(--color-brand-active)` nos dois
   arquivos (`replace_all`, escopo confirmado restrito ao Hub via `grep -r` no `src/`).
 - **Decisão explícita — cores douradas de `.clock-widget .date`/`.cal-grid span` mantidas como
@@ -3327,7 +3327,7 @@ active)` em 8 pontos de `hub-orbit.css` e 4 de `HubIcons.tsx` nunca resolvia —
   sem backend) gerou o CSS processado (`@theme` do Tailwind já resolvido); harness Playwright
   descartável (Chromium `/opt/pw-browsers/chromium`, `file://`, não promovido a teste oficial —
   mesmo cuidado do Piloto 002) renderizou os elementos de cor do Hub (`op-dot`, `hc-title` small e
-  primary, eyebrow/tagline, clock) nas 4 combinações marca×tema. Confirmou visualmente Total Trac
+  primary, eyebrow/tagline, clock) nas 4 combinações marca×tema. Confirmou visualmente Birth Hub 360
   azul/ciano correto nas 4 combinações e expôs o bug do `--brand-active` (textos pretos antes do
   fix, coloridos depois) — screenshots e harness descartados após a revisão, não commitados.
 - **Verificação**: `npm ci` (ambiente sem `node_modules`), `npx biome lint` (0 erros/warnings nos
@@ -3364,7 +3364,7 @@ transparent 63%, #000 64%, #000 80%, ...)` da coroa de traços mede em **farthes
 - **Separar identidade de dado comercial foi o que destravou o resto**: o seletor de marca parecia
   visual, mas controlava playbook, personas, matriz de objeções e histórico do copiloto. Apagá-lo
   junto com a marca teria removido funcionalidade (Constituição §6). Virou **playbook comercial**
-  (`src/config/playbooks.ts` + `useActivePlaybook`), com as chaves de banco (`atlasgr`/`totaltrac`)
+  (`src/config/playbooks.ts` + `useActivePlaybook`), com as chaves de banco (`birthhub360`)
   preservadas e o seletor movido para a barra de filtros das matrizes — onde ele sempre pertenceu.
   Mesmo raciocínio para `getBrandFromEmail` → `getTenantFromEmail`: nunca decidiu marca, decidia
   organização.
@@ -3384,7 +3384,7 @@ transparent 63%, #000 64%, #000 80%, ...)` da coroa de traços mede em **farthes
   que a regra "ANCHOR" do brand book já mandava.
 
 - **O que NÃO foi renomeado, e por quê** (checar antes de "terminar o serviço"): allowlist de
-  domínios de login (regra de segurança); chaves `atlasgr`/`totaltrac` em banco e API; `appId`,
+  domínios de login (regra de segurança); chaves `birthhub360` em banco e API; `appId`,
   esquema de deep link e domínios (invalidam instalações e DNS); `EXTERNAL_LINKS` (sistemas de
   terceiros da operação); `public/tools/` (aplicações legadas em iframe); o script de voz
   `atlasProductPlaybook.ts` — renomear ali faria a IA se apresentar ao prospect como a plataforma

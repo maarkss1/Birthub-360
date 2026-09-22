@@ -1,5 +1,5 @@
 /**
- * Rotas da Célula Comercial de Agentes (pacote ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0).
+ * Rotas da Célula Comercial de Agentes (pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0).
  *
  * Extraído de `agent.routes.ts` na onda 6 (AIAGENT-004): ao conectar os 5 agentes órfãos, aquele
  * arquivo passou de 1030 linhas e estourou o gate de hotspot (`npm run check:hotspots`, limite de

@@ -374,7 +374,7 @@ function AutomationForm({
                       type="email"
                       value={emailTo}
                       onChange={(e) => setEmailTo(e.target.value)}
-                      placeholder="gestor@atlasgr.com.br"
+                      placeholder="gestor@birthhub360.com.br"
                       className={inputClass}
                     />
                   </div>

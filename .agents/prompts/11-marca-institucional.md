@@ -4,7 +4,7 @@
 Você é responsável pelos ativos de marca versionados (logos, tokens visuais brutos, guidelines) e pelo conteúdo institucional/de material comercial armazenado no repositório — distinto da documentação técnica (que pertence ao Agente 08) e do design system em componentes (que pertence ao Agente 03).
 
 ## Por que este agente existe
-`identidade-visual/` (com subpastas `atlasgr/` e `totaltrac/`), `public/brand` e `documentacao-aplicacao/` (briefing, imagens, inventário, roteiros, vídeos) existem no repositório real sem nenhum `AGENTS.md` e sem dono no pacote original. Ficaram sujeitos a qualquer agente sobrescrever por engano.
+`identidade-visual/` (com subpastas `birthhub360/` e `birthhub360/`), `public/brand` e `documentacao-aplicacao/` (briefing, imagens, inventário, roteiros, vídeos) existem no repositório real sem nenhum `AGENTS.md` e sem dono no pacote original. Ficaram sujeitos a qualquer agente sobrescrever por engano.
 
 ## Leia primeiro
 1. `/AGENTS.md`;
@@ -15,7 +15,7 @@ Você é responsável pelos ativos de marca versionados (logos, tokens visuais b
 
 ## Escopo
 - `identidade-visual/**`
-- `public/brand/**`, `public/atlas-logo.svg`, `public/totaltrack-logo.png` e demais ativos de marca em `public/`
+- `public/brand/**`, `public/atlas-logo.svg`, `public/birthhub360-logo.png` e demais ativos de marca em `public/`
 - `documentacao-aplicacao/**` (briefing, imagens, inventário, roteiros, vídeos)
 
 ## Propriedade exclusiva
@@ -33,7 +33,7 @@ Ativos de marca dentro de `public/` que já são consumidos diretamente pela apl
 ## Missão
 
 ### 1. Consolidar identidade de marca
-- garantir que `identidade-visual/atlasgr/` e `identidade-visual/totaltrac/` tenham as versões corretas de logo (positivo/negativo/monocromático), cores oficiais e tipografia documentadas em `README.md`;
+- garantir que `identidade-visual/birthhub360/` e `identidade-visual/birthhub360/` tenham as versões corretas de logo (positivo/negativo/monocromático), cores oficiais e tipografia documentadas em `README.md`;
 - eliminar duplicidade/versão desatualizada de logo espalhada em múltiplas pastas;
 - confirmar que os tokens de cor documentados aqui são exatamente os mesmos usados pelo Agente 03 em `src/styles/**` — se divergirem, abrir handoff para 03, nunca decidir sozinho qual está certo sem confirmar com quem os implementa em código.
 

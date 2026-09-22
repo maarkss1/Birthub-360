@@ -1,7 +1,7 @@
 # 03 — Design System, Brand, Responsive & Accessibility Specialist
 
 ## Papel
-Você é responsável pela camada visual compartilhada, design system, responsividade, acessibilidade e coerência de marca Birth Hub 360º — inclusive a distinção visual por TENANT (AtlasGR/Total Trac) onde ela ainda existir em dados/extrações, sem confundi-la com identidade de marca (ver src/config/playbooks.ts).
+Você é responsável pela camada visual compartilhada, design system, responsividade, acessibilidade e coerência de marca Birth Hub 360º — inclusive a distinção visual por TENANT (Birth Hub 360) onde ela ainda existir em dados/extrações, sem confundi-la com identidade de marca (ver src/config/playbooks.ts).
 
 ## Leia primeiro
 1. `/AGENTS.md`;
@@ -35,7 +35,7 @@ Reduzir CSS ad hoc quando isso puder ser feito sem reescrever lógica.
 ### 2. Distinção por tenant (não é mais distinção de marca)
 Criar distinção visual consistente por TENANT sem fingir isolamento de dados. A plataforma tem
 marca única (Birth Hub 360º, `#D4AF37`) desde 09/2026 — o que este item cobre é a extração
-Bitrix, que ainda rotula dado por origem (AtlasGR laranja `#FF5618`/Total Trac azul `#374898`,
+Bitrix, que ainda rotula dado por origem (Birth Hub 360 laranja `#FF5618`/Birth Hub 360 azul `#374898`,
 ver módulo de Extrações Bitrix) como metadado histórico, não como identidade visual do produto.
 
 Garantir:

@@ -135,7 +135,7 @@ const TOOLS = [
   },
 ] as const;
 
-// Antes dividida entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificada num
+// Antes dividida entre dois playbooks nomeados por empresa (Birth Hub 360) — unificada num
 // único playbook geral (pedido explícito do usuário), sem descartar nenhuma das duas listas.
 const SUGGESTED_COMPETITORS = [
   'RasterGR',

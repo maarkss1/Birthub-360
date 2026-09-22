@@ -308,7 +308,7 @@ describe('AutomationEngine.handle — execução real', () => {
             title: 'Lead parado: {{status}}',
             body: 'Dono: {{owner}}',
             channel: 'email',
-            to: 'gestor@atlasgr.com.br',
+            to: 'gestor@birthhub360.com.br',
           },
         }),
       ]);
@@ -318,7 +318,7 @@ describe('AutomationEngine.handle — execução real', () => {
       expect(executadas).toBe(1);
       expect(notificationMock.create).toHaveBeenCalledTimes(1);
       expect(sendEmailMock).toHaveBeenCalledWith({
-        to: 'gestor@atlasgr.com.br',
+        to: 'gestor@birthhub360.com.br',
         subject: 'Lead parado: Proposta',
         text: 'Dono: Marcelo',
       });
@@ -340,7 +340,7 @@ describe('AutomationEngine.handle — execução real', () => {
 
     it('SMTP não configurado: notificação interna já criada continua de pé, e o histórico explica a causa sem fingir sucesso total', async () => {
       automationMock.findMany.mockResolvedValue([
-        regra({ actionConfig: { title: 'Aviso', channel: 'email', to: 'gestor@atlasgr.com.br' } }),
+        regra({ actionConfig: { title: 'Aviso', channel: 'email', to: 'gestor@birthhub360.com.br' } }),
       ]);
       sendEmailMock.mockRejectedValue(new MailerNotConfiguredErrorMock('SMTP_HOST ausente'));
 

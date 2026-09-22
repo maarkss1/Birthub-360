@@ -101,7 +101,7 @@ describe('Module Access Grant Integration', () => {
     ).rejects.toThrow(ModuleAccessServiceError);
   });
 
-  it('rejects the retired moduleKeys (treinamento-atlasgr, proposta-comercial, hub-inteligencia-marketing) — conteúdo proprietário Atlas GR aposentado em 09/2026', async () => {
+  it('rejects the retired moduleKeys (treinamento-birthhub360, proposta-comercial, hub-inteligencia-marketing) — conteúdo proprietário Birth Hub 360 aposentado em 09/2026', async () => {
     const user = await prisma.user.create({
       data: {
         name: 'Erik Retirado',
@@ -111,7 +111,7 @@ describe('Module Access Grant Integration', () => {
     });
 
     for (const retiredKey of [
-      'treinamento-atlasgr',
+      'treinamento-birthhub360',
       'proposta-comercial',
       'hub-inteligencia-marketing',
     ]) {

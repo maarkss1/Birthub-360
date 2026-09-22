@@ -5,14 +5,14 @@
 - Prioridade: normal
 
 ## Resolução
-Resolvido em 09/2026: o módulo `treinamento-atlasgr` (junto com `proposta-comercial` e `hub-inteligencia-marketing`) continha dados e URLs proprietárias da operação legada Atlas GR e foi totalmente aposentado e removido do catálogo de módulos (`src/config/module-catalog.ts`), das rotas (`src/App.tsx`), e dos portais estáticos (`public/tools/`). `grantModuleAccess` agora rejeita essas chaves e não há qualquer URL hardcoded de terceiro exposta a novos tenants.
+Resolvido em 09/2026: o módulo `treinamento-birthhub360` (junto com `proposta-comercial` e `hub-inteligencia-marketing`) continha dados e URLs proprietárias da operação legada Birth Hub 360 e foi totalmente aposentado e removido do catálogo de módulos (`src/config/module-catalog.ts`), das rotas (`src/App.tsx`), e dos portais estáticos (`public/tools/`). `grantModuleAccess` agora rejeita essas chaves e não há qualquer URL hardcoded de terceiro exposta a novos tenants.
 
 
 ## Problema
-`src/config/module-catalog.ts` (módulo `'treinamento-atlasgr'`, ativo/roteado em `App.tsx`) tem
-URLs hardcoded para sistemas internos da operação AtlasGR original: `connect.atlasgr.com.br`,
-`newconnect.atlasgr.com.br`, `perfil-securitario.atlasgr.com.br`, `atlasgr.bitrix24.com.br`,
-`webmail.atlasgr.com.br`. Como o ICP declarado hoje (`src/config/brand.ts`) é "qualquer empresa com
+`src/config/module-catalog.ts` (módulo `'treinamento-birthhub360'`, ativo/roteado em `App.tsx`) tem
+URLs hardcoded para sistemas internos da operação Birth Hub 360 original: `connect.birthhub360.com.br`,
+`newconnect.birthhub360.com.br`, `perfil-securitario.birthhub360.com.br`, `birthhub360.bitrix24.com.br`,
+`webmail.birthhub360.com.br`. Como o ICP declarado hoje (`src/config/brand.ts`) é "qualquer empresa com
 área comercial", qualquer tenant novo da Birth Hub 360 vê atalhos para sistemas internos de uma
 empresa terceira.
 

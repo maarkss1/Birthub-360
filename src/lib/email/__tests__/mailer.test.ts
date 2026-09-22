@@ -39,7 +39,7 @@ describe('sendEmail', () => {
       SMTP_SECURE: false,
       SMTP_USER: 'user',
       SMTP_PASS: 'pass',
-      SMTP_FROM: 'sdr@atlasgr.com.br',
+      SMTP_FROM: 'sdr@birthhub360.com.br',
     };
     const { sendEmail } = await import('../mailer.js');
 
@@ -49,7 +49,7 @@ describe('sendEmail', () => {
       expect.objectContaining({ host: 'smtp.example.com', port: 587 }),
     );
     expect(sendMailMock).toHaveBeenCalledWith({
-      from: 'sdr@atlasgr.com.br',
+      from: 'sdr@birthhub360.com.br',
       to: 'lead@empresa.com',
       subject: 'Proposta',
       text: 'Corpo do e-mail',
@@ -81,14 +81,14 @@ describe('sendEmail', () => {
       SMTP_HOST: 'smtp.example.com',
       SMTP_PORT: 587,
       SMTP_SECURE: false,
-      SMTP_USER: 'sdr@atlasgr.com.br',
+      SMTP_USER: 'sdr@birthhub360.com.br',
     };
     const { sendEmail } = await import('../mailer.js');
 
     await sendEmail({ to: 'lead@empresa.com', subject: 'Proposta', text: 'Corpo' });
 
     expect(sendMailMock).toHaveBeenCalledWith(
-      expect.objectContaining({ from: 'sdr@atlasgr.com.br' }),
+      expect.objectContaining({ from: 'sdr@birthhub360.com.br' }),
     );
   });
 

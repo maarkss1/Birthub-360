@@ -57,7 +57,7 @@ Detalhamento dos 4 webhooks (arquivo → mecanismo → fail-closed):
   `THREECX_WEBHOOK_SECRET` ausente.
 - `src/features/integrations/birth-voice/voiceResult.webhook.ts` → `secretMatches()` local
   (`timingSafeEqual` com igualdade de tamanho verificada antes) → `503` se
-  `ATLASGR_WEBHOOK_SECRET` ausente.
+  `BIRTHHUB360_WEBHOOK_SECRET` ausente.
 - `src/features/integrations/bitrix/bitrix.webhook.ts` → `safeEqual()` local (`timingSafeEqual`
   com igualdade de tamanho verificada antes, contra `BitrixConnection.webhookSecret` por conexão)
   → recusa (não processa) quando `!connection.inboundEventsEnabled || !connection.webhookSecret` —

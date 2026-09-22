@@ -6,7 +6,7 @@
 
 ## Resolução
 Resolvido pela unificação de marca em Birth Hub 360 (conforme documentado em `src/contexts/BrandContext.tsx` e `src/styles/globals.css`).
-O mecanismo legado de alternância de marcas em runtime (`atlasgr` / `totaltrac` que reescrevia `--brand`/`--brand-2` para `#FF6B10`/`#FF8008`) foi completamente descontinuado a pedido explícito do produto. As variáveis canônicas da plataforma são definidas globalmente em `src/styles/globals.css` (`--brand: #d4af37` Antique Gold, `--brand-2: #f0d77b` Gold Soft), eliminando qualquer divergência entre fallback inicial e estado hidratado.
+O mecanismo legado de alternância de marcas em runtime (`birthhub360` que reescrevia `--brand`/`--brand-2` para `#FF6B10`/`#FF8008`) foi completamente descontinuado a pedido explícito do produto. As variáveis canônicas da plataforma são definidas globalmente em `src/styles/globals.css` (`--brand: #d4af37` Antique Gold, `--brand-2: #f0d77b` Gold Soft), eliminando qualquer divergência entre fallback inicial e estado hidratado.
 
 
 ## Problema
@@ -15,24 +15,24 @@ O mecanismo legado de alternância de marcas em runtime (`atlasgr` / `totaltrac`
 --brand: #FF5618;
 --brand-2: #FF8008;
 ```
-`#FF8008` é uma cor real da paleta AtlasGR (`identidade-visual/atlasgr/tokens/atlasgr.css` →
+`#FF8008` é uma cor real da paleta Birth Hub 360 (`identidade-visual/birthhub360/tokens/birthhub360.css` →
 `--atlas-cor-laranja-medio`, README → "Laranja médio"), então não é uma cor inventada — mas não é a
 cor que `src/contexts/BrandContext.tsx` efetivamente aplica como `accentColor`/`--brand-2` para a
-marca AtlasGR em runtime:
+marca Birth Hub 360 em runtime:
 ```ts
-atlasgr: { primaryColor: '#FF5618', accentColor: '#FF6B10', ... }
+birthhub360: { primaryColor: '#FF5618', accentColor: '#FF6B10', ... }
 ```
 `#FF6B10` é a outra cor secundária real do pack (`--atlas-cor-laranja-apoio`, README → "Laranja
 apoio"). Ou seja: o valor default/fallback de `--brand-2` em `globals.css` (`#FF8008`, laranja
 médio) e o valor que o JS realmente escreve em `--brand-2` assim que `BrandProvider` monta
-(`#FF6B10`, laranja apoio) são dois tons diferentes da paleta AtlasGR, não o mesmo tom.
+(`#FF6B10`, laranja apoio) são dois tons diferentes da paleta Birth Hub 360, não o mesmo tom.
 
 Efeito prático: qualquer render antes do `useEffect` de `BrandContext.tsx` rodar (SSR eventual,
 paint inicial antes da hidratação, ou qualquer consumidor de `--brand-2`/`--color-brand-2`/
 `--color-brand-2-active` fora da árvore do `BrandProvider`) usa `#FF8008` em vez do `#FF6B10` que o
-resto da aplicação considera "o" accent da AtlasGR. Os dois tons são próximos visualmente (mesma
+resto da aplicação considera "o" accent da Birth Hub 360. Os dois tons são próximos visualmente (mesma
 família de laranja), então não é um erro grosseiro de marca, mas é uma divergência real de token —
-exatamente o tipo de coisa que `identidade-visual/atlasgr/tokens/atlasgr.css` existe pra evitar
+exatamente o tipo de coisa que `identidade-visual/birthhub360/tokens/birthhub360.css` existe pra evitar
 (tokens têm nome próprio pra cada tom: `--atlas-cor-laranja-medio` vs `--atlas-cor-laranja-apoio`).
 
 Não fiz a alteração porque `src/styles/globals.css` é propriedade exclusiva do Agente 03 (ver
@@ -41,15 +41,15 @@ Não fiz a alteração porque `src/styles/globals.css` é propriedade exclusiva 
 ## Arquivo(s) envolvido(s)
 - `src/styles/globals.css`, linha 172 (`--brand-2: #FF8008;` no `:root` default).
 - Para referência (não alterar, só decidir o valor correto): `src/contexts/BrandContext.tsx`
-  (`BRAND_CONFIGS.atlasgr.accentColor = '#FF6B10'`), `identidade-visual/atlasgr/tokens/atlasgr.css`
+  (`BRAND_CONFIGS.birthhub360.accentColor = '#FF6B10'`), `identidade-visual/birthhub360/tokens/birthhub360.css`
   (`--atlas-cor-laranja-medio: #FF8008` e `--atlas-cor-laranja-apoio: #FF6B10`).
 
 ## Alteração necessária
-Decidir qual dos dois tons é o "--brand-2" canônico da AtlasGR e alinhar os dois lugares:
+Decidir qual dos dois tons é o "--brand-2" canônico da Birth Hub 360 e alinhar os dois lugares:
 - Opção A (recomendada, menor mudança): trocar o default em `globals.css` linha 172 para
   `--brand-2: #FF6B10;`, igualando ao que `BrandContext.tsx` já aplica em runtime — assim o valor
   antes da hidratação já é o mesmo que depois.
-- Opção B: manter `#FF8008` em `globals.css` e mudar `accentColor` da AtlasGR em `BrandContext.tsx`
+- Opção B: manter `#FF8008` em `globals.css` e mudar `accentColor` da Birth Hub 360 em `BrandContext.tsx`
   para `#FF8008` — só faz sentido se houver razão de design pra preferir "laranja médio" como accent
   em vez de "laranja apoio" (fora do escopo de decisão do Agente 11).
 
@@ -59,13 +59,13 @@ não de consistência de token (que é o que audito).
 ## Teste esperado
 - `document.documentElement.style.getPropertyValue('--brand-2')` (ou inspeção visual do primeiro
   paint antes da hidratação, se reproduzível) bate com o valor usado pelo restante da UI depois que
-  `BrandProvider` monta, para a marca AtlasGR.
+  `BrandProvider` monta, para a marca Birth Hub 360.
 - `npx tsc --noEmit`, `npm run lint`, `npm run build` continuam verdes (mudança é só valor de token
   CSS, não deveria quebrar nada).
 
 ## Contexto adicional
 Encontrado durante auditoria de consistência de tokens de marca (Agente 11, Onda 4/roadmap-v2) ao
-comparar `identidade-visual/atlasgr/tokens/*` contra o que `globals.css` e `BrandContext.tsx`
+comparar `identidade-visual/birthhub360/tokens/*` contra o que `globals.css` e `BrandContext.tsx`
 realmente consomem, conforme escopo da missão desta onda. Não é bloqueador: os dois tons pertencem à
 mesma paleta oficial documentada, o problema é qual dos dois é "o" `--brand-2`, não uma cor fora da
 marca.

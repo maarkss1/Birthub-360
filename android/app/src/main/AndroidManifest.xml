@@ -29,9 +29,9 @@
             </intent-filter>
 
             <!-- Deep link — esquema custom, funciona sem depender de verificação de domínio.
-                 Formato: atlasgr://<destino>, onde <destino> é um TabType válido do contrato de
+                 Formato: birthhub360://<destino>, onde <destino> é um TabType válido do contrato de
                  navegação do Agente 02 (src/lib/navigationBus.ts) ou vazio/"dashboard" pro início.
-                 Ex.: atlasgr://crm, atlasgr://prospect, atlasgr://intelligence. Resolvido
+                 Ex.: birthhub360://crm, birthhub360://prospect, birthhub360://intelligence. Resolvido
                  nativamente em MainActivity.java (não duplica lógica de negócio: só traduz o
                  destino pra uma URL do próprio server.url, que o React Router de src/App.tsx já
                  sabe rotear). Destino desconhecido nunca carrega uma URL — mostra um diálogo nativo
@@ -40,7 +40,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="atlasgr" />
+                <data android:scheme="birthhub360" />
             </intent-filter>
 
             <!-- Deep link — Android App Link (https) pro domínio de produção real, com
@@ -50,7 +50,7 @@
                  08/10). Até lá, este intent-filter ainda funciona como link comum (usuário escolhe
                  "abrir com o app" na primeira vez), só não pula o seletor. Mantém o mesmo domínio
                  fallback usado em capacitor.config.ts hoje — trocar junto quando o domínio final
-                 (app.atlasgr.com.br) entrar no ar. -->
+                 (app.birthhub360.com.br) entrar no ar. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

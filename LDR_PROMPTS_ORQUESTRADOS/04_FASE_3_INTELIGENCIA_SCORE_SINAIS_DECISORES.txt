@@ -40,7 +40,7 @@ Implementar taxonomia versionada de sinais. Exemplos válidos apenas quando sust
 - vagas relacionadas a logística/GR/segurança;
 - notícia de crescimento/investimento;
 - mudança de executivo;
-- interação recente com AtlasGR;
+- interação recente com Birth Hub 360;
 - oportunidade aberta;
 - avanço/estagnação no CRM;
 - nova relação empresarial verificada.

@@ -60,7 +60,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     ...parseAllowedOrigins(process.env.ALLOWED_ORIGINS),
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL.replace(/\/$/, '')] : []),
-    ...(process.env.NODE_ENV === 'production' ? [] : ['https://atlasgr-dev-server.loca.lt']),
+    ...(process.env.NODE_ENV === 'production' ? [] : ['https://birthhub360-dev-server.loca.lt']),
     // GitHub Codespaces expõe a porta local por uma URL https dinâmica, diferente em cada
     // Codespace (<CODESPACE_NAME>-<porta>.<domínio-de-forwarding>, ambos injetados
     // automaticamente pelo Codespaces). .env.example fixa ALLOWED_ORIGINS/BETTER_AUTH_URL em
@@ -79,7 +79,7 @@ export const auth = betterAuth({
     enabled: true,
     // Sem isto, `isAuthorizedLoginEmail` (checagem por DOMÍNIO, não por posse da caixa postal)
     // era a ÚNICA barreira do cadastro: bastava digitar qualquer endereço
-    // "algo@atlasgr.com.br"/"@totaltrac.com.br" — mesmo pertencente a outra pessoa — para ganhar
+    // "algo@birthhub360.com.br"/"@birthhub360.com.br" — mesmo pertencente a outra pessoa — para ganhar
     // sessão válida na hora e, se fosse o primeiro cadastro daquela organização, virar ADMIN dela
     // (ver databaseHooks.user.create.before abaixo). Achado real do piloto de threat-modeling
     // (skill Mantis, módulo mantis-threat-model) rodado sobre este módulo. Com isto, o sign-up
@@ -314,8 +314,8 @@ export const auth = betterAuth({
           // Create an organization if one isn't provided (during registration / Google OAuth)
           if (!user.organizationId) {
             // Nome da organização não carrega mais marca nenhuma — desde que o cadastro deixou
-            // de ser restrito a e-mails @atlasgr.com.br/@totaltrac.com.br (ver access-policy.ts),
-            // rotular toda organização nova como "... AtlasGR Operações" ficaria simplesmente
+            // de ser restrito a e-mails @birthhub360.com.br/@birthhub360.com.br (ver access-policy.ts),
+            // rotular toda organização nova como "... Birth Hub 360 Operações" ficaria simplesmente
             // errado para qualquer outra empresa que se cadastre.
             // O middleware de /api/auth (server.ts) já roda toda esta rota sob
             // requestContext.run({ bypassRls: true }, ...) — sem tenant conhecido ainda,

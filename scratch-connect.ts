@@ -12,13 +12,13 @@ async function main() {
     if (
       org.name.toLowerCase().includes('atlas') ||
       org.name.toLowerCase().includes('oracle') ||
-      org.name.toLowerCase().includes('totaltrac')
+      org.name.toLowerCase().includes('birthhub360')
     ) {
       console.log(`Conectando org: ${org.name}`);
       try {
         const result = await connectBitrix(
           org.id,
-          'https://atlasgr.bitrix24.com.br/rest/450/gr94fas79p1nizci/',
+          'https://birthhub360.bitrix24.com.br/rest/450/gr94fas79p1nizci/',
           org.name + ' Bitrix24',
         );
         console.log(`Sucesso na org ${org.name}:`, result);

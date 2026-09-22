@@ -8,7 +8,7 @@
  * Este SDK conecta o Express/Node ao collector via OTLP HTTP (porta 4318).
  *
  * Configuração via variáveis de ambiente:
- *   OTEL_SERVICE_NAME=atlasgr-api       # Nome do serviço no Tempo/Grafana
+ *   OTEL_SERVICE_NAME=birthhub360-api       # Nome do serviço no Tempo/Grafana
  *   OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318  # Collector endpoint
  *   OTEL_TRACES_SAMPLER=always_on       # Em produção: parentbased_traceidratio=0.1
  */
@@ -20,7 +20,7 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
 const OTEL_ENDPOINT = process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://localhost:4318';
-const SERVICE_NAME = process.env.OTEL_SERVICE_NAME ?? 'atlasgr-api';
+const SERVICE_NAME = process.env.OTEL_SERVICE_NAME ?? 'birthhub360-api';
 const SERVICE_VERSION = process.env.npm_package_version ?? '0.0.1';
 
 // Não inicializa em ambiente de teste (Vitest / Jest) para evitar interferência

@@ -18,7 +18,7 @@ afterEach(cleanup);
 const useAuthMock = vi.fn();
 vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => useAuthMock() }));
 
-// A Sidebar não usa mais BrandContext/Logo/TotalTrackLogo (marca única, ver
+// A Sidebar não usa mais BrandContext/Logo/birthhub360Logo (marca única, ver
 // src/components/brand/BirthHubLogo.tsx) — mocks removidos junto com a troca.
 import { Sidebar } from '@/components/layout/Sidebar';
 

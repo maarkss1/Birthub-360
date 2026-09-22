@@ -2,11 +2,11 @@ import { expect, type Page } from '@playwright/test';
 import { prisma } from '../../src/lib/prisma';
 import { requestContext } from '../../src/lib/async-context';
 
-// Sempre @atlasgr.com.br: só domínios autorizados (ver src/config/access-policy.ts) passam pela
+// Sempre @birthhub360.com.br: só domínios autorizados (ver src/config/access-policy.ts) passam pela
 // checagem client-side E pelo databaseHooks.user.create.before do better-auth (src/lib/auth.ts).
 export function uniqueTestEmail(prefix: string): string {
   const unique = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-  return `e2e-${prefix}-${unique}@atlasgr.com.br`;
+  return `e2e-${prefix}-${unique}@birthhub360.com.br`;
 }
 
 export const E2E_PASSWORD = 'E2eTestPassword123!';
@@ -30,7 +30,7 @@ interface SignUpOptions {
 //
 // Desde que o cadastro passou a exigir confirmação de posse do e-mail
 // (requireEmailVerification em src/lib/auth.ts — corrige um achado real do piloto de
-// threat-modeling do Mantis: antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono
+// threat-modeling do Mantis: antes, qualquer "algo@birthhub360.com.br" digitado, mesmo não sendo dono
 // real, virava sessão + ADMIN na hora), o sign-up passa a ter DOIS desfechos possíveis, e este
 // helper não pode assumir qual: com `ALLOW_DEV_AUTH_BYPASS=true` (é o caso deste job de CI — ver
 // ci.yml — e também de qualquer ambiente local que o exporte), `requireEmailVerification` fica

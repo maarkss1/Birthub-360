@@ -44,10 +44,10 @@ import {
 
 const ORG_ID = 'org-1';
 const CONNECTION = { id: 'conn-1' };
-const USER = { id: 'user-1', email: 'vendedor@atlasgr.com.br', name: 'Vendedor Um' };
+const USER = { id: 'user-1', email: 'vendedor@birthhub360.com.br', name: 'Vendedor Um' };
 const ASSIGNEES = [
-  { id: '10', name: 'Ana Souza', email: 'ana@atlasgr.com.br' },
-  { id: '20', name: 'Bruno Reis', email: 'bruno@atlasgr.com.br' },
+  { id: '10', name: 'Ana Souza', email: 'ana@birthhub360.com.br' },
+  { id: '20', name: 'Bruno Reis', email: 'bruno@birthhub360.com.br' },
 ];
 
 beforeEach(() => {

@@ -79,15 +79,15 @@ o dump):
 | ↳ tabela `session` (7 registros: token de sessão, IP, user-agent)                   | SECRET (mitigado)               | Sessão ativa       | LOW (hoje) | **Todas expiradas em 2026-08-12** — verificável diretamente pela coluna `expiresAt`, hoje é 2026-09-15 (>1 mês vencidas) | Nenhuma — sessões vencidas não são reutilizáveis pelo protocolo de auth |
 | ↳ tabela `Company` (27 registros: CNPJ, telefones, e-mails, endereço, dados de enriquecimento) | BUSINESS_DATA + PII (pessoa jurídica) | Dado de prospecção  | HIGH       | Dado real de empresas prospectadas                 | Ver seção LGPD                                                       |
 | ↳ tabela `Contact` (41 registros: nome, telefone, WhatsApp, e-mail, cargo)          | PII                              | Dado de prospecção  | CRITICAL   | Dado pessoal real e identificável                  | Ver seção LGPD                                                       |
-| ↳ tabela `BitrixConnection` (1 registro: webhook URL AtlasGR completo)              | SECRET                           | Credencial de integração | HIGH   | Rotacionado (SEC-003, ver abaixo)                  | Nenhuma (rotação já confirmada em sessão anterior)                  |
+| ↳ tabela `BitrixConnection` (1 registro: webhook URL Birth Hub 360 completo)              | SECRET                           | Credencial de integração | HIGH   | Rotacionado (SEC-003, ver abaixo)                  | Nenhuma (rotação já confirmada em sessão anterior)                  |
 | ↳ tabela `AuditLog` (134 registros: IP, ator, ação)                                 | PII (IP)                         | Log interno         | MEDIUM     | IPs de ambiente local (`127.0.0.1`) — não expõe IP real de usuário final | Nenhuma                                                              |
 | ↳ tabelas `Lead`/`TimelineEvent`/`EnrichmentLog`/`Organization`/`AILog`/`AgentMemory` | BUSINESS_DATA                   | Dado comercial interno | MEDIUM  | Dado real de operação comercial em estágio inicial | Ver seção LGPD                                                       |
 | ↳ tabelas `WhatsAppMessage`, `GoogleWorkspaceConnection`, `Prospect`, `Note`, `Automation`, `Document`, `KnowledgeDocument`, etc. | —                                | —                  | —          | **0 registros** — tabelas vazias no momento do dump | Nenhuma                                                              |
 | `dump.rdb` (821 bytes, Redis RDB v0010)                                             | FALSE_POSITIVE                  | Metadado de fila     | INFORMATIVE | Contém só bookkeeping de filas BullMQ vazias (`bull:*:stalled-check`, sem payload de job real) | Nenhuma — confirmado sem dado sensível                              |
 | `scripts/call_bland_juliana.py`                                                    | SECRET + PII                    | Chave de API + telefone pessoal | CRITICAL | Chave Bland AI rotacionada (SEC-003); telefone pessoal de "Juliana" hardcoded | Nenhuma ação de credencial; PII já tratada como achado histórico conhecido |
 | `scripts/call_juliana.{js,ts}`, `scripts/call_rodrigo.{js,ts}`                      | PII                              | Telefone pessoal      | HIGH       | Telefones reais de "Juliana"/"Rodrigo" hardcoded; chave de API nesses arquivos é `local-dev-key` (fake) | Nenhuma ação de credencial (não é segredo real nestes arquivos especificamente) |
-| `public/tools/extrator-bitrix.html`, `extrator_bitrix (1).html` (múltiplas versões) | SECRET                          | Webhook Bitrix24 (AtlasGR) hardcoded | HIGH | Rotacionado (SEC-003)                              | Nenhuma                                                              |
-| `src/features/integrations/bitrix/service/connections.ts` (versão histórica), `src/hooks/useBitrixIntegration.ts` (versão histórica) | SECRET                          | Fallback com webhook Bitrix24 (AtlasGR + TotalTrac) hardcoded | HIGH | Rotacionado (SEC-003); fallback removido do código atual (`.agents/completion/01-bloqueadores.md`, item 3) | Nenhuma                                                              |
+| `public/tools/extrator-bitrix.html`, `extrator_bitrix (1).html` (múltiplas versões) | SECRET                          | Webhook Bitrix24 (Birth Hub 360) hardcoded | HIGH | Rotacionado (SEC-003)                              | Nenhuma                                                              |
+| `src/features/integrations/bitrix/service/connections.ts` (versão histórica), `src/hooks/useBitrixIntegration.ts` (versão histórica) | SECRET                          | Fallback com webhook Bitrix24 (Birth Hub 360 + Birth Hub 360) hardcoded | HIGH | Rotacionado (SEC-003); fallback removido do código atual (`.agents/completion/01-bloqueadores.md`, item 3) | Nenhuma                                                              |
 | `test-gemini.ts` (×2 variantes), `test-gemini-quota.ts`                            | SECRET                          | Chave Google Gemini hardcoded | CRITICAL | Rotacionada, confirmada pelo dono do repositório em 2026-09-05 (`ROTATE_GEMINI_API_KEY.md`) | Nenhuma                                                              |
 | `.env.example`, `.env.test.example`                                                | FALSE_POSITIVE                  | Placeholder           | —          | Só placeholders (`replace-with-a-long-random-secret` etc.), nenhum valor real | Nenhuma                                                              |
 | `docker-compose.yml` (versão histórica e atual)                                    | FALSE_POSITIVE                  | Credencial de dev local | —        | `prospector_pass`/`prospector_redis_pass` — default de container local, não usado fora de `docker-compose up` local | Nenhuma                                                              |
@@ -101,10 +101,10 @@ nenhum ponto do histórico alcançável pela tag.
 | Credencial                                    | Onde apareceu no histórico                                | Classificação                | Evidência                                                                                   |
 | ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------- |
 | Chave Bland AI (`org_...`)                    | `scripts/call_bland_juliana.py` (fallback hardcoded)          | **ROTATED (reverificado)**    | `.agents/completion/01-bloqueadores.md` (SEC-003, 2026-08-18) — confirmado inicialmente pelo dono do repositório. **Reverificado diretamente pelo dono em 2026-09-15: chave revogada no painel Bland AI.** |
-| Webhook Bitrix24 AtlasGR (`.../rest/450/...`) | `connections.ts`, `useBitrixIntegration.ts`, `extrator-bitrix.html`, dump (`BitrixConnection`) | **ROTATED**                   | Idem acima (SEC-003); runbook `ROTATE_BITRIX24_WEBHOOKS.md`. Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
-| Webhook Bitrix24 TotalTrac (`.../rest/2486/...`) | `connections.ts` (uma versão histórica)                      | **ROTATED**                   | Idem acima (SEC-003). Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
+| Webhook Bitrix24 Birth Hub 360 (`.../rest/450/...`) | `connections.ts`, `useBitrixIntegration.ts`, `extrator-bitrix.html`, dump (`BitrixConnection`) | **ROTATED**                   | Idem acima (SEC-003); runbook `ROTATE_BITRIX24_WEBHOOKS.md`. Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
+| Webhook Bitrix24 Birth Hub 360 (`.../rest/2486/...`) | `connections.ts` (uma versão histórica)                      | **ROTATED**                   | Idem acima (SEC-003). Ainda sem reverificação direta no painel Bitrix24 nesta rodada — ver "Ações manuais pendentes". |
 | Chave Google Gemini (formato `AQ.*`, Google AI Studio) | `test-gemini.ts`, `test-gemini-quota.ts`                       | **ROTATED (reverificado)**    | Confirmado inicialmente pelo dono do repositório em 2026-09-05; `ROTATE_GEMINI_API_KEY.md`, fingerprints suprimidos em `.gitleaksignore`. **Reverificado diretamente pelo dono em 2026-09-15: chave revogada no Google AI Studio.** |
-| `ATLASGR_WEBHOOK_SECRET` (valor antigo hardcoded `segredo_compartilhado_atlasgr_123`) | Código-fonte histórico de `LeadDetailDrawer.tsx` (commit `9236028b`) | **ROTATED**     | Código atual já é fail-closed (não aceita mais o literal como fallback). **Revogação em produção (Render) confirmada diretamente pelo dono do repositório em 2026-09-15** — fecha a pendência registrada em `GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`, item 2. |
+| `BIRTHHUB360_WEBHOOK_SECRET` (valor antigo hardcoded `segredo_compartilhado_atlasgr_123`) | Código-fonte histórico de `LeadDetailDrawer.tsx` (commit `9236028b`) | **ROTATED**     | Código atual já é fail-closed (não aceita mais o literal como fallback). **Revogação em produção (Render) confirmada diretamente pelo dono do repositório em 2026-09-15** — fecha a pendência registrada em `GITLEAKS_HISTORICAL_FINDINGS_2026-09-05.md`, item 2. |
 | Hashes de senha de 5 usuários reais (`user.passwordHash`, `account.password`, formato scrypt `hash:salt` do Better Auth) | Dump `backups/prospector-20260806-152827.dump`                 | **NO LONGER APPLICABLE**    | Hash, não texto puro — coincidia na janela de tempo (05-06/08/2026) com o bug já documentado em `.agents/completion/01-bloqueadores.md` item 5 (`reset-passwords.ts` sem alvo resetava TODAS as senhas para `00000000`). **Confirmado pelo dono do repositório em 2026-09-15 que essas 5 contas não existem mais no sistema** — não há mais credencial ativa para resetar. |
 | Tokens de sessão (`session.token`, 7 registros)| Dump `backups/prospector-20260806-152827.dump`                 | **NO LONGER VALID**           | `expiresAt` de todos os 7 registros = 2026-08-12, mais de um mês antes da data desta investigação (2026-09-15) — verificável diretamente no dado, sem depender do provedor. |
 | Tokens OAuth (`account.accessToken`/`refreshToken`/`idToken`) | Dump `backups/prospector-20260806-152827.dump`                 | **N/A**                       | Todos os 5 registros têm essas 3 colunas `NULL` — nenhum token OAuth real estava presente no dump (só o provedor `credential`, isto é, senha local). |
@@ -114,7 +114,7 @@ sessão de agente** (sem acesso de rede a Bland AI/Bitrix24/Google/Render a part
 Bland AI e Google Gemini, porém, foram **reverificados diretamente pelo dono do repositório em
 2026-09-15** (checagem manual no painel de cada provedor, não só a confirmação humana já registrada
 de 08/2026 e 09/05) — essas duas ficam com o nível mais alto de confiança disponível.
-`ATLASGR_WEBHOOK_SECRET` teve a mesma reverificação direta na mesma data (ver linha acima). Os dois
+`BIRTHHUB360_WEBHOOK_SECRET` teve a mesma reverificação direta na mesma data (ver linha acima). Os dois
 webhooks Bitrix24 seguem apoiados só na confirmação humana original de SEC-003 (08/2026) — ver
 "Ações manuais pendentes". Isso é consistente com a
 instrução deste incidente ("não assuma que trocar o `.env` significa rotação") — a evidência citada
@@ -140,7 +140,7 @@ instrução deste incidente ("não assuma que trocar o `.env` significa rotaçã
 **Os dados eram reais, fictícios ou anonimizados?** Reais — CNPJ válido verificável na Receita
 Federal (`06.537.598/0001-39`, ATLAS GERENCIADORA DE RISCOS LTDA, mencionado no próprio conteúdo
 enriquecido do registro), nomes de usuário e organizações correspondentes à operação real descrita
-na seção 1 do `.claude/CLAUDE.md` (AtlasGR/TotalTrac). Nenhum indício de dado sintético/anonimizado
+na seção 1 do `.claude/CLAUDE.md` (Birth Hub 360). Nenhum indício de dado sintético/anonimizado
 nas tabelas com registros.
 
 **Possibilidade de identificação do titular:** Alta para `Contact` (nome completo + telefone/e-mail
@@ -214,7 +214,7 @@ sessão; preparação da remoção do remote (bloqueada por permissão da creden
 
 Ver tabela "Credenciais identificadas" acima. Resumo: 5 credenciais de terceiro/aplicação
 classificadas como `ROTATED` (4 com evidência de confirmação humana registrada em sessões
-anteriores; `ATLASGR_WEBHOOK_SECRET` confirmado revogado em produção pelo dono do repositório em
+anteriores; `BIRTHHUB360_WEBHOOK_SECRET` confirmado revogado em produção pelo dono do repositório em
 2026-09-15 — nenhuma reverificada diretamente contra o provedor nesta sessão por falta de acesso de
 rede); hashes de senha dos 5 usuários reais do dump agora `NO LONGER APPLICABLE` (contas não
 existem mais, confirmado pelo dono do repositório em 2026-09-15); tokens de sessão do dump são
@@ -255,10 +255,10 @@ existem mais, confirmado pelo dono do repositório em 2026-09-15); tokens de ses
    v1.0.0-rc.1` não retorna nada.
 2. **Confirmar a revogação de cada credencial `ROTATED`** diretamente no provedor. **Parcialmente
    concluído em 2026-09-15**: Bland AI e Google Gemini — dono do repositório confirmou diretamente
-   que revogou as duas chaves. `ATLASGR_WEBHOOK_SECRET` também confirmado (item 3). **Ainda
-   pendente:** os 2 webhooks Bitrix24 (AtlasGR e TotalTrac) — sem reverificação direta no painel
+   que revogou as duas chaves. `BIRTHHUB360_WEBHOOK_SECRET` também confirmado (item 3). **Ainda
+   pendente:** os 2 webhooks Bitrix24 (Birth Hub 360) — sem reverificação direta no painel
    Bitrix24 nesta rodada, só a confirmação humana original de SEC-003 (08/2026).
-3. ~~**Confirmar o valor real de `ATLASGR_WEBHOOK_SECRET` em produção (Render)**~~ — **CONCLUÍDA em
+3. ~~**Confirmar o valor real de `BIRTHHUB360_WEBHOOK_SECRET` em produção (Render)**~~ — **CONCLUÍDA em
    2026-09-15**: dono do repositório confirmou diretamente que o webhook já foi revogado, fechando
    a pendência registrada em 2026-09-05.
 4. ~~**Decidir e executar, para os 5 usuários reais do dump, se é necessário forçar reset de
@@ -289,10 +289,10 @@ existem mais, confirmado pelo dono do repositório em 2026-09-15); tokens de ses
 ## Status final
 
 **PARTIALLY RESOLVED** — vetor de exposição fechado (tag removida do remote e verificada
-2026-09-15); webhook `ATLASGR_WEBHOOK_SECRET`, chave Bland AI e chave Google Gemini confirmados
+2026-09-15); webhook `BIRTHHUB360_WEBHOOK_SECRET`, chave Bland AI e chave Google Gemini confirmados
 revogados diretamente pelo dono do repositório; a pendência dos 5 usuários ficou moot (contas de
 teste, sem mais acesso); e a avaliação de DPO/jurídico foi concluída (sem necessidade de
 comunicação formal) — todos confirmados/decididos por ele em 2026-09-15; investigação, inventário e
 documentação completos. Segue pendente apenas: reverificação direta dos 2 webhooks Bitrix24
-(AtlasGR e TotalTrac) contra o painel Bitrix24 — fora do alcance de uma sessão de agente sem acesso
+(Birth Hub 360) contra o painel Bitrix24 — fora do alcance de uma sessão de agente sem acesso
 de rede a esse serviço.

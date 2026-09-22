@@ -1,8 +1,8 @@
-PACOTE DE PROMPTS — LDR / ACCOUNT INTELLIGENCE ATLASGR
-Repositório: https://github.com/MaarksN/CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR
+PACOTE DE PROMPTS — LDR / ACCOUNT INTELLIGENCE BIRTH HUB 360
+Repositório: https://github.com/MaarksN/CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360
 
 OBJETIVO
-Implementar o LDR / Account Intelligence diretamente na Central de Inteligência Comercial AtlasGR, reutilizando a arquitetura, agentes, integrações, Market Intelligence, Bitrix24, IA, workers e governança já existentes.
+Implementar o LDR / Account Intelligence diretamente na Central de Inteligência Comercial Birth Hub 360, reutilizando a arquitetura, agentes, integrações, Market Intelligence, Bitrix24, IA, workers e governança já existentes.
 
 FLUXO FINAL OBRIGATÓRIO
 EMPRESA REAL

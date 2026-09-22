@@ -1,15 +1,15 @@
-// Cliente HTTP do Copiloto — fala SÓ com o backend da Central Atlas GR (/api/copiloto-ia/*).
+// Cliente HTTP do Copiloto — fala SÓ com o backend da Central Birth Hub 360 (/api/copiloto-ia/*).
 // Nunca guarda webhook/token do Bitrix aqui (ver AGENTS.md do pacote): a extensão é cliente fino,
 // autenticação é a sessão do navegador (cookie do Better Auth, `credentials: 'include'`) — o
-// usuário precisa estar logado na Central Atlas GR na mesma janela/perfil do Chrome. Sem isso não
+// usuário precisa estar logado na Central Birth Hub 360 na mesma janela/perfil do Chrome. Sem isso não
 // existe nenhum outro segredo/token armazenado pela extensão.
 
 // Produção real: Render (docs/deploy/producao.md §2, §8) — o caminho Oracle Cloud do ADR-004 foi
 // retirado no commit 783f8582 ("retire oracle cloud deployment resources") e o IP direto que
 // vivia aqui parou de responder (confirmado por teste de conexão). O domínio final é
-// https://app.atlasgr.com.br (já em `host_permissions`), mas o cutover de DNS/Cloudflare ainda não
+// https://app.birthhub360.com.br (já em `host_permissions`), mas o cutover de DNS/Cloudflare ainda não
 // aconteceu (§3 do guia) — até lá, o hostname real é o do serviço Render abaixo. Trocar para
-// https://app.atlasgr.com.br assim que o cutover acontecer.
+// https://app.birthhub360.com.br assim que o cutover acontecer.
 const DEFAULT_API_BASE_URL = 'https://prospector-atlas.onrender.com';
 const STORAGE_KEY = 'atlasApiBaseUrl';
 
@@ -56,7 +56,7 @@ async function request(path, options = {}) {
     });
   } catch {
     throw new ApiError(
-      `Não foi possível contatar ${baseUrl} — confira a URL do backend e se a Central Atlas GR está acessível.`,
+      `Não foi possível contatar ${baseUrl} — confira a URL do backend e se a Central Birth Hub 360 está acessível.`,
       0,
     );
   }
@@ -70,7 +70,7 @@ async function request(path, options = {}) {
 
   if (res.status === 401) {
     throw new ApiError(
-      'Sessão expirada ou ausente — abra a Central Atlas GR numa aba e faça login antes de usar o Copiloto.',
+      'Sessão expirada ou ausente — abra a Central Birth Hub 360 numa aba e faça login antes de usar o Copiloto.',
       401,
       body?.code,
     );

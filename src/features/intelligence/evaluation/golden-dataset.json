@@ -135,8 +135,8 @@
       "tags": ["cfo", "objecao-custo"],
       "input": {
         "brand": {
-          "name": "AtlasGR",
-          "description": "AtlasGR (inteligência comercial e gestão de risco logístico)"
+          "name": "Birth Hub 360",
+          "description": "Birth Hub 360 (inteligência comercial e gestão de risco logístico)"
         },
         "inputs": {
           "persona": "skeptical_cfo",
@@ -158,8 +158,8 @@
       "tags": ["diretora-logistica"],
       "input": {
         "brand": {
-          "name": "AtlasGR",
-          "description": "AtlasGR (inteligência comercial e gestão de risco logístico)"
+          "name": "Birth Hub 360",
+          "description": "Birth Hub 360 (inteligência comercial e gestão de risco logístico)"
         },
         "inputs": {
           "persona": "strict_buyer",
@@ -190,8 +190,8 @@
       "tags": ["gerente-frota", "extremo"],
       "input": {
         "brand": {
-          "name": "AtlasGR",
-          "description": "AtlasGR (inteligência comercial e gestão de risco logístico)"
+          "name": "Birth Hub 360",
+          "description": "Birth Hub 360 (inteligência comercial e gestão de risco logístico)"
         },
         "inputs": {
           "persona": "tech_director",

@@ -70,7 +70,7 @@ export function RoleplayHub() {
     },
   ];
 
-  const personasTotaltrack = [
+  const personasbirthhub360 = [
     {
       id: 'gestor_frota',
       label: 'Gestor de Frotas (Transportadora)',
@@ -88,9 +88,9 @@ export function RoleplayHub() {
     },
   ];
 
-  // Antes dividida entre dois playbooks nomeados por empresa (atlasgr/totaltrac) — unificada
+  // Antes dividida entre dois playbooks nomeados por empresa (Birth Hub 360) — unificada
   // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma persona.
-  const currentPersonas = [...personasAtlas, ...personasTotaltrack];
+  const currentPersonas = [...personasAtlas, ...personasbirthhub360];
 
   // Mesma classificação de persona usada para o motor de IA do turno (generateRoleplay) — extraída
   // pra função pura porque finishCall também precisa dela para o parecer técnico de sessão
