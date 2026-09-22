@@ -18,6 +18,8 @@ type DialogProps = {
       andamento. O botão de fechar (X) e qualquer botão dentro de `footer`/`children` continuam
       funcionando normalmente; é uma proteção contra fechamento acidental, não um lock total. */
   preventClose?: boolean;
+  /** Ativa o efeito cinematográfico de borda em órbita contínua (ex: salvando formulário). */
+  isLoading?: boolean;
 };
 
 export function Dialog({
@@ -28,6 +30,7 @@ export function Dialog({
   maxWidth = 'max-w-md',
   footer,
   preventClose = false,
+  isLoading = false,
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
@@ -115,9 +118,16 @@ export function Dialog({
       className={cn(
         'backdrop:bg-black/40 open:animate-fade-in fixed m-auto rounded-2xl border border-line bg-surface-elevated/90 p-0 text-ink shadow-dialog outline-none backdrop:backdrop-blur-md sm:w-full transition-all',
         maxWidth,
+        isLoading && 'border-transparent overflow-hidden isolate',
       )}
     >
-      <div className="flex max-h-[85vh] flex-col backdrop-blur-xl rounded-2xl">
+      {isLoading && (
+        <>
+          <div className="absolute inset-[-100%] z-[-2] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,var(--brand)_50%,transparent_100%)] opacity-80 pointer-events-none" />
+          <div className="absolute inset-[1.5px] z-[-1] rounded-[calc(1rem-1.5px)] bg-surface-elevated/95 backdrop-blur-xl pointer-events-none" />
+        </>
+      )}
+      <div className={cn("flex max-h-[85vh] flex-col backdrop-blur-xl rounded-2xl relative z-10 transition-opacity duration-300", isLoading && "opacity-60 pointer-events-none select-none")}>
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-4">
           {typeof title === 'string' ? (

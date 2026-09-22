@@ -45,18 +45,28 @@ export interface CardProps
     VariantProps<typeof cardVariants> {
   /** Faixa de destaque no topo do card — usa os tokens de marca (`--brand`/`--brand-2`). */
   accentBar?: boolean;
+  /** Ativa o efeito de borda em órbita contínua durante carregamento. */
+  isLoading?: boolean;
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, padding, accentBar, children, ...props }, ref) => (
-    <div ref={ref} className={cn(cardVariants({ variant, padding, className }))} {...props}>
+  ({ className, variant, padding, accentBar, isLoading, children, ...props }, ref) => (
+    <div ref={ref} className={cn(cardVariants({ variant, padding, className }), isLoading && 'border-transparent overflow-hidden isolate')} {...props}>
+      {isLoading && (
+        <>
+          <div className="absolute inset-[-100%] z-[-2] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,var(--brand)_50%,transparent_100%)] opacity-80" />
+          <div className="absolute inset-[1.5px] z-[-1] rounded-[calc(var(--radius-card)-1.5px)] bg-surface-elevated/95 backdrop-blur-xl" />
+        </>
+      )}
       {accentBar && (
         <>
           <span className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand to-transparent" />
           <span className="pointer-events-none absolute -right-12 -top-16 h-28 w-28 rounded-full bg-brand/10 blur-[38px]" />
         </>
       )}
-      {children}
+      <div className={cn('relative z-10 transition-opacity duration-300', isLoading && 'opacity-60 pointer-events-none select-none')}>
+        {children}
+      </div>
     </div>
   ),
 );
