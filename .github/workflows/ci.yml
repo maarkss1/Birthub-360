@@ -226,7 +226,7 @@ jobs:
           NODE_ENV: test
           ALLOW_DEV_AUTH_BYPASS: true
         run: |
-          node dist/server.js &
+          node dist/server.cjs &
           SERVER_PID=$!
           echo "Aguardando boot do servidor de produção (PID $SERVER_PID)..."
           for i in $(seq 1 30); do

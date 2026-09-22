@@ -41,7 +41,7 @@ export function SinglePageDashboard() {
         {/* HEADER ÂNCORA EXECUTIVO — Tipografia Serifada, Sem Gradiente em Texto */}
         <header className="space-y-2">
           <div className="flex flex-wrap items-center gap-2.5 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand/10 text-brand-ink border border-brand/20">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
               <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
               Strategic Command Center
             </span>
@@ -164,7 +164,7 @@ export function SinglePageDashboard() {
                   <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
                     Leads Ativos no Funil
                   </span>
-                  <span className="p-2 rounded-xl bg-brand/10 text-brand-ink border border-brand/20">
+                  <span className="p-2 rounded-xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
                     <TrendingUp className="w-4 h-4" />
                   </span>
                 </div>
@@ -221,7 +221,7 @@ export function SinglePageDashboard() {
                 <button
                   type="button"
                   onClick={() => navigate('/app/analytics')}
-                  className="text-xs font-bold text-red-violet hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-red-violet-active hover:underline inline-flex items-center gap-1 cursor-pointer"
                 >
                   <span>Analytics</span>
                   <ChevronRight className="w-3 h-3" />
