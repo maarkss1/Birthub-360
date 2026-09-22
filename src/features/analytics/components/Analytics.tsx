@@ -148,7 +148,7 @@ function DecisionInstrumentCard({
           {subtitle && <p className="text-[11px] text-ink-2/70">{subtitle}</p>}
           {insight && (
             <div className="mt-2 p-2 rounded-lg bg-red-violet/5 border border-red-violet/10">
-              <p className="text-[10px] text-red-violet font-medium flex items-center gap-1">
+              <p className="text-[10px] text-red-violet-active font-medium flex items-center gap-1">
                 <Flame className="w-3 h-3" />
                 {insight}
               </p>
