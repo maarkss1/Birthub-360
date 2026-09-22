@@ -307,19 +307,21 @@
      mede 4.93:1 contra --surface-2 e 5.29:1 contra --surface, com folga sobre o mínimo AA. Depois
      do recalibre de --critical acima (75/25), --critical-active herda automaticamente (deriva de
      var(--critical)) e sobe pra ~10.95:1 contra --surface-elevated / ~11.76:1 contra --surface-2 /
-     ~13.52:1 contra --surface — só ganha margem. Achado posterior (harness de navegador real,
-     Canvas2D + color-mix computado + luminância relativa WCAG, não estimado): DealsGrid.tsx/
-     CompareBar.tsx tinham um `dark:text-critical` redundante e ERRADO no badge "Perdido"/Δ
-     negativo (`bg-critical/15 text-critical-active dark:text-critical`) — plain `--critical` no
-     escuro mede só 3.85:1 contra o composto real (bg-critical/15 sobre --surface-2 escura), abaixo
-     de AA. O padrão certo pra esse composto já era este token: plain `text-critical-active` (sem
-     override de tema) mede 9.80:1 no escuro e 8.65:1 no claro contra o mesmo composto — mesmo
-     padrão já usado sem override por BentoMetric.tsx/BentoInsight.tsx. `dark:text-critical`
-     presumia (por analogia com --ok-active/--warn-active, onde a versão "-active" no escuro é
-     literalmente igual à crua) que --critical-active no escuro também seria igual a --critical
-     cru — não é: são cores diferentes de propósito, porque --critical sozinho nunca foi calibrado
-     pra este composto translúcido, só pra texto sólido contra --surface/--surface-2. Removido o
-     override; ver `.claude/PILOTS.md`. */
+     ~13.52:1 contra --surface — só ganha margem, usado hoje em dark mode por BentoMetric.tsx/
+     BentoInsight.tsx e, desde o achado abaixo, também por DealsGrid.tsx/CompareBar.tsx.
+     Achado posterior (harness de navegador real, Canvas2D + color-mix computado + luminância
+     relativa WCAG, não estimado): DealsGrid.tsx/CompareBar.tsx tinham um `dark:text-critical`
+     redundante e ERRADO no badge "Perdido"/Δ negativo
+     (`bg-critical/15 text-critical-active dark:text-critical`) — plain `--critical` no escuro
+     mede só 3.85:1 contra o composto real (bg-critical/15 sobre --surface-2 escura), abaixo de AA.
+     O padrão certo pra esse composto já era este token: plain `text-critical-active` (sem override
+     de tema) mede 9.80:1 no escuro e 8.65:1 no claro contra o mesmo composto — mesmo padrão já
+     usado sem override por BentoMetric.tsx/BentoInsight.tsx. `dark:text-critical` presumia (por
+     analogia com --ok-active/--warn-active, onde a versão "-active" no escuro é literalmente igual
+     à crua) que --critical-active no escuro também seria igual a --critical cru — não é: são cores
+     diferentes de propósito, porque --critical sozinho nunca foi calibrado pra este composto
+     translúcido, só pra texto sólido contra --surface/--surface-2. Removido o override; ver
+     `.claude/PILOTS.md`. */
   --critical-active: color-mix(in srgb, var(--critical) 20%, white);
   /* --color-ok cru já passa 4.5:1 contra a superfície escura — ver comentário de --ok-active
      no :root acima. */
