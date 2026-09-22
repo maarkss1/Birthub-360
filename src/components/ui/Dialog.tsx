@@ -119,7 +119,9 @@ export function Dialog({
       )}
     >
       <div className="flex items-center justify-between p-4 border-b border-line shrink-0">
-        <h2 id={titleId} className="text-lg font-semibold text-ink">{title}</h2>
+        <h2 id={titleId} className="text-lg font-semibold text-ink">
+          {title}
+        </h2>
         <button
           type="button"
           onClick={onClose}
