@@ -168,7 +168,7 @@ export class ActivityUseCases {
 
       lines.push(
         'BEGIN:VEVENT',
-        `UID:${act.id}@atlasgr.com.br`,
+        `UID:${act.id}@birthhub360.com.br`,
         `DTSTAMP:${formatIcsDate(new Date())}`,
         `DTSTART:${formatIcsDate(startDate)}`,
         `DTEND:${formatIcsDate(endDate)}`,

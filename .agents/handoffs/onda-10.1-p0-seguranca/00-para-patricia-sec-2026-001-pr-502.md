@@ -53,7 +53,7 @@ git ls-remote --tags origin | grep v1.0.0-rc.1   # não deve retornar nada
 4. Depois de mergeado e a tag removida, considerar se vale reabrir `.agents/completion/01-bloqueadores.md`
    para marcar o item como `RESOLVED` (ainda ficam pendências separadas registradas no incidente:
    reverificação de rotação de credencial contra os provedores, confirmação de
-   `ATLASGR_WEBHOOK_SECRET` em produção, decisão sobre reset de senha dos 5 usuários reais achados
+   `BIRTHHUB360_WEBHOOK_SECRET` em produção, decisão sobre reset de senha dos 5 usuários reais achados
    no dump, avaliação de DPO/jurídico sobre a janela de exposição de PII).
 
 Nenhuma credencial em texto claro foi impressa em nenhum artefato deste PR — tudo mascarado, ver

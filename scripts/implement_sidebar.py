@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useBrand } from '../../contexts/BrandContext';
 import { Logo } from '../Logo';
-import { TotalTrackLogo } from '../TotalTrackLogo';
+import { birthhub360Logo } from '../birthhub360Logo';
 import { TabType } from './Header';
 
 interface SidebarProps {
@@ -19,7 +19,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     const { activeBrand, setActiveBrand } = useBrand();
-    const isAtlas = activeBrand === 'atlasgr';
+    const isAtlas = activeBrand === 'birthhub360';
 
     const coreTools = [
         { id: 'dashboard', label: 'Painel Central', icon: <Home size={20} /> },
@@ -45,10 +45,10 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             {/* Context Switcher */}
             <div className={`p-4 border-b ${isAtlas ? 'border-orange-100' : 'border-white/10'}`}>
                 <div className="flex items-center gap-2 mb-3">
-                    {isAtlas ? <Logo className="h-8 text-slate-900" /> : <TotalTrackLogo className="h-8 text-white" />}
+                    {isAtlas ? <Logo className="h-8 text-slate-900" /> : <birthhub360Logo className="h-8 text-white" />}
                 </div>
                 
-                <div className="relative group cursor-pointer" onClick={() => setActiveBrand(isAtlas ? 'totaltrac' : 'atlasgr')}>
+                <div className="relative group cursor-pointer" onClick={() => setActiveBrand(isAtlas ? 'birthhub360' : 'birthhub360')}>
                     <div className={`flex items-center justify-between p-2 rounded-xl border transition-all ${
                         isAtlas ? 'bg-orange-50 border-orange-200 hover:bg-orange-100' : 'bg-blue-900/30 border-blue-800 hover:bg-blue-900/50'
                     }`}>
@@ -57,7 +57,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                                 Operação Atual
                             </span>
                             <span className={`text-sm font-black ${isAtlas ? 'text-slate-900' : 'text-white'}`}>
-                                {isAtlas ? 'AtlasGR' : 'TotalTrac'}
+                                {isAtlas ? 'Birth Hub 360' : 'Birth Hub 360'}
                             </span>
                         </div>
                         <div className={`w-6 h-6 rounded-md flex items-center justify-center ${isAtlas ? 'bg-white shadow-sm text-slate-400' : 'bg-slate-800 text-slate-400'}`}>
@@ -215,7 +215,7 @@ import { motion } from 'framer-motion';
 export function SinglePageDashboard({ onSelectModule }: { onSelectModule?: (tab: string) => void }) {
     const { activeBrand } = useBrand();
     const { currentUser } = useAuth();
-    const isAtlas = activeBrand === 'atlasgr';
+    const isAtlas = activeBrand === 'birthhub360';
 
     return (
         <div className="flex-1 overflow-y-auto bg-transparent flex flex-col items-center relative min-h-screen font-sans p-4 md:p-8 space-y-8">
@@ -225,7 +225,7 @@ export function SinglePageDashboard({ onSelectModule }: { onSelectModule?: (tab:
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-black">Olá, {currentUser?.name || 'Usuário'}</h1>
-                        <p className="text-sm opacity-70">Resumo da operação {isAtlas ? 'AtlasGR' : 'TotalTrac'} de hoje.</p>
+                        <p className="text-sm opacity-70">Resumo da operação {isAtlas ? 'Birth Hub 360' : 'Birth Hub 360'} de hoje.</p>
                     </div>
                 </div>
 

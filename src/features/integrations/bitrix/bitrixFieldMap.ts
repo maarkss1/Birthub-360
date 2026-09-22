@@ -2,7 +2,7 @@
  * Mapeamento central de campos entre a plataforma e o Bitrix24 — ponte entre os ~35 campos
  * comerciais que já existem (checklist de qualificação do SDR) ou foram adicionados agora
  * (etapa da cadência, motivo de perda, pacote, status do negócio, etc.) e os campos custom
- * (`UF_CRM_*`) reais do portal `atlasgr.bitrix24.com.br`.
+ * (`UF_CRM_*`) reais do portal `birthhub360.bitrix24.com.br`.
  *
  * Por que um código por entidade (Lead x Deal): o Bitrix trata Lead e Negócio (Deal) como objetos
  * inteiramente separados — o mesmo campo de negócio ("Segmento da Operação", por exemplo) tem um
@@ -336,7 +336,7 @@ export const BITRIX_FIELD_MAP: BitrixFieldMapping[] = [
   // (`service/outboundSync.ts`), não como campo filtrável/relatável. Diferente dos outros campos
   // deste mapa, não dá para simplesmente adicionar uma entrada `{ target: { kind: 'lead', field:
   // 'score' }, type: 'double', ... }` — não existe hoje nenhum `UF_CRM_*` reservado para isso no
-  // portal `atlasgr.bitrix24.com.br` (confirmado varrendo este arquivo: nenhuma ocorrência de
+  // portal `birthhub360.bitrix24.com.br` (confirmado varrendo este arquivo: nenhuma ocorrência de
   // "score"). Pré-requisito real, fora do alcance de uma mudança de código: um admin do Bitrix
   // precisa criar um campo customizado numérico em Lead e em Deal primeiro (mesmo padrão dual
   // leadCode/dealCode do resto do mapa) — só depois disso vale adicionar a entrada aqui e

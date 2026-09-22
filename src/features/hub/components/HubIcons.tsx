@@ -79,10 +79,10 @@ export const HubIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> =
   ),
   // Nota (09/2026): existiam aqui ícones dedicados às chaves 'treinamento'/'proposta'/'hub-mkt' —
   // nunca correspondiam a nenhum `ModuleKey` real (que sempre usaram o nome completo, ex.
-  // 'treinamento-atlasgr'), então já eram código morto (HubScreen.tsx usa `HubIcons[mod.key]` com
+  // 'treinamento-birthhub360'), então já eram código morto (HubScreen.tsx usa `HubIcons[mod.key]` com
   // o moduleKey exato do catálogo). Removidos junto com a aposentadoria dos módulos que
   // pretendiam ilustrar (treinamento comercial, proposta comercial, hub de inteligência/mkt —
-  // conteúdo proprietário da Atlas GR, pedido explícito do usuário).
+  // conteúdo proprietário da Birth Hub 360, pedido explícito do usuário).
   sdr: (props) => (
     <svg width="42" height="42" viewBox="0 0 48 48" fill="none" {...props}>
       <path
@@ -137,10 +137,10 @@ export const HubIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> =
       <circle cx="42" cy="8" r="2.6" fill="currentColor" />
     </svg>
   ),
-  // Nota (09/2026, pedido explícito do usuário: "Atlas GR não é ninguém, não é nem mais pra
+  // Nota (09/2026, pedido explícito do usuário: "Birth Hub 360 não é ninguém, não é nem mais pra
   // existir"): existiam aqui ícones dedicados a 'connect'/'new-connect'/'securitario'/'bitrix24'/
   // 'webmail' — ilustravam os 5 atalhos de EXTERNAL_LINKS (module-catalog.ts) que apontavam pra
-  // sistemas internos da própria Atlas GR (portal Connect, Perfil Securitário, Bitrix24 e webmail
+  // sistemas internos da própria Birth Hub 360 (portal Connect, Perfil Securitário, Bitrix24 e webmail
   // daquela operação). Removidos junto com as entradas do catálogo que os usavam. Restam só os
   // ícones dos 2 atalhos genéricos (Gmail, Google Workspace).
   gmail: (props) => (

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "=== AtlasGR: Rollback de Deployment ==="
+echo "=== Birth Hub 360: Rollback de Deployment ==="
 echo "Este script auxilia no rollback seguro de uma release falha."
 
 # 1. Avisos Prévios

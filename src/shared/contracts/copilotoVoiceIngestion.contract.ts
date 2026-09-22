@@ -1,7 +1,7 @@
 /**
  * Contrato de composição entre `src/features/integrations/birth-voice/` (dono do resultado real
  * da ligação: Note/Activity/TimelineEvent, isso NUNCA muda) e `src/features/copiloto-ia/` (Onda 7,
- * item 2 do pacote `atlasgr_copiloto_ai_pack` — "ponte ligações → Copiloto"). Mesmo raciocínio de
+ * item 2 do pacote `birthhub360_copiloto_ai_pack` — "ponte ligações → Copiloto"). Mesmo raciocínio de
  * `bitrixWriteback.contract.ts`/`meetingSynthesis.contract.ts`: é uma PORTA (padrão hexagonal), não
  * um DTO compartilhado — `birth-voice` depende só desta interface, nunca de
  * `copiloto-ia/application|infra|domain` diretamente (proibido por `.dependency-cruiser.cjs`,

@@ -45,7 +45,7 @@ describe('PrismaAutomationVersionStore', () => {
         action: 'Ligar via SDR de Voz',
         actionConfig: { dueInDays: 1 },
         editedByUserId: 'user-1',
-        editedByEmail: 'user@atlasgr.com.br',
+        editedByEmail: 'user@birthhub360.com.br',
         changeReason: 'update',
       });
 
@@ -94,7 +94,7 @@ describe('PrismaAutomationVersionStore', () => {
       conditions: { status: 'novo' },
       actionConfig: { dueInDays: 1 },
       editedByUserId: 'user-1',
-      editedByEmail: 'user@atlasgr.com.br',
+      editedByEmail: 'user@birthhub360.com.br',
       createdAt: new Date('2026-08-20T10:00:00.000Z'),
     };
 

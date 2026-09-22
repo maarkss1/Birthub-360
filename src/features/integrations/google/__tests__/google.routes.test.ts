@@ -145,7 +145,7 @@ describe('GET /api/google/callback', () => {
 
   it('processa o callback e redireciona com sucesso quando o state é válido', async () => {
     verifyStateMock.mockReturnValue(true);
-    processGoogleCallbackMock.mockResolvedValue({ email: 'comercial@atlasgr.com.br' });
+    processGoogleCallbackMock.mockResolvedValue({ email: 'comercial@birthhub360.com.br' });
     const app = buildApp();
 
     const res = await request(app).get('/api/google/callback').query({ code: 'c1', state: 's1' });
@@ -174,7 +174,7 @@ describe('GET /api/google/status', () => {
   it('devolve o shape { connected, email, hasCalendarWriteScope } do serviço', async () => {
     getGoogleStatusMock.mockResolvedValue({
       connected: true,
-      email: 'comercial@atlasgr.com.br',
+      email: 'comercial@birthhub360.com.br',
       hasCalendarWriteScope: true,
     });
     const app = buildApp();
@@ -184,7 +184,7 @@ describe('GET /api/google/status', () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
       success: true,
-      data: { connected: true, email: 'comercial@atlasgr.com.br', hasCalendarWriteScope: true },
+      data: { connected: true, email: 'comercial@birthhub360.com.br', hasCalendarWriteScope: true },
     });
     expect(getGoogleStatusMock).toHaveBeenCalledWith('org-1');
   });

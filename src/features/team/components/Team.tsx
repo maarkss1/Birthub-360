@@ -279,7 +279,7 @@ export function Team() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-surface-2 border border-line rounded-xl px-3 py-2.5 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-brand"
-                  placeholder="nome@atlasgr.com.br"
+                  placeholder="nome@birthhub360.com.br"
                   required
                 />
               </div>
@@ -349,6 +349,8 @@ export function Team() {
                         <img
                           src={member.image}
                           alt=""
+                          width={36}
+                          height={36}
                           className="w-9 h-9 rounded-full object-cover shrink-0 border border-line"
                         />
                       ) : (

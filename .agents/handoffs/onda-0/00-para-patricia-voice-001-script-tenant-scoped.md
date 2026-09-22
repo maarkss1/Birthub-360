@@ -11,7 +11,7 @@ Ao responder "todas as ondas 0-9 foram finalizadas?", a re-verificação encontr
 **VOICE-001** (Onda 0, CRITICAL/P0 — `docs/audits/repository-debt-audit/agents/VOICE.md`) nunca
 tinha sido corrigido, diferente dos outros 15 bloqueadores da onda. Reauditei o código atual antes
 de corrigir (protocolo da onda): confirmado que `atlasProductPlaybook.ts` ainda hardcodava
-identidade completa da Atlas GR ("Gessica", histórico "nasceu em 2004... 390 clientes", produtos
+identidade completa da Birth Hub 360 ("Gessica", histórico "nasceu em 2004... 390 clientes", produtos
 "Atlas Profile"/"CIA") no roteiro que a IA de voz usa em **toda** ligação de **qualquer**
 organização — exatamente o achado original, ainda não corrigido.
 
@@ -20,8 +20,8 @@ organização — exatamente o achado original, ainda não corrigido.
 - Novo model fields em `VoiceHubConnection` (migração
   `20260914120000_voice_hub_connection_script_fields`): `scriptPersonaName`,
   `scriptCompanyDescription`, `scriptOfferText`, `scriptClosingLine`. Migração faz backfill de
-  **todas** as conexões já cadastradas hoje com o texto exato da Atlas GR — zero mudança de
-  comportamento no deploy para quem já está configurado (presumivelmente só a Atlas GR, per a
+  **todas** as conexões já cadastradas hoje com o texto exato da Birth Hub 360 — zero mudança de
+  comportamento no deploy para quem já está configurado (presumivelmente só a Birth Hub 360, per a
   ressalva do próprio achado). O roteiro genérico só passa a valer para conexões novas, ou se uma
   organização já existente limpar os campos.
 - `atlasProductPlaybook.ts` removido, substituído por `voiceScript.ts`: roteiro genérico que

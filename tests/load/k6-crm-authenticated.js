@@ -134,7 +134,7 @@ function extractSessionCookie(response) {
 
 function uniqueEmail() {
   const unique = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-  return `k6-load-${unique}@atlasgr.com.br`;
+  return `k6-load-${unique}@birthhub360.com.br`;
 }
 
 export function setup() {

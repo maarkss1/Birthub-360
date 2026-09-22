@@ -23,14 +23,14 @@ onda.
 Ao escolher o valor default de `PRODUCTION_URL`, testei os dois domínios candidatos:
 
 ```
-curl https://app.atlasgr.com.br/health/live      → não resolve DNS (domínio final, ver
+curl https://app.birthhub360.com.br/health/live      → não resolve DNS (domínio final, ver
                                                      docs/deploy/producao.md §3, ainda não está no ar)
 curl https://prospector-atlas.onrender.com/health/live → 200 { status: "ok" } (backend real, ativo)
 ```
 
 Usei `https://prospector-atlas.onrender.com` como default (documentado em
 `docs/deploy/producao.md` §8 como o fallback "até lá"). Isso deixa o app mobile **funcional hoje**,
-mas cria uma dependência de coordenação: quando `app.atlasgr.com.br` entrar no ar (Cloudflare
+mas cria uma dependência de coordenação: quando `app.birthhub360.com.br` entrar no ar (Cloudflare
 DNS + certificado, `docs/deploy/producao.md` §3), alguém precisa:
 
 1. Atualizar `PRODUCTION_URL` em `capacitor.config.ts` (meu escopo — eu faço, mas preciso ser
@@ -60,16 +60,16 @@ DNS + certificado, `docs/deploy/producao.md` §3), alguém precisa:
    intent-filters `autoVerify="true"` que adicionei em
    `android/app/src/main/AndroidManifest.xml` continuam funcionando como link comum (o Android
    mostra o seletor "abrir com" na primeira vez), só não pulam direto pro app.
-3. Me avisar (handoff de volta) quando (a) `app.atlasgr.com.br` estiver resolvendo e servindo a
+3. Me avisar (handoff de volta) quando (a) `app.birthhub360.com.br` estiver resolvendo e servindo a
    aplicação, e (b) o keystore de release para gerar o SHA-256 do `assetlinks.json` existir — para
    eu atualizar os 3 arquivos listados acima.
 
 ## Teste esperado
 
-- `curl https://app.atlasgr.com.br/health/live` retornando `200` confirma que o domínio final está
+- `curl https://app.birthhub360.com.br/health/live` retornando `200` confirma que o domínio final está
   pronto para eu migrar `capacitor.config.ts`.
-- Depois de publicado `assetlinks.json`, `https://app.atlasgr.com.br/app/crm` aberto em qualquer
-  app (WhatsApp, e-mail, navegador) deve abrir direto o AtlasGR Prospector na tela de CRM, sem
+- Depois de publicado `assetlinks.json`, `https://app.birthhub360.com.br/app/crm` aberto em qualquer
+  app (WhatsApp, e-mail, navegador) deve abrir direto o Birth Hub 360 Prospector na tela de CRM, sem
   seletor de app.
 
 ## Contexto adicional

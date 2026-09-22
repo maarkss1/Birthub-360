@@ -2,7 +2,7 @@
 -- (URL do PABX, ramal, apiKey/apiSecret) num `Map` em memória (`memory3CXStore`), perdido a cada
 -- restart/redeploy do processo e inconsistente entre instâncias com mais de um processo do
 -- servidor rodando ao mesmo tempo. Mesmo padrão de BitrixConnection: uma organização pode ter
--- mais de um PABX 3CX (ex.: AtlasGR e TotalTrac com telefonia separada), por isso não é @unique
+-- mais de um PABX 3CX (ex.: Birth Hub 360 com telefonia separada), por isso não é @unique
 -- por organizationId. Ver handoff .agents/handoffs/onda-1/06-para-01-persistencia-3cx.md.
 --
 -- apiKey/apiSecret são cifrados em repouso (AES-256-GCM) de forma transparente pela extensão

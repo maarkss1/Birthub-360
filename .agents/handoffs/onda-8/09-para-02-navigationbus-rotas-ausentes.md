@@ -48,10 +48,10 @@ cair no catch-all `/app`), ou os dois devem deixar de aparecer em `TAB_ROUTE_SET
 ## Contexto adicional
 
 Achado durante o inventário de paridade mobile da Onda 8 (Agente 09), ao implementar deep link
-nativo (`android/app/src/main/java/br/com/atlasgr/prospector/MainActivity.java` e
+nativo (`android/app/src/main/java/br/com/birthhub360/prospector/MainActivity.java` e
 `ios/App/App/SceneDelegate.swift`) — a lista `VALID_TABS`/`validTabs` nesses dois arquivos espelha
 `TAB_ROUTE_SET` de propósito (é o contrato oficial de navegação), então herdou o mesmo problema: um
-deep link `atlasgr://enrich` ou `atlasgr://prompts` passa na validação nativa (não mostra o erro
+deep link `birthhub360://enrich` ou `birthhub360://prompts` passa na validação nativa (não mostra o erro
 "link inválido"), carrega `/app/enrich` no WebView, e o próprio app React Router redireciona
 silenciosamente pro dashboard — do ponto de vista de quem abriu o link, parece que o link "não fez
 nada". Não tentei contornar isso removendo os dois da lista nativa porque a lista nativa deveria
@@ -86,7 +86,7 @@ o padrão do bloqueador #7.
 **Pendência para o Agente 09**: a lista nativa `VALID_TABS`/`validTabs`
 (`MainActivity.java`/`SceneDelegate.swift`) precisa deixar de espelhar `enrich`/`prompts` também,
 já que `android/**`/`ios/**` são propriedade exclusiva do Agente 09 — não editei esses arquivos.
-Um deep link `atlasgr://enrich` ou `atlasgr://prompts` hoje passaria na validação nativa e cairia no
+Um deep link `birthhub360://enrich` ou `birthhub360://prompts` hoje passaria na validação nativa e cairia no
 mesmo "não fez nada" já descrito neste handoff (só que agora o lado web pelo menos recusa a
 navegação em vez de redirecionar silenciosamente — o app abre, mas fica na tela em que já estava).
 Se o produto quiser reativar `PromptStudio.tsx` como tela real no futuro, é uma decisão de escopo

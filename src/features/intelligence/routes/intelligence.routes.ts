@@ -616,7 +616,7 @@ const reportSchema = z.object({
 });
 
 // Antes do playbook geral único, este texto variava por playbook (logística vs. frota) — ver
-// git blame para o conteúdo antigo. Removido junto com atlasgr/totaltrac (pedido explícito do
+// git blame para o conteúdo antigo. Removido junto com Birth Hub 360 (pedido explícito do
 // usuário); mantém-se genérico até o desenho de um playbook configurável por organização.
 function reportBrandContext(_brandId: 'geral'): string {
   return 'Birth Hub 360 (inteligência comercial B2B)';

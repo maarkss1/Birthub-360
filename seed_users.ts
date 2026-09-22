@@ -47,10 +47,10 @@ interface SeedUserDefinition {
 // sem erro, mas nunca satisfaz nenhuma checagem de RBAC (cai no fallback `?? 0`, mais restrito que
 // VISUALIZADOR). Bug real encontrado aqui: este script gravava 'admin' minúsculo.
 const USERS: SeedUserDefinition[] = [
-    { name: 'Marcelo Nascimento', email: 'marcelo.nascimento@atlasgr.com.br', role: 'ADMIN', passwordEnvVar: 'SEED_PASSWORD_MARCELO' },
-    { name: 'Kaue Oliveira', email: 'kaue.oliveira@totaltrac.com.br', role: 'CLOSER', passwordEnvVar: 'SEED_PASSWORD_KAUE', joinOrganizationOfEmail: 'marcelo.nascimento@atlasgr.com.br' },
-    { name: 'Joao Reis', email: 'joao.reis@atlasgr.com.br', role: 'SDR', passwordEnvVar: 'SEED_PASSWORD_JOAO', joinOrganizationOfEmail: 'marcelo.nascimento@atlasgr.com.br' },
-    { name: 'Marcelo do Nascimento', email: 'marcelinmark@gmail.com', role: 'GESTOR', passwordEnvVar: 'SEED_PASSWORD_MARCELO_GESTOR', joinOrganizationOfEmail: 'marcelo.nascimento@atlasgr.com.br' },
+    { name: 'Marcelo Nascimento', email: 'marcelo.nascimento@birthhub360.com.br', role: 'ADMIN', passwordEnvVar: 'SEED_PASSWORD_MARCELO' },
+    { name: 'Kaue Oliveira', email: 'kaue.oliveira@birthhub360.com.br', role: 'CLOSER', passwordEnvVar: 'SEED_PASSWORD_KAUE', joinOrganizationOfEmail: 'marcelo.nascimento@birthhub360.com.br' },
+    { name: 'Joao Reis', email: 'joao.reis@birthhub360.com.br', role: 'SDR', passwordEnvVar: 'SEED_PASSWORD_JOAO', joinOrganizationOfEmail: 'marcelo.nascimento@birthhub360.com.br' },
+    { name: 'Marcelo do Nascimento', email: 'marcelinmark@gmail.com', role: 'GESTOR', passwordEnvVar: 'SEED_PASSWORD_MARCELO_GESTOR', joinOrganizationOfEmail: 'marcelo.nascimento@birthhub360.com.br' },
 ];
 
 async function seed() {

@@ -9,7 +9,7 @@ Extensão Manifest V3 real que fala com o backend do módulo Copiloto Comercial 
 - Tema claro/escuro — botão 🌙/☀️ no header do side panel, persistido em `chrome.storage.sync`.
   Escuro continua o padrão (era o único antes); a cor de marca (laranja) é fixa nos dois temas, só
   a superfície muda.
-- Vincula a reunião a um Lead existente da Central Atlas GR — por nome (busca incremental com
+- Vincula a reunião a um Lead existente da Central Birth Hub 360 — por nome (busca incremental com
   `GET /api/copiloto-ia/leads/search`, mostrando até 10 candidatos por título do Lead/nome do
   Contato/razão social ou nome fantasia da Company), por e-mail do contato, por link de
   lead/negócio do Bitrix24, ou colando o id cru da Central (`GET /api/copiloto-ia/leads/lookup`,
@@ -51,7 +51,7 @@ Extensão Manifest V3 real que fala com o backend do módulo Copiloto Comercial 
   (mapeamento de campo + writeback real para `entityType: LEAD`, com aprovação humana, já
   implementado na Onda 4 — ver `bitrix-field-mappings`/`crm-field-suggestions/:id/writeback` em
   `routes/copilotoIa.routes.ts` e `AGENT_08_BITRIX24.md`/`docs/BITRIX_FIELD_MAPPING.md` do pacote).
-- **Não guarda segredo nenhum.** Autenticação é a sessão de navegador já aberta na Central Atlas GR
+- **Não guarda segredo nenhum.** Autenticação é a sessão de navegador já aberta na Central Birth Hub 360
   (cookie do Better Auth, enviado via `credentials: 'include'`) — sem token/API key na extensão. A
   chave da OpenAI (Whisper) fica só no backend, nunca chega ao navegador.
 
@@ -62,7 +62,7 @@ Extensão Manifest V3 real que fala com o backend do módulo Copiloto Comercial 
    rodando, a transcrição fica enfileirada mas nunca processa.
 2. Configure `OPENAI_API_KEY` e as variáveis `STORAGE_*` (`.env.example` documenta as duas) — sem
    elas, o upload de áudio ou a transcrição falham explicitamente (nunca silenciosamente).
-3. Faça login na Central Atlas GR numa aba normal do MESMO perfil do Chrome (a extensão reaproveita
+3. Faça login na Central Birth Hub 360 numa aba normal do MESMO perfil do Chrome (a extensão reaproveita
    essa sessão via cookie).
 4. `chrome://extensions` → ative o "Modo do desenvolvedor" → "Carregar sem compactação" → selecione
    esta pasta (`chrome-extension/`).
@@ -99,7 +99,7 @@ real do Google Meet — precisa de um passo manual num Chrome de verdade antes d
    `host_permissions` (`manifest.json`) apontam para o serviço Render de produção
    (`https://prospector-atlas.onrender.com`, ver `docs/deploy/producao.md` §2 e §8 — o caminho
    Oracle Cloud/ADR-004 citado aqui antes foi retirado no commit 783f8582 e o IP direto parou de
-   responder). Trocar para `https://app.atlasgr.com.br` assim que o cutover de domínio/DNS
+   responder). Trocar para `https://app.birthhub360.com.br` assim que o cutover de domínio/DNS
    (`docs/deploy/producao.md` §3) acontecer. A aba "Configurações" do side panel continua existindo
    para apontar pra outro ambiente (ex.: `localhost:3005` em desenvolvimento) sem precisar editar
    código — a extensão pede a permissão de host correspondente (`optional_host_permissions`) na

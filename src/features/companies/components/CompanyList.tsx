@@ -211,7 +211,13 @@ export function CompanyList() {
               className="w-10 h-10 rounded-xl bg-soft border border-brand/30 flex items-center justify-center text-brand shrink-0 font-bold overflow-hidden cursor-pointer"
             >
               {company.logoUrl ? (
-                <img src={company.logoUrl} alt="" className="w-full h-full object-contain p-1" />
+                <img
+                  src={company.logoUrl}
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-contain p-1"
+                />
               ) : (
                 <Building2 className="w-5 h-5" />
               )}
@@ -570,6 +576,8 @@ export function CompanyList() {
                             <img
                               src={company.logoUrl}
                               alt=""
+                              width={48}
+                              height={48}
                               className="w-full h-full object-contain p-1"
                             />
                           ) : (

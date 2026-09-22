@@ -23,7 +23,7 @@ export interface BantQualificationData {
   /**
    * Não entra mais no cálculo do score. ACH-05-07 usava este campo pra só bonificar
    * fuelCostPain/theftRiskPain quando o playbook ativo era o de risco de carga/logística
-   * ('atlasgr') — a unificação de playbook comercial em `'geral'` (decisão do usuário, ver
+   * ('birthhub360') — a unificação de playbook comercial em `'geral'` (decisão do usuário, ver
    * CLAUDE.md seção 1) removeu a única forma de saber se uma organização era desse vertical.
    * Campo mantido na interface só para não quebrar chamadores que ainda o preenchem.
    */
@@ -105,7 +105,7 @@ export function calculateLeadScore(data: BantQualificationData = {}): LeadScoreR
       break;
   }
 
-  // ACH-05-07 restringia este bônus ao playbook de risco de carga/logística ('atlasgr'); a
+  // ACH-05-07 restringia este bônus ao playbook de risco de carga/logística ('birthhub360'); a
   // unificação de playbook em 'geral' removeu a forma de saber se o lead é desse vertical, então
   // o bônus não é mais aplicado (ver comentário de `activePlaybook` acima).
 

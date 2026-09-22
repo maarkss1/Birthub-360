@@ -245,7 +245,7 @@ describe('detectRecordingConsent', () => {
         {
           role: 'assistant',
           content:
-            'Oi! Aqui é a Gessica, uma assistente de inteligência artificial da Atlas GR. Essa ligação pode ser gravada para fins de qualidade e treinamento, tudo bem?',
+            'Oi! Aqui é a Gessica, uma assistente de inteligência artificial da Birth Hub 360. Essa ligação pode ser gravada para fins de qualidade e treinamento, tudo bem?',
         },
         { role: 'user', content: 'Pode sim, pode falar.' },
       ],
@@ -257,7 +257,10 @@ describe('detectRecordingConsent', () => {
   it('fica PENDING quando a divulgação da IA não aparece na transcrição (nunca fabrica concessão por omissão)', () => {
     const result = detectRecordingConsent({
       transcript: [
-        { role: 'assistant', content: 'Oi, tudo bem? Posso falar rapidinho sobre a Atlas GR?' },
+        {
+          role: 'assistant',
+          content: 'Oi, tudo bem? Posso falar rapidinho sobre a Birth Hub 360?',
+        },
         { role: 'user', content: 'Pode sim.' },
       ],
     });
@@ -271,7 +274,7 @@ describe('detectRecordingConsent', () => {
         {
           role: 'assistant',
           content:
-            'Aqui é a Gessica, uma assistente de inteligência artificial da Atlas GR. Essa ligação pode ser gravada, tudo bem?',
+            'Aqui é a Gessica, uma assistente de inteligência artificial da Birth Hub 360. Essa ligação pode ser gravada, tudo bem?',
         },
         { role: 'user', content: 'Não, eu não quero ser gravado, pode desligar.' },
       ],
@@ -297,7 +300,7 @@ describe('detectRecordingConsent', () => {
         {
           role: 'assistant',
           content:
-            'Aqui é a Gessica, uma assistente de inteligência artificial da Atlas GR. Essa ligação pode ser gravada, tudo bem? Ah, entendi, não quero ser gravado nenhum problema.',
+            'Aqui é a Gessica, uma assistente de inteligência artificial da Birth Hub 360. Essa ligação pode ser gravada, tudo bem? Ah, entendi, não quero ser gravado nenhum problema.',
         },
         { role: 'user', content: 'Isso, pode seguir.' },
       ],
@@ -314,7 +317,7 @@ describe('detectRecordingConsent', () => {
 describe('detectRecordingConsentFromRawTranscript', () => {
   it('concede quando o texto bruto contém as duas divulgações e nenhuma recusa', () => {
     const result = detectRecordingConsentFromRawTranscript(
-      'Oi, aqui é a Gessica, uma assistente de inteligência artificial da Atlas GR. Essa ligação pode ser gravada para fins de qualidade e treinamento. Cliente: pode falar.',
+      'Oi, aqui é a Gessica, uma assistente de inteligência artificial da Birth Hub 360. Essa ligação pode ser gravada para fins de qualidade e treinamento. Cliente: pode falar.',
     );
     expect(result.status).toBe('GRANTED');
   });
@@ -327,7 +330,7 @@ describe('detectRecordingConsentFromRawTranscript', () => {
 
   it('recusa quando o texto bruto contém uma frase de recusa, mesmo sem separação por locutor', () => {
     const result = detectRecordingConsentFromRawTranscript(
-      'Aqui é a Gessica, assistente de inteligência artificial da Atlas GR, pode ser gravada. Não autorizo a gravação, desligue.',
+      'Aqui é a Gessica, assistente de inteligência artificial da Birth Hub 360, pode ser gravada. Não autorizo a gravação, desligue.',
     );
     expect(result.status).toBe('DECLINED');
   });

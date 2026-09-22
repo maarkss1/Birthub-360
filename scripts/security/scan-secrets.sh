@@ -116,7 +116,7 @@ PATTERNS=(
     'xox[baprs]-[A-Za-z0-9-]{10,}'                        # Slack token
     'ghp_[A-Za-z0-9]{36}'                                 # GitHub PAT
     'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}' # JWT
-    '(BITRIX24_WEBHOOK_URL|TOTALTRAC_BITRIX24_WEBHOOK_URL)\s*=\s*.+/rest/[0-9]+/[A-Za-z0-9]{10,}'
+    '(BITRIX24_WEBHOOK_URL|BIRTHHUB360_BITRIX24_WEBHOOK_URL)\s*=\s*.+/rest/[0-9]+/[A-Za-z0-9]{10,}'
     '(BLAND_API_KEY|API_KEY|SECRET|TOKEN|PASSWORD)\s*[:=]\s*["'"'"']?[A-Za-z0-9_\-\/\.]{16,}["'"'"']?'
 )
 

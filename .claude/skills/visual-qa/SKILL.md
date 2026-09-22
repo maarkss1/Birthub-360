@@ -51,7 +51,7 @@ A "Ordem de verificação recomendada" acima é o teto, não um mínimo fixo pra
 decidir o que rodar, avalie o risco real: um ajuste pontual de texto/espaçamento numa tela isolada
 não precisa das mesmas combinações que uma mudança em autenticação, layout compartilhado
 (`MainLayout`, `Sidebar`), ou primitivo de design system (`src/components/ui/`) — essas últimas
-afetam múltiplas telas e justificam QA amplo: desktop, mobile, light, dark, Birth Hub 360, Birth Hub 360,
+afetam múltiplas telas e justificam QA amplo: desktop, mobile, light, dark, Birth Hub 360,
 navegação por teclado, foco visível, overflow horizontal, contraste, `prefers-reduced-motion`,
 console do navegador (sem erros novos) e screenshot. Não pule QA proporcional por preguiça, mas
 também não rode todas as combinações cegamente em toda alteração pequena — isso não é rigor, é

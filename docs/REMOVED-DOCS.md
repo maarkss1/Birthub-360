@@ -150,3 +150,51 @@ Auth (`src/lib/auth.ts`) com cookie `HttpOnly` (`better-auth.session_token`), se
 Access/Refresh Token JWT. `SECURITY_GUIDE.md` (linhas 7-9) e `THREAT_MODEL.md` (linhas 10-13)
 nomeiam essa arquitetura explicitamente. O gap documental que este parágrafo registrava já foi
 fechado — não reabra esta investigação sem antes reler os dois arquivos contra `src/lib/auth.ts`.
+
+## Terceira leva — relatórios de execução/roadmap movidos para fora do repositório (2026-09-22)
+
+Pedido explícito do usuário, mesmo espírito do commit `b7e1f7871c9` (ITEM-14): tudo que é
+prompt de finalização, roadmap de onda/wave ou checklist/relatório de evidência solto na raiz saiu
+do controle de versão e passa a viver em `E:\Birthub-360-Docs\` (área de trabalho local do
+usuário, fora do repositório) — **cópia, não apagado**: o conteúdo integral existe lá antes de
+qualquer remoção daqui, e o histórico git de cada arquivo continua acessível via `git log -- <path>`
+mesmo depois de removido do HEAD.
+
+**O que saiu** (diretórios copiados inteiros para `E:\Birthub-360-Docs\`, depois removidos daqui):
+
+- `.agents/completion/**` → `E:\Birthub-360-Docs\agents-completion\`
+- `.agents/runs/**` → `E:\Birthub-360-Docs\agents-runs\`
+- `docs/waves/**` (roadmap de ondas/waves pós-09) → `E:\Birthub-360-Docs\docs-waves\`
+- `docs/audits/**` (auditorias de dívida técnica por agente) → `E:\Birthub-360-Docs\docs-audits\`
+- `LDR_PROMPTS_ORQUESTRADOS/` e `LDR_PROMPTS_ORQUESTRADOS.zip` → `E:\Birthub-360-Docs\LDR_PROMPTS_ORQUESTRADOS\`
+- ~28 arquivos soltos na raiz do tipo checklist/evidência/roadmap (`BASELINE-GO-LIVE.{md,json}`,
+  `BIRTH-HUB-360-GO-LIVE-*.{html,json,md}`, `*-EVIDENCE.md`, `CHANGELOG-MELHORIAS.md`,
+  `CONTINUAR-LINT-CLEANUP.md`, `CREATIVE_SYSTEM_01.md`, `DIVIDA_TECNICA_MULTIAGENTE_ATLASGR_2026-09-08.html`,
+  `EXECUCAO-ONDAS.md`, `FILME_HERO_01_30S.md`, `INSTALL-AGENTS.md`, `MANIFESTO-ARQUIVOS.md`,
+  `PRODUCT.md`, `PRODUCT_EXPERIENCE.md`, `REMEDIACAO_FINAL.md`, `RUNTIME-CONFIG-DOCS-EVIDENCE.md`,
+  `WEB_DESIGN_GUIDELINES_AUDIT.md`, `birth-hub-360-go-live-audit.json` e afins) →
+  `E:\Birthub-360-Docs\root-files\`
+
+**O que NÃO saiu** (deliberadamente, pedido explícito confirmado com o usuário antes de mexer):
+
+- `.agents/prompts/**` — são as instruções ativas que sessões do enxame de agentes ainda leem para
+  coordenar trabalho agora; mover quebraria qualquer sessão em andamento que dependa desses
+  arquivos estarem no repositório.
+- `.agents/handoffs/**` — registros de handoff entre agentes, mesmo raciocínio de
+  `.agents/runs/**` na "Segunda leva" acima (log append-only, mas potencialmente em consumo ativo).
+- `docs/deploy/`, `docs/development/`, `docs/security/runbooks/`, `docs/security/*.md`,
+  `docs/architecture/` (exceto o que já listado acima) — documentação operacional viva (runbooks de
+  deploy, guia de desenvolvimento, procedimentos de incidente), não prompt/roadmap/checklist.
+- `documentacao-aplicacao/`, `assets/`, `backups/`, `birthub-360-assets/` — mídia/ativos de marca e
+  backups de banco, fora do escopo desta leva (nem código, nem prompt/roadmap).
+
+**Débito derivado (fora do escopo desta leva):** dezenas de comentários em código-fonte
+(`src/lib/prisma.ts`, `src/config/env.ts`, vários `.ts`/`.tsx` de features) e em `.agents/runs/**`/
+`.agents/handoffs/**` remanescentes citam, por nome, caminhos como `.agents/runs/onda-9.md` ou
+`docs/waves/post-09/ondas/ONDA_*.md` como contexto histórico de um bug/decisão — essas citações
+ficam quebradas depois desta leva (o arquivo referenciado só existe em `E:\Birthub-360-Docs\`
+agora). Mesmo critério já usado nas levas anteriores: são ponteiros de comentário para contexto
+histórico, não um link vivo que algo em runtime resolve — corrigir cada um exigiria tocar dezenas
+de arquivos de código só por causa de um comentário, então ficam como estão; quem seguir a citação
+e não encontrar o arquivo aqui deve olhar em `E:\Birthub-360-Docs\` antes de assumir que o conteúdo
+se perdeu.

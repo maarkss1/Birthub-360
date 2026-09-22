@@ -192,7 +192,7 @@ const envSchema = z
 
     // Segredo do webhook /api/webhooks/voice-result (Bland AI). Fail-closed: sem ele o webhook
     // responde 503 (ver voiceResult.webhook.ts) — nunca cai para um valor default versionado.
-    ATLASGR_WEBHOOK_SECRET: z.string().optional(),
+    BIRTHHUB360_WEBHOOK_SECRET: z.string().optional(),
 
     // ── Telefonia PABX 3CX ────────────────────────────────────────────────────
     // Segredo compartilhado que valida a assinatura HMAC do webhook de eventos de chamada do 3CX
@@ -471,7 +471,7 @@ if (_env.success && _env.data.NODE_ENV === 'production') {
 
   // Validação de segredos de webhook configurados em produção
   const webhookSecretsToCheck: Array<{ name: string; value: string | undefined }> = [
-    { name: 'ATLASGR_WEBHOOK_SECRET', value: _env.data.ATLASGR_WEBHOOK_SECRET },
+    { name: 'BIRTHHUB360_WEBHOOK_SECRET', value: _env.data.BIRTHHUB360_WEBHOOK_SECRET },
     { name: 'BIRTH_VOICES_WEBHOOK_SECRET', value: _env.data.BIRTH_VOICES_WEBHOOK_SECRET },
     { name: 'THREECX_WEBHOOK_SECRET', value: _env.data.THREECX_WEBHOOK_SECRET },
     { name: 'CHATWOOT_WEBHOOK_SECRET', value: _env.data.CHATWOOT_WEBHOOK_SECRET },

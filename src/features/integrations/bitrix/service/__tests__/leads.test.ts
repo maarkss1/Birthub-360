@@ -213,7 +213,7 @@ describe('importSelectedBitrixLeads — owner grava User.id, não User.name (Ond
     clientMock.callBitrix.mockImplementation(async (_url: string, method: string) => {
       if (method === 'user.get') {
         return {
-          result: [{ ID: '7', NAME: 'Ana', LAST_NAME: 'Souza', EMAIL: 'ana@atlasgr.com.br' }],
+          result: [{ ID: '7', NAME: 'Ana', LAST_NAME: 'Souza', EMAIL: 'ana@birthhub360.com.br' }],
         };
       }
       if (method === 'crm.lead.get') {
@@ -237,7 +237,7 @@ describe('importSelectedBitrixLeads — owner grava User.id, não User.name (Ond
       expect.objectContaining({
         where: {
           organizationId: 'org-1',
-          email: { equals: 'ana@atlasgr.com.br', mode: 'insensitive' },
+          email: { equals: 'ana@birthhub360.com.br', mode: 'insensitive' },
         },
       }),
     );

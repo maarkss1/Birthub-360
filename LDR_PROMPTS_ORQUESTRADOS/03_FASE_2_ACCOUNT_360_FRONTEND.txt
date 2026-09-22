@@ -58,7 +58,7 @@ VISÃO GERAL
 Exibir:
 - resumo executivo IA;
 - motivos do score;
-- oportunidades AtlasGR;
+- oportunidades Birth Hub 360;
 - riscos/objeções;
 - principais sinais;
 - principais decisores;
