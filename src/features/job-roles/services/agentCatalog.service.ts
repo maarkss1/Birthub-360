@@ -136,7 +136,11 @@ export async function listAgentsForJobRole(jobRoleId: string): Promise<RoleAgent
       accessLevel: g.accessLevel,
       requiresApproval: g.requiresApproval,
     }))
-    .sort((a, b) => ACCESS_LEVEL_ORDER[a.accessLevel] - ACCESS_LEVEL_ORDER[b.accessLevel]);
+    .sort(
+      (a, b) =>
+        ACCESS_LEVEL_ORDER[a.accessLevel] - ACCESS_LEVEL_ORDER[b.accessLevel] ||
+        a.agent.code.localeCompare(b.agent.code),
+    );
 }
 
 /** Upsert idempotente por `code` — usado pelo seed (scripts/seed-multi-cargo.ts) para popular o

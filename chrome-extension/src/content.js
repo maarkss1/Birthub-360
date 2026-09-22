@@ -56,7 +56,7 @@ let badgeEl = null;
 function ensureBadge() {
   if (badgeEl) return badgeEl;
   badgeEl = document.createElement('div');
-  badgeEl.textContent = '● Copiloto Atlas GR — sessão de captura ativa';
+  badgeEl.textContent = '● Copiloto Birth Hub 360 — sessão de captura ativa';
   Object.assign(badgeEl.style, {
     position: 'fixed',
     top: '12px',

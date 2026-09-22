@@ -32,7 +32,7 @@
                 gold: '#FFC500',
                 dark: '#141110',
               },
-              totaltrac: {
+              birthhub360: {
                 blue: '#008FCE',
                 navy: '#2D3B78',
                 sky: '#93DBF2',
@@ -61,7 +61,7 @@
         --brand-name: 'ATLAS LOGISTICS INTELLIGENCE';
       }
 
-      [data-theme='totaltrac'] {
+      [data-theme='birthhub360'] {
         --brand-primary: #008fce;
         --brand-secondary: #93dbf2;
         --brand-accent: #2d3b78;
@@ -74,7 +74,7 @@
         --grid-line: rgba(0, 143, 206, 0.07);
         --card-glass: rgba(8, 14, 26, 0.75);
         --brand-symbol: '◎';
-        --brand-name: 'TOTALTRAC FLEET TELEMETRY';
+        --brand-name: 'BIRTH HUB 360 FLEET TELEMETRY';
       }
 
       body {
@@ -294,13 +294,13 @@
   </head>
   <body class="selection:bg-orange-500 selection:text-white">
     <!--
-      Documento histórico — descreve o sistema de duas marcas (AtlasGR & TotalTrac),
+      Documento histórico — descreve o sistema de duas marcas (Birth Hub 360),
       substituído pela marca única Birth Hub 360º em 09/2026. Paleta, logos e combinações
       de cor aqui (incluindo #FF5618 e texto branco sobre cor de marca) não são mais válidos.
       Fonte de verdade atual: identidade-visual/birthhub360/ e src/styles/globals.css.
     -->
     <div style="position:sticky;top:0;z-index:9999;background:#B45309;color:#FFFBEB;padding:10px 16px;font-family:sans-serif;font-size:14px;line-height:1.4;text-align:center;">
-        <strong>Documento histórico</strong> — descreve o sistema de duas marcas (AtlasGR &amp; TotalTrac), substituído pela marca única Birth Hub 360º em 09/2026. Paleta e combinações de cor aqui não são mais válidas. Fonte de verdade atual: <code>identidade-visual/birthhub360/</code>.
+        <strong>Documento histórico</strong> — descreve o sistema de duas marcas (Birth Hub 360 &amp; Birth Hub 360), substituído pela marca única Birth Hub 360º em 09/2026. Paleta e combinações de cor aqui não são mais válidas. Fonte de verdade atual: <code>identidade-visual/birthhub360/</code>.
     </div>
 
     <div class="cyber-grid"></div>
@@ -322,7 +322,7 @@
             <h1
               class="font-cyber font-black tracking-wider text-xl text-white flex items-center gap-2"
             >
-              <span id="brand-title-text">ATLASGR</span>
+              <span id="brand-title-text">BIRTH HUB 360</span>
               <span
                 class="text-[10px] uppercase font-mono px-2 py-0.5 rounded border border-white/20 bg-white/5 text-gray-400"
                 >DESIGN SYSTEM v4.0</span
@@ -340,18 +340,18 @@
             class="bg-black/60 p-1 rounded-xl border border-white/15 flex items-center gap-1 shadow-inner"
           >
             <button
-              onclick="switchBrand('atlasgr')"
+              onclick="switchBrand('birthhub360')"
               id="btn-mode-atlas"
               class="px-4 py-2 rounded-lg font-cyber text-xs font-bold transition-all duration-300 flex items-center gap-2 bg-[#FF5618] text-white shadow-[0_0_15px_rgba(255,86,24,0.6)]"
             >
-              <span>▲</span> MODO ATLASGR
+              <span>▲</span> MODO BIRTH HUB 360
             </button>
             <button
-              onclick="switchBrand('totaltrac')"
-              id="btn-mode-totaltrac"
+              onclick="switchBrand('birthhub360')"
+              id="btn-mode-birthhub360"
               class="px-4 py-2 rounded-lg font-cyber text-xs font-bold transition-all duration-300 flex items-center gap-2 text-gray-400 hover:text-white"
             >
-              <span>◎</span> MODO TOTALTRAC
+              <span>◎</span> MODO BIRTH HUB 360
             </button>
           </div>
           <button
@@ -443,8 +443,8 @@
         </h1>
         <p class="text-lg md:text-2xl text-gray-300 max-w-4xl mx-auto font-light leading-relaxed">
           A convergência perfeita entre a potência logística da
-          <b class="text-[#FF5618]">AtlasGR</b> e a precisão em telemetria da
-          <b class="text-[#008FCE]">TotalTrac</b>. Uma experiência multi-tenant imersiva, viva e
+          <b class="text-[#FF5618]">Birth Hub 360</b> e a precisão em telemetria da
+          <b class="text-[#008FCE]">Birth Hub 360</b>. Uma experiência multi-tenant imersiva, viva e
           cirurgicamente padronizada.
         </p>
 
@@ -478,7 +478,7 @@
             <button
               onclick="
                 playCyberSound('warp');
-                switchBrand(currentBrand === 'atlasgr' ? 'totaltrac' : 'atlasgr');
+                switchBrand(currentBrand === 'birthhub360' ? 'birthhub360' : 'birthhub360');
               "
               class="btn-cyber text-xs py-3 px-6"
             >
@@ -504,7 +504,7 @@
           >
             <div class="flex items-center justify-between">
               <h3 class="text-2xl font-cyber font-bold text-[#FF5618] flex items-center gap-2">
-                <span>▲</span> ATLASGR • SEGURANÇA & LOGÍSTICA
+                <span>▲</span> BIRTH HUB 360 • SEGURANÇA & LOGÍSTICA
               </h3>
               <span
                 class="font-mono text-xs px-2.5 py-1 rounded bg-[#FF5618]/20 text-[#FF5618] border border-[#FF5618]/40"
@@ -532,13 +532,13 @@
             </div>
           </div>
 
-          <!-- TotalTrac DNA Card -->
+          <!-- Birth Hub 360 DNA Card -->
           <div
             class="glass-panel p-8 space-y-6 relative overflow-hidden border-t-4 border-[#008FCE]"
           >
             <div class="flex items-center justify-between">
               <h3 class="text-2xl font-cyber font-bold text-[#008FCE] flex items-center gap-2">
-                <span>◎</span> TOTALTRAC • TELEMETRIA & VÍDEO
+                <span>◎</span> BIRTH HUB 360 • TELEMETRIA & VÍDEO
               </h3>
               <span
                 class="font-mono text-xs px-2.5 py-1 rounded bg-[#008FCE]/20 text-[#008FCE] border border-[#008FCE]/40"
@@ -591,7 +591,7 @@
             </div>
             <p class="text-xs text-gray-400 leading-relaxed font-mono">
               A geometria do símbolo Atlas é construída sobre paralelogramos inclinados
-              simetricamente a 60 graus. O símbolo TotalTrac é construído sobre círculos
+              simetricamente a 60 graus. O símbolo Birth Hub 360 é construído sobre círculos
               concêntricos de sinal wi-fi convergindo em um pin GPS.
             </p>
           </div>
@@ -659,11 +659,11 @@
           </h2>
         </div>
 
-        <!-- Paleta AtlasGR -->
+        <!-- Paleta Birth Hub 360 -->
         <div class="glass-panel p-8 space-y-6 border-l-8 border-[#FF5618]">
           <div class="flex items-center justify-between">
             <h3 class="text-xl font-cyber font-bold text-white flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-[#FF5618]"></span> PALETA OFICIAL ATLASGR
+              <span class="w-3 h-3 rounded-full bg-[#FF5618]"></span> PALETA OFICIAL BIRTH HUB 360
             </h3>
             <span class="font-mono text-xs text-gray-400">SISTEMA CROMÁTICO PRIMÁRIO & APOIO</span>
           </div>
@@ -738,11 +738,11 @@
           </div>
         </div>
 
-        <!-- Paleta TotalTrac -->
+        <!-- Paleta Birth Hub 360 -->
         <div class="glass-panel p-8 space-y-6 border-l-8 border-[#008FCE]">
           <div class="flex items-center justify-between">
             <h3 class="text-xl font-cyber font-bold text-white flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-[#008FCE]"></span> PALETA OFICIAL TOTALTRAC
+              <span class="w-3 h-3 rounded-full bg-[#008FCE]"></span> PALETA OFICIAL BIRTH HUB 360
             </h3>
             <span class="font-mono text-xs text-gray-400">SISTEMA CROMÁTICO TELEMETRIA</span>
           </div>
@@ -835,7 +835,7 @@
                 <h3 class="font-cyber font-bold text-xl text-[#FF5618]">
                   FAMÍLIA MONT / MONTSERRAT
                 </h3>
-                <p class="font-mono text-xs text-gray-400">FONTE OFICIAL ATLASGR</p>
+                <p class="font-mono text-xs text-gray-400">FONTE OFICIAL BIRTH HUB 360</p>
               </div>
               <span class="font-mono text-xs px-3 py-1 bg-white/10 rounded">TÍTULOS & BODY</span>
             </div>
@@ -870,14 +870,14 @@
             </div>
           </div>
 
-          <!-- Tipografia TotalTrac -->
+          <!-- Tipografia Birth Hub 360 -->
           <div class="glass-panel p-8 space-y-6">
             <div class="flex items-center justify-between border-b border-white/10 pb-4">
               <div>
                 <h3 class="font-cyber font-bold text-xl text-[#008FCE]">
                   FAMÍLIA FIVO SANS / INTER
                 </h3>
-                <p class="font-mono text-xs text-gray-400">FONTE OFICIAL TOTALTRAC</p>
+                <p class="font-mono text-xs text-gray-400">FONTE OFICIAL BIRTH HUB 360</p>
               </div>
               <span class="font-mono text-xs px-3 py-1 bg-white/10 rounded">TELEMETRIA & UI</span>
             </div>
@@ -933,7 +933,7 @@
               <h4 class="font-cyber font-bold text-white">STROKE & GEOMETRIA</h4>
               <p class="font-mono text-xs text-gray-400">
                 Espessura padrão de <b>2px</b> (stroke uniforme). Vértices chanfrados ou angulados
-                em 60º na Atlas e anéis circulares concêntricos na TotalTrac.
+                em 60º na Atlas e anéis circulares concêntricos na Birth Hub 360.
               </p>
             </div>
 
@@ -1044,7 +1044,7 @@
 
           <div class="glass-panel p-6 space-y-4">
             <h4 class="font-cyber font-bold text-white text-lg">
-              TRATAMENTO TOTALTRAC (TECH SATELLITE)
+              TRATAMENTO BIRTH HUB 360 (TECH SATELLITE)
             </h4>
             <div
               class="h-64 rounded-xl overflow-hidden relative bg-gradient-to-tr from-[#008FCE]/40 to-black/80 flex items-center justify-center p-6 border border-[#008FCE]/30"
@@ -1106,10 +1106,10 @@
             </p>
           </div>
 
-          <!-- Ondas de Sinal TotalTrac -->
+          <!-- Ondas de Sinal Birth Hub 360 -->
           <div class="glass-panel p-8 space-y-4 relative overflow-hidden">
             <h3 class="font-cyber font-bold text-xl text-[#008FCE]">
-              PADRÃO ONDAS DE RADAR (TOTALTRAC)
+              PADRÃO ONDAS DE RADAR (BIRTH HUB 360)
             </h3>
             <div
               class="h-36 rounded-xl border border-white/15 p-4 flex items-center justify-center bg-[#008FCE]/10"
@@ -1350,7 +1350,7 @@
             <div class="text-3xl text-red-500">❌</div>
             <div class="font-bold text-red-300">NÃO ROTACIONAR</div>
             <p class="text-[11px] text-gray-400">
-              O ângulo dos símbolos é fixo (60º Atlas / 0º TotalTrac).
+              O ângulo dos símbolos é fixo (60º Atlas / 0º Birth Hub 360).
             </p>
           </div>
           <div class="p-6 rounded-xl bg-red-950/20 border border-red-500/30 text-center space-y-2">
@@ -1372,7 +1372,7 @@
         <div
           class="font-cyber font-black tracking-widest text-white text-lg flex items-center justify-center gap-2"
         >
-          <span>NEXUS PROTOCOL</span> • <span>ATLASGR & TOTALTRAC</span>
+          <span>NEXUS PROTOCOL</span> • <span>Birth Hub 360</span>
         </div>
         <p>Manual Oficial de Identidade Visual e UI/UX • Engenharia e Design de Nível 5</p>
         <p class="text-[10px] text-gray-600">
@@ -1385,7 +1385,7 @@
     <script>
       let audioEngineEnabled = true;
       let audioCtx = null;
-      let currentBrand = 'atlasgr';
+      let currentBrand = 'birthhub360';
 
       function initAudio() {
         if (!audioCtx) {
@@ -1474,27 +1474,27 @@
         const titleText = document.getElementById('brand-title-text');
         const subtitleText = document.getElementById('brand-subtitle-text');
         const btnAtlas = document.getElementById('btn-mode-atlas');
-        const btnTotaltrac = document.getElementById('btn-mode-totaltrac');
+        const btnbirthhub360 = document.getElementById('btn-mode-birthhub360');
 
-        if (brand === 'totaltrac') {
-          root.setAttribute('data-theme', 'totaltrac');
+        if (brand === 'birthhub360') {
+          root.setAttribute('data-theme', 'birthhub360');
           logoIcon.innerText = '◎';
-          titleText.innerText = 'TOTALTRAC';
+          titleText.innerText = 'BIRTH HUB 360';
           subtitleText.innerText = 'SISTEMA DE TELEMETRIA & FROTAS';
 
-          btnTotaltrac.className =
+          btnbirthhub360.className =
             'px-4 py-2 rounded-lg font-cyber text-xs font-bold transition-all duration-300 flex items-center gap-2 bg-[#008FCE] text-white shadow-[0_0_15px_rgba(0,143,206,0.6)]';
           btnAtlas.className =
             'px-4 py-2 rounded-lg font-cyber text-xs font-bold transition-all duration-300 flex items-center gap-2 text-gray-400 hover:text-white';
         } else {
           root.removeAttribute('data-theme');
           logoIcon.innerText = '▲';
-          titleText.innerText = 'ATLASGR';
+          titleText.innerText = 'BIRTH HUB 360';
           subtitleText.innerText = 'CENTRAL DE INTELIGÊNCIA LOGÍSTICA';
 
           btnAtlas.className =
             'px-4 py-2 rounded-lg font-cyber text-xs font-bold transition-all duration-300 flex items-center gap-2 bg-[#FF5618] text-white shadow-[0_0_15px_rgba(255,86,24,0.6)]';
-          btnTotaltrac.className =
+          btnbirthhub360.className =
             'px-4 py-2 rounded-lg font-cyber text-xs font-bold transition-all duration-300 flex items-center gap-2 text-gray-400 hover:text-white';
         }
       }

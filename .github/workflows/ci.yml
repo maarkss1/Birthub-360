@@ -19,7 +19,7 @@ concurrency:
   # podem cancelar a verificação de integração um do outro, ou o estado combinado de main fica
   # sem gate verde confirmado (mesmo modo de falha do incidente da Onda 5, RLS do AILog só
   # visível no gate de integração).
-  group: ${{ github.event_name == 'pull_request' && format('central-atlasgr-release-pr-{0}', github.event.pull_request.number) || format('central-atlasgr-release-push-{0}', github.sha) }}
+  group: ${{ github.event_name == 'pull_request' && format('central-birthhub360-release-pr-{0}', github.event.pull_request.number) || format('central-birthhub360-release-push-{0}', github.sha) }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:

@@ -22,7 +22,7 @@ Apenas a versão ativa na branch principal (`main`) e tags estáveis associadas 
 Se você identificar uma falha de segurança, brecha de controle de acesso (RBAC), vazamento de dados de tenant (multi-tenancy) ou vulnerabilidade de dependência:
 
 1. **Canal de Contato:** Envie um e-mail diretamente para:
-   * **`security@birthhub360.com`** ou contate o mantenedor principal do repositório (`marceloatlasgr@gmail.com`).
+   * **`security@birthhub360.com`** ou contate o mantenedor principal do repositório (`marcelinmark@gmail.com`).
 2. **Informações Necessárias no Reporte:**
    * Descrição detalhada da vulnerabilidade encontrada;
    * Passos reproduzíveis (PoC ou script de demonstração);

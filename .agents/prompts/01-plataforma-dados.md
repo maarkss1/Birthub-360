@@ -82,12 +82,12 @@ Garantir:
 
 Coordene com 06 para integração com o armazenamento seguro.
 
-### 5. Tenancy Birth Hub 360 / Birth Hub 360
+### 5. Tenancy Birth Hub 360
 Separação visual é insuficiente.
 
 Faça testes de acesso cruzado:
-- usuário Birth Hub 360 tentando ler/escrever Birth Hub 360;
-- usuário Birth Hub 360 tentando ler/escrever Birth Hub 360;
+- usuário da Organização A tentando ler/escrever dados da Organização B;
+- usuário da Organização B tentando ler/escrever dados da Organização A;
 - IDs manipulados;
 - queries sem filtro;
 - background jobs sem tenant explícito.

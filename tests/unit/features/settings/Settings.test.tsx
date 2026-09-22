@@ -17,7 +17,7 @@ import userEvent from '@testing-library/user-event';
  */
 
 const useAuthMock = vi.fn(() => ({
-  currentUser: { id: 'u1', name: 'Ana', email: 'ana@atlasgr.com.br', role: 'ADMIN' },
+  currentUser: { id: 'u1', name: 'Ana', email: 'ana@birthhub360.com.br', role: 'ADMIN' },
   isAdmin: true,
 }));
 vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => useAuthMock() }));
@@ -51,7 +51,7 @@ function render(ui: React.ReactElement) {
 beforeEach(() => {
   localStorage.clear();
   useAuthMock.mockReturnValue({
-    currentUser: { id: 'u1', name: 'Ana', email: 'ana@atlasgr.com.br', role: 'ADMIN' },
+    currentUser: { id: 'u1', name: 'Ana', email: 'ana@birthhub360.com.br', role: 'ADMIN' },
     isAdmin: true,
   });
 });
@@ -100,7 +100,7 @@ describe('Settings — aba Auditoria & LGPD', () => {
 
   it('GESTOR também vê a aba de auditoria (achado real do Piloto 025 — backend já permite GESTOR)', async () => {
     useAuthMock.mockReturnValue({
-      currentUser: { id: 'u2', name: 'Gustavo', email: 'g@atlasgr.com.br', role: 'GESTOR' },
+      currentUser: { id: 'u2', name: 'Gustavo', email: 'g@birthhub360.com.br', role: 'GESTOR' },
       isAdmin: false,
     });
     render(<Settings />);
@@ -113,7 +113,7 @@ describe('Settings — aba Auditoria & LGPD', () => {
 
   it('SDR não vê a aba de auditoria nem a de usuários/feature flags', async () => {
     useAuthMock.mockReturnValue({
-      currentUser: { id: 'u3', name: 'Sérgio', email: 's@atlasgr.com.br', role: 'SDR' },
+      currentUser: { id: 'u3', name: 'Sérgio', email: 's@birthhub360.com.br', role: 'SDR' },
       isAdmin: false,
     });
     render(<Settings />);

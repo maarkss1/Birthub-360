@@ -2,7 +2,7 @@
 
 ## Projeto
 
-CENTRAL-DE-INTELIGENCIA-COMECIAL-ATLASGR
+CENTRAL-DE-INTELIGENCIA-COMECIAL-BIRTH HUB 360
 
 Este arquivo é a regra global para qualquer agente que trabalhe neste repositório. Regras locais em `AGENTS.md` dentro de subpastas refinam o escopo, mas nunca anulam as regras de segurança, qualidade e coordenação deste arquivo. Em caso de conflito entre um `AGENTS.md` local e este arquivo, este arquivo vence.
 
@@ -324,7 +324,7 @@ Antes de finalizar qualquer onda, rodar varredura de segredo versionado (ferrame
 - Dashboards devem apresentar loading, empty, error e stale state de forma explícita.
 - Nenhuma métrica comercial pode ser fabricada para "preencher" a interface.
 
-## Tenancy Birth Hub 360 / Birth Hub 360
+## Tenancy Birth Hub 360
 
 Separação visual não é prova de isolamento.
 

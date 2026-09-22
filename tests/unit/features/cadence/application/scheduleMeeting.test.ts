@@ -41,7 +41,7 @@ const baseInput = {
   proposedEnd: FUTURE_END,
   leadTitle: 'Empresa Exemplo',
   leadEmail: 'contato@exemplo.com',
-  ownerEmail: 'vendedor@atlasgr.com.br',
+  ownerEmail: 'vendedor@birthhub360.com.br',
 };
 
 beforeEach(() => vi.clearAllMocks());
@@ -71,7 +71,7 @@ describe('scheduleVerifiedMeeting', () => {
         leadId: 'lead-1',
         confirmationEvidenceType: 'manual-verified',
         confirmationEvidenceRef: 'note-1',
-        attendeeEmails: ['contato@exemplo.com', 'vendedor@atlasgr.com.br'],
+        attendeeEmails: ['contato@exemplo.com', 'vendedor@birthhub360.com.br'],
       }),
     );
   });
@@ -120,7 +120,7 @@ describe('scheduleVerifiedMeeting', () => {
     await scheduleVerifiedMeeting(ports, { ...baseInput, leadEmail: '' }, NOW);
 
     expect(ports.scheduler.createEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ attendeeEmails: ['vendedor@atlasgr.com.br'] }),
+      expect.objectContaining({ attendeeEmails: ['vendedor@birthhub360.com.br'] }),
     );
   });
 });

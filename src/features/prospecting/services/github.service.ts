@@ -19,7 +19,7 @@ const GITHUB_API_BASE = 'https://api.github.com';
 // chave, é um identificador de cliente público.
 const GITHUB_HEADERS = {
   Accept: 'application/vnd.github+json',
-  'User-Agent': 'atlasgr-prospector',
+  'User-Agent': 'birthhub360-prospector',
   'X-GitHub-Api-Version': '2022-11-28',
 };
 

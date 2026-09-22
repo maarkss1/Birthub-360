@@ -137,7 +137,7 @@ export function LoginScreen() {
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
   // Cadastro (?signup=1) agora exige confirmação de posse do e-mail antes de abrir sessão (ver
   // requireEmailVerification em src/lib/auth.ts — achado do piloto de threat-modeling do Mantis:
-  // antes, qualquer "algo@atlasgr.com.br" digitado, mesmo não sendo dono real, virava sessão +
+  // antes, qualquer "algo@birthhub360.com.br" digitado, mesmo não sendo dono real, virava sessão +
   // ADMIN na hora). O servidor devolve `token: null` nesse caso; este estado mostra o aviso em
   // vez de tentar navegar para /app sem sessão nenhuma.
   const [verificationPending, setVerificationPending] = useState(false);

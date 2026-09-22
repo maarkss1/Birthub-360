@@ -1,6 +1,6 @@
 /**
  * Tipos de domínio do módulo "Copiloto Comercial IA" (fundação — Onda 1 do pacote
- * `atlasgr_copiloto_ai_pack`, ver `.claude/PILOTS.md` e AGENTS.md desta pasta).
+ * `birthhub360_copiloto_ai_pack`, ver `.claude/PILOTS.md` e AGENTS.md desta pasta).
  *
  * Este módulo NÃO substitui `ConversationSignal` (`src/features/intelligence` lê janelas de
  * `WhatsAppMessage`/e-mail já persistidas) — ele é a fundação de dados para captura de conversa

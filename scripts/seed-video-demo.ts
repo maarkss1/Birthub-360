@@ -1,12 +1,12 @@
 import 'dotenv/config';
 import { prisma } from '../src/lib/prisma.js';
 
-// A conta de demonstração (video.demo@atlasgr.com.br) é criada pela própria tela de cadastro do
+// A conta de demonstração (video.demo@birthhub360.com.br) é criada pela própria tela de cadastro do
 // produto (Better Auth gera o hash de senha correto e o hook em src/lib/auth.ts já cria a
-// organização "<nome> - AtlasGR Operações" e promove o usuário a ADMIN). Este script só popula
+// organização "<nome> - Birth Hub 360 Operações" e promove o usuário a ADMIN). Este script só popula
 // dados comerciais fictícios (empresas/contatos/leads/atividades) nessa organização já existente
 // — não recria usuário/conta/organização.
-const DEMO_EMAIL = 'video.demo@atlasgr.com.br';
+const DEMO_EMAIL = 'video.demo@birthhub360.com.br';
 
 async function main() {
   await prisma.$transaction(

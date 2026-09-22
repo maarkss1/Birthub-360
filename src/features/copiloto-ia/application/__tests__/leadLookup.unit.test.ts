@@ -3,12 +3,16 @@ import { parseLeadLookupQuery } from '../leadLookup';
 
 describe('parseLeadLookupQuery', () => {
   it('reconhece URL de lead do Bitrix24 e extrai o id numérico', () => {
-    const result = parseLeadLookupQuery('https://atlasgr.bitrix24.com.br/crm/lead/details/482/');
+    const result = parseLeadLookupQuery(
+      'https://birthhub360.bitrix24.com.br/crm/lead/details/482/',
+    );
     expect(result).toEqual({ type: 'bitrix', id: '482' });
   });
 
   it('reconhece URL de negócio (deal) do Bitrix24', () => {
-    const result = parseLeadLookupQuery('https://atlasgr.bitrix24.com.br/crm/deal/details/1930/');
+    const result = parseLeadLookupQuery(
+      'https://birthhub360.bitrix24.com.br/crm/deal/details/1930/',
+    );
     expect(result).toEqual({ type: 'bitrix', id: '1930' });
   });
 

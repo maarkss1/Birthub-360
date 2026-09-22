@@ -8,7 +8,7 @@ import {
 
 /**
  * Agente Diretoria — Executivo Comercial (Célula Comercial, pacote
- * ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0, id `executive-director`).
+ * BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0, id `executive-director`).
  *
  * Camada final de tradução operação → decisão executiva. Narra o cockpit executivo já calculado
  * (overview, tendências, health score, forecast accuracy) — o chamador monta o contexto, este

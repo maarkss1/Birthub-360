@@ -1,6 +1,5 @@
 import { randomBytes } from 'node:crypto';
 import { env } from '../../../../config/env.js';
-import { playbookInfo } from '../../../../config/playbooks.js';
 import { AuditService } from '../../../../lib/audit/audit.service.js';
 import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
@@ -29,21 +28,15 @@ function buildWebhookReceiverUrl(connectionId: string): string {
   return `${base}/api/integrations/bitrix/webhook/${connectionId}`;
 }
 
-// URLs de webhook do Bitrix24 SÃO credenciais (o token de acesso fica no path) — nunca podem ter
-// fallback hardcoded aqui: as duas URLs reais que existiam neste arquivo ficaram expostas no git e
-// devem ser consideradas comprometidas/rotacionadas. Sem a env correspondente, o autoconnect
-// simplesmente não acontece (a organização conecta manualmente pela tela de Integrações).
-export const ATLAS_BITRIX_WEBHOOK_URL =
-  process.env.BITRIX24_WEBHOOK_URL || process.env.BITRIX_WEBHOOK_URL || null;
-export const TOTALTRAC_BITRIX_WEBHOOK_URL =
-  process.env.TOTALTRAC_BITRIX24_WEBHOOK_URL || process.env.TOTALTRAC_BITRIX_WEBHOOK_URL || null;
-
-/** Lista todos os portais Bitrix conectados desta organização — se não houver nenhum e a env do
- * webhook da marca estiver configurada, autoconecta o portal correspondente (Birth Hub 360 x Birth Hub 360). */
+/** Lista todos os portais Bitrix conectados desta organização. Não existe mais autoconexão por
+ * webhook padrão de marca: essa detecção era exclusiva dos dois tenants legados de uma marca
+ * anterior, fora de escopo do produto desde 09/2026 (ver CLAUDE.md) — e nunca fazia sentido para
+ * uma organização nova. Cada organização conecta seu próprio portal manualmente pela tela de
+ * Integrações. */
 export async function listBitrixConnections(
   organizationId: string,
 ): Promise<BitrixConnectionSummary[]> {
-  let connections = await prisma.bitrixConnection.findMany({
+  const connections = await prisma.bitrixConnection.findMany({
     where: { organizationId },
     select: {
       id: true,
@@ -55,51 +48,6 @@ export async function listBitrixConnections(
     },
     orderBy: { createdAt: 'asc' },
   });
-
-  if (connections.length === 0) {
-    try {
-      const org = await prisma.organization.findUnique({
-        where: { id: organizationId },
-        select: { name: true },
-      });
-      const orgName = (org?.name || '').toLowerCase();
-      const isTotalTrac = orgName.includes('totaltrac') || orgName.includes('total track');
-      const isAtlas = orgName.includes('atlas');
-
-      // Só os dois tenants conhecidos herdam webhook padrão — organização desconhecida nunca
-      // recebe credencial de outra empresa por default (vazamento cross-tenant).
-      const defaultWebhook = isTotalTrac
-        ? TOTALTRAC_BITRIX_WEBHOOK_URL
-        : isAtlas
-          ? ATLAS_BITRIX_WEBHOOK_URL
-          : null;
-      // Rótulo da conexão auto-provisionada: descreve o TENANT (a org detectada pelo nome),
-      // não a marca da plataforma — reaproveita o rótulo já usado no playbook comercial
-      // (src/config/playbooks.ts) em vez de inventar um segundo nome para o mesmo eixo.
-      const defaultLabel = `${playbookInfo(isTotalTrac ? 'totaltrac' : 'atlasgr').label} Bitrix24`;
-
-      if (defaultWebhook) {
-        await connectBitrix(organizationId, defaultWebhook, defaultLabel);
-        connections = await prisma.bitrixConnection.findMany({
-          where: { organizationId },
-          select: {
-            id: true,
-            label: true,
-            webhookUrl: true,
-            webhookSecret: true,
-            inboundEventsEnabled: true,
-            lastImportedAt: true,
-          },
-          orderBy: { createdAt: 'asc' },
-        });
-      }
-    } catch (err) {
-      logger.warn(
-        { err, organizationId },
-        'Não foi possível autoconectar o webhook padrão do Bitrix24.',
-      );
-    }
-  }
 
   return connections.map((c) => ({
     id: c.id,

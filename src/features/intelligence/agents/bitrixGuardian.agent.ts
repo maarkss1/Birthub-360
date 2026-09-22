@@ -7,7 +7,7 @@ import {
 } from './swarm.constants.js';
 
 /**
- * Agente Bitrix Guardian (Célula Comercial, pacote ATLASGR_COMMERCIAL_AGENT_CELL v1.1.0,
+ * Agente Bitrix Guardian (Célula Comercial, pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0,
  * id `bitrix-guardian`).
  *
  * Papel "CRM" real do enxame de produção (ver `AUTONOMIA_COMERCIAL_24X7.md`): a regra

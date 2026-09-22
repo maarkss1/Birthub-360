@@ -1,10 +1,10 @@
 import UIKit
 import Capacitor
 
-// Resolve o deep link de esquema custom "atlasgr://<destino>" (ver CFBundleURLTypes em
+// Resolve o deep link de esquema custom "birthhub360://<destino>" (ver CFBundleURLTypes em
 // Info.plist) traduzindo o destino recebido pra uma navegação real dentro do WebView que o
 // Capacitor já carregou (server.url, ver capacitor.config.ts) — contraparte iOS de
-// android/app/src/main/java/br/com/atlasgr/prospector/MainActivity.java (mesma lista de destinos
+// android/app/src/main/java/br/com/birthhub360/prospector/MainActivity.java (mesma lista de destinos
 // válidos, mesmo comportamento de erro visível para destino desconhecido; ver comentários lá para
 // o raciocínio completo, incluindo o handoff aberto pro Agente 02 sobre a lista duplicada e sobre
 // "enrich"/"prompts" não terem rota correspondente em src/App.tsx).
@@ -52,7 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func handleDeepLink(_ url: URL) {
-        guard url.scheme == "atlasgr" else { return }
+        guard url.scheme == "birthhub360" else { return }
         let tab = url.host ?? ""
 
         if tab.isEmpty || tab == "dashboard" {
@@ -82,7 +82,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         DispatchQueue.main.async {
             let alert = UIAlertController(
                 title: "Link inválido",
-                message: "O destino \"\(tab)\" não existe no AtlasGR Prospector. Verifique o link e tente novamente.",
+                message: "O destino \"\(tab)\" não existe no Birth Hub 360 Prospector. Verifique o link e tente novamente.",
                 preferredStyle: .alert
             )
             alert.addAction(UIAlertAction(title: "OK", style: .default))

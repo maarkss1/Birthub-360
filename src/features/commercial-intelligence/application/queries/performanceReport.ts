@@ -2,7 +2,7 @@
  * Eficiência (Fase 4) — Win Rate, ticket médio, ciclo de venda e funil de conversão (snapshot atual
  * + alcance histórico real via `LeadStageHistory`, seção 12). Também SLA de primeiro contato e
  * concentração de receita (top 10 clientes) — achados reais confirmados ao comparar com o
- * protótipo standalone `Acompanhamento-Comercial-AtlasGR-e-Total-Trac` (ferramenta de relatórios
+ * protótipo standalone `Acompanhamento-Comercial-Birth Hub 360-e-Total-Trac` (ferramenta de relatórios
  * 100% client-side sobre Bitrix): essas duas métricas não tinham nenhum equivalente neste módulo,
  * mesmo já rodando sobre dados nativos (Postgres) em vez de reconsultar o Bitrix a cada relatório.
  */

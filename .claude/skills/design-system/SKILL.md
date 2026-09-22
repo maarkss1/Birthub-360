@@ -71,7 +71,7 @@ Até 09/2026 a plataforma trocava de marca em runtime (`data-brand` no `<html>`,
 por JS) e toda decisão de cor precisava ser conferida em 4 combinações (2 marcas × 2 temas). Não
 mais: a marca é uma só e a cor vive inteiramente em CSS. **Restam 2 combinações: claro e escuro.**
 
-Se encontrar `data-brand`, `activeBrand`, `isAtlas`, `atlas-orange` ou `totaltrack-blue` em algum
+Se encontrar `data-brand`, `activeBrand`, `isAtlas`, `atlas-orange` ou `birthhub360-blue` em algum
 lugar, é resíduo — não reintroduza o mecanismo, migre para os tokens.
 
 O que aquele seletor de fato controlava no CONTEÚDO virou o **playbook comercial**
@@ -124,7 +124,7 @@ usada resolve para uma cor real (`grep` em `globals.css`), não assuma que exist
 
 - [ ] Nenhum token novo foi criado sem antes confirmar que não existe equivalente em `globals.css`.
 - [ ] Cor de marca usa token (`bg-brand`/`text-brand-ink`), nunca hex cru nem classe estática de
-      marca antiga (`atlas-orange`/`totaltrack-blue`, que não resolvem mais para cor nenhuma).
+      marca antiga (`atlas-orange`/`birthhub360-blue`, que não resolvem mais para cor nenhuma).
 - [ ] Toda superfície `bg-brand`/`bg-brand-active`/`from-brand` tem `text-on-brand` em cima —
       nunca `text-white`.
 - [ ] Radius novo usa `--radius-card`/`--radius-card-lg`, a menos que haja motivo semântico para

@@ -2,7 +2,7 @@
 set -e
 
 echo "=========================================================="
-echo "🚀 Central AtlasGR — Bootstrap do Ollama na Nuvem / VPS"
+echo "🚀 Central Birth Hub 360 — Bootstrap do Ollama na Nuvem / VPS"
 echo "=========================================================="
 
 OLLAMA_CONTAINER="${1:-atlas_ollama}"

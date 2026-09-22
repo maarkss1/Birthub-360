@@ -1,6 +1,6 @@
 @echo off
 echo ==========================================================
-echo  Central AtlasGR -- Bootstrap do Ollama no Windows
+echo  Central Birth Hub 360 -- Bootstrap do Ollama no Windows
 echo ==========================================================
 
 set OLLAMA_CONTAINER=atlas_ollama

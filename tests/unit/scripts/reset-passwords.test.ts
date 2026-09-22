@@ -56,7 +56,7 @@ describe('resetPasswords', () => {
     prismaMock.user.findMany.mockResolvedValue([]);
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    const result = await resetPasswords(['naoexiste@atlasgr.com.br']);
+    const result = await resetPasswords(['naoexiste@birthhub360.com.br']);
 
     expect(result.usersFound).toBe(0);
     expect(result.usersUpdated).toBe(0);
@@ -73,7 +73,7 @@ describe('resetPasswords', () => {
 
   it('conta existente: reseta a credencial, marca mustChangePassword e nunca imprime a senha', async () => {
     prismaMock.user.findMany.mockResolvedValue([
-      { id: 'user-1', email: 'existente@atlasgr.com.br' } as never,
+      { id: 'user-1', email: 'existente@birthhub360.com.br' } as never,
     ]);
     prismaMock.account.findFirst.mockResolvedValue({ id: 'account-1' } as never);
     prismaMock.account.update.mockResolvedValue({} as never);
@@ -82,7 +82,7 @@ describe('resetPasswords', () => {
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     process.env.RESET_PASSWORD_VALUE = 'UmaSenhaForteDeTeste123!';
 
-    const result = await resetPasswords(['existente@atlasgr.com.br']);
+    const result = await resetPasswords(['existente@birthhub360.com.br']);
 
     expect(result.scope).toBe('single');
     expect(result.usersUpdated).toBe(1);
@@ -104,14 +104,14 @@ describe('resetPasswords', () => {
 
   it('gera uma senha aleatória forte quando nenhuma é fornecida (nunca a senha fixa antiga "00000000")', async () => {
     prismaMock.user.findMany.mockResolvedValue([
-      { id: 'user-2', email: 'sem-senha-explicita@atlasgr.com.br' } as never,
+      { id: 'user-2', email: 'sem-senha-explicita@birthhub360.com.br' } as never,
     ]);
     prismaMock.account.findFirst.mockResolvedValue(null);
     prismaMock.account.create.mockResolvedValue({} as never);
     prismaMock.user.update.mockResolvedValue({} as never);
     vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    const result = await resetPasswords(['sem-senha-explicita@atlasgr.com.br']);
+    const result = await resetPasswords(['sem-senha-explicita@birthhub360.com.br']);
 
     expect(result.passwordSource).toBe('generated');
     expect(prismaMock.account.create).toHaveBeenCalledTimes(1);
@@ -122,7 +122,7 @@ describe('resetPasswords', () => {
 
   it('rejeita RESET_PASSWORD_VALUE curta demais', async () => {
     process.env.RESET_PASSWORD_VALUE = 'curta';
-    await expect(resetPasswords(['alguem@atlasgr.com.br'])).rejects.toBeInstanceOf(
+    await expect(resetPasswords(['alguem@birthhub360.com.br'])).rejects.toBeInstanceOf(
       ResetPasswordsUsageError,
     );
     expect(prismaMock.user.findMany).not.toHaveBeenCalled();
@@ -151,8 +151,8 @@ describe('resetPasswords', () => {
       process.env.RESET_PASSWORDS_ALLOW_ALL = '1';
       process.env.RESET_PASSWORDS_ACTOR = 'sre-oncall';
       prismaMock.user.findMany.mockResolvedValue([
-        { id: 'user-a', email: 'a@atlasgr.com.br' } as never,
-        { id: 'user-b', email: 'b@atlasgr.com.br' } as never,
+        { id: 'user-a', email: 'a@birthhub360.com.br' } as never,
+        { id: 'user-b', email: 'b@birthhub360.com.br' } as never,
       ]);
       prismaMock.account.findFirst.mockResolvedValue(null);
       prismaMock.account.create.mockResolvedValue({} as never);

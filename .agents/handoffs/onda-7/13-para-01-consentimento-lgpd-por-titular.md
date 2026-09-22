@@ -18,7 +18,7 @@ por `AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS` (fail-closed, mesmo padrão de dois-
 Isso é uma base legal **administrativa, no nível do tenant** — não existe hoje nenhum model/coluna
 de "consentimento" ou "base legal" por titular (Contact) no schema (`prisma/schema.prisma`).
 Confirmei com `grep -in "consent" prisma/schema.prisma` → zero resultados. `docs/lgpd-base-legal.md`
-já documenta a base legal real usada pela AtlasGR para dado de prospect B2B como **Legítimo
+já documenta a base legal real usada pela Birth Hub 360 para dado de prospect B2B como **Legítimo
 Interesse (Art. 7º, IX)**, não consentimento individual explícito — então o gate que implementei é
 deliberadamente uma autorização administrativa do tenant ("esta organização confirma que tem base
 legal para processar dado pessoal de seus titulares via IA externa"), não um checkbox de opt-in por
@@ -33,7 +33,7 @@ pessoa.
 
 ## Alteração necessária (não bloqueadora)
 
-Se a AtlasGR precisar, no futuro, de um controle mais granular (por titular/Contact, não só por
+Se a Birth Hub 360 precisar, no futuro, de um controle mais granular (por titular/Contact, não só por
 organização) — por exemplo, para atender um Contact que pediu para não ter dado processado por IA
 mesmo que a organização como um todo esteja autorizada — o modelo correto seria um campo/relação em
 `Contact` (ex.: `aiProcessingConsent: Boolean?` ou uma tabela `Consent` com `contactId`, `basis`,

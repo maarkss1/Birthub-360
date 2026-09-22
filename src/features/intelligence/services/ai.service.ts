@@ -192,8 +192,8 @@ export interface GenerateContentOptions {
    *  src/config/playbooks.ts). Seleciona o preâmbulo e os overrides de prompt.
    *  Tipado como `string` (não `PlaybookKey`) de propósito: os prompts
    *  FLEET_SYSTEM_PREAMBLE/FLEET_TOOL_OVERRIDES abaixo ainda não foram
-   *  revisados na remoção dos playbooks atlasgr/totaltrac — nenhum caminho novo
-   *  envia mais 'totaltrac' aqui, mas o conteúdo do prompt em si fica para uma
+   *  revisados na remoção dos playbooks Birth Hub 360 — nenhum caminho novo
+   *  envia mais 'birthhub360' aqui, mas o conteúdo do prompt em si fica para uma
    *  rodada dedicada de revisão de conteúdo, não para não perder texto de IA
    *  já escrito sem revisão de negócio. */
   brandId?: string;
@@ -292,7 +292,7 @@ export class AIService {
     }
     const toolId = tool as ContentTool;
 
-    const isFleetPlaybook = extra?.brandId === 'totaltrac';
+    const isFleetPlaybook = extra?.brandId === 'birthhub360';
     const basePreamble = isFleetPlaybook ? FLEET_SYSTEM_PREAMBLE : SYSTEM_PREAMBLE;
     const userSections: string[] = [];
     if (extra?.tone) userSections.push(`Tom solicitado pelo usuário: ${extra.tone}`);
