@@ -28,12 +28,12 @@ const buttonVariants = cva(
         // dinamicamente na troca de marca (BrandContext.tsx) e já geram `bg-brand-2` de verdade.
         // hover:shadow-glow-brand (era shadow-brand-sm, mais discreto) — glow difuso de verdade,
         // acende só no hover/focus, nunca em repouso (regra do brief "Neon Tokyo × Cosmic Gold").
-        default: 'bg-brand-active text-on-brand shadow-brand-sm hover:bg-brand hover:shadow-card',
+        default: 'bg-brand-active text-on-brand shadow-brand-sm hover:bg-brand hover:shadow-glow-brand hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
         // bg-btn-danger (color-mix com --danger, globals.css) — bg-red-500 cru com texto branco
         // media ~3.76:1, abaixo do mínimo AA 4.5:1 (mesma classe de achado do DQA-19 que motivou
         // bg-brand-active acima). btn-danger-hover escurece mais, mesma lógica de bg-brand-2.
         destructive:
-          'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:shadow-card',
+          'bg-btn-danger text-white shadow-sm hover:bg-btn-danger-hover hover:shadow-card hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
         // border-gray-300/hover:bg-gray-100/200 (Tailwind cru, não token) nunca reagiam ao tema —
         // no dark mode (padrão do produto, CREATIVE_SYSTEM_01.md seção C) produziam borda
         // praticamente invisível e um hover claro incoerente sobre superfície escura. Trocados
@@ -42,10 +42,10 @@ const buttonVariants = cva(
         // novo — outline/ghost eram os únicos sem nenhum feedback de hover (achado real, catálogo
         // visual "Neon Tokyo × Cosmic Gold", 10/09/2026).
         outline:
-          'border-line bg-transparent text-ink hover:border-ink-2/30 hover:bg-surface-subtle',
+          'border-line bg-transparent text-ink hover:border-ink-2/30 hover:bg-surface-subtle hover:scale-[1.02] active:scale-95',
         secondary:
-          'border-line bg-surface-elevated text-ink shadow-sm hover:bg-surface-interactive',
-        ghost: 'text-ink-2 hover:bg-surface-interactive hover:text-ink',
+          'border-line bg-surface-elevated text-ink shadow-sm hover:bg-surface-interactive hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
+        ghost: 'text-ink-2 hover:bg-surface-interactive hover:text-ink hover:scale-[1.02] active:scale-95',
         // text-brand-ink dark:text-brand (não text-brand cru) — mesmo achado do axe-core que
         // motivou bg-brand-active acima: texto de marca direto sobre bg-bg/bg-surface só atinge
         // ~3.0:1, abaixo do mínimo AA de 4.5:1. Sem hover:scale de propósito — é texto inline, não

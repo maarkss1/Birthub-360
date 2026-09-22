@@ -3,7 +3,7 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const inputVariants = cva(
-  'flex w-full rounded-control border border-line bg-surface-elevated text-ink placeholder:text-ink-2/75 transition-[border-color,box-shadow,background-color] duration-200 hover:border-ink-2/35 focus-visible:outline-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/25 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:opacity-60 disabled:hover:border-line',
+  'flex w-full rounded-control border border-line bg-surface-elevated/70 backdrop-blur-sm text-ink placeholder:text-ink-2/75 transition-all duration-200 hover:border-brand/40 hover:bg-surface-elevated hover:shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] focus-visible:outline-none focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/20 disabled:cursor-not-allowed disabled:bg-surface-subtle disabled:opacity-60 disabled:hover:border-line',
   {
     variants: {
       inputSize: {

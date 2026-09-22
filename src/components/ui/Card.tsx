@@ -8,15 +8,15 @@ const cardVariants = cva('relative overflow-hidden rounded-card text-ink', {
   variants: {
     variant: {
       default:
-        'bg-surface-elevated border border-line shadow-card transition-[box-shadow,border-color] duration-200 hover:border-ink-2/20 hover:shadow-card-hover',
-      stat: 'bg-surface-elevated border border-line shadow-card transition-[box-shadow,border-color] duration-200 hover:border-brand/25 hover:shadow-card-hover',
-      outline: 'border border-line bg-transparent',
+        'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 hover:border-ink-2/20 hover:shadow-card-hover hover:-translate-y-0.5',
+      stat: 'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 hover:border-brand/25 hover:shadow-card-hover hover:-translate-y-0.5',
+      outline: 'border border-line bg-transparent transition-all duration-300 hover:border-ink-2/30',
       accent:
-        'bg-surface-elevated border border-brand/35 shadow-card transition-[box-shadow,border-color] duration-200 hover:border-brand/55 hover:shadow-card-hover',
+        'bg-surface-elevated/80 backdrop-blur-md border border-brand/35 shadow-card transition-all duration-300 hover:border-brand/55 hover:shadow-glow-brand hover:-translate-y-0.5',
       elevated:
-        'bg-surface-elevated border border-line shadow-card-hover transition-[box-shadow,border-color] duration-200 hover:border-brand/25',
+        'bg-surface-elevated border border-line shadow-card-hover transition-all duration-300 hover:border-brand/25 hover:-translate-y-0.5',
       interactive:
-        'group bg-surface-elevated border border-line shadow-card cursor-pointer transition-[box-shadow,border-color,background-color] duration-200 hover:border-brand/30 hover:bg-surface-interactive hover:shadow-card-hover',
+        'group bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card cursor-pointer transition-all duration-300 hover:border-brand/30 hover:bg-surface-interactive hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] active:scale-[0.99]',
       // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
       // Mesmo idioma do "accent" acima (borda + shadow-glow em repouso, pra marcar destaque
       // persistente — não é o glow transitório de hover do Button). shadow-glow-accent-*/pulse

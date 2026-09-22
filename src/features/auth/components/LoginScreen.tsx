@@ -74,8 +74,8 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
           strokeLinecap="round"
           strokeOpacity={0.4}
           initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.4 }}
-          transition={{ duration: 0.5, ease: EASE_PREMIUM, delay: 0.25 + index * 0.28 }}
+          animate={{ pathLength: 1, opacity: 0.6 }}
+          transition={{ duration: 0.8, ease: EASE_PREMIUM, delay: 0.3 + index * 0.2 }}
         />
       ))}
       {CONNECT_ICONS.map(({ icon: Icon, accent }, index) => {
@@ -83,9 +83,9 @@ function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
         return (
           <motion.g
             key={`node-${cx(index)}`}
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.4 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ ...SPRING_SOFT, delay: index * 0.28 }}
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.4, rotate: -30 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ ...SPRING_SOFT, delay: index * 0.2 }}
             style={{ transformOrigin: `${cx(index)}px ${cy}px` }}
           >
             <circle
@@ -271,7 +271,7 @@ export function LoginScreen() {
   // (a mesma fonte de verdade de cor do resto do app, nunca hex digitado à mão), em vez dos
   // tokens de tema.
   const inputClass =
-    'block w-full border-0 border-b-2 border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0';
+    'block w-full rounded-xl border border-slate-200 bg-white/70 py-3.5 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all hover:bg-white hover:border-slate-300 focus:bg-white focus:border-[var(--login-accent)] focus:outline-none focus:ring-4 focus:ring-[var(--login-accent)]/15';
 
   return (
     <div
@@ -286,14 +286,20 @@ export function LoginScreen() {
         className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center"
         style={{ backgroundColor: BRAND.colors.obsidian }}
       >
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div
-            className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full blur-[120px]"
-            style={{ backgroundColor: BRAND.colors.brand, opacity: 0.14 }}
+        <div className="pointer-events-none absolute inset-0 mix-blend-screen" aria-hidden="true">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.18, scale: 1 }}
+            transition={{ duration: 2, ease: EASE_PREMIUM }}
+            className="absolute -top-32 -left-24 h-[500px] w-[500px] rounded-full blur-[120px]"
+            style={{ backgroundColor: BRAND.colors.brand }}
           />
-          <div
-            className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full blur-[120px]"
-            style={{ backgroundColor: BRAND.colors.iris, opacity: 0.14 }}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.12, scale: 1 }}
+            transition={{ duration: 2, ease: EASE_PREMIUM, delay: 0.2 }}
+            className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full blur-[140px]"
+            style={{ backgroundColor: BRAND.colors.iris }}
           />
         </div>
 
@@ -358,9 +364,9 @@ export function LoginScreen() {
             {verificationPending ? (
               <div className="space-y-5 text-center">
                 <div
-                  className="flex items-start gap-2.5 rounded-2xl border p-3.5 text-left text-sm text-slate-700"
+                  className="flex items-start gap-2.5 rounded-2xl border p-3.5 text-left text-sm text-slate-700 backdrop-blur-md"
                   style={{
-                    backgroundColor: `${BRAND.colors.brand}14`,
+                    backgroundColor: `${BRAND.colors.brand}1A`,
                     borderColor: `${BRAND.colors.brand}4D`,
                   }}
                   role="status"
@@ -383,9 +389,9 @@ export function LoginScreen() {
               forgotPasswordSent ? (
                 <div className="space-y-5 text-center">
                   <div
-                    className="flex items-start gap-2.5 rounded-2xl border p-3.5 text-left text-sm text-slate-700"
+                    className="flex items-start gap-2.5 rounded-2xl border p-3.5 text-left text-sm text-slate-700 backdrop-blur-md"
                     style={{
-                      backgroundColor: `${BRAND.colors.brand}14`,
+                      backgroundColor: `${BRAND.colors.brand}1A`,
                       borderColor: `${BRAND.colors.brand}4D`,
                     }}
                     role="status"
@@ -410,7 +416,7 @@ export function LoginScreen() {
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      className="flex items-start gap-2.5 rounded-2xl border border-red-300 bg-red-50 p-3.5 text-xs text-red-700"
+                      className="flex items-start gap-2.5 rounded-2xl border border-red-300 bg-red-50/80 backdrop-blur-md p-3.5 text-xs text-red-700"
                       role="alert"
                     >
                       <AlertCircle size={16} className="mt-0.5 shrink-0" />
@@ -462,8 +468,9 @@ export function LoginScreen() {
                     style={{
                       ...submitMagnetic.style,
                       backgroundImage: `linear-gradient(to right, ${BRAND.colors.brand}, ${BRAND.colors.brandAccent})`,
+                      boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 4px 14px rgba(212, 175, 55, 0.3)'
                     }}
-                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 shadow-md transition-shadow hover:shadow-lg disabled:opacity-50"
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 transition-all hover:brightness-110 hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <Loader2 className="animate-spin" size={18} />
@@ -489,7 +496,7 @@ export function LoginScreen() {
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="flex items-start gap-2.5 rounded-2xl border border-red-300 bg-red-50 p-3.5 text-xs text-red-700"
+                    className="flex items-start gap-2.5 rounded-2xl border border-red-300 bg-red-50/80 backdrop-blur-md p-3.5 text-xs text-red-700"
                     role="alert"
                   >
                     <AlertCircle size={16} className="mt-0.5 shrink-0" />
@@ -510,7 +517,7 @@ export function LoginScreen() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="block w-full rounded-t-lg border-0 border-b-2 border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 placeholder-slate-500 shadow-sm transition-colors focus:border-[var(--login-accent)] focus:outline-none focus:ring-0"
+                      className="block w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3.5 text-sm text-slate-900 placeholder-slate-400 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all hover:bg-white hover:border-slate-300 focus:bg-white focus:border-[var(--login-accent)] focus:outline-none focus:ring-4 focus:ring-[var(--login-accent)]/15"
                       placeholder="Ex: Marcelo Nascimento"
                       required={isSignUp}
                     />
@@ -533,7 +540,7 @@ export function LoginScreen() {
                       type="email"
                       value={email}
                       onChange={(e) => handleEmailChange(e.target.value)}
-                      className={`${inputClass} rounded-t-lg`}
+                      className={inputClass}
                       placeholder="executivo@birthhub360.com.br"
                       required
                     />
@@ -556,7 +563,7 @@ export function LoginScreen() {
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={`${inputClass} rounded-t-lg`}
+                      className={inputClass}
                       placeholder="••••••••••••"
                       required
                     />
@@ -574,7 +581,7 @@ export function LoginScreen() {
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="h-4 w-4 cursor-pointer rounded border-slate-300"
+                        className="h-4 w-4 cursor-pointer rounded border-slate-300 transition-all focus:ring-2 focus:ring-[var(--login-accent)] focus:ring-offset-2"
                         style={{ accentColor: BRAND.colors.brand }}
                       />
                       Manter conexão ativa
@@ -603,8 +610,9 @@ export function LoginScreen() {
                   style={{
                     ...submitMagnetic.style,
                     backgroundImage: `linear-gradient(to right, ${BRAND.colors.brand}, ${BRAND.colors.brandAccent})`,
+                    boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 4px 14px rgba(212, 175, 55, 0.3)'
                   }}
-                  className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 shadow-md transition-shadow hover:shadow-lg disabled:opacity-50"
+                  className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 transition-all hover:brightness-110 hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin" size={18} />

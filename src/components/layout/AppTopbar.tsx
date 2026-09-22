@@ -113,11 +113,11 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
           SoundFX.play('focus');
           window.dispatchEvent(new Event(OPEN_COMMAND_PALETTE_EVENT));
         }}
-        className="group ml-3 hidden max-w-md flex-1 items-center gap-2 rounded-control border border-line bg-surface-subtle px-3 py-2 text-ink-2 transition-[border-color,box-shadow,color] hover:border-brand/30 hover:text-ink hover:shadow-sm lg:flex"
+        className="group ml-3 hidden max-w-md flex-1 items-center gap-2 rounded-control border border-line bg-surface-subtle/50 px-3 py-2 text-ink-2 transition-all hover:border-brand/40 hover:bg-surface-subtle hover:text-ink hover:shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] lg:flex"
       >
-        <Search className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+        <Search className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-110 group-hover:text-brand" />
         <span className="text-xs">Buscar empresa, decisor ou comando…</span>
-        <kbd className="ml-auto rounded-md border border-line bg-surface px-1.5 py-0.5 text-[9px] font-semibold text-ink-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        <kbd className="ml-auto rounded-md border border-line bg-surface px-1.5 py-0.5 text-[9px] font-semibold text-ink-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] transition-colors group-hover:border-brand/30">
           ⌘K
         </kbd>
       </button>
@@ -136,7 +136,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
             SoundFX.play('navigate');
             toggleTheme();
           }}
-          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-line hover:bg-surface-2 hover:text-ink active:translate-y-0"
+          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-all duration-200 hover:scale-105 hover:border-line hover:bg-surface-2 hover:text-ink hover:shadow-sm active:scale-95"
           aria-label="Alternar tema"
           title={`Mudar para modo ${theme === 'dark' ? 'claro' : 'escuro'}`}
         >
@@ -146,9 +146,9 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         <button
           type="button"
           onClick={toggleSound}
-          className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
+          className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-sm ${
             soundEnabled
-              ? 'border-brand/15 bg-brand/8 text-brand-ink dark:text-brand'
+              ? 'border-brand/15 bg-brand/8 text-brand-ink dark:text-brand hover:border-brand/30'
               : 'border-transparent text-ink-2 hover:border-line hover:bg-surface-2 hover:text-ink'
           }`}
           aria-pressed={soundEnabled}
@@ -164,17 +164,17 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
             SoundFX.play('navigate');
             navigate('/app/notifications');
           }}
-          className="relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-line hover:bg-surface-2 hover:text-ink active:translate-y-0"
+          className="relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-all duration-200 hover:scale-105 hover:border-line hover:bg-surface-2 hover:text-brand hover:shadow-sm active:scale-95"
           aria-label={
             unreadCount > 0
               ? `Notificações — ${unreadCount} não lida${unreadCount === 1 ? '' : 's'}`
               : 'Notificações'
           }
         >
-          <Bell className="h-5 w-5" />
+          <Bell className="h-5 w-5 transition-transform duration-300" />
           {unreadCount > 0 && (
             <span
-              className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_0_3px_var(--surface)]"
+              className="absolute right-[9px] top-[9px] h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_0_3px_var(--surface)] animate-pulse"
               aria-hidden="true"
             />
           )}
@@ -190,7 +190,7 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
         <button
           type="button"
           onClick={logout}
-          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-[transform,background-color,border-color,color] duration-200 hover:-translate-y-0.5 hover:border-critical/20 hover:bg-critical/10 hover:text-critical active:translate-y-0"
+          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-ink-2 transition-all duration-200 hover:scale-105 hover:border-critical/20 hover:bg-critical/10 hover:text-critical hover:shadow-sm active:scale-95"
           aria-label="Sair da conta"
           title="Sair da conta"
         >
