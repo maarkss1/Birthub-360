@@ -55,6 +55,12 @@ afterAll(async () => {
   );
 });
 
+// O agendamento HOT/WARM/COLD (feat 16, Fase 5) só reprocessa a conta cujo snapshot mais recente é
+// mais velho que a janela da faixa (1h/12h/7d). Estes testes precisam que a conta seja ELEGÍVEL no
+// scan e que exista um snapshot para o worker ligar score/recomendação — então o snapshot semeado
+// é mais velho que qualquer janela. Sem isto o scan devolvia `processed: 0`.
+const STALE_SNAPSHOT_AT = () => new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);
+
 describe('scanAndGenerateAccountInsights — score e Next Best Action reais, contra Postgres', () => {
   it('gera AccountScore e AccountRecommendation ligados ao snapshot real, a partir de sinal e decisor reais', async () => {
     const orgId = await createTestOrg();
@@ -69,6 +75,7 @@ describe('scanAndGenerateAccountInsights — score e Next Best Action reais, con
       });
       await prisma.accountIntelligenceSnapshot.create({
         data: {
+          createdAt: STALE_SNAPSHOT_AT(),
           organizationId: orgId,
           companyId: company.id,
           version: 1,
@@ -155,6 +162,7 @@ describe('scanAndGenerateAccountInsights — score e Next Best Action reais, con
       });
       await prisma.accountIntelligenceSnapshot.create({
         data: {
+          createdAt: STALE_SNAPSHOT_AT(),
           organizationId: orgId,
           companyId: company.id,
           version: 1,
@@ -196,6 +204,7 @@ describe('scanAndGenerateAccountInsights — score e Next Best Action reais, con
       });
       await prisma.accountIntelligenceSnapshot.create({
         data: {
+          createdAt: STALE_SNAPSHOT_AT(),
           organizationId: orgA,
           companyId: company.id,
           version: 1,
@@ -228,6 +237,7 @@ describe('scanAndGenerateAccountInsights — score e Next Best Action reais, con
       });
       await prisma.accountIntelligenceSnapshot.create({
         data: {
+          createdAt: STALE_SNAPSHOT_AT(),
           organizationId: orgId,
           companyId: company.id,
           version: 1,
@@ -313,6 +323,7 @@ describe('scanAndGenerateAccountInsights — score e Next Best Action reais, con
       });
       await prisma.accountIntelligenceSnapshot.create({
         data: {
+          createdAt: STALE_SNAPSHOT_AT(),
           organizationId: orgId,
           companyId: company.id,
           version: 1,
