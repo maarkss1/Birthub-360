@@ -211,12 +211,12 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     bitrixLeadId: string | null,
   ): void {
     if (!bitrixLeadId) return;
-    import('../../integrations/bitrix/bitrix.service.js')
-      .then(({ pushLeadToBitrix }) => pushLeadToBitrix(organizationId, leadId))
+    import('../../../lib/queue/bitrixOutbound.queue.js')
+      .then(({ queueLeadPushToBitrix }) => queueLeadPushToBitrix(organizationId, leadId))
       .catch((err) => {
         logger.warn(
           { err, organizationId, leadId },
-          '[bitrix] Falha ao disparar re-sincronização automática após mudança de etapa',
+          '[bitrix] Falha ao enfileirar re-sincronização automática após mudança de etapa',
         );
       });
   }

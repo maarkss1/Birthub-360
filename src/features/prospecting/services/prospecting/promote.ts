@@ -6,7 +6,7 @@ import {
 } from '../../../../lib/enumMap';
 import { logger } from '../../../../lib/logger';
 import { prisma } from '../../../../lib/prisma.js';
-import { pushLeadToBitrix } from '../../../integrations/bitrix/bitrix.service.js';
+import { queueLeadPushToBitrix } from '../../../../lib/queue/bitrixOutbound.queue.js';
 import { toDeterministicCnpj } from '../cnpj.util';
 import { resolveCompanyIdentity } from '../companyIdentity.service';
 import { enrichCompany } from '../enrichment.service';
@@ -165,8 +165,8 @@ export async function promoteToCrm(input: PromoteInput) {
 
   // Fire-and-forget: Atlas → Bitrix24 é automático (nunca exige clique manual), mas nunca deve
   // atrasar nem derrubar a resposta de criação do lead — pushLeadToBitrix já engole os próprios
-  // erros e vira no-op se a organização não tiver Bitrix conectado.
-  void pushLeadToBitrix(input.organizationId, lead.id);
+  // erros e vira no-op se a organização não tiver Bitrix conectado. O push em si foi movido para uma fila.
+  void queueLeadPushToBitrix(input.organizationId, lead.id);
 
   return {
     lead: {

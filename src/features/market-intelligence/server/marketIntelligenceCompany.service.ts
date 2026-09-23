@@ -356,8 +356,9 @@ export async function approveToPipeline(
         },
         include: { leads: true },
       });
-    } catch (error: any) {
-      if (error.code === 'P2002' && error.meta?.target?.includes('cnpj')) {
+    } catch (error: unknown) {
+      const err = error as Record<string, unknown>;
+      if (err.code === 'P2002' && (err.meta as any)?.target?.includes('cnpj')) {
         // Race condition: another request created the company between our findFirst and create
         const existingCompany = await prisma.company.findFirst({
           where: { cnpj: normalizedCnpj, organizationId, deletedAt: null },

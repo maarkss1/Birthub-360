@@ -111,6 +111,7 @@ export function Dialog({
     // próprio MDN para <dialog> + clique no backdrop; nenhum atalho de teclado fica sem
     // equivalente (Escape já fecha, foco já é gerenciado nativamente).
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    // biome-ignore lint/a11y/useKeyWithClickEvents: onClick detects backdrop clicks only. Keyboard is handled natively by <dialog> (Escape key).
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}

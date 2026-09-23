@@ -103,8 +103,9 @@ export class PrismaCompanyRepository implements CompanyRepository {
         } as Prisma.CompanyUncheckedCreateInput,
       });
       return serializeCompanyStatus(created) as Company;
-    } catch (error: any) {
-      if (error.code === 'P2002' && error.meta?.target?.includes('cnpj')) {
+    } catch (error: unknown) {
+      const err = error as Record<string, unknown>;
+      if (err.code === 'P2002' && (err.meta as any)?.target?.includes('cnpj')) {
         throw new Error('Já existe uma empresa com este CNPJ nesta organização.');
       }
       throw error;
@@ -125,8 +126,8 @@ export class PrismaCompanyRepository implements CompanyRepository {
     const updated = await prisma.company.update({
       where: { id, organizationId },
       data: {
-        ...data,
-        ...(data.status ? { status: toPrismaCompanyStatus(data.status) } : {}),
+        ...finalData,
+        ...(finalData.status ? { status: toPrismaCompanyStatus(finalData.status) } : {}),
       } as Prisma.CompanyUpdateInput,
     });
     return serializeCompanyStatus(updated) as Company;

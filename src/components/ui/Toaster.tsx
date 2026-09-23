@@ -31,7 +31,6 @@ export function Toaster() {
   if (toasts.length === 0) return null;
 
   return (
-  return (
     <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 max-w-sm pointer-events-none">
       <AnimatePresence>
         {toasts.map((t) => {
@@ -47,7 +46,7 @@ export function Toaster() {
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.7}
-              onDragEnd={(e, { offset, velocity }) => {
+              onDragEnd={(_e, { offset, velocity }) => {
                 if (offset.x > 100 || velocity.x > 500) {
                   setToasts((prev) => prev.filter((x) => x.id !== t.id));
                 }
