@@ -135,12 +135,12 @@
        --ink   (#174A9C) 7.85:1 contra --bg/--surface
        --ink-2 (#6D28D9) 6.62:1 contra --bg/--surface
      Ambos com folga sobre o mínimo AA (4.5:1). */
-  --bg: #ffffff;
+  --bg: #f8fafc;
   --surface: #ffffff;
-  --surface-2: #f8fafc;
-  --surface-subtle: #f1f5f9;
+  --surface-2: #f1f5f9;
+  --surface-subtle: #e2e8f0;
   --surface-elevated: #ffffff;
-  --surface-interactive: #f8fafc;
+  --surface-interactive: #f1f5f9;
   --overlay: rgba(11, 19, 43, 0.52);
   --ink: #0b132b;
   --ink-2: #475569;
@@ -258,17 +258,17 @@
 }
 
 .dark {
-  /* Midnight Blue — Âncora oficial do tema escuro (#0B132B) */
-  --bg: #0b132b;
-  --surface: #111d3f;
-  --surface-2: #16244c;
-  --surface-subtle: #0e1836;
-  --surface-elevated: #1b2d5d;
-  --surface-interactive: #203366;
-  --overlay: rgba(11, 19, 43, 0.78);
-  --ink: var(--brand-2);
-  --ink-2: #94a3b8;
-  --line: rgba(212, 175, 55, 0.18);
+  /* Obsidian — Âncora oficial do tema escuro neutro */
+  --bg: #09090b;
+  --surface: #18181b;
+  --surface-2: #27272a;
+  --surface-subtle: #141417;
+  --surface-elevated: #27272a;
+  --surface-interactive: #3f3f46;
+  --overlay: rgba(9, 9, 11, 0.78);
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --line: rgba(255, 255, 255, 0.1);
   --soft: rgba(212, 175, 55, 0.16);
   /* Sunset Orange e Red-Violet oficiais */
   --red: #ff5841;
@@ -365,6 +365,20 @@
   --shadow-glow-pulse-value:
     0 0 20px -2px color-mix(in srgb, var(--pulse) 55%, transparent),
     0 0 8px -1px color-mix(in srgb, var(--pulse) 40%, transparent);
+  
+  /* Novos tokens para tema futurista */
+  --neon-cyan: #22d3ee;
+  --neon-purple: #a855f7;
+  --neon-pink: #f472b6;
+  --neon-green: #4ade80;
+  --cyber-blue: #3b82f6;
+  --cyber-orange: #f97316;
+  
+  /* Sombras neon intensas */
+  --shadow-neon-cyan: 0 0 30px rgba(34, 211, 238, 0.6), 0 0 60px rgba(34, 211, 238, 0.4);
+  --shadow-neon-purple: 0 0 30px rgba(168, 85, 247, 0.6), 0 0 60px rgba(168, 85, 247, 0.4);
+  --shadow-neon-pink: 0 0 30px rgba(244, 114, 182, 0.6), 0 0 60px rgba(244, 114, 182, 0.4);
+  --shadow-neon-green: 0 0 30px rgba(74, 222, 128, 0.6), 0 0 60px rgba(74, 222, 128, 0.4);
 }
 
 @theme {
@@ -574,6 +588,11 @@
   --animate-spin-slow: spin 12s linear infinite;
   --animate-shimmer: shimmer 2.5s infinite linear;
   --animate-border-beam: border-beam calc(var(--duration, 12) * 1s) infinite linear;
+  --animate-pulse-slow: pulse-slow 8s ease-in-out infinite;
+  --animate-fade-in: fade-in 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-hologram: hologram 4s ease-in-out infinite;
+  --animate-cyber-scan: cyber-scan 2s linear infinite;
+  --animate-neon-flicker: neon-flicker 0.1s infinite;
 
   @keyframes border-beam {
     0% {
@@ -648,6 +667,51 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes hologram {
+    0%, 100% {
+      opacity: 0.8;
+      filter: brightness(1) contrast(1);
+    }
+    50% {
+      opacity: 0.6;
+      filter: brightness(1.1) contrast(1.1);
+    }
+  }
+  @keyframes cyber-scan {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes neon-flicker {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.95;
     }
   }
 }

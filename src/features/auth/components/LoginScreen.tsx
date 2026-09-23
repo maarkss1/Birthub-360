@@ -6,19 +6,14 @@ import { motion, useReducedMotion } from 'framer-motion';
 import {
   AlertCircle,
   ArrowRight,
-  Building2,
   CalendarDays,
   CheckCircle2,
   Clock,
   Database,
-  LayoutGrid,
-  ListChecks,
   Loader2,
   Lock,
-  type LucideIcon,
   Mail,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -27,7 +22,7 @@ import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
-import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../../../lib/motion';
+import { fadeInUp, useMagnetic } from '../../../lib/motion';
 
 
 
@@ -68,7 +63,7 @@ export function LoginScreen() {
 
   // Leve inclinação 3D no emblema da marca (painel esquerdo, desktop) ao mover o mouse — mesmo
   // hook premium de src/lib/motion.ts, já com guarda de prefers-reduced-motion embutida.
-  const brandTilt = useTilt(6);
+  // brandTilt removido pois não estava sendo usado.
 
   // Relógio e calendário ao vivo do painel do formulário: reforçam a sensação de central
   // operando agora.

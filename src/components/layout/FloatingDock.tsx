@@ -58,18 +58,18 @@ export function FloatingDock({ activeTab, onOpenFullMenu }: FloatingDockProps) {
               aria-label={item.label}
               aria-current={isActive ? 'page' : undefined}
               className={cn(
-                'relative flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2 rounded-xl text-xs font-semibold transition-colors duration-200 cursor-pointer',
+                'relative flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2 rounded-xl text-xs font-semibold transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer',
                 isActive
-                  ? 'text-on-brand bg-brand shadow-sm'
-                  : 'text-ink-2 hover:text-ink hover:bg-surface-2',
+                  ? 'text-on-brand bg-gradient-to-br from-brand to-brand-2 shadow-md shadow-brand/20 scale-105'
+                  : 'text-ink-2 hover:text-ink hover:bg-surface-2 hover:scale-105',
               )}
             >
-              <Icon size={20} className="shrink-0" />
+              <Icon size={20} className="shrink-0 transition-transform duration-200" />
               <span className="text-[10px] mt-0.5 tracking-tight font-medium truncate max-w-[48px]">
                 {item.label}
               </span>
               {isActive && (
-                <span className="absolute -bottom-1 h-1 w-3 rounded-full bg-white shadow-sm" />
+                <span className="absolute -bottom-1 h-1 w-3 rounded-full bg-gradient-to-r from-brand to-brand-2 shadow-sm shadow-brand/30" />
               )}
             </button>
           );

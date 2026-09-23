@@ -11,6 +11,8 @@ export const EASE_PREMIUM = [0.22, 1, 0.36, 1] as const;
 export const EASE_SPRING_SOFT = [0.34, 1.56, 0.64, 1] as const;
 export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 export const EASE_IN_OUT_SMOOTH = [0.4, 0, 0.2, 1] as const;
+export const EASE_BOUNCE = [0.34, 1.56, 0.64, 1] as const;
+export const EASE_SMOOTH = [0.25, 0.1, 0.25, 1] as const;
 
 export const MOTION_DURATION = {
   instant: 0.1,
@@ -18,11 +20,13 @@ export const MOTION_DURATION = {
   base: 0.28,
   deliberate: 0.42,
   gentle: 0.6,
+  slow: 0.8,
 } as const;
 
 export const SPRING_SNAPPY = { type: 'spring', stiffness: 420, damping: 32, mass: 0.7 } as const;
 export const SPRING_SOFT = { type: 'spring', stiffness: 260, damping: 24, mass: 0.9 } as const;
 export const SPRING_ELASTIC = { type: 'spring', stiffness: 500, damping: 30, mass: 0.8 } as const;
+export const SPRING_BOUNCY = { type: 'spring', stiffness: 400, damping: 20, mass: 0.6 } as const;
 
 export const fadeIn: Variants = {
   hidden: { opacity: 0 },
@@ -39,9 +43,54 @@ export const fadeInUp: Variants = {
   },
 };
 
+export const fadeInDown: Variants = {
+  hidden: { opacity: 0, y: -16, filter: 'blur(6px)' },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.45, ease: EASE_PREMIUM },
+  },
+};
+
+export const fadeInScale: Variants = {
+  hidden: { opacity: 0, scale: 0.95, filter: 'blur(4px)' },
+  show: {
+    opacity: 1,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: { duration: 0.4, ease: EASE_PREMIUM },
+  },
+};
+
 export const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.94 },
   show: { opacity: 1, scale: 1, transition: SPRING_SOFT },
+};
+
+export const scaleInBouncy: Variants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  show: { opacity: 1, scale: 1, transition: SPRING_BOUNCY },
+};
+
+export const slideInRight: Variants = {
+  hidden: { opacity: 0, x: 32, filter: 'blur(4px)' },
+  show: {
+    opacity: 1,
+    x: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.4, ease: EASE_PREMIUM },
+  },
+};
+
+export const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -32, filter: 'blur(4px)' },
+  show: {
+    opacity: 1,
+    x: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.4, ease: EASE_PREMIUM },
+  },
 };
 
 export const staggerContainer = (stagger = 0.06, delayChildren = 0): Variants => ({
@@ -76,6 +125,31 @@ export const pageTransition: Variants = {
     scale: 0.99,
     filter: 'blur(6px)',
     transition: { duration: 0.25, ease: EASE_PREMIUM },
+  },
+};
+
+export const pulseGlow: Variants = {
+  initial: { scale: 1, opacity: 0.8 },
+  animate: {
+    scale: [1, 1.05, 1],
+    opacity: [0.8, 1, 0.8],
+    transition: {
+      duration: 2,
+      repeat: Infinity,
+      ease: EASE_SMOOTH,
+    },
+  },
+};
+
+export const shimmer: Variants = {
+  initial: { backgroundPosition: '-200% 0' },
+  animate: {
+    backgroundPosition: ['200% 0'],
+    transition: {
+      duration: 2.5,
+      repeat: Infinity,
+      ease: 'linear',
+    },
   },
 };
 

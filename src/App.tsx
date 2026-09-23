@@ -290,7 +290,7 @@ function AppLayout() {
           Router casar estes paths aninhados contra o restante da URL automaticamente. */}
       <Suspense fallback={<PageFallback />}>
         <Routes>
-          <Route index element={<AdaptiveDashboard />} />
+          <Route index element={<WorkspaceHome />} />
           {/* Alias explícito para /app/dashboard: TabType inclui 'dashboard' e Sidebar/
               CommandPalette navegam para `/app/${tab}` para TODO TabType (useNavigationBusBridge é
               a única exceção, com mapeamento especial só ali — ver comentário nesse hook). Sem esta

@@ -7,13 +7,9 @@ import { BirthHubLogo } from '../brand/BirthHubLogo';
 import { SoundFX } from '../../lib/soundEffects';
 import { TAB_META, type TabType } from './tabMeta';
 
-/** Preferência de menu recolhido. A chave anterior era prefixada com o nome da
- *  marca antiga; a leitura do valor legado existe só para não zerar a
- *  preferência de quem já usava o produto — pode sair numa limpeza futura. */
-const SIDEBAR_COLLAPSED_KEY = '@birthhub:sidebar-collapsed';
-const LEGACY_SIDEBAR_COLLAPSED_KEY = '@birthhub360:sidebar-collapsed';
+const SIDEBAR_COLLAPSED_KEY = '@birthhub:futuristic-sidebar-collapsed';
 
-interface SidebarProps {
+interface FuturisticSidebarProps {
   activeTab: TabType;
   mobileOpen?: boolean;
   onCloseMobile?: () => void;
@@ -26,19 +22,16 @@ interface NavGroupDefinition {
   items: TabType[];
 }
 
-export function Sidebar({
+export function FuturisticSidebar({
   activeTab,
   mobileOpen = false,
   onCloseMobile,
   collapsed: externalCollapsed,
   onToggleCollapse,
-}: SidebarProps) {
+}: FuturisticSidebarProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return (
-      (window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) ??
-        window.localStorage.getItem(LEGACY_SIDEBAR_COLLAPSED_KEY)) === 'true'
-    );
+    return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true';
   });
 
   const isCollapsed = externalCollapsed !== undefined ? externalCollapsed : internalCollapsed;
@@ -57,17 +50,11 @@ export function Sidebar({
       });
     }
   };
-  const { currentUser, isAdmin, canAccessCommercialIntelligence, canAccessCopilotoIa, logout } =
-    useAuth();
+
+  const { currentUser, isAdmin, canAccessCommercialIntelligence, canAccessCopilotoIa, logout } = useAuth();
   const navigate = useNavigate();
-  const canManageOperations =
-    !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
-  const canAccessMesaTratamento =
-    !!currentUser && hasRequiredRole(currentUser.role, MESA_TRATAMENTO_ROLES);
-  // Perfil SDR focado: pedido explícito do usuário — dentro da Central Comercial (CRM), o papel
-  // SDR vê um menu enxuto centrado no Plano Diário e nas ferramentas de trabalho do dia
-  // (prospecção, qualificação, cadência, treino), não os ~30 itens do menu completo. Aplica-se ao
-  // papel como um todo (não a uma conta específica), então vale para qualquer futuro SDR contratado.
+  const canManageOperations = !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
+  const canAccessMesaTratamento = !!currentUser && hasRequiredRole(currentUser.role, MESA_TRATAMENTO_ROLES);
   const isRestrictedSdrProfile = currentUser?.role === 'SDR';
 
   const selectTab = (tab: TabType) => {
@@ -84,19 +71,6 @@ export function Sidebar({
     'settings',
   ];
 
-  // Navegação transformada para paradigma Command Center: estruturada por função de comando
-  // (COMMAND CENTER → INTELLIGENCE → BUSINESS → EXECUTION → CAPACITATION → DATA → ADMINISTRATION)
-  // mantendo a lógica de jornada comercial e acesso por papel. TAB_META é a fonte única de
-  // rótulo/ícone e TabType impede destinos fantasma.
-  //
-  // Os módulos executivos (Social Selling, Treinamento Comercial, Proposta Comercial, Hub
-  // Inteligência & Mkt) NÃO aparecem mais aqui — pedido explícito do usuário: "não quero que
-  // apareça no CRM, só nos círculos" do Hub Executivo standalone (rotas top-level em App.tsx,
-  // fora de /app/*). Quem administra quem vê cada módulo é 'module-access' acima, não a Sidebar.
-  //
-  // Perfil SDR focado (role SDR, ver isRestrictedSdrProfile acima): Command Center simplificado
-  // focado em execução diária — Plano Diário em primeiro, ferramentas de prospecção/qualificação,
-  // cadência e treinamento. Sem dashboards/analytics/administração de integrações.
   const navGroupsByJourney: NavGroupDefinition[] = isRestrictedSdrProfile
     ? [
         { title: 'COMMAND CENTER', items: ['daily-plan'] },
@@ -167,45 +141,15 @@ export function Sidebar({
       ];
 
   const GROUP_ORDER_BY_ROLE: Partial<Record<string, string[]>> = {
-    CLOSER: [
-      'COMMAND CENTER',
-      'EXECUTION',
-      'BUSINESS',
-      'INTELLIGENCE',
-      'CAPACITATION',
-      'ADMINISTRATION',
-    ],
-    GESTOR: [
-      'COMMAND CENTER',
-      'INTELLIGENCE',
-      'BUSINESS',
-      'EXECUTION',
-      'CAPACITATION',
-      'ADMINISTRATION',
-    ],
-    ADMIN: [
-      'COMMAND CENTER',
-      'INTELLIGENCE',
-      'BUSINESS',
-      'EXECUTION',
-      'CAPACITATION',
-      'ADMINISTRATION',
-    ],
-    VISUALIZADOR: [
-      'COMMAND CENTER',
-      'INTELLIGENCE',
-      'BUSINESS',
-      'EXECUTION',
-      'CAPACITATION',
-      'ADMINISTRATION',
-    ],
+    CLOSER: ['COMMAND CENTER', 'EXECUTION', 'BUSINESS', 'INTELLIGENCE', 'CAPACITATION', 'ADMINISTRATION'],
+    GESTOR: ['COMMAND CENTER', 'INTELLIGENCE', 'BUSINESS', 'EXECUTION', 'CAPACITATION', 'ADMINISTRATION'],
+    ADMIN: ['COMMAND CENTER', 'INTELLIGENCE', 'BUSINESS', 'EXECUTION', 'CAPACITATION', 'ADMINISTRATION'],
+    VISUALIZADOR: ['COMMAND CENTER', 'INTELLIGENCE', 'BUSINESS', 'EXECUTION', 'CAPACITATION', 'ADMINISTRATION'],
   };
 
   const roleOrder = GROUP_ORDER_BY_ROLE[currentUser?.role ?? ''];
   const navGroups = roleOrder
-    ? [...navGroupsByJourney].sort(
-        (a, b) => roleOrder.indexOf(a.title) - roleOrder.indexOf(b.title),
-      )
+    ? [...navGroupsByJourney].sort((a, b) => roleOrder.indexOf(a.title) - roleOrder.indexOf(b.title))
     : navGroupsByJourney;
 
   const renderNavItem = (tab: TabType) => {
@@ -224,16 +168,10 @@ export function Sidebar({
         aria-current={isActive ? 'page' : undefined}
         className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated cursor-pointer hover:scale-[1.02] active:scale-95 ${
         isActive
-          ? 'bg-gradient-to-r from-brand/15 to-brand/5 text-brand shadow-md ring-1 ring-brand/30 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
-          : 'text-ink-2 hover:bg-surface-interactive hover:text-ink hover:shadow-sm'
+          ? 'bg-gradient-to-r from-brand/20 via-brand/10 to-transparent text-brand shadow-lg shadow-brand/20 ring-1 ring-brand/30 border-l-2 border-brand'
+          : 'text-ink-2 hover:bg-surface-interactive/60 hover:text-ink hover:shadow-sm hover:border-l-2 hover:border-brand/30'
       } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
-        {isActive && (
-          <span
-            aria-hidden="true"
-            className="absolute inset-y-1.5 left-0 w-[2px] rounded-r-full bg-gradient-to-b from-brand to-brand-2 shadow-[0_0_12px_var(--color-brand)]"
-          />
-        )}
         <Icon
           size={16}
           aria-hidden="true"
@@ -244,40 +182,46 @@ export function Sidebar({
         >
           {meta.label}
         </span>
+        {isActive && (
+          <span className="absolute right-2 w-1.5 h-1.5 rounded-full bg-brand shadow-[0_0_8px_var(--color-brand)] animate-pulse" />
+        )}
       </button>
     );
   };
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-surface-elevated/70 backdrop-blur-xl border-r border-line shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-[width,transform] duration-300 lg:static lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-40 flex h-full flex-col bg-surface-elevated/60 backdrop-blur-2xl border-r border-line/50 shadow-[4px_0_24px_rgba(0,0,0,0.04)] transition-[width,transform] duration-300 lg:static lg:translate-x-0 ${
         isCollapsed ? 'lg:w-[5rem]' : 'lg:w-[16rem]'
       } ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
-      aria-label="Navegação principal - Intelligent Business Command Center"
+      aria-label="Navegação principal - Futuristic Command Center"
     >
+      {/* Linha de luz superior */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent" />
+      
       <div className="flex flex-col shrink-0">
         <div
-          className={`flex items-center justify-between border-b border-line px-5 py-4 ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+          className={`flex items-center justify-between border-b border-line/50 px-5 py-4 ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
         >
           {isCollapsed ? (
-            <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand" />
+            <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand shadow-[0_0_12px_rgba(212,175,55,0.3)]" />
           ) : (
             <>
               <div className="flex items-center gap-2.5">
-                <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand" />
+                <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand shadow-[0_0_12px_rgba(212,175,55,0.3)]" />
                 <div className="leading-tight">
                   <h1 className="flex items-center gap-1 text-sm font-bold tracking-tight text-ink">
                     Birth Hub 360°
                   </h1>
                   <span className="text-[10px] font-medium tracking-wide text-ink-2">
-                    Intelligent Business Command Center
+                    Futuristic Command Center
                   </span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={toggleCollapse}
-                className="hidden rounded-md p-1.5 text-ink-2 transition-colors hover:bg-surface-interactive hover:text-ink lg:block"
+                className="hidden rounded-md p-1.5 text-ink-2 transition-all duration-200 hover:bg-surface-interactive hover:text-ink hover:scale-110 lg:block"
                 title="Recolher menu"
               >
                 <PanelLeftClose size={16} />
@@ -291,7 +235,7 @@ export function Sidebar({
             <button
               type="button"
               onClick={toggleCollapse}
-              className="rounded-md p-1.5 text-ink-2 transition-colors hover:bg-surface-interactive hover:text-ink"
+              className="rounded-md p-1.5 text-ink-2 transition-all duration-200 hover:bg-surface-interactive hover:text-ink hover:scale-110"
               title="Expandir menu lateral"
             >
               <PanelLeftOpen size={16} />
@@ -302,12 +246,12 @@ export function Sidebar({
 
       <nav
         aria-label="Navegação principal"
-        className="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-2.5 py-3"
+        className="custom-scrollbar flex-1 space-y-4 overflow-y-auto px-2.5 py-3"
       >
         {navGroups.map((group) => (
           <section key={group.title} className="space-y-1" aria-label={group.title}>
             <div className={`mb-2 flex items-center px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2/80">
                 {group.title}
               </p>
             </div>
@@ -325,7 +269,7 @@ export function Sidebar({
       <div className="p-4 pt-2">
         {currentUser && (
           <div
-            className={`relative overflow-hidden rounded-2xl bg-surface-subtle/40 backdrop-blur-md px-3 py-3 transition-all ${
+            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-subtle/60 to-surface-elevated/40 backdrop-blur-md px-3 py-3 transition-all duration-300 ${
               isCollapsed ? 'lg:px-1.5 lg:py-2 lg:flex lg:justify-center' : ''
             }`}
             title={
@@ -335,7 +279,7 @@ export function Sidebar({
             }
           >
             <div className="flex min-w-0 items-center gap-3 relative z-10">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand/80 to-brand-2/90 text-sm font-bold text-on-brand shadow-sm ring-2 ring-surface transition-transform duration-300">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand/80 to-brand-2/90 text-sm font-bold text-on-brand shadow-lg shadow-brand/20 ring-2 ring-surface transition-transform duration-300 hover:scale-110">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className={`min-w-0 flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>
@@ -353,7 +297,7 @@ export function Sidebar({
         <button
           type="button"
           onClick={logout}
-          className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left text-sm font-bold text-critical transition-all duration-200 hover:scale-[1.02] hover:border-critical/15 hover:bg-critical/10 hover:shadow-sm active:scale-95 ${
+          className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left text-sm font-bold text-critical transition-all duration-200 hover:scale-[1.02] hover:border-critical/15 hover:bg-critical/10 hover:shadow-sm hover:shadow-critical/10 active:scale-95 ${
             isCollapsed ? 'lg:justify-center lg:px-0' : ''
           }`}
           title="Encerrar sessão e sair da conta"
@@ -363,6 +307,9 @@ export function Sidebar({
           <span className={isCollapsed ? 'lg:hidden' : ''}>Sair da Conta</span>
         </button>
       </div>
+      
+      {/* Linha de luz inferior */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-iris/30 to-transparent" />
     </aside>
   );
 }

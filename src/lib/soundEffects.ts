@@ -1,4 +1,4 @@
-export type UiSound = 'navigate' | 'focus' | 'confirm' | 'success' | 'warning' | 'error';
+export type UiSound = 'navigate' | 'focus' | 'confirm' | 'success' | 'warning' | 'error' | 'hover' | 'click' | 'notification' | 'typing' | 'swipe';
 
 const STORAGE_KEY = 'birthhub360:ui-sound-enabled';
 
@@ -120,6 +120,22 @@ class SoundEngine {
             gain: 0.022,
             type: 'triangle',
           });
+          break;
+        case 'hover':
+          this.tone({ frequency: 480, endFrequency: 520, duration: 0.025, gain: 0.008 });
+          break;
+        case 'click':
+          this.tone({ frequency: 580, endFrequency: 620, duration: 0.03, gain: 0.012 });
+          break;
+        case 'notification':
+          this.tone({ frequency: 520, endFrequency: 680, duration: 0.08, gain: 0.015 });
+          this.tone({ frequency: 680, endFrequency: 520, duration: 0.06, gain: 0.01, delay: 0.08 });
+          break;
+        case 'typing':
+          this.tone({ frequency: 320, endFrequency: 340, duration: 0.02, gain: 0.006 });
+          break;
+        case 'swipe':
+          this.tone({ frequency: 440, endFrequency: 560, duration: 0.05, gain: 0.016 });
           break;
       }
     } catch {

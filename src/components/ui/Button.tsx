@@ -55,9 +55,13 @@ const buttonVariants = cva(
         // Nunca preenchimento sólido — só borda + glow de texto/sombra no hover/focus, e o glow só
         // acende no escuro (--accent-violet/--accent-cyan/--pulse divergem de --iris/--orbit-blue
         // só em .dark; --iris/--orbit-blue em si continuam intocados em todo o resto do produto).
-        iris: 'border-accent-violet/45 bg-transparent text-accent-violet hover:border-accent-violet/70 hover:bg-accent-violet/8',
-        cyan: 'border-accent-cyan/45 bg-transparent text-accent-cyan hover:border-accent-cyan/70 hover:bg-accent-cyan/8',
-        pulse: 'border-pulse/45 bg-transparent text-pulse hover:border-pulse/70 hover:bg-pulse/8',
+        iris: 'border-accent-violet/45 bg-transparent text-accent-violet hover:border-accent-violet/70 hover:bg-accent-violet/8 hover:shadow-glow-accent-violet hover:scale-[1.02] active:scale-95',
+        cyan: 'border-accent-cyan/45 bg-transparent text-accent-cyan hover:border-accent-cyan/70 hover:bg-accent-cyan/8 hover:shadow-glow-accent-cyan hover:scale-[1.02] active:scale-95',
+        pulse: 'border-pulse/45 bg-transparent text-pulse hover:border-pulse/70 hover:bg-pulse/8 hover:shadow-glow-pulse hover:scale-[1.02] active:scale-95',
+        // Nova variante glass para efeito moderno
+        glass: 'bg-surface/60 backdrop-blur-md border-line/50 text-ink hover:bg-surface/80 hover:border-brand/30 hover:shadow-card hover:scale-[1.02] active:scale-95',
+        // Nova variante gradient para destaque
+        gradient: 'bg-gradient-to-r from-brand to-brand-2 text-on-brand shadow-brand-sm hover:shadow-glow-brand hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
       },
       size: {
         default: 'h-9 px-4 py-2',

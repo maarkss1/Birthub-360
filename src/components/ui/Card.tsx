@@ -9,24 +9,28 @@ const cardVariants = cva('relative overflow-hidden rounded-card text-ink', {
   variants: {
     variant: {
       default:
-        'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 hover:border-ink-2/20 hover:shadow-card-hover hover:-translate-y-0.5',
-      stat: 'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 hover:border-brand/25 hover:shadow-card-hover hover:-translate-y-0.5',
-      outline: 'border border-line bg-transparent transition-all duration-300 hover:border-ink-2/30',
+        'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-ink-2/20 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
+      stat: 'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/25 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
+      outline: 'border border-line bg-transparent transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-ink-2/30 hover:bg-surface-subtle/50',
       accent:
-        'bg-surface-elevated/80 backdrop-blur-md border border-brand/35 shadow-card transition-all duration-300 hover:border-brand/55 hover:shadow-glow-brand hover:-translate-y-0.5',
+        'bg-surface-elevated/80 backdrop-blur-md border border-brand/35 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/55 hover:shadow-glow-brand hover:-translate-y-0.5 hover:scale-[1.005]',
       elevated:
-        'bg-surface-elevated border border-line shadow-card-hover transition-all duration-300 hover:border-brand/25 hover:-translate-y-0.5',
+        'bg-surface-elevated border border-line shadow-card-hover transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/25 hover:-translate-y-0.5 hover:scale-[1.005]',
       interactive:
-        'group bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card cursor-pointer transition-all duration-300 hover:border-brand/30 hover:bg-surface-interactive hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] active:scale-[0.99]',
+        'group bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/30 hover:bg-surface-interactive hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] active:scale-[0.99]',
       // --- Propostas "Neon Tokyo × Cosmic Gold" (catálogo visual, 10/09/2026) ---
       // Mesmo idioma do "accent" acima (borda + shadow-glow em repouso, pra marcar destaque
       // persistente — não é o glow transitório de hover do Button). shadow-glow-accent-*/pulse
       // já são discretos no claro (20%) e vívidos no escuro (duas camadas) — o mesmo token
       // resolve os dois temas sem precisar de dark: aqui.
-      iris: 'bg-surface border border-accent-violet/30 shadow-glow-accent-violet transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
-      cyan: 'bg-surface border border-accent-cyan/30 shadow-glow-accent-cyan transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+      iris: 'bg-surface border border-accent-violet/30 shadow-glow-accent-violet transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:scale-[1.005] hover:border-accent-violet/50',
+      cyan: 'bg-surface border border-accent-cyan/30 shadow-glow-accent-cyan transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:scale-[1.005] hover:border-accent-cyan/50',
       pulse:
-        'bg-surface border border-pulse/30 shadow-glow-pulse transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5',
+        'bg-surface border border-pulse/30 shadow-glow-pulse transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:scale-[1.005] hover:border-pulse/50',
+      // Nova variante glass
+      glass: 'bg-surface/60 backdrop-blur-xl border border-line/50 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-surface/80 hover:border-brand/30 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
+      // Nova variante para metálico
+      metallic: 'bg-gradient-to-br from-surface to-surface-2 border border-line/60 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/30 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
     },
     padding: {
       default: 'p-6',

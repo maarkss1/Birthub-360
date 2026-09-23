@@ -899,6 +899,8 @@ model Organization {
   aiGuardrailEvents        AIGuardrailEvent[]
   reports                  Report[]
   assistantMessages        AssistantMessage[]
+  workspaceLayouts         WorkspaceLayout[]
+  roleWorkspaces           RoleWorkspaceDefinition[]
   roleplaySessions         RoleplaySession[]
   qualificationMatrixItems QualificationMatrixItem[]
   objectionMatrixItems     ObjectionMatrixItem[]
@@ -4927,4 +4929,50 @@ model ExternalCrmSyncLog {
   @@index([connectionId])
   @@index([leadId])
   @@index([createdAt])
+}
+
+/// Define o layout do Workspace vinculado a um papel.
+model RoleWorkspaceDefinition {
+  id             String          @id @default(cuid())
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role           String // Pode ser o UserRole (SDR, ADMIN, etc) ou jobRoleCode
+  layoutId       String
+  layout         WorkspaceLayout @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([organizationId, role])
+}
+
+/// Representa a estrutura de grid/canvas de uma tela configurável.
+model WorkspaceLayout {
+  id             String                    @id @default(cuid())
+  organizationId String
+  organization   Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String // Ex: "SDR Default Layout"
+  roles          RoleWorkspaceDefinition[]
+  sections       WorkspaceSection[]
+  createdAt      DateTime                  @default(now())
+  updatedAt      DateTime                  @updatedAt
+}
+
+/// Representa colunas, abas ou painéis dentro de um layout.
+model WorkspaceSection {
+  id       String            @id @default(cuid())
+  layoutId String
+  layout   WorkspaceLayout   @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+  name     String // Ex: "Sidebar", "Main Column"
+  order    Int               @default(0)
+  widgets  WorkspaceWidget[]
+}
+
+/// O widget em si a ser injetado (ex: Pipeline, Prospects, Metas)
+model WorkspaceWidget {
+  id            String           @id @default(cuid())
+  sectionId     String
+  section       WorkspaceSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  componentCode String // Nome do componente React que a Engine deve renderizar, ex: "PipelineWidget"
+  props         Json             @default("{}") // Configurações do widget
+  order         Int              @default(0)
 }
