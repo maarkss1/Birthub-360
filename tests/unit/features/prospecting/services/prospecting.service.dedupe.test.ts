@@ -31,6 +31,11 @@ vi.mock('../../../../../src/lib/prisma.js', () => ({
   withRlsContext: (fn: (tx: unknown) => unknown) => withRlsContextMock(fn as never),
 }));
 
+vi.mock('../../../../../src/lib/queue/bitrixOutbound.queue.js', () => ({
+  queueLeadPushToBitrix: vi.fn().mockResolvedValue(undefined),
+}));
+
+
 vi.mock('../../../../../src/features/prospecting/services/enrichment.service', () => ({
   enrichCompany: vi.fn().mockResolvedValue(undefined),
 }));
