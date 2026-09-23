@@ -15,8 +15,8 @@ vi.mock('@/lib/logger', () => ({
 // faz fail-open ('unavailable'). A dedupe de entrega em si já tem sua própria cobertura (ver
 // webhookReplayGuard.test.ts); aqui só precisa estar neutra para não interferir nos cenários deste
 // arquivo (idempotência de negócio, RLS, métricas de falha).
-export const claimWebhookDeliveryMock = vi.fn().mockResolvedValue('fresh');
-export const validateWebhookTimestampMock = vi.fn().mockReturnValue({ valid: true });
+const claimWebhookDeliveryMock = vi.fn().mockResolvedValue('fresh');
+const validateWebhookTimestampMock = vi.fn().mockReturnValue({ valid: true });
 
 vi.mock('@/shared/security/webhookReplayGuard', () => ({
   claimWebhookDelivery: claimWebhookDeliveryMock,

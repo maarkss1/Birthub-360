@@ -231,8 +231,8 @@ describe('syncLeadToBitrix — criação (P1-3, P2-2, P2-3 da auditoria)', () =>
   });
 });
 
-describe('pushLeadToBitrix — automático (fire-and-forget)', () => {
-  it('nunca propaga erro ao chamador mesmo quando a sincronização falha', async () => {
+describe('pushLeadToBitrix — automático', () => {
+  it('relança o erro quando a sincronização falha (o worker BullMQ reagenda o retry)', async () => {
     prismaMock.bitrixConnection.findFirst.mockResolvedValue({
       id: 'conn-1',
       webhookUrl: WEBHOOK_URL,
@@ -241,7 +241,7 @@ describe('pushLeadToBitrix — automático (fire-and-forget)', () => {
     clientMock.callBitrix.mockRejectedValue(new Error('Falha de rede'));
 
     const { pushLeadToBitrix } = await import('../outboundSync.js');
-    await expect(pushLeadToBitrix('org-1', 'lead-1')).resolves.toBeUndefined();
+    await expect(pushLeadToBitrix('org-1', 'lead-1')).rejects.toThrow('Falha de rede');
   });
 
   it('não faz nada (sem lançar) quando a organização não tem conexão Bitrix', async () => {

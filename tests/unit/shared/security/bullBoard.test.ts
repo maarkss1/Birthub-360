@@ -10,10 +10,13 @@ vi.mock('@bull-board/api/bullMQAdapter', () => ({
 }));
 
 vi.mock('@bull-board/express', () => ({
-  ExpressAdapter: vi.fn().mockImplementation(() => ({
-    setBasePath: vi.fn(),
-    getRouter: vi.fn().mockReturnValue('mockedRouter'),
-  })),
+  // Vitest 4: um mock chamado com `new` precisa ser `function`/`class`, não arrow.
+  ExpressAdapter: vi.fn().mockImplementation(function () {
+    return {
+      setBasePath: vi.fn(),
+      getRouter: vi.fn().mockReturnValue('mockedRouter'),
+    };
+  }),
 }));
 
 vi.mock('../../../../src/lib/queue/agent.worker.js', () => ({ agentQueue: {} }));

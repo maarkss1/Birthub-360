@@ -26,8 +26,8 @@ vi.mock('@/lib/logger', () => ({
 // Mesmo cuidado do bitrix.webhook.test.ts: sem este mock, testes reenviando corpos parecidos
 // colidiriam no fingerprint de `claimWebhookDelivery` (dedupe de entrega) e um teste seguinte
 // seria tratado como replay do anterior.
-export const claimWebhookDeliveryMock = vi.fn().mockResolvedValue('fresh');
-export const validateWebhookTimestampMock = vi.fn().mockReturnValue({ valid: true });
+const claimWebhookDeliveryMock = vi.fn().mockResolvedValue('fresh');
+const validateWebhookTimestampMock = vi.fn().mockReturnValue({ valid: true });
 
 vi.mock('@/shared/security/webhookReplayGuard', () => ({
   claimWebhookDelivery: claimWebhookDeliveryMock,
@@ -231,7 +231,7 @@ describe('POST /webhook (Birth Voices Hub) — isolamento de tenant do segredo (
     const res = await post(app, body, sign(SECRET_ORG_A, body));
 
     expect(res.status).toBe(200);
-    expect(res.body.outcome).toBe('duplicate-ignored');
+    expect(res.body.outcome).toBe('duplicate-delivery');
     expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
   });
 

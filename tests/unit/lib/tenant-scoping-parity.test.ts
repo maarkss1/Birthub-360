@@ -82,6 +82,12 @@ const KNOWN_RLS_ONLY_MODELS = [
   'Document',
   'EconomicRelationship',
   'EmailMessage',
+  // Conectores CRM externos (scaffold): ainda sem escrita via client global — as rotas usam req.db
+  // (tenant-scoped) e a RLS do Postgres (migration 20260923170000) cobre o resto. Mesma decisão
+  // já tomada para BitrixConnection/BitrixSyncRule/BitrixSyncLog.
+  'ExternalCrmConnection',
+  'ExternalCrmSyncLog',
+  'ExternalCrmSyncRule',
   'ForecastSnapshot',
   'GoogleWorkspaceConnection',
   'IntelligenceEvidence',
@@ -103,6 +109,9 @@ const KNOWN_RLS_ONLY_MODELS = [
   'QualificationMatrixItem',
   'Report',
   'RoleMemoryRecord',
+  // Layouts de Workspace: só leitura/config administrativa por tenant, nenhum caminho de escrita
+  // em massa pelo client global — RLS (migration 20260923170000) basta.
+  'RoleWorkspaceDefinition',
   'RoleplaySession',
   'SavedSearch',
   'SavedView',
@@ -115,6 +124,9 @@ const KNOWN_RLS_ONLY_MODELS = [
   'VoiceCallLog',
   'VoiceHubConnection',
   'WhatsAppMessage',
+  'WorkspaceLayout',
+  'WorkspaceSection',
+  'WorkspaceWidget',
 ].sort();
 
 describe('paridade de tenant-scoping entre os dois pontos de acesso Prisma (TENANT-007)', () => {

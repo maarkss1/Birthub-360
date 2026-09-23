@@ -900,6 +900,8 @@ model Organization {
   reports                  Report[]
   assistantMessages        AssistantMessage[]
   workspaceLayouts         WorkspaceLayout[]
+  workspaceSections        WorkspaceSection[]
+  workspaceWidgets         WorkspaceWidget[]
   roleWorkspaces           RoleWorkspaceDefinition[]
   roleplaySessions         RoleplaySession[]
   qualificationMatrixItems QualificationMatrixItem[]
@@ -4943,6 +4945,7 @@ model RoleWorkspaceDefinition {
   updatedAt      DateTime        @updatedAt
 
   @@unique([organizationId, role])
+  @@index([layoutId])
 }
 
 /// Representa a estrutura de grid/canvas de uma tela configurável.
@@ -4955,24 +4958,36 @@ model WorkspaceLayout {
   sections       WorkspaceSection[]
   createdAt      DateTime                  @default(now())
   updatedAt      DateTime                  @updatedAt
+
+  @@index([organizationId])
 }
 
 /// Representa colunas, abas ou painéis dentro de um layout.
 model WorkspaceSection {
-  id       String            @id @default(cuid())
-  layoutId String
-  layout   WorkspaceLayout   @relation(fields: [layoutId], references: [id], onDelete: Cascade)
-  name     String // Ex: "Sidebar", "Main Column"
-  order    Int               @default(0)
-  widgets  WorkspaceWidget[]
+  id             String            @id @default(cuid())
+  organizationId String
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  layoutId       String
+  layout         WorkspaceLayout   @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+  name           String // Ex: "Sidebar", "Main Column"
+  order          Int               @default(0)
+  widgets        WorkspaceWidget[]
+
+  @@index([organizationId])
+  @@index([layoutId])
 }
 
 /// O widget em si a ser injetado (ex: Pipeline, Prospects, Metas)
 model WorkspaceWidget {
-  id            String           @id @default(cuid())
-  sectionId     String
-  section       WorkspaceSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  componentCode String // Nome do componente React que a Engine deve renderizar, ex: "PipelineWidget"
-  props         Json             @default("{}") // Configurações do widget
-  order         Int              @default(0)
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sectionId      String
+  section        WorkspaceSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  componentCode  String // Nome do componente React que a Engine deve renderizar, ex: "PipelineWidget"
+  props          Json             @default("{}") // Configurações do widget
+  order          Int              @default(0)
+
+  @@index([organizationId])
+  @@index([sectionId])
 }

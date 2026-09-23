@@ -34,8 +34,12 @@ interface BitrixOutboundJobData {
 
 export async function queueLeadPushToBitrix(organizationId: string, leadId: string): Promise<void> {
   if (!bitrixOutboundQueue) {
-    // Fallback gracioso se a fila estiver desligada
-    void pushLeadToBitrix(organizationId, leadId);
+    // Fallback gracioso se a fila estiver desligada. `pushLeadToBitrix` relança o erro (o worker
+    // BullMQ precisa dele para reagendar o retry), então aqui — sem worker — o `.catch` é o que
+    // mantém o fire-and-forget: sem ele a falha viraria unhandled rejection.
+    void pushLeadToBitrix(organizationId, leadId).catch((err) =>
+      logger.warn({ err, organizationId, leadId }, '[bitrix] Push direto falhou (fila desligada)'),
+    );
     return;
   }
   
