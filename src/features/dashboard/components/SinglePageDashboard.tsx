@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Activity,
   ArrowRight,
@@ -340,7 +340,7 @@ export function SinglePageDashboard() {
               </div>
             </div>
           </motion.section>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

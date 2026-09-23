@@ -148,7 +148,7 @@ export function ConversationDetailDrawer({
       ) : (
         <div className="space-y-8">
           {!handoff.isComplete && (
-            <div className="rounded-xl border border-warning/30 bg-warning/10 p-3 flex items-start gap-2">
+            <div className="rounded-xl border border-warning/30 bg-warning/10 backdrop-blur-md p-3 flex items-start gap-2 shadow-[inset_0_1px_4px_rgba(0,0,0,0.1)]">
               <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
               <div className="text-xs text-ink-2 space-y-0.5">
                 <p className="font-semibold text-ink">Processamento ainda incompleto</p>
@@ -164,7 +164,7 @@ export function ConversationDetailDrawer({
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-2">
                 Resumo executivo
               </h3>
-              <div className="glass-card p-4 rounded-xl border border-line space-y-3 text-sm">
+              <div className="bg-surface-elevated/60 backdrop-blur-xl p-4 rounded-xl border border-line shadow-card space-y-3 text-sm">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-ink leading-relaxed">{handoff.summary.executiveSummary}</p>
                   <Badge
