@@ -399,6 +399,23 @@ export interface BitrixNoteDraftResult {
   draft: string;
 }
 
+// ─── Motivo real de perda via IA sobre transcrição real ──────────────────────
+
+export type LossReasonAiUnavailableReason = 'sem_transcricao' | 'negocio_nao_encontrado';
+export interface LossReasonAiAnalysisResult {
+  leadId: string;
+  available: boolean;
+  reason: LossReasonAiUnavailableReason | null;
+  declaredReasonRaw: string | null;
+  declaredBucket: string;
+  inferredBucket: string | null;
+  evidenceQuote: string | null;
+  mismatch: boolean;
+  confidence: 'alta' | 'media' | 'baixa' | null;
+  source: 'ai' | 'fallback' | null;
+  generatedAt: string;
+}
+
 // ─── Previsor — Faixa de Cenário (derivada client-side de ExecutiveOverview já carregado) ────────
 
 export interface ForecastScenario {
@@ -468,6 +485,124 @@ export interface ForecastAccuracySummary {
   sampleSize: number;
   meanAbsoluteErrorPercent: number | null;
   samples: ForecastAccuracyResult[];
+}
+
+// ─── Forecast auto-calibrado ──────────────────────────────────────────────────
+
+export type ForecastCalibrationUnavailableReason = 'sem_historico_suficiente';
+export type ForecastBiasDirection = 'superestimando' | 'subestimando' | 'neutro';
+export interface ForecastCalibrationResult {
+  available: boolean;
+  reason: ForecastCalibrationUnavailableReason | null;
+  sampleSize: number;
+  minSampleSize: number;
+  calibrationFactor: number | null;
+  minFactor: number;
+  maxFactor: number;
+  biasDirection: ForecastBiasDirection | null;
+  rawForecastAmount: number;
+  calibratedForecastAmount: number | null;
+  goalAmount: number | null;
+  currency: string;
+  calibratedGapToGoal: number | null;
+}
+
+// ─── Detecção automática de gargalo de funil ─────────────────────────────────
+
+export type BottleneckSeverity = 'critico' | 'atencao' | 'normal' | 'sem_dados';
+export interface FunnelBottleneckStage {
+  stageId: string;
+  stageName: string;
+  sortOrder: number;
+  averageDaysInStage: number | null;
+  sampleSize: number;
+  normalBaselineDays: number | null;
+  multiplier: number | null;
+  severity: BottleneckSeverity;
+  openCount: number;
+  openAmount: number;
+}
+export interface FunnelBottleneckReport {
+  stages: FunnelBottleneckStage[];
+  criticalMultiplier: number;
+  warningMultiplier: number;
+  minSampleSizeForBaseline: number;
+  trackingSince: string | null;
+}
+
+// ─── Benchmark de vendedor ────────────────────────────────────────────────────
+
+export type SellerBenchmarkMetric = 'winRate' | 'salesCycleMedianDays' | 'averageTicketWon';
+export interface SellerBenchmarkSuggestion {
+  metric: SellerBenchmarkMetric;
+  label: string;
+  sellerValue: number;
+  teamAverage: number;
+  topPerformerValue: number;
+  text: string;
+}
+export interface SellerBenchmarkRow {
+  owner: string;
+  winRate: number | null;
+  wonCount: number;
+  lostCount: number;
+  averageTicketWon: number | null;
+  salesCycleMedianDays: number | null;
+  openCount: number;
+  openAmount: number;
+  isTopPerformer: boolean;
+  suggestion: SellerBenchmarkSuggestion | null;
+}
+export interface SellerBenchmarkTeamAverages {
+  winRate: number | null;
+  salesCycleMedianDays: number | null;
+  averageTicketWon: number | null;
+}
+export interface SellerBenchmarkReport {
+  period: string;
+  minDealsForRanking: number;
+  sellers: SellerBenchmarkRow[];
+  teamAverages: SellerBenchmarkTeamAverages;
+  topPerformerOwner: string | null;
+}
+
+// ─── Atribuição de receita por canal/origem — TOQUE ÚNICO (item 25, versão reduzida) ─────────
+
+export interface ChannelAttributionBreakdown {
+  label: string;
+  wonCount: number;
+  wonAmount: number;
+  pctOfWonAmount: number | null;
+  averageTicket: number | null;
+}
+export interface ChannelAttributionReport {
+  period: string;
+  model: 'toque_unico';
+  totalWonAmount: number;
+  totalWonCount: number;
+  byChannel: ChannelAttributionBreakdown[];
+  bySource: ChannelAttributionBreakdown[];
+}
+
+// ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────
+
+export type HiringScenarioUnavailableReason =
+  | 'numero_de_reps_invalido'
+  | 'sem_dados_de_pipeline_por_vendedor';
+export interface HiringScenarioResult {
+  available: boolean;
+  reason: HiringScenarioUnavailableReason | null;
+  additionalReps: number;
+  windowDays: number;
+  rampUpDays: number;
+  avgPipelineAmountPerRepPerMonth: number | null;
+  activeRepsInPeriod: number;
+  incrementalPipelineAmount: number | null;
+  winRatePct: number | null;
+  salesCycleMedianDays: number | null;
+  cycleExceedsWindow: boolean;
+  estimatedIncrementalRevenue: number | null;
+  currency: string;
 }
 
 // ─── CLOSEDATE Intelligence ─────────────────────────────────────────────────
@@ -672,6 +807,18 @@ export const commercialIntelligenceApi = {
   healthScore: (filter: CommercialFilter) =>
     api.get<HealthScoreResult>(`${BASE}/health-score?${qs(filter)}`),
   forecastAccuracy: () => api.get<ForecastAccuracySummary>(`${BASE}/forecast-accuracy`),
+  forecastCalibration: (filter: CommercialFilter) =>
+    api.get<ForecastCalibrationResult>(`${BASE}/forecast-calibration?${qs(filter)}`),
+  funnelBottlenecks: (filter: CommercialFilter) =>
+    api.get<FunnelBottleneckReport>(`${BASE}/funnel-bottlenecks?${qs(filter)}`),
+  sellerBenchmark: (filter: CommercialFilter) =>
+    api.get<SellerBenchmarkReport>(`${BASE}/seller-benchmark?${qs(filter)}`),
+  hiringScenario: (filter: CommercialFilter, additionalReps: number) =>
+    api.get<HiringScenarioResult>(
+      `${BASE}/hiring-scenario?${qs(filter, { additionalReps })}`,
+    ),
+  channelAttribution: (filter: CommercialFilter) =>
+    api.get<ChannelAttributionReport>(`${BASE}/channel-attribution?${qs(filter)}`),
   closeDateIntelligence: (filter: CommercialFilter) =>
     api.get<CloseDateIntelligenceReport>(`${BASE}/close-date-intelligence?${qs(filter)}`),
   journey: (filter: CommercialFilter) => api.get<JourneyReport>(`${BASE}/journey?${qs(filter)}`),
@@ -758,6 +905,8 @@ export const commercialIntelligenceApi = {
     api.post<BitrixNoteDraftResult>(`${BASE}/ai/bitrix-note`, { leadId }),
   aiMentorPlaybook: (filter: CommercialFilter) =>
     api.post<MentorPlaybookResult>(`${BASE}/ai/mentor-playbook`, filter),
+  aiLossReasonAnalysis: (leadId: string) =>
+    api.post<LossReasonAiAnalysisResult>(`${BASE}/ai/loss-reason-analysis`, { leadId }),
 };
 
 /**

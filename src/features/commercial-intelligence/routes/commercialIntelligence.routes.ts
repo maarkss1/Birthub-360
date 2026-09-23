@@ -62,6 +62,21 @@ router.get('/trends', (req, res, next) => resolve().getHistoricalTrends(req, res
 // Jornada — leitura pura de banco como as demais rotas GET acima (sem limitador de IA).
 router.get('/health-score', (req, res, next) => resolve().getHealthScore(req, res, next));
 router.get('/forecast-accuracy', (req, res, next) => resolve().getForecastAccuracy(req, res, next));
+// Forecast auto-calibrado (fecha o loop do erro histórico acima), gargalo de funil e benchmark de
+// vendedor — mesma leitura pura de banco das rotas GET acima (sem limitador de IA).
+router.get('/forecast-calibration', (req, res, next) =>
+  resolve().getForecastCalibration(req, res, next),
+);
+router.get('/funnel-bottlenecks', (req, res, next) =>
+  resolve().getFunnelBottlenecks(req, res, next),
+);
+router.get('/seller-benchmark', (req, res, next) => resolve().getSellerBenchmark(req, res, next));
+router.get('/hiring-scenario', (req, res, next) => resolve().getHiringScenario(req, res, next));
+// Atribuição de receita por canal/origem — TOQUE ÚNICO (item 25, versão reduzida — ver
+// domain/CommercialIntelligence.ts::ChannelAttributionReport e o handoff bloqueado de multi-touch).
+router.get('/channel-attribution', (req, res, next) =>
+  resolve().getChannelAttribution(req, res, next),
+);
 router.get('/close-date-intelligence', (req, res, next) =>
   resolve().getCloseDateIntelligence(req, res, next),
 );
@@ -80,6 +95,11 @@ router.post('/ai/executive-summary', aiLimiter, (req, res, next) =>
 );
 router.post('/ai/bitrix-note', aiLimiter, (req, res, next) =>
   resolve().postAiBitrixNote(req, res, next),
+);
+// Motivo real de perda a partir de transcrição real (item 21) — mesmo desenho de custo/efeito dos
+// demais endpoints de IA acima: aiLimiter dedicado, só roda com clique explícito por negócio.
+router.post('/ai/loss-reason-analysis', aiLimiter, (req, res, next) =>
+  resolve().postAiLossReasonAnalysis(req, res, next),
 );
 // Mentor Comercial — playbook de recomendações priorizadas (mesmo desenho de custo/efeito
 // colateral dos 2 endpoints de IA acima: `aiLimiter` dedicado, nunca disparado sem clique explícito).

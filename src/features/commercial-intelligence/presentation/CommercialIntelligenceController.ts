@@ -274,6 +274,57 @@ export class CommercialIntelligenceController {
     }
   };
 
+  getForecastCalibration = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.forecastCalibration(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getFunnelBottlenecks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.funnelBottlenecks(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getSellerBenchmark = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.sellerBenchmark(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getChannelAttribution = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const data = await this.useCases.channelAttribution(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getHiringScenario = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const additionalReps = Number(req.query.additionalReps);
+      const data = await this.useCases.hiringScenario(organizationId, parseFilter(req), additionalReps);
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getCloseDateIntelligence = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { organizationId } = (req as AuthRequest).user;
@@ -319,6 +370,25 @@ export class CommercialIntelligenceController {
     try {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.aiService.generateExecutiveSummary(organizationId, parseFilter(req));
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  postAiLossReasonAnalysis = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { organizationId } = (req as AuthRequest).user;
+      const leadId = typeof req.body?.leadId === 'string' ? req.body.leadId : '';
+      if (!leadId) {
+        res.status(400).json({ success: false, error: 'leadId é obrigatório.' });
+        return;
+      }
+      const data = await this.aiService.analyzeLossReason(organizationId, leadId);
+      if (!data) {
+        res.status(404).json({ success: false, error: 'Negócio não encontrado' });
+        return;
+      }
       res.json({ success: true, data });
     } catch (error) {
       next(error);

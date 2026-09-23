@@ -10,9 +10,12 @@ import {
   type HistoricalTrendsReport,
   type PerformanceMetrics,
 } from '../commercialIntelligence.api';
+import { ChannelAttributionCard } from './ChannelAttributionCard';
 import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
+import { FunnelBottleneckCard } from './FunnelBottleneckCard';
 import { FunnelConversionCard } from './FunnelConversionCard';
 import { KpiTile } from './KpiTile';
+import { SellerBenchmarkCard } from './SellerBenchmarkCard';
 
 function DaysLabel(days: number | null): string {
   if (days == null) return 'Não disponível';
@@ -226,6 +229,10 @@ export function PerformanceTab({ filter }: { filter: CommercialFilter }) {
         trackingSince={data.funnelHistoricalTrackingSince}
       />
 
+      <FunnelBottleneckCard filter={filter} />
+
+      <SellerBenchmarkCard filter={filter} />
+
       {data.revenueConcentration.topClients.length > 0 && (
         <Card padding="sm">
           <h3 className="text-sm font-bold text-ink mb-1">
@@ -265,6 +272,8 @@ export function PerformanceTab({ filter }: { filter: CommercialFilter }) {
           </div>
         </Card>
       )}
+
+      <ChannelAttributionCard filter={filter} />
 
       {trends && <TrendsCard data={trends} />}
 

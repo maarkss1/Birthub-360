@@ -22,6 +22,7 @@
  */
 import type {
   AgingReport,
+  ChannelAttributionReport,
   CommercialGoalDTO,
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
@@ -33,22 +34,30 @@ import type {
   ExportFormat,
   FilterOptions,
   ForecastAccuracySummary,
+  ForecastCalibrationResult,
   ForecastExplain,
   ForecastSnapshotStore,
+  FunnelBottleneckReport,
   GoalMetric,
   HealthScoreResult,
+  HiringScenarioResult,
   HistoricalTrendsReport,
   LeadingIndicatorsReport,
   LossAnalysis,
   PerformanceMetrics,
   PipelineCreation,
+  SellerBenchmarkReport,
 } from '../domain/CommercialIntelligence';
 import type { CloseDateIntelligenceReport, JourneyReport } from '../domain/JourneyIntelligence';
+import { computeForecastCalibration } from './forecastCalibration';
 import { buildExecutiveExport, type ExecutiveExportPayload } from './executiveExport';
+import { simulateHiringScenario } from './hiringScenarioSimulator';
 import { getGoal as getGoalCommand, setGoal as setGoalCommand } from './goalCommands';
 import { computeHealthScore } from './healthScore';
 import { buildAging } from './queries/agingReport';
 import { buildAlerts } from './queries/alertsReport';
+import { buildFunnelBottlenecks } from './queries/bottleneckReport';
+import { buildChannelAttribution } from './queries/channelAttributionReport';
 import { buildCloseDateIntelligence } from './queries/closeDateIntelligenceReport';
 import { buildCrmQuality } from './queries/crmQualityReport';
 import { buildDealsDrillDown, buildForecastExplain } from './queries/drillDownReport';
@@ -60,6 +69,7 @@ import { buildLeadingIndicators } from './queries/leadingIndicatorsReport';
 import { buildLosses } from './queries/lossesReport';
 import { buildPerformance } from './queries/performanceReport';
 import { buildPipelineCreation } from './queries/pipelineCreationReport';
+import { buildSellerBenchmark } from './queries/sellerBenchmarkReport';
 
 export {
   COVERAGE_PROTECTION_FALLBACK_HEALTHY,
@@ -294,5 +304,81 @@ export class CommercialIntelligenceUseCases {
     now = new Date(),
   ): Promise<JourneyReport> {
     return buildJourney(this.repository, organizationId, filter, now);
+  }
+
+  // ─── Detecção automática de gargalo de funil (comparação relativa entre etapas) ──────────
+  async funnelBottlenecks(
+    organizationId: string,
+    filter: CommercialIntelligenceFilter,
+    now = new Date(),
+  ): Promise<FunnelBottleneckReport> {
+    return buildFunnelBottlenecks(this.repository, organizationId, filter, now);
+  }
+
+  // ─── Benchmark de vendedor (Win Rate/Ciclo/Ticket vs. time e top performer) ──────────────
+  async sellerBenchmark(
+    organizationId: string,
+    filter: CommercialIntelligenceFilter,
+    now = new Date(),
+  ): Promise<SellerBenchmarkReport> {
+    return buildSellerBenchmark(this.repository, organizationId, filter, now);
+  }
+
+  // ─── Forecast auto-calibrado (previsto vs. realizado retroalimenta o forecast atual) ────
+  //
+  // Reaproveita `executiveOverview()` (forecast bruto + meta) e `forecastAccuracy()` (erro
+  // histórico real, snapshots semanais) — nenhum dado novo buscado aqui, só a composição dos dois
+  // já existentes via `computeForecastCalibration` (puro, testado isoladamente).
+  async forecastCalibration(
+    organizationId: string,
+    filter: CommercialIntelligenceFilter,
+    now = new Date(),
+  ): Promise<ForecastCalibrationResult> {
+    const [overview, accuracy] = await Promise.all([
+      this.executiveOverview(organizationId, filter, now),
+      this.forecastAccuracy(organizationId, now),
+    ]);
+    return computeForecastCalibration(
+      accuracy.samples,
+      overview.forecastAmount,
+      overview.goal?.amount ?? null,
+      overview.goal?.currency ?? 'BRL',
+    );
+  }
+
+  // ─── Atribuição de receita por canal/origem — toque único (item 25, versão reduzida) ────
+  async channelAttribution(
+    organizationId: string,
+    filter: CommercialIntelligenceFilter,
+    now = new Date(),
+  ): Promise<ChannelAttributionReport> {
+    return buildChannelAttribution(this.repository, organizationId, filter, now);
+  }
+
+  // ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────────────────
+  //
+  // Reaproveita `pipelineCreation()` (throughput real por vendedor, `byOwner`) e `performance()`
+  // (Win Rate/Sales Cycle reais) do mesmo período do filtro — nenhum dado novo buscado aqui.
+  async hiringScenario(
+    organizationId: string,
+    filter: CommercialIntelligenceFilter,
+    additionalReps: number,
+    now = new Date(),
+  ): Promise<HiringScenarioResult> {
+    const [creation, performance] = await Promise.all([
+      this.pipelineCreation(organizationId, filter, now),
+      this.performance(organizationId, filter, now),
+    ]);
+    const activeRepsInPeriod = creation.byOwner.length;
+    const avgPipelineAmountPerRepPerMonth =
+      activeRepsInPeriod > 0 ? creation.amount / activeRepsInPeriod : null;
+    return simulateHiringScenario(
+      additionalReps,
+      avgPipelineAmountPerRepPerMonth,
+      activeRepsInPeriod,
+      performance.winRate,
+      performance.salesCycle.medianDays,
+      'BRL',
+    );
   }
 }

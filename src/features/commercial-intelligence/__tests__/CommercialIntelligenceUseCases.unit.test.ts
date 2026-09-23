@@ -65,6 +65,7 @@ function deal(overrides: Partial<DealRow> & { id: string }): DealRow {
     amount: 0,
     owner: 'ana@birthhub360.com.br',
     source: 'Indicação',
+    channel: null,
     companyId: 'company-1',
     companyName: 'Empresa Teste',
     companyCnpj: '00.000.000/0001-00',

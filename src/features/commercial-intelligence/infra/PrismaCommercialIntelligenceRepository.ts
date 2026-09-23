@@ -59,6 +59,7 @@ export class PrismaCommercialIntelligenceRepository implements CommercialIntelli
         amount: lead.amount ?? 0,
         owner: lead.owner,
         source: lead.source,
+        channel: lead.channel,
         companyId: lead.companyId,
         companyName: lead.company?.tradeName || lead.company?.legalName || null,
         companyCnpj: lead.company?.cnpj ?? null,

@@ -705,6 +705,37 @@ export interface HealthScoreResult {
   generatedAt: string;
 }
 
+// ─── Motivo real de perda via IA sobre transcrição real (item 21 — não o campo manual) ──────
+//
+// `LossAnalysis`/`lossTaxonomy.ts` (acima) classificam o campo MANUAL `Lead.lossReason` — texto
+// preenchido às pressas no CRM, não necessariamente o motivo real. Este bloco vai à fonte primária
+// (transcrição real de chamada, `VoiceCallLog.transcript`) e usa IA para inferir o motivo REAL,
+// citando um trecho literal como evidência — nunca aceita a inferência do modelo sem mostrar de
+// onde veio. Só roda sob demanda (POST, custo de IA), nunca automaticamente para todo negócio
+// perdido.
+
+export type LossReasonAiUnavailableReason = 'sem_transcricao' | 'negocio_nao_encontrado';
+
+export interface LossReasonAiAnalysisResult {
+  leadId: string;
+  available: boolean;
+  reason: LossReasonAiUnavailableReason | null;
+  /** Texto bruto do campo manual `Lead.lossReason`, tal como preenchido no CRM. */
+  declaredReasonRaw: string | null;
+  /** Bucket da taxonomia fixa (`LOSS_REASON_TAXONOMY`) obtido do campo manual via `classifyLossReason` — mesmo cálculo determinístico já usado em `LossAnalysis`. */
+  declaredBucket: string;
+  /** Bucket da mesma taxonomia fixa, inferido da transcrição real. `null` sem transcrição disponível. */
+  inferredBucket: string | null;
+  /** Trecho LITERAL da transcrição que embasa o motivo inferido — nunca a IA "decidindo sem mostrar o porquê". `null` no fallback determinístico (sem citação, só o bucket). */
+  evidenceQuote: string | null;
+  /** `true` quando o motivo inferido da transcrição diverge do declarado manualmente — o sinal que este recurso existe para detectar. */
+  mismatch: boolean;
+  confidence: 'alta' | 'media' | 'baixa' | null;
+  /** `'ai'` quando o modelo classificou a partir da transcrição; `'fallback'` quando a IA falhou e a mesma heurística determinística de palavra-chave de `lossTaxonomy.ts` foi aplicada ao texto da transcrição — a UI precisa rotular a origem, nunca apresentar fallback como se fosse leitura da IA. */
+  source: 'ai' | 'fallback' | null;
+  generatedAt: string;
+}
+
 // ─── Mentor Comercial por IA (playbook de recomendações) ────────────────────
 
 export type MentorRecommendationPriority = 'alta' | 'media' | 'baixa';
@@ -760,6 +791,194 @@ export interface FilterOptions {
   companies: string[];
 }
 
+// ─── Forecast auto-calibrado (previsto vs. realizado retroalimenta o próximo forecast) ─────
+//
+// `ForecastAccuracySummary` (acima) já mede o erro histórico; este bloco fecha o loop: usa esse
+// erro para corrigir o Forecast Ponderado Explicável ATUAL, em vez de só reportar o erro passado
+// passivamente. Nunca um segundo modelo estatístico — só um fator de correção (realizado/previsto
+// médio dos meses encerrados) aplicado ao forecast já calculado por `forecastEngine.ts`.
+
+export type ForecastCalibrationUnavailableReason = 'sem_historico_suficiente';
+
+export type ForecastBiasDirection = 'superestimando' | 'subestimando' | 'neutro';
+
+/**
+ * Forecast bruto (`ExecutiveOverview.forecastAmount`) corrigido por um fator de calibração
+ * derivado do erro histórico real (`ForecastAccuracySummary.samples`). `available: false` sem
+ * amostra mínima de meses encerrados — o forecast bruto nunca é escondido, só não é "corrigido"
+ * sem base estatística. Ver `application/forecastCalibration.ts` para a fórmula e o motivo do
+ * clamp do fator.
+ */
+export interface ForecastCalibrationResult {
+  available: boolean;
+  reason: ForecastCalibrationUnavailableReason | null;
+  sampleSize: number;
+  minSampleSize: number;
+  /** Média de (realizado / previsto) dos meses encerrados com snapshot, limitada a [minFactor, maxFactor] — 1.0 = sem viés detectado. `null` sem amostra mínima. */
+  calibrationFactor: number | null;
+  minFactor: number;
+  maxFactor: number;
+  biasDirection: ForecastBiasDirection | null;
+  rawForecastAmount: number;
+  /** `rawForecastAmount * calibrationFactor`. `null` sem `calibrationFactor` disponível. */
+  calibratedForecastAmount: number | null;
+  goalAmount: number | null;
+  currency: string;
+  /** Meta − calibrado, nunca negativo. `null` sem meta cadastrada ou sem calibração disponível. */
+  calibratedGapToGoal: number | null;
+}
+
+// ─── Detecção automática de gargalo de funil (comparação relativa entre etapas) ────────────
+//
+// Distinto de `StageAging`/`AgingReport` (que mede quanto do pipeline está acima de um limiar FIXO
+// de dias): aqui cada etapa é comparada contra a duração "normal" das DEMAIS etapas do mesmo
+// pipeline — o sistema aponta ativamente qual etapa está anormalmente lenta, não só lista aging.
+// Mesma fonte de duração (`buildStageDurationStats`, `LeadStageHistory`), nenhum cálculo de duração
+// novo introduzido aqui.
+
+export type BottleneckSeverity = 'critico' | 'atencao' | 'normal' | 'sem_dados';
+
+export interface FunnelBottleneckStage {
+  stageId: string;
+  stageName: string;
+  sortOrder: number;
+  /** Duração média (dias) de passagens JÁ CONCLUÍDAS por esta etapa. `null` sem nenhuma amostra. */
+  averageDaysInStage: number | null;
+  /** Quantas passagens concluídas alimentam `averageDaysInStage`. */
+  sampleSize: number;
+  /** Mediana da duração média das OUTRAS etapas com amostra suficiente — a régua de "normal" desta etapa. `null` sem ao menos 2 outras etapas comparáveis. */
+  normalBaselineDays: number | null;
+  /** `averageDaysInStage / normalBaselineDays`. `null` sem os dois lados calculáveis ou sem amostra própria suficiente. */
+  multiplier: number | null;
+  severity: BottleneckSeverity;
+  /** Negócios ABERTOS agora, parados nesta etapa. */
+  openCount: number;
+  openAmount: number;
+}
+
+export interface FunnelBottleneckReport {
+  stages: FunnelBottleneckStage[];
+  criticalMultiplier: number;
+  warningMultiplier: number;
+  minSampleSizeForBaseline: number;
+  trackingSince: string | null;
+}
+
+// ─── Benchmark de vendedor (performance individual vs. time e vs. top performer) ───────────
+//
+// `PerformanceMetrics` (Fase 4) já calcula Win Rate/Ciclo/Ticket para UM recorte (filtro
+// `owner` opcional). Este relatório calcula os mesmos 3 indicadores para TODOS os vendedores de
+// uma vez (ignora `filter.owner` de propósito — comparação entre vendedores não faz sentido já
+// pré-filtrada a um único vendedor) e adiciona a comparação time/top performer + uma sugestão
+// específica, não um texto de incentivo genérico.
+
+export type SellerBenchmarkMetric = 'winRate' | 'salesCycleMedianDays' | 'averageTicketWon';
+
+export interface SellerBenchmarkSuggestion {
+  metric: SellerBenchmarkMetric;
+  label: string;
+  sellerValue: number;
+  teamAverage: number;
+  topPerformerValue: number;
+  /** Texto pronto para exibição, gerado deterministicamente dos 3 valores acima — nunca por IA. */
+  text: string;
+}
+
+export interface SellerBenchmarkRow {
+  owner: string;
+  /** Ganhos / (Ganhos + Perdidos) no período, em %. `null` sem negócios fechados. */
+  winRate: number | null;
+  wonCount: number;
+  lostCount: number;
+  averageTicketWon: number | null;
+  salesCycleMedianDays: number | null;
+  openCount: number;
+  openAmount: number;
+  /** `true` só quando `wonCount + lostCount >= minDealsForRanking` E este vendedor tem o maior Win Rate do time no período. */
+  isTopPerformer: boolean;
+  /** `null` quando a amostra do vendedor (`wonCount + lostCount`) é menor que `minDealsForRanking` — sem comparação confiável ainda. */
+  suggestion: SellerBenchmarkSuggestion | null;
+}
+
+export interface SellerBenchmarkTeamAverages {
+  winRate: number | null;
+  salesCycleMedianDays: number | null;
+  averageTicketWon: number | null;
+}
+
+export interface SellerBenchmarkReport {
+  period: PeriodMonth;
+  minDealsForRanking: number;
+  sellers: SellerBenchmarkRow[];
+  teamAverages: SellerBenchmarkTeamAverages;
+  topPerformerOwner: string | null;
+}
+
+// ─── Atribuição de receita por canal/origem — TOQUE ÚNICO (item 25, versão reduzida) ────────
+//
+// O item 25 pede atribuição MULTI-TOQUE ("de qual canal/campanha realmente veio o fechamento, não
+// só o primeiro toque"). Isso exige um modelo de touchpoint/campanha que NÃO existe hoje em
+// `prisma/schema.prisma` (só `Lead.source`/`Lead.channel`, strings de toque ÚNICO, sem histórico de
+// touchpoints) — ver handoff `.agents/handoffs/analytics-suite/25-para-01-schema-atribuicao-
+// multicanal.md`, registrado como bloqueado por falta de dono de schema para revisar a migration.
+// Este bloco é a versão HONESTA e possível com o dado real que já existe: atribuição de toque
+// único por canal e por origem — nunca apresentada como multi-touque. `mismatchTouchpointsCount`
+// deliberadamente NÃO existe aqui (não fabricamos um dado de multi-touch que não temos).
+
+export interface ChannelAttributionBreakdown {
+  /** Valor de `Lead.channel` ou `Lead.source`, conforme a dimensão do relatório. `'Não informado'` quando o campo está vazio — nunca omitido nem virando 0 silencioso. */
+  label: string;
+  wonCount: number;
+  wonAmount: number;
+  /** % da receita total ganha do período atribuída a este canal/origem. `null` sem receita ganha no período. */
+  pctOfWonAmount: number | null;
+  averageTicket: number | null;
+}
+
+export interface ChannelAttributionReport {
+  period: PeriodMonth;
+  /** Sempre `'toque_unico'` — rótulo explícito para a UI nunca apresentar isto como multi-touch. */
+  model: 'toque_unico';
+  totalWonAmount: number;
+  totalWonCount: number;
+  byChannel: ChannelAttributionBreakdown[];
+  bySource: ChannelAttributionBreakdown[];
+}
+
+// ─── Simulação de cenário (contratação de SDR/vendedor) ──────────────────────
+//
+// "Se eu contratar +N vendedores, qual o impacto em receita em 90 dias?" — baseado em dados REAIS
+// de throughput (Pipeline Criado por vendedor, `PipelineCreation.byOwner`) e conversão (Win
+// Rate/Sales Cycle de `PerformanceMetrics`), nunca um número de mercado genérico. Mesma disciplina
+// do resto do módulo: sem amostra de throughput por vendedor, `available: false` — nunca um
+// impacto fabricado.
+
+export type HiringScenarioUnavailableReason =
+  | 'numero_de_reps_invalido'
+  | 'sem_dados_de_pipeline_por_vendedor';
+
+export interface HiringScenarioResult {
+  available: boolean;
+  reason: HiringScenarioUnavailableReason | null;
+  additionalReps: number;
+  /** Janela fixa pedida pelo produto — impacto em receita "em 90 dias". */
+  windowDays: number;
+  /** Dias de onboarding em que um vendedor novo não gera pipeline ainda — política documentada, não medição. */
+  rampUpDays: number;
+  /** Pipeline Criado total do período / nº de vendedores que criaram pipeline no período — a taxa real usada na projeção. `null` sem nenhum vendedor com pipeline criado no período de referência. */
+  avgPipelineAmountPerRepPerMonth: number | null;
+  activeRepsInPeriod: number;
+  /** Pipeline adicional projetado nos `windowDays`, já descontados os `rampUpDays` de onboarding. */
+  incrementalPipelineAmount: number | null;
+  winRatePct: number | null;
+  salesCycleMedianDays: number | null;
+  /** `true` quando o Ciclo de Venda mediano é maior que os dias produtivos restantes na janela — a receita adicional provavelmente só materializa DEPOIS dos 90 dias, não dentro deles. */
+  cycleExceedsWindow: boolean;
+  /** Pipeline adicional × Win Rate — expectativa estatística, não uma certeza (mesmo espírito do cenário "Provável" do Previsor). `null` sem Win Rate calculável. */
+  estimatedIncrementalRevenue: number | null;
+  currency: string;
+}
+
 // ─── Tendências históricas (seção 23) ────────────────────────────────────────
 
 export interface HistoricalTrendPoint {
@@ -804,6 +1023,8 @@ export interface DealRow {
   amount: number;
   owner: string | null;
   source: string | null;
+  /** `Lead.channel` — canal de toque único (ex.: WhatsApp, Site, Indicação). Distinto de `source` (origem/campanha mais específica). Usado pela Atribuição de Receita (item 25, toque único — ver `channelAttributionReport.ts`). */
+  channel: string | null;
   companyId: string | null;
   companyName: string | null;
   companyCnpj: string | null;
