@@ -157,7 +157,7 @@ export function WelcomeScreen() {
     );
   }
   if (currentUser) {
-    return <Navigate to="/hub" replace />;
+    return <Navigate to="/app" replace />;
   }
 
   return (
@@ -285,9 +285,9 @@ export function WelcomeScreen() {
               if (audioRef.current) audioRef.current.play().catch(() => {});
               navigate('/login');
             }}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-brand-2 via-brand to-brand-2 px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand shadow-[0_20px_50px_rgba(18,74,66,0.28)] transition-transform hover:-translate-y-0.5"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-brand-2 via-brand to-brand-2 px-8 py-4 text-sm font-bold uppercase tracking-[0.12em] text-on-brand shadow-[0_20px_50px_color-mix(in_srgb,var(--brand)_28%,transparent)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
           >
-            Explorar Hub
+            Explorar o Birth Hub
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </button>
         </motion.div>

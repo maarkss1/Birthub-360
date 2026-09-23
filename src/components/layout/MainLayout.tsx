@@ -1,7 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigationBusBridge } from '../../hooks/useNavigationBusBridge';
-import { BottomSheet } from '../ui/BottomSheet';
 import { BugReportButton } from '../ui/BugReportButton';
 import { CommandPalette } from '../ui/CommandPalette';
 import { CopilotTrigger } from '../ui/CopilotTrigger';
@@ -49,7 +48,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Ambientação de marca contida: clara no light, profunda sem neon no dark. */}
       <div className="absolute inset-0 flex z-0 overflow-hidden pointer-events-none bg-bg mix-blend-screen dark:mix-blend-color-dodge">
         <div className="absolute -right-48 -top-56 h-[36rem] w-[36rem] rounded-full bg-brand/15 blur-[160px] dark:bg-brand/10 transition-colors duration-1000" />
-        <div className="absolute -bottom-64 -left-48 h-[34rem] w-[34rem] rounded-full bg-iris/10 blur-[180px] dark:bg-orbit-blue/8 transition-colors duration-1000" />
+        <div className="absolute -bottom-64 -left-48 h-[34rem] w-[34rem] rounded-full bg-iris/10 blur-[180px] dark:bg-orbit-blue/10 transition-colors duration-1000" />
       </div>
 
       <OfflineBanner />
@@ -80,9 +79,6 @@ export function MainLayout({ children }: MainLayoutProps) {
           <CopilotTrigger />
           <BugReportButton />
           <CommandPalette />
-          <BottomSheet open={false} onOpenChange={() => {}} snapPoints={['50%', '90%']}>
-            <div />
-          </BottomSheet>
         </div>
       </div>
     </div>

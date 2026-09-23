@@ -25,6 +25,7 @@ import { featureFlagsRouter } from '../features/feature-flags/routes/featureFlag
 import { gamificationRoutes } from '../features/gamification/routes/gamification.routes.js';
 import { birthVoiceRoutes } from '../features/integrations/birth-voice/birthVoice.routes.js';
 import { bitrixRoutes } from '../features/integrations/bitrix/bitrix.routes.js';
+import { externalCrmRoutes } from '../features/integrations/shared/externalCrm.routes.js';
 import { hubTasksRoutes } from '../features/integrations/bitrix/hubTasks.routes.js';
 import { emailRoutes } from '../features/integrations/email/email.routes.js';
 import { googleRoutes } from '../features/integrations/google/google.routes.js';
@@ -191,6 +192,7 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/integrations/omie', authenticateToken, requireTenant, omieRoutes);
   app.use('/api/google', authenticateToken, requireTenant, googleRoutes);
   app.use('/api/bitrix', authenticateToken, requireTenant, bitrixRoutes);
+  app.use('/api/integrations/external-crm', authenticateToken, requireTenant, externalCrmRoutes);
   app.use('/api/bitrix', authenticateToken, requireTenant, hubTasksRoutes);
   app.use('/api/team', authenticateToken, requireTenant, teamRoutes);
   app.use('/api/module-access', authenticateToken, requireTenant, moduleAccessRoutes);

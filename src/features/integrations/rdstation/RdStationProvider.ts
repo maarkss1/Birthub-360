@@ -6,10 +6,9 @@
  */
 
 import {
-  CrmConnectionConfig,
-  CrmProvider,
-  NormalizedLead,
-  PushLeadResult,
+  type CrmConnectionConfig,
+  type CrmProvider,
+  type NormalizedLead,
   registerCrmProvider,
 } from '../shared/CrmProvider';
 
@@ -63,7 +62,7 @@ const RdStationProvider: CrmProvider = {
   displayName: 'RD Station',
   authType: 'oauth2',
 
-  async listLeads(config, lastImportedAt, cursor) {
+  async listLeads(config, _lastImportedAt, cursor) {
     const page = cursor ? Number(cursor) : 1;
     const params = new URLSearchParams({
       page: String(page),

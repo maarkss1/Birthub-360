@@ -61,7 +61,7 @@ export function ChangePasswordGate() {
       () => {},
     );
 
-    window.location.href = '/hub';
+    window.location.href = '/app';
   };
 
   return (

@@ -30,7 +30,7 @@ export function ExecutiveHeader({
   // usam AppTopbar; o botão de voltar deles precisa estar aqui, no header que eles compartilham.
   const handleBack = () => {
     if (location.key !== 'default') navigate(-1);
-    else navigate('/hub');
+    else navigate('/app');
   };
 
   // Atualização (09/2026, pedido explícito do usuário): existiam mais 3 entradas aqui

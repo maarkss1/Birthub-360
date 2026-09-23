@@ -30,6 +30,7 @@ import { BitrixImportPanel } from './BitrixImportPanel';
 import { BitrixSyncRulesPanel } from './BitrixSyncRulesPanel';
 import { IntegrationStatusBadge } from './IntegrationStatusBadge';
 import { WebhookMonitor } from './WebhookMonitor';
+import { ExternalCrmPanel } from './ExternalCrmPanel';
 
 type IntegrationCapabilityStatus = 'connected' | 'read' | 'write' | 'stub' | 'error' | 'pending';
 
@@ -159,6 +160,10 @@ export function Integrations() {
     | 'whatsapp'
     | 'google'
     | 'bitrix'
+    | 'hubspot'
+    | 'pipedrive'
+    | 'rdstation'
+    | 'monday'
     | '3cx'
     | 'voice-hub'
     | 'slack'
@@ -222,6 +227,46 @@ export function Integrations() {
             className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'bitrix' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
           >
             <span className="text-lg">🔗</span> Bitrix24
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('hubspot');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'hubspot' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">🟠</span> HubSpot
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('pipedrive');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'pipedrive' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">🟢</span> Pipedrive
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('rdstation');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'rdstation' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">🔵</span> RD Station
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              SoundFX.play('navigate');
+              setActiveTab('monday');
+            }}
+            className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'monday' ? 'bg-brand/10 text-brand-ink dark:text-brand' : 'text-ink-2 hover:bg-surface-2'}`}
+          >
+            <span className="text-lg">🔴</span> Monday.com
           </button>
           <button
             type="button"
@@ -835,6 +880,46 @@ export function Integrations() {
           )}
 
           {/* 3CX PABX Telephony Card */}
+          {activeTab === 'hubspot' && (
+            <div className="max-w-4xl space-y-6">
+              <ExternalCrmPanel
+                providerKey="hubspot"
+                displayName="HubSpot"
+                authType="oauth2"
+              />
+            </div>
+          )}
+
+          {activeTab === 'pipedrive' && (
+            <div className="max-w-4xl space-y-6">
+              <ExternalCrmPanel
+                providerKey="pipedrive"
+                displayName="Pipedrive"
+                authType="api_key"
+              />
+            </div>
+          )}
+
+          {activeTab === 'rdstation' && (
+            <div className="max-w-4xl space-y-6">
+              <ExternalCrmPanel
+                providerKey="rdstation"
+                displayName="RD Station"
+                authType="oauth2"
+              />
+            </div>
+          )}
+
+          {activeTab === 'monday' && (
+            <div className="max-w-4xl space-y-6">
+              <ExternalCrmPanel
+                providerKey="monday"
+                displayName="Monday.com"
+                authType="api_key"
+              />
+            </div>
+          )}
+
           {activeTab === '3cx' && (
             <Card className="p-8 rounded-2xl">
               <div className="flex items-center justify-between mb-8">

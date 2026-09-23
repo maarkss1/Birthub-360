@@ -1,4 +1,4 @@
-import { LayoutGrid, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -259,13 +259,13 @@ export function Sidebar({
           className={`px-5 py-4 flex items-center justify-between border-b border-line ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
         >
           {isCollapsed ? (
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-surface-2 to-sunset flex items-center justify-center shadow-sm">
               <span className="text-gold font-black text-base italic tracking-tighter">B</span>
             </div>
           ) : (
             <>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-[#1E293B] to-sunset flex items-center justify-center shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-midnight via-surface-2 to-sunset flex items-center justify-center shadow-sm">
                   <span className="text-gold font-black text-base italic tracking-tighter">B</span>
                 </div>
                 <div className="leading-none">
@@ -301,31 +301,6 @@ export function Sidebar({
             </button>
           </div>
         )}
-
-        <button
-          type="button"
-          onClick={() => {
-            SoundFX.play('navigate');
-            navigate('/hub');
-            onCloseMobile?.();
-          }}
-          className={`group relative mt-2 flex w-full cursor-pointer items-center gap-3 rounded-xl bg-surface-subtle/50 backdrop-blur-sm px-3 py-2.5 text-left transition-all duration-300 hover:bg-surface-2 hover:shadow-md hover:scale-[1.02] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
-            isCollapsed ? 'lg:justify-center lg:px-1.5' : ''
-          }`}
-          title="Ir para o Hub Executivo"
-          aria-label="Ir para o Hub Executivo"
-        >
-          <LayoutGrid
-            size={16}
-            aria-hidden="true"
-            className="shrink-0 text-ink-2 transition-transform duration-300 group-hover:scale-110 group-hover:text-ink"
-          />
-          <span
-            className={`text-[13px] font-semibold text-ink transition-colors duration-300 ${isCollapsed ? 'lg:hidden' : ''}`}
-          >
-            Hub Executivo
-          </span>
-        </button>
       </div>
 
       <nav
@@ -353,7 +328,7 @@ export function Sidebar({
       <div className="p-4 pt-2">
         {currentUser && (
           <div
-            className={`group relative overflow-hidden rounded-2xl bg-surface-subtle/40 backdrop-blur-md px-3 py-3 transition-all hover:bg-surface-subtle hover:shadow-sm cursor-default ${
+            className={`relative overflow-hidden rounded-2xl bg-surface-subtle/40 backdrop-blur-md px-3 py-3 transition-all ${
               isCollapsed ? 'lg:px-1.5 lg:py-2 lg:flex lg:justify-center' : ''
             }`}
             title={
@@ -363,11 +338,11 @@ export function Sidebar({
             }
           >
             <div className="flex min-w-0 items-center gap-3 relative z-10">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand/80 to-brand-2/90 text-sm font-bold text-on-brand shadow-sm ring-2 ring-surface transition-transform duration-300 group-hover:scale-105">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand/80 to-brand-2/90 text-sm font-bold text-on-brand shadow-sm ring-2 ring-surface transition-transform duration-300">
                 {currentUser.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className={`min-w-0 flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>
-                <p className="truncate text-[13px] font-bold leading-tight text-ink transition-colors group-hover:text-brand">
+                <p className="truncate text-[13px] font-bold leading-tight text-ink transition-colors">
                   {currentUser.name}
                 </p>
                 <p className="mt-0.5 truncate text-[11px] font-medium leading-tight text-ink-2">

@@ -6,10 +6,9 @@
  */
 
 import {
-  CrmConnectionConfig,
-  CrmProvider,
+  type CrmConnectionConfig,
+  type  CrmProvider,
   NormalizedLead,
-  PushLeadResult,
   registerCrmProvider,
 } from '../shared/CrmProvider';
 
@@ -46,7 +45,10 @@ async function mondayQuery<T>(
 
 function mapMondayItem(item: Record<string, unknown>): NormalizedLead {
   const cols = (item.column_values as Record<string, unknown>[]) ?? [];
-  const get = (id: string) => cols.find((c) => c.id === id)?.text ?? undefined;
+  const get = (id: string): string | undefined => {
+    const val = cols.find((c) => c.id === id)?.text;
+    return typeof val === 'string' ? val : undefined;
+  };
 
   return {
     externalId: String(item.id),

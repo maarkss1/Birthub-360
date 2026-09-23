@@ -6,10 +6,9 @@
  */
 
 import {
-  CrmConnectionConfig,
-  CrmProvider,
-  NormalizedLead,
-  PushLeadResult,
+  type CrmConnectionConfig,
+  type CrmProvider,
+  type NormalizedLead,
   registerCrmProvider,
 } from '../shared/CrmProvider';
 

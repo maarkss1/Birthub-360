@@ -174,13 +174,15 @@ export function AppTopbar({ activeTab, onOpenMobileNav }: AppTopbarProps) {
           <Bell className="h-5 w-5 transition-transform duration-300" />
           {unreadCount > 0 && (
             <span
-              className="absolute right-[9px] top-[9px] h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_0_3px_var(--surface)] animate-pulse"
+              className="absolute right-[9px] top-[9px] h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_0_3px_var(--surface)] motion-safe:animate-pulse"
               aria-hidden="true"
             />
           )}
         </button>
 
         <div
+          role="img"
+          aria-label={`Avatar de ${currentUser?.name || 'Usuário'}`}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-2 text-sm font-bold text-on-brand shadow-sm ring-1 ring-white/10"
           title={`${currentUser?.name || 'Usuário'} (${currentUser?.roleTitle || currentUser?.role || ''})`}
         >

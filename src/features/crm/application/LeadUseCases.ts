@@ -153,7 +153,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     ) {
       broadcastEvent({ type: 'DEAL_LOST', organizationId, payload: { leadId: id } });
     }
-    if (data.status) this.syncStatusChangeToBitrix(organizationId, id, updated.bitrixLeadId);
+    if (data.status) this.syncStatusChangeToCrms(organizationId, id, updated.bitrixLeadId, { name: 'Lead Atualizado', amount: updated.amount ?? undefined, stageLabel: updated.status });
     return updated;
   }
 
@@ -182,7 +182,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     ) {
       broadcastEvent({ type: 'DEAL_LOST', organizationId, payload: { leadId: id } });
     }
-    this.syncStatusChangeToBitrix(organizationId, id, updated.bitrixLeadId);
+    this.syncStatusChangeToCrms(organizationId, id, updated.bitrixLeadId, { name: 'Lead Atualizado', amount: updated.amount ?? undefined, stageLabel: updated.status });
     return updated;
   }
 
@@ -205,18 +205,31 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
    * NENHUM método de escrita no Bitrix ainda (`crm.deal.update` não existe em lugar nenhum do
    * código) — sincronizar Deal ficou de fora, é esforço maior que este achado.
    */
-  private syncStatusChangeToBitrix(
+  private syncStatusChangeToCrms(
     organizationId: string,
     leadId: string,
     bitrixLeadId: string | null,
+    leadData: { name: string; amount?: number; stageLabel?: string },
   ): void {
-    if (!bitrixLeadId) return;
-    import('../../../lib/queue/bitrixOutbound.queue.js')
-      .then(({ queueLeadPushToBitrix }) => queueLeadPushToBitrix(organizationId, leadId))
+    if (bitrixLeadId) {
+      import('../../../lib/queue/bitrixOutbound.queue.js')
+        .then(({ queueLeadPushToBitrix }) => queueLeadPushToBitrix(organizationId, leadId))
+        .catch((err) => {
+          logger.warn(
+            { err, organizationId, leadId },
+            '[bitrix] Falha ao enfileirar re-sincronização automática após mudança de etapa',
+          );
+        });
+    }
+
+    import('../../../lib/queue/externalCrmOutbound.queue.js')
+      .then(({ queueLeadPushToExternalCrms }) => 
+        queueLeadPushToExternalCrms({ organizationId, leadId, payload: leadData })
+      )
       .catch((err) => {
         logger.warn(
           { err, organizationId, leadId },
-          '[bitrix] Falha ao enfileirar re-sincronização automática após mudança de etapa',
+          '[crm] Falha ao enfileirar re-sincronização automática para CRMs externos',
         );
       });
   }

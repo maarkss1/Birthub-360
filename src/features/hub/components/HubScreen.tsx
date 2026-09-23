@@ -382,11 +382,11 @@ export function HubScreen() {
   };
 
   return (
-    <div className="relative h-screen max-h-screen w-full bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-[#0B132B] dark:via-[#111D3F] dark:to-[#080E21] text-ink overflow-hidden flex flex-col justify-between select-none">
+    <div className="relative h-screen max-h-screen w-full bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-bg dark:via-surface dark:to-bg text-ink overflow-hidden flex flex-col justify-between select-none">
       {/* Background Ambient Glows */}
-      <div className="absolute pointer-events-none h-96 w-96 rounded-full bg-gold/15 blur-3xl -top-20 -left-20 animate-[hub-bg-float-1_15s_infinite_ease-in-out]" />
-      <div className="absolute pointer-events-none h-80 w-80 rounded-full bg-sunset/15 blur-3xl top-1/2 -right-20 animate-[hub-bg-float-2_18s_infinite_ease-in-out]" />
-      <div className="absolute pointer-events-none h-72 w-72 rounded-full bg-red-violet/15 blur-3xl -bottom-10 left-1/3 animate-[hub-bg-float-3_20s_infinite_ease-in-out]" />
+      <div className="absolute pointer-events-none h-96 w-96 rounded-full bg-gold/15 blur-3xl -top-20 -left-20 motion-safe:animate-[hub-bg-float-1_15s_infinite_ease-in-out]" />
+      <div className="absolute pointer-events-none h-80 w-80 rounded-full bg-sunset/15 blur-3xl top-1/2 -right-20 motion-safe:animate-[hub-bg-float-2_18s_infinite_ease-in-out]" />
+      <div className="absolute pointer-events-none h-72 w-72 rounded-full bg-red-violet/15 blur-3xl -bottom-10 left-1/3 motion-safe:animate-[hub-bg-float-3_20s_infinite_ease-in-out]" />
 
       <HubBurstCanvas ref={burstRef} />
 
@@ -587,6 +587,7 @@ export function HubScreen() {
                     onClick={(e) => handleCardClick(e, item)}
                     className={`hub-card ${item.primary ? 'primary' : ''}`}
                     title={item.description}
+                    aria-label={`${item.label} - ${item.description}`}
                     data-orbit-accent={item.colorVar}
                     style={{ '--orbit-accent': `var(--${item.colorVar})` } as React.CSSProperties}
                   >
@@ -684,9 +685,10 @@ function ExecutiveCockpitView({
           type="button"
           onClick={(e) => onCardClick(e, primary)}
           className="group relative flex items-center justify-between w-full p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-brand/15 to-amber-600/10 border-2 border-brand/40 shadow-glow-brand hover:border-brand hover:shadow-glow-brand-strong transition-all cursor-pointer text-left backdrop-blur-md"
+          aria-label={`${primary.label} - ${primary.description}`}
         >
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#FFEAA7] via-[#D4AF37] to-[#B8860B] flex items-center justify-center text-[#0B132B] shadow-md group-hover:scale-105 transition-transform shrink-0">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-brand/50 via-brand to-brand-2 flex items-center justify-center text-midnight shadow-md group-hover:scale-105 transition-transform shrink-0">
               <primary.icon className="h-6 w-6" />
             </div>
             <div>
@@ -721,6 +723,7 @@ function ExecutiveCockpitView({
               onClick={(e) => onCardClick(e, item)}
               className="group relative flex items-center gap-3 p-3 rounded-xl bg-surface/90 border border-line shadow-card hover:shadow-card-hover hover:border-[var(--card-accent)] transition-all cursor-pointer text-left backdrop-blur-md overflow-hidden"
               style={{ '--card-accent': `var(--${item.colorVar})` } as React.CSSProperties}
+              aria-label={`${item.label} - ${item.description}`}
             >
               <div
                 className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"

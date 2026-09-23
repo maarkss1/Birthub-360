@@ -20,7 +20,7 @@ interface ExternalCrmPanelProps {
   displayName: string;
   authType: 'oauth2' | 'api_key';
   iconSrc?: string;
-  organizationId: string;
+  organizationId?: string;
 }
 
 const PROVIDER_COLORS: Record<string, string> = {
@@ -41,7 +41,6 @@ export function ExternalCrmPanel({
   providerKey,
   displayName,
   authType,
-  organizationId,
 }: ExternalCrmPanelProps) {
   const [connections, setConnections] = useState<CrmConnection[]>([]);
   const [loading, setLoading] = useState(false);
@@ -94,7 +93,6 @@ export function ExternalCrmPanel({
           provider: providerKey,
           label: formLabel || displayName,
           config,
-          organizationId,
         }),
       });
 
@@ -106,8 +104,8 @@ export function ExternalCrmPanel({
       setFormDomain('');
       setFormBoardId('');
       await fetchConnections();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erro ao salvar');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao salvar conexão');
     } finally {
       setSaving(false);
     }
@@ -127,18 +125,17 @@ export function ExternalCrmPanel({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="rounded-xl border border-line bg-surface p-5 shadow-sm space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xl" aria-hidden>
-            {emoji}
-          </span>
+      <div className="flex items-center justify-between pb-4 border-b border-line">
+        <div className="flex items-center gap-2.5">
+          <span className="text-xl" aria-hidden>{emoji}</span>
           <h3 className={`font-semibold text-base ${colorClass}`}>{displayName}</h3>
         </div>
         <div className="flex items-center gap-2">
           {!loadedOnce && (
             <button
+              type="button"
               onClick={fetchConnections}
               disabled={loading}
               className="flex items-center gap-1.5 rounded-lg border border-line bg-surface-1 px-3 py-1.5 text-xs font-medium text-ink-2 transition hover:bg-surface-2 disabled:opacity-60"
@@ -153,6 +150,7 @@ export function ExternalCrmPanel({
           )}
           {loadedOnce && (
             <button
+              type="button"
               onClick={fetchConnections}
               disabled={loading}
               className="rounded-lg border border-line bg-surface-1 p-1.5 text-ink-3 transition hover:bg-surface-2 disabled:opacity-60"
@@ -162,6 +160,7 @@ export function ExternalCrmPanel({
             </button>
           )}
           <button
+            type="button"
             onClick={() => setShowForm((v) => !v)}
             className="flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand/90"
           >
@@ -187,10 +186,11 @@ export function ExternalCrmPanel({
           <h4 className="text-sm font-medium text-ink-1">Nova conexão com {displayName}</h4>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-ink-2">
+            <label htmlFor="crm-conn-label" className="mb-1 block text-xs font-medium text-ink-2">
               Nome da conexão (opcional)
             </label>
             <input
+              id="crm-conn-label"
               type="text"
               placeholder={`Ex: ${displayName} Principal`}
               value={formLabel}
@@ -200,7 +200,7 @@ export function ExternalCrmPanel({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-ink-2">
+            <label htmlFor="crm-conn-token" className="mb-1 block text-xs font-medium text-ink-2">
               {authType === 'api_key' ? (
                 <span className="flex items-center gap-1">
                   <KeyRound className="size-3" />
@@ -211,6 +211,7 @@ export function ExternalCrmPanel({
               )}
             </label>
             <input
+              id="crm-conn-token"
               type="password"
               required
               placeholder={authType === 'api_key' ? 'sk_live_...' : 'Bearer token...'}
@@ -222,10 +223,11 @@ export function ExternalCrmPanel({
 
           {(providerKey === 'hubspot' || providerKey === 'pipedrive') && (
             <div>
-              <label className="mb-1 block text-xs font-medium text-ink-2">
+              <label htmlFor="crm-conn-domain" className="mb-1 block text-xs font-medium text-ink-2">
                 Portal / Domínio (opcional)
               </label>
               <input
+                id="crm-conn-domain"
                 type="text"
                 placeholder="Ex: meuportal.pipedrive.com"
                 value={formDomain}
@@ -237,10 +239,11 @@ export function ExternalCrmPanel({
 
           {providerKey === 'monday' && (
             <div>
-              <label className="mb-1 block text-xs font-medium text-ink-2">
+              <label htmlFor="crm-conn-board" className="mb-1 block text-xs font-medium text-ink-2">
                 ID do Quadro (Board ID)
               </label>
               <input
+                id="crm-conn-board"
                 type="text"
                 required
                 placeholder="Ex: 1234567890"
@@ -287,6 +290,7 @@ export function ExternalCrmPanel({
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => handleDelete(conn.id)}
                   className="rounded-lg border border-red-200 p-1.5 text-red-500 transition hover:bg-red-50 dark:border-red-500/20 dark:hover:bg-red-500/10"
                   title="Remover conexão"

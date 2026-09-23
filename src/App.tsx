@@ -40,9 +40,6 @@ const WorkspaceHome = lazy(() =>
     default: m.WorkspaceHome,
   })),
 );
-const HubScreen = lazy(() =>
-  import('./features/hub/components/HubScreen').then((m) => ({ default: m.HubScreen })),
-);
 const LoginScreen = lazy(() =>
   import('./features/auth/components/LoginScreen').then((m) => ({ default: m.LoginScreen })),
 );
@@ -483,14 +480,7 @@ export default function App() {
                         ModuleAccessAdmin (/app/module-access) + atalhos para ferramentas externas
                         (Bitrix24, webmail, portais). Fica fora de /app/* de propósito — sem
                         MainLayout/Sidebar do CRM — mas ainda exige login (ProtectedRoute). */}
-                      <Route
-                        path="/hub"
-                        element={
-                          <ProtectedRoute>
-                            <HubScreen />
-                          </ProtectedRoute>
-                        }
-                      />
+                      <Route path="/hub" element={<Navigate to="/app" replace />} />
                       {/* Módulos executivos — NUNCA parte do CRM: pedido explícito do usuário ("não
                         quero que apareça no CRM, só nos círculos") para tirar peso/navegação do
                         CRM. Por isso ficam fora de /app/* — sem MainLayout/Sidebar do CRM — mas

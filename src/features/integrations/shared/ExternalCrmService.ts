@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '@/lib/prisma';
-import { getCrmProvider, listCrmProviders, CrmConnectionConfig } from './CrmProvider';
+import { getCrmProvider, listCrmProviders, type CrmConnectionConfig } from './CrmProvider';
 
 // Ensure all providers are registered before use
 import '../hubspot/HubspotProvider';

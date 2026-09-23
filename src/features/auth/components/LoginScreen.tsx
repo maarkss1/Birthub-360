@@ -5,9 +5,12 @@ import { ptBR } from 'date-fns/locale';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   AlertCircle,
+  ArrowRight,
   Building2,
   CalendarDays,
+  CheckCircle2,
   Clock,
+  Database,
   LayoutGrid,
   ListChecks,
   Loader2,
@@ -592,9 +595,9 @@ export function LoginScreen() {
                         setIsForgotPassword(true);
                         setError('');
                       }}
-                      className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900"
+                      className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--login-accent)] focus-visible:ring-offset-2 rounded"
                     >
-                      Protocolo de recuperação?
+                      Esqueci minha senha?
                     </button>
                   </div>
                 )}
@@ -610,25 +613,35 @@ export function LoginScreen() {
                   style={{
                     ...submitMagnetic.style,
                     backgroundImage: `linear-gradient(to right, ${BRAND.colors.brand}, ${BRAND.colors.brandAccent})`,
-                    boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 4px 14px rgba(212, 175, 55, 0.3)'
+                    boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 4px 14px color-mix(in srgb, var(--brand) 30%, transparent)'
                   }}
-                  className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 transition-all hover:brightness-110 hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] disabled:opacity-50"
+                  className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-sm font-extrabold uppercase tracking-wide text-slate-950 transition-all hover:brightness-110 hover:shadow-[0_6px_20px_color-mix(in_srgb,var(--brand)_40%,transparent)] disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--login-accent)] focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin" size={18} />
                   ) : isSignUp ? (
                     'Criar nova conta'
                   ) : (
-                    'Iniciar link neural'
+                    <>
+                      Entrar no Birth Hub <ArrowRight className="h-4 w-4" />
+                    </>
                   )}
                 </motion.button>
               </form>
             )}
           </motion.div>
 
-          <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-200 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-600">
-            <ShieldCheck className="h-4 w-4 text-emerald-500" aria-hidden="true" />
-            Protegido por Criptografia Quântica
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 border-t border-slate-200 pt-6">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[10px] font-bold text-slate-600">
+              <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-[var(--color-ok)]" aria-hidden="true" /> Acesso protegido</span>
+              <span className="flex items-center gap-1.5"><Lock className="h-4 w-4 text-slate-400" aria-hidden="true" /> Autenticação empresarial</span>
+              <span className="flex items-center gap-1.5"><Database className="h-4 w-4 text-slate-400" aria-hidden="true" /> Controle de permissões</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-[var(--color-ok)]" aria-hidden="true" /> Conformidade LGPD</span>
+            </div>
+            <div className="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center space-y-1">
+              <p>Birth Hub 360° | Centro de comando para operações de receita</p>
+              <p>v1.0.0</p>
+            </div>
           </div>
         </div>
       </div>

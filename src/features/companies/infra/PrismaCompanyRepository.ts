@@ -104,8 +104,8 @@ export class PrismaCompanyRepository implements CompanyRepository {
       });
       return serializeCompanyStatus(created) as Company;
     } catch (error: unknown) {
-      const err = error as Record<string, unknown>;
-      if (err.code === 'P2002' && (err.meta as any)?.target?.includes('cnpj')) {
+      const err = error as { code?: string; meta?: { target?: string[] | string } };
+      if (err.code === 'P2002' && err.meta?.target?.includes('cnpj')) {
         throw new Error('Já existe uma empresa com este CNPJ nesta organização.');
       }
       throw error;
