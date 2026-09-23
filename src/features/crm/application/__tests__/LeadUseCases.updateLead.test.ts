@@ -24,9 +24,15 @@ vi.mock('../../../../lib/eventsBus.js', () => ({
   broadcastEvent: (...args: unknown[]) => broadcastEvent(...args),
 }));
 
-const pushLeadToBitrix = vi.fn().mockResolvedValue(undefined);
-vi.mock('../../../integrations/bitrix/bitrix.service.js', () => ({
-  pushLeadToBitrix: (...args: unknown[]) => pushLeadToBitrix(...args),
+// A re-sincronização é enfileirada (QUEUE-001): `queueLeadPushToBitrix` é o ponto de contato do
+// use case com o Bitrix; o push em si roda num worker BullMQ, fora do escopo destes testes.
+const queueLeadPushToBitrix = vi.fn().mockResolvedValue(undefined);
+vi.mock('../../../../lib/queue/bitrixOutbound.queue.js', () => ({
+  queueLeadPushToBitrix: (...args: unknown[]) => queueLeadPushToBitrix(...args),
+}));
+// Fan-out para CRMs externos: fora do escopo destes testes, mockado para não abrir conexão Redis.
+vi.mock('../../../../lib/queue/externalCrmOutbound.queue.js', () => ({
+  queueLeadPushToExternalCrms: vi.fn().mockResolvedValue(undefined),
 }));
 
 const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
@@ -129,7 +135,7 @@ describe('LeadUseCases.updateLead', () => {
     await useCases.updateLead('org-1', 'lead-1', { status: 'Reunião Agendada' });
     await flushMicrotasks();
 
-    expect(pushLeadToBitrix).toHaveBeenCalledWith('org-1', 'lead-1');
+    expect(queueLeadPushToBitrix).toHaveBeenCalledWith('org-1', 'lead-1');
   });
 
   it('não tenta sincronizar com o Bitrix quando o lead nunca foi exportado (bitrixLeadId nulo)', async () => {
@@ -140,11 +146,11 @@ describe('LeadUseCases.updateLead', () => {
     await useCases.updateLead('org-1', 'lead-1', { status: 'Reunião Agendada' });
     await flushMicrotasks();
 
-    expect(pushLeadToBitrix).not.toHaveBeenCalled();
+    expect(queueLeadPushToBitrix).not.toHaveBeenCalled();
   });
 
   it('uma falha na re-sincronização com o Bitrix é logada, nunca propagada ao chamador', async () => {
-    pushLeadToBitrix.mockRejectedValueOnce(new Error('Bitrix indisponível'));
+    queueLeadPushToBitrix.mockRejectedValueOnce(new Error('Bitrix indisponível'));
     const { useCases } = makeUseCases({
       update: vi.fn().mockResolvedValue({ id: 'lead-1', bitrixLeadId: 'bx-99' }),
     });
@@ -208,6 +214,6 @@ describe('LeadUseCases.updateLeadStatus', () => {
     await useCases.updateLeadStatus('org-1', 'lead-1', 'Cadência Iniciada');
     await flushMicrotasks();
 
-    expect(pushLeadToBitrix).toHaveBeenCalledWith('org-1', 'lead-1');
+    expect(queueLeadPushToBitrix).toHaveBeenCalledWith('org-1', 'lead-1');
   });
 });

@@ -11,12 +11,17 @@ vi.mock('@/features/prospecting/services/enrichment.service', () => ({
 }));
 
 // Achado da auditoria (PR #328): mudar a etapa de um lead no Kanban não propagava nada para o
-// Bitrix24 até a próxima exportação manual. `pushLeadToBitrix` é mockado aqui — os testes provam
-// só QUANDO `LeadUseCases` decide disparar a re-sincronização (via `syncStatusChangeToBitrix`),
-// não o comportamento de `pushLeadToBitrix` em si (já coberto em outro lugar).
-const pushLeadToBitrixMock = vi.fn().mockResolvedValue(undefined);
-vi.mock('@/features/integrations/bitrix/bitrix.service.js', () => ({
-  pushLeadToBitrix: (...args: unknown[]) => pushLeadToBitrixMock(...args),
+// Bitrix24 até a próxima exportação manual. Desde a fila de saída (QUEUE-001) a re-sincronização é
+// ENFILEIRADA por `queueLeadPushToBitrix` (que faz o push em si num worker BullMQ) — é ela que é
+// mockada aqui: os testes provam só QUANDO `LeadUseCases` decide disparar a re-sincronização (via
+// `syncStatusChangeToCrms`), não o comportamento da fila nem de `pushLeadToBitrix`.
+const queueLeadPushToBitrixMock = vi.fn().mockResolvedValue(undefined);
+vi.mock('@/lib/queue/bitrixOutbound.queue.js', () => ({
+  queueLeadPushToBitrix: (...args: unknown[]) => queueLeadPushToBitrixMock(...args),
+}));
+// Fan-out para CRMs externos: fora do escopo destes testes, mockado para não abrir conexão Redis.
+vi.mock('@/lib/queue/externalCrmOutbound.queue.js', () => ({
+  queueLeadPushToExternalCrms: vi.fn().mockResolvedValue(undefined),
 }));
 
 function makeRepository(overrides: Partial<LeadRepository> = {}): LeadRepository {
@@ -67,7 +72,7 @@ describe('LeadUseCases — sync automático com Bitrix na mudança de etapa', ()
     vi.clearAllMocks();
   });
 
-  it('updateLead dispara pushLeadToBitrix quando status muda e o lead já tem bitrixLeadId', async () => {
+  it('updateLead enfileira o push para o Bitrix quando status muda e o lead já tem bitrixLeadId', async () => {
     const repository = makeRepository({
       update: vi
         .fn()
@@ -79,10 +84,10 @@ describe('LeadUseCases — sync automático com Bitrix na mudança de etapa', ()
     // Fire-and-forget: dá um tick pro `.then()` da promise interna rodar antes de checar.
     await new Promise((r) => setTimeout(r, 0));
 
-    expect(pushLeadToBitrixMock).toHaveBeenCalledWith('org-1', 'lead-1');
+    expect(queueLeadPushToBitrixMock).toHaveBeenCalledWith('org-1', 'lead-1');
   });
 
-  it('updateLead NÃO dispara pushLeadToBitrix quando o lead nunca foi exportado (bitrixLeadId nulo)', async () => {
+  it('updateLead NÃO enfileira o push para o Bitrix quando o lead nunca foi exportado (bitrixLeadId nulo)', async () => {
     const repository = makeRepository({
       update: vi
         .fn()
@@ -93,10 +98,10 @@ describe('LeadUseCases — sync automático com Bitrix na mudança de etapa', ()
     await useCases.updateLead('org-1', 'lead-1', { status: 'Reunião Agendada' });
     await new Promise((r) => setTimeout(r, 0));
 
-    expect(pushLeadToBitrixMock).not.toHaveBeenCalled();
+    expect(queueLeadPushToBitrixMock).not.toHaveBeenCalled();
   });
 
-  it('updateLead NÃO dispara pushLeadToBitrix quando a atualização não muda o status', async () => {
+  it('updateLead NÃO enfileira o push para o Bitrix quando a atualização não muda o status', async () => {
     const repository = makeRepository({
       update: vi.fn().mockResolvedValue({ id: 'lead-1', bitrixLeadId: 'bx-1' }),
     });
@@ -105,10 +110,10 @@ describe('LeadUseCases — sync automático com Bitrix na mudança de etapa', ()
     await useCases.updateLead('org-1', 'lead-1', { owner: 'user-2' });
     await new Promise((r) => setTimeout(r, 0));
 
-    expect(pushLeadToBitrixMock).not.toHaveBeenCalled();
+    expect(queueLeadPushToBitrixMock).not.toHaveBeenCalled();
   });
 
-  it('updateLeadStatus (drag do Kanban) dispara pushLeadToBitrix quando o lead já tem bitrixLeadId', async () => {
+  it('updateLeadStatus (drag do Kanban) enfileira o push para o Bitrix quando o lead já tem bitrixLeadId', async () => {
     const repository = makeRepository({
       updateStatus: vi
         .fn()
@@ -119,6 +124,6 @@ describe('LeadUseCases — sync automático com Bitrix na mudança de etapa', ()
     await useCases.updateLeadStatus('org-1', 'lead-1', 'Qualificação (SDR)');
     await new Promise((r) => setTimeout(r, 0));
 
-    expect(pushLeadToBitrixMock).toHaveBeenCalledWith('org-1', 'lead-1');
+    expect(queueLeadPushToBitrixMock).toHaveBeenCalledWith('org-1', 'lead-1');
   });
 });

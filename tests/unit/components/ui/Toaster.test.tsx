@@ -8,18 +8,23 @@
  */
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import { render, screen, cleanup, act, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, cleanup, act, waitFor, fireEvent } from '@testing-library/react';
 import { Toaster } from '@/components/ui/Toaster';
 import { toast } from '@/lib/toast';
+import { MotionGlobalConfig } from 'framer-motion';
 
 beforeEach(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
+  // Sem isto, a animação de saída do AnimatePresence depende do agendador de frames do framer-motion,
+  // que fica preso quando um teste anterior troca o relógio falso — e o toast fechado nunca sai do DOM
+  // quando esta suíte roda inteira (passava isolado). Com `skipAnimations` a saída é imediata.
+  MotionGlobalConfig.skipAnimations = true;
 });
 
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
+  MotionGlobalConfig.skipAnimations = false;
 });
 
 describe('Toaster', () => {
@@ -49,7 +54,6 @@ describe('Toaster', () => {
   });
 
   it('fecha um toast individualmente ao clicar no X, sem afetar os outros', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<Toaster />);
     act(() => {
       toast.error('Erro A');
@@ -57,9 +61,18 @@ describe('Toaster', () => {
     });
 
     const [closeA] = await screen.findAllByRole('button', { name: 'Fechar notificação' });
-    await user.click(closeA);
+    // `fireEvent` e não `user.click`: o toast é `drag="x"` (arrastar para dispensar) e, no jsdom, a
+    // sequência pointerdown/pointerup sintética do user-event é absorvida pelo gesto de drag do
+    // framer-motion e o `click` nunca chega ao botão. `fireEvent.click` entrega o clique ao X.
+    fireEvent.click(closeA);
 
-    expect(screen.queryByText('Erro A')).not.toBeInTheDocument();
+    // O toast sai com animação de saída (AnimatePresence, ~0,2s): some do DOM só depois dela.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+    await waitFor(() => {
+      expect(screen.queryByText('Erro A')).not.toBeInTheDocument();
+    });
     expect(screen.getByText('Erro B')).toBeInTheDocument();
   });
 

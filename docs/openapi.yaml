@@ -130,6 +130,8 @@ tags:
       AgentCapabilityGrant ∩ RoleCapabilityGrant ∩ ToolBinding VERIFIED ∩ risco/aprovação`.
   - name: Bitrix24
     description: Conexão, sincronização e extração de dados com o Bitrix24 (CRM externo)
+  - name: CRM Externo
+    description: Conectores genéricos de CRM externo (HubSpot, RD Station, Monday etc.) — conexões por tenant
   - name: 3CX
     description: Integração com o PABX 3CX (discagem e eventos de chamada)
   - name: Copiloto IA
@@ -4568,6 +4570,77 @@ paths:
             content:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/external-crm:
+    get:
+      tags: [CRM Externo]
+      summary: Lista as conexões de CRM externo do tenant (somente ADMIN/GESTOR)
+      parameters:
+        - name: provider
+          in: query
+          required: false
+          description: 'Filtra por provider (ex.: hubspot, rdstation, monday)'
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: object }
+        '401': { description: Não autenticado }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [CRM Externo]
+      summary: Cria uma conexão de CRM externo (somente ADMIN/GESTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [provider, label, config]
+              properties:
+                provider: { type: string }
+                label: { type: string }
+                config:
+                  type: object
+                  description: Credenciais/configuração do provider (cifradas em repouso)
+                inboundEventsEnabled: { type: boolean }
+      responses:
+        '201':
+          description: Conexão criada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string }
+                  provider: { type: string }
+                  label: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { description: Não autenticado }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /integrations/external-crm/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    delete:
+      tags: [CRM Externo]
+      summary: Remove uma conexão de CRM externo (somente ADMIN/GESTOR)
+      responses:
+        '200':
+          description: Removida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+        '401': { description: Não autenticado }
         '403': { $ref: '#/components/responses/Forbidden' }
   /integrations/birth-voice/calls:
     get:

@@ -38,8 +38,8 @@ describe('Dialog', () => {
     const dialog = screen.getByRole('dialog', { hidden: true });
 
     expect(dialog.hasAttribute('open')).toBe(false);
-    expect(dialog.classList.contains('open:flex')).toBe(true);
-    expect(dialog.classList.contains('open:flex-col')).toBe(true);
+    // O layout flex vive num <div> interno; o <dialog> em si nunca pode ganhar `display` fixo
+    // (nem `flex` incondicional), senão sobrescreve o `display: none` nativo de `dialog:not([open])`.
     expect(dialog.classList.contains('flex')).toBe(false);
     expect(dialog.classList.contains('flex-col')).toBe(false);
     expect(HTMLDialogElement.prototype.showModal).not.toHaveBeenCalled();
