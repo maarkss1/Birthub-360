@@ -167,7 +167,7 @@ export function LandingLoginSplitScreen() {
               PT-BR
               <ChevronDown className="w-3 h-3 ml-1" />
             </button>
-            <button className="rounded-full border border-slate-300 dark:border-white/20 px-5 py-2 text-xs font-bold tracking-wide hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+            <button type="button" className="rounded-full border border-slate-300 dark:border-white/20 px-5 py-2 text-xs font-bold tracking-wide hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
               Acessar Hub &rarr;
             </button>
           </div>
@@ -192,10 +192,10 @@ export function LandingLoginSplitScreen() {
             </motion.p>
             
             <motion.div variants={staggerItem} className="flex items-center gap-4 pt-4">
-              <button onClick={() => navigate('/login')} className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#E6C65A] px-6 py-3 text-sm font-bold text-slate-900 shadow-[0_4px_14px_rgba(212,175,55,0.4)] transition-transform hover:-translate-y-0.5">
+              <button type="button" onClick={() => navigate('/login')} className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#E6C65A] px-6 py-3 text-sm font-bold text-slate-900 shadow-[0_4px_14px_rgba(212,175,55,0.4)] transition-transform hover:-translate-y-0.5">
                 Explorar o Birth Hub &rarr;
               </button>
-              <button className="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-brand dark:hover:text-brand transition-colors">
+              <button type="button" className="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-brand dark:hover:text-brand transition-colors">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 dark:border-white/20">
                   <Play className="h-4 w-4 ml-0.5" />
                 </span>
