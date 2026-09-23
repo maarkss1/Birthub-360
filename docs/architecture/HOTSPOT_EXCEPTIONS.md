@@ -94,6 +94,14 @@ propósito por estar fora de "## Exceções ativas"):
 - **Registrado em:** 2026-08-29
 - **Reavaliar até:** 2026-11-30 (mesmo checkpoint do `KNOWN_VIOLATIONS.md`)
 
+### `src/features/integrations/components/Integrations.tsx`
+
+- **Limite excepcional:** 1200 linhas
+- **Dono:** Agente 06 — Integrações e Bitrix
+- **Motivo:** Exceção criada para liberar o build, arquivo passou das 1000 linhas (1081).
+- **Registrado em:** 2026-09-23
+- **Reavaliar até:** 2026-11-30 (mesmo checkpoint dos demais itens desta lista)
+
 ## Débito conhecido, abaixo do limite de falha (sem exceção necessária)
 
 Arquivos na faixa de aviso (701–1000 linhas) no momento em que este gate foi criado — não

@@ -94,21 +94,21 @@ export function SinglePageDashboard() {
             </div>
 
             {/* Ações Rápidas de Topo */}
-            <div className="flex items-center gap-2.5 shrink-0">
+            <div className="flex items-center gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => navigate('/app/prospect')}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface-interactive text-ink border border-line text-xs font-semibold transition-all hover:shadow-sm active:scale-[0.98] cursor-pointer"
+                className="group inline-flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl bg-surface-elevated/90 hover:bg-surface-interactive text-ink border border-line shadow-card hover:shadow-card-hover text-xs font-semibold transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
-                <Search className="w-4 h-4 text-ink-2" />
+                <Search className="w-4 h-4 text-ink-2 group-hover:text-brand transition-colors" />
                 <span>Prospecção</span>
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/app/crm')}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-2 text-on-brand text-xs font-bold transition-all shadow-sm shadow-brand/15 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                className="group relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand to-brand-2 text-on-brand text-xs font-bold transition-all duration-300 shadow-glow-brand hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer overflow-hidden"
               >
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span>Novo Negócio</span>
               </button>
             </div>
@@ -214,22 +214,22 @@ export function SinglePageDashboard() {
             {/* TILE EMPILHADO 1: LEADS QUALIFICADOS */}
             <motion.section variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } }}
               aria-label="Volume de Leads"
-              className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
+              className="group flex-1 rounded-3xl bg-surface-elevated/90 backdrop-blur-md border border-line p-6 sm:p-7 shadow-card hover:shadow-card-hover hover:border-brand/35 hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden flex flex-col justify-between"
             >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-brand/8 rounded-bl-full pointer-events-none" />
+              <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-bl from-brand/15 to-transparent rounded-bl-full pointer-events-none transition-transform duration-500 group-hover:scale-110" />
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
                     Leads Ativos no Funil
                   </span>
-                  <span className="p-2 rounded-xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
+                  <span className="p-2.5 rounded-xl bg-brand/10 text-brand-ink dark:text-brand border border-brand/20 shadow-sm transition-transform duration-300 group-hover:scale-105">
                     <TrendingUp className="w-4 h-4" />
                   </span>
                 </div>
                 <p className="text-3xl sm:text-4xl font-black text-ink tracking-tight [font-variant-numeric:tabular-nums]">
                   {totalLeads}
                 </p>
-                <p className="text-xs font-semibold text-ok mt-2 flex items-center gap-1">
+                <p className="text-xs font-semibold text-ok mt-2 flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>{totalLeads > 0 ? 'Leads monitorados no funil' : 'Sem leads ativos'}</span>
                 </p>
@@ -244,10 +244,10 @@ export function SinglePageDashboard() {
                 <button
                   type="button"
                   onClick={() => navigate('/app/prospect')}
-                  className="text-xs font-bold text-brand-ink dark:text-brand hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-brand-ink dark:text-brand hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <span>Prospecção</span>
-                  <ChevronRight className="w-3 h-3" />
+                  <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
             </motion.section>
@@ -255,22 +255,22 @@ export function SinglePageDashboard() {
             {/* TILE EMPILHADO 2: TAXA DE CONVERSÃO / WIN RATE */}
             <motion.section variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } }}
               aria-label="Taxa de Conversão"
-              className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
+              className="group flex-1 rounded-3xl bg-surface-elevated/90 backdrop-blur-md border border-line p-6 sm:p-7 shadow-card hover:shadow-card-hover hover:border-red-violet/35 hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden flex flex-col justify-between"
             >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-red-violet/8 rounded-bl-full pointer-events-none" />
+              <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-bl from-red-violet/15 to-transparent rounded-bl-full pointer-events-none transition-transform duration-500 group-hover:scale-110" />
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
                     Taxa de Conversão (Win Rate)
                   </span>
-                  <span className="p-2 rounded-xl bg-red-violet/10 text-red-violet border border-red-violet/20">
+                  <span className="p-2.5 rounded-xl bg-red-violet/10 text-red-violet border border-red-violet/20 shadow-sm transition-transform duration-300 group-hover:scale-105">
                     <Radar className="w-4 h-4" />
                   </span>
                 </div>
                 <p className="text-3xl sm:text-4xl font-black text-ink tracking-tight [font-variant-numeric:tabular-nums]">
                   {winRate}%
                 </p>
-                <p className="text-xs font-semibold text-ink-2 mt-2 flex items-center gap-1">
+                <p className="text-xs font-semibold text-ink-2 mt-2 flex items-center gap-1.5">
                   <Target className="w-3.5 h-3.5 text-brand" />
                   <span>
                     {closedThisMonth > 0
@@ -287,10 +287,10 @@ export function SinglePageDashboard() {
                 <button
                   type="button"
                   onClick={() => navigate('/app/analytics')}
-                  className="text-xs font-bold text-red-violet-active hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-red-violet-active hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <span>Analytics</span>
-                  <ChevronRight className="w-3 h-3" />
+                  <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
             </motion.section>
@@ -299,8 +299,17 @@ export function SinglePageDashboard() {
           {/* TILE 4: COPILOTO IA — Gradiente Suave Dourado→Violeta na Superfície */}
           <motion.section variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } }}
             aria-label="Copiloto de IA e Inteligência Ativa"
-            className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-brand/8 via-surface to-red-violet/8 border border-brand/20 dark:border-brand/30 p-7 sm:p-8 shadow-sm relative overflow-hidden"
+            className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-brand/8 via-surface-elevated/90 to-red-violet/8 backdrop-blur-md border border-brand/20 dark:border-brand/30 p-7 sm:p-8 shadow-card relative overflow-hidden"
           >
+            {/* Feixe Laser Periférico Copiloto IA (Violeta / Íris de inteligência) */}
+            <BorderBeam
+              variant="violet"
+              size={360}
+              duration={16}
+              borderWidth={1.5}
+              radius={24}
+              glow
+            />
             <div className="absolute right-0 top-0 w-72 h-72 bg-brand/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -334,8 +343,8 @@ export function SinglePageDashboard() {
               <div className="flex items-center gap-3 shrink-0">
                 <button
                   type="button"
-                  onClick={() => navigate('/app/commercial_intelligence')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-interactive text-ink border border-line text-xs font-semibold transition-all hover:shadow-sm active:scale-[0.98] cursor-pointer"
+                  onClick={() => navigate('/app/intelligence')}
+                  className="group inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-interactive text-ink border border-line text-xs font-semibold transition-all hover:shadow-card hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                 >
                   <LineChart className="w-4 h-4 text-brand" />
                   <span>Ver Dossiê Completo</span>
@@ -343,9 +352,9 @@ export function SinglePageDashboard() {
                 <button
                   type="button"
                   onClick={() => navigate(totalLeads > 0 ? '/app/crm' : '/app/prospect')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-2 text-on-brand text-xs font-bold transition-all shadow-sm shadow-brand/15 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand to-brand-2 text-on-brand text-xs font-bold transition-all duration-300 shadow-glow-brand hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer overflow-hidden"
                 >
-                  <Zap className="w-4 h-4" />
+                  <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   <span>{totalLeads > 0 ? 'Agir nos Deals' : 'Prospectar Agora'}</span>
                 </button>
               </div>

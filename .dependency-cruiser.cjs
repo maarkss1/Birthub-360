@@ -77,10 +77,13 @@ module.exports = {
         'exceção estrutural: é tratado como serviço transversal (mesmo papel de src/shared/), ' +
         'porque notificação é infraestrutura consumida por natureza por qualquer fluxo de negócio ' +
         '— o único uso real hoje é automations -> notifications ' +
-        '(src/features/automations/automation.engine.ts), mas a regra não proíbe o mesmo padrão ' +
-        'para outra feature no futuro.',
+        'para outra feature no futuro. ' +
+        'Exceção 2: `src/features/intelligence/` atua como uma camada de aplicação orquestradora (ex: CentralAISuiteService) ' +
+        'que precisa consumir vários outros domínios de features para funcionar. ' +
+        'Exceção 3: `src/features/job-roles/` atua como uma camada transversal de controle de permissões e atribuições.',
       from: {
         path: '^src/features/([^/]+)/',
+        pathNot: ['^src/features/intelligence/', '^src/features/job-roles/'],
       },
       to: {
         path: '^src/features/([^/]+)/',

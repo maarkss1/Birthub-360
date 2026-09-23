@@ -29,92 +29,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
 import { EASE_PREMIUM, fadeInUp, SPRING_SOFT, useMagnetic, useTilt } from '../../../lib/motion';
 
-// Ícones da abertura animada (ConnectingCircles) — os 3 primeiros ecoam os pilares da marca;
-// o 4º (LayoutGrid) é o mesmo ícone do botão "Hub Executivo" na Sidebar, o destino de entrada.
-const CONNECT_ICONS: readonly { icon: LucideIcon; accent: 'brand' | 'sunset' | 'red-violet' }[] = [
-  { icon: Building2, accent: 'brand' },
-  { icon: ListChecks, accent: 'sunset' },
-  { icon: Sparkles, accent: 'red-violet' },
-  { icon: LayoutGrid, accent: 'brand' },
-];
 
-interface ConnectingCirclesProps {
-  reduceMotion: boolean;
-}
-
-// Abertura da tela de entrada do produto: os mesmos "círculos" do Hub Executivo (badges
-// circulares, ver DestinationCard em src/features/hub/components/HubScreen.tsx) se conectando —
-// pedido explícito do usuário. Não é decoração gratuita (regra #6 da constituição): comunica
-// literalmente que este login é a porta de entrada para os destinos do Hub, terminando no mesmo
-// ícone (LayoutGrid) usado no atalho real do Hub na Sidebar. Toca uma vez na montagem (sem
-// repeat), e com prefers-reduced-motion a versão final já nasce montada, sem desenhar as linhas.
-function ConnectingCircles({ reduceMotion }: ConnectingCirclesProps) {
-  const nodeCount = CONNECT_ICONS.length;
-  const spacing = 96;
-  const radius = 22;
-  const width = spacing * (nodeCount - 1) + radius * 2 + 8;
-  const height = radius * 2 + 8;
-  const cy = height / 2;
-  const cx = (index: number) => radius + 4 + index * spacing;
-
-  return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      width={width}
-      height={height}
-      className="mx-auto h-auto w-full max-w-sm"
-      aria-hidden="true"
-    >
-      {CONNECT_ICONS.slice(0, -1).map((node, index) => (
-        <motion.line
-          key={`line-${cx(index)}-${cx(index + 1)}`}
-          x1={cx(index)}
-          y1={cy}
-          x2={cx(index + 1)}
-          y2={cy}
-          style={{ stroke: `var(--${node.accent})` }}
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeOpacity={0.4}
-          initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.6 }}
-          transition={{ duration: 0.8, ease: EASE_PREMIUM, delay: 0.3 + index * 0.2 }}
-        />
-      ))}
-      {CONNECT_ICONS.map(({ icon: Icon, accent }, index) => {
-        const isHub = index === nodeCount - 1;
-        return (
-          <motion.g
-            key={`node-${cx(index)}`}
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.4, rotate: -30 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ ...SPRING_SOFT, delay: index * 0.2 }}
-            style={{ transformOrigin: `${cx(index)}px ${cy}px` }}
-          >
-            <circle
-              cx={cx(index)}
-              cy={cy}
-              r={radius}
-              style={{
-                fill: isHub ? `var(--${accent})` : 'var(--surface)',
-                stroke: `var(--${accent})`,
-              }}
-              strokeWidth={1.5}
-            />
-            <foreignObject x={cx(index) - 9} y={cy - 9} width={18} height={18}>
-              <div className="flex h-full w-full items-center justify-center">
-                <Icon
-                  className="h-[18px] w-[18px]"
-                  style={{ color: isHub ? 'var(--on-brand)' : `var(--${accent})` }}
-                />
-              </div>
-            </foreignObject>
-          </motion.g>
-        );
-      })}
-    </svg>
-  );
-}
 
 export function LoginScreen() {
   // Esta tela agora é a porta de entrada do produto (rota "/", além de "/login" — ver App.tsx):
@@ -281,47 +196,7 @@ export function LoginScreen() {
       className="relative flex min-h-screen overflow-hidden"
       style={{ ['--login-accent' as string]: BRAND.colors.brand }}
     >
-      {/* Painel esquerdo — cosmos escuro fixo, com o símbolo real da marca (BirthHubLogo, gerado
-          a partir do brand book) no centro, substituindo o logo de outra empresa que estava
-          nesta posição no mockup de referência. Hero split-screen é exceção justificada à
-          regra #2 (seção 5 da constituição): pedido explícito do usuário — ver .claude/PILOTS.md. */}
-      <aside
-        className="relative hidden overflow-hidden lg:flex lg:w-1/2 lg:items-center lg:justify-center"
-        style={{ backgroundColor: BRAND.colors.obsidian }}
-      >
-        <div className="pointer-events-none absolute inset-0 mix-blend-screen" aria-hidden="true">
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.18, scale: 1 }}
-            transition={{ duration: 2, ease: EASE_PREMIUM }}
-            className="absolute -top-32 -left-24 h-[500px] w-[500px] rounded-full blur-[120px]"
-            style={{ backgroundColor: BRAND.colors.brand }}
-          />
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.12, scale: 1 }}
-            transition={{ duration: 2, ease: EASE_PREMIUM, delay: 0.2 }}
-            className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full blur-[140px]"
-            style={{ backgroundColor: BRAND.colors.iris }}
-          />
-        </div>
 
-        <motion.div
-          ref={brandTilt.ref as React.RefObject<HTMLDivElement>}
-          style={brandTilt.style}
-          onPointerMove={brandTilt.onPointerMove}
-          onPointerLeave={brandTilt.onPointerLeave}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative flex flex-col items-center px-10 text-center"
-        >
-          <BrandEmblemBadge className="h-52 w-52" title="Birth Hub 360°" />
-          {/* Não é <h1>: o título de página real é "Acesso Executivo", no painel do formulário —
-              dois <h1> na mesma tela quebraria a hierarquia de heading (a11y, seção 10). */}
-          <p className="mt-8 font-display text-4xl font-extrabold tracking-tight">Birth Hub 360°</p>
-        </motion.div>
-      </aside>
 
       {/* Painel direito — formulário claro fixo (mesma justificativa de cor acima). */}
       <div
@@ -348,7 +223,7 @@ export function LoginScreen() {
           </div>
 
           <div className="mb-6">
-            <ConnectingCircles reduceMotion={!!shouldReduceMotion} />
+            
           </div>
 
           <h1 className="text-center font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl lg:text-left">
@@ -511,7 +386,7 @@ export function LoginScreen() {
                   <div>
                     <label
                       htmlFor="login-name"
-                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                      className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-ink-2"
                     >
                       Seu Nome Completo
                     </label>
@@ -520,7 +395,7 @@ export function LoginScreen() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="block w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3.5 text-sm text-slate-900 placeholder-slate-400 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all hover:bg-white hover:border-slate-300 focus:bg-white focus:border-[var(--login-accent)] focus:outline-none focus:ring-4 focus:ring-[var(--login-accent)]/15"
+                      className="block w-full rounded-xl border border-line bg-surface px-4 py-3.5 text-sm text-ink placeholder-ink-3 shadow-sm transition-all hover:border-brand/40 focus:bg-surface focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
                       placeholder="Ex: Marcelo Nascimento"
                       required={isSignUp}
                     />
@@ -530,13 +405,13 @@ export function LoginScreen() {
                 <div>
                   <label
                     htmlFor="login-email"
-                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-ink-2"
                   >
                     Credencial Institucional
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                      <Mail className="h-4 w-4 text-slate-600" aria-hidden="true" />
+                      <Mail className="h-4 w-4 text-ink-2" aria-hidden="true" />
                     </div>
                     <input
                       id="login-email"
@@ -553,13 +428,13 @@ export function LoginScreen() {
                 <div>
                   <label
                     htmlFor="login-password"
-                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-600"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-ink-2"
                   >
                     Chave de Segurança
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                      <Lock className="h-4 w-4 text-slate-600" aria-hidden="true" />
+                      <Lock className="h-4 w-4 text-ink-2" aria-hidden="true" />
                     </div>
                     <input
                       id="login-password"
@@ -577,14 +452,14 @@ export function LoginScreen() {
                   <div className="flex items-center justify-between pt-1">
                     <label
                       htmlFor="login-remember"
-                      className="flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-600"
+                      className="flex cursor-pointer items-center gap-2 text-xs font-medium text-ink-2"
                     >
                       <input
                         id="login-remember"
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="h-4 w-4 cursor-pointer rounded border-slate-300 transition-all focus:ring-2 focus:ring-[var(--login-accent)] focus:ring-offset-2"
+                        className="h-4 w-4 cursor-pointer rounded border-line transition-all focus:ring-2 focus:ring-brand focus:ring-offset-2"
                         style={{ accentColor: BRAND.colors.brand }}
                       />
                       Manter conexão ativa
@@ -595,7 +470,7 @@ export function LoginScreen() {
                         setIsForgotPassword(true);
                         setError('');
                       }}
-                      className="cursor-pointer text-xs font-bold text-slate-700 transition-colors hover:underline hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--login-accent)] focus-visible:ring-offset-2 rounded"
+                      className="cursor-pointer text-xs font-bold text-ink transition-colors hover:underline hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 rounded"
                     >
                       Esqueci minha senha?
                     </button>
