@@ -1,96 +1,115 @@
-import { Request, Response, NextFunction } from 'express';
-import { env } from '../config/env';
+import { randomBytes } from 'node:crypto';
+import type { NextFunction, Request, Response } from 'express';
 
 /**
- * Middleware de proteção CSRF baseado em validação de Origin/Referer.
- * 
- * Protege rotas autenticadas por sessão (cookies). Fail open (permite) requisições:
- * - Webhooks (não possuem cookies, autenticados por assinatura)
- * - Bearer token (cabeçalho Authorization: Bearer explícito)
+ * Endpoint para gerar o token CSRF.
  */
+export function csrfTokenHandler(req: Request, res: Response) {
+  const token = randomBytes(32).toString('hex');
+  res.cookie('csrfToken', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+  res.json({ success: true, token });
+}
+
+/**
+ * Proteção CSRF por validação estrita de Origin/Referer (SEC-002).
+ */
+
+const WEBHOOK_PATHS: readonly RegExp[] = [
+  /^\/api\/integrations\/birth-voice\/webhook\/?$/,
+  /^\/api\/integrations\/3cx\/webhook(\/|$)/,
+  /^\/api\/webhooks\/(voice-result|email|signature)(\/|$)/,
+  /^\/api\/integrations\/bitrix\/webhook\/[^/]+\/?$/,
+  /^\/api\/integrations\/chatwoot\/webhook\/?$/,
+  /^\/api\/integrations\/stripe\/webhook\/[^/]+\/?$/,
+];
+
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+function isLocalDevOrigin(origin: string): boolean {
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+}
+
+function buildAllowedOrigins(): Set<string> {
+  const allowed = new Set<string>();
+
+  if (process.env.PUBLIC_BASE_URL) {
+    try {
+      allowed.add(new URL(process.env.PUBLIC_BASE_URL).origin);
+    } catch {}
+  }
+
+  if (process.env.ALLOWED_ORIGINS) {
+    for (const raw of process.env.ALLOWED_ORIGINS.split(',')) {
+      const origin = raw.trim();
+      if (origin) allowed.add(origin);
+    }
+  }
+
+  return allowed;
+}
+
+function originOf(value: string): string | null {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+function isAllowedOrigin(origin: string, allowed: Set<string>): boolean {
+  if (allowed.has(origin)) return true;
+  return process.env.NODE_ENV !== 'production' && isLocalDevOrigin(origin);
+}
+
+function deny(res: Response, error: string): void {
+  res.status(403).json({ success: false, error });
+}
+
 export function csrfGuard(req: Request, res: Response, next: NextFunction): void {
-  // Ignorar métodos seguros que não alteram estado
-  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-    return next();
-  }
+  if (SAFE_METHODS.has(req.method)) return next();
 
-  // Permitir requisições autenticadas explicitamente via Bearer token
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
-    return next();
-  }
+  const path = req.originalUrl.split('?')[0] ?? '';
+  if (WEBHOOK_PATHS.some((pattern) => pattern.test(path))) return next();
 
-  // Permitir requisições para rotas de webhooks explícitas (fail open)
-  // Assumimos que as rotas de webhook estão em /api/webhooks ou contém /webhooks
-  if (req.originalUrl.includes('/webhooks')) {
-    return next();
-  }
+  const hasBearer = req.headers.authorization?.toLowerCase().startsWith('bearer ') ?? false;
+  const hasCookie = Boolean(req.headers.cookie);
+  if (hasBearer && !hasCookie) return next();
 
-  // Validar Origin e Referer
   const origin = req.headers.origin;
   const referer = req.headers.referer;
 
   if (!origin && !referer) {
-    // Para mitigar CSRF, navegadores em cross-origin enviam Origin ou Referer
-    res.status(403).json({
-      success: false,
-      error: 'CSRF token missing or invalid. Missing Origin/Referer header.',
-    });
+    deny(res, 'CSRF: cabeçalho Origin/Referer ausente.');
     return;
   }
 
-  const allowedOrigins = new Set<string>();
-  
-  if (env.PUBLIC_BASE_URL) {
-    try {
-      allowedOrigins.add(new URL(env.PUBLIC_BASE_URL).origin);
-    } catch {}
-  }
-  
-  if (env.ALLOWED_ORIGINS) {
-    env.ALLOWED_ORIGINS.split(',').forEach(o => allowedOrigins.add(o.trim()));
+  const allowed = buildAllowedOrigins();
+
+  if (origin && !isAllowedOrigin(origin, allowed)) {
+    deny(res, 'CSRF: Origin não permitida.');
+    return;
   }
 
-  // Ambiente de desenvolvimento: permite localhost
-  if (env.NODE_ENV !== 'production' && origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
-    allowedOrigins.add(origin);
-  }
-  if (env.NODE_ENV !== 'production' && referer) {
-    try {
-      const rOrigin = new URL(referer).origin;
-      if (rOrigin.startsWith('http://localhost:') || rOrigin.startsWith('http://127.0.0.1:')) {
-        allowedOrigins.add(rOrigin);
-      }
-    } catch {}
-  }
-
-  // Validar o Origin (se presente)
-  if (origin) {
-    if (!allowedOrigins.has(origin)) {
-      res.status(403).json({
-        success: false,
-        error: `CSRF Error: Origin ${origin} not allowed.`,
-      });
+  if (referer) {
+    const refererOrigin = originOf(referer);
+    if (!refererOrigin || !isAllowedOrigin(refererOrigin, allowed)) {
+      deny(res, 'CSRF: Referer não permitido.');
       return;
     }
   }
 
-  // Validar o Referer (se presente)
-  if (referer) {
-    try {
-      const refererOrigin = new URL(referer).origin;
-      if (!allowedOrigins.has(refererOrigin)) {
-        res.status(403).json({
-          success: false,
-          error: `CSRF Error: Referer ${refererOrigin} not allowed.`,
-        });
-        return;
-      }
-    } catch (e) {
-      res.status(403).json({
-        success: false,
-        error: 'CSRF Error: Invalid Referer header.',
-      });
+  // Double Submit Cookie Validation
+  if (hasCookie) {
+    const csrfHeader = req.header('x-csrf-token');
+    const csrfCookieMatch = req.headers.cookie?.match(/csrfToken=([^;]+)/);
+    const csrfCookie = csrfCookieMatch ? csrfCookieMatch[1] : null;
+
+    if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
+      deny(res, 'CSRF: Token ausente ou inválido.');
       return;
     }
   }

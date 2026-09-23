@@ -15,8 +15,12 @@ vi.mock('@/lib/logger', () => ({
 // faz fail-open ('unavailable'). A dedupe de entrega em si já tem sua própria cobertura (ver
 // webhookReplayGuard.test.ts); aqui só precisa estar neutra para não interferir nos cenários deste
 // arquivo (idempotência de negócio, RLS, métricas de falha).
+export const claimWebhookDeliveryMock = vi.fn().mockResolvedValue('fresh');
+export const validateWebhookTimestampMock = vi.fn().mockReturnValue({ valid: true });
+
 vi.mock('@/shared/security/webhookReplayGuard', () => ({
-  claimWebhookDelivery: vi.fn().mockResolvedValue('fresh'),
+  claimWebhookDelivery: claimWebhookDeliveryMock,
+  validateWebhookTimestamp: validateWebhookTimestampMock,
   webhookDeliveryFingerprint: vi.fn(() => 'fingerprint-de-teste'),
 }));
 
@@ -244,5 +248,33 @@ describe('POST /webhook/:connectionId', () => {
     expect(metric.values).toContainEqual(
       expect.objectContaining({ labels: { tenant: 'org-1', entity: 'lead' }, value: 1 }),
     );
+  });
+
+  it('RETORNA 200 E IGNORA PROCESSAMENTO se a entrega for um webhook repetido (replay attack ou retry forçado)', async () => {
+    claimWebhookDeliveryMock.mockResolvedValueOnce('replay');
+    prismaMock.bitrixConnection.findUnique.mockResolvedValue(CONNECTION);
+    const app = await buildApp();
+
+    const res = await request(app)
+      .post('/webhook/conn-1')
+      .send('event=ONCRMDEALUPDATE&data[FIELDS][ID]=100&auth[application_token]=segredo-correto&ts=1234567890');
+
+    expect(res.status).toBe(200);
+    expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.bitrixSyncLog.create).not.toHaveBeenCalled();
+  });
+
+  it('RETORNA 401 se a requisição estiver muito defasada no tempo (stale)', async () => {
+    validateWebhookTimestampMock.mockReturnValueOnce({ valid: false, reason: 'expired' });
+    prismaMock.bitrixConnection.findUnique.mockResolvedValue(CONNECTION);
+    const app = await buildApp();
+
+    const res = await request(app)
+      .post('/webhook/conn-1')
+      .send('event=ONCRMDEALUPDATE&data[FIELDS][ID]=100&auth[application_token]=segredo-correto&ts=1234567890');
+
+    expect(res.status).toBe(401);
+    expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
+    expect(prismaMock.bitrixSyncLog.create).not.toHaveBeenCalled();
   });
 });

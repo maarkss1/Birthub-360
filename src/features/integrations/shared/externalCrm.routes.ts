@@ -14,7 +14,7 @@ import type { Request, Response } from 'express';
 export const externalCrmRoutes = Router();
 
 interface AuthenticatedRequest extends Request {
-  user?: { organizationId?: string };
+  user?: { id?: string; role?: string; organizationId?: string };
 }
 
 // Restringe todas as rotas para ADMIN/GESTOR

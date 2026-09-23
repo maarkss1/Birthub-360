@@ -1,8 +1,9 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { opaGuard } from './opaGuard';
 import { Request, Response, NextFunction } from 'express';
 
 // Mock global fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch as any;
 
 describe('opaGuard Middleware', () => {
@@ -19,12 +20,12 @@ describe('opaGuard Middleware', () => {
     } as any;
 
     mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn()
     } as any;
 
-    mockNext = jest.fn();
-    jest.clearAllMocks();
+    mockNext = vi.fn();
+    vi.clearAllMocks();
   });
 
   it('should allow access if OPA returns true', async () => {

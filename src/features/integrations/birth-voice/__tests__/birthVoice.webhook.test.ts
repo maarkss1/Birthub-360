@@ -26,8 +26,12 @@ vi.mock('@/lib/logger', () => ({
 // Mesmo cuidado do bitrix.webhook.test.ts: sem este mock, testes reenviando corpos parecidos
 // colidiriam no fingerprint de `claimWebhookDelivery` (dedupe de entrega) e um teste seguinte
 // seria tratado como replay do anterior.
+export const claimWebhookDeliveryMock = vi.fn().mockResolvedValue('fresh');
+export const validateWebhookTimestampMock = vi.fn().mockReturnValue({ valid: true });
+
 vi.mock('@/shared/security/webhookReplayGuard', () => ({
-  claimWebhookDelivery: vi.fn().mockResolvedValue('fresh'),
+  claimWebhookDelivery: claimWebhookDeliveryMock,
+  validateWebhookTimestamp: validateWebhookTimestampMock,
   webhookDeliveryFingerprint: vi.fn((...parts: unknown[]) => JSON.stringify(parts)),
 }));
 
@@ -213,6 +217,31 @@ describe('POST /webhook (Birth Voices Hub) — isolamento de tenant do segredo (
     const app = await buildApp();
 
     const res = await post(app, body, undefined);
+
+    expect(res.status).toBe(401);
+    expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('RETORNA 200 E IGNORA PROCESSAMENTO se a entrega for um webhook repetido (replay attack ou retry forçado)', async () => {
+    claimWebhookDeliveryMock.mockResolvedValueOnce('replay');
+    connectionsFor({ [ORG_A]: SECRET_ORG_A });
+    const body = payload(ORG_A);
+    const app = await buildApp();
+
+    const res = await post(app, body, sign(SECRET_ORG_A, body));
+
+    expect(res.status).toBe(200);
+    expect(res.body.outcome).toBe('duplicate-ignored');
+    expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('RETORNA 401 se a requisição estiver muito defasada no tempo (stale)', async () => {
+    validateWebhookTimestampMock.mockReturnValueOnce({ valid: false, reason: 'expired' });
+    connectionsFor({ [ORG_A]: SECRET_ORG_A });
+    const body = payload(ORG_A);
+    const app = await buildApp();
+
+    const res = await post(app, body, sign(SECRET_ORG_A, body));
 
     expect(res.status).toBe(401);
     expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
