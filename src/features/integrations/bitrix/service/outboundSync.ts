@@ -412,8 +412,9 @@ export async function pushLeadToBitrix(organizationId: string, leadId: string): 
   } catch (err) {
     logger.warn(
       { err, correlationId, organizationId, leadId },
-      '[bitrix] Falha ao enviar lead automaticamente — motivo salvo em Lead.bitrixSyncError e BitrixSyncLog',
+      '[bitrix] Falha ao enviar lead — motivo salvo em Lead.bitrixSyncError e propagado para fila de retentativa',
     );
+    throw err; // Necessário para o worker BullMQ identificar a falha e agendar o retry
   }
 }
 

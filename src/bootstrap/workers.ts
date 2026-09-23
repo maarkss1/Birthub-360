@@ -22,6 +22,7 @@ import {
   createBitrixExtractionPurgeWorker,
   scheduleBitrixExtractionPurgeJob,
 } from '../features/integrations/bitrix/jobs/bitrixExtractionPurge.worker.js';
+import { createBitrixOutboundWorker } from '../lib/queue/bitrixOutbound.queue.js';
 import {
   createFollowUpWorker,
   scheduleFollowUpJobs,
@@ -111,6 +112,7 @@ export interface EmbeddedWorkersHandle {
   whatsappSignalWorker: CloseableWorker;
   whatsappCommandWorker: CloseableWorker;
   bitrixSyncWorker: CloseableWorker;
+  bitrixOutboundWorker: CloseableWorker;
   bitrixExtractionPurgeWorker: CloseableWorker;
   followUpWorker: CloseableWorker;
   execSummaryWorker: CloseableWorker;
@@ -158,6 +160,7 @@ export function startEmbeddedWorkers(): EmbeddedWorkersHandle {
     whatsappSignalWorker: embeddedWorkersEnabled ? createWhatsAppSignalWorker() : null,
     whatsappCommandWorker: embeddedWorkersEnabled ? createWhatsAppCommandWorker() : null,
     bitrixSyncWorker: embeddedWorkersEnabled ? createBitrixSyncWorker() : null,
+    bitrixOutboundWorker: embeddedWorkersEnabled ? createBitrixOutboundWorker() : null,
     bitrixExtractionPurgeWorker: embeddedWorkersEnabled
       ? createBitrixExtractionPurgeWorker()
       : null,
