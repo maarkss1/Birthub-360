@@ -48,6 +48,7 @@ export const ENCRYPTED_MODEL_FIELDS: Record<string, readonly string[]> = {
   SlackConnection: ['webhookUrl', 'botToken'],
   StripeConnection: ['secretKey', 'webhookSecret'],
   OmieConnection: ['appKey', 'appSecret'],
+  ExternalCrmConnection: ['config'],
   // Tokens OAuth de login social (Google/Microsoft via Better Auth, gravados por
   // prismaAdapter em src/lib/auth.ts) — mesma classe de credencial de terceiro das linhas
   // acima. Ver .agents/handoffs/roadmap-v2-onda-1/01-para-00-account-oauth-tokens-sem-cifra.md.

@@ -683,6 +683,7 @@ model Lead {
   dealClosureEvents           DealClosureEvent[]
   copilotoConversations       CopilotoConversation[]
   copilotoDealHealthSnapshots CopilotoDealHealthSnapshot[]
+  externalCrmSyncLogs         ExternalCrmSyncLog[]
   // NOT NULL + ON DELETE CASCADE (DATA-007/DATA-003): reaplicado após confirmar que o banco não
   // tem linhas órfãs (ver migration 20260920010000_data007_organizationid_not_null_guarded, que
   // falha com RAISE EXCEPTION caso encontre alguma antes de aplicar a constraint).
@@ -922,6 +923,9 @@ model Organization {
   slackConnections              SlackConnection[]
   stripeConnections             StripeConnection[]
   omieConnections               OmieConnection[]
+  externalCrmConnections        ExternalCrmConnection[]
+  externalCrmSyncRules          ExternalCrmSyncRule[]
+  externalCrmSyncLogs           ExternalCrmSyncLog[]
   attachments                   Attachment[]
   optOutRecords                 OptOutRecord[]
   crmPipelines                  CrmPipeline[]
@@ -1959,16 +1963,16 @@ model PlaybookInsight {
 
   /// Quantos AIPendingAction.outcomeStatus=POSITIVE embasavam esta sugestão no momento em que foi
   /// gerada/atualizada — histórico, não recalculado retroativamente quando a base real muda.
-  evidenceCount Int
+  evidenceCount   Int
   /// AIPendingAction.id das evidências reais que embasaram a sugestão — proveniência para revisão
   /// humana, nunca uma lista fabricada.
   sourceActionIds String[]
 
-  status      PlaybookInsightStatus @default(SUGGESTED)
-  broadcastAt DateTime?
+  status                          PlaybookInsightStatus @default(SUGGESTED)
+  broadcastAt                     DateTime?
   /// User.id de quem decidiu anunciar pro time (nunca inferido — vem de req.user na rota
   /// autenticada, mesmo padrão de AIPendingAction.approvedBy).
-  broadcastBy String?
+  broadcastBy                     String?
   /// Preenchido só se alguém decidir promover a sugestão para um item real e permanente da Matriz
   /// de Objeções (fluxo já existente, POST /api/playbook/objection-matrix) — nunca automático.
   promotedToObjectionMatrixItemId String?
@@ -4836,3 +4840,91 @@ model AgentBuildProposal {
 }
 
 // --- ELITE COMMERCIAL AGENT ---
+
+// --- GENERIC CRM INTEGRATION (HubSpot, Pipedrive, RD Station, Monday) ---
+
+model ExternalCrmConnection {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  /// Provider identifier: "hubspot", "pipedrive", "rdstation", "monday", etc.
+  provider String
+
+  /// Display name for the connection (e.g. "HubSpot Principal")
+  label String @default("External CRM")
+
+  /// JSON object containing the encrypted configuration/credentials.
+  /// For OAuth: { accessToken, refreshToken, expiresAt, domain }
+  /// For API Key: { apiKey, domain }
+  /// It is encrypted in rest by the Prisma extension in src/lib/prisma.ts via src/lib/crypto/piiFields.ts.
+  config String @db.Text
+
+  /// Whether we process inbound webhooks/events from this CRM
+  inboundEventsEnabled Boolean @default(false)
+
+  syncRules ExternalCrmSyncRule[]
+  syncLogs  ExternalCrmSyncLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([provider])
+}
+
+model ExternalCrmSyncRule {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  connectionId String
+  connection   ExternalCrmConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  /// "deal" or "lead" or "contact"
+  source String @default("deal")
+
+  /// Mapping configurations or specific pipeline filters
+  categoryId   String?
+  stageId      String?
+  assignedById String?
+
+  active Boolean @default(true)
+
+  lastRunAt         DateTime?
+  lastImportedCount Int       @default(0)
+  lastError         String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([connectionId])
+  @@index([active])
+}
+
+model ExternalCrmSyncLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  connectionId String?
+  connection   ExternalCrmConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+
+  direction String
+  status    String
+
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  externalEntityId String?
+  payloadSnapshot  String? @db.Text
+  errorDetails     String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([connectionId])
+  @@index([leadId])
+  @@index([createdAt])
+}

@@ -183,9 +183,9 @@ export function LoginScreen() {
           email,
           password,
           name: name || email.split('@')[0],
-          callbackURL: '/hub',
+          callbackURL: '/app',
         })
-      : await authClient.signIn.email({ email, password, rememberMe, callbackURL: '/hub' });
+      : await authClient.signIn.email({ email, password, rememberMe, callbackURL: '/app' });
 
     if (result.error) {
       setError(result.error.message || 'Não foi possível autenticar. Verifique suas credenciais.');
@@ -258,7 +258,7 @@ export function LoginScreen() {
   }
 
   if (currentUser) {
-    return <Navigate to="/hub" replace />;
+    return <Navigate to="/app" replace />;
   }
 
   // Classes de texto/borda do painel direito: literais (slate), não os tokens semânticos
