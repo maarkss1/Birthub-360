@@ -6,6 +6,7 @@ import type { SignatureStatus } from '../../../shared/domain/signature.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
+  validateWebhookTimestamp,
 } from '../../../shared/security/webhookReplayGuard.js';
 import { applySignatureStatusUpdate } from '../../cadence/application/documentSignature.js';
 import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
@@ -76,6 +77,14 @@ async function handleSignatureStatus(req: Request, res: Response): Promise<void>
   if (!isValidSignature(rawBody, req.header('x-signature-webhook-signature'), secret)) {
     logger.warn('Webhook de status de assinatura com assinatura inválida — descartado.');
     res.status(401).json({ success: false, error: 'Assinatura inválida.' });
+    return;
+  }
+
+  const timestamp = req.header('x-signature-timestamp') || req.header('x-timestamp');
+  const tsValidation = validateWebhookTimestamp(timestamp);
+  if (!tsValidation.valid) {
+    logger.warn('Webhook rejeitado por timestamp inválido (Replay Protection)');
+    res.status(401).json({ success: false, error: 'Timestamp inválido ou expirado.' });
     return;
   }
 

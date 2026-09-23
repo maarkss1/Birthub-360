@@ -7,6 +7,7 @@ import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
+  validateWebhookTimestamp,
 } from '../../../shared/security/webhookReplayGuard.js';
 import { isValidSignature } from '../birth-voice/birthVoice.helpers.js';
 import {
@@ -54,6 +55,14 @@ threecxWebhookRouter.post(
     if (!isValidSignature(rawBody, signature, secret)) {
       logger.warn('Webhook do 3CX com assinatura inválida — descartado.');
       res.status(401).json({ success: false, error: 'Assinatura inválida.' });
+      return;
+    }
+
+    const timestamp = req.header('x-3cx-timestamp') || req.header('x-timestamp');
+    const tsValidation = validateWebhookTimestamp(timestamp);
+    if (!tsValidation.valid) {
+      logger.warn('Webhook rejeitado por timestamp inválido (Replay Protection)');
+      res.status(401).json({ success: false, error: 'Timestamp inválido ou expirado.' });
       return;
     }
 

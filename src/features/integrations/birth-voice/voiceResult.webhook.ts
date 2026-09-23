@@ -10,6 +10,7 @@ import { container } from '../../../shared/di/container.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
+  validateWebhookTimestamp,
 } from '../../../shared/security/webhookReplayGuard.js';
 import { sseService } from '../../notifications/sse.service.js';
 import { sendWhatsAppMessage } from '../whatsapp/whatsapp.service.js';
@@ -126,6 +127,14 @@ async function handleVoiceResult(req: Request, res: Response): Promise<void> {
   }
 
   const provided = req.headers['x-birthhub360-webhook-secret'];
+  const timestamp = req.headers['x-birthhub360-timestamp'] || req.headers['x-timestamp'];
+
+  const tsValidation = validateWebhookTimestamp(timestamp as string | undefined);
+  if (!tsValidation.valid) {
+    logger.warn('Webhook rejeitado por timestamp inválido (Replay Protection)');
+    res.status(401).json({ success: false, error: 'Timestamp inválido ou expirado.' });
+    return;
+  }
   if (!secretMatches(typeof provided === 'string' ? provided : undefined, expectedSecret)) {
     res.status(401).json({ success: false, error: 'Unauthorized webhook secret' });
     return;

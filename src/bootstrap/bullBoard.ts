@@ -1,32 +1,31 @@
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
+import express from 'express';
 import type { Express } from 'express';
 import { agentQueue } from '../lib/queue/agent.worker.js';
 import { leadsQueue } from '../lib/queue/index.js';
 import { queuesEnabled } from '../lib/queue/redis.js';
 import { searchQueue } from '../lib/queue/search.queue.js';
-import { authenticateToken } from '../shared/middlewares/authenticateToken.js';
-import { requireTenant } from '../shared/middlewares/authorization.js';
 import { requirePlatformOperator } from '../shared/middlewares/requirePlatformOperator.js';
-import { requireRole } from '../shared/middlewares/requireRole.js';
+import { logger } from '../lib/logger.js';
 
 /**
- * UI de monitoramento de filas (BullBoard) em /admin/queues. Painel administrativo: além de
- * autenticação, exige papel ADMIN — os jobs exibidos aqui carregam dados de TODAS as organizações
- * (filas são globais, não por tenant), então qualquer usuário comum autenticado poder abrir isso
- * era exposição cross-tenant. Restringir a ADMIN reduz a superfície ao papel mais alto existente;
- * o risco residual (ADMIN de uma organização enxergar jobs de outra) fica documentado no
- * relatório de segurança.
+ * SEC-001 (Sprint 01/Onda 13) e P0 Security Freeze (BullBoard tenant data isolation):
+ * A UI do BullBoard exibe jobs com dados de TODAS as organizações (filas globais).
+ * Anteriormente, a rota era exposta na mesma porta web da aplicação, permitindo acesso se o usuário
+ * estivesse autenticado, com tenant e role ADMIN, criando um risco de "tenant admin enxergar jobs
+ * cross-tenant".
  *
- * SEC-001 (Sprint 01/Onda 13): `requirePlatformOperator` é a segunda trava, obrigatória —
- * ADMIN de uma organização não é automaticamente "operador de infraestrutura" (a distinção que
- * o próprio pacote SEC-001 pede). Sem PLATFORM_OPERATOR_TOKEN configurado, a rota nega por
- * padrão mesmo para um ADMIN de verdade.
+ * Resolução na Origem (Network Isolation): 
+ * O BullBoard agora é removido da aplicação Express principal e isolado em um servidor
+ * rodando em uma porta separada, acessível APENAS via localhost (127.0.0.1).
+ * Além do isolamento de rede, mantém-se a trava exigindo o `requirePlatformOperator`.
  */
 export function mountBullBoard(app: Express): void {
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath('/admin/queues');
+  
   if (queuesEnabled && leadsQueue && searchQueue && agentQueue) {
     createBullBoard({
       queues: [
@@ -38,12 +37,17 @@ export function mountBullBoard(app: Express): void {
     });
   }
 
-  app.use(
-    '/admin/queues',
-    authenticateToken,
-    requireTenant,
-    requireRole(['ADMIN']),
-    requirePlatformOperator,
-    serverAdapter.getRouter(),
-  );
+  // Cria um app Express completamente separado apenas para o BullBoard
+  const bullBoardApp = express();
+  
+  // Exige apenas o token de operador da plataforma (sem dependência de tenant/admin de negócio)
+  bullBoardApp.use('/admin/queues', requirePlatformOperator, serverAdapter.getRouter());
+
+  // Porta dedicada para o serviço isolado (default 3010)
+  const port = process.env.BULL_BOARD_PORT ? parseInt(process.env.BULL_BOARD_PORT, 10) : 3010;
+  
+  // Importante: bind em 127.0.0.1 garante que a porta NÃO está exposta para a rede externa
+  bullBoardApp.listen(port, '127.0.0.1', () => {
+    logger.info({ port, host: '127.0.0.1' }, 'BullBoard (Isolated) running on http://127.0.0.1:' + port + '/admin/queues');
+  });
 }

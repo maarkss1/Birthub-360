@@ -3,6 +3,7 @@ import cors from 'cors';
 import type { Express } from 'express';
 import helmet from 'helmet';
 import { env } from '../config/env.js';
+import { csrfGuard } from '../shared/security/csrfGuard.js';
 
 // Sem isto, esquecer de definir ALLOWED_ORIGINS em produção fazia o servidor subir "com sucesso"
 // mas só aceitando as origens de localhost do fallback abaixo — todo tráfego do frontend real de
@@ -157,6 +158,9 @@ export function applySecurityMiddleware(app: Express): void {
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     }),
   );
+
+  // Proteção CSRF
+  app.use(csrfGuard);
 
   // Compressão gzip/brotli — reduz tamanho de resposta até 70%
   app.use(compression());

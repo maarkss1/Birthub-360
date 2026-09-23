@@ -1,0 +1,45 @@
+ID,Priority,Wave,Area,Task,Owner,Dependencies,Acceptance,Status
+SEC-001,P0,0,Security,Webhook replay protection,15/08,Transport inventory,Timestamp+HMAC+nonce/idempotency negative tests,BLOCKED
+SEC-002,P0,0,Security,Dedicated CSRF,15/01,Auth inventory,Session-bound token+Origin/Referer tests,BLOCKED
+SEC-003,P0,0,Security,BullBoard tenant isolation,15/08,Queue metadata,Org A cannot enumerate Org B jobs,BLOCKED
+SEC-004,P0,0,Security,Git history PII decision,15/08,Backup+scan,Decision and approved runbook/exception,OPEN
+SEC-005,P0,0,Security,Customer URLs,15/15,Code scan,No unsafe tenant-specific hardcoding,OPEN
+SEC-006,P0,0,Security,OPA enforcement,15/08,Policy inventory,Behavioral enforcement test,OPEN
+SEC-007,P0,0,Security,Five-role security guide,18,Role inventory,Docs match reality,OPEN
+PROD-001,P1,1,Product,Define three pillars,02,Audit baseline,Approved product taxonomy,OPEN
+PROD-002,P1,1,Product,Map all 51 capabilities to pillar/engine,02/04/07,PROD-001,No orphan product capability,OPEN
+PROD-003,P1,1,Product,Navigation simplification,02/03,PROD-001,Primary nav exposes CRM/Prospecting/Copilot,OPEN
+PROD-004,P1,1,Product,Contextual capability rules,02/07,PROD-002,Secondary capabilities surfaced by context,OPEN
+PROD-005,P1,1,Product,Product Convergence Gate,00,PROD-001,Gate required for new top-level capability,OPEN
+CON-001,P1,2,Consolidation,Unify four AI interfaces,07/02,PROD-003,Canonical Intelligence experience,OPEN
+CON-002,P1,2,Consolidation,Novu decision,06/10,Usage scan,Implemented or removed,OPEN
+CON-003,P1,2,Architecture,101 violations burn-down,07/05/02,Audit,Measured reduction with boundary tests,OPEN
+CON-004,P1,2,Legacy,Remove orphan/placeholder modules,08,Dependency scan,No dead imports/routes,OPEN
+ARCH-001,P1,3,Architecture,Intelligence Clean Architecture,07,CON-003,Boundary tests green,OPEN
+ARCH-002,P1,3,Architecture,Prospecting Clean Architecture,05,CON-003,Boundary tests green,OPEN
+ARCH-003,P1,3,Architecture,UI-only modules migration,02/03,CON-003,Reports/Roleplay/Settings/Team/Gamification aligned,OPEN
+WS-001,P1,4,Workspace,RoleWorkspaceDefinition,01/02,ARCH-001,Persisted tenant-aware definition,OPEN
+WS-002,P1,4,Workspace,GET /api/workspaces/current,02/07,WS-001,Server-resolved workspace,OPEN
+WS-003,P1,4,Workspace,Dynamic React workspace,02/03,WS-002,No fixed role layout as source of truth,OPEN
+WS-004,P1,4,Workspace,Persona workspace IA,02/03,WS-003,SDR/Closer/Manager/Admin experiences coherent,OPEN
+BRAIN-001,P1,4,Architecture,CORE domain extraction,07,CON-001,Canonical boundaries documented,OPEN
+INT-001,P1,5,Intelligence,Unified Intelligence facade,07,CON-001,All AI calls normalized,OPEN
+INT-002,P1,5,Intelligence,Contextual AI in CRM,02/07,INT-001,AI available from relevant records,OPEN
+INT-003,P1,5,Intelligence,Contextual AI in Prospecting,05/07,INT-001,AI available in prospecting workflow,OPEN
+INT-004,P1,5,Intelligence,AI activity/governance,07/18,INT-001,AILog/guardrail visibility consistent,OPEN
+SWARM-001,P1,6,Swarm,User-facing swarm observability,07/02,Existing telemetry,Supervisor/agents/tasks/status/elapsed,OPEN
+SWARM-002,P1,6,Swarm,Trace correlation,10/07,SWARM-001,Trace/log IDs visible,OPEN
+INTG-001,P1,7,Integrations,WhatsApp Redis active state,06,Postgres durable config,Replica-safe session handling,OPEN
+INTG-002,P1,7,Integrations,Unified opt-out,06/07,INTG-001,WhatsApp/voice/email/calls share policy,OPEN
+INTG-003,P1,7,Integrations,3CX/Birth Voices resilience,06,Adapter inventory,Timeout/backoff/jitter/circuit/idempotency tests,OPEN
+PROD-010,P2,8,Infrastructure,Managed PostgreSQL+pgvector,10/01,Backup plan,Staging migration rehearsal,OPEN
+PROD-011,P2,8,Infrastructure,Redis/BullMQ cloud,10/16,PROD-010,Worker failover tested,OPEN
+PROD-012,P2,8,Infrastructure,CI/CD+secrets,10/08,PROD-010,Reproducible deployment,OPEN
+PROD-013,P2,8,Infrastructure,Backup restore,14/10,PROD-010,Restore evidence,RISK
+PROD-014,P2,8,Infrastructure,DR/RPO/RTO,14/10,PROD-013,Drill and report,RISK
+DOC-001,P2,9,Contracts,OpenAPI root tags,18,API inventory,6 tags declared,OPEN
+DOC-002,P2,9,Contracts,Security guide/runbooks,18,Security gates,Docs match implementation,OPEN
+ML-001,P3,10,ML,Data sufficiency gate,01,Historical deals,Enough labels and no leakage,BLOCKED
+ML-002,P3,10,ML,Feature engineering,07,ML-001,Point-in-time correct features,BLOCKED
+ML-003,P3,10,ML,Model training/evaluation,07,ML-002,Precision Recall F1 ROC-AUC reported,BLOCKED
+ML-004,P3,10,ML,Model registry/drift,01/07,ML-003,Versioning and drift monitoring,BLOCKED

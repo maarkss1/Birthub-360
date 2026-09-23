@@ -13,6 +13,7 @@ import {
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
+  validateWebhookTimestamp,
 } from '../../../shared/security/webhookReplayGuard.js';
 import { emailIntentClassifier } from '../../cadence/infra/emailIntentClassifier.js';
 import { prismaConversationSignalPort } from '../../cadence/infra/PrismaConversationSignalPort.js';
@@ -214,6 +215,14 @@ async function handleInboundEmail(req: Request, res: Response): Promise<void> {
   if (!isValidSignature(rawBody, req.header('x-email-inbound-signature'), secret)) {
     logger.warn('Webhook de e-mail de entrada com assinatura inválida — descartado.');
     res.status(401).json({ success: false, error: 'Assinatura inválida.' });
+    return;
+  }
+
+  const timestamp = req.header('x-email-timestamp') || req.header('x-timestamp');
+  const tsValidation = validateWebhookTimestamp(timestamp);
+  if (!tsValidation.valid) {
+    logger.warn('Webhook rejeitado por timestamp inválido (Replay Protection)');
+    res.status(401).json({ success: false, error: 'Timestamp inválido ou expirado.' });
     return;
   }
 

@@ -1,0 +1,22 @@
+{
+  "name": "BIRTH-HUB-360-EXECUTION-PLAN-V4",
+  "version": "4.0",
+  "basis": [
+    "V0",
+    "V1",
+    "V2",
+    "V3",
+    "Product Convergence Analysis"
+  ],
+  "primary_product_model": "Revenue Operating System",
+  "pillars": [
+    "CRM Comercial",
+    "Prospecção Inteligente",
+    "Copiloto Comercial IA"
+  ],
+  "waves": 11,
+  "specialist_slots": 8,
+  "coordinator": 0,
+  "principle": "reduce perceived complexity without reducing technical capability",
+  "files": 33
+}

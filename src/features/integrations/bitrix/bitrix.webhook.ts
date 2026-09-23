@@ -8,6 +8,7 @@ import { routeParam } from '../../../shared/http/routeParams.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
+  validateWebhookTimestamp,
 } from '../../../shared/security/webhookReplayGuard.js';
 import { callBitrix } from './service/client.js';
 import { applyInboundCustomFields, resolveEnumMaps } from './service/customFields.js';
@@ -190,6 +191,14 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
   const auth = body?.auth as Record<string, unknown> | undefined;
   const applicationToken =
     typeof auth?.application_token === 'string' ? auth.application_token : null;
+
+  const timestamp = req.header('x-bitrix-timestamp') || req.header('x-timestamp') || (body?.ts as string);
+  const tsValidation = validateWebhookTimestamp(timestamp);
+  if (!tsValidation.valid) {
+    logger.warn('Webhook rejeitado por timestamp inválido (Replay Protection)');
+    res.status(401).json({ success: false, error: 'Timestamp inválido ou expirado.' });
+    return;
+  }
 
   if (!applicationToken) {
     res.status(400).json({ success: false, error: 'application_token ausente.' });

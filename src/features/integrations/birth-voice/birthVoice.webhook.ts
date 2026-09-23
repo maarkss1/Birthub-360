@@ -10,6 +10,7 @@ import { container } from '../../../shared/di/container.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
+  validateWebhookTimestamp,
 } from '../../../shared/security/webhookReplayGuard.js';
 import { sendWhatsAppMessage } from '../whatsapp/whatsapp.service.js';
 import {
@@ -286,6 +287,14 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
   }
 
   const signature = req.header('x-birthvoices-signature');
+  const timestamp = req.header('x-birthvoices-timestamp') || req.header('x-timestamp');
+
+  const tsValidation = validateWebhookTimestamp(timestamp);
+  if (!tsValidation.valid) {
+    logger.warn('Webhook rejeitado por timestamp inválido (Replay Protection)');
+    res.status(401).json({ success: false, error: 'Timestamp inválido ou expirado.' });
+    return;
+  }
 
   // Parse "otimista": o resultado só é usado para (a) decidir qual segredo tentar e (b) responder
   // 400 depois que a assinatura já foi validada por algum segredo — nunca antes disso, e nunca
