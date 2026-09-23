@@ -30,6 +30,7 @@ vi.mock('../../../../../src/lib/logger.js', () => ({
 vi.mock('../../../../../src/shared/security/webhookReplayGuard.js', () => ({
   claimWebhookDelivery: vi.fn().mockResolvedValue('fresh'),
   webhookDeliveryFingerprint: vi.fn(() => 'fingerprint-de-teste'),
+  validateWebhookTimestamp: vi.fn().mockReturnValue({ valid: true }),
 }));
 
 const mockEnv: Record<string, string | undefined> = { THREECX_WEBHOOK_SECRET: 'segredo-3cx-teste' };

@@ -12,6 +12,7 @@ vi.mock('@/lib/logger', () => ({
 vi.mock('@/shared/security/webhookReplayGuard', () => ({
   claimWebhookDelivery: vi.fn().mockResolvedValue('fresh'),
   webhookDeliveryFingerprint: vi.fn(() => 'fingerprint-de-teste'),
+  validateWebhookTimestamp: vi.fn().mockReturnValue({ valid: true }),
 }));
 
 const contextStore: { tenantId?: string; bypassRls?: boolean }[] = [];
