@@ -1,5 +1,6 @@
 import { Loader2, Lock, Plus, Trash2, Zap } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../lib/api';
 import { hasRequiredRole } from '../../../lib/auth/authorization';
@@ -183,7 +184,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
           <Zap className="w-5 h-5 text-brand" /> Sincronização automática
         </h3>
         <p className="text-sm text-ink-2 mt-1 max-w-2xl">
-          O Atlas verifica cada regra a cada 15 minutos e importa sozinho só o que bater com o
+          O {BRAND.shortName} verifica cada regra a cada 15 minutos e importa sozinho só o que bater com o
           filtro — sem regra ativa, nada é trazido automaticamente.
         </p>
       </div>

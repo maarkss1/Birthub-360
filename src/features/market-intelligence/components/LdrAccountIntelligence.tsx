@@ -193,7 +193,7 @@ export function LdrAccountIntelligence() {
             <div className="flex items-center gap-2 text-brand">
               <Bot className="h-5 w-5" />
               <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                LDR Atlas · Account Intelligence
+                LDR · Account Intelligence
               </span>
             </div>
             {/* Achado real de finalização (2026-09-04, axe-core/color-contrast): a regra global

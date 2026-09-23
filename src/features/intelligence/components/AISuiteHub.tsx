@@ -84,7 +84,7 @@ const CAPABILITIES: AICapability[] = [
     modelDefault: 'llama3.1:8b',
     samplePayload: {
       meetingTitle: 'Alinhamento WhatsApp',
-      participants: ['Vendedor Atlas', 'Cliente'],
+      participants: ['Vendedor', 'Cliente'],
       rawTranscript:
         'Cliente: O valor mensal ficou acima do meu orçamento atual. Vendedor: Entendo, podemos ajustar a taxa de instalação.',
     },
@@ -329,7 +329,7 @@ const CAPABILITIES: AICapability[] = [
     modelDefault: 'llama3.1:8b',
     samplePayload: {
       meetingTitle: 'Apresentação Comercial Birth Hub 360 vs Concorrente',
-      participants: ['Leonardo (Consultor Atlas)', 'Mauro (Gerente Geral Cliente)'],
+      participants: ['Leonardo (Consultor)', 'Mauro (Gerente Geral Cliente)'],
       rawTranscript:
         'Leonardo: Demonstramos a trava de quinta roda e o bloqueador anti-jammer. Mauro: Gostei muito da redundância via satélite. Vamos avançar com o teste em 10 veículos na próxima terça.',
     },

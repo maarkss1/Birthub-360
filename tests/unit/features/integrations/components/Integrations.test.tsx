@@ -179,7 +179,7 @@ describe('Integrations — tela de Integrações não quebra ao montar (estado/i
       await user.click(screen.getByText('Google Workspace'));
       expect(await screen.findByText('Calendar escrita via Cadência')).toBeInTheDocument();
       expect(
-        screen.getByText(/A Agenda do Atlas continua local e não sincroniza com o Google/i),
+        screen.getByText(/A Agenda do Birth Hub continua local e não sincroniza com o Google/i),
       ).toBeInTheDocument();
       expect(
         screen.getByText(/Agendamento pela Cadência cria o evento de verdade no Google Calendar/i),

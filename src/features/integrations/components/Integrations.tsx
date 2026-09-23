@@ -13,6 +13,7 @@ import {
 import { type ReactNode, useState } from 'react';
 import { IconWrench } from '../../../components/icons';
 import { Card } from '../../../components/ui/Card';
+import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { use3CXIntegration } from '../../../hooks/use3CXIntegration';
 import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
@@ -510,7 +511,7 @@ export function Integrations() {
                     <CapabilityBadge status="stub">Agenda local</CapabilityBadge>
                   </div>
                   <p>
-                    Eventos abaixo vêm do Google Calendar de verdade. A Agenda do Atlas continua
+                    Eventos abaixo vêm do Google Calendar de verdade. A Agenda do {BRAND.shortName} continua
                     local e não sincroniza com o Google. Só a Cadência cria eventos reais no Google
                     Calendar, e só quando o vendedor confirma manualmente uma reunião (ver aviso
                     abaixo) — não existe sincronização geral de compromissos.
@@ -548,7 +549,7 @@ export function Integrations() {
                       Esta conexão foi feita antes do escopo de escrita (
                       <code className="font-mono">calendar.events</code>) existir, então ainda tem
                       só <code className="font-mono">calendar.readonly</code>. Agendamento pela
-                      Cadência vai continuar gravando a confirmação no Atlas normalmente, mas a
+                      Cadência vai continuar gravando a confirmação no {BRAND.shortName} normalmente, mas a
                       criação do evento no Google Calendar vai falhar em silêncio até você
                       desconectar e reconectar a conta abaixo.
                     </p>
@@ -629,7 +630,7 @@ export function Integrations() {
                         />
                         <IntegrationStatusBadge
                           capability="read"
-                          title="Importação do Bitrix24 para o Atlas é manual, portal por portal"
+                          title={`Importação do Bitrix24 para o ${BRAND.shortName} é manual, portal por portal`}
                         />
                       </>
                     )}
@@ -654,7 +655,7 @@ export function Integrations() {
                       leitura/importação real
                     </CapabilityBadge>
                     <CapabilityBadge status={bitrixConnections.length > 0 ? 'write' : 'pending'}>
-                      escrita real Atlas→Bitrix
+                      {`escrita real ${BRAND.shortName}→Bitrix`}
                     </CapabilityBadge>
                     <CapabilityBadge
                       status={
@@ -769,7 +770,7 @@ export function Integrations() {
                           <div className="flex items-center justify-between gap-2">
                             <p className="text-sm font-bold text-ink flex items-center gap-1.5">
                               <KeyRound className="w-4 h-4 text-brand" /> Webhook de entrada
-                              (Bitrix24 → Atlas)
+                              (Bitrix24 → {BRAND.shortName})
                             </p>
                             <label
                               className="relative inline-flex items-center cursor-pointer shrink-0"
@@ -794,9 +795,9 @@ export function Integrations() {
                             </label>
                           </div>
                           <p className="text-xs text-ink-2">
-                            Opcional — sem isto, o Atlas continua trazendo dados do Bitrix24 por
+                            Opcional — sem isto, o {BRAND.shortName} continua trazendo dados do Bitrix24 por
                             importação manual/regra automática (a cada 15 min). Ativar aqui faz o
-                            Bitrix avisar o Atlas na hora quando um Lead/Negócio já importado muda,
+                            Bitrix avisar o {BRAND.shortName} na hora quando um Lead/Negócio já importado muda,
                             sem esperar o próximo ciclo. Só atualiza registros já importados — nunca
                             cria um novo sozinho.
                           </p>

@@ -10,6 +10,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
+import { BRAND } from '../../../config/brand';
 import {
   Card,
   CardContent,
@@ -117,7 +118,7 @@ export function WebhookMonitor() {
               Monitor de Sincronização Bitrix24
             </CardTitle>
             <CardDescription>
-              Histórico real de webhook de entrada e push/pull Atlas ↔ Bitrix24 — cobre hoje só esta
+              Histórico real de webhook de entrada e push/pull {BRAND.shortName} ↔ Bitrix24 — cobre hoje só esta
               integração (WhatsApp, 3CX e voz ainda não têm um histórico equivalente registrado).
             </CardDescription>
           </div>
@@ -162,7 +163,7 @@ export function WebhookMonitor() {
               }
               description={
                 logs.length === 0
-                  ? 'Assim que o Bitrix24 enviar um evento de webhook, ou o Atlas sincronizar um lead/negócio, o histórico aparece aqui.'
+                  ? `Assim que o Bitrix24 enviar um evento de webhook, ou o ${BRAND.shortName} sincronizar um lead/negócio, o histórico aparece aqui.`
                   : 'Ajuste o termo de busca para ver outros registros.'
               }
             />
@@ -188,11 +189,11 @@ export function WebhookMonitor() {
                       <td className="py-2.5 px-3">
                         {log.direction === 'inbound' ? (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
-                            <ArrowDownLeft className="w-3 h-3" /> Bitrix → Atlas
+                            <ArrowDownLeft className="w-3 h-3" /> Bitrix → {BRAND.shortName}
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">
-                            <ArrowUpRight className="w-3 h-3" /> Atlas → Bitrix
+                            <ArrowUpRight className="w-3 h-3" /> {BRAND.shortName} → Bitrix
                           </span>
                         )}
                       </td>
@@ -244,7 +245,10 @@ export function WebhookMonitor() {
         {selectedLog && (
           <div className="space-y-3 text-xs">
             <p className="text-ink-2">
-              {selectedLog.direction === 'inbound' ? 'Bitrix → Atlas' : 'Atlas → Bitrix'} —{' '}
+              {selectedLog.direction === 'inbound'
+                ? `Bitrix → ${BRAND.shortName}`
+                : `${BRAND.shortName} → Bitrix`}{' '}
+              —{' '}
               {ENTITY_LABEL[selectedLog.entityType] || selectedLog.entityType}
               {selectedLog.bitrixRecordId ? ` #${selectedLog.bitrixRecordId}` : ''}
             </p>
