@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type React from 'react';
+import { useState } from 'react';
 import { SoundFX } from '../../lib/soundEffects';
 import { cn } from '../../lib/utils';
 
@@ -19,7 +20,7 @@ export function CyberInput({
   ...props
 }: CyberInputProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [isFocused, setIsFocused] = React.useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const variantStyles = {
     neon: {
