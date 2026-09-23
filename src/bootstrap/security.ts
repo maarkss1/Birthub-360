@@ -4,7 +4,6 @@ import type { Express } from 'express';
 import helmet from 'helmet';
 import { env } from '../config/env.js';
 import { csrfGuard } from '../shared/security/csrfGuard.js';
-import { opaGuard } from '../shared/security/opaGuard.js';
 
 // Sem isto, esquecer de definir ALLOWED_ORIGINS em produção fazia o servidor subir "com sucesso"
 // mas só aceitando as origens de localhost do fallback abaixo — todo tráfego do frontend real de
@@ -156,15 +155,12 @@ export function applySecurityMiddleware(app: Express): void {
       },
       credentials: true, // Necessário para Better Auth (cookies de sessão)
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     }),
   );
 
   // Proteção CSRF
   app.use(csrfGuard);
-
-  // OPA Middleware
-  app.use(opaGuard);
 
   // Compressão gzip/brotli — reduz tamanho de resposta até 70%
   app.use(compression());

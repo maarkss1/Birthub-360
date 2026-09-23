@@ -71,10 +71,7 @@ import { requireRole } from '../shared/middlewares/requireRole.js';
  * fallback 404 de `/api/*`. Deve ser montado depois do parser JSON, do handler de auth e do
  * BullBoard, e antes do fallback de frontend — mesma posição do server.ts original.
  */
-import { csrfTokenHandler } from '../shared/security/csrfGuard.js';
-
 export function mountFeatureRoutes(app: Express): void {
-  app.get('/api/csrf-token', csrfTokenHandler);
   // Precisa vir ANTES de '/api/companies': o path de 1 segmento
   // '/api/companies/market-intelligence' colidiria com companyRoutes 'GET /:id' (que trataria
   // "market-intelligence" como um id de empresa) se companyRoutes fosse verificado primeiro. Ver

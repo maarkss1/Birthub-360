@@ -1,18 +1,5 @@
-import { randomBytes } from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
-
-/**
- * Endpoint para gerar o token CSRF.
- */
-export function csrfTokenHandler(req: Request, res: Response) {
-  const token = randomBytes(32).toString('hex');
-  res.cookie('csrfToken', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-  });
-  res.json({ success: true, token });
-}
+import { env } from '../../config/env.js';
 
 /**
  * Proteção CSRF por validação estrita de Origin/Referer (SEC-002).
@@ -36,14 +23,14 @@ function isLocalDevOrigin(origin: string): boolean {
 function buildAllowedOrigins(): Set<string> {
   const allowed = new Set<string>();
 
-  if (process.env.PUBLIC_BASE_URL) {
+  if (env.PUBLIC_BASE_URL) {
     try {
-      allowed.add(new URL(process.env.PUBLIC_BASE_URL).origin);
+      allowed.add(new URL(env.PUBLIC_BASE_URL).origin);
     } catch {}
   }
 
-  if (process.env.ALLOWED_ORIGINS) {
-    for (const raw of process.env.ALLOWED_ORIGINS.split(',')) {
+  if (env.ALLOWED_ORIGINS) {
+    for (const raw of env.ALLOWED_ORIGINS.split(',')) {
       const origin = raw.trim();
       if (origin) allowed.add(origin);
     }
@@ -62,7 +49,7 @@ function originOf(value: string): string | null {
 
 function isAllowedOrigin(origin: string, allowed: Set<string>): boolean {
   if (allowed.has(origin)) return true;
-  return process.env.NODE_ENV !== 'production' && isLocalDevOrigin(origin);
+  return env.NODE_ENV !== 'production' && isLocalDevOrigin(origin);
 }
 
 function deny(res: Response, error: string): void {
@@ -70,14 +57,23 @@ function deny(res: Response, error: string): void {
 }
 
 export function csrfGuard(req: Request, res: Response, next: NextFunction): void {
-  if (SAFE_METHODS.has(req.method)) return next();
+  if (SAFE_METHODS.has(req.method)) {
+    next();
+    return;
+  }
 
   const path = req.originalUrl.split('?')[0] ?? '';
-  if (WEBHOOK_PATHS.some((pattern) => pattern.test(path))) return next();
+  if (WEBHOOK_PATHS.some((pattern) => pattern.test(path))) {
+    next();
+    return;
+  }
 
   const hasBearer = req.headers.authorization?.toLowerCase().startsWith('bearer ') ?? false;
   const hasCookie = Boolean(req.headers.cookie);
-  if (hasBearer && !hasCookie) return next();
+  if (hasBearer && !hasCookie) {
+    next();
+    return;
+  }
 
   const origin = req.headers.origin;
   const referer = req.headers.referer;
@@ -98,18 +94,6 @@ export function csrfGuard(req: Request, res: Response, next: NextFunction): void
     const refererOrigin = originOf(referer);
     if (!refererOrigin || !isAllowedOrigin(refererOrigin, allowed)) {
       deny(res, 'CSRF: Referer não permitido.');
-      return;
-    }
-  }
-
-  // Double Submit Cookie Validation
-  if (hasCookie) {
-    const csrfHeader = req.header('x-csrf-token');
-    const csrfCookieMatch = req.headers.cookie?.match(/csrfToken=([^;]+)/);
-    const csrfCookie = csrfCookieMatch ? csrfCookieMatch[1] : null;
-
-    if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
-      deny(res, 'CSRF: Token ausente ou inválido.');
       return;
     }
   }
