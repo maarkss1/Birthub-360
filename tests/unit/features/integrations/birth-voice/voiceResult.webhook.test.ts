@@ -78,6 +78,18 @@ vi.mock('../../../../../src/shared/security/webhookReplayGuard.js', () => ({
 const mockEnv: Record<string, string | undefined> = { BIRTHHUB360_WEBHOOK_SECRET: 'segredo-de-teste' };
 vi.mock('../../../../../src/config/env.js', () => ({ env: mockEnv }));
 
+// O container de DI não é mockado por padrão — se não registrar o CopilotoVoiceIngestionPort
+// antes do teste, container.resolve() lança e o handler captura como 500.
+// Aqui mockamos o módulo para sempre ter um port silencioso que não interfere no teste.
+vi.mock('../../../../../src/shared/di/container.js', () => ({
+  container: {
+    resolve: vi.fn().mockReturnValue({
+      ingestCallResult: vi.fn().mockResolvedValue(undefined),
+    }),
+  },
+}));
+
+
 const { voiceResultWebhookRoutes } =
   await import('../../../../../src/features/integrations/birth-voice/voiceResult.webhook');
 

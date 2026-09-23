@@ -285,15 +285,6 @@
       "name": "no-cross-feature-imports",
       "severity": "error"
     },
-    "to": "src/features/commercial-intelligence/infra/stageHistory.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/crm360/infra/PrismaCrm360Repository.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
     "to": "src/features/crm/application/dealClosureGate.ts"
   },
   {
@@ -304,15 +295,6 @@
       "severity": "error"
     },
     "to": "src/features/crm/infra/PrismaDealClosureGate.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/dashboard/components/SinglePageDashboard.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/analytics/components/GlowChart.tsx"
   },
   {
     "type": "dependency",
@@ -433,11 +415,18 @@
     "cycle": [
       {
         "name": "src/lib/queue/whatsappCommand.queue.ts",
-        "dependencyTypes": ["local", "import"]
+        "dependencyTypes": [
+          "local",
+          "import"
+        ]
       },
       {
         "name": "src/features/integrations/whatsapp/whatsapp.service.ts",
-        "dependencyTypes": ["local", "type-only", "import"]
+        "dependencyTypes": [
+          "local",
+          "type-only",
+          "import"
+        ]
       }
     ]
   },
@@ -458,285 +447,6 @@
       "severity": "error"
     },
     "to": "src/features/cadence/infra/PrismaOptOutRepository.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/components/BitrixGuideHub.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/commercial-intelligence/application/pipelineEligibility.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/components/BitrixGuideHub.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/bitrix/bitrixFieldMap.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/components/IntelligenceHub.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/dashboard/components/AIConfigCenter.tsx"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/components/IntelligenceHub.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/knowledge/knowledge.api.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/components/ReportsHub.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/analytics/analytics.api.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/components/ReportsHub.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/analytics/components/GlowChart.tsx"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/evaluation/goldenDataset.runner.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/activities/services/next-best-action.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/evaluation/goldenDataset.runner.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/chatbook/services/meeting-synthesis.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/evaluation/goldenDataset.runner.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/knowledge/services/knowledge-copilot.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/routes/ai-suite.routes.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/knowledge/search.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/aiPendingAction.service.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/activities/services/activity.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/aiPendingAction.service.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/notes/application/NoteUseCases.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/activities/services/next-best-action.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/analytics/services/churn-prediction.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/automations/services/smart-lead-router.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/cadence/infra/services/cadence-ai.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/chatbook/services/meeting-synthesis.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/contacts/services/decision-committee.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/document-editor/services/proposal-ai.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/gamification/services/seller-coaching.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/bitrix/services/bitrix-data-hygiene.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/whatsapp/conversation-intelligence.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/knowledge/services/knowledge-copilot.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/lgpd/services/lgpd-sanitizer.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/mesa-tratamento/services/mesa-triage.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/playbook/services/playbook-ai.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/CentralAISuiteService.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/roleplay/services/roleplay-ai.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/swarmScheduler.service.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/birth-voice/coldCall.policy.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/vector-search.service.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/knowledge/search.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/services/vector.service.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/knowledge/search.service.ts"
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/intelligence/tools/opsTools.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/activities/services/activity.service.ts"
   },
   {
     "type": "dependency",
@@ -764,6 +474,15 @@
       "severity": "error"
     },
     "to": "src/features/integrations/bitrix/service/client.ts"
+  },
+  {
+    "type": "dependency",
+    "from": "src/features/mesa-tratamento/components/ManagementPanel.tsx",
+    "rule": {
+      "name": "no-cross-feature-imports",
+      "severity": "error"
+    },
+    "to": "src/features/integrations/bitrix/bitrix.api.ts"
   },
   {
     "type": "dependency",
@@ -830,15 +549,6 @@
   },
   {
     "type": "dependency",
-    "from": "src/features/prospecting/services/prospecting/promote.ts",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/bitrix/bitrix.service.ts"
-  },
-  {
-    "type": "dependency",
     "from": "src/features/roleplay/components/RoleplayHub.tsx",
     "rule": {
       "name": "no-cross-feature-imports",
@@ -902,11 +612,17 @@
     "cycle": [
       {
         "name": "src/lib/prisma.ts",
-        "dependencyTypes": ["local", "import"]
+        "dependencyTypes": [
+          "local",
+          "import"
+        ]
       },
       {
         "name": "src/lib/audit/audit.service.ts",
-        "dependencyTypes": ["local", "import"]
+        "dependencyTypes": [
+          "local",
+          "import"
+        ]
       }
     ]
   },
@@ -921,25 +637,25 @@
     "cycle": [
       {
         "name": "src/lib/queue/search.queue.ts",
-        "dependencyTypes": ["local", "import"]
+        "dependencyTypes": [
+          "local",
+          "import"
+        ]
       },
       {
         "name": "src/lib/queue/deadLetter.ts",
-        "dependencyTypes": ["local", "import"]
+        "dependencyTypes": [
+          "local",
+          "import"
+        ]
       },
       {
         "name": "src/lib/prisma.ts",
-        "dependencyTypes": ["local", "import"]
+        "dependencyTypes": [
+          "local",
+          "import"
+        ]
       }
     ]
-  },
-  {
-    "type": "dependency",
-    "from": "src/features/mesa-tratamento/components/ManagementPanel.tsx",
-    "rule": {
-      "name": "no-cross-feature-imports",
-      "severity": "error"
-    },
-    "to": "src/features/integrations/bitrix/bitrix.api.ts"
   }
 ]

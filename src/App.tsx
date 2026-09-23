@@ -16,7 +16,6 @@ import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import {
   COMMERCIAL_INTELLIGENCE_ROLES,
-  COPILOTO_IA_ROLES,
   MESA_TRATAMENTO_ROLES,
 } from './lib/auth/authorization';
 
@@ -126,11 +125,7 @@ const CommercialIntelligenceHub = lazy(() =>
     default: m.CommercialIntelligenceHub,
   })),
 );
-const CopilotoIaHub = lazy(() =>
-  import('./features/copiloto-ia/components/CopilotoIaHub').then((m) => ({
-    default: m.CopilotoIaHub,
-  })),
-);
+
 const DailyPlanHub = lazy(() =>
   import('./features/commercial-intelligence/components/DailyPlanHub').then((m) => ({
     default: m.DailyPlanHub,
@@ -196,46 +191,7 @@ const LeadApprovalDeck = lazy(() =>
 const PropostasList = lazy(() =>
   import('./features/crm360/components/PropostasList').then((m) => ({ default: m.PropostasList })),
 );
-const EliteCommercialAgentWorkspace = lazy(() =>
-  import('./features/intelligence/components/EliteCommercialAgentWorkspace').then((m) => ({
-    default: m.EliteCommercialAgentWorkspace,
-  })),
-);
-const AgentQualityPanel = lazy(() =>
-  import('./features/intelligence/components/AgentQualityPanel').then((m) => ({
-    default: m.AgentQualityPanel,
-  })),
-);
-const AIPendingActions = lazy(() =>
-  import('./features/intelligence/components/AIPendingActions').then((m) => ({
-    default: m.AIPendingActions,
-  })),
-);
-const AutomationGuide = lazy(() =>
-  import('./features/intelligence/components/AutomationGuide').then((m) => ({
-    default: m.AutomationGuide,
-  })),
-);
-const B2BGenerator = lazy(() =>
-  import('./features/intelligence/components/B2BGenerator').then((m) => ({
-    default: m.B2BGenerator,
-  })),
-);
-const RobustScriptGenerator = lazy(() =>
-  import('./features/intelligence/components/RobustScriptGenerator').then((m) => ({
-    default: m.RobustScriptGenerator,
-  })),
-);
-const SalesMethodologyStudio = lazy(() =>
-  import('./features/intelligence/components/SalesMethodologyStudio').then((m) => ({
-    default: m.SalesMethodologyStudio,
-  })),
-);
-const SuperagentCreator = lazy(() =>
-  import('./features/intelligence/components/SuperagentCreator').then((m) => ({
-    default: m.SuperagentCreator,
-  })),
-);
+
 const PublicBookingPage = lazy(() =>
   import('./features/calendar/components/PublicBookingPage').then((m) => ({
     default: m.PublicBookingPage,
@@ -324,14 +280,6 @@ function AppLayout() {
             }
           />
           <Route path="intelligence" element={<IntelligenceHub />} />
-          <Route path="intelligence/elite-agent" element={<EliteCommercialAgentWorkspace />} />
-          <Route path="intelligence/quality-panel" element={<AgentQualityPanel />} />
-          <Route path="intelligence/pending-actions" element={<AIPendingActions />} />
-          <Route path="intelligence/automation-guide" element={<AutomationGuide />} />
-          <Route path="intelligence/b2b-generator" element={<B2BGenerator />} />
-          <Route path="intelligence/script-generator" element={<RobustScriptGenerator />} />
-          <Route path="intelligence/sales-methodology" element={<SalesMethodologyStudio />} />
-          <Route path="intelligence/superagent-creator" element={<SuperagentCreator />} />
           <Route path="companies" element={<CompanyList />} />
           <Route path="contacts" element={<ContactList />} />
           <Route path="activities" element={<ActivityList />} />
@@ -362,17 +310,7 @@ function AppLayout() {
               </RequireRole>
             }
           />
-          {/* Copiloto Comercial IA — RequireRole bloqueia acesso direto por URL, mesmo padrão de
-              commercial_intelligence acima. Autorização real está em requireRole no backend
-              (copilotoIa.routes.ts). */}
-          <Route
-            path="copiloto_ia"
-            element={
-              <RequireRole allowedRoles={[...COPILOTO_IA_ROLES]}>
-                <CopilotoIaHub />
-              </RequireRole>
-            }
-          />
+
           <Route path="daily-plan" element={<DailyPlanHub />} />
           <Route path="sdr-diagnostic" element={<JoaoReisDiagnosticHub />} />
           <Route path="calendar" element={<Calendar />} />

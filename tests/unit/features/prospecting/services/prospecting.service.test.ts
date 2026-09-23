@@ -15,6 +15,13 @@ vi.mock('../../../../../src/lib/prisma.js', () => ({
     fn({ $queryRaw: txQueryRaw }),
 }));
 
+// promote.ts chama queueLeadPushToBitrix em fire-and-forget — sem este mock, a fila
+// tentaria resolver prisma.bitrixConnection (não mockado aqui) e lançaria unhandled errors.
+vi.mock('../../../../../src/lib/queue/bitrixOutbound.queue.js', () => ({
+  queueLeadPushToBitrix: vi.fn().mockResolvedValue(undefined),
+}));
+
+
 vi.mock('../../../../../src/features/prospecting/services/enrichment.service', () => ({
   enrichCompany: vi.fn(),
 }));

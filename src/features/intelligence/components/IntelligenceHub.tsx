@@ -30,6 +30,7 @@ import { type KnowledgeDocumentSummary, knowledgeApi } from '../../knowledge/kno
 import { AgentQualityPanel } from './AgentQualityPanel';
 import { AIPendingActions } from './AIPendingActions';
 import { AISuiteHub } from './AISuiteHub';
+import { CopilotoIaHub } from '../../copiloto-ia/components/CopilotoIaHub';
 import { AutomationGuide } from './AutomationGuide';
 import { B2BGenerator } from './B2BGenerator';
 import { RobustScriptGenerator } from './RobustScriptGenerator';
@@ -49,7 +50,8 @@ export type IntelligenceTab =
   | 'generator'
   | 'tools'
   | 'rag'
-  | 'quality';
+  | 'quality'
+  | 'copiloto';
 
 interface IntelligenceHubProps {
   initialTab?: IntelligenceTab;
@@ -70,6 +72,13 @@ const TOOL_TABS: {
     icon: Cpu,
     description:
       'Console interativo para executar e orquestrar os 20 motores de IA (Ollama & Cloud) da plataforma.',
+  },
+  {
+    id: 'copiloto',
+    label: 'Copiloto IA',
+    icon: Sparkles,
+    description:
+      'Conversas, reuniões e ligações capturadas pelo Copiloto Comercial IA — resumo, deal health e coaching.',
   },
   {
     id: 'swarm',
@@ -271,6 +280,11 @@ export function IntelligenceHub({ initialTab }: IntelligenceHubProps) {
         {activeTab === 'automations' && <AutomationGuide />}
         {activeTab === 'generator' && <B2BGenerator />}
         {activeTab === 'tools' && <Intelligence />}
+        {activeTab === 'copiloto' && (
+          <Card variant="default" padding="lg" accentBar>
+            <CopilotoIaHub />
+          </Card>
+        )}
 
         {activeTab === 'actions' && (
           <Card variant="default" padding="lg" accentBar>
