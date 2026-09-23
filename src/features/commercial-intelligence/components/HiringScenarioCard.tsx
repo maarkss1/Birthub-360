@@ -98,7 +98,9 @@ export function HiringScenarioCard({ filter }: { filter: CommercialFilter }) {
               <p className="mt-1 text-lg font-black tracking-tight text-ink [font-variant-numeric:tabular-nums]">
                 {formatCurrency(data.avgPipelineAmountPerRepPerMonth)}/mês
               </p>
-              <p className="text-[11px] text-ink-2">{data.activeRepsInPeriod} vendedor(es) ativo(s)</p>
+              <p className="text-[11px] text-ink-2">
+                {data.activeRepsInPeriod} vendedor(es) ativo(s)
+              </p>
             </div>
             <div>
               <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-ink-2">

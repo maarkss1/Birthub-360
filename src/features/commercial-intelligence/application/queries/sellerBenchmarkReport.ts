@@ -171,7 +171,9 @@ export async function buildSellerBenchmark(
       wonCount: won.length,
       lostCount: lost.length,
       averageTicketWon:
-        won.length > 0 ? roundMoney(won.reduce((sum, s) => sum + s.deal.amount, 0) / won.length) : null,
+        won.length > 0
+          ? roundMoney(won.reduce((sum, s) => sum + s.deal.amount, 0) / won.length)
+          : null,
       salesCycleMedianDays: median(cycleDays),
       openCount: open.length,
       openAmount: roundMoney(open.reduce((sum, s) => sum + s.deal.amount, 0)),

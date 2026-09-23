@@ -119,9 +119,8 @@ export function ForecastCalibrationCard({ filter }: { filter: CommercialFilter }
       )}
       {data.available && (
         <p className="mt-3 text-[11px] text-ink-2">
-          Fator calculado sobre {data.sampleSize} mês(es) encerrado(s), limitado a [
-          {data.minFactor}x–{data.maxFactor}x] para não deixar amostra pequena distorcer o
-          forecast.
+          Fator calculado sobre {data.sampleSize} mês(es) encerrado(s), limitado a [{data.minFactor}
+          x–{data.maxFactor}x] para não deixar amostra pequena distorcer o forecast.
         </p>
       )}
     </Card>

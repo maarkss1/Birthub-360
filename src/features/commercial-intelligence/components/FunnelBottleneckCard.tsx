@@ -97,6 +97,7 @@ export function FunnelBottleneckCard({ filter }: { filter: CommercialFilter }) {
 
       <div
         className="mt-4 overflow-x-auto"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: região rolável horizontal precisa ser focável por teclado (axe scrollable-region-focusable, WCAG 2.1.1)
         tabIndex={0}
         role="region"
         aria-label="Tabela de gargalo de funil por etapa (rolável)"

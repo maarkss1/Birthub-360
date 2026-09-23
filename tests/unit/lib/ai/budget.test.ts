@@ -9,7 +9,10 @@ import client from 'prom-client';
  * (o que também reseta o cache em memória local do módulo entre casos, sem precisar mexer nele
  * diretamente na maioria dos testes).
  */
-describe('src/lib/ai/budget.ts (AI-011)', () => {
+// Timeout maior que o default de 5s: cada caso reimporta budget.ts do zero (vi.resetModules), e o
+// import frio (prom-client + metrics + env) estoura 5s em runner lento/carregado — já derrubou o
+// gate de unit tests mesmo com o teste passando isolado.
+describe('src/lib/ai/budget.ts (AI-011)', { timeout: 30_000 }, () => {
   let aggregateMock: ReturnType<typeof vi.fn>;
   let redisStore: Map<string, string>;
 

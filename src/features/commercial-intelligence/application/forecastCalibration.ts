@@ -32,7 +32,11 @@ export const MAX_CALIBRATION_FACTOR = 1.4;
 /** Faixa em torno de 1.0 tratada como "sem viés" (evita rotular ruído estatístico pequeno como tendência). */
 const NEUTRAL_BIAS_BAND = 0.03;
 
-function unavailable(rawForecastAmount: number, goalAmount: number | null, currency: string): ForecastCalibrationResult {
+function unavailable(
+  rawForecastAmount: number,
+  goalAmount: number | null,
+  currency: string,
+): ForecastCalibrationResult {
   return {
     available: false,
     reason: 'sem_historico_suficiente',
@@ -64,8 +68,16 @@ export function computeForecastCalibration(
   currency: string,
 ): ForecastCalibrationResult {
   const usable = samples.filter(
-    (s): s is ForecastAccuracyResult & { predictedForecastAmount: number; realizedClosedAmount: number } =>
-      s.available && s.predictedForecastAmount != null && s.predictedForecastAmount > 0 && s.realizedClosedAmount != null,
+    (
+      s,
+    ): s is ForecastAccuracyResult & {
+      predictedForecastAmount: number;
+      realizedClosedAmount: number;
+    } =>
+      s.available &&
+      s.predictedForecastAmount != null &&
+      s.predictedForecastAmount > 0 &&
+      s.realizedClosedAmount != null,
   );
 
   if (usable.length < MIN_SAMPLES_FOR_CALIBRATION) {

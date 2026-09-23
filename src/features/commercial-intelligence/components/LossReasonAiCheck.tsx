@@ -1,6 +1,9 @@
 import { AlertTriangle, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { commercialIntelligenceApi, type LossReasonAiAnalysisResult } from '../commercialIntelligence.api';
+import {
+  commercialIntelligenceApi,
+  type LossReasonAiAnalysisResult,
+} from '../commercialIntelligence.api';
 
 const REASON_LABEL: Record<NonNullable<LossReasonAiAnalysisResult['reason']>, string> = {
   sem_transcricao: 'Sem transcrição de chamada registrada para este negócio.',

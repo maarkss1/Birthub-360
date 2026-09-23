@@ -436,7 +436,8 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
       'Forecast Ponderado Explicável atual, corrigido por um fator derivado do erro histórico real (previsto vs. realizado dos meses já encerrados) — fecha o loop que o Erro Histórico do Forecast só media.',
     formula:
       'Fator = média de (Fechado realizado / Forecast previsto) dos meses encerrados com snapshot e previsto > 0, limitado a [0.6, 1.4]. Forecast Calibrado = Forecast atual × Fator.',
-    source: 'application/forecastCalibration.ts (GET /commercial-intelligence/forecast-calibration)',
+    source:
+      'application/forecastCalibration.ts (GET /commercial-intelligence/forecast-calibration)',
     period: 'Mês corrente, usando o histórico de meses já encerrados como base do fator',
     inclusionRules:
       'Exige ao menos 3 meses encerrados com erro histórico calculável (mesmas 3 condições do Erro Histórico do Forecast) antes de aplicar qualquer correção.',
@@ -450,7 +451,8 @@ export const METRICS_DICTIONARY: MetricDefinition[] = [
       'Aponta ativamente qual etapa do funil está anormalmente lenta comparada às demais — não um dashboard passivo de aging por faixa fixa.',
     formula:
       'Multiplicador da etapa = Duração média da etapa / Mediana da duração média das OUTRAS etapas com amostra suficiente (baseline "normal"). Crítico ≥ 2,5x; Atenção ≥ 1,5x.',
-    source: 'application/queries/bottleneckReport.ts (GET /commercial-intelligence/funnel-bottlenecks)',
+    source:
+      'application/queries/bottleneckReport.ts (GET /commercial-intelligence/funnel-bottlenecks)',
     period: 'Snapshot atual do funil, duração calculada sobre todo o histórico disponível',
     inclusionRules:
       'Uma etapa só classifica (crítico/atenção/normal) com ao menos 3 passagens concluídas próprias E ao menos 2 outras etapas comparáveis para formar a baseline.',

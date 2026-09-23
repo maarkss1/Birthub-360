@@ -19,11 +19,51 @@ const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';
 
 const STAGES: StageDefinition[] = [
-  { id: 'nova', name: 'Nova Oportunidade', code: 'nova', sortOrder: 0, probability: 15, isWon: false, isLost: false },
-  { id: 'qualificacao', name: 'Qualificação', code: 'qualificacao', sortOrder: 1, probability: 30, isWon: false, isLost: false },
-  { id: 'proposta', name: 'Proposta Enviada', code: 'proposta', sortOrder: 2, probability: 45, isWon: false, isLost: false },
-  { id: 'ganho', name: 'Ganhos', code: 'ganho', sortOrder: 3, probability: 100, isWon: true, isLost: false },
-  { id: 'perdido', name: 'Perdidos', code: 'perdido', sortOrder: 4, probability: 0, isWon: false, isLost: true },
+  {
+    id: 'nova',
+    name: 'Nova Oportunidade',
+    code: 'nova',
+    sortOrder: 0,
+    probability: 15,
+    isWon: false,
+    isLost: false,
+  },
+  {
+    id: 'qualificacao',
+    name: 'Qualificação',
+    code: 'qualificacao',
+    sortOrder: 1,
+    probability: 30,
+    isWon: false,
+    isLost: false,
+  },
+  {
+    id: 'proposta',
+    name: 'Proposta Enviada',
+    code: 'proposta',
+    sortOrder: 2,
+    probability: 45,
+    isWon: false,
+    isLost: false,
+  },
+  {
+    id: 'ganho',
+    name: 'Ganhos',
+    code: 'ganho',
+    sortOrder: 3,
+    probability: 100,
+    isWon: true,
+    isLost: false,
+  },
+  {
+    id: 'perdido',
+    name: 'Perdidos',
+    code: 'perdido',
+    sortOrder: 4,
+    probability: 0,
+    isWon: false,
+    isLost: true,
+  },
 ];
 
 function deal(overrides: Partial<DealRow> & { id: string }): DealRow {
@@ -173,10 +213,7 @@ describe('bottleneckReport.buildFunnelBottlenecks', () => {
       pass('e', 'proposta', 'Proposta Enviada', 32),
       pass('f', 'proposta', 'Proposta Enviada', 34),
     ];
-    const repo = new FakeRepository(
-      [deal({ id: 'x', pipelineStageId: 'proposta' })],
-      history,
-    );
+    const repo = new FakeRepository([deal({ id: 'x', pipelineStageId: 'proposta' })], history);
     const report = await buildFunnelBottlenecks(repo, 'org-1', { month: PERIOD }, NOW);
     const proposta = report.stages.find((s) => s.stageId === 'proposta');
     expect(proposta?.sampleSize).toBeGreaterThanOrEqual(MIN_SAMPLE_SIZE_FOR_BASELINE);

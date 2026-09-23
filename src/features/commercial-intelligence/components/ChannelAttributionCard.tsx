@@ -12,7 +12,13 @@ import {
 } from '../commercialIntelligence.api';
 import { MetricInfo } from './MetricInfo';
 
-function BreakdownList({ rows, maxAmount }: { rows: ChannelAttributionBreakdown[]; maxAmount: number }) {
+function BreakdownList({
+  rows,
+  maxAmount,
+}: {
+  rows: ChannelAttributionBreakdown[];
+  maxAmount: number;
+}) {
   if (rows.length === 0) return <p className="text-xs text-ink-2">Sem negócio ganho no período.</p>;
   return (
     <div className="space-y-2">
@@ -24,7 +30,9 @@ function BreakdownList({ rows, maxAmount }: { rows: ChannelAttributionBreakdown[
           <div className="h-6 flex-1 overflow-hidden rounded-md bg-surface-2">
             <div
               className="h-full rounded-md bg-brand/70"
-              style={{ width: `${maxAmount > 0 ? Math.max(4, (row.wonAmount / maxAmount) * 100) : 0}%` }}
+              style={{
+                width: `${maxAmount > 0 ? Math.max(4, (row.wonAmount / maxAmount) * 100) : 0}%`,
+              }}
             />
           </div>
           <div className="w-12 shrink-0 text-right text-xs text-ink [font-variant-numeric:tabular-nums]">

@@ -814,9 +814,7 @@ export const commercialIntelligenceApi = {
   sellerBenchmark: (filter: CommercialFilter) =>
     api.get<SellerBenchmarkReport>(`${BASE}/seller-benchmark?${qs(filter)}`),
   hiringScenario: (filter: CommercialFilter, additionalReps: number) =>
-    api.get<HiringScenarioResult>(
-      `${BASE}/hiring-scenario?${qs(filter, { additionalReps })}`,
-    ),
+    api.get<HiringScenarioResult>(`${BASE}/hiring-scenario?${qs(filter, { additionalReps })}`),
   channelAttribution: (filter: CommercialFilter) =>
     api.get<ChannelAttributionReport>(`${BASE}/channel-attribution?${qs(filter)}`),
   closeDateIntelligence: (filter: CommercialFilter) =>

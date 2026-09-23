@@ -14,9 +14,33 @@ const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';
 
 const STAGES: StageDefinition[] = [
-  { id: 'nova', name: 'Nova Oportunidade', code: 'nova', sortOrder: 0, probability: 15, isWon: false, isLost: false },
-  { id: 'ganho', name: 'Ganhos', code: 'ganho', sortOrder: 1, probability: 100, isWon: true, isLost: false },
-  { id: 'perdido', name: 'Perdidos', code: 'perdido', sortOrder: 2, probability: 0, isWon: false, isLost: true },
+  {
+    id: 'nova',
+    name: 'Nova Oportunidade',
+    code: 'nova',
+    sortOrder: 0,
+    probability: 15,
+    isWon: false,
+    isLost: false,
+  },
+  {
+    id: 'ganho',
+    name: 'Ganhos',
+    code: 'ganho',
+    sortOrder: 1,
+    probability: 100,
+    isWon: true,
+    isLost: false,
+  },
+  {
+    id: 'perdido',
+    name: 'Perdidos',
+    code: 'perdido',
+    sortOrder: 2,
+    probability: 0,
+    isWon: false,
+    isLost: true,
+  },
 ];
 
 function deal(overrides: Partial<DealRow> & { id: string }): DealRow {
@@ -149,10 +173,18 @@ describe('channelAttributionReport.buildChannelAttribution', () => {
   });
 
   it('canal/origem vazio vira "Não informado", nunca omitido nem 0 fabricado', async () => {
-    const repo = new FakeRepository([deal({ id: 'a', channel: null, source: null, amount: 5_000 })]);
+    const repo = new FakeRepository([
+      deal({ id: 'a', channel: null, source: null, amount: 5_000 }),
+    ]);
     const report = await buildChannelAttribution(repo, 'org-1', { month: PERIOD }, NOW);
     expect(report.byChannel).toEqual([
-      { label: 'Não informado', wonCount: 1, wonAmount: 5_000, pctOfWonAmount: 100, averageTicket: 5_000 },
+      {
+        label: 'Não informado',
+        wonCount: 1,
+        wonAmount: 5_000,
+        pctOfWonAmount: 100,
+        averageTicket: 5_000,
+      },
     ]);
   });
 
@@ -197,7 +229,12 @@ describe('channelAttributionReport.buildChannelAttribution', () => {
       deal({ id: 'a', owner: 'ana', channel: 'WhatsApp', amount: 10_000 }),
       deal({ id: 'b', owner: 'bruno', channel: 'Site', amount: 20_000 }),
     ]);
-    const report = await buildChannelAttribution(repo, 'org-1', { month: PERIOD, owner: 'ana' }, NOW);
+    const report = await buildChannelAttribution(
+      repo,
+      'org-1',
+      { month: PERIOD, owner: 'ana' },
+      NOW,
+    );
     expect(report.totalWonAmount).toBe(10_000);
     expect(report.byChannel.map((r) => r.label)).toEqual(['WhatsApp']);
   });

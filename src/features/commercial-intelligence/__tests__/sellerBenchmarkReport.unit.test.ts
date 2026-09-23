@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { buildSellerBenchmark, MIN_DEALS_FOR_RANKING } from '../application/queries/sellerBenchmarkReport';
+import {
+  buildSellerBenchmark,
+  MIN_DEALS_FOR_RANKING,
+} from '../application/queries/sellerBenchmarkReport';
 import type {
   CommercialGoalDTO,
   CommercialIntelligenceRepository,
@@ -14,9 +17,33 @@ const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';
 
 const STAGES: StageDefinition[] = [
-  { id: 'nova', name: 'Nova Oportunidade', code: 'nova', sortOrder: 0, probability: 15, isWon: false, isLost: false },
-  { id: 'ganho', name: 'Ganhos', code: 'ganho', sortOrder: 1, probability: 100, isWon: true, isLost: false },
-  { id: 'perdido', name: 'Perdidos', code: 'perdido', sortOrder: 2, probability: 0, isWon: false, isLost: true },
+  {
+    id: 'nova',
+    name: 'Nova Oportunidade',
+    code: 'nova',
+    sortOrder: 0,
+    probability: 15,
+    isWon: false,
+    isLost: false,
+  },
+  {
+    id: 'ganho',
+    name: 'Ganhos',
+    code: 'ganho',
+    sortOrder: 1,
+    probability: 100,
+    isWon: true,
+    isLost: false,
+  },
+  {
+    id: 'perdido',
+    name: 'Perdidos',
+    code: 'perdido',
+    sortOrder: 2,
+    probability: 0,
+    isWon: false,
+    isLost: true,
+  },
 ];
 
 function deal(overrides: Partial<DealRow> & { id: string }): DealRow {
@@ -66,7 +93,9 @@ function won(id: string, owner: string, amount: number, cycleDays: number): Deal
     stageName: 'Ganhos',
     stageIsWon: true,
     createdAt: new Date('2026-08-01T00:00:00Z'),
-    closedAt: new Date(new Date('2026-08-01T00:00:00Z').getTime() + cycleDays * 24 * 60 * 60 * 1000),
+    closedAt: new Date(
+      new Date('2026-08-01T00:00:00Z').getTime() + cycleDays * 24 * 60 * 60 * 1000,
+    ),
   });
 }
 
@@ -149,7 +178,7 @@ describe('sellerBenchmarkReport.buildSellerBenchmark', () => {
     const repo = new FakeRepository([won('a', 'bruno', 10_000, 20), lost('b', 'bruno')]);
     const report = await buildSellerBenchmark(repo, 'org-1', { month: PERIOD }, NOW);
     const bruno = report.sellers.find((s) => s.owner === 'bruno');
-    expect(bruno?.wonCount + (bruno?.lostCount ?? 0)).toBeLessThan(MIN_DEALS_FOR_RANKING);
+    expect((bruno?.wonCount ?? 0) + (bruno?.lostCount ?? 0)).toBeLessThan(MIN_DEALS_FOR_RANKING);
     expect(bruno?.isTopPerformer).toBe(false);
     expect(bruno?.suggestion).toBeNull();
     expect(report.topPerformerOwner).toBeNull();

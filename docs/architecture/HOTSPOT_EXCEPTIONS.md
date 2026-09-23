@@ -102,6 +102,18 @@ propósito por estar fora de "## Exceções ativas"):
 - **Registrado em:** 2026-09-23
 - **Reavaliar até:** 2026-11-30 (mesmo checkpoint dos demais itens desta lista)
 
+### `src/features/commercial-intelligence/domain/CommercialIntelligence.ts`
+
+- **Limite excepcional:** 1250 linhas
+- **Dono:** maarkss1 (fora do roster de agentes)
+- **Motivo:** catálogo só de tipos (`interface`/`type` dos DTOs de Inteligência Comercial), sem
+  lógica: passou de 1000 linhas (1193) com forecast auto-calibrado, gargalo de funil, benchmark de
+  vendedor, cenário de contratação, atribuição por canal e motivo de perda por IA. Dividir por
+  subdomínio (mantendo este arquivo como barrel de re-export) é o caminho certo, mas é uma
+  refatoração mecânica ampla que não cabe junto de uma correção de CI.
+- **Registrado em:** 2026-09-23
+- **Reavaliar até:** 2026-11-30 (mesmo checkpoint dos demais itens desta lista)
+
 ## Débito conhecido, abaixo do limite de falha (sem exceção necessária)
 
 Arquivos na faixa de aviso (701–1000 linhas) no momento em que este gate foi criado — não

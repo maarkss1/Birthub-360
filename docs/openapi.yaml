@@ -5567,6 +5567,77 @@ paths:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }
         '403': { $ref: '#/components/responses/Forbidden' }
+  /commercial-intelligence/forecast-calibration:
+    get:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Forecast auto-calibrado pelo erro histórico real dos snapshots mensais (somente ADMIN/GESTOR).
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /commercial-intelligence/funnel-bottlenecks:
+    get:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Gargalo de funil por etapa — duração média vs. baseline normal e negócios parados agora (somente ADMIN/GESTOR).
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /commercial-intelligence/seller-benchmark:
+    get:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Benchmark de vendedores — win rate, ciclo e sugestões a partir do top performer, respeitando o mínimo de negócios para ranking (somente ADMIN/GESTOR).
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /commercial-intelligence/hiring-scenario:
+    get:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Simulação de cenário de contratação — impacto projetado de vendedores adicionais (somente ADMIN/GESTOR).
+      parameters:
+        - name: additionalReps
+          in: query
+          required: true
+          description: Quantidade de vendedores adicionais a simular
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /commercial-intelligence/channel-attribution:
+    get:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Atribuição de receita por canal/origem, toque único (somente ADMIN/GESTOR).
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '403': { $ref: '#/components/responses/Forbidden' }
   /commercial-intelligence/close-date-intelligence:
     get:
       tags: [Comercial Inteligente]
@@ -5619,6 +5690,32 @@ paths:
               { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
           }
         '403': { $ref: '#/components/responses/Forbidden' }
+  /commercial-intelligence/ai/loss-reason-analysis:
+    post:
+      tags: [Comercial Inteligente]
+      summary: >-
+        Motivo real de perda de um negócio via IA sobre a transcrição real (item 21). Só roda com
+        clique explícito por negócio; mesmo limitador de IA dedicado dos demais endpoints `ai/*`
+        deste módulo (somente ADMIN/GESTOR).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [leadId]
+              properties:
+                leadId: { type: string }
+      responses:
+        '200':
+          {
+            description: OK,
+            content:
+              { application/json: { schema: { $ref: '#/components/schemas/DataEnvelope' } } },
+          }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
   /commercial-intelligence/ai/mentor-playbook:
     post:
       tags: [Comercial Inteligente]
