@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
 import { BirthHubLogo } from '../brand/BirthHubLogo';
+import { BrandEmblemBadge } from '../brand/BrandEmblemBadge';
 import { SoundFX } from '../../lib/soundEffects';
 import { TAB_META, type TabType } from './tabMeta';
 
@@ -260,11 +261,11 @@ export function Sidebar({
           className={`flex items-center justify-between border-b border-line px-5 py-4 ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
         >
           {isCollapsed ? (
-            <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand" />
+            <BrandEmblemBadge className="h-9 w-9" title="Birth Hub 360°" />
           ) : (
             <>
               <div className="flex items-center gap-2.5">
-                <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand" />
+                <BrandEmblemBadge className="h-10 w-10 shrink-0" title="Birth Hub 360°" />
                 <div className="leading-tight">
                   <h1 className="flex items-center gap-1 text-sm font-bold tracking-tight text-ink">
                     Birth Hub 360°
