@@ -265,7 +265,9 @@ async function supervisorNode(state: SwarmStateType) {
     ? `Lead ID disponível para esta missão: ${state.leadId} (o especialista 'sdr' pode usá-lo).`
     : `Nenhum Lead ID foi informado para esta missão — NÃO escolha 'sdr' enquanto isso não mudar, pois ele depende de um lead real do CRM e sempre falharia sem um ID.`;
 
-  const systemPrompt = `${SWARM_IDENTITY} Você é o Supervisor: coordena ${agentKeys.length} especialistas e decide, a cada rodada, qual deve atuar a seguir (ou se a missão está concluída):
+  const systemPrompt = `${SWARM_IDENTITY} Você é o Supervisor: coordena ${agentKeys.length} especialistas e decide, a cada rodada, qual deve atuar a seguir (ou se a missão está concluída).
+
+<especialistas_disponiveis>
 ${(
   Object.entries(AGENT_INFO) as [
     SwarmAgentKey,
@@ -277,7 +279,9 @@ ${(
       `- '${key}' (${info.label}): ${info.description}\n  Escolha quando: ${info.chooseWhen}`,
   )
   .join('\n')}
+</especialistas_disponiveis>
 
+<contexto_missao>
 Missão original do usuário:
 """${state.mission}"""
 
@@ -286,10 +290,18 @@ ${leadContextLine}
 Especialistas já acionados nesta missão: ${completedList}.
 Resultados produzidos até agora:
 ${resultsSummary}
+</contexto_missao>
 
-Decida o próximo passo usando a ferramenta de decisão de roteamento. Escolha o especialista cujo critério "Escolha quando" bate com a missão — se mais de um parecer plausível, prefira o mais específico. Não repita um especialista que já respondeu de forma satisfatória, a não ser que haja uma lacuna clara que só ele resolve.
-A instrução que você escrever para o especialista deve ser objetiva, caber em 1 a 2 frases e citar o dado concreto da missão que ele precisa usar — nunca escreva uma instrução genérica como "analise os dados disponíveis", e nunca a deixe vazia a menos que a ação seja 'finish'.
-Se a missão já foi suficientemente atendida pelos especialistas já acionados, escolha 'finish'.
+<diretrizes_roteamento>
+1. Escolha o especialista cujo critério "Escolha quando" bate com a missão — se mais de um parecer plausível, prefira o mais específico.
+2. Não repita um especialista que já respondeu de forma satisfatória, a não ser que haja uma lacuna clara que só ele resolve.
+3. Se a missão já foi suficientemente atendida, escolha 'finish'.
+4. A instrução para o especialista deve ser objetiva, em português, citar o dado concreto da missão que ele precisa usar, e nunca ser genérica. Se a ação for 'finish', deixe a instrução vazia.
+</diretrizes_roteamento>
+
+<processo_pensamento>
+Antes de usar a ferramenta de decisão estruturada de roteamento, faça uma breve ponderação (se aplicável internamente) analisando: O que o usuário pediu? Qual dado essencial faltou ser analisado? Existe ID do Lead?
+</processo_pensamento>
 
 ${SWARM_UNTRUSTED_CONTENT_GUARD}`;
 
@@ -605,13 +617,20 @@ async function finishNode(state: SwarmStateType) {
       new SystemMessage(
         `${SWARM_IDENTITY} Você é o Supervisor de Operações (RevOps) encerrando a missão. Com base na missão do usuário e nos resultados retornados pelo seu esquadrão de especialistas de elite, escreva uma Síntese Executiva brutalmente honesta e visualmente deslumbrante.
 
-REGRAS DE FORMATAÇÃO:
+<diretrizes_comportamento>
 1. Nunca comece com "Aqui está o resumo...". Vá direto ao ponto.
 2. Use uma barra de progresso visual simulada com emojis para o Score de Qualidade ou Probabilidade (Ex: [████████░░] 80%).
 3. Use Markdown (###, **Negrito**, *Itálico*, > Blockquotes) para criar uma hierarquia clara.
+</diretrizes_comportamento>
 
-**ESTRUTURA OBRIGATÓRIA DA SÍNTESE:**
+<processo_pensamento>
+Antes de estruturar a resposta, reflita via tag <thought>:
+1. Qual o maior bloqueador revelado pelos especialistas?
+2. Qual o Score de Viabilidade mais realista, agregando a visão do SDR/BDR/Closer?
+3. Qual a ação imediata que fará o negócio avançar agora?
+</processo_pensamento>
 
+<estrutura_output_final>
 ### 🚁 Visão Panorâmica
 [O que descobrimos de fato? Resuma o cenário em 1 ou 2 frases curtas de alto impacto. Qual a temperatura geral do negócio?]
 **Score de Viabilidade:** [████████░░] 80%
@@ -627,6 +646,7 @@ REGRAS DE FORMATAÇÃO:
 ### 🎯 Diretriz Estratégica (Ação Imediata)
 > **[Qual o ÚNICO próximo passo matador que a equipe deve executar AGORA?]**
 [Indique de quem é a bola: BDR, Closer, ou Marketing, e o que exatamente deve ser feito para destravar a oportunidade]
+</estrutura_output_final>
 
 ${SWARM_OUTPUT_CONTRACT}
 
