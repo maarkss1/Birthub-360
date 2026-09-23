@@ -40,7 +40,11 @@ jobs:
     name: Central Birth Hub 360 / application gate
     runs-on: ubuntu-latest
     needs: secret-scan
-    timeout-minutes: 30
+    # 60 (era 30): o gate completo (lint -> tsc -> unit -> integração -> E2E -> build) leva ~13 min
+    # só até os E2E, e os 99 testes Playwright (1 worker, até 2 retentativas) passam de 17 min. Até
+    # 09/2026 o lint quebrava antes e o job nunca chegava aos E2E, então 30 min nunca foi medido com
+    # o gate inteiro — estourava em "Run E2E Tests" mesmo sem nenhuma falha de teste.
+    timeout-minutes: 60
 
     services:
       postgres:
