@@ -96,7 +96,7 @@ export type TabType =
   | 'team'
   | 'settings'
   | 'daily-plan'
-  | 'sdr-diagnostic-joao'
+  | 'sdr-diagnostic'
   | 'commercial_intelligence'
   | 'copiloto_ia'
   | 'module-access';
@@ -154,5 +154,5 @@ export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
   settings: { label: 'Configurações', icon: SettingsIcon },
 
   // DIAGNOSTICS - Ferramentas de diagnóstico
-  'sdr-diagnostic-joao': { label: 'Diagnóstico SDR', icon: Stethoscope },
+  'sdr-diagnostic': { label: 'Diagnóstico SDR', icon: Stethoscope },
 };

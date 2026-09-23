@@ -374,7 +374,7 @@ function AppLayout() {
             }
           />
           <Route path="daily-plan" element={<DailyPlanHub />} />
-          <Route path="sdr-diagnostic-joao" element={<JoaoReisDiagnosticHub />} />
+          <Route path="sdr-diagnostic" element={<JoaoReisDiagnosticHub />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="automations" element={<Automations />} />

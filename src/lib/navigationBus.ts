@@ -59,6 +59,6 @@ const TAB_ROUTE_SET: Record<TabType, true> = {
   propostas: true,
   'mesa-tratamento': true,
   'daily-plan': true,
-  'sdr-diagnostic-joao': true,
+  'sdr-diagnostic': true,
   'module-access': true,
 };

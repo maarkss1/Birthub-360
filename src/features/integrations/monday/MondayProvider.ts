@@ -7,8 +7,8 @@
 
 import {
   type CrmConnectionConfig,
-  type  CrmProvider,
-  NormalizedLead,
+  type CrmProvider,
+  type NormalizedLead,
   registerCrmProvider,
 } from '../shared/CrmProvider';
 

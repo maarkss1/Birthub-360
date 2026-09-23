@@ -13,13 +13,17 @@ import type { Request, Response } from 'express';
 
 export const externalCrmRoutes = Router();
 
+interface AuthenticatedRequest extends Request {
+  user?: { organizationId?: string };
+}
+
 // Restringe todas as rotas para ADMIN/GESTOR
 externalCrmRoutes.use(requireRole(['ADMIN', 'GESTOR']));
 
 // GET /api/integrations/external-crm
 // Lista conexões ativas de um provider específico
 externalCrmRoutes.get('/', async (req: Request, res: Response) => {
-  const organizationId = (req as any).user?.organizationId;
+  const organizationId = (req as AuthenticatedRequest).user?.organizationId;
   if (!organizationId) return res.status(401).send({ error: 'Unauthorized' });
 
   const provider = req.query.provider as string | undefined;
@@ -39,7 +43,7 @@ externalCrmRoutes.get('/', async (req: Request, res: Response) => {
 // POST /api/integrations/external-crm
 // Cria nova conexão
 externalCrmRoutes.post('/', express.json(), async (req: Request, res: Response) => {
-  const organizationId = (req as any).user?.organizationId;
+  const organizationId = (req as AuthenticatedRequest).user?.organizationId;
   if (!organizationId) return res.status(401).send({ error: 'Unauthorized' });
 
   const schema = z.object({
@@ -79,7 +83,7 @@ externalCrmRoutes.post('/', express.json(), async (req: Request, res: Response) 
 // DELETE /api/integrations/external-crm/:id
 // Remove conexão
 externalCrmRoutes.delete('/:id', async (req: Request, res: Response) => {
-  const organizationId = (req as any).user?.organizationId;
+  const organizationId = (req as AuthenticatedRequest).user?.organizationId;
   if (!organizationId) return res.status(401).send({ error: 'Unauthorized' });
 
   const rawId = req.params.id;

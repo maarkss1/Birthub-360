@@ -72,7 +72,7 @@ export function SinglePageDashboard() {
         <header className="space-y-2">
           <div className="flex flex-wrap items-center gap-2.5 mb-1">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand/10 text-brand-ink dark:text-brand border border-brand/20">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-brand motion-safe:animate-pulse" />
               Strategic Command Center
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-surface-2 text-ink-2 border border-line">
