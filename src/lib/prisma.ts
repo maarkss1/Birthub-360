@@ -39,11 +39,16 @@ const connectionString = env.DATABASE_URL || process.env.DATABASE_URL || '';
 // limited to pool_size: 15" e "Failed to get session" em toda rota autenticada.
 const pool = new Pool({
   connectionString,
-  max: 10, // Máximo de clients no pool — mantém margem abaixo do pool_size:15 do pooler Supabase
+  max: process.env.DB_POOL_MAX
+    ? parseInt(process.env.DB_POOL_MAX, 10)
+    : process.env.NODE_ENV === 'test'
+      ? 25
+      : 10, // Máximo de clients no pool — mantém margem abaixo do pool_size:15 do pooler Supabase em prod
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
   connectionTimeoutMillis: 30000, // Return an error after 30 seconds if connection could not be established
   allowExitOnIdle: true,
 });
+
 
 // Error handling for idle clients — usa logger estruturado (não console.error) para aparecer no Pino/Datadog.
 pool.on('error', (err) => {
@@ -439,9 +444,10 @@ export const prisma = basePrisma.$extends({
               return build(tx as unknown as PrismaClient);
             },
             {
-              maxWait: 15000,
-              timeout: 30000,
+              maxWait: process.env.NODE_ENV === 'test' ? 30000 : 15000,
+              timeout: 45000,
             },
+
           );
         };
 

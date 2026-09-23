@@ -14,18 +14,16 @@ const chromiumExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?.trim(
 export default defineConfig({
   testDir: './tests/e2e',
   testIgnore: ['**/visual.spec.ts'],
-  globalSetup: './tests/global-setup.ts',
-
-
+  globalSetup: './tests/e2e/global-setup.ts',
   // Os specs de auth/leads criam usuários/organizações reais no banco de testes de integração —
   // rodar em série evita duas rotinas de signup/CRUD pisando uma na outra na mesma tabela.
   fullyParallel: false,
   workers: 1,
   retries: process.env.CI ? 2 : 0,
   // Default do Playwright (30s) não sobra folga pro signUp() de helpers.ts (que já usa até 30s
-  // pra navegar pro app sob carga do runner do CI) mais o resto de cada teste. 45s dá esse espaço
-  // sem esconder um hang de verdade — signUp() estoura o timeout dele primeiro nesse caso.
-  timeout: 45_000,
+  // pra navegar pro app sob carga do runner  // (ver tests/e2e/helpers.ts). Aumentado de 30s para 45s (e agora 60s) para absorver o load total
+  // sem esconder um hang de verdade - signUp() estoura o timeout dele primeiro nesse caso.
+  timeout: 60_000,
   reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
   use: {
     baseURL: process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`,

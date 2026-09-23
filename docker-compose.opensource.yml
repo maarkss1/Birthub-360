@@ -11,6 +11,7 @@ services:
   langfuse-web: &langfuse-base
     image: langfuse/langfuse:3
     environment: &langfuse-env
+      HOSTNAME: '0.0.0.0'
       DATABASE_URL: postgresql://prospector:prospector_pass@postgres:5432/langfuse
       NEXTAUTH_URL: http://localhost:3001
       NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-change-this-langfuse-nextauth-secret}
@@ -45,7 +46,7 @@ services:
       test:
         [
           'CMD-SHELL',
-          'wget --no-verbose --tries=1 --spider http://localhost:3000/api/public/health || exit 1',
+          'wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/public/health || exit 1',
         ]
       interval: 15s
       timeout: 5s
@@ -53,7 +54,7 @@ services:
 
   langfuse-worker:
     <<: *langfuse-base
-    command: ['node', './worker/dist/index.js']
+    image: langfuse/langfuse-worker:3
     ports: []
     environment:
       <<: *langfuse-env
@@ -69,7 +70,7 @@ services:
     security_opt:
       - no-new-privileges:true
     healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:8123/ping']
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:8123/ping']
       interval: 10s
       timeout: 5s
       retries: 20

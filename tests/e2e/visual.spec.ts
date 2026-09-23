@@ -70,6 +70,7 @@ test.describe('Regressão visual', () => {
       await setTheme(page, theme);
       await signUp(page, { email: uniqueTestEmail(`visual-dash-${theme}`) });
       await waitForAppReady(page);
+      await page.waitForTimeout(1000);
       await expect(page).toHaveScreenshot(`dashboard-${theme}.png`, {
         ...DASHBOARD_SCREENSHOT_OPTIONS,
         mask: [
@@ -86,6 +87,7 @@ test.describe('Regressão visual', () => {
       await signUp(page, { email: uniqueTestEmail(`visual-crm-${theme}`) });
       await page.getByRole('button', { name: 'Pipeline CRM' }).click();
       await waitForAppReady(page);
+      await page.waitForTimeout(1000);
       await expect(page).toHaveScreenshot(`crm-board-${theme}.png`, SCREENSHOT_OPTIONS);
     });
   }
@@ -95,6 +97,9 @@ test.describe('Regressão visual', () => {
     await signUp(page, { email: uniqueTestEmail('visual-contact-form') });
     await page.getByRole('button', { name: 'Decisores' }).click();
     await waitForAppReady(page);
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+
     await page
       .getByRole('button', { name: /Novo Contato|Adicionar Primeiro Contato/ })
       .first()

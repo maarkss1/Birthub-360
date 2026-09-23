@@ -1,3 +1,4 @@
+﻿import { motion } from 'framer-motion';
 import {
   Activity,
   ArrowRight,
@@ -114,9 +115,21 @@ export function SinglePageDashboard() {
         </header>
 
         {/* BENTO GRID (GAP 16px / 1rem) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <motion.div 
+          className="grid grid-cols-1 lg:grid-cols-3 gap-4"
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            show: {
+              opacity: 1,
+              y: 0,
+              transition: { staggerChildren: 0.1, delayChildren: 0.1, type: 'spring', stiffness: 260, damping: 20 }
+            }
+          }}
+        >
           {/* TILE 1: HERO DO PIPELINE (DESTAQUE / 2 COLUNAS) — Gradiente Diagonal Ink→Íris no Fundo */}
-          <section
+          <motion.section variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } }}
             aria-label="Pipeline de Vendas em Destaque"
             className="lg:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B132B] via-[#121B38] to-[#2E1065] text-white p-7 sm:p-9 border border-white/10 flex flex-col justify-between shadow-xl min-h-[320px]"
           >
@@ -183,12 +196,12 @@ export function SinglePageDashboard() {
                 </button>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* COLUNA LATERAL COM 2 TILES EMPILHADOS (GAP 16px) */}
           <div className="flex flex-col gap-4">
             {/* TILE EMPILHADO 1: LEADS QUALIFICADOS */}
-            <section
+            <motion.section variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } }}
               aria-label="Volume de Leads"
               className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
             >
@@ -226,10 +239,10 @@ export function SinglePageDashboard() {
                   <ChevronRight className="w-3 h-3" />
                 </button>
               </div>
-            </section>
+            </motion.section>
 
             {/* TILE EMPILHADO 2: TAXA DE CONVERSÃO / WIN RATE */}
-            <section
+            <motion.section variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } }}
               aria-label="Taxa de Conversão"
               className="flex-1 rounded-3xl bg-surface border border-line p-6 sm:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between"
             >
@@ -269,11 +282,11 @@ export function SinglePageDashboard() {
                   <ChevronRight className="w-3 h-3" />
                 </button>
               </div>
-            </section>
+            </motion.section>
           </div>
 
           {/* TILE 4: COPILOTO IA — Gradiente Suave Dourado→Violeta na Superfície */}
-          <section
+          <motion.section variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } }}
             aria-label="Copiloto de IA e Inteligência Ativa"
             className="lg:col-span-3 rounded-3xl bg-gradient-to-br from-brand/8 via-surface to-red-violet/8 border border-brand/20 dark:border-brand/30 p-7 sm:p-8 shadow-sm relative overflow-hidden"
           >
@@ -326,7 +339,7 @@ export function SinglePageDashboard() {
                 </button>
               </div>
             </div>
-          </section>
+          </motion.section>
         </div>
       </div>
     </div>

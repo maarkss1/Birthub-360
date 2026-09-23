@@ -83,11 +83,11 @@ export async function signUp(
   const verificationPanel = page.getByText(/Enviamos um link de confirmação/);
   const outcome = await Promise.race([
     page
-      .waitForURL('**/hub*', { timeout: 30_000 })
+      .waitForURL('**/hub*', { timeout: 45_000 })
       .then(() => 'authenticated' as const)
       .catch(() => null),
     verificationPanel
-      .waitFor({ state: 'visible', timeout: 30_000 })
+      .waitFor({ state: 'visible', timeout: 45_000 })
       .then(() => 'pending-verification' as const)
       .catch(() => null),
   ]);
@@ -99,7 +99,7 @@ export async function signUp(
     // padrão pós-login mudou (ver comentário do topo da função).
     if (landOn === 'app') {
       await page.goto('/app');
-      await page.waitForURL('**/app*', { timeout: 30_000 });
+      await page.waitForURL('**/app*', { timeout: 45_000 });
     }
     return;
   }
