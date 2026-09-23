@@ -33,7 +33,7 @@ export function Pagination({
           type="button"
           disabled={page === 1}
           onClick={() => onPageChange(Math.max(1, page - 1))}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface border border-line text-ink-2 hover:bg-surface-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer text-xs font-semibold"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface/70 backdrop-blur-md border border-line text-ink-2 hover:bg-surface-elevated hover:shadow-sm active:scale-95 disabled:hover:scale-100 hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer text-xs font-semibold"
         >
           <ChevronLeft className="w-4 h-4" /> Anterior
         </button>
@@ -41,7 +41,7 @@ export function Pagination({
           type="button"
           disabled={page === totalPages}
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface border border-line text-ink-2 hover:bg-surface-2 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer text-xs font-semibold"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface/70 backdrop-blur-md border border-line text-ink-2 hover:bg-surface-elevated hover:shadow-sm active:scale-95 disabled:hover:scale-100 hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer text-xs font-semibold"
         >
           Próxima <ChevronRight className="w-4 h-4" />
         </button>

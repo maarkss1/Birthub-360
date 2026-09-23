@@ -32,8 +32,8 @@ export function TabNavCards({
             aria-selected={active}
             onClick={() => onSelect(item.id)}
             className={cn(
-              'relative flex items-center gap-3.5 overflow-hidden rounded-card border border-line bg-surface p-4 px-5 text-left shadow-card transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 focus-visible:ring-offset-bg',
-              active ? 'border-brand/45' : 'hover:shadow-card-hover',
+              'relative flex items-center gap-3.5 overflow-hidden rounded-card border border-line bg-surface/70 backdrop-blur-md p-4 px-5 text-left shadow-card transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 focus-visible:ring-offset-bg',
+              active ? 'border-brand/45 shadow-[inset_0_2px_12px_rgba(0,0,0,0.02)]' : 'hover:shadow-card-hover',
             )}
           >
             <span
