@@ -37,20 +37,25 @@ export interface ExternalCrmOutboundJobData {
   };
 }
 
-export async function queueLeadPushToExternalCrms(jobData: ExternalCrmOutboundJobData): Promise<void> {
+export async function queueLeadPushToExternalCrms(
+  jobData: ExternalCrmOutboundJobData,
+): Promise<void> {
   if (!externalCrmOutboundQueue) {
-    void ExternalCrmService.pushLeadToAllConnections(jobData.organizationId, jobData.leadId, jobData.payload);
+    void ExternalCrmService.pushLeadToAllConnections(
+      jobData.organizationId,
+      jobData.leadId,
+      jobData.payload,
+    );
     return;
   }
-  
-  await externalCrmOutboundQueue.add(
-    'push-lead',
-    jobData,
-    {
-      jobId: `crm-push-${jobData.organizationId}-${jobData.leadId}-${Date.now()}`
-    }
+
+  await externalCrmOutboundQueue.add('push-lead', jobData, {
+    jobId: `crm-push-${jobData.organizationId}-${jobData.leadId}-${Date.now()}`,
+  });
+  logger.info(
+    { organizationId: jobData.organizationId, leadId: jobData.leadId },
+    '[crm] Push enfileirado com sucesso',
   );
-  logger.info({ organizationId: jobData.organizationId, leadId: jobData.leadId }, '[crm] Push enfileirado com sucesso');
 }
 
 export function createExternalCrmOutboundWorker() {
@@ -58,12 +63,18 @@ export function createExternalCrmOutboundWorker() {
     EXTERNAL_CRM_OUTBOUND_QUEUE_NAME,
     async (job: Job<ExternalCrmOutboundJobData>) => {
       const { organizationId, leadId, payload } = job.data;
-      logger.info({ jobId: job.id, organizationId, leadId }, 'Processing external CRM outbound sync job');
+      logger.info(
+        { jobId: job.id, organizationId, leadId },
+        'Processing external CRM outbound sync job',
+      );
 
       await requestContext.run({ tenantId: organizationId }, async () => {
         try {
           await ExternalCrmService.pushLeadToAllConnections(organizationId, leadId, payload);
-          logger.info({ organizationId, leadId }, 'External CRM outbound job completed successfully');
+          logger.info(
+            { organizationId, leadId },
+            'External CRM outbound job completed successfully',
+          );
         } catch (error) {
           logger.error({ err: error, jobId: job.id, leadId }, 'External CRM outbound job failed');
           throw error;

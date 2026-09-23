@@ -16,7 +16,7 @@ export function ParticleSystem({
   intensity = 'medium',
 }: ParticleSystemProps) {
   const shouldReduceMotion = useReducedMotion();
-  
+
   if (shouldReduceMotion) return null;
 
   const colorMap = {
@@ -36,7 +36,7 @@ export function ParticleSystem({
     const colorClass = Array.isArray(colorMap[color])
       ? colorMap[color][i % colorMap[color].length]
       : colorMap[color];
-    
+
     return {
       id: i,
       x: Math.random() * 100,
@@ -90,7 +90,7 @@ export interface DigitalRainProps {
 
 export function DigitalRain({ className, color = 'cyan' }: DigitalRainProps) {
   const shouldReduceMotion = useReducedMotion();
-  
+
   if (shouldReduceMotion) return null;
 
   const colorMap = {
@@ -143,7 +143,7 @@ export interface GlitchEffectProps {
 
 export function GlitchEffect({ children, className, intensity = 'medium' }: GlitchEffectProps) {
   const shouldReduceMotion = useReducedMotion();
-  
+
   if (shouldReduceMotion) {
     return <div className={className}>{children}</div>;
   }
@@ -180,7 +180,7 @@ export function GlitchEffect({ children, className, intensity = 'medium' }: Glit
       >
         {children}
       </motion.div>
-      
+
       <motion.div
         className="absolute inset-0 text-blue-500/20 mix-blend-screen"
         style={{ filter: 'blur(1px)' }}

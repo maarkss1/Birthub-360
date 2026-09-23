@@ -3,7 +3,13 @@ import type React from 'react';
 import { SoundFX, type UiSound } from '../../lib/soundEffects';
 import { cn } from '../../lib/utils';
 
-export interface NeonButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+// Omite os 4 handlers cujo tipo o framer-motion redefine em `motion.button` (drag/animation): sem
+// isto, o spread de `...props` no <motion.button> não compila.
+export interface NeonButtonProps
+  extends Omit<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart'
+  > {
   variant?: 'cyan' | 'purple' | 'gold' | 'pink' | 'green';
   size?: 'sm' | 'md' | 'lg';
   sound?: UiSound;
@@ -89,8 +95,14 @@ export function NeonButton({
       {/* Partículas de luz */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/4 w-1 h-1 bg-white/50 rounded-full animate-pulse" />
-        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
-        <div className="absolute bottom-1/4 left-1/2 w-1 h-1 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+        <div
+          className="absolute top-1/3 right-1/3 w-1 h-1 bg-white/50 rounded-full animate-pulse"
+          style={{ animationDelay: '0.5s' }}
+        />
+        <div
+          className="absolute bottom-1/4 left-1/2 w-1 h-1 bg-white/50 rounded-full animate-pulse"
+          style={{ animationDelay: '1s' }}
+        />
       </div>
 
       <span className="relative z-10">{children}</span>

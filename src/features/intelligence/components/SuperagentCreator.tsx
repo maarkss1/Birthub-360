@@ -837,7 +837,14 @@ $status | ConvertTo-Json -Depth 3
 
             {/* Display do Código */}
             <div className="relative z-10 bg-black/80 p-6 rounded-2xl border border-white/10 backdrop-blur-md font-mono text-sm leading-relaxed overflow-hidden text-emerald-300">
-              <BorderBeam variant="emerald" size={220} duration={10} borderWidth={1.5} radius={16} glow />
+              <BorderBeam
+                variant="emerald"
+                size={220}
+                duration={10}
+                borderWidth={1.5}
+                radius={16}
+                glow
+              />
               <div className="overflow-x-auto max-h-96 custom-scrollbar relative z-10">
                 <pre className="whitespace-pre-wrap">
                   {activeTabOutput === 'prompt' && result.systemPrompt}

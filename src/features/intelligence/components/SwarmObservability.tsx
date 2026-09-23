@@ -19,17 +19,69 @@ interface LogEntry {
 }
 
 const mockAgents: AgentStatus[] = [
-  { id: 'ag-01', name: 'Alpha', role: 'Qualificador de Leads', status: 'WORKING', tokensUsed: 14500, lastActive: 'Agora' },
-  { id: 'ag-02', name: 'Beta', role: 'Analisador de CRM', status: 'IDLE', tokensUsed: 8900, lastActive: 'Há 5 min' },
-  { id: 'ag-03', name: 'Gamma', role: 'Gerador de Reports', status: 'WORKING', tokensUsed: 32150, lastActive: 'Agora' },
-  { id: 'ag-04', name: 'Delta', role: 'Monitor de Fila', status: 'ERROR', tokensUsed: 4200, lastActive: 'Há 12 min' },
+  {
+    id: 'ag-01',
+    name: 'Alpha',
+    role: 'Qualificador de Leads',
+    status: 'WORKING',
+    tokensUsed: 14500,
+    lastActive: 'Agora',
+  },
+  {
+    id: 'ag-02',
+    name: 'Beta',
+    role: 'Analisador de CRM',
+    status: 'IDLE',
+    tokensUsed: 8900,
+    lastActive: 'Há 5 min',
+  },
+  {
+    id: 'ag-03',
+    name: 'Gamma',
+    role: 'Gerador de Reports',
+    status: 'WORKING',
+    tokensUsed: 32150,
+    lastActive: 'Agora',
+  },
+  {
+    id: 'ag-04',
+    name: 'Delta',
+    role: 'Monitor de Fila',
+    status: 'ERROR',
+    tokensUsed: 4200,
+    lastActive: 'Há 12 min',
+  },
 ];
 
 const mockLogs: LogEntry[] = [
-  { id: 'log-1', timestamp: '10:45:01', agent: 'Alpha', action: 'Processando lead #4892 - Score calculado: 85', level: 'info' },
-  { id: 'log-2', timestamp: '10:45:15', agent: 'Gamma', action: 'Iniciando extração semanal de pipeline', level: 'info' },
-  { id: 'log-3', timestamp: '10:46:02', agent: 'Delta', action: 'Falha ao conectar na API externa (timeout)', level: 'error' },
-  { id: 'log-4', timestamp: '10:46:10', agent: 'Alpha', action: 'Enviando webhook de qualificação concluída', level: 'info' },
+  {
+    id: 'log-1',
+    timestamp: '10:45:01',
+    agent: 'Alpha',
+    action: 'Processando lead #4892 - Score calculado: 85',
+    level: 'info',
+  },
+  {
+    id: 'log-2',
+    timestamp: '10:45:15',
+    agent: 'Gamma',
+    action: 'Iniciando extração semanal de pipeline',
+    level: 'info',
+  },
+  {
+    id: 'log-3',
+    timestamp: '10:46:02',
+    agent: 'Delta',
+    action: 'Falha ao conectar na API externa (timeout)',
+    level: 'error',
+  },
+  {
+    id: 'log-4',
+    timestamp: '10:46:10',
+    agent: 'Alpha',
+    action: 'Enviando webhook de qualificação concluída',
+    level: 'info',
+  },
 ];
 
 export function SwarmObservability() {
@@ -42,7 +94,9 @@ export function SwarmObservability() {
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Activity className="text-blue-600" /> Swarm Observability
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Painel restrito para ADMIN/Ops. Monitoramento autônomo do enxame.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Painel restrito para ADMIN/Ops. Monitoramento autônomo do enxame.
+          </p>
         </div>
         <div className="flex gap-4">
           <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm flex items-center gap-3">
@@ -67,19 +121,19 @@ export function SwarmObservability() {
       </div>
 
       <div className="flex border-b border-gray-200 mb-6">
-        <button 
+        <button
           className={`py-2 px-4 border-b-2 font-medium text-sm transition-colors ${activeTab === 'agents' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
           onClick={() => setActiveTab('agents')}
         >
           Estado dos Agentes
         </button>
-        <button 
+        <button
           className={`py-2 px-4 border-b-2 font-medium text-sm transition-colors ${activeTab === 'logs' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
           onClick={() => setActiveTab('logs')}
         >
           Logs Autônomos
         </button>
-        <button 
+        <button
           className={`py-2 px-4 border-b-2 font-medium text-sm transition-colors ${activeTab === 'traces' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
           onClick={() => setActiveTab('traces')}
         >
@@ -93,10 +147,18 @@ export function SwarmObservability() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agente / Papel</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uso (Tokens)</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Atividade</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Agente / Papel
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Uso (Tokens)
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Última Atividade
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -109,9 +171,21 @@ export function SwarmObservability() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {agent.status === 'WORKING' && <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><Activity size={12} className="animate-pulse" /> Trabalhando</span>}
-                      {agent.status === 'IDLE' && <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><Clock size={12} /> Ocioso</span>}
-                      {agent.status === 'ERROR' && <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><AlertCircle size={12} /> Erro</span>}
+                      {agent.status === 'WORKING' && (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <Activity size={12} className="animate-pulse" /> Trabalhando
+                        </span>
+                      )}
+                      {agent.status === 'IDLE' && (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          <Clock size={12} /> Ocioso
+                        </span>
+                      )}
+                      {agent.status === 'ERROR' && (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          <AlertCircle size={12} /> Erro
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {agent.tokensUsed.toLocaleString()}
@@ -131,7 +205,9 @@ export function SwarmObservability() {
             {mockLogs.map((log) => (
               <div key={log.id} className="mb-2 flex gap-3">
                 <span className="text-gray-500 shrink-0">[{log.timestamp}]</span>
-                <span className={`font-semibold shrink-0 ${log.level === 'error' ? 'text-red-400' : 'text-blue-400'}`}>
+                <span
+                  className={`font-semibold shrink-0 ${log.level === 'error' ? 'text-red-400' : 'text-blue-400'}`}
+                >
                   {log.agent}
                 </span>
                 <span className={`${log.level === 'error' ? 'text-red-300' : 'text-gray-300'}`}>
@@ -147,7 +223,9 @@ export function SwarmObservability() {
           <div className="p-8 flex flex-col items-center justify-center h-full text-gray-500">
             <Database size={48} className="mb-4 text-gray-300" />
             <p className="text-lg font-medium">Traces Detalhados (Em construção)</p>
-            <p className="text-sm mt-2">A visualização de flamegraphs de traces estará disponível em breve.</p>
+            <p className="text-sm mt-2">
+              A visualização de flamegraphs de traces estará disponível em breve.
+            </p>
           </div>
         )}
       </div>

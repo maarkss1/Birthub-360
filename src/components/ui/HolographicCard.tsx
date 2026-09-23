@@ -18,7 +18,7 @@ export function HolographicCard({
   onClick,
 }: HolographicCardProps) {
   const shouldReduceMotion = useReducedMotion();
-  
+
   const intensityMap = {
     low: 'border-opacity-30 shadow-glow-opacity-20',
     medium: 'border-opacity-50 shadow-glow-opacity-40',
@@ -37,6 +37,7 @@ export function HolographicCard({
       className={cn(
         'relative overflow-hidden rounded-2xl bg-surface-elevated/80 backdrop-blur-xl border transition-all duration-300',
         variantColors[variant],
+        intensityMap[intensity],
         onClick && 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]',
         shouldReduceMotion && 'hover:scale-100 active:scale-100',
         className,
@@ -52,14 +53,12 @@ export function HolographicCard({
 
       {/* Glow no topo */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-      
+
       {/* Glow no canto superior direito */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full" />
 
       {/* Conteúdo */}
-      <div className="relative z-10 p-6">
-        {children}
-      </div>
+      <div className="relative z-10 p-6">{children}</div>
 
       {/* Borda animada */}
       <motion.div
@@ -68,9 +67,13 @@ export function HolographicCard({
           background: 'linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)',
           backgroundSize: '200% 200%',
         }}
-        animate={!shouldReduceMotion ? {
-          backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-        } : undefined}
+        animate={
+          !shouldReduceMotion
+            ? {
+                backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
+              }
+            : undefined
+        }
         transition={{
           duration: 3,
           repeat: Infinity,

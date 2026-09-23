@@ -95,7 +95,9 @@ export function Toggle({
         className={cn(
           'relative inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
           styles.container,
-          checked ? cn(styles.checked, variant !== 'classic' && glowColorStyles[glowColor]) : styles.unchecked,
+          checked
+            ? cn(styles.checked, variant !== 'classic' && glowColorStyles[glowColor])
+            : styles.unchecked,
           disabled && 'cursor-not-allowed opacity-50 hover:brightness-100',
         )}
       >
@@ -114,7 +116,7 @@ export function Toggle({
                 }
           }
         />
-        
+
         {/* Efeito de brilho no thumb para variantes neon/cyber */}
         {(variant === 'neon' || variant === 'cyber') && checked && !shouldReduceMotion && (
           <motion.div

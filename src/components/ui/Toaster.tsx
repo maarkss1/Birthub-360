@@ -9,7 +9,10 @@ import { type ToastMessage, toast } from '../../lib/toast';
 // segunda era a animação de entrada do toast sendo capturada a meio caminho, não uma cor real
 // insuficiente — bg-red-600 mede 4.83:1 em repouso, já dentro do mínimo). bg-green-700 mede 5.02:1.
 const KIND_STYLES: Record<ToastMessage['kind'], { bg: string; icon: typeof CheckCircle2 }> = {
-  success: { bg: 'bg-green-700/80 backdrop-blur-xl border border-green-500/30', icon: CheckCircle2 },
+  success: {
+    bg: 'bg-green-700/80 backdrop-blur-xl border border-green-500/30',
+    icon: CheckCircle2,
+  },
   error: { bg: 'bg-red-600/80 backdrop-blur-xl border border-red-500/30', icon: AlertTriangle },
   info: { bg: 'bg-obsidian/80 backdrop-blur-xl border border-white/10', icon: Info },
 };

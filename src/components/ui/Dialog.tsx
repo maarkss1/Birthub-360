@@ -122,8 +122,10 @@ export function Dialog({
       className={cn(
         'backdrop:bg-black/40 open:animate-fade-in fixed m-auto rounded-2xl border p-0 text-ink shadow-dialog outline-none backdrop:backdrop-blur-md sm:w-full transition-all',
         variant === 'classic' && 'border-line bg-surface-elevated/90',
-        variant === 'holographic' && 'border-brand/30 bg-surface-elevated/60 backdrop-blur-xl shadow-[0_0_40px_rgba(212,175,55,0.2)]',
-        variant === 'neon' && 'border-cyan-400/30 bg-surface-elevated/60 backdrop-blur-xl shadow-[0_0_40px_rgba(34,211,238,0.2)]',
+        variant === 'holographic' &&
+          'border-brand/30 bg-surface-elevated/60 backdrop-blur-xl shadow-[0_0_40px_rgba(212,175,55,0.2)]',
+        variant === 'neon' &&
+          'border-cyan-400/30 bg-surface-elevated/60 backdrop-blur-xl shadow-[0_0_40px_rgba(34,211,238,0.2)]',
         maxWidth,
         isLoading && 'border-transparent overflow-hidden isolate',
       )}
@@ -134,7 +136,7 @@ export function Dialog({
           <div className="absolute inset-[1.5px] z-[-1] rounded-[calc(1rem-1.5px)] bg-surface-elevated/95 backdrop-blur-xl pointer-events-none" />
         </>
       )}
-      
+
       {/* Efeito holográfico adicional para variantes especiais */}
       {(variant === 'holographic' || variant === 'neon') && !isLoading && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
@@ -142,20 +144,30 @@ export function Dialog({
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         </div>
       )}
-      
-      <div className={cn("flex max-h-[85vh] flex-col backdrop-blur-xl rounded-2xl relative z-10 transition-opacity duration-300", isLoading && "opacity-60 pointer-events-none select-none")}>
+
+      <div
+        className={cn(
+          'flex max-h-[85vh] flex-col backdrop-blur-xl rounded-2xl relative z-10 transition-opacity duration-300',
+          isLoading && 'opacity-60 pointer-events-none select-none',
+        )}
+      >
         {/* Header */}
-        <div className={cn(
-          "flex shrink-0 items-center justify-between px-5 py-4",
-          variant === 'classic' && 'border-b border-line',
-          variant === 'holographic' && 'border-b border-brand/20',
-          variant === 'neon' && 'border-b border-cyan-400/20',
-        )}>
+        <div
+          className={cn(
+            'flex shrink-0 items-center justify-between px-5 py-4',
+            variant === 'classic' && 'border-b border-line',
+            variant === 'holographic' && 'border-b border-brand/20',
+            variant === 'neon' && 'border-b border-cyan-400/20',
+          )}
+        >
           {typeof title === 'string' ? (
-            <h2 id={titleId} className={cn(
-              "font-display text-lg font-bold tracking-tight",
-              variant === 'neon' && 'text-cyan-300'
-            )}>
+            <h2
+              id={titleId}
+              className={cn(
+                'font-display text-lg font-bold tracking-tight',
+                variant === 'neon' && 'text-cyan-300',
+              )}
+            >
               {title}
             </h2>
           ) : (
@@ -165,8 +177,8 @@ export function Dialog({
             type="button"
             onClick={onClose}
             className={cn(
-              "rounded-full p-1.5 text-ink-2 transition-all duration-200 hover:bg-surface-interactive hover:text-ink hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand",
-              variant === 'neon' && 'hover:text-cyan-200 focus-visible:ring-cyan-400'
+              'rounded-full p-1.5 text-ink-2 transition-all duration-200 hover:bg-surface-interactive hover:text-ink hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+              variant === 'neon' && 'hover:text-cyan-200 focus-visible:ring-cyan-400',
             )}
             aria-label="Fechar modal"
           >
@@ -175,12 +187,16 @@ export function Dialog({
         </div>
         <div className="p-4 overflow-y-auto overscroll-contain">{children}</div>
         {footer && (
-          <div className={cn(
-            "p-4 shrink-0 flex justify-end gap-3",
-            variant === 'classic' && 'border-t border-line',
-            variant === 'holographic' && 'border-t border-brand/20',
-            variant === 'neon' && 'border-t border-cyan-400/20',
-          )}>{footer}</div>
+          <div
+            className={cn(
+              'p-4 shrink-0 flex justify-end gap-3',
+              variant === 'classic' && 'border-t border-line',
+              variant === 'holographic' && 'border-t border-brand/20',
+              variant === 'neon' && 'border-t border-cyan-400/20',
+            )}
+          >
+            {footer}
+          </div>
         )}
       </div>
     </dialog>

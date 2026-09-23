@@ -257,7 +257,9 @@ describe('POST /webhook/:connectionId', () => {
 
     const res = await request(app)
       .post('/webhook/conn-1')
-      .send('event=ONCRMDEALUPDATE&data[FIELDS][ID]=100&auth[application_token]=segredo-correto&ts=1234567890');
+      .send(
+        'event=ONCRMDEALUPDATE&data[FIELDS][ID]=100&auth[application_token]=segredo-correto&ts=1234567890',
+      );
 
     expect(res.status).toBe(200);
     expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();
@@ -271,7 +273,9 @@ describe('POST /webhook/:connectionId', () => {
 
     const res = await request(app)
       .post('/webhook/conn-1')
-      .send('event=ONCRMDEALUPDATE&data[FIELDS][ID]=100&auth[application_token]=segredo-correto&ts=1234567890');
+      .send(
+        'event=ONCRMDEALUPDATE&data[FIELDS][ID]=100&auth[application_token]=segredo-correto&ts=1234567890',
+      );
 
     expect(res.status).toBe(401);
     expect(prismaMock.lead.findFirst).not.toHaveBeenCalled();

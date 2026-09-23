@@ -41,7 +41,12 @@ export function ThemeSwitcher({ currentStyle, onStyleChange, className }: ThemeS
   };
 
   return (
-    <div className={cn('flex items-center gap-1 p-1 rounded-xl bg-surface-elevated/80 backdrop-blur-md border border-line', className)}>
+    <div
+      className={cn(
+        'flex items-center gap-1 p-1 rounded-xl bg-surface-elevated/80 backdrop-blur-md border border-line',
+        className,
+      )}
+    >
       {styles.map((style) => (
         <motion.button
           key={style.value}
@@ -59,7 +64,7 @@ export function ThemeSwitcher({ currentStyle, onStyleChange, className }: ThemeS
         >
           {style.icon}
           <span className="hidden sm:inline">{style.label}</span>
-          
+
           {currentStyle === style.value && (
             <motion.div
               className="absolute inset-0 rounded-lg bg-brand/20"
@@ -79,9 +84,13 @@ export interface QuickThemeToggleProps {
   className?: string;
 }
 
-export function QuickThemeToggle({ currentStyle, onStyleChange, className }: QuickThemeToggleProps) {
+export function QuickThemeToggle({
+  currentStyle,
+  onStyleChange,
+  className,
+}: QuickThemeToggleProps) {
   const shouldReduceMotion = useReducedMotion();
-  
+
   const nextStyle = () => {
     const styles: ThemeStyle[] = ['classic', 'futuristic', 'neon'];
     const currentIndex = styles.indexOf(currentStyle);
@@ -120,7 +129,7 @@ export function QuickThemeToggle({ currentStyle, onStyleChange, className }: Qui
       title={`Mudar estilo (atual: ${currentStyle})`}
     >
       {getIcon()}
-      
+
       <motion.div
         className="absolute inset-0 rounded-xl bg-brand/10"
         initial={{ scale: 0 }}

@@ -7,9 +7,12 @@ const selectVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border-line hover:border-brand/40 hover:bg-surface-elevated hover:shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.005] focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/20 focus-visible:scale-[1.01] focus-visible:shadow-[inset_0_2px_12px_rgba(212,175,55,0.08)]',
-        filled: 'border-transparent bg-surface-2 hover:bg-surface-interactive hover:border-brand/30 hover:scale-[1.005] focus-visible:bg-surface focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/20 focus-visible:scale-[1.01]',
-        ghost: 'border-transparent bg-transparent hover:bg-surface-subtle hover:border-brand/20 hover:scale-[1.005] focus-visible:bg-surface-subtle focus-visible:border-brand/30 focus-visible:ring-4 focus-visible:ring-brand/20 focus-visible:scale-[1.01]',
+        default:
+          'border-line hover:border-brand/40 hover:bg-surface-elevated hover:shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] hover:scale-[1.005] focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/20 focus-visible:scale-[1.01] focus-visible:shadow-[inset_0_2px_12px_rgba(212,175,55,0.08)]',
+        filled:
+          'border-transparent bg-surface-2 hover:bg-surface-interactive hover:border-brand/30 hover:scale-[1.005] focus-visible:bg-surface focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/20 focus-visible:scale-[1.01]',
+        ghost:
+          'border-transparent bg-transparent hover:bg-surface-subtle hover:border-brand/20 hover:scale-[1.005] focus-visible:bg-surface-subtle focus-visible:border-brand/30 focus-visible:ring-4 focus-visible:ring-brand/20 focus-visible:scale-[1.01]',
       },
       size: {
         default: 'h-10 px-3 py-2',
@@ -29,15 +32,13 @@ export interface SelectProps
   extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
     VariantProps<typeof selectVariants> {}
 
-const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({ className, variant, size, ...props }, ref) => {
-  return (
-    <select
-      className={cn(selectVariants({ variant, size, className }))}
-      ref={ref}
-      {...props}
-    />
-  );
-});
+const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
+  ({ className, variant, size, ...props }, ref) => {
+    return (
+      <select className={cn(selectVariants({ variant, size, className }))} ref={ref} {...props} />
+    );
+  },
+);
 Select.displayName = 'Select';
 
 export { Select, selectVariants };

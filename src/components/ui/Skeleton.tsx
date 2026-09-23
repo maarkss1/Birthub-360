@@ -10,7 +10,9 @@ export function Skeleton({ className, shimmer = true, ...props }: SkeletonProps)
     <div
       className={cn(
         'rounded-md transition-all duration-300',
-        shimmer ? 'bh-skeleton-shimmer relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-brand/10 before:to-transparent bg-surface-2/60 backdrop-blur-sm' : 'animate-pulse bg-surface-2/60 backdrop-blur-sm',
+        shimmer
+          ? 'bh-skeleton-shimmer relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-brand/10 before:to-transparent bg-surface-2/60 backdrop-blur-sm'
+          : 'animate-pulse bg-surface-2/60 backdrop-blur-sm',
         className,
       )}
       {...props}

@@ -49,7 +49,6 @@ const pool = new Pool({
   allowExitOnIdle: true,
 });
 
-
 // Error handling for idle clients — usa logger estruturado (não console.error) para aparecer no Pino/Datadog.
 pool.on('error', (err) => {
   logger.error({ err }, 'Unexpected error on idle database client');
@@ -447,7 +446,6 @@ export const prisma = basePrisma.$extends({
               maxWait: process.env.NODE_ENV === 'test' ? 30000 : 15000,
               timeout: 45000,
             },
-
           );
         };
 

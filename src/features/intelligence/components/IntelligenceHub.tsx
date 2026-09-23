@@ -145,7 +145,8 @@ const TOOL_TABS: {
     id: 'rag',
     label: 'Base de Conhecimento',
     icon: Database,
-    description: 'Base de embeddings que o Copiloto SDR consulta para gerar abordagens contextuais.',
+    description:
+      'Base de embeddings que o Copiloto SDR consulta para gerar abordagens contextuais.',
   },
   {
     id: 'quality',

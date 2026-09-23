@@ -48,8 +48,14 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Ambientação de marca contida: clara no light, profunda sem neon no dark. */}
       <div className="absolute inset-0 flex z-0 overflow-hidden pointer-events-none bg-bg mix-blend-screen dark:mix-blend-color-dodge">
         <div className="absolute -right-48 -top-56 h-[36rem] w-[36rem] rounded-full bg-brand/15 blur-[160px] dark:bg-brand/10 transition-colors duration-1000 animate-pulse-slow" />
-        <div className="absolute -bottom-64 -left-48 h-[34rem] w-[34rem] rounded-full bg-iris/10 blur-[180px] dark:bg-orbit-blue/10 transition-colors duration-1000 animate-pulse-slow" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[40rem] w-[40rem] rounded-full bg-orbit-blue/5 blur-[200px] dark:bg-orbit-blue/8 transition-colors duration-1000 animate-pulse-slow" style={{ animationDelay: '4s' }} />
+        <div
+          className="absolute -bottom-64 -left-48 h-[34rem] w-[34rem] rounded-full bg-iris/10 blur-[180px] dark:bg-orbit-blue/10 transition-colors duration-1000 animate-pulse-slow"
+          style={{ animationDelay: '2s' }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[40rem] w-[40rem] rounded-full bg-orbit-blue/5 blur-[200px] dark:bg-orbit-blue/8 transition-colors duration-1000 animate-pulse-slow"
+          style={{ animationDelay: '4s' }}
+        />
       </div>
 
       <OfflineBanner />

@@ -153,7 +153,12 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     ) {
       broadcastEvent({ type: 'DEAL_LOST', organizationId, payload: { leadId: id } });
     }
-    if (data.status) this.syncStatusChangeToCrms(organizationId, id, updated.bitrixLeadId, { name: 'Lead Atualizado', amount: updated.amount ?? undefined, stageLabel: updated.status });
+    if (data.status)
+      this.syncStatusChangeToCrms(organizationId, id, updated.bitrixLeadId, {
+        name: 'Lead Atualizado',
+        amount: updated.amount ?? undefined,
+        stageLabel: updated.status,
+      });
     return updated;
   }
 
@@ -182,7 +187,11 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     ) {
       broadcastEvent({ type: 'DEAL_LOST', organizationId, payload: { leadId: id } });
     }
-    this.syncStatusChangeToCrms(organizationId, id, updated.bitrixLeadId, { name: 'Lead Atualizado', amount: updated.amount ?? undefined, stageLabel: updated.status });
+    this.syncStatusChangeToCrms(organizationId, id, updated.bitrixLeadId, {
+      name: 'Lead Atualizado',
+      amount: updated.amount ?? undefined,
+      stageLabel: updated.status,
+    });
     return updated;
   }
 
@@ -223,8 +232,8 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
     }
 
     import('../../../lib/queue/externalCrmOutbound.queue.js')
-      .then(({ queueLeadPushToExternalCrms }) => 
-        queueLeadPushToExternalCrms({ organizationId, leadId, payload: leadData })
+      .then(({ queueLeadPushToExternalCrms }) =>
+        queueLeadPushToExternalCrms({ organizationId, leadId, payload: leadData }),
       )
       .catch((err) => {
         logger.warn(

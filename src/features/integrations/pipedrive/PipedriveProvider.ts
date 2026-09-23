@@ -17,7 +17,7 @@ const PIPEDRIVE_BASE = 'https://api.pipedrive.com/v1';
 async function pipedriveRequest<T>(
   path: string,
   config: CrmConnectionConfig,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const separator = path.includes('?') ? '&' : '?';
   const token = config.apiKey ?? config.accessToken;
@@ -81,14 +81,10 @@ const PipedriveProvider: CrmProvider = {
       params.set('since_timestamp', lastImportedAt.toISOString().split('T')[0]);
     }
 
-    const data = await pipedriveRequest<Record<string, unknown>[]>(
-      `/deals?${params}`,
-      config
-    );
+    const data = await pipedriveRequest<Record<string, unknown>[]>(`/deals?${params}`, config);
 
     const deals = Array.isArray(data) ? data : [];
-    const nextCursor =
-      deals.length === 100 ? String(start + 100) : undefined;
+    const nextCursor = deals.length === 100 ? String(start + 100) : undefined;
 
     return {
       leads: deals.map(mapPipedriveDeal),
@@ -111,11 +107,10 @@ const PipedriveProvider: CrmProvider = {
       return { externalId };
     }
 
-    const created = await pipedriveRequest<{ id: number }>(
-      '/deals',
-      config,
-      { method: 'POST', body: JSON.stringify(body) }
-    );
+    const created = await pipedriveRequest<{ id: number }>('/deals', config, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
 
     return {
       externalId: String(created.id),

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
-import { BirthHubLogo } from '../brand/BirthHubLogo';
 import { BrandEmblemBadge } from '../brand/BrandEmblemBadge';
 import { SoundFX } from '../../lib/soundEffects';
 import { TAB_META, type TabType } from './tabMeta';
@@ -224,10 +223,10 @@ export function Sidebar({
         aria-label={meta.label}
         aria-current={isActive ? 'page' : undefined}
         className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated cursor-pointer hover:scale-[1.02] active:scale-95 ${
-        isActive
-          ? 'bg-gradient-to-r from-brand/15 to-brand/5 text-brand shadow-md ring-1 ring-brand/30 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
-          : 'text-ink-2 hover:bg-surface-interactive hover:text-ink hover:shadow-sm'
-      } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
+          isActive
+            ? 'bg-gradient-to-r from-brand/15 to-brand/5 text-brand shadow-md ring-1 ring-brand/30 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
+            : 'text-ink-2 hover:bg-surface-interactive hover:text-ink hover:shadow-sm'
+        } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         {isActive && (
           <span
@@ -360,7 +359,10 @@ export function Sidebar({
           title="Encerrar sessão e sair da conta"
           aria-label="Encerrar sessão e sair da conta"
         >
-          <LogOut size={20} className="shrink-0 opacity-80 transition-transform group-hover:-translate-x-1" />
+          <LogOut
+            size={20}
+            className="shrink-0 opacity-80 transition-transform group-hover:-translate-x-1"
+          />
           <span className={isCollapsed ? 'lg:hidden' : ''}>Sair da Conta</span>
         </button>
       </div>

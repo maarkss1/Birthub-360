@@ -184,8 +184,8 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
           <Zap className="w-5 h-5 text-brand" /> Sincronização automática
         </h3>
         <p className="text-sm text-ink-2 mt-1 max-w-2xl">
-          O {BRAND.shortName} verifica cada regra a cada 15 minutos e importa sozinho só o que bater com o
-          filtro — sem regra ativa, nada é trazido automaticamente.
+          O {BRAND.shortName} verifica cada regra a cada 15 minutos e importa sozinho só o que bater
+          com o filtro — sem regra ativa, nada é trazido automaticamente.
         </p>
       </div>
 

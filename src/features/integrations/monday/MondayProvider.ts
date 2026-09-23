@@ -17,7 +17,7 @@ const MONDAY_API_URL = 'https://api.monday.com/v2';
 async function mondayQuery<T>(
   query: string,
   variables: Record<string, unknown>,
-  config: CrmConnectionConfig
+  config: CrmConnectionConfig,
 ): Promise<T> {
   const token = config.apiKey ?? config.accessToken;
   const res = await fetch(MONDAY_API_URL, {
@@ -104,9 +104,7 @@ const MondayProvider: CrmProvider = {
     }>(query, { boardId: [boardId], page }, config);
 
     const items = result.boards?.[0]?.items_page?.items ?? [];
-    const nextCursor = result.boards?.[0]?.items_page?.cursor
-      ? String(page + 1)
-      : undefined;
+    const nextCursor = result.boards?.[0]?.items_page?.cursor ? String(page + 1) : undefined;
 
     return {
       leads: items.map(mapMondayItem),
@@ -138,7 +136,7 @@ const MondayProvider: CrmProvider = {
     const result = await mondayQuery<{ create_item: { id: string } }>(
       mutation,
       { boardId, itemName: lead.name },
-      config
+      config,
     );
 
     return {

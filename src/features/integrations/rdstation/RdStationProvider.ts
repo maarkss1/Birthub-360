@@ -17,7 +17,7 @@ const RDSTATION_API_BASE = 'https://crm.rdstation.com/api/v1';
 async function rdRequest<T>(
   path: string,
   config: CrmConnectionConfig,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const token = config.accessToken ?? config.apiKey;
   const res = await fetch(`${RDSTATION_API_BASE}${path}`, {
@@ -98,11 +98,10 @@ const RdStationProvider: CrmProvider = {
       return { externalId };
     }
 
-    const created = await rdRequest<{ deal: { _id: string } }>(
-      '/deals',
-      config,
-      { method: 'POST', body: JSON.stringify({ deal: body }) }
-    );
+    const created = await rdRequest<{ deal: { _id: string } }>('/deals', config, {
+      method: 'POST',
+      body: JSON.stringify({ deal: body }),
+    });
 
     return { externalId: created.deal._id };
   },

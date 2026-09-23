@@ -10,25 +10,25 @@ interface ContextualCopilotProps {
 
 export function ContextualCopilot({ context, onClose }: ContextualCopilotProps) {
   const [input, setInput] = useState('');
-  
+
   const suggestions = {
     CRM: [
-      "Quais as oportunidades mais quentes hoje?",
-      "Resumo da conta atual",
-      "Quais tarefas estão atrasadas?"
+      'Quais as oportunidades mais quentes hoje?',
+      'Resumo da conta atual',
+      'Quais tarefas estão atrasadas?',
     ],
     PROSPECTING: [
-      "Quem abordar primeiro nesta lista?",
-      "Gerar e-mail frio para este lead",
-      "Qual o melhor horário para ligar?"
+      'Quem abordar primeiro nesta lista?',
+      'Gerar e-mail frio para este lead',
+      'Qual o melhor horário para ligar?',
     ],
     MANAGEMENT: [
-      "Visão geral de metas deste mês",
-      "Qual vendedor está precisando de ajuda?",
-      "Previsão de fechamento da semana"
-    ]
+      'Visão geral de metas deste mês',
+      'Qual vendedor está precisando de ajuda?',
+      'Previsão de fechamento da semana',
+    ],
   };
-  
+
   const currentSuggestions = suggestions[context] || [];
 
   return (
@@ -44,17 +44,19 @@ export function ContextualCopilot({ context, onClose }: ContextualCopilotProps) 
           </button>
         )}
       </div>
-      
+
       <div className="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-4">
         <div className="bg-white p-3 rounded-lg shadow-sm text-sm text-gray-700 border border-gray-100">
           Olá! Como posso te ajudar na sua visão de <strong>{context}</strong> hoje?
         </div>
-        
+
         <div className="mt-2">
-          <p className="text-xs text-gray-500 font-medium mb-2 uppercase tracking-wide">Sugestões de contexto</p>
+          <p className="text-xs text-gray-500 font-medium mb-2 uppercase tracking-wide">
+            Sugestões de contexto
+          </p>
           <div className="flex flex-col gap-2">
             {currentSuggestions.map((suggestion, idx) => (
-              <button 
+              <button
                 key={idx}
                 className="text-left text-xs bg-indigo-50 text-indigo-700 p-2 rounded-md hover:bg-indigo-100 transition-colors flex items-center gap-2 border border-indigo-100"
                 onClick={() => setInput(suggestion)}
@@ -66,7 +68,7 @@ export function ContextualCopilot({ context, onClose }: ContextualCopilotProps) 
           </div>
         </div>
       </div>
-      
+
       <div className="p-3 bg-white border-t border-gray-200">
         <div className="relative flex items-center">
           <input

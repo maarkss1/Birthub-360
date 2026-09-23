@@ -16,12 +16,12 @@ describe('opaGuard Middleware', () => {
       method: 'GET',
       path: '/api/resource/123',
       user: { role: 'USER', id: '123' },
-      params: { id: '123' }
+      params: { id: '123' },
     } as any;
 
     mockRes = {
       status: vi.fn().mockReturnThis(),
-      json: vi.fn()
+      json: vi.fn(),
     } as any;
 
     mockNext = vi.fn();
@@ -31,7 +31,7 @@ describe('opaGuard Middleware', () => {
   it('should allow access if OPA returns true', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ result: true })
+      json: async () => ({ result: true }),
     });
 
     await opaGuard(mockReq as Request, mockRes as Response, mockNext);
@@ -42,7 +42,7 @@ describe('opaGuard Middleware', () => {
   it('should deny access if OPA returns false', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ result: false })
+      json: async () => ({ result: false }),
     });
 
     await opaGuard(mockReq as Request, mockRes as Response, mockNext);

@@ -17,7 +17,7 @@ const HUBSPOT_API_BASE = 'https://api.hubapi.com';
 async function hubspotRequest<T>(
   path: string,
   config: CrmConnectionConfig,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const url = `${HUBSPOT_API_BASE}${path}`;
   const res = await fetch(url, {
@@ -122,14 +122,10 @@ const HubSpotProvider: CrmProvider = {
       return { externalId };
     }
 
-    const created = await hubspotRequest<{ id: string }>(
-      '/crm/v3/objects/deals',
-      config,
-      {
-        method: 'POST',
-        body: JSON.stringify({ properties }),
-      }
-    );
+    const created = await hubspotRequest<{ id: string }>('/crm/v3/objects/deals', config, {
+      method: 'POST',
+      body: JSON.stringify({ properties }),
+    });
 
     return {
       externalId: created.id,

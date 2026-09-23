@@ -14,8 +14,10 @@ const inputVariants = cva(
       },
       variant: {
         default: '',
-        filled: 'bg-surface-2 border-transparent hover:bg-surface-interactive focus-visible:bg-surface focus-visible:border-brand',
-        ghost: 'bg-transparent border-transparent hover:bg-surface-subtle focus-visible:bg-surface-subtle focus-visible:border-brand/30',
+        filled:
+          'bg-surface-2 border-transparent hover:bg-surface-interactive focus-visible:bg-surface focus-visible:border-brand',
+        ghost:
+          'bg-transparent border-transparent hover:bg-surface-subtle focus-visible:bg-surface-subtle focus-visible:border-brand/30',
       },
     },
     defaultVariants: {

@@ -467,7 +467,14 @@ export function RobustScriptGenerator() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-[#0D1117] border border-[#30363D] rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group"
           >
-            <BorderBeam variant="cyan" size={260} duration={12} borderWidth={1.5} radius={40} glow />
+            <BorderBeam
+              variant="cyan"
+              size={260}
+              duration={12}
+              borderWidth={1.5}
+              radius={40}
+              glow
+            />
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#30363D] pb-4">
               <div className="flex items-center gap-3 text-slate-400 text-xs font-mono uppercase tracking-widest">
                 <TerminalSquare size={16} className={accent.text} />

@@ -14,10 +14,7 @@ import { BrandProvider } from './contexts/BrandContext';
 import { DailyClosingProvider } from './contexts/DailyClosingContext';
 import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import {
-  COMMERCIAL_INTELLIGENCE_ROLES,
-  MESA_TRATAMENTO_ROLES,
-} from './lib/auth/authorization';
+import { COMMERCIAL_INTELLIGENCE_ROLES, MESA_TRATAMENTO_ROLES } from './lib/auth/authorization';
 
 const DesignLabPage = lazy(() =>
   import('./features/design-lab/DesignLabPage').then((m) => ({ default: m.DesignLabPage })),

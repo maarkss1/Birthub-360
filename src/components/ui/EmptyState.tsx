@@ -18,9 +18,9 @@ export function EmptyState({ title, description, actionLabel, onAction, icon }: 
       transition={{ duration: 0.3 }}
       className="flex flex-col items-center justify-center p-12 text-center rounded-card-lg border border-line my-6 bg-surface/50 backdrop-blur-2xl shadow-card"
     >
-      <motion.div 
+      <motion.div
         animate={{ y: [-4, 4, -4] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
         className="w-16 h-16 rounded-card bg-brand/10 flex items-center justify-center text-brand-ink dark:text-brand mb-4 shadow-lg shadow-brand/20 border border-brand/20 backdrop-blur-md"
       >
         {icon || <Sparkles className="w-8 h-8 text-brand-ink dark:text-brand" />}

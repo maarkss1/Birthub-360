@@ -1,7 +1,11 @@
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 import { getTenantId } from '../../../lib/async-context.js';
-import { loadAgentMemory, recordAgentFailure, saveAgentMemory } from '../agents/agentMemory.store.js';
+import {
+  loadAgentMemory,
+  recordAgentFailure,
+  saveAgentMemory,
+} from '../agents/agentMemory.store.js';
 import { redactAndTrackPiiLeak } from './guardrails.service.js';
 
 export interface GatewayCallConfig {
@@ -25,14 +29,14 @@ export interface GatewayCallConfig {
 
 /**
  * P5: Gateway de Inteligência (IntelligenceGateway)
- * 
+ *
  * Este serviço atua como um wrapper genérico e centralizado para todas as chamadas aos modelos de IA,
  * garantindo a aplicação uniforme das diretrizes P5:
- * 
- * 1. Normalização de Chamadas: abstrai a chamada ao getAiModel, compondo o histórico (se stateless) ou 
+ *
+ * 1. Normalização de Chamadas: abstrai a chamada ao getAiModel, compondo o histórico (se stateless) ou
  *    recuperando-o via AgentMemory.
  * 2. Log e Telemetria: Garante o registro padronizado de uso de tokens, custos e latência via logAiUsage (AILog).
- * 3. Governança e Risco (Guardrails): Mascara automaticamente PII da saída gerada e registra vazamentos contidos 
+ * 3. Governança e Risco (Guardrails): Mascara automaticamente PII da saída gerada e registra vazamentos contidos
  *    no AIGuardrailEvent via redactAndTrackPiiLeak.
  * 4. Memória: Reutiliza o `AgentMemory` store para carregar e salvar estado conversacional de forma atômica
  *    e segura (se um sessionId for fornecido).
@@ -46,7 +50,7 @@ export class IntelligenceGateway {
       temperature = 0.7,
       systemPrompt,
       messages,
-      promptId
+      promptId,
     } = config;
 
     const organizationId = config.organizationId ?? getTenantId();
@@ -57,7 +61,7 @@ export class IntelligenceGateway {
       const memory = await loadAgentMemory({
         sessionId,
         agentType,
-        organizationId
+        organizationId,
       });
       if (memory?.messages) {
         history = memory.messages as Array<{ role: string; content: string }>;
@@ -66,12 +70,12 @@ export class IntelligenceGateway {
 
     // Compõe a lista completa de mensagens (histórico + system + novas mensagens)
     const allMessages = [...history];
-    if (systemPrompt && !allMessages.some(m => m.role === 'system')) {
+    if (systemPrompt && !allMessages.some((m) => m.role === 'system')) {
       allMessages.unshift({ role: 'system', content: systemPrompt });
     }
     allMessages.push(...messages);
 
-    const langChainMessages = allMessages.map(m => {
+    const langChainMessages = allMessages.map((m) => {
       if (m.role === 'system') return new SystemMessage(m.content);
       if (m.role === 'assistant') return new AIMessage(m.content);
       return new HumanMessage(m.content);
@@ -90,7 +94,7 @@ export class IntelligenceGateway {
           sessionId,
           agentType,
           organizationId,
-          errorMessage: error instanceof Error ? error.message : String(error)
+          errorMessage: error instanceof Error ? error.message : String(error),
         });
       }
       throw error;
@@ -103,7 +107,7 @@ export class IntelligenceGateway {
       latencyMs: Date.now() - startTime,
       promptId,
       // O tenant do AILog vem de `requestContext` (RLS), não do input — ver src/lib/ai/usage-log.ts.
-      agentRole: agentType
+      agentRole: agentType,
     });
 
     // 4. Governança: Sanitização de PII e registro no AIGuardrailEvent
@@ -117,7 +121,7 @@ export class IntelligenceGateway {
         agentType,
         organizationId,
         messages: allMessages,
-        status: 'Completed'
+        status: 'Completed',
       });
     }
 

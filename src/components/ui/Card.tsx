@@ -11,7 +11,8 @@ const cardVariants = cva('relative overflow-hidden rounded-card text-ink', {
       default:
         'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-ink-2/20 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
       stat: 'bg-surface-elevated/80 backdrop-blur-md border border-line shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/25 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
-      outline: 'border border-line bg-transparent transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-ink-2/30 hover:bg-surface-subtle/50',
+      outline:
+        'border border-line bg-transparent transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-ink-2/30 hover:bg-surface-subtle/50',
       accent:
         'bg-surface-elevated/80 backdrop-blur-md border border-brand/35 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/55 hover:shadow-glow-brand hover:-translate-y-0.5 hover:scale-[1.005]',
       elevated:
@@ -28,9 +29,11 @@ const cardVariants = cva('relative overflow-hidden rounded-card text-ink', {
       pulse:
         'bg-surface border border-pulse/30 shadow-glow-pulse transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:scale-[1.005] hover:border-pulse/50',
       // Nova variante glass
-      glass: 'bg-surface/60 backdrop-blur-xl border border-line/50 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-surface/80 hover:border-brand/30 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
+      glass:
+        'bg-surface/60 backdrop-blur-xl border border-line/50 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-surface/80 hover:border-brand/30 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
       // Nova variante para metálico
-      metallic: 'bg-gradient-to-br from-surface to-surface-2 border border-line/60 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/30 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
+      metallic:
+        'bg-gradient-to-br from-surface to-surface-2 border border-line/60 shadow-card transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-brand/30 hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.005]',
     },
     padding: {
       default: 'p-6',

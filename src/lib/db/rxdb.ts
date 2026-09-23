@@ -10,21 +10,21 @@ export const leadSchema = {
   properties: {
     id: { type: 'string', maxLength: 100 },
     name: { type: 'string' },
-    synced: { type: 'boolean' }
+    synced: { type: 'boolean' },
   },
-  required: ['id', 'name']
+  required: ['id', 'name'],
 } as const;
 
 export async function initOfflineDb() {
   const db = await createRxDatabase({
     name: 'birthhub360db',
-    storage: getRxStorageDexie() // O IndexedDB Storage
+    storage: getRxStorageDexie(), // O IndexedDB Storage
   });
 
   await db.addCollections({
     leads: {
-      schema: leadSchema
-    }
+      schema: leadSchema,
+    },
   });
 
   return db;

@@ -1,4 +1,15 @@
-export type UiSound = 'navigate' | 'focus' | 'confirm' | 'success' | 'warning' | 'error' | 'hover' | 'click' | 'notification' | 'typing' | 'swipe';
+export type UiSound =
+  | 'navigate'
+  | 'focus'
+  | 'confirm'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'hover'
+  | 'click'
+  | 'notification'
+  | 'typing'
+  | 'swipe';
 
 const STORAGE_KEY = 'birthhub360:ui-sound-enabled';
 

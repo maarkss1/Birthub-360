@@ -192,7 +192,8 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
   const applicationToken =
     typeof auth?.application_token === 'string' ? auth.application_token : null;
 
-  const timestamp = req.header('x-bitrix-timestamp') || req.header('x-timestamp') || (body?.ts as string);
+  const timestamp =
+    req.header('x-bitrix-timestamp') || req.header('x-timestamp') || (body?.ts as string);
   const tsValidation = validateWebhookTimestamp(timestamp);
   if (!tsValidation.valid) {
     logger.warn('Webhook rejeitado por timestamp inválido (Replay Protection)');

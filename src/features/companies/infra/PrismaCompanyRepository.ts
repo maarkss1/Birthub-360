@@ -116,8 +116,12 @@ export class PrismaCompanyRepository implements CompanyRepository {
     const existing = await prisma.company.findFirst({ where: { id, organizationId } });
     if (!existing) throw new Error('Company not found');
 
-    const normalizedCnpj = data.cnpj !== undefined ? (data.cnpj ? toDeterministicCnpj(data.cnpj) : null) : undefined;
-    const finalData = { ...data, ...(normalizedCnpj !== undefined ? { cnpj: normalizedCnpj } : {}) };
+    const normalizedCnpj =
+      data.cnpj !== undefined ? (data.cnpj ? toDeterministicCnpj(data.cnpj) : null) : undefined;
+    const finalData = {
+      ...data,
+      ...(normalizedCnpj !== undefined ? { cnpj: normalizedCnpj } : {}),
+    };
 
     // organizationId também no `where` do update em si (mesmo padrão de PrismaLeadRepository)
     // — não corrige uma falha explorável hoje (o pré-check acima + RLS real já bloqueiam um

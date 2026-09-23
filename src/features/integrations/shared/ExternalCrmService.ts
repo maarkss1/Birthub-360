@@ -126,7 +126,7 @@ export const ExternalCrmService = {
   async pushLeadToAllConnections(
     organizationId: string,
     leadId: string,
-    normalizedLead: { name: string; amount?: number; stageLabel?: string }
+    normalizedLead: { name: string; amount?: number; stageLabel?: string },
   ) {
     const connections = await prisma.externalCrmConnection.findMany({
       where: { organizationId },
@@ -151,7 +151,7 @@ export const ExternalCrmService = {
         const result = await provider.pushLead(
           config,
           { externalId: existingLog?.externalEntityId ?? '', ...normalizedLead },
-          existingLog?.externalEntityId ?? undefined
+          existingLog?.externalEntityId ?? undefined,
         );
 
         await prisma.externalCrmSyncLog.create({
@@ -166,7 +166,7 @@ export const ExternalCrmService = {
         });
 
         return { provider: conn.provider, externalId: result.externalId };
-      })
+      }),
     );
 
     return results;

@@ -45,8 +45,12 @@ function PlaceholderWidget({ code, config }: { code: string; config?: any }) {
 function MissionWidget() {
   return (
     <div className="flex flex-col gap-1 p-4 rounded-card border border-line bg-surface shadow-card">
-      <h3 className="font-serif text-2xl font-medium tracking-tight text-ink md:text-3xl">Missão do Cargo</h3>
-      <p className="mt-0.5 text-sm text-ink-2">Este é o widget de missão renderizado via registry.</p>
+      <h3 className="font-serif text-2xl font-medium tracking-tight text-ink md:text-3xl">
+        Missão do Cargo
+      </h3>
+      <p className="mt-0.5 text-sm text-ink-2">
+        Este é o widget de missão renderizado via registry.
+      </p>
     </div>
   );
 }
@@ -79,10 +83,10 @@ function ProspectListWidget() {
 }
 
 const WIDGET_REGISTRY: Record<string, React.ComponentType<any>> = {
-  'Mission': MissionWidget,
-  'Kpis': KpisWidget,
-  'QuickActions': QuickActionsWidget,
-  'ProspectList': ProspectListWidget,
+  Mission: MissionWidget,
+  Kpis: KpisWidget,
+  QuickActions: QuickActionsWidget,
+  ProspectList: ProspectListWidget,
 };
 
 // ============================================================================
@@ -99,7 +103,7 @@ export function WorkspaceRenderer({ layout }: { layout: WorkspaceLayoutDef }) {
           {section.title && (
             <h2 className="text-lg font-bold text-ink tracking-tight">{section.title}</h2>
           )}
-          
+
           <div
             className={cn(
               'grid gap-4',
@@ -107,19 +111,19 @@ export function WorkspaceRenderer({ layout }: { layout: WorkspaceLayoutDef }) {
               section.columns === 2 && 'grid-cols-1 sm:grid-cols-2',
               section.columns === 3 && 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
               section.columns === 4 && 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
-              (!section.columns || section.columns > 4) && 'grid-cols-1'
+              (!section.columns || section.columns > 4) && 'grid-cols-1',
             )}
           >
             {section.widgets.map((widget) => {
               const WidgetComponent = WIDGET_REGISTRY[widget.componentCode] || PlaceholderWidget;
-              
+
               return (
                 <div
                   key={widget.id}
                   className={cn(
                     widget.colSpan === 2 && 'sm:col-span-2',
                     widget.colSpan === 3 && 'lg:col-span-3',
-                    widget.colSpan === 4 && 'lg:col-span-4'
+                    widget.colSpan === 4 && 'lg:col-span-4',
                   )}
                 >
                   <WidgetComponent config={widget.config} code={widget.componentCode} />
@@ -138,42 +142,45 @@ export function WorkspaceHome() {
 
   // MOCK: Simulando o layout dinâmico que viria do backend
   // Isso será substituído por dados reais do Prisma (WorkspaceLayout/WorkspaceSection)
-  const dynamicLayoutMock = useMemo<WorkspaceLayoutDef>(() => ({
-    id: 'layout-1',
-    sections: [
-      {
-        id: 'sec-1',
-        columns: 1,
-        widgets: [
-          { id: 'w-1', componentCode: 'Mission' }
-        ]
-      },
-      {
-        id: 'sec-2',
-        title: 'Gestão Diária',
-        columns: 3,
-        widgets: [
-          { id: 'w-2', componentCode: 'Kpis' },
-          { id: 'w-3', componentCode: 'QuickActions' },
-          { id: 'w-4', componentCode: 'UnknownWidget' }
-        ]
-      },
-      {
-        id: 'sec-3',
-        title: 'Operação',
-        columns: 1,
-        widgets: [
-          { id: 'w-5', componentCode: 'ProspectList' }
-        ]
-      }
-    ]
-  }), []);
+  const dynamicLayoutMock = useMemo<WorkspaceLayoutDef>(
+    () => ({
+      id: 'layout-1',
+      sections: [
+        {
+          id: 'sec-1',
+          columns: 1,
+          widgets: [{ id: 'w-1', componentCode: 'Mission' }],
+        },
+        {
+          id: 'sec-2',
+          title: 'Gestão Diária',
+          columns: 3,
+          widgets: [
+            { id: 'w-2', componentCode: 'Kpis' },
+            { id: 'w-3', componentCode: 'QuickActions' },
+            { id: 'w-4', componentCode: 'UnknownWidget' },
+          ],
+        },
+        {
+          id: 'sec-3',
+          title: 'Operação',
+          columns: 1,
+          widgets: [{ id: 'w-5', componentCode: 'ProspectList' }],
+        },
+      ],
+    }),
+    [],
+  );
 
   return (
     <div className="relative flex min-h-full flex-1 flex-col items-center overflow-y-auto bg-transparent font-sans px-4 pb-8 md:px-8 pt-8">
       <div className="bh-page relative z-[1] flex w-full flex-1 flex-col items-center justify-start">
         {isLoading && (
-          <div aria-live="polite" aria-busy="true" className="flex items-center gap-2 text-ink-2 mt-20">
+          <div
+            aria-live="polite"
+            aria-busy="true"
+            className="flex items-center gap-2 text-ink-2 mt-20"
+          >
             <Loader2 className="h-5 w-5 animate-spin" />
             <span className="text-sm">Carregando interface dinâmica…</span>
           </div>

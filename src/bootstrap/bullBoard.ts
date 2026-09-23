@@ -11,7 +11,7 @@ import { requirePlatformOperator } from '../shared/middlewares/requirePlatformOp
 export function mountBullBoard(app: Express): void {
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath('/admin/queues');
-  
+
   if (queuesEnabled && leadsQueue && searchQueue && agentQueue) {
     createBullBoard({
       queues: [

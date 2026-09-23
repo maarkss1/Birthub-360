@@ -511,10 +511,10 @@ export function Integrations() {
                     <CapabilityBadge status="stub">Agenda local</CapabilityBadge>
                   </div>
                   <p>
-                    Eventos abaixo vêm do Google Calendar de verdade. A Agenda do {BRAND.shortName} continua
-                    local e não sincroniza com o Google. Só a Cadência cria eventos reais no Google
-                    Calendar, e só quando o vendedor confirma manualmente uma reunião (ver aviso
-                    abaixo) — não existe sincronização geral de compromissos.
+                    Eventos abaixo vêm do Google Calendar de verdade. A Agenda do {BRAND.shortName}{' '}
+                    continua local e não sincroniza com o Google. Só a Cadência cria eventos reais
+                    no Google Calendar, e só quando o vendedor confirma manualmente uma reunião (ver
+                    aviso abaixo) — não existe sincronização geral de compromissos.
                   </p>
                 </IntegrationTruthBox>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -549,9 +549,9 @@ export function Integrations() {
                       Esta conexão foi feita antes do escopo de escrita (
                       <code className="font-mono">calendar.events</code>) existir, então ainda tem
                       só <code className="font-mono">calendar.readonly</code>. Agendamento pela
-                      Cadência vai continuar gravando a confirmação no {BRAND.shortName} normalmente, mas a
-                      criação do evento no Google Calendar vai falhar em silêncio até você
-                      desconectar e reconectar a conta abaixo.
+                      Cadência vai continuar gravando a confirmação no {BRAND.shortName}{' '}
+                      normalmente, mas a criação do evento no Google Calendar vai falhar em silêncio
+                      até você desconectar e reconectar a conta abaixo.
                     </p>
                   </div>
                 )}
@@ -795,11 +795,11 @@ export function Integrations() {
                             </label>
                           </div>
                           <p className="text-xs text-ink-2">
-                            Opcional — sem isto, o {BRAND.shortName} continua trazendo dados do Bitrix24 por
-                            importação manual/regra automática (a cada 15 min). Ativar aqui faz o
-                            Bitrix avisar o {BRAND.shortName} na hora quando um Lead/Negócio já importado muda,
-                            sem esperar o próximo ciclo. Só atualiza registros já importados — nunca
-                            cria um novo sozinho.
+                            Opcional — sem isto, o {BRAND.shortName} continua trazendo dados do
+                            Bitrix24 por importação manual/regra automática (a cada 15 min). Ativar
+                            aqui faz o Bitrix avisar o {BRAND.shortName} na hora quando um
+                            Lead/Negócio já importado muda, sem esperar o próximo ciclo. Só atualiza
+                            registros já importados — nunca cria um novo sozinho.
                           </p>
                           <div className="flex items-center gap-2">
                             <input
@@ -883,11 +883,7 @@ export function Integrations() {
           {/* 3CX PABX Telephony Card */}
           {activeTab === 'hubspot' && (
             <div className="max-w-4xl space-y-6">
-              <ExternalCrmPanel
-                providerKey="hubspot"
-                displayName="HubSpot"
-                authType="oauth2"
-              />
+              <ExternalCrmPanel providerKey="hubspot" displayName="HubSpot" authType="oauth2" />
             </div>
           )}
 
@@ -913,11 +909,7 @@ export function Integrations() {
 
           {activeTab === 'monday' && (
             <div className="max-w-4xl space-y-6">
-              <ExternalCrmPanel
-                providerKey="monday"
-                displayName="Monday.com"
-                authType="api_key"
-              />
+              <ExternalCrmPanel providerKey="monday" displayName="Monday.com" authType="api_key" />
             </div>
           )}
 

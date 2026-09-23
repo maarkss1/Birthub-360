@@ -118,8 +118,9 @@ export function WebhookMonitor() {
               Monitor de Sincronização Bitrix24
             </CardTitle>
             <CardDescription>
-              Histórico real de webhook de entrada e push/pull {BRAND.shortName} ↔ Bitrix24 — cobre hoje só esta
-              integração (WhatsApp, 3CX e voz ainda não têm um histórico equivalente registrado).
+              Histórico real de webhook de entrada e push/pull {BRAND.shortName} ↔ Bitrix24 — cobre
+              hoje só esta integração (WhatsApp, 3CX e voz ainda não têm um histórico equivalente
+              registrado).
             </CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={() => void loadLogs()} disabled={loading}>
@@ -248,8 +249,7 @@ export function WebhookMonitor() {
               {selectedLog.direction === 'inbound'
                 ? `Bitrix → ${BRAND.shortName}`
                 : `${BRAND.shortName} → Bitrix`}{' '}
-              —{' '}
-              {ENTITY_LABEL[selectedLog.entityType] || selectedLog.entityType}
+              — {ENTITY_LABEL[selectedLog.entityType] || selectedLog.entityType}
               {selectedLog.bitrixRecordId ? ` #${selectedLog.bitrixRecordId}` : ''}
             </p>
             <div className="flex items-center gap-2">

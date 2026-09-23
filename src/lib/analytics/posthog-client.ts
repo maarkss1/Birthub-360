@@ -6,7 +6,7 @@ export function initPostHogClient() {
       api_host: process.env.VITE_POSTHOG_HOST || 'https://app.posthog.com',
       loaded: (ph) => {
         if (process.env.NODE_ENV === 'development') ph.opt_out_capturing();
-      }
+      },
     });
   }
 }

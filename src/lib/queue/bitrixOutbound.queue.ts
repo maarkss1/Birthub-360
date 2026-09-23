@@ -42,13 +42,13 @@ export async function queueLeadPushToBitrix(organizationId: string, leadId: stri
     );
     return;
   }
-  
+
   await bitrixOutboundQueue.add(
     'push-lead',
     { organizationId, leadId },
     {
-      jobId: `bitrix-push-${organizationId}-${leadId}`
-    }
+      jobId: `bitrix-push-${organizationId}-${leadId}`,
+    },
   );
   logger.info({ organizationId, leadId }, '[bitrix] Push enfileirado com sucesso');
 }
@@ -91,4 +91,3 @@ export function createBitrixOutboundWorker() {
 
   return worker;
 }
-

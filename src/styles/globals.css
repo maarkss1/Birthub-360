@@ -365,7 +365,7 @@
   --shadow-glow-pulse-value:
     0 0 20px -2px color-mix(in srgb, var(--pulse) 55%, transparent),
     0 0 8px -1px color-mix(in srgb, var(--pulse) 40%, transparent);
-  
+
   /* Novos tokens para tema futurista */
   --neon-cyan: #22d3ee;
   --neon-purple: #a855f7;
@@ -373,7 +373,7 @@
   --neon-green: #4ade80;
   --cyber-blue: #3b82f6;
   --cyber-orange: #f97316;
-  
+
   /* Sombras neon intensas */
   --shadow-neon-cyan: 0 0 30px rgba(34, 211, 238, 0.6), 0 0 60px rgba(34, 211, 238, 0.4);
   --shadow-neon-purple: 0 0 30px rgba(168, 85, 247, 0.6), 0 0 60px rgba(168, 85, 247, 0.4);
@@ -689,7 +689,8 @@
     }
   }
   @keyframes hologram {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.8;
       filter: brightness(1) contrast(1);
     }
@@ -707,7 +708,8 @@
     }
   }
   @keyframes neon-flicker {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {

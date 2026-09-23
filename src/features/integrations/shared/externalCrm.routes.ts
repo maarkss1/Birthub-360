@@ -68,11 +68,11 @@ externalCrmRoutes.post('/', express.json(), async (req: Request, res: Response) 
       config: config as Record<string, string>,
       inboundEventsEnabled,
     });
-    
-    return res.status(201).send({ 
-      id: connection.id, 
+
+    return res.status(201).send({
+      id: connection.id,
       provider: connection.provider,
-      label: connection.label 
+      label: connection.label,
     });
   } catch (err) {
     logger.error({ err, organizationId }, 'Erro ao criar conexão de CRM externo');

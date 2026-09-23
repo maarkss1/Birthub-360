@@ -51,10 +51,13 @@ export function FuturisticSidebar({
     }
   };
 
-  const { currentUser, isAdmin, canAccessCommercialIntelligence, canAccessCopilotoIa, logout } = useAuth();
+  const { currentUser, isAdmin, canAccessCommercialIntelligence, canAccessCopilotoIa, logout } =
+    useAuth();
   const navigate = useNavigate();
-  const canManageOperations = !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
-  const canAccessMesaTratamento = !!currentUser && hasRequiredRole(currentUser.role, MESA_TRATAMENTO_ROLES);
+  const canManageOperations =
+    !!currentUser && hasRequiredRole(currentUser.role, ['ADMIN', 'GESTOR']);
+  const canAccessMesaTratamento =
+    !!currentUser && hasRequiredRole(currentUser.role, MESA_TRATAMENTO_ROLES);
   const isRestrictedSdrProfile = currentUser?.role === 'SDR';
 
   const selectTab = (tab: TabType) => {
@@ -141,15 +144,45 @@ export function FuturisticSidebar({
       ];
 
   const GROUP_ORDER_BY_ROLE: Partial<Record<string, string[]>> = {
-    CLOSER: ['COMMAND CENTER', 'EXECUTION', 'BUSINESS', 'INTELLIGENCE', 'CAPACITATION', 'ADMINISTRATION'],
-    GESTOR: ['COMMAND CENTER', 'INTELLIGENCE', 'BUSINESS', 'EXECUTION', 'CAPACITATION', 'ADMINISTRATION'],
-    ADMIN: ['COMMAND CENTER', 'INTELLIGENCE', 'BUSINESS', 'EXECUTION', 'CAPACITATION', 'ADMINISTRATION'],
-    VISUALIZADOR: ['COMMAND CENTER', 'INTELLIGENCE', 'BUSINESS', 'EXECUTION', 'CAPACITATION', 'ADMINISTRATION'],
+    CLOSER: [
+      'COMMAND CENTER',
+      'EXECUTION',
+      'BUSINESS',
+      'INTELLIGENCE',
+      'CAPACITATION',
+      'ADMINISTRATION',
+    ],
+    GESTOR: [
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
+    ],
+    ADMIN: [
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
+    ],
+    VISUALIZADOR: [
+      'COMMAND CENTER',
+      'INTELLIGENCE',
+      'BUSINESS',
+      'EXECUTION',
+      'CAPACITATION',
+      'ADMINISTRATION',
+    ],
   };
 
   const roleOrder = GROUP_ORDER_BY_ROLE[currentUser?.role ?? ''];
   const navGroups = roleOrder
-    ? [...navGroupsByJourney].sort((a, b) => roleOrder.indexOf(a.title) - roleOrder.indexOf(b.title))
+    ? [...navGroupsByJourney].sort(
+        (a, b) => roleOrder.indexOf(a.title) - roleOrder.indexOf(b.title),
+      )
     : navGroupsByJourney;
 
   const renderNavItem = (tab: TabType) => {
@@ -167,10 +200,10 @@ export function FuturisticSidebar({
         aria-label={meta.label}
         aria-current={isActive ? 'page' : undefined}
         className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated cursor-pointer hover:scale-[1.02] active:scale-95 ${
-        isActive
-          ? 'bg-gradient-to-r from-brand/20 via-brand/10 to-transparent text-brand shadow-lg shadow-brand/20 ring-1 ring-brand/30 border-l-2 border-brand'
-          : 'text-ink-2 hover:bg-surface-interactive/60 hover:text-ink hover:shadow-sm hover:border-l-2 hover:border-brand/30'
-      } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
+          isActive
+            ? 'bg-gradient-to-r from-brand/20 via-brand/10 to-transparent text-brand shadow-lg shadow-brand/20 ring-1 ring-brand/30 border-l-2 border-brand'
+            : 'text-ink-2 hover:bg-surface-interactive/60 hover:text-ink hover:shadow-sm hover:border-l-2 hover:border-brand/30'
+        } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         <Icon
           size={16}
@@ -198,17 +231,23 @@ export function FuturisticSidebar({
     >
       {/* Linha de luz superior */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent" />
-      
+
       <div className="flex flex-col shrink-0">
         <div
           className={`flex items-center justify-between border-b border-line/50 px-5 py-4 ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
         >
           {isCollapsed ? (
-            <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand shadow-[0_0_12px_rgba(212,175,55,0.3)]" />
+            <BirthHubLogo
+              variant="symbol"
+              className="h-8 w-8 text-brand shadow-[0_0_12px_rgba(212,175,55,0.3)]"
+            />
           ) : (
             <>
               <div className="flex items-center gap-2.5">
-                <BirthHubLogo variant="symbol" className="h-8 w-8 text-brand shadow-[0_0_12px_rgba(212,175,55,0.3)]" />
+                <BirthHubLogo
+                  variant="symbol"
+                  className="h-8 w-8 text-brand shadow-[0_0_12px_rgba(212,175,55,0.3)]"
+                />
                 <div className="leading-tight">
                   <h1 className="flex items-center gap-1 text-sm font-bold tracking-tight text-ink">
                     Birth Hub 360°
@@ -303,11 +342,14 @@ export function FuturisticSidebar({
           title="Encerrar sessão e sair da conta"
           aria-label="Encerrar sessão e sair da conta"
         >
-          <LogOut size={20} className="shrink-0 opacity-80 transition-transform group-hover:-translate-x-1" />
+          <LogOut
+            size={20}
+            className="shrink-0 opacity-80 transition-transform group-hover:-translate-x-1"
+          />
           <span className={isCollapsed ? 'lg:hidden' : ''}>Sair da Conta</span>
         </button>
       </div>
-      
+
       {/* Linha de luz inferior */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-iris/30 to-transparent" />
     </aside>

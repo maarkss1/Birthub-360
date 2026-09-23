@@ -28,7 +28,8 @@ const buttonVariants = cva(
         // dinamicamente na troca de marca (BrandContext.tsx) e já geram `bg-brand-2` de verdade.
         // hover:shadow-glow-brand (era shadow-brand-sm, mais discreto) — glow difuso de verdade,
         // acende só no hover/focus, nunca em repouso (regra do brief "Neon Tokyo × Cosmic Gold").
-        default: 'bg-brand-active text-on-brand shadow-brand-sm hover:bg-brand hover:shadow-glow-brand hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
+        default:
+          'bg-brand-active text-on-brand shadow-brand-sm hover:bg-brand hover:shadow-glow-brand hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
         // bg-btn-danger (color-mix com --danger, globals.css) — bg-red-500 cru com texto branco
         // media ~3.76:1, abaixo do mínimo AA 4.5:1 (mesma classe de achado do DQA-19 que motivou
         // bg-brand-active acima). btn-danger-hover escurece mais, mesma lógica de bg-brand-2.
@@ -45,7 +46,8 @@ const buttonVariants = cva(
           'border-line bg-transparent text-ink hover:border-ink-2/30 hover:bg-surface-subtle hover:scale-[1.02] active:scale-95',
         secondary:
           'border-line bg-surface-elevated text-ink shadow-sm hover:bg-surface-interactive hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
-        ghost: 'text-ink-2 hover:bg-surface-interactive hover:text-ink hover:scale-[1.02] active:scale-95',
+        ghost:
+          'text-ink-2 hover:bg-surface-interactive hover:text-ink hover:scale-[1.02] active:scale-95',
         // text-brand-ink dark:text-brand (não text-brand cru) — mesmo achado do axe-core que
         // motivou bg-brand-active acima: texto de marca direto sobre bg-bg/bg-surface só atinge
         // ~3.0:1, abaixo do mínimo AA de 4.5:1. Sem hover:scale de propósito — é texto inline, não
@@ -57,11 +59,14 @@ const buttonVariants = cva(
         // só em .dark; --iris/--orbit-blue em si continuam intocados em todo o resto do produto).
         iris: 'border-accent-violet/45 bg-transparent text-accent-violet hover:border-accent-violet/70 hover:bg-accent-violet/8 hover:shadow-glow-accent-violet hover:scale-[1.02] active:scale-95',
         cyan: 'border-accent-cyan/45 bg-transparent text-accent-cyan hover:border-accent-cyan/70 hover:bg-accent-cyan/8 hover:shadow-glow-accent-cyan hover:scale-[1.02] active:scale-95',
-        pulse: 'border-pulse/45 bg-transparent text-pulse hover:border-pulse/70 hover:bg-pulse/8 hover:shadow-glow-pulse hover:scale-[1.02] active:scale-95',
+        pulse:
+          'border-pulse/45 bg-transparent text-pulse hover:border-pulse/70 hover:bg-pulse/8 hover:shadow-glow-pulse hover:scale-[1.02] active:scale-95',
         // Nova variante glass para efeito moderno
-        glass: 'bg-surface/60 backdrop-blur-md border-line/50 text-ink hover:bg-surface/80 hover:border-brand/30 hover:shadow-card hover:scale-[1.02] active:scale-95',
+        glass:
+          'bg-surface/60 backdrop-blur-md border-line/50 text-ink hover:bg-surface/80 hover:border-brand/30 hover:shadow-card hover:scale-[1.02] active:scale-95',
         // Nova variante gradient para destaque
-        gradient: 'bg-gradient-to-r from-brand to-brand-2 text-on-brand shadow-brand-sm hover:shadow-glow-brand hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
+        gradient:
+          'bg-gradient-to-r from-brand to-brand-2 text-on-brand shadow-brand-sm hover:shadow-glow-brand hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95',
       },
       size: {
         default: 'h-9 px-4 py-2',

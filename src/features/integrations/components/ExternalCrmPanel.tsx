@@ -37,11 +37,7 @@ const PROVIDER_EMOJIS: Record<string, string> = {
   monday: '🔴',
 };
 
-export function ExternalCrmPanel({
-  providerKey,
-  displayName,
-  authType,
-}: ExternalCrmPanelProps) {
+export function ExternalCrmPanel({ providerKey, displayName, authType }: ExternalCrmPanelProps) {
   const [connections, setConnections] = useState<CrmConnection[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
@@ -60,10 +56,9 @@ export function ExternalCrmPanel({
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(
-        `/api/integrations/external-crm?provider=${providerKey}`,
-        { method: 'GET' }
-      );
+      const res = await fetch(`/api/integrations/external-crm?provider=${providerKey}`, {
+        method: 'GET',
+      });
       if (!res.ok) throw new Error('Erro ao carregar conexões');
       const data = (await res.json()) as CrmConnection[];
       setConnections(data);
@@ -129,7 +124,9 @@ export function ExternalCrmPanel({
       {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-line">
         <div className="flex items-center gap-2.5">
-          <span className="text-xl" aria-hidden>{emoji}</span>
+          <span className="text-xl" aria-hidden>
+            {emoji}
+          </span>
           <h3 className={`font-semibold text-base ${colorClass}`}>{displayName}</h3>
         </div>
         <div className="flex items-center gap-2">
@@ -223,7 +220,10 @@ export function ExternalCrmPanel({
 
           {(providerKey === 'hubspot' || providerKey === 'pipedrive') && (
             <div>
-              <label htmlFor="crm-conn-domain" className="mb-1 block text-xs font-medium text-ink-2">
+              <label
+                htmlFor="crm-conn-domain"
+                className="mb-1 block text-xs font-medium text-ink-2"
+              >
                 Portal / Domínio (opcional)
               </label>
               <input

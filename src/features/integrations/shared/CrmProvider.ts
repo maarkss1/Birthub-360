@@ -51,7 +51,7 @@ export interface CrmProvider {
   listLeads(
     config: CrmConnectionConfig,
     lastImportedAt: Date | null,
-    cursor?: string
+    cursor?: string,
   ): Promise<{ leads: NormalizedLead[]; nextCursor?: string }>;
 
   /**
@@ -63,7 +63,7 @@ export interface CrmProvider {
   pushLead(
     config: CrmConnectionConfig,
     lead: NormalizedLead,
-    externalId?: string
+    externalId?: string,
   ): Promise<PushLeadResult>;
 
   /**
@@ -87,7 +87,7 @@ export function getCrmProvider(providerKey: string): CrmProvider {
   if (!provider) {
     throw new Error(
       `[CrmProvider] Provider "${providerKey}" not registered. ` +
-        `Known providers: ${[..._registry.keys()].join(', ')}`
+        `Known providers: ${[..._registry.keys()].join(', ')}`,
     );
   }
   return provider;
