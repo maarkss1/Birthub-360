@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { validateWebhookTimestamp } from '../../../shared/security/webhookReplayGuard.js';
 
 /**
  * Verificação de assinatura de webhook do Stripe — lógica pura, sem env/rede, mesmo raciocínio de
@@ -59,10 +60,8 @@ export function isValidStripeSignature({
   const { timestamp, v1Signatures } = parseSignatureHeader(signatureHeader);
   if (!timestamp || v1Signatures.length === 0) return false;
 
-  const timestampNum = Number(timestamp);
-  if (!Number.isFinite(timestampNum)) return false;
-  const skewSeconds = Math.abs(nowMs / 1000 - timestampNum);
-  if (skewSeconds > maxSkewSeconds) return false;
+  const tsValidation = validateWebhookTimestamp(timestamp, maxSkewSeconds, nowMs);
+  if (!tsValidation.valid) return false;
 
   const signedPayload = `${timestamp}.${rawBody.toString('utf8')}`;
   const expectedHex = createHmac('sha256', secret).update(signedPayload).digest('hex');

@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { validateWebhookTimestamp } from '../../../shared/security/webhookReplayGuard.js';
 
 /**
  * Verificação de assinatura do Chatwoot — lógica pura, sem env/rede, mesmo raciocínio de
@@ -44,10 +45,8 @@ export function isValidChatwootSignature({
   if (!signatureHeader || !timestampHeader) return false;
   if (!signatureHeader.startsWith(SIGNATURE_PREFIX)) return false;
 
-  const timestamp = Number(timestampHeader);
-  if (!Number.isFinite(timestamp)) return false;
-  const skewSeconds = Math.abs(nowMs / 1000 - timestamp);
-  if (skewSeconds > maxSkewSeconds) return false;
+  const tsValidation = validateWebhookTimestamp(timestampHeader, maxSkewSeconds, nowMs);
+  if (!tsValidation.valid) return false;
 
   const signedPayload = `${timestampHeader}.${rawBody.toString('utf8')}`;
   const expectedHex = createHmac('sha256', secret).update(signedPayload).digest('hex');

@@ -49,3 +49,15 @@ Este repositório aplica verificações automatizadas contínuas em todos os bui
 * **Auditoria de Dependências:** Varredura com `npm run security:audit-waivers` e governança de vulnerabilidades conhecidas em `docs/security/AUDIT_WAIVERS.md`;
 * **Isolamento Multi-Tenant:** Proteção em nível de banco de dados via PostgreSQL Row-Level Security (RLS) e extensão de injeção de tenant Prisma;
 * **Sanitização de Logs:** Mascaramento e redação obrigatória de PII (dados pessoais) e tokens antes da gravação de logs.
+
+## RBAC e Controle de Acesso (5 Roles)
+
+A plataforma utiliza um sistema centralizado de controle de acesso baseado em papéis (RBAC) hierárquicos, garantindo que o escopo de permissões seja previsível e seguro. Existem exatamente **5 papéis oficiais** no sistema:
+
+1. **ADMIN (Nível 100):** Acesso irrestrito às configurações da organização, integrações, faturamento e visibilidade de dados globais.
+2. **GESTOR (Nível 75):** Acesso a dashboards táticos (ex: Comercial Inteligente), gestão da equipe e aprovações avançadas (ex: OPA policies).
+3. **CLOSER (Nível 50):** Acesso à operação de vendas avançada, funil comercial e gestão de propostas.
+4. **SDR (Nível 40):** Operação na base de leads (Mesa de Tratamento), execução de ligações e qualificação.
+5. **VISUALIZADOR (Nível 10):** Permissão de leitura restrita, sem capacidade de mutação de dados (fallback seguro e default na criação).
+
+Qualquer modificação no controle de acesso deve utilizar o `src/lib/auth/authorization.ts` como fonte canônica. Não crie novos enums de permissão.
