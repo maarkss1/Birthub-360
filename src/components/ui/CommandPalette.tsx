@@ -22,6 +22,7 @@ import { SoundFX } from '../../lib/soundEffects';
 import type { Company, Contact, PaginatedResponse } from '../../types';
 import type { TabType } from '../layout/tabMeta';
 import { TAB_META } from '../layout/tabMeta';
+import { BorderBeam } from './BorderBeam';
 
 type ResultItem = {
   id: string;
@@ -366,6 +367,7 @@ export function CommandPalette() {
         ref={panelRef}
         className="w-full h-full sm:h-auto sm:max-w-2xl overflow-hidden sm:rounded-2xl border-0 sm:border border-line bg-surface bh-card shadow-2xl flex flex-col relative"
       >
+        <BorderBeam variant="brand" size={240} duration={10} borderWidth={1.5} radius={16} glow />
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-brand to-transparent pointer-events-none" />
         <div className="flex items-center gap-3 border-b border-line px-4 py-3.5">
           <Search className="h-5 w-5 shrink-0 text-ink-2" />

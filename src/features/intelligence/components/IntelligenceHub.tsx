@@ -94,10 +94,10 @@ const TOOL_TABS: {
   },
   {
     id: 'superagent',
-    label: 'Criador de Superagente',
+    label: 'Criador de Copiloto',
     icon: Sparkles,
     description:
-      'Monta a configuração de um agente autônomo e gera prompt, JSON e scripts de provisionamento.',
+      'Monta a configuração de um copiloto autônomo e gera prompt, JSON e scripts de provisionamento.',
   },
   {
     id: 'scripts',
@@ -134,9 +134,9 @@ const TOOL_TABS: {
   },
   {
     id: 'rag',
-    label: 'Conhecimento Vetorial (RAG)',
+    label: 'Base de Conhecimento',
     icon: Database,
-    description: 'Base de embeddings que o Agente SDR consulta para gerar abordagens contextuais.',
+    description: 'Base de embeddings que o Copiloto SDR consulta para gerar abordagens contextuais.',
   },
   {
     id: 'quality',
@@ -286,9 +286,9 @@ export function IntelligenceHub({ initialTab }: IntelligenceHubProps) {
                   <Database size={22} />
                 </div>
                 <div>
-                  <CardTitle>Conhecimento Vetorial (RAG)</CardTitle>
+                  <CardTitle>Base de Conhecimento</CardTitle>
                   <CardDescription>
-                    Documentos reais indexados nesta organização. O Agente SDR consulta esta mesma
+                    Documentos reais indexados nesta organização. O Copiloto SDR consulta esta mesma
                     base (busca híbrida semântica + palavra-chave) para gerar abordagens contextuais
                     — nunca inventa uma fonte que não está aqui.
                   </CardDescription>
@@ -324,7 +324,7 @@ export function IntelligenceHub({ initialTab }: IntelligenceHubProps) {
                   Nenhum documento indexado ainda
                 </p>
                 <p className="text-xs text-ink-2 mb-4 max-w-sm mx-auto">
-                  Sem documentos, o Agente SDR não tem playbook para consultar — ele avisa isso em
+                  Sem documentos, o Copiloto SDR não tem playbook para consultar — ele avisa isso em
                   vez de inventar uma resposta.
                 </p>
                 <Button asChild variant="outline">

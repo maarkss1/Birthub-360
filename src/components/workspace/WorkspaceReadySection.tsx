@@ -156,12 +156,12 @@ export function WorkspaceReadySection({ workspace }: { workspace: Workspace }) {
       {widgets.has('agentGroups') && (
         <section aria-labelledby="workspace-agents-heading" className="space-y-3">
           <h2 id="workspace-agents-heading" className="text-sm font-bold text-ink">
-            Agentes do cargo
+            Copilotos do cargo
           </h2>
           {workspace.agentGroups.length === 0 ? (
             <EmptyState
-              title="Nenhum agente concedido ainda"
-              description="Peça a um administrador para conceder um agente a este cargo em Governança de Agentes."
+              title="Nenhum copiloto concedido ainda"
+              description="Peça a um administrador para conceder um copiloto a este cargo em Histórico."
               icon={<Bot className="h-8 w-8" />}
             />
           ) : (

@@ -134,14 +134,14 @@ export const EliteCommercialAgentWorkspace: React.FC = () => {
               <Sparkles className="w-5 h-5" />
             </span>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
-              Agente Comercial de Elite
+              Copiloto Comercial de Elite
             </h1>
             <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              Malha Ativa (392 Agentes)
+              Malha Ativa (392 Copilotos)
             </span>
           </div>
           <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-            Orquestração autônoma ponta a ponta: Inteligência, Estratégia, Governança e Execução.
+            Orquestração autônoma ponta a ponta: Inteligência, Estratégia, Histórico e Execução.
           </p>
         </div>
 

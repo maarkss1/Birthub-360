@@ -573,7 +573,16 @@
   --animate-gradient-flow: gradient-flow 8s ease infinite;
   --animate-spin-slow: spin 12s linear infinite;
   --animate-shimmer: shimmer 2.5s infinite linear;
-  --animate-fade-in-up: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-border-beam: border-beam calc(var(--duration, 12) * 1s) infinite linear;
+
+  @keyframes border-beam {
+    0% {
+      offset-distance: 0%;
+    }
+    100% {
+      offset-distance: 100%;
+    }
+  }
 
   @keyframes toast-in {
     from {

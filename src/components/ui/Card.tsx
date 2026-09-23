@@ -3,6 +3,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
+import { BorderBeam, type BorderBeamProps } from './BorderBeam';
 
 const cardVariants = cva('relative overflow-hidden rounded-card text-ink', {
   variants: {
@@ -47,16 +48,60 @@ export interface CardProps
   accentBar?: boolean;
   /** Ativa o efeito de borda em órbita contínua durante carregamento. */
   isLoading?: boolean;
+  /** Ativa o feixe laser luminoso contínuo no perímetro do card (efeito BorderBeam). */
+  borderBeam?: boolean;
+  /** Variação cromática do feixe laser (padrão: 'cyan', idêntico ao vídeo). */
+  borderBeamVariant?: BorderBeamProps['variant'];
+  /** Duração em segundos da volta completa do feixe. */
+  borderBeamDuration?: number;
+  /** Comprimento do feixe em pixels. */
+  borderBeamSize?: number;
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, padding, accentBar, isLoading, children, ...props }, ref) => (
-    <div ref={ref} className={cn(cardVariants({ variant, padding, className }), isLoading && 'border-transparent overflow-hidden isolate')} {...props}>
+  (
+    {
+      className,
+      variant,
+      padding,
+      accentBar,
+      isLoading,
+      borderBeam,
+      borderBeamVariant = 'cyan',
+      borderBeamDuration = 12,
+      borderBeamSize = 220,
+      children,
+      ...props
+    },
+    ref,
+  ) => (
+    <div
+      ref={ref}
+      className={cn(
+        cardVariants({ variant, padding, className }),
+        (isLoading || borderBeam) && 'overflow-hidden isolate',
+      )}
+      {...props}
+    >
       {isLoading && (
-        <>
-          <div className="absolute inset-[-100%] z-[-2] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,var(--brand)_50%,transparent_100%)] opacity-80" />
-          <div className="absolute inset-[1.5px] z-[-1] rounded-[calc(var(--radius-card)-1.5px)] bg-surface-elevated/95 backdrop-blur-xl" />
-        </>
+        <BorderBeam
+          variant="brand"
+          size={200}
+          duration={3.5}
+          borderWidth={2}
+          glow
+          radius="var(--radius-card)"
+        />
+      )}
+      {!isLoading && borderBeam && (
+        <BorderBeam
+          variant={borderBeamVariant}
+          size={borderBeamSize}
+          duration={borderBeamDuration}
+          borderWidth={1.5}
+          glow
+          radius="var(--radius-card)"
+        />
       )}
       {accentBar && (
         <>
@@ -64,7 +109,12 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           <span className="pointer-events-none absolute -right-12 -top-16 h-28 w-28 rounded-full bg-brand/10 blur-[38px]" />
         </>
       )}
-      <div className={cn('relative z-10 transition-opacity duration-300', isLoading && 'opacity-60 pointer-events-none select-none')}>
+      <div
+        className={cn(
+          'relative z-10 transition-opacity duration-300',
+          isLoading && 'opacity-60 pointer-events-none select-none',
+        )}
+      >
         {children}
       </div>
     </div>

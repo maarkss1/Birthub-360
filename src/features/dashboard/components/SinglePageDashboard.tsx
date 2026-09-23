@@ -16,6 +16,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { BorderBeam } from '../../../components/ui/BorderBeam';
 import { Skeleton } from '../../../components/ui/Skeleton';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useAnalyticsDashboard } from '../../../hooks/useDatabase';
@@ -137,6 +138,16 @@ export function SinglePageDashboard() {
             <div className="absolute -right-16 -bottom-16 w-80 h-80 bg-red-violet/20 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute right-1/3 -top-12 w-64 h-64 bg-brand/15 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-sunset/15 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Feixe Laser Periférico (BorderBeam contínuo no perímetro do Card Hero) */}
+            <BorderBeam
+              variant="cyan"
+              size={280}
+              duration={14}
+              borderWidth={1.5}
+              radius={24}
+              glow
+            />
 
             <div className="relative z-10 space-y-4">
               <div className="flex items-center justify-between">

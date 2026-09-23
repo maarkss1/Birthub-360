@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
 import { useBrandAccent } from '../../../hooks/useBrandAccent';
 import { api } from '../../../lib/api';
+import { BorderBeam } from '../../../components/ui/BorderBeam';
 
 const PROVIDERS = [
   { id: 'groq', name: 'Groq Cloud (Fast)', models: ['openai/gpt-oss-120b', 'openai/gpt-oss-20b'] },
@@ -835,13 +836,16 @@ $status | ConvertTo-Json -Depth 3
             </div>
 
             {/* Display do Código */}
-            <div className="relative z-10 bg-black/80 p-6 rounded-2xl border border-white/10 backdrop-blur-md font-mono text-sm leading-relaxed overflow-x-auto text-emerald-300 custom-scrollbar max-h-96">
-              <pre className="whitespace-pre-wrap">
-                {activeTabOutput === 'prompt' && result.systemPrompt}
-                {activeTabOutput === 'json' && result.jsonConfig}
-                {activeTabOutput === 'python' && result.pythonScript}
-                {activeTabOutput === 'powershell' && result.powershellScript}
-              </pre>
+            <div className="relative z-10 bg-black/80 p-6 rounded-2xl border border-white/10 backdrop-blur-md font-mono text-sm leading-relaxed overflow-hidden text-emerald-300">
+              <BorderBeam variant="emerald" size={220} duration={10} borderWidth={1.5} radius={16} glow />
+              <div className="overflow-x-auto max-h-96 custom-scrollbar relative z-10">
+                <pre className="whitespace-pre-wrap">
+                  {activeTabOutput === 'prompt' && result.systemPrompt}
+                  {activeTabOutput === 'json' && result.jsonConfig}
+                  {activeTabOutput === 'python' && result.pythonScript}
+                  {activeTabOutput === 'powershell' && result.powershellScript}
+                </pre>
+              </div>
             </div>
           </motion.div>
         )}

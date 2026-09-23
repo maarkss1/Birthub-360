@@ -41,7 +41,7 @@ export function WorkspaceHome() {
             tone="neutral"
             icon={<UserX className="h-6 w-6" />}
             title="Nenhum cargo atribuído"
-            description="Seu usuário ainda não tem um cargo (JobRole) principal ativo. Peça a um administrador para atribuir um cargo em Cargos e Agentes para liberar o seu workspace."
+            description="Seu usuário ainda não tem um cargo (JobRole) principal ativo. Peça a um administrador para atribuir um cargo em Cargos e Copiloto para liberar o seu workspace."
           />
         )}
 
