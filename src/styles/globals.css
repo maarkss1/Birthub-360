@@ -174,6 +174,19 @@
      (--info-active já escurece pra badge "soft", ver comentário abaixo); no escuro é sobrescrito
      com uma versão clareada — ver o comentário em `.dark` abaixo pro porquê. */
   --info: #3b82f6;
+  /* --- Acentos de ícone da navegação lateral (Sidebar) ---
+     Um matiz por "tipo" de módulo, sempre derivado dos tokens de marca/semântica (nenhum hex novo):
+     ouro, íris, azul-órbita, vermelho, verde, violeta, turquesa e neutro. Calibrados como GRÁFICO
+     (mínimo 3:1 contra a superfície, WCAG 1.4.11) — não como texto. O ouro puro mede 2.10:1 no claro,
+     então aqui vai escurecido (mesma lógica de --color-brand-ink, um pouco mais vivo). */
+  --nav-c-gold: color-mix(in srgb, var(--brand) 72%, black);
+  --nav-c-iris: var(--iris);
+  --nav-c-blue: color-mix(in srgb, var(--orbit-blue) 92%, black);
+  --nav-c-red: color-mix(in srgb, var(--red) 84%, black);
+  --nav-c-green: color-mix(in srgb, var(--ok) 90%, black);
+  --nav-c-violet: color-mix(in srgb, var(--iris) 45%, var(--orbit-blue));
+  --nav-c-teal: color-mix(in srgb, var(--ok) 55%, var(--orbit-blue));
+  --nav-c-slate: var(--ink-2);
   --soft: rgba(212, 175, 55, 0.12);
   /* --- Acentos de interação (proposta "Neon Tokyo × Cosmic Gold", catálogo visual) ---
      --accent-violet/--accent-cyan são NOVOS tokens dedicados a acentos de botão/interação — não
@@ -273,6 +286,20 @@
   /* Sunset Orange e Red-Violet oficiais */
   --red: #ff5841;
   --pink: #c53678;
+  /* Acentos de ícone da Sidebar, lado escuro: sobre --surface-elevated escura os matizes clareiam
+     em direção ao branco (o ouro volta ao --brand puro, que aqui já passa de 3:1). */
+  --nav-c-gold: var(--brand);
+  --nav-c-iris: color-mix(in srgb, var(--iris) 72%, white);
+  --nav-c-blue: color-mix(in srgb, var(--orbit-blue) 75%, white);
+  --nav-c-red: color-mix(in srgb, var(--red) 88%, white);
+  --nav-c-green: color-mix(in srgb, var(--ok) 70%, white);
+  --nav-c-violet: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--iris) 45%, var(--orbit-blue)) 72%,
+    white
+  );
+  --nav-c-teal: color-mix(in srgb, color-mix(in srgb, var(--ok) 55%, var(--orbit-blue)) 72%, white);
+  --nav-c-slate: var(--ink-2);
   /* Clareado (color-mix em direção ao branco, mesma fórmula de --critical-active acima) para
      recuperar 4.5:1 como texto sólido contra --surface escura — 30% branco mede 5.35:1 (calculado,
      luminância relativa WCAG), com folga. Só a versão "-active" muda por tema; --red-violet cru

@@ -3,11 +3,11 @@ import {
   BarChart3,
   Bell,
   BookOpen,
-  Bot,
   Briefcase,
   Building2,
   CalendarCheck,
   CalendarDays,
+  ClipboardCheck,
   Cpu,
   Database,
   FileBarChart,
@@ -23,6 +23,7 @@ import {
   MessageSquare,
   Mic,
   PhoneCall,
+  Radar,
   Repeat,
   Search,
   Settings as SettingsIcon,
@@ -101,58 +102,77 @@ export type TabType =
   | 'copiloto_ia'
   | 'module-access';
 
-/** Metadados (rótulo + ícone) de cada módulo navegável — fonte única usada pelo topbar e pelo Command Palette.
+/**
+ * Matiz do ícone de cada módulo na navegação lateral — chave para uma das variáveis
+ * `--nav-c-*` de `src/styles/globals.css` (todas derivadas dos tokens de marca, calibradas nos dois
+ * temas). Um matiz por "tipo" de módulo, como o painel de navegação do Explorer do Windows.
+ */
+export type NavAccent = 'gold' | 'iris' | 'blue' | 'red' | 'green' | 'violet' | 'teal' | 'slate';
+
+export const NAV_ACCENT_VAR: Record<NavAccent, string> = {
+  gold: 'var(--nav-c-gold)',
+  iris: 'var(--nav-c-iris)',
+  blue: 'var(--nav-c-blue)',
+  red: 'var(--nav-c-red)',
+  green: 'var(--nav-c-green)',
+  violet: 'var(--nav-c-violet)',
+  teal: 'var(--nav-c-teal)',
+  slate: 'var(--nav-c-slate)',
+};
+
+/** Metadados (rótulo + ícone + matiz) de cada módulo navegável — fonte única usada pela Sidebar, pelo
+ * topbar e pelo Command Palette. Cada módulo tem um ícone SVG próprio (nenhum repetido).
  * Atualizado para paradigma Command Center: seções estratégicas agrupadas por função de comando. */
-export const TAB_META: Record<TabType, { label: string; icon: typeof Home }> = {
+export const TAB_META: Record<TabType, { label: string; icon: typeof Home; accent: NavAccent }> = {
   // COMMAND CENTER - Visão estratégica geral
-  dashboard: { label: 'Command Center', icon: Home },
-  workspace: { label: 'Meu Espaço', icon: Briefcase },
-  'daily-plan': { label: 'Plano Diário', icon: CalendarCheck },
+  dashboard: { label: 'Command Center', icon: Home, accent: 'gold' },
+  workspace: { label: 'Meu Espaço', icon: Briefcase, accent: 'blue' },
+  'daily-plan': { label: 'Plano Diário', icon: CalendarCheck, accent: 'green' },
 
   // INTELLIGENCE - Camada de inteligência e sinais
-  commercial_intelligence: { label: 'Inteligência de Vendas', icon: LineChart },
-  copiloto_ia: { label: 'Copiloto IA', icon: Mic },
-  intelligence: { label: 'Assistente de Vendas', icon: Zap },
-  'market-intelligence': { label: 'Pesquisa de Mercado', icon: Bot },
-  analytics: { label: 'Analytics', icon: BarChart3 },
-  winloss: { label: 'Win/Loss', icon: Target },
-  reports: { label: 'Relatórios Avançados', icon: FileBarChart },
+  commercial_intelligence: { label: 'Inteligência de Vendas', icon: LineChart, accent: 'violet' },
+  copiloto_ia: { label: 'Copiloto IA', icon: Mic, accent: 'iris' },
+  intelligence: { label: 'Assistente de Vendas', icon: Zap, accent: 'gold' },
+  'market-intelligence': { label: 'Pesquisa de Mercado', icon: Radar, accent: 'teal' },
+  analytics: { label: 'Analytics', icon: BarChart3, accent: 'blue' },
+  winloss: { label: 'Win/Loss', icon: Target, accent: 'red' },
+  reports: { label: 'Relatórios Avançados', icon: FileBarChart, accent: 'slate' },
 
   // BUSINESS - Operações comerciais
-  prospect: { label: 'Prospecção', icon: Search },
-  crm: { label: 'Pipeline CRM', icon: LayoutTemplate },
-  crm360: { label: 'Gestão de Negócios', icon: Gauge },
-  propostas: { label: 'Propostas', icon: FileSignature },
-  companies: { label: 'Empresas', icon: Building2 },
-  contacts: { label: 'Decisores', icon: Users },
-  'mesa-tratamento': { label: 'Mesa de Tratamento', icon: Headset },
+  prospect: { label: 'Prospecção', icon: Search, accent: 'teal' },
+  crm: { label: 'Pipeline CRM', icon: LayoutTemplate, accent: 'blue' },
+  crm360: { label: 'Gestão de Negócios', icon: Gauge, accent: 'violet' },
+  propostas: { label: 'Propostas', icon: FileSignature, accent: 'gold' },
+  companies: { label: 'Empresas', icon: Building2, accent: 'green' },
+  contacts: { label: 'Decisores', icon: Users, accent: 'iris' },
+  'mesa-tratamento': { label: 'Mesa de Tratamento', icon: Headset, accent: 'red' },
 
   // EXECUTION - Execução e automação
-  activities: { label: 'Agenda', icon: Activity },
-  calendar: { label: 'Calendário', icon: CalendarDays },
-  cadence: { label: 'Cadência', icon: Repeat },
-  automations: { label: 'Automações', icon: Cpu },
+  activities: { label: 'Agenda', icon: Activity, accent: 'iris' },
+  calendar: { label: 'Calendário', icon: CalendarDays, accent: 'blue' },
+  cadence: { label: 'Cadência', icon: Repeat, accent: 'green' },
+  automations: { label: 'Automações', icon: Cpu, accent: 'gold' },
 
   // CAPACITATION - Treinamento e capacitação
-  roleplay: { label: 'Roleplay', icon: PhoneCall },
-  qualification_matrix: { label: 'Matriz de Qualificação', icon: Target },
-  objections_matrix: { label: 'Matriz de Objeções', icon: Shield },
-  topic_training: { label: 'Academy', icon: BookOpen },
-  chatbook: { label: 'Chatbook', icon: MessageSquare },
-  knowledge: { label: 'Base de Conhecimento', icon: Database },
-  editor: { label: 'Editor de Documentos', icon: FileText },
+  roleplay: { label: 'Roleplay', icon: PhoneCall, accent: 'red' },
+  qualification_matrix: { label: 'Matriz de Qualificação', icon: ClipboardCheck, accent: 'teal' },
+  objections_matrix: { label: 'Matriz de Objeções', icon: Shield, accent: 'violet' },
+  topic_training: { label: 'Academy', icon: BookOpen, accent: 'gold' },
+  chatbook: { label: 'Chatbook', icon: MessageSquare, accent: 'blue' },
+  knowledge: { label: 'Base de Conhecimento', icon: Database, accent: 'green' },
+  editor: { label: 'Editor de Documentos', icon: FileText, accent: 'slate' },
 
   // DATA - Integrações e dados
-  integrations: { label: 'Integrações', icon: Globe },
-  bitrix: { label: 'Guia Prático Bitrix24', icon: Layers },
+  integrations: { label: 'Integrações', icon: Globe, accent: 'blue' },
+  bitrix: { label: 'Guia Prático Bitrix24', icon: Layers, accent: 'teal' },
 
   // ADMINISTRATION - Administração e configurações
-  notifications: { label: 'Notificações', icon: Bell },
-  usage: { label: 'Consumo de IA', icon: Wallet },
-  team: { label: 'Equipe', icon: UserCog },
-  'module-access': { label: 'Acesso a Módulos', icon: ShieldCheck },
-  settings: { label: 'Configurações', icon: SettingsIcon },
+  notifications: { label: 'Notificações', icon: Bell, accent: 'gold' },
+  usage: { label: 'Consumo de IA', icon: Wallet, accent: 'violet' },
+  team: { label: 'Equipe', icon: UserCog, accent: 'blue' },
+  'module-access': { label: 'Acesso a Módulos', icon: ShieldCheck, accent: 'green' },
+  settings: { label: 'Configurações', icon: SettingsIcon, accent: 'slate' },
 
   // DIAGNOSTICS - Ferramentas de diagnóstico
-  'sdr-diagnostic': { label: 'Diagnóstico SDR', icon: Stethoscope },
+  'sdr-diagnostic': { label: 'Diagnóstico SDR', icon: Stethoscope, accent: 'green' },
 };

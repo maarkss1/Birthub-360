@@ -1,11 +1,13 @@
+import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { useState } from 'react';
+import { type CSSProperties, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
 import { BrandEmblemBadge } from '../brand/BrandEmblemBadge';
 import { SoundFX } from '../../lib/soundEffects';
-import { TAB_META, type TabType } from './tabMeta';
+import { NavLaunchTransition, type NavLaunch } from './NavLaunchTransition';
+import { NAV_ACCENT_VAR, TAB_META, type TabType } from './tabMeta';
 
 /** Preferência de menu recolhido. A chave anterior era prefixada com o nome da
  *  marca antiga; a leitura do valor legado existe só para não zerar a
@@ -70,10 +72,53 @@ export function Sidebar({
   // papel como um todo (não a uma conta específica), então vale para qualquer futuro SDR contratado.
   const isRestrictedSdrProfile = currentUser?.role === 'SDR';
 
-  const selectTab = (tab: TabType) => {
-    if (tab !== activeTab) SoundFX.play('navigate');
+  const reduceMotion = useReducedMotion();
+  const [launch, setLaunch] = useState<(NavLaunch & { tab: TabType }) | null>(null);
+
+  const openTab = (tab: TabType) => {
     navigate(`/app/${tab}`);
     onCloseMobile?.();
+  };
+
+  const finishLaunch = () => {
+    if (!launch) return;
+    openTab(launch.tab);
+    setLaunch(null);
+  };
+
+  const selectTab = (tab: TabType, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (launch) return; // transição em andamento: ignora cliques extras
+    if (tab !== activeTab) SoundFX.play('navigate');
+
+    // A animação de abertura (ícone voa ao centro, gira, revela o logo) é pulada quando:
+    // - já está no módulo (nada a abrir);
+    // - a pessoa pediu movimento reduzido (prefers-reduced-motion);
+    // - navegador automatizado (Playwright/Selenium): os testes E2E clicam nesses botões e não
+    //   devem esperar ~1s de animação;
+    // - Ctrl/Cmd/Shift/Alt pressionado: atalho para quem quer ir direto (uso repetido, SDR).
+    const skip =
+      tab === activeTab ||
+      reduceMotion ||
+      (typeof navigator !== 'undefined' && navigator.webdriver) ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey;
+    if (skip) {
+      openTab(tab);
+      return;
+    }
+
+    const meta = TAB_META[tab];
+    const anchor = event.currentTarget.querySelector('[data-nav-icon]') ?? event.currentTarget;
+    const rect = anchor.getBoundingClientRect();
+    setLaunch({
+      tab,
+      label: meta.label,
+      Icon: meta.icon,
+      accent: NAV_ACCENT_VAR[meta.accent],
+      from: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+    });
   };
 
   const administrationItems: TabType[] = [
@@ -213,34 +258,40 @@ export function Sidebar({
     if (!meta) return null;
     const Icon = meta.icon;
     const isActive = activeTab === tab;
+    // O matiz do módulo vira a variável --nav-accent; ícone, ladrilho e barra ativa leem dela.
+    const accentStyle = { '--nav-accent': NAV_ACCENT_VAR[meta.accent] } as CSSProperties;
 
     return (
       <button
         key={tab}
         type="button"
-        onClick={() => selectTab(tab)}
+        onClick={(event) => selectTab(tab, event)}
         title={meta.label}
         aria-label={meta.label}
         aria-current={isActive ? 'page' : undefined}
-        className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated cursor-pointer hover:scale-[1.02] active:scale-95 ${
+        style={accentStyle}
+        className={`group relative flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left text-[13px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-surface-elevated cursor-pointer ${
           isActive
-            ? 'bg-gradient-to-r from-brand/15 to-brand/5 text-brand shadow-md ring-1 ring-brand/30 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
-            : 'text-ink-2 hover:bg-surface-interactive hover:text-ink hover:shadow-sm'
+            ? 'bg-[color-mix(in_srgb,var(--nav-accent)_12%,transparent)] text-ink'
+            : 'text-ink-2 hover:bg-surface-interactive hover:text-ink'
         } ${isCollapsed ? 'lg:px-0 lg:justify-center' : ''}`}
       >
         {isActive && (
           <span
             aria-hidden="true"
-            className="absolute inset-y-1.5 left-0 w-[2px] rounded-r-full bg-gradient-to-b from-brand to-brand-2 shadow-[0_0_12px_var(--color-brand)]"
+            className="absolute inset-y-1.5 left-0 w-[3px] rounded-r-full bg-[var(--nav-accent)]"
           />
         )}
-        <Icon
-          size={16}
-          aria-hidden="true"
-          className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110 text-brand' : 'group-hover:scale-110 group-hover:text-brand/60'}`}
-        />
+        {/* Ladrilho colorido com o ícone SVG do módulo — cada módulo tem ícone e matiz próprios */}
         <span
-          className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-semibold tracking-tight' : ''}`}
+          data-nav-icon
+          aria-hidden="true"
+          className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-[color-mix(in_srgb,var(--nav-accent)_14%,transparent)] text-[var(--nav-accent)]"
+        >
+          <Icon size={16} strokeWidth={2} />
+        </span>
+        <span
+          className={`truncate ${isCollapsed ? 'lg:hidden' : ''} ${isActive ? 'font-semibold text-ink' : ''}`}
         >
           {meta.label}
         </span>
@@ -302,21 +353,19 @@ export function Sidebar({
 
       <nav
         aria-label="Navegação principal"
-        className="custom-scrollbar flex-1 space-y-5 overflow-y-auto px-2.5 py-3"
+        className="custom-scrollbar flex-1 space-y-3 overflow-y-auto px-2.5 py-3"
       >
-        {navGroups.map((group) => (
-          <section key={group.title} className="space-y-1" aria-label={group.title}>
-            <div className={`mb-2 flex items-center px-3 ${isCollapsed ? 'lg:hidden' : ''}`}>
+        {navGroups.map((group, groupIndex) => (
+          <section
+            key={group.title}
+            className={`space-y-0.5 ${groupIndex > 0 ? 'border-t border-line pt-3' : ''}`}
+            aria-label={group.title}
+          >
+            <div className={`mb-1.5 flex items-center px-2 ${isCollapsed ? 'lg:hidden' : ''}`}>
               <p className="text-[10px] font-bold uppercase tracking-widest text-ink-2">
                 {group.title}
               </p>
             </div>
-            {isCollapsed && (
-              <div
-                className="hidden lg:block my-2 mx-auto w-4 h-px bg-line/50"
-                aria-hidden="true"
-              />
-            )}
             {group.items.map(renderNavItem)}
           </section>
         ))}
@@ -366,6 +415,9 @@ export function Sidebar({
           <span className={isCollapsed ? 'lg:hidden' : ''}>Sair da Conta</span>
         </button>
       </div>
+      <AnimatePresence>
+        {launch && <NavLaunchTransition key={launch.tab} launch={launch} onFinish={finishLaunch} />}
+      </AnimatePresence>
     </aside>
   );
 }
