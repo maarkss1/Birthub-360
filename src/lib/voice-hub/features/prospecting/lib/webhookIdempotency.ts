@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { Redis } from 'ioredis';
 import { getRedisUrl, getRedisRetryStrategy } from '../../../lib/env.js';
-import { logger } from '../../../lib/logger.js';
+import { logger } from '@/lib/logger';
 
 /**
  * Thrown when we cannot determine whether a webhook delivery is a duplicate (e.g. Redis is

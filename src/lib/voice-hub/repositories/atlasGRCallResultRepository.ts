@@ -1,10 +1,10 @@
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 /**
  * Persists the result of a call dispatched via the AtlasGR/Bland AI prospecting integration.
  * Resolves .agents/handoffs/onda-1/06-para-01-persistir-resultado-bland.md — see the
  * `AtlasGRCallResult` model in `prisma/schema.prisma` for the full rationale, including why
- * `tenantId` is optional (this integration has no verifiable per-call tenant signal today).
+ * `organizationId` is optional (this integration has no verifiable per-call tenant signal today).
  *
  * Intended caller: the Bland AI result callback handler in
  * `src/features/prospecting/routes/atlasgr.routes.ts` (Agente 06's domain) — this file only
@@ -14,7 +14,7 @@ import { prisma } from '../lib/prisma.js';
 
 export interface UpsertAtlasGRCallResultInput {
   callId: string;
-  tenantId?: string | null;
+  organizationId?: string | null;
   leadId?: string | null;
   status?: string | null;
   completed?: boolean | null;
@@ -31,7 +31,7 @@ export interface UpsertAtlasGRCallResultInput {
  */
 export function upsertAtlasGRCallResult(input: UpsertAtlasGRCallResultInput) {
   const shared = {
-    tenantId: input.tenantId ?? null,
+    organizationId: input.organizationId ?? null,
     leadId: input.leadId ?? null,
     status: input.status ?? null,
     completed: input.completed ?? null,
@@ -54,30 +54,30 @@ export function findAtlasGRCallResultByCallId(callId: string) {
 
 /**
  * Tenant-scoped, paginated read of dispatched-call results, for a future "quantas ligações a
- * AtlasGR disparou e qual foi o resultado de cada uma" view. `tenantId` must come from the
+ * AtlasGR disparou e qual foi o resultado de cada uma" view. `organizationId` must come from the
  * authenticated session (requireTenant), never from client input, same rule as every other
  * tenant-scoped query in this codebase — see AGENTS.md §15.
  *
- * Rows with `tenantId: null` (see the model comment for why some legitimately have none) are
+ * Rows with `organizationId: null` (see the model comment for why some legitimately have none) are
  * intentionally excluded here rather than merged in the way `metricRepository.listMetricsForUser`
- * merges tenant-wide rows: a null `tenantId` on this model reflects "no verifiable tenant", not
+ * merges tenant-wide rows: a null `organizationId` on this model reflects "no verifiable tenant", not
  * "belongs to every tenant", so surfacing it inside one tenant's own view would misattribute it.
  * A separate, explicitly-labelled admin/operational view is the right place to list untenanted
  * rows, not this function.
  */
 export async function listAtlasGRCallResultsForTenant(
-  tenantId: string,
+  organizationId: string,
   { page, pageSize }: { page: number; pageSize: number }
 ) {
   const skip = (page - 1) * pageSize;
   const [items, total] = await Promise.all([
     prisma.atlasGRCallResult.findMany({
-      where: { tenantId },
+      where: { organizationId },
       orderBy: { receivedAt: 'desc' },
       skip,
       take: pageSize,
     }),
-    prisma.atlasGRCallResult.count({ where: { tenantId } }),
+    prisma.atlasGRCallResult.count({ where: { organizationId } }),
   ]);
   return { items, total };
 }

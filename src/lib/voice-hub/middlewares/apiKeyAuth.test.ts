@@ -60,7 +60,7 @@ function makeRes() {
   return res as Response;
 }
 
-const VALID_SESSION = { id: 'user-1', email: 'admin@tenant-1.com', role: 'admin', tenantId: 'tenant-1' };
+const VALID_SESSION = { id: 'user-1', email: 'admin@tenant-1.com', role: 'admin', organizationId: 'tenant-1' };
 
 describe('getAuthUser — API key path', () => {
   it('routes an API-key-shaped Bearer token to authenticateApiKey, never to JWT verification', async () => {
@@ -96,7 +96,7 @@ describe('getAuthUser — API key path', () => {
 });
 
 describe('attachAuthIfPresent — per-API-key rate limit', () => {
-  it('sets req.user/req.tenantId and calls next() for a valid key under the limit', async () => {
+  it('sets req.user/req.organizationId and calls next() for a valid key under the limit', async () => {
     vi.mocked(authenticateApiKey).mockResolvedValue({ apiKeyId: 'key-1', session: VALID_SESSION });
 
     const req = makeReq({ headers: { authorization: 'Bearer bvhk_live_ok' } });
@@ -106,7 +106,7 @@ describe('attachAuthIfPresent — per-API-key rate limit', () => {
     await attachAuthIfPresent(req, res, next);
 
     expect(req.user).toEqual(VALID_SESSION);
-    expect(req.tenantId).toBe('tenant-1');
+    expect(req.organizationId).toBe('tenant-1');
     expect(next).toHaveBeenCalledTimes(1);
     expect(res.status).not.toHaveBeenCalled();
   });

@@ -50,16 +50,16 @@ function getMockSocket(): MockSocket {
   return socket;
 }
 
-const SUPERVISOR_USER = { id: 'u1', email: 'supervisora@teste.com', role: 'admin', tenantId: 'tenant-1', permissions: ['supervision:intervene'] };
-const AGENT_USER = { id: 'u2', email: 'agente@teste.com', role: 'user', tenantId: 'tenant-1', permissions: [] };
+const SUPERVISOR_USER = { id: 'u1', email: 'supervisora@teste.com', role: 'admin', organizationId: 'tenant-1', permissions: ['supervision:intervene'] };
+const AGENT_USER = { id: 'u2', email: 'agente@teste.com', role: 'user', organizationId: 'tenant-1', permissions: [] };
 // Dedicated 'supervisor' role (see handoff 01-para-11-supervisor-permission-frontend.md): holds
 // the 'supervision:intervene' permission on the server by default, same as 'admin', but must not
 // get full admin access. `canIntervene` is driven purely by `user.permissions` now (see handoff
 // 02-para-11-permissions-disponivel-no-sessionstore.md) — the role name itself is irrelevant here.
-const DEDICATED_SUPERVISOR_USER = { id: 'u3', email: 'supervisor.dedicado@teste.com', role: 'supervisor', tenantId: 'tenant-1', permissions: ['supervision:intervene'] };
+const DEDICATED_SUPERVISOR_USER = { id: 'u3', email: 'supervisor.dedicado@teste.com', role: 'supervisor', organizationId: 'tenant-1', permissions: ['supervision:intervene'] };
 // A user whose role is outside the old hardcoded allowlist entirely, but who was granted the
 // permission directly — proves `canIntervene` no longer depends on role name at all.
-const CUSTOM_ROLE_WITH_PERMISSION_USER = { id: 'u4', email: 'custom.permissao@teste.com', role: 'qa-lead', tenantId: 'tenant-1', permissions: ['supervision:intervene'] };
+const CUSTOM_ROLE_WITH_PERMISSION_USER = { id: 'u4', email: 'custom.permissao@teste.com', role: 'qa-lead', organizationId: 'tenant-1', permissions: ['supervision:intervene'] };
 
 describe('LiveSupervisor', () => {
   beforeEach(() => {

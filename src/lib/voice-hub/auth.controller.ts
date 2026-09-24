@@ -1,4 +1,4 @@
-import { logger } from "../lib/logger.js";
+import { logger } from '@/lib/logger';
 import { Request, Response } from 'express';
 import { loginSchema, registerSchema } from '../validators/index.js';
 import { z } from 'zod';
@@ -22,7 +22,7 @@ export async function registerHandler(req: Request, res: Response) {
 
   try {
     const result = await register(email, password, companyName);
-    writeAuditLog(result.tenantId, result.user.id, 'USER_REGISTER', {});
+    writeAuditLog(result.organizationId, result.user.id, 'USER_REGISTER', {});
     setCookie(res, 'access_token', result.token, ACCESS_TOKEN_MAX_AGE_MS);
     setLoggedInCookie(res);
     setCookie(res, 'refresh_token', result.refreshToken, REFRESH_TOKEN_MAX_AGE_MS);
@@ -46,8 +46,8 @@ export async function loginHandler(req: Request, res: Response) {
 
   try {
     const result = await login(email, password);
-    writeAuditLog(result.tenantId, result.user.id, 'USER_LOGIN', {});
-    createMetric(result.tenantId, result.user.id, { name: 'user_login', value: 1, tags: { userId: result.user.id } });
+    writeAuditLog(result.organizationId, result.user.id, 'USER_LOGIN', {});
+    createMetric(result.organizationId, result.user.id, { name: 'user_login', value: 1, tags: { userId: result.user.id } });
     setCookie(res, 'access_token', result.token, ACCESS_TOKEN_MAX_AGE_MS);
     setLoggedInCookie(res);
     setCookie(res, 'refresh_token', result.refreshToken, REFRESH_TOKEN_MAX_AGE_MS);
@@ -99,6 +99,6 @@ export async function logoutHandler(req: Request, res: Response) {
 // hasPermission in src/middlewares/rbac.ts), never trusted from this response alone.
 export async function meHandler(req: Request, res: Response) {
   if (!req.user) return res.json({ user: null });
-  const permissions = await getPermissionsForRoleName(req.user.role, req.user.tenantId);
+  const permissions = await getPermissionsForRoleName(req.user.role, req.user.organizationId);
   res.json({ user: { ...req.user, permissions } });
 }

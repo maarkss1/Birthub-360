@@ -91,10 +91,10 @@ function toMetadata(row: webhookEndpointRepository.TenantWebhookEndpointRecord):
 // boundary — this function trusts its caller the same way createApiKeyForTenant trusts its own
 // Zod-validated input.
 export async function createWebhookEndpointForTenant(
-  tenantId: string,
+  organizationId: string,
   data: { url: string; events: string[] },
 ): Promise<CreatedWebhookEndpoint> {
-  const activeCount = await webhookEndpointRepository.countActiveEndpointsForTenant(tenantId);
+  const activeCount = await webhookEndpointRepository.countActiveEndpointsForTenant(organizationId);
   if (activeCount >= MAX_ACTIVE_WEBHOOK_ENDPOINTS_PER_TENANT) {
     throw new WebhookEndpointServiceError(
       `Limite de ${MAX_ACTIVE_WEBHOOK_ENDPOINTS_PER_TENANT} endpoints de webhook ativos por tenant atingido. ` +
@@ -107,7 +107,7 @@ export async function createWebhookEndpointForTenant(
   const secretHash = hashWebhookSecret(plaintextSecret);
 
   const created = await webhookEndpointRepository.createEndpoint({
-    tenantId,
+    organizationId,
     url: data.url,
     secretHash,
     events: data.events,
@@ -123,16 +123,16 @@ export async function createWebhookEndpointForTenant(
   };
 }
 
-export async function listWebhookEndpointsForTenant(tenantId: string): Promise<WebhookEndpointMetadata[]> {
-  const rows = await webhookEndpointRepository.listEndpointsForTenant(tenantId);
+export async function listWebhookEndpointsForTenant(organizationId: string): Promise<WebhookEndpointMetadata[]> {
+  const rows = await webhookEndpointRepository.listEndpointsForTenant(organizationId);
   return rows.map(toMetadata);
 }
 
 // DELETE /api/developers/webhooks/:id. Tenant-scoped lookup (never trusts the id alone) so an
 // admin from tenant A can never delete — or even discover the existence of — an endpoint
 // belonging to tenant B (AGENTS.md §15).
-export async function deleteWebhookEndpointForTenant(tenantId: string, id: string): Promise<void> {
-  const existing = await webhookEndpointRepository.findEndpointForTenant(id, tenantId);
+export async function deleteWebhookEndpointForTenant(organizationId: string, id: string): Promise<void> {
+  const existing = await webhookEndpointRepository.findEndpointForTenant(id, organizationId);
   if (!existing) {
     throw new WebhookEndpointServiceError('Endpoint de webhook não encontrado.', 404);
   }
@@ -143,10 +143,10 @@ export async function deleteWebhookEndpointForTenant(tenantId: string, id: strin
 // working secret again after the one-time reveal is to invalidate the old one and mint a new one
 // — there is no "reveal again" path anywhere in this service.
 export async function regenerateWebhookEndpointSecret(
-  tenantId: string,
+  organizationId: string,
   id: string,
 ): Promise<CreatedWebhookEndpoint> {
-  const existing = await webhookEndpointRepository.findEndpointForTenant(id, tenantId);
+  const existing = await webhookEndpointRepository.findEndpointForTenant(id, organizationId);
   if (!existing) {
     throw new WebhookEndpointServiceError('Endpoint de webhook não encontrado.', 404);
   }
@@ -185,10 +185,10 @@ export interface WebhookDispatchResolution {
 
 // Called by webhookService.dispatch for every event that does not carry an explicit targetUrl.
 export async function resolveActiveEndpointsForEvent(
-  tenantId: string,
+  organizationId: string,
   event: string,
 ): Promise<WebhookDispatchResolution> {
-  const active = await webhookEndpointRepository.listActiveEndpointsForTenant(tenantId);
+  const active = await webhookEndpointRepository.listActiveEndpointsForTenant(organizationId);
   const targets = active
     .filter((endpoint) => endpoint.events.includes('*') || endpoint.events.includes(event))
     .map((endpoint) => ({ endpointId: endpoint.id, url: endpoint.url }));

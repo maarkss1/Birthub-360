@@ -2,7 +2,7 @@ import type { Prisma } from '@prisma/client';
 import type { StudioEdge, StudioNode, ValidationIssue } from '../../lib/studio/types.js';
 import * as workflowRepository from '../repositories/workflowRepository.js';
 import * as agentRepository from '../repositories/agentRepository.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 import {
   knowledgeConfidenceEngine,
   type KnowledgeDocument,
@@ -54,7 +54,7 @@ interface RuntimeEdge extends Record<string, Prisma.JsonValue> {
  * Prisma.JsonObject. Keeping the runtime state JSON-safe prevents test-only casts from hiding a
  * production persistence mismatch and makes the session snapshot portable across workers.
  *
- * Deliberately NOT extended with new top-level fields for tenantId/agentId/knowledgeDocuments
+ * Deliberately NOT extended with new top-level fields for organizationId/agentId/knowledgeDocuments
  * (added in Onda 5 for `knowledge` node support) — every field here must be a required, always
  * JSON-safe (non-`undefined`) value, because `extends Record<string, Prisma.JsonValue>` and an
  * optional property (`foo?: T`, whose type TypeScript always widens to `T | undefined`) cannot
@@ -690,13 +690,13 @@ function applyToolFallback(state: WorkflowRuntimeState, node: RuntimeNode, reaso
  * downgrade to "allowed".
  */
 async function executeToolNodeAsync(state: WorkflowRuntimeState, node: RuntimeNode): Promise<void> {
-  const tenantId = getRuntimeTenantId(state);
+  const organizationId = getRuntimeTenantId(state);
   try {
-    const consent = await getAiConsent(tenantId);
+    const consent = await getAiConsent(organizationId);
     if (!consent.granted) {
       logger.warn('Workflow tool node blocked: tenant has not granted external data consent', {
         workflowId: state.workflowId,
-        tenantId,
+        organizationId,
         nodeId: node.id,
       });
       applyToolFallback(state, node, 'consent_not_granted');
@@ -705,7 +705,7 @@ async function executeToolNodeAsync(state: WorkflowRuntimeState, node: RuntimeNo
   } catch (error) {
     logger.error('Failed to verify tenant consent before executing workflow tool node', {
       workflowId: state.workflowId,
-      tenantId,
+      organizationId,
       nodeId: node.id,
       error: error instanceof Error ? error.message : String(error),
     });
@@ -736,7 +736,7 @@ async function executeToolNodeAsync(state: WorkflowRuntimeState, node: RuntimeNo
     state.variables[`tool_${node.id}_result`] = result.body ?? '';
     logger.info('Workflow tool node executed successfully', {
       workflowId: state.workflowId,
-      tenantId: getRuntimeTenantId(state),
+      organizationId: getRuntimeTenantId(state),
       agentId: getRuntimeAgentId(state),
       nodeId: node.id,
       status: result.status,
@@ -746,7 +746,7 @@ async function executeToolNodeAsync(state: WorkflowRuntimeState, node: RuntimeNo
 
   logger.warn('Workflow tool node failed; continuing the call on the fallback path', {
     workflowId: state.workflowId,
-    tenantId: getRuntimeTenantId(state),
+    organizationId: getRuntimeTenantId(state),
     agentId: getRuntimeAgentId(state),
     nodeId: node.id,
     reason: result.error,
@@ -754,18 +754,18 @@ async function executeToolNodeAsync(state: WorkflowRuntimeState, node: RuntimeNo
   applyToolFallback(state, node, result.error ?? 'unknown_error');
 }
 
-async function loadAgentKnowledgeDocuments(tenantId: string, agentId: string): Promise<KnowledgeDocument[]> {
+async function loadAgentKnowledgeDocuments(organizationId: string, agentId: string): Promise<KnowledgeDocument[]> {
   try {
     // Tenant-scoped lookup: `agentRepository.getAgent` only returns a row when `agentId` actually
-    // belongs to `tenantId`, so a mismatched/foreign agentId yields no documents rather than
+    // belongs to `organizationId`, so a mismatched/foreign agentId yields no documents rather than
     // another tenant's knowledge base — this is the tenant-isolation guarantee for `knowledge`.
-    const agent = await agentRepository.getAgent(agentId, tenantId);
+    const agent = await agentRepository.getAgent(agentId, organizationId);
     if (!agent) return [];
     const config = (agent.configuration as unknown as AgentConfiguration) || {};
     return Array.isArray(config.knowledge) ? config.knowledge : [];
   } catch (error) {
     logger.error('Failed to load agent knowledge documents for workflow runtime', {
-      tenantId,
+      organizationId,
       agentId,
       error: error instanceof Error ? error.message : String(error),
     });
@@ -1000,7 +1000,7 @@ function closingMessage(state: WorkflowRuntimeState): string {
 }
 
 export async function initializeWorkflowRuntime(
-  tenantId: string,
+  organizationId: string,
   initialVariables: Record<string, unknown> = {},
   // Optional today because `telephonyService.ts` (Agente 05) does not pass it yet at its two
   // call sites (`startCall`/`startOutboundCall`, both of which already have the resolved `Agent`
@@ -1010,14 +1010,14 @@ export async function initializeWorkflowRuntime(
   // caller's behavior.
   agentId?: string,
 ): Promise<WorkflowRuntimeState | null> {
-  const workflow = await workflowRepository.findActiveWorkflowForTenant(tenantId);
+  const workflow = await workflowRepository.findActiveWorkflowForTenant(organizationId);
   if (!workflow) return null;
 
   const { nodes, edges } = toStudioGraph(workflow.nodes, workflow.edges);
   const runtimeIssues = validateRuntimeCompatibility(nodes, edges);
   if (runtimeIssues.length > 0) {
     logger.error('Active workflow is not runtime-compatible; refusing to execute it', {
-      tenantId,
+      organizationId,
       workflowId: workflow.id,
       issueIds: runtimeIssues.map((issue) => issue.id),
     });
@@ -1027,7 +1027,7 @@ export async function initializeWorkflowRuntime(
   const start = nodes.find((node) => node.type === 'start');
   if (!start) return null;
 
-  const knowledgeDocuments = agentId ? await loadAgentKnowledgeDocuments(tenantId, agentId) : [];
+  const knowledgeDocuments = agentId ? await loadAgentKnowledgeDocuments(organizationId, agentId) : [];
 
   const state: WorkflowRuntimeState = {
     workflowId: workflow.id,
@@ -1039,7 +1039,7 @@ export async function initializeWorkflowRuntime(
           .filter(([, value]) => value !== null && value !== undefined)
           .map(([key, value]) => [key, String(value)]),
       ),
-      [RUNTIME_TENANT_ID_VAR]: tenantId,
+      [RUNTIME_TENANT_ID_VAR]: organizationId,
       ...(agentId ? { [RUNTIME_AGENT_ID_VAR]: agentId } : {}),
       [RUNTIME_KNOWLEDGE_DOCS_VAR]: JSON.stringify(knowledgeDocuments),
     },

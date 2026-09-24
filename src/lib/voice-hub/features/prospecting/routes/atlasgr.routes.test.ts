@@ -201,7 +201,7 @@ describe('POST /api/webhooks/bland/:token', () => {
       completed: true,
       callLength: null,
       leadId: null,
-      tenantId: null,
+      organizationId: null,
     });
   });
 
@@ -225,7 +225,7 @@ describe('POST /api/webhooks/bland/:token', () => {
       completed: true,
       callLength: 42,
       leadId: 'lead-1',
-      tenantId: 'tenant-123',
+      organizationId: 'tenant-123',
     });
   });
 

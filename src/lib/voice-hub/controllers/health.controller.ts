@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Redis } from 'ioredis';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 export function healthHandler(_req: Request, res: Response) {
   res.status(200).json({ status: 'ok' });

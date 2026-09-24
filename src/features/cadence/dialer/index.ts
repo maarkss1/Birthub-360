@@ -1,6 +1,6 @@
-import { loadEnv } from "./config/env.js";
-import { createLogger } from "./infrastructure/logger.js";
-import { createPool } from "./infrastructure/db/pool.js";
+import { env } from "@/config/env";
+import { logger } from "@/lib/logger";
+import { prisma } from "@/lib/prisma";
 import { PgCampaignRepository } from "./infrastructure/db/repositories/PgCampaignRepository.js";
 import { PgLeadRepository } from "./infrastructure/db/repositories/PgLeadRepository.js";
 import { PgCallAttemptRepository } from "./infrastructure/db/repositories/PgCallAttemptRepository.js";
@@ -24,10 +24,10 @@ async function main(): Promise<void> {
   const pool = createPool(env.databaseUrl);
 
   // --- Infraestrutura ---
-  const campaignRepository = new PgCampaignRepository(pool);
-  const leadRepository = new PgLeadRepository(pool);
-  const callAttemptRepository = new PgCallAttemptRepository(pool);
-  const dncRepository = new PgDncRepository(pool);
+  const campaignRepository = new PgCampaignRepository(prisma);
+  const leadRepository = new PgLeadRepository(prisma);
+  const callAttemptRepository = new PgCallAttemptRepository(prisma);
+  const dncRepository = new PgDncRepository(prisma);
 
   const authClient = new ThreeCxAuthClient({
     domain: env.threeCx.domain,
@@ -97,9 +97,7 @@ async function main(): Promise<void> {
     logger.info({ signal }, "Encerrando aplicação");
     await dialerLoop.stop();
     server.close(() => {
-      pool
-        .end()
-        .then(() => process.exit(0))
+      Promise.resolve().then(() => process.exit(0))
         .catch(() => process.exit(1));
     });
   };

@@ -50,7 +50,7 @@ function makePayload(overrides: Partial<WebhookPayload> = {}): WebhookPayload {
     id: 'evt_1',
     type: 'call.completed',
     timestamp: '2026-01-01T00:00:00Z',
-    tenantId: 'tenant-a',
+    organizationId: 'tenant-a',
     data: { sessionId: 's1' },
     ...overrides,
   };

@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { Queue } from 'bullmq';
 import { getRedisConnectionOptions } from '../lib/env.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 import { resolveActiveEndpointsForEvent } from './webhookEndpointService.js';
 
 /**
@@ -12,7 +12,7 @@ export interface WebhookPayload {
   id: string;
   type: string;
   timestamp: string;
-  tenantId: string;
+  organizationId: string;
   data: Record<string, unknown>;
 }
 
@@ -43,7 +43,7 @@ export class WebhookService {
    *                  a configured-but-non-matching tenant never falls through to that fallback.
    */
   public async dispatch(
-    tenantId: string,
+    organizationId: string,
     event: string,
     data: Record<string, unknown>,
     targetUrl?: string,
@@ -53,13 +53,13 @@ export class WebhookService {
         id: `evt_${randomUUID()}`,
         type: event,
         timestamp: new Date().toISOString(),
-        tenantId,
+        organizationId,
         data,
       };
 
       if (targetUrl) {
         await this.enqueue({ url: targetUrl, payload });
-        logger.info(`[WebhookService] Queued event ${event} for tenant ${tenantId} (explicit targetUrl)`);
+        logger.info(`[WebhookService] Queued event ${event} for tenant ${organizationId} (explicit targetUrl)`);
         return;
       }
 
@@ -75,12 +75,12 @@ export class WebhookService {
       let hasAnyActiveEndpoint = false;
       let targets: { endpointId: string; url: string }[] = [];
       try {
-        const resolution = await resolveActiveEndpointsForEvent(tenantId, event);
+        const resolution = await resolveActiveEndpointsForEvent(organizationId, event);
         hasAnyActiveEndpoint = resolution.hasAnyActiveEndpoint;
         targets = resolution.targets;
       } catch (resolutionError) {
         logger.error(
-          `[WebhookService] Could not resolve tenant webhook endpoints for tenant ${tenantId} — dropping event ${event} instead of risking delivery to the wrong destination`,
+          `[WebhookService] Could not resolve tenant webhook endpoints for tenant ${organizationId} — dropping event ${event} instead of risking delivery to the wrong destination`,
           resolutionError,
         );
         return;
@@ -90,26 +90,26 @@ export class WebhookService {
         if (targets.length === 0) {
           // Tenant has active endpoints, just none subscribed to this event type — a deliberate
           // no-op, never redirected to the deployment-wide fallback (see dispatch's doc comment).
-          logger.debug(`[WebhookService] No tenant endpoint subscribed to event ${event} for tenant ${tenantId}`);
+          logger.debug(`[WebhookService] No tenant endpoint subscribed to event ${event} for tenant ${organizationId}`);
           return;
         }
         for (const target of targets) {
           await this.enqueue({ url: target.url, payload, endpointId: target.endpointId });
         }
         logger.info(
-          `[WebhookService] Queued event ${event} for tenant ${tenantId} to ${targets.length} tenant endpoint(s)`,
+          `[WebhookService] Queued event ${event} for tenant ${organizationId} to ${targets.length} tenant endpoint(s)`,
         );
         return;
       }
 
       const webhookUrl = process.env.WEBHOOK_URL || process.env.TEST_WEBHOOK_URL;
       if (!webhookUrl) {
-        logger.debug(`[WebhookService] No webhook URL configured for tenant ${tenantId}`);
+        logger.debug(`[WebhookService] No webhook URL configured for tenant ${organizationId}`);
         return;
       }
 
       await this.enqueue({ url: webhookUrl, payload });
-      logger.info(`[WebhookService] Queued event ${event} for tenant ${tenantId} (deployment-wide fallback)`);
+      logger.info(`[WebhookService] Queued event ${event} for tenant ${organizationId} (deployment-wide fallback)`);
     } catch (error) {
       logger.error(`[WebhookService] Error dispatching webhook event ${event}`, error);
     }

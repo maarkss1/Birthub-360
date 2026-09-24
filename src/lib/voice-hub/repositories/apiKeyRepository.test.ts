@@ -12,7 +12,7 @@ vi.mock('../lib/prisma.js', () => ({
   },
 }));
 
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 import {
   API_KEY_SAFE_SELECT,
   createApiKey,
@@ -32,7 +32,7 @@ describe('apiKeyRepository', () => {
     vi.mocked(prisma.aPIKey.create).mockResolvedValue({ id: 'key-1' } as any);
 
     await createApiKey({
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       name: 'CI key',
       keyHash: 'hash-value',
       createdByUserId: 'user-1',
@@ -41,7 +41,7 @@ describe('apiKeyRepository', () => {
 
     expect(prisma.aPIKey.create).toHaveBeenCalledWith({
       data: {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         name: 'CI key',
         keyHash: 'hash-value',
         createdByUserId: 'user-1',
@@ -51,25 +51,25 @@ describe('apiKeyRepository', () => {
     });
   });
 
-  it('listApiKeysForTenant scopes by tenantId and uses the safe select', async () => {
+  it('listApiKeysForTenant scopes by organizationId and uses the safe select', async () => {
     vi.mocked(prisma.aPIKey.findMany).mockResolvedValue([]);
 
     await listApiKeysForTenant('tenant-1');
 
     expect(prisma.aPIKey.findMany).toHaveBeenCalledWith({
-      where: { tenantId: 'tenant-1' },
+      where: { organizationId: 'tenant-1' },
       select: API_KEY_SAFE_SELECT,
       orderBy: { createdAt: 'desc' },
     });
   });
 
-  it('findApiKeyForTenant scopes lookup by id AND tenantId (cross-tenant lookup returns null)', async () => {
+  it('findApiKeyForTenant scopes lookup by id AND organizationId (cross-tenant lookup returns null)', async () => {
     vi.mocked(prisma.aPIKey.findFirst).mockResolvedValue(null);
 
     const result = await findApiKeyForTenant('key-1', 'tenant-1');
 
     expect(prisma.aPIKey.findFirst).toHaveBeenCalledWith({
-      where: { id: 'key-1', tenantId: 'tenant-1' },
+      where: { id: 'key-1', organizationId: 'tenant-1' },
       select: API_KEY_SAFE_SELECT,
     });
     expect(result).toBeNull();

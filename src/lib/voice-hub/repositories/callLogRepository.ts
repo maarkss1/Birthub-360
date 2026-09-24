@@ -1,15 +1,15 @@
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
-export function listCallLogsForTenant(tenantId: string) {
-  return prisma.callLog.findMany({ where: { tenantId }, orderBy: { timestamp: 'desc' }, take: 100 });
+export function listCallLogsForTenant(organizationId: string) {
+  return prisma.callLog.findMany({ where: { organizationId }, orderBy: { timestamp: 'desc' }, take: 100 });
 }
 
-export function createCallLog(tenantId: string, userId: string | null, data: {
+export function createCallLog(organizationId: string, userId: string | null, data: {
   contactName?: string; duration?: string; status?: string; agent?: string;
 }) {
   return prisma.callLog.create({
     data: {
-      tenantId,
+      organizationId,
       userId: userId ?? undefined,
       contactName: data.contactName || 'Contato Anônimo',
       duration: data.duration || '02:15',
@@ -20,8 +20,8 @@ export function createCallLog(tenantId: string, userId: string | null, data: {
   });
 }
 
-export function findCallLogForTenant(id: string, tenantId: string) {
-  return prisma.callLog.findFirst({ where: { id, tenantId } });
+export function findCallLogForTenant(id: string, organizationId: string) {
+  return prisma.callLog.findFirst({ where: { id, organizationId } });
 }
 
 export function updateCallLog(id: string, data: { contactName?: string; status?: string; duration?: string }) {

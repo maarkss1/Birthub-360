@@ -11,7 +11,7 @@ import {
   Card, Button, Badge, Progress, Spinner, Skeleton, EmptyState, Alert,
   Tooltip, Modal, useToast, ToastContainer
 } from '../../components/design-system';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 interface CallLogEntry {
   id: string;

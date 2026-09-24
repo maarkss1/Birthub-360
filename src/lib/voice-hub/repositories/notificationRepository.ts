@@ -5,14 +5,14 @@
 // which is the only caller of this file (Clean Architecture, AGENTS.md §2: Controller → Service →
 // Repository, no Prisma access outside `src/repositories/**`).
 //
-// Every function here takes `userId`, never `tenantId`: `Notification` has no `tenantId` column
+// Every function here takes `userId`, never `organizationId`: `Notification` has no `organizationId` column
 // (see the schema comment directly above `model Notification` in prisma/schema.prisma). Filtering
 // by `userId` alone is tenant-safe *only* as long as callers always derive `userId` from
 // `req.user.id` (never from a client-supplied payload) — the same invariant already documented
 // there and enforced by notificationService/notification.controller, never repeated or relaxed
 // here.
 import { Notification, Prisma } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 export function createNotification(input: {
   userId: string;

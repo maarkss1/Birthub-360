@@ -17,11 +17,11 @@
 // out for display) touch it. This makes an accidental hash leak through the listing endpoint
 // structurally impossible rather than something the service layer has to remember to strip.
 import { Prisma } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 export interface TenantWebhookEndpointRecord {
   id: string;
-  tenantId: string;
+  organizationId: string;
   url: string;
   /** SHA-256 hex digest of the plaintext secret — see webhookEndpointService.ts#hashWebhookSecret. */
   secretHash: string;
@@ -49,7 +49,7 @@ function normalizeEvents(value: Prisma.JsonValue): string[] {
 
 function toRecord(row: {
   id: string;
-  tenantId: string;
+  organizationId: string;
   url: string;
   secretHash: string;
   events: Prisma.JsonValue;
@@ -61,7 +61,7 @@ function toRecord(row: {
 }): TenantWebhookEndpointRecord {
   return {
     id: row.id,
-    tenantId: row.tenantId,
+    organizationId: row.organizationId,
     url: row.url,
     secretHash: row.secretHash,
     events: normalizeEvents(row.events),
@@ -73,19 +73,19 @@ function toRecord(row: {
   };
 }
 
-export async function countActiveEndpointsForTenant(tenantId: string): Promise<number> {
-  return prisma.tenantWebhookEndpoint.count({ where: { tenantId, active: true } });
+export async function countActiveEndpointsForTenant(organizationId: string): Promise<number> {
+  return prisma.tenantWebhookEndpoint.count({ where: { organizationId, active: true } });
 }
 
 export async function createEndpoint(data: {
-  tenantId: string;
+  organizationId: string;
   url: string;
   secretHash: string;
   events: string[];
 }): Promise<TenantWebhookEndpointRecord> {
   const created = await prisma.tenantWebhookEndpoint.create({
     data: {
-      tenantId: data.tenantId,
+      organizationId: data.organizationId,
       url: data.url,
       secretHash: data.secretHash,
       events: data.events,
@@ -98,9 +98,9 @@ export async function createEndpoint(data: {
 // selects a column that would let the secret leak (there would be none to select even if asked:
 // only secretHash is ever persisted, never the plaintext) — toRecord/the service layer's
 // `toMetadata` never surface it regardless.
-export async function listEndpointsForTenant(tenantId: string): Promise<TenantWebhookEndpointRecord[]> {
+export async function listEndpointsForTenant(organizationId: string): Promise<TenantWebhookEndpointRecord[]> {
   const rows = await prisma.tenantWebhookEndpoint.findMany({
-    where: { tenantId },
+    where: { organizationId },
     orderBy: { createdAt: 'desc' },
   });
   return rows.map(toRecord);
@@ -108,22 +108,22 @@ export async function listEndpointsForTenant(tenantId: string): Promise<TenantWe
 
 // Active-only — used by webhookEndpointService.resolveActiveEndpointsForEvent (dispatch path). A
 // tenant-scoped query at the repository layer, never a filter applied after fetching everyone
-// (AGENTS.md §15): the WHERE clause itself carries both `tenantId` and `active`.
-export async function listActiveEndpointsForTenant(tenantId: string): Promise<TenantWebhookEndpointRecord[]> {
+// (AGENTS.md §15): the WHERE clause itself carries both `organizationId` and `active`.
+export async function listActiveEndpointsForTenant(organizationId: string): Promise<TenantWebhookEndpointRecord[]> {
   const rows = await prisma.tenantWebhookEndpoint.findMany({
-    where: { tenantId, active: true },
+    where: { organizationId, active: true },
   });
   return rows.map(toRecord);
 }
 
 // Tenant-scoped lookup by id — never a global-by-id lookup. Used by delete/regenerate so an admin
 // from tenant A can never act on — or even discover the existence of — an endpoint of tenant B.
-// The WHERE clause itself carries `tenantId`, never a filter applied after an unscoped fetch.
+// The WHERE clause itself carries `organizationId`, never a filter applied after an unscoped fetch.
 export async function findEndpointForTenant(
   id: string,
-  tenantId: string,
+  organizationId: string,
 ): Promise<TenantWebhookEndpointRecord | null> {
-  const row = await prisma.tenantWebhookEndpoint.findFirst({ where: { id, tenantId } });
+  const row = await prisma.tenantWebhookEndpoint.findFirst({ where: { id, organizationId } });
   return row ? toRecord(row) : null;
 }
 

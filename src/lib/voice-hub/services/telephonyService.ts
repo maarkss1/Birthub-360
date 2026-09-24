@@ -15,7 +15,7 @@ import {
   type WorkflowNode,
   type WorkflowRuntimeState,
 } from './workflowRuntimeService.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 
 const DEFAULT_GREETING = 'Olá! Aqui é a assistente virtual do Birth Voices Hub. Como posso ajudar você hoje?';
 const DEFAULT_OUTBOUND_GREETING =
@@ -89,7 +89,7 @@ export async function startCall(params: { callSid: string; from: string; to: str
     return { configured: false as const };
   }
 
-  const workflow = await initializeWorkflowRuntime(agent.tenantId, {
+  const workflow = await initializeWorkflowRuntime(agent.organizationId, {
     direction: 'inbound',
     from: params.from,
     to: params.to,
@@ -111,7 +111,7 @@ export async function startCall(params: { callSid: string; from: string; to: str
   };
 
   const result = await sessionRepository.createInboundPhoneSessionIfNoneForCallSid(
-    agent.tenantId,
+    agent.organizationId,
     agent.id,
     params.callSid,
     metadata,
@@ -159,7 +159,7 @@ export async function startOutboundCall(params: { sessionId: string; callSid: st
     }
   }
 
-  const workflow = await initializeWorkflowRuntime(session.tenantId, {
+  const workflow = await initializeWorkflowRuntime(session.organizationId, {
     direction: 'outbound',
     from: metadata.from ?? '',
     to: metadata.to ?? '',
@@ -296,7 +296,7 @@ export async function handleTurn(
         // routing decision.
         logger.info('Transferring call to a human agent', {
           sessionId: session.id,
-          tenantId: session.tenantId,
+          organizationId: session.organizationId,
           department: transferDetails.department ?? null,
         });
       } else {
@@ -322,7 +322,7 @@ export async function handleTurn(
         params.speechResult,
         preferredProvider,
         systemInstruction,
-        session.tenantId,
+        session.organizationId,
       );
 
       if (!gatewayResponse.blockedByConsent) {
@@ -341,7 +341,7 @@ export async function handleTurn(
       params.speechResult,
       'GoogleGemini',
       systemInstruction,
-      session.tenantId,
+      session.organizationId,
     );
     reply = gatewayResponse.text;
   }
@@ -378,7 +378,7 @@ export async function endCall(params: { callSid: string; status: string; duratio
   const outcome = TWILIO_STATUS_TO_CALL_LOG[params.status] || params.status;
   const isOutbound = metadata.direction === 'outbound';
 
-  await callLogService.createCallLog(session.tenantId, null, {
+  await callLogService.createCallLog(session.organizationId, null, {
     contactName: isOutbound ? String(metadata.context?.name ?? metadata.to ?? 'Ligação Telefônica') : 'Ligação Telefônica',
     duration: formatDuration(params.durationSeconds),
     status: outcome,
@@ -386,7 +386,7 @@ export async function endCall(params: { callSid: string; status: string; duratio
   });
 
   await webhookService.dispatch(
-    session.tenantId,
+    session.organizationId,
     'agent.call.ended',
     {
       sessionId: session.id,

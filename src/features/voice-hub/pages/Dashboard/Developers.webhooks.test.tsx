@@ -12,8 +12,8 @@ import DevelopersPage from './Developers';
 let mockRole = 'admin';
 
 vi.mock('../../store/useSessionStore', () => ({
-  useSessionStore: (selector: (state: { user: { id: string; email: string; role: string; tenantId: string } | null }) => unknown) =>
-    selector({ user: { id: 'user-1', email: 'admin@teste.com', role: mockRole, tenantId: 'tenant-1' } }),
+  useSessionStore: (selector: (state: { user: { id: string; email: string; role: string; organizationId: string } | null }) => unknown) =>
+    selector({ user: { id: 'user-1', email: 'admin@teste.com', role: mockRole, organizationId: 'tenant-1' } }),
 }));
 
 interface MockResponse {

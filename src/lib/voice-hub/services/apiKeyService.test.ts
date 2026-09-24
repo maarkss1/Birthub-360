@@ -37,7 +37,7 @@ describe('apiKeyService.createApiKeyForTenant', () => {
   it('returns the plaintext key exactly once and never persists it (only a hash goes to the repository)', async () => {
     vi.mocked(apiKeyRepository.createApiKey).mockImplementation(async (data) => ({
       id: 'key-1',
-      tenantId: data.tenantId,
+      organizationId: data.organizationId,
       name: data.name,
       scopes: [],
       createdByUserId: data.createdByUserId,
@@ -54,7 +54,7 @@ describe('apiKeyService.createApiKeyForTenant', () => {
     expect(isApiKeyFormat(result.key)).toBe(true);
 
     const call = vi.mocked(apiKeyRepository.createApiKey).mock.calls[0][0];
-    expect(call.tenantId).toBe('tenant-1');
+    expect(call.organizationId).toBe('tenant-1');
     expect(call.createdByUserId).toBe('user-1');
     // keyHash must never equal (or contain) the plaintext key.
     expect(call.keyHash).not.toBe(result.key);
@@ -66,7 +66,7 @@ describe('apiKeyService.createApiKeyForTenant', () => {
   it('two keys created back to back never collide in plaintext or hash', async () => {
     vi.mocked(apiKeyRepository.createApiKey).mockImplementation(async (data) => ({
       id: `key-${Math.random()}`,
-      tenantId: data.tenantId,
+      organizationId: data.organizationId,
       name: data.name,
       scopes: [],
       createdByUserId: data.createdByUserId,
@@ -89,7 +89,7 @@ describe('apiKeyService.listApiKeysForTenant', () => {
     vi.mocked(apiKeyRepository.listApiKeysForTenant).mockResolvedValue([
       {
         id: 'key-1',
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         name: 'CI key',
         scopes: [],
         createdByUserId: 'user-1',
@@ -131,7 +131,7 @@ describe('apiKeyService.revokeApiKeyForTenant', () => {
   it('is idempotent: revoking an already-revoked key succeeds without a second write', async () => {
     vi.mocked(apiKeyRepository.findApiKeyForTenant).mockResolvedValue({
       id: 'key-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       name: 'CI key',
       scopes: [],
       createdByUserId: 'user-1',
@@ -151,7 +151,7 @@ describe('apiKeyService.revokeApiKeyForTenant', () => {
   it('revokes an active key scoped to the caller tenant', async () => {
     vi.mocked(apiKeyRepository.findApiKeyForTenant).mockResolvedValue({
       id: 'key-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       name: 'CI key',
       scopes: [],
       createdByUserId: 'user-1',
@@ -163,7 +163,7 @@ describe('apiKeyService.revokeApiKeyForTenant', () => {
     });
     vi.mocked(apiKeyRepository.revokeApiKey).mockResolvedValue({
       id: 'key-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       name: 'CI key',
       scopes: [],
       createdByUserId: 'user-1',
@@ -193,7 +193,7 @@ describe('apiKeyService.authenticateApiKey', () => {
   it('rejects a revoked key immediately (no cache/grace period)', async () => {
     vi.mocked(apiKeyRepository.findApiKeyByHash).mockResolvedValue({
       id: 'key-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       createdByUserId: 'user-1',
       revokedAt: new Date('2026-01-01T00:00:00Z'),
       expiresAt: null,
@@ -208,7 +208,7 @@ describe('apiKeyService.authenticateApiKey', () => {
   it('rejects an expired key', async () => {
     vi.mocked(apiKeyRepository.findApiKeyByHash).mockResolvedValue({
       id: 'key-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       createdByUserId: 'user-1',
       revokedAt: null,
       expiresAt: new Date(Date.now() - 1000),
@@ -222,7 +222,7 @@ describe('apiKeyService.authenticateApiKey', () => {
   it('authenticates a valid key, resolving to the creator user role/tenant and touching lastUsedAt', async () => {
     vi.mocked(apiKeyRepository.findApiKeyByHash).mockResolvedValue({
       id: 'key-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       createdByUserId: 'user-1',
       revokedAt: null,
       expiresAt: null,
@@ -230,7 +230,7 @@ describe('apiKeyService.authenticateApiKey', () => {
     vi.mocked(userRepository.findUserById).mockResolvedValue({
       id: 'user-1',
       email: 'admin@tenant-1.com',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
     } as any);
     vi.mocked(userRepository.findMembershipWithRole).mockResolvedValue({
       role: { name: 'admin' },
@@ -240,7 +240,7 @@ describe('apiKeyService.authenticateApiKey', () => {
 
     expect(result).toEqual({
       apiKeyId: 'key-1',
-      session: { id: 'user-1', email: 'admin@tenant-1.com', role: 'admin', tenantId: 'tenant-1' },
+      session: { id: 'user-1', email: 'admin@tenant-1.com', role: 'admin', organizationId: 'tenant-1' },
     });
     expect(apiKeyRepository.touchLastUsed).toHaveBeenCalledWith('key-1');
   });
@@ -248,7 +248,7 @@ describe('apiKeyService.authenticateApiKey', () => {
   it('fails closed when the creating user no longer belongs to the key tenant (deleted/moved)', async () => {
     vi.mocked(apiKeyRepository.findApiKeyByHash).mockResolvedValue({
       id: 'key-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       createdByUserId: 'user-1',
       revokedAt: null,
       expiresAt: null,

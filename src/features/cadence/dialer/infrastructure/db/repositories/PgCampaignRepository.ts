@@ -1,4 +1,5 @@
-import type { Pool } from "pg";
+import type { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { Campaign, type CampaignProps, type CampaignStatus } from "../../../domain/entities/Campaign.js";
 import type { CampaignRepository } from "../../../application/ports/CampaignRepository.js";
 
@@ -20,12 +21,13 @@ function rowToProps(row: CampaignRow): CampaignProps {
   };
 }
 
+// TODO: Refactor native SQL queries to use Prisma ORM directly.
 export class PgCampaignRepository implements CampaignRepository {
-  constructor(private readonly pool: Pool) {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   async save(campaign: Campaign): Promise<void> {
     const props = campaign.toProps();
-    await this.pool.query(
+    await this.prisma.$executeRawUnsafe(
       `INSERT INTO campaigns (id, name, status, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5)
        ON CONFLICT (id) DO UPDATE SET
@@ -37,24 +39,24 @@ export class PgCampaignRepository implements CampaignRepository {
   }
 
   async findById(id: string): Promise<Campaign | null> {
-    const result = await this.pool.query<CampaignRow>("SELECT * FROM campaigns WHERE id = $1", [
+    const rows = await this.prisma.$queryRawUnsafe<CampaignRow[]>("SELECT * FROM campaigns WHERE id = $1", [
       id,
     ]);
-    const row = result.rows[0];
+    const row = rows[0];
     return row === undefined ? null : Campaign.restore(rowToProps(row));
   }
 
   async findActive(): Promise<Campaign[]> {
-    const result = await this.pool.query<CampaignRow>(
+    const rows = await this.prisma.$queryRawUnsafe<CampaignRow[]>(
       "SELECT * FROM campaigns WHERE status = 'active' ORDER BY created_at DESC",
     );
-    return result.rows.map((row) => Campaign.restore(rowToProps(row)));
+    return rows.map((row) => Campaign.restore(rowToProps(row)));
   }
 
   async findAll(): Promise<Campaign[]> {
-    const result = await this.pool.query<CampaignRow>(
+    const rows = await this.prisma.$queryRawUnsafe<CampaignRow[]>(
       "SELECT * FROM campaigns ORDER BY created_at DESC",
     );
-    return result.rows.map((row) => Campaign.restore(rowToProps(row)));
+    return rows.map((row) => Campaign.restore(rowToProps(row)));
   }
 }

@@ -15,7 +15,7 @@ import { NotificationCenter } from './NotificationCenter';
 
 export function Sidebar() {
   const location = useLocation();
-  // Real session user (id/email/role/tenantId) from GET /api/auth/me, populated by
+  // Real session user (id/email/role/organizationId) from GET /api/auth/me, populated by
   // DashboardLayout on mount. No server route has ever set a `user_info` cookie, so reading one
   // here previously always resolved to a fabricated fallback name/email — see lib/auth.ts.
   const user = useSessionStore((state) => state.user);

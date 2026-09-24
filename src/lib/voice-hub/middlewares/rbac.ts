@@ -4,7 +4,7 @@ import { getPermissionsForRoleName } from '../repositories/roleRepository.js';
 
 export const requireTenant = async (req: Request, res: Response, next: NextFunction) => {
   await attachAuthIfPresent(req, res, () => {
-    if (!req.user || !req.tenantId) {
+    if (!req.user || !req.organizationId) {
       return res.status(401).json({ error: 'Não autorizado.' });
     }
     next();
@@ -33,11 +33,11 @@ export const requireRole = (allowedRoles: string[]) => {
 // .agents/handoffs/onda-4/11-para-01-supervisor-role-rbac.md for why this replaces
 // role-name allowlists such as the old `ROLES_ALLOWED_TO_INTERVENE`.
 export async function hasPermission(
-  user: { role: string; tenantId: string } | null | undefined,
+  user: { role: string; organizationId: string } | null | undefined,
   permission: string
 ): Promise<boolean> {
-  if (!user?.role || !user.tenantId) return false;
-  const permissions = await getPermissionsForRoleName(user.role, user.tenantId);
+  if (!user?.role || !user.organizationId) return false;
+  const permissions = await getPermissionsForRoleName(user.role, user.organizationId);
   return permissions.includes(permission);
 }
 

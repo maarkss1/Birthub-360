@@ -3,13 +3,13 @@ import * as agentRepository from '../repositories/agentRepository.js';
 import * as sessionRepository from '../repositories/sessionRepository.js';
 import { getTelephonyProvider } from './telephonyProvider.js';
 import type { PhoneSessionMetadata } from './telephonyService.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 
 export class AgentNotFoundError extends Error {}
 export class DuplicateCallError extends Error {}
 
 export interface OutboundCallRequest {
-  tenantId: string;
+  organizationId: string;
   agentId: string;
   /** E.164, validated at the route boundary. */
   targetNumber: string;
@@ -36,7 +36,7 @@ export interface OutboundCallResult {
  */
 export async function initiateOutboundCall(params: OutboundCallRequest): Promise<OutboundCallResult> {
   // Tenant-scoped lookup (not findAgentById) so one tenant can never dial using another's agent.
-  const agent = await agentRepository.getAgent(params.agentId, params.tenantId);
+  const agent = await agentRepository.getAgent(params.agentId, params.organizationId);
   if (!agent) {
     throw new AgentNotFoundError('Agente não encontrado para este tenant.');
   }
@@ -66,7 +66,7 @@ export async function initiateOutboundCall(params: OutboundCallRequest): Promise
   let claim: Awaited<ReturnType<typeof sessionRepository.createOutboundPhoneSessionIfNoneInFlight>>;
   try {
     claim = await sessionRepository.createOutboundPhoneSessionIfNoneInFlight(
-      agent.tenantId,
+      agent.organizationId,
       agent.id,
       params.targetNumber,
       metadata,
@@ -74,7 +74,7 @@ export async function initiateOutboundCall(params: OutboundCallRequest): Promise
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2034') {
       logger.warn('[OutboundCall] Concurrent dial to the same number lost the double-submit race', {
-        tenantId: agent.tenantId,
+        organizationId: agent.organizationId,
         to: params.targetNumber,
       });
       throw new DuplicateCallError('Já existe uma chamada em andamento para este número.');
@@ -103,7 +103,7 @@ export async function initiateOutboundCall(params: OutboundCallRequest): Promise
       sessionId: session.id,
       callSid: call.callId,
       provider: provider.name,
-      tenantId: agent.tenantId,
+      organizationId: agent.organizationId,
       agentId: agent.id,
     });
 

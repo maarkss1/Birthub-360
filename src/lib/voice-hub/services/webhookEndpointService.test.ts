@@ -31,7 +31,7 @@ type Row = webhookEndpointRepository.TenantWebhookEndpointRecord;
 function makeRow(overrides: Partial<Row> = {}): Row {
   return {
     id: 'ep-1',
-    tenantId: 'tenant-a',
+    organizationId: 'tenant-a',
     url: 'https://example.com/hooks/birthvoices',
     secretHash: 'deadbeef',
     events: ['call.completed'],
@@ -52,7 +52,7 @@ describe('webhookEndpointService.createWebhookEndpointForTenant', () => {
   it('returns the plaintext secret exactly once and only the SHA-256 hash reaches the repository', async () => {
     vi.mocked(webhookEndpointRepository.countActiveEndpointsForTenant).mockResolvedValue(0);
     vi.mocked(webhookEndpointRepository.createEndpoint).mockImplementation(async (data) =>
-      makeRow({ tenantId: data.tenantId, url: data.url, secretHash: data.secretHash, events: data.events }),
+      makeRow({ organizationId: data.organizationId, url: data.url, secretHash: data.secretHash, events: data.events }),
     );
 
     const result = await createWebhookEndpointForTenant('tenant-a', {
@@ -63,7 +63,7 @@ describe('webhookEndpointService.createWebhookEndpointForTenant', () => {
     expect(result.secret.startsWith('whsec_')).toBe(true);
 
     const call = vi.mocked(webhookEndpointRepository.createEndpoint).mock.calls[0][0];
-    expect(call.tenantId).toBe('tenant-a');
+    expect(call.organizationId).toBe('tenant-a');
     // The hash sent to the repository must never equal (or contain) the plaintext secret...
     expect(call.secretHash).not.toBe(result.secret);
     expect(call.secretHash).not.toContain(result.secret);
@@ -86,7 +86,7 @@ describe('webhookEndpointService.createWebhookEndpointForTenant', () => {
   it('allows creation of the 5th endpoint (limit is on active count reaching the max, not before)', async () => {
     vi.mocked(webhookEndpointRepository.countActiveEndpointsForTenant).mockResolvedValue(4);
     vi.mocked(webhookEndpointRepository.createEndpoint).mockImplementation(async (data) =>
-      makeRow({ tenantId: data.tenantId, url: data.url, secretHash: data.secretHash, events: data.events }),
+      makeRow({ organizationId: data.organizationId, url: data.url, secretHash: data.secretHash, events: data.events }),
     );
 
     await expect(
@@ -115,7 +115,7 @@ describe('webhookEndpointService.listWebhookEndpointsForTenant', () => {
 });
 
 describe('webhookEndpointService cross-tenant isolation', () => {
-  it('delete for a foreign tenant 404s instead of deleting (repository is asked with the caller tenantId, never a global id lookup)', async () => {
+  it('delete for a foreign tenant 404s instead of deleting (repository is asked with the caller organizationId, never a global id lookup)', async () => {
     // tenant-b's endpoint does not exist from tenant-a's point of view.
     vi.mocked(webhookEndpointRepository.findEndpointForTenant).mockResolvedValue(null);
 
@@ -180,9 +180,9 @@ describe('webhookEndpointService.resolveActiveEndpointsForEvent', () => {
     expect(resolution.targets).toEqual([]);
   });
 
-  it('never returns a target belonging to another tenant (repository is queried with the caller tenantId only)', async () => {
+  it('never returns a target belonging to another tenant (repository is queried with the caller organizationId only)', async () => {
     vi.mocked(webhookEndpointRepository.listActiveEndpointsForTenant).mockResolvedValue([
-      makeRow({ id: 'ep-tenant-a', tenantId: 'tenant-a', events: ['*'] }),
+      makeRow({ id: 'ep-tenant-a', organizationId: 'tenant-a', events: ['*'] }),
     ]);
 
     await resolveActiveEndpointsForEvent('tenant-b', 'call.completed');
@@ -199,7 +199,7 @@ describe('webhookEndpointService signature verifiability', () => {
     let stored: Row | null = null;
     vi.mocked(webhookEndpointRepository.countActiveEndpointsForTenant).mockResolvedValue(0);
     vi.mocked(webhookEndpointRepository.createEndpoint).mockImplementation(async (data) => {
-      stored = makeRow({ tenantId: data.tenantId, url: data.url, secretHash: data.secretHash, events: data.events });
+      stored = makeRow({ organizationId: data.organizationId, url: data.url, secretHash: data.secretHash, events: data.events });
       return stored;
     });
     vi.mocked(webhookEndpointRepository.findActiveEndpointById).mockImplementation(async (id) =>
@@ -211,7 +211,7 @@ describe('webhookEndpointService signature verifiability', () => {
       events: ['*'],
     });
 
-    const body = JSON.stringify({ id: 'evt_1', type: 'call.completed', timestamp: '2026-01-01T00:00:00Z', tenantId: 'tenant-a', data: {} });
+    const body = JSON.stringify({ id: 'evt_1', type: 'call.completed', timestamp: '2026-01-01T00:00:00Z', organizationId: 'tenant-a', data: {} });
 
     // What webhook.worker.ts#signBody does internally for a per-endpoint delivery.
     const secretHashForSigning = await findActiveSigningSecretHash(created.id);

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { CreditCard, Zap, History, AlertTriangle, Lock, Check } from 'lucide-react';
 import { useSessionStore } from '../../store/useSessionStore';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system';
 
 interface WalletSummary {
-  tenantId: string;
+  organizationId: string;
   balanceCents: number;
   currency: string;
   planId: string | null;

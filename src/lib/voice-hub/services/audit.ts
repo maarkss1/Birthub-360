@@ -1,7 +1,7 @@
 import { Redis } from 'ioredis';
 import { Queue, Worker } from 'bullmq';
 import { createAuditLog } from '../repositories/auditLogRepository.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 import { getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
 
 const redisUrl = getRedisUrl();
@@ -21,8 +21,8 @@ new Worker(
   { connection }
 );
 
-export function writeAuditLog(tenantId: string | undefined, userId: string, action: string, details: unknown) {
+export function writeAuditLog(organizationId: string | undefined, userId: string, action: string, details: unknown) {
   auditQueue
-    .add('log', { tenantId, userId, action, details }, { removeOnComplete: true, removeOnFail: 100 })
+    .add('log', { organizationId, userId, action, details }, { removeOnComplete: true, removeOnFail: 100 })
     .catch((err) => logger.error('Audit queue enqueue failure', err));
 }

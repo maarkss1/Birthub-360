@@ -37,7 +37,7 @@ vi.mock('../controllers/health.controller.js', () => ({
 }));
 
 const mockListActiveTenantIds = vi.fn();
-vi.mock('../repositories/tenantRepository.js', () => ({
+vi.mock('../repositories/organizationRepository.js', () => ({
   listActiveTenantIds: () => mockListActiveTenantIds(),
 }));
 
@@ -51,7 +51,7 @@ vi.mock('../lib/logger.js', () => ({
 }));
 
 import { startSlaScheduler, stopSlaScheduler, PLATFORM_READY_METRIC_NAME } from './slaScheduler.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 
 beforeEach(() => {
   vi.clearAllMocks();

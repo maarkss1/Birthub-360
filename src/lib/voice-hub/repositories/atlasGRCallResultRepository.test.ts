@@ -11,7 +11,7 @@ vi.mock('../lib/prisma.js', () => ({
   },
 }));
 
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 import {
   upsertAtlasGRCallResult,
   findAtlasGRCallResultByCallId,
@@ -31,14 +31,14 @@ describe('atlasGRCallResultRepository.upsertAtlasGRCallResult', () => {
       where: { callId: 'call-123' },
       create: {
         callId: 'call-123',
-        tenantId: null,
+        organizationId: null,
         leadId: null,
         status: 'completed',
         completed: null,
         callLength: null,
       },
       update: {
-        tenantId: null,
+        organizationId: null,
         leadId: null,
         status: 'completed',
         completed: null,
@@ -47,12 +47,12 @@ describe('atlasGRCallResultRepository.upsertAtlasGRCallResult', () => {
     });
   });
 
-  it('passes tenantId through when the caller has one (e.g. ATLASGR_TENANT_ID), but never invents one', async () => {
+  it('passes organizationId through when the caller has one (e.g. ATLASGR_TENANT_ID), but never invents one', async () => {
     vi.mocked(prisma.atlasGRCallResult.upsert).mockResolvedValue({ id: 'row-2' } as any);
 
     await upsertAtlasGRCallResult({
       callId: 'call-456',
-      tenantId: 'tenant-abc',
+      organizationId: 'tenant-abc',
       leadId: 'lead-1',
       status: 'no-answer',
       completed: false,
@@ -61,7 +61,7 @@ describe('atlasGRCallResultRepository.upsertAtlasGRCallResult', () => {
 
     const call = vi.mocked(prisma.atlasGRCallResult.upsert).mock.calls[0][0];
     expect(call.where).toEqual({ callId: 'call-456' });
-    expect(call.create).toMatchObject({ tenantId: 'tenant-abc', leadId: 'lead-1', callLength: 12.5 });
+    expect(call.create).toMatchObject({ organizationId: 'tenant-abc', leadId: 'lead-1', callLength: 12.5 });
   });
 });
 
@@ -77,19 +77,19 @@ describe('atlasGRCallResultRepository.findAtlasGRCallResultByCallId', () => {
 });
 
 describe('atlasGRCallResultRepository.listAtlasGRCallResultsForTenant', () => {
-  it('scopes strictly to the given tenantId (never trusts client input, AGENTS.md §15)', async () => {
+  it('scopes strictly to the given organizationId (never trusts client input, AGENTS.md §15)', async () => {
     vi.mocked(prisma.atlasGRCallResult.findMany).mockResolvedValue([{ id: 'row-1' }] as any);
     vi.mocked(prisma.atlasGRCallResult.count).mockResolvedValue(1);
 
     const result = await listAtlasGRCallResultsForTenant('tenant-abc', { page: 1, pageSize: 20 });
 
     expect(prisma.atlasGRCallResult.findMany).toHaveBeenCalledWith({
-      where: { tenantId: 'tenant-abc' },
+      where: { organizationId: 'tenant-abc' },
       orderBy: { receivedAt: 'desc' },
       skip: 0,
       take: 20,
     });
-    expect(prisma.atlasGRCallResult.count).toHaveBeenCalledWith({ where: { tenantId: 'tenant-abc' } });
+    expect(prisma.atlasGRCallResult.count).toHaveBeenCalledWith({ where: { organizationId: 'tenant-abc' } });
     expect(result).toEqual({ items: [{ id: 'row-1' }], total: 1 });
   });
 });

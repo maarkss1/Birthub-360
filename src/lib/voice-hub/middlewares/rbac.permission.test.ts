@@ -28,13 +28,13 @@ describe('rbac.hasPermission', () => {
   });
 
   it('fails closed when the caller has no tenant', async () => {
-    expect(await hasPermission({ role: 'admin', tenantId: '' }, 'supervision:intervene')).toBe(false);
+    expect(await hasPermission({ role: 'admin', organizationId: '' }, 'supervision:intervene')).toBe(false);
   });
 
   it('grants when the resolved permission set includes the requested permission', async () => {
     vi.mocked(getPermissionsForRoleName).mockResolvedValue(['supervision:intervene']);
 
-    const result = await hasPermission({ role: 'supervisor', tenantId: 'tenant-1' }, 'supervision:intervene');
+    const result = await hasPermission({ role: 'supervisor', organizationId: 'tenant-1' }, 'supervision:intervene');
 
     expect(getPermissionsForRoleName).toHaveBeenCalledWith('supervisor', 'tenant-1');
     expect(result).toBe(true);
@@ -43,7 +43,7 @@ describe('rbac.hasPermission', () => {
   it('denies when the resolved permission set does not include the requested permission', async () => {
     vi.mocked(getPermissionsForRoleName).mockResolvedValue([]);
 
-    const result = await hasPermission({ role: 'user', tenantId: 'tenant-1' }, 'supervision:intervene');
+    const result = await hasPermission({ role: 'user', organizationId: 'tenant-1' }, 'supervision:intervene');
 
     expect(result).toBe(false);
   });
@@ -63,7 +63,7 @@ describe('rbac.requirePermission (Express middleware)', () => {
 
   it('rejects with 403 when the session lacks the permission', async () => {
     vi.mocked(getPermissionsForRoleName).mockResolvedValue([]);
-    const req = { user: { id: 'u1', email: 'u1@example.com', role: 'user', tenantId: 't1' } } as unknown as Request;
+    const req = { user: { id: 'u1', email: 'u1@example.com', role: 'user', organizationId: 't1' } } as unknown as Request;
     const res = makeRes();
     const next = vi.fn() as unknown as NextFunction;
 
@@ -75,7 +75,7 @@ describe('rbac.requirePermission (Express middleware)', () => {
 
   it('calls next() when the session has the permission', async () => {
     vi.mocked(getPermissionsForRoleName).mockResolvedValue(['supervision:intervene']);
-    const req = { user: { id: 'u1', email: 'u1@example.com', role: 'supervisor', tenantId: 't1' } } as unknown as Request;
+    const req = { user: { id: 'u1', email: 'u1@example.com', role: 'supervisor', organizationId: 't1' } } as unknown as Request;
     const res = makeRes();
     const next = vi.fn() as unknown as NextFunction;
 
@@ -88,7 +88,7 @@ describe('rbac.requirePermission (Express middleware)', () => {
   it('funnels a lookup failure into next(err) instead of throwing or hanging', async () => {
     const boom = new Error('db down');
     vi.mocked(getPermissionsForRoleName).mockRejectedValue(boom);
-    const req = { user: { id: 'u1', email: 'u1@example.com', role: 'user', tenantId: 't1' } } as unknown as Request;
+    const req = { user: { id: 'u1', email: 'u1@example.com', role: 'user', organizationId: 't1' } } as unknown as Request;
     const res = makeRes();
     const next = vi.fn() as unknown as NextFunction;
 

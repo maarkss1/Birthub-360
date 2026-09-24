@@ -1,5 +1,5 @@
 import * as callLogRepository from '../repositories/callLogRepository.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 
 export class NotFoundError extends Error {}
 
@@ -9,22 +9,22 @@ export class NotFoundError extends Error {}
 // can override per invocation.
 const DEFAULT_CALL_LOG_RETENTION_DAYS = 365;
 
-export function listCallLogs(tenantId: string) {
-  return callLogRepository.listCallLogsForTenant(tenantId);
+export function listCallLogs(organizationId: string) {
+  return callLogRepository.listCallLogsForTenant(organizationId);
 }
 
-export function createCallLog(tenantId: string, userId: string | null, data: { contactName?: string; duration?: string; status?: string; agent?: string }) {
-  return callLogRepository.createCallLog(tenantId, userId, data);
+export function createCallLog(organizationId: string, userId: string | null, data: { contactName?: string; duration?: string; status?: string; agent?: string }) {
+  return callLogRepository.createCallLog(organizationId, userId, data);
 }
 
-export async function updateCallLog(id: string, tenantId: string, data: { contactName?: string; status?: string; duration?: string }) {
-  const existing = await callLogRepository.findCallLogForTenant(id, tenantId);
+export async function updateCallLog(id: string, organizationId: string, data: { contactName?: string; status?: string; duration?: string }) {
+  const existing = await callLogRepository.findCallLogForTenant(id, organizationId);
   if (!existing) throw new NotFoundError('Log de chamada não encontrado.');
   return callLogRepository.updateCallLog(id, data);
 }
 
-export async function deleteCallLog(id: string, tenantId: string) {
-  const existing = await callLogRepository.findCallLogForTenant(id, tenantId);
+export async function deleteCallLog(id: string, organizationId: string) {
+  const existing = await callLogRepository.findCallLogForTenant(id, organizationId);
   if (!existing) throw new NotFoundError('Log não encontrado para exclusão.');
   await callLogRepository.deleteCallLog(id);
 }

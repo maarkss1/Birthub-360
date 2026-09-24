@@ -3,19 +3,19 @@ import { getAgent, updateAgentConfig } from '../services/agentService.js';
 import { knowledgeConfidenceEngine } from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
 import { AgentConfiguration } from '../types/agent.js';
 import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from '../infrastructure/antivirus.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 
 export async function addKnowledgeDocumentHandler(req: Request, res: Response) {
   try {
      const { agentId, name, keyword, content } = req.body;
-     const agent = await getAgent(agentId, req.tenantId!);
+     const agent = await getAgent(agentId, req.organizationId!);
      if (!agent) return res.status(404).json({ error: 'Agente não encontrado.' });
 
      const config = (agent.configuration as unknown as AgentConfiguration) || {};
      const knowledge = config.knowledge || [];
      knowledge.push({ id: crypto.randomUUID(), name, keyword, content, addedAt: Date.now() });
 
-     await updateAgentConfig(agentId, req.tenantId!, { knowledge });
+     await updateAgentConfig(agentId, req.organizationId!, { knowledge });
      res.json({ success: true, message: 'Documento adicionado à base de conhecimento do agente.' });
   } catch (err: unknown) {
      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
@@ -101,7 +101,7 @@ export async function uploadKnowledgeDocumentHandler(req: Request, res: Response
       });
     }
 
-    const agent = await getAgent(agentId, req.tenantId!);
+    const agent = await getAgent(agentId, req.organizationId!);
     if (!agent) return res.status(404).json({ error: 'Agente não encontrado.' });
 
     let buffer: Buffer;
@@ -120,7 +120,7 @@ export async function uploadKnowledgeDocumentHandler(req: Request, res: Response
       if (error instanceof InfectedFileError) {
         logger.warn('Knowledge upload rejected: infected file', {
           agentId,
-          tenantId: req.tenantId,
+          organizationId: req.organizationId,
           fileName,
           viruses: error.viruses,
         });
@@ -129,7 +129,7 @@ export async function uploadKnowledgeDocumentHandler(req: Request, res: Response
       if (error instanceof AntivirusUnavailableError) {
         logger.error('Knowledge upload rejected: antivirus scan unavailable', {
           agentId,
-          tenantId: req.tenantId,
+          organizationId: req.organizationId,
           fileName,
         });
         return res.status(503).json({ error: error.message });
@@ -154,7 +154,7 @@ export async function uploadKnowledgeDocumentHandler(req: Request, res: Response
       addedAt: Date.now(),
     });
 
-    await updateAgentConfig(agentId, req.tenantId!, { knowledge });
+    await updateAgentConfig(agentId, req.organizationId!, { knowledge });
     res.json({ success: true, message: 'Documento adicionado à base de conhecimento do agente.' });
   } catch (err: unknown) {
     res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
@@ -164,7 +164,7 @@ export async function uploadKnowledgeDocumentHandler(req: Request, res: Response
 export async function testRagQueryHandler(req: Request, res: Response) {
   try {
      const { agentId, query } = req.body;
-     const agent = await getAgent(agentId, req.tenantId!);
+     const agent = await getAgent(agentId, req.organizationId!);
      if (!agent) return res.status(404).json({ error: 'Agente não encontrado.' });
 
      const config = (agent.configuration as unknown as AgentConfiguration) || {};

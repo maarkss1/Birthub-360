@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 export type SystemRoleName = 'admin' | 'user' | 'supervisor';
 
@@ -26,11 +26,11 @@ export const SYSTEM_ROLE_DEFAULT_PERMISSIONS: Record<SystemRoleName, string[]> =
 };
 
 export async function getOrCreateSystemRole(name: SystemRoleName) {
-  const existing = await prisma.role.findFirst({ where: { name, tenantId: null } });
+  const existing = await prisma.role.findFirst({ where: { name, organizationId: null } });
   if (existing) return existing;
 
   const defaultPermissionNames = SYSTEM_ROLE_DEFAULT_PERMISSIONS[name] ?? [];
-  const data: Prisma.RoleUncheckedCreateInput = { name, tenantId: null, description: `System role: ${name}` };
+  const data: Prisma.RoleUncheckedCreateInput = { name, organizationId: null, description: `System role: ${name}` };
   if (defaultPermissionNames.length > 0) {
     data.permissions = {
       connectOrCreate: defaultPermissionNames.map((permissionName) => ({
@@ -54,17 +54,17 @@ export function permissionNamesOf(role: { permissions?: unknown } | null | undef
 
 // Resolves the effective permission set for a role name within a tenant: a tenant-scoped custom
 // role of that name wins if one exists, otherwise falls back to the system role of the same name
-// (tenantId null). This is queried live (not embedded in the JWT) so that granting/revoking a
+// (organizationId null). This is queried live (not embedded in the JWT) so that granting/revoking a
 // permission on a Role takes effect immediately, without waiting for token refresh.
-export async function getPermissionsForRoleName(name: string, tenantId: string): Promise<string[]> {
+export async function getPermissionsForRoleName(name: string, organizationId: string): Promise<string[]> {
   const tenantRole = await prisma.role.findFirst({
-    where: { name, tenantId },
+    where: { name, organizationId },
     include: { permissions: true },
   });
   if (tenantRole) return permissionNamesOf(tenantRole);
 
   const systemRole = await prisma.role.findFirst({
-    where: { name, tenantId: null },
+    where: { name, organizationId: null },
     include: { permissions: true },
   });
   return permissionNamesOf(systemRole);

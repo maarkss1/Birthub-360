@@ -1,4 +1,5 @@
-import type { Pool } from "pg";
+import type { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import {
   CallAttempt,
   TERMINAL_CALL_ATTEMPT_STATUSES,
@@ -58,13 +59,14 @@ function terminalStatusPlaceholders(startAt: number): string {
   return TERMINAL_CALL_ATTEMPT_STATUSES.map((_, index) => `$${startAt + index}`).join(", ");
 }
 
+// TODO: Refactor native SQL queries to use Prisma ORM directly.
 export class PgCallAttemptRepository implements CallAttemptRepository {
-  constructor(private readonly pool: Pool) {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   async save(attempt: CallAttempt): Promise<void> {
     const props = attempt.toProps();
     try {
-      await this.pool.query(
+      await this.prisma.$executeRawUnsafe(
         `INSERT INTO call_attempts (id, lead_id, campaign_id, agent_dn, status, provider_call_id, started_at, ended_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          ON CONFLICT (id) DO UPDATE SET
@@ -91,29 +93,29 @@ export class PgCallAttemptRepository implements CallAttemptRepository {
   }
 
   async findById(id: string): Promise<CallAttempt | null> {
-    const result = await this.pool.query<CallAttemptRow>(
+    const rows = await this.prisma.$queryRawUnsafe<CallAttemptRow[]>(
       "SELECT * FROM call_attempts WHERE id = $1",
       [id],
     );
-    const row = result.rows[0];
+    const row = rows[0];
     return row === undefined ? null : CallAttempt.restore(rowToProps(row));
   }
 
   async findInProgress(campaignId: string): Promise<CallAttempt[]> {
-    const result = await this.pool.query<CallAttemptRow>(
+    const rows = await this.prisma.$queryRawUnsafe<CallAttemptRow[]>(
       `SELECT * FROM call_attempts
        WHERE campaign_id = $1 AND status NOT IN (${terminalStatusPlaceholders(2)})`,
       [campaignId, ...TERMINAL_CALL_ATTEMPT_STATUSES],
     );
-    return result.rows.map((row) => CallAttempt.restore(rowToProps(row)));
+    return rows.map((row) => CallAttempt.restore(rowToProps(row)));
   }
 
   async findBusyAgentDns(): Promise<Set<string>> {
-    const result = await this.pool.query<{ agent_dn: string }>(
+    const rows = await this.prisma.$queryRawUnsafe<{ agent_dn: string }[]>(
       `SELECT DISTINCT agent_dn FROM call_attempts
        WHERE status NOT IN (${terminalStatusPlaceholders(1)})`,
       [...TERMINAL_CALL_ATTEMPT_STATUSES],
     );
-    return new Set(result.rows.map((row) => row.agent_dn));
+    return new Set(rows.map((row) => row.agent_dn));
   }
 }

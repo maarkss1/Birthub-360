@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 export function createTenant(name: string) {
   return prisma.tenant.create({ data: { name } });
@@ -9,7 +9,7 @@ export function findTenantById(id: string) {
 }
 
 // Used by `src/services/slaScheduler.ts` to fan out one `platform_ready_check` Metric row per
-// active tenant on every periodic readiness sample — `Metric.tenantId` is a required FK to
+// active tenant on every periodic readiness sample — `Metric.organizationId` is a required FK to
 // `Tenant` (see prisma/schema.prisma), so a platform-wide event with no tenant cannot be persisted
 // there directly; this returns only the ids of tenants that still have a real row to attach to.
 export async function listActiveTenantIds(): Promise<string[]> {

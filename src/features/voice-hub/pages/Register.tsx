@@ -44,7 +44,7 @@ export default function RegisterPage() {
       }
 
       auth.setToken(data.token, data.user);
-      // Populate the real session (id/email/role/tenantId) before navigating so the shell
+      // Populate the real session (id/email/role/organizationId) before navigating so the shell
       // renders the real user — and the onboarding checklist for this brand-new tenant —
       // correctly on the very first dashboard paint.
       await fetchSession();

@@ -52,7 +52,7 @@ describe('workflowCollab.controller', () => {
   describe('addCommentHandler', () => {
     it('returns 400 when nodeId or text is missing', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: { nodeId: 'node-1' },
       } as unknown as Request;
@@ -69,7 +69,7 @@ describe('workflowCollab.controller', () => {
       vi.mocked(addComment).mockResolvedValue(mockWorkflow as never);
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: { nodeId: 'node-1', text: 'Rever este nó de roteamento' },
       } as unknown as Request;
@@ -90,7 +90,7 @@ describe('workflowCollab.controller', () => {
       vi.mocked(addComment).mockRejectedValue(new NotFoundError('Workflow não encontrado.'));
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: { nodeId: 'node-missing', text: 'Texto' },
       } as unknown as Request;
@@ -106,7 +106,7 @@ describe('workflowCollab.controller', () => {
       vi.mocked(addComment).mockRejectedValue(new ConflictError('Nó bloqueado por outro usuário.'));
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: { nodeId: 'node-locked', text: 'Texto' },
       } as unknown as Request;
@@ -122,7 +122,7 @@ describe('workflowCollab.controller', () => {
   describe('resolveCommentHandler', () => {
     it('returns 400 when commentId is missing', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: {},
       } as unknown as Request;
@@ -139,7 +139,7 @@ describe('workflowCollab.controller', () => {
       vi.mocked(resolveComment).mockResolvedValue(mockWorkflow as never);
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: { commentId: 'comment-123' },
       } as unknown as Request;
@@ -155,7 +155,7 @@ describe('workflowCollab.controller', () => {
   describe('lockNodeHandler and unlockNodeHandler', () => {
     it('returns 400 when nodeId is missing in lock', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: {},
       } as unknown as Request;
@@ -172,7 +172,7 @@ describe('workflowCollab.controller', () => {
       vi.mocked(lockNode).mockResolvedValue(mockWorkflow as never);
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: { nodeId: 'node-1' },
       } as unknown as Request;
@@ -188,7 +188,7 @@ describe('workflowCollab.controller', () => {
       vi.mocked(lockNode).mockRejectedValue(new ConflictError('Nó já está em edição por outro usuário.'));
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-2' },
         body: { nodeId: 'node-1' },
       } as unknown as Request;
@@ -202,7 +202,7 @@ describe('workflowCollab.controller', () => {
 
     it('returns 400 when nodeId is missing in unlock', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: {},
       } as unknown as Request;
@@ -219,7 +219,7 @@ describe('workflowCollab.controller', () => {
       vi.mocked(unlockNode).mockResolvedValue(mockWorkflow as never);
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-1' },
         body: { nodeId: 'node-1' },
       } as unknown as Request;

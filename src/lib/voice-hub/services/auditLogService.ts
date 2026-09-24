@@ -12,8 +12,8 @@ export function parsePagination(rawPage: unknown, rawPageSize: unknown): { page:
   return { page, pageSize };
 }
 
-export async function listAuditLog(tenantId: string, page: number, pageSize: number) {
-  const { items, total } = await listAuditLogsForTenant(tenantId, { page, pageSize });
+export async function listAuditLog(organizationId: string, page: number, pageSize: number) {
+  const { items, total } = await listAuditLogsForTenant(organizationId, { page, pageSize });
 
   return {
     items: items.map((entry) => ({

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { GoogleGenAI, GenerateVideosOperation } from '@google/genai';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
 import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService.js';
 
@@ -38,7 +38,7 @@ export async function chatHandler(req: Request, res: Response) {
       lastUserMessage.text,
       'GoogleGemini',
       prompt || undefined,
-      req.tenantId!
+      req.organizationId!
     );
 
     res.json(gatewayResponse);
@@ -49,7 +49,7 @@ export async function chatHandler(req: Request, res: Response) {
 }
 
 export async function getAiConsentHandler(req: Request, res: Response) {
-  const consent = await getAiConsent(req.tenantId!);
+  const consent = await getAiConsent(req.organizationId!);
   res.json({ consent });
 }
 
@@ -60,8 +60,8 @@ export async function setAiConsentHandler(req: Request, res: Response) {
   }
 
   const consent = granted
-    ? await grantAiConsent(req.tenantId!, req.user!.id)
-    : await revokeAiConsent(req.tenantId!, req.user!.id);
+    ? await grantAiConsent(req.organizationId!, req.user!.id)
+    : await revokeAiConsent(req.organizationId!, req.user!.id);
 
   res.json({ success: true, consent });
 }

@@ -11,7 +11,7 @@ const router = express.Router();
 
 // Notifications are a per-user feed, not an admin-only resource like /api/billing/* — any
 // authenticated member of a tenant reads and manages only their own notifications (`requireTenant`
-// establishes req.user/req.tenantId; no `requireRole` gate on top, unlike billing.routes.ts, since
+// establishes req.user/req.organizationId; no `requireRole` gate on top, unlike billing.routes.ts, since
 // there is no elevated action here — a user can only ever touch their own rows, enforced in
 // notificationService/notificationRepository, never trusted from the request).
 // Additional per-IP limiter on top of server.ts's general 200 req/min — kept high enough for a

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { changePlanSchema } from '../validators/index.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 import { writeAuditLog } from '../services/audit.js';
 import {
   changePlan,
@@ -28,15 +28,15 @@ function parsePagination(rawPage: unknown, rawPageSize: unknown): { page: number
 // Atual" cards. `wallet: null` is a real, explicit state (tenant never onboarded to billing yet),
 // not an error — the frontend renders it as an empty state (AGENTS.md §14).
 export async function getWalletSummaryHandler(req: Request, res: Response) {
-  const wallet = await getWalletSummary(req.tenantId!);
+  const wallet = await getWalletSummary(req.organizationId!);
   res.json({ wallet });
 }
 
 // GET /api/billing/transactions — paginated "Histórico de Uso" table, tenant-scoped
-// (req.tenantId always comes from requireTenant, never from a query param — AGENTS.md §15).
+// (req.organizationId always comes from requireTenant, never from a query param — AGENTS.md §15).
 export async function listTransactionsHandler(req: Request, res: Response) {
   const { page, pageSize } = parsePagination(req.query.page, req.query.pageSize);
-  const { items, total } = await listTransactions(req.tenantId!, { page, pageSize });
+  const { items, total } = await listTransactions(req.organizationId!, { page, pageSize });
   res.json({
     items,
     page,
@@ -61,12 +61,12 @@ export async function changePlanHandler(req: Request, res: Response) {
 
   try {
     const wallet = await changePlan(
-      req.tenantId!,
+      req.organizationId!,
       parsed.data.planId,
       req.user!.id,
       parsed.data.effectiveAt ?? 'immediate'
     );
-    writeAuditLog(req.tenantId, req.user!.id, 'BILLING_PLAN_CHANGED', { planId: parsed.data.planId });
+    writeAuditLog(req.organizationId, req.user!.id, 'BILLING_PLAN_CHANGED', { planId: parsed.data.planId });
     // Best-effort: a notification write failing must never fail the plan change itself (the
     // money/plan side-effect already succeeded). See notificationService.ts module doc — this is
     // the first of potentially several domains calling the same generic entry point, not a

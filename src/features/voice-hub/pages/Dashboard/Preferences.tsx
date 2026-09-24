@@ -4,7 +4,7 @@ import {
   SlidersHorizontal, ArrowRight, AlertTriangle
 } from 'lucide-react';
 import { Card, Button, Badge, Switch, Select, useToast, ToastContainer, Skeleton } from '../../components/design-system';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 const PREFERENCES_DEFAULTS = {
   lang: 'pt',

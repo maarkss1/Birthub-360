@@ -27,7 +27,7 @@ function formatPublishedAt(iso: string): string {
  * All data here comes straight from the store's `workflowVersions`/`rollbackIssues`, themselves
  * populated only by the real endpoints above (`store/useStudioStore.ts`); nothing is fabricated
  * client-side (AGENTS.md §14), and every request is scoped to this session's own `workflowId`
- * (AGENTS.md §15 — the server independently re-derives tenant ownership from `req.tenantId`).
+ * (AGENTS.md §15 — the server independently re-derives tenant ownership from `req.organizationId`).
  */
 export function VersionHistoryPanel() {
   const {

@@ -10,7 +10,7 @@ vi.mock('../lib/prisma.js', () => ({
   },
 }));
 
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 import {
   getOrCreateSystemRole,
   permissionNamesOf,
@@ -44,7 +44,7 @@ describe('roleRepository.getOrCreateSystemRole (Permission wiring)', () => {
     await getOrCreateSystemRole('user');
 
     expect(prisma.role.create).toHaveBeenCalledWith({
-      data: { name: 'user', tenantId: null, description: 'System role: user' },
+      data: { name: 'user', organizationId: null, description: 'System role: user' },
     });
   });
 
@@ -57,7 +57,7 @@ describe('roleRepository.getOrCreateSystemRole (Permission wiring)', () => {
     expect(prisma.role.create).toHaveBeenCalledWith({
       data: {
         name: 'supervisor',
-        tenantId: null,
+        organizationId: null,
         description: 'System role: supervisor',
         permissions: {
           connectOrCreate: [
@@ -110,13 +110,13 @@ describe('roleRepository.getPermissionsForRoleName', () => {
     const result = await getPermissionsForRoleName('supervisor', 'tenant-1');
 
     expect(prisma.role.findFirst).toHaveBeenNthCalledWith(1, {
-      where: { name: 'supervisor', tenantId: 'tenant-1' },
+      where: { name: 'supervisor', organizationId: 'tenant-1' },
       include: { permissions: true },
     });
     expect(result).toEqual(['custom:thing']);
   });
 
-  it('falls back to the system role (tenantId null) when no tenant-scoped role exists', async () => {
+  it('falls back to the system role (organizationId null) when no tenant-scoped role exists', async () => {
     vi.mocked(prisma.role.findFirst)
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce({ id: 'system-role', permissions: [{ name: 'supervision:intervene' }] } as any);
@@ -124,7 +124,7 @@ describe('roleRepository.getPermissionsForRoleName', () => {
     const result = await getPermissionsForRoleName('supervisor', 'tenant-1');
 
     expect(prisma.role.findFirst).toHaveBeenNthCalledWith(2, {
-      where: { name: 'supervisor', tenantId: null },
+      where: { name: 'supervisor', organizationId: null },
       include: { permissions: true },
     });
     expect(result).toEqual(['supervision:intervene']);

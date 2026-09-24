@@ -1,9 +1,9 @@
 import { Queue, Worker } from 'bullmq';
 import { Redis } from 'ioredis';
 import { getRedisConnectionOptions, getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 import { checkPlatformHealth } from '../controllers/health.controller.js';
-import { listActiveTenantIds } from '../repositories/tenantRepository.js';
+import { listActiveTenantIds } from '../repositories/organizationRepository.js';
 import { createMetric } from './metricService.js';
 
 /**
@@ -21,7 +21,7 @@ import { createMetric } from './metricService.js';
  * (`name: 'platform_ready_check'`, `value: 1 | 0`), so a time window of real samples — not a
  * single point-in-time snapshot — becomes available to compute an uptime ratio from.
  *
- * Why fan-out per tenant instead of one platform-wide row: `Metric.tenantId` (prisma/schema.prisma,
+ * Why fan-out per tenant instead of one platform-wide row: `Metric.organizationId` (prisma/schema.prisma,
  * owned exclusively by Agente 01) is a required FK to `Tenant`, with no "system"/platform tenant
  * row in the `Tenant` table (the same reason `lib/voice-runtime/providers/LLMGateway.ts` skips
  * writing AI-cost metrics for `SYSTEM_TENANT_ID`). Rather than requesting a schema change for a
@@ -52,12 +52,12 @@ async function sampleAndRecordPlatformReadiness(): Promise<{ ready: boolean; ten
   }
 
   const { ready, checks } = await checkPlatformHealth(redisClient);
-  const tenantIds = await listActiveTenantIds();
+  const organizationIds = await listActiveTenantIds();
   const checkedAt = new Date().toISOString();
 
   const results = await Promise.allSettled(
-    tenantIds.map((tenantId) =>
-      createMetric(tenantId, null, {
+    organizationIds.map((organizationId) =>
+      createMetric(organizationId, null, {
         name: PLATFORM_READY_METRIC_NAME,
         value: ready ? 1 : 0,
         tags: { database: checks.database, redis: checks.redis, checkedAt },
@@ -68,17 +68,17 @@ async function sampleAndRecordPlatformReadiness(): Promise<{ ready: boolean; ten
   const failedCount = results.filter((r) => r.status === 'rejected').length;
   if (failedCount > 0) {
     logger.error(
-      `[SlaScheduler] Failed to persist ${PLATFORM_READY_METRIC_NAME} for ${failedCount}/${tenantIds.length} tenants`
+      `[SlaScheduler] Failed to persist ${PLATFORM_READY_METRIC_NAME} for ${failedCount}/${organizationIds.length} tenants`
     );
   }
 
   logger.info('[SlaScheduler] Platform readiness sample recorded', {
     ready,
     checks,
-    tenantCount: tenantIds.length,
+    tenantCount: organizationIds.length,
   });
 
-  return { ready, tenantCount: tenantIds.length };
+  return { ready, tenantCount: organizationIds.length };
 }
 
 /**

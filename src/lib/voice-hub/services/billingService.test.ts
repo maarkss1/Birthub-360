@@ -57,7 +57,7 @@ describe('billingService.getWalletSummary', () => {
   it('maps the wallet + joined plan to WalletSummary', async () => {
     vi.mocked(findWalletByTenant).mockResolvedValue({
       id: 'wallet-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       balanceCents: 5000,
       currency: 'BRL',
       planId: 'plan-1',
@@ -71,7 +71,7 @@ describe('billingService.getWalletSummary', () => {
     const result = await getWalletSummary('tenant-1');
 
     expect(result).toEqual({
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       balanceCents: 5000,
       currency: 'BRL',
       planId: 'plan-1',
@@ -89,7 +89,7 @@ describe('billingService.listTransactions', () => {
         {
           id: 'tx-1',
           walletId: 'wallet-1',
-          tenantId: 'tenant-1',
+          organizationId: 'tenant-1',
           type: 'credit',
           amountCents: 1000,
           balanceAfterCents: 1000,
@@ -162,7 +162,7 @@ describe('billingService.changePlan', () => {
       id: 'plan-1', slug: 'pro', name: 'Pro', priceCents: 9900, currency: 'BRL', billingInterval: 'monthly', active: true, createdAt: new Date(), updatedAt: new Date(),
     } as any);
     vi.mocked(upsertWalletPlan).mockResolvedValue({
-      id: 'wallet-1', tenantId: 'tenant-1', balanceCents: 0, currency: 'BRL', planId: 'plan-1', planStatus: 'active', currentPeriodEnd: new Date('2026-10-07T00:00:00.000Z'), createdAt: new Date(), updatedAt: new Date(),
+      id: 'wallet-1', organizationId: 'tenant-1', balanceCents: 0, currency: 'BRL', planId: 'plan-1', planStatus: 'active', currentPeriodEnd: new Date('2026-10-07T00:00:00.000Z'), createdAt: new Date(), updatedAt: new Date(),
       plan: { id: 'plan-1', slug: 'pro', name: 'Pro', priceCents: 9900, currency: 'BRL', billingInterval: 'monthly', active: true, createdAt: new Date(), updatedAt: new Date() },
     } as any);
 
@@ -176,7 +176,7 @@ describe('billingService.changePlan', () => {
 
 describe('billingService.recordTransaction — idempotency (AGENTS.md §9 item 16)', () => {
   const input = {
-    tenantId: 'tenant-1',
+    organizationId: 'tenant-1',
     type: 'debit',
     amountCents: -500,
     idempotencyKey: 'idem-key-1',
@@ -185,7 +185,7 @@ describe('billingService.recordTransaction — idempotency (AGENTS.md §9 item 1
 
   it('creates and returns the transaction on the first call', async () => {
     vi.mocked(createTransactionAtomic).mockResolvedValue({
-      id: 'tx-1', walletId: 'wallet-1', tenantId: 'tenant-1', type: 'debit', amountCents: -500, balanceAfterCents: 500, status: 'completed', description: 'Uso de sessão', externalReference: null, idempotencyKey: 'idem-key-1', createdAt: new Date('2026-09-01T00:00:00.000Z'),
+      id: 'tx-1', walletId: 'wallet-1', organizationId: 'tenant-1', type: 'debit', amountCents: -500, balanceAfterCents: 500, status: 'completed', description: 'Uso de sessão', externalReference: null, idempotencyKey: 'idem-key-1', createdAt: new Date('2026-09-01T00:00:00.000Z'),
     } as any);
 
     const result = await recordTransaction(input);
@@ -203,7 +203,7 @@ describe('billingService.recordTransaction — idempotency (AGENTS.md §9 item 1
 
   it('is idempotent: a repeated call with the same idempotencyKey returns the existing transaction instead of throwing or double-crediting', async () => {
     const existing = {
-      id: 'tx-1', walletId: 'wallet-1', tenantId: 'tenant-1', type: 'debit', amountCents: -500, balanceAfterCents: 500, status: 'completed', description: 'Uso de sessão', externalReference: null, idempotencyKey: 'idem-key-1', createdAt: new Date('2026-09-01T00:00:00.000Z'),
+      id: 'tx-1', walletId: 'wallet-1', organizationId: 'tenant-1', type: 'debit', amountCents: -500, balanceAfterCents: 500, status: 'completed', description: 'Uso de sessão', externalReference: null, idempotencyKey: 'idem-key-1', createdAt: new Date('2026-09-01T00:00:00.000Z'),
     };
 
     // Simulates the second, redelivered call: the Prisma unique constraint on idempotencyKey
@@ -241,21 +241,21 @@ describe('billingService.canStartNewSession', () => {
 
   it('returns false when the plan is not active/trialing (e.g. past_due)', async () => {
     vi.mocked(findWalletByTenant).mockResolvedValue({
-      id: 'wallet-1', tenantId: 'tenant-1', balanceCents: 1000, currency: 'BRL', planId: 'plan-1', planStatus: 'past_due', currentPeriodEnd: null, createdAt: new Date(), updatedAt: new Date(), plan: null,
+      id: 'wallet-1', organizationId: 'tenant-1', balanceCents: 1000, currency: 'BRL', planId: 'plan-1', planStatus: 'past_due', currentPeriodEnd: null, createdAt: new Date(), updatedAt: new Date(), plan: null,
     } as any);
     expect(await canStartNewSession('tenant-1')).toBe(false);
   });
 
   it('returns false when the balance is zero or negative even with an active plan', async () => {
     vi.mocked(findWalletByTenant).mockResolvedValue({
-      id: 'wallet-1', tenantId: 'tenant-1', balanceCents: 0, currency: 'BRL', planId: 'plan-1', planStatus: 'active', currentPeriodEnd: null, createdAt: new Date(), updatedAt: new Date(), plan: null,
+      id: 'wallet-1', organizationId: 'tenant-1', balanceCents: 0, currency: 'BRL', planId: 'plan-1', planStatus: 'active', currentPeriodEnd: null, createdAt: new Date(), updatedAt: new Date(), plan: null,
     } as any);
     expect(await canStartNewSession('tenant-1')).toBe(false);
   });
 
   it('returns true for an active plan with a positive balance', async () => {
     vi.mocked(findWalletByTenant).mockResolvedValue({
-      id: 'wallet-1', tenantId: 'tenant-1', balanceCents: 100, currency: 'BRL', planId: 'plan-1', planStatus: 'trialing', currentPeriodEnd: null, createdAt: new Date(), updatedAt: new Date(), plan: null,
+      id: 'wallet-1', organizationId: 'tenant-1', balanceCents: 100, currency: 'BRL', planId: 'plan-1', planStatus: 'trialing', currentPeriodEnd: null, createdAt: new Date(), updatedAt: new Date(), plan: null,
     } as any);
     expect(await canStartNewSession('tenant-1')).toBe(true);
   });

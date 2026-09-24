@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response } from 'express';
 import { listOrganizationsHandler } from './organization.controller.js';
-import { findTenantById } from '../repositories/tenantRepository.js';
+import { findTenantById } from '../repositories/organizationRepository.js';
 
-vi.mock('../repositories/tenantRepository.js', () => ({
+vi.mock('../repositories/organizationRepository.js', () => ({
   findTenantById: vi.fn(),
 }));
 
@@ -28,7 +28,7 @@ describe('organization.controller', () => {
         createdAt: mockCreatedAt,
       } as never);
 
-      const req = { tenantId: 'tenant-123' } as unknown as Request;
+      const req = { organizationId: 'tenant-123' } as unknown as Request;
       const res = fakeResponse();
 
       await listOrganizationsHandler(req, res);
@@ -48,7 +48,7 @@ describe('organization.controller', () => {
     it('returns empty organizations array when tenant does not exist', async () => {
       vi.mocked(findTenantById).mockResolvedValue(null);
 
-      const req = { tenantId: 'tenant-missing' } as unknown as Request;
+      const req = { organizationId: 'tenant-missing' } as unknown as Request;
       const res = fakeResponse();
 
       await listOrganizationsHandler(req, res);

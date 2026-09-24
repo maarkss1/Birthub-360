@@ -1,12 +1,12 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
-export function findSetting(tenantId: string | null, userId: string | null, key: string) {
-  return prisma.setting.findFirst({ where: { tenantId, userId, key } });
+export function findSetting(organizationId: string | null, userId: string | null, key: string) {
+  return prisma.setting.findFirst({ where: { organizationId, userId, key } });
 }
 
-export async function upsertSetting(tenantId: string | null, userId: string | null, key: string, value: unknown) {
-  const existing = await prisma.setting.findFirst({ where: { tenantId, userId, key } });
+export async function upsertSetting(organizationId: string | null, userId: string | null, key: string, value: unknown) {
+  const existing = await prisma.setting.findFirst({ where: { organizationId, userId, key } });
 
   if (existing) {
     return prisma.setting.update({ where: { id: existing.id }, data: { value: value as Prisma.InputJsonValue } });
@@ -15,17 +15,17 @@ export async function upsertSetting(tenantId: string | null, userId: string | nu
   try {
     return await prisma.setting.create({
       data: {
-        tenantId,
+        organizationId,
         userId,
         key,
         value: value as Prisma.InputJsonValue,
-        isGlobal: !tenantId && !userId,
+        isGlobal: !organizationId && !userId,
       },
     });
   } catch (error) {
     // If a race condition occurred and the unique constraint failed, update the existing record
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-      const raceExisting = await prisma.setting.findFirst({ where: { tenantId, userId, key } });
+      const raceExisting = await prisma.setting.findFirst({ where: { organizationId, userId, key } });
       if (raceExisting) {
         return prisma.setting.update({
           where: { id: raceExisting.id },
@@ -37,6 +37,6 @@ export async function upsertSetting(tenantId: string | null, userId: string | nu
   }
 }
 
-export function deleteSetting(tenantId: string | null, userId: string | null, key: string) {
-  return prisma.setting.deleteMany({ where: { tenantId, userId, key } });
+export function deleteSetting(organizationId: string | null, userId: string | null, key: string) {
+  return prisma.setting.deleteMany({ where: { organizationId, userId, key } });
 }

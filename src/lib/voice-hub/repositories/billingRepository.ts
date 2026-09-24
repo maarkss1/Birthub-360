@@ -5,27 +5,27 @@
 // `src/services/billingService.ts`, which is the only caller of this file (Clean Architecture,
 // AGENTS.md §2: Controller → Service → Repository, no Prisma access outside `src/repositories/**`).
 import { Plan, Prisma, Transaction, Wallet } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 export type WalletWithPlan = Wallet & { plan: Plan | null };
 
-export function findWalletByTenant(tenantId: string): Promise<WalletWithPlan | null> {
-  return prisma.wallet.findUnique({ where: { tenantId }, include: { plan: true } });
+export function findWalletByTenant(organizationId: string): Promise<WalletWithPlan | null> {
+  return prisma.wallet.findUnique({ where: { organizationId }, include: { plan: true } });
 }
 
 export function findTransactionsForTenant(
-  tenantId: string,
+  organizationId: string,
   { page, pageSize }: { page: number; pageSize: number }
 ): Promise<[Transaction[], number]> {
   const skip = (page - 1) * pageSize;
   return Promise.all([
     prisma.transaction.findMany({
-      where: { tenantId },
+      where: { organizationId },
       orderBy: { createdAt: 'desc' },
       skip,
       take: pageSize,
     }),
-    prisma.transaction.count({ where: { tenantId } }),
+    prisma.transaction.count({ where: { organizationId } }),
   ]);
 }
 
@@ -37,18 +37,18 @@ export function findPlanById(planId: string): Promise<Plan | null> {
   return prisma.plan.findUnique({ where: { id: planId } });
 }
 
-// One row per tenant (Wallet.tenantId is @unique) — creates the wallet on first plan change if
+// One row per tenant (Wallet.organizationId is @unique) — creates the wallet on first plan change if
 // the tenant never had one (see .agents/handoffs/onda-4/01-para-12-schema-billing-pronto.md:
 // "isso é decisão de produto sua" — this file's decision is "first plan change is the creation
 // trigger"), otherwise updates the existing row in place.
 export function upsertWalletPlan(
-  tenantId: string,
+  organizationId: string,
   data: { planId: string; planStatus: string; currentPeriodEnd: Date | null; currency: string }
 ): Promise<WalletWithPlan> {
   return prisma.wallet.upsert({
-    where: { tenantId },
+    where: { organizationId },
     create: {
-      tenantId,
+      organizationId,
       planId: data.planId,
       planStatus: data.planStatus,
       currentPeriodEnd: data.currentPeriodEnd,
@@ -84,7 +84,7 @@ export function findTransactionByIdempotencyKey(idempotencyKey: string): Promise
 // the statement itself; a second concurrent UPDATE on the same row blocks until the first commits,
 // then re-reads the now-current value — no lost update, no SERIALIZABLE/retry loop needed.
 export function createTransactionAtomic(input: {
-  tenantId: string;
+  organizationId: string;
   type: string;
   amountCents: number;
   description: string | null;
@@ -92,7 +92,7 @@ export function createTransactionAtomic(input: {
   idempotencyKey: string;
 }): Promise<Transaction | null> {
   return prisma.$transaction(async (tx) => {
-    const wallet = await tx.wallet.findUnique({ where: { tenantId: input.tenantId } });
+    const wallet = await tx.wallet.findUnique({ where: { organizationId: input.organizationId } });
     if (!wallet) return null;
 
     const updatedWallet = await tx.wallet.update({
@@ -103,7 +103,7 @@ export function createTransactionAtomic(input: {
     return tx.transaction.create({
       data: {
         walletId: wallet.id,
-        tenantId: input.tenantId,
+        organizationId: input.organizationId,
         type: input.type,
         amountCents: input.amountCents,
         balanceAfterCents: updatedWallet.balanceCents,

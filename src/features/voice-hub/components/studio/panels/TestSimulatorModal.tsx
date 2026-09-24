@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Mic, MicOff, PhoneOff, User, Bot, Loader2, AlertTriangle } from 'lucide-react';
-import { logger } from '../../../lib/logger';
+import { logger } from '@/lib/logger';
 import { useStudioStore } from '../../../store/useStudioStore';
 import { validationEngine } from '../../../lib/studio/ValidationEngine';
 

@@ -24,8 +24,8 @@ export type PlanStatus = 'inactive' | 'active' | 'past_due' | 'canceled' | 'tria
 const ACTIVE_PLAN_STATUSES: ReadonlySet<PlanStatus> = new Set(['active', 'trialing']);
 
 export class WalletNotFoundError extends Error {
-  constructor(tenantId: string) {
-    super(`billingService: tenant ${tenantId} não possui carteira (Wallet) ainda.`);
+  constructor(organizationId: string) {
+    super(`billingService: tenant ${organizationId} não possui carteira (Wallet) ainda.`);
     this.name = 'WalletNotFoundError';
   }
 }
@@ -57,7 +57,7 @@ export class ProrationNotSupportedError extends Error {
 }
 
 export interface WalletSummary {
-  tenantId: string;
+  organizationId: string;
   balanceCents: number;
   currency: string;
   planId: string | null;
@@ -86,7 +86,7 @@ export interface PlanOption {
 }
 
 export interface RecordTransactionInput {
-  tenantId: string;
+  organizationId: string;
   type: string;
   amountCents: number;
   // REQUIRED, not optional: AGENTS.md §9 item 16 names duplicate charging as the same severity
@@ -105,7 +105,7 @@ function toPlanStatus(raw: string): PlanStatus {
 
 function mapWallet(wallet: WalletWithPlan): WalletSummary {
   return {
-    tenantId: wallet.tenantId,
+    organizationId: wallet.organizationId,
     balanceCents: wallet.balanceCents,
     currency: wallet.currency,
     planId: wallet.planId,
@@ -159,17 +159,17 @@ function computePeriodEnd(billingInterval: string, from: Date = new Date()): Dat
 // tenant has no Wallet row yet, per .agents/handoffs/onda-4/01-para-12-schema-billing-pronto.md
 // and AGENTS.md §14 (never fabricate a balance/plan that doesn't exist). Callers must render an
 // explicit empty/error state, exactly the loading/empty/error convention Billing.tsx already uses.
-export async function getWalletSummary(tenantId: string): Promise<WalletSummary | null> {
-  const wallet = await findWalletByTenant(tenantId);
+export async function getWalletSummary(organizationId: string): Promise<WalletSummary | null> {
+  const wallet = await findWalletByTenant(organizationId);
   return wallet ? mapWallet(wallet) : null;
 }
 
 // Paginated transaction history for the "Histórico de Uso" table in Billing.tsx.
 export async function listTransactions(
-  tenantId: string,
+  organizationId: string,
   pagination: { page: number; pageSize: number }
 ): Promise<{ items: TransactionSummary[]; total: number }> {
-  const [items, total] = await findTransactionsForTenant(tenantId, pagination);
+  const [items, total] = await findTransactionsForTenant(organizationId, pagination);
   return { items: items.map(mapTransaction), total };
 }
 
@@ -186,7 +186,7 @@ export async function listAvailablePlans(): Promise<PlanOption[]> {
 // service's deliberate choice of "wallet creation trigger" per the open question in the schema
 // handoff.
 export async function changePlan(
-  tenantId: string,
+  organizationId: string,
   newPlanId: string,
   _actorUserId: string,
   effectiveAt: 'immediate' | 'next_cycle' = 'immediate'
@@ -200,7 +200,7 @@ export async function changePlan(
     throw new PlanNotFoundError(newPlanId);
   }
 
-  const wallet = await upsertWalletPlan(tenantId, {
+  const wallet = await upsertWalletPlan(organizationId, {
     planId: plan.id,
     planStatus: 'active',
     currentPeriodEnd: computePeriodEnd(plan.billingInterval),
@@ -216,12 +216,12 @@ export async function changePlan(
 // `Transaction.idempotencyKey` to reject a second concurrent insert; when that happens (Prisma
 // P2002) this function fetches and returns the transaction that already exists instead of
 // throwing or crediting/debiting the wallet a second time. Redelivering the same
-// (tenantId, idempotencyKey) request — a payment webhook retry, a client double-submit — is
+// (organizationId, idempotencyKey) request — a payment webhook retry, a client double-submit — is
 // therefore always safe.
 export async function recordTransaction(input: RecordTransactionInput): Promise<TransactionSummary> {
   try {
     const created = await createTransactionAtomic({
-      tenantId: input.tenantId,
+      organizationId: input.organizationId,
       type: input.type,
       amountCents: input.amountCents,
       description: input.description ?? null,
@@ -230,7 +230,7 @@ export async function recordTransaction(input: RecordTransactionInput): Promise<
     });
 
     if (!created) {
-      throw new WalletNotFoundError(input.tenantId);
+      throw new WalletNotFoundError(input.organizationId);
     }
 
     return mapTransaction(created);
@@ -256,8 +256,8 @@ export async function recordTransaction(input: RecordTransactionInput): Promise<
 // new session" — the same fail-closed default as an explicitly inactive/past_due/canceled plan or
 // a zero/negative balance. This is a deliberate product decision, not an oversight: until Agente
 // 05 wires the call site, this function has no caller and no user-visible effect either way.
-export async function canStartNewSession(tenantId: string): Promise<boolean> {
-  const wallet = await findWalletByTenant(tenantId);
+export async function canStartNewSession(organizationId: string): Promise<boolean> {
+  const wallet = await findWalletByTenant(organizationId);
   if (!wallet) return false;
   if (!ACTIVE_PLAN_STATUSES.has(toPlanStatus(wallet.planStatus))) return false;
   if (wallet.balanceCents <= 0) return false;

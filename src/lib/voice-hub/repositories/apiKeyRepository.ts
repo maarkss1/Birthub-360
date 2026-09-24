@@ -12,12 +12,12 @@
 // plaintext key to hash-and-compare) touches it. This makes an accidental hash leak through the
 // listing endpoint structurally impossible rather than something the service layer has to
 // remember to strip.
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 // Shape returned by listing/lookup-by-id — deliberately excludes `keyHash`.
 export const API_KEY_SAFE_SELECT = {
   id: true,
-  tenantId: true,
+  organizationId: true,
   name: true,
   scopes: true,
   createdByUserId: true,
@@ -30,7 +30,7 @@ export const API_KEY_SAFE_SELECT = {
 
 export type SafeApiKey = {
   id: string;
-  tenantId: string;
+  organizationId: string;
   name: string;
   scopes: unknown;
   createdByUserId: string | null;
@@ -42,7 +42,7 @@ export type SafeApiKey = {
 };
 
 export function createApiKey(data: {
-  tenantId: string;
+  organizationId: string;
   name: string;
   keyHash: string;
   createdByUserId: string;
@@ -50,7 +50,7 @@ export function createApiKey(data: {
 }): Promise<SafeApiKey> {
   return prisma.aPIKey.create({
     data: {
-      tenantId: data.tenantId,
+      organizationId: data.organizationId,
       name: data.name,
       keyHash: data.keyHash,
       createdByUserId: data.createdByUserId,
@@ -60,17 +60,17 @@ export function createApiKey(data: {
   });
 }
 
-export function listApiKeysForTenant(tenantId: string): Promise<SafeApiKey[]> {
+export function listApiKeysForTenant(organizationId: string): Promise<SafeApiKey[]> {
   return prisma.aPIKey.findMany({
-    where: { tenantId },
+    where: { organizationId },
     select: API_KEY_SAFE_SELECT,
     orderBy: { createdAt: 'desc' },
   });
 }
 
-export function findApiKeyForTenant(id: string, tenantId: string): Promise<SafeApiKey | null> {
+export function findApiKeyForTenant(id: string, organizationId: string): Promise<SafeApiKey | null> {
   return prisma.aPIKey.findFirst({
-    where: { id, tenantId },
+    where: { id, organizationId },
     select: API_KEY_SAFE_SELECT,
   });
 }

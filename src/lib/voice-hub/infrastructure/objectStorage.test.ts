@@ -39,12 +39,12 @@ beforeEach(() => {
 });
 
 describe('buildTenantObjectKey', () => {
-  it('builds a key scoped under tenants/<tenantId>/...', () => {
+  it('builds a key scoped under tenants/<organizationId>/...', () => {
     const key = buildTenantObjectKey('tenant-abc', 'recordings', 'call-123.wav');
     expect(key).toBe('tenants/tenant-abc/recordings/call-123.wav');
   });
 
-  it('rejects a tenantId with path-unsafe characters', () => {
+  it('rejects a organizationId with path-unsafe characters', () => {
     expect(() => buildTenantObjectKey('../other-tenant', 'file.txt')).toThrow(InvalidObjectKeyError);
   });
 

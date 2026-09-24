@@ -1,5 +1,5 @@
 import express from 'express';
-import { logger } from '../../../lib/logger.js';
+import { logger } from '@/lib/logger';
 import {
   voiceProspectingService,
   BlandConfigurationError,
@@ -196,7 +196,7 @@ router.post('/webhooks/bland/:token', validateBlandCallbackToken, async (req, re
   // .agents/handoffs/onda-4/01-para-06-persistir-resultado-bland-pronto.md). Fire-and-forget on
   // purpose: this local bookkeeping must never fail or delay the response to Bland AI, but a
   // failure here is never swallowed silently either — it is always logged.
-  // `tenantId` is best-effort only: `ATLASGR_TENANT_ID` identifies the tenant at call *dispatch*
+  // `organizationId` is best-effort only: `ATLASGR_TENANT_ID` identifies the tenant at call *dispatch*
   // time, but that id is never sent to Bland AI as call metadata and never comes back in this
   // callback, so it cannot be verified against the actual call — see the `AtlasGRCallResult`
   // model comment in prisma/schema.prisma for the full rationale.
@@ -206,7 +206,7 @@ router.post('/webhooks/bland/:token', validateBlandCallbackToken, async (req, re
     completed: forwardPayload.completed,
     callLength: forwardPayload.call_length || null,
     leadId: asString(variables.lead_id) || null,
-    tenantId: process.env.ATLASGR_TENANT_ID?.trim() || null,
+    organizationId: process.env.ATLASGR_TENANT_ID?.trim() || null,
   }).catch((error) => {
     logger.error('Failed to persist AtlasGR/Bland AI call result', {
       callId,

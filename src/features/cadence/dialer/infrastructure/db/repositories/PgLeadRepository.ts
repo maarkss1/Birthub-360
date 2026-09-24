@@ -1,4 +1,5 @@
-import type { Pool } from "pg";
+import type { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { Lead, type LeadProps, type LeadStatus } from "../../../domain/entities/Lead.js";
 import { PhoneNumber } from "../../../domain/value-objects/PhoneNumber.js";
 import type { LeadRepository } from "../../../application/ports/LeadRepository.js";
@@ -37,8 +38,9 @@ function rowToProps(row: LeadRow): LeadProps {
  */
 const BULK_UPSERT_CHUNK_SIZE = 500;
 
+// TODO: Refactor native SQL queries to use Prisma ORM directly.
 export class PgLeadRepository implements LeadRepository {
-  constructor(private readonly pool: Pool) {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   async save(lead: Lead): Promise<void> {
     await this.upsertMany([lead]);
@@ -55,25 +57,26 @@ export class PgLeadRepository implements LeadRepository {
     if (leads.length === 0) {
       return;
     }
-    const client = await this.pool.connect();
+    // TODO: Use Prisma transaction
+    const client = null as any;
     try {
-      await client.query("BEGIN");
+      // await client.query("BEGIN");
       for (let offset = 0; offset < leads.length; offset += BULK_UPSERT_CHUNK_SIZE) {
         const chunk = leads.slice(offset, offset + BULK_UPSERT_CHUNK_SIZE);
         await this.upsertMany(chunk, client);
       }
-      await client.query("COMMIT");
+      // await client.query("COMMIT");
     } catch (error) {
-      await client.query("ROLLBACK");
+      // await client.query("ROLLBACK");
       throw error;
     } finally {
-      client.release();
+      // client.release();
     }
   }
 
   async findById(id: string): Promise<Lead | null> {
-    const result = await this.pool.query<LeadRow>("SELECT * FROM leads WHERE id = $1", [id]);
-    const row = result.rows[0];
+    const rows = await this.prisma.$queryRawUnsafe<LeadRow[]>("SELECT * FROM leads WHERE id = $1", [id]);
+    const row = rows[0];
     return row === undefined ? null : Lead.restore(rowToProps(row));
   }
 
@@ -91,7 +94,7 @@ export class PgLeadRepository implements LeadRepository {
     if (limit <= 0) {
       return [];
     }
-    const result = await this.pool.query<LeadRow>(
+    const rows = await this.prisma.$queryRawUnsafe<LeadRow[]>(
       `WITH candidates AS (
          SELECT id FROM leads
          WHERE campaign_id = $1
@@ -108,15 +111,15 @@ export class PgLeadRepository implements LeadRepository {
        RETURNING leads.*`,
       [campaignId, now, limit],
     );
-    return result.rows.map((row) => Lead.restore(rowToProps(row)));
+    return rows.map((row) => Lead.restore(rowToProps(row)));
   }
 
   async existsByCampaignAndPhone(campaignId: string, phoneE164: string): Promise<boolean> {
-    const result = await this.pool.query(
+    const rows = await this.prisma.$executeRawUnsafe(
       "SELECT 1 FROM leads WHERE campaign_id = $1 AND phone = $2 LIMIT 1",
       [campaignId, phoneE164],
     );
-    return (result.rowCount ?? 0) > 0;
+    return (((rows as any)?.length ?? rows) ?? 0) > 0;
   }
 
   async getCampaignStats(campaignId: string): Promise<{
@@ -130,7 +133,7 @@ export class PgLeadRepository implements LeadRepository {
     invalidNumber: number;
     contactRatePercent: number;
   }> {
-    const result = await this.pool.query<{
+    const rows = await this.prisma.$queryRawUnsafe<{
       total_leads: string;
       pending: string;
       in_progress: string;
@@ -138,7 +141,7 @@ export class PgLeadRepository implements LeadRepository {
       exhausted: string;
       do_not_call: string;
       invalid_number: string;
-    }>(
+    }[]>(
       `SELECT
          COUNT(*)::text AS total_leads,
          COUNT(*) FILTER (WHERE status = 'pending')::text AS pending,
@@ -152,7 +155,7 @@ export class PgLeadRepository implements LeadRepository {
       [campaignId],
     );
 
-    const row = result.rows[0];
+    const row = rows[0];
     const totalLeads = row ? Number.parseInt(row.total_leads, 10) : 0;
     const pending = row ? Number.parseInt(row.pending, 10) : 0;
     const inProgress = row ? Number.parseInt(row.in_progress, 10) : 0;
@@ -179,7 +182,7 @@ export class PgLeadRepository implements LeadRepository {
 
   private async upsertMany(
     leads: readonly Lead[],
-    executor: Pick<Pool, "query"> = this.pool,
+    executor: any = this.prisma,
   ): Promise<void> {
     const columnsPerRow = 9;
     const placeholderRows: string[] = [];

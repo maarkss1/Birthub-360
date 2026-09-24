@@ -20,12 +20,12 @@ function toSafeUser(user: { id: string; email: string; companyName: string; crea
   };
 }
 
-export async function listUsers(tenantId: string) {
-  const users = await userRepository.listUsersForTenant(tenantId);
+export async function listUsers(organizationId: string) {
+  const users = await userRepository.listUsersForTenant(organizationId);
   return users.map(toSafeUser);
 }
 
-export async function createUserInTenant(tenantId: string, data: { email: string; password: string; companyName?: string; role?: SystemRoleName }) {
+export async function createUserInTenant(organizationId: string, data: { email: string; password: string; companyName?: string; role?: SystemRoleName }) {
   const existing = await userRepository.findUserByEmail(data.email);
   if (existing) {
     throw new UserServiceError('Este email já está cadastrado.');
@@ -35,18 +35,18 @@ export async function createUserInTenant(tenantId: string, data: { email: string
     email: data.email,
     passwordHash: hashPassword(data.password),
     companyName: data.companyName || 'Organização Associada',
-    tenantId,
+    organizationId,
   });
 
   const role = await getOrCreateSystemRole(data.role ?? 'user');
-  await userRepository.createMembership(user.id, tenantId, role.id);
+  await userRepository.createMembership(user.id, organizationId, role.id);
 
   return { id: user.id, email: user.email, role: role.name };
 }
 
 export async function updateUserProfile(
   targetId: string,
-  tenantId: string,
+  organizationId: string,
   requester: { id: string; role: string },
   data: { companyName?: string; role?: SystemRoleName; password?: string }
 ) {
@@ -55,7 +55,7 @@ export async function updateUserProfile(
   }
 
   const target = await userRepository.findUserById(targetId);
-  if (!target || target.tenantId !== tenantId) {
+  if (!target || target.organizationId !== organizationId) {
     throw new UserServiceError('Usuário não encontrado.', 404);
   }
 
@@ -66,17 +66,17 @@ export async function updateUserProfile(
 
   if (data.role && requester.role === 'admin') {
     const role = await getOrCreateSystemRole(data.role);
-    await userRepository.updateMembershipRole(targetId, tenantId, role.id);
+    await userRepository.updateMembershipRole(targetId, organizationId, role.id);
   }
 }
 
-export async function deleteUser(targetId: string, tenantId: string, requesterId: string) {
+export async function deleteUser(targetId: string, organizationId: string, requesterId: string) {
   if (requesterId === targetId) {
     throw new UserServiceError('Você não pode excluir o seu próprio usuário admin.');
   }
 
   const target = await userRepository.findUserById(targetId);
-  if (!target || target.tenantId !== tenantId) {
+  if (!target || target.organizationId !== organizationId) {
     throw new UserServiceError('Usuário não encontrado.', 404);
   }
 
@@ -88,7 +88,7 @@ export async function deleteUser(targetId: string, tenantId: string, requesterId
 // updateUserProfile, since both are actions a user is allowed to take on their own account.
 export async function anonymizeUserData(
   targetId: string,
-  tenantId: string,
+  organizationId: string,
   requester: { id: string; role: string }
 ) {
   if (requester.role !== 'admin' && requester.id !== targetId) {
@@ -96,7 +96,7 @@ export async function anonymizeUserData(
   }
 
   const target = await userRepository.findUserById(targetId);
-  if (!target || target.tenantId !== tenantId) {
+  if (!target || target.organizationId !== organizationId) {
     throw new UserServiceError('Usuário não encontrado.', 404);
   }
 

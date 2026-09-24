@@ -32,7 +32,7 @@ const EICAR = 'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$
 function fakeAgent(knowledge: unknown[] = []) {
   return {
     id: 'agent-1',
-    tenantId: 'tenant-1',
+    organizationId: 'tenant-1',
     userId: null,
     name: 'Agente de teste',
     model: 'gemini',
@@ -48,7 +48,7 @@ function fakeReq(body: Record<string, unknown>): Request {
   return {
     params: { id: 'agent-1' },
     body,
-    tenantId: 'tenant-1',
+    organizationId: 'tenant-1',
   } as unknown as Request;
 }
 

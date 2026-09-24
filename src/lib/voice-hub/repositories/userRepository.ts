@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
 export function findUserByEmail(email: string) {
   return prisma.user.findFirst({ where: { email: email.toLowerCase(), deletedAt: null } });
@@ -9,31 +9,31 @@ export function findUserById(id: string) {
   return prisma.user.findFirst({ where: { id, deletedAt: null } });
 }
 
-export function createUser(data: { email: string; passwordHash: string; companyName: string; tenantId: string }) {
+export function createUser(data: { email: string; passwordHash: string; companyName: string; organizationId: string }) {
   return prisma.user.create({
     data: {
       email: data.email.toLowerCase(),
       passwordHash: data.passwordHash,
       companyName: data.companyName,
-      tenantId: data.tenantId,
+      organizationId: data.organizationId,
     },
   });
 }
 
-export function findMembershipWithRole(userId: string, tenantId: string) {
+export function findMembershipWithRole(userId: string, organizationId: string) {
   return prisma.membership.findFirst({
-    where: { userId, tenantId },
+    where: { userId, organizationId },
     include: { role: true },
   });
 }
 
-export function createMembership(userId: string, tenantId: string, roleId: string) {
-  return prisma.membership.create({ data: { userId, tenantId, roleId } });
+export function createMembership(userId: string, organizationId: string, roleId: string) {
+  return prisma.membership.create({ data: { userId, organizationId, roleId } });
 }
 
-export function listUsersForTenant(tenantId: string) {
+export function listUsersForTenant(organizationId: string) {
   return prisma.user.findMany({
-    where: { tenantId, deletedAt: null },
+    where: { organizationId, deletedAt: null },
     include: { memberships: { include: { role: true } } },
     orderBy: { createdAt: 'asc' },
   });
@@ -68,6 +68,6 @@ export function anonymizeUser(id: string) {
   });
 }
 
-export function updateMembershipRole(userId: string, tenantId: string, roleId: string) {
-  return prisma.membership.updateMany({ where: { userId, tenantId }, data: { roleId } });
+export function updateMembershipRole(userId: string, organizationId: string, roleId: string) {
+  return prisma.membership.updateMany({ where: { userId, organizationId }, data: { roleId } });
 }

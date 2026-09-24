@@ -8,15 +8,15 @@ vi.mock('../lib/prisma.js', () => ({
   },
 }));
 
-import { prisma } from '../lib/prisma.js';
-import { listActiveTenantIds } from './tenantRepository.js';
+import { prisma } from '@/lib/prisma';
+import { listActiveTenantIds } from './organizationRepository.js';
 
 beforeEach(() => vi.clearAllMocks());
 
 // Covers `.agents/handoffs/onda-4/10-para-02-sla-telemetria-overview.md` — the SLA sampler in
 // `src/services/slaScheduler.ts` fans a `Metric` row out to every active tenant on each tick since
-// `Metric.tenantId` is a required FK with no platform-wide sentinel row.
-describe('tenantRepository.listActiveTenantIds', () => {
+// `Metric.organizationId` is a required FK with no platform-wide sentinel row.
+describe('organizationRepository.listActiveTenantIds', () => {
   it('excludes soft-deleted tenants and returns only ids', async () => {
     vi.mocked(prisma.tenant.findMany).mockResolvedValue([{ id: 't1' }, { id: 't2' }] as any);
 

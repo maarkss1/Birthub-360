@@ -3,7 +3,7 @@ import { AlertCircle, ShieldAlert, HeartPulse, Activity, Zap, Shield, Clock, Wif
 import { motion, AnimatePresence } from 'motion/react';
 import { io, Socket } from 'socket.io-client';
 import { useSessionStore } from '../../store/useSessionStore';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 interface Alert {
   id: string;

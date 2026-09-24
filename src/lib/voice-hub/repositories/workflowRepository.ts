@@ -1,20 +1,20 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
-export function findWorkflowForTenant(tenantId: string) {
-  return prisma.workflow.findFirst({ where: { tenantId, deletedAt: null }, orderBy: { updatedAt: 'desc' } });
+export function findWorkflowForTenant(organizationId: string) {
+  return prisma.workflow.findFirst({ where: { organizationId, deletedAt: null }, orderBy: { updatedAt: 'desc' } });
 }
 
 // Only workflow the voice runtime (Agente 04) is meant to execute for a tenant: one that has
 // been through workflowService.publishWorkflow() and therefore passed ValidationEngine. Any
 // edit after publish flips status back to 'draft' (see workflowService.saveWorkflow/
 // updateWorkflow), so this never returns a row whose nodes/edges drifted from what was validated.
-export function findActiveWorkflowForTenant(tenantId: string) {
-  return prisma.workflow.findFirst({ where: { tenantId, deletedAt: null, status: 'active' }, orderBy: { updatedAt: 'desc' } });
+export function findActiveWorkflowForTenant(organizationId: string) {
+  return prisma.workflow.findFirst({ where: { organizationId, deletedAt: null, status: 'active' }, orderBy: { updatedAt: 'desc' } });
 }
 
 export function upsertWorkflow(
-  tenantId: string,
+  organizationId: string,
   userId: string,
   existingId: string | null,
   data: { name?: string; nodes?: unknown; edges?: unknown; metadata?: unknown; version?: number; status?: string }
@@ -35,7 +35,7 @@ export function upsertWorkflow(
   }
   return prisma.workflow.create({
     data: {
-      tenantId,
+      organizationId,
       userId,
       createdBy: userId,
       updatedBy: userId,
@@ -59,10 +59,10 @@ export function findWorkflowById(id: string) {
 
 // Tenant-scoped lookup by id: the ONLY safe way to resolve a workflow id coming from a URL
 // param (GET/POST /workflow/:id/...). Never call findWorkflowById with a client-supplied id
-// without also checking tenantId — that would let one tenant address another tenant's workflow
+// without also checking organizationId — that would let one tenant address another tenant's workflow
 // by guessing/enumerating ids (AGENTS.md §15).
-export function findWorkflowByIdForTenant(id: string, tenantId: string) {
-  return prisma.workflow.findFirst({ where: { id, tenantId, deletedAt: null } });
+export function findWorkflowByIdForTenant(id: string, organizationId: string) {
+  return prisma.workflow.findFirst({ where: { id, organizationId, deletedAt: null } });
 }
 
 // Optimistic concurrency: only applies the metadata write if `version` still matches what the

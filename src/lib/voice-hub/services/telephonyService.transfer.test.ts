@@ -57,7 +57,7 @@ type Session = Awaited<ReturnType<typeof findSessionById>>;
 function agent(overrides: Partial<NonNullable<Agent>> = {}): NonNullable<Agent> {
   return {
     id: 'agent-1',
-    tenantId: 'tenant-1',
+    organizationId: 'tenant-1',
     userId: null,
     name: 'Catarina Atendimento',
     model: 'gemini',
@@ -73,7 +73,7 @@ function agent(overrides: Partial<NonNullable<Agent>> = {}): NonNullable<Agent> 
 function session(overrides: Partial<NonNullable<Session>> = {}): NonNullable<Session> {
   return {
     id: 'sess-1',
-    tenantId: 'tenant-1',
+    organizationId: 'tenant-1',
     userId: null,
     agentId: 'agent-1',
     channel: 'phone',

@@ -5,7 +5,7 @@ import { refreshSession } from '../services/authService.js';
 import { setCookie, ACCESS_TOKEN_MAX_AGE_MS } from '../lib/cookies.js';
 import { authenticateApiKey, isApiKeyFormat } from '../services/apiKeyService.js';
 import { getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 
 export const csrfProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
@@ -129,23 +129,23 @@ export const attachAuthIfPresent = async (req: express.Request, res: express.Res
   const session = await getAuthUser(req, res);
   if (session) {
     req.user = session;
-    req.tenantId = session.tenantId;
+    req.organizationId = session.organizationId;
 
     // Auto-upsert User and Tenant in Dev environment so old JWT cookies don't break fresh databases
-    if (process.env.NODE_ENV !== 'production' && session.tenantId) {
+    if (process.env.NODE_ENV !== 'production' && session.organizationId) {
       try {
         const { prisma } = await import('../lib/prisma.js');
         await prisma.tenant.upsert({
-          where: { id: session.tenantId },
+          where: { id: session.organizationId },
           update: {},
-          create: { id: session.tenantId, name: 'Local Dev Tenant' }
+          create: { id: session.organizationId, name: 'Local Dev Tenant' }
         });
         await prisma.user.upsert({
           where: { id: session.id },
           update: {},
           create: {
             id: session.id,
-            tenantId: session.tenantId,
+            organizationId: session.organizationId,
             email: session.email || 'dev@local.com',
             companyName: 'Local Dev Corp',
             passwordHash: 'dummy'

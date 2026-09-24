@@ -9,8 +9,8 @@
 //   - in-app only. `Notification` has no channel field (email/webhook) — every notification
 //     created here is an in-app item. Email/webhook delivery is future work, gated on a schema
 //     extension (see the handoff to Agente 01 this agent filed alongside this service).
-//   - scoped by `userId`, not `tenantId`. `Notification` has no `tenantId` column. A `User`
-//     belongs to exactly one `Tenant` (`User.tenantId`), so filtering by `userId` alone cannot
+//   - scoped by `userId`, not `organizationId`. `Notification` has no `organizationId` column. A `User`
+//     belongs to exactly one `Tenant` (`User.organizationId`), so filtering by `userId` alone cannot
 //     leak a notification across tenants *as long as* `userId` always comes from `req.user.id`
 //     (never from a client-supplied payload/query param) — enforced in notification.controller.ts,
 //     never relaxed here. This mirrors the existing Session/Metric/Setting per-user pattern in the

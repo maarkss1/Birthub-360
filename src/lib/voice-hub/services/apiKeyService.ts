@@ -78,7 +78,7 @@ function toMetadata(row: apiKeyRepository.SafeApiKey): ApiKeyMetadata {
 // POST /api/developers/keys. `expiresAt: null` means "no expiration" — a deliberate, explicit
 // choice (not a fabricated default) since not every tenant wants rotation-by-expiry.
 export async function createApiKeyForTenant(
-  tenantId: string,
+  organizationId: string,
   createdByUserId: string,
   data: { name: string; expiresAt?: Date | null }
 ): Promise<CreatedApiKey> {
@@ -86,7 +86,7 @@ export async function createApiKeyForTenant(
   const keyHash = hashApiKey(plaintextKey);
 
   const created = await apiKeyRepository.createApiKey({
-    tenantId,
+    organizationId,
     name: data.name,
     keyHash,
     createdByUserId,
@@ -102,8 +102,8 @@ export async function createApiKeyForTenant(
   };
 }
 
-export async function listApiKeysForTenant(tenantId: string): Promise<ApiKeyMetadata[]> {
-  const rows = await apiKeyRepository.listApiKeysForTenant(tenantId);
+export async function listApiKeysForTenant(organizationId: string): Promise<ApiKeyMetadata[]> {
+  const rows = await apiKeyRepository.listApiKeysForTenant(organizationId);
   return rows.map(toMetadata);
 }
 
@@ -112,8 +112,8 @@ export async function listApiKeysForTenant(tenantId: string): Promise<ApiKeyMeta
 // existence of — a key belonging to tenant B (AGENTS.md §15). Idempotent: revoking an
 // already-revoked key succeeds without error rather than surfacing a confusing double-revoke
 // failure to the caller.
-export async function revokeApiKeyForTenant(tenantId: string, id: string): Promise<ApiKeyMetadata> {
-  const existing = await apiKeyRepository.findApiKeyForTenant(id, tenantId);
+export async function revokeApiKeyForTenant(organizationId: string, id: string): Promise<ApiKeyMetadata> {
+  const existing = await apiKeyRepository.findApiKeyForTenant(id, organizationId);
   if (!existing) {
     throw new ApiKeyServiceError('Chave de API não encontrada.', 404);
   }
@@ -153,9 +153,9 @@ export async function authenticateApiKey(plaintextKey: string): Promise<ApiKeyAu
   if (!apiKey.createdByUserId) return null;
 
   const user = await userRepository.findUserById(apiKey.createdByUserId);
-  if (!user || user.tenantId !== apiKey.tenantId) return null;
+  if (!user || user.organizationId !== apiKey.organizationId) return null;
 
-  const membership = await userRepository.findMembershipWithRole(user.id, apiKey.tenantId);
+  const membership = await userRepository.findMembershipWithRole(user.id, apiKey.organizationId);
   if (!membership) return null;
 
   // Best-effort — never let bookkeeping failure block an otherwise-valid authenticated request.
@@ -167,7 +167,7 @@ export async function authenticateApiKey(plaintextKey: string): Promise<ApiKeyAu
       id: user.id,
       email: user.email,
       role: membership.role.name,
-      tenantId: apiKey.tenantId,
+      organizationId: apiKey.organizationId,
     },
   };
 }

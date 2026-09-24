@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import { logger } from '../lib/logger';
+import { logger } from '@/lib/logger';
 
 export interface SessionUser {
   id: string;
   email: string;
   role: string;
-  tenantId: string;
+  organizationId: string;
   // Permissions computed live by the server (GET /api/auth/me), never fabricated on the client.
   // Optional because older cached sessions/tests may not carry it; treat absence as "no permissions
   // known", not as "all denied" or "all allowed" — callers should check via
@@ -85,7 +85,7 @@ export const useSessionStore = create<SessionState>((set) => ({
             id: data.user.id,
             email: data.user.email,
             role: data.user.role,
-            tenantId: data.user.tenantId,
+            organizationId: data.user.organizationId,
             permissions: data.user.permissions,
           }
         : null;

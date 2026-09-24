@@ -40,7 +40,7 @@ export default function LoginPage() {
         throw new Error(data.error || 'Erro ao realizar login.');
       }
 
-      // Populate the real session (id/email/role/tenantId) before navigating so the shell
+      // Populate the real session (id/email/role/organizationId) before navigating so the shell
       // renders the real user on the very first dashboard paint instead of a loading flash.
       await fetchSession();
       navigate('/dashboard');

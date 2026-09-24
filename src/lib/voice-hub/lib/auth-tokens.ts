@@ -5,7 +5,7 @@ export interface TokenPayload {
   id: string;
   email: string;
   role: string;
-  tenantId: string;
+  organizationId: string;
 }
 
 export interface RefreshTokenPayload {
@@ -86,7 +86,7 @@ export function generateRefreshToken(payload: RefreshTokenPayload): string {
 export function verifyToken(token: string): TokenPayload | null {
   const payload = verify<TokenPayload>(token, requireSecret('JWT_SECRET'));
   if (!payload) return null;
-  return { id: payload.id, email: payload.email, role: payload.role, tenantId: payload.tenantId };
+  return { id: payload.id, email: payload.email, role: payload.role, organizationId: payload.organizationId };
 }
 
 export function verifyRefreshToken(token: string): RefreshTokenPayload | null {

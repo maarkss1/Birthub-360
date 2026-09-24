@@ -48,7 +48,7 @@ describe('voiceOutbound.controller', () => {
   describe('initiateOutboundCallHandler', () => {
     it('returns 400 when agentId is missing', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { targetNumber: '+5511999998888' },
       } as unknown as Request;
       const res = fakeResponse();
@@ -63,7 +63,7 @@ describe('voiceOutbound.controller', () => {
 
     it('returns 400 when targetNumber is not in E.164 format', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { agentId: 'agent-1', targetNumber: '11999998888' },
       } as unknown as Request;
       const res = fakeResponse();
@@ -84,7 +84,7 @@ describe('voiceOutbound.controller', () => {
       });
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: {
           agentId: 'agent-1',
           targetNumber: '+5511999998888',
@@ -97,7 +97,7 @@ describe('voiceOutbound.controller', () => {
       await initiateOutboundCallHandler(req, res);
 
       expect(initiateOutboundCall).toHaveBeenCalledWith({
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         agentId: 'agent-1',
         targetNumber: '+5511999998888',
         context: { leadName: 'Maria Silva' },
@@ -118,7 +118,7 @@ describe('voiceOutbound.controller', () => {
       );
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { agentId: 'agent-missing', targetNumber: '+5511999998888' },
       } as unknown as Request;
       const res = fakeResponse();
@@ -135,7 +135,7 @@ describe('voiceOutbound.controller', () => {
       );
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { agentId: 'agent-1', targetNumber: '+5511999998888' },
       } as unknown as Request;
       const res = fakeResponse();
@@ -152,7 +152,7 @@ describe('voiceOutbound.controller', () => {
       );
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { agentId: 'agent-1', targetNumber: '+5511999998888' },
       } as unknown as Request;
       const res = fakeResponse();
@@ -167,7 +167,7 @@ describe('voiceOutbound.controller', () => {
       vi.mocked(initiateOutboundCall).mockRejectedValue(new Error('Twilio upstream 500 error'));
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { agentId: 'agent-1', targetNumber: '+5511999998888' },
       } as unknown as Request;
       const res = fakeResponse();

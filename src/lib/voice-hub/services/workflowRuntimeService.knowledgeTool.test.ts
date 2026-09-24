@@ -10,7 +10,7 @@ vi.mock('../repositories/agentRepository.js', () => ({
 
 // `tool` node execution is gated on the same tenant consent required for external AI providers
 // (see workflowRuntimeService.ts#executeToolNodeAsync) — mocked here (not the real
-// settingService/tenantAiConsentRepository/Prisma chain) so these tests control consent state
+// settingService/organizationAiConsentRepository/Prisma chain) so these tests control consent state
 // directly instead of depending on the global Prisma mock's default empty result.
 vi.mock('./settingService.js', () => ({
   getAiConsent: vi.fn(),
@@ -59,7 +59,7 @@ function edge(id: string, source: string, target: string, sourceHandle?: string,
 function activeWorkflow(nodes: StudioNode[], edges: StudioEdge[], version = 1): NonNullable<ActiveWorkflow> {
   return {
     id: 'wf-1',
-    tenantId: 'tenant-1',
+    organizationId: 'tenant-1',
     userId: 'user-1',
     name: 'Fluxo com knowledge/tool',
     status: 'active',
@@ -75,10 +75,10 @@ function activeWorkflow(nodes: StudioNode[], edges: StudioEdge[], version = 1): 
   } as unknown as NonNullable<ActiveWorkflow>;
 }
 
-function agentWithKnowledge(id: string, tenantId: string, knowledge: KnowledgeDocument[]): NonNullable<Agent> {
+function agentWithKnowledge(id: string, organizationId: string, knowledge: KnowledgeDocument[]): NonNullable<Agent> {
   return {
     id,
-    tenantId,
+    organizationId,
     userId: null,
     name: 'Agente de teste',
     model: 'gemini',
@@ -228,7 +228,7 @@ describe('knowledge node execution', () => {
     expect(prepared.systemInstruction).not.toContain('Atendemos de segunda a sexta');
   });
 
-  it('never leaks another tenant\'s knowledge documents (agentId not owned by tenantId yields zero documents)', async () => {
+  it('never leaks another tenant\'s knowledge documents (agentId not owned by organizationId yields zero documents)', async () => {
     const nodes = [
       node('start-1', 'start'),
       node('knowledge-1', 'knowledge', { database: 'faq' }),

@@ -14,7 +14,7 @@ import {
   Bot,
 } from 'lucide-react';
 import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 interface KnowledgeDoc {
   id: string;

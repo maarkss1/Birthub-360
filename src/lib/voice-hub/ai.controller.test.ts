@@ -79,7 +79,7 @@ describe('ai.controller', () => {
   describe('chatHandler', () => {
     it('returns 400 when currentMessages has no user message', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { currentMessages: [{ role: 'agent', text: 'Olá!' }] },
       } as unknown as Request;
       const res = fakeResponse();
@@ -92,7 +92,7 @@ describe('ai.controller', () => {
       }));
     });
 
-    it('delegates to llmProviderGateway with GoogleGemini and tenantId', async () => {
+    it('delegates to llmProviderGateway with GoogleGemini and organizationId', async () => {
       const mockResult: import('../../lib/voice-runtime/providers/LLMGateway.js').GatewayResponse = {
         text: 'Resposta do modelo',
         providerUsed: 'GoogleGemini',
@@ -104,7 +104,7 @@ describe('ai.controller', () => {
       vi.mocked(llmProviderGateway.processRequest).mockResolvedValue(mockResult);
 
       const req = {
-        tenantId: 'tenant-abc',
+        organizationId: 'tenant-abc',
         body: {
           prompt: 'Você é um assistente prestativo',
           currentMessages: [
@@ -129,7 +129,7 @@ describe('ai.controller', () => {
       vi.mocked(llmProviderGateway.processRequest).mockRejectedValue(new Error('Gateway failure'));
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: {
           currentMessages: [{ role: 'user', text: 'Oi' }],
         },
@@ -153,7 +153,7 @@ describe('ai.controller', () => {
       };
       vi.mocked(getAiConsent).mockResolvedValue(mockRecord);
 
-      const req = { tenantId: 'tenant-1' } as unknown as Request;
+      const req = { organizationId: 'tenant-1' } as unknown as Request;
       const res = fakeResponse();
 
       await getAiConsentHandler(req, res);
@@ -164,7 +164,7 @@ describe('ai.controller', () => {
 
     it('rejects non-boolean granted with 400', async () => {
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         body: { granted: 'yes' },
       } as unknown as Request;
       const res = fakeResponse();
@@ -185,7 +185,7 @@ describe('ai.controller', () => {
       vi.mocked(grantAiConsent).mockResolvedValue(mockRecord);
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-admin' },
         body: { granted: true },
       } as unknown as Request;
@@ -207,7 +207,7 @@ describe('ai.controller', () => {
       vi.mocked(revokeAiConsent).mockResolvedValue(mockRecord);
 
       const req = {
-        tenantId: 'tenant-1',
+        organizationId: 'tenant-1',
         user: { id: 'user-admin' },
         body: { granted: false },
       } as unknown as Request;

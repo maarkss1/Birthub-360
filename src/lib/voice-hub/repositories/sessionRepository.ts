@@ -1,14 +1,14 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
-export function listSessionsForUser(tenantId: string, userId: string) {
-  return prisma.session.findMany({ where: { tenantId, userId, deletedAt: null }, orderBy: { createdAt: 'desc' } });
+export function listSessionsForUser(organizationId: string, userId: string) {
+  return prisma.session.findMany({ where: { organizationId, userId, deletedAt: null }, orderBy: { createdAt: 'desc' } });
 }
 
-export function createSession(tenantId: string, userId: string, data: { agentId?: string; channel?: string; metadata?: unknown }) {
+export function createSession(organizationId: string, userId: string, data: { agentId?: string; channel?: string; metadata?: unknown }) {
   return prisma.session.create({
     data: {
-      tenantId,
+      organizationId,
       userId,
       agentId: data.agentId || 'default_catarina',
       channel: data.channel || 'WebChat',
@@ -18,8 +18,8 @@ export function createSession(tenantId: string, userId: string, data: { agentId?
   });
 }
 
-export function findSessionForUser(id: string, tenantId: string, userId: string) {
-  return prisma.session.findFirst({ where: { id, tenantId, userId, deletedAt: null } });
+export function findSessionForUser(id: string, organizationId: string, userId: string) {
+  return prisma.session.findFirst({ where: { id, organizationId, userId, deletedAt: null } });
 }
 
 export function updateSession(id: string, data: { status?: string; metadata?: Prisma.InputJsonValue }) {
@@ -32,10 +32,10 @@ export function deleteSession(id: string) {
 
 // Phone calls have no logged-in user (userId is null) — the caller is authenticated by the
 // Twilio request signature, not a JWT, and tenant scoping comes from the resolved Agent instead.
-export function createPhoneSession(tenantId: string, agentId: string, metadata: unknown) {
+export function createPhoneSession(organizationId: string, agentId: string, metadata: unknown) {
   return prisma.session.create({
     data: {
-      tenantId,
+      organizationId,
       userId: null,
       agentId,
       channel: 'phone',
@@ -67,7 +67,7 @@ export function findActivePhoneSessionByCallSid(callSid: string) {
  * therefore the correct replay behavior: same call, same runtime snapshot, no duplicate session.
  */
 export async function createInboundPhoneSessionIfNoneForCallSid(
-  tenantId: string,
+  organizationId: string,
   agentId: string,
   callSid: string,
   metadata: unknown,
@@ -87,7 +87,7 @@ export async function createInboundPhoneSessionIfNoneForCallSid(
 
         const session = await tx.session.create({
           data: {
-            tenantId,
+            organizationId,
             userId: null,
             agentId,
             channel: 'phone',
@@ -120,7 +120,7 @@ export async function createInboundPhoneSessionIfNoneForCallSid(
  * before either has written its own session, and both go on to dial the same lead for real.
  */
 export async function createOutboundPhoneSessionIfNoneInFlight(
-  tenantId: string,
+  organizationId: string,
   agentId: string,
   toNumber: string,
   metadata: unknown,
@@ -129,7 +129,7 @@ export async function createOutboundPhoneSessionIfNoneInFlight(
     async (tx) => {
       const inFlight = await tx.session.findFirst({
         where: {
-          tenantId,
+          organizationId,
           channel: 'phone',
           status: 'active',
           deletedAt: null,
@@ -145,7 +145,7 @@ export async function createOutboundPhoneSessionIfNoneInFlight(
 
       const session = await tx.session.create({
         data: {
-          tenantId,
+          organizationId,
           userId: null,
           agentId,
           channel: 'phone',

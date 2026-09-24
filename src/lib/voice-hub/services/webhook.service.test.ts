@@ -53,7 +53,7 @@ describe('WebhookService.dispatch — explicit targetUrl (legacy per-call path)'
     const [, jobData, jobOpts] = mockAdd.mock.calls[0];
     expect(jobData.url).toBe('https://caller.example.com/callback');
     expect(jobData.endpointId).toBeUndefined();
-    expect(jobData.payload.tenantId).toBe('tenant-a');
+    expect(jobData.payload.organizationId).toBe('tenant-a');
     expect(jobData.payload.type).toBe('agent.call.ended');
     expect(jobOpts).toEqual({ attempts: 5, backoff: { type: 'exponential', delay: 2000 } });
   });
@@ -124,8 +124,8 @@ describe('WebhookService.dispatch — per-tenant endpoint resolution', () => {
   });
 
   it('never enqueues a target belonging to a different tenant than the one dispatching', async () => {
-    mockResolveActiveEndpointsForEvent.mockImplementation(async (tenantId: string) => {
-      if (tenantId !== 'tenant-a') {
+    mockResolveActiveEndpointsForEvent.mockImplementation(async (organizationId: string) => {
+      if (organizationId !== 'tenant-a') {
         throw new Error('should never be queried for another tenant');
       }
       return { hasAnyActiveEndpoint: true, targets: [{ endpointId: 'ep-a', url: 'https://a.example.com/hook' }] };

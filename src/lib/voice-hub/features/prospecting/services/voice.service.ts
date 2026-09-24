@@ -1,4 +1,4 @@
-import { logger } from '../../../lib/logger.js';
+import { logger } from '@/lib/logger';
 import type { AtlasGROutboundPayload } from '../validators/atlasgr.schema.js';
 import { buildAtlasGROutboundIdempotencyKey, claimIdempotencyKey } from '../lib/webhookIdempotency.js';
 import { getAiConsent } from '../../../services/settingService.js';
@@ -52,15 +52,15 @@ export class VoiceProspectingService {
       throw new BlandConfigurationError('WEBHOOK_BASE_URL missing or insecure');
     }
 
-    const tenantId = process.env.ATLASGR_TENANT_ID?.trim();
-    if (!tenantId) {
+    const organizationId = process.env.ATLASGR_TENANT_ID?.trim();
+    if (!organizationId) {
       logger.warn('ATLASGR_TENANT_ID is required to enforce tenant-scoped AI consent');
       throw new BlandConfigurationError('ATLASGR_TENANT_ID missing');
     }
 
-    const consent = await getAiConsent(tenantId);
+    const consent = await getAiConsent(organizationId);
     if (!consent.granted) {
-      logger.warn('Bland outbound call blocked: tenant has not granted external AI consent', { tenantId });
+      logger.warn('Bland outbound call blocked: tenant has not granted external AI consent', { organizationId });
       throw new ExternalAiConsentRequiredError('AI provider consent required');
     }
 
@@ -76,7 +76,7 @@ export class VoiceProspectingService {
     const claimed = await claimIdempotencyKey(idempotencyKey);
     if (!claimed) {
       logger.info('VoiceProspectingService: duplicate AtlasGR webhook delivery ignored', {
-        tenantId,
+        organizationId,
         leadId: payload.lead_id,
         idempotencyKey,
       });
@@ -90,7 +90,7 @@ export class VoiceProspectingService {
     // Phone number is intentionally omitted from logs. Name/company are sufficient to correlate
     // with the CRM while keeping direct contact data out of the operational log stream.
     logger.info('VoiceProspectingService: Triggering outbound call via Bland AI', {
-      tenantId,
+      organizationId,
       name: payload.name,
       company: payload.company,
       leadId: payload.lead_id,
@@ -192,7 +192,7 @@ Pessoa de Contato: ${payload.name}
         throw new Error(data.message || `Bland AI call failed with status ${response.status}`);
       }
 
-      logger.info('Call successfully dispatched via Bland AI', { tenantId, callId: data.call_id, status: data.status });
+      logger.info('Call successfully dispatched via Bland AI', { organizationId, callId: data.call_id, status: data.status });
 
       return {
         success: true,
@@ -203,7 +203,7 @@ Pessoa de Contato: ${payload.name}
       };
     } catch (error) {
       logger.error('Error triggering voice call', {
-        tenantId,
+        organizationId,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;

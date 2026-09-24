@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Server, Users, RefreshCw } from 'lucide-react';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 type Session = {
   id: string;

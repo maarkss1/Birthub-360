@@ -1,18 +1,18 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '@/lib/prisma';
 
-export function listAgentsForTenant(tenantId: string) {
-  return prisma.agent.findMany({ where: { tenantId, deletedAt: null }, orderBy: { createdAt: 'desc' } });
+export function listAgentsForTenant(organizationId: string) {
+  return prisma.agent.findMany({ where: { organizationId, deletedAt: null }, orderBy: { createdAt: 'desc' } });
 }
 
-export function getAgent(id: string, tenantId: string) {
-  return prisma.agent.findFirst({ where: { id, tenantId, deletedAt: null } });
+export function getAgent(id: string, organizationId: string) {
+  return prisma.agent.findFirst({ where: { id, organizationId, deletedAt: null } });
 }
 
-export function createAgent(tenantId: string, userId: string, data: { name: string; model: string; configuration?: unknown }) {
+export function createAgent(organizationId: string, userId: string, data: { name: string; model: string; configuration?: unknown }) {
   return prisma.agent.create({
     data: {
-      tenantId,
+      organizationId,
       userId,
       name: data.name,
       model: data.model,
@@ -21,20 +21,20 @@ export function createAgent(tenantId: string, userId: string, data: { name: stri
   });
 }
 
-export function updateAgent(id: string, tenantId: string, data: { name?: string; model?: string; configuration?: unknown }) {
+export function updateAgent(id: string, organizationId: string, data: { name?: string; model?: string; configuration?: unknown }) {
   const updateData: Prisma.AgentUpdateManyMutationInput = {};
   if (data.name) updateData.name = data.name;
   if (data.model) updateData.model = data.model;
   if (data.configuration) updateData.configuration = data.configuration as Prisma.InputJsonValue;
 
   return prisma.agent.updateMany({
-    where: { id, tenantId, deletedAt: null },
+    where: { id, organizationId, deletedAt: null },
     data: updateData
   });
 }
 
-export function deleteAgentForTenant(id: string, tenantId: string) {
-  return prisma.agent.updateMany({ where: { id, tenantId }, data: { deletedAt: new Date() } });
+export function deleteAgentForTenant(id: string, organizationId: string) {
+  return prisma.agent.updateMany({ where: { id, organizationId }, data: { deletedAt: new Date() } });
 }
 
 export function findAgentByPhoneNumber(phoneNumber: string) {

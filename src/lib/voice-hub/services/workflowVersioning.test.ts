@@ -109,7 +109,7 @@ function runtimeIncompatibleGraph() {
 
 interface WorkflowRowOverrides {
   id?: string;
-  tenantId?: string;
+  organizationId?: string;
   version?: number;
   status?: string;
   nodes?: unknown;
@@ -126,7 +126,7 @@ function workflowRow(overrides: WorkflowRowOverrides): NonNullable<Workflow> {
   const { nodes, edges } = validGraph();
   return {
     id: 'wf-1',
-    tenantId: 'tenant-1',
+    organizationId: 'tenant-1',
     userId: 'user-1',
     name: 'Fluxo',
     description: null,
@@ -344,7 +344,7 @@ describe('rollbackToVersion', () => {
     const current = validGraph();
     mockFindByIdForTenant.mockResolvedValueOnce(workflowRow({
       id: 'wf-1',
-      tenantId: 'tenant-1',
+      organizationId: 'tenant-1',
       version: 3,
       nodes: current.nodes,
       edges: current.edges,

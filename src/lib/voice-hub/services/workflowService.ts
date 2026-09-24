@@ -1,7 +1,7 @@
 import * as workflowRepository from '../repositories/workflowRepository.js';
 import { validationEngine } from '../../lib/studio/ValidationEngine.js';
 import { validateRuntimeCompatibility } from './workflowRuntimeService.js';
-import { logger } from '../../lib/logger.js';
+import { logger } from '@/lib/logger';
 import type { StudioNode, StudioEdge, ValidationIssue } from '../../lib/studio/types.js';
 
 export class NotFoundError extends Error {}
@@ -137,19 +137,19 @@ async function archivePublishedVersion(
   }
 }
 
-export function getWorkflow(tenantId: string, _version?: number) {
-  return workflowRepository.findWorkflowForTenant(tenantId);
+export function getWorkflow(organizationId: string, _version?: number) {
+  return workflowRepository.findWorkflowForTenant(organizationId);
 }
 
-export async function getWorkflowHistory(tenantId: string) {
-  const existing = await workflowRepository.findWorkflowForTenant(tenantId);
+export async function getWorkflowHistory(organizationId: string) {
+  const existing = await workflowRepository.findWorkflowForTenant(organizationId);
   if (!existing) return [];
   const metadata = existing.metadata as unknown as WorkflowMetadata;
   return metadata?.history || [];
 }
 
-export async function saveWorkflow(tenantId: string, userId: string, data: { name?: string; nodes?: unknown; edges?: unknown, commitMessage?: string }) {
-  const existing = await workflowRepository.findWorkflowForTenant(tenantId);
+export async function saveWorkflow(organizationId: string, userId: string, data: { name?: string; nodes?: unknown; edges?: unknown, commitMessage?: string }) {
+  const existing = await workflowRepository.findWorkflowForTenant(organizationId);
 
   const metadata = (existing?.metadata as unknown as WorkflowMetadata) || {};
   const newVersion = (existing?.version || 0) + 1;
@@ -168,7 +168,7 @@ export async function saveWorkflow(tenantId: string, userId: string, data: { nam
 
   // Every structural save is unvalidated new content. Even if the row used to be active, the
   // write goes back to draft and must cross publishWorkflow again before production can see it.
-  return workflowRepository.upsertWorkflow(tenantId, userId, existing?.id ?? null, {
+  return workflowRepository.upsertWorkflow(organizationId, userId, existing?.id ?? null, {
     ...data,
     metadata,
     version: newVersion,
@@ -176,13 +176,13 @@ export async function saveWorkflow(tenantId: string, userId: string, data: { nam
   });
 }
 
-export async function updateWorkflow(tenantId: string, userId: string, data: { name?: string; nodes?: unknown; edges?: unknown }) {
-  const existing = await workflowRepository.findWorkflowForTenant(tenantId);
+export async function updateWorkflow(organizationId: string, userId: string, data: { name?: string; nodes?: unknown; edges?: unknown }) {
+  const existing = await workflowRepository.findWorkflowForTenant(organizationId);
   if (!existing) throw new NotFoundError('Workflow não encontrado para atualização.');
 
   const structuralChange = data.nodes !== undefined || data.edges !== undefined;
 
-  return workflowRepository.upsertWorkflow(tenantId, userId, existing.id, {
+  return workflowRepository.upsertWorkflow(organizationId, userId, existing.id, {
     name: data.name ?? existing.name,
     nodes: data.nodes ?? existing.nodes,
     edges: data.edges ?? existing.edges,
@@ -209,8 +209,8 @@ export async function updateWorkflow(tenantId: string, userId: string, data: { n
  * is unaffected either way — `telephonyService.ts` snapshots the workflow into
  * `PhoneSessionMetadata.workflow` at call start and never re-reads the live row mid-call.
  */
-export async function publishWorkflow(tenantId: string, userId: string) {
-  const existing = await workflowRepository.findWorkflowForTenant(tenantId);
+export async function publishWorkflow(organizationId: string, userId: string) {
+  const existing = await workflowRepository.findWorkflowForTenant(organizationId);
   if (!existing) throw new NotFoundError('Nenhum fluxo encontrado para publicar.');
 
   const { nodes, edges } = toStudioGraph(existing.nodes, existing.edges);
@@ -224,20 +224,20 @@ export async function publishWorkflow(tenantId: string, userId: string) {
 
   await archivePublishedVersion(existing.id, existing.version, existing.nodes, existing.edges, existing.metadata, userId);
 
-  return workflowRepository.upsertWorkflow(tenantId, userId, existing.id, {
+  return workflowRepository.upsertWorkflow(organizationId, userId, existing.id, {
     status: 'active',
     version: existing.version + 1,
   });
 }
 
 /**
- * Published-version archive for one workflow (tenant-scoped by `workflowId` + `tenantId`,
+ * Published-version archive for one workflow (tenant-scoped by `workflowId` + `organizationId`,
  * never trusting `workflowId` alone — see `workflowRepository.findWorkflowByIdForTenant`).
  * Newest first. Returns `[]` (never a 404) for a workflow that has never been published, since
  * "no versions yet" is a legitimate, non-error state.
  */
-export async function listWorkflowVersions(tenantId: string, workflowId: string): Promise<PublishedWorkflowVersion[]> {
-  const workflow = await workflowRepository.findWorkflowByIdForTenant(workflowId, tenantId);
+export async function listWorkflowVersions(organizationId: string, workflowId: string): Promise<PublishedWorkflowVersion[]> {
+  const workflow = await workflowRepository.findWorkflowByIdForTenant(workflowId, organizationId);
   if (!workflow) throw new NotFoundError('Workflow não encontrado.');
 
   const versions = await workflowRepository.findWorkflowVersionsForWorkflow(workflow.id);
@@ -256,8 +256,8 @@ export async function listWorkflowVersions(tenantId: string, workflowId: string)
  * has since been removed (see `docs/patterns/workflow-execution-contract.md` §2); rolling back to
  * it must fail the same way a fresh publish of that graph would, never apply it half-broken.
  */
-export async function rollbackToVersion(tenantId: string, userId: string, workflowId: string, version: number) {
-  const existing = await workflowRepository.findWorkflowByIdForTenant(workflowId, tenantId);
+export async function rollbackToVersion(organizationId: string, userId: string, workflowId: string, version: number) {
+  const existing = await workflowRepository.findWorkflowByIdForTenant(workflowId, organizationId);
   if (!existing) throw new NotFoundError('Workflow não encontrado.');
 
   const target = await workflowRepository.findWorkflowVersion(existing.id, version);
@@ -274,7 +274,7 @@ export async function rollbackToVersion(tenantId: string, userId: string, workfl
 
   await archivePublishedVersion(existing.id, existing.version, existing.nodes, existing.edges, existing.metadata, userId);
 
-  return workflowRepository.upsertWorkflow(tenantId, userId, existing.id, {
+  return workflowRepository.upsertWorkflow(organizationId, userId, existing.id, {
     nodes: target.nodes,
     edges: target.edges,
     metadata: target.metadata,
@@ -283,8 +283,8 @@ export async function rollbackToVersion(tenantId: string, userId: string, workfl
   });
 }
 
-export async function restoreWorkflowVersion(tenantId: string, userId: string, versionToRestore: number) {
-  const existing = await workflowRepository.findWorkflowForTenant(tenantId);
+export async function restoreWorkflowVersion(organizationId: string, userId: string, versionToRestore: number) {
+  const existing = await workflowRepository.findWorkflowForTenant(organizationId);
   if (!existing) throw new NotFoundError('Workflow não encontrado.');
 
   const metadata = existing.metadata as unknown as WorkflowMetadata;
@@ -293,25 +293,25 @@ export async function restoreWorkflowVersion(tenantId: string, userId: string, v
 
   if (!snapshot) throw new NotFoundError('Versão não encontrada.');
 
-  return saveWorkflow(tenantId, userId, {
+  return saveWorkflow(organizationId, userId, {
     nodes: snapshot.nodes,
     edges: snapshot.edges,
     commitMessage: `Restaurado para a versão ${versionToRestore}`
   });
 }
 
-export async function removeWorkflow(tenantId: string) {
-  const existing = await workflowRepository.findWorkflowForTenant(tenantId);
+export async function removeWorkflow(organizationId: string) {
+  const existing = await workflowRepository.findWorkflowForTenant(organizationId);
   if (!existing) throw new NotFoundError('Nenhum fluxo encontrado para exclusão.');
   await workflowRepository.deleteWorkflow(existing.id);
   return existing;
 }
 
-export async function duplicateWorkflow(tenantId: string, userId: string, _sourceWorkflowId: string) {
-  const existing = await workflowRepository.findWorkflowForTenant(tenantId);
+export async function duplicateWorkflow(organizationId: string, userId: string, _sourceWorkflowId: string) {
+  const existing = await workflowRepository.findWorkflowForTenant(organizationId);
   if (!existing) throw new NotFoundError('Workflow de origem não encontrado.');
 
-  return workflowRepository.upsertWorkflow(tenantId, userId, null, {
+  return workflowRepository.upsertWorkflow(organizationId, userId, null, {
     name: `${existing.name} (Cópia)`,
     nodes: existing.nodes,
     edges: existing.edges

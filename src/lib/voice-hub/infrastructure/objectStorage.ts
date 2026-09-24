@@ -56,15 +56,15 @@ export class InvalidObjectKeyError extends Error {
 }
 
 /**
- * Builds an object key scoped to a single tenant, e.g. `tenants/<tenantId>/recordings/<callId>.wav`.
+ * Builds an object key scoped to a single tenant, e.g. `tenants/<organizationId>/recordings/<callId>.wav`.
  *
  * Every object this service ever writes or reads MUST go through this function (or have its key
  * checked with `assertKeyBelongsToTenant`) so that one tenant can never guess or construct the key
  * of another tenant's object.
  */
-export function buildTenantObjectKey(tenantId: string, ...segments: string[]): string {
-  if (!SAFE_SEGMENT.test(tenantId)) {
-    throw new InvalidObjectKeyError(`tenantId inválido para chave de objeto: "${tenantId}"`);
+export function buildTenantObjectKey(organizationId: string, ...segments: string[]): string {
+  if (!SAFE_SEGMENT.test(organizationId)) {
+    throw new InvalidObjectKeyError(`organizationId inválido para chave de objeto: "${organizationId}"`);
   }
   if (segments.length === 0) {
     throw new InvalidObjectKeyError('É necessário ao menos um segmento de caminho para a chave de objeto.');
@@ -80,7 +80,7 @@ export function buildTenantObjectKey(tenantId: string, ...segments: string[]): s
     return normalized;
   });
 
-  return ['tenants', tenantId, ...cleanSegments].join('/');
+  return ['tenants', organizationId, ...cleanSegments].join('/');
 }
 
 /**
@@ -89,11 +89,11 @@ export function buildTenantObjectKey(tenantId: string, ...segments: string[]): s
  * before generating any pre-signed URL for it. Prevents cross-tenant access from a caller that
  * passes a raw/stored key instead of re-deriving it.
  */
-export function assertKeyBelongsToTenant(tenantId: string, key: string): void {
-  const expectedPrefix = `tenants/${tenantId}/`;
+export function assertKeyBelongsToTenant(organizationId: string, key: string): void {
+  const expectedPrefix = `tenants/${organizationId}/`;
   if (!key.startsWith(expectedPrefix)) {
     throw new InvalidObjectKeyError(
-      `Chave de objeto "${key}" não pertence ao tenant "${tenantId}" — acesso negado.`,
+      `Chave de objeto "${key}" não pertence ao tenant "${organizationId}" — acesso negado.`,
     );
   }
 }
@@ -112,12 +112,12 @@ function clampTtl(expiresInSeconds: number): number {
  * governs storage access, not the antivirus gate.
  */
 export async function getPresignedUploadUrl(
-  tenantId: string,
+  organizationId: string,
   key: string,
   contentType: string,
   expiresInSeconds: number = DEFAULT_PRESIGNED_URL_TTL_SECONDS,
 ): Promise<string> {
-  assertKeyBelongsToTenant(tenantId, key);
+  assertKeyBelongsToTenant(organizationId, key);
   const command = new PutObjectCommand({ Bucket: recordingsBucket, Key: key, ContentType: contentType });
   return getSignedUrl(objectStorage, command, { expiresIn: clampTtl(expiresInSeconds) });
 }
@@ -128,11 +128,11 @@ export async function getPresignedUploadUrl(
  * reachable without a fresh, tenant-checked, expiring link.
  */
 export async function getPresignedDownloadUrl(
-  tenantId: string,
+  organizationId: string,
   key: string,
   expiresInSeconds: number = DEFAULT_PRESIGNED_URL_TTL_SECONDS,
 ): Promise<string> {
-  assertKeyBelongsToTenant(tenantId, key);
+  assertKeyBelongsToTenant(organizationId, key);
   const command = new GetObjectCommand({ Bucket: recordingsBucket, Key: key });
   return getSignedUrl(objectStorage, command, { expiresIn: clampTtl(expiresInSeconds) });
 }

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Mic, MicOff, Save, RotateCcw } from 'lucide-react';
-import { logger } from '../../lib/logger';
+import { logger } from '@/lib/logger';
 
 interface SpeechRecognitionResultLike {
   0: { transcript: string };

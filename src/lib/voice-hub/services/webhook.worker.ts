@@ -1,7 +1,7 @@
 import { createHmac } from 'crypto';
 import { Worker, Job, UnrecoverableError } from 'bullmq';
 import { getRedisConnectionOptions } from '../lib/env.js';
-import { logger } from '../lib/logger.js';
+import { logger } from '@/lib/logger';
 import { isPrivateOrReservedHost } from '../validators/index.js';
 import { WebhookPayload } from './webhook.service.js';
 import { findActiveSigningSecretHash } from './webhookEndpointService.js';
@@ -71,7 +71,7 @@ export function startWebhookWorker() {
     'webhooks',
     async (job: Job<{ url: string; payload: WebhookPayload; endpointId?: string }>) => {
       const { url, payload, endpointId } = job.data;
-      logger.debug(`[WebhookWorker] Processing job ${job.id} for tenant ${payload.tenantId}`);
+      logger.debug(`[WebhookWorker] Processing job ${job.id} for tenant ${payload.organizationId}`);
 
       if (!isSafeWebhookUrl(url)) {
         // Not a transient delivery failure — the target is categorically disallowed (private/
@@ -80,7 +80,7 @@ export function startWebhookWorker() {
         // target. UnrecoverableError tells BullMQ to fail the job immediately without consuming
         // the retry budget.
         logger.error(
-          `[WebhookWorker] Refusing to deliver event ${payload.type} for tenant ${payload.tenantId} (job ${job.id}): target URL is not an allowed public HTTPS endpoint.`,
+          `[WebhookWorker] Refusing to deliver event ${payload.type} for tenant ${payload.organizationId} (job ${job.id}): target URL is not an allowed public HTTPS endpoint.`,
         );
         throw new UnrecoverableError('Webhook target URL is not allowed (private/reserved host or disallowed scheme)');
       }
