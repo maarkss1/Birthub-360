@@ -12,10 +12,10 @@ test.describe('Elite Commercial Agent - Next Best Action', () => {
     await page.goto('/app/intelligence/elite-agent');
 
     // 3. Aguarda o render principal (título e subtítulo real do componente)
-    await expect(page.getByRole('heading', { name: 'Agente Comercial de Elite' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Copiloto Comercial de Elite' })).toBeVisible();
     await expect(
       page.getByText(
-        'Orquestração autônoma ponta a ponta: Inteligência, Estratégia, Governança e Execução.',
+        'Orquestração autônoma ponta a ponta: Inteligência, Estratégia, Histórico e Execução.',
       ),
     ).toBeVisible();
 

@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import { expect, type Page } from '@playwright/test';
 import { prisma } from '../../src/lib/prisma';
 import { requestContext } from '../../src/lib/async-context';
@@ -5,7 +6,9 @@ import { requestContext } from '../../src/lib/async-context';
 // Sempre @birthhub360.com.br: só domínios autorizados (ver src/config/access-policy.ts) passam pela
 // checagem client-side E pelo databaseHooks.user.create.before do better-auth (src/lib/auth.ts).
 export function uniqueTestEmail(prefix: string): string {
-  const unique = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+  // randomBytes (não Math.random): o e-mail vira credencial de uma conta real de teste, e o CodeQL
+  // trata Math.random() nesse fluxo como aleatoriedade insegura (js/insecure-randomness).
+  const unique = `${Date.now()}-${randomBytes(4).toString('hex')}`;
   return `e2e-${prefix}-${unique}@birthhub360.com.br`;
 }
 
