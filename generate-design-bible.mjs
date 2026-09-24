@@ -43,7 +43,6 @@ for (const file of tsxFiles) {
         .replace(/strokeLinejoin=/g, 'stroke-linejoin=')
         .replace(/fillRule=/g, 'fill-rule=')
         .replace(/clipRule=/g, 'clip-rule=')
-        .replace(/viewBox=/g, 'viewBox=')
         .replace(/\{([^}]+)\}/g, '"currentColor"'); // Replace dynamic vars with currentColor
 
       svgs.push({

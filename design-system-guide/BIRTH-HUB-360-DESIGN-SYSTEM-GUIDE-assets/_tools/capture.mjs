@@ -4,7 +4,7 @@ import fs from 'node:fs'; import crypto from 'node:crypto';
 const ROOT = fileURLToPath(new URL('..', import.meta.url)).replace(/\\/g, '/').replace(/\/$/, '');
 const BASE = 'http://localhost:3024';
 for (const d of ['screens','data','components']) fs.mkdirSync(`${ROOT}/${d}`, {recursive:true});
-const only = process.argv[2] ? new RegExp(process.argv[2]) : null;
+const only = process.argv[2] ? { test: (r) => r.includes(process.argv[2]) } : null; // filtro por substring da rota (sem regex a partir de argv)
 const PUBLIC = ['/', '/login', '/reset-password', '/book/demo', '/rota-inexistente-404'];
 const APP = ['', 'dashboard','workspace','prospect','crm','crm360','mesa-tratamento','intelligence','intelligence/elite-agent','companies','contacts','activities','cadence','chatbook','roleplay','qualification_matrix','objections_matrix','topic_training','bitrix','reports','integrations','knowledge','analytics','winloss','market-intelligence','market-intelligence/deck','propostas','commercial_intelligence','daily-plan','sdr-diagnostic','calendar','notifications','automations','usage','editor','team','module-access','settings'].map(p=>'/app'+(p?'/'+p:''));
 const OTHER = ['/social-selling','/design-lab/command-language','/design-lab/components-v2'];

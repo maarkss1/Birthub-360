@@ -6,7 +6,7 @@ const cssPath=`${REPO}/src/styles/globals.css`; const lines=fs.readFileSync(cssP
 // blocos de nível 0
 const blocks=[]; let depth=0, cur=null;
 lines.forEach((ln,i)=>{ const opens=(ln.match(/\{/g)||[]).length, closes=(ln.match(/\}/g)||[]).length;
-  if(depth===0&&opens>closes){ cur={sel:ln.replace('{','').trim(),start:i+1,decls:[]}; }
+  if(depth===0&&opens>closes){ cur={sel:ln.replace(/{/g,'').trim(),start:i+1,decls:[]}; }
   else if(cur&&depth===1){ const m=ln.match(/^\s*(--[\w-]+)\s*:\s*(.+?);?\s*(\/\*.*)?$/); if(m&&!ln.trim().startsWith('/*')) cur.decls.push({name:m[1],value:m[2].replace(/;$/,'').trim(),line:i+1}); }
   depth+=opens-closes; if(depth===0&&cur){cur.end=i+1;blocks.push(cur);cur=null;} });
 const want=blocks.filter(b=>/^(:root|\.dark|@theme)/.test(b.sel));
