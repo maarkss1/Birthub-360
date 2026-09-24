@@ -169,7 +169,7 @@ export function LandingLoginSplitScreen() {
               type="button"
               className="flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300"
             >
-              <span className="w-4 h-4 rounded-full overflow-hidden inline-flex items-center justify-center bg-green-500 text-[8px] text-white">
+              <span className="w-4 h-4 rounded-full overflow-hidden inline-flex items-center justify-center bg-green-700 text-[8px] text-white">
                 BR
               </span>
               PT-BR
@@ -283,7 +283,7 @@ export function LandingLoginSplitScreen() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="relative z-20 mt-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+        <div className="relative z-20 mt-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400">
           <ArrowDown className="h-4 w-4 rounded-full border border-current p-0.5" />
           Escrole para explorar
         </div>
@@ -478,6 +478,7 @@ export function LandingLoginSplitScreen() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 py-3.5 pl-11 pr-4 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand transition-colors"
+                        aria-label="E-mail"
                         placeholder="executivo@birthhub360.com.br"
                         required
                         autoFocus
@@ -521,6 +522,7 @@ export function LandingLoginSplitScreen() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 py-3.5 px-4 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand transition-colors"
+                        aria-label="Nome completo"
                         placeholder="Seu Nome Completo"
                         required={isSignUp}
                       />
@@ -535,6 +537,7 @@ export function LandingLoginSplitScreen() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 py-3.5 pl-11 pr-4 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand transition-colors"
+                        aria-label="Credencial Institucional"
                         placeholder={
                           activeTab === 'sso'
                             ? 'seuemail@seudominio.com.br'
@@ -551,13 +554,16 @@ export function LandingLoginSplitScreen() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 py-3.5 pl-11 pr-11 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand transition-colors"
+                        aria-label="Senha"
                         placeholder="••••••••••••"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                        aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                        aria-pressed={showPassword}
+                        className="absolute right-4 top-3.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -677,7 +683,7 @@ export function LandingLoginSplitScreen() {
                 <CheckCircle2 className="w-3.5 h-3.5 text-brand" /> Conformidade LGPD
               </span>
             </div>
-            <div className="mt-6 text-center text-[9px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500">
+            <div className="mt-6 text-center text-[9px] uppercase tracking-widest font-bold text-slate-600 dark:text-slate-400">
               BIRTH HUB 360&deg; | CENTRO DE COMANDO PARA OPERAÇÕES DE RECEITA
               <div className="mt-1">v1.0.0</div>
             </div>

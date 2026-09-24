@@ -2,6 +2,7 @@ import path from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = process.env.PORT ?? '3000';
+const BASE_URL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`;
 
 // Ambientes que já vêm com um Chromium provisionado (sandbox de agente, imagem corporativa de CI)
 // costumam ter uma build diferente da que o @playwright/test instalado espera — o launch falha com
@@ -26,7 +27,12 @@ export default defineConfig({
   timeout: 60_000,
   reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`,
+    baseURL: BASE_URL,
+    // `page.request`/`request` mandam o cookie de sessão mas NÃO mandam `Origin` (um navegador real
+    // sempre manda em POST/PUT/DELETE). O csrfGuard exige Origin/Referer válido em mutação com cookie
+    // (SEC-002), então sem isto todo `page.request.post('/api/...')` dos specs tomava 403. Origem =
+    // a do próprio app sob teste, exatamente o que o navegador enviaria.
+    extraHTTPHeaders: { Origin: new URL(BASE_URL).origin },
     trace: 'on-first-retry',
   },
   projects: [

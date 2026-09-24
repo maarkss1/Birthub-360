@@ -65,7 +65,7 @@ test.describe('Saved Views do pipeline CRM', () => {
     await expect(() => {
       const q = new URL(page.url()).searchParams.get('q');
       expect(q).toBe(company.tradeName);
-    }).toPass({ timeout: 5_000 });
+    }).toPass({ timeout: 15_000 }); // folga p/ o 1º diálogo/compilação a frio no runner
     await expect(
       page.getByRole('button', { name: new RegExp(`^${company.tradeName}`) }),
     ).toBeVisible();

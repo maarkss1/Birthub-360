@@ -1,6 +1,5 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import million from 'million/compiler';
 import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -8,7 +7,10 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig(() => {
   return {
     plugins: [
-      million.vite({ auto: true }),
+      // Million.js (`million.vite({ auto: true })`, adicionado em 22/09) NÃO pode voltar em modo auto:
+      // ele recompila componentes em "blocos" com DOM próprio (`<slot>`, `$change`) fora do React, e
+      // os inputs controlados deixam de receber onChange — a busca do Kanban (?q=) e as views salvas
+      // simplesmente paravam de funcionar, em dev e no build de produção (achado dos E2E).
       react(),
       tailwindcss(),
       VitePWA({

@@ -300,6 +300,11 @@
   );
   --nav-c-teal: color-mix(in srgb, color-mix(in srgb, var(--ok) 55%, var(--orbit-blue)) 72%, white);
   --nav-c-slate: var(--ink-2);
+  /* --ok cru (#0f9d64) sobre --surface-elevated escura mede 4.44:1 como texto de 12px, abaixo do
+     mínimo AA de 4.5:1 (axe-core, "Volume de Leads" no Pipeline CRM). Clareado em ~14% rumo ao
+     branco: 5.3:1. Mesmo padrão de --critical em .dark (hex cru + color-mix; o token do claro
+     não pode se auto-referenciar aqui). */
+  --ok: color-mix(in srgb, #0f9d64 86%, white);
   /* Clareado (color-mix em direção ao branco, mesma fórmula de --critical-active acima) para
      recuperar 4.5:1 como texto sólido contra --surface escura — 30% branco mede 5.35:1 (calculado,
      luminância relativa WCAG), com folga. Só a versão "-active" muda por tema; --red-violet cru
