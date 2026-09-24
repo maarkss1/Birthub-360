@@ -79,7 +79,9 @@ test.describe('Comercial Inteligente — Jornada, CLOSEDATE e Health Score com d
       page.getByRole('heading', { name: 'Forecast Accuracy (erro histórico)' }),
     ).toBeVisible();
     // Sem snapshot semanal ainda: honestidade sobre ausência de histórico, nunca um número.
-    await expect(page.getByText('Histórico insuficiente')).toBeVisible();
+    // exact: o cartão de calibração repete "Histórico insuficiente para..." numa nota; sem isto o
+    // seletor casa 2 elementos (strict mode violation).
+    await expect(page.getByText('Histórico insuficiente', { exact: true })).toBeVisible();
 
     // Visão Executiva: Health Score composto renderiza os 6 pilares.
     await page.goto('/app/commercial_intelligence?tab=overview');

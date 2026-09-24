@@ -58,6 +58,13 @@ const IntelligenceHub = lazy(() =>
     default: m.IntelligenceHub,
   })),
 );
+// Rota isolada do Agente Comercial de Elite (NBA): removida por engano no commit 2ab1b535 (varredura
+// "commit remaining pending changes") e coberta por tests/e2e/elite-commercial-agent-nba.spec.ts.
+const EliteCommercialAgentWorkspace = lazy(() =>
+  import('./features/intelligence/components/EliteCommercialAgentWorkspace').then((m) => ({
+    default: m.EliteCommercialAgentWorkspace,
+  })),
+);
 const CompanyList = lazy(() =>
   import('./features/companies/components/CompanyList').then((m) => ({ default: m.CompanyList })),
 );
@@ -243,7 +250,7 @@ function AppLayout() {
           Router casar estes paths aninhados contra o restante da URL automaticamente. */}
       <Suspense fallback={<PageFallback />}>
         <Routes>
-          <Route index element={<WorkspaceHome />} />
+          <Route index element={<AdaptiveDashboard />} />
           {/* Alias explícito para /app/dashboard: TabType inclui 'dashboard' e Sidebar/
               CommandPalette navegam para `/app/${tab}` para TODO TabType (useNavigationBusBridge é
               a única exceção, com mapeamento especial só ali — ver comentário nesse hook). Sem esta
@@ -277,6 +284,7 @@ function AppLayout() {
             }
           />
           <Route path="intelligence" element={<IntelligenceHub />} />
+          <Route path="intelligence/elite-agent" element={<EliteCommercialAgentWorkspace />} />
           <Route path="companies" element={<CompanyList />} />
           <Route path="contacts" element={<ContactList />} />
           <Route path="activities" element={<ActivityList />} />

@@ -19,15 +19,12 @@ import { signUp, uniqueTestEmail, E2E_PASSWORD } from './helpers';
 // formato do próprio `isAuthorizedLoginEmail` — a checagem client-side já é coberta a fundo pelo
 // teste unitário de access-policy.ts.
 test.describe('Autenticação', () => {
-  test('cadastro com e-mail corporativo autorizado cria a conta e entra no Hub', async ({
+  test('cadastro com e-mail corporativo autorizado cria a conta e entra no Command Center', async ({
     page,
   }) => {
-    // landOn: 'hub' pede pro helper NÃO normalizar pra /app — este teste é justamente sobre o
-    // destino real pós-login (ver Pilot 031/032 em .claude/PILOTS.md: /hub substituiu /app como
-    // destino padrão), então a asserção precisa ver o redirecionamento de verdade, não a
-    // conveniência que os outros specs usam.
-    await signUp(page, { email: uniqueTestEmail('signup'), landOn: 'hub' });
-    await expect(page).toHaveURL(/\/hub/);
+    // O destino pós-login é o Command Center (/app); /hub só redireciona para lá.
+    await signUp(page, { email: uniqueTestEmail('signup') });
+    await expect(page).toHaveURL(/\/app/);
   });
 
   test('login com senha correta autentica de verdade contra o servidor', async ({
@@ -42,8 +39,8 @@ test.describe('Autenticação', () => {
     await page.goto('/login');
     await page.getByLabel('Credencial Institucional').fill(email);
     await page.getByPlaceholder('••••••••').fill(E2E_PASSWORD);
-    await page.getByRole('button', { name: /^Iniciar link neural$/ }).click();
-    await expect(page).toHaveURL(/\/hub/, { timeout: 15_000 });
+    await page.getByRole('button', { name: /^ENTRAR NO BIRTH HUB/ }).click();
+    await expect(page).toHaveURL(/\/app/, { timeout: 15_000 });
   });
 
   test('login com senha incorreta é rejeitado pelo servidor e não navega pro app', async ({
@@ -57,13 +54,13 @@ test.describe('Autenticação', () => {
     await page.goto('/login');
     await page.getByLabel('Credencial Institucional').fill(email);
     await page.getByPlaceholder('••••••••').fill('SenhaErradaDeProposito!');
-    await page.getByRole('button', { name: /^Iniciar link neural$/ }).click();
+    await page.getByRole('button', { name: /^ENTRAR NO BIRTH HUB/ }).click();
 
     // LoginScreen só renderiza um único <p> dentro do <form>: a mensagem de erro devolvida pelo
     // servidor (result.error.message do better-auth) quando a autenticação falha.
     await expect(page.locator('form p')).toBeVisible({ timeout: 10_000 });
     await expect(page).toHaveURL(/\/login/);
-    await expect(page.getByRole('button', { name: /^Iniciar link neural$/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^ENTRAR NO BIRTH HUB/ })).toBeVisible();
   });
 
   test('acessar /app sem sessão válida redireciona para /login (ProtectedRoute)', async ({
