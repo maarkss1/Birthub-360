@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --atlas-orange: #FF5618;
+  --atlas-dark: #333333;
+  --atlas-amber: #FF8008;
+  --atlas-yellow: #FFC500;
+  --atlas-warm-orange: #FF6B10;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Marca ativa: Atlas (padrão) */
+  --brand-primary: #FF5618;
+  --brand-secondary: #FF8020;
+  --brand-primary-hover: #FF4500;
+  --brand-secondary-hover: #FF6510;
+}
+
+/* Marca ativa: TotalTrac (definida via data-brand="totaltrac" no elemento raiz pós-login) */
+[data-brand="totaltrac"] {
+  --brand-primary: #374898;
+  --brand-secondary: #008FCE;
+  --brand-primary-hover: #2D3B78;
+  --brand-secondary-hover: #007AB0;
+}
+
+body {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #0b0f19;
+  color: #f1f5f9;
+  overflow-x: hidden;
+}
+
+/* Modo claro: sem isso, o fundo do <body> ficava escuro por trás de qualquer
+   tela mais curta que a viewport (ex.: login), aparecendo como uma faixa preta. */
+.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF5618;
+}
+
+/* Atlas Brand Glow */
+.atlas-glow {
+  box-shadow: 0 0 25px -5px rgba(255, 86, 24, 0.25);
+}
+
+.atlas-glow-sm {
+  box-shadow: 0 0 15px -3px rgba(255, 86, 24, 0.2);
+}
+
+/* Code Pre Block */
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
