@@ -325,7 +325,7 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
           </div>
 
           {/* Orbital Graphic (Absolute Positioned on the right side of the left panel) */}
-          <div className="pointer-events-none absolute right-0 top-1/2 hidden h-[600px] w-[600px] -translate-y-1/2 translate-x-[15%] lg:block">
+          <div className="pointer-events-none absolute right-0 top-1/2 hidden h-[600px] w-[600px] -translate-y-1/2 -translate-x-[10%] lg:block">
             <div className="relative w-full h-full flex items-center justify-center">
               {/* Outer Rings */}
               <motion.div
@@ -336,17 +336,17 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-16 rounded-full border border-slate-200 dark:border-white/10"
+                className="absolute inset-[136px] rounded-full border-[3px] border-slate-300 dark:border-white/25"
               />
 
               {/* Core Gradient Ring */}
               <div
-                className="absolute w-[200px] h-[200px] rounded-full border-[8px] border-transparent"
+                className="absolute w-[216px] h-[216px] rounded-full border-[14px] border-transparent"
                 style={{
                   background: `linear-gradient(currentColor, currentColor) padding-box, conic-gradient(from 0deg, ${BRAND.colors.orbitBlue} 0%, ${BRAND.colors.brand} 33%, ${BRAND.colors.pink} 66%, ${BRAND.colors.orbitBlue} 100%) border-box`,
                 }}
               />
-              <div className="absolute w-[184px] h-[184px] rounded-full bg-white dark:bg-[#0B132B] flex items-center justify-center shadow-2xl border border-slate-100 dark:border-none">
+              <div className="absolute w-[188px] h-[188px] rounded-full bg-white dark:bg-[#0B132B] flex items-center justify-center shadow-2xl border border-slate-100 dark:border-none">
                 <BirthHubLogo
                   variant="symbol"
                   className="w-24 h-24 drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]"
@@ -356,7 +356,7 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
               {/* Satellites */}
               <div className="absolute top-12 flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-white/10 flex items-center justify-center mb-2">
-                  <DatabaseZap className="h-4 w-4 text-brand" />
+                  <DatabaseZap className="h-4 w-4 text-orbit-blue" />
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Dados
@@ -366,7 +366,7 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
 
               <div className="absolute bottom-12 flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-white/10 flex items-center justify-center mb-2">
-                  <Target className="h-4 w-4 text-brand" />
+                  <Target className="h-4 w-4 text-pink" />
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Decisão
@@ -374,9 +374,9 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
                 <span className="text-[9px] text-slate-500 dark:text-slate-300">Estratégia baseada em dados</span>
               </div>
 
-              <div className="absolute left-12 flex flex-col items-center">
+              <div className="absolute left-3 flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-white/10 flex items-center justify-center mb-2">
-                  <Rocket className="h-4 w-4 text-brand" />
+                  <Rocket className="h-4 w-4 text-red" />
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Execução
@@ -384,9 +384,9 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
                 <span className="text-[9px] text-slate-500 dark:text-slate-300">Resultados consistentes</span>
               </div>
 
-              <div className="absolute right-12 flex flex-col items-center">
+              <div className="absolute right-3 flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-white/10 flex items-center justify-center mb-2">
-                  <BrainCircuit className="h-4 w-4 text-brand" />
+                  <BrainCircuit className="h-4 w-4 text-iris" />
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Inteligência
