@@ -1,0 +1,18 @@
+allowBuilds:
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  '@whiskeysockets/baileys': true
+  bcrypt: true
+  core-js: true
+  cpu-features: true
+  esbuild: true
+  libxmljs2: true
+  msgpackr-extract: true
+  msw: true
+  prisma: true
+  protobufjs: true
+  sharp: true
+  ssh2: true
+  tesseract.js: true
+minimumReleaseAgeExclude:
+  - posthog-js@1.434.9

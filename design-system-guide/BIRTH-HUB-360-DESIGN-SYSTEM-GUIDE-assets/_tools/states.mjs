@@ -6,7 +6,7 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url)).replace(/\\/g, '/').r
 fs.mkdirSync(`${ROOT}/states`, { recursive: true });
 const out = { states: [], overlays: [], themes: [], notes: [] };
 const P = ['backgroundColor','color','borderTopColor','borderTopWidth','boxShadow','transform','outlineStyle','outlineColor','outlineWidth','outlineOffset','opacity','cursor','textDecorationLine','filter','backgroundImage'];
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const browser = await chromium.launch({ channel: 'chrome', headless: true });
 async function ctxFor(w, h, auth = true) { const c = await browser.newContext({ ...(auth ? { storageState: `${ROOT}/_tools/auth.json` } : {}), viewport: { width: w, height: h }, isMobile: w < 768, hasTouch: w < 768 }); await c.addInitScript(() => { try { localStorage.setItem('@prospector:has_seen_tour', 'true'); } catch {} }); return c; }
 const comp = (loc) => loc.evaluate((el, P) => { const c = getComputedStyle(el); const o = {}; for (const p of P) o[p] = c[p]; o.transition = c.transition; const r = el.getBoundingClientRect(); o.rect = { w: +r.width.toFixed(1), h: +r.height.toFixed(1) }; o.html = el.outerHTML.slice(0, 500); return o; }, P);
 async function clipShot(page, loc, path, pad = 10) { const b = await loc.boundingBox(); if (!b) return false; const vp = page.viewportSize(); const x = Math.max(0, b.x - pad), y = Math.max(0, b.y - pad); await page.screenshot({ path, clip: { x, y, width: Math.min(vp.width - x, b.width + pad * 2), height: Math.min(vp.height - y, b.height + pad * 2) } }); return true; }

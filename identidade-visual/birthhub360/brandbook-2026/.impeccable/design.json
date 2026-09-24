@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "scope": "BRANDBOOK-BIRTH-HUB-360.html",
+  "mode": "read",
+  "status": "proposed-redesign",
+  "colors": {
+    "pink": "#BE326F", "gold": "#C69B52", "red": "#BE3B36", "blue": "#315FD6",
+    "midnight": "#101D2F", "ivory": "#F5F2EA", "goldLight": "#E4BC76",
+    "pinkLight": "#F18BB9", "redLight": "#F38278", "blueLight": "#8EADFF",
+    "muted": "#58616C", "line": "#D8D6CF"
+  },
+  "typography": {"display": "Cabin", "body": "Cabin", "data": "IBM Plex Mono"},
+  "spacing": [4, 8, 12, 16, 24, 32, 48, 64, 96],
+  "implementation": "static-self-contained-html"
+}
