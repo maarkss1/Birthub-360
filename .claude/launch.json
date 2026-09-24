@@ -71,6 +71,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "preview", "--port", "4173", "--strictPort"],
       "port": 4173
+    },
+    {
+      "name": "landing-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "landing", "run", "dev"],
+      "port": 5300
     }
   ]
 }
