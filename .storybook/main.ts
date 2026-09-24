@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 // do escopo de "catálogo de componentes").
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: ['@storybook/addon-vitest', '@storybook/addon-a11y', '@storybook/addon-docs'],
+  addons: ['@storybook/addon-a11y', '@storybook/addon-docs'],
   framework: '@storybook/react-vite',
   // O builder Vite do Storybook não herda automaticamente vite.config.ts da raiz — sem isto, as
   // classes utilitárias do Tailwind 4 (CSS-first, plugin @tailwindcss/vite) não seriam geradas
