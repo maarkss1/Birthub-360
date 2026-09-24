@@ -65,21 +65,6 @@ export const BRAND = {
     blossom: '#FFFFFF',
   },
   /**
-   * Canais de atendimento exibidos na tela de entrada (`WelcomeScreen`).
-   *
-   * ATENÇÃO — pendente de atualização: estes números vieram da operação
-   * anterior e foram PRESERVADOS de propósito, não recriados. Suporte é
-   * funcionalidade (é por onde o usuário pede ajuda), então apagá-los junto com
-   * a marca antiga tiraria acesso a atendimento sem nada no lugar. Troque pelos
-   * canais da Birth Hub 360 assim que existirem — é uma edição só, aqui.
-   *
-   * Um canal com string vazia simplesmente não é renderizado.
-   */
-  support: {
-    whatsapp: { label: 'Suporte: (16) 98181-8458', href: 'https://wa.me/5516981818458' },
-    phone: { label: 'Comercial: (16) 2132-3790', href: 'tel:+551621323790' },
-  },
-  /**
    * Perfis sociais da plataforma.
    *
    * Vazio de propósito: os perfis que existiam aqui eram os de uma marca anterior

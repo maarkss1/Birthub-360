@@ -160,20 +160,6 @@
       "status": "CONFIRMED",
       "note": "A tipografia do produto (Bodoni Moda/Inter) está em src/config/brand.ts e public/fonts/. Este playbook usa Sora para headings por instrução explícita do briefing que o originou — é uma peça de comunicação estratégica, não uma tela do produto."
     },
-    "support": {
-      "whatsapp": {
-        "label": "Suporte: (16) 98181-8458",
-        "href": "https://wa.me/5516981818458",
-        "status": "CONFIRMED",
-        "source": "src/config/brand.ts"
-      },
-      "phone": {
-        "label": "Comercial: (16) 2132-3790",
-        "href": "tel:+551621323790",
-        "status": "CONFIRMED",
-        "source": "src/config/brand.ts"
-      }
-    },
     "credit": {
       "text": "Desenvolvido pelo Coordenador Comercial Marcelo do Nascimento",
       "status": "CONFIRMED",
