@@ -361,7 +361,7 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Dados
                 </span>
-                <span className="text-[9px] text-slate-500">Integração sem limites</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-300">Integração sem limites</span>
               </div>
 
               <div className="absolute bottom-12 flex flex-col items-center">
@@ -371,7 +371,7 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Decisão
                 </span>
-                <span className="text-[9px] text-slate-500">Estratégia baseada em dados</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-300">Estratégia baseada em dados</span>
               </div>
 
               <div className="absolute left-12 flex flex-col items-center">
@@ -381,7 +381,7 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Execução
                 </span>
-                <span className="text-[9px] text-slate-500">Resultados consistentes</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-300">Resultados consistentes</span>
               </div>
 
               <div className="absolute right-12 flex flex-col items-center">
@@ -391,7 +391,7 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                   Inteligência
                 </span>
-                <span className="text-[9px] text-slate-500">Insights em tempo real</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-300">Insights em tempo real</span>
               </div>
             </div>
           </div>
@@ -744,3 +744,4 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
     </div>
   );
 }
+
