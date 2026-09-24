@@ -1,5 +1,5 @@
 import { LandingLoginSplitScreen } from './LandingLoginSplitScreen';
 
 export function LoginScreen() {
-  return <LandingLoginSplitScreen />;
+  return <LandingLoginSplitScreen view="access" />;
 }

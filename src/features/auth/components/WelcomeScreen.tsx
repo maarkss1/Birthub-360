@@ -1,5 +1,5 @@
 import { LandingLoginSplitScreen } from './LandingLoginSplitScreen';
 
 export function WelcomeScreen() {
-  return <LandingLoginSplitScreen />;
+  return <LandingLoginSplitScreen view="welcome" />;
 }
