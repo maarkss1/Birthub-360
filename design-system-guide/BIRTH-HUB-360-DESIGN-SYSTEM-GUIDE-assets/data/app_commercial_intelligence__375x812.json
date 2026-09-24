@@ -1,0 +1,1 @@
+{"route":"/app/commercial_intelligence","requestedViewport":[375,812],"error":"Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"domcontentloaded\"\u001b[22m\n"}

@@ -1,0 +1,35 @@
+{
+  "version": "4.0-proposta",
+  "brand": "Birth Hub 360º",
+  "colors": {
+    "midnight": "#101D2F",
+    "gold": "#C69B52",
+    "goldLight": "#E4BC76",
+    "ivory": "#F5F2EA",
+    "white": "#FFFFFF",
+    "blue": "#315FD6",
+    "pink": "#BE326F",
+    "red": "#BE3B36",
+    "pinkLight": "#F18BB9",
+    "redLight": "#F38278",
+    "blueLight": "#8EADFF",
+    "muted": "#58616C",
+    "line": "#D8D6CF"
+  },
+  "typography": {
+    "display": "Cabin",
+    "body": "Cabin",
+    "data": "IBM Plex Mono"
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64,
+    96
+  ]
+}

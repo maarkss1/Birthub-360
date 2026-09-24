@@ -1,0 +1,167 @@
+{
+  "desktop": {
+    "errors": [],
+    "dimensions": {
+      "viewport": 1440,
+      "body": 1440,
+      "chapters": 18,
+      "fonts": [
+        true,
+        true
+      ],
+      "brokenImages": 0,
+      "links": 0
+    },
+    "a11y": [],
+    "type": {
+      "text": "Contexto real. Ação clara.",
+      "font": "\"IBM Plex Mono\", sans-serif"
+    },
+    "downloads": [
+      {
+        "filename": "birth-hub-360-logo-principal.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-negativo.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-monocromatico.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-branco.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-vertical.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-simbolo.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-icone.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-favicon.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-tokens.json",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-tokens.css",
+        "failure": null
+      },
+      {
+        "filename": "Cabin-Variable.ttf",
+        "failure": null
+      },
+      {
+        "filename": "IBMPlexMono-Regular.ttf",
+        "failure": null
+      },
+      {
+        "filename": "OFL-Cabin.txt",
+        "failure": null
+      },
+      {
+        "filename": "OFL-IBM-Plex-Mono.txt",
+        "failure": null
+      }
+    ],
+    "copy": "Cor #BE326F copiada.",
+    "keyboard": {
+      "tag": "BUTTON",
+      "outline": "solid"
+    }
+  },
+  "mobile": {
+    "errors": [],
+    "dimensions": {
+      "viewport": 390,
+      "body": 390,
+      "chapters": 18,
+      "fonts": [
+        true,
+        true
+      ],
+      "brokenImages": 0,
+      "links": 0
+    },
+    "a11y": [],
+    "type": {
+      "text": "Contexto real. Ação clara.",
+      "font": "\"IBM Plex Mono\", sans-serif"
+    },
+    "downloads": [
+      {
+        "filename": "birth-hub-360-logo-principal.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-negativo.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-monocromatico.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-branco.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-logo-vertical.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-simbolo.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-icone.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-favicon.svg",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-tokens.json",
+        "failure": null
+      },
+      {
+        "filename": "birth-hub-360-tokens.css",
+        "failure": null
+      },
+      {
+        "filename": "Cabin-Variable.ttf",
+        "failure": null
+      },
+      {
+        "filename": "IBMPlexMono-Regular.ttf",
+        "failure": null
+      },
+      {
+        "filename": "OFL-Cabin.txt",
+        "failure": null
+      },
+      {
+        "filename": "OFL-IBM-Plex-Mono.txt",
+        "failure": null
+      }
+    ],
+    "copy": "Cor #BE326F copiada.",
+    "mobileMenuClosed": true,
+    "keyboard": {
+      "tag": "DIV",
+      "outline": "solid"
+    }
+  }
+}
