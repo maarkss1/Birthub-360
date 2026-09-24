@@ -1,0 +1,6 @@
+{
+  "name": "Agente Birth Hub 360 & Web IDE",
+  "description": "Agente autônomo de programação para desenvolvimento local e em navegador com suporte a Gemini, Groq, Ollama e OpenRouter, editor de arquivos, diff visual e exportador CLI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
