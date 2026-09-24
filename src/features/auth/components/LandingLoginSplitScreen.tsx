@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { motion } from 'framer-motion';
+import { animate, motion, useReducedMotion } from 'framer-motion';
 import {
   AlertCircle,
   CalendarDays,
@@ -20,14 +20,63 @@ import {
   ArrowDown,
   ChevronDown,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { BirthHubLogo, BirthHubWordmark } from '../../../components/brand/BirthHubLogo';
 import { isAuthorizedLoginEmail } from '../../../config/access-policy';
 import { BRAND } from '../../../config/brand';
 import { useAuth } from '../../../contexts/AuthContext';
 import { authClient } from '../../../lib/auth-client';
-import { staggerContainer, staggerItem } from '../../../lib/motion';
+import { EASE_OUT_EXPO, staggerContainer, staggerItem } from '../../../lib/motion';
+
+/** Linha do slogan: sobe de dentro de uma máscara (overflow-hidden) — entrada em cascata linha a linha. */
+function RevealLine({ children, delay }: { children: ReactNode; delay: number }) {
+  return (
+    <span className="block overflow-hidden">
+      <motion.span
+        className="block"
+        initial={{ y: '110%' }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.7, delay, ease: EASE_OUT_EXPO }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  );
+}
+
+/** Número que conta de 0 até o valor final uma única vez (comunica a grandeza do indicador). Com
+ *  movimento reduzido mostra o valor final direto. */
+function CountUp({ to, suffix = '', delay = 0 }: { to: number; suffix?: string; delay?: number }) {
+  const reduceMotion = useReducedMotion();
+  const [value, setValue] = useState(reduceMotion ? to : 0);
+  useEffect(() => {
+    if (reduceMotion) {
+      setValue(to);
+      return;
+    }
+    const controls = animate(0, to, {
+      duration: 1.4,
+      delay,
+      ease: EASE_OUT_EXPO,
+      onUpdate: (v) => setValue(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [to, delay, reduceMotion]);
+  return (
+    <span className="tabular-nums">
+      {value}
+      {suffix}
+    </span>
+  );
+}
+
+const HERO_STATS = [
+  { Icon: DatabaseZap, to: 50, suffix: '+', lines: ['Sistemas', 'Integrados'] },
+  { Icon: BrainCircuit, to: 100, suffix: '+', lines: ['Empresas', 'Que Confiam'] },
+  { Icon: Rocket, to: 3, suffix: 'x', lines: ['Mais Eficiência', 'Comercial'] },
+  { Icon: Target, to: 360, suffix: '°', lines: ['Visão Da', 'Operação'] },
+];
 
 export function LandingLoginSplitScreen() {
   const navigate = useNavigate();
@@ -153,18 +202,18 @@ export function LandingLoginSplitScreen() {
 
         {/* Navbar */}
         <header className="relative z-20 flex items-center justify-between mb-16">
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <BirthHubLogo variant="icon" className="w-8 h-8 text-brand" />
             <BirthHubWordmark className="h-4 text-slate-900 dark:text-white" />
           </div>
-          <nav className="flex items-center gap-6 text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-300">
+          <nav className="hidden 2xl:flex items-center gap-6 text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-300">
             <span className="cursor-pointer hover:text-brand transition-colors">Soluções</span>
             <span className="cursor-pointer hover:text-brand transition-colors">Recursos</span>
             <span className="cursor-pointer hover:text-brand transition-colors">Segmentos</span>
             <span className="cursor-pointer hover:text-brand transition-colors">Preços</span>
             <span className="cursor-pointer hover:text-brand transition-colors">Conteúdo</span>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-4 whitespace-nowrap">
             <button
               type="button"
               className="flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300"
@@ -200,19 +249,17 @@ export function LandingLoginSplitScreen() {
             </motion.p>
             <motion.h1
               variants={staggerItem}
-              className="text-5xl md:text-6xl font-extrabold tracking-tight"
+              className="font-display text-5xl md:text-6xl font-bold tracking-tight"
             >
               Birth Hub <span className="text-brand">360&deg;</span>
             </motion.h1>
             <motion.p
               variants={staggerItem}
-              className="text-2xl font-light leading-snug text-slate-700 dark:text-slate-200"
+              className="font-display text-2xl md:text-3xl font-normal leading-snug text-slate-700 dark:text-slate-200"
             >
-              Dados que conectam.
-              <br />
-              Inteligência que decide.
-              <br />
-              Resultados que acontecem.
+              <RevealLine delay={0.35}>Dados que conectam.</RevealLine>
+              <RevealLine delay={0.5}>Inteligência que decide.</RevealLine>
+              <RevealLine delay={0.65}>Resultados que acontecem.</RevealLine>
             </motion.p>
             <motion.p
               variants={staggerItem}
@@ -225,7 +272,7 @@ export function LandingLoginSplitScreen() {
               <button
                 type="button"
                 onClick={() => navigate('/login')}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#E6C65A] px-6 py-3 text-sm font-bold text-slate-900 shadow-[0_4px_14px_rgba(212,175,55,0.4)] transition-transform hover:-translate-y-0.5"
+                className="flex items-center gap-2 rounded-full transition-transform hover:-translate-y-0.5 active:translate-y-0 motion-reduce:transform-none bg-gradient-to-r from-[#D4AF37] to-[#E6C65A] px-6 py-3 text-sm font-bold text-slate-900 shadow-[0_4px_14px_rgba(212,175,55,0.4)] transition-transform hover:-translate-y-0.5"
               >
                 Explorar o Birth Hub &rarr;
               </button>
@@ -243,44 +290,26 @@ export function LandingLoginSplitScreen() {
         </div>
 
         {/* Stats Row */}
-        <div className="relative z-20 mt-12 grid grid-cols-4 gap-4 border-t border-slate-200 dark:border-white/10 pt-8">
-          <div>
-            <DatabaseZap className="h-5 w-5 text-slate-400 dark:text-slate-500 mb-2" />
-            <div className="text-2xl font-bold">50+</div>
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">
-              Sistemas
-              <br />
-              Integrados
-            </div>
-          </div>
-          <div>
-            <BrainCircuit className="h-5 w-5 text-slate-400 dark:text-slate-500 mb-2" />
-            <div className="text-2xl font-bold">100+</div>
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">
-              Empresas
-              <br />
-              Que Confiam
-            </div>
-          </div>
-          <div>
-            <Rocket className="h-5 w-5 text-slate-400 dark:text-slate-500 mb-2" />
-            <div className="text-2xl font-bold">3x</div>
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">
-              Mais Eficiência
-              <br />
-              Comercial
-            </div>
-          </div>
-          <div>
-            <Target className="h-5 w-5 text-slate-400 dark:text-slate-500 mb-2" />
-            <div className="text-2xl font-bold">360&deg;</div>
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">
-              Visão Da
-              <br />
-              Operação
-            </div>
-          </div>
-        </div>
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={staggerContainer(0.09)}
+          className="relative z-20 mt-12 grid grid-cols-4 gap-4 border-t border-slate-200 dark:border-white/10 pt-8"
+        >
+          {HERO_STATS.map((stat, i) => (
+            <motion.div key={stat.lines.join(' ')} variants={staggerItem}>
+              <stat.Icon className="h-5 w-5 text-slate-400 dark:text-slate-500 mb-2" />
+              <div className="font-display text-3xl font-bold">
+                <CountUp to={stat.to} suffix={stat.suffix} delay={0.5 + i * 0.09} />
+              </div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">
+                {stat.lines[0]}
+                <br />
+                {stat.lines[1]}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
         {/* Scroll indicator */}
         <div className="relative z-20 mt-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400">
@@ -377,26 +406,31 @@ export function LandingLoginSplitScreen() {
 
         <div className="w-full max-w-md z-10">
           {/* Header */}
-          <div className="text-center mb-8">
+          <motion.div
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
+          >
             <div className="inline-block relative mb-4">
               <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand via-pink to-orbitBlue blur-xl opacity-30 dark:opacity-50" />
               <div className="relative w-20 h-20 rounded-full bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-white/10 flex items-center justify-center">
                 <BirthHubLogo variant="symbol" className="w-12 h-12" />
               </div>
             </div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">
+            <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
               Birth Hub 360&deg;
             </h2>
-            <p className="text-lg font-medium text-slate-700 dark:text-slate-300 mb-1">
+            <p className="font-display text-lg font-medium text-slate-700 dark:text-slate-300 mb-1">
               Acessar plataforma
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide">
               Dados &rarr; Inteligência &rarr; Decisão &rarr; Execução
             </p>
-          </div>
+          </motion.div>
 
           {/* Form Card */}
-          <div className="bg-white dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-white/10 p-1">
+          <div className="animate-fade-in bg-white dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-white/10 p-1">
             {/* Tabs */}
             <div className="flex border-b border-slate-100 dark:border-white/5">
               <button
