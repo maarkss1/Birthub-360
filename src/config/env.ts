@@ -138,6 +138,7 @@ const envSchema = z
     FLOWISE_SECRET_KEY: z.string().optional(),
     OPENWEBUI_URL: z.string().url().default('http://localhost:3009'),
     OPENWEBUI_SECRET: z.string().optional(),
+    GEMINI_API_KEY: z.string().optional(),
 
     // ── Qdrant (OS-5, docker-compose.services.yml) ───────────────────────────
     // Cliente registrado em src/lib/qdrant/index.ts, mas hoje sem nenhuma feature plugada nele —
