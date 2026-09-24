@@ -4,7 +4,10 @@
     {
       "name": "prospector-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3024,
       "env": {
         "NODE_ENV": "development",
@@ -19,7 +22,10 @@
     {
       "name": "prospector-dev-nowatch",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["tsx", "server.ts"],
+      "runtimeArgs": [
+        "tsx",
+        "server.ts"
+      ],
       "port": 3024,
       "env": {
         "NODE_ENV": "development",
@@ -34,7 +40,10 @@
     {
       "name": "prospector-dev-uxcheck",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3009,
       "env": {
         "PORT": "3009",
@@ -63,14 +72,36 @@
     {
       "name": "portal-comercial-static",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["http-server", "-p", "8088", "-c-1"],
+      "runtimeArgs": [
+        "http-server",
+        "-p",
+        "8088",
+        "-c-1"
+      ],
       "port": 8088
     },
     {
       "name": "frontend-preview",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "preview", "--port", "4173", "--strictPort"],
+      "runtimeArgs": [
+        "vite",
+        "preview",
+        "--port",
+        "4173",
+        "--strictPort"
+      ],
       "port": 4173
+    },
+    {
+      "name": "landing-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "landing",
+        "run",
+        "dev"
+      ],
+      "port": 5300
     }
   ]
 }
