@@ -16,7 +16,7 @@ export default tseslint.config(
     // public/tools/** são aplicações legadas embutidas por iframe (ver CLAUDE.md §13) — bundles
     // JS de terceiros minificados (Next.js, vendor chunks), não código deste projeto. Sem este
     // ignore, ~18 mil erros de lint desses bundles escondem os erros reais de src/ no mesmo report.
-    ignores: ['dist', 'node_modules', 'build', '*.config.js', 'public/tools/**'],
+    ignores: ['dist', 'node_modules', 'build', 'landing/**', '*.config.js', 'public/tools/**'],
   },
   {
     // Extensão Chrome (MV3): service worker (background.js), content script (content.js) e páginas
