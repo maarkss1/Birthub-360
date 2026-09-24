@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ssh oracle-atlasgr:*)"
+      "Bash(ssh oracle-atlasgr:*)",
+      "Bash(git commit -q -m 'docs\\(design-system\\): handoff do Design System Bible \\(ferramentas, dados parciais e passo a passo\\) *)"
     ]
   },
   "hooks": {
