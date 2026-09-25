@@ -2,7 +2,7 @@ import type { Prisma } from '@prisma/client';
 import type { StudioEdge, StudioNode, ValidationIssue } from '../../lib/studio/types.js';
 import * as workflowRepository from '../repositories/workflowRepository.js';
 import * as agentRepository from '../repositories/agentRepository.js';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger.js';
 import {
   knowledgeConfidenceEngine,
   type KnowledgeDocument,

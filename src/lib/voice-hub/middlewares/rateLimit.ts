@@ -9,7 +9,7 @@
 import type express from 'express';
 import { Redis } from 'ioredis';
 import { getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 const redisClient = new Redis(getRedisUrl(), { maxRetriesPerRequest: 1, connectTimeout: 2000, commandTimeout: 2000, retryStrategy: getRedisRetryStrategy() });
 redisClient.on('error', (err) => logger.error('Rate limiter Redis error', err));

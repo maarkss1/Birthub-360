@@ -5,7 +5,7 @@ import { refreshSession } from '../services/authService.js';
 import { setCookie, ACCESS_TOKEN_MAX_AGE_MS } from '../lib/cookies.js';
 import { authenticateApiKey, isApiKeyFormat } from '../services/apiKeyService.js';
 import { getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 export const csrfProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (['POST', 'PUT', 'DELETE'].includes(req.method)) {

@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { outboundCallSchema } from '../validators/index.js';
 import { initiateOutboundCall, AgentNotFoundError, DuplicateCallError } from '../services/outboundCallService.js';
 import { TwilioNotConfiguredError } from '../services/twilioClient.js';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 export async function initiateOutboundCallHandler(req: Request, res: Response) {
   const parsed = outboundCallSchema.safeParse(req.body);

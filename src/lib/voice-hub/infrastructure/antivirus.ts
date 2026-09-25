@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
 import NodeClam from 'clamscan';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 /**
  * Thrown when a scanned buffer tests positive for one or more viruses. Callers must reject the

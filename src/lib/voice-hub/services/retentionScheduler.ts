@@ -1,6 +1,6 @@
 import { Queue, Worker } from 'bullmq';
 import { getRedisConnectionOptions } from '../lib/env.js';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger.js';
 import { purgeExpiredCallLogs } from './callLogService.js';
 
 /**

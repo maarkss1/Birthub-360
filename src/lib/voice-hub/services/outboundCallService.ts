@@ -3,7 +3,7 @@ import * as agentRepository from '../repositories/agentRepository.js';
 import * as sessionRepository from '../repositories/sessionRepository.js';
 import { getTelephonyProvider } from './telephonyProvider.js';
 import type { PhoneSessionMetadata } from './telephonyService.js';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 export class AgentNotFoundError extends Error {}
 export class DuplicateCallError extends Error {}
