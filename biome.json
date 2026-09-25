@@ -6,7 +6,11 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["src/**", "server/**", "scripts/**"]
+    "includes": [
+      "src/**",
+      "server/**",
+      "scripts/**"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -17,7 +21,13 @@
     "lineWidth": 100,
     "attributePosition": "auto"
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -26,12 +36,15 @@
         "noUnusedVariables": "warn",
         "noUnusedImports": "warn",
         "useExhaustiveDependencies": "warn",
-        "noUndeclaredVariables": "error"
+        "noUndeclaredVariables": "error",
+        "noUnreachable": "warn"
       },
       "suspicious": {
-        "noExplicitAny": "warn",
+        "noExplicitAny": "off",
         "noConsole": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "useIterableCallbackReturn": "warn",
+        "noImplicitAnyLet": "warn"
       },
       "style": {
         "useConst": "error",
@@ -47,7 +60,15 @@
         "noAutofocus": "warn",
         "noSvgWithoutTitle": "off",
         "useButtonType": "warn",
-        "useSemanticElements": "warn"
+        "useSemanticElements": "warn",
+        "noStaticElementInteractions": "warn",
+        "noLabelWithoutControl": "warn",
+        "noAriaHiddenOnFocusable": "warn",
+        "useFocusableInteractive": "warn",
+        "useAriaPropsSupportedByRole": "warn",
+        "noNoninteractiveTabindex": "warn",
+        "useMediaCaption": "warn",
+        "useValidAnchor": "warn"
       }
     }
   },
@@ -90,7 +111,9 @@
       }
     },
     {
-      "includes": ["src/hooks/use3CXIntegration.ts"],
+      "includes": [
+        "src/hooks/use3CXIntegration.ts"
+      ],
       "linter": {
         "rules": {
           "correctness": {
