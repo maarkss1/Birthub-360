@@ -1,5 +1,4 @@
 import express from 'express';
-import authRoutes from './auth.routes.js';
 import workflowRoutes from './workflow.routes.js';
 import callLogRoutes from './callLog.routes.js';
 import onboardingRoutes from './onboarding.routes.js';
@@ -25,7 +24,6 @@ import webhookEndpointRoutes from './webhookEndpoint.routes.js';
 
 const router = express.Router();
 
-router.use(authRoutes);
 router.use(workflowRoutes);
 router.use(callLogRoutes);
 router.use(onboardingRoutes);

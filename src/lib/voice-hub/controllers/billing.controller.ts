@@ -63,20 +63,20 @@ export async function changePlanHandler(req: Request, res: Response) {
     const wallet = await changePlan(
       req.organizationId!,
       parsed.data.planId,
-      req.user?.id,
+      req.voiceHubUser?.id,
       parsed.data.effectiveAt ?? 'immediate'
     );
-    writeAuditLog(req.organizationId, req.user?.id, 'BILLING_PLAN_CHANGED', { planId: parsed.data.planId });
+    writeAuditLog(req.organizationId, req.voiceHubUser?.id, 'BILLING_PLAN_CHANGED', { planId: parsed.data.planId });
     // Best-effort: a notification write failing must never fail the plan change itself (the
     // money/plan side-effect already succeeded). See notificationService.ts module doc — this is
     // the first of potentially several domains calling the same generic entry point, not a
     // billing-only notification path.
     createNotification({
-      userId: req.user?.id,
+      userId: req.voiceHubUser?.id,
       title: 'Plano atualizado',
       message: `Seu plano foi alterado com sucesso para ${wallet.planName ?? parsed.data.planId}.`,
     }).catch((err) => {
-      logger.error('Failed to create plan-change notification', { err, userId: req.user?.id });
+      logger.error('Failed to create plan-change notification', { err, userId: req.voiceHubUser?.id });
     });
     return res.json({ wallet });
   } catch (err: any) {

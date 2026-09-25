@@ -30,7 +30,6 @@ export const csrfProtection = (req: express.Request, res: express.Response, next
       // this is our only CSRF signal — outside production, tooling (tests, curl, etc.) may not send it.
       if (isProduction) {
         return res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
-        return;
       }
       return next();
     }
@@ -40,11 +39,9 @@ export const csrfProtection = (req: express.Request, res: express.Response, next
         const parsedOrigin = new URL(origin).host;
         if (parsedOrigin !== host) {
           return res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
-          return;
         }
       } catch {
         return res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
-        return;
       }
     }
   }
@@ -128,7 +125,7 @@ export async function getAuthUser(req: express.Request, res?: express.Response):
 export const attachAuthIfPresent = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const session = await getAuthUser(req, res);
   if (session) {
-    req.user = session;
+    req.voiceHubUser = session;
     req.organizationId = session.organizationId;
 
     // Auto-upsert User and Tenant in Dev environment so old JWT cookies don't break fresh databases
@@ -164,7 +161,6 @@ export const attachAuthIfPresent = async (req: express.Request, res: express.Res
     const limited = await isApiKeyRateLimited(req.apiKeyId);
     if (limited) {
       return res.status(429).json({ error: 'Limite de requisições excedido para esta chave de API. Tente novamente em breve.' });
-      return;
     }
   }
 

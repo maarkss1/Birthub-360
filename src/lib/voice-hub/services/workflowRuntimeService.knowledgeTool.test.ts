@@ -25,8 +25,8 @@ import {
   resumeAfterTool,
   validateRuntimeCompatibility,
 } from './workflowRuntimeService.js';
-import type { StudioEdge, StudioNode, NodeType } from '../../lib/studio/types.js';
-import type { KnowledgeDocument } from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
+import type { StudioEdge, StudioNode, NodeType } from '@/lib/studio/types.js';
+import type { KnowledgeDocument } from '@/lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
 
 const mockFindActive = vi.mocked(findActiveWorkflowForTenant);
 const mockGetAgent = vi.mocked(getAgent);

@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response } from 'express';
 
 // Mock dependencies
-vi.mock('../../lib/voice-runtime/providers/LLMGateway.js', () => ({
+vi.mock('@/lib/voice-runtime/providers/LLMGateway.js', () => ({
   llmProviderGateway: {
     processRequest: vi.fn(),
   },
 }));
 
-vi.mock('../services/settingService.js', () => ({
+vi.mock('./services/settingService.js', () => ({
   getAiConsent: vi.fn(),
   grantAiConsent: vi.fn(),
   revokeAiConsent: vi.fn(),
@@ -37,8 +37,8 @@ vi.mock('@google/genai', () => {
   };
 });
 
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
-import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService.js';
+import { llmProviderGateway } from '@/lib/voice-runtime/providers/LLMGateway.js';
+import { getAiConsent, grantAiConsent, revokeAiConsent } from './services/settingService.js';
 import {
   chatHandler,
   getAiConsentHandler,
@@ -91,7 +91,7 @@ describe('ai.controller', () => {
     });
 
     it('delegates to llmProviderGateway with GoogleGemini and organizationId', async () => {
-      const mockResult: import('../../lib/voice-runtime/providers/LLMGateway.js').GatewayResponse = {
+      const mockResult: import('@/lib/voice-runtime/providers/LLMGateway.js').GatewayResponse = {
         text: 'Resposta do modelo',
         providerUsed: 'GoogleGemini',
         latencyMs: 120,

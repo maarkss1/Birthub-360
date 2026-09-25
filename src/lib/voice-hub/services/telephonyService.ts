@@ -3,7 +3,7 @@ import * as agentRepository from '../repositories/agentRepository.js';
 import * as sessionRepository from '../repositories/sessionRepository.js';
 import * as callLogService from './callLogService.js';
 import { webhookService } from './webhook.service.js';
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
+import { llmProviderGateway } from '@/lib/voice-runtime/providers/LLMGateway.js';
 import {
   getWorkflowOpeningQuestion,
   initializeWorkflowRuntime,

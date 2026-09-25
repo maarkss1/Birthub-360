@@ -1,19 +1,16 @@
 import type { Request, Response, NextFunction } from 'express';
-import { attachAuthIfPresent } from './index.js';
 import { getPermissionsForRoleName } from '../repositories/roleRepository.js';
 
 export const requireTenant = async (req: Request, res: Response, next: NextFunction) => {
-  await attachAuthIfPresent(req, res, () => {
-    if (!req.user || !req.organizationId) {
+    if (!req.voiceHubUser || !req.organizationId || req.voiceHubUser.organizationId !== req.organizationId) {
       return res.status(401).json({ error: 'Não autorizado.' });
     }
     return next();
-  });
 };
 
 export const requireRole = (allowedRoles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const session = req.user;
+    const session = req.voiceHubUser;
     if (!session) {
       return res.status(401).json({ error: 'Não autorizado.' });
     }
@@ -43,13 +40,13 @@ export async function hasPermission(
 
 export const requirePermission = (permission: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
+    if (!req.voiceHubUser) {
       return res.status(401).json({ error: 'Não autorizado.' });
     }
 
     // Returning the promise is harmless for Express (the return value is ignored) and lets
     // callers/tests await this middleware deterministically instead of racing the async check.
-    return hasPermission(req.user, permission)
+    return hasPermission(req.voiceHubUser, permission)
       .then((allowed) => {
         if (!allowed) {
           return res.status(403).json({ error: `Acesso proibido. Requer a permissão: ${permission}.` });

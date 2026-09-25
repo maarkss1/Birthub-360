@@ -12,8 +12,8 @@ export async function createCallLogHandler(req: Request, res: Response) {
   const parsed = callLogSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
-  const log = await createCallLog(req.organizationId!, req.user?.id ?? null, parsed.data);
-  if (req.user) writeAuditLog(req.organizationId, req.user.id, 'CALL_LOG_CREATE', { logId: log.id });
+  const log = await createCallLog(req.organizationId!, req.voiceHubUser?.id ?? null, parsed.data);
+  if (req.voiceHubUser) writeAuditLog(req.organizationId, req.voiceHubUser.id, 'CALL_LOG_CREATE', { logId: log.id });
   return res.json({ success: true, log });
 }
 

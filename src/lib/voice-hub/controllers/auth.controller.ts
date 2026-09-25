@@ -98,7 +98,7 @@ export async function logoutHandler(_req: Request, res: Response) {
 // permission-gated action must still be enforced authoritatively server-side (requirePermission /
 // hasPermission in src/middlewares/rbac.ts), never trusted from this response alone.
 export async function meHandler(req: Request, res: Response) {
-  if (!req.user) return res.json({ user: null });
-  const permissions = await getPermissionsForRoleName(req.user.role, req.user.organizationId);
-  return res.json({ user: { ...req.user, permissions } });
+  if (!req.voiceHubUser) return res.json({ user: null });
+  const permissions = await getPermissionsForRoleName(req.voiceHubUser.role, req.voiceHubUser.organizationId);
+  return res.json({ user: { ...req.voiceHubUser, permissions } });
 }

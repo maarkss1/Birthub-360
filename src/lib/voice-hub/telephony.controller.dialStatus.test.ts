@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response } from 'express';
 import { dialStatusHandler, gatherHandler } from './telephony.controller.js';
 
-vi.mock('../services/telephonyService.js', () => ({
+vi.mock('./services/telephonyService.js', () => ({
   startCall: vi.fn(),
   startOutboundCall: vi.fn(),
   handleTurn: vi.fn(),
@@ -10,7 +10,7 @@ vi.mock('../services/telephonyService.js', () => ({
   messages: { reprompt: 'Pode repetir?', goodbye: 'Até logo.' },
 }));
 
-import { handleTurn } from '../services/telephonyService.js';
+import { handleTurn } from './services/telephonyService.js';
 const mockHandleTurn = vi.mocked(handleTurn);
 
 function fakeRes() {

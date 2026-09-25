@@ -11,7 +11,7 @@
 //     extension (see the handoff to Agente 01 this agent filed alongside this service).
 //   - scoped by `userId`, not `organizationId`. `Notification` has no `organizationId` column. A `User`
 //     belongs to exactly one `Tenant` (`User.organizationId`), so filtering by `userId` alone cannot
-//     leak a notification across tenants *as long as* `userId` always comes from `req.user.id`
+//     leak a notification across tenants *as long as* `userId` always comes from `req.voiceHubUser.id`
 //     (never from a client-supplied payload/query param) — enforced in notification.controller.ts,
 //     never relaxed here. This mirrors the existing Session/Metric/Setting per-user pattern in the
 //     schema and is the same invariant AGENTS.md §16 item 12 (this agent's own LGPD
@@ -68,7 +68,7 @@ function mapNotification(notification: Notification): NotificationSummary {
 }
 
 // Generic creation entry point — see module doc above. `userId` must already be known-good
-// (resolved from `req.user.id` at the call site, or from a trusted internal domain event), never
+// (resolved from `req.voiceHubUser.id` at the call site, or from a trusted internal domain event), never
 // taken from unvalidated external input.
 export async function createNotification(input: {
   userId: string;

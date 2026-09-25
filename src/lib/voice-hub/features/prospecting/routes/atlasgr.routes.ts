@@ -50,7 +50,6 @@ function validateAtlasGRSecret(req: express.Request, res: express.Response, next
   if (!expectedSecret) {
     logger.error('AtlasGR webhook rejected: ATLASGR_WEBHOOK_SECRET is not configured (failing closed)');
     return res.status(503).json({ error: 'Integração AtlasGR não está configurada.' });
-    return;
   }
 
   const provided = req.headers['x-atlasgr-webhook-secret'];
@@ -59,7 +58,6 @@ function validateAtlasGRSecret(req: express.Request, res: express.Response, next
       hasHeader: typeof provided === 'string',
     });
     return res.status(401).json({ error: 'Não autorizado.' });
-    return;
   }
 
   return next();
@@ -75,14 +73,12 @@ function validateBlandCallbackToken(req: express.Request, res: express.Response,
   if (!expectedToken) {
     logger.error('Bland AI callback rejected: BLAND_WEBHOOK_TOKEN is not configured (failing closed)');
     return res.status(503).json({ error: 'Callback da Bland AI não está configurado.' });
-    return;
   }
 
   const provided = req.params.token;
   if (typeof provided !== 'string' || !safeEqual(provided, expectedToken)) {
     logger.warn('Bland AI callback rejected: invalid token');
     return res.status(403).json({ error: 'Token inválido.' });
-    return;
   }
 
   return next();
@@ -93,7 +89,6 @@ router.post('/webhook/atlasgr/outbound', validateAtlasGRSecret, async (req, res)
   if (!parsed.success) {
     logger.warn('AtlasGR webhook rejected: invalid payload', { issues: parsed.error.issues });
     return res.status(400).json({ error: 'Payload inválido.', issues: parsed.error.issues.map((i) => i.message) });
-    return;
   }
 
   try {
@@ -113,12 +108,10 @@ router.post('/webhook/atlasgr/outbound', validateAtlasGRSecret, async (req, res)
         error: error.message,
       });
       return res.status(503).json({ error: 'Não foi possível processar o webhook no momento. Tente novamente.' });
-      return;
     }
     if (error instanceof BlandConfigurationError) {
       logger.error('AtlasGR webhook: Bland AI integration is misconfigured', { error: error.message });
       return res.status(503).json({ error: 'Integração com Bland AI não está configurada.' });
-      return;
     }
     logger.error('AtlasGR webhook: failed to process outbound call request', {
       error: error instanceof Error ? error.message : String(error),
@@ -132,7 +125,6 @@ router.post('/webhooks/bland/:token', validateBlandCallbackToken, async (req, re
   if (!parsed.success) {
     logger.warn('Bland AI callback rejected: invalid payload', { issues: parsed.error.issues });
     return res.status(400).json({ error: 'Payload inválido.' });
-    return;
   }
 
   const data = parsed.data as typeof parsed.data & Record<string, unknown>;
@@ -153,7 +145,6 @@ router.post('/webhooks/bland/:token', validateBlandCallbackToken, async (req, re
       hasSecret: Boolean(webhookSecret),
     });
     return res.status(503).json({ error: 'Integração de retorno com AtlasGR não está configurada.' });
-    return;
   }
 
   let processingState: Awaited<ReturnType<typeof beginBlandCallbackProcessing>>;
@@ -165,18 +156,15 @@ router.post('/webhooks/bland/:token', validateBlandCallbackToken, async (req, re
       error: error instanceof Error ? error.message : String(error),
     });
     return res.status(503).json({ error: 'Não foi possível verificar idempotência do callback.' });
-    return;
   }
 
   if (processingState === 'duplicate') {
     return res.status(200).json({ received: true, duplicate: true });
-    return;
   }
 
   if (processingState === 'in_progress') {
     // Ask the provider to retry later instead of executing the same CRM side effect concurrently.
     return res.status(503).json({ error: 'Callback já está sendo processado. Tente novamente.' });
-    return;
   }
 
   const variables = asRecord(data.variables);

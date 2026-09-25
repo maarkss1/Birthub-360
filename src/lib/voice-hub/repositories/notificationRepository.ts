@@ -8,7 +8,7 @@
 // Every function here takes `userId`, never `organizationId`: `Notification` has no `organizationId` column
 // (see the schema comment directly above `model Notification` in prisma/schema.prisma). Filtering
 // by `userId` alone is tenant-safe *only* as long as callers always derive `userId` from
-// `req.user.id` (never from a client-supplied payload) — the same invariant already documented
+// `req.voiceHubUser.id` (never from a client-supplied payload) — the same invariant already documented
 // there and enforced by notificationService/notification.controller, never repeated or relaxed
 // here.
 import type { Notification, Prisma } from '@prisma/client';

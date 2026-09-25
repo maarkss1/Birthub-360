@@ -5,10 +5,10 @@ import {
   initiateOutboundCall,
   AgentNotFoundError,
   DuplicateCallError,
-} from '../services/outboundCallService.js';
-import { TwilioNotConfiguredError } from '../services/twilioClient.js';
+} from './services/outboundCallService.js';
+import { TwilioNotConfiguredError } from './services/twilioClient.js';
 
-vi.mock('../services/outboundCallService.js', () => ({
+vi.mock('./services/outboundCallService.js', () => ({
   initiateOutboundCall: vi.fn(),
   AgentNotFoundError: class AgentNotFoundError extends Error {
     constructor(message: string) {
@@ -24,7 +24,7 @@ vi.mock('../services/outboundCallService.js', () => ({
   },
 }));
 
-vi.mock('../services/twilioClient.js', () => ({
+vi.mock('./services/twilioClient.js', () => ({
   TwilioNotConfiguredError: class TwilioNotConfiguredError extends Error {
     constructor(message: string) {
       super(message);

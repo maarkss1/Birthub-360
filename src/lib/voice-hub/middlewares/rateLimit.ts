@@ -26,7 +26,6 @@ export const createRateLimiter = (keyPrefix: string, limit: number, windowSecond
       }
       if (current > limit) {
         return res.status(429).json({ error: 'Limite de requisições excedido. Tente novamente em um minuto.' });
-        return;
       }
       return next();
     } catch {

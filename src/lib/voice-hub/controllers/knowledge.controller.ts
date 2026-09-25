@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { getAgent, updateAgentConfig } from '../services/agentService.js';
-import { knowledgeConfidenceEngine } from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
+import { knowledgeConfidenceEngine } from '@/lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
 import type { AgentConfiguration } from '../types/agent.js';
 import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from '../infrastructure/antivirus.js';
 import { logger } from '@/lib/logger';

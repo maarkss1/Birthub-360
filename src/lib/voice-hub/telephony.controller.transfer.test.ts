@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 
 // Same mocking shape as `__tests__/telephony.controller.test.ts` (Agente 08) — see
 // `.agents/handoffs/onda-6/04-para-05-transferDetails-contrato.md`.
-vi.mock('../services/telephonyService.js', () => ({
+vi.mock('./services/telephonyService.js', () => ({
   startCall: vi.fn(),
   startOutboundCall: vi.fn(),
   handleTurn: vi.fn(),
@@ -11,7 +11,7 @@ vi.mock('../services/telephonyService.js', () => ({
   messages: { reprompt: 'Pode repetir?', goodbye: 'Até logo.' },
 }));
 
-import { handleTurn } from '../services/telephonyService.js';
+import { handleTurn } from './services/telephonyService.js';
 import { gatherHandler } from './telephony.controller.js';
 
 const mockHandleTurn = vi.mocked(handleTurn);

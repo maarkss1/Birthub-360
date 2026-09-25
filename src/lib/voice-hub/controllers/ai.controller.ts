@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { GoogleGenAI, GenerateVideosOperation } from '@google/genai';
 import { logger } from '@/lib/logger';
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
+import { llmProviderGateway } from '@/lib/voice-runtime/providers/LLMGateway.js';
 import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService.js';
 
 function getGeminiClient(): GoogleGenAI | null {
@@ -60,8 +60,8 @@ export async function setAiConsentHandler(req: Request, res: Response) {
   }
 
   const consent = granted
-    ? await grantAiConsent(req.organizationId!, req.user?.id)
-    : await revokeAiConsent(req.organizationId!, req.user?.id);
+    ? await grantAiConsent(req.organizationId!, req.voiceHubUser?.id)
+    : await revokeAiConsent(req.organizationId!, req.voiceHubUser?.id);
 
   return res.json({ success: true, consent });
 }
