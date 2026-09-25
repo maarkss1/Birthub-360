@@ -37,7 +37,8 @@
         "noUnusedImports": "warn",
         "useExhaustiveDependencies": "warn",
         "noUndeclaredVariables": "error",
-        "noUnreachable": "warn"
+        "noUnreachable": "warn",
+        "noInvalidUseBeforeDeclaration": "warn"
       },
       "suspicious": {
         "noExplicitAny": "off",

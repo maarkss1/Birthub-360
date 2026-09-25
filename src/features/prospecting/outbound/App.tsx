@@ -183,13 +183,6 @@ export default function App() {
   } | null>(null);
   const [isCheckingOllama, setIsCheckingOllama] = useState<boolean>(false);
 
-  // Fetch initial stats and initial leads on mount
-  useEffect(() => {
-    fetchDbStats();
-    checkOllamaStatus();
-    loadInitialCampaign();
-  }, [loadInitialCampaign, fetchDbStats, checkOllamaStatus]);
-
   const fetchDbStats = async () => {
     try {
       const res = await fetch('/api/db/stats');
@@ -244,6 +237,13 @@ export default function App() {
       console.warn('Erro ao carregar campanha inicial:', err);
     }
   };
+
+  // Fetch initial stats and initial leads on mount
+  useEffect(() => {
+    fetchDbStats();
+    checkOllamaStatus();
+    loadInitialCampaign();
+  }, [loadInitialCampaign, fetchDbStats, checkOllamaStatus]);
 
   // Start Prospecting Search Pipeline
   const handleStartSearch = async () => {
