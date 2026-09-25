@@ -378,7 +378,7 @@ Consultivo, profissional, calmo e seguro.`}
                   <Activity className="h-4 w-4 text-brand" /> Insights da Catarina AI
                 </h4>
                 <div className="space-y-3">
-                  <div className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 border border-blue-100 dark:border-blue-800/50 rounded-lg text-sm flex gap-3 items-start">
+                  <div className="p-3 bg-blue-50 dark:bg-brand/20 text-brand-ink dark:text-brand dark:text-brand-ink dark:text-brand border border-blue-100 dark:border-blue-800/50 rounded-lg text-sm flex gap-3 items-start">
                     <Zap className="h-5 w-5 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold">Otimização de Custos</p>

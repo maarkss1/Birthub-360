@@ -1,6 +1,6 @@
-import { env } from "@/config/env";
-import { logger } from "@/lib/logger";
-import { prisma } from "@/lib/prisma";
+import { env } from '../../../config/env';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
 import { PgCampaignRepository } from "./infrastructure/db/repositories/PgCampaignRepository.js";
 import { PgLeadRepository } from "./infrastructure/db/repositories/PgLeadRepository.js";
 import { PgCallAttemptRepository } from "./infrastructure/db/repositories/PgCallAttemptRepository.js";

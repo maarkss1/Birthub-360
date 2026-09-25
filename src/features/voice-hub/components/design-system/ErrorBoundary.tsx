@@ -1,7 +1,7 @@
 
 import React, { ErrorInfo, ReactNode } from 'react';
 import { AlertCircle, RotateCcw, Home } from 'lucide-react';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../lib/logger';
 import { useSessionStore } from '../../store/useSessionStore';
 import { getAccessibleTextOnBrand } from './tokens';
 

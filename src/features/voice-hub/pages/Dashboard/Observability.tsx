@@ -3,7 +3,7 @@ import { Card, Badge, Spinner, Table, TableHead, TableRow, TableCell } from '../
 import { Activity, BarChart2, Server, Zap, Shield, Terminal, RefreshCw, Layers } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import type { Attributes } from '@opentelemetry/api';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../lib/logger';
 
 interface LocalSpan {
   id: string;

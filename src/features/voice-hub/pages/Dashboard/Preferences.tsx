@@ -4,7 +4,7 @@ import {
   SlidersHorizontal, ArrowRight, AlertTriangle
 } from 'lucide-react';
 import { Card, Button, Badge, Switch, Select, useToast, ToastContainer, Skeleton } from '../../components/design-system';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../lib/logger';
 
 const PREFERENCES_DEFAULTS = {
   lang: 'pt',
@@ -174,7 +174,7 @@ export default function PreferencesPage() {
           {/* LOCALIDADE */}
           <Card className="space-y-6">
             <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-700/60 pb-3">
-              <div className="p-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-lg">
+              <div className="p-2 bg-blue-50 dark:bg-blue-950/40 text-brand-ink dark:text-brand dark:text-brand-ink dark:text-brand rounded-lg">
                 <Globe className="h-5 w-5" />
               </div>
               <div>

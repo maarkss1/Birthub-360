@@ -11,7 +11,7 @@ import {
   Card, Button, Badge, Progress, Spinner, Skeleton, EmptyState, Alert,
   Tooltip, Modal, useToast, ToastContainer
 } from '../../components/design-system';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger';
 
 interface CallLogEntry {
   id: string;
@@ -395,7 +395,7 @@ export default function RebuiltExecutiveOverview() {
           </div>
         </Card>
         <Card className="p-4 hover:border-brand cursor-pointer transition-colors flex items-center gap-3" onClick={() => navigate('/dashboard/analytics')}>
-          <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg"><Activity className="h-5 w-5" /></div>
+          <div className="p-2 bg-indigo-50 dark:bg-iris/30 text-iris dark:text-iris rounded-lg"><Activity className="h-5 w-5" /></div>
           <div className="text-left">
             <h4 className="font-bold text-slate-900 dark:text-white text-sm">Ver Análises</h4>
             <p className="text-xs text-slate-500">Métricas recentes</p>
@@ -935,7 +935,7 @@ export default function RebuiltExecutiveOverview() {
       {activeTab === 'audit' && (
         <Card className="p-8 space-y-8 animate-fade-in text-left">
           <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-750 pb-4">
-            <div className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-lg">
+            <div className="p-2 bg-indigo-50 dark:bg-indigo-950/40 text-iris dark:text-iris rounded-lg">
               <ShieldCheck className="h-6 w-6" />
             </div>
             <div>

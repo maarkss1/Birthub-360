@@ -75,7 +75,7 @@ export function AgentForm() {
       {/* Main Glassmorphism Form */}
       <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl rounded-3xl border border-white/20 dark:border-slate-800/50 shadow-2xl overflow-hidden relative">
         <div className="absolute top-0 right-0 h-64 w-64 bg-brand-500/10 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute bottom-0 left-0 h-64 w-64 bg-indigo-500/10 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 left-0 h-64 w-64 bg-iris/10 rounded-full blur-3xl -z-10"></div>
 
         <div className="p-8 md:p-10 relative z-10 space-y-10">
           

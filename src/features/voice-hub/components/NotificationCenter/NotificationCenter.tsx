@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Bell, Check, CheckCheck, RefreshCw } from 'lucide-react';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../lib/logger';
 import { formatRelativeTime } from './formatRelativeTime';
 
 export interface NotificationItem {

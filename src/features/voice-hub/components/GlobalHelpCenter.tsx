@@ -7,7 +7,7 @@ import {
 import { Card, Button, Spinner } from './design-system';
 import { getAccessibleTextOnBrand } from './design-system/tokens';
 import { useSessionStore } from '../store/useSessionStore';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger';
 
 interface Message {
   id: string;

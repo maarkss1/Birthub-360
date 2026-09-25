@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { StudioNode, StudioEdge, NodeType, ValidationIssue, WorkflowVersionSummary } from '../lib/studio/types';
 import { validationEngine } from '../lib/studio/ValidationEngine';
 import { addEdge, Connection } from '@xyflow/react';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../lib/logger';
 
 export type NodeLifecycleState = 
   | 'Created'
@@ -222,7 +222,7 @@ export const nodeRegistry: Record<string, NodeRegistryItem> = {
     category: 'Prompt',
     description: 'Executes generative agent instructions, system prompts, or blocks.',
     iconName: 'MessageSquare',
-    colorClass: 'bg-indigo-500 text-indigo-600',
+    colorClass: 'bg-iris text-iris',
     inputs: 1,
     outputs: 1,
     version: '1.2.0',
@@ -327,7 +327,7 @@ export const nodeRegistry: Record<string, NodeRegistryItem> = {
     category: 'Integration',
     description: 'Perform HTTP REST webhooks, CRM queries, or SQL commands synchronously.',
     iconName: 'Wrench',
-    colorClass: 'bg-blue-500 text-blue-600',
+    colorClass: 'bg-brand text-brand-ink dark:text-brand',
     inputs: 1,
     outputs: 1,
     version: '2.0.0',

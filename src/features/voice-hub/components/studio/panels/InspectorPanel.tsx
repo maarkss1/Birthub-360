@@ -80,7 +80,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
       {/* Header */}
       <div className="p-4 border-b border-white/5 bg-transparent shrink-0">
         <div className="flex items-center justify-between mb-2">
-          <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 text-[10px] font-bold text-indigo-400 uppercase tracking-wider border border-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.1)]">
+          <span className="px-2 py-0.5 rounded-full bg-iris/10 text-[10px] font-bold text-iris uppercase tracking-wider border border-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.1)]">
             {regItem?.category || data.category || 'Node'}
           </span>
           <div className="flex items-center gap-1.5">
@@ -109,7 +109,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
             onClick={() => setActiveTab(tab)}
             className={`pb-2 pt-2.5 px-3 border-b-2 text-[11px] font-bold uppercase tracking-wide transition-colors whitespace-nowrap shrink-0 ${
               activeTab === tab 
-                ? 'border-indigo-500 text-indigo-400' 
+                ? 'border-indigo-500 text-iris' 
                 : 'border-transparent text-gray-500 hover:text-gray-300'
             }`}
           >
@@ -132,7 +132,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
               {/* Identity Properties */}
               <div className="space-y-3">
                 <h3 className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Settings2 className="w-3.5 h-3.5 text-indigo-400" /> General Properties
+                  <Settings2 className="w-3.5 h-3.5 text-iris" /> General Properties
                 </h3>
                 
                 <div className="space-y-3">
@@ -171,7 +171,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                   </div>
                   <div className="flex justify-between">
                     <span>Active Version:</span>
-                    <span className="font-mono font-medium text-indigo-400">v{regItem.version}</span>
+                    <span className="font-mono font-medium text-iris">v{regItem.version}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Inputs / Outputs:</span>
@@ -179,7 +179,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                   </div>
                   <div className="flex justify-between">
                     <span>Dependency Match:</span>
-                    <span className="text-[10px] bg-indigo-500/10 text-indigo-300 px-1 rounded font-semibold border border-indigo-500/20">{regItem.dependencies[0] || 'none'}</span>
+                    <span className="text-[10px] bg-iris/10 text-iris px-1 rounded font-semibold border border-indigo-500/20">{regItem.dependencies[0] || 'none'}</span>
                   </div>
                 </div>
               )}
@@ -205,7 +205,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
               className="space-y-5"
             >
               <h3 className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
-                <Code className="w-3.5 h-3.5 text-indigo-400" /> Setup Configuration
+                <Code className="w-3.5 h-3.5 text-iris" /> Setup Configuration
               </h3>
 
               {!data.config || Object.keys(data.config).length === 0 ? (
@@ -255,11 +255,11 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Variable className="w-3.5 h-3.5 text-indigo-400" /> Bound State Variables
+                  <Variable className="w-3.5 h-3.5 text-iris" /> Bound State Variables
                 </h3>
                 <button 
                   onClick={() => setShowAddVar(!showAddVar)}
-                  className="text-[10px] font-bold text-indigo-400 hover:bg-indigo-500/20 px-1.5 py-0.5 rounded flex items-center gap-0.5 border border-transparent hover:border-indigo-500/30 transition-colors"
+                  className="text-[10px] font-bold text-iris hover:bg-iris/20 px-1.5 py-0.5 rounded flex items-center gap-0.5 border border-transparent hover:border-indigo-500/30 transition-colors"
                 >
                   <Plus className="w-3 h-3" /> ADD
                 </button>
@@ -268,7 +268,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
               {showAddVar && (
                 <form onSubmit={handleAddVariable} className="p-3 bg-white/5 border border-indigo-500/30 rounded-lg space-y-2">
                   <div>
-                    <label htmlFor={newVarNameId} className="block text-[9px] font-bold text-indigo-400 uppercase">Variable Name</label>
+                    <label htmlFor={newVarNameId} className="block text-[9px] font-bold text-iris uppercase">Variable Name</label>
                     <input
                       id={newVarNameId}
                       type="text"
@@ -280,7 +280,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                     />
                   </div>
                   <div>
-                    <label htmlFor={newVarValId} className="block text-[9px] font-bold text-indigo-400 uppercase">Value</label>
+                    <label htmlFor={newVarValId} className="block text-[9px] font-bold text-iris uppercase">Value</label>
                     <input
                       id={newVarValId}
                       type="text"
@@ -292,7 +292,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                   </div>
                   <div className="flex justify-end gap-1.5">
                     <button type="button" onClick={() => setShowAddVar(false)} className="text-[10px] text-gray-400 hover:text-gray-200">Cancel</button>
-                    <button type="submit" className="text-[10px] bg-indigo-600/90 text-white px-2.5 py-1 rounded shadow-[0_0_10px_rgba(99,102,241,0.3)] border border-indigo-500/50 hover:bg-indigo-500 transition-colors">Create</button>
+                    <button type="submit" className="text-[10px] bg-iris/90 text-white px-2.5 py-1 rounded shadow-[0_0_10px_rgba(99,102,241,0.3)] border border-indigo-500/50 hover:bg-iris transition-colors">Create</button>
                   </div>
                 </form>
               )}
@@ -301,7 +301,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                 {Object.entries(simulationVariables).map(([k, v]) => (
                   <div key={k} className="p-2.5 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between hover:border-white/20 hover:bg-white/10 transition-colors">
                     <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 bg-indigo-500/20 rounded flex items-center justify-center text-indigo-400 font-mono text-[10px] font-bold border border-indigo-500/30">V</div>
+                      <div className="w-5 h-5 bg-iris/20 rounded flex items-center justify-center text-iris font-mono text-[10px] font-bold border border-indigo-500/30">V</div>
                       <div>
                         <div className="text-xs font-bold text-gray-200">{k}</div>
                         <div className="text-[10px] text-gray-400 font-mono">Value: {String(v)}</div>
@@ -324,7 +324,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
               {/* Incoming Connections */}
               <div className="space-y-3">
                 <h3 className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Link className="w-3.5 h-3.5 text-blue-400" /> Incoming Ports (Inputs)
+                  <Link className="w-3.5 h-3.5 text-brand-ink dark:text-brand" /> Incoming Ports (Inputs)
                 </h3>
 
                 {incomingEdges.length === 0 ? (
@@ -337,7 +337,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                       <div key={edge.id} className="p-2.5 bg-white/5 border border-white/10 rounded-lg text-xs flex justify-between items-center transition-colors hover:bg-white/10">
                         <span className="font-semibold text-gray-300">From Node: {edge.source}</span>
                         {edge.data?.description && (
-                          <span className="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 rounded border border-blue-500/30">{edge.data.description}</span>
+                          <span className="text-[10px] bg-brand/20 text-brand-ink dark:text-brand px-1.5 rounded border border-blue-500/30">{edge.data.description}</span>
                         )}
                       </div>
                     ))}
@@ -368,7 +368,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                           )}
                         </div>
                         {edge.data?.condition && (
-                          <div className="text-[10px] font-mono text-indigo-400 font-medium">
+                          <div className="text-[10px] font-mono text-iris font-medium">
                             IF: {edge.data.condition}
                           </div>
                         )}
@@ -389,7 +389,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
               className="space-y-5"
             >
               <h3 className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
-                <Activity className="w-3.5 h-3.5 text-indigo-400" /> Telemetry & Health
+                <Activity className="w-3.5 h-3.5 text-iris" /> Telemetry & Health
               </h3>
 
               <div className="grid grid-cols-2 gap-2">
@@ -448,18 +448,18 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
               className="space-y-4"
             >
               <h3 className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
-                <BookOpen className="w-3.5 h-3.5 text-indigo-400" /> Auto-Documentation
+                <BookOpen className="w-3.5 h-3.5 text-iris" /> Auto-Documentation
               </h3>
 
               {regItem?.documentation ? (
                 <div className="space-y-4 text-xs text-gray-300">
                   <div>
-                    <div className="font-bold text-indigo-400 uppercase text-[10px]">Objective & Goal</div>
+                    <div className="font-bold text-iris uppercase text-[10px]">Objective & Goal</div>
                     <p className="mt-1 leading-relaxed bg-white/5 p-2.5 rounded-lg border border-white/10 text-gray-400">{regItem.documentation.goal}</p>
                   </div>
 
                   <div>
-                    <div className="font-bold text-indigo-400 uppercase text-[10px]">Outputs Desc</div>
+                    <div className="font-bold text-iris uppercase text-[10px]">Outputs Desc</div>
                     <ul className="mt-1 list-disc list-inside space-y-1 pl-1.5 text-gray-400">
                       {regItem.documentation.outputsDesc.map((desc, i) => (
                         <li key={i}>{desc}</li>
@@ -468,7 +468,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                   </div>
 
                   <div>
-                    <div className="font-bold text-indigo-400 uppercase text-[10px]">Best Practices</div>
+                    <div className="font-bold text-iris uppercase text-[10px]">Best Practices</div>
                     <ul className="mt-1 list-disc list-inside space-y-1 pl-1.5 text-gray-400">
                       {regItem.documentation.bestPractices.map((bp, i) => (
                         <li key={i}>{bp}</li>
@@ -477,7 +477,7 @@ export function InspectorPanel({ selectedNode }: InspectorPanelProps) {
                   </div>
 
                   <div>
-                    <div className="font-bold text-indigo-400 uppercase text-[10px]">Examples</div>
+                    <div className="font-bold text-iris uppercase text-[10px]">Examples</div>
                     <ul className="mt-1 list-disc list-inside space-y-1 pl-1.5 text-gray-400">
                       {regItem.documentation.examples.map((ex, i) => (
                         <li key={i}>{ex}</li>

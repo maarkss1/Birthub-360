@@ -50,8 +50,8 @@ export default function AnalyticsPage() {
                 <h3 className="font-bold text-slate-800 mb-4">Funil de Conversão</h3>
                 <div className="space-y-4">
                     <FunnelBar label="Tentativas" value="100%" color="bg-slate-200" />
-                    <FunnelBar label="Atendidas" value="65%" color="bg-blue-200" />
-                    <FunnelBar label="Conversa Útil (>30s)" value="42%" color="bg-blue-400" />
+                    <FunnelBar label="Atendidas" value="65%" color="bg-brand" />
+                    <FunnelBar label="Conversa Útil (>30s)" value="42%" color="bg-brand" />
                     <FunnelBar label="Conversão / Objetivo" value="18%" color="bg-green-500" />
                 </div>
             </div>
@@ -102,7 +102,7 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
     const colors: Record<string, string> = {
-        blue: 'bg-blue-50 text-blue-600',
+        blue: 'bg-blue-50 text-brand-ink dark:text-brand',
         green: 'bg-green-50 text-green-600',
         orange: 'bg-orange-50 text-orange-600',
         purple: 'bg-purple-50 text-purple-600',

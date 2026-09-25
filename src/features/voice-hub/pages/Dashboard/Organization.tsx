@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Save, Upload, Shield, Video, Loader2, AlertTriangle, Lock } from 'lucide-react';
 import { useSessionStore } from '../../store/useSessionStore';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../lib/logger';
 import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system';
 
 interface TenantUser {

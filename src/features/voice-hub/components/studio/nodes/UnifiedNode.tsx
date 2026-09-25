@@ -33,7 +33,7 @@ export function UnifiedNode({ data, iconName, colorClass, headerTitle, inputs = 
   // Lifecycle badges colors
   const badgeStyles: Record<string, string> = {
     Created: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
-    Initialized: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    Initialized: 'bg-brand/10 text-brand-ink dark:text-brand border-blue-500/20',
     Configured: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
     Validated: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     Ready: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
@@ -56,7 +56,7 @@ export function UnifiedNode({ data, iconName, colorClass, headerTitle, inputs = 
           type="target"
           position={Position.Left}
           id={`in-${i}`}
-          className="w-3 h-3 border-2 border-[#131520] bg-gray-500 hover:bg-indigo-400 hover:scale-125 transition-transform"
+          className="w-3 h-3 border-2 border-[#131520] bg-gray-500 hover:bg-iris hover:scale-125 transition-transform"
           style={{ top: inputs > 1 ? `${(100 / (inputs + 1)) * (i + 1)}%` : '50%' }}
         />
       ))}
@@ -111,7 +111,7 @@ export function UnifiedNode({ data, iconName, colorClass, headerTitle, inputs = 
           type="source"
           position={Position.Right}
           id={`out-${i}`}
-          className="w-3 h-3 border-2 border-[#131520] bg-indigo-500 hover:bg-indigo-400 hover:scale-125 transition-transform"
+          className="w-3 h-3 border-2 border-[#131520] bg-iris hover:bg-iris hover:scale-125 transition-transform"
           style={{ top: outputs > 1 ? `${(100 / (outputs + 1)) * (i + 1)}%` : '50%' }}
         />
       ))}
