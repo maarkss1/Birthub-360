@@ -1,33 +1,17 @@
 {
   "name": "Central de Inteligência Comercial BIRTH HUB 360",
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "../docker-compose.postgres-local.yml",
-    "docker-compose.yml"
-  ],
-  "service": "app",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
   "workspaceFolder": "/workspace",
-  "shutdownAction": "stopCompose",
   "forwardPorts": [
-    3005,
-    5434,
-    6379,
-    7700,
-    9000,
-    9001,
-    4000,
-    11434
+    3005
   ],
   "portsAttributes": {
     "3005": {
       "label": "App (Express + Vite)",
       "onAutoForward": "openPreview"
-    },
-    "9001": {
-      "label": "MinIO Console"
     }
   },
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postCreateCommand": "bash .devcontainer/post-create-codespace.sh",
   "features": {
     "ghcr.io/devcontainers/features/sshd:1": {
       "version": "latest"
